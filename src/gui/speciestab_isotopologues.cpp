@@ -19,20 +19,20 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/speciestab.h"
-#include "gui/gui.h"
-#include "gui/delegates/isotopecombo.hui"
-#include "gui/helpers/treewidgetupdater.h"
 #include "classes/atomtype.h"
+#include "gui/delegates/isotopecombo.hui"
+#include "gui/gui.h"
+#include "gui/helpers/treewidgetupdater.h"
+#include "gui/speciestab.h"
 
 /*
  * Private Functions
  */
 
 // IsotopologuesTree top-level update function
-void SpeciesTab::updateIsotopologuesTreeTopLevelItem(QTreeWidget* treeWidget, int topLevelItemIndex, Isotopologue* data, bool createItem)
+void SpeciesTab::updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, int topLevelItemIndex, Isotopologue *data, bool createItem)
 {
-	QTreeWidgetItem* item;
+	QTreeWidgetItem *item;
 	if (createItem)
 	{
 		item = new QTreeWidgetItem;
@@ -40,19 +40,20 @@ void SpeciesTab::updateIsotopologuesTreeTopLevelItem(QTreeWidget* treeWidget, in
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 		treeWidget->insertTopLevelItem(topLevelItemIndex, item);
 	}
-	else item = treeWidget->topLevelItem(topLevelItemIndex);
+	else
+		item = treeWidget->topLevelItem(topLevelItemIndex);
 
 	// Set item data
 	item->setText(0, data->name());
 
 	// Update child items
-	TreeWidgetRefDataListUpdater<SpeciesTab,AtomType,Isotope*> isotopeUpdater(item, data->isotopes(), this, &SpeciesTab::updateIsotopologuesTreeChildItem);
+	TreeWidgetRefDataListUpdater<SpeciesTab, AtomType, Isotope *> isotopeUpdater(item, data->isotopes(), this, &SpeciesTab::updateIsotopologuesTreeChildItem);
 }
 
 // IsotopologuesTree item update function
-void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem* parentItem, int childIndex, AtomType* atomType, Isotope* isotope, bool createItem)
+void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, AtomType *atomType, Isotope *isotope, bool createItem)
 {
-	QTreeWidgetItem* item;
+	QTreeWidgetItem *item;
 
 	// AtomType
 	if (createItem)
@@ -63,19 +64,23 @@ void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem* parentItem, i
 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 		parentItem->insertChild(childIndex, item);
 	}
-	else item = parentItem->child(childIndex);
+	else
+		item = parentItem->child(childIndex);
 	item->setText(1, atomType->name());
 	item->setText(2, IsotopeComboDelegate::textForIsotope(isotope));
 }
 
 // Return currently-selected Isotopologue
-Isotopologue* SpeciesTab::currentIsotopologue()
+Isotopologue *SpeciesTab::currentIsotopologue()
 {
 	// Get current item from tree, and check the parent item
-	QTreeWidgetItem* item = ui_.IsotopologuesTree->currentItem();
-	if (!item) return NULL;
-	if (item->parent()) return VariantPointer<Isotopologue>(item->parent()->data(0, Qt::UserRole));
-	else return VariantPointer<Isotopologue>(item->data(0, Qt::UserRole));
+	QTreeWidgetItem *item = ui_.IsotopologuesTree->currentItem();
+	if (!item)
+		return NULL;
+	if (item->parent())
+		return VariantPointer<Isotopologue>(item->parent()->data(0, Qt::UserRole));
+	else
+		return VariantPointer<Isotopologue>(item->data(0, Qt::UserRole));
 }
 
 /*
@@ -94,8 +99,9 @@ void SpeciesTab::on_IsotopologueAddButton_clicked(bool checked)
 void SpeciesTab::on_IsotopologueRemoveButton_clicked(bool checked)
 {
 	// Get current Isotopologue
-	Isotopologue* iso = currentIsotopologue();
-	if (!iso) return;
+	Isotopologue *iso = currentIsotopologue();
+	if (!iso)
+		return;
 
 	// Notify all keywords that our Isotopologue is about to be removed
 	KeywordBase::objectNoLongerValid<Isotopologue>(iso);
@@ -113,21 +119,16 @@ void SpeciesTab::on_IsotopologueGenerateButton_clicked(bool checked)
 	// TODO
 }
 
-void SpeciesTab::on_IsotopologueExpandAllButton_clicked(bool checked)
-{
-	ui_.IsotopologuesTree->expandAll();
-}
+void SpeciesTab::on_IsotopologueExpandAllButton_clicked(bool checked) { ui_.IsotopologuesTree->expandAll(); }
 
-void SpeciesTab::on_IsotopologueCollapseAllButton_clicked(bool checked)
-{
-	ui_.IsotopologuesTree->collapseAll();
-}
+void SpeciesTab::on_IsotopologueCollapseAllButton_clicked(bool checked) { ui_.IsotopologuesTree->collapseAll(); }
 
-void SpeciesTab::on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column)
+void SpeciesTab::on_IsotopologuesTree_itemChanged(QTreeWidgetItem *item, int column)
 {
-	if (refreshLock_.isLocked() || (!item)) return;
+	if (refreshLock_.isLocked() || (!item))
+		return;
 
-	Isotopologue* isotopologue = currentIsotopologue();
+	Isotopologue *isotopologue = currentIsotopologue();
 
 	// If a top-level item, then the only possibility is to edit the isotopologue name (column 0)
 	if (item->parent() == NULL)
@@ -153,9 +154,10 @@ void SpeciesTab::on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int col
 	else if (column == 2)
 	{
 		// Set neutron isotope - need to get AtomType from column 1...
-		AtomType* atomType = VariantPointer<AtomType>(item->data(1, Qt::UserRole));
-		Isotope* isotope = VariantPointer<Isotope>(item->data(2, Qt::UserRole));
-		if (isotope) isotopologue->setAtomTypeIsotope(atomType, isotope);
+		AtomType *atomType = VariantPointer<AtomType>(item->data(1, Qt::UserRole));
+		Isotope *isotope = VariantPointer<Isotope>(item->data(2, Qt::UserRole));
+		if (isotope)
+			isotopologue->setAtomTypeIsotope(atomType, isotope);
 		dissolveWindow_->setModified();
 	}
 }
@@ -170,16 +172,18 @@ void SpeciesTab::updateIsotopologuesTab()
 	Locker refreshLocker(refreshLock_);
 
 	// Isotopologues Tree
-	if (!species_) ui_.IsotopologuesTree->clear();
+	if (!species_)
+		ui_.IsotopologuesTree->clear();
 	else
 	{
-		TreeWidgetUpdater<SpeciesTab,Isotopologue> isotopologueUpdater(ui_.IsotopologuesTree, species_->isotopologues(), this, &SpeciesTab::updateIsotopologuesTreeTopLevelItem);
+		TreeWidgetUpdater<SpeciesTab, Isotopologue> isotopologueUpdater(ui_.IsotopologuesTree, species_->isotopologues(), this, &SpeciesTab::updateIsotopologuesTreeTopLevelItem);
 
 		// If there is no current isotopologue selected, try to select the first
-		if (!currentIsotopologue()) ui_.IsotopologuesTree->setCurrentItem(ui_.IsotopologuesTree->topLevelItem(0));
+		if (!currentIsotopologue())
+			ui_.IsotopologuesTree->setCurrentItem(ui_.IsotopologuesTree->topLevelItem(0));
 
 		ui_.IsotopologuesTree->resizeColumnToContents(0);
 	}
-	Isotopologue* isotopologue = currentIsotopologue();
+	Isotopologue *isotopologue = currentIsotopologue();
 	ui_.IsotopologueRemoveButton->setEnabled(isotopologue != NULL);
 }

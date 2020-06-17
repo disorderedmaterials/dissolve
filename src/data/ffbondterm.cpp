@@ -20,11 +20,11 @@
 */
 
 #include "data/ffbondterm.h"
-#include "data/ffatomtype.h"
 #include "data/ff.h"
+#include "data/ffatomtype.h"
 
 // Constructor
-ForcefieldBondTerm::ForcefieldBondTerm(const char* typeI, const char* typeJ, SpeciesBond::BondFunction form, double data0, double data1, double data2, double data3) : ListItem<ForcefieldBondTerm>()
+ForcefieldBondTerm::ForcefieldBondTerm(const char *typeI, const char *typeJ, SpeciesBond::BondFunction form, double data0, double data1, double data2, double data3)
 {
 	typeI_ = typeI;
 	typeJ_ = typeJ;
@@ -36,31 +36,25 @@ ForcefieldBondTerm::ForcefieldBondTerm(const char* typeI, const char* typeJ, Spe
 }
 
 // Destructor
-ForcefieldBondTerm::~ForcefieldBondTerm()
-{
-}
+ForcefieldBondTerm::~ForcefieldBondTerm() {}
 
 /*
  * Data
  */
 
 // Return if this term matches the atom types supplied
-bool ForcefieldBondTerm::matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j)
+bool ForcefieldBondTerm::isMatch(const ForcefieldAtomType *i, const ForcefieldAtomType *j) const
 {
-	if (DissolveSys::sameWildString(typeI_, i->equivalentName()) && DissolveSys::sameWildString(typeJ_, j->equivalentName())) return true;
-	if (DissolveSys::sameWildString(typeJ_, i->equivalentName()) && DissolveSys::sameWildString(typeI_, j->equivalentName())) return true;
+	if (DissolveSys::sameWildString(typeI_, i->equivalentName()) && DissolveSys::sameWildString(typeJ_, j->equivalentName()))
+		return true;
+	if (DissolveSys::sameWildString(typeJ_, i->equivalentName()) && DissolveSys::sameWildString(typeI_, j->equivalentName()))
+		return true;
 
 	return false;
 }
 
 // Return functional form index of interaction
-SpeciesBond::BondFunction ForcefieldBondTerm::form() const
-{
-	return form_;
-}
+SpeciesBond::BondFunction ForcefieldBondTerm::form() const { return form_; }
 
 // Return array of parameters
-const double* ForcefieldBondTerm::parameters() const
-{
-	return parameters_;
-}
+const double *ForcefieldBondTerm::parameters() const { return parameters_; }

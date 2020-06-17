@@ -19,17 +19,17 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/rdf/gui/modulewidget.h"
+#include "classes/atomtype.h"
+#include "genericitems/listhelper.h"
 #include "gui/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
+#include "modules/rdf/gui/modulewidget.h"
 #include "modules/rdf/rdf.h"
-#include "classes/atomtype.h"
 #include "templates/variantpointer.h"
-#include "genericitems/listhelper.h"
 
 // Constructor
-RDFModuleWidget::RDFModuleWidget(QWidget* parent, RDFModule* module, Dissolve& dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
+RDFModuleWidget::RDFModuleWidget(QWidget *parent, RDFModule *module, Dissolve &dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -78,9 +78,7 @@ RDFModuleWidget::RDFModuleWidget(QWidget* parent, RDFModule* module, Dissolve& d
 	setGraphDataTargets(module_);
 }
 
-RDFModuleWidget::~RDFModuleWidget()
-{
-}
+RDFModuleWidget::~RDFModuleWidget() {}
 
 /*
  * UI
@@ -101,21 +99,25 @@ void RDFModuleWidget::updateControls(int flags)
  */
 
 // Write widget state through specified LineParser
-bool RDFModuleWidget::writeState(LineParser& parser) const
+bool RDFModuleWidget::writeState(LineParser &parser) const
 {
 	// Write DataViewer sessions
-	if (!partialsGraph_->writeSession(parser)) return false;
-	if (!totalsGraph_->writeSession(parser)) return false;
+	if (!partialsGraph_->writeSession(parser))
+		return false;
+	if (!totalsGraph_->writeSession(parser))
+		return false;
 
 	return true;
 }
 
 // Read widget state through specified LineParser
-bool RDFModuleWidget::readState(LineParser& parser)
+bool RDFModuleWidget::readState(LineParser &parser)
 {
 	// Read DataViewer sessions
-	if (!partialsGraph_->readSession(parser)) return false;
-	if (!totalsGraph_->readSession(parser)) return false;
+	if (!partialsGraph_->readSession(parser))
+		return false;
+	if (!totalsGraph_->readSession(parser))
+		return false;
 
 	return true;
 }
@@ -125,19 +127,19 @@ bool RDFModuleWidget::readState(LineParser& parser)
  */
 
 // Set data targets in graphs
-void RDFModuleWidget::setGraphDataTargets(RDFModule* module)
+void RDFModuleWidget::setGraphDataTargets(RDFModule *module)
 {
-	if (!module) return;
+	if (!module)
+		return;
 
 	// Add Configuration targets to the combo box
 	ui_.TargetCombo->clear();
-	RefListIterator<Configuration> configIterator(module->targetConfigurations());
-	while (Configuration* config = configIterator.iterate()) ui_.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
+	for (Configuration *config : module->targetConfigurations())
+		ui_.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
 
 	// Loop over Configurations and add total G(R)
 	CharString blockData;
-	configIterator.restart();
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration *cfg : module->targetConfigurations())
 	{
 		// Add calculated total G(r)
 		totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//Total", cfg->niceName()), cfg->niceName(), "Calc");
@@ -151,26 +153,30 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 
 	// Get target Configuration
 	currentConfiguration_ = VariantPointer<Configuration>(ui_.TargetCombo->itemData(index));
-	if (!currentConfiguration_) return;
+	if (!currentConfiguration_)
+		return;
 
 	CharString blockData;
 	const AtomTypeList cfgTypes = currentConfiguration_->usedAtomTypesList();
 	int n = 0;
-	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
+	for (AtomType *at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
 	{
 		int m = n;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
+		for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
 		{
 			CharString id("%s-%s", at1->name(), at2->name());
 
 			// Full partial
-			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Full", currentConfiguration_->niceName(), id.get()), CharString("%s (Full)", id.get()), "Full");
+			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Full", currentConfiguration_->niceName(), id.get()),
+							 CharString("%s (Full)", id.get()), "Full");
 
 			// Bound partial
-			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Bound", currentConfiguration_->niceName(), id.get()), CharString("%s (Bound)", id.get()), "Bound");
+			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Bound", currentConfiguration_->niceName(), id.get()),
+							 CharString("%s (Bound)", id.get()), "Bound");
 
 			// Unbound partial
-			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Unbound", currentConfiguration_->niceName(), id.get()), CharString("%s (Unbound)", id.get()), "Unbound");
+			partialsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//%s//Unbound", currentConfiguration_->niceName(), id.get()),
+							 CharString("%s (Unbound)", id.get()), "Unbound");
 		}
 	}
 }

@@ -1,10 +1,8 @@
 ---
 title: Step 6 - Next Steps
 grand_parent: Examples
-parent: Liquid Argon
 weight: 8
 ---
-# Liquid Argon
 
 ## 6) Next Steps
 

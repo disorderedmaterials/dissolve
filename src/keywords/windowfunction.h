@@ -31,26 +31,24 @@
 // Keyword with WindowFunction Data
 class WindowFunctionKeyword : public KeywordData<WindowFunction>
 {
-	public:
+      public:
 	// Constructor
 	WindowFunctionKeyword(WindowFunction value);
 	// Destructor
 	~WindowFunctionKeyword();
 
-
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 };
 
 #endif
-

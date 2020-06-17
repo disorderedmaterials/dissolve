@@ -22,32 +22,31 @@
 #ifndef DISSOLVE_KVECTOR_H
 #define DISSOLVE_KVECTOR_H
 
+#include "genericitems/base.h"
+#include "templates/array.h"
 #include "templates/listitem.h"
 #include "templates/vector3.h"
-#include "templates/array.h"
-#include "genericitems/base.h"
 
 // Forward Declarations
 class BraggReflection;
 
 // K-Vector
-class KVector : public ListItem<KVector>,  public GenericItemBase
+class KVector : public GenericItemBase
 {
-	public:
+      public:
 	// Constructor
 	KVector(int h = 0, int k = 0, int l = 0, int reflectionIndex = -1, int nAtomTypes = 0);
 	// Destructor
 	~KVector();
 	// Copy constructor
-	KVector(const KVector& source);
+	KVector(const KVector &source);
 	// Operator=
-	void operator=(const KVector& source);
-
+	void operator=(const KVector &source);
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Integer hkl indices of vector
 	Vec3<int> hkl_;
 	// Associated BraggReflection index
@@ -55,18 +54,18 @@ class KVector : public ListItem<KVector>,  public GenericItemBase
 	// Contributions to this kvector from individual atom types
 	Array<double> cosTerms_, sinTerms_;
 
-	public:
+      public:
 	// Initialise
 	void initialise(int h, int k, int l, int reflectionIndex, int nAtomTypes);
 	// Return hkl indices
-	const Vec3<int>& hkl() const;
+	const Vec3<int> &hkl() const;
 	// Return h index
 	int h() const;
 	// Return k index
 	int k() const;
 	// Return l index
 	int l() const;
-	// Set BraggReflection index 
+	// Set BraggReflection index
 	void setBraggReflectionIndex(int index);
 	// Return associated BraggReflection index
 	int braggReflectionIndex() const;
@@ -77,27 +76,25 @@ class KVector : public ListItem<KVector>,  public GenericItemBase
 	// Add value to sinTerm index specified
 	void addSinTerm(int atomTypeIndex, double value);
 	// Calculate intensities and sum into associated BraggReflection
-	void calculateIntensities(BraggReflection* reflectionArray);
+	void calculateIntensities(BraggReflection *reflectionArray);
 	// Return specified intensity
 	double intensity(int typeI, int typeJ);
-
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-	public:
+      public:
 	// Return class name
-	static const char* itemClassName();
-
+	static const char *itemClassName();
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast data from root to all other processes
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif

@@ -23,12 +23,12 @@
 #include "data/atomicmass.h"
 
 // Add a new atom to the Species
-SpeciesAtom* Species::addAtom(Element* element, Vec3<double> r, double q)
+SpeciesAtom *Species::addAtom(Element *element, Vec3<double> r, double q)
 {
-	SpeciesAtom* i = atoms_.add();
+	SpeciesAtom *i = atoms_.add();
 	i->setSpecies(this);
 	i->set(element, r.x, r.y, r.z, q);
-	i->setIndex(atoms_.nItems()-1);
+	i->setIndex(atoms_.nItems() - 1);
 
 	++version_;
 
@@ -36,7 +36,7 @@ SpeciesAtom* Species::addAtom(Element* element, Vec3<double> r, double q)
 }
 
 // Remove the specified atom from the species
-void Species::removeAtom(SpeciesAtom* i)
+void Species::removeAtom(SpeciesAtom *i)
 {
 	/*
 	 * Note: This is a deliberately simplistic function, and is intended only for use when creating / editing basic
@@ -44,7 +44,8 @@ void Species::removeAtom(SpeciesAtom* i)
 	 */
 
 	// Remove any bond terms that involve 'i'
-	while (i->nBonds()) removeBond(i, i->bond(0)->partner(i));
+	while (i->nBonds())
+		removeBond(i, i->bond(0)->partner(i));
 
 	// Now remove the atom
 	atoms_.remove(i);
@@ -53,33 +54,22 @@ void Species::removeAtom(SpeciesAtom* i)
 }
 
 // Return the number of Atoms in the Species
-int Species::nAtoms() const
-{
-	return atoms_.nItems();
-}
+int Species::nAtoms() const { return atoms_.nItems(); }
 
 // Return the first Atom in the Species
-SpeciesAtom* Species::firstAtom() const
-{
-	return atoms_.first();
-}
+SpeciesAtom *Species::firstAtom() const { return atoms_.first(); }
 
 // Return the nth Atom in the Species
-SpeciesAtom* Species::atom(int n)
-{
-	return atoms_[n];
-}
+SpeciesAtom *Species::atom(int n) { return atoms_[n]; }
 
 // Return the list of SpeciesAtoms
-const List<SpeciesAtom>& Species::atoms() const
-{
-	return atoms_;
-}
+const List<SpeciesAtom> &Species::atoms() const { return atoms_; }
 
 // Set coordinates of specified atom
-void Species::setAtomCoordinates(SpeciesAtom* i, Vec3<double> r)
+void Species::setAtomCoordinates(SpeciesAtom *i, Vec3<double> r)
 {
-	if (!i) return;
+	if (!i)
+		return;
 
 	i->setCoordinates(r);
 
@@ -101,12 +91,14 @@ void Species::setAtomCoordinates(int id, double x, double y, double z)
 }
 
 // Transmute specified SpeciesAtom
-void Species::transmuteAtom(SpeciesAtom* i, Element* el)
+void Species::transmuteAtom(SpeciesAtom *i, Element *el)
 {
-	if (!i) return;
+	if (!i)
+		return;
 
 	// Nothing to do if current element matches that supplied
-	if (i->element() == el) return;
+	if (i->element() == el)
+		return;
 
 	// Remove any existing AtomType assignment
 	i->setAtomType(NULL);
@@ -118,7 +110,8 @@ void Species::transmuteAtom(SpeciesAtom* i, Element* el)
 // Clear current Atom selection
 void Species::clearAtomSelection()
 {
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) i->setSelected(false);
+	for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+		i->setSelected(false);
 
 	selectedAtoms_.clear();
 
@@ -126,7 +119,7 @@ void Species::clearAtomSelection()
 }
 
 // Add Atom to selection
-void Species::selectAtom(SpeciesAtom* i)
+void Species::selectAtom(SpeciesAtom *i)
 {
 	if (!i->isSelected())
 	{
@@ -139,7 +132,7 @@ void Species::selectAtom(SpeciesAtom* i)
 }
 
 // Remove atom from selection
-void Species::deselectAtom(SpeciesAtom* i)
+void Species::deselectAtom(SpeciesAtom *i)
 {
 	if (i->isSelected())
 	{
@@ -152,95 +145,89 @@ void Species::deselectAtom(SpeciesAtom* i)
 }
 
 // Toggle selection state of specified atom
-void Species::toggleAtomSelection(SpeciesAtom* i)
+void Species::toggleAtomSelection(SpeciesAtom *i)
 {
-	if (i->isSelected()) deselectAtom(i);
-	else selectAtom(i);
+	if (i->isSelected())
+		deselectAtom(i);
+	else
+		selectAtom(i);
 }
 
 // Select Atoms along any path from the specified one, ignoring the bond(s) provided
-void Species::selectFromAtom(SpeciesAtom* i, SpeciesBond* exclude, SpeciesBond* excludeToo)
+void Species::selectFromAtom(SpeciesAtom *i, SpeciesBond *exclude, SpeciesBond *excludeToo)
 {
 	// Loop over Bonds on specified Atom
 	selectAtom(i);
-	SpeciesAtom* j;
-	const SpeciesBond* ij;
-	for (int ijIndex = 0; ijIndex < i->nBonds(); ++ijIndex, ij = i->bonds().value(ijIndex))
+	for (const auto *bond : i->bonds())
 	{
 		// Is this either of the excluded bonds?
-		if (exclude == ij) continue;
-		if (excludeToo == ij) continue;
+		if (exclude == bond)
+			continue;
+		if (excludeToo == bond)
+			continue;
 
 		// Get the partner atom in the bond and select it (if it is not selected already)
-		j = ij->partner(i);
+		auto *partner = bond->partner(i);
 
-		if (selectedAtoms_.contains(j)) continue;
-		selectFromAtom(j, exclude);
+		if (selectedAtoms_.contains(partner))
+			continue;
+		selectFromAtom(partner, exclude);
 	}
 }
 
 // Return current atom selection
-const RefList<SpeciesAtom>& Species::selectedAtoms() const
-{
-	return selectedAtoms_;
-}
+const RefList<SpeciesAtom> &Species::selectedAtoms() const { return selectedAtoms_; }
 
 // Return nth selected Atom
-SpeciesAtom* Species::selectedAtom(int n)
+SpeciesAtom *Species::selectedAtom(int n)
 {
-	RefListItem<SpeciesAtom>* ri = selectedAtoms_[n];
-	if (ri == NULL) return NULL;
-	else return ri->item();
+	RefListItem<SpeciesAtom> *ri = selectedAtoms_[n];
+	if (ri == NULL)
+		return NULL;
+	else
+		return ri->item();
 }
 
 // Return total charge of species from local atomic charges
 double Species::totalChargeOnAtoms()
 {
 	double totalQ = 0.0;
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) totalQ += i->charge();
+	for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+		totalQ += i->charge();
 	return totalQ;
 }
 
 // Return number of selected Atoms
-int Species::nSelectedAtoms() const
-{
-	return selectedAtoms_.nItems();
-}
+int Species::nSelectedAtoms() const { return selectedAtoms_.nItems(); }
 
 // Return whether specified Atom is selected
-bool Species::isAtomSelected(SpeciesAtom* i) const
-{
-	return selectedAtoms_.contains(i);
-}
+bool Species::isAtomSelected(SpeciesAtom *i) const { return selectedAtoms_.contains(i); }
 
 // Return version of the atom selection
-int Species::atomSelectionVersion() const
-{
-	return atomSelectionVersion_;
-}
+int Species::atomSelectionVersion() const { return atomSelectionVersion_; }
 
 // Return total atomic mass of Species
 double Species::mass() const
 {
 	double m = 0.0;
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) m += AtomicMass::mass(i->element());
+	for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+		m += AtomicMass::mass(i->element());
 	return m;
 }
 
 // Bump AtomTypes version
-void Species::bumpAtomTypesVersion()
-{
-	++atomTypesVersion_;
-}
+void Species::bumpAtomTypesVersion() { ++atomTypesVersion_; }
 
 // Return used AtomTypesList
-const AtomTypeList& Species::usedAtomTypes()
+const AtomTypeList &Species::usedAtomTypes()
 {
 	if (usedAtomTypesPoint_ != atomTypesVersion_)
 	{
 		usedAtomTypes_.clear();
-		for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) if (i->atomType()) usedAtomTypes_.add(i->atomType(), 1);
-	
+		for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+			if (i->atomType())
+				usedAtomTypes_.add(i->atomType(), 1);
+
 		usedAtomTypesPoint_ = atomTypesVersion_;
 	}
 
@@ -250,7 +237,8 @@ const AtomTypeList& Species::usedAtomTypes()
 // Clear AtomType assignments for all atoms
 void Species::clearAtomTypes()
 {
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next()) i->setAtomType(NULL);
+	for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+		i->setAtomType(NULL);
 
 	++atomTypesVersion_;
 }

@@ -20,25 +20,25 @@
 */
 
 #include "main/dissolve.h"
-#include "classes/species.h"
 #include "classes/atomtype.h"
 #include "classes/braggreflection.h"
 #include "classes/kvector.h"
 #include "classes/partialset.h"
+#include "classes/species.h"
 #include "classes/weights.h"
+#include "genericitems/item.h"
+#include "genericitems/items.h"
 #include "math/histogram1d.h"
 #include "math/histogram2d.h"
 #include "math/histogram3d.h"
 #include "math/pairbroadeningfunction.h"
-#include "genericitems/item.h"
-#include "genericitems/items.h"
 
 // Static Members (ObjectInfo)
 bool ObjectInfo::autoSuffixing_ = false;
 CharString ObjectInfo::autoSuffix_;
 
 // Constructor
-Dissolve::Dissolve(CoreData& coreData) : coreData_(coreData)
+Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 {
 	// Set Module instances list in our core data
 	coreData_.setModuleInstances(&moduleInstances_);
@@ -76,16 +76,10 @@ Dissolve::~Dissolve()
  */
 
 // Return reference to CoreData
-CoreData& Dissolve::coreData()
-{
-	return coreData_;
-}
+CoreData &Dissolve::coreData() { return coreData_; }
 
 // Return const reference to CoreData
-const CoreData& Dissolve::constCoreData() const
-{
-	return coreData_;
-}
+const CoreData &Dissolve::constCoreData() const { return coreData_; }
 
 // Clear all data
 void Dissolve::clear()
@@ -98,7 +92,7 @@ void Dissolve::clear()
 	Messenger::printVerbose("Clearing Pair Potentials...\n");
 	pairPotentialDelta_ = 0.005;
 	pairPotentialRange_ = 15.0;
-	pairPotentialRangeSquared_ = pairPotentialRange_*pairPotentialRange_;
+	pairPotentialRangeSquared_ = pairPotentialRange_ * pairPotentialRange_;
 	pairPotentialsIncludeCoulomb_ = false;
 	pairPotentials_.clear();
 	potentialMap_.clear();
@@ -130,19 +124,19 @@ void Dissolve::registerGenericItems()
 	GenericItem::addItemClass(new GenericItemContainer<CharString>("CharString"));
 	GenericItem::addItemClass(new GenericItemContainer<streampos>("StreamPos"));
 
-	GenericItem::addItemClass(new GenericItemContainer< Vec3<int> >("Vec3<int>"));
-	GenericItem::addItemClass(new GenericItemContainer< Vec3<double> >("Vec3<double>"));
+	GenericItem::addItemClass(new GenericItemContainer<Vec3<int>>("Vec3<int>"));
+	GenericItem::addItemClass(new GenericItemContainer<Vec3<double>>("Vec3<double>"));
 
-	GenericItem::addItemClass(new GenericItemContainer< Array2D<double> >("Array2D<double>"));
-	GenericItem::addItemClass(new GenericItemContainer< Array2D< Array<double> > >("Array2D<Array<double>>"));
-	GenericItem::addItemClass(new GenericItemContainer< Array2D<DummyClass> >("Array2D<DummyClass>"));
+	GenericItem::addItemClass(new GenericItemContainer<Array2D<double>>("Array2D<double>"));
+	GenericItem::addItemClass(new GenericItemContainer<Array2D<Array<double>>>("Array2D<Array<double>>"));
+	GenericItem::addItemClass(new GenericItemContainer<Array2D<DummyClass>>("Array2D<DummyClass>"));
 
-	GenericItem::addItemClass(new GenericItemContainer< Array<int> >("Array<int>"));
-	GenericItem::addItemClass(new GenericItemContainer< Array<double> >("Array<double>"));
-	GenericItem::addItemClass(new GenericItemContainer< Array<DummyClass> >("Array<DummyClass>"));
-	GenericItem::addItemClass(new GenericItemContainer< Array<BraggReflection> >("Array<BraggReflection>"));
-	GenericItem::addItemClass(new GenericItemContainer< Array< Vec3<int> > >("Array<Vec3<int>>"));
-	GenericItem::addItemClass(new GenericItemContainer< Array< Vec3<double> > >("Array<Vec3<double>>"));
+	GenericItem::addItemClass(new GenericItemContainer<Array<int>>("Array<int>"));
+	GenericItem::addItemClass(new GenericItemContainer<Array<double>>("Array<double>"));
+	GenericItem::addItemClass(new GenericItemContainer<Array<DummyClass>>("Array<DummyClass>"));
+	GenericItem::addItemClass(new GenericItemContainer<Array<BraggReflection>>("Array<BraggReflection>"));
+	GenericItem::addItemClass(new GenericItemContainer<Array<Vec3<int>>>("Array<Vec3<int>>"));
+	GenericItem::addItemClass(new GenericItemContainer<Array<Vec3<double>>>("Array<Vec3<double>>"));
 
 	GenericItem::addItemClass(new GenericItemContainer<BraggReflection>(BraggReflection::itemClassName()));
 	GenericItem::addItemClass(new GenericItemContainer<Data1D>(Data1D::itemClassName()));

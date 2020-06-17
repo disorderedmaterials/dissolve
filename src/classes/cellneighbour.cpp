@@ -30,25 +30,17 @@ CellNeighbour::CellNeighbour()
 }
 
 // Destructor
-CellNeighbour::~CellNeighbour()
-{
-}
+CellNeighbour::~CellNeighbour() {}
 
 // Set cell and mim flag
-void CellNeighbour::set(Cell* cell, bool useMim)
+void CellNeighbour::set(Cell *cell, bool useMim)
 {
 	cell_ = cell;
 	useMim_ = useMim;
 }
 
 // Return referenced cell
-Cell* CellNeighbour::cell()
-{
-	return cell_;
-}
+Cell *CellNeighbour::cell() { return cell_; }
 
 // Return whether mim should be applied
-bool CellNeighbour::useMim()
-{
-	return useMim_;
-}
+bool CellNeighbour::useMim() { return useMim_; }

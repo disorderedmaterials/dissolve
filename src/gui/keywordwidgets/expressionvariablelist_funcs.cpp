@@ -19,26 +19,27 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/expressionvariablelist.h"
-#include "gui/helpers/tablewidgetupdater.h"
-#include "gui/delegates/integerspin.hui"
-#include "gui/delegates/exponentialspin.hui"
-#include "procedure/nodes/node.h"
-#include "expression/variable.h"
 #include "classes/coredata.h"
-#include <QHBoxLayout>
+#include "expression/variable.h"
+#include "gui/delegates/exponentialspin.hui"
+#include "gui/delegates/integerspin.hui"
+#include "gui/helpers/tablewidgetupdater.h"
+#include "gui/keywordwidgets/expressionvariablelist.h"
+#include "procedure/nodes/node.h"
 #include <QComboBox>
+#include <QHBoxLayout>
 #include <QString>
 
 // Constructor
-ExpressionVariableListKeywordWidget::ExpressionVariableListKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+ExpressionVariableListKeywordWidget::ExpressionVariableListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Create and set up the UI for our widget
 	ui_.setupUi(this);
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<ExpressionVariableListKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into ExpressionVariableListKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<ExpressionVariableListKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into ExpressionVariableListKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information
@@ -46,8 +47,10 @@ ExpressionVariableListKeywordWidget::ExpressionVariableListKeywordWidget(QWidget
 	}
 
 	// Add suitable delegate to the table
-	if (keyword_->variableType() == ExpressionValue::IntegerType) ui_.VariablesTable->setItemDelegateForColumn(1, new IntegerSpinDelegate(this));
-	else if (keyword_->variableType() == ExpressionValue::DoubleType) ui_.VariablesTable->setItemDelegateForColumn(1, new ExponentialSpinDelegate(this));
+	if (keyword_->variableType() == ExpressionValue::IntegerType)
+		ui_.VariablesTable->setItemDelegateForColumn(1, new IntegerSpinDelegate(this));
+	else if (keyword_->variableType() == ExpressionValue::DoubleType)
+		ui_.VariablesTable->setItemDelegateForColumn(1, new ExponentialSpinDelegate(this));
 }
 
 /*
@@ -55,13 +58,14 @@ ExpressionVariableListKeywordWidget::ExpressionVariableListKeywordWidget(QWidget
  */
 
 // Variable table update function
-void ExpressionVariableListKeywordWidget::updateVariableTableRow(int row, ExpressionNode* node, bool createItem)
+void ExpressionVariableListKeywordWidget::updateVariableTableRow(int row, ExpressionNode *node, bool createItem)
 {
 	// Case the node up into an ExpressionVariable
-	ExpressionVariable* var = dynamic_cast<ExpressionVariable*>(node);
-	if (!var) return;
+	ExpressionVariable *var = dynamic_cast<ExpressionVariable *>(node);
+	if (!var)
+		return;
 
-	QTableWidgetItem* item;
+	QTableWidgetItem *item;
 
 	// Name
 	if (createItem)
@@ -70,7 +74,8 @@ void ExpressionVariableListKeywordWidget::updateVariableTableRow(int row, Expres
 		item->setData(Qt::UserRole, VariantPointer<ExpressionVariable>(var));
 		ui_.VariablesTable->setItem(row, 0, item);
 	}
-	else item = ui_.VariablesTable->item(row, 0);
+	else
+		item = ui_.VariablesTable->item(row, 0);
 	item->setText(var->name());
 
 	// Value
@@ -80,39 +85,45 @@ void ExpressionVariableListKeywordWidget::updateVariableTableRow(int row, Expres
 		item->setData(Qt::UserRole, VariantPointer<ExpressionVariable>(var));
 		ui_.VariablesTable->setItem(row, 1, item);
 	}
-	else item = ui_.VariablesTable->item(row, 1);
+	else
+		item = ui_.VariablesTable->item(row, 1);
 	item->setText(var->value().asString());
 }
 
 // Variable data changed
-void ExpressionVariableListKeywordWidget::on_VariablesTable_itemChanged(QTableWidgetItem* w)
+void ExpressionVariableListKeywordWidget::on_VariablesTable_itemChanged(QTableWidgetItem *w)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	// Get the widget's data (our ExpressionVariable)
-	ExpressionVariable* var = VariantPointer<ExpressionVariable>(w->data(Qt::UserRole));
-	if (!var) return;
+	ExpressionVariable *var = VariantPointer<ExpressionVariable>(w->data(Qt::UserRole));
+	if (!var)
+		return;
 
 	// Check column of the item to see what we need to do
 	switch (w->column())
 	{
-		// Variable name
-		case (0):
-			// Check that the name is not currently in use anywhere in the Procedure
-			if (keyword_->parentNode()->parameterExists(qPrintable(w->text()), var))
-			{
-				Messenger::error("A Node with name '%s' already exists elsewhere in the Procedure.\n", qPrintable(w->text()));
-				w->setText(var->name());
-				return;
-			}
-			else var->setName(qPrintable(w->text()));
-			break;
-		// Variable value
-		case (1):
-			// Set the new value
-			if (keyword_->variableType() == ExpressionValue::IntegerType) var->set(w->text().toInt());
-			else if (keyword_->variableType() == ExpressionValue::DoubleType) var->set(w->text().toDouble());
-			break;
+	// Variable name
+	case (0):
+		// Check that the name is not currently in use anywhere in the Procedure
+		if (keyword_->parentNode()->parameterExists(qPrintable(w->text()), var))
+		{
+			Messenger::error("A Node with name '%s' already exists elsewhere in the Procedure.\n", qPrintable(w->text()));
+			w->setText(var->name());
+			return;
+		}
+		else
+			var->setName(qPrintable(w->text()));
+		break;
+	// Variable value
+	case (1):
+		// Set the new value
+		if (keyword_->variableType() == ExpressionValue::IntegerType)
+			var->set(w->text().toInt());
+		else if (keyword_->variableType() == ExpressionValue::DoubleType)
+			var->set(w->text().toDouble());
+		break;
 	}
 
 	emit(keywordValueChanged(keyword_->optionMask()));
@@ -126,9 +137,9 @@ void ExpressionVariableListKeywordWidget::on_VariablesTable_itemChanged(QTableWi
 void ExpressionVariableListKeywordWidget::updateValue()
 {
 	refreshing_ = true;
-	
+
 	// Update the variables list against that contained in the keyword's data
-	TableWidgetUpdater<ExpressionVariableListKeywordWidget,ExpressionNode> tableUpdater(ui_.VariablesTable, keyword_->data(), this, &ExpressionVariableListKeywordWidget::updateVariableTableRow);
+	TableWidgetUpdater<ExpressionVariableListKeywordWidget, ExpressionNode> tableUpdater(ui_.VariablesTable, keyword_->data(), this, &ExpressionVariableListKeywordWidget::updateVariableTableRow);
 
 	refreshing_ = false;
 }

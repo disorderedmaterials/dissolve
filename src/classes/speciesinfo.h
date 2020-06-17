@@ -32,27 +32,26 @@ class Species;
  */
 class SpeciesInfo : public ListItem<SpeciesInfo>
 {
-	public:
+      public:
 	// Constructor
 	SpeciesInfo();
 	// Destructor
 	~SpeciesInfo();
 
-
 	/*
 	 * Species Target
 	 */
-	private:
+      private:
 	// Target Species
-	Species* species_;
+	Species *species_;
 	// Population of the Species
 	int population_;
 
-	public:
+      public:
 	// Set target Species
-	void setSpecies(Species* sp);
+	void setSpecies(Species *sp);
 	// Return target Species
-	Species* species();
+	Species *species();
 	// Zero the population of the Species
 	void zeroPopulation();
 	// Add to population of the Species

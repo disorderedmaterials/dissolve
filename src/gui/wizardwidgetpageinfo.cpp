@@ -28,16 +28,14 @@ WizardWidgetPageInfo::WizardWidgetPageInfo() : ListItem<WizardWidgetPageInfo>()
 	stackedWidgetPage_ = NULL;
 }
 
-WizardWidgetPageInfo::~WizardWidgetPageInfo()
-{
-}
+WizardWidgetPageInfo::~WizardWidgetPageInfo() {}
 
 /*
  * Data
  */
 
 // Set page information
-void WizardWidgetPageInfo::set(int index, const char* title, int nextIndex)
+void WizardWidgetPageInfo::set(int index, const char *title, int nextIndex)
 {
 	index_ = index;
 	title_ = title;
@@ -45,90 +43,56 @@ void WizardWidgetPageInfo::set(int index, const char* title, int nextIndex)
 }
 
 // Set page index
-void WizardWidgetPageInfo::setIndex(int index)
-{
-	index_ = index;
-}
+void WizardWidgetPageInfo::setIndex(int index) { index_ = index; }
 
 // Set page title
-void WizardWidgetPageInfo::setTitle(const char* title)
-{
-	title_ = title;
-}
+void WizardWidgetPageInfo::setTitle(const char *title) { title_ = title; }
 
 // Set next page index
-void WizardWidgetPageInfo::setNextPageIndex(int nextIndex)
-{
-	nextIndex_ = nextIndex;
-}
+void WizardWidgetPageInfo::setNextPageIndex(int nextIndex) { nextIndex_ = nextIndex; }
 
 // Set page type
-void WizardWidgetPageInfo::setPageType(WizardWidgetPageInfo::PageType type)
-{
-	pageType_ = type;
-}
+void WizardWidgetPageInfo::setPageType(WizardWidgetPageInfo::PageType type) { pageType_ = type; }
 
 // Return page type
-WizardWidgetPageInfo::PageType WizardWidgetPageInfo::pageType() const
-{
-	return pageType_;
-}
+WizardWidgetPageInfo::PageType WizardWidgetPageInfo::pageType() const { return pageType_; }
 
 // Return identifying index for page
-int WizardWidgetPageInfo::index() const
-{
-	return index_;
-}
+int WizardWidgetPageInfo::index() const { return index_; }
 
 // Return title text for page
-const char* WizardWidgetPageInfo::title() const
-{
-	return title_.get();
-}
+const char *WizardWidgetPageInfo::title() const { return title_.get(); }
 
 // Return index of the 'next' page
-int WizardWidgetPageInfo::nextIndex() const
-{
-	return nextIndex_;
-}
+int WizardWidgetPageInfo::nextIndex() const { return nextIndex_; }
 
 // Return whether this is an exit (finish) point
-bool WizardWidgetPageInfo::isFinishPoint() const
-{
-	return nextIndex_ == -1;
-}
+bool WizardWidgetPageInfo::isFinishPoint() const { return nextIndex_ == -1; }
 
 /*
  * Widget Interaction
  */
 
 // Set Associated widget in QStackedWidget
-void WizardWidgetPageInfo::setStackedWidgetPage(QWidget* widget)
-{
-	stackedWidgetPage_ = widget;
-}
+void WizardWidgetPageInfo::setStackedWidgetPage(QWidget *widget) { stackedWidgetPage_ = widget; }
 
 // Return associated widget in QStackedWidget
-QWidget* WizardWidgetPageInfo::stackedWidgetPage() const
-{
-	return stackedWidgetPage_;
-}
+QWidget *WizardWidgetPageInfo::stackedWidgetPage() const { return stackedWidgetPage_; }
 // Add new widget highlight
-WizardWidgetHighlight* WizardWidgetPageInfo::addWidgetHighlight()
-{
-	return widgetHighlights_.add();
-}
+WizardWidgetHighlight *WizardWidgetPageInfo::addWidgetHighlight() { return widgetHighlights_.add(); }
 
 // Highlight all defined widgets
 void WizardWidgetPageInfo::highlightWidgets()
 {
 	ListIterator<WizardWidgetHighlight> highlightIterator(widgetHighlights_);
-	while (WizardWidgetHighlight* wh =highlightIterator.iterate()) wh->highlight();
+	while (WizardWidgetHighlight *wh = highlightIterator.iterate())
+		wh->highlight();
 }
 
 // Un-highlight all defined widgets
 void WizardWidgetPageInfo::unHighlightWidgets()
 {
 	ListIterator<WizardWidgetHighlight> highlightIterator(widgetHighlights_);
-	while (WizardWidgetHighlight* wh =highlightIterator.iterate()) wh->unHighlight();
+	while (WizardWidgetHighlight *wh = highlightIterator.iterate())
+		wh->unHighlight();
 }

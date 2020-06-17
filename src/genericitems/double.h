@@ -27,79 +27,60 @@
 // GenericItemContainer<double>
 template <> class GenericItemContainer<double> : public GenericItem
 {
-	public:
+      public:
 	// Constructor
-	GenericItemContainer<double>(const char* name, int flags = 0) : GenericItem(name, flags)
-	{
-	}
-
+	GenericItemContainer<double>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Data item
 	double data_;
 
-	public:
+      public:
 	// Return data item
-	double& data()
-	{
-		return data_;
-	}
-
+	double &data() { return data_; }
 
 	/*
 	 * Item Class
 	 */
-	protected:
+      protected:
 	// Create a new GenericItem containing same class as current type
-	GenericItem* createItem(const char* className, const char* name, int flags = 0)
+	GenericItem *createItem(const char *className, const char *name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer<double>(name, flags);
+		if (DissolveSys::sameString(className, itemClassName()))
+			return new GenericItemContainer<double>(name, flags);
 		return NULL;
 	}
 
-	public:
+      public:
 	// Return class name contained in item
-	const char* itemClassName()
-	{
-		return "double";
-	}
-
+	const char *itemClassName() { return "double"; }
 
 	/*
 	 * I/O
 	 */
-	public:
+      public:
 	// Write data through specified parser
-	bool write(LineParser& parser)
-	{
-		return parser.writeLineF("%16.9e\n", data_);
-	}
+	bool write(LineParser &parser) { return parser.writeLineF("%16.9e\n", data_); }
 	// Read data through specified parser
-	bool read(LineParser& parser, const CoreData& coreData)
+	bool read(LineParser &parser, const CoreData &coreData)
 	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+			return false;
 		data_ = parser.argd(0);
 		return true;
 	}
 
-
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
-	{
-		return procPool.broadcast(data_, root);
-	}
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData) { return procPool.broadcast(data_, root); }
 	// Check item equality
-	bool equality(ProcessPool& procPool)
-	{
-		return procPool.equality(data_);
-	}
+	bool equality(ProcessPool &procPool) { return procPool.equality(data_); }
 };
 
 #endif

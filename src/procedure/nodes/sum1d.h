@@ -22,10 +22,10 @@
 #ifndef DISSOLVE_PROCEDURENODE_SUM1D_H
 #define DISSOLVE_PROCEDURENODE_SUM1D_H
 
-#include "procedure/nodes/node.h"
+#include "base/charstring.h"
 #include "math/range.h"
 #include "math/sampleddouble.h"
-#include "base/charstring.h"
+#include "procedure/nodes/node.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -36,27 +36,25 @@ class NodeScopeStack;
 // Procedure Node - Sum1D
 class Sum1DProcedureNode : public ProcedureNode
 {
-	public:
+      public:
 	// Constructor
-	Sum1DProcedureNode(const Process1DProcedureNode* target = NULL);
+	Sum1DProcedureNode(const Process1DProcedureNode *target = NULL);
 	// Destructor
 	~Sum1DProcedureNode();
-
 
 	/*
 	 * Identity
 	 */
-	public:
+      public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Process1D node that we are targetting (retrieved from keyword 'SourceData')
-	const Process1DProcedureNode* processNode_;
+	const Process1DProcedureNode *processNode_;
 	// Ranges for sums (retrieved from keywords)
 	Range rangeA_, rangeB_, rangeC_;
 	// Flags for second and third ranges
@@ -64,25 +62,24 @@ class Sum1DProcedureNode : public ProcedureNode
 	// Calculated sums (stored in processing data list)
 	SampledDouble sum_[3];
 
-	public:
+      public:
 	// Return calculated sum specified
-	const SampledDouble& sum(int index) const;
+	const SampledDouble &sum(int index) const;
 	// Return whether range B is enabled (from keyword data)
 	bool isRangeBEnabled() const;
 	// Return whether range C is enabled (from keyword data)
 	bool isRangeCEnabled() const;
 
-
 	/*
 	 * Execute
 	 */
-	public:
+      public:
 	// Prepare any necessary data, ready for execution
-	bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
+	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Finalise any necessary data after execution
-	bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };
 
 #endif

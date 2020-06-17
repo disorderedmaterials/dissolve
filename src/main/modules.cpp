@@ -22,6 +22,7 @@
 #include "main/dissolve.h"
 #include "modules/analyse/analyse.h"
 #include "modules/atomshake/atomshake.h"
+#include "modules/benchmark/benchmark.h"
 #include "modules/bragg/bragg.h"
 #include "modules/calculate_angle/angle.h"
 #include "modules/calculate_avgmol/avgmol.h"
@@ -35,7 +36,9 @@
 #include "modules/datatest/datatest.h"
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
-#include "modules/export/export.h"
+#include "modules/export_coordinates/exportcoords.h"
+#include "modules/export_pairpotentials/exportpp.h"
+#include "modules/export_trajectory/exporttraj.h"
 #include "modules/forces/forces.h"
 #include "modules/geomopt/geomopt.h"
 #include "modules/import/import.h"
@@ -56,11 +59,11 @@
  */
 
 // Register master Module
-bool Dissolve::registerMasterModule(Module* masterInstance)
+bool Dissolve::registerMasterModule(Module *masterInstance)
 {
 	// Do sanity check on name
 	ListIterator<Module> moduleIterator(masterModules_);
-	while (Module* module = moduleIterator.iterate())
+	while (Module *module = moduleIterator.iterate())
 	{
 		if (DissolveSys::sameString(module->type(), masterInstance->type()))
 		{
@@ -81,38 +84,72 @@ bool Dissolve::registerMasterModule(Module* masterInstance)
 // Register master instances for all Modules
 bool Dissolve::registerMasterModules()
 {
-	if (!registerMasterModule(new AnalyseModule)) return false;
-	if (!registerMasterModule(new AtomShakeModule)) return false;
-	if (!registerMasterModule(new BraggModule)) return false;
-	if (!registerMasterModule(new CalculateAngleModule)) return false;
-	if (!registerMasterModule(new CalculateAvgMolModule)) return false;
-	if (!registerMasterModule(new CalculateAxisAngleModule)) return false;
-	if (!registerMasterModule(new CalculateCNModule)) return false;
-	if (!registerMasterModule(new CalculateDAngleModule)) return false;
-	if (!registerMasterModule(new CalculateRDFModule)) return false;
-	if (!registerMasterModule(new CalculateSDFModule)) return false;
-	if (!registerMasterModule(new CalibrationModule)) return false;
-	if (!registerMasterModule(new ChecksModule)) return false;
-	if (!registerMasterModule(new DataTestModule)) return false;
-	if (!registerMasterModule(new EnergyModule)) return false;
-	if (!registerMasterModule(new EPSRModule)) return false;
-	if (!registerMasterModule(new ExportModule)) return false;
-	if (!registerMasterModule(new ForcesModule)) return false;
-	if (!registerMasterModule(new GeometryOptimisationModule)) return false;
-	if (!registerMasterModule(new ImportModule)) return false;
-	if (!registerMasterModule(new IntraShakeModule)) return false;
-	if (!registerMasterModule(new MDModule)) return false;
-	if (!registerMasterModule(new MolShakeModule)) return false;
-	if (!registerMasterModule(new NeutronSQModule)) return false;
-	if (!registerMasterModule(new RDFModule)) return false;
-	if (!registerMasterModule(new RefineModule)) return false;
-	if (!registerMasterModule(new SanityCheckModule)) return false;
-	if (!registerMasterModule(new SQModule)) return false;
-	if (!registerMasterModule(new TestModule)) return false;
+	if (!registerMasterModule(new AnalyseModule))
+		return false;
+	if (!registerMasterModule(new AtomShakeModule))
+		return false;
+	if (!registerMasterModule(new BenchmarkModule))
+		return false;
+	if (!registerMasterModule(new BraggModule))
+		return false;
+	if (!registerMasterModule(new CalculateAngleModule))
+		return false;
+	if (!registerMasterModule(new CalculateAvgMolModule))
+		return false;
+	if (!registerMasterModule(new CalculateAxisAngleModule))
+		return false;
+	if (!registerMasterModule(new CalculateCNModule))
+		return false;
+	if (!registerMasterModule(new CalculateDAngleModule))
+		return false;
+	if (!registerMasterModule(new CalculateRDFModule))
+		return false;
+	if (!registerMasterModule(new CalculateSDFModule))
+		return false;
+	if (!registerMasterModule(new CalibrationModule))
+		return false;
+	if (!registerMasterModule(new ChecksModule))
+		return false;
+	if (!registerMasterModule(new DataTestModule))
+		return false;
+	if (!registerMasterModule(new EnergyModule))
+		return false;
+	if (!registerMasterModule(new EPSRModule))
+		return false;
+	if (!registerMasterModule(new ExportCoordinatesModule))
+		return false;
+	if (!registerMasterModule(new ExportPairPotentialsModule))
+		return false;
+	if (!registerMasterModule(new ExportTrajectoryModule))
+		return false;
+	if (!registerMasterModule(new ForcesModule))
+		return false;
+	if (!registerMasterModule(new GeometryOptimisationModule))
+		return false;
+	if (!registerMasterModule(new ImportModule))
+		return false;
+	if (!registerMasterModule(new IntraShakeModule))
+		return false;
+	if (!registerMasterModule(new MDModule))
+		return false;
+	if (!registerMasterModule(new MolShakeModule))
+		return false;
+	if (!registerMasterModule(new NeutronSQModule))
+		return false;
+	if (!registerMasterModule(new RDFModule))
+		return false;
+	if (!registerMasterModule(new RefineModule))
+		return false;
+	if (!registerMasterModule(new SanityCheckModule))
+		return false;
+	if (!registerMasterModule(new SQModule))
+		return false;
+	if (!registerMasterModule(new TestModule))
+		return false;
 
 	Messenger::print("Module Information (%i available):\n", masterModules_.nItems());
 	ListIterator<Module> moduleIterator(masterModules_);
-	while (Module* module = moduleIterator.iterate())
+	while (Module *module = moduleIterator.iterate())
 	{
 		Messenger::print(" --> %s\n", module->type());
 		Messenger::print("     %s\n", module->brief());
@@ -122,27 +159,25 @@ bool Dissolve::registerMasterModules()
 }
 
 // Search for master Module of the named type
-Module* Dissolve::findMasterModule(const char* moduleType) const
+Module *Dissolve::findMasterModule(const char *moduleType) const
 {
 	ListIterator<Module> moduleIterator(masterModules_);
-	while (Module* module = moduleIterator.iterate())
+	while (Module *module = moduleIterator.iterate())
 	{
-		if (DissolveSys::sameString(module->type(), moduleType)) return module;
+		if (DissolveSys::sameString(module->type(), moduleType))
+			return module;
 	}
 
 	return NULL;
 }
 
 // Return master Module instances
-const List<Module>& Dissolve::masterModules() const
-{
-	return masterModules_;
-}
+const List<Module> &Dissolve::masterModules() const { return masterModules_; }
 
 // Create a Module instance for the named Module type
-Module* Dissolve::createModuleInstance(const char* moduleType)
+Module *Dissolve::createModuleInstance(const char *moduleType)
 {
-	Module* masterModule = findMasterModule(moduleType);
+	Module *masterModule = findMasterModule(moduleType);
 	if (!masterModule)
 	{
 		Messenger::error("No Module type '%s' exists.\n", moduleType);
@@ -158,7 +193,7 @@ Module* Dissolve::createModuleInstance(const char* moduleType)
 	} while (findModuleInstance(uniqueName));
 
 	// Create a new instance of the specified Module and add it to our list
-	Module* instance = masterModule->createInstance();
+	Module *instance = masterModule->createInstance();
 	moduleInstances_.append(instance);
 	instance->setUniqueName(uniqueName);
 
@@ -166,10 +201,11 @@ Module* Dissolve::createModuleInstance(const char* moduleType)
 }
 
 // Create a Module instance for the named Module type, and add it to the specified layer
-Module* Dissolve::createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer, bool configurationLocal)
+Module *Dissolve::createModuleInstance(const char *moduleType, ModuleLayer *destinationLayer, bool configurationLocal)
 {
-	Module* module = createModuleInstance(moduleType);
-	if (!module) return NULL;
+	Module *module = createModuleInstance(moduleType);
+	if (!module)
+		return NULL;
 
 	// Add the new module instance to the specified destination layer
 	destinationLayer->own(module);
@@ -180,27 +216,29 @@ Module* Dissolve::createModuleInstance(const char* moduleType, ModuleLayer* dest
 }
 
 // Search for any instance of any Module with the specified unique name
-Module* Dissolve::findModuleInstance(const char* uniqueName)
+Module *Dissolve::findModuleInstance(const char *uniqueName)
 {
-	RefListIterator<Module> moduleIterator(moduleInstances_);
-	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
+	for (Module *module : moduleInstances_)
+		if (DissolveSys::sameString(module->uniqueName(), uniqueName))
+			return module;
 
 	return NULL;
 }
 
 // Search for any instance of any Module with the specified Module type
-RefList<Module> Dissolve::findModuleInstances(const char* moduleType)
+RefList<Module> Dissolve::findModuleInstances(const char *moduleType)
 {
 	RefList<Module> instances;
 
-	RefListIterator<Module> moduleIterator(moduleInstances_);
-	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->type(), moduleType)) instances.append(module);
+	for (Module *module : moduleInstances_)
+		if (DissolveSys::sameString(module->type(), moduleType))
+			instances.append(module);
 
 	return instances;
 }
 
 // Generate unique Module name with base name provided
-const char* Dissolve::uniqueModuleName(const char* name, Module* excludeThis)
+const char *Dissolve::uniqueModuleName(const char *name, Module *excludeThis)
 {
 	static CharString uniqueName;
 	CharString baseName = name;
@@ -208,12 +246,14 @@ const char* Dissolve::uniqueModuleName(const char* name, Module* excludeThis)
 	int suffix = 0;
 
 	// Must always have a baseName
-	if (baseName.isEmpty()) baseName = "Unnamed";
+	if (baseName.isEmpty())
+		baseName = "Unnamed";
 
 	// Find an unused name starting with the baseName provided
-	while (Module* existingModule = findModuleInstance(uniqueName))
+	while (Module *existingModule = findModuleInstance(uniqueName))
 	{
-		if (existingModule == excludeThis) break;
+		if (existingModule == excludeThis)
+			break;
 
 		// Increase suffix value and regenerate uniqueName from baseName
 		++suffix;
@@ -224,9 +264,10 @@ const char* Dissolve::uniqueModuleName(const char* name, Module* excludeThis)
 }
 
 // Delete specified Module instance
-bool Dissolve::deleteModuleInstance(Module* instance)
+bool Dissolve::deleteModuleInstance(Module *instance)
 {
-	if (!moduleInstances_.contains(instance)) return Messenger::error("Can't find Module instance to remove.\n");
+	if (!moduleInstances_.contains(instance))
+		return Messenger::error("Can't find Module instance to remove.\n");
 
 	// Remove the reference from our list
 	moduleInstances_.remove(instance);

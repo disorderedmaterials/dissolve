@@ -20,17 +20,15 @@
 */
 
 #include "gui/widgets/colourbutton.hui"
-#include <QPainter>
 #include <QColorDialog>
+#include <QPainter>
 
 /*
  * ColourButton
  */
 
 // Constructor
-ColourButton::ColourButton(QWidget* parent) : QPushButton(parent)
-{
-}
+ColourButton::ColourButton(QWidget *parent) : QPushButton(parent) {}
 
 // Set displayed colour
 void ColourButton::setColour(QColor colour)
@@ -40,18 +38,16 @@ void ColourButton::setColour(QColor colour)
 }
 
 // Return displayed colour
-QColor ColourButton::colour()
-{
-	return colour_;
-}
+QColor ColourButton::colour() { return colour_; }
 
 // Select new colour
 bool ColourButton::selectColour()
 {
 	// Request a colour dialog
 	QColor newcol = QColorDialog::getColor(colour_.rgba(), this, "Select new colour", QColorDialog::ShowAlphaChannel);
-	if (!newcol.isValid()) return false;
-	
+	if (!newcol.isValid())
+		return false;
+
 	colour_ = newcol;
 	repaint();
 	return true;
@@ -64,7 +60,7 @@ void ColourButton::paintEvent(QPaintEvent *event)
 
 	// Draw single rectangle and we're done
 	QBrush brush(colour_);
-	QRectF rect(3.0, 3.0, width()-3.0, height()-3.0);
+	QRectF rect(3.0, 3.0, width() - 3.0, height() - 3.0);
 	painter.setBrush(brush);
 	painter.drawRect(rect);
 	painter.end();

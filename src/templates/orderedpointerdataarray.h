@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_ORDEREDPOINTERDATAARRAY_H
 #define DISSOLVE_ORDEREDPOINTERDATAARRAY_H
 
-#include <stdlib.h>
-#include <stdio.h>
 #include "base/messenger.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 // Forward Declarations
 /* none */
@@ -38,9 +38,9 @@
  */
 template <class T, class D> class OrderedPointerDataArray
 {
-	public:
+      public:
 	// Constructor
-	OrderedPointerDataArray<T,D>()
+	OrderedPointerDataArray<T, D>()
 	{
 		nItems_ = 0;
 		arraySize_ = 0;
@@ -48,12 +48,9 @@ template <class T, class D> class OrderedPointerDataArray
 		data_ = NULL;
 	}
 	// Destructor
-	~OrderedPointerDataArray()
-	{
-		clear();
-	}
+	~OrderedPointerDataArray() { clear(); }
 	// Copy Constructor
-	OrderedPointerDataArray<T,D>(const OrderedPointerDataArray<T,D>& source)
+	OrderedPointerDataArray<T, D>(const OrderedPointerDataArray<T, D> &source)
 	{
 		nItems_ = 0;
 		arraySize_ = 0;
@@ -62,19 +59,20 @@ template <class T, class D> class OrderedPointerDataArray
 		(*this) = source;
 	}
 	// Assignment operator
-	OrderedPointerDataArray<T,D>& operator=(const OrderedPointerDataArray<T,D>& source)
+	OrderedPointerDataArray<T, D> &operator=(const OrderedPointerDataArray<T, D> &source)
 	{
 		// Clear any current data in the list...
 		clear();
 
 		initialise(source.nItems());
 
-		for (int n=0; n<source.nItems(); ++n) add(source.value(n), source.data(n));
+		for (int n = 0; n < source.nItems(); ++n)
+			add(source.value(n), source.data(n));
 
 		return *this;
 	}
 	// Element access operator
-	T* operator[](int index)
+	T *operator[](int index)
 	{
 #ifdef CHECKS
 		if ((index < 0) || (index >= nItems_))
@@ -86,26 +84,27 @@ template <class T, class D> class OrderedPointerDataArray
 		return items_[index];
 	}
 
-
 	/*
 	 * Basic Data
 	 */
-	protected:
+      protected:
 	// Array of items
-	T** items_;
+	T **items_;
 	// Array of data
-	D* data_;
+	D *data_;
 	// Size of items array
 	int arraySize_;
 	// Number of items in array
 	int nItems_;
 
-	public:
+      public:
 	// Clear the list
 	void clear()
 	{
-		if (items_) delete[] items_;
-		if (data_) delete[] data_;
+		if (items_)
+			delete[] items_;
+		if (data_)
+			delete[] data_;
 		items_ = NULL;
 		data_ = NULL;
 		nItems_ = 0;
@@ -125,23 +124,20 @@ template <class T, class D> class OrderedPointerDataArray
 		}
 		else
 		{
-			items_ = new T*[arraySize_];
+			items_ = new T *[arraySize_];
 			data_ = new D[arraySize_];
 		}
 
-		for (int n=0; n<arraySize_; ++n)
+		for (int n = 0; n < arraySize_; ++n)
 		{
 			items_[n] = NULL;
 			data_[n] = D();
 		}
 	}
 	// Returns the number of items in the list
-	int nItems() const
-	{
-		return nItems_;
-	}
+	int nItems() const { return nItems_; }
 	// Const pointer access
-	T* pointer(int index) const
+	T *pointer(int index) const
 	{
 #ifdef CHECKS
 		if ((index < 0) || (index >= nItems_))
@@ -167,30 +163,26 @@ template <class T, class D> class OrderedPointerDataArray
 		return data_[index];
 	}
 	// Return pointer array
-	T** items()
-	{
-		return items_;
-	}
+	T **items() { return items_; }
 	// Return data array
-	D* data()
-	{
-		return data_;
-	}
+	D *data() { return data_; }
 
 	/*
 	 * Item Management
 	 */
-	public:
+      public:
 	// Add an item to the list
-	void add(T* ptr, D ptrData = D())
+	void add(T *ptr, D ptrData = D())
 	{
 		// Loop over pointers, searching for the first existing item that has a higher pointer address.
 		// If we find the same pointer address in the list, return immediately.
 		int insertAt, n;
-		for (insertAt = 0; insertAt<nItems_; ++insertAt)
+		for (insertAt = 0; insertAt < nItems_; ++insertAt)
 		{
-			if (items_[insertAt] == ptr) return;
-			if (items_[insertAt] > ptr) break;
+			if (items_[insertAt] == ptr)
+				return;
+			if (items_[insertAt] > ptr)
+				break;
 		}
 
 		// The pointer is not currently in the list, and we have the position at which it should be inserted in 'insertAt'.
@@ -199,11 +191,11 @@ template <class T, class D> class OrderedPointerDataArray
 		if (nItems_ == arraySize_)
 		{
 			// Create a new array with some more item space
-			T** newItems = new T*[arraySize_+2];
-			D* newData = new D[arraySize_+2];
+			T **newItems = new T *[arraySize_ + 2];
+			D *newData = new D[arraySize_ + 2];
 
 			// Copy existing pointers/data up to 'insertAt'
-			for (n=0; n<insertAt; ++n)
+			for (n = 0; n < insertAt; ++n)
 			{
 				newItems[n] = items_[n];
 				newData[n] = data_[n];
@@ -214,15 +206,17 @@ template <class T, class D> class OrderedPointerDataArray
 			newData[insertAt] = ptrData;
 
 			// Copy the remaining pointers/data, shifting them one place up in the new list
-			for (n=insertAt; n<nItems_; ++n)
+			for (n = insertAt; n < nItems_; ++n)
 			{
-				newItems[n+1] = items_[n];
-				newData[n+1] = data_[n];
+				newItems[n + 1] = items_[n];
+				newData[n + 1] = data_[n];
 			}
 
 			// Delete the old arrays if they exist
-			if (items_) delete[] items_;
-			if (data_) delete[] data_;
+			if (items_)
+				delete[] items_;
+			if (data_)
+				delete[] data_;
 
 			// Set the new arrays and array size
 			items_ = newItems;
@@ -232,10 +226,10 @@ template <class T, class D> class OrderedPointerDataArray
 		else
 		{
 			// Shuffle items from the insertion point up one place in the array (to higher indices), working backwards to avoid overwriting data
-			for (n=nItems_-1; n>=insertAt; --n)
+			for (n = nItems_ - 1; n >= insertAt; --n)
 			{
-				items_[n+1] = items_[n];
-				data_[n+1] = data_[n];
+				items_[n + 1] = items_[n];
+				data_[n + 1] = data_[n];
 			}
 
 			// Now put the new item into the 'insertAt' position
@@ -259,22 +253,23 @@ template <class T, class D> class OrderedPointerDataArray
 		data_[index] = value;
 	}
 	// Remove an item from the array, leaving the remaining items contiguous in memory
-	bool remove(T* ptr)
+	bool remove(T *ptr)
 	{
 		// Step through the items until we find the specified pointer
-		for (int n=0; n<nItems_; ++n)
+		for (int n = 0; n < nItems_; ++n)
 		{
-			if (items_[n] > ptr) return false;
+			if (items_[n] > ptr)
+				return false;
 			if (items_[n] == ptr)
 			{
 				// Found it. Move all items from this point forward back one place
-				for (int m=n+1; m<nItems_; ++m)
+				for (int m = n + 1; m < nItems_; ++m)
 				{
-					items_[m-1] = items_[m];
-					data_[m-1] = data_[m];
+					items_[m - 1] = items_[m];
+					data_[m - 1] = data_[m];
 				}
-				items_[nItems_-1] = NULL;
-				data_[nItems_-1] = D();
+				items_[nItems_ - 1] = NULL;
+				data_[nItems_ - 1] = D();
 				--nItems_;
 
 				return true;
@@ -284,9 +279,11 @@ template <class T, class D> class OrderedPointerDataArray
 		return false;
 	}
 	// Return array index of pointer within the list
-	int indexOf(const T* ptr) const
+	int indexOf(const T *ptr) const
 	{
-		for (int n=0; n<nItems_; ++n) if (items_[n] == ptr) return n;
+		for (int n = 0; n < nItems_; ++n)
+			if (items_[n] == ptr)
+				return n;
 
 		return -1;
 	}

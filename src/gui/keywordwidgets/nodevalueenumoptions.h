@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_NODEVALUEENUMOPTIONS_H
 #define DISSOLVE_KEYWORDWIDGET_NODEVALUEENUMOPTIONS_H
 
-#include "gui/keywordwidgets/ui_nodevalueenumoptions.h"
 #include "gui/keywordwidgets/base.h"
+#include "gui/keywordwidgets/ui_nodevalueenumoptions.h"
 #include "keywords/nodevalueenumoptions.h"
 #include <QWidget>
 
@@ -35,41 +35,38 @@ class NodeValueEnumOptionsKeywordWidget : public QWidget, public KeywordWidgetBa
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	NodeValueEnumOptionsKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-
+	NodeValueEnumOptionsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-	private:
+      private:
 	// Associated keyword
-	NodeValueEnumOptionsBaseKeyword* keyword_;
-
+	NodeValueEnumOptionsBaseKeyword *keyword_;
 
 	/*
 	 * Widgets
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::NodeValueEnumOptionsWidget ui_;
 
-	private slots:
+      private slots:
 	// Value edited
 	void on_ValueEdit_editingFinished();
 	void on_ValueEdit_returnPressed();
 	void on_OptionsCombo_currentIndexChanged(int index);
 
-	signals:
+      signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update
 	 */
-	public:
+      public:
 	// Update value displayed in widget
 	void updateValue();
 };

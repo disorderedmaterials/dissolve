@@ -23,28 +23,27 @@
 #define DISSOLVE_PRAXIS_H
 
 #include "base/messenger.h"
-#include "templates/array.h"
 #include "math/minimiser.h"
+#include "templates/array.h"
 #include <iomanip>
 #include <limits>
 
 // Brent's Principal Axis Minimiser
 template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 {
-	public:
+      public:
 	// Constructor
-	PrAxisMinimiser<T>(T& object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false) : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
+	PrAxisMinimiser<T>(T &object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false) : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
 	{
 		maxStep_ = 0.01;
 		tolerance_ = 1.0e-3;
 		printLevel_ = 0;
 	}
 
-
 	/*
 	 * Interface
 	 */
-	private:
+      private:
 	// Maximum step size
 	double maxStep_;
 	// Convergence tolerance
@@ -52,30 +51,17 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	// Print level
 	int printLevel_;
 
-	private:
+      private:
 	// Perform minimisation
-	double execute(Array<double>& values)
-	{
-		return praxis(tolerance_, maxStep_, values, printLevel_);
-	}
+	double execute(Array<double> &values) { return praxis(tolerance_, maxStep_, values, printLevel_); }
 
-	public:
+      public:
 	// Set maximum step size
-	void setMaxStep(double step)
-	{
-		maxStep_ = step;
-	}
+	void setMaxStep(double step) { maxStep_ = step; }
 	// Set convergence tolerance
-	void setTolerance(double tol)
-	{
-		tolerance_ = tol;
-	}
+	void setTolerance(double tol) { tolerance_ = tol; }
 	// Set print level
-	void setPrintLevel(int level)
-	{
-		printLevel_ = level;
-	}
-
+	void setPrintLevel(int level) { printLevel_ = level; }
 
 	/*
 	 * Algorithm
@@ -106,13 +92,11 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	 *   LC: QA402.5.B74.
 	 */
 
-	private:
+      private:
 	//****************************************************************************80
-	
-	double flin ( const Array<double> alpha, int jsearch, double l,
-		int &nf, double v[], double q0[], double q1[], double &qd0,
-		double &qd1, double &qa, double &qb, double &qc )
-	
+
+	double flin(const Array<double> alpha, int jsearch, double l, int &nf, double v[], double q0[], double q1[], double &qd0, double &qd1, double &qa, double &qb, double &qc)
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -183,49 +167,49 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	{
 		int i;
 		double value;
-	
+
 		int n = alpha.nItems();
 		Array<double> t(n);
 
-	//
-	//  The search is linear.
-	//
-		if ( 0 <= jsearch )
+		//
+		//  The search is linear.
+		//
+		if (0 <= jsearch)
 		{
-			for ( i = 0; i < n; i++ )
+			for (i = 0; i < n; i++)
 			{
-				t[i] = alpha.constAt(i) + l * v[i+jsearch*n];
+				t[i] = alpha.constAt(i) + l * v[i + jsearch * n];
 			}
 		}
-	//
-	//  The search is along a parabolic space curve.
-	//
+		//
+		//  The search is along a parabolic space curve.
+		//
 		else
 		{
-			qa =                 l * ( l - qd1 ) /       ( qd0 + qd1 ) / qd0;
-			qb = - ( l + qd0 ) *     ( l - qd1 ) / qd1                 / qd0;
-			qc =   ( l + qd0 ) * l               / qd1 / ( qd0 + qd1 );
-	
-			for ( i = 0; i < n; i++ )
+			qa = l * (l - qd1) / (qd0 + qd1) / qd0;
+			qb = -(l + qd0) * (l - qd1) / qd1 / qd0;
+			qc = (l + qd0) * l / qd1 / (qd0 + qd1);
+
+			for (i = 0; i < n; i++)
 			{
 				t[i] = qa * q0[i] + qb * alpha.constAt(i) + qc * q1[i];
 			}
 		}
-	//
-	//  The function evaluation counter NF is incremented.
-	//
+		//
+		//  The function evaluation counter NF is incremented.
+		//
 		nf = nf + 1;
-	//
-	//  Evaluate the function.
-	//
+		//
+		//  Evaluate the function.
+		//
 		value = MinimiserBase<T>::cost(t);
-	
+
 		return value;
 	}
 	//****************************************************************************80
-	
-	void minfit ( int n, double tol, double a[], double q[] )
-	
+
+	void minfit(int n, double tol, double a[], double q[])
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -310,270 +294,270 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		double x;
 		double y;
 		double z;
-	//
-	//  Householder's reduction to bidiagonal form.
-	//
-		if ( n == 1 )
+		//
+		//  Householder's reduction to bidiagonal form.
+		//
+		if (n == 1)
 		{
-			q[0] = a[0+0*n];
-			a[0+0*n] = 1.0;
+			q[0] = a[0 + 0 * n];
+			a[0 + 0 * n] = 1.0;
 			return;
 		}
-	
+
 		e = new double[n];
-	
+
 		eps = std::numeric_limits<double>::epsilon();
 		g = 0.0;
 		x = 0.0;
-	
-		for ( i = 1; i <= n; i++ )
+
+		for (i = 1; i <= n; i++)
 		{
-			e[i-1] = g;
+			e[i - 1] = g;
 			l = i + 1;
-	
+
 			s = 0.0;
-			for ( ii = i; ii <= n; ii++ )
+			for (ii = i; ii <= n; ii++)
 			{
-				s = s + a[ii-1+(i-1)*n] * a[ii-1+(i-1)*n];
+				s = s + a[ii - 1 + (i - 1) * n] * a[ii - 1 + (i - 1) * n];
 			}
-	
+
 			g = 0.0;
-	
-			if ( tol <= s )
+
+			if (tol <= s)
 			{
-				f = a[i-1+(i-1)*n];
-	
-				g = sqrt ( s );
-	
-				if ( 0.0 <= f )
+				f = a[i - 1 + (i - 1) * n];
+
+				g = sqrt(s);
+
+				if (0.0 <= f)
 				{
-					g = - g;
+					g = -g;
 				}
-	
+
 				h = f * g - s;
-				a[i-1+(i-1)*n] = f - g;
-	
-				for ( j = l; j <= n; j++ )
+				a[i - 1 + (i - 1) * n] = f - g;
+
+				for (j = l; j <= n; j++)
 				{
 					f = 0.0;
-					for ( ii = i; ii <= n; ii++ )
+					for (ii = i; ii <= n; ii++)
 					{
-						f = f + a[ii-1+(i-1)*n] * a[ii-1+(j-1)*n];
+						f = f + a[ii - 1 + (i - 1) * n] * a[ii - 1 + (j - 1) * n];
 					}
 					f = f / h;
-	
-					for ( ii = i; ii <= n; ii++ )
+
+					for (ii = i; ii <= n; ii++)
 					{
-						a[ii-1+(j-1)*n] = a[ii-1+(j-1)*n] + f * a[ii-1+(i-1)*n];
+						a[ii - 1 + (j - 1) * n] = a[ii - 1 + (j - 1) * n] + f * a[ii - 1 + (i - 1) * n];
 					}
 				}
 			}
-	
-			q[i-1] = g;
-	
+
+			q[i - 1] = g;
+
 			s = 0.0;
-			for ( j = l; j <= n; j++ )
+			for (j = l; j <= n; j++)
 			{
-				s = s + a[i-1+(j-1)*n] * a[i-1+(j-1)*n];
+				s = s + a[i - 1 + (j - 1) * n] * a[i - 1 + (j - 1) * n];
 			}
-	
+
 			g = 0.0;
-	
-			if ( tol <= s )
+
+			if (tol <= s)
 			{
-				if ( i < n )
+				if (i < n)
 				{
-					f = a[i-1+i*n];
+					f = a[i - 1 + i * n];
 				}
-	
-				g = sqrt ( s );
-	
-				if ( 0.0 <= f )
+
+				g = sqrt(s);
+
+				if (0.0 <= f)
 				{
-					g = - g;
+					g = -g;
 				}
-	
+
 				h = f * g - s;
-	
-				if ( i < n )
+
+				if (i < n)
 				{
-					a[i-1+i*n] = f - g;
-					for ( jj = l; jj <= n; jj++ )
+					a[i - 1 + i * n] = f - g;
+					for (jj = l; jj <= n; jj++)
 					{
-						e[jj-1] = a[i-1+(jj-1)*n] / h;
+						e[jj - 1] = a[i - 1 + (jj - 1) * n] / h;
 					}
-	
-					for ( j = l; j <= n; j++ )
+
+					for (j = l; j <= n; j++)
 					{
 						s = 0.0;
-						for ( jj = l; jj <= n; jj++ )
+						for (jj = l; jj <= n; jj++)
 						{
-							s = s + a[j-1+(jj-1)*n] * a[i-1+(jj-1)*n];
+							s = s + a[j - 1 + (jj - 1) * n] * a[i - 1 + (jj - 1) * n];
 						}
-						for ( jj = l; jj <= n; jj++ )
+						for (jj = l; jj <= n; jj++)
 						{
-							a[j-1+(jj-1)*n] = a[j-1+(jj-1)*n] + s * e[jj-1];
+							a[j - 1 + (jj - 1) * n] = a[j - 1 + (jj - 1) * n] + s * e[jj - 1];
 						}
 					}
 				}
 			}
-	
-			y = fabs ( q[i-1] ) + fabs ( e[i-1] );
-	
-			x = max ( x, y );
+
+			y = fabs(q[i - 1]) + fabs(e[i - 1]);
+
+			x = max(x, y);
 		}
-	//
-	//  Accumulation of right-hand transformations.
-	//
-		a[n-1+(n-1)*n] = 1.0;
-		g = e[n-1];
+		//
+		//  Accumulation of right-hand transformations.
+		//
+		a[n - 1 + (n - 1) * n] = 1.0;
+		g = e[n - 1];
 		l = n;
-	
-		for ( i = n - 1; 1 <= i; i-- )
+
+		for (i = n - 1; 1 <= i; i--)
 		{
-			if ( g != 0.0 )
+			if (g != 0.0)
 			{
-				h = a[i-1+i*n] * g;
-	
-				for ( ii = l; ii <= n; ii++ )
+				h = a[i - 1 + i * n] * g;
+
+				for (ii = l; ii <= n; ii++)
 				{
-					a[ii-1+(i-1)*n] = a[i-1+(ii-1)*n] / h;
+					a[ii - 1 + (i - 1) * n] = a[i - 1 + (ii - 1) * n] / h;
 				}
-	
-				for ( j = l; j <= n; j++ )
+
+				for (j = l; j <= n; j++)
 				{
 					s = 0.0;
-					for ( jj = l; jj <= n; jj++ )
+					for (jj = l; jj <= n; jj++)
 					{
-						s = s + a[i-1+(jj-1)*n] * a[jj-1+(j-1)*n];
+						s = s + a[i - 1 + (jj - 1) * n] * a[jj - 1 + (j - 1) * n];
 					}
-	
-					for ( ii = l; ii <= n; ii++ )
+
+					for (ii = l; ii <= n; ii++)
 					{
-						a[ii-1+(j-1)*n] = a[ii-1+(j-1)*n] + s * a[ii-1+(i-1)*n];
+						a[ii - 1 + (j - 1) * n] = a[ii - 1 + (j - 1) * n] + s * a[ii - 1 + (i - 1) * n];
 					}
 				}
 			}
-	
-			for ( jj = l; jj <= n; jj++ )
+
+			for (jj = l; jj <= n; jj++)
 			{
-				a[i-1+(jj-1)*n] = 0.0;
+				a[i - 1 + (jj - 1) * n] = 0.0;
 			}
-	
-			for ( ii = l; ii <= n; ii++ )
+
+			for (ii = l; ii <= n; ii++)
 			{
-				a[ii-1+(i-1)*n] = 0.0;
+				a[ii - 1 + (i - 1) * n] = 0.0;
 			}
-	
-			a[i-1+(i-1)*n] = 1.0;
-	
-			g = e[i-1];
-	
+
+			a[i - 1 + (i - 1) * n] = 1.0;
+
+			g = e[i - 1];
+
 			l = i;
 		}
-	//
-	//  Diagonalization of the bidiagonal form.
-	//
+		//
+		//  Diagonalization of the bidiagonal form.
+		//
 		eps = eps * x;
-	
-		for ( k = n; 1 <= k; k-- )
+
+		for (k = n; 1 <= k; k--)
 		{
 			kt = 0;
-	
-			for ( ; ; )
+
+			for (;;)
 			{
 				kt = kt + 1;
-	
-				if ( kt_max < kt )
+
+				if (kt_max < kt)
 				{
-					e[k-1] = 0.0;
+					e[k - 1] = 0.0;
 					Messenger::error("MINFIT - Fatal error! - The QR algorithm failed to converge.\n");
 					return;
 				}
-	
+
 				skip = 0;
-	
-				for ( l2 = k; 1 <= l2; l2-- )
+
+				for (l2 = k; 1 <= l2; l2--)
 				{
 					l = l2;
-	
-					if ( fabs ( e[l-1] ) <= eps )
+
+					if (fabs(e[l - 1]) <= eps)
 					{
 						skip = 1;
 						break;
 					}
-	
-					if ( 1 < l )
+
+					if (1 < l)
 					{
-						if ( fabs ( q[l-2] ) <= eps )
+						if (fabs(q[l - 2]) <= eps)
 						{
 							break;
 						}
 					}
 				}
-	//
-	//  Cancellation of E(L) if 1 < L.
-	//
-				if ( ! skip )
+				//
+				//  Cancellation of E(L) if 1 < L.
+				//
+				if (!skip)
 				{
 					c = 0.0;
 					s = 1.0;
-	
-					for ( i = l; i <= k; i++ )
+
+					for (i = l; i <= k; i++)
 					{
-						f = s * e[i-1];
-						e[i-1] = c * e[i-1];
-						if ( fabs ( f ) <= eps )
+						f = s * e[i - 1];
+						e[i - 1] = c * e[i - 1];
+						if (fabs(f) <= eps)
 						{
 							break;
 						}
-						g = q[i-1];
-	//
-	//  q(i) = h = sqrt(g*g + f*f).
-	//
-						h = r8_hypot ( f, g );
-		
-						q[i-1] = h;
-	
-						if ( h == 0.0 )
+						g = q[i - 1];
+						//
+						//  q(i) = h = sqrt(g*g + f*f).
+						//
+						h = r8_hypot(f, g);
+
+						q[i - 1] = h;
+
+						if (h == 0.0)
 						{
 							g = 1.0;
 							h = 1.0;
 						}
-	
-						c =   g / h;
-						s = - f / h;
+
+						c = g / h;
+						s = -f / h;
 					}
 				}
-	//
-	//  Test for convergence for this index K.
-	//
-				z = q[k-1];
-	
-				if ( l == k )
+				//
+				//  Test for convergence for this index K.
+				//
+				z = q[k - 1];
+
+				if (l == k)
 				{
-					if ( z < 0.0 )
+					if (z < 0.0)
 					{
-						q[k-1] = - z;
-						for ( i = 1; i <= n; i++ )
+						q[k - 1] = -z;
+						for (i = 1; i <= n; i++)
 						{
-							a[i-1+(k-1)*n] = - a[i-1+(k-1)*n];
+							a[i - 1 + (k - 1) * n] = -a[i - 1 + (k - 1) * n];
 						}
 					}
 					break;
 				}
-	//
-	//  Shift from bottom 2*2 minor.
-	//
-				x = q[l-1];
-				y = q[k-2];
-				g = e[k-2];
-				h = e[k-1];
-				f = ( ( y - z ) * ( y + z ) + ( g - h ) * ( g + h ) ) / ( 2.0 * h * y );
-	
-				g = r8_hypot ( f, 1.0 );
-	
-				if ( f < 0.0 )
+				//
+				//  Shift from bottom 2*2 minor.
+				//
+				x = q[l - 1];
+				y = q[k - 2];
+				g = e[k - 2];
+				h = e[k - 1];
+				f = ((y - z) * (y + z) + (g - h) * (g + h)) / (2.0 * h * y);
+
+				g = r8_hypot(f, 1.0);
+
+				if (f < 0.0)
 				{
 					temp = f - g;
 				}
@@ -581,80 +565,77 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 				{
 					temp = f + g;
 				}
-	
-				f = ( ( x - z ) * ( x + z ) + h * ( y / temp - h ) ) / x;
-	//
-	//  Next QR transformation.
-	//
+
+				f = ((x - z) * (x + z) + h * (y / temp - h)) / x;
+				//
+				//  Next QR transformation.
+				//
 				c = 1.0;
 				s = 1.0;
-	
-				for ( i = l + 1; i <= k; i++ )
+
+				for (i = l + 1; i <= k; i++)
 				{
-					g = e[i-1];
-					y = q[i-1];
+					g = e[i - 1];
+					y = q[i - 1];
 					h = s * g;
 					g = g * c;
-	
-					z = r8_hypot ( f, h );
-	
-					e[i-2] = z;
-	
-					if ( z == 0.0 )
+
+					z = r8_hypot(f, h);
+
+					e[i - 2] = z;
+
+					if (z == 0.0)
 					{
 						f = 1.0;
 						z = 1.0;
 					}
-	
+
 					c = f / z;
 					s = h / z;
-					f =   x * c + g * s;
-					g = - x * s + g * c;
+					f = x * c + g * s;
+					g = -x * s + g * c;
 					h = y * s;
 					y = y * c;
-	
-					for ( j = 1; j <= n; j++ )
+
+					for (j = 1; j <= n; j++)
 					{
-						x = a[j-1+(i-2)*n];
-						z = a[j-1+(i-1)*n];
-						a[j-1+(i-2)*n] =   x * c + z * s;
-						a[j-1+(i-1)*n] = - x * s + z * c;
+						x = a[j - 1 + (i - 2) * n];
+						z = a[j - 1 + (i - 1) * n];
+						a[j - 1 + (i - 2) * n] = x * c + z * s;
+						a[j - 1 + (i - 1) * n] = -x * s + z * c;
 					}
-	
-					z = r8_hypot ( f, h );
-	
-					q[i-2] = z;
-	
-					if ( z == 0.0 )
+
+					z = r8_hypot(f, h);
+
+					q[i - 2] = z;
+
+					if (z == 0.0)
 					{
 						f = 1.0;
 						z = 1.0;
 					}
-	
+
 					c = f / z;
 					s = h / z;
-					f =   c * g + s * y;
-					x = - s * g + c * y;
+					f = c * g + s * y;
+					x = -s * g + c * y;
 				}
-	
-				e[l-1] = 0.0;
-				e[k-1] = f;
-				q[k-1] = x;
+
+				e[l - 1] = 0.0;
+				e[k - 1] = f;
+				q[k - 1] = x;
 			}
 		}
-	
-		delete [] e;
-	
+
+		delete[] e;
+
 		return;
 	}
 	//****************************************************************************80
-	
-	void minny ( Array<double>& alpha, int jsearch, int nits, double &d2, double &x1, double &f1,
-		bool fk, double t, double h,
-		double v[], double q0[], double q1[], int &nl, int &nf, double dmin,
-		double ldt, double &fx, double &qa, double &qb, double &qc, double &qd0,
-		double &qd1 )
-	
+
+	void minny(Array<double> &alpha, int jsearch, int nits, double &d2, double &x1, double &f1, bool fk, double t, double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin,
+		   double ldt, double &fx, double &qa, double &qb, double &qc, double &qd0, double &qd1)
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -763,24 +744,24 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		double temp;
 		double x2;
 		double xm;
-	
+
 		machep = std::numeric_limits<double>::epsilon();
 		small = machep * machep;
-		m2 = sqrt ( machep );
-		m4 = sqrt ( m2 );
+		m2 = sqrt(machep);
+		m4 = sqrt(m2);
 		sf1 = f1;
 		sx1 = x1;
 		k = 0;
 		xm = 0.0;
 		fm = fx;
 		f0 = fx;
-		dz = ( d2 < machep );
-	//
-	//  Find the step size.
-	//
-		s = r8vec_norm ( alpha.nItems(), alpha.array() );
-	
-		if ( dz )
+		dz = (d2 < machep);
+		//
+		//  Find the step size.
+		//
+		s = r8vec_norm(alpha.nItems(), alpha.array());
+
+		if (dz)
 		{
 			temp = dmin;
 		}
@@ -788,83 +769,82 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		{
 			temp = d2;
 		}
-	
-		t2 = m4 * sqrt ( fabs ( fx ) / temp + s * ldt ) + m2 * ldt;
+
+		t2 = m4 * sqrt(fabs(fx) / temp + s * ldt) + m2 * ldt;
 		s = m4 * s + t;
-		if ( dz && s < t2 )
+		if (dz && s < t2)
 		{
 			t2 = s;
 		}
-	
-		t2 = max ( t2, small );
-		t2 = min ( t2, 0.01 * h );
-	
-		if ( fk && f1 <= fm )
+
+		t2 = max(t2, small);
+		t2 = min(t2, 0.01 * h);
+
+		if (fk && f1 <= fm)
 		{
 			xm = x1;
 			fm = f1;
 		}
-	
-		if ( ( ! fk ) || fabs ( x1 ) < t2 )
+
+		if ((!fk) || fabs(x1) < t2)
 		{
-			if ( 0.0 <= x1 )
+			if (0.0 <= x1)
 			{
 				temp = 1.0;
 			}
 			else
 			{
-				temp = - 1.0;
+				temp = -1.0;
 			}
-	
+
 			x1 = temp * t2;
-			f1 = flin ( alpha, jsearch, x1, nf, v, q0, q1, qd0, qd1, qa, qb, qc );
+			f1 = flin(alpha, jsearch, x1, nf, v, q0, q1, qd0, qd1, qa, qb, qc);
 		}
-	
-		if ( f1 <= fm )
+
+		if (f1 <= fm)
 		{
 			xm = x1;
 			fm = f1;
 		}
-	//
-	//  Evaluate FLIN at another point and estimate the second derivative.
-	//
-		for ( ; ; )
+		//
+		//  Evaluate FLIN at another point and estimate the second derivative.
+		//
+		for (;;)
 		{
-			if ( dz )
+			if (dz)
 			{
-				if ( f1 <= f0 )
+				if (f1 <= f0)
 				{
 					x2 = 2.0 * x1;
 				}
 				else
 				{
-					x2 = - x1;
+					x2 = -x1;
 				}
-	
-				f2 = flin ( alpha, jsearch, x2, nf, v, q0, q1, qd0, qd1, qa, qb, qc );
-	
-				if ( f2 <= fm )
+
+				f2 = flin(alpha, jsearch, x2, nf, v, q0, q1, qd0, qd1, qa, qb, qc);
+
+				if (f2 <= fm)
 				{
 					xm = x2;
 					fm = f2;
 				}
-	
-				d2 = ( x2 * ( f1 - f0 ) - x1 * ( f2 - f0 ) )
-					/ ( ( x1 * x2 ) * ( x1 - x2 ) );
+
+				d2 = (x2 * (f1 - f0) - x1 * (f2 - f0)) / ((x1 * x2) * (x1 - x2));
 			}
-	//
-	//  Estimate the first derivative at 0.
-	//
-			d1 = ( f1 - f0 ) / x1 - x1 * d2;
+			//
+			//  Estimate the first derivative at 0.
+			//
+			d1 = (f1 - f0) / x1 - x1 * d2;
 			dz = 1;
-	//
-	//  Predict the minimum.
-	//
-			if ( d2 <= small )
+			//
+			//  Predict the minimum.
+			//
+			if (d2 <= small)
 			{
-				if ( 0.0 <= d1 )
+				if (0.0 <= d1)
 				{
-					x2 = - h;
+					x2 = -h;
 				}
 				else
 				{
@@ -873,55 +853,55 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 			}
 			else
 			{
-				x2 = ( - 0.5 * d1 ) / d2;
+				x2 = (-0.5 * d1) / d2;
 			}
-	
-			if ( h < fabs ( x2 ) )
+
+			if (h < fabs(x2))
 			{
-				if ( x2 <= 0.0 )
+				if (x2 <= 0.0)
 				{
-					x2 = - h;
+					x2 = -h;
 				}
 				else
 				{
 					x2 = h;
 				}
 			}
-	//
-	//  Evaluate F at the predicted minimum.
-	//
+			//
+			//  Evaluate F at the predicted minimum.
+			//
 			ok = 1;
-	
-			for ( ; ; )
+
+			for (;;)
 			{
-				f2 = flin ( alpha, jsearch, x2, nf, v, q0, q1, qd0, qd1, qa, qb, qc );
-	
-				if ( nits <= k || f2 <= f0 )
+				f2 = flin(alpha, jsearch, x2, nf, v, q0, q1, qd0, qd1, qa, qb, qc);
+
+				if (nits <= k || f2 <= f0)
 				{
 					break;
 				}
-	
+
 				k = k + 1;
-	
-				if ( f0 < f1 && 0.0 < x1 * x2 )
+
+				if (f0 < f1 && 0.0 < x1 * x2)
 				{
 					ok = 0;
 					break;
 				}
 				x2 = 0.5 * x2;
 			}
-	
-			if ( ok )
+
+			if (ok)
 			{
 				break;
 			}
 		}
-	//
-	//  Increment the one-dimensional search counter.
-	//
+		//
+		//  Increment the one-dimensional search counter.
+		//
 		nl = nl + 1;
-	
-		if ( fm < f2 )
+
+		if (fm < f2)
 		{
 			x2 = xm;
 		}
@@ -929,49 +909,48 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		{
 			fm = f2;
 		}
-	//
-	//  Get a new estimate of the second derivative.
-	//
-		if ( small < fabs ( x2 * ( x2 - x1 ) ) )
+		//
+		//  Get a new estimate of the second derivative.
+		//
+		if (small < fabs(x2 * (x2 - x1)))
 		{
-			d2 = ( x2 * ( f1 - f0 ) - x1 * ( fm - f0 ) )
-				/ ( ( x1 * x2 ) * ( x1 - x2 ) );
+			d2 = (x2 * (f1 - f0) - x1 * (fm - f0)) / ((x1 * x2) * (x1 - x2));
 		}
 		else
 		{
-			if ( 0 < k )
+			if (0 < k)
 			{
 				d2 = 0.0;
 			}
 		}
-	
-		d2 = max ( d2, small );
-	
+
+		d2 = max(d2, small);
+
 		x1 = x2;
 		fx = fm;
-	
-		if ( sf1 < fx )
+
+		if (sf1 < fx)
 		{
 			fx = sf1;
 			x1 = sx1;
 		}
-	//
-	//  Update X for linear search.
-	//
-		if ( 0 <= jsearch )
+		//
+		//  Update X for linear search.
+		//
+		if (0 <= jsearch)
 		{
-			for ( i = 0; i < n; i++ )
+			for (i = 0; i < n; i++)
 			{
-				alpha[i] = alpha[i] + x1 * v[i+jsearch*n];
+				alpha[i] = alpha[i] + x1 * v[i + jsearch * n];
 			}
 		}
-	
+
 		return;
 	}
 	//****************************************************************************80
-	
-	void print2 ( int n, double x[], int prin, double fx, int nf, int nl )
-	
+
+	void print2(int n, double x[], int prin, double fx, int nf, int nl)
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -1025,21 +1004,19 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		Messenger::print("Linear searches = %i\n", nl);
 		Messenger::print("Function evaluations = %i\n", nf);
 		Messenger::print("Function value FX = %e\n", fx);
-	
-		if ( n <= 4 || 2 < prin )
+
+		if (n <= 4 || 2 < prin)
 		{
-			r8vec_print ( n, x, "  X:" );
+			r8vec_print(n, x, "  X:");
 		}
-	
+
 		return;
 	}
 	//****************************************************************************80
-	
-	void quad ( Array<double>& alpha, double t,
-		double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin,
-		double ldt, double &fx, double &qf1, double &qa, double &qb, double &qc,
-		double &qd0, double &qd1 )
-	
+
+	void quad(Array<double> &alpha, double t, double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin, double ldt, double &fx, double &qf1, double &qa, double &qb,
+		  double &qc, double &qd0, double &qd1)
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -1111,26 +1088,26 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		double s;
 		double temp;
 		double value;
-	
+
 		temp = fx;
-		fx   = qf1;
-		qf1  = temp;
-	
-		for ( i = 0; i < n; i++ )
+		fx = qf1;
+		qf1 = temp;
+
+		for (i = 0; i < n; i++)
 		{
-			temp  = alpha[i];
-			alpha[i]  = q1[i];
+			temp = alpha[i];
+			alpha[i] = q1[i];
 			q1[i] = temp;
 		}
-	
+
 		qd1 = 0.0;
-		for ( i = 0; i < n; i++ )
+		for (i = 0; i < n; i++)
 		{
-			qd1 = qd1 + ( alpha[i] - q1[i] ) * ( alpha[i] - q1[i] );
+			qd1 = qd1 + (alpha[i] - q1[i]) * (alpha[i] - q1[i]);
 		}
-		qd1 = sqrt ( qd1 );
-	
-		if ( qd0 <= 0.0 || qd1 <= 0.0 || nl < 3 * n * n )
+		qd1 = sqrt(qd1);
+
+		if (qd0 <= 0.0 || qd1 <= 0.0 || nl < 3 * n * n)
 		{
 			fx = qf1;
 			qa = 0.0;
@@ -1140,37 +1117,36 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		}
 		else
 		{
-			jsearch = - 1;
+			jsearch = -1;
 			nits = 2;
 			s = 0.0;
 			l = qd1;
 			value = qf1;
 			fk = true;
-	
-			minny ( alpha, jsearch, nits, s, l, value, fk, t,
-				h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
-	
-			qa =                 l * ( l - qd1 )       / ( qd0 + qd1 ) / qd0;
-			qb = - ( l + qd0 )     * ( l - qd1 ) / qd1                 / qd0;
-			qc =   ( l + qd0 ) * l               / qd1 / ( qd0 + qd1 );
+
+			minny(alpha, jsearch, nits, s, l, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
+
+			qa = l * (l - qd1) / (qd0 + qd1) / qd0;
+			qb = -(l + qd0) * (l - qd1) / qd1 / qd0;
+			qc = (l + qd0) * l / qd1 / (qd0 + qd1);
 		}
-	
+
 		qd0 = qd1;
-	
-		for ( i = 0; i < n; i++ )
+
+		for (i = 0; i < n; i++)
 		{
 			s = q0[i];
 			q0[i] = alpha[i];
 			alpha[i] = qa * s + qb * alpha[i] + qc * q1[i];
 		}
-	
+
 		return;
 	}
 
 	//****************************************************************************80
-	
-	double r8_hypot ( double x, double y )
-	
+
+	double r8_hypot(double x, double y)
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -1199,36 +1175,36 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		double a;
 		double b;
 		double value;
-	
-		if ( fabs ( x ) < fabs ( y ) )
+
+		if (fabs(x) < fabs(y))
 		{
-			a = fabs ( y );
-			b = fabs ( x );
+			a = fabs(y);
+			b = fabs(x);
 		}
 		else
 		{
-			a = fabs ( x );
-			b = fabs ( y );
+			a = fabs(x);
+			b = fabs(y);
 		}
-	//
-	//  A contains the larger value.
-	//
-		if ( a == 0.0 )
+		//
+		//  A contains the larger value.
+		//
+		if (a == 0.0)
 		{
 			value = 0.0;
 		}
 		else
 		{
-			value = a * sqrt ( 1.0 + ( b / a ) * ( b / a ) );
+			value = a * sqrt(1.0 + (b / a) * (b / a));
 		}
-	
+
 		return value;
 	}
 
 	//****************************************************************************80
-	
-	double r8_uniform_01 ( int &seed )
-	
+
+	double r8_uniform_01(int &seed)
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -1307,28 +1283,28 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		const int i4_huge = 2147483647;
 		int k;
 		double r;
-	
-		if ( seed == 0 )
+
+		if (seed == 0)
 		{
 			Messenger::error("R8_UNIFORM_01 - Fatal error! - Input value of SEED = 0.\n");
 			return 0.0;
 		}
-	
+
 		k = seed / 127773;
-	
-		seed = 16807 * ( seed - k * 127773 ) - k * 2836;
-	
-		if ( seed < 0 )
+
+		seed = 16807 * (seed - k * 127773) - k * 2836;
+
+		if (seed < 0)
 		{
 			seed = seed + i4_huge;
 		}
-		r = ( double ) ( seed ) * 4.656612875E-10;
+		r = (double)(seed)*4.656612875E-10;
 		return r;
 	}
 	//****************************************************************************80
-	
-	void r8mat_print ( int m, int n, double a[], const char* title )
-	
+
+	void r8mat_print(int m, int n, double a[], const char *title)
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -1365,15 +1341,14 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	//    Input, string TITLE, a title.
 	//
 	{
-		r8mat_print_some ( m, n, a, 1, 1, m, n, title );
-	
+		r8mat_print_some(m, n, a, 1, 1, m, n, title);
+
 		return;
 	}
 	//****************************************************************************80
-	
-	void r8mat_print_some ( int m, int n, double a[], int ilo, int jlo, int ihi,
-		int jhi, const char* title )
-	
+
+	void r8mat_print_some(int m, int n, double a[], int ilo, int jlo, int ihi, int jhi, const char *title)
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -1413,53 +1388,53 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	//    Input, string TITLE, a title.
 	//
 	{
-	# define INCX 5
-	
+#define INCX 5
+
 		int i;
 		int i2hi;
 		int i2lo;
 		int j;
 		int j2hi;
 		int j2lo;
-	
+
 		Messenger::print("%s\n", title);
-	
-		if ( m <= 0 || n <= 0 )
+
+		if (m <= 0 || n <= 0)
 		{
 			Messenger::print("  (None)\n");
 			return;
 		}
-	//
-	//  Print the columns of the matrix, in strips of 5.
-	//
-		for ( j2lo = jlo; j2lo <= jhi; j2lo = j2lo + INCX )
+		//
+		//  Print the columns of the matrix, in strips of 5.
+		//
+		for (j2lo = jlo; j2lo <= jhi; j2lo = j2lo + INCX)
 		{
 			j2hi = j2lo + INCX - 1;
-			if ( n < j2hi )
+			if (n < j2hi)
 			{
 				j2hi = n;
 			}
-			if ( jhi < j2hi )
+			if (jhi < j2hi)
 			{
 				j2hi = jhi;
 			}
 			Messenger::print("\n");
-	//
-	//  For each column J in the current range...
-	//
-	//  Write the header.
-	//
+			//
+			//  For each column J in the current range...
+			//
+			//  Write the header.
+			//
 			Messenger::print("  Col:    ");
-			for ( j = j2lo; j <= j2hi; j++ )
+			for (j = j2lo; j <= j2hi; j++)
 			{
 				Messenger::print("%10i   ", j - 1);
 			}
 			Messenger::print("\n");
 			Messenger::print("  Row\n");
-	//
-	//  Determine the range of the rows in this strip.
-	//
-			if ( 1 < ilo )
+			//
+			//  Determine the range of the rows in this strip.
+			//
+			if (1 < ilo)
 			{
 				i2lo = ilo;
 			}
@@ -1467,7 +1442,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 			{
 				i2lo = 1;
 			}
-			if ( ihi < m )
+			if (ihi < m)
 			{
 				i2hi = ihi;
 			}
@@ -1475,28 +1450,28 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 			{
 				i2hi = m;
 			}
-	
-			for ( i = i2lo; i <= i2hi; i++ )
+
+			for (i = i2lo; i <= i2hi; i++)
 			{
-	//
-	//  Print out (up to) 5 entries in row I, that lie in the current strip.
-	//
+				//
+				//  Print out (up to) 5 entries in row I, that lie in the current strip.
+				//
 				Messenger::print("%fi: ", i - 1);
-				for ( j = j2lo; j <= j2hi; j++ )
+				for (j = j2lo; j <= j2hi; j++)
 				{
-					Messenger::print("%12.4e  ", a[i-1+(j-1)*m]);
+					Messenger::print("%12.4e  ", a[i - 1 + (j - 1) * m]);
 				}
 				Messenger::print("\n");
 			}
 		}
-	
+
 		return;
-	# undef INCX
+#undef INCX
 	}
 	//****************************************************************************80
-	
-	void r8mat_transpose_in_place ( int n, double a[] )
-	
+
+	void r8mat_transpose_in_place(int n, double a[])
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -1530,22 +1505,22 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		int i;
 		int j;
 		double t;
-	
-		for ( j = 0; j < n; j++ )
+
+		for (j = 0; j < n; j++)
 		{
-			for ( i = 0; i < j; i++ )
+			for (i = 0; i < j; i++)
 			{
-				t        = a[i+j*n];
-				a[i+j*n] = a[j+i*n];
-				a[j+i*n] = t;
+				t = a[i + j * n];
+				a[i + j * n] = a[j + i * n];
+				a[j + i * n] = t;
 			}
 		}
 		return;
 	}
 	//****************************************************************************80
-	
-	void r8vec_copy ( int n, double a1[], double a2[] )
-	
+
+	void r8vec_copy(int n, double a1[], double a2[])
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -1578,17 +1553,17 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	//
 	{
 		int i;
-	
-		for ( i = 0; i < n; i++ )
+
+		for (i = 0; i < n; i++)
 		{
 			a2[i] = a1[i];
 		}
 		return;
 	}
 	//****************************************************************************80
-	
-	double r8vec_max ( int n, double r8vec[] )
-	
+
+	double r8vec_max(int n, double r8vec[])
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -1623,12 +1598,12 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	{
 		int i;
 		double value;
-	
+
 		value = r8vec[0];
-	
-		for ( i = 1; i < n; i++ )
+
+		for (i = 1; i < n; i++)
 		{
-			if ( value < r8vec[i] )
+			if (value < r8vec[i])
 			{
 				value = r8vec[i];
 			}
@@ -1636,9 +1611,9 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		return value;
 	}
 	//****************************************************************************80
-	
-	double r8vec_min ( int n, double r8vec[] )
-	
+
+	double r8vec_min(int n, double r8vec[])
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -1672,12 +1647,12 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	{
 		int i;
 		double value;
-	
+
 		value = r8vec[0];
-	
-		for ( i = 1; i < n; i++ )
+
+		for (i = 1; i < n; i++)
 		{
-			if ( r8vec[i] < value )
+			if (r8vec[i] < value)
 			{
 				value = r8vec[i];
 			}
@@ -1685,9 +1660,9 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		return value;
 	}
 	//****************************************************************************80
-	
-	double r8vec_norm ( int n, double a[] )
-	
+
+	double r8vec_norm(int n, double a[])
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -1725,21 +1700,21 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	{
 		int i;
 		double v;
-	
+
 		v = 0.0;
-	
-		for ( i = 0; i < n; i++ )
+
+		for (i = 0; i < n; i++)
 		{
 			v = v + a[i] * a[i];
 		}
-		v = sqrt ( v );
-	
+		v = sqrt(v);
+
 		return v;
 	}
 	//****************************************************************************80
-	
-	void r8vec_print ( int n, double a[], const char* title )
-	
+
+	void r8vec_print(int n, double a[], const char *title)
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -1772,19 +1747,19 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	//
 	{
 		int i;
-	
+
 		Messenger::print("%s\n", title);
-		for ( i = 0; i < n; i++ )
+		for (i = 0; i < n; i++)
 		{
 			Messenger::print("  %8i: %14.6e\n", i, a[i]);
 		}
-	
+
 		return;
 	}
 	//****************************************************************************80
-	
-	void svsort ( int n, double d[], double v[] )
-	
+
+	void svsort(int n, double d[], double v[])
+
 	//****************************************************************************80
 	//
 	//  Purpose:
@@ -1822,7 +1797,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	//
 	//    Input, int N, the length of D, and the order of V.
 	//
-	//    Input/output, double D[N], the vector to be sorted. 
+	//    Input/output, double D[N], the vector to be sorted.
 	//    On output, the entries of D are in descending order.
 	//
 	//    Input/output, double V[N,N], an N by N array to be adjusted
@@ -1836,44 +1811,44 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		int j2;
 		int j3;
 		double t;
-	
-		for ( j1 = 0; j1 < n - 1; j1++ )
+
+		for (j1 = 0; j1 < n - 1; j1++)
 		{
-	//
-	//  Find J3, the index of the largest entry in D[J1:N-1].
-	//  MAXLOC apparently requires its output to be an array.
-	//
+			//
+			//  Find J3, the index of the largest entry in D[J1:N-1].
+			//  MAXLOC apparently requires its output to be an array.
+			//
 			j3 = j1;
-			for ( j2 = j1 + 1; j2 < n; j2++ )
+			for (j2 = j1 + 1; j2 < n; j2++)
 			{
-				if ( d[j3] < d[j2] )
+				if (d[j3] < d[j2])
 				{
 					j3 = j2;
 				}
 			}
-	//
-	//  If J1 != J3, swap D[J1] and D[J3], and columns J1 and J3 of V.
-	//
-			if ( j1 != j3 )
+			//
+			//  If J1 != J3, swap D[J1] and D[J3], and columns J1 and J3 of V.
+			//
+			if (j1 != j3)
 			{
-				t     = d[j1];
+				t = d[j1];
 				d[j1] = d[j3];
 				d[j3] = t;
-				for ( i = 0; i < n; i++ )
+				for (i = 0; i < n; i++)
 				{
-					t         = v[i+j1*n];
-					v[i+j1*n] = v[i+j3*n];
-					v[i+j3*n] = t;
+					t = v[i + j1 * n];
+					v[i + j1 * n] = v[i + j3 * n];
+					v[i + j3 * n] = t;
 				}
 			}
 		}
-	
+
 		return;
 	}
 
 	//****************************************************************************80
 
-	double praxis ( double t0, double h0, Array<double>& x, int prin)
+	double praxis(double t0, double h0, Array<double> &x, int prin)
 
 	//****************************************************************************80
 	//
@@ -1896,7 +1871,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	//      A = inverse(V") * D * inverse(V)
 	//
 	//    V(*,*) is the matrix of search directions;
-	//    D(*) is the array of second differences. 
+	//    D(*) is the array of second differences.
 	//
 	//    If F(X) has continuous second derivatives near X0, then A will tend
 	//    to the hessian of F at X0 as X approaches X0.
@@ -1937,7 +1912,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 	//
 	//    Input, int PRIN, controls printing intermediate results.
 	//    0, nothing is printed.
-	//    1, F is printed after every n+1 or n+2 linear minimizations. 
+	//    1, F is printed after every n+1 or n+2 linear minimizations.
 	//       final X is printed, but intermediate X is printed only
 	//       if N is at most 4.
 	//    2, the scale factors and the principal values of the approximating
@@ -2022,44 +1997,44 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		double vsmall;
 		double *y;
 		double *z;
-	//
-	//  Allocation.
-	//
+		//
+		//  Allocation.
+		//
 		int nAlpha = x.nItems();
 		d = new double[nAlpha];
 		q0 = new double[nAlpha];
 		q1 = new double[nAlpha];
-		v = new double[nAlpha*nAlpha];
+		v = new double[nAlpha * nAlpha];
 		y = new double[nAlpha];
 		z = new double[nAlpha];
-	//
-	//  Initialization.
-	//
+		//
+		//  Initialization.
+		//
 		machep = std::numeric_limits<double>::epsilon();
 		small = machep * machep;
 		vsmall = small * small;
 		large = 1.0 / small;
 		vlarge = 1.0 / vsmall;
-		m2 = sqrt ( machep );
-		m4 = sqrt ( m2 );
+		m2 = sqrt(machep);
+		m4 = sqrt(m2);
 		seed = 123456789;
-	//
-	//  Heuristic numbers:
-	//
-	//  If the axes may be badly scaled (which is to be avoided if
-	//  possible), then set SCBD = 10.  Otherwise set SCBD = 1.
-	//
-	//  If the problem is known to be ill-conditioned, initialize ILLC = true.
-	//
-	//  KTM is the number of iterations without improvement before the
-	//  algorithm terminates.  KTM = 4 is very cautious; usually KTM = 1
-	//  is satisfactory.
-	//
+		//
+		//  Heuristic numbers:
+		//
+		//  If the axes may be badly scaled (which is to be avoided if
+		//  possible), then set SCBD = 10.  Otherwise set SCBD = 1.
+		//
+		//  If the problem is known to be ill-conditioned, initialize ILLC = true.
+		//
+		//  KTM is the number of iterations without improvement before the
+		//  algorithm terminates.  KTM = 4 is very cautious; usually KTM = 1
+		//  is satisfactory.
+		//
 		scbd = 1.0;
 		illc = false;
 		ktm = 1;
-	
-		if ( illc )
+
+		if (illc)
 		{
 			ldfac = 0.1;
 		}
@@ -2067,7 +2042,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		{
 			ldfac = 0.01;
 		}
-	
+
 		kt = 0;
 		nl = 0;
 		nf = 1;
@@ -2075,25 +2050,25 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		fx = MinimiserBase<T>::cost(x);
 
 		qf1 = fx;
-		t = small + fabs ( t0 );
+		t = small + fabs(t0);
 		t2 = t;
 		dmin = small;
 		h = h0;
-		h = max ( h, 100.0 * t );
+		h = max(h, 100.0 * t);
 		ldt = h;
-	//
-	//  The initial set of search directions V is the identity matrix.
-	//
-		for ( j = 0; j < nAlpha; j++ )
+		//
+		//  The initial set of search directions V is the identity matrix.
+		//
+		for (j = 0; j < nAlpha; j++)
 		{
-			for ( i = 0; i < nAlpha; i++ )
+			for (i = 0; i < nAlpha; i++)
 			{
-				v[i+j*nAlpha] = 0.0;
+				v[i + j * nAlpha] = 0.0;
 			}
-			v[j+j*nAlpha] = 1.0;
+			v[j + j * nAlpha] = 1.0;
 		}
-	
-		for ( i = 0; i < nAlpha; i++ )
+
+		for (i = 0; i < nAlpha; i++)
 		{
 			d[i] = 0.0;
 		}
@@ -2102,369 +2077,366 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 		qc = 0.0;
 		qd0 = 0.0;
 		qd1 = 0.0;
-		r8vec_copy ( nAlpha, x.array(), q0 );
-		r8vec_copy ( nAlpha, x.array(), q1 );
-	
-		if ( 0 < prin )
+		r8vec_copy(nAlpha, x.array(), q0);
+		r8vec_copy(nAlpha, x.array(), q1);
+
+		if (0 < prin)
 		{
-			print2 ( nAlpha, x.array(), prin, fx, nf, nl );
+			print2(nAlpha, x.array(), prin, fx, nf, nl);
 		}
-	//
-	//  The main loop starts here.
-	//
-		for ( ; ; )
+		//
+		//  The main loop starts here.
+		//
+		for (;;)
 		{
 			sf = d[0];
 			d[0] = 0.0;
-	//
-	//  Minimize along the first direction V(*,1).
-	//
+			//
+			//  Minimize along the first direction V(*,1).
+			//
 			jsearch = 0;
 			nits = 2;
 			d2 = d[0];
 			s = 0.0;
 			value = fx;
 			fk = false;
-	
-			minny ( x, jsearch, nits, d2, s, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
-	
+
+			minny(x, jsearch, nits, d2, s, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
+
 			d[0] = d2;
-	
-			if ( s <= 0.0 )
+
+			if (s <= 0.0)
 			{
-				for ( i = 0; i < nAlpha; i++ )
+				for (i = 0; i < nAlpha; i++)
 				{
-					v[i+0*nAlpha] = - v[i+0*nAlpha];
+					v[i + 0 * nAlpha] = -v[i + 0 * nAlpha];
 				}
 			}
-	
-			if ( sf <= 0.9 * d[0] || d[0] <= 0.9 * sf )
+
+			if (sf <= 0.9 * d[0] || d[0] <= 0.9 * sf)
 			{
-				for ( i = 1; i < nAlpha; i++ )
+				for (i = 1; i < nAlpha; i++)
 				{
 					d[i] = 0.0;
 				}
 			}
-	//
-	//  The inner loop starts here.
-	//
-			for ( k = 1; k <= nAlpha; k++ )
+			//
+			//  The inner loop starts here.
+			//
+			for (k = 1; k <= nAlpha; k++)
 			{
-				r8vec_copy ( x.nItems(), x.array(), y );
-	
+				r8vec_copy(x.nItems(), x.array(), y);
+
 				sf = fx;
-	
-				if ( 0 < kt )
+
+				if (0 < kt)
 				{
 					illc = true;
 				}
-	
-				for ( ; ; )
+
+				for (;;)
 				{
 					kl = k;
 					df = 0.0;
-	//
-	//  A random step follows, to avoid resolution valleys.
-	//
-					if ( illc )
+					//
+					//  A random step follows, to avoid resolution valleys.
+					//
+					if (illc)
 					{
-						for ( j = 0; j < nAlpha; j++ )
+						for (j = 0; j < nAlpha; j++)
 						{
-							r = r8_uniform_01 ( seed );
-							s = ( 0.1 * ldt + t2 * pow ( 10.0, kt ) ) * ( r - 0.5 );
+							r = r8_uniform_01(seed);
+							s = (0.1 * ldt + t2 * pow(10.0, kt)) * (r - 0.5);
 							z[j] = s;
-							for ( i = 0; i < nAlpha; i++ )
+							for (i = 0; i < nAlpha; i++)
 							{
-								x[i] = x[i] + s * v[i+j*nAlpha];
+								x[i] = x[i] + s * v[i + j * nAlpha];
 							}
 						}
-	
+
 						fx = MinimiserBase<T>::cost(x);
 						nf = nf + 1;
 					}
-	//
-	//  Minimize along the "non-conjugate" directions V(*,K),...,V(*,N).
-	//
-					for ( k2 = k; k2 <= nAlpha; k2++ )
+					//
+					//  Minimize along the "non-conjugate" directions V(*,K),...,V(*,N).
+					//
+					for (k2 = k; k2 <= nAlpha; k2++)
 					{
 						sl = fx;
-	
+
 						jsearch = k2 - 1;
 						nits = 2;
-						d2 = d[k2-1];
+						d2 = d[k2 - 1];
 						s = 0.0;
 						value = fx;
 						fk = false;
-	
-						minny ( x, jsearch, nits, d2, s, value, fk, t,
-							h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
-	
-						d[k2-1] = d2;
-	
-						if ( illc )
+
+						minny(x, jsearch, nits, d2, s, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
+
+						d[k2 - 1] = d2;
+
+						if (illc)
 						{
-							s = d[k2-1] * pow ( s + z[k2-1], 2 );
+							s = d[k2 - 1] * pow(s + z[k2 - 1], 2);
 						}
 						else
 						{
 							s = sl - fx;
 						}
-	
-						if ( df <= s )
+
+						if (df <= s)
 						{
 							df = s;
 							kl = k2;
 						}
 					}
-	//
-	//  If there was not much improvement on the first try, set
-	//  ILLC = true and start the inner loop again.
-	//
-					if ( illc )
+					//
+					//  If there was not much improvement on the first try, set
+					//  ILLC = true and start the inner loop again.
+					//
+					if (illc)
 					{
 						break;
 					}
 
-					if ( fabs ( 100.0 * machep * fx ) <= df )
+					if (fabs(100.0 * machep * fx) <= df)
 					{
 						break;
 					}
 					illc = true;
 				}
-	
-				if ( k == 2 && 1 < prin )
+
+				if (k == 2 && 1 < prin)
 				{
-					r8vec_print ( nAlpha, d, "  The second difference array:" );
+					r8vec_print(nAlpha, d, "  The second difference array:");
 				}
-	//
-	//  Minimize along the "conjugate" directions V(*,1),...,V(*,K-1).
-	//
-				for ( k2 = 1; k2 < k; k2++ )
+				//
+				//  Minimize along the "conjugate" directions V(*,1),...,V(*,K-1).
+				//
+				for (k2 = 1; k2 < k; k2++)
 				{
 					jsearch = k2 - 1;
 					nits = 2;
-					d2 = d[k2-1];
+					d2 = d[k2 - 1];
 					s = 0.0;
 					value = fx;
 					fk = false;
-	
-					minny ( x, jsearch, nits, d2, s, value, fk, t,
-						h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
-	
-					d[k2-1] = d2;
+
+					minny(x, jsearch, nits, d2, s, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
+
+					d[k2 - 1] = d2;
 				}
-	
+
 				f1 = fx;
 				fx = sf;
-	
-				for ( i = 0; i < nAlpha; i++ )
+
+				for (i = 0; i < nAlpha; i++)
 				{
 					temp = x[i];
 					x[i] = y[i];
 					y[i] = temp - y[i];
 				}
-				
-				lds = r8vec_norm ( nAlpha, y );
-	//
-	//  Discard direction V(*,kl).
-	//
-	//  If no random step was taken, V(*,KL) is the "non-conjugate"
-	//  direction along which the greatest improvement was made.
-	//
-				if ( small < lds )
+
+				lds = r8vec_norm(nAlpha, y);
+				//
+				//  Discard direction V(*,kl).
+				//
+				//  If no random step was taken, V(*,KL) is the "non-conjugate"
+				//  direction along which the greatest improvement was made.
+				//
+				if (small < lds)
 				{
-					for ( j = kl - 1; k <= j; j-- )
+					for (j = kl - 1; k <= j; j--)
 					{
-						for ( i = 1; i <= nAlpha; i++ )
+						for (i = 1; i <= nAlpha; i++)
 						{
-							v[i-1+j*nAlpha] = v[i-1+(j-1)*nAlpha];
+							v[i - 1 + j * nAlpha] = v[i - 1 + (j - 1) * nAlpha];
 						}
-						d[j] = d[j-1];
+						d[j] = d[j - 1];
 					}
-	
-					d[k-1] = 0.0;
-	
-					for ( i = 1; i <= nAlpha; i++ )
+
+					d[k - 1] = 0.0;
+
+					for (i = 1; i <= nAlpha; i++)
 					{
-						v[i-1+(k-1)*nAlpha] = y[i-1] / lds;
+						v[i - 1 + (k - 1) * nAlpha] = y[i - 1] / lds;
 					}
-	//
-	//  Minimize along the new "conjugate" direction V(*,k), which is
-	//  the normalized vector:  (new x) - (old x).
-	//
+					//
+					//  Minimize along the new "conjugate" direction V(*,k), which is
+					//  the normalized vector:  (new x) - (old x).
+					//
 					jsearch = k - 1;
 					nits = 4;
-					d2 = d[k-1];
+					d2 = d[k - 1];
 					value = f1;
 					fk = true;
-	
-					minny ( x, jsearch, nits, d2, lds, value, fk, t,
-						h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1 );
-	
-					d[k-1] = d2;
-	
-					if ( lds <= 0.0 )
+
+					minny(x, jsearch, nits, d2, lds, value, fk, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qa, qb, qc, qd0, qd1);
+
+					d[k - 1] = d2;
+
+					if (lds <= 0.0)
 					{
-						lds = - lds;
-						for ( i = 1; i <= nAlpha; i++ )
+						lds = -lds;
+						for (i = 1; i <= nAlpha; i++)
 						{
-							v[i-1+(k-1)*nAlpha] = - v[i-1+(k-1)*nAlpha];
+							v[i - 1 + (k - 1) * nAlpha] = -v[i - 1 + (k - 1) * nAlpha];
 						}
 					}
 				}
-	
+
 				ldt = ldfac * ldt;
-				ldt = max ( ldt, lds );
-	
-				if ( 0 < prin )
+				ldt = max(ldt, lds);
+
+				if (0 < prin)
 				{
-					print2 ( nAlpha, x, prin, fx, nf, nl );
+					print2(nAlpha, x, prin, fx, nf, nl);
 				}
-	
-				t2 = r8vec_norm ( nAlpha, x );
-	
+
+				t2 = r8vec_norm(nAlpha, x);
+
 				t2 = m2 * t2 + t;
-	//
-	//  See whether the length of the step taken since starting the
-	//  inner loop exceeds half the tolerance.
-	//
-				if ( 0.5 * t2 < ldt )
+				//
+				//  See whether the length of the step taken since starting the
+				//  inner loop exceeds half the tolerance.
+				//
+				if (0.5 * t2 < ldt)
 				{
-					kt = - 1;
+					kt = -1;
 				}
-	
+
 				kt = kt + 1;
-	
-				if ( ktm < kt )
+
+				if (ktm < kt)
 				{
-					if ( 0 < prin )
+					if (0 < prin)
 					{
-						r8vec_print ( nAlpha, x, "  X:" );
+						r8vec_print(nAlpha, x, "  X:");
 					}
-	
-					delete [] d;
-					delete [] q0;
-					delete [] q1;
-					delete [] v;
-					delete [] y;
-					delete [] z;
-	
+
+					delete[] d;
+					delete[] q0;
+					delete[] q1;
+					delete[] v;
+					delete[] y;
+					delete[] z;
+
 					return fx;
 				}
 			}
-	//
-	//  The inner loop ends here.
-	//
-	//  Try quadratic extrapolation in case we are in a curved valley.
-	//
-			quad ( x, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qf1, qa, qb, qc, qd0, qd1 );
-	
-			for ( j = 0; j < nAlpha; j++ )
+			//
+			//  The inner loop ends here.
+			//
+			//  Try quadratic extrapolation in case we are in a curved valley.
+			//
+			quad(x, t, h, v, q0, q1, nl, nf, dmin, ldt, fx, qf1, qa, qb, qc, qd0, qd1);
+
+			for (j = 0; j < nAlpha; j++)
 			{
-				d[j] = 1.0 / sqrt ( d[j] );
+				d[j] = 1.0 / sqrt(d[j]);
 			}
-	
-			dn = r8vec_max ( nAlpha, d );
-	
-			if ( 3 < prin )
+
+			dn = r8vec_max(nAlpha, d);
+
+			if (3 < prin)
 			{
-				r8mat_print ( nAlpha, nAlpha, v, "  The new direction vectors:" );
+				r8mat_print(nAlpha, nAlpha, v, "  The new direction vectors:");
 			}
-	
-			for ( j = 0; j < nAlpha; j++ )
+
+			for (j = 0; j < nAlpha; j++)
 			{
-				for ( i = 0; i < nAlpha; i++ )
+				for (i = 0; i < nAlpha; i++)
 				{
-					v[i+j*nAlpha] = ( d[j] / dn ) * v[i+j*nAlpha];
+					v[i + j * nAlpha] = (d[j] / dn) * v[i + j * nAlpha];
 				}
 			}
-	//
-	//  Scale the axes to try to reduce the condition number.
-	//
-			if ( 1.0 < scbd )
+			//
+			//  Scale the axes to try to reduce the condition number.
+			//
+			if (1.0 < scbd)
 			{
-				for ( i = 0; i < nAlpha; i++ )
+				for (i = 0; i < nAlpha; i++)
 				{
 					s = 0.0;
-					for ( j = 0; j < nAlpha; j++ )
+					for (j = 0; j < nAlpha; j++)
 					{
-						s = s + v[i+j*nAlpha] * v[i+j*nAlpha];
+						s = s + v[i + j * nAlpha] * v[i + j * nAlpha];
 					}
-					s = sqrt ( s );
-					z[i] = max ( m4, s );
+					s = sqrt(s);
+					z[i] = max(m4, s);
 				}
-	
-				s = r8vec_min ( nAlpha, z );
-	
-				for ( i = 0; i < nAlpha; i++ )
+
+				s = r8vec_min(nAlpha, z);
+
+				for (i = 0; i < nAlpha; i++)
 				{
 					sl = s / z[i];
 					z[i] = 1.0 / sl;
-	
-					if ( scbd < z[i] )
+
+					if (scbd < z[i])
 					{
 						sl = 1.0 / scbd;
 						z[i] = scbd;
 					}
-					for ( j = 0; j < nAlpha; j++ )
+					for (j = 0; j < nAlpha; j++)
 					{
-						v[i+j*nAlpha] = sl * v[i+j*nAlpha];
+						v[i + j * nAlpha] = sl * v[i + j * nAlpha];
 					}
 				}
 			}
-	//
-	//  Calculate a new set of orthogonal directions before repeating
-	//  the main loop.
-	//
-	//  Transpose V for MINFIT:
-	//
-			r8mat_transpose_in_place ( nAlpha, v );
-	//
-	//  MINFIT finds the singular value decomposition of V.
-	//
-	//  This gives the principal values and principal directions of the
-	//  approximating quadratic form without squaring the condition number.
-	//
-			minfit ( nAlpha, vsmall, v, d );
-	//
-	//  Unscale the axes.
-	//
-			if ( 1.0 < scbd )
+			//
+			//  Calculate a new set of orthogonal directions before repeating
+			//  the main loop.
+			//
+			//  Transpose V for MINFIT:
+			//
+			r8mat_transpose_in_place(nAlpha, v);
+			//
+			//  MINFIT finds the singular value decomposition of V.
+			//
+			//  This gives the principal values and principal directions of the
+			//  approximating quadratic form without squaring the condition number.
+			//
+			minfit(nAlpha, vsmall, v, d);
+			//
+			//  Unscale the axes.
+			//
+			if (1.0 < scbd)
 			{
-				for ( i = 0; i < nAlpha; i++ )
+				for (i = 0; i < nAlpha; i++)
 				{
-					for ( j = 0; j < nAlpha; j++ )
+					for (j = 0; j < nAlpha; j++)
 					{
-						v[i+j*nAlpha] = z[i] * v[i+j*nAlpha];
+						v[i + j * nAlpha] = z[i] * v[i + j * nAlpha];
 					}
 				}
-	
-				for ( j = 0; j < nAlpha; j++ )
+
+				for (j = 0; j < nAlpha; j++)
 				{
 					s = 0.0;
-					for ( i = 0; i < nAlpha; i++ )
+					for (i = 0; i < nAlpha; i++)
 					{
-						s = s + v[i+j*nAlpha] * v[i+j*nAlpha];
+						s = s + v[i + j * nAlpha] * v[i + j * nAlpha];
 					}
-					s = sqrt ( s );
-	
+					s = sqrt(s);
+
 					d[j] = s * d[j];
-					for ( i = 0; i < nAlpha; i++ )
+					for (i = 0; i < nAlpha; i++)
 					{
-						v[i+j*nAlpha] = v[i+j*nAlpha] / s;
+						v[i + j * nAlpha] = v[i + j * nAlpha] / s;
 					}
 				}
 			}
-	
-			for ( i = 0; i < nAlpha; i++ )
+
+			for (i = 0; i < nAlpha; i++)
 			{
 				dni = dn * d[i];
-	
-				if ( large < dni )
+
+				if (large < dni)
 				{
 					d[i] = vsmall;
 				}
-				else if ( dni < small )
+				else if (dni < small)
 				{
 					d[i] = vlarge;
 				}
@@ -2473,19 +2445,19 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 					d[i] = 1.0 / dni / dni;
 				}
 			}
-	//
-	//  Sort the eigenvalues and eigenvectors.
-	//
-			svsort ( nAlpha, d, v );
-	//
-	//  Determine the smallest eigenvalue.
-	//
-			dmin = max ( d[nAlpha-1], small );
-	//
-	//  The ratio of the smallest to largest eigenvalue determines whether
-	//  the system is ill conditioned.
-	//
-			if ( dmin < m2 * d[0] )
+			//
+			//  Sort the eigenvalues and eigenvectors.
+			//
+			svsort(nAlpha, d, v);
+			//
+			//  Determine the smallest eigenvalue.
+			//
+			dmin = max(d[nAlpha - 1], small);
+			//
+			//  The ratio of the smallest to largest eigenvalue determines whether
+			//  the system is ill conditioned.
+			//
+			if (dmin < m2 * d[0])
 			{
 				illc = true;
 			}
@@ -2493,40 +2465,40 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 			{
 				illc = false;
 			}
-	
-			if ( 1 < prin )
+
+			if (1 < prin)
 			{
-				if ( 1.0 < scbd )
+				if (1.0 < scbd)
 				{
-					r8vec_print ( nAlpha, z, "  The scale factors:" );
+					r8vec_print(nAlpha, z, "  The scale factors:");
 				}
-				r8vec_print ( nAlpha, d, "  Principal values of the quadratic form:" );
-			}
-	
-			if ( 3 < prin )
-			{
-				r8mat_print ( nAlpha, nAlpha, v, "  The principal axes:" );
+				r8vec_print(nAlpha, d, "  Principal values of the quadratic form:");
 			}
 
-	//
-	//  The main loop ends here.
-	//
+			if (3 < prin)
+			{
+				r8mat_print(nAlpha, nAlpha, v, "  The principal axes:");
+			}
+
+			//
+			//  The main loop ends here.
+			//
 		}
-	
-		if ( 0 < prin )
+
+		if (0 < prin)
 		{
-			r8vec_print ( nAlpha, x, "  X:" );
+			r8vec_print(nAlpha, x, "  X:");
 		}
-	//
-	//  Free memory.
-	//
-		delete [] d;
-		delete [] q0;
-		delete [] q1;
-		delete [] v;
-		delete [] y;
-		delete [] z;
-	
+		//
+		//  Free memory.
+		//
+		delete[] d;
+		delete[] q0;
+		delete[] q1;
+		delete[] v;
+		delete[] y;
+		delete[] z;
+
 		return fx;
 	}
 };

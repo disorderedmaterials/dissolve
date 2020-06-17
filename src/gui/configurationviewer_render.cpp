@@ -22,14 +22,10 @@
 #include "gui/configurationviewer.hui"
 
 // Perform post-initialisation operations
-void ConfigurationViewer::postInitialiseGL()
-{
-}
+void ConfigurationViewer::postInitialiseGL() {}
 
 // Perform post-resize operations
-void ConfigurationViewer::postResizeGL()
-{
-}
+void ConfigurationViewer::postResizeGL() {}
 
 // Render 2D overlay content
 void ConfigurationViewer::render2DOverlay()
@@ -41,9 +37,10 @@ void ConfigurationViewer::render2DOverlay()
 
 	static LineStyle selectionBoxStyle(1.0, LineStipple::HalfDashStipple);
 
-	if (interacting()) switch (interactionMode())
-	{
+	if (interacting())
+		switch (interactionMode())
+		{
 		default:
 			break;
-	}
+		}
 }

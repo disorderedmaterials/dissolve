@@ -1,10 +1,8 @@
 ---
 title: Step 2 - Set up a Forcefield
 grand_parent: Examples
-parent: Liquid Argon
 weight: 2
 ---
-# Liquid Argon
 
 ## 2. Set up a Forcefield
 

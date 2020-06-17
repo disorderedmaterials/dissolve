@@ -33,77 +33,59 @@ MimeString::MimeString(MimeString::MimeStringType type, QString data)
 }
 
 // Return type of data contained in string
-MimeString::MimeStringType MimeString::type() const
-{
-	return type_;
-}
+MimeString::MimeStringType MimeString::type() const { return type_; }
 
 // Return string data
-QString MimeString::data() const
-{
-	return data_;
-}
+QString MimeString::data() const { return data_; }
 
 /*
  * Mime Strings
  */
 
 // Constructor
-MimeStrings::MimeStrings()
-{
-}
+MimeStrings::MimeStrings() {}
 
 // Destructor
-MimeStrings::~MimeStrings()
-{
-}
+MimeStrings::~MimeStrings() {}
 
 // Copy Constructor
-MimeStrings::MimeStrings(const MimeStrings& source)
-{
-	(*this) = source;
-}
+MimeStrings::MimeStrings(const MimeStrings &source) { (*this) = source; }
 
 // Assignment Operator
-void MimeStrings::operator=(const MimeStrings& source)
-{
-	strings_ = source.strings_;
-}
+void MimeStrings::operator=(const MimeStrings &source) { strings_ = source.strings_; }
 
-bool MimeStrings::hasFormat(const QString& mimeType) const
+bool MimeStrings::hasFormat(const QString &mimeType) const
 {
-	if (mimeType == "dissolve/mimestrings") return true;
+	if (mimeType == "dissolve/mimestrings")
+		return true;
 
 	return false;
 }
 
-QStringList MimeStrings::formats() const
-{
-	return QStringList() << "dissolve/mimestrings";
-}
+QStringList MimeStrings::formats() const { return QStringList() << "dissolve/mimestrings"; }
 
-QVariant MimeStrings::retrieveData(const QString& mimeType, QVariant::Type type) const
-{
-	return QVariant();
-}
+QVariant MimeStrings::retrieveData(const QString &mimeType, QVariant::Type type) const { return QVariant(); }
 
 // Add mime string
 void MimeStrings::add(MimeString::MimeStringType type, QString data)
 {
-	MimeString* mimeString = new MimeString(type, data);
+	MimeString *mimeString = new MimeString(type, data);
 	strings_.own(mimeString);
 }
 
 // Add mime strings from source MimeStrings
-void MimeStrings::add(MimeStrings& sourceStrings)
+void MimeStrings::add(MimeStrings &sourceStrings)
 {
-	for (MimeString* mimeString = sourceStrings.strings().first(); mimeString != NULL; mimeString = mimeString->next()) add(mimeString->type(), mimeString->data());
+	for (MimeString *mimeString = sourceStrings.strings().first(); mimeString != NULL; mimeString = mimeString->next())
+		add(mimeString->type(), mimeString->data());
 }
 
 // Return whether the specified MimeString data is present
 bool MimeStrings::hasData(MimeString::MimeStringType type) const
 {
-	for (MimeString* mimeString = strings_.first(); mimeString != NULL; mimeString = mimeString->next()) if (mimeString->type() == type) return true;
+	for (MimeString *mimeString = strings_.first(); mimeString != NULL; mimeString = mimeString->next())
+		if (mimeString->type() == type)
+			return true;
 
 	return false;
 }
@@ -111,13 +93,12 @@ bool MimeStrings::hasData(MimeString::MimeStringType type) const
 // Return the data for the specified type
 QString MimeStrings::data(MimeString::MimeStringType type) const
 {
-	for (MimeString* mimeString = strings_.first(); mimeString != NULL; mimeString = mimeString->next()) if (mimeString->type() == type) return mimeString->data();
+	for (MimeString *mimeString = strings_.first(); mimeString != NULL; mimeString = mimeString->next())
+		if (mimeString->type() == type)
+			return mimeString->data();
 
 	return QString();
 }
 
 // Return mime strings
-List<MimeString>& MimeStrings::strings()
-{
-	return strings_;
-}
+List<MimeString> &MimeStrings::strings() { return strings_; }

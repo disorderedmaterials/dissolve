@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULELISTEDITOR_H
 #define DISSOLVE_MODULELISTEDITOR_H
 
-#include "gui/ui_modulelisteditor.h"
 #include "base/charstring.h"
+#include "gui/ui_modulelisteditor.h"
 #include "templates/refdatalist.h"
 
 // Forward Declarations
@@ -41,24 +41,23 @@ class ModuleListEditor : public QWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	ModuleListEditor(QWidget* parent = NULL);
+	ModuleListEditor(QWidget *parent = NULL);
 	~ModuleListEditor();
-
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::ModuleListEditor ui_;
 
-	private:
+      private:
 	// Whether the widget is currently refreshing
 	bool refreshing_;
 
-	public:
+      public:
 	// Update controls
 	void updateControls();
 	// Disable sensitive controls within widget
@@ -68,48 +67,45 @@ class ModuleListEditor : public QWidget
 	// Show / hide module palette
 	void setModulePaletteVisible(bool visible);
 
-
 	/*
 	 * Setup
 	 */
-	private:
+      private:
 	// Pointer to main window
-	DissolveWindow* dissolveWindow_;
+	DissolveWindow *dissolveWindow_;
 	// Target ModuleLayer
-	ModuleLayer* moduleLayer_;
+	ModuleLayer *moduleLayer_;
 	// Parent Configuration (if we are local to one)
-	Configuration* localConfiguration_;
+	Configuration *localConfiguration_;
 	// Module categories and their associated MimeTreeWidgetItems
-	RefDataList<MimeTreeWidgetItem,CharString> moduleCategories_;
+	RefDataList<MimeTreeWidgetItem, CharString> moduleCategories_;
 
-	public:
+      public:
 	// Set up the ModuleListEditor for the specified ModuleLayer
-	bool setUp(DissolveWindow* dissolveWindow, ModuleLayer* moduleLayer, Configuration* localConfiguration = NULL);
-
+	bool setUp(DissolveWindow *dissolveWindow, ModuleLayer *moduleLayer, Configuration *localConfiguration = NULL);
 
 	/*
 	 * Widget Functions
 	 */
-	private:
+      private:
 	// Chart widget being displayed
-	ModuleListChart* chartWidget_;
+	ModuleListChart *chartWidget_;
 
-	private slots:
-	void blockSelectionChanged(const QString& blockIdentifier);
-	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);
+      private slots:
+	void blockSelectionChanged(const QString &blockIdentifier);
+	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem *item);
 	void chartWidgetDataModified();
 	void chartWidgetSizeChanged();
 	void controlsWidgetDataModified();
 
-
 	/*
 	 * State
 	 */
-	public:
+      public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser) const;
+	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
+	bool readState(LineParser &parser);
 };
 
 #endif

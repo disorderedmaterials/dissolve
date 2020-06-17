@@ -32,30 +32,28 @@ class QWidget;
 // Chart Block - Base class for any widget displayed in a chart
 class ChartBlock : public ListItem<ChartBlock>
 {
-	public:
+      public:
 	// Constructor / Destructor
 	ChartBlock();
 	virtual ~ChartBlock();
 
-
 	/*
 	 * Type
 	 */
-	public:
+      public:
 	// Return type of this block
-	virtual const char* blockType() = 0;
-
+	virtual const char *blockType() = 0;
 
 	/*
 	 * Widget
 	 */
-	private:
+      private:
 	// Proposed new geometry of the widget
 	QRect newGeometry_;
-	
-	public:
+
+      public:
 	// Return underlying widget
-	virtual QWidget* widget() = 0;
+	virtual QWidget *widget() = 0;
 	// Return width of underlying widget
 	virtual int widgetWidth() const = 0;
 	// Return height of underlying widget
@@ -71,11 +69,10 @@ class ChartBlock : public ListItem<ChartBlock>
 	// Return whether the supplied point (in global coordinates) allows a drag operation to begin
 	virtual bool isDragPoint(QPoint globalPos) const = 0;
 
-
 	/*
 	 * Update
 	 */
-	public:
+      public:
 	// Update controls within widget
 	virtual void updateControls() = 0;
 	// Disable sensitive controls

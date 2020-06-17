@@ -22,7 +22,7 @@
 #include "gui/importspeciesdialog.h"
 
 // Constructor
-ImportSpeciesDialog::ImportSpeciesDialog(QWidget* parent, const Dissolve& mainDissolveInstance)
+ImportSpeciesDialog::ImportSpeciesDialog(QWidget *parent, const Dissolve &mainDissolveInstance)
 {
 	ui_.setupUi(this);
 
@@ -30,22 +30,14 @@ ImportSpeciesDialog::ImportSpeciesDialog(QWidget* parent, const Dissolve& mainDi
 	ui_.ImportSpeciesWidget->setMainDissolveReference(&mainDissolveInstance);
 	ui_.ImportSpeciesWidget->setCloseButtonAvailable(false);
 	connect(ui_.ImportSpeciesWidget, SIGNAL(finished()), this, SLOT(accept()));
-	connect(ui_.ImportSpeciesWidget, SIGNAL(cancel()), this, SLOT(reject()));
+	connect(ui_.ImportSpeciesWidget, SIGNAL(canceled()), this, SLOT(reject()));
 }
 
 // Destructor
-ImportSpeciesDialog::~ImportSpeciesDialog()
-{
-}
+ImportSpeciesDialog::~ImportSpeciesDialog() {}
 
 // Reset, ready for adding a new Species
-void ImportSpeciesDialog::reset()
-{
-	ui_.ImportSpeciesWidget->reset();
-}
+void ImportSpeciesDialog::reset() { ui_.ImportSpeciesWidget->reset(); }
 
 // Copy imported Species over to the specified Dissolve object
-Species* ImportSpeciesDialog::importSpecies(Dissolve& dissolve)
-{
-	return ui_.ImportSpeciesWidget->importSpecies(dissolve);
-}
+Species *ImportSpeciesDialog::importSpecies(Dissolve &dissolve) { return ui_.ImportSpeciesWidget->importSpecies(dissolve); }

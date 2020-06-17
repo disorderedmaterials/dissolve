@@ -19,12 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate_rdf/rdf.h"
 #include "modules/calculate_rdf/gui/modulewidget.h"
+#include "modules/calculate_rdf/rdf.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* CalculateRDFModule::createWidget(QWidget* parent, Dissolve& dissolve)
-{
-	return new CalculateRDFModuleWidget(parent, this);
-}
-
+ModuleWidget *CalculateRDFModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new CalculateRDFModuleWidget(parent, this); }

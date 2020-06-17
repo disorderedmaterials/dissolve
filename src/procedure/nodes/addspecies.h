@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_PROCEDURENODE_ADDSPECIES_H
 #define DISSOLVE_PROCEDURENODE_ADDSPECIES_H
 
+#include "base/units.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodevalue.h"
-#include "base/units.h"
 
 // Forward Declarations
 class Species;
@@ -32,47 +32,54 @@ class Species;
 // AddSpecies Node
 class AddSpeciesProcedureNode : public ProcedureNode
 {
-	public:
+      public:
 	// Constructor
-	AddSpeciesProcedureNode(Species* sp = NULL, NodeValue population = 0, NodeValue density = 0.1, Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
+	AddSpeciesProcedureNode(Species *sp = NULL, NodeValue population = 0, NodeValue density = 0.1, Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
 	// Destructor
 	~AddSpeciesProcedureNode();
-
 
 	/*
 	 * Identity
 	 */
-	public:
+      public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
 	// Return whether a name for the node must be provided
 	bool mustBeNamed() const;
 
-
 	/*
 	 * Node Data
 	 */
-	public:
+      public:
+	// Box Action Style
+	enum BoxActionStyle
+	{
+		None,	/* Box geometry / volume will remain unchanged */
+		AddVolume,   /* Increase Box volume to accommodate new species, according to supplied density */
+		ScaleVolume, /* Scale current Box volume to give, after addition of the current species, the supplied density */
+		nBoxActionStyles
+	};
+	// Return enum option info for BoxActionStyle
+	static EnumOptions<BoxActionStyle> boxActionStyles();
 	// Positioning Type
 	enum PositioningType
 	{
-		CentralPositioning,			/* Position the Species at the centre of the Box */
-		CurrentPositioning,			/* Use current Species coordinates */
-		RandomPositioning,			/* Set position randomly */
+		CentralPositioning, /* Position the Species at the centre of the Box */
+		CurrentPositioning, /* Use current Species coordinates */
+		RandomPositioning,  /* Set position randomly */
 		nPositioningTypes
 	};
 	// Return enum option info for PositioningType
 	static EnumOptions<PositioningType> positioningTypes();
 
-
 	/*
 	 * Execute
 	 */
-	public:
+      public:
 	// Prepare any necessary data, ready for execution
-	bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
+	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };
 
 #endif

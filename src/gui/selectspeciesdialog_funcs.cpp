@@ -19,14 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "data/ff.h"
 #include "gui/selectspeciesdialog.h"
 #include "gui/selectspecieswidget.h"
-#include "data/ff.h"
 #include "templates/variantpointer.h"
 #include <QRegExp>
 
 // Constructor
-SelectSpeciesDialog::SelectSpeciesDialog(QWidget* parent, const CoreData& coreData, QString dialogTitle)
+SelectSpeciesDialog::SelectSpeciesDialog(QWidget *parent, const CoreData &coreData, QString dialogTitle)
 {
 	ui_.setupUi(this);
 
@@ -36,42 +36,34 @@ SelectSpeciesDialog::SelectSpeciesDialog(QWidget* parent, const CoreData& coreDa
 }
 
 // Destructor
-SelectSpeciesDialog::~SelectSpeciesDialog()
-{
-}
+SelectSpeciesDialog::~SelectSpeciesDialog() {}
 
-void SelectSpeciesDialog::on_SpeciesWidget_speciesSelectionChanged(bool isValid)
-{
-	ui_.SelectButton->setEnabled(isValid);
-}
+void SelectSpeciesDialog::on_SpeciesWidget_speciesSelectionChanged(bool isValid) { ui_.SelectButton->setEnabled(isValid); }
 
 void SelectSpeciesDialog::on_SpeciesWidget_speciesDoubleClicked()
 {
 	// Check current selection size for validity
-	if (ui_.SpeciesWidget->currentSpecies().nItems() != 1) return;
+	if (ui_.SpeciesWidget->currentSpecies().nItems() != 1)
+		return;
 
 	accept();
 }
 
-void SelectSpeciesDialog::on_SelectButton_clicked(bool checked)
-{
-	accept();
-}
+void SelectSpeciesDialog::on_SelectButton_clicked(bool checked) { accept(); }
 
-void SelectSpeciesDialog::on_CancelButton_clicked(bool checked)
-{
-	reject();
-}
+void SelectSpeciesDialog::on_CancelButton_clicked(bool checked) { reject(); }
 
 // Run the dialog, returning a single selected Species
-Species* SelectSpeciesDialog::selectSpecies()
+Species *SelectSpeciesDialog::selectSpecies()
 {
 	ui_.SpeciesWidget->reset(1, 1);
 
 	show();
 
-	if (exec() == QDialog::Accepted) return ui_.SpeciesWidget->currentSpecies().firstItem();
-	else return NULL;
+	if (exec() == QDialog::Accepted)
+		return ui_.SpeciesWidget->currentSpecies().firstItem();
+	else
+		return NULL;
 }
 
 // Run the dialog, returning a list of selected Species
@@ -81,6 +73,8 @@ RefList<Species> SelectSpeciesDialog::selectSpecies(int minSpecies, int maxSpeci
 
 	show();
 
-	if (exec() == QDialog::Accepted) return ui_.SpeciesWidget->currentSpecies();
-	else return RefList<Species>();
+	if (exec() == QDialog::Accepted)
+		return ui_.SpeciesWidget->currentSpecies();
+	else
+		return RefList<Species>();
 }

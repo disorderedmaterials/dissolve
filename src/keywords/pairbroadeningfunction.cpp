@@ -23,44 +23,37 @@
 #include "base/lineparser.h"
 
 // Constructor
-PairBroadeningFunctionKeyword::PairBroadeningFunctionKeyword(PairBroadeningFunction value) : KeywordData<PairBroadeningFunction>(KeywordBase::PairBroadeningFunctionData, value)
-{
-}
+PairBroadeningFunctionKeyword::PairBroadeningFunctionKeyword(PairBroadeningFunction value) : KeywordData<PairBroadeningFunction>(KeywordBase::PairBroadeningFunctionData, value) {}
 
 // Destructor
-PairBroadeningFunctionKeyword::~PairBroadeningFunctionKeyword()
-{
-}
+PairBroadeningFunctionKeyword::~PairBroadeningFunctionKeyword() {}
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int PairBroadeningFunctionKeyword::minArguments() const
-{
-	return 1;
-}
+int PairBroadeningFunctionKeyword::minArguments() const { return 1; }
 
 // Return maximum number of arguments accepted
-int PairBroadeningFunctionKeyword::maxArguments() const
-{
-	return 2;
-}
+int PairBroadeningFunctionKeyword::maxArguments() const { return 2; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool PairBroadeningFunctionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool PairBroadeningFunctionKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-	if (data_.readAsKeyword(parser, startArg, coreData)) set_ = true;
-	else return false;
+	if (data_.readAsKeyword(parser, startArg, coreData))
+		set_ = true;
+	else
+		return false;
 
 	return true;
 }
 
 // Write keyword data to specified LineParser
-bool PairBroadeningFunctionKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool PairBroadeningFunctionKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
-	if (!parser.writeLineF("%s%s", prefix, name())) return false;
+	if (!parser.writeLineF("%s%s", prefix, name()))
+		return false;
 
 	return data_.writeAsKeyword(parser, prefix, true);
 }
@@ -70,7 +63,4 @@ bool PairBroadeningFunctionKeyword::write(LineParser& parser, const char* keywor
  */
 
 // Validate supplied value
-bool PairBroadeningFunctionKeyword::isValid(PairBroadeningFunction value)
-{
-	return true;
-}
+bool PairBroadeningFunctionKeyword::isValid(PairBroadeningFunction value) { return true; }

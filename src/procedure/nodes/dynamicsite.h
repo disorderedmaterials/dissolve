@@ -24,8 +24,9 @@
 
 #include "procedure/nodes/node.h"
 #include "templates/array.h"
-#include "templates/reflist.h"
 #include "templates/refdatalist.h"
+#include "templates/reflist.h"
+#include <memory>
 
 // Forward Declarations
 class SelectProcedureNode;
@@ -38,64 +39,57 @@ class NodeScopeStack;
 // Procedure Node - Dynamic Site
 class DynamicSiteProcedureNode : public ProcedureNode
 {
-	public:
+      public:
 	// Constructor
-	DynamicSiteProcedureNode(SelectProcedureNode* parent);
+	DynamicSiteProcedureNode(SelectProcedureNode *parent);
 	// Destructor
 	~DynamicSiteProcedureNode();
-
 
 	/*
 	 * Identity
 	 */
-	public:
+      public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
 	// Return whether a name for the node must be provided
 	bool mustBeNamed() const;
 
-
 	/*
 	 * Site Criteria
 	 */
-	private:
+      private:
 	// Parent Select node for context
-	SelectProcedureNode* parent_;
+	SelectProcedureNode *parent_;
 	// Target Elements for selection as sites
 	RefList<Element> elements_;
 	// Target AtomTypes for selection as sites
 	RefList<AtomType> atomTypes_;
 
-	public:
+      public:
 	// Return whether axes are specified for the dynamic site
-	bool hasAxes() const
-	{
-		return false;
-	}
-
+	bool hasAxes() const { return false; }
 
 	/*
 	 * Site Generation
 	 */
-	private:
+      private:
 	// List of generated sites
 	Array<Site> generatedSites_;
 
-	private:
+      private:
 	// Generate dynamic sites from the specified Molecule
-	void generateSites(const Molecule* molecule); 
+	void generateSites(std::shared_ptr<const Molecule> molecule);
 
-	public:
+      public:
 	// Return Array of generated sites
-	const Array<Site>& generatedSites() const;
-
+	const Array<Site> &generatedSites() const;
 
 	/*
 	 * Execute
 	 */
-	public:
+      public:
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };
 
 #endif

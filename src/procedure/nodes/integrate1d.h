@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_PROCEDURENODE_INTEGRATE1D_H
 #define DISSOLVE_PROCEDURENODE_INTEGRATE1D_H
 
-#include "procedure/nodes/node.h"
-#include "math/sampleddouble.h"
 #include "base/charstring.h"
+#include "math/sampleddouble.h"
+#include "procedure/nodes/node.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -35,45 +35,42 @@ class NodeScopeStack;
 // Procedure Node - Integrate1D
 class Integrate1DProcedureNode : public ProcedureNode
 {
-	public:
+      public:
 	// Constructor
-	Integrate1DProcedureNode(const Process1DProcedureNode* target = NULL);
+	Integrate1DProcedureNode(const Process1DProcedureNode *target = NULL);
 	// Destructor
 	~Integrate1DProcedureNode();
-
 
 	/*
 	 * Identity
 	 */
-	public:
+      public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Process1D node that we are targetting (retrieved from keyword 'SourceData')
-	const Process1DProcedureNode* processNode_;
+	const Process1DProcedureNode *processNode_;
 	// Calculated integral (stored in processing data list)
 	SampledDouble integral_[3];
 
-	public:
+      public:
 	// Return calculated integral specified
-	const SampledDouble& integral(int index) const;
-
+	const SampledDouble &integral(int index) const;
 
 	/*
 	 * Execute
 	 */
-	public:
+      public:
 	// Prepare any necessary data, ready for execution
-	bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
+	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Finalise any necessary data after execution
-	bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };
 
 #endif

@@ -22,27 +22,27 @@
 #ifndef DISSOLVE_FORCEFIELD_ANGLETERM_H
 #define DISSOLVE_FORCEFIELD_ANGLETERM_H
 
-#include "classes/speciesangle.h"
 #include "base/charstring.h"
 #include "base/parameters.h"
+#include "classes/speciesangle.h"
 
 // Forward Declarations
 class Forcefield;
 class ForcefieldAtomType;
 
 // Forcefield Angle Term
-class ForcefieldAngleTerm : public ListItem<ForcefieldAngleTerm>
+class ForcefieldAngleTerm
 {
-	public:
+      public:
 	// Constructor / Destructor
-	ForcefieldAngleTerm(const char* typeI = NULL, const char* typeJ = NULL, const char* typeK = NULL, SpeciesAngle::AngleFunction form = SpeciesAngle::NoForm, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	ForcefieldAngleTerm(const char *typeI = NULL, const char *typeJ = NULL, const char *typeK = NULL, SpeciesAngle::AngleFunction form = SpeciesAngle::NoForm, double data0 = 0.0,
+			    double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	~ForcefieldAngleTerm();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Type names involved in interaction
 	CharString typeI_, typeJ_, typeK_;
 	// Functional form of interaction
@@ -50,13 +50,13 @@ class ForcefieldAngleTerm : public ListItem<ForcefieldAngleTerm>
 	// Parameters for interaction
 	double parameters_[MAXINTRAPARAMS];
 
-	public:
+      public:
 	// Return if this term matches the atom types supplied
-	bool matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k);
+	bool isMatch(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k) const;
 	// Return functional form index of interaction
 	SpeciesAngle::AngleFunction form() const;
 	// Return array of parameters
-	const double* parameters() const;
+	const double *parameters() const;
 };
 
 #endif

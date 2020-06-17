@@ -33,34 +33,33 @@ class SiteWidget : public QWidget
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	SiteWidget(QWidget* parent = 0);
+	SiteWidget(QWidget *parent = 0);
 	~SiteWidget();
 
-	private:
+      private:
 	// Main CoreData
-	CoreData* coreData_;
+	CoreData *coreData_;
 
-	public:
+      public:
 	// Set main CoreData pointer
-	void setCoreData(CoreData* coreData);
-
+	void setCoreData(CoreData *coreData);
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::SiteWidget ui_;
 
-	private slots:
+      private slots:
 	// Notify that the style of displayed data in the underlying viewer has changed
 	void notifyStyleModified();
 	// Notify that the displayed data in the underlying viewer has changed
 	void notifyDataModified();
 
-	public slots:
+      public slots:
 	// Post redisplay in the underlying view
 	void postRedisplay();
 	// Update toolbar to reflect current viewer state
@@ -68,7 +67,7 @@ class SiteWidget : public QWidget
 	// Update status bar
 	void updateStatusBar();
 
-	signals:
+      signals:
 	// Style of displayed data has been modified
 	void styleModified();
 	// Displayed data has been modified
@@ -76,23 +75,21 @@ class SiteWidget : public QWidget
 	// New site created and displayed
 	void siteCreatedAndShown();
 
-
 	/*
 	 * Site Viewer
 	 */
-	public:
+      public:
 	// Set parent Species for site
-	void setSpecies(Species* sp);
+	void setSpecies(Species *sp);
 	// Set target site, updating widget as necessary
-	void setSite(SpeciesSite* site);
+	void setSite(SpeciesSite *site);
 	// Return contained SiteViewer
-	SiteViewer* siteViewer();
-
+	SiteViewer *siteViewer();
 
 	/*
 	 * ToolBar
 	 */
-	private slots:
+      private slots:
 	// Interaction
 	void on_InteractionViewButton_clicked(bool checked);
 	// View

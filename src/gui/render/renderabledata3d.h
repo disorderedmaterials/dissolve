@@ -31,77 +31,75 @@ class Axes;
 // Renderable for Data3D
 class RenderableData3D : public Renderable
 {
-	public:
+      public:
 	// Constructor / Destructor
-	RenderableData3D(const Data3D* source, const char* objectTag);
+	RenderableData3D(const Data3D *source, const char *objectTag);
 	~RenderableData3D();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Source data
-	const Data3D* source_;
+	const Data3D *source_;
 
-	private:
+      private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	bool validateDataSource();
 	// Invalidate the current data source
 	void invalidateDataSource();
 
-	public:
+      public:
 	// Return version of data
 	int dataVersion();
-	
-	
+
 	/*
 	 * Transform / Limits
 	 */
-	private:
+      private:
 	// Transformed data
 	Data3D transformedData_;
 
-	protected:
+      protected:
 	// Transform data according to current settings
 	void transformValues();
 	// Return reference to transformed data
-	const Data3D& transformedData();
-
+	const Data3D &transformedData();
 
 	/*
 	 * Rendering Primitives
 	 */
-	private:
+      private:
 	// Primitive to represent data
-	Primitive* dataPrimitive_;
-	
-	private:
-	// Create line strip primitive
-	void constructLine( const Array< double >& displayXAbscissa, const Array< double >& displayYAbscissa, const Array< double >& displayAbscissa, const Array3D< double >& displayValues, const Axes& axes, const ColourDefinition& colourDefinition);
-	void marchingCubesOriginal(const Array<double>& displayXAbscissa, const Array<double>& displayYAbscissa, const Array<double>& displayZAbscissa, const Array3D<double>& displayValues, double lowerCutoff, double upperCutoff, const ColourDefinition& colourDefinition, const Axes& axes, Primitive* primitive);
+	Primitive *dataPrimitive_;
 
-	protected:
+      private:
+	// Create line strip primitive
+	void constructLine(const Array<double> &displayXAbscissa, const Array<double> &displayYAbscissa, const Array<double> &displayAbscissa, const Array3D<double> &displayValues, const Axes &axes,
+			   const ColourDefinition &colourDefinition);
+	void marchingCubesOriginal(const Array<double> &displayXAbscissa, const Array<double> &displayYAbscissa, const Array<double> &displayZAbscissa, const Array3D<double> &displayValues,
+				   double lowerCutoff, double upperCutoff, const ColourDefinition &colourDefinition, const Axes &axes, Primitive *primitive);
+
+      protected:
 	// Recreate necessary primitives / primitive assemblies for the data
-	void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition);
+	void recreatePrimitives(const View &view, const ColourDefinition &colourDefinition);
 	// Send primitives for rendering
 	const void sendToGL(const double pixelScaling);
-	
-
 
 	/*
 	 * Style
 	 */
-	public:
+      public:
 	// Display Styles enum
 	enum Data3DDisplayStyle
 	{
-		SolidStyle, nData3DDisplayStyles
+		SolidStyle,
+		nData3DDisplayStyles
 	};
 	// Return EnumOptions for Data3DDisplayStyle
 	static EnumOptions<Data3DDisplayStyle> data3DDisplayStyles();
 
-	private:
+      private:
 	// Display style for the renderable
 	Data3DDisplayStyle displayStyle_;
 	// Lower cutoff for surface generation
@@ -111,7 +109,7 @@ class RenderableData3D : public Renderable
 	// Surface shininess for SolidSurface style
 	double surfaceShininess_;
 
-	public:
+      public:
 	// Set display style for renderable
 	void setDisplayStyle(Data3DDisplayStyle displayStyle);
 	// Return display style for the renderable
@@ -125,26 +123,25 @@ class RenderableData3D : public Renderable
 	// Return upper cutoff for surface generation
 	double upperCutoff() const;
 
-
 	/*
 	 * Style I/O
 	 */
-	public:
+      public:
 	// Data3DStyle Keywords Enum
 	enum Data3DStyleKeyword
 	{
-		DisplayKeyword,			/* 'Display' - General display style for renderable */
-		EndStyleKeyword,		/* 'EndStyle' - End of Style block */
-		LowerCutoffKeyword,		/* 'LowerCutoff' - Lower cutoff value for surface generation */
-		UpperCutoffKeyword,		/* 'UpperCutoff' - Upper cutoff value for surface generation */
+		DisplayKeyword,     /* 'Display' - General display style for renderable */
+		EndStyleKeyword,    /* 'EndStyle' - End of Style block */
+		LowerCutoffKeyword, /* 'LowerCutoff' - Lower cutoff value for surface generation */
+		UpperCutoffKeyword, /* 'UpperCutoff' - Upper cutoff value for surface generation */
 		nData3DStyleKeywords
 	};
 	// Return enum option info for RenderableKeyword
 	static EnumOptions<RenderableData3D::Data3DStyleKeyword> data3DStyleKeywords();
 	// Write style information
-	bool writeStyleBlock(LineParser& parser, int indentLevel = 0) const;
+	bool writeStyleBlock(LineParser &parser, int indentLevel = 0) const;
 	// Read style information
-	bool readStyleBlock(LineParser& parser);
+	bool readStyleBlock(LineParser &parser);
 };
 
 #endif

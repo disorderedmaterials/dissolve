@@ -30,61 +30,56 @@
 class ProcedureNode;
 
 // Keyword with NodeValue Triplet Data
-class Vec3NodeValueKeyword : public KeywordData< Vec3<NodeValue> >
+class Vec3NodeValueKeyword : public KeywordData<Vec3<NodeValue>>
 {
-	public:
+      public:
 	// Constructor
-	Vec3NodeValueKeyword(ProcedureNode* parentNode, Vec3<double> value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
+	Vec3NodeValueKeyword(ProcedureNode *parentNode, Vec3<double> value, Vec3Labels::LabelType labelType = Vec3Labels::NoLabels);
 	// Destructor
 	~Vec3NodeValueKeyword();
-
 
 	/*
 	 * Parent Node
 	 */
-	private:
+      private:
 	// Parent ProcedureNode
-	ProcedureNode* parentNode_;
-
+	ProcedureNode *parentNode_;
 
 	/*
 	 * Label Type
 	 */
-	private:
+      private:
 	// Label type to display in GUI
 	Vec3Labels::LabelType labelType_;
 
-	public:
+      public:
 	// Label type to display in GUI
 	Vec3Labels::LabelType labelType() const;
-
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
-
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 
 	/*
 	 * Set
 	 */
-	public:
+      public:
 	// Set the specified value from supplied expression text
-	bool setValue(int index, const char* expressionText);
-
+	bool setValue(int index, const char *expressionText);
 
 	/*
 	 * Conversion
 	 */
-	public:
+      public:
 	// Return value (as Vec3<int>)
 	Vec3<int> asVec3Int();
 	// Return value (as Vec3<double>)
@@ -92,4 +87,3 @@ class Vec3NodeValueKeyword : public KeywordData< Vec3<NodeValue> >
 };
 
 #endif
-

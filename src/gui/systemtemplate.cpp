@@ -22,30 +22,22 @@
 #include "gui/systemtemplate.h"
 #include "base/messenger.h"
 #include "templates/variantpointer.h"
-#include <QToolButton>
 #include <QDir>
 #include <QFile>
+#include <QToolButton>
 #include <QXmlStreamReader>
 #include <stdlib.h>
 
 // Constructor / Destructor
-SystemTemplate::SystemTemplate()
-{
-	toolButton_ = NULL;
-}
+SystemTemplate::SystemTemplate() { toolButton_ = NULL; }
 
-SystemTemplate::~SystemTemplate()
-{
-}
+SystemTemplate::~SystemTemplate() {}
 
 // Copy Constructor
-SystemTemplate::SystemTemplate(const SystemTemplate& source)
-{
-	(*this) = source;
-}
+SystemTemplate::SystemTemplate(const SystemTemplate &source) { (*this) = source; }
 
 // Assignment operator
-void SystemTemplate::operator=(const SystemTemplate& source)
+void SystemTemplate::operator=(const SystemTemplate &source)
 {
 	name_ = source.name_;
 	description_ = source.description_;
@@ -64,12 +56,15 @@ bool SystemTemplate::read(const QDir rootResourceDir)
 {
 	// Set up an XML stream reader on the expected template info file
 	QFile infoFile(rootResourceDir.filePath("info.xml"));
-	if (!infoFile.open(QIODevice::ReadOnly | QIODevice::Text)) return Messenger::error("Couldn't open template system info file '%s'.\n", qPrintable(infoFile.fileName()));
+	if (!infoFile.open(QIODevice::ReadOnly | QIODevice::Text))
+		return Messenger::error("Couldn't open template system info file '%s'.\n", qPrintable(infoFile.fileName()));
 	QXmlStreamReader infoReader(&infoFile);
 
 	// Check that we have a file with the correct root node
-	if (!infoReader.readNextStartElement()) return Messenger::error("Failed to do initial read from system template xml.\n");
-	if (infoReader.name() != "systemtemplate") return Messenger::error("System template file has wrong root node type (%s).\n", qPrintable(infoReader.name().toString()));
+	if (!infoReader.readNextStartElement())
+		return Messenger::error("Failed to do initial read from system template xml.\n");
+	if (infoReader.name() != "systemtemplate")
+		return Messenger::error("System template file has wrong root node type (%s).\n", qPrintable(infoReader.name().toString()));
 
 	QString inputFileResource;
 
@@ -79,11 +74,16 @@ bool SystemTemplate::read(const QDir rootResourceDir)
 		// Check the name of the root element
 		QString token = infoReader.name().toString();
 
-		if (token == "name") name_ = infoReader.readElementText();
-		else if (token == "icon") iconResource_= rootResourceDir.absoluteFilePath(infoReader.readElementText());
-		else if (token == "input") inputFileResource = rootResourceDir.absoluteFilePath(infoReader.readElementText());
-		else if (token == "group") group_ = infoReader.readElementText();
-		else if (token == "description") description_ = infoReader.readElementText();
+		if (token == "name")
+			name_ = infoReader.readElementText();
+		else if (token == "icon")
+			iconResource_ = rootResourceDir.absoluteFilePath(infoReader.readElementText());
+		else if (token == "input")
+			inputFileResource = rootResourceDir.absoluteFilePath(infoReader.readElementText());
+		else if (token == "group")
+			group_ = infoReader.readElementText();
+		else if (token == "description")
+			description_ = infoReader.readElementText();
 		else
 		{
 			Messenger::error("Unrecognised token '%s' found in system template.\n", qPrintable(token));
@@ -95,8 +95,10 @@ bool SystemTemplate::read(const QDir rootResourceDir)
 	if (!inputFileResource.isEmpty())
 	{
 		QFile file(inputFileResource);
-		if (!file.open(QIODevice::ReadOnly)) return Messenger::error("Failed to open input file data for template '%s'.\n", qPrintable(name_));
-		else inputFileData_ = file.readAll();
+		if (!file.open(QIODevice::ReadOnly))
+			return Messenger::error("Failed to open input file data for template '%s'.\n", qPrintable(name_));
+		else
+			inputFileData_ = file.readAll();
 		file.close();
 	}
 
@@ -104,52 +106,35 @@ bool SystemTemplate::read(const QDir rootResourceDir)
 }
 
 // Return name of the template
-QString SystemTemplate::name() const
-{
-	return name_;
-}
+QString SystemTemplate::name() const { return name_; }
 
 // Return group in which the template exists
-QString SystemTemplate::group() const
-{
-	return group_;
-}
+QString SystemTemplate::group() const { return group_; }
 
 // Return short description of the template
-QString SystemTemplate::description() const
-{
-	return description_;
-}
+QString SystemTemplate::description() const { return description_; }
 
 // Return resource path to the template's icon
-QString SystemTemplate::iconResource() const
-{
-	return iconResource_;
-}
+QString SystemTemplate::iconResource() const { return iconResource_; }
 
 // Return the template's input data
-QString SystemTemplate::inputFileData() const
-{
-	return inputFileData_;
-}
+QString SystemTemplate::inputFileData() const { return inputFileData_; }
 
 // Return QToolButton created for the template
-QToolButton* SystemTemplate::toolButton() const
-{
-	return toolButton_;
-}
+QToolButton *SystemTemplate::toolButton() const { return toolButton_; }
 
 // Create and return a button for this template
-QToolButton* SystemTemplate::createButton()
+QToolButton *SystemTemplate::createButton()
 {
-	if (toolButton_) Messenger::warn("A QToolButton already exists for the SystemTemplate '%s'. It will be overwritten.\n", qPrintable(name_));
+	if (toolButton_)
+		Messenger::warn("A QToolButton already exists for the SystemTemplate '%s'. It will be overwritten.\n", qPrintable(name_));
 	toolButton_ = new QToolButton;
 	toolButton_->setText(name_);
-	toolButton_->setMaximumSize(QSize(200,200));
+	toolButton_->setMaximumSize(QSize(200, 200));
 	toolButton_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
 	toolButton_->setToolButtonStyle(Qt::ToolButtonIconOnly);
 	toolButton_->setIcon(QPixmap(iconResource_));
-	toolButton_->setIconSize(QSize(64,64));
+	toolButton_->setIconSize(QSize(64, 64));
 	toolButton_->setToolTip(description_);
 
 	return toolButton_;

@@ -19,10 +19,10 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "genericitems/item.h"
 #include "gui/datamanagerdialog.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
-#include "genericitems/item.h"
 #include "templates/variantpointer.h"
 #include <QFileDialog>
 #include <QInputDialog>
@@ -30,7 +30,7 @@
 #include <QRegExp>
 
 // Constructor
-DataManagerDialog::DataManagerDialog(QWidget* parent, Dissolve& dissolve, List<ReferencePoint>& referencePoints) : QDialog(parent), dissolve_(dissolve), referencePoints_(referencePoints)
+DataManagerDialog::DataManagerDialog(QWidget *parent, Dissolve &dissolve, List<ReferencePoint> &referencePoints) : QDialog(parent), dissolve_(dissolve), referencePoints_(referencePoints)
 {
 	ui_.setupUi(this);
 
@@ -38,25 +38,23 @@ DataManagerDialog::DataManagerDialog(QWidget* parent, Dissolve& dissolve, List<R
 }
 
 // Destructor
-DataManagerDialog::~DataManagerDialog()
-{
-}
+DataManagerDialog::~DataManagerDialog() {}
 
 /*
  * UI
  */
 
 // Append GenericItems to table under specified source
-void DataManagerDialog::addItemsToTable(QTableWidget* table, List<GenericItem>& items, const char* locationName, const char* locationIconResource)
+void DataManagerDialog::addItemsToTable(QTableWidget *table, List<GenericItem> &items, const char *locationName, const char *locationIconResource)
 {
 	// Create icon
 	QIcon locationIcon = QPixmap(locationIconResource);
 
-	QTableWidgetItem* item;
+	QTableWidgetItem *item;
 	int count = table->rowCount();
 	table->setRowCount(count + items.nItems());
 	ListIterator<GenericItem> itemIterator(items);
-	while (GenericItem* genericItem = itemIterator.iterate())
+	while (GenericItem *genericItem = itemIterator.iterate())
 	{
 		// Item name
 		item = new QTableWidgetItem(genericItem->name());
@@ -85,21 +83,23 @@ void DataManagerDialog::addItemsToTable(QTableWidget* table, List<GenericItem>& 
 }
 
 // Update the specified table of GenericItems, optionally filtering them by name and description
-void DataManagerDialog::filterTable(QTableWidget* table, GenericItem* current, QString filter)
+void DataManagerDialog::filterTable(QTableWidget *table, GenericItem *current, QString filter)
 {
 	// Loop over rows in the table
-	for (int n=0; n<table->rowCount(); ++n)
+	for (int n = 0; n < table->rowCount(); ++n)
 	{
-		QTableWidgetItem* item = table->item(n, 0);
-		if (!item) continue;
-		GenericItem* genericItem = VariantPointer<GenericItem>(item->data(Qt::UserRole));
+		QTableWidgetItem *item = table->item(n, 0);
+		if (!item)
+			continue;
+		GenericItem *genericItem = VariantPointer<GenericItem>(item->data(Qt::UserRole));
 		if (genericItem == current)
 		{
 			table->setCurrentItem(item);
 		}
 
 		// Check filtering
-		if (filter.isEmpty()) table->setRowHidden(n, false);
+		if (filter.isEmpty())
+			table->setRowHidden(n, false);
 		else
 		{
 			// Check name
@@ -120,9 +120,9 @@ void DataManagerDialog::filterTable(QTableWidget* table, GenericItem* current, Q
 }
 
 // Update ReferencePoint table row
-void DataManagerDialog::referencePointRowUpdate(int row, ReferencePoint* refPoint, bool createItems)
+void DataManagerDialog::referencePointRowUpdate(int row, ReferencePoint *refPoint, bool createItems)
 {
-	QTableWidgetItem* item;
+	QTableWidgetItem *item;
 
 	// Data Suffix
 	if (createItems)
@@ -131,7 +131,8 @@ void DataManagerDialog::referencePointRowUpdate(int row, ReferencePoint* refPoin
 		item->setData(Qt::UserRole, VariantPointer<ReferencePoint>(refPoint));
 		ui_.ReferencePointsTable->setItem(row, 0, item);
 	}
-	else item = ui_.ReferencePointsTable->item(row, 0);
+	else
+		item = ui_.ReferencePointsTable->item(row, 0);
 	item->setText(refPoint->suffix());
 
 	// Restart file name
@@ -141,16 +142,18 @@ void DataManagerDialog::referencePointRowUpdate(int row, ReferencePoint* refPoin
 		item->setData(Qt::UserRole, VariantPointer<ReferencePoint>(refPoint));
 		ui_.ReferencePointsTable->setItem(row, 1, item);
 	}
-	else item = ui_.ReferencePointsTable->item(row, 1);
+	else
+		item = ui_.ReferencePointsTable->item(row, 1);
 	item->setText(refPoint->restartFile());
 }
 
 // Return currently-selected ReferencePoint
-ReferencePoint* DataManagerDialog::currentReferencePoint() const
+ReferencePoint *DataManagerDialog::currentReferencePoint() const
 {
 	// Get current item from tree, and check the parent item
-	QTableWidgetItem* item = ui_.ReferencePointsTable->currentItem();
-	if (!item) return NULL;
+	QTableWidgetItem *item = ui_.ReferencePointsTable->currentItem();
+	if (!item)
+		return NULL;
 	return VariantPointer<ReferencePoint>(item->data(Qt::UserRole));
 }
 
@@ -161,30 +164,30 @@ void DataManagerDialog::updateControls()
 	ui_.SimulationDataTable->setRowCount(0);
 	addItemsToTable(ui_.SimulationDataTable, dissolve_.processingModuleData().items(), "Main Processing", ":/dissolve/icons/dissolve.png");
 	ListIterator<Configuration> configIterator(dissolve_.configurations());
-	while (Configuration* cfg = configIterator.iterate()) addItemsToTable(ui_.SimulationDataTable, cfg->moduleData().items(), cfg->name(), ":/tabs/icons/tabs_configuration.svg");
+	while (Configuration *cfg = configIterator.iterate())
+		addItemsToTable(ui_.SimulationDataTable, cfg->moduleData().items(), cfg->name(), ":/tabs/icons/tabs_configuration.svg");
 	ui_.SimulationDataTable->resizeColumnsToContents();
 
 	// Populate reference points table
-	TableWidgetUpdater<DataManagerDialog,ReferencePoint> refPointUpdater(ui_.ReferencePointsTable, referencePoints_, this, &DataManagerDialog::referencePointRowUpdate);
+	TableWidgetUpdater<DataManagerDialog, ReferencePoint> refPointUpdater(ui_.ReferencePointsTable, referencePoints_, this, &DataManagerDialog::referencePointRowUpdate);
 	ui_.ReferencePointsTable->resizeColumnsToContents();
 }
 
 // Simulation Data
-void DataManagerDialog::on_SimulationDataFilterEdit_textChanged(const QString& text)
-{
-	filterTable(ui_.SimulationDataTable, NULL, text);
-}
+void DataManagerDialog::on_SimulationDataFilterEdit_textChanged(const QString &text) { filterTable(ui_.SimulationDataTable, NULL, text); }
 
 // Refernce Points
 void DataManagerDialog::on_ReferencePointRemoveButton_clicked(bool checked)
 {
-	ReferencePoint* refPoint = currentReferencePoint();
-	if (!refPoint) return;
+	ReferencePoint *refPoint = currentReferencePoint();
+	if (!refPoint)
+		return;
 
 	// For the provided suffix, we need to prune all processing data lists of associated data
 	dissolve_.processingModuleData().pruneWithSuffix(qPrintable(refPoint->suffix()));
 	ListIterator<Configuration> configIterator(dissolve_.configurations());
-	while (Configuration* cfg = configIterator.iterate()) cfg->moduleData().pruneWithSuffix(qPrintable(refPoint->suffix()));
+	while (Configuration *cfg = configIterator.iterate())
+		cfg->moduleData().pruneWithSuffix(qPrintable(refPoint->suffix()));
 
 	updateControls();
 }
@@ -193,20 +196,24 @@ void DataManagerDialog::on_ReferencePointOpenButton_clicked(bool checked)
 {
 	// Get file to open
 	QString restartFile = QFileDialog::getOpenFileName(this, "Choose restart file to open", QDir().absolutePath(), "Restart Files (*.restart)");
-	if (restartFile.isEmpty()) return;
+	if (restartFile.isEmpty())
+		return;
 
 	// Get suffix for data - base this on the filename
 	QString suffix = QFileInfo(restartFile).baseName();
 	bool ok;
 	suffix = QInputDialog::getText(this, "Reference Point Suffix", "Enter suffix to apply to the reference point data", QLineEdit::Normal, suffix, &ok);
-	if (!ok) return;
+	if (!ok)
+		return;
 
-	ReferencePoint* refPoint = referencePoints_.add();
+	ReferencePoint *refPoint = referencePoints_.add();
 	refPoint->setRestartFile(qPrintable(QDir::current().relativeFilePath(restartFile)));
 	refPoint->setSuffix(qPrintable(suffix));
 
 	// Load the data
-	if (!dissolve_.loadRestartAsReference(qPrintable(refPoint->restartFile()), qPrintable(refPoint->suffix()))) QMessageBox::warning(this, "Error loading reference point", "Couldn't load the reference point data specified.\nThis may be because your simulation setup doesn't match that expected by the restart data.\n");
+	if (!dissolve_.loadRestartAsReference(qPrintable(refPoint->restartFile()), qPrintable(refPoint->suffix())))
+		QMessageBox::warning(this, "Error loading reference point",
+				     "Couldn't load the reference point data specified.\nThis may be because your simulation setup doesn't match that expected by the restart data.\n");
 
 	updateControls();
 }
@@ -215,37 +222,35 @@ void DataManagerDialog::on_ReferencePointCreateButton_clicked(bool checked)
 {
 	// Get filename for reference point
 	QString filename = QFileDialog::getSaveFileName(this, "Select Reference Point File", QDir::currentPath(), "Restart Files (*.restart)");
-	if (filename.isEmpty()) return;
+	if (filename.isEmpty())
+		return;
 
 	// Get suffix for data - base this on the filename
 	QString suffix = QFileInfo(filename).baseName();
 	bool ok;
 	suffix = QInputDialog::getText(this, "Reference Point Suffix", "Enter suffix to apply to the reference point data", QLineEdit::Normal, suffix, &ok);
-	if (!ok) return;
+	if (!ok)
+		return;
 
-	if (dissolve_.saveRestart(qPrintable(filename))) Messenger::print("Saved reference point to '%s'.\n", qPrintable(filename));
+	if (dissolve_.saveRestart(qPrintable(filename)))
+		Messenger::print("Saved reference point to '%s'.\n", qPrintable(filename));
 	else
 	{
 		Messenger::error("Failed to save reference point to '%s'.\n", qPrintable(filename));
 		return;
 	}
 
-	ReferencePoint* refPoint = referencePoints_.add();
+	ReferencePoint *refPoint = referencePoints_.add();
 	refPoint->setRestartFile(qPrintable(QDir::current().relativeFilePath(filename)));
 	refPoint->setSuffix(qPrintable(suffix));
 
-	if (!dissolve_.loadRestartAsReference(qPrintable(filename), qPrintable(suffix))) QMessageBox::warning(this, "Error loading reference point", "Couldn't load the reference point data.\nWhich is odd, annoying, and something you should let the developer know about.");
+	if (!dissolve_.loadRestartAsReference(qPrintable(filename), qPrintable(suffix)))
+		QMessageBox::warning(this, "Error loading reference point", "Couldn't load the reference point data.\nWhich is odd, annoying, and something you should let the developer know about.");
 
 	updateControls();
 }
 
-void DataManagerDialog::on_ReferencePointsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem)
-{
-	ui_.ReferencePointRemoveButton->setEnabled(currentItem);
-}
+void DataManagerDialog::on_ReferencePointsTable_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *previousItem) { ui_.ReferencePointRemoveButton->setEnabled(currentItem); }
 
 // Dialog
-void DataManagerDialog::on_CloseButton_clicked(bool checked)
-{
-	accept();
-}
+void DataManagerDialog::on_CloseButton_clicked(bool checked) { accept(); }

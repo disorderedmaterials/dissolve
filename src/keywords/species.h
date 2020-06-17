@@ -29,36 +29,33 @@
 class Species;
 
 // Keyword with Species Data
-class SpeciesKeyword : public KeywordData<Species*>
+class SpeciesKeyword : public KeywordData<Species *>
 {
-	public:
+      public:
 	// Constructor
-	SpeciesKeyword(Species* sp = NULL);
+	SpeciesKeyword(Species *sp = NULL);
 	// Destructor
 	~SpeciesKeyword();
-
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
-
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 
 	/*
 	 * Object Management
 	 */
-	protected:
+      protected:
 	// Prune any references to the supplied Species in the contained data
-	void removeReferencesTo(Species* sp);
+	void removeReferencesTo(Species *sp);
 };
 
 #endif
-

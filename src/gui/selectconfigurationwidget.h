@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_WIDGET_SELECTSPECIES_H
 #define DISSOLVE_WIDGET_SELECTSPECIES_H
 
-#include "gui/ui_selectconfigurationwidget.h"
 #include "data/fflibrary.h"
+#include "gui/ui_selectconfigurationwidget.h"
 #include "templates/list.h"
 #include <QWidget>
 
@@ -36,67 +36,63 @@ class SelectConfigurationWidget : public QWidget
 {
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	SelectConfigurationWidget(QWidget* parent);
+	SelectConfigurationWidget(QWidget *parent);
 	// Destructor
 	~SelectConfigurationWidget();
-
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::SelectConfigurationWidget ui_;
 	// Whether the widget is refreshing
 	bool refreshing_;
 
-
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// CoreData containing available Configuration
-	const CoreData* coreData_;
+	const CoreData *coreData_;
 	// Minimum number of Configuration in a valid selection
 	int minimumSelectionSize_;
 	// Maximum number of Configuration in a valid selection (-1 for no limit)
 	int maximumSelectionSize_;
 
-	public:
+      public:
 	// Set CoreData containing available Configuration
-	void setCoreData(const CoreData* coreData);
+	void setCoreData(const CoreData *coreData);
 	// Reset widget, applying specified min and max limits to selection
 	void reset(int minSize, int maxSize);
-
 
 	/*
 	 * Update
 	 */
-	private:
+      private:
 	// Update the list of Configuration
 	void updateConfigurationList();
-
 
 	/*
 	 * Signals / Slots
 	 */
-	private slots:
+      private slots:
 	void on_SelectNoneButton_clicked(bool checked);
 	void on_SelectAllButton_clicked(bool checked);
 	void on_ConfigurationList_itemSelectionChanged();
-	void on_ConfigurationList_itemDoubleClicked(QListWidgetItem* item);
+	void on_ConfigurationList_itemDoubleClicked(QListWidgetItem *item);
 
-	signals:
+      signals:
 	void speciesSelectionChanged(bool isValid);
 	void speciesDoubleClicked();
 
-	private:
+      private:
 	// Return whether number of selected items is valid
 	bool isSelectionValid() const;
 
-	public:
+      public:
 	// Return number of species currently selected
 	int nSelected() const;
 	// Return the currently-selected Configuration

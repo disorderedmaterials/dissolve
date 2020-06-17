@@ -22,12 +22,12 @@
 #ifndef DISSOLVE_RENDER_TEXTPRIMITIVE_H
 #define DISSOLVE_RENDER_TEXTPRIMITIVE_H
 
-#include "gui/render/textfragment.h"
 #include "gui/render/textformat.h"
-#include "math/matrix4.h"
+#include "gui/render/textfragment.h"
 #include "math/cuboid.h"
-#include "templates/vector3.h"
+#include "math/matrix4.h"
 #include "templates/list.h"
+#include "templates/vector3.h"
 #include <QString>
 
 // External Declarations
@@ -39,26 +39,46 @@ class FontInstance;
 // Text Primitive
 class TextPrimitive : public ListItem<TextPrimitive>
 {
-	public:
+      public:
 	// Constructor / Destructor
 	TextPrimitive();
 	~TextPrimitive();
 	// Text Anchors enum
-	enum TextAnchor { TopLeftAnchor, TopMiddleAnchor, TopRightAnchor, MiddleLeftAnchor, CentralAnchor, MiddleRightAnchor, BottomLeftAnchor, BottomMiddleAnchor, BottomRightAnchor, nTextAnchors };
+	enum TextAnchor
+	{
+		TopLeftAnchor,
+		TopMiddleAnchor,
+		TopRightAnchor,
+		MiddleLeftAnchor,
+		CentralAnchor,
+		MiddleRightAnchor,
+		BottomLeftAnchor,
+		BottomMiddleAnchor,
+		BottomRightAnchor,
+		nTextAnchors
+	};
 	// Convert text string to TextAnchor
-	static TextAnchor textAnchor(const char* s);
+	static TextAnchor textAnchor(const char *s);
 	// Convert TextAnchor to text string
-	static const char* textAnchor(TextAnchor anchor);
+	static const char *textAnchor(TextAnchor anchor);
 	// Escape Sequence enum
-	enum EscapeSequence { BoldEscape, ItalicEscape, NewLineEscape, SubScriptEscape, SuperScriptEscape, SymbolEscape, nEscapeSequences };
+	enum EscapeSequence
+	{
+		BoldEscape,
+		ItalicEscape,
+		NewLineEscape,
+		SubScriptEscape,
+		SuperScriptEscape,
+		SymbolEscape,
+		nEscapeSequences
+	};
 	// Convert text string to EscapeSequence
-	static EscapeSequence escapeSequence(const char* s);
-
+	static EscapeSequence escapeSequence(const char *s);
 
 	/*
 	 * Definition
 	 */
-	private:
+      private:
 	// Coordinates of anchorpoint of text
 	Vec3<double> anchorPoint_;
 	// Location of anchorpoint on text bounding box
@@ -74,21 +94,20 @@ class TextPrimitive : public ListItem<TextPrimitive>
 	// Text fragments to render
 	List<TextFragment> fragments_;
 
-	public:
+      public:
 	// Set data
-	void set(FontInstance& fontInstance, QString text, Vec3<double> anchorPoint, TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 localRotation, double textSize, bool flat);
+	void set(FontInstance &fontInstance, QString text, Vec3<double> anchorPoint, TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 localRotation, double textSize, bool flat);
 	// Return transformation matrix to use when rendering (including fragment scale/translation if one is specified)
-	Matrix4 transformationMatrix(FontInstance& fontInstance, const Matrix4& viewMatrixInverse, double baseFontSize, TextFragment* fragment = NULL);
+	Matrix4 transformationMatrix(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize, TextFragment *fragment = NULL);
 	// Calculate bounding box of primitive
-	void boundingBox(FontInstance& fontInstance, Vec3<double>& lowerLeft, Vec3<double>& upperRight);
+	void boundingBox(FontInstance &fontInstance, Vec3<double> &lowerLeft, Vec3<double> &upperRight);
 	// Render primitive
-	void render(FontInstance& fontInstance, const Matrix4& viewMatrix, const Matrix4& viewMatrixInverse, double baseFontSize);
-
+	void render(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse, double baseFontSize);
 
 	/*
 	 * Generation
 	 */
-	private:
+      private:
 	// Character string source
 	static QString stringSource_;
 	// Integer position in stringSource, total length of string, and starting position of current token/function
@@ -100,21 +119,21 @@ class TextPrimitive : public ListItem<TextPrimitive>
 	// 'Replace' last character read from current input stream
 	static void unGetChar();
 	// Current target for generation
-	static TextPrimitive* target_;
+	static TextPrimitive *target_;
 	// Current FontInstance
-	static FontInstance* fontInstance_;
+	static FontInstance *fontInstance_;
 	// Format stack, used when generating primitive
 	static List<TextFormat> formatStack_;
 	// Current horizontal position, used when generating primitive
 	static double horizontalPosition_;
 
-	public:
+      public:
 	// Parser lexer, called by yylex()
 	static int lex();
 	// Generate TextFragment data for specified TextPrimitive from supplied string
-	static bool generateFragments(FontInstance* fontInstance, TextPrimitive* target, QString inputString);
+	static bool generateFragments(FontInstance *fontInstance, TextPrimitive *target, QString inputString);
 	// Return current target TextPrimitive
-	static TextPrimitive* target();
+	static TextPrimitive *target();
 	// Add text fragment
 	bool addFragment(QString text);
 	// Add escape marker

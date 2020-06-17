@@ -29,44 +29,40 @@
 class Species;
 
 // Keyword with Species RefList Data
-class SpeciesRefListKeyword : public KeywordData< RefList<Species>& >
+class SpeciesRefListKeyword : public KeywordData<RefList<Species> &>
 {
-	public:
+      public:
 	// Constructor
-	SpeciesRefListKeyword(RefList<Species>& references);
+	SpeciesRefListKeyword(RefList<Species> &references);
 	// Destructor
 	~SpeciesRefListKeyword();
-
 
 	/*
 	 * Data
 	 */
-	protected:
+      protected:
 	// Determine whether current data is 'empty', and should be considered as 'not set'
 	bool isDataEmpty() const;
-
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
-
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 
 	/*
 	 * Object Management
 	 */
-	protected:
+      protected:
 	// Prune any references to the supplied Species in the contained data
-	void removeReferencesTo(Species* sp);
+	void removeReferencesTo(Species *sp);
 };
 
 #endif
-

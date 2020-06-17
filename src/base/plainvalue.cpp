@@ -60,7 +60,7 @@ PlainValue::PlainValue(double value)
 }
 
 // Constructor (string)
-PlainValue::PlainValue(const char* value)
+PlainValue::PlainValue(const char *value)
 {
 	clear();
 
@@ -69,7 +69,7 @@ PlainValue::PlainValue(const char* value)
 }
 
 // Constructor (CharString)
-PlainValue::PlainValue(const CharString& value)
+PlainValue::PlainValue(const CharString &value)
 {
 	clear();
 
@@ -78,13 +78,10 @@ PlainValue::PlainValue(const CharString& value)
 }
 
 // Constructor (PlainValue)
-PlainValue::PlainValue(const PlainValue& value)
-{
-	(*this) = value;
-}
+PlainValue::PlainValue(const PlainValue &value) { (*this) = value; }
 
 // Assignment operator
-void PlainValue::operator=(const PlainValue& value)
+void PlainValue::operator=(const PlainValue &value)
 {
 	name_ = value.name_;
 	description_ = value.description_;
@@ -101,18 +98,13 @@ void PlainValue::operator=(const PlainValue& value)
 }
 
 // Destructor
-PlainValue::~PlainValue()
-{
-}
+PlainValue::~PlainValue() {}
 
 // VariableType names
-const char* ValueTypeNames[] = { "Boolean", "Integer", "Double", "String" };
+const char *ValueTypeNames[] = {"Boolean", "Integer", "Double", "String"};
 
 // Return VariableType name
-const char* PlainValue::valueType(ValueType vt)
-{
-	return ValueTypeNames[vt];
-}
+const char *PlainValue::valueType(ValueType vt) { return ValueTypeNames[vt]; }
 
 /*
  * Definition
@@ -134,7 +126,7 @@ void PlainValue::clear()
 }
 
 // Set value, including name and description
-void PlainValue::initialise(const char* name, PlainValue newValue, const char* description, int genericItemFlags)
+void PlainValue::initialise(const char *name, PlainValue newValue, const char *description, int genericItemFlags)
 {
 	name_ = name;
 	description_ = description;
@@ -144,7 +136,7 @@ void PlainValue::initialise(const char* name, PlainValue newValue, const char* d
 }
 
 // Set value
-void PlainValue::set(const PlainValue& value)
+void PlainValue::set(const PlainValue &value)
 {
 	type_ = value.type_;
 	valueB_ = value.valueB_;
@@ -154,28 +146,16 @@ void PlainValue::set(const PlainValue& value)
 }
 
 // Return name of value
-const char* PlainValue::name()
-{
-	return name_.get();
-}
+const char *PlainValue::name() { return name_.get(); }
 
 // Return description for value
-const char* PlainValue::description()
-{
-	return description_.get();
-}
+const char *PlainValue::description() { return description_.get(); }
 
 // Return type of variable
-PlainValue::ValueType PlainValue::type()
-{
-	return type_;
-}
+PlainValue::ValueType PlainValue::type() { return type_; }
 
 // Return flags to apply if reinstated as a GenericListItem (i.e. in a Module)
-int PlainValue::genericItemFlags()
-{
-	return genericItemFlags_;
-}
+int PlainValue::genericItemFlags() { return genericItemFlags_; }
 
 /*
  * Validation
@@ -184,7 +164,8 @@ int PlainValue::genericItemFlags()
 // Set integer validation range
 void PlainValue::setValidationRange(int minValue, int maxValue)
 {
-	if (type_ != PlainValue::IntegerType) Messenger::warn("Setting integer validation for a non-integer PlainValue.\n");
+	if (type_ != PlainValue::IntegerType)
+		Messenger::warn("Setting integer validation for a non-integer PlainValue.\n");
 
 	hasValidation_ = true;
 	minimumLimit_ = true;
@@ -196,7 +177,8 @@ void PlainValue::setValidationRange(int minValue, int maxValue)
 // Set minimum validation limit
 void PlainValue::setValidationMin(int minValue)
 {
-	if (type_ != PlainValue::IntegerType) Messenger::warn("Setting integer validation maximum limit for a non-integer PlainValue.\n");
+	if (type_ != PlainValue::IntegerType)
+		Messenger::warn("Setting integer validation maximum limit for a non-integer PlainValue.\n");
 
 	minimumLimit_ = true;
 	minI_ = minValue;
@@ -205,28 +187,24 @@ void PlainValue::setValidationMin(int minValue)
 // Set maximum validation limit
 void PlainValue::setValidationMax(int maxValue)
 {
-	if (type_ != PlainValue::IntegerType) Messenger::warn("Setting integer validation minimum limit for a non-integer PlainValue.\n");
+	if (type_ != PlainValue::IntegerType)
+		Messenger::warn("Setting integer validation minimum limit for a non-integer PlainValue.\n");
 
 	maximumLimit_ = true;
 	maxI_ = maxValue;
 }
 
 // Return minimum integer value allowed
-int PlainValue::minI()
-{
-	return minI_;
-}
+int PlainValue::minI() { return minI_; }
 
 // Return maximum integer value allowed
-int PlainValue::maxI()
-{
-	return maxI_;
-}
+int PlainValue::maxI() { return maxI_; }
 
 // Set double validation range
 void PlainValue::setValidationRange(double minValue, double maxValue)
 {
-	if (type_ != PlainValue::DoubleType) Messenger::warn("Setting double validation for a non-double PlainValue.\n");
+	if (type_ != PlainValue::DoubleType)
+		Messenger::warn("Setting double validation for a non-double PlainValue.\n");
 
 	hasValidation_ = true;
 	minD_ = minValue;
@@ -236,8 +214,9 @@ void PlainValue::setValidationRange(double minValue, double maxValue)
 // Set minimum validation limit
 void PlainValue::setValidationMin(double minValue)
 {
-	if (type_ != PlainValue::DoubleType) Messenger::warn("Setting double validation minimum limit for a non-double PlainValue.\n");
-	
+	if (type_ != PlainValue::DoubleType)
+		Messenger::warn("Setting double validation minimum limit for a non-double PlainValue.\n");
+
 	minimumLimit_ = true;
 	minD_ = minValue;
 }
@@ -245,40 +224,30 @@ void PlainValue::setValidationMin(double minValue)
 // Set maximum validation limit
 void PlainValue::setValidationMax(double maxValue)
 {
-	if (type_ != PlainValue::DoubleType) Messenger::warn("Setting double validation maximum limit for a non-double PlainValue.\n");
+	if (type_ != PlainValue::DoubleType)
+		Messenger::warn("Setting double validation maximum limit for a non-double PlainValue.\n");
 
 	maximumLimit_ = true;
 	maxD_ = maxValue;
 }
 
 // Return minimum double value allowed
-double PlainValue::minD()
-{
-	return minD_.value();
-}
+double PlainValue::minD() { return minD_.value(); }
 
 // Return maximum double value allowed
-double PlainValue::maxD()
-{
-	return maxD_.value();
-}
+double PlainValue::maxD() { return maxD_.value(); }
 
 // Return minimum double value allowed (as string)
-const char* PlainValue::minDAsString()
-{
-	return minD_.asString();
-}
+const char *PlainValue::minDAsString() { return minD_.asString(); }
 
 // Return maximum double value allowed (as string)
-const char* PlainValue::maxDAsString()
-{
-	return maxD_.asString();
-}
+const char *PlainValue::maxDAsString() { return maxD_.asString(); }
 
 // Set string validation
-void PlainValue::setValidation(int nValues, const char** values)
+void PlainValue::setValidation(int nValues, const char **values)
 {
-	if (type_ != PlainValue::StringType) Messenger::warn("Setting string validation for a non-string PlainValue.\n");
+	if (type_ != PlainValue::StringType)
+		Messenger::warn("Setting string validation for a non-string PlainValue.\n");
 
 	hasValidation_ = true;
 	nValidC_ = nValues;
@@ -289,9 +258,10 @@ void PlainValue::setValidation(int nValues, const char** values)
 CharString PlainValue::validC()
 {
 	CharString result;
-	for (int n=0; n<nValidC_; ++n)
+	for (int n = 0; n < nValidC_; ++n)
 	{
-		if (n > 0) result += ", ";
+		if (n > 0)
+			result += ", ";
 		result += validC_[n];
 	}
 
@@ -301,10 +271,13 @@ CharString PlainValue::validC()
 // Validate integer value
 bool PlainValue::isValid(int i)
 {
-	if (!hasValidation_) return true;
+	if (!hasValidation_)
+		return true;
 
-	if (minimumLimit_ && (i < minI_)) return false;
-	else if (maximumLimit_ && (i > maxI_)) return false;
+	if (minimumLimit_ && (i < minI_))
+		return false;
+	else if (maximumLimit_ && (i > maxI_))
+		return false;
 
 	return true;
 }
@@ -312,21 +285,27 @@ bool PlainValue::isValid(int i)
 // Valudate double value
 bool PlainValue::isValid(double d)
 {
-	if (!hasValidation_) return true;
+	if (!hasValidation_)
+		return true;
 
-	if (minimumLimit_ && (d < minD_)) return false;
-	else if (maximumLimit_ && (d > maxD_)) return false;
+	if (minimumLimit_ && (d < minD_))
+		return false;
+	else if (maximumLimit_ && (d > maxD_))
+		return false;
 
 	return true;
 }
 
 // Validate string value
-bool PlainValue::isValid(const char* s)
+bool PlainValue::isValid(const char *s)
 {
-	if (!hasValidation_) return true;
+	if (!hasValidation_)
+		return true;
 
 	// Loop over list of values
-	for (int n=0; n<nValidC_; ++n) if (DissolveSys::sameString(s, validC_[n])) return true;
+	for (int n = 0; n < nValidC_; ++n)
+		if (DissolveSys::sameString(s, validC_[n]))
+			return true;
 
 	return false;
 }
@@ -335,20 +314,28 @@ bool PlainValue::isValid(const char* s)
 CharString PlainValue::validRange()
 {
 	CharString result;
-	if (!hasValidation_) result = "< No Range >";
+	if (!hasValidation_)
+		result = "< No Range >";
 	else if (type_ == PlainValue::IntegerType)
 	{
-		if (minimumLimit_ && maximumLimit_) result.sprintf("%i <= n <= %i\n", minI_, maxI_);
-		else if (maximumLimit_) result.sprintf("n <= %i", maxI_);
-		else result.sprintf("%i <= n", minI_);
+		if (minimumLimit_ && maximumLimit_)
+			result.sprintf("%i <= n <= %i\n", minI_, maxI_);
+		else if (maximumLimit_)
+			result.sprintf("n <= %i", maxI_);
+		else
+			result.sprintf("%i <= n", minI_);
 	}
 	else if (type_ == PlainValue::DoubleType)
 	{
-		if (minimumLimit_ && maximumLimit_) result.sprintf("%s <= n <= %s\n", minD_.asString().get(), maxD_.asString().get());
-		else if (maximumLimit_) result.sprintf("%s <= n", minD_.asString().get());
-		else result.sprintf("n <= %s", maxD_.asString().get());
+		if (minimumLimit_ && maximumLimit_)
+			result.sprintf("%s <= n <= %s\n", minD_.asString().get(), maxD_.asString().get());
+		else if (maximumLimit_)
+			result.sprintf("%s <= n", minD_.asString().get());
+		else
+			result.sprintf("n <= %s", maxD_.asString().get());
 	}
-	else result = validC();
+	else
+		result = validC();
 	return result;
 }
 
@@ -359,10 +346,14 @@ CharString PlainValue::validRange()
 // Return variable (as bool)
 bool PlainValue::asBool()
 {
-	if (type_ == PlainValue::BooleanType) return valueB_;
-	else if (type_ == PlainValue::IntegerType) return valueI_;
-	else if (type_ == PlainValue::DoubleType) return (valueD_ > 0.0);
-	else if (type_ == PlainValue::StringType) return DissolveSys::atob(valueC_.get());
+	if (type_ == PlainValue::BooleanType)
+		return valueB_;
+	else if (type_ == PlainValue::IntegerType)
+		return valueI_;
+	else if (type_ == PlainValue::DoubleType)
+		return (valueD_ > 0.0);
+	else if (type_ == PlainValue::StringType)
+		return DissolveSys::atob(valueC_.get());
 
 	return false;
 }
@@ -370,10 +361,14 @@ bool PlainValue::asBool()
 // Return variable (as int)
 int PlainValue::asInt()
 {
-	if (type_ == PlainValue::BooleanType) return int(valueB_);
-	else if (type_ == PlainValue::IntegerType) return valueI_;
-	else if (type_ == PlainValue::DoubleType) return int(valueD_);
-	else if (type_ == PlainValue::StringType) return atoi(valueC_.get());
+	if (type_ == PlainValue::BooleanType)
+		return int(valueB_);
+	else if (type_ == PlainValue::IntegerType)
+		return valueI_;
+	else if (type_ == PlainValue::DoubleType)
+		return int(valueD_);
+	else if (type_ == PlainValue::StringType)
+		return atoi(valueC_.get());
 
 	return 0;
 }
@@ -381,16 +376,20 @@ int PlainValue::asInt()
 // Return variable (as double)
 double PlainValue::asDouble()
 {
-	if (type_ == PlainValue::BooleanType) return (valueB_ ? 1.0 : 0.0);
-	else if (type_ == PlainValue::IntegerType) return double(valueI_);
-	else if (type_ == PlainValue::DoubleType) return valueD_;
-	else if (type_ == PlainValue::StringType) return atof(valueC_.get());
+	if (type_ == PlainValue::BooleanType)
+		return (valueB_ ? 1.0 : 0.0);
+	else if (type_ == PlainValue::IntegerType)
+		return double(valueI_);
+	else if (type_ == PlainValue::DoubleType)
+		return valueD_;
+	else if (type_ == PlainValue::StringType)
+		return atof(valueC_.get());
 
 	return 0.0;
 }
 
 // Return variable (as string)
-const char* PlainValue::asString()
+const char *PlainValue::asString()
 {
 	if (type_ == PlainValue::BooleanType)
 	{
@@ -406,7 +405,8 @@ const char* PlainValue::asString()
 		conversionStringTemp_.sprintf("%f", valueD_);
 		return conversionStringTemp_.get();
 	}
-	else if (type_ == PlainValue::StringType) return valueC_.get();
+	else if (type_ == PlainValue::StringType)
+		return valueC_.get();
 
 	return "[NULL]";
 }
@@ -416,35 +416,41 @@ const char* PlainValue::asString()
  */
 
 // Broadcast data
-bool PlainValue::broadcast(ProcessPool& procPool)
+bool PlainValue::broadcast(ProcessPool &procPool)
 {
 #ifdef PARALLEL
-	if (!procPool.broadcast(name_)) return false;
-	if (!procPool.broadcast(description_)) return false;
+	if (!procPool.broadcast(name_))
+		return false;
+	if (!procPool.broadcast(description_))
+		return false;
 
 	// Broadcast type first, then value
 	int tempType = type_;
-	if (!procPool.broadcast(&tempType, 1)) return false;
-	type_ = (PlainValue::ValueType) tempType;
+	if (!procPool.broadcast(&tempType, 1))
+		return false;
+	type_ = (PlainValue::ValueType)tempType;
 	switch (type_)
 	{
-		case (PlainValue::BooleanType):
-			if (!procPool.broadcast(valueB_)) return false;
-			break;
-		case (PlainValue::IntegerType):
-			if (!procPool.broadcast(&valueI_, 1)) return false;
-			break;
-		case (PlainValue::DoubleType):
-			if (!procPool.broadcast(&valueD_, 1)) return false;
-			break;
-		case (PlainValue::StringType):
-			if (!procPool.broadcast(valueC_)) return false;
-			break;
-		default:
-			Messenger::error("Broadcast of PlainValue failed - type_ %s not accounted for.\n", PlainValue::valueType(type_));
+	case (PlainValue::BooleanType):
+		if (!procPool.broadcast(valueB_))
 			return false;
+		break;
+	case (PlainValue::IntegerType):
+		if (!procPool.broadcast(&valueI_, 1))
+			return false;
+		break;
+	case (PlainValue::DoubleType):
+		if (!procPool.broadcast(&valueD_, 1))
+			return false;
+		break;
+	case (PlainValue::StringType):
+		if (!procPool.broadcast(valueC_))
+			return false;
+		break;
+	default:
+		Messenger::error("Broadcast of PlainValue failed - type_ %s not accounted for.\n", PlainValue::valueType(type_));
+		return false;
 	}
 #endif
 	return true;
 }
-

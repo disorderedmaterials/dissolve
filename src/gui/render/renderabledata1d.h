@@ -31,103 +31,103 @@ class Axes;
 // Renderable for Data1D
 class RenderableData1D : public Renderable
 {
-	public:
+      public:
 	// Constructor / Destructor
-	RenderableData1D(const Data1D* source, const char* objectTag);
+	RenderableData1D(const Data1D *source, const char *objectTag);
 	~RenderableData1D();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Source data
-	const Data1D* source_;
+	const Data1D *source_;
 
-	private:
+      private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	bool validateDataSource();
 	// Invalidate the current data source
 	void invalidateDataSource();
 
-	public:
+      public:
 	// Return version of data
 	int dataVersion();
-
 
 	/*
 	 * Transform / Limits
 	 */
-	private:
+      private:
 	// Transformed data
 	Data1D transformedData_;
 
-	protected:
+      protected:
 	// Transform data according to current settings
 	void transformValues();
 	// Return reference to transformed data
-	const Data1D& transformedData();
+	const Data1D &transformedData();
 
-	public:
+      public:
 	// Calculate min/max y value over specified x range (if possible in the underlying data)
-	bool yRangeOverX(double xMin, double xMax, double& yMin, double& yMax);
-
+	bool yRangeOverX(double xMin, double xMax, double &yMin, double &yMax);
 
 	/*
 	 * Rendering Primitives
 	 */
-	private:
+      private:
 	// Primitive to represent data
-	Primitive* dataPrimitive_;
+	Primitive *dataPrimitive_;
 
-	private:
+      private:
 	// Create line strip primitive
-	void constructLineXY(const Array<double>& displayAbscissa, const Array<double>& displayValues, Primitive* primitive, const Axes& axes, const ColourDefinition& colourDefinition, double zCoordinate = 0.0);
+	void constructLineXY(const Array<double> &displayAbscissa, const Array<double> &displayValues, Primitive *primitive, const Axes &axes, const ColourDefinition &colourDefinition,
+			     double zCoordinate = 0.0);
 
-	protected:
+      protected:
 	// Recreate necessary primitives / primitive assemblies for the data
-	void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition);
+	void recreatePrimitives(const View &view, const ColourDefinition &colourDefinition);
 	// Send primitives for rendering
 	const void sendToGL(const double pixelScaling);
-
 
 	/*
 	 * Style
 	 */
-	public:
+      public:
 	// Display Styles enum
-	enum Data1DDisplayStyle { LinesStyle, nDisplayStyles };
+	enum Data1DDisplayStyle
+	{
+		LinesStyle,
+		nDisplayStyles
+	};
 	// Return EnumOptions for Data1DDisplayStyle
 	static EnumOptions<Data1DDisplayStyle> data1DDisplayStyles();
 
-	private:
+      private:
 	// Display style for the renderable
 	Data1DDisplayStyle displayStyle_;
 
-	public:
+      public:
 	// Set display style for renderable
 	void setDisplayStyle(Data1DDisplayStyle displayStyle);
 	// Return display style for the renderable
 	Data1DDisplayStyle displayStyle() const;
 
-
 	/*
 	 * Style I/O
 	 */
-	public:
+      public:
 	// Data1DStyle Keywords Enum
 	enum Data1DStyleKeyword
 	{
-		DisplayKeyword,			/* 'Display' - General display style for renderable */
-		EndStyleKeyword,		/* 'EndStyle' - End of Style block */
+		DisplayKeyword,  /* 'Display' - General display style for renderable */
+		EndStyleKeyword, /* 'EndStyle' - End of Style block */
 		nData1DStyleKeywords
 	};
 	// Return enum option info for RenderableKeyword
 	static EnumOptions<RenderableData1D::Data1DStyleKeyword> data1DStyleKeywords();
 	// Write style information
-	bool writeStyleBlock(LineParser& parser, int indentLevel = 0) const;
+	bool writeStyleBlock(LineParser &parser, int indentLevel = 0) const;
 	// Read style information
-	bool readStyleBlock(LineParser& parser);
+	bool readStyleBlock(LineParser &parser);
 };
 
 #endif

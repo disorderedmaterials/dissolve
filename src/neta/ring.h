@@ -22,10 +22,10 @@
 #ifndef DISSOLVE_NETA_RING_H
 #define DISSOLVE_NETA_RING_H
 
-#include "neta/node.h"
 #include "classes/speciesbond.h"
 #include "classes/speciesring.h"
-#include "templates/pointerarray.h"
+#include "neta/node.h"
+#include <vector>
 
 // Forward Declarations
 class Element;
@@ -35,16 +35,15 @@ class NETADefinition;
 // NETA Ring Node
 class NETARingNode : public NETANode
 {
-	public:
+      public:
 	// Constructor / Destructor
-	NETARingNode(NETADefinition* parent);
+	NETARingNode(NETADefinition *parent);
 	~NETARingNode();
-
 
 	/*
 	 * Modifiers
 	 */
-	private:
+      private:
 	// Repeat count value
 	int repeatCount_;
 	// Repeat count comparison operator
@@ -54,32 +53,31 @@ class NETARingNode : public NETANode
 	// Ring size value comparison operator
 	NETANode::ComparisonOperator sizeValueOperator_;
 
-	public:
+      public:
 	// Available modifiers
 	enum NETARingModifier
 	{
-		SizeModifier,			/* 'size' - Specifies size of ring (default = -1) */
-		RepeatRingModifier,		/* 'n' - Specifies the number of matches required (default = 1) */
+		SizeModifier,       /* 'size' - Specifies size of ring (default = -1) */
+		RepeatRingModifier, /* 'n' - Specifies the number of matches required (default = 1) */
 		nRingModifiers
 	};
 	// Return enum options for NETARingModifiers
 	static EnumOptions<NETARingNode::NETARingModifier> modifiers();
 	// Return whether the specified modifier is valid for this node
-	bool isValidModifier(const char* s) const;
+	bool isValidModifier(const char *s) const;
 	// Set value and comparator for specified modifier
-	bool setModifier(const char* modifier, ComparisonOperator op, int value);
-
+	bool setModifier(const char *modifier, ComparisonOperator op, int value);
 
 	/*
 	 * Scoring
 	 */
-	private:
+      private:
 	// Locate rings in which the specified atom is involved
-	void findRings(const SpeciesAtom* currentAtom, List<SpeciesRing>& rings, PointerArray<const SpeciesAtom>& path, const int minSize, const int maxSize) const;
+	void findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &rings, std::vector<const SpeciesAtom *> &path, const int minSize, const int maxSize) const;
 
-	public:
+      public:
 	// Evaluate the node and return its score
-	int score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const;
+	int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const;
 };
 
 #endif

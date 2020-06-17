@@ -24,10 +24,7 @@
 #include <math.h>
 
 // Constructor
-SampledDouble::SampledDouble()
-{
-	clear();
-}
+SampledDouble::SampledDouble() { clear(); }
 
 SampledDouble::SampledDouble(const double x)
 {
@@ -49,44 +46,26 @@ void SampledDouble::clear()
 }
 
 // Return current (mean) value
-double SampledDouble::value() const
-{
-	return mean_;
-}
+double SampledDouble::value() const { return mean_; }
 
 // Return number of samples contributing to averages etc.
-int SampledDouble::count() const
-{
-	return count_;
-}
+int SampledDouble::count() const { return count_; }
 
 // Return mean (current) value
-double SampledDouble::mean() const
-{
-	return mean_;
-}
+double SampledDouble::mean() const { return mean_; }
 
 // Return variance of sampled data
-double SampledDouble::variance() const
-{
-	return (count_ < 2 ? 0.0 : m2_ / (count_ - 1));
-}
+double SampledDouble::variance() const { return (count_ < 2 ? 0.0 : m2_ / (count_ - 1)); }
 
 // Return standard deviation of sampled data
-double SampledDouble::stDev() const
-{
-	return (count_ < 2 ? 0.0 : sqrt(m2_ / (count_ - 1)));
-}
+double SampledDouble::stDev() const { return (count_ < 2 ? 0.0 : sqrt(m2_ / (count_ - 1))); }
 
 /*
  * Operators
  */
 
 // Conversion (double)
-SampledDouble::operator double&()
-{
-	return mean_;
-}
+SampledDouble::operator double &() { return mean_; }
 
 // Assigment
 void SampledDouble::operator=(double x)
@@ -98,7 +77,7 @@ void SampledDouble::operator=(double x)
 }
 
 // Assigment
-void SampledDouble::operator=(const SampledDouble& source)
+void SampledDouble::operator=(const SampledDouble &source)
 {
 	count_ = source.count_;
 	mean_ = source.mean_;
@@ -125,19 +104,18 @@ void SampledDouble::operator+=(double x)
 }
 
 // Operator +=
-void SampledDouble::operator+=(int i)
-{
-	(*this) += (double) i;
-}
+void SampledDouble::operator+=(int i) { (*this) += (double)i; }
 
 // Operator +=
-void SampledDouble::operator+=(const SampledDouble& source)
+void SampledDouble::operator+=(const SampledDouble &source)
 {
 	// Accumulate other values using parallel algorithm of Chan
-	// T. F. Chan, G. H. Golub, R. J. LeVeque, "Updating Formulae and a Pairwise Algorithm for Computing Sample Variances.", Technical Report STAN-CS-79-773, Department of Computer Science, Stanford University (1979).
+	// T. F. Chan, G. H. Golub, R. J. LeVeque, "Updating Formulae and a Pairwise Algorithm for Computing Sample Variances.", Technical Report STAN-CS-79-773, Department of Computer Science,
+	// Stanford University (1979).
 
 	// Nothing to do if there are no samples in the source data
-	if (source.count_ == 0) return;
+	if (source.count_ == 0)
+		return;
 
 	// Determine difference in mean values between samples B and A and reciprocal of total counts
 	const double deltaMean = source.value() - mean_;
@@ -174,15 +152,13 @@ void SampledDouble::operator/=(double x)
  */
 
 // Return class name
-const char* SampledDouble::itemClassName()
-{
-	return "SampledDouble";
-}
+const char *SampledDouble::itemClassName() { return "SampledDouble"; }
 
 // Read data through specified LineParser
-bool SampledDouble::read(LineParser& parser, const CoreData& coreData)
+bool SampledDouble::read(LineParser &parser, const CoreData &coreData)
 {
-	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+	if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+		return false;
 	mean_ = parser.argd(0);
 	count_ = parser.argi(1);
 	m2_ = parser.argd(2);
@@ -191,66 +167,78 @@ bool SampledDouble::read(LineParser& parser, const CoreData& coreData)
 }
 
 // Write data through specified LineParser
-bool SampledDouble::write(LineParser& parser)
-{
-	return parser.writeLineF("%f  %i  %f\n", mean_, count_, m2_);
-}
+bool SampledDouble::write(LineParser &parser) { return parser.writeLineF("%f  %i  %f\n", mean_, count_, m2_); }
 
 /*
  * Parallel Comms
  */
 
 // Sum data over all processes within the pool
-bool SampledDouble::allSum(ProcessPool& procPool)
+bool SampledDouble::allSum(ProcessPool &procPool)
 {
 #ifdef PARALLEL
 	// All processes in the pool send their data to the zero rank, which assembles the statistics and then broadcasts the final result
-	for (int n=1; n<procPool.nProcesses(); ++n)
+	for (int n = 1; n < procPool.nProcesses(); ++n)
 	{
 		if (procPool.poolRank() == 0)
 		{
 			// Rank zero receives the data and sums it
 			SampledDouble data;
-			if (!procPool.receive(data.count_, 0)) return false;
-			if (!procPool.receive(data.mean_, 0)) return false;
-			if (!procPool.receive(data.m2_, 0)) return false;
+			if (!procPool.receive(data.count_, 0))
+				return false;
+			if (!procPool.receive(data.mean_, 0))
+				return false;
+			if (!procPool.receive(data.m2_, 0))
+				return false;
 
 			(*this) += data;
 		}
 		else
 		{
 			// Send our data to rank zero
-			if (!procPool.send(count_, 0)) return false;
-			if (!procPool.send(mean_, 0)) return false;
-			if (!procPool.send(m2_, 0)) return false;
+			if (!procPool.send(count_, 0))
+				return false;
+			if (!procPool.send(mean_, 0))
+				return false;
+			if (!procPool.send(m2_, 0))
+				return false;
 		}
 	}
 
-	if (!procPool.broadcast(count_)) return false;
-	if (!procPool.broadcast(mean_)) return false;
-	if (!procPool.broadcast(m2_)) return false;
+	if (!procPool.broadcast(count_))
+		return false;
+	if (!procPool.broadcast(mean_))
+		return false;
+	if (!procPool.broadcast(m2_))
+		return false;
 #endif
 	return true;
 }
 
 // Broadcast data
-bool SampledDouble::broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
+bool SampledDouble::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 {
 #ifdef PARALLEL
-	if (!procPool.broadcast(count_, root)) return false;
-	if (!procPool.broadcast(mean_, root)) return false;
-	if (!procPool.broadcast(m2_, root)) return false;
+	if (!procPool.broadcast(count_, root))
+		return false;
+	if (!procPool.broadcast(mean_, root))
+		return false;
+	if (!procPool.broadcast(m2_, root))
+		return false;
 #endif
 	return true;
 }
 
 // Check equality of all data
-bool SampledDouble::equality(ProcessPool& procPool)
+bool SampledDouble::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
-	if (!procPool.equality(count_)) return Messenger::error("SampledDouble count is not equivalent (process %i has %i).\n", procPool.poolRank(), count_);
-	if (!procPool.equality(mean_)) return Messenger::error("SampledDouble mean value is not equivalent (process %i has %e).\n", procPool.poolRank(), mean_);
-	if (!procPool.equality(m2_)) return Messenger::error("SampledDouble m2 value is not equivalent (process %i has %e).\n", procPool.poolRank(), m2_);
+	if (!procPool.equality(count_))
+		return Messenger::error("SampledDouble count is not equivalent (process %i has %i).\n", procPool.poolRank(), count_);
+	if (!procPool.equality(mean_))
+		return Messenger::error("SampledDouble mean value is not equivalent (process %i has %e).\n", procPool.poolRank(), mean_);
+	if (!procPool.equality(m2_))
+		return Messenger::error("SampledDouble m2 value is not equivalent (process %i has %e).\n", procPool.poolRank(), m2_);
 #endif
 	return true;
 }

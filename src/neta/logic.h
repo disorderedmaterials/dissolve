@@ -30,26 +30,30 @@ class NETADefinition;
 // NETA Logic Node
 class NETALogicNode : public NETANode
 {
-	public:
+      public:
 	// Node logic types
-	enum LogicType { AndLogic, OrLogic, AndNotLogic };
+	enum LogicType
+	{
+		AndLogic,
+		OrLogic,
+		AndNotLogic
+	};
 	// Constructor / Destructor
-	NETALogicNode(NETADefinition* parent, LogicType logic, NETANode* arg1, NETANode* arg2);
+	NETALogicNode(NETADefinition *parent, LogicType logic, NETANode *arg1, NETANode *arg2);
 	~NETALogicNode();
-	
-	private:
+
+      private:
 	// Logic type
 	LogicType logic_;
 	// Node targets
-	NETANode* argument1_, *argument2_;
-
+	NETANode *argument1_, *argument2_;
 
 	/*
 	 * Scoring
 	 */
-	public:
+      public:
 	// Evaluate the node and return its score
-	int score(const SpeciesAtom* i, RefList<const SpeciesAtom>& matchPath) const;
+	int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const;
 };
 
 #endif

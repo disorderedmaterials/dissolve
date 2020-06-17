@@ -34,21 +34,21 @@ class ImportSpeciesDialog : public QDialog
 {
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	ImportSpeciesDialog(QWidget* parent, const Dissolve& mainDissolveInstance);
+	ImportSpeciesDialog(QWidget *parent, const Dissolve &mainDissolveInstance);
 	// Destructor
 	~ImportSpeciesDialog();
 
-	private:
+      private:
 	// Main form declaration
 	Ui::ImportSpeciesDialog ui_;
 
-	public:
+      public:
 	// Reset, ready for adding a new Species
 	void reset();
 	// Copy imported Species over to the specified Dissolve object
-	Species* importSpecies(Dissolve& dissolve);
+	Species *importSpecies(Dissolve &dissolve);
 };
 
 #endif

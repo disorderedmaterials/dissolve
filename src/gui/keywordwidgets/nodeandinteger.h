@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_NODEANDINTEGER_H
 #define DISSOLVE_KEYWORDWIDGET_NODEANDINTEGER_H
 
-#include "gui/keywordwidgets/ui_nodeandinteger.h"
 #include "gui/keywordwidgets/base.h"
+#include "gui/keywordwidgets/ui_nodeandinteger.h"
 #include "keywords/nodeandinteger.h"
 #include <QWidget>
 
@@ -35,39 +35,36 @@ class NodeAndIntegerKeywordWidget : public QWidget, public KeywordWidgetBase
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	NodeAndIntegerKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-
+	NodeAndIntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-	private:
+      private:
 	// Associated keyword
-	NodeAndIntegerKeywordBase* keyword_;
-
+	NodeAndIntegerKeywordBase *keyword_;
 
 	/*
 	 * Widgets
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::NodeAndIntegerValueWidget ui_;
 
-	private slots:
+      private slots:
 	// Value changed
 	void on_NodeCombo_currentIndexChanged(int index);
 
-	signals:
+      signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update
 	 */
-	public:
+      public:
 	// Update value displayed in widget
 	void updateValue();
 };

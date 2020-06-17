@@ -19,16 +19,16 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/procedureeditor.h"
-#include "gui/gui.h"
+#include "base/lineparser.h"
 #include "gui/charts/procedure.h"
+#include "gui/gui.h"
+#include "gui/procedureeditor.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
-#include "base/lineparser.h"
 #include "templates/variantpointer.h"
 
 // Constructor / Destructor
-ProcedureEditor::ProcedureEditor(QWidget* parent) : QWidget(parent)
+ProcedureEditor::ProcedureEditor(QWidget *parent) : QWidget(parent)
 {
 	ui_.setupUi(this);
 
@@ -38,16 +38,14 @@ ProcedureEditor::ProcedureEditor(QWidget* parent) : QWidget(parent)
 	refreshing_ = false;
 }
 
-ProcedureEditor::~ProcedureEditor()
-{
-}
+ProcedureEditor::~ProcedureEditor() {}
 
 /*
  * Procedure Target
  */
 
 // Set up to display / edit the target Procedure
-void ProcedureEditor::setUp(Procedure* procedure, const CoreData& coreData)
+void ProcedureEditor::setUp(Procedure *procedure, const CoreData &coreData)
 {
 	procedure_ = procedure;
 
@@ -72,7 +70,7 @@ void ProcedureEditor::setUp(Procedure* procedure, const CoreData& coreData)
 // 	{
 // 		// Check that the category is not 'HIDDEN' (in which case we don't show it)
 // 		if (DissolveSys::sameString("HIDDEN", module->category())) continue;
-// 
+//
 // 		// Find category for this Module (if it exists) or create a new one
 // 		MimeTreeWidgetItem* categoryItem = NULL;
 // 		RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
@@ -84,7 +82,7 @@ void ProcedureEditor::setUp(Procedure* procedure, const CoreData& coreData)
 // 			categoryItem->setFlags(Qt::ItemIsEnabled);
 // 			moduleCategories_.append(categoryItem, module->category());
 // 		}
-// 
+//
 // 		// Create item for the Module
 // 		MimeTreeWidgetItem* item = new MimeTreeWidgetItem(categoryItem, 1000);
 // 		item->setIcon(0, ModuleChartModuleBlock::modulePixmap(module));
@@ -94,7 +92,7 @@ void ProcedureEditor::setUp(Procedure* procedure, const CoreData& coreData)
 // 		item->setToolTip(0, module->brief());
 // 		item->addMimeString(MimeString::ModuleType, module->type());
 // 	}
-// 
+//
 // 	// Populate the available Modules tree with the categories we now have
 // 	ui_.AvailableModulesTree->clear();
 // 	RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
@@ -104,7 +102,7 @@ void ProcedureEditor::setUp(Procedure* procedure, const CoreData& coreData)
 // 	ui_.AvailableModulesTree->setSortingEnabled(true);
 // 	ui_.AvailableModulesTree->expandAll();
 
-	// Hide palette group initially
+// Hide palette group initially
 // 	ui_.PaletteGroup->setVisible(false);
 
 /*
@@ -124,14 +122,14 @@ void ProcedureEditor::updateControls()
 // Disable sensitive controls within tab
 void ProcedureEditor::disableSensitiveControls()
 {
-// 	ui_.AvailableModulesTree->setEnabled(false);
+	// 	ui_.AvailableModulesTree->setEnabled(false);
 	chart_->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab
 void ProcedureEditor::enableSensitiveControls()
 {
-// 	ui_.AvailableModulesTree->setEnabled(true);
+	// 	ui_.AvailableModulesTree->setEnabled(true);
 	chart_->enableSensitiveControls();
 }
 
@@ -142,15 +140,15 @@ void ProcedureEditor::enableSensitiveControls()
 // void ProcedureEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item)
 // {
 // 	if (!moduleProcedure_) return;
-// 
+//
 // 	// Get the Module associated to the double-clicked item
 // 	const Module* module = VariantPointer<const Module>(item->data(0, Qt::UserRole));
 // 	if (!module) return;
-// 
+//
 // 	// Create a new instance of the Module
 // 	Module* newInstance = dissolveWindow_->dissolve().createModuleInstance(module->type());
 // 	newInstance->setConfigurationLocal(localConfiguration_);
-// 
+//
 // 	// Set Configuration targets as appropriate
 // 	if (newInstance->nRequiredTargets() != 0)
 // 	{
@@ -165,11 +163,11 @@ void ProcedureEditor::enableSensitiveControls()
 // 			}
 // 		}
 // 	}
-// 
+//
 // 	moduleProcedure_->own(newInstance);
-// 
+//
 // 	updateControls();
-// 
+//
 // 	// Flag that the current data has changed
 // 	dissolveWindow_->setModified();
 // }
@@ -179,17 +177,19 @@ void ProcedureEditor::enableSensitiveControls()
  */
 
 // Write widget state through specified LineParser
-bool ProcedureEditor::writeState(LineParser& parser) const
+bool ProcedureEditor::writeState(LineParser &parser) const
 {
-	if (!chart_->writeState(parser)) return false;
+	if (!chart_->writeState(parser))
+		return false;
 
 	return true;
 }
 
 // Read widget state through specified LineParser
-bool ProcedureEditor::readState(LineParser& parser)
+bool ProcedureEditor::readState(LineParser &parser)
 {
-	if (!chart_->readState(parser)) return false;
+	if (!chart_->readState(parser))
+		return false;
 
 	return true;
 }
@@ -199,13 +199,7 @@ bool ProcedureEditor::readState(LineParser& parser)
  */
 
 // Data displayed in the chart has been modified
-void ProcedureEditor::chartDataModified()
-{
-	emit(dataModified());
-}
+void ProcedureEditor::chartDataModified() { emit(dataModified()); }
 
 // Required size of the chart widget has changed
-void ProcedureEditor::chartSizeChanged()
-{
-	ui_.ProcedureScrollArea->updateGeometry();
-}
+void ProcedureEditor::chartSizeChanged() { ui_.ProcedureScrollArea->updateGeometry(); }

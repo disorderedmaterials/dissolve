@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/geomopt/geomopt.h"
 #include "keywords/types.h"
+#include "modules/geomopt/geomopt.h"
 
 // Perform any necessary initialisation for the Module
 void GeometryOptimisationModule::initialise()
@@ -30,4 +30,3 @@ void GeometryOptimisationModule::initialise()
 	keywords_.add("Calculation", new DoubleKeyword(1.0e-5, 1.0e-10), "StepSize", "Initial step size to employ");
 	keywords_.add("Calculation", new DoubleKeyword(1.0e-4, 1.0e-10), "Tolerance", "Tolerance controlling convergence of algorithm)");
 }
-

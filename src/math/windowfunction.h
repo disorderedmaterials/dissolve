@@ -35,40 +35,40 @@ class Data1D;
 // Window Function
 class WindowFunction : public GenericItemBase
 {
-	public:
+      public:
 	// Function Types
-	enum FunctionType {
-		NoWindow,		/* No window */
-		BartlettWindow,		/* Bartlett (triangular) window */
-		HannWindow,		/* von Hann (Hanning) window */
-		LanczosWindow,		/* Lanczos window */
-		NuttallWindow,		/* Nuttall window (continuous first derivatives over range) */
-		SineWindow,		/* Sine Window */
-		Lorch0Window,		/* Original Lorch function */
-		nFunctionTypes		/* Number of defined WindowFunctions */
+	enum FunctionType
+	{
+		NoWindow,       /* No window */
+		BartlettWindow, /* Bartlett (triangular) window */
+		HannWindow,     /* von Hann (Hanning) window */
+		LanczosWindow,  /* Lanczos window */
+		NuttallWindow,  /* Nuttall window (continuous first derivatives over range) */
+		SineWindow,     /* Sine Window */
+		Lorch0Window,   /* Original Lorch function */
+		nFunctionTypes  /* Number of defined WindowFunctions */
 	};
 	// Return FunctionType from supplied string
-	static FunctionType functionType(const char* s);
+	static FunctionType functionType(const char *s);
 	// Return FunctionType name
-	static const char* functionType(FunctionType func);
+	static const char *functionType(FunctionType func);
 	// Return number of parameters needed to define FunctionType
 	static int nFunctionParameters(FunctionType func);
 	// Return description for FunctionType
-	static const char* functionDescription(FunctionType func);
+	static const char *functionDescription(FunctionType func);
 
-	public:
+      public:
 	// Constructor
 	WindowFunction(FunctionType function = NoWindow, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
 	// Destructor
 	~WindowFunction();
 	// Assignment Operator
-	void operator=(const WindowFunction& source);
-
+	void operator=(const WindowFunction &source);
 
 	/*
 	 * Function Data
 	 */
-	private:
+      private:
 	// Function Type
 	FunctionType function_;
 	// Parameters
@@ -76,11 +76,11 @@ class WindowFunction : public GenericItemBase
 	// Maximal x value for current data target
 	double xMax_;
 
-	public:
+      public:
 	// Set function data
 	void set(FunctionType function, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
 	// Set function data from LineParser source
-	bool set(LineParser& parser, int startArg);
+	bool set(LineParser &parser, int startArg);
 	// Return function type
 	FunctionType function() const;
 	// Return parameter specified
@@ -88,32 +88,29 @@ class WindowFunction : public GenericItemBase
 	// Return short summary of function parameters
 	CharString parameterSummary() const;
 	// Set-up function for specified data
-	bool setUp(const Data1D& data);
+	bool setUp(const Data1D &data);
 	// Return value of function given parameters x (current abscissa value) and omega (target abscissa value)
 	double y(double x, double omega) const;
-
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-	public:
+      public:
 	// Return class name
-	static const char* itemClassName();
+	static const char *itemClassName();
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
-
+	bool write(LineParser &parser);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif
-

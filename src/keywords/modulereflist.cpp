@@ -20,74 +20,54 @@
 */
 
 #include "keywords/modulereflist.h"
+#include "base/lineparser.h"
+#include "classes/coredata.h"
 #include "module/list.h"
 #include "module/module.h"
-#include "classes/coredata.h"
-#include "base/lineparser.h"
 
 // Constructors
-ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module>& references, int maxModules) : KeywordData< RefList<Module>& >(KeywordBase::ModuleRefListData, references)
-{
-	maxModules_ = maxModules;
-}
+ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, int maxModules) : KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references) { maxModules_ = maxModules; }
 
-ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module>& references, CharStringList allowedModuleTypes, int maxModules) : KeywordData< RefList<Module>& >(KeywordBase::ModuleRefListData, references)
+ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, CharStringList allowedModuleTypes, int maxModules) : KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references)
 {
 	moduleTypes_ = allowedModuleTypes;
 	maxModules_ = maxModules;
 }
 
 // Destructor
-ModuleRefListKeyword::~ModuleRefListKeyword()
-{
-}
+ModuleRefListKeyword::~ModuleRefListKeyword() {}
 
 /*
  * Data
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool ModuleRefListKeyword::isDataEmpty() const
-{
-	return data_.nItems() > 0;
-}
+bool ModuleRefListKeyword::isDataEmpty() const { return data_.nItems() > 0; }
 
 // Return the Module type(s) to allow
-const CharStringList& ModuleRefListKeyword::moduleTypes() const
-{
-	return moduleTypes_;
-}
+const CharStringList &ModuleRefListKeyword::moduleTypes() const { return moduleTypes_; }
 
 // Return maximum number of Modules to allow in the list
-int ModuleRefListKeyword::maxModules() const
-{
-	return maxModules_;
-}
+int ModuleRefListKeyword::maxModules() const { return maxModules_; }
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int ModuleRefListKeyword::minArguments() const
-{
-	return 1;
-}
+int ModuleRefListKeyword::minArguments() const { return 1; }
 
 // Return maximum number of arguments accepted
-int ModuleRefListKeyword::maxArguments() const
-{
-	return (maxModules_ == -1 ? 99 : maxModules_);
-}
+int ModuleRefListKeyword::maxArguments() const { return (maxModules_ == -1 ? 99 : maxModules_); }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ModuleRefListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool ModuleRefListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
 	// Loop over arguments provided to the keyword
-	for (int n = startArg; n<parser.nArgs(); ++n)
+	for (int n = startArg; n < parser.nArgs(); ++n)
 	{
 		// Find specified Module by its unique name
-		Module* module = coreData.findModule(parser.argc(n));
+		Module *module = coreData.findModule(parser.argc(n));
 		if (!module)
 		{
 			Messenger::error("No Module named '%s' exists.\n", parser.argc(n));
@@ -110,13 +90,13 @@ bool ModuleRefListKeyword::read(LineParser& parser, int startArg, const CoreData
 }
 
 // Write keyword data to specified LineParser
-bool ModuleRefListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool ModuleRefListKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	// Loop over list of referenced Modules
-	RefListIterator<Module> refIterator(data_);
-	while (Module* module = refIterator.iterate())
+	for (Module *module : data_)
 	{
-		if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, module->uniqueName())) return false;
+		if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, module->uniqueName()))
+			return false;
 	}
 
 	return true;
@@ -127,7 +107,4 @@ bool ModuleRefListKeyword::write(LineParser& parser, const char* keywordName, co
  */
 
 // Prune any references to the supplied Module in the contained data
-void ModuleRefListKeyword::removeReferencesTo(Module* module)
-{
-	data_.remove(module);
-}
+void ModuleRefListKeyword::removeReferencesTo(Module *module) { data_.remove(module); }

@@ -31,57 +31,66 @@ class ProcessPool;
 // Coordinate Import Formats
 class CoordinateImportFileFormat : public FileAndFormat
 {
-	public:
+      public:
 	// Coordinate Import Formats
-	enum CoordinateImportFormat { XYZCoordinates, DLPOLYCoordinates, EPSRCoordinates, nCoordinateImportFormats };
-	// Constructor
+	enum CoordinateImportFormat
+	{
+		XYZCoordinates,
+		DLPOLYCoordinates,
+		EPSRCoordinates,
+		nCoordinateImportFormats
+	};
+	// Constructors
 	CoordinateImportFileFormat(CoordinateImportFormat format = XYZCoordinates);
+	CoordinateImportFileFormat(const char *filename, CoordinateImportFormat format = XYZCoordinates);
 	// Destructor
 	~CoordinateImportFileFormat();
 
+	/*
+	 * Keyword Options
+	 */
+      private:
+	// Set up keywords for the format
+	void setUpKeywords();
 
 	/*
 	 * Format Access
 	 */
-	public:
+      public:
+	// Return enum options for CoordinateImportFormat
+	static EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> coordinateImportFormats();
 	// Return number of available formats
 	int nFormats() const;
-	// Return formats array
-	const char** formats() const;
-	// Return nice formats array
-	const char** niceFormats() const;
+	// Return format keyword for supplied index
+	const char *formatKeyword(int id) const;
+	// Return description string for supplied index
+	const char *formatDescription(int id) const;
 	// Return current format as CoordinateImportFormat
 	CoordinateImportFormat coordinateFormat() const;
-
 
 	/*
 	 * Filename / Basename
 	 */
-	public:
+      public:
 	// Return whether the file must exist
-	bool fileMustExist() const
-	{
-		return true;
-	}
-
+	bool fileMustExist() const { return true; }
 
 	/*
 	 * Import Functions
 	 */
-	private:
+      private:
 	// Import DL_POLY coordinates through specified parser
-	bool importDLPOLY(LineParser& parser, Array< Vec3<double> >& r);
+	bool importDLPOLY(LineParser &parser, Array<Vec3<double>> &r);
 	// Import EPSR ATO coordinates through specified parser
-	bool importEPSR(LineParser& parser, Array< Vec3<double> >& r);
+	bool importEPSR(LineParser &parser, Array<Vec3<double>> &r);
 	// Import xyz coordinates through specified parser
-	bool importXYZ(LineParser& parser, Array< Vec3<double> >& r);
+	bool importXYZ(LineParser &parser, Array<Vec3<double>> &r);
 
-	public:
+      public:
 	// Import coordinates using current filename and format
-	bool importData(Array< Vec3<double> >& r, ProcessPool* procPool = NULL);
+	bool importData(Array<Vec3<double>> &r, ProcessPool *procPool = NULL);
 	// Import coordinates using supplied parser and current format
-	bool importData(LineParser& parser, Array< Vec3<double> >& r);
+	bool importData(LineParser &parser, Array<Vec3<double>> &r);
 };
 
 #endif
-

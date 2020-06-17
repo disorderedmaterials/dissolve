@@ -19,30 +19,25 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/refine/refine.h"
 #include "keywords/types.h"
+#include "modules/refine/refine.h"
 
 // Return enum options for PotentialInversionMethod
 EnumOptions<RefineModule::PotentialInversionMethod> RefineModule::potentialInversionMethods()
 {
-	static EnumOptionsList PotentialInversionMethodOptions = EnumOptionsList() <<
-		EnumOption(RefineModule::DirectFourierPotentialInversion,	"Direct") <<
-		EnumOption(RefineModule::DirectGaussianPotentialInversion,	"Gaussian") <<
-		EnumOption(RefineModule::PercusYevickPotentialInversion,	"PY") <<
-		EnumOption(RefineModule::HypernettedChainPotentialInversion,	"HNC");
+	static EnumOptionsList PotentialInversionMethodOptions =
+	    EnumOptionsList() << EnumOption(RefineModule::DirectFourierPotentialInversion, "Direct") << EnumOption(RefineModule::DirectGaussianPotentialInversion, "Gaussian")
+			      << EnumOption(RefineModule::PercusYevickPotentialInversion, "PY") << EnumOption(RefineModule::HypernettedChainPotentialInversion, "HNC");
 
 	static EnumOptions<RefineModule::PotentialInversionMethod> options("PotentialInversionMethod", PotentialInversionMethodOptions, RefineModule::DirectGaussianPotentialInversion);
 
 	return options;
 }
 
-
 // Return enum options for MatrixAugmentationStyle
 EnumOptions<RefineModule::MatrixAugmentationStyle> RefineModule::matrixAugmentationStyles()
 {
-	static EnumOptionsList MatrixAugmentationStyleOptions = EnumOptionsList() <<
-		EnumOption(RefineModule::NoAugmentation,	"None") <<
-		EnumOption(RefineModule::PartialsAugmentation,	"Partials");
+	static EnumOptionsList MatrixAugmentationStyleOptions = EnumOptionsList() << EnumOption(RefineModule::NoAugmentation, "None") << EnumOption(RefineModule::PartialsAugmentation, "Partials");
 
 	static EnumOptions<RefineModule::MatrixAugmentationStyle> options("MatrixAugmentationStyle", MatrixAugmentationStyleOptions, RefineModule::PartialsAugmentation);
 
@@ -54,7 +49,8 @@ void RefineModule::initialise()
 {
 	groupedTargets_.addAllowedModuleType("NeutronSQ");
 
-	keywords_.add(new EnumOptionsKeyword<RefineModule::MatrixAugmentationStyle>(matrixAugmentationStyles() = RefineModule::PartialsAugmentation), "Augmentation", "Style used to augment (overdetermine) scattering matrix");
+	keywords_.add(new EnumOptionsKeyword<RefineModule::MatrixAugmentationStyle>(matrixAugmentationStyles() = RefineModule::PartialsAugmentation), "Augmentation",
+		      "Style used to augment (overdetermine) scattering matrix");
 	keywords_.add(new DoubleKeyword(0.9), "AugmentationParam", "Parameter used to in augmentation (overdetermination) of scattering matrix (dependent on augmentation style selected)");
 	keywords_.add(new BoolKeyword(true), "AutoMinimumRadius", "Automatically determine minimum radii between atom types for potential generation");
 	keywords_.add(new BoolKeyword(true), "DeltaPhiRSmoothing", "Whether to smooth generated phi(r)");
@@ -63,10 +59,11 @@ void RefineModule::initialise()
 	keywords_.add(new DoubleKeyword(0.005), "ErrorStabilityThreshold", "Threshold value at which error is deemed stable over the defined windowing period", "<value[0.0-1.0]>");
 	keywords_.add(new IntegerKeyword(10), "ErrorStabilityWindow", "Number of points over which to assess the stability of errors");
 	keywords_.add(new DoubleKeyword(0.5, 0.01, 100.0), "GaussianAccuracy", "Requested percentage error of Gaussian approximation (if InversionMethod == Gaussian)");
-	keywords_.add(new EnumOptionsKeyword<RefineModule::PotentialInversionMethod>(potentialInversionMethods() = RefineModule::DirectGaussianPotentialInversion), "InversionMethod", "Potential inversion method to employ");
+	keywords_.add(new EnumOptionsKeyword<RefineModule::PotentialInversionMethod>(potentialInversionMethods() = RefineModule::DirectGaussianPotentialInversion), "InversionMethod",
+		      "Potential inversion method to employ");
 	keywords_.add(new DoubleKeyword(0.9, 0.0, 5.0), "MinimumRadius", "Minimum value of r at which additional potential is allowed to take effect (neglecting width of truncation strip)");
 	keywords_.add(new DoubleKeyword(3.0, 0.0, 100.0), "MaximumRadius", "Maximum value of r (if AutoMinimumRadii = true) at which additional potential is zeroed");
-// 	keywords_.add(new BoolKeyword(false), "ModifyBonds", "Modify equilibrium distances of bonds based on signatures in difference functions");
+	// 	keywords_.add(new BoolKeyword(false), "ModifyBonds", "Modify equilibrium distances of bonds based on signatures in difference functions");
 	keywords_.add(new BoolKeyword(true), "ModifyPotential", "Whether to apply generated perturbations to interatomic potentials");
 	keywords_.add(new BoolKeyword(true), "OnlyWhenEnergyStable", "Assesses the energy of all involved Configurations, refining the potential only when all their total energies are stable");
 	keywords_.add(new BoolKeyword(false), "OnlyWhenErrorStable", "Assesses the error of the fits to the reference data, refining the potential only when all errors are stable");
@@ -78,4 +75,3 @@ void RefineModule::initialise()
 	keywords_.add(new DoubleKeyword(1.0, 0.0, 10.0), "Weighting", "Fractional (maximal) amounts of generated perturbations to apply to pair potentials");
 	keywords_.add(new WindowFunctionKeyword(WindowFunction(WindowFunction::SineWindow)), "WindowFunction", "Window function to apply when back-transforming delta S(Q) to g(r)");
 }
-

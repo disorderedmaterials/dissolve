@@ -36,84 +36,77 @@ class SpeciesSite;
 // Calculate Axis Angle Module
 class CalculateAxisAngleModule : public Module
 {
-	public:
+      public:
 	// Constructor
 	CalculateAxisAngleModule();
 	// Destructor
 	~CalculateAxisAngleModule();
 
-
 	/*
 	 * Instances
 	 */
-	public:
+      public:
 	// Create instance of this module
-	Module* createInstance() const;
-
+	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return type of module
-	const char* type() const;
+	const char *type() const;
 	// Return category for module
-	const char* category() const;
+	const char *category() const;
 	// Return brief description of module
-	const char* brief() const;
+	const char *brief() const;
 	// Return the number of Configuration targets this Module requires
 	int nRequiredTargets() const;
-
 
 	/*
 	 * Initialisation
 	 */
-	protected:
+      protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
-
 
 	/*
 	 * Processing
 	 */
-	private:
+      private:
 	// Run set-up stage
-	bool setUp(Dissolve& dissolve, ProcessPool& procPool);
+	bool setUp(Dissolve &dissolve, ProcessPool &procPool);
 	// Run main processing
-	bool process(Dissolve& dissolve, ProcessPool& procPool);
-
+	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions / Data
 	 */
-	private:
+      private:
 	// Analysis procedure to be run
 	Procedure analyser_;
 	// SelectNode for site A
-	SelectProcedureNode* selectA_;
+	SelectProcedureNode *selectA_;
 	// SelectNode for site B
-	SelectProcedureNode* selectB_;
+	SelectProcedureNode *selectB_;
 	// Collect1DNode for A-B RDF
-	Collect1DProcedureNode* collectDistance_;
+	Collect1DProcedureNode *collectDistance_;
 	// Collect1DNode for A-B angle histogram
-	Collect1DProcedureNode* collectAngle_;
+	Collect1DProcedureNode *collectAngle_;
 	// Collect2DNode for distance-angle data
-	Collect2DProcedureNode* collectDAngle_;
+	Collect2DProcedureNode *collectDAngle_;
 	// Process1DNode for A-B RDF
-	Process1DProcedureNode* processDistance_;
+	Process1DProcedureNode *processDistance_;
 	// Process1DNode for A-B-C angle histogram
-	Process1DProcedureNode* processAngle_;
+	Process1DProcedureNode *processAngle_;
 	// Process2DNode for distance-angle data
-	Process2DProcedureNode* processDAngle_;
-
+	Process2DProcedureNode *processDAngle_;
 
 	/*
 	 * GUI Widget
 	 */
-	public:
+      public:
 	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, Dissolve& dissolve);
+	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
 
 #endif
-

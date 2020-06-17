@@ -32,10 +32,10 @@ ExponentialSpinDelegate::ExponentialSpinDelegate(QObject *parent, double vmin, d
 }
 
 // Create editor
-QWidget* ExponentialSpinDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
+QWidget *ExponentialSpinDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	// Create editor widget (in this case a double spin box) and set some properties
-	ExponentialSpin* editor = new ExponentialSpin(parent);
+	ExponentialSpin *editor = new ExponentialSpin(parent);
 	editor->setMinimum(min_);
 	editor->setMaximum(max_);
 	editor->setSingleStep(step_);
@@ -45,29 +45,24 @@ QWidget* ExponentialSpinDelegate::createEditor(QWidget* parent, const QStyleOpti
 }
 
 // Set initial value in editor
-void ExponentialSpinDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
+void ExponentialSpinDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
 	double value = index.model()->data(index, Qt::EditRole).toDouble();
 
-	ExponentialSpin* spinBox = static_cast<ExponentialSpin*>(editor);
+	ExponentialSpin *spinBox = static_cast<ExponentialSpin *>(editor);
 	spinBox->setValue(value);
 	spinBox->selectAll();
 }
 
 // Get value from editing widget, and set back in model
-void ExponentialSpinDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
+void ExponentialSpinDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-	ExponentialSpin* spinBox = static_cast<ExponentialSpin*>(editor);
+	ExponentialSpin *spinBox = static_cast<ExponentialSpin *>(editor);
 
-	// Make sure the value in the spinBox has been updated from the current text
-	spinBox->updateValueFromText();
 	double value = spinBox->value();
 
 	model->setData(index, value, Qt::EditRole);
 }
 
 // Update widget geometry
-void ExponentialSpinDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-	editor->setGeometry(option.rect);
-}
+void ExponentialSpinDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const { editor->setGeometry(option.rect); }

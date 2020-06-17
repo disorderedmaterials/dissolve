@@ -19,11 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/analyse/analyse.h"
 #include "keywords/types.h"
+#include "modules/analyse/analyse.h"
 
 // Perform any necessary initialisation for the Module
-void AnalyseModule::initialise()
-{
-	keywords_.add(new ProcedureKeyword(analyser_), "Analyser", "Analysis procedure to run");
-}
+void AnalyseModule::initialise() { keywords_.add(new ProcedureKeyword(analyser_), "Analyser", "Analysis procedure to run"); }

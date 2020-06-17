@@ -36,25 +36,25 @@ class SelectSpeciesDialog : public QDialog
 {
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	SelectSpeciesDialog(QWidget* parent, const CoreData& coreData, QString dialogTitle);
+	SelectSpeciesDialog(QWidget *parent, const CoreData &coreData, QString dialogTitle);
 	// Destructor
 	~SelectSpeciesDialog();
 
-	private:
+      private:
 	// Main form declaration
 	Ui::SelectSpeciesDialog ui_;
 
-	private slots:
+      private slots:
 	void on_SpeciesWidget_speciesSelectionChanged(bool isValid);
 	void on_SpeciesWidget_speciesDoubleClicked();
 	void on_SelectButton_clicked(bool checked);
 	void on_CancelButton_clicked(bool checked);
 
-	public:
+      public:
 	// Run the dialog, returning a single selected Species
-	Species* selectSpecies();
+	Species *selectSpecies();
 	// Run the dialog, returning a list of selected Species
 	RefList<Species> selectSpecies(int minSpecies, int maxSpecies);
 };

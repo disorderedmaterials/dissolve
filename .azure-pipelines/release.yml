@@ -1,0 +1,145 @@
+trigger:
+  - master
+
+pr: none
+
+stages:
+  - template: templates/code-quality-checks.yml
+
+  # Build and Package Executables
+  - stage: 'build'
+    displayName: 'Build and Package'
+    jobs:
+      - job: 'linux_serialgui'
+        displayName: 'Build Linux (Serial/GUI, ubuntu-16.04)'
+        pool:
+          vmImage: 'ubuntu-16.04'
+        steps:
+          - template: templates/build-linux-serial-gui.yml
+            parameters:
+              ppa: 'beineri/opt-qt-5.12.0-xenial'
+              qtver: 512
+          - template: templates/package-linux-serial-gui.yml
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "packages/"
+              ArtifactName: 'linux-artifacts'
+            displayName: 'Publish Linux Artifacts'
+          - bash: |
+              cp build/dissolve tests/
+            displayName: 'Copy Executable'
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "tests/"
+              ArtifactName: 'linux-tests-serial'
+            displayName: 'Publish Serial Test Artifacts'
+      - job: 'linux_parallel'
+        displayName: 'Build Linux (Parallel, ubuntu-18.04)'
+        pool:
+          vmImage: 'ubuntu-18.04' 
+        steps:
+          - template: templates/build-linux-parallel.yml
+          - bash: |
+              cp build-parallel/dissolve-mpi tests/
+            displayName: 'Copy Executable'
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "tests/"
+              ArtifactName: 'linux-tests-parallel'
+            displayName: 'Publish Parallel Test Artifacts'
+      - job: 'osx_serialgui'
+        displayName: 'Build OSX (Serial/GUI, macos-latest)'
+        pool:
+          vmImage: 'macos-latest' 
+        steps:
+          - template: templates/build-osx-serial-gui.yml
+          - template: templates/package-osx-serial-gui.yml
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "packages/"
+              ArtifactName: 'osx-artifacts'
+            displayName: 'Publish OSX Artifacts'
+      - job: 'windows_serialgui'
+        displayName: 'Build Windows (Serial/GUI, windows-latest)'
+        pool:
+          vmImage: 'windows-latest' 
+        steps:
+          - template: templates/build-windows-serial-gui.yml
+          - template: templates/package-windows-serial-gui.yml
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "packages/"
+              ArtifactName: 'windows-artifacts'
+            displayName: 'Publish Windows Artifacts'
+
+  # Run System Tests
+  - stage: 'system_tests_serial'
+    displayName: 'System Tests (Serial)'
+    jobs:
+      - template: templates/system-tests.yml
+  - stage: 'system_tests_parallel'
+    displayName: 'System Tests (Parallel)'
+    jobs:
+      - template: templates/system-tests.yml
+        parameters:
+          parallel: true
+
+  # Deploy
+  - stage: 'deploy'
+    displayName: 'Deploy'
+    jobs:
+      - job: 'release_gh'
+        displayName: 'Create Versioned Release (GH)'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - checkout: self
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              specificBuildWithTriggering: true
+              downloadType: 'single'
+              artifactName: 'linux-artifacts'
+            displayName: 'Download Linux Artifacts'
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              specificBuildWithTriggering: true
+              downloadType: 'single'
+              artifactName: 'osx-artifacts'
+            displayName: 'Download OSX Artifacts'
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              specificBuildWithTriggering: true
+              downloadType: 'single'
+              artifactName: 'windows-artifacts'
+            displayName: 'Download Windows Artifacts'
+          - bash: |
+              VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+              cd ./examples
+              ./package-examples -v $VERSION
+            displayName: 'Create Example Data Archives'
+          - bash: |
+              SHORTHASH=`git rev-parse --short HEAD`
+              VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+              # Linux AppImages
+              cd $(System.ArtifactsDirectory)/linux-artifacts
+              mv -v Dissolve-${SHORTHASH}-x86_64.AppImage Dissolve-${VERSION}-x86_64.AppImage
+              mv -v Dissolve-GUI-${SHORTHASH}-x86_64.AppImage Dissolve-GUI-${VERSION}-x86_64.AppImage
+              cd ../
+              # OSX Disk Images
+              cd $(System.ArtifactsDirectory)/osx-artifacts
+              mv -v Dissolve-GUI-${VERSION}.dmg Dissolve-GUI-${VERSION}-Catalina.dmg
+              cd ../
+              # Windows Installer / Zip
+              cd $(System.ArtifactsDirectory)/windows-artifacts
+              # -- Generated names are OK
+              cd ../
+            displayName: 'Rename Artifacts'
+          - bash: |
+              VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+              ./ci/scripts/update-release -r projectdissolve/dissolve -t ${VERSION} -n "${VERSION}" -f Recent.md $(System.ArtifactsDirectory)/linux-artifacts/*AppImage $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg examples/*zip examples/*.tar.gz
+            env:
+              GITHUB_TOKEN: $(REPO_SECRET)
+            displayName: 'Create Versioned Release (GitHub)'

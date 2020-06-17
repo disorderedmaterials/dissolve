@@ -22,12 +22,11 @@
 #ifndef DISSOLVE_DATA2D_H
 #define DISSOLVE_DATA2D_H
 
-#include "math/plottable.h"
 #include "base/version.h"
+#include "math/data1d.h"
+#include "math/plottable.h"
 #include "templates/array2d.h"
 #include "templates/objectstore.h"
-#include "math/data1d.h"
-
 
 // Forward Declarations
 class Histogram2D;
@@ -35,21 +34,20 @@ class Histogram2D;
 // One-Dimensional Data
 class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore<Data2D>, public GenericItemBase
 {
-	public:
+      public:
 	// Constructor
 	Data2D();
 	// Destructor
 	~Data2D();
 	// Copy Constructor
-	Data2D(const Data2D& source);
+	Data2D(const Data2D &source);
 	// Clear data
 	void clear();
-	
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// X axis array
 	Array<double> x_;
 	// Y axis array
@@ -63,46 +61,46 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	// Data version
 	VersionCounter version_;
 
-	public:
+      public:
 	// Initialise arrays to specified size
 	void initialise(int xSize, int ySize, bool withError = false);
 	// Initialise to be consistent in size and axes with supplied object
-	void initialise(const Data2D& source);
+	void initialise(const Data2D &source);
 	// Initialise from supplied axis ranges
 	void initialise(double xMin, double xMax, double xBin, double yMin, double yMax, double yBin, bool withError = false);
 	// Copy arrays from supplied object
-	void copyArrays(const Data2D& source);
+	void copyArrays(const Data2D &source);
 	// Zero values array
 	void zero();
 	// Return data version
 	int version() const;
 	// Return x axis value specified
-	double& xAxis(int index);
+	double &xAxis(int index);
 	// Return x axis value specified (const)
 	double constXAxis(int index) const;
 	// Return x axis Array
-	Array<double>& xAxis();
+	Array<double> &xAxis();
 	// Return x axis Array (const)
-	const Array<double>& constXAxis() const;
+	const Array<double> &constXAxis() const;
 	// Return y axis value specified
-	double& yAxis(int index);
+	double &yAxis(int index);
 	// Return y axis value specified (const)
 	double constYAxis(int index) const;
 	// Return y axis Array
-	Array<double>& yAxis();
+	Array<double> &yAxis();
 	// Return y axis Array (const)
-	const Array<double>& constYAxis() const;
+	const Array<double> &constYAxis() const;
 	// Return value specified
-	double& value(int xIndex, int yIndex);
+	double &value(int xIndex, int yIndex);
 	// Return value value specified (const)
 	double constValue(int xIndex, int yIndex) const;
 	// Return value Array
-	Array2D<double>& values();
+	Array2D<double> &values();
 	// Return values Array
-	const Array2D<double>& constValues2D() const;
+	const Array2D<double> &constValues2D() const;
 	// Return values Array in linear format
-	double* values2DLinear();
-	// Return value specified from linear array 	
+	double *values2DLinear();
+	// Return value specified from linear array
 	double value(int index);
 	// Return number of values present in whole dataset
 	int nValues() const;
@@ -115,21 +113,20 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	// Return whether the values have associated errors
 	bool valuesHaveErrors() const;
 	// Return error value specified
-	double& error(int xIndex, int yIndex);
+	double &error(int xIndex, int yIndex);
 	// Return error value specified (const)
 	double constError(int xIndex, int yIndex) const;
 	// Return error Array
-	Array2D<double>& errors();
+	Array2D<double> &errors();
 	// Return errors Array
-	const Array2D<double>& constErrors2D() const;
-
+	const Array2D<double> &constErrors2D() const;
 
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	// Assignment Operator
-	void operator=(const Data2D& source);
+	void operator=(const Data2D &source);
 	// Operator +=
 	void operator+=(const double delta);
 	// Operator -=
@@ -139,27 +136,25 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
 	// Operator /=
 	void operator/=(const double factor);
 
-
 	/*
 	 * GenericItemBase Implementations
 	 */
-	public:
+      public:
 	// Return class name
-	static const char* itemClassName();
+	static const char *itemClassName();
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
-
+	bool write(LineParser &parser);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif

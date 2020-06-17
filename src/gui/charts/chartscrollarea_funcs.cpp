@@ -23,13 +23,9 @@
 #include <QScrollBar>
 
 // Constructor
-ChartScrollArea::ChartScrollArea(QWidget* parent) : QScrollArea(parent)
-{
-}
+ChartScrollArea::ChartScrollArea(QWidget *parent) : QScrollArea(parent) {}
 
-ChartScrollArea::~ChartScrollArea()
-{
-}
+ChartScrollArea::~ChartScrollArea() {}
 
 /*
  * QScrollArea Reimplementations
@@ -39,13 +35,12 @@ ChartScrollArea::~ChartScrollArea()
 QSize ChartScrollArea::sizeHint() const
 {
 	QSize s = viewportSizeHint();
-	if (horizontalScrollBarPolicy() == Qt::ScrollBarAlwaysOn) s.setHeight(s.height() + horizontalScrollBar()->sizeHint().height());
-	if (verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOn) s.setWidth(s.width() + verticalScrollBar()->sizeHint().width());
+	if (horizontalScrollBarPolicy() == Qt::ScrollBarAlwaysOn)
+		s.setHeight(s.height() + horizontalScrollBar()->sizeHint().height());
+	if (verticalScrollBarPolicy() == Qt::ScrollBarAlwaysOn)
+		s.setWidth(s.width() + verticalScrollBar()->sizeHint().width());
 	return s;
 }
 
 // Return viewport size hint
-QSize ChartScrollArea::viewportSizeHint() const
-{
-	return (widget() ? widget()->sizeHint() : QSize(50,50));
-}
+QSize ChartScrollArea::viewportSizeHint() const { return (widget() ? widget()->sizeHint() : QSize(50, 50)); }

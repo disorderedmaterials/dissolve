@@ -23,48 +23,34 @@
 #include "base/lineparser.h"
 
 // Constructors
-RangeKeyword::RangeKeyword(Range value, Vec3Labels::LabelType labelType) : KeywordData<Range>(KeywordBase::RangeData, value)
-{
-	labelType_ = labelType;
-}
+RangeKeyword::RangeKeyword(Range value, Vec3Labels::LabelType labelType) : KeywordData<Range>(KeywordBase::RangeData, value) { labelType_ = labelType; }
 
 // Destructor
-RangeKeyword::~RangeKeyword()
-{
-}
+RangeKeyword::~RangeKeyword() {}
 
 /*
  * Label Type
  */
 
 // Label type to display in GUI
-Vec3Labels::LabelType RangeKeyword::labelType() const
-{
-	return labelType_;
-}
+Vec3Labels::LabelType RangeKeyword::labelType() const { return labelType_; }
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int RangeKeyword::minArguments() const
-{
-	return 2;
-}
+int RangeKeyword::minArguments() const { return 2; }
 
 // Return maximum number of arguments accepted
-int RangeKeyword::maxArguments() const
-{
-	return 2;
-}
+int RangeKeyword::maxArguments() const { return 2; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool RangeKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool RangeKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-	if (parser.hasArg(startArg+1))
+	if (parser.hasArg(startArg + 1))
 	{
-		setData(Range(parser.argd(startArg), parser.argd(startArg+1)));
+		setData(Range(parser.argd(startArg), parser.argd(startArg + 1)));
 
 		return true;
 	}
@@ -73,7 +59,4 @@ bool RangeKeyword::read(LineParser& parser, int startArg, const CoreData& coreDa
 }
 
 // Write keyword data to specified LineParser
-bool RangeKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
-{
-	return parser.writeLineF("%s%s  %12.6e  %12.6e\n", prefix, keywordName, data_.minimum(), data_.maximum());
-}
+bool RangeKeyword::write(LineParser &parser, const char *keywordName, const char *prefix) { return parser.writeLineF("%s%s  %12.6e  %12.6e\n", prefix, keywordName, data_.minimum(), data_.maximum()); }

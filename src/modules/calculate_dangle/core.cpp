@@ -37,16 +37,11 @@ CalculateDAngleModule::CalculateDAngleModule() : Module(), analyser_(ProcedureNo
 }
 
 // Destructor
-CalculateDAngleModule::~CalculateDAngleModule()
-{
-}
+CalculateDAngleModule::~CalculateDAngleModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* CalculateDAngleModule::createInstance() const
-{
-	return new CalculateDAngleModule;
-}
+Module *CalculateDAngleModule::createInstance() const { return new CalculateDAngleModule; }

@@ -27,11 +27,11 @@ ColourDefinition::ColourDefinition()
 {
 	// Colour Definitions
 	singleColour_.setRgb(0, 0, 0, 255);
-	rgbGradient_.addPoint(0.0, QColor(255,255,255));
-	rgbGradient_.addPoint(1.0, QColor(0,0,255));
+	rgbGradient_.addPoint(0.0, QColor(255, 255, 255));
+	rgbGradient_.addPoint(1.0, QColor(0, 0, 255));
 	hsvGradient_.setUseHSV(true);
-	hsvGradient_.addPoint(0.0, QColor(255,0,0));
-	hsvGradient_.addPoint(1.0, QColor(100,40,255));
+	hsvGradient_.addPoint(0.0, QColor(255, 0, 0));
+	hsvGradient_.addPoint(1.0, QColor(100, 40, 255));
 	customGradient_.clear();
 
 	// Style
@@ -41,18 +41,13 @@ ColourDefinition::ColourDefinition()
 }
 
 // Destructor
-ColourDefinition::~ColourDefinition()
-{
-}
+ColourDefinition::~ColourDefinition() {}
 
 // Copy constructor
-ColourDefinition::ColourDefinition(const ColourDefinition& source)
-{
-	(*this) = source;
-}
+ColourDefinition::ColourDefinition(const ColourDefinition &source) { (*this) = source; }
 
 // Assignment operator
-void ColourDefinition::operator=(const ColourDefinition& source)
+void ColourDefinition::operator=(const ColourDefinition &source)
 {
 	// Colour Definitions
 	style_ = source.style_;
@@ -70,20 +65,19 @@ void ColourDefinition::operator=(const ColourDefinition& source)
  */
 
 // ColourStyle Keywords
-const char* ColourStyleKeywords[] = { "SingleColour", "RGBGradient", "HSVGradient", "CustomGradient" };
+const char *ColourStyleKeywords[] = {"SingleColour", "RGBGradient", "HSVGradient", "CustomGradient"};
 
 // Convert text string to ColourStyle
-ColourDefinition::ColourStyle ColourDefinition::colourStyle(const char* s)
+ColourDefinition::ColourStyle ColourDefinition::colourStyle(const char *s)
 {
-	for (int n=0; n<ColourDefinition::nColourStyles; ++n) if (DissolveSys::sameString(s, ColourStyleKeywords[n])) return (ColourDefinition::ColourStyle) n;
+	for (int n = 0; n < ColourDefinition::nColourStyles; ++n)
+		if (DissolveSys::sameString(s, ColourStyleKeywords[n]))
+			return (ColourDefinition::ColourStyle)n;
 	return ColourDefinition::nColourStyles;
 }
 
 // Convert ColourStyle to text string
-const char* ColourDefinition::colourStyle(ColourStyle cs)
-{
-	return ColourStyleKeywords[cs];
-}
+const char *ColourDefinition::colourStyle(ColourStyle cs) { return ColourStyleKeywords[cs]; }
 
 /*
  * Style
@@ -98,10 +92,7 @@ void ColourDefinition::setStyle(ColourStyle style)
 }
 
 // Return colour style in use
-ColourDefinition::ColourStyle ColourDefinition::style() const
-{
-	return style_;
-}
+ColourDefinition::ColourStyle ColourDefinition::style() const { return style_; }
 
 // Set whether to use global alpha value
 void ColourDefinition::setUseGlobalAlpha(bool useGlobalAlpha)
@@ -112,10 +103,7 @@ void ColourDefinition::setUseGlobalAlpha(bool useGlobalAlpha)
 }
 
 // Return whether to use global alpha value
-bool ColourDefinition::useGlobalAlpha() const
-{
-	return useGlobalAlpha_;
-}
+bool ColourDefinition::useGlobalAlpha() const { return useGlobalAlpha_; }
 
 // Set global alpha value
 void ColourDefinition::setGlobalAlpha(double alpha)
@@ -126,16 +114,10 @@ void ColourDefinition::setGlobalAlpha(double alpha)
 }
 
 // Return global alpha value
-double ColourDefinition::globalAlpha() const
-{
-	return globalAlpha_;
-}
+double ColourDefinition::globalAlpha() const { return globalAlpha_; }
 
 // Return version
-int ColourDefinition::version() const
-{
-	return version_;
-}
+int ColourDefinition::version() const { return version_; }
 
 /*
  * Colour Definitions
@@ -150,10 +132,7 @@ void ColourDefinition::setSingleColour(QColor colour)
 }
 
 // Return single colour
-QColor ColourDefinition::singleColour() const
-{
-	return singleColour_;
-}
+QColor ColourDefinition::singleColour() const { return singleColour_; }
 
 /*
  * RGB Gradient Definition
@@ -168,10 +147,7 @@ void ColourDefinition::setRGBGradientStartValue(double value)
 }
 
 // Return RGB gradient start value
-double ColourDefinition::rgbGradientStartValue() const
-{
-	return rgbGradient_.point(0).value();
-}
+double ColourDefinition::rgbGradientStartValue() const { return rgbGradient_.point(0).value(); }
 
 // Set RGB gradient start colour
 void ColourDefinition::setRGBGradientStartColour(QColor colour)
@@ -182,10 +158,7 @@ void ColourDefinition::setRGBGradientStartColour(QColor colour)
 }
 
 // Return RGB gradient start colour
-QColor ColourDefinition::rgbGradientStartColour() const
-{
-	return rgbGradient_.point(0).colour();
-}
+QColor ColourDefinition::rgbGradientStartColour() const { return rgbGradient_.point(0).colour(); }
 
 // Set RGB gradient start
 void ColourDefinition::setRGBGradientStart(double value, QColor colour)
@@ -204,10 +177,7 @@ void ColourDefinition::setRGBGradientEndValue(double value)
 }
 
 // Return RGB gradient end value
-double ColourDefinition::rgbGradientEndValue() const
-{
-	return rgbGradient_.point(1).value();
-}
+double ColourDefinition::rgbGradientEndValue() const { return rgbGradient_.point(1).value(); }
 
 // Set RGB gradient end colour
 void ColourDefinition::setRGBGradientEndColour(QColor colour)
@@ -218,10 +188,7 @@ void ColourDefinition::setRGBGradientEndColour(QColor colour)
 }
 
 // Return RGB gradient end colour
-QColor ColourDefinition::rgbGradientEndColour() const
-{
-	return rgbGradient_.point(1).colour();
-}
+QColor ColourDefinition::rgbGradientEndColour() const { return rgbGradient_.point(1).colour(); }
 
 // Set RGB gradient end
 void ColourDefinition::setRGBGradientEnd(double value, QColor colour)
@@ -244,10 +211,7 @@ void ColourDefinition::setHSVGradientStartValue(double value)
 }
 
 // Return HSV gradient start value
-double ColourDefinition::hsvGradientStartValue() const
-{
-	return hsvGradient_.point(0).value();
-}
+double ColourDefinition::hsvGradientStartValue() const { return hsvGradient_.point(0).value(); }
 
 // Set HSV gradient start colour
 void ColourDefinition::setHSVGradientStartColour(QColor colour)
@@ -258,10 +222,7 @@ void ColourDefinition::setHSVGradientStartColour(QColor colour)
 }
 
 // Return HSV gradient start colour
-QColor ColourDefinition::hsvGradientStartColour() const
-{
-	return hsvGradient_.point(0).colour();
-}
+QColor ColourDefinition::hsvGradientStartColour() const { return hsvGradient_.point(0).colour(); }
 
 // Set HSV gradient start
 void ColourDefinition::setHSVGradientStart(double value, QColor colour)
@@ -280,10 +241,7 @@ void ColourDefinition::setHSVGradientEndValue(double value)
 }
 
 // Return HSV gradient end value
-double ColourDefinition::hsvGradientEndValue() const
-{
-	return hsvGradient_.point(1).value();
-}
+double ColourDefinition::hsvGradientEndValue() const { return hsvGradient_.point(1).value(); }
 
 // Set HSV gradient end colour
 void ColourDefinition::setHSVGradientEndColour(QColor colour)
@@ -294,10 +252,7 @@ void ColourDefinition::setHSVGradientEndColour(QColor colour)
 }
 
 // Return HSV gradient end colour
-QColor ColourDefinition::hsvGradientEndColour() const
-{
-	return hsvGradient_.point(1).colour();
-}
+QColor ColourDefinition::hsvGradientEndColour() const { return hsvGradient_.point(1).colour(); }
 
 // Set HSV gradient end
 void ColourDefinition::setHSVGradientEnd(double value, QColor colour)
@@ -320,22 +275,13 @@ void ColourDefinition::setCustomGradientPoint(int index, double value, QColor co
 }
 
 // Return custom gradient point specified
-const ColourScalePoint& ColourDefinition::customGradientPoint(int index) const
-{
-	return customGradient_.point(index);
-}
+const ColourScalePoint &ColourDefinition::customGradientPoint(int index) const { return customGradient_.point(index); }
 
 // Return colour of custom gradient point specified
-QColor ColourDefinition::customGradientColour(int index) const
-{
-	return customGradient_.point(index).colour();
-}
+QColor ColourDefinition::customGradientColour(int index) const { return customGradient_.point(index).colour(); }
 
 // Return value of custom gradient point specified
-double ColourDefinition::customGradientValue(ColourStyle source, int index) const
-{
-	return customGradient_.point(index).value();
-}
+double ColourDefinition::customGradientValue(ColourStyle source, int index) const { return customGradient_.point(index).value(); }
 
 // Append point to custom gradient
 void ColourDefinition::appendCustomGradientPoint()
@@ -354,16 +300,10 @@ void ColourDefinition::addCustomGradientPoint(double value, QColor colour)
 }
 
 // Return number of points in custom gradient
-int ColourDefinition::nCustomGradientPoints() const
-{
-	return customGradient_.nPoints();
-}
+int ColourDefinition::nCustomGradientPoints() const { return customGradient_.nPoints(); }
 
 // Return custom gradient points
-const Array<ColourScalePoint>& ColourDefinition::customGradientPoints() const
-{
-	return customGradient_.points();
-}
+const Array<ColourScalePoint> &ColourDefinition::customGradientPoints() const { return customGradient_.points(); }
 
 // Remove specified colourscale point with index specified
 void ColourDefinition::removeCustomGradientPoint(int id)
@@ -378,7 +318,7 @@ void ColourDefinition::removeCustomGradientPoint(int id)
  */
 
 // Return (set) colour for specified value
-void ColourDefinition::colour(double value, GLfloat* rgba) const
+void ColourDefinition::colour(double value, GLfloat *rgba) const
 {
 	if (style_ == ColourDefinition::SingleColourStyle)
 	{
@@ -390,16 +330,19 @@ void ColourDefinition::colour(double value, GLfloat* rgba) const
 	else if (style_ == ColourDefinition::RGBGradientStyle)
 	{
 		rgbGradient_.colour(value, rgba);
-		if (useGlobalAlpha_) rgba[3] = globalAlpha_;
+		if (useGlobalAlpha_)
+			rgba[3] = globalAlpha_;
 	}
 	else if (style_ == ColourDefinition::HSVGradientStyle)
 	{
 		hsvGradient_.colour(value, rgba);
-		if (useGlobalAlpha_) rgba[3] = globalAlpha_;
+		if (useGlobalAlpha_)
+			rgba[3] = globalAlpha_;
 	}
 	else
 	{
 		customGradient_.colour(value, rgba);
-		if (useGlobalAlpha_) rgba[3] = globalAlpha_;
+		if (useGlobalAlpha_)
+			rgba[3] = globalAlpha_;
 	}
 }

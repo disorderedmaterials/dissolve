@@ -22,12 +22,7 @@
 #include "base/outputhandler.h"
 
 // Constructor
-OutputHandler::OutputHandler()
-{
-}
+OutputHandler::OutputHandler() {}
 
 // Destructor
-OutputHandler::~OutputHandler()
-{
-}
-
+OutputHandler::~OutputHandler() {}

@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_RENDER_COLOURDEFINITION_H
 #define DISSOLVE_RENDER_COLOURDEFINITION_H
 
-#include "gui/render/colourscale.h"
 #include "base/enumoptions.h"
 #include "base/version.h"
+#include "gui/render/colourscale.h"
 
 // Forward Declarations
 /* none */
@@ -32,33 +32,38 @@
 // Colour Definition
 class ColourDefinition
 {
-	public:
+      public:
 	// Constructor
 	ColourDefinition();
 	// Destructor
 	~ColourDefinition();
 	// Copy constructor
-	ColourDefinition(const ColourDefinition& source);
+	ColourDefinition(const ColourDefinition &source);
 	// Assignment operator
-	void operator=(const ColourDefinition& source);
-
+	void operator=(const ColourDefinition &source);
 
 	/*
 	 * Enumerations
 	 */
-	public:
+      public:
 	// Colour Styles
-	enum ColourStyle { SingleColourStyle, RGBGradientStyle, HSVGradientStyle, CustomGradientStyle, nColourStyles };
+	enum ColourStyle
+	{
+		SingleColourStyle,
+		RGBGradientStyle,
+		HSVGradientStyle,
+		CustomGradientStyle,
+		nColourStyles
+	};
 	// Convert text string to ColourStyle
-	static ColourStyle colourStyle(const char* s);
+	static ColourStyle colourStyle(const char *s);
 	// Convert ColourStyle to text string
-	static const char* colourStyle(ColourDefinition::ColourStyle cs);
-
+	static const char *colourStyle(ColourDefinition::ColourStyle cs);
 
 	/*
 	 * Style
 	 */
-	private:
+      private:
 	// Current colour style in use
 	ColourStyle style_;
 	// Whether to use global alpha value
@@ -68,7 +73,7 @@ class ColourDefinition
 	// Version
 	VersionCounter version_;
 
-	public:
+      public:
 	// Set colour style to use
 	void setStyle(ColourStyle source);
 	// Return colour style in use
@@ -84,29 +89,27 @@ class ColourDefinition
 	// Return version
 	int version() const;
 
-
 	/*
 	 * Single Colour Definition
 	 */
-	private:
+      private:
 	// Single colour
 	QColor singleColour_;
 
-	public:
+      public:
 	// Set single colour
 	void setSingleColour(QColor colour);
 	// Return single colour
 	QColor singleColour() const;
 
-
 	/*
 	 * RGB Gradient Definition
 	 */
-	private:
+      private:
 	// RGB Gradient
 	ColourScale rgbGradient_;
 
-	public:
+      public:
 	// Set RGB gradient start value
 	void setRGBGradientStartValue(double value);
 	// Return RGB gradient start value
@@ -128,15 +131,14 @@ class ColourDefinition
 	// Set RGB gradient end
 	void setRGBGradientEnd(double value, QColor colour);
 
-
 	/*
 	 * HSV Gradient Definition
 	 */
-	private:
+      private:
 	// HSV gradient
 	ColourScale hsvGradient_;
 
-	public:
+      public:
 	// Set HSV gradient start value
 	void setHSVGradientStartValue(double value);
 	// Return HSV gradient start value
@@ -158,19 +160,18 @@ class ColourDefinition
 	// Set HSV gradient end
 	void setHSVGradientEnd(double value, QColor colour);
 
-
 	/*
 	 * Custom Gradient Definition
 	 */
-	private:
+      private:
 	// Custom gradient
 	ColourScale customGradient_;
 
-	public:
+      public:
 	// Set custom gradient point value and colour
 	void setCustomGradientPoint(int index, double value, QColor colour);
 	// Return custom gradient point specified
-	const ColourScalePoint& customGradientPoint(int index) const;
+	const ColourScalePoint &customGradientPoint(int index) const;
 	// Return colour of custom gradient point specified
 	QColor customGradientColour(int index) const;
 	// Return value of custom gradient point specified
@@ -182,17 +183,16 @@ class ColourDefinition
 	// Return number of points in custom gradient
 	int nCustomGradientPoints() const;
 	// Return custom gradient points
-	const Array<ColourScalePoint>& customGradientPoints() const;
+	const Array<ColourScalePoint> &customGradientPoints() const;
 	// Remove specified colourscale point with index specified
 	void removeCustomGradientPoint(int id);
-
 
 	/*
 	 * Colour Access
 	 */
-	public:
+      public:
 	// Return (set) colour for specified value
-	void colour(double value, GLfloat* rgba) const;
+	void colour(double value, GLfloat *rgba) const;
 };
 
 #endif

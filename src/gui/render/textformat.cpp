@@ -22,7 +22,7 @@
 #include "gui/render/textformat.h"
 
 // Constructor
-TextFormat::TextFormat() :  ListItem<TextFormat>()
+TextFormat::TextFormat() : ListItem<TextFormat>()
 {
 	y_ = 0.0;
 	scale_ = 1.0;
@@ -32,18 +32,13 @@ TextFormat::TextFormat() :  ListItem<TextFormat>()
 }
 
 // Desctructor
-TextFormat::~TextFormat()
-{
-}
+TextFormat::~TextFormat() {}
 
 // Copy constructor
-TextFormat::TextFormat(const TextFormat& source)
-{
-	(*this) = source;
-}
+TextFormat::TextFormat(const TextFormat &source) { (*this) = source; }
 
 // Assignment operator
-void TextFormat::operator=(const TextFormat& source)
+void TextFormat::operator=(const TextFormat &source)
 {
 	y_ = source.y_;
 	scale_ = source.scale_;
@@ -53,66 +48,33 @@ void TextFormat::operator=(const TextFormat& source)
 }
 
 // Set vertical (bottom-edge) position
-void TextFormat::setY(double y)
-{
-	y_ = y;
-}
+void TextFormat::setY(double y) { y_ = y; }
 
 // Adjust vertical (bottom-edge) position
-void TextFormat::adjustY(double delta)
-{
-	y_ += delta;
-}
+void TextFormat::adjustY(double delta) { y_ += delta; }
 
 // Return vertical (bottom-edge) position
-double TextFormat::y()
-{
-	return y_;
-}
+double TextFormat::y() { return y_; }
 
 // Set scale
-void TextFormat::setScale(double scale)
-{
-	scale_ = scale;
-}
+void TextFormat::setScale(double scale) { scale_ = scale; }
 
 // Return scale
-double TextFormat::scale()
-{
-	return scale_;
-}
+double TextFormat::scale() { return scale_; }
 // Set whether text is italic
-void TextFormat::setItalic(bool italic)
-{
-	italic_ = italic;
-}
+void TextFormat::setItalic(bool italic) { italic_ = italic; }
 
 // Return whether text is italic
-bool TextFormat::italic()
-{
-	return italic_;
-}
+bool TextFormat::italic() { return italic_; }
 
 // Set whether text is bold
-void TextFormat::setBold(bool bold)
-{
-	bold_ = bold;
-}
+void TextFormat::setBold(bool bold) { bold_ = bold; }
 
 // Return whether text is bold
-bool TextFormat::bold()
-{
-	return bold_;
-}
+bool TextFormat::bold() { return bold_; }
 
 // Set whether text is actually a symbol
-void TextFormat::setSymbol(bool symbol)
-{
-	symbol_ = symbol;
-}
+void TextFormat::setSymbol(bool symbol) { symbol_ = symbol; }
 
 // Return whether text is actually a symbol
-bool TextFormat::symbol()
-{
-	return symbol_;
-}
+bool TextFormat::symbol() { return symbol_; }

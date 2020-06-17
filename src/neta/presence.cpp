@@ -20,11 +20,12 @@
 */
 
 #include "neta/presence.h"
-#include "data/ffatomtype.h"
 #include "classes/speciesatom.h"
+#include "data/ffatomtype.h"
 
 // Constructor
-NETAPresenceNode::NETAPresenceNode(NETADefinition* parent, PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes, SpeciesBond::BondType bt) : NETANode(parent, NETANode::PresenceNode)
+NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt)
+    : NETANode(parent, NETANode::PresenceNode)
 {
 	allowedElements_ = targetElements;
 	allowedAtomTypes_ = targetAtomTypes;
@@ -38,9 +39,7 @@ NETAPresenceNode::NETAPresenceNode(NETADefinition* parent, PointerArray<Element>
 }
 
 // Destructor
-NETAPresenceNode::~NETAPresenceNode()
-{
-}
+NETAPresenceNode::~NETAPresenceNode() {}
 
 /*
  * Modifiers
@@ -49,44 +48,39 @@ NETAPresenceNode::~NETAPresenceNode()
 // Return enum options for NETACharacterModifiers
 EnumOptions<NETAPresenceNode::NETACharacterModifier> NETAPresenceNode::modifiers()
 {
-	static EnumOptionsList ModifierOptions = EnumOptionsList() <<
-		EnumOption(NBondsModifier,			"nbonds") <<
-		EnumOption(NHydrogensModifier,			"nh") <<
-		EnumOption(RepeatCharacterModifier,		"n");
-	
+	static EnumOptionsList ModifierOptions = EnumOptionsList() << EnumOption(NBondsModifier, "nbonds") << EnumOption(NHydrogensModifier, "nh") << EnumOption(RepeatCharacterModifier, "n");
+
 	static EnumOptions<NETAPresenceNode::NETACharacterModifier> options("CharacterModifier", ModifierOptions);
 
 	return options;
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETAPresenceNode::isValidModifier(const char* s) const
-{
-	return (modifiers().isValid(s));
-}
+bool NETAPresenceNode::isValidModifier(const char *s) const { return (modifiers().isValid(s)); }
 
 // Set value and comparator for specified modifier
-bool NETAPresenceNode::setModifier(const char* modifier, ComparisonOperator op, int value)
+bool NETAPresenceNode::setModifier(const char *modifier, ComparisonOperator op, int value)
 {
 	// Check that the supplied index is valid
-	if (!modifiers().isValid(modifier)) return Messenger::error("Invalid modifier '%s' passed to NETAPresenceNode.\n", modifier);
+	if (!modifiers().isValid(modifier))
+		return Messenger::error("Invalid modifier '%s' passed to NETAPresenceNode.\n", modifier);
 
 	switch (modifiers().enumeration(modifier))
 	{
-		case (NETAPresenceNode::NBondsModifier):
-			nBondsValue_ = value;
-			nBondsValueOperator_ = op;
-			break;
-		case (NETAPresenceNode::NHydrogensModifier):
-			nHydrogensValue_ = value;
-			nHydrogensValueOperator_ = op;
-			break;
-		case (NETAPresenceNode::RepeatCharacterModifier):
-			repeatCount_ = value;
-			repeatCountOperator_ = op;
-			break;
-		default:
-			return Messenger::error("Don't know how to handle modifier '%s' in character node.\n", modifier);
+	case (NETAPresenceNode::NBondsModifier):
+		nBondsValue_ = value;
+		nBondsValueOperator_ = op;
+		break;
+	case (NETAPresenceNode::NHydrogensModifier):
+		nHydrogensValue_ = value;
+		nHydrogensValueOperator_ = op;
+		break;
+	case (NETAPresenceNode::RepeatCharacterModifier):
+		repeatCount_ = value;
+		repeatCountOperator_ = op;
+		break;
+	default:
+		return Messenger::error("Don't know how to handle modifier '%s' in character node.\n", modifier);
 	}
 
 	return true;
@@ -97,31 +91,32 @@ bool NETAPresenceNode::setModifier(const char* modifier, ComparisonOperator op, 
  */
 
 // Evaluate the node and return its score
-int NETAPresenceNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& availableAtoms) const
+int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &availableAtoms) const
 {
-// 	printf("I AM THE PRESENCE - availableAtoms size = %i:\n", availableAtoms.nItems());
-// 	RefListIterator<const SpeciesAtom> availableAtomsIterator(availableAtoms);
-// 	while (const SpeciesAtom* iii = availableAtomsIterator.iterate()) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
+	// 	printf("I AM THE PRESENCE - availableAtoms size = %i:\n", availableAtoms.nItems());
+	// 	for (const SpeciesAtom* iii : availableAtoms) printf("   -- %p %i %s\n", iii, iii->userIndex(), iii->element()->symbol());
 
 	// We expect the passed SpeciesAtom 'i' to be NULL, as our potential targets are held in availableAtoms (which we will modify as appropriate)
-	if (i != NULL) printf("Don't pass target atom to NETAPresenceNode - pass a list of possible atoms instead...\n");
+	if (i != NULL)
+		printf("Don't pass target atom to NETAPresenceNode - pass a list of possible atoms instead...\n");
 
 	// Loop over the provided possible list of atoms
 	int nMatches = 0, totalScore = 0;
 	RefList<const SpeciesAtom> matches;
-	RefListIterator<const SpeciesAtom> atomIterator(availableAtoms);
-	while (const SpeciesAtom* j = atomIterator.iterate())
+	for (auto j : availableAtoms)
 	{
 		// Evaluate the atom against our elements
 		int atomScore = NETANode::NoMatch;
-		for (int n=0; n<allowedElements_.nItems(); ++n)
+		for (const auto *element : allowedElements_)
 		{
-			if (j->element() != allowedElements_.at(n)) continue;
+			if (j->element() != element)
+				continue;
 
 			// Process branch definition via the base class, using a fresh path
 			RefList<const SpeciesAtom> emptyPath;
 			int branchScore = NETANode::score(j, emptyPath);
-			if (branchScore == NETANode::NoMatch) continue;
+			if (branchScore == NETANode::NoMatch)
+				continue;
 
 			// Create total score (element match plus branch score)
 			atomScore = 1 + branchScore;
@@ -129,31 +124,36 @@ int NETAPresenceNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& av
 			// Now have a match, so break out of the loop
 			break;
 		}
-		if (atomScore == NETANode::NoMatch) for (int n=0; n<allowedAtomTypes_.nItems(); ++n)
-		{
-			// Evaluate the neighbour against the atom type
-			int typeScore = allowedAtomTypes_.at(n)->neta().score(j);
-			if (typeScore == NETANode::NoMatch) continue;
+		if (atomScore == NETANode::NoMatch)
+			for (const auto *type : allowedAtomTypes_)
+			{
+				// Evaluate the neighbour against the atom type
+				int typeScore = type->neta().score(j);
+				if (typeScore == NETANode::NoMatch)
+					continue;
 
-			// Process branch definition via the base class, using an empty path
-			RefList<const SpeciesAtom> emptyPath;
-			int branchScore = NETANode::score(j, emptyPath);
-			if (branchScore == NETANode::NoMatch) continue;
+				// Process branch definition via the base class, using an empty path
+				RefList<const SpeciesAtom> emptyPath;
+				int branchScore = NETANode::score(j, emptyPath);
+				if (branchScore == NETANode::NoMatch)
+					continue;
 
-			// Create total score
-			atomScore = typeScore + branchScore;
+				// Create total score
+				atomScore = typeScore + branchScore;
 
-			// Now have a match, so break out of the loop
-			break;
-		}
+				// Now have a match, so break out of the loop
+				break;
+			}
 
 		// Did we match the atom?
-		if (atomScore == NETANode::NoMatch) continue;
+		if (atomScore == NETANode::NoMatch)
+			continue;
 
 		// Check any specified modifier values
 		if (nBondsValue_ >= 0)
 		{
-			if (!compareValues(j->nBonds(), nBondsValueOperator_, nBondsValue_)) return NETANode::NoMatch;
+			if (!compareValues(j->nBonds(), nBondsValueOperator_, nBondsValue_))
+				return NETANode::NoMatch;
 
 			++atomScore;
 		}
@@ -161,9 +161,11 @@ int NETAPresenceNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& av
 		{
 			// Count number of hydrogens attached to this atom
 			int nH = 0;
-			const PointerArray<SpeciesBond>& bonds = j->bonds();
-			for (int n=0; n<bonds.nItems(); ++n) if (bonds.at(n)->partner(j)->element()->Z() == ELEMENT_H) ++nH;
-			if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_)) return NETANode::NoMatch;
+			for (const auto *bond : j->bonds())
+				if (bond->partner(j)->element()->Z() == ELEMENT_H)
+					++nH;
+			if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_))
+				return NETANode::NoMatch;
 
 			++atomScore;
 		}
@@ -174,15 +176,17 @@ int NETAPresenceNode::score(const SpeciesAtom* i, RefList<const SpeciesAtom>& av
 		matches.append(j);
 
 		// Have we matched enough? If so break out early.
-		if (compareValues(nMatches, repeatCountOperator_, repeatCount_)) break;
+		if (compareValues(nMatches, repeatCountOperator_, repeatCount_))
+			break;
 	}
 
 	// Did we find the required number of matches in the provided list?
-	if (!compareValues(nMatches, repeatCountOperator_, repeatCount_)) return NETANode::NoMatch;
+	if (!compareValues(nMatches, repeatCountOperator_, repeatCount_))
+		return NETANode::NoMatch;
 
 	// Remove any matched atoms from the original list
-	RefListIterator<const SpeciesAtom> matchIterator(matches);
-	while (const SpeciesAtom* j = matchIterator.iterate()) availableAtoms.remove(j);
+	for (auto j : matches)
+		availableAtoms.remove(j);
 
 	return totalScore;
 }

@@ -31,49 +31,46 @@
 // Plain Value List
 class PlainValueList
 {
-	public:
+      public:
 	// Constructor
 	PlainValueList();
 	// Destructor
 	~PlainValueList();
 
-
 	/*
 	 * Values
 	 */
-	private:
+      private:
 	// List of contained Values
 	List<PlainValue> values_;
 
-	public:
+      public:
 	// Return first Value in list
-	PlainValue* values();
+	PlainValue *values();
 	// Add Value
-	PlainValue* add(const char* name, PlainValue newValue, const char* description = "", int genericItemFlags = -1);
+	PlainValue *add(const char *name, PlainValue newValue, const char *description = "", int genericItemFlags = -1);
 	// Retrieve named Value (bool)
-	bool valueAsBool(const char* name);
+	bool valueAsBool(const char *name);
 	// Retrieve named Value (int)
-	int valueAsInt(const char* name);
+	int valueAsInt(const char *name);
 	// Retrieve named Value (double)
-	double valueAsDouble(const char* name);
+	double valueAsDouble(const char *name);
 	// Retrieve named Value (string)
-	const char* valueAsString(const char* name);
-
+	const char *valueAsString(const char *name);
 
 	/*
 	 * Search
 	 */
-	public:
+      public:
 	// Return named Value
-	PlainValue* value(const char* name);
-
+	PlainValue *value(const char *name);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool);
+	bool broadcast(ProcessPool &procPool);
 };
 
 #endif

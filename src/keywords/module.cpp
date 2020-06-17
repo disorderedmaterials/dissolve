@@ -23,22 +23,14 @@
 #include "module/module.h"
 
 // Constructor
-ModuleKeywordBase::ModuleKeywordBase(const char* moduleType)
-{
-	moduleType_ = moduleType;
-}
+ModuleKeywordBase::ModuleKeywordBase(const char *moduleType) { moduleType_ = moduleType; }
 
 // Destructor
-ModuleKeywordBase::~ModuleKeywordBase()
-{
-}
+ModuleKeywordBase::~ModuleKeywordBase() {}
 
 /*
  * Target Module Type
  */
 
 // Return target Module type to allow
-const char* ModuleKeywordBase::moduleType() const
-{
-	return moduleType_;
-}
+const char *ModuleKeywordBase::moduleType() const { return moduleType_; }

@@ -31,18 +31,13 @@ LineStyle::LineStyle(double width, LineStipple::StippleType stipple, double r, d
 }
 
 // Destructor
-LineStyle::~LineStyle()
-{
-}
+LineStyle::~LineStyle() {}
 
 // Copy constructor
-LineStyle::LineStyle(const LineStyle& source)
-{
-	(*this) = source;
-}
+LineStyle::LineStyle(const LineStyle &source) { (*this) = source; }
 
 // Assignment operator
-void LineStyle::operator=(const LineStyle& source)
+void LineStyle::operator=(const LineStyle &source)
 {
 	width_ = source.width_;
 	stipple_ = source.stipple_;
@@ -80,28 +75,16 @@ void LineStyle::set(double width, LineStipple::StippleType stipple, double r, do
 }
 
 // Set line width
-void LineStyle::setWidth(double width)
-{
-	width_ = width;
-}
+void LineStyle::setWidth(double width) { width_ = width; }
 
 // Return line width
-double LineStyle::width() const
-{
-	return width_;
-}
+double LineStyle::width() const { return width_; }
 
 // Set line stipple
-void LineStyle::setStipple(LineStipple::StippleType stipple)
-{
-	stipple_ = stipple;
-}
+void LineStyle::setStipple(LineStipple::StippleType stipple) { stipple_ = stipple; }
 
 // Return line stipple
-LineStipple::StippleType LineStyle::stipple() const
-{
-	return stipple_;
-}
+LineStipple::StippleType LineStyle::stipple() const { return stipple_; }
 
 // Set line colour
 void LineStyle::setColour(double r, double g, double b, double a)
@@ -122,10 +105,7 @@ void LineStyle::setColour(QColor colour)
 }
 
 // Return line colour
-const GLfloat* LineStyle::colour() const
-{
-	return colour_;
-}
+const GLfloat *LineStyle::colour() const { return colour_; }
 
 /*
  * GL
@@ -138,7 +118,8 @@ void LineStyle::sendToGL(const double pixelScaling) const
 	glLineWidth(width_ * pixelScaling);
 
 	// Enable / disable stippling
-	if (stipple_ == LineStipple::NoStipple) glDisable(GL_LINE_STIPPLE);
+	if (stipple_ == LineStipple::NoStipple)
+		glDisable(GL_LINE_STIPPLE);
 	else
 	{
 		glEnable(GL_LINE_STIPPLE);

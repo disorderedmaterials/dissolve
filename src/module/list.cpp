@@ -20,38 +20,28 @@
 */
 
 #include "module/list.h"
-#include "module/module.h"
-#include "base/sysfunc.h"
 #include "base/lineparser.h"
+#include "base/sysfunc.h"
+#include "module/module.h"
 
 // Constructor
-ModuleList::ModuleList()
-{
-}
+ModuleList::ModuleList() {}
 
 // Destructor
-ModuleList::~ModuleList()
-{
-}
+ModuleList::~ModuleList() {}
 
 // Conversion operator (List<Module>&)
-ModuleList::operator List<Module>&()
-{
-	return modules_;
-}
+ModuleList::operator List<Module> &() { return modules_; }
 
 /*
  * Module List
  */
 
 // Clear list
-void ModuleList::clear()
-{
-	modules_.clear();
-}
+void ModuleList::clear() { modules_.clear(); }
 
 // Associate module to list
-bool ModuleList::own(Module* module, Module* addBeforeThis)
+bool ModuleList::own(Module *module, Module *addBeforeThis)
 {
 	// Add the module pointer to the list
 	if (addBeforeThis)
@@ -62,58 +52,57 @@ bool ModuleList::own(Module* module, Module* addBeforeThis)
 			Messenger::error("ModuleList doesn't contain the Module pointer given as 'addBeforeThis'.\n");
 			return false;
 		}
-		else modules_.ownBefore(module, addBeforeThis);
+		else
+			modules_.ownBefore(module, addBeforeThis);
 	}
-	else modules_.own(module);
+	else
+		modules_.own(module);
 
 	return true;
 }
 
 // Remove specified Module from list (but don't delete it)
-void ModuleList::cut(Module* module)
-{
-	modules_.cut(module);
-}
+void ModuleList::cut(Module *module) { modules_.cut(module); }
 
 // Find associated Module by unique name
-Module* ModuleList::find(const char* uniqueName) const
+Module *ModuleList::find(const char *uniqueName) const
 {
 	ListIterator<Module> moduleIterator(modules_);
-	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
+	while (Module *module = moduleIterator.iterate())
+		if (DissolveSys::sameString(module->uniqueName(), uniqueName))
+			return module;
 
 	return NULL;
 }
 
 // Return whether specified Module is present in the list
-bool ModuleList::contains(Module* searchModule) const
+bool ModuleList::contains(Module *searchModule) const
 {
 	ListIterator<Module> moduleIterator(modules_);
-	while (Module* module = moduleIterator.iterate()) if (module == searchModule) return true;
+	while (Module *module = moduleIterator.iterate())
+		if (module == searchModule)
+			return true;
 
 	return false;
 }
 
 // Return total number of Modules in the list
-int ModuleList::nModules() const
-{
-	return modules_.nItems();
-}
+int ModuleList::nModules() const { return modules_.nItems(); }
 
 // Return list of Modules
-List<Module>& ModuleList::modules()
-{
-	return modules_;
-}
+List<Module> &ModuleList::modules() { return modules_; }
 
 /*
  * General Actions
  */
 
 // Run set-up stages for all modules
-bool ModuleList::setUpAll(Dissolve& dissolve, ProcessPool& procPool)
+bool ModuleList::setUpAll(Dissolve &dissolve, ProcessPool &procPool)
 {
 	ListIterator<Module> moduleIterator(modules_);
-	while (Module* module = moduleIterator.iterate()) if (!module->setUp(dissolve, procPool)) return false;
+	while (Module *module = moduleIterator.iterate())
+		if (!module->setUp(dissolve, procPool))
+			return false;
 
 	return true;
 }

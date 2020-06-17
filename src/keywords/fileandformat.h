@@ -27,44 +27,41 @@
 // Forward Declarations
 class FileAndFormat;
 
-// Keyword with a file format 
-class FileAndFormatKeyword : public KeywordData<FileAndFormat&>
+// Keyword with a file format
+class FileAndFormatKeyword : public KeywordData<FileAndFormat &>
 {
-	public:
+      public:
 	// Constructor
-	FileAndFormatKeyword(FileAndFormat& fileAndFormat, const char* endKeyword);
+	FileAndFormatKeyword(FileAndFormat &fileAndFormat, const char *endKeyword);
 	// Destructor
 	~FileAndFormatKeyword();
-
 
 	/*
 	 * End Keyword
 	 */
-	private:
+      private:
 	// Keyword that signals the end of 'block' for the data
 	CharString endKeyword_;
-
 
 	/*
 	 * Keyword Options
 	 */
-	public:
+      public:
 	// Return whether the underlying FileAndFormat has any options
 	bool hasOptions() const;
-
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 };
 
 #endif

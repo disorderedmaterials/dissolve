@@ -30,20 +30,19 @@
 // Text Formatter
 class TextFormat : public ListItem<TextFormat>
 {
-	public:
+      public:
 	// Constructor / Desctructor
 	TextFormat();
 	~TextFormat();
 	// Copy constructor
-	TextFormat(const TextFormat& source);
+	TextFormat(const TextFormat &source);
 	// Assignment operator
-	void operator=(const TextFormat& source);
-
+	void operator=(const TextFormat &source);
 
 	/*
 	 * Definition
 	 */
-	private:
+      private:
 	// Vertical (bottom-edge) position
 	double y_;
 	// Scale
@@ -55,7 +54,7 @@ class TextFormat : public ListItem<TextFormat>
 	// Whether text is actually a symbol
 	bool symbol_;
 
-	public:
+      public:
 	// Set vertical (bottom-edge) position
 	void setY(double y);
 	// Adjust vertical (bottom-edge) position

@@ -1,9 +1,7 @@
 ---
 title: Compilation
-parent: Developer Documentation
 weight: 6
 ---
-# Compiling Dissolve
 
 Dissolve uses `CMake` in order to provide a consistent build system across Window, OSX and Linux.
 

@@ -38,7 +38,7 @@ class MasterIntra;
  */
 class SpeciesIntra
 {
-	public:
+      public:
 	// Constructor
 	SpeciesIntra();
 	// Destructor
@@ -46,47 +46,45 @@ class SpeciesIntra
 	// Interaction Type
 	enum InteractionType
 	{
-		BondInteraction,		/* Interaction is a bond between two atoms in the same molecule */
-		AngleInteraction,		/* Interaction is an angle between three atoms in the same molecule */
-		TorsionInteraction,		/* Interaction is a torsion between four atoms in the same molecule */
-		ImproperInteraction		/* Interaction is an improper torsion between four atoms in the same molecule */
+		BondInteraction,    /* Interaction is a bond between two atoms in the same molecule */
+		AngleInteraction,   /* Interaction is an angle between three atoms in the same molecule */
+		TorsionInteraction, /* Interaction is a torsion between four atoms in the same molecule */
+		ImproperInteraction /* Interaction is an improper torsion between four atoms in the same molecule */
 	};
-
 
 	/*
 	 * Basic Data
 	 */
-	protected:
+      protected:
 	// Parent Species
-	Species* parent_;
+	Species *parent_;
 
-	public:
+      public:
 	// Set parent Species
-	void setParent(Species* parent);
+	void setParent(Species *parent);
 	// Return parent Species
-	Species* parent() const;
-
+	Species *parent() const;
 
 	/*
 	 * Interaction Parameters
 	 */
-	protected:
+      protected:
 	// Linked master from which parameters should be taken (if relevant)
-	MasterIntra* masterParameters_;
+	MasterIntra *masterParameters_;
 	// Index of functional form of interaction
 	int form_;
 	// Parameters for interaction
 	double parameters_[MAXINTRAPARAMS];
 
-	public:
+      public:
 	// Set linked master from which parameters should be taken
-	void setMasterParameters(MasterIntra* master);
+	void setMasterParameters(MasterIntra *master);
 	// Return linked master from which parameters should be taken
-	const MasterIntra* masterParameters() const;
+	const MasterIntra *masterParameters() const;
 	// Detach from MasterIntra, if we are currently referencing one
 	void detachFromMasterIntra();
 	// Return parameter source
-	const SpeciesIntra* parameterSource() const;
+	const SpeciesIntra *parameterSource() const;
 	// Set functional form index of interaction
 	void setForm(int form);
 	// Return functional form index of interaction
@@ -98,13 +96,13 @@ class SpeciesIntra
 	// Return nth parameter
 	double parameter(int id) const;
 	// Return array of parameters
-	const double* parameters() const;
+	const double *parameters() const;
 	// Return parameters as Array<double>
 	Array<double> parametersAsArray() const;
 	// Set parameters from double*
 	void setParameters(Array<double> params);
 	// Set parameters from Array<double>
-	void setParameters(const double* params);
+	void setParameters(const double *params);
 	// Set up any necessary parameters
 	virtual void setUp() = 0;
 	// Calculate and return fundamental frequency for the interaction
@@ -112,31 +110,30 @@ class SpeciesIntra
 	// Return type of this interaction
 	virtual InteractionType type() const = 0;
 
-
 	/*
 	 * Connections
 	 */
-	private:
+      private:
 	// Number of SpeciesAtoms attached to termini (number of items stored in attached_ arrays)
 	int nAttached_[2];
 	// Arrays of indices (in)directly attached to termini
-	int* attached_[2];
+	int *attached_[2];
 	// Size of attached_ SpeciesAtoms arrays (maximum number of items that may be stored)
 	int arraySize_[2];
 	// Whether the term is contained within a cycle
 	bool inCycle_;
 
-	public:
+      public:
 	// Clear and delete all arrays
 	void deleteAttachedAtomArrays();
 	// Set attached SpeciesAtoms for terminus specified
-	void setAttachedAtoms(int terminus, const RefList<SpeciesAtom>& atoms);
+	void setAttachedAtoms(int terminus, const RefList<SpeciesAtom> &atoms);
 	// Set attached SpeciesAtoms for terminus specified (single SpeciesAtom)
-	void setAttachedAtoms(int terminus, SpeciesAtom* atom);
+	void setAttachedAtoms(int terminus, SpeciesAtom *atom);
 	// Return number of attached SpeciesAtoms for terminus specified
 	int nAttached(int terminus) const;
 	// Return array of attached indices for terminus specified
-	int* attached(int terminus) const;
+	int *attached(int terminus) const;
 	// Set whether the term is contained within a cycle
 	void setInCycle(bool b);
 	// Return whether the term is contained within a cycle

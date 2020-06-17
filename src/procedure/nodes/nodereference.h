@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_PROCEDURENODE_NODEREFERENCE_H
 #define DISSOLVE_PROCEDURENODE_NODEREFERENCE_H
 
-#include "procedure/nodes/node.h"
 #include "base/charstring.h"
+#include "procedure/nodes/node.h"
 #include "templates/listitem.h"
 
 // Forward Declarations
@@ -33,27 +33,26 @@ class AnalyseModule;
 // Procedure Node Reference
 class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
 {
-	public:
+      public:
 	// Constructor
-	ProcedureNodeReference(ProcedureNode* node = NULL);
+	ProcedureNodeReference(ProcedureNode *node = NULL);
 	// Destructor
 	~ProcedureNodeReference();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Target node
-	ProcedureNode* node_;
+	ProcedureNode *node_;
 	// Parent AnalyseModule owning the node (if relevant)
-	AnalyseModule* analyseModuleParent_;
+	AnalyseModule *analyseModuleParent_;
 	// Allowable node types (when reading / setting)
 	bool allowedTypes_[ProcedureNode::nNodeTypes];
 
-	public:
+      public:
 	// Return target node
-	ProcedureNode* node();
+	ProcedureNode *node();
 	// Return node type
 	ProcedureNode::NodeType type() const;
 	// Add allowable node type
@@ -63,25 +62,23 @@ class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
 	// Return if node pointer is NULL
 	bool isNull() const;
 
-
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	// Assignment operator
-	void operator=(ProcedureNode* node);
+	void operator=(ProcedureNode *node);
 	// Assignment operator
-	void operator=(const ProcedureNodeReference& nodeRef);
-
+	void operator=(const ProcedureNodeReference &nodeRef);
 
 	/*
 	 * Read / Write
 	 */
-	public:
+      public:
 	// Read structure from specified LineParser
-	bool read(LineParser& parser, int startArg, const CoreData& coreData, const Procedure* procedure);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData, const Procedure *procedure);
 	// Write structure to specified LineParser
-	bool write(LineParser& parser, const char* prefix);
+	bool write(LineParser &parser, const char *prefix);
 };
 
 #endif

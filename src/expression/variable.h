@@ -22,60 +22,57 @@
 #ifndef DISSOLVE_EXPRESSION_VARIABLE_H
 #define DISSOLVE_EXPRESSION_VARIABLE_H
 
-#include "expression/node.h"
 #include "base/charstring.h"
+#include "expression/node.h"
 
 // Variable
 class ExpressionVariable : public ExpressionNode
 {
-	public:
+      public:
 	// Constructor / Destructor
 	ExpressionVariable(ExpressionValue value = ExpressionValue(), bool readOnly = false);
 	~ExpressionVariable();
 
-
 	/*
 	 * Variable Data
 	 */
-	protected:
+      protected:
 	// Name of the variable
 	CharString name_;
 	// Value of variable
 	ExpressionValue value_;
 	// Initial value of new variable
-	ExpressionNode* initialValue_;
+	ExpressionNode *initialValue_;
 
-	public:
+      public:
 	// Set name of variable
-	void setName(const char* s);
+	void setName(const char *s);
 	// Get name of variable
-	const char* name() const;
+	const char *name() const;
 	// Set initial value expression
-	bool setInitialValue(ExpressionNode* node);
+	bool setInitialValue(ExpressionNode *node);
 	// Return Node corresponding to initial value
-	ExpressionNode* initialValue() const;
-
+	ExpressionNode *initialValue() const;
 
 	/*
 	 * Set / Get
 	 */
-	public:
+      public:
 	// Return value of node
-	bool execute(ExpressionValue& value);
+	bool execute(ExpressionValue &value);
 	// Set value of node
 	bool set(ExpressionValue value);
 	// Return value
-	const ExpressionValue& value() const;
+	const ExpressionValue &value() const;
 	// Return pointer to value
-	ExpressionValue* valuePointer();
-
+	ExpressionValue *valuePointer();
 
 	/*
 	 * Inherited Virtuals
 	 */
-	public:
+      public:
 	// Print node contents
-	void nodePrint(int offset, const char* prefix = "");
+	void nodePrint(int offset, const char *prefix = "");
 	// Initialise node
 	bool initialise();
 };

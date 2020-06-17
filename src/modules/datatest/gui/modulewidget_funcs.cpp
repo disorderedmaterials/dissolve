@@ -19,15 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/datatest/gui/modulewidget.h"
 #include "modules/datatest/datatest.h"
+#include "modules/datatest/gui/modulewidget.h"
 
 // Constructor
-DataTestModuleWidget::DataTestModuleWidget(QWidget* parent, DataTestModule* module) : ModuleWidget(parent), module_(module)
+DataTestModuleWidget::DataTestModuleWidget(QWidget *parent, DataTestModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
 
 	refreshing_ = false;
 }
-

@@ -448,7 +448,7 @@
                </font>
               </property>
               <property name="text">
-               <string>Short-range and charge parameters in atom types will define pair potentials</string>
+               <string>Charges taken from atom types and included in tabulated pair potentials</string>
               </property>
               <property name="wordWrap">
                <bool>true</bool>
@@ -495,7 +495,7 @@
                </font>
               </property>
               <property name="text">
-               <string>Short-range parameters in atom types will define pair potentials, with Coulomb terms calculated from charges defined in species</string>
+               <string>Charges taken from species atoms and not included in tabulated pair potentials</string>
               </property>
               <property name="wordWrap">
                <bool>true</bool>

@@ -20,48 +20,40 @@
 */
 
 #include "keywords/atomtypereflist.h"
+#include "base/lineparser.h"
 #include "classes/atomtype.h"
 #include "classes/coredata.h"
-#include "base/lineparser.h"
 
 // Constructor
-AtomTypeRefListKeyword::AtomTypeRefListKeyword(RefList<AtomType>& targetRefList) : KeywordData< RefList<AtomType>& >(KeywordBase::AtomTypeRefListData, targetRefList)
-{
-}
+AtomTypeRefListKeyword::AtomTypeRefListKeyword(RefList<AtomType> &targetRefList) : KeywordData<RefList<AtomType> &>(KeywordBase::AtomTypeRefListData, targetRefList) {}
 
 // Destructor
-AtomTypeRefListKeyword::~AtomTypeRefListKeyword()
-{
-}
+AtomTypeRefListKeyword::~AtomTypeRefListKeyword() {}
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int AtomTypeRefListKeyword::minArguments() const
-{
-	return 1;
-}
+int AtomTypeRefListKeyword::minArguments() const { return 1; }
 
 // Return maximum number of arguments accepted
-int AtomTypeRefListKeyword::maxArguments() const
-{
-	return 999;
-}
+int AtomTypeRefListKeyword::maxArguments() const { return 999; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool AtomTypeRefListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool AtomTypeRefListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
 	// Loop over arguments (which are AtomType names) and add them to our list
 	for (int n = startArg; n < parser.nArgs(); ++n)
 	{
 		// Do we recognise the AtomType?
-		AtomType* atomType = coreData.findAtomType(parser.argc(n));
-		if (!atomType) return Messenger::error("Unrecognised AtomType '%s' found in list.\n", parser.argc(n));
+		AtomType *atomType = coreData.findAtomType(parser.argc(n));
+		if (!atomType)
+			return Messenger::error("Unrecognised AtomType '%s' found in list.\n", parser.argc(n));
 
 		// If the AtomType is in the list already, complain
-		if (data_.contains(atomType)) return Messenger::error("AtomType '%s' specified in list twice.\n", parser.argc(n));
+		if (data_.contains(atomType))
+			return Messenger::error("AtomType '%s' specified in list twice.\n", parser.argc(n));
 
 		// All OK - add it to our selection list
 		data_.append(atomType);
@@ -73,17 +65,19 @@ bool AtomTypeRefListKeyword::read(LineParser& parser, int startArg, const CoreDa
 }
 
 // Write keyword data to specified LineParser
-bool AtomTypeRefListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool AtomTypeRefListKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	// Don't write anything if there are no items in the list
-	if (data_.nItems() == 0) return true;
+	if (data_.nItems() == 0)
+		return true;
 
 	// Loop over the AtomType selection list
 	CharString atomTypes;
-	RefListIterator<AtomType> typeIterator(data_);
-	while (AtomType* at = typeIterator.iterate()) atomTypes.strcatf("  %s", at->name());
+	for (auto at : data_)
+		atomTypes.strcatf("  %s", at->name());
 
-	if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, atomTypes.get())) return false;
+	if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, atomTypes.get()))
+		return false;
 
 	return true;
 }
@@ -93,7 +87,4 @@ bool AtomTypeRefListKeyword::write(LineParser& parser, const char* keywordName, 
  */
 
 // Prune any references to the supplied AtomType in the contained data
-void AtomTypeRefListKeyword::removeReferencesTo(AtomType* at)
-{
-	data_.remove(at);
-}
+void AtomTypeRefListKeyword::removeReferencesTo(AtomType *at) { data_.remove(at); }

@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/sq/sq.h"
 #include "keywords/types.h"
+#include "modules/sq/sq.h"
 
 // Perform any necessary initialisation for the Module
 void SQModule::initialise()

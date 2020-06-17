@@ -19,14 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/selectspecieswidget.h"
-#include "gui/helpers/listwidgetupdater.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
+#include "gui/helpers/listwidgetupdater.h"
+#include "gui/selectspecieswidget.h"
 #include "templates/variantpointer.h"
 
 // Constructor
-SelectSpeciesWidget::SelectSpeciesWidget(QWidget* parent) : QWidget(parent)
+SelectSpeciesWidget::SelectSpeciesWidget(QWidget *parent) : QWidget(parent)
 {
 	ui_.setupUi(this);
 
@@ -38,16 +38,14 @@ SelectSpeciesWidget::SelectSpeciesWidget(QWidget* parent) : QWidget(parent)
 }
 
 // Destructor
-SelectSpeciesWidget::~SelectSpeciesWidget()
-{
-}
+SelectSpeciesWidget::~SelectSpeciesWidget() {}
 
 /*
  * Data
  */
 
 // Set CoreData containing available Species
-void SelectSpeciesWidget::setCoreData(const CoreData* coreData)
+void SelectSpeciesWidget::setCoreData(const CoreData *coreData)
 {
 	coreData_ = coreData;
 
@@ -63,8 +61,10 @@ void SelectSpeciesWidget::reset(int minSize, int maxSize)
 	ui_.SpeciesList->clearSelection();
 
 	// Set the correct selection behaviour and enable/disable select all / none buttons as appropriate
-	if (maxSize == 1) ui_.SpeciesList->setSelectionMode(QAbstractItemView::SingleSelection);
-	else ui_.SpeciesList->setSelectionMode(QAbstractItemView::ExtendedSelection);
+	if (maxSize == 1)
+		ui_.SpeciesList->setSelectionMode(QAbstractItemView::SingleSelection);
+	else
+		ui_.SpeciesList->setSelectionMode(QAbstractItemView::ExtendedSelection);
 	ui_.SelectionControls->setVisible(maxSize != 1);
 }
 
@@ -84,24 +84,16 @@ void SelectSpeciesWidget::updateSpeciesList()
 	ListWidgetUpdater<SelectSpeciesWidget, Species> speciesUpdater(ui_.SpeciesList, coreData_->constSpecies());
 }
 
-void SelectSpeciesWidget::on_SelectNoneButton_clicked(bool checked)
-{
-	ui_.SpeciesList->clearSelection();
-}
+void SelectSpeciesWidget::on_SelectNoneButton_clicked(bool checked) { ui_.SpeciesList->clearSelection(); }
 
-void SelectSpeciesWidget::on_SelectAllButton_clicked(bool checked)
-{
-	ui_.SpeciesList->selectAll();
-}
+void SelectSpeciesWidget::on_SelectAllButton_clicked(bool checked) { ui_.SpeciesList->selectAll(); }
 
-void SelectSpeciesWidget::on_SpeciesList_itemSelectionChanged()
-{
-	emit(speciesSelectionChanged(isSelectionValid()));
-}
+void SelectSpeciesWidget::on_SpeciesList_itemSelectionChanged() { emit(speciesSelectionChanged(isSelectionValid())); }
 
-void SelectSpeciesWidget::on_SpeciesList_itemDoubleClicked(QListWidgetItem* item)
+void SelectSpeciesWidget::on_SpeciesList_itemDoubleClicked(QListWidgetItem *item)
 {
-	if (!item) return;
+	if (!item)
+		return;
 
 	emit(speciesDoubleClicked());
 }
@@ -111,20 +103,24 @@ bool SelectSpeciesWidget::isSelectionValid() const
 {
 	int count = nSelected();
 
-	if (count < minimumSelectionSize_) return false;
-	else if (maximumSelectionSize_ == -1) return true;
-	else return (count <= maximumSelectionSize_);
+	if (count < minimumSelectionSize_)
+		return false;
+	else if (maximumSelectionSize_ == -1)
+		return true;
+	else
+		return (count <= maximumSelectionSize_);
 }
 
 // Return number of species currently selected
 int SelectSpeciesWidget::nSelected() const
 {
 	int count = 0;
-	for (int n=0; n<ui_.SpeciesList->count(); ++n)
+	for (int n = 0; n < ui_.SpeciesList->count(); ++n)
 	{
-		QListWidgetItem* item = ui_.SpeciesList->item(n);
+		QListWidgetItem *item = ui_.SpeciesList->item(n);
 
-		if (item->isSelected()) ++count;
+		if (item->isSelected())
+			++count;
 	}
 
 	return count;
@@ -136,11 +132,12 @@ RefList<Species> SelectSpeciesWidget::currentSpecies() const
 	RefList<Species> selection;
 
 	// Loop over items in the list and construct the selection RefList
-	for (int n=0; n<ui_.SpeciesList->count(); ++n)
+	for (int n = 0; n < ui_.SpeciesList->count(); ++n)
 	{
-		QListWidgetItem* item = ui_.SpeciesList->item(n);
+		QListWidgetItem *item = ui_.SpeciesList->item(n);
 
-		if (item->isSelected()) selection.append(VariantPointer<Species>(item->data(Qt::UserRole)));
+		if (item->isSelected())
+			selection.append(VariantPointer<Species>(item->data(Qt::UserRole)));
 	}
 
 	return selection;

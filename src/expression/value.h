@@ -28,7 +28,7 @@
 // Expression Value
 class ExpressionValue
 {
-	public:
+      public:
 	// Constructors
 	ExpressionValue();
 	ExpressionValue(int value);
@@ -36,19 +36,22 @@ class ExpressionValue
 	// Destructor
 	~ExpressionValue();
 	// Copy constructor
-	ExpressionValue(const ExpressionValue& source);
+	ExpressionValue(const ExpressionValue &source);
 	// Assignment operator
-	void operator=(const ExpressionValue& source);
-
+	void operator=(const ExpressionValue &source);
 
 	/*
 	 * Data
 	 */
-	public:
+      public:
 	// Value Type
-	enum ValueType { IntegerType, DoubleType };
+	enum ValueType
+	{
+		IntegerType,
+		DoubleType
+	};
 
-	private:
+      private:
 	// Current result type
 	ValueType type_;
 	// Whether current result type is fixed
@@ -58,7 +61,7 @@ class ExpressionValue
 	// Double value (if type_ == DoubleType)
 	double valueD_;
 
-	public:
+      public:
 	// Return the current result type
 	ValueType type() const;
 	// Assignment operator (integer)
@@ -70,26 +73,24 @@ class ExpressionValue
 	// Return as double (regardless of current type)
 	double asDouble() const;
 	// Return result as a string
-	const char* asString() const;
+	const char *asString() const;
 	// Return pointer to integer value
-	int* integerPointer();
+	int *integerPointer();
 	// Return pointer to double value
-	double* doublePointer();
-
+	double *doublePointer();
 
 	/*
 	 * Tests
 	 */
-	public:
+      public:
 	// Return whether the contained type is an integer
 	bool isInteger() const;
 	// Return whether the contained type is an double
 	bool isDouble() const;
 	// Return the supplied ExpressionValues both contain integer types
-	static bool bothIntegers(const ExpressionValue& a, const ExpressionValue& b);
+	static bool bothIntegers(const ExpressionValue &a, const ExpressionValue &b);
 	// Return the supplied ExpressionValues both contain double types
-	static bool bothDoubles(const ExpressionValue& a, const ExpressionValue& b);
+	static bool bothDoubles(const ExpressionValue &a, const ExpressionValue &b);
 };
 
 #endif
-

@@ -19,12 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/test/test.h"
 #include "keywords/types.h"
+#include "modules/test/test.h"
 
 // Perform any necessary initialisation for the Module
 void TestModule::initialise()
 {
-// 	keywords_.add(new BoolKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
+	// 	keywords_.add(new BoolKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
 }
-

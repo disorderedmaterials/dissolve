@@ -1,9 +1,7 @@
 ---
 title: Step 8 - Calculate Refined Properties
-parent: Comparing Benzene Structure
 grand_parent: Examples
 ---
-# Comparing Benzene Structure
 
 ## 8. Calculate Refined Properties
 

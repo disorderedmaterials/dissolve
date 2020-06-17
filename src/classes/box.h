@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_BOX_H
 #define DISSOLVE_BOX_H
 
-#include "math/matrix3.h"
 #include "base/enumoptions.h"
+#include "math/matrix3.h"
 #include "templates/array.h"
 
 // Forward Declarations
@@ -35,32 +35,32 @@ class ProcessPool;
 // Basic Box Definition
 class Box
 {
-	public:
+      public:
 	// Constructor
 	Box();
 	// Virtual Destructor
 	virtual ~Box();
 	// Assignment operator
-	void operator=(const Box& source);
-
+	void operator=(const Box &source);
 
 	/*
 	 * Basic Definition
 	 */
-	public:
+      public:
 	// Box Type Enum
-	enum BoxType {
-		NonPeriodicBoxType,		/* Non-periodic system - cubic box, but no minimum image calculation */
-		CubicBoxType,			/* Cubic box with equivalent cell lengths, and right-angles */
-		OrthorhombicBoxType,		/* Orthorhombic box with inequivalent cell lengths, and right-angles */
-		MonoclinicBoxType,		/* Monoclinic box with cell angles a != 90, and b == c == 90 */
-		TriclinicBoxType,		/* Triclinic box with cell angles a != b != c != 90 */
-		nBoxTypes			/* Number of Box types */
+	enum BoxType
+	{
+		NonPeriodicBoxType,  /* Non-periodic system - cubic box, but no minimum image calculation */
+		CubicBoxType,	/* Cubic box with equivalent cell lengths, and right-angles */
+		OrthorhombicBoxType, /* Orthorhombic box with inequivalent cell lengths, and right-angles */
+		MonoclinicBoxType,   /* Monoclinic box with cell angles a != 90, and b == c == 90 */
+		TriclinicBoxType,    /* Triclinic box with cell angles a != b != c != 90 */
+		nBoxTypes	    /* Number of Box types */
 	};
 	// Return enum options for BoxType
 	static EnumOptions<BoxType> boxTypes();
 
-	protected:
+      protected:
 	// Box type
 	BoxType type_;
 	// Box lengths
@@ -82,7 +82,7 @@ class Box
 	// Reciprocal volume
 	double reciprocalVolume_;
 
-	public:
+      public:
 	// Finalise Box, storing volume and reciprocal and inverted axes
 	void finalise();
 	// Return Box type
@@ -98,403 +98,389 @@ class Box
 	// Return axis angle specified
 	double axisAngle(int n) const;
 	// Return axis matrix
-	const Matrix3& axes() const;
+	const Matrix3 &axes() const;
 	// Return inverse axes matrix
-	const Matrix3& inverseAxes() const;
+	const Matrix3 &inverseAxes() const;
 	// Return reciprocal box volume
 	double reciprocalVolume() const;
 	// Return reciprocal axis lengths
 	Vec3<double> reciprocalAxisLengths() const;
 	// Return reciprocal axes matrix
-	const Matrix3& reciprocalAxes() const;
+	const Matrix3 &reciprocalAxes() const;
 	// Scale Box by specified factor
 	void scale(double factor);
-
 
 	/*
 	 * Minimum Image Routines (Pure Virtual)
 	 */
-	public:
+      public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	virtual Vec3<double> minimumImage(const Atom* i, const Atom* ref) const = 0;
+	virtual Vec3<double> minimumImage(const Atom *i, const Atom *ref) const = 0;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	virtual Vec3<double> minimumImage(const Atom* i, const Vec3<double>& ref) const = 0;
+	virtual Vec3<double> minimumImage(const Atom *i, const Vec3<double> &ref) const = 0;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	virtual Vec3<double> minimumImage(const Vec3<double>& i, const Vec3<double>& ref) const = 0;
+	virtual Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const = 0;
 	// Return minimum image vector from 'i' to 'j'
-	virtual Vec3<double> minimumVector(const Atom* i, const Atom* j) const = 0;
+	virtual Vec3<double> minimumVector(const Atom *i, const Atom *j) const = 0;
 	// Return minimum image vector from 'i' to 'j'
-	virtual Vec3<double> minimumVector(const Atom& i, const Atom& j) const = 0;
+	virtual Vec3<double> minimumVector(const Atom &i, const Atom &j) const = 0;
 	// Return minimum image vector from 'i' to 'j'
-	virtual Vec3<double> minimumVector(const Atom* i, const Vec3<double>& j) const = 0;
+	virtual Vec3<double> minimumVector(const Atom *i, const Vec3<double> &j) const = 0;
 	// Return minimum image vector from 'i' to 'j'
-	virtual Vec3<double> minimumVector(const Vec3<double>& i, const Vec3<double>& j) const = 0;
+	virtual Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const = 0;
 	// Return minimum image distance from 'i' to 'j'
-	virtual double minimumDistance(const Atom* i, const Atom* j) const = 0;
+	virtual double minimumDistance(const Atom *i, const Atom *j) const = 0;
 	// Return minimum image distance from 'i' to 'j' (references)
-	virtual double minimumDistance(const Atom& i, const Atom& j) const = 0;
+	virtual double minimumDistance(const Atom &i, const Atom &j) const = 0;
 	// Return minimum image distance from 'i' to 'j'
-	virtual double minimumDistance(const Atom* i, const Vec3<double>& j) const = 0;
+	virtual double minimumDistance(const Atom *i, const Vec3<double> &j) const = 0;
 	// Return minimum image distance from 'i' to 'j'
-	virtual double minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const = 0;
+	virtual double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const = 0;
 	// Return minimum image squared distance from 'i' to 'j' (pointers)
-	virtual double minimumDistanceSquared(const Atom* i, const Atom* j) const = 0;
+	virtual double minimumDistanceSquared(const Atom *i, const Atom *j) const = 0;
 	// Return minimum image squared distance from 'i' to 'j' (references)
-	virtual double minimumDistanceSquared(const Atom& i, const Atom& j) const = 0;
+	virtual double minimumDistanceSquared(const Atom &i, const Atom &j) const = 0;
 	// Return minimum image squared distance from 'i' to 'j'
-	virtual double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const = 0;
+	virtual double minimumDistanceSquared(const Atom *i, const Vec3<double> &j) const = 0;
 	// Return minimum image squared distance from 'i' to 'j'
-	virtual double minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const = 0;
-
+	virtual double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const = 0;
 
 	/*
 	 * Utility Routines
 	 */
-	public:
+      public:
 	// Generate a suitable Box given the supplied relative lengths, angles, and volume
-	static Box* generate(Vec3<double> lengths, Vec3<double> angles);
+	static Box *generate(Vec3<double> lengths, Vec3<double> angles);
 	// Return radius of largest possible inscribed sphere for box
 	double inscribedSphereRadius() const;
 	// Calculate the RDF normalisation for the Box
-	bool calculateRDFNormalisation(ProcessPool& procPool, Data1D& boxNorm, double rdfRange, double rdfBinWidth, int nPoints) const;
-
+	bool calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, double rdfRange, double rdfBinWidth, int nPoints) const;
 
 	/*
 	 * Utility Routines (Pure Virtual)
 	 */
-	public:
+      public:
 	// Return random coordinate inside Box
 	virtual Vec3<double> randomCoordinate() const = 0;
 	// Return folded coordinate (i.e. inside current Box)
-	virtual Vec3<double> fold(const Vec3<double>& i) const = 0;
+	virtual Vec3<double> fold(const Vec3<double> &i) const = 0;
 	// Return folded fractional coordinate (i.e. inside current Box)
-	virtual Vec3<double> foldFrac(const Vec3<double>& i) const = 0;
+	virtual Vec3<double> foldFrac(const Vec3<double> &i) const = 0;
 	// Convert supplied fractional coordinates to real space
-	virtual Vec3<double> fracToReal(const Vec3<double>& r) const = 0;
-
+	virtual Vec3<double> fracToReal(const Vec3<double> &r) const = 0;
 
 	/*
 	 * Utility Routines
 	 */
-	public:
+      public:
 	// Return angle (in degrees, no MIM) between Atoms
-	double angleInDegrees(const Atom* i, const Atom* j, const Atom* k) const;
+	double angleInDegrees(const Atom *i, const Atom *j, const Atom *k) const;
 	// Return angle (in degrees) between coordinates
-	double angleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k) const;
+	double angleInDegrees(const Vec3<double> &i, const Vec3<double> &j, const Vec3<double> &k) const;
 	// Return angle (in degrees) between supplied normalised vectors
-	static double angleInDegrees(const Vec3<double>& normji, const Vec3<double>& normjk);
+	static double angleInDegrees(const Vec3<double> &normji, const Vec3<double> &normjk);
 	// Return angle (in degrees) between supplied normalised vectors (storing dot product)
-	static double angleInDegrees(const Vec3<double>& normji, const Vec3<double>& normjk, double& dotProduct);
+	static double angleInDegrees(const Vec3<double> &normji, const Vec3<double> &normjk, double &dotProduct);
 	// Return literal angle (in degrees) between coordinates, without applying minimum image convention
-	static double literalAngleInDegrees(const Vec3<double>& i, const Vec3<double>& j, const Vec3<double>& k);
+	static double literalAngleInDegrees(const Vec3<double> &i, const Vec3<double> &j, const Vec3<double> &k);
 	// Return torsion (in degrees) between supplied unnormalised vectors
-	static double torsionInDegrees(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl);
+	static double torsionInDegrees(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl);
 	// Return torsion (in degrees) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
-	static double torsionInDegrees(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl, Vec3<double>& xpj, double& magxpj, Vec3<double>& xpk, double& magxpk);
+	static double torsionInDegrees(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl, Vec3<double> &xpj, double &magxpj, Vec3<double> &xpk, double &magxpk);
 	// Return torsion (in radians) between supplied unnormalised vectors
-	static double torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl);
+	static double torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl);
 	// Return torsion (in radians) between supplied unnormalised vectors, storing cross products and magnitude in supplied variables
-	static double torsionInRadians(const Vec3<double>& vecji, const Vec3<double>& vecjk, const Vec3<double>& veckl, Vec3<double>& xpj, double& magxpj, Vec3<double>& xpk, double& magxpk);
+	static double torsionInRadians(const Vec3<double> &vecji, const Vec3<double> &vecjk, const Vec3<double> &veckl, Vec3<double> &xpj, double &magxpj, Vec3<double> &xpk, double &magxpk);
 };
 
 // Non-Periodic Box Definition
 class NonPeriodicBox : public Box
 {
-	public:
+      public:
 	// Constructor
 	NonPeriodicBox(double length);
 	// Destructor
 	~NonPeriodicBox();
 
-
 	/*
 	 * Minimum Image Routines (Virtual Implementations)
 	 */
-	public:
+      public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;
+	Vec3<double> minimumImage(const Atom *i, const Atom *ref) const;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Atom* i, const Vec3<double>& ref) const;
+	Vec3<double> minimumImage(const Atom *i, const Vec3<double> &ref) const;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Vec3<double>& i, const Vec3<double>& ref) const;
+	Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom* i, const Atom* j) const;
+	Vec3<double> minimumVector(const Atom *i, const Atom *j) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom& i, const Atom& j) const;
+	Vec3<double> minimumVector(const Atom &i, const Atom &j) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom* i, const Vec3<double>& j) const;
+	Vec3<double> minimumVector(const Atom *i, const Vec3<double> &j) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Vec3<double>& i, const Vec3<double>& j) const;
+	Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const;
 	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Atom* i, const Atom* j) const;
+	double minimumDistance(const Atom *i, const Atom *j) const;
 	// Return minimum image distance from 'i' to 'j' (references)
-	double minimumDistance(const Atom& i, const Atom& j) const;
+	double minimumDistance(const Atom &i, const Atom &j) const;
 	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
+	double minimumDistance(const Atom *i, const Vec3<double> &j) const;
 	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const;
+	double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const;
 	// Return minimum image squared distance from 'i' to 'j' (pointers)
-	double minimumDistanceSquared(const Atom* i, const Atom* j) const;
+	double minimumDistanceSquared(const Atom *i, const Atom *j) const;
 	// Return minimum image squared distance from 'i' to 'j' (references)
-	double minimumDistanceSquared(const Atom& i, const Atom& j) const;
+	double minimumDistanceSquared(const Atom &i, const Atom &j) const;
 	// Return minimum image squared distance from 'i' to 'j'
-	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
+	double minimumDistanceSquared(const Atom *i, const Vec3<double> &j) const;
 	// Return minimum image squared distance from 'i' to 'j'
-	double minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const;
-
+	double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const;
 
 	/*
 	 * Utility Routines (Virtual Implementations)
 	 */
-	public:
+      public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
 	// Return folded coordinate (i.e. inside current Box)
-	Vec3<double> fold(const Vec3<double>& i) const;
+	Vec3<double> fold(const Vec3<double> &i) const;
 	// Return folded fractional coordinate (i.e. inside current Box)
-	Vec3<double> foldFrac(const Vec3<double>& i) const;
+	Vec3<double> foldFrac(const Vec3<double> &i) const;
 	// Convert supplied fractional coordinates to real space
-	Vec3<double> fracToReal(const Vec3<double>& r) const;
+	Vec3<double> fracToReal(const Vec3<double> &r) const;
 };
 
 // Cubic Box Definition
 class CubicBox : public Box
 {
-	public:
+      public:
 	// Constructor
 	CubicBox(double length);
 	// Destructor
 	~CubicBox();
 
-
 	/*
 	 * Minimum Image Routines (Virtual Implementations)
 	 */
-	public:
+      public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;
+	Vec3<double> minimumImage(const Atom *i, const Atom *ref) const;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Atom* i, const Vec3<double>& ref) const;
+	Vec3<double> minimumImage(const Atom *i, const Vec3<double> &ref) const;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Vec3<double>& i, const Vec3<double>& ref) const;
+	Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom* i, const Atom* j) const;
+	Vec3<double> minimumVector(const Atom *i, const Atom *j) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom& i, const Atom& j) const;
+	Vec3<double> minimumVector(const Atom &i, const Atom &j) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom* i, const Vec3<double>& j) const;
+	Vec3<double> minimumVector(const Atom *i, const Vec3<double> &j) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Vec3<double>& i, const Vec3<double>& j) const;
+	Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const;
 	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Atom* i, const Atom* j) const;
+	double minimumDistance(const Atom *i, const Atom *j) const;
 	// Return minimum image distance from 'i' to 'j' (references)
-	double minimumDistance(const Atom& i, const Atom& j) const;
+	double minimumDistance(const Atom &i, const Atom &j) const;
 	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
+	double minimumDistance(const Atom *i, const Vec3<double> &j) const;
 	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const;
+	double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const;
 	// Return minimum image squared distance from 'i' to 'j' (pointers)
-	double minimumDistanceSquared(const Atom* i, const Atom* j) const;
+	double minimumDistanceSquared(const Atom *i, const Atom *j) const;
 	// Return minimum image squared distance from 'i' to 'j' (references)
-	double minimumDistanceSquared(const Atom& i, const Atom& j) const;
+	double minimumDistanceSquared(const Atom &i, const Atom &j) const;
 	// Return minimum image squared distance from 'i' to 'j'
-	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
+	double minimumDistanceSquared(const Atom *i, const Vec3<double> &j) const;
 	// Return minimum image squared distance from 'i' to 'j'
-	double minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const;
-
+	double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const;
 
 	/*
 	 * Utility Routines (Virtual Implementations)
 	 */
-	public:
+      public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
 	// Return folded coordinate (i.e. inside current Box)
-	Vec3<double> fold(const Vec3<double>& i) const;
+	Vec3<double> fold(const Vec3<double> &i) const;
 	// Return folded fractional coordinate (i.e. inside current Box)
-	Vec3<double> foldFrac(const Vec3<double>& i) const;
+	Vec3<double> foldFrac(const Vec3<double> &i) const;
 	// Convert supplied fractional coordinates to real space
-	Vec3<double> fracToReal(const Vec3<double>& r) const;
+	Vec3<double> fracToReal(const Vec3<double> &r) const;
 };
 
 // Orthorhombic Box Definition
 class OrthorhombicBox : public Box
 {
-	public:
+      public:
 	// Constructor
 	OrthorhombicBox(const Vec3<double> lengths);
 	// Destructor
 	~OrthorhombicBox();
 
-
 	/*
 	 * Minimum Image Routines (Virtual Implementations)
 	 */
-	public:
+      public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;
+	Vec3<double> minimumImage(const Atom *i, const Atom *ref) const;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Atom* i, const Vec3<double>& ref) const;
+	Vec3<double> minimumImage(const Atom *i, const Vec3<double> &ref) const;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Vec3<double>& i, const Vec3<double>& ref) const;
+	Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom* i, const Atom* j) const;
+	Vec3<double> minimumVector(const Atom *i, const Atom *j) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom& i, const Atom& j) const;
+	Vec3<double> minimumVector(const Atom &i, const Atom &j) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom* i, const Vec3<double>& j) const;
+	Vec3<double> minimumVector(const Atom *i, const Vec3<double> &j) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Vec3<double>& i, const Vec3<double>& j) const;
+	Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const;
 	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Atom* i, const Atom* j) const;
+	double minimumDistance(const Atom *i, const Atom *j) const;
 	// Return minimum image distance from 'i' to 'j' (references)
-	double minimumDistance(const Atom& i, const Atom& j) const;
+	double minimumDistance(const Atom &i, const Atom &j) const;
 	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
+	double minimumDistance(const Atom *i, const Vec3<double> &j) const;
 	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const;
+	double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const;
 	// Return minimum image squared distance from 'i' to 'j' (pointers)
-	double minimumDistanceSquared(const Atom* i, const Atom* j) const;
+	double minimumDistanceSquared(const Atom *i, const Atom *j) const;
 	// Return minimum image squared distance from 'i' to 'j' (references)
-	double minimumDistanceSquared(const Atom& i, const Atom& j) const;
+	double minimumDistanceSquared(const Atom &i, const Atom &j) const;
 	// Return minimum image squared distance from 'i' to 'j'
-	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
+	double minimumDistanceSquared(const Atom *i, const Vec3<double> &j) const;
 	// Return minimum image squared distance from 'i' to 'j'
-	double minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const;
-
+	double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const;
 
 	/*
 	 * Utility Routines (Virtual Implementations)
 	 */
-	public:
+      public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
 	// Return folded coordinate (i.e. inside current Box)
-	Vec3<double> fold(const Vec3<double>& i) const;
+	Vec3<double> fold(const Vec3<double> &i) const;
 	// Return folded fractional coordinate (i.e. inside current Box)
-	Vec3<double> foldFrac(const Vec3<double>& i) const;
+	Vec3<double> foldFrac(const Vec3<double> &i) const;
 	// Convert supplied fractional coordinates to real space
-	Vec3<double> fracToReal(const Vec3<double>& r) const;
+	Vec3<double> fracToReal(const Vec3<double> &r) const;
 };
 
 // Monoclinic Box Definition
 class MonoclinicBox : public Box
 {
-	public:
+      public:
 	// Constructor
 	MonoclinicBox(const Vec3<double> lengths, double beta);
 	// Destructor
 	~MonoclinicBox();
 
-
 	/*
 	 * Minimum Image Routines (Virtual Implementations)
 	 */
-	public:
+      public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;
+	Vec3<double> minimumImage(const Atom *i, const Atom *ref) const;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Atom* i, const Vec3<double>& ref) const;
+	Vec3<double> minimumImage(const Atom *i, const Vec3<double> &ref) const;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Vec3<double>& i, const Vec3<double>& ref) const;
+	Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom* i, const Atom* j) const;
+	Vec3<double> minimumVector(const Atom *i, const Atom *j) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom& i, const Atom& j) const;
+	Vec3<double> minimumVector(const Atom &i, const Atom &j) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom* i, const Vec3<double>& j) const;
+	Vec3<double> minimumVector(const Atom *i, const Vec3<double> &j) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Vec3<double>& i, const Vec3<double>& j) const;
+	Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const;
 	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Atom* i, const Atom* j) const;
+	double minimumDistance(const Atom *i, const Atom *j) const;
 	// Return minimum image distance from 'i' to 'j' (references)
-	double minimumDistance(const Atom& i, const Atom& j) const;
+	double minimumDistance(const Atom &i, const Atom &j) const;
 	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
+	double minimumDistance(const Atom *i, const Vec3<double> &j) const;
 	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const;
+	double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const;
 	// Return minimum image squared distance from 'i' to 'j' (pointers)
-	double minimumDistanceSquared(const Atom* i, const Atom* j) const;
+	double minimumDistanceSquared(const Atom *i, const Atom *j) const;
 	// Return minimum image squared distance from 'i' to 'j' (references)
-	double minimumDistanceSquared(const Atom& i, const Atom& j) const;
+	double minimumDistanceSquared(const Atom &i, const Atom &j) const;
 	// Return minimum image squared distance from 'i' to 'j'
-	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
+	double minimumDistanceSquared(const Atom *i, const Vec3<double> &j) const;
 	// Return minimum image squared distance from 'i' to 'j'
-	double minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const;
-
+	double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const;
 
 	/*
 	 * Utility Routines (Virtual Implementations)
 	 */
-	public:
+      public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
 	// Return folded coordinate (i.e. inside current Box)
-	Vec3<double> fold(const Vec3<double>& i) const;
+	Vec3<double> fold(const Vec3<double> &i) const;
 	// Return folded fractional coordinate (i.e. inside current Box)
-	Vec3<double> foldFrac(const Vec3<double>& i) const;
+	Vec3<double> foldFrac(const Vec3<double> &i) const;
 	// Convert supplied fractional coordinates to real space
-	Vec3<double> fracToReal(const Vec3<double>& r) const;
+	Vec3<double> fracToReal(const Vec3<double> &r) const;
 };
 
 // Triclinic Box Definition
 class TriclinicBox : public Box
 {
-	public:
+      public:
 	// Constructor
 	TriclinicBox(const Vec3<double> lengths, const Vec3<double> angles);
 	// Destructor
 	~TriclinicBox();
 
-
 	/*
 	 * Minimum Image Routines (Virtual Implementations)
 	 */
-	public:
+      public:
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Atom* i, const Atom* ref) const;
+	Vec3<double> minimumImage(const Atom *i, const Atom *ref) const;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Atom* i, const Vec3<double>& ref) const;
+	Vec3<double> minimumImage(const Atom *i, const Vec3<double> &ref) const;
 	// Return minimum image coordinates of 'i' with respect to 'ref'
-	Vec3<double> minimumImage(const Vec3<double>& i, const Vec3<double>& ref) const;
+	Vec3<double> minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom* i, const Atom* j) const;
+	Vec3<double> minimumVector(const Atom *i, const Atom *j) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom& i, const Atom& j) const;
+	Vec3<double> minimumVector(const Atom &i, const Atom &j) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Atom* i, const Vec3<double>& j) const;
+	Vec3<double> minimumVector(const Atom *i, const Vec3<double> &j) const;
 	// Return minimum image vector from 'i' to 'j'
-	Vec3<double> minimumVector(const Vec3<double>& i, const Vec3<double>& j) const;
+	Vec3<double> minimumVector(const Vec3<double> &i, const Vec3<double> &j) const;
 	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Atom* i, const Atom* j) const;
+	double minimumDistance(const Atom *i, const Atom *j) const;
 	// Return minimum image distance from 'i' to 'j' (references)
-	double minimumDistance(const Atom& i, const Atom& j) const;
+	double minimumDistance(const Atom &i, const Atom &j) const;
 	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Atom* i, const Vec3<double>& j) const;
+	double minimumDistance(const Atom *i, const Vec3<double> &j) const;
 	// Return minimum image distance from 'i' to 'j'
-	double minimumDistance(const Vec3<double>& i, const Vec3<double>& j) const;
+	double minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const;
 	// Return minimum image squared distance from 'i' to 'j' (pointers)
-	double minimumDistanceSquared(const Atom* i, const Atom* j) const;
+	double minimumDistanceSquared(const Atom *i, const Atom *j) const;
 	// Return minimum image squared distance from 'i' to 'j' (references)
-	double minimumDistanceSquared(const Atom& i, const Atom& j) const;
+	double minimumDistanceSquared(const Atom &i, const Atom &j) const;
 	// Return minimum image squared distance from 'i' to 'j'
-	double minimumDistanceSquared(const Atom* i, const Vec3<double>& j) const;
+	double minimumDistanceSquared(const Atom *i, const Vec3<double> &j) const;
 	// Return minimum image squared distance from 'i' to 'j'
-	double minimumDistanceSquared(const Vec3<double>& i, const Vec3<double>& j) const;
-
+	double minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const;
 
 	/*
 	 * Utility Routines (Virtual Implementations)
 	 */
-	public:
+      public:
 	// Return random coordinate inside Box
 	Vec3<double> randomCoordinate() const;
 	// Return folded coordinate (i.e. inside current Box)
-	Vec3<double> fold(const Vec3<double>& i) const;
+	Vec3<double> fold(const Vec3<double> &i) const;
 	// Return folded fractional coordinate (i.e. inside current Box)
-	Vec3<double> foldFrac(const Vec3<double>& i) const;
+	Vec3<double> foldFrac(const Vec3<double> &i) const;
 	// Convert supplied fractional coordinates to real space
-	Vec3<double> fracToReal(const Vec3<double>& r) const;
+	Vec3<double> fracToReal(const Vec3<double> &r) const;
 };
 
 #endif

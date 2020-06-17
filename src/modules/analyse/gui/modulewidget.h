@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULEWIDGET_ANALYSE_H
 #define DISSOLVE_MODULEWIDGET_ANALYSE_H
 
-#include "modules/analyse/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
+#include "modules/analyse/gui/ui_modulewidget.h"
 
 // Forward Declarations
 class AnalyseModule;
@@ -36,19 +36,18 @@ class AnalyseModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	AnalyseModuleWidget(QWidget* parent, AnalyseModule* module, const CoreData& coreData);
+	AnalyseModuleWidget(QWidget *parent, AnalyseModule *module, const CoreData &coreData);
 
-	private:
+      private:
 	// Associated Module
-	AnalyseModule* module_;
-
+	AnalyseModule *module_;
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::AnalyseModuleWidget ui_;
 };

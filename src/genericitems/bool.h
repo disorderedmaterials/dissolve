@@ -22,85 +22,66 @@
 #ifndef DISSOLVE_GENERICITEMCONTAINER_BOOL_H
 #define DISSOLVE_GENERICITEMCONTAINER_BOOL_H
 
-#include "genericitems/container.h"
 #include "base/lineparser.h"
+#include "genericitems/container.h"
 
 // GenericItemContainer<bool>
 template <> class GenericItemContainer<bool> : public GenericItem
 {
-	public:
+      public:
 	// Constructor
-	GenericItemContainer<bool>(const char* name, int flags = 0) : GenericItem(name, flags)
-	{
-	}
-
+	GenericItemContainer<bool>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Data item
 	bool data_;
 
-	public:
+      public:
 	// Return data item
-	bool& data()
-	{
-		return data_;
-	}
-
+	bool &data() { return data_; }
 
 	/*
 	 * Item Class
 	 */
-	protected:
+      protected:
 	// Create a new GenericItem containing same class as current type
-	GenericItem* createItem(const char* className, const char* name, int flags = 0)
+	GenericItem *createItem(const char *className, const char *name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer<bool>(name, flags);
+		if (DissolveSys::sameString(className, itemClassName()))
+			return new GenericItemContainer<bool>(name, flags);
 		return NULL;
 	}
 
-	public:
+      public:
 	// Return class name contained in item
-	const char* itemClassName()
-	{
-		return "bool";
-	}
-
+	const char *itemClassName() { return "bool"; }
 
 	/*
 	 * I/O
 	 */
-	public:
+      public:
 	// Write data through specified parser
-	bool write(LineParser& parser)
-	{
-		return parser.writeLineF("%s\n", DissolveSys::btoa(data_));
-	}
+	bool write(LineParser &parser) { return parser.writeLineF("%s\n", DissolveSys::btoa(data_)); }
 	// Read data through specified parser
-	bool read(LineParser& parser, const CoreData& coreData)
+	bool read(LineParser &parser, const CoreData &coreData)
 	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+			return false;
 		data_ = parser.argb(0);
 		return true;
 	}
 
-
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
-	{
-		return procPool.broadcast(data_, root);
-	}
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData) { return procPool.broadcast(data_, root); }
 	// Check item equality
-	bool equality(ProcessPool& procPool)
-	{
-		return procPool.equality(data_);
-	}
+	bool equality(ProcessPool &procPool) { return procPool.equality(data_); }
 };
 
 #endif

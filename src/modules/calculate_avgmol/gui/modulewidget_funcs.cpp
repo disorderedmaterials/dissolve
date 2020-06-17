@@ -19,11 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate_avgmol/gui/modulewidget.h"
 #include "modules/calculate_avgmol/avgmol.h"
+#include "modules/calculate_avgmol/gui/modulewidget.h"
 
 // Constructor
-CalculateAvgMolModuleWidget::CalculateAvgMolModuleWidget(QWidget* parent, CalculateAvgMolModule* module) : ModuleWidget(parent), module_(module)
+CalculateAvgMolModuleWidget::CalculateAvgMolModuleWidget(QWidget *parent, CalculateAvgMolModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -38,37 +38,24 @@ CalculateAvgMolModuleWidget::CalculateAvgMolModuleWidget(QWidget* parent, Calcul
  */
 
 // Update controls within widget
-void CalculateAvgMolModuleWidget::updateControls(int flags)
-{
-}
+void CalculateAvgMolModuleWidget::updateControls(int flags) {}
 
 // Disable sensitive controls within widget
-void CalculateAvgMolModuleWidget::disableSensitiveControls()
-{
-}
+void CalculateAvgMolModuleWidget::disableSensitiveControls() {}
 
 // Enable sensitive controls within widget
-void CalculateAvgMolModuleWidget::enableSensitiveControls()
-{
-}
+void CalculateAvgMolModuleWidget::enableSensitiveControls() {}
 
 /*
  * State I/O
  */
 
 // Write widget state through specified LineParser
-bool CalculateAvgMolModuleWidget::writeState(LineParser& parser) const
-{
-	return true;
-}
+bool CalculateAvgMolModuleWidget::writeState(LineParser &parser) const { return true; }
 
 // Read widget state through specified LineParser
-bool CalculateAvgMolModuleWidget::readState(LineParser& parser)
-{
-	return true;
-}
+bool CalculateAvgMolModuleWidget::readState(LineParser &parser) { return true; }
 
 /*
  * Widgets / Functions
  */
-

@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_IMPORT_DATA2D_H
 #define DISSOLVE_IMPORT_DATA2D_H
 
-#include "io/fileandformat.h"
 #include "base/enumoptions.h"
+#include "io/fileandformat.h"
 #include "templates/vector3.h"
 
 // Forward Declarations
@@ -34,53 +34,60 @@ class Vec3DoubleKeyword;
 // Data2D Import Formats
 class Data2DImportFileFormat : public FileAndFormat
 {
-	public:
+      public:
 	// Available Data2D formats
-	enum Data2DImportFormat { CartesianData2D, nData2DImportFormats };
-	// Constructor
+	enum Data2DImportFormat
+	{
+		CartesianData2D,
+		nData2DImportFormats
+	};
+	// Constructors
 	Data2DImportFileFormat(Data2DImportFormat format = CartesianData2D);
+	Data2DImportFileFormat(const char *filename, Data2DImportFormat format = CartesianData2D);
 	// Destructor
 	~Data2DImportFileFormat();
 
+	/*
+	 * Keyword Options
+	 */
+      private:
+	// Set up keywords for the format
+	void setUpKeywords();
 
 	/*
 	 * Format Access
 	 */
-	public:
+      public:
+	// Return enum options for Data2DImportFormat
+	static EnumOptions<Data2DImportFileFormat::Data2DImportFormat> data2DImportFormats();
 	// Return number of available formats
 	int nFormats() const;
-	// Return formats array
-	const char** formats() const;
-	// Return nice formats array
-	const char** niceFormats() const;
+	// Return format keyword for supplied index
+	const char *formatKeyword(int id) const;
+	// Return description string for supplied index
+	const char *formatDescription(int id) const;
 	// Return current format as Data2DImportFormat
 	Data2DImportFormat data2DFormat() const;
-
 
 	/*
 	 * Filename / Basename
 	 */
-	public:
+      public:
 	// Return whether the file must exist
-	bool fileMustExist() const
-	{
-		return true;
-	}
-
+	bool fileMustExist() const { return true; }
 
 	/*
 	 * Data Import
 	 */
-	private:
+      private:
 	// Import cartesian data from supplied parser
-	bool importCartesian(LineParser& parser, Data2D& data);
+	bool importCartesian(LineParser &parser, Data2D &data);
 
-	public:
+      public:
 	// Import Data2D using current filename and format
-	bool importData(Data2D& data, ProcessPool* procPool = NULL);
+	bool importData(Data2D &data, ProcessPool *procPool = NULL);
 	// Import Data2D using supplied parser and current format
-	bool importData(LineParser& parser, Data2D& data);
+	bool importData(LineParser &parser, Data2D &data);
 };
 
 #endif
-

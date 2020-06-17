@@ -18,7 +18,7 @@ Configuration 'liquid'
     AddSpecies
       Species  'Argon'
       Population  10000
-      ScaleBox  False
+      BoxAction  None
     EndAddSpecies
   EndGenerator
   InputCoordinates  epsr  'epsr_qindep0.1/argonbox.ato'
@@ -53,5 +53,5 @@ EndModule
 EndLayer
 
 PairPotentials
-  Parameters  Ar  0.0  LJGeometric  0.979   3.401
+  Parameters  Ar  Ar  0.0  LJGeometric  0.979   3.401
 EndPairPotentials

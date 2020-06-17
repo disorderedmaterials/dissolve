@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/charstring.h"
 #include "base/timer.h"
+#include "base/charstring.h"
 
 // Constructor
 Timer::Timer()
@@ -35,17 +35,20 @@ Timer::Timer()
  */
 
 // Return time string based on provided tick count
-const char* Timer::timeString(clock_t ticks)
+const char *Timer::timeString(clock_t ticks)
 {
 	int n = ticks / CLOCKS_PER_SEC;
 	int hours = n / 3600;
 	n %= 3600;
 	int minutes = n / 60;
 	n %= 60;
-	double seconds = ticks /  double(CLOCKS_PER_SEC) - hours*3600 - minutes*60;
-	if (hours != 0) timeString_.sprintf("%i hours, %i minutes, and %0.2f seconds", hours, minutes, seconds);
-	else if (minutes != 0) timeString_.sprintf("%i minutes and %0.2f seconds", minutes, seconds);
-	else timeString_.sprintf("%0.2f seconds", seconds);
+	double seconds = ticks / double(CLOCKS_PER_SEC) - hours * 3600 - minutes * 60;
+	if (hours != 0)
+		timeString_.sprintf("%i hours, %i minutes, and %0.2f seconds", hours, minutes, seconds);
+	else if (minutes != 0)
+		timeString_.sprintf("%i minutes and %0.2f seconds", minutes, seconds);
+	else
+		timeString_.sprintf("%0.2f seconds", seconds);
 	return timeString_.get();
 }
 
@@ -76,39 +79,34 @@ double Timer::split()
 }
 
 // Accumulate time since last start
-void Timer::accumulate()
-{
-	totalTime_ += clock() - startTime_;
-}
+void Timer::accumulate() { totalTime_ += clock() - startTime_; }
 
 // Zero total time
-void Timer::zero()
-{
-	totalTime_ = 0;
-}
+void Timer::zero() { totalTime_ = 0; }
 
 // Return current elapsed time as a time string
-const char* Timer::elapsedTimeString()
+const char *Timer::elapsedTimeString()
 {
-	if (running_) return timeString(clock() - startTime_);
-	else return timeString(totalTime_);
+	if (running_)
+		return timeString(clock() - startTime_);
+	else
+		return timeString(totalTime_);
 }
 
 // Return total time (after stop()) as a time string
-const char* Timer::totalTimeString()
-{
-	return timeString(totalTime_);
-}
+const char *Timer::totalTimeString() { return timeString(totalTime_); }
 
 // Return number of seconds elapsed
 double Timer::secondsElapsed() const
 {
-	if (running_) return (clock() - startTime_) / double(CLOCKS_PER_SEC);
-	else return totalTime_ / double(CLOCKS_PER_SEC);
+	if (running_)
+		return (clock() - startTime_) / double(CLOCKS_PER_SEC);
+	else
+		return totalTime_ / double(CLOCKS_PER_SEC);
 }
 
 // Return time string for number of seconds provided
-const char* Timer::timeString(double seconds)
+const char *Timer::timeString(double seconds)
 {
 	static CharString result;
 
@@ -116,15 +114,18 @@ const char* Timer::timeString(double seconds)
 	seconds -= hours * 3600;
 	int minutes = int(seconds) / 60;
 	seconds -= minutes * 60;
-	
-	if (hours != 0) result.sprintf("%i hours, %i minutes, and %0.1f seconds", hours, minutes, seconds);
-	else if (minutes != 0) result.sprintf("%i minutes and %0.1f seconds", minutes, seconds);
-	else result.sprintf("%0.1f seconds", seconds);
+
+	if (hours != 0)
+		result.sprintf("%i hours, %i minutes, and %0.1f seconds", hours, minutes, seconds);
+	else if (minutes != 0)
+		result.sprintf("%i minutes and %0.1f seconds", minutes, seconds);
+	else
+		result.sprintf("%0.1f seconds", seconds);
 	return result.get();
 }
 
 // Return ETA string for number of seconds provided
-const char* Timer::etaString(double seconds)
+const char *Timer::etaString(double seconds)
 {
 	static CharString result;
 
@@ -132,7 +133,7 @@ const char* Timer::etaString(double seconds)
 	seconds -= hours * 3600;
 	int minutes = int(seconds) / 60;
 	seconds -= minutes * 60;
-	
+
 	result.sprintf("%02i:%02i:%02i", hours, minutes, int(seconds));
 
 	return result.get();

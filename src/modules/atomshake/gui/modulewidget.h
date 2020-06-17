@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULEWIDGET_ATOMSHAKE_H
 #define DISSOLVE_MODULEWIDGET_ATOMSHAKE_H
 
-#include "modules/atomshake/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
+#include "modules/atomshake/gui/ui_modulewidget.h"
 
 // Forward Declarations
 class AtomShakeModule;
@@ -34,20 +34,19 @@ class AtomShakeModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	private:
+      private:
 	// Associated Module
-	AtomShakeModule* module_;
+	AtomShakeModule *module_;
 
-	public:
+      public:
 	// Constructor / Destructor
-	AtomShakeModuleWidget(QWidget* parent, AtomShakeModule* module);
+	AtomShakeModuleWidget(QWidget *parent, AtomShakeModule *module);
 	~AtomShakeModuleWidget();
-
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::AtomShakeModuleWidget ui_;
 };

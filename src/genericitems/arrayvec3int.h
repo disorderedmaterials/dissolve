@@ -25,94 +25,87 @@
 #include "genericitems/container.h"
 
 // GenericItemContainer< Array< Vec3<int> > >
-template <> class GenericItemContainer< Array< Vec3<int> > > : public GenericItem
+template <> class GenericItemContainer<Array<Vec3<int>>> : public GenericItem
 {
-	public:
+      public:
 	// Constructor
-	GenericItemContainer< Array< Vec3<int> > >(const char* name, int flags = 0) : GenericItem(name, flags)
-	{
-	}
-
+	GenericItemContainer<Array<Vec3<int>>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Data item
-	Array< Vec3<int> > data_;
+	Array<Vec3<int>> data_;
 
-	public:
+      public:
 	// Return data item
-	Array< Vec3<int> >& data()
-	{
-		return data_;
-	}
+	Array<Vec3<int>> &data() { return data_; }
 
 	/*
 	 * Item Class
 	 */
-	protected:
+      protected:
 	// Create a new GenericItem containing same class as current type
-	GenericItem* createItem(const char* className, const char* name, int flags = 0)
+	GenericItem *createItem(const char *className, const char *name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer< Array< Vec3<int> > >(name, flags);
+		if (DissolveSys::sameString(className, itemClassName()))
+			return new GenericItemContainer<Array<Vec3<int>>>(name, flags);
 		return NULL;
 	}
 
-	public:
+      public:
 	// Return class name contained in item
-	const char* itemClassName()
-	{
-		return "Array<Vec3<int>>";
-	}
-
+	const char *itemClassName() { return "Array<Vec3<int>>"; }
 
 	/*
 	 * I/O
 	 */
-	public:
+      public:
 	// Write data through specified parser
-	bool write(LineParser& parser)
+	bool write(LineParser &parser)
 	{
 		parser.writeLineF("%i\n", data_.nItems());
-		Vec3<int>* array = data_.array();
-		for (int n=0; n<data_.nItems(); ++n)
+		Vec3<int> *array = data_.array();
+		for (int n = 0; n < data_.nItems(); ++n)
 		{
-			if (!parser.writeLineF("%i %i %i\n", array[n].x, array[n].y, array[n].z)) return false;
+			if (!parser.writeLineF("%i %i %i\n", array[n].x, array[n].y, array[n].z))
+				return false;
 		}
 		return true;
 	}
 	// Read data through specified parser
-	bool read(LineParser& parser, const CoreData& coreData)
+	bool read(LineParser &parser, const CoreData &coreData)
 	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+			return false;
 		int nItems = parser.argi(0);
 		data_.createEmpty(nItems);
-		for (int n=0; n<nItems; ++n)
+		for (int n = 0; n < nItems; ++n)
 		{
-			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+				return false;
 			data_.add(parser.arg3i(0));
 		}
 		return true;
 	}
 
-
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
-	{
-		return procPool.broadcast(data_, root);
-	}
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData) { return procPool.broadcast(data_, root); }
 	// Return equality between items
-	bool equality(ProcessPool& procPool)
+	bool equality(ProcessPool &procPool)
 	{
 		// Verify array size first
-		if (!procPool.equality(data_.nItems())) return false;
+		if (!procPool.equality(data_.nItems()))
+			return false;
 		// Keep it simple (and slow) and check/send one value at a time
-		for (int n=0; n<data_.nItems(); ++n) if (!procPool.equality(data_.constAt(n))) return false;
+		for (int n = 0; n < data_.nItems(); ++n)
+			if (!procPool.equality(data_.constAt(n)))
+				return false;
 		return true;
 	}
 };

@@ -36,41 +36,49 @@ class ExpressionVariable;
 // Expression Generator
 class ExpressionGenerator
 {
-	private:
+      private:
 	// Constructor
-	ExpressionGenerator(Expression& expression, const char* expressionText);
+	ExpressionGenerator(Expression &expression, const char *expressionText);
 
-	public:
+      public:
 	// Destructor
 	~ExpressionGenerator();
-
 
 	/*
 	 * Target Expression and Generator
 	 */
-	private:
+      private:
 	// Pointer to target Expression
-	static Expression* expression_;
+	static Expression *expression_;
 	// The ExpressionGenerator object calling the parser/lexer
-	static ExpressionGenerator* generator_;
+	static ExpressionGenerator *generator_;
 
-	public:
+      public:
 	// Return target Expression (static to allow ExpressionGenerator_parse() to use it)
-	static Expression* expression();
+	static Expression *expression();
 	// Return current ExpressionGenerator (static to allow ExpressionGenerator_parse() to use it)
-	static ExpressionGenerator* generator();
-
+	static ExpressionGenerator *generator();
 
 	/*
 	 * Lexer
 	 */
-	public:
+      public:
 	// Symbol Tokens
-	enum SymbolToken { AssignSymbol, GEQSymbol, LEQSymbol, CNEQSymbol, FNEQSymbol, AndSymbol, OrSymbol, nSymbolTokens };
+	enum SymbolToken
+	{
+		AssignSymbol,
+		GEQSymbol,
+		LEQSymbol,
+		CNEQSymbol,
+		FNEQSymbol,
+		AndSymbol,
+		OrSymbol,
+		nSymbolTokens
+	};
 	// Return enum options for SymbolToken
 	static EnumOptions<int> symbolTokens();
 
-	private:
+      private:
 	// Source expression string
 	CharString expressionString_;
 	// Integer position in stringSource, total length of string, and starting position of current token/function
@@ -78,9 +86,9 @@ class ExpressionGenerator
 	// Whether to use additional pre-defined constants
 	bool useAdditionalConstants_;
 
-	private:
+      private:
 	// Set string source for lexer
-	void setSource(const char* expressionText);
+	void setSource(const char *expressionText);
 	// Get next character from current input stream
 	char getChar();
 	// Peek next character from current input stream
@@ -88,18 +96,17 @@ class ExpressionGenerator
 	// 'Replace' last character read from current input stream
 	void unGetChar();
 
-	public:
+      public:
 	// Parser lexer, called by yylex()
 	int lex();
-
 
 	/*
 	 * Creation
 	 */
-	public:
+      public:
 	// Static generation functions
-	static bool generate(Expression& expression);
-	static bool generate(Expression& expression, RefList<ExpressionVariable> externalVariables);
+	static bool generate(Expression &expression);
+	static bool generate(Expression &expression, RefList<ExpressionVariable> externalVariables);
 };
 
 #endif

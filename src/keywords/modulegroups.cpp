@@ -20,32 +20,25 @@
 */
 
 #include "keywords/modulegroups.h"
+#include "base/lineparser.h"
+#include "base/sysfunc.h"
+#include "classes/coredata.h"
 #include "module/group.h"
 #include "module/groups.h"
 #include "module/module.h"
-#include "classes/coredata.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
 
 // Constructor
-ModuleGroupsKeyword::ModuleGroupsKeyword(ModuleGroups& groups) : KeywordData<ModuleGroups&>(KeywordBase::ModuleGroupsData, groups)
-{
-}
+ModuleGroupsKeyword::ModuleGroupsKeyword(ModuleGroups &groups) : KeywordData<ModuleGroups &>(KeywordBase::ModuleGroupsData, groups) {}
 
 // Destructor
-ModuleGroupsKeyword::~ModuleGroupsKeyword()
-{
-}
+ModuleGroupsKeyword::~ModuleGroupsKeyword() {}
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int ModuleGroupsKeyword::minArguments() const
-{
-	return 1;
-}
+int ModuleGroupsKeyword::minArguments() const { return 1; }
 
 // Return maximum number of arguments accepted
 int ModuleGroupsKeyword::maxArguments() const
@@ -55,10 +48,10 @@ int ModuleGroupsKeyword::maxArguments() const
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ModuleGroupsKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool ModuleGroupsKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
 	// Find specified Module by its unique name
-	Module* module = coreData.findModule(parser.argc(startArg));
+	Module *module = coreData.findModule(parser.argc(startArg));
 	if (!module)
 	{
 		Messenger::error("No Module named '%s' exists.\n", parser.argc(startArg));
@@ -68,12 +61,13 @@ bool ModuleGroupsKeyword::read(LineParser& parser, int startArg, const CoreData&
 	// Check the module's type
 	if (!data_.moduleTypeIsAllowed(module->type()))
 	{
-		Messenger::error("Module '%s' is of type '%s', and is not permitted in these groups (allowed types = %s).\n", parser.argc(startArg), module->type(), data_.allowedModuleTypes().asCommaSeparatedList());
+		Messenger::error("Module '%s' is of type '%s', and is not permitted in these groups (allowed types = %s).\n", parser.argc(startArg), module->type(),
+				 data_.allowedModuleTypes().asCommaSeparatedList());
 		return false;
 	}
 
 	// If a second argument was given, this is the name of the group we should add the Module to. Otherwise, use the default
-	data_.addModule(module, parser.hasArg(startArg+1) ? parser.argc(startArg+1) : "Default");
+	data_.addModule(module, parser.hasArg(startArg + 1) ? parser.argc(startArg + 1) : "Default");
 
 	set_ = true;
 
@@ -81,17 +75,17 @@ bool ModuleGroupsKeyword::read(LineParser& parser, int startArg, const CoreData&
 }
 
 // Write keyword data to specified LineParser
-bool ModuleGroupsKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool ModuleGroupsKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	// Loop over defined groups
 	ListIterator<ModuleGroup> groupIterator(data_.groups());
-	while (ModuleGroup* group = groupIterator.iterate())
+	while (ModuleGroup *group = groupIterator.iterate())
 	{
 		// Loop over list of referenced Modules in this group
-		RefListIterator<Module> refIterator(group->modules());
-		while (Module* module = refIterator.iterate())
+		for (Module *module : group->modules())
 		{
-			if (!parser.writeLineF("%s%s  '%s'  '%s'\n", prefix, keywordName, module->uniqueName(), group->name())) return false;
+			if (!parser.writeLineF("%s%s  '%s'  '%s'\n", prefix, keywordName, module->uniqueName(), group->name()))
+				return false;
 		}
 	}
 
@@ -103,12 +97,13 @@ bool ModuleGroupsKeyword::write(LineParser& parser, const char* keywordName, con
  */
 
 // Prune any references to the supplied Module in the contained data
-void ModuleGroupsKeyword::removeReferencesTo(Module* module)
+void ModuleGroupsKeyword::removeReferencesTo(Module *module)
 {
 	// Loop over defined groups
 	ListIterator<ModuleGroup> groupIterator(data_.groups());
-	while (ModuleGroup* group = groupIterator.iterate())
+	while (ModuleGroup *group = groupIterator.iterate())
 	{
-		if (group->contains(module)) group->remove(module);
+		if (group->contains(module))
+			group->remove(module);
 	}
 }

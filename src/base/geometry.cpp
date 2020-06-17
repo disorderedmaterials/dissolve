@@ -35,14 +35,12 @@ Geometry::Geometry()
 }
 
 // Destructor
-Geometry::~Geometry()
-{
-}
+Geometry::~Geometry() {}
 
 /*
  * Data
  */
-	
+
 // Set reference value and indices
 void Geometry::set(double value, int a, int b, int c, int d)
 {
@@ -54,15 +52,7 @@ void Geometry::set(double value, int a, int b, int c, int d)
 }
 
 // Return reference value
-double Geometry::value()
-{
-	return value_;
-}
+double Geometry::value() { return value_; }
 
 // Return index value
-int Geometry::indices(int i) const
-{
-	return indices_[i];
-}
-
-
+int Geometry::indices(int i) const { return indices_[i]; }

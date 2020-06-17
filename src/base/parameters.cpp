@@ -25,25 +25,21 @@
 // Constructor
 InteractionParameters::InteractionParameters()
 {
-	for (int n=0; n<MAXSRPARAMETERS; ++n) parameters_[n] = 0.0;
+	for (int n = 0; n < MAXSRPARAMETERS; ++n)
+		parameters_[n] = 0.0;
 	charge_ = 0.0;
 	empty_ = true;
 }
 
 // Destructor
-InteractionParameters::~InteractionParameters()
-{
-}
+InteractionParameters::~InteractionParameters() {}
 
 /*
  * Parameters
  */
 
 // Return whether the parameters / charge are empty (i.e. none have ever been set)
-bool InteractionParameters::isEmpty() const
-{
-	return empty_;
-}
+bool InteractionParameters::isEmpty() const { return empty_; }
 
 // Set parameter with index specified
 void InteractionParameters::setParameter(int index, double value)
@@ -55,9 +51,9 @@ void InteractionParameters::setParameter(int index, double value)
 		return;
 	}
 #endif
-	 parameters_[index] = value;
+	parameters_[index] = value;
 
-	 empty_ = false;
+	empty_ = false;
 }
 
 // Return parameter with index specified
@@ -70,7 +66,7 @@ double InteractionParameters::parameter(int index) const
 		return 0.0;
 	}
 #endif
-	 return parameters_[index];
+	return parameters_[index];
 }
 
 // Set atomic charge
@@ -82,7 +78,4 @@ void InteractionParameters::setCharge(double charge)
 }
 
 // Return atomic charge
-double InteractionParameters::charge() const
-{
-	return charge_;
-}
+double InteractionParameters::charge() const { return charge_; }

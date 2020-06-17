@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULE_IMPORT_H
 #define DISSOLVE_MODULE_IMPORT_H
 
-#include "module/module.h"
 #include "io/import/trajectory.h"
+#include "module/module.h"
 
 // Forward Declarations
 class Data1D;
@@ -33,58 +33,52 @@ class Data3D;
 // Import Module
 class ImportModule : public Module
 {
-	public:
+      public:
 	// Constructor
 	ImportModule();
 	// Destructor
 	~ImportModule();
 
-
 	/*
 	 * Instances
 	 */
-	public:
+      public:
 	// Create instance of this module
-	Module* createInstance() const;
-
+	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return type of module
-	const char* type() const;
+	const char *type() const;
 	// Return category for module
-	const char* category() const;
+	const char *category() const;
 	// Return brief description of module
-	const char* brief() const;
+	const char *brief() const;
 	// Return the number of Configuration targets this Module requires
 	int nRequiredTargets() const;
-
 
 	/*
 	 * Initialisation
 	 */
-	protected:
+      protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
-	
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Trajectory file source
 	TrajectoryImportFileFormat trajectoryFile_;
-
 
 	/*
 	 * Processing
 	 */
-	private:
+      private:
 	// Run main processing
-	bool process(Dissolve& dissolve, ProcessPool& procPool);
+	bool process(Dissolve &dissolve, ProcessPool &procPool);
 };
 
 #endif
-

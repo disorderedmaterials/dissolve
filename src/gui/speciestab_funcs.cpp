@@ -19,21 +19,22 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/speciestab.h"
-#include "gui/gui.h"
-#include "gui/delegates/intraformcombo.hui"
+#include "classes/atomtype.h"
 #include "gui/delegates/combolist.hui"
-#include "gui/delegates/integerspin.hui"
-#include "gui/delegates/isotopecombo.hui"
 #include "gui/delegates/exponentialspin.hui"
+#include "gui/delegates/integerspin.hui"
+#include "gui/delegates/intraformcombo.hui"
+#include "gui/delegates/isotopecombo.hui"
 #include "gui/delegates/null.h"
 #include "gui/getspeciesnamedialog.h"
+#include "gui/gui.h"
+#include "gui/speciestab.h"
 #include "main/dissolve.h"
-#include "classes/atomtype.h"
 #include <QMessageBox>
 
 // Constructor / Destructor
-SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, Species* species) : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Species: %s", title), this)
+SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Species *species)
+    : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Species: %s", title), this)
 {
 	ui_.setupUi(this);
 
@@ -44,7 +45,8 @@ SpeciesTab::SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainT
 	// Set item delegates in tables
 	// -- SpeciesAtomTable
 	ui_.AtomTable->setItemDelegateForColumn(1, new ComboListDelegate(this, new ComboNameListItems<AtomType>(dissolve_.atomTypes())));
-	for (int n=2; n<6; ++n) ui_.AtomTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+	for (int n = 2; n < 6; ++n)
+		ui_.AtomTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 	ui_.AtomTable->horizontalHeader()->setFont(font());
 	// -- Isotopologues Tree
 	ui_.IsotopologuesTree->setItemDelegateForColumn(1, new NullDelegate(this));
@@ -110,29 +112,20 @@ void SpeciesTab::updateControls()
 }
 
 // Disable sensitive controls within tab
-void SpeciesTab::disableSensitiveControls()
-{
-	setEnabled(false);
-}
+void SpeciesTab::disableSensitiveControls() { setEnabled(false); }
 
 // Enable sensitive controls within tab
-void SpeciesTab::enableSensitiveControls()
-{
-	setEnabled(true);
-}
+void SpeciesTab::enableSensitiveControls() { setEnabled(true); }
 
 /*
  * MainTab Reimplementations
  */
 
 // Return tab type
-MainTab::TabType SpeciesTab::type() const
-{
-	return MainTab::SpeciesTabType;
-}
+MainTab::TabType SpeciesTab::type() const { return MainTab::SpeciesTabType; }
 
 // Raise suitable dialog for entering / checking new tab name
-QString SpeciesTab::getNewTitle(bool& ok)
+QString SpeciesTab::getNewTitle(bool &ok)
 {
 	// Get a new, valid name for the Species
 	GetSpeciesNameDialog nameDialog(this, dissolve_.coreData());
@@ -150,10 +143,7 @@ QString SpeciesTab::getNewTitle(bool& ok)
 }
 
 // Return whether the title of the tab can be changed
-bool SpeciesTab::canChangeTitle() const
-{
-	return true;
-}
+bool SpeciesTab::canChangeTitle() const { return true; }
 
 // Return whether the tab can be closed (after any necessary user querying, etc.)
 bool SpeciesTab::canClose() const
@@ -166,7 +156,8 @@ bool SpeciesTab::canClose() const
 	queryBox.setDefaultButton(QMessageBox::No);
 	int ret = queryBox.exec();
 
-	if (ret != QMessageBox::Yes) return false;
+	if (ret != QMessageBox::Yes)
+		return false;
 
 	return true;
 }
@@ -176,23 +167,14 @@ bool SpeciesTab::canClose() const
  */
 
 // Return displayed Species
-Species* SpeciesTab::species() const
-{
-	return species_;
-}
+Species *SpeciesTab::species() const { return species_; }
 
 /*
  * State
  */
 
 // Read widget state through specified LineParser
-bool SpeciesTab::readState(LineParser& parser, const CoreData& coreData)
-{
-	return true;
-}
+bool SpeciesTab::readState(LineParser &parser, const CoreData &coreData) { return true; }
 
 // Write widget state through specified LineParser
-bool SpeciesTab::writeState(LineParser& parser) const
-{
-	return true;
-}
+bool SpeciesTab::writeState(LineParser &parser) const { return true; }

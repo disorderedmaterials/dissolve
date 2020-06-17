@@ -19,14 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate_rdf/rdf.h"
 #include "keywords/types.h"
+#include "modules/calculate_rdf/rdf.h"
 #include "procedure/nodes/calculatedistance.h"
 #include "procedure/nodes/collect1d.h"
-#include "procedure/nodes/process1d.h"
 #include "procedure/nodes/operatenumberdensitynormalise.h"
 #include "procedure/nodes/operatesitepopulationnormalise.h"
 #include "procedure/nodes/operatesphericalshellnormalise.h"
+#include "procedure/nodes/process1d.h"
 #include "procedure/nodes/select.h"
 
 // Perform any necessary initialisation for the Module
@@ -73,20 +73,20 @@ void CalculateRDFModule::initialise()
 	// Select: Site 'A'
 	selectA_ = new SelectProcedureNode;
 	selectA_->setName("A");
-	SequenceProcedureNode* forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
+	SequenceProcedureNode *forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
 	analyser_.addRootSequenceNode(selectA_);
 
 	// -- Select: Site 'B'
 	selectB_ = new SelectProcedureNode();
 	selectB_->setName("B");
 	RefList<SelectProcedureNode> exclusions(selectA_);
-	selectB_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameSite", exclusions);
-	selectB_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameMolecule", exclusions);
-	SequenceProcedureNode* forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
+	selectB_->setKeyword<RefList<SelectProcedureNode> &>("ExcludeSameSite", exclusions);
+	selectB_->setKeyword<RefList<SelectProcedureNode> &>("ExcludeSameMolecule", exclusions);
+	SequenceProcedureNode *forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
 	forEachA->addNode(selectB_);
 
 	// -- -- Calculate: 'rAB'
-	CalculateDistanceProcedureNode* calcDistance = new CalculateDistanceProcedureNode(selectA_, selectB_);
+	CalculateDistanceProcedureNode *calcDistance = new CalculateDistanceProcedureNode(selectA_, selectB_);
 	forEachB->addNode(calcDistance);
 
 	// -- -- Collect1D: 'RDF'
@@ -99,7 +99,7 @@ void CalculateRDFModule::initialise()
 	processDistance_->setKeyword<CharString>("LabelValue", "g(r)");
 	processDistance_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
 
-	SequenceProcedureNode* rdfNormalisation = processDistance_->addNormalisationBranch();
+	SequenceProcedureNode *rdfNormalisation = processDistance_->addNormalisationBranch();
 	rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(selectA_));
 	rdfNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode(selectB_));
 	rdfNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
@@ -110,12 +110,14 @@ void CalculateRDFModule::initialise()
 	 */
 
 	// Calculation
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxDeltaLabels), "DistanceRange", "Range (min, max, delta) of distance axis", "<min> <max> <delta> (Angstroms)");
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxDeltaLabels), "DistanceRange",
+		      "Range (min, max, delta) of distance axis", "<min> <max> <delta> (Angstroms)");
 
 	// Sites
 	keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA", "Set the site(s) 'A' which are to represent the origin of the RDF", "<Species> <Site>");
 	keywords_.link("Sites", selectB_->keywords().find("Site"), "SiteB", "Set the site(s) 'B' for which the distribution around the origin sites 'A' should be calculated", "<Species> <Site>");
 	keywords_.add("Sites", new BoolKeyword(false), "ExcludeSameMolecule", "Whether to exclude correlations between sites on the same molecule", "<True|False>");
+
+	// Export
+	keywords_.link("Export", processDistance_->keywords().find("Save"), "Save", "Whether to save calculated RDF to disk", "<True|False>");
 }
-
-

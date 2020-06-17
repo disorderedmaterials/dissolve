@@ -37,16 +37,11 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module(), analyser_(Proce
 }
 
 // Destructor
-CalculateAxisAngleModule::~CalculateAxisAngleModule()
-{
-}
+CalculateAxisAngleModule::~CalculateAxisAngleModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* CalculateAxisAngleModule::createInstance() const
-{
-	return new CalculateAxisAngleModule;
-}
+Module *CalculateAxisAngleModule::createInstance() const { return new CalculateAxisAngleModule; }

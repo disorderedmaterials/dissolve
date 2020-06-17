@@ -1,10 +1,8 @@
 ---
 title: Step 5 - Equilibrate the System
 grand_parent: Examples
-parent: Liquid Argon
 weight: 7
 ---
-# Liquid Argon
 
 ## 5) Equilibrate the System
 

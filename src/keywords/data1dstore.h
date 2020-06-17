@@ -28,27 +28,26 @@
 class Data1DStore;
 
 // Keyword with a store of Data1D
-class Data1DStoreKeyword : public KeywordData<Data1DStore&>
+class Data1DStoreKeyword : public KeywordData<Data1DStore &>
 {
-	public:
+      public:
 	// Constructor
-	Data1DStoreKeyword(Data1DStore& dataStore);
+	Data1DStoreKeyword(Data1DStore &dataStore);
 	// Destructor
 	~Data1DStoreKeyword();
-
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 };
 
 #endif

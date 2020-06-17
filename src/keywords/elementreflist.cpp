@@ -20,47 +20,39 @@
 */
 
 #include "keywords/elementreflist.h"
-#include "data/elements.h"
 #include "base/lineparser.h"
+#include "data/elements.h"
 
 // Constructor
-ElementRefListKeyword::ElementRefListKeyword(RefList<Element>& targetRefList) : KeywordData< RefList<Element>& >(KeywordBase::ElementRefListData, targetRefList)
-{
-}
+ElementRefListKeyword::ElementRefListKeyword(RefList<Element> &targetRefList) : KeywordData<RefList<Element> &>(KeywordBase::ElementRefListData, targetRefList) {}
 
 // Destructor
-ElementRefListKeyword::~ElementRefListKeyword()
-{
-}
+ElementRefListKeyword::~ElementRefListKeyword() {}
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int ElementRefListKeyword::minArguments() const
-{
-	return 1;
-}
+int ElementRefListKeyword::minArguments() const { return 1; }
 
 // Return maximum number of arguments accepted
-int ElementRefListKeyword::maxArguments() const
-{
-	return 999;
-}
+int ElementRefListKeyword::maxArguments() const { return 999; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ElementRefListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool ElementRefListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
 	// Loop over arguments (which are Element names) and add them to our list
 	for (int n = startArg; n < parser.nArgs(); ++n)
 	{
 		// Do we recognise the Element?
-		Element* el = Elements::elementPointer(parser.argc(n));
-		if (!el) return Messenger::error("Unrecognised Element '%s' found in list.\n", parser.argc(n));
+		Element *el = Elements::elementPointer(parser.argc(n));
+		if (!el)
+			return Messenger::error("Unrecognised Element '%s' found in list.\n", parser.argc(n));
 
 		// If the Element is in the list already, complain
-		if (data_.contains(el)) return Messenger::error("Element '%s' specified in list twice.\n", parser.argc(n));
+		if (data_.contains(el))
+			return Messenger::error("Element '%s' specified in list twice.\n", parser.argc(n));
 
 		// All OK - add it to our selection list
 		data_.append(el);
@@ -72,17 +64,19 @@ bool ElementRefListKeyword::read(LineParser& parser, int startArg, const CoreDat
 }
 
 // Write keyword data to specified LineParser
-bool ElementRefListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool ElementRefListKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	// Don't write anything if there are no items in the list
-	if (data_.nItems() == 0) return true;
+	if (data_.nItems() == 0)
+		return true;
 
 	// Loop over the Element list
 	CharString elements;
-	RefListIterator<Element> elementIterator(data_);
-	while (Element* el = elementIterator.iterate()) elements.strcatf("  %s", el->symbol());
+	for (auto el : data_)
+		elements.strcatf("  %s", el->symbol());
 
-	if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, elements.get())) return false;
+	if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, elements.get()))
+		return false;
 
 	return true;
 }

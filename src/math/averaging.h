@@ -31,23 +31,27 @@
 // Data Averaging
 class Averaging
 {
-	public:
+      public:
 	// Averaging Schemes
 	enum AveragingScheme
 	{
-		LinearAveraging, ExponentialAveraging, nAveragingSchemes
+		LinearAveraging,
+		ExponentialAveraging,
+		nAveragingSchemes
 	};
 	// Return enum options for AveragingScheme
 	static EnumOptions<Averaging::AveragingScheme> averagingSchemes();
 
-	private:
+      private:
 	// Establish the number of stored datasets, shift indices down, and lose oldest dataset if necessary
-	static int pruneOldData(GenericList& moduleData, const char* name, const char* prefix, int nSetsInAverage)
+	static int pruneOldData(GenericList &moduleData, const char *name, const char *prefix, int nSetsInAverage)
 	{
 		// Establish how many stored datasets we have
 		int nStored = 0;
-		for (nStored = 0; nStored < nSetsInAverage; ++nStored) if (!moduleData.contains(CharString("%s_%i", name, nStored+1), prefix)) break;
-		Messenger::print("Average requested over %i datsets - %i available in module data (%i max).\n", nSetsInAverage, nStored, nSetsInAverage-1);
+		for (nStored = 0; nStored < nSetsInAverage; ++nStored)
+			if (!moduleData.contains(CharString("%s_%i", name, nStored + 1), prefix))
+				break;
+		Messenger::print("Average requested over %i datsets - %i available in module data (%i max).\n", nSetsInAverage, nStored, nSetsInAverage - 1);
 
 		// Remove the oldest dataset if it exists, and shuffle the others down
 		if (nStored == nSetsInAverage)
@@ -55,27 +59,27 @@ class Averaging
 			moduleData.remove(CharString("%s_%i", name, nStored), prefix);
 			--nStored;
 		}
-		for (int n=nStored; n>0; --n) moduleData.rename(CharString("%s_%i", name, n), prefix, CharString("%s_%i", name, n+1), prefix);
+		for (int n = nStored; n > 0; --n)
+			moduleData.rename(CharString("%s_%i", name, n), prefix, CharString("%s_%i", name, n + 1), prefix);
 
 		return nStored;
 	}
 	// Return exponential decay factor
-	static double expDecay()
-	{
-		return 0.7;
-	}
+	static double expDecay() { return 0.7; }
 	// Return the normalisation factor for the supplied scheme and number of data
 	static double normalisationFactor(Averaging::AveragingScheme scheme, int nData)
 	{
-		if (scheme == Averaging::LinearAveraging) return nData;
-		else if (scheme == Averaging::ExponentialAveraging) return (1.0 - pow(expDecay(),nData)) / (1.0 - expDecay());
+		if (scheme == Averaging::LinearAveraging)
+			return nData;
+		else if (scheme == Averaging::ExponentialAveraging)
+			return (1.0 - pow(expDecay(), nData)) / (1.0 - expDecay());
 
 		return 1.0;
 	}
 
-	public:
+      public:
 	// Perform averaging of named data
-	template <class T> static bool average(GenericList& moduleData, const char* name, const char* prefix, int nSetsInAverage, AveragingScheme averagingScheme)
+	template <class T> static bool average(GenericList &moduleData, const char *name, const char *prefix, int nSetsInAverage, AveragingScheme averagingScheme)
 	{
 		// Find the 'root' data of type T, which should currently contain the most recently-calculated data
 		if (!moduleData.contains(name, prefix))
@@ -83,13 +87,13 @@ class Averaging
 			Messenger::error("Couldn't find root data '%s' (prefix = '%s') in order to perform averaging.\n", name, prefix);
 			return false;
 		}
-		T& currentData = GenericListHelper<T>::retrieve(moduleData, name, prefix);
+		T &currentData = GenericListHelper<T>::retrieve(moduleData, name, prefix);
 
 		// Establish the number of existing datasets, and perform management on them
 		int nData = pruneOldData(moduleData, name, prefix, nSetsInAverage);
 
 		// Store the current T as the earliest data (index == 1)
-		T& recentData = GenericListHelper<T>::realise(moduleData, CharString("%s_1", name), prefix, GenericItem::InRestartFileFlag);
+		T &recentData = GenericListHelper<T>::realise(moduleData, CharString("%s_1", name), prefix, GenericItem::InRestartFileFlag);
 		recentData = currentData;
 		++nData;
 
@@ -99,14 +103,16 @@ class Averaging
 		// Perform averaging of the datsets that we have
 		currentData.reset();
 		double weight = 1.0;
-		for (int n=0; n<nData; ++n)
+		for (int n = 0; n < nData; ++n)
 		{
 			// Get a copy of the (n+1)'th dataset
-			T data = GenericListHelper<T>::value(moduleData, CharString("%s_%i", name, n+1), prefix);
+			T data = GenericListHelper<T>::value(moduleData, CharString("%s_%i", name, n + 1), prefix);
 
 			// Determine the weighting factor
-			if (averagingScheme == Averaging::LinearAveraging) weight = 1.0 / normalisation;
-			else if (averagingScheme == Averaging::ExponentialAveraging) weight = pow(expDecay(), n) / normalisation;
+			if (averagingScheme == Averaging::LinearAveraging)
+				weight = 1.0 / normalisation;
+			else if (averagingScheme == Averaging::ExponentialAveraging)
+				weight = pow(expDecay(), n) / normalisation;
 
 			// Weight the data
 			data *= weight;
@@ -118,7 +124,7 @@ class Averaging
 		return true;
 	};
 	// Perform averaging of named array data
-	template <class T> static bool arrayAverage(GenericList& moduleData, const char* name, const char* prefix, int nSetsInAverage, AveragingScheme averagingScheme)
+	template <class T> static bool arrayAverage(GenericList &moduleData, const char *name, const char *prefix, int nSetsInAverage, AveragingScheme averagingScheme)
 	{
 		// Find the 'root' data of type T, which should currently contain the most recently-calculated data
 		if (!moduleData.contains(name, prefix))
@@ -126,13 +132,13 @@ class Averaging
 			Messenger::error("Couldn't find root data '%s' (prefix = '%s') in order to perform averaging.\n", name, prefix);
 			return false;
 		}
-		T& currentData = GenericListHelper<T>::retrieve(moduleData, name, prefix);
+		T &currentData = GenericListHelper<T>::retrieve(moduleData, name, prefix);
 
 		// Establish the number of existing datasets, and perform management on them
 		int nData = pruneOldData(moduleData, name, prefix, nSetsInAverage);
 
 		// Store the current T as the earliest data (index == 1)
-		T& recentData = GenericListHelper<T>::realise(moduleData, CharString("%s_1", name), prefix, GenericItem::InRestartFileFlag);
+		T &recentData = GenericListHelper<T>::realise(moduleData, CharString("%s_1", name), prefix, GenericItem::InRestartFileFlag);
 		recentData = currentData;
 		++nData;
 
@@ -140,21 +146,24 @@ class Averaging
 		double normalisation = normalisationFactor(averagingScheme, nData);
 
 		// Reset array elements
-		for (int i=0; i<currentData.nItems(); ++i) currentData.at(i).reset();
+		for (int i = 0; i < currentData.nItems(); ++i)
+			currentData.at(i).reset();
 
 		// Perform averaging of the datsets that we have
 		double weight = 1.0;
-		for (int n=0; n<nData; ++n)
+		for (int n = 0; n < nData; ++n)
 		{
 			// Get a copy of the (n+1)'th dataset
-			T data = GenericListHelper<T>::value(moduleData, CharString("%s_%i", name, n+1), prefix);
+			T data = GenericListHelper<T>::value(moduleData, CharString("%s_%i", name, n + 1), prefix);
 
 			// Determine the weighting factor
-			if (averagingScheme == Averaging::LinearAveraging) weight = 1.0 / normalisation;
-			else if (averagingScheme == Averaging::ExponentialAveraging) weight = pow(expDecay(), n) / normalisation;
+			if (averagingScheme == Averaging::LinearAveraging)
+				weight = 1.0 / normalisation;
+			else if (averagingScheme == Averaging::ExponentialAveraging)
+				weight = pow(expDecay(), n) / normalisation;
 
 			// Loop over individual elements of the array
-			for (int i=0; i<currentData.nItems(); ++i)
+			for (int i = 0; i < currentData.nItems(); ++i)
 			{
 				// Weight the data
 				data.at(i) *= weight;

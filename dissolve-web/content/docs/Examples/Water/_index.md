@@ -1,10 +1,7 @@
 ---
 title: Liquid Water
-parent: Examples
-has_children: true
 weight: 3
 ---
-# Liquid Water
 
 60 - 75 minutes
 {: .label .label-blue }

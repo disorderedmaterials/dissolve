@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "base/sysfunc.h"
 #include "gui/gettabnamedialog.h"
 #include "gui/maintab.h"
-#include "base/sysfunc.h"
 
 // Constructor
-GetTabNameDialog::GetTabNameDialog(QWidget* parent, RefList<const MainTab> currentTabs)
+GetTabNameDialog::GetTabNameDialog(QWidget *parent, RefList<const MainTab> currentTabs)
 {
 	ui_.setupUi(this);
 
@@ -32,12 +32,10 @@ GetTabNameDialog::GetTabNameDialog(QWidget* parent, RefList<const MainTab> curre
 }
 
 // Destructor
-GetTabNameDialog::~GetTabNameDialog()
-{
-}
+GetTabNameDialog::~GetTabNameDialog() {}
 
 // Run the dialog
-bool GetTabNameDialog::get(const MainTab* currentTab, const char* currentName)
+bool GetTabNameDialog::get(const MainTab *currentTab, const char *currentName)
 {
 	currentTab_ = currentTab;
 
@@ -50,10 +48,7 @@ bool GetTabNameDialog::get(const MainTab* currentTab, const char* currentName)
 }
 
 // Return the name string
-QString GetTabNameDialog::newName() const
-{
-	return ui_.NameEdit->text();
-}
+QString GetTabNameDialog::newName() const { return ui_.NameEdit->text(); }
 
 /*
  * Slots
@@ -64,13 +59,14 @@ void GetTabNameDialog::on_NameEdit_textChanged(const QString text)
 {
 	// Make sure the name is valid
 	bool nameValid = true;
-	if (text.isEmpty()) nameValid = false;
+	if (text.isEmpty())
+		nameValid = false;
 	else
 	{
-		RefListIterator<const MainTab> tabIterator(currentTabs_);
-		while (const MainTab* tab = tabIterator.iterate())
+		for (const MainTab *tab : currentTabs_)
 		{
-			if (currentTab_ == tab) continue;
+			if (currentTab_ == tab)
+				continue;
 
 			if (DissolveSys::sameString(tab->title(), qPrintable(text)))
 			{
@@ -87,12 +83,6 @@ void GetTabNameDialog::on_NameEdit_textChanged(const QString text)
 	ui_.OKButton->setEnabled(nameValid);
 }
 
-void GetTabNameDialog::on_CancelButton_clicked(bool checked)
-{
-	reject();
-}
+void GetTabNameDialog::on_CancelButton_clicked(bool checked) { reject(); }
 
-void GetTabNameDialog::on_OKButton_clicked(bool checked)
-{
-	accept();
-}
+void GetTabNameDialog::on_OKButton_clicked(bool checked) { accept(); }

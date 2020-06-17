@@ -28,10 +28,18 @@
 // Labels for Vec3 Keyword
 class Vec3Labels
 {
-	public:
+      public:
 	// Label Types
-	enum LabelType { NoLabels, ABCLabels, AlphaBetaGammaLabels, HKLLabels, MinMaxDeltaLabels, MinMaxBinwidthlabels, XYZLabels };
+	enum LabelType
+	{
+		NoLabels,
+		ABCLabels,
+		AlphaBetaGammaLabels,
+		HKLLabels,
+		MinMaxDeltaLabels,
+		MinMaxBinwidthlabels,
+		XYZLabels
+	};
 };
 
 #endif
-

@@ -1,10 +1,8 @@
 ---
 title: Step 7 - Set up Potential Refinement
-parent: Liquid Water
 grand_parent: Examples
 weight: 9
 ---
-# Liquid Water
 
 ## 7. Set up Potential Refinement
 

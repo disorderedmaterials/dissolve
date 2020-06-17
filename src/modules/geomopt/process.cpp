@@ -19,14 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/geomopt/geomopt.h"
+#include "base/sysfunc.h"
+#include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/forces/forces.h"
-#include "main/dissolve.h"
-#include "base/sysfunc.h"
+#include "modules/geomopt/geomopt.h"
 
 // Run main processing
-bool GeometryOptimisationModule::process(Dissolve& dissolve, ProcessPool& procPool)
+bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
 	// Retrieve Module options
 	const int nCycles = keywords_.asInt("NCycles");
@@ -41,13 +41,14 @@ bool GeometryOptimisationModule::process(Dissolve& dissolve, ProcessPool& procPo
 	Messenger::print("\n");
 
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+	if (targetConfigurations_.nItems() == 0)
+		return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	// Loop over target Configurations
-	for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
+	for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
 	{
 		// Grab Configuration pointer
-		Configuration* cfg = ri->item();
+		Configuration *cfg = ri->item();
 
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
@@ -83,7 +84,7 @@ bool GeometryOptimisationModule::process(Dissolve& dissolve, ProcessPool& procPo
 			setReferenceCoordinates(cfg);
 
 			// Line minimise along the force gradient
-			double newEnergy = lineMinimise(procPool, cfg, dissolve.potentialMap(), tolerance*0.01, stepSize);
+			double newEnergy = lineMinimise(procPool, cfg, dissolve.potentialMap(), tolerance * 0.01, stepSize);
 
 			// Get new forces and RMS for the adjusted coordinates (now stored in the Configuration) and determine new step size
 			ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), xForce_, yForce_, zForce_);
@@ -120,4 +121,3 @@ bool GeometryOptimisationModule::process(Dissolve& dissolve, ProcessPool& procPo
 
 	return true;
 }
-

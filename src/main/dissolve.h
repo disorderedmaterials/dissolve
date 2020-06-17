@@ -22,13 +22,13 @@
 #ifndef DISSOLVE_DISSOLVE_H
 #define DISSOLVE_DISSOLVE_H
 
-#include "data/elements.h"
-#include "module/module.h"
-#include "module/layer.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/pairpotential.h"
 #include "classes/potentialmap.h"
+#include "data/elements.h"
+#include "module/layer.h"
+#include "module/module.h"
 
 // Forward Declarations
 class Atom;
@@ -41,94 +41,89 @@ class ChangeStore;
 // Dissolve Main Class
 class Dissolve
 {
-	public:
+      public:
 	// Constructor
-	Dissolve(CoreData& coreData);
+	Dissolve(CoreData &coreData);
 	// Destructor
 	~Dissolve();
-
 
 	/*
 	 * Core
 	 */
-	private:
-	// Reference to CoreData 
-	CoreData& coreData_;
+      private:
+	// Reference to CoreData
+	CoreData &coreData_;
 
-	public:
+      public:
 	// Return reference to CoreData
-	CoreData& coreData();
+	CoreData &coreData();
 	// Return const reference to CoreData
-	const CoreData& constCoreData() const;
+	const CoreData &constCoreData() const;
 	// Clear all data
 	void clear();
 	// Register GenericItems
 	void registerGenericItems();
 
-
 	/*
 	 * Atom Types
 	 * (Exposes List<AtomType> in coreData_)
 	 */
-	public:
+      public:
 	// Add AtomType with specified Element
-	AtomType* addAtomType(Element* el);
+	AtomType *addAtomType(Element *el);
 	// Return number of AtomTypes in list
 	int nAtomTypes() const;
 	// Return AtomTypes list
-	List<AtomType>& atomTypes();
+	List<AtomType> &atomTypes();
 	// Return nth AtomType in list
-	AtomType* atomType(int n);
+	AtomType *atomType(int n);
 	// Search for AtomType by name
-	AtomType* findAtomType(const char* name) const;
+	AtomType *findAtomType(const char *name) const;
 	// Clear all AtomTypes
 	void clearAtomTypes();
-
 
 	/*
 	 * Master Terms
 	 * (Exposes lists in coreData_)
 	 */
-	public:
+      public:
 	// Return list of master Bond parameters
-	const List<MasterIntra>& masterBonds() const;
+	const List<MasterIntra> &masterBonds() const;
 	// Return list of master Angle parameters
-	const List<MasterIntra>& masterAngles() const;
+	const List<MasterIntra> &masterAngles() const;
 	// Return list of master Torsion parameters
-	const List<MasterIntra>& masterTorsions() const;
+	const List<MasterIntra> &masterTorsions() const;
 	// Check and print MasterTerm usage
 	void checkMasterTermUsage() const;
-
 
 	/*
 	 * Species Definitions
 	 * (Exposes List<Species> in coreData_)
 	 */
-	public:
+      public:
 	// Add a new Species to the list
-	Species* addSpecies();
+	Species *addSpecies();
 	// Remove the specified Species from the list
-	void removeSpecies(Species* sp);
+	void removeSpecies(Species *sp);
 	// Return number of defined Species
 	int nSpecies() const;
 	// Return Species list
-	List<Species>& species();
+	List<Species> &species();
 	// Return nth Species in the list
-	Species* species(int n);
+	Species *species(int n);
 	// Search for Species by name
-	Species* findSpecies(const char* name) const;
+	Species *findSpecies(const char *name) const;
 	// Copy AtomType, creating a new one if necessary
-	void copyAtomType(const SpeciesAtom* sourceAtom, SpeciesAtom* destAtom);
+	void copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom);
 	// Copy intramolecular interaction parameters, adding MasterIntra if necessary
-	void copySpeciesIntra(const SpeciesIntra* sourceIntra, SpeciesIntra* destIntra);
+	void copySpeciesIntra(const SpeciesIntra *sourceIntra, SpeciesIntra *destIntra);
 	// Copy Species
-	Species* copySpecies(const Species* species);
-
+	Species *copySpecies(const Species *species);
 
 	/*
 	 * Pair Potentials
 	 */
-	private:
+      private:
 	// Maximum distance for tabulated PairPotentials
 	double pairPotentialRange_;
 	// Maximum squared distance for tabulated PairPotentials
@@ -144,7 +139,7 @@ class Dissolve
 	// Map for PairPotentials
 	PotentialMap potentialMap_;
 
-	public:
+      public:
 	// Set maximum distance for tabulated PairPotentials
 	void setPairPotentialRange(double range);
 	// Return maximum distance for tabulated PairPotentials
@@ -160,118 +155,114 @@ class Dissolve
 	// Return whether Coulomb term should be included in generated PairPotentials
 	bool pairPotentialsIncludeCoulomb();
 	// Return index of specified PairPotential
-	int indexOf(PairPotential* pp);
+	int indexOf(PairPotential *pp);
 	// Return number of defined PairPotentials
 	int nPairPotentials() const;
 	// Add new pair potential to list
-	PairPotential* addPairPotential(AtomType* at1, AtomType* at2);
+	PairPotential *addPairPotential(AtomType *at1, AtomType *at2);
 	// Return PairPotentials list
-	const List<PairPotential>& pairPotentials() const;
+	const List<PairPotential> &pairPotentials() const;
 	// Return nth PairPotential in list
-	PairPotential* pairPotential(int n);
+	PairPotential *pairPotential(int n);
 	// Return whether specified PairPotential is defined
-	PairPotential* pairPotential(AtomType* at1, AtomType* at2) const;
+	PairPotential *pairPotential(AtomType *at1, AtomType *at2) const;
 	// Return whether specified PairPotential is defined
-	PairPotential* pairPotential(const char* at1, const char* at2) const;
+	PairPotential *pairPotential(const char *at1, const char *at2) const;
 	// Return map for PairPotentials
-	const PotentialMap& potentialMap();
+	const PotentialMap &potentialMap();
 	// Clear and regenerate all PairPotentials, replacing those currently defined
 	void regeneratePairPotentials();
 	// Generate all necessary PairPotentials, adding missing terms where necessary
-	bool generatePairPotentials(AtomType* onlyInvolving = NULL);
-
+	bool generatePairPotentials(AtomType *onlyInvolving = NULL);
 
 	/*
 	 * Configurations
 	 * (Exposes List<Configuration> in coreData_)
 	 */
-	public:
+      public:
 	// Add new Configuration
-	Configuration* addConfiguration();
+	Configuration *addConfiguration();
 	// Own the specified Configuration
-	bool ownConfiguration(Configuration* cfg);
+	bool ownConfiguration(Configuration *cfg);
 	// Remove specified Configuration
-	void removeConfiguration(Configuration* cfg);
+	void removeConfiguration(Configuration *cfg);
 	// Return number of defined Configurations
 	int nConfigurations() const;
 	// Return Configuration list
-	List<Configuration>& configurations();
+	List<Configuration> &configurations();
 	// Return Configuration list (const)
-	const List<Configuration>& constConfigurations() const;
+	const List<Configuration> &constConfigurations() const;
 	// Find configuration by name
-	Configuration* findConfiguration(const char* name) const;
+	Configuration *findConfiguration(const char *name) const;
 	// Find configuration by 'nice' name
-	Configuration* findConfigurationByNiceName(const char* name) const;
-
+	Configuration *findConfigurationByNiceName(const char *name) const;
 
 	/*
 	 * Modules
 	 */
-	private:
+      private:
 	// List of all instances of all used Modules
 	RefList<Module> moduleInstances_;
 	// List of master Module instances
 	List<Module> masterModules_;
 
-	private:
+      private:
 	// Register master Module
-	bool registerMasterModule(Module* masterInstance);
+	bool registerMasterModule(Module *masterInstance);
 
-	public:
+      public:
 	// Register master instances for all Modules
 	bool registerMasterModules();
 	// Return master Module instances
-	const List<Module>& masterModules() const;
+	const List<Module> &masterModules() const;
 	// Search for master Module of the named type
-	Module* findMasterModule(const char* moduleType) const;
+	Module *findMasterModule(const char *moduleType) const;
 	// Create a Module instance for the named Module type
-	Module* createModuleInstance(const char* moduleType);
+	Module *createModuleInstance(const char *moduleType);
 	// Create a Module instance for the named Module type, and add it to the specified layer
-	Module* createModuleInstance(const char* moduleType, ModuleLayer* destinationLayer, bool configurationLocal = false);
+	Module *createModuleInstance(const char *moduleType, ModuleLayer *destinationLayer, bool configurationLocal = false);
 	// Search for any instance of any Module with the specified unique name
-	Module* findModuleInstance(const char* uniqueName);
+	Module *findModuleInstance(const char *uniqueName);
 	// Search for any instance of any Module with the specified Module type
-	RefList<Module> findModuleInstances(const char* moduleType);
+	RefList<Module> findModuleInstances(const char *moduleType);
 	// Generate unique Module name with base name provided
-	const char* uniqueModuleName(const char* name, Module* excludeThis = NULL);
+	const char *uniqueModuleName(const char *name, Module *excludeThis = NULL);
 	// Delete specified Module instance
-	bool deleteModuleInstance(Module* instance);
-
+	bool deleteModuleInstance(Module *instance);
 
 	/*
 	 * Layers
 	 */
-	private:
+      private:
 	// List of defined processing layers
 	List<ModuleLayer> processingLayers_;
 	// Data associated with processing Modules
 	GenericList processingModuleData_;
 
-	public:
+      public:
 	// Add new processing layer
-	ModuleLayer* addProcessingLayer();
+	ModuleLayer *addProcessingLayer();
 	// Remove specified processing layer
-	void removeProcessingLayer(ModuleLayer* layer);
+	void removeProcessingLayer(ModuleLayer *layer);
 	// Find named processing layer
-	ModuleLayer* findProcessingLayer(const char* name) const;
+	ModuleLayer *findProcessingLayer(const char *name) const;
 	// Own the specified processing layer
-	bool ownProcessingLayer(ModuleLayer* layer);
+	bool ownProcessingLayer(ModuleLayer *layer);
 	// Return number of defined processing layers
 	int nProcessingLayers() const;
 	// Generate unique processing layer name, with base name provided
-	const char* uniqueProcessingLayerName(const char* baseName) const;
+	const char *uniqueProcessingLayerName(const char *baseName) const;
 	// Return list of processing layers
-	List<ModuleLayer>& processingLayers();
+	List<ModuleLayer> &processingLayers();
 	// Return data associated with main processing Modules
-	GenericList& processingModuleData();
+	GenericList &processingModuleData();
 	// Create and add a named Module to the named layer (creating it if necessary), with optional Configuration target
-	Module* createModuleInLayer(const char* moduleType, const char* layerName, Configuration* cfg = NULL);
-
+	Module *createModuleInLayer(const char *moduleType, const char *layerName, Configuration *cfg = NULL);
 
 	/*
 	 * Simulation
 	 */
-	private:
+      private:
 	// Random seed
 	int seed_;
 	// Frequency at which to write restart file
@@ -285,7 +276,7 @@ class Dissolve
 	// Accumulated timing information for main loop iterations
 	SampledDouble iterationTime_;
 
-	public:
+      public:
 	// Set number of test points to use when calculating Box normalisation arrays
 	void setNBoxNormalisationPoints(int nPoints);
 	// Return number of test points to use when calculating Box normalisation arrays
@@ -294,7 +285,7 @@ class Dissolve
 	void setSeed(int seed);
 	// Return random seed
 	int seed() const;
-	// Set frequency with which to write various iteration data	
+	// Set frequency with which to write various iteration data
 	void setRestartFileFrequency(int n);
 	// Return frequency with which to write restart file
 	int restartFileFrequency() const;
@@ -311,11 +302,10 @@ class Dissolve
 	// Print timing information
 	void printTiming();
 
-
 	/*
 	 * I/O
 	 */
-	private:  
+      private:
 	// Filename of current input file
 	CharString inputFilename_;
 	// Filename of current restart file
@@ -325,25 +315,25 @@ class Dissolve
 	// Check if heartbeat file needs to be written or not
 	bool writeHeartBeat_;
 
-	private:
+      private:
 	// Load input file through supplied parser
-	bool loadInput(LineParser& parser);
-	
-	public:
+	bool loadInput(LineParser &parser);
+
+      public:
 	// Load input file
-	bool loadInput(const char* filename);
+	bool loadInput(const char *filename);
 	// Load input from supplied string
-	bool loadInputFromString(const char* inputString);
+	bool loadInputFromString(const char *inputString);
 	// Save input file
-	bool saveInput(const char* filename);
+	bool saveInput(const char *filename);
 	// Load restart file
-	bool loadRestart(const char* filename);
+	bool loadRestart(const char *filename);
 	// Load restart file as reference point
-	bool loadRestartAsReference(const char* filename, const char* dataSuffix);
+	bool loadRestartAsReference(const char *filename, const char *dataSuffix);
 	// Save restart file
-	bool saveRestart(const char* filename);
+	bool saveRestart(const char *filename);
 	// Save heartbeat file
-	bool saveHeartBeat(const char* filename, double estimatedNSecs);
+	bool saveHeartBeat(const char *filename, double estimatedNSecs);
 	// Set bool for heartbeat file to be written
 	void setWriteHeartBeat(bool b);
 	// write heartbeat file
@@ -351,47 +341,50 @@ class Dissolve
 	// Return whether an input filename has been set
 	bool hasInputFilename() const;
 	// Set current input filenamea
-	void setInputFilename(const char* filename);
+	void setInputFilename(const char *filename);
 	// Return current input filename
-	const char* inputFilename() const;
+	const char *inputFilename() const;
 	// Set restart filename
-	void setRestartFilename(const char* filename);
+	void setRestartFilename(const char *filename);
 	// Return restart filename
-	const char* restartFilename() const;
+	const char *restartFilename() const;
 	// Return whether a restart filename has been set
 	bool hasRestartFilename() const;
-
 
 	/*
 	 * Object Management
 	 */
-	public:
+      public:
 	// Remove all references to the specified Configuration
-	void removeReferencesTo(Configuration* cfg);
+	void removeReferencesTo(Configuration *cfg);
 	// Remove all references to the specified Module
-	void removeReferencesTo(Module* module);
+	void removeReferencesTo(Module *module);
 	// Remove all references to the specified Species
-	void removeReferencesTo(Species* sp);
+	void removeReferencesTo(Species *sp);
 	// Remove all references to the specified SpeciesSite
-	void removeReferencesTo(SpeciesSite* site);
-
+	void removeReferencesTo(SpeciesSite *site);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Parallel Strategy
-	enum ParallelStrategy { SequentialConfigStrategy, EvenStrategy, nParallelStrategies };
+	enum ParallelStrategy
+	{
+		SequentialConfigStrategy,
+		EvenStrategy,
+		nParallelStrategies
+	};
 	// Convert string to ParallelStrategy
-	static ParallelStrategy parallelStrategy(const char* s);
+	static ParallelStrategy parallelStrategy(const char *s);
 
-	private:
+      private:
 	// Parallel strategy for Configuration work
 	ParallelStrategy parallelStrategy_;
 	// Default process group population (per Configuration)
 	int parallelGroupPopulation_;
 
-	public:
+      public:
 	// Set parallel strategy for Configuration work
 	void setParallelStrategy(ParallelStrategy ps);
 	// Return parallel strategy for Configuration work
@@ -401,7 +394,7 @@ class Dissolve
 	// Return default process group population (per Configuration)
 	int parallelGroupPopulation() const;
 	// Return world process pool
-	ProcessPool& worldPool();
+	ProcessPool &worldPool();
 	// Set up local MPI pools
 	bool setUpMPIPools();
 };

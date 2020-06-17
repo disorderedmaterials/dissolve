@@ -20,15 +20,15 @@
 */
 
 #include "data/ff/ludwig/py4oh.h"
+#include "base/sysfunc.h"
+#include "classes/atomtype.h"
+#include "classes/speciesatom.h"
 #include "data/ffangleterm.h"
 #include "data/ffatomtype.h"
 #include "data/ffbondterm.h"
+#include "data/ffimproperterm.h"
 #include "data/ffparameters.h"
 #include "data/fftorsionterm.h"
-#include "data/ffimproperterm.h"
-#include "classes/atomtype.h"
-#include "classes/speciesatom.h"
-#include "base/sysfunc.h"
 
 /*
  * Implements "1‐(4‐hydroxybutyl)pyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine"
@@ -56,7 +56,7 @@ Forcefield_Py4OH_Ludwig::Forcefield_Py4OH_Ludwig()
 	// Atom Types
 	addAtomType(ELEMENT_N, 1, "nc", "nbonds=3,ring(size=6,C(n=5),N)", "Nitrogen in pyridine ring", 0.1014, "nc");
 	addAtomType(ELEMENT_C, 2, "ca_o", "nbonds=3,ring(size=6,C(n=5),N),-N,-C,-H", "Carbon in aromatic ring, ortho", 0.0568, "ca");
-	addAtomType(ELEMENT_C, 3, "ca_m", "nbonds=3,ring(size=6,C(n=5),N),-C,-H,-C" , "Carbon in aromatic ring, meta", -0.2214, "ca");
+	addAtomType(ELEMENT_C, 3, "ca_m", "nbonds=3,ring(size=6,C(n=5),N),-C,-H,-C", "Carbon in aromatic ring, meta", -0.2214, "ca");
 	addAtomType(ELEMENT_C, 4, "ca_p", "nbonds=3,ring(size=6,C(n=5),N),-C(n=2,-C(-N))", "Carbon in aromatic ring, para", 0.1747, "ca");
 	addAtomType(ELEMENT_H, 5, "ha_o", "nbonds=1,-&2", "Hydrogen bound to carbon in aromatic ring, ortho", 0.1802, "ha");
 	addAtomType(ELEMENT_H, 6, "ha_m", "nbonds=1,-&3", "Hydrogen bound to carbon in aromatic ring, meta", 0.1759, "ha");
@@ -131,28 +131,21 @@ Forcefield_Py4OH_Ludwig::Forcefield_Py4OH_Ludwig()
 	addImproperTerm("ca", "ca", "nc", "ct", SpeciesImproper::CosineForm, 4.606, 2.0, 180.0);
 }
 
-Forcefield_Py4OH_Ludwig::~Forcefield_Py4OH_Ludwig()
-{
-}
+Forcefield_Py4OH_Ludwig::~Forcefield_Py4OH_Ludwig() {}
 
 /*
  * Definition
  */
 
 // Return name of Forcefield
-const char* Forcefield_Py4OH_Ludwig::name() const
-{
-	return "1‐(4‐hydroxybutyl)pyridinium cation (Py4OH)";
-}
+const char *Forcefield_Py4OH_Ludwig::name() const { return "1‐(4‐hydroxybutyl)pyridinium cation (Py4OH)"; }
 
 // Return description for Forcefield
-const char* Forcefield_Py4OH_Ludwig::description() const
+const char *Forcefield_Py4OH_Ludwig::description() const
 {
-	return "Implements of 1‐(4‐hydroxybutyl)pyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine; W. L. Jorgensen,	D. S. Maxwell, and J. Tirado-Rives, <i>Journal of the American Chemical Society</i>, <b>118</b>, 11225 (1996).";
+	return "Implements of 1‐(4‐hydroxybutyl)pyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine; W. L. Jorgensen,	D. S. Maxwell, and J. Tirado-Rives, <i>Journal of the "
+	       "American Chemical Society</i>, <b>118</b>, 11225 (1996).";
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_Py4OH_Ludwig::shortRangeType() const
-{
-	return Forcefield::LennardJonesType;
-}
+Forcefield::ShortRangeType Forcefield_Py4OH_Ludwig::shortRangeType() const { return Forcefield::LennardJonesType; }

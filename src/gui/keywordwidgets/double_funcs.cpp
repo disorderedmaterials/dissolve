@@ -19,20 +19,24 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/double.hui"
-#include "gui/helpers/mousewheeladjustmentguard.h"
 #include "genericitems/listhelper.h"
+#include "gui/helpers/mousewheeladjustmentguard.h"
+#include "gui/keywordwidgets/double.hui"
 
 // Constructor
-DoubleKeywordWidget::DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : ExponentialSpin(parent), KeywordWidgetBase(coreData)
+DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : ExponentialSpin(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<DoubleKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into DoubleKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<DoubleKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into DoubleKeyword.\n", keyword->name());
 	else
 	{
 		// Set minimum and maximum values
-		setRange(keyword_->hasValidationMin(), keyword_->validationMin(), keyword_->hasValidationMax(), keyword_->validationMax());
+		if (keyword_->hasValidationMin())
+			setMinimumLimit(keyword_->validationMin());
+		if (keyword_->hasValidationMax())
+			setMaximumLimit(keyword_->validationMax());
 
 		// Set current value
 		setValue(keyword_->asDouble());
@@ -52,7 +56,8 @@ DoubleKeywordWidget::DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, 
 // Spin box value changed
 void DoubleKeywordWidget::myValueChanged(double newValue)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	keyword_->setData(newValue);
 

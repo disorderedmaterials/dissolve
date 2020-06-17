@@ -22,7 +22,7 @@
 #include "gui/addconfigurationdialog.h"
 
 // Constructor
-AddConfigurationDialog::AddConfigurationDialog(QWidget* parent, const Dissolve& mainDissolveInstance)
+AddConfigurationDialog::AddConfigurationDialog(QWidget *parent, const Dissolve &mainDissolveInstance)
 {
 	ui_.setupUi(this);
 
@@ -34,18 +34,10 @@ AddConfigurationDialog::AddConfigurationDialog(QWidget* parent, const Dissolve& 
 }
 
 // Destructor
-AddConfigurationDialog::~AddConfigurationDialog()
-{
-}
+AddConfigurationDialog::~AddConfigurationDialog() {}
 
 // Reset, ready for adding a new Configuration
-void AddConfigurationDialog::reset()
-{
-	ui_.AddConfigurationWidget->reset();
-}
+void AddConfigurationDialog::reset() { ui_.AddConfigurationWidget->reset(); }
 
 // Copy imported Configuration over to the specified Dissolve object
-Configuration* AddConfigurationDialog::importConfiguration(Dissolve& dissolve)
-{
-	return ui_.AddConfigurationWidget->importConfiguration(dissolve);
-}
+Configuration *AddConfigurationDialog::importConfiguration(Dissolve &dissolve) { return ui_.AddConfigurationWidget->importConfiguration(dissolve); }

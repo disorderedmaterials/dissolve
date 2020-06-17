@@ -1,6 +1,6 @@
 /*
 	*** Export - Data1D
-	*** src/io/export/data2d.h
+	*** src/io/export/data1d.h
 	Copyright T. Youngs 2012-2020
 
 	This file is part of Dissolve.
@@ -30,43 +30,48 @@ class Data1D;
 // Data1D Export Formats
 class Data1DExportFileFormat : public FileAndFormat
 {
-	public:
+      public:
 	// Available data formats
-	enum Data1DExportFormat { XYData, nData1DExportFormats };
+	enum Data1DExportFormat
+	{
+		XYData1D,
+		nData1DExportFormats
+	};
+	// Constructor
+	Data1DExportFileFormat(const char *filename = NULL, Data1DExportFormat format = Data1DExportFileFormat::XYData1D);
+
+	/*
+	 * Format Access
+	 */
+      public:
+	// Return enum options for Data1DExportFormat
+	static EnumOptions<Data1DExportFileFormat::Data1DExportFormat> data1DExportFormats();
 	// Return number of available formats
 	int nFormats() const;
-	// Return formats array
-	const char** formats() const;
-	// Return nice formats array
-	const char** niceFormats() const;
+	// Return format keyword for supplied index
+	const char *formatKeyword(int id) const;
+	// Return description string for supplied index
+	const char *formatDescription(int id) const;
 	// Return current format as Data1DExportFormat
 	Data1DExportFormat data1DFormat() const;
-	// Constructor
-	Data1DExportFileFormat(const char* filename = NULL, Data1DExportFormat format = Data1DExportFileFormat::XYData);
-
 
 	/*
 	 * Filename / Basename
 	 */
-	public:
+      public:
 	// Return whether the file must exist
-	bool fileMustExist() const
-	{
-		return false;
-	}
-
+	bool fileMustExist() const { return false; }
 
 	/*
 	 * Export Functions
 	 */
-	private:
+      private:
 	// Export Data1D as simple XY (or XYE) data
-	bool exportXY(LineParser& parser, const Data1D& data);
+	bool exportXY(LineParser &parser, const Data1D &data);
 
-	public:
+      public:
 	// Export Data1D using current filename and format
-	bool exportData(const Data1D& data);
+	bool exportData(const Data1D &data);
 };
 
 #endif
-

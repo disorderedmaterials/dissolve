@@ -22,8 +22,9 @@
 #ifndef DISSOLVE_SITE_H
 #define DISSOLVE_SITE_H
 
-#include "math/matrix3.h"
 #include "base/enumoptions.h"
+#include "math/matrix3.h"
+#include <memory>
 
 // Forward Declarations
 class Molecule;
@@ -31,60 +32,63 @@ class Molecule;
 // Site Definition
 class Site
 {
-	public:
+      public:
 	// Constructor
-	Site(const Molecule* molecule = NULL, Vec3<double> origin = Vec3<double>());
+	Site(std::shared_ptr<const Molecule> molecule = NULL, Vec3<double> origin = Vec3<double>());
 	// Destructor
 	virtual ~Site();
-
 
 	/*
 	 * Site Definition
 	 */
-	protected:
+      protected:
 	// Site origin
 	Vec3<double> origin_;
 	// Molecule to which site is related (if relevant)
-	const Molecule* molecule_;
+	std::shared_ptr<const Molecule> molecule_;
 
-	public:
+      public:
 	// Return site origin
-	const Vec3<double>& origin() const;
+	const Vec3<double> &origin() const;
 	// Return Molecule to which site is related (if relevant)
-	const Molecule* molecule() const;
+	std::shared_ptr<const Molecule> molecule() const;
 	// Return whether local axes are present
 	virtual bool hasAxes() const;
 	// Return local axes
-	virtual const Matrix3& axes() const;
+	virtual const Matrix3 &axes() const;
 };
 
 // Oriented Site Definition
 class OrientedSite : public Site
 {
-	public:
+      public:
 	// Constructor
-	OrientedSite(const Molecule* molecule = NULL, Vec3<double> origin = Vec3<double>(), Vec3<double> xAxis = Vec3<double>(), Vec3<double> yAxis = Vec3<double>(), Vec3<double> zAxis = Vec3<double>());
+	OrientedSite(std::shared_ptr<const Molecule> molecule = NULL, Vec3<double> origin = Vec3<double>(), Vec3<double> xAxis = Vec3<double>(), Vec3<double> yAxis = Vec3<double>(),
+		     Vec3<double> zAxis = Vec3<double>());
 	// Destructor
 	~OrientedSite();
-
 
 	/*
 	 * Site Definition
 	 */
-	private:
+      private:
 	// Local axes
 	Matrix3 axes_;
 
-	public:
+      public:
 	// Axis Enum
-	enum SiteAxis { XAxis = 0, YAxis = 1, ZAxis = 2};
+	enum SiteAxis
+	{
+		XAxis = 0,
+		YAxis = 1,
+		ZAxis = 2
+	};
 	// Return enum options for SiteAxis
 	static EnumOptions<OrientedSite::SiteAxis> siteAxis();
 	// Return whether local axes are present
 	bool hasAxes() const;
 	// Return local axes
-	const Matrix3& axes() const;
+	const Matrix3 &axes() const;
 };
 
 #endif
-

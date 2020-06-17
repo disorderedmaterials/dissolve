@@ -20,17 +20,17 @@
 */
 
 #include "classes/species.h"
-#include "classes/masterintra.h"
-#include "classes/atomtype.h"
-#include "data/isotopes.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
+#include "classes/atomtype.h"
+#include "classes/masterintra.h"
+#include "data/isotopes.h"
 
 // Static Members (ObjectStore)
-template<class Species> RefDataList<Species,int> ObjectStore<Species>::objects_;
-template<class Species> int ObjectStore<Species>::objectCount_ = 0;
-template<class Species> int ObjectStore<Species>::objectType_ = ObjectInfo::SpeciesObject;
-template<class Species> const char* ObjectStore<Species>::objectTypeName_ = "Species";
+template <class Species> RefDataList<Species, int> ObjectStore<Species>::objects_;
+template <class Species> int ObjectStore<Species>::objectCount_ = 0;
+template <class Species> int ObjectStore<Species>::objectType_ = ObjectInfo::SpeciesObject;
+template <class Species> const char *ObjectStore<Species>::objectTypeName_ = "Species";
 
 // Constructor
 Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
@@ -47,9 +47,7 @@ Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
 }
 
 // Destructor
-Species::~Species()
-{
-}
+Species::~Species() {}
 
 // Clear Data
 void Species::clear()
@@ -67,16 +65,10 @@ void Species::clear()
  */
 
 // Set name of the Species
-void Species::setName(const char* name)
-{
-	name_ = name;
-}
+void Species::setName(const char *name) { name_ = name; }
 
 // Return the name of the Species
-const char* Species::name() const
-{
-	return name_.get();
-}
+const char *Species::name() const { return name_.get(); }
 
 // Check set-up of Species
 bool Species::checkSetUp()
@@ -93,7 +85,7 @@ bool Species::checkSetUp()
 	/*
 	 * AtomTypes
 	 */
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next())
+	for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
 	{
 		if (i->atomType() == NULL)
 		{
@@ -101,12 +93,13 @@ bool Species::checkSetUp()
 			++nErrors;
 		}
 	}
-	if (nErrors > 0) return false;
+	if (nErrors > 0)
+		return false;
 
 	/*
 	 * IntraMolecular Data
 	 */
-	for (SpeciesAtom* i = atoms_.first(); i != NULL; i = i->next())
+	for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
 	{
 		if ((i->nBonds() == 0) && (atoms_.nItems() > 1))
 		{
@@ -115,26 +108,26 @@ bool Species::checkSetUp()
 		}
 
 		// Check each Bond for two-way consistency
-		const PointerArray<SpeciesBond>& bonds = i->bonds();
-		for (int n=0; n<bonds.nItems(); ++n)
+		for (const auto *bond : i->bonds())
 		{
-			SpeciesAtom* j = bonds.at(n)->partner(i);
-			if (!j->hasBond(i))
+			SpeciesAtom *partner = bond->partner(i);
+			if (!partner->hasBond(i))
 			{
-				Messenger::error("SpeciesAtom %i references a Bond to SpeciesAtom %i, but SpeciesAtom %i does not.\n", i->userIndex(), j->userIndex(), j->userIndex());
+				Messenger::error("SpeciesAtom %i references a Bond to SpeciesAtom %i, but SpeciesAtom %i does not.\n", i->userIndex(), partner->userIndex(), partner->userIndex());
 				++nErrors;
 			}
 		}
 	}
-	if (nErrors > 0) return false;
+	if (nErrors > 0)
+		return false;
 
 	/*
 	 * Check Isotopologues
 	 */
-	for (Isotopologue* iso = isotopologues_.first(); iso != NULL; iso = iso->next())
+	for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
 	{
-		RefDataListIterator<AtomType,Isotope*> isotopeIterator(iso->isotopes());
-		while (AtomType* atomType = isotopeIterator.iterate())
+		RefDataListIterator<AtomType, Isotope *> isotopeIterator(iso->isotopes());
+		while (AtomType *atomType = isotopeIterator.iterate())
 		{
 			if (isotopeIterator.currentData() == NULL)
 			{
@@ -158,10 +151,11 @@ void Species::print()
 	Messenger::print("  Atoms:\n");
 	Messenger::print("      ID   El  Type (ID)        X             Y             Z             Q\n");
 	Messenger::print("    ----------------------------------------------------------------------------\n");
-	for (int n=0; n<nAtoms(); ++n)
+	for (int n = 0; n < nAtoms(); ++n)
 	{
-		SpeciesAtom* i = atoms_[n];
-		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.4e  %12.4e  %12.4e\n", n+1, i->element()->symbol(), (i->atomType() ? i->atomType()->name() : "??"), (i->atomType() ? i->atomType()->index() : -1), i->r().x, i->r().y, i->r().z, i->charge());
+		SpeciesAtom *i = atoms_[n];
+		Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.4e  %12.4e  %12.4e\n", n + 1, i->element()->symbol(), (i->atomType() ? i->atomType()->name() : "??"),
+				 (i->atomType() ? i->atomType()->index() : -1), i->r().x, i->r().y, i->r().z, i->charge());
 	}
 
 	if (nBonds() > 0)
@@ -170,10 +164,11 @@ void Species::print()
 		Messenger::print("      I     J    Form             Parameters\n");
 		Messenger::print("    ---------------------------------------------------------------------------------\n");
 		DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds());
-		while (const SpeciesBond* b = bondIterator.iterate())
+		while (const SpeciesBond *b = bondIterator.iterate())
 		{
-			CharString s("   %4i  %4i    %c%-12s", b->indexI()+1, b->indexJ()+1, b->masterParameters() ? '@' : ' ', SpeciesBond::bondFunctions().keywordFromInt(b->form()));
-			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", b->parameter(n));
+			CharString s("   %4i  %4i    %c%-12s", b->indexI() + 1, b->indexJ() + 1, b->masterParameters() ? '@' : ' ', SpeciesBond::bondFunctions().keywordFromInt(b->form()));
+			for (int n = 0; n < MAXINTRAPARAMS; ++n)
+				s.strcatf("  %12.4e", b->parameter(n));
 			Messenger::print("%s\n", s.get());
 		}
 	}
@@ -184,10 +179,12 @@ void Species::print()
 		Messenger::print("      I     J     K    Form             Parameters\n");
 		Messenger::print("    ---------------------------------------------------------------------------------------\n");
 		DynamicArrayConstIterator<SpeciesAngle> angleIterator(angles());
-		while (const SpeciesAngle* a = angleIterator.iterate())
+		while (const SpeciesAngle *a = angleIterator.iterate())
 		{
-			CharString s("   %4i  %4i  %4i    %c%-12s", a->indexI()+1, a->indexJ()+1, a->indexK()+1, a->masterParameters() ? '@' : ' ', SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
-			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", a->parameter(n));
+			CharString s("   %4i  %4i  %4i    %c%-12s", a->indexI() + 1, a->indexJ() + 1, a->indexK() + 1, a->masterParameters() ? '@' : ' ',
+				     SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
+			for (int n = 0; n < MAXINTRAPARAMS; ++n)
+				s.strcatf("  %12.4e", a->parameter(n));
 			Messenger::print("%s\n", s.get());
 		}
 	}
@@ -199,10 +196,12 @@ void Species::print()
 		Messenger::print("    ---------------------------------------------------------------------------------------------\n");
 		// Loop over Torsions
 		DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(torsions());
-		while (const SpeciesTorsion* t = torsionIterator.iterate())
+		while (const SpeciesTorsion *t = torsionIterator.iterate())
 		{
-			CharString s("   %4i  %4i  %4i  %4i    %c%-12s", t->indexI()+1, t->indexJ()+1, t->indexK()+1, t->indexL()+1, t->masterParameters() ? '@' : ' ', SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
-			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", t->parameter(n));
+			CharString s("   %4i  %4i  %4i  %4i    %c%-12s", t->indexI() + 1, t->indexJ() + 1, t->indexK() + 1, t->indexL() + 1, t->masterParameters() ? '@' : ' ',
+				     SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
+			for (int n = 0; n < MAXINTRAPARAMS; ++n)
+				s.strcatf("  %12.4e", t->parameter(n));
 			Messenger::print("%s\n", s.get());
 		}
 	}
@@ -214,48 +213,38 @@ void Species::print()
 		Messenger::print("    ---------------------------------------------------------------------------------------------\n");
 		// Loop over Impropers
 		DynamicArrayConstIterator<SpeciesImproper> improperIterator(impropers());
-		while (const SpeciesImproper* imp = improperIterator.iterate())
+		while (const SpeciesImproper *imp = improperIterator.iterate())
 		{
-			CharString s("   %4i  %4i  %4i  %4i    %c%-12s", imp->indexI()+1, imp->indexJ()+1, imp->indexK()+1, imp->indexL()+1, imp->masterParameters() ? '@' : ' ', SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
-			for (int n=0; n<MAXINTRAPARAMS; ++n) s.strcatf("  %12.4e", imp->parameter(n));
+			CharString s("   %4i  %4i  %4i  %4i    %c%-12s", imp->indexI() + 1, imp->indexJ() + 1, imp->indexK() + 1, imp->indexL() + 1, imp->masterParameters() ? '@' : ' ',
+				     SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
+			for (int n = 0; n < MAXINTRAPARAMS; ++n)
+				s.strcatf("  %12.4e", imp->parameter(n));
 			Messenger::print("%s\n", s.get());
 		}
 	}
 }
 
 // Return version
-int Species::version() const
-{
-	return version_;
-}
+int Species::version() const { return version_; }
 
 /*
  * Coordinate Sets
  */
 
 // Clear coordinate sets
-void Species::clearCoordinateSets()
-{
-	coordinateSets_.clear();
-}
+void Species::clearCoordinateSets() { coordinateSets_.clear(); }
 
 // Add new coordinate set
-CoordinateSet* Species::addCoordinateSet()
+CoordinateSet *Species::addCoordinateSet()
 {
-	CoordinateSet* coordSet = coordinateSets_.add();
+	CoordinateSet *coordSet = coordinateSets_.add();
 	coordSet->initialise(atoms_.nItems());
 
 	return coordSet;
 }
 
 // Return number of defined coordinate sets
-int Species::nCoordinateSets() const
-{
-	return coordinateSets_.nItems();
-}
+int Species::nCoordinateSets() const { return coordinateSets_.nItems(); }
 
 // Return coordinates sets
-const List<CoordinateSet>& Species::coordinateSets() const
-{
-	return coordinateSets_;
-}
+const List<CoordinateSet> &Species::coordinateSets() const { return coordinateSets_; }

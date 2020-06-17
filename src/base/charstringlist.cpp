@@ -23,29 +23,19 @@
 #include "base/sysfunc.h"
 
 // Constructor
-CharStringList::CharStringList()
-{
-}
+CharStringList::CharStringList() {}
 
 // Destructor
-CharStringList::~CharStringList()
-{
-}
+CharStringList::~CharStringList() {}
 
 // Copy constructor
-CharStringList::CharStringList(const CharStringList& source)
-{
-	(*this) = source;
-}
+CharStringList::CharStringList(const CharStringList &source) { (*this) = source; }
 
 // Conversion from const char*
-CharStringList::CharStringList(const char* text)
-{
-	strings_.add(text);
-}
+CharStringList::CharStringList(const char *text) { strings_.add(text); }
 
 // Assignment operator
-void CharStringList::operator=(const CharStringList& source)
+void CharStringList::operator=(const CharStringList &source)
 {
 	clear();
 
@@ -57,48 +47,40 @@ void CharStringList::operator=(const CharStringList& source)
  */
 
 // Clear
-void CharStringList::clear()
-{
-	strings_.clear();
-}
+void CharStringList::clear() { strings_.clear(); }
 
 // Add string to list
-void CharStringList::add(const char* s)
-{
-	strings_.add(s);
-}
+void CharStringList::add(const char *s) { strings_.add(s); }
 
 // Return number of strings in list
-int CharStringList::nItems() const
-{
-	return strings_.nItems();
-}
+int CharStringList::nItems() const { return strings_.nItems(); }
 
 // Return nth string in list
-const char* CharStringList::at(int index) const
-{
-	return strings_.constAt(index);
-}
+const char *CharStringList::at(int index) const { return strings_.constAt(index); }
 
 // Return whether specified string is currently in the list
-bool CharStringList::contains(const char* s, bool caseSensitive) const
+bool CharStringList::contains(const char *s, bool caseSensitive) const
 {
-	for (int n=0; n<strings_.nItems(); ++n) if (DissolveSys::sameString(strings_.constAt(n), s, caseSensitive)) return true;
+	for (int n = 0; n < strings_.nItems(); ++n)
+		if (DissolveSys::sameString(strings_.constAt(n), s, caseSensitive))
+			return true;
 
 	return false;
 }
 
 // Return list as comma-separated string
-const char* CharStringList::asCommaSeparatedList() const
+const char *CharStringList::asCommaSeparatedList() const
 {
 	static CharString result;
 
 	result.clear();
 
-	for (int n=0; n<strings_.nItems(); ++n)
+	for (int n = 0; n < strings_.nItems(); ++n)
 	{
-		if (n == 0) result = strings_.constAt(n);
-		else result.strcatf(", %s", strings_.constAt(n).get());
+		if (n == 0)
+			result = strings_.constAt(n);
+		else
+			result.strcatf(", %s", strings_.constAt(n).get());
 	}
 
 	return result.get();

@@ -1,10 +1,8 @@
 ---
 title: Units
-parent: Starting Out
 grand_parent: User Guide
 weight: 1
 ---
-# Units
 
 1 minute read
 {: .label .label-blue }

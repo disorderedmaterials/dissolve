@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_PROCEDURENODE_PROCESS2D_H
 #define DISSOLVE_PROCEDURENODE_PROCESS2D_H
 
-#include "procedure/nodes/node.h"
 #include "base/charstring.h"
+#include "procedure/nodes/node.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -35,67 +35,63 @@ class NodeScopeStack;
 // Procedure Node - Process2D
 class Process2DProcedureNode : public ProcedureNode
 {
-	public:
+      public:
 	// Constructor
-	Process2DProcedureNode(const Collect2DProcedureNode* target = NULL);
+	Process2DProcedureNode(const Collect2DProcedureNode *target = NULL);
 	// Destructor
 	~Process2DProcedureNode();
-
 
 	/*
 	 * Identity
 	 */
-	public:
+      public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Collect2D node that we are processing
-	const Collect2DProcedureNode* collectNode_;
+	const Collect2DProcedureNode *collectNode_;
 	// Pointer to processed data (stored in processing data list)
-	Data2D* processedData_;
+	Data2D *processedData_;
 
-	public:
+      public:
 	// Return processed data
-	const Data2D& processedData() const;
+	const Data2D &processedData() const;
 	// Return value label
-	const char* valueLabel() const;
+	const char *valueLabel() const;
 	// Return x axis label
-	const char* xAxisLabel() const;
+	const char *xAxisLabel() const;
 	// Return y axis label
-	const char* yAxisLabel() const;
-
+	const char *yAxisLabel() const;
 
 	/*
 	 * Branches
 	 */
-	private:
+      private:
 	// Branch for normalisation of data (if defined)
-	SequenceProcedureNode* normalisationBranch_;
+	SequenceProcedureNode *normalisationBranch_;
 
-	public:
+      public:
 	// Add and return normalisation sequence branch
-	SequenceProcedureNode* addNormalisationBranch();
+	SequenceProcedureNode *addNormalisationBranch();
 	// Return whether this node has a branch
 	bool hasBranch() const;
 	// Return SequenceNode for the branch (if it exists)
-	SequenceProcedureNode* branch();
-
+	SequenceProcedureNode *branch();
 
 	/*
 	 * Execute
 	 */
-	public:
+      public:
 	// Prepare any necessary data, ready for execution
-	bool prepare(Configuration* cfg, const char* prefix, GenericList& targetList);
+	bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 	// Finalise any necessary data after execution
-	bool finalise(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };
 
 #endif

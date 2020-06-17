@@ -23,9 +23,7 @@
 #include "base/messenger.h"
 
 // Constructor
-ProcessGroup::ProcessGroup() : ListItem<ProcessGroup>()
-{
-}
+ProcessGroup::ProcessGroup() : ListItem<ProcessGroup>() {}
 
 /*
  * Group Data
@@ -39,31 +37,16 @@ void ProcessGroup::addProcess(int poolRank, int worldRank)
 }
 
 // Return total number of processes in group
-int ProcessGroup::nProcesses()
-{
-	return poolRanks_.nItems();
-}
+int ProcessGroup::nProcesses() { return poolRanks_.nItems(); }
 
 // Return world ranks of group processes
-Array<int>& ProcessGroup::worldRanks()
-{
-	return worldRanks_;
-}
+Array<int> &ProcessGroup::worldRanks() { return worldRanks_; }
 
 // Return nth world rank of group processes
-int ProcessGroup::worldRank(int n) const
-{
-	return worldRanks_.constAt(n);
-}
+int ProcessGroup::worldRank(int n) const { return worldRanks_.constAt(n); }
 
 // Return pool ranks of group processes
-Array<int>& ProcessGroup::poolRanks()
-{
-	return poolRanks_;
-}
+Array<int> &ProcessGroup::poolRanks() { return poolRanks_; }
 
 // Return nth pool rank of group processes
-int ProcessGroup::poolRank(int n) const
-{
-	return poolRanks_.constAt(n);
-}
+int ProcessGroup::poolRank(int n) const { return poolRanks_.constAt(n); }

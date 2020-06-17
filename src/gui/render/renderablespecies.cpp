@@ -20,14 +20,14 @@
 */
 
 #include "gui/render/renderablespecies.h"
-#include "gui/render/renderablegroupmanager.h"
-#include "gui/render/view.h"
+#include "base/lineparser.h"
 #include "classes/atom.h"
 #include "data/elementcolours.h"
-#include "base/lineparser.h"
+#include "gui/render/renderablegroupmanager.h"
+#include "gui/render/view.h"
 
 // Constructor
-RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTag) : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
+RenderableSpecies::RenderableSpecies(const Species *source, const char *objectTag) : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
 {
 	// Set defaults
 	displayStyle_ = SpheresStyle;
@@ -43,7 +43,7 @@ RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTa
 	bondPrimitive_ = createPrimitive(GL_TRIANGLES, false);
 	bondPrimitive_->cylinder(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1, 8);
 	unitCellPrimitive_ = createPrimitive(GL_LINES, false);
-// 	unitCellPrimitive_->wireCube(1.0, 4, 0, 0, 0);
+	// 	unitCellPrimitive_->wireCube(1.0, 4, 0, 0, 0);
 	lineSpeciesPrimitive_ = createPrimitive(GL_LINES, true);
 	lineSelectionPrimitive_ = createPrimitive(GL_LINES, true);
 	lineSelectionPrimitive_->setNoInstances();
@@ -55,9 +55,7 @@ RenderableSpecies::RenderableSpecies(const Species* source, const char* objectTa
 }
 
 // Destructor
-RenderableSpecies::~RenderableSpecies()
-{
-}
+RenderableSpecies::~RenderableSpecies() {}
 
 /*
  * Data
@@ -67,25 +65,21 @@ RenderableSpecies::~RenderableSpecies()
 bool RenderableSpecies::validateDataSource()
 {
 	// Don't try to access source_ if we are not currently permitted to do so
-	if (!sourceDataAccessEnabled_) return false;
+	if (!sourceDataAccessEnabled_)
+		return false;
 
 	// If there is no valid source set, attempt to set it now...
-	if (!source_) source_ = Species::findObject(objectTag_);
+	if (!source_)
+		source_ = Species::findObject(objectTag_);
 
 	return source_;
 }
 
 // Invalidate the current data source
-void RenderableSpecies::invalidateDataSource()
-{
-	source_ = NULL;
-}
+void RenderableSpecies::invalidateDataSource() { source_ = NULL; }
 
 // Return version of data
-int RenderableSpecies::dataVersion()
-{
-	return (validateDataSource() ? source_->version() : -99);
-}
+int RenderableSpecies::dataVersion() { return (validateDataSource() ? source_->version() : -99); }
 
 /*
  * Transform / Limits
@@ -94,14 +88,16 @@ int RenderableSpecies::dataVersion()
 // Transform data according to current settings
 void RenderableSpecies::transformValues()
 {
-	if (!source_) return;
+	if (!source_)
+		return;
 
 	// If the transformed data are already up-to-date, no need to do anything
-	if (valuesTransformDataVersion_ == dataVersion()) return;
+	if (valuesTransformDataVersion_ == dataVersion())
+		return;
 
 	// Loop over Atoms, seeking extreme x, y, and z values
 	ListIterator<SpeciesAtom> atomIterator(source_->atoms());
-	while (SpeciesAtom* i = atomIterator.iterate())
+	while (SpeciesAtom *i = atomIterator.iterate())
 	{
 		if (atomIterator.isFirst())
 		{
@@ -110,12 +106,18 @@ void RenderableSpecies::transformValues()
 		}
 		else
 		{
-			if (i->r().x < limitsMin_.x) limitsMin_.x = i->r().x;
-			else if (i->r().x > limitsMax_.x) limitsMax_.x = i->r().x;
-			if (i->r().y < limitsMin_.y) limitsMin_.y = i->r().y;
-			else if (i->r().y > limitsMax_.y) limitsMax_.y = i->r().y;
-			if (i->r().z < limitsMin_.z) limitsMin_.z = i->r().z;
-			else if (i->r().z > limitsMax_.z) limitsMax_.z = i->r().z;
+			if (i->r().x < limitsMin_.x)
+				limitsMin_.x = i->r().x;
+			else if (i->r().x > limitsMax_.x)
+				limitsMax_.x = i->r().x;
+			if (i->r().y < limitsMin_.y)
+				limitsMin_.y = i->r().y;
+			else if (i->r().y > limitsMax_.y)
+				limitsMax_.y = i->r().y;
+			if (i->r().z < limitsMin_.z)
+				limitsMin_.z = i->r().z;
+			else if (i->r().z > limitsMax_.z)
+				limitsMax_.z = i->r().z;
 		}
 	}
 
@@ -139,38 +141,38 @@ void RenderableSpecies::transformValues()
  */
 
 // Create cylinder bond between supplied atoms in specified assembly
-void RenderableSpecies::createCylinderBond(PrimitiveAssembly& assembly, const SpeciesAtom* i, const SpeciesAtom* j, double radialScaling)
+void RenderableSpecies::createCylinderBond(PrimitiveAssembly &assembly, const SpeciesAtom *i, const SpeciesAtom *j, double radialScaling)
 {
 	Matrix4 A;
 
 	// Get vector between Atoms i->j and move to Bond centre
 	Vec3<double> vij = j->r() - i->r();
-	A.setTranslation(i->r()+vij*0.5);
+	A.setTranslation(i->r() + vij * 0.5);
 	const double mag = vij.magAndNormalise();
 
 	// Create rotation matrix for Bond
 	A.setColumn(2, vij.x, vij.y, vij.z, 0.0);
 	A.setColumn(0, vij.orthogonal(), 0.0);
 	A.setColumn(1, vij * A.columnAsVec3(0), 0.0);
-	A.columnMultiply(2, 0.5*mag);
+	A.columnMultiply(2, 0.5 * mag);
 	A.applyScaling(radialScaling, radialScaling, 1.0);
 
 	// Render half of Bond in colour of Atom j
-	const float* colour = ElementColours::colour(j->element());
+	const float *colour = ElementColours::colour(j->element());
 	assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
 	// Render half of Bond in colour of Atom i
-	A.columnMultiply(2,-1.0);
+	A.columnMultiply(2, -1.0);
 	colour = ElementColours::colour(i->element());
 	assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 }
 
 // Recreate necessary primitives / primitive assemblies for the data
-void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinition& colourDefinition)
+void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinition &colourDefinition)
 {
 	Matrix4 A;
-	const GLfloat* colour;
-	const GLfloat colourBlack[4] = { 0.0, 0.0, 0.0, 1.0 };
+	const GLfloat *colour;
+	const GLfloat colourBlack[4] = {0.0, 0.0, 0.0, 1.0};
 
 	// Clear existing data
 	lineSpeciesPrimitive_->forgetAll();
@@ -179,7 +181,8 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 	selectionAssembly_.clear();
 
 	// Check data source
-	if (!validateDataSource()) return;
+	if (!validateDataSource())
+		return;
 
 	// Render according to the current displayStyle
 	if (displayStyle_ == LinesStyle)
@@ -190,10 +193,11 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 
 		// Draw Atoms
 		ListIterator<SpeciesAtom> atomIterator(source_->atoms());
-		while (SpeciesAtom* i = atomIterator.iterate())
+		while (SpeciesAtom *i = atomIterator.iterate())
 		{
 			// Only draw the atom if it has no bonds, in which case draw it as a 'cross'
-			if (i->nBonds() != 0) continue;
+			if (i->nBonds() != 0)
+				continue;
 
 			const Vec3<double> r = i->r();
 			colour = ElementColours::colour(i->element());
@@ -205,7 +209,7 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 
 		// Draw bonds
 		DynamicArrayConstIterator<SpeciesBond> bondIterator(source_->constBonds());
-		while (const SpeciesBond* b = bondIterator.iterate())
+		while (const SpeciesBond *b = bondIterator.iterate())
 		{
 			// Determine half delta i-j for bond
 			const Vec3<double> ri = b->i()->r();
@@ -225,7 +229,7 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 
 		// Draw Atoms
 		ListIterator<SpeciesAtom> atomIterator(source_->atoms());
-		while (SpeciesAtom* i = atomIterator.iterate())
+		while (SpeciesAtom *i = atomIterator.iterate())
 		{
 			A.setIdentity();
 			A.setTranslation(i->r());
@@ -244,7 +248,8 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 
 		// Draw bonds
 		DynamicArrayConstIterator<SpeciesBond> bondIterator(source_->constBonds());
-		while (const SpeciesBond* b = bondIterator.iterate()) createCylinderBond(speciesAssembly_, b->i(), b->j(), spheresBondRadius_);
+		while (const SpeciesBond *b = bondIterator.iterate())
+			createCylinderBond(speciesAssembly_, b->i(), b->j(), spheresBondRadius_);
 	}
 }
 
@@ -252,8 +257,10 @@ void RenderableSpecies::recreatePrimitives(const View& view, const ColourDefinit
 const void RenderableSpecies::sendToGL(const double pixelScaling)
 {
 	// Set appropriate lighting for the species and interaction assemblies
-	if (displayStyle_ == LinesStyle) glDisable(GL_LIGHTING);
-	else glEnable(GL_LIGHTING);
+	if (displayStyle_ == LinesStyle)
+		glDisable(GL_LIGHTING);
+	else
+		glEnable(GL_LIGHTING);
 	speciesAssembly_.sendToGL(pixelScaling);
 	interactionAssembly_.sendToGL(pixelScaling);
 
@@ -265,16 +272,17 @@ const void RenderableSpecies::sendToGL(const double pixelScaling)
 // Recreate selection Primitive
 void RenderableSpecies::recreateSelectionPrimitive()
 {
-	if (selectionPrimitiveVersion_ == source_->atomSelectionVersion()) return;
+	if (selectionPrimitiveVersion_ == source_->atomSelectionVersion())
+		return;
 
 	// Clear existing data
 	selectionAssembly_.clear();
 	lineSelectionPrimitive_->forgetAll();
 
-	const GLfloat* colour;
+	const GLfloat *colour;
 	Matrix4 A;
-	const Atom* i;
-	const SpeciesBond* b;
+	const Atom *i;
+	const SpeciesBond *b;
 
 	if (displayStyle_ == LinesStyle)
 	{
@@ -285,10 +293,11 @@ void RenderableSpecies::recreateSelectionPrimitive()
 
 		// Draw selection
 		ListIterator<SpeciesAtom> atomIterator(source_->atoms());
-		while (SpeciesAtom* i = atomIterator.iterate())
+		while (SpeciesAtom *i = atomIterator.iterate())
 		{
 			// If not selected, continue
-			if (!i->isSelected()) continue;
+			if (!i->isSelected())
+				continue;
 
 			// Get element colour
 			colour = ElementColours::colour(i->element());
@@ -305,11 +314,10 @@ void RenderableSpecies::recreateSelectionPrimitive()
 			else
 			{
 				// Draw all bonds from this atom
-				const PointerArray<SpeciesBond>& bonds = i->bonds();
-				for (int n=0; n<bonds.nItems(); ++n)
+				for (const auto *bond : i->bonds())
 				{
-					const Vec3<double> ri = i->r();
-					const Vec3<double> dij = (bonds.at(n)->partner(i)->r() - ri) * 0.5;
+					const auto ri = i->r();
+					const auto dij = (bond->partner(i)->r() - ri) * 0.5;
 
 					// Draw bond halves
 					lineSelectionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, colour);
@@ -323,9 +331,10 @@ void RenderableSpecies::recreateSelectionPrimitive()
 		selectionAssembly_.add(true, GL_LINE);
 
 		ListIterator<SpeciesAtom> atomIterator(source_->atoms());
-		while (SpeciesAtom* i = atomIterator.iterate())
+		while (SpeciesAtom *i = atomIterator.iterate())
 		{
-			if (!i->isSelected()) continue;
+			if (!i->isSelected())
+				continue;
 
 			A.setIdentity();
 			A.setTranslation(i->r());
@@ -346,7 +355,7 @@ void RenderableSpecies::clearInteractionPrimitive()
 }
 
 // Recreate interaction Primitive to display drawing interaction (from existing atom to existing atom)
-void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, SpeciesAtom* toAtom)
+void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, SpeciesAtom *toAtom)
 {
 	// Clear existing data
 	clearInteractionPrimitive();
@@ -380,7 +389,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, 
 }
 
 // Recreate interaction Primitive to display drawing interaction (from existing atom to point)
-void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, Vec3<double> toPoint, Element* toElement)
+void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, Vec3<double> toPoint, Element *toElement)
 {
 	// Clear existing data
 	clearInteractionPrimitive();
@@ -416,7 +425,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, 
 		// Draw the temporary atom
 		A.setTranslation(j.r());
 		A.applyScaling(spheresAtomRadius_);
-		const float* colour = ElementColours::colour(j.element());
+		const float *colour = ElementColours::colour(j.element());
 		interactionAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
 		// Draw the temporary bond between the atoms
@@ -425,7 +434,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, 
 }
 
 // Recreate interaction Primitive to display drawing interaction (from point to point)
-void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Element* fromElement, Vec3<double> toPoint, Element* toElement)
+void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Element *fromElement, Vec3<double> toPoint, Element *toElement)
 {
 	// Clear existing data
 	clearInteractionPrimitive();
@@ -463,7 +472,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
 		// Draw the temporary atoms
 		A.setTranslation(i.r());
 		A.applyScaling(spheresAtomRadius_);
-		const float* colour = ElementColours::colour(i.element());
+		const float *colour = ElementColours::colour(i.element());
 		interactionAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
 		A.setIdentity();
@@ -484,9 +493,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
 // Return EnumOptions for SpeciesDisplayStyle
 EnumOptions<RenderableSpecies::SpeciesDisplayStyle> RenderableSpecies::speciesDisplayStyles()
 {
-	static EnumOptionsList SpeciesStyleOptions = EnumOptionsList() <<
-		EnumOption(RenderableSpecies::LinesStyle,	"Lines") <<
-		EnumOption(RenderableSpecies::SpheresStyle,	"Spheres");
+	static EnumOptionsList SpeciesStyleOptions = EnumOptionsList() << EnumOption(RenderableSpecies::LinesStyle, "Lines") << EnumOption(RenderableSpecies::SpheresStyle, "Spheres");
 
 	static EnumOptions<RenderableSpecies::SpeciesDisplayStyle> options("SpeciesDisplayStyle", SpeciesStyleOptions);
 
@@ -502,10 +509,7 @@ void RenderableSpecies::setDisplayStyle(SpeciesDisplayStyle displayStyle)
 }
 
 // Return display style for the renderable
-RenderableSpecies::SpeciesDisplayStyle RenderableSpecies::displayStyle() const
-{
-	return displayStyle_;
-}
+RenderableSpecies::SpeciesDisplayStyle RenderableSpecies::displayStyle() const { return displayStyle_; }
 
 /*
  * Style I/O
@@ -514,9 +518,7 @@ RenderableSpecies::SpeciesDisplayStyle RenderableSpecies::displayStyle() const
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableSpecies::SpeciesStyleKeyword> RenderableSpecies::speciesStyleKeywords()
 {
-	static EnumOptionsList StyleKeywords = EnumOptionsList() <<
-		EnumOption(RenderableSpecies::DisplayKeyword,	"Display",	1) <<
-		EnumOption(RenderableSpecies::EndStyleKeyword,	"EndStyle");
+	static EnumOptionsList StyleKeywords = EnumOptionsList() << EnumOption(RenderableSpecies::DisplayKeyword, "Display", 1) << EnumOption(RenderableSpecies::EndStyleKeyword, "EndStyle");
 
 	static EnumOptions<RenderableSpecies::SpeciesStyleKeyword> options("SpeciesStyleKeyword", StyleKeywords);
 
@@ -524,47 +526,53 @@ EnumOptions<RenderableSpecies::SpeciesStyleKeyword> RenderableSpecies::speciesSt
 }
 
 // Write style information
-bool RenderableSpecies::writeStyleBlock(LineParser& parser, int indentLevel) const
+bool RenderableSpecies::writeStyleBlock(LineParser &parser, int indentLevel) const
 {
 	// Construct indent string
-	char* indent = new char[indentLevel*2+1];
-	for (int n=0; n<indentLevel*2; ++n) indent[n] = ' ';
-	indent[indentLevel*2] = '\0';
+	char *indent = new char[indentLevel * 2 + 1];
+	for (int n = 0; n < indentLevel * 2; ++n)
+		indent[n] = ' ';
+	indent[indentLevel * 2] = '\0';
 
-	if (!parser.writeLineF("%s%s  %s\n", indent, speciesStyleKeywords().keyword(RenderableSpecies::DisplayKeyword), speciesDisplayStyles().keyword(displayStyle_))) return false;
+	if (!parser.writeLineF("%s%s  %s\n", indent, speciesStyleKeywords().keyword(RenderableSpecies::DisplayKeyword), speciesDisplayStyles().keyword(displayStyle_)))
+		return false;
 
 	return true;
 }
 
 // Read style information
-bool RenderableSpecies::readStyleBlock(LineParser& parser)
+bool RenderableSpecies::readStyleBlock(LineParser &parser)
 {
 	while (!parser.eofOrBlank())
 	{
 		// Get line from file
-		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success) return false;
+		if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success)
+			return false;
 
 		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
-		if (!speciesStyleKeywords().isValid(parser.argc(0))) return speciesStyleKeywords().errorAndPrintValid(parser.argc(0));
+		if (!speciesStyleKeywords().isValid(parser.argc(0)))
+			return speciesStyleKeywords().errorAndPrintValid(parser.argc(0));
 		SpeciesStyleKeyword kwd = speciesStyleKeywords().enumeration(parser.argc(0));
-		if (!speciesStyleKeywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+		if (!speciesStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
+			return false;
 
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-			// Display style
-			case (RenderableSpecies::DisplayKeyword):
-				if (!speciesDisplayStyles().isValid(parser.argc(1))) return speciesDisplayStyles().errorAndPrintValid(parser.argc(1));
-				displayStyle_ = speciesDisplayStyles().enumeration(parser.argc(1));
-				break;
-			// End of block
-			case (RenderableSpecies::EndStyleKeyword):
-				return true;
-			// Unrecognised Keyword
-			default:
-				Messenger::warn("Unrecognised display style keyword for RenderableSpecies: %s\n", parser.argc(0));
-				return false;
-				break;
+		// Display style
+		case (RenderableSpecies::DisplayKeyword):
+			if (!speciesDisplayStyles().isValid(parser.argc(1)))
+				return speciesDisplayStyles().errorAndPrintValid(parser.argc(1));
+			displayStyle_ = speciesDisplayStyles().enumeration(parser.argc(1));
+			break;
+		// End of block
+		case (RenderableSpecies::EndStyleKeyword):
+			return true;
+		// Unrecognised Keyword
+		default:
+			Messenger::warn("Unrecognised display style keyword for RenderableSpecies: %s\n", parser.argc(0));
+			return false;
+			break;
 		}
 	}
 

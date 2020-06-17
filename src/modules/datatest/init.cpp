@@ -19,9 +19,9 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/datatest/datatest.h"
 #include "keywords/types.h"
 #include "math/error.h"
+#include "modules/datatest/datatest.h"
 
 // Perform any necessary initialisation for the Module
 void DataTestModule::initialise()
@@ -33,4 +33,3 @@ void DataTestModule::initialise()
 	keywords_.add("Test", new ModuleRefListKeyword(targetModule_, 1), "Target", "Module containing target data", "<Module>");
 	keywords_.add("Test", new DoubleKeyword(0.1, 1.0e-5), "Threshold", "Test threshold (%%error) above which test fails", "<threshold[0.1]>");
 }
-

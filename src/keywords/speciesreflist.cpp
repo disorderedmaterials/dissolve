@@ -20,54 +20,42 @@
 */
 
 #include "keywords/speciesreflist.h"
+#include "base/lineparser.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
-#include "base/lineparser.h"
 
 // Constructor
-SpeciesRefListKeyword::SpeciesRefListKeyword(RefList<Species>& references) : KeywordData< RefList<Species>& >(KeywordBase::SpeciesRefListData, references)
-{
-}
+SpeciesRefListKeyword::SpeciesRefListKeyword(RefList<Species> &references) : KeywordData<RefList<Species> &>(KeywordBase::SpeciesRefListData, references) {}
 
 // Destructor
-SpeciesRefListKeyword::~SpeciesRefListKeyword()
-{
-}
+SpeciesRefListKeyword::~SpeciesRefListKeyword() {}
 
 /*
  * Data
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool SpeciesRefListKeyword::isDataEmpty() const
-{
-	return data_.nItems() > 0;
-}
+bool SpeciesRefListKeyword::isDataEmpty() const { return data_.nItems() > 0; }
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int SpeciesRefListKeyword::minArguments() const
-{
-	return 1;
-}
+int SpeciesRefListKeyword::minArguments() const { return 1; }
 
 // Return maximum number of arguments accepted
-int SpeciesRefListKeyword::maxArguments() const
-{
-	return 99;
-}
+int SpeciesRefListKeyword::maxArguments() const { return 99; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool SpeciesRefListKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool SpeciesRefListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
 	// Each argument is the name of a Species that we will add to our list
-	for (int n=startArg; n < parser.nArgs(); ++n)
+	for (int n = startArg; n < parser.nArgs(); ++n)
 	{
-		Species* sp = coreData.findSpecies(parser.argc(n));
-		if (!sp) return Messenger::error("Error defining Species targets - no Species named '%s' exists.\n", parser.argc(n));
+		Species *sp = coreData.findSpecies(parser.argc(n));
+		if (!sp)
+			return Messenger::error("Error defining Species targets - no Species named '%s' exists.\n", parser.argc(n));
 
 		data_.append(sp);
 	}
@@ -78,14 +66,15 @@ bool SpeciesRefListKeyword::read(LineParser& parser, int startArg, const CoreDat
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesRefListKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool SpeciesRefListKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	// Loop over list of Species
 	CharString speciesString;
-	RefListIterator<Species> speciesIterator(data_);
-	while (Species* sp = speciesIterator.iterate()) speciesString.strcatf("  %s", sp->name());
+	for (Species *sp : data_)
+		speciesString.strcatf("  %s", sp->name());
 
-	if (!parser.writeLineF("%s%s  %s\n", prefix, keywordName, speciesString.get())) return false;
+	if (!parser.writeLineF("%s%s  %s\n", prefix, keywordName, speciesString.get()))
+		return false;
 
 	return true;
 }
@@ -95,7 +84,4 @@ bool SpeciesRefListKeyword::write(LineParser& parser, const char* keywordName, c
  */
 
 // Prune any references to the supplied Species in the contained data
-void SpeciesRefListKeyword::removeReferencesTo(Species* sp)
-{
-	data_.remove(sp);
-}
+void SpeciesRefListKeyword::removeReferencesTo(Species *sp) { data_.remove(sp); }

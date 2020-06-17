@@ -23,58 +23,32 @@
 #include "base/sysfunc.h"
 
 // Constructor
-ModuleGroup::ModuleGroup(const char* name) : ListItem<ModuleGroup>()
-{
-	name_ = name;
-}
+ModuleGroup::ModuleGroup(const char *name) : ListItem<ModuleGroup>() { name_ = name; }
 
 // Destructor
-ModuleGroup::~ModuleGroup()
-{
-}
+ModuleGroup::~ModuleGroup() {}
 
 /*
  * Module Group
  */
 
 // Return name of group
-const char* ModuleGroup::name()
-{
-	return name_.get();
-}
+const char *ModuleGroup::name() { return name_.get(); }
 
 // Return whether name of group is as specified
-bool ModuleGroup::isName(const char* queryName)
-{
-	return DissolveSys::sameString(name_, queryName);
-}
+bool ModuleGroup::isName(const char *queryName) { return DissolveSys::sameString(name_, queryName); }
 
 // Associate Module to group
-void ModuleGroup::add(Module* module)
-{
-	modules_.addUnique(module);
-}
+void ModuleGroup::add(Module *module) { modules_.addUnique(module); }
 
 // Remove Module from group
-void ModuleGroup::remove(Module* module)
-{
-	modules_.remove(module);
-}
+void ModuleGroup::remove(Module *module) { modules_.remove(module); }
 
 // Return whether the specified Module is in the group
-bool ModuleGroup::contains(Module* module) const
-{
-	return modules_.contains(module);
-}
+bool ModuleGroup::contains(Module *module) const { return modules_.contains(module); }
 
 // Return total number of Modules in the group
-int ModuleGroup::nModules() const
-{
-	return modules_.nItems();
-}
+int ModuleGroup::nModules() const { return modules_.nItems(); }
 
 // Return reflist of Modules
-const RefList<Module>& ModuleGroup::modules() const
-{
-	return modules_;
-}
+const RefList<Module> &ModuleGroup::modules() const { return modules_; }

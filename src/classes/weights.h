@@ -24,9 +24,9 @@
 
 #include "classes/atomtypelist.h"
 #include "classes/isotopologues.h"
-#include "templates/list.h"
-#include "templates/array2d.h"
 #include "genericitems/base.h"
+#include "templates/array2d.h"
+#include "templates/list.h"
 
 // Forward Declarations
 /* none */
@@ -34,37 +34,35 @@
 // Weights Container
 class Weights : public GenericItemBase
 {
-	public:
+      public:
 	// Constructor
 	Weights();
 	// Copy Constructor
-	Weights(const Weights& source);
+	Weights(const Weights &source);
 	// Assignment operator
-	void operator=(const Weights& source);
-
+	void operator=(const Weights &source);
 
 	/*
 	 * Construction
 	 */
-	private:
+      private:
 	// List of Isotopologues for Species
 	List<Isotopologues> isotopologueMixtures_;
 
-	public:
+      public:
 	// Clear contents
 	void clear();
 	// Add Species Isotopologue to the relevant mixture
-	bool addIsotopologue(Species* sp, int speciesPopulation, const Isotopologue* iso, double isotopologueRelativePopulation);
+	bool addIsotopologue(Species *sp, int speciesPopulation, const Isotopologue *iso, double isotopologueRelativePopulation);
 	// Return whether we have a mixtures definition for the provided Species
-	Isotopologues* hasIsotopologues(Species* sp) const;
+	Isotopologues *hasIsotopologues(Species *sp) const;
 	// Print atomtype / weights information
 	void print() const;
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Type list derived from Species referenced in isotopologueMixtures_
 	AtomTypeList atomTypes_;
 	// Concentration product matrix (ci * cj)
@@ -82,17 +80,17 @@ class Weights : public GenericItemBase
 	// Whether the structure is valid (i.e. has been finalised)
 	bool valid_;
 
-	private:
+      private:
 	// Calculate weighting matrices based on current AtomType / Isotope information
 	void calculateWeightingMatrices();
 
-	public:
+      public:
 	// Create AtomType list and matrices based on stored Isotopologues information
-	void createFromIsotopologues(const AtomTypeList& exchangeableTypes);
+	void createFromIsotopologues(const AtomTypeList &exchangeableTypes);
 	// Reduce data to be naturally-weighted
 	void naturalise();
 	// Return AtomTypeList
-	AtomTypeList& atomTypes();
+	AtomTypeList &atomTypes();
 	// Return number of used AtomTypes
 	int nUsedTypes() const;
 	// Return concentration product for types i and j
@@ -104,9 +102,9 @@ class Weights : public GenericItemBase
 	// Return bound weighting for types i and j
 	double boundWeight(int i, int j) const;
 	// Return full scattering weights matrix
-	Array2D<double>& weights();
+	Array2D<double> &weights();
 	// Return full bound scattering weights matrix
-	Array2D<double>& boundWeights();
+	Array2D<double> &boundWeights();
 	// Return bound coherent average squared scattering (<b>**2)
 	double boundCoherentSquareOfAverage() const;
 	// Return bound coherent squared average scattering (<b**2>)
@@ -114,27 +112,25 @@ class Weights : public GenericItemBase
 	// Return whether the structure is valid (i.e. has been finalised)
 	bool isValid() const;
 
-
 	/*
 	 * GenericItemBase Implementations
 	 */
-	public:
+      public:
 	// Return class name
-	static const char* itemClassName();
+	static const char *itemClassName();
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
-
+	bool write(LineParser &parser);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif

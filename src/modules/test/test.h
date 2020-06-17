@@ -34,57 +34,52 @@ class TestModule : public Module
 	 * Module for testing various functions
 	 */
 
-	public:
+      public:
 	// Constructor
 	TestModule();
 	// Destructor
 	~TestModule();
 
-
 	/*
 	 * Instances
 	 */
-	public:
+      public:
 	// Create instance of this module
-	Module* createInstance() const;
-
+	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return type of module
-	const char* type() const;
+	const char *type() const;
 	// Return category for module
-	const char* category() const;
+	const char *category() const;
 	// Return brief description of module
-	const char* brief() const;
+	const char *brief() const;
 	// Return the number of Configuration targets this Module requires
 	int nRequiredTargets() const;
-
 
 	/*
 	 * Initialisation
 	 */
-	protected:
+      protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-	private:
+      private:
 	// Run main processing
-	bool process(Dissolve& dissolve, ProcessPool& procPool);
-
+	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * GUI Widget
 	 */
-	public:
+      public:
 	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, Dissolve& dissolve);
+	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
 
 #endif
-

@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate_axisangle/axisangle.h"
 #include "keywords/types.h"
+#include "modules/calculate_axisangle/axisangle.h"
 #include "procedure/nodes/calculateaxisangle.h"
 #include "procedure/nodes/calculatedistance.h"
 #include "procedure/nodes/collect1d.h"
@@ -86,7 +86,7 @@ void CalculateAxisAngleModule::initialise()
 	 *     EndOperateEquationNormalise
 	 *     OperateNormalise
 	 *       Value  1.0
-         *     EndOperateNormalise
+	 *     EndOperateNormalise
 	 *   EndNormalistaion
 	 *   LabelValue  'g(r)'
 	 *   LabelX  'r, Angstroms'
@@ -98,28 +98,28 @@ void CalculateAxisAngleModule::initialise()
 	// Select: Site 'A'
 	selectA_ = new SelectProcedureNode(NULL, true);
 	selectA_->setName("A");
-	SequenceProcedureNode* forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
+	SequenceProcedureNode *forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
 	analyser_.addRootSequenceNode(selectA_);
 
 	// -- Select: Site 'B'
 	selectB_ = new SelectProcedureNode(NULL, true);
 	selectB_->setName("B");
 	RefList<SelectProcedureNode> sameMoleculeExclusions(selectA_);
-	selectB_->setKeyword< RefList<SelectProcedureNode>& >("ExcludeSameMolecule", sameMoleculeExclusions);
-	SequenceProcedureNode* forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
+	selectB_->setKeyword<RefList<SelectProcedureNode> &>("ExcludeSameMolecule", sameMoleculeExclusions);
+	SequenceProcedureNode *forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
 	forEachA->addNode(selectB_);
 
 	// -- -- Calculate: 'rAB'
-	CalculateDistanceProcedureNode* calcDistance = new CalculateDistanceProcedureNode(selectA_, selectB_);
+	CalculateDistanceProcedureNode *calcDistance = new CalculateDistanceProcedureNode(selectA_, selectB_);
 	forEachB->addNode(calcDistance);
 
 	// -- -- Calculate: 'axisAngle'
-	CalculateAxisAngleProcedureNode* calcAngle = new CalculateAxisAngleProcedureNode(selectA_, OrientedSite::XAxis, selectB_, OrientedSite::XAxis);
+	CalculateAxisAngleProcedureNode *calcAngle = new CalculateAxisAngleProcedureNode(selectA_, OrientedSite::XAxis, selectB_, OrientedSite::XAxis);
 	forEachB->addNode(calcAngle);
 
 	// -- -- Collect2D:  'rAB vs axisAngle)'
 	collectDAngle_ = new Collect2DProcedureNode(calcDistance, calcAngle, 0.0, 10.0, 0.05, 0.0, 180.0, 1.0);
-	SequenceProcedureNode* subCollection = collectDAngle_->addSubCollectBranch(ProcedureNode::AnalysisContext);
+	SequenceProcedureNode *subCollection = collectDAngle_->addSubCollectBranch(ProcedureNode::AnalysisContext);
 	forEachB->addNode(collectDAngle_);
 
 	// -- -- -- Collect1D:  'RDF(AB)'
@@ -136,10 +136,10 @@ void CalculateAxisAngleModule::initialise()
 	processDistance_->setKeyword<CharString>("LabelValue", "g(r)");
 	processDistance_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
 
-	SequenceProcedureNode* rdfNormalisation = processDistance_->addNormalisationBranch();
+	SequenceProcedureNode *rdfNormalisation = processDistance_->addNormalisationBranch();
 	RefList<const SelectProcedureNode> sitePopulationNormalisers;
 	sitePopulationNormalisers.append(selectA_);
-// 	sitePopulationNormalisers.append(selectB_);
+	// 	sitePopulationNormalisers.append(selectB_);
 	rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(sitePopulationNormalisers));
 	rdfNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode(selectB_));
 	rdfNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);
@@ -150,7 +150,7 @@ void CalculateAxisAngleModule::initialise()
 	processAngle_->setName("AxisAngle(AB)");
 	processAngle_->setKeyword<CharString>("LabelValue", "Normalised Frequency");
 	processAngle_->setKeyword<CharString>("LabelX", "\\symbol{theta}, \\symbol{degrees}");
-	SequenceProcedureNode* angleNormalisation = processAngle_->addNormalisationBranch();
+	SequenceProcedureNode *angleNormalisation = processAngle_->addNormalisationBranch();
 	angleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(x)"));
 	angleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
 	analyser_.addRootSequenceNode(processAngle_);
@@ -161,7 +161,7 @@ void CalculateAxisAngleModule::initialise()
 	processDAngle_->setKeyword<CharString>("LabelValue", "g(r)");
 	processDAngle_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
 	processDAngle_->setKeyword<CharString>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
-	SequenceProcedureNode* dAngleNormalisation = processDAngle_->addNormalisationBranch();
+	SequenceProcedureNode *dAngleNormalisation = processDAngle_->addNormalisationBranch();
 	dAngleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(y)"));
 	dAngleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
 	analyser_.addRootSequenceNode(processDAngle_);
@@ -171,8 +171,10 @@ void CalculateAxisAngleModule::initialise()
 	 */
 
 	// Calculation
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "DistanceRange", "Range (min, max, binwidth) of distance axis", "<min> <max> <binwidth> (Angstroms)");
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "AngleRange", "Range (min, max, binwidth) of angle axis", "<min> <max> <binwidth> (degrees)");
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "DistanceRange",
+		      "Range (min, max, binwidth) of distance axis", "<min> <max> <binwidth> (Angstroms)");
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "AngleRange",
+		      "Range (min, max, binwidth) of angle axis", "<min> <max> <binwidth> (degrees)");
 
 	// Sites
 	keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA", "Add site(s) which represent 'A' in the interaction A-B...C", "<Species> <Site> [<Species> <Site> ... ]");
@@ -186,4 +188,3 @@ void CalculateAxisAngleModule::initialise()
 	keywords_.link("Export", processAngle_->keywords().find("Save"), "SaveAngle", "Whether to save calculated A-B...C angle histrogram to disk", "<True|False>");
 	keywords_.link("Export", processDAngle_->keywords().find("Save"), "SaveDAngle", "Whether to save calculated A-B...C angle map to disk", "<True|False>");
 }
-

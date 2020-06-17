@@ -22,7 +22,7 @@
    </font>
   </property>
   <property name="windowTitle">
-   <string>Skeleton Controls</string>
+   <string>GeometryOptimisation Controls</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">

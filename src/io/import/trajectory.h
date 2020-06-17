@@ -30,39 +30,47 @@
 // Trajectory Import Formats
 class TrajectoryImportFileFormat : public FileAndFormat
 {
-	public:
+      public:
 	// Available trajectory formats
-	enum TrajectoryImportFormat { XYZTrajectory, nTrajectoryImportFormats };
-	// Constructor
+	enum TrajectoryImportFormat
+	{
+		XYZTrajectory,
+		nTrajectoryImportFormats
+	};
+	// Constructors
 	TrajectoryImportFileFormat(TrajectoryImportFormat format = XYZTrajectory);
+	TrajectoryImportFileFormat(const char *filename, TrajectoryImportFormat format = XYZTrajectory);
 	// Destructor
 	~TrajectoryImportFileFormat();
 
+	/*
+	 * Keyword Options
+	 */
+      private:
+	// Set up keywords for the format
+	void setUpKeywords();
 
 	/*
 	 * Format Access
 	 */
-	public:
+      public:
+	// Return enum options for TrajectoryImportFileFormat
+	static EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> trajectoryImportFormats();
 	// Return number of available formats
 	int nFormats() const;
-	// Return formats array
-	const char** formats() const;
-	// Return nice formats array
-	const char** niceFormats() const;
+	// Return format keyword for supplied index
+	const char *formatKeyword(int id) const;
+	// Return description string for supplied index
+	const char *formatDescription(int id) const;
 	// Return current format as TrajectoryImportFormat
 	TrajectoryImportFormat trajectoryFormat() const;
-
 
 	/*
 	 * Filename / Basename
 	 */
-	public:
+      public:
 	// Return whether the file must exist
-	bool fileMustExist() const
-	{
-		return true;
-	}
+	bool fileMustExist() const { return true; }
 };
 
 #endif
-

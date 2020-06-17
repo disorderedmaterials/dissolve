@@ -33,35 +33,32 @@ class SelectProcedureNode;
 // Procedure Node - Exclude
 class ExcludeProcedureNode : public ProcedureNode
 {
-	public:
+      public:
 	// Constructor
 	ExcludeProcedureNode();
 	// Destructor
 	~ExcludeProcedureNode();
 
-
 	/*
 	 * Identity
 	 */
-	public:
+      public:
 	// Return whether specified context is relevant for this node type
 	bool isContextRelevant(ProcedureNode::NodeContext context);
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Pair of nodes (sites) to compare when disallowing same Sites
-	Array<SelectProcedureNode*> sameSites_;
-
+	Array<SelectProcedureNode *> sameSites_;
 
 	/*
 	 * Execute
 	 */
-	public:
+      public:
 	// Execute node, targetting the supplied Configuration
-	ProcedureNode::NodeExecutionResult execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList);
+	ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
 };
 
 #endif

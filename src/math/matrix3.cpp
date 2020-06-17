@@ -23,32 +23,29 @@
 #include "base/messenger.h"
 
 // Constructor
-Matrix3::Matrix3()
-{
-	setIdentity();
-}
+Matrix3::Matrix3() { setIdentity(); }
 
 /*
  * Operators
  */
 
 // Matrix3 multiply (operator *) (return new matrix)
-Matrix3 Matrix3::operator*(const Matrix3& B) const
+Matrix3 Matrix3::operator*(const Matrix3 &B) const
 {
 	// [ row(A|this).column(B) ]
 	Matrix3 AB;
 
-	AB.matrix_[0] = matrix_[0]*B.matrix_[0] + matrix_[3]*B.matrix_[1] + matrix_[6]*B.matrix_[2];
-	AB.matrix_[1] = matrix_[1]*B.matrix_[0] + matrix_[4]*B.matrix_[1] + matrix_[7]*B.matrix_[2];
-	AB.matrix_[2] = matrix_[2]*B.matrix_[0] + matrix_[5]*B.matrix_[1] + matrix_[8]*B.matrix_[2];
+	AB.matrix_[0] = matrix_[0] * B.matrix_[0] + matrix_[3] * B.matrix_[1] + matrix_[6] * B.matrix_[2];
+	AB.matrix_[1] = matrix_[1] * B.matrix_[0] + matrix_[4] * B.matrix_[1] + matrix_[7] * B.matrix_[2];
+	AB.matrix_[2] = matrix_[2] * B.matrix_[0] + matrix_[5] * B.matrix_[1] + matrix_[8] * B.matrix_[2];
 
-	AB.matrix_[3] = matrix_[0]*B.matrix_[3] + matrix_[3]*B.matrix_[4] + matrix_[6]*B.matrix_[5];
-	AB.matrix_[4] = matrix_[1]*B.matrix_[3] + matrix_[4]*B.matrix_[4] + matrix_[7]*B.matrix_[5];
-	AB.matrix_[5] = matrix_[2]*B.matrix_[3] + matrix_[5]*B.matrix_[4] + matrix_[8]*B.matrix_[5];
+	AB.matrix_[3] = matrix_[0] * B.matrix_[3] + matrix_[3] * B.matrix_[4] + matrix_[6] * B.matrix_[5];
+	AB.matrix_[4] = matrix_[1] * B.matrix_[3] + matrix_[4] * B.matrix_[4] + matrix_[7] * B.matrix_[5];
+	AB.matrix_[5] = matrix_[2] * B.matrix_[3] + matrix_[5] * B.matrix_[4] + matrix_[8] * B.matrix_[5];
 
-	AB.matrix_[6] = matrix_[0]*B.matrix_[6] + matrix_[3]*B.matrix_[7] + matrix_[6]*B.matrix_[8];
-	AB.matrix_[7] = matrix_[1]*B.matrix_[6] + matrix_[4]*B.matrix_[7] + matrix_[7]*B.matrix_[8];
-	AB.matrix_[8] = matrix_[2]*B.matrix_[6] + matrix_[5]*B.matrix_[7] + matrix_[8]*B.matrix_[8];
+	AB.matrix_[6] = matrix_[0] * B.matrix_[6] + matrix_[3] * B.matrix_[7] + matrix_[6] * B.matrix_[8];
+	AB.matrix_[7] = matrix_[1] * B.matrix_[6] + matrix_[4] * B.matrix_[7] + matrix_[7] * B.matrix_[8];
+	AB.matrix_[8] = matrix_[2] * B.matrix_[6] + matrix_[5] * B.matrix_[7] + matrix_[8] * B.matrix_[8];
 
 	return AB;
 }
@@ -56,56 +53,59 @@ Matrix3 Matrix3::operator*(const Matrix3& B) const
 Matrix3 Matrix3::operator*(const double a) const
 {
 	Matrix3 AB;
-	for (int n=0; n<9; ++n) AB.matrix_[n] = matrix_[n] * a;
+	for (int n = 0; n < 9; ++n)
+		AB.matrix_[n] = matrix_[n] * a;
 	return AB;
 }
 
-Matrix3 Matrix3::operator+(const Matrix3& B) const
+Matrix3 Matrix3::operator+(const Matrix3 &B) const
 {
 	Matrix3 A;
-	for (int n=0; n<9; ++n) A[n] = matrix_[n] + B.matrix_[n];
+	for (int n = 0; n < 9; ++n)
+		A[n] = matrix_[n] + B.matrix_[n];
 	return A;
 }
 
-Matrix3 Matrix3::operator-(const Matrix3& B) const
+Matrix3 Matrix3::operator-(const Matrix3 &B) const
 {
 	Matrix3 A;
-	for (int n=0; n<9; ++n) A[n] = matrix_[n] - B.matrix_[n];
+	for (int n = 0; n < 9; ++n)
+		A[n] = matrix_[n] - B.matrix_[n];
 	return A;
 }
 
-Vec3<double> Matrix3::operator*(const Vec3<double>& v) const
+Vec3<double> Matrix3::operator*(const Vec3<double> &v) const
 {
 	Vec3<double> result;
-	result.x = v.x*matrix_[0] + v.y*matrix_[3] + v.z*matrix_[6];
-	result.y = v.x*matrix_[1] + v.y*matrix_[4] + v.z*matrix_[7];
-	result.z = v.x*matrix_[2] + v.y*matrix_[5] + v.z*matrix_[8];
+	result.x = v.x * matrix_[0] + v.y * matrix_[3] + v.z * matrix_[6];
+	result.y = v.x * matrix_[1] + v.y * matrix_[4] + v.z * matrix_[7];
+	result.z = v.x * matrix_[2] + v.y * matrix_[5] + v.z * matrix_[8];
 	return result;
 }
 
 // Matrix3 multiply (operator *=)
-Matrix3& Matrix3::operator*=(const Matrix3& B)
+Matrix3 &Matrix3::operator*=(const Matrix3 &B)
 {
 	// [ row(A|this).column(B) ]
 	Matrix3 AB;
 
-	AB.matrix_[0] = matrix_[0]*B.matrix_[0] + matrix_[3]*B.matrix_[1] + matrix_[6]*B.matrix_[2];
-	AB.matrix_[1] = matrix_[1]*B.matrix_[0] + matrix_[4]*B.matrix_[1] + matrix_[7]*B.matrix_[2];
-	AB.matrix_[2] = matrix_[2]*B.matrix_[0] + matrix_[5]*B.matrix_[1] + matrix_[8]*B.matrix_[2];
+	AB.matrix_[0] = matrix_[0] * B.matrix_[0] + matrix_[3] * B.matrix_[1] + matrix_[6] * B.matrix_[2];
+	AB.matrix_[1] = matrix_[1] * B.matrix_[0] + matrix_[4] * B.matrix_[1] + matrix_[7] * B.matrix_[2];
+	AB.matrix_[2] = matrix_[2] * B.matrix_[0] + matrix_[5] * B.matrix_[1] + matrix_[8] * B.matrix_[2];
 
-	AB.matrix_[3] = matrix_[0]*B.matrix_[3] + matrix_[3]*B.matrix_[4] + matrix_[6]*B.matrix_[5];
-	AB.matrix_[4] = matrix_[1]*B.matrix_[3] + matrix_[4]*B.matrix_[4] + matrix_[7]*B.matrix_[5];
-	AB.matrix_[5] = matrix_[2]*B.matrix_[3] + matrix_[5]*B.matrix_[4] + matrix_[8]*B.matrix_[5];
+	AB.matrix_[3] = matrix_[0] * B.matrix_[3] + matrix_[3] * B.matrix_[4] + matrix_[6] * B.matrix_[5];
+	AB.matrix_[4] = matrix_[1] * B.matrix_[3] + matrix_[4] * B.matrix_[4] + matrix_[7] * B.matrix_[5];
+	AB.matrix_[5] = matrix_[2] * B.matrix_[3] + matrix_[5] * B.matrix_[4] + matrix_[8] * B.matrix_[5];
 
-	AB.matrix_[6] = matrix_[0]*B.matrix_[6] + matrix_[3]*B.matrix_[7] + matrix_[6]*B.matrix_[8];
-	AB.matrix_[7] = matrix_[1]*B.matrix_[6] + matrix_[4]*B.matrix_[7] + matrix_[7]*B.matrix_[8];
-	AB.matrix_[8] = matrix_[2]*B.matrix_[6] + matrix_[5]*B.matrix_[7] + matrix_[8]*B.matrix_[8];
+	AB.matrix_[6] = matrix_[0] * B.matrix_[6] + matrix_[3] * B.matrix_[7] + matrix_[6] * B.matrix_[8];
+	AB.matrix_[7] = matrix_[1] * B.matrix_[6] + matrix_[4] * B.matrix_[7] + matrix_[7] * B.matrix_[8];
+	AB.matrix_[8] = matrix_[2] * B.matrix_[6] + matrix_[5] * B.matrix_[7] + matrix_[8] * B.matrix_[8];
 
 	*this = AB;
-	return* this;
+	return *this;
 }
 
-Matrix3& Matrix3::operator*=(const double a)
+Matrix3 &Matrix3::operator*=(const double a)
 {
 	matrix_[0] *= a;
 	matrix_[1] *= a;
@@ -121,10 +121,7 @@ Matrix3& Matrix3::operator*=(const double a)
 }
 
 // Array access (operator [])
-double& Matrix3::operator[](int index)
-{
-	return matrix_[index];
-}
+double &Matrix3::operator[](int index) { return matrix_[index]; }
 
 /*
  * General Routines
@@ -168,13 +165,10 @@ void Matrix3::zero()
 }
 
 // Return matrix array
-double *Matrix3::matrix()
-{
-	return matrix_;
-}
+double *Matrix3::matrix() { return matrix_; }
 
 // Return transpose of current matrix
-Matrix3& Matrix3::transpose()
+Matrix3 &Matrix3::transpose()
 {
 	static Matrix3 A;
 	A.matrix_[0] = matrix_[0];
@@ -192,8 +186,8 @@ Matrix3& Matrix3::transpose()
 // Calculate determinant
 double Matrix3::determinant() const
 {
-	double det = matrix_[0]*matrix_[4]*matrix_[8] + matrix_[1]*matrix_[5]*matrix_[6] + matrix_[2]*matrix_[3]*matrix_[7];
-	det -= matrix_[2]*matrix_[4]*matrix_[6] + matrix_[1]*matrix_[3]*matrix_[8] + matrix_[0]*matrix_[5]*matrix_[7];
+	double det = matrix_[0] * matrix_[4] * matrix_[8] + matrix_[1] * matrix_[5] * matrix_[6] + matrix_[2] * matrix_[3] * matrix_[7];
+	det -= matrix_[2] * matrix_[4] * matrix_[6] + matrix_[1] * matrix_[3] * matrix_[8] + matrix_[0] * matrix_[5] * matrix_[7];
 	return det;
 }
 
@@ -206,27 +200,29 @@ void Matrix3::invert()
 	bool pivoted[3];
 	int row, col, n, m;
 	double large, element;
-	for (n=0; n<3; ++n)
+	for (n = 0; n < 3; ++n)
 	{
 		pivotrows[n] = 0;
 		pivotcols[n] = 0;
 		pivoted[n] = false;
 	}
 	// Loop over columns to be reduced
-	for (n=0; n<3; ++n)
+	for (n = 0; n < 3; ++n)
 	{
 		// Locate suitable pivot element - find largest value in the matrix A
 		large = 0.0;
-		for (row=0; row<3; ++row)
+		for (row = 0; row < 3; ++row)
 		{
 			// Only search this row if it has not previously contained a pivot element
-			if (pivoted[row]) continue;
-			for (col=0; col<3; ++col)
+			if (pivoted[row])
+				continue;
+			for (col = 0; col < 3; ++col)
 			{
 				// Similarly, only look at the column element if the column hasn't been pivoted yet.
-				if (pivoted[col]) continue;
+				if (pivoted[col])
+					continue;
 				// Check the size of the element...
-				element = fabs(matrix_[row*3+col]);
+				element = fabs(matrix_[row * 3 + col]);
 				if (element > large)
 				{
 					large = element;
@@ -235,46 +231,50 @@ void Matrix3::invert()
 				}
 			}
 		}
-		
+
 		// Mark the pivot row/column as changed
 		pivoted[pivotcol] = true;
 		pivotrows[n] = pivotrow;
 		pivotcols[n] = pivotcol;
-		
+
 		// Exchange rows to put pivot element on the diagonal
 		if (pivotrow != pivotcol)
 		{
-			for (m=0; m<3; ++m)
+			for (m = 0; m < 3; ++m)
 			{
-				element = matrix_[pivotrow*3+m];
-				matrix_[pivotrow*3+m] = matrix_[pivotcol*3+m];
-				matrix_[pivotcol*3+m] = element;
+				element = matrix_[pivotrow * 3 + m];
+				matrix_[pivotrow * 3 + m] = matrix_[pivotcol * 3 + m];
+				matrix_[pivotcol * 3 + m] = element;
 			}
 		}
-		
+
 		// Now ready to divide through row elements.
-		element = 1.0 / matrix_[pivotcol*3+pivotcol];
-		matrix_[pivotcol*3+pivotcol] = 1.0;
-		for (m=0; m<3; ++m) matrix_[pivotcol*3+m] *= element;
-		
+		element = 1.0 / matrix_[pivotcol * 3 + pivotcol];
+		matrix_[pivotcol * 3 + pivotcol] = 1.0;
+		for (m = 0; m < 3; ++m)
+			matrix_[pivotcol * 3 + m] *= element;
+
 		// Divide through other rows by the relevant multiple of the pivot row
-		for (row=0; row<3; ++row)
+		for (row = 0; row < 3; ++row)
 		{
-			if (row == pivotcol) continue;
-			element = matrix_[row*3 + pivotcol];
-			matrix_[row*3 + pivotcol] = 0.0;
-			for (m=0; m<3; ++m) matrix_[row*3+m] = matrix_[row*3+m] - matrix_[pivotcol*3+m] * element;
+			if (row == pivotcol)
+				continue;
+			element = matrix_[row * 3 + pivotcol];
+			matrix_[row * 3 + pivotcol] = 0.0;
+			for (m = 0; m < 3; ++m)
+				matrix_[row * 3 + m] = matrix_[row * 3 + m] - matrix_[pivotcol * 3 + m] * element;
 		}
 	}
 	// Rearrange columns to undo row exchanges performed earlier
-	for (n=2; n>=0; --n)
+	for (n = 2; n >= 0; --n)
 	{
-		if (pivotrows[n] != pivotcols[n]) for (m=0; m<3; ++m)
-		{
-			element = matrix_[m*3+pivotrows[n]];
-			matrix_[m*3+pivotrows[n]] = matrix_[m*3+pivotcols[n]];
-			matrix_[m*3+pivotcols[n]] = element;
-		}
+		if (pivotrows[n] != pivotcols[n])
+			for (m = 0; m < 3; ++m)
+			{
+				element = matrix_[m * 3 + pivotrows[n]];
+				matrix_[m * 3 + pivotrows[n]] = matrix_[m * 3 + pivotcols[n]];
+				matrix_[m * 3 + pivotcols[n]] = element;
+			}
 	}
 }
 
@@ -295,7 +295,9 @@ double Matrix3::value(int n) const
 double Matrix3::max() const
 {
 	int maxId = 0;
-	for (int n=1; n<9; ++n) if (matrix_[n] > matrix_[maxId]) maxId = n;
+	for (int n = 1; n < 9; ++n)
+		if (matrix_[n] > matrix_[maxId])
+			maxId = n;
 	return matrix_[maxId];
 }
 
@@ -306,7 +308,7 @@ double Matrix3::max() const
 // Copy column contents to supplied Vec3
 Vec3<double> Matrix3::columnAsVec3(int col) const
 {
-	Vec3<double> vec(matrix_[col*3], matrix_[col*3+1], matrix_[col*3+2]);
+	Vec3<double> vec(matrix_[col * 3], matrix_[col * 3 + 1], matrix_[col * 3 + 2]);
 	return vec;
 }
 
@@ -314,56 +316,57 @@ Vec3<double> Matrix3::columnAsVec3(int col) const
 void Matrix3::setRow(int row, double x, double y, double z)
 {
 	matrix_[row] = x;
-	matrix_[3+row] = y;
-	matrix_[6+row] = z;
+	matrix_[3 + row] = y;
+	matrix_[6 + row] = z;
 }
 
 // Set specified column from supplied values
 void Matrix3::setColumn(int col, double a, double b, double c)
 {
-	matrix_[col*3] = a;
-	matrix_[col*3+1] = b;
-	matrix_[col*3+2] = c;
+	matrix_[col * 3] = a;
+	matrix_[col * 3 + 1] = b;
+	matrix_[col * 3 + 2] = c;
 }
 
 // Set specified column from supplied Vec3
 void Matrix3::setColumn(int col, const Vec3<double> vec)
 {
-	matrix_[col*3] = vec.x;
-	matrix_[col*3+1] = vec.y;
-	matrix_[col*3+2] = vec.z;
+	matrix_[col * 3] = vec.x;
+	matrix_[col * 3 + 1] = vec.y;
+	matrix_[col * 3 + 2] = vec.z;
 }
 
 // Adjust specified column from supplied values
 void Matrix3::adjustColumn(int col, double a, double b, double c)
 {
-	matrix_[col*3] += a;
-	matrix_[col*3+1] += b;
-	matrix_[col*3+2] += c;
+	matrix_[col * 3] += a;
+	matrix_[col * 3 + 1] += b;
+	matrix_[col * 3 + 2] += c;
 }
 
 // Adjust specified column from supplied Vec3
 void Matrix3::adjustColumn(int col, const Vec3<double> vec)
 {
-	matrix_[col*3] += vec.x;
-	matrix_[col*3+1] += vec.y;
-	matrix_[col*3+2] += vec.z;
+	matrix_[col * 3] += vec.x;
+	matrix_[col * 3 + 1] += vec.y;
+	matrix_[col * 3 + 2] += vec.z;
 }
 
 // Calculate column magnitude
 double Matrix3::columnMagnitude(int column) const
 {
 	double mag = 0.0;
-	for (int n=column*3; n<column*3+3; ++n) mag += (matrix_[n] * matrix_[n]);
+	for (int n = column * 3; n < column * 3 + 3; ++n)
+		mag += (matrix_[n] * matrix_[n]);
 	return sqrt(mag);
 }
 
 // Multiply column by single value
 void Matrix3::columnMultiply(int col, double d)
 {
-	matrix_[col*3] *= d;
-	matrix_[col*3+1] *= d;
-	matrix_[col*3+2] *= d;
+	matrix_[col * 3] *= d;
+	matrix_[col * 3 + 1] *= d;
+	matrix_[col * 3 + 2] *= d;
 }
 
 // Multiply first three columns by values in supplied vector
@@ -377,10 +380,10 @@ void Matrix3::columnMultiply(Vec3<double> vec)
 // Normalise specified column to 1
 void Matrix3::columnNormalise(int col)
 {
-	double mag = 1.0/sqrt(matrix_[col*3]*matrix_[col*3] + matrix_[col*3+1]*matrix_[col*3+1] + matrix_[col*3+2]*matrix_[col*3+2]);
-	matrix_[col*3] *= mag;
-	matrix_[col*3+1] *= mag;
-	matrix_[col*3+2] *= mag;
+	double mag = 1.0 / sqrt(matrix_[col * 3] * matrix_[col * 3] + matrix_[col * 3 + 1] * matrix_[col * 3 + 1] + matrix_[col * 3 + 2] * matrix_[col * 3 + 2]);
+	matrix_[col * 3] *= mag;
+	matrix_[col * 3 + 1] *= mag;
+	matrix_[col * 3 + 2] *= mag;
 }
 
 // Orthogonalise rotation matrix column w.r.t. one (or two) other columns)
@@ -406,7 +409,8 @@ void Matrix3::orthogonaliseColumn(int targetcol, int orthocol1, int orthocol2)
 		Vec3<double> newvec = source1 * source2;
 		newvec.normalise();
 		double dp = newvec.dp(v);
-		if (dp < 0.0) newvec *= -1.0;
+		if (dp < 0.0)
+			newvec *= -1.0;
 		v = newvec;
 	}
 	setColumn(targetcol, v);
@@ -419,7 +423,7 @@ void Matrix3::orthogonaliseColumn(int targetcol, int orthocol1, int orthocol2)
 // Create rotation matrix about X
 void Matrix3::createRotationX(double angle)
 {
-	double cosx, sinx, theta = angle/DEGRAD;
+	double cosx, sinx, theta = angle / DEGRAD;
 	cosx = cos(theta);
 	sinx = sin(theta);
 	matrix_[0] = 1.0;
@@ -438,28 +442,28 @@ void Matrix3::createRotationX(double angle)
 // Create XY rotation matrix
 void Matrix3::createRotationXY(double anglex, double angley)
 {
-	double cosx, sinx, cosy, siny, thetax = anglex/DEGRAD, thetay = angley/DEGRAD;
+	double cosx, sinx, cosy, siny, thetax = anglex / DEGRAD, thetay = angley / DEGRAD;
 	cosx = cos(thetax);
 	cosy = cos(thetay);
 	sinx = sin(thetax);
 	siny = sin(thetay);
 	matrix_[0] = cosy;
-	matrix_[1] = (-sinx)*(-siny);
-	matrix_[2] = -siny*cosx;
+	matrix_[1] = (-sinx) * (-siny);
+	matrix_[2] = -siny * cosx;
 
 	matrix_[3] = 0.0;
 	matrix_[4] = cosx;
 	matrix_[5] = sinx;
 
 	matrix_[6] = siny;
-	matrix_[7] = (-sinx)*cosy;
-	matrix_[8] = cosx*cosy;
+	matrix_[7] = (-sinx) * cosy;
+	matrix_[8] = cosx * cosy;
 }
 
 // Create rotation matrix about Y
 void Matrix3::createRotationY(double angle)
 {
-	double cosx, sinx, theta = angle/DEGRAD;
+	double cosx, sinx, theta = angle / DEGRAD;
 	cosx = cos(theta);
 	sinx = sin(theta);
 	matrix_[0] = cosx;
@@ -478,7 +482,7 @@ void Matrix3::createRotationY(double angle)
 // Create rotation matrix about Z
 void Matrix3::createRotationZ(double angle)
 {
-	double cosx, sinx, theta = angle/DEGRAD;
+	double cosx, sinx, theta = angle / DEGRAD;
 	cosx = cos(theta);
 	sinx = sin(theta);
 	matrix_[0] = cosx;
@@ -497,45 +501,45 @@ void Matrix3::createRotationZ(double angle)
 // Create axis rotation quaternion
 void Matrix3::createRotationAxis(double ax, double ay, double az, double angle, bool normalise)
 {
-	double cosx, sinx, theta = angle/DEGRAD, oneMcosx;
+	double cosx, sinx, theta = angle / DEGRAD, oneMcosx;
 	if (normalise)
 	{
-		double mag = sqrt(ax*ax + ay*ay + az*az);
+		double mag = sqrt(ax * ax + ay * ay + az * az);
 		ax /= mag;
 		ay /= mag;
 		az /= mag;
 	}
 	cosx = cos(theta);
 	sinx = sin(theta);
-	oneMcosx = 1.0-cosx;
-	matrix_[0] = ax*ax*oneMcosx + cosx;
-	matrix_[1] = ax*ay*oneMcosx - az*sinx;
-	matrix_[2] = ax*az*oneMcosx + ay*sinx;
+	oneMcosx = 1.0 - cosx;
+	matrix_[0] = ax * ax * oneMcosx + cosx;
+	matrix_[1] = ax * ay * oneMcosx - az * sinx;
+	matrix_[2] = ax * az * oneMcosx + ay * sinx;
 
-	matrix_[3] = ax*ay*oneMcosx + az*sinx;
-	matrix_[4] = ay*ay*oneMcosx + cosx;
-	matrix_[5] = ay*az*oneMcosx - ax*sinx;
+	matrix_[3] = ax * ay * oneMcosx + az * sinx;
+	matrix_[4] = ay * ay * oneMcosx + cosx;
+	matrix_[5] = ay * az * oneMcosx - ax * sinx;
 
-	matrix_[6] = ax*az*oneMcosx - ay*sinx;
-	matrix_[7] = ay*az*oneMcosx + ax*sinx;
-	matrix_[8] = az*az*oneMcosx + cosx;
+	matrix_[6] = ax * az * oneMcosx - ay * sinx;
+	matrix_[7] = ay * az * oneMcosx + ax * sinx;
+	matrix_[8] = az * az * oneMcosx + cosx;
 }
 
 // Apply rotation about X axis
 void Matrix3::applyRotationX(double angle)
 {
-	double cosx, sinx, theta = angle/DEGRAD, temp[3];
+	double cosx, sinx, theta = angle / DEGRAD, temp[3];
 	cosx = cos(theta);
 	sinx = sin(theta);
 
 	// Recalculate second column and store in temp values
-	temp[0] = matrix_[3]*cosx + matrix_[6]*-sinx;
-	temp[1] = matrix_[4]*cosx + matrix_[7]*-sinx;
-	temp[2] = matrix_[5]*cosx + matrix_[8]*-sinx;
+	temp[0] = matrix_[3] * cosx + matrix_[6] * -sinx;
+	temp[1] = matrix_[4] * cosx + matrix_[7] * -sinx;
+	temp[2] = matrix_[5] * cosx + matrix_[8] * -sinx;
 
-	matrix_[6] = matrix_[3]*sinx + matrix_[6]*cosx;
-	matrix_[7] = matrix_[4]*sinx + matrix_[7]*cosx;
-	matrix_[8] = matrix_[5]*sinx + matrix_[8]*cosx;
+	matrix_[6] = matrix_[3] * sinx + matrix_[6] * cosx;
+	matrix_[7] = matrix_[4] * sinx + matrix_[7] * cosx;
+	matrix_[8] = matrix_[5] * sinx + matrix_[8] * cosx;
 
 	matrix_[3] = temp[0];
 	matrix_[4] = temp[1];
@@ -545,37 +549,37 @@ void Matrix3::applyRotationX(double angle)
 // Apply axis rotation quaternion
 void Matrix3::applyRotationAxis(double ax, double ay, double az, double angle, bool normalise)
 {
-	double cosx, sinx, theta = angle/DEGRAD, temp[6], multipliers[9];
+	double cosx, sinx, theta = angle / DEGRAD, temp[6], multipliers[9];
 	if (normalise)
 	{
-		double mag = sqrt(ax*ax + ay*ay + az*az);
+		double mag = sqrt(ax * ax + ay * ay + az * az);
 		ax /= mag;
 		ay /= mag;
 		az /= mag;
 	}
 	cosx = cos(theta);
 	sinx = sin(theta);
-	multipliers[0] = ax*ax*(1.0-cosx) + cosx;
-	multipliers[1] = ax*ay*(1.0-cosx) + az*sinx;
-	multipliers[2] = ax*az*(1.0-cosx) - ay*sinx;
-	multipliers[3] = ax*ay*(1.0-cosx) - az*sinx;
-	multipliers[4] = ay*ay*(1.0-cosx) + cosx;
-	multipliers[5] = ay*az*(1.0-cosx) + ax*sinx;
-	multipliers[6] = ax*az*(1.0-cosx) + ay*sinx;
-	multipliers[7] = ay*az*(1.0-cosx) - ax*sinx;
-	multipliers[8] = az*az*(1.0-cosx) + cosx;
+	multipliers[0] = ax * ax * (1.0 - cosx) + cosx;
+	multipliers[1] = ax * ay * (1.0 - cosx) + az * sinx;
+	multipliers[2] = ax * az * (1.0 - cosx) - ay * sinx;
+	multipliers[3] = ax * ay * (1.0 - cosx) - az * sinx;
+	multipliers[4] = ay * ay * (1.0 - cosx) + cosx;
+	multipliers[5] = ay * az * (1.0 - cosx) + ax * sinx;
+	multipliers[6] = ax * az * (1.0 - cosx) + ay * sinx;
+	multipliers[7] = ay * az * (1.0 - cosx) - ax * sinx;
+	multipliers[8] = az * az * (1.0 - cosx) + cosx;
 
-	temp[0] = matrix_[0]*multipliers[0] + matrix_[3]*multipliers[1] + matrix_[6]*multipliers[2];
-	temp[1] = matrix_[1]*multipliers[0] + matrix_[4]*multipliers[1] + matrix_[7]*multipliers[2];
-	temp[2] = matrix_[2]*multipliers[0] + matrix_[5]*multipliers[1] + matrix_[8]*multipliers[2];
+	temp[0] = matrix_[0] * multipliers[0] + matrix_[3] * multipliers[1] + matrix_[6] * multipliers[2];
+	temp[1] = matrix_[1] * multipliers[0] + matrix_[4] * multipliers[1] + matrix_[7] * multipliers[2];
+	temp[2] = matrix_[2] * multipliers[0] + matrix_[5] * multipliers[1] + matrix_[8] * multipliers[2];
 
-	temp[3] = matrix_[0]*multipliers[3] + matrix_[3]*multipliers[4] + matrix_[6]*multipliers[5];
-	temp[4] = matrix_[1]*multipliers[3] + matrix_[4]*multipliers[4] + matrix_[7]*multipliers[5];
-	temp[5] = matrix_[2]*multipliers[3] + matrix_[5]*multipliers[4] + matrix_[8]*multipliers[5];
+	temp[3] = matrix_[0] * multipliers[3] + matrix_[3] * multipliers[4] + matrix_[6] * multipliers[5];
+	temp[4] = matrix_[1] * multipliers[3] + matrix_[4] * multipliers[4] + matrix_[7] * multipliers[5];
+	temp[5] = matrix_[2] * multipliers[3] + matrix_[5] * multipliers[4] + matrix_[8] * multipliers[5];
 
-	matrix_[6] = matrix_[0]*multipliers[6] + matrix_[3]*multipliers[7] + matrix_[6]*multipliers[8];
-	matrix_[7] = matrix_[1]*multipliers[6] + matrix_[4]*multipliers[7] + matrix_[7]*multipliers[8];
-	matrix_[8] = matrix_[2]*multipliers[6] + matrix_[5]*multipliers[7] + matrix_[8]*multipliers[8];
+	matrix_[6] = matrix_[0] * multipliers[6] + matrix_[3] * multipliers[7] + matrix_[6] * multipliers[8];
+	matrix_[7] = matrix_[1] * multipliers[6] + matrix_[4] * multipliers[7] + matrix_[7] * multipliers[8];
+	matrix_[8] = matrix_[2] * multipliers[6] + matrix_[5] * multipliers[7] + matrix_[8] * multipliers[8];
 
 	matrix_[0] = temp[0];
 	matrix_[1] = temp[1];
@@ -644,9 +648,9 @@ void Matrix3::applyScalingZ(double scale)
 Vec3<double> Matrix3::transform(double x, double y, double z) const
 {
 	Vec3<double> result;
-	result.x = x*matrix_[0] + y*matrix_[3] + z*matrix_[6];
-	result.y = x*matrix_[1] + y*matrix_[4] + z*matrix_[7];
-	result.z = x*matrix_[2] + y*matrix_[5] + z*matrix_[8];
+	result.x = x * matrix_[0] + y * matrix_[3] + z * matrix_[6];
+	result.y = x * matrix_[1] + y * matrix_[4] + z * matrix_[7];
+	result.z = x * matrix_[2] + y * matrix_[5] + z * matrix_[8];
 	return result;
 }
 
@@ -654,9 +658,9 @@ Vec3<double> Matrix3::transform(double x, double y, double z) const
 Vec3<double> Matrix3::transform(Vec3<double> vec) const
 {
 	Vec3<double> result;
-	result.x = vec.x*matrix_[0] + vec.y*matrix_[3] + vec.z*matrix_[6];
-	result.y = vec.x*matrix_[1] + vec.y*matrix_[4] + vec.z*matrix_[7];
-	result.z = vec.x*matrix_[2] + vec.y*matrix_[5] + vec.z*matrix_[8];
+	result.x = vec.x * matrix_[0] + vec.y * matrix_[3] + vec.z * matrix_[6];
+	result.y = vec.x * matrix_[1] + vec.y * matrix_[4] + vec.z * matrix_[7];
+	result.z = vec.x * matrix_[2] + vec.y * matrix_[5] + vec.z * matrix_[8];
 	return result;
 }
 
@@ -665,12 +669,12 @@ Vec3<double> Matrix3::transform(Vec3<double> vec) const
  */
 
 // Construct 'cross-product' matrix of the supplied vector using cyclic permutations
-void Matrix3::makeCrossProductMatrix(Vec3<double>& v)
+void Matrix3::makeCrossProductMatrix(Vec3<double> &v)
 {
 	Vec3<double> temp;
-	for (int n=0; n<3; ++n)
+	for (int n = 0; n < 3; ++n)
 	{
-		temp = Vec3<double>::unit(DissolveMath::cp3(n+1)) * v.get(DissolveMath::cp3(n+2)) - Vec3<double>::unit(DissolveMath::cp3(n+2)) * v.get(DissolveMath::cp3(n+1));
+		temp = Vec3<double>::unit(DissolveMath::cp3(n + 1)) * v.get(DissolveMath::cp3(n + 2)) - Vec3<double>::unit(DissolveMath::cp3(n + 2)) * v.get(DissolveMath::cp3(n + 1));
 		setColumn(n, temp);
 	}
 }

@@ -20,212 +20,144 @@
 */
 
 #include "data/elementcolours.h"
-#include "base/messenger.h"
 
-// Static Singletons
-Array< List<ElementColour> > ElementColours::coloursByElementPrivate_;
-
-/*
- * Isotopic Neutron Scattering Data
- */
-
-// Constructor
-ElementColour::ElementColour(int z, float r, float g, float b, float a) : ElementReference(z), ListItem<ElementColour>()
+namespace ElementColours
 {
-	// Set the colour data
-	colour_[0] = r;
-	colour_[1] = g;
-	colour_[2] = b;
-	colour_[3] = a;
 
-	// Add this isotope to its parent element's list
-	ElementColours::registerElementColour(this, z);
-}
-
-// Assignment Operator
-ElementColour& ElementColour::operator=(const ElementColour& source)
+struct color
 {
-	colour_[0] = source.colour_[0];
-	colour_[1] = source.colour_[1];
-	colour_[2] = source.colour_[2];
-	colour_[3] = source.colour_[3];
+	float red;
+	float green;
+	float blue;
+	float alpha;
+};
 
-	return (*this);
-}
+constexpr color const colours_[] = {
+    // R	G	B	A
+    {0.5, 0.5, 0.5, 1.0},       // XX
+    {0.87, 0.87, 0.87, 1.0},    // H
+    {1.0, 0.784, 0.784, 1.0},   // HE
+    {0.647, 0.165, 0.165, 1.0}, // LI
+    {0.0, 0.0, 0.0, 1.0},       // BE
+    {0.0, 1.0, 0.0, 1.0},       // B
+    {0.0, 1.0, 0.2, 1.0},       // C
+    {0.561, 0.561, 1.0, 1.0},   // N
+    {1.0, 0.0, 0.0, 1.0},       // O
+    {0.784, 0.647, 0.094, 1.0}, // F
+    {0.0, 0.0, 0.0, 1.0},       // NE
+    {0.0, 0.0, 1.0, 1.0},       // NA
+    {0.0, 0.0, 0.0, 1.0},       // MG
+    {0.561, 0.561, 1.0, 1.0},   // AL
+    {0.784, 0.647, 0.094, 1.0}, // SI
+    {1.0, 0.647, 0.0, 1.0},     // P
+    {1.0, 0.784, 0.196, 1.0},   // S
+    {0.0, 1.0, 0.0, 1.0},       // CL
+    {0.0, 1.0, 0.0, 1.0},       // AR
+    {0.0, 1.0, 0.0, 1.0},       // K
+    {1.0, 1.0, 1.0, 1.0},       // CA
+    {1.0, 0.86, 0.66, 1.0},     // SC
+    {0.7, 0.7, 0.7, 1.0},       // TI
+    {0.7, 0.7, 0.7, 1.0},       // V
+    {0.7, 0.7, 0.7, 1.0},       // CR
+    {0.7, 0.7, 0.7, 1.0},       // MN
+    {1.0, 0.647, 0.0, 1.0},     // FE
+    {0.647, 0.165, 0.165, 1.0}, // CO
+    {0.647, 0.165, 0.165, 1.0}, // NI
+    {0.647, 0.165, 0.165, 1.0}, // CU
+    {0.647, 0.165, 0.165, 1.0}, // ZN
+    {0.647, 0.165, 0.165, 1.0}, // GA
+    {0.647, 0.165, 0.165, 1.0}, // GE
+    {0.647, 0.165, 0.165, 1.0}, // AS
+    {0.647, 0.165, 0.165, 1.0}, // SE
+    {0.647, 0.165, 0.165, 1.0}, // BR
+    {0.6, 0.6, 0.6, 1.0},       // KR
+    {0.0, 1.0, 0.0, 1.0},       // RB
+    {0.0, 1.0, 0.0, 1.0},       // SR
+    {0.647, 0.165, 0.165, 1.0}, // Y
+    {0.784, 0.647, 0.094, 1.0}, // ZR
+    {1.0, 1.0, 1.0, 1.0},       // NB
+    {1.0, 1.0, 1.0, 1.0},       // MO
+    {1.0, 1.0, 1.0, 1.0},       // TC
+    {1.0, 1.0, 1.0, 1.0},       // RU
+    {1.0, 1.0, 1.0, 1.0},       // RH
+    {1.0, 1.0, 1.0, 1.0},       // PD
+    {0.6, 0.6, 0.6, 1.0},       // AG
+    {0.0, 1.0, 0.0, 1.0},       // CD
+    {1.0, 1.0, 1.0, 1.0},       // IN
+    {1.0, 1.0, 1.0, 1.0},       // SN
+    {1.0, 1.0, 1.0, 1.0},       // SB
+    {1.0, 1.0, 1.0, 1.0},       // TE
+    {1.0, 1.0, 1.0, 1.0},       // I
+    {1.0, 1.0, 1.0, 1.0},       // XE
+    {0.647, 0.165, 0.165, 1.0}, // CS
+    {1.0, 1.0, 1.0, 1.0},       // BA
+    {1.0, 1.0, 1.0, 1.0},       // LA
+    {1.0, 1.0, 1.0, 1.0},       // CE
+    {1.0, 1.0, 1.0, 1.0},       // PR
+    {1.0, 1.0, 1.0, 1.0},       // ND
+    {1.0, 1.0, 1.0, 1.0},       // PM
+    {1.0, 1.0, 1.0, 1.0},       // SM
+    {1.0, 1.0, 1.0, 1.0},       // EU
+    {1.0, 1.0, 1.0, 1.0},       // GD
+    {1.0, 1.0, 1.0, 1.0},       // TB
+    {1.0, 1.0, 1.0, 1.0},       // DY
+    {1.0, 1.0, 1.0, 1.0},       // HO
+    {1.0, 1.0, 1.0, 1.0},       // ER
+    {1.0, 1.0, 1.0, 1.0},       // TM
+    {1.0, 1.0, 1.0, 1.0},       // YB
+    {1.0, 1.0, 1.0, 1.0},       // LU
+    {1.0, 1.0, 1.0, 1.0},       // HF
+    {1.0, 1.0, 1.0, 1.0},       // TA
+    {1.0, 1.0, 1.0, 1.0},       // W
+    {1.0, 1.0, 1.0, 1.0},       // RE
+    {1.0, 1.0, 1.0, 1.0},       // OS
+    {1.0, 1.0, 1.0, 1.0},       // IR
+    {1.0, 1.0, 1.0, 1.0},       // PT
+    {0.784, 0.647, 0.094, 1.0}, // AU
+    {1.0, 1.0, 1.0, 1.0},       // HG
+    {1.0, 1.0, 1.0, 1.0},       // TL
+    {1.0, 1.0, 1.0, 1.0},       // PB
+    {1.0, 1.0, 1.0, 1.0},       // BI
+    {1.0, 1.0, 1.0, 1.0},       // PO
+    {1.0, 1.0, 1.0, 1.0},       // AT
+    {1.0, 1.0, 1.0, 1.0},       // RN
+    {1.0, 1.0, 1.0, 1.0},       // FR
+    {1.0, 1.0, 1.0, 1.0},       // RA
+    {1.0, 1.0, 1.0, 1.0},       // AC
+    {1.0, 1.0, 1.0, 1.0},       // TH
+    {1.0, 1.0, 1.0, 1.0},       // PA
+    {1.0, 1.0, 1.0, 1.0},       // U
+    {1.0, 1.0, 1.0, 1.0},       // NP
+    {1.0, 1.0, 1.0, 1.0},       // PU
+    {1.0, 1.0, 1.0, 1.0},       // AM
+    {1.0, 1.0, 1.0, 1.0},       // CM
+    {1.0, 1.0, 1.0, 1.0},       // BK
+    {1.0, 1.0, 1.0, 1.0},       // CF
+    {1.0, 1.0, 1.0, 1.0},       // ES
+    {1.0, 1.0, 1.0, 1.0},       // FM
+    {1.0, 1.0, 1.0, 1.0},       // MD
+    {1.0, 1.0, 1.0, 1.0},       // NO
+    {1.0, 1.0, 1.0, 1.0},       // LR
+    {1.0, 1.0, 1.0, 1.0},       // RF
+    {1.0, 1.0, 1.0, 1.0},       // DB
+    {1.0, 1.0, 1.0, 1.0},       // SG
+    {1.0, 1.0, 1.0, 1.0},       // BH
+    {1.0, 1.0, 1.0, 1.0},       // HS
+    {1.0, 1.0, 1.0, 1.0},       // MT
+    {1.0, 1.0, 1.0, 1.0},       // DS
+    {1.0, 1.0, 1.0, 1.0},       // RG
+    {1.0, 1.0, 1.0, 1.0},       // CN
+    {1.0, 1.0, 1.0, 1.0},       // NH
+    {1.0, 1.0, 1.0, 1.0},       // FL
+    {1.0, 1.0, 1.0, 1.0},       // MC
+    {1.0, 1.0, 1.0, 1.0},       // LV
+    {1.0, 1.0, 1.0, 1.0},       // TS
+    {1.0, 1.0, 1.0, 1.0}	// OG
+};
 
-// Return colour
-const float* ElementColour::colour() const
-{
-	return colour_;
-}
-
-/*
- * Element Colours
- */
-
-// Return colour data, grouped by element
-List<ElementColour>& ElementColours::coloursByElement(int Z)
-{
-	// Has the master array been initialised yet? If not, do it now, before the Sears data is constructed
-	if (coloursByElementPrivate_.nItems() == 0)
-	{
-		/*
-		 * Create the array, and set all Lists to only disown their items on destruction, rather than deleting them.
-		 * Need to do this otherwise each Isotope will be destructed twice - once from the List<T> destructor, and once
-		 * again from the destruction of the static array colourData.
-		 */
-		coloursByElementPrivate_.initialise(Elements::nElements());
-		for (int n=0; n<Elements::nElements(); ++n) coloursByElementPrivate_[n].setDisownOnDestruction(true);
-	}
-
-	/* Copied from Aten */
-
-	static ElementColour colourData[] = {
-	//	Z	El	R	G	B	A
-		{ ELEMENT_XX,	0.5,	0.5,	0.5,	1.0 },
-		{ ELEMENT_H,	0.87,	0.87,	0.87,	1.0 },
-		{ ELEMENT_HE,	1.0,	0.784,	0.784,	1.0 },
-		{ ELEMENT_LI,	0.647,	0.165,	0.165,	1.0 },
-		{ ELEMENT_BE,	0.0,	0.0,	0.0,	1.0 },
-		{ ELEMENT_B,	0.0,	1.0,	0.0,	1.0 },
-		{ ELEMENT_C,	0.0,	1.0,	0.2,	1.0 },
-		{ ELEMENT_N,	0.561,	0.561,	1.0,	1.0 },
-		{ ELEMENT_O,	1.0,	0.0,	0.0,	1.0 },
-		{ ELEMENT_F,	0.784,	0.647,	0.094,	1.0 },
-		{ ELEMENT_NE,	0.0,	0.0,	0.0,	1.0 },
-		{ ELEMENT_NA,	0.0,	0.0,	1.0,	1.0 },
-		{ ELEMENT_MG,	0.0,	0.0,	0.0,	1.0 },
-		{ ELEMENT_AL,	0.561,	0.561,	1.0,	1.0 },
-		{ ELEMENT_SI,	0.784,	0.647,	0.094,	1.0 },
-		{ ELEMENT_P,	1.0,	0.647,	0.0,	1.0 },
-		{ ELEMENT_S,	1.0,	0.784,	0.196,	1.0 },
-		{ ELEMENT_CL,	0.0,	1.0,	0.0,	1.0 },
-		{ ELEMENT_AR,	0.0,	1.0,	0.0,	1.0 },
-		{ ELEMENT_K,	0.0,	1.0,	0.0,	1.0 },
-		{ ELEMENT_CA,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_SC,	1.0,	0.86,	0.66,	1.0 },
-		{ ELEMENT_TI,	0.7,	0.7,	0.7,	1.0 },
-		{ ELEMENT_V,	0.7,	0.7,	0.7,	1.0 },
-		{ ELEMENT_CR,	0.7,	0.7,	0.7,	1.0 },
-		{ ELEMENT_MN,	0.7,	0.7,	0.7,	1.0 },
-		{ ELEMENT_FE,	1.0,	0.647,	0.0,	1.0 },
-		{ ELEMENT_CO,	0.647,	0.165,	0.165,	1.0 },
-		{ ELEMENT_NI,	0.647,	0.165,	0.165,	1.0 },
-		{ ELEMENT_CU,	0.647,	0.165,	0.165,	1.0 },
-		{ ELEMENT_ZN,	0.647,	0.165,	0.165,	1.0 },
-		{ ELEMENT_GA,	0.647,	0.165,	0.165,	1.0 },
-		{ ELEMENT_GE,	0.647,	0.165,	0.165,	1.0 },
-		{ ELEMENT_AS,	0.647,	0.165,	0.165,	1.0 },
-		{ ELEMENT_SE,	0.647,	0.165,	0.165,	1.0 },
-		{ ELEMENT_BR,	0.647,	0.165,	0.165,	1.0 },
-		{ ELEMENT_KR,	0.6,	0.6,	0.6,	1.0 },
-		{ ELEMENT_RB,	0.0,	1.0,	0.0,	1.0 },
-		{ ELEMENT_SR,	0.0,	1.0,	0.0,	1.0 },
-		{ ELEMENT_Y,	0.647,	0.165,	0.165,	1.0 },
-		{ ELEMENT_ZR,	0.784,	0.647,	0.094,	1.0 },
-		{ ELEMENT_NB,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_MO,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_TC,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_RU,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_RH,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_PD,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_AG,	0.6,	0.6,	0.6,	1.0 },
-		{ ELEMENT_CD,	0.0,	1.0,	0.0,	1.0 },
-		{ ELEMENT_IN,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_SN,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_SB,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_TE,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_I,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_XE,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_CS,	0.647,	0.165,	0.165,	1.0 },
-		{ ELEMENT_BA,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_LA,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_CE,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_PR,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_ND,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_PM,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_SM,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_EU,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_GD,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_TB,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_DY,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_HO,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_ER,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_TM,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_YB,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_LU,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_HF,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_TA,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_W,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_RE,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_OS,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_IR,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_PT,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_AU,	0.784,	0.647,	0.094,	1.0 },
-		{ ELEMENT_HG,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_TL,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_PB,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_BI,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_PO,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_AT,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_RN,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_FR,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_RA,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_AC,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_TH,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_PA,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_U,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_NP,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_PU,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_AM,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_CM,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_BK,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_CF,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_ES,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_FM,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_MD,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_NO,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_LR,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_RF,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_DB,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_SG,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_BH,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_HS,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_MT,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_DS,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_RG,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_CN,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_NH,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_FL,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_MC,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_LV,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_TS,	1.0,	1.0,	1.0,	1.0 },
-		{ ELEMENT_OG,	1.0,	1.0,	1.0,	1.0 }
-	};
-
-	if ((Z < 0) || (Z > nElements()))
-	{
-		Messenger::error("ElementColours::coloursByElement() - Element with Z=%i is out of range!\n", Z);
-		return coloursByElementPrivate_[0];
-	}
-
-	return coloursByElementPrivate_[Z];
-}
-
-// Register specified Isotope to given Element
-void ElementColours::registerElementColour(ElementColour* ec, int Z)
-{
-	coloursByElementPrivate_[Z].own(ec);
-}
+const float *colour(int Z) { return reinterpret_cast<const float *>(&colours_[Z]); }
 
 // Return colour for specified Element
-const float* ElementColours::colour(int Z)
-{
-	return coloursByElement(Z).first()->colour();
-}
+const float *colour(Element *el) { return reinterpret_cast<const float *>(&colours_[el->Z()]); }
 
-// Return colour for specified Element
-const float* ElementColours::colour(Element* el)
-{
-	return coloursByElement(el->Z()).first()->colour();
-}
+} // namespace ElementColours

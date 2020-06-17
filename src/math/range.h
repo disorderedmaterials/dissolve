@@ -27,19 +27,18 @@
 // Range
 class Range
 {
-	public:
+      public:
 	// Constructor / Destructor
 	Range(double minimum = 0.0, double maximum = 0.0);
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Minimum and maximum for range
 	double minimum_, maximum_;
 
-	public:
+      public:
 	// Set range
 	void set(double minimum, double maximum);
 	// Set minimum for range
@@ -55,4 +54,3 @@ class Range
 };
 
 #endif
-

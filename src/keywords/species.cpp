@@ -20,38 +20,28 @@
 */
 
 #include "keywords/species.h"
+#include "base/lineparser.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
-#include "base/lineparser.h"
 
 // Constructor
-SpeciesKeyword::SpeciesKeyword(Species* sp) : KeywordData<Species*>(KeywordBase::SpeciesData, sp)
-{
-}
+SpeciesKeyword::SpeciesKeyword(Species *sp) : KeywordData<Species *>(KeywordBase::SpeciesData, sp) {}
 
 // Destructor
-SpeciesKeyword::~SpeciesKeyword()
-{
-}
+SpeciesKeyword::~SpeciesKeyword() {}
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int SpeciesKeyword::minArguments() const
-{
-	return 1;
-}
+int SpeciesKeyword::minArguments() const { return 1; }
 
 // Return maximum number of arguments accepted
-int SpeciesKeyword::maxArguments() const
-{
-	return 1;
-}
+int SpeciesKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool SpeciesKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool SpeciesKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
 	// Find target Species (first argument)
 	data_ = coreData.findSpecies(parser.argc(startArg));
@@ -67,13 +57,15 @@ bool SpeciesKeyword::read(LineParser& parser, int startArg, const CoreData& core
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool SpeciesKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	if (data_)
 	{
-		if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_->name())) return false;
+		if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_->name()))
+			return false;
 	}
-	else if (!parser.writeLineF("%s%s  '?_?'\n", prefix, name())) return false;
+	else if (!parser.writeLineF("%s%s  '?_?'\n", prefix, name()))
+		return false;
 
 	return true;
 }
@@ -83,7 +75,8 @@ bool SpeciesKeyword::write(LineParser& parser, const char* keywordName, const ch
  */
 
 // Prune any references to the supplied Species in the contained data
-void SpeciesKeyword::removeReferencesTo(Species* sp)
+void SpeciesKeyword::removeReferencesTo(Species *sp)
 {
-	if (data_ == sp) data_ = NULL;
+	if (data_ == sp)
+		data_ = NULL;
 }

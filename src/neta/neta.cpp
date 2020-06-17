@@ -20,25 +20,19 @@
 */
 
 #include "neta/neta.h"
+#include "base/messenger.h"
+#include "base/sysfunc.h"
+#include "data/ffatomtype.h"
 #include "neta/generator.h"
 #include "neta/node.h"
-#include "data/ffatomtype.h"
-#include "base/sysfunc.h"
-#include "base/messenger.h"
 #include <stdarg.h>
 #include <string.h>
 
 // Constructor
-NETADefinition::NETADefinition(const char* netaDefinition, const Forcefield* associatedFF) : rootNode_(this)
-{
-	set(netaDefinition, associatedFF);
-}
+NETADefinition::NETADefinition(const char *netaDefinition, const Forcefield *associatedFF) : rootNode_(this) { set(netaDefinition, associatedFF); }
 
 // Destructor
-NETADefinition::~NETADefinition()
-{
-	clear();
-}
+NETADefinition::~NETADefinition() { clear(); }
 
 /*
  * Data
@@ -52,13 +46,10 @@ void NETADefinition::clear()
 }
 
 // Return root node pointer
-NETARootNode* NETADefinition::rootNode()
-{
-	return &rootNode_;
-}
+NETARootNode *NETADefinition::rootNode() { return &rootNode_; }
 
 // Set NETADefinition from supplied string
-bool NETADefinition::set(const char* netaDefinition, const Forcefield* associatedFF)
+bool NETADefinition::set(const char *netaDefinition, const Forcefield *associatedFF)
 {
 	clear();
 
@@ -70,23 +61,17 @@ bool NETADefinition::set(const char* netaDefinition, const Forcefield* associate
 }
 
 // Set generating string
-void NETADefinition::setDefinitionString(const char* definition)
-{
-	definitionString_ = definition;
-}
+void NETADefinition::setDefinitionString(const char *definition) { definitionString_ = definition; }
 
 // Return original generating string
-const char* NETADefinition::definitionString() const
-{
-	return definitionString_.get();
-}
+const char *NETADefinition::definitionString() const { return definitionString_.get(); }
 
 /*
  * Matching
  */
 
 // Check supplied atom to see if it matches this NETA description
-int NETADefinition::score(const SpeciesAtom* i) const
+int NETADefinition::score(const SpeciesAtom *i) const
 {
 	RefList<const SpeciesAtom> matchPath;
 	return rootNode_.score(i, matchPath);

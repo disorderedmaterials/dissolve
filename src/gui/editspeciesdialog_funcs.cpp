@@ -22,7 +22,7 @@
 #include "gui/editspeciesdialog.h"
 
 // Constructor
-EditSpeciesDialog::EditSpeciesDialog(QWidget* parent, Species* sp)
+EditSpeciesDialog::EditSpeciesDialog(QWidget *parent, Species *sp)
 {
 	ui_.setupUi(this);
 
@@ -36,27 +36,13 @@ EditSpeciesDialog::EditSpeciesDialog(QWidget* parent, Species* sp)
 }
 
 // Destructor
-EditSpeciesDialog::~EditSpeciesDialog()
-{
-}
+EditSpeciesDialog::~EditSpeciesDialog() {}
 
-void EditSpeciesDialog::on_CancelButton_clicked(bool checked)
-{
-	reject();
-}
+void EditSpeciesDialog::on_CancelButton_clicked(bool checked) { reject(); }
 
-void EditSpeciesDialog::on_OKButton_clicked(bool checked)
-{
-	accept();
-}
+void EditSpeciesDialog::on_OKButton_clicked(bool checked) { accept(); }
 
-void EditSpeciesDialog::dataModified()
-{
-	ui_.OKButton->setEnabled(species_->nAtoms() > 0);
-}
+void EditSpeciesDialog::dataModified() { ui_.OKButton->setEnabled(species_->nAtoms() > 0); }
 
 // Run the dialog, returning whether it was accepted
-bool EditSpeciesDialog::editSpecies()
-{
-	return (exec() == QDialog::Accepted);
-}
+bool EditSpeciesDialog::editSpecies() { return (exec() == QDialog::Accepted); }

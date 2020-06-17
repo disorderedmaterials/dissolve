@@ -1,10 +1,7 @@
 ---
 title: Liquid Argon
-parent: Examples
-has_children: true
 weight: 1
 ---
-# Liquid Argon
 
 {{< label color="blue" text="20 minute read" >}}
 

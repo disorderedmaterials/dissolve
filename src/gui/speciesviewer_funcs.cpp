@@ -19,13 +19,13 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/speciesviewer.hui"
-#include "gui/render/renderablespecies.h"
 #include "classes/species.h"
 #include "data/elements.h"
+#include "gui/render/renderablespecies.h"
+#include "gui/speciesviewer.hui"
 
 // Constructor
-SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
+SpeciesViewer::SpeciesViewer(QWidget *parent) : BaseViewer(parent)
 {
 	// Source data
 	species_ = NULL;
@@ -47,9 +47,7 @@ SpeciesViewer::SpeciesViewer(QWidget* parent) : BaseViewer(parent)
 }
 
 // Destructor
-SpeciesViewer::~SpeciesViewer()
-{
-}
+SpeciesViewer::~SpeciesViewer() {}
 
 /*
  * Target Species
@@ -77,10 +75,7 @@ void SpeciesViewer::setSpecies(Species *sp)
 }
 
 // Return target Species
-Species* SpeciesViewer::species() const
-{
-	return species_;
-}
+Species *SpeciesViewer::species() const { return species_; }
 
 /*
  * Renderable
@@ -89,15 +84,17 @@ Species* SpeciesViewer::species() const
 // Set renderable drawing style
 void SpeciesViewer::setRenderableDrawStyle(RenderableSpecies::SpeciesDisplayStyle ds)
 {
-	if (speciesRenderable_) speciesRenderable_->setDisplayStyle(ds);
-// 	else Messenger::warn("No RenderableSpecies exists, so can't set its draw style.\n");
+	if (speciesRenderable_)
+		speciesRenderable_->setDisplayStyle(ds);
+	// 	else Messenger::warn("No RenderableSpecies exists, so can't set its draw style.\n");
 }
 
 // Return current renderable draw style
 RenderableSpecies::SpeciesDisplayStyle SpeciesViewer::renderableDrawStyle() const
 {
-	if (speciesRenderable_) return speciesRenderable_->displayStyle();
-// 	else Messenger::warn("No RenderableSpecies exists, so can't return its draw style.\n");
+	if (speciesRenderable_)
+		return speciesRenderable_->displayStyle();
+	// 	else Messenger::warn("No RenderableSpecies exists, so can't return its draw style.\n");
 
 	return RenderableSpecies::LinesStyle;
 }
@@ -105,5 +102,6 @@ RenderableSpecies::SpeciesDisplayStyle SpeciesViewer::renderableDrawStyle() cons
 // Recreate selection primitive
 void SpeciesViewer::recreateSelectionPrimitive()
 {
-	if (speciesRenderable_) speciesRenderable_->recreateSelectionPrimitive();
+	if (speciesRenderable_)
+		speciesRenderable_->recreateSelectionPrimitive();
 }

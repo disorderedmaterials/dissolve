@@ -22,13 +22,13 @@
 #ifndef DISSOLVE_RENDER_RENDERABLE_H
 #define DISSOLVE_RENDER_RENDERABLE_H
 
-#include "gui/render/primitiveassembly.h"
-#include "gui/render/primitivelist.h"
+#include "base/charstring.h"
 #include "gui/render/colourdefinition.h"
 #include "gui/render/linestyle.h"
+#include "gui/render/primitiveassembly.h"
+#include "gui/render/primitivelist.h"
 #include "gui/stockcolours.h"
 #include "math/transformer.h"
-#include "base/charstring.h"
 
 // Forward Declarations
 class PlottableData;
@@ -37,46 +37,52 @@ class View;
 
 class Renderable : public ListItem<Renderable>
 {
-	public:
+      public:
 	// Renderable type
-	enum RenderableType { ConfigurationRenderable, Data1DRenderable, Data2DRenderable, Data3DRenderable, SpeciesRenderable, SpeciesSiteRenderable, nRenderableTypes };
+	enum RenderableType
+	{
+		ConfigurationRenderable,
+		Data1DRenderable,
+		Data2DRenderable,
+		Data3DRenderable,
+		SpeciesRenderable,
+		SpeciesSiteRenderable,
+		nRenderableTypes
+	};
 	// Return enum options for RenderableType
 	static EnumOptions<RenderableType> renderableTypes();
 	// Constructor / Destructor
-	Renderable(RenderableType type, const char* objectTag);
+	Renderable(RenderableType type, const char *objectTag);
 	virtual ~Renderable();
-
 
 	/*
 	 * Instances
 	 */
-	private:
+      private:
 	// List of all current renderables
 	static RefList<Renderable> instances_;
-
 
 	/*
 	 * Identity
 	 */
-	protected:
+      protected:
 	// Name of Renderable
 	CharString name_;
 	// Type of Renderable
 	RenderableType type_;
 
-	public:
+      public:
 	// Set name of Renderable
-	void setName(const char* name);
+	void setName(const char *name);
 	// Return name of Renderable
-	const char* name();
+	const char *name();
 	// Return type of Renderable
 	RenderableType type() const;
-
 
 	/*
 	 * Data
 	 */
-	protected:
+      protected:
 	// Whether access to source data is currently enabled
 	static bool sourceDataAccessEnabled_;
 	// Identifying tag for source data object
@@ -94,25 +100,25 @@ class Renderable : public ListItem<Renderable>
 	// Data version at which values were last transformed
 	int valuesTransformDataVersion_;
 
-	private:
+      private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	virtual bool validateDataSource() = 0;
 	// Invalidate the current data source
 	virtual void invalidateDataSource() = 0;
 
-	protected:
+      protected:
 	// Transform data values
 	virtual void transformValues() = 0;
 
-	public:
+      public:
 	// Set whether access to source data is currently enabled
 	static void setSourceDataAccessEnabled(bool b);
 	// Return whether access to source data is currently enabled
 	static bool sourceDataAccessEnabled();
 	// Return identifying tag for source data object
-	const char* objectTag() const;
+	const char *objectTag() const;
 	// Invalidate renderable data for specified object tag
-	static int invalidate(const char* objectTag);
+	static int invalidate(const char *objectTag);
 	// Invalidate all renderables
 	static void invalidateAll();
 	// Return version of data
@@ -134,9 +140,9 @@ class Renderable : public ListItem<Renderable>
 	// Return maximum positive of transformed values
 	double positiveValuesMax();
 	// Set values transform equation
-	void setValuesTransformEquation(const char* transformEquation);
+	void setValuesTransformEquation(const char *transformEquation);
 	// Return values transform equation
-	const char* valuesTransformEquation() const;
+	const char *valuesTransformEquation() const;
 	// Return whether the values transform equation is valid
 	bool valuesTransformEquationValid() const;
 	// Set whether values transform is enabled
@@ -146,27 +152,25 @@ class Renderable : public ListItem<Renderable>
 	// Return data version at which values were last transformed
 	int valuesTransformDataVersion() const;
 	// Calculate min/max y value over specified x range (if possible in the underlying data)
-	virtual bool yRangeOverX(double xMin, double xMax, double& yMin, double& yMax);
-
+	virtual bool yRangeOverX(double xMin, double xMax, double &yMin, double &yMax);
 
 	/*
 	 * Group
 	 */
-	protected:
+      protected:
 	// Group that this Renderable is associated to (if any)
-	RenderableGroup* group_;
+	RenderableGroup *group_;
 
-	public:
+      public:
 	// Set group that this Renderable is associated to
-	void setGroup(RenderableGroup* group);
+	void setGroup(RenderableGroup *group);
 	// Return group that this Renderable is associated to
-	RenderableGroup* group() const;
-
+	RenderableGroup *group() const;
 
 	/*
 	 * Basic Style
 	 */
-	protected:
+      protected:
 	// Whether Renderable is visible
 	bool visible_;
 	// Colour definition
@@ -176,7 +180,7 @@ class Renderable : public ListItem<Renderable>
 	// Style version (relative to data version)
 	int styleVersion_;
 
-	public:
+      public:
 	// Set whether Renderable is visible
 	void setVisible(bool visible);
 	// Return whether Renderable is visible
@@ -186,30 +190,27 @@ class Renderable : public ListItem<Renderable>
 	// Set basic colour
 	void setColour(StockColours::StockColour stockColour);
 	// Return local colour definition for display
-	ColourDefinition& colour();
+	ColourDefinition &colour();
 	// Return local colour definition for display (const)
-	const ColourDefinition& constColour() const;
+	const ColourDefinition &constColour() const;
 	// Return line style
-	LineStyle& lineStyle();
+	LineStyle &lineStyle();
 	// Return style version
 	int styleVersion() const;
-
 
 	/*
 	 * Style I/O
 	 */
-	public:
+      public:
 	// Write style information
-	virtual bool writeStyleBlock(LineParser& parser, int indentLevel = 0) const = 0;
+	virtual bool writeStyleBlock(LineParser &parser, int indentLevel = 0) const = 0;
 	// Read style information
-	virtual bool readStyleBlock(LineParser& parser) = 0;
-
-
+	virtual bool readStyleBlock(LineParser &parser) = 0;
 
 	/*
 	 * Rendering Primitives
 	 */
-	private:
+      private:
 	// Primitives instance-managed by the Renderable
 	PrimitiveList primitives_;
 	// Data version at which bespoke primitives / assembled list were last created
@@ -221,25 +222,25 @@ class Renderable : public ListItem<Renderable>
 	// Style version at which primitives were last created
 	int lastStyleVersion_;
 
-	protected:
+      protected:
 	// Create single Primitive, whose instances will be managed by the Renderable
-	Primitive* createPrimitive(GLenum type = GL_LINES, bool colourData = false);
+	Primitive *createPrimitive(GLenum type = GL_LINES, bool colourData = false);
 	// Reinitialise managed Primitive list to the size specified
 	void reinitialisePrimitives(int newSize, GLenum type, bool colourData);
 	// Return number of primitives managed by the Renderable
 	int nPrimitives() const;
 	// Return nth Primitive managed by the Renderable
-	Primitive* primitive(int n);
+	Primitive *primitive(int n);
 	// Remove specified Primitive
-	void removePrimitive(Primitive* primitive);
+	void removePrimitive(Primitive *primitive);
 	// Recreate necessary primitives / primitive assemblies for the data
-	virtual void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition) = 0;
+	virtual void recreatePrimitives(const View &view, const ColourDefinition &colourDefinition) = 0;
 	// Send primitives for rendering
 	virtual const void sendToGL(const double pixelScaling) = 0;
 
-	public:
+      public:
 	// Update primitives and send to display
-	void updateAndSendPrimitives(const View& view, bool forceUpdate, bool pushAndPop, const QOpenGLContext* context, double pixelScaling);
+	void updateAndSendPrimitives(const View &view, bool forceUpdate, bool pushAndPop, const QOpenGLContext *context, double pixelScaling);
 };
 
 #endif

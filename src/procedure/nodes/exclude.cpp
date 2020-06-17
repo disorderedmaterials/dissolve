@@ -20,11 +20,11 @@
 */
 
 #include "procedure/nodes/exclude.h"
-#include "procedure/nodes/select.h"
-#include "keywords/types.h"
-#include "classes/species.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "classes/species.h"
+#include "keywords/types.h"
+#include "procedure/nodes/select.h"
 
 // Constructor
 ExcludeProcedureNode::ExcludeProcedureNode() : ProcedureNode(ProcedureNode::ExcludeNode)
@@ -33,31 +33,27 @@ ExcludeProcedureNode::ExcludeProcedureNode() : ProcedureNode(ProcedureNode::Excl
 }
 
 // Destructor
-ExcludeProcedureNode::~ExcludeProcedureNode()
-{
-}
+ExcludeProcedureNode::~ExcludeProcedureNode() {}
 
 /*
  * Identity
  */
 
 // Return whether specified context is relevant for this node type
-bool ExcludeProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
-{
-	return (context == ProcedureNode::AnalysisContext);
-}
+bool ExcludeProcedureNode::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::AnalysisContext); }
 
 /*
  * Execute
  */
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult ExcludeProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+ProcedureNode::NodeExecutionResult ExcludeProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
 {
 	// Exclude based on Sites?
 	if (sameSites_.at(0) && sameSites_.at(1))
 	{
-		if (sameSites_.at(0)->currentSite() == sameSites_.at(1)->currentSite()) return ProcedureNode::SomethingElse;
+		if (sameSites_.at(0)->currentSite() == sameSites_.at(1)->currentSite())
+			return ProcedureNode::SomethingElse;
 	}
 
 	return ProcedureNode::Success;

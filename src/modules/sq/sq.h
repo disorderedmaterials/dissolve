@@ -22,11 +22,11 @@
 #ifndef DISSOLVE_MODULE_SQ_H
 #define DISSOLVE_MODULE_SQ_H
 
-#include "module/module.h"
+#include "classes/data1dstore.h"
+#include "classes/partialset.h"
 #include "math/broadeningfunction.h"
 #include "math/windowfunction.h"
-#include "classes/partialset.h"
-#include "classes/data1dstore.h"
+#include "module/module.h"
 
 // Forward Declarations
 class PartialSet;
@@ -35,71 +35,66 @@ class Weights;
 // SQ Module
 class SQModule : public Module
 {
-	public:
+      public:
 	// Constructor
 	SQModule();
 	// Destructor
 	~SQModule();
 
-
 	/*
 	 * Instances
 	 */
-	public:
+      public:
 	// Create instance of this module
-	Module* createInstance() const;
-
+	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return type of module
-	const char* type() const;
+	const char *type() const;
 	// Return category for module
-	const char* category() const;
+	const char *category() const;
 	// Return brief description of module
-	const char* brief() const;
+	const char *brief() const;
 	// Return the number of Configuration targets this Module requires
 	int nRequiredTargets() const;
-
 
 	/*
 	 * Initialisation
 	 */
-	protected:
+      protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
 	/*
 	 * Processing
 	 */
-	private:
+      private:
 	// Run main processing
-	bool process(Dissolve& dissolve, ProcessPool& procPool);
-
+	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Members / Functions
 	 */
-	private:
+      private:
 	// Test data
 	Data1DStore testData_;
 
-	public:
+      public:
 	// Calculate unweighted S(Q) from unweighted g(r)
-	static bool calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, const PartialSet& unweightedgr, PartialSet& unweightedsq, double qMin, double qDelta, double qMax, double rho, const WindowFunction& windowFunction, const BroadeningFunction& broadening);
+	static bool calculateUnweightedSQ(ProcessPool &procPool, Configuration *cfg, const PartialSet &unweightedgr, PartialSet &unweightedsq, double qMin, double qDelta, double qMax, double rho,
+					  const WindowFunction &windowFunction, const BroadeningFunction &broadening);
 	// Sum unweighted S(Q) over the supplied Module's target Configurations
-	static bool sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericList& moduleData, PartialSet& summedUnweightedSQ);
-
+	static bool sumUnweightedSQ(ProcessPool &procPool, Module *module, GenericList &moduleData, PartialSet &summedUnweightedSQ);
 
 	/*
 	 * GUI Widget
 	 */
-	public:
+      public:
 	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, Dissolve& dissolve);
+	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
 
 #endif
-

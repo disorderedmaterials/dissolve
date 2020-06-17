@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_KEYWORD_ISOTOPOLOGUECOLLECTION_H
 #define DISSOLVE_KEYWORD_ISOTOPOLOGUECOLLECTION_H
 
-#include "keywords/data.h"
 #include "classes/isotopologuecollection.h"
+#include "keywords/data.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 
@@ -31,50 +31,46 @@
 /* none */
 
 // Keyword with IsotopologueCollection Data
-class IsotopologueCollectionKeyword : public KeywordData<IsotopologueCollection&>
+class IsotopologueCollectionKeyword : public KeywordData<IsotopologueCollection &>
 {
-	public:
+      public:
 	// Constructor
-	IsotopologueCollectionKeyword(IsotopologueCollection& collection, const RefList<Configuration>& allowedConfigurations);
+	IsotopologueCollectionKeyword(IsotopologueCollection &collection, const RefList<Configuration> &allowedConfigurations);
 	// Destructor
 	~IsotopologueCollectionKeyword();
-
 
 	/*
 	 * Allowed Configurations
 	 */
-	private:
+      private:
 	// Allowed Configurations, to which the IsotopologueCollection may refer
-	const RefList<Configuration>& allowedConfigurations_;
+	const RefList<Configuration> &allowedConfigurations_;
 
-	public:
+      public:
 	// Return allowed Configurations, to which the IsotopologueCollection may refer
-	const RefList<Configuration>& allowedConfigurations() const;
-
+	const RefList<Configuration> &allowedConfigurations() const;
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
-
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 
 	/*
 	 * Object Management
 	 */
-	protected:
+      protected:
 	// Prune any references to the supplied Species in the contained data
-	void removeReferencesTo(Species* sp);
+	void removeReferencesTo(Species *sp);
 	// Prune any references to the supplied Isotopologue in the contained data
-	void removeReferencesTo(Isotopologue* iso);
+	void removeReferencesTo(Isotopologue *iso);
 };
 
 #endif
-

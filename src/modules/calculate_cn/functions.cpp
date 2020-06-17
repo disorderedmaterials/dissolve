@@ -23,7 +23,7 @@
 #include "procedure/nodes/sum1d.h"
 
 // Return specified coordination number (from Sum1D node)
-const SampledDouble& CalculateCNModule::coordinationNumber(int index)
+const SampledDouble &CalculateCNModule::coordinationNumber(int index)
 {
 	if (!sum1D_)
 	{
@@ -35,13 +35,7 @@ const SampledDouble& CalculateCNModule::coordinationNumber(int index)
 }
 
 // Return whether range B is enabled
-bool CalculateCNModule::isRangeBEnabled() const
-{
-	return (sum1D_ ? sum1D_->isRangeBEnabled() : false);
-}
+bool CalculateCNModule::isRangeBEnabled() const { return (sum1D_ ? sum1D_->isRangeBEnabled() : false); }
 
 // Return whether range C is enabled
-bool CalculateCNModule::isRangeCEnabled() const
-{
-	return (sum1D_ ? sum1D_->isRangeCEnabled() : false);
-}
+bool CalculateCNModule::isRangeCEnabled() const { return (sum1D_ ? sum1D_->isRangeCEnabled() : false); }

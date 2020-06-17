@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULEWIDGET_SQ_H
 #define DISSOLVE_MODULEWIDGET_SQ_H
 
-#include "modules/sq/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
+#include "modules/sq/gui/ui_modulewidget.h"
 
 // Forward Declarations
 class Dissolve;
@@ -38,48 +38,45 @@ class SQModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	SQModuleWidget(QWidget* parent, SQModule* module, Dissolve& dissolve);
+	SQModuleWidget(QWidget *parent, SQModule *module, Dissolve &dissolve);
 	~SQModuleWidget();
 
-	private:
+      private:
 	// Associated Module
-	SQModule* module_;
+	SQModule *module_;
 	// DataViewers contained within this widget
-	DataViewer* partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalSQGraph_;
+	DataViewer *partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalSQGraph_;
 	// Reference to Dissolve
-	Dissolve& dissolve_;
-
+	Dissolve &dissolve_;
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::SQModuleWidget ui_;
 
-	public:
+      public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
 
 	/*
 	 * State I/O
 	 */
-	public:
+      public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser) const;
+	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
+	bool readState(LineParser &parser);
 
 	/*
 	 * Widgets / Functions
 	 */
-	private:
+      private:
 	// Set data targets in graphs
-	void setGraphDataTargets(SQModule* module);
+	void setGraphDataTargets(SQModule *module);
 };
 
 #endif

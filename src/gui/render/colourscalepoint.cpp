@@ -29,23 +29,17 @@ ColourScalePoint::ColourScalePoint(double value, QColor colour)
 	setColour(colour);
 }
 // Destructor
-ColourScalePoint::~ColourScalePoint()
-{
-}
+ColourScalePoint::~ColourScalePoint() {}
 
 // Copy Constructor
-ColourScalePoint::ColourScalePoint(const ColourScalePoint& source)
-{
-        (*this) = source;
-}
+ColourScalePoint::ColourScalePoint(const ColourScalePoint &source) { (*this) = source; }
 
 // Assignment Operator
-void ColourScalePoint::operator=(const ColourScalePoint& source)
+void ColourScalePoint::operator=(const ColourScalePoint &source)
 {
-        value_ = source.value_;
-        colour_ = source.colour_;
+	value_ = source.value_;
+	colour_ = source.colour_;
 }
-
 
 /*
  * Value and Colour
@@ -59,31 +53,19 @@ void ColourScalePoint::set(double value, QColor colour)
 }
 
 // Set value of point
-void ColourScalePoint::setValue(double d)
-{
-	value_ = d;
-}
+void ColourScalePoint::setValue(double d) { value_ = d; }
 
 // Return value of point
-double ColourScalePoint::value() const
-{
-	return value_;
-}
+double ColourScalePoint::value() const { return value_; }
 
 // Set colour
-void ColourScalePoint::setColour(QColor colour)
-{
-	colour_ = colour;
-}
+void ColourScalePoint::setColour(QColor colour) { colour_ = colour; }
 
 // Return colour
-QColor ColourScalePoint::colour() const
-{
-	return colour_;
-}
+QColor ColourScalePoint::colour() const { return colour_; }
 
 // Return colour as GLfloat*
-void ColourScalePoint::colour(GLfloat* rgba) const
+void ColourScalePoint::colour(GLfloat *rgba) const
 {
 	rgba[0] = colour_.redF();
 	rgba[1] = colour_.greenF();
@@ -92,7 +74,4 @@ void ColourScalePoint::colour(GLfloat* rgba) const
 }
 
 // Set alpha value
-void ColourScalePoint::setAlpha(int alpha)
-{
-	colour_.setAlpha(alpha);
-}
+void ColourScalePoint::setAlpha(int alpha) { colour_.setAlpha(alpha); }

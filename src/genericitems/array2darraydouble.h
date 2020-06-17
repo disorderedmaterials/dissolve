@@ -25,94 +25,82 @@
 #include "genericitems/container.h"
 
 // GenericItemContainer< Array2D< Array<double> > >
-template <> class GenericItemContainer< Array2D< Array<double> > > : public GenericItem
+template <> class GenericItemContainer<Array2D<Array<double>>> : public GenericItem
 {
-	public:
+      public:
 	// Constructor
-	GenericItemContainer< Array2D< Array<double> > >(const char* name, int flags = 0) : GenericItem(name, flags)
-	{
-	}
-
+	GenericItemContainer<Array2D<Array<double>>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Data item
-	Array2D< Array<double> > data_;
+	Array2D<Array<double>> data_;
 
-	public:
+      public:
 	// Return data item
-	Array2D< Array<double> >& data()
-	{
-		return data_;
-	}
-
+	Array2D<Array<double>> &data() { return data_; }
 
 	/*
 	 * Item Class
 	 */
-	protected:
+      protected:
 	// Create a new GenericItem containing same class as current type
-	GenericItem* createItem(const char* className, const char* name, int flags = 0)
+	GenericItem *createItem(const char *className, const char *name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer< Array2D< Array<double> > >(name, flags);
+		if (DissolveSys::sameString(className, itemClassName()))
+			return new GenericItemContainer<Array2D<Array<double>>>(name, flags);
 		return NULL;
 	}
 
-	public:
+      public:
 	// Return class name contained in item
-	const char* itemClassName()
-	{
-		return "Array2D<Array<double>>";
-	}
-
+	const char *itemClassName() { return "Array2D<Array<double>>"; }
 
 	/*
 	 * I/O
 	 */
-	public:
+      public:
 	// Write data through specified parser
-	bool write(LineParser& parser)
-	{
-		return write(data_, parser);
-	}
+	bool write(LineParser &parser) { return write(data_, parser); }
 	// Read data through specified parser
-	bool read(LineParser& parser, const CoreData& coreData)
-	{
-		return read(data_, parser);
-	}
+	bool read(LineParser &parser, const CoreData &coreData) { return read(data_, parser); }
 	// Write specified data through specified parser
-	static bool write(const Array2D< Array<double> >& thisData, LineParser& parser)
+	static bool write(const Array2D<Array<double>> &thisData, LineParser &parser)
 	{
 		parser.writeLineF("%i  %i  %s\n", thisData.nRows(), thisData.nColumns(), DissolveSys::btoa(thisData.halved()));
-		for (int n=0; n<thisData.linearArraySize(); ++n)
+		for (int n = 0; n < thisData.linearArraySize(); ++n)
 		{
-			const Array<double>& arrayData = thisData.constLinearValue(n);
+			const Array<double> &arrayData = thisData.constLinearValue(n);
 
 			parser.writeLineF("%i\n", arrayData.nItems());
-			for (int m=0; m<arrayData.nItems(); ++m)
+			for (int m = 0; m < arrayData.nItems(); ++m)
 			{
-				if (!parser.writeLineF("%16.9e\n", arrayData.constAt(m))) return false;
+				if (!parser.writeLineF("%16.9e\n", arrayData.constAt(m)))
+					return false;
 			}
 		}
 		return true;
 	}
 	// Read specified data through specified parser
-	static bool read(Array2D< Array<double> >& thisData, LineParser& parser)
+	static bool read(Array2D<Array<double>> &thisData, LineParser &parser)
 	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+			return false;
 		int nRows = parser.argi(0), nColumns = parser.argi(1);
 		thisData.initialise(nRows, nColumns, parser.argb(2));
 
-		for (int n=0; n<thisData.linearArraySize(); ++n)
+		for (int n = 0; n < thisData.linearArraySize(); ++n)
 		{
-			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+				return false;
 			int nItems = parser.argi(0);
 			thisData.linearArray()[n].createEmpty(nItems);
-			for (int m=0; m<nItems; ++m)
+			for (int m = 0; m < nItems; ++m)
 			{
-				if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+				if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+					return false;
 				thisData.linearArray()[n].add(parser.argd(0));
 			}
 		}
@@ -120,13 +108,12 @@ template <> class GenericItemContainer< Array2D< Array<double> > > : public Gene
 		return true;
 	}
 
-
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 	{
 #ifdef PARALLEL
 		int nRows, nColumns;
@@ -152,11 +139,12 @@ template <> class GenericItemContainer< Array2D< Array<double> > > : public Gene
 				Messenger::print("Failed to broadcast Array2D< Array<double> > half-diagonal status from root rank %i.\n", root);
 				return false;
 			}
-			
+
 			// Now broadcast Array elements
-			for (int n=0; n<data_.linearArraySize(); ++n)
+			for (int n = 0; n < data_.linearArraySize(); ++n)
 			{
-				if (!procPool.broadcast(data_.linearArray()[n], root)) return false;
+				if (!procPool.broadcast(data_.linearArray()[n], root))
+					return false;
 			}
 		}
 		else
@@ -174,31 +162,38 @@ template <> class GenericItemContainer< Array2D< Array<double> > > : public Gene
 			}
 			if (!procPool.broadcast(half, root))
 			{
-				Messenger::print("Slave %i (world rank %i) failed to receive Array2D< Array<double> > halved status from root rank %i.\n", procPool.poolRank(), procPool.worldRank(), root);
+				Messenger::print("Slave %i (world rank %i) failed to receive Array2D< Array<double> > halved status from root rank %i.\n", procPool.poolRank(), procPool.worldRank(),
+						 root);
 				return false;
 			}
 
 			// Resize and receive array
 			data_.initialise(nRows, nColumns, half);
-			for (int n=0; n<data_.linearArraySize(); ++n)
+			for (int n = 0; n < data_.linearArraySize(); ++n)
 			{
-				if (!procPool.broadcast(data_.linearArray()[n], root)) return false;
+				if (!procPool.broadcast(data_.linearArray()[n], root))
+					return false;
 			}
 		}
 #endif
 		return true;
 	}
 	// Return equality between items
-	bool equality(ProcessPool& procPool)
+	bool equality(ProcessPool &procPool)
 	{
 #ifdef PARALLEL
 		// Verify array size and state first
-		if (!procPool.equality(data_.nRows())) return Messenger::error("Array2D<double> nRows are not equal (process %i has %i).\n", procPool.poolRank(), data_.nRows());
-		if (!procPool.equality(data_.nColumns())) return Messenger::error("Array2D<double> nColumns are not equal (process %i has %i).\n", procPool.poolRank(), data_.nColumns());
-		if (!procPool.equality(data_.halved())) return Messenger::error("Array2D<double> half-status are not equivalent (process %i has %i).\n", procPool.poolRank(), data_.halved());
+		if (!procPool.equality(data_.nRows()))
+			return Messenger::error("Array2D<double> nRows are not equal (process %i has %i).\n", procPool.poolRank(), data_.nRows());
+		if (!procPool.equality(data_.nColumns()))
+			return Messenger::error("Array2D<double> nColumns are not equal (process %i has %i).\n", procPool.poolRank(), data_.nColumns());
+		if (!procPool.equality(data_.halved()))
+			return Messenger::error("Array2D<double> half-status are not equivalent (process %i has %i).\n", procPool.poolRank(), data_.halved());
 
 		// Keep it simple (and slow) and check/send one object at a time
-		for (int n=0; n<data_.linearArraySize(); ++n) if (!procPool.equality(data_.linearArray()[n])) return Messenger::error("Array<double> index %i is not equivalent (process %i.\n", procPool.poolRank());
+		for (int n = 0; n < data_.linearArraySize(); ++n)
+			if (!procPool.equality(data_.linearArray()[n]))
+				return Messenger::error("Array<double> index %i is not equivalent (process %i.\n", procPool.poolRank());
 #endif
 		return true;
 	}

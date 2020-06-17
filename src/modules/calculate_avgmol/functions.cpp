@@ -19,27 +19,28 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate_avgmol/avgmol.h"
-#include "main/dissolve.h"
 #include "genericitems/listhelper.h"
+#include "main/dissolve.h"
+#include "modules/calculate_avgmol/avgmol.h"
 
 /*
  * Private Functions
  */
 
 // Ensure arrays are the correct size for the current target Species
-void CalculateAvgMolModule::updateArrays(Dissolve& dissolve)
+void CalculateAvgMolModule::updateArrays(Dissolve &dissolve)
 {
 	int requiredSize = targetSpecies_ ? targetSpecies_->nAtoms() : -1;
 
 	// Retrieve / create the three data arrays, and size accordingly
-	Array<SampledDouble>& x = GenericListHelper< Array<SampledDouble> >::realise(dissolve.processingModuleData(), "X", uniqueName(), GenericItem::InRestartFileFlag);
-	Array<SampledDouble>& y = GenericListHelper< Array<SampledDouble> >::realise(dissolve.processingModuleData(), "Y", uniqueName(), GenericItem::InRestartFileFlag);
-	Array<SampledDouble>& z = GenericListHelper< Array<SampledDouble> >::realise(dissolve.processingModuleData(), "Z", uniqueName(), GenericItem::InRestartFileFlag);
+	Array<SampledDouble> &x = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "X", uniqueName(), GenericItem::InRestartFileFlag);
+	Array<SampledDouble> &y = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "Y", uniqueName(), GenericItem::InRestartFileFlag);
+	Array<SampledDouble> &z = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "Z", uniqueName(), GenericItem::InRestartFileFlag);
 
 	if (requiredSize > 0)
 	{
-		if (x.nItems() == requiredSize && y.nItems() == requiredSize && z.nItems() == requiredSize) Messenger::print("Using existing coordinate arrays for average species.\n");
+		if (x.nItems() == requiredSize && y.nItems() == requiredSize && z.nItems() == requiredSize)
+			Messenger::print("Using existing coordinate arrays for average species.\n");
 		else
 		{
 			Messenger::printVerbose("Initialising arrays for average molecule: size = %i\n", requiredSize);
@@ -57,10 +58,11 @@ void CalculateAvgMolModule::updateArrays(Dissolve& dissolve)
 }
 
 // Update the local species with the coordinates from the supplied arrays
-void CalculateAvgMolModule::updateSpecies(const Array<SampledDouble>& x, const Array<SampledDouble>& y, const Array<SampledDouble>& z)
+void CalculateAvgMolModule::updateSpecies(const Array<SampledDouble> &x, const Array<SampledDouble> &y, const Array<SampledDouble> &z)
 {
 	// Loop over atoms in our species
-	for (int n=0; n<averageSpecies_.nAtoms(); ++n) averageSpecies_.setAtomCoordinates(n, x.constAt(n).value(), y.constAt(n).value(), z.constAt(n).value());
+	for (int n = 0; n < averageSpecies_.nAtoms(); ++n)
+		averageSpecies_.setAtomCoordinates(n, x.constAt(n).value(), y.constAt(n).value(), z.constAt(n).value());
 }
 
 /*
@@ -68,7 +70,4 @@ void CalculateAvgMolModule::updateSpecies(const Array<SampledDouble>& x, const A
  */
 
 // Return average Species
-Species& CalculateAvgMolModule::averageSpecies()
-{
-	return averageSpecies_;
-}
+Species &CalculateAvgMolModule::averageSpecies() { return averageSpecies_; }

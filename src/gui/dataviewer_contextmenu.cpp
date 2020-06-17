@@ -19,6 +19,7 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "base/messenger.h"
 #include "gui/dataviewer.hui"
 #include "gui/gizmo.h"
 #include "gui/selectgenericitemdialog.h"
@@ -26,7 +27,6 @@
 #include "io/export/data2d.h"
 #include "io/export/data3d.h"
 #include "math/data2d.h"
-#include "base/messenger.h"
 #include <QFileDialog>
 
 /*
@@ -37,17 +37,17 @@
 void DataViewer::showGeneralContextMenu(QPoint pos)
 {
 	QMenu menu;
-	QAction* action;
+	QAction *action;
 	menu.setFont(font());
 
 	// Reset View
-	QAction* resetViewAction = menu.addAction("&Reset View");
+	QAction *resetViewAction = menu.addAction("&Reset View");
 
 	// Copy to clipboard
-	QAction* copyToClipboardAction = menu.addAction("&Copy to clipboard");
+	QAction *copyToClipboardAction = menu.addAction("&Copy to clipboard");
 
 	// If the user can add data, add a new section allowing it
-	RefDataList<QAction,int> addDataAction;
+	RefDataList<QAction, int> addDataAction;
 	if (hasFlag(DataViewer::UserCanAddDataFlag))
 	{
 		menu.addSeparator();
@@ -57,39 +57,44 @@ void DataViewer::showGeneralContextMenu(QPoint pos)
 	}
 
 	// Execute the menu
-	QAction* selectedAction = menu.exec(mapToGlobal(pos));
+	QAction *selectedAction = menu.exec(mapToGlobal(pos));
 
 	// Act on the action!
-	if (selectedAction == resetViewAction) view_.resetViewMatrix();
-	else if (selectedAction == copyToClipboardAction) copyViewToClipboard(true);
+	if (selectedAction == resetViewAction)
+		view_.resetViewMatrix();
+	else if (selectedAction == copyToClipboardAction)
+		copyViewToClipboard(true);
 	else if (addDataAction.contains(selectedAction))
 	{
 		int dimensionality = addDataAction.dataForItem(selectedAction);
 		SelectGenericItemDialog genericItemDialog(this, *dissolve_);
 		if (dimensionality == 1)
 		{
-			Data1D* item = genericItemDialog.selectGenericItem<Data1D>();
-			if (item) createRenderable(Renderable::Data1DRenderable, item->objectTag(), item->name(), "Default");
+			Data1D *item = genericItemDialog.selectGenericItem<Data1D>();
+			if (item)
+				createRenderable(Renderable::Data1DRenderable, item->objectTag(), item->name(), "Default");
 		}
 		else if (dimensionality == 2)
 		{
-			Data2D* item = genericItemDialog.selectGenericItem<Data2D>();
-			if (item) createRenderable(Renderable::Data2DRenderable, item->objectTag(), item->name(), "Default");
+			Data2D *item = genericItemDialog.selectGenericItem<Data2D>();
+			if (item)
+				createRenderable(Renderable::Data2DRenderable, item->objectTag(), item->name(), "Default");
 		}
 		else if (dimensionality == 3)
 		{
-			Data3D* item = genericItemDialog.selectGenericItem<Data3D>();
-			if (item) createRenderable(Renderable::Data3DRenderable, item->objectTag(), item->name(), "Default");
+			Data3D *item = genericItemDialog.selectGenericItem<Data3D>();
+			if (item)
+				createRenderable(Renderable::Data3DRenderable, item->objectTag(), item->name(), "Default");
 		}
 	}
 }
 
 // Show renderable context menu
-void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
+void DataViewer::showRenderableContextMenu(QPoint pos, Renderable *rend)
 {
 	QMenu menu;
-	QAction* action;
-	RefDataList<QAction,Gizmo*> copyToActions;
+	QAction *action;
+	RefDataList<QAction, Gizmo *> copyToActions;
 	menu.setFont(font());
 	QFont italicFont(menu.font());
 	italicFont.setItalic(true);
@@ -101,22 +106,22 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 	menu.addSeparator();
 
 	// -- Hide Renderable
-	QAction* hideAction = menu.addAction("&Hide");
+	QAction *hideAction = menu.addAction("&Hide");
 
 	// -- Save As...
-	QAction* saveAsAction = menu.addAction("&Save as...");
+	QAction *saveAsAction = menu.addAction("&Save as...");
 	saveAsAction->setEnabled(rend->type() >= Renderable::Data1DRenderable && rend->type() <= Renderable::Data3DRenderable);
 
 	// -- Copy To...
-	QMenu* copyToMenu = menu.addMenu("&Copy to...");
+	QMenu *copyToMenu = menu.addMenu("&Copy to...");
 	copyToMenu->setFont(menu.font());
 	// Get list of viable destinations that will accept our data
 	RefList<Gizmo> destinations = Gizmo::allThatAccept(Renderable::renderableTypes().keyword(rend->type()));
-	if (destinations.nItems() == 0) copyToMenu->setEnabled(false);
+	if (destinations.nItems() == 0)
+		copyToMenu->setEnabled(false);
 	else
 	{
-		RefListIterator<Gizmo> destinationIterator(destinations);
-		while (Gizmo* destination = destinationIterator.iterate())
+		for (Gizmo *destination : destinations)
 		{
 			action = copyToMenu->addAction(destination->uniqueName());
 			copyToActions.append(action, destination);
@@ -124,7 +129,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 	}
 
 	// -- Remove Renderable
-	QAction* removeAction = NULL;
+	QAction *removeAction = NULL;
 	if (hasFlag(DataViewer::UserCanRemoveDataFlag))
 	{
 		menu.addSeparator();
@@ -132,7 +137,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 	}
 
 	// Execute the menu
-	QAction* selectedAction = menu.exec(mapToGlobal(pos));
+	QAction *selectedAction = menu.exec(mapToGlobal(pos));
 
 	// Act on the action!
 	if (selectedAction)
@@ -151,30 +156,41 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable* rend)
 				if (rend->type() == Renderable::Data1DRenderable)
 				{
 					Data1DExportFileFormat exportFormat(qPrintable(filename));
-					Data1D* data = Data1D::findObject(rend->objectTag());
-					if (!data) Messenger::error("Failed to locate data to export (tag = %s).\n", rend->objectTag()); else exportFormat.exportData(*data);
+					Data1D *data = Data1D::findObject(rend->objectTag());
+					if (!data)
+						Messenger::error("Failed to locate data to export (tag = %s).\n", rend->objectTag());
+					else
+						exportFormat.exportData(*data);
 				}
 				else if (rend->type() == Renderable::Data2DRenderable)
 				{
 					Data2DExportFileFormat exportFormat(qPrintable(filename));
-					Data2D* data = Data2D::findObject(rend->objectTag());
-					if (!data) Messenger::error("Failed to locate data to export (tag = %s).\n", rend->objectTag()); else exportFormat.exportData(*data);
+					Data2D *data = Data2D::findObject(rend->objectTag());
+					if (!data)
+						Messenger::error("Failed to locate data to export (tag = %s).\n", rend->objectTag());
+					else
+						exportFormat.exportData(*data);
 				}
 				else if (rend->type() == Renderable::Data3DRenderable)
 				{
 					Data3DExportFileFormat exportFormat(qPrintable(filename));
-					Data3D* data = Data3D::findObject(rend->objectTag());
-					if (!data) Messenger::error("Failed to locate data to export (tag = %s).\n", rend->objectTag()); else exportFormat.exportData(*data);
+					Data3D *data = Data3D::findObject(rend->objectTag());
+					if (!data)
+						Messenger::error("Failed to locate data to export (tag = %s).\n", rend->objectTag());
+					else
+						exportFormat.exportData(*data);
 				}
 			}
 		}
 		else if (copyToActions.contains(selectedAction))
 		{
-			Gizmo* destination = copyToActions.dataForItem(selectedAction);
-			if (!destination) return;
+			Gizmo *destination = copyToActions.dataForItem(selectedAction);
+			if (!destination)
+				return;
 			destination->sendData(Renderable::renderableTypes().keyword(rend->type()), rend->objectTag(), rend->name());
 		}
-		else if (selectedAction == removeAction) removeRenderable(rend);
+		else if (selectedAction == removeAction)
+			removeRenderable(rend);
 	}
 
 	// Done

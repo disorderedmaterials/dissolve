@@ -1,10 +1,8 @@
 ---
 title: Getting Dissolve
-parent: Getting Started
 grand_parent: User Guide
 weight: 20
 ---
-# Running on SCARF
 
 The parallel version of Dissolve is installed as a module on [SCARF](https://www.scarf.rl.ac.uk/home).
 

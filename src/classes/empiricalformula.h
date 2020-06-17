@@ -34,41 +34,39 @@ class SpeciesAtom;
 // Empirical Formula Generator
 class EmpiricalFormula
 {
-	public:
+      public:
 	// Constructor
 	EmpiricalFormula();
 	// Destructor
 	~EmpiricalFormula();
 
-
 	/*
 	 * Construction
 	 */
-	private:
+      private:
 	// Element counts
 	Array<int> elementCounts_;
 	// Formula string
 	CharString formula_;
 
-	public:
+      public:
 	// Clear counts array
 	void reset();
 	// Add to empirical formula
-	void add(Element* element, int count = 1);
+	void add(Element *element, int count = 1);
 	// Return current empirical formula
-	const char* formula();
+	const char *formula();
 	// Return rich text of current empirical formula
-	const char* richTextFormula();
-
+	const char *richTextFormula();
 
 	/*
 	 * Convenience Functions
 	 */
-	public:
+      public:
 	// Return empirical formula for supplied Species
-	static const char* formula(const Species* species, bool richText = false);
+	static const char *formula(const Species *species, bool richText = false);
 	// Return empirical formula for supplied SpeciesAtom reflist
-	static const char* formula(const RefList<SpeciesAtom>& atoms, bool richText = false);
+	static const char *formula(const RefList<SpeciesAtom> &atoms, bool richText = false);
 };
 
 #endif

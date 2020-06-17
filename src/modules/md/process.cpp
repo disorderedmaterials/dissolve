@@ -19,38 +19,40 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/md/md.h"
-#include "main/dissolve.h"
-#include "modules/energy/energy.h"
-#include "modules/forces/forces.h"
+#include "base/lineparser.h"
+#include "base/timer.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/forcekernel.h"
 #include "classes/species.h"
 #include "data/atomicmass.h"
-#include "base/timer.h"
-#include "base/lineparser.h"
 #include "genericitems/listhelper.h"
+#include "main/dissolve.h"
+#include "modules/energy/energy.h"
+#include "modules/forces/forces.h"
+#include "modules/md/md.h"
 
 // Run main processing
-bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
+bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
 	/*
 	 * Perform Molecular Dynamics on a given Configuration.
-	 * 
+	 *
 	 * This is a parallel routine, with processes operating in groups.
 	 */
 
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+	if (targetConfigurations_.nItems() == 0)
+		return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
-	GenericList& moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
+	GenericList &moduleData = configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
 
 	// Get control parameters
 	const bool capForce = keywords_.asBool("CapForces");
-	const double maxForce = keywords_.asDouble("CapForcesAt") * 100.0;	// To convert from kJ/mol to 10 J/mol
+	const double maxForce = keywords_.asDouble("CapForcesAt") * 100.0; // To convert from kJ/mol to 10 J/mol
 	double cutoffDistance = keywords_.asDouble("CutoffDistance");
-	if (cutoffDistance < 0.0) cutoffDistance = dissolve.pairPotentialRange();
+	if (cutoffDistance < 0.0)
+		cutoffDistance = dissolve.pairPotentialRange();
 	double deltaT = keywords_.asDouble("DeltaT");
 	const int energyFrequency = keywords_.asInt("EnergyFrequency");
 	const int nSteps = keywords_.asInt("NSteps");
@@ -64,27 +66,36 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	// Print argument/parameter summary
 	Messenger::print("MD: Cutoff distance is %f\n", cutoffDistance);
 	Messenger::print("MD: Number of steps = %i\n", nSteps);
-	if (onlyWhenEnergyStable) Messenger::print("MD: Only peform MD if target Configuration energies are stable.\n");
-	if (writeTraj) Messenger::print("MD: Trajectory file will be appended every %i step(s).\n", trajectoryFrequency);
-	else Messenger::print("MD: Trajectory file off.\n");
-	if (capForce) Messenger::print("MD: Forces will be capped to %10.3e kJ/mol per atom per axis.\n", maxForce / 100.0);
-	if (energyFrequency > 0) Messenger::print("MD: Energy will be calculated every %i step(s).\n", energyFrequency);
-	else Messenger::print("MD: Energy will be not be calculated.\n");
-	if (outputFrequency > 0) Messenger::print("MD: Summary will be written every %i step(s).\n", outputFrequency);
-	else Messenger::print("MD: Summary will not be written.\n");
-	if (variableTimestep) Messenger::print("MD: Variable timestep will be employed.");
-	else Messenger::print("MD: Constant timestep of %e ps will be used.\n", deltaT);
+	if (onlyWhenEnergyStable)
+		Messenger::print("MD: Only peform MD if target Configuration energies are stable.\n");
+	if (writeTraj)
+		Messenger::print("MD: Trajectory file will be appended every %i step(s).\n", trajectoryFrequency);
+	else
+		Messenger::print("MD: Trajectory file off.\n");
+	if (capForce)
+		Messenger::print("MD: Forces will be capped to %10.3e kJ/mol per atom per axis.\n", maxForce / 100.0);
+	if (energyFrequency > 0)
+		Messenger::print("MD: Energy will be calculated every %i step(s).\n", energyFrequency);
+	else
+		Messenger::print("MD: Energy will be not be calculated.\n");
+	if (outputFrequency > 0)
+		Messenger::print("MD: Summary will be written every %i step(s).\n", outputFrequency);
+	else
+		Messenger::print("MD: Summary will not be written.\n");
+	if (variableTimestep)
+		Messenger::print("MD: Variable timestep will be employed.");
+	else
+		Messenger::print("MD: Constant timestep of %e ps will be used.\n", deltaT);
 	if (restrictToSpecies_.nItems() > 0)
 	{
 		CharString speciesNames;
-		RefListIterator<Species> speciesIterator(restrictToSpecies_);
-		while (Species* sp = speciesIterator.iterate()) speciesNames.strcatf("  %s", sp->name());
+		for (Species *sp : restrictToSpecies_)
+			speciesNames.strcatf("  %s", sp->name());
 		Messenger::print("MD: Calculation will be restricted to Species:%s\n", speciesNames.get());
 	}
 	Messenger::print("\n");
 
-	RefListIterator<Configuration> configIterator(targetConfigurations_);
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration *cfg : targetConfigurations_)
 	{
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
@@ -92,7 +103,8 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (onlyWhenEnergyStable)
 		{
 			int stabilityResult = EnergyModule::checkStability(cfg);
-			if (stabilityResult == -1) return false;
+			if (stabilityResult == -1)
+				return false;
 			else if (stabilityResult == 1)
 			{
 				Messenger::print("Skipping MD for Configuration '%s'.\n", cfg->niceName());
@@ -101,13 +113,14 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Determine target Molecules (if there are entries in the targetSpecies_ list)
-		Array<Molecule*> targetMolecules;
+		Array<std::shared_ptr<Molecule>> targetMolecules;
 		if (restrictToSpecies_.nItems() > 0)
 		{
-			for (int n=0; n<cfg->nMolecules(); ++n)
+			for (int n = 0; n < cfg->nMolecules(); ++n)
 			{
-				Molecule* mol = cfg->molecule(n);
-				if (restrictToSpecies_.contains(mol->species())) targetMolecules.add(mol);
+				std::shared_ptr<Molecule> mol = cfg->molecule(n);
+				if (restrictToSpecies_.contains(mol->species()))
+					targetMolecules.add(mol);
 			}
 		}
 
@@ -116,13 +129,13 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 		// Create force arrays as simple double arrays (easier to sum with MPI) - others are Vec3<double> arrays
 		Array<double> mass(cfg->nAtoms()), fx(cfg->nAtoms()), fy(cfg->nAtoms()), fz(cfg->nAtoms());
-		Array< Vec3<double> > a(cfg->nAtoms());
+		Array<Vec3<double>> a(cfg->nAtoms());
 
 		// Variables
 		int n, nCapped = 0;
-		Atom** atoms = cfg->atoms().array();
+		Atom **atoms = cfg->atoms().array();
 		double tInstant, ke, tScale, peInter, peIntra;
-		double deltaTSq = deltaT*deltaT;
+		double deltaTSq = deltaT * deltaT;
 
 		/*
 		 * Calculation Begins
@@ -131,24 +144,26 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Read in or assign random velocities
 		// Realise the velocity array from the moduleData
 		bool created;
-		Array< Vec3<double> >& v = GenericListHelper< Array< Vec3<double> > >::realise(moduleData, "Velocities", uniqueName(), GenericItem::NoFlag, &created);
+		Array<Vec3<double>> &v = GenericListHelper<Array<Vec3<double>>>::realise(moduleData, "Velocities", uniqueName(), GenericItem::NoFlag, &created);
 		if (created)
 		{
 			randomVelocities = true;
 			v.initialise(cfg->nAtoms());
 		}
-		if (randomVelocities) Messenger::print("Random initial velocities will be assigned.\n");
-		else Messenger::print("Existing velocities will be used.\n");
+		if (randomVelocities)
+			Messenger::print("Random initial velocities will be assigned.\n");
+		else
+			Messenger::print("Existing velocities will be used.\n");
 
 		Vec3<double> vCom;
 		double massSum = 0.0;
-		for (n=0; n<cfg->nAtoms(); ++n)
+		for (n = 0; n < cfg->nAtoms(); ++n)
 		{
 			if (randomVelocities)
 			{
-				v[n].x = exp(DissolveMath::random()-0.5) / sqrt(TWOPI);
-				v[n].y = exp(DissolveMath::random()-0.5) / sqrt(TWOPI);
-				v[n].z = exp(DissolveMath::random()-0.5) / sqrt(TWOPI);
+				v[n].x = exp(DissolveMath::random() - 0.5) / sqrt(TWOPI);
+				v[n].y = exp(DissolveMath::random() - 0.5) / sqrt(TWOPI);
+				v[n].z = exp(DissolveMath::random() - 0.5) / sqrt(TWOPI);
 			}
 
 			// Grab atom mass for future use
@@ -168,12 +183,14 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// If ke is in units of [g mol-1 Angstroms2 ps-2] then must use kb in units of 10 J mol-1 K-1 (= 0.8314462)
 		const double kb = 0.8314462;
 		ke = 0.0;
-		for (n=0; n<cfg->nAtoms(); ++n) ke += 0.5 * mass[n] * v[n].dp(v[n]);
+		for (n = 0; n < cfg->nAtoms(); ++n)
+			ke += 0.5 * mass[n] * v[n].dp(v[n]);
 		tInstant = ke * 2.0 / (3.0 * cfg->nAtoms() * kb);
-		
+
 		// Rescale velocities for desired temperature
 		tScale = sqrt(temperature / tInstant);
-		for (n=0; n<cfg->nAtoms(); ++n) v[n] *= tScale;
+		for (n = 0; n < cfg->nAtoms(); ++n)
+			v[n] *= tScale;
 
 		// Open trajectory file (if requested)
 		LineParser trajParser;
@@ -191,7 +208,8 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 				}
 				procPool.decideTrue();
 			}
-			else if (!procPool.decision()) return false;
+			else if (!procPool.decision())
+				return false;
 		}
 
 		// Write header
@@ -209,8 +227,10 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		// Variable timestep requires forces to be available immediately
 		if (variableTimestep)
 		{
-			if (restrictToSpecies_.nItems() > 0) ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), fx, fy, fz);
-			else ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
+			if (restrictToSpecies_.nItems() > 0)
+				ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), fx, fy, fz);
+			else
+				ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
 
 			// Must multiply by 100.0 to convert from kJ/mol to 10J/mol (our internal MD units)
 			fx *= 100.0;
@@ -219,23 +239,24 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		}
 
 		// Ready to do MD propagation of system
-		for (int step=1; step<=nSteps; ++step)
+		for (int step = 1; step <= nSteps; ++step)
 		{
 			// Variable timestep?
-			if (variableTimestep) deltaT = determineTimeStep(fx, fy, fz);
+			if (variableTimestep)
+				deltaT = determineTimeStep(fx, fy, fz);
 
 			// Velocity Verlet first stage (A)
 			// A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
 			// A:  v(t+dt/2) = v(t) + 0.5*a(t)*dt
 			// B:  a(t+dt) = F(t+dt)/m
 			// B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
-			for (n=0; n<cfg->nAtoms(); ++n)
+			for (n = 0; n < cfg->nAtoms(); ++n)
 			{
 				// Propagate positions (by whole step)...
-				atoms[n]->translateCoordinates(v[n]*deltaT + a[n]*0.5*deltaTSq);
+				atoms[n]->translateCoordinates(v[n] * deltaT + a[n] * 0.5 * deltaTSq);
 
 				// ...velocities (by half step)...
-				v[n] += a[n]*0.5*deltaT;
+				v[n] += a[n] * 0.5 * deltaT;
 			}
 
 			// Update Cell contents / Atom locations
@@ -245,14 +266,17 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			fx = 0.0;
 			fy = 0.0;
 			fz = 0.0;
-			if (restrictToSpecies_.nItems() > 0) ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), fx, fy, fz);
-			else ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
+			if (restrictToSpecies_.nItems() > 0)
+				ForcesModule::totalForces(procPool, cfg, targetMolecules, dissolve.potentialMap(), fx, fy, fz);
+			else
+				ForcesModule::totalForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
 			fx *= 100.0;
 			fy *= 100.0;
 			fz *= 100.0;
 
 			// Cap forces
-			if (capForce) nCapped = capForces(cfg, maxForce, fx, fy, fz);
+			if (capForce)
+				nCapped = capForces(cfg, maxForce, fx, fy, fz);
 
 			// Velocity Verlet second stage (B) and velocity scaling
 			// A:  r(t+dt) = r(t) + v(t)*dt + 0.5*a(t)*dt**2
@@ -260,22 +284,22 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// B:  a(t+dt) = F(t+dt)/m
 			// B:  v(t+dt) = v(t+dt/2) + 0.5*a(t+dt)*dt
 			ke = 0.0;
-			for (n=0; n<cfg->nAtoms(); ++n)
+			for (n = 0; n < cfg->nAtoms(); ++n)
 			{
 				// Determine new accelerations
 				a[n].set(fx[n], fy[n], fz[n]);
 				a[n] /= mass[n];
 
 				// ..and finally velocities again (by second half-step)
-				v[n] += a[n]*0.5*deltaT;
-				
+				v[n] += a[n] * 0.5 * deltaT;
+
 				ke += 0.5 * mass[n] * v[n].dp(v[n]);
 			}
 
 			// Rescale velocities for desired temperature
 			tInstant = ke * 2.0 / (3.0 * cfg->nAtoms() * kb);
 			tScale = sqrt(temperature / tInstant);
-			for (n=0; n<cfg->nAtoms(); ++n)
+			for (n = 0; n < cfg->nAtoms(); ++n)
 			{
 				v[n].x *= tScale;
 				v[n].y *= tScale;
@@ -286,20 +310,21 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			ke *= 0.01;
 
 			// Write step summary?
-			if ((step == 1)|| (step%outputFrequency == 0))
+			if ((step == 1) || (step % outputFrequency == 0))
 			{
 				// Include total energy term?
-				if ((energyFrequency > 0) && (step%energyFrequency == 0))
+				if ((energyFrequency > 0) && (step % energyFrequency == 0))
 				{
 					peInter = EnergyModule::interAtomicEnergy(procPool, cfg, dissolve.potentialMap());
 					peIntra = EnergyModule::intraMolecularEnergy(procPool, cfg, dissolve.potentialMap());
-					Messenger::print("  %-10i    %10.3e   %10.3e   %10.3e   %10.3e   %10.3e   %10.3e\n", step, tInstant, ke, peInter, peIntra, ke+peIntra+peInter, deltaT);
+					Messenger::print("  %-10i    %10.3e   %10.3e   %10.3e   %10.3e   %10.3e   %10.3e\n", step, tInstant, ke, peInter, peIntra, ke + peIntra + peInter, deltaT);
 				}
-				else Messenger::print("  %-10i    %10.3e   %10.3e                                          %10.3e\n", step, tInstant, ke, deltaT);
+				else
+					Messenger::print("  %-10i    %10.3e   %10.3e                                          %10.3e\n", step, tInstant, ke, deltaT);
 			}
 
 			// Save trajectory frame
-			if (writeTraj && (step%trajectoryFrequency == 0))
+			if (writeTraj && (step % trajectoryFrequency == 0))
 			{
 				if (procPool.isMaster())
 				{
@@ -308,7 +333,8 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 					// Construct and write header
 					CharString header("Step %i of %i, T = %10.3e, ke = %10.3e", step, nSteps, tInstant, ke);
-					if ((energyFrequency > 0) && (step%energyFrequency == 0)) header.strcatf(", inter = %10.3e, intra = %10.3e, tot = %10.3e", peInter, peIntra, ke+peInter+peIntra);
+					if ((energyFrequency > 0) && (step % energyFrequency == 0))
+						header.strcatf(", inter = %10.3e, intra = %10.3e, tot = %10.3e", peInter, peIntra, ke + peInter + peIntra);
 					if (!trajParser.writeLineF("%s\n", header.get()))
 					{
 						procPool.decideFalse();
@@ -316,9 +342,9 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					}
 
 					// Write Atoms
-					for (int n=0; n<cfg->nAtoms(); ++n)
+					for (int n = 0; n < cfg->nAtoms(); ++n)
 					{
-						Atom* i = atoms[n];
+						Atom *i = atoms[n];
 						if (!trajParser.writeLineF("%-3s   %10.3f  %10.3f  %10.3f\n", i->speciesAtom()->element()->symbol(), i->r().x, i->r().y, i->r().z))
 						{
 							procPool.decideFalse();
@@ -328,15 +354,18 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 					procPool.decideTrue();
 				}
-				else if (!procPool.decision()) return false;
+				else if (!procPool.decision())
+					return false;
 			}
 		}
 		timer.stop();
 
 		// Close trajectory file
-		if (writeTraj && procPool.isMaster()) trajParser.closeFiles();
+		if (writeTraj && procPool.isMaster())
+			trajParser.closeFiles();
 
-		if (capForce) Messenger::print("A total of %i forces were capped over the course of the dynamics (%9.3e per step).\n", nCapped, double(nCapped) / nSteps);
+		if (capForce)
+			Messenger::print("A total of %i forces were capped over the course of the dynamics (%9.3e per step).\n", nCapped, double(nCapped) / nSteps);
 		Messenger::print("%i steps performed (%s work, %s comms)\n", nSteps, timer.totalTimeString(), procPool.accumulatedTimeString());
 
 		// Increment configuration changeCount
@@ -349,4 +378,3 @@ bool MDModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	return true;
 }
-

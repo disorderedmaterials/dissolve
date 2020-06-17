@@ -22,25 +22,13 @@
 #include "modules/analyse/analyse.h"
 
 // Return type of module
-const char* AnalyseModule::type() const
-{
-	return "Analyse";
-}
+const char *AnalyseModule::type() const { return "Analyse"; }
 
 // Return category for module
-const char* AnalyseModule::category() const
-{
-	return "Analysis";
-}
+const char *AnalyseModule::category() const { return "Analysis"; }
 
 // Return brief description of module
-const char* AnalyseModule::brief() const
-{
-	return "Perform custom analysis of one or more Configurations";
-}
+const char *AnalyseModule::brief() const { return "Perform custom analysis of one or more Configurations"; }
 
 // Return the number of Configuration targets this Module requires
-int AnalyseModule::nRequiredTargets() const
-{
-	return Module::OneOrMoreTargets;
-}
+int AnalyseModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }

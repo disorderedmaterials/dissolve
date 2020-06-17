@@ -1,5 +1,5 @@
 /*
-	*** Configuration Widget - Functions 
+	*** Configuration Widget - Functions
 	*** src/gui/configurationwidget_funcs.cpp
 	Copyright T. Youngs 2013-2020
 
@@ -19,16 +19,16 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/configurationwidget.h"
-#include "gui/widgets/elementselector.hui"
+#include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/empiricalformula.h"
-#include "classes/configuration.h"
+#include "gui/configurationwidget.h"
+#include "gui/widgets/elementselector.hui"
 #include "main/dissolve.h"
 #include <QButtonGroup>
 
 // Constructor
-ConfigurationWidget::ConfigurationWidget(QWidget* parent) : QWidget(parent)
+ConfigurationWidget::ConfigurationWidget(QWidget *parent) : QWidget(parent)
 {
 	// Set up our UI
 	ui_.setupUi(this);
@@ -39,31 +39,20 @@ ConfigurationWidget::ConfigurationWidget(QWidget* parent) : QWidget(parent)
 }
 
 // Destructor
-ConfigurationWidget::~ConfigurationWidget()
-{
-}
+ConfigurationWidget::~ConfigurationWidget() {}
 
 /*
  * UI
  */
 
 // Notify that the style of displayed data in the underlying viewer has changed
-void ConfigurationWidget::notifyStyleModified()
-{
-	emit(styleModified());
-}
+void ConfigurationWidget::notifyStyleModified() { emit(styleModified()); }
 
 // Notify that the displayed data in the underlying viewer has changed
-void ConfigurationWidget::notifyDataModified()
-{
-	emit(dataModified());
-}
+void ConfigurationWidget::notifyDataModified() { emit(dataModified()); }
 
 // Post redisplay in the underlying view
-void ConfigurationWidget::postRedisplay()
-{
-	ui_.ConfigurationView->postRedisplay();
-}
+void ConfigurationWidget::postRedisplay() { ui_.ConfigurationView->postRedisplay(); }
 
 // Update toolbar to reflect current viewer state
 void ConfigurationWidget::updateToolbar()
@@ -71,8 +60,8 @@ void ConfigurationWidget::updateToolbar()
 	// Set current interaction mode
 	switch (configurationViewer()->interactionMode())
 	{
-		default:
-			break;
+	default:
+		break;
 	}
 
 	// Set checkable buttons
@@ -85,7 +74,7 @@ void ConfigurationWidget::updateToolbar()
  */
 
 // Set target Configuration, updating widget as necessary
-void ConfigurationWidget::setConfiguration(Configuration* cfg)
+void ConfigurationWidget::setConfiguration(Configuration *cfg)
 {
 	ui_.ConfigurationView->setConfiguration(cfg);
 
@@ -93,10 +82,7 @@ void ConfigurationWidget::setConfiguration(Configuration* cfg)
 }
 
 // Return contained ConfigurationViewer
-ConfigurationViewer* ConfigurationWidget::configurationViewer()
-{
-	return ui_.ConfigurationView;
-}
+ConfigurationViewer *ConfigurationWidget::configurationViewer() { return ui_.ConfigurationView; }
 
 /*
  * Toolbar
@@ -126,7 +112,4 @@ void ConfigurationWidget::on_ViewAxesVisibleButton_clicked(bool checked)
 	configurationViewer()->postRedisplay();
 }
 
-void ConfigurationWidget::on_ViewCopyToClipboardButton_clicked(bool checked)
-{
-	configurationViewer()->copyViewToClipboard(checked);
-}
+void ConfigurationWidget::on_ViewCopyToClipboardButton_clicked(bool checked) { configurationViewer()->copyViewToClipboard(checked); }

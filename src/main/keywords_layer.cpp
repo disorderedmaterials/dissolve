@@ -19,20 +19,18 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/keywords.h"
-#include "main/dissolve.h"
-#include "module/layer.h"
-#include "base/sysfunc.h"
 #include "base/lineparser.h"
+#include "base/sysfunc.h"
+#include "main/dissolve.h"
+#include "main/keywords.h"
+#include "module/layer.h"
 
 // Return enum option info for LayerKeyword
 EnumOptions<LayerBlock::LayerKeyword> LayerBlock::keywords()
 {
-	static EnumOptionsList LayerKeywords = EnumOptionsList() <<
-		EnumOption(LayerBlock::DisabledKeyword, 	"Disabled") <<
-		EnumOption(LayerBlock::EndLayerKeyword, 	"EndLayer") <<
-		EnumOption(LayerBlock::FrequencyKeyword,	"Frequency",	1) <<
-		EnumOption(LayerBlock::ModuleKeyword, 		"Module",	EnumOption::OptionalSecondArgument);
+	static EnumOptionsList LayerKeywords = EnumOptionsList() << EnumOption(LayerBlock::DisabledKeyword, "Disabled") << EnumOption(LayerBlock::EndLayerKeyword, "EndLayer")
+								 << EnumOption(LayerBlock::FrequencyKeyword, "Frequency", 1)
+								 << EnumOption(LayerBlock::ModuleKeyword, "Module", EnumOption::OptionalSecondArgument);
 
 	static EnumOptions<LayerBlock::LayerKeyword> options("LayerKeyword", LayerKeywords);
 
@@ -40,91 +38,101 @@ EnumOptions<LayerBlock::LayerKeyword> LayerBlock::keywords()
 }
 
 // Parse Layer block
-bool LayerBlock::parse(LineParser& parser, Dissolve* dissolve, ModuleLayer* layer)
+bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *layer)
 {
 	Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword), layer->name());
 
 	bool blockDone = false, error = false;
-	Module* module = NULL;
+	Module *module = NULL;
 	CharString niceName;
 
 	while (!parser.eofOrBlank())
 	{
 		// Read in a line, which should contain a keyword and a minimum number of arguments
-		if (parser.getArgsDelim() != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success)
+			return false;
 
 		// Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
-		if (!keywords().isValid(parser.argc(0))) return keywords().errorAndPrintValid(parser.argc(0));
+		if (!keywords().isValid(parser.argc(0)))
+			return keywords().errorAndPrintValid(parser.argc(0));
 		LayerKeyword kwd = keywords().enumeration(parser.argc(0));
-		if (!keywords().validNArgs(kwd, parser.nArgs()-1)) return false;
+		if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
+			return false;
 
 		// All OK, so process the keyword
 		switch (kwd)
 		{
-			case (LayerBlock::DisabledKeyword):
-				layer->setEnabled(false);
+		case (LayerBlock::DisabledKeyword):
+			layer->setEnabled(false);
+			break;
+		case (LayerBlock::EndLayerKeyword):
+			Messenger::print("Found end of %s block.\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword));
+			blockDone = true;
+			break;
+		case (LayerBlock::FrequencyKeyword):
+			layer->setFrequency(parser.argi(1));
+			break;
+		case (LayerBlock::ModuleKeyword):
+			// The argument following the keyword is the module name, so try to create an instance of that Module
+			module = dissolve->createModuleInstance(parser.argc(1));
+			if (!module)
+			{
+				error = true;
 				break;
-			case (LayerBlock::EndLayerKeyword):
-				Messenger::print("Found end of %s block.\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword));
-				blockDone = true;
+			}
+
+			// Add the new instance to the processing list
+			if (!layer->own(module))
+			{
+				Messenger::error("Failed to add Module '%s' as processing layer task.\n", parser.argc(1));
+				error = true;
+			}
+			if (error)
 				break;
-			case (LayerBlock::FrequencyKeyword):
-				layer->setFrequency(parser.argi(1));
-				break;
-			case (LayerBlock::ModuleKeyword):
-				// The argument following the keyword is the module name, so try to create an instance of that Module
-				module = dissolve->createModuleInstance(parser.argc(1));
-				if (!module)
+
+			// Set unique name, if it was provided - need to check if it has been used elsewhere (in any Module or instance of it)
+			if (parser.hasArg(2))
+			{
+				niceName = DissolveSys::niceName(parser.argc(2));
+				Module *existingModule = dissolve->findModuleInstance(niceName);
+				if (existingModule && (existingModule != module))
 				{
+					Messenger::error("A Module with the unique name '%s' already exist.\n", niceName.get());
 					error = true;
 					break;
 				}
-
-				// Add the new instance to the processing list
-				if (!layer->own(module))
+				else if (dissolve->findConfigurationByNiceName(niceName))
 				{
-					Messenger::error("Failed to add Module '%s' as processing layer task.\n", parser.argc(1));
+					Messenger::error("A Configuration with the unique name '%s' already exist, and so cannot be used as a Module name.\n", niceName.get());
 					error = true;
+					break;
 				}
-				if (error) break;
+				else
+					module->setUniqueName(niceName);
+			}
 
-				// Set unique name, if it was provided - need to check if it has been used elsewhere (in any Module or instance of it)
-				if (parser.hasArg(2))
-				{
-					niceName = DissolveSys::niceName(parser.argc(2));
-					Module* existingModule = dissolve->findModuleInstance(niceName);
-					if (existingModule && (existingModule != module))
-					{
-						Messenger::error("A Module with the unique name '%s' already exist.\n", niceName.get());
-						error = true;
-						break;
-					}
-					else if (dissolve->findConfigurationByNiceName(niceName))
-					{
-						Messenger::error("A Configuration with the unique name '%s' already exist, and so cannot be used as a Module name.\n", niceName.get());
-						error = true;
-						break;
-					}
-					else module->setUniqueName(niceName);
-				}
-
-				// Parse rest of Module block
-				module->setConfigurationLocal(false);
-				if (!ModuleBlock::parse(parser, dissolve, module, dissolve->processingModuleData(), false)) error = true;
-				else if (!module->setUp(*dissolve, dissolve->worldPool())) error = true;
-				if (error) break;
-				break;
-			default:
-				printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword), keywords().keyword(kwd));
+			// Parse rest of Module block
+			module->setConfigurationLocal(false);
+			if (!ModuleBlock::parse(parser, dissolve, module, dissolve->processingModuleData(), false))
 				error = true;
+			else if (!module->setUp(*dissolve, dissolve->worldPool()))
+				error = true;
+			if (error)
 				break;
+			break;
+		default:
+			printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword), keywords().keyword(kwd));
+			error = true;
+			break;
 		}
 
 		// Error encountered?
-		if (error) break;
-		
+		if (error)
+			break;
+
 		// End of block?
-		if (blockDone) break;
+		if (blockDone)
+			break;
 	}
 
 	// If there's no error and the blockDone flag isn't set, return an error

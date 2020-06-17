@@ -24,8 +24,8 @@
 
 #include "templates/vector3.h"
 #include <FTGL/ftgl.h>
-#include <QString>
 #include <QResource>
+#include <QString>
 
 // Forward Declarations
 /* none */
@@ -33,21 +33,20 @@
 // Font Instance
 class FontInstance
 {
-	public:
+      public:
 	// Constructor
 	FontInstance();
-
 
 	/*
 	 * Font Data
 	 */
-	private:
+      private:
 	// Font file last passed to setupFont()
 	QString fontFile_;
 	// Font data
-	QResource* fontData_;
+	QResource *fontData_;
 	// FTGL font for text
-	FTFont* font_;
+	FTFont *font_;
 	// Font full height (from bottom of descender to top of ascender)
 	double fontFullHeight_;
 	// Font base height (from baseline to top of ascender)
@@ -57,7 +56,7 @@ class FontInstance
 	// General scaling factor for primitives rendered with this font instance
 	double scaleFactor_;
 
-	public:
+      public:
 	// Set up font with font filename specified
 	bool setUp(QString fontFileName = QString());
 	// Return whether font exists and is ready for use
@@ -71,27 +70,25 @@ class FontInstance
 	// Return general scaling factor for primitives rendered with this font instance
 	double scaleFactor() const;
 
-
 	/*
 	 * Rendering
 	 */
-	public:
+      public:
 	// Set face size
 	bool setFaceSize(double faceSize);
 	// Render supplied text
-	bool renderText(const char* text) const;
-
+	bool renderText(const char *text) const;
 
 	/*
 	 * Bounding Box Calculation
 	 */
-	private:
+      private:
 	// Return bounding box for specified string
 	FTBBox boundingBox(QString text) const;
 
-	public:
+      public:
 	// Calculate bounding box for specified string
-	void boundingBox(QString text, Vec3<double>& lowerLeft, Vec3<double>& upperRight) const;
+	void boundingBox(QString text, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const;
 	// Calculate bounding box width for specified string
 	double boundingBoxWidth(QString text) const;
 	// Calculate bounding box height for specified string

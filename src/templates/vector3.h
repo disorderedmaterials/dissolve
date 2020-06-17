@@ -25,13 +25,13 @@
 #include "math/constants.h"
 #include "math/mathfunc.h"
 #include "templates/listitem.h"
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
 
 // 3D vector
 template <class T> class Vec3
 {
-	public:
+      public:
 	// Constructor
 	Vec3<T>(T xx = 0, T yy = 0, T zz = 0)
 	{
@@ -40,13 +40,12 @@ template <class T> class Vec3
 		z = zz;
 	}
 	// Components of vector
-	T x,y,z;
-
+	T x, y, z;
 
 	/*
 	 * Set / adjust / retrieve
 	 */
-	public:
+      public:
 	// Set the vector to 0,0,0
 	void zero()
 	{
@@ -57,9 +56,12 @@ template <class T> class Vec3
 	// Set the specific element to value
 	void set(int index, T value)
 	{
-		if (index == 0) x = value;
-		else if (index == 1) y = value;
-		else if (index == 2) z = value;
+		if (index == 0)
+			x = value;
+		else if (index == 1)
+			y = value;
+		else if (index == 2)
+			z = value;
 	}
 	// Set all three values simultaneously
 	void set(T newX, T newY, T newZ)
@@ -71,9 +73,12 @@ template <class T> class Vec3
 	// Add value to single component
 	void add(int index, T delta)
 	{
-		if (index == 0) x += delta;
-		else if (index == 1) y += delta;
-		else if (index == 2) z += delta;
+		if (index == 0)
+			x += delta;
+		else if (index == 1)
+			y += delta;
+		else if (index == 2)
+			z += delta;
 	}
 	// Add values to all three values simultaneously
 	void add(T dx, T dy, T dz)
@@ -85,18 +90,20 @@ template <class T> class Vec3
 	// Returns the value of the specified element
 	T get(int index) const
 	{
-		if (index == 0) return x;
-		else if (index == 1) return y;
-		else if (index == 2) return z;
+		if (index == 0)
+			return x;
+		else if (index == 1)
+			return y;
+		else if (index == 2)
+			return z;
 		printf("Vec3 - element index %i is out of bounds.\n", index);
 		return T();
 	}
 
-
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	// Operator =
 	void operator=(const T value)
 	{
@@ -111,7 +118,7 @@ template <class T> class Vec3
 		y += value;
 		z += value;
 	}
-	void operator+=(const Vec3<T>& v)
+	void operator+=(const Vec3<T> &v)
 	{
 		x += v.x;
 		y += v.y;
@@ -120,44 +127,35 @@ template <class T> class Vec3
 	Vec3<T> operator+(const T value) const
 	{
 		Vec3<T> result;
-		result.x = x+value;
-		result.y = y+value;
-		result.z = z+value;
+		result.x = x + value;
+		result.y = y + value;
+		result.z = z + value;
 		return result;
 	}
-	Vec3<T> operator+(const Vec3<T>& v) const
+	Vec3<T> operator+(const Vec3<T> &v) const
 	{
 		Vec3<T> result;
-		result.x = x+v.x;
-		result.y = y+v.y;
-		result.z = z+v.z;
+		result.x = x + v.x;
+		result.y = y + v.y;
+		result.z = z + v.z;
 		return result;
 	}
 	// Operators - and -=
-	inline Vec3<T> operator-() const
-	{
-		return Vec3<T>(-x,-y,-z);
-	}
+	inline Vec3<T> operator-() const { return Vec3<T>(-x, -y, -z); }
 	void operator-=(const T value)
 	{
 		x -= value;
 		y -= value;
 		z -= value;
 	}
-	void operator-=(const Vec3<T>& v)
+	void operator-=(const Vec3<T> &v)
 	{
 		x -= v.x;
 		y -= v.y;
 		z -= v.z;
 	}
-	inline Vec3<T> operator-(const T value) const
-	{
-		return Vec3<T>(x-value, y-value, z-value);
-	}
-	inline Vec3<T> operator-(const Vec3<T>& v) const
-	{
-		return Vec3<T>(x-v.x, y-v.y, z-v.z);
-	}
+	inline Vec3<T> operator-(const T value) const { return Vec3<T>(x - value, y - value, z - value); }
+	inline Vec3<T> operator-(const Vec3<T> &v) const { return Vec3<T>(x - v.x, y - v.y, z - v.z); }
 	// Operators / and /=
 	void operator/=(const T value)
 	{
@@ -165,58 +163,48 @@ template <class T> class Vec3
 		y /= value;
 		z /= value;
 	}
-	void operator/=(const Vec3<T>& v)
+	void operator/=(const Vec3<T> &v)
 	{
 		x /= v.x;
 		y /= v.y;
 		z /= v.z;
 	}
-	Vec3<T> operator/(const T value) const
-	{
-		return Vec3<T>(x/value, y/value, z/value);
-	}
-	Vec3<T> operator/(const Vec3<T>& v) const
-	{
-		return Vec3<T>(x/v.x, y/v.y, z/v.z);
-	}
+	Vec3<T> operator/(const T value) const { return Vec3<T>(x / value, y / value, z / value); }
+	Vec3<T> operator/(const Vec3<T> &v) const { return Vec3<T>(x / v.x, y / v.y, z / v.z); }
 	// Operators * and *=
-	Vec3<T> operator*(const T value) const
-	{
-		return Vec3<T>(x*value, y*value, z*value);
-	}
+	Vec3<T> operator*(const T value) const { return Vec3<T>(x * value, y * value, z * value); }
 	void operator*=(const T value)
 	{
 		x *= value;
 		y *= value;
 		z *= value;
 	}
-	Vec3<T> operator*(const Vec3<T>& v) const
+	Vec3<T> operator*(const Vec3<T> &v) const
 	{
 		// Cross Product
 		return Vec3<T>(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
 	}
 	// Element access operator
-	T& operator[](int index)
+	T &operator[](int index)
 	{
-		if (index == 0) return x;
-		else if (index == 1) return y;
-		else if (index == 2) return z;
+		if (index == 0)
+			return x;
+		else if (index == 1)
+			return y;
+		else if (index == 2)
+			return z;
 		printf("Vec3 - array access failed - index %i is out of bounds.\n", index);
 
 		static T dummy;
 		return dummy;
 	}
 
-
 	/*
 	 * Methods
 	 */
-	public:
+      public:
 	// Return vector of absolute elements
-	Vec3<T> abs() const
-	{
-		return Vec3<T>(fabs(x), fabs(y), fabs(z));
-	}
+	Vec3<T> abs() const { return Vec3<T>(fabs(x), fabs(y), fabs(z)); }
 	// Returns the largest absolute value of the vector
 	T absMax() const
 	{
@@ -226,8 +214,10 @@ template <class T> class Vec3
 	// Returns the index of the maximum absolute-valued element in the vector
 	int absMaxElement() const
 	{
-		if ((fabs(x) >= fabs(y)) && (fabs(x) >= fabs(z))) return 0;
-		if ((fabs(y) >= fabs(x)) && (fabs(y) >= fabs(z))) return 1;
+		if ((fabs(x) >= fabs(y)) && (fabs(x) >= fabs(z)))
+			return 0;
+		if ((fabs(y) >= fabs(x)) && (fabs(y) >= fabs(z)))
+			return 1;
 		return 2;
 	}
 	// Returns the smallest absolute value of the vector
@@ -239,20 +229,20 @@ template <class T> class Vec3
 	// Returns the index of the minimum absolute-valued element in the vector
 	int absMinElement() const
 	{
-		if ((fabs(x) <= fabs(y)) && (fabs(x) <= fabs(z))) return 0;
-		if ((fabs(y) <= fabs(x)) && (fabs(y) <= fabs(z))) return 1;
+		if ((fabs(x) <= fabs(y)) && (fabs(x) <= fabs(z)))
+			return 0;
+		if ((fabs(y) <= fabs(x)) && (fabs(y) <= fabs(z)))
+			return 1;
 		return 2;
 	}
 	// Dot product between this and supplied vector
-	double dp(const Vec3<T>& v) const
-	{
-		return (x*v.x + y*v.y + z*v.z);
-	}
+	double dp(const Vec3<T> &v) const { return (x * v.x + y * v.y + z * v.z); }
 	// Normalise and return original magnitude
 	double magAndNormalise()
 	{
-		double mag = sqrt(x*x + y*y + z*z);
-		if (mag < 1.0E-8) zero();
+		double mag = sqrt(x * x + y * y + z * z);
+		if (mag < 1.0E-8)
+			zero();
 		else
 		{
 			x /= mag;
@@ -264,9 +254,10 @@ template <class T> class Vec3
 	// Normalise and return original magnitude squared
 	double magSqAndNormalise()
 	{
-		double magSq = x*x + y*y + z*z;
+		double magSq = x * x + y * y + z * z;
 		double mag = sqrt(magSq);
-		if (mag < 1.0E-8) zero();
+		if (mag < 1.0E-8)
+			zero();
 		else
 		{
 			x /= mag;
@@ -276,15 +267,9 @@ template <class T> class Vec3
 		return magSq;
 	}
 	// Calculate vector magnitude
-	inline double magnitude() const
-	{
-		return sqrt(x*x + y*y + z*z);
-	}
+	inline double magnitude() const { return sqrt(x * x + y * y + z * z); }
 	// Calculate square of vector magnitude
-	inline double magnitudeSq() const
-	{
-		return x*x + y*y + z*z;
-	}
+	inline double magnitudeSq() const { return x * x + y * y + z * z; }
 	// Returns the largest value of the vector
 	T max() const
 	{
@@ -294,8 +279,10 @@ template <class T> class Vec3
 	// Returns the maximum valued element in the vector
 	int maxElement() const
 	{
-		if ((x >= y) && (x >= z)) return 0;
-		if ((y >= x) && (y >= z)) return 1;
+		if ((x >= y) && (x >= z))
+			return 0;
+		if ((y >= x) && (y >= z))
+			return 1;
 		return 2;
 	}
 	// Returns the smallest value of the vector
@@ -307,8 +294,10 @@ template <class T> class Vec3
 	// Returns the minimum valued element in the vector
 	int minElement() const
 	{
-		if ((x <= y) && (x <= z)) return 0;
-		if ((y <= x) && (y <= z)) return 1;
+		if ((x <= y) && (x <= z))
+			return 0;
+		if ((y <= x) && (y <= z))
+			return 1;
 		return 2;
 	}
 	// Multiply elements of this vector with those of supplied vector
@@ -321,8 +310,9 @@ template <class T> class Vec3
 	// Normalise the vector to unity
 	void normalise()
 	{
-		double mag = sqrt(x*x + y*y + z*z);
-		if (mag < 1.0E-8) zero();
+		double mag = sqrt(x * x + y * y + z * z);
+		if (mag < 1.0E-8)
+			zero();
 		else
 		{
 			x /= mag;
@@ -360,7 +350,7 @@ template <class T> class Vec3
 		return result;
 	}
 	// Orthogonalise (Gram-Schmidt) w.r.t. supplied vector
-	void orthogonalise(const Vec3<T>& reference)
+	void orthogonalise(const Vec3<T> &reference)
 	{
 		double sourcemag = reference.magnitude();
 		double dpovermagsq = dp(reference) / (sourcemag * sourcemag);
@@ -369,50 +359,48 @@ template <class T> class Vec3
 		z = z - dpovermagsq * reference.z;
 	}
 	// Orthogonalise (two vectors)
-	void orthogonalise(const Vec3<T>& reference1, const Vec3<T>& reference2)
+	void orthogonalise(const Vec3<T> &reference1, const Vec3<T> &reference2)
 	{
 		// This routine actually generates the orthogonal vector via the cross-product
 		// We also calculate the scalar resolute (dp) to ensure the new vector points in the same direction
 		Vec3<T> newvec = reference1 * reference2;
 		newvec.normalise();
 		double dp = newvec.dp(*this);
-		if (dp < 0.0) newvec *= -1.0;
+		if (dp < 0.0)
+			newvec *= -1.0;
 		*this = newvec;
 	}
 	// Prints the contents of the vector
-	void print() const
-	{
-		printf("%8.4f %8.4f %8.4f\n",(double)x,(double)y,(double)z);
-	}
+	void print() const { printf("%8.4f %8.4f %8.4f\n", (double)x, (double)y, (double)z); }
 	// Generate random unit vector
 	void randomUnit()
 	{
 		// Generates a random unit vector
-		x = DissolveMath::random()-0.5;
-		y = DissolveMath::random()-0.5;
-		z = DissolveMath::random()-0.5;
+		x = DissolveMath::random() - 0.5;
+		y = DissolveMath::random() - 0.5;
+		z = DissolveMath::random() - 0.5;
 		normalise();
 	}
 	// Convert spherical who,phi,theta coordinates into cartesian x,y,z
 	void toCartesian()
 	{
 		// x = rho, y = theta (inclination), z = phi (azimuthal angle), assuming that phi and theta are in degrees
-		T newx,newy,newz;
+		T newx, newy, newz;
 		y /= DEGRAD;
 		z /= DEGRAD;
 		newx = x * sin(y) * cos(z);
 		newy = x * sin(y) * sin(z);
 		newz = x * cos(y);
-		set(newx,newy,newz);
+		set(newx, newy, newz);
 	}
 	// Convert cartesian x,y,z coordinates into spherical (rho,phi/zenith,theta/azimuthal)
 	void toSpherical()
 	{
 		T rho, phi, theta;
 		rho = magnitude();
-		theta = acos(z/rho);
-		phi = atan2(y,x);
-		set(rho, phi*DEGRAD,theta*DEGRAD);
+		theta = acos(z / rho);
+		phi = atan2(y, x);
+		set(rho, phi * DEGRAD, theta * DEGRAD);
 	}
 	// Set all three values simultaneously, converting supplied spherical coordinates to cartesian
 	void fromSpherical(T r, T phi, T theta)
@@ -425,9 +413,12 @@ template <class T> class Vec3
 	// Return a unit vector along the specified direction
 	static Vec3<T> unit(int index)
 	{
-		if (index == 0) return Vec3<T>(1,0,0);
-		else if (index == 1) return Vec3<T>(0,1,0);
-		else if (index == 2) return Vec3<T>(0,0,1);
+		if (index == 0)
+			return Vec3<T>(1, 0, 0);
+		else if (index == 1)
+			return Vec3<T>(0, 1, 0);
+		else if (index == 2)
+			return Vec3<T>(0, 0, 1);
 
 		printf("Vec3 - array access failed - index %i is out of bounds.\n", index);
 		return Vec3<T>();
@@ -444,21 +435,19 @@ template <class T> class Vec3
 /*
  * 3D vector with List Pointers
  */
-template <class T> class ListVec3 : public Vec3<T>, public ListItem< ListVec3<T> >
+template <class T> class ListVec3 : public Vec3<T>, public ListItem<ListVec3<T>>
 {
-	public:
+      public:
 	// Constructor
-	ListVec3<T>(T xx = 0, T yy = 0, T zz = 0) : Vec3<T>(xx, yy, zz), ListItem<ListVec3>()
-	{
-	}
+	ListVec3<T>(T xx = 0, T yy = 0, T zz = 0) : Vec3<T>(xx, yy, zz), ListItem<ListVec3>() {}
 	// Copy Constructor
-	ListVec3<T>(const Vec3<T>& source)
+	ListVec3<T>(const Vec3<T> &source)
 	{
 		Vec3<T>::x = source.x;
 		Vec3<T>::y = source.y;
 		Vec3<T>::z = source.z;
 	}
-	void operator=(const Vec3<T>& source)
+	void operator=(const Vec3<T> &source)
 	{
 		Vec3<T>::x = source.x;
 		Vec3<T>::y = source.y;

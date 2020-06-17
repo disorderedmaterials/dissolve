@@ -33,17 +33,11 @@ NeutronSQModule::NeutronSQModule() : Module()
 }
 
 // Destructor
-NeutronSQModule::~NeutronSQModule()
-{
-}
+NeutronSQModule::~NeutronSQModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* NeutronSQModule::createInstance() const
-{
-	return new NeutronSQModule;
-}
-
+Module *NeutronSQModule::createInstance() const { return new NeutronSQModule; }

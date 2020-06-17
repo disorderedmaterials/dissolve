@@ -20,101 +20,110 @@
 */
 
 #include "io/export/pairpotential.h"
-#include "classes/pairpotential.h"
-#include "math/data1d.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-
-// PairPotential Export Keywords
-const char* PairPotentialExportFormatKeywords[] = { "block", "TABLE" };
-const char* NicePairPotentialExportFormatKeywords[] = { "Block Data", "DL_POLY TABLE file" };
-
-// Return number of available formats
-int PairPotentialExportFileFormat::nFormats() const
-{
-	return PairPotentialExportFileFormat::nPairPotentialExportFormats;
-}
-
-// Return formats array
-const char** PairPotentialExportFileFormat::formats() const
-{
-	return PairPotentialExportFormatKeywords;
-}
-
-// Return nice formats array
-const char** PairPotentialExportFileFormat::niceFormats() const
-{
-	return NicePairPotentialExportFormatKeywords;
-}
-
-// Return current format as PairPotentialExportFormat
-PairPotentialExportFileFormat::PairPotentialExportFormat PairPotentialExportFileFormat::pairPotentialFormat() const
-{
-	return (PairPotentialExportFileFormat::PairPotentialExportFormat) format_;
-}
+#include "classes/pairpotential.h"
+#include "math/data1d.h"
 
 // Constructor
-PairPotentialExportFileFormat::PairPotentialExportFileFormat(const char* filename, PairPotentialExportFormat format) : FileAndFormat(filename, format)
+PairPotentialExportFileFormat::PairPotentialExportFileFormat(const char *filename, PairPotentialExportFormat format) : FileAndFormat(filename, format) {}
+
+/*
+ * Format Access
+ */
+
+// Return enum options for PairPotentialExportFormat
+EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> PairPotentialExportFileFormat::pairPotentialExportFormats()
 {
+	static EnumOptionsList PairPotentialExportFormats = EnumOptionsList() << EnumOption(PairPotentialExportFileFormat::BlockPairPotential, "block", "Block Data")
+									      << EnumOption(PairPotentialExportFileFormat::DLPOLYTABLEPairPotential, "table", "DL_POLY TABLE File");
+
+	static EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> options("PairPotentialExportFileFormat", PairPotentialExportFormats);
+
+	return options;
 }
+
+// Return number of available formats
+int PairPotentialExportFileFormat::nFormats() const { return PairPotentialExportFileFormat::nPairPotentialExportFormats; }
+
+// Return format keyword for supplied index
+const char *PairPotentialExportFileFormat::formatKeyword(int id) const { return pairPotentialExportFormats().keywordByIndex(id); }
+
+// Return description string for supplied index
+const char *PairPotentialExportFileFormat::formatDescription(int id) const { return pairPotentialExportFormats().descriptionByIndex(id); }
+
+// Return current format as PairPotentialExportFormat
+PairPotentialExportFileFormat::PairPotentialExportFormat PairPotentialExportFileFormat::pairPotentialFormat() const { return (PairPotentialExportFileFormat::PairPotentialExportFormat)format_; }
 
 /*
  * Export Functions
  */
 
 // Write PairPotential as simple block data
-bool PairPotentialExportFileFormat::exportBlock(LineParser& parser, PairPotential* pp)
+bool PairPotentialExportFileFormat::exportBlock(LineParser &parser, PairPotential *pp)
 {
 	// Get array references for convenience
-	const Data1D& uOriginal = pp->uOriginal();
-	const Data1D& uAdditional = pp->uAdditional();
-	const Data1D& uFull = pp->uFull();
-	const Data1D& dUFull = pp->dUFull();
+	const Data1D &uOriginal = pp->uOriginal();
+	const Data1D &uAdditional = pp->uAdditional();
+	const Data1D &uFull = pp->uFull();
+	const Data1D &dUFull = pp->dUFull();
 	const int nPoints = pp->nPoints();
 
 	// Write header comment
-	if (!parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "", "Full", "Derivative", "Original", "Additional", "Exact(Orig)", "Exact(Deriv)")) return false;
-	if (!parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)")) return false;
+	if (!parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "", "Full", "Derivative", "Original", "Additional", "Exact(Orig)", "Exact(Deriv)"))
+		return false;
+	if (!parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)"))
+		return false;
 
-	for (int n = 0; n<nPoints; ++n) if (!parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", uOriginal.constXAxis(n), uFull.constValue(n), dUFull.constValue(n), uOriginal.constValue(n), uAdditional.constValue(n), pp->analyticEnergy(uOriginal.constXAxis(n)), pp->analyticForce(uOriginal.constXAxis(n)))) return false;
+	for (int n = 0; n < nPoints; ++n)
+		if (!parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", uOriginal.constXAxis(n), uFull.constValue(n), dUFull.constValue(n), uOriginal.constValue(n),
+				       uAdditional.constValue(n), pp->analyticEnergy(uOriginal.constXAxis(n)), pp->analyticForce(uOriginal.constXAxis(n))))
+			return false;
 
 	return true;
 }
 
 // Write PairPotential as a DL_POLY TABLE file
-bool PairPotentialExportFileFormat::exportDLPOLY(LineParser& parser, PairPotential* pp)
+bool PairPotentialExportFileFormat::exportDLPOLY(LineParser &parser, PairPotential *pp)
 {
 	// Get array references for convenience
-	const Data1D& uFull = pp->uFull();
-	const Data1D& dUFull = pp->dUFull();
+	const Data1D &uFull = pp->uFull();
+	const Data1D &dUFull = pp->dUFull();
 	const int nPoints = pp->nPoints();
 
 	// Write header (record 1)
-	if (!parser.writeLineF("%-72s\n", "TABLE file written by Dissolve")) return false;
+	if (!parser.writeLineF("%-72s\n", "TABLE file written by Dissolve"))
+		return false;
 
 	// Write mesh information (record 2)
-	if (!parser.writeLineF("%20.10e%20.10e%10i\n", pp->delta(), pp->range(), nPoints)) return false;
+	if (!parser.writeLineF("%20.10e%20.10e%10i\n", pp->delta(), pp->range(), nPoints))
+		return false;
 
 	// Write pair potential header record
-	if (!parser.writeLineF("%-8s%-8s%20.10e%20.10e\n", pp->atomTypeNameI(), pp->atomTypeNameJ(),0.0,0.0)) return false;
+	if (!parser.writeLineF("%-8s%-8s%20.10e%20.10e\n", pp->atomTypeNameI(), pp->atomTypeNameJ(), 0.0, 0.0))
+		return false;
 
 	// Write energy data
-	for (int n=0; n<nPoints; ++n)
+	for (int n = 0; n < nPoints; ++n)
 	{
-		if (!parser.writeLineF("%17.12e ", uFull.constValue(n))) return false;
-		if ( ((n+1)%4 == 0) || (n == (nPoints-1)) )
+		if (!parser.writeLineF("%17.12e ", uFull.constValue(n)))
+			return false;
+		if (((n + 1) % 4 == 0) || (n == (nPoints - 1)))
 		{
-			if (!parser.writeLineF("\n")) return false;
+			if (!parser.writeLineF("\n"))
+				return false;
 		}
 	}
 
 	// Write force data
-	for (int n=0; n<nPoints; ++n)
+	for (int n = 0; n < nPoints; ++n)
 	{
-		if (!parser.writeLineF("%17.12e ", dUFull.constValue(n))) return false;
-		if ( ((n+1)%4 == 0) || (n == (nPoints-1)) )
+		if (!parser.writeLineF("%17.12e ", dUFull.constValue(n)))
+			return false;
+		if (((n + 1) % 4 == 0) || (n == (nPoints - 1)))
 		{
-			if (!parser.writeLineF("\n")) return false;
+			if (!parser.writeLineF("\n"))
+				return false;
 		}
 	}
 
@@ -122,7 +131,7 @@ bool PairPotentialExportFileFormat::exportDLPOLY(LineParser& parser, PairPotenti
 }
 
 // Write PairPotential using current filename and format
-bool PairPotentialExportFileFormat::exportData(PairPotential* pp)
+bool PairPotentialExportFileFormat::exportData(PairPotential *pp)
 {
 	// Open the file
 	LineParser parser;
@@ -134,9 +143,14 @@ bool PairPotentialExportFileFormat::exportData(PairPotential* pp)
 
 	// Write data
 	bool result = false;
-	if (pairPotentialFormat() == PairPotentialExportFileFormat::BlockPairPotential) result = exportBlock(parser, pp);
-	else if (pairPotentialFormat() == PairPotentialExportFileFormat::DLPOLYTABLEPairPotential) result = exportDLPOLY(parser, pp);
-	else Messenger::error("Unrecognised pair potential format.\nKnown formats are: %s.\n", PairPotentialExportFileFormat().formats());
-
+	if (pairPotentialFormat() == PairPotentialExportFileFormat::BlockPairPotential)
+		result = exportBlock(parser, pp);
+	else if (pairPotentialFormat() == PairPotentialExportFileFormat::DLPOLYTABLEPairPotential)
+		result = exportDLPOLY(parser, pp);
+	else
+	{
+		Messenger::error("Unrecognised pair potential format.\nKnown formats are:\n");
+		printAvailableFormats();
+	}
 	return result;
 }

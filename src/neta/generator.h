@@ -24,8 +24,8 @@
 
 #include "base/charstring.h"
 #include "base/enumoptions.h"
-#include "templates/pointerarray.h"
 #include "templates/reflist.h"
+#include <vector>
 
 // External declarations
 extern int NETADefinitionGenerator_parse();
@@ -41,43 +41,41 @@ class NETANode;
 // NETADefinition Generator
 class NETADefinitionGenerator
 {
-	private:
+      private:
 	// Constructor
-	NETADefinitionGenerator(NETADefinition& definition, const char* definitionText, const Forcefield* associatedFF = NULL);
+	NETADefinitionGenerator(NETADefinition &definition, const char *definitionText, const Forcefield *associatedFF = NULL);
 
-	public:
+      public:
 	// Destructor
 	~NETADefinitionGenerator();
-
 
 	/*
 	 * Target Objects
 	 */
-	private:
+      private:
 	// Pointer to target NETADefinition
-	static NETADefinition* definition_;
+	static NETADefinition *definition_;
 	// The NETADefinitionGenerator object calling the parser/lexer
-	static NETADefinitionGenerator* generator_;
+	static NETADefinitionGenerator *generator_;
 
-	public:
+      public:
 	// Return target NETADefinition (static to allow NETADefinitionGenerator_parse() to use it)
-	static NETADefinition* definition();
+	static NETADefinition *definition();
 	// Return current NETADefinitionGenerator (static to allow NETADefinitionGenerator_parse() to use it)
-	static NETADefinitionGenerator* generator();
-
+	static NETADefinitionGenerator *generator();
 
 	/*
 	 * Lexer
 	 */
-	private:
+      private:
 	// Source definition string
 	CharString definitionString_;
 	// Integer position in stringSource, total length of string, and starting position of current token/function
 	int stringPos_, stringLength_, tokenStart_, functionStart_;
 
-	private:
+      private:
 	// Set string source for lexer
-	void setSource(const char* definitionText);
+	void setSource(const char *definitionText);
 	// Get next character from current input stream
 	char getChar();
 	// Peek next character from current input stream
@@ -85,41 +83,40 @@ class NETADefinitionGenerator
 	// 'Replace' last character read from current input stream
 	void unGetChar();
 
-	public:
+      public:
 	// Parser lexer, called by yylex()
 	int lex();
-
 
 	/*
 	 * Creation
 	 */
-	private:
+      private:
 	// Encompassing forcefield for the definition (if any)
-	static const Forcefield* associatedForcefield_;
+	static const Forcefield *associatedForcefield_;
 	// Temporary element array used in definition creation
-	static PointerArray<Element> targetElements_;
+	static std::vector<Element *> targetElements_;
 	// Temporary atomtype array used in definition creation
-	static PointerArray<ForcefieldAtomType> targetAtomTypes_;
+	static std::vector<ForcefieldAtomType *> targetAtomTypes_;
 	// Context (branch) stack
 	static RefList<NETANode> contextStack_;
 	// Whether to recognise text elements as generic names, rather than an element or unrecognised token
 	static bool expectName_;
 
-	public:
+      public:
 	// Add element target to array (by Z)
 	static bool addElementTarget(int elementZ);
 	// Add atomtype target to array (by id)
 	static bool addAtomTypeTarget(int id);
 	// Add atomtype target to array (by name)
-	static bool addAtomTypeTarget(const char* typeName);
+	static bool addAtomTypeTarget(const char *typeName);
 	// Return target Elements array
-	static PointerArray<Element> targetElements();
+	static std::vector<Element *> targetElements();
 	// Return target ForcefieldAtomTypes array
-	static PointerArray<ForcefieldAtomType> targetAtomTypes();
+	static std::vector<ForcefieldAtomType *> targetAtomTypes();
 	// Clear element / atomtype targets
 	static void clearTargets();
 	// Return topmost context
-	static NETANode* context();
+	static NETANode *context();
 	// Push branch in last node of topmost context onto the context stack
 	static bool pushContext();
 	// Pop topmost context
@@ -127,7 +124,7 @@ class NETADefinitionGenerator
 	// Set whether to recognise text elements as generic names
 	static void setExpectName(bool b);
 	// Static generation function
-	static bool generate(NETADefinition& neta, const char* netaDefinition, const Forcefield* associatedFF);
+	static bool generate(NETADefinition &neta, const char *netaDefinition, const Forcefield *associatedFF);
 };
 
 #endif

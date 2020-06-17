@@ -23,77 +23,75 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Data3D Type Keywords
-const char* Data3DImportFormatKeywords[] = { "cartesian" };
-const char* NiceData3DImportFormatKeywords[] = { "Cartesian X,Y,Z,f(x,y,z) data" };
-
-// Constructor
-Data3DImportFileFormat::Data3DImportFileFormat(Data3DImportFormat format) : FileAndFormat(format)
-{
-}
+// Constructors
+Data3DImportFileFormat::Data3DImportFileFormat(Data3DImportFileFormat::Data3DImportFormat format) : FileAndFormat(format) { setUpKeywords(); }
+Data3DImportFileFormat::Data3DImportFileFormat(const char *filename, Data3DImportFileFormat::Data3DImportFormat format) : FileAndFormat(filename, format) { setUpKeywords(); }
 
 // Destructor
-Data3DImportFileFormat::~Data3DImportFileFormat()
-{
-}
+Data3DImportFileFormat::~Data3DImportFileFormat() {}
+
+/*
+ * Keyword Options
+ */
+
+// Set up keywords for the format
+void Data3DImportFileFormat::setUpKeywords() {}
 
 /*
  * Format Access
  */
 
+// Return enum options for Data3DImportFormat
+EnumOptions<Data3DImportFileFormat::Data3DImportFormat> Data3DImportFileFormat::data3DImportFormats()
+{
+	static EnumOptionsList Data3DImportFormats = EnumOptionsList() << EnumOption(Data3DImportFileFormat::CartesianData3D, "cartesian", "Cartesian X,Y,Z,f(x,y,z) data");
+
+	static EnumOptions<Data3DImportFileFormat::Data3DImportFormat> options("Data3DImportFileFormat", Data3DImportFormats);
+
+	return options;
+}
+
 // Return number of available formats
-int Data3DImportFileFormat::nFormats() const
-{
-	return Data3DImportFileFormat::nData3DImportFormats;
-}
+int Data3DImportFileFormat::nFormats() const { return Data3DImportFileFormat::nData3DImportFormats; }
 
-// Return formats array
-const char** Data3DImportFileFormat::formats() const
-{
-	return Data3DImportFormatKeywords;
-}
+// Return format keyword for supplied index
+const char *Data3DImportFileFormat::formatKeyword(int id) const { return data3DImportFormats().keywordByIndex(id); }
 
-// Return nice formats array
-const char** Data3DImportFileFormat::niceFormats() const
-{
-	return NiceData3DImportFormatKeywords;
-}
+// Return description string for supplied index
+const char *Data3DImportFileFormat::formatDescription(int id) const { return data3DImportFormats().descriptionByIndex(id); }
 
 // Return current format as Data3DImportFormat
-Data3DImportFileFormat::Data3DImportFormat Data3DImportFileFormat::data3DFormat() const
-{
-	return (Data3DImportFileFormat::Data3DImportFormat) format_;
-}
+Data3DImportFileFormat::Data3DImportFormat Data3DImportFileFormat::data3DFormat() const { return (Data3DImportFileFormat::Data3DImportFormat)format_; }
 
 /*
  * Import / Write
  */
 
 // Parse additional argument
-bool Data3DImportFileFormat::parseArgument(const char* arg)
+bool Data3DImportFileFormat::parseArgument(const char *arg)
 {
 	// Split arg into parts before and after the '='
 	CharString key = DissolveSys::beforeChar(arg, '=');
 	CharString value = DissolveSys::afterChar(arg, '=');
-	if (key == "template") templateSourceObjectTag_ = value;
-	else return false;
+	if (key == "template")
+		templateSourceObjectTag_ = value;
+	else
+		return false;
 
 	return true;
 }
 
 // Return whether this file/format has any additional arguments to write
-bool Data3DImportFileFormat::hasAdditionalArguments() const
-{
-	return true;
-}
+bool Data3DImportFileFormat::hasAdditionalArguments() const { return true; }
 
 // Return additional arguments as string
-const char* Data3DImportFileFormat::additionalArguments() const
+const char *Data3DImportFileFormat::additionalArguments() const
 {
 	static CharString args;
 
 	args.clear();
-	if (!templateSourceObjectTag_.isEmpty()) args.sprintf("template='%s'", templateSourceObjectTag_.get());
+	if (!templateSourceObjectTag_.isEmpty())
+		args.sprintf("template='%s'", templateSourceObjectTag_.get());
 
 	return args.get();
 }
@@ -103,11 +101,12 @@ const char* Data3DImportFileFormat::additionalArguments() const
  */
 
 // Import Data3D using current filename and format
-bool Data3DImportFileFormat::importData(Data3D& data, ProcessPool* procPool)
+bool Data3DImportFileFormat::importData(Data3D &data, ProcessPool *procPool)
 {
 	// Open file and check that we're OK to proceed importing from it
 	LineParser parser(procPool);
-	if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading())) return Messenger::error("Couldn't open file '%s' for loading Data3D data.\n", filename_.get());
+	if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
+		return Messenger::error("Couldn't open file '%s' for loading Data3D data.\n", filename_.get());
 
 	// Import the data
 	bool result = importData(parser, data);
@@ -118,12 +117,12 @@ bool Data3DImportFileFormat::importData(Data3D& data, ProcessPool* procPool)
 }
 
 // Import Data3D using supplied parser and current format
-bool Data3DImportFileFormat::importData(LineParser& parser, Data3D& data)
+bool Data3DImportFileFormat::importData(LineParser &parser, Data3D &data)
 {
 	// Import the data
 	bool result = false;
-// 	if (data3DFormat() == Data3DImportFileFormat::CartesianData3D) result = importCartesian(parser, data);
-	Messenger::error("Don't know how to load Data3D of format '%s'.\n", Data3DImportFileFormat().format(data3DFormat()));
+	// 	if (data3DFormat() == Data3DImportFileFormat::CartesianData3D) result = importCartesian(parser, data);
+	Messenger::error("Don't know how to load Data3D in format '%s'.\n", formatKeyword(data3DFormat()));
 
 	return result;
 }

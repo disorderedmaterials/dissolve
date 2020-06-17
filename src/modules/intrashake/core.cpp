@@ -33,16 +33,11 @@ IntraShakeModule::IntraShakeModule() : Module()
 }
 
 // Destructor
-IntraShakeModule::~IntraShakeModule()
-{
-}
+IntraShakeModule::~IntraShakeModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* IntraShakeModule::createInstance() const
-{
-	return new IntraShakeModule;
-}
+Module *IntraShakeModule::createInstance() const { return new IntraShakeModule; }

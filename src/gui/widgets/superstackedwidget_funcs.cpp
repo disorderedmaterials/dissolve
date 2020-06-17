@@ -23,14 +23,13 @@
 #include <QPainter>
 
 // Constructor
-SuperStackedWidget::SuperStackedWidget(QWidget* parent) : QStackedWidget(parent)
-{
-}
+SuperStackedWidget::SuperStackedWidget(QWidget *parent) : QStackedWidget(parent) {}
 
 // Paint event
-void SuperStackedWidget::paintEvent(QPaintEvent* event)
+void SuperStackedWidget::paintEvent(QPaintEvent *event)
 {
-	if (currentIndex() != 0) return;
+	if (currentIndex() != 0)
+		return;
 
 	QPainter painter(this);
 
@@ -38,5 +37,5 @@ void SuperStackedWidget::paintEvent(QPaintEvent* event)
 	painter.drawPixmap(0, 0, QPixmap(":/images/images/hexagons1.png"));
 
 	// Draw the background before we do anything else
-	painter.drawPixmap(width()-512, height()-527, QPixmap(":/images/images/big.png"));
+	painter.drawPixmap(width() - 512, height() - 527, QPixmap(":/images/images/big.png"));
 }

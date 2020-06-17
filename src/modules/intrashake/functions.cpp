@@ -20,4 +20,3 @@
 */
 
 #include "modules/intrashake/intrashake.h"
-

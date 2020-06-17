@@ -1,10 +1,8 @@
 ---
 title: Keyword Options
-parent: Overviews
 grand_parent: Developer Documentation
 mermaid: true
 ---
-# Keyword Options
 
 ## Introduction
 

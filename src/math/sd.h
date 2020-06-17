@@ -22,60 +22,61 @@
 #ifndef DISSOLVE_SDMIN_H
 #define DISSOLVE_SDMIN_H
 
-#include "math/minimiser.h"
 #include "base/messenger.h"
+#include "math/minimiser.h"
 #include "templates/array.h"
 
 template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
 {
-	public:
+      public:
 	// Constructor
-	SteepestDescentMinimiser<T>(T& object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false) : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
+	SteepestDescentMinimiser<T>(T &object, typename MinimiserBase<T>::MinimiserCostFunction costFunction, bool pokeBeforeCost = false)
+	    : MinimiserBase<T>(object, costFunction, pokeBeforeCost)
 
-	private:
-	// Pointers to double values to be fit
-	Array<double*> targets_;
+		  private :
+	    // Pointers to double values to be fit
+	    Array<double *> targets_;
 	// Local values for fitting
 	Array<double> values_;
 
-
-	private:
+      private:
 	// Calculate gradient of current parameters
-	Array<double> gradient(const Array<double>& alpha)
+	Array<double> gradient(const Array<double> &alpha)
 	{
 		const double deltaFrac = 0.05;
 		double delta;
 		Array<double> gradient;
-		for (int n=0; n<alpha.nItems(); ++n)
+		for (int n = 0; n < alpha.nItems(); ++n)
 		{
 			Array<double> tempAlpha = alpha;
-			tempAlpha[n] = alpha.value(n)*(1.0-deltaFrac);
+			tempAlpha[n] = alpha.value(n) * (1.0 - deltaFrac);
 			delta = (object_.*costFunction_)(tempAlpha.array(), tempAlpha.nItems());
-			tempAlpha[n] = alpha.value(n)*(1.0+deltaFrac);
+			tempAlpha[n] = alpha.value(n) * (1.0 + deltaFrac);
 			delta -= (object_.*costFunction_)(tempAlpha.array(), tempAlpha.nItems());
-			gradient.add(-delta / (2.0*deltaFrac));
+			gradient.add(-delta / (2.0 * deltaFrac));
 		}
 
 		return gradient;
 	}
 	// Adjust parameters along specified gradient
-	Array<double> gradientMove(const Array<double>& alpha, const Array<double> grad, double stepSize)
+	Array<double> gradientMove(const Array<double> &alpha, const Array<double> grad, double stepSize)
 	{
 		Array<double> newAlpha(alpha.nItems());
-		for (int n=0; n<alpha.nItems(); ++n) newAlpha[n] = alpha.value(n) * grad.value(n) * stepSize;
+		for (int n = 0; n < alpha.nItems(); ++n)
+			newAlpha[n] = alpha.value(n) * grad.value(n) * stepSize;
 		return newAlpha;
 	}
 
-	public:
-        // Add pointer to double value to be fit
-        void addTarget(double& var)
-        {
-                targets_.add(&var);
-                values_.add(var);
-        }
-        // Perform minimisation
-        double minimise(int maxIterations)
-        {
+      public:
+	// Add pointer to double value to be fit
+	void addTarget(double &var)
+	{
+		targets_.add(&var);
+		values_.add(var);
+	}
+	// Perform minimisation
+	double minimise(int maxIterations)
+	{
 		int cycle, nattempts;
 		double trialError, stepSize;
 		bool lineDone, converged, success;
@@ -94,8 +95,9 @@ template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
 		stepSize = 1.0;
 
 		printf("Starting error = %f\n", currentError);
-		for (int n=0; n<grad.nItems(); ++n) printf("GRAD %i = %f\n", n, grad[n]);
-		for (cycle=0; cycle<maxIterations; cycle++)
+		for (int n = 0; n < grad.nItems(); ++n)
+			printf("GRAD %i = %f\n", n, grad[n]);
+		for (cycle = 0; cycle < maxIterations; cycle++)
 		{
 			// Minimise along gradient vector
 
@@ -110,34 +112,39 @@ template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
 				trialAlpha = gradientMove(values_, grad, stepSize);
 				trialError = (object_.*costFunction_)(trialAlpha.array(), trialAlpha.nItems());
 				printf("Trial Alpha[10] = %f, step = %f, error = %f\n", trialAlpha[10], stepSize, trialError);
-				if (trialError > currentError) stepSize *= 0.5;
+				if (trialError > currentError)
+					stepSize *= 0.5;
 			} while (trialError > currentError);
-			
+
 			printf("Current error = %f\n", trialError);
 			currentError = trialError;
 
 			// Complex method begins here
-// 			else currentError = lineMinimise(sourceModel);
-			
+			// 			else currentError = lineMinimise(sourceModel);
+
 			// Copy alpha and calculate gradient ready for next cycle
 			values_ = trialAlpha;
 			grad = gradient(values_);
 
 			// Check convergence criteria
-// 			if (fabs(deltaEnergy) < eConverge)
-// 			{
-// 				converged = true;
-// 				break;
-// 			}
+			// 			if (fabs(deltaEnergy) < eConverge)
+			// 			{
+			// 				converged = true;
+			// 				break;
+			// 			}
 
-			if (lineDone || converged) break;
+			if (lineDone || converged)
+				break;
 		}
 
-		if (converged) Messenger::print("Steepest descent converged in %i steps.",cycle+1);
-		else Messenger::print("Steepest descent did not converge within %i steps.",maxIterations);
+		if (converged)
+			Messenger::print("Steepest descent converged in %i steps.", cycle + 1);
+		else
+			Messenger::print("Steepest descent did not converge within %i steps.", maxIterations);
 
 		// Set minimised values back into their original variables
-                for (int n=0; n<targets_.nItems(); ++n) (*targets_[n]) = values_[n];
+		for (int n = 0; n < targets_.nItems(); ++n)
+			(*targets_[n]) = values_[n];
 
 		return currentError;
 	}

@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_HISTOGRAM2D_H
 #define DISSOLVE_HISTOGRAM2D_H
 
+#include "genericitems/base.h"
 #include "math/data2d.h"
 #include "math/sampleddouble.h"
-#include "genericitems/base.h"
 #include "templates/array2d.h"
 #include "templates/objectstore.h"
 
@@ -34,21 +34,20 @@ class ProcessPool;
 // One-Dimensional Histogram
 class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D>, public GenericItemBase
 {
-	public:
+      public:
 	// Constructor
 	Histogram2D();
 	// Destructor
 	~Histogram2D();
 	// Copy Constructor
-	Histogram2D(const Histogram2D& source);
+	Histogram2D(const Histogram2D &source);
 	// Clear data
 	void clear();
-	
 
 	/*
 	 * Histogram Data
 	 */
-	private:
+      private:
 	// Minimum value for x data (hard left-edge of first bin)
 	double xMinimum_;
 	// Maximum value for x data (hard right-edge of last bin, adjusted to match bin width if necessary)
@@ -80,7 +79,7 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
 	// Accumulated data
 	Data2D accumulatedData_;
 
-	public:
+      public:
 	// Initialise with specified bin range
 	void initialise(double xMinimum, double xMaximum, double xBinWidth, double yMinimum, double yMaximum, double yBinWidth);
 	// Zero histogram bins
@@ -108,47 +107,44 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
 	// Accumulate current histogram bins into averages
 	void accumulate();
 	// Return Array of x centre-bin values
-	const Array<double>& xBinCentres() const;
+	const Array<double> &xBinCentres() const;
 	// Return Array of y centre-bin values
-	const Array<double>& yBinCentres() const;
+	const Array<double> &yBinCentres() const;
 	// Return histogram data
-	Array2D<long int>& bins();
+	Array2D<long int> &bins();
 	// Add source histogram data into local array
-	void add(Histogram2D& other, int factor = 1);
+	void add(Histogram2D &other, int factor = 1);
 	// Return accumulated (averaged) data
-	const Data2D& accumulatedData() const;
-
+	const Data2D &accumulatedData() const;
 
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	// Assignment Operator
-	void operator=(const Histogram2D& source);
-
+	void operator=(const Histogram2D &source);
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-	public:
+      public:
 	// Return class name
-	static const char* itemClassName();
+	static const char *itemClassName();
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
-
+	bool write(LineParser &parser);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Sum histogram data onto all processes
-	bool allSum(ProcessPool& procPool);
+	bool allSum(ProcessPool &procPool);
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif

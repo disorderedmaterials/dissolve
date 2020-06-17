@@ -22,34 +22,18 @@
 #include "gui/referencepoint.h"
 
 // Constructor / Destructor
-ReferencePoint::ReferencePoint() : ListItem<ReferencePoint>()
-{
-}
+ReferencePoint::ReferencePoint() : ListItem<ReferencePoint>() {}
 
-ReferencePoint::~ReferencePoint()
-{
-}
+ReferencePoint::~ReferencePoint() {}
 
 // Set suffix for data items
-void ReferencePoint::setSuffix(const char* suffix)
-{
-	suffix_ = suffix;
-}
+void ReferencePoint::setSuffix(const char *suffix) { suffix_ = suffix; }
 
 // Return suffix for data items
-const char* ReferencePoint::suffix() const
-{
-	return suffix_.get();
-}
+const char *ReferencePoint::suffix() const { return suffix_.get(); }
 
 // Set restart file from which the reference point data was read
-void ReferencePoint::setRestartFile(const char* restartFile)
-{
-	restartFile_ = restartFile;
-}
+void ReferencePoint::setRestartFile(const char *restartFile) { restartFile_ = restartFile; }
 
 // Return restart file from which the reference point data was read
-const char* ReferencePoint::restartFile() const
-{
-	return restartFile_.get();
-}
+const char *ReferencePoint::restartFile() const { return restartFile_.get(); }

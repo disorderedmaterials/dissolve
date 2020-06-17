@@ -22,11 +22,11 @@
 #ifndef DISSOLVE_KEYWORD_NODEVALUEENUMOPTIONS_H
 #define DISSOLVE_KEYWORD_NODEVALUEENUMOPTIONS_H
 
+#include "base/lineparser.h"
 #include "keywords/data.h"
 #include "procedure/nodes/node.h"
 #include "procedure/nodevalue.h"
 #include "templates/venum.h"
-#include "base/lineparser.h"
 
 // Forward Declarations
 class ProcedureNode;
@@ -34,106 +34,90 @@ class ProcedureNode;
 // Keyword with NodeValue and EnumOptions base class
 class NodeValueEnumOptionsBaseKeyword
 {
-	public:
+      public:
 	// Constructor
-	NodeValueEnumOptionsBaseKeyword(NodeValue& nodeValue, EnumOptionsBase& baseOptions) : nodeValue_(nodeValue), baseOptions_(baseOptions)
-	{
-	}
-
+	NodeValueEnumOptionsBaseKeyword(NodeValue &nodeValue, EnumOptionsBase &baseOptions) : nodeValue_(nodeValue), baseOptions_(baseOptions) {}
 
 	/*
 	 * Source Data
 	 */
-	private:
+      private:
 	// Source NodeValue
-	NodeValue& nodeValue_;
+	NodeValue &nodeValue_;
 	// Source EnumBaseOptions
-	EnumOptionsBase& baseOptions_;
+	EnumOptionsBase &baseOptions_;
 
-	public:
+      public:
 	// Return NodeValue
-	const NodeValue& value() const
-	{
-		return nodeValue_;
-	}
+	const NodeValue &value() const { return nodeValue_; }
 	// Return EnumBaseOptions
-	const EnumOptionsBase& baseOptions() const
-	{
-		return baseOptions_;
-	}
-
+	const EnumOptionsBase &baseOptions() const { return baseOptions_; }
 
 	/*
 	 * Set
 	 */
-	public:
+      public:
 	// Set node value from expression text, informing KeywordBase
-	virtual bool setValue(const char* expressionText) = 0;
+	virtual bool setValue(const char *expressionText) = 0;
 	// Set new option index, informing KeywordBase
 	virtual bool setEnumerationByIndex(int optionIndex) = 0;
-
 
 	/*
 	 * Access to KeywordBase
 	 */
-	public:
+      public:
 	// Return option mask for keyword
 	virtual int optionMask() const = 0;
 };
 
 // Keyword with NodeValue and EnumOptions
-template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, public KeywordData< Venum<NodeValue,E> >
+template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, public KeywordData<Venum<NodeValue, E>>
 {
-	public:
+      public:
 	// Constructor
-	NodeValueEnumOptionsKeyword(ProcedureNode* parentNode, NodeValue value, EnumOptions<E> enumOptions) : KeywordData< Venum<NodeValue,E> >(KeywordBase::NodeValueEnumOptionsData, Venum<NodeValue,E>(value,enumOptions)), NodeValueEnumOptionsBaseKeyword(KeywordData< Venum<NodeValue,E> >::data_.value(), KeywordData< Venum<NodeValue,E> >::data_.baseOptions())
+	NodeValueEnumOptionsKeyword(ProcedureNode *parentNode, NodeValue value, EnumOptions<E> enumOptions)
+	    : KeywordData<Venum<NodeValue, E>>(KeywordBase::NodeValueEnumOptionsData, Venum<NodeValue, E>(value, enumOptions)),
+	      NodeValueEnumOptionsBaseKeyword(KeywordData<Venum<NodeValue, E>>::data_.value(), KeywordData<Venum<NodeValue, E>>::data_.baseOptions())
 	{
 		parentNode_ = parentNode;
 	}
 	// Destructor
-	~NodeValueEnumOptionsKeyword()
-	{
-	}
-
+	~NodeValueEnumOptionsKeyword() {}
 
 	/*
 	 * Parent Node
 	 */
-	private:
+      private:
 	// Parent ProcedureNode
-	ProcedureNode* parentNode_;
-
+	ProcedureNode *parentNode_;
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
-	int minArguments() const
-	{
-		return 2;
-	}
+	int minArguments() const { return 2; }
 	// Return maximum number of arguments accepted
-	int maxArguments() const
-	{
-		return 2;
-	}
+	int maxArguments() const { return 2; }
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData)
+	bool read(LineParser &parser, int startArg, const CoreData &coreData)
 	{
 		// Check that the parent node has been set
-		if (!parentNode_) return Messenger::error("Parent node in NodeValueEnumOptions keyword '%s' not set. Can't read data.\n", KeywordData< Venum<NodeValue,E> >::name());
+		if (!parentNode_)
+			return Messenger::error("Parent node in NodeValueEnumOptions keyword '%s' not set. Can't read data.\n", KeywordData<Venum<NodeValue, E>>::name());
 
 		// Need two args...
-		if (parser.hasArg(startArg+1))
+		if (parser.hasArg(startArg + 1))
 		{
 			// Parse the value to start with...
-			if (!KeywordData< Venum<NodeValue,E> >::data_.value().set(parser.argc(startArg), parentNode_->parametersInScope())) return false;
+			if (!KeywordData<Venum<NodeValue, E>>::data_.value().set(parser.argc(startArg), parentNode_->parametersInScope()))
+				return false;
 
 			// Now the enum option
-			if (!KeywordData< Venum<NodeValue,E> >::data_.setEnumeration(parser.argc(startArg+1))) return false;
+			if (!KeywordData<Venum<NodeValue, E>>::data_.setEnumeration(parser.argc(startArg + 1)))
+				return false;
 
-			KeywordData< Venum<NodeValue,E> >::hasBeenSet();
+			KeywordData<Venum<NodeValue, E>>::hasBeenSet();
 
 			return true;
 		}
@@ -141,64 +125,53 @@ template <class E> class NodeValueEnumOptionsKeyword : public NodeValueEnumOptio
 		return false;
 	}
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix)
+	bool write(LineParser &parser, const char *keywordName, const char *prefix)
 	{
-		return parser.writeLineF("%s%s  '%s'  %s\n", prefix, KeywordBase::name(), KeywordData< Venum<NodeValue,E> >::data_.value().asString().get(), KeywordData< Venum<NodeValue,E> >::data_.enumerationAsString());
+		return parser.writeLineF("%s%s  '%s'  %s\n", prefix, KeywordBase::name(), KeywordData<Venum<NodeValue, E>>::data_.value().asString().get(),
+					 KeywordData<Venum<NodeValue, E>>::data_.enumerationAsString());
 	}
-
 
 	/*
 	 * Set (implementing pure virtuals from NodeValueEnumOptionsBaseKeyword)
 	 */
-	public:
+      public:
 	// Set node value from expression text, informing KeywordBase
-	bool setValue(const char* expressionText)
+	bool setValue(const char *expressionText)
 	{
-		if (!parentNode_) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::name());
+		if (!parentNode_)
+			return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::name());
 
-		bool result = KeywordData< Venum<NodeValue,E> >::data_.value().set(expressionText, parentNode_->parametersInScope());
+		bool result = KeywordData<Venum<NodeValue, E>>::data_.value().set(expressionText, parentNode_->parametersInScope());
 
-		KeywordData< Venum<NodeValue,E> >::hasBeenSet();
+		KeywordData<Venum<NodeValue, E>>::hasBeenSet();
 
 		return result;
 	}
 	// Set new option index, informing KeywordBase
 	bool setEnumerationByIndex(int optionIndex)
 	{
-		bool result = KeywordData< Venum<NodeValue,E> >::data_.setEnumerationByIndex(optionIndex);
+		bool result = KeywordData<Venum<NodeValue, E>>::data_.setEnumerationByIndex(optionIndex);
 
-		KeywordData< Venum<NodeValue,E> >::hasBeenSet();
+		KeywordData<Venum<NodeValue, E>>::hasBeenSet();
 
 		return result;
 	}
 
-
 	/*
 	 * Access to KeywordBase
 	 */
-	public:
+      public:
 	// Return option mask for keyword
-	int optionMask() const
-	{
-		return KeywordBase::optionMask();
-	}
-
+	int optionMask() const { return KeywordBase::optionMask(); }
 
 	/*
 	 * Conversion
 	 */
-	public:
+      public:
 	// Return value (as int)
-	int asInt()
-	{
-		return KeywordData< Venum<NodeValue,E> >::data_.value().asInteger();
-	}
+	int asInt() { return KeywordData<Venum<NodeValue, E>>::data_.value().asInteger(); }
 	// Return value (as double)
-	double asDouble()
-	{
-		return KeywordData< Venum<NodeValue,E> >::data_.value().asDouble();
-	}
+	double asDouble() { return KeywordData<Venum<NodeValue, E>>::data_.value().asDouble(); }
 };
 
 #endif
-

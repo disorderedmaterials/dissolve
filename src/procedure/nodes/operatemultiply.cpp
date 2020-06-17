@@ -20,10 +20,10 @@
 */
 
 #include "procedure/nodes/operatemultiply.h"
-#include "math/data1d.h"
-#include "keywords/types.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "keywords/types.h"
+#include "math/data1d.h"
 
 // Constructor
 OperateMultiplyProcedureNode::OperateMultiplyProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateMultiplyNode)
@@ -32,26 +32,24 @@ OperateMultiplyProcedureNode::OperateMultiplyProcedureNode() : OperateProcedureN
 }
 
 // Destructor
-OperateMultiplyProcedureNode::~OperateMultiplyProcedureNode()
-{
-}
+OperateMultiplyProcedureNode::~OperateMultiplyProcedureNode() {}
 
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)
  */
 
 // Operate on Data1D target
-bool OperateMultiplyProcedureNode::operateData1D(ProcessPool& procPool, Configuration* cfg)
+bool OperateMultiplyProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
 	// Evaluate the expression to get the multiplier
 	const double multiplier = keywords_.asDouble("Value");
 	(*targetData1D_) *= multiplier;
 
 	return true;
-} 
+}
 
 // Operate on Data2D target
-bool OperateMultiplyProcedureNode::operateData2D(ProcessPool& procPool, Configuration* cfg)
+bool OperateMultiplyProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
 	// Evaluate the expression to get the multiplier
 	const double multiplier = keywords_.asDouble("Value");
@@ -61,7 +59,7 @@ bool OperateMultiplyProcedureNode::operateData2D(ProcessPool& procPool, Configur
 }
 
 // Operate on Data3D target
-bool OperateMultiplyProcedureNode::operateData3D(ProcessPool& procPool, Configuration* cfg)
+bool OperateMultiplyProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
 	// Evaluate the expression to get the multiplier
 	const double multiplier = keywords_.asDouble("Value");

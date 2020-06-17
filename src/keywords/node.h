@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_KEYWORD_NODE_H
 #define DISSOLVE_KEYWORD_NODE_H
 
+#include "base/lineparser.h"
 #include "keywords/data.h"
 #include "procedure/nodes/node.h"
-#include "base/lineparser.h"
 
 // Forward Declarations
 class NodeValue;
@@ -33,154 +33,138 @@ class ProcedureNode;
 // Keyword with ProcedureNode base class
 class NodeKeywordBase
 {
-	public:
+      public:
 	// Constructor
-	NodeKeywordBase(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
+	NodeKeywordBase(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope);
 	// Destructor
 	virtual ~NodeKeywordBase();
-
 
 	/*
 	 * Parent Node
 	 */
-	private:
+      private:
 	// Parent ProcedureNode
-	ProcedureNode* parentNode_;
+	ProcedureNode *parentNode_;
 
-	public:
+      public:
 	// Return parent ProcedureNode
-	ProcedureNode* parentNode() const;
-
+	ProcedureNode *parentNode() const;
 
 	/*
 	 * Target Node
 	 */
-	private:
+      private:
 	// Target node type to allow
 	ProcedureNode::NodeType nodeType_;
 	// Whether to accept nodes within scope only
 	bool onlyInScope_;
 
-	public:
+      public:
 	// Return target node type to allow
 	ProcedureNode::NodeType nodeType() const;
 	// Return whether to accept nodes within scope only
 	bool onlyInScope() const;
 	// Set the target node
-	virtual bool setNode(ProcedureNode* node) = 0;
+	virtual bool setNode(ProcedureNode *node) = 0;
 	// Return the current target node as the base class
-	virtual const ProcedureNode* procedureNode() const = 0;
-
+	virtual const ProcedureNode *procedureNode() const = 0;
 
 	/*
 	 * Access to KeywordBase
 	 */
-	public:
+      public:
 	// Return option mask for keyword
 	virtual int optionMask() const = 0;
 };
 
 // Keyword with ProcedureNode
-template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordData<N*>
+template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordData<N *>
 {
-	public:
+      public:
 	// Constructor
-	NodeKeyword(ProcedureNode* parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N* node = NULL) : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<N*>(KeywordBase::NodeData, node)
+	NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N *node = NULL)
+	    : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<N *>(KeywordBase::NodeData, node)
 	{
 	}
 	// Destructor
-	~NodeKeyword()
-	{
-	}
-
+	~NodeKeyword() {}
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
-	int minArguments() const
-	{
-		return 1;
-	}
+	int minArguments() const { return 1; }
 	// Return maximum number of arguments accepted
-	int maxArguments() const
-	{
-		return 1;
-	}
+	int maxArguments() const { return 1; }
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData)
+	bool read(LineParser &parser, int startArg, const CoreData &coreData)
 	{
-		if (!parentNode()) return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::name());
+		if (!parentNode())
+			return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", KeywordBase::name());
 
 		// Locate the named node - don't prune by type yet (we'll check that in setNode())
-		ProcedureNode* node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg)) : parentNode()->nodeExists(parser.argc(startArg));
-		if (!node) return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::name());
+		ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg)) : parentNode()->nodeExists(parser.argc(startArg));
+		if (!node)
+			return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg), KeywordBase::name());
 
 		return setNode(node);
 	}
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix)
+	bool write(LineParser &parser, const char *keywordName, const char *prefix)
 	{
 		// No need to write the keyword if the node pointer is null
-		if (KeywordData<N*>::data_ == NULL) return true;
+		if (KeywordData<N *>::data_ == NULL)
+			return true;
 
-		if (!parser.writeLineF("%s%s  '%s'\n", prefix, KeywordBase::name(), KeywordData<N*>::data_->name())) return false;
+		if (!parser.writeLineF("%s%s  '%s'\n", prefix, KeywordBase::name(), KeywordData<N *>::data_->name()))
+			return false;
 
 		return true;
 	}
-
 
 	/*
 	 * Target Node
 	 */
-	public:
+      public:
 	// Set the target node
-	bool setNode(ProcedureNode* node)
+	bool setNode(ProcedureNode *node)
 	{
-		if (!node) return false;
+		if (!node)
+			return false;
 
-		if (!node->isType(nodeType())) return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
+		if (!node->isType(nodeType()))
+			return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(), ProcedureNode::nodeTypes().keyword(node->type()),
+						KeywordBase::name(), ProcedureNode::nodeTypes().keyword(nodeType()));
 
-		KeywordData<N*>::data_ = dynamic_cast<N*>(node);
+		KeywordData<N *>::data_ = dynamic_cast<N *>(node);
 
-		KeywordData<N*>::set_ = true;
+		KeywordData<N *>::set_ = true;
 
 		return true;
 	}
 	// Return the current target node as the base class
-	const ProcedureNode* procedureNode() const
-	{
-		return KeywordData<N*>::data_;
-	}
+	const ProcedureNode *procedureNode() const { return KeywordData<N *>::data_; }
 	// Return the current target node
-	N* node() const
-	{
-		return KeywordData<N*>::data_;
-	}
-
+	N *node() const { return KeywordData<N *>::data_; }
 
 	/*
 	 * Access to KeywordBase
 	 */
-	public:
+      public:
 	// Return option mask for keyword
-	int optionMask() const
-	{
-		return KeywordBase::optionMask();
-	}
-
+	int optionMask() const { return KeywordBase::optionMask(); }
 
 	/*
 	 * Object Management
 	 */
-	protected:
+      protected:
 	// Prune any references to the supplied ProcedureNode in the contained data
-	void removeReferencesTo(ProcedureNode* node)
+	void removeReferencesTo(ProcedureNode *node)
 	{
-		if (KeywordData<N*>::data_ == node) KeywordData<N*>::data_ = NULL;
+		if (KeywordData<N *>::data_ == node)
+			KeywordData<N *>::data_ = NULL;
 	}
 };
 
 #endif
-

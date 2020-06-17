@@ -23,11 +23,10 @@
 #define DISSOLVE_CELL_H
 
 #include "classes/atom.h"
-#include "templates/array.h"
+#include "templates/orderedvector.h"
 #include "templates/vector3.h"
-#include "templates/reflist.h"
-#include "templates/ordereddaoarray.h"
-#include "templates/orderedpointerarray.h"
+#include <set>
+#include <vector>
 
 // Forward Declarations
 class Box;
@@ -38,17 +37,16 @@ class CellNeighbour;
  */
 class Cell
 {
-	public:
+      public:
 	// Constructor
 	Cell();
 	// Destructor
 	~Cell();
 
-
 	/*
 	 * Identity
 	 */
-	private:
+      private:
 	// Grid reference
 	Vec3<int> gridReference_;
 	// Unique index
@@ -56,11 +54,11 @@ class Cell
 	// Real-space coordinates at the centre of this cell
 	Vec3<double> centre_;
 
-	public:
+      public:
 	// Set grid reference
 	void setGridReference(int x, int y, int z);
 	// Return grid reference
-	const Vec3<int>& gridReference() const;
+	const Vec3<int> &gridReference() const;
 	// Set unique index
 	void setIndex(int id);
 	// Return unique index
@@ -68,45 +66,43 @@ class Cell
 	// Set real-space Cell centre
 	void setCentre(Vec3<double> r);
 	// Return real-space Cell centre
-	const Vec3<double>& centre() const;
-
+	const Vec3<double> &centre() const;
 
 	/*
 	 * Contents
 	 */
-	private:
+      private:
 	// Array of Atoms contained in this Cell
-	OrderedPointerArray<Atom> atoms_;
+	OrderedVector<Atom *> atoms_;
 	// Return array of contained Atoms, ordered by their array indices
-	OrderedDAOArray<Atom> indexOrderedAtoms_;
+	OrderedVector<Atom *> indexOrderedAtoms_ = OrderedVector<Atom *>([](const Atom *lhs, const Atom *rhs) { return lhs->arrayIndex() < rhs->arrayIndex(); });
 
-	public:
+      public:
 	// Return array of contained Atoms
-	OrderedPointerArray<Atom>& atoms();
+	OrderedVector<Atom *> &atoms();
 	// Return array of contained Atoms, ordered by their array indices
-	Atom** indexOrderedAtoms() const;
+	const OrderedVector<Atom *> &indexOrderedAtoms() const;
 	// Return number of Atoms in array
 	int nAtoms() const;
 	// Add atom to Cell
-	bool addAtom(Atom* atom);
+	bool addAtom(Atom *atom);
 	// Remove Atom from Cell
-	bool removeAtom(Atom* atom);
-
+	bool removeAtom(Atom *atom);
 
 	/*
 	 * Neighbours
 	 */
-	private:
+      private:
 	// Arrays of neighbouring cells, within the defined potential cutoff (from anywhere in the Cell)
-	Cell** cellNeighbours_, **mimCellNeighbours_;
+	std::vector<Cell *> cellNeighbours_, mimCellNeighbours_;
 	// Array of all neighbouring cells
-	CellNeighbour* allCellNeighbours_;
+	std::vector<CellNeighbour> allCellNeighbours_;
 	// Number of cells in cell arrays
 	int nCellNeighbours_, nMimCellNeighbours_;
 
-	public:
+      public:
 	// Add Cell neighbours
-	void addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedPointerArray<Cell>& mimNeighbours);
+	void addCellNeighbours(OrderedVector<Cell *> &nearNeighbours, OrderedVector<Cell *> &mimNeighbours);
 	// Return number of Cell near-neighbours, not requiring minimum image calculation
 	int nCellNeighbours() const;
 	// Return number of Cell neighbours requiring minimum image calculation
@@ -114,17 +110,17 @@ class Cell
 	// Return total number of Cell neighbours
 	int nTotalCellNeighbours() const;
 	// Return adjacent Cell neighbour list
-	Cell** cellNeighbours();
+	std::vector<Cell *> cellNeighbours();
 	// Return specified adjacent Cell neighbour
-	Cell* cellNeighbour(int id) const;
+	Cell *cellNeighbour(int id) const;
 	// Return list of Cell neighbours requiring minimum image calculation
-	Cell** mimCellNeighbours();
-	// Return specified Cell neighbour, requiring minimum image calculation
-	Cell* mimCellNeighbour(int id) const;
+	std::vector<Cell *> mimCellNeighbours();
+	// Return specified Cell neighbour requiring minimum image calculation
+	Cell *mimCellNeighbour(int id) const;
+	// Return if the specified Cell requires minimum image calculation
+	bool mimRequired(const Cell *otherCell) const;
 	// Return list of all Cell neighbours
-	CellNeighbour* allCellNeighbours();
-	// Return array of adjacent Cell neighbours
-	const Array<Cell*>& adjacentCellNeighbours();
+	std::vector<CellNeighbour> allCellNeighbours();
 };
 
 #endif

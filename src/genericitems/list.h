@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_GENERICLIST_H
 #define DISSOLVE_GENERICLIST_H
 
-#include "genericitems/item.h"
 #include "base/sysfunc.h"
+#include "genericitems/item.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 
@@ -33,53 +33,52 @@ class GenericList
 	/*
 	 * List Contents
 	 */
-	private:
+      private:
 	// List of generic items
 	List<GenericItem> items_;
 
-	public:
+      public:
 	// Clear all items (except those that are marked protected)
 	void clear();
 	// Clear all items, including protected items
 	void clearAll();
 	// Add specified item to list (from base class pointer)
-	void add(GenericItem* item);
+	void add(GenericItem *item);
 	// Create an item of the specified type
-	GenericItem* create(const char* name, const char* itemClassName, int version = 0, int flags = 0);
+	GenericItem *create(const char *name, const char *itemClassName, int version = 0, int flags = 0);
 	// Return whether the named item is contained in the list
-	bool contains(const char* name, const char* prefix = NULL);
+	bool contains(const char *name, const char *prefix = NULL);
 	// Return if named item, if it exists, is of specified type
-	bool isItemOfType(const char* type, const char* name, const char* prefix = NULL);
+	bool isItemOfType(const char *type, const char *name, const char *prefix = NULL);
 	// Return item list
-	List<GenericItem>& items();
+	List<GenericItem> &items();
 	// Return the named item from the list
-	GenericItem* find(const char* name);
+	GenericItem *find(const char *name);
 	// Return the named item from the list (with prefix)
-	GenericItem* find(const char* name, const char* prefix);
+	GenericItem *find(const char *name, const char *prefix);
 	// Return the version of the named item from the list
-	int version(const char* name, const char* prefix = NULL) const;
+	int version(const char *name, const char *prefix = NULL) const;
 	// Return list of all items with specified prefix (before first '_')
-	RefList<GenericItem> itemsWithPrefix(const char* prefix);
+	RefList<GenericItem> itemsWithPrefix(const char *prefix);
 	// Return list of all items with specified class type
-	RefList<GenericItem> itemsWithClassName(const char* className);
+	RefList<GenericItem> itemsWithClassName(const char *className);
 	// List all items
 	void listItems();
 	// Remove named item
-	bool remove(const char* name, const char* prefix);
+	bool remove(const char *name, const char *prefix);
 	// Rename item
-	bool rename(const char* oldName, const char* oldPrefix, const char* newName, const char* newPrefix);
+	bool rename(const char *oldName, const char *oldPrefix, const char *newName, const char *newPrefix);
 	// Prune all items with '@suffix'
-	void pruneWithSuffix(const char* suffix);
-
+	void pruneWithSuffix(const char *suffix);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast all data
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check equality of all data
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif

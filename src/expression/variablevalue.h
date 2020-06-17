@@ -28,38 +28,36 @@
 class ExpressionVariable;
 
 // Expression Value Node (retrieves value of an ExpressionVariable)
-class ExpressionVariableValue: public ExpressionNode
+class ExpressionVariableValue : public ExpressionNode
 {
-	public:
+      public:
 	// Constructor / Destructor
-	ExpressionVariableValue(ExpressionVariable* var = 0);
+	ExpressionVariableValue(ExpressionVariable *var = 0);
 	~ExpressionVariableValue();
-
 
 	/*
 	 * Variable Target
 	 */
-	private:
+      private:
 	// Variable that this node links to
-	ExpressionVariable* variable_;
-	
-	public:
-	// Set variable target
-	void setVariable(ExpressionVariable* v);
-	// Get variable target
-	ExpressionVariable* variable() const;
-	// Return name of variable target
-	const char* name() const;
+	ExpressionVariable *variable_;
 
+      public:
+	// Set variable target
+	void setVariable(ExpressionVariable *v);
+	// Get variable target
+	ExpressionVariable *variable() const;
+	// Return name of variable target
+	const char *name() const;
 
 	/*
 	 * Inherited Virtuals
 	 */
-	public:
+      public:
 	// Execute node
-	bool execute(ExpressionValue& result);
+	bool execute(ExpressionValue &result);
 	// Print node contents
-	void nodePrint(int offset, const char* prefix = "");
+	void nodePrint(int offset, const char *prefix = "");
 	// Set from ExpressionValue
 	bool set(ExpressionValue value);
 	// Initialise node

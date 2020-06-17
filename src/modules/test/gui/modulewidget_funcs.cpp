@@ -23,11 +23,10 @@
 #include "modules/test/test.h"
 
 // Constructor
-TestModuleWidget::TestModuleWidget(QWidget* parent, TestModule* module) : ModuleWidget(parent), module_(module)
+TestModuleWidget::TestModuleWidget(QWidget *parent, TestModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
 
 	refreshing_ = false;
 }
-

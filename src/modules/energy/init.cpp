@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/energy/energy.h"
 #include "keywords/types.h"
+#include "modules/energy/energy.h"
 
 // Perform any necessary initialisation for the Module
 void EnergyModule::initialise()
@@ -39,5 +39,3 @@ void EnergyModule::initialise()
 	// Export
 	keywords_.add("Export", new BoolKeyword(false), "Save", "Save calculate energy points to the file '<name>.energy.txt'");
 }
-
-

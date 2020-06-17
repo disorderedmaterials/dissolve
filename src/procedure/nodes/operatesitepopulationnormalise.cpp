@@ -20,61 +20,62 @@
 */
 
 #include "procedure/nodes/operatesitepopulationnormalise.h"
-#include "procedure/nodes/select.h"
-#include "keywords/types.h"
+#include "base/lineparser.h"
+#include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "keywords/types.h"
+#include "procedure/nodes/select.h"
 
 // Constructor
 OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateSitePopulationNormaliseNode)
 {
 	// Create keywords - store the pointers to the superclasses for later use
-	keywords_.add("Sites", new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_), "Site", "Site(s) by which to normalise data based on their population");
+	keywords_.add("Sites", new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_), "Site",
+		      "Site(s) by which to normalise data based on their population");
 }
 
-OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode(RefList<const SelectProcedureNode> selectNodes) : OperateProcedureNodeBase(ProcedureNode::OperateSitePopulationNormaliseNode)
+OperateSitePopulationNormaliseProcedureNode::OperateSitePopulationNormaliseProcedureNode(RefList<const SelectProcedureNode> selectNodes)
+    : OperateProcedureNodeBase(ProcedureNode::OperateSitePopulationNormaliseNode)
 {
 	// Create keywords - store the pointers to the superclasses for later use
-	keywords_.add("Sites", new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_), "Site", "Site(s) by which to normalise data based on their population");
+	keywords_.add("Sites", new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_), "Site",
+		      "Site(s) by which to normalise data based on their population");
 
 	selectNodes_ = selectNodes;
 }
 
 // Destructor
-OperateSitePopulationNormaliseProcedureNode::~OperateSitePopulationNormaliseProcedureNode()
-{
-}
+OperateSitePopulationNormaliseProcedureNode::~OperateSitePopulationNormaliseProcedureNode() {}
 
 /*
  * Data Target (implements virtuals in OperateProcedureNodeBase)
  */
 
 // Operate on Data1D target
-bool OperateSitePopulationNormaliseProcedureNode::operateData1D(ProcessPool& procPool, Configuration* cfg)
+bool OperateSitePopulationNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
-	RefListIterator<const SelectProcedureNode> selectNodeIterator(selectNodes_);
-	while (const SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData1D_) /= selectNode->nAverageSites();
+	for (const SelectProcedureNode *selectNode : selectNodes_)
+		(*targetData1D_) /= selectNode->nAverageSites();
 
 	return true;
 }
 
 // Operate on Data2D target
-bool OperateSitePopulationNormaliseProcedureNode::operateData2D(ProcessPool& procPool, Configuration* cfg)
+bool OperateSitePopulationNormaliseProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
-	RefListIterator<const SelectProcedureNode> selectNodeIterator(selectNodes_);
-	while (const SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData2D_) /= selectNode->nAverageSites();
+	for (const SelectProcedureNode *selectNode : selectNodes_)
+		(*targetData2D_) /= selectNode->nAverageSites();
 
 	return true;
 }
 
 // Operate on Data3D target
-bool OperateSitePopulationNormaliseProcedureNode::operateData3D(ProcessPool& procPool, Configuration* cfg)
+bool OperateSitePopulationNormaliseProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
-	RefListIterator<const SelectProcedureNode> selectNodeIterator(selectNodes_);
-	while (const SelectProcedureNode* selectNode = selectNodeIterator.iterate()) (*targetData3D_) /= selectNode->nAverageSites();
+	for (const SelectProcedureNode *selectNode : selectNodes_)
+		(*targetData3D_) /= selectNode->nAverageSites();
 
 	return true;
 }

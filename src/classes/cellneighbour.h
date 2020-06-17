@@ -29,26 +29,26 @@ class Cell;
 class CellNeighbour
 {
 	/*
-	 * Simple class encapsulating a pointer to a Cell, and a flag indicating whether or not mimimum image calculations should be applied when 
+	 * Simple class encapsulating a pointer to a Cell, and a flag indicating whether or not mimimum image calculations should be applied when
 	 * considering the contents of this cell with the cell which owns the array in which it appears.
 	 */
-	public:
+      public:
 	// Constructor
 	CellNeighbour();
 	// Destructor
 	~CellNeighbour();
 
-	private:
+      private:
 	// Cell pointer
-	Cell* cell_;
+	Cell *cell_;
 	// Whether mim should be used with this Cell
 	bool useMim_;
 
-	public:
+      public:
 	// Set cell and mim flag
-	void set(Cell* cell, bool useMim);
+	void set(Cell *cell, bool useMim);
 	// Return referenced cell
-	Cell* cell();
+	Cell *cell();
 	// Return whether mim should be applied
 	bool useMim();
 };

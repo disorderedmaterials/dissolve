@@ -23,44 +23,36 @@
 #include "base/lineparser.h"
 
 // Constructor
-BroadeningFunctionKeyword::BroadeningFunctionKeyword(BroadeningFunction value) : KeywordData<BroadeningFunction>(KeywordBase::BroadeningFunctionData, value)
-{
-}
+BroadeningFunctionKeyword::BroadeningFunctionKeyword(BroadeningFunction value) : KeywordData<BroadeningFunction>(KeywordBase::BroadeningFunctionData, value) {}
 
 // Destructor
-BroadeningFunctionKeyword::~BroadeningFunctionKeyword()
-{
-}
+BroadeningFunctionKeyword::~BroadeningFunctionKeyword() {}
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int BroadeningFunctionKeyword::minArguments() const
-{
-	return 1;
-}
+int BroadeningFunctionKeyword::minArguments() const { return 1; }
 
 // Return maximum number of arguments accepted
-int BroadeningFunctionKeyword::maxArguments() const
-{
-	return MAXBROADENINGFUNCTIONPARAMS;
-}
+int BroadeningFunctionKeyword::maxArguments() const { return MAXBROADENINGFUNCTIONPARAMS; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool BroadeningFunctionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool BroadeningFunctionKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
 	bool result = data_.set(parser, startArg);
-	if (result) set_ = true;
+	if (result)
+		set_ = true;
 
 	return result;
 }
 
 // Write keyword data to specified LineParser
-bool BroadeningFunctionKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool BroadeningFunctionKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	CharString params;
-	for (int n=0; n<BroadeningFunction::nFunctionParameters(data_.function()); ++n) params.strcatf("  %f", data_.parameter(n));
+	for (int n = 0; n < BroadeningFunction::nFunctionParameters(data_.function()); ++n)
+		params.strcatf("  %f", data_.parameter(n));
 	return parser.writeLineF("%s%s  '%s'%s\n", prefix, keywordName, BroadeningFunction::functionType(data_.function()), params.get());
 }

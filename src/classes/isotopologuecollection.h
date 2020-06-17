@@ -37,65 +37,63 @@ class ProcessPool;
 // IsotopologueCollection - Isotopologues over one or more Configurations
 class IsotopologueCollection : public GenericItemBase
 {
-	public:
+      public:
 	// Constructor
 	IsotopologueCollection();
 	// Destructor
 	~IsotopologueCollection();
 
-
 	/*
 	 * Sets
 	 */
-	private:
+      private:
 	// IsotopologueSets for individual Configurations
 	List<IsotopologueSet> isotopologueSets_;
 
-	private:
+      private:
 	// Remove any sets from the collection that are empty
 	void pruneEmptySets();
 
-	public:
+      public:
 	// Clear all existing data
 	void clear();
 	// Add Isotopologue weight for the specified Configuration / Species
-	void add(Configuration* cfg, Isotopologue* iso, double relativeWeight);
+	void add(Configuration *cfg, Isotopologue *iso, double relativeWeight);
 	// Remove the specified set from the collection
-	void remove(IsotopologueSet* set);
+	void remove(IsotopologueSet *set);
 	// Remove the Configuration from the collection
-	void remove(Configuration* cfg);
+	void remove(Configuration *cfg);
 	// Remove the Species from the specified set
-	void remove(IsotopologueSet* set, Species* sp);
+	void remove(IsotopologueSet *set, Species *sp);
 	// Remove the IsotopologueWeight from the specified set
-	void remove(IsotopologueSet* set, IsotopologueWeight* isoWeight);
+	void remove(IsotopologueSet *set, IsotopologueWeight *isoWeight);
 	// Remove any occurrences of the specified Species from the collection
-	void remove(Species* sp);
+	void remove(Species *sp);
 	// Remove any occurrences of the specified Isotopologue from the collection
-	void remove(Isotopologue* iso);
+	void remove(Isotopologue *iso);
 	// Return defined sets
-	List<IsotopologueSet>& isotopologueSets();
+	List<IsotopologueSet> &isotopologueSets();
 	// Return whether a set exists for the supplied Configuration
-	bool contains(const Configuration* cfg) const;
+	bool contains(const Configuration *cfg) const;
 	// Return IsotopologueSet for the specified Configuration
-	const IsotopologueSet* isotopologueSet(const Configuration* cfg) const;
+	const IsotopologueSet *isotopologueSet(const Configuration *cfg) const;
 	// Return whether the Species has a defined set of isotopologues in the specified Configuration
-	bool contains(const Configuration* cfg, const Species* sp) const;
+	bool contains(const Configuration *cfg, const Species *sp) const;
 	// Return Isotopologues for the Species in the specified Configuration
-	const Isotopologues* isotopologues(const Configuration* cfg, const Species* sp) const;
+	const Isotopologues *isotopologues(const Configuration *cfg, const Species *sp) const;
 	// Complete the collection by making sure it contains every Species in every Configuration in the supplied list
-	void complete(const RefList<Configuration>& configurations);
-
+	void complete(const RefList<Configuration> &configurations);
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-	public:
+      public:
 	// Return class name
-	static const char* itemClassName();
+	static const char *itemClassName();
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
+	bool write(LineParser &parser);
 };
 
 #endif

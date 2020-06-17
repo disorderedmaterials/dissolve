@@ -25,6 +25,8 @@
 #include "classes/distributor.h"
 #include "classes/molecule.h"
 #include "templates/dynamicarray.h"
+#include <deque>
+#include <memory>
 
 // Forward Declarations
 /* none */
@@ -32,27 +34,25 @@
 // Molecule Distributor
 class MoleculeDistributor : public Distributor
 {
-	public:
+      public:
 	// Constructor
-	MoleculeDistributor(const DynamicArray<Molecule>& moleculeArray, const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed);
+	MoleculeDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed);
 	// Destructor
 	~MoleculeDistributor();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Source Molecule Array
-	const DynamicArray<Molecule>& moleculeArray_;
-
+	const std::deque<std::shared_ptr<Molecule>> &moleculeArray_;
 
 	/*
 	 * Cells
 	 */
-	private:
+      private:
 	// Return array of Cells that we must hard lock in order to modify the object with index specified
-	Array<Cell*> cellsToBeModifiedForObject(int objectId);
+	Array<Cell *> cellsToBeModifiedForObject(int objectId);
 };
 
 #endif

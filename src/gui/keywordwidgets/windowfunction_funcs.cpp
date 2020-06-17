@@ -19,26 +19,28 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/windowfunction.hui"
 #include "genericitems/listhelper.h"
-#include <QHBoxLayout>
+#include "gui/keywordwidgets/windowfunction.hui"
 #include <QComboBox>
+#include <QHBoxLayout>
 
 // Constructor
-WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Create the necessary subwidgets
-	QHBoxLayout* layout = new QHBoxLayout(this);
-	layout->setContentsMargins(0,0,0,0);
+	QHBoxLayout *layout = new QHBoxLayout(this);
+	layout->setContentsMargins(0, 0, 0, 0);
 	layout->setSpacing(4);
 	functionCombo_ = new QComboBox;
-	for (int n=0; n<WindowFunction::nFunctionTypes; ++n) functionCombo_->addItem(WindowFunction::functionType( (WindowFunction::FunctionType) n));
+	for (int n = 0; n < WindowFunction::nFunctionTypes; ++n)
+		functionCombo_->addItem(WindowFunction::functionType((WindowFunction::FunctionType)n));
 	layout->addWidget(functionCombo_);
 	connect(functionCombo_, SIGNAL(currentTextChanged(QString)), this, SLOT(functionComboChanged(QString)));
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<WindowFunctionKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into WindowFunctionKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<WindowFunctionKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into WindowFunctionKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information
@@ -51,9 +53,10 @@ WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget* parent, Keywor
  */
 
 // Check box state changed
-void WindowFunctionKeywordWidget::functionComboChanged(const QString& text)
+void WindowFunctionKeywordWidget::functionComboChanged(const QString &text)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	// Get widget data, and set the function type
 	WindowFunction windowFunction;
@@ -70,13 +73,10 @@ void WindowFunctionKeywordWidget::functionComboChanged(const QString& text)
  */
 
 // Update value displayed in widget
-void WindowFunctionKeywordWidget::updateValue()
-{
-	setWidgets(keyword_->data());
-}
+void WindowFunctionKeywordWidget::updateValue() { setWidgets(keyword_->data()); }
 
 // Set widgets from supplied object
-void WindowFunctionKeywordWidget::setWidgets(const WindowFunction& windowFunction)
+void WindowFunctionKeywordWidget::setWidgets(const WindowFunction &windowFunction)
 {
 	refreshing_ = true;
 

@@ -20,27 +20,26 @@
 */
 
 #include "classes/celldistributor.h"
-#include "classes/cell.h"
 #include "base/processpool.h"
+#include "classes/cell.h"
 
 // Constructor
-CellDistributor::CellDistributor(const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed) : Distributor(cellArray.nCells(), cellArray, procPool, strategy, repeatsAllowed), cells_(cellArray)
+CellDistributor::CellDistributor(const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed)
+    : Distributor(cellArray.nCells(), cellArray, procPool, strategy, repeatsAllowed), cells_(cellArray)
 {
 }
 
 // Destructor
-CellDistributor::~CellDistributor()
-{
-}
+CellDistributor::~CellDistributor() {}
 
 /*
  * Cells
  */
 
 // Return array of Cells that we must hard lock in order to modify the object with index specified
-Array<Cell*> CellDistributor::cellsToBeModifiedForObject(int objectId)
+Array<Cell *> CellDistributor::cellsToBeModifiedForObject(int objectId)
 {
-	Array<Cell*> cells;
+	Array<Cell *> cells;
 
 	cells.add(cells_.cell(objectId));
 

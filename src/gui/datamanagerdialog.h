@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_DIALOG_DATAMANAGER_H
 #define DISSOLVE_DIALOG_DATAMANAGER_H
 
-#include "gui/ui_datamanagerdialog.h"
 #include "gui/referencepoint.h"
+#include "gui/ui_datamanagerdialog.h"
 #include "templates/list.h"
 #include <QDialog>
 
@@ -36,46 +36,45 @@ class DataManagerDialog : public QDialog
 {
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	DataManagerDialog(QWidget* parent, Dissolve& dissolve, List<ReferencePoint>& referencePoints);
+	DataManagerDialog(QWidget *parent, Dissolve &dissolve, List<ReferencePoint> &referencePoints);
 	// Destructor
 	~DataManagerDialog();
 
-	private:
+      private:
 	// Reference to Dissolve
-	Dissolve& dissolve_;
+	Dissolve &dissolve_;
 	// List of current ReferencePoints
-	List<ReferencePoint>& referencePoints_;
-
+	List<ReferencePoint> &referencePoints_;
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::DataManagerDialog ui_;
 
-	private:
+      private:
 	// Append GenericItems to table under specified source
-	void addItemsToTable(QTableWidget* table, List<GenericItem>& items, const char* locationName, const char* locationIconResource);
+	void addItemsToTable(QTableWidget *table, List<GenericItem> &items, const char *locationName, const char *locationIconResource);
 	// Update the specified table of GenericItems, optionally filtering them by name and description
-	void filterTable(QTableWidget* table, GenericItem* current, QString filter);
+	void filterTable(QTableWidget *table, GenericItem *current, QString filter);
 	// Update ReferencePoint table row
-	void referencePointRowUpdate(int row, ReferencePoint* refPoint, bool createItems);
+	void referencePointRowUpdate(int row, ReferencePoint *refPoint, bool createItems);
 	// Return currently-selected ReferencePoint
-	ReferencePoint* currentReferencePoint() const;
+	ReferencePoint *currentReferencePoint() const;
 	// Update controls
 	void updateControls();
 
-	private slots:
+      private slots:
 	// Simulation Data
-	void on_SimulationDataFilterEdit_textChanged(const QString& text);
+	void on_SimulationDataFilterEdit_textChanged(const QString &text);
 	// Reference Points
 	void on_ReferencePointRemoveButton_clicked(bool checked);
 	void on_ReferencePointCreateButton_clicked(bool checked);
 	void on_ReferencePointOpenButton_clicked(bool checked);
-	void on_ReferencePointsTable_currentItemChanged(QTableWidgetItem* currentItem, QTableWidgetItem* previousItem);
+	void on_ReferencePointsTable_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *previousItem);
 
 	// Dialog
 	void on_CloseButton_clicked(bool checked);

@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_VEC3DOUBLE_H
 #define DISSOLVE_KEYWORDWIDGET_VEC3DOUBLE_H
 
-#include "gui/keywordwidgets/ui_vec3double.h"
 #include "gui/keywordwidgets/base.h"
+#include "gui/keywordwidgets/ui_vec3double.h"
 #include "keywords/vec3double.h"
 #include <QWidget>
 
@@ -35,40 +35,37 @@ class Vec3DoubleKeywordWidget : public QWidget, public KeywordWidgetBase
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	Vec3DoubleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-
+	Vec3DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-	private:
+      private:
 	// Associated keyword
-	Vec3DoubleKeyword* keyword_;
-
+	Vec3DoubleKeyword *keyword_;
 
 	/*
 	 * Widgets
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::Vec3DoubleWidget ui_;
 
-	private slots:
+      private slots:
 	void on_Spin1_valueChanged(double value);
 	void on_Spin2_valueChanged(double value);
 	void on_Spin3_valueChanged(double value);
 
-	signals:
+      signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update
 	 */
-	public:
+      public:
 	// Update value displayed in widget
 	void updateValue();
 };

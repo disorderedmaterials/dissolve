@@ -13,13 +13,13 @@ permalink: /
 - Simona (September 2019-present)
 - J. Busch (October 2019-present)
 
-_Current Version: 0.5.6, Wednesday 5th February 2020_
+_Current Version: 0.6.99, Tuesday 10th March 2020_
 
 ## Introduction
 
 Dissolve is a classical simulation code intended to help in analysing experimental scattering (diffraction) measurements through generating representative atomic configurations consistent with supplied reference data. Its primary use is for disordered systems such as those comprised of (or containing) liquids and glasses, but it can be applied to much more complex systems. See [What is Dissolve?](userguide/overview.md) for more information.
 
-Check out [Dissolve on GitHub](https://www.github.com/trisyoungs/dissolve) and [contribute](developers/contributing.md) if you want to!
+Check out [Dissolve on GitHub](https://github.com/projectdissolve/dissolve) and [contribute](developers/contributing.md) if you want to!
 
 An initial publication describing Dissolve and proving consistency with existing methodology is available here:
 

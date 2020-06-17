@@ -20,8 +20,8 @@
 */
 
 #include "gui/render/view.h"
-#include "gui/render/renderable.h"
 #include "gui/render/fontinstance.h"
+#include "gui/render/renderable.h"
 #include "math/cuboid.h"
 #include <algorithm>
 #include <cmath>
@@ -30,15 +30,10 @@
 const double View::defaultZTranslation_ = -10.0;
 
 // Constructor
-View::View(const List<Renderable>& renderables, FontInstance& fontInstance) : fontInstance_(fontInstance), renderables_(renderables), axes_(*this, fontInstance)
-{
-	clear();
-}
+View::View(const List<Renderable> &renderables, FontInstance &fontInstance) : fontInstance_(fontInstance), renderables_(renderables), axes_(*this, fontInstance) { clear(); }
 
 // Destructor
-View::~View()
-{
-}
+View::~View() {}
 
 // Clear view, resetting to defaults
 void View::clear()
@@ -54,7 +49,7 @@ void View::clear()
 	viewType_ = View::AutoStretchedView;
 	linkedView_ = NULL;
 	autoFollowType_ = View::NoAutoFollow;
-	autoFollowXLength_= 20.0;
+	autoFollowXLength_ = 20.0;
 
 	// Projection / view
 	hasPerspective_ = false;
@@ -107,7 +102,8 @@ void View::recalculateViewport(int width, int height)
 	{
 		projectionMatrix_ = calculateProjectionMatrix(hasPerspective_, defaultZTranslation_);
 	}
-	else projectionMatrix_ = calculateProjectionMatrix(false, defaultZTranslation_);
+	else
+		projectionMatrix_ = calculateProjectionMatrix(false, defaultZTranslation_);
 
 	calculateFontScaling();
 
@@ -125,46 +121,41 @@ void View::translateViewport(int deltaX, int deltaY)
 }
 
 // Return viewport matrix
-const GLuint* View::viewportMatrix() const
-{
-	return viewportMatrix_;
-}
+const GLuint *View::viewportMatrix() const { return viewportMatrix_; }
 
 /*
  * Projection / View
  */
 
 // View types
-const char* ViewTypeKeywords[View::nViewTypes] = { "Normal", "AutoStretched", "FlatXY", "FlatXZ", "FlatZY" };
+const char *ViewTypeKeywords[View::nViewTypes] = {"Normal", "AutoStretched", "FlatXY", "FlatXZ", "FlatZY"};
 
 // Convert text string to ViewType
-View::ViewType View::viewType(const char* s)
+View::ViewType View::viewType(const char *s)
 {
-	for (int n=0; n<View::nViewTypes; ++n) if (DissolveSys::sameString(s, ViewTypeKeywords[n])) return (View::ViewType) n;
+	for (int n = 0; n < View::nViewTypes; ++n)
+		if (DissolveSys::sameString(s, ViewTypeKeywords[n]))
+			return (View::ViewType)n;
 	return View::nViewTypes;
 }
 
 // Convert ViewType to text string
-const char* View::viewType(View::ViewType vt)
-{
-	return ViewTypeKeywords[vt];
-}
+const char *View::viewType(View::ViewType vt) { return ViewTypeKeywords[vt]; }
 
 // AutoFollow types
-const char* AutoFollowTypeKeywords[View::nAutoFollowTypes] = { "None", "All", "X" };
+const char *AutoFollowTypeKeywords[View::nAutoFollowTypes] = {"None", "All", "X"};
 
 // Convert text string to AutoFollowType
-View::AutoFollowType View::autoFollowType(const char* s)
+View::AutoFollowType View::autoFollowType(const char *s)
 {
-	for (int n=0; n<View::nAutoFollowTypes; ++n) if (DissolveSys::sameString(s, AutoFollowTypeKeywords[n])) return (View::AutoFollowType) n;
+	for (int n = 0; n < View::nAutoFollowTypes; ++n)
+		if (DissolveSys::sameString(s, AutoFollowTypeKeywords[n]))
+			return (View::AutoFollowType)n;
 	return View::nAutoFollowTypes;
 }
 
 // Convert AutoFollowType to text string
-const char* View::autoFollowType(View::AutoFollowType aft)
-{
-	return AutoFollowTypeKeywords[aft];
-}
+const char *View::autoFollowType(View::AutoFollowType aft) { return AutoFollowTypeKeywords[aft]; }
 
 // Return calculated projection matrix
 Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) const
@@ -179,12 +170,12 @@ Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) c
 		// Use reversed top and bottom values so we get y-axis (0,1,0) pointing up
 		top = tan(perspectiveFieldOfView_ / DEGRAD) * 0.5;
 		bottom = -top;
-		left = -aspectRatio_*top;
-		right = aspectRatio_*top;
-		result.setColumn(0, (nearClip*2.0) / (right-left), 0.0, 0.0, 0.0);
-		result.setColumn(1, 0.0, (nearClip*2.0) / (top-bottom), 0.0, 0.0);
-		result.setColumn(2, (right+left)/(right-left), (top+bottom)/(top-bottom), -(farClip+nearClip)/(farClip-nearClip), -1.0);
-		result.setColumn(3, 0.0, 0.0, -(2.0*nearClip*farClip) / (farClip-nearClip), 0.0);
+		left = -aspectRatio_ * top;
+		right = aspectRatio_ * top;
+		result.setColumn(0, (nearClip * 2.0) / (right - left), 0.0, 0.0, 0.0);
+		result.setColumn(1, 0.0, (nearClip * 2.0) / (top - bottom), 0.0, 0.0);
+		result.setColumn(2, (right + left) / (right - left), (top + bottom) / (top - bottom), -(farClip + nearClip) / (farClip - nearClip), -1.0);
+		result.setColumn(3, 0.0, 0.0, -(2.0 * nearClip * farClip) / (farClip - nearClip), 0.0);
 		// Equivalent to the following code:
 		// glMatrixMode(GL_PROJECTION);
 		// glLoadIdentity();
@@ -197,12 +188,12 @@ Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) c
 	{
 		top = -tan(perspectiveFieldOfView_ / DEGRAD) * orthoZoom;
 		bottom = -top;
-		left = -aspectRatio_*top;
-		right = aspectRatio_*top;
+		left = -aspectRatio_ * top;
+		right = aspectRatio_ * top;
 
-		result.setColumn(0, 2.0 / (right-left), 0.0, 0.0, (right+left)/(right-left));
-		result.setColumn(1, 0.0, 2.0 / (top-bottom), 0.0, (top+bottom)/(top-bottom));
-		result.setColumn(2, 0.0, 0.0, -1.0/farClip, 0.0);
+		result.setColumn(0, 2.0 / (right - left), 0.0, 0.0, (right + left) / (right - left));
+		result.setColumn(1, 0.0, 2.0 / (top - bottom), 0.0, (top + bottom) / (top - bottom));
+		result.setColumn(2, 0.0, 0.0, -1.0 / farClip, 0.0);
 		result.setColumn(3, 0.0, 0.0, 0.0, 1.0);
 		// Equivalent to the following code:
 		// glMatrixMode(GL_PROJECTION);
@@ -239,7 +230,8 @@ void View::setViewType(View::ViewType vt)
 	viewType_ = vt;
 
 	// Forcibly turn off perspective if this is a flat view
-	if ((viewType_ >= View::FlatXYView) && (viewType_ <= View::FlatZYView)) setHasPerspective(false);
+	if ((viewType_ >= View::FlatXYView) && (viewType_ <= View::FlatZYView))
+		setHasPerspective(false);
 
 	showAllData();
 
@@ -251,34 +243,19 @@ void View::setViewType(View::ViewType vt)
 }
 
 // Return view type
-View::ViewType View::viewType() const
-{
-	return viewType_;
-}
+View::ViewType View::viewType() const { return viewType_; }
 
 // Set linked View, if any
-void View::setLinkedView(View* linkedView)
-{
-	linkedView_ = linkedView;
-}
+void View::setLinkedView(View *linkedView) { linkedView_ = linkedView; }
 
 // Return linked View, if any
-View* View::linkedView() const
-{
-	return linkedView_;
-}
+View *View::linkedView() const { return linkedView_; }
 
 // Return whether view type is flat
-bool View::isFlatView() const
-{
-	return ((viewType_ >= View::FlatXYView) && (viewType_ <= View::FlatZYView));
-}
+bool View::isFlatView() const { return ((viewType_ >= View::FlatXYView) && (viewType_ <= View::FlatZYView)); }
 
 // Return projection matrix
-Matrix4 View::projectionMatrix() const
-{
-	return projectionMatrix_;
-}
+Matrix4 View::projectionMatrix() const { return projectionMatrix_; }
 
 // Set whether the view uses perspective
 void View::setHasPerspective(bool perspective)
@@ -291,16 +268,14 @@ void View::setHasPerspective(bool perspective)
 }
 
 // Return whether the view uses perspective
-bool View::hasPerspective() const
-{
-	return hasPerspective_;
-}
+bool View::hasPerspective() const { return hasPerspective_; }
 
 // Update transformation (view) matrix
-void View::setViewRotation(Matrix4& mat)
+void View::setViewRotation(Matrix4 &mat)
 {
 	// If this is a two-dimensional or linked view, ignore the request
-	if ((viewType_ != View::NormalView) && (viewType_ != View::AutoStretchedView)) return;
+	if ((viewType_ != View::NormalView) && (viewType_ != View::AutoStretchedView))
+		return;
 
 	viewRotation_ = mat;
 
@@ -313,8 +288,9 @@ void View::setViewRotation(Matrix4& mat)
 void View::setViewRotationColumn(int column, double x, double y, double z)
 {
 	// If this is a two-dimensional or linked view, ignore the request
-	if ((viewType_ != View::NormalView) && (viewType_ != View::AutoStretchedView)) return;
-	
+	if ((viewType_ != View::NormalView) && (viewType_ != View::AutoStretchedView))
+		return;
+
 	viewRotation_.setColumn(column, x, y, z, 0.0);
 
 	updateViewMatrix();
@@ -326,10 +302,11 @@ void View::setViewRotationColumn(int column, double x, double y, double z)
 void View::rotateView(double dx, double dy)
 {
 	// If this is a two-dimensional or linked view, ignore the request
-	if ((viewType_ != View::NormalView) && (viewType_ != View::AutoStretchedView)) return;
+	if ((viewType_ != View::NormalView) && (viewType_ != View::AutoStretchedView))
+		return;
 
 	Matrix4 A;
-	A.createRotationXY(dx, dy);	// TODO Create Matrix4::applyPreRotationXY() function.
+	A.createRotationXY(dx, dy); // TODO Create Matrix4::applyPreRotationXY() function.
 	viewRotation_.preMultiply(A);
 
 	updateViewMatrix();
@@ -338,10 +315,7 @@ void View::rotateView(double dx, double dy)
 }
 
 // Return rotation matrix
-const Matrix4& View::viewRotation() const
-{
-	return viewRotation_;
-}
+const Matrix4 &View::viewRotation() const { return viewRotation_; }
 
 // Return view rotation inverse
 Matrix4 View::viewRotationInverse()
@@ -350,7 +324,7 @@ Matrix4 View::viewRotationInverse()
 	{
 		viewRotationInverse_ = viewRotation_;
 		viewRotationInverse_.invert();
-		
+
 		viewRotationInversePoint_ = viewRotationPoint_;
 	}
 
@@ -362,7 +336,8 @@ void View::setViewTranslation(double x, double y, double z)
 {
 	viewTranslation_.set(x, y, z);
 
-	if (!hasPerspective_) projectionMatrix_ = calculateProjectionMatrix(false, viewTranslation_.z);
+	if (!hasPerspective_)
+		projectionMatrix_ = calculateProjectionMatrix(false, viewTranslation_.z);
 
 	updateViewMatrix();
 
@@ -373,10 +348,12 @@ void View::setViewTranslation(double x, double y, double z)
 void View::translateView(double dx, double dy, double dz)
 {
 	// If this is a two-dimensional view, ignore the request
-	if ((viewType_ != View::NormalView) && (viewType_ != View::AutoStretchedView)) return;
+	if ((viewType_ != View::NormalView) && (viewType_ != View::AutoStretchedView))
+		return;
 
 	viewTranslation_.add(dx, dy, dz);
-	if ((!hasPerspective_) && (fabs(dz) > 1.0e-4)) projectionMatrix_ = calculateProjectionMatrix(false, viewTranslation_.z);
+	if ((!hasPerspective_) && (fabs(dz) > 1.0e-4))
+		projectionMatrix_ = calculateProjectionMatrix(false, viewTranslation_.z);
 
 	updateViewMatrix();
 
@@ -384,16 +361,10 @@ void View::translateView(double dx, double dy, double dz)
 }
 
 // Return current view translation
-Vec3<double> View::viewTranslation() const
-{
-	return viewTranslation_;
-}
+Vec3<double> View::viewTranslation() const { return viewTranslation_; }
 
 // Return view matrix
-const Matrix4& View::viewMatrix() const
-{
-	return viewMatrix_;
-}
+const Matrix4 &View::viewMatrix() const { return viewMatrix_; }
 
 // Project given data coordinates into world coordinates
 Vec3<double> View::dataToWorld(Vec3<double> r) const
@@ -424,15 +395,15 @@ Vec3<double> View::dataToScreen(Vec3<double> r) const
 	screenr = projectionMatrix_ * worldr;
 	screenr.x /= screenr.w;
 	screenr.y /= screenr.w;
-	screenr.x = viewportMatrix_[0] + viewportMatrix_[2]*(screenr.x+1)*0.5;
-	screenr.y = viewportMatrix_[1] + viewportMatrix_[3]*(screenr.y+1)*0.5;
+	screenr.x = viewportMatrix_[0] + viewportMatrix_[2] * (screenr.x + 1) * 0.5;
+	screenr.y = viewportMatrix_[1] + viewportMatrix_[3] * (screenr.y + 1) * 0.5;
 	screenr.z = screenr.z / screenr.w;
 
 	return Vec3<double>(screenr.x, screenr.y, screenr.z);
 }
 
 // Project given data coordinates into screen coordinates, with corresponding distance 'delta' in data
-Vec3<double> View::dataToScreen(Vec3<double> r, double& lengthScale) const
+Vec3<double> View::dataToScreen(Vec3<double> r, double &lengthScale) const
 {
 	Vec4<double> screenr;
 	Vec4<double> worldr;
@@ -447,15 +418,15 @@ Vec3<double> View::dataToScreen(Vec3<double> r, double& lengthScale) const
 	screenr = projectionMatrix_ * worldr;
 	screenr.x /= screenr.w;
 	screenr.y /= screenr.w;
-	screenr.x = viewportMatrix_[0] + viewportMatrix_[2]*(screenr.x+1)*0.5;
-	screenr.y = viewportMatrix_[1] + viewportMatrix_[3]*(screenr.y+1)*0.5;
+	screenr.x = viewportMatrix_[0] + viewportMatrix_[2] * (screenr.x + 1) * 0.5;
+	screenr.y = viewportMatrix_[1] + viewportMatrix_[3] * (screenr.y + 1) * 0.5;
 	screenr.z = screenr.z / screenr.w;
 
 	// Calculate 2D lengthscale around the point - multiply world[x+lengthScale] coordinates by P
 	worldr.x += lengthScale;
 	Vec4<double> tempScreen = projectionMatrix_ * worldr;
 	tempScreen.x /= tempScreen.w;
-	lengthScale = fabs( (viewportMatrix_[0] + viewportMatrix_[2]*(tempScreen.x+1)*0.5) - screenr.x);
+	lengthScale = fabs((viewportMatrix_[0] + viewportMatrix_[2] * (tempScreen.x + 1) * 0.5) - screenr.x);
 
 	return Vec3<double>(screenr.x, screenr.y, screenr.z);
 }
@@ -478,8 +449,8 @@ Vec3<double> View::dataToScreen(Vec3<double> r, Matrix4 projectionMatrix, Matrix
 	screenr = projectionMatrix * worldr;
 	screenr.x /= screenr.w;
 	screenr.y /= screenr.w;
-	screenr.x = viewportMatrix_[0] + viewportMatrix_[2]*(screenr.x+1)*0.5;
-	screenr.y = viewportMatrix_[1] + viewportMatrix_[3]*(screenr.y+1)*0.5;
+	screenr.x = viewportMatrix_[0] + viewportMatrix_[2] * (screenr.x + 1) * 0.5;
+	screenr.y = viewportMatrix_[1] + viewportMatrix_[3] * (screenr.y + 1) * 0.5;
 	screenr.z = screenr.z / screenr.w;
 
 	return Vec3<double>(screenr.x, screenr.y, screenr.z);
@@ -498,8 +469,10 @@ double View::calculateRequiredZoom(double xMax, double yMax, double fraction) co
 	Vec3<double> translation(0.0, 0.0, -1.0);
 
 	// Sanity check
-	if (viewportMatrix_[2] == 0) return 1.0;
-	if (viewportMatrix_[3] == 0) return 1.0;
+	if (viewportMatrix_[2] == 0)
+		return 1.0;
+	if (viewportMatrix_[3] == 0)
+		return 1.0;
 
 	// Calculate target screen coordinate
 	int targetX = viewportMatrix_[0] + (1.0 + fraction) * viewportMatrix_[2] * 0.5;
@@ -509,7 +482,8 @@ double View::calculateRequiredZoom(double xMax, double yMax, double fraction) co
 	do
 	{
 		// If not using perspective, must recalculate the projection matrix
-		if (!hasPerspective_) projectionMatrix = calculateProjectionMatrix(false, translation.z);
+		if (!hasPerspective_)
+			projectionMatrix = calculateProjectionMatrix(false, translation.z);
 
 		// Project the point : worldr = P x M x modelr
 		viewMatrix.setIdentity();
@@ -518,15 +492,16 @@ double View::calculateRequiredZoom(double xMax, double yMax, double fraction) co
 		rScreen = projectionMatrix * rWorld;
 		rScreen.x /= rScreen.w;
 		rScreen.y /= rScreen.w;
-		rScreen.x = viewportMatrix_[0] + viewportMatrix_[2]*(rScreen.x+1)*0.5;
-		rScreen.y = viewportMatrix_[1] + viewportMatrix_[3]*(rScreen.y+1)*0.5;
+		rScreen.x = viewportMatrix_[0] + viewportMatrix_[2] * (rScreen.x + 1) * 0.5;
+		rScreen.y = viewportMatrix_[1] + viewportMatrix_[3] * (rScreen.y + 1) * 0.5;
 		rScreen.z = rScreen.z / rScreen.w;
 
 		// Increase zoom distance
-		translation.z -= std::max( std::max(rScreen.x / targetX, rScreen.y / targetY), 1.0);
+		translation.z -= std::max(std::max(rScreen.x / targetX, rScreen.y / targetY), 1.0);
 
 		// Limit the number of iterations so we can never get into an infinite loop
-		if (++count == 1000) break;
+		if (++count == 1000)
+			break;
 
 	} while ((rScreen.x > targetX) || (rScreen.y > targetY));
 
@@ -541,25 +516,26 @@ Vec3<double> View::screenToData(int x, int y, double z) const
 	double dx, dy;
 
 	// Project points at guide z-position and two other points along literal x and y to get scaling factors for screen coordinates
-	worldr.set(0.0,0.0,z, 1.0);
+	worldr.set(0.0, 0.0, z, 1.0);
 	temp = projectionMatrix_ * worldr;
-	newx = viewportMatrix_[0] + viewportMatrix_[2]*(temp.x / temp.w + 1.0)*0.5;
-	newy = viewportMatrix_[1] + viewportMatrix_[3]*(temp.y / temp.w + 1.0)*0.5;
+	newx = viewportMatrix_[0] + viewportMatrix_[2] * (temp.x / temp.w + 1.0) * 0.5;
+	newy = viewportMatrix_[1] + viewportMatrix_[3] * (temp.y / temp.w + 1.0) * 0.5;
 
-	for (int n=0; n<10; ++n)
+	for (int n = 0; n < 10; ++n)
 	{
 		// Determine new (better) coordinate from a yardstick centred at current world coordinates
-		temp = projectionMatrix_ * Vec4<double>(worldr.x+1.0, worldr.y+1.0, worldr.z, worldr.w);
-		dx = viewportMatrix_[0] + viewportMatrix_[2]*(temp.x / temp.w + 1.0)*0.5 - newx;
-		dy = viewportMatrix_[1] + viewportMatrix_[3]*(temp.y / temp.w + 1.0)*0.5 - newy;
+		temp = projectionMatrix_ * Vec4<double>(worldr.x + 1.0, worldr.y + 1.0, worldr.z, worldr.w);
+		dx = viewportMatrix_[0] + viewportMatrix_[2] * (temp.x / temp.w + 1.0) * 0.5 - newx;
+		dy = viewportMatrix_[1] + viewportMatrix_[3] * (temp.y / temp.w + 1.0) * 0.5 - newy;
 
-		worldr.add((x-newx)/dx, (y-newy)/dy, 0.0, 0.0);
-// 		printf ("N=%i", n); worldr.print();
+		worldr.add((x - newx) / dx, (y - newy) / dy, 0.0, 0.0);
+		// 		printf ("N=%i", n); worldr.print();
 		temp = projectionMatrix_ * worldr;
-		newx = viewportMatrix_[0] + viewportMatrix_[2]*(temp.x / temp.w + 1.0)*0.5;
-		newy = viewportMatrix_[1] + viewportMatrix_[3]*(temp.y / temp.w + 1.0)*0.5;
-// 		printf("NEW dx = %f, dy = %f, wantedxy = %f, %f\n", newx, newy, x, y);
-		if ((x == newx) && (y == newy)) break;
+		newx = viewportMatrix_[0] + viewportMatrix_[2] * (temp.x / temp.w + 1.0) * 0.5;
+		newy = viewportMatrix_[1] + viewportMatrix_[3] * (temp.y / temp.w + 1.0) * 0.5;
+		// 		printf("NEW dx = %f, dy = %f, wantedxy = %f, %f\n", newx, newy, x, y);
+		if ((x == newx) && (y == newy))
+			break;
 	}
 
 	// Finally, invert to model coordinates
@@ -570,16 +546,17 @@ Vec3<double> View::screenToData(int x, int y, double z) const
 double View::screenToAxis(int axis, int x, int y, bool clamp) const
 {
 	// Check for a valid axis
-	if (axis == -1) return 0.0;
+	if (axis == -1)
+		return 0.0;
 
-// 	printf("Test: min=%f, max=%f\n", min_[0], max_[0]);
-// 	rMouseLast_.print();
-// 	axisCoordMin_[0].print();
+	// 	printf("Test: min=%f, max=%f\n", min_[0], max_[0]);
+	// 	rMouseLast_.print();
+	// 	axisCoordMin_[0].print();
 	// Project axis coordinates to get a screen-based yardstick
 	Vec3<double> axmin = dataToScreen(axes_.coordMin(axis));
 	Vec3<double> axmax = dataToScreen(axes_.coordMax(axis));
-// 	axmin.print();
-// 	axmax.print();
+	// 	axmin.print();
+	// 	axmax.print();
 
 	// Calculate vectors between axis minimum and mouse position (AM) and axis maximum (AB)
 	Vec3<double> ab(axmax.x - axmin.x, axmax.y - axmin.y, 0.0);
@@ -588,21 +565,25 @@ double View::screenToAxis(int axis, int x, int y, bool clamp) const
 	double ratio = am.magnitude() / ab.magnitude();
 	abNorm.normalise();
 	amNorm.normalise();
-// 	double angle = acos(abNorm.dp(amNorm));
-//	printf("Angle = %f, %f\n", angle, angle * DEGRAD);
+	// 	double angle = acos(abNorm.dp(amNorm));
+	//	printf("Angle = %f, %f\n", angle, angle * DEGRAD);
 
 	// Calculate slice axis value - no need to account for inverted axes here, since this is accounted for in the vectors axmin and axmax
 	double axisValue;
-	if (axes_.logarithmic(axis)) axisValue = pow(10, abNorm.dp(amNorm)*ratio * (log10(axes_.max(axis)) - log10(axes_.min(axis))) + log10(axes_.min(axis)));
-	else axisValue = abNorm.dp(amNorm)*ratio * (axes_.max(axis) - axes_.min(axis)) + axes_.min(axis);
-//	printf("slicevalue = %f (%f)\n", axisValue, abNorm.dp(amNorm)*ratio);
+	if (axes_.logarithmic(axis))
+		axisValue = pow(10, abNorm.dp(amNorm) * ratio * (log10(axes_.max(axis)) - log10(axes_.min(axis))) + log10(axes_.min(axis)));
+	else
+		axisValue = abNorm.dp(amNorm) * ratio * (axes_.max(axis) - axes_.min(axis)) + axes_.min(axis);
+	//	printf("slicevalue = %f (%f)\n", axisValue, abNorm.dp(amNorm)*ratio);
 
 	// Clamp value to data range
 	if (clamp)
 	{
-		if (axisValue < axes_.min(axis)) axisValue = axes_.min(axis);
-		else if (axisValue > axes_.max(axis)) axisValue = axes_.max(axis);
-	// 	printf("ACMAG = %f, X = %f\n", ratio, axisValue);
+		if (axisValue < axes_.min(axis))
+			axisValue = axes_.min(axis);
+		else if (axisValue > axes_.max(axis))
+			axisValue = axes_.max(axis);
+		// 	printf("ACMAG = %f, X = %f\n", ratio, axisValue);
 	}
 
 	return axisValue;
@@ -612,24 +593,32 @@ double View::screenToAxis(int axis, int x, int y, bool clamp) const
 void View::recalculateView(bool force)
 {
 	// Check viewport size to try and avoid nan errors
-	if ((viewportMatrix_[2] == 0) || (viewportMatrix_[3] == 0)) return;
+	if ((viewportMatrix_[2] == 0) || (viewportMatrix_[3] == 0))
+		return;
 
 	// If the view is neither flat nor autoStretched, there is nothing to do here...
-	if (viewType_ == View::NormalView) return;
+	if (viewType_ == View::NormalView)
+		return;
 
 	// If we are already up-to-date (w.r.t. the associated axes) then we can also return now
 	bool upToDate = true;
-	if (force) upToDate = false;
-	else if (viewAxesUsedAt_ != axes().version()) upToDate = false;
-	else if (viewViewportUsedAt_ != viewportVersion_) upToDate = false;
+	if (force)
+		upToDate = false;
+	else if (viewAxesUsedAt_ != axes().version())
+		upToDate = false;
+	else if (viewViewportUsedAt_ != viewportVersion_)
+		upToDate = false;
 
-	if (upToDate) return;
+	if (upToDate)
+		return;
 
 	int axis;
 
 	// Calculate ourselves a 'standard' projection matrix
-	if (viewType_ == View::AutoStretchedView) projectionMatrix_ = calculateProjectionMatrix(hasPerspective_, viewTranslation_.z);
-	else projectionMatrix_ = calculateProjectionMatrix(false, defaultZTranslation_);
+	if (viewType_ == View::AutoStretchedView)
+		projectionMatrix_ = calculateProjectionMatrix(hasPerspective_, viewTranslation_.z);
+	else
+		projectionMatrix_ = calculateProjectionMatrix(false, defaultZTranslation_);
 
 	// Create a temporary, orthographic projection matrix
 	Matrix4 tempProjection = calculateProjectionMatrix(false, defaultZTranslation_);
@@ -641,13 +630,13 @@ void View::recalculateView(bool force)
 
 	// -- Project a point one unit each along X and Y and subtract off the viewport centre coordinate in order to get literal 'pixels per unit' for (screen) X and Y
 	Vec3<double> unit = dataToScreen(Vec3<double>(1.0, 1.0, 0.0), tempProjection, Matrix4());
-	unit.x -= viewportMatrix_[0] + viewportMatrix_[2]/2.0;
-	unit.y -= viewportMatrix_[1] + viewportMatrix_[3]/2.0;
+	unit.x -= viewportMatrix_[0] + viewportMatrix_[2] / 2.0;
+	unit.y -= viewportMatrix_[1] + viewportMatrix_[3] / 2.0;
 	unit.z = unit.y;
 
 	// Get axis min/max, accounting for logarithmic axes
 	Vec3<double> axisMin, axisMax;
-	for (axis=0; axis<3; ++axis)
+	for (axis = 0; axis < 3; ++axis)
 	{
 		axisMin[axis] = axes_.logarithmic(axis) ? log10(axes_.min(axis)) : axes_.min(axis);
 		axisMax[axis] = axes_.logarithmic(axis) ? log10(axes_.max(axis)) : axes_.max(axis);
@@ -655,19 +644,21 @@ void View::recalculateView(bool force)
 
 	// Decide how we will set stretch factors for each axis (initially set to standard xyy)
 	int axisX = 0, axisY = 1;
-	Vec3<int> axisDir(0,1,1);
-	if (viewType_ == View::FlatXZView) axisY = 2;
+	Vec3<int> axisDir(0, 1, 1);
+	if (viewType_ == View::FlatXZView)
+		axisY = 2;
 	else if (viewType_ == View::FlatZYView)
 	{
-		axisDir.set(1,1,0);
+		axisDir.set(1, 1, 0);
 		axisX = 2;
 	}
 
 	// Set axis stretch factors to fill available pixel width/height
-	for (axis=0; axis<3; ++axis)
+	for (axis = 0; axis < 3; ++axis)
 	{
-		axes_.setStretch(axis, viewportMatrix_[axisDir[axis]+2] / (unit[axisDir[axis]] * (axes_.realRange(axis))));
-		if (!std::isnormal(axes_.stretch(axis))) axes_.setStretch(axis, 1.0);
+		axes_.setStretch(axis, viewportMatrix_[axisDir[axis] + 2] / (unit[axisDir[axis]] * (axes_.realRange(axis))));
+		if (!std::isnormal(axes_.stretch(axis)))
+			axes_.setStretch(axis, 1.0);
 	}
 
 	const double margin = 10.0 * fontInstance_.scaleFactor();
@@ -681,8 +672,10 @@ void View::recalculateView(bool force)
 		// We will now calculate more accurate stretch factors to apply to the X and Y axes.
 		// Project the axis limits on to the screen using the relevant viewmatrix + coordinate centre translation
 		viewMat.createTranslation(-axes().coordCentre());
-		if (viewType_ == View::FlatXZView) viewMat.applyPreRotationX(90.0);
-		else if (viewType_ == View::FlatZYView) viewMat.applyPreRotationY(-90.0);
+		if (viewType_ == View::FlatXZView)
+			viewMat.applyPreRotationX(90.0);
+		else if (viewType_ == View::FlatZYView)
+			viewMat.applyPreRotationY(-90.0);
 
 		// Calculate view rotation matrix inverse
 		viewMatrixInverse = viewMat;
@@ -690,26 +683,29 @@ void View::recalculateView(bool force)
 		viewMatrixInverse.invert();
 
 		// Calculate coordinates and global extremes over axes and labels
-		globalMin.set(1e9,1e9,1e9);
+		globalMin.set(1e9, 1e9, 1e9);
 		globalMax = -globalMin;
 		labelMin = globalMin;
 		labelMax = -labelMin;
-		for (axis=0; axis<3; ++axis)
+		for (axis = 0; axis < 3; ++axis)
 		{
 			// Skip third (i.e. 'z') axis
-			if ((axis != axisX) && (axis != axisY)) continue;
+			if ((axis != axisX) && (axis != axisY))
+				continue;
 
 			// Project axis min/max coordinates onto screen
 			a = dataToScreen(axes_.coordMin(axis), tempProjection, viewMat);
 			b = dataToScreen(axes_.coordMax(axis), tempProjection, viewMat);
-			coordMin[axis].set(std::min(a.x,b.x), std::min(a.y,b.y),  std::min(a.z,b.z)); 
-			coordMax[axis].set(std::max(a.x,b.x), std::max(a.y,b.y),  std::max(a.z,b.z)); 
+			coordMin[axis].set(std::min(a.x, b.x), std::min(a.y, b.y), std::min(a.z, b.z));
+			coordMax[axis].set(std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z));
 
 			// Update global min/max
-			for (int n=0; n<3; ++n)
+			for (int n = 0; n < 3; ++n)
 			{
-				if (coordMin[axis][n] < globalMin[n]) globalMin[n] = coordMin[axis][n];
-				if (coordMax[axis][n] > globalMax[n]) globalMax[n] = coordMax[axis][n];
+				if (coordMin[axis][n] < globalMin[n])
+					globalMin[n] = coordMin[axis][n];
+				if (coordMax[axis][n] > globalMax[n])
+					globalMax[n] = coordMax[axis][n];
 			}
 
 			// Get bounding cuboid for axis text
@@ -722,14 +718,18 @@ void View::recalculateView(bool force)
 			b = dataToScreen(cuboid.maxima(), tempProjection, viewMat);
 
 			// Update global and label min/max
-			for (int n=0; n<3; ++n)
+			for (int n = 0; n < 3; ++n)
 			{
-				tempMin = std::min(a[n],b[n]);
-				tempMax = std::max(a[n],b[n]);
-				if (tempMin < globalMin[n]) globalMin[n] = tempMin;
-				if (tempMax > globalMax[n]) globalMax[n] = tempMax;
-				if (tempMin < labelMin[n]) labelMin[n] = tempMin;
-				if (tempMax > labelMax[n]) labelMax[n] = tempMax;
+				tempMin = std::min(a[n], b[n]);
+				tempMax = std::max(a[n], b[n]);
+				if (tempMin < globalMin[n])
+					globalMin[n] = tempMin;
+				if (tempMax > globalMax[n])
+					globalMax[n] = tempMax;
+				if (tempMin < labelMin[n])
+					labelMin[n] = tempMin;
+				if (tempMax > labelMax[n])
+					labelMax[n] = tempMax;
 			}
 		}
 
@@ -739,12 +739,12 @@ void View::recalculateView(bool force)
 		double globalHeight = globalMax.y - globalMin.y;
 		axisPixelLength_[axisX] = coordMax[axisX].x - coordMin[axisX].x;
 		axisPixelLength_[axisY] = coordMax[axisY].y - coordMin[axisY].y;
-// 		double labelWidth = labelMax.x - labelMin.x;
-// 		double labelHeight = labelMax.y - labelMin.y;
+		// 		double labelWidth = labelMax.x - labelMin.x;
+		// 		double labelHeight = labelMax.y - labelMin.y;
 
 		// Now, we know the width and height of the axis on its own, and the extra 'added' by the labels, so work out how much we need to shrink the axis by
-		double deltaWidth = (viewportMatrix_[2] - 2*margin) - globalWidth;
-		double deltaHeight = (viewportMatrix_[3] - 2*margin) - globalHeight;
+		double deltaWidth = (viewportMatrix_[2] - 2 * margin) - globalWidth;
+		double deltaHeight = (viewportMatrix_[3] - 2 * margin) - globalHeight;
 
 		// So, need to lose deltaWidth and deltaHeight pixels from the axis exents - we'll do this by scaling the stretchfactor
 		double factor = axisPixelLength_[axisX] / (axisPixelLength_[axisX] - deltaWidth);
@@ -752,13 +752,15 @@ void View::recalculateView(bool force)
 		factor = axisPixelLength_[axisY] / (axisPixelLength_[axisY] - deltaHeight);
 		axes_.setStretch(axisY, axes_.stretch(axisY) * factor);
 	}
-	
+
 	// Set new rotation matrix and translation vector (if not AutoStretchedView)
 	if (viewType_ > View::AutoStretchedView)
 	{
 		viewRotation_.setIdentity();
-		if (viewType_ == View::FlatXZView) viewRotation_.applyPreRotationX(90.0);
-		else if (viewType_ == View::FlatZYView) viewRotation_.applyPreRotationY(-90.0);
+		if (viewType_ == View::FlatXZView)
+			viewRotation_.applyPreRotationX(90.0);
+		else if (viewType_ == View::FlatZYView)
+			viewRotation_.applyPreRotationY(-90.0);
 
 		// Set a translation in order to set the margins as requested
 		// The viewTranslation_ is applied in 'normal' coordinate axes, so viewTranslation_.x is along screen x etc.
@@ -788,15 +790,15 @@ void View::resetViewMatrix()
 		viewTranslation_.set(0.0, 0.0, 0.0);
 
 		// If a Normal view, reset the stretch factors
-// 		if (viewType_ == View::NormalView)
-// 		{
-// 			axes_.setStretch(0, 1.0);
-// 			axes_.setStretch(1, 1.0);
-// 			axes_.setStretch(2, 1.0);
-// 		}
+		// 		if (viewType_ == View::NormalView)
+		// 		{
+		// 			axes_.setStretch(0, 1.0);
+		// 			axes_.setStretch(1, 1.0);
+		// 			axes_.setStretch(2, 1.0);
+		// 		}
 
 		// Calculate zoom to show all data
-		viewTranslation_.z = calculateRequiredZoom(axes_.realRange(0)*0.5*axes_.stretch(0), axes_.realRange(1)*0.5*axes_.stretch(1), 0.9);
+		viewTranslation_.z = calculateRequiredZoom(axes_.realRange(0) * 0.5 * axes_.stretch(0), axes_.realRange(1) * 0.5 * axes_.stretch(1), 0.9);
 
 		// Recalculate projection matrix
 		projectionMatrix_ = calculateProjectionMatrix(hasPerspective_, viewTranslation_.z);
@@ -828,8 +830,8 @@ void View::showAllData(double xFrac, double yFrac, double zFrac)
 		Axes::ensureSensibleRange(limitMin, limitMax);
 
 		axes_.setRange(axis, limitMin, limitMax);
-// 		axes_.setToLimit(axis, true);
-// 		axes_.setToLimit(axis, false);
+		// 		axes_.setToLimit(axis, true);
+		// 		axes_.setToLimit(axis, false);
 	}
 }
 
@@ -844,8 +846,10 @@ void View::zoomTo(Vec3<double> limit1, Vec3<double> limit2)
 	if (isFlatView())
 	{
 		int axisX = 0, axisY = 1;
-		if (viewType_ == View::FlatXZView) axisY = 2;
-		else if (viewType_ == View::FlatZYView) axisX = 2;
+		if (viewType_ == View::FlatXZView)
+			axisY = 2;
+		else if (viewType_ == View::FlatZYView)
+			axisX = 2;
 		axes_.setRange(axisX, newMin.get(axisX), newMax.get(axisX));
 		axes_.setRange(axisY, newMin.get(axisY), newMax.get(axisY));
 	}
@@ -865,15 +869,19 @@ void View::scaleRange(double factor)
 {
 	// Set the axis to skip (if any)
 	int skipAxis = -1;
-	if (viewType_ == View::FlatXYView) skipAxis = 2;
-	else if (viewType_ == View::FlatXZView) skipAxis = 1;
-	else if (viewType_ == View::FlatZYView) skipAxis = 0;
+	if (viewType_ == View::FlatXYView)
+		skipAxis = 2;
+	else if (viewType_ == View::FlatXZView)
+		skipAxis = 1;
+	else if (viewType_ == View::FlatZYView)
+		skipAxis = 0;
 
 	// Loop over axes
 	for (int axis = 0; axis < 3; ++axis)
 	{
-		if (axis == skipAxis) continue;
-		
+		if (axis == skipAxis)
+			continue;
+
 		// Get current range of axis (either the real or logged values stored)
 		double halfRange = 0.5 * (axes_.max(axis) - axes_.min(axis));
 		double mid = axes_.min(axis) + halfRange;
@@ -904,45 +912,35 @@ void View::setAutoFollowType(AutoFollowType aft)
 }
 
 // Cycle auto-follow type in effect
-void View::cycleAutoFollowType()
-{
-	autoFollowType_ = (View::AutoFollowType) ((autoFollowType_+1)%nAutoFollowTypes);
-}
+void View::cycleAutoFollowType() { autoFollowType_ = (View::AutoFollowType)((autoFollowType_ + 1) % nAutoFollowTypes); }
 
 // Auto-follow type in effect
-View::AutoFollowType View::autoFollowType() const
-{
-	return autoFollowType_;
-}
+View::AutoFollowType View::autoFollowType() const { return autoFollowType_; }
 
 // Set length of X region to follow, if autoFollowType_ == XFollow
-void View::setAutoFollowXLength(double length)
-{
-	autoFollowXLength_ = length;
-}
+void View::setAutoFollowXLength(double length) { autoFollowXLength_ = length; }
 
 // Return length of X region to follow, if autoFollowType_ == XFollow
-double View::autoFollowXLength() const
-{
-	return autoFollowXLength_;
-}
+double View::autoFollowXLength() const { return autoFollowXLength_; }
 
 // Set axis limits based on current auto-follow type
 void View::autoFollowData()
 {
 	// Is autofollowing enabled?
-	if (autoFollowType_ == View::NoAutoFollow) return;
+	if (autoFollowType_ == View::NoAutoFollow)
+		return;
 
 	// If renderable data access is disabled, there's nothing to do
-	if (!Renderable::sourceDataAccessEnabled()) return;
+	if (!Renderable::sourceDataAccessEnabled())
+		return;
 
 	// Only update the axes if one of the renderables transformed data has changed, to prevent needless primitive regeneration further down the line
 	bool updateRequired = false;
 	ListIterator<Renderable> renderableIterator(renderables_);
-	while (Renderable* rend = renderableIterator.iterate())
+	while (Renderable *rend = renderableIterator.iterate())
 	{
 		// If the renderable isn't in the list, or our stored version is different, we need to update
-		RefDataItem<Renderable,int>* ri = autoFollowTransformVersions_.contains(rend);
+		RefDataItem<Renderable, int> *ri = autoFollowTransformVersions_.contains(rend);
 		if ((!ri) || (ri->data() != rend->dataVersion()))
 		{
 			updateRequired = true;
@@ -950,26 +948,31 @@ void View::autoFollowData()
 		}
 	}
 
-	if (!updateRequired) return;
+	if (!updateRequired)
+		return;
 
-	if (autoFollowType_ == View::AllAutoFollow) showAllData();
+	if (autoFollowType_ == View::AllAutoFollow)
+		showAllData();
 	else if (autoFollowType_ == View::XAutoFollow)
 	{
 		// Establish min / max limits on x axis
 		double xMin = dataMinima().x;
 		double xMax = dataMaxima().x;
-		if ((xMax - xMin) > autoFollowXLength_) xMin = xMax - autoFollowXLength_;
+		if ((xMax - xMin) > autoFollowXLength_)
+			xMin = xMax - autoFollowXLength_;
 
 		// Get y range over the horizontal range we've established
 		bool first = true;
 		double yMin = 0.0, yMax = 0.0, yMinTest = 0.0, yMaxTest = 0.0;
-		for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next())
+		for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
 		{
 			// Skip this Renderable if it is not currently visible
-			if (!rend->isVisible()) continue;
+			if (!rend->isVisible())
+				continue;
 
 			// Get y limits for the this data
-			if (!rend->yRangeOverX(xMin, xMax, yMinTest, yMaxTest)) continue;
+			if (!rend->yRangeOverX(xMin, xMax, yMinTest, yMaxTest))
+				continue;
 			if (first)
 			{
 				yMin = yMinTest;
@@ -978,8 +981,10 @@ void View::autoFollowData()
 			}
 			else
 			{
-				if (yMinTest < yMin) yMin = yMinTest;
-				if (yMaxTest > yMax) yMax = yMaxTest;
+				if (yMinTest < yMin)
+					yMin = yMinTest;
+				if (yMaxTest > yMax)
+					yMax = yMaxTest;
 			}
 		}
 
@@ -992,11 +997,11 @@ void View::autoFollowData()
 		else
 		{
 			// Increase the range by 5% either way
-			double yDelta = (yMax - yMin)*0.05;
+			double yDelta = (yMax - yMin) * 0.05;
 			yMax += yDelta;
 			yMin -= yDelta;
 		}
-	
+
 		// Ensure a sensible range for the axes
 		Axes::ensureSensibleRange(xMin, xMax);
 		Axes::ensureSensibleRange(yMin, yMax);
@@ -1008,7 +1013,8 @@ void View::autoFollowData()
 
 	// Update stored transformedData versions
 	renderableIterator.restart();
-	while (Renderable* rend = renderableIterator.iterate()) autoFollowTransformVersions_.addUnique(rend, rend->valuesTransformDataVersion());
+	while (Renderable *rend = renderableIterator.iterate())
+		autoFollowTransformVersions_.addUnique(rend, rend->valuesTransformDataVersion());
 }
 
 /*
@@ -1019,22 +1025,28 @@ void View::autoFollowData()
 Vec3<double> View::dataMinima()
 {
 	// If there are no Renderables, just return the current limits
-	if (renderables_.nItems() == 0) return Vec3<double>(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
+	if (renderables_.nItems() == 0)
+		return Vec3<double>(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
 
 	int nCounted = 0;
 	Vec3<double> v, minima;
-	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next())
+	for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
 	{
 		// Skip this Renderable if it is not currently visible
-		if (!rend->isVisible()) continue;
+		if (!rend->isVisible())
+			continue;
 
-		if (nCounted == 0) minima = rend->limitsMin();
+		if (nCounted == 0)
+			minima = rend->limitsMin();
 		else
 		{
 			v = rend->limitsMin();
-			if (v.x < minima.x) minima.x = v.x;
-			if (v.y < minima.y) minima.y = v.y;
-			if (v.z < minima.z) minima.z = v.z;
+			if (v.x < minima.x)
+				minima.x = v.x;
+			if (v.y < minima.y)
+				minima.y = v.y;
+			if (v.z < minima.z)
+				minima.z = v.z;
 		}
 		++nCounted;
 	}
@@ -1046,22 +1058,28 @@ Vec3<double> View::dataMinima()
 Vec3<double> View::dataMaxima()
 {
 	// If there are no Renderables, just return the current limits
-	if (renderables_.nItems() == 0) return Vec3<double>(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
+	if (renderables_.nItems() == 0)
+		return Vec3<double>(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
 
 	int nCounted = 0;
 	Vec3<double> v, maxima;
-	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next())
+	for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
 	{
 		// Skip this Renderable if it is not currently visible
-		if (!rend->isVisible()) continue;
+		if (!rend->isVisible())
+			continue;
 
-		if (nCounted == 0) maxima = rend->limitsMax();
+		if (nCounted == 0)
+			maxima = rend->limitsMax();
 		else
 		{
 			v = rend->limitsMax();
-			if (v.x > maxima.x) maxima.x = v.x;
-			if (v.y > maxima.y) maxima.y = v.y;
-			if (v.z > maxima.z) maxima.z = v.z;
+			if (v.x > maxima.x)
+				maxima.x = v.x;
+			if (v.y > maxima.y)
+				maxima.y = v.y;
+			if (v.z > maxima.z)
+				maxima.z = v.z;
 		}
 		++nCounted;
 	}
@@ -1074,25 +1092,32 @@ Vec3<double> View::positiveDataMinima()
 {
 	int nCounted = 0;
 	Vec3<double> v, minima;
-	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next())
+	for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
 	{
 		// Skip this Renderable if it is not currently visible
-		if (!rend->isVisible()) continue;
+		if (!rend->isVisible())
+			continue;
 
-		if (nCounted == 0) minima = rend->positiveLimitsMin();
+		if (nCounted == 0)
+			minima = rend->positiveLimitsMin();
 		else
 		{
 			v = rend->positiveLimitsMin();
-			if (v.x < minima.x) minima.x = v.x;
-			if (v.y < minima.y) minima.y = v.y;
-			if (v.z < minima.z) minima.z = v.z;
+			if (v.x < minima.x)
+				minima.x = v.x;
+			if (v.y < minima.y)
+				minima.y = v.y;
+			if (v.z < minima.z)
+				minima.z = v.z;
 		}
 		++nCounted;
 	}
 
 	// If we didn't have any data to work with, return the current axis limits
-	if (nCounted == 0) return Vec3<double>(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
-	else return minima;
+	if (nCounted == 0)
+		return Vec3<double>(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
+	else
+		return minima;
 }
 
 // Return positive data minima over all displayed renderables
@@ -1100,25 +1125,32 @@ Vec3<double> View::positiveDataMaxima()
 {
 	int nCounted = 0;
 	Vec3<double> v, maxima;
-	for (Renderable* rend = renderables_.first(); rend != NULL; rend = rend->next())
+	for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
 	{
 		// Skip this Renderable if it is not currently visible
-		if (!rend->isVisible()) continue;
+		if (!rend->isVisible())
+			continue;
 
-		if (nCounted == 0) maxima = rend->positiveLimitsMax();
+		if (nCounted == 0)
+			maxima = rend->positiveLimitsMax();
 		else
 		{
 			v = rend->positiveLimitsMax();
-			if (v.x < maxima.x) maxima.x = v.x;
-			if (v.y < maxima.y) maxima.y = v.y;
-			if (v.z < maxima.z) maxima.z = v.z;
+			if (v.x < maxima.x)
+				maxima.x = v.x;
+			if (v.y < maxima.y)
+				maxima.y = v.y;
+			if (v.z < maxima.z)
+				maxima.z = v.z;
 		}
 		++nCounted;
 	}
 
 	// If we didn't have any data to work with, return the current axis limits
-	if (nCounted == 0) return Vec3<double>(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
-	else return maxima;
+	if (nCounted == 0)
+		return Vec3<double>(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
+	else
+		return maxima;
 }
 
 // Update axis limits to represent data extent of associated collections
@@ -1143,13 +1175,13 @@ void View::updateAxisLimits(double xFrac, double yFrac, double zFrac)
 		// Adjust limits
 		if (fractions[axis] > 0.0)
 		{
-			dataMax[axis] = dataMin[axis] + (dataMax[axis] - dataMin[axis])*fractions[axis];
-			dataMaxPositive[axis] = dataMinPositive[axis] + (dataMaxPositive[axis] - dataMinPositive[axis])*fractions[axis];
+			dataMax[axis] = dataMin[axis] + (dataMax[axis] - dataMin[axis]) * fractions[axis];
+			dataMaxPositive[axis] = dataMinPositive[axis] + (dataMaxPositive[axis] - dataMinPositive[axis]) * fractions[axis];
 		}
 		else
 		{
-			dataMin[axis] = dataMax[axis] - (dataMin[axis] - dataMax[axis])*fractions[axis];
-			dataMinPositive[axis] = dataMaxPositive[axis] - (dataMinPositive[axis] - dataMaxPositive[axis])*fractions[axis];
+			dataMin[axis] = dataMax[axis] - (dataMin[axis] - dataMax[axis]) * fractions[axis];
+			dataMinPositive[axis] = dataMaxPositive[axis] - (dataMinPositive[axis] - dataMaxPositive[axis]) * fractions[axis];
 		}
 
 		// Set allowable range to avoid negative numbers if axis is now logarithmic
@@ -1172,13 +1204,15 @@ void View::updateAxisLimits(double xFrac, double yFrac, double zFrac)
 void View::shiftFlatAxisLimits(double deltaH, double deltaV)
 {
 	// If this is not a flat view, return now
-	if (!isFlatView()) return;
+	if (!isFlatView())
+		return;
 
 	// Set indices for target axes
 	int axes[2];
 	axes[0] = 0;
 	axes[1] = 1;
-	if (viewType_ == View::FlatXZView) axes[1] = 2;
+	if (viewType_ == View::FlatXZView)
+		axes[1] = 2;
 	else if (viewType_ == View::FlatZYView)
 	{
 		axes[0] = 1;
@@ -1189,26 +1223,27 @@ void View::shiftFlatAxisLimits(double deltaH, double deltaV)
 	double deltas[2];
 	deltas[0] = deltaH;
 	deltas[1] = deltaV;
-	for (int n=0; n<2; ++n)
+	for (int n = 0; n < 2; ++n)
 	{
 		double range = axes_.realRange(axes[n]);
 		bool logarithmic = axes_.logarithmic(axes[n]);
 		double ppUnit = axisPixelLength_[axes[n]] / range;
 
 		// Flip sign of delta if the axis is inverted
-		if (axes_.inverted(axes[n])) deltas[n] = -deltas[n];
+		if (axes_.inverted(axes[n]))
+			deltas[n] = -deltas[n];
 
 		// Get adjusted min/max values
 		double newMin, newMax;
 		if (logarithmic)
 		{
-			newMin = pow(10, axes_.realMin(axes[n]) - deltas[n]/ppUnit);
-			newMax = pow(10, axes_.realMax(axes[n]) - deltas[n]/ppUnit);
+			newMin = pow(10, axes_.realMin(axes[n]) - deltas[n] / ppUnit);
+			newMax = pow(10, axes_.realMax(axes[n]) - deltas[n] / ppUnit);
 		}
 		else
 		{
-			newMin = axes_.min(axes[n]) - deltas[n]/ppUnit;
-			newMax = axes_.max(axes[n]) - deltas[n]/ppUnit;
+			newMin = axes_.min(axes[n]) - deltas[n] / ppUnit;
+			newMax = axes_.max(axes[n]) - deltas[n] / ppUnit;
 		}
 
 		axes_.setMin(axes[n], newMin);
@@ -1223,7 +1258,8 @@ void View::shiftFlatAxisLimitsFractional(double fracH, double fracV)
 	int axes[2];
 	axes[0] = 0;
 	axes[1] = 1;
-	if (viewType_ == View::FlatXZView) axes[1] = 2;
+	if (viewType_ == View::FlatXZView)
+		axes[1] = 2;
 	else if (viewType_ == View::FlatZYView)
 	{
 		axes[0] = 1;
@@ -1238,16 +1274,10 @@ void View::shiftFlatAxisLimitsFractional(double fracH, double fracV)
 }
 
 // Return axes for the view
-Axes& View::axes()
-{
-	return axes_;
-}
+Axes &View::axes() { return axes_; }
 
 // Return axes for the view (const)
-const Axes& View::constAxes() const
-{
-	return axes_;
-}
+const Axes &View::constAxes() const { return axes_; }
 
 /*
  * Style
@@ -1258,9 +1288,10 @@ void View::calculateFontScaling()
 {
 	// Calculate text scaling factor
 	Vec3<double> translate(0.0, 0.0, viewTranslation_.z);
-	if (hasPerspective_) translate.z = 0.5;
+	if (hasPerspective_)
+		translate.z = 0.5;
 	Vec3<double> unit = dataToScreen(Vec3<double>(0.0, 1.0, viewTranslation_.z), projectionMatrix_, Matrix4(), translate);
-	unit.y -= viewportMatrix_[1] + viewportMatrix_[3]*0.5;
+	unit.y -= viewportMatrix_[1] + viewportMatrix_[3] * 0.5;
 	textZScale_ = unit.y;
 }
 
@@ -1273,10 +1304,7 @@ void View::setLabelPointSize(double value)
 }
 
 // Return font point size for axis value labels
-double View::labelPointSize() const
-{
-	return labelPointSize_;
-}
+double View::labelPointSize() const { return labelPointSize_; }
 
 // Return font point size for titles
 void View::setTitlePointSize(double value)
@@ -1287,16 +1315,10 @@ void View::setTitlePointSize(double value)
 }
 
 // Return font point size for titles
-double View::titlePointSize() const
-{
-	return titlePointSize_;
-}
+double View::titlePointSize() const { return titlePointSize_; }
 
 // Return text z scaling factor
-double View::textZScale() const
-{
-	return textZScale_;
-}
+double View::textZScale() const { return textZScale_; }
 
 // Set whether axis text labels are drawn flat in 3D views
 void View::setFlatLabelsIn3D(bool flat)
@@ -1307,7 +1329,4 @@ void View::setFlatLabelsIn3D(bool flat)
 }
 
 // Whether axis text labels are drawn flat in 3D views
-bool View::flatLabelsIn3D() const
-{
-	return flatLabelsIn3D_;
-}
+bool View::flatLabelsIn3D() const { return flatLabelsIn3D_; }

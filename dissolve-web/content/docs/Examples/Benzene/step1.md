@@ -1,9 +1,7 @@
 ---
 title: Step 1 - Create the Species
-parent: Comparing Benzene Structure
 grand_parent: Examples
 ---
-# Comparing Benzene Structure
 
 ## 1. Create the Species
 

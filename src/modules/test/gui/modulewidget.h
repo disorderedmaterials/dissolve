@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULEWIDGET_TEST_H
 #define DISSOLVE_MODULEWIDGET_TEST_H
 
-#include "modules/test/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
+#include "modules/test/gui/ui_modulewidget.h"
 
 // Forward Declarations
 class TestModule;
@@ -34,19 +34,18 @@ class TestModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	private:
+      private:
 	// Associated Module
-	TestModule* module_;
+	TestModule *module_;
 
-	public:
+      public:
 	// Constructor
-	TestModuleWidget(QWidget* parent, TestModule* module);
-
+	TestModuleWidget(QWidget *parent, TestModule *module);
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::TestModuleWidget ui_;
 };
