@@ -74,7 +74,7 @@ EnergyModuleWidget::~EnergyModuleWidget() {}
 void EnergyModuleWidget::updateControls(int flags)
 {
     // Set gradient and stability labels
-    int stabilityWindow = module_->keywords().asInt("StabilityWindow");
+    auto stabilityWindow = module_->keywords().asInt("StabilityWindow");
     ui_.GradientInfoLabel->setText(QString("Gradient (last %1 points) : ").arg(stabilityWindow));
 
     QPalette labelPalette = ui_.StableLabel->palette();
@@ -86,11 +86,11 @@ void EnergyModuleWidget::updateControls(int flags)
             ui_.GradientValueLabel->setText("N/A");
         else
         {
-            double grad = GenericListHelper<double>::value(currentConfiguration_->moduleData(), "EnergyGradient", "", 0.0);
+            auto grad = GenericListHelper<double>::value(currentConfiguration_->moduleData(), "EnergyGradient", "", 0.0);
             ui_.GradientValueLabel->setText(QString::number(grad));
         }
 
-        bool stable = GenericListHelper<bool>::value(currentConfiguration_->moduleData(), "EnergyStable", "", false);
+        auto stable = GenericListHelper<bool>::value(currentConfiguration_->moduleData(), "EnergyStable", "", false);
 
         if (stable)
         {

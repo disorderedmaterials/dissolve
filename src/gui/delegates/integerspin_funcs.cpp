@@ -34,7 +34,7 @@ IntegerSpinDelegate::IntegerSpinDelegate(QObject *parent, int vmin, int vmax, in
 QWidget *IntegerSpinDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     // Create editor widget (in this case a QSpinBox) and set some properties
-    QSpinBox *editor = new QSpinBox(parent);
+    auto *editor = new QSpinBox(parent);
     editor->setMinimum(min_);
     editor->setMaximum(max_);
     editor->setSingleStep(step_);
@@ -45,20 +45,20 @@ QWidget *IntegerSpinDelegate::createEditor(QWidget *parent, const QStyleOptionVi
 // Set initial value in editor
 void IntegerSpinDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
-    int value = index.model()->data(index, Qt::EditRole).toInt();
+    auto value = index.model()->data(index, Qt::EditRole).toInt();
 
-    QSpinBox *spinBox = static_cast<QSpinBox *>(editor);
+    auto *spinBox = static_cast<QSpinBox *>(editor);
     spinBox->setValue(value);
 }
 
 // Get value from editing widget, and set back in model
 void IntegerSpinDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-    QSpinBox *spinBox = static_cast<QSpinBox *>(editor);
+    auto *spinBox = static_cast<QSpinBox *>(editor);
 
     // Make sure the value in the spinBox has been updated from the current text
     spinBox->interpretText();
-    int value = spinBox->value();
+    auto value = spinBox->value();
 
     model->setData(index, value, Qt::EditRole);
 }

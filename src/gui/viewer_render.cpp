@@ -142,7 +142,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 
     if (axesVisible_)
     {
-        int skipAxis = -1;
+        auto skipAxis = -1;
         if (view_.viewType() == View::FlatXYView)
             skipAxis = 2;
         else if (view_.viewType() == View::FlatXZView)
@@ -207,7 +207,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
         enableClipping();
 
     // Draw all Renderables
-    for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
     {
         // If the Renderable is hidden, don't draw it!
         if (!rend->isVisible())
@@ -414,8 +414,8 @@ void BaseViewer::enableClipping()
     glLoadMatrixd(view_.viewMatrix().matrix());
 
     // Get clip plane coordinates and indices
-    Vec3<double> clipMin = view_.axes().clipMin();
-    Vec3<double> clipMax = view_.axes().clipMax();
+    auto clipMin = view_.axes().clipMin();
+    auto clipMax = view_.axes().clipMax();
     static GLenum planes[6] = {GL_CLIP_PLANE0, GL_CLIP_PLANE1, GL_CLIP_PLANE2, GL_CLIP_PLANE3, GL_CLIP_PLANE4, GL_CLIP_PLANE5};
 
     // Loop over axes
@@ -474,8 +474,8 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
     offscreenContext_.makeCurrent(&offscreenSurface_);
 
     // Set tile size
-    int tileWidth = 512;
-    int tileHeight = 512;
+    auto tileWidth = 512;
+    auto tileHeight = 512;
 
     // Initialise framebuffer format and object
     QOpenGLFramebufferObjectFormat fboFormat;
@@ -498,8 +498,8 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
     painter.drawRect(0, 0, imageWidth, imageHeight);
 
     // Calculate the number of tiles required to cover the requested image size
-    int nX = imageWidth / tileWidth + ((imageWidth % tileWidth) ? 1 : 0);
-    int nY = imageHeight / tileHeight + ((imageHeight % tileHeight) ? 1 : 0);
+    auto nX = imageWidth / tileWidth + ((imageWidth % tileWidth) ? 1 : 0);
+    auto nY = imageHeight / tileHeight + ((imageHeight % tileHeight) ? 1 : 0);
 
     // Set the viewport of our View to be the new image size
     view_.recalculateViewport(imageWidth, imageHeight);

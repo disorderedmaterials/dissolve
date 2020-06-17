@@ -95,7 +95,7 @@ bool ExpressionNode::hasArg(int i) { return (i < args_.nItems()); }
 // Add list of arguments formas as a plain List<Node>, beginning from supplied list head
 void ExpressionNode::addListArguments(ExpressionNode *leaf)
 {
-    for (ExpressionNode *node = leaf; node != NULL; node = node->next())
+    for (auto *node = leaf; node != NULL; node = node->next())
         args_.append(node);
 }
 
@@ -110,7 +110,7 @@ void ExpressionNode::addJoinedArguments(ExpressionNode *lastleaf)
     for (first = lastleaf; first != NULL; first = first->prevArgument)
         if (first->prevArgument == NULL)
             break;
-    for (ExpressionNode *node = first; node != NULL; node = node->nextArgument)
+    for (auto *node = first; node != NULL; node = node->nextArgument)
         args_.append(node);
 }
 

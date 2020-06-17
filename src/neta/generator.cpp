@@ -145,7 +145,7 @@ int NETADefinitionGenerator::lex()
     if (c == '.' || isdigit(c))
     {
         Messenger::printVerbose("NETA (%p): found the start of a number...\n", definition_);
-        bool isInteger = (c != '.');
+        auto isInteger = (c != '.');
         hasExp = false;
         token += c;
         done = false;
@@ -407,7 +407,7 @@ bool NETADefinitionGenerator::generate(NETADefinition &neta, const char *netaDef
     NETADefinitionGenerator generator(neta, neta.definitionString(), associatedFF);
 
     // Generate definition
-    bool result = NETADefinitionGenerator_parse() == 0;
+    auto result = NETADefinitionGenerator_parse() == 0;
     if (!result)
         definition_->clear();
 

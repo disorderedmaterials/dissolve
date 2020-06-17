@@ -480,10 +480,10 @@ double View::calculateRequiredZoom(double xMax, double yMax, double fraction) co
         return 1.0;
 
     // Calculate target screen coordinate
-    int targetX = viewportMatrix_[0] + (1.0 + fraction) * viewportMatrix_[2] * 0.5;
-    int targetY = viewportMatrix_[1] + (1.0 + fraction) * viewportMatrix_[3] * 0.5;
+    auto targetX = viewportMatrix_[0] + (1.0 + fraction) * viewportMatrix_[2] * 0.5;
+    auto targetY = viewportMatrix_[1] + (1.0 + fraction) * viewportMatrix_[3] * 0.5;
 
-    int count = 0;
+    auto count = 0;
     do
     {
         // If not using perspective, must recalculate the projection matrix
@@ -559,16 +559,16 @@ double View::screenToAxis(int axis, int x, int y, bool clamp) const
     // 	rMouseLast_.print();
     // 	axisCoordMin_[0].print();
     // Project axis coordinates to get a screen-based yardstick
-    Vec3<double> axmin = dataToScreen(axes_.coordMin(axis));
-    Vec3<double> axmax = dataToScreen(axes_.coordMax(axis));
+    auto axmin = dataToScreen(axes_.coordMin(axis));
+    auto axmax = dataToScreen(axes_.coordMax(axis));
     // 	axmin.print();
     // 	axmax.print();
 
     // Calculate vectors between axis minimum and mouse position (AM) and axis maximum (AB)
     Vec3<double> ab(axmax.x - axmin.x, axmax.y - axmin.y, 0.0);
     Vec3<double> am(x - axmin.x, y - axmin.y, 0.0);
-    Vec3<double> amNorm = am, abNorm = ab;
-    double ratio = am.magnitude() / ab.magnitude();
+    auto amNorm = am, abNorm = ab;
+    auto ratio = am.magnitude() / ab.magnitude();
     abNorm.normalise();
     amNorm.normalise();
     // 	double angle = acos(abNorm.dp(amNorm));
@@ -609,7 +609,7 @@ void View::recalculateView(bool force)
         return;
 
     // If we are already up-to-date (w.r.t. the associated axes) then we can also return now
-    bool upToDate = true;
+    auto upToDate = true;
     if (force)
         upToDate = false;
     else if (viewAxesUsedAt_ != axes().version())
@@ -638,7 +638,7 @@ void View::recalculateView(bool force)
 
     // -- Project a point one unit each along X and Y and subtract off the viewport centre coordinate in order to get
     // literal 'pixels per unit' for (screen) X and Y
-    Vec3<double> unit = dataToScreen(Vec3<double>(1.0, 1.0, 0.0), tempProjection, Matrix4());
+    auto unit = dataToScreen(Vec3<double>(1.0, 1.0, 0.0), tempProjection, Matrix4());
     unit.x -= viewportMatrix_[0] + viewportMatrix_[2] / 2.0;
     unit.y -= viewportMatrix_[1] + viewportMatrix_[3] / 2.0;
     unit.z = unit.y;
@@ -652,7 +652,7 @@ void View::recalculateView(bool force)
     }
 
     // Decide how we will set stretch factors for each axis (initially set to standard xyy)
-    int axisX = 0, axisY = 1;
+    auto axisX = 0, axisY = 1;
     Vec3<int> axisDir(0, 1, 1);
     if (viewType_ == View::FlatXZView)
         axisY = 2;
@@ -670,7 +670,7 @@ void View::recalculateView(bool force)
             axes_.setStretch(axis, 1.0);
     }
 
-    const double margin = 10.0 * fontInstance_.scaleFactor();
+    const auto margin = 10.0 * fontInstance_.scaleFactor();
     Matrix4 viewMat, B, viewMatrixInverse;
     double tempMin, tempMax;
     Vec3<double> coordMin[3], coordMax[3], labelMin, labelMax, a, b, globalMin, globalMax;
@@ -857,7 +857,7 @@ void View::zoomTo(Vec3<double> limit1, Vec3<double> limit2)
     // Check the view type and set relevant coordinates
     if (isFlatView())
     {
-        int axisX = 0, axisY = 1;
+        auto axisX = 0, axisY = 1;
         if (viewType_ == View::FlatXZView)
             axisY = 2;
         else if (viewType_ == View::FlatZYView)
@@ -880,7 +880,7 @@ void View::zoomTo(Vec3<double> limit1, Vec3<double> limit2)
 void View::scaleRange(double factor)
 {
     // Set the axis to skip (if any)
-    int skipAxis = -1;
+    auto skipAxis = -1;
     if (viewType_ == View::FlatXYView)
         skipAxis = 2;
     else if (viewType_ == View::FlatXZView)
@@ -907,12 +907,12 @@ void View::scaleRange(double factor)
 void View::centre2DAt(Vec3<double> centre, double fraction)
 {
     // Get delta distance
-    Vec3<double> delta = (centre - axes_.centre()) * fraction;
+    const auto delta = (centre - axes_.centre()) * fraction;
 
     // Add to current axis limits
-    axes_.setRange(0, axes_.min(0) + delta[0], axes_.max(0) + delta[0]);
-    axes_.setRange(1, axes_.min(1) + delta[1], axes_.max(1) + delta[1]);
-    axes_.setRange(2, axes_.min(2) + delta[2], axes_.max(2) + delta[2]);
+    axes_.setRange(0, axes_.min(0) + delta.x, axes_.max(0) + delta.x);
+    axes_.setRange(1, axes_.min(1) + delta.y, axes_.max(1) + delta.y);
+    axes_.setRange(2, axes_.min(2) + delta.z, axes_.max(2) + delta.z);
 }
 
 // Set auto-follow type in effect
@@ -948,7 +948,7 @@ void View::autoFollowData()
 
     // Only update the axes if one of the renderables transformed data has changed, to prevent needless primitive
     // regeneration further down the line
-    bool updateRequired = false;
+    auto updateRequired = false;
     ListIterator<Renderable> renderableIterator(renderables_);
     while (Renderable *rend = renderableIterator.iterate())
     {
@@ -975,9 +975,9 @@ void View::autoFollowData()
             xMin = xMax - autoFollowXLength_;
 
         // Get y range over the horizontal range we've established
-        bool first = true;
+        auto first = true;
         double yMin = 0.0, yMax = 0.0, yMinTest = 0.0, yMaxTest = 0.0;
-        for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
+        for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
         {
             // Skip this Renderable if it is not currently visible
             if (!rend->isVisible())
@@ -1041,9 +1041,9 @@ Vec3<double> View::dataMinima()
     if (renderables_.nItems() == 0)
         return Vec3<double>(axes_.limitMin(0), axes_.limitMin(1), axes_.limitMin(2));
 
-    int nCounted = 0;
+    auto nCounted = 0;
     Vec3<double> v, minima;
-    for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1074,9 +1074,9 @@ Vec3<double> View::dataMaxima()
     if (renderables_.nItems() == 0)
         return Vec3<double>(axes_.limitMax(0), axes_.limitMax(1), axes_.limitMax(2));
 
-    int nCounted = 0;
+    auto nCounted = 0;
     Vec3<double> v, maxima;
-    for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1103,9 +1103,9 @@ Vec3<double> View::dataMaxima()
 // Return positive data minima over all displayed renderables
 Vec3<double> View::positiveDataMinima()
 {
-    int nCounted = 0;
+    auto nCounted = 0;
     Vec3<double> v, minima;
-    for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1136,9 +1136,9 @@ Vec3<double> View::positiveDataMinima()
 // Return positive data minima over all displayed renderables
 Vec3<double> View::positiveDataMaxima()
 {
-    int nCounted = 0;
+    auto nCounted = 0;
     Vec3<double> v, maxima;
-    for (Renderable *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1170,10 +1170,10 @@ Vec3<double> View::positiveDataMaxima()
 void View::updateAxisLimits(double xFrac, double yFrac, double zFrac)
 {
     // Get transformed data extents
-    Vec3<double> dataMin = dataMinima();
-    Vec3<double> dataMax = dataMaxima();
-    Vec3<double> dataMinPositive = positiveDataMinima();
-    Vec3<double> dataMaxPositive = positiveDataMaxima();
+    auto dataMin = dataMinima();
+    auto dataMax = dataMaxima();
+    auto dataMinPositive = positiveDataMinima();
+    auto dataMaxPositive = positiveDataMaxima();
 
     // The fractional values we've been passed tell us how much of the 'data' to include in the limits
     // A positive value, 0.0 < f < 1.0, tells us to shrink the maximum limit.
@@ -1239,7 +1239,7 @@ void View::shiftFlatAxisLimits(double deltaH, double deltaV)
     for (int n = 0; n < 2; ++n)
     {
         double range = axes_.realRange(axes[n]);
-        bool logarithmic = axes_.logarithmic(axes[n]);
+        auto logarithmic = axes_.logarithmic(axes[n]);
         double ppUnit = axisPixelLength_[axes[n]] / range;
 
         // Flip sign of delta if the axis is inverted
@@ -1303,7 +1303,7 @@ void View::calculateFontScaling()
     Vec3<double> translate(0.0, 0.0, viewTranslation_.z);
     if (hasPerspective_)
         translate.z = 0.5;
-    Vec3<double> unit = dataToScreen(Vec3<double>(0.0, 1.0, viewTranslation_.z), projectionMatrix_, Matrix4(), translate);
+    auto unit = dataToScreen(Vec3<double>(0.0, 1.0, viewTranslation_.z), projectionMatrix_, Matrix4(), translate);
     unit.y -= viewportMatrix_[1] + viewportMatrix_[3] * 0.5;
     textZScale_ = unit.y;
 }

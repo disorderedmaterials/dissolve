@@ -76,7 +76,7 @@ void Isotopologue::update()
     }
 
     // Loop over Atoms in species, get their assigned AtomTypes, and searching for them in the oldItems list
-    for (SpeciesAtom *i = parent_->firstAtom(); i != NULL; i = i->next())
+    for (auto *i = parent_->firstAtom(); i != NULL; i = i->next())
     {
         AtomType *at = i->atomType();
         if (at == NULL)

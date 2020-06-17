@@ -55,14 +55,14 @@ void SelectGenericItemDialog::updateGenericItemTable(GenericItem *current, QStri
         {
             // Check name
             QString name = genericItem->name();
-            bool inName = name.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
+            auto inName = name.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
 
             // Check object tag
             QString objectTag = ui_.ItemsTable->item(n, 2)->text();
-            bool inObjectTag = objectTag.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
+            auto inObjectTag = objectTag.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
 
             // Hide the item?
-            bool hide = (!inName) && (!inObjectTag);
+            auto hide = (!inName) && (!inObjectTag);
             ui_.ItemsTable->setRowHidden(n, hide);
 
             // If the item was hidden, and it was selected, reset the current index

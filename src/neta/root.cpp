@@ -88,7 +88,7 @@ int NETARootNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchP
     // 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(),
     // iii->element()->symbol()); 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
 
-    int totalScore = 0;
+    auto totalScore = 0;
 
     // Check any specified modifier values
     if (nBondsValue_ >= 0 && (!compareValues(i->nBonds(), nBondsValueOperator_, nBondsValue_)))
@@ -98,7 +98,7 @@ int NETARootNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchP
     if (nHydrogensValue_ >= 0)
     {
         // Count number of hydrogens attached to this atom
-        int nH = 0;
+        auto nH = 0;
         for (const auto *bond : i->bonds())
             if (bond->partner(i)->element()->Z() == ELEMENT_H)
                 ++nH;
@@ -109,7 +109,7 @@ int NETARootNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchP
     }
 
     // Process branch definition via the base class
-    int branchScore = NETANode::score(i, matchPath);
+    auto branchScore = NETANode::score(i, matchPath);
     if (branchScore == NETANode::NoMatch)
         return NETANode::NoMatch;
 

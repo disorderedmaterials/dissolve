@@ -49,7 +49,7 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
 
     Configuration *targetCfg;
     CharString varName, dataName;
-    bool blockDone = false, error = false;
+    auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())
     {
@@ -60,7 +60,7 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (keywords().isValid(parser.argc(0)))
         {
-            ModuleKeyword kwd = keywords().enumeration(parser.argc(0));
+            auto kwd = keywords().enumeration(parser.argc(0));
             if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
                 return false;
 
@@ -116,7 +116,7 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
         else
         {
             // Might be a keyword defined in the Module itself?
-            int result = module->parseKeyword(parser, dissolve, targetList, module->uniqueName());
+            auto result = module->parseKeyword(parser, dissolve, targetList, module->uniqueName());
             if (result == 0)
                 error = true;
             else if (result == -1)

@@ -120,7 +120,7 @@ bool LineParser::openInput(const char *filename)
     fileInput_ = true;
 
     // Master will open the file
-    bool result = true;
+    auto result = true;
     if ((!processPool_) || processPool_->isMaster())
     {
         inputFile_ = new std::ifstream(filename, std::ios::in | std::ios::binary);
@@ -174,7 +174,7 @@ bool LineParser::openInputString(const char *string)
 // Open new stream for writing
 bool LineParser::openOutput(const char *filename, bool directOutput)
 {
-    bool result = true;
+    auto result = true;
 
     // Master handles the opening of the output file
     if ((!processPool_) || processPool_->isMaster())
@@ -224,7 +224,7 @@ bool LineParser::openOutput(const char *filename, bool directOutput)
 // Open existing stream for writing
 bool LineParser::appendOutput(const char *filename)
 {
-    bool result = true;
+    auto result = true;
 
     // Master handles the opening of the output file
     if ((!processPool_) || processPool_->isMaster())
@@ -293,7 +293,7 @@ void LineParser::closeFiles()
 bool LineParser::isFileGoodForReading() const
 {
     // Master performs the checks
-    bool result = true;
+    auto result = true;
     if ((!processPool_) || processPool_->isMaster())
     {
         if (fileInput_ && (inputFile_ == NULL))
@@ -315,7 +315,7 @@ bool LineParser::isFileGoodForReading() const
 bool LineParser::isFileGoodForWriting() const
 {
     // Master performs the checks
-    bool result = true;
+    auto result = true;
     if ((!processPool_) || processPool_->isMaster())
     {
         if (directOutput_)
@@ -388,7 +388,7 @@ void LineParser::rewind()
 bool LineParser::eofOrBlank() const
 {
     // If no process pool is defined, or we are the master, do the check
-    bool result = false;
+    auto result = false;
     if ((!processPool_) || processPool_->isMaster())
     {
         // Do we have a valid input stream?
@@ -515,7 +515,7 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
                 // Now, see if our line contains only blanks
                 nchars = 0;
                 nspaces = 0;
-                for (char *c = line_; *c != '\0'; c++)
+                for (auto *c = line_; *c != '\0'; c++)
                 {
                     nchars++;
                     if (isspace(*c))
@@ -709,13 +709,13 @@ bool LineParser::getNextN(int optionMask, int length, CharString *destarg)
 {
     // Put the next 'length' characters from line_ into temparg (and put into supplied arg if supplied)
     // A negative length may be supplied, which we interpret as 'strip trailing spaces'
-    int arglen = 0;
+    auto arglen = 0;
     char c;
     if (lineLength_ == 0)
         return false;
 
     int n, charsleft = lineLength_ - linePos_;
-    bool striptrailing = (length < 0);
+    auto striptrailing = (length < 0);
     length = abs(length);
     if (length > charsleft)
         length = charsleft;
@@ -791,12 +791,12 @@ LineParser::ParseReturnValue LineParser::getArgsDelim(int optionMask)
 // Get rest of current line starting at next delimited part (and put into destination argument if supplied)
 bool LineParser::getRestDelim(CharString *destarg)
 {
-    int arglen = 0, n, length;
+    auto arglen = 0;
     char c;
     if (lineLength_ == 0)
         return false;
-    length = lineLength_ - linePos_;
-    for (n = 0; n < length; n++)
+    const auto length = lineLength_ - linePos_;
+    for (int n = 0; n < length; ++n)
     {
         c = line_[linePos_];
         switch (c)
@@ -815,7 +815,7 @@ bool LineParser::getRestDelim(CharString *destarg)
     }
     // Add terminating character to temparg - strip whitespace at end if there is any...
     tempArg_[arglen] = '\0';
-    for (n = arglen - 1; n > 0; --n)
+    for (int n = arglen - 1; n > 0; --n)
     {
         if ((tempArg_[n] != ' ') && (tempArg_[n] != '\t'))
             break;
@@ -829,7 +829,7 @@ bool LineParser::getRestDelim(CharString *destarg)
 // Get next argument (delimited) from file stream
 bool LineParser::getArgDelim(int optionMask, CharString *destarg)
 {
-    bool result = getNextArg(optionMask, destarg);
+    auto result = getNextArg(optionMask, destarg);
     // 	printf("getArgDelim = %s [%s]\n", result ? "true" : "false", destarg->get());
     return result;
 }
@@ -846,8 +846,8 @@ void LineParser::getArgsDelim(int optionMask, const char *s)
 // Get next delimited chunk from input stream (not line)
 bool LineParser::getCharsDelim(CharString *destarg)
 {
-    int length = 0;
-    bool result = true;
+    auto length = 0;
+    auto result = true;
     char c;
     while (!inputStream()->eof())
     {
@@ -1001,7 +1001,7 @@ const char *LineParser::getChars(int nchars, bool skipeol)
 {
     char c;
     // Check number of characters requested
-    int i = 0;
+    auto i = 0;
     if (nchars == 0)
         return NULL;
     else if (nchars > MAXLINELENGTH)
@@ -1047,7 +1047,7 @@ const char *LineParser::getChars(int nchars, bool skipeol)
 // Write line to file
 bool LineParser::writeLine(const char *s) const
 {
-    bool result = true;
+    auto result = true;
 
     // Master handles the writing
     if ((!processPool_) || processPool_->isMaster())
@@ -1081,7 +1081,7 @@ bool LineParser::writeLine(const char *s) const
 // Write formatted line to file
 bool LineParser::writeLineF(const char *fmt, ...) const
 {
-    bool result = true;
+    auto result = true;
 
     // Master handles the writing
     if ((!processPool_) || processPool_->isMaster())
@@ -1132,7 +1132,7 @@ bool LineParser::writeLineF(const char *fmt, ...) const
 bool LineParser::writeBannerComment(const char *fmt, ...)
 {
     static CharString bannerChars;
-    const int width = 80;
+    const auto width = 80;
     if (bannerChars.length() < width)
     {
         bannerChars.createEmpty(width + 1);
@@ -1149,8 +1149,8 @@ bool LineParser::writeBannerComment(const char *fmt, ...)
     CharString bannerText = workingText_;
 
     // Now, get the length of the banner text and create a format for printing it into a line 80 chars wide
-    int leftPad = (width - bannerText.length()) / 2 - 1;
-    int rightPad = width - bannerText.length() - leftPad - 2;
+    auto leftPad = (width - bannerText.length()) / 2 - 1;
+    auto rightPad = width - bannerText.length() - leftPad - 2;
     char bannerFormat[64];
     sprintf(bannerFormat, "%%s\n%%c%%%is%%s%%%is%%c\n%%s", leftPad, rightPad);
 
@@ -1197,7 +1197,7 @@ bool LineParser::readArg(long long int &i)
 // Commit cached output stream to actual output file
 bool LineParser::commitCache()
 {
-    bool result = true;
+    auto result = true;
 
     // Master handles the writing
     if ((!processPool_) || processPool_->isMaster())

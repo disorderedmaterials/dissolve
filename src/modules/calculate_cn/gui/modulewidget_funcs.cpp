@@ -56,10 +56,10 @@ void CalculateCNModuleWidget::updateControls(int flags)
     if (module_)
     {
         ui_.RegionAResultFrame->setText(module_->coordinationNumber(0));
-        bool rangeBOn = module_->isRangeBEnabled();
+        auto rangeBOn = module_->isRangeBEnabled();
         ui_.RegionBResultFrame->setText(rangeBOn ? module_->coordinationNumber(1) : SampledDouble());
         ui_.RegionBResultFrame->setEnabled(rangeBOn);
-        bool rangeCOn = module_->isRangeCEnabled();
+        auto rangeCOn = module_->isRangeCEnabled();
         ui_.RegionCResultFrame->setText(rangeCOn ? module_->coordinationNumber(2) : SampledDouble());
         ui_.RegionCResultFrame->setEnabled(rangeCOn);
     }
@@ -90,7 +90,7 @@ void CalculateCNModuleWidget::setGraphDataTargets()
     rdfGraph_->clearRenderables();
 
     // Get target RDF module
-    bool found = false;
+    auto found = false;
     const CalculateRDFModule *rdfModule = module_->keywords().retrieve<const CalculateRDFModule *>("SourceRDF", NULL, &found);
 
     // If the RDF data for the graph has not yet been found, attempt to locate it now

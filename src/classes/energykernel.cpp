@@ -114,8 +114,8 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
     }
 #endif
     double totalEnergy = 0.0;
-    OrderedVector<Atom *> &centralAtoms = centralCell->atoms();
-    OrderedVector<Atom *> &otherAtoms = otherCell->atoms();
+    auto &centralAtoms = centralCell->atoms();
+    auto &otherAtoms = otherCell->atoms();
     Atom *ii, *jj;
     Vec3<double> rI;
     std::shared_ptr<Molecule> molI;
@@ -123,8 +123,8 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
     auto central = centralAtoms.begin();
 
     // Get start/stride for specified loop context
-    int start = processPool_.interleavedLoopStart(strategy);
-    int stride = processPool_.interleavedLoopStride(strategy);
+    auto start = processPool_.interleavedLoopStart(strategy);
+    auto stride = processPool_.interleavedLoopStride(strategy);
 
     // Loop over central cell atoms
     if (applyMim)
@@ -204,20 +204,20 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
                             bool performSum)
 {
     double totalEnergy = 0.0;
-    OrderedVector<Atom *> &centralAtoms = centralCell->atoms();
+    auto &centralAtoms = centralCell->atoms();
     Atom *ii, *jj;
     Vec3<double> rJ;
     std::shared_ptr<Molecule> molJ;
     double rSq, scale;
 
     // Get start/stride for specified loop context
-    int start = processPool_.interleavedLoopStart(strategy);
-    int stride = processPool_.interleavedLoopStride(strategy);
+    auto start = processPool_.interleavedLoopStart(strategy);
+    auto stride = processPool_.interleavedLoopStride(strategy);
 
     // Straight loop over Cells *not* requiring mim
     for (auto *otherCell : centralCell->cellNeighbours())
     {
-        OrderedVector<Atom *> &otherAtoms = otherCell->atoms();
+        auto &otherAtoms = otherCell->atoms();
 
         for (auto *jj : otherAtoms)
         {
@@ -255,7 +255,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
     // Straight loop over Cells requiring mim
     for (auto *otherCell : centralCell->mimCellNeighbours())
     {
-        OrderedVector<Atom *> &otherAtoms = otherCell->atoms();
+        auto &otherAtoms = otherCell->atoms();
 
         for (auto *jj : otherAtoms)
         {
@@ -316,17 +316,17 @@ double EnergyKernel::energy(const Atom *i, Cell *cell, int flags, ProcessPool::D
     Atom *jj;
     int j;
     double rSq, scale;
-    OrderedVector<Atom *> &otherAtoms = cell->atoms();
+    auto &otherAtoms = cell->atoms();
     auto other = otherAtoms.begin();
-    int nOtherAtoms = cell->nAtoms();
+    auto nOtherAtoms = cell->nAtoms();
 
     // Grab some information on the supplied Atom
     std::shared_ptr<Molecule> moleculeI = i->molecule();
-    const Vec3<double> rI = i->r();
+    const auto rI = i->r();
 
     // Get start/stride for specified loop context
-    int start = processPool_.interleavedLoopStart(strategy);
-    int stride = processPool_.interleavedLoopStride(strategy);
+    auto start = processPool_.interleavedLoopStart(strategy);
+    auto stride = processPool_.interleavedLoopStride(strategy);
 
     if (flags & KernelFlags::ApplyMinimumImageFlag)
     {
@@ -602,11 +602,11 @@ double EnergyKernel::energy(std::shared_ptr<const Molecule> mol, ProcessPool::Di
 double EnergyKernel::correct(const Atom *i)
 {
     // Loop over atoms in molecule
-    int nMolAtoms = i->molecule()->nAtoms();
+    auto nMolAtoms = i->molecule()->nAtoms();
     Atom *j;
     std::vector<Atom *> atoms = i->molecule()->atoms();
     double scale, r, correctionEnergy = 0.0;
-    Vec3<double> rI = i->r();
+    const auto rI = i->r();
 
     for (auto *j : atoms)
     {
@@ -631,8 +631,8 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
     ProcessPool::DivisionStrategy subStrategy = ProcessPool::subDivisionStrategy(strategy);
 
     // Set start/stride for parallel loop
-    int start = processPool_.interleavedLoopStart(strategy);
-    int stride = processPool_.interleavedLoopStride(strategy);
+    auto start = processPool_.interleavedLoopStart(strategy);
+    auto stride = processPool_.interleavedLoopStride(strategy);
 
     double totalEnergy = 0.0;
     Cell *cell;

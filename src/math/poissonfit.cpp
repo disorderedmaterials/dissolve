@@ -114,7 +114,7 @@ double PoissonFit::poissonFT(const int qIndex, const int nIndex) const
      * where a = arctan(Q*sigma).
      */
 
-    const int n = n_.constAt(nIndex);
+    const auto n = n_.constAt(nIndex);
 
     double na = n * arcTanQSigma_.constAt(qIndex);
 
@@ -225,7 +225,7 @@ bool PoissonFit::saveCoefficients(const char *filename) const
 void PoissonFit::preCalculateTerms()
 {
     // Factors involving Q
-    const Array<double> &Q = referenceData_.constXAxis();
+    const auto &Q = referenceData_.constXAxis();
     sqrtOnePlusQSqSigmaSq_.initialise(referenceData_.nValues());
     oneMinusQSqSigmaSq_.initialise(referenceData_.nValues());
     arcTanQSigma_.initialise(referenceData_.nValues());
@@ -247,8 +247,8 @@ void PoissonFit::preCalculateTerms()
     n_.clear();
     lnNPlusTwoFactorial_.clear();
     double r = rStep_;
-    int deltaN = floor(rStep_ / sigmaR_ + 0.5);
-    int n = deltaN - 1;
+    auto deltaN = floor(rStep_ / sigmaR_ + 0.5);
+    auto n = deltaN - 1;
     for (int i = 0; i < nPoissons_; ++i)
     {
         // Store n at this r value
@@ -305,7 +305,7 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
     for (int loop = 0; loop < nLoops; ++loop)
     {
         // Index of the function in the C_ array is given by 'p'
-        int p = loop * (sampleSize / nLoops);
+        auto p = loop * (sampleSize / nLoops);
         if ((p == 0) && ignoreZerothTerm_)
             p = 1;
         while (p < nPoissons_)
@@ -505,7 +505,7 @@ double PoissonFit::costTabulatedC(const Array<double> &alpha)
     double sose = 0.0;
 
     double y, dy;
-    int nAlpha = alpha.nItems();
+    auto nAlpha = alpha.nItems();
     for (int i = 0; i < approximateData_.nValues(); ++i)
     {
         // Get approximate data x and y for this point

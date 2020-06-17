@@ -33,10 +33,10 @@ bool SanityCheckModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Basic checks on data from Dissolve
-    int i = 0;
+    auto i = 0;
     for (AtomType *at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
     {
-        int j = i;
+        auto j = i;
         for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
         {
             PairPotential *pp = dissolve.pairPotential(at1, at2);
@@ -71,7 +71,7 @@ bool SanityCheckModule::process(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("Failed sanity check for Configuration '%s' nAtoms (%i).\n", cfg->name(), cfg->nAtoms());
         for (int n = 0; n < cfg->nAtoms(); ++n)
         {
-            Vec3<double> r = cfg->atom(n)->r();
+            auto r = cfg->atom(n)->r();
             if (!procPool.equality(cfg->atom(n)->r()))
                 return Messenger::error("Failed sanity check for Configuration '%s' atom position %i (%f %f %f).\n",
                                         cfg->name(), n, r.x, r.y, r.z);

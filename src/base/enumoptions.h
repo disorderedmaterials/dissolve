@@ -92,21 +92,21 @@ template <class T> class EnumOptions : public EnumOptionsBase
     int minArgs(T enumeration) const
     {
         // Retrieve the relevant EnumOption
-        const EnumOption &opt = option(enumeration);
+        const auto &opt = option(enumeration);
         return opt.minArgs();
     }
     // Return maximum number of arguments for the specified enumeration
     int maxArgs(T enumeration) const
     {
         // Retrieve the relevant EnumOption
-        const EnumOption &opt = option(enumeration);
+        const auto &opt = option(enumeration);
         return opt.maxArgs();
     }
     // Check number of arguments provided to keyword
     bool validNArgs(T enumeration, int nArgsProvided) const
     {
         // Retrieve the relevant EnumOption
-        const EnumOption &opt = option(enumeration);
+        const auto &opt = option(enumeration);
 
         switch (opt.minArgs())
         {

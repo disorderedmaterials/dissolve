@@ -71,7 +71,7 @@ void ChangeStore::reset()
 // Update all Atom positions
 void ChangeStore::updateAll()
 {
-    for (ChangeData *item = targetAtoms_.first(); item != NULL; item = item->next())
+    for (auto *item = targetAtoms_.first(); item != NULL; item = item->next())
         item->updatePosition();
 }
 
@@ -113,7 +113,7 @@ void ChangeStore::updateAtom(int id)
 void ChangeStore::revertAll()
 {
     // 	printf("In Revert...\n");
-    for (ChangeData *item = targetAtoms_.first(); item != NULL; item = item->next())
+    for (auto *item = targetAtoms_.first(); item != NULL; item = item->next())
         item->revertPosition();
     // 	printf("Done Revert.\n");
 }
@@ -162,7 +162,7 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
 {
 #ifdef PARALLEL
     // First, get total number of changes across all processes
-    int nTotalChanges = changes_.nItems();
+    auto nTotalChanges = changes_.nItems();
     if (!processPool_.allSum(&nTotalChanges, 1))
         return false;
 
@@ -224,7 +224,7 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
     }
 #else
     // Apply atom changes
-    for (ChangeData *data = changes_.first(); data != NULL; data = data->next())
+    for (auto *data = changes_.first(); data != NULL; data = data->next())
     {
         // Set new coordinates and check cell position (Configuration::updateAtomInCell() will do all this)
         data->revertPosition();

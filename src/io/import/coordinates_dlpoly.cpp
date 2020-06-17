@@ -48,9 +48,9 @@ bool CoordinateImportFileFormat::importDLPOLY(LineParser &parser, Array<Vec3<dou
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
 
-    int keytrj = parser.argi(0);
-    int imcon = parser.argi(1);
-    int nAtoms = parser.hasArg(2) ? parser.argi(2) : 0;
+    auto keytrj = parser.argi(0);
+    auto imcon = parser.argi(1);
+    auto nAtoms = parser.hasArg(2) ? parser.argi(2) : 0;
     Messenger::print(" --> Expecting coordinates for %i atoms (DLPOLY keytrj=%i, imcon=%i).\n", nAtoms, keytrj, imcon);
     r.clear();
 
@@ -59,7 +59,7 @@ bool CoordinateImportFileFormat::importDLPOLY(LineParser &parser, Array<Vec3<dou
         parser.skipLines(3);
 
     // Loop over atoms (either a specified number, or until we reach the end of the file
-    int atomCount = 0;
+    auto atomCount = 0;
     while (!parser.eofOrBlank())
     {
         // Skip atomname line, get the positions, then skip velocity and force lines if necessary

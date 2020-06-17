@@ -56,7 +56,7 @@ bool NETADefinition::set(const char *netaDefinition, const Forcefield *associate
 
     definitionString_ = netaDefinition;
 
-    bool result = NETADefinitionGenerator::generate(*this, definitionString_.get(), associatedFF);
+    auto result = NETADefinitionGenerator::generate(*this, definitionString_.get(), associatedFF);
 
     return result;
 }

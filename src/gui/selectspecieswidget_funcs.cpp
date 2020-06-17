@@ -99,7 +99,7 @@ void SelectSpeciesWidget::on_SpeciesList_itemDoubleClicked(QListWidgetItem *item
 // Return whether number of selected items is valid
 bool SelectSpeciesWidget::isSelectionValid() const
 {
-    int count = nSelected();
+    auto count = nSelected();
 
     if (count < minimumSelectionSize_)
         return false;
@@ -112,7 +112,7 @@ bool SelectSpeciesWidget::isSelectionValid() const
 // Return number of species currently selected
 int SelectSpeciesWidget::nSelected() const
 {
-    int count = 0;
+    auto count = 0;
     for (int n = 0; n < ui_.SpeciesList->count(); ++n)
     {
         QListWidgetItem *item = ui_.SpeciesList->item(n);

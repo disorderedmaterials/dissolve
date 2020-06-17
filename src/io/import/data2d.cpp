@@ -92,7 +92,7 @@ bool Data2DImportFileFormat::importData(Data2D &data, ProcessPool *procPool)
         return Messenger::error("Couldn't open file '%s' for loading Data2D data.\n", filename_.get());
 
     // Import the data
-    bool result = importData(parser, data);
+    auto result = importData(parser, data);
 
     parser.closeFiles();
 
@@ -103,7 +103,7 @@ bool Data2DImportFileFormat::importData(Data2D &data, ProcessPool *procPool)
 bool Data2DImportFileFormat::importData(LineParser &parser, Data2D &data)
 {
     // Import the data
-    bool result = false;
+    auto result = false;
     if (data2DFormat() == Data2DImportFileFormat::CartesianData2D)
         result = importCartesian(parser, data);
     else

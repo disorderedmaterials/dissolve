@@ -86,8 +86,8 @@ double Fit1DProcedureNode::equationCost(const Array<double> &alpha)
     // We assume that the minimiser has 'pokeBeforeCost' set, so our Expression's variables are up-to-date with new test
     // values.
     double cost = 0.0;
-    const Array<double> &x = referenceData_.xAxis();
-    const Array<double> &y = referenceData_.values();
+    const auto &x = referenceData_.xAxis();
+    const auto &y = referenceData_.values();
     double equationY;
     for (int n = 0; n < referenceData_.nValues(); ++n)
     {
@@ -187,15 +187,15 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, con
 
     // Generate final fit data
     // Retrieve / realise the data from the supplied list
-    Data1D &data = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix,
-                                                      GenericItem::InRestartFileFlag);
+    auto &data = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix,
+                                                    GenericItem::InRestartFileFlag);
 
     data.setName(name());
     data.setObjectTag(CharString("%s//Fit1D//%s//%s", prefix, cfg->name(), name()));
     data.clear();
 
     double cost = 0.0;
-    const Array<double> &x = referenceData_.xAxis();
+    const auto &x = referenceData_.xAxis();
     bool success;
     for (int n = 0; n < referenceData_.nValues(); ++n)
     {

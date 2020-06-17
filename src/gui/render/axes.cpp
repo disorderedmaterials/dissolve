@@ -585,7 +585,7 @@ void Axes::transformZ(Array<double> &zArray) const
 // Transform a 2D array of values into local axes coordinates
 void Axes::transformX(Array2D<double> &xArray) const
 {
-    int n = 0;
+    auto n = 0;
     while (n < xArray.linearArraySize())
     {
         xArray.linearValue(n) = transformX(xArray.linearValue(n));
@@ -596,7 +596,7 @@ void Axes::transformX(Array2D<double> &xArray) const
 // Transform a 2D array of values into local axes coordinates
 void Axes::transformY(Array2D<double> &yArray) const
 {
-    int n = 0;
+    auto n = 0;
     while (n < yArray.linearArraySize())
     {
         yArray.linearValue(n) = transformY(yArray.linearValue(n));
@@ -607,7 +607,7 @@ void Axes::transformY(Array2D<double> &yArray) const
 // Transform a 2D array of values into local axes coordinates
 void Axes::transformZ(Array2D<double> &zArray) const
 {
-    int n = 0;
+    auto n = 0;
     while (n < zArray.linearArraySize())
     {
         zArray.linearValue(n) = transformZ(zArray.linearValue(n));
@@ -622,8 +622,10 @@ void Axes::transformZ(Array2D<double> &zArray) const
 // Recalculate tick deltas for specified axis
 void Axes::calculateTickDeltas(int axis)
 {
-    const int nBaseValues = 5, maxIterations = 10, maxTicks = 10;
-    int power = 1, baseValues[nBaseValues] = {1, 2, 3, 4, 5}, baseValueIndex = 0, nTicks, iteration, minTicks = maxTicks / 2;
+    const auto nBaseValues = 5, maxIterations = 10, maxTicks = 10;
+    auto power = 1, baseValueIndex = 0, minTicks = maxTicks / 2;
+    int nTicks, iteration;
+    auto baseValues = std::vector<int>{1, 2, 3, 4, 5};
 
     baseValueIndex = 0;
     power = int(log10((max_[axis] - min_[axis]) / maxTicks) - 1);
@@ -769,7 +771,7 @@ int Axes::minorTicks(int axis) const { return minorTicks_.get(axis); }
 void Axes::determineLabelFormat(int axis)
 {
     // Set axis value format based on tick delta
-    int logTick = int(log10(tickDelta_[axis]));
+    auto logTick = int(log10(tickDelta_[axis]));
     if (abs(logTick) > 3)
     {
         numberFormat_[axis].setType(NumberFormat::ScientificFormat);
@@ -778,7 +780,7 @@ void Axes::determineLabelFormat(int axis)
     }
     else if (logTick <= 0)
     {
-        int nDecimals = abs(logTick);
+        auto nDecimals = abs(logTick);
 
         numberFormat_[axis].setType(NumberFormat::DecimalFormat);
         numberFormat_[axis].setUseENotation(false);
@@ -788,9 +790,9 @@ void Axes::determineLabelFormat(int axis)
         while (true)
         {
             // Loop over labels and check that they are all different
-            bool allDifferent = true;
+            auto allDifferent = true;
             QString tickLabel, oldLabel;
-            int nTicks = (max_[axis] - min_[axis]) / tickDelta_[axis];
+            auto nTicks = (max_[axis] - min_[axis]) / tickDelta_[axis];
             double axisValue = tickFirst_[axis];
             for (int n = 0; n < nTicks; ++n)
             {
@@ -1083,7 +1085,7 @@ void Axes::updateAxisPrimitives()
     Matrix4 viewRotationInverse = parentView_.viewRotationInverse();
 
     // Set axis for in-plane (in-screen) rotation
-    int inPlaneAxis = 2;
+    auto inPlaneAxis = 2;
     if (parentView_.viewType() == View::FlatXZView)
         inPlaneAxis = 1;
     else if (parentView_.viewType() == View::FlatZYView)
@@ -1165,11 +1167,11 @@ void Axes::updateAxisPrimitives()
             double min = log10(min_[axis] <= 0.0 ? 1.0e-10 : min_[axis]);
 
             // Plot tickmarks - Start at floored (ceiling'd) integer of logAxisMin (logAxisMax), and go from there.
-            int nMinorTicks = minorTicks_[axis] > 8 ? 8 : minorTicks_[axis];
-            int count = 0;
+            auto nMinorTicks = minorTicks_[axis] > 8 ? 8 : minorTicks_[axis];
+            auto count = 0;
             double power = floor(min);
             double value = pow(10, power);
-            Vec3<double> u = coordMin_[axis];
+            auto u = coordMin_[axis];
             while (value <= max_[axis])
             {
                 // Check break condition
@@ -1227,7 +1229,7 @@ void Axes::updateAxisPrimitives()
                 return;
 
             // Plot tickmarks
-            int count = 0;
+            auto count = 0;
             delta = tickDelta_[axis] / (minorTicks_[axis] + 1);
             value = tickFirst_[axis];
             u = coordMin_[axis];

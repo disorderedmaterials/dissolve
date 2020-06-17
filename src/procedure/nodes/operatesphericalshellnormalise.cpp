@@ -43,7 +43,7 @@ OperateSphericalShellNormaliseProcedureNode::~OperateSphericalShellNormaliseProc
 bool OperateSphericalShellNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
     // We expect x values to be centre-bin values, and regularly spaced
-    const Array<double> &xAxis = targetData1D_->constXAxis();
+    const auto &xAxis = targetData1D_->constXAxis();
     Array<double> &values = targetData1D_->values();
     if (xAxis.nItems() < 2)
         return true;

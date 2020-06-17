@@ -27,9 +27,9 @@
 bool Data1DImportFileFormat::importXY(LineParser &parser, Data1D &data)
 {
     // Grab column indices
-    const int xCol = keywords_.asInt("X") - 1;
-    const int yCol = keywords_.asInt("Y") - 1;
-    const int errorCol = keywords_.asInt("Error") - 1;
+    const auto xCol = keywords_.asInt("X") - 1;
+    const auto yCol = keywords_.asInt("Y") - 1;
+    const auto errorCol = keywords_.asInt("Error") - 1;
 
     // Clear the structure, and initialise error arrays if necessary
     data.clear();

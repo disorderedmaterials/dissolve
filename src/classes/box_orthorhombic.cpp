@@ -53,7 +53,7 @@ OrthorhombicBox::~OrthorhombicBox() {}
 // Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> OrthorhombicBox::minimumImage(const Atom *i, const Atom *ref) const
 {
-    Vec3<double> mimVec = i->r();
+    auto mimVec = i->r();
     mimVec -= ref->r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -66,7 +66,7 @@ Vec3<double> OrthorhombicBox::minimumImage(const Atom *i, const Atom *ref) const
 // Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> OrthorhombicBox::minimumImage(const Atom *i, const Vec3<double> &ref) const
 {
-    Vec3<double> mimVec = i->r();
+    auto mimVec = i->r();
     mimVec -= ref;
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -79,7 +79,7 @@ Vec3<double> OrthorhombicBox::minimumImage(const Atom *i, const Vec3<double> &re
 // Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> OrthorhombicBox::minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const
 {
-    Vec3<double> mimVec = i;
+    auto mimVec = i;
     mimVec -= ref;
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
     mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
@@ -91,7 +91,7 @@ Vec3<double> OrthorhombicBox::minimumImage(const Vec3<double> &i, const Vec3<dou
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> OrthorhombicBox::minimumVector(const Atom *i, const Atom *j) const
 {
-    Vec3<double> mimVec = j->r();
+    auto mimVec = j->r();
     mimVec -= i->r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -104,7 +104,7 @@ Vec3<double> OrthorhombicBox::minimumVector(const Atom *i, const Atom *j) const
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> OrthorhombicBox::minimumVector(const Atom &i, const Atom &j) const
 {
-    Vec3<double> mimVec = j.r();
+    auto mimVec = j.r();
     mimVec -= i.r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -117,7 +117,7 @@ Vec3<double> OrthorhombicBox::minimumVector(const Atom &i, const Atom &j) const
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> OrthorhombicBox::minimumVector(const Atom *i, const Vec3<double> &j) const
 {
-    Vec3<double> mimVec = j;
+    auto mimVec = j;
     mimVec -= i->r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -130,7 +130,7 @@ Vec3<double> OrthorhombicBox::minimumVector(const Atom *i, const Vec3<double> &j
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> OrthorhombicBox::minimumVector(const Vec3<double> &i, const Vec3<double> &j) const
 {
-    Vec3<double> mimVec = j;
+    auto mimVec = j;
     mimVec -= i;
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -143,7 +143,7 @@ Vec3<double> OrthorhombicBox::minimumVector(const Vec3<double> &i, const Vec3<do
 // Return minimum image distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistance(const Atom *i, const Atom *j) const
 {
-    Vec3<double> mimVec = j->r();
+    auto mimVec = j->r();
     mimVec -= i->r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -156,7 +156,7 @@ double OrthorhombicBox::minimumDistance(const Atom *i, const Atom *j) const
 // Return minimum image distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistance(const Atom &i, const Atom &j) const
 {
-    Vec3<double> mimVec = j.r();
+    auto mimVec = j.r();
     mimVec -= i.r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -169,7 +169,7 @@ double OrthorhombicBox::minimumDistance(const Atom &i, const Atom &j) const
 // Return minimum image distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistance(const Atom *i, const Vec3<double> &j) const
 {
-    Vec3<double> mimVec = j;
+    auto mimVec = j;
     mimVec -= i->r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -182,7 +182,7 @@ double OrthorhombicBox::minimumDistance(const Atom *i, const Vec3<double> &j) co
 // Return minimum image distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const
 {
-    Vec3<double> mimVec = j;
+    auto mimVec = j;
     mimVec -= i;
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -195,7 +195,7 @@ double OrthorhombicBox::minimumDistance(const Vec3<double> &i, const Vec3<double
 // Return minimum image squared distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistanceSquared(const Atom *i, const Atom *j) const
 {
-    Vec3<double> mimVec = j->r();
+    auto mimVec = j->r();
     mimVec -= i->r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -208,7 +208,7 @@ double OrthorhombicBox::minimumDistanceSquared(const Atom *i, const Atom *j) con
 // Return minimum image squared distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistanceSquared(const Atom &i, const Atom &j) const
 {
-    Vec3<double> mimVec = j.r();
+    auto mimVec = j.r();
     mimVec -= i.r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -221,7 +221,7 @@ double OrthorhombicBox::minimumDistanceSquared(const Atom &i, const Atom &j) con
 // Return minimum image squared distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistanceSquared(const Atom *i, const Vec3<double> &j) const
 {
-    Vec3<double> mimVec = j;
+    auto mimVec = j;
     mimVec -= i->r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -234,7 +234,7 @@ double OrthorhombicBox::minimumDistanceSquared(const Atom *i, const Vec3<double>
 // Return minimum image squared distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const
 {
-    Vec3<double> mimVec = j;
+    auto mimVec = j;
     mimVec -= i;
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;

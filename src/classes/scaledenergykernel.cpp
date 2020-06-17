@@ -49,8 +49,8 @@ double ScaledEnergyKernel::pairPotentialEnergy(const Atom *i, const Atom *j, dou
     if (i->molecule() != j->molecule())
     {
         // Get COG of Molecules
-        Vec3<double> cogI = i->molecule()->centreOfGeometry(box_);
-        Vec3<double> cogJ = j->molecule()->centreOfGeometry(box_);
+        const auto cogI = i->molecule()->centreOfGeometry(box_);
+        const auto cogJ = j->molecule()->centreOfGeometry(box_);
         double rIJ = box_->minimumDistance(cogI, cogJ);
 
         return potentialMap_.energy(i, j, r + (rIJ * interMoleculeRScale_ - rIJ));

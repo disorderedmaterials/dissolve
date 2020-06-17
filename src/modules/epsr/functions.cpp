@@ -46,9 +46,9 @@ void EPSRModule::addTargets(RefList<Module> targets, const char *groupName)
 // Create / retrieve arrays for storage of empirical potential coefficients
 Array2D<Array<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp)
 {
-    Array2D<Array<double>> &coefficients = GenericListHelper<Array2D<Array<double>>>::realise(
+    auto &coefficients = GenericListHelper<Array2D<Array<double>>>::realise(
         dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
-    int arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients.at(0, 0).nItems() : 0);
+    auto arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients.at(0, 0).nItems() : 0);
     if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) ||
         ((ncoeffp != -1) && (ncoeffp != arrayNCoeffP)))
     {
@@ -68,7 +68,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
                                              double averagedRho, int ncoeffp, double rminpt, double rmaxpt, double sigma1,
                                              double sigma2)
 {
-    const int nAtomTypes = dissolve.nAtomTypes();
+    const auto nAtomTypes = dissolve.nAtomTypes();
     int i, j;
 
     // Get coefficients array
@@ -124,20 +124,20 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
 // Generate and return single empirical potential function
 Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i, int j, int n)
 {
-    const int nAtomTypes = dissolve.nAtomTypes();
-    ExpansionFunctionType functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
-    const double gsigma1 = keywords_.asDouble("GSigma1");
-    const double gsigma2 = keywords_.asDouble("GSigma2");
-    int ncoeffp = keywords_.asInt("NCoeffP");
-    const double psigma1 = keywords_.asDouble("PSigma1");
-    const double psigma2 = keywords_.asDouble("PSigma2");
-    const double qMax = keywords_.asDouble("QMax");
-    const double qMin = keywords_.asDouble("QMin");
+    const auto nAtomTypes = dissolve.nAtomTypes();
+    auto functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
+    const auto gsigma1 = keywords_.asDouble("GSigma1");
+    const auto gsigma2 = keywords_.asDouble("GSigma2");
+    auto ncoeffp = keywords_.asInt("NCoeffP");
+    const auto psigma1 = keywords_.asDouble("PSigma1");
+    const auto psigma2 = keywords_.asDouble("PSigma2");
+    const auto qMax = keywords_.asDouble("QMax");
+    const auto qMin = keywords_.asDouble("QMin");
     double rmaxpt = keywords_.asDouble("RMaxPT");
     double rminpt = keywords_.asDouble("RMinPT");
 
     // EPSR constants
-    const int mcoeff = 200;
+    const auto mcoeff = 200;
 
     // Calculate some values if they were not provided
     if (rmaxpt < 0.0)
@@ -190,10 +190,10 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
 
     double absEnergyEP = 0.0;
 
-    int i = 0;
+    auto i = 0;
     for (AtomType *at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
     {
-        int j = i;
+        auto j = i;
         for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
         {
             Array<double> &potCoeff = coefficients.at(i, j);
@@ -226,7 +226,7 @@ void EPSRModule::truncate(Data1D &data, double rMin, double rMax)
     // Replicates the EPSR25 truncate(xx,rminpt,rmaxpt) function applied over a whole dataset.
     double x;
     Array<double> &y = data.values();
-    const double decay = rMax - rMin;
+    const auto decay = rMax - rMin;
     for (int n = 0; n < data.nValues(); ++n)
     {
         x = data.xAxis(n);

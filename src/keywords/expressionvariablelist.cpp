@@ -108,7 +108,7 @@ bool ExpressionVariableListKeyword::write(LineParser &parser, const char *keywor
     while (ExpressionNode *node = nodeIterator.iterate())
     {
         // Cast up to ExpressionVariable
-        ExpressionVariable *var = dynamic_cast<ExpressionVariable *>(node);
+        auto *var = dynamic_cast<ExpressionVariable *>(node);
         if (!var)
             Messenger::error("Failed to cast ExpressionNode to ExpressionVariable when writing "
                              "ExpressionVariableList data.\n");

@@ -166,9 +166,9 @@ const Data1D &RenderableData1D::transformedData()
 bool RenderableData1D::yRangeOverX(double xMin, double xMax, double &yMin, double &yMax)
 {
     // Grab reference to transformed data
-    const Data1D &data = transformedData();
+    const auto &data = transformedData();
 
-    bool first = true;
+    auto first = true;
     for (int n = 0; n < data.nValues(); ++n)
     {
         if (data.constXAxis(n) < xMin)
@@ -230,12 +230,12 @@ void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, con
     // Copy and transform abscissa values (still in data space) into axes coordinates
     Array<double> x = displayAbscissa;
     axes.transformX(x);
-    int nX = x.nItems();
+    auto nX = x.nItems();
     if (nX < 2)
         return;
 
     // Get some values from axes so we can calculate colours properly
-    bool yLogarithmic = axes.logarithmic(1);
+    auto yLogarithmic = axes.logarithmic(1);
     double yStretch = axes.stretch(1);
 
     // Temporary variables
@@ -355,7 +355,7 @@ bool RenderableData1D::readStyleBlock(LineParser &parser)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!data1DStyleKeywords().isValid(parser.argc(0)))
             return data1DStyleKeywords().errorAndPrintValid(parser.argc(0));
-        Data1DStyleKeyword kwd = data1DStyleKeywords().enumeration(parser.argc(0));
+        auto kwd = data1DStyleKeywords().enumeration(parser.argc(0));
         if (!data1DStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 

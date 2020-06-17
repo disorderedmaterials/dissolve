@@ -122,8 +122,8 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
      * 4) Loop over torsions and create / assign parameters / MasterTerms (if TorsionTermsCheck is checked)
      */
 
-    bool typesSelectionOnly = ui_.AtomTypesAssignSelectionRadio->isChecked();
-    bool intraSelectionOnly = ui_.IntramolecularTermsAssignSelectionRadio->isChecked();
+    auto typesSelectionOnly = ui_.AtomTypesAssignSelectionRadio->isChecked();
+    auto intraSelectionOnly = ui_.IntramolecularTermsAssignSelectionRadio->isChecked();
 
     // 1) Set AtomTypes
     ListIterator<SpeciesAtom> originalAtomIterator(targetSpecies_->atoms());
@@ -295,7 +295,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
             // Assign intramolecular terms
             if (!ui_.IntramolecularTermsAssignNoneRadio->isChecked())
             {
-                int flags = 0;
+                auto flags = 0;
                 if (ui_.IgnoreCurrentTypesCheck->isChecked())
                     flags += Forcefield::DetermineTypesFlag;
                 if (!ui_.NoImproperTermsCheck->isChecked())
@@ -539,7 +539,7 @@ void AddForcefieldTermsWizard::updateAtomTypesConflictsPage()
 void AddForcefieldTermsWizard::checkForAtomTypeConflicts()
 {
     // Determine whether we have any naming conflicts
-    int nConflicts = 0;
+    auto nConflicts = 0;
     for (int i = 0; i < ui_.AtomTypesConflictsList->count(); ++i)
     {
         QListWidgetItem *item = ui_.AtomTypesConflictsList->item(i);
@@ -564,7 +564,7 @@ void AddForcefieldTermsWizard::checkForAtomTypeConflicts()
 void AddForcefieldTermsWizard::on_AtomTypesConflictsList_itemSelectionChanged()
 {
     // Enable / disable prefix and suffix buttons as appropriate
-    bool isSelection = ui_.AtomTypesConflictsList->selectedItems().count() > 0;
+    auto isSelection = ui_.AtomTypesConflictsList->selectedItems().count() > 0;
     ui_.AtomTypesPrefixButton->setEnabled(isSelection);
     ui_.AtomTypesSuffixButton->setEnabled(isSelection);
 }
@@ -654,7 +654,7 @@ void AddForcefieldTermsWizard::updateMasterTermsPage()
         &AddForcefieldTermsWizard::updateMasterTermsTreeChild);
 
     // Determine whether we have any naming conflicts
-    bool conflicts = false;
+    auto conflicts = false;
     ListIterator<MasterIntra> bondIterator(temporaryCoreData_.masterBonds());
     while (MasterIntra *intra = bondIterator.iterate())
         if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
@@ -686,7 +686,7 @@ void AddForcefieldTermsWizard::updateMasterTermsPage()
 void AddForcefieldTermsWizard::on_MasterTermsTree_itemSelectionChanged()
 {
     // Enable / disable prefix and suffix buttons as appropriate
-    bool isSelection = ui_.MasterTermsTree->selectedItems().count() > 0;
+    auto isSelection = ui_.MasterTermsTree->selectedItems().count() > 0;
     ui_.MasterTermsPrefixButton->setEnabled(isSelection);
     ui_.MasterTermsSuffixButton->setEnabled(isSelection);
 }

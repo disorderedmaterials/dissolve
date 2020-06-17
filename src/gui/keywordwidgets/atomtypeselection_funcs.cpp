@@ -59,7 +59,7 @@ AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget *parent, 
 void AtomTypeSelectionKeywordWidget::updateSelectionRow(int row, AtomType &atomType, bool createItem)
 {
     // Grab the target AtomTypeSelection
-    AtomTypeList &selection = keyword_->data();
+    auto &selection = keyword_->data();
 
     QListWidgetItem *item;
     if (createItem)
@@ -134,7 +134,7 @@ void AtomTypeSelectionKeywordWidget::updateKeywordData()
 void AtomTypeSelectionKeywordWidget::updateSummaryText()
 {
     // Create summary text for the KeywordDropDown button
-    AtomTypeList &selection = keyword_->data();
+    auto &selection = keyword_->data();
     if (selection.nItems() == 0)
         setSummaryText("<None>");
     else

@@ -90,7 +90,7 @@ void CalculateSDFModule::initialise()
     forEachA->addNode(selectB_);
 
     // -- -- Calculate: 'v(B->A)'
-    CalculateVectorProcedureNode *calcVector = new CalculateVectorProcedureNode(selectA_, selectB_, true);
+    auto *calcVector = new CalculateVectorProcedureNode(selectA_, selectB_, true);
     forEachB->addNode(calcVector);
 
     // -- -- Collect3D: 'SDF'

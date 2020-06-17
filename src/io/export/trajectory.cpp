@@ -94,7 +94,7 @@ bool TrajectoryExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
 bool TrajectoryExportFileFormat::exportData(Configuration *cfg)
 {
     // Make an initial check to see if the specified file exists
-    bool fileExists = DissolveSys::fileExists(filename_);
+    auto fileExists = DissolveSys::fileExists(filename_);
 
     // Open the specified file for appending
     LineParser parser;

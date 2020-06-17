@@ -54,7 +54,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
     AtomType *at1;
     PairPotential::CoulombTruncationScheme cTrunc;
     PairPotential::ShortRangeTruncationScheme srTrunc;
-    bool blockDone = false, error = false;
+    auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())
     {
@@ -65,7 +65,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!keywords().isValid(parser.argc(0)))
             return keywords().errorAndPrintValid(parser.argc(0));
-        PairPotentialsKeyword kwd = keywords().enumeration(parser.argc(0));
+        auto kwd = keywords().enumeration(parser.argc(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 

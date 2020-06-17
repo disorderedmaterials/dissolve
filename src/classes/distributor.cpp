@@ -327,7 +327,7 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
     {
         // Find the next object for this process / group, starting from the last one we found.
         // If there is no last object, work out a sensible starting point
-        int startIndex = lastObjectDistributed_[processOrGroup];
+        auto startIndex = lastObjectDistributed_[processOrGroup];
         if (startIndex == Distributor::NoneAvailable)
         {
             // TODO Better algorithm required here!
@@ -349,7 +349,7 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
             for (int n = 0; n < nObjects_; ++n)
             {
                 // Get wrapped object index
-                int index = (startIndex + n) % nObjects_;
+                auto index = (startIndex + n) % nObjects_;
 
                 // If this object is already distributed, move on
                 if (objectStatus_[index] == Distributor::DistributedFlag)
@@ -399,7 +399,7 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
                         for (int i = 0; i < softLocksRequired.nItems(); ++i)
                         {
                             // Get index of surrounding Cell
-                            int cellIndex = softLocksRequired[i]->index();
+                            auto cellIndex = softLocksRequired[i]->index();
 
                             // If this Cell hasn't been modified, then great! Move on...
                             if (cellContentsModifiedBy_[cellIndex] == -1)
@@ -475,7 +475,7 @@ bool Distributor::finishedWithObject()
     // we are trying to avoid!
     for (int processOrGroup = 0; processOrGroup < nProcessesOrGroups_; ++processOrGroup)
     {
-        int objectIndex = lastObjectDistributed_[processOrGroup];
+        auto objectIndex = lastObjectDistributed_[processOrGroup];
 
         // Mark object as completed
         if (objectIndex >= 0)
@@ -484,7 +484,7 @@ bool Distributor::finishedWithObject()
         // Mark hard-locked Cells as being modified
         for (int n = 0; n < lastHardLockedCells_[processOrGroup].nItems(); ++n)
         {
-            int cellIndex = lastHardLockedCells_[processOrGroup].constAt(n)->index();
+            auto cellIndex = lastHardLockedCells_[processOrGroup].constAt(n)->index();
 
             // If the current process/group was the last to modify it, that's OK.
             if (cellContentsModifiedBy_[cellIndex] == processOrGroup)

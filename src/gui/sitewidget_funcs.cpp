@@ -84,7 +84,7 @@ void SiteWidget::updateToolbar()
     ui_.ViewSpheresButton->setChecked(siteViewer()->speciesRenderableDrawStyle() != RenderableSpecies::LinesStyle);
 
     // Enable site-definition buttons
-    bool currentSelection = (siteViewer()->species() ? siteViewer()->species()->nSelectedAtoms() != 0 : false);
+    auto currentSelection = (siteViewer()->species() ? siteViewer()->species()->nSelectedAtoms() != 0 : false);
     ui_.SiteCreateButton->setEnabled(currentSelection);
     ui_.SiteSetOriginButton->setEnabled(currentSelection && siteViewer()->speciesSite());
     ui_.SiteSetXAxisButton->setEnabled(currentSelection && siteViewer()->speciesSite());

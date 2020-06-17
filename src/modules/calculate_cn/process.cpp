@@ -31,8 +31,8 @@
 bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for valid CalculateRDF pointer
-    bool found = false;
-    const CalculateRDFModule *rdfModule = keywords_.retrieve<const CalculateRDFModule *>("SourceRDF", NULL, &found);
+    auto found = false;
+    const auto *rdfModule = keywords_.retrieve<const CalculateRDFModule *>("SourceRDF", NULL, &found);
     if ((!found) || (!rdfModule))
         return Messenger::error("No suitable CalculateRDF target set for CalculateCN.\n");
 
@@ -49,10 +49,10 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Test?
-    const double testThreshold = keywords_.asDouble("TestThreshold");
+    const auto testThreshold = keywords_.asDouble("TestThreshold");
     if (keywords_.isSet("TestRangeA"))
     {
-        const double delta = keywords_.asDouble("TestRangeA") - coordinationNumber(0).value();
+        const auto delta = keywords_.asDouble("TestRangeA") - coordinationNumber(0).value();
 
         Messenger::print("Reference coordination number delta with correct value for range A is %15.9e and is %s "
                          "(threshold is %10.3e)\n",
@@ -67,7 +67,7 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("Test coordination number for range B supplied, but calculation for that range "
                                     "is not active.\n");
 
-        const double delta = keywords_.asDouble("TestRangeB") - coordinationNumber(1).value();
+        const auto delta = keywords_.asDouble("TestRangeB") - coordinationNumber(1).value();
 
         Messenger::print("Reference coordination number delta with correct value for range B is %15.9e and is %s "
                          "(threshold is %10.3e)\n",
@@ -82,7 +82,7 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("Test coordination number for range C supplied, but calculation for that range "
                                     "is not active.\n");
 
-        const double delta = keywords_.asDouble("TestRangeC") - coordinationNumber(2).value();
+        const auto delta = keywords_.asDouble("TestRangeC") - coordinationNumber(2).value();
 
         Messenger::print("Reference coordination number delta with correct value for range C is %15.9e and is %s "
                          "(threshold is %10.3e)\n",

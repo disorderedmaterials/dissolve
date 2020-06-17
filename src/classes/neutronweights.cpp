@@ -173,12 +173,12 @@ void NeutronWeights::calculateWeightingMatrices()
     for (auto &topes : isotopologueMixtures_)
     {
         // Get weighting for associated Species population
-        double speciesWeight = double(topes.speciesPopulation());
+        auto speciesWeight = double(topes.speciesPopulation());
 
         // Using the underlying Species, construct a flag matrix which states the AtomType interactions we have present
         Species *sp = topes.species();
         const AtomTypeList &speciesAtomTypes = sp->usedAtomTypes();
-        const int nAtoms = sp->nAtoms();
+        const auto nAtoms = sp->nAtoms();
         intraFlag = false;
         for_each_pair(atomTypes_.begin(), atomTypes_.end(),
                       [&](int i_, const AtomTypeData &atd1, int j_, const AtomTypeData &atd2) {
@@ -207,7 +207,7 @@ void NeutronWeights::calculateWeightingMatrices()
             for (auto atd1 = speciesAtomTypes.begin(); atd1 != speciesAtomTypes.end(); ++atd1)
             {
                 // Get the local index of this AtomType, as well as its pointer
-                int typeI = atomTypes_.indexOf(atd1->atomType());
+                auto typeI = atomTypes_.indexOf(atd1->atomType());
                 auto &localI = atomTypes_[typeI];
 
                 // If this AtomType is exchangeable, add the averaged scattering length from the local
@@ -226,8 +226,8 @@ void NeutronWeights::calculateWeightingMatrices()
                 for (auto atd2 = atd1; atd2 != speciesAtomTypes.end(); ++atd2)
                 {
                     // Get the local index of this AtomType, as well as its pointer
-                    int typeJ = atomTypes_.indexOf(atd2->atomType());
-                    AtomTypeData &localJ = atomTypes_[typeJ];
+                    auto typeJ = atomTypes_.indexOf(atd2->atomType());
+                    auto &localJ = atomTypes_[typeJ];
 
                     // Check to see if this interaction is present in the current Species
                     if (!intraFlag.at(typeI, typeJ))
@@ -287,7 +287,7 @@ void NeutronWeights::createFromIsotopologues(const AtomTypeList &exchangeableTyp
 
             // Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the
             // Isotopologue
-            for (SpeciesAtom *i = topes.species()->firstAtom(); i != NULL; i = i->next())
+            for (auto *i = topes.species()->firstAtom(); i != NULL; i = i->next())
             {
                 Isotope *iso = tope->atomTypeIsotope(i->atomType());
                 atomTypes_.addIsotope(*i->atomType(), iso, isoWeight.weight() * topes.speciesPopulation());
@@ -364,7 +364,7 @@ bool NeutronWeights::read(LineParser &parser, CoreData &coreData)
     isotopologueMixtures_.clear();
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    int nItems = parser.argi(0);
+    auto nItems = parser.argi(0);
     for (int n = 0; n < nItems; ++n)
     {
         isotopologueMixtures_.emplace_back();

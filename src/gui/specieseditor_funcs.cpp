@@ -248,7 +248,7 @@ void SpeciesEditor::on_ToolsMinimiseButton_clicked(bool checked)
 
     // Copy the optimised coordinates from the temporary Configuration to the target Species
     ListIterator<SpeciesAtom> atomIterator(sp->atoms());
-    int index = 0;
+    auto index = 0;
     while (SpeciesAtom *i = atomIterator.iterate())
         sp->setAtomCoordinates(i, temporaryCfg->atom(index++)->r());
 

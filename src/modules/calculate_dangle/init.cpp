@@ -143,11 +143,11 @@ void CalculateDAngleModule::initialise()
     forEachB->addNode(selectC_);
 
     // -- -- -- Calculate: 'rBC'
-    CalculateDistanceProcedureNode *calcDistance = new CalculateDistanceProcedureNode(selectB_, selectC_);
+    auto *calcDistance = new CalculateDistanceProcedureNode(selectB_, selectC_);
     forEachC->addNode(calcDistance);
 
     // -- -- -- Calculate: 'aABC'
-    CalculateAngleProcedureNode *calcAngle = new CalculateAngleProcedureNode(selectA_, selectB_, selectC_);
+    auto *calcAngle = new CalculateAngleProcedureNode(selectA_, selectB_, selectC_);
     forEachC->addNode(calcAngle);
 
     // -- -- -- Collect2D:  'Distance-Angle(B...C vs A-B...C)'

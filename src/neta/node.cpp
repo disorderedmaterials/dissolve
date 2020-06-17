@@ -98,7 +98,7 @@ NETAPresenceNode *NETANode::createPresenceNode(std::vector<Element *> targetElem
 NETARingNode *NETANode::createRingNode()
 {
     // Create the new node and own it
-    NETARingNode *node = new NETARingNode(parent_);
+    auto *node = new NETARingNode(parent_);
     branch_.own(node);
 
     return node;
@@ -131,7 +131,7 @@ bool NETANode::setFlag(const char *flag, bool state) { return false; }
 // Return result of comparison between values provided
 bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
 {
-    bool result = false;
+    auto result = false;
 
     switch (op)
     {
@@ -171,14 +171,14 @@ void NETANode::setReverseLogic() { reverseLogic_ = true; }
 // Evaluate the node and return its score
 int NETANode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &atomData) const
 {
-    int totalScore = 0;
+    auto totalScore = 0;
 
     // Loop over nodes in branch in sequence
     ListIterator<NETANode> branchIterator(branch_);
     while (NETANode *node = branchIterator.iterate())
     {
         // Get the score from the node, returning early if NoMatch is encountered
-        int nodeScore = node->score(i, atomData);
+        auto nodeScore = node->score(i, atomData);
         if (nodeScore == NETANode::NoMatch)
             return NETANode::NoMatch;
 

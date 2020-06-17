@@ -289,7 +289,7 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
     int cellIndex;
 
     // Obvious check first - is the Molecule available for distribution / assignment?
-    const int molId = mol->arrayIndex();
+    const auto molId = mol->arrayIndex();
 
     if (DND)
         Messenger::print("  -- Checking Molecule %i for process/group %i: status = %s\n", molId, processOrGroup,

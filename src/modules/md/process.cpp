@@ -50,19 +50,19 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Get control parameters
     const bool capForce = keywords_.asBool("CapForces");
-    const double maxForce = keywords_.asDouble("CapForcesAt") * 100.0; // To convert from kJ/mol to 10 J/mol
+    const auto maxForce = keywords_.asDouble("CapForcesAt") * 100.0; // To convert from kJ/mol to 10 J/mol
     double cutoffDistance = keywords_.asDouble("CutoffDistance");
     if (cutoffDistance < 0.0)
         cutoffDistance = dissolve.pairPotentialRange();
     double deltaT = keywords_.asDouble("DeltaT");
-    const int energyFrequency = keywords_.asInt("EnergyFrequency");
-    const int nSteps = keywords_.asInt("NSteps");
-    const int outputFrequency = keywords_.asInt("OutputFrequency");
-    bool randomVelocities = keywords_.asBool("RandomVelocities");
+    const auto energyFrequency = keywords_.asInt("EnergyFrequency");
+    const auto nSteps = keywords_.asInt("NSteps");
+    const auto outputFrequency = keywords_.asInt("OutputFrequency");
+    auto randomVelocities = keywords_.asBool("RandomVelocities");
     const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
-    const int trajectoryFrequency = keywords_.asInt("TrajectoryFrequency");
+    const auto trajectoryFrequency = keywords_.asInt("TrajectoryFrequency");
     const bool variableTimestep = keywords_.asBool("VariableTimestep");
-    bool writeTraj = trajectoryFrequency > 0;
+    auto writeTraj = trajectoryFrequency > 0;
 
     // Print argument/parameter summary
     Messenger::print("MD: Cutoff distance is %f\n", cutoffDistance);
@@ -103,7 +103,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         if (onlyWhenEnergyStable)
         {
-            int stabilityResult = EnergyModule::checkStability(cfg);
+            auto stabilityResult = EnergyModule::checkStability(cfg);
             if (stabilityResult == -1)
                 return false;
             else if (stabilityResult == 1)
@@ -126,7 +126,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Get temperature from Configuration
-        const double temperature = cfg->temperature();
+        const auto temperature = cfg->temperature();
 
         // Create force arrays as simple double arrays (easier to sum with MPI) - others are Vec3<double> arrays
         Array<double> mass(cfg->nAtoms()), fx(cfg->nAtoms()), fy(cfg->nAtoms()), fz(cfg->nAtoms());
@@ -145,8 +145,8 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Read in or assign random velocities
         // Realise the velocity array from the moduleData
         bool created;
-        Array<Vec3<double>> &v = GenericListHelper<Array<Vec3<double>>>::realise(moduleData, "Velocities", uniqueName(),
-                                                                                 GenericItem::NoFlag, &created);
+        auto &v = GenericListHelper<Array<Vec3<double>>>::realise(moduleData, "Velocities", uniqueName(), GenericItem::NoFlag,
+                                                                  &created);
         if (created)
         {
             randomVelocities = true;
@@ -183,7 +183,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Calculate instantaneous temperature
         // J = kg m2 s-2  -->   10 J = g Ang2 ps-2
         // If ke is in units of [g mol-1 Angstroms2 ps-2] then must use kb in units of 10 J mol-1 K-1 (= 0.8314462)
-        const double kb = 0.8314462;
+        const auto kb = 0.8314462;
         ke = 0.0;
         for (n = 0; n < cfg->nAtoms(); ++n)
             ke += 0.5 * mass[n] * v[n].dp(v[n]);

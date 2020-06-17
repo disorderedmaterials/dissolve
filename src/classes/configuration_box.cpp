@@ -82,12 +82,12 @@ const CellArray &Configuration::constCells() const { return cells_; }
 // Scale Box, Cells, and Molecule geometric centres according to current size factor
 void Configuration::applySizeFactor(const PotentialMap &potentialMap)
 {
-    const double reductionFactor = 0.95;
+    const auto reductionFactor = 0.95;
 
     while (true)
     {
         // Calculate ratio between current and applied size factors for use later on
-        const double sizeFactorRatio = requestedSizeFactor_ / appliedSizeFactor_;
+        const auto sizeFactorRatio = requestedSizeFactor_ / appliedSizeFactor_;
 
         // Check current vs applied size factors (via the ratio) - if unequal, perform scaling and set the new applied
         // size factor

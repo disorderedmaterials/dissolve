@@ -85,13 +85,13 @@ Forcefield::determineAtomType(SpeciesAtom *i,
                               const std::vector<std::vector<std::reference_wrapper<ForcefieldAtomType>>> &atomTypes)
 {
     // Go through AtomTypes defined for the target's element, and check NETA scores
-    int bestScore = -1;
+    auto bestScore = -1;
     ForcefieldAtomType *bestType = NULL;
     for (const auto &typeRef : atomTypes[i->element()->Z()])
     {
         // Get the scoring for this type
         auto &type = typeRef.get();
-        int score = type.neta().score(i);
+        auto score = type.neta().score(i);
         if (score > bestScore)
         {
             bestScore = score;
@@ -128,8 +128,8 @@ const ForcefieldParameters *Forcefield::shortRangeParameters(const char *name) c
 // Return the named ForcefieldAtomType (if it exists)
 ForcefieldAtomType *Forcefield::atomTypeByName(const char *name, Element *element) const
 {
-    int startZ = (element ? element->Z() : 0);
-    int endZ = (element ? element->Z() : nElements() - 1);
+    auto startZ = (element ? element->Z() : 0);
+    auto endZ = (element ? element->Z() : nElements() - 1);
     for (int Z = startZ; Z <= endZ; ++Z)
     {
         // Go through types associated to the Element
@@ -147,8 +147,8 @@ ForcefieldAtomType *Forcefield::atomTypeByName(const char *name, Element *elemen
 // Return the ForcefieldAtomType with specified id (if it exists)
 ForcefieldAtomType *Forcefield::atomTypeById(int id, Element *element) const
 {
-    int startZ = (element ? element->Z() : 0);
-    int endZ = (element ? element->Z() : nElements() - 1);
+    auto startZ = (element ? element->Z() : 0);
+    auto endZ = (element ? element->Z() : nElements() - 1);
     for (int Z = startZ; Z <= endZ; ++Z)
     {
         // Go through types associated to the Element
@@ -280,8 +280,8 @@ int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignm
     Messenger::print("Assigning atomtypes to species '%s' from forcefield '%s'...\n", sp->name(), name());
 
     // Loop over Species atoms
-    int nFailed = 0;
-    for (SpeciesAtom *i = sp->atoms().first(); i != NULL; i = i->next())
+    auto nFailed = 0;
+    for (auto *i = sp->atoms().first(); i != NULL; i = i->next())
     {
         // Obey the supplied strategy:
         // -- Don't reassign a type to this atom if one already exists (strategy == Forcefield::TypeMissing)
@@ -313,8 +313,8 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
 
     Messenger::print("Assigning intramolecular terms to species '%s' from forcefield '%s'...\n", sp->name(), name());
 
-    bool determineTypes = flags & Forcefield::DetermineTypesFlag;
-    bool selectionOnly = flags & Forcefield::SelectionOnlyFlag;
+    auto determineTypes = flags & Forcefield::DetermineTypesFlag;
+    auto selectionOnly = flags & Forcefield::SelectionOnlyFlag;
 
     // Assign bond terms
     DynamicArrayIterator<SpeciesBond> bondIterator(sp->bonds());
@@ -601,7 +601,7 @@ bool Forcefield::isAtomGeometry(SpeciesAtom *i, AtomGeometry geom) const { retur
 bool Forcefield::isBondPattern(const SpeciesAtom *i, const int nSingle, const int nDouble, const int nTriple,
                                const int nQuadruple, const int nAromatic) const
 {
-    int actualNSingle = 0, actualNDouble = 0, actualNTriple = 0, actualNQuadruple = 0, actualNAromatic = 0;
+    auto actualNSingle = 0, actualNDouble = 0, actualNTriple = 0, actualNQuadruple = 0, actualNAromatic = 0;
     for (const auto *bond : i->bonds())
     {
         switch (bond->bondType())
@@ -655,7 +655,7 @@ bool Forcefield::isBondPattern(const SpeciesAtom *i, const int nSingle, const in
 // Return whether the specified atom is bound to a specific element (and count thereof)
 bool Forcefield::isBoundTo(const SpeciesAtom *i, Element *element, const int count, bool allowMoreThanCount) const
 {
-    int found = 0;
+    auto found = 0;
 
     for (const auto *bond : i->bonds())
         if (bond->partner(i)->element() == element)
@@ -673,11 +673,11 @@ int Forcefield::guessOxidationState(const SpeciesAtom *i) const
      *   - A singly-bound Oxygen is considered to be -1 (which effectively includes it's 'R' group
      *   - An R-group is considered to be +1
      */
-    int osBound = 0;
+    auto osBound = 0;
 
     // Keep track of the number of bound elements that are the same as our own, as a crude check for elemental environments
     // (OS == 0)
-    int nSameElement = 0;
+    auto nSameElement = 0;
 
     const std::vector<SpeciesBond *> &bonds = i->bonds();
     for (const auto *bond : bonds)

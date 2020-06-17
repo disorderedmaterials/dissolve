@@ -56,7 +56,7 @@ ComboListDelegate::~ComboListDelegate()
 QWidget *ComboListDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
     // Create editor widget (in this case a combo box) and add the available options
-    QComboBox *editor = new QComboBox(parent);
+    auto *editor = new QComboBox(parent);
     items_->restartIterator();
     while (items_->nextItem())
         editor->addItem(items_->currentItemText());
@@ -73,7 +73,7 @@ void ComboListDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
     QString value = index.model()->data(index, Qt::EditRole).toString();
 
     // Find this AtomType in the master list
-    int typeIndex = 0;
+    auto typeIndex = 0;
     items_->restartIterator();
     while (items_->nextItem())
     {
@@ -82,14 +82,14 @@ void ComboListDelegate::setEditorData(QWidget *editor, const QModelIndex &index)
         ++typeIndex;
     }
 
-    QComboBox *comboBox = static_cast<QComboBox *>(editor);
+    auto *comboBox = static_cast<QComboBox *>(editor);
     comboBox->setCurrentIndex(typeIndex);
 }
 
 // Get value from editing widget, and set back in model
 void ComboListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-    QComboBox *comboBox = static_cast<QComboBox *>(editor);
+    auto *comboBox = static_cast<QComboBox *>(editor);
     QString value = comboBox->currentText();
 
     model->setData(index, value, Qt::EditRole);
@@ -109,7 +109,7 @@ void ComboListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOption
 // Index changed in combo box
 void ComboListDelegate::comboIndexChanged(int index)
 {
-    QComboBox *editor = qobject_cast<QComboBox *>(sender());
+    auto *editor = qobject_cast<QComboBox *>(sender());
 
     emit commitData(editor);
     emit closeEditor(editor);

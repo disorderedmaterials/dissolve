@@ -339,7 +339,7 @@ Site *SpeciesSite::createFromParent() const
         v /= xAxisIndices.nItems();
 
         // Get vector from site origin and normalise it
-        Vec3<double> x = v - origin;
+        auto x = v - origin;
         x.normalise();
 
         // Get average position of supplied y-axis atoms
@@ -349,7 +349,7 @@ Site *SpeciesSite::createFromParent() const
         v /= yAxisIndices.nItems();
 
         // Get vector from site origin, normalise it, and orthogonalise
-        Vec3<double> y = v - origin;
+        auto y = v - origin;
         y.orthogonalise(x);
         y.normalise();
 
@@ -389,7 +389,7 @@ bool SpeciesSite::read(LineParser &parser)
 {
     Messenger::printVerbose("\nReading information for Site '%s'...\n", name());
 
-    bool blockDone = false, error = false;
+    auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())
     {
@@ -400,7 +400,7 @@ bool SpeciesSite::read(LineParser &parser)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!keywords().isValid(parser.argc(0)))
             return keywords().errorAndPrintValid(parser.argc(0));
-        SiteKeyword kwd = keywords().enumeration(parser.argc(0));
+        auto kwd = keywords().enumeration(parser.argc(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 

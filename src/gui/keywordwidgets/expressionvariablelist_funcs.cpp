@@ -62,7 +62,7 @@ ExpressionVariableListKeywordWidget::ExpressionVariableListKeywordWidget(QWidget
 void ExpressionVariableListKeywordWidget::updateVariableTableRow(int row, ExpressionNode *node, bool createItem)
 {
     // Case the node up into an ExpressionVariable
-    ExpressionVariable *var = dynamic_cast<ExpressionVariable *>(node);
+    auto *var = dynamic_cast<ExpressionVariable *>(node);
     if (!var)
         return;
 

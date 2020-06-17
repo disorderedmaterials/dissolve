@@ -54,7 +54,7 @@ const char *Gizmo::uniqueName(const char *base)
     static CharString uniqueName;
     CharString baseName = base;
     uniqueName = baseName;
-    int suffix = 0;
+    auto suffix = 0;
 
     // Must always have a baseName
     if (baseName.isEmpty())

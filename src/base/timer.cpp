@@ -36,10 +36,10 @@ Timer::Timer()
 // Return time string based on provided tick count
 const char *Timer::timeString(clock_t ticks)
 {
-    int n = ticks / CLOCKS_PER_SEC;
-    int hours = n / 3600;
+    auto n = ticks / CLOCKS_PER_SEC;
+    auto hours = n / 3600;
     n %= 3600;
-    int minutes = n / 60;
+    auto minutes = n / 60;
     n %= 60;
     double seconds = ticks / double(CLOCKS_PER_SEC) - hours * 3600 - minutes * 60;
     if (hours != 0)
@@ -109,9 +109,9 @@ const char *Timer::timeString(double seconds)
 {
     static CharString result;
 
-    int hours = int(seconds) / 3600;
+    auto hours = int(seconds) / 3600;
     seconds -= hours * 3600;
-    int minutes = int(seconds) / 60;
+    auto minutes = int(seconds) / 60;
     seconds -= minutes * 60;
 
     if (hours != 0)
@@ -128,9 +128,9 @@ const char *Timer::etaString(double seconds)
 {
     static CharString result;
 
-    int hours = int(seconds) / 3600;
+    auto hours = int(seconds) / 3600;
     seconds -= hours * 3600;
-    int minutes = int(seconds) / 60;
+    auto minutes = int(seconds) / 60;
     seconds -= minutes * 60;
 
     result.sprintf("%02i:%02i:%02i", hours, minutes, int(seconds));

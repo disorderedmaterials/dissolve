@@ -185,7 +185,7 @@ bool Collect3DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
     // Construct our data name, and search for it in the supplied list
     CharString dataName("%s_%s_Bins", name(), cfg->niceName());
     bool created;
-    Histogram3D &target =
+    auto &target =
         GenericListHelper<Histogram3D>::realise(targetList, dataName.get(), prefix, GenericItem::InRestartFileFlag, &created);
     if (created)
     {
@@ -203,17 +203,17 @@ bool Collect3DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
     histogram_ = &target;
 
     // Retrieve the observables
-    Pair<CalculateProcedureNodeBase *, int> xObs = keywords_.retrieve<Pair<CalculateProcedureNodeBase *, int>>("QuantityX");
+    auto xObs = keywords_.retrieve<Pair<CalculateProcedureNodeBase *, int>>("QuantityX");
     xObservable_ = xObs.a();
     xObservableIndex_ = xObs.b();
     if (!xObservable_)
         return Messenger::error("No valid x quantity set in '%s'.\n", name());
-    Pair<CalculateProcedureNodeBase *, int> yObs = keywords_.retrieve<Pair<CalculateProcedureNodeBase *, int>>("QuantityY");
+    auto yObs = keywords_.retrieve<Pair<CalculateProcedureNodeBase *, int>>("QuantityY");
     yObservable_ = yObs.a();
     yObservableIndex_ = yObs.b();
     if (!yObservable_)
         return Messenger::error("No valid y quantity set in '%s'.\n", name());
-    Pair<CalculateProcedureNodeBase *, int> zObs = keywords_.retrieve<Pair<CalculateProcedureNodeBase *, int>>("QuantityZ");
+    auto zObs = keywords_.retrieve<Pair<CalculateProcedureNodeBase *, int>>("QuantityZ");
     zObservable_ = zObs.a();
     zObservableIndex_ = zObs.b();
     if (!zObservable_)

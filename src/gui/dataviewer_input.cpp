@@ -34,7 +34,7 @@ void DataViewer::mouseMoved(int dx, int dy)
         return;
     }
 
-    bool refresh = false;
+    auto refresh = false;
 
     // What we do here depends on the current mode
     switch (interactionMode())
@@ -98,7 +98,7 @@ void DataViewer::mouseWheeled(int delta)
         emit(controlAspectChanged());
     }
 
-    bool scrollUp = delta > 0;
+    auto scrollUp = delta > 0;
 
     // Perform camera zoom in a 3D view, or view scaling in a 2D view
     if (view().isFlatView())
@@ -180,8 +180,8 @@ void DataViewer::contextMenuRequested(QPoint pos)
 // Key pressed
 bool DataViewer::keyPressed(int key)
 {
-    bool refresh = true;
-    bool accept = true;
+    auto refresh = true;
+    auto accept = true;
     switch (key)
     {
         case (Qt::Key_Left):
@@ -258,7 +258,7 @@ bool DataViewer::keyPressed(int key)
 // Key released
 bool DataViewer::keyReleased(int key)
 {
-    bool refresh = false, accept = true;
+    auto refresh = false, accept = true;
 
     switch (key)
     {

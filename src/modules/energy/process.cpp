@@ -63,15 +63,15 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Retrieve control parameters from Configuration
         const bool saveData = keywords_.asBool("Save");
-        const double stabilityThreshold = keywords_.asDouble("StabilityThreshold");
-        const int stabilityWindow = keywords_.asInt("StabilityWindow");
+        const auto stabilityThreshold = keywords_.asDouble("StabilityThreshold");
+        const auto stabilityWindow = keywords_.asInt("StabilityWindow");
         const bool testAnalytic = keywords_.asBool("TestAnalytic");
         const bool testMode = keywords_.asBool("Test");
-        const double testThreshold = keywords_.asDouble("TestThreshold");
-        bool hasReferenceInter = keywords_.isSet("TestReferenceInter");
-        const double testReferenceInter = keywords_.asDouble("TestReferenceInter");
-        bool hasReferenceIntra = keywords_.isSet("TestReferenceIntra");
-        const double testReferenceIntra = keywords_.asDouble("TestReferenceIntra");
+        const auto testThreshold = keywords_.asDouble("TestThreshold");
+        auto hasReferenceInter = keywords_.isSet("TestReferenceInter");
+        const auto testReferenceInter = keywords_.asDouble("TestReferenceInter");
+        auto hasReferenceIntra = keywords_.isSet("TestReferenceIntra");
+        const auto testReferenceIntra = keywords_.asDouble("TestReferenceIntra");
 
         // Print parameter summary
         if (testMode)
@@ -110,7 +110,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             std::shared_ptr<Molecule> molN, molM;
             const Box *box = cfg->box();
             double scale;
-            const double cutoff = dissolve.potentialMap().range();
+            const auto cutoff = dissolve.potentialMap().range();
 
             Timer testTimer;
 
@@ -329,29 +329,29 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                              bondEnergy, angleEnergy, torsionEnergy);
 
             // Store current energies in the Configuration in case somebody else needs them
-            Data1D &interData =
+            auto &interData =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Inter", uniqueName(), GenericItem::InRestartFileFlag);
             interData.addPoint(dissolve.iteration(), interEnergy);
             interData.setObjectTag(CharString("%s//%s//Inter", cfg->niceName(), uniqueName()));
-            Data1D &intraData =
+            auto &intraData =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Intra", uniqueName(), GenericItem::InRestartFileFlag);
             intraData.addPoint(dissolve.iteration(), intraEnergy);
             intraData.setObjectTag(CharString("%s//%s//Intra", cfg->niceName(), uniqueName()));
-            Data1D &bondData =
+            auto &bondData =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Bond", uniqueName(), GenericItem::InRestartFileFlag);
             bondData.addPoint(dissolve.iteration(), bondEnergy);
             bondData.setObjectTag(CharString("%s//%s//Bond", cfg->niceName(), uniqueName()));
-            Data1D &angleData =
+            auto &angleData =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Angle", uniqueName(), GenericItem::InRestartFileFlag);
             angleData.addPoint(dissolve.iteration(), angleEnergy);
             angleData.setObjectTag(CharString("%s//%s//Angle", cfg->niceName(), uniqueName()));
-            Data1D &torsionData =
+            auto &torsionData =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Torsion", uniqueName(), GenericItem::InRestartFileFlag);
             torsionData.addPoint(dissolve.iteration(), torsionEnergy);
             torsionData.setObjectTag(CharString("%s//%s//Torsion", cfg->niceName(), uniqueName()));
 
             // Append to arrays of total energies
-            Data1D &totalEnergyArray =
+            auto &totalEnergyArray =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Total", uniqueName(), GenericItem::InRestartFileFlag);
             totalEnergyArray.addPoint(dissolve.iteration(), interEnergy + intraEnergy);
             totalEnergyArray.setObjectTag(CharString("%s//%s//Total", cfg->niceName(), uniqueName()));
@@ -359,7 +359,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Determine stability of energy
             // Check number of points already stored for the Configuration
             double grad = 0.0;
-            bool stable = false;
+            auto stable = false;
             if (stabilityWindow > totalEnergyArray.nValues())
                 Messenger::print("Too few points to assess stability.\n");
             else

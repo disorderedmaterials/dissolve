@@ -54,8 +54,8 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
     // Set start/stride for parallel loop
-    int start = procPool.interleavedLoopStart(strategy);
-    int stride = procPool.interleavedLoopStride(strategy);
+    auto start = procPool.interleavedLoopStart(strategy);
+    auto stride = procPool.interleavedLoopStride(strategy);
 
     std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
     std::shared_ptr<const Molecule> mol;
@@ -196,7 +196,7 @@ int EnergyModule::checkStability(Configuration *cfg)
     // Retrieve the EnergyStable flag from the Configuration's module data
     if (cfg->moduleData().contains("EnergyStable"))
     {
-        bool stable = GenericListHelper<bool>::value(cfg->moduleData(), "EnergyStable");
+        auto stable = GenericListHelper<bool>::value(cfg->moduleData(), "EnergyStable");
         if (!stable)
         {
             Messenger::print("Energy for Configuration '%s' is not yet stable.\n", cfg->name());
@@ -217,12 +217,12 @@ int EnergyModule::checkStability(Configuration *cfg)
 // assessed
 int EnergyModule::checkStability(const RefList<Configuration> &configurations)
 {
-    int nFailed = 0;
+    auto nFailed = 0;
 
     for (Configuration *cfg : configurations)
     {
         // Check the stability of this Configuration
-        int result = checkStability(cfg);
+        auto result = checkStability(cfg);
 
         if (result == 1)
             ++nFailed;

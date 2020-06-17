@@ -72,7 +72,7 @@ PairPotential *Dissolve::pairPotential(int n) { return pairPotentials_[n]; }
 // Return whether specified PairPotential is defined
 PairPotential *Dissolve::pairPotential(AtomType *at1, AtomType *at2) const
 {
-    for (PairPotential *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
+    for (auto *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
     {
         if ((pot->atomTypeI() == at1) && (pot->atomTypeJ() == at2))
             return pot;
@@ -85,7 +85,7 @@ PairPotential *Dissolve::pairPotential(AtomType *at1, AtomType *at2) const
 // Return whether specified PairPotential is defined
 PairPotential *Dissolve::pairPotential(const char *at1, const char *at2) const
 {
-    for (PairPotential *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
+    for (auto *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
     {
         if (DissolveSys::sameString(pot->atomTypeNameI(), at1) && DissolveSys::sameString(pot->atomTypeNameJ(), at2))
             return pot;
@@ -118,7 +118,7 @@ bool Dissolve::generatePairPotentials(AtomType *onlyInvolving)
         return true;
     }
 
-    int nUndefined = 0;
+    auto nUndefined = 0;
 
     // Loop over all atomtype pairs and update / add pair potentials as necessary
     for (AtomType *at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next())

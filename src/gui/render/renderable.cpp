@@ -116,7 +116,7 @@ const char *Renderable::objectTag() const { return objectTag_.get(); }
 // Invalidate renderable data for specified object tag
 int Renderable::invalidate(const char *objectTag)
 {
-    int count = 0;
+    auto count = 0;
     for (Renderable *rend : instances_)
     {
         if (!DissolveSys::sameString(objectTag, rend->objectTag_))
@@ -328,7 +328,7 @@ void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, boo
     const ColourDefinition &colourDefinition = colour();
 
     // Check whether the primitive for this Renderable needs updating
-    bool upToDate = true;
+    auto upToDate = true;
     if (forceUpdate)
         upToDate = false;
     else if (lastAxesVersion_ != axes.version())

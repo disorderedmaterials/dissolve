@@ -180,7 +180,7 @@ void SpeciesAngle::setUp() {}
 double SpeciesAngle::fundamentalFrequency(double reducedMass) const
 {
     // Get pointer to relevant parameters array
-    const double *params = parameters();
+    const auto *params = parameters();
 
     double k = 0.0;
     if (form() == SpeciesAngle::HarmonicForm)
@@ -214,7 +214,7 @@ SpeciesIntra::InteractionType SpeciesAngle::type() const { return SpeciesIntra::
 double SpeciesAngle::energy(double angleInDegrees) const
 {
     // Get pointer to relevant parameters array
-    const double *params = parameters();
+    const auto *params = parameters();
 
     if (form() == SpeciesAngle::NoForm)
         return 0.0;
@@ -254,7 +254,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
          * 2 : Constant C1
          * 3 : Constant C2
          */
-        const double angleInRadians = angleInDegrees / DEGRAD;
+        const auto angleInRadians = angleInDegrees / DEGRAD;
         return params[0] * (params[1] + params[2] * cos(angleInRadians) + params[3] * cos(2.0 * angleInRadians));
     }
 
@@ -266,13 +266,13 @@ double SpeciesAngle::energy(double angleInDegrees) const
 double SpeciesAngle::force(double angleInDegrees) const
 {
     // Get pointer to relevant parameters array
-    const double *params = parameters();
+    const auto *params = parameters();
 
     // Convert angle to radians
-    const double angleInRadians = angleInDegrees / DEGRAD;
+    const auto angleInRadians = angleInDegrees / DEGRAD;
 
     // Set initial derivative of angle w.r.t. cos(angle) for chain rule
-    const double dTheta_dCosTheta = -1.0 / sin(angleInDegrees / DEGRAD);
+    const auto dTheta_dCosTheta = -1.0 / sin(angleInDegrees / DEGRAD);
 
     if (form() == SpeciesAngle::NoForm)
         return 0.0;

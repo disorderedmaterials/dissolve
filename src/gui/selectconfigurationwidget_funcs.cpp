@@ -103,7 +103,7 @@ void SelectConfigurationWidget::on_ConfigurationList_itemDoubleClicked(QListWidg
 // Return whether number of selected items is valid
 bool SelectConfigurationWidget::isSelectionValid() const
 {
-    int count = nSelected();
+    auto count = nSelected();
 
     if (count < minimumSelectionSize_)
         return false;
@@ -116,7 +116,7 @@ bool SelectConfigurationWidget::isSelectionValid() const
 // Return number of species currently selected
 int SelectConfigurationWidget::nSelected() const
 {
-    int count = 0;
+    auto count = 0;
     for (int n = 0; n < ui_.ConfigurationList->count(); ++n)
     {
         QListWidgetItem *item = ui_.ConfigurationList->item(n);

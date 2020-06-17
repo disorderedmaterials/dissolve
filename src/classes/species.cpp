@@ -71,7 +71,7 @@ const char *Species::name() const { return name_.get(); }
 // Check set-up of Species
 bool Species::checkSetUp()
 {
-    int nErrors = 0;
+    auto nErrors = 0;
 
     // Must have at least one atom...
     if (atoms_.nItems() == 0)
@@ -83,7 +83,7 @@ bool Species::checkSetUp()
     /*
      * AtomTypes
      */
-    for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+    for (auto *i = atoms_.first(); i != NULL; i = i->next())
     {
         if (i->atomType() == NULL)
         {
@@ -97,7 +97,7 @@ bool Species::checkSetUp()
     /*
      * IntraMolecular Data
      */
-    for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+    for (auto *i = atoms_.first(); i != NULL; i = i->next())
     {
         if ((i->nBonds() == 0) && (atoms_.nItems() > 1))
         {
@@ -124,7 +124,7 @@ bool Species::checkSetUp()
     /*
      * Check Isotopologues
      */
-    for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
+    for (auto *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
     {
         RefDataListIterator<AtomType, Isotope *> isotopeIterator(iso->isotopes());
         while (AtomType *atomType = isotopeIterator.iterate())

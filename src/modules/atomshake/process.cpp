@@ -53,13 +53,13 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         double cutoffDistance = keywords_.asDouble("CutoffDistance");
         if (cutoffDistance < 0.0)
             cutoffDistance = dissolve.pairPotentialRange();
-        const int nShakesPerAtom = keywords_.asInt("ShakesPerAtom");
-        const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
-        double &stepSize = keywords_.retrieve<double>("StepSize");
-        const double stepSizeMax = keywords_.asDouble("StepSizeMax");
-        const double stepSizeMin = keywords_.asDouble("StepSizeMin");
-        const double termScale = 1.0;
-        const double rRT = 1.0 / (.008314472 * cfg->temperature());
+        const auto nShakesPerAtom = keywords_.asInt("ShakesPerAtom");
+        const auto targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
+        auto &stepSize = keywords_.retrieve<double>("StepSize");
+        const auto stepSizeMax = keywords_.asDouble("StepSizeMax");
+        const auto stepSizeMin = keywords_.asDouble("StepSizeMin");
+        const auto termScale = 1.0;
+        const auto rRT = 1.0 / (.008314472 * cfg->temperature());
 
         // Print argument/parameter summary
         Messenger::print("AtomShake: Cutoff distance is %f\n", cutoffDistance);
@@ -83,7 +83,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
 
         int shake, n, m;
-        int nAttempts = 0, nAccepted = 0;
+        auto nAttempts = 0, nAccepted = 0;
         bool accept;
         double currentEnergy, currentIntraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;
         Vec3<double> rDelta;

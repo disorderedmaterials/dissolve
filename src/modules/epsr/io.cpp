@@ -56,8 +56,8 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
         return Messenger::error("Couldn't open pcof file for reading.\n");
 
     // Read keyword section (terminated by the 'q' command)
-    bool done = false;
-    int ncoeffp = 0;
+    auto done = false;
+    auto ncoeffp = 0;
     while (!parser.eofOrBlank())
     {
         // Parse arguments, and attempt to convert the first into a keyword
@@ -133,7 +133,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
     }
 
     // Retrieve and zero the current potential coefficients file
-    Array2D<Array<double>> &potentialCoefficients = GenericListHelper<Array2D<Array<double>>>::realise(
+    auto &potentialCoefficients = GenericListHelper<Array2D<Array<double>>>::realise(
         dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
     potentialCoefficients.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
     for (int n = 0; n < potentialCoefficients.linearArraySize(); ++n)
@@ -146,7 +146,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
     // coefficients for
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return Messenger::error("Failed to read number of pair potentials from pcof file.\n");
-    int nPots = parser.argi(0);
+    auto nPots = parser.argi(0);
     Messenger::print("Number of potentials in pcof file = %i\n", nPots);
     for (int n = 0; n < nPots; ++n)
     {

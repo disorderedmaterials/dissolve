@@ -45,7 +45,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
     Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::keywords().keyword(BlockKeywords::LayerBlockKeyword),
                      layer->name());
 
-    bool blockDone = false, error = false;
+    auto blockDone = false, error = false;
     Module *module = NULL;
     CharString niceName;
 
@@ -58,7 +58,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!keywords().isValid(parser.argc(0)))
             return keywords().errorAndPrintValid(parser.argc(0));
-        LayerKeyword kwd = keywords().enumeration(parser.argc(0));
+        auto kwd = keywords().enumeration(parser.argc(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 

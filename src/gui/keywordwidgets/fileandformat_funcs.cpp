@@ -92,7 +92,7 @@ void FileAndFormatKeywordWidget::on_FileEdit_returnPressed()
 void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
 {
     // Grab the target FileAndFormat
-    FileAndFormat &fileAndFormat = keyword_->data();
+    auto &fileAndFormat = keyword_->data();
 
     // Determine what sort of dialog we need to raise...
     QString filename;
@@ -150,13 +150,13 @@ void FileAndFormatKeywordWidget::on_OptionsButton_clicked(bool checked)
 void FileAndFormatKeywordWidget::checkFileValidity()
 {
     // Grab the target FileAndFormat
-    const FileAndFormat &fileAndFormat = keyword_->data();
+    const auto &fileAndFormat = keyword_->data();
 
     // If this is an export FileAndFormat, no need to show the indicator or check if the file exists
     if (fileAndFormat.fileMustExist())
     {
         ui_.FileExistsIndicator->setVisible(true);
-        bool ok = fileAndFormat.hasFilename() ? QFile::exists(fileAndFormat.filename()) : false;
+        auto ok = fileAndFormat.hasFilename() ? QFile::exists(fileAndFormat.filename()) : false;
         ui_.FileExistsIndicator->setOK(ok);
     }
     else
@@ -172,7 +172,7 @@ void FileAndFormatKeywordWidget::updateWidgetValues(const CoreData &coreData)
     refreshing_ = true;
 
     // Grab the target FileAndFormat
-    FileAndFormat &fileAndFormat = keyword_->data();
+    auto &fileAndFormat = keyword_->data();
 
     // UPdate widgets
     ui_.FileEdit->setText(fileAndFormat.filename());
@@ -186,7 +186,7 @@ void FileAndFormatKeywordWidget::updateWidgetValues(const CoreData &coreData)
 void FileAndFormatKeywordWidget::updateKeywordData()
 {
     // Grab the target FileAndFormat
-    FileAndFormat &fileAndFormat = keyword_->data();
+    auto &fileAndFormat = keyword_->data();
 
     fileAndFormat.setFilename(qPrintable(ui_.FileEdit->text()));
     fileAndFormat.setFormatIndex(ui_.FormatCombo->currentIndex());

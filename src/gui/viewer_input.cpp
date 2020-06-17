@@ -75,8 +75,8 @@ void BaseViewer::mouseReleaseEvent(QMouseEvent *event)
 // Mouse move event
 void BaseViewer::mouseMoveEvent(QMouseEvent *event)
 {
-    const int dx = event->x() - rMouseLast_.x;
-    const int dy = (contextHeight_ - event->y()) - rMouseLast_.y;
+    const auto dx = event->x() - rMouseLast_.x;
+    const auto dy = (contextHeight_ - event->y()) - rMouseLast_.y;
 
     // Store the new mouse coordinate with inverted y coordinate
     rMouseLast_.set(event->x(), contextHeight_ - event->y(), 0.0);
@@ -141,7 +141,7 @@ void BaseViewer::mouseMoved(int dx, int dy) {}
 // Mouse 'wheeled'
 void BaseViewer::mouseWheeled(int delta)
 {
-    bool scrollup = delta > 0;
+    auto scrollup = delta > 0;
 
     // Perform camera zoom
     double zrange = view_.axes().stretch(2) * view_.axes().realRange(2);
@@ -150,7 +150,7 @@ void BaseViewer::mouseWheeled(int delta)
     view_.translateView(0.0, 0.0, 0.5 * zrange * (scrollup ? -1.0 : 1.0));
 
     // Never let camera z go above z = 1.0...
-    Vec3<double> trans = view_.viewTranslation();
+    auto trans = view_.viewTranslation();
     if (trans.z > 1.0)
         trans.z = 1.0;
     view_.setViewTranslation(trans.x, trans.y, trans.z);

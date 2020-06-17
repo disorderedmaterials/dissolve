@@ -37,8 +37,8 @@ bool CalculateAxisAngleModule::process(Dissolve &dissolve, ProcessPool &procPool
         return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
     // Ensure any parameters in our nodes are set correctly
-    const Vec3<double> distanceRange = keywords_.asVec3Double("DistanceRange");
-    const Vec3<double> angleRange = keywords_.asVec3Double("AngleRange");
+    const auto distanceRange = keywords_.asVec3Double("DistanceRange");
+    const auto angleRange = keywords_.asVec3Double("AngleRange");
     collectDistance_->setKeyword<Vec3<double>>("RangeX", distanceRange);
     collectAngle_->setKeyword<Vec3<double>>("RangeX", angleRange);
     collectDAngle_->setKeyword<Vec3<double>>("RangeX", distanceRange);
@@ -50,7 +50,7 @@ bool CalculateAxisAngleModule::process(Dissolve &dissolve, ProcessPool &procPool
     selectB_->setKeyword<RefList<SelectProcedureNode> &>("ExcludeSameMolecule", sameMoleculeExclusions);
 
     // Grab Configuration pointer
-    Configuration *cfg = targetConfigurations_.firstItem();
+    auto *cfg = targetConfigurations_.firstItem();
 
     // Set up process pool - must do this to ensure we are using all available processes
     procPool.assignProcessesToGroups(cfg->processPool());

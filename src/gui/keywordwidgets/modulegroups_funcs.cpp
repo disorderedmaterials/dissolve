@@ -59,7 +59,7 @@ ModuleGroupsKeywordWidget::ModuleGroupsKeywordWidget(QWidget *parent, KeywordBas
 void ModuleGroupsKeywordWidget::updateSelectionRow(int row, Module *module, bool create)
 {
     // Grab the target groups
-    ModuleGroups &groups = keyword_->data();
+    auto &groups = keyword_->data();
 
     QTableWidgetItem *item;
 
@@ -98,7 +98,7 @@ void ModuleGroupsKeywordWidget::itemChanged(QTableWidgetItem *item)
     Module *module = VariantPointer<Module>(ui_.SelectionTable->item(item->row(), 0)->data(Qt::UserRole));
     if (!module)
         return;
-    bool isSelected = (ui_.SelectionTable->item(item->row(), 0)->checkState() == Qt::Checked);
+    auto isSelected = (ui_.SelectionTable->item(item->row(), 0)->checkState() == Qt::Checked);
 
     // Get group text from column 1 of the current row
     QString groupName = ui_.SelectionTable->item(item->row(), 1)->text();
@@ -167,7 +167,7 @@ void ModuleGroupsKeywordWidget::updateKeywordData()
 void ModuleGroupsKeywordWidget::updateSummaryText()
 {
     // Create summary text for the KeywordDropDown button
-    ModuleGroups &groups = keyword_->data();
+    auto &groups = keyword_->data();
     if (groups.modules().nItems() == 0)
         setSummaryText("<None>");
     else

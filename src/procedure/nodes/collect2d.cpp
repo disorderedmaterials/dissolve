@@ -132,7 +132,7 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
     // Construct our data name, and search for it in the supplied list
     CharString dataName("%s_%s_Bins", name(), cfg->niceName());
     bool created;
-    Histogram2D &target =
+    auto &target =
         GenericListHelper<Histogram2D>::realise(targetList, dataName.get(), prefix, GenericItem::InRestartFileFlag, &created);
     if (created)
     {
@@ -149,12 +149,12 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
     histogram_ = &target;
 
     // Retrieve the observables
-    Pair<CalculateProcedureNodeBase *, int> xObs = keywords_.retrieve<Pair<CalculateProcedureNodeBase *, int>>("QuantityX");
+    auto xObs = keywords_.retrieve<Pair<CalculateProcedureNodeBase *, int>>("QuantityX");
     xObservable_ = xObs.a();
     xObservableIndex_ = xObs.b();
     if (!xObservable_)
         return Messenger::error("No valid x quantity set in '%s'.\n", name());
-    Pair<CalculateProcedureNodeBase *, int> yObs = keywords_.retrieve<Pair<CalculateProcedureNodeBase *, int>>("QuantityY");
+    auto yObs = keywords_.retrieve<Pair<CalculateProcedureNodeBase *, int>>("QuantityY");
     yObservable_ = yObs.a();
     yObservableIndex_ = yObs.b();
     if (!yObservable_)

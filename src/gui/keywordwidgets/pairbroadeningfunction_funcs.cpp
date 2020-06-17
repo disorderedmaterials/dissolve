@@ -97,7 +97,7 @@ void PairBroadeningFunctionKeywordWidget::updateWidgetValues(const CoreData &cor
     refreshing_ = true;
 
     // Grab the target PairBroadeningFunction
-    PairBroadeningFunction &pairBroadeningFunction = keyword_->data();
+    auto &pairBroadeningFunction = keyword_->data();
 
     // Radio button
     switch (pairBroadeningFunction.function())

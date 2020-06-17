@@ -55,7 +55,7 @@ QString GetModuleLayerNameDialog::newName() const { return ui_.NameEdit->text();
 void GetModuleLayerNameDialog::on_NameEdit_textChanged(const QString text)
 {
     // Make sure the name is valid
-    bool nameValid = true;
+    auto nameValid = true;
     if (text.isEmpty())
         nameValid = false;
     else

@@ -511,19 +511,19 @@ void RenderableData3D::marchingCubesOriginal(const Array<double> &displayXAbscis
 
     // Transform abscissa values (still in data space) into axes coordinates
     axes.transformX(x);
-    int nX = x.nItems();
+    auto nX = x.nItems();
     if (nX < 2)
         return;
 
     // Transform abscissa values (still in data space) into axes coordinates
     axes.transformY(y);
-    int nY = y.nItems();
+    auto nY = y.nItems();
     if (nY < 2)
         return;
 
     // Transform abscissa values (still in data space) into axes coordinates
     axes.transformZ(z);
-    int nZ = z.nItems();
+    auto nZ = z.nItems();
     if (nZ < 2)
         return;
 
@@ -746,7 +746,7 @@ bool RenderableData3D::readStyleBlock(LineParser &parser)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!data3DStyleKeywords().isValid(parser.argc(0)))
             return data3DStyleKeywords().errorAndPrintValid(parser.argc(0));
-        Data3DStyleKeyword kwd = data3DStyleKeywords().enumeration(parser.argc(0));
+        auto kwd = data3DStyleKeywords().enumeration(parser.argc(0));
         if (!data3DStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 

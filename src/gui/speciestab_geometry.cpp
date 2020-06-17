@@ -417,7 +417,7 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem *w)
 
     // Column of passed item tells us the type of data we need to change
     int i, j;
-    bool updateRow = false;
+    auto updateRow = false;
     switch (w->column())
     {
         // Atom Indices
@@ -484,7 +484,7 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem *w)
 
     // Column of passed item tells us the type of data we need to change
     int i, j, k;
-    bool updateRow = false;
+    auto updateRow = false;
     switch (w->column())
     {
         // Atom Indices
@@ -553,7 +553,7 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem *w)
 
     // Column of passed item tells us the type of data we need to change
     int i, j, k, l;
-    bool updateRow = false;
+    auto updateRow = false;
     switch (w->column())
     {
         // Atom Indices
@@ -624,7 +624,7 @@ void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem *w)
 
     // Column of passed item tells us the type of data we need to change
     int i, j, k, l;
-    bool updateRow = false;
+    auto updateRow = false;
     switch (w->column())
     {
         // Atom Indices

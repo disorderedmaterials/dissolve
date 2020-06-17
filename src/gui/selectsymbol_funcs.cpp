@@ -67,8 +67,8 @@ void SelectSymbolDialog::on_SearchEdit_textChanged(QString text)
 
     // Found a match, so highlight the relevant item in the table
     ui.SymbolTable->clearSelection();
-    int nColumns = ui.SymbolTable->columnCount();
-    int row = symbol / nColumns, column = symbol % nColumns;
+    auto nColumns = ui.SymbolTable->columnCount();
+    auto row = symbol / nColumns, column = symbol % nColumns;
     QTableWidgetItem *item = ui.SymbolTable->item(row, column);
     if (item)
         item->setSelected(true);
@@ -127,10 +127,10 @@ void SelectSymbolDialog::updateTable(bool force)
     // Recalculate the number of columns it is possible to display in the widget
     // If this is the same as the previous number, then we only need to adjust the widths (possibly)
     QScrollBar *scrollBar = ui.SymbolTable->verticalScrollBar();
-    int scrollBarWidth = (scrollBar ? scrollBar->width() : 0);
-    int nDisplayColumns = (ui.SymbolTable->width() - scrollBarWidth) / itemSize_;
-    int widthRemainder = (ui.SymbolTable->width() - scrollBarWidth) - nDisplayColumns * itemSize_;
-    int nNeededRows = SymbolData::nSymbols / nDisplayColumns + (SymbolData::nSymbols % nDisplayColumns == 0 ? 0 : 1);
+    auto scrollBarWidth = (scrollBar ? scrollBar->width() : 0);
+    auto nDisplayColumns = (ui.SymbolTable->width() - scrollBarWidth) / itemSize_;
+    auto widthRemainder = (ui.SymbolTable->width() - scrollBarWidth) - nDisplayColumns * itemSize_;
+    auto nNeededRows = SymbolData::nSymbols / nDisplayColumns + (SymbolData::nSymbols % nDisplayColumns == 0 ? 0 : 1);
 
     if ((nDisplayColumns != oldNColumns) || force)
     {

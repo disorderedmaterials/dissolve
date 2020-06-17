@@ -206,15 +206,15 @@ void Box::scale(double factor)
 Box *Box::generate(Vec3<double> lengths, Vec3<double> angles)
 {
     // Determine box type from supplied lengths / angles
-    bool rightAlpha = (fabs(angles.x - 90.0) < 0.001);
-    bool rightBeta = (fabs(angles.y - 90.0) < 0.001);
-    bool rightGamma = (fabs(angles.z - 90.0) < 0.001);
+    auto rightAlpha = (fabs(angles.x - 90.0) < 0.001);
+    auto rightBeta = (fabs(angles.y - 90.0) < 0.001);
+    auto rightGamma = (fabs(angles.z - 90.0) < 0.001);
 
     if (rightAlpha && rightBeta && rightGamma)
     {
         // Cubic or orthorhombic
-        bool abSame = (fabs(lengths.x - lengths.y) < 0.0001);
-        bool acSame = (fabs(lengths.x - lengths.z) < 0.0001);
+        auto abSame = (fabs(lengths.x - lengths.y) < 0.0001);
+        auto acSame = (fabs(lengths.x - lengths.z) < 0.0001);
         if (abSame && acSame)
             return new CubicBox(lengths.x);
         else
@@ -259,8 +259,8 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
                                     int nPoints) const
 {
     // Set up array - we will use a nominal bin width of 0.1 Angstroms and then interpolate to the rdfBinWidth afterwards
-    const double binWidth = 0.1;
-    const double rBinWidth = 1.0 / binWidth;
+    const auto binWidth = 0.1;
+    const auto rBinWidth = 1.0 / binWidth;
     int bin, nBins = rdfRange / binWidth;
     Data1D normData;
     normData.initialise(nBins);
@@ -268,10 +268,10 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
     for (int n = 0; n < nBins; ++n)
         normData.xAxis(n) = (n + 0.5) * binWidth;
 
-    Vec3<double> centre = axes_ * Vec3<double>(0.5, 0.5, 0.5);
+    auto centre = axes_ * Vec3<double>(0.5, 0.5, 0.5);
 
     // Divide points over processes
-    const int nPointsPerProcess = nPoints / procPool.nProcesses();
+    const auto nPointsPerProcess = nPoints / procPool.nProcesses();
     Messenger::print("Number of insertion points per process is %i, total is %i\n", nPointsPerProcess,
                      nPointsPerProcess * procPool.nProcesses());
 
