@@ -9,17 +9,14 @@ grand_parent: Examples
 
 To ensure that our silicon and oxygen atoms are well mixed and distributed we're going to "cook" the box at a high temperature to start with.
 
-> **Bulk** configuration tab
-{: .action .action_tabs}
-> Change the **Temperature** to 2000.0
-{: .action .action_edit}
+{{< action type="tabs" text="**Bulk** configuration tab" >}}
+{{< action type="edit" text="Change the **Temperature** to 2000.0" >}}
+
 
 Now we'll run for 250 steps
 
-> Simulation &#8680; Run For...
-{: .action .action_menu}
-> Set the number of steps to 250 and click _OK_
-{: .step}
+{{< action type="menu" text="Simulation &#8680; Run For..." >}}
+{{< step text="Set the number of steps to 250 and click _OK_" >}}
 
 You can open (double-click) the [`NeutronSQ`](../../userguide/modules/neutronsq) module in the _RDF / Neutron S(Q)_ layer to monitor the structure, or the [`Energy`](../../userguide/modules/energy) module in the _Evolve (Basic Atomic)_ to check the energy as the simulation progresses. The total energy will be large and negative - of the order of &ndash;4&mult;10<sup>6</sup>. When finished, the F(Q) and G(r) should look a little like this:
 
@@ -31,14 +28,11 @@ _Calculated total G(r) (black line) of amorphous silica at high temperature (200
 
 We'll now reset the temperature of the box to 298 K and run a second equilibration.
 
-> **Bulk** configuration tab
-{: .action .action_tabs}
-> Change the **Temperature** to 298.0
-{: .action .action_edit}
-> Simulation &#8680; Run For...
-{: .action .action_menu}
-> Set the number of steps to 250 and click _OK_
-{: .step}
+{{< action type="tabs" text="**Bulk** configuration tab" >}}
+{{< action type="edit" text="Change the **Temperature** to 298.0" >}}
+{{< action type="menu" text="Simulation &#8680; Run For..." >}}
+{{< step text="Set the number of steps to 250 and click _OK_" >}}
+
 
 Once finished, the structure should look a lot better:
 
