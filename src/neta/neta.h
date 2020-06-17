@@ -22,11 +22,11 @@
 #ifndef DISSOLVE_NETA_H
 #define DISSOLVE_NETA_H
 
+#include "base/charstring.h"
+#include "base/enumoptions.h"
 #include "neta/connection.h"
 #include "neta/logic.h"
 #include "neta/root.h"
-#include "base/charstring.h"
-#include "base/enumoptions.h"
 #include "templates/list.h"
 
 // Forward Declarations
@@ -36,45 +36,43 @@ class SpeciesAtom;
 // NETA Definition
 class NETADefinition
 {
-	public:
+      public:
 	// Constructor
-	NETADefinition(const char* netaDefinition = NULL, const Forcefield* associatedFF = NULL);
+	NETADefinition(const char *netaDefinition = NULL, const Forcefield *associatedFF = NULL);
 	// Destructor
 	~NETADefinition();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Root node of the definition
 	NETARootNode rootNode_;
 	// Original definition string
 	CharString definitionString_;
 
-	public:
+      public:
 	// Clear all definition data
 	void clear();
 	// Return root node pointer
-	NETARootNode* rootNode();
+	NETARootNode *rootNode();
 	// Set NETADefinition from supplied string
-	bool set(const char* netaDefinition, const Forcefield* associatedFF = NULL);
+	bool set(const char *netaDefinition, const Forcefield *associatedFF = NULL);
 	// Set generating string
-	void setDefinitionString(const char* definition);
+	void setDefinitionString(const char *definition);
 	// Return original generating string
-	const char* definitionString() const;
-
+	const char *definitionString() const;
 
 	/*
 	 * Matching
 	 */
-	private:
+      private:
 	// Current SpeciesAtom being typed
-	SpeciesAtom* targetAtom_;
+	SpeciesAtom *targetAtom_;
 
-	public:
+      public:
 	// Check supplied atom to see if it matches this NETA description
-	int score(const SpeciesAtom* i) const;
+	int score(const SpeciesAtom *i) const;
 };
 
 #endif

@@ -22,24 +22,17 @@
 #include "keywords/linkto.h"
 
 // Constructor
-LinkToKeyword::LinkToKeyword(KeywordBase* keywordData) : KeywordData<KeywordBase*>(KeywordBase::LinkToKeywordData, keywordData)
-{
-}
+LinkToKeyword::LinkToKeyword(KeywordBase *keywordData) : KeywordData<KeywordBase *>(KeywordBase::LinkToKeywordData, keywordData) {}
 
 // Destructor
-LinkToKeyword::~LinkToKeyword()
-{
-}
+LinkToKeyword::~LinkToKeyword() {}
 
 /*
  * Base Pointer Return (Overloading KeywordBase virtual)
  */
 
 // Return base pointer for this (may be overloaded to provide access to other KeywordBase instance)
-KeywordBase* LinkToKeyword::base()
-{
-	return data_;
-}
+KeywordBase *LinkToKeyword::base() { return data_; }
 
 /*
  * Arguments
@@ -60,14 +53,14 @@ int LinkToKeyword::maxArguments() const
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool LinkToKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool LinkToKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
 	Messenger::warn("Don't call LinkToKeyword::read() - go through base().\n");
 	return data_->read(parser, startArg, coreData);
 }
 
 // Write keyword data to specified LineParser
-bool LinkToKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool LinkToKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
 	Messenger::warn("Don't call LinkToKeyword::write() - go through base().\n");
 	return data_->write(parser, data_->name(), prefix);

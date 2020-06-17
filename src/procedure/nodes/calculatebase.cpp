@@ -24,7 +24,8 @@
 #include "base/sysfunc.h"
 
 // Constructor
-CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode* site0, SelectProcedureNode* site1, SelectProcedureNode* site2, SelectProcedureNode* site3) : ProcedureNode(nodeType)
+CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode *site0, SelectProcedureNode *site1, SelectProcedureNode *site2, SelectProcedureNode *site3)
+    : ProcedureNode(nodeType)
 {
 	sites_[0] = site0;
 	sites_[1] = site1;
@@ -38,19 +39,14 @@ CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType n
 }
 
 // Destructor
-CalculateProcedureNodeBase::~CalculateProcedureNodeBase()
-{
-}
+CalculateProcedureNodeBase::~CalculateProcedureNodeBase() {}
 
 /*
  * Identity
  */
 
 // Return whether specified context is relevant for this node type
-bool CalculateProcedureNodeBase::isContextRelevant(ProcedureNode::NodeContext context)
-{
-	return (context == ProcedureNode::AnalysisContext);
-}
+bool CalculateProcedureNodeBase::isContextRelevant(ProcedureNode::NodeContext context) { return (context == ProcedureNode::AnalysisContext); }
 
 /*
  * Observable Target
@@ -70,23 +66,21 @@ double CalculateProcedureNodeBase::value(int id) const
 }
 
 // Return last calculated value of observable
-Vec3<double> CalculateProcedureNodeBase::values() const
-{
-	return value_;
-}
+Vec3<double> CalculateProcedureNodeBase::values() const { return value_; }
 
-/* 
+/*
  * Execute
  */
 
 // Prepare any necessary data, ready for execution
-bool CalculateProcedureNodeBase::prepare(Configuration* cfg, const char* prefix, GenericList& targetList)
+bool CalculateProcedureNodeBase::prepare(Configuration *cfg, const char *prefix, GenericList &targetList)
 {
 	// Check that the sites have been properly defined
-	for (int n=0; n<nSitesRequired(); ++n)
+	for (int n = 0; n < nSitesRequired(); ++n)
 	{
 		sites_[n] = siteKeywords_[n] ? siteKeywords_[n]->node() : NULL;
-		if (!sites_[n]) return Messenger::error("Observable site %i is not set.\n", n);
+		if (!sites_[n])
+			return Messenger::error("Observable site %i is not set.\n", n);
 	}
 
 	return true;

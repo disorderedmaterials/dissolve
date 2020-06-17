@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/messenger.h"
 #include "classes/changedata.h"
+#include "base/messenger.h"
 #include "classes/atom.h"
 #include "classes/cell.h"
 
@@ -33,16 +33,14 @@ ChangeData::ChangeData() : ListItem<ChangeData>()
 }
 
 // Destructor
-ChangeData::~ChangeData()
-{
-}
+ChangeData::~ChangeData() {}
 
 /*
  * Target Data
  */
 
 // Set target atom
-void ChangeData::setAtom(Atom* i)
+void ChangeData::setAtom(Atom *i)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -58,16 +56,10 @@ void ChangeData::setAtom(Atom* i)
 }
 
 // Return target Atom
-Atom* ChangeData::atom()
-{
-	return atom_;
-}
+Atom *ChangeData::atom() { return atom_; }
 
 // Return array index of stored Atom
-int ChangeData::atomArrayIndex() const
-{
-	return atom_->arrayIndex();
-}
+int ChangeData::atomArrayIndex() const { return atom_->arrayIndex(); }
 
 // Update local position, and flag as moved
 void ChangeData::updatePosition()
@@ -92,13 +84,7 @@ void ChangeData::revertPosition()
 }
 
 // Return whether atom has moved
-bool ChangeData::hasMoved()
-{
-	return moved_;
-}
+bool ChangeData::hasMoved() { return moved_; }
 
 // Return position vector
-Vec3<double> ChangeData::r() const
-{
-	return r_;
-}
+Vec3<double> ChangeData::r() const { return r_; }

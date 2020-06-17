@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_EXPRESSION_H
 #define DISSOLVE_EXPRESSION_H
 
-#include "expression/node.h"
-#include "expression/functions.h"
 #include "base/charstring.h"
+#include "expression/functions.h"
+#include "expression/node.h"
 #include "templates/list.h"
 
 // Forward declarations
@@ -34,41 +34,39 @@ class Node;
 // Mathematical Expression
 class Expression
 {
-	public:
+      public:
 	// Constructor
-	Expression(const char* expressionText = NULL);
+	Expression(const char *expressionText = NULL);
 	// Destructor
 	~Expression();
 	// Copy constructor
-	Expression(const Expression& source);
+	Expression(const Expression &source);
 	// Assignment operator
-	void operator=(const Expression& source);
-
+	void operator=(const Expression &source);
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Original generating string
 	CharString expressionString_;
 
-	public:
+      public:
 	// Clear all expression data
 	void clear();
 	// Return whether current expression is valid (contains at least one node)
 	bool isValid() const;
 	// Set Expression from supplied string
-	bool set(const char* expressionString);
+	bool set(const char *expressionString);
 	// Set Expression from supplied string and external variables
-	bool set(const char* expressionString, RefList<ExpressionVariable> externalVariables);
+	bool set(const char *expressionString, RefList<ExpressionVariable> externalVariables);
 	// Return original generating string`
-	const char* expressionString() const;
-
+	const char *expressionString() const;
 
 	/*
 	 * Nodes
 	 */
-	private:
+      private:
 	// Node list - a disordered list of all nodes (except persistent ones) owned by the Expression
 	List<ExpressionNode> nodes_;
 	// Persistent node list, not removed by normal clear() function
@@ -76,29 +74,28 @@ class Expression
 	// Reflist of all statements in the Expression, to be executed sequentially
 	RefList<ExpressionNode> statements_;
 
-	public:
+      public:
 	// Add a node representing a whole statement to the execution list
-	bool addStatement(ExpressionNode* node);
+	bool addStatement(ExpressionNode *node);
 	// Add an operator to the Expression
-	ExpressionNode* addOperator(ExpressionFunctions::Function func, ExpressionNode* arg1, ExpressionNode* arg2 = NULL);
+	ExpressionNode *addOperator(ExpressionFunctions::Function func, ExpressionNode *arg1, ExpressionNode *arg2 = NULL);
 	// Associate a command-based node to the Expression
-	ExpressionNode* addFunctionNodeWithArglist(ExpressionFunctions::Function func, ExpressionNode* arglist);
+	ExpressionNode *addFunctionNodeWithArglist(ExpressionFunctions::Function func, ExpressionNode *arglist);
 	// Add a function node to the list (overloaded to accept simple arguments instead of a list)
-	ExpressionNode* addFunctionNode(ExpressionFunctions::Function func, ExpressionNode* arg1 = NULL, ExpressionNode* arg2 = NULL, ExpressionNode* arg3 = NULL, ExpressionNode* arg4 = NULL);
+	ExpressionNode *addFunctionNode(ExpressionFunctions::Function func, ExpressionNode *arg1 = NULL, ExpressionNode *arg2 = NULL, ExpressionNode *arg3 = NULL, ExpressionNode *arg4 = NULL);
 	// Add a value node, targetting the supplied variable
-	ExpressionNode* addValueNode(ExpressionVariable* var);
+	ExpressionNode *addValueNode(ExpressionVariable *var);
 	// Join two nodes together
-	static ExpressionNode* joinArguments(ExpressionNode* arg1, ExpressionNode* arg2);
+	static ExpressionNode *joinArguments(ExpressionNode *arg1, ExpressionNode *arg2);
 	// Join two commands together
-	ExpressionNode* joinCommands(ExpressionNode* node1, ExpressionNode* node2);
+	ExpressionNode *joinCommands(ExpressionNode *node1, ExpressionNode *node2);
 	// Print statement info
 	void print();
-
 
 	/*
 	 * Variables / Constants
 	 */
-	private:
+      private:
 	// Reference list of variables
 	RefList<ExpressionVariable> variables_;
 	// Reference list of constants
@@ -106,31 +103,30 @@ class Expression
 	// Reference list of external variables
 	RefList<ExpressionVariable> externalVariables_;
 
-	public:
+      public:
 	// Create numeric constant
-	ExpressionVariable* createConstant(ExpressionValue value, bool persistent = false);
+	ExpressionVariable *createConstant(ExpressionValue value, bool persistent = false);
 	// Create integer variable, with optional ExpressionNode as initial value source
-	ExpressionVariable* createIntegerVariable(const char* name, bool persistent = false, ExpressionNode* initialValue = NULL);
+	ExpressionVariable *createIntegerVariable(const char *name, bool persistent = false, ExpressionNode *initialValue = NULL);
 	// Create double variable, with optional ExpressionNode as initial value source
-	ExpressionVariable* createDoubleVariable(const char* name, bool persistent = false, ExpressionNode* initialValue = NULL);
+	ExpressionVariable *createDoubleVariable(const char *name, bool persistent = false, ExpressionNode *initialValue = NULL);
 	// Create variable with supplied initial value
-	ExpressionVariable* createVariableWithValue(const char* name, ExpressionValue initialValue, bool persistent = false);
+	ExpressionVariable *createVariableWithValue(const char *name, ExpressionValue initialValue, bool persistent = false);
 	// Set list of external variables
 	void setExternalVariables(RefList<ExpressionVariable> externalVariables);
 	// Search for variable
-	ExpressionVariable* variable(const char* name);
+	ExpressionVariable *variable(const char *name);
 	// Return list of variables
-	RefList<ExpressionVariable>& variables();
+	RefList<ExpressionVariable> &variables();
 	// Return list of constants
-	RefList<ExpressionVariable>& constants();
-
+	RefList<ExpressionVariable> &constants();
 
 	/*
 	 * Execution
 	 */
-	public:
+      public:
 	// Execute, returning whether successful, and setting result value of some type
-	bool execute(ExpressionValue& result);
+	bool execute(ExpressionValue &result);
 	// Execute and return as integer
 	int asInteger();
 	// Execute and return as double

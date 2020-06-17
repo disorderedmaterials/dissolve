@@ -22,25 +22,13 @@
 #include "modules/calculate_angle/angle.h"
 
 // Return type of module
-const char* CalculateAngleModule::type() const
-{
-	return "CalculateAngle";
-}
+const char *CalculateAngleModule::type() const { return "CalculateAngle"; }
 
 // Return category for module
-const char* CalculateAngleModule::category() const
-{
-	return "Analysis";
-}
+const char *CalculateAngleModule::category() const { return "Analysis"; }
 
 // Return brief description of module
-const char* CalculateAngleModule::brief() const
-{
-	return "Calculate distance/angle maps";
-}
+const char *CalculateAngleModule::brief() const { return "Calculate distance/angle maps"; }
 
 // Return the number of Configuration targets this Module requires
-int CalculateAngleModule::nRequiredTargets() const
-{
-	return Module::ExactlyOneTarget;
-}
+int CalculateAngleModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

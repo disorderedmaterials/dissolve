@@ -19,22 +19,22 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "math/data1d.h"
-#include "base/lineparser.h"
-#include "math/error.h"
 #include "math/poissonfit.h"
+#include "base/lineparser.h"
+#include "math/data1d.h"
+#include "math/error.h"
 #include "math/mc.h"
 #include "math/praxis.h"
 
 // Constructor
-PoissonFit::PoissonFit(const Data1D& referenceData) : expMax_(25.0)
+PoissonFit::PoissonFit(const Data1D &referenceData) : expMax_(25.0)
 {
 	referenceData_ = referenceData;
 
 	alphaSpace_ = FunctionSpace::RealSpace;
-	rBroad_= 0.0;
+	rBroad_ = 0.0;
 	nPoissons_ = 0;
-	ignoreZerothTerm_= true;
+	ignoreZerothTerm_ = true;
 }
 
 /*
@@ -47,20 +47,23 @@ void PoissonFit::generateApproximation(FunctionSpace::SpaceType space)
 	approximateData_.initialise(referenceData_);
 
 	// Sum defined functions
-	for (int n=0; n<nPoissons_; ++n) addFunction(approximateData_, space, C_.constAt(n), n);
+	for (int n = 0; n < nPoissons_; ++n)
+		addFunction(approximateData_, space, C_.constAt(n), n);
 }
 
 // Add contribution to specified Data1D
-void PoissonFit::addFunction(Data1D& data, FunctionSpace::SpaceType space, double C, const int nIndex) const
+void PoissonFit::addFunction(Data1D &data, FunctionSpace::SpaceType space, double C, const int nIndex) const
 {
 	if (space == FunctionSpace::RealSpace)
 	{
-		for (int m=0; m<data.nValues(); ++m) data.value(m) += C * poisson(data.xAxis(m), nIndex);
+		for (int m = 0; m < data.nValues(); ++m)
+			data.value(m) += C * poisson(data.xAxis(m), nIndex);
 	}
 	else
 	{
 		// We assume here that the supplied 'data' has abscissa consistent with the precalculated data
-		for (int m=0; m<data.nValues(); ++m) data.value(m) += C * poissonFT(m, nIndex);
+		for (int m = 0; m < data.nValues(); ++m)
+			data.value(m) += C * poissonFT(m, nIndex);
 	}
 }
 
@@ -69,12 +72,12 @@ double PoissonFit::poisson(const double x, const int nIndex) const
 {
 	/*
 	 * Functional Form [Phys. Rev. B, 72, 104204 (2005) - Eq 7]
-	 * 
+	 *
 	 * 			    1	        (   r   )n     (     r   )
 	 * p[n](r,sigma) = -------------------- ( ----- )  exp ( - ----- )
 	 * 		   4 pi sigma**3 (n+2)! ( sigma )      (   sigma )
 	 *
-	 * Overflows possible from large values of n, so treat everything logged and explicitly check for 
+	 * Overflows possible from large values of n, so treat everything logged and explicitly check for
 	 * values going over some predefined limit (expMax_).
 	 *
 	 * Note: Equation as written does not contain a factor of rho in the denominator, but such a factor
@@ -82,16 +85,17 @@ double PoissonFit::poisson(const double x, const int nIndex) const
 	 * being introduced in the process of generating the empirical potentials instead.
 	 */
 
-	 // Calculate natural log of denominator in prefactor
+	// Calculate natural log of denominator in prefactor
 	double lnFactor = log(fourPiSigmaRCubed_) + lnNPlusTwoFactorial_.constAt(nIndex);
 
 	// At x == 0 only the first function (with nIndex == 0) contributes - all others are zero
-	double exponent = - (x / sigmaR_) - lnFactor - (rBroad_*x);
+	double exponent = -(x / sigmaR_) - lnFactor - (rBroad_ * x);
 	if (x > 0.0)
 	{
-		exponent += n_.constAt(nIndex) * log(x/sigmaR_);
+		exponent += n_.constAt(nIndex) * log(x / sigmaR_);
 	}
-	else if (nIndex != 0) return 0.0;
+	else if (nIndex != 0)
+		return 0.0;
 
 	// Check magnitude of exponent for return
 	// TODO This does *not* prevent a maximum value...
@@ -103,11 +107,11 @@ double PoissonFit::poissonFT(const int qIndex, const int nIndex) const
 {
 	/*
 	 * Functional Form [Phys. Rev. B, 72, 104204 (2005) - Eq 9]
-	 * 
+	 *
 	 * 				     1			(	       1-Q*Q*sigma*sigma	  )
 	 * P[n](Q,sigma) = ------------------------------------ ( 2 cos(n*a) + ----------------- sin(n*a) )
 	 * 		   (n+2) sqrt(1+Q*Q*sigma*sigma)**(n+4) (		     Q*sigma		  )
-	 * 
+	 *
 	 * where a = arctan(Q*sigma).
 	 */
 
@@ -115,18 +119,15 @@ double PoissonFit::poissonFT(const int qIndex, const int nIndex) const
 
 	double na = n * arcTanQSigma_.constAt(qIndex);
 
-	double factor = 1.0 / ( (n+2) * pow(sqrtOnePlusQSqSigmaSq_.constAt(qIndex), n+4) );
+	double factor = 1.0 / ((n + 2) * pow(sqrtOnePlusQSqSigmaSq_.constAt(qIndex), n + 4));
 
-	double value = 2.0 * cos(na) + (oneMinusQSqSigmaSq_.constAt(qIndex) / (referenceData_.constXAxis(qIndex)*sigmaQ_))*sin(na);
+	double value = 2.0 * cos(na) + (oneMinusQSqSigmaSq_.constAt(qIndex) / (referenceData_.constXAxis(qIndex) * sigmaQ_)) * sin(na);
 
 	return factor * value;
 }
 
 // Return approximate function
-const Data1D& PoissonFit::approximation() const
-{
-	return approximateData_;
-}
+const Data1D &PoissonFit::approximation() const { return approximateData_; }
 
 // Calculate and return approximate function in requested space
 Data1D PoissonFit::approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const
@@ -140,7 +141,8 @@ Data1D PoissonFit::approximation(FunctionSpace::SpaceType space, double factor, 
 	}
 
 	// Loop over defined functions
-	for (int n=0; n<nPoissons_; ++n) addFunction(approx, space, C_.constAt(n), n);
+	for (int n = 0; n < nPoissons_; ++n)
+		addFunction(approx, space, C_.constAt(n), n);
 
 	approx.values() *= factor;
 
@@ -187,37 +189,27 @@ void PoissonFit::set(FunctionSpace::SpaceType space, double rMax, Array<double> 
 }
 
 // Return number of Poisson functions in fit
-int PoissonFit::nPoissons() const
-{
-	return nPoissons_;
-}
+int PoissonFit::nPoissons() const { return nPoissons_; }
 
 // Set whether the first coefficient should be ignored (set to zero)
-void PoissonFit::setIgnoreZerothTerm(bool ignore)
-{
-	ignoreZerothTerm_ = ignore;
-}
+void PoissonFit::setIgnoreZerothTerm(bool ignore) { ignoreZerothTerm_ = ignore; }
 
 // Return whether the first coefficient should be ignored (set to zero)
-bool PoissonFit::ignoreZerothTerm() const
-{
-	return ignoreZerothTerm_;
-}
+bool PoissonFit::ignoreZerothTerm() const { return ignoreZerothTerm_; }
 
 // Return current C values
-const Array<double>& PoissonFit::C() const
-{
-	return C_;
-}
+const Array<double> &PoissonFit::C() const { return C_; }
 
 // Save coefficients to specified file
-bool PoissonFit::saveCoefficients(const char* filename) const
+bool PoissonFit::saveCoefficients(const char *filename) const
 {
 	LineParser parser;
-	if (!parser.openOutput(filename)) return false;
+	if (!parser.openOutput(filename))
+		return false;
 
 	parser.writeLineF("#   C\n");
-	for (int n=0; n<nPoissons_; ++n) parser.writeLineF("%f\n", C_.constAt(n));
+	for (int n = 0; n < nPoissons_; ++n)
+		parser.writeLineF("%f\n", C_.constAt(n));
 
 	parser.closeFiles();
 
@@ -232,62 +224,64 @@ bool PoissonFit::saveCoefficients(const char* filename) const
 void PoissonFit::preCalculateTerms()
 {
 	// Factors involving Q
-	const Array<double>& Q = referenceData_.constXAxis();
+	const Array<double> &Q = referenceData_.constXAxis();
 	sqrtOnePlusQSqSigmaSq_.initialise(referenceData_.nValues());
 	oneMinusQSqSigmaSq_.initialise(referenceData_.nValues());
 	arcTanQSigma_.initialise(referenceData_.nValues());
-	for (int n=0; n<referenceData_.nValues(); ++n)
+	for (int n = 0; n < referenceData_.nValues(); ++n)
 	{
-		sqrtOnePlusQSqSigmaSq_[n] = sqrt(1.0 + Q.constAt(n)*Q.constAt(n) * sigmaQ_*sigmaQ_);
-		oneMinusQSqSigmaSq_[n] = 1.0 - Q.constAt(n)*Q.constAt(n) * sigmaQ_*sigmaQ_;
-		arcTanQSigma_[n] = atan(Q.constAt(n)*sigmaQ_);
+		sqrtOnePlusQSqSigmaSq_[n] = sqrt(1.0 + Q.constAt(n) * Q.constAt(n) * sigmaQ_ * sigmaQ_);
+		oneMinusQSqSigmaSq_[n] = 1.0 - Q.constAt(n) * Q.constAt(n) * sigmaQ_ * sigmaQ_;
+		arcTanQSigma_[n] = atan(Q.constAt(n) * sigmaQ_);
 	}
 
 	/*
 	 * Poisson function powers (n)  [Eq 2.3.3]
-	 * 
+	 *
 	 * Values of 'n' and lnGamma are calculated to be consistent with those utilised in EPSR:
-	 * 
+	 *
 	 *   - Stored n, used in prefactor calculation, starts at 0
 	 *   - lnGamma calculated from these values + 3, to give the (n+2) values used in the equation.
 	 */
 	n_.clear();
 	lnNPlusTwoFactorial_.clear();
 	double r = rStep_;
-	int deltaN = floor(rStep_/sigmaR_ + 0.5);
+	int deltaN = floor(rStep_ / sigmaR_ + 0.5);
 	int n = deltaN - 1;
-	for (int i=0; i<nPoissons_; ++i)
+	for (int i = 0; i < nPoissons_; ++i)
 	{
 		// Store n at this r value
 		n_.add((sigmaR_ > 0.0) && (sigmaR_ <= r) ? n : 0);
 
-		// Calculate gamma function for (n+2) - note that this is 'n+3' int ehc 
-		lnNPlusTwoFactorial_.add(lgamma(n_[i]+3));
+		// Calculate gamma function for (n+2) - note that this is 'n+3' int ehc
+		lnNPlusTwoFactorial_.add(lgamma(n_[i] + 3));
 
 		// Increase r and n
 		r += rStep_;
 		n += deltaN;
 	}
-	fourPiSigmaRCubed_ = 4.0 * PI * sigmaR_*sigmaR_*sigmaR_;
+	fourPiSigmaRCubed_ = 4.0 * PI * sigmaR_ * sigmaR_ * sigmaR_;
 }
 
 // Update precalculated function data using specified C
 void PoissonFit::updatePrecalculatedFunctions(FunctionSpace::SpaceType space, double C)
 {
 	functions_.initialise(nPoissons_, referenceData_.nValues());
-	
+
 	if (space == FunctionSpace::RealSpace)
 	{
-		for (int n=0; n<nPoissons_; ++n)
+		for (int n = 0; n < nPoissons_; ++n)
 		{
-			for (int m=0; m<referenceData_.nValues(); ++m) functions_.at(n, m) = C * poisson(referenceData_.xAxis(m), n);
+			for (int m = 0; m < referenceData_.nValues(); ++m)
+				functions_.at(n, m) = C * poisson(referenceData_.xAxis(m), n);
 		}
 	}
-	else 
+	else
 	{
-		for (int n=0; n<nPoissons_; ++n)
+		for (int n = 0; n < nPoissons_; ++n)
 		{
-			for (int m=0; m<referenceData_.nValues(); ++m) functions_.at(n, m) = C * poissonFT(m, n);
+			for (int m = 0; m < referenceData_.nValues(); ++m)
+				functions_.at(n, m) = C * poissonFT(m, n);
 		}
 	}
 }
@@ -307,11 +301,12 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
 
 	currentError_ = 1.0e9;
 
-	for (int loop=0; loop < nLoops; ++loop)
+	for (int loop = 0; loop < nLoops; ++loop)
 	{
 		// Index of the function in the C_ array is given by 'p'
-		int p = loop*(sampleSize/nLoops);
-		if ((p == 0) && ignoreZerothTerm_) p = 1;
+		int p = loop * (sampleSize / nLoops);
+		if ((p == 0) && ignoreZerothTerm_)
+			p = 1;
 		while (p < nPoissons_)
 		{
 			// Generate the approximate data - we will subtract the functions that we are fitting in the next loop
@@ -324,11 +319,11 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
 			MonteCarloMinimiser<PoissonFit> poissonMinimiser(*this, &PoissonFit::costAnalyticC);
 			alphaSpace_ = space;
 
-			// Set-up fitting targets 
-			for (int n=0; n<sampleSize; ++n)
+			// Set-up fitting targets
+			for (int n = 0; n < sampleSize; ++n)
 			{
 				// Add the Poisson coefficients to the fitting pool - ignore any whose x centre is below rMin
-				if (((p+1)*sigmaR_) >= xMin)
+				if (((p + 1) * sigmaR_) >= xMin)
 				{
 					poissonMinimiser.addTarget(C_[p]);
 					alphaIndex_.add(p);
@@ -339,7 +334,8 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
 
 				// Increase function index - if that was the last one, break now
 				++p;
-				if (p == nPoissons_) break;
+				if (p == nPoissons_)
+					break;
 			}
 
 			// Optimise this set of Gaussians
@@ -349,7 +345,8 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
 			Messenger::printVerbose("PoissonFit::reFitC() - P = %i, error = %f\n", p, currentError_);
 
 			// If we are not at the end of the Gaussian array, move the index backwards so the next set overlaps a little with this one
-			if (p < nPoissons_) p -= overlap;
+			if (p < nPoissons_)
+				p -= overlap;
 		}
 	}
 
@@ -360,7 +357,8 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
 }
 
 // Construct suitable representation using given number of Poissons spaced evenly in real space up to rMax (those below rMin will be zeroed)
-double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, double sigmaQ, double sigmaR, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM, bool reFitAtEnd)
+double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, double sigmaQ, double sigmaR, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK,
+				       int smoothingM, bool reFitAtEnd)
 {
 	// Clear any existing data
 	nPoissons_ = nPoissons;
@@ -387,9 +385,10 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
 	alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
 	// Add coefficients for minimising
-	for (int n=(ignoreZerothTerm_ ? 1 : 0); n<nPoissons_; ++n)
+	for (int n = (ignoreZerothTerm_ ? 1 : 0); n < nPoissons_; ++n)
 	{
-		if (((n+1)*sigmaR_) < rMin) continue;
+		if (((n + 1) * sigmaR_) < rMin)
+			continue;
 
 		alphaIndex_.add(n);
 		poissonMinimiser.addTarget(C_[n]);
@@ -398,7 +397,8 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
 	currentError_ = poissonMinimiser.minimise();
 
 	// Perform a final grouped refit of the amplitudes
-	if (reFitAtEnd) sweepFitC(FunctionSpace::ReciprocalSpace, rMin);
+	if (reFitAtEnd)
+		sweepFitC(FunctionSpace::ReciprocalSpace, rMin);
 
 	// Regenerate approximation and calculate percentage error of fit
 	generateApproximation(FunctionSpace::ReciprocalSpace);
@@ -408,7 +408,8 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
 }
 
 // Construct suitable reciprocal-space representation using provided coefficients as a starting point
-double PoissonFit::constructReciprocal(double rMin, double rMax, Array<double> coefficients, double sigmaQ, double sigmaR, int nIterations, double initialStepSize, int smoothingThreshold, int smoothingK, int smoothingM, bool reFitAtEnd)
+double PoissonFit::constructReciprocal(double rMin, double rMax, Array<double> coefficients, double sigmaQ, double sigmaR, int nIterations, double initialStepSize, int smoothingThreshold,
+				       int smoothingK, int smoothingM, bool reFitAtEnd)
 {
 	// Set up data
 	nPoissons_ = coefficients.nItems();
@@ -434,9 +435,10 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, Array<double> c
 	alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
 	// Add coefficients for minimising
-	for (int n=(ignoreZerothTerm_ ? 1 : 0); n<nPoissons_; ++n)
+	for (int n = (ignoreZerothTerm_ ? 1 : 0); n < nPoissons_; ++n)
 	{
-		if (((n+1)*sigmaR_) < rMin) continue;
+		if (((n + 1) * sigmaR_) < rMin)
+			continue;
 
 		alphaIndex_.add(n);
 		poissonMinimiser.addTarget(C_[n]);
@@ -445,7 +447,8 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, Array<double> c
 	currentError_ = poissonMinimiser.minimise();
 
 	// Perform a final grouped refit of the amplitudes
-	if (reFitAtEnd) sweepFitC(FunctionSpace::ReciprocalSpace, rMin);
+	if (reFitAtEnd)
+		sweepFitC(FunctionSpace::ReciprocalSpace, rMin);
 
 	// Regenerate approximation and calculate percentage error of fit
 	generateApproximation(FunctionSpace::ReciprocalSpace);
@@ -459,7 +462,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, Array<double> c
  */
 
 // One-parameter cost function (amplitude) with alpha array containing A values, including current approximate data into sum
-double PoissonFit::costAnalyticC(const Array<double>& alpha)
+double PoissonFit::costAnalyticC(const Array<double> &alpha)
 {
 	double sose = 0.0;
 	double multiplier = 1.0;
@@ -467,16 +470,16 @@ double PoissonFit::costAnalyticC(const Array<double>& alpha)
 	int nIndex;
 	double C;
 
-	// Loop over data points, add in our Gaussian contributions, and 
+	// Loop over data points, add in our Gaussian contributions, and
 	double x, y, dy;
-	for (int i=0; i<approximateData_.nValues(); ++i)
+	for (int i = 0; i < approximateData_.nValues(); ++i)
 	{
 		// Get approximate data x and y for this point
 		x = approximateData_.xAxis(i);
 		y = approximateData_.value(i);
 
 		// Add in contributions from our Gaussians
-		for (int n=0; n<alpha.nItems(); ++n)
+		for (int n = 0; n < alpha.nItems(); ++n)
 		{
 			nIndex = alphaIndex_[n];
 			C = alpha.constAt(n);
@@ -485,29 +488,30 @@ double PoissonFit::costAnalyticC(const Array<double>& alpha)
 		}
 
 		dy = referenceData_.value(i) - y;
-		sose += dy*dy;
+		sose += dy * dy;
 	}
 
 	return sose * multiplier;
 }
 
 // One-parameter cost function (coefficient) using pre-calculated function array, including current approximate data in sum
-double PoissonFit::costTabulatedC(const Array<double>& alpha)
+double PoissonFit::costTabulatedC(const Array<double> &alpha)
 {
 	double sose = 0.0;
 
 	double y, dy;
 	int nAlpha = alpha.nItems();
-	for (int i=0; i<approximateData_.nValues(); ++i)
+	for (int i = 0; i < approximateData_.nValues(); ++i)
 	{
 		// Get approximate data x and y for this point
 		y = approximateData_.value(i);
 
 		// Add in contributions from our Gaussians
-		for (int n=0; n<nAlpha; ++n) y += functions_.at(alphaIndex_[n], i) * alpha.constAt(n);
+		for (int n = 0; n < nAlpha; ++n)
+			y += functions_.at(alphaIndex_[n], i) * alpha.constAt(n);
 
 		dy = referenceData_.value(i) - y;
-		sose += dy*dy;
+		sose += dy * dy;
 	}
 
 	return sose;

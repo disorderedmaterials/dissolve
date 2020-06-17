@@ -33,29 +33,28 @@ class GetGizmoNameDialog : public QDialog
 {
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	GetGizmoNameDialog(QWidget* parent);
+	GetGizmoNameDialog(QWidget *parent);
 	// Destructor
 	~GetGizmoNameDialog();
 
-	private:
+      private:
 	// Main form declaration
 	Ui::GetGizmoNameDialog ui_;
 	// Current Gizmo that we are renaming
-	const Gizmo* currentGizmo_;
+	const Gizmo *currentGizmo_;
 
-	public:
+      public:
 	// Run the dialog
-	bool get(const Gizmo* currentGizmo, const char* currentName);
+	bool get(const Gizmo *currentGizmo, const char *currentName);
 	// Return the name string
 	QString newName() const;
-
 
 	/*
 	 * Slots
 	 */
-	private slots:
+      private slots:
 	void on_NameEdit_textChanged(const QString text);
 	void on_CancelButton_clicked(bool checked);
 	void on_OKButton_clicked(bool checked);

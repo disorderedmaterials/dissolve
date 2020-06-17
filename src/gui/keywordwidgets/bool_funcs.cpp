@@ -19,15 +19,16 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/bool.hui"
 #include "genericitems/listhelper.h"
+#include "gui/keywordwidgets/bool.hui"
 
 // Constructor
-BoolKeywordWidget::BoolKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QCheckBox(parent), KeywordWidgetBase(coreData)
+BoolKeywordWidget::BoolKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QCheckBox(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<BoolKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into BoolKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<BoolKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into BoolKeyword.\n", keyword->name());
 	else
 	{
 		// Set current value
@@ -45,7 +46,8 @@ BoolKeywordWidget::BoolKeywordWidget(QWidget* parent, KeywordBase* keyword, cons
 // Check box state changed
 void BoolKeywordWidget::myClicked(bool checked)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	keyword_->setData(checked);
 

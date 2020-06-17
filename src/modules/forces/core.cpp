@@ -33,16 +33,11 @@ ForcesModule::ForcesModule() : Module()
 }
 
 // Destructor
-ForcesModule::~ForcesModule()
-{
-}
+ForcesModule::~ForcesModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* ForcesModule::createInstance() const
-{
-	return new ForcesModule;
-}
+Module *ForcesModule::createInstance() const { return new ForcesModule; }

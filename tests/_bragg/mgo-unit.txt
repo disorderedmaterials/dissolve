@@ -25,8 +25,8 @@ PairPotentials
   # Atom Type Parameters
   # Note: These are for reference only (unless GenerateAll is used).
   # If you wish to modify the potential, change the relevant Generate lines below.
-  Parameters  Mg  0.000000e+00  1.000000e+00  2.501000e+00  0.000000e+00  0.000000e+00
-  Parameters  O   0.000000e+00  1.000000e+00  2.501000e+00  0.000000e+00  0.000000e+00
+  Parameters  Mg  Mg  0.000000e+00  1.000000e+00  2.501000e+00  0.000000e+00  0.000000e+00
+  Parameters  O  O   0.000000e+00  1.000000e+00  2.501000e+00  0.000000e+00  0.000000e+00
   GenerateAll  LJ
   Range  2.000000
   Delta  0.005000

@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_GIZMOS_GRAPH_H
 #define DISSOLVE_GIZMOS_GRAPH_H
 
-#include "gui/ui_graphgizmo.h"
 #include "gui/gizmo.h"
+#include "gui/ui_graphgizmo.h"
 #include "math/sampleddouble.h"
 
 // Forward Declarations
@@ -35,32 +35,30 @@ class GraphGizmo : public QWidget, public Gizmo
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	GraphGizmo(Dissolve& dissolve, const char* uniqueName);
+	GraphGizmo(Dissolve &dissolve, const char *uniqueName);
 	~GraphGizmo();
-
 
 	/*
 	 * Core
 	 */
-	public:
+      public:
 	// Return string specifying Gizmo type
-	const char* type() const;
-
+	const char *type() const;
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::GraphGizmo ui_;
 
-	protected:
+      protected:
 	// Window close event
-	void closeEvent(QCloseEvent* event);
+	void closeEvent(QCloseEvent *event);
 
-	public:
+      public:
 	// Update controls within widget
 	void updateControls();
 	// Disable sensitive controls within widget
@@ -68,45 +66,41 @@ class GraphGizmo : public QWidget, public Gizmo
 	// Enable sensitive controls within widget
 	void enableSensitiveControls();
 
-
 	/*
 	 * Data Handling
 	 */
-	public:
+      public:
 	// Return whether this Gizmo accepts data of the specified type
-	bool acceptsData(const char* dataType);
+	bool acceptsData(const char *dataType);
 	// Send data (referenced by its object tag) to the Gizmo
-	bool sendData(const char* dataType, const char* objectTag, const char* name);
-
+	bool sendData(const char *dataType, const char *objectTag, const char *name);
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Pointer to our DataViewer
-	DataViewer* dataViewer_;
+	DataViewer *dataViewer_;
 
-	public:
+      public:
 	// Return pointer to the contained DataViewer
-	DataViewer* dataViewer() const;
-
+	DataViewer *dataViewer() const;
 
 	/*
 	 * State
 	 */
-	public:
+      public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser) const;
+	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
+	bool readState(LineParser &parser);
 
 	/*
 	 * Widget Signals / Slots
 	 */
-	private slots:
+      private slots:
 
-	signals:
+      signals:
 	void windowClosed(QString windowTitle);
 };
 

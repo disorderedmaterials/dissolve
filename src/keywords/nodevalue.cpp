@@ -20,46 +20,33 @@
 */
 
 #include "keywords/nodevalue.h"
-#include "procedure/nodes/node.h"
 #include "base/lineparser.h"
+#include "procedure/nodes/node.h"
 
 // Constructor
-NodeValueKeyword::NodeValueKeyword(ProcedureNode* parentNode, NodeValue value) : KeywordData<NodeValue>(KeywordData::NodeValueData, value)
-{
-	parentNode_ = parentNode;
-}
+NodeValueKeyword::NodeValueKeyword(ProcedureNode *parentNode, NodeValue value) : KeywordData<NodeValue>(KeywordData::NodeValueData, value) { parentNode_ = parentNode; }
 
 // Destructor
-NodeValueKeyword::~NodeValueKeyword()
-{
-}
+NodeValueKeyword::~NodeValueKeyword() {}
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int NodeValueKeyword::minArguments() const
-{
-	return 1;
-}
+int NodeValueKeyword::minArguments() const { return 1; }
 
 // Return maximum number of arguments accepted
-int NodeValueKeyword::maxArguments() const
-{
-	return 1;
-}
+int NodeValueKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool NodeValueKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
-{
-	return setValue(parser.argc(startArg));
-}
+bool NodeValueKeyword::read(LineParser &parser, int startArg, const CoreData &coreData) { return setValue(parser.argc(startArg)); }
 
 // Write keyword data to specified LineParser
-bool NodeValueKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool NodeValueKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
-	if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_.asString().get())) return false;
+	if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_.asString().get()))
+		return false;
 
 	return true;
 }
@@ -69,9 +56,10 @@ bool NodeValueKeyword::write(LineParser& parser, const char* keywordName, const 
  */
 
 // Set the value from supplied expression text
-bool NodeValueKeyword::setValue(const char* expressionText)
+bool NodeValueKeyword::setValue(const char *expressionText)
 {
-	if (!data_.set(expressionText, parentNode_->parametersInScope())) return false;
+	if (!data_.set(expressionText, parentNode_->parametersInScope()))
+		return false;
 
 	set_ = true;
 
@@ -83,16 +71,10 @@ bool NodeValueKeyword::setValue(const char* expressionText)
  */
 
 // Return value (as int)
-int NodeValueKeyword::asInt()
-{
-	return data_.asInteger();
-}
+int NodeValueKeyword::asInt() { return data_.asInteger(); }
 
 // Return value (as double)
-double NodeValueKeyword::asDouble()
-{
-	return data_.asDouble();
-}
+double NodeValueKeyword::asDouble() { return data_.asDouble(); }
 
 /*
  * Object Management

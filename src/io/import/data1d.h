@@ -32,57 +32,66 @@ class ProcessPool;
 // Data1D Import Formats
 class Data1DImportFileFormat : public FileAndFormat
 {
-	public:
+      public:
 	// Data1D Formats
-	enum Data1DImportFormat { XYData1D, HistogramData1D, GudrunMintData1D, nData1DImportFormats };
-	// Constructor
+	enum Data1DImportFormat
+	{
+		XYData1D,
+		HistogramData1D,
+		GudrunMintData1D,
+		nData1DImportFormats
+	};
+	// Constructors
 	Data1DImportFileFormat(Data1DImportFormat format = XYData1D);
+	Data1DImportFileFormat(const char *filename, Data1DImportFormat format = XYData1D);
 	// Destructor
 	~Data1DImportFileFormat();
 
+	/*
+	 * Keyword Options
+	 */
+      private:
+	// Set up keywords for the format
+	void setUpKeywords();
 
 	/*
 	 * Format Access
 	 */
-	public:
+      public:
+	// Return enum options for Data1DImportFormat
+	static EnumOptions<Data1DImportFileFormat::Data1DImportFormat> data1DImportFormats();
 	// Return number of available formats
 	int nFormats() const;
-	// Return formats array
-	const char** formats() const;
-	// Return nice formats array
-	const char** niceFormats() const;
+	// Return format keyword for supplied index
+	const char *formatKeyword(int id) const;
+	// Return description string for supplied index
+	const char *formatDescription(int id) const;
 	// Return current format as Data1DImportFormat
 	Data1DImportFormat data1DFormat() const;
-
 
 	/*
 	 * Filename / Basename
 	 */
-	public:
+      public:
 	// Return whether the file must exist
-	bool fileMustExist() const
-	{
-		return true;
-	}
-
+	bool fileMustExist() const { return true; }
 
 	/*
 	 * Import Functions
 	 */
-	private:
+      private:
 	// Import simple XY data using specified parser
-	bool importXY(LineParser& parser, Data1D& data);
+	bool importXY(LineParser &parser, Data1D &data);
 	// Import simple histogram data using specified parser
-	bool importHistogram(LineParser& parser, Data1D& data);
+	bool importHistogram(LineParser &parser, Data1D &data);
 	// Import Gudrun merged interference cross-section (mint) data using specified parser
-	bool importGudrunMint(LineParser& parser, Data1D& data);
+	bool importGudrunMint(LineParser &parser, Data1D &data);
 
-	public:
+      public:
 	// Import Data1D using current filename and format
-	bool importData(Data1D& data, ProcessPool* procPool = NULL);
+	bool importData(Data1D &data, ProcessPool *procPool = NULL);
 	// Import Data1D using supplied parser and current format
-	bool importData(LineParser& parser, Data1D& data);
+	bool importData(LineParser &parser, Data1D &data);
 };
 
 #endif
-

@@ -22,11 +22,12 @@
 #ifndef DISSOLVE_ATOM_H
 #define DISSOLVE_ATOM_H
 
-#include "templates/vector3.h"
-#include "templates/reflist.h"
 #include "templates/dynamicarrayobject.h"
-#include "templates/pointerarray.h"
 #include "templates/orderedpointerdataarray.h"
+#include "templates/reflist.h"
+#include "templates/vector3.h"
+#include <memory>
+#include <vector>
 
 // Forward Declarations
 class Cell;
@@ -37,25 +38,23 @@ class SpeciesAtom;
 // Atom Definition
 class Atom : public DynamicArrayObject<Atom>
 {
-	public:
+      public:
 	// Constructor
 	Atom();
 	// Destructor
 	~Atom();
 
-
 	/*
 	 * DynamicArrayObject Virtuals
 	 */
-	public:
+      public:
 	// Clear object, ready for re-use
 	void clear();
-
 
 	/*
 	 * Properties
 	 */
-	private:
+      private:
 	// Coordinates
 	Vec3<double> r_;
 	// Assigned AtomType index, local to Configuration (for partial indexing etc.)
@@ -63,13 +62,13 @@ class Atom : public DynamicArrayObject<Atom>
 	// Assigned master AtomType index (for pair potential indexing)
 	int masterTypeIndex_;
 
-	public:
+      public:
 	// Set coordinates
 	void set(const Vec3<double> r);
 	// Set coordinates
 	void set(double rx, double ry, double rz);
 	// Return coordinates
-	const Vec3<double>& r() const;
+	const Vec3<double> &r() const;
 	// Return x-coordinate
 	double x() const;
 	// Return y-coordinate
@@ -80,58 +79,55 @@ class Atom : public DynamicArrayObject<Atom>
 	void setLocalTypeIndex(int id);
 	// Return local AtomType index
 	int localTypeIndex() const;
-	// Set master AtomType index 
+	// Set master AtomType index
 	void setMasterTypeIndex(int id);
-	// Return master AtomType index 
+	// Return master AtomType index
 	int masterTypeIndex() const;
-
 
 	/*
 	 * Location
 	 */
-	private:
+      private:
 	// SpeciesAtom that this Atom represents
-	const SpeciesAtom* speciesAtom_;
+	const SpeciesAtom *speciesAtom_;
 	// Molecule in which this Atom exists
-	Molecule* molecule_;
+	std::shared_ptr<Molecule> molecule_;
 	// Cell in which the atom exists
-	Cell* cell_;
+	Cell *cell_;
 
-	public:
+      public:
 	// Set SpeciesAtom that this Atom represents
-	void setSpeciesAtom(const SpeciesAtom* spAtom);
+	void setSpeciesAtom(const SpeciesAtom *spAtom);
 	// Return SpeciesAtom that this Atom represents
-	const SpeciesAtom* speciesAtom() const;
-	// Set Molecule in which this Atom exists 
-	void setMolecule(Molecule* mol);
+	const SpeciesAtom *speciesAtom() const;
+	// Set Molecule in which this Atom exists
+	void setMolecule(std::shared_ptr<Molecule> mol);
 	// Return Molecule in which this Atom exists
-	Molecule* molecule() const;
+	std::shared_ptr<Molecule> molecule() const;
 	// Set cell in which the atom exists
-	void setCell(Cell* cell);
+	void setCell(Cell *cell);
 	// Return cell in which the atom exists
-	Cell* cell() const;
-
+	Cell *cell() const;
 
 	/*
 	 * Coordinate Manipulation
 	 */
-	public:
+      public:
 	// Set coordinates
-	void setCoordinates(const Vec3<double>& newr);
+	void setCoordinates(const Vec3<double> &newr);
 	// Set coordinates
 	void setCoordinates(double dx, double dy, double dz);
 	// Translate coordinates
-	void translateCoordinates(const Vec3<double>& delta);
+	void translateCoordinates(const Vec3<double> &delta);
 	// Translate coordinates
 	void translateCoordinates(double dx, double dy, double dz);
 
-
 	/*
-	* Intramolecular Information
-	*/
-	public:
+	 * Intramolecular Information
+	 */
+      public:
 	// Return scaling factor to employ with specified Atom
-	double scaling(Atom* j) const;
+	double scaling(Atom *j) const;
 };
 
 #endif

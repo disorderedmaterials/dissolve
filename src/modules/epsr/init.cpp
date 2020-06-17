@@ -19,15 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/epsr/epsr.h"
 #include "keywords/types.h"
+#include "modules/epsr/epsr.h"
 
 // Return enum option info for ExpansionFunctionType
 EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionTypes()
 {
-	static EnumOptionsList ExpansionFunctionTypeOptions = EnumOptionsList() << 
-		EnumOption(EPSRModule::PoissonExpansionFunction, 	"Poisson") << 
-		EnumOption(EPSRModule::GaussianExpansionFunction, 	"Gaussian");
+	static EnumOptionsList ExpansionFunctionTypeOptions = EnumOptionsList()
+							      << EnumOption(EPSRModule::PoissonExpansionFunction, "Poisson") << EnumOption(EPSRModule::GaussianExpansionFunction, "Gaussian");
 
 	static EnumOptions<EPSRModule::ExpansionFunctionType> options("ExpansionFunctionType", ExpansionFunctionTypeOptions, EPSRModule::PoissonExpansionFunction);
 
@@ -40,7 +39,8 @@ void EPSRModule::initialise()
 	groupedTargets_.addAllowedModuleType("NeutronSQ");
 
 	// Calculation
-	keywords_.add("Calculation", new BoolKeyword(true), "OnlyWhenEnergyStable", "Assesses the energy of all involved Configurations, refining the potential only when all their total energies are stable");
+	keywords_.add("Calculation", new BoolKeyword(true), "OnlyWhenEnergyStable",
+		      "Assesses the energy of all involved Configurations, refining the potential only when all their total energies are stable");
 	keywords_.add("Calculation", new DoubleKeyword(3.0, -1.0), "EReq", "Limit of magnitude of additional potential for any one pair potential");
 	keywords_.add("Calculation", new DoubleKeyword(0.8, 0.0, 1.0), "Feedback", "Confidence factor");
 	keywords_.add("Calculation", new BoolKeyword(true), "ModifyPotential", "Whether to apply generated perturbations to interatomic potentials");
@@ -50,7 +50,8 @@ void EPSRModule::initialise()
 	keywords_.add("Calculation", new DoubleKeyword(1.0, 0.0, 10.0), "Weighting", "Factor used when adding fluctuation coefficients to pair potentials");
 
 	// Expansion Function
-	keywords_.add("Expansion Function", new EnumOptionsKeyword<EPSRModule::ExpansionFunctionType>(EPSRModule::expansionFunctionTypes() = EPSRModule::PoissonExpansionFunction), "ExpansionFunction", "Form of expansion function to use when fitting difference data");
+	keywords_.add("Expansion Function", new EnumOptionsKeyword<EPSRModule::ExpansionFunctionType>(EPSRModule::expansionFunctionTypes() = EPSRModule::PoissonExpansionFunction), "ExpansionFunction",
+		      "Form of expansion function to use when fitting difference data");
 	keywords_.add("Expansion Function", new DoubleKeyword(0.1, 0.001, 1.0), "GSigma1", "Width for Gaussian function in reciprocal space");
 	keywords_.add("Expansion Function", new DoubleKeyword(0.2, 0.001, 1.0), "GSigma2", "Width for Gaussian function in real space");
 	keywords_.add("Expansion Function", new IntegerKeyword(-1, -1), "NCoeffP", "Number of coefficients used to define the empirical potential (-1 for automatic)");
@@ -73,4 +74,3 @@ void EPSRModule::initialise()
 	keywords_.add("Export", new BoolKeyword(false), "SaveEstimatedPartials", "Whether to save estimated partials", "<True|False>");
 	keywords_.add("Export", new BoolKeyword(false), "SavePCof", "Whether to save potential coefficients", "<True|False>");
 }
-

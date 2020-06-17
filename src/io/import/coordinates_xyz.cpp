@@ -19,29 +19,31 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "io/import/coordinates.h"
 #include "base/lineparser.h"
+#include "io/import/coordinates.h"
 
 // Import xyz coordinates through specified parser
-bool CoordinateImportFileFormat::importXYZ(LineParser& parser, Array< Vec3<double> >& r)
+bool CoordinateImportFileFormat::importXYZ(LineParser &parser, Array<Vec3<double>> &r)
 {
 	Messenger::print(" --> Importing coordinates in xyz format...\n");
 
 	// Import in natoms
-	if (parser.getArgsDelim() != LineParser::Success) return false;
+	if (parser.getArgsDelim() != LineParser::Success)
+		return false;
 	int nAtoms = parser.argi(0);
 
 	// Skip title
-	if (parser.skipLines(1) != LineParser::Success) return false;
+	if (parser.skipLines(1) != LineParser::Success)
+		return false;
 
 	Messenger::print(" --> Expecting coordinates for %i atoms.\n", nAtoms);
 	r.clear();
-	for (int n=0; n<nAtoms; ++n)
+	for (int n = 0; n < nAtoms; ++n)
 	{
-		if (parser.getArgsDelim() != LineParser::Success) return false;
+		if (parser.getArgsDelim() != LineParser::Success)
+			return false;
 		r.add(parser.arg3d(1));
 	}
 
 	return true;
 }
-

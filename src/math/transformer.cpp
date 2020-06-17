@@ -20,13 +20,12 @@
 */
 
 #include "math/transformer.h"
+#include "data3d.h"
 #include "expression/generator.h"
 #include "expression/variable.h"
 #include "math/data1d.h"
-#include "templates/array.h"
 #include "math/data2d.h"
-#include "data3d.h"
-
+#include "templates/array.h"
 
 // Constructor
 Transformer::Transformer()
@@ -40,18 +39,13 @@ Transformer::Transformer()
 }
 
 // Destructor
-Transformer::~Transformer()
-{
-}
+Transformer::~Transformer() {}
 
 // Copy constructor
-Transformer::Transformer(const Transformer& source)
-{
-	(*this) = source;
-}
+Transformer::Transformer(const Transformer &source) { (*this) = source; }
 
 // Assignment operator
-void Transformer::operator=(const Transformer& source)
+void Transformer::operator=(const Transformer &source)
 {
 	// Set equation from old expression
 	setEquation(source.text_.get());
@@ -63,19 +57,13 @@ void Transformer::operator=(const Transformer& source)
  */
 
 // Set whether transform is enabled
-void Transformer::setEnabled(bool b)
-{
-	enabled_ = b;
-}
+void Transformer::setEnabled(bool b) { enabled_ = b; }
 
 // Return whether transform is enabled
-bool Transformer::enabled() const
-{
-	return enabled_;
-}
+bool Transformer::enabled() const { return enabled_; }
 
 // Set equation, returning if it was successfully generated
-bool Transformer::setEquation(const char* equation)
+bool Transformer::setEquation(const char *equation)
 {
 	text_ = equation;
 	valid_ = equation_.set(text_);
@@ -84,33 +72,28 @@ bool Transformer::setEquation(const char* equation)
 }
 
 // Return text used to generate last equation_
-const char* Transformer::text() const
-{
-	return text_.get();
-}
+const char *Transformer::text() const { return text_.get(); }
 
 // Return whether current equation is valid
-bool Transformer::valid() const
-{
-	return valid_;
-}
+bool Transformer::valid() const { return valid_; }
 
 /*
  * Transform Values
  */
 
 // Transform supplied Data1D values
-void Transformer::transformValues(Data1D& data)
+void Transformer::transformValues(Data1D &data)
 {
 	// If Transformer isn't enabled, return now
-	if (!enabled_) return;
+	if (!enabled_)
+		return;
 
 	// Get references to x and value arrays, and take copies of each
-	const Array<double>& xAxis = data.constXAxis();
-	Array<double>& values = data.values();
+	const Array<double> &xAxis = data.constXAxis();
+	Array<double> &values = data.values();
 
 	// Data1D x and value (y) arrays are of same size - loop over number of values
-	for (int n=0; n<data.nValues(); ++n)
+	for (int n = 0; n < data.nValues(); ++n)
 	{
 		// Set values in equations
 		x_->set(xAxis.constAt(n));
@@ -123,24 +106,25 @@ void Transformer::transformValues(Data1D& data)
 }
 
 // Transform supplied Data2D values
-void Transformer::transformValues(Data2D& data)
+void Transformer::transformValues(Data2D &data)
 {
 	// If Transformer isn't enabled, return now
-	if (!enabled_) return;
+	if (!enabled_)
+		return;
 
 	// Get references to x and value arrays, and take copies of each
-	const Array<double>& xAxis = data.constXAxis();
-	const Array<double>& yAxis = data.constYAxis();
-	Array2D<double>& values = data.values();
+	const Array<double> &xAxis = data.constXAxis();
+	const Array<double> &yAxis = data.constYAxis();
+	Array2D<double> &values = data.values();
 
 	// Data2D x and y arrays may be of different sizes
-	for (int i=0; i<xAxis.nItems(); ++i)
+	for (int i = 0; i < xAxis.nItems(); ++i)
 	{
 		// Set x value in equation
 		x_->set(xAxis.constAt(i));
 
 		// Loop over Y axis points
-		for (int j=0; j<yAxis.nItems(); ++j)
+		for (int j = 0; j < yAxis.nItems(); ++j)
 		{
 			// Set y and value (z) values in equation
 			y_->set(yAxis.constAt(j));
@@ -148,37 +132,38 @@ void Transformer::transformValues(Data2D& data)
 			value_->set(values.at(i, j));
 
 			// Perform transform
-			values.at(i,j) = equation_.asDouble();
+			values.at(i, j) = equation_.asDouble();
 		}
 	}
 }
 
 // Transform supplied Data1D values
-void Transformer::transformValues(Data3D& data)
+void Transformer::transformValues(Data3D &data)
 {
 	// If Transformer isn't enabled, return now
-	if (!enabled_) return;
+	if (!enabled_)
+		return;
 
 	// Get references to x and value arrays, and take copies of each
-	const Array<double>& xAxis = data.constXAxis();
-	const Array<double>& yAxis = data.constYAxis();
-	const Array<double>& zAxis = data.constZAxis();
-	Array3D<double>& values = data.values();
+	const Array<double> &xAxis = data.constXAxis();
+	const Array<double> &yAxis = data.constYAxis();
+	const Array<double> &zAxis = data.constZAxis();
+	Array3D<double> &values = data.values();
 
 	// Data3D x, y and z arrays may be of different sizes
-	for (int i=0; i<xAxis.nItems(); ++i)
+	for (int i = 0; i < xAxis.nItems(); ++i)
 	{
 		// Set x value in equation
 		x_->set(xAxis.constAt(i));
 
 		// Loop over Y axis points
-		for (int j=0; j<yAxis.nItems(); ++j)
+		for (int j = 0; j < yAxis.nItems(); ++j)
 		{
 			// Set y and value (z) values in equation
 			y_->set(yAxis.constAt(j));
 
 			// Loop over z values
-			for (int k=0; k<zAxis.nItems(); ++k)
+			for (int k = 0; k < zAxis.nItems(); ++k)
 			{
 				z_->set(values.at(i, j, k));
 				value_->set(values.at(i, j, k));

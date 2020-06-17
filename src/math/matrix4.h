@@ -31,36 +31,34 @@ class Matrix3;
 // Column-major 4x4 matrix
 class Matrix4
 {
-	public:
+      public:
 	// Constructor
 	Matrix4();
-	
-	private:
+
+      private:
 	// Matrix4
 	double matrix_[16];
-
 
 	/*
 	 * Operators
 	 */
-	public:
-	Matrix4 operator*(const Matrix4& B) const;
+      public:
+	Matrix4 operator*(const Matrix4 &B) const;
 	Matrix4 operator*(const double a) const;
-	Matrix4 operator+(const Matrix4& B) const;
-	Matrix4 operator-(const Matrix4& B) const;
-	Vec3<double> operator*(const Vec3<double>& v) const;
-	Vec4<double> operator*(const Vec4<double>& v) const;
-	Matrix4& operator*=(const Matrix4& B);
-	double& operator[](int);
-	void operator=(const Matrix3& B);
+	Matrix4 operator+(const Matrix4 &B) const;
+	Matrix4 operator-(const Matrix4 &B) const;
+	Vec3<double> operator*(const Vec3<double> &v) const;
+	Vec4<double> operator*(const Vec4<double> &v) const;
+	Matrix4 &operator*=(const Matrix4 &B);
+	double &operator[](int);
+	void operator=(const Matrix3 &B);
 	// Pre-multiply this matrix by the supplied matrix
-	void preMultiply(const Matrix4& B);
-
+	void preMultiply(const Matrix4 &B);
 
 	/*
 	 * Basic Set/Get
 	 */
-	public:
+      public:
 	// Reset the matrix to the identity
 	void setIdentity();
 	// Prints the matrix to stdout
@@ -68,19 +66,18 @@ class Matrix4
 	// Set the zero matrix
 	void zero();
 	// Return matrix array
-	const double* matrix() const;
+	const double *matrix() const;
 	// Return transpose of current matrix
-	Matrix4& transpose() const;
+	Matrix4 &transpose() const;
 	// Calculate determinant
 	double determinant() const;
 	// Invert matrix
 	void invert();
 
-
 	/*
 	 * Column Operations
 	 */
-	public:
+      public:
 	// Copy column contents to supplied Vec3
 	Vec3<double> columnAsVec3(int col) const;
 	// Copy column contents to supplied Vec4
@@ -114,11 +111,10 @@ class Matrix4
 	// Orthogonalise rotation matrix column w.r.t. one (or two) other columns)
 	void orthogonaliseColumn(int targetcol, int orthcol1, int orthocol2 = -1);
 
-
 	/*
 	 * Rotations
 	 */
-	public:
+      public:
 	// Create rotation matrix about X
 	void createRotationX(double angle);
 	// Create XY rotation matrix
@@ -146,15 +142,14 @@ class Matrix4
 	// Apply axis rotation quaternion, premultiplying with current matrix
 	void applyPreRotationAxis(double ax, double ay, double az, double angle, bool normalise);
 	// Set rotation matrix
-	void setRotation(const Matrix3& rotation);
+	void setRotation(const Matrix3 &rotation);
 	// Apply rotation matrix
-	void applyRotation(const Matrix3& B);
-
+	void applyRotation(const Matrix3 &B);
 
 	/*
 	 * Translations
 	 */
-	public:
+      public:
 	// Create a translation matrix (as glTranslated would do)
 	void createTranslation(double dx, double dy, double dz);
 	// Create a translation matrix (as glTranslated would do)
@@ -182,11 +177,10 @@ class Matrix4
 	// Set translation in the matrix
 	void setTranslation(double x, double y, double z);
 
-
 	/*
 	 * Scaling
 	 */
-	public:
+      public:
 	// Apply a general scaling to the matrix
 	void applyScaling(double scalex, double scaley, double scalez);
 	// Apply a general scaling to the matrix
@@ -202,11 +196,10 @@ class Matrix4
 	// Apply a z-scaling to the matrix
 	void applyScalingZ(double scale);
 
-
 	/*
 	 * Transforms
 	 */
-	public:
+      public:
 	// Transform coordinates supplied and return as Vec3<double>
 	Vec3<double> transform(double x, double y, double z) const;
 	// Transform coordinates supplied and return as Vec3<double>
@@ -222,16 +215,14 @@ class Matrix4
 	// Remove translation and scaling parts, leaving rotation only
 	void removeTranslationAndScaling();
 	// Copy translation and scaling parts from specified matrix
-	void copyTranslationAndScaling(Matrix4& source);
-
+	void copyTranslationAndScaling(Matrix4 &source);
 
 	/*
 	 * Shearing
 	 */
-	public:
+      public:
 	// Apply a shearing along X
 	void applyShearX(double shearx);
 };
 
 #endif
-

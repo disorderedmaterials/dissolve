@@ -22,26 +22,26 @@
 #ifndef DISSOLVE_RENDER_VERTEXCHUNK_H
 #define DISSOLVE_RENDER_VERTEXCHUNK_H
 
-#include <QtGui/qopengl.h>
 #include "math/constants.h"
+#include <QtGui/qopengl.h>
 
 #define VERTEXCHUNKSIZE 1020
 
 // Chunk of triangles
 class VertexChunk
 {
-	public:
+      public:
 	// Constructor / Destructor
 	VertexChunk();
 	~VertexChunk();
 	// List pointers
-	VertexChunk* prev, *next;
-	
-	private:
+	VertexChunk *prev, *next;
+
+      private:
 	// Vertex data array (containing normal and possibly colour data)
-	GLfloat* vertexData_;
+	GLfloat *vertexData_;
 	// Centroid array
-	GLfloat* centroids_;
+	GLfloat *centroids_;
 	// Number of data points per vertex (NR=6, CNR=10)
 	int dataPerVertex_;
 	// Number of defined vertices in current chunk
@@ -54,12 +54,12 @@ class VertexChunk
 	GLenum type_;
 	// Number of vertices per primitive type
 	int verticesPerType_;
-	
-	private:
+
+      private:
 	// Update (and finalise) centroid for current primitive type
 	void updateCentroid(GLfloat x, GLfloat y, GLfloat z, bool finalise);
-	
-	public:
+
+      public:
 	// Initialise structure
 	void initialise(GLenum type, bool colourData);
 	// Forget all vertex data currently stored in array (but retain array)
@@ -67,7 +67,7 @@ class VertexChunk
 	// Define next vertex and normal
 	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, bool calcCentroid = true);
 	// Define next vertex, normal, and colour (as array)
-	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat* colour, bool calcCentroid = true);
+	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat *colour, bool calcCentroid = true);
 	// Define next vertex, normal, and colour
 	void defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, GLfloat r, GLfloat g, GLfloat b, GLfloat a, bool calcCentroid = true);
 	// Return whether current array is full
@@ -75,9 +75,9 @@ class VertexChunk
 	// Return number of defined primitive (GL) types
 	int nDefinedTypes();
 	// Return vertex array
-	GLfloat* vertexData();
+	GLfloat *vertexData();
 	// Return centroid array
-	GLfloat* centroids();
+	GLfloat *centroids();
 	// Return number of defined vertices in chunk
 	int nDefinedVertices();
 	// Send to OpenGL (i.e. render)

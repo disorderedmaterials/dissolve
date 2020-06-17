@@ -31,16 +31,15 @@ class ProcessPool;
 // Double value with sampling
 class SampledDouble : public GenericItemBase
 {
-	public:
+      public:
 	// Constructors
 	SampledDouble();
 	SampledDouble(const double x);
 
-
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Sample size contributing to averages etc.
 	int count_;
 	// Mean of sampled data (i.e. current value)
@@ -48,7 +47,7 @@ class SampledDouble : public GenericItemBase
 	// Aggregate of squared distance from mean
 	double m2_;
 
-	public:
+      public:
 	// Clear data
 	void clear();
 	// Return current (mean) value
@@ -62,51 +61,48 @@ class SampledDouble : public GenericItemBase
 	// Return standard deviation of sampled data
 	double stDev() const;
 
-
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	// Conversion (double)
-	operator double&();
+	operator double &();
 	// Assigment
 	void operator=(double x);
 	// Assigment
-	void operator=(const SampledDouble& source);
+	void operator=(const SampledDouble &source);
 	// Operator +=
 	void operator+=(double x);
 	// Operator +=
 	void operator+=(int i);
 	// Operator +=
-	void operator+=(const SampledDouble& source);
+	void operator+=(const SampledDouble &source);
 	// Operator *=
 	void operator*=(double factor);
 	// Operator /=
 	void operator/=(double factor);
 
-
 	/*
 	 * GenericItemBase Implementations
 	 */
-	public:
+      public:
 	// Return class name
-	static const char* itemClassName();
+	static const char *itemClassName();
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
-
+	bool write(LineParser &parser);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Sum data over all processes within the pool
-	bool allSum(ProcessPool& procPool);
+	bool allSum(ProcessPool &procPool);
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check equality of all data
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif

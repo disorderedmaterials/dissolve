@@ -3,39 +3,38 @@
 	*** src/classes/configuration.cpp
 	Copyright T. Youngs 2012-2020
 
-	This file is part of Configuration.
+	This file is part of Dissolve.
 
-	Configuration is free software: you can redistribute it and/or modify
+	Dissolve is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
 	the Free Software Foundation, either version 3 of the License, or
 	(at your option) any later version.
 
-	Configuration is distributed in the hope that it will be useful,
+	Dissolve is distributed in the hope that it will be useful,
 	but WITHOUT ANY WARRANTY; without even the implied warranty of
 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 	GNU General Public License for more details.
 
 	You should have received a copy of the GNU General Public License
-	along with Configuration.  If not, see <http://www.gnu.org/licenses/>.
+	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "classes/configuration.h"
+#include "base/lineparser.h"
+#include "base/processpool.h"
+#include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 #include "classes/masterintra.h"
 #include "classes/species.h"
-#include "base/lineparser.h"
-#include "base/processpool.h"
-#include "base/sysfunc.h"
 #include "modules/energy/energy.h"
-#include "modules/export/export.h"
 
 // Static Members (ObjectStore)
-template<class Configuration> RefDataList<Configuration,int> ObjectStore<Configuration>::objects_;
-template<class Configuration> int ObjectStore<Configuration>::objectCount_ = 0;
-template<class Configuration> int ObjectStore<Configuration>::objectType_ = ObjectInfo::ConfigurationObject;
-template<class Configuration> const char* ObjectStore<Configuration>::objectTypeName_ = "Configuration";
+template <class Configuration> RefDataList<Configuration, int> ObjectStore<Configuration>::objects_;
+template <class Configuration> int ObjectStore<Configuration>::objectCount_ = 0;
+template <class Configuration> int ObjectStore<Configuration>::objectType_ = ObjectInfo::ConfigurationObject;
+template <class Configuration> const char *ObjectStore<Configuration>::objectTypeName_ = "Configuration";
 
 // Constructor
 Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext, "EndGenerator")
@@ -46,16 +45,10 @@ Configuration::Configuration() : ListItem<Configuration>(), ObjectStore<Configur
 }
 
 // Destructor
-Configuration::~Configuration()
-{
-	clear();
-}
+Configuration::~Configuration() { clear(); }
 
 // Assignment operator
-void Configuration::operator=(Configuration& source)
-{
-	Messenger::error("XXX CONFIGURATION COPY (via ASSIGNMENT OPERATOR) IS NOT YET IMPLEMENTED.\n");
-}
+void Configuration::operator=(Configuration &source) { Messenger::error("XXX CONFIGURATION COPY (via ASSIGNMENT OPERATOR) IS NOT YET IMPLEMENTED.\n"); }
 
 // Clear all data
 void Configuration::clear()
@@ -81,7 +74,7 @@ void Configuration::clear()
  */
 
 // Set name of the Configuration
-void Configuration::setName(const char* name)
+void Configuration::setName(const char *name)
 {
 	name_ = name;
 
@@ -90,25 +83,16 @@ void Configuration::setName(const char* name)
 }
 
 // Return name of the Configuration
-const char* Configuration::name() const
-{
-	return name_.get();
-}
+const char *Configuration::name() const { return name_.get(); }
 
 // Return nice name of the Configuration
-const char* Configuration::niceName() const
-{
-	return niceName_.get();
-}
+const char *Configuration::niceName() const { return niceName_.get(); }
 
 // Return the current generator
-Procedure& Configuration::generator()
-{
-	return generator_;
-}
+Procedure &Configuration::generator() { return generator_; }
 
 // Create the Configuration according to its generator Procedure
-bool Configuration::generate(ProcessPool& procPool, double pairPotentialRange)
+bool Configuration::generate(ProcessPool &procPool, double pairPotentialRange)
 {
 	// Empty the current contents
 	empty();
@@ -116,11 +100,13 @@ bool Configuration::generate(ProcessPool& procPool, double pairPotentialRange)
 	// Generate the contents
 	Messenger::print("\nExecuting generator procedure for Configuration '%s'...\n\n", niceName());
 	bool result = generator_.execute(procPool, this, "Generator", moduleData_);
-	if (!result) return Messenger::error("Failed to generate Configuration '%s'.\n", niceName());
+	if (!result)
+		return Messenger::error("Failed to generate Configuration '%s'.\n", niceName());
 	Messenger::print("\n");
 
 	// Set-up Cells for the Box
-	if (cells_.nCells() == 0) cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange);
+	if (cells_.nCells() == 0)
+		cells_.generate(box_, requestedCellDivisionLength_, pairPotentialRange);
 
 	// Make sure Cell contents / Atom locations are up-to-date
 	updateCellContents();
@@ -131,24 +117,23 @@ bool Configuration::generate(ProcessPool& procPool, double pairPotentialRange)
 	++contentsVersion_;
 
 	// Sanity check the contents - if we have zero atoms then there's a problem!
-	if (nAtoms() == 0) return Messenger::error("Generated contents for Configuration '%s' contains no atoms!\n", name());
+	if (nAtoms() == 0)
+		return Messenger::error("Generated contents for Configuration '%s' contains no atoms!\n", name());
 
 	return true;
 }
 
 // Return import coordinates file / format
-CoordinateImportFileFormat& Configuration::inputCoordinates()
-{
-	return inputCoordinates_;
-}
+CoordinateImportFileFormat &Configuration::inputCoordinates() { return inputCoordinates_; }
 
 // Load coordinates from file
-bool Configuration::loadCoordinates(LineParser& parser, CoordinateImportFileFormat::CoordinateImportFormat format)
+bool Configuration::loadCoordinates(LineParser &parser, CoordinateImportFileFormat::CoordinateImportFormat format)
 {
 	// Load coordinates into temporary array
-	Array< Vec3<double> > r;
+	Array<Vec3<double>> r;
 	CoordinateImportFileFormat coordinateFormat(format);
-	if (!coordinateFormat.importData(parser, r)) return false;
+	if (!coordinateFormat.importData(parser, r))
+		return false;
 
 	// Temporary array now contains some number of atoms - does it match the number in the configuration's molecules?
 	if (atoms_.nItems() != r.nItems())
@@ -158,16 +143,18 @@ bool Configuration::loadCoordinates(LineParser& parser, CoordinateImportFileForm
 	}
 
 	// All good, so copy atom coordinates over into our array
-	for (int n=0; n<atoms_.nItems(); ++n) atoms_[n]->setCoordinates(r[n]);
+	for (int n = 0; n < atoms_.nItems(); ++n)
+		atoms_[n]->setCoordinates(r[n]);
 
 	return true;
 }
 
 // Initialise (generate or load) the basic contents of the Configuration
-bool Configuration::initialiseContent(ProcessPool& procPool, double pairPotentialRange, bool emptyCurrentContent)
+bool Configuration::initialiseContent(ProcessPool &procPool, double pairPotentialRange, bool emptyCurrentContent)
 {
 	// Clear existing content?
-	if (emptyCurrentContent) empty();
+	if (emptyCurrentContent)
+		empty();
 
 	/*
 	 * Content Initialisation
@@ -177,10 +164,12 @@ bool Configuration::initialiseContent(ProcessPool& procPool, double pairPotentia
 	if (nAtoms() == 0)
 	{
 		// Run the generator procedure (we will need species / atom info to load any coordinates in to anyway)
-		if (!generate(procPool, pairPotentialRange)) return false;
+		if (!generate(procPool, pairPotentialRange))
+			return false;
 
 		// If there are still no atoms, complain.
-		if (nAtoms() == 0) return false;
+		if (nAtoms() == 0)
+			return false;
 
 		// If an input file was specified, try to load it
 		if (inputCoordinates_.hasValidFileAndFormat())
@@ -189,14 +178,17 @@ bool Configuration::initialiseContent(ProcessPool& procPool, double pairPotentia
 			{
 				Messenger::print("Loading initial coordinates from file '%s'...\n", inputCoordinates_.filename());
 				LineParser inputFileParser(&procPool);
-				if (!inputFileParser.openInput(inputCoordinates_)) return false;
-				if (!loadCoordinates(inputFileParser, inputCoordinates_.coordinateFormat())) return false;
+				if (!inputFileParser.openInput(inputCoordinates_))
+					return false;
+				if (!loadCoordinates(inputFileParser, inputCoordinates_.coordinateFormat()))
+					return false;
 				inputFileParser.closeFiles();
 
 				// Need to update cell locations now, as we have new atom positions
 				updateCellContents();
 			}
-			else return Messenger::error("Input coordinates file '%s' specified for Configuration '%s', but the file doesn't exist.\n", name(), inputCoordinates_.filename());
+			else
+				return Messenger::error("Input coordinates file '%s' specified for Configuration '%s', but the file doesn't exist.\n", name(), inputCoordinates_.filename());
 		}
 	}
 
@@ -204,50 +196,29 @@ bool Configuration::initialiseContent(ProcessPool& procPool, double pairPotentia
 }
 
 // Set configuration temperature
-void Configuration::setTemperature(double t)
-{
-	temperature_ = t;
-}
+void Configuration::setTemperature(double t) { temperature_ = t; }
 
 // Return configuration temperature
-double Configuration::temperature() const
-{
-	return temperature_;
-}
+double Configuration::temperature() const { return temperature_; }
 
 /*
  * Modules
  */
 
 // Associate Module to the Configuration
-bool Configuration::ownModule(Module* module)
-{
-	return moduleLayer_.own(module);
-}
+bool Configuration::ownModule(Module *module) { return moduleLayer_.own(module); }
 
 // Return number of Modules associated to this Configuration
-int Configuration::nModules() const
-{
-	return moduleLayer_.nModules();
-}
+int Configuration::nModules() const { return moduleLayer_.nModules(); }
 
 // Return Module layer for this Configuration
-ModuleLayer& Configuration::moduleLayer()
-{
-	return moduleLayer_;
-}
+ModuleLayer &Configuration::moduleLayer() { return moduleLayer_; }
 
 // Return list of Modules associated to this Configuration
-ModuleList& Configuration::modules()
-{
-	return moduleLayer_;
-}
+ModuleList &Configuration::modules() { return moduleLayer_; }
 
 // Return list of data variables set by Modules
-GenericList& Configuration::moduleData()
-{
-	return moduleData_;
-}
+GenericList &Configuration::moduleData() { return moduleData_; }
 
 /*
  * Parallel Comms
@@ -259,33 +230,31 @@ bool Configuration::setUpProcessPool(Array<int> worldRanks, int groupPopulation)
 	// Create pool
 	processPool_.setUp(name_, worldRanks, groupPopulation);
 
-	// Assign processes, and 
-	if (!processPool_.assignProcessesToGroups()) return false;
+	// Assign processes, and
+	if (!processPool_.assignProcessesToGroups())
+		return false;
 	processPool_.setGroupsFixed();
 
 	return true;
 }
 
 // Return process pool for this Configuration
-ProcessPool& Configuration::processPool()
-{
-	return processPool_;
-}
+ProcessPool &Configuration::processPool() { return processPool_; }
 
 // Broadcast coordinate from specified root process
-bool Configuration::broadcastCoordinates(ProcessPool& procPool, int rootRank)
+bool Configuration::broadcastCoordinates(ProcessPool &procPool, int rootRank)
 {
 #ifdef PARALLEL
-	double* x, *y, *z;
+	double *x, *y, *z;
 	x = new double[atoms_.nItems()];
 	y = new double[atoms_.nItems()];
 	z = new double[atoms_.nItems()];
-	
+
 	// Master assembles Atom coordinate arrays...
 	if (procPool.poolRank() == rootRank)
 	{
 		Messenger::printVerbose("Process rank %i is assembling coordinate data...\n", procPool.poolRank());
-		for (int n=0; n<atoms_.nItems(); ++n)
+		for (int n = 0; n < atoms_.nItems(); ++n)
 		{
 			x[n] = atoms_[n]->r().x;
 			y[n] = atoms_[n]->r().y;
@@ -293,19 +262,25 @@ bool Configuration::broadcastCoordinates(ProcessPool& procPool, int rootRank)
 		}
 	}
 
-	if (!procPool.broadcast(x, atoms_.nItems(), rootRank)) return false;
-	if (!procPool.broadcast(y, atoms_.nItems(), rootRank)) return false;
-	if (!procPool.broadcast(z, atoms_.nItems(), rootRank)) return false;
-	
+	if (!procPool.broadcast(x, atoms_.nItems(), rootRank))
+		return false;
+	if (!procPool.broadcast(y, atoms_.nItems(), rootRank))
+		return false;
+	if (!procPool.broadcast(z, atoms_.nItems(), rootRank))
+		return false;
+
 	// Slaves then store values into Atoms, updating related info as we go
-	if (procPool.isSlave()) for (int n=0; n<atoms_.nItems(); ++n) atoms_[n]->setCoordinates(x[n], y[n], z[n]);
+	if (procPool.isSlave())
+		for (int n = 0; n < atoms_.nItems(); ++n)
+			atoms_[n]->setCoordinates(x[n], y[n], z[n]);
 
 	delete[] x;
 	delete[] y;
 	delete[] z;
 
 	// Broadcast contents version
-	if (!contentsVersion_.broadcast(procPool, rootRank)) return false;
+	if (!contentsVersion_.broadcast(procPool, rootRank))
+		return false;
 #endif
 	return true;
 }

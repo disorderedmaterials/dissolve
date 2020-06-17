@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_DATA2DSTORE_H
 #define DISSOLVE_DATA2DSTORE_H
 
-#include "math/data2d.h"
 #include "io/import/data2d.h"
+#include "math/data2d.h"
 #include "templates/list.h"
 #include "templates/refdatalist.h"
 
@@ -33,33 +33,32 @@
 // Data2D Store
 class Data2DStore
 {
-	public:
+      public:
 	// Constructor
 	Data2DStore();
 	// Destructor
 	~Data2DStore();
 
-
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// List of contained data
 	List<Data2D> data_;
 	// References for Data2D and associated file/format
-	RefDataList<Data2D,Data2DImportFileFormat> dataReferences_;
+	RefDataList<Data2D, Data2DImportFileFormat> dataReferences_;
 
-	public:
+      public:
 	// Add named data reference to store, reading file and format from specified parser / starting argument
-	bool addData(const char* dataName, LineParser& parser, int startArg, const char* endKeyword, const CoreData& coreData);
+	bool addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword, const CoreData &coreData);
 	// Check to see if the named data is present in the store
-	bool containsData(const char* name) const;
+	bool containsData(const char *name) const;
 	// Return named data
-	const Data2D& data(const char* name) const;
+	const Data2D &data(const char *name) const;
 	// Return list of all data
-	const List<Data2D>& data() const;
+	const List<Data2D> &data() const;
 	// Return list of all data references
-	const RefDataList<Data2D,Data2DImportFileFormat>& dataReferences() const;
+	const RefDataList<Data2D, Data2DImportFileFormat> &dataReferences() const;
 };
 
 #endif

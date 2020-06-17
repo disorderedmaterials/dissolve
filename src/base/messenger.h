@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MESSENGER_H
 #define DISSOLVE_MESSENGER_H
 
-#include <stdarg.h>
 #include "base/outputhandler.h"
+#include <stdarg.h>
 
 // Forward Declarations
 class LineParser;
@@ -31,15 +31,14 @@ class LineParser;
 // Global messaging handler
 class Messenger
 {
-	public:
+      public:
 	// Constructor
 	Messenger();
-
 
 	/*
 	 * General Print Routines
 	 */
-	private:
+      private:
 	// Quiet mode
 	static bool quiet_;
 	// Mute mode (temporary quietness if not already)
@@ -53,17 +52,17 @@ class Messenger
 	// Working storage for text to print
 	static char workingText_[8096];
 
-	private:
+      private:
 	// Master text creation / formatting routine
-	static void createText(const char* indentText, const char* format, va_list arguments);
+	static void createText(const char *indentText, const char *format, va_list arguments);
 	// Master text creation / formatting routine (indent text only, for banners etc.)
-	static void createText(const char* indentText);
+	static void createText(const char *indentText);
 	// Create and print text
-	static void createAndPrintText(const char* indentText, const char* format, va_list arguments);
+	static void createAndPrintText(const char *indentText, const char *format, va_list arguments);
 	// Create and print text (simple)
-	static void createAndPrintText(const char* text);
+	static void createAndPrintText(const char *text);
 
-	public:
+      public:
 	// Set status of quiet mode
 	static void setQuiet(bool b);
 	// Return status of quiet mode
@@ -79,45 +78,43 @@ class Messenger
 	// Set status of master-only mode
 	static void setMasterOnly(bool b);
 	// Print normal message
-	static void print(const char* fmt, ...);
+	static void print(const char *fmt, ...);
 	// Print verbose message
-	static void printVerbose(const char* fmt, ...);
+	static void printVerbose(const char *fmt, ...);
 	// Print error message
-	static bool error(const char* fmt, ...);
+	static bool error(const char *fmt, ...);
 	// Print warn message
-	static void warn(const char* fmt, ...);
+	static void warn(const char *fmt, ...);
 	// Print banner message
-	static void banner(const char* fmt, ...);
+	static void banner(const char *fmt, ...);
 	// Print heading message
-	static void heading(const char* fmt, ...);
-
+	static void heading(const char *fmt, ...);
 
 	/*
 	 * Text Output Routine
 	 */
-	private:
+      private:
 	// Output handler (if any)
-	static OutputHandler* outputHandler_;
+	static OutputHandler *outputHandler_;
 
-	public:
+      public:
 	// Set output handler
-	static void setOutputHandler(OutputHandler* outputHandler);
+	static void setOutputHandler(OutputHandler *outputHandler);
 	// Print text
-	static void outputText(const char* text);
-
+	static void outputText(const char *text);
 
 	/*
 	 * File Redirection
 	 */
-	private:
+      private:
 	// Whether file redirection is enabled
 	static bool redirect_;
 	// Local LineParser for file redirection
 	static LineParser parser_;
-	
-	public:
+
+      public:
 	// Enable redirection of all messaging to specified file
-	static bool enableRedirect(const char* filename);
+	static bool enableRedirect(const char *filename);
 	// Cease redirection of messaging to file
 	static void ceaseRedirect();
 };

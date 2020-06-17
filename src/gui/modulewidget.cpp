@@ -22,46 +22,29 @@
 #include "gui/modulewidget.h"
 
 // Constructor
-ModuleWidget::ModuleWidget(QWidget* parent) : QWidget(parent)
-{
-	refreshing_ = false;
-}
+ModuleWidget::ModuleWidget(QWidget *parent) : QWidget(parent) { refreshing_ = false; }
 
-ModuleWidget::~ModuleWidget()
-{
-}
+ModuleWidget::~ModuleWidget() {}
 
 /*
  * UI
  */
 
 // Update controls within widget
-void ModuleWidget::updateControls(int flags)
-{
-}
+void ModuleWidget::updateControls(int flags) {}
 
 // Disable sensitive controls within widget
-void ModuleWidget::disableSensitiveControls()
-{
-}
+void ModuleWidget::disableSensitiveControls() {}
 
 // Enable sensitive controls within widget
-void ModuleWidget::enableSensitiveControls()
-{
-}
+void ModuleWidget::enableSensitiveControls() {}
 
 /*
  * State I/O
  */
 
 // Write widget state through specified LineParser
-bool ModuleWidget::writeState(LineParser& parser) const
-{
-	return true;
-}
+bool ModuleWidget::writeState(LineParser &parser) const { return true; }
 
 // Read widget state through specified LineParser
-bool ModuleWidget::readState(LineParser& parser)
-{
-	return true;
-}
+bool ModuleWidget::readState(LineParser &parser) { return true; }

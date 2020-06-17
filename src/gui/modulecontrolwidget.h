@@ -38,49 +38,46 @@ class ModuleControlWidget : public QWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	ModuleControlWidget(QWidget* parent);
+	ModuleControlWidget(QWidget *parent);
 	~ModuleControlWidget();
 
-	private:
+      private:
 	// Whether the widget is currently refreshing
 	bool refreshing_;
-
 
 	/*
 	 * Setup
 	 */
-	public:
+      public:
 	// Set up links to main window
-	void setUp(DissolveWindow* dissolveWindow);
-
+	void setUp(DissolveWindow *dissolveWindow);
 
 	/*
 	 * Module Target
 	 */
-	private:
+      private:
 	// Pointer to Dissolve
-	Dissolve* dissolve_;
+	Dissolve *dissolve_;
 	// Associated Module
-	Module* module_;
+	Module *module_;
 
-	private slots:
+      private slots:
 	// Run the set-up stage of the associated Module
 	void setUpModule();
 
-	public:
+      public:
 	// Set target Module to display
-	void setModule(Module* module, Dissolve* dissolve);
+	void setModule(Module *module, Dissolve *dissolve);
 
-	signals:
+      signals:
 	void updateModuleWidget(int flags);
-
 
 	/*
 	 * Update
 	 */
-	public:
+      public:
 	// Update controls within widget
 	void updateControls();
 	// Disable sensitive controls
@@ -88,26 +85,25 @@ class ModuleControlWidget : public QWidget
 	// Enable sensitive controls
 	void enableSensitiveControls();
 
-
 	/*
 	 * UI
 	 */
-	private:	
+      private:
 	// Main form declaration
 	Ui::ModuleControlWidget ui_;
 
-	private slots:
+      private slots:
 	// Keyword data for Module has been modified
 	void keywordDataModified();
 
-	public slots:
+      public slots:
 	void on_NameEdit_editingFinished();
 	void on_NameEdit_returnPressed();
 	void on_EnabledButton_clicked(bool checked);
 	void on_FrequencySpin_valueChanged(int value);
-	void on_ConfigurationTargetList_itemChanged(QListWidgetItem* item);
+	void on_ConfigurationTargetList_itemChanged(QListWidgetItem *item);
 
-	signals:
+      signals:
 	// Notify that the Module's data has been modified in some way
 	void dataModified();
 };

@@ -38,51 +38,49 @@ class Species;
  */
 class Isotopologue : public ListItem<Isotopologue>
 {
-	public:
+      public:
 	// Constructor
 	Isotopologue();
 	// Destructor
 	~Isotopologue();
 
-
 	/*
 	 * Basic Information
 	 */
-	private:
+      private:
 	// Parent Species
-	Species* parent_;
+	Species *parent_;
 	// Descriptive name
 	CharString name_;
-	
-	public:
+
+      public:
 	// Set parent Species
-	void setParent(Species* parent);
+	void setParent(Species *parent);
 	// Return parent Species
-	Species* parent() const;
+	Species *parent() const;
 	// Set name of Isotopologue
-	void setName(const char* name);
+	void setName(const char *name);
 	// Return name of Isotopologue
-	const char* name() const;
-	
-	
+	const char *name() const;
+
 	/*
 	 * Isotope Definition
 	 */
-	private:
+      private:
 	// List of AtomType references and their assigned Isotopes
-	RefDataList<AtomType,Isotope*> isotopes_;
-	
-	public:
+	RefDataList<AtomType, Isotope *> isotopes_;
+
+      public:
 	// Update AtomType/Isotope RefList
 	void update();
 	// Set AtomType/Isotope pair in list
-	bool setAtomTypeIsotope(AtomType* at, Isotope* isotope);
+	bool setAtomTypeIsotope(AtomType *at, Isotope *isotope);
 	// Return Isotope for specified AtomType
-	Isotope* atomTypeIsotope(AtomType* at) const;
+	Isotope *atomTypeIsotope(AtomType *at) const;
 	// Return AtomType/Isotope pairs list
-	const RefDataList<AtomType,Isotope*>& isotopes() const;
+	const RefDataList<AtomType, Isotope *> &isotopes() const;
 	// Return nth Atom/Isotope pair
-	RefDataItem<AtomType,Isotope*>* isotope(int n);
+	RefDataItem<AtomType, Isotope *> *isotope(int n);
 };
 
 #endif

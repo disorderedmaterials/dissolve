@@ -22,7 +22,4 @@
 #include "gui/maintabsbar.hui"
 
 // Constructor
-MainTabsBar::MainTabsBar(QWidget* parent) : QTabBar(parent)
-{
-}
-
+MainTabsBar::MainTabsBar(QWidget *parent) : QTabBar(parent) {}

@@ -22,47 +22,30 @@
 #include "classes/isotopologueweight.h"
 
 // Constructor
-IsotopologueWeight::IsotopologueWeight(const Isotopologue* iso, double weight) : ListItem<IsotopologueWeight>()
-{
-	set(iso, weight);
-}
+IsotopologueWeight::IsotopologueWeight(const Isotopologue *iso, double weight) : ListItem<IsotopologueWeight>() { set(iso, weight); }
 
 // Destructor
-IsotopologueWeight::~IsotopologueWeight()
-{
-}
+IsotopologueWeight::~IsotopologueWeight() {}
 
 /*
  * Isotopologue and Weight
  */
 
 // Set associated Isotopologue and weight
-void IsotopologueWeight::set(const Isotopologue* iso, double weight)
+void IsotopologueWeight::set(const Isotopologue *iso, double weight)
 {
 	isotopologue_ = iso;
 	weight_ = weight;
 }
 
 // Set associated Isotopologue
-void IsotopologueWeight::setIsotopologue(const Isotopologue* iso)
-{
-	isotopologue_ = iso;
-}
+void IsotopologueWeight::setIsotopologue(const Isotopologue *iso) { isotopologue_ = iso; }
 
 // Return associated Isotopologue
-const Isotopologue* IsotopologueWeight::isotopologue() const
-{
-	return isotopologue_;
-}
+const Isotopologue *IsotopologueWeight::isotopologue() const { return isotopologue_; }
 
 // Set relative weight
-void IsotopologueWeight::setWeight(double weight)
-{
-	weight_ = weight;
-}
+void IsotopologueWeight::setWeight(double weight) { weight_ = weight; }
 
 // Return relative weight
-double IsotopologueWeight::weight() const
-{
-	return weight_;
-}
+double IsotopologueWeight::weight() const { return weight_; }

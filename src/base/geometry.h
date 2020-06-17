@@ -22,48 +22,44 @@
 #ifndef DISSOLVE_GEOMETRY_H
 #define DISSOLVE_GEOMETRY_H
 
-
 #include "templates/listitem.h"
 #include <map>
 
 // Forward Declarations
 /* none */
 
-
-
 // Geometry Definition
 class Geometry : public ListItem<Geometry>
 {
-	public:
+      public:
 	// Constructor
 	Geometry();
 	// Destructor
 	~Geometry();
 	// Type of geometry data passed
-	enum GeometryType { 
+	enum GeometryType
+	{
 		AngleType,
 		DistanceType,
 		TorsionType
 	};
 
-
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Reference value
 	double value_;
 	// Array for indices
 	int indices_[4];
-	
-	public:
+
+      public:
 	// Set reference value and indices
 	void set(double value, int a, int b, int c = -1, int d = -1);
 	// Return reference value
 	double value();
 	// Return specified index
 	int indices(int i) const;
-	
 };
 
 #endif

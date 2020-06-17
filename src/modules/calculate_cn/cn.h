@@ -33,80 +33,73 @@ class OperateSitePopulationNormaliseProcedureNode;
 // CalculateCN Module
 class CalculateCNModule : public Module
 {
-	public:
+      public:
 	// Constructor
 	CalculateCNModule();
 	// Destructor
 	~CalculateCNModule();
 
-
 	/*
 	 * Instances
 	 */
-	public:
+      public:
 	// Create instance of this module
-	Module* createInstance() const;
-
+	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return type of module
-	const char* type() const;
+	const char *type() const;
 	// Return category for module
-	const char* category() const;
+	const char *category() const;
 	// Return brief description of module
-	const char* brief() const;
+	const char *brief() const;
 	// Return the number of Configuration targets this Module requires
 	int nRequiredTargets() const;
-
 
 	/*
 	 * Initialisation
 	 */
-	protected:
+      protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
-
 
 	/*
 	 * Processing
 	 */
-	private:
+      private:
 	// Run main processing
-	bool process(Dissolve& dissolve, ProcessPool& procPool);
-
+	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions / Data
 	 */
-	private:
+      private:
 	// Analysis procedure to be run
 	Procedure analyser_;
 	// Sum1D node
-	Sum1DProcedureNode* sum1D_;
+	Sum1DProcedureNode *sum1D_;
 	// Process1D node
-	Process1DProcedureNode* process1D_;
+	Process1DProcedureNode *process1D_;
 	// Site normalisation node
-	OperateSitePopulationNormaliseProcedureNode* siteNormaliser_;
+	OperateSitePopulationNormaliseProcedureNode *siteNormaliser_;
 
-	public:
+      public:
 	// Return specified coordination number (from Sum1D node)
-	const SampledDouble& coordinationNumber(int index);
+	const SampledDouble &coordinationNumber(int index);
 	// Return whether range B is enabled
 	bool isRangeBEnabled() const;
 	// Return whether range C is enabled
 	bool isRangeCEnabled() const;
 
-
 	/*
 	 * GUI Widget
 	 */
-	public:
+      public:
 	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, Dissolve& dissolve);
+	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
 
 #endif
-

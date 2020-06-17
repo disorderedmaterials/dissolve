@@ -19,27 +19,27 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/dissolve.h"
-#include "version.h"
-#include "gui/gui.h"
+#include "base/lineparser.h"
 #include "gui/configurationtab.h"
 #include "gui/forcefieldtab.h"
+#include "gui/gui.h"
 #include "gui/layertab.h"
 #include "gui/moduletab.h"
 #include "gui/speciestab.h"
 #include "gui/workspacetab.h"
-#include "base/lineparser.h"
+#include "main/dissolve.h"
+#include "version.h"
 #include <QCloseEvent>
 #include <QDir>
 #include <QDirIterator>
+#include <QFileInfo>
 #include <QFontDatabase>
 #include <QLCDNumber>
 #include <QMdiSubWindow>
 #include <QMessageBox>
-#include <QFileInfo>
 
 // Constructor
-DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve_(dissolve), threadController_(this, dissolve)
+DissolveWindow::DissolveWindow(Dissolve &dissolve) : QMainWindow(NULL), dissolve_(dissolve), threadController_(this, dissolve)
 {
 	// Initialise resources
 	Q_INIT_RESOURCE(main);
@@ -72,15 +72,15 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 	// Create statusbar widgets
 	localSimulationIndicator_ = new QLabel;
 	localSimulationIndicator_->setPixmap(QPixmap(":/general/icons/general_local.svg"));
-	localSimulationIndicator_->setMaximumSize(QSize(20,20));
+	localSimulationIndicator_->setMaximumSize(QSize(20, 20));
 	localSimulationIndicator_->setScaledContents(true);
 	restartFileIndicator_ = new QLabel;
 	restartFileIndicator_->setPixmap(QPixmap(":/general/icons/general_restartfile.svg"));
-	restartFileIndicator_->setMaximumSize(QSize(20,20));
+	restartFileIndicator_->setMaximumSize(QSize(20, 20));
 	restartFileIndicator_->setScaledContents(true);
 	heartbeatFileIndicator_ = new QLabel;
 	heartbeatFileIndicator_->setPixmap(QPixmap(":/general/icons/general_heartbeat.svg"));
-	heartbeatFileIndicator_->setMaximumSize(QSize(20,20));
+	heartbeatFileIndicator_->setMaximumSize(QSize(20, 20));
 	heartbeatFileIndicator_->setScaledContents(true);
 	etaLabel_ = new QLabel("ETA: --:--:--");
 	statusBar()->addPermanentWidget(etaLabel_);
@@ -103,12 +103,10 @@ DissolveWindow::DissolveWindow(Dissolve& dissolve) : QMainWindow(NULL), dissolve
 }
 
 // Destructor
-DissolveWindow::~DissolveWindow()
-{
-}
+DissolveWindow::~DissolveWindow() {}
 
 // Catch window close event
-void DissolveWindow::closeEvent(QCloseEvent* event)
+void DissolveWindow::closeEvent(QCloseEvent *event)
 {
 	// Mark the window as refreshing, so we don't try to update any more widgets
 	refreshing_ = true;
@@ -129,7 +127,8 @@ void DissolveWindow::closeEvent(QCloseEvent* event)
 		emit(stopIterating());
 
 		// Wait for the thread to stop
-		while (dissolveState_ == RunningState) QApplication::processEvents();
+		while (dissolveState_ == RunningState)
+			QApplication::processEvents();
 	}
 
 	// Clear tabs before we try to close down the application, otherwise we'll get in to trouble with object deletion
@@ -138,9 +137,7 @@ void DissolveWindow::closeEvent(QCloseEvent* event)
 	event->accept();
 }
 
-void DissolveWindow::resizeEvent(QResizeEvent* event)
-{
-}
+void DissolveWindow::resizeEvent(QResizeEvent *event) {}
 
 /*
  * Dissolve Integration
@@ -155,23 +152,17 @@ void DissolveWindow::setModified()
 }
 
 // Return reference to Dissolve
-Dissolve& DissolveWindow::dissolve()
-{
-	return dissolve_;
-}
+Dissolve &DissolveWindow::dissolve() { return dissolve_; }
 
 // Return const reference to Dissolve
-const Dissolve& DissolveWindow::constDissolve() const
-{
-	return dissolve_;
-}
+const Dissolve &DissolveWindow::constDissolve() const { return dissolve_; }
 
 // Link output handler in to the Messenger
 void DissolveWindow::addOutputHandler()
 {
 	Messenger::setOutputHandler(&outputHandler_);
-	connect(&outputHandler_, SIGNAL(printText(const QString&)), this, SLOT(appendMessage(const QString&)));
-	connect(&outputHandler_, SIGNAL(setColour(const QColor&)), ui_.MessagesEdit, SLOT(setTextColor(const QColor&)));
+	connect(&outputHandler_, SIGNAL(printText(const QString &)), this, SLOT(appendMessage(const QString &)));
+	connect(&outputHandler_, SIGNAL(setColour(const QColor &)), ui_.MessagesEdit, SLOT(setTextColor(const QColor &)));
 }
 
 /*
@@ -179,7 +170,7 @@ void DissolveWindow::addOutputHandler()
  */
 
 // Open specified input file from the CLI
-bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFile, bool ignoreRestartFile, bool ignoreLayoutFile)
+bool DissolveWindow::openLocalFile(const char *inputFile, const char *restartFile, bool ignoreRestartFile, bool ignoreLayoutFile)
 {
 	// Clear any existing tabs etc.
 	ui_.MainTabs->clearTabs();
@@ -195,28 +186,36 @@ bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFil
 	if (inputFileInfo.exists())
 	{
 		QDir::setCurrent(inputFileInfo.absoluteDir().absolutePath());
-		if (!dissolve_.loadInput(qPrintable(inputFileInfo.fileName()))) QMessageBox::warning(this, "Input file contained errors.", "The input file failed to load correctly.\nCheck the simulation carefully, and see the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
+		if (!dissolve_.loadInput(qPrintable(inputFileInfo.fileName())))
+			QMessageBox::warning(this, "Input file contained errors.", "The input file failed to load correctly.\nCheck the simulation carefully, and see the messages for more details.",
+					     QMessageBox::Ok, QMessageBox::Ok);
 	}
-	else return Messenger::error("Input file does not exist.\n");
+	else
+		return Messenger::error("Input file does not exist.\n");
 
 	// Load restart file if it exists
 	Messenger::banner("Parse Restart File");
 	if (!ignoreRestartFile)
 	{
 		CharString actualRestartFile = restartFile;
-		if (actualRestartFile.isEmpty()) actualRestartFile.sprintf("%s.restart", dissolve_.inputFilename());
-		
+		if (actualRestartFile.isEmpty())
+			actualRestartFile.sprintf("%s.restart", dissolve_.inputFilename());
+
 		if (DissolveSys::fileExists(actualRestartFile))
 		{
 			Messenger::print("\nRestart file '%s' exists and will be loaded.\n", actualRestartFile.get());
-			if (!dissolve_.loadRestart(actualRestartFile)) QMessageBox::warning(this, "Restart file contained errors.", "The restart file failed to load correctly.\nSee the messages for more details.", QMessageBox::Ok, QMessageBox::Ok);
+			if (!dissolve_.loadRestart(actualRestartFile))
+				QMessageBox::warning(this, "Restart file contained errors.", "The restart file failed to load correctly.\nSee the messages for more details.", QMessageBox::Ok,
+						     QMessageBox::Ok);
 
 			// Reset the restart filename to be the standard one
 			dissolve_.setRestartFilename(CharString("%s.restart", dissolve_.inputFilename()));
 		}
-		else Messenger::print("\nRestart file '%s' does not exist.\n", actualRestartFile.get());
+		else
+			Messenger::print("\nRestart file '%s' does not exist.\n", actualRestartFile.get());
 	}
-	else Messenger::print("\nRestart file (if it exists) will be ignored.\n");
+	else
+		Messenger::print("\nRestart file (if it exists) will be ignored.\n");
 
 	refreshing_ = true;
 
@@ -228,7 +227,8 @@ bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFil
 	stateFilename_.sprintf("%s.state", dissolve_.inputFilename());
 
 	// Try to load in the window state file
-	if (DissolveSys::fileExists(stateFilename_) && (!ignoreLayoutFile)) loadState();
+	if (DissolveSys::fileExists(stateFilename_) && (!ignoreLayoutFile))
+		loadState();
 
 	localSimulation_ = true;
 
@@ -237,7 +237,7 @@ bool DissolveWindow::openLocalFile(const char* inputFile, const char* restartFil
 	if (DissolveSys::fileExists(beatFile))
 	{
 		// TODO
-// 		if (
+		// 		if (
 	}
 
 	dissolveState_ = EditingState;
@@ -265,7 +265,7 @@ void DissolveWindow::initialiseSystemTemplates()
 		QDir dir = templateIterator.next();
 
 		// Open the associated xml file
-		SystemTemplate* sysTemp = systemTemplates_.add();
+		SystemTemplate *sysTemp = systemTemplates_.add();
 		if (!sysTemp->read(dir))
 		{
 			Messenger::error("Error reading the template info file '%s'.\n", qPrintable(dir.filePath("info.xml")));
@@ -321,8 +321,9 @@ void DissolveWindow::updateControlsFrame()
 // Update menus
 void DissolveWindow::updateMenus()
 {
-	MainTab* activeTab = ui_.MainTabs->currentTab();
-	if (!activeTab) return;
+	MainTab *activeTab = ui_.MainTabs->currentTab();
+	if (!activeTab)
+		return;
 
 	// Species Menu
 	ui_.SpeciesRenameAction->setEnabled(activeTab->type() == MainTab::SpeciesTabType);
@@ -362,8 +363,10 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
 	ui_.ControlIterationLabel->setText(CharString("%06i", dissolve_.iteration()).get());
 
 	// Set ETA text if we can
-	if (iterationsRemaining == -1) etaLabel_->setText("ETA: --:--:--");
-	else etaLabel_->setText(QString("ETA: %1").arg(Timer::etaString(iterationsRemaining*dissolve_.iterationTime())));
+	if (iterationsRemaining == -1)
+		etaLabel_->setText("ETA: --:--:--");
+	else
+		etaLabel_->setText(QString("ETA: %1").arg(Timer::etaString(iterationsRemaining * dissolve_.iterationTime())));
 
 	// Enable data access in Renderables, and update all tabs.
 	Renderable::setSourceDataAccessEnabled(true);

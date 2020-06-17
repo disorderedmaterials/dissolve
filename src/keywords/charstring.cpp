@@ -24,37 +24,28 @@
 #include "base/sysfunc.h"
 
 // Constructor
-CharStringKeyword::CharStringKeyword(CharString value) : KeywordData<CharString>(KeywordBase::CharStringData, value)
-{
-}
+CharStringKeyword::CharStringKeyword(CharString value) : KeywordData<CharString>(KeywordBase::CharStringData, value) {}
 
 // Destructor
-CharStringKeyword::~CharStringKeyword()
-{
-}
+CharStringKeyword::~CharStringKeyword() {}
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int CharStringKeyword::minArguments() const
-{
-	return 1;
-}
+int CharStringKeyword::minArguments() const { return 1; }
 
 // Return minimum number of arguments accepted
-int CharStringKeyword::maxArguments() const
-{
-	return 1;
-}
+int CharStringKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool CharStringKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
+bool CharStringKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
 	if (parser.hasArg(startArg))
 	{
-		if (!setData(parser.argc(startArg))) return false;
+		if (!setData(parser.argc(startArg)))
+			return false;
 
 		return true;
 	}
@@ -63,35 +54,20 @@ bool CharStringKeyword::read(LineParser& parser, int startArg, const CoreData& c
 }
 
 // Write keyword data to specified LineParser
-bool CharStringKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
-{
-	return parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_.get());
-}
+bool CharStringKeyword::write(LineParser &parser, const char *keywordName, const char *prefix) { return parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_.get()); }
 
 /*
  * Conversion
  */
 
 // Return value (as bool)
-bool CharStringKeyword::asBool()
-{
-	return DissolveSys::atob(data_);
-}
+bool CharStringKeyword::asBool() { return DissolveSys::atob(data_); }
 
 // Return value (as int)
-int CharStringKeyword::asInt()
-{
-	return atoi(data_);
-}
+int CharStringKeyword::asInt() { return atoi(data_); }
 
 // Return value (as double)
-double CharStringKeyword::asDouble()
-{
-	return atof(data_);
-}
+double CharStringKeyword::asDouble() { return atof(data_); }
 
 // Return value (as string)
-const char* CharStringKeyword::asString()
-{
-	return data_;
-}
+const char *CharStringKeyword::asString() { return data_; }

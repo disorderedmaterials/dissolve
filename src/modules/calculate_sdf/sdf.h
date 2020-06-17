@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_MODULE_CALCULATESDF_H
 #define DISSOLVE_MODULE_CALCULATESDF_H
 
+#include "io/export/data3d.h"
 #include "module/module.h"
 #include "procedure/procedure.h"
-#include "io/export/data3d.h"
 
 // Forward Declarations
 class Collect3DProcedureNode;
@@ -35,76 +35,69 @@ class SpeciesSite;
 // CalculateSDF Module
 class CalculateSDFModule : public Module
 {
-	public:
+      public:
 	// Constructor
 	CalculateSDFModule();
 	// Destructor
 	~CalculateSDFModule();
 
-
 	/*
 	 * Instances
 	 */
-	public:
+      public:
 	// Create instance of this module
-	Module* createInstance() const;
-
+	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return type of module
-	const char* type() const;
+	const char *type() const;
 	// Return category for module
-	const char* category() const;
+	const char *category() const;
 	// Return brief description of module
-	const char* brief() const;
+	const char *brief() const;
 	// Return the number of Configuration targets this Module requires
 	int nRequiredTargets() const;
-
 
 	/*
 	 * Initialisation
 	 */
-	protected:
+      protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
-
 
 	/*
 	 * Processing
 	 */
-	private:
+      private:
 	// Run main processing
-	bool process(Dissolve& dissolve, ProcessPool& procPool);
-
+	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions / Data
 	 */
-	private:
+      private:
 	// Analysis procedure to be run
 	Procedure analyser_;
 	// SelectNode for site A (origin)
-	SelectProcedureNode* selectA_;
+	SelectProcedureNode *selectA_;
 	// SelectNode for site B (surrounding)
-	SelectProcedureNode* selectB_;
+	SelectProcedureNode *selectB_;
 	// Collect3DNode for position of B around A SDF
-	Collect3DProcedureNode* collectVector_;
+	Collect3DProcedureNode *collectVector_;
 	// Process3DNode for B around A SDF
-	Process3DProcedureNode* processPosition_;
+	Process3DProcedureNode *processPosition_;
 	// Export file and format for SDF
 	Data3DExportFileFormat sdfFileAndFormat_;
-
 
 	/*
 	 * GUI Widget
 	 */
-	public:
+      public:
 	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, Dissolve& dissolve);
+	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
 
 #endif
-

@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "classes/configuration.h"
-#include "classes/box.h"
-#include "classes/cell.h"
-#include "modules/energy/energy.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
+#include "classes/box.h"
+#include "classes/cell.h"
+#include "classes/configuration.h"
+#include "modules/energy/energy.h"
 
 // Create Box definition with  specifeid lengths and angles
 bool Configuration::createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic)
@@ -37,17 +37,16 @@ bool Configuration::createBox(const Vec3<double> lengths, const Vec3<double> ang
 		box_ = NULL;
 	}
 
-	if (nonPeriodic) box_ = new NonPeriodicBox(1.0);
-	else box_ = Box::generate(lengths, angles);
+	if (nonPeriodic)
+		box_ = new NonPeriodicBox(1.0);
+	else
+		box_ = Box::generate(lengths, angles);
 
 	return true;
 }
 
 // Return Box
-const Box* Configuration::box() const
-{
-	return box_;
-}
+const Box *Configuration::box() const { return box_; }
 
 // Scale Box lengths (and associated Cells) by specified factor
 void Configuration::scaleBox(double factor)
@@ -60,49 +59,28 @@ void Configuration::scaleBox(double factor)
 }
 
 // Set requested size factor for Box
-void Configuration::setRequestedSizeFactor(double factor)
-{
-	requestedSizeFactor_ = factor;
-}
+void Configuration::setRequestedSizeFactor(double factor) { requestedSizeFactor_ = factor; }
 
 // Return requested size factor for Box
-double Configuration::requestedSizeFactor()
-{
-	return requestedSizeFactor_;
-}
+double Configuration::requestedSizeFactor() { return requestedSizeFactor_; }
 
 // Return last size factor applied to Box / Cells
-double Configuration::appliedSizeFactor()
-{
-	return appliedSizeFactor_;
-}
+double Configuration::appliedSizeFactor() { return appliedSizeFactor_; }
 
 // Set requested side length for individual Cell
-void Configuration::setRequestedCellDivisionLength(double a)
-{
-	requestedCellDivisionLength_ = a;
-}
+void Configuration::setRequestedCellDivisionLength(double a) { requestedCellDivisionLength_ = a; }
 
 // Return requested side length for individual Cell
-double Configuration::requestedCellDivisionLength() const
-{
-	return requestedCellDivisionLength_;
-}
+double Configuration::requestedCellDivisionLength() const { return requestedCellDivisionLength_; }
 
 // Return cell array
-CellArray& Configuration::cells()
-{
-	return cells_;
-}
+CellArray &Configuration::cells() { return cells_; }
 
 // Return cell array
-const CellArray& Configuration::constCells() const
-{
-	return cells_;
-}
+const CellArray &Configuration::constCells() const { return cells_; }
 
 // Scale Box, Cells, and Molecule geometric centres according to current size factor
-void Configuration::applySizeFactor(const PotentialMap& potentialMap)
+void Configuration::applySizeFactor(const PotentialMap &potentialMap)
 {
 	const double reductionFactor = 0.95;
 
@@ -138,11 +116,13 @@ void Configuration::applySizeFactor(const PotentialMap& potentialMap)
 		 *  -- Otherwise, check energy - if it is negative, reduce requested size factor
 		 *  -- If energy is positive, don't change anything
 		 */
-		if (fabs(requestedSizeFactor_ - 1.0) < 1.0e-5) break;
+		if (fabs(requestedSizeFactor_ - 1.0) < 1.0e-5)
+			break;
 		else if (EnergyModule::interMolecularEnergy(processPool_, this, potentialMap) <= 0.0)
 		{
 			requestedSizeFactor_ *= reductionFactor;
-			if (requestedSizeFactor_ < 1.0) requestedSizeFactor_ = 1.0;
+			if (requestedSizeFactor_ < 1.0)
+				requestedSizeFactor_ = 1.0;
 			Messenger::print("Intermolecular energy is zero or negative, so reducing SizeFactor to %f\n", requestedSizeFactor_);
 		}
 		else

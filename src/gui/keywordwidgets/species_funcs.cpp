@@ -19,18 +19,19 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/species.hui"
-#include "gui/helpers/comboboxupdater.h"
-#include "gui/helpers/mousewheeladjustmentguard.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
+#include "gui/helpers/comboboxupdater.h"
+#include "gui/helpers/mousewheeladjustmentguard.h"
+#include "gui/keywordwidgets/species.hui"
 
 // Constructor
-SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QComboBox(parent), KeywordWidgetBase(coreData)
+SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QComboBox(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<SpeciesKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into SpeciesKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<SpeciesKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into SpeciesKeyword.\n", keyword->name());
 	else
 	{
 		// Set current information
@@ -51,9 +52,10 @@ SpeciesKeywordWidget::SpeciesKeywordWidget(QWidget* parent, KeywordBase* keyword
 // Combo box item changed
 void SpeciesKeywordWidget::myIndexChanged(int index)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
-	Species* sp = (index == -1 ? NULL : VariantPointer<Species>(itemData(index, Qt::UserRole)));
+	Species *sp = (index == -1 ? NULL : VariantPointer<Species>(itemData(index, Qt::UserRole)));
 	keyword_->setData(sp);
 
 	emit(keywordValueChanged(keyword_->optionMask()));
@@ -67,7 +69,7 @@ void SpeciesKeywordWidget::myIndexChanged(int index)
 void SpeciesKeywordWidget::updateValue()
 {
 	refreshing_ = true;
-	
+
 	// Update the QComboBox against the global Species list
 	ComboBoxUpdater<Species> comboUpdater(this, coreData_.constSpecies(), keyword_->data());
 

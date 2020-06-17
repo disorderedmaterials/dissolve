@@ -22,7 +22,7 @@
 #ifndef DISSOLVE_LISTITEM_H
 #define DISSOLVE_LISTITEM_H
 
-#include <stdlib.h>     // To get NULL
+#include <stdlib.h> // To get NULL
 
 // Forward Declarations
 template <class T> class List;
@@ -31,7 +31,7 @@ template <class T> class ListIterator;
 // ListItem Class
 template <class T> class ListItem
 {
-	public:
+      public:
 	// Constructor
 	ListItem<T>()
 	{
@@ -39,23 +39,17 @@ template <class T> class ListItem
 		next_ = NULL;
 	}
 
-	private:
+      private:
 	// Pointer to previous item in list
-	T* prev_;
+	T *prev_;
 	// Pointer to next item in list
-	T* next_;
+	T *next_;
 
-	public:
+      public:
 	// Return previous item in list
-	T* prev() const
-	{
-		return prev_;
-	}
+	T *prev() const { return prev_; }
 	// Return next item in list
-	T* next() const
-	{
-		return next_;
-	}
+	T *next() const { return next_; }
 	// Declare the list and iterator as friends
 	friend class List<T>;
 	friend class ListIterator<T>;

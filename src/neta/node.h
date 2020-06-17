@@ -1,32 +1,32 @@
- /*
-	*** NETA Node
-	*** src/neta/node.h
-	Copyright T. Youngs 2019-2020
+/*
+       *** NETA Node
+       *** src/neta/node.h
+       Copyright T. Youngs 2019-2020
 
-	This file is part of Dissolve.
+       This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+       Dissolve is free software: you can redistribute it and/or modify
+       it under the terms of the GNU General Public License as published by
+       the Free Software Foundation, either version 3 of the License, or
+       (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+       Dissolve is distributed in the hope that it will be useful,
+       but WITHOUT ANY WARRANTY; without even the implied warranty of
+       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+       GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+       You should have received a copy of the GNU General Public License
+       along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef DISSOLVE_NETA_NODE_H
 #define DISSOLVE_NETA_NODE_H
 
 #include "base/enumoptions.h"
-#include "templates/listitem.h"
 #include "templates/list.h"
-#include "templates/pointerarray.h"
+#include "templates/listitem.h"
 #include "templates/reflist.h"
+#include <vector>
 
 // Forward Declarations
 class Element;
@@ -40,98 +40,113 @@ class SpeciesAtom;
 // NETA Node
 class NETANode : public ListItem<NETANode>
 {
-	public:
+      public:
 	// Node types
-	enum NodeType { BasicNode, ConnectionNode, LogicNode, PresenceNode, RingNode, RootNode, nNETANodeTypes };
+	enum NodeType
+	{
+		BasicNode,
+		ConnectionNode,
+		LogicNode,
+		PresenceNode,
+		RingNode,
+		RootNode,
+		nNETANodeTypes
+	};
 	// Value Comparison Operators
-	enum ComparisonOperator { EqualTo, NotEqualTo, GreaterThan, LessThan, GreaterThanEqualTo, LessThanEqualTo };
+	enum ComparisonOperator
+	{
+		EqualTo,
+		NotEqualTo,
+		GreaterThan,
+		LessThan,
+		GreaterThanEqualTo,
+		LessThanEqualTo
+	};
 	// Return enum options for Comparison Operators
 	static EnumOptions<NETANode::ComparisonOperator> comparisonOperators();
 	// Special Scoring Results
-	enum NETAResult { NoMatch = -1 };
+	enum NETAResult
+	{
+		NoMatch = -1
+	};
 	// Constructor / Destructor
-	NETANode(NETADefinition* parent, NodeType type);
+	NETANode(NETADefinition *parent, NodeType type);
+	NETANode() = default;
 	virtual ~NETANode();
-
 
 	/*
 	 * Node Type and Parent
 	 */
-	protected:
+      protected:
 	// Type of node
 	NodeType nodeType_;
 	// Pointer to parent definition
-	NETADefinition* parent_;
+	NETADefinition *parent_;
 
-	public:
+      public:
 	// Return node type
 	NodeType nodeType() const;
 	// Return parent definition
-	NETADefinition* parent() const;
-
+	NETADefinition *parent() const;
 
 	/*
 	 * Branching and Node Generation
 	 */
-	protected:
+      protected:
 	// Branch of nodes
 	List<NETANode> branch_;
 
-	public:
+      public:
 	// Clear all nodes
 	void clear();
 	// Return last node of branch
-	NETANode* lastBranchNode();
+	NETANode *lastBranchNode();
 	// Return number of nodes defined in branch
 	int nBranchNodes() const;
 	// Create connectivity node in the branch
-	NETAConnectionNode* createConnectionNode(PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes);
+	NETAConnectionNode *createConnectionNode(std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes);
 	// Create presence node in the branch
-	NETAPresenceNode* createPresenceNode(PointerArray<Element> targetElements, PointerArray<ForcefieldAtomType> targetAtomTypes);
+	NETAPresenceNode *createPresenceNode(std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes);
 	// Create ring node in the branch
-	NETARingNode* createRingNode();
-
+	NETARingNode *createRingNode();
 
 	/*
 	 * Modifiers
 	 */
-	public:
+      public:
 	// Return whether the specified modifier is valid for this node
-	virtual bool isValidModifier(const char* s) const;
+	virtual bool isValidModifier(const char *s) const;
 	// Set value and comparator for specified modifier
-	virtual bool setModifier(const char* modifier, ComparisonOperator op, int value);
-
+	virtual bool setModifier(const char *modifier, ComparisonOperator op, int value);
 
 	/*
 	 * Flags
 	 */
-	public:
+      public:
 	// Return whether the specified flag is valid for this node
-	virtual bool isValidFlag(const char* s) const;
+	virtual bool isValidFlag(const char *s) const;
 	// Set specified flag
-	virtual bool setFlag(const char* flag, bool state);
-
+	virtual bool setFlag(const char *flag, bool state);
 
 	/*
 	 * Value Comparison
 	 */
-	public:
+      public:
 	// Return result of comparison between values provided
 	static bool compareValues(int lhsValue, ComparisonOperator op, int rhsValue);
-
 
 	/*
 	 * Scoring
 	 */
-	protected:
+      protected:
 	// Whether to use reverse logic when returning the final value
 	bool reverseLogic_;
 
-	public:
+      public:
 	// Set node to use reverse logic
 	void setReverseLogic();
 	// Evaluate the node and return its score
-	virtual int score(const SpeciesAtom* i, RefList<const SpeciesAtom>& atomData) const;
+	virtual int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &atomData) const;
 };
 
 #endif

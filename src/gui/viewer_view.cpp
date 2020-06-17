@@ -26,40 +26,36 @@
  */
 
 // Return the View definition
-View& BaseViewer::view()
+View &BaseViewer::view()
 {
-	if (view_.linkedView()) return (*view_.linkedView());
+	if (view_.linkedView())
+		return (*view_.linkedView());
 	return view_;
 }
 
 // Return the View definition (const)
-const View& BaseViewer::constView() const
+const View &BaseViewer::constView() const
 {
-	if (view_.linkedView()) return (*view_.linkedView());
+	if (view_.linkedView())
+		return (*view_.linkedView());
 	return view_;
 }
 
-
 // Register that the specified viewer depends on (links to) this one
-void BaseViewer::addDependentViewer(BaseViewer* viewer)
-{
-	dependentViewers_.addUnique(viewer);
-}
+void BaseViewer::addDependentViewer(BaseViewer *viewer) { dependentViewers_.addUnique(viewer); }
 
 // Unregister the specified viewer
-void BaseViewer::removeDependentViewer(BaseViewer* viewer)
-{
-	dependentViewers_.remove(viewer);
-}
+void BaseViewer::removeDependentViewer(BaseViewer *viewer) { dependentViewers_.remove(viewer); }
 
 // Link this viewer to the one specified
-void BaseViewer::linkView(BaseViewer* viewToLinkTo)
+void BaseViewer::linkView(BaseViewer *viewToLinkTo)
 {
 	// Check if a link is already set...
 	if (linkedViewer_)
 	{
 		// Perform consistency check on linked view...
-		if ((&linkedViewer_->view()) != view_.linkedView()) Messenger::warn("Mangled view links present...\n");
+		if ((&linkedViewer_->view()) != view_.linkedView())
+			Messenger::warn("Mangled view links present...\n");
 
 		linkedViewer_->removeDependentViewer(this);
 	}

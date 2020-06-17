@@ -19,113 +19,84 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/dissolve.h"
 #include "classes/atomtype.h"
 #include "genericitems/listhelper.h"
+#include "main/dissolve.h"
 
 // Set maximum distance for tabulated PairPotentials
 void Dissolve::setPairPotentialRange(double range)
 {
 	pairPotentialRange_ = range;
-	pairPotentialRangeSquared_ = range*range;
+	pairPotentialRangeSquared_ = range * range;
 }
 
 // Return maximum distance for tabulated PairPotentials
-double Dissolve::pairPotentialRange() const
-{
-	return pairPotentialRange_;
-}
+double Dissolve::pairPotentialRange() const { return pairPotentialRange_; }
 
 // Return maximum squared distance for tabulated PairPotentials
-double Dissolve::pairPotentialRangeSquared() const
-{
-	return pairPotentialRangeSquared_;
-}
+double Dissolve::pairPotentialRangeSquared() const { return pairPotentialRangeSquared_; }
 
 // Set delta to use in tabulations
-void Dissolve::setPairPotentialDelta(double delta)
-{
-	pairPotentialDelta_ = delta;
-}
+void Dissolve::setPairPotentialDelta(double delta) { pairPotentialDelta_ = delta; }
 
 // Return delta to use in tabulations
-double Dissolve::pairPotentialDelta() const
-{
-	return pairPotentialDelta_;
-}
+double Dissolve::pairPotentialDelta() const { return pairPotentialDelta_; }
 
 // Set whether Coulomb term should be included in generated PairPotentials
-void Dissolve::setPairPotentialsIncludeCoulomb(bool b)
-{
-	pairPotentialsIncludeCoulomb_ = b;
-}
+void Dissolve::setPairPotentialsIncludeCoulomb(bool b) { pairPotentialsIncludeCoulomb_ = b; }
 
 // Return whether Coulomb term should be included in generated PairPotentials
-bool Dissolve::pairPotentialsIncludeCoulomb()
-{
-	return pairPotentialsIncludeCoulomb_;
-}
+bool Dissolve::pairPotentialsIncludeCoulomb() { return pairPotentialsIncludeCoulomb_; }
 
 // Return index of specified PairPotential
-int Dissolve::indexOf(PairPotential* pp)
-{
-	return pairPotentials_.indexOf(pp);
-}
+int Dissolve::indexOf(PairPotential *pp) { return pairPotentials_.indexOf(pp); }
 
 // Return number of defined PairPotentials
-int Dissolve::nPairPotentials() const
-{
-	return pairPotentials_.nItems();
-}
+int Dissolve::nPairPotentials() const { return pairPotentials_.nItems(); }
 
 // Add new pair potential to list
-PairPotential* Dissolve::addPairPotential(AtomType* at1, AtomType* at2)
+PairPotential *Dissolve::addPairPotential(AtomType *at1, AtomType *at2)
 {
-	PairPotential* pp = pairPotentials_.add();
+	PairPotential *pp = pairPotentials_.add();
 	pp->setUp(at1, at2);
 
 	return pp;
 }
 
-// Return first PaiPotential in list
-const List<PairPotential>& Dissolve::pairPotentials() const
-{
-	return pairPotentials_;
-}
+// Return first PairPotential in list
+const List<PairPotential> &Dissolve::pairPotentials() const { return pairPotentials_; }
 
 // Return nth PairPotential in list
-PairPotential* Dissolve::pairPotential(int n)
-{
-	return pairPotentials_[n];
-}
+PairPotential *Dissolve::pairPotential(int n) { return pairPotentials_[n]; }
 
 // Return whether specified PairPotential is defined
-PairPotential* Dissolve::pairPotential(AtomType* at1, AtomType* at2) const
+PairPotential *Dissolve::pairPotential(AtomType *at1, AtomType *at2) const
 {
-	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
+	for (PairPotential *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
 	{
-		if ((pot->atomTypeI() == at1) && (pot->atomTypeJ() == at2)) return pot;
-		if ((pot->atomTypeI() == at2) && (pot->atomTypeJ() == at1)) return pot;
+		if ((pot->atomTypeI() == at1) && (pot->atomTypeJ() == at2))
+			return pot;
+		if ((pot->atomTypeI() == at2) && (pot->atomTypeJ() == at1))
+			return pot;
 	}
 	return NULL;
 }
 
 // Return whether specified PairPotential is defined
-PairPotential* Dissolve::pairPotential(const char* at1, const char* at2) const
+PairPotential *Dissolve::pairPotential(const char *at1, const char *at2) const
 {
-	for (PairPotential* pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
+	for (PairPotential *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
 	{
-		if (DissolveSys::sameString(pot->atomTypeNameI(), at1) && DissolveSys::sameString(pot->atomTypeNameJ(), at2)) return pot;
-		if (DissolveSys::sameString(pot->atomTypeNameI(), at2) && DissolveSys::sameString(pot->atomTypeNameJ(), at1)) return pot;
+		if (DissolveSys::sameString(pot->atomTypeNameI(), at1) && DissolveSys::sameString(pot->atomTypeNameJ(), at2))
+			return pot;
+		if (DissolveSys::sameString(pot->atomTypeNameI(), at2) && DissolveSys::sameString(pot->atomTypeNameJ(), at1))
+			return pot;
 	}
 	return NULL;
 }
 
 // Return map for PairPotentials
-const PotentialMap& Dissolve::potentialMap()
-{
-	return potentialMap_;
-}
+const PotentialMap &Dissolve::potentialMap() { return potentialMap_; }
 
 // Clear and regenerate all PairPotentials, replacing those currently defined
 void Dissolve::regeneratePairPotentials()
@@ -138,7 +109,7 @@ void Dissolve::regeneratePairPotentials()
 }
 
 // Generate all necessary PairPotentials, adding missing terms where necessary
-bool Dissolve::generatePairPotentials(AtomType* onlyInvolving)
+bool Dissolve::generatePairPotentials(AtomType *onlyInvolving)
 {
 	// Check current AtomTypes version against the last one we generated at
 	if (pairPotentialAtomTypeVersion_ == coreData_.atomTypesVersion())
@@ -150,19 +121,21 @@ bool Dissolve::generatePairPotentials(AtomType* onlyInvolving)
 	int nUndefined = 0;
 
 	// Loop over all atomtype pairs and update / add pair potentials as necessary
-	for (AtomType* at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next())
+	for (AtomType *at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next())
 	{
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next())
+		for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next())
 		{
 			// If an AtomType was supplied, only generate the pair potential if one of its AtomTypes matches
-			if (onlyInvolving && (at1 != onlyInvolving) && (at2 != onlyInvolving)) continue;
+			if (onlyInvolving && (at1 != onlyInvolving) && (at2 != onlyInvolving))
+				continue;
 
 			// Does a PairPotential for this AtomType pair already exist?
-			PairPotential* pot = pairPotential(at1, at2);
+			PairPotential *pot = pairPotential(at1, at2);
 			if (pot)
 			{
 				Messenger::print("Updating existing PairPotential for interaction between '%s' and '%s'...\n", at1->name(), at2->name());
-				if (!pot->setUp(at1, at2)) return false;
+				if (!pot->setUp(at1, at2))
+					return false;
 			}
 			else
 			{
@@ -171,12 +144,15 @@ bool Dissolve::generatePairPotentials(AtomType* onlyInvolving)
 			}
 
 			// Check the implied short-range form of the potential
-			if (pot->shortRangeType() == Forcefield::UndefinedType) ++nUndefined;
-			else if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_)) return false;
+			if (pot->shortRangeType() == Forcefield::UndefinedType)
+				++nUndefined;
+			else if (!pot->tabulate(pairPotentialRange_, pairPotentialDelta_, pairPotentialsIncludeCoulomb_))
+				return false;
 
 			// Retrieve additional potential from the processing module data, if present
 			CharString itemName("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
-			if (!processingModuleData_.contains(itemName, "Dissolve")) continue;
+			if (!processingModuleData_.contains(itemName, "Dissolve"))
+				continue;
 			pot->setUAdditional(GenericListHelper<Data1D>::retrieve(processingModuleData_, itemName, "Dissolve", Data1D()));
 		}
 	}

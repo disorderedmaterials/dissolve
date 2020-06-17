@@ -19,29 +19,17 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/viewer.hui"
 #include "base/messenger.h"
+#include "gui/viewer.hui"
 
 // Set whether Axes are visible
-void BaseViewer::setAxesVisible(bool visible)
-{
-	axesVisible_ = visible;
-}
+void BaseViewer::setAxesVisible(bool visible) { axesVisible_ = visible; }
 
 // Return whether Axes are visible
-bool BaseViewer::axesVisible() const
-{
-	return axesVisible_;
-}
+bool BaseViewer::axesVisible() const { return axesVisible_; }
 
 // Set whether to apply clip planes about Axes volume for Renderables
-void BaseViewer::setClipToAxesVolume(bool clip)
-{
-	clipToAxesVolume_ = clip;
-}
+void BaseViewer::setClipToAxesVolume(bool clip) { clipToAxesVolume_ = clip; }
 
 // Return whether clip planes are applied about Axes volume for Renderables
-bool BaseViewer::clipToAxesVolume() const
-{
-	return clipToAxesVolume_;
-}
+bool BaseViewer::clipToAxesVolume() const { return clipToAxesVolume_; }

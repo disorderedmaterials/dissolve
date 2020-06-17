@@ -19,22 +19,23 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate_avgmol/avgmol.h"
-#include "main/dissolve.h"
+#include "base/sysfunc.h"
 #include "classes/box.h"
 #include "genericitems/listhelper.h"
-#include "base/sysfunc.h"
+#include "main/dissolve.h"
+#include "modules/calculate_avgmol/avgmol.h"
 
 // Run set-up stage
-bool CalculateAvgMolModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
+bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 {
-	SpeciesSite* site = keywords_.retrieve<SpeciesSite*>("Site");
+	SpeciesSite *site = keywords_.retrieve<SpeciesSite *>("Site");
 
 	// Clear species
 	averageSpecies_.clear();
 
 	// If the targetSpecies_ is different from the current target site, or the site is NULL, clear the arrays
-	if (!site) targetSpecies_ = NULL;
+	if (!site)
+		targetSpecies_ = NULL;
 	else
 	{
 		if (site->parent() == NULL)
@@ -49,9 +50,11 @@ bool CalculateAvgMolModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 
 			// Copy basic atom and bond information from species
 			ListIterator<SpeciesAtom> atomIterator(targetSpecies_->atoms());
-			while (SpeciesAtom* i = atomIterator.iterate()) averageSpecies_.addAtom(i->element(), i->r());
+			while (SpeciesAtom *i = atomIterator.iterate())
+				averageSpecies_.addAtom(i->element(), i->r());
 			DynamicArrayIterator<SpeciesBond> bondIterator(targetSpecies_->bonds());
-			while (SpeciesBond* b = bondIterator.iterate()) averageSpecies_.addBond(b->indexI(), b->indexJ());
+			while (SpeciesBond *b = bondIterator.iterate())
+				averageSpecies_.addBond(b->indexI(), b->indexJ());
 		}
 	}
 
@@ -63,9 +66,9 @@ bool CalculateAvgMolModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 	updateArrays(dissolve);
 
 	// Retrieve data arrays
-	Array<SampledDouble>& x = GenericListHelper< Array<SampledDouble> >::retrieve(dissolve.processingModuleData(), "X", uniqueName());
-	Array<SampledDouble>& y = GenericListHelper< Array<SampledDouble> >::retrieve(dissolve.processingModuleData(), "Y", uniqueName());
-	Array<SampledDouble>& z = GenericListHelper< Array<SampledDouble> >::retrieve(dissolve.processingModuleData(), "Z", uniqueName());
+	Array<SampledDouble> &x = GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "X", uniqueName());
+	Array<SampledDouble> &y = GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Y", uniqueName());
+	Array<SampledDouble> &z = GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Z", uniqueName());
 
 	// Update our Species
 	updateSpecies(x, y, z);
@@ -74,42 +77,45 @@ bool CalculateAvgMolModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
 }
 
 // Run main processing
-bool CalculateAvgMolModule::process(Dissolve& dissolve, ProcessPool& procPool)
+bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+	if (targetConfigurations_.nItems() == 0)
+		return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	// Grab Configuration and Box pointers
-	Configuration* cfg = targetConfigurations_.firstItem();
-	const Box* box = cfg->box();
+	Configuration *cfg = targetConfigurations_.firstItem();
+	const Box *box = cfg->box();
 
 	// Set up process pool - must do this to ensure we are using all available processes
 	procPool.assignProcessesToGroups(cfg->processPool());
 
 	// Get the target site
-	SpeciesSite* site = keywords_.retrieve<SpeciesSite*>("Site");
-	if (!site) return Messenger::error("No target site defined.\n");
+	SpeciesSite *site = keywords_.retrieve<SpeciesSite *>("Site");
+	if (!site)
+		return Messenger::error("No target site defined.\n");
 
 	// Get site parent species
-	Species* sp = site->parent();
-	if (sp != targetSpecies_) return Messenger::error("Internal error - target site parent is not the same as the target species.\n");
+	Species *sp = site->parent();
+	if (sp != targetSpecies_)
+		return Messenger::error("Internal error - target site parent is not the same as the target species.\n");
 
 	// Update arrays
 	updateArrays(dissolve);
 
 	// Get the site stack
-	const SiteStack* stack = cfg->siteStack(site);
+	const SiteStack *stack = cfg->siteStack(site);
 
 	// Retrieve data arrays
-	Array<SampledDouble>& x = GenericListHelper< Array<SampledDouble> >::retrieve(dissolve.processingModuleData(), "X", uniqueName());
-	Array<SampledDouble>& y = GenericListHelper< Array<SampledDouble> >::retrieve(dissolve.processingModuleData(), "Y", uniqueName());
-	Array<SampledDouble>& z = GenericListHelper< Array<SampledDouble> >::retrieve(dissolve.processingModuleData(), "Z", uniqueName());
+	Array<SampledDouble> &x = GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "X", uniqueName());
+	Array<SampledDouble> &y = GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Y", uniqueName());
+	Array<SampledDouble> &z = GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Z", uniqueName());
 
 	// Loop over sites
 	Vec3<double> r;
-	for (int n=0; n<stack->nSites(); ++n)
+	for (int n = 0; n < stack->nSites(); ++n)
 	{
-		const Site& s = stack->site(n);
+		const Site &s = stack->site(n);
 #ifdef CHECKS
 		if (s.molecule()->species() != targetSpecies_)
 		{
@@ -123,7 +129,7 @@ bool CalculateAvgMolModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		inverseAxes.invert();
 
 		// Loop over atoms, taking delta position with origin, and rotating into local axes
-		for (int i=0; i<s.molecule()->nAtoms(); ++i)
+		for (int i = 0; i < s.molecule()->nAtoms(); ++i)
 		{
 			r = inverseAxes * box->minimumVector(s.origin(), s.molecule()->atom(i)->r());
 

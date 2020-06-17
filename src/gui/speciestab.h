@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_SPECIESTAB_H
 #define DISSOLVE_SPECIESTAB_H
 
-#include "gui/ui_speciestab.h"
 #include "gui/maintab.h"
+#include "gui/ui_speciestab.h"
 
 // Forward Declarations
 class AtomType;
@@ -41,20 +41,19 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	SpeciesTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, Species* species);
+	SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Species *species);
 	~SpeciesTab();
-
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::SpeciesTab ui_;
 
-	public slots:
+      public slots:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab
@@ -62,117 +61,111 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
 	// Enable sensitive controls within tab
 	void enableSensitiveControls();
 
-
 	/*
 	 * MainTab Reimplementations
 	 */
-	public:
+      public:
 	// Return tab type
 	MainTab::TabType type() const;
 	// Raise suitable dialog for entering / checking new tab name
-	QString getNewTitle(bool& ok);
+	QString getNewTitle(bool &ok);
 	// Return whether the title of the tab can be changed
 	bool canChangeTitle() const;
 	// Return whether the tab can be closed (after any necessary user querying, etc.)
 	bool canClose() const;
 
-
 	/*
 	 * Species Target
 	 */
-	private:
+      private:
 	// Species data to display
-	Species* species_;
+	Species *species_;
 
-	public:
+      public:
 	// Return displayed Species
-	Species* species() const;
-
+	Species *species() const;
 
 	/*
 	 * Widget Functions - Geometry
 	 */
-	private:
+      private:
 	// SpeciesAtomTable row update function
-	void updateAtomTableRow(int row, SpeciesAtom* speciesAtom, bool createItems);
+	void updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool createItems);
 	// SpeciesBondTable row update function
-	void updateBondTableRow(int row, SpeciesBond* speciesBond, bool createItems);
+	void updateBondTableRow(int row, SpeciesBond *speciesBond, bool createItems);
 	// SpeciesAngleTable row update function
-	void updateAngleTableRow(int row, SpeciesAngle* speciesAngle, bool createItems);
+	void updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool createItems);
 	// SpeciesTorsionTable row update function
-	void updateTorsionTableRow(int row, SpeciesTorsion* speciesTorsion, bool createItems);
+	void updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, bool createItems);
 	// SpeciesImproperTable row update function
-	void updateImproperTableRow(int row, SpeciesImproper* speciesImproper, bool createItems);
+	void updateImproperTableRow(int row, SpeciesImproper *speciesImproper, bool createItems);
 
-	private slots:
+      private slots:
 	// Update atom table selection
 	void updateAtomTableSelection();
 
-	private slots:
-	void on_AtomTable_itemChanged(QTableWidgetItem* w);
+      private slots:
+	void on_AtomTable_itemChanged(QTableWidgetItem *w);
 	void on_AtomTable_itemSelectionChanged();
-	void on_BondTable_itemChanged(QTableWidgetItem* w);
-	void on_AngleTable_itemChanged(QTableWidgetItem* w);
-	void on_TorsionTable_itemChanged(QTableWidgetItem* w);
-	void on_ImproperTable_itemChanged(QTableWidgetItem* w);
+	void on_BondTable_itemChanged(QTableWidgetItem *w);
+	void on_AngleTable_itemChanged(QTableWidgetItem *w);
+	void on_TorsionTable_itemChanged(QTableWidgetItem *w);
+	void on_ImproperTable_itemChanged(QTableWidgetItem *w);
 
-	public slots:
+      public slots:
 	// Update Geometry tab
 	void updateGeometryTab();
-
 
 	/*
 	 * Widget Functions - Isotopologues
 	 */
-	private:
+      private:
 	// IsotopologuesTree top-level update function
-	void updateIsotopologuesTreeTopLevelItem(QTreeWidget* treeWidget, int topLevelItemIndex, Isotopologue* data, bool createItem);
+	void updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, int topLevelItemIndex, Isotopologue *data, bool createItem);
 	// IsotopologuesTree item update function
-	void updateIsotopologuesTreeChildItem(QTreeWidgetItem* parentItem, int childIndex, AtomType* item, Isotope* data, bool createItem);
+	void updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, AtomType *item, Isotope *data, bool createItem);
 	// Return currently-selected Isotopologue
-	Isotopologue* currentIsotopologue();
+	Isotopologue *currentIsotopologue();
 
-	private slots:
+      private slots:
 	void on_IsotopologueAddButton_clicked(bool checked);
 	void on_IsotopologueRemoveButton_clicked(bool checked);
 	void on_IsotopologueGenerateButton_clicked(bool checked);
 	void on_IsotopologueExpandAllButton_clicked(bool checked);
 	void on_IsotopologueCollapseAllButton_clicked(bool checked);
-	void on_IsotopologuesTree_itemChanged(QTreeWidgetItem* item, int column);
+	void on_IsotopologuesTree_itemChanged(QTreeWidgetItem *item, int column);
 
-	public slots:
+      public slots:
 	// Update Isotopologues tab
 	void updateIsotopologuesTab();
-
 
 	/*
 	 * Widget Functions - Sites
 	 */
-	private:
+      private:
 	// Return currently-selected SpeciesSite
-	SpeciesSite* currentSite();
+	SpeciesSite *currentSite();
 
-	private slots:
+      private slots:
 	void setCurrentSiteFromViewer();
 	void on_SiteAddButton_clicked(bool checked);
 	void on_SiteRemoveButton_clicked(bool checked);
-	void on_SiteList_currentItemChanged(QListWidgetItem* currentItem, QListWidgetItem* previousItem);
-	void on_SiteList_itemChanged(QListWidgetItem* item);
+	void on_SiteList_currentItemChanged(QListWidgetItem *currentItem, QListWidgetItem *previousItem);
+	void on_SiteList_itemChanged(QListWidgetItem *item);
 	void on_SiteOriginMassWeightedCheck_clicked(bool checked);
 
-	public slots:
+      public slots:
 	// Update sites tab
 	void updateSitesTab();
-
 
 	/*
 	 * State
 	 */
-	public:
+      public:
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser, const CoreData& coreData);
+	bool readState(LineParser &parser, const CoreData &coreData);
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser) const;
+	bool writeState(LineParser &parser) const;
 };
 
 #endif

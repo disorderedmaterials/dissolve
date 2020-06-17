@@ -32,20 +32,19 @@ class QToolButton;
 // System Template
 class SystemTemplate : public ListItem<SystemTemplate>
 {
-	public:
+      public:
 	// Constructor / Destructor
 	SystemTemplate();
 	~SystemTemplate();
 	// Copy Constructor
-	SystemTemplate(const SystemTemplate& source);
+	SystemTemplate(const SystemTemplate &source);
 	// Assignment operator
-	void operator=(const SystemTemplate& source);
-
+	void operator=(const SystemTemplate &source);
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Name of the template
 	QString name_;
 	// Group in which the template exists
@@ -57,9 +56,9 @@ class SystemTemplate : public ListItem<SystemTemplate>
 	// Template's input data
 	QString inputFileData_;
 	// QToolButton created for the template
-	QToolButton* toolButton_;
+	QToolButton *toolButton_;
 
-	public:
+      public:
 	// Read data contained in specified dir
 	bool read(const QDir rootResourceDir);
 	// Return name of the template
@@ -73,9 +72,9 @@ class SystemTemplate : public ListItem<SystemTemplate>
 	// Return the template's input data
 	QString inputFileData() const;
 	// Return QToolButton created for the template
-	QToolButton* toolButton() const;
+	QToolButton *toolButton() const;
 	// Create and return a button for this template
-	QToolButton* createButton();
+	QToolButton *createButton();
 };
 
 #endif

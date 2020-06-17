@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULEWIDGET_CALCULATESDF_H
 #define DISSOLVE_MODULEWIDGET_CALCULATESDF_H
 
-#include "modules/calculate_sdf/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
+#include "modules/calculate_sdf/gui/ui_modulewidget.h"
 
 // Forward Declarations
 class CalculateSDFModule;
@@ -39,55 +39,52 @@ class CalculateSDFModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	CalculateSDFModuleWidget(QWidget* parent, CalculateSDFModule* module, const CoreData& coreData);
+	CalculateSDFModuleWidget(QWidget *parent, CalculateSDFModule *module, const CoreData &coreData);
 
-	private:
+      private:
 	// Associated Module
-	CalculateSDFModule* module_;
+	CalculateSDFModule *module_;
 	// CoreData reference
-	const CoreData& coreData_;
-
+	const CoreData &coreData_;
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::CalculateSDFModuleWidget ui_;
 	// DataViewers contained within this widget
-	DataViewer* sdfGraph_;
+	DataViewer *sdfGraph_;
 	// Renderable for our SDF
-	RenderableData3D* sdfRenderable_;
+	RenderableData3D *sdfRenderable_;
 	// Reference molecule (Species) to display alongside density
-	Species* referenceMolecule_;
+	Species *referenceMolecule_;
 	// Renderable for reference molecule
-	RenderableSpecies* referenceMoleculeRenderable_;
+	RenderableSpecies *referenceMoleculeRenderable_;
 
-	public:
+      public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
 
 	/*
 	 * State I/O
 	 */
-	public:
+      public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser) const;
+	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
+	bool readState(LineParser &parser);
 
 	/*
 	 * Widgets / Functions
 	 */
-	private:
+      private:
 	// Set data targets in graphs
 	void setGraphDataTargets();
 
-	private slots:
+      private slots:
 	void on_LowerCutoffSpin_valueChanged(double value);
 	void on_UpperCutoffSpin_valueChanged(double value);
 	void on_ReferenceMoleculeCombo_currentIndexChanged(int index);

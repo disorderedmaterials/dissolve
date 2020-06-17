@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/skeleton/skeleton.h"
-#include "main/dissolve.h"
 #include "base/sysfunc.h"
+#include "main/dissolve.h"
+#include "modules/skeleton/skeleton.h"
 
 // Run main processing
-bool SkeletonModule::process(Dissolve& dissolve, ProcessPool& procPool)
+bool SkeletonModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
 	/*
 	 * This is a XXX routine.
@@ -32,14 +32,12 @@ bool SkeletonModule::process(Dissolve& dissolve, ProcessPool& procPool)
 	 */
 
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+	if (targetConfigurations_.nItems() == 0)
+		return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	// Loop over target Configurations
-	for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
+	for (Configuration *cfg : targetConfigurations_)
 	{
-		// Grab Configuration pointer
-		Configuration* cfg = ri->item();
-
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
 
@@ -48,4 +46,3 @@ bool SkeletonModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	return false;
 }
-

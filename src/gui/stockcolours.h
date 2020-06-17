@@ -31,9 +31,25 @@
 // Stock Colours
 class StockColours
 {
-	public:
+      public:
 	// Stock Colours
-	enum StockColour { BlackStockColour, RedStockColour, GreenStockColour, BlueStockColour, PurpleStockColour, CyanStockColour, OrangeStockColour, PinkStockColour, LightRedStockColour, LightGreenStockColour, LightBlueStockColour, SilverStockColour, GoldStockColour, nStockColours };
+	enum StockColour
+	{
+		BlackStockColour,
+		RedStockColour,
+		GreenStockColour,
+		BlueStockColour,
+		PurpleStockColour,
+		CyanStockColour,
+		OrangeStockColour,
+		PinkStockColour,
+		LightRedStockColour,
+		LightGreenStockColour,
+		LightBlueStockColour,
+		SilverStockColour,
+		GoldStockColour,
+		nStockColours
+	};
 	// Return enum options for AveragingScheme
 	static EnumOptions<StockColours::StockColour> stockColours();
 	// Return stock colour (as QColor)

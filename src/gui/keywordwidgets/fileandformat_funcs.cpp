@@ -19,26 +19,26 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/fileandformat.h"
-#include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/dialog.h"
-#include "main/dissolve.h"
-#include "io/fileandformat.h"
 #include "genericitems/listhelper.h"
-#include <QHBoxLayout>
+#include "gui/keywordwidgets/dialog.h"
+#include "gui/keywordwidgets/dropdown.h"
+#include "gui/keywordwidgets/fileandformat.h"
+#include "io/fileandformat.h"
+#include "main/dissolve.h"
 #include <QComboBox>
 #include <QFile>
 #include <QFileDialog>
 #include <QFileInfo>
+#include <QHBoxLayout>
 
 // Constructor
-FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Create and set up our UI
 	ui_.setupUi(this);
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<FileAndFormatKeyword*>(keyword);
+	keyword_ = dynamic_cast<FileAndFormatKeyword *>(keyword);
 	if (!keyword_)
 	{
 		Messenger::error("Couldn't cast base keyword '%s' into FileAndFormatKeyword.\n", keyword->name());
@@ -49,7 +49,8 @@ FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordB
 
 	// Populate combo with the file formats available
 	ui_.FormatCombo->clear();
-	for (int n=0; n < keyword_->data().nFormats(); ++n) ui_.FormatCombo->addItem(keyword_->data().format(n));
+	for (int n = 0; n < keyword_->data().nFormats(); ++n)
+		ui_.FormatCombo->addItem(keyword_->data().formatKeyword(n));
 
 	// If the FileAndFormat has keyword options, enable the options button.
 	ui_.OptionsButton->setEnabled(keyword_->hasOptions());
@@ -66,7 +67,8 @@ FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget* parent, KeywordB
 
 void FileAndFormatKeywordWidget::on_FileEdit_editingFinished()
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	updateKeywordData();
 
@@ -77,7 +79,8 @@ void FileAndFormatKeywordWidget::on_FileEdit_editingFinished()
 
 void FileAndFormatKeywordWidget::on_FileEdit_returnPressed()
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	updateKeywordData();
 
@@ -89,7 +92,7 @@ void FileAndFormatKeywordWidget::on_FileEdit_returnPressed()
 void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
 {
 	// Grab the target FileAndFormat
-	FileAndFormat& fileAndFormat = keyword_->data();
+	FileAndFormat &fileAndFormat = keyword_->data();
 
 	// Determine what sort of dialog we need to raise...
 	QString filename;
@@ -119,7 +122,8 @@ void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
 
 void FileAndFormatKeywordWidget::on_FormatCombo_currentIndexChanged(int index)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	updateKeywordData();
 
@@ -132,7 +136,8 @@ void FileAndFormatKeywordWidget::on_OptionsButton_clicked(bool checked)
 
 	optionsDialog.showOptions();
 
-	if (optionsDialog.keywordsModified()) emit(keywordValueChanged(keyword_->optionMask()));
+	if (optionsDialog.keywordsModified())
+		emit(keywordValueChanged(keyword_->optionMask()));
 }
 
 /*
@@ -143,7 +148,7 @@ void FileAndFormatKeywordWidget::on_OptionsButton_clicked(bool checked)
 void FileAndFormatKeywordWidget::checkFileValidity()
 {
 	// Grab the target FileAndFormat
-	const FileAndFormat& fileAndFormat = keyword_->data();
+	const FileAndFormat &fileAndFormat = keyword_->data();
 
 	// If this is an export FileAndFormat, no need to show the indicator or check if the file exists
 	if (fileAndFormat.fileMustExist())
@@ -152,22 +157,20 @@ void FileAndFormatKeywordWidget::checkFileValidity()
 		bool ok = fileAndFormat.hasFilename() ? QFile::exists(fileAndFormat.filename()) : false;
 		ui_.FileExistsIndicator->setOK(ok);
 	}
-	else ui_.FileExistsIndicator->setVisible(false);
+	else
+		ui_.FileExistsIndicator->setVisible(false);
 }
 
 // Update value displayed in widget
-void FileAndFormatKeywordWidget::updateValue()
-{
-	updateWidgetValues(coreData_);
-}
+void FileAndFormatKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
 
 // Update widget values data based on keyword data
-void FileAndFormatKeywordWidget::updateWidgetValues(const CoreData& coreData)
+void FileAndFormatKeywordWidget::updateWidgetValues(const CoreData &coreData)
 {
 	refreshing_ = true;
 
 	// Grab the target FileAndFormat
-	FileAndFormat& fileAndFormat = keyword_->data();
+	FileAndFormat &fileAndFormat = keyword_->data();
 
 	// UPdate widgets
 	ui_.FileEdit->setText(fileAndFormat.filename());
@@ -181,7 +184,7 @@ void FileAndFormatKeywordWidget::updateWidgetValues(const CoreData& coreData)
 void FileAndFormatKeywordWidget::updateKeywordData()
 {
 	// Grab the target FileAndFormat
-	FileAndFormat& fileAndFormat = keyword_->data();
+	FileAndFormat &fileAndFormat = keyword_->data();
 
 	fileAndFormat.setFilename(qPrintable(ui_.FileEdit->text()));
 	fileAndFormat.setFormatIndex(ui_.FormatCombo->currentIndex());

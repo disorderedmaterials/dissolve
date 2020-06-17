@@ -1,9 +1,7 @@
 ---
 title: Step 6 - Analyse the Structure
-parent: Bulk Silica
 grand_parent: Examples
 ---
-# Bulk Silica
 
 ## 6. Analyse the Structure
 

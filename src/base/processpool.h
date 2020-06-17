@@ -25,12 +25,12 @@
 // Random number buffer size
 #define RANDBUFFERSIZE 16172
 
-#include "base/processgroup.h"
 #include "base/charstring.h"
+#include "base/processgroup.h"
 #include "base/timer.h"
-#include "templates/vector3.h"
 #include "templates/array.h"
 #include "templates/array2d.h"
+#include "templates/vector3.h"
 // Include <mpi.h> only if we are compiling in parallel
 #ifdef PARALLEL
 #include <mpi.h>
@@ -43,22 +43,22 @@ class ProcessPool
 	 * Class to define a 'pool' of processes that should work together in parallel tasks, providing limits per process,
 	 * and macros to simplify coding and aid readability.
 	 */
-	public:
+      public:
 	// Constructor
 	ProcessPool();
 	// Copy Constructor
-	ProcessPool(const ProcessPool& source);
+	ProcessPool(const ProcessPool &source);
 	// Assignment Operator
-	void operator=(const ProcessPool& source);
+	void operator=(const ProcessPool &source);
 	// Clear all data
 	void clear();
 	// Communicator Types (for subroutines)
 	enum CommunicatorType
 	{
-		GroupProcessesCommunicator,		/* Process groups (communicator == groupCommunicator_) */
-		GroupLeadersCommunicator,		/* A group containing all process group leaders in the local pool (communicator == leaderCommunicator_) */
-		PoolProcessesCommunicator,		/* A group containing all processes in the local pool (communicator == poolCommunicator_) */
-		NoCommunicator				/* No communicator */
+		GroupProcessesCommunicator, /* Process groups (communicator == groupCommunicator_) */
+		GroupLeadersCommunicator,   /* A group containing all process group leaders in the local pool (communicator == leaderCommunicator_) */
+		PoolProcessesCommunicator,  /* A group containing all processes in the local pool (communicator == poolCommunicator_) */
+		NoCommunicator		    /* No communicator */
 	};
 
 #ifdef PARALLEL
@@ -66,19 +66,18 @@ class ProcessPool
 	MPI_Comm communicator(ProcessPool::CommunicatorType commType);
 #endif
 
-
 	/*
 	 * Global Information
 	 */
-	private:
+      private:
 	// Number of processes in total
 	static int nWorldProcesses_;
 	// World rank of this process
 	static int worldRank_;
 
-	public:
+      public:
 	// Initialise parallel communications, setting rank within the specified communicators / nProcesses
-	static bool initialiseMPI(int* argn, char ***argv);
+	static bool initialiseMPI(int *argn, char ***argv);
 	// End parallel communications
 	static void finalise();
 	// Return number of world processes
@@ -88,25 +87,23 @@ class ProcessPool
 	// Return if this is the world master process
 	static bool isWorldMaster();
 
-
 	/*
 	 * Timing
 	 */
-	private:
+      private:
 	// Communication Timer
 	Timer timer_;
 
-	public:
+      public:
 	// Reset accumulated Comm time
 	void resetAccumulatedTime();
 	// Return accumulated time string
-	const char* accumulatedTimeString();
-
+	const char *accumulatedTimeString();
 
 	/*
 	 * Process Identification
 	 */
-	private:
+      private:
 	// Local rank of this process in the pool (corrsponding to array index in worldRanks_)
 	int poolRank_;
 	// Index of local group in which this process exists
@@ -114,7 +111,7 @@ class ProcessPool
 	// Rank of this process in its local group
 	int groupRank_;
 
-	public:
+      public:
 	// Return rank of this process in the pool
 	int poolRank() const;
 	// Return whether this process is the master for the specified communicator
@@ -128,23 +125,27 @@ class ProcessPool
 	// Return group index in which this process exists
 	int groupIndex() const;
 	// Return local group in which this process exists
-	ProcessGroup& myGroup();
+	ProcessGroup &myGroup();
 	// Return rank of this process in its local group
 	int groupRank() const;
 	// Return whether this process is a group leader
 	bool groupLeader() const;
 	// Return process info string
-	const char* processInfo();
-
+	const char *processInfo();
 
 	/*
 	 * Pool Data
 	 */
-	public:
+      public:
 	// Group Population Enum
-	enum GroupPopulation { HalfMaximumGroupPopulation = -1, MaximumGroupPopulation = 0, MinimumGroupPopulation = 1 };
+	enum GroupPopulation
+	{
+		HalfMaximumGroupPopulation = -1,
+		MaximumGroupPopulation = 0,
+		MinimumGroupPopulation = 1
+	};
 
-	private:
+      private:
 	// Name of this pool
 	CharString name_;
 	// Array of world ranks in this pool
@@ -172,11 +173,11 @@ class ProcessPool
 	// Whether group data is modifiable
 	bool groupsModifiable_;
 
-	public:
+      public:
 	// Set up pool with processes specified
-	bool setUp(const char* name, Array<int> worldRanks, int groupPopulation);
+	bool setUp(const char *name, Array<int> worldRanks, int groupPopulation);
 	// Return name of pool
-	const char* name();
+	const char *name();
 	// Return total number of processes in pool
 	int nProcesses() const;
 	// Return root (first) world rank of this pool
@@ -184,34 +185,33 @@ class ProcessPool
 	// Assign processes to groups
 	bool assignProcessesToGroups();
 	// Assign processes to groups taken from supplied ProcessPool
-	bool assignProcessesToGroups(ProcessPool& groupsSource);
+	bool assignProcessesToGroups(ProcessPool &groupsSource);
 	// Return number of process groups
 	int nProcessGroups() const;
 	// Return nth process group
-	ProcessGroup& processGroup(int n);
+	ProcessGroup &processGroup(int n);
 	// Return number of processes in specified group
 	int nProcessesInGroup(int groupId) const;
 	// Return array of pool ranks in the specified group
-	int* poolRanksInGroup(int groupId) const;
+	int *poolRanksInGroup(int groupId) const;
 	// Return whether group data is modifiable
 	bool groupsModifiable() const;
 	// Prevent group data from being modified
 	void setGroupsFixed();
-	// Return maximum number of simultaneous, single-Cell-modifying process groups 
+	// Return maximum number of simultaneous, single-Cell-modifying process groups
 	int maxProcessGroups() const;
-
 
 	/*
 	 * Strategy / Limits
 	 */
-	public:
+      public:
 	// Division of Labour Style
 	enum DivisionStrategy
 	{
-		GroupsStrategy = 16,		/* Divide loop work over process groups within pool */
-		GroupProcessesStrategy = 8,	/* Divide loop work over processes within a group */
-		PoolStrategy = 4,		/* Divide loop work over individual processes in pool */
-		PoolProcessesStrategy = 2	/* Single process handles entire loop */
+		GroupsStrategy = 16,	/* Divide loop work over process groups within pool */
+		GroupProcessesStrategy = 8, /* Divide loop work over processes within a group */
+		PoolStrategy = 4,	   /* Divide loop work over individual processes in pool */
+		PoolProcessesStrategy = 2   /* Single process handles entire loop */
 	};
 	// Return sub-strategy for specified dividion of labour strategy
 	static DivisionStrategy subDivisionStrategy(DivisionStrategy strategy);
@@ -230,113 +230,109 @@ class ProcessPool
 	// Return ending outer loop index for a two-body interaction calculation where only the upper half (i >= j) is required
 	int twoBodyLoopEnd(int nItems) const;
 
-
 	/*
 	 * Send/Receive Functions
 	 */
-	public:
+      public:
 	// Wait for all processes
 	bool wait(ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
-	// Send single integer value to target rank within the specified communicator 
+	// Send single integer value to target rank within the specified communicator
 	bool send(int value, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Receive single integer from source rank within the specified communicator
-	bool receive(int& value, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
-	// Send single long integer value to target rank within the specified communicator 
+	bool receive(int &value, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	// Send single long integer value to target rank within the specified communicator
 	bool send(long int value, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Receive single long integer from source rank within the specified communicator
-	bool receive(long int& value, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool receive(long int &value, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Send single double value to target rank within the specified communicator
 	bool send(double value, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Receive single double value from source rank within the specified communicator
-	bool receive(double& value, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool receive(double &value, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Send single bool value to target rank within the specified communicator
 	bool send(bool value, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Receive single bool value from source rank within the specified communicator
-	bool receive(bool& value, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool receive(bool &value, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Send integer array data to target rank within the specified communicator
-	bool send(int* source, int nData, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool send(int *source, int nData, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Receive integer array data from target rank within the specified communicator
-	bool receive(int* source, int nData, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool receive(int *source, int nData, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Send double array data to target rank within the specified communicator
-	bool send(double* source, int nData, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool send(double *source, int nData, int targetRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Receive double array data from target rank within the specified communicator
-	bool receive(double* source, int nData, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
-
+	bool receive(double *source, int nData, int sourceRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
 	/*
 	 * Broadcast Functions
 	 */
-	public:
+      public:
 	// Broadcast CharString
-	bool broadcast(CharString& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(CharString &source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast char data
-	bool broadcast(char* source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(char *source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast Vec3<int>
-	bool broadcast(Vec3<int>& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(Vec3<int> &source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast Vec3<double>
-	bool broadcast(Vec3<double>& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(Vec3<double> &source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast single integer
-	bool broadcast(int& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(int &source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast integers
-	bool broadcast(int* source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(int *source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast single long integer
-	bool broadcast(long int& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(long int &source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast long integer to all Processes
-	bool broadcast(long int* source, int count, int rootRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(long int *source, int count, int rootRank, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast single double
-	bool broadcast(double& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(double &source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast double(s)
-	bool broadcast(double* source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(double *source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast float(s)
-	bool broadcast(float* source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(float *source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast bool
-	bool broadcast(bool& source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(bool &source, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast Array<int>
-	bool broadcast(Array<int>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(Array<int> &array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast Array<long int>
-	bool broadcast(Array<long int>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(Array<long int> &array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast Array<double>
-	bool broadcast(Array<double>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(Array<double> &array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast Array< Vec3<int> >
-	bool broadcast(Array< Vec3<int> >& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(Array<Vec3<int>> &array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast Array< Vec3<double> >
-	bool broadcast(Array< Vec3<double> >& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(Array<Vec3<double>> &array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast Array2D<double>
-	bool broadcast(Array2D<double>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool broadcast(Array2D<double> &array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast Array2D<bool>
-	bool broadcast(Array2D<bool>& array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
-
+	bool broadcast(Array2D<bool> &array, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
 	/*
 	 * Special Array Functions
 	 */
-	public:
+      public:
 	// Reduce (sum) double data to root process
-	bool sum(double* source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool sum(double *source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Reduce (sum) int data to root process
-	bool sum(int* source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool sum(int *source, int count, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Reduce (sum) double data to all processes
-	bool allSum(double* source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool allSum(double *source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Reduce (sum) int data to all processes
-	bool allSum(int* source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool allSum(int *source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Reduce (sum) int data to all processes
-	bool allSum(long int* source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool allSum(long int *source, int count, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Reduce (sum) double data over processes relevant to specified strategy
-	bool allSum(double* source, int count, ProcessPool::DivisionStrategy strategy);
+	bool allSum(double *source, int count, ProcessPool::DivisionStrategy strategy);
 	// Reduce (sum) int data over processes relevant to specified strategy
-	bool allSum(int* source, int count, ProcessPool::DivisionStrategy strategy);
+	bool allSum(int *source, int count, ProcessPool::DivisionStrategy strategy);
 	// Assemble integer array on target rank within the specified communicator
-	bool assemble(int* array, int nData, int* rootDest, int rootMaxData, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool assemble(int *array, int nData, int *rootDest, int rootMaxData, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Assemble double array on target rank within the specified communicator
-	bool assemble(double* array, int nLocalData, double* rootDest, int rootMaxData, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool assemble(double *array, int nLocalData, double *rootDest, int rootMaxData, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Assemble Array<double> on target rank within the specified communicator
-	bool assemble(Array<double>& array, int nData, Array<double>& rootDest, int rootMaxData, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
-
+	bool assemble(Array<double> &array, int nData, Array<double> &rootDest, int rootMaxData, int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
 	/*
 	 * Decisions
 	 */
-	public:
+      public:
 	// Broadcast logical 'true' decision to processes (Master only)
 	bool decideTrue(int rootRank = 0, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Broadcast logical 'false' decision to processes (Master only)
@@ -346,11 +342,10 @@ class ProcessPool
 	// Test the supplied condition over all processes, returning true only if they all report truth
 	bool allTrue(bool isOK, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
-
 	/*
 	 * Equality Operations
 	 */
-	public:
+      public:
 	// Check equality of bool value across involved processes
 	bool equality(bool b, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of integer value across involved processes
@@ -360,31 +355,30 @@ class ProcessPool
 	// Check equality of double value across involved processes
 	bool equality(double x, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of CharString value across involved processes
-	bool equality(const char* s, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool equality(const char *s, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Vec3<double> value across involved processes
 	bool equality(Vec3<double> v, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Vec3<int> value across involved processes
 	bool equality(Vec3<int> v, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of double array across involved processes
-	bool equality(double* array, int nx, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool equality(double *array, int nx, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of long int array across involved processes
-	bool equality(long int* array, int nx, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool equality(long int *array, int nx, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array<int> across involved processes
-	bool equality(const Array<int>& array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool equality(const Array<int> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array<double> across involved processes
-	bool equality(const Array<double>& array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool equality(const Array<double> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array2D<int> across involved processes
-	bool equality(const Array2D<int>& array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool equality(const Array2D<int> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array2D<double> across involved processes
-	bool equality(const Array2D<double>& array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+	bool equality(const Array2D<double> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 	// Check equality of Array2D<bool> across involved processes
-	bool equality(const Array2D<bool>& array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
-
+	bool equality(const Array2D<bool> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
 	/*
 	 * Buffered Random Numbers
 	 */
-	private:
+      private:
 	// Random number buffer
 	double randomBuffer_[RANDBUFFERSIZE];
 	// Index of next buffered number
@@ -392,11 +386,11 @@ class ProcessPool
 	// Communicator for random number buffer
 	ProcessPool::CommunicatorType randomBufferCommGroup_;
 
-	private:
+      private:
 	// Refill random number buffer
 	void refillRandomBuffer();
 
-	public:
+      public:
 	// Initialise random number buffer for processes
 	void initialiseRandomBuffer(ProcessPool::CommunicatorType commType);
 	// Initialise random number buffer for processes
@@ -406,11 +400,10 @@ class ProcessPool
 	// Get next buffered random number (-1 to +1 inclusive)
 	double randomPlusMinusOne();
 
-
 	/*
 	 * Macro Variables
 	 */
-	public:
+      public:
 	// Failure return result buffer
 	static int FAILED;
 	// Sccess return result buffer
@@ -448,9 +441,9 @@ class ProcessPool
  * }
  */
 #ifdef PARALLEL
-#define MPIRunMaster(pool,x) (pool.isMaster() ? (x ? (pool.decideTrue(),true) : (pool.decideFalse(),false)) : pool.decision())
+#define MPIRunMaster(pool, x) (pool.isMaster() ? (x ? (pool.decideTrue(), true) : (pool.decideFalse(), false)) : pool.decision())
 #else
-#define MPIRunMaster(pool,x) x
+#define MPIRunMaster(pool, x) x
 #endif
 
 #endif

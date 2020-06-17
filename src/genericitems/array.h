@@ -26,93 +26,86 @@
 #include "templates/broadcastarray.h"
 
 // GenericItemContainer< Array<T> >
-template <class T> class GenericItemContainer< Array<T> > : public GenericItem
+template <class T> class GenericItemContainer<Array<T>> : public GenericItem
 {
-	public:
+      public:
 	// Constructor
-	GenericItemContainer< Array<T> >(const char* name, int flags = 0) : GenericItem(name, flags)
-	{
-	}
-
+	GenericItemContainer<Array<T>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Data item
 	Array<T> data_;
 
-	public:
+      public:
 	// Return data item
-	Array<T>& data()
-	{
-		return data_;
-	}
-
+	Array<T> &data() { return data_; }
 
 	/*
 	 * Item Class
 	 */
-	protected:
+      protected:
 	// Create a new GenericItem containing same class as current type
-	GenericItem* createItem(const char* className, const char* name, int flags = 0)
+	GenericItem *createItem(const char *className, const char *name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer< Array<T> >(name, flags);
+		if (DissolveSys::sameString(className, itemClassName()))
+			return new GenericItemContainer<Array<T>>(name, flags);
 		return NULL;
 	}
 
-	public:
+      public:
 	// Return class name contained in item
-	const char* itemClassName()
+	const char *itemClassName()
 	{
 		static CharString className("Array<%s>", T::itemClassName());
 		return className.get();
 	}
 
-
 	/*
 	 * I/O
 	 */
-	public:
+      public:
 	// Write data through specified parser
-	bool write(LineParser& parser)
+	bool write(LineParser &parser)
 	{
 		parser.writeLineF("%i\n", data_.nItems());
-		T* array = data_.array();
-		for (int n=0; n<data_.nItems(); ++n)
+		T *array = data_.array();
+		for (int n = 0; n < data_.nItems(); ++n)
 		{
-			if (!array[n].write(parser)) return false;
+			if (!array[n].write(parser))
+				return false;
 		}
 		return true;
 	}
 	// Read data through specified parser
-	bool read(LineParser& parser, const CoreData& coreData)
+	bool read(LineParser &parser, const CoreData &coreData)
 	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+			return false;
 		int nItems = parser.argi(0);
 		data_.initialise(nItems);
 
-		for (int n=0; n<nItems; ++n) if (!data_[n].read(parser, coreData)) return false;
+		for (int n = 0; n < nItems; ++n)
+			if (!data_[n].read(parser, coreData))
+				return false;
 		return true;
 	}
-
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 	{
 		bool success;
 		BroadcastArray<T>(procPool, root, data_, coreData, success);
 		return success;
 	}
 	// Return equality between items
-	bool equality(ProcessPool& procPool)
-	{
-		return false;
-	}
+	bool equality(ProcessPool &procPool) { return false; }
 };
 
 #endif

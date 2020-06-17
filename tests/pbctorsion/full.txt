@@ -139,7 +139,7 @@ Configuration  'Liquid'
     AddSpecies
       Population  200
       Species  'Hexane'
-      ScaleBox  False
+      BoxAction  None
     EndAddSpecies
   EndGenerator
   InputCoordinates  dlpoly  'dlpoly/CONFIG'
@@ -150,6 +150,7 @@ Layer  'Processing'
 
 Module  Energy
   Test  On
+  TestAnalytic  On
   Configuration  'Liquid'
   TestReferenceInter  -2903.925000	# LJ (-5124.720) + Coul (2020.063) - LJ correct (-200.732)
   TestReferenceIntra  11488.122
@@ -174,7 +175,7 @@ PairPotentials
   Delta  0.01000
   ShortRangeTruncation  None
   IncludeCoulomb  False
-  Parameters  'CT'   0.0       LJGeometric  0.276144      3.500000  
-  Parameters  'HC'   0.0       LJGeometric  0.125520      2.500000 
+  Parameters  'CT'  C   0.0       LJGeometric  0.276144      3.500000  
+  Parameters  'HC'  H   0.0       LJGeometric  0.125520      2.500000 
   CoulombTruncation  None
 EndPairPotentials

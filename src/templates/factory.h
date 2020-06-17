@@ -24,19 +24,19 @@
 
 #include "templates/list.h"
 #include "templates/listitem.h"
-#include <stdlib.h>
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 // Object Chunk
-template <class T> class ObjectChunk : public ListItem< ObjectChunk<T> >
+template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
 {
 	/*
 	 * Chunk of objects, maintained by an ObjectFactory
 	 */
-	public:
+      public:
 	// Constructor
-	ObjectChunk<T>(int size) : ListItem< ObjectChunk<T> >(), nObjects_(size)
+	ObjectChunk<T>(int size) : ListItem<ObjectChunk<T>>(), nObjects_(size)
 	{
 		objectArray_ = new T[nObjects_];
 		objectUsed_ = new bool[nObjects_];
@@ -47,46 +47,49 @@ template <class T> class ObjectChunk : public ListItem< ObjectChunk<T> >
 	// Destructor
 	~ObjectChunk()
 	{
-		if (objectArray_) delete[] objectArray_;
-		if (objectUsed_) delete[] objectUsed_;
+		if (objectArray_)
+			delete[] objectArray_;
+		if (objectUsed_)
+			delete[] objectUsed_;
 	}
-
 
 	/*
 	 * Chunk Data
 	 */
-	private:
+      private:
 	// Number of objects in chunk
 	const int nObjects_;
 	// Size of individual object
 	int objectSize_;
 	// Object array
-	T* objectArray_;
+	T *objectArray_;
 	// Object usage flags
-	bool* objectUsed_;
+	bool *objectUsed_;
 	// Number of unused objects in chunk
 	int nUnusedObjects_;
 	// Index of next available object
 	int nextAvailableObject_;
 
-	private:
+      private:
 	// Determine array offset of object
-	int objectOffset(T* object)
+	int objectOffset(T *object)
 	{
-	// 	printf("in objectoffset: %li %li\n", intptr_t(object), intptr_t(&objectArray_[0]));
+		// 	printf("in objectoffset: %li %li\n", intptr_t(object), intptr_t(&objectArray_[0]));
 		intptr_t offset = intptr_t(object) - intptr_t(&objectArray_[0]);
-	// 	printf("Offset = %li\n", offset);
-		if (offset < 0) return -1;
+		// 	printf("Offset = %li\n", offset);
+		if (offset < 0)
+			return -1;
 		int index = offset / objectSize_;
 		return (index < nObjects_ ? index : -1);
 	}
 
-	public:
+      public:
 	// Return next available object
-	T* nextAvailable()
+	T *nextAvailable()
 	{
-		if (nextAvailableObject_ == -1) return NULL;
-		T* object = &objectArray_[nextAvailableObject_];
+		if (nextAvailableObject_ == -1)
+			return NULL;
+		T *object = &objectArray_[nextAvailableObject_];
 		objectUsed_[nextAvailableObject_] = true;
 		--nUnusedObjects_;
 
@@ -126,43 +129,43 @@ template <class T> class ObjectChunk : public ListItem< ObjectChunk<T> >
 		return object;
 	}
 	// Return specified object to pool
-	bool returnObject(T* object)
+	bool returnObject(T *object)
 	{
 		// Get the item offset of the object
 		int offset = objectOffset(object);
-		if (offset == -1) return false;
-		
+		if (offset == -1)
+			return false;
+
 		// Mark the object as unused, and increase the unused counter
 		objectUsed_[offset] = false;
 
 		++nUnusedObjects_;
-		if (nextAvailableObject_ == -1) nextAvailableObject_ = offset;
+		if (nextAvailableObject_ == -1)
+			nextAvailableObject_ = offset;
 		return true;
 	}
 	// Mark all objects as unused
 	void markAllObjectsUnused()
 	{
-		for (int n=0; n<nObjects_; ++n) objectUsed_[n] = false;
+		for (int n = 0; n < nObjects_; ++n)
+			objectUsed_[n] = false;
 		nextAvailableObject_ = 0;
 		nUnusedObjects_ = nObjects_;
 	}
 	// Return whether object is part of this chunk
-	bool ownsObject(T* object)
+	bool ownsObject(T *object)
 	{
 		// Calculate array offset of this object
 		return (objectOffset(object) != -1);
 	}
 	// Return whether there are unused objects in the chunk
-	bool hasUnusedObjects()
-	{
-		return (nUnusedObjects_ != 0);
-	}
+	bool hasUnusedObjects() { return (nUnusedObjects_ != 0); }
 };
 
 // Object Factory Class
 template <class T> class ObjectFactory
 {
-	public:
+      public:
 	// Constructor
 	ObjectFactory<T>()
 	{
@@ -170,32 +173,27 @@ template <class T> class ObjectFactory
 		chunkSize_ = 256;
 	}
 
-
 	/*
 	 * Object Store
 	 */
-	private:
+      private:
 	// Chunk size
 	int chunkSize_;
 	// List of object chunks maintained by this factory
-	List< ObjectChunk<T> > objectChunks_;
+	List<ObjectChunk<T>> objectChunks_;
 	// Current chunk from which objects are being taken
-	ObjectChunk<T>* currentChunk_;
+	ObjectChunk<T> *currentChunk_;
 
-	public:
+      public:
 	// Set chunksize to use when creating new chunks
-	void setChunkSize(int chunkSize)
-	{
-		chunkSize_ = chunkSize;
-	}
-
+	void setChunkSize(int chunkSize) { chunkSize_ = chunkSize; }
 
 	/*
 	 * Object Access
 	 */
-	public:
+      public:
 	// Produce a new object
-	T* produce()
+	T *produce()
 	{
 		if (currentChunk_ == NULL)
 		{
@@ -203,13 +201,15 @@ template <class T> class ObjectFactory
 			objectChunks_.own(currentChunk_);
 			return currentChunk_->nextAvailable();
 		}
-		else if (currentChunk_->hasUnusedObjects()) return currentChunk_->nextAvailable();
+		else if (currentChunk_->hasUnusedObjects())
+			return currentChunk_->nextAvailable();
 		else
 		{
 			// Must search current chunk list to see if any current chunks have available space. If not, we will create a new one
-			for (ObjectChunk<T>* chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next())
+			for (ObjectChunk<T> *chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next())
 			{
-				if (chunk == currentChunk_) continue;
+				if (chunk == currentChunk_)
+					continue;
 				if (chunk->hasUnusedObjects())
 				{
 					currentChunk_ = chunk;
@@ -228,10 +228,12 @@ template <class T> class ObjectFactory
 		return NULL;
 	}
 	// Return specified object to factory
-	void returnObject(T* object)
+	void returnObject(T *object)
 	{
 		// Must find chunk which owns this object
-		for (ObjectChunk<T>* chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next()) if (chunk->returnObject(object)) return;
+		for (ObjectChunk<T> *chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next())
+			if (chunk->returnObject(object))
+				return;
 
 		// Couldn't find it!
 		printf("Internal Error - Tried to return an object to an ObjectFactory which didn't produce it.\n");
@@ -239,7 +241,8 @@ template <class T> class ObjectFactory
 	// Mark all objects as unused
 	void markAllObjectsUnused()
 	{
-		for (ObjectChunk<T>* chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next()) chunk->markAllObjectsUnused();
+		for (ObjectChunk<T> *chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next())
+			chunk->markAllObjectsUnused();
 	}
 };
 

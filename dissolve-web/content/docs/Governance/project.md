@@ -1,8 +1,6 @@
 ---
 title: Project Governance
-parent: Project Governance
 ---
-# Project Management Committee
 
 The Project Management Committee is responsible for setting the strategic direction for the software both technically and scientifically within the Disordered Materials group. The committee should also make decisions on budget and resource allocations for the project where necessary.
 

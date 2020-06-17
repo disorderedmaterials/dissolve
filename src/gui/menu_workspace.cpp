@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/gui.h"
 #include "gui/getgizmonamedialog.h"
+#include "gui/gui.h"
 
 /*
  * Private Slots
@@ -28,7 +28,7 @@
 
 void DissolveWindow::on_WorkspaceCreateEmptyAction_triggered(bool checked)
 {
-	MainTab* workspaceTab = ui_.MainTabs->addWorkspaceTab(this, "New Workspace");
+	MainTab *workspaceTab = ui_.MainTabs->addWorkspaceTab(this, "New Workspace");
 
 	ui_.MainTabs->setCurrentTab(workspaceTab);
 }
@@ -36,8 +36,9 @@ void DissolveWindow::on_WorkspaceCreateEmptyAction_triggered(bool checked)
 void DissolveWindow::on_WorkspaceRenameCurrentGizmoAction_triggered(bool checked)
 {
 	// Get current data from the action (it should be our target Gizmo)
-	Gizmo* currentGizmo = VariantPointer<Gizmo>(ui_.WorkspaceRenameCurrentGizmoAction->data());
-	if (!currentGizmo) return;
+	Gizmo *currentGizmo = VariantPointer<Gizmo>(ui_.WorkspaceRenameCurrentGizmoAction->data());
+	if (!currentGizmo)
+		return;
 
 	// Get a new, valid name for the gizmo
 	GetGizmoNameDialog nameDialog(this);
@@ -53,9 +54,9 @@ void DissolveWindow::on_WorkspaceRenameCurrentGizmoAction_triggered(bool checked
  * Public Slots
  */
 
-void DissolveWindow::currentWorkspaceGizmoChanged(QMdiSubWindow* gizmoWindow)
+void DissolveWindow::currentWorkspaceGizmoChanged(QMdiSubWindow *gizmoWindow)
 {
-	Gizmo* currentGizmo = gizmoWindow ? Gizmo::find(gizmoWindow) : NULL;
+	Gizmo *currentGizmo = gizmoWindow ? Gizmo::find(gizmoWindow) : NULL;
 	if (!currentGizmo || !gizmoWindow)
 	{
 		ui_.WorkspaceRenameCurrentGizmoAction->setText("Rename Current Gizmo...");

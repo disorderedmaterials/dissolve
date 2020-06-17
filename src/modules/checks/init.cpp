@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/checks/checks.h"
 #include "keywords/types.h"
+#include "modules/checks/checks.h"
 
 // Perform any necessary initialisation for the Module
 void ChecksModule::initialise()

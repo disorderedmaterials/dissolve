@@ -33,16 +33,11 @@ SanityCheckModule::SanityCheckModule() : Module()
 }
 
 // Destructor
-SanityCheckModule::~SanityCheckModule()
-{
-}
+SanityCheckModule::~SanityCheckModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* SanityCheckModule::createInstance() const
-{
-	return new SanityCheckModule;
-}
+Module *SanityCheckModule::createInstance() const { return new SanityCheckModule; }

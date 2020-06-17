@@ -35,24 +35,23 @@ class FontInstance;
 // Rendering View
 class View
 {
-	private:
+      private:
 	// Associated FontInstance from parent viewer
-	FontInstance& fontInstance_;
+	FontInstance &fontInstance_;
 	// List of Renderables that we are to display
-	const List<Renderable>& renderables_;
+	const List<Renderable> &renderables_;
 
-	public:
+      public:
 	// Constructor / Destructor
-	View(const List<Renderable>& renderables, FontInstance& fontInstance);
+	View(const List<Renderable> &renderables, FontInstance &fontInstance);
 	~View();
 	// Clear view, resetting to defaults
 	void clear();
 
-
 	/*
 	 * Geometry
 	 */
-	private:
+      private:
 	// Pixel offsets for view
 	int xOffset_, yOffset_;
 	// Scale factors for view
@@ -63,9 +62,8 @@ class View
 	GLuint viewportMatrix_[4];
 	// Version of viewport matrix
 	int viewportVersion_;
-	
 
-	public:
+      public:
 	// Set pixel offsets and scales to use
 	void setOffsetAndScale(int xOffset, int yOffset, double xScale, double yScale);
 	// Recalculate viewport matrix based on pixel dimensions provided
@@ -73,31 +71,44 @@ class View
 	// Translate viewport by specified pixel amounts
 	void translateViewport(int deltaX, int deltaY);
 	// Return viewport matrix
-	const GLuint* viewportMatrix() const;
-
+	const GLuint *viewportMatrix() const;
 
 	/*
 	 * Projection / View
 	 */
-	public:
+      public:
 	// View type
-	enum ViewType { NormalView, AutoStretchedView, FlatXYView, FlatXZView, FlatZYView, nViewTypes };
+	enum ViewType
+	{
+		NormalView,
+		AutoStretchedView,
+		FlatXYView,
+		FlatXZView,
+		FlatZYView,
+		nViewTypes
+	};
 	// Convert text string to ViewType
-	static ViewType viewType(const char* s);
+	static ViewType viewType(const char *s);
 	// Convert ViewType to text string
-	static const char* viewType(ViewType vt);
+	static const char *viewType(ViewType vt);
 	// AutoFollow type
-	enum AutoFollowType { NoAutoFollow, AllAutoFollow, XAutoFollow, nAutoFollowTypes };
+	enum AutoFollowType
+	{
+		NoAutoFollow,
+		AllAutoFollow,
+		XAutoFollow,
+		nAutoFollowTypes
+	};
 	// Convert text string to AutoFollowType
-	static AutoFollowType autoFollowType(const char* s);
+	static AutoFollowType autoFollowType(const char *s);
 	// Convert AutoFollowType to text string
-	static const char* autoFollowType(AutoFollowType aft);
+	static const char *autoFollowType(AutoFollowType aft);
 
-	private:
+      private:
 	// Type of view to use
 	ViewType viewType_;
 	// Linked View, if any
-	View* linkedView_;
+	View *linkedView_;
 	// Projection matrix for GL
 	Matrix4 projectionMatrix_;
 	// Whether projection has perspective
@@ -127,23 +138,23 @@ class View
 	// Auto-follow type in effect
 	AutoFollowType autoFollowType_;
 	// Transformed data versions at last auto-follow
-	RefDataList<Renderable,int> autoFollowTransformVersions_;
+	RefDataList<Renderable, int> autoFollowTransformVersions_;
 	// Length of X region to follow, if autoFollowType_ == XFollow
 	double autoFollowXLength_;
 
-	private:
+      private:
 	// Return calculated projection matrix
 	Matrix4 calculateProjectionMatrix(bool hasPerspective, double orthoZoom = 0.0) const;
 
-	public:
+      public:
 	// Set view type
 	void setViewType(View::ViewType vt);
 	// Return view type
 	View::ViewType viewType() const;
 	// Set linked View, if any
-	void setLinkedView(View* linkedView);
+	void setLinkedView(View *linkedView);
 	// Return linked View, if any
-	View* linkedView() const;
+	View *linkedView() const;
 	// Return whether view type is flat
 	bool isFlatView() const;
 	// Return projection matrix
@@ -153,13 +164,13 @@ class View
 	// Return whether the view uses perspective
 	bool hasPerspective() const;
 	// Update view matrix
-	void setViewRotation(Matrix4& mat);
+	void setViewRotation(Matrix4 &mat);
 	// Update single column of view matrix
 	void setViewRotationColumn(int column, double x, double y, double z);
 	// Rotate view matrix about x and y by amounts specified
 	void rotateView(double dx, double dy);
 	// Return rotation matrix
-	const Matrix4& viewRotation() const;
+	const Matrix4 &viewRotation() const;
 	// Return view rotation inverse
 	Matrix4 viewRotationInverse();
 	// Set view translation
@@ -171,13 +182,13 @@ class View
 	// Update view matrix
 	void updateViewMatrix();
 	// Return view matrix
-	const Matrix4& viewMatrix() const;
+	const Matrix4 &viewMatrix() const;
 	// Project given data coordinates into world coordinates
 	Vec3<double> dataToWorld(Vec3<double> r) const;
 	// Project given data coordinates into screen coordinates
 	Vec3<double> dataToScreen(Vec3<double> r) const;
 	// Project given data coordinates into screen coordinates, with corresponding distance 'delta' in data
-	Vec3<double> dataToScreen(Vec3<double> r, double& delta) const;
+	Vec3<double> dataToScreen(Vec3<double> r, double &delta) const;
 	// Project given data coordinates into screen coordinates using supplied rotation matrix and translation vector
 	Vec3<double> dataToScreen(Vec3<double> r, Matrix4 projectionMatrix, Matrix4 rotationMatrix, Vec3<double> translation = Vec3<double>()) const;
 	// Return z translation necessary to display coordinates supplied, assuming the identity view matrix
@@ -211,17 +222,16 @@ class View
 	// Set axis limits based on current auto-follow type
 	void autoFollowData();
 
-
 	/*
 	 * Axes
 	 */
-	private:
+      private:
 	// Axes for the view
 	Axes axes_;
 	// Pixel 'lengths' of axes in flat views
 	Vec3<double> axisPixelLength_;
 
-	public:
+      public:
 	// Return data minima over all displayed renderables
 	Vec3<double> dataMinima();
 	// Return data maxima over all displayed renderables
@@ -231,21 +241,20 @@ class View
 	// Return positive data maxima over all displayed renderables
 	Vec3<double> positiveDataMaxima();
 	// Update axis limits to represent data extent of renderables
-	void updateAxisLimits(double xFrac =1.0, double yFrac = 1.0, double zFrac = 1.0);
+	void updateAxisLimits(double xFrac = 1.0, double yFrac = 1.0, double zFrac = 1.0);
 	// Shift flat view axis limits by specified amounts
 	void shiftFlatAxisLimits(double deltaH, double deltaV);
 	// Shift flat view axis limits by specified fractional amounts
 	void shiftFlatAxisLimitsFractional(double fracH, double fracV);
 	// Return axes for the view
-	Axes& axes();
+	Axes &axes();
 	// Return axes for the view (const)
-	const Axes& constAxes() const;
-
+	const Axes &constAxes() const;
 
 	/*
 	 * Style
 	 */
-	private:
+      private:
 	// Font scaling for axis value labels
 	double labelPointSize_;
 	// Font scaling for titles
@@ -255,11 +264,11 @@ class View
 	// Whether axis text labels are drawn flat in 3D views
 	bool flatLabelsIn3D_;
 
-	private:
+      private:
 	// Calculate font scaling factor
 	void calculateFontScaling();
 
-	public:
+      public:
 	// Set font point size for axis value labels
 	void setLabelPointSize(double value);
 	// Return font point size for axis value labels

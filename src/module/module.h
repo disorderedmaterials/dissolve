@@ -24,9 +24,9 @@
 
 #include "base/messenger.h"
 #include "genericitems/list.h"
-#include "math/sampleddouble.h"
 #include "keywords/group.h"
 #include "keywords/list.h"
+#include "math/sampleddouble.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
@@ -40,29 +40,27 @@ class QWidget;
 // Module
 class Module : public ListItem<Module>
 {
-	public:
+      public:
 	// Constructor
 	Module();
 	// Destructor
 	virtual ~Module();
 
-
 	/*
 	 * Instances
 	 */
-	public:
+      public:
 	// Create instance of this module
-	virtual Module* createInstance() const = 0;
-
+	virtual Module *createInstance() const = 0;
 
 	/*
 	 * Definition
 	 */
-	protected:
+      protected:
 	// Unique name of Module
 	CharString uniqueName_;
 
-	public:
+      public:
 	// Target Configurations Enum
 	enum TargetConfigurationNumber
 	{
@@ -71,54 +69,50 @@ class Module : public ListItem<Module>
 		ExactlyOneTarget = 1
 	};
 	// Return type of Module
-	virtual const char* type() const = 0;
+	virtual const char *type() const = 0;
 	// Return category for Module
-	virtual const char* category() const = 0;
+	virtual const char *category() const = 0;
 	// Set unique name of Module
-	void setUniqueName(const char* uniqueName);
+	void setUniqueName(const char *uniqueName);
 	// Return unique name of Module
-	const char* uniqueName() const;
+	const char *uniqueName() const;
 	// Return brief description of Module
-	virtual const char* brief() const = 0;
+	virtual const char *brief() const = 0;
 	// Return the number of Configuration targets this Module requires
 	virtual int nRequiredTargets() const = 0;
-
 
 	/*
 	 * Keywords
 	 */
-	protected:
+      protected:
 	// Keywords recognised by Module
 	KeywordList keywords_;
 
-	
-	public:
+      public:
 	// Return list of recognised keywords
-	KeywordList& keywords();
+	KeywordList &keywords();
 	// Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-	KeywordBase::ParseResult parseKeyword(LineParser& parser, Dissolve* dissolve, GenericList& targetList, const char* prefix);
+	KeywordBase::ParseResult parseKeyword(LineParser &parser, Dissolve *dissolve, GenericList &targetList, const char *prefix);
 	// Print valid keywords
 	void printValidKeywords();
-
 
 	/*
 	 * Initialisation
 	 */
-	public:
+      public:
 	// Perform any necessary initialisation for the Module
 	virtual void initialise() = 0;
-
 
 	/*
 	 * Control
 	 */
-	protected:
+      protected:
 	// Frequency at which to run Module (relative to layer execution count)
 	int frequency_;
 	// Whether the Module is enabled
 	bool enabled_;
 
-	public:
+      public:
 	// Set frequency at which to run Module (relative to layer execution count)
 	void setFrequency(int freq);
 	// Return frequency at which to run Module (relative to layer execution count)
@@ -126,7 +120,7 @@ class Module : public ListItem<Module>
 	// Return whether the Module should run this iteration
 	bool runThisIteration(int iteration) const;
 	// Return short descriptive text relating frequency to supplied iteration number
-	const char* frequencyDetails(int iteration) const;
+	const char *frequencyDetails(int iteration) const;
 	// Set whether the Module is enabled
 	void setEnabled(bool b);
 	// Return whether the Module is enabled
@@ -134,74 +128,69 @@ class Module : public ListItem<Module>
 	// Return whether the Module is disabled
 	bool isDisabled() const;
 
-
 	/*
 	 * Targets
 	 */
-	protected:
+      protected:
 	// Configurations that are targeted by this Module
 	RefList<Configuration> targetConfigurations_;
-	// Whether this module is a local Module in a Configuration 
+	// Whether this module is a local Module in a Configuration
 	bool configurationLocal_;
 
-	public:
+      public:
 	// Add Configuration target
-	bool addTargetConfiguration(Configuration* cfg);
+	bool addTargetConfiguration(Configuration *cfg);
 	// Add Configuration targets
-	bool addTargetConfigurations(const List<Configuration>& configs);
+	bool addTargetConfigurations(const List<Configuration> &configs);
 	// Remove Configuration target
-	bool removeTargetConfiguration(Configuration* cfg);
+	bool removeTargetConfiguration(Configuration *cfg);
 	// Return number of targeted Configurations
 	int nTargetConfigurations() const;
 	// Return whether the number of targeted Configurations is valid
 	bool hasValidNTargetConfigurations(bool reportError = false) const;
 	// Return targeted Configurations
-	const RefList<Configuration>& targetConfigurations() const;
+	const RefList<Configuration> &targetConfigurations() const;
 	// Return if the specified Configuration is in the targets list
-	bool isTargetConfiguration(Configuration* cfg) const;
+	bool isTargetConfiguration(Configuration *cfg) const;
 	// Copy Configuration targets from specified Module
-	void copyTargetConfigurations(Module* sourceModule);
+	void copyTargetConfigurations(Module *sourceModule);
 	// Set whether this module is a local Module in a Configuration
 	void setConfigurationLocal(bool b);
 	// Return whether this module is a local Module in a Configuration
 	bool configurationLocal() const;
 
-
 	/*
 	 * Processing
 	 */
-	private:
+      private:
 	// Run main processing
-	virtual bool process(Dissolve& dissolve, ProcessPool& procPool) = 0;
+	virtual bool process(Dissolve &dissolve, ProcessPool &procPool) = 0;
 
-	public:
+      public:
 	// Run set-up stage
-	virtual bool setUp(Dissolve& dissolve, ProcessPool& procPool);
+	virtual bool setUp(Dissolve &dissolve, ProcessPool &procPool);
 	// Run main processing stage
-	bool executeProcessing(Dissolve& dissolve, ProcessPool& procPool);
-
+	bool executeProcessing(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Timing
 	 */
-	private:
+      private:
 	// Accumulated timing information (in seconds) for this Module
 	SampledDouble processTimes_;
 
-	public:
+      public:
 	// Return timing information (in seconds) for this Module
 	SampledDouble processTimes() const;
 	// Read timing information through specified parser
-	bool readProcessTimes(LineParser& parser);
-
+	bool readProcessTimes(LineParser &parser);
 
 	/*
 	 * GUI Widget
 	 */
-	public:
+      public:
 	// Return a new widget controlling this Module
-	virtual ModuleWidget* createWidget(QWidget* parent, Dissolve& dissolve);
+	virtual ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
 
 #endif
-

@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_RENDER_RENDERABLESPECIES_H
 #define DISSOLVE_RENDER_RENDERABLESPECIES_H
 
-#include "gui/render/renderable.h"
 #include "classes/species.h"
+#include "gui/render/renderable.h"
 
 // Forward Declarations
 class Axes;
@@ -31,84 +31,85 @@ class Axes;
 // Renderable for Species
 class RenderableSpecies : public Renderable
 {
-	public:
+      public:
 	// Constructor / Destructor
-	RenderableSpecies(const Species* source, const char* objectTag);
+	RenderableSpecies(const Species *source, const char *objectTag);
 	~RenderableSpecies();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Source data
-	const Species* source_;
+	const Species *source_;
 
-	private:
+      private:
 	// Return whether a valid data source is available (attempting to set it if not)
 	bool validateDataSource();
 	// Invalidate the current data source
 	void invalidateDataSource();
 
-	public:
+      public:
 	// Return version of data
 	int dataVersion();
-
 
 	/*
 	 * Transform / Limits
 	 */
-	protected:
+      protected:
 	// Transform data according to current settings
 	void transformValues();
-
 
 	/*
 	 * Rendering Primitives
 	 */
-	private:
+      private:
 	// Basic primitives
-	Primitive* atomPrimitive_, *selectedAtomPrimitive_, *unitCellPrimitive_, *bondPrimitive_;
+	Primitive *atomPrimitive_, *selectedAtomPrimitive_, *unitCellPrimitive_, *bondPrimitive_;
 	// Main primitives
-	Primitive* lineSpeciesPrimitive_, *lineSelectionPrimitive_, *lineInteractionPrimitive_;
+	Primitive *lineSpeciesPrimitive_, *lineSelectionPrimitive_, *lineInteractionPrimitive_;
 	// Main assemblies
 	PrimitiveAssembly speciesAssembly_, selectionAssembly_, interactionAssembly_;
 	// Version at which selection primitive was created, relative to selection version
 	int selectionPrimitiveVersion_;
 
-	private:
+      private:
 	// Create cylinder bond between supplied atoms in specified assembly
-	void createCylinderBond(PrimitiveAssembly& assembly, const SpeciesAtom* i, const SpeciesAtom* j, double radialScaling);
+	void createCylinderBond(PrimitiveAssembly &assembly, const SpeciesAtom *i, const SpeciesAtom *j, double radialScaling);
 
-	protected:
+      protected:
 	// Recreate necessary primitives / primitive assemblies for the data
-	void recreatePrimitives(const View& view, const ColourDefinition& colourDefinition);
+	void recreatePrimitives(const View &view, const ColourDefinition &colourDefinition);
 	// Send primitives for rendering
 	const void sendToGL(const double pixelScaling);
 
-	public:
+      public:
 	// Recreate selection Primitive
 	void recreateSelectionPrimitive();
 	// Clear interaction Primitive
 	void clearInteractionPrimitive();
 	// Recreate interaction Primitive to display drawing interaction (from existing atom to existing atom)
-	void recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, SpeciesAtom* toAtom);
+	void recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, SpeciesAtom *toAtom);
 	// Recreate interaction Primitive to display drawing interaction (from existing atom to point)
-	void recreateDrawInteractionPrimitive(SpeciesAtom* fromAtom, Vec3<double> toPoint, Element* toElement);
+	void recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, Vec3<double> toPoint, Element *toElement);
 	// Recreate interaction Primitive to display drawing interaction (from point to point)
-	void recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Element* fromElement, Vec3<double> toPoint, Element* toElement);
-
+	void recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Element *fromElement, Vec3<double> toPoint, Element *toElement);
 
 	/*
 	 * Style
 	 */
-	public:
+      public:
 	// Display Styles enum
-	enum SpeciesDisplayStyle { LinesStyle, SpheresStyle, nSpeciesDisplayStyles };
+	enum SpeciesDisplayStyle
+	{
+		LinesStyle,
+		SpheresStyle,
+		nSpeciesDisplayStyles
+	};
 	// Return EnumOptions for SpeciesDisplayStyle
 	static EnumOptions<SpeciesDisplayStyle> speciesDisplayStyles();
 
-	private:
+      private:
 	// Display style for the renderable
 	SpeciesDisplayStyle displayStyle_;
 	// Radius of free (unbound) atoms when drawing with lines
@@ -118,30 +119,29 @@ class RenderableSpecies : public Renderable
 	// Radius of bonds when drawing with spheres
 	double spheresBondRadius_;
 
-	public:
+      public:
 	// Set display style for renderable
 	void setDisplayStyle(SpeciesDisplayStyle displayStyle);
 	// Return display style for the renderable
 	SpeciesDisplayStyle displayStyle() const;
 
-
 	/*
 	 * Style I/O
 	 */
-	public:
+      public:
 	// SpeciesStyle Keywords Enum
 	enum SpeciesStyleKeyword
 	{
-		DisplayKeyword,			/* 'Display' - General display style for renderable */
-		EndStyleKeyword,		/* 'EndStyle' - End of Style block */
+		DisplayKeyword,  /* 'Display' - General display style for renderable */
+		EndStyleKeyword, /* 'EndStyle' - End of Style block */
 		nSpeciesStyleKeywords
 	};
 	// Return enum option info for RenderableKeyword
 	static EnumOptions<RenderableSpecies::SpeciesStyleKeyword> speciesStyleKeywords();
 	// Write style information
-	bool writeStyleBlock(LineParser& parser, int indentLevel = 0) const;
+	bool writeStyleBlock(LineParser &parser, int indentLevel = 0) const;
 	// Read style information
-	bool readStyleBlock(LineParser& parser);
+	bool readStyleBlock(LineParser &parser);
 };
 
 #endif

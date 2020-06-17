@@ -27,7 +27,7 @@
 
 class Lock
 {
-	public:
+      public:
 	// Constructor
 	Lock();
 	// Destructor
@@ -35,17 +35,17 @@ class Lock
 	// Declare Locker to be our friend
 	friend class Locker;
 
-	private:
+      private:
 	// Lock counter
 	int lockCounter_;
 
-	private:
+      private:
 	// Increase lock count
 	void addLockLevel();
 	// Decrease lock count
 	void removeLockLevel();
 
-	public:
+      public:
 	// Return whether we are currently locked
 	bool isLocked() const;
 };
@@ -53,19 +53,19 @@ class Lock
 // Locker
 class Locker
 {
-	public:
+      public:
 	// Constructor
-	Locker(Lock& lock);
+	Locker(Lock &lock);
 	// Destructor
 	~Locker();
 
-	private:
+      private:
 	// Target Lock
-	Lock& lock_;
+	Lock &lock_;
 	// Whether our lock has already been released
 	bool unlocked_;
 
-	public:
+      public:
 	// Manually release the lock
 	void unlock();
 };

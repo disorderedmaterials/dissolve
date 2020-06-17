@@ -22,25 +22,13 @@
 #include "modules/bragg/bragg.h"
 
 // Return type of module
-const char* BraggModule::type() const
-{
-	return "Bragg";
-}
+const char *BraggModule::type() const { return "Bragg"; }
 
 // Return category for module
-const char* BraggModule::category() const
-{
-	return "Correlation Functions";
-}
+const char *BraggModule::category() const { return "Correlation Functions"; }
 
 // Return brief description of module
-const char* BraggModule::brief() const
-{
-	return "Calculate Bragg scattering";
-}
+const char *BraggModule::brief() const { return "Calculate Bragg scattering"; }
 
 // Return the number of Configuration targets this Module requires
-int BraggModule::nRequiredTargets() const
-{
-	return Module::OneOrMoreTargets;
-}
+int BraggModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }

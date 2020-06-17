@@ -1,9 +1,7 @@
 ---
 title: Step 7 - Refine the Simulation
-parent: Comparing Benzene Structure
 grand_parent: Examples
 ---
-# Comparing Benzene Structure
 
 ## 7. Refine the Simulation
 

@@ -19,15 +19,16 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/layertab.h"
-#include "gui/gui.h"
-#include "gui/getmodulelayernamedialog.h"
-#include "main/dissolve.h"
 #include "base/lineparser.h"
+#include "gui/getmodulelayernamedialog.h"
+#include "gui/gui.h"
+#include "gui/layertab.h"
+#include "main/dissolve.h"
 #include <QMessageBox>
 
 // Constructor / Destructor
-LayerTab::LayerTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, ModuleLayer* layer) : ListItem<LayerTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Layer: %s", title), this)
+LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, ModuleLayer *layer)
+    : ListItem<LayerTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Layer: %s", title), this)
 {
 	ui_.setupUi(this);
 
@@ -50,13 +51,10 @@ LayerTab::~LayerTab()
  */
 
 // Return tab type
-MainTab::TabType LayerTab::type() const
-{
-	return MainTab::LayerTabType;
-}
+MainTab::TabType LayerTab::type() const { return MainTab::LayerTabType; }
 
 // Raise suitable dialog for entering / checking new tab name
-QString LayerTab::getNewTitle(bool& ok)
+QString LayerTab::getNewTitle(bool &ok)
 {
 	// Get a new, valid name for the layer
 	GetModuleLayerNameDialog nameDialog(this, dissolve_.processingLayers());
@@ -74,10 +72,7 @@ QString LayerTab::getNewTitle(bool& ok)
 }
 
 // Return whether the title of the tab can be changed
-bool LayerTab::canChangeTitle() const
-{
-	return true;
-}
+bool LayerTab::canChangeTitle() const { return true; }
 
 // Return whether the tab can be closed (after any necessary user querying, etc.)
 bool LayerTab::canClose() const
@@ -90,11 +85,13 @@ bool LayerTab::canClose() const
 	queryBox.setDefaultButton(QMessageBox::No);
 	int ret = queryBox.exec();
 
-	if (ret != QMessageBox::Yes) return false;
+	if (ret != QMessageBox::Yes)
+		return false;
 
 	// Before closing, we must close any tabs that are displaying our associated Modules
 	ListIterator<Module> moduleIterator(moduleLayer_->modules());
-	while (Module* module = moduleIterator.iterate()) dissolveWindow_->removeModuleTab(module->uniqueName());
+	while (Module *module = moduleIterator.iterate())
+		dissolveWindow_->removeModuleTab(module->uniqueName());
 
 	return true;
 }
@@ -104,10 +101,7 @@ bool LayerTab::canClose() const
  */
 
 // Return displayed ModuleLayer
-ModuleLayer* LayerTab::moduleLayer() const
-{
-	return moduleLayer_;
-}
+ModuleLayer *LayerTab::moduleLayer() const { return moduleLayer_; }
 
 /*
  * Widgets
@@ -124,7 +118,8 @@ void LayerTab::on_ShowPaletteButton_clicked(bool checked)
 
 void LayerTab::on_EnabledButton_clicked(bool checked)
 {
-	if (refreshLock_.isLocked() || (!moduleLayer_)) return;
+	if (refreshLock_.isLocked() || (!moduleLayer_))
+		return;
 
 	moduleLayer_->setEnabled(checked);
 
@@ -133,7 +128,8 @@ void LayerTab::on_EnabledButton_clicked(bool checked)
 
 void LayerTab::on_FrequencySpin_valueChanged(int value)
 {
-	if (refreshLock_.isLocked() || (!moduleLayer_)) return;
+	if (refreshLock_.isLocked() || (!moduleLayer_))
+		return;
 
 	moduleLayer_->setFrequency(value);
 
@@ -147,7 +143,8 @@ void LayerTab::on_FrequencySpin_valueChanged(int value)
 // Update controls in tab
 void LayerTab::updateControls()
 {
-	if (!moduleLayer_) return;
+	if (!moduleLayer_)
+		return;
 
 	Locker refreshLocker(refreshLock_);
 
@@ -178,17 +175,19 @@ void LayerTab::enableSensitiveControls()
  */
 
 // Read widget state through specified LineParser
-bool LayerTab::readState(LineParser& parser, const CoreData& coreData)
+bool LayerTab::readState(LineParser &parser, const CoreData &coreData)
 {
-	if (!ui_.ModuleListPanel->readState(parser)) return false;
+	if (!ui_.ModuleListPanel->readState(parser))
+		return false;
 
 	return true;
 }
 
 // Write widget state through specified LineParser
-bool LayerTab::writeState(LineParser& parser) const
+bool LayerTab::writeState(LineParser &parser) const
 {
-	if (!ui_.ModuleListPanel->writeState(parser)) return false;
+	if (!ui_.ModuleListPanel->writeState(parser))
+		return false;
 
 	return true;
 }

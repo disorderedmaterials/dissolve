@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_VEC3NODEVALUE_H
 #define DISSOLVE_KEYWORDWIDGET_VEC3NODEVALUE_H
 
-#include "gui/keywordwidgets/ui_vec3nodevalue.h"
 #include "gui/keywordwidgets/base.h"
+#include "gui/keywordwidgets/ui_vec3nodevalue.h"
 #include "keywords/vec3nodevalue.h"
 #include <QWidget>
 
@@ -35,27 +35,25 @@ class Vec3NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	Vec3NodeValueKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-
+	Vec3NodeValueKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-	private:
+      private:
 	// Associated keyword
-	Vec3NodeValueKeyword* keyword_;
-
+	Vec3NodeValueKeyword *keyword_;
 
 	/*
 	 * Widgets
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::Vec3NodeValueWidget ui_;
 
-	private slots:
+      private slots:
 	// Values edited
 	void on_ValueAEdit_editingFinished();
 	void on_ValueAEdit_returnPressed();
@@ -64,15 +62,14 @@ class Vec3NodeValueKeywordWidget : public QWidget, public KeywordWidgetBase
 	void on_ValueCEdit_editingFinished();
 	void on_ValueCEdit_returnPressed();
 
-	signals:
+      signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update
 	 */
-	public:
+      public:
 	// Update value displayed in widget
 	void updateValue();
 };

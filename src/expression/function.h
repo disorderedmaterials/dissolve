@@ -31,27 +31,26 @@
 // Function Node
 class ExpressionFunction : public ExpressionNode
 {
-	public:
+      public:
 	// Constructors / Destructor
 	ExpressionFunction(ExpressionFunctions::Function func = ExpressionFunctions::NoFunction);
-	ExpressionFunction(ExpressionNode* source);
+	ExpressionFunction(ExpressionNode *source);
 	~ExpressionFunction();
-
 
 	/*
 	 * Function Data
 	 */
-	protected:
+      protected:
 	// Function that this node performs
 	ExpressionFunctions::Function function_;
-	
-	public:
+
+      public:
 	// Get command function
 	ExpressionFunctions::Function function() const;
 	// Execute command
-	bool execute(ExpressionValue& result);
+	bool execute(ExpressionValue &result);
 	// Print node contents
-	void nodePrint(int offset, const char* prefix = "");
+	void nodePrint(int offset, const char *prefix = "");
 	// Set from ExpressionValue
 	bool set(ExpressionValue value);
 	// Initialise node

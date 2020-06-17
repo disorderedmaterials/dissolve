@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_MIMESTRINGS_H
 #define DISSOLVE_MIMESTRINGS_H
 
-#include <QMimeData>
-#include "templates/listitem.h"
 #include "templates/list.h"
+#include "templates/listitem.h"
+#include <QMimeData>
 
 // Forward declarations
 /* none */
@@ -32,25 +32,25 @@
 // Mime String Object
 class MimeString : public ListItem<MimeString>
 {
-	public:
+      public:
 	// Mime Strings Data Type
 	enum MimeStringType
 	{
 		NoMimeType,
-		LocalType,			/* Local block identifier */
-		ModuleType,			/* Module type */
+		LocalType,  /* Local block identifier */
+		ModuleType, /* Module type */
 		nMimeStringTypes
 	};
 	// Constructor
 	MimeString(MimeString::MimeStringType type = NoMimeType, QString data = QString());
 
-	private:
+      private:
 	// Type of data contained in string
 	MimeStringType type_;
 	// String data
 	QString data_;
 
-	public:
+      public:
 	// Return type of data contained in string
 	MimeStringType type() const;
 	// Return string data
@@ -60,45 +60,42 @@ class MimeString : public ListItem<MimeString>
 // Mime Strings Data
 class MimeStrings : public QMimeData
 {
-	public:
+      public:
 	// Constructor
 	MimeStrings();
 	// Destructor
 	~MimeStrings();
 	// Copy Constructor
-	MimeStrings(const MimeStrings& source);
+	MimeStrings(const MimeStrings &source);
 	// Assignment Operator
-	void operator=(const MimeStrings& source);
-
+	void operator=(const MimeStrings &source);
 
 	/*
 	 * Reimplementations
 	 */
-	public:
-	bool hasFormat(const QString& mimeType) const;
+      public:
+	bool hasFormat(const QString &mimeType) const;
 	QStringList formats() const;
-	QVariant retrieveData(const QString& mimeType, QVariant::Type type) const;
-
+	QVariant retrieveData(const QString &mimeType, QVariant::Type type) const;
 
 	/*
 	 * Mime Data
 	 */
-	private:
+      private:
 	// List of mime strings
 	List<MimeString> strings_;
 
-	public:
+      public:
 	// Add mime string
 	void add(MimeString::MimeStringType type, QString data);
 	// Add mime strings from source MimeStrings
-	void add(MimeStrings& sourceStrings);
+	void add(MimeStrings &sourceStrings);
 	// Return whether the specified MimeString data is present
 	bool hasData(MimeString::MimeStringType type) const;
 	// Return the data for the specified type
 	QString data(MimeString::MimeStringType type) const;
 	// Return mime strings
-	List<MimeString>& strings();
+	List<MimeString> &strings();
 };
 
 #endif
-

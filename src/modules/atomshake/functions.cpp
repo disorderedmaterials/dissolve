@@ -20,4 +20,3 @@
 */
 
 #include "modules/atomshake/atomshake.h"
-

@@ -22,42 +22,38 @@
 #include "gui/render/primitiveassembly.h"
 
 // Constructor
-PrimitiveAssembly::PrimitiveAssembly() : ListItem<PrimitiveAssembly>()
-{
-}
+PrimitiveAssembly::PrimitiveAssembly() : ListItem<PrimitiveAssembly>() {}
 
 // Destructor
-PrimitiveAssembly::~PrimitiveAssembly()
-{
-}
+PrimitiveAssembly::~PrimitiveAssembly() {}
 
 // Clear all existing primitives
 void PrimitiveAssembly::clear()
 {
-	// Return all objects to their 
+	// Return all objects to their
 	assembly_.clear();
 }
 
 // Add Primitive to the assembly
-void PrimitiveAssembly::add(Primitive* primitive, const Matrix4& matrix)
+void PrimitiveAssembly::add(Primitive *primitive, const Matrix4 &matrix)
 {
-	UncolouredPrimitiveInfo* pi = uncolouredPrimitiveFactory_.produce();
+	UncolouredPrimitiveInfo *pi = uncolouredPrimitiveFactory_.produce();
 	(*pi) = UncolouredPrimitiveInfo(primitive, matrix);
 	assembly_.add(pi);
 }
 
 // Add Primitive with colour to the assembly
-void PrimitiveAssembly::add(Primitive* primitive, const Matrix4& matrix, const GLfloat* rgba)
+void PrimitiveAssembly::add(Primitive *primitive, const Matrix4 &matrix, const GLfloat *rgba)
 {
-	ColouredPrimitiveInfo* pi = colouredPrimitiveFactory_.produce();
+	ColouredPrimitiveInfo *pi = colouredPrimitiveFactory_.produce();
 	(*pi) = ColouredPrimitiveInfo(primitive, matrix, rgba[0], rgba[1], rgba[2], rgba[3]);
 	assembly_.add(pi);
 }
 
 // Add Primitive with colour to the assembly
-void PrimitiveAssembly::add(Primitive* primitive, const Matrix4& matrix, GLfloat r, GLfloat g, GLfloat b, GLfloat a)
+void PrimitiveAssembly::add(Primitive *primitive, const Matrix4 &matrix, GLfloat r, GLfloat g, GLfloat b, GLfloat a)
 {
-	ColouredPrimitiveInfo* pi = colouredPrimitiveFactory_.produce();
+	ColouredPrimitiveInfo *pi = colouredPrimitiveFactory_.produce();
 	(*pi) = ColouredPrimitiveInfo(primitive, matrix, r, g, b, a);
 	assembly_.add(pi);
 }
@@ -65,7 +61,7 @@ void PrimitiveAssembly::add(Primitive* primitive, const Matrix4& matrix, GLfloat
 // Add styling information
 void PrimitiveAssembly::add(bool lighting, GLenum polygonFillMode)
 {
-	StylePrimitiveInfo* pi = stylePrimitiveFactory_.produce();
+	StylePrimitiveInfo *pi = stylePrimitiveFactory_.produce();
 	(*pi) = StylePrimitiveInfo(lighting, polygonFillMode);
 	assembly_.add(pi);
 }
@@ -73,7 +69,7 @@ void PrimitiveAssembly::add(bool lighting, GLenum polygonFillMode)
 // Add line styling information
 void PrimitiveAssembly::add(LineStyle lineStyle)
 {
-	LineStylePrimitiveInfo* pi = lineStylePrimitiveFactory_.produce();
+	LineStylePrimitiveInfo *pi = lineStylePrimitiveFactory_.produce();
 	(*pi) = LineStylePrimitiveInfo(lineStyle);
 	assembly_.add(pi);
 }
@@ -85,5 +81,6 @@ void PrimitiveAssembly::add(LineStyle lineStyle)
 // Send to OpenGL (i.e. render)
 void PrimitiveAssembly::sendToGL(double pixelScaling)
 {
-	for (int n=0; n<assembly_.nItems(); ++n) assembly_[n]->sendToGL(pixelScaling);
+	for (int n = 0; n < assembly_.nItems(); ++n)
+		assembly_[n]->sendToGL(pixelScaling);
 }

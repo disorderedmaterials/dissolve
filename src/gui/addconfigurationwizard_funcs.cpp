@@ -19,19 +19,19 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "classes/box.h"
+#include "classes/configuration.h"
+#include "classes/species.h"
 #include "gui/addconfigurationwizard.h"
 #include "gui/helpers/combopopulator.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
-#include "classes/box.h"
-#include "classes/configuration.h"
-#include "classes/species.h"
 #include "templates/variantpointer.h"
 #include <QFileDialog>
 #include <QInputDialog>
 
 // Constructor / Destructor
-AddConfigurationWizard::AddConfigurationWizard(QWidget* parent)
+AddConfigurationWizard::AddConfigurationWizard(QWidget *parent)
 {
 	dissolveReference_ = NULL;
 	importTarget_ = NULL;
@@ -46,30 +46,26 @@ AddConfigurationWizard::AddConfigurationWizard(QWidget* parent)
 	registerPage(AddConfigurationWizard::NameAndTemperaturePage, "Name and Temperature", WizardWidgetPageInfo::FinishHereFlag);
 
 	// Connect signals / slots
-// 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(atomTypesListEdited(QWidget*)));
-// 	connect(ui_.CreateAtomicElementSelector, SIGNAL(elementSelectionChanged()), this, SLOT(createAtomicElementChanged()));
+	// 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this, SLOT(atomTypesListEdited(QWidget*)));
+	// 	connect(ui_.CreateAtomicElementSelector, SIGNAL(elementSelectionChanged()), this, SLOT(createAtomicElementChanged()));
 
 	lockedForRefresh_ = 0;
 }
 
-AddConfigurationWizard::~AddConfigurationWizard()
-{
-}
+AddConfigurationWizard::~AddConfigurationWizard() {}
 
 /*
  * Data
  */
 
 // Set Dissolve reference
-void AddConfigurationWizard::setMainDissolveReference(const Dissolve* dissolveReference)
-{
-	dissolveReference_ = dissolveReference;
-}
+void AddConfigurationWizard::setMainDissolveReference(const Dissolve *dissolveReference) { dissolveReference_ = dissolveReference; }
 
 // Move constructed Configuration over to the specified Dissolve object, returning the new pointer to it
-Configuration* AddConfigurationWizard::importConfiguration(Dissolve& dissolve)
+Configuration *AddConfigurationWizard::importConfiguration(Dissolve &dissolve)
 {
-	if (!importTarget_) return NULL;
+	if (!importTarget_)
+		return NULL;
 
 	// Set the name of the Configuration from the name edit
 	importTarget_->setName(qPrintable(ui_.FinishNameEdit->text()));
@@ -79,7 +75,7 @@ Configuration* AddConfigurationWizard::importConfiguration(Dissolve& dissolve)
 
 	dissolve.ownConfiguration(importTarget_);
 
-	Configuration* newCfg = importTarget_;
+	Configuration *newCfg = importTarget_;
 
 	importTarget_ = NULL;
 
@@ -94,13 +90,14 @@ Configuration* AddConfigurationWizard::importConfiguration(Dissolve& dissolve)
 bool AddConfigurationWizard::displayControlPage(int index)
 {
 	// Check page index given
-	if ((index < 0) || (index >= AddConfigurationWizard::nPages)) return Messenger::error("Page index %i not recognised.\n", index);
+	if ((index < 0) || (index >= AddConfigurationWizard::nPages))
+		return Messenger::error("Page index %i not recognised.\n", index);
 
 	// Update controls / check flow
 	switch (index)
 	{
-		default:
-			break;
+	default:
+		break;
 	}
 
 	// Page index is valid, so show it - no need to switch/case
@@ -115,10 +112,10 @@ bool AddConfigurationWizard::progressionAllowed(int index) const
 	// Check widget validity in the specified page, returning if progression (i.e. pushing 'Next' or 'Finish') is allowed
 	switch (index)
 	{
-		case (AddConfigurationWizard::NameAndTemperaturePage):
-			return (ui_.FinishNameIndicator->state() == CheckIndicator::OKState);
-		default:
-			break;
+	case (AddConfigurationWizard::NameAndTemperaturePage):
+		return (ui_.FinishNameIndicator->state() == CheckIndicator::OKState);
+	default:
+		break;
 	}
 
 	return true;
@@ -127,16 +124,16 @@ bool AddConfigurationWizard::progressionAllowed(int index) const
 // Perform any necessary actions before moving to the next page
 bool AddConfigurationWizard::prepareForNextPage(int currentIndex)
 {
-	Species* sp;
+	Species *sp;
 
 	switch (currentIndex)
 	{
-		case (AddConfigurationWizard::SelectTemplatePage):
-			// Clear Configuration, and add used Species
-			importTarget_->clear();
-			break;
-		default:
-			break;
+	case (AddConfigurationWizard::SelectTemplatePage):
+		// Clear Configuration, and add used Species
+		importTarget_->clear();
+		break;
+	default:
+		break;
 	}
 
 	return true;
@@ -149,8 +146,8 @@ int AddConfigurationWizard::determineNextPage(int currentIndex)
 
 	switch (currentIndex)
 	{
-		default:
-			break;
+	default:
+		break;
 	}
 
 	return result;
@@ -161,8 +158,8 @@ bool AddConfigurationWizard::prepareForPreviousPage(int currentIndex)
 {
 	switch (currentIndex)
 	{
-		default:
-			break;
+	default:
+		break;
 	}
 
 	return true;
@@ -179,7 +176,8 @@ void AddConfigurationWizard::reset()
 	resetToPage(AddConfigurationWizard::StartPage);
 
 	// Create a new Configuration to tinker with
-	if (importTarget_) delete importTarget_;
+	if (importTarget_)
+		delete importTarget_;
 	importTarget_ = new Configuration;
 
 	// Set a new, unique name ready on the final page
@@ -190,15 +188,9 @@ void AddConfigurationWizard::reset()
  * Start Page
  */
 
-void AddConfigurationWizard::on_StartCreateEmptyButton_clicked(bool checked)
-{
-	goToPage(AddConfigurationWizard::NameAndTemperaturePage);
-}
+void AddConfigurationWizard::on_StartCreateEmptyButton_clicked(bool checked) { goToPage(AddConfigurationWizard::NameAndTemperaturePage); }
 
-void AddConfigurationWizard::on_StartCreateTemplateButton_clicked(bool checked)
-{
-	goToPage(AddConfigurationWizard::SelectTemplatePage);
-}
+void AddConfigurationWizard::on_StartCreateTemplateButton_clicked(bool checked) { goToPage(AddConfigurationWizard::SelectTemplatePage); }
 
 /*
  * Select Template Page
@@ -221,8 +213,10 @@ void AddConfigurationWizard::on_FinishNameEdit_textChanged(const QString text)
 
 	// Name of the prospective Configuration has been changed, so make sure it is valid
 	bool nameIsValid;
-	if (text.isEmpty()) nameIsValid = false;
-	else nameIsValid = dissolveReference_->findConfiguration(qPrintable(text)) == NULL;
+	if (text.isEmpty())
+		nameIsValid = false;
+	else
+		nameIsValid = dissolveReference_->findConfiguration(qPrintable(text)) == NULL;
 
 	ui_.FinishNameIndicator->setOK(nameIsValid);
 

@@ -28,20 +28,16 @@
  */
 
 // Constructor
-ComboListItems::ComboListItems()
-{
-}
+ComboListItems::ComboListItems() {}
 
 // Destructor
-ComboListItems::~ComboListItems()
-{
-}
+ComboListItems::~ComboListItems() {}
 
 /*
  * ComboListDelegate
  */
 
-ComboListDelegate::ComboListDelegate(QObject* parent, ComboListItems* items, bool allowNewItems) : QItemDelegate(parent), items_(items)
+ComboListDelegate::ComboListDelegate(QObject *parent, ComboListItems *items, bool allowNewItems) : QItemDelegate(parent), items_(items)
 {
 	// Private variables
 	allowNewItems_ = allowNewItems;
@@ -50,7 +46,8 @@ ComboListDelegate::ComboListDelegate(QObject* parent, ComboListItems* items, boo
 // Destructor
 ComboListDelegate::~ComboListDelegate()
 {
-	if (items_) delete items_;
+	if (items_)
+		delete items_;
 }
 
 /*
@@ -58,12 +55,13 @@ ComboListDelegate::~ComboListDelegate()
  */
 
 // Create editor
-QWidget* ComboListDelegate::createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const
+QWidget *ComboListDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
 {
 	// Create editor widget (in this case a combo box) and add the available options
-	QComboBox* editor = new QComboBox(parent);
+	QComboBox *editor = new QComboBox(parent);
 	items_->restartIterator();
-	while (items_->nextItem()) editor->addItem(items_->currentItemText());
+	while (items_->nextItem())
+		editor->addItem(items_->currentItemText());
 	editor->setEditable(allowNewItems_);
 
 	// Connect index changed signal of combobox to a local slot, so we can signal to close the editor immediately
@@ -72,7 +70,7 @@ QWidget* ComboListDelegate::createEditor(QWidget* parent, const QStyleOptionView
 }
 
 // Set initial value in editor
-void ComboListDelegate::setEditorData(QWidget* editor, const QModelIndex& index) const
+void ComboListDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
 	QString value = index.model()->data(index, Qt::EditRole).toString();
 
@@ -81,28 +79,26 @@ void ComboListDelegate::setEditorData(QWidget* editor, const QModelIndex& index)
 	items_->restartIterator();
 	while (items_->nextItem())
 	{
-		if (value == items_->currentItemText()) break;
+		if (value == items_->currentItemText())
+			break;
 		++typeIndex;
 	}
 
-	QComboBox* comboBox = static_cast<QComboBox*>(editor);
+	QComboBox *comboBox = static_cast<QComboBox *>(editor);
 	comboBox->setCurrentIndex(typeIndex);
 }
 
 // Get value from editing widget, and set back in model
-void ComboListDelegate::setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const
+void ComboListDelegate::setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
 {
-	QComboBox* comboBox = static_cast<QComboBox*>(editor);
+	QComboBox *comboBox = static_cast<QComboBox *>(editor);
 	QString value = comboBox->currentText();
 
 	model->setData(index, value, Qt::EditRole);
 }
 
 // Update widget geometry
-void ComboListDelegate::updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const
-{
-	editor->setGeometry(option.rect);
-}
+void ComboListDelegate::updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const { editor->setGeometry(option.rect); }
 
 /*
  * Signals / Slots
@@ -111,7 +107,7 @@ void ComboListDelegate::updateEditorGeometry(QWidget* editor, const QStyleOption
 // Index changed in combo box
 void ComboListDelegate::comboIndexChanged(int index)
 {
-	QComboBox* editor = qobject_cast<QComboBox*>(sender());
+	QComboBox *editor = qobject_cast<QComboBox *>(sender());
 
 	emit commitData(editor);
 	emit closeEditor(editor);

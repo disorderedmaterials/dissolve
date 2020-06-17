@@ -27,33 +27,31 @@
 // Column-major 3x3 matrix
 class Matrix3
 {
-	public:
+      public:
 	// Constructor
 	Matrix3();
-	
-	private:
+
+      private:
 	// Matrix
 	double matrix_[9];
-
 
 	/*
 	 * Operators
 	 */
-	public:
-	Matrix3 operator*(const Matrix3& B) const;
+      public:
+	Matrix3 operator*(const Matrix3 &B) const;
 	Matrix3 operator*(const double a) const;
-	Matrix3 operator+(const Matrix3& B) const;
-	Matrix3 operator-(const Matrix3& B) const;
-	Vec3<double> operator*(const Vec3<double>& v) const;
-	Matrix3& operator*=(const Matrix3& B);
-	Matrix3& operator*=(const double a);
-	double& operator[](int);
-
+	Matrix3 operator+(const Matrix3 &B) const;
+	Matrix3 operator-(const Matrix3 &B) const;
+	Vec3<double> operator*(const Vec3<double> &v) const;
+	Matrix3 &operator*=(const Matrix3 &B);
+	Matrix3 &operator*=(const double a);
+	double &operator[](int);
 
 	/*
 	 * General Routines
 	 */
-	public:
+      public:
 	// Reset the matrix to the identity
 	void setIdentity();
 	// Prints the matrix to stdout
@@ -61,9 +59,9 @@ class Matrix3
 	// Set the zero matrix
 	void zero();
 	// Return matrix array
-	double* matrix();
+	double *matrix();
 	// Return transpose of current matrix
-	Matrix3& transpose();
+	Matrix3 &transpose();
 	// Calculate determinant
 	double determinant() const;
 	// Invert matrix
@@ -73,11 +71,10 @@ class Matrix3
 	// Return maximal element
 	double max() const;
 
-
 	/*
 	 * Column Operations
 	 */
-	public:
+      public:
 	// Copy column contents to supplied Vec3
 	Vec3<double> columnAsVec3(int col) const;
 	// Set specified row from supplied triplet of values
@@ -101,11 +98,10 @@ class Matrix3
 	// Orthogonalise rotation matrix column w.r.t. one (or two) other columns)
 	void orthogonaliseColumn(int targetcol, int orthcol1, int orthocol2 = -1);
 
-
 	/*
 	 * Rotations
 	 */
-	public:
+      public:
 	// Create rotation matrix about X
 	void createRotationX(double angle);
 	// Create XY rotation matrix
@@ -121,11 +117,10 @@ class Matrix3
 	// Apply axis rotation quaternion
 	void applyRotationAxis(double ax, double ay, double az, double angle, bool normalise);
 
-
 	/*
 	 * Scaling
 	 */
-	public:
+      public:
 	// Apply a general scaling to the matrix (as glScaled would to)
 	void applyScaling(double scalex, double scaley, double scalez);
 	// Apply a general scaling to the matrix (as glScaled would to)
@@ -139,24 +134,21 @@ class Matrix3
 	// Apply a z-scaling to the matrix
 	void applyScalingZ(double scale);
 
-
 	/*
 	 * Transforms
 	 */
-	public:
+      public:
 	// Transform coordinates supplied and return as Vec3<double>
 	Vec3<double> transform(double x, double y, double z) const;
 	// Transform coordinates supplied and return as Vec3<double>
 	Vec3<double> transform(const Vec3<double> vec) const;
 
-
 	/*
 	 * Special Functions
 	 */
-	public:
+      public:
 	// Construct 'cross-product' matrix of the supplied vector using cyclic permutations
-	void makeCrossProductMatrix(Vec3<double>& v);
+	void makeCrossProductMatrix(Vec3<double> &v);
 };
 
 #endif
-

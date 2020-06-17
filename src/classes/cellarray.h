@@ -32,17 +32,16 @@ class Cell;
 // Cell Array
 class CellArray
 {
-	public:
+      public:
 	// Constructor
 	CellArray();
 	// Destructor
 	~CellArray();
 
-
 	/*
 	 * Cell Data
 	 */
-	private:
+      private:
 	// Cell divisions along each axis
 	Vec3<int> divisions_;
 	// Fractional Cell size
@@ -52,19 +51,19 @@ class CellArray
 	// Cell extents out from given central cell
 	Vec3<int> extents_;
 	// List of Cell neighbour indices (within pair potential range)
-	List< ListVec3<int> > neighbourIndices_;
+	List<ListVec3<int>> neighbourIndices_;
 	// Cell axes
 	Matrix3 axes_;
 	// Total number of Cells in Box
 	int nCells_;
 	// Cell array (one-dimensional)
-	Cell* cells_;
+	Cell *cells_;
 	// Box associated with this cell division scheme
-	const Box* box_;
+	const Box *box_;
 
-	public:
+      public:
 	// Generate array for provided Box
-	bool generate(const Box* box, double cellSize, double pairPotentialRange);
+	bool generate(const Box *box, double cellSize, double pairPotentialRange);
 	// Scale Cells sizes by supplied factor
 	void scale(double factor);
 	// Clear Cell arrays
@@ -78,19 +77,21 @@ class CellArray
 	// Return cell extents out from given central cell
 	Vec3<int> extents() const;
 	// Return list of Cell neighbour indices
-	List< ListVec3<int> > neighbourIndices() const;
+	List<ListVec3<int>> neighbourIndices() const;
 	// Retrieve Cell with (wrapped) grid reference specified
-	Cell* cell(int x, int y, int z) const;
+	Cell *cell(int x, int y, int z) const;
 	// Retrieve Cell with id specified
-	Cell* cell(int id) const;
+	Cell *cell(int id) const;
 	// Return Cell which contains specified coordinate
-	Cell* cell(const Vec3<double> r) const;
-	// Return whether two Cells need minimum image calculation
-	bool useMim(const Cell* a, const Cell* b) const;
-	// Return if any Atoms in the supplied Cells are within the range supplied
-	bool withinRange(const Cell* a, const Cell* b, double distance);
+	Cell *cell(const Vec3<double> r) const;
+	// Check if it is possible for any pair of Atoms in the supplied cells to be within the specified distance
+	bool withinRange(const Cell *a, const Cell *b, double distance);
+	// Check if minimum image calculation is necessary for any potential pair of atoms in the supplied cells
+	bool minimumImageRequired(const Cell *a, const Cell *b, double distance);
 	// Return the minimum image grid delta between the two specified Cells
-	Vec3<int> mimGridDelta(const Cell* a, const Cell* b) const;
+	Vec3<int> mimGridDelta(const Cell *a, const Cell *b) const;
+	// Return the minimum image equivalent of the supplied grid delta
+	Vec3<int> mimGridDelta(Vec3<int> delta) const;
 };
 
 #endif

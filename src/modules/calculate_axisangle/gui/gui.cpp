@@ -23,8 +23,4 @@
 #include "modules/calculate_axisangle/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* CalculateAxisAngleModule::createWidget(QWidget* parent, Dissolve& dissolve)
-{
-	return new CalculateAxisAngleModuleWidget(parent, this);
-}
-
+ModuleWidget *CalculateAxisAngleModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new CalculateAxisAngleModuleWidget(parent, this); }

@@ -23,7 +23,7 @@
 #include "data/ff.h"
 
 // Constructors
-ForcefieldParameters::ForcefieldParameters(const char* name, double data0, double data1, double data2, double data3) : ListItem<ForcefieldParameters>()
+ForcefieldParameters::ForcefieldParameters(const char *name, double data0, double data1, double data2, double data3) : ListItem<ForcefieldParameters>()
 {
 	name_ = name;
 	parameters_.setParameter(0, data0);
@@ -33,26 +33,18 @@ ForcefieldParameters::ForcefieldParameters(const char* name, double data0, doubl
 }
 
 // Destructor
-ForcefieldParameters::~ForcefieldParameters()
-{
-}
+ForcefieldParameters::~ForcefieldParameters() {}
 
 /*
  * Identity
  */
 
 // Return name of type
-const char* ForcefieldParameters::name() const
-{
-	return name_.get();
-}
+const char *ForcefieldParameters::name() const { return name_.get(); }
 
 /*
  * Parameters
  */
 
 // Return interatomic interaction parameters
-const InteractionParameters& ForcefieldParameters::parameters() const
-{
-	return parameters_;
-}
+const InteractionParameters &ForcefieldParameters::parameters() const { return parameters_; }

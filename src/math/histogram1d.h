@@ -22,9 +22,9 @@
 #ifndef DISSOLVE_HISTOGRAM1D_H
 #define DISSOLVE_HISTOGRAM1D_H
 
+#include "genericitems/base.h"
 #include "math/data1d.h"
 #include "math/sampleddouble.h"
-#include "genericitems/base.h"
 #include "templates/array.h"
 #include "templates/objectstore.h"
 
@@ -34,21 +34,20 @@ class ProcessPool;
 // One-Dimensional Histogram
 class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D>, public GenericItemBase
 {
-	public:
+      public:
 	// Constructor
 	Histogram1D();
 	// Destructor
 	~Histogram1D();
 	// Copy Constructor
-	Histogram1D(const Histogram1D& source);
+	Histogram1D(const Histogram1D &source);
 	// Clear data
 	void clear();
-	
 
 	/*
 	 * Histogram Data
 	 */
-	private:
+      private:
 	// Minimum value for data (hard left-edge of first bin)
 	double minimum_;
 	// Maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
@@ -70,17 +69,17 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	// Accumulated data
 	Data1D accumulatedData_;
 
-	private:
+      private:
 	// Update accumulated data
 	void updateAccumulatedData();
 
-	public:
+      public:
 	// Initialise with specified bin range
 	void initialise(double minimum, double maximum, double binWidth);
 	// Zero histogram bins
 	void zeroBins();
 	// Set up supplied axis
-	static void setUpAxis(double axisMin, double& axisMax, double binWidth, int& nBins, Array<double>& binCentres);
+	static void setUpAxis(double axisMin, double &axisMax, double binWidth, int &nBins, Array<double> &binCentres);
 	// Return minimum value for data (hard left-edge of first bin)
 	double minimum() const;
 	// Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
@@ -96,45 +95,42 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
 	// Accumulate current histogram bins into averages
 	void accumulate();
 	// Return Array of x centre-bin values
-	const Array<double>& binCentres() const;
+	const Array<double> &binCentres() const;
 	// Return histogram data
-	Array<long int>& bins();
+	Array<long int> &bins();
 	// Add source histogram data into local array
-	void add(Histogram1D& other, int factor = 1);
+	void add(Histogram1D &other, int factor = 1);
 	// Return accumulated (averaged) data
-	const Data1D& accumulatedData() const;
-
+	const Data1D &accumulatedData() const;
 
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	// Assignment Operator
-	void operator=(const Histogram1D& source);
-
+	void operator=(const Histogram1D &source);
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-	public:
+      public:
 	// Return class name
-	static const char* itemClassName();
+	static const char *itemClassName();
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
-
+	bool write(LineParser &parser);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Sum histogram data onto all processes
-	bool allSum(ProcessPool& procPool);
+	bool allSum(ProcessPool &procPool);
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif

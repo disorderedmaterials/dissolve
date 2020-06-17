@@ -19,42 +19,43 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/energy/energy.h"
+#include "base/lineparser.h"
+#include "base/sysfunc.h"
+#include "classes/box.h"
+#include "classes/species.h"
+#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "math/regression.h"
-#include "classes/species.h"
-#include "classes/box.h"
-#include "base/sysfunc.h"
-#include "base/lineparser.h"
-#include "genericitems/listhelper.h"
+#include "modules/energy/energy.h"
 
 // Run set-up stage
-bool EnergyModule::setUp(Dissolve& dissolve, ProcessPool& procPool)
+bool EnergyModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 {
 	// For each Configuration target, add a flag to its moduleData (which is *not* stored in the restart file) that we are targeting it
-	RefListIterator<Configuration> configIterator(targetConfigurations_);
-	while (Configuration* cfg = configIterator.iterate()) GenericListHelper<bool>::realise(cfg->moduleData(), "_IsEnergyModuleTarget", "", GenericItem::ProtectedFlag) = true;
+	for (Configuration *cfg : targetConfigurations_)
+		GenericListHelper<bool>::realise(cfg->moduleData(), "_IsEnergyModuleTarget", "", GenericItem::ProtectedFlag) = true;
 
 	return true;
 }
 
 // Run main processing
-bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
+bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
 	/*
 	 * Calculate Energy for the target Configuration(s)
-	 * 
+	 *
 	 * This is a parallel routine, with processes operating in groups, unless in TEST mode.
 	 */
 
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+	if (targetConfigurations_.nItems() == 0)
+		return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	// Loop over target Configurations
-	for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
+	for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
 	{
 		// Grab Configuration pointer
-		Configuration* cfg = ri->item();
+		Configuration *cfg = ri->item();
 
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
@@ -75,9 +76,12 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 		if (testMode)
 		{
 			Messenger::print("Energy: All energies will be calculated in serial test mode and compared to production values.\n");
-			if (testAnalytic) Messenger::print("Energy: Exact, analytical potential will be used in test.");
-			if (hasReferenceInter) Messenger::print("Energy: Reference interatomic energy is %15.9e kJ/mol.\n", testReferenceInter);
-			if (hasReferenceIntra) Messenger::print("Energy: Reference intramolecular energy is %15.9e kJ/mol.\n", testReferenceIntra);
+			if (testAnalytic)
+				Messenger::print("Energy: Exact, analytical potential will be used in test.");
+			if (hasReferenceInter)
+				Messenger::print("Energy: Reference interatomic energy is %15.9e kJ/mol.\n", testReferenceInter);
+			if (hasReferenceIntra)
+				Messenger::print("Energy: Reference intramolecular energy is %15.9e kJ/mol.\n", testReferenceIntra);
 		}
 
 		Messenger::print("\n");
@@ -94,74 +98,81 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			 * Test Calculation Begins
 			 */
 
-			const PotentialMap& potentialMap = dissolve.potentialMap();
+			const PotentialMap &potentialMap = dissolve.potentialMap();
 			double correctInterEnergy = 0.0, correctIntraEnergy = 0.0;
 
 			double r, angle;
-			Atom* i, *j;
+			Atom *i, *j;
 			Vec3<double> vecji, vecjk, veckl;
-			Molecule* molN, *molM;
-			const Box* box = cfg->box();
+			std::shared_ptr<Molecule> molN, molM;
+			const Box *box = cfg->box();
 			double scale;
 			const double cutoff = dissolve.potentialMap().range();
 
 			Timer testTimer;
 
 			// Calculate interatomic energy in a loop over defined Molecules
-			for (int n=0; n<cfg->nMolecules(); ++n)
+			for (int n = 0; n < cfg->nMolecules(); ++n)
 			{
 				molN = cfg->molecule(n);
 
 				// Molecule self-energy
-				for (int ii = 0; ii<molN->nAtoms()-1; ++ii)
+				for (int ii = 0; ii < molN->nAtoms() - 1; ++ii)
 				{
 					i = molN->atom(ii);
 
-// 					Messenger::print("Atom %i r = %f %f %f\n", ii, molN->atom(ii)->r().x, molN->atom(ii)->r().y, molN->atom(ii)->r().z);
-					for (int jj = ii+1; jj <molN->nAtoms(); ++jj)
+					// 					Messenger::print("Atom %i r = %f %f %f\n", ii, molN->atom(ii)->r().x, molN->atom(ii)->r().y, molN->atom(ii)->r().z);
+					for (int jj = ii + 1; jj < molN->nAtoms(); ++jj)
 					{
 						j = molN->atom(jj);
 
 						// Get interatomic distance
 						r = box->minimumDistance(i, j);
-						if (r > cutoff) continue;
+						if (r > cutoff)
+							continue;
 
 						// Get intramolecular scaling of atom pair
 						scale = i->scaling(j);
-						if (scale < 1.0e-3) continue;
+						if (scale < 1.0e-3)
+							continue;
 
-						if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(i, j, r) * scale;
-						else correctInterEnergy += potentialMap.energy(i, j, r) * scale;
+						if (testAnalytic)
+							correctInterEnergy += potentialMap.analyticEnergy(i, j, r) * scale;
+						else
+							correctInterEnergy += potentialMap.energy(i, j, r) * scale;
 					}
 				}
 
 				// Molecule-molecule energy
-				for (int m=n+1; m<cfg->nMolecules(); ++m)
+				for (int m = n + 1; m < cfg->nMolecules(); ++m)
 				{
 					molM = cfg->molecule(m);
 
 					// Double loop over atoms
-					for (int ii = 0; ii <molN->nAtoms(); ++ii)
+					for (int ii = 0; ii < molN->nAtoms(); ++ii)
 					{
 						i = molN->atom(ii);
 
-						for (int jj = 0; jj <molM->nAtoms(); ++jj)
+						for (int jj = 0; jj < molM->nAtoms(); ++jj)
 						{
 							j = molM->atom(jj);
 
 							// Get interatomic distance and check cutoff
 							r = box->minimumDistance(i, j);
-							if (r > cutoff) continue;
+							if (r > cutoff)
+								continue;
 
-							if (testAnalytic) correctInterEnergy += potentialMap.analyticEnergy(i, j, r);
-							else correctInterEnergy += potentialMap.energy(i, j, r);
+							if (testAnalytic)
+								correctInterEnergy += potentialMap.analyticEnergy(i, j, r);
+							else
+								correctInterEnergy += potentialMap.energy(i, j, r);
 						}
 					}
 				}
 
 				// Bond energy
 				DynamicArrayConstIterator<SpeciesBond> bondIterator(molN->species()->constBonds());
-				while (const SpeciesBond* b = bondIterator.iterate())
+				while (const SpeciesBond *b = bondIterator.iterate())
 				{
 					r = cfg->box()->minimumDistance(molN->atom(b->indexI()), molN->atom(b->indexJ()));
 					correctIntraEnergy += b->energy(r);
@@ -169,12 +180,12 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 				// Angle energy
 				DynamicArrayConstIterator<SpeciesAngle> angleIterator(molN->species()->constAngles());
-				while (const SpeciesAngle* a = angleIterator.iterate())
+				while (const SpeciesAngle *a = angleIterator.iterate())
 				{
 					// Get vectors 'j-i' and 'j-k'
 					vecji = cfg->box()->minimumVector(molN->atom(a->indexJ()), molN->atom(a->indexI()));
 					vecjk = cfg->box()->minimumVector(molN->atom(a->indexJ()), molN->atom(a->indexK()));
-					
+
 					// Calculate angle
 					vecji.normalise();
 					vecjk.normalise();
@@ -186,7 +197,7 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 				// Torsion energy
 				DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(molN->species()->constTorsions());
-				while (const SpeciesTorsion* t = torsionIterator.iterate())
+				while (const SpeciesTorsion *t = torsionIterator.iterate())
 				{
 					// Get vectors 'j-i', 'j-k' and 'k-l'
 					vecji = cfg->box()->minimumVector(molN->atom(t->indexJ()), molN->atom(t->indexI()));
@@ -239,39 +250,50 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			if (hasReferenceInter)
 			{
 				delta = testReferenceInter - correctInterEnergy;
-				Messenger::print("Reference interatomic energy delta with correct value is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (!procPool.allTrue(fabs(delta) < testThreshold)) return false;
+				Messenger::print("Reference interatomic energy delta with correct value is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta,
+						 fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (!procPool.allTrue(fabs(delta) < testThreshold))
+					return false;
 
 				delta = testReferenceInter - interEnergy;
-				Messenger::print("Reference interatomic energy delta with production value is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (!procPool.allTrue(fabs(delta) < testThreshold)) return false;
+				Messenger::print("Reference interatomic energy delta with production value is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta,
+						 fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (!procPool.allTrue(fabs(delta) < testThreshold))
+					return false;
 			}
 			if (hasReferenceIntra)
 			{
 				delta = testReferenceIntra - correctIntraEnergy;
-				Messenger::print("Reference intramolecular energy delta with correct value is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (!procPool.allTrue(fabs(delta) < testThreshold)) return false;
+				Messenger::print("Reference intramolecular energy delta with correct value is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta,
+						 fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (!procPool.allTrue(fabs(delta) < testThreshold))
+					return false;
 
 				delta = testReferenceIntra - intraEnergy;
-				Messenger::print("Reference intramolecular energy delta with production value is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
-				if (!procPool.allTrue(fabs(delta) < testThreshold)) return false;
+				Messenger::print("Reference intramolecular energy delta with production value is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", delta,
+						 fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+				if (!procPool.allTrue(fabs(delta) < testThreshold))
+					return false;
 			}
 
 			// Compare production vs 'correct' values
-			double interDelta = correctInterEnergy-interEnergy;
-			double intraDelta = correctIntraEnergy-intraEnergy;
+			double interDelta = correctInterEnergy - interEnergy;
+			double intraDelta = correctIntraEnergy - intraEnergy;
 			Messenger::print("Comparing 'correct' with production values...\n");
-			Messenger::print("Interatomic energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", interDelta, fabs(interDelta) < testThreshold ? "OK" : "NOT OK", testThreshold);
-			Messenger::print("Intramolecular energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", intraDelta, fabs(intraDelta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+			Messenger::print("Interatomic energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", interDelta, fabs(interDelta) < testThreshold ? "OK" : "NOT OK",
+					 testThreshold);
+			Messenger::print("Intramolecular energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", intraDelta, fabs(intraDelta) < testThreshold ? "OK" : "NOT OK",
+					 testThreshold);
 
 			// All OK?
-			if (!procPool.allTrue( (fabs(interDelta) < testThreshold) && (fabs(intraDelta) < testThreshold) )) return false;
+			if (!procPool.allTrue((fabs(interDelta) < testThreshold) && (fabs(intraDelta) < testThreshold)))
+				return false;
 		}
 		else
 		{
 			/*
 			 * Calculates the total energy of the entire system.
-			 * 
+			 *
 			 * This is a serial routine (subroutines called from within are parallel).
 			 */
 
@@ -288,45 +310,48 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			double intraEnergy = intraMolecularEnergy(procPool, cfg, dissolve.potentialMap(), bondEnergy, angleEnergy, torsionEnergy);
 			intraTimer.stop();
 
-			Messenger::print("Time to do interatomic energy was %s, intramolecular energy was %s (%s comms).\n", interTimer.totalTimeString(), intraTimer.totalTimeString(), procPool.accumulatedTimeString());
+			Messenger::print("Time to do interatomic energy was %s, intramolecular energy was %s (%s comms).\n", interTimer.totalTimeString(), intraTimer.totalTimeString(),
+					 procPool.accumulatedTimeString());
 			Messenger::print("Total Energy (World) is %15.9e kJ/mol (%15.9e kJ/mol interatomic + %15.9e kJ/mol intramolecular).\n", interEnergy + intraEnergy, interEnergy, intraEnergy);
 			Messenger::print("Intramolecular contributions are - bonds = %15.9e kJ/mol, angles = %15.9e kJ/mol, torsions = %15.9e kJ/mol.\n", bondEnergy, angleEnergy, torsionEnergy);
 
 			// Store current energies in the Configuration in case somebody else needs them
-			Data1D& interData = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Inter", uniqueName(), GenericItem::InRestartFileFlag);
+			Data1D &interData = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Inter", uniqueName(), GenericItem::InRestartFileFlag);
 			interData.addPoint(dissolve.iteration(), interEnergy);
 			interData.setObjectTag(CharString("%s//%s//Inter", cfg->niceName(), uniqueName()));
-			Data1D& intraData = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Intra", uniqueName(), GenericItem::InRestartFileFlag);
+			Data1D &intraData = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Intra", uniqueName(), GenericItem::InRestartFileFlag);
 			intraData.addPoint(dissolve.iteration(), intraEnergy);
 			intraData.setObjectTag(CharString("%s//%s//Intra", cfg->niceName(), uniqueName()));
-			Data1D& bondData = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Bond", uniqueName(), GenericItem::InRestartFileFlag);
+			Data1D &bondData = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Bond", uniqueName(), GenericItem::InRestartFileFlag);
 			bondData.addPoint(dissolve.iteration(), bondEnergy);
 			bondData.setObjectTag(CharString("%s//%s//Bond", cfg->niceName(), uniqueName()));
-			Data1D& angleData = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Angle", uniqueName(), GenericItem::InRestartFileFlag);
+			Data1D &angleData = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Angle", uniqueName(), GenericItem::InRestartFileFlag);
 			angleData.addPoint(dissolve.iteration(), angleEnergy);
 			angleData.setObjectTag(CharString("%s//%s//Angle", cfg->niceName(), uniqueName()));
-			Data1D& torsionData = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Torsion", uniqueName(), GenericItem::InRestartFileFlag);
+			Data1D &torsionData = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Torsion", uniqueName(), GenericItem::InRestartFileFlag);
 			torsionData.addPoint(dissolve.iteration(), torsionEnergy);
 			torsionData.setObjectTag(CharString("%s//%s//Torsion", cfg->niceName(), uniqueName()));
 
 			// Append to arrays of total energies
-			Data1D& totalEnergyArray = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Total", uniqueName(), GenericItem::InRestartFileFlag);
-			totalEnergyArray.addPoint(dissolve.iteration(), interEnergy+intraEnergy);
+			Data1D &totalEnergyArray = GenericListHelper<Data1D>::realise(cfg->moduleData(), "Total", uniqueName(), GenericItem::InRestartFileFlag);
+			totalEnergyArray.addPoint(dissolve.iteration(), interEnergy + intraEnergy);
 			totalEnergyArray.setObjectTag(CharString("%s//%s//Total", cfg->niceName(), uniqueName()));
 
 			// Determine stability of energy
 			// Check number of points already stored for the Configuration
 			double grad = 0.0;
 			bool stable = false;
-			if (stabilityWindow > totalEnergyArray.nValues()) Messenger::print("Too few points to assess stability.\n");
+			if (stabilityWindow > totalEnergyArray.nValues())
+				Messenger::print("Too few points to assess stability.\n");
 			else
 			{
 				double yMean;
 				grad = Regression::linear(totalEnergyArray, stabilityWindow, yMean);
-				double thresholdValue = fabs(stabilityThreshold*yMean);
+				double thresholdValue = fabs(stabilityThreshold * yMean);
 				stable = fabs(grad) < thresholdValue;
 
-				Messenger::print("Gradient of last %i points is %e kJ/mol/step (absolute threshold value is %e, stable = %s).\n", stabilityWindow, grad, thresholdValue, DissolveSys::btoa(stable));
+				Messenger::print("Gradient of last %i points is %e kJ/mol/step (absolute threshold value is %e, stable = %s).\n", stabilityWindow, grad, thresholdValue,
+						 DissolveSys::btoa(stable));
 			}
 
 			// Set variable in Configuration
@@ -347,8 +372,10 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 					parser.writeLine("# All values in kJ/mol.\n");
 					parser.writeLine("# Iteration   Total         Inter         Bond          Angle         Torsion       Gradient      S?\n");
 				}
-				else parser.appendOutput(filename);
-				parser.writeLineF("  %10i  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %i\n", dissolve.iteration(), interEnergy+intraEnergy, interEnergy, bondEnergy, angleEnergy, torsionEnergy, grad, stable);
+				else
+					parser.appendOutput(filename);
+				parser.writeLineF("  %10i  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %i\n", dissolve.iteration(), interEnergy + intraEnergy, interEnergy, bondEnergy, angleEnergy,
+						  torsionEnergy, grad, stable);
 				parser.closeFiles();
 			}
 		}
@@ -358,4 +385,3 @@ bool EnergyModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 	return true;
 }
-

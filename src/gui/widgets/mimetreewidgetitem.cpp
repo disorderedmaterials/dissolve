@@ -22,25 +22,15 @@
 #include "gui/widgets/mimetreewidgetitem.h"
 
 // Constructors
-MimeTreeWidgetItem::MimeTreeWidgetItem(QTreeWidget* parent, int type) : QTreeWidgetItem(parent, type)
-{
-}
-MimeTreeWidgetItem::MimeTreeWidgetItem(QTreeWidgetItem* parent, int type) : QTreeWidgetItem(parent, type)
-{
-}
+MimeTreeWidgetItem::MimeTreeWidgetItem(QTreeWidget *parent, int type) : QTreeWidgetItem(parent, type) {}
+MimeTreeWidgetItem::MimeTreeWidgetItem(QTreeWidgetItem *parent, int type) : QTreeWidgetItem(parent, type) {}
 
 /*
  * Mime Data
  */
 
 // Add mime data of specified type
-void MimeTreeWidgetItem::addMimeString(MimeString::MimeStringType type, QString data)
-{
-	mimeStrings_.add(type, data);
-}
+void MimeTreeWidgetItem::addMimeString(MimeString::MimeStringType type, QString data) { mimeStrings_.add(type, data); }
 
 // Return mime strings
-MimeStrings& MimeTreeWidgetItem::mimeStrings()
-{
-	return mimeStrings_;
-}
+MimeStrings &MimeTreeWidgetItem::mimeStrings() { return mimeStrings_; }

@@ -23,9 +23,10 @@
 #define DISSOLVE_CHANGESTORE_H
 
 #include "classes/changedata.h"
-#include "templates/vector3.h"
 #include "templates/array.h"
 #include "templates/reflist.h"
+#include "templates/vector3.h"
+#include <memory>
 
 // Forward Declarations
 class Atom;
@@ -37,33 +38,31 @@ class ProcessPool;
 // ChangeStore
 class ChangeStore
 {
-	public:
+      public:
 	// Constructor
-	ChangeStore(ProcessPool& procPool);
+	ChangeStore(ProcessPool &procPool);
 	// Destructor
 	~ChangeStore();
-
 
 	/*
 	 * Watch Targets
 	 */
-	private:
+      private:
 	// List of target atoms (and modification data)
 	List<ChangeData> targetAtoms_;
 
-	public:
+      public:
 	// Add atom to watch
-	void add(Atom* i);
+	void add(Atom *i);
 	// Add molecule to watch
-	void add(Molecule* mol);
+	void add(std::shared_ptr<Molecule> mol);
 	// Add cell to watch
-	void add(Cell* cell);
-
+	void add(Cell *cell);
 
 	/*
 	 * Change Data
 	 */
-	private:
+      private:
 	// List of local changes
 	List<ChangeData> changes_;
 	// Coordinate broadcast arrays
@@ -71,7 +70,7 @@ class ChangeStore
 	// Index broadcast array
 	Array<int> indices_;
 
-	public:
+      public:
 	// Reset ChangeStore, forgetting all changes
 	void reset();
 	// Update all Atom positions
@@ -79,7 +78,7 @@ class ChangeStore
 	// Update single atom position
 	void updateAtom(int id);
 	// Update Atom positions using list indices
-	void updateAtomsLocal(int nAtoms, int* indices);
+	void updateAtomsLocal(int nAtoms, int *indices);
 	// Revert all atoms to stored positions
 	void revertAll();
 	// Revert specified index to stored position
@@ -87,17 +86,16 @@ class ChangeStore
 	// Save Atom changes for broadcast, and reset arrays for new data
 	void storeAndReset();
 
-
 	/*
 	 * Parallel Comms
 	 */
-	private:
+      private:
 	// ProcessPool over which this ChangeStore should broadcast
-	ProcessPool& processPool_;
+	ProcessPool &processPool_;
 
-	public:
+      public:
 	// Distribute and apply change data to all processes
-	bool distributeAndApply(Configuration* cfg);
+	bool distributeAndApply(Configuration *cfg);
 };
 
 #endif

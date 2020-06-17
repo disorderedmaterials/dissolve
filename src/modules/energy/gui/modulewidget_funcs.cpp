@@ -19,17 +19,17 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/energy/gui/modulewidget.h"
+#include "classes/atomtype.h"
+#include "genericitems/listhelper.h"
 #include "gui/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
-#include "classes/atomtype.h"
+#include "modules/energy/gui/modulewidget.h"
 #include "templates/variantpointer.h"
-#include "genericitems/listhelper.h"
 
 // Constructor
-EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, EnergyModule* module) : ModuleWidget(parent), module_(module)
+EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, EnergyModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -40,7 +40,7 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, EnergyModule* module) : 
 	energyGraph_ = ui_.PlotWidget->dataViewer();
 
 	// Start a new, empty session
-	View& view = energyGraph_->view();
+	View &view = energyGraph_->view();
 	view.setViewType(View::FlatXYView);
 	view.axes().setTitle(0, "Iteration");
 	view.axes().setMax(0, 10.0);
@@ -65,9 +65,7 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget* parent, EnergyModule* module) : 
 	refreshing_ = false;
 }
 
-EnergyModuleWidget::~EnergyModuleWidget()
-{
-}
+EnergyModuleWidget::~EnergyModuleWidget() {}
 
 /*
  * UI
@@ -83,8 +81,9 @@ void EnergyModuleWidget::updateControls(int flags)
 	QPalette labelPalette = ui_.StableLabel->palette();
 	if (currentConfiguration_)
 	{
-		const Data1D& totalEnergyArray = GenericListHelper<Data1D>::value(currentConfiguration_->moduleData(), "Total", module_->uniqueName(), Data1D());
-		if (totalEnergyArray.nValues() < stabilityWindow) ui_.GradientValueLabel->setText("N/A");
+		const Data1D &totalEnergyArray = GenericListHelper<Data1D>::value(currentConfiguration_->moduleData(), "Total", module_->uniqueName(), Data1D());
+		if (totalEnergyArray.nValues() < stabilityWindow)
+			ui_.GradientValueLabel->setText("N/A");
 		else
 		{
 			double grad = GenericListHelper<double>::value(currentConfiguration_->moduleData(), "EnergyGradient", "", 0.0);
@@ -122,19 +121,21 @@ void EnergyModuleWidget::updateControls(int flags)
  */
 
 // Write widget state through specified LineParser
-bool EnergyModuleWidget::writeState(LineParser& parser) const
+bool EnergyModuleWidget::writeState(LineParser &parser) const
 {
 	// Write DataViewer sessions
-	if (!energyGraph_->writeSession(parser)) return false;
+	if (!energyGraph_->writeSession(parser))
+		return false;
 
 	return true;
 }
 
 // Read widget state through specified LineParser
-bool EnergyModuleWidget::readState(LineParser& parser)
+bool EnergyModuleWidget::readState(LineParser &parser)
 {
 	// Read DataViewer sessions
-	if (!energyGraph_->readSession(parser)) return false;
+	if (!energyGraph_->readSession(parser))
+		return false;
 
 	return true;
 }
@@ -144,14 +145,15 @@ bool EnergyModuleWidget::readState(LineParser& parser)
  */
 
 // Set data targets in graphs
-void EnergyModuleWidget::setGraphDataTargets(EnergyModule* module)
+void EnergyModuleWidget::setGraphDataTargets(EnergyModule *module)
 {
-	if (!module) return;
+	if (!module)
+		return;
 
 	// Add Configuration targets to the combo box
 	ui_.TargetCombo->clear();
-	RefListIterator<Configuration> configIterator(module->targetConfigurations());
-	while (Configuration* config = configIterator.iterate()) ui_.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
+	for (Configuration *config : module->targetConfigurations())
+		ui_.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
 }
 
 void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
@@ -161,10 +163,11 @@ void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 
 	// Get target Configuration
 	currentConfiguration_ = VariantPointer<Configuration>(ui_.TargetCombo->itemData(index));
-	if (!currentConfiguration_) return;
+	if (!currentConfiguration_)
+		return;
 
 	// Add data targets
-	Renderable* rend;
+	Renderable *rend;
 	energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D%%%s//%s//Total", currentConfiguration_->niceName(), module_->uniqueName()), "Total", "Totals");
 	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D%%%s//%s//Inter", currentConfiguration_->niceName(), module_->uniqueName()), "Inter", "Totals");
 	rend->setColour(StockColours::RedStockColour);
@@ -175,7 +178,8 @@ void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 	rend->setColour(StockColours::GreenStockColour);
 	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D%%%s//%s//Angle", currentConfiguration_->niceName(), module_->uniqueName()), "Angle", "Intramolecular");
 	rend->setColour(StockColours::PurpleStockColour);
-	rend = energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D%%%s//%s//Torsion", currentConfiguration_->niceName(), module_->uniqueName()), "Torsion", "Intramolecular");
+	rend =
+	    energyGraph_->createRenderable(Renderable::Data1DRenderable, CharString("Data1D%%%s//%s//Torsion", currentConfiguration_->niceName(), module_->uniqueName()), "Torsion", "Intramolecular");
 	rend->setColour(StockColours::OrangeStockColour);
 
 	updateControls();

@@ -27,28 +27,20 @@
  */
 
 // Constructor
-PrimitiveInfo::PrimitiveInfo()
-{
-}
+PrimitiveInfo::PrimitiveInfo() {}
 
 // Destructor
-PrimitiveInfo::~PrimitiveInfo()
-{
-}
+PrimitiveInfo::~PrimitiveInfo() {}
 
 /*
  * UncolouredPrimitiveInfo
  */
 
 // Constructor
-UncolouredPrimitiveInfo::UncolouredPrimitiveInfo(Primitive* prim, Matrix4 transform) : primitive_(prim), transform_(transform)
-{
-}
+UncolouredPrimitiveInfo::UncolouredPrimitiveInfo(Primitive *prim, Matrix4 transform) : primitive_(prim), transform_(transform) {}
 
 // Destructor
-UncolouredPrimitiveInfo::~UncolouredPrimitiveInfo()
-{
-}
+UncolouredPrimitiveInfo::~UncolouredPrimitiveInfo() {}
 
 // Expose contained info to GL
 void UncolouredPrimitiveInfo::sendToGL(double pixelScaling)
@@ -68,7 +60,7 @@ void UncolouredPrimitiveInfo::sendToGL(double pixelScaling)
  */
 
 // Constructor
-ColouredPrimitiveInfo::ColouredPrimitiveInfo(Primitive* prim, Matrix4 transform, GLfloat r, GLfloat g, GLfloat b, GLfloat a) : primitive_(prim), transform_(transform)
+ColouredPrimitiveInfo::ColouredPrimitiveInfo(Primitive *prim, Matrix4 transform, GLfloat r, GLfloat g, GLfloat b, GLfloat a) : primitive_(prim), transform_(transform)
 {
 	colour_[0] = r;
 	colour_[1] = g;
@@ -77,9 +69,7 @@ ColouredPrimitiveInfo::ColouredPrimitiveInfo(Primitive* prim, Matrix4 transform,
 }
 
 // Destructor
-ColouredPrimitiveInfo::~ColouredPrimitiveInfo()
-{
-}
+ColouredPrimitiveInfo::~ColouredPrimitiveInfo() {}
 
 // Expose contained info to GL
 void ColouredPrimitiveInfo::sendToGL(double pixelScaling)
@@ -102,28 +92,30 @@ void ColouredPrimitiveInfo::sendToGL(double pixelScaling)
  */
 
 // Constructor
-StylePrimitiveInfo::StylePrimitiveInfo(bool lighting, GLenum polygonFillMode) : lighting_(lighting), fillMode_(polygonFillMode)
-{
-}
+StylePrimitiveInfo::StylePrimitiveInfo(bool lighting, GLenum polygonFillMode) : lighting_(lighting), fillMode_(polygonFillMode) {}
 
 // Destructor
-StylePrimitiveInfo::~StylePrimitiveInfo()
-{
-}
+StylePrimitiveInfo::~StylePrimitiveInfo() {}
 
 // Expose contained info to GL
 void StylePrimitiveInfo::sendToGL(double pixelScaling)
 {
 	// Enable / disable lighting
-	if (lighting_) glEnable(GL_LIGHTING);
-	else glDisable(GL_LIGHTING);
+	if (lighting_)
+		glEnable(GL_LIGHTING);
+	else
+		glDisable(GL_LIGHTING);
 
 	// Set polygon rendering mode and smoothing
 	glPolygonMode(GL_FRONT_AND_BACK, fillMode_);
-	if (fillMode_ == GL_POINT) glEnable(GL_POINT_SMOOTH);
-	else glDisable(GL_POINT_SMOOTH);
-	if (fillMode_ == GL_LINE) glEnable(GL_LINE_SMOOTH);
-	else glDisable(GL_LINE_SMOOTH);
+	if (fillMode_ == GL_POINT)
+		glEnable(GL_POINT_SMOOTH);
+	else
+		glDisable(GL_POINT_SMOOTH);
+	if (fillMode_ == GL_LINE)
+		glEnable(GL_LINE_SMOOTH);
+	else
+		glDisable(GL_LINE_SMOOTH);
 }
 
 /*
@@ -131,17 +123,10 @@ void StylePrimitiveInfo::sendToGL(double pixelScaling)
  */
 
 // Constructor
-LineStylePrimitiveInfo::LineStylePrimitiveInfo(LineStyle style) : lineStyle_(style)
-{
-}
+LineStylePrimitiveInfo::LineStylePrimitiveInfo(LineStyle style) : lineStyle_(style) {}
 
 // Destructor
-LineStylePrimitiveInfo::~LineStylePrimitiveInfo()
-{
-}
+LineStylePrimitiveInfo::~LineStylePrimitiveInfo() {}
 
 // Expose contained info to GL
-void LineStylePrimitiveInfo::sendToGL(double pixelScaling)
-{
-	lineStyle_.sendToGL(pixelScaling);
-}
+void LineStylePrimitiveInfo::sendToGL(double pixelScaling) { lineStyle_.sendToGL(pixelScaling); }

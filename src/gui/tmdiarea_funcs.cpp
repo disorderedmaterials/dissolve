@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/tmdiarea.hui"
 #include "gui/gui.h"
+#include "gui/tmdiarea.hui"
 #include "main/dissolve.h"
 
 // Constructor
-TMdiArea::TMdiArea(DissolveWindow* dissolveWindow, QWidget* parent) : QMdiArea(parent)
+TMdiArea::TMdiArea(DissolveWindow *dissolveWindow, QWidget *parent) : QMdiArea(parent)
 {
 	dissolveWindow_ = dissolveWindow;
 

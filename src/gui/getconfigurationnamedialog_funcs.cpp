@@ -19,24 +19,19 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/getconfigurationnamedialog.h"
+#include "base/sysfunc.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
-#include "base/sysfunc.h"
+#include "gui/getconfigurationnamedialog.h"
 
 // Constructor
-GetConfigurationNameDialog::GetConfigurationNameDialog(QWidget* parent, const CoreData& coreData) : coreData_(coreData)
-{
-	ui_.setupUi(this);
-}
+GetConfigurationNameDialog::GetConfigurationNameDialog(QWidget *parent, const CoreData &coreData) : coreData_(coreData) { ui_.setupUi(this); }
 
 // Destructor
-GetConfigurationNameDialog::~GetConfigurationNameDialog()
-{
-}
+GetConfigurationNameDialog::~GetConfigurationNameDialog() {}
 
 // Run the dialog
-bool GetConfigurationNameDialog::get(const Configuration* currentConfiguration, const char* currentName)
+bool GetConfigurationNameDialog::get(const Configuration *currentConfiguration, const char *currentName)
 {
 	configuration_ = currentConfiguration;
 
@@ -49,10 +44,7 @@ bool GetConfigurationNameDialog::get(const Configuration* currentConfiguration, 
 }
 
 // Return the name string
-QString GetConfigurationNameDialog::newName() const
-{
-	return ui_.NameEdit->text();
-}
+QString GetConfigurationNameDialog::newName() const { return ui_.NameEdit->text(); }
 
 /*
  * Slots
@@ -63,13 +55,15 @@ void GetConfigurationNameDialog::on_NameEdit_textChanged(const QString text)
 {
 	// Make sure the name is valid
 	bool nameValid = true;
-	if (text.isEmpty()) nameValid = false;
+	if (text.isEmpty())
+		nameValid = false;
 	else
 	{
 		ListIterator<Configuration> configIterator(coreData_.constConfigurations());
-		while (Configuration* cfg = configIterator.iterate())
+		while (Configuration *cfg = configIterator.iterate())
 		{
-			if (configuration_ == cfg) continue;
+			if (configuration_ == cfg)
+				continue;
 
 			if (DissolveSys::sameString(cfg->name(), qPrintable(text)))
 			{
@@ -86,12 +80,6 @@ void GetConfigurationNameDialog::on_NameEdit_textChanged(const QString text)
 	ui_.OKButton->setEnabled(nameValid);
 }
 
-void GetConfigurationNameDialog::on_CancelButton_clicked(bool checked)
-{
-	reject();
-}
+void GetConfigurationNameDialog::on_CancelButton_clicked(bool checked) { reject(); }
 
-void GetConfigurationNameDialog::on_OKButton_clicked(bool checked)
-{
-	accept();
-}
+void GetConfigurationNameDialog::on_OKButton_clicked(bool checked) { accept(); }

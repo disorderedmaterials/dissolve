@@ -27,23 +27,31 @@
 // Enum Option
 class EnumOption
 {
-	public:
+      public:
 	// Constructors
-	EnumOption(const int enumeration = 0, const char* keyword = NULL, int minArgs = 0, int maxArgs = 0);
-
+	EnumOption();
+	EnumOption(const int enumeration, const char *keyword, int minArgs = 0, int maxArgs = 0);
+	EnumOption(const int enumeration, const char *keyword, const char *description, int minArgs = 0, int maxArgs = 0);
 
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Argument Numbers
-	enum ArgumentNumber { NoArguments = 0, OneOrMoreArguments = -1, OptionalSecondArgument = -2 };
+	enum ArgumentNumber
+	{
+		NoArguments = 0,
+		OneOrMoreArguments = -1,
+		OptionalSecondArgument = -2
+	};
 
-	private:
+      private:
 	// Option enumeration (i.e. from enum value)
 	int enumeration_;
 	// Option keyword
-	const char* keyword_;
+	const char *keyword_;
+	// Option description / long text
+	const char *description_;
 	// Whether the option has any associated arguments
 	bool hasArguments_;
 	// Minimum number of arguments the option takes
@@ -51,13 +59,15 @@ class EnumOption
 	// Maximum number of arguments the option takes
 	int maxArgs_;
 
-	public:
+      public:
 	// Return if the option is valid (true except in derived classes)
 	virtual bool isValid() const;
 	// Return option enumeration (i.e. from enum value)
 	int enumeration() const;
 	// Return option keyword
-	const char* keyword() const;
+	const char *keyword() const;
+	// Return option description
+	const char *description() const;
 	// Return whether the option has any associated arguments
 	bool hasArguments() const;
 	// Return minimum number of arguments the option takes
@@ -69,18 +79,13 @@ class EnumOption
 // Unrecognised Enum Option
 class UnrecognisedEnumOption : public EnumOption
 {
-	public:
+      public:
 	// Constructor
-	UnrecognisedEnumOption() : EnumOption(0, "UNRECOGNISED_KEYWORD")
-	{
-	}
+	UnrecognisedEnumOption() : EnumOption(0, "UNRECOGNISED_KEYWORD") {}
 
-	public:
+      public:
 	// Return if the option is valid (true except in derived classes)
-	bool isValid() const
-	{
-		return false;
-	}
+	bool isValid() const { return false; }
 };
 
 #endif

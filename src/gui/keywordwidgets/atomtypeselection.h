@@ -22,10 +22,10 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_ATOMTYPESELECTION_H
 #define DISSOLVE_KEYWORDWIDGET_ATOMTYPESELECTION_H
 
-#include "gui/keywordwidgets/ui_atomtypeselection.h"
-#include "gui/keywordwidgets/dropdown.h"
-#include "keywords/atomtypeselection.h"
 #include "gui/keywordwidgets/base.h"
+#include "gui/keywordwidgets/dropdown.h"
+#include "gui/keywordwidgets/ui_atomtypeselection.h"
+#include "keywords/atomtypeselection.h"
 #include <QWidget>
 
 // Forward Declarations
@@ -36,45 +36,42 @@ class AtomTypeSelectionKeywordWidget : public KeywordDropDown, public KeywordWid
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	AtomTypeSelectionKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-        // Main form declaration
-        Ui::AtomTypeSelectionWidget ui;
-
+	AtomTypeSelectionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+	// Main form declaration
+	Ui::AtomTypeSelectionWidget ui;
 
 	/*
 	 * Keyword
 	 */
-	private:
+      private:
 	// Associated keyword
-	AtomTypeSelectionKeyword* keyword_;
-
+	AtomTypeSelectionKeyword *keyword_;
 
 	/*
 	 * Signals / Slots
 	 */
-	private:
+      private:
 	// Selection list update function
-	void updateSelectionRow(int row, AtomType* atomType, bool createItem);
+	void updateSelectionRow(int row, AtomType *atomType, bool createItem);
 
-	private slots:
+      private slots:
 	// List item changed
-	void itemChanged(QListWidgetItem* item);
+	void itemChanged(QListWidgetItem *item);
 
-	signals:
+      signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update
 	 */
-	public:
+      public:
 	// Update value displayed in widget
 	void updateValue();
 	// Update widget values data based on keyword data
-	void updateWidgetValues(const CoreData& coreData);
+	void updateWidgetValues(const CoreData &coreData);
 	// Update keyword data based on widget values
 	void updateKeywordData();
 	// Update summary text

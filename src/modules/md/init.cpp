@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/md/md.h"
 #include "keywords/types.h"
+#include "modules/md/md.h"
 
 // Perform any necessary initialisation for the Module
 void MDModule::initialise()
@@ -41,5 +41,3 @@ void MDModule::initialise()
 	keywords_.add("Output", new IntegerKeyword(5), "OutputFrequency", "Frequency at which to output step information (or 0 to inhibit)");
 	keywords_.add("Output", new IntegerKeyword(0), "TrajectoryFrequency", "Write frequency for trajectory file (or 0 to inhibit)");
 }
-
-

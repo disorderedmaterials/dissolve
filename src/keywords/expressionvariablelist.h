@@ -22,74 +22,68 @@
 #ifndef DISSOLVE_KEYWORD_EXPRESSIONVARIABLELIST_H
 #define DISSOLVE_KEYWORD_EXPRESSIONVARIABLELIST_H
 
-#include "keywords/data.h"
 #include "expression/node.h"
+#include "keywords/data.h"
 #include "templates/list.h"
 
 // Forward Declarations
 class ProcedureNode;
 
 // Keyword with ExpressionVariable List
-class ExpressionVariableListKeyword : public KeywordData< List<ExpressionNode>& >
+class ExpressionVariableListKeyword : public KeywordData<List<ExpressionNode> &>
 {
-	public:
+      public:
 	// Constructor
-	ExpressionVariableListKeyword(ProcedureNode* parentNode, List<ExpressionNode>& variables, ExpressionValue::ValueType variableType);
+	ExpressionVariableListKeyword(ProcedureNode *parentNode, List<ExpressionNode> &variables, ExpressionValue::ValueType variableType);
 	// Destructor
 	~ExpressionVariableListKeyword();
-
 
 	/*
 	 * Parent Node
 	 */
-	private:
+      private:
 	// Parent ProcedureNode
-	ProcedureNode* parentNode_;
+	ProcedureNode *parentNode_;
 
-	public:
+      public:
 	// Return parent ProcedureNode
-	const ProcedureNode* parentNode() const;
-
+	const ProcedureNode *parentNode() const;
 
 	/*
 	 * Variable Type
 	 */
-	private:
+      private:
 	// Assumed type for variables in the list
 	ExpressionValue::ValueType variableType_;
 
-	public:
+      public:
 	// Return assumed type for variables in the list
 	ExpressionValue::ValueType variableType() const;
-
 
 	/*
 	 * Data
 	 */
-	protected:
+      protected:
 	// Determine whether current data is 'empty', and should be considered as 'not set'
 	bool isDataEmpty() const;
-
 
 	/*
 	 * Arguments
 	 */
-	public:
+      public:
 	// Return minimum number of arguments accepted
 	int minArguments() const;
 	// Return maximum number of arguments accepted
 	int maxArguments() const;
 	// Parse arguments from supplied LineParser, starting at given argument offset
-	bool read(LineParser& parser, int startArg, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const CoreData &coreData);
 	// Write keyword data to specified LineParser
-	bool write(LineParser& parser, const char* keywordName, const char* prefix);
-
+	bool write(LineParser &parser, const char *keywordName, const char *prefix);
 
 	/*
 	 * Object Management
 	 */
-	protected:
+      protected:
 };
 
 #endif
-

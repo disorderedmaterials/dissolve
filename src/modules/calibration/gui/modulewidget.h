@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULEWIDGET_CALIBRATION_H
 #define DISSOLVE_MODULEWIDGET_CALIBRATION_H
 
-#include "modules/calibration/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
+#include "modules/calibration/gui/ui_modulewidget.h"
 
 // Forward Declarations
 class CalibrationModule;
@@ -38,44 +38,41 @@ class CalibrationModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	CalibrationModuleWidget(QWidget* parent, CalibrationModule* module);
+	CalibrationModuleWidget(QWidget *parent, CalibrationModule *module);
 	~CalibrationModuleWidget();
 
-	private:
+      private:
 	// Associated Module
-	CalibrationModule* module_;
+	CalibrationModule *module_;
 	// DataViewer contained within this widget
-	DataViewer* dataView_;
-
+	DataViewer *dataView_;
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::CalibrationModuleWidget ui_;
 
-	public:
+      public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
-
 
 	/*
 	 * State I/O
 	 */
-	public:
+      public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser) const;
+	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
+	bool readState(LineParser &parser);
 
 	/*
 	 * Widgets / Functions
 	 */
-	private:
+      private:
 };
 
 #endif

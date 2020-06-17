@@ -1,9 +1,7 @@
 ---
 title: Project Overview
-parent: Developer Documentation
 weight: 3
 ---
-# Project Overview
 
 ## Introduction
 

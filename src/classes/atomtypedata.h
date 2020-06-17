@@ -37,23 +37,22 @@ class ProcessPool;
  */
 class AtomTypeData : public ListItem<AtomTypeData>
 {
-	public:
+      public:
 	// Constructor
 	AtomTypeData();
 	// Copy Constructor
-	AtomTypeData(const AtomTypeData& source);
+	AtomTypeData(const AtomTypeData &source);
 	// Assignment Operator
-	void operator=(const AtomTypeData& source);
-
+	void operator=(const AtomTypeData &source);
 
 	/*
 	 * Properties
 	 */
-	private:
+      private:
 	// List index of AtomTypeData in AtomTypeList
 	int listIndex_;
 	// Reference AtomType
-	AtomType* atomType_;
+	AtomType *atomType_;
 	// Whether the AtomType has been marked as exchangeable
 	bool exchangeable_;
 	// Isotopes information (if any)
@@ -65,19 +64,19 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	// Calculated bound coherent scattering over all Isotopes
 	double boundCoherent_;
 
-	public:
+      public:
 	// Initialise
-	bool initialise(int listIndex, AtomType* atomType, double population = 0);
+	bool initialise(int listIndex, AtomType *atomType, double population = 0);
 	// Add to population
 	void add(double nAdd);
 	// Add to population of Isotope
-	void add(Isotope* tope, double nAdd);
+	void add(Isotope *tope, double nAdd);
 	// Zero populations
 	void zeroPopulations();
 	// Return list index of AtomTypeData in AtomTypeList
 	int listIndex() const;
 	// Return reference AtomType
-	AtomType* atomType() const;
+	AtomType *atomType() const;
 	// Set exchangeable flag
 	void setAsExchangeable();
 	// Return whether the associated AtomType is exchangeable
@@ -87,11 +86,11 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	// Remove any existing isotopes, and add only the natural isotope
 	void naturalise();
 	// Return if specified Isotope is already in the list
-	bool hasIsotope(Isotope* tope);
+	bool hasIsotope(Isotope *tope);
 	// Set this AtomType to have only the single Isotope provided
-	void setSingleIsotope(Isotope* tope);
+	void setSingleIsotope(Isotope *tope);
 	// Return first IsotopeData
-	IsotopeData* isotopeData();
+	IsotopeData *isotopeData();
 	// Return total population over all isotopes
 	int population() const;
 	// Return total fractional population including all isotopes
@@ -101,27 +100,25 @@ class AtomTypeData : public ListItem<AtomTypeData>
 	// Return calculated bound coherent scattering over all Isotopes
 	double boundCoherent() const;
 	// Return referenced AtomType name
-	const char* atomTypeName() const;
-
+	const char *atomTypeName() const;
 
 	/*
 	 * I/O
 	 */
-	public:
+      public:
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
-
+	bool write(LineParser &parser);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif

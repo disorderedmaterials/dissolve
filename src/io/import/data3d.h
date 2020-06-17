@@ -31,77 +31,82 @@ class ProcessPool;
 // Data3D Import Formats
 class Data3DImportFileFormat : public FileAndFormat
 {
-	public:
+      public:
 	// Available Data3D formats
-	enum Data3DImportFormat { CartesianData3D, nData3DImportFormats };
-	// Constructor
+	enum Data3DImportFormat
+	{
+		CartesianData3D,
+		nData3DImportFormats
+	};
+	// Constructors
 	Data3DImportFileFormat(Data3DImportFormat format = CartesianData3D);
+	Data3DImportFileFormat(const char *filename, Data3DImportFormat format = CartesianData3D);
 	// Destructor
 	~Data3DImportFileFormat();
 	// Copy Constructor
-	Data3DImportFileFormat(const Data3DImportFileFormat& source);
+	Data3DImportFileFormat(const Data3DImportFileFormat &source);
 	// Assignment Operator
-	void operator=(const Data3DImportFileFormat& source);
+	void operator=(const Data3DImportFileFormat &source);
 
+	/*
+	 * Keyword Options
+	 */
+      private:
+	// Set up keywords for the format
+	void setUpKeywords();
 
 	/*
 	 * Format Access
 	 */
-	public:
+      public:
+	// Return enum options for Data3DImportFormat
+	static EnumOptions<Data3DImportFileFormat::Data3DImportFormat> data3DImportFormats();
 	// Return number of available formats
 	int nFormats() const;
-	// Return formats array
-	const char** formats() const;
-	// Return nice formats array
-	const char** niceFormats() const;
+	// Return format keyword for supplied index
+	const char *formatKeyword(int id) const;
+	// Return description string for supplied index
+	const char *formatDescription(int id) const;
 	// Return current format as Data3DImportFormat
 	Data3DImportFormat data3DFormat() const;
-
 
 	/*
 	 * Templating
 	 */
-	private:
+      private:
 	// Object tag of Data3D upon which to template arrays before importing
 	CharString templateSourceObjectTag_;
-
 
 	/*
 	 * Filename / Basename
 	 */
-	public:
+      public:
 	// Return whether the file must exist
-	bool fileMustExist() const
-	{
-		return true;
-	}
-
+	bool fileMustExist() const { return true; }
 
 	/*
 	 * Import / Write
 	 */
-	protected:
+      protected:
 	// Parse additional argument
-	bool parseArgument(const char* arg);
+	bool parseArgument(const char *arg);
 	// Return whether this file/format has any additional arguments to write
 	bool hasAdditionalArguments() const;
 	// Return additional arguments as string
-	const char* additionalArguments() const;
-
+	const char *additionalArguments() const;
 
 	/*
 	 * Data Import
 	 */
-	private:
+      private:
 	// Import cartesian data from supplied parser
-	bool importCartesian(LineParser& parser, Data3D& data);
+	bool importCartesian(LineParser &parser, Data3D &data);
 
-	public:
+      public:
 	// Import Data3D using current filename and format
-	bool importData(Data3D& data, ProcessPool* procPool = NULL);
+	bool importData(Data3D &data, ProcessPool *procPool = NULL);
 	// Import Data3D using supplied parser and current format
-	bool importData(LineParser& parser, Data3D& data);
+	bool importData(LineParser &parser, Data3D &data);
 };
 
 #endif
-

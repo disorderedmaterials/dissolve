@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_DATA1DSTORE_H
 #define DISSOLVE_DATA1DSTORE_H
 
-#include "math/data1d.h"
 #include "io/import/data1d.h"
+#include "math/data1d.h"
 #include "templates/list.h"
 #include "templates/refdatalist.h"
 
@@ -33,33 +33,32 @@
 // Data1D Store
 class Data1DStore
 {
-	public:
+      public:
 	// Constructor
 	Data1DStore();
 	// Destructor
 	~Data1DStore();
 
-
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// List of contained data
 	List<Data1D> data_;
 	// References for Data1D and associated file/format
-	RefDataList<Data1D,Data1DImportFileFormat> dataReferences_;
+	RefDataList<Data1D, Data1DImportFileFormat> dataReferences_;
 
-	public:
+      public:
 	// Add named data reference to store, reading file and format from specified parser / starting argument
-	bool addData(const char* dataName, LineParser& parser, int startArg, const char* endKeyword, const CoreData& coreData);
+	bool addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword, const CoreData &coreData);
 	// Check to see if the named data is present in the store
-	bool containsData(const char* name) const;
+	bool containsData(const char *name) const;
 	// Return named data
-	const Data1D& data(const char* name) const;
+	const Data1D &data(const char *name) const;
 	// Return list of all data
-	const List<Data1D>& data() const;
+	const List<Data1D> &data() const;
 	// Return list of all data references
-	const RefDataList<Data1D,Data1DImportFileFormat>& dataReferences() const;
+	const RefDataList<Data1D, Data1DImportFileFormat> &dataReferences() const;
 };
 
 #endif

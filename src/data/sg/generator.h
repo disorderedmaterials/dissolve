@@ -22,45 +22,43 @@
 #ifndef DISSOLVE_SYMMETRYGENERATOR_H
 #define DISSOLVE_SYMMETRYGENERATOR_H
 
-#include "math/matrix4.h"
 #include "base/charstring.h"
-#include "templates/listitem.h"
+#include "math/matrix4.h"
 
 // Forward Declarations
 /* none */
 
 // Symmetry Generator
-class SymmetryGenerator : public ListItem<SymmetryGenerator>
+class SymmetryGenerator
 {
-	public:
+      public:
 	// Constructor
 	SymmetryGenerator();
-
 
 	/*
 	 * Generator Information
 	 */
-	private:
+      private:
 	// Generator text (if any)
 	CharString text_;
 	// Generator matrix
 	Matrix4 matrix_;
 
-	private:
+      private:
 	// Set partial element of matrix in specified row
-	void setMatrixPart(int row, const char* part);
+	void setMatrixPart(int row, const char *part);
 
-	public:
+      public:
 	// Set from plain text string
-	bool set(const char* s);
+	bool set(const char *s);
 	// Set rotation matrix row (not including translation vector)
 	void setRotationRow(int row, double x, double y, double z);
 	// Set translation column
 	void setTranslation(double tx, double ty, double tz, double divisor);
 	// Return generator text
-	const char* text() const;
+	const char *text() const;
 	// Return matrix for generator
-	const Matrix4& matrix() const;
+	const Matrix4 &matrix() const;
 };
 
 #endif

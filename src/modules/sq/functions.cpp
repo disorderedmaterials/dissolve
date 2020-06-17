@@ -19,21 +19,23 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/sq/sq.h"
-#include "math/ft.h"
-#include "classes/configuration.h"
 #include "classes/box.h"
+#include "classes/configuration.h"
 #include "genericitems/listhelper.h"
+#include "math/ft.h"
+#include "modules/sq/sq.h"
 
 /*
  * Public Functions
  */
 
 // Generate S(Q) from supplied g(r)
-bool SQModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, const PartialSet& unweightedgr, PartialSet& unweightedsq, double qMin, double qDelta, double qMax, double rho, const WindowFunction& windowFunction, const BroadeningFunction& broadening)
+bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, Configuration *cfg, const PartialSet &unweightedgr, PartialSet &unweightedsq, double qMin, double qDelta, double qMax, double rho,
+				     const WindowFunction &windowFunction, const BroadeningFunction &broadening)
 {
 	// Copy partial g(r) into our new S(Q) object - it should have been initialised already, so we will just check its size
-	if (unweightedgr.nAtomTypes() != unweightedsq.nAtomTypes()) return Messenger::error("SQModule::calculateUnweightedSQ - sizes of supplied partial sets are different.\n");
+	if (unweightedgr.nAtomTypes() != unweightedsq.nAtomTypes())
+		return Messenger::error("SQModule::calculateUnweightedSQ - sizes of supplied partial sets are different.\n");
 
 	// Subtract 1.0 from the full and unbound partials so as to give (g(r)-1) and FT into S(Q)
 	// Don't subtract 1.0 from the bound partials
@@ -42,23 +44,26 @@ bool SQModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, 
 	Timer timer;
 	timer.start();
 	int nTypes = unweightedgr.nAtomTypes();
-	for (int n=0; n<nTypes; ++n)
+	for (int n = 0; n < nTypes; ++n)
 	{
-		for (int m=n; m<nTypes; ++m)
+		for (int m = n; m < nTypes; ++m)
 		{
 			// Total partial
-			unweightedsq.partial(n,m).copyArrays(unweightedgr.constPartial(n,m));
-			unweightedsq.partial(n,m).values() -= 1.0;
-			if (!Fourier::sineFT(unweightedsq.partial(n,m), 4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
+			unweightedsq.partial(n, m).copyArrays(unweightedgr.constPartial(n, m));
+			unweightedsq.partial(n, m).values() -= 1.0;
+			if (!Fourier::sineFT(unweightedsq.partial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening))
+				return false;
 
 			// Bound partial
-			unweightedsq.boundPartial(n,m).copyArrays(unweightedgr.constBoundPartial(n,m));
-			if (!Fourier::sineFT(unweightedsq.boundPartial(n,m), 4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
+			unweightedsq.boundPartial(n, m).copyArrays(unweightedgr.constBoundPartial(n, m));
+			if (!Fourier::sineFT(unweightedsq.boundPartial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening))
+				return false;
 
 			// Unbound partial
-			unweightedsq.unboundPartial(n,m).copyArrays(unweightedgr.constUnboundPartial(n,m));
-			unweightedsq.unboundPartial(n,m).values() -= 1.0;
-			if (!Fourier::sineFT(unweightedsq.unboundPartial(n,m), 4.0*PI*rho, qMin, qDelta, qMax, windowFunction, broadening)) return false;
+			unweightedsq.unboundPartial(n, m).copyArrays(unweightedgr.constUnboundPartial(n, m));
+			unweightedsq.unboundPartial(n, m).values() -= 1.0;
+			if (!Fourier::sineFT(unweightedsq.unboundPartial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening))
+				return false;
 		}
 	}
 
@@ -72,12 +77,12 @@ bool SQModule::calculateUnweightedSQ(ProcessPool& procPool, Configuration* cfg, 
 }
 
 // Sum unweighted S(Q) over the supplied Module's target Configurations
-bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericList& moduleData, PartialSet& summedUnweightedSQ)
+bool SQModule::sumUnweightedSQ(ProcessPool &procPool, Module *module, GenericList &moduleData, PartialSet &summedUnweightedSQ)
 {
 	// Create an AtomTypeList containing all AtomTypes present in all target configurations
 	AtomTypeList combinedAtomTypes;
-	RefListIterator<Configuration> configIterator(module->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate()) combinedAtomTypes.add(cfg->usedAtomTypesList());
+	for (Configuration *cfg : module->targetConfigurations())
+		combinedAtomTypes.add(cfg->usedAtomTypesList());
 	combinedAtomTypes.finalise();
 
 	// Set up PartialSet container
@@ -88,8 +93,7 @@ bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericLis
 	// We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of partials at the end.
 	double totalWeight = 0.0;
 	CharString fingerprint;
-	configIterator.restart();
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration *cfg : module->targetConfigurations())
 	{
 		// Update fingerprint
 		fingerprint += fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion()) : CharString("_%i", cfg->contentsVersion());
@@ -100,7 +104,8 @@ bool SQModule::sumUnweightedSQ(ProcessPool& procPool, Module* module, GenericLis
 		Messenger::print("Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
 
 		// Grab partials for Configuration and add into our set
-		if (!cfg->moduleData().contains("UnweightedSQ")) return Messenger::error("Couldn't find UnweightedSQ data for Configuration '%s'.\n", cfg->name());
+		if (!cfg->moduleData().contains("UnweightedSQ"))
+			return Messenger::error("Couldn't find UnweightedSQ data for Configuration '%s'.\n", cfg->name());
 		PartialSet cfgPartialSQ = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedSQ");
 		summedUnweightedSQ.addPartials(cfgPartialSQ, weight);
 	}

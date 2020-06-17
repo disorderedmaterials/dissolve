@@ -19,16 +19,15 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/neutronsq/neutronsq.h"
 #include "keywords/types.h"
+#include "modules/neutronsq/neutronsq.h"
 
 // Return enum option info for NormalisationType
 EnumOptions<NeutronSQModule::NormalisationType> NeutronSQModule::normalisationTypes()
 {
-	static EnumOptionsList NormalisationTypeOptions = EnumOptionsList() << 
-		EnumOption(NeutronSQModule::NoNormalisation,			"None") << 
-		EnumOption(NeutronSQModule::AverageOfSquaresNormalisation,	"AverageSquared") << 
-		EnumOption(NeutronSQModule::SquareOfAverageNormalisation,	"SquaredAverage");
+	static EnumOptionsList NormalisationTypeOptions = EnumOptionsList()
+							  << EnumOption(NeutronSQModule::NoNormalisation, "None") << EnumOption(NeutronSQModule::AverageOfSquaresNormalisation, "AverageSquared")
+							  << EnumOption(NeutronSQModule::SquareOfAverageNormalisation, "SquaredAverage");
 
 	static EnumOptions<NeutronSQModule::NormalisationType> options("NormalisationType", NormalisationTypeOptions, NeutronSQModule::NoNormalisation);
 
@@ -46,19 +45,25 @@ void NeutronSQModule::initialise()
 	keywords_.add("Calculation", new WindowFunctionKeyword(WindowFunction(WindowFunction::NoWindow)), "WindowFunction", "Window function to apply when Fourier-transforming g(r) to S(Q)");
 
 	// Neutron Isotopes
-	keywords_.add("Neutron Isotopes", new AtomTypeSelectionKeyword(exchangeableTypes_, targetConfigurations_), "Exchangeable", "Specify AtomTypes that are exchangeable", "<AtomType> [AtomType...]");
-	keywords_.add("Neutron Isotopes", new IsotopologueCollectionKeyword(isotopologues_, targetConfigurations()), "Isotopologue", "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
-	keywords_.add("Neutron Isotopes", new EnumOptionsKeyword<NeutronSQModule::NormalisationType>(NeutronSQModule::normalisationTypes() = NeutronSQModule::NoNormalisation), "Normalisation", "Normalisation to apply to total weighted F(Q)");
+	keywords_.add("Neutron Isotopes", new AtomTypeSelectionKeyword(exchangeableTypes_, targetConfigurations_), "Exchangeable", "Specify AtomTypes that are exchangeable",
+		      "<AtomType> [AtomType...]");
+	keywords_.add("Neutron Isotopes", new IsotopologueCollectionKeyword(isotopologues_, targetConfigurations()), "Isotopologue",
+		      "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
+	keywords_.add("Neutron Isotopes", new EnumOptionsKeyword<NeutronSQModule::NormalisationType>(NeutronSQModule::normalisationTypes() = NeutronSQModule::NoNormalisation), "Normalisation",
+		      "Normalisation to apply to total weighted F(Q)");
 
 	// Bragg Scattering
 	keywords_.add("Bragg Scattering", new BoolKeyword(false), "IncludeBragg", "Include Bragg scattering (if reflection data are present in the Configuration)");
 	keywords_.add("Bragg Scattering", new BroadeningFunctionKeyword(BroadeningFunction()), "BraggQBroadening", "Broadening function to apply, on top of any QBroadening, to Bragg scattering");
 
 	// Reference Data
-	keywords_.add("Reference Data", new FileAndFormatKeyword(referenceFQ_, "EndReference"), "Reference", "F(Q) reference data", "<format> <filename>", KeywordBase::ModificationRequiresSetUpOption);
-	keywords_.add("Reference Data", new EnumOptionsKeyword<NeutronSQModule::NormalisationType>(NeutronSQModule::normalisationTypes() = NeutronSQModule::NoNormalisation), "ReferenceNormalisation", "Normalisation to remove from reference data before use", KeywordBase::ModificationRequiresSetUpOption);
+	keywords_.add("Reference Data", new FileAndFormatKeyword(referenceFQ_, "EndReference"), "Reference", "F(Q) reference data", "<format> <filename>",
+		      KeywordBase::ModificationRequiresSetUpOption);
+	keywords_.add("Reference Data", new EnumOptionsKeyword<NeutronSQModule::NormalisationType>(NeutronSQModule::normalisationTypes() = NeutronSQModule::NoNormalisation), "ReferenceNormalisation",
+		      "Normalisation to remove from reference data before use", KeywordBase::ModificationRequiresSetUpOption);
 	keywords_.add("Reference Data", new BoolKeyword(false), "ReferenceIgnoreFirst", "Ignore the first point in the supplied reference data", KeywordBase::ModificationRequiresSetUpOption);
-	keywords_.add("Reference Data", new WindowFunctionKeyword(WindowFunction(WindowFunction::Lorch0Window)), "ReferenceWindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)", KeywordBase::ModificationRequiresSetUpOption);
+	keywords_.add("Reference Data", new WindowFunctionKeyword(WindowFunction(WindowFunction::Lorch0Window)), "ReferenceWindowFunction",
+		      "Window function to apply when Fourier-transforming reference S(Q) to g(r)", KeywordBase::ModificationRequiresSetUpOption);
 
 	// Export
 	keywords_.add("Export", new BoolKeyword(false), "SaveReference", "Whether to save the reference data and its Fourier transform", "<True|False>");
@@ -67,7 +72,4 @@ void NeutronSQModule::initialise()
 }
 
 // Return file and format for reference total F(Q)
-const Data1DImportFileFormat& NeutronSQModule::referenceFQFileAndFormat()
-{
-	return referenceFQ_;
-}
+const Data1DImportFileFormat &NeutronSQModule::referenceFQFileAndFormat() { return referenceFQ_; }

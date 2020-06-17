@@ -23,10 +23,10 @@
 #define DISSOLVE_RENDER_TEXTPRIMITIVELIST_H
 
 #include "gui/render/textprimitive.h"
-#include "math/matrix4.h"
 #include "math/cuboid.h"
-#include "templates/vector3.h"
+#include "math/matrix4.h"
 #include "templates/list.h"
+#include "templates/vector3.h"
 #include <QString>
 
 // Forward Declarations
@@ -35,23 +35,24 @@ class FontInstance;
 // Text Primitive List
 class TextPrimitiveList
 {
-	public:
+      public:
 	// Constructor
 	TextPrimitiveList();
 
-	private:
+      private:
 	// List of text primitive chunks
 	List<TextPrimitive> textPrimitives_;
 
-	public:
+      public:
 	// Clear list
 	void clear();
 	// Add primitive to list
-	void add(FontInstance& fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4& rotation, double textSize, bool flat);
+	void add(FontInstance &fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 &rotation, double textSize,
+		 bool flat);
 	// Update global bounding cuboid for all text primitives in the list
-	Cuboid boundingCuboid(FontInstance& fontInstance, const Matrix4& viewMatrixInverse, double baseFontSize, Cuboid startingCuboid = Cuboid());
+	Cuboid boundingCuboid(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize, Cuboid startingCuboid = Cuboid());
 	// Render all primitives in list
-	void renderAll(FontInstance& fontInstance, const Matrix4& viewMatrix, const Matrix4& viewMatrixInverse, double baseFontSize);
+	void renderAll(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse, double baseFontSize);
 };
 
 #endif

@@ -22,27 +22,27 @@
 #ifndef DISSOLVE_FORCEFIELD_IMPROPERTERM_H
 #define DISSOLVE_FORCEFIELD_IMPROPERTERM_H
 
-#include "classes/speciesimproper.h"
 #include "base/charstring.h"
 #include "base/parameters.h"
+#include "classes/speciesimproper.h"
 
 // Forward Declarations
 class Forcefield;
 class ForcefieldAtomType;
 
 // Forcefield Improper Term
-class ForcefieldImproperTerm : public ListItem<ForcefieldImproperTerm>
+class ForcefieldImproperTerm
 {
-	public:
+      public:
 	// Constructor / Destructor
-	ForcefieldImproperTerm(const char* typeI = NULL, const char* typeJ = NULL, const char* typeK = NULL, const char* typeL = NULL, SpeciesImproper::ImproperFunction form = SpeciesImproper::NoForm, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+	ForcefieldImproperTerm(const char *typeI = NULL, const char *typeJ = NULL, const char *typeK = NULL, const char *typeL = NULL, SpeciesImproper::ImproperFunction form = SpeciesImproper::NoForm,
+			       double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
 	~ForcefieldImproperTerm();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Type names involved in interaction
 	CharString typeI_, typeJ_, typeK_, typeL_;
 	// Functional form of interaction
@@ -50,13 +50,13 @@ class ForcefieldImproperTerm : public ListItem<ForcefieldImproperTerm>
 	// Parameters for interaction
 	double parameters_[MAXINTRAPARAMS];
 
-	public:
+      public:
 	// Return if this term matches the atom types supplied
-	bool matches(const ForcefieldAtomType* i, const ForcefieldAtomType* j, const ForcefieldAtomType* k, const ForcefieldAtomType* l);
+	bool isMatch(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k, const ForcefieldAtomType *l) const;
 	// Return functional form index of interaction
 	SpeciesImproper::ImproperFunction form() const;
 	// Return array of parameters
-	const double* parameters() const;
+	const double *parameters() const;
 };
 
 #endif

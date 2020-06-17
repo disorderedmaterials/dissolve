@@ -20,21 +20,16 @@
 */
 
 #include "classes/speciesangle.h"
-#include "classes/speciesatom.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
+#include "classes/speciesatom.h"
 #include "templates/enumhelpers.h"
 
 // Constructor
-SpeciesAngle::SpeciesAngle() : SpeciesIntra(), DynamicArrayObject<SpeciesAngle>()
-{
-	clear();
-}
+SpeciesAngle::SpeciesAngle() : SpeciesIntra(), DynamicArrayObject<SpeciesAngle>() { clear(); }
 
 // Destructor
-SpeciesAngle::~SpeciesAngle()
-{
-}
+SpeciesAngle::~SpeciesAngle() {}
 
 /*
  * DynamicArrayObject Virtuals
@@ -55,38 +50,35 @@ void SpeciesAngle::clear()
  */
 
 // Set SpeciesAtoms involved in interaction
-void SpeciesAngle::setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k)
+void SpeciesAngle::setAtoms(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
 {
 	i_ = i;
 	j_ = j;
 	k_ = k;
 #ifdef CHECKS
-	if (i_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* i in SpeciesAngle::set().\n");
-	if (j_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* j in SpeciesAngle::set().\n");
-	if (k_ == NULL) Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesAngle::set().\n");
+	if (i_ == NULL)
+		Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* i in SpeciesAngle::set().\n");
+	if (j_ == NULL)
+		Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* j in SpeciesAngle::set().\n");
+	if (k_ == NULL)
+		Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesAngle::set().\n");
 #endif
-	if (i_) i_->addAngle(this);
-	if (j_) j_->addAngle(this);
-	if (k_) k_->addAngle(this);
+	if (i_)
+		i_->addAngle(this);
+	if (j_)
+		j_->addAngle(this);
+	if (k_)
+		k_->addAngle(this);
 }
 
 // Return first SpeciesAtom
-SpeciesAtom* SpeciesAngle::i() const
-{
-	return i_;
-}
+SpeciesAtom *SpeciesAngle::i() const { return i_; }
 
 // Return second (central) SpeciesAtom
-SpeciesAtom* SpeciesAngle::j() const
-{
-	return j_;
-}
+SpeciesAtom *SpeciesAngle::j() const { return j_; }
 
 // Return third SpeciesAtom
-SpeciesAtom* SpeciesAngle::k() const
-{
-	return k_;
-}
+SpeciesAtom *SpeciesAngle::k() const { return k_; }
 
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesAngle::indexI() const
@@ -130,21 +122,40 @@ int SpeciesAngle::indexK() const
 // Return index (in parent Species) of nth SpeciesAtom in interaction
 int SpeciesAngle::index(int n) const
 {
-	if (n == 0) return indexI();
-	else if (n == 1) return indexJ();
-	else if (n == 2) return indexK();
+	if (n == 0)
+		return indexI();
+	else if (n == 1)
+		return indexJ();
+	else if (n == 2)
+		return indexK();
 
 	Messenger::error("SpeciesAtom index %i is out of range in SpeciesAngle::index(int). Returning 0...\n");
 	return 0;
 }
 
 // Return whether Atoms in Angle match those specified
-bool SpeciesAngle::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
+bool SpeciesAngle::matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const
 {
-	if (j_ != j) return false;
-	if ((i_ == i) && (k_ == k)) return true;
-	if ((i_ == k) && (k_ == i)) return true;
+	if (j_ != j)
+		return false;
+	if ((i_ == i) && (k_ == k))
+		return true;
+	if ((i_ == k) && (k_ == i))
+		return true;
 	return false;
+}
+
+// Return whether all atoms in the interaction are currently selected
+bool SpeciesAngle::isSelected() const
+{
+#ifdef CHECKS
+	if (i_ == NULL || j_ == NULL || k_ == NULL)
+	{
+		Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesAngle::isSelected(). Returning false...\n");
+		return false;
+	}
+#endif
+	return (i_->isSelected() && j_->isSelected() && k_->isSelected());
 }
 
 /*
@@ -154,11 +165,8 @@ bool SpeciesAngle::matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const
 // Return enum options for AngleFunction
 EnumOptions<SpeciesAngle::AngleFunction> SpeciesAngle::angleFunctions()
 {
-	static EnumOptionsList AngleFunctionOptions = EnumOptionsList() <<
-		EnumOption(SpeciesAngle::NoForm, 		"None",		0,0) <<
-		EnumOption(SpeciesAngle::HarmonicForm, 		"Harmonic",	2,2) <<
-		EnumOption(SpeciesAngle::CosineForm, 		"Cos",		4,4) <<
-		EnumOption(SpeciesAngle::Cos2Form, 		"Cos2",		4,4);
+	static EnumOptionsList AngleFunctionOptions = EnumOptionsList() << EnumOption(SpeciesAngle::NoForm, "None", 0, 0) << EnumOption(SpeciesAngle::HarmonicForm, "Harmonic", 2, 2)
+									<< EnumOption(SpeciesAngle::CosineForm, "Cos", 4, 4) << EnumOption(SpeciesAngle::Cos2Form, "Cos2", 4, 4);
 
 	static EnumOptions<SpeciesAngle::AngleFunction> options("AngleFunction", AngleFunctionOptions);
 
@@ -166,18 +174,17 @@ EnumOptions<SpeciesAngle::AngleFunction> SpeciesAngle::angleFunctions()
 }
 
 // Set up any necessary parameters
-void SpeciesAngle::setUp()
-{
-}
+void SpeciesAngle::setUp() {}
 
 // Calculate and return fundamental frequency for the interaction
 double SpeciesAngle::fundamentalFrequency(double reducedMass) const
 {
 	// Get pointer to relevant parameters array
-	const double* params = parameters();
+	const double *params = parameters();
 
 	double k = 0.0;
-	if (form() == SpeciesAngle::HarmonicForm) k = params[0];
+	if (form() == SpeciesAngle::HarmonicForm)
+		k = params[0];
 	else
 	{
 		Messenger::error("Functional form of SpeciesAngle term not set, or no force constant available, so can't determine fundamental frequency.\n");
@@ -186,32 +193,30 @@ double SpeciesAngle::fundamentalFrequency(double reducedMass) const
 
 	// Convert force constant from (assumed) kJ mol-1 A-2 into J m-2 (kg s-2)
 	k *= 1000.0 * 1.0e20 / AVOGADRO;
-// 	printf("K = %f\n", k);
+	// 	printf("K = %f\n", k);
 
 	// Convert reduced mass from amu to kg
 	double mu = reducedMass / (AVOGADRO * 1000.0);
-// 	printf("mu = %e\n", mu);
+	// 	printf("mu = %e\n", mu);
 
 	// Calculate fundamental frequency
 	double v = (1.0 / TWOPI) * sqrt(k / mu);
-// 	printf("v = %e\n", v);
+	// 	printf("v = %e\n", v);
 
 	return v;
 }
 
 // Return type of this interaction
-SpeciesIntra::InteractionType SpeciesAngle::type() const
-{
-	return SpeciesIntra::AngleInteraction;
-}
+SpeciesIntra::InteractionType SpeciesAngle::type() const { return SpeciesIntra::AngleInteraction; }
 
 // Return energy for specified angle
 double SpeciesAngle::energy(double angleInDegrees) const
 {
 	// Get pointer to relevant parameters array
-	const double* params = parameters();
+	const double *params = parameters();
 
-	if (form() == SpeciesAngle::NoForm) return 0.0;
+	if (form() == SpeciesAngle::NoForm)
+		return 0.0;
 	else if (form() == SpeciesAngle::HarmonicForm)
 	{
 		/*
@@ -222,7 +227,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
 		 * 1 : Equilibrium angle, eq (degrees)
 		 */
 		double delta = (angleInDegrees - params[1]) / DEGRAD;
-		return 0.5*params[0]*delta*delta;
+		return 0.5 * params[0] * delta * delta;
 	}
 	else if (form() == SpeciesAngle::CosineForm)
 	{
@@ -235,7 +240,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
 		 * 2 : Equilibrium angle, eq (degrees)
 		 * 3 : Sign, s
 		 */
-		return params[0] * (1.0 + params[3] * cos(params[1] * angleInDegrees/DEGRAD - params[2]));
+		return params[0] * (1.0 + params[3] * cos(params[1] * angleInDegrees / DEGRAD - params[2]));
 	}
 	else if (form() == SpeciesAngle::Cos2Form)
 	{
@@ -248,7 +253,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
 		 * 2 : Constant C1
 		 * 3 : Constant C2
 		 */
-		const double angleInRadians = angleInDegrees /DEGRAD;
+		const double angleInRadians = angleInDegrees / DEGRAD;
 		return params[0] * (params[1] + params[2] * cos(angleInRadians) + params[3] * cos(2.0 * angleInRadians));
 	}
 
@@ -260,15 +265,16 @@ double SpeciesAngle::energy(double angleInDegrees) const
 double SpeciesAngle::force(double angleInDegrees) const
 {
 	// Get pointer to relevant parameters array
-	const double* params = parameters();
+	const double *params = parameters();
 
 	// Convert angle to radians
-	const double angleInRadians = angleInDegrees /DEGRAD;
+	const double angleInRadians = angleInDegrees / DEGRAD;
 
 	// Set initial derivative of angle w.r.t. cos(angle) for chain rule
-	const double dTheta_dCosTheta = -1.0 / sin(angleInDegrees/DEGRAD);
+	const double dTheta_dCosTheta = -1.0 / sin(angleInDegrees / DEGRAD);
 
-	if (form() == SpeciesAngle::NoForm) return 0.0;
+	if (form() == SpeciesAngle::NoForm)
+		return 0.0;
 	else if (form() == SpeciesAngle::HarmonicForm)
 	{
 		/*
@@ -280,7 +286,7 @@ double SpeciesAngle::force(double angleInDegrees) const
 		 */
 
 		// Chain rule - multiply by derivative of energy w.r.t. angle (harmonic form)
-		return dTheta_dCosTheta * -params[0]*((angleInDegrees-params[1])/DEGRAD);
+		return dTheta_dCosTheta * -params[0] * ((angleInDegrees - params[1]) / DEGRAD);
 	}
 	else if (form() == SpeciesAngle::CosineForm)
 	{
@@ -293,7 +299,7 @@ double SpeciesAngle::force(double angleInDegrees) const
 		 * 2 : Equilibrium angle, eq (degrees)
 		 * 3 : Sign, s
 		 */
-		return dTheta_dCosTheta * -params[0] * params[1] * params[3] * sin(params[1] * angleInRadians - params[2]/DEGRAD);
+		return dTheta_dCosTheta * -params[0] * params[1] * params[3] * sin(params[1] * angleInRadians - params[2] / DEGRAD);
 	}
 	else if (form() == SpeciesAngle::Cos2Form)
 	{
@@ -318,7 +324,7 @@ double SpeciesAngle::force(double angleInDegrees) const
  */
 
 // Broadcast data from Master to all Slaves
-bool SpeciesAngle::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& atoms)
+bool SpeciesAngle::broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms)
 {
 #ifdef PARALLEL
 	int buffer[3];
@@ -330,8 +336,9 @@ bool SpeciesAngle::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& ato
 		buffer[1] = indexJ();
 		buffer[2] = indexK();
 	}
-	if (!procPool.broadcast(buffer, 3)) return false;
-	
+	if (!procPool.broadcast(buffer, 3))
+		return false;
+
 	// Slaves now take Atom pointers from supplied List
 	if (procPool.isSlave())
 	{
@@ -339,10 +346,12 @@ bool SpeciesAngle::broadcast(ProcessPool& procPool, const List<SpeciesAtom>& ato
 		j_ = atoms.item(buffer[1]);
 		k_ = atoms.item(buffer[2]);
 	}
-	
+
 	// Send parameter info
-	if (!procPool.broadcast(parameters_, MAXINTRAPARAMS)) return false;
-	if (!procPool.broadcast(form_)) return false;
+	if (!procPool.broadcast(parameters_, MAXINTRAPARAMS))
+		return false;
+	if (!procPool.broadcast(form_))
+		return false;
 #endif
 	return true;
 }

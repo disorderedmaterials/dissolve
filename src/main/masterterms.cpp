@@ -22,19 +22,10 @@
 #include "main/dissolve.h"
 
 // Return list of master Bond parameters
-const List<MasterIntra>& Dissolve::masterBonds() const
-{
-	return coreData_.masterBonds();
-}
+const List<MasterIntra> &Dissolve::masterBonds() const { return coreData_.masterBonds(); }
 
 // Return list of master Angle parameters
-const List<MasterIntra>& Dissolve::masterAngles() const
-{
-	return coreData_.masterAngles();
-}
+const List<MasterIntra> &Dissolve::masterAngles() const { return coreData_.masterAngles(); }
 
 // Return list of master Torsion parameters
-const List<MasterIntra>& Dissolve::masterTorsions() const
-{
-	return coreData_.masterTorsions();
-}
+const List<MasterIntra> &Dissolve::masterTorsions() const { return coreData_.masterTorsions(); }

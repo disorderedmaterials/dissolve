@@ -22,10 +22,10 @@
 #ifndef DISSOLVE_MAINTAB_H
 #define DISSOLVE_MAINTAB_H
 
-#include "module/module.h"
 #include "base/charstring.h"
 #include "base/enumoptions.h"
 #include "base/lock.h"
+#include "module/module.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 #include <QString>
@@ -42,66 +42,71 @@ class QWidget;
 // Base Tab
 class MainTab
 {
-	public:
+      public:
 	// Constructor / Destructor
-	MainTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, QWidget* page);
+	MainTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, QWidget *page);
 	virtual ~MainTab();
 	// Tab Types
-	enum TabType { ConfigurationTabType, ForcefieldTabType, LayerTabType, ModuleTabType, SpeciesTabType, WorkspaceTabType };
+	enum TabType
+	{
+		ConfigurationTabType,
+		ForcefieldTabType,
+		LayerTabType,
+		ModuleTabType,
+		SpeciesTabType,
+		WorkspaceTabType
+	};
 	// Return enum options for TabType
 	static EnumOptions<MainTab::TabType> tabTypes();
-
 
 	/*
 	 * Data
 	 */
-	protected:
+      protected:
 	// Reference to Dissolve
-	Dissolve& dissolve_;
+	Dissolve &dissolve_;
 	// Pointer to main window
-	DissolveWindow* dissolveWindow_;
+	DissolveWindow *dissolveWindow_;
 	// MainTabsWidget in which this tab is contained
-	MainTabsWidget* tabWidget_;
+	MainTabsWidget *tabWidget_;
 	// Page widget
-	QWidget* page_;
+	QWidget *page_;
 	// Unique title (name) of tab
 	CharString title_;
 
-	protected:
+      protected:
 	// Raise suitable dialog for entering / checking new tab name
-	virtual QString getNewTitle(bool& ok);
+	virtual QString getNewTitle(bool &ok);
 
-	public:
+      public:
 	// Return tab type
 	virtual TabType type() const = 0;
 	// Return page widget
-	QWidget* page() const;
+	QWidget *page() const;
 	// Return title of tab
-	const char* title() const;
-
+	const char *title() const;
 
 	/*
 	 * Management
 	 */
-	protected:
+      protected:
 	// Return whether the title of the tab can be changed
 	virtual bool canChangeTitle() const;
 
-	public:
+      public:
 	// Rename tab through suitable dialog / widget
 	bool rename();
 	// Return whether the tab can be closed (after any necessary user querying, etc.)
 	virtual bool canClose() const;
 
-
 	/*
 	 * Update
 	 */
-	protected:
+      protected:
 	// Lock for widget refresh
 	Lock refreshLock_;
 
-	public:
+      public:
 	// Update controls in tab
 	virtual void updateControls() = 0;
 	// Disable sensitive controls within the tab
@@ -109,15 +114,14 @@ class MainTab
 	// Enable sensitive controls within the tab
 	virtual void enableSensitiveControls() = 0;
 
-
 	/*
 	 * State
 	 */
-	public:
+      public:
 	// Write widget state through specified LineParser
-	virtual bool writeState(LineParser& parser) const = 0;
+	virtual bool writeState(LineParser &parser) const = 0;
 	// Read widget state through specified LineParser
-	virtual bool readState(LineParser& parser, const CoreData& coreData) = 0;
+	virtual bool readState(LineParser &parser, const CoreData &coreData) = 0;
 };
 
 #endif

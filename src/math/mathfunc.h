@@ -31,25 +31,23 @@ class DissolveMath
 	/*
 	 * Error Functions
 	 */
-	public:
+      public:
 	static double erfc(double);
 	static double erf(double);
-
 
 	/*
 	 * Random Number Generation
 	 */
-	public:
+      public:
 	static double random();
 	static double randomPlusMinusOne();
 	static int randomimax();
 	static int randomi(int range);
 
-
 	/*
 	 * Integer Functions
 	 */
-	public:
+      public:
 	// Raise the integer 'i' to the power 'p'
 	static int power(int i, int p);
 	// Sign function

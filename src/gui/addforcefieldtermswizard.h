@@ -36,40 +36,44 @@ class AddForcefieldTermsWizard : public WizardWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	AddForcefieldTermsWizard(QWidget* parent);
+	AddForcefieldTermsWizard(QWidget *parent);
 	~AddForcefieldTermsWizard();
-
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Main instance of Dissolve that we're using as a reference
-	const Dissolve* dissolveReference_;
+	const Dissolve *dissolveReference_;
 	// Temporary core data for applying Forcefield terms
 	CoreData temporaryCoreData_;
 	// Temporary Dissolve reference for creating / importing layers
 	Dissolve temporaryDissolve_;
 	// Target Species that we are acquiring forcefield terms for
-	Species* targetSpecies_;
+	Species *targetSpecies_;
 	// Species pointer with newly-applied Forcefield terms
-	Species* modifiedSpecies_;
+	Species *modifiedSpecies_;
+	// List of atom type name mappings to be applied
+	RefDataList<const AtomType, CharString> typeNameMappings_;
 
-	public:
+      private:
+	// Return (mapped) name to use for specified type
+	const char *mappedName(const AtomType *at);
+
+      public:
 	// Set Dissolve reference
-	void setMainDissolveReference(const Dissolve* dissolveReference);
+	void setMainDissolveReference(const Dissolve *dissolveReference);
 	// Set target Species that we are acquiring forcefield terms for
-	void setTargetSpecies(Species* sp);
+	void setTargetSpecies(Species *sp);
 	// Apply our Forcefield terms to the targetted Species within the specified Dissolve object
-	bool applyForcefieldTerms(Dissolve& dissolve);
-
+	bool applyForcefieldTerms(Dissolve &dissolve);
 
 	/*
 	 * Controls
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::AddForcefieldTermsWizard ui_;
 	// Lock counter for the widget refreshing
@@ -77,15 +81,15 @@ class AddForcefieldTermsWizard : public WizardWidget
 	// Pages Enum
 	enum WidgetPage
 	{
-		SelectForcefieldPage,		/* Select Forcefield to apply to Species */
-		AtomTypesPage,			/* AtomTypes page - select how / what to assign */
-		AtomTypesConflictsPage,		/* AtomTypes conflicts page - check / re-map AtomTypes */
-		IntramolecularPage,		/* Select intramolecular terms to generate */
-		MasterTermsPage,		/* MasterTerms page - check / re-map MasterTerms */
+		SelectForcefieldPage,   /* Select Forcefield to apply to Species */
+		AtomTypesPage,		/* AtomTypes page - select how / what to assign */
+		AtomTypesConflictsPage, /* AtomTypes conflicts page - check / re-map AtomTypes */
+		IntramolecularPage,     /* Select intramolecular terms to generate */
+		MasterTermsPage,	/* MasterTerms page - check / re-map MasterTerms */
 		nPages
 	};
 
-	protected:
+      protected:
 	// Go to specified page index in the controls widget
 	bool displayControlPage(int index);
 	// Return whether progression to the next page from the current page is allowed
@@ -97,65 +101,62 @@ class AddForcefieldTermsWizard : public WizardWidget
 	// Perform any necessary actions before moving to the previous page
 	bool prepareForPreviousPage(int currentIndex);
 
-	public:
+      public:
 	// Reset, ready for adding new forcefield terms
 	void reset();
-
 
 	/*
 	 * Select Forcefield Page
 	 */
-	private slots:
+      private slots:
 	void on_ForcefieldWidget_forcefieldSelectionChanged(bool isValid);
 	void on_ForcefieldWidget_forcefieldDoubleClicked();
-
 
 	/*
 	 * Select Terms Page
 	 */
-	private:
-
-
+      private:
 	/*
 	 * AtomTypes Page
 	 */
-	private:
+      private:
 	// Row update function for AtomTypesConflictsList
-	void updateAtomTypesConflictsListRow(int row, AtomType* atomType, bool createItem);
+	void updateAtomTypesConflictsListRow(int row, AtomType *atomType, bool createItem);
 	// Update page with AtomTypes in our temporary Dissolve reference
 	void updateAtomTypesConflictsPage();
+	// Check for atom type naming conflicts
+	void checkForAtomTypeConflicts();
 
-	private slots:
+      private slots:
 	void on_AtomTypesConflictsList_itemSelectionChanged();
-	void atomTypesConflictsListEdited(QWidget* lineEdit);
+	void atomTypesConflictsListEdited(QWidget *lineEdit);
 	void on_AtomTypesPrefixButton_clicked(bool checked);
 	void on_AtomTypesSuffixButton_clicked(bool checked);
-
 
 	/*
 	 * Intramolecular Page
 	 */
-	private slots:
-	void on_ApplyIntramolecularTermsCheck_clicked(bool checked);
-	void on_ApplyNoIntramolecularTermsCheck_clicked(bool checked);
-	void on_ReduceToMasterTermsCheck_clicked(bool checked);
-
+      private slots:
+	void on_IntramolecularTermsAssignAllRadio_clicked(bool checked);
+	void on_IntramolecularTermsAssignSelectionRadio_clicked(bool checked);
+	void on_IntramolecularTermsAssignNoneRadio_clicked(bool checked);
+	void on_NoMasterTermsCheck_clicked(bool checked);
 
 	/*
 	 * MasterTerms Page
 	 */
-	private:
+      private:
 	// Parental tree widgets for master terms
-	QTreeWidgetItem* masterBondItemParent_, *masterAngleItemParent_, *masterTorsionItemParent_;
-	
-	private:
+	QTreeWidgetItem *masterBondItemParent_, *masterAngleItemParent_, *masterTorsionItemParent_;
+
+      private:
 	// Row update function for MasterTermsTree
-	void updateMasterTermsTreeChild(QTreeWidgetItem* parent, int childIndex, MasterIntra* masterIntra, bool createItem);
+	void updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, MasterIntra *masterIntra, bool createItem);
 	void updateMasterTermsPage();
 
-	private slots:
+      private slots:
 	void on_MasterTermsTree_itemSelectionChanged();
-	void masterTermsTreeEdited(QWidget* lineEdit);
+	void masterTermsTreeEdited(QWidget *lineEdit);
 	void on_MasterTermsPrefixButton_clicked(bool checked);
 	void on_MasterTermsSuffixButton_clicked(bool checked);
 };

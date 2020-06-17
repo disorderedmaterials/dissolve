@@ -30,54 +30,62 @@
 // ComboBox Populator
 class ComboPopulator
 {
-	public:
+      public:
 	// Constructor
-	ComboPopulator(QComboBox* combo, int nItems, const char** itemArray, bool append = false)
+	ComboPopulator(QComboBox *combo, int nItems, const char **itemArray, bool append = false)
 	{
 		// Clear the combobox
-		if (!append) combo->clear();
+		if (!append)
+			combo->clear();
 
 		// Add our text items to the list
-		for (int n=0; n<nItems; ++n) combo->addItem(itemArray[n]);
+		for (int n = 0; n < nItems; ++n)
+			combo->addItem(itemArray[n]);
 	}
 };
 
 // ComboBox Populator from EnumOptions
 class ComboEnumOptionsPopulator
 {
-	public:
+      public:
 	// Constructor
-	ComboEnumOptionsPopulator(QComboBox* combo, const EnumOptionsBase& options, bool append = false)
+	ComboEnumOptionsPopulator(QComboBox *combo, const EnumOptionsBase &options, bool append = false)
 	{
 		// Clear the combobox
-		if (!append) combo->clear();
+		if (!append)
+			combo->clear();
 
 		// Add our text items to the list
-		for (int n=0; n<options.nOptions(); ++n) combo->addItem(options.keywordByIndex(n));
+		for (int n = 0; n < options.nOptions(); ++n)
+			combo->addItem(options.keywordByIndex(n));
 	}
 };
 
 // ComboBox Populator, from templated List using item's name() function
 template <class T> class ComboNameListPopulator
 {
-	public:
+      public:
 	// Constructors
-	ComboNameListPopulator<T>(QComboBox* combo, const List<T>& items, bool append = false)
+	ComboNameListPopulator<T>(QComboBox *combo, const List<T> &items, bool append = false)
 	{
 		// Clear the combobox
-		if (!append) combo->clear();
+		if (!append)
+			combo->clear();
 
 		// Add our text items to the list
-		for (T* item = items.first(); item != NULL; item = item->next()) combo->addItem(item->name(), VariantPointer<T>(item));
+		for (T *item = items.first(); item != NULL; item = item->next())
+			combo->addItem(item->name(), VariantPointer<T>(item));
 	}
 	// Constructor
-	ComboNameListPopulator<T>(QComboBox* combo, const List<T>& items, const char* prefix, bool append = false)
+	ComboNameListPopulator<T>(QComboBox *combo, const List<T> &items, const char *prefix, bool append = false)
 	{
 		// Clear the combobox
-		if (!append) combo->clear();
+		if (!append)
+			combo->clear();
 
 		// Add our text items to the list
-		for (T* item = items.first(); item != NULL; item = item->next()) combo->addItem(QString("%1%2").arg(prefix, item->name()), VariantPointer<T>(item));
+		for (T *item = items.first(); item != NULL; item = item->next())
+			combo->addItem(QString("%1%2").arg(prefix, item->name()), VariantPointer<T>(item));
 	}
 };
 

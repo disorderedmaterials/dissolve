@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/wizardwidget.hui"
 #include "base/sysfunc.h"
+#include "gui/wizardwidget.hui"
 
 // Constructor / Destructor
 WizardWidget::WizardWidget()
@@ -32,19 +32,17 @@ WizardWidget::WizardWidget()
 	currentPage_ = NULL;
 }
 
-WizardWidget::~WizardWidget()
-{
-}
+WizardWidget::~WizardWidget() {}
 
 /*
  * Widgets
  */
 
 // Attach header and footer to existing named widgets in specified widget
-void WizardWidget::setUpHeaderAndFooter(QWidget* widget)
+void WizardWidget::setUpHeaderAndFooter(QWidget *widget)
 {
 	// Search for the named QWidgets 'WizardHeaderWidget' and 'WizardFooterWidgetr'
-	QWidget* headerWidget = widget->findChild<QWidget*>("WizardHeaderWidget");
+	QWidget *headerWidget = widget->findChild<QWidget *>("WizardHeaderWidget");
 	if (headerWidget)
 	{
 		headerAvailable_ = true;
@@ -53,9 +51,10 @@ void WizardWidget::setUpHeaderAndFooter(QWidget* widget)
 
 		connect(headerUi_.CloseButton, SIGNAL(clicked(bool)), this, SLOT(closeWizard(bool)));
 	}
-	else printf("Header widget not found.\n");
+	else
+		printf("Header widget not found.\n");
 
-	QWidget* footerWidget = widget->findChild<QWidget*>("WizardFooterWidget");
+	QWidget *footerWidget = widget->findChild<QWidget *>("WizardFooterWidget");
 	if (footerWidget)
 	{
 		footerAvailable_ = true;
@@ -68,17 +67,19 @@ void WizardWidget::setUpHeaderAndFooter(QWidget* widget)
 		connect(footerUi_.NextButton, SIGNAL(clicked(bool)), this, SLOT(goToNextPage(bool)));
 		connect(footerUi_.FinishButton, SIGNAL(clicked(bool)), this, SLOT(finishWizard(bool)));
 	}
-	else printf("Footer widget not found.\n");
+	else
+		printf("Footer widget not found.\n");
 }
 
 // Set icon in header
 void WizardWidget::setWizardHeaderIcon(QString iconResource)
 {
-	if (headerAvailable_) headerUi_.IconLabel->setPixmap(QPixmap(iconResource));
+	if (headerAvailable_)
+		headerUi_.IconLabel->setPixmap(QPixmap(iconResource));
 }
 
 // Update controls in header and footer widgets to reflect the specified page
-void WizardWidget::updateHeaderAndFooter(WizardWidgetPageInfo* page)
+void WizardWidget::updateHeaderAndFooter(WizardWidgetPageInfo *page)
 {
 	// Set header widgets
 	if (headerAvailable_)
@@ -94,7 +95,8 @@ void WizardWidget::updateHeaderAndFooter(WizardWidgetPageInfo* page)
 		if (page)
 		{
 			int nextIndex = page->nextIndex();
-			if (nextIndex == -1) nextIndex = determineNextPage(page->index());
+			if (nextIndex == -1)
+				nextIndex = determineNextPage(page->index());
 			footerUi_.NextButton->setVisible((page->pageType() == WizardWidgetPageInfo::NormalPage) && (nextIndex != WizardWidgetPageInfo::FinishHereFlag));
 			footerUi_.NextButton->setEnabled(nextIndex != -1);
 			footerUi_.FinishButton->setVisible(nextIndex == WizardWidgetPageInfo::FinishHereFlag);
@@ -113,25 +115,20 @@ void WizardWidget::updateHeaderAndFooter(WizardWidgetPageInfo* page)
 	}
 }
 
- // Set whether the close button is available
+// Set whether the close button is available
 void WizardWidget::setCloseButtonAvailable(bool b)
 {
 	closeButtonAvailable_ = b;
 
-	if (headerAvailable_) headerUi_.CloseButton->setVisible(closeButtonAvailable_);
+	if (headerAvailable_)
+		headerUi_.CloseButton->setVisible(closeButtonAvailable_);
 }
 
 // Return whether header controls are available
-bool WizardWidget::headerAvailable() const
-{
-	return headerAvailable_;
-}
- 
+bool WizardWidget::headerAvailable() const { return headerAvailable_; }
+
 // Return whether footer controls are available
-bool WizardWidget::footerAvailable() const
-{
-	return footerAvailable_;
-}
+bool WizardWidget::footerAvailable() const { return footerAvailable_; }
 
 /*
  * Page Management
@@ -148,21 +145,23 @@ void WizardWidget::clearPages()
 }
 
 // Add empty page
-WizardWidgetPageInfo* WizardWidget::addPage()
+WizardWidgetPageInfo *WizardWidget::addPage()
 {
-	WizardWidgetPageInfo* page = pages_.add();
+	WizardWidgetPageInfo *page = pages_.add();
 	page->setIndex(pages_.nItems());
 
 	return page;
 }
 
 // Register page
-WizardWidgetPageInfo* WizardWidget::registerPage(int index, const char* title, int nextIndex)
+WizardWidgetPageInfo *WizardWidget::registerPage(int index, const char *title, int nextIndex)
 {
 	// Check that the specified index isn't already registered...
-	WizardWidgetPageInfo* page = findPage(index);
-	if (page) printf("Internal Error: Page with index %i has already been registered.\n", index);
-	else page = pages_.add();
+	WizardWidgetPageInfo *page = findPage(index);
+	if (page)
+		printf("Internal Error: Page with index %i has already been registered.\n", index);
+	else
+		page = pages_.add();
 
 	// Set page info
 	page->set(index, title, nextIndex);
@@ -171,18 +170,20 @@ WizardWidgetPageInfo* WizardWidget::registerPage(int index, const char* title, i
 }
 
 // Register choice page (no Finish / Next buttons)
-void WizardWidget::registerChoicePage(int index, const char* title)
+void WizardWidget::registerChoicePage(int index, const char *title)
 {
-	WizardWidgetPageInfo* page = registerPage(index, title);
+	WizardWidgetPageInfo *page = registerPage(index, title);
 
 	page->setPageType(WizardWidgetPageInfo::ChoicePage);
 }
 
 // Find page with specified index
-WizardWidgetPageInfo* WizardWidget::findPage(int index)
+WizardWidgetPageInfo *WizardWidget::findPage(int index)
 {
 	ListIterator<WizardWidgetPageInfo> pageIterator(pages_);
-	while (WizardWidgetPageInfo* page = pageIterator.iterate()) if (page->index() == index) return page;
+	while (WizardWidgetPageInfo *page = pageIterator.iterate())
+		if (page->index() == index)
+			return page;
 
 	return NULL;
 }
@@ -200,58 +201,52 @@ bool WizardWidget::updateProgressionControls()
 }
 
 // Go to previous page
-void WizardWidget::goToPreviousPage(bool checked)
-{
-	goToPreviousPage();
-}
+void WizardWidget::goToPreviousPage(bool checked) { goToPreviousPage(); }
 
 // Go to previous page
 void WizardWidget::goToPreviousPage()
 {
-	if (!currentPage_) return;
+	if (!currentPage_)
+		return;
 
 	// Perform any necessary actions before moving to the previous page
-	if (!prepareForPreviousPage(currentPage_->index())) return;
+	if (!prepareForPreviousPage(currentPage_->index()))
+		return;
 
 	// Move to the previous page in the history
 	goBack();
 }
 
 // Go to next page
-void WizardWidget::goToNextPage(bool checked)
-{
-	goToNextPage();
-}
+void WizardWidget::goToNextPage(bool checked) { goToNextPage(); }
 
 // Go to next page
 void WizardWidget::goToNextPage()
 {
-	if (!currentPage_) return;
+	if (!currentPage_)
+		return;
 
 	// Perform any necessary actions before moving to the next page
-	if (!prepareForNextPage(currentPage_->index())) return;
+	if (!prepareForNextPage(currentPage_->index()))
+		return;
 
 	// Move to the next page defined for the current page
 	int nextIndex = currentPage_->nextIndex();
-	if (nextIndex == -1) nextIndex = determineNextPage(currentPage_->index());
+	if (nextIndex == -1)
+		nextIndex = determineNextPage(currentPage_->index());
 
 	// If we still have no valid index, complain!
-	if (nextIndex == -1) Messenger::error("No valid Next page could be determined.\n");
-	else goToPage(nextIndex);
+	if (nextIndex == -1)
+		Messenger::error("No valid Next page could be determined.\n");
+	else
+		goToPage(nextIndex);
 }
 
 // End the wizard
-void WizardWidget::finishWizard(bool checked)
-{
-	emit(finished());
-}
+void WizardWidget::finishWizard(bool checked) { emit(finished()); }
 
 // Close the wizard
-void WizardWidget::closeWizard(bool checked)
-{
-	emit(canceled());
-}
-
+void WizardWidget::closeWizard(bool checked) { emit(canceled()); }
 
 // Reset wizard and begin again from specified page
 void WizardWidget::resetToPage(int index)

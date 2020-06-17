@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULEWIDGET_OPTIMISE_H
 #define DISSOLVE_MODULEWIDGET_OPTIMISE_H
 
-#include "modules/geomopt/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
+#include "modules/geomopt/gui/ui_modulewidget.h"
 
 // Forward Declarations
 class GeometryOptimisationModule;
@@ -34,19 +34,18 @@ class GeometryOptimisationModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	private:
+      private:
 	// Associated Module
-	GeometryOptimisationModule* module_;
+	GeometryOptimisationModule *module_;
 
-	public:
+      public:
 	// Constructor
-	GeometryOptimisationModuleWidget(QWidget* parent, GeometryOptimisationModule* module);
-
+	GeometryOptimisationModuleWidget(QWidget *parent, GeometryOptimisationModule *module);
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::GeometryOptimisationModuleWidget ui_;
 };

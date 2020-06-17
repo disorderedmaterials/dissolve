@@ -25,29 +25,29 @@
 // Spacegroup Name Data
 class SpacegroupNameData
 {
-	public:
+      public:
 	// Constructor
-	SpacegroupNameData(const char* name, const char* formattedName);
+	SpacegroupNameData(const char *name, const char *formattedName);
 
-	private:
+      private:
 	// Name of the spacegroup
-	const char* name_;
+	const char *name_;
 	// Formatted name of the spacegroup
-	const char* formattedName_;
+	const char *formattedName_;
 
-	public:
+      public:
 	// Return the name of the spacegroup
-	const char* name() const;
+	const char *name() const;
 	// Return the formatted name of the spacegroup
-	const char* formattedName() const;
+	const char *formattedName() const;
 };
 
 // Spacegroups
 class Spacegroups
 {
-	private:
+      private:
 	// Return SpacegroupNameData with index specified
-	static const SpacegroupNameData& spacegroupNameData(int id);
+	static const SpacegroupNameData &spacegroupNameData(int id);
 };
 
 #endif

@@ -19,19 +19,19 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/neutronsq/neutronsq.h"
+#include "base/lineparser.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "classes/speciesinfo.h"
-#include "base/lineparser.h"
+#include "modules/neutronsq/neutronsq.h"
 
 // Calculate weighted g(r) from supplied unweighted g(r) and Weights
-bool NeutronSQModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& weightedgr, Weights& weights, NeutronSQModule::NormalisationType normalisation)
+bool NeutronSQModule::calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, Weights &weights, NeutronSQModule::NormalisationType normalisation)
 {
 	int typeI, typeJ;
-	for (typeI=0; typeI<unweightedgr.nAtomTypes(); ++typeI)
+	for (typeI = 0; typeI < unweightedgr.nAtomTypes(); ++typeI)
 	{
-		for (typeJ=typeI; typeJ<unweightedgr.nAtomTypes(); ++typeJ)
+		for (typeJ = typeI; typeJ < unweightedgr.nAtomTypes(); ++typeJ)
 		{
 			double weight = weights.weight(typeI, typeJ);
 			double boundWeight = weights.boundWeight(typeI, typeJ);
@@ -53,19 +53,21 @@ bool NeutronSQModule::calculateWeightedGR(PartialSet& unweightedgr, PartialSet& 
 
 	// Calculate and normalise total to form factor if requested
 	weightedgr.formTotal(false);
-	if (normalisation == NeutronSQModule::AverageOfSquaresNormalisation) weightedgr.total().values() /= weights.boundCoherentAverageOfSquares();
-	else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation) weightedgr.total().values() /= weights.boundCoherentSquareOfAverage();
+	if (normalisation == NeutronSQModule::AverageOfSquaresNormalisation)
+		weightedgr.total().values() /= weights.boundCoherentAverageOfSquares();
+	else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation)
+		weightedgr.total().values() /= weights.boundCoherentSquareOfAverage();
 
 	return true;
 }
 
 // Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
-bool NeutronSQModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& weightedsq, Weights& weights, NeutronSQModule::NormalisationType normalisation)
+bool NeutronSQModule::calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, Weights &weights, NeutronSQModule::NormalisationType normalisation)
 {
 	int typeI, typeJ;
-	for (typeI=0; typeI<unweightedsq.nAtomTypes(); ++typeI)
+	for (typeI = 0; typeI < unweightedsq.nAtomTypes(); ++typeI)
 	{
-		for (typeJ=typeI; typeJ<unweightedsq.nAtomTypes(); ++typeJ)
+		for (typeJ = typeI; typeJ < unweightedsq.nAtomTypes(); ++typeJ)
 		{
 			// Weight bound and unbound S(Q) and sum into full partial
 			double weight = weights.weight(typeI, typeJ);
@@ -87,41 +89,44 @@ bool NeutronSQModule::calculateWeightedSQ(PartialSet& unweightedsq, PartialSet& 
 
 	// Calculate and normalise total to form factor if requested
 	weightedsq.formTotal(false);
-	if (normalisation == NeutronSQModule::AverageOfSquaresNormalisation) weightedsq.total().values() /= weights.boundCoherentAverageOfSquares();
-	else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation) weightedsq.total().values() /= weights.boundCoherentSquareOfAverage();
+	if (normalisation == NeutronSQModule::AverageOfSquaresNormalisation)
+		weightedsq.total().values() /= weights.boundCoherentAverageOfSquares();
+	else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation)
+		weightedsq.total().values() /= weights.boundCoherentSquareOfAverage();
 
 	return true;
 }
 
 // Calculate Weights matrix summed over target Configurations
-bool NeutronSQModule::calculateSummedWeights(Weights& summedWeights) const
+bool NeutronSQModule::calculateSummedWeights(Weights &summedWeights) const
 {
 	summedWeights.clear();
 
 	// Loop over Configurations
-	RefListIterator<Configuration> configIterator(targetConfigurations_);
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration *cfg : targetConfigurations_)
 	{
 		// Loop over Species used in this Configuration and find its entry in the defined Isotopologues for the Module
 		ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
-		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
+		while (SpeciesInfo *spInfo = speciesInfoIterator.iterate())
 		{
 			// Find the Isotopologues for the Configuration/Species, if they have been defined
-			const Isotopologues* topes = isotopologues_.isotopologues(cfg, spInfo->species());
+			const Isotopologues *topes = isotopologues_.isotopologues(cfg, spInfo->species());
 
 			// Use the natural isotopologue if a species in the Configuration is not covered by at least one explicit Isotopologue definition
 			if (!topes)
 			{
-				Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is missing, so the natural isotopologue will be used.\n", spInfo->species()->name(), cfg->name());
+				Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is missing, so the natural isotopologue will be used.\n", spInfo->species()->name(),
+						 cfg->name());
 
-				Species* sp = spInfo->species();
+				Species *sp = spInfo->species();
 				summedWeights.addIsotopologue(sp, spInfo->population(), sp->naturalIsotopologue(), 1.0);
 			}
 			else
 			{
 				// Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
 				ListIterator<IsotopologueWeight> weightIterator(topes->mix());
-				while (IsotopologueWeight* isoWeight = weightIterator.iterate()) summedWeights.addIsotopologue(spInfo->species(), spInfo->population(), isoWeight->isotopologue(), isoWeight->weight());
+				while (IsotopologueWeight *isoWeight = weightIterator.iterate())
+					summedWeights.addIsotopologue(spInfo->species(), spInfo->population(), isoWeight->isotopologue(), isoWeight->weight());
 			}
 		}
 	}

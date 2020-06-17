@@ -19,16 +19,17 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/integer.hui"
-#include "gui/helpers/mousewheeladjustmentguard.h"
 #include "genericitems/listhelper.h"
+#include "gui/helpers/mousewheeladjustmentguard.h"
+#include "gui/keywordwidgets/integer.hui"
 
 // Constructor
-IntegerKeywordWidget::IntegerKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QSpinBox(parent), KeywordWidgetBase(coreData)
+IntegerKeywordWidget::IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QSpinBox(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<IntegerKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into IntegerKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<IntegerKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into IntegerKeyword.\n", keyword->name());
 	else
 	{
 		// Set minimum and maximum values
@@ -52,7 +53,8 @@ IntegerKeywordWidget::IntegerKeywordWidget(QWidget* parent, KeywordBase* keyword
 // Spin box value changed
 void IntegerKeywordWidget::myValueChanged(int newValue)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	keyword_->setData(newValue);
 

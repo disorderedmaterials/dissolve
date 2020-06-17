@@ -24,10 +24,10 @@
 
 #include "classes/atomtypelist.h"
 #include "classes/weights.h"
-#include "math/histogram1d.h"
 #include "math/data1d.h"
-#include "templates/list.h"
+#include "math/histogram1d.h"
 #include "templates/array2d.h"
+#include "templates/list.h"
 
 // Forward Declarations
 class Configuration;
@@ -36,17 +36,16 @@ class Interpolator;
 // Set of Partials
 class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 {
-	public:
+      public:
 	// Constructor
 	PartialSet();
 	// Destructor
 	~PartialSet();
 
-
 	/*
 	 * Partials Data
 	 */
-	private:
+      private:
 	// AtomTypes used to generate matrices
 	AtomTypeList atomTypes_;
 	// RDF range used to initialise arrays
@@ -76,11 +75,11 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	// Prefix applied to object names
 	CharString objectNamePrefix_;
 
-	public:
+      public:
 	// Set up PartialSet, including initialising histograms for g(r) use
-	bool setUp(const AtomTypeList& atomTypes, double rdfRange, double binWidth, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
+	bool setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth, const char *prefix, const char *tag, const char *suffix, const char *abscissaUnits);
 	// Set up PartialSet without initialising histogram arrays
-	bool setUpPartials(const AtomTypeList& atomTypes, const char* prefix, const char* tag, const char* suffix, const char* abscissaUnits);
+	bool setUpPartials(const AtomTypeList &atomTypes, const char *prefix, const char *tag, const char *suffix, const char *abscissaUnits);
 	// Set up histogram arrays for g(r) calculation
 	void setUpHistograms(double rdfRange, double binWidth);
 	// Reset partial arrays
@@ -88,39 +87,39 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	// Return number of AtomTypes used to generate matrices
 	int nAtomTypes() const;
 	// Return atom types list
-	const AtomTypeList& atomTypes() const;
+	const AtomTypeList &atomTypes() const;
 	// Return RDF range used to initialise arrays
 	double rdfRange() const;
 	// Return RDF bin width used to initialise arrays
 	double rdfBinWidth() const;
 	// Set new fingerprint
-	void setFingerprint(const char* fingerprint);
+	void setFingerprint(const char *fingerprint);
 	// Return fingerprint of partials
-	const char* fingerprint() const;
+	const char *fingerprint() const;
 	// Return full histogram specified
-	Histogram1D& fullHistogram(int i, int j);
+	Histogram1D &fullHistogram(int i, int j);
 	// Return bound histogram specified
-	Histogram1D& boundHistogram(int i, int j);
+	Histogram1D &boundHistogram(int i, int j);
 	// Return unbound histogram specified
-	Histogram1D& unboundHistogram(int i, int j);
+	Histogram1D &unboundHistogram(int i, int j);
 	// Return full atom-atom partial specified
-	Data1D& partial(int i, int j);
+	Data1D &partial(int i, int j);
 	// Return full atom-atom partial specified (const)
-	Data1D& constPartial(int i, int j) const;
+	Data1D &constPartial(int i, int j) const;
 	// Return atom-atom partial for unbound pairs
-	Data1D& unboundPartial(int i, int j);
+	Data1D &unboundPartial(int i, int j);
 	// Return atom-atom partial for unbound pairs (const)
-	Data1D& constUnboundPartial(int i, int j) const;
+	Data1D &constUnboundPartial(int i, int j) const;
 	// Return atom-atom partial for bound pairs
-	Data1D& boundPartial(int i, int j);
+	Data1D &boundPartial(int i, int j);
 	// Return atom-atom partial for bound pairs (const)
-	Data1D& constBoundPartial(int i, int j) const;
+	Data1D &constBoundPartial(int i, int j) const;
 	// Return whether specified bound partial is empty
 	bool isBoundPartialEmpty(int i, int j) const;
 	// Sum partials into total
 	void formTotal(bool applyConcentrationWeights);
 	// Return total function
-	Data1D& total();
+	Data1D &total();
 	// Return copy of total function
 	Data1D constTotal() const;
 	// Calculate and return total bound function
@@ -130,59 +129,55 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
 	// Save all partials and total
 	bool save();
 	// Name all object based on the supplied prefix
-	void setObjectTags(const char* prefix, const char* suffix = NULL);
+	void setObjectTags(const char *prefix, const char *suffix = NULL);
 	// Return prefix applied to object names
-	const char* objectNamePrefix() const;
+	const char *objectNamePrefix() const;
 	// Set underlying Data1D file names
-	void setFileNames(const char* prefix, const char* tag, const char* suffix);
-
+	void setFileNames(const char *prefix, const char *tag, const char *suffix);
 
 	/*
 	 * Manipulation
 	 */
-	private:
+      private:
 	// Adjust all partials, adding specified delta to each
 	void adjust(double delta);
 
-	public:
+      public:
 	// Form partials from stored Histogram data
 	void formPartials(double boxVolume);
 	// Add in partials from source PartialSet to our own, with specified weighting
-	bool addPartials(PartialSet& source, double weighting);
+	bool addPartials(PartialSet &source, double weighting);
 	// Calculate RDF from supplied Histogram and normalisation data
-	static void calculateRDF(Data1D& destination, Histogram1D& histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier);
-
+	static void calculateRDF(Data1D &destination, Histogram1D &histogram, double boxVolume, int nCentres, int nSurrounding, double multiplier);
 
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	void operator+=(const double delta);
-	void operator+=(const PartialSet& source);
+	void operator+=(const PartialSet &source);
 	void operator-=(const double delta);
 	void operator*=(const double factor);
-
 
 	/*
 	 * GenericItemBase Implementations
 	 */
-	public:
+      public:
 	// Return class name
-	static const char* itemClassName();
+	static const char *itemClassName();
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
-
+	bool write(LineParser &parser);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast data from root to all other processes
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif

@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate_dangle/gui/modulewidget.h"
-#include "modules/calculate_dangle/dangle.h"
 #include "classes/configuration.h"
+#include "modules/calculate_dangle/dangle.h"
+#include "modules/calculate_dangle/gui/modulewidget.h"
 
 // Constructor
-CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, CalculateDAngleModule* module) : ModuleWidget(parent), module_(module)
+CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget *parent, CalculateDAngleModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -32,7 +32,7 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 	// Set up RDF graph
 	rdfGraph_ = ui_.RDFPlotWidget->dataViewer();
 
-	View& rdfView = rdfGraph_->view();
+	View &rdfView = rdfGraph_->view();
 	rdfView.setViewType(View::FlatXYView);
 	rdfView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	rdfView.axes().setMax(0, 10.0);
@@ -44,7 +44,7 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 	// Set up Angle graph
 	angleGraph_ = ui_.AnglePlotWidget->dataViewer();
 
-	View& angleView = angleGraph_->view();
+	View &angleView = angleGraph_->view();
 	angleView.setViewType(View::FlatXYView);
 	angleView.axes().setTitle(0, "Angle, \\sym{degree}");
 	angleView.axes().setRange(0, 0.0, 180.0);
@@ -55,7 +55,7 @@ CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget* parent, Calcul
 	// Set up Distance-Angle graph
 	dAngleGraph_ = ui_.DAnglePlotWidget->dataViewer();
 
-	View& dAngleView = dAngleGraph_->view();
+	View &dAngleView = dAngleGraph_->view();
 	dAngleView.setViewType(View::FlatXYView);
 	dAngleView.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	dAngleView.axes().setRange(0, 0.0, 5.0);
@@ -93,19 +93,21 @@ void CalculateDAngleModuleWidget::updateControls(int flags)
  */
 
 // Write widget state through specified LineParser
-bool CalculateDAngleModuleWidget::writeState(LineParser& parser) const
+bool CalculateDAngleModuleWidget::writeState(LineParser &parser) const
 {
 	// Write DataViewer sessions
-	if (!rdfGraph_->writeSession(parser)) return false;
+	if (!rdfGraph_->writeSession(parser))
+		return false;
 
 	return true;
 }
 
 // Read widget state through specified LineParser
-bool CalculateDAngleModuleWidget::readState(LineParser& parser)
+bool CalculateDAngleModuleWidget::readState(LineParser &parser)
 {
 	// Read DataViewer sessions
-	if (!rdfGraph_->readSession(parser)) return false;
+	if (!rdfGraph_->readSession(parser))
+		return false;
 
 	return true;
 }
@@ -115,24 +117,24 @@ bool CalculateDAngleModuleWidget::readState(LineParser& parser)
  */
 
 // Set data targets in graphs
-void CalculateDAngleModuleWidget::setGraphDataTargets(CalculateDAngleModule* module)
+void CalculateDAngleModuleWidget::setGraphDataTargets(CalculateDAngleModule *module)
 {
 	// Remove any current data
 	rdfGraph_->clearRenderables();
 
 	// Loop over Configuration targets in Module
-	RefListIterator<Configuration> configIterator(module_->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration *cfg : module_->targetConfigurations())
 	{
 		// Calculated B...C RDF
-		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF(BC)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
+		Renderable *rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF(BC)", module_->uniqueName(), cfg->niceName()), "B...C g(r)");
 		rdf->setColour(StockColours::BlueStockColour);
 
 		// Calculated angle histogram
-		Renderable* angle = angleGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//Angle(ABC)", module_->uniqueName(), cfg->niceName()), "A-B...C Angle");
+		Renderable *angle = angleGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//Angle(ABC)", module_->uniqueName(), cfg->niceName()), "A-B...C Angle");
 		angle->setColour(StockColours::RedStockColour);
 
 		// Calculated distance-angle map
-		Renderable* dAngle = dAngleGraph_->createRenderable(Renderable::Data2DRenderable, CharString("%s//Process2D//%s//DAngle(A-BC)", module_->uniqueName(), cfg->niceName()), "B...C vs A-B...C//%s");
+		Renderable *dAngle =
+		    dAngleGraph_->createRenderable(Renderable::Data2DRenderable, CharString("%s//Process2D//%s//DAngle(A-BC)", module_->uniqueName(), cfg->niceName()), "B...C vs A-B...C//%s");
 	}
 }

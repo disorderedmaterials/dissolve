@@ -1,10 +1,8 @@
 ---
 title: Step 1 - Create a Water Species
-parent: Liquid Water
 grand_parent: Examples
 weight: 1
 ---
-# Liquid Water
 
 ## 1. Create a Water Species
 

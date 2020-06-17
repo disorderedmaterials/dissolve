@@ -24,7 +24,7 @@
 #include <string.h>
 
 // Constructor
-ExpressionVariableValue::ExpressionVariableValue(ExpressionVariable* var) : ExpressionNode(), variable_(var)
+ExpressionVariableValue::ExpressionVariableValue(ExpressionVariable *var) : ExpressionNode(), variable_(var)
 {
 	// Private variables
 	readOnly_ = false;
@@ -32,24 +32,16 @@ ExpressionVariableValue::ExpressionVariableValue(ExpressionVariable* var) : Expr
 }
 
 // Destructor
-ExpressionVariableValue::~ExpressionVariableValue()
-{
-}
+ExpressionVariableValue::~ExpressionVariableValue() {}
 
 // Set function
-void ExpressionVariableValue::setVariable(ExpressionVariable* variable)
-{
-	variable_ = variable;
-}
+void ExpressionVariableValue::setVariable(ExpressionVariable *variable) { variable_ = variable; }
 
 // Get function
-ExpressionVariable* ExpressionVariableValue::variable() const
-{
-	return variable_;
-}
+ExpressionVariable *ExpressionVariableValue::variable() const { return variable_; }
 
 // Return name of variable target
-const char* ExpressionVariableValue::name() const
+const char *ExpressionVariableValue::name() const
 {
 	if (variable_ == NULL)
 	{
@@ -64,7 +56,7 @@ const char* ExpressionVariableValue::name() const
  */
 
 // Execute command
-bool ExpressionVariableValue::execute(ExpressionValue& result)
+bool ExpressionVariableValue::execute(ExpressionValue &result)
 {
 	if (variable_ == NULL)
 	{
@@ -74,13 +66,14 @@ bool ExpressionVariableValue::execute(ExpressionValue& result)
 
 	// Call the local variable's execute() function to get the base value
 	bool success = variable_->execute(result);
-	if (!success) printf("Variable retrieval ('%s') failed.\n", variable_->name());
+	if (!success)
+		printf("Variable retrieval ('%s') failed.\n", variable_->name());
 
 	return success;
 }
 
 // Print node contents
-void ExpressionVariableValue::nodePrint(int offset, const char* prefix)
+void ExpressionVariableValue::nodePrint(int offset, const char *prefix)
 {
 	if (variable_ == NULL)
 	{
@@ -103,7 +96,8 @@ bool ExpressionVariableValue::set(ExpressionValue value)
 
 	// Call the local variable's set() function
 	result = variable_->set(value);
-	if (!result) printf("Variable set failed.\n");
+	if (!result)
+		printf("Variable set failed.\n");
 
 	return result;
 }

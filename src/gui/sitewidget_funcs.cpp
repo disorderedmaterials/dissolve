@@ -1,5 +1,5 @@
 /*
-	*** Species Widget - Functions 
+	*** Species Widget - Functions
 	*** src/gui/sitewidget_funcs.cpp
 	Copyright T. Youngs 2013-2020
 
@@ -19,26 +19,26 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/sitewidget.h"
-#include "gui/widgets/elementselector.hui"
-#include "procedure/nodes/addspecies.h"
-#include "procedure/nodes/box.h"
 #include "classes/coredata.h"
 #include "classes/empiricalformula.h"
 #include "classes/species.h"
+#include "gui/sitewidget.h"
+#include "gui/widgets/elementselector.hui"
 #include "main/dissolve.h"
+#include "procedure/nodes/addspecies.h"
+#include "procedure/nodes/box.h"
 #include <QButtonGroup>
 
 // Constructor
-SiteWidget::SiteWidget(QWidget* parent) : QWidget(parent)
+SiteWidget::SiteWidget(QWidget *parent) : QWidget(parent)
 {
 	// Set up our UI
 	ui_.setupUi(this);
 
-// 	// Create a button group for the interaction modes
-// 	QButtonGroup* group = new QButtonGroup;
-// 	group->addButton(ui_.InteractionViewButton);
-// 	group->addButton(ui_.InteractionDrawButton);
+	// 	// Create a button group for the interaction modes
+	// 	QButtonGroup* group = new QButtonGroup;
+	// 	group->addButton(ui_.InteractionViewButton);
+	// 	group->addButton(ui_.InteractionDrawButton);
 
 	// Connect signals / slots
 	connect(ui_.SiteView, SIGNAL(dataModified()), this, SLOT(notifyDataModified()));
@@ -53,37 +53,23 @@ SiteWidget::SiteWidget(QWidget* parent) : QWidget(parent)
 }
 
 // Destructor
-SiteWidget::~SiteWidget()
-{
-}
+SiteWidget::~SiteWidget() {}
 
 // Set main CoreData pointer
-void SiteWidget::setCoreData(CoreData* coreData)
-{
-	coreData_ = coreData;
-}
+void SiteWidget::setCoreData(CoreData *coreData) { coreData_ = coreData; }
 
 /*
  * UI
  */
 
 // Notify that the style of displayed data in the underlying viewer has changed
-void SiteWidget::notifyStyleModified()
-{
-	emit(styleModified());
-}
+void SiteWidget::notifyStyleModified() { emit(styleModified()); }
 
 // Notify that the displayed data in the underlying viewer has changed
-void SiteWidget::notifyDataModified()
-{
-	emit(dataModified());
-}
+void SiteWidget::notifyDataModified() { emit(dataModified()); }
 
 // Post redisplay in the underlying view
-void SiteWidget::postRedisplay()
-{
-	ui_.SiteView->postRedisplay();
-}
+void SiteWidget::postRedisplay() { ui_.SiteView->postRedisplay(); }
 
 // Update toolbar to reflect current viewer state
 void SiteWidget::updateToolbar()
@@ -91,9 +77,9 @@ void SiteWidget::updateToolbar()
 	// Set current interaction mode
 	switch (siteViewer()->interactionMode())
 	{
-		case (SiteViewer::DefaultInteraction):
-			ui_.InteractionViewButton->setChecked(true);
-			break;
+	case (SiteViewer::DefaultInteraction):
+		ui_.InteractionViewButton->setChecked(true);
+		break;
 	}
 
 	// Set checkable buttons
@@ -111,7 +97,7 @@ void SiteWidget::updateToolbar()
 void SiteWidget::updateStatusBar()
 {
 	// Get displayed Species
-	const Species* sp = siteViewer()->species();
+	const Species *sp = siteViewer()->species();
 
 	// Set interaction mode text
 	ui_.ModeLabel->setText(siteViewer()->interactionModeText());
@@ -126,7 +112,7 @@ void SiteWidget::updateStatusBar()
  */
 
 // Set parent Species for site
-void SiteWidget::setSpecies(Species* sp)
+void SiteWidget::setSpecies(Species *sp)
 {
 	ui_.SiteView->setSpecies(sp);
 
@@ -134,7 +120,7 @@ void SiteWidget::setSpecies(Species* sp)
 }
 
 // Set target site, updating widget as necessary
-void SiteWidget::setSite(SpeciesSite* site)
+void SiteWidget::setSite(SpeciesSite *site)
 {
 	ui_.SiteView->setSite(site);
 
@@ -143,10 +129,7 @@ void SiteWidget::setSite(SpeciesSite* site)
 }
 
 // Return contained SiteViewer
-SiteViewer* SiteWidget::siteViewer()
-{
-	return ui_.SiteView;
-}
+SiteViewer *SiteWidget::siteViewer() { return ui_.SiteView; }
 
 /*
  * Toolbar
@@ -154,7 +137,8 @@ SiteViewer* SiteWidget::siteViewer()
 
 void SiteWidget::on_InteractionViewButton_clicked(bool checked)
 {
-	if (checked) siteViewer()->setInteractionMode(SiteViewer::DefaultInteraction);
+	if (checked)
+		siteViewer()->setInteractionMode(SiteViewer::DefaultInteraction);
 }
 
 void SiteWidget::on_ViewResetButton_clicked(bool checked)
@@ -174,19 +158,17 @@ void SiteWidget::on_ViewSpheresButton_clicked(bool checked)
 	siteViewer()->postRedisplay();
 }
 
-void SiteWidget::on_ViewCopyToClipboardButton_clicked(bool checked)
-{
-	siteViewer()->copyViewToClipboard(checked);
-}
+void SiteWidget::on_ViewCopyToClipboardButton_clicked(bool checked) { siteViewer()->copyViewToClipboard(checked); }
 
 void SiteWidget::on_SiteCreateButton_clicked(bool checked)
 {
 	// Sanity check for valid Species and selection
-	Species* sp = siteViewer()->species();
-	if ((!sp) || (sp->nSelectedAtoms() == 0)) return;
+	Species *sp = siteViewer()->species();
+	if ((!sp) || (sp->nSelectedAtoms() == 0))
+		return;
 
 	// Create the new site, using the empirical formula of the selection as the base name
-	SpeciesSite* site = sp->addSite(EmpiricalFormula::formula(sp->selectedAtoms()));
+	SpeciesSite *site = sp->addSite(EmpiricalFormula::formula(sp->selectedAtoms()));
 	site->setOriginAtoms(sp->selectedAtoms());
 
 	// Update the siteViewer
@@ -199,9 +181,10 @@ void SiteWidget::on_SiteCreateButton_clicked(bool checked)
 void SiteWidget::on_SiteSetOriginButton_clicked(bool checked)
 {
 	// Sanity check for valid SpeciesSite and Species
-	Species* sp = siteViewer()->species();
-	SpeciesSite* site = siteViewer()->speciesSite();
-	if (!site) return;
+	Species *sp = siteViewer()->species();
+	SpeciesSite *site = siteViewer()->speciesSite();
+	if (!site)
+		return;
 
 	// Get current atom selection from Species
 	site->setOriginAtoms(sp->selectedAtoms());
@@ -214,9 +197,10 @@ void SiteWidget::on_SiteSetOriginButton_clicked(bool checked)
 void SiteWidget::on_SiteSetXAxisButton_clicked(bool checked)
 {
 	// Sanity check for valid SpeciesSite and Species
-	Species* sp = siteViewer()->species();
-	SpeciesSite* site = siteViewer()->speciesSite();
-	if (!site) return;
+	Species *sp = siteViewer()->species();
+	SpeciesSite *site = siteViewer()->speciesSite();
+	if (!site)
+		return;
 
 	// Get current atom selection from Species
 	site->setXAxisAtoms(sp->selectedAtoms());
@@ -229,9 +213,10 @@ void SiteWidget::on_SiteSetXAxisButton_clicked(bool checked)
 void SiteWidget::on_SiteSetYAxisButton_clicked(bool checked)
 {
 	// Sanity check for valid SpeciesSite and Species
-	Species* sp = siteViewer()->species();
-	SpeciesSite* site = siteViewer()->speciesSite();
-	if (!site) return;
+	Species *sp = siteViewer()->species();
+	SpeciesSite *site = siteViewer()->speciesSite();
+	if (!site)
+		return;
 
 	// Get current atom selection from Species
 	site->setYAxisAtoms(sp->selectedAtoms());

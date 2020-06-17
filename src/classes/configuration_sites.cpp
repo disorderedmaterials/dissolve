@@ -23,13 +23,16 @@
 #include "classes/species.h"
 
 // Calculate / retrieve stack of sites for specified Species / SpeciesSite
-const SiteStack* Configuration::siteStack(SpeciesSite* site)
+const SiteStack *Configuration::siteStack(SpeciesSite *site)
 {
 	// Create or find existing stack in our list
-	SiteStack* stack = NULL;
+	SiteStack *stack = NULL;
 	ListIterator<SiteStack> stackIterator(siteStacks_);
-	while ((stack = stackIterator.iterate())) if (stack->speciesSite() == site) break;
-	if (!stack) stack = siteStacks_.add();
+	while ((stack = stackIterator.iterate()))
+		if (stack->speciesSite() == site)
+			break;
+	if (!stack)
+		stack = siteStacks_.add();
 
 	// Recreate the stack list
 	if (!stack->create(this, site))

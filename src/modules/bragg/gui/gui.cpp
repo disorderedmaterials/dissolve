@@ -23,8 +23,4 @@
 #include "modules/bragg/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* BraggModule::createWidget(QWidget* parent, Dissolve& dissolve)
-{
-	return new BraggModuleWidget(parent, this);
-}
-
+ModuleWidget *BraggModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new BraggModuleWidget(parent, this); }

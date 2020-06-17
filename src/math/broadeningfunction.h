@@ -34,33 +34,40 @@ class ProcessPool;
 // Broadening Function
 class BroadeningFunction : public GenericItemBase
 {
-	public:
+      public:
 	// Function Types
-	enum FunctionType { NoFunction, GaussianFunction, ScaledGaussianFunction, OmegaDependentGaussianFunction, GaussianC2Function, nFunctionTypes };
+	enum FunctionType
+	{
+		NoFunction,
+		GaussianFunction,
+		ScaledGaussianFunction,
+		OmegaDependentGaussianFunction,
+		GaussianC2Function,
+		nFunctionTypes
+	};
 	// Return FunctionType from supplied string
-	static FunctionType functionType(const char* s);
+	static FunctionType functionType(const char *s);
 	// Return FunctionType name
-	static const char* functionType(FunctionType func);
+	static const char *functionType(FunctionType func);
 	// Return number of parameters needed to define FunctionType
 	static int nFunctionParameters(FunctionType func);
 	// Return description for FunctionType
-	static const char* functionDescription(FunctionType func);
+	static const char *functionDescription(FunctionType func);
 
-	public:
+      public:
 	// Constructor
 	BroadeningFunction(FunctionType function = NoFunction, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
 	// Destructor
 	~BroadeningFunction();
 	// Copy Constructor
-	BroadeningFunction(const BroadeningFunction& source);
+	BroadeningFunction(const BroadeningFunction &source);
 	// Assignment Operator
-	void operator=(const BroadeningFunction& source);
-
+	void operator=(const BroadeningFunction &source);
 
 	/*
 	 * Function Data
 	 */
-	private:
+      private:
 	// Function Type
 	FunctionType function_;
 	// Parameters
@@ -70,11 +77,11 @@ class BroadeningFunction : public GenericItemBase
 	// Static value of omega to use if required
 	double staticOmega_;
 
-	public:
+      public:
 	// Set function data
 	void set(FunctionType function, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0, double p5 = 0.0, double p6 = 0.0);
 	// Set function data from LineParser source
-	bool set(LineParser& parser, int startArg);
+	bool set(LineParser &parser, int startArg);
 	// Return function type
 	FunctionType function() const;
 	// Return number of parameters required
@@ -82,9 +89,9 @@ class BroadeningFunction : public GenericItemBase
 	// Return specified parameter
 	double parameter(int index) const;
 	// Return parameters array
-	double* parameters();
+	double *parameters();
 	// Return specified parameter name
-	const char* parameterName(int index) const;
+	const char *parameterName(int index) const;
 	// Return short summary of function parameters
 	CharString parameterSummary() const;
 	// Set up any dependent parameters based on the current parameters
@@ -114,28 +121,25 @@ class BroadeningFunction : public GenericItemBase
 	// Return the discrete kernel normalisation factor for the current function, given the underlying data binwidth and omega value
 	double discreteKernelNormalisation(double deltaX, double omega) const;
 
-
 	/*
 	 * GenericItemBase Implementations
 	 */
-	public:
+      public:
 	// Return class name
-	static const char* itemClassName();
+	static const char *itemClassName();
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
-
+	bool write(LineParser &parser);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif
-

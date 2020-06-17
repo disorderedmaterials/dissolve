@@ -25,36 +25,36 @@
 #include <QRegExp>
 
 // Constructor
-SelectSystemTemplateDialog::SelectSystemTemplateDialog(QWidget* parent, const List<SystemTemplate>& systemTemplates) : systemTemplates_(systemTemplates)
+SelectSystemTemplateDialog::SelectSystemTemplateDialog(QWidget *parent, const List<SystemTemplate> &systemTemplates) : systemTemplates_(systemTemplates)
 {
 	ui_.setupUi(this);
 
 	// Populate the list with available templates
 	ListIterator<SystemTemplate> templateIterator(systemTemplates_);
-	while (SystemTemplate* sysTemp = templateIterator.iterate())
+	while (SystemTemplate *sysTemp = templateIterator.iterate())
 	{
-		QListWidgetItem* item = new QListWidgetItem(QPixmap(sysTemp->iconResource()), sysTemp->name(), ui_.TemplatesList);
+		QListWidgetItem *item = new QListWidgetItem(QPixmap(sysTemp->iconResource()), sysTemp->name(), ui_.TemplatesList);
 		item->setData(Qt::UserRole, VariantPointer<SystemTemplate>(sysTemp));
 	}
 }
 
 // Destructor
-SelectSystemTemplateDialog::~SelectSystemTemplateDialog()
-{
-}
+SelectSystemTemplateDialog::~SelectSystemTemplateDialog() {}
 
 // Update the list of system templates, optionally filtering them by name and description
 void SelectSystemTemplateDialog::updateTemplatesList(QString filter)
 {
 	// Loop over items in the list
-	for (int n=0; n<ui_.TemplatesList->count(); ++n)
+	for (int n = 0; n < ui_.TemplatesList->count(); ++n)
 	{
-		QListWidgetItem* item = ui_.TemplatesList->item(n);
-		if (!item) continue;
-		SystemTemplate* sysTemp = VariantPointer<SystemTemplate>(item->data(Qt::UserRole));
+		QListWidgetItem *item = ui_.TemplatesList->item(n);
+		if (!item)
+			continue;
+		SystemTemplate *sysTemp = VariantPointer<SystemTemplate>(item->data(Qt::UserRole));
 
 		// Check filtering
-		if (filter.isEmpty()) item->setHidden(false);
+		if (filter.isEmpty())
+			item->setHidden(false);
 		else
 		{
 			// Check name
@@ -68,17 +68,15 @@ void SelectSystemTemplateDialog::updateTemplatesList(QString filter)
 			item->setHidden(hide);
 
 			// If the item was hidden, and it was selected, reset the current index
-			if (hide && item->isSelected()) ui_.TemplatesList->setCurrentRow(-1);
+			if (hide && item->isSelected())
+				ui_.TemplatesList->setCurrentRow(-1);
 		}
 	}
 }
 
-void SelectSystemTemplateDialog::on_FilterEdit_textChanged(const QString& text)
-{
-	updateTemplatesList(text);
-}
+void SelectSystemTemplateDialog::on_FilterEdit_textChanged(const QString &text) { updateTemplatesList(text); }
 
-void SelectSystemTemplateDialog::on_TemplatesList_currentItemChanged(QListWidgetItem* current, QListWidgetItem* previous)
+void SelectSystemTemplateDialog::on_TemplatesList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
 	if (!current)
 	{
@@ -88,7 +86,7 @@ void SelectSystemTemplateDialog::on_TemplatesList_currentItemChanged(QListWidget
 	}
 
 	// Get the selected template
-	SystemTemplate* sysTemp = VariantPointer<SystemTemplate>(current->data(Qt::UserRole));
+	SystemTemplate *sysTemp = VariantPointer<SystemTemplate>(current->data(Qt::UserRole));
 
 	// Update the informational text
 	ui_.TemplateDetailsTextEdit->setText(sysTemp->description());
@@ -96,33 +94,30 @@ void SelectSystemTemplateDialog::on_TemplatesList_currentItemChanged(QListWidget
 	ui_.SelectButton->setEnabled(true);
 }
 
-void SelectSystemTemplateDialog::on_TemplatesList_itemDoubleClicked(QListWidgetItem* item)
+void SelectSystemTemplateDialog::on_TemplatesList_itemDoubleClicked(QListWidgetItem *item)
 {
-	if (!item) return;
+	if (!item)
+		return;
 
 	accept();
 }
 
-void SelectSystemTemplateDialog::on_SelectButton_clicked(bool checked)
-{
-	accept();
-}
+void SelectSystemTemplateDialog::on_SelectButton_clicked(bool checked) { accept(); }
 
-void SelectSystemTemplateDialog::on_CancelButton_clicked(bool checked)
-{
-	reject();
-}
+void SelectSystemTemplateDialog::on_CancelButton_clicked(bool checked) { reject(); }
 
 // Run the dialog, returning the selected SystemTemplate
-SystemTemplate* SelectSystemTemplateDialog::selectTemplate()
+SystemTemplate *SelectSystemTemplateDialog::selectTemplate()
 {
 	show();
 
 	if (exec() == QDialog::Accepted)
 	{
-		QListWidgetItem* item = ui_.TemplatesList->currentItem();
-		if (item == NULL) return NULL;
+		QListWidgetItem *item = ui_.TemplatesList->currentItem();
+		if (item == NULL)
+			return NULL;
 		return VariantPointer<SystemTemplate>(item->data(Qt::UserRole));
 	}
-	else return NULL;
+	else
+		return NULL;
 }

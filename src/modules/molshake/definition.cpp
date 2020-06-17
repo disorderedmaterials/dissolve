@@ -22,25 +22,13 @@
 #include "modules/molshake/molshake.h"
 
 // Return type of module
-const char* MolShakeModule::type() const
-{
-	return "MolShake";
-}
+const char *MolShakeModule::type() const { return "MolShake"; }
 
 // Return category for module
-const char* MolShakeModule::category() const
-{
-	return "Evolution";
-}
+const char *MolShakeModule::category() const { return "Evolution"; }
 
 // Return brief description of module
-const char* MolShakeModule::brief() const
-{
-	return "Perform molecular Monte Carlo moves";
-}
+const char *MolShakeModule::brief() const { return "Perform molecular Monte Carlo moves"; }
 
 // Return the number of Configuration targets this Module requires
-int MolShakeModule::nRequiredTargets() const
-{
-	return Module::ExactlyOneTarget;
-}
+int MolShakeModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

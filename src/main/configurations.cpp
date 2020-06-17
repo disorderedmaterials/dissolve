@@ -19,25 +19,26 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "main/dissolve.h"
+#include "base/lineparser.h"
 #include "classes/box.h"
 #include "classes/species.h"
-#include "base/lineparser.h"
+#include "main/dissolve.h"
 #include <string.h>
 
 // Add new Configuration
-Configuration* Dissolve::addConfiguration()
+Configuration *Dissolve::addConfiguration()
 {
-	Configuration* cfg = coreData_.addConfiguration();
+	Configuration *cfg = coreData_.addConfiguration();
 
 	return cfg;
 }
 
 // Own specified Configuration
-bool Dissolve::ownConfiguration(Configuration* cfg)
+bool Dissolve::ownConfiguration(Configuration *cfg)
 {
 	// Sanity check - do we already own this Configuration?
-	if (coreData_.configurations().contains(cfg)) return Messenger::error("Already own Configuration '%s', so nothing to do.\n", cfg->name());
+	if (coreData_.configurations().contains(cfg))
+		return Messenger::error("Already own Configuration '%s', so nothing to do.\n", cfg->name());
 
 	coreData_.configurations().own(cfg);
 
@@ -45,13 +46,15 @@ bool Dissolve::ownConfiguration(Configuration* cfg)
 }
 
 // Remove specified Configuration
-void Dissolve::removeConfiguration(Configuration* cfg)
+void Dissolve::removeConfiguration(Configuration *cfg)
 {
-	if (!cfg) return;
+	if (!cfg)
+		return;
 
 	// Remove any references to the Modules in the Configuration's local processing layer before we delete it
 	ListIterator<Module> moduleIterator(cfg->modules());
-	while (Module* module = moduleIterator.iterate()) removeReferencesTo(module);
+	while (Module *module = moduleIterator.iterate())
+		removeReferencesTo(module);
 
 	// Remove references to the Configuration itself
 	removeReferencesTo(cfg);
@@ -61,33 +64,23 @@ void Dissolve::removeConfiguration(Configuration* cfg)
 }
 
 // Return number of defined Configurations
-int Dissolve::nConfigurations() const
-{
-	return coreData_.nConfigurations();
-}
+int Dissolve::nConfigurations() const { return coreData_.nConfigurations(); }
 
 // Return Configuration list
-List<Configuration>& Dissolve::configurations()
-{
-	return coreData_.configurations();
-}
+List<Configuration> &Dissolve::configurations() { return coreData_.configurations(); }
 
 // Return Configuration list (const)
-const List<Configuration>& Dissolve::constConfigurations() const
-{
-	return coreData_.configurations();
-}
+const List<Configuration> &Dissolve::constConfigurations() const { return coreData_.configurations(); }
 
 // Find configuration by name
-Configuration* Dissolve::findConfiguration(const char* name) const
-{
-	return coreData_.findConfiguration(name);
-}
+Configuration *Dissolve::findConfiguration(const char *name) const { return coreData_.findConfiguration(name); }
 
 // Find configuration by 'nice' name
-Configuration* Dissolve::findConfigurationByNiceName(const char* name) const
+Configuration *Dissolve::findConfigurationByNiceName(const char *name) const
 {
-	for (Configuration* cfg = constConfigurations().first(); cfg != NULL; cfg = cfg->next()) if (DissolveSys::sameString(name, cfg->niceName())) return cfg;
+	for (Configuration *cfg = constConfigurations().first(); cfg != NULL; cfg = cfg->next())
+		if (DissolveSys::sameString(name, cfg->niceName()))
+			return cfg;
 
 	return NULL;
 }

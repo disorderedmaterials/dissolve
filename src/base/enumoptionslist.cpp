@@ -22,13 +22,10 @@
 #include "base/enumoptionslist.h"
 
 // Return list of options
-const Array<EnumOption>& EnumOptionsList::options() const
-{
-	return options_;
-}
+const Array<EnumOption> &EnumOptionsList::options() const { return options_; }
 
 // Add item
-EnumOptionsList& EnumOptionsList::operator<<(EnumOption option)
+EnumOptionsList &EnumOptionsList::operator<<(EnumOption option)
 {
 	options_.add(option);
 	return (*this);

@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULETAB_H
 #define DISSOLVE_MODULETAB_H
 
-#include "gui/ui_moduletab.h"
 #include "gui/maintab.h"
+#include "gui/ui_moduletab.h"
 
 // Forward Declarations
 class Module;
@@ -36,58 +36,53 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	ModuleTab(DissolveWindow* dissolveWindow, Dissolve& dissolve, MainTabsWidget* parent, const char* title, Module* module);
+	ModuleTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Module *module);
 	~ModuleTab();
-
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::ModuleTab ui_;
-
 
 	/*
 	 * MainTab Reimplementations
 	 */
-	public:
+      public:
 	// Return tab type
 	MainTab::TabType type() const;
-
 
 	/*
 	 * Module Target
 	 */
-	public:
+      public:
 	// Module displayed in this tab
-	Module* module_;
+	Module *module_;
 	// Module control widget displayed
-	ModuleControlWidget* controlsWidget_;
+	ModuleControlWidget *controlsWidget_;
 	// ModuleWidget displayed in this control widget (if any)
-	ModuleWidget* moduleWidget_;
+	ModuleWidget *moduleWidget_;
 
-	public:
+      public:
 	// Initialise controls for the specified Module
-	void initialiseControls(Module* module);
+	void initialiseControls(Module *module);
 	// Return displayed Module
-	const Module* module() const;
-
+	const Module *module() const;
 
 	/*
 	 * Widgets
 	 */
-	private:
+      private:
 	// Splitter which contains the controls and module widgets
-	QSplitter* splitter_;
-
+	QSplitter *splitter_;
 
 	/*
 	 * Update
 	 */
-	public:
+      public:
 	// Update controls in tab
 	void updateControls();
 	// Disable sensitive controls within tab
@@ -95,19 +90,18 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
 	// Enable sensitive controls within tab
 	void enableSensitiveControls();
 
-	public slots:
+      public slots:
 	// Update controls in module widget only
 	void updateModuleWidget(int flags);
-
 
 	/*
 	 * State
 	 */
-	public:
+      public:
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser, const CoreData& coreData);
+	bool readState(LineParser &parser, const CoreData &coreData);
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser) const;
+	bool writeState(LineParser &parser) const;
 };
 
 #endif

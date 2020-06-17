@@ -20,11 +20,12 @@
 */
 
 #include "classes/distributor.h"
-#include "classes/cell.h"
 #include "base/processpool.h"
+#include "classes/cell.h"
 
 // Constructor
-Distributor::Distributor(int nObjects, const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy, bool allowRepeats) : cellArray_(cellArray), processPool_(procPool), divisionStrategy_(strategy)
+Distributor::Distributor(int nObjects, const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy, bool allowRepeats)
+    : cellArray_(cellArray), processPool_(procPool), divisionStrategy_(strategy)
 {
 	// Cells
 	cellLocks_.initialise(cellArray_.nCells());
@@ -44,16 +45,13 @@ Distributor::Distributor(int nObjects, const CellArray& cellArray, ProcessPool& 
 	processOrGroupIndex_ = processPool_.strategyProcessIndex(divisionStrategy_);
 	lastObjectDistributed_.initialise(nProcessesOrGroups_);
 	lastObjectDistributed_ = Distributor::NoneAvailable;
-	lastHardLockedCells_ = new Array<Cell*>[nProcessesOrGroups_];
+	lastHardLockedCells_ = new Array<Cell *>[nProcessesOrGroups_];
 
 	repeatsAllowed_ = allowRepeats;
 }
 
 // Destructor
-Distributor::~Distributor()
-{
-	delete[] lastHardLockedCells_;
-}
+Distributor::~Distributor() { delete[] lastHardLockedCells_; }
 
 /*
  * Cells
@@ -99,7 +97,7 @@ bool Distributor::removeSoftLock(int cellIndex)
 // Add hard lock to specified Cell index, soft-locking surrounding Cells automatically
 bool Distributor::addHardLocks(int cellIndex)
 {
-	Array<Cell*> cells;
+	Array<Cell *> cells;
 	cells.add(cellArray_.cell(cellIndex));
 	return addHardLocks(cells);
 }
@@ -107,22 +105,22 @@ bool Distributor::addHardLocks(int cellIndex)
 // Remove hard lock from specified Cell index, soft-unlocking surrounding Cells automatically
 bool Distributor::removeHardLocks(int cellIndex)
 {
-	Array<Cell*> cells;
+	Array<Cell *> cells;
 	cells.add(cellArray_.cell(cellIndex));
 	return removeHardLocks(cells);
 }
 
 // Add hard locks to specified Cells, soft-locking surrounding Cells automatically
-bool Distributor::addHardLocks(Array<Cell*> cells)
+bool Distributor::addHardLocks(Array<Cell *> cells)
 {
 	int cellId;
 
 	// Form a list of unique surrounding cells that we need to soft-lock
-	Array<Cell*> softCells = surroundingCells(cells);
+	Array<Cell *> softCells = surroundingCells(cells);
 	Messenger::printVerbose("Hard-locking %i cells and soft-locking %i surrounding ones...\n", cells.nItems(), softCells.nItems());
 
 	// Loop over Cells to hard-lock
-	for (int n=0; n<cells.nItems(); ++n)
+	for (int n = 0; n < cells.nItems(); ++n)
 	{
 		cellId = cells.constAt(n)->index();
 
@@ -143,26 +141,27 @@ bool Distributor::addHardLocks(Array<Cell*> cells)
 	}
 
 	// Must now soft-lock all the surrounding Cells
-	for (int n=0; n<softCells.nItems(); ++n)
+	for (int n = 0; n < softCells.nItems(); ++n)
 	{
 		cellId = softCells.constAt(n)->index();
-		if (!addSoftLock(cellId)) return false;
+		if (!addSoftLock(cellId))
+			return false;
 	}
 
 	return true;
 }
 
 // Remove hard lock from specified Cells, soft-unlocking surrounding Cells automatically
-bool Distributor::removeHardLocks(Array<Cell*> cells)
+bool Distributor::removeHardLocks(Array<Cell *> cells)
 {
 	int cellId;
 
 	// Form a list of unique surrounding cells that we need to soft-lock
-	Array<Cell*> softCells = surroundingCells(cells);
+	Array<Cell *> softCells = surroundingCells(cells);
 	Messenger::printVerbose("Hard-unlocking %i cells and soft-unlocking %i surrounding ones...\n", cells.nItems(), softCells.nItems());
 
 	// Loop over Cells to hard-unlock
-	for (int n=0; n<cells.nItems(); ++n)
+	for (int n = 0; n < cells.nItems(); ++n)
 	{
 		cellId = cells.constAt(n)->index();
 
@@ -183,90 +182,105 @@ bool Distributor::removeHardLocks(Array<Cell*> cells)
 	}
 
 	// Must now soft-unlock all the surrounding Cells
-	for (int n=0; n<softCells.nItems(); ++n)
+	for (int n = 0; n < softCells.nItems(); ++n)
 	{
 		cellId = softCells.constAt(n)->index();
-		if (!removeSoftLock(cellId)) return false;
+		if (!removeSoftLock(cellId))
+			return false;
 	}
 
 	return true;
 }
 
 // Return lock count
-int Distributor::lockCount(int cellIndex) const
-{
-	return cellLocks_.constAt(cellIndex);
-}
+int Distributor::lockCount(int cellIndex) const { return cellLocks_.constAt(cellIndex); }
 
 // Check hard lock possibility
 bool Distributor::canHardLock(int cellIndex) const
 {
-	if (cellLocks_.constAt(cellIndex) != NoLocks) return false;
+	if (cellLocks_.constAt(cellIndex) != NoLocks)
+		return false;
 
-	Cell* cell = cellArray_.cell(cellIndex);
+	Cell *cell = cellArray_.cell(cellIndex);
 	int id;
 
 	// For the specified Cell to be hard lockable its neighbours must not be HardLocked
 
 	// Check lock status of local Cell neighbours
-	for (int n=0; n<cell->nCellNeighbours(); ++n)
+	for (int n = 0; n < cell->nCellNeighbours(); ++n)
 	{
 		id = cell->cellNeighbour(n)->index();
-		if (cellLocks_.constAt(id) == HardLocked) return false;
+		if (cellLocks_.constAt(id) == HardLocked)
+			return false;
 	}
 
 	// Check lock status of minimum image Cell neighbours
-	for (int n=0; n<cell->nMimCellNeighbours(); ++n)
+	for (int n = 0; n < cell->nMimCellNeighbours(); ++n)
 	{
 		id = cell->mimCellNeighbour(n)->index();
-		if (cellLocks_.constAt(id) == HardLocked) return false;
+		if (cellLocks_.constAt(id) == HardLocked)
+			return false;
 	}
 
 	return true;
 }
 
 // Check hard lock possibility for list of Cells
-bool Distributor::canHardLock(Array<Cell*> cells) const
+bool Distributor::canHardLock(Array<Cell *> cells) const
 {
-	for (int n=0; n<cells.nItems(); ++n) if (!canHardLock(cells[n]->index())) return false;
+	for (int n = 0; n < cells.nItems(); ++n)
+		if (!canHardLock(cells[n]->index()))
+			return false;
 	return true;
 }
 
 // Return list of unique cells surrounding the supplied list of 'central' ones
-Array<Cell*> Distributor::surroundingCells(Array<Cell*> centralCells)
+Array<Cell *> Distributor::surroundingCells(Array<Cell *> centralCells)
 {
-	Array<Cell*> surroundingCells;
+	Array<Cell *> surroundingCells;
 	int i;
-	for (int n=0; n<centralCells.nItems(); ++n)
+	for (int n = 0; n < centralCells.nItems(); ++n)
 	{
 		// Local Cell neighbours
-		for (int nbr=0; nbr<centralCells[n]->nCellNeighbours(); ++nbr)
+		for (int nbr = 0; nbr < centralCells[n]->nCellNeighbours(); ++nbr)
 		{
-			Cell* nbrCell = centralCells[n]->cellNeighbour(nbr);
+			Cell *nbrCell = centralCells[n]->cellNeighbour(nbr);
 
 			// Check presence in central cells list
-			for (i = 0; i<centralCells.nItems(); ++i) if (centralCells[i] == nbrCell) break;
-			if (i != centralCells.nItems()) continue;
+			for (i = 0; i < centralCells.nItems(); ++i)
+				if (centralCells[i] == nbrCell)
+					break;
+			if (i != centralCells.nItems())
+				continue;
 
 			// Check presence in surrounding cells list
-			for (i = 0; i<surroundingCells.nItems(); ++i) if (surroundingCells[i] == nbrCell) break;
-			if (i != surroundingCells.nItems()) continue;
+			for (i = 0; i < surroundingCells.nItems(); ++i)
+				if (surroundingCells[i] == nbrCell)
+					break;
+			if (i != surroundingCells.nItems())
+				continue;
 
 			surroundingCells.add(nbrCell);
 		}
 
 		// MIM Cell neighbours
-		for (int nbr=0; nbr<centralCells[n]->nMimCellNeighbours(); ++nbr)
+		for (int nbr = 0; nbr < centralCells[n]->nMimCellNeighbours(); ++nbr)
 		{
-			Cell* nbrCell = centralCells[n]->mimCellNeighbour(nbr);
+			Cell *nbrCell = centralCells[n]->mimCellNeighbour(nbr);
 
 			// Check presence in central cells list
-			for (i = 0; i<centralCells.nItems(); ++i) if (centralCells[i] == nbrCell) break;
-			if (i != centralCells.nItems()) continue;
+			for (i = 0; i < centralCells.nItems(); ++i)
+				if (centralCells[i] == nbrCell)
+					break;
+			if (i != centralCells.nItems())
+				continue;
 
 			// Check presence in surrounding cells list
-			for (i = 0; i<surroundingCells.nItems(); ++i) if (surroundingCells[i] == nbrCell) break;
-			if (i != surroundingCells.nItems()) continue;
+			for (i = 0; i < surroundingCells.nItems(); ++i)
+				if (surroundingCells[i] == nbrCell)
+					break;
+			if (i != surroundingCells.nItems())
+				continue;
 
 			surroundingCells.add(nbrCell);
 		}
@@ -280,13 +294,13 @@ Array<Cell*> Distributor::surroundingCells(Array<Cell*> centralCells)
  */
 
 // Return next available object for calculation
-int Distributor::nextAvailableObject(bool& changesBroadcastRequired)
+int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
 {
 	/*
 	 * All processes should call here together. We will work out the index of the next object that should be the target for each process or group of processes.
 	 */
 
-	Array<Cell*> hardLocksRequired, softLocksRequired;
+	Array<Cell *> hardLocksRequired, softLocksRequired;
 	changesBroadcastRequired = false;
 
 	// Initial check - if all objects have been distributed, we can return the AllComplete flag
@@ -294,14 +308,14 @@ int Distributor::nextAvailableObject(bool& changesBroadcastRequired)
 	{
 		Messenger::printVerbose("All objects distributed.\n");
 		lastObjectDistributed_ = Distributor::AllComplete;
-// 		lastHardLockedCells_ = Array<Cell*>();
+		// 		lastHardLockedCells_ = Array<Cell*>();
 
 		return Distributor::AllComplete;
 	}
 
 	// Loop over target groups / processes
 	// Every process will determine the next object for every group / process, and return therelevant one at the end of the routine
-	for (int processOrGroup=0; processOrGroup<nProcessesOrGroups_; ++processOrGroup)
+	for (int processOrGroup = 0; processOrGroup < nProcessesOrGroups_; ++processOrGroup)
 	{
 		// Find the next object for this process / group, starting from the last one we found.
 		// If there is no last object, work out a sensible starting point
@@ -323,74 +337,86 @@ int Distributor::nextAvailableObject(bool& changesBroadcastRequired)
 		{
 			nextObject = startIndex;
 		}
-		else for (int n=0; n<nObjects_; ++n)
-		{
-			// Get wrapped object index
-			int index = (startIndex+n)%nObjects_;
-
-			// If this object is already distributed, move on
-			if (objectStatus_[index] == Distributor::DistributedFlag) continue;
-
-			// If the object is waiting for distribution *OR* has already been completed, we are allowing repeats, and we have already sent all objects, properly check its validity for distribution
-			if ((objectStatus_[index] == Distributor::WaitingFlag) || ((nObjectsDistributed_ >= nObjects_) && repeatsAllowed_ && (objectStatus_[index] == Distributor::CompletedFlag)))
+		else
+			for (int n = 0; n < nObjects_; ++n)
 			{
-				// We now check the possibility for locking the Cells necessary for modifying the object
+				// Get wrapped object index
+				int index = (startIndex + n) % nObjects_;
 
-				// First, get the Cells that we need to hard-lock if the object is to be modifeid
-				hardLocksRequired = cellsToBeModifiedForObject(index);
+				// If this object is already distributed, move on
+				if (objectStatus_[index] == Distributor::DistributedFlag)
+					continue;
 
-				// If any of these Cells have been modified by a process other than this one, continue the search
-				// TODO Should we just broadcast changes instead of continuing the search?
-				hardCellModified = false;
-				for (int i = 0; i<hardLocksRequired.nItems(); ++i)
+				// If the object is waiting for distribution *OR* has already been completed, we are allowing repeats, and we have already sent all objects, properly check its validity
+				// for distribution
+				if ((objectStatus_[index] == Distributor::WaitingFlag) ||
+				    ((nObjectsDistributed_ >= nObjects_) && repeatsAllowed_ && (objectStatus_[index] == Distributor::CompletedFlag)))
 				{
-					if (cellContentsModifiedBy_[hardLocksRequired[i]->index()] == -1) continue;
-					if (cellContentsModifiedBy_[hardLocksRequired[i]->index()] != processOrGroup)
+					// We now check the possibility for locking the Cells necessary for modifying the object
+
+					// First, get the Cells that we need to hard-lock if the object is to be modifeid
+					hardLocksRequired = cellsToBeModifiedForObject(index);
+
+					// If any of these Cells have been modified by a process other than this one, continue the search
+					// TODO Should we just broadcast changes instead of continuing the search?
+					hardCellModified = false;
+					for (int i = 0; i < hardLocksRequired.nItems(); ++i)
 					{
-						hardCellModified = true;
-						break;
+						if (cellContentsModifiedBy_[hardLocksRequired[i]->index()] == -1)
+							continue;
+						if (cellContentsModifiedBy_[hardLocksRequired[i]->index()] != processOrGroup)
+						{
+							hardCellModified = true;
+							break;
+						}
 					}
-				}
-				if (hardCellModified) continue;
+					if (hardCellModified)
+						continue;
 
-				// If we can't hard-lock these Cells, move on
-				if (!canHardLock(hardLocksRequired)) continue;
+					// If we can't hard-lock these Cells, move on
+					if (!canHardLock(hardLocksRequired))
+						continue;
 
-				// We can hard-lock the Cells, so this looks like a viable object to use as a target.
-				// Check now to see if any of the surrounding cells we need to soft-lock have the 'cellContentsModifiedBy_' values. If they have been set by someone else, there are changes to that Cell which we need, and so must broadcast any stored changes before the calculation proceeds
-				// Check the current value of changesBroadcastRequired first - if it is already 'true', there's no point making further checks
-				if (!changesBroadcastRequired)
-				{
-					softLocksRequired = surroundingCells(hardLocksRequired);
-					for (int i = 0; i<softLocksRequired.nItems(); ++i)
+					// We can hard-lock the Cells, so this looks like a viable object to use as a target.
+					// Check now to see if any of the surrounding cells we need to soft-lock have the 'cellContentsModifiedBy_' values. If they have been set by someone else, there
+					// are changes to that Cell which we need, and so must broadcast any stored changes before the calculation proceeds Check the current value of
+					// changesBroadcastRequired first - if it is already 'true', there's no point making further checks
+					if (!changesBroadcastRequired)
 					{
-						// Get index of surrounding Cell
-						int cellIndex = softLocksRequired[i]->index();
+						softLocksRequired = surroundingCells(hardLocksRequired);
+						for (int i = 0; i < softLocksRequired.nItems(); ++i)
+						{
+							// Get index of surrounding Cell
+							int cellIndex = softLocksRequired[i]->index();
 
-						// If this Cell hasn't been modified, then great! Move on...
-						if (cellContentsModifiedBy_[cellIndex] == -1) continue;
+							// If this Cell hasn't been modified, then great! Move on...
+							if (cellContentsModifiedBy_[cellIndex] == -1)
+								continue;
 
-						// If this Cell has been modified by the present process/group, that's OK, since it will have the new coordinates already
-						if (cellContentsModifiedBy_[cellIndex] == processOrGroup) continue;
+							// If this Cell has been modified by the present process/group, that's OK, since it will have the new coordinates already
+							if (cellContentsModifiedBy_[cellIndex] == processOrGroup)
+								continue;
 
-						// It's been modified by someone else, so we will need to distribute changes before the calculation begins
-						changesBroadcastRequired = true;
-						++nChangeBroadcastsRequired_;
-						Messenger::printVerbose("Changes broadcast required - Cell %i is required by process/group %i, and process/group %i has modified it.\n", cellIndex, processOrGroup, cellContentsModifiedBy_[cellIndex]);
+							// It's been modified by someone else, so we will need to distribute changes before the calculation begins
+							changesBroadcastRequired = true;
+							++nChangeBroadcastsRequired_;
+							Messenger::printVerbose("Changes broadcast required - Cell %i is required by process/group %i, and process/group %i has modified it.\n",
+										cellIndex, processOrGroup, cellContentsModifiedBy_[cellIndex]);
 
-						// Reset the modified by flags here - this makes the assumption that the calling routine will honour the truth of 'changesBroadcastRequired'
-						cellContentsModifiedBy_ = -1;
-						break;
+							// Reset the modified by flags here - this makes the assumption that the calling routine will honour the truth of 'changesBroadcastRequired'
+							cellContentsModifiedBy_ = -1;
+							break;
+						}
 					}
+
+					// All good - set the nextObject index
+					nextObject = index;
 				}
 
-				// All good - set the nextObject index
-				nextObject = index;
+				// If we have found a viable object, break out of the loop
+				if (nextObject != Distributor::NoneAvailable)
+					break;
 			}
-
-			// If we have found a viable object, break out of the loop
-			if (nextObject != Distributor::NoneAvailable) break;
-		}
 
 		// Did we find a valid object?
 		if (nextObject == Distributor::NoneAvailable)
@@ -412,7 +438,8 @@ int Distributor::nextAvailableObject(bool& changesBroadcastRequired)
 			lastHardLockedCells_[processOrGroup] = hardLocksRequired;
 
 			// If the object hasn't already been distributed, increase our counter
-			if (objectStatus_[nextObject] == Distributor::WaitingFlag) ++nObjectsDistributed_;
+			if (objectStatus_[nextObject] == Distributor::WaitingFlag)
+				++nObjectsDistributed_;
 
 			// Lock the necessary Cells
 			addHardLocks(hardLocksRequired);
@@ -426,24 +453,28 @@ int Distributor::nextAvailableObject(bool& changesBroadcastRequired)
 bool Distributor::finishedWithObject()
 {
 	// Unlock all cells that we hard/soft-locked in the last distribution, and set flags on modified Cells
-	// We assume that changes were made to all hard-locked cells by all processes / groups. This may not be the case, but to find out the true picture we would need to perform further MPI broadcast of information each time, and that is what we are trying to avoid!
-	for (int processOrGroup = 0; processOrGroup<nProcessesOrGroups_; ++processOrGroup)
+	// We assume that changes were made to all hard-locked cells by all processes / groups. This may not be the case, but to find out the true picture we would need to perform further MPI
+	// broadcast of information each time, and that is what we are trying to avoid!
+	for (int processOrGroup = 0; processOrGroup < nProcessesOrGroups_; ++processOrGroup)
 	{
 		int objectIndex = lastObjectDistributed_[processOrGroup];
 
 		// Mark object as completed
-		if (objectIndex >= 0) objectStatus_[objectIndex] = Distributor::CompletedFlag;
+		if (objectIndex >= 0)
+			objectStatus_[objectIndex] = Distributor::CompletedFlag;
 
 		// Mark hard-locked Cells as being modified
-		for (int n=0; n<lastHardLockedCells_[processOrGroup].nItems(); ++n)
+		for (int n = 0; n < lastHardLockedCells_[processOrGroup].nItems(); ++n)
 		{
 			int cellIndex = lastHardLockedCells_[processOrGroup].constAt(n)->index();
 
 			// If the current process/group was the last to modify it, that's OK.
-			if (cellContentsModifiedBy_[cellIndex] == processOrGroup) continue;
+			if (cellContentsModifiedBy_[cellIndex] == processOrGroup)
+				continue;
 
 			// Sanity check - has this cell been modified by somebody else?
-			if (cellContentsModifiedBy_[cellIndex] != -1) Messenger::warn("Cell index %i contents modified twice (%i and %i)?\n", cellIndex, cellContentsModifiedBy_[cellIndex], processOrGroup);
+			if (cellContentsModifiedBy_[cellIndex] != -1)
+				Messenger::warn("Cell index %i contents modified twice (%i and %i)?\n", cellIndex, cellContentsModifiedBy_[cellIndex], processOrGroup);
 
 			cellContentsModifiedBy_[cellIndex] = processOrGroup;
 		}
@@ -459,13 +490,7 @@ bool Distributor::finishedWithObject()
 }
 
 // Return number of instances where no viable object was available
-int Distributor::nUnavailableInstances() const
-{
-	return nUnavailableInstances_;
-}
+int Distributor::nUnavailableInstances() const { return nUnavailableInstances_; }
 
 // Return number of times a change broadcast was required
-int Distributor::nChangeBroadcastsRequired() const
-{
-	return nChangeBroadcastsRequired_;
-}
+int Distributor::nChangeBroadcastsRequired() const { return nChangeBroadcastsRequired_; }

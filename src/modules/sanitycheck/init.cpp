@@ -19,12 +19,11 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/sanitycheck/sanitycheck.h"
 #include "keywords/types.h"
+#include "modules/sanitycheck/sanitycheck.h"
 
 // Perform any necessary initialisation for the Module
 void SanityCheckModule::initialise()
 {
-// 	keywords_.add(new BoolKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
+	// 	keywords_.add(new BoolKeyword(true), "ExampleKeyword", "Example keyword description", "<args>");
 }
-

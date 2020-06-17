@@ -1,9 +1,7 @@
 ---
 title: Coding Standards
-parent: Developer Documentation
 weight: 4
 ---
-# Coding Standards
 
 ## Introduction
 

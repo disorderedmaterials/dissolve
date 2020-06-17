@@ -37,16 +37,11 @@ CalculateCNModule::CalculateCNModule() : Module(), analyser_(ProcedureNode::Anal
 }
 
 // Destructor
-CalculateCNModule::~CalculateCNModule()
-{
-}
+CalculateCNModule::~CalculateCNModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* CalculateCNModule::createInstance() const
-{
-	return new CalculateCNModule;
-}
+Module *CalculateCNModule::createInstance() const { return new CalculateCNModule; }

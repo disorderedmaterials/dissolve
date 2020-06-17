@@ -21,8 +21,8 @@
 
 #include "base/messenger.h"
 #include "base/lineparser.h"
-#include "base/sysfunc.h"
 #include "base/processpool.h"
+#include "base/sysfunc.h"
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
@@ -36,49 +36,53 @@ bool Messenger::masterOnly_ = false;
 LineParser Messenger::parser_; //= new LineParser;
 char Messenger::text_[8096];
 char Messenger::workingText_[8096];
-OutputHandler* Messenger::outputHandler_ = NULL;
+OutputHandler *Messenger::outputHandler_ = NULL;
 
 // Constructor
-Messenger::Messenger()
-{
-}
+Messenger::Messenger() {}
 
 /*
  * General Print Routines (Private)
  */
 
 // Master text creation / formatting routine
-void Messenger::createText(const char* indentText, const char* format, va_list arguments)
+void Messenger::createText(const char *indentText, const char *format, va_list arguments)
 {
 	// Reset main text string storage
 	text_[0] = '\0';
 
 	// First, vsprintf the supplied format/arguments into workingText_
 	vsprintf(workingText_, format, arguments);
-	
+
 	// Now, use strtok to split the workingText_ up into lines, prepending the indentText and/or process id to each
 	CharString prependedLine;
-	char* startChar = workingText_;
-	char* endChar = workingText_;
+	char *startChar = workingText_;
+	char *endChar = workingText_;
 	bool lastPart = (*endChar == '\0');
 	while (!lastPart)
 	{
 		// Find end position of next segment, which is either a newline or NULL (if it is the latter, note that it is the true end of the string)
 		// We will set this end position to be NULL regardless, since a newline will be appended in the next part
-		while ((*endChar != '\n') && (*endChar != '\0')) endChar++;
-		if (*endChar == '\0') lastPart = true;
+		while ((*endChar != '\n') && (*endChar != '\0'))
+			endChar++;
+		if (*endChar == '\0')
+			lastPart = true;
 		*endChar = '\0';
 
 		// If we were given some 'indentText', print copies of it before the message
 		if (indentText != NULL)
 		{
-			if (redirect_ || (ProcessPool::nWorldProcesses() == 1)) prependedLine.sprintf("%s %s\n", indentText, startChar);
-			else prependedLine.sprintf("[%i] %s %s\n", ProcessPool::worldRank(), indentText, startChar);
+			if (redirect_ || (ProcessPool::nWorldProcesses() == 1))
+				prependedLine.sprintf("%s %s\n", indentText, startChar);
+			else
+				prependedLine.sprintf("[%i] %s %s\n", ProcessPool::worldRank(), indentText, startChar);
 		}
 		else
 		{
-			if (redirect_ || (ProcessPool::nWorldProcesses() == 1)) prependedLine.sprintf("%s\n", startChar);
-			else prependedLine.sprintf("[%i] %s\n", ProcessPool::worldRank(), startChar);
+			if (redirect_ || (ProcessPool::nWorldProcesses() == 1))
+				prependedLine.sprintf("%s\n", startChar);
+			else
+				prependedLine.sprintf("[%i] %s\n", ProcessPool::worldRank(), startChar);
 		}
 		strcat(text_, prependedLine.get());
 
@@ -87,14 +91,16 @@ void Messenger::createText(const char* indentText, const char* format, va_list a
 		startChar = endChar;
 
 		// Make an additional check for this being the actual string terminator
-		if (*endChar == '\0') break;
+		if (*endChar == '\0')
+			break;
 	}
 }
 
 // Master text creation / formatting routine
-void Messenger::createAndPrintText(const char* indentText, const char* format, va_list arguments)
+void Messenger::createAndPrintText(const char *indentText, const char *format, va_list arguments)
 {
-	if (masterOnly_ && (!ProcessPool::isWorldMaster())) return;
+	if (masterOnly_ && (!ProcessPool::isWorldMaster()))
+		return;
 
 	createText(indentText, format, arguments);
 
@@ -102,15 +108,18 @@ void Messenger::createAndPrintText(const char* indentText, const char* format, v
 }
 
 // Create and print text (simple)
-void Messenger::createAndPrintText(const char* text)
+void Messenger::createAndPrintText(const char *text)
 {
-	if (masterOnly_ && (!ProcessPool::isWorldMaster())) return;
+	if (masterOnly_ && (!ProcessPool::isWorldMaster()))
+		return;
 
 	// Reset main text string storage
 	text_[0] = '\0';
 
-	if (redirect_ || (ProcessPool::nWorldProcesses() == 1)) sprintf(text_, "%s\n", text);
-	else sprintf(text_, "[%i] %s\n", ProcessPool::worldRank(), text);
+	if (redirect_ || (ProcessPool::nWorldProcesses() == 1))
+		sprintf(text_, "%s\n", text);
+	else
+		sprintf(text_, "[%i] %s\n", ProcessPool::worldRank(), text);
 
 	outputText(text_);
 }
@@ -120,83 +129,67 @@ void Messenger::createAndPrintText(const char* text)
  */
 
 // Set status of quiet mode
-void Messenger::setQuiet(bool b)
-{
-	quiet_ = b;
-}
+void Messenger::setQuiet(bool b) { quiet_ = b; }
 
 // Return status of quiet mode
-bool Messenger::isQuiet()
-{
-	return quiet_;
-}
+bool Messenger::isQuiet() { return quiet_; }
 
 // Temporarily mute output
-void Messenger::mute()
-{
-	muted_ = true;
-}
+void Messenger::mute() { muted_ = true; }
 
 // Unmute output
-void Messenger::unMute()
-{
-	muted_ = false;
-}
+void Messenger::unMute() { muted_ = false; }
 
 // Set status of verbose mode
-void Messenger::setVerbose(bool b)
-{
-	verbose_ = b;
-}
+void Messenger::setVerbose(bool b) { verbose_ = b; }
 
 // Return status of verbose mode
-bool Messenger::isVerbose()
-{
-	return verbose_;
-}
+bool Messenger::isVerbose() { return verbose_; }
 
 // Set status of master-only mode
-void Messenger::setMasterOnly(bool b)
-{
-	masterOnly_ = b;
-}
+void Messenger::setMasterOnly(bool b) { masterOnly_ = b; }
 
 // Print standard message
-void Messenger::print(const char* fmt, ...)
+void Messenger::print(const char *fmt, ...)
 {
-	if (quiet_ || muted_) return;
+	if (quiet_ || muted_)
+		return;
 
 	va_list arguments;
-	va_start(arguments,fmt);
+	va_start(arguments, fmt);
 	createAndPrintText(NULL, fmt, arguments);
 	va_end(arguments);
 }
 
 // Print verbose message
-void Messenger::printVerbose(const char* fmt, ...)
+void Messenger::printVerbose(const char *fmt, ...)
 {
-	if (quiet_ || muted_ || (!verbose_)) return;
+	if (quiet_ || muted_ || (!verbose_))
+		return;
 
 	va_list arguments;
-	va_start(arguments,fmt);
+	va_start(arguments, fmt);
 	createAndPrintText(NULL, fmt, arguments);
 	va_end(arguments);
 }
 
 // Print error message
-bool Messenger::error(const char* fmt, ...)
+bool Messenger::error(const char *fmt, ...)
 {
-	if (quiet_ || muted_) return false;
+	if (quiet_ || muted_)
+		return false;
 
 	va_list arguments;
-	va_start(arguments,fmt);
+	va_start(arguments, fmt);
 
 	outputText("\n");
-	if (outputHandler_) outputHandler_->styleForError();
+	if (outputHandler_)
+		outputHandler_->styleForError();
 	createAndPrintText("***  ERROR");
 	createAndPrintText("***  ERROR    ", fmt, arguments);
 	createAndPrintText("***  ERROR");
-	if (outputHandler_) outputHandler_->resetStyling();
+	if (outputHandler_)
+		outputHandler_->resetStyling();
 	outputText("\n");
 
 	va_end(arguments);
@@ -205,32 +198,36 @@ bool Messenger::error(const char* fmt, ...)
 }
 
 // Print warning message
-void Messenger::warn(const char* fmt, ...)
+void Messenger::warn(const char *fmt, ...)
 {
-	if (quiet_ || muted_) return;
+	if (quiet_ || muted_)
+		return;
 
 	va_list arguments;
 	va_start(arguments, fmt);
 
-	if (outputHandler_) outputHandler_->styleForWarning();
+	if (outputHandler_)
+		outputHandler_->styleForWarning();
 	outputText("\n!!! WARNING\n");
 	createAndPrintText("!!! WARNING   ", fmt, arguments);
 	outputText("!!! WARNING\n\n");
-	if (outputHandler_) outputHandler_->resetStyling();
+	if (outputHandler_)
+		outputHandler_->resetStyling();
 
 	va_end(arguments);
 }
 
 // Print banner message of specified width
-void Messenger::banner(const char* fmt, ...)
+void Messenger::banner(const char *fmt, ...)
 {
-	if (quiet_ || muted_) return;
+	if (quiet_ || muted_)
+		return;
 
 	static CharString bannerChars;
 	const int width = 80;
 	if (bannerChars.length() < width)
 	{
-		bannerChars.createEmpty(width+1);
+		bannerChars.createEmpty(width + 1);
 		bannerChars.fill('=');
 	}
 
@@ -254,15 +251,16 @@ void Messenger::banner(const char* fmt, ...)
 }
 
 // Print heading message
-void Messenger::heading(const char* fmt, ...)
+void Messenger::heading(const char *fmt, ...)
 {
-	if (quiet_ || muted_) return;
+	if (quiet_ || muted_)
+		return;
 
 	static CharString bannerChars;
 	const int width = 80;
 	if (bannerChars.length() < width)
 	{
-		bannerChars.createEmpty(width+1);
+		bannerChars.createEmpty(width + 1);
 		bannerChars.fill('-');
 	}
 
@@ -290,21 +288,21 @@ void Messenger::heading(const char* fmt, ...)
  */
 
 // Set output handler
-void Messenger::setOutputHandler(OutputHandler* outputHandler)
-{
-	outputHandler_ = outputHandler;
-}
+void Messenger::setOutputHandler(OutputHandler *outputHandler) { outputHandler_ = outputHandler; }
 
 // Print text
-void Messenger::outputText(const char* text)
+void Messenger::outputText(const char *text)
 {
 	// If we are redirecting to files, use the parser_
-	if (redirect_) parser_.writeLineF("%s", text);
+	if (redirect_)
+		parser_.writeLineF("%s", text);
 	else
 	{
 		// Not redirecting - has an OutputHandler been defined?
-		if (outputHandler_) outputHandler_->outputText(text);
-		else printf("%s", text);
+		if (outputHandler_)
+			outputHandler_->outputText(text);
+		else
+			printf("%s", text);
 	}
 }
 
@@ -313,7 +311,7 @@ void Messenger::outputText(const char* text)
  */
 
 // Enable redirection of all messaging to specified file
-bool Messenger::enableRedirect(const char* filename)
+bool Messenger::enableRedirect(const char *filename)
 {
 	parser_.openOutput(filename, true);
 	if (!parser_.isFileGoodForWriting())
@@ -321,7 +319,7 @@ bool Messenger::enableRedirect(const char* filename)
 		Messenger::print("Couldn't open output file '%s' for writing.\n", filename);
 		return false;
 	}
-	
+
 	redirect_ = true;
 	return true;
 }

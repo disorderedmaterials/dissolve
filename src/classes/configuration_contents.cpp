@@ -19,13 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "classes/configuration.h"
+#include "base/processpool.h"
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/cell.h"
+#include "classes/configuration.h"
 #include "classes/species.h"
-#include "base/processpool.h"
 #include "modules/import/import.h"
+#include <memory>
 
 // Clear contents of Configuration, leaving other definitions intact
 void Configuration::empty()
@@ -33,7 +34,8 @@ void Configuration::empty()
 	molecules_.clear();
 	atoms_.clear();
 	usedAtomTypes_.clear();
-	if (box_ != NULL) delete box_;
+	if (box_ != NULL)
+		delete box_;
 	box_ = new CubicBox(1.0);
 	cells_.clear();
 
@@ -48,45 +50,28 @@ void Configuration::initialiseArrays(int nMolecules)
 {
 	// Clear current contents
 	empty();
-
-	molecules_.initialise(nMolecules);
 }
 
 // Return specified used type
-AtomType* Configuration::usedAtomType(int index)
-{
-	return usedAtomTypes_.atomType(index);
-}
+AtomType *Configuration::usedAtomType(int index) { return usedAtomTypes_.atomType(index); }
 
 // Return specified used type data
-AtomTypeData* Configuration::usedAtomTypeData(int index)
-{
-	return usedAtomTypes_[index];
-}
+AtomTypeData *Configuration::usedAtomTypeData(int index) { return usedAtomTypes_[index]; }
 
 // Return first AtomTypeData for this Configuration
-AtomTypeData* Configuration::usedAtomTypes()
-{
-	return usedAtomTypes_.first();
-}
+AtomTypeData *Configuration::usedAtomTypes() { return usedAtomTypes_.first(); }
 
 // Return AtomTypeList for this Configuration
-const AtomTypeList& Configuration::usedAtomTypesList() const
-{
-	return usedAtomTypes_;
-}
+const AtomTypeList &Configuration::usedAtomTypesList() const { return usedAtomTypes_; }
 
 // Return number of atom types used in this Configuration
-int Configuration::nUsedAtomTypes() const
-{
-	return usedAtomTypes_.nItems();
-}
+int Configuration::nUsedAtomTypes() const { return usedAtomTypes_.nItems(); }
 
 // Add Species to list of those used by the Configuration, setting/adding the population specified
-SpeciesInfo* Configuration::addUsedSpecies(Species* sp, int population)
+SpeciesInfo *Configuration::addUsedSpecies(Species *sp, int population)
 {
 	// Check if we have an existing info for this Species
-	SpeciesInfo* spInfo = usedSpeciesInfo(sp);
+	SpeciesInfo *spInfo = usedSpeciesInfo(sp);
 	if (!spInfo)
 	{
 		spInfo = usedSpecies_.add();
@@ -100,102 +85,92 @@ SpeciesInfo* Configuration::addUsedSpecies(Species* sp, int population)
 }
 
 // Return SpeciesInfo for specified Species
-SpeciesInfo* Configuration::usedSpeciesInfo(Species* sp)
+SpeciesInfo *Configuration::usedSpeciesInfo(Species *sp)
 {
-	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next()) if (spInfo->species() == sp) return spInfo;
+	for (SpeciesInfo *spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next())
+		if (spInfo->species() == sp)
+			return spInfo;
 
 	return NULL;
 }
 
 // Return list of SpeciesInfo for the Configuration
-List<SpeciesInfo>& Configuration::usedSpecies()
-{
-	return usedSpecies_;
-}
+List<SpeciesInfo> &Configuration::usedSpecies() { return usedSpecies_; }
 
 // Return if the specified Species is present in the usedSpecies list
-bool Configuration::hasUsedSpecies(Species* sp)
+bool Configuration::hasUsedSpecies(Species *sp)
 {
-	for (SpeciesInfo* spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next()) if (spInfo->species() == sp) return true;
+	for (SpeciesInfo *spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next())
+		if (spInfo->species() == sp)
+			return true;
 
 	return false;
 }
 
-// Return the atomic density of the Configuration
-double Configuration::atomicDensity() const
+// Return the total atomic mass present in the Configuration
+double Configuration::atomicMass() const
 {
-	return nAtoms() / box_->volume();
-}
-
-// Return the chemical density (g/cm3) of the Configuration
-double Configuration::chemicalDensity() const
-{
-	double density = 0.0;
+	double mass = 0.0;
 
 	// Get total molar mass in configuration
 	ListIterator<SpeciesInfo> speciesIterator(usedSpecies_);
-	while (SpeciesInfo* spInfo = speciesIterator.iterate()) density += spInfo->species()->mass() * spInfo->population();
+	while (SpeciesInfo *spInfo = speciesIterator.iterate())
+		mass += spInfo->species()->mass() * spInfo->population();
 
-	// Convert to absolute mass, and divide by box volume
-	density /= AVOGADRO;
-	density /= (box_->volume() / 1.0E24);
-
-	return density;
+	// Convert to absolute mass
+	return mass / AVOGADRO;
 }
+
+// Return the atomic density of the Configuration
+double Configuration::atomicDensity() const { return nAtoms() / box_->volume(); }
+
+// Return the chemical density (g/cm3) of the Configuration
+double Configuration::chemicalDensity() const { return atomicMass() / (box_->volume() / 1.0E24); }
 
 // Return version of current contents
-int Configuration::contentsVersion() const
-{
-	return contentsVersion_;
-}
+int Configuration::contentsVersion() const { return contentsVersion_; }
 
 // Increment version of current contents
-void Configuration::incrementContentsVersion()
-{
-	++contentsVersion_;
-}
+void Configuration::incrementContentsVersion() { ++contentsVersion_; }
 
 // Add Molecule to Configuration based on the supplied Species
-Molecule* Configuration::addMolecule(Species* sp, CoordinateSet* sourceCoordinates)
+std::shared_ptr<Molecule> Configuration::addMolecule(Species *sp, CoordinateSet *sourceCoordinates)
 {
 	// Create the new Molecule object and set its Species pointer
-	Molecule* newMolecule = molecules_.add();
+	std::shared_ptr<Molecule> newMolecule = std::make_shared<Molecule>();
+	newMolecule->setArrayIndex(molecules_.size());
+	molecules_.push_back(newMolecule);
 	newMolecule->setSpecies(sp);
 
 	// Update the relevant SpeciesInfo population
 	addUsedSpecies(sp, 1);
 
 	// Add Atoms from Species to the Molecule, using either species coordinates or those from the source CoordinateSet
-	SpeciesAtom* spi = sp->firstAtom();
-	if (sourceCoordinates) for (int n=0; n<sp->nAtoms(); ++n, spi = spi->next()) addAtom(spi, newMolecule, sourceCoordinates->r(n));
-	else for (int n=0; n<sp->nAtoms(); ++n, spi = spi->next()) addAtom(spi, newMolecule, spi->r());
+	SpeciesAtom *spi = sp->firstAtom();
+	if (sourceCoordinates)
+		for (int n = 0; n < sp->nAtoms(); ++n, spi = spi->next())
+			addAtom(spi, newMolecule, sourceCoordinates->r(n));
+	else
+		for (int n = 0; n < sp->nAtoms(); ++n, spi = spi->next())
+			addAtom(spi, newMolecule, spi->r());
 
 	return newMolecule;
 }
 
 // Return number of Molecules in Configuration
-int Configuration::nMolecules() const
-{
-	return molecules_.nItems();
-}
+int Configuration::nMolecules() const { return molecules_.size(); }
 
 // Return array of Molecules
-DynamicArray<Molecule>& Configuration::molecules()
-{
-	return molecules_;
-}
+std::deque<std::shared_ptr<Molecule>> &Configuration::molecules() { return molecules_; }
 
 // Return nth Molecule
-Molecule* Configuration::molecule(int n)
-{
-	return molecules_[n];
-}
+std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n]; }
 
 // Add new Atom to Configuration, with Molecule parent specified
-Atom* Configuration::addAtom(const SpeciesAtom* sourceAtom, Molecule* molecule, Vec3<double> r)
+Atom *Configuration::addAtom(const SpeciesAtom *sourceAtom, std::shared_ptr<Molecule> molecule, Vec3<double> r)
 {
 	// Create new Atom object and set its source pointer
-	Atom* newAtom = atoms_.add();
+	Atom *newAtom = atoms_.add();
 	newAtom->setSpeciesAtom(sourceAtom);
 
 	// Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
@@ -205,7 +180,7 @@ Atom* Configuration::addAtom(const SpeciesAtom* sourceAtom, Molecule* molecule, 
 	newAtom->setCoordinates(r);
 
 	// Update our typeIndex (non-isotopic) and set local and master type indices
-	AtomTypeData* atd = usedAtomTypes_.add(sourceAtom->atomType(), 1);
+	AtomTypeData *atd = usedAtomTypes_.add(sourceAtom->atomType(), 1);
 	newAtom->setLocalTypeIndex(atd->listIndex());
 	newAtom->setMasterTypeIndex(sourceAtom->atomType()->index());
 
@@ -213,25 +188,16 @@ Atom* Configuration::addAtom(const SpeciesAtom* sourceAtom, Molecule* molecule, 
 }
 
 // Return number of Atoms in Configuration
-int Configuration::nAtoms() const
-{
-	return atoms_.nItems();
-}
+int Configuration::nAtoms() const { return atoms_.nItems(); }
 
 // Return Atom array
-DynamicArray<Atom>& Configuration::atoms()
-{
-	return atoms_;
-}
+DynamicArray<Atom> &Configuration::atoms() { return atoms_; }
 
 // Return Atom array (const)
-const DynamicArray<Atom>& Configuration::constAtoms() const
-{
-	return atoms_;
-}
+const DynamicArray<Atom> &Configuration::constAtoms() const { return atoms_; }
 
 // Return nth atom
-Atom* Configuration::atom(int n)
+Atom *Configuration::atom(int n)
 {
 #ifdef CHECKS
 	if ((n < 0) || (n >= atoms_.nItems()))
@@ -247,11 +213,8 @@ Atom* Configuration::atom(int n)
 void Configuration::scaleMoleculeCentres(double factor)
 {
 	Vec3<double> oldCog, newCog, newPos;
-	for (int n=0; n<molecules_.nItems(); ++n)
+	for (auto mol : molecules_)
 	{
-		// Get Molecule pointer
-		Molecule* mol = molecules_[n];
-
 		// First, work out the centre of geometry of the Molecule, and fold it into the Box
 		oldCog = box()->fold(mol->centreOfGeometry(box()));
 
@@ -259,10 +222,10 @@ void Configuration::scaleMoleculeCentres(double factor)
 		newCog = oldCog * factor;
 
 		// Loop over Atoms in Molecule, setting new coordinates as we go
-		for (int m=0; m<mol->nAtoms(); ++m)
+		for (int m = 0; m < mol->nAtoms(); ++m)
 		{
 			// Get Atom pointer
-			Atom* i = mol->atom(m);
+			Atom *i = mol->atom(m);
 
 			// Calculate and set new position
 			newPos = newCog + box()->minimumVector(i->r(), oldCog);

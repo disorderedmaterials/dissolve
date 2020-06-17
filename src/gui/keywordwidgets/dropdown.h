@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_DROPDOWN_H
 #define DISSOLVE_KEYWORDWIDGET_DROPDOWN_H
 
-#include "gui/keywordwidgets/ui_dropdown.h"
 #include "gui/keywordwidgets/dropwidget.hui"
+#include "gui/keywordwidgets/ui_dropdown.h"
 #include <QWidget>
 
 // Forward Declarations
@@ -34,43 +34,40 @@ class KeywordDropDown : public QWidget
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	KeywordDropDown(QWidget* parent);
-
+	KeywordDropDown(QWidget *parent);
 
 	/*
 	 * UI
 	 */
-	private:
-        // Main form declaration
-        Ui::KeywordDropDownControlWidget ui_;
+      private:
+	// Main form declaration
+	Ui::KeywordDropDownControlWidget ui_;
 	// Widget to display as the drop-down
 	DropWidget dropWidget_;
 
-	public:
+      public:
 	// Return the drop widget
-	DropWidget* dropWidget();
-
+	DropWidget *dropWidget();
 
 	/*
 	 * Signals / Slots
 	 */
-	private slots:
+      private slots:
 	void on_CallDropWidgetButton_clicked(bool checked);
 	void dropWidgetHidden();
-
 
 	/*
 	 * Update
 	 */
-	protected:
+      protected:
 	// Set summary text on call button
-	void setSummaryText(const char* text);
+	void setSummaryText(const char *text);
 	// Set icon on call button
 	void setSummaryIcon(QIcon icon);
 	// Update widget values data based on keyword data
-	virtual void updateWidgetValues(const CoreData& coreData) = 0;
+	virtual void updateWidgetValues(const CoreData &coreData) = 0;
 	// Update keyword data based on widget values
 	virtual void updateKeywordData() = 0;
 };

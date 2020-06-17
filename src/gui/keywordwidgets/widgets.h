@@ -20,9 +20,9 @@
 */
 
 // General include for all KeywordWidget types
+#include "gui/keywordwidgets/atomtypeselection.h"
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/bool.hui"
-#include "gui/keywordwidgets/atomtypeselection.h"
 #include "gui/keywordwidgets/broadeningfunction.h"
 #include "gui/keywordwidgets/charstring.hui"
 #include "gui/keywordwidgets/double.hui"
@@ -46,7 +46,7 @@
 #include "gui/keywordwidgets/speciesreflist.h"
 #include "gui/keywordwidgets/speciessite.h"
 #include "gui/keywordwidgets/speciessitereflist.h"
-#include "gui/keywordwidgets/windowfunction.hui"
 #include "gui/keywordwidgets/vec3double.h"
 #include "gui/keywordwidgets/vec3integer.h"
 #include "gui/keywordwidgets/vec3nodevalue.h"
+#include "gui/keywordwidgets/windowfunction.hui"

@@ -31,15 +31,14 @@ class Timer
 	/*
 	 * Simple class to store and manipulate tick information in order to provide timings for routines etc.
 	 */
-	public:
+      public:
 	// Constructor
 	Timer();
-
 
 	/*
 	 * Timing Routines
 	 */
-	private:
+      private:
 	// Start time
 	clock_t startTime_;
 	// Split time
@@ -51,11 +50,11 @@ class Timer
 	// Whether the timer is running or not
 	bool running_;
 
-	private:
+      private:
 	// Return time string based on provided tick count
-	const char* timeString(clock_t ticks);
+	const char *timeString(clock_t ticks);
 
-	public:
+      public:
 	// Start timer
 	void start();
 	// Stop timer and set total time
@@ -67,15 +66,15 @@ class Timer
 	// Zero total time
 	void zero();
 	// Return current elapsed time as a time string
-	const char* elapsedTimeString();
+	const char *elapsedTimeString();
 	// Return total time (after stop()) as a time string
-	const char* totalTimeString();
+	const char *totalTimeString();
 	// Return number of seconds elapsed
 	double secondsElapsed() const;
 	// Return time string for number of seconds provided
-	static const char* timeString(double seconds);
+	static const char *timeString(double seconds);
 	// Return ETA string for number of seconds provided
-	static const char* etaString(double seconds);
+	static const char *etaString(double seconds);
 };
 
 #endif

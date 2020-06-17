@@ -28,13 +28,13 @@
 #include <QMessageBox>
 
 // Constructor
-Integrator1DGizmo::Integrator1DGizmo(Dissolve& dissolve, const char* uniqueName) : Gizmo(dissolve, uniqueName)
+Integrator1DGizmo::Integrator1DGizmo(Dissolve &dissolve, const char *uniqueName) : Gizmo(dissolve, uniqueName)
 {
 	// Set up user interface
 	ui_.setupUi(this);
 
-	// Grab the DataViewer pointer from the 
-	View& view = ui_.PlotWidget->view();
+	// Grab the DataViewer pointer from the
+	View &view = ui_.PlotWidget->view();
 	view.setViewType(View::FlatXYView);
 	view.axes().setTitle(0, "X");
 	view.axes().setRange(0, 0.0, 10.0);
@@ -50,29 +50,21 @@ Integrator1DGizmo::Integrator1DGizmo(Dissolve& dissolve, const char* uniqueName)
 }
 
 // Destructor
-Integrator1DGizmo::~Integrator1DGizmo()
-{
-}
+Integrator1DGizmo::~Integrator1DGizmo() {}
 
 /*
  * Core
  */
 
 // Return string specifying Gizmo type
-const char* Integrator1DGizmo::type() const
-{
-	return "Integrator1D";
-}
+const char *Integrator1DGizmo::type() const { return "Integrator1D"; }
 
 /*
  * UI
  */
 
 // Window close event
-void Integrator1DGizmo::closeEvent(QCloseEvent* event)
-{
-	emit(windowClosed(uniqueName_.get()));
-}
+void Integrator1DGizmo::closeEvent(QCloseEvent *event) { emit(windowClosed(uniqueName_.get())); }
 
 // Update controls within widget
 void Integrator1DGizmo::updateControls()
@@ -92,14 +84,10 @@ void Integrator1DGizmo::updateControls()
 }
 
 // Disable sensitive controls within widget
-void Integrator1DGizmo::disableSensitiveControls()
-{
-}
+void Integrator1DGizmo::disableSensitiveControls() {}
 
 // Enable sensitive controls within widget
-void Integrator1DGizmo::enableSensitiveControls()
-{
-}
+void Integrator1DGizmo::enableSensitiveControls() {}
 
 /*
  * Data
@@ -110,10 +98,10 @@ void Integrator1DGizmo::calculateIntegrals()
 {
 	// Check for a valid Data target
 	// Region 1
-// 	if (ui_.Region1Group->isChecked())
-// 	{
-// 		double integral = Integrator::trapezoid(
-// 	}
+	// 	if (ui_.Region1Group->isChecked())
+	// 	{
+	// 		double integral = Integrator::trapezoid(
+	// 	}
 }
 
 // Set data targets in graphs
@@ -122,9 +110,10 @@ void Integrator1DGizmo::setGraphDataTargets()
 	// Remove any current data
 	ui_.PlotWidget->clearRenderables();
 
-	if (!integrationTarget_) return;
+	if (!integrationTarget_)
+		return;
 
-	Renderable* data = ui_.PlotWidget->createRenderable(Renderable::Data1DRenderable, integrationTarget_->objectTag(), integrationTarget_->name());
+	Renderable *data = ui_.PlotWidget->createRenderable(Renderable::Data1DRenderable, integrationTarget_->objectTag(), integrationTarget_->name());
 }
 
 /*
@@ -132,20 +121,22 @@ void Integrator1DGizmo::setGraphDataTargets()
  */
 
 // Write widget state through specified LineParser
-bool Integrator1DGizmo::writeState(LineParser& parser) const
+bool Integrator1DGizmo::writeState(LineParser &parser) const
 {
 
 	// Write DataViewer state
-	if (!ui_.PlotWidget->writeSession(parser)) return false;
+	if (!ui_.PlotWidget->writeSession(parser))
+		return false;
 
 	return true;
 }
 
 // Read widget state through specified LineParser
-bool Integrator1DGizmo::readState(LineParser& parser)
+bool Integrator1DGizmo::readState(LineParser &parser)
 {
 	// Read the DataViewer session info
-	if (!ui_.PlotWidget->readSession(parser)) return false;
+	if (!ui_.PlotWidget->readSession(parser))
+		return false;
 
 	return true;
 }
@@ -157,8 +148,9 @@ bool Integrator1DGizmo::readState(LineParser& parser)
 void Integrator1DGizmo::on_TargetSelectButton_clicked(bool checked)
 {
 	SelectGenericItemDialog genericItemDialog(this, dissolve_);
-	Data1D* item = genericItemDialog.selectGenericItem<Data1D>();
-	if (!item) return;
+	Data1D *item = genericItemDialog.selectGenericItem<Data1D>();
+	if (!item)
+		return;
 
 	// Set target
 	integrationTarget_ = item;

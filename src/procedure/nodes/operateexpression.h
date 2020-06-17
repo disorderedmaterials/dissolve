@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_PROCEDURENODE_OPERATEEXPRESSION_H
 #define DISSOLVE_PROCEDURENODE_OPERATEEXPRESSION_H
 
-#include "procedure/nodes/operatebase.h"
 #include "expression/expression.h"
+#include "procedure/nodes/operatebase.h"
 
 // Forward Declarations
 /* none */
@@ -31,39 +31,37 @@
 // Operate Expression Node
 class OperateExpressionProcedureNode : public OperateProcedureNodeBase
 {
-	public:
+      public:
 	// Constructors
-	OperateExpressionProcedureNode(const char* expressionText = "");
+	OperateExpressionProcedureNode(const char *expressionText = "");
 	// Destructor
 	~OperateExpressionProcedureNode();
-
 
 	/*
 	 * Expression and Variables
 	 */
-	private:
+      private:
 	// Normalisation expression
 	Expression expression_;
 	// X variable in equation
-	ExpressionVariable* x_;
+	ExpressionVariable *x_;
 	// Y variable in equation
-	ExpressionVariable* y_;
+	ExpressionVariable *y_;
 	// Z variable in equation
-	ExpressionVariable* z_;
+	ExpressionVariable *z_;
 	// Value variable in equation
-	ExpressionVariable* value_;
-
+	ExpressionVariable *value_;
 
 	/*
 	 * Data Target (implements virtuals in OperateProcedureNodeBase)
 	 */
-	public:
+      public:
 	// Operate on Data1D target
-	bool operateData1D(ProcessPool& procPool, Configuration* cfg);
+	bool operateData1D(ProcessPool &procPool, Configuration *cfg);
 	// Operate on Data2D target
-	bool operateData2D(ProcessPool& procPool, Configuration* cfg);
+	bool operateData2D(ProcessPool &procPool, Configuration *cfg);
 	// Operate on Data3D target
-	bool operateData3D(ProcessPool& procPool, Configuration* cfg);
+	bool operateData3D(ProcessPool &procPool, Configuration *cfg);
 };
 
 #endif

@@ -1,9 +1,7 @@
 ---
 title: Step 2 - Set up a Configuration
-parent: Comparing Benzene Structure
 grand_parent: Examples
 ---
-# Comparing Benzene Structure
 
 ## 2. Set up a Configuration
 

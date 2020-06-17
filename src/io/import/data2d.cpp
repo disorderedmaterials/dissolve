@@ -20,64 +20,65 @@
 */
 
 #include "io/import/data2d.h"
-#include "keywords/types.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "keywords/types.h"
 
-// Data2D Type Keywords
-const char* Data2DImportFormatKeywords[] = { "cartesian" };
-const char* NiceData2DImportFormatKeywords[] = { "Cartesian X,Y,f(X,Y) data" };
-
-// Constructor
-Data2DImportFileFormat::Data2DImportFileFormat(Data2DImportFormat format) : FileAndFormat(format)
-{
-	keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0,0.0,0.0)), "XAxis", "Min, max, and delta to assume for x axis");
-	keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0,0.0,0.0)), "YAxis", "Min, max, and delta to assume for y axis");
-}
+// Constructors
+Data2DImportFileFormat::Data2DImportFileFormat(Data2DImportFileFormat::Data2DImportFormat format) : FileAndFormat(format) { setUpKeywords(); }
+Data2DImportFileFormat::Data2DImportFileFormat(const char *filename, Data2DImportFileFormat::Data2DImportFormat format) : FileAndFormat(filename, format) { setUpKeywords(); }
 
 // Destructor
-Data2DImportFileFormat::~Data2DImportFileFormat()
+Data2DImportFileFormat::~Data2DImportFileFormat() {}
+
+/*
+ * Keyword Options
+ */
+
+// Set up keywords for the format
+void Data2DImportFileFormat::setUpKeywords()
 {
+	keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0, 0.0, 0.0)), "XAxis", "Min, max, and delta to assume for x axis");
+	keywords_.add("Ranges", new Vec3DoubleKeyword(Vec3<double>(0.0, 0.0, 0.0)), "YAxis", "Min, max, and delta to assume for y axis");
 }
 
 /*
  * Format Access
  */
 
+// Return enum options for Data2DImportFormat
+EnumOptions<Data2DImportFileFormat::Data2DImportFormat> Data2DImportFileFormat::data2DImportFormats()
+{
+	static EnumOptionsList Data2DImportFormats = EnumOptionsList() << EnumOption(Data2DImportFileFormat::CartesianData2D, "cartesian", "Cartesian X,Y,f(X,Y) data");
+
+	static EnumOptions<Data2DImportFileFormat::Data2DImportFormat> options("Data2DImportFileFormat", Data2DImportFormats);
+
+	return options;
+}
+
 // Return number of available formats
-int Data2DImportFileFormat::nFormats() const
-{
-	return Data2DImportFileFormat::nData2DImportFormats;
-}
+int Data2DImportFileFormat::nFormats() const { return Data2DImportFileFormat::nData2DImportFormats; }
 
-// Return formats array
-const char** Data2DImportFileFormat::formats() const
-{
-	return Data2DImportFormatKeywords;
-}
+// Return format keyword for supplied index
+const char *Data2DImportFileFormat::formatKeyword(int id) const { return data2DImportFormats().keywordByIndex(id); }
 
-// Return nice formats array
-const char** Data2DImportFileFormat::niceFormats() const
-{
-	return NiceData2DImportFormatKeywords;
-}
+// Return description string for supplied index
+const char *Data2DImportFileFormat::formatDescription(int id) const { return data2DImportFormats().descriptionByIndex(id); }
 
 // Return current format as Data2DImportFormat
-Data2DImportFileFormat::Data2DImportFormat Data2DImportFileFormat::data2DFormat() const
-{
-	return (Data2DImportFileFormat::Data2DImportFormat) format_;
-}
+Data2DImportFileFormat::Data2DImportFormat Data2DImportFileFormat::data2DFormat() const { return (Data2DImportFileFormat::Data2DImportFormat)format_; }
 
 /*
  * Import Functions
  */
 
 // Import Data2D using current filename and format
-bool Data2DImportFileFormat::importData(Data2D& data, ProcessPool* procPool)
+bool Data2DImportFileFormat::importData(Data2D &data, ProcessPool *procPool)
 {
 	// Open file and check that we're OK to proceed importing from it
 	LineParser parser(procPool);
-	if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading())) return Messenger::error("Couldn't open file '%s' for loading Data2D data.\n", filename_.get());
+	if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
+		return Messenger::error("Couldn't open file '%s' for loading Data2D data.\n", filename_.get());
 
 	// Import the data
 	bool result = importData(parser, data);
@@ -88,12 +89,14 @@ bool Data2DImportFileFormat::importData(Data2D& data, ProcessPool* procPool)
 }
 
 // Import Data2D using supplied parser and current format
-bool Data2DImportFileFormat::importData(LineParser& parser, Data2D& data)
+bool Data2DImportFileFormat::importData(LineParser &parser, Data2D &data)
 {
 	// Import the data
 	bool result = false;
-	if (data2DFormat() == Data2DImportFileFormat::CartesianData2D) result = importCartesian(parser, data);
-	else Messenger::error("Don't know how to load Data2D of format '%s'.\n", Data2DImportFileFormat().format(data2DFormat()));
+	if (data2DFormat() == Data2DImportFileFormat::CartesianData2D)
+		result = importCartesian(parser, data);
+	else
+		Messenger::error("Don't know how to load Data2D of format '%s'.\n", formatKeyword(data2DFormat()));
 
 	return result;
 }

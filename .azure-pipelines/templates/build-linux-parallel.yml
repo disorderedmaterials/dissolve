@@ -1,0 +1,18 @@
+parameters:
+  - name: extraflags
+    default: ''
+
+steps:
+  - checkout: self
+  - bash: |
+      set -ex
+      # -- General
+      sudo apt-get install bison ninja-build libopenmpi-dev openmpi-bin openmpi-common
+    displayName: 'Install Prerequisites'
+  - bash: |
+      set -ex
+      mkdir build-parallel
+      cd build-parallel
+      cmake -G "Ninja" -DPARALLEL:bool=true ${{ parameters.extraflags }} ../
+      ninja
+    displayName: 'Build'

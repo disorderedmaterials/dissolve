@@ -1,9 +1,7 @@
 ---
 title: Step 9a - Centre-of-Geometry RDFs
-parent: Comparing Benzene Structure
 grand_parent: Examples
 ---
-# Comparing Benzene Structure
 
 ## 9a. Centre-of-Geometry RDFs
 

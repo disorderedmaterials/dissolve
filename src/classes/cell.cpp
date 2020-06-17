@@ -20,95 +20,67 @@
 */
 
 #include "classes/cell.h"
-#include "classes/cellneighbour.h"
-#include "classes/box.h"
 #include "classes/atom.h"
+#include "classes/box.h"
+#include "classes/cellneighbour.h"
+#include "templates/orderedvector.h"
+#include <algorithm>
 
 // Constructor
 Cell::Cell()
 {
 	index_ = -1;
-	cellNeighbours_ = NULL;
-	mimCellNeighbours_ = NULL;
-	allCellNeighbours_ = NULL;
 	nCellNeighbours_ = 0;
 	nMimCellNeighbours_ = 0;
 }
 
 // Destructor
-Cell::~Cell()
-{
-	if (cellNeighbours_) delete[] cellNeighbours_;
-	if (mimCellNeighbours_) delete[] mimCellNeighbours_;
-	if (allCellNeighbours_) delete[] allCellNeighbours_;
-}
+Cell::~Cell() {}
 
 /*
  * Identity
  */
 
 // Set grid reference
-void Cell::setGridReference(int x, int y, int z)
-{
-	gridReference_.set(x,y,z);
-}
+void Cell::setGridReference(int x, int y, int z) { gridReference_.set(x, y, z); }
 
 // Return grid reference
-const Vec3<int>& Cell::gridReference() const
-{
-	return gridReference_;
-}
+const Vec3<int> &Cell::gridReference() const { return gridReference_; }
 
 // Set unique index
 void Cell::setIndex(int id)
 {
 	// To prevent misuse, the identity of a Cell can be changed from its starting value of -1 only once.
-	if (id == -1) Messenger::print("BAD_USAGE - Refused to set the ID of a Cell more than once.\n");
-	else index_ = id;
+	if (id == -1)
+		Messenger::print("BAD_USAGE - Refused to set the ID of a Cell more than once.\n");
+	else
+		index_ = id;
 }
 
 // Return unique index
-int Cell::index() const
-{
-	return index_;
-}
+int Cell::index() const { return index_; }
 
 // Set real-space Cell centre
-void Cell::setCentre(Vec3<double> r)
-{
-	centre_ = r;
-}
+void Cell::setCentre(Vec3<double> r) { centre_ = r; }
 
 // Return real-space Cell centre
-const Vec3< double >& Cell::centre() const
-{
-	return centre_;
-}
+const Vec3<double> &Cell::centre() const { return centre_; }
 
 /*
  * Contents
  */
 
 // Return array of contained Atoms
-OrderedPointerArray<Atom>& Cell::atoms()
-{
-	return atoms_;
-}
+OrderedVector<Atom *> &Cell::atoms() { return atoms_; }
 
 // Return array of contained Atoms, ordered by their array indices
-Atom** Cell::indexOrderedAtoms() const
-{
-	return indexOrderedAtoms_.constItems();
-}
+const OrderedVector<Atom *> &Cell::indexOrderedAtoms() const { return indexOrderedAtoms_; }
 
 // Return number of Atoms in list
-int Cell::nAtoms() const
-{
-	return atoms_.nItems();
-}
+int Cell::nAtoms() const { return atoms_.size(); }
 
 // Add atom to Cell
-bool Cell::addAtom(Atom* i)
+bool Cell::addAtom(Atom *i)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -118,17 +90,18 @@ bool Cell::addAtom(Atom* i)
 	}
 #endif
 	// Add Atom to our pointer- and index-ordered arrays
-	atoms_.add(i);
-	indexOrderedAtoms_.add(i);
+	atoms_.insert(i);
+	indexOrderedAtoms_.insert(i);
 
-	if (i->cell()) Messenger::warn("About to set Cell pointer in Atom %i, but this will overwrite an existing value.\n", i->arrayIndex());
+	if (i->cell())
+		Messenger::warn("About to set Cell pointer in Atom %i, but this will overwrite an existing value.\n", i->arrayIndex());
 	i->setCell(this);
 
 	return true;
 }
 
 // Remove Atom from Cell
-bool Cell::removeAtom(Atom* i)
+bool Cell::removeAtom(Atom *i)
 {
 #ifdef CHECKS
 	if (i == NULL)
@@ -138,9 +111,9 @@ bool Cell::removeAtom(Atom* i)
 	}
 #endif
 	// Remove atom from this cell
-	if (atoms_.remove(i))
+	if (atoms_.erase(i))
 	{
-		indexOrderedAtoms_.remove(i);
+		indexOrderedAtoms_.erase(i);
 		i->setCell(NULL);
 	}
 	else
@@ -157,74 +130,68 @@ bool Cell::removeAtom(Atom* i)
  */
 
 // Add Cell neighbours
-void Cell::addCellNeighbours(OrderedPointerArray<Cell>& nearNeighbours, OrderedPointerArray<Cell>& mimNeighbours)
+void Cell::addCellNeighbours(OrderedVector<Cell *> &nearNeighbours, OrderedVector<Cell *> &mimNeighbours)
 {
 	int n;
 
 	// Create near-neighbour array of Cells not requiring minimum image to be applied
-	nCellNeighbours_ = nearNeighbours.nItems();
-	cellNeighbours_ = new Cell*[nCellNeighbours_];
-	for (n=0; n<nCellNeighbours_; ++n) cellNeighbours_[n] = nearNeighbours[n];
+	nCellNeighbours_ = nearNeighbours.size();
+	cellNeighbours_.resize(nCellNeighbours_);
+	std::copy(nearNeighbours.begin(), nearNeighbours.end(), cellNeighbours_.begin());
 
 	// Create array of neighbours that require minimum image calculation
-	nMimCellNeighbours_ = mimNeighbours.nItems();
-	mimCellNeighbours_ = new Cell*[nMimCellNeighbours_];
-	for (n=0; n<nMimCellNeighbours_; ++n) mimCellNeighbours_[n] = mimNeighbours[n];
+	nMimCellNeighbours_ = mimNeighbours.size();
+	mimCellNeighbours_.clear();
+	mimCellNeighbours_.resize(nMimCellNeighbours_);
+	std::copy(mimNeighbours.begin(), mimNeighbours.end(), mimCellNeighbours_.begin());
 
 	// Create ordered list of CellNeighbours (including cells from both lists)
-	OrderedPointerDataArray<Cell,bool> allCells;
-	for (n=0; n<nearNeighbours.nItems(); ++n) allCells.add(nearNeighbours[n], false);
-	for (n=0; n<mimNeighbours.nItems(); ++n) allCells.add(mimNeighbours[n], true);
+	OrderedVector<std::pair<Cell *, bool>> allCells;
+	for (auto *near : nearNeighbours)
+		allCells.emplace(near, false);
+	for (auto *mim : mimNeighbours)
+		allCells.emplace(mim, true);
 
-	if (allCells.nItems() != (nCellNeighbours_+nMimCellNeighbours_)) Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
-	allCellNeighbours_ = new CellNeighbour[allCells.nItems()];
-	for (n=0; n<allCells.nItems(); ++n) allCellNeighbours_[n].set(allCells.pointer(n), allCells.data(n));
+	if (allCells.size() != (nCellNeighbours_ + nMimCellNeighbours_))
+		Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
+	allCellNeighbours_.resize(allCells.size());
+	auto destination = allCellNeighbours_.begin();
+	for (auto source : allCells)
+	{
+		(*destination).set(source.first, source.second);
+		++destination;
+	}
 }
 
 // Return number of Cell near-neighbours, not requiring minimum image calculation
-int Cell::nCellNeighbours() const
-{
-	return nCellNeighbours_;
-}
+int Cell::nCellNeighbours() const { return nCellNeighbours_; }
 
 // Return total number of Cell neighbours requiring minimum image calculation
-int Cell::nMimCellNeighbours() const
-{
-	return nMimCellNeighbours_;
-}
+int Cell::nMimCellNeighbours() const { return nMimCellNeighbours_; }
 
 // Return total number of Cell neighbours
-int Cell::nTotalCellNeighbours() const
-{
-	return nCellNeighbours_ + nMimCellNeighbours_;
-}
+int Cell::nTotalCellNeighbours() const { return nCellNeighbours_ + nMimCellNeighbours_; }
 
 // Return adjacent Cell neighbour list
-Cell** Cell::cellNeighbours()
-{
-	return cellNeighbours_;
-}
+std::vector<Cell *> Cell::cellNeighbours() { return cellNeighbours_; }
 
 // Return specified adjacent Cell neighbour
-Cell* Cell::cellNeighbour(int id) const
-{
-	return cellNeighbours_[id];
-}
+Cell *Cell::cellNeighbour(int id) const { return cellNeighbours_[id]; }
 
 // Return list of Cell neighbours requiring minimum image calculation
-Cell** Cell::mimCellNeighbours()
-{
-	return mimCellNeighbours_;
-}
+std::vector<Cell *> Cell::mimCellNeighbours() { return mimCellNeighbours_; }
 
 // Return specified Cell neighbour, requiring minimum image calculation
-Cell* Cell::mimCellNeighbour(int id) const
+Cell *Cell::mimCellNeighbour(int id) const { return mimCellNeighbours_[id]; }
+
+// Return if the specified Cell requires minimum image calculation
+bool Cell::mimRequired(const Cell *otherCell) const
 {
-	return mimCellNeighbours_[id];
+	for (int n = 0; n < nMimCellNeighbours_; ++n)
+		if (mimCellNeighbours_[n] == otherCell)
+			return true;
+	return false;
 }
 
 // Return list of all Cell neighbours
-CellNeighbour* Cell::allCellNeighbours()
-{
-	return allCellNeighbours_;
-}
+std::vector<CellNeighbour> Cell::allCellNeighbours() { return allCellNeighbours_; }

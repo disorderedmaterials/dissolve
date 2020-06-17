@@ -33,95 +33,89 @@ class LineParser;
 // File / Format Base
 class FileAndFormat
 {
-	public:
+      public:
 	// Constructors
 	FileAndFormat(int format = 0);
-	FileAndFormat(const char* filename = NULL, int format = 0);
+	FileAndFormat(const char *filename = NULL, int format = 0);
 	// Destructor
 	virtual ~FileAndFormat();
 	// Conversion to const char*
-	operator const char*() const;
-
+	operator const char *() const;
 
 	/*
 	 * Available Formats
 	 */
-	protected:
+      protected:
 	// Format of associated file
 	int format_;
 
-	public:
+      public:
 	// Return number of available formats
 	virtual int nFormats() const = 0;
-	// Return formats array
-	virtual const char** formats() const = 0;
-	// Return nice formats array
-	virtual const char** niceFormats() const = 0;
+	// Return format keyword for supplied index
+	virtual const char *formatKeyword(int id) const = 0;
+	// Return description string for supplied index
+	virtual const char *formatDescription(int id) const = 0;
 	// Convert text string to format index
-	int format(const char* s) const;
-	// Convert format index to text string
-	const char* format(int id) const;
-	// Convert format index to nice text string
-	const char* niceFormat(int id) const;
+	int format(const char *s) const;
 	// Set format index
 	void setFormatIndex(int id);
 	// Return format index
 	int formatIndex() const;
 	// Return format string
-	const char* format() const;
-	// Return nice format string
-	const char* niceFormat() const;
-
+	const char *format() const;
+	// Return description string
+	const char *description() const;
+	// Print available formats
+	void printAvailableFormats() const;
 
 	/*
 	 * Filename / Basename
 	 */
-	protected:
+      protected:
 	// Associated filename / basename
 	CharString filename_;
 
-	public:
+      public:
 	// Return whether the file must exist
 	virtual bool fileMustExist() const = 0;
+	// Return whether the file actually exists
+	bool fileExists() const;
 	// Set filename / basename
-	void setFilename(const char* filename);
+	void setFilename(const char *filename);
 	// Return filename / basename
-	const char* filename() const;
-
+	const char *filename() const;
 
 	/*
 	 * Check
 	 */
-	public:
+      public:
 	// Return whether a filename has been set
 	bool hasFilename() const;
 	// Return whether a filename and format have been set
 	bool hasValidFileAndFormat() const;
 
-
 	/*
 	 * Additional Options
 	 */
-	protected:
+      protected:
 	// Available keywords options
 	KeywordList keywords_;
 
-	public:
+      public:
 	// Return available keywords
-	KeywordList& keywords();
-
+	KeywordList &keywords();
 
 	/*
 	 * Read / Write
 	 */
-	public:
+      public:
 	// Read format / filename from specified parser
-	bool read(LineParser& parser, int startArg, const char* endKeyword, const CoreData& coreData);
+	bool read(LineParser &parser, int startArg, const char *endKeyword, const CoreData &coreData);
 	// Write format / filename to specified parser
-	bool writeFilenameAndFormat(LineParser& parser, const char* prefix);
+	bool writeFilenameAndFormat(LineParser &parser, const char *prefix);
 	// Write options and end block
-	bool writeBlock(LineParser& parser, const char* prefix);
+	bool writeBlock(LineParser &parser, const char *prefix);
 };
 
 #endif
-

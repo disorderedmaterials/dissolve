@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "classes/configuration.h"
 #include "modules/calculate_rdf/gui/modulewidget.h"
 #include "modules/calculate_rdf/rdf.h"
-#include "classes/configuration.h"
 
 // Constructor
-CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDFModule* module) : ModuleWidget(parent), module_(module)
+CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, CalculateRDFModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -32,7 +32,7 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget* parent, CalculateRDF
 	// Set up RDF graph
 	rdfGraph_ = ui_.RDFPlotWidget->dataViewer();
 
-	View& view = rdfGraph_->view();
+	View &view = rdfGraph_->view();
 	view.setViewType(View::FlatXYView);
 	view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
 	view.axes().setMax(0, 10.0);
@@ -61,19 +61,21 @@ void CalculateRDFModuleWidget::updateControls(int flags)
  */
 
 // Write widget state through specified LineParser
-bool CalculateRDFModuleWidget::writeState(LineParser& parser) const
+bool CalculateRDFModuleWidget::writeState(LineParser &parser) const
 {
 	// Write DataViewer sessions
-	if (!rdfGraph_->writeSession(parser)) return false;
+	if (!rdfGraph_->writeSession(parser))
+		return false;
 
 	return true;
 }
 
 // Read widget state through specified LineParser
-bool CalculateRDFModuleWidget::readState(LineParser& parser)
+bool CalculateRDFModuleWidget::readState(LineParser &parser)
 {
 	// Read DataViewer sessions
-	if (!rdfGraph_->readSession(parser)) return false;
+	if (!rdfGraph_->readSession(parser))
+		return false;
 
 	return true;
 }
@@ -88,14 +90,15 @@ void CalculateRDFModuleWidget::setGraphDataTargets()
 	// Remove any current data
 	rdfGraph_->clearRenderables();
 
-	if (!module_) return;
+	if (!module_)
+		return;
 
 	// Loop over Configuration targets in Module
-	RefListIterator<Configuration> configIterator(module_->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration *cfg : module_->targetConfigurations())
 	{
 		// Calculated RDF
-		Renderable* rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF", module_->uniqueName(), cfg->niceName()), CharString("RDF//%s", cfg->niceName()), cfg->niceName());
+		Renderable *rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF", module_->uniqueName(), cfg->niceName()),
+							      CharString("RDF//%s", cfg->niceName()), cfg->niceName());
 		rdf->setColour(StockColours::BlueStockColour);
 	}
 }

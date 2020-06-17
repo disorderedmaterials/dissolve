@@ -22,13 +22,13 @@
 #ifndef DISSOLVE_MAINWINDOW_H
 #define DISSOLVE_MAINWINDOW_H
 
-#include "gui/ui_gui.h"
+#include "base/charstring.h"
+#include "gui/maintab.h"
 #include "gui/outputhandler.hui"
 #include "gui/referencepoint.h"
 #include "gui/systemtemplate.h"
 #include "gui/thread.hui"
-#include "gui/maintab.h"
-#include "base/charstring.h"
+#include "gui/ui_gui.h"
 #include "templates/list.h"
 
 // Forward Declarations
@@ -51,30 +51,28 @@ class DissolveWindow : public QMainWindow
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	DissolveWindow(Dissolve& dissolve);
+	DissolveWindow(Dissolve &dissolve);
 	~DissolveWindow();
-
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::DissolveWindow ui_;
 
-	protected:
-	void closeEvent(QCloseEvent* event);
-	void resizeEvent(QResizeEvent* event);
-
+      protected:
+	void closeEvent(QCloseEvent *event);
+	void resizeEvent(QResizeEvent *event);
 
 	/*
 	 * Dissolve Integration
 	 */
-	private:
+      private:
 	// Dissolve reference
-	Dissolve& dissolve_;
+	Dissolve &dissolve_;
 	// Whether any data has been modified
 	bool modified_;
 	// Whether window is currently refreshing
@@ -86,65 +84,60 @@ class DissolveWindow : public QMainWindow
 	// Whether the current simulation is on the local machine
 	bool localSimulation_;
 
-	public slots:
+      public slots:
 	// Flag that data has been modified via the GUI
 	void setModified();
 
-	public:
+      public:
 	// Return reference to Dissolve
-	Dissolve& dissolve();
+	Dissolve &dissolve();
 	// Return const reference to Dissolve
-	const Dissolve& constDissolve() const;
+	const Dissolve &constDissolve() const;
 	// Link the Messenger in to the GUI output device
 	void addOutputHandler();
-
 
 	/*
 	 * StatusBar
 	 */
-	private:
+      private:
 	// Label for local / remote simulation indicator
-	QLabel* localSimulationIndicator_;
+	QLabel *localSimulationIndicator_;
 	// Label for restart file indicator
-	QLabel* restartFileIndicator_;
+	QLabel *restartFileIndicator_;
 	// Label for heartbeat file indicator
-	QLabel* heartbeatFileIndicator_;
+	QLabel *heartbeatFileIndicator_;
 	// Label for simulation ETA (when using RunFor)
-	QLabel* etaLabel_;
-
+	QLabel *etaLabel_;
 
 	/*
 	 * File
 	 */
-	public:
+      public:
 	// Open specified input file
-	bool openLocalFile(const char* inputFile, const char* restartFile, bool ignoreRestartFile, bool ignoreLayoutFile);
-
+	bool openLocalFile(const char *inputFile, const char *restartFile, bool ignoreRestartFile, bool ignoreLayoutFile);
 
 	/*
 	 * System Templates
 	 */
-	private:
+      private:
 	// List of available SystemTemplates
 	List<SystemTemplate> systemTemplates_;
 
-	private:
+      private:
 	// Initialise system templates from the main resource
 	void initialiseSystemTemplates();
-
 
 	/*
 	 * Reference Points
 	 */
-	private:
+      private:
 	// List of ReferencePoints currently loaded
 	List<ReferencePoint> referencePoints_;
-
 
 	/*
 	 * Update Functions
 	 */
-	public slots:
+      public slots:
 	// Update window title
 	void updateWindowTitle();
 	// Update controls frame
@@ -156,17 +149,16 @@ class DissolveWindow : public QMainWindow
 	// Update while running
 	void updateWhileRunning(int iterationsRemaining);
 
-
 	/*
 	 * Main Menu
 	 */
-	private:
+      private:
 	// Check whether current input needs to be saved and, if so, if it saved successfully
 	bool checkSaveCurrentInput();
 	// Clear all data and start new simulation afresh
 	void startNew();
 
-	private slots:
+      private slots:
 	// File
 	void on_FileNewAction_triggered(bool checked);
 	void on_FileNewFromTemplateAction_triggered(bool checked);
@@ -224,31 +216,29 @@ class DissolveWindow : public QMainWindow
 	void on_HelpOnlineManualAction_triggered(bool checked);
 	void on_HelpOnlineTutorialsAction_triggered(bool checked);
 
-	public slots:
-	void currentWorkspaceGizmoChanged(QMdiSubWindow* gizmoWindow);
-
+      public slots:
+	void currentWorkspaceGizmoChanged(QMdiSubWindow *gizmoWindow);
 
 	/*
 	 * Main Stack
 	 */
-	private:
+      private:
 	// Stack Pages Enum
 	enum MainStackPage
 	{
-		StartStackPage,		/* Start Page - Routes to load, create, and monitor simulations */
-		SimulationStackPage,	/* Simulation Page - Controls for current simulation */
+		StartStackPage,      /* Start Page - Routes to load, create, and monitor simulations */
+		SimulationStackPage, /* Simulation Page - Controls for current simulation */
 		nStackPages
 	};
 
-	private:
+      private:
 	// Set currently-visible main stack page
 	void showMainStackPage(MainStackPage page);
-
 
 	/*
 	 * 'Start' Stack Page
 	 */
-	private slots:
+      private slots:
 	// 'Create' Group
 	void on_StartCreateNewButton_clicked(bool checked);
 	void on_StartCreateFromTemplateButton_clicked(bool checked);
@@ -260,36 +250,36 @@ class DissolveWindow : public QMainWindow
 	void on_StartOnlineManualButton_clicked(bool checked);
 	void on_StartOnlineTutorialsButton_clicked(bool checked);
 
-
 	/*
 	 * 'Simulation' Stack Page - Run Control
 	 */
-	public:
+      public:
 	// Dissolve State Enum
-	enum DissolveState {
-		EditingState,		/* Dissolve is currently editing a file in the GUI */
-		RunningState,		/* Dissolve is currently running in the GUI */
-		MonitoringState,	/* Dissolve is running in the background, and we are monitoring it via the restart file */
+	enum DissolveState
+	{
+		EditingState,    /* Dissolve is currently editing a file in the GUI */
+		RunningState,    /* Dissolve is currently running in the GUI */
+		MonitoringState, /* Dissolve is running in the background, and we are monitoring it via the restart file */
 		nDissolveStates
 	};
 
-	private:
+      private:
 	// Thread controller
 	DissolveThreadController threadController_;
 	// Current state of Dissolve
 	DissolveState dissolveState_;
 
-	public:
+      public:
 	// Return current state of Dissolve
 	DissolveState dissolveState() const;
 
-	private slots: 
+      private slots:
 	void on_ControlRunButton_clicked(bool checked);
 	void on_ControlStepButton_clicked(bool checked);
 	void on_ControlPauseButton_clicked(bool checked);
 	void on_ControlReloadButton_clicked(bool checked);
 
-	public slots:
+      public slots:
 	// Disable sensitive controls
 	void disableSensitiveControls();
 	// Enable sensitive controls
@@ -297,46 +287,43 @@ class DissolveWindow : public QMainWindow
 	// All iterations requested are complete
 	void iterationsComplete();
 
-	signals:
+      signals:
 	void iterate(int);
 	void stopIterating();
-
 
 	/*
 	 * 'Simulation' Stack Page - Tabs
 	 */
-	private slots:
+      private slots:
 	void on_MainTabs_currentChanged(int index);
 
-	public:
+      public:
 	// Return list of all current tabs
 	RefList<const MainTab> allTabs() const;
 
-	public slots:
+      public slots:
 	// Add or go to Module tab for the Module with the unique name provided
-	void showModuleTab(const QString& uniqueName);
+	void showModuleTab(const QString &uniqueName);
 	// Remove the Module tab (if it exists) for the Module with the unique name provided
-	void removeModuleTab(const QString& uniqueName);
-
+	void removeModuleTab(const QString &uniqueName);
 
 	/*
 	 * 'Simulation' Stack Page - Messages
 	 */
-	private slots:
+      private slots:
 	void on_MessagesIncreaseFontSizeButton_clicked(bool checked);
 	void on_MessagesDecreaseFontSizeButton_clicked(bool checked);
 	void clearMessages();
-	void appendMessage(const QString& msg);
-
+	void appendMessage(const QString &msg);
 
 	/*
 	 * GUI State
 	 */
-	private:
+      private:
 	// Filename containing current GUI state
 	CharString stateFilename_;
 
-	public:
+      public:
 	// Save current GUI state
 	bool saveState();
 	// Load GUI state

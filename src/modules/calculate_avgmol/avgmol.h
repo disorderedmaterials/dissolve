@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_MODULE_CALCULATEAVGMOL_H
 #define DISSOLVE_MODULE_CALCULATEAVGMOL_H
 
-#include "module/module.h"
 #include "classes/species.h"
+#include "module/module.h"
 
 // Forward Declarations
 /* none */
@@ -31,80 +31,73 @@
 // Calculate Average Molecule Module
 class CalculateAvgMolModule : public Module
 {
-	public:
+      public:
 	// Constructor
 	CalculateAvgMolModule();
 	// Destructor
 	~CalculateAvgMolModule();
 
-
 	/*
 	 * Instances
 	 */
-	public:
+      public:
 	// Create instance of this module
-	Module* createInstance() const;
-
+	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return type of module
-	const char* type() const;
+	const char *type() const;
 	// Return category for module
-	const char* category() const;
+	const char *category() const;
 	// Return brief description of module
-	const char* brief() const;
+	const char *brief() const;
 	// Return the number of Configuration targets this Module requires
 	int nRequiredTargets() const;
-
 
 	/*
 	 * Initialisation
 	 */
-	protected:
+      protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
-
 
 	/*
 	 * Processing
 	 */
-	private:
+      private:
 	// Run set-up stage
-	bool setUp(Dissolve& dissolve, ProcessPool& procPool);
+	bool setUp(Dissolve &dissolve, ProcessPool &procPool);
 	// Run main processing
-	bool process(Dissolve& dissolve, ProcessPool& procPool);
-
+	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions / Data
 	 */
-	private:
+      private:
 	// Species targeted by module (derived from selected site)
-	Species* targetSpecies_;
+	Species *targetSpecies_;
 	// Local Species representing average of targeted Species
 	Species averageSpecies_;
 
-	private:
+      private:
 	// Ensure arrays are the correct size for the current target Species
-	void updateArrays(Dissolve& dissolve);
+	void updateArrays(Dissolve &dissolve);
 	// Update the local species with the coordinates from the supplied arrays
-	void updateSpecies(const Array<SampledDouble>& x, const Array<SampledDouble>& y, const Array<SampledDouble>& z);
+	void updateSpecies(const Array<SampledDouble> &x, const Array<SampledDouble> &y, const Array<SampledDouble> &z);
 
-	public:
+      public:
 	// Return average Species
-	Species& averageSpecies();
-
+	Species &averageSpecies();
 
 	/*
 	 * GUI Widget
 	 */
-	public:
+      public:
 	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, Dissolve& dissolve);
+	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
 
 #endif
-

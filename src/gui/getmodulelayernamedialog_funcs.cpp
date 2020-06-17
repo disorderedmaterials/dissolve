@@ -19,24 +19,19 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/getmodulelayernamedialog.h"
-#include "classes/coredata.h"
-#include "module/layer.h"
 #include "base/sysfunc.h"
+#include "classes/coredata.h"
+#include "gui/getmodulelayernamedialog.h"
+#include "module/layer.h"
 
 // Constructor
-GetModuleLayerNameDialog::GetModuleLayerNameDialog(QWidget* parent, const List<ModuleLayer>& layers) : layers_(layers)
-{
-	ui_.setupUi(this);
-}
+GetModuleLayerNameDialog::GetModuleLayerNameDialog(QWidget *parent, const List<ModuleLayer> &layers) : layers_(layers) { ui_.setupUi(this); }
 
 // Destructor
-GetModuleLayerNameDialog::~GetModuleLayerNameDialog()
-{
-}
+GetModuleLayerNameDialog::~GetModuleLayerNameDialog() {}
 
 // Run the dialog
-bool GetModuleLayerNameDialog::get(const ModuleLayer* moduleLayer, const char* currentName)
+bool GetModuleLayerNameDialog::get(const ModuleLayer *moduleLayer, const char *currentName)
 {
 	moduleLayer_ = moduleLayer;
 
@@ -49,10 +44,7 @@ bool GetModuleLayerNameDialog::get(const ModuleLayer* moduleLayer, const char* c
 }
 
 // Return the name string
-QString GetModuleLayerNameDialog::newName() const
-{
-	return ui_.NameEdit->text();
-}
+QString GetModuleLayerNameDialog::newName() const { return ui_.NameEdit->text(); }
 
 /*
  * Slots
@@ -63,13 +55,15 @@ void GetModuleLayerNameDialog::on_NameEdit_textChanged(const QString text)
 {
 	// Make sure the name is valid
 	bool nameValid = true;
-	if (text.isEmpty()) nameValid = false;
+	if (text.isEmpty())
+		nameValid = false;
 	else
 	{
 		ListIterator<ModuleLayer> layerIterator(layers_);
-		while (ModuleLayer* layer = layerIterator.iterate())
+		while (ModuleLayer *layer = layerIterator.iterate())
 		{
-			if (moduleLayer_ == layer) continue;
+			if (moduleLayer_ == layer)
+				continue;
 
 			if (DissolveSys::sameString(layer->name(), qPrintable(text)))
 			{
@@ -86,12 +80,6 @@ void GetModuleLayerNameDialog::on_NameEdit_textChanged(const QString text)
 	ui_.OKButton->setEnabled(nameValid);
 }
 
-void GetModuleLayerNameDialog::on_CancelButton_clicked(bool checked)
-{
-	reject();
-}
+void GetModuleLayerNameDialog::on_CancelButton_clicked(bool checked) { reject(); }
 
-void GetModuleLayerNameDialog::on_OKButton_clicked(bool checked)
-{
-	accept();
-}
+void GetModuleLayerNameDialog::on_OKButton_clicked(bool checked) { accept(); }

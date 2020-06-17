@@ -37,16 +37,11 @@ CalculateAngleModule::CalculateAngleModule() : Module(), analyser_(ProcedureNode
 }
 
 // Destructor
-CalculateAngleModule::~CalculateAngleModule()
-{
-}
+CalculateAngleModule::~CalculateAngleModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* CalculateAngleModule::createInstance() const
-{
-	return new CalculateAngleModule;
-}
+Module *CalculateAngleModule::createInstance() const { return new CalculateAngleModule; }

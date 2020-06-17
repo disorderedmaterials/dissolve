@@ -30,17 +30,18 @@
  */
 
 // Compute integral of supplied data via trapezoid rule
-double Integrator::trapezoid(const Data1D& data)
+double Integrator::trapezoid(const Data1D &data)
 {
 	// Check for insufficient data
-	if (data.nValues() < 2) return 0.0;
+	if (data.nValues() < 2)
+		return 0.0;
 
 	// Grab data arrays
-	const Array<double>& x = data.constXAxis();
-	const Array<double>& y = data.constValues();
+	const Array<double> &x = data.constXAxis();
+	const Array<double> &y = data.constValues();
 
 	double total = 0.0, y0 = y.firstValue(), y1, x0 = x.firstValue(), x1;
-	for (int n=1; n<x.nItems(); ++n)
+	for (int n = 1; n < x.nItems(); ++n)
 	{
 		x1 = x.constAt(n);
 		y1 = y.constAt(n);
@@ -52,27 +53,31 @@ double Integrator::trapezoid(const Data1D& data)
 }
 
 // Compute integral of supplied data via trapezoid rule between the specified limits
-double Integrator::trapezoid(const Data1D& data, double xMin, double xMax)
+double Integrator::trapezoid(const Data1D &data, double xMin, double xMax)
 {
 	// Check for insufficient data
-	if (data.nValues() < 2) return 0.0;
+	if (data.nValues() < 2)
+		return 0.0;
 
 	// Grab data arrays
-	const Array<double>& x = data.constXAxis();
-	const Array<double>& y = data.constValues();
+	const Array<double> &x = data.constXAxis();
+	const Array<double> &y = data.constValues();
 
 	double total = 0.0, y0, y1, x0, x1;
 	int nPoints = 0;
-	for (int n=0; n<x.nItems(); ++n)
+	for (int n = 0; n < x.nItems(); ++n)
 	{
 		// Get current x and y values and check limit
 		x1 = x.constAt(n);
 		y1 = y.constAt(n);
-		if (x1 < xMin) continue;
-		if (x1 > xMax) break;
+		if (x1 < xMin)
+			continue;
+		if (x1 > xMax)
+			break;
 
 		// If this is the first point, don't try to increase integral
-		if (nPoints > 0) total += (x1 - x0) * (y0 + y1) * 0.5;
+		if (nPoints > 0)
+			total += (x1 - x0) * (y0 + y1) * 0.5;
 
 		// Store old values
 		x0 = x1;
@@ -85,23 +90,21 @@ double Integrator::trapezoid(const Data1D& data, double xMin, double xMax)
 }
 
 // Compute integral of supplied data via trapezoid rule within the specified range
-double Integrator::trapezoid(const Data1D& data, const Range range)
-{
-	return trapezoid(data, range.minimum(), range.maximum());
-}
+double Integrator::trapezoid(const Data1D &data, const Range range) { return trapezoid(data, range.minimum(), range.maximum()); }
 
 // Compute absolute integral of supplied data via trapezoid rule
-double Integrator::absTrapezoid(const Data1D& data)
+double Integrator::absTrapezoid(const Data1D &data)
 {
 	// Check for insufficient data
-	if (data.nValues() < 2) return 0.0;
+	if (data.nValues() < 2)
+		return 0.0;
 
 	// Grab data arrays
-	const Array<double>& x = data.constXAxis();
-	const Array<double>& y = data.constValues();
+	const Array<double> &x = data.constXAxis();
+	const Array<double> &y = data.constValues();
 
 	double total = 0.0, y0 = y.firstValue(), y1, x0 = x.firstValue(), x1;
-	for (int n=1; n<x.nItems(); ++n)
+	for (int n = 1; n < x.nItems(); ++n)
 	{
 		x1 = x.constAt(n);
 		y1 = y.constAt(n);
@@ -113,31 +116,34 @@ double Integrator::absTrapezoid(const Data1D& data)
 }
 
 // Return sum of all values in supplied data
-double Integrator::sum(const Data1D& data)
+double Integrator::sum(const Data1D &data)
 {
 	// Grab data array
-	const Array<double>& values = data.constValues();
+	const Array<double> &values = data.constValues();
 
 	double total = 0.0;
 
-	for (int n=0; n<values.nItems(); ++n) total += values.constAt(n);
+	for (int n = 0; n < values.nItems(); ++n)
+		total += values.constAt(n);
 
 	return total;
 }
 
 // Return sum of supplied data between the specified limits
-double Integrator::sum(const Data1D& data, double xMin, double xMax)
+double Integrator::sum(const Data1D &data, double xMin, double xMax)
 {
 	// Grab data arrays
-	const Array<double>& x = data.constXAxis();
-	const Array<double>& values = data.constValues();
+	const Array<double> &x = data.constXAxis();
+	const Array<double> &values = data.constValues();
 
 	double total = 0.0;
 
-	for (int n=0; n<values.nItems(); ++n)
+	for (int n = 0; n < values.nItems(); ++n)
 	{
-		if (x.constAt(n) < xMin) continue;
-		if (x.constAt(n) > xMax) break;
+		if (x.constAt(n) < xMin)
+			continue;
+		if (x.constAt(n) > xMax)
+			break;
 
 		total += values.constAt(n);
 	}
@@ -146,37 +152,37 @@ double Integrator::sum(const Data1D& data, double xMin, double xMax)
 }
 
 // Return sum of supplied data within the specified range
-double Integrator::sum(const Data1D& data, const Range range)
-{
-	return sum(data, range.minimum(), range.maximum());
-}
+double Integrator::sum(const Data1D &data, const Range range) { return sum(data, range.minimum(), range.maximum()); }
 
 // Return sum of all absolute values of supplied data
-double Integrator::absSum(const Data1D& data)
+double Integrator::absSum(const Data1D &data)
 {
 	// Grab data array
-	const Array<double>& values = data.constValues();
+	const Array<double> &values = data.constValues();
 
 	double total = 0.0;
 
-	for (int n=0; n<values.nItems(); ++n) total += fabs(values.constAt(n));
+	for (int n = 0; n < values.nItems(); ++n)
+		total += fabs(values.constAt(n));
 
 	return total;
 }
 
 // Return sum of all absolute values between the specified limits
-double Integrator::absSum(const Data1D& data, double xMin, double xMax)
+double Integrator::absSum(const Data1D &data, double xMin, double xMax)
 {
 	// Grab data arrays
-	const Array<double>& x = data.constXAxis();
-	const Array<double>& values = data.constValues();
+	const Array<double> &x = data.constXAxis();
+	const Array<double> &values = data.constValues();
 
 	double total = 0.0;
 
-	for (int n=0; n<values.nItems(); ++n)
+	for (int n = 0; n < values.nItems(); ++n)
 	{
-		if (x.constAt(n) < xMin) continue;
-		if (x.constAt(n) > xMax) break;
+		if (x.constAt(n) < xMin)
+			continue;
+		if (x.constAt(n) > xMax)
+			break;
 
 		total += fabs(values.constAt(n));
 	}
@@ -185,98 +191,99 @@ double Integrator::absSum(const Data1D& data, double xMin, double xMax)
 }
 
 // Return sum of all absolute values within the specified range
-double Integrator::absSum(const Data1D& data, const Range range)
-{
-	return absSum(data, range.minimum(), range.maximum());
-}
+double Integrator::absSum(const Data1D &data, const Range range) { return absSum(data, range.minimum(), range.maximum()); }
 
 // Return sum of squares of all values in supplied data
-double Integrator::sumOfSquares(const Data1D& data)
+double Integrator::sumOfSquares(const Data1D &data)
 {
 	// Grab data array
-	const Array<double>& values = data.constValues();
+	const Array<double> &values = data.constValues();
 
 	double total = 0.0;
 
-	for (int n=0; n<values.nItems(); ++n) total += values.constAt(n)*values.constAt(n);
+	for (int n = 0; n < values.nItems(); ++n)
+		total += values.constAt(n) * values.constAt(n);
 
 	return total;
 }
 
 // Return sum of squares of values between the specified limits
-double Integrator::sumOfSquares(const Data1D& data, double xMin, double xMax)
+double Integrator::sumOfSquares(const Data1D &data, double xMin, double xMax)
 {
 	// Grab data arrays
-	const Array<double>& x = data.constXAxis();
-	const Array<double>& values = data.constValues();
+	const Array<double> &x = data.constXAxis();
+	const Array<double> &values = data.constValues();
 
 	double total = 0.0;
 
-	for (int n=0; n<values.nItems(); ++n)
+	for (int n = 0; n < values.nItems(); ++n)
 	{
-		if (x.constAt(n) < xMin) continue;
-		if (x.constAt(n) > xMax) break;
+		if (x.constAt(n) < xMin)
+			continue;
+		if (x.constAt(n) > xMax)
+			break;
 
-		total += values.constAt(n)*values.constAt(n);
+		total += values.constAt(n) * values.constAt(n);
 	}
 
 	return total;
 }
 
 // Return sum of squares of values within the specified range
-double Integrator::sumOfSquares(const Data1D& data, const Range range)
-{
-	return sumOfSquares(data, range.minimum(), range.maximum());
-}
+double Integrator::sumOfSquares(const Data1D &data, const Range range) { return sumOfSquares(data, range.minimum(), range.maximum()); }
 
 // Return sum of all values in supplied data
-double Integrator::sum(const Data2D& data)
+double Integrator::sum(const Data2D &data)
 {
 	// Grab data array
-	const Array2D<double>& values = data.constValues2D();
+	const Array2D<double> &values = data.constValues2D();
 
 	double total = 0.0;
 
-	for (int n=0; n<values.linearArraySize(); ++n) total += values.constLinearValue(n);
+	for (int n = 0; n < values.linearArraySize(); ++n)
+		total += values.constLinearValue(n);
 
 	return total;
 }
 
 // Return sum of all absolute values in supplied data
-double Integrator::absSum(const Data2D& data)
+double Integrator::absSum(const Data2D &data)
 {
 	// Grab data array
-	const Array2D<double>& values = data.constValues2D();
+	const Array2D<double> &values = data.constValues2D();
 
 	double total = 0.0;
 
-	for (int n=0; n<values.linearArraySize(); ++n) total += fabs(values.constLinearValue(n));
+	for (int n = 0; n < values.linearArraySize(); ++n)
+		total += fabs(values.constLinearValue(n));
 
 	return total;
 }
 
 // Return sum of all values in supplied data
-double Integrator::sum(const Data3D& data)
+double Integrator::sum(const Data3D &data)
 {
 	// Grab data array
-	const Array3D<double>& values = data.constValues3D();
+	const Array3D<double> &values = data.constValues3D();
 
 	double total = 0.0;
 
-	for (int n=0; n<values.linearArraySize(); ++n) total += values.constLinearValue(n);
+	for (int n = 0; n < values.linearArraySize(); ++n)
+		total += values.constLinearValue(n);
 
 	return total;
 }
 
 // Return sum of all absolute values in supplied data
-double Integrator::absSum(const Data3D& data)
+double Integrator::absSum(const Data3D &data)
 {
 	// Grab data array
-	const Array3D<double>& values = data.constValues3D();
+	const Array3D<double> &values = data.constValues3D();
 
 	double total = 0.0;
 
-	for (int n=0; n<values.linearArraySize(); ++n) total += fabs(values.constLinearValue(n));
+	for (int n = 0; n < values.linearArraySize(); ++n)
+		total += fabs(values.constLinearValue(n));
 
 	return total;
 }

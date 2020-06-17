@@ -33,17 +33,11 @@ AtomShakeModule::AtomShakeModule() : Module()
 }
 
 // Destructor
-AtomShakeModule::~AtomShakeModule()
-{
-}
+AtomShakeModule::~AtomShakeModule() {}
 
 /*
  * Instances
  */
 
-
 // Create instance of this module
-Module* AtomShakeModule::createInstance() const
-{
-	return new AtomShakeModule;
-}
+Module *AtomShakeModule::createInstance() const { return new AtomShakeModule; }

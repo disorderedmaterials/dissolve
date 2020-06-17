@@ -35,39 +35,36 @@ class CalibrationModule : public Module
 	 * Module for testing various functions
 	 */
 
-	public:
+      public:
 	// Constructor
 	CalibrationModule();
 	// Destructor
 	~CalibrationModule();
 
-
 	/*
 	 * Instances
 	 */
-	public:
+      public:
 	// Create instance of this module
-	Module* createInstance() const;
-
+	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return type of module
-	const char* type() const;
+	const char *type() const;
 	// Return category for module
-	const char* category() const;
+	const char *category() const;
 	// Return brief description of module
-	const char* brief() const;
+	const char *brief() const;
 	// Return the number of Configuration targets this Module requires
 	int nRequiredTargets() const;
-
 
 	/*
 	 * Initialisation
 	 */
-	public:
+      public:
 	// IntraBroadening Fitting Targets
 	enum IntraBroadeningFitTarget
 	{
@@ -76,23 +73,22 @@ class CalibrationModule : public Module
 		IntraBroadeningTargetBoth,
 		nIntraBroadeningFitTargets
 	};
-	protected:
+
+      protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
 
-	
 	/*
 	 * Processing
 	 */
-	private:
+      private:
 	// Run main processing
-	bool process(Dissolve& dissolve, ProcessPool& procPool);
-
+	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Members / Functions
 	 */
-	private:
+      private:
 	// RDF Module targets for IntraBroadening calibration
 	RefList<Module> intraBroadeningModules_;
 	// NeutronSQ Module targets for IntraBroadening calibration (S(Q) data)
@@ -100,36 +96,35 @@ class CalibrationModule : public Module
 	// NeutronSQ Module targets for IntraBroadening calibration (G(r) data)
 	RefList<Module> intraBroadeningNeutronGRReferences_;
 
-
 	/*
 	 * GUI Widget
 	 */
-	public:
+      public:
 	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, Dissolve& dissolve);
+	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
 
 // Interface Class for Complex Cost Functions
 class CalibrationModuleCostFunctions
 {
-	public:
+      public:
 	// Constructor
-	CalibrationModuleCostFunctions(Dissolve& dissolve, ProcessPool& procPool, RefList<Module>& intraBroadeningModules, RefDataList<Module,CalibrationModule::IntraBroadeningFitTarget>& intraBroadeningReferences);
+	CalibrationModuleCostFunctions(Dissolve &dissolve, ProcessPool &procPool, RefList<Module> &intraBroadeningModules,
+				       RefDataList<Module, CalibrationModule::IntraBroadeningFitTarget> &intraBroadeningReferences);
 
-	private:
+      private:
 	// Dissolve Main Object
-	Dissolve& dissolve_;
+	Dissolve &dissolve_;
 	// Target ProcessPool
-	ProcessPool& processPool_;
+	ProcessPool &processPool_;
 	// RDFModule targets for IntraBroadening fitting
-	RefList<Module>& intraBroadeningModules_;
+	RefList<Module> &intraBroadeningModules_;
 	// NeutronSQModule targets for IntraBroadening fitting
-	RefDataList<Module,CalibrationModule::IntraBroadeningFitTarget>& intraBroadeningReferences_;
+	RefDataList<Module, CalibrationModule::IntraBroadeningFitTarget> &intraBroadeningReferences_;
 
-	public:
+      public:
 	// Cost function for intraBroadening minimisation
-	double intraBroadeningCost(const Array<double>& alpha);
+	double intraBroadeningCost(const Array<double> &alpha);
 };
 
 #endif
-

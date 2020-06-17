@@ -33,17 +33,11 @@ ImportModule::ImportModule() : Module()
 }
 
 // Destructor
-ImportModule::~ImportModule()
-{
-}
+ImportModule::~ImportModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* ImportModule::createInstance() const
-{
-	return new ImportModule;
-}
-
+Module *ImportModule::createInstance() const { return new ImportModule; }

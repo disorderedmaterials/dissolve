@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_PROCEDUREEDITOR_H
 #define DISSOLVE_PROCEDUREEDITOR_H
 
-#include "gui/ui_procedureeditor.h"
 #include "base/charstring.h"
+#include "gui/ui_procedureeditor.h"
 #include "templates/refdatalist.h"
 
 // Forward Declarations
@@ -40,34 +40,32 @@ class ProcedureEditor : public QWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor / Destructor
-	ProcedureEditor(QWidget* parent = NULL);
+	ProcedureEditor(QWidget *parent = NULL);
 	~ProcedureEditor();
-
 
 	/*
 	 * Procedure Target
 	 */
-	private:
+      private:
 	// Procedure to be edited
-	Procedure* procedure_;
+	Procedure *procedure_;
 	// Module categories and their associated MimeTreeWidgetItems
-	RefDataList<MimeTreeWidgetItem,CharString> moduleCategories_;
+	RefDataList<MimeTreeWidgetItem, CharString> moduleCategories_;
 
-	public:
+      public:
 	// Set up to display / edit the target Procedure
-	void setUp(Procedure* procedure, const CoreData& coreData);
-
+	void setUp(Procedure *procedure, const CoreData &coreData);
 
 	/*
 	 * Update
 	 */
-	private:
+      private:
 	// Whether the widget is currently refreshing
 	bool refreshing_;
 
-	public:
+      public:
 	// Update controls
 	void updateControls();
 	// Disable sensitive controls within widget
@@ -75,40 +73,37 @@ class ProcedureEditor : public QWidget
 	// Enable sensitive controls within widget
 	void enableSensitiveControls();
 
-
 	/*
 	 * Controls
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::ProcedureEditor ui_;
 	// Pointer to created ProcedureChart
-	ProcedureChart* chart_;
+	ProcedureChart *chart_;
 
-	private slots:
-// 	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);
-
+      private slots:
+	// 	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);
 
 	/*
 	 * State
 	 */
-	public:
+      public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser) const;
+	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
+	bool readState(LineParser &parser);
 
 	/*
 	 * Signals / Slots
 	 */
-	private slots:
+      private slots:
 	// Data displayed in the chart has been modified
 	void chartDataModified();
 	// Required size of the chart widget has changed
 	void chartSizeChanged();
 
-	signals:
+      signals:
 	// Notify that the Procedure's data has changed
 	void dataModified();
 };

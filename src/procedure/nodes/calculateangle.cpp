@@ -20,15 +20,16 @@
 */
 
 #include "procedure/nodes/calculateangle.h"
-#include "procedure/nodes/select.h"
+#include "base/lineparser.h"
+#include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "base/lineparser.h"
-#include "base/sysfunc.h"
+#include "procedure/nodes/select.h"
 
 // Constructor
-CalculateAngleProcedureNode::CalculateAngleProcedureNode(SelectProcedureNode* site0, SelectProcedureNode* site1, SelectProcedureNode* site2) : CalculateProcedureNodeBase(ProcedureNode::CalculateAngleNode, site0, site1, site2)
+CalculateAngleProcedureNode::CalculateAngleProcedureNode(SelectProcedureNode *site0, SelectProcedureNode *site1, SelectProcedureNode *site2)
+    : CalculateProcedureNodeBase(ProcedureNode::CalculateAngleNode, site0, site1, site2)
 {
 	// Create keywords - store the pointers to the superclasses for later use
 	siteKeywords_[0] = new NodeKeyword<SelectProcedureNode>(this, ProcedureNode::SelectNode, true, site0);
@@ -40,35 +41,27 @@ CalculateAngleProcedureNode::CalculateAngleProcedureNode(SelectProcedureNode* si
 }
 
 // Destructor
-CalculateAngleProcedureNode::~CalculateAngleProcedureNode()
-{
-}
+CalculateAngleProcedureNode::~CalculateAngleProcedureNode() {}
 
 /*
  * Observable Target
  */
 
 // Return number of sites required to calculate observable
-int CalculateAngleProcedureNode::nSitesRequired() const
-{
-	return 3;
-}
+int CalculateAngleProcedureNode::nSitesRequired() const { return 3; }
 
 // Return dimensionality of calculated observable
-int CalculateAngleProcedureNode::dimensionality() const
-{
-	return 1;
-}
+int CalculateAngleProcedureNode::dimensionality() const { return 1; }
 
-/* 
+/*
  * Execute
  */
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult CalculateAngleProcedureNode::execute(ProcessPool& procPool, Configuration* cfg, const char* prefix, GenericList& targetList)
+ProcedureNode::NodeExecutionResult CalculateAngleProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
 {
 #ifdef CHECKS
-	for (int n=0; n<nSitesRequired(); ++n)
+	for (int n = 0; n < nSitesRequired(); ++n)
 	{
 		if (sites_[n]->currentSite() == NULL)
 		{

@@ -19,12 +19,12 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/node.h"
 #include "gui/helpers/comboboxupdater.h"
 #include "gui/helpers/mousewheeladjustmentguard.h"
+#include "gui/keywordwidgets/node.h"
 
 // Constructor
-NodeKeywordWidget::NodeKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+NodeKeywordWidget::NodeKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI
 	ui_.setupUi(this);
@@ -32,8 +32,9 @@ NodeKeywordWidget::NodeKeywordWidget(QWidget* parent, KeywordBase* keyword, cons
 	refreshing_ = true;
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<NodeKeywordBase*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into NodeKeywordBase.\n", keyword->name());
+	keyword_ = dynamic_cast<NodeKeywordBase *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into NodeKeywordBase.\n", keyword->name());
 	else
 	{
 		updateValue();
@@ -52,10 +53,11 @@ NodeKeywordWidget::NodeKeywordWidget(QWidget* parent, KeywordBase* keyword, cons
 // Value changed
 void NodeKeywordWidget::on_NodeCombo_currentIndexChanged(int index)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	// Get data from the selected item
-	ProcedureNode* node = VariantPointer<ProcedureNode>(ui_.NodeCombo->itemData(index, Qt::UserRole));
+	ProcedureNode *node = VariantPointer<ProcedureNode>(ui_.NodeCombo->itemData(index, Qt::UserRole));
 	keyword_->setNode(node);
 
 	emit(keywordValueChanged(keyword_->optionMask()));

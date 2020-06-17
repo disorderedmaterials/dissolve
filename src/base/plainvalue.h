@@ -32,7 +32,7 @@ class ProcessPool;
 // PlainValue
 class PlainValue : public ListItem<PlainValue>
 {
-	public:
+      public:
 	// Constructor
 	PlainValue();
 	// Destructor
@@ -44,23 +44,28 @@ class PlainValue : public ListItem<PlainValue>
 	// Constructor (double)
 	PlainValue(double value);
 	// Constructor (const char*)
-	PlainValue(const char* value);
+	PlainValue(const char *value);
 	// Constructor (CharString)
-	PlainValue(const CharString& value);
+	PlainValue(const CharString &value);
 	// Constructor (PlainValue)
-	PlainValue(const PlainValue& value);
+	PlainValue(const PlainValue &value);
 	// Assignment Operator
-	void operator=(const PlainValue& value);
+	void operator=(const PlainValue &value);
 	// Value Type
-	enum ValueType { BooleanType, IntegerType, DoubleType, StringType };
+	enum ValueType
+	{
+		BooleanType,
+		IntegerType,
+		DoubleType,
+		StringType
+	};
 	// Return ValueType name
-	static const char* valueType(ValueType vt);
-
+	static const char *valueType(ValueType vt);
 
 	/*
 	 * Value Storage
 	 */
-	private:
+      private:
 	// Name of value
 	CharString name_;
 	// Description of value, if any
@@ -78,29 +83,28 @@ class PlainValue : public ListItem<PlainValue>
 	// Value (string)
 	CharString valueC_;
 
-	private:
+      private:
 	// Clear all data
 	void clear();
 
-	public:
+      public:
 	// Set up value, including name and description
-	void initialise(const char* name, PlainValue newValue, const char* description, int genericItemFlags);
+	void initialise(const char *name, PlainValue newValue, const char *description, int genericItemFlags);
 	// Set value
-	void set(const PlainValue& newValue);
+	void set(const PlainValue &newValue);
 	// Return name of value
-	const char* name();
+	const char *name();
 	// Return description for value
-	const char* description();
+	const char *description();
 	// Return type of value
 	ValueType type();
 	// Return flags to apply if reinstated as a GenericListItem (i.e. in a Module)
 	int genericItemFlags();
 
-
 	/*
 	 * Validation
 	 */
-	private:
+      private:
 	// Whether this option has any validation
 	bool hasValidation_;
 	// Validation limits to apply (if appropriate)
@@ -112,9 +116,9 @@ class PlainValue : public ListItem<PlainValue>
 	// Number of valid string values (if appropriate)
 	int nValidC_;
 	// Pointer to valid string values array (if appropriate)
-	const char** validC_;
+	const char **validC_;
 
-	public:
+      public:
 	// Set integer validation range
 	void setValidationRange(int minValue, int maxValue);
 	// Set minimum validation limit
@@ -136,11 +140,11 @@ class PlainValue : public ListItem<PlainValue>
 	// Return maximum double value allowed
 	double maxD();
 	// Return minimum double value allowed (as string)
-	const char* minDAsString();
+	const char *minDAsString();
 	// Return maximum double value allowed (as string)
-	const char* maxDAsString();
+	const char *maxDAsString();
 	// Set string validation
-	void setValidation(int nValues, const char** values);
+	void setValidation(int nValues, const char **values);
 	// Return valid string values
 	CharString validC();
 	// Validate integer value
@@ -148,19 +152,18 @@ class PlainValue : public ListItem<PlainValue>
 	// Valudate double value
 	bool isValid(double d);
 	// Validate string value
-	bool isValid(const char* s);
+	bool isValid(const char *s);
 	// Return valid range
 	CharString validRange();
-
 
 	/*
 	 * Conversion
 	 */
-	private:
+      private:
 	// Temporary working string
 	CharString conversionStringTemp_;
 
-	public:
+      public:
 	// Return value (as bool)
 	bool asBool();
 	// Return value (as int)
@@ -168,16 +171,14 @@ class PlainValue : public ListItem<PlainValue>
 	// Return value (as double)
 	double asDouble();
 	// Return value (as string)
-	const char* asString();
-
+	const char *asString();
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool);
+	bool broadcast(ProcessPool &procPool);
 };
 
 #endif
-

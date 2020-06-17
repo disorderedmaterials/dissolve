@@ -30,22 +30,27 @@
 // Number Format
 class NumberFormat
 {
-	public:
+      public:
 	// Constructor / Destructor
 	NumberFormat();
 	~NumberFormat();
 	// Basic Number Type
-	enum FormatType { DecimalFormat, IntegerFormat, ScientificFormat, nNumberFormats };
+	enum FormatType
+	{
+		DecimalFormat,
+		IntegerFormat,
+		ScientificFormat,
+		nNumberFormats
+	};
 	// Convert text string to FormatType
 	static FormatType formatType(QString s);
 	// Convert FormatType to text string
-	static const char* formatType(FormatType id);
-
+	static const char *formatType(FormatType id);
 
 	/*
 	 * Definition
 	 */
-	private:
+      private:
 	// Format type
 	FormatType type_;
 	// Number of decimals to use
@@ -57,7 +62,7 @@ class NumberFormat
 	// Whether to use 'E' notation in preference to 'x10' notation
 	bool useENotation_;
 
-	public:
+      public:
 	// Set format type
 	void setType(NumberFormat::FormatType type);
 	// Return format type
@@ -79,11 +84,10 @@ class NumberFormat
 	// Return whether to use 'E' notation in preference to 'x10' notation
 	bool useENotation();
 
-
 	/*
 	 * Number Conversion
 	 */
-	public:
+      public:
 	// Return number formatted according to internal definition
 	QString format(double number);
 };

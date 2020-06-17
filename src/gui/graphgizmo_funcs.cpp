@@ -28,7 +28,7 @@
 #include <QMessageBox>
 
 // Constructor
-GraphGizmo::GraphGizmo(Dissolve& dissolve, const char* uniqueName) : Gizmo(dissolve, uniqueName)
+GraphGizmo::GraphGizmo(Dissolve &dissolve, const char *uniqueName) : Gizmo(dissolve, uniqueName)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -50,29 +50,21 @@ GraphGizmo::GraphGizmo(Dissolve& dissolve, const char* uniqueName) : Gizmo(disso
 }
 
 // Destructor
-GraphGizmo::~GraphGizmo()
-{
-}
+GraphGizmo::~GraphGizmo() {}
 
 /*
  * Core
  */
 
 // Return string specifying Gizmo type
-const char* GraphGizmo::type() const
-{
-	return "Graph";
-}
+const char *GraphGizmo::type() const { return "Graph"; }
 
 /*
  * UI
  */
 
 // Window close event
-void GraphGizmo::closeEvent(QCloseEvent* event)
-{
-	emit(windowClosed(uniqueName_.get()));
-}
+void GraphGizmo::closeEvent(QCloseEvent *event) { emit(windowClosed(uniqueName_.get())); }
 
 // Update controls within widget
 void GraphGizmo::updateControls()
@@ -86,34 +78,34 @@ void GraphGizmo::updateControls()
 }
 
 // Disable sensitive controls within widget
-void GraphGizmo::disableSensitiveControls()
-{
-}
+void GraphGizmo::disableSensitiveControls() {}
 
 // Enable sensitive controls within widget
-void GraphGizmo::enableSensitiveControls()
-{
-}
+void GraphGizmo::enableSensitiveControls() {}
 
 /*
  * Data Handling
  */
 
 // Return whether this Gizmo accepts data of the specified type
-bool GraphGizmo::acceptsData(const char* dataType)
+bool GraphGizmo::acceptsData(const char *dataType)
 {
-	if (DissolveSys::sameString("Data1D", dataType)) return true;
-	if (DissolveSys::sameString("Data2D", dataType)) return true;
-	if (DissolveSys::sameString("Data3D", dataType)) return true;
+	if (DissolveSys::sameString("Data1D", dataType))
+		return true;
+	if (DissolveSys::sameString("Data2D", dataType))
+		return true;
+	if (DissolveSys::sameString("Data3D", dataType))
+		return true;
 
 	return false;
 }
 
 // Send data (referenced by its object tag) to the Gizmo
-bool GraphGizmo::sendData(const char* dataType, const char* objectTag, const char* name)
+bool GraphGizmo::sendData(const char *dataType, const char *objectTag, const char *name)
 {
 	Renderable::RenderableType rendType = Renderable::renderableTypes().enumeration(dataType);
-	if ((rendType != Renderable::Data1DRenderable) && (rendType != Renderable::Data2DRenderable) && (rendType != Renderable::Data3DRenderable)) return false;
+	if ((rendType != Renderable::Data1DRenderable) && (rendType != Renderable::Data2DRenderable) && (rendType != Renderable::Data3DRenderable))
+		return false;
 
 	dataViewer_->createRenderable(rendType, objectTag, name, "Default");
 
@@ -125,29 +117,28 @@ bool GraphGizmo::sendData(const char* dataType, const char* objectTag, const cha
  */
 
 // Return pointer to the contained DataViewer
-DataViewer* GraphGizmo::dataViewer() const
-{
-	return dataViewer_;
-}
+DataViewer *GraphGizmo::dataViewer() const { return dataViewer_; }
 
 /*
  * State
  */
 
 // Write widget state through specified LineParser
-bool GraphGizmo::writeState(LineParser& parser) const
+bool GraphGizmo::writeState(LineParser &parser) const
 {
 	// Write DataViewer state
-	if (!dataViewer_->writeSession(parser)) return false;
+	if (!dataViewer_->writeSession(parser))
+		return false;
 
 	return true;
 }
 
 // Read widget state through specified LineParser
-bool GraphGizmo::readState(LineParser& parser)
+bool GraphGizmo::readState(LineParser &parser)
 {
 	// Read the DataViewer session info
-	if (!dataViewer_->readSession(parser)) return false;
+	if (!dataViewer_->readSession(parser))
+		return false;
 
 	// Make sure that our controls reflect the state of the underlying DataViewer
 	ui_.DataView->updateToolbar();

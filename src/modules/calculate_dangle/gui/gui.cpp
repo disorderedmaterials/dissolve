@@ -23,8 +23,4 @@
 #include "modules/calculate_dangle/gui/modulewidget.h"
 
 // Return a new widget controlling this Module
-ModuleWidget* CalculateDAngleModule::createWidget(QWidget* parent, Dissolve& dissolve)
-{
-	return new CalculateDAngleModuleWidget(parent, this);
-}
-
+ModuleWidget *CalculateDAngleModule::createWidget(QWidget *parent, Dissolve &dissolve) { return new CalculateDAngleModuleWidget(parent, this); }

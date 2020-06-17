@@ -22,19 +22,10 @@
 #include "classes/sitereference.h"
 
 // Constructor
-SiteReference::SiteReference(SiteStack& siteStack, const char* name) : ListItem<SiteReference>(), siteStack_(siteStack)
-{
-	name_ = name;
-}
+SiteReference::SiteReference(SiteStack &siteStack, const char *name) : ListItem<SiteReference>(), siteStack_(siteStack) { name_ = name; }
 
 // Return referenced stack of sites
-SiteStack& SiteReference::siteStack() const
-{
-	return siteStack_;
-}
+SiteStack &SiteReference::siteStack() const { return siteStack_; }
 
 // Return name of this site stack (in the context of an Analyser)
-const char* SiteReference::name() const
-{
-	return name_.get();
-}
+const char *SiteReference::name() const { return name_.get(); }

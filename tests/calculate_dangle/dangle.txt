@@ -72,8 +72,8 @@ EndSpecies
 PairPotentials
   Range  9.000000
   Delta  0.050000
-  Parameters  'OW'  -0.82   LJGeometric   0.65	3.165492
-  Parameters  'HW'  0.41    LJGeometric   0.0      0.0
+  Parameters  'OW'  O  -0.82   LJGeometric   0.65	3.165492
+  Parameters  'HW'  H  0.41    LJGeometric   0.0      0.0
 EndPairPotentials
 
 #------------------------#
@@ -204,6 +204,9 @@ Module  Analyse  'DAngle(X-H...O)-Analyser'
     Process1D  'Angle'
       SourceData  'ANGLE(ABC)'
       Normalisation
+	OperateExpression
+	  Expression  "value/sin(x)"
+	EndOperateExpression
         OperateNormalise
           Value  1.0
         EndOperateNormalise
@@ -247,17 +250,17 @@ EndModule
 Module DataTest
   Frequency  95
   Target  'DAngle(X-H...O)'
-  Data1D  'DAngle(X-H...O)_ANGLE(ABC)_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.dahist1_02_1_01_02.angle'
+  Data1D  'DAngle(X-H...O)_ANGLE(ABC)_Bulk'  xy  '../_data/water267-dlpoly/water-267-298K.dahist1_02_1_01_02.angle.norm'
   EndData1D
-  Threshold  0.3
+  Threshold  0.4
 EndModule
 
 Module DataTest
   Frequency  95
   Target  'DAngle(X-H...O)-Analyser'
-  Data1D  'DAngle(X-H...O)-Analyser//Process1D//Bulk//Angle'  xy  '../_data/water267-dlpoly/water-267-298K.dahist1_02_1_01_02.angle'
+  Data1D  'DAngle(X-H...O)-Analyser//Process1D//Bulk//Angle'  xy  '../_data/water267-dlpoly/water-267-298K.dahist1_02_1_01_02.angle.norm'
   EndData1D
-  Threshold  0.3
+  Threshold  0.4
 EndModule
 
 Module DataTest

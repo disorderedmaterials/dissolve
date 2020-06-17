@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate_angle/angle.h"
 #include "keywords/types.h"
+#include "modules/calculate_angle/angle.h"
 #include "procedure/nodes/calculateangle.h"
 #include "procedure/nodes/calculatedistance.h"
 #include "procedure/nodes/collect1d.h"
@@ -104,12 +104,12 @@ void CalculateAngleModule::initialise()
 	 *   Normalisation
 	 *     OperateSitePopulationNormalise
 	 *       Site  'B'
-         *     EndOperateSitePopulationNormalise
+	 *     EndOperateSitePopulationNormalise
 	 *     OperateNumberDensityNormalise
 	 *       Site  'A'
-         *     EndOperateNumberDensityNormalise
+	 *     EndOperateNumberDensityNormalise
 	 *     OperateSphericalShellNormalise
-         *     EndOperateSphericalShellNormalise
+	 *     EndOperateSphericalShellNormalise
 	 *   EndNormalisation
 	 *   LabelX  'r, Angstroms'
 	 *   LabelValue  'g\\sub{AB}(r)'
@@ -118,12 +118,12 @@ void CalculateAngleModule::initialise()
 	 *   Normalisation
 	 *     OperateSitePopulationNormalise
 	 *       Site  'B'
-         *     EndOperateSitePopulationNormalise
+	 *     EndOperateSitePopulationNormalise
 	 *     OperateNumberDensityNormalise
 	 *       Site  'C'
-         *     EndOperateNumberDensityNormalise
+	 *     EndOperateNumberDensityNormalise
 	 *     OperateSphericalShellNormalise
-         *     EndOperateSphericalShellNormalise
+	 *     EndOperateSphericalShellNormalise
 	 *   EndNormalisation
 	 *   LabelX  'r, Angstroms'
 	 *   LabelValue  'g\\sub{BC}(r)'
@@ -135,7 +135,7 @@ void CalculateAngleModule::initialise()
 	 *     EndOperateExpression
 	 *     OperateNormalise
 	 *       Value  1.0
-         *     EndOperateNormalise
+	 *     EndOperateNormalise
 	 *   EndNormalisation
 	 *   LabelValue  'g(r)'
 	 *   LabelX  'theta, Degrees'
@@ -148,7 +148,7 @@ void CalculateAngleModule::initialise()
 	 *     EndOperateEquationNormalise
 	 *     OperateNormalise
 	 *       Value  1.0
-         *     EndOperateNormalise
+	 *     EndOperateNormalise
 	 *   EndNormalistaion
 	 *   LabelValue  'g(r)'
 	 *   LabelX  'r, Angstroms'
@@ -160,44 +160,44 @@ void CalculateAngleModule::initialise()
 	// Select: Site 'B'
 	selectB_ = new SelectProcedureNode;
 	selectB_->setName("B");
-	SequenceProcedureNode* forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
+	SequenceProcedureNode *forEachB = selectB_->addForEachBranch(ProcedureNode::AnalysisContext);
 	analyser_.addRootSequenceNode(selectB_);
 
 	// -- Select: Site 'A'
 	selectA_ = new SelectProcedureNode;
 	selectA_->setName("A");
-	SequenceProcedureNode* forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
+	SequenceProcedureNode *forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
 	forEachB->addNode(selectA_);
 
 	// -- -- Select: Site 'C'
 	selectC_ = new SelectProcedureNode;
 	selectC_->setName("C");
-	SequenceProcedureNode* forEachC = selectC_->addForEachBranch(ProcedureNode::AnalysisContext);
+	SequenceProcedureNode *forEachC = selectC_->addForEachBranch(ProcedureNode::AnalysisContext);
 	forEachA->addNode(selectC_);
 
 	// -- -- -- Calculate: 'rAB'
-	CalculateDistanceProcedureNode* calcAB = new CalculateDistanceProcedureNode(selectA_, selectB_);
+	CalculateDistanceProcedureNode *calcAB = new CalculateDistanceProcedureNode(selectA_, selectB_);
 	forEachC->addNode(calcAB);
 
 	// -- -- -- Calculate: 'rBC'
-	CalculateDistanceProcedureNode* calcBC = new CalculateDistanceProcedureNode(selectB_, selectC_);
+	CalculateDistanceProcedureNode *calcBC = new CalculateDistanceProcedureNode(selectB_, selectC_);
 	forEachC->addNode(calcBC);
 
 	// -- -- -- Calculate: 'aABC'
-	CalculateAngleProcedureNode* calcABC = new CalculateAngleProcedureNode(selectA_, selectB_, selectC_);
+	CalculateAngleProcedureNode *calcABC = new CalculateAngleProcedureNode(selectA_, selectB_, selectC_);
 	forEachC->addNode(calcABC);
 
 	// -- -- -- Collect3D:  'rAB vs rBC vs aABC'
 	collectDDA_ = new Collect3DProcedureNode(calcAB, calcBC, calcABC, 0.0, 10.0, 0.05, 0.0, 10.0, 0.05, 0.0, 180.0, 1.0);
-	SequenceProcedureNode* subCollection = collectDDA_->addSubCollectBranch(ProcedureNode::AnalysisContext);
+	SequenceProcedureNode *subCollection = collectDDA_->addSubCollectBranch(ProcedureNode::AnalysisContext);
 	forEachC->addNode(collectDDA_);
 
 	// -- -- -- -- Collect1D:  'RDF(AB)'
-	collectAB_= new Collect1DProcedureNode(calcAB, 0.0, 10.0, 0.05);
+	collectAB_ = new Collect1DProcedureNode(calcAB, 0.0, 10.0, 0.05);
 	subCollection->addNode(collectAB_);
 
 	// -- -- -- -- Collect1D:  'RDF(BC)'
-	collectBC_= new Collect1DProcedureNode(calcBC, 0.0, 10.0, 0.05);
+	collectBC_ = new Collect1DProcedureNode(calcBC, 0.0, 10.0, 0.05);
 	subCollection->addNode(collectBC_);
 
 	// -- -- -- -- Collect1D:  'ANGLE(ABC)'
@@ -217,7 +217,7 @@ void CalculateAngleModule::initialise()
 	processAB_->setName("RDF(AB)");
 	processAB_->setKeyword<CharString>("LabelValue", "g\\sub{AB}(r)");
 	processAB_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
-	SequenceProcedureNode* rdfABNormalisation = processAB_->addNormalisationBranch();
+	SequenceProcedureNode *rdfABNormalisation = processAB_->addNormalisationBranch();
 	RefList<const SelectProcedureNode> normAB;
 	normAB.append(selectB_);
 	normAB.append(selectA_);
@@ -232,7 +232,7 @@ void CalculateAngleModule::initialise()
 	processBC_->setName("RDF(BC)");
 	processBC_->setKeyword<CharString>("LabelValue", "g\\sub{BC}(r)");
 	processBC_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
-	SequenceProcedureNode* rdfBCNormalisation = processBC_->addNormalisationBranch();
+	SequenceProcedureNode *rdfBCNormalisation = processBC_->addNormalisationBranch();
 	RefList<const SelectProcedureNode> normBC;
 	normBC.append(selectB_);
 	normBC.append(selectA_);
@@ -247,7 +247,7 @@ void CalculateAngleModule::initialise()
 	processAngle_->setName("Angle(ABC)");
 	processAngle_->setKeyword<CharString>("LabelValue", "Normalised Frequency");
 	processAngle_->setKeyword<CharString>("LabelX", "\\symbol{theta}, \\symbol{degrees}");
-	SequenceProcedureNode* angleNormalisation = processAngle_->addNormalisationBranch();
+	SequenceProcedureNode *angleNormalisation = processAngle_->addNormalisationBranch();
 	angleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(x)"));
 	angleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
 	analyser_.addRootSequenceNode(processAngle_);
@@ -258,7 +258,7 @@ void CalculateAngleModule::initialise()
 	processDAngleAB_->setKeyword<CharString>("LabelValue", "g\\sub{AB}(r)");
 	processDAngleAB_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
 	processDAngleAB_->setKeyword<CharString>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
-	SequenceProcedureNode* dAngleABNormalisation = processDAngleAB_->addNormalisationBranch();
+	SequenceProcedureNode *dAngleABNormalisation = processDAngleAB_->addNormalisationBranch();
 	dAngleABNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(y)"));
 	dAngleABNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
 	analyser_.addRootSequenceNode(processDAngleAB_);
@@ -269,7 +269,7 @@ void CalculateAngleModule::initialise()
 	processDAngleBC_->setKeyword<CharString>("LabelValue", "g\\sub{BC}(r)");
 	processDAngleBC_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
 	processDAngleBC_->setKeyword<CharString>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
-	SequenceProcedureNode* dAngleBCNormalisation = processDAngleBC_->addNormalisationBranch();
+	SequenceProcedureNode *dAngleBCNormalisation = processDAngleBC_->addNormalisationBranch();
 	dAngleBCNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(y)"));
 	dAngleBCNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
 	analyser_.addRootSequenceNode(processDAngleBC_);
@@ -279,9 +279,12 @@ void CalculateAngleModule::initialise()
 	 */
 
 	// Calculation
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "RangeAB", "Range (min, max, binwidth) of A-B distance axis", "<min> <max> <binwidth> (Angstroms)");
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "RangeBC", "Range (min, max, binwidth) of B-C distance axis", "<min> <max> <binwidth> (Angstroms)");
-	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "AngleRange", "Range (min, max, binwidth) of angle axis", "<min> <max> <binwidth> (degrees)");
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "RangeAB",
+		      "Range (min, max, binwidth) of A-B distance axis", "<min> <max> <binwidth> (Angstroms)");
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 10.0, 0.05), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "RangeBC",
+		      "Range (min, max, binwidth) of B-C distance axis", "<min> <max> <binwidth> (Angstroms)");
+	keywords_.add("Calculation", new Vec3DoubleKeyword(Vec3<double>(0.0, 180.0, 1.0), Vec3<double>(0.0, 0.0, 1.0e-5), Vec3Labels::MinMaxBinwidthlabels), "AngleRange",
+		      "Range (min, max, binwidth) of angle axis", "<min> <max> <binwidth> (degrees)");
 
 	// Sites
 	keywords_.link("Sites", selectA_->keywords().find("Site"), "SiteA", "Add site(s) which represent 'A' in the interaction A-B-C", "<Species> <Site> [<Species> <Site> ... ]");
@@ -298,4 +301,3 @@ void CalculateAngleModule::initialise()
 	keywords_.link("Export", processDAngleAB_->keywords().find("Save"), "SaveDAngleAB", "Whether to save calculated (A-B)-C distance-angle map to disk", "<True|False>");
 	keywords_.link("Export", processDAngleBC_->keywords().find("Save"), "SaveDAngleBC", "Whether to save calculated A-(B-C) distance-angle map to disk", "<True|False>");
 }
-

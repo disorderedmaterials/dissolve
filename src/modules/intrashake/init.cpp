@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/intrashake/intrashake.h"
 #include "keywords/types.h"
+#include "modules/intrashake/intrashake.h"
 
 // Perform any necessary initialisation for the Module
 void IntraShakeModule::initialise()
@@ -49,4 +49,3 @@ void IntraShakeModule::initialise()
 	keywords_.add("Torsions", new DoubleKeyword(0.5), "TorsionStepSizeMin", "Minimum step size for Torsion adjustments (degrees)", "<stepsize>");
 	keywords_.add("Torsions", new DoubleKeyword(45.0), "TorsionStepSizeMax", "Maximum step size for Torsion adjustments (degrees)", "<stepsize>");
 }
-

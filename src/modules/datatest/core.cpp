@@ -33,16 +33,11 @@ DataTestModule::DataTestModule() : Module()
 }
 
 // Destructor
-DataTestModule::~DataTestModule()
-{
-}
+DataTestModule::~DataTestModule() {}
 
 /*
  * Instances
  */
 
 // Create instance of this module
-Module* DataTestModule::createInstance() const
-{
-	return new DataTestModule;
-}
+Module *DataTestModule::createInstance() const { return new DataTestModule; }

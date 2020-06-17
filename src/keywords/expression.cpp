@@ -20,45 +20,33 @@
 */
 
 #include "keywords/expression.h"
-#include "expression/expression.h"
 #include "base/lineparser.h"
+#include "expression/expression.h"
 
 // Constructor
-ExpressionKeyword::ExpressionKeyword(Expression& expression) : KeywordData<Expression&>(KeywordData::ExpressionData, expression)
-{
-}
+ExpressionKeyword::ExpressionKeyword(Expression &expression) : KeywordData<Expression &>(KeywordData::ExpressionData, expression) {}
 
 // Destructor
-ExpressionKeyword::~ExpressionKeyword()
-{
-}
+ExpressionKeyword::~ExpressionKeyword() {}
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int ExpressionKeyword::minArguments() const
-{
-	return 1;
-}
+int ExpressionKeyword::minArguments() const { return 1; }
 
 // Return maximum number of arguments accepted
-int ExpressionKeyword::maxArguments() const
-{
-	return 1;
-}
+int ExpressionKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ExpressionKeyword::read(LineParser& parser, int startArg, const CoreData& coreData)
-{
-	return setValue(parser.argc(startArg));
-}
+bool ExpressionKeyword::read(LineParser &parser, int startArg, const CoreData &coreData) { return setValue(parser.argc(startArg)); }
 
 // Write keyword data to specified LineParser
-bool ExpressionKeyword::write(LineParser& parser, const char* keywordName, const char* prefix)
+bool ExpressionKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
-	if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_.expressionString())) return false;
+	if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_.expressionString()))
+		return false;
 
 	return true;
 }
@@ -68,9 +56,10 @@ bool ExpressionKeyword::write(LineParser& parser, const char* keywordName, const
  */
 
 // Set the value from supplied expression text
-bool ExpressionKeyword::setValue(const char* expressionText)
+bool ExpressionKeyword::setValue(const char *expressionText)
 {
-	if (!data_.set(expressionText)) return false;
+	if (!data_.set(expressionText))
+		return false;
 
 	set_ = true;
 
@@ -82,16 +71,10 @@ bool ExpressionKeyword::setValue(const char* expressionText)
  */
 
 // Return value (as int)
-int ExpressionKeyword::asInt()
-{
-	return data_.asInteger();
-}
+int ExpressionKeyword::asInt() { return data_.asInteger(); }
 
 // Return value (as double)
-double ExpressionKeyword::asDouble()
-{
-	return data_.asDouble();
-}
+double ExpressionKeyword::asDouble() { return data_.asDouble(); }
 
 /*
  * Object Management

@@ -20,15 +20,15 @@
 */
 
 #include "classes/coredata.h"
+#include "base/sysfunc.h"
+#include "classes/atomtype.h"
 #include "classes/configuration.h"
 #include "classes/species.h"
-#include "classes/atomtype.h"
 #include "classes/speciesangle.h"
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
 #include "module/list.h"
 #include "module/module.h"
-#include "base/sysfunc.h"
 
 // Constructor
 CoreData::CoreData()
@@ -38,9 +38,7 @@ CoreData::CoreData()
 }
 
 // Destructor
-CoreData::~CoreData()
-{
-}
+CoreData::~CoreData() {}
 
 // Clear all data
 void CoreData::clear()
@@ -58,9 +56,9 @@ void CoreData::clear()
  */
 
 // Add new AtomType
-AtomType* CoreData::addAtomType(Element* el)
+AtomType *CoreData::addAtomType(Element *el)
 {
-	AtomType* newAtomType = atomTypes_.add();
+	AtomType *newAtomType = atomTypes_.add();
 
 	// Create a suitable unique name
 	newAtomType->setName(uniqueAtomTypeName(el->symbol()));
@@ -76,37 +74,22 @@ AtomType* CoreData::addAtomType(Element* el)
 }
 
 // Remove specified AtomType
-void CoreData::removeAtomType(AtomType* at)
-{
-	atomTypes_.remove(at);
-}
+void CoreData::removeAtomType(AtomType *at) { atomTypes_.remove(at); }
 
 // Return number of AtomTypes in list
-int CoreData::nAtomTypes() const
-{
-	return atomTypes_.nItems();
-}
+int CoreData::nAtomTypes() const { return atomTypes_.nItems(); }
 
 // Return core AtomTypes list
-List<AtomType>& CoreData::atomTypes()
-{
-	return atomTypes_;
-}
+List<AtomType> &CoreData::atomTypes() { return atomTypes_; }
 
 // Return core AtomTypes list (const)
-const List<AtomType>& CoreData::constAtomTypes() const
-{
-	return atomTypes_;
-}
+const List<AtomType> &CoreData::constAtomTypes() const { return atomTypes_; }
 
 // Return nth AtomType in list
-AtomType* CoreData::atomType(int n)
-{
-	return atomTypes_[n];
-}
+AtomType *CoreData::atomType(int n) { return atomTypes_[n]; }
 
 // Generate unique AtomType name with base name provided
-const char* CoreData::uniqueAtomTypeName(const char* base) const
+const char *CoreData::uniqueAtomTypeName(const char *base) const
 {
 	static CharString uniqueName;
 	CharString baseName = base;
@@ -114,7 +97,8 @@ const char* CoreData::uniqueAtomTypeName(const char* base) const
 	int suffix = 0;
 
 	// Must always have a baseName
-	if (baseName.isEmpty()) baseName = "Unnamed";
+	if (baseName.isEmpty())
+		baseName = "Unnamed";
 
 	// Find an unused name starting with the baseName provided
 	while (findAtomType(uniqueName))
@@ -128,31 +112,27 @@ const char* CoreData::uniqueAtomTypeName(const char* base) const
 }
 
 // Search for AtomType by name
-AtomType* CoreData::findAtomType(const char* name) const
+AtomType *CoreData::findAtomType(const char *name) const
 {
-	for (AtomType* at = atomTypes_.first(); at != NULL; at = at->next()) if (DissolveSys::sameString(at->name(),name)) return at;
+	for (AtomType *at = atomTypes_.first(); at != NULL; at = at->next())
+		if (DissolveSys::sameString(at->name(), name))
+			return at;
 
 	return NULL;
 }
 
 // Bump AtomTypes version
-void CoreData::bumpAtomTypesVersion()
-{
-	++atomTypesVersion_;
-}
+void CoreData::bumpAtomTypesVersion() { ++atomTypesVersion_; }
 
 // Return AtomTypes version
-int CoreData::atomTypesVersion() const
-{
-	return atomTypesVersion_;
-}
+int CoreData::atomTypesVersion() const { return atomTypesVersion_; }
 
 /*
  * Master Intramolecular Terms
  */
 
 // Add new master Bond parameters
-MasterIntra* CoreData::addMasterBond(const char* name)
+MasterIntra *CoreData::addMasterBond(const char *name)
 {
 	// Check for existence of master Bond already
 	if (hasMasterBond(name))
@@ -162,7 +142,7 @@ MasterIntra* CoreData::addMasterBond(const char* name)
 	}
 
 	// OK to add new master Bond
-	MasterIntra* b = masterBonds_.add();
+	MasterIntra *b = masterBonds_.add();
 	b->setName(name);
 	b->setType(SpeciesIntra::BondInteraction);
 
@@ -170,35 +150,28 @@ MasterIntra* CoreData::addMasterBond(const char* name)
 }
 
 // Return number of master Bond parameters in list
-int CoreData::nMasterBonds() const
-{
-	return masterBonds_.nItems();
-}
+int CoreData::nMasterBonds() const { return masterBonds_.nItems(); }
 
 // Return list of master Bond parameters
-const List<MasterIntra>& CoreData::masterBonds() const
-{
-	return masterBonds_;
-}
+const List<MasterIntra> &CoreData::masterBonds() const { return masterBonds_; }
 
 // Return nth master Bond parameters
-MasterIntra* CoreData::masterBond(int n)
-{
-	return masterBonds_[n];
-}
+MasterIntra *CoreData::masterBond(int n) { return masterBonds_[n]; }
 
 // Return whether named master Bond parameters exist
-MasterIntra* CoreData::hasMasterBond(const char* name) const
+MasterIntra *CoreData::hasMasterBond(const char *name) const
 {
 	// Remove leading '@' if necessary
-	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+	const char *trimmedName = name[0] == '@' ? &name[1] : name;
 
-	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next()) if (DissolveSys::sameString(trimmedName, b->name())) return b;
+	for (MasterIntra *b = masterBonds_.first(); b != NULL; b = b->next())
+		if (DissolveSys::sameString(trimmedName, b->name()))
+			return b;
 	return NULL;
 }
 
 // Add new master Angle parameters
-MasterIntra* CoreData::addMasterAngle(const char* name)
+MasterIntra *CoreData::addMasterAngle(const char *name)
 {
 	// Check for existence of master Angle already
 	if (hasMasterAngle(name))
@@ -208,7 +181,7 @@ MasterIntra* CoreData::addMasterAngle(const char* name)
 	}
 
 	// OK to add new master Angle
-	MasterIntra* a = masterAngles_.add();
+	MasterIntra *a = masterAngles_.add();
 	a->setName(name);
 	a->setType(SpeciesIntra::AngleInteraction);
 
@@ -216,35 +189,28 @@ MasterIntra* CoreData::addMasterAngle(const char* name)
 }
 
 // Return number of master Angle parameters in list
-int CoreData::nMasterAngles() const
-{
-	return masterAngles_.nItems();
-}
+int CoreData::nMasterAngles() const { return masterAngles_.nItems(); }
 
 // Return list of master Angle parameters
-const List<MasterIntra>& CoreData::masterAngles() const
-{
-	return masterAngles_;
-}
+const List<MasterIntra> &CoreData::masterAngles() const { return masterAngles_; }
 
 // Return nth master Angle parameters
-MasterIntra* CoreData::masterAngle(int n)
-{
-	return masterAngles_[n];
-}
+MasterIntra *CoreData::masterAngle(int n) { return masterAngles_[n]; }
 
 // Return whether named master Angle parameters exist
-MasterIntra* CoreData::hasMasterAngle(const char* name) const
+MasterIntra *CoreData::hasMasterAngle(const char *name) const
 {
 	// Remove leading '@' if necessary
-	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+	const char *trimmedName = name[0] == '@' ? &name[1] : name;
 
-	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next()) if (DissolveSys::sameString(trimmedName, a->name())) return a;
+	for (MasterIntra *a = masterAngles_.first(); a != NULL; a = a->next())
+		if (DissolveSys::sameString(trimmedName, a->name()))
+			return a;
 	return NULL;
 }
 
 // Add new master Torsion parameters
-MasterIntra* CoreData::addMasterTorsion(const char* name)
+MasterIntra *CoreData::addMasterTorsion(const char *name)
 {
 	// Check for existence of master Torsion already
 	if (hasMasterTorsion(name))
@@ -254,7 +220,7 @@ MasterIntra* CoreData::addMasterTorsion(const char* name)
 	}
 
 	// OK to add new master Torsion
-	MasterIntra* t = masterTorsions_.add();
+	MasterIntra *t = masterTorsions_.add();
 	t->setName(name);
 	t->setType(SpeciesIntra::TorsionInteraction);
 
@@ -262,35 +228,28 @@ MasterIntra* CoreData::addMasterTorsion(const char* name)
 }
 
 // Return number of master Torsion parameters in list
-int CoreData::nMasterTorsions() const
-{
-	return masterTorsions_.nItems();
-}
+int CoreData::nMasterTorsions() const { return masterTorsions_.nItems(); }
 
 // Return list of master Torsion parameters
-const List<MasterIntra>& CoreData::masterTorsions() const
-{
-	return masterTorsions_;
-}
+const List<MasterIntra> &CoreData::masterTorsions() const { return masterTorsions_; }
 
 // Return nth master Torsion parameters
-MasterIntra* CoreData::masterTorsion(int n)
-{
-	return masterTorsions_[n];
-}
+MasterIntra *CoreData::masterTorsion(int n) { return masterTorsions_[n]; }
 
 // Return whether named master Torsion parameters exist
-MasterIntra* CoreData::hasMasterTorsion(const char* name) const
+MasterIntra *CoreData::hasMasterTorsion(const char *name) const
 {
 	// Remove leading '@' if necessary
-	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+	const char *trimmedName = name[0] == '@' ? &name[1] : name;
 
-	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next()) if (DissolveSys::sameString(trimmedName, t->name())) return t;
+	for (MasterIntra *t = masterTorsions_.first(); t != NULL; t = t->next())
+		if (DissolveSys::sameString(trimmedName, t->name()))
+			return t;
 	return NULL;
 }
 
 // Add new master Improper parameters
-MasterIntra* CoreData::addMasterImproper(const char* name)
+MasterIntra *CoreData::addMasterImproper(const char *name)
 {
 	// Check for existence of master Improper already
 	if (hasMasterImproper(name))
@@ -300,7 +259,7 @@ MasterIntra* CoreData::addMasterImproper(const char* name)
 	}
 
 	// OK to add new master Improper
-	MasterIntra* i = masterImpropers_.add();
+	MasterIntra *i = masterImpropers_.add();
 	i->setName(name);
 	i->setType(SpeciesIntra::ImproperInteraction);
 
@@ -308,43 +267,44 @@ MasterIntra* CoreData::addMasterImproper(const char* name)
 }
 
 // Return number of master Improper parameters in list
-int CoreData::nMasterImpropers() const
-{
-	return masterImpropers_.nItems();
-}
+int CoreData::nMasterImpropers() const { return masterImpropers_.nItems(); }
 
 // Return list of master Improper parameters
-const List<MasterIntra>& CoreData::masterImpropers() const
-{
-	return masterImpropers_;
-}
+const List<MasterIntra> &CoreData::masterImpropers() const { return masterImpropers_; }
 
 // Return nth master Improper parameters
-MasterIntra* CoreData::masterImproper(int n)
-{
-	return masterImpropers_[n];
-}
+MasterIntra *CoreData::masterImproper(int n) { return masterImpropers_[n]; }
 
 // Return whether named master Improper parameters exist
-MasterIntra* CoreData::hasMasterImproper(const char* name) const
+MasterIntra *CoreData::hasMasterImproper(const char *name) const
 {
 	// Remove leading '@' if necessary
-	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+	const char *trimmedName = name[0] == '@' ? &name[1] : name;
 
-	for (MasterIntra* t = masterImpropers_.first(); t != NULL; t = t->next()) if (DissolveSys::sameString(trimmedName, t->name())) return t;
+	for (MasterIntra *t = masterImpropers_.first(); t != NULL; t = t->next())
+		if (DissolveSys::sameString(trimmedName, t->name()))
+			return t;
 	return NULL;
 }
 
 // Return the named master term (of any form) if it exists
-MasterIntra* CoreData::findMasterTerm(const char* name) const
+MasterIntra *CoreData::findMasterTerm(const char *name) const
 {
 	// Remove leading '@' if necessary
-	const char* trimmedName = name[0] == '@' ? &name[1] : name;
+	const char *trimmedName = name[0] == '@' ? &name[1] : name;
 
-	for (MasterIntra* b = masterBonds_.first(); b != NULL; b = b->next()) if (DissolveSys::sameString(trimmedName, b->name())) return b;
-	for (MasterIntra* a = masterAngles_.first(); a != NULL; a = a->next()) if (DissolveSys::sameString(trimmedName, a->name())) return a;
-	for (MasterIntra* t = masterTorsions_.first(); t != NULL; t = t->next()) if (DissolveSys::sameString(trimmedName, t->name())) return t;
-	for (MasterIntra* i = masterImpropers_.first(); i != NULL; i = i->next()) if (DissolveSys::sameString(trimmedName, i->name())) return i;
+	for (MasterIntra *b = masterBonds_.first(); b != NULL; b = b->next())
+		if (DissolveSys::sameString(trimmedName, b->name()))
+			return b;
+	for (MasterIntra *a = masterAngles_.first(); a != NULL; a = a->next())
+		if (DissolveSys::sameString(trimmedName, a->name()))
+			return a;
+	for (MasterIntra *t = masterTorsions_.first(); t != NULL; t = t->next())
+		if (DissolveSys::sameString(trimmedName, t->name()))
+			return t;
+	for (MasterIntra *i = masterImpropers_.first(); i != NULL; i = i->next())
+		if (DissolveSys::sameString(trimmedName, i->name()))
+			return i;
 
 	return NULL;
 }
@@ -362,9 +322,9 @@ void CoreData::clearMasterTerms()
  */
 
 // Add new Species
-Species* CoreData::addSpecies()
+Species *CoreData::addSpecies()
 {
-	Species* newSpecies = species_.add();
+	Species *newSpecies = species_.add();
 
 	// Create a suitable unique name
 	newSpecies->setName(uniqueSpeciesName("NewSpecies"));
@@ -373,37 +333,22 @@ Species* CoreData::addSpecies()
 }
 
 // Remove specified Species
-void CoreData::removeSpecies(Species* sp)
-{
-	species_.remove(sp);
-}
+void CoreData::removeSpecies(Species *sp) { species_.remove(sp); }
 
 // Return number of Species in list
-int CoreData::nSpecies() const
-{
-	return species_.nItems();
-}
+int CoreData::nSpecies() const { return species_.nItems(); }
 
 // Return core Species list
-List<Species>& CoreData::species()
-{
-	return species_;
-}
+List<Species> &CoreData::species() { return species_; }
 
 // Return core Species list (const)
-const List<Species>& CoreData::constSpecies() const
-{
-	return species_;
-}
+const List<Species> &CoreData::constSpecies() const { return species_; }
 
 // Return nth Species in list
-Species* CoreData::species(int n)
-{
-	return species_[n];
-}
+Species *CoreData::species(int n) { return species_[n]; }
 
 // Generate unique Species name with base name provided
-const char* CoreData::uniqueSpeciesName(const char* base) const
+const char *CoreData::uniqueSpeciesName(const char *base) const
 {
 	static CharString uniqueName;
 	CharString baseName = base;
@@ -411,7 +356,8 @@ const char* CoreData::uniqueSpeciesName(const char* base) const
 	int suffix = 0;
 
 	// Must always have a baseName
-	if (baseName.isEmpty()) baseName = "Unnamed";
+	if (baseName.isEmpty())
+		baseName = "Unnamed";
 
 	// Find an unused name starting with the baseName provided
 	while (findSpecies(uniqueName))
@@ -425,9 +371,11 @@ const char* CoreData::uniqueSpeciesName(const char* base) const
 }
 
 // Search for Species by name
-Species* CoreData::findSpecies(const char* name) const
+Species *CoreData::findSpecies(const char *name) const
 {
-	for (Species* sp = species_.first(); sp != NULL; sp = sp->next()) if (DissolveSys::sameString(sp->name(),name)) return sp;
+	for (Species *sp = species_.first(); sp != NULL; sp = sp->next())
+		if (DissolveSys::sameString(sp->name(), name))
+			return sp;
 
 	return NULL;
 }
@@ -437,9 +385,9 @@ Species* CoreData::findSpecies(const char* name) const
  */
 
 // Add new Configuration
-Configuration* CoreData::addConfiguration()
+Configuration *CoreData::addConfiguration()
 {
-	Configuration* newConfiguration = configurations_.add();
+	Configuration *newConfiguration = configurations_.add();
 
 	// Create a suitable unique name
 	newConfiguration->setName(uniqueConfigurationName("NewConfiguration"));
@@ -448,37 +396,22 @@ Configuration* CoreData::addConfiguration()
 }
 
 // Remove specified Configuration
-void CoreData::removeConfiguration(Configuration* cfg)
-{
-	configurations_.remove(cfg);
-}
+void CoreData::removeConfiguration(Configuration *cfg) { configurations_.remove(cfg); }
 
 // Return number of Configurations in list
-int CoreData::nConfigurations() const
-{
-	return configurations_.nItems();
-}
+int CoreData::nConfigurations() const { return configurations_.nItems(); }
 
 // Return core Configurations list
-List<Configuration>& CoreData::configurations()
-{
-	return configurations_;
-}
+List<Configuration> &CoreData::configurations() { return configurations_; }
 
 // Return core Configuration list (const)
-const List<Configuration>& CoreData::constConfigurations() const
-{
-	return configurations_;
-}
+const List<Configuration> &CoreData::constConfigurations() const { return configurations_; }
 
 // Return nth Configuration in list
-Configuration* CoreData::configuration(int n)
-{
-	return configurations_[n];
-}
+Configuration *CoreData::configuration(int n) { return configurations_[n]; }
 
 // Generate unique Configuration name with base name provided
-const char* CoreData::uniqueConfigurationName(const char* base) const
+const char *CoreData::uniqueConfigurationName(const char *base) const
 {
 	static CharString uniqueName;
 	CharString baseName = base;
@@ -486,7 +419,8 @@ const char* CoreData::uniqueConfigurationName(const char* base) const
 	int suffix = 0;
 
 	// Must always have a baseName
-	if (baseName.isEmpty()) baseName = "Unnamed";
+	if (baseName.isEmpty())
+		baseName = "Unnamed";
 
 	// Find an unused name starting with the baseName provided
 	while (findConfiguration(uniqueName))
@@ -500,9 +434,11 @@ const char* CoreData::uniqueConfigurationName(const char* base) const
 }
 
 // Search for Configuration by name
-Configuration* CoreData::findConfiguration(const char* name) const
+Configuration *CoreData::findConfiguration(const char *name) const
 {
-	for (Configuration* cfg = configurations_.first(); cfg != NULL; cfg = cfg->next()) if (DissolveSys::sameString(cfg->name(),name)) return cfg;
+	for (Configuration *cfg = configurations_.first(); cfg != NULL; cfg = cfg->next())
+		if (DissolveSys::sameString(cfg->name(), name))
+			return cfg;
 
 	return NULL;
 }
@@ -512,13 +448,10 @@ Configuration* CoreData::findConfiguration(const char* name) const
  */
 
 // Set target Module instances list
-void CoreData::setModuleInstances(RefList<Module>* moduleInstances)
-{
-	moduleInstances_ = moduleInstances;
-}
+void CoreData::setModuleInstances(RefList<Module> *moduleInstances) { moduleInstances_ = moduleInstances; }
 
 // Search for any instance of any module with the specified unique name
-Module* CoreData::findModule(const char* uniqueName) const
+Module *CoreData::findModule(const char *uniqueName) const
 {
 	if (!moduleInstances_)
 	{
@@ -526,30 +459,33 @@ Module* CoreData::findModule(const char* uniqueName) const
 		return NULL;
 	}
 
-	RefListIterator<Module> moduleIterator(*moduleInstances_);
-	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->uniqueName(), uniqueName)) return module;
+	for (auto module : *moduleInstances_)
+		if (DissolveSys::sameString(module->uniqueName(), uniqueName))
+			return module;
 
 	return NULL;
 }
 
 // Search for and return any instance(s) of the specified Module type
-RefList<Module> CoreData::findModules(const char* moduleType) const
+RefList<Module> CoreData::findModules(const char *moduleType) const
 {
 	RefList<Module> modules;
 
-	RefListIterator<Module> moduleIterator(*moduleInstances_);
-	while (Module* module = moduleIterator.iterate()) if (DissolveSys::sameString(module->type(), moduleType)) modules.append(module);
+	for (auto module : *moduleInstances_)
+		if (DissolveSys::sameString(module->type(), moduleType))
+			modules.append(module);
 
 	return modules;
 }
 
 // Search for and return any instance(s) of the specified Module type
-RefList<Module> CoreData::findModules(const CharStringList& moduleTypes) const
+RefList<Module> CoreData::findModules(const CharStringList &moduleTypes) const
 {
 	RefList<Module> modules;
 
-	RefListIterator<Module> moduleIterator(*moduleInstances_);
-	while (Module* module = moduleIterator.iterate()) if (moduleTypes.contains(module->type())) modules.append(module);
+	for (auto module : *moduleInstances_)
+		if (moduleTypes.contains(module->type()))
+			modules.append(module);
 
 	return modules;
 }
@@ -559,13 +495,7 @@ RefList<Module> CoreData::findModules(const CharStringList& moduleTypes) const
  */
 
 // Set pointer to the current input filename
-void CoreData::setInputFilename(const CharString* inputFilePtr)
-{
-	inputFilename_ = inputFilePtr;
-}
+void CoreData::setInputFilename(const CharString *inputFilePtr) { inputFilename_ = inputFilePtr; }
 
 // Return the current input filename (from Dissolve)
-const char* CoreData::inputFilename() const
-{
-	return (inputFilename_ ? inputFilename_->get() : "NO_INPUTFILENAME_SET");
-}
+const char *CoreData::inputFilename() const { return (inputFilename_ ? inputFilename_->get() : "NO_INPUTFILENAME_SET"); }

@@ -19,15 +19,16 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/charstring.hui"
 #include "genericitems/listhelper.h"
+#include "gui/keywordwidgets/charstring.hui"
 
 // Constructor
-CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QLineEdit(parent), KeywordWidgetBase(coreData)
+CharStringKeywordWidget::CharStringKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QLineEdit(parent), KeywordWidgetBase(coreData)
 {
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<CharStringKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into CharStringKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<CharStringKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into CharStringKeyword.\n", keyword->name());
 	else
 	{
 		setText(keyword_->asString());
@@ -42,9 +43,10 @@ CharStringKeywordWidget::CharStringKeywordWidget(QWidget* parent, KeywordBase* k
  */
 
 // Line edit text changed
-void CharStringKeywordWidget::myTextChanged(const QString& text)
+void CharStringKeywordWidget::myTextChanged(const QString &text)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	keyword_->setData(qPrintable(text));
 
@@ -64,4 +66,3 @@ void CharStringKeywordWidget::updateValue()
 
 	refreshing_ = false;
 }
-

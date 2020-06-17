@@ -41,15 +41,19 @@ FontInstance::FontInstance()
 bool FontInstance::setUp(QString fontFileName)
 {
 	// Delete any previous font
-	if (font_) delete font_;
+	if (font_)
+		delete font_;
 	font_ = NULL;
-	if (fontData_) delete fontData_;
+	if (fontData_)
+		delete fontData_;
 	fontData_ = NULL;
 
 	// Check the fontFileName - if it's empty then we try to load the default font from our resource
 	fontFile_ = fontFileName;
-	if (fontFile_.isEmpty()) fontData_ = new QResource(":/fonts/fonts/FreeSans.ttf");
-	else fontData_ = new QResource(fontFileName);
+	if (fontFile_.isEmpty())
+		fontData_ = new QResource(":/fonts/fonts/FreeSans.ttf");
+	else
+		fontData_ = new QResource(fontFileName);
 	if (fontData_->size() <= 0)
 	{
 		printf("Font data is empty - correct resource path specified?\n");
@@ -57,7 +61,7 @@ bool FontInstance::setUp(QString fontFileName)
 	}
 
 	// Construct font
-	FTPolygonFont* newFont = new FTPolygonFont(fontData_->data(), fontData_->size());
+	FTPolygonFont *newFont = new FTPolygonFont(fontData_->data(), fontData_->size());
 	if (newFont->Error())
 	{
 		printf("Error generating font.\n");
@@ -70,10 +74,11 @@ bool FontInstance::setUp(QString fontFileName)
 		font_ = newFont;
 
 		// Request unicode character mapping...
-		if (!font_->CharMap(ft_encoding_unicode)) Messenger::print("Failed to set unicode character mapping for font - special characters may not render correctly.\n");
+		if (!font_->CharMap(ft_encoding_unicode))
+			Messenger::print("Failed to set unicode character mapping for font - special characters may not render correctly.\n");
 
-// 		font_->Depth(3.0);
-// 		font_->Outset(-.5, 1.5);
+		// 		font_->Depth(3.0);
+		// 		font_->Outset(-.5, 1.5);
 		font_->FaceSize(1);
 		FTBBox boundingBox = font_->BBox("0123456789");
 		fontBaseHeight_ = boundingBox.Upper().Y() - boundingBox.Lower().Y();
@@ -87,46 +92,32 @@ bool FontInstance::setUp(QString fontFileName)
 }
 
 // Return whether font exists and is ready for use
-bool FontInstance::fontOK() const
-{
-	return (font_ != NULL);
-}
+bool FontInstance::fontOK() const { return (font_ != NULL); }
 
 // Return base height of font
-double FontInstance::fontBaseHeight() const
-{
-	return fontBaseHeight_;
-}
+double FontInstance::fontBaseHeight() const { return fontBaseHeight_; }
 
 // Return full height of font
-double FontInstance::fontFullHeight() const
-{
-	return fontFullHeight_;
-}
+double FontInstance::fontFullHeight() const { return fontFullHeight_; }
 
 // Return bounding box for specified string
 FTBBox FontInstance::boundingBox(QString text) const
 {
-	if (!font_) return FTBBox();
+	if (!font_)
+		return FTBBox();
 
 	// Need to be a little careful here - we will put a '.' either side of the text so we get the full width of strings with trailing spaces..
 	FTBBox box = font_->BBox(qPrintable("." + text.toUtf8() + "."));
-// 	double newWidth = box.Upper().X() - dotWidth_;
-// 	box.Upper().X(newWidth);
-	return FTBBox(box.Lower(), FTPoint(box.Upper().X()-dotWidth_, box.Upper().Y()));
+	// 	double newWidth = box.Upper().X() - dotWidth_;
+	// 	box.Upper().X(newWidth);
+	return FTBBox(box.Lower(), FTPoint(box.Upper().X() - dotWidth_, box.Upper().Y()));
 }
 
 // Set general scaling factor for primitives rendered with this font instance
-void FontInstance::setScaleFactor(double scaleFactor)
-{
-	scaleFactor_ = scaleFactor;
-}
+void FontInstance::setScaleFactor(double scaleFactor) { scaleFactor_ = scaleFactor; }
 
 // Return general scaling factor for primitives rendered with this font instance
-double FontInstance::scaleFactor() const
-{
-	return scaleFactor_;
-}
+double FontInstance::scaleFactor() const { return scaleFactor_; }
 
 /*
  * Rendering
@@ -135,7 +126,8 @@ double FontInstance::scaleFactor() const
 // Set face size
 bool FontInstance::setFaceSize(double faceSize)
 {
-	if (!font_) return false;
+	if (!font_)
+		return false;
 
 	font_->FaceSize(faceSize);
 
@@ -143,9 +135,10 @@ bool FontInstance::setFaceSize(double faceSize)
 }
 
 // Render supplied text
-bool FontInstance::renderText(const char* text) const
+bool FontInstance::renderText(const char *text) const
 {
-	if (!font_) return false;
+	if (!font_)
+		return false;
 
 	font_->Render(text);
 
@@ -157,7 +150,7 @@ bool FontInstance::renderText(const char* text) const
  */
 
 // Calculate bounding box for specified string
-void FontInstance::boundingBox(QString text, Vec3<double>& lowerLeft, Vec3<double>& upperRight) const
+void FontInstance::boundingBox(QString text, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const
 {
 	FTBBox box = boundingBox(text);
 	lowerLeft.set(box.Lower().X(), box.Lower().Y(), box.Lower().Z());

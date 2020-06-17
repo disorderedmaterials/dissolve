@@ -23,35 +23,38 @@
 #include "classes/atom.h"
 
 // Constructor
-MoleculeDistributor::MoleculeDistributor(const DynamicArray<Molecule>& moleculeArray, const CellArray& cellArray, ProcessPool& procPool, ProcessPool::DivisionStrategy strategy, bool repeatsAllowed) : Distributor(moleculeArray.nItems(), cellArray, procPool, strategy, repeatsAllowed), moleculeArray_(moleculeArray)
+MoleculeDistributor::MoleculeDistributor(const std::deque<std::shared_ptr<Molecule>> &moleculeArray, const CellArray &cellArray, ProcessPool &procPool, ProcessPool::DivisionStrategy strategy,
+					 bool repeatsAllowed)
+    : Distributor(moleculeArray.size(), cellArray, procPool, strategy, repeatsAllowed), moleculeArray_(moleculeArray)
 {
 }
 
 // Destructor
-MoleculeDistributor::~MoleculeDistributor()
-{
-}
+MoleculeDistributor::~MoleculeDistributor() {}
 
 /*
  * Cells
  */
 
 // Return array of Cells that we must hard lock in order to modify the object with index specified
-Array<Cell*> MoleculeDistributor::cellsToBeModifiedForObject(int objectId)
+Array<Cell *> MoleculeDistributor::cellsToBeModifiedForObject(int objectId)
 {
 	// Grab specified molecule
-	const Molecule* molecule = moleculeArray_.constValue(objectId);
+	std::shared_ptr<const Molecule> molecule = moleculeArray_[objectId];
 
 	// Loop over Atoms in the Molecule, and add the (unique) cellID each Atom is in
-	Array<Cell*> cells;
+	Array<Cell *> cells;
 	int n;
-	for (int i=0; i<molecule->nAtoms(); ++i)
+	for (int i = 0; i < molecule->nAtoms(); ++i)
 	{
-		Cell* cell = molecule->atom(i)->cell();
+		Cell *cell = molecule->atom(i)->cell();
 
 		// Is it already in the list?
-		for (n=0; n<cells.nItems(); ++n) if (cells.constAt(n) == cell) break;
-		if (n == cells.nItems()) cells.add(cell);
+		for (n = 0; n < cells.nItems(); ++n)
+			if (cells.constAt(n) == cell)
+				break;
+		if (n == cells.nItems())
+			cells.add(cell);
 	}
 
 	return cells;

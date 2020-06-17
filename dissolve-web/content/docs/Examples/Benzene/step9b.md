@@ -1,9 +1,7 @@
 ---
 title: Step 9b - Molecule Orientation
-parent: Comparing Benzene Structure
 grand_parent: Examples
 ---
-# Comparing Benzene Structure
 
 ## 9b. Molecule Orientation
 

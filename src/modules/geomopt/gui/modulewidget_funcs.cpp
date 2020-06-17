@@ -19,15 +19,14 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/geomopt/gui/modulewidget.h"
 #include "modules/geomopt/geomopt.h"
+#include "modules/geomopt/gui/modulewidget.h"
 
 // Constructor
-GeometryOptimisationModuleWidget::GeometryOptimisationModuleWidget(QWidget* parent, GeometryOptimisationModule* module) : ModuleWidget(parent), module_(module)
+GeometryOptimisationModuleWidget::GeometryOptimisationModuleWidget(QWidget *parent, GeometryOptimisationModule *module) : ModuleWidget(parent), module_(module)
 {
 	// Set up user interface
 	ui_.setupUi(this);
 
 	refreshing_ = false;
 }
-

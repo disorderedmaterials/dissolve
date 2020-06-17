@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_KEYWORDWIDGET_MODULE_H
 #define DISSOLVE_KEYWORDWIDGET_MODULE_H
 
-#include "gui/keywordwidgets/ui_module.h"
 #include "gui/keywordwidgets/base.h"
+#include "gui/keywordwidgets/ui_module.h"
 #include "keywords/module.h"
 #include <QWidget>
 
@@ -35,43 +35,40 @@ class ModuleKeywordWidget : public QWidget, public KeywordWidgetBase
 	// All Qt declarations must include this macro
 	Q_OBJECT
 
-	public:
+      public:
 	// Constructor
-	ModuleKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData);
-
+	ModuleKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
 	/*
 	 * Keyword
 	 */
-	private:
+      private:
 	// Associated keyword
-	ModuleKeywordBase* keyword_;
-
+	ModuleKeywordBase *keyword_;
 
 	/*
 	 * Widgets
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::ModuleWidget ui_;
 
-	private slots:
+      private slots:
 	// Value changed
 	void on_ModuleCombo_currentIndexChanged(int index);
 
-	signals:
+      signals:
 	// Keyword value changed
 	void keywordValueChanged(int flags);
-
 
 	/*
 	 * Update
 	 */
-	private:
+      private:
 	// Return text (for ComboBox item) for supplied Module
-	const char* uniqueNameOfModule(const Module* module);
+	const char *uniqueNameOfModule(const Module *module);
 
-	public:
+      public:
 	// Update value displayed in widget
 	void updateValue();
 };

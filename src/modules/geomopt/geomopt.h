@@ -30,54 +30,50 @@ class PotentialMap;
 // Geometry Optimisation Module
 class GeometryOptimisationModule : public Module
 {
-	public:
+      public:
 	// Constructor
 	GeometryOptimisationModule();
 	// Destructor
 	~GeometryOptimisationModule();
 
-
 	/*
 	 * Instances
 	 */
-	public:
+      public:
 	// Create instance of this module
-	Module* createInstance() const;
-
+	Module *createInstance() const;
 
 	/*
 	 * Definition
 	 */
-	public:
+      public:
 	// Return type of module
-	const char* type() const;
+	const char *type() const;
 	// Return category for module
-	const char* category() const;
+	const char *category() const;
 	// Return brief description of module
-	const char* brief() const;
+	const char *brief() const;
 	// Return the number of Configuration targets this Module requires
 	int nRequiredTargets() const;
-
 
 	/*
 	 * Initialisation
 	 */
-	protected:
+      protected:
 	// Perform any necessary initialisation for the Module
 	void initialise();
-	
+
 	/*
 	 * Processing
 	 */
-	private:
+      private:
 	// Run main processing
-	bool process(Dissolve& dissolve, ProcessPool& procPool);
-
+	bool process(Dissolve &dissolve, ProcessPool &procPool);
 
 	/*
 	 * Functions
 	 */
-	private:
+      private:
 	// Current (reference) coordinates
 	Array<double> xRef_, yRef_, zRef_;
 	// Temporary test coordinates
@@ -85,32 +81,30 @@ class GeometryOptimisationModule : public Module
 	// Current forces
 	Array<double> xForce_, yForce_, zForce_;
 
-	private:
+      private:
 	// Copy coordinates from supplied Configuration into reference arrays
-	void setReferenceCoordinates(Configuration* cfg);
+	void setReferenceCoordinates(Configuration *cfg);
 	// Revert Configuration to reference coordinates
-	void revertToReferenceCoordinates(Configuration* cfg);
+	void revertToReferenceCoordinates(Configuration *cfg);
 	// Return current RMS force
 	double rmsForce() const;
 	// Determine suitable step size from current forces
 	double gradientStepSize();
 	// Sort bounds / energies so that minimum energy is in the central position
-	void sortBoundsAndEnergies(Vec3<double>& bounds, Vec3<double>& energies);
+	void sortBoundsAndEnergies(Vec3<double> &bounds, Vec3<double> &energies);
 	// Return energy of adjusted coordinates, following the force vectors by the supplied amount
-	double energyAtGradientPoint(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, double delta);
+	double energyAtGradientPoint(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, double delta);
 	// Perform Golden Search within specified bounds
-	double goldenSearch(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, Vec3<double>& bounds, Vec3<double>& energies, int& nPointsAccepted);
+	double goldenSearch(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, const double tolerance, Vec3<double> &bounds, Vec3<double> &energies, int &nPointsAccepted);
 	// Line minimise supplied Configuration from the reference coordinates along the stored force vectors
-	double lineMinimise(ProcessPool& procPool, Configuration* cfg, const PotentialMap& potentialMap, const double tolerance, double& stepSize);
-
+	double lineMinimise(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, const double tolerance, double &stepSize);
 
 	/*
 	 * GUI Widget
 	 */
-	public:
+      public:
 	// Return a new widget controlling this Module
-	ModuleWidget* createWidget(QWidget* parent, Dissolve& dissolve);
+	ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
 
 #endif
-

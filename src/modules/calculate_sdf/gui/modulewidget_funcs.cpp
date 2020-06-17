@@ -19,18 +19,18 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/calculate_sdf/gui/modulewidget.h"
-#include "modules/calculate_sdf/sdf.h"
-#include "modules/calculate_avgmol/avgmol.h"
-#include "gui/render/renderabledata3d.h"
-#include "gui/render/renderablespecies.h"
-#include "gui/helpers/comboboxupdater.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
+#include "gui/helpers/comboboxupdater.h"
+#include "gui/render/renderabledata3d.h"
+#include "gui/render/renderablespecies.h"
+#include "modules/calculate_avgmol/avgmol.h"
+#include "modules/calculate_sdf/gui/modulewidget.h"
+#include "modules/calculate_sdf/sdf.h"
 
 // Constructor
-CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget* parent, CalculateSDFModule* module, const CoreData& coreData) : ModuleWidget(parent), module_(module), coreData_(coreData)
+CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, CalculateSDFModule *module, const CoreData &coreData) : ModuleWidget(parent), module_(module), coreData_(coreData)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -38,15 +38,15 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget* parent, CalculateSDF
 	refreshing_ = true;
 
 	// Set limits and step sizes in spin widgets
-	ui_.LowerCutoffSpin->setRange(true, 0.0, false);
+	ui_.LowerCutoffSpin->setMinimumLimit(0.0);
 	ui_.LowerCutoffSpin->setSingleStep(0.01);
-	ui_.UpperCutoffSpin->setRange(true, 0.0, false);
+	ui_.UpperCutoffSpin->setMinimumLimit(0.0);
 	ui_.UpperCutoffSpin->setSingleStep(0.01);
 
 	// Set up SDF graph
 	sdfGraph_ = ui_.SDFPlotWidget->dataViewer();
 
-	View& sdfView = sdfGraph_->view();
+	View &sdfView = sdfGraph_->view();
 	sdfView.setViewType(View::NormalView);
 	sdfView.axes().setTitle(0, "X, \\sym{angstrom}");
 	sdfView.axes().setRange(0, -10.0, 10.0);
@@ -93,14 +93,15 @@ void CalculateSDFModuleWidget::updateControls(int flags)
 	}
 
 	// Update available reference molecule combo
-	RefDataList<Species,CharString> refMolecules;
+	RefDataList<Species, CharString> refMolecules;
 	// -- Find available AvgMol results
 	RefList<CalculateAvgMolModule> avgMolModules = coreData_.findModulesByClass<CalculateAvgMolModule>();
-	RefListIterator<CalculateAvgMolModule> avgMolIterator(avgMolModules);
-	while (CalculateAvgMolModule* module = avgMolIterator.iterate()) refMolecules.append(&module->averageSpecies(), CharString("%s (AvgMol)", module->averageSpecies().name()));
+	for (CalculateAvgMolModule *module : avgMolModules)
+		refMolecules.append(&module->averageSpecies(), CharString("%s (AvgMol)", module->averageSpecies().name()));
 	// -- Add on current species
 	ListIterator<Species> speciesIterator(coreData_.constSpecies());
-	while (Species* sp = speciesIterator.iterate()) refMolecules.append(sp, CharString("%s (Species)", sp->name()));
+	while (Species *sp = speciesIterator.iterate())
+		refMolecules.append(sp, CharString("%s (Species)", sp->name()));
 	ComboBoxUpdater<Species> refMoleculeUpdater(ui_.ReferenceMoleculeCombo, refMolecules, referenceMolecule_, 1, 0);
 
 	refreshing_ = false;
@@ -111,19 +112,21 @@ void CalculateSDFModuleWidget::updateControls(int flags)
  */
 
 // Write widget state through specified LineParser
-bool CalculateSDFModuleWidget::writeState(LineParser& parser) const
+bool CalculateSDFModuleWidget::writeState(LineParser &parser) const
 {
 	// Write DataViewer sessions
-	if (!sdfGraph_->writeSession(parser)) return false;
+	if (!sdfGraph_->writeSession(parser))
+		return false;
 
 	return true;
 }
 
 // Read widget state through specified LineParser
-bool CalculateSDFModuleWidget::readState(LineParser& parser)
+bool CalculateSDFModuleWidget::readState(LineParser &parser)
 {
 	// Read DataViewer sessions
-	if (!sdfGraph_->readSession(parser)) return false;
+	if (!sdfGraph_->readSession(parser))
+		return false;
 
 	setGraphDataTargets();
 
@@ -142,14 +145,15 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
 	sdfRenderable_ = NULL;
 	referenceMoleculeRenderable_ = NULL;
 
-	if (!module_) return;
+	if (!module_)
+		return;
 
 	// Loop over Configuration targets in Module
-	RefListIterator<Configuration> configIterator(module_->targetConfigurations());
-	while (Configuration* cfg = configIterator.iterate())
+	for (Configuration *cfg : module_->targetConfigurations())
 	{
 		// Calculated SDF
-		sdfRenderable_ = dynamic_cast<RenderableData3D*>(sdfGraph_->createRenderable(Renderable::Data3DRenderable, CharString("%s//Process3D//%s//SDF", module_->uniqueName(), cfg->niceName()), CharString("SDF//%s", cfg->niceName()), cfg->niceName()));
+		sdfRenderable_ = dynamic_cast<RenderableData3D *>(sdfGraph_->createRenderable(
+		    Renderable::Data3DRenderable, CharString("%s//Process3D//%s//SDF", module_->uniqueName(), cfg->niceName()), CharString("SDF//%s", cfg->niceName()), cfg->niceName()));
 
 		if (sdfRenderable_)
 		{
@@ -167,13 +171,16 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
 		}
 
 		// Reference molecule
-		if (referenceMolecule_) referenceMoleculeRenderable_ = dynamic_cast<RenderableSpecies*>(sdfGraph_->createRenderable(Renderable::SpeciesRenderable, referenceMolecule_->objectTag(), "Reference Molecule"));
+		if (referenceMolecule_)
+			referenceMoleculeRenderable_ =
+			    dynamic_cast<RenderableSpecies *>(sdfGraph_->createRenderable(Renderable::SpeciesRenderable, referenceMolecule_->objectTag(), "Reference Molecule"));
 	}
 }
 
 void CalculateSDFModuleWidget::on_LowerCutoffSpin_valueChanged(double value)
 {
-	if (refreshing_ || !sdfRenderable_) return;
+	if (refreshing_ || !sdfRenderable_)
+		return;
 
 	sdfRenderable_->setLowerCutoff(value);
 
@@ -182,7 +189,8 @@ void CalculateSDFModuleWidget::on_LowerCutoffSpin_valueChanged(double value)
 
 void CalculateSDFModuleWidget::on_UpperCutoffSpin_valueChanged(double value)
 {
-	if (refreshing_ || !sdfRenderable_) return;
+	if (refreshing_ || !sdfRenderable_)
+		return;
 
 	sdfRenderable_->setUpperCutoff(value);
 
@@ -191,11 +199,14 @@ void CalculateSDFModuleWidget::on_UpperCutoffSpin_valueChanged(double value)
 
 void CalculateSDFModuleWidget::on_ReferenceMoleculeCombo_currentIndexChanged(int index)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	// Check index...
-	if (index == -1) referenceMolecule_ = NULL;
-	else referenceMolecule_ = VariantPointer<Species>(ui_.ReferenceMoleculeCombo->currentData());
+	if (index == -1)
+		referenceMolecule_ = NULL;
+	else
+		referenceMolecule_ = VariantPointer<Species>(ui_.ReferenceMoleculeCombo->currentData());
 
 	setGraphDataTargets();
 }

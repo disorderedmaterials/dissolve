@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_DATA1D_H
 #define DISSOLVE_DATA1D_H
 
-#include "math/plottable.h"
 #include "base/version.h"
+#include "math/plottable.h"
 #include "templates/array.h"
 #include "templates/objectstore.h"
 
@@ -33,21 +33,20 @@ class Histogram1D;
 // One-Dimensional Data
 class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore<Data1D>, public GenericItemBase
 {
-	public:
+      public:
 	// Constructor
 	Data1D();
 	// Destructor
 	~Data1D();
 	// Copy Constructor
-	Data1D(const Data1D& source);
+	Data1D(const Data1D &source);
 	// Clear data
 	void clear();
-	
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// X array
 	Array<double> x_;
 	// Values at each x
@@ -59,13 +58,13 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
 	// Data version
 	VersionCounter version_;
 
-	public:
+      public:
 	// Initialise arrays to specified size
 	void initialise(int size, bool withError = false);
 	// Initialise to be consistent in size and x axis with supplied object
-	void initialise(const Data1D& source);
+	void initialise(const Data1D &source);
 	// Copy arrays from supplied object
-	void copyArrays(const Data1D& source);
+	void copyArrays(const Data1D &source);
 	// Zero values array
 	void zero();
 	// Return data version
@@ -79,21 +78,21 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
 	// Remove last point
 	void removeLastPoint();
 	// Return x axis value specified
-	double& xAxis(int index);
+	double &xAxis(int index);
 	// Return x axis value specified (const)
 	double constXAxis(int index) const;
 	// Return x axis Array
-	Array<double>& xAxis();
+	Array<double> &xAxis();
 	// Return x axis Array (const)
-	const Array<double>& constXAxis() const;
+	const Array<double> &constXAxis() const;
 	// Return value specified
-	double& value(int index);
+	double &value(int index);
 	// Return value value specified (const)
 	double constValue(int index) const;
 	// Return value Array
-	Array<double>& values();
+	Array<double> &values();
 	// Return values Array
-	const Array<double>& constValues() const;
+	const Array<double> &constValues() const;
 	// Return number of values present in whole dataset
 	int nValues() const;
 	// Return minimum value over all data points
@@ -105,27 +104,26 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
 	// Return whether the values have associated errors
 	bool valuesHaveErrors() const;
 	// Return error value specified
-	double& error(int index);
+	double &error(int index);
 	// Return error value specified (const)
 	double constError(int index) const;
 	// Return error Array
-	Array<double>& errors();
+	Array<double> &errors();
 	// Return errors Array
-	const Array<double>& constErrors() const;
-
+	const Array<double> &constErrors() const;
 
 	/*
 	 * Operators
 	 */
-	public:
+      public:
 	// Assignment Operator
-	void operator=(const Data1D& source);
+	void operator=(const Data1D &source);
 	// Operator +=
-	void operator+=(const Data1D& source);
+	void operator+=(const Data1D &source);
 	// Operator +=
 	void operator+=(const double delta);
 	// Operator -=
-	void operator-=(const Data1D& source);
+	void operator-=(const Data1D &source);
 	// Operator -=
 	void operator-=(const double delta);
 	// Operator *=
@@ -133,27 +131,25 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
 	// Operator /=
 	void operator/=(const double factor);
 
-
 	/*
 	 * GenericItemBase Implementations
 	 */
-	public:
+      public:
 	// Return class name
-	static const char* itemClassName();
+	static const char *itemClassName();
 	// Read data through specified LineParser
-	bool read(LineParser& parser, const CoreData& coreData);
+	bool read(LineParser &parser, const CoreData &coreData);
 	// Write data through specified LineParser
-	bool write(LineParser& parser);
-
+	bool write(LineParser &parser);
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast data
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData);
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData);
 	// Check item equality
-	bool equality(ProcessPool& procPool);
+	bool equality(ProcessPool &procPool);
 };
 
 #endif

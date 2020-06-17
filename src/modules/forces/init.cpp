@@ -19,8 +19,8 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/forces/forces.h"
 #include "keywords/types.h"
+#include "modules/forces/forces.h"
 
 // Perform any necessary initialisation for the Module
 void ForcesModule::initialise()
@@ -36,4 +36,3 @@ void ForcesModule::initialise()
 	// Export
 	keywords_.add("Export", new BoolKeyword(false), "Save", "Save forces for the Configuration to the file '<name>.forces.txt'");
 }
-

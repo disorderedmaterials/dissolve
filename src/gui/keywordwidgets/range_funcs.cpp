@@ -19,13 +19,13 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "gui/keywordwidgets/range.h"
-#include "gui/helpers/mousewheeladjustmentguard.h"
 #include "genericitems/listhelper.h"
+#include "gui/helpers/mousewheeladjustmentguard.h"
+#include "gui/keywordwidgets/range.h"
 #include "vec3labels.h"
 
 // Constructor
-RangeKeywordWidget::RangeKeywordWidget(QWidget* parent, KeywordBase* keyword, const CoreData& coreData) : QWidget(parent), KeywordWidgetBase(coreData)
+RangeKeywordWidget::RangeKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData) : QWidget(parent), KeywordWidgetBase(coreData)
 {
 	// Setup our UI
 	ui_.setupUi(this);
@@ -33,8 +33,9 @@ RangeKeywordWidget::RangeKeywordWidget(QWidget* parent, KeywordBase* keyword, co
 	refreshing_ = true;
 
 	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<RangeKeyword*>(keyword);
-	if (!keyword_) Messenger::error("Couldn't cast base keyword '%s' into RangeKeyword.\n", keyword->name());
+	keyword_ = dynamic_cast<RangeKeyword *>(keyword);
+	if (!keyword_)
+		Messenger::error("Couldn't cast base keyword '%s' into RangeKeyword.\n", keyword->name());
 	else
 	{
 		// Set current values
@@ -49,7 +50,7 @@ RangeKeywordWidget::RangeKeywordWidget(QWidget* parent, KeywordBase* keyword, co
 	// Set appropriate labels
 	Vec3WidgetLabels::set(ui_.Label1, keyword_->labelType(), 0);
 	Vec3WidgetLabels::set(ui_.Label2, keyword_->labelType(), 1);
-	
+
 	refreshing_ = false;
 }
 
@@ -60,7 +61,8 @@ RangeKeywordWidget::RangeKeywordWidget(QWidget* parent, KeywordBase* keyword, co
 // Spin box value changed
 void RangeKeywordWidget::on_Spin1_valueChanged(double value)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	keyword_->data().setMinimum(value);
 	keyword_->hasBeenSet();
@@ -71,11 +73,11 @@ void RangeKeywordWidget::on_Spin1_valueChanged(double value)
 // Spin box value changed
 void RangeKeywordWidget::on_Spin2_valueChanged(double value)
 {
-	if (refreshing_) return;
+	if (refreshing_)
+		return;
 
 	keyword_->data().setMaximum(value);
 	keyword_->hasBeenSet();
-
 
 	emit(keywordValueChanged(keyword_->optionMask()));
 }

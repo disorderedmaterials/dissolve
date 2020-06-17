@@ -19,49 +19,44 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "classes/species.h"
-#include "classes/box.h"
-#include "data/ff.h"
 #include "base/sysfunc.h"
+#include "classes/box.h"
+#include "classes/species.h"
+#include "data/ff.h"
 
 /*
  * Public
  */
 
 // Set Forcefield to source terms from
-void Species::setForcefield(Forcefield* ff)
-{
-	forcefield_ = ff;
-}
+void Species::setForcefield(Forcefield *ff) { forcefield_ = ff; }
 
 // Return Forcefield to source terms from
-Forcefield* Species::forcefield() const
-{
-	return forcefield_;
-}
+Forcefield *Species::forcefield() const { return forcefield_; }
 
 // Set whether to auto-generate missing intramolecular terms, and remove invalid ones
 void Species::setAutoUpdateIntramolecularTerms(bool b)
 {
 	autoUpdateIntramolecularTerms_ = b;
 
-	if (autoUpdateIntramolecularTerms_) updateIntramolecularTerms();
+	if (autoUpdateIntramolecularTerms_)
+		updateIntramolecularTerms();
 }
 
 // Return whether to auto-generate missing intramolecular terms, and remove invalid ones
-bool Species::autoUpdateIntramolecularTerms() const
-{
-	return autoUpdateIntramolecularTerms_;
-}
+bool Species::autoUpdateIntramolecularTerms() const { return autoUpdateIntramolecularTerms_; }
 
 // Apply terms from source Forcefield
-bool Species::applyForcefieldTerms(CoreData& coreData)
+bool Species::applyForcefieldTerms(CoreData &coreData)
 {
-	if (!forcefield_) return Messenger::error("No forcefield set in Species '%s', so can't apply terms.\n", name());
+	if (!forcefield_)
+		return Messenger::error("No forcefield set in Species '%s', so can't apply terms.\n", name());
 
 	// Apply the specified Forcefield
-	if (!forcefield_->assignAtomTypes(this, coreData, false)) return false;
-	if (!forcefield_->assignIntramolecular(this, true, true)) return false;
+	if (forcefield_->assignAtomTypes(this, coreData, Forcefield::TypeAll) != 0)
+		return false;
+	if (!forcefield_->assignIntramolecular(this))
+		return false;
 
 	return true;
 }

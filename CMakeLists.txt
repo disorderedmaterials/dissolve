@@ -3,8 +3,8 @@ project(Dissolve)
 set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
-set(VERSION_MINOR "5")
-set(VERSION_PATCH "6")
+set(VERSION_MINOR "6")
+set(VERSION_PATCH "99")
 
 set(CMAKE_BUILD_TYPE "Release")
 
@@ -194,6 +194,7 @@ set(BASIC_LINK_LIBS
   # Modules
   analysemodule
   atomshakemodule
+  benchmarkmodule
   braggmodule
   calculateanglemodule
   calculateavgmolmodule
@@ -207,7 +208,9 @@ set(BASIC_LINK_LIBS
   datatestmodule
   energymodule
   epsrmodule
-  exportmodule
+  exportcoordinatesmodule
+  exportpairpotentialsmodule
+  exporttrajectorymodule
   forcesmodule
   geomoptmodule
   importmodule
@@ -241,6 +244,7 @@ target_link_libraries( ${target_name}
   # Module 'nogui' libs
   analysemodulenogui
   atomshakemodulenogui
+  benchmarkmodulenogui
   braggmodulenogui
   calculateanglemodulenogui
   calculateavgmolmodulenogui
@@ -277,6 +281,7 @@ if(GUI)
     # Module gui libs
     analysemodulegui
     atomshakemodulegui
+    benchmarkmodulegui
     braggmodulegui
     calculateanglemodulegui
     calculateavgmolmodulegui

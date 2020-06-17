@@ -19,17 +19,17 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/neutronsq/gui/modulewidget.h"
+#include "classes/atomtype.h"
+#include "genericitems/listhelper.h"
 #include "gui/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
+#include "modules/neutronsq/gui/modulewidget.h"
 #include "modules/neutronsq/neutronsq.h"
-#include "classes/atomtype.h"
-#include "genericitems/listhelper.h"
 #include "templates/variantpointer.h"
 
 // Constructor
-NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, NeutronSQModule* module, Dissolve& dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
+NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget *parent, NeutronSQModule *module, Dissolve &dissolve) : ModuleWidget(parent), module_(module), dissolve_(dissolve)
 {
 	// Set up user interface
 	ui_.setupUi(this);
@@ -115,9 +115,7 @@ NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget* parent, NeutronSQModule* m
 	refreshing_ = false;
 }
 
-NeutronSQModuleWidget::~NeutronSQModuleWidget()
-{
-}
+NeutronSQModuleWidget::~NeutronSQModuleWidget() {}
 
 /*
  * UI
@@ -132,7 +130,8 @@ void NeutronSQModuleWidget::updateControls(int flags)
 	ui_.TotalSQPlotWidget->updateToolbar();
 
 	// Clear and recreate graph data targets?
-	if (flags&ModuleWidget::ResetGraphDataTargetsFlag) setGraphDataTargets(module_);
+	if (flags & ModuleWidget::ResetGraphDataTargetsFlag)
+		setGraphDataTargets(module_);
 
 	partialGRGraph_->postRedisplay();
 	partialSQGraph_->postRedisplay();
@@ -145,26 +144,34 @@ void NeutronSQModuleWidget::updateControls(int flags)
  */
 
 // Write widget state through specified LineParser
-bool NeutronSQModuleWidget::writeState(LineParser& parser) const
+bool NeutronSQModuleWidget::writeState(LineParser &parser) const
 {
 	// Write DataViewer sessions
-	if (!partialGRGraph_->writeSession(parser)) return false;
-	if (!partialSQGraph_->writeSession(parser)) return false;
-	if (!totalGRGraph_->writeSession(parser)) return false;
-	if (!totalFQGraph_->writeSession(parser)) return false;
+	if (!partialGRGraph_->writeSession(parser))
+		return false;
+	if (!partialSQGraph_->writeSession(parser))
+		return false;
+	if (!totalGRGraph_->writeSession(parser))
+		return false;
+	if (!totalFQGraph_->writeSession(parser))
+		return false;
 
 	return true;
 }
 
 // Read widget state through specified LineParser
-bool NeutronSQModuleWidget::readState(LineParser& parser)
+bool NeutronSQModuleWidget::readState(LineParser &parser)
 {
 	// Read DataViewer sessions
-	if (!partialGRGraph_->readSession(parser)) return false;
-	if (!partialSQGraph_->readSession(parser)) return false;
-	if (!totalGRGraph_->readSession(parser)) return false;
-	if (!totalFQGraph_->readSession(parser)) return false;
-	
+	if (!partialGRGraph_->readSession(parser))
+		return false;
+	if (!partialSQGraph_->readSession(parser))
+		return false;
+	if (!totalGRGraph_->readSession(parser))
+		return false;
+	if (!totalFQGraph_->readSession(parser))
+		return false;
+
 	return true;
 }
 
@@ -173,7 +180,7 @@ bool NeutronSQModuleWidget::readState(LineParser& parser)
  */
 
 // Set data targets in graphs
-void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
+void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule *module)
 {
 	// Clear any current renderables
 	ui_.PartialGRPlotWidget->clearRenderableData();
@@ -185,10 +192,10 @@ void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
 
 	// Add partials
 	int n = 0;
-	for (AtomType* at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
+	for (AtomType *at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
 	{
 		int m = n;
-		for (AtomType* at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
+		for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
 		{
 			CharString id("%s-%s", at1->name(), at2->name());
 
@@ -197,52 +204,58 @@ void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule* module)
 			 */
 
 			// Full partial
-			partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s//Full", module_->uniqueName(), id.get()), CharString("%s (Full)", id.get()), "Full");
+			partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s//Full", module_->uniqueName(), id.get()), CharString("%s (Full)", id.get()),
+							  "Full");
 
 			// Bound partial
-			partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s//Bound", module_->uniqueName(), id.get()), CharString("%s (Bound)", id.get()), "Bound");
+			partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s//Bound", module_->uniqueName(), id.get()), CharString("%s (Bound)", id.get()),
+							  "Bound");
 
 			// Unbound partial
-			partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s//Unbound", module_->uniqueName(), id.get()), CharString("%s (Unbound)", id.get()), "Unbound");
+			partialGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//%s//Unbound", module_->uniqueName(), id.get()),
+							  CharString("%s (Unbound)", id.get()), "Unbound");
 
 			/*
 			 * Partial S(Q)
 			 */
 
 			// Full partial
-			partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s//Full", module_->uniqueName(), id.get()), CharString("%s (Full)", id.get()), "Full");
+			partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s//Full", module_->uniqueName(), id.get()), CharString("%s (Full)", id.get()),
+							  "Full");
 
 			// Bound partial
-			partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s//Bound", module_->uniqueName(), id.get()), CharString("%s (Bound)", id.get()), "Bound");
+			partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s//Bound", module_->uniqueName(), id.get()), CharString("%s (Bound)", id.get()),
+							  "Bound");
 
 			// Unbound partial
-			partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s//Unbound", module_->uniqueName(), id.get()), CharString("%s (Unbound)", id.get()), "Unbound");
+			partialSQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//%s//Unbound", module_->uniqueName(), id.get()),
+							  CharString("%s (Unbound)", id.get()), "Unbound");
 		}
 	}
 
 	// Add calculated total G(r)
-	Renderable* totalGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//Total", module_->uniqueName()), "Calculated (Direct)");
+	Renderable *totalGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedGR//Total", module_->uniqueName()), "Calculated (Direct)");
 	totalGRGraph_->addRenderableToGroup(totalGR, "Calculated");
 
 	// Add calculated total representative G(r) (from FT of S(Q))
-	Renderable* repGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//RepresentativeTotalGR", module_->uniqueName()), "Calculated (via FT)");
+	Renderable *repGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//RepresentativeTotalGR", module_->uniqueName()), "Calculated (via FT)");
 	repGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
 	totalGRGraph_->addRenderableToGroup(repGR, "Calculated");
 
 	// Add calculate total F(Q)
-	Renderable* totalFQ = totalFQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//Total", module_->uniqueName()), "Calculated");
+	Renderable *totalFQ = totalFQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//WeightedSQ//Total", module_->uniqueName()), "Calculated");
 	totalFQGraph_->addRenderableToGroup(totalFQ, "Calculated");
 
 	// Add on reference data if present
-	const Data1DImportFileFormat& referenceFileAndFormat = module->referenceFQFileAndFormat();
+	const Data1DImportFileFormat &referenceFileAndFormat = module->referenceFQFileAndFormat();
 	if (referenceFileAndFormat.hasValidFileAndFormat())
 	{
 		// Add FT of reference data total G(r)
-		Renderable* refGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceDataFT", module_->uniqueName()), "Reference");
+		Renderable *refGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceDataFT", module_->uniqueName()), "Reference");
 		totalGRGraph_->addRenderableToGroup(refGR, "Reference");
 
 		// Add calculate total F(Q)
-		Renderable* refFQ = totalFQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceData", module_->uniqueName()), "Reference");
+		Renderable *refFQ = totalFQGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//ReferenceData", module_->uniqueName()), "Reference");
 		totalFQGraph_->addRenderableToGroup(refFQ, "Reference");
 	}
 }

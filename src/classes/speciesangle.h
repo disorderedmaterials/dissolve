@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_SPECIESANGLE_H
 #define DISSOLVE_SPECIESANGLE_H
 
-#include "classes/speciesintra.h"
 #include "base/enumoptions.h"
+#include "classes/speciesintra.h"
 #include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
@@ -34,41 +34,39 @@ class ProcessPool;
 // SpeciesAngle Definition
 class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle>
 {
-	public:
+      public:
 	// Constructor
 	SpeciesAngle();
 	// Destructor
 	~SpeciesAngle();
 
-
 	/*
 	 * DynamicArrayObject Virtuals
 	 */
-	public:
+      public:
 	// Clear object, ready for re-use
 	void clear();
-
 
 	/*
 	 * SpeciesAtom Information
 	 */
-	private:
+      private:
 	// First SpeciesAtom in interaction
-	SpeciesAtom* i_;
+	SpeciesAtom *i_;
 	// Second (central) SpeciesAtom in interaction
-	SpeciesAtom* j_;
+	SpeciesAtom *j_;
 	// Third SpeciesAtom in interaction
-	SpeciesAtom* k_;
+	SpeciesAtom *k_;
 
-	public:
+      public:
 	// Set SpeciesAtoms involved in interaction
-	void setAtoms(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k);
+	void setAtoms(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
 	// Return first SpeciesAtom
-	SpeciesAtom* i() const;
+	SpeciesAtom *i() const;
 	// Return second (central) SpeciesAtom
-	SpeciesAtom* j() const;
+	SpeciesAtom *j() const;
 	// Return third SpeciesAtom
-	SpeciesAtom* k() const;
+	SpeciesAtom *k() const;
 	// Return index (in parent Species) of first SpeciesAtom
 	int indexI() const;
 	// Return index (in parent Species) of second (central) SpeciesAtom
@@ -78,13 +76,14 @@ class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle
 	// Return index (in parent Species) of nth SpeciesAtom
 	int index(int n) const;
 	// Return whether SpeciesAtom match those specified
-	bool matches(SpeciesAtom* i, SpeciesAtom* j, SpeciesAtom* k) const;
-
+	bool matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const;
+	// Return whether all atoms in the interaction are currently selected
+	bool isSelected() const;
 
 	/*
 	 * Interaction Parameters
 	 */
-	public:
+      public:
 	// Angle functional forms
 	enum AngleFunction
 	{
@@ -94,9 +93,9 @@ class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle
 		Cos2Form
 	};
 	// Return enum options for AngleFunction
-	static EnumOptions<AngleFunction> angleFunctions(); 
+	static EnumOptions<AngleFunction> angleFunctions();
 
-	public:
+      public:
 	// Set up any necessary parameters
 	void setUp();
 	// Return fundamental frequency for the interaction
@@ -108,13 +107,12 @@ class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle
 	// Return force multiplier for specified angle
 	double force(double angleInDegrees) const;
 
-
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast data from Master to all Slaves
-	bool broadcast(ProcessPool& procPool, const List<SpeciesAtom>& atoms);
+	bool broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms);
 };
 
 #endif

@@ -19,28 +19,29 @@
 	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "modules/import/import.h"
-#include "main/dissolve.h"
-#include "classes/configuration.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "classes/configuration.h"
 #include "genericitems/listhelper.h"
+#include "main/dissolve.h"
+#include "modules/import/import.h"
 
 // Run main processing
-bool ImportModule::process(Dissolve& dissolve, ProcessPool& procPool)
+bool ImportModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
 	/*
 	 * Import data to the target Configuration(s)
 	 */
 
 	// Check for zero Configuration targets
-	if (targetConfigurations_.nItems() == 0) return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+	if (targetConfigurations_.nItems() == 0)
+		return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
 	// Loop over target Configurations
-	for (RefListItem<Configuration>* ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
+	for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
 	{
 		// Grab Configuration pointer
-		Configuration* cfg = ri->item();
+		Configuration *cfg = ri->item();
 
 		// Set up process pool - must do this to ensure we are using all available processes
 		procPool.assignProcessesToGroups(cfg->processPool());
@@ -57,7 +58,8 @@ bool ImportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 
 			// Open the file
 			LineParser parser(&procPool);
-			if ((!parser.openInput(trajectoryFile_.filename())) || (!parser.isFileGoodForReading())) return Messenger::error("Couldn't open trajectory file '%s'.\n", trajectoryFile_.filename());
+			if ((!parser.openInput(trajectoryFile_.filename())) || (!parser.isFileGoodForReading()))
+				return Messenger::error("Couldn't open trajectory file '%s'.\n", trajectoryFile_.filename());
 
 			// Does a seek position exist in the processing module info?
 			CharString streamPosName("TrajectoryPosition_%s", cfg->niceName());
@@ -71,13 +73,14 @@ bool ImportModule::process(Dissolve& dissolve, ProcessPool& procPool)
 			// Read the frame
 			switch (trajectoryFile_.trajectoryFormat())
 			{
-				case (TrajectoryImportFileFormat::XYZTrajectory):
-					if (!cfg->loadCoordinates(parser, CoordinateImportFileFormat::XYZCoordinates)) return false;
-					cfg->incrementContentsVersion();
-					break;
-				default:
-					return Messenger::error("Bad TGAY - he hasn't implemented reading of trajectory frames of format %i.\n", trajectoryFile_.trajectoryFormat());
-					break;
+			case (TrajectoryImportFileFormat::XYZTrajectory):
+				if (!cfg->loadCoordinates(parser, CoordinateImportFileFormat::XYZCoordinates))
+					return false;
+				cfg->incrementContentsVersion();
+				break;
+			default:
+				return Messenger::error("Bad TGAY - he hasn't implemented reading of trajectory frames of format %i.\n", trajectoryFile_.trajectoryFormat());
+				break;
 			}
 
 			// Set the trajectory file position in the restart file

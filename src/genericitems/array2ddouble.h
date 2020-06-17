@@ -25,100 +25,81 @@
 #include "genericitems/container.h"
 
 // GenericItemContainer< Array2D<double> >
-template <> class GenericItemContainer< Array2D<double> > : public GenericItem
+template <> class GenericItemContainer<Array2D<double>> : public GenericItem
 {
-	public:
+      public:
 	// Constructor
-	GenericItemContainer< Array2D<double> >(const char* name, int flags = 0) : GenericItem(name, flags)
-	{
-	}
-
+	GenericItemContainer<Array2D<double>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
 
 	/*
 	 * Data
 	 */
-	private:
+      private:
 	// Data item
 	Array2D<double> data_;
 
-	public:
+      public:
 	// Return data item
-	Array2D<double>& data()
-	{
-		return data_;
-	}
-
+	Array2D<double> &data() { return data_; }
 
 	/*
 	 * Item Class
 	 */
-	protected:
+      protected:
 	// Create a new GenericItem containing same class as current type
-	GenericItem* createItem(const char* className, const char* name, int flags = 0)
+	GenericItem *createItem(const char *className, const char *name, int flags = 0)
 	{
-		if (DissolveSys::sameString(className, itemClassName())) return new GenericItemContainer< Array2D<double> >(name, flags);
+		if (DissolveSys::sameString(className, itemClassName()))
+			return new GenericItemContainer<Array2D<double>>(name, flags);
 		return NULL;
 	}
 
-	public:
+      public:
 	// Return class name contained in item
-	const char* itemClassName()
-	{
-		return "Array2D<double>";
-	}
-
+	const char *itemClassName() { return "Array2D<double>"; }
 
 	/*
 	 * I/O
 	 */
-	public:
+      public:
 	// Write data through specified parser
-	bool write(LineParser& parser)
-	{
-		return write(data_, parser);
-	}
+	bool write(LineParser &parser) { return write(data_, parser); }
 	// Read data through specified parser
-	bool read(LineParser& parser, const CoreData& coreData)
-	{
-		return read(data_, parser);
-	}
+	bool read(LineParser &parser, const CoreData &coreData) { return read(data_, parser); }
 	// Write specified data through specified parser
-	static bool write(const Array2D<double>& thisData, LineParser& parser)
+	static bool write(const Array2D<double> &thisData, LineParser &parser)
 	{
 		parser.writeLineF("%i  %i  %s\n", thisData.nRows(), thisData.nColumns(), DissolveSys::btoa(thisData.halved()));
-		for (int n=0; n<thisData.linearArraySize(); ++n) if (!parser.writeLineF("%16.9e\n", thisData.constLinearValue(n))) return false;
+		for (int n = 0; n < thisData.linearArraySize(); ++n)
+			if (!parser.writeLineF("%16.9e\n", thisData.constLinearValue(n)))
+				return false;
 		return true;
 	}
 	// Read specified data through specified parser
-	static bool read(Array2D<double>& thisData, LineParser& parser)
+	static bool read(Array2D<double> &thisData, LineParser &parser)
 	{
-		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+		if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+			return false;
 		int nRows = parser.argi(0), nColumns = parser.argi(1);
 		thisData.initialise(nRows, nColumns, parser.argb(2));
 
-		for (int n=0; n<thisData.linearArraySize(); ++n)
+		for (int n = 0; n < thisData.linearArraySize(); ++n)
 		{
-			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success) return false;
+			if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+				return false;
 			thisData.linearArray()[n] = parser.argd(0);
 		}
 		return true;
 	}
 
-
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast item contents
-	bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData)
-	{
-		return procPool.broadcast(data_, root);
-	}
+	bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData) { return procPool.broadcast(data_, root); }
 	// Return equality between items
-	bool equality(ProcessPool& procPool)
-	{
-		return procPool.equality(data_);
-	}
+	bool equality(ProcessPool &procPool) { return procPool.equality(data_); }
 };
 
 #endif

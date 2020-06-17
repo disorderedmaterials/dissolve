@@ -22,8 +22,8 @@
 #ifndef DISSOLVE_CALCULATE_AVGMOLMODULEWIDGET_H
 #define DISSOLVE_CALCULATE_AVGMOLMODULEWIDGET_H
 
-#include "modules/calculate_avgmol/gui/ui_modulewidget.h"
 #include "gui/modulewidget.h"
+#include "modules/calculate_avgmol/gui/ui_modulewidget.h"
 
 // Forward Declarations
 class CalculateAvgMolModule;
@@ -34,23 +34,22 @@ class CalculateAvgMolModuleWidget : public ModuleWidget
 	// All Qt declarations derived from QObject must include this macro
 	Q_OBJECT
 
-	private:
+      private:
 	// Associated Module
-	CalculateAvgMolModule* module_;
+	CalculateAvgMolModule *module_;
 
-	public:
+      public:
 	// Constructor
-	CalculateAvgMolModuleWidget(QWidget* parent, CalculateAvgMolModule* module);
-
+	CalculateAvgMolModuleWidget(QWidget *parent, CalculateAvgMolModule *module);
 
 	/*
 	 * UI
 	 */
-	private:
+      private:
 	// Main form declaration
 	Ui::CalculateAvgMolModuleWidget ui_;
 
-	public:
+      public:
 	// Update controls within widget
 	void updateControls(int flags = ModuleWidget::DefaultUpdateFlag);
 	// Disable sensitive controls within widget
@@ -58,23 +57,20 @@ class CalculateAvgMolModuleWidget : public ModuleWidget
 	// Enable sensitive controls within widget
 	void enableSensitiveControls();
 
-
 	/*
 	 * State I/O
 	 */
-	public:
+      public:
 	// Write widget state through specified LineParser
-	bool writeState(LineParser& parser) const;
+	bool writeState(LineParser &parser) const;
 	// Read widget state through specified LineParser
-	bool readState(LineParser& parser);
-
+	bool readState(LineParser &parser);
 
 	/*
 	 * Widgets / Functions
 	 */
-	private:
-
-	private slots:
+      private:
+      private slots:
 };
 
 #endif

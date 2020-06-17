@@ -33,44 +33,42 @@ class CoreData;
  */
 class GenericItem : public ListItem<GenericItem>
 {
-	public:
+      public:
 	// Constructor
-	GenericItem(const char* name, int flags);
+	GenericItem(const char *name, int flags);
 	virtual ~GenericItem();
 	// Item Flags
 	enum ItemFlag
 	{
-		NoFlag				= 0,	/* No flag */
-		InRestartFileFlag		= 1,	/* The item should be written to the restart file */
-		IsReferencePointDataFlag	= 2,	/* The item was loaded as reference point data */
-		ProtectedFlag			= 4	/* The item will not be clear()'d unless forced */
+		NoFlag = 0,		      /* No flag */
+		InRestartFileFlag = 1,	/* The item should be written to the restart file */
+		IsReferencePointDataFlag = 2, /* The item was loaded as reference point data */
+		ProtectedFlag = 4	     /* The item will not be clear()'d unless forced */
 	};
-
 
 	/*
 	 * Item Class
 	 */
-	protected:
+      protected:
 	// List of all available class names (as GenericItems)
 	static List<GenericItem> itemClasses_;
 
-	protected:
+      protected:
 	// Create a new GenericItem containing same class as current type
-	virtual GenericItem* createItem(const char* className, const char* name, int flags = 0) = 0;
+	virtual GenericItem *createItem(const char *className, const char *name, int flags = 0) = 0;
 
-	public:
+      public:
 	// Return class name contained in item
-	virtual const char* itemClassName() = 0;
+	virtual const char *itemClassName() = 0;
 	// Add class to list of representative itemClasses_
-	static void addItemClass(GenericItem* item);
+	static void addItemClass(GenericItem *item);
 	// Return new, empty GenericItem containing the class specified
-	static GenericItem* newItem(const char* className, const char* name, int flags = 0);
-
+	static GenericItem *newItem(const char *className, const char *name, int flags = 0);
 
 	/*
 	 * Item Contents
 	 */
-	private:
+      private:
 	// Name associated to the item
 	CharString name_;
 	// Version of the item
@@ -78,11 +76,11 @@ class GenericItem : public ListItem<GenericItem>
 	// Flags
 	int flags_;
 
-	public:
+      public:
 	// Set item name
-	void setName(const char* name);
+	void setName(const char *name);
 	// Return item name
-	const char* name();
+	const char *name();
 	// Return version of the item
 	int version() const;
 	// Set version of the item
@@ -100,25 +98,23 @@ class GenericItem : public ListItem<GenericItem>
 	// Return whether specified flag is set
 	bool hasFlag(GenericItem::ItemFlag flag) const;
 
-
 	/*
 	 * I/O
 	 */
-	public:
+      public:
 	// Write data through specified parser
-	virtual bool write(LineParser& parser) = 0;
+	virtual bool write(LineParser &parser) = 0;
 	// Read data through specified parser
-	virtual bool read(LineParser& parser, const CoreData& coreData) = 0;
-
+	virtual bool read(LineParser &parser, const CoreData &coreData) = 0;
 
 	/*
 	 * Parallel Comms
 	 */
-	public:
+      public:
 	// Broadcast item contents
-	virtual bool broadcast(ProcessPool& procPool, const int root, const CoreData& coreData) = 0;
+	virtual bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData) = 0;
 	// Return equality between items
-	virtual bool equality(ProcessPool& procPool) = 0;
+	virtual bool equality(ProcessPool &procPool) = 0;
 };
 
 #endif
