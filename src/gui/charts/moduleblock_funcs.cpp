@@ -28,6 +28,7 @@
 #include "templates/variantpointer.h"
 #include <QFile>
 #include <QPainter>
+#include <QPainterPath>
 
 ModuleBlock::ModuleBlock(QWidget *parent, Module *module, Dissolve &dissolve)
     : QWidget(parent), ChartBlock(), dissolve_(dissolve)

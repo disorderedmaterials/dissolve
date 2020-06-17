@@ -21,10 +21,10 @@
 
 #include "gui/charts/proceduremetrics.h"
 #include "gui/charts/procedurenode.h"
-// #include "gui/keywordwidgets/widget.h"
 #include "procedure/nodes/node.h"
 #include "templates/variantpointer.h"
 #include <QPainter>
+#include <QPainterPath>
 
 ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget *parent, ProcedureNode *node, const CoreData &coreData)
     : QWidget(parent), ChartBlock()
