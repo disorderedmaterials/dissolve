@@ -203,19 +203,13 @@ bool Collect3DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
     histogram_ = &target;
 
     // Retrieve the observables
-    auto xObs = keywords_.retrieve<Pair<CalculateProcedureNodeBase *, int>>("QuantityX");
-    xObservable_ = xObs.a();
-    xObservableIndex_ = xObs.b();
+    std::tie(xObservable_, xObservableIndex_) = keywords_.retrieve<std::tuple<CalculateProcedureNodeBase *, int>>("QuantityX");
     if (!xObservable_)
         return Messenger::error("No valid x quantity set in '%s'.\n", name());
-    auto yObs = keywords_.retrieve<Pair<CalculateProcedureNodeBase *, int>>("QuantityY");
-    yObservable_ = yObs.a();
-    yObservableIndex_ = yObs.b();
+    std::tie(yObservable_, yObservableIndex_) = keywords_.retrieve<std::tuple<CalculateProcedureNodeBase *, int>>("QuantityY");
     if (!yObservable_)
         return Messenger::error("No valid y quantity set in '%s'.\n", name());
-    auto zObs = keywords_.retrieve<Pair<CalculateProcedureNodeBase *, int>>("QuantityZ");
-    zObservable_ = zObs.a();
-    zObservableIndex_ = zObs.b();
+    std::tie(zObservable_, zObservableIndex_) = keywords_.retrieve<std::tuple<CalculateProcedureNodeBase *, int>>("QuantityZ");
     if (!zObservable_)
         return Messenger::error("No valid z quantity set in '%s'.\n", name());
 

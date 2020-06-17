@@ -24,7 +24,7 @@
 #include "base/lineparser.h"
 #include "keywords/data.h"
 #include "procedure/nodes/node.h"
-#include "templates/pair.h"
+#include <tuple>
 
 // Forward Declarations
 class NodeValue;
@@ -75,8 +75,6 @@ class NodeAndIntegerKeywordBase
     virtual void setIndex(int index) = 0;
     // Return target index
     virtual int index() const = 0;
-    // Return whether index has been set
-    virtual bool indexSet() const = 0;
 
     /*
      * Access to KeywordBase
@@ -87,19 +85,19 @@ class NodeAndIntegerKeywordBase
 };
 
 // Keyword with ProcedureNode and integer index
-template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBase, public KeywordData<Pair<N *, int>>
+template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBase, public KeywordData<std::tuple<N *, int>>
 {
     public:
     NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N *node)
-        : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<Pair<N *, int>>(
+        : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::tuple<N *, int>>(
                                                                             KeywordBase::NodeAndIntegerData,
-                                                                            Pair<N *, int>(node))
+                                                                            std::tuple<N *, int>(node, -1))
     {
     }
     NodeAndIntegerKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N *node, int index)
-        : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<Pair<N *, int>>(
+        : NodeAndIntegerKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<std::tuple<N *, int>>(
                                                                             KeywordBase::NodeAndIntegerData,
-                                                                            Pair<N *, int>(node, index))
+                                                                            std::tuple<N *, int>(node, index))
     {
     }
     ~NodeAndIntegerKeyword() {}
@@ -132,10 +130,10 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
     bool write(LineParser &parser, const char *keywordName, const char *prefix)
     {
         // Grab the node pointer
-        const N *node = KeywordData<Pair<N *, int>>::data_.a();
+        const N *node = std::get<0>(KeywordData<std::tuple<N *, int>>::data_);
 
         // If an index was set, write it after the node name
-        if (KeywordData<Pair<N *, int>>::data_.isBSet())
+        if (std::get<1>(KeywordData<std::tuple<N *, int>>::data_) >= 0)
         {
             if (!parser.writeLineF("%s%s  '%s'\n", prefix, KeywordBase::name(), node ? node->name() : "???"))
                 return false;
@@ -143,7 +141,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
         else
         {
             if (!parser.writeLineF("%s%s  '%s'  %i\n", prefix, KeywordBase::name(), node ? node->name() : "???",
-                                   KeywordData<Pair<N *, int>>::data_.b()))
+                                   std::get<1>(KeywordData<std::tuple<N *, int>>::data_)))
                 return false;
         }
 
@@ -165,14 +163,14 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
                                     ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(),
                                     ProcedureNode::nodeTypes().keyword(nodeType()));
 
-        KeywordData<Pair<N *, int>>::data_.setA(dynamic_cast<N *>(node));
+        std::get<0>(KeywordData<std::tuple<N *, int>>::data_) = dynamic_cast<N *>(node);
 
-        KeywordData<Pair<N *, int>>::set_ = true;
+        KeywordData<std::tuple<N *, int>>::set_ = true;
 
         return true;
     }
     // Return the current target node
-    ProcedureNode *node() const { return KeywordData<Pair<N *, int>>::data_.a(); }
+    ProcedureNode *node() const { return std::get<0>(KeywordData<std::tuple<N *, int>>::data_); }
 
     /*
      * Associated Index
@@ -181,16 +179,13 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
     // Set target index
     void setIndex(int index)
     {
-        KeywordData<Pair<N *, int>>::data_.setB(index);
+        std::get<1>(KeywordData<std::tuple<N *, int>>::data_) = index;
 
-        KeywordData<Pair<N *, int>>::set_ = true;
+        KeywordData<std::tuple<N *, int>>::set_ = true;
     }
 
     // Return target index
-    int index() const { return KeywordData<Pair<N *, int>>::data_.b(); }
-
-    // Return whether index has been set
-    bool indexSet() const { return KeywordData<Pair<N *, int>>::data_.isBSet(); }
+    int index() const { return std::get<1>(KeywordData<std::tuple<N *, int>>::data_); }
 
     /*
      * Access to KeywordBase
