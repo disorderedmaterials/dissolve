@@ -9,25 +9,18 @@ grand_parent: Examples
 
 Time to create a suitable liquid configuration for our simulation using the predefined "simple random mix" generator:
 
-> Configuration &#8680; Create... &#8680; Simple random mix
-{: .action .action_menu}
-> Choose the benzene species and press **Select**
-{: .step}
-> Double-click on the tab title and change its name to `Liquid`
-{: .action .action_edit}
+{{< action type="menu" text="Configuration &#8680; Create... &#8680; Simple random mix" >}}
+{{< step text="Choose the benzene species and press **Select**">}}
+{{< action type="edit" text="Double-click on the tab title and change its name to `Liquid`" >}}
 
 In the interests of speed, we'll use the default number of molecules (100) for the simulation, but we will need to set the correct density. We'll use chemical units of g/cm<sup>3</sup> to specify it:
 
-> Open the settings for the `Parameters` node
-{: .action .action_settings}
-> Check that the value of the "rho" variable is 0.876. Note that this is "just a number" - units are given in the `AddSpecies` node when we reference this value
-{: .step}
-> Open the settings for the `AddSpecies` node
-{: .action .action_settings}
-> Make sure that the units for the **Density** are set to `g/cm3` and that it references our parameter `rho`
-{: .step}
-> Click _Regenerate_{: .text-green-100} to recreate the configuration with our adjusted parameters
-{: .action .action_mouse}
+{{< action type="settings" text="Open the settings for the `Parameters` node" >}}
+{{< step text="Check that the value of the \"rho\" variable is 0.876. Note that this is \"just a number\" - units are given in the `AddSpecies` node when we reference this value">}}
+{{< action type="settings" text="Open the settings for the `AddSpecies` node" >}}
+{{< step text="Make sure that the units for the **Density** are set to `g/cm3` and that it references our parameter `rho`">}}
+{{< action type="mouse" text="Click _Regenerate_{: .text-green-100} to recreate the configuration with our adjusted parameters" >}}
+
 
 The resulting box will have a side length of just over 24.5 &#8491;.
 
@@ -38,20 +31,17 @@ Since the molecules were added to the box completely at random, there will most 
 
 In anticipation of some bad contacts:
 
-> **Liquid** configuration tab
-{: .action .action_tabs}
-> Set the **Requested** value for the _Size Factor Scaling_ to 10.0
-{: .step}
+{{< action type="tabs" text="**Liquid** configuration tab" >}}
+{{< step text="Set the **Requested** value for the _Size Factor Scaling_ to 10.0" >}}
+
 
 Finally, before we move on, we will have to reduce our pair potential range from the default of 15 &#8491; since this is larger than the half the maximum width of our simulation box.
 
-> **Forcefield** tab, **Pair Potentials** section
-{: .action .action_tabs}
-> Reduce the pair potential **Range** from 15 to 12 &#8491;
-{: .step}
+{{< action type="tabs" text="**Forcefield** tab, **Pair Potentials** section" >}}
+{{< step text="Reduce the pair potential **Range** from 15 to 12 &#8491;" >}}
 
-> For a cubic box, you can't have a cutoff value greater than half the box length, as this means that a given atom will 'see' other atoms twice because of the periodic boundary conditions.
-{: .tip}
+
+{{< tip text="For a cubic box, you can't have a cutoff value greater than half the box length, as this means that a given atom will 'see' other atoms twice because of the periodic boundary conditions." >}}
 
 {{< button pos="left" text="Previous Step" path= "/docs/examples/benzene/step1/">}}
 {{< button pos="right" text="Next Step" path= "/docs/examples/benzene/step3/">}}

@@ -10,12 +10,9 @@ weight: 7
 
 With two of our processing layers set up we can start to run the simulation and monitor how the system is evolving. There are several ways to run the simulation within the Dissolve GUI.
 
-> Click the _Run_{: .text-green-100} button on the left-hand side of the main window
-{: .action .action_mouse}
-> Simulation &#8680; Run
-{: .action .action_menu}
-> Ctrl-R
-{: .action .action_key}
+{{< action type="mouse" text="Click the _Run_{: .text-green-100} button on the left-hand side of the main window" >}}
+{{< action type="menu" text="Simulation &#8680; Run" >}}
+{{< action type="key" text="Ctrl-R" >}}
 
 Do one of those to set the simulation running. Note the counter in the top-left of the main window which tracks the current iteration.
 
@@ -30,12 +27,9 @@ If you have the [`NeutronSQ`](../../userguide/modules/neutronsq) module tab stil
 
 We'll now stop the simulation.
 
-> Click the _Pause_{: .text-green-100} button on the left-hand side of the main window
-{: .action .action_mouse}
-> Simulation &#8680; Pause
-{: .action .action_menu}
-> Esc
-{: .action .action_key}
+{{< action type="mouse" text="Click the _Pause_{: .text-green-100} button on the left-hand side of the main window" >}}
+{{< action type="menu" text="Simulation &#8680; Pause" >}}
+{{< action type="key" text="Esc" >}}
 
 Keep in mind that the simulation will not actually stop until the current iteration is completed - most parts of the GUI will remain grayed out until then.
 

@@ -10,8 +10,8 @@ weight: 5
 
 We almost always want to move the contents of our configurations around, and this is the job of the evolution layer.
 
-> Layer &#8680; Create... &#8680; Evolution... &#8680; Standard Atomic (MC/MD)
-{: .action .action_menu}
+{{< action type="menu" text="Layer &#8680; Create... &#8680; Evolution... &#8680; Standard Atomic (MC/MD)" >}}
+
 
 Our new layer contains the following modules:
 

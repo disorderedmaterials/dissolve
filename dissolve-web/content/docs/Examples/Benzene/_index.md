@@ -19,12 +19,13 @@ You will set up and equilibrate a small liquid benzene simulation before calcula
 
 Download the example data `Dissolve-X.Y.Z-ExampleData.zip` or `Dissolve-X.Y.Z-ExampleData.tar.gz` (where `X.Y.Z` will be the current version) from the [continuous build](https://github.com/trisyoungs/dissolve/releases/tag/continuous) in the releases section on GitHub and unpack it if you haven't done so already.
 
-> Open the Dissolve GUI
-{: .action .action_dissolve}
+{{< action type="dissolve" text="Open the Dissolve GUI" >}}
+
 > Choose **Empty Simulation** from the _Create_ section
 {: .step}
-> Save As...
-{: .action .action_menu}
+
+{{< action type="menu" text="Save As..." >}}
+
 > Save your own input file under a sensible name in the `benzene` directory of the example data
 {: .step}
 

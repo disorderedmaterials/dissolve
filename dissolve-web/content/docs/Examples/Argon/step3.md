@@ -14,10 +14,9 @@ Configurations in Dissolve are created from a sequence of instructions that defi
 
 Dissolve provides several standard configuration generators for common-use cases, one of which we will use now.
 
-> Configuration &#8680; Create... &#8680; Simple random mix
-{: .action .action_menu}
-> A random mix can contain any number of species - we only have one, so select the argon species
-{: .step}
+{{< action type="menu" text="Configuration &#8680; Create... &#8680; Simple random mix" >}}
+{{< step text="A random mix can contain any number of species - we only have one, so select the argon species" >}}
+
 
 You will now see that the _Generator_{: .text-green-100} section has been populated with several steps, and a new configuration of atomic coordinates has been created based on these steps.  We'll go through these one-by-one in the order they appear. To see the settings for any step, click the cog icon in its bottom-right corner.
 
@@ -29,31 +28,23 @@ You will now see that the _Generator_{: .text-green-100} section has been popula
 
 In the `AddSpecies` node note how we have reference the `rho` parameter for the density. Many numerical values for nodes 
 
-> Many numerical options can be given in the form of equations referencing variables such as those set in a `Parameters` node. A green tick indicates if the equation is valid.
-{: .tip}
+{{< tip text="Many numerical options can be given in the form of equations referencing variables such as those set in a `Parameters` node. A green tick indicates if the equation is valid.">}}
 
 Let's change the settings of our configuration's generator to give us a suitable system.
 
-> Open the settings for the `Parameters` node
-{: .action .action_settings}
-> Change the value of the "rho" variable to 0.0213 (which is our target density in units of atoms/A3)
-{: .step}
-> Open the settings for the `AddSpecies` node
-{: .action .action_settings}
-> Check that the units for the **Density** are set to `atoms/A3`
-{: .step}
-> Increase the **Population** to 1000
-{: .step}
+{{< action type="settings" text="Open the settings for the `Parameters` node" >}}
+{{< step text="Change the value of the \"rho\" variable to 0.0213 (which is our target density in units of atoms/A3)">}}
+{{< action type="settings" text="Open the settings for the `AddSpecies` node" >}}
+{{< step text="Check that the units for the **Density** are set to `atoms/A3`">}}
+{{< step text="Increase the **Population** to 1000">}}
 
 Finally, we need to set the correct temperature for the configuration.
 
-> Set the **Temperature** to 85 K to match that of the experimental measurement
-{: .action .action_edit}
+{{< action type="edit" text="Set the **Temperature** to 85 K to match that of the experimental measurement" >}}
 
 Because we've changed some settings, we need to hit the _Regenerate_{: .text-green-100} button to recreate our initial configuration.
 
-> You can regenerate a configuration at any time, but bear in mind that other quantities calculated by modules may also need to be cleared. Remove all of this data to begin a 'clean' run with the _Clear Module Data_{: .text-green-100} option in the  _Simulation_{: .text-green-100} menu.
-{: .tip}
+{{< tip text="You can regenerate a configuration at any time, but bear in mind that other quantities calculated by modules may also need to be cleared. Remove all of this data to begin a 'clean' run with the _Clear Module Data_{: .text-green-100} option in the  _Simulation_{: .text-green-100} menu.">}}
 
 
 {{< button pos="left" text="Previous Step" path= "/docs/examples/argon/step2/">}}

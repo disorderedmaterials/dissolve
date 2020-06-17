@@ -1,4 +1,4 @@
 {{ $type := .Get "type"  }}
 <blockquote class="action action-{{ $type }}" >
-{{ with .Get "text" }}<p>{{ . | markdownify }}</p>{{ end }}
+{{ with .Get "text" }}<p>{{ . | markdownify }}{{ .| safeHTML }}</p>{{ end }}
 </blockquote>
