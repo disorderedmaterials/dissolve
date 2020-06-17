@@ -3,8 +3,7 @@ title: Liquid Water
 weight: 3
 ---
 
-60 - 75 minutes
-{: .label .label-blue }
+{{< label color="blue" text="60 - 75 minutes" >}}
 
 ## Summary
 
@@ -14,14 +13,11 @@ It should be no surprise that water is present in a significant fraction of diso
 
 Download the example data `Dissolve-X.Y.Z-ExampleData.zip` or `Dissolve-X.Y.Z-ExampleData.tar.gz` (where `X.Y.Z` will be the current version) from the [continuous build](https://github.com/trisyoungs/dissolve/releases/tag/continuous) in the releases section on GitHub and unpack it if you haven't done so already.
 
-> Open the Dissolve GUI
-{: .action .action_dissolve}
-> Choose **Empty Simulation** from the _Create_ section
-{: .step}
-> Save As...
-{: .action .action_menu}
-> Save your own input file under a sensible name in the `water` directory of the example data
-{: .step}
+{{< action type="dissolve" text="Open the Dissolve GUI" >}}
+{{< step text="Choose **Empty Simulation** from the _Create_ section" >}}
+{{< action type="menu" text="Save As..." >}}
+{{< step text="Save your own input file under a sensible name in the `water` directory of the example data" >}}
+
 
 Alternatively, download the data files listed below and save them to a location of your choice.
 

@@ -16,25 +16,18 @@ Our agreement with experiment is OK, but it is possible to make it even better b
 
 Here we'll employ the [`EPSR`](../../userguide/modules/epsr) module in order to adjust the interatomic potentials automatically to give better agreement with the experimental reference data.
 
-> Layer &#8680; Create... &#8680; Refinement... &#8680; Standard EPSR
-{: .action .action_menu}
+{{< action type="menu" text="Layer &#8680; Create... &#8680; Refinement... &#8680; Standard EPSR" >}}
 
 Our new layer contains only the [`EPSR`](../../userguide/modules/epsr) module, and which Dissolve has set up with sensible targets and defaults. Double-click the [`EPSR`](../../userguide/modules/epsr) module to open it up as a tab - we'll need to explore the various graphs as we proceed, but for now let's check the set-up of the module. Brief descriptions of the important parameters are given below - for more in-depth explanations see the [`EPSR`](../../userguide/modules/epsr) module page.
 
-> **Refine (EPSR)** tab
-{: .action .action_tabs}
-> Double-click on the [`EPSR`](../../userguide/modules/epsr) module to open it up in a new tab
-{: .action .action_mouse}
-> Open the **Calculation** settings group
-{: .action .action_groups}
-> An initial value for **EReq** has been set (3.0) - this determines the magnitude or "strength" of the generated interatomic potentials
-{: .step}
-> The **Feedback** factor is 0.8 - this states that we are 80% confident in the experimental data, and that the calculated partial structure factors should make up 20% of the estimated partials
-{: .step}
-> The range of data over which to generate the potential in _Q_-space is determined by **QMax** (30 &#8491;<sup>-1</sup>)and **QMin** (0.5 &#8491;<sup>-1</sup>)
-{: .step}
-> The experimental data to use in the refinement are set in the **Target** option, which lists all available modules by name that have suitable data for the [`EPSR`](../../userguide/modules/epsr) module to use. All of the [`NeutronSQ`](../../userguide/modules/neutronsq) modules have been selected automatically
-{: .step}
+{{< action type="tabs" text="**Refine (EPSR)** tab" >}}
+{{< action type="mouse" text="Double-click on the [`EPSR`](../../userguide/modules/epsr) module to open it up in a new tab" >}}
+{{< action type="groups" text=" Open the **Calculation** settings group" >}}
+{{< step text=" An initial value for **EReq** has been set (3.0) - this determines the magnitude or \"strength\" of the generated interatomic potentials" >}}
+{{< step text="The **Feedback** factor is 0.8 - this states that we are 80% confident in the experimental data, and that the calculated partial structure factors should make up 20% of the estimated partials" >}}
+{{< step text="The range of data over which to generate the potential in _Q_-space is determined by **QMax** (30 &#8491;<sup>-1</sup>)and **QMin** (0.5 &#8491;<sup>-1</sup>)" >}}
+{{< step text=" The experimental data to use in the refinement are set in the **Target** option, which lists all available modules by name that have suitable data for the [`EPSR`](../../userguide/modules/epsr) module to use. All of the [`NeutronSQ`](../../userguide/modules/neutronsq) modules have been selected automatically" >}}
+
 
 All of these default values are fine for our purpose, and there's very little that you should have to change in the first instance. So, start the simulation running again to begin the refinement process, and while it's running we'll go through the different tabs in the [`EPSR`](../../userguide/modules/epsr) module one by one to see what information we have available, and which help to illustrate the basic workflow of the EPSR methodology.
 

@@ -21,18 +21,12 @@ We will define axes on our centre-of-mass site. In general, a system of referenc
 
 When defining a site within Dissolve it is your responsibility to provide atom indices for the origin and the representative _x_ and _y_ directions - Dissolve will do the rest. Thus:
 
-> **Water** species tab
-{: .action .action_tabs}
-> Open the **Analysis Sites** section
-{: .step}
-> If you don't already have the `COM` site, click-drag with the left mouse button in the species viewer and draw a box around the whole molecule to select it, then press the **Create** button in the toolbar, and rename the new site to `COM`.
-{: .action .action_mouse}
-> Make sure the `COM` site is selected in the list on the left
-{: .step}
-> Select the oxygen atom and click the **X Axis** button in the viewer toolbar
-{: .action .action_mouse}
-> Select either one of the hydrogen atoms and click the **Y Axis** button in the viewer toolbar
-{: .action .action_mouse}
+{{< action type="tabs" text="**Water** species tab" >}}
+{{< step text="Open the **Analysis Sites** section" >}}
+{{< action type="mouse" text="If you don't already have the `COM` site, click-drag with the left mouse button in the species viewer and draw a box around the whole molecule to select it, then press the **Create** button in the toolbar, and rename the new site to `COM`." >}}
+{{< step text="Make sure the `COM` site is selected in the list on the left" >}}
+{{< action type="mouse" text="Select the oxygen atom and click the **X Axis** button in the viewer toolbar" >}}
+{{< action type="mouse" text="Select either one of the hydrogen atoms and click the **Y Axis** button in the viewer toolbar" >}}
 
 You'll note that, as soon as you pressed the **Y Axis** button a set of axes appeared in the site viewer, letting you know that your definition is complete and showing you how your system of axes are oriented.
 
@@ -40,8 +34,7 @@ You'll note that, as soon as you pressed the **Y Axis** button a set of axes app
 
 We will add another of Dissolve's predefined analysis layers to get the modules that we want:
 
-> Layer &#8680; Create... &#8680; Analysis... &#8680; Average Molecule & SDF
-{: .action .action_menu}
+{{< action type="menu" text="Layer &#8680; Create... &#8680; Analysis... &#8680; Average Molecule & SDF" >}}
 
 Along with the calculation of the SDF, it is useful to have the actual average geometry of the species around the specified site, and so the layer provides the following modules:
 
@@ -54,20 +47,13 @@ As the name implies, the [`CalculateAvgMol`](../../userguide/modules/calculateav
 
 Let's proceed and set up the two modules in the layer:
 
-> Select the [`CalculateAvgMol`](../../userguide/modules/calculateavgmol) module to display its options
-{: .action .action_mouse}
-> Open the **Target** settings group
-{: .action .action_groups}
-> Set the target **Site** for the average molecule calculation to be `COM` (it will be the only one available, since it is the only one which has a set of axes defined)
-{: .step}
-> Select the [`CalculateSDF`](../../userguide/modules/calculatesdf) module to display its options
-{: .action .action_mouse}
-> Open the **Sites** settings group
-{: .action .action_groups}
-> Set the central **SiteA** to `COM` (again, the only one available)
-{: .step}
-> Set the surrounding **SiteB** to `O`
-{: .step}
+{{< action type="mouse" text="Select the [`CalculateAvgMol`](../../userguide/modules/calculateavgmol) module to display its options" >}}
+{{< action type="groups" text="Open the **Target** settings group" >}}
+{{< step text="Set the target **Site** for the average molecule calculation to be `COM` (it will be the only one available, since it is the only one which has a set of axes defined)" >}}
+{{< action type="mouse" text="Select the [`CalculateSDF`](../../userguide/modules/calculatesdf) module to display its options" >}}
+{{< action type="groups" text="Open the **Sites** settings group" >}}
+{{< step text="Set the central **SiteA** to `COM` (again, the only one available)" >}}
+{{< step text="Set the surrounding **SiteB** to `O`" >}}
 
 {{< button pos="left" text="Previous Step" path= "/docs/examples/water/step9b/">}}
 {{< button pos="right" text="Next Step" path= "/docs/examples/water/step10/">}}

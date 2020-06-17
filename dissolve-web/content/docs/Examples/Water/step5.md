@@ -8,10 +8,9 @@ weight: 7
 
 With our equilibrated (or equilibrating...) system we'll now make a basic comparison between our simulated total structure factors and the reference datasets.
 
-> **RDF / Neutron S(Q)** tab
-{: .action .action_tabs}
-> Double-click on the `H2O` [`NeutronSQ`](../../userguide/modules/neutronsq) module to open its additional controls in a separate tab
-{: .step}
+{{< action type="tabs" text="**RDF / Neutron S(Q)** tab" >}}
+{{< step text="Double-click on the `H2O` [`NeutronSQ`](../../userguide/modules/neutronsq) module to open its additional controls in a separate tab" >}}
+
 
 Now we can see the comparison between the total radial distribution functions (top panel) and neutron-weighted structure factors (bottom panel) for the H<sub>2</sub>O sample. When the system is approaching equilibrium you should see something similar to this:
 
@@ -24,23 +23,18 @@ At first glance the calculated and experimental F(Q) agree reasonably well, but 
 
 First, stop the simulation if it is running:
 
-> Click the _Pause_{: .text-green-100} button on the left-hand side of the main window
-{: .action .action_mouse}
-> Simulation &#8680; Pause
-{: .action .action_menu}
-> Esc
-{: .action .action_key}
+{{< action type="mouse" text="Click the _Pause_{: .text-green-100} button on the left-hand side of the main window" >}}
+{{< action type="menu" text="Simulation &#8680; Pause" >}}
+{{< action type="key" text="Esc" >}}
+
 
 Now we can safely adjust the options in the [`RDF`](../../userguide/modules/rdf) module:
 
-> **RDF / Neutron S(Q)** tab
-{: .action .action_tabs}
-> Select th [`RDF`](../../userguide/modules/rdf) module to display its additional controls
-{: .step}
-> Open the **Calculation** settings group
-{: .action .action_groups}
-> Set the **IntraBroadening** to `Gaussian` with a FWHM of 0.18 (the default)
-{: .step}
+{{< action type="tabs" text=" **RDF / Neutron S(Q)** tab" >}}
+{{< step text="Select th [`RDF`](../../userguide/modules/rdf) module to display its additional controls" >}}
+{{< action type="groups" text="Open the **Calculation** settings group" >}}
+{{< step text="Set the **IntraBroadening** to `Gaussian` with a FWHM of 0.18 (the default)" >}}
+
 
 Start the simulation up again and you should see quite quickly that this broadening function brings the intensity of the first peak down to a level much more in line with the reference data:
 
