@@ -28,4 +28,5 @@ You'll see several curves on the graph, including the total energy (black line) 
 
 The energy will take a few hundred iterations to stabilise, so while we're waiting we'll take an initial look at the comparison between simulation and experiment in the next section.
 
-[Previous Step](/docs/examples/water/step3){: .btn }   [Next Step](/docs/examples/water/step5){: .btn .right}
+{{< button pos="left" text="Previous Step" path= "/docs/examples/water/step3/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/water/step5/">}}

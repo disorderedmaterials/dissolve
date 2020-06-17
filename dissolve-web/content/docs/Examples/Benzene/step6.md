@@ -96,4 +96,6 @@ All that remains is to add our EPSR refinement layer:
 > Change the **EReq** value to 10.0 - the default of 3.0 will not be enough to promote the necessary changes in structure
 {: .action .action_edit}
 
-[Previous Step](/docs/examples/benzene/step5){: .btn }   [Next Step](/docs/examples/benzene/step7){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/benzene/step5/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/benzene/step7/">}}

@@ -29,4 +29,6 @@ Finally, modules may have entire control panels of other functionality, most com
 
 All of the default settings for the modules within the evolution layer are sensible enough for our needs, so take a look around at what's there if you want to, but there's no need to change anything.
 
-[Previous Step](/docs/examples/argon/step4a/){: .btn }   [Next Step](/docs/examples/argon/step4b/){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/argon/step4/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/argon/step4b/">}}

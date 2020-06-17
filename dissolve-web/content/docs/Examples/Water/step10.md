@@ -62,4 +62,6 @@ Open the [CalculateSDF](../../userguide/modules/calculatesdf) module to see the 
 
 Spatial density functions take a relatively long to accumulate to a point where the surfaces are smooth, but you should be able to make out the salient features after only a handful of iterations. Along each O&ndash;H bond vector there exists a small lobe of density, and represents the positions of molecules acting as hydrogen bond acceptors to the central one (this visually represents the distance and angle we found in the [CalculateDAngle](../../userguide/modules/calculatedangle) results above). A halo of density also exists around the oxygen atom, representing the positions of molecules acting as hydrogen bond donors to the central one.
 
-[Previous Step](/docs/examples/water/step9){: .btn }   [Back to Index](/docs/examples/water/){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/water/step9">}}
+{{< button pos="right" text="Back to Index" path= "/docs/examples/water/">}}

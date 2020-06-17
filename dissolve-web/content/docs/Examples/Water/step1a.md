@@ -62,4 +62,5 @@ We can now clean up the geometry of our molecule by doing a quick geometry optim
 
 Do this a couple of times until there's no further appreciable change to the geometry of the molecule.
 
-[Back to Overview](/docs/examples/water/){: .btn }   [Next Step](/docs/examples/water/step1b){: .btn .right}
+{{< button pos="left" text="Back to Overview" path= "/docs/examples/water/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/water/step1b">}}

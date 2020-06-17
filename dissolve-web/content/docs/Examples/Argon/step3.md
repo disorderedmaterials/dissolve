@@ -55,4 +55,6 @@ Because we've changed some settings, we need to hit the _Regenerate_{: .text-gre
 > You can regenerate a configuration at any time, but bear in mind that other quantities calculated by modules may also need to be cleared. Remove all of this data to begin a 'clean' run with the _Clear Module Data_{: .text-green-100} option in the  _Simulation_{: .text-green-100} menu.
 {: .tip}
 
-[Previous Step](/docs/examples/argon/step2/){: .btn }   [Next Step](/docs/examples/argon/step4/){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/argon/step2/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/argon/step4/">}}

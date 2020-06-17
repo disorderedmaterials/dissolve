@@ -40,4 +40,5 @@ Finally, we'll tweak the temperature of the configuration.
 ![](waterbox.png){: .img-centre}
 *Initial, randomised water box containing 1000 molecules*
 
-[Previous Step](/docs/examples/water/step1/){: .btn }   [Next Step](/docs/examples/water/step3){: .btn .right}
+{{< button pos="left" text="Previous Step" path= "/docs/examples/water/step1b/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/water/step3/">}}

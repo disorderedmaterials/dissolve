@@ -39,4 +39,5 @@ Once this has been achieved, we can make a snapshot of the current simulation an
 
 Now we can move on to set up the analysis of the structural properties we're interested in.
 
-[Previous Step](/docs/examples/benzene/step2){: .btn }   [Next Step](/docs/examples/benzene/step4){: .btn .right}
+{{< button pos="left" text="Previous Step" path= "/docs/examples/benzene/step2/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/benzene/step4/">}}

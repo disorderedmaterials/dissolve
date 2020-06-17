@@ -4,7 +4,7 @@ languageCode = "en-us"
 theme = "docsy"
 
 enableInlineShortcodes = true
-
+relativeURLs = true
 ## Configuration for BlackFriday markdown parser: https://github.com/russross/blackfriday
 [blackfriday]
 plainIDAnchors = true

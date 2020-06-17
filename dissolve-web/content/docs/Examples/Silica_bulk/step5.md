@@ -41,4 +41,5 @@ The question is, can it be better? The answer is, of course, yes - the intensity
 
 For the purposes of the example, let's move on and calculate something from the (semi-) refined structure.
 
-[Previous Step](/docs/examples/silica_bulk/step4/){: .btn }   [Next Step](/docs/examples/silica_bulk/step6/){: .btn .right}
+{{< button pos="left" text="Previous Step" path= "/docs/examples/silica_bulk/step4/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/silica_bulk/step6/">}}

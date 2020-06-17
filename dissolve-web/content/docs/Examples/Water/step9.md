@@ -29,6 +29,8 @@ You'll see in this section a list of defined sites (currently none) for your wat
 
 ### Next Steps
 
-The following subsections will describe how to set up several flavours of analysis in separate layers. Feel free to add all of them, or just a selection, to your simulation before moving on to [Step 10](step10.md) and starting it up again to see the results.
+The following subsections will describe how to set up several flavours of analysis in separate layers. Feel free to add all of them, or just a selection, to your simulation before moving on to [Step 10](/docs/examples/water/step10/) and starting it up again to see the results.
 
-[Previous Step](/docs/examples/water/step8){: .btn }   [Next Step](/docs/examples/water/step9a/){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/water/step8/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/water/step9a/">}}

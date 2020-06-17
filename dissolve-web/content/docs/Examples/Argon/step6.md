@@ -12,4 +12,6 @@ Now that our simulation is set up and running nicely, we will consider the quali
 
 You're now prepared for more useful / interesting / exciting (delete as appropriate) examples - a good next step would be to try the [liquid water example](../water).
 
-[Previous Step](/docs/examples/argon/step5){: .btn }      [Back to Index](/docs/examples/argon/){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/argon/step5/">}}
+{{< button pos="right" text="Back to Index" path= "/docs/examples/argon/">}}

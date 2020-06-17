@@ -24,4 +24,6 @@ We have three experimental datasets in this example - H<sub>2</sub>O, D<sub>2</s
 > Exchangeable atoms are not specified in isotopologue definitions, but instead are indicated when using the isotopologues in modules.
 {: .tip}
 
-[Back to Overview](/docs/examples/water/){: .btn }   [Next Step](/docs/examples/water/step2){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/water/step1a">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/water/step2">}}

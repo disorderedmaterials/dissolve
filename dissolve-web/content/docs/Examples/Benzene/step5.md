@@ -56,4 +56,5 @@ We need to refine the simulation before we calculate our properties again, so we
 > Disable the layer by clicking the ![](../icons/slider-on.png) button so it displays ![](../icons/slider-off.png)
 {: .step}
 
-[Previous Step](/docs/examples/benzene/step4){: .btn }   [Next Step](/docs/examples/benzene/step6){: .btn .right}
+{{< button pos="left" text="Previous Step" path= "/docs/examples/benzene/step4/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/benzene/step6/">}}

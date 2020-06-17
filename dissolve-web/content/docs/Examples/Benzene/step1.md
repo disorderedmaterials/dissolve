@@ -97,4 +97,7 @@ We'll locate our analysis site at the centre of the benzene ring and give it som
 > Rename the site to `COG` by double-clicking `C6`
 {: .action action_edit}
 
-[Back to Overview](/docs/examples/benzene){: .btn }   [Next Step](/docs/examples/benzene/step2){: .btn .right}
+
+{{< button pos="left" text="Back to Overview" path= "/docs/examples/benzene/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/benzene/step2">}}
+

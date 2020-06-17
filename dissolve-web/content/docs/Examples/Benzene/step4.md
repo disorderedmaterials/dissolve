@@ -43,4 +43,6 @@ Let's add an empty processing layer to to the simulation, add on our module, and
 > It would also be nice here to calculate the spatial density function (the three-dimensional distribution of molecules around a reference point) and compare it, but this takes more iterations than a (sane) example will allow.
 {: .tip}
 
-[Previous Step](/docs/examples/benzene/step3){: .btn }   [Next Step](/docs/examples/benzene/step5){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/benzene/step3/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/benzene/step5/">}}

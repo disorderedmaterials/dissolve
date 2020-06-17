@@ -48,4 +48,5 @@ It's also worth checking the other two samples, where the same kind of improveme
 ### References
 1. [Quantum Differences between Heavy and Light Water](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.101.065502), A. K. Soper and C. J. Benmore, Phys. Rev. Lett. **101**, 065502 (2008).
 
-[Previous Step](/docs/examples/water/step5){: .btn }   [Next Step](/docs/examples/water/step7){: .btn .right}
+{{< button pos="left" text="Previous Step" path= "/docs/examples/water/step5/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/water/step7/">}}

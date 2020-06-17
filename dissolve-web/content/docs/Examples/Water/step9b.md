@@ -57,4 +57,6 @@ As its name suggests, the [CalculateDAngle](../../userguide/modules/calculatedan
 > Enable the **ExcludeSameMolecule** to ignore interactions where site C is on the same molecule as A and B.
 {: .step}
 
-[Previous Step](/docs/examples/water/step9b){: .btn }   [Next Step](/docs/examples/water/step9c){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/water/step9b/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/water/step9c/">}}

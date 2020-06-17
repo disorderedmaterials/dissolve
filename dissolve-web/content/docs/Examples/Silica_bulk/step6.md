@@ -50,4 +50,6 @@ The three graphs on the first page of [`CalculateAngle`](../../userguide/modules
 
 The second and third tabs display us the distance-angle correlation graphs, which are both identical in the present case.
 
-[Previous Step](/docs/examples/silica_bulk/step5/){: .btn }   [Back to Index](/docs/examples/silica_bulk/){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/silica_bulk/step5/">}}
+{{< button pos="right" text="Back to Index" path= "/docs/examples/silica_bulk/">}}

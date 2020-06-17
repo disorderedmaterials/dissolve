@@ -95,4 +95,6 @@ The upper panel shows the evolution of the current potential magnitude (whose li
 
 Safe to say that you can probably ignore this one!
 
-[Previous Step](/docs/examples/water/step6){: .btn }   [Next Step](/docs/examples/water/step8){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/water/step6/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/water/step8/">}}

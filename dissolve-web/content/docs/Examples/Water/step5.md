@@ -53,4 +53,5 @@ Start the simulation up again and you should see quite quickly that this broaden
 
 It's important to understand the difference between the two flavours of "calculated" G(r). The first (`Calculated (Direct)`, solid black line) is the G(r) calculated directly from the configuration, and with broadening applied, and represents the raw "simulated" G(r). The second (`Calculated (via FT)`, dashed black line) is derived from Fourier transform of the calculate total F(Q) (i.e. it is the Fourier transform of the Fourier transform of the G(r)). The reason for displaying the latter is to enable a more consistent comparison between experimental and calculated G(r) - the reference data is Fourier transformed from _Q_- to _r_-space usually with a Window function such as the Lorch function, and so we also use the same window function when transforming the calculated F(Q). Note that the effects are mostly isolated to the first peak in the G(r), which has a lower intensity in the Fourier transformed version.
 
-[Previous Step](/docs/examples/water/step4){: .btn }   [Next Step](/docs/examples/water/step6){: .btn .right}
+{{< button pos="left" text="Previous Step" path= "/docs/examples/water/step4/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/water/step6/">}}

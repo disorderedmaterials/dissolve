@@ -25,5 +25,5 @@ Alternatively, download the data files listed below and save them to a location 
 
 - Neutron data file: [yarnell.sq](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/argon/data/yarnell.sq)
 
-<a class="btn left" href ="/docs/examples/argon/step1">Let's begin!</a>
 
+{{< button pos="left" text="Let's begin!" path= "/docs/examples/argon/step1">}}

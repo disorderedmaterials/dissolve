@@ -71,4 +71,5 @@ Now the [`CalculateCN`](../../userguide/modules/calculatecn) module:
 
 The [`CalculateCN`](../../userguide/modules/calculatecn) module calculates up to three separate coordination numbers over different distance regions of the target RDF, but we will focus on the first coordination shell in this example. The target RDF is taken from a [`CalculateRDF`](../../userguide/modules/calculaterdf) module, specified by the **SourceRDF** keyword (this was been automatically set to be the [`CalculateRDF`](../../userguide/modules/calculaterdf) module in the current layer).
 
-[Previous Step](/docs/examples/water/step9){: .btn }   [Next Step](/docs/examples/water/step9b){: .btn .right}
+{{< button pos="left" text="Previous Step" path= "/docs/examples/water/step9/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/water/step9b/">}}

@@ -40,4 +40,5 @@ By default, Dissolve will generate all the necessary pair potentials for the cur
 > Reduce the pair potential **Range** from 15 to 10
 {: .step}
 
-[Previous Step](/docs/examples/argon/step1/){: .btn }   [Next Step](/docs/examples/argon/step3/){: .btn .right}
+<a class="btn left" href ="/docs/examples/argon/step1/">Previous Step</a>
+<a class="btn right" href ="/docs/examples/argon/step3/">Next Step</a>

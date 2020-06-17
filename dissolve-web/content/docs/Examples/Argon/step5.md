@@ -39,4 +39,5 @@ We'll now stop the simulation.
 
 Keep in mind that the simulation will not actually stop until the current iteration is completed - most parts of the GUI will remain grayed out until then.
 
-[Previous Step](/docs/examples/argon/step4b/){: .btn }   [Next Step](/docs/examples/argon/step6/){: .btn .right}
+{{< button pos="left" text="Previous Step" path= "/docs/examples/argon/step4b/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/argon/step6/">}}

@@ -35,4 +35,6 @@ Let's get our refined simulation data:
 
 Back on the workspace tab we now have both datasets visible.
 
-[Previous Step](/docs/examples/benzene/step8){: .btn }   [Back to Index](/docs/examples/benzene/){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/benzene/step8/">}}
+{{< button pos="right" text="Back to Index" path= "/docs/examples/benzene/">}}

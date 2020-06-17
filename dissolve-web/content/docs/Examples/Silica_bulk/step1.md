@@ -55,4 +55,5 @@ And now, the oxygen:
 > Select the oxygen atom in the viewer, and click _Create_ in the toolbar to create a site
 {: .step}
 
-[Back to Overview](/docs/examples/silica_bulk/){: .btn }   [Next Step](/docs/examples/silica_bulk/step2){: .btn .right}
+{{< button pos="left" text="Back to Overview" path= "/docs/examples/silica_bulk/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/benzene/step2/">}}

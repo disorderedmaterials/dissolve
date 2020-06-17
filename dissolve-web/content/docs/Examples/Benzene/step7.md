@@ -34,4 +34,6 @@ Keep running until the applied potential gets to the new limit - we don't want t
 > Change the filename to `refined.restart` and click _Save_
 {: .action .action_edit}
 
-[Previous Step](/docs/examples/benzene/step6){: .btn }   [Next Step](/docs/examples/benzene/step8){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/benzene/step6/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/benzene/step8/">}}

@@ -128,4 +128,6 @@ When we set the isotopologues for our water molecule in the `HDO` sample they we
 > For the **Reference** keyword select the file `SLS18502-HDO5050.mint01` and set the format of the data to `mint`
 {: .step}
 
-[Previous Step](/docs/examples/water/step2/){: .btn }   [Next Step](/docs/examples/water/step4){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/water/step2/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/water/step4/">}}

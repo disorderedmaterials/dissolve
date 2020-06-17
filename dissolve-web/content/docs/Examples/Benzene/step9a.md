@@ -68,4 +68,5 @@ _Comparison of centre-of-geometry RDFs between reference (red) and refined (blac
 
 As we can see from the plot, the differences are quite subtle, but nevertheless they are there. On refinement we observe a decrease in the number of short contacts, suggesting a reduction in face-to-face stacking.
 
-[Previous Step](/docs/examples/benzene/step9){: .btn }   [Next Step](/docs/examples/benzene/step9b){: .btn .right}
+{{< button pos="left" text="Previous Step" path= "/docs/examples/benzene/step9/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/benzene/step9b/">}}

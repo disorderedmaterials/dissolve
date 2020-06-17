@@ -34,4 +34,4 @@ Alternatively, download the data files listed below and save them to a location 
 - C<sub>6</sub>H<sub>6</sub>:C<sub>6</sub>D<sub>6</sub> (50:50): [5050.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/benzene/data/5050.mint01)
 - C<sub>6</sub>D<sub>6</sub>: [C6D6.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/benzene/data/C6D6.mint01)
 
-[Let's begin!](/docs/examples/benzene/step1/){: .btn }
+{{< button pos="left" text="Let's begin" path= "/docs/examples/benzene/step1/">}}

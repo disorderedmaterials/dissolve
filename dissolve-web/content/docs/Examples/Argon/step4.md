@@ -18,4 +18,6 @@ We'll split our simulation up into two layers:
 > You can have as many layers in a simulation as you need - whatever makes the most sense in what you're trying to do.
 {: .tip}
 
-[Previous Step](/docs/examples/argon/step3/){: .btn }   [Next Step](/docs/examples/argon/step4a/){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/argon/step3/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/argon/step4a/">}}

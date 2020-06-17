@@ -27,4 +27,6 @@ Once those iterations have completed, we can move on to do the comparison of the
 > Change the filename to `production.restart` and click _Save_
 {: .action .action_edit}
 
-[Previous Step](/docs/examples/benzene/step7){: .btn }   [Next Step](/docs/examples/benzene/step9){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/benzene/step7/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/benzene/step9/">}}

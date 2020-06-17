@@ -11,4 +11,6 @@ Viewing the output of modules in their own tabs is convenient enough, but if we 
 
 In the next two sections we'll compare both the centre-of-geometry RDF and the axis angle map between the reference and refined simulations.
 
-[Previous Step](/docs/examples/benzene/step8){: .btn }   [Next Step](/docs/examples/benzene/step9a){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/benzene/step8/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/benzene/step9a/">}}

@@ -53,4 +53,5 @@ Finally, before we move on, we will have to reduce our pair potential range from
 > For a cubic box, you can't have a cutoff value greater than half the box length, as this means that a given atom will 'see' other atoms twice because of the periodic boundary conditions.
 {: .tip}
 
-[Previous Step](/docs/examples/benzene/step1/){: .btn }   [Next Step](/docs/examples/benzene/step3){: .btn .right}
+{{< button pos="left" text="Previous Step" path= "/docs/examples/benzene/step1/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/benzene/step3/">}}

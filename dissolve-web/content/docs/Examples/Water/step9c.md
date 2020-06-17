@@ -71,4 +71,5 @@ Let's proceed and set up the two modules in the layer:
 > Set the surrounding **SiteB** to `O`
 {: .step}
 
-[Previous Step](/docs/examples/water/step9b){: .btn }   [Next Step](/docs/examples/water/step10){: .btn .right}
+{{< button pos="left" text="Previous Step" path= "/docs/examples/water/step9b/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/water/step10/">}}

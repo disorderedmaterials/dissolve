@@ -87,4 +87,6 @@ The data, along with its Fourier transform, are now plotted in the graphs to the
 > Set the **ReferenceNormalisation** to `AverageSquared`
 {: .step}
 
-[Previous Step](/docs/examples/argon/step4a/){: .btn }   [Next Step](/docs/examples/argon/step5/){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/argon/step4a/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/argon/step5/">}}

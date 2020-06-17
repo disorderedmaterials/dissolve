@@ -48,4 +48,5 @@ _Equilibrated structure factor (black line) of amorphous silica compared to refe
 ![](cooked-gr.png)
 _Equilibrated total G(r) (black line) of amorphous silica compared to Fourier transform of reference data at 298 K (red line)_
 
-[Previous Step](/docs/examples/silica_bulk/step3){: .btn }   [Next Step](/docs/examples/silica_bulk/step5){: .btn .right}
+{{< button pos="left" text="Previous Step" path= "/docs/examples/silica_bulk/step3/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/silica_bulk/step5/">}}

@@ -34,4 +34,6 @@ We just need to set the instrumental _Q_ broadening and add the reference data t
 > The datafile contains a point at _Q_ = 0.0 which we must remove, so tick the **ReferenceIgnoreFirst** option
 {: .step}
 
-[Previous Step](/docs/examples/silica_bulk/step2/){: .btn }   [Next Step](/docs/examples/silica_bulk/step4/){: .btn .right}
+
+{{< button pos="left" text="Previous Step" path= "/docs/examples/silica_bulk/step2/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/silica_bulk/step4/">}}

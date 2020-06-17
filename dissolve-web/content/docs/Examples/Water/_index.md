@@ -32,4 +32,5 @@ Alternatively, download the data files listed below and save them to a location 
 - HDO: [SLS18500-HDO5050.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/water/data/SLS18500-HDO5050.mint01)
 - D<sub>2</sub>O: [SLS18502-D2O.mint01](https://raw.githubusercontent.com/trisyoungs/dissolve/develop/examples/water/data/SLS18502-D2O.mint01)
 
-[Let's begin!](step1.md){: .btn }
+
+{{< button pos="left" text="Let's begin!" path= "/docs/examples/water/step1/">}}

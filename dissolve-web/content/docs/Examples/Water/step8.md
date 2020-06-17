@@ -39,4 +39,5 @@ We can observe some discrepancies at the low _Q_ end of the data, but there is l
 
 At this point, we can start to think about what kind of structural properties we want to calculate from our refined simulation.
 
-[Previous Step](/docs/examples/water/step7){: .btn }   [Next Step](/docs/examples/water/step9){: .btn .right}
+{{< button pos="left" text="Previous Step" path= "/docs/examples/water/step7/">}}
+{{< button pos="right" text="Next Step" path= "/docs/examples/water/step9/">}}
