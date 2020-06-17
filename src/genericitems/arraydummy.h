@@ -53,7 +53,7 @@ template <> class GenericItemContainer<Array<DummyClass>> : public GenericItem
     // Write data through specified parser
     bool write(LineParser &parser) { return false; }
     // Read data through specified parser
-    bool read(LineParser &parser, const CoreData &coreData) { return false; }
+    bool read(LineParser &parser, CoreData &coreData) { return false; }
 
     /*
      * Parallel Comms

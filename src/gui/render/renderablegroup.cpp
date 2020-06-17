@@ -146,7 +146,7 @@ void RenderableGroup::setRenderableColour(Renderable *rend)
     else if (colouringStyle_ == AutomaticIndividualColouring)
     {
         // Find the StockColour with the lowest usage count
-        int lowestId = 0;
+        auto lowestId = 0;
         for (int colourId = 0; colourId < StockColours::nStockColours; ++colourId)
         {
             if (automaticStockColourUsageCount_[colourId] < automaticStockColourUsageCount_[lowestId])
@@ -250,7 +250,7 @@ void RenderableGroup::setRenderableVerticalShift(Renderable *renderable, int ren
 // Set vertical shift in all Renderables in the group via their transform equations
 void RenderableGroup::setRenderableVerticalShifts()
 {
-    int index = 0;
+    auto index = 0;
     for (Renderable *renderable : renderables_)
         setRenderableVerticalShift(renderable, index++);
 }

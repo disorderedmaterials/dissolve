@@ -54,7 +54,7 @@ RenderableGroup *RenderableGroupManager::createGroup(const char *name)
     {
         // No existing group, so must add a new one
         // First, find the StockColour with the lowest usage count
-        int lowestId = 0;
+        auto lowestId = 0;
         for (int colourId = 0; colourId < StockColours::nStockColours; ++colourId)
         {
             if (stockColourUsageCount_[colourId] < stockColourUsageCount_[lowestId])
@@ -102,7 +102,7 @@ RenderableGroup *RenderableGroupManager::addToGroup(Renderable *renderable, cons
 // Return named group, if it exists
 RenderableGroup *RenderableGroupManager::group(const char *name)
 {
-    for (RenderableGroup *group = groups_.first(); group != NULL; group = group->next())
+    for (auto *group = groups_.first(); group != NULL; group = group->next())
         if (DissolveSys::sameString(group->name(), name))
             return group;
     return NULL;
@@ -111,7 +111,7 @@ RenderableGroup *RenderableGroupManager::group(const char *name)
 // Return group for specified Renderable, if one has been assigned
 RenderableGroup *RenderableGroupManager::group(Renderable *renderable)
 {
-    for (RenderableGroup *group = groups_.first(); group != NULL; group = group->next())
+    for (auto *group = groups_.first(); group != NULL; group = group->next())
         if (group->usedByRenderable(renderable))
             return group;
     return NULL;
@@ -143,7 +143,7 @@ void RenderableGroupManager::removeFromGroup(Renderable *renderable)
 // Empty all groups of Renderables
 void RenderableGroupManager::emptyGroups()
 {
-    for (RenderableGroup *group = groups_.first(); group != NULL; group = group->next())
+    for (auto *group = groups_.first(); group != NULL; group = group->next())
         group->empty();
 }
 
@@ -205,8 +205,8 @@ double VerticalShiftAmounts[] = {0.0, 0.5, 1.0, 2.0};
 void RenderableGroupManager::setRenderableGroupShifts()
 {
     // Loop over RenderableGroups
-    int groupIndex = 0;
-    for (RenderableGroup *group = groups_.first(); group != NULL; group = group->next())
+    auto groupIndex = 0;
+    for (auto *group = groups_.first(); group != NULL; group = group->next())
     {
         group->applyVerticalShift(VerticalShiftAmounts[verticalShiftAmount_], groupIndex++);
     }

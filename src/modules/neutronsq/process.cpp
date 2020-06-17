@@ -52,7 +52,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Truncate data beyond QMax
-        const double qMax = keywords_.asDouble("QMax") < 0.0 ? 30.0 : keywords_.asDouble("QMax");
+        const auto qMax = keywords_.asDouble("QMax") < 0.0 ? 30.0 : keywords_.asDouble("QMax");
         if (referenceData.constXAxis().lastValue() < qMax)
             Messenger::warn("Qmax limit of %e Angstroms**-1 for calculated NeutronSQ (%s) is beyond limit of "
                             "reference data (Qmax = %e Angstroms**-1).\n",
@@ -70,8 +70,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Remove normalisation factor from data
-        NeutronSQModule::NormalisationType normType =
-            keywords_.enumeration<NeutronSQModule::NormalisationType>("ReferenceNormalisation");
+        auto normType = keywords_.enumeration<NeutronSQModule::NormalisationType>("ReferenceNormalisation");
         if (normType != NeutronSQModule::NoNormalisation)
         {
             // We need the summed Weights in order to do the normalisation
@@ -111,15 +110,15 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 
         // Store the reference data in processing
         referenceData.setName(uniqueName());
-        Data1D &storedData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceData", uniqueName(),
-                                                                GenericItem::ProtectedFlag);
+        auto &storedData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceData", uniqueName(),
+                                                              GenericItem::ProtectedFlag);
         storedData.setObjectTag(CharString("%s//ReferenceData", uniqueName()));
         storedData = referenceData;
 
         // Calculate and store the FT of the reference data in processing
         referenceData.setName(uniqueName());
-        Data1D &storedDataFT = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceDataFT",
-                                                                  uniqueName(), GenericItem::ProtectedFlag);
+        auto &storedDataFT = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceDataFT",
+                                                                uniqueName(), GenericItem::ProtectedFlag);
         storedDataFT.setObjectTag(CharString("%s//ReferenceDataFT", uniqueName()));
         storedDataFT = referenceData;
         double rho = nTargetConfigurations() == 0 ? 0.1 : RDFModule::summedRho(this, dissolve.processingModuleData());
@@ -166,19 +165,17 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     CharString varName;
 
     const bool includeBragg = keywords_.asBool("IncludeBragg");
-    const BroadeningFunction &braggQBroadening =
-        keywords_.retrieve<BroadeningFunction>("BraggQBroadening", BroadeningFunction());
-    NeutronSQModule::NormalisationType normalisation =
-        keywords_.enumeration<NeutronSQModule::NormalisationType>("Normalisation");
-    const BroadeningFunction &qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
-    const double qDelta = keywords_.asDouble("QDelta");
-    const double qMin = keywords_.asDouble("QMin");
+    const auto &braggQBroadening = keywords_.retrieve<BroadeningFunction>("BraggQBroadening", BroadeningFunction());
+    auto normalisation = keywords_.enumeration<NeutronSQModule::NormalisationType>("Normalisation");
+    const auto &qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
+    const auto qDelta = keywords_.asDouble("QDelta");
+    const auto qMin = keywords_.asDouble("QMin");
     double qMax = keywords_.asDouble("QMax");
     if (qMax < 0.0)
         qMax = 30.0;
     const bool saveUnweighted = keywords_.asBool("SaveUnweighted");
     const bool saveWeighted = keywords_.asBool("SaveWeighted");
-    const WindowFunction &windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
+    const auto &windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
 
     // Print argument/parameter summary
     Messenger::print("NeutronSQ: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n",
@@ -239,17 +236,17 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // g(r) may come from one of many RDF-type modules
         if (!cfg->moduleData().contains("UnweightedGR"))
             return Messenger::error("Couldn't locate UnweightedGR for Configuration '%s'.\n", cfg->name());
-        const PartialSet &unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
+        const auto &unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
 
         // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-        PartialSet &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", NULL,
-                                                                          GenericItem::InRestartFileFlag, &created);
+        auto &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", NULL,
+                                                                    GenericItem::InRestartFileFlag, &created);
         if (created)
             unweightedsq.setUpPartials(unweightedgr.atomTypes(), CharString("%s-%s", cfg->niceName(), uniqueName()),
                                        "unweighted", "sq", "Q, 1/Angstroms");
 
         // Is the PartialSet already up-to-date? Do we force its calculation anyway?
-        bool &forceCalculation = GenericListHelper<bool>::retrieve(cfg->moduleData(), "_ForceNeutronSQ", NULL, false);
+        auto &forceCalculation = GenericListHelper<bool>::retrieve(cfg->moduleData(), "_ForceNeutronSQ", NULL, false);
         const bool sqUpToDate = DissolveSys::sameString(
             unweightedsq.fingerprint(), CharString("%i/%i", cfg->moduleData().version("UnweightedGR"),
                                                    includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
@@ -273,17 +270,17 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 return Messenger::error("Bragg scattering requested to be included, but Configuration '%s' "
                                         "contains no reflection data.\n",
                                         cfg->name());
-            const Array<BraggReflection> &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
+            const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
                 cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>());
-            const int nReflections = braggReflections.nItems();
-            const double braggQMax = braggReflections.constAt(nReflections - 1).q();
+            const auto nReflections = braggReflections.nItems();
+            const auto braggQMax = braggReflections.constAt(nReflections - 1).q();
             Messenger::print("Found BraggReflections data for Configuration '%s' (nReflections = %i, QMax = %f "
                              "Angstroms**-1).\n",
                              cfg->name(), nReflections, braggQMax);
 
             // Create a temporary array into which our broadened Bragg partials will be placed
-            Array2D<Data1D> &braggPartials = GenericListHelper<Array2D<Data1D>>::realise(
-                cfg->moduleData(), "BraggPartials", uniqueName(), GenericItem::NoFlag, &created);
+            auto &braggPartials = GenericListHelper<Array2D<Data1D>>::realise(cfg->moduleData(), "BraggPartials", uniqueName(),
+                                                                              GenericItem::NoFlag, &created);
             if (created)
             {
                 // Initialise the array
@@ -340,14 +337,14 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 {
                     // Note: Intramolecular broadening will not be applied to bound terms within the
                     // calculated Bragg scattering
-                    Data1D &bound = unweightedsq.boundPartial(i, j);
-                    Data1D &unbound = unweightedsq.unboundPartial(i, j);
-                    Data1D &partial = unweightedsq.partial(i, j);
-                    Data1D &bragg = braggPartials.at(i, j);
+                    auto &bound = unweightedsq.boundPartial(i, j);
+                    auto &unbound = unweightedsq.unboundPartial(i, j);
+                    auto &partial = unweightedsq.partial(i, j);
+                    auto &bragg = braggPartials.at(i, j);
 
                     for (int n = 0; n < bound.nValues(); ++n)
                     {
-                        const double q = bound.xAxis(n);
+                        const auto q = bound.xAxis(n);
                         if (q <= braggQMax)
                         {
                             bound.value(n) = 0.0;
@@ -378,23 +375,23 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (isotopologues_.contains(cfg))
         {
             // Get the set...
-            optional<IsotopologueSet> topeSet = isotopologues_.getIsotopologueSet(cfg);
-            if (std::get<1>(topeSet))
+            auto topeSet = isotopologues_.getIsotopologueSet(cfg);
+            if (!topeSet)
             {
                 return Messenger::error("Could not locate IsotopologueSet");
             }
 
             // Iterate over Species present in the set
-            for (Isotopologues &topes : std::get<0>(topeSet).isotopologues())
+            for (auto &topes : (*topeSet).constIsotopologues())
             {
                 // Find the referenced Species in our SpeciesInfo list
-                SpeciesInfo *spInfo = cfg->usedSpeciesInfo(topes.species());
+                auto *spInfo = cfg->usedSpeciesInfo(topes.species());
                 if (!spInfo)
                     return Messenger::error("Couldn't locate SpeciesInfo for '%s' in the Configuration '%s'.\n",
                                             topes.species()->name(), cfg->niceName());
 
                 // Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
-                for (IsotopologueWeight &isoWeight : topes.mix())
+                for (const auto &isoWeight : topes.constMix())
                     weights.addIsotopologue(spInfo->species(), spInfo->population(), isoWeight.isotopologue(),
                                             isoWeight.weight());
             }
@@ -420,8 +417,8 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         weights.print();
 
         // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-        PartialSet &weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", NULL,
-                                                                        GenericItem::InRestartFileFlag, &created);
+        auto &weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", NULL,
+                                                                  GenericItem::InRestartFileFlag, &created);
         if (created)
             weightedsq.setUpPartials(unweightedsq.atomTypes(), CharString("%s-%s", cfg->niceName(), uniqueName()), "weighted",
                                      "sq", "Q, 1/Angstroms");
@@ -442,8 +439,8 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     // Create/retrieve PartialSet for summed partial S(Q)
-    PartialSet &summedUnweightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedSQ",
-                                                                            uniqueName_, GenericItem::InRestartFileFlag);
+    auto &summedUnweightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedSQ",
+                                                                      uniqueName_, GenericItem::InRestartFileFlag);
 
     // Sum the partials from the associated Configurations
     if (!SQModule::sumUnweightedSQ(procPool, this, dissolve.processingModuleData(), summedUnweightedSQ))
@@ -454,8 +451,8 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return false;
 
     // Create/retrieve PartialSet for summed partial S(Q)
-    PartialSet &summedWeightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedSQ",
-                                                                          uniqueName_, GenericItem::InRestartFileFlag);
+    auto &summedWeightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedSQ", uniqueName_,
+                                                                    GenericItem::InRestartFileFlag);
     summedWeightedSQ = summedUnweightedSQ;
     summedWeightedSQ.setFileNames(uniqueName_, "weighted", "sq");
     summedWeightedSQ.setObjectTags(CharString("%s//%s", uniqueName_.get(), "WeightedSQ"));
@@ -471,16 +468,16 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     calculateWeightedSQ(summedUnweightedSQ, summedWeightedSQ, summedWeights, normalisation);
 
     // Create/retrieve PartialSet for summed unweighted g(r)
-    PartialSet &summedUnweightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR",
-                                                                            uniqueName_, GenericItem::InRestartFileFlag);
+    auto &summedUnweightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR",
+                                                                      uniqueName_, GenericItem::InRestartFileFlag);
 
     // Sum the partials from the associated Configurations
     if (!RDFModule::sumUnweightedGR(procPool, this, dissolve.processingModuleData(), summedUnweightedGR))
         return false;
 
     // Create/retrieve PartialSet for summed weighted g(r)
-    PartialSet &summedWeightedGR = GenericListHelper<PartialSet>::realise(
-        dissolve.processingModuleData(), "WeightedGR", uniqueName_, GenericItem::InRestartFileFlag, &created);
+    auto &summedWeightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedGR", uniqueName_,
+                                                                    GenericItem::InRestartFileFlag, &created);
     if (created)
         summedWeightedGR.setUpPartials(summedUnweightedSQ.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
     summedWeightedGR.setObjectTags(CharString("%s//%s", uniqueName_.get(), "WeightedGR"));
@@ -489,8 +486,8 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     calculateWeightedGR(summedUnweightedGR, summedWeightedGR, summedWeights, normalisation);
 
     // Calculate representative total g(r) from FT of calculated S(Q)
-    Data1D &repGR = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RepresentativeTotalGR", uniqueName_,
-                                                       GenericItem::InRestartFileFlag);
+    auto &repGR = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RepresentativeTotalGR", uniqueName_,
+                                                     GenericItem::InRestartFileFlag);
     repGR = summedWeightedSQ.total();
     double rho = nTargetConfigurations() == 0 ? 0.1 : RDFModule::summedRho(this, dissolve.processingModuleData());
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), qMin, qDelta, qMax, referenceWindowFunction);

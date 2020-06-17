@@ -53,17 +53,17 @@ bool Dissolve::prepare()
         srand(seed_);
 
     // Check Species
-    for (Species *sp = species().first(); sp != NULL; sp = sp->next())
+    for (auto *sp = species().first(); sp != NULL; sp = sp->next())
         if (!sp->checkSetUp())
             return false;
 
     // Reassign AtomType indices (in case one or more have been added / removed)
-    int count = 0;
-    for (AtomType *at = atomTypes().first(); at != NULL; at = at->next(), ++count)
+    auto count = 0;
+    for (auto *at = atomTypes().first(); at != NULL; at = at->next(), ++count)
         at->setIndex(count);
 
     // Check Configurations
-    for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
     {
         // Check Box extent against pair potential range
         double maxPPRange = cfg->box()->inscribedSphereRadius();
@@ -79,7 +79,7 @@ bool Dissolve::prepare()
         if (pairPotentialsIncludeCoulomb_)
         {
             auto &types = cfg->usedAtomTypesList();
-            totalQ = std::accumulate(types.begin(), types.end(), totalQ, [](double acc, const AtomTypeData &atd) {
+            totalQ = std::accumulate(types.begin(), types.end(), totalQ, [](auto acc, const auto &atd) {
                 return acc + atd.population() * atd.atomType().parameters().charge();
             });
         }
@@ -148,9 +148,9 @@ bool Dissolve::iterate(int nIterations)
          *  0)	Print schedule of tasks to run, and write heartbeat file
          */
         double thisTime = 0.0;
-        int nEnabledModules = 0;
+        auto nEnabledModules = 0;
 
-        for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+        for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
         {
             if (cfg->nModules() == 0)
                 continue;
@@ -158,7 +158,7 @@ bool Dissolve::iterate(int nIterations)
             Messenger::print("Configuration layer '%s'  (%s):\n\n", cfg->name(),
                              cfg->moduleLayer().frequencyDetails(iteration_));
 
-            int layerExecutionCount = iteration_ / cfg->moduleLayer().frequency();
+            auto layerExecutionCount = iteration_ / cfg->moduleLayer().frequency();
             ListIterator<Module> modIterator(cfg->modules());
             while (Module *module = modIterator.iterate())
             {
@@ -181,7 +181,7 @@ bool Dissolve::iterate(int nIterations)
             if (!layer->enabled())
                 continue;
 
-            int layerExecutionCount = iteration_ / layer->frequency();
+            auto layerExecutionCount = iteration_ / layer->frequency();
             ListIterator<Module> processingIterator(layer->modules());
             while (Module *module = processingIterator.iterate())
             {
@@ -219,8 +219,8 @@ bool Dissolve::iterate(int nIterations)
          */
         Messenger::banner("Configuration Processing");
 
-        bool result = true;
-        for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+        auto result = true;
+        for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
         {
             // Check for failure of one or more processes / processing tasks
             if (!worldPool().allTrue(result))
@@ -270,7 +270,7 @@ bool Dissolve::iterate(int nIterations)
          */
         Messenger::banner("Reassemble Data");
         // Loop over Configurations
-        for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+        for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
         {
             Messenger::printVerbose("Broadcasting data for Configuration '%s'...\n", cfg->name());
             if (!cfg->broadcastCoordinates(worldPool(), cfg->processPool().rootWorldRank()))
@@ -296,7 +296,7 @@ bool Dissolve::iterate(int nIterations)
                 continue;
 
             Messenger::banner("Layer '%s'", layer->name());
-            int layerExecutionCount = iteration_ / layer->frequency();
+            auto layerExecutionCount = iteration_ / layer->frequency();
 
             ListIterator<Module> processingIterator(layer->modules());
             while (Module *module = processingIterator.iterate())
@@ -336,7 +336,7 @@ bool Dissolve::iterate(int nIterations)
                 iteration_;
 
             // Pair Potentials
-            for (PairPotential *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
+            for (auto *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
             {
                 GenericListHelper<Data1D>::realise(
                     processingModuleData_, CharString("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()),
@@ -418,17 +418,17 @@ void Dissolve::printTiming()
     Messenger::banner("Timing Information");
 
     // Determine format for timing information output, accounting for the longest Module name we have
-    int maxLength = 0, length;
+    auto maxLength = 0;
     for (Module *module : moduleInstances_)
     {
-        length = strlen(module->uniqueName());
+        const auto length = strlen(module->uniqueName());
         if (length > maxLength)
             maxLength = length;
     }
     CharString timingFormat("      --> %%20s  %%-%is  %%7.2f s/iteration (%%i iterations)\n", maxLength + 2);
     CharString restartFormat("      --> %%20s  %%-%is  %%7.2f s/write     (%%i writes)\n", maxLength + 2);
 
-    for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
     {
         if (cfg->nModules() == 0)
             continue;

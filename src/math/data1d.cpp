@@ -469,7 +469,7 @@ void Data1D::operator/=(const double factor)
 const char *Data1D::itemClassName() { return "Data1D"; }
 
 // Read data through specified LineParser
-bool Data1D::read(LineParser &parser, const CoreData &coreData)
+bool Data1D::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 
@@ -486,8 +486,8 @@ bool Data1D::read(LineParser &parser, const CoreData &coreData)
     // Read number of points and whether errors are present
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    int nPoints = parser.argi(0);
-    bool errors = parser.argb(1);
+    auto nPoints = parser.argi(0);
+    auto errors = parser.argb(1);
     initialise(nPoints, errors);
 
     // Read data points

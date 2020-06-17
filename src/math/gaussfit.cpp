@@ -85,7 +85,7 @@ double GaussFit::gaussian(double x, double xCentre, double A, double FWHM) const
 double GaussFit::gaussianFT(double x, double xCentre, double A, double FWHM) const
 {
     double c = FWHM / TWOSQRT2LN2;
-    const double xCx = xCentre * x;
+    const auto xCx = xCentre * x;
     return xCx > 0.0 ? A * exp(-(x * x * c * c) / 2.0) * sin(xCx) / (xCx) : A * exp(-(x * x * c * c) / 2.0);
 }
 
@@ -281,7 +281,7 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
     for (int loop = 0; loop < nLoops; ++loop)
     {
         // Index of the Gaussian in the x_, A_, and fwhm_ arrays is given by 'g'
-        int g = loop * (sampleSize / nLoops);
+        auto g = loop * (sampleSize / nLoops);
         while (g < nGaussians_)
         {
             // Generate the approximate data - we will subtract the Gaussians that we are fitting in the next loop
@@ -342,8 +342,8 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
     nGaussians_ = 0;
     approximateData_.initialise(referenceData_);
 
-    const int regionWidth = 5, regionDelta = regionWidth / 2;
-    int lastSign = 0;
+    const auto regionWidth = 5, regionDelta = regionWidth / 2;
+    auto lastSign = 0;
     double gradient, trialX, trialA, trialFWHM, lastX;
     Data1D referenceDelta;
 
@@ -359,7 +359,7 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
             referenceDelta.addPoint(referenceData_.xAxis(n), referenceData_.value(n) - approximateData_.value(n));
 
         // Keep track of the number of Gaussians we add this cycle
-        int nAdded = 0;
+        auto nAdded = 0;
         lastX = -1.0;
 
         // Go over points in the delta, calculating the gradient as we go, and seeking gradient minima (actually,
@@ -631,7 +631,7 @@ double GaussFit::costAnalyticA(const Array<double> &alpha)
 // data into sum
 double GaussFit::costAnalyticAF(const Array<double> &alpha)
 {
-    const int nGauss = alpha.nItems() / 2;
+    const auto nGauss = alpha.nItems() / 2;
 
     double sose = 0.0;
     double multiplier = 1.0;
@@ -671,7 +671,7 @@ double GaussFit::costAnalyticAF(const Array<double> &alpha)
 // approximate data into sum
 double GaussFit::costAnalyticAX(const Array<double> &alpha)
 {
-    const int nGauss = alpha.nItems() / 2;
+    const auto nGauss = alpha.nItems() / 2;
 
     double sose = 0.0;
     double multiplier = 1.0;
@@ -711,7 +711,7 @@ double GaussFit::costAnalyticAX(const Array<double> &alpha)
 // approximate data into sum
 double GaussFit::costAnalyticAFX(const Array<double> &alpha)
 {
-    const int nGauss = alpha.nItems() / 2;
+    const auto nGauss = alpha.nItems() / 2;
 
     double sose = 0.0;
     double multiplier = 1.0;
@@ -754,7 +754,7 @@ double GaussFit::costTabulatedA(const Array<double> &alpha)
 
     // Loop over data points and sum contributions from tabulated functions on to the current approximate data
     double y, dy;
-    int nAlpha = alpha.nItems();
+    auto nAlpha = alpha.nItems();
     for (int i = 0; i < approximateData_.nValues(); ++i)
     {
         // Get approximate data x and y for this point

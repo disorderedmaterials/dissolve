@@ -40,7 +40,7 @@ OperateMultiplyProcedureNode::~OperateMultiplyProcedureNode() {}
 bool OperateMultiplyProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
     // Evaluate the expression to get the multiplier
-    const double multiplier = keywords_.asDouble("Value");
+    const auto multiplier = keywords_.asDouble("Value");
     (*targetData1D_) *= multiplier;
 
     return true;
@@ -50,7 +50,7 @@ bool OperateMultiplyProcedureNode::operateData1D(ProcessPool &procPool, Configur
 bool OperateMultiplyProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
     // Evaluate the expression to get the multiplier
-    const double multiplier = keywords_.asDouble("Value");
+    const auto multiplier = keywords_.asDouble("Value");
     (*targetData2D_) *= multiplier;
 
     return true;
@@ -60,7 +60,7 @@ bool OperateMultiplyProcedureNode::operateData2D(ProcessPool &procPool, Configur
 bool OperateMultiplyProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
     // Evaluate the expression to get the multiplier
-    const double multiplier = keywords_.asDouble("Value");
+    const auto multiplier = keywords_.asDouble("Value");
     (*targetData3D_) *= multiplier;
 
     return true;

@@ -48,9 +48,9 @@ bool ForceImportFileFormat::importDLPOLY(LineParser &parser, Array<double> &fx, 
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
 
-    int keytrj = parser.argi(0);
-    int imcon = parser.argi(1);
-    int nAtoms = parser.argi(2);
+    auto keytrj = parser.argi(0);
+    auto imcon = parser.argi(1);
+    auto nAtoms = parser.argi(2);
     if (keytrj != 2)
     {
         Messenger::error("File does not contain forces (keytrj = %i).\n", keytrj);

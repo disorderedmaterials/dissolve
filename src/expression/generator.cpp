@@ -145,7 +145,7 @@ int ExpressionGenerator::lex()
     if (c == '.' || isdigit(c))
     {
         Messenger::printVerbose("LEXER (%p): found the start of a number...\n", this);
-        bool isInteger = (c != '.');
+        auto isInteger = (c != '.');
         hasExp = false;
         token += c;
         done = false;
@@ -359,7 +359,7 @@ bool ExpressionGenerator::generate(Expression &expression)
     ExpressionGenerator generator(expression, expression.expressionString());
 
     // Generate expression
-    bool result = ExpressionGenerator_parse() == 0;
+    auto result = ExpressionGenerator_parse() == 0;
     if (!result)
         expression_->clear();
 
@@ -375,7 +375,7 @@ bool ExpressionGenerator::generate(Expression &expression, RefList<ExpressionVar
     expression.setExternalVariables(externalVariables);
 
     // Generate expression
-    bool result = ExpressionGenerator_parse() == 0;
+    auto result = ExpressionGenerator_parse() == 0;
     if (!result)
         expression_->clear();
 

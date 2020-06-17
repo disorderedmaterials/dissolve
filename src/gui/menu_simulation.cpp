@@ -142,7 +142,7 @@ void DissolveWindow::on_SimulationClearModuleDataAction_triggered(bool checked)
     queryBox.setInformativeText("This cannot be undone. Proceed?");
     queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     queryBox.setDefaultButton(QMessageBox::No);
-    int ret = queryBox.exec();
+    auto ret = queryBox.exec();
 
     if (ret == QMessageBox::Yes)
     {

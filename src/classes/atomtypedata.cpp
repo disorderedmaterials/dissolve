@@ -112,7 +112,7 @@ void AtomTypeData::add(Isotope *tope, double nAdd)
 void AtomTypeData::zeroPopulations()
 {
     // Zero individual isotope counts
-    for (IsotopeData *topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next())
+    for (auto *topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next())
         topeData->zeroPopulation();
 
     // Zero totals
@@ -139,12 +139,12 @@ void AtomTypeData::finalise(double totalAtoms)
     fraction_ = population_ / totalAtoms;
 
     // Calculate isotope fractional populations (of AtomType)
-    for (IsotopeData *topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next())
+    for (auto *topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next())
         topeData->finalise(population_);
 
     // Determine bound coherent scattering for AtomType, based on Isotope populations
     boundCoherent_ = 0.0;
-    for (IsotopeData *topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next())
+    for (auto *topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next())
         boundCoherent_ += topeData->fraction() * topeData->isotope()->boundCoherent();
 }
 
@@ -163,7 +163,7 @@ void AtomTypeData::naturalise()
 // Return if specified Isotope is already in the list
 bool AtomTypeData::hasIsotope(Isotope *tope)
 {
-    for (IsotopeData *topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next())
+    for (auto *topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next())
         if (topeData->isotope() == tope)
             return true;
 
@@ -264,7 +264,7 @@ bool AtomTypeData::equality(ProcessPool &procPool)
         return Messenger::error("AtomTypeData number of isotopes is not equivalent (process %i has %i).\n", procPool.poolRank(),
                                 isotopes_.nItems());
     ListIterator<IsotopeData> isotopeIterator(isotopes_);
-    int count = 0;
+    auto count = 0;
     while (IsotopeData *topeData = isotopeIterator.iterate())
     {
         if (!topeData->equality(procPool))

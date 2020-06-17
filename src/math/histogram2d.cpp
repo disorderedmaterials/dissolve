@@ -129,7 +129,7 @@ int Histogram2D::nYBins() const { return nYBins_; }
 bool Histogram2D::bin(double x, double y)
 {
     // Calculate target bin along x
-    int xBin = (x - xMinimum_) / xBinWidth_;
+    auto xBin = (x - xMinimum_) / xBinWidth_;
     if ((xBin < 0) || (xBin >= nXBins_))
     {
         ++nMissed_;
@@ -137,7 +137,7 @@ bool Histogram2D::bin(double x, double y)
     }
 
     // Calculate target bin along y
-    int yBin = (y - yMinimum_) / yBinWidth_;
+    auto yBin = (y - yMinimum_) / yBinWidth_;
     if ((yBin < 0) || (yBin >= nYBins_))
     {
         ++nMissed_;
@@ -229,7 +229,7 @@ void Histogram2D::operator=(const Histogram2D &source)
 const char *Histogram2D::itemClassName() { return "Histogram2D"; }
 
 // Read data through specified LineParser
-bool Histogram2D::read(LineParser &parser, const CoreData &coreData)
+bool Histogram2D::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 

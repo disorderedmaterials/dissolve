@@ -32,8 +32,8 @@ void Filters::convolve(Data1D &data, const BroadeningFunction &function, bool va
         return;
 
     // Grab x and y arrays
-    const Array<double> &x = data.constXAxis();
-    const double xDelta = x.constAt(1) - x.constAt(0);
+    const auto &x = data.constXAxis();
+    const auto xDelta = x.constAt(1) - x.constAt(0);
     Array<double> &y = data.values();
 
     Array<double> newY(data.nValues());
@@ -87,7 +87,7 @@ void Filters::convolve(double xCentre, double value, const BroadeningFunction &f
         return;
 
     // Grab x and y arrays
-    const Array<double> &x = dest.constXAxis();
+    const auto &x = dest.constXAxis();
     Array<double> &y = dest.values();
 
     // Loop over existing datapoints
@@ -221,11 +221,11 @@ void Filters::normalisedMovingAverage(Data1D &data, int avgSize)
 double Filters::subtractAverage(Data1D &data, double xStart)
 {
     // Grab x and y arrays
-    const Array<double> &x = data.constXAxis();
+    const auto &x = data.constXAxis();
     Array<double> &y = data.values();
 
     double sum = 0.0;
-    int nPoints = 0;
+    auto nPoints = 0;
     for (int n = 0; n < x.nItems(); ++n)
     {
         if (x.constAt(n) >= xStart)
@@ -244,7 +244,7 @@ double Filters::subtractAverage(Data1D &data, double xStart)
 void Filters::trim(Data1D &data, double xMin, double xMax, bool interpolateEnds, double interpolationThreshold)
 {
     Array<double> newX, newY;
-    const Array<double> &x = data.constXAxis();
+    const auto &x = data.constXAxis();
     for (int n = 0; n < x.nItems(); ++n)
     {
         if (x.constAt(n) < xMin)

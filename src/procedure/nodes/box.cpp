@@ -62,9 +62,9 @@ ProcedureNode::NodeExecutionResult BoxProcedureNode::execute(ProcessPool &procPo
                                                              GenericList &targetList)
 {
     // Retrieve necessary parameters
-    Vec3<double> lengths = keywords_.asVec3Double("Lengths");
-    Vec3<double> angles = keywords_.asVec3Double("Angles");
-    bool nonPeriodic = keywords_.asBool("NonPeriodic");
+    auto lengths = keywords_.asVec3Double("Lengths");
+    auto angles = keywords_.asVec3Double("Angles");
+    auto nonPeriodic = keywords_.asBool("NonPeriodic");
 
     // Create a Box in the target Configuration with our lengths and angles
     if (!cfg->createBox(lengths, angles, nonPeriodic))

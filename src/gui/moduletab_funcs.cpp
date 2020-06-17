@@ -162,7 +162,7 @@ bool ModuleTab::readState(LineParser &parser, const CoreData &coreData)
     // Read state information for the tab : CollapsedIndex(int)
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    int collapsedIndex = parser.argi(0);
+    auto collapsedIndex = parser.argi(0);
     QList<int> widgetSizes;
     if ((collapsedIndex == 0) && controlsWidget_)
         widgetSizes << 0 << 1;
@@ -186,7 +186,7 @@ bool ModuleTab::readState(LineParser &parser, const CoreData &coreData)
 bool ModuleTab::writeState(LineParser &parser) const
 {
     // Write state information for the tab : CollapsedIndex(int)
-    int collapsedIndex = -1;
+    auto collapsedIndex = -1;
     QList<int> sizes = splitter_->sizes();
     if (sizes.at(0) == 0)
         collapsedIndex = 0;

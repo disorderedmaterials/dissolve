@@ -100,7 +100,7 @@ bool Configuration::generate(ProcessPool &procPool, double pairPotentialRange)
 
     // Generate the contents
     Messenger::print("\nExecuting generator procedure for Configuration '%s'...\n\n", niceName());
-    bool result = generator_.execute(procPool, this, "Generator", moduleData_);
+    auto result = generator_.execute(procPool, this, "Generator", moduleData_);
     if (!result)
         return Messenger::error("Failed to generate Configuration '%s'.\n", niceName());
     Messenger::print("\n");

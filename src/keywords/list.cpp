@@ -87,7 +87,7 @@ bool KeywordList::link(const char *groupName, KeywordBase *object, const char *n
 // Find named keyword
 KeywordBase *KeywordList::find(const char *name) const
 {
-    for (KeywordBase *kwd = keywords_.first(); kwd != NULL; kwd = kwd->next())
+    for (auto *kwd = keywords_.first(); kwd != NULL; kwd = kwd->next())
         if (DissolveSys::sameString(name, kwd->name()))
             return kwd->base();
 
@@ -245,7 +245,7 @@ void KeywordList::hasBeenSet(const char *name)
  */
 
 // Try to parse node keyword in specified LineParser
-KeywordBase::ParseResult KeywordList::parse(LineParser &parser, const CoreData &coreData)
+KeywordBase::ParseResult KeywordList::parse(LineParser &parser, CoreData &coreData)
 {
     // Do we recognise the first item (the 'keyword')?
     KeywordBase *keyword = find(parser.argc(0));
@@ -289,12 +289,12 @@ bool KeywordList::write(LineParser &parser, const char *prefix, bool onlyIfSet)
 bool KeywordList::writeGroups(LineParser &parser, const char *prefix, bool onlyIfSet)
 {
     // Loop over keyword groups
-    bool firstGroup = true;
+    auto firstGroup = true;
     ListIterator<KeywordGroup> groupsIterator(groups_);
     while (KeywordGroup *group = groupsIterator.iterate())
     {
         // Loop over keywords in group
-        bool firstWritten = true;
+        auto firstWritten = true;
         for (KeywordBase *keyword : group->keywords())
         {
             // If the keyword has never been set (i.e. it still has its default value) don't bother to write it

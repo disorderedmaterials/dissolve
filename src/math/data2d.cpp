@@ -95,8 +95,8 @@ void Data2D::initialise(double xMin, double xMax, double xBin, double yMin, doub
 {
     double xRange = xMax - xMin;
     double yRange = yMax - yMin;
-    int nXBins = xRange / xBin;
-    int nYBins = yRange / yBin;
+    auto nXBins = xRange / xBin;
+    auto nYBins = yRange / yBin;
 
     // We will clamp the maxima to the nearest bin boundary (not less than the supplied axis maxima)
     if ((xMin + nXBins * xBin) < xMax)
@@ -477,7 +477,7 @@ void Data2D::operator/=(const double factor)
 const char *Data2D::itemClassName() { return "Data2D"; }
 
 // Read data through specified LineParser
-bool Data2D::read(LineParser &parser, const CoreData &coreData)
+bool Data2D::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 
@@ -494,9 +494,9 @@ bool Data2D::read(LineParser &parser, const CoreData &coreData)
     // Read axis sizes and initialise arrays
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    int xSize = parser.argi(0);
-    int ySize = parser.argi(1);
-    bool errors = parser.argb(2);
+    auto xSize = parser.argi(0);
+    auto ySize = parser.argi(1);
+    auto errors = parser.argb(2);
     initialise(xSize, ySize, errors);
 
     // Read x axis

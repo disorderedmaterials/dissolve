@@ -86,7 +86,7 @@ bool ForceImportFileFormat::importData(Array<double> &fx, Array<double> &fy, Arr
         return Messenger::error("Couldn't open file '%s' for loading Data2D data.\n", filename_.get());
 
     // Import the data
-    bool result = importData(parser, fx, fy, fz);
+    auto result = importData(parser, fx, fy, fz);
 
     parser.closeFiles();
 
@@ -97,7 +97,7 @@ bool ForceImportFileFormat::importData(Array<double> &fx, Array<double> &fy, Arr
 bool ForceImportFileFormat::importData(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz)
 {
     // Import the data
-    bool result = false;
+    auto result = false;
     if (forceFormat() == ForceImportFileFormat::XYZForces)
         result = importXYZ(parser, fx, fy, fz);
     else if (forceFormat() == ForceImportFileFormat::DLPOLYForces)

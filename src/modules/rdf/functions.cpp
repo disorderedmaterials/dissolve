@@ -105,8 +105,8 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     double rbin = 1.0 / binWidth;
 
     // Loop context is to use all processes in Pool as one group
-    int start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    int stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
     Messenger::printVerbose("Self terms..\n");
 
@@ -185,8 +185,8 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
     CellArray &cellArray = cfg->cells();
 
     // Loop context is to use all processes in Pool as one group
-    int start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    int stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
     for (n = start; n < cellArray.nCells(); n += stride)
     {
@@ -265,8 +265,8 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
 {
     // Does a PartialSet already exist for this Configuration?
     bool wasCreated;
-    PartialSet &originalgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "OriginalGR", "",
-                                                                    GenericItem::InRestartFileFlag, &wasCreated);
+    auto &originalgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "OriginalGR", "",
+                                                              GenericItem::InRestartFileFlag, &wasCreated);
     if (wasCreated)
         originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth, cfg->niceName(), "original", "rdf", "r, Angstroms");
 
@@ -321,8 +321,8 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
     CellArray &cellArray = cfg->cells();
 
     // Set start/stride for parallel loop (pool solo)
-    int start = (method == RDFModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
-    int stride = (method == RDFModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
+    auto start = (method == RDFModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
+    auto stride = (method == RDFModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
 
     timer.start();
 
@@ -664,7 +664,7 @@ double RDFModule::summedRho(Module *module, GenericList &processingModuleData)
     double rho0 = 0.0, totalWeight = 0.0;
     for (Configuration *cfg : module->targetConfigurations())
     {
-        double weight = GenericListHelper<double>::value(
+        auto weight = GenericListHelper<double>::value(
             processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
         totalWeight += weight;
 
@@ -699,7 +699,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericLi
     for (Configuration *cfg : module->targetConfigurations())
     {
         // Get weighting factor for this Configuration to contribute to the summed partials
-        double weight = GenericListHelper<double>::value(
+        auto weight = GenericListHelper<double>::value(
             processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
         Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
 
@@ -730,7 +730,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericLi
         // Grab partials for Configuration and add into our set
         if (!cfg->moduleData().contains("UnweightedGR"))
             return Messenger::error("Couldn't find UnweightedGR data for Configuration '%s'.\n", cfg->name());
-        PartialSet cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
+        auto cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }
     summedUnweightedGR.setFingerprint(fingerprint);
@@ -755,7 +755,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
         for (Configuration *cfg : module->targetConfigurations())
         {
             // Get weighting factor for this Configuration to contribute to the summed partials
-            double weight = GenericListHelper<double>::value(
+            auto weight = GenericListHelper<double>::value(
                 processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
             Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
 
@@ -804,7 +804,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
         // *Copy* the partials for the Configuration, subtract 1.0, and add into our set
         if (!cfg->moduleData().contains("UnweightedGR"))
             return Messenger::error("Couldn't find UnweightedGR data for Configuration '%s'.\n", cfg->name());
-        PartialSet cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
+        auto cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
         cfgPartialGR -= 1.0;
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }
@@ -869,7 +869,7 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
                                      const char *typeIorTotal, const char *typeJ, const char *target)
 {
     // We either expect two AtomType names and a target next, or the target 'total'
-    bool testResult = false;
+    auto testResult = false;
     if (DissolveSys::sameString(typeIorTotal, "total") && (typeJ == NULL) && (target == NULL))
     {
         double error = Error::percent(partials.constTotal(), testData);
@@ -881,8 +881,8 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
     else
     {
         // Get indices of AtomTypes
-        int indexI = partials.atomTypes().indexOf(typeIorTotal);
-        int indexJ = partials.atomTypes().indexOf(typeJ);
+        auto indexI = partials.atomTypes().indexOf(typeIorTotal);
+        auto indexJ = partials.atomTypes().indexOf(typeJ);
         if ((indexI == -1) || (indexJ == -1))
             return Messenger::error("Unrecognised test data name '%s'.\n", testData.name());
 
@@ -957,7 +957,7 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
             return Messenger::error("Test data has no name?");
 
         // Check first argument to determine PartialSet, then pass on the data
-        bool setA = false;
+        auto setA = false;
         if (DissolveSys::sameString(prefixA, parser.argc(0)))
             setA = true;
         else if (DissolveSys::sameString(prefixB, parser.argc(0)))

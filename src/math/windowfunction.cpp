@@ -217,7 +217,7 @@ bool WindowFunction::setUp(const Data1D &data)
 double WindowFunction::y(double x, double omega) const
 {
     // Determine current fractional x value (from our stored xMax_)
-    const double chi = x / xMax_;
+    const auto chi = x / xMax_;
 
 #ifdef CHECKS
     if ((chi < 0.0) || (chi > 1.0))
@@ -273,7 +273,7 @@ double WindowFunction::y(double x, double omega) const
 const char *WindowFunction::itemClassName() { return "WindowFunction"; }
 
 // Read data through specified LineParser
-bool WindowFunction::read(LineParser &parser, const CoreData &coreData)
+bool WindowFunction::read(LineParser &parser, CoreData &coreData)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

@@ -387,8 +387,8 @@ double Interpolator::y(double x, int interval)
 double Interpolator::approximate(const Data1D &data, double x)
 {
     // Grab xand y arrays
-    const Array<double> &xData = data.constXAxis();
-    const Array<double> &yData = data.constValues();
+    const auto &xData = data.constXAxis();
+    const auto &yData = data.constValues();
 
     if (x < xData.firstValue())
         return yData.firstValue();
@@ -396,7 +396,7 @@ double Interpolator::approximate(const Data1D &data, double x)
         return yData.lastValue();
 
     // Perform binary chop search
-    int left = 0;
+    auto left = 0;
     int i, right = data.constXAxis().nItems() - 1;
     while ((right - left) > 1)
     {

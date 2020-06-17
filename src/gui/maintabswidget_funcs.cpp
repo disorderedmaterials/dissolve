@@ -104,7 +104,7 @@ ModuleLayer *MainTabsWidget::currentLayer() const
 // Find SpeciesTab containing specified page widget
 SpeciesTab *MainTabsWidget::speciesTab(QWidget *page)
 {
-    for (SpeciesTab *tab = speciesTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = speciesTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->page() == page)
             return tab;
 
@@ -114,7 +114,7 @@ SpeciesTab *MainTabsWidget::speciesTab(QWidget *page)
 // Find ConfigurationTab containing specified page widget
 ConfigurationTab *MainTabsWidget::configurationTab(QWidget *page)
 {
-    for (ConfigurationTab *tab = configurationTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = configurationTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->page() == page)
             return tab;
 
@@ -124,7 +124,7 @@ ConfigurationTab *MainTabsWidget::configurationTab(QWidget *page)
 // Find LayerTab containing specified page widget
 LayerTab *MainTabsWidget::processingLayerTab(QWidget *page)
 {
-    for (LayerTab *tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->page() == page)
             return tab;
 
@@ -134,7 +134,7 @@ LayerTab *MainTabsWidget::processingLayerTab(QWidget *page)
 // Find ModuleTab containing specified page widget
 ModuleTab *MainTabsWidget::moduleTab(QWidget *page)
 {
-    for (ModuleTab *tab = moduleTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = moduleTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->page() == page)
             return tab;
 
@@ -144,7 +144,7 @@ ModuleTab *MainTabsWidget::moduleTab(QWidget *page)
 // Find ModuleTab containing specified Module
 ModuleTab *MainTabsWidget::moduleTab(Module *module)
 {
-    for (ModuleTab *tab = moduleTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = moduleTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->module() == module)
             return tab;
 
@@ -154,7 +154,7 @@ ModuleTab *MainTabsWidget::moduleTab(Module *module)
 // Find WorkspaceTab containing specified page widget
 WorkspaceTab *MainTabsWidget::workspaceTab(QWidget *page)
 {
-    for (WorkspaceTab *tab = workspaceTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = workspaceTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->page() == page)
             return tab;
 
@@ -187,7 +187,7 @@ const char *MainTabsWidget::uniqueTabName(const char *base)
     static CharString uniqueName;
     CharString baseName = base;
     uniqueName = baseName;
-    int suffix = 0;
+    auto suffix = 0;
 
     // Must always have a baseName
     if (baseName.isEmpty())
@@ -240,12 +240,12 @@ void MainTabsWidget::clearTabs()
 // Reconcile tabs, making them consistent with the provided data
 void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
 {
-    Dissolve &dissolve = dissolveWindow->dissolve();
+    auto &dissolve = dissolveWindow->dissolve();
 
     // Species - Global tab indices run from 1 (first tab after ForcefieldTab) to 1+nSpecies
     ListIterator<Species> speciesIterator(dissolve.species());
-    int currentTabIndex = 0;
-    int baseIndex = 1;
+    auto currentTabIndex = 0;
+    auto baseIndex = 1;
     while (Species *sp = speciesIterator.iterate())
     {
         // Loop over existing tabs
@@ -354,14 +354,14 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
 void MainTabsWidget::removeByPage(QWidget *page)
 {
     // Delete the tab from the tabwidget first - find its index (based on the page widget pointer) and remove that
-    int indexToRemove = indexOf(page);
+    auto indexToRemove = indexOf(page);
     if (indexToRemove == -1)
         printf("Couldn't remove tab since its page widget (%p) could not be found.\n", page);
     else
         removeTab(indexToRemove);
 
     // Now delete the tab from its list - this will delete the actual page widget
-    bool updateAll = false;
+    auto updateAll = false;
     if (speciesTab(page))
     {
         allTabs_.remove(speciesTab(page));
@@ -493,7 +493,7 @@ void MainTabsWidget::setCurrentTab(Species *species)
     if (!species)
         return;
 
-    for (SpeciesTab *tab = speciesTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = speciesTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->species() == species)
         {
             setCurrentWidget(tab->page());
@@ -509,7 +509,7 @@ void MainTabsWidget::setCurrentTab(Configuration *cfg)
     if (!cfg)
         return;
 
-    for (ConfigurationTab *tab = configurationTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = configurationTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->configuration() == cfg)
         {
             setCurrentWidget(tab->page());
@@ -525,7 +525,7 @@ void MainTabsWidget::setCurrentTab(ModuleLayer *layer)
     if (!layer)
         return;
 
-    for (LayerTab *tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next())
         if (tab->moduleLayer() == layer)
         {
             setCurrentWidget(tab->page());
@@ -586,7 +586,7 @@ void MainTabsWidget::enableSensitiveControls()
 void MainTabsWidget::setTabTextColour(QWidget *pageWidget, QColor colour)
 {
     // Find the tab containing the specified page
-    int tabIndex = indexOf(pageWidget);
+    auto tabIndex = indexOf(pageWidget);
     if (tabIndex == -1)
     {
         Messenger::error("MainTabsWidget::setTabTextColour - Failed to find tab containing widget %p.\n", pageWidget);
@@ -601,7 +601,7 @@ void MainTabsWidget::setTabTextColour(QWidget *pageWidget, QColor colour)
 void MainTabsWidget::setTabIcon(QWidget *pageWidget, QIcon icon)
 {
     // Find the tab containing the specified page
-    int tabIndex = indexOf(pageWidget);
+    auto tabIndex = indexOf(pageWidget);
     if (tabIndex == -1)
     {
         Messenger::error("MainTabsWidget::setTabIcon - Failed to find tab containing widget %p.\n", pageWidget);
@@ -616,7 +616,7 @@ void MainTabsWidget::setTabIcon(QWidget *pageWidget, QIcon icon)
 QToolButton *MainTabsWidget::addTabCloseButton(QWidget *pageWidget)
 {
     // Find the tab containing the specified page
-    int tabIndex = indexOf(pageWidget);
+    auto tabIndex = indexOf(pageWidget);
     if (tabIndex == -1)
     {
         Messenger::error("MainTabsWidget::addTabCloseButton - Failed to find tab containing widget %p.\n", pageWidget);
@@ -651,7 +651,7 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
     if (item)
     {
         // Find the tab containing the page widget (stored as the RefListItem's data)
-        int tabIndex = indexOf(item->data());
+        auto tabIndex = indexOf(item->data());
         if (tabIndex == -1)
         {
             Messenger::error("MainTabsWidget::tabCloseButtonClicked - Failed to find tab containing widget %p.\n",

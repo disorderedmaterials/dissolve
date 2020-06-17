@@ -48,7 +48,7 @@ int Data2DStoreKeyword::maxArguments() const
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool Data2DStoreKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool Data2DStoreKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg + 2),
                      parser.argc(startArg + 1));

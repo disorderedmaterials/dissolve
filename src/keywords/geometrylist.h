@@ -52,7 +52,7 @@ class GeometryListKeyword : public KeywordData<List<Geometry> &>
     // Return maximum number of arguments accepted
     int maxArguments() const;
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, const CoreData &coreData);
+    bool read(LineParser &parser, int startArg, CoreData &coreData);
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, const char *keywordName, const char *prefix);
 };

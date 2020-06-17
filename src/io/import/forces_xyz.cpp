@@ -37,7 +37,7 @@ bool ForceImportFileFormat::importXYZ(LineParser &parser, Array<double> &fx, Arr
     // Read in number of atoms and initiliase arrays
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    int nAtoms = parser.argi(0);
+    auto nAtoms = parser.argi(0);
     Messenger::print(" --> Expecting forces for %i atoms.\n", nAtoms);
     fx.initialise(nAtoms);
     fy.initialise(nAtoms);

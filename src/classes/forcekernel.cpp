@@ -56,7 +56,7 @@ void ForceKernel::forcesWithoutMim(const Atom *i, const Atom *j, double scale)
     force /= r;
     force *= potentialMap_.force(i, j, r) * scale;
 
-    int index = i->arrayIndex();
+    auto index = i->arrayIndex();
     fx_[index] += force.x;
     fy_[index] += force.y;
     fz_[index] += force.z;
@@ -77,7 +77,7 @@ void ForceKernel::forcesWithMim(const Atom *i, const Atom *j, double scale)
     force /= r;
     force *= potentialMap_.force(i, j, r) * scale;
 
-    int index = i->arrayIndex();
+    auto index = i->arrayIndex();
     fx_[index] += force.x;
     fy_[index] += force.y;
     fz_[index] += force.z;
@@ -151,8 +151,8 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
     double scale;
 
     // Get start/stride for specified loop context
-    int start = processPool_.interleavedLoopStart(strategy);
-    int stride = processPool_.interleavedLoopStride(strategy);
+    auto start = processPool_.interleavedLoopStart(strategy);
+    auto stride = processPool_.interleavedLoopStride(strategy);
 
     // Loop over central cell atoms
     if (applyMim)
@@ -248,11 +248,11 @@ void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::Divi
 
     // Grab the array of Atoms in the supplied Cell
     OrderedVector<Atom *> &otherAtoms = cell->atoms();
-    int nOtherAtoms = cell->nAtoms();
+    auto nOtherAtoms = cell->nAtoms();
 
     // Get start/stride for specified loop context
-    int start = processPool_.interleavedLoopStart(strategy);
-    int stride = processPool_.interleavedLoopStride(strategy);
+    auto start = processPool_.interleavedLoopStart(strategy);
+    auto stride = processPool_.interleavedLoopStride(strategy);
 
     // Loop over cell atoms
     if (flags & KernelFlags::ApplyMinimumImageFlag)
@@ -467,7 +467,7 @@ void ForceKernel::forces(const SpeciesBond *b, const Atom *i, const Atom *j)
     vecji *= b->force(distance);
 
     // Calculate forces
-    int index = i->arrayIndex();
+    auto index = i->arrayIndex();
     fx_[index] -= vecji.x;
     fy_[index] -= vecji.y;
     fz_[index] -= vecji.z;
@@ -507,7 +507,7 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesBond *b, const Atom 
     vecji *= b->force(distance);
 
     // Calculate forces
-    int index = onlyThis->arrayIndex();
+    auto index = onlyThis->arrayIndex();
     if (onlyThis == i)
     {
         fx_[index] -= vecji.x;
@@ -538,18 +538,18 @@ void ForceKernel::forces(const SpeciesAngle *a, const Atom *i, const Atom *j, co
         vecjk = k->r() - j->r();
 
     // Calculate angle
-    const double magji = vecji.magAndNormalise();
-    const double magjk = vecjk.magAndNormalise();
+    const auto magji = vecji.magAndNormalise();
+    const auto magjk = vecjk.magAndNormalise();
     double dp;
-    const double angle = Box::angleInDegrees(vecji, vecjk, dp);
+    const auto angle = Box::angleInDegrees(vecji, vecjk, dp);
 
     // Determine Angle force vectors for atoms
-    const double force = a->force(angle);
-    const Vec3<double> forcei = (vecjk - vecji * dp) * force / magji;
-    const Vec3<double> forcek = (vecji - vecjk * dp) * force / magjk;
+    const auto force = a->force(angle);
+    const auto forcei = (vecjk - vecji * dp) * force / magji;
+    const auto forcek = (vecji - vecjk * dp) * force / magjk;
 
     // Store forces
-    int index = i->arrayIndex();
+    auto index = i->arrayIndex();
     fx_[index] += forcei.x;
     fy_[index] += forcei.y;
     fz_[index] += forcei.z;
@@ -587,18 +587,18 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesAngle *a, const Atom
         vecjk = k->r() - j->r();
 
     // Calculate angle
-    const double magji = vecji.magAndNormalise();
-    const double magjk = vecjk.magAndNormalise();
+    const auto magji = vecji.magAndNormalise();
+    const auto magjk = vecjk.magAndNormalise();
     double dp;
-    const double angle = Box::angleInDegrees(vecji, vecjk, dp);
+    const auto angle = Box::angleInDegrees(vecji, vecjk, dp);
 
     // Determine Angle force vectors for atoms
-    const double force = a->force(angle);
-    const Vec3<double> forcei = (vecjk - vecji * dp) * force / magji;
-    const Vec3<double> forcek = (vecji - vecjk * dp) * force / magjk;
+    const auto force = a->force(angle);
+    const auto forcei = (vecjk - vecji * dp) * force / magji;
+    const auto forcek = (vecji - vecjk * dp) * force / magjk;
 
     // Store forces
-    int index = onlyThis->arrayIndex();
+    auto index = onlyThis->arrayIndex();
     if (onlyThis == i)
     {
         fx_[index] += forcei.x;
@@ -640,15 +640,15 @@ void ForceKernel::forces(const SpeciesTorsion *t, const Atom *i, const Atom *j, 
     // Calculate cross products and torsion angle formed (in radians)
     Vec3<double> xpj = vecji * vecjk;
     Vec3<double> xpk = veckl * vecjk;
-    const double magxpj = xpj.magAndNormalise();
-    const double magxpk = xpk.magAndNormalise();
+    const auto magxpj = xpj.magAndNormalise();
+    const auto magxpk = xpk.magAndNormalise();
     double dp = xpj.dp(xpk);
     if (dp < -1.0)
         dp = -1.0;
     else if (dp > 1.0)
         dp = 1.0;
-    const double phi = acos(dp);
-    const double du_dphi = t->force(phi * DEGRAD);
+    const auto phi = acos(dp);
+    const auto du_dphi = t->force(phi * DEGRAD);
 
     /*
      * Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
@@ -678,12 +678,12 @@ void ForceKernel::forces(const SpeciesTorsion *t, const Atom *i, const Atom *j, 
     dxpk_dlk.makeCrossProductMatrix(vecjk);
 
     // Construct derivatives of cos(phi) w.r.t. perpendicular axes
-    const Vec3<double> dcos_dxpj = (xpk - xpj * dp) / magxpj;
-    const Vec3<double> dcos_dxpk = (xpj - xpk * dp) / magxpk;
+    const auto dcos_dxpj = (xpk - xpj * dp) / magxpj;
+    const auto dcos_dxpk = (xpj - xpk * dp) / magxpk;
 
     // 			printf("i-j-k-l %i-%i-%i-%i %f %f %f\n",i,j,k,l, phi, dphi_dcosphi, du_dphi);
     // Calculate forces on atom i
-    int index = i->arrayIndex();
+    auto index = i->arrayIndex();
     fx_[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0));
     fy_[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(1));
     fz_[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(2));
@@ -732,15 +732,15 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesTorsion *t, const At
     // Calculate cross products and torsion angle formed (in radians)
     Vec3<double> xpj = vecji * vecjk;
     Vec3<double> xpk = veckl * vecjk;
-    const double magxpj = xpj.magAndNormalise();
-    const double magxpk = xpk.magAndNormalise();
+    const auto magxpj = xpj.magAndNormalise();
+    const auto magxpk = xpk.magAndNormalise();
     double dp = xpj.dp(xpk);
     if (dp < -1.0)
         dp = -1.0;
     else if (dp > 1.0)
         dp = 1.0;
-    const double phi = acos(dp);
-    const double du_dphi = t->force(phi * DEGRAD);
+    const auto phi = acos(dp);
+    const auto du_dphi = t->force(phi * DEGRAD);
 
     /*
      * Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
@@ -770,12 +770,12 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesTorsion *t, const At
     dxpk_dlk.makeCrossProductMatrix(vecjk);
 
     // Construct derivatives of cos(phi) w.r.t. perpendicular axes
-    const Vec3<double> dcos_dxpj = (xpk - xpj * dp) / magxpj;
-    const Vec3<double> dcos_dxpk = (xpj - xpk * dp) / magxpk;
+    const auto dcos_dxpj = (xpk - xpj * dp) / magxpj;
+    const auto dcos_dxpk = (xpj - xpk * dp) / magxpk;
 
     // 			printf("i-j-k-l %i-%i-%i-%i %f %f %f\n",i,j,k,l, phi, dphi_dcosphi, du_dphi);
     // Calculate forces for specified atom
-    int index = onlyThis->arrayIndex();
+    auto index = onlyThis->arrayIndex();
     if (onlyThis == i)
     {
         fx_[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0));

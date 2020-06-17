@@ -79,7 +79,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const bool testAnalytic = keywords_.asBool("TestAnalytic");
         const bool testInter = keywords_.asBool("TestInter");
         const bool testIntra = keywords_.asBool("TestIntra");
-        const double testThreshold = keywords_.asDouble("TestThreshold");
+        const auto testThreshold = keywords_.asDouble("TestThreshold");
 
         // Calculate the total forces
         if (testMode)
@@ -335,7 +335,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         dcos_dxpk = (xpj - xpk * dp) / magxpk;
 
                         // Sum forces on Atoms
-                        int index = i->arrayIndex();
+                        auto index = i->arrayIndex();
                         intraFx[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0));
                         intraFy[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(1));
                         intraFz[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(2));
@@ -504,8 +504,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 moduleData.contains("ReferenceFZ", uniqueName()))
             {
                 // Grab reference force arrays and check sizes
-                const Array<double> &referenceFx =
-                    GenericListHelper<Array<double>>::value(moduleData, "ReferenceFX", uniqueName());
+                const auto &referenceFx = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFX", uniqueName());
                 if (referenceFx.nItems() != cfg->nAtoms())
                 {
                     Messenger::error("Number of force components in ReferenceFX is %i, but the "
@@ -513,8 +512,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                      referenceFx.nItems(), cfg->name(), cfg->nAtoms());
                     return false;
                 }
-                const Array<double> &referenceFy =
-                    GenericListHelper<Array<double>>::value(moduleData, "ReferenceFY", uniqueName());
+                const auto &referenceFy = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFY", uniqueName());
                 if (referenceFy.nItems() != cfg->nAtoms())
                 {
                     Messenger::error("Number of force components in ReferenceFY is %i, but the "
@@ -522,8 +520,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                      referenceFy.nItems(), cfg->name(), cfg->nAtoms());
                     return false;
                 }
-                const Array<double> &referenceFz =
-                    GenericListHelper<Array<double>>::value(moduleData, "ReferenceFZ", uniqueName());
+                const auto &referenceFz = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFZ", uniqueName());
                 if (referenceFz.nItems() != cfg->nAtoms())
                 {
                     Messenger::error("Number of force components in ReferenceFZ is %i, but the "
@@ -630,9 +627,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Messenger::print("Forces: Calculating total forces for Configuration '%s'...\n", cfg->name());
 
             // Realise the force arrays
-            Array<double> &fx = GenericListHelper<Array<double>>::realise(cfg->moduleData(), "FX", uniqueName());
-            Array<double> &fy = GenericListHelper<Array<double>>::realise(cfg->moduleData(), "FY", uniqueName());
-            Array<double> &fz = GenericListHelper<Array<double>>::realise(cfg->moduleData(), "FZ", uniqueName());
+            auto &fx = GenericListHelper<Array<double>>::realise(cfg->moduleData(), "FX", uniqueName());
+            auto &fy = GenericListHelper<Array<double>>::realise(cfg->moduleData(), "FY", uniqueName());
+            auto &fz = GenericListHelper<Array<double>>::realise(cfg->moduleData(), "FZ", uniqueName());
             fx.initialise(cfg->nAtoms());
             fy.initialise(cfg->nAtoms());
             fz.initialise(cfg->nAtoms());

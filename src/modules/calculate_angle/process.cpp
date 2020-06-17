@@ -38,9 +38,9 @@ bool CalculateAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Ensure any parameters in our nodes are set correctly
     RefList<SelectProcedureNode> exclusions;
-    const Vec3<double> rangeAB = keywords_.asVec3Double("RangeAB");
-    const Vec3<double> rangeBC = keywords_.asVec3Double("RangeBC");
-    const Vec3<double> angleRange = keywords_.asVec3Double("AngleRange");
+    const auto rangeAB = keywords_.asVec3Double("RangeAB");
+    const auto rangeBC = keywords_.asVec3Double("RangeBC");
+    const auto angleRange = keywords_.asVec3Double("AngleRange");
     selectA_->setKeyword<SelectProcedureNode *>("ReferenceSite", selectB_);
     selectA_->setKeyword<Range>("InclusiveRange", Range(rangeAB.x, rangeAB.y));
     selectC_->setKeyword<SelectProcedureNode *>("ReferenceSite", selectB_);
@@ -69,7 +69,7 @@ bool CalculateAngleModule::process(Dissolve &dissolve, ProcessPool &procPool)
     selectC_->setKeyword<RefList<SelectProcedureNode> &>("ExcludeSameSite", exclusions);
 
     // Grab Configuration pointer
-    Configuration *cfg = targetConfigurations_.firstItem();
+    auto *cfg = targetConfigurations_.firstItem();
 
     // Set up process pool - must do this to ensure we are using all available processes
     procPool.assignProcessesToGroups(cfg->processPool());

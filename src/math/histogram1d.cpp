@@ -133,7 +133,7 @@ int Histogram1D::nBins() const { return nBins_; }
 bool Histogram1D::bin(double x)
 {
     // Calculate target bin
-    int bin = (x - minimum_) / binWidth_;
+    auto bin = (x - minimum_) / binWidth_;
 
     // Check bin range
     if ((bin < 0) || (bin >= nBins_))
@@ -208,7 +208,7 @@ void Histogram1D::operator=(const Histogram1D &source)
 const char *Histogram1D::itemClassName() { return "Histogram1D"; }
 
 // Read data through specified LineParser
-bool Histogram1D::read(LineParser &parser, const CoreData &coreData)
+bool Histogram1D::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 

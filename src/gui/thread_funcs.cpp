@@ -63,7 +63,7 @@ void DissolveThreadWorker::stopIterating() { keepIterating_ = false; }
 
 DissolveThreadController::DissolveThreadController(DissolveWindow *parentWindow, Dissolve &dissolve, int nIterations)
 {
-    DissolveThreadWorker *worker = new DissolveThreadWorker(dissolve);
+    auto *worker = new DissolveThreadWorker(dissolve);
     worker->moveToThread(&workerThread_);
 
     // Connect signals / slots

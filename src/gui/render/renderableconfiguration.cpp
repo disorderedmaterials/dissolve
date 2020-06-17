@@ -112,8 +112,8 @@ void RenderableConfiguration::createCylinderBond(PrimitiveAssembly &assembly, co
                                                  const Vec3<double> vij, bool drawFromAtoms, double radialScaling)
 {
     Matrix4 A;
-    Vec3<double> unit = vij;
-    const double mag = unit.magAndNormalise();
+    auto unit = vij;
+    const auto mag = unit.magAndNormalise();
 
     // Create rotation matrix for Bond
     A.setColumn(2, unit.x, unit.y, unit.z, 0.0);
@@ -191,7 +191,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
             // If the atom has no bonds draw it as a 'cross'
             if (i->speciesAtom()->nBonds() == 0)
             {
-                const Vec3<double> r = i->r();
+                const auto r = i->r();
                 colour = ElementColours::colour(i->speciesAtom()->element());
 
                 lineConfigurationPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
@@ -213,8 +213,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
                     rj = partner->r();
 
                     // Determine half delta i-j for bond
-                    const Vec3<double> dij =
-                        (i->cell()->mimRequired(partner->cell()) ? box->minimumVector(ri, rj) : rj - ri) * 0.5;
+                    const auto dij = (i->cell()->mimRequired(partner->cell()) ? box->minimumVector(ri, rj) : rj - ri) * 0.5;
 
                     // Draw bond halves
                     lineConfigurationPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
@@ -356,7 +355,7 @@ bool RenderableConfiguration::readStyleBlock(LineParser &parser)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!configurationStyleKeywords().isValid(parser.argc(0)))
             return configurationStyleKeywords().errorAndPrintValid(parser.argc(0));
-        ConfigurationStyleKeyword kwd = configurationStyleKeywords().enumeration(parser.argc(0));
+        auto kwd = configurationStyleKeywords().enumeration(parser.argc(0));
         if (!configurationStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 

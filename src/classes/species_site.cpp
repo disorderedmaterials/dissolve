@@ -70,13 +70,13 @@ const char *Species::uniqueSiteName(const char *baseName, SpeciesSite *exclude) 
 {
     static CharString uniqueName;
     CharString existingName = baseName;
-    int highest = -1;
+    auto highest = -1;
 
     if (existingName.isEmpty())
         existingName = "NewSite";
 
     // Find all existing names which are the same as 'existingName' up to the first '_', and get the highest appended number
-    for (SpeciesSite *site = sites_.first(); site != NULL; site = site->next())
+    for (auto *site = sites_.first(); site != NULL; site = site->next())
     {
         if (site == exclude)
             continue;
@@ -96,7 +96,7 @@ const char *Species::uniqueSiteName(const char *baseName, SpeciesSite *exclude) 
 // Search for SpeciesSite by name
 SpeciesSite *Species::findSite(const char *name) const
 {
-    for (SpeciesSite *site = sites_.first(); site != NULL; site = site->next())
+    for (auto *site = sites_.first(); site != NULL; site = site->next())
         if (DissolveSys::sameString(name, site->name()))
             return site;
     return NULL;

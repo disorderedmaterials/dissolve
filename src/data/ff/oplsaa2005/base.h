@@ -22,6 +22,7 @@
 #pragma once
 
 #include "data/ff.h"
+#include <optional>
 
 // Forward Declarations
 /* none */
@@ -54,14 +55,19 @@ class OPLSAA2005BaseForcefield : public Forcefield
      */
     public:
     // Return bond term for the supplied atom type pair (if it exists)
-    optional<const ForcefieldBondTerm &> bondTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j) const;
+    std::optional<std::reference_wrapper<const ForcefieldBondTerm>> bondTerm(const ForcefieldAtomType *i,
+                                                                             const ForcefieldAtomType *j) const;
     // Return angle term for the supplied atom type trio (if it exists)
-    optional<const ForcefieldAngleTerm &> angleTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j,
-                                                    const ForcefieldAtomType *k) const;
+    std::optional<std::reference_wrapper<const ForcefieldAngleTerm>>
+    angleTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k) const;
     // Return torsion term for the supplied atom type quartet (if it exists)
-    optional<const ForcefieldTorsionTerm &> torsionTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j,
-                                                        const ForcefieldAtomType *k, const ForcefieldAtomType *l) const;
+    std::optional<std::reference_wrapper<const ForcefieldTorsionTerm>> torsionTerm(const ForcefieldAtomType *i,
+                                                                                   const ForcefieldAtomType *j,
+                                                                                   const ForcefieldAtomType *k,
+                                                                                   const ForcefieldAtomType *l) const;
     // Return improper term for the supplied atom type quartet (if it exists)
-    optional<const ForcefieldImproperTerm &> improperTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j,
-                                                          const ForcefieldAtomType *k, const ForcefieldAtomType *l) const;
+    std::optional<std::reference_wrapper<const ForcefieldImproperTerm>> improperTerm(const ForcefieldAtomType *i,
+                                                                                     const ForcefieldAtomType *j,
+                                                                                     const ForcefieldAtomType *k,
+                                                                                     const ForcefieldAtomType *l) const;
 };

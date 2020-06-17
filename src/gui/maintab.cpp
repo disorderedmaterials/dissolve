@@ -88,7 +88,7 @@ bool MainTab::rename()
         return false;
 
     // Find ourselves in the tab widget
-    int tabIndex = tabWidget_->indexOf(page_);
+    auto tabIndex = tabWidget_->indexOf(page_);
     if (tabIndex == -1)
     {
         Messenger::print("Couldn't rename tab '%s' since its page widget could not be found.\n", title_.get());

@@ -176,15 +176,15 @@ void CalculateAngleModule::initialise()
     forEachA->addNode(selectC_);
 
     // -- -- -- Calculate: 'rAB'
-    CalculateDistanceProcedureNode *calcAB = new CalculateDistanceProcedureNode(selectA_, selectB_);
+    auto *calcAB = new CalculateDistanceProcedureNode(selectA_, selectB_);
     forEachC->addNode(calcAB);
 
     // -- -- -- Calculate: 'rBC'
-    CalculateDistanceProcedureNode *calcBC = new CalculateDistanceProcedureNode(selectB_, selectC_);
+    auto *calcBC = new CalculateDistanceProcedureNode(selectB_, selectC_);
     forEachC->addNode(calcBC);
 
     // -- -- -- Calculate: 'aABC'
-    CalculateAngleProcedureNode *calcABC = new CalculateAngleProcedureNode(selectA_, selectB_, selectC_);
+    auto *calcABC = new CalculateAngleProcedureNode(selectA_, selectB_, selectC_);
     forEachC->addNode(calcABC);
 
     // -- -- -- Collect3D:  'rAB vs rBC vs aABC'

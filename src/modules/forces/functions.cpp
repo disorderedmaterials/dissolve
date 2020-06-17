@@ -46,8 +46,8 @@ void ForcesModule::intramolecularForces(ProcessPool &procPool, Configuration *cf
     ForceKernel kernel(procPool, cfg, potentialMap, fx, fy, fz);
 
     // Set start/stride for parallel loop
-    int start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    int stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
     // Loop over Molecules
     std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
@@ -96,8 +96,8 @@ void ForcesModule::interatomicForces(ProcessPool &procPool, Configuration *cfg, 
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
     // Set start/stride for parallel loop
-    int start = procPool.interleavedLoopStart(strategy);
-    int stride = procPool.interleavedLoopStride(strategy);
+    auto start = procPool.interleavedLoopStart(strategy);
+    auto stride = procPool.interleavedLoopStride(strategy);
 
     for (int cellId = start; cellId < cellArray.nCells(); cellId += stride)
     {
@@ -177,8 +177,8 @@ void ForcesModule::intramolecularForces(ProcessPool &procPool, Configuration *cf
     ForceKernel kernel(procPool, cfg, potentialMap, fx, fy, fz);
 
     // Set start/stride for parallel loop
-    int start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    int stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
     // Loop over supplied atom indices
     const DynamicArray<Atom> &atoms = cfg->atoms();
@@ -226,8 +226,8 @@ void ForcesModule::interatomicForces(ProcessPool &procPool, Configuration *cfg, 
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
     // Set start/stride for parallel loop
-    int start = procPool.interleavedLoopStart(strategy);
-    int stride = procPool.interleavedLoopStride(strategy);
+    auto start = procPool.interleavedLoopStart(strategy);
+    auto stride = procPool.interleavedLoopStride(strategy);
 
     // Loop over supplied atom indices
     const DynamicArray<Atom> &atoms = cfg->atoms();

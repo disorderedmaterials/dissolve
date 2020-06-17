@@ -91,7 +91,7 @@ ExpressionVariable *ParametersProcedureNode::hasParameter(const char *name, Expr
     while (ExpressionNode *node = integerIterator.iterate())
     {
         // Cast up the node into an ExpressionVariable
-        ExpressionVariable *var = dynamic_cast<ExpressionVariable *>(node);
+        auto *var = dynamic_cast<ExpressionVariable *>(node);
         if (!var)
             continue;
         if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))
@@ -103,7 +103,7 @@ ExpressionVariable *ParametersProcedureNode::hasParameter(const char *name, Expr
     while (ExpressionNode *node = doubleIterator.iterate())
     {
         // Cast up the node into an ExpressionVariable
-        ExpressionVariable *var = dynamic_cast<ExpressionVariable *>(node);
+        auto *var = dynamic_cast<ExpressionVariable *>(node);
         if (!var)
             continue;
         if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))
@@ -123,7 +123,7 @@ RefList<ExpressionVariable> ParametersProcedureNode::parameterReferences() const
     while (ExpressionNode *node = integerIterator.iterate())
     {
         // Cast up the node into an ExpressionVariable
-        ExpressionVariable *var = dynamic_cast<ExpressionVariable *>(node);
+        auto *var = dynamic_cast<ExpressionVariable *>(node);
         if (var)
             params.append(var);
     }
@@ -133,7 +133,7 @@ RefList<ExpressionVariable> ParametersProcedureNode::parameterReferences() const
     while (ExpressionNode *node = doubleIterator.iterate())
     {
         // Cast up the node into an ExpressionVariable
-        ExpressionVariable *var = dynamic_cast<ExpressionVariable *>(node);
+        auto *var = dynamic_cast<ExpressionVariable *>(node);
         if (var)
             params.append(var);
     }

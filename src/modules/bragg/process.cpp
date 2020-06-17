@@ -43,15 +43,15 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (targetConfigurations_.nItems() == 0)
         return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
-    const int averaging = keywords_.asInt("Averaging");
+    const auto averaging = keywords_.asInt("Averaging");
     if (!Averaging::averagingSchemes().isValid(keywords_.asString("AveragingScheme")))
         return Averaging::averagingSchemes().errorAndPrintValid(keywords_.asString("AveragingScheme"));
     Averaging::AveragingScheme averagingScheme =
         Averaging::averagingSchemes().enumeration(keywords_.asString("AveragingScheme"));
-    const double qDelta = keywords_.asDouble("QDelta");
-    const double qMax = keywords_.asDouble("QMax");
-    const double qMin = keywords_.asDouble("QMin");
-    const Vec3<int> multiplicity = keywords_.asVec3Int("Multiplicity");
+    const auto qDelta = keywords_.asDouble("QDelta");
+    const auto qMax = keywords_.asDouble("QMax");
+    const auto qMin = keywords_.asDouble("QMin");
+    const auto multiplicity = keywords_.asVec3Int("Multiplicity");
     // TODO Could look for this value in the Configuration's module data (could be set/stored if a known crystal repeat was
     // used in the generation of the Configuration).
     const bool saveReflections = keywords_.asBool("SaveReflections");
@@ -103,8 +103,8 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (saveReflections)
         {
             // Retrieve BraggReflection data from the Configuration's module data
-            bool found = false;
-            const Array<BraggReflection> &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
+            auto found = false;
+            const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
                 cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>(), &found);
             if (!found)
                 return Messenger::error("Failed to find BraggReflection array in module data for Configuration '%s'.\n",

@@ -440,10 +440,10 @@ void EPSRModuleWidget::updateDebugEPFunctionsGraph(int from, int to)
     if (!module_)
         return;
 
-    int i = 0;
+    auto i = 0;
     for (AtomType *at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
     {
-        int j = i;
+        auto j = i;
         for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
         {
             CharString id("%s-%s", at1->name(), at2->name());

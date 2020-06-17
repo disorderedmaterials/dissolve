@@ -158,7 +158,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
     }
 
     // Loop over neighbour atoms
-    int nMatches = 0;
+    auto nMatches = 0;
     RefDataListIterator<const SpeciesAtom, int> neighbourIterator(neighbours);
     while (const SpeciesAtom *j = neighbourIterator.iterate())
     {
@@ -175,7 +175,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
             // Add ourselves to the match path so we can't backtrack
             branchMatchPath.append(i);
 
-            int branchScore = NETANode::score(j, branchMatchPath);
+            auto branchScore = NETANode::score(j, branchMatchPath);
             if (branchScore == NETANode::NoMatch)
                 continue;
 
@@ -189,13 +189,13 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
             for (auto type : allowedAtomTypes_)
             {
                 // Evaluate the neighbour against the atom type
-                int typeScore = type->neta().score(j);
+                auto typeScore = type->neta().score(j);
                 if (typeScore == NETANode::NoMatch)
                     continue;
 
                 // Process branch definition via the base class, using a copy of the current match path
                 RefList<const SpeciesAtom> branchMatchPath = matchPath;
-                int branchScore = NETANode::score(j, branchMatchPath);
+                auto branchScore = NETANode::score(j, branchMatchPath);
                 if (branchScore == NETANode::NoMatch)
                     continue;
 
@@ -221,7 +221,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
         if (nHydrogensValue_ >= 0)
         {
             // Count number of hydrogens attached to this atom
-            int nH = 0;
+            auto nH = 0;
             for (const auto *bond : j->bonds())
                 if (bond->partner(j)->element()->Z() == ELEMENT_H)
                     ++nH;
@@ -245,7 +245,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
         return NETANode::NoMatch;
 
     // Generate total score and add matched atoms to path
-    int totalScore = 0;
+    auto totalScore = 0;
     neighbourIterator.restart();
     while (const SpeciesAtom *j = neighbourIterator.iterate())
     {

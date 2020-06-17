@@ -185,7 +185,7 @@ Module *Dissolve::createModuleInstance(const char *moduleType)
     }
 
     // Find a suitable unique name for the Module
-    int instanceId = 1;
+    auto instanceId = 1;
     CharString uniqueName;
     do
     {
@@ -243,7 +243,7 @@ const char *Dissolve::uniqueModuleName(const char *name, Module *excludeThis)
     static CharString uniqueName;
     CharString baseName = name;
     uniqueName = baseName;
-    int suffix = 0;
+    auto suffix = 0;
 
     // Must always have a baseName
     if (baseName.isEmpty())

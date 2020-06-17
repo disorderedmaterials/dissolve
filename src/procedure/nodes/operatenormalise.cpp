@@ -49,7 +49,7 @@ OperateNormaliseProcedureNode::~OperateNormaliseProcedureNode() {}
 bool OperateNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
     // Evaluate the expression to get the value
-    const double value = keywords_.asDouble("Value");
+    const auto value = keywords_.asDouble("Value");
     const bool absolute = keywords_.asBool("Absolute");
 
     // Get sum of absolute values
@@ -64,7 +64,7 @@ bool OperateNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configu
 bool OperateNormaliseProcedureNode::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
     // Evaluate the expression to get the value
-    const double value = keywords_.asDouble("Value");
+    const auto value = keywords_.asDouble("Value");
     const bool absolute = keywords_.asBool("Absolute");
 
     // Get sum of absolute values
@@ -79,7 +79,7 @@ bool OperateNormaliseProcedureNode::operateData2D(ProcessPool &procPool, Configu
 bool OperateNormaliseProcedureNode::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
     // Evaluate the expression to get the value
-    const double value = keywords_.asDouble("Value");
+    const auto value = keywords_.asDouble("Value");
     const bool absolute = keywords_.asBool("Absolute");
 
     // Get sum of absolute values

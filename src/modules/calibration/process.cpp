@@ -63,7 +63,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
         if (onlyWhenEnergyStable)
         {
-            int stabilityResult = EnergyModule::checkStability(configs);
+            auto stabilityResult = EnergyModule::checkStability(configs);
             if (stabilityResult == -1)
                 return false;
             else if (stabilityResult != 0)
@@ -107,8 +107,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
         for (Module *module : intraBroadeningModules_)
         {
             // Retrieve the PairBroadeningFunction
-            PairBroadeningFunction &broadening =
-                module->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
+            auto &broadening = module->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
 
             // Add its parameters to our minimiser - only add broadening functions with global parameters once
             switch (broadening.function())
@@ -145,18 +144,18 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
         for (Module *rdfModule : intraBroadeningModules_)
         {
             // Retrieve the PairBroadeningFunction
-            PairBroadeningFunction &broadening =
+            auto &broadening =
                 rdfModule->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
 
             Messenger::print("Optimal IntraBroadening parameters for '%s' are now: %s\n", rdfModule->uniqueName(),
                              broadening.summary().get());
 
             // Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
-            int smoothing = rdfModule->keywords().asInt("Smoothing");
+            auto smoothing = rdfModule->keywords().asInt("Smoothing");
             for (Configuration *cfg : rdfModule->targetConfigurations())
             {
-                const PartialSet &originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");
-                PartialSet &unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
+                const auto &originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");
+                auto &unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
                 RDFModule::calculateUnweightedGR(procPool, cfg, originalGR, unweightedGR, broadening, smoothing);
             }
 

@@ -57,7 +57,7 @@ void Messenger::createText(const char *indentText, const char *format, va_list a
     CharString prependedLine;
     char *startChar = workingText_;
     char *endChar = workingText_;
-    bool lastPart = (*endChar == '\0');
+    auto lastPart = (*endChar == '\0');
     while (!lastPart)
     {
         // Find end position of next segment, which is either a newline or NULL (if it is the latter, note that it is
@@ -224,7 +224,7 @@ void Messenger::banner(const char *fmt, ...)
         return;
 
     static CharString bannerChars;
-    const int width = 80;
+    const auto width = 80;
     if (bannerChars.length() < width)
     {
         bannerChars.createEmpty(width + 1);
@@ -239,8 +239,8 @@ void Messenger::banner(const char *fmt, ...)
     CharString bannerText = workingText_;
 
     // Now, get the length of the banner text and create a format for printing it into a line 80 chars wide
-    int leftPad = (width - bannerText.length()) / 2 - 1;
-    int rightPad = width - bannerText.length() - leftPad - 2;
+    auto leftPad = (width - bannerText.length()) / 2 - 1;
+    auto rightPad = width - bannerText.length() - leftPad - 2;
     char bannerFormat[64];
     sprintf(bannerFormat, "%%s\n%%c%%%is%%s%%%is%%c\n%%s", leftPad, rightPad);
 
@@ -257,7 +257,7 @@ void Messenger::heading(const char *fmt, ...)
         return;
 
     static CharString bannerChars;
-    const int width = 80;
+    const auto width = 80;
     if (bannerChars.length() < width)
     {
         bannerChars.createEmpty(width + 1);
@@ -272,8 +272,8 @@ void Messenger::heading(const char *fmt, ...)
     CharString bannerText = workingText_;
 
     // Now, get the length of the banner text and create a format for printing it into a line 80 chars wide
-    int leftPad = (width - bannerText.length()) / 2 - 1;
-    int rightPad = width - bannerText.length() - leftPad - 2;
+    auto leftPad = (width - bannerText.length()) / 2 - 1;
+    auto rightPad = width - bannerText.length() - leftPad - 2;
     char bannerFormat[64];
     sprintf(bannerFormat, "%%%is%%s%%%is", leftPad, rightPad);
 

@@ -50,7 +50,7 @@ LineParser::~LineParser()
 }
 
 // Return current stream for input
-istream *LineParser::inputStream() const
+std::istream *LineParser::inputStream() const
 {
     if (fileInput_)
         return inputFile_;
@@ -120,10 +120,10 @@ bool LineParser::openInput(const char *filename)
     fileInput_ = true;
 
     // Master will open the file
-    bool result = true;
+    auto result = true;
     if ((!processPool_) || processPool_->isMaster())
     {
-        inputFile_ = new ifstream(filename, ios::in | ios::binary);
+        inputFile_ = new std::ifstream(filename, std::ios::in | std::ios::binary);
         if (!inputFile_->is_open())
         {
             closeFiles();
@@ -162,9 +162,9 @@ bool LineParser::openInputString(const char *string)
     fileInput_ = false;
 
     // Create a new stringstream and copy the input string to it
-    inputStrings_ = new stringstream;
+    inputStrings_ = new std::stringstream;
     (*inputStrings_) << string;
-    inputStrings_->seekg(ios_base::beg);
+    inputStrings_->seekg(std::ios_base::beg);
 
     lastLineNo_ = 0;
 
@@ -174,7 +174,7 @@ bool LineParser::openInputString(const char *string)
 // Open new stream for writing
 bool LineParser::openOutput(const char *filename, bool directOutput)
 {
-    bool result = true;
+    auto result = true;
 
     // Master handles the opening of the output file
     if ((!processPool_) || processPool_->isMaster())
@@ -200,7 +200,7 @@ bool LineParser::openOutput(const char *filename, bool directOutput)
         directOutput_ = directOutput;
         if (directOutput_)
         {
-            outputFile_ = new ofstream(filename, ios::out);
+            outputFile_ = new std::ofstream(filename, std::ios::out);
             if (!outputFile_->is_open())
             {
                 closeFiles();
@@ -209,7 +209,7 @@ bool LineParser::openOutput(const char *filename, bool directOutput)
             }
         }
         else
-            cachedFile_ = new stringstream;
+            cachedFile_ = new std::stringstream;
     }
 
     // Broadcast result of open
@@ -224,7 +224,7 @@ bool LineParser::openOutput(const char *filename, bool directOutput)
 // Open existing stream for writing
 bool LineParser::appendOutput(const char *filename)
 {
-    bool result = true;
+    auto result = true;
 
     // Master handles the opening of the output file
     if ((!processPool_) || processPool_->isMaster())
@@ -248,7 +248,7 @@ bool LineParser::appendOutput(const char *filename)
 
         // Open file for appending
         directOutput_ = true;
-        outputFile_ = new ofstream(filename, ios::app);
+        outputFile_ = new std::ofstream(filename, std::ios::app);
         if (!outputFile_->is_open())
         {
             closeFiles();
@@ -293,7 +293,7 @@ void LineParser::closeFiles()
 bool LineParser::isFileGoodForReading() const
 {
     // Master performs the checks
-    bool result = true;
+    auto result = true;
     if ((!processPool_) || processPool_->isMaster())
     {
         if (fileInput_ && (inputFile_ == NULL))
@@ -315,7 +315,7 @@ bool LineParser::isFileGoodForReading() const
 bool LineParser::isFileGoodForWriting() const
 {
     // Master performs the checks
-    bool result = true;
+    auto result = true;
     if ((!processPool_) || processPool_->isMaster())
     {
         if (directOutput_)
@@ -343,9 +343,9 @@ char LineParser::peek() const
 }
 
 // Tell current position of input stream
-streampos LineParser::tellg() const
+std::streampos LineParser::tellg() const
 {
-    streampos result = 0;
+    std::streampos result = 0;
     if (inputStream() != NULL)
         result = inputStream()->tellg();
     else
@@ -354,7 +354,7 @@ streampos LineParser::tellg() const
 }
 
 // Seek position in input stream
-void LineParser::seekg(streampos pos)
+void LineParser::seekg(std::streampos pos)
 {
     if (inputFile_ != NULL)
     {
@@ -367,7 +367,7 @@ void LineParser::seekg(streampos pos)
 }
 
 // Seek n bytes in specified direction in input stream
-void LineParser::seekg(streamoff off, ios_base::seekdir dir)
+void LineParser::seekg(std::streamoff off, std::ios_base::seekdir dir)
 {
     if (inputStream() != NULL)
         inputFile_->seekg(off, dir);
@@ -379,7 +379,7 @@ void LineParser::seekg(streamoff off, ios_base::seekdir dir)
 void LineParser::rewind()
 {
     if (inputStream() != NULL)
-        inputFile_->seekg(0, ios::beg);
+        inputFile_->seekg(0, std::ios::beg);
     else
         Messenger::print("No file currently open to rewind.\n");
 }
@@ -388,7 +388,7 @@ void LineParser::rewind()
 bool LineParser::eofOrBlank() const
 {
     // If no process pool is defined, or we are the master, do the check
-    bool result = false;
+    auto result = false;
     if ((!processPool_) || processPool_->isMaster())
     {
         // Do we have a valid input stream?
@@ -410,7 +410,7 @@ bool LineParser::eofOrBlank() const
         }
 
         // Otherwise, store the current file position and search for a non-whitespace character (or end of file)
-        streampos pos = inputStream()->tellg();
+        std::streampos pos = inputStream()->tellg();
 
         // Skip through whitespace, searching for 'hard' character
         char c;
@@ -515,7 +515,7 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
                 // Now, see if our line contains only blanks
                 nchars = 0;
                 nspaces = 0;
-                for (char *c = line_; *c != '\0'; c++)
+                for (auto *c = line_; *c != '\0'; c++)
                 {
                     nchars++;
                     if (isspace(*c))
@@ -709,13 +709,13 @@ bool LineParser::getNextN(int optionMask, int length, CharString *destarg)
 {
     // Put the next 'length' characters from line_ into temparg (and put into supplied arg if supplied)
     // A negative length may be supplied, which we interpret as 'strip trailing spaces'
-    int arglen = 0;
+    auto arglen = 0;
     char c;
     if (lineLength_ == 0)
         return false;
 
     int n, charsleft = lineLength_ - linePos_;
-    bool striptrailing = (length < 0);
+    auto striptrailing = (length < 0);
     length = abs(length);
     if (length > charsleft)
         length = charsleft;
@@ -791,12 +791,12 @@ LineParser::ParseReturnValue LineParser::getArgsDelim(int optionMask)
 // Get rest of current line starting at next delimited part (and put into destination argument if supplied)
 bool LineParser::getRestDelim(CharString *destarg)
 {
-    int arglen = 0, n, length;
+    auto arglen = 0;
     char c;
     if (lineLength_ == 0)
         return false;
-    length = lineLength_ - linePos_;
-    for (n = 0; n < length; n++)
+    const auto length = lineLength_ - linePos_;
+    for (int n = 0; n < length; ++n)
     {
         c = line_[linePos_];
         switch (c)
@@ -815,7 +815,7 @@ bool LineParser::getRestDelim(CharString *destarg)
     }
     // Add terminating character to temparg - strip whitespace at end if there is any...
     tempArg_[arglen] = '\0';
-    for (n = arglen - 1; n > 0; --n)
+    for (int n = arglen - 1; n > 0; --n)
     {
         if ((tempArg_[n] != ' ') && (tempArg_[n] != '\t'))
             break;
@@ -829,7 +829,7 @@ bool LineParser::getRestDelim(CharString *destarg)
 // Get next argument (delimited) from file stream
 bool LineParser::getArgDelim(int optionMask, CharString *destarg)
 {
-    bool result = getNextArg(optionMask, destarg);
+    auto result = getNextArg(optionMask, destarg);
     // 	printf("getArgDelim = %s [%s]\n", result ? "true" : "false", destarg->get());
     return result;
 }
@@ -846,8 +846,8 @@ void LineParser::getArgsDelim(int optionMask, const char *s)
 // Get next delimited chunk from input stream (not line)
 bool LineParser::getCharsDelim(CharString *destarg)
 {
-    int length = 0;
-    bool result = true;
+    auto length = 0;
+    auto result = true;
     char c;
     while (!inputStream()->eof())
     {
@@ -1001,7 +1001,7 @@ const char *LineParser::getChars(int nchars, bool skipeol)
 {
     char c;
     // Check number of characters requested
-    int i = 0;
+    auto i = 0;
     if (nchars == 0)
         return NULL;
     else if (nchars > MAXLINELENGTH)
@@ -1047,7 +1047,7 @@ const char *LineParser::getChars(int nchars, bool skipeol)
 // Write line to file
 bool LineParser::writeLine(const char *s) const
 {
-    bool result = true;
+    auto result = true;
 
     // Master handles the writing
     if ((!processPool_) || processPool_->isMaster())
@@ -1081,7 +1081,7 @@ bool LineParser::writeLine(const char *s) const
 // Write formatted line to file
 bool LineParser::writeLineF(const char *fmt, ...) const
 {
-    bool result = true;
+    auto result = true;
 
     // Master handles the writing
     if ((!processPool_) || processPool_->isMaster())
@@ -1132,7 +1132,7 @@ bool LineParser::writeLineF(const char *fmt, ...) const
 bool LineParser::writeBannerComment(const char *fmt, ...)
 {
     static CharString bannerChars;
-    const int width = 80;
+    const auto width = 80;
     if (bannerChars.length() < width)
     {
         bannerChars.createEmpty(width + 1);
@@ -1149,8 +1149,8 @@ bool LineParser::writeBannerComment(const char *fmt, ...)
     CharString bannerText = workingText_;
 
     // Now, get the length of the banner text and create a format for printing it into a line 80 chars wide
-    int leftPad = (width - bannerText.length()) / 2 - 1;
-    int rightPad = width - bannerText.length() - leftPad - 2;
+    auto leftPad = (width - bannerText.length()) / 2 - 1;
+    auto rightPad = width - bannerText.length() - leftPad - 2;
     char bannerFormat[64];
     sprintf(bannerFormat, "%%s\n%%c%%%is%%s%%%is%%c\n%%s", leftPad, rightPad);
 
@@ -1197,7 +1197,7 @@ bool LineParser::readArg(long long int &i)
 // Commit cached output stream to actual output file
 bool LineParser::commitCache()
 {
-    bool result = true;
+    auto result = true;
 
     // Master handles the writing
     if ((!processPool_) || processPool_->isMaster())
@@ -1212,7 +1212,7 @@ bool LineParser::commitCache()
             return false;
         }
 
-        ofstream outputFile(outputFilename_);
+        std::ofstream outputFile(outputFilename_);
         if (outputFile.is_open())
         {
             outputFile << cachedFile_->str();

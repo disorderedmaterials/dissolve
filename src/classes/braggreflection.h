@@ -91,7 +91,7 @@ class BraggReflection : public GenericItemBase
     // Return class name
     static const char *itemClassName();
     // Read data through specified parser
-    bool read(LineParser &parser, const CoreData &coreData);
+    bool read(LineParser &parser, CoreData &coreData);
     // Write data through specified parser
     bool write(LineParser &parser);
 

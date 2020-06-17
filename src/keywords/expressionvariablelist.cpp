@@ -67,7 +67,7 @@ int ExpressionVariableListKeyword::minArguments() const { return 2; }
 int ExpressionVariableListKeyword::maxArguments() const { return 2; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ExpressionVariableListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool ExpressionVariableListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     if (!parentNode_)
         return Messenger::error("Parent ProcedureNode not set, so can't read ExpressionVariableList data.\n");
@@ -108,7 +108,7 @@ bool ExpressionVariableListKeyword::write(LineParser &parser, const char *keywor
     while (ExpressionNode *node = nodeIterator.iterate())
     {
         // Cast up to ExpressionVariable
-        ExpressionVariable *var = dynamic_cast<ExpressionVariable *>(node);
+        auto *var = dynamic_cast<ExpressionVariable *>(node);
         if (!var)
             Messenger::error("Failed to cast ExpressionNode to ExpressionVariable when writing "
                              "ExpressionVariableList data.\n");

@@ -77,11 +77,11 @@ PairPotentialExportFileFormat::PairPotentialExportFormat PairPotentialExportFile
 bool PairPotentialExportFileFormat::exportBlock(LineParser &parser, PairPotential *pp)
 {
     // Get array references for convenience
-    const Data1D &uOriginal = pp->uOriginal();
-    const Data1D &uAdditional = pp->uAdditional();
-    const Data1D &uFull = pp->uFull();
-    const Data1D &dUFull = pp->dUFull();
-    const int nPoints = pp->nPoints();
+    const auto &uOriginal = pp->uOriginal();
+    const auto &uAdditional = pp->uAdditional();
+    const auto &uFull = pp->uFull();
+    const auto &dUFull = pp->dUFull();
+    const auto nPoints = pp->nPoints();
 
     // Write header comment
     if (!parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "", "Full", "Derivative", "Original", "Additional",
@@ -104,9 +104,9 @@ bool PairPotentialExportFileFormat::exportBlock(LineParser &parser, PairPotentia
 bool PairPotentialExportFileFormat::exportDLPOLY(LineParser &parser, PairPotential *pp)
 {
     // Get array references for convenience
-    const Data1D &uFull = pp->uFull();
-    const Data1D &dUFull = pp->dUFull();
-    const int nPoints = pp->nPoints();
+    const auto &uFull = pp->uFull();
+    const auto &dUFull = pp->dUFull();
+    const auto nPoints = pp->nPoints();
 
     // Write header (record 1)
     if (!parser.writeLineF("%-72s\n", "TABLE file written by Dissolve"))
@@ -159,7 +159,7 @@ bool PairPotentialExportFileFormat::exportData(PairPotential *pp)
     }
 
     // Write data
-    bool result = false;
+    auto result = false;
     if (pairPotentialFormat() == PairPotentialExportFileFormat::BlockPairPotential)
         result = exportBlock(parser, pp);
     else if (pairPotentialFormat() == PairPotentialExportFileFormat::DLPOLYTABLEPairPotential)

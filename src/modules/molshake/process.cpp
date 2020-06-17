@@ -58,15 +58,15 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         double cutoffDistance = keywords_.asDouble("CutoffDistance");
         if (cutoffDistance < 0.0)
             cutoffDistance = dissolve.pairPotentialRange();
-        double &rotationStepSize = keywords_.retrieve<double>("RotationStepSize");
-        const double rotationStepSizeMax = keywords_.asDouble("RotationStepSizeMax");
-        const double rotationStepSizeMin = keywords_.asDouble("RotationStepSizeMin");
-        const int nShakesPerMolecule = keywords_.asInt("ShakesPerMolecule");
-        const double targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
-        double &translationStepSize = keywords_.retrieve<double>("TranslationStepSize");
-        const double translationStepSizeMax = keywords_.asDouble("TranslationStepSizeMax");
-        const double translationStepSizeMin = keywords_.asDouble("TranslationStepSizeMin");
-        const double rRT = 1.0 / (.008314472 * cfg->temperature());
+        auto &rotationStepSize = keywords_.retrieve<double>("RotationStepSize");
+        const auto rotationStepSizeMax = keywords_.asDouble("RotationStepSizeMax");
+        const auto rotationStepSizeMin = keywords_.asDouble("RotationStepSizeMin");
+        const auto nShakesPerMolecule = keywords_.asInt("ShakesPerMolecule");
+        const auto targetAcceptanceRate = keywords_.asDouble("TargetAcceptanceRate");
+        auto &translationStepSize = keywords_.retrieve<double>("TranslationStepSize");
+        const auto translationStepSizeMax = keywords_.asDouble("TranslationStepSizeMax");
+        const auto translationStepSizeMin = keywords_.asDouble("TranslationStepSizeMin");
+        const auto rRT = 1.0 / (.008314472 * cfg->temperature());
 
         // Print argument/parameter summary
         Messenger::print("MolShake: Cutoff distance is %f.\n", cutoffDistance);
@@ -105,7 +105,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Set initial random offset for our counter determining whether to perform R+T, R, or T.
-        int count = procPool.random() * 10;
+        auto count = procPool.random() * 10;
         bool rotate, translate;
 
         Timer timer;

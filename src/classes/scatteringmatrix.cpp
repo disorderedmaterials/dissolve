@@ -38,7 +38,7 @@ int ScatteringMatrix::nPairs() const { return typePairs_.size(); }
 // Return index of specified AtomType pair
 int ScatteringMatrix::pairIndex(AtomType *typeI, AtomType *typeJ) const
 {
-    int index = 0;
+    auto index = 0;
     for (auto [i, j] : typePairs_)
     {
         if ((i == typeI) && (j == typeJ))
@@ -59,7 +59,7 @@ double ScatteringMatrix::pairWeightInverse(AtomType *typeI, AtomType *typeJ, int
      * The required column of the inverse matrix is the original (row) index of the supplied data.
      */
 
-    int index = pairIndex(typeI, typeJ);
+    auto index = pairIndex(typeI, typeJ);
     return inverseA_.constAt(index, dataIndex);
 }
 
@@ -68,7 +68,7 @@ void ScatteringMatrix::print() const
 {
     // Write header
     CharString text, line;
-    int nColsWritten = 0;
+    auto nColsWritten = 0;
     for (auto [i, j] : typePairs_)
     {
         text.sprintf("%s-%s", i->name(), j->name());
@@ -119,7 +119,7 @@ void ScatteringMatrix::printInverse() const
 {
     // Write header
     CharString text, line;
-    int nColsWritten = 0;
+    auto nColsWritten = 0;
     for (auto [i, j] : typePairs_)
     {
         text.sprintf("%s-%s", i->name(), j->name());
@@ -137,10 +137,10 @@ void ScatteringMatrix::printInverse() const
     Messenger::print("%s", line.get());
 
     // Loop over inverse matrix columns, rather than rows, to match the AtomType headers
-    for (int col = 0; col < inverseA_.nColumns(); ++col)
+    for (auto col = 0; col < inverseA_.nColumns(); ++col)
     {
         line.clear();
-        for (int row = 0; row < inverseA_.nRows(); ++row)
+        for (auto row = 0; row < inverseA_.nRows(); ++row)
         {
             line.strcatf("%10f ", inverseA_.constAt(row, col));
 
@@ -232,7 +232,7 @@ void ScatteringMatrix::initialise(const List<AtomType> &types, Array2D<Data1D> &
     // Create partials array
     estimatedSQ.initialise(types.nItems(), types.nItems(), true);
     Data1D *partials = estimatedSQ.linearArray();
-    int index = 0;
+    auto index = 0;
     for (auto [i, j] : typePairs_)
     {
         partials[index].setName(CharString("EstimatedSQ-%s-%s-%s.sq", i->name(), j->name(), groupName));
@@ -270,16 +270,16 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeigh
 
     // Extend the scattering matrix by one row
     A_.addRow(typePairs_.size());
-    const int rowIndex = A_.nRows() - 1;
+    const auto rowIndex = A_.nRows() - 1;
 
     // Set coefficients in A_
-    const int nUsedTypes = dataWeights.nUsedTypes();
+    const auto nUsedTypes = dataWeights.nUsedTypes();
     AtomTypeList &usedTypes = dataWeights.atomTypes();
     for (int n = 0; n < nUsedTypes; ++n)
     {
         for (int m = n; m < nUsedTypes; ++m)
         {
-            int colIndex = pairIndex(&usedTypes.atomType(n), &usedTypes.atomType(m));
+            auto colIndex = pairIndex(&usedTypes.atomType(n), &usedTypes.atomType(m));
             if (colIndex == -1)
             {
                 Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
@@ -306,9 +306,9 @@ bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, AtomType *a
 {
     // Extend the scattering matrix by one row
     A_.addRow(typePairs_.size());
-    const int rowIndex = A_.nRows() - 1;
+    const auto rowIndex = A_.nRows() - 1;
 
-    int colIndex = pairIndex(at1, at2);
+    auto colIndex = pairIndex(at1, at2);
     if (colIndex == -1)
     {
         Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes ('%s' and/or '%s').\n",

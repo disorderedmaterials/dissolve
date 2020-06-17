@@ -47,7 +47,7 @@ bool ImportModule::process(Dissolve &dissolve, ProcessPool &procPool)
         procPool.assignProcessesToGroups(cfg->processPool());
 
         // Retrieve control parameters
-        bool readTrajectory = keywords_.asBool("ReadTrajectory");
+        auto readTrajectory = keywords_.asBool("ReadTrajectory");
 
         /*
          * Import Trajectory Frame?
@@ -67,8 +67,8 @@ bool ImportModule::process(Dissolve &dissolve, ProcessPool &procPool)
             if (dissolve.processingModuleData().contains(streamPosName, uniqueName()))
             {
                 // Retrieve the streampos and go to it in the file
-                streampos trajPos =
-                    GenericListHelper<streampos>::retrieve(dissolve.processingModuleData(), streamPosName, uniqueName());
+                std::streampos trajPos =
+                    GenericListHelper<std::streampos>::retrieve(dissolve.processingModuleData(), streamPosName, uniqueName());
                 parser.seekg(trajPos);
             }
 
@@ -87,8 +87,8 @@ bool ImportModule::process(Dissolve &dissolve, ProcessPool &procPool)
             }
 
             // Set the trajectory file position in the restart file
-            GenericListHelper<streampos>::realise(dissolve.processingModuleData(), streamPosName, uniqueName(),
-                                                  GenericItem::InRestartFileFlag) = parser.tellg();
+            GenericListHelper<std::streampos>::realise(dissolve.processingModuleData(), streamPosName, uniqueName(),
+                                                       GenericItem::InRestartFileFlag) = parser.tellg();
         }
     }
 

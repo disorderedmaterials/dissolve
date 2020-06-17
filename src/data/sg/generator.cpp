@@ -31,8 +31,8 @@ SymmetryGenerator::SymmetryGenerator() {}
 void SymmetryGenerator::setMatrixPart(int row, const char *part)
 {
     // The string provided either contains (-)xyz, or a translation amount
-    int pos = 0;
-    int multiplier = 0;
+    auto pos = 0;
+    auto multiplier = 0;
     CharString a, b;
 
     // Check for plus/minus signs

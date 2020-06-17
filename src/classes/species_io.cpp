@@ -61,7 +61,7 @@ bool Species::loadFromXYZ(const char *filename)
 
     // Simple format - first line is number of atoms, next line is title, then follow atoms/coordinates, one atom per line
     parser.getArgsDelim(LineParser::Defaults);
-    int nAtoms = parser.argi(0);
+    auto nAtoms = parser.argi(0);
     parser.readNextLine(LineParser::Defaults);
     name_ = parser.line();
     int success;
@@ -132,7 +132,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     SpeciesTorsion::TorsionFunction tf;
     SpeciesBond::BondType bt;
     Isotope *tope;
-    bool blockDone = false, error = false;
+    auto blockDone = false, error = false;
 
     // Turn off intramolecular term autogeneration while we're reading
     autoUpdateIntramolecularTerms_ = false;
@@ -146,7 +146,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!keywords().isValid(parser.argc(0)))
             return keywords().errorAndPrintValid(parser.argc(0));
-        SpeciesKeyword kwd = keywords().enumeration(parser.argc(0));
+        auto kwd = keywords().enumeration(parser.argc(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 
@@ -589,8 +589,8 @@ bool Species::write(LineParser &parser, const char *prefix)
 
     // Atoms
     parser.writeLineF("%s# Atoms\n", newPrefix.get());
-    int count = 0;
-    for (SpeciesAtom *i = atoms_.first(); i != NULL; i = i->next())
+    auto count = 0;
+    for (auto *i = atoms_.first(); i != NULL; i = i->next())
     {
         if (!parser.writeLineF("%s%s  %3i  %3s  %12.6e  %12.6e  %12.6e  '%s'  %12.6e\n", newPrefix.get(),
                                keywords().keyword(Species::AtomKeyword), ++count, i->element()->symbol(), i->r().x, i->r().y,
@@ -636,7 +636,7 @@ bool Species::write(LineParser &parser, const char *prefix)
         }
 
         // Any bond type information to write?
-        bool bondTypeHeaderWritten = false;
+        auto bondTypeHeaderWritten = false;
         for (int bt = 1; bt < SpeciesBond::nBondTypes; ++bt)
             if (bondTypes[bt].nItems() > 0)
             {
@@ -768,7 +768,7 @@ bool Species::write(LineParser &parser, const char *prefix)
         if (!parser.writeLineF("\n%s# Isotopologues\n", newPrefix.get()))
             return false;
 
-        for (Isotopologue *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
+        for (auto *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
         {
             if (!parser.writeLineF("%s%s  '%s'", newPrefix.get(), keywords().keyword(Species::IsotopologueKeyword),
                                    iso->name()))

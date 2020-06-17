@@ -33,7 +33,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
     //             : phib, thetac, phic
     if (parser.getArgsDelim() != LineParser::Success)
         return false;
-    int nMols = parser.argi(0);
+    auto nMols = parser.argi(0);
     if (parser.nArgs() == 3)
     {
         double boxSize = parser.argd(1);
@@ -70,7 +70,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
     // n+5: nrot (number of defined molecular rotations)
     // n+6: atom1, atom2 (bonds of rotation 'axis')
     // n+7: list of headgroup atoms that are rotated
-    int atomOffset = 0;
+    auto atomOffset = 0;
     int nAtoms, nRestraints, currentArg;
     Vec3<double> com, delta;
     for (int m = 0; m < nMols; m++)
@@ -125,7 +125,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
         // There are 14 atoms per line - first line contains number of atoms followed by (up to) 13 indices
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
-        int nRotations = parser.argi(0);
+        auto nRotations = parser.argi(0);
         while (nRotations > 0)
         {
             // Import line to find out which type of definition this is...

@@ -187,7 +187,7 @@ EnumOptions<SpeciesBond::BondFunction> SpeciesBond::bondFunctions()
 void SpeciesBond::setUp()
 {
     // Get pointer to relevant parameters array
-    const double *params = parameters();
+    const auto *params = parameters();
 
     /*
      * Depending on the form, we may have other dependent parameters to set up
@@ -208,7 +208,7 @@ void SpeciesBond::setUp()
 double SpeciesBond::fundamentalFrequency(double reducedMass) const
 {
     // Get pointer to relevant parameters array
-    const double *params = parameters();
+    const auto *params = parameters();
 
     double k = 0.0;
     if (form() == SpeciesBond::HarmonicForm)
@@ -241,7 +241,7 @@ SpeciesIntra::InteractionType SpeciesBond::type() const { return SpeciesIntra::B
 double SpeciesBond::energy(double distance) const
 {
     // Get pointer to relevant parameters array
-    const double *params = parameters();
+    const auto *params = parameters();
 
     if (form() == SpeciesBond::NoForm)
         return 0.0;
@@ -277,7 +277,7 @@ double SpeciesBond::energy(double distance) const
 double SpeciesBond::force(double distance) const
 {
     // Get pointer to relevant parameters array
-    const double *params = parameters();
+    const auto *params = parameters();
 
     if (form() == SpeciesBond::NoForm)
         return 0.0;

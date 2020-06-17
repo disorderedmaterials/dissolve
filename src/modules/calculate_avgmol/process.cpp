@@ -28,7 +28,7 @@
 // Run set-up stage
 bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 {
-    SpeciesSite *site = keywords_.retrieve<SpeciesSite *>("Site");
+    auto *site = keywords_.retrieve<SpeciesSite *>("Site");
 
     // Clear species
     averageSpecies_.clear();
@@ -87,14 +87,14 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
 
     // Grab Configuration and Box pointers
-    Configuration *cfg = targetConfigurations_.firstItem();
+    auto *cfg = targetConfigurations_.firstItem();
     const Box *box = cfg->box();
 
     // Set up process pool - must do this to ensure we are using all available processes
     procPool.assignProcessesToGroups(cfg->processPool());
 
     // Get the target site
-    SpeciesSite *site = keywords_.retrieve<SpeciesSite *>("Site");
+    auto *site = keywords_.retrieve<SpeciesSite *>("Site");
     if (!site)
         return Messenger::error("No target site defined.\n");
 

@@ -80,7 +80,7 @@ const char *Dissolve::uniqueProcessingLayerName(const char *base) const
     static CharString uniqueName;
     CharString baseName = base;
     uniqueName = baseName;
-    int suffix = 0;
+    auto suffix = 0;
 
     // Must always have a baseName
     if (baseName.isEmpty())

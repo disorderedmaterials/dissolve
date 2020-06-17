@@ -155,7 +155,7 @@ bool ImportSpeciesWizard::prepareForNextPage(int currentIndex)
             }
             // Update the Species and AtomTypes lists
             ui_.SpeciesList->clear();
-            for (Species *sp = temporaryDissolve_.species().first(); sp != NULL; sp = sp->next())
+            for (auto *sp = temporaryDissolve_.species().first(); sp != NULL; sp = sp->next())
             {
                 QListWidgetItem *item = new QListWidgetItem(sp->name());
                 item->setData(Qt::UserRole, VariantPointer<Species>(sp));
@@ -292,7 +292,7 @@ void ImportSpeciesWizard::updateAtomTypesPage()
                                                                  &ImportSpeciesWizard::updateAtomTypesListRow);
 
     // Determine whether we have any naming conflicts
-    bool conflicts = false;
+    auto conflicts = false;
     ListIterator<AtomType> typeIterator(temporaryCoreData_.constAtomTypes());
     while (AtomType *at = typeIterator.iterate())
         if (dissolveReference_->findAtomType(at->name()))
@@ -310,7 +310,7 @@ void ImportSpeciesWizard::updateAtomTypesPage()
 void ImportSpeciesWizard::on_AtomTypesList_itemSelectionChanged()
 {
     // Enable / disable prefix and suffix buttons as appropriate
-    bool isSelection = ui_.AtomTypesList->selectedItems().count() > 0;
+    auto isSelection = ui_.AtomTypesList->selectedItems().count() > 0;
     ui_.AtomTypesPrefixButton->setEnabled(isSelection);
     ui_.AtomTypesSuffixButton->setEnabled(isSelection);
 }
@@ -408,7 +408,7 @@ void ImportSpeciesWizard::updateMasterTermsPage()
         masterTorsionItemParent_, temporaryCoreData_.masterTorsions(), this, &ImportSpeciesWizard::updateMasterTermsTreeChild);
 
     // Determine whether we have any naming conflicts
-    bool conflicts = false;
+    auto conflicts = false;
     ListIterator<MasterIntra> bondIterator(temporaryCoreData_.masterBonds());
     while (MasterIntra *intra = bondIterator.iterate())
         if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
@@ -440,7 +440,7 @@ void ImportSpeciesWizard::updateMasterTermsPage()
 void ImportSpeciesWizard::on_MasterTermsTree_itemSelectionChanged()
 {
     // Enable / disable prefix and suffix buttons as appropriate
-    bool isSelection = ui_.MasterTermsTree->selectedItems().count() > 0;
+    auto isSelection = ui_.MasterTermsTree->selectedItems().count() > 0;
     ui_.MasterTermsPrefixButton->setEnabled(isSelection);
     ui_.MasterTermsSuffixButton->setEnabled(isSelection);
 }

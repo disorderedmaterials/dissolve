@@ -60,7 +60,7 @@ bool FontInstance::setUp(QString fontFileName)
     }
 
     // Construct font
-    FTPolygonFont *newFont = new FTPolygonFont(fontData_->data(), fontData_->size());
+    auto *newFont = new FTPolygonFont(fontData_->data(), fontData_->size());
     if (newFont->Error())
     {
         printf("Error generating font.\n");

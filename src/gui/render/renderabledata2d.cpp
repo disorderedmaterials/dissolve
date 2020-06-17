@@ -212,19 +212,19 @@ void RenderableData2D::constructLine(const Array<double> &displayXAbscissa, cons
     // Copy and transform abscissa values (still in data space) into axes coordinates
     Array<double> x = displayXAbscissa;
     axes.transformX(x);
-    int nX = x.nItems();
+    auto nX = x.nItems();
     if (nX < 2)
         return;
 
     // Copy and transform abscissa values (still in data space) into axes coordinates
     Array<double> y = displayYAbscissa;
     axes.transformY(y);
-    int nY = y.nItems();
+    auto nY = y.nItems();
     if (nY < 2)
         return;
 
     // Get some values from axes so we can calculate colours properly
-    bool vLogarithmic = axes.logarithmic(2);
+    auto vLogarithmic = axes.logarithmic(2);
     // double vStretch = axes.stretch(2);
 
     // Temporary variables
@@ -361,7 +361,7 @@ bool RenderableData2D::readStyleBlock(LineParser &parser)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!data2DStyleKeywords().isValid(parser.argc(0)))
             return data2DStyleKeywords().errorAndPrintValid(parser.argc(0));
-        Data2DStyleKeyword kwd = data2DStyleKeywords().enumeration(parser.argc(0));
+        auto kwd = data2DStyleKeywords().enumeration(parser.argc(0));
         if (!data2DStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 

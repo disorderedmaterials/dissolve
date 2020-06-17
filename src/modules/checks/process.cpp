@@ -47,8 +47,8 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
         procPool.assignProcessesToGroups(cfg->processPool());
 
         // Retrieve control parameters from Configuration
-        const double angleThreshold = keywords_.asDouble("AngleThreshold");
-        const double distanceThreshold = keywords_.asDouble("DistanceThreshold");
+        const auto angleThreshold = keywords_.asDouble("AngleThreshold");
+        const auto distanceThreshold = keywords_.asDouble("DistanceThreshold");
 
         Messenger::print("Checks: Threshold for distance checks is %f Angstroms\n", distanceThreshold);
         Messenger::print("Checks: Threshold for angle checks is %f degrees\n", angleThreshold);
@@ -63,7 +63,7 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Loop over distances to check
-        for (Geometry *d = distances_.first(); d != NULL; d = d->next())
+        for (auto *d = distances_.first(); d != NULL; d = d->next())
         {
             actual = cfg->box()->minimumDistance(atoms[d->indices(0)], atoms[d->indices(1)]);
             delta = fabs(actual - d->value());
@@ -84,7 +84,7 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Loop over angles to check
-        for (Geometry *a = angles_.first(); a != NULL; a = a->next())
+        for (auto *a = angles_.first(); a != NULL; a = a->next())
         {
             actual = cfg->box()->angleInDegrees(atoms[a->indices(0)], atoms[a->indices(1)], atoms[a->indices(2)]);
             delta = fabs(actual - a->value());

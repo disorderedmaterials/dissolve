@@ -215,7 +215,7 @@ ProcedureNode *SequenceProcedureNode::nodeInScope(ProcedureNode *queryingNode, c
     }
 
     // Start from the target node and work backwards...
-    for (ProcedureNode *node = queryingNode; node != NULL; node = node->prev())
+    for (auto *node = queryingNode; node != NULL; node = node->prev())
     {
         if (DissolveSys::sameString(node->name(), name))
         {
@@ -249,7 +249,7 @@ RefList<ProcedureNode> SequenceProcedureNode::nodesInScope(ProcedureNode *queryi
     RefList<ProcedureNode> matches;
 
     // Start from the target node and work backwards...
-    for (ProcedureNode *node = queryingNode; node != NULL; node = node->prev())
+    for (auto *node = queryingNode; node != NULL; node = node->prev())
     {
         // Check type
         if (nt == ProcedureNode::nNodeTypes)
@@ -289,7 +289,7 @@ ExpressionVariable *SequenceProcedureNode::parameterInScope(ProcedureNode *query
     }
 
     // Start from the target node and work backwards...
-    for (ProcedureNode *node = queryingNode; node != NULL; node = node->prev())
+    for (auto *node = queryingNode; node != NULL; node = node->prev())
     {
         ExpressionVariable *param = node->hasParameter(name, excludeParameter);
         if (param)
@@ -329,7 +329,7 @@ RefList<ExpressionVariable> SequenceProcedureNode::parametersInScope(ProcedureNo
     }
 
     // Start from the target node and work backwards...
-    for (ProcedureNode *node = queryingNode; node != NULL; node = node->prev())
+    for (auto *node = queryingNode; node != NULL; node = node->prev())
     {
         parameters += node->parameterReferences();
     }
@@ -405,7 +405,7 @@ void SequenceProcedureNode::setBlockTerminationKeyword(const char *endKeyword) {
 const char *SequenceProcedureNode::blockTerminationKeyword() const { return blockTerminationKeyword_.get(); }
 
 // Read structure from specified LineParser
-bool SequenceProcedureNode::read(LineParser &parser, const CoreData &coreData)
+bool SequenceProcedureNode::read(LineParser &parser, CoreData &coreData)
 {
     // Read until we encounter the block-ending keyword, or we fail for some reason
     while (!parser.eofOrBlank())

@@ -57,13 +57,13 @@ void SelectSystemTemplateDialog::updateTemplatesList(QString filter)
         else
         {
             // Check name
-            bool inName = sysTemp->name().contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
+            auto inName = sysTemp->name().contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
 
             // Check description
-            bool inDescription = sysTemp->description().contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
+            auto inDescription = sysTemp->description().contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
 
             // Hide the item?
-            bool hide = (!inName) && (!inDescription);
+            auto hide = (!inName) && (!inDescription);
             item->setHidden(hide);
 
             // If the item was hidden, and it was selected, reset the current index

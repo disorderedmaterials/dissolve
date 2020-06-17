@@ -130,7 +130,7 @@ void ChartBase::mouseMoveEvent(QMouseEvent *event)
     MimeStrings *mimeData = new MimeStrings(mimeInfo(draggedBlock_));
 
     // Construct the drag object
-    QDrag *drag = new QDrag(this);
+    auto *drag = new QDrag(this);
     drag->setMimeData(mimeData);
     drag->setPixmap(draggedBlock_->widget()->grab());
 
@@ -191,7 +191,7 @@ void ChartBase::dragEnterEvent(QDragEnterEvent *event)
     }
 
     // Get the MimeStrings data
-    const MimeStrings *mimeStrings = dynamic_cast<const MimeStrings *>(event->mimeData());
+    const auto *mimeStrings = dynamic_cast<const MimeStrings *>(event->mimeData());
     if (!mimeStrings)
     {
         event->ignore();
@@ -242,7 +242,7 @@ void ChartBase::dropEvent(QDropEvent *event)
     }
 
     // Get the MimeStrings data
-    const MimeStrings *mimeStrings = dynamic_cast<const MimeStrings *>(event->mimeData());
+    const auto *mimeStrings = dynamic_cast<const MimeStrings *>(event->mimeData());
     if (!mimeStrings)
     {
         event->ignore();
@@ -283,7 +283,7 @@ MimeStrings ChartBase::mimeInfo(ChartBlock *block) { return MimeStrings(); }
 // Return hotspot, if any, under specified point
 ChartHotSpot *ChartBase::hotSpotAt(QPoint point)
 {
-    for (ChartHotSpot *hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next())
+    for (auto *hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next())
         if (hotSpot->contains(point))
             return hotSpot;
 

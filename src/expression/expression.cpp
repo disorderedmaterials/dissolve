@@ -58,8 +58,7 @@ void Expression::clear()
     statements_.clear();
 
     // Clear variables and constants, except those that are in the persistent nodes list
-    std::remove_if(variables_.begin(), variables_.end(),
-                   [&](const ExpressionNode *x) { return !persistentNodes_.contains(x); });
+    std::remove_if(variables_.begin(), variables_.end(), [&](const auto *x) { return !persistentNodes_.contains(x); });
 
     for (auto varRef : variables_)
     {
@@ -104,7 +103,7 @@ const char *Expression::expressionString() const { return expressionString_.get(
 void Expression::print()
 {
     printf("Leaf Structure (%i statements):\n", statements_.nItems());
-    int n = 1;
+    auto n = 1;
     for (RefListItem<ExpressionNode> *ri = statements_.first(); ri != NULL; ri = ri->next())
     {
         printf("-------------------------------------------------------------\n");
@@ -139,7 +138,7 @@ bool Expression::addStatement(ExpressionNode *leaf)
 ExpressionNode *Expression::addOperator(ExpressionFunctions::Function func, ExpressionNode *arg1, ExpressionNode *arg2)
 {
     // Create new command node
-    ExpressionFunction *leaf = new ExpressionFunction(func);
+    auto *leaf = new ExpressionFunction(func);
     nodes_.own(leaf);
     Messenger::printVerbose("Added operator '%s' (%p)...\n", ExpressionFunctions::data[func].keyword, leaf);
 
@@ -156,7 +155,7 @@ ExpressionNode *Expression::addOperator(ExpressionFunctions::Function func, Expr
 ExpressionNode *Expression::addFunctionNodeWithArglist(ExpressionFunctions::Function func, ExpressionNode *arglist)
 {
     // Create new command node
-    ExpressionFunction *leaf = new ExpressionFunction(func);
+    auto *leaf = new ExpressionFunction(func);
     nodes_.own(leaf);
     Messenger::printVerbose("Added function '%s' (%p)...\n", ExpressionFunctions::data[func].keyword, leaf);
 
@@ -181,7 +180,7 @@ ExpressionNode *Expression::addFunctionNode(ExpressionFunctions::Function func, 
                                             ExpressionNode *a3, ExpressionNode *a4)
 {
     // Create new command node
-    ExpressionFunction *leaf = new ExpressionFunction(func);
+    auto *leaf = new ExpressionFunction(func);
     nodes_.own(leaf);
     Messenger::printVerbose("Added function '%s' (%p)...\n", ExpressionFunctions::data[func].keyword, leaf);
 
@@ -210,7 +209,7 @@ ExpressionNode *Expression::addFunctionNode(ExpressionFunctions::Function func, 
 // Add value node targetting specified variable
 ExpressionNode *Expression::addValueNode(ExpressionVariable *var)
 {
-    ExpressionVariableValue *vnode = new ExpressionVariableValue(var);
+    auto *vnode = new ExpressionVariableValue(var);
     nodes_.own(vnode);
     vnode->setParent(this);
 
@@ -230,7 +229,7 @@ ExpressionNode *Expression::joinArguments(ExpressionNode *arg1, ExpressionNode *
 // Join two commands together
 ExpressionNode *Expression::joinCommands(ExpressionNode *node1, ExpressionNode *node2)
 {
-    ExpressionFunction *leaf = new ExpressionFunction(ExpressionFunctions::Joiner);
+    auto *leaf = new ExpressionFunction(ExpressionFunctions::Joiner);
     nodes_.own(leaf);
     leaf->setParent(this);
     if (node1 != NULL)
@@ -382,7 +381,7 @@ RefList<ExpressionVariable> &Expression::constants() { return constants_; }
 // Execute expression
 bool Expression::execute(ExpressionValue &result)
 {
-    bool success = true;
+    auto success = true;
     for (RefListItem<ExpressionNode> *ri = statements_.first(); ri != NULL; ri = ri->next())
     {
         // 		ri->item()->nodePrint(1);

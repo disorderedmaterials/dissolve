@@ -209,7 +209,7 @@ bool RenderableSpeciesSite::readStyleBlock(LineParser &parser)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!speciesSiteStyleKeywords().isValid(parser.argc(0)))
             return speciesSiteStyleKeywords().errorAndPrintValid(parser.argc(0));
-        SpeciesSiteStyleKeyword kwd = speciesSiteStyleKeywords().enumeration(parser.argc(0));
+        auto kwd = speciesSiteStyleKeywords().enumeration(parser.argc(0));
         if (!speciesSiteStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 

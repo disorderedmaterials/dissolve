@@ -31,7 +31,7 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
     if (!interacting())
         return;
 
-    bool refresh = false;
+    auto refresh = false;
     SpeciesAtom *currentAtom = NULL;
 
     // What we do here depends on the current mode

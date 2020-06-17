@@ -52,8 +52,8 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     // 2) TODO Need to check distances properly for monoclinic and triclinic cells
     // 3) Require Cells to be roughly 'cubic' as far as is possible.
 
-    const int minCellsPerSide = 3;
-    const double tolerance = 0.01;
+    const auto minCellsPerSide = 3;
+    const auto tolerance = 0.01;
     int n, x, y, z;
 
     box_ = box;
@@ -98,7 +98,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     // We try to get all lengths as similar as possible
     for (n = 1; n < 3; ++n)
     {
-        int el = (minEl + n) % 3;
+        auto el = (minEl + n) % 3;
         double x = boxLengths[el] / realCellSize_[minEl];
         double remainder = x - int(x);
 
@@ -160,7 +160,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     Messenger::print("Constructing array of %i cells...\n", nCells_);
     cells_ = new Cell[nCells_];
     Vec3<double> fracCentre(fractionalCellSize_.x * 0.5, 0.0, 0.0);
-    int count = 0;
+    auto count = 0;
     for (x = 0; x < divisions_.x; ++x)
     {
         fracCentre.y = fractionalCellSize_.y * 0.5;
@@ -228,7 +228,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 
                 // Check a nominal central cell at (0,0,0) and this grid reference to see if any pairs of
                 // corners are in range
-                bool close = false;
+                auto close = false;
                 for (int iCorner = 0; iCorner < 8; ++iCorner)
                 {
                     // Set integer vertex of corner on 'central' box
@@ -353,7 +353,7 @@ Cell *CellArray::cell(int id) const
 // Return Cell which contains specified coordinate
 Cell *CellArray::cell(const Vec3<double> r) const
 {
-    Vec3<double> foldFracR = box_->foldFrac(r);
+    auto foldFracR = box_->foldFrac(r);
     Vec3<int> indices;
     indices.x = foldFracR.x / fractionalCellSize_.x;
     indices.y = foldFracR.y / fractionalCellSize_.y;
@@ -395,7 +395,7 @@ bool CellArray::withinRange(const Cell *a, const Cell *b, double distance)
     u.z -= DissolveMath::sgn(u.z);
 
     // Turn this grid reference delta into a real distamce by multiplying by the Cell axes_ matrix
-    Vec3<double> v = axes_ * Vec3<double>(u.x, u.y, u.z);
+    auto v = axes_ * Vec3<double>(u.x, u.y, u.z);
 
     // Check ths vector magnitude against the supplied distance
     return (v.magnitude() <= distance);

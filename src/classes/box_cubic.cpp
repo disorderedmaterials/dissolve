@@ -53,7 +53,7 @@ Vec3<double> CubicBox::minimumImage(const Atom *i, const Atom *ref) const
      * This, and all other routines, use a ternary if/else test and an int() cast in order to calculate minimum image
      * vectors, distances, and coordinates, since this is about 25-30% faster than using floor().
      */
-    Vec3<double> mimVec = i->r();
+    auto mimVec = i->r();
     mimVec -= ref->r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -67,7 +67,7 @@ Vec3<double> CubicBox::minimumImage(const Atom *i, const Atom *ref) const
 // Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> CubicBox::minimumImage(const Atom *i, const Vec3<double> &ref) const
 {
-    Vec3<double> mimVec = i->r();
+    auto mimVec = i->r();
     mimVec -= ref;
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -81,7 +81,7 @@ Vec3<double> CubicBox::minimumImage(const Atom *i, const Vec3<double> &ref) cons
 // Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> CubicBox::minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const
 {
-    Vec3<double> mimVec = i;
+    auto mimVec = i;
     mimVec -= ref;
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -95,7 +95,7 @@ Vec3<double> CubicBox::minimumImage(const Vec3<double> &i, const Vec3<double> &r
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> CubicBox::minimumVector(const Atom *i, const Atom *j) const
 {
-    Vec3<double> mimVec = j->r();
+    auto mimVec = j->r();
     mimVec -= i->r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -108,7 +108,7 @@ Vec3<double> CubicBox::minimumVector(const Atom *i, const Atom *j) const
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> CubicBox::minimumVector(const Atom &i, const Atom &j) const
 {
-    Vec3<double> mimVec = j.r();
+    auto mimVec = j.r();
     mimVec -= i.r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -121,7 +121,7 @@ Vec3<double> CubicBox::minimumVector(const Atom &i, const Atom &j) const
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> CubicBox::minimumVector(const Atom *i, const Vec3<double> &j) const
 {
-    Vec3<double> mimVec = j;
+    auto mimVec = j;
     mimVec -= i->r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -134,7 +134,7 @@ Vec3<double> CubicBox::minimumVector(const Atom *i, const Vec3<double> &j) const
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> CubicBox::minimumVector(const Vec3<double> &i, const Vec3<double> &j) const
 {
-    Vec3<double> mimVec = j;
+    auto mimVec = j;
     mimVec -= i;
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -147,7 +147,7 @@ Vec3<double> CubicBox::minimumVector(const Vec3<double> &i, const Vec3<double> &
 // Return minimum image distance from 'i' to 'j'
 double CubicBox::minimumDistance(const Atom *i, const Atom *j) const
 {
-    Vec3<double> mimVec = j->r();
+    auto mimVec = j->r();
     mimVec -= i->r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -160,7 +160,7 @@ double CubicBox::minimumDistance(const Atom *i, const Atom *j) const
 // Return minimum image distance from 'i' to 'j'
 double CubicBox::minimumDistance(const Atom &i, const Atom &j) const
 {
-    Vec3<double> mimVec = j.r();
+    auto mimVec = j.r();
     mimVec -= i.r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -173,7 +173,7 @@ double CubicBox::minimumDistance(const Atom &i, const Atom &j) const
 // Return minimum image distance from 'i' to 'j'
 double CubicBox::minimumDistance(const Atom *i, const Vec3<double> &j) const
 {
-    Vec3<double> mimVec = j;
+    auto mimVec = j;
     mimVec -= i->r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -186,7 +186,7 @@ double CubicBox::minimumDistance(const Atom *i, const Vec3<double> &j) const
 // Return minimum image distance from 'i' to 'j'
 double CubicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const
 {
-    Vec3<double> mimVec = j;
+    auto mimVec = j;
     mimVec -= i;
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -199,7 +199,7 @@ double CubicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) c
 // Return minimum image squared distance from 'i' to 'j' (pointers)
 double CubicBox::minimumDistanceSquared(const Atom *i, const Atom *j) const
 {
-    Vec3<double> mimVec = j->r();
+    auto mimVec = j->r();
     mimVec -= i->r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -212,7 +212,7 @@ double CubicBox::minimumDistanceSquared(const Atom *i, const Atom *j) const
 // Return minimum image squared distance from 'i' to 'j' (references)
 double CubicBox::minimumDistanceSquared(const Atom &i, const Atom &j) const
 {
-    Vec3<double> mimVec = j.r();
+    auto mimVec = j.r();
     mimVec -= i.r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
@@ -225,7 +225,7 @@ double CubicBox::minimumDistanceSquared(const Atom &i, const Atom &j) const
 // Return minimum image squared distance from 'i' to 'j'
 double CubicBox::minimumDistanceSquared(const Atom *i, const Vec3<double> &j) const
 {
-    Vec3<double> mimVec = j;
+    auto mimVec = j;
     mimVec -= i->r();
 
     mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;

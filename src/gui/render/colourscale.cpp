@@ -114,7 +114,7 @@ void ColourScale::setPoint(int position, double value, QColor colour)
 void ColourScale::setValue(int position, double value)
 {
     // Store whether the new value is higher or lower than the existing one...
-    bool newValueHigher = value >= points_[position].value();
+    auto newValueHigher = value >= points_[position].value();
 
     // Set the new value of the point
     points_[position].setValue(value);
@@ -238,7 +238,7 @@ void ColourScale::colour(double value, GLfloat *rgba) const
 // Set all alpha values to that specified
 void ColourScale::setAllAlpha(double alpha)
 {
-    int alphai = alpha * 255;
+    auto alphai = alpha * 255;
     if (alphai < 0)
         alphai = 0;
     else if (alphai > 255)

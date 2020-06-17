@@ -90,8 +90,8 @@ bool Data2DExportFileFormat::exportCartesian(LineParser &parser, const Data2D &d
 {
     // Three-column format (x  y  value) in blocks of similar y value, separated by blank lines
     const Array2D<double> &values = data.constValues2D();
-    const Array<double> &xAxis = data.constXAxis();
-    const Array<double> &yAxis = data.constYAxis();
+    const auto &xAxis = data.constXAxis();
+    const auto &yAxis = data.constYAxis();
     for (int x = 0; x < values.nRows(); ++x)
     {
         for (int y = 0; y < values.nColumns(); ++y)
@@ -116,7 +116,7 @@ bool Data2DExportFileFormat::exportData(const Data2D &data)
     }
 
     // Write data
-    bool result = false;
+    auto result = false;
     if (data2DFormat() == Data2DExportFileFormat::BlockData2D)
         result = exportBlock(parser, data);
     // 	else if (data2DFormat() == Data2DExportFileFormat::CartesianData2D) result = exportCartesian(parser, data);

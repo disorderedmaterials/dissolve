@@ -115,7 +115,7 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
     // Construct our data name, and search for it in the supplied list
     CharString dataName("%s_%s_Bins", name(), cfg->niceName());
     bool created;
-    Histogram1D &target =
+    auto &target =
         GenericListHelper<Histogram1D>::realise(targetList, dataName.get(), prefix, GenericItem::InRestartFileFlag, &created);
     if (created)
     {

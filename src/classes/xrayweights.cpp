@@ -64,11 +64,11 @@ bool XRayWeights::initialiseFormFactors()
 
         // Try to retrieve form factor data for this atom type (element, formal charge [TODO])
         auto data = XRayFormFactors::formFactorData(formFactors_, at.element());
-        if (std::get<1>(data))
+        if (!data)
             return Messenger::error("No form factor data present for element %s (formal charge %i) in x-ray data set '%s'.\n",
                                     at.element()->symbol(), 0, XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
 
-        formFactorData_.push_back(std::reference_wrapper<const FormFactorData>(std::get<0>(data)));
+        formFactorData_.push_back(*data);
     }
 
     return true;
@@ -92,12 +92,12 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
     // Fill atomTypes_ list with AtomType populations, based on Isotopologues relative populations and associated Species
     // populations
     atomTypes_.clear();
-    for (SpeciesInfo *spInfo = speciesInfoList.first(); spInfo != NULL; spInfo = spInfo->next())
+    for (auto *spInfo = speciesInfoList.first(); spInfo != NULL; spInfo = spInfo->next())
     {
         const Species *sp = spInfo->species();
 
         // Loop over Atoms in the Species
-        for (SpeciesAtom *i = sp->firstAtom(); i != NULL; i = i->next())
+        for (auto *i = sp->firstAtom(); i != NULL; i = i->next())
             atomTypes_.add(*i->atomType(), spInfo->population());
     }
 
@@ -108,7 +108,7 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
 // Add Species to weights in the specified population
 void XRayWeights::addSpecies(const Species *sp, int population)
 {
-    for (SpeciesAtom *i = sp->firstAtom(); i != NULL; i = i->next())
+    for (auto *i = sp->firstAtom(); i != NULL; i = i->next())
         atomTypes_.add(*i->atomType(), population);
 
     valid_ = false;
@@ -267,7 +267,7 @@ bool XRayWeights::isValid() const { return valid_; }
 const char *XRayWeights::itemClassName() { return "XRayWeights"; }
 
 // Read data through specified LineParser
-bool XRayWeights::read(LineParser &parser, const CoreData &coreData)
+bool XRayWeights::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 

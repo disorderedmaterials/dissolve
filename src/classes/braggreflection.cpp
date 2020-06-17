@@ -136,7 +136,7 @@ int BraggReflection::nKVectors() const { return nKVectors_; }
 const char *BraggReflection::itemClassName() { return "BraggReflection"; }
 
 // Read data through specified parser
-bool BraggReflection::read(LineParser &parser, const CoreData &coreData)
+bool BraggReflection::read(LineParser &parser, CoreData &coreData)
 {
     // Read index, Q centre, and number of contributing K-vectors
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

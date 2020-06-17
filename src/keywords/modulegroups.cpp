@@ -49,7 +49,7 @@ int ModuleGroupsKeyword::maxArguments() const
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ModuleGroupsKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool ModuleGroupsKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Find specified Module by its unique name
     Module *module = coreData.findModule(parser.argc(startArg));

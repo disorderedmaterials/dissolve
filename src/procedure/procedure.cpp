@@ -102,7 +102,7 @@ bool Procedure::execute(ProcessPool &procPool, Configuration *cfg, const char *p
  */
 
 // Read structure from specified LineParser
-bool Procedure::read(LineParser &parser, const CoreData &coreData)
+bool Procedure::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 

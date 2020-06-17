@@ -29,8 +29,6 @@
 #include <iostream>
 #include <sstream>
 
-using namespace std;
-
 #define MAXLINELENGTH 8092
 
 // Forward Declarations
@@ -83,17 +81,17 @@ class LineParser
     // Integer line number of last read line
     int lastLineNo_;
     // Source stream for reading
-    ifstream *inputFile_;
+    std::ifstream *inputFile_;
     // Source string stream for reading
-    stringstream *inputStrings_;
+    std::stringstream *inputStrings_;
     // Target stream for writing
-    ofstream *outputFile_;
+    std::ofstream *outputFile_;
     // Target stream for cached writing
-    stringstream *cachedFile_;
+    std::stringstream *cachedFile_;
 
     private:
     // Return current stream for input
-    istream *inputStream() const;
+    std::istream *inputStream() const;
 
     public:
     // Reset data
@@ -127,13 +125,13 @@ class LineParser
     // Return whether current file source is good for writing
     bool isFileGoodForWriting() const;
     // Tell current position of input stream
-    streampos tellg() const;
+    std::streampos tellg() const;
     // Peek next character in input stream
     char peek() const;
     // Seek position in input stream
-    void seekg(streampos pos);
+    void seekg(std::streampos pos);
     // Seek n bytes in specified direction in input stream
-    void seekg(streamoff off, ios_base::seekdir dir);
+    void seekg(std::streamoff off, std::ios_base::seekdir dir);
     // Rewind input stream to start
     void rewind();
     // Return whether the end of the input stream has been reached (or only whitespace remains)

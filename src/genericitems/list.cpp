@@ -82,7 +82,7 @@ bool GenericList::contains(const char *name, const char *prefix)
     else
         varName.sprintf("%s_%s", prefix, name);
 
-    for (GenericItem *item = items_.first(); item != NULL; item = item->next())
+    for (auto *item = items_.first(); item != NULL; item = item->next())
         if (DissolveSys::sameString(item->name(), varName.get()))
             return true;
 
@@ -105,7 +105,7 @@ List<GenericItem> &GenericList::items() { return items_; }
 // Return the named item from the list
 GenericItem *GenericList::find(const char *name)
 {
-    for (GenericItem *item = items_.first(); item != NULL; item = item->next())
+    for (auto *item = items_.first(); item != NULL; item = item->next())
         if (DissolveSys::sameString(item->name(), name))
             return item;
     return NULL;
@@ -121,7 +121,7 @@ GenericItem *GenericList::find(const char *name, const char *prefix)
     else
         varName.sprintf("%s_%s", prefix, name);
 
-    for (GenericItem *item = items_.first(); item != NULL; item = item->next())
+    for (auto *item = items_.first(); item != NULL; item = item->next())
         if (DissolveSys::sameString(item->name(), varName.get()))
             return item;
     return NULL;
@@ -137,7 +137,7 @@ int GenericList::version(const char *name, const char *prefix) const
     else
         varName.sprintf("%s_%s", prefix, name);
 
-    for (GenericItem *item = items_.first(); item != NULL; item = item->next())
+    for (auto *item = items_.first(); item != NULL; item = item->next())
         if (DissolveSys::sameString(item->name(), varName.get()))
             return item->version();
 
@@ -149,7 +149,7 @@ RefList<GenericItem> GenericList::itemsWithPrefix(const char *prefix)
 {
     RefList<GenericItem> items;
     CharString itemUniqueName;
-    for (GenericItem *item = items_.first(); item != NULL; item = item->next())
+    for (auto *item = items_.first(); item != NULL; item = item->next())
     {
         itemUniqueName = DissolveSys::beforeChar(item->name(), '_');
         if (itemUniqueName == prefix)
@@ -163,7 +163,7 @@ RefList<GenericItem> GenericList::itemsWithPrefix(const char *prefix)
 RefList<GenericItem> GenericList::itemsWithClassName(const char *className)
 {
     RefList<GenericItem> items;
-    for (GenericItem *item = items_.first(); item != NULL; item = item->next())
+    for (auto *item = items_.first(); item != NULL; item = item->next())
         if (DissolveSys::sameString(item->itemClassName(), className))
             items.append(item);
 
@@ -173,8 +173,8 @@ RefList<GenericItem> GenericList::itemsWithClassName(const char *className)
 // List all items
 void GenericList::listItems()
 {
-    int count = 0;
-    for (GenericItem *item = items_.first(); item != NULL; item = item->next(), ++count)
+    auto count = 0;
+    for (auto *item = items_.first(); item != NULL; item = item->next(), ++count)
         Messenger::print("  %3i  %s", count, item->name());
 }
 
@@ -239,7 +239,7 @@ void GenericList::pruneWithSuffix(const char *suffix)
 // Broadcast all data
 bool GenericList::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 {
-    for (GenericItem *item = items_.first(); item != NULL; item = item->next())
+    for (auto *item = items_.first(); item != NULL; item = item->next())
     {
         Messenger::printVerbose("Broadcasting data '%s' (%s)...\n", item->name(), item->itemClassName());
         if (!item->broadcast(procPool, root, coreData))
@@ -256,14 +256,14 @@ bool GenericList::equality(ProcessPool &procPool)
     // If we can't find the data, we'll complain but move on.
     RefList<GenericItem> checkedItems;
     CharString itemName, itemClassName;
-    int nFailed = 0;
+    auto nFailed = 0;
     for (int n = 0; n < procPool.nProcesses(); ++n)
     {
         // The master process - rank 'n' - will control the loop
         if (procPool.poolRank() == n)
         {
             // Loop over GenericItems in list
-            for (GenericItem *item = items_.first(); item != NULL; item = item->next())
+            for (auto *item = items_.first(); item != NULL; item = item->next())
             {
                 // If we have already checked this item, move on...
                 if (checkedItems.contains(item))

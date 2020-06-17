@@ -80,7 +80,7 @@ void Species::updateIntramolecularTerms()
     }
 
     // Check existing angle terms for any that are invalid
-    int anglePos = 0, origNAngles = angles_.nItems();
+    auto anglePos = 0, origNAngles = angles_.nItems();
     for (int n = 0; n < origNAngles; ++n)
     {
         // Grab the angle
@@ -102,7 +102,7 @@ void Species::updateIntramolecularTerms()
         ++anglePos;
     }
 
-    int torsionPos = 0, origNTorsions = torsions_.nItems();
+    auto torsionPos = 0, origNTorsions = torsions_.nItems();
     for (int n = 0; n < origNTorsions; ++n)
     {
         // Grab the angle

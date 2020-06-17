@@ -44,20 +44,19 @@ CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(
 double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double> &alpha)
 {
     // Store alpha parameters in the PairBroadeningFunction in the associated RDF modules
-    int alphaIndex = 0;
-    const int nAlpha = alpha.nItems();
+    auto alphaIndex = 0;
+    const auto nAlpha = alpha.nItems();
     for (Module *rdfModule : intraBroadeningModules_)
     {
         // Retrieve the PairBroadeningFunction - new test values will already have been set (pokeBeforeCost = true)
-        PairBroadeningFunction &broadening =
-            rdfModule->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
+        auto &broadening = rdfModule->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
 
         // Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
-        int smoothing = rdfModule->keywords().asInt("Smoothing");
+        auto smoothing = rdfModule->keywords().asInt("Smoothing");
         for (Configuration *cfg : rdfModule->targetConfigurations())
         {
-            const PartialSet &originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");
-            PartialSet &unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
+            const auto &originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");
+            auto &unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
             RDFModule::calculateUnweightedGR(processPool_, cfg, originalGR, unweightedGR, broadening, smoothing);
         }
     }

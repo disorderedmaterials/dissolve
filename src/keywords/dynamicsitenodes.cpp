@@ -60,13 +60,13 @@ int DynamicSiteNodesKeyword::minArguments() const { return 0; }
 int DynamicSiteNodesKeyword::maxArguments() const { return 0; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     if (!parentNode_)
         return Messenger::error("Parent ProcedureNode not set, so can't read DynamicSiteNode data.\n");
 
     // Create a new DynamicSite and add it to our data RefList
-    DynamicSiteProcedureNode *dynamicSite = new DynamicSiteProcedureNode(parentNode_);
+    auto *dynamicSite = new DynamicSiteProcedureNode(parentNode_);
     data_.append(dynamicSite);
 
     // Attempt to read the DynamicSite data

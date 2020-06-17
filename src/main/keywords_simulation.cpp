@@ -43,7 +43,7 @@ bool SimulationBlock::parse(LineParser &parser, Dissolve *dissolve)
 {
     Messenger::print("\nParsing %s block...\n", BlockKeywords::keywords().keyword(BlockKeywords::SimulationBlockKeyword));
 
-    bool blockDone = false, error = false;
+    auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())
     {
@@ -54,7 +54,7 @@ bool SimulationBlock::parse(LineParser &parser, Dissolve *dissolve)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!keywords().isValid(parser.argc(0)))
             return keywords().errorAndPrintValid(parser.argc(0));
-        SimulationKeyword kwd = keywords().enumeration(parser.argc(0));
+        auto kwd = keywords().enumeration(parser.argc(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 

@@ -41,7 +41,7 @@ bool Dissolve::loadInput(LineParser &parser)
     ModuleLayer *layer = NULL;
     CharString niceName;
     Species *sp;
-    bool error = false;
+    auto error = false;
 
     while (!parser.eofOrBlank())
     {
@@ -52,7 +52,7 @@ bool Dissolve::loadInput(LineParser &parser)
         // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
         if (!BlockKeywords::keywords().isValid(parser.argc(0)))
             return BlockKeywords::keywords().errorAndPrintValid(parser.argc(0));
-        BlockKeywords::BlockKeyword kwd = BlockKeywords::keywords().enumeration(parser.argc(0));
+        auto kwd = BlockKeywords::keywords().enumeration(parser.argc(0));
 
         // All OK, so process the keyword
         switch (kwd)
@@ -153,7 +153,7 @@ bool Dissolve::loadInputFromString(const char *inputString)
     if (!parser.openInputString(inputString))
         return false;
 
-    bool result = loadInput(parser);
+    auto result = loadInput(parser);
 
     if (result)
         Messenger::print("Finished reading input.\n");
@@ -169,7 +169,7 @@ bool Dissolve::loadInput(const char *filename)
     if (!parser.openInput(filename))
         return false;
 
-    bool result = loadInput(parser);
+    auto result = loadInput(parser);
 
     if (result)
     {
@@ -204,7 +204,7 @@ bool Dissolve::saveInput(const char *filename)
         if (!parser.writeLineF("\n%s\n", BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword)))
             return false;
 
-        for (MasterIntra *b = coreData_.masterBonds().first(); b != NULL; b = b->next())
+        for (auto *b = coreData_.masterBonds().first(); b != NULL; b = b->next())
         {
             CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(),
                          SpeciesBond::bondFunctions().keywordFromInt(b->form()));
@@ -214,7 +214,7 @@ bool Dissolve::saveInput(const char *filename)
                 return false;
         }
 
-        for (MasterIntra *a = coreData_.masterAngles().first(); a != NULL; a = a->next())
+        for (auto *a = coreData_.masterAngles().first(); a != NULL; a = a->next())
         {
             CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword), a->name(),
                          SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
@@ -224,7 +224,7 @@ bool Dissolve::saveInput(const char *filename)
                 return false;
         }
 
-        for (MasterIntra *t = coreData_.masterTorsions().first(); t != NULL; t = t->next())
+        for (auto *t = coreData_.masterTorsions().first(); t != NULL; t = t->next())
         {
             CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword), t->name(),
                          SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
@@ -234,7 +234,7 @@ bool Dissolve::saveInput(const char *filename)
                 return false;
         }
 
-        for (MasterIntra *imp = coreData_.masterImpropers().first(); imp != NULL; imp = imp->next())
+        for (auto *imp = coreData_.masterImpropers().first(); imp != NULL; imp = imp->next())
         {
             CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword), imp->name(),
                          SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
@@ -252,7 +252,7 @@ bool Dissolve::saveInput(const char *filename)
 
     // Write Species data
     parser.writeBannerComment("Species");
-    for (Species *sp = species().first(); sp != NULL; sp = sp->next())
+    for (auto *sp = species().first(); sp != NULL; sp = sp->next())
     {
         if (!parser.writeLineF("\n"))
             return false;
@@ -269,7 +269,7 @@ bool Dissolve::saveInput(const char *filename)
     // Atom Type Parameters
     if (!parser.writeLineF("  # Atom Type Parameters\n"))
         return false;
-    for (AtomType *atomType = atomTypes().first(); atomType != NULL; atomType = atomType->next())
+    for (auto *atomType = atomTypes().first(); atomType != NULL; atomType = atomType->next())
     {
         CharString s("  %s  %s  %s  %12.6e  %s",
                      PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword), atomType->name(),
@@ -311,7 +311,7 @@ bool Dissolve::saveInput(const char *filename)
     // Write Configurations
     if (!parser.writeBannerComment("Configurations"))
         return false;
-    for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
     {
         if (!parser.writeLineF("\n%s  '%s'\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword),
                                cfg->name()))
@@ -408,7 +408,7 @@ bool Dissolve::saveInput(const char *filename)
                 return false;
 
             // Write Configuration target(s)
-            bool first = true;
+            auto first = true;
             for (Configuration *cfg : module->targetConfigurations())
             {
                 if (first && (!parser.writeLineF("\n")))
@@ -459,7 +459,7 @@ bool Dissolve::loadRestart(const char *filename)
     // Variables
     Configuration *cfg;
     Module *module;
-    bool error = false;
+    auto error = false;
 
     while (!parser.eofOrBlank())
     {
@@ -619,7 +619,7 @@ bool Dissolve::loadRestartAsReference(const char *filename, const char *dataSuff
     // Variables
     Configuration *cfg;
     CharString newName;
-    bool error = false, skipCurrentItem = false;
+    auto error = false, skipCurrentItem = false;
 
     // Enable suffixing of all ObjectStore types
     ObjectInfo::enableAutoSuffixing(dataSuffix);
@@ -777,7 +777,7 @@ bool Dissolve::saveRestart(const char *filename)
     }
 
     // Configuration Module Data
-    for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
     {
         // Cycle over data store in the Configuration
         ListIterator<GenericItem> itemIterator(cfg->moduleData().items());
@@ -811,7 +811,7 @@ bool Dissolve::saveRestart(const char *filename)
     }
 
     // Configurations
-    for (Configuration *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
     {
         if (!parser.writeLineF("Configuration  '%s'\n", cfg->name()))
             return false;

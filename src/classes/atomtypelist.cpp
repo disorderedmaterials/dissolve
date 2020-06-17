@@ -70,8 +70,8 @@ void AtomTypeList::zero()
 AtomTypeData &AtomTypeList::add(AtomType &atomType, double population)
 {
     // Search the list for the AtomType provided.
-    auto atd = std::find_if(types_.begin(), types_.end(),
-                            [&atomType](const AtomTypeData &data) { return &data.atomType() == &atomType; });
+    auto atd =
+        std::find_if(types_.begin(), types_.end(), [&atomType](const auto &data) { return &data.atomType() == &atomType; });
 
     // Return the entry if we found it
     if (atd != types_.end())
@@ -94,7 +94,7 @@ void AtomTypeList::add(const AtomTypeList &source)
         AtomTypeData &atd = add(newType.atomType());
 
         // Now add Isotope data
-        for (IsotopeData *topeData = newType.isotopeData(); topeData != NULL; topeData = topeData->next())
+        for (auto *topeData = newType.isotopeData(); topeData != NULL; topeData = topeData->next())
             atd.add(topeData->isotope(), topeData->population());
     }
 }
@@ -102,8 +102,8 @@ void AtomTypeList::add(const AtomTypeList &source)
 // Remove specified AtomType from the list
 void AtomTypeList::remove(AtomType &atomType)
 {
-    types_.erase(std::remove_if(types_.begin(), types_.end(),
-                                [&atomType](const AtomTypeData &atd) { return &atd.atomType() == &atomType; }));
+    types_.erase(
+        std::remove_if(types_.begin(), types_.end(), [&atomType](const auto &atd) { return &atd.atomType() == &atomType; }));
 }
 
 // Add/increase this AtomType/Isotope pair
@@ -121,7 +121,7 @@ void AtomTypeList::finalise()
 {
     // Finalise AtomTypeData
     double total = totalPopulation();
-    for (AtomTypeData &atd : types_)
+    for (auto &atd : types_)
         atd.finalise(total);
 }
 
@@ -133,7 +133,7 @@ void AtomTypeList::finalise(const AtomTypeList &exchangeable)
 
     // Account for exchangeable atoms - form the average bound coherent scattering over all exchangeable atoms
     double totalFraction = 0.0, boundCoherent = 0.0;
-    for (AtomTypeData &atd : types_)
+    for (auto &atd : types_)
     {
         // If this type is not exchangable, move on
         if (!exchangeable.contains(atd.atomType()))
@@ -146,7 +146,7 @@ void AtomTypeList::finalise(const AtomTypeList &exchangeable)
     boundCoherent /= totalFraction;
 
     // Now go back through the list and set the new scattering length for exchangeable components
-    for (AtomTypeData &atd : types_)
+    for (auto &atd : types_)
     {
         // If this type is not exchangable, move on
         if (!exchangeable.contains(atd.atomType()))
@@ -162,7 +162,7 @@ void AtomTypeList::finalise(const AtomTypeList &exchangeable)
 void AtomTypeList::naturalise()
 {
     // Loop over AtomTypes in the source list
-    for (AtomTypeData &atd : types_)
+    for (auto &atd : types_)
         atd.naturalise();
 }
 
@@ -206,7 +206,7 @@ std::vector<AtomTypeData>::const_iterator AtomTypeList::end() const { return typ
 // Return index of AtomType in list
 int AtomTypeList::indexOf(AtomType &atomtype) const
 {
-    int count = 0;
+    auto count = 0;
     for (auto &atd : types_)
     {
         if (&atd.atomType() == &atomtype)
@@ -220,7 +220,7 @@ int AtomTypeList::indexOf(AtomType &atomtype) const
 // Return index of names AtomType in list
 int AtomTypeList::indexOf(const char *name) const
 {
-    int count = 0;
+    auto count = 0;
     for (auto &atd : types_)
     {
         if (DissolveSys::sameString(atd.atomType().name(), name))
@@ -253,14 +253,12 @@ AtomType &AtomTypeList::atomType(int n)
 }
 
 // Return AtomTypeData for specified AtomType
-optional<const AtomTypeData &> AtomTypeList::atomTypeData(AtomType &atomType)
+std::optional<std::reference_wrapper<const AtomTypeData>> AtomTypeList::atomTypeData(AtomType &atomType)
 {
-    auto it = std::find_if(types_.begin(), types_.end(),
-                           [&atomType](const AtomTypeData &atd) { return &atomType == &atd.atomType(); });
-    bool found = false;
-    if (it != types_.end())
-        found = true;
-    return std::make_tuple(*it, found);
+    auto it = std::find_if(types_.begin(), types_.end(), [&atomType](const auto &atd) { return &atomType == &atd.atomType(); });
+    if (it == types_.end())
+        return {};
+    return *it;
 }
 
 // Print AtomType populations
@@ -278,7 +276,7 @@ void AtomTypeList::print() const
             Messenger::print("%c %-8s  %-3s    -     %-10i    %10.6f (of world) %6.3f\n", exch, atd.atomTypeName(),
                              atd.atomType().element()->symbol(), atd.population(), atd.fraction(), atd.boundCoherent());
 
-            for (IsotopeData *topeData = atd.isotopeData(); topeData != NULL; topeData = topeData->next())
+            for (auto *topeData = atd.isotopeData(); topeData != NULL; topeData = topeData->next())
             {
                 Messenger::print("                   %-3i   %-10.6e  %10.6f (of type)  %6.3f\n", topeData->isotope()->A(),
                                  topeData->population(), topeData->fraction(), topeData->isotope()->boundCoherent());
@@ -300,13 +298,13 @@ void AtomTypeList::print() const
 const char *AtomTypeList::itemClassName() { return "AtomTypeList"; }
 
 // Read data through specified LineParser
-bool AtomTypeList::read(LineParser &parser, const CoreData &coreData)
+bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
 {
     types_.clear();
 
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    int nItems = parser.argi(0);
+    auto nItems = parser.argi(0);
     for (int n = 0; n < nItems; ++n)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

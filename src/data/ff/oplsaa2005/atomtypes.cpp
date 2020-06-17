@@ -976,7 +976,7 @@ const ForcefieldAtomType &OPLSAA2005BaseForcefield::oplsAtomTypeById(int id) con
         {NULL, ELEMENT_H, 1239, "HA", "", "H4  thiazole jlj0003", 0.200000, 0.125520, 2.420000},
         {NULL, ELEMENT_H, 1240, "HA", "", "H5  thiazole jlj0003", 0.200000, 0.125520, 2.420000}};
 
-    const int nAtomTypes = 898;
+    const auto nAtomTypes = 898;
 
     // Search through list
     for (int n = 0; n < nAtomTypes; ++n)

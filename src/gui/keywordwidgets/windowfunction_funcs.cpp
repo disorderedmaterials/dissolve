@@ -28,7 +28,7 @@ WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget *parent, Keywor
     : QWidget(parent), KeywordWidgetBase(coreData)
 {
     // Create the necessary subwidgets
-    QHBoxLayout *layout = new QHBoxLayout(this);
+    auto *layout = new QHBoxLayout(this);
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(4);
     functionCombo_ = new QComboBox;

@@ -163,7 +163,7 @@ class KeywordBase : public ListItem<KeywordBase>
     // Check number of arguments provided to keyword
     bool validNArgs(int nArgsProvided) const;
     // Parse arguments from supplied LineParser, starting at given argument offset
-    virtual bool read(LineParser &parser, int startArg, const CoreData &coreData) = 0;
+    virtual bool read(LineParser &parser, int startArg, CoreData &coreData) = 0;
     // Write keyword data to specified LineParser
     virtual bool write(LineParser &parser, const char *keywordName, const char *prefix = "") = 0;
 

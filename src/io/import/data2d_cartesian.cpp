@@ -37,14 +37,14 @@ bool Data2DImportFileFormat::importCartesian(LineParser &parser, Data2D &data)
         return Messenger::error("Must supply x and y ranges (e.g. xrange=min,max,delta) when importing 2D cartesian data.\n");
 
     // Set up our data
-    const Vec3<double> xRange = keywords_.asVec3Double("XRange");
-    const double xMin = xRange.x;
-    const double xMax = xRange.y;
-    const double xDelta = xRange.z;
-    const Vec3<double> yRange = keywords_.asVec3Double("YRange");
-    const double yMin = yRange.x;
-    const double yMax = yRange.y;
-    const double yDelta = yRange.z;
+    const auto xRange = keywords_.asVec3Double("XRange");
+    const auto xMin = xRange.x;
+    const auto xMax = xRange.y;
+    const auto xDelta = xRange.z;
+    const auto yRange = keywords_.asVec3Double("YRange");
+    const auto yMin = yRange.x;
+    const auto yMax = yRange.y;
+    const auto yDelta = yRange.z;
     data.initialise(xMin, xMax, xDelta, yMin, yMax, yDelta);
 
     // Loop over lines in the file - we expect blocks with three columns (x, y, f(x,y))
@@ -63,14 +63,14 @@ bool Data2DImportFileFormat::importCartesian(LineParser &parser, Data2D &data)
 
         double x = parser.argd(0);
         double y = parser.argd(1);
-        int xBin = (x - xMin) / xDelta;
+        auto xBin = (x - xMin) / xDelta;
         if ((xBin < 0) || (xBin >= data.constXAxis().nItems()))
         {
             Messenger::warn("Coordinates x=%e y=%e are out-of-range (xBin = %i, nBins = %i).\n", x, y, xBin,
                             data.constXAxis().nItems());
             continue;
         }
-        int yBin = (y - yMin) / yDelta;
+        auto yBin = (y - yMin) / yDelta;
         if ((yBin < 0) || (yBin >= data.constYAxis().nItems()))
         {
             Messenger::warn("Coordinates x=%e y=%e are out-of-range (yBin = %i, nBins = %i).\n", x, y, yBin,

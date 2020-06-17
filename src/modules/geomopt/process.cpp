@@ -29,10 +29,10 @@
 bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Retrieve Module options
-    const int nCycles = keywords_.asInt("NCycles");
-    const double tolerance = keywords_.asDouble("Tolerance");
-    const double initialStepSize = keywords_.asDouble("StepSize");
-    const int nStepSizeResetsAllowed = 5;
+    const auto nCycles = keywords_.asInt("NCycles");
+    const auto tolerance = keywords_.asDouble("Tolerance");
+    const auto initialStepSize = keywords_.asDouble("StepSize");
+    const auto nStepSizeResetsAllowed = 5;
 
     // Print argument/parameter summary
     Messenger::print("Optimise: Maximum number of cycles is %i.\n", nCycles);
@@ -64,7 +64,7 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPo
         yForce_.initialise(cfg->nAtoms());
         zForce_.initialise(cfg->nAtoms());
 
-        bool converged = false, lineDone = false;
+        auto converged = false, lineDone = false;
 
         // Get the initial energy and forces of the Configuration
         double oldEnergy = EnergyModule::totalEnergy(procPool, cfg, dissolve.potentialMap());
@@ -78,7 +78,7 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPo
                          "Step Size");
         Messenger::print(" --    %16.9e  %-16s  %16.9e  %-16s  %16.9e\n", oldEnergy, "------", oldRMSForce, "------", stepSize);
 
-        int nStepSizeResets = 0;
+        auto nStepSizeResets = 0;
         for (int cycle = 1; cycle <= nCycles; ++cycle)
         {
             // Copy current Configuration coordinates as our reference (they will be modified by lineMinimise())

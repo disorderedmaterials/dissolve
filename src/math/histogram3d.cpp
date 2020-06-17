@@ -165,7 +165,7 @@ int Histogram3D::nYBins() const { return nYBins_; }
 bool Histogram3D::bin(double x, double y, double z)
 {
     // Calculate target bin along x
-    int xBin = (x - xMinimum_) / xBinWidth_;
+    auto xBin = (x - xMinimum_) / xBinWidth_;
     if ((xBin < 0) || (xBin >= nXBins_))
     {
         ++nMissed_;
@@ -173,7 +173,7 @@ bool Histogram3D::bin(double x, double y, double z)
     }
 
     // Calculate target bin along y
-    int yBin = (y - yMinimum_) / yBinWidth_;
+    auto yBin = (y - yMinimum_) / yBinWidth_;
     if ((yBin < 0) || (yBin >= nYBins_))
     {
         ++nMissed_;
@@ -181,7 +181,7 @@ bool Histogram3D::bin(double x, double y, double z)
     }
 
     // Calculate target bin along z
-    int zBin = (z - zMinimum_) / zBinWidth_;
+    auto zBin = (z - zMinimum_) / zBinWidth_;
     if ((zBin < 0) || (zBin >= nZBins_))
     {
         ++nMissed_;
@@ -278,7 +278,7 @@ void Histogram3D::operator=(const Histogram3D &source)
 const char *Histogram3D::itemClassName() { return "Histogram3D"; }
 
 // Read data through specified LineParser
-bool Histogram3D::read(LineParser &parser, const CoreData &coreData)
+bool Histogram3D::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 

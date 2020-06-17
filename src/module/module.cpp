@@ -126,7 +126,7 @@ const char *Module::frequencyDetails(int iteration) const
     else
     {
         // Calculate number of steps necessary to get to next multiple of the frequency_
-        int nToGo = frequency_ - (iteration - frequency_ * (iteration / frequency_));
+        auto nToGo = frequency_ - (iteration - frequency_ * (iteration / frequency_));
         if (nToGo == 1)
             return "next iteration";
 
@@ -193,7 +193,7 @@ bool Module::addTargetConfigurations(const List<Configuration> &configs)
                                 configs.nItems(), uniqueName(), nRequiredTargets());
     else
     {
-        int spaces = nRequiredTargets() - nTargetConfigurations();
+        auto spaces = nRequiredTargets() - nTargetConfigurations();
         Messenger::print("Adding up to %i configurations from the %i provided as targets for module '%s'...\n", spaces,
                          configs.nItems(), uniqueName());
 
@@ -226,7 +226,7 @@ bool Module::hasValidNTargetConfigurations(bool reportError) const
 {
     if (nRequiredTargets() == Module::OneOrMoreTargets)
     {
-        bool valid = nTargetConfigurations() > 0;
+        auto valid = nTargetConfigurations() > 0;
         if (reportError && (!valid))
             Messenger::error("Module '%s' expects one or more configuration targets, but none have been provided.\n",
                              uniqueName());
@@ -234,7 +234,7 @@ bool Module::hasValidNTargetConfigurations(bool reportError) const
     }
     else if (nRequiredTargets() == Module::ZeroTargets)
     {
-        bool valid = (nTargetConfigurations() == 0);
+        auto valid = (nTargetConfigurations() == 0);
         if (reportError && (!valid))
             Messenger::error("Module '%s' expects zero configuration targets, but %i ha%s been provided.\n", uniqueName(),
                              nTargetConfigurations(), nRequiredTargets() == 1 ? "s" : "ve");
@@ -242,7 +242,7 @@ bool Module::hasValidNTargetConfigurations(bool reportError) const
     }
     else
     {
-        bool valid = (nRequiredTargets() == nTargetConfigurations());
+        auto valid = (nRequiredTargets() == nTargetConfigurations());
         if (reportError && (!valid))
             Messenger::error("Module '%s' expects exactly %i configuration %s, but %i ha%s been provided.\n", uniqueName(),
                              nRequiredTargets(), nRequiredTargets() == 1 ? "target" : "targets", nTargetConfigurations(),
@@ -295,7 +295,7 @@ bool Module::executeProcessing(Dissolve &dissolve, ProcessPool &procPool)
     timer.start();
 
     // Run main processing routine
-    bool result = process(dissolve, procPool);
+    auto result = process(dissolve, procPool);
 
     // Accumulate timing information
     timer.stop();

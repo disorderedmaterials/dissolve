@@ -538,11 +538,11 @@ void Matrix4::columnNormalise(int col)
 void Matrix4::orthogonaliseColumn(int targetcol, int orthocol1, int orthocol2)
 {
     // Grab target column
-    Vec3<double> v = columnAsVec3(targetcol);
+    auto v = columnAsVec3(targetcol);
     // Orthogonalising w.r.t one or two other vectors?
     if (orthocol2 == -1)
     {
-        Vec3<double> source = columnAsVec3(orthocol1);
+        auto source = columnAsVec3(orthocol1);
         double sourcemag = source.magnitude();
         double dpovermagsq = v.dp(source) / (sourcemag * sourcemag);
         v.x -= dpovermagsq * source.x;
@@ -553,8 +553,8 @@ void Matrix4::orthogonaliseColumn(int targetcol, int orthocol1, int orthocol2)
     {
         // This routine actually generates the orthogonal vector via the cross-product
         // We also calculate the scalar resolute (dp) to ensure the new vector points in the same direction
-        Vec3<double> source1 = columnAsVec3(orthocol1), source2 = columnAsVec3(orthocol2);
-        Vec3<double> newvec = source1 * source2;
+        auto source1 = columnAsVec3(orthocol1), source2 = columnAsVec3(orthocol2);
+        auto newvec = source1 * source2;
         newvec.normalise();
         double dp = newvec.dp(v);
         if (dp < 0.0)

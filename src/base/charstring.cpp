@@ -101,7 +101,7 @@ void CharString::clear()
 void CharString::set(const char *s)
 {
     // If new size is less than or equal to old size, don't reallocate
-    int newsize = (s == NULL ? 1 : strlen(s) + 1);
+    auto newsize = (s == NULL ? 1 : strlen(s) + 1);
     if (newsize > size_)
     {
         if (data_ != NULL)
@@ -176,7 +176,7 @@ void CharString::erase(int start, int end)
         return;
     if (end >= endPosition_)
         end = endPosition_ - 1;
-    int count = endPosition_ - end;
+    auto count = endPosition_ - end;
     // printf("Range to erase is %i to %i.\n",start,end);
     // printf("Characters after endpoint = %i\n",count);
     // Copy the character in position 'n' to position 'start + (n-last-1)'
@@ -356,7 +356,7 @@ long int CharString::asLongInteger() const { return (data_ != NULL ? atol(data_)
 bool CharString::asBool() const
 {
     // Convert string to boolean
-    bool result = false;
+    auto result = false;
     CharString lcase(DissolveSys::lowerCase(data_));
     if (lcase == "off")
         result = false;
@@ -382,8 +382,8 @@ bool CharString::asBool() const
 bool CharString::isNumeric() const
 {
     // Go through string - if we find a 'non-number' character, return false
-    int nSymbols = 0, nChars = 0;
-    for (char *c = data_; *c != '\0'; ++c)
+    auto nSymbols = 0, nChars = 0;
+    for (auto *c = data_; *c != '\0'; ++c)
     {
         ++nChars;
         switch (*c)
@@ -437,7 +437,7 @@ const char *CharString::upper() const
 // Find character
 int CharString::find(char search) const
 {
-    int count = 0;
+    auto count = 0;
     char *c;
     for (c = data_; *c != '\0'; c++)
     {
@@ -542,7 +542,7 @@ void CharString::substr(const char *source, int pos, int nchars)
 {
     clear();
     // Check start position
-    int len = strlen(source);
+    auto len = strlen(source);
     if ((pos < 0) || (pos >= len))
         return;
     // Copy characters

@@ -30,7 +30,7 @@ bool CoordinateImportFileFormat::importXYZ(LineParser &parser, Array<Vec3<double
     // Import in natoms
     if (parser.getArgsDelim() != LineParser::Success)
         return false;
-    int nAtoms = parser.argi(0);
+    auto nAtoms = parser.argi(0);
 
     // Skip title
     if (parser.skipLines(1) != LineParser::Success)

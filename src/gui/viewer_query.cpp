@@ -105,7 +105,7 @@ void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, const char *in
     offscreenBuffer_->bind();
 
     // Compare the stored colours in the region with those in the current buffer
-    int index = 0;
+    auto index = 0;
     double delta = 0.0;
     for (int dx = 0; dx < queryRegionWidth_; ++dx)
     {
@@ -127,8 +127,8 @@ void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, const char *in
     }
 
     // Set the object info if the colour change threshold was reached
-    const double threshold = 1.0; //(0.5 * queryRegionHeight_*queryRegionWidth_) * 0.25;
-                                  // 	printf("Delta = %f, threshold = %f\n", delta, threshold);
+    const auto threshold = 1.0; //(0.5 * queryRegionHeight_*queryRegionWidth_) * 0.25;
+                                // 	printf("Delta = %f, threshold = %f\n", delta, threshold);
     if (delta > threshold)
     {
         queryObjectType_ = objectType;
@@ -145,7 +145,7 @@ void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, const char *in
 BaseViewer::ViewerObject BaseViewer::queryAt(int x, int y)
 {
     // Sampling size around central pixel
-    const int sampleSize = 2;
+    const auto sampleSize = 2;
 
     queryObjectType_ = BaseViewer::NoObject;
     queryObjectInfo_.clear();
@@ -169,10 +169,10 @@ BaseViewer::ViewerObject BaseViewer::queryAt(int x, int y)
     }
 
     // Set up region to sample
-    int left = x - sampleSize;
-    int right = x + sampleSize;
-    int top = y + sampleSize;
-    int bottom = y - sampleSize;
+    auto left = x - sampleSize;
+    auto right = x + sampleSize;
+    auto top = y + sampleSize;
+    auto bottom = y - sampleSize;
     if (left < 0)
         left = 0;
     if (right >= queryImageWidth_)
