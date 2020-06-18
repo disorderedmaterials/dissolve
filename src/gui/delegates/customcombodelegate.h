@@ -34,7 +34,7 @@ template <class P> class CustomComboDelegate : public QItemDelegate
 {
     public:
     // Typedef for function pointers
-	typedef std::vector<std::string> *(P::*ValidItemNamesFunction)(QModelIndex &index);
+	typedef std::vector<std::string> (P::*ValidItemNamesFunction)(const QModelIndex &index);
 
     private:
     // Parent object of valid items member function
@@ -42,7 +42,8 @@ template <class P> class CustomComboDelegate : public QItemDelegate
     // Function to acquire valid items for the combo box
     ValidItemNamesFunction validItemNamesFunction_;
 
-    CustomComboDelegate(P* parent, ValidItemNamesFunction validItemNamesFunction) : QItemDelegate(parent), functionParent_(parent), validItemNamesFunction_(validItemNamesFunction)
+    public:
+    CustomComboDelegate(P *parent, ValidItemNamesFunction validItemNamesFunction) : QItemDelegate(parent), functionParent_(parent), validItemNamesFunction_(validItemNamesFunction)
     {
     }
 
@@ -58,7 +59,7 @@ template <class P> class CustomComboDelegate : public QItemDelegate
         QComboBox *editor = new QComboBox(parent);
 
         // Get the vector of allowable item names
-        std::vector<std::string> validNames = (functionParent_->*validItemNamesFunction_(index));
+        std::vector<std::string> validNames = (functionParent_->*validItemNamesFunction_)(index);
         
         // Add our text items to the list
         for (auto name : validNames)

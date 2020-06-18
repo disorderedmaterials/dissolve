@@ -24,8 +24,8 @@
 #include "classes/species.h"
 #include "genericitems/listhelper.h"
 #include "gui/delegates/combolist.hui"
-#include "gui/delegates/exponentialspin.hui"
 #include "gui/delegates/customcombodelegate.h"
+#include "gui/delegates/exponentialspin.hui"
 #include "gui/delegates/usedspeciescombo.hui"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/isotopologuecollection.h"
@@ -37,11 +37,11 @@ IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget
     : KeywordDropDown(this), KeywordWidgetBase(coreData), isotopologueSetsItemManager_(this), isotopologuesItemManager_(this),
       isotopologueWeightItemManager_(this)
 {
-	// Create and set up the UI for our widget in the drop-down's widget container
-	ui_.setupUi(dropWidget());
+    // Create and set up the UI for our widget in the drop-down's widget container
+    ui_.setupUi(dropWidget());
 
-	// Set delegates for table
-	ui_.IsotopologueTree->setItemDelegateForColumn(2, new CustomComboDelegate<IsotopologueCollectionKeywordWidget>(this, &IsotopologueCollectionKeywordWidget::validIsotopologueNames);
+    // Set delegates for table
+    ui_.IsotopologueTree->setItemDelegateForColumn(2, new CustomComboDelegate<IsotopologueCollectionKeywordWidget>(this, &IsotopologueCollectionKeywordWidget::validIsotopologueNames));
 	ui_.IsotopologueTree->setItemDelegateForColumn(3, new ExponentialSpinDelegate(this));
 
 	// Connect signals / slots
@@ -59,8 +59,8 @@ IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget
 		Messenger::error("Couldn't cast base keyword '%s' into IsotopologueCollectionKeyword.\n", keyword->name());
 	else
 	{
-		// Set current information
-		updateWidgetValues(coreData_);
+        // Set current information
+        updateWidgetValues(coreData_);
 	}
 
 	// Summary text on KeywordDropDown button
@@ -72,16 +72,44 @@ IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget
  */
 
 // Return valid Isotopologue names for specified model index
-std::vector<std::string> IsotopologueCollectionKeywordWidget::validIsotopologueNames(QModelIndex &index)
+std::vector<std::string> IsotopologueCollectionKeywordWidget::validIsotopologueNames(const QModelIndex &index)
 {
-    
+    auto *item = ui_.IsotopologueTree->currentItem();
+    if (!item)
+    {
+        // TODO Raise exception
+        Messenger::error("IsotopologueCollectionKeywordWidget::validIsotopologueNames() - Invalid QModelIndex passed.\n");
+        return std::vector<std::string>();
+    }
+
+    // We are expecting to be given a QModelIndex which locates an item representing a IsotopologueWeight
+    if (isotopologueWeightItemManager_.isMapped(item))
+    {
+        // Valid IsotopologueWeight item - what we really need is the parent item's data (Isotopologues) to get Species access
+        auto topesData = isotopologuesItemManager_.reference(item->parent());
+        if (std::get<1>(topesData))
+        {
+            // TODO Raise Exception
+            Messenger::error("IsotopologueCollectionKeywordWidget::validIsotopologueNames() - Couldn't find Isotopologues parent item.\n");
+            return std::vector<std::string>();
+        }
+
+        // Construct valid names list
+        std::vector<std::string> validNames = { "Natural" };
+        ListIterator<Isotopologue> topeIterator(std::get<0>(topesData).species()->isotopologues());
+        while (Isotopologue *tope = topeIterator.iterate()) validNames.push_back(tope->name());
+
+        return validNames;
+    }
+
+    return std::vector<std::string>();
 }
 
 // // Return Species context for current item (if any)
 // const Species *IsotopologueCollectionKeywordWidget::speciesContext() const
 // {
 //     QTreeWidgetItem *item = ui_.IsotopologueTree->currentItem();
-// 
+//
 //     if (isotopologuesItemManager_.isMapped(item))
 //     {
 // 		// Get Isotopologues reference
@@ -106,7 +134,7 @@ std::vector<std::string> IsotopologueCollectionKeywordWidget::validIsotopologueN
 // 		}
 //         return std::get<0>(topesData).species();
 //     }
-// 
+//
 //     return nullptr;
 // }
 
