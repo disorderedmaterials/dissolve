@@ -40,30 +40,31 @@ IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget
     ui_.setupUi(dropWidget());
 
     // Set delegates for table
-    ui_.IsotopologueTree->setItemDelegateForColumn(2, new CustomComboDelegate<IsotopologueCollectionKeywordWidget>(this, &IsotopologueCollectionKeywordWidget::validIsotopologueNames));
-	ui_.IsotopologueTree->setItemDelegateForColumn(3, new ExponentialSpinDelegate(this));
+    ui_.IsotopologueTree->setItemDelegateForColumn(2, new CustomComboDelegate<IsotopologueCollectionKeywordWidget>(
+                                                          this, &IsotopologueCollectionKeywordWidget::availableIsotopologueNames));
+    ui_.IsotopologueTree->setItemDelegateForColumn(3, new ExponentialSpinDelegate(this));
 
-	// Connect signals / slots
-	connect(ui_.AutoButton, SIGNAL(clicked(bool)), this, SLOT(autoButton_clicked(bool)));
-	connect(ui_.AddButton, SIGNAL(clicked(bool)), this, SLOT(addButton_clicked(bool)));
-	connect(ui_.RemoveButton, SIGNAL(clicked(bool)), this, SLOT(removeButton_clicked(bool)));
-	connect(ui_.IsotopologueTree, SIGNAL(itemChanged(QTreeWidgetItem *, int)), this,
-		SLOT(isotopologueTree_itemChanged(QTreeWidgetItem *, int)));
-	connect(ui_.IsotopologueTree, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)), this,
-		SLOT(isotopologueTree_currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
+    // Connect signals / slots
+    connect(ui_.AutoButton, SIGNAL(clicked(bool)), this, SLOT(autoButton_clicked(bool)));
+    connect(ui_.AddButton, SIGNAL(clicked(bool)), this, SLOT(addButton_clicked(bool)));
+    connect(ui_.RemoveButton, SIGNAL(clicked(bool)), this, SLOT(removeButton_clicked(bool)));
+    connect(ui_.IsotopologueTree, SIGNAL(itemChanged(QTreeWidgetItem *, int)), this,
+            SLOT(isotopologueTree_itemChanged(QTreeWidgetItem *, int)));
+    connect(ui_.IsotopologueTree, SIGNAL(currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)), this,
+            SLOT(isotopologueTree_currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
 
-	// Cast the pointer up into the parent class type
-	keyword_ = dynamic_cast<IsotopologueCollectionKeyword *>(keyword);
-	if (!keyword_)
-		Messenger::error("Couldn't cast base keyword '%s' into IsotopologueCollectionKeyword.\n", keyword->name());
-	else
-	{
+    // Cast the pointer up into the parent class type
+    keyword_ = dynamic_cast<IsotopologueCollectionKeyword *>(keyword);
+    if (!keyword_)
+        Messenger::error("Couldn't cast base keyword '%s' into IsotopologueCollectionKeyword.\n", keyword->name());
+    else
+    {
         // Set current information
         updateWidgetValues(coreData_);
-	}
+    }
 
-	// Summary text on KeywordDropDown button
-	setSummaryText("Edit...");
+    // Summary text on KeywordDropDown button
+    setSummaryText("Edit...");
 }
 
 /*
@@ -71,15 +72,15 @@ IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget
  */
 
 // Return valid Isotopologue names for specified model index
-std::vector<std::string> IsotopologueCollectionKeywordWidget::validIsotopologueNames(const QModelIndex &index)
+std::vector<std::string> IsotopologueCollectionKeywordWidget::availableIsotopologueNames(const QModelIndex &index)
 {
     // We are expecting to be given a QModelIndex which locates an item representing a IsotopologueWeight
     // The column of the provided child model index must therefore be '2'
     if (index.column() != 2)
     {
-            // TODO Raise Exception
-            Messenger::error("IsotopologueCollectionKeywordWidget::validIsotopologueNames() - Not a suitable column (!= 2).\n");
-            return std::vector<std::string>();
+        // TODO Raise Exception
+        Messenger::error("IsotopologueCollectionKeywordWidget::availableIsotopologueNames() - Not a suitable column (!= 2).\n");
+        return std::vector<std::string>();
     }
 
     // Get the parent and grandparent model indices to get the positions (rows) of the Isopologues and IsotopologueSets
@@ -87,18 +88,20 @@ std::vector<std::string> IsotopologueCollectionKeywordWidget::validIsotopologueN
     const auto setIndex = topesIndex.parent();
     if (!topesIndex.isValid() || !setIndex.isValid())
     {
-            // TODO Raise Exception
-            Messenger::error("IsotopologueCollectionKeywordWidget::validIsotopologueNames() - Parent (Isotopologues) and/or grandparent (IsotopologueSet) not valid.\n");
-            return std::vector<std::string>();
+        // TODO Raise Exception
+        Messenger::error("IsotopologueCollectionKeywordWidget::availableIsotopologueNames() - Parent (Isotopologues) and/or "
+                         "grandparent (IsotopologueSet) not valid.\n");
+        return std::vector<std::string>();
     }
 
     auto &isotopologueSet = keyword_->data().isotopologueSets()[setIndex.row()];
     auto &isotopologues = isotopologueSet.isotopologues()[topesIndex.row()];
 
     // Construct valid names list
-    std::vector<std::string> validNames = { "Natural" };
+    std::vector<std::string> validNames = {"Natural"};
     ListIterator<Isotopologue> topeIterator(isotopologues.species()->isotopologues());
-    while (Isotopologue *tope = topeIterator.iterate()) validNames.push_back(tope->name());
+    while (Isotopologue *tope = topeIterator.iterate())
+        validNames.push_back(tope->name());
 
     return validNames;
 }
@@ -118,7 +121,7 @@ void IsotopologueCollectionKeywordWidget::autoButton_clicked(bool checked)
 
 void IsotopologueCollectionKeywordWidget::addButton_clicked(bool checked)
 {
-   QTreeWidgetItem *item = ui_.IsotopologueTree->currentItem();
+    QTreeWidgetItem *item = ui_.IsotopologueTree->currentItem();
 
     // Determine what kind of data is selected
     if (!item)

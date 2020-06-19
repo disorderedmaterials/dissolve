@@ -29,21 +29,22 @@
 // Forward Declarations
 /* none */
 
-// Custom Combo Delegate 
+// Custom Combo Delegate
 template <class P> class CustomComboDelegate : public QItemDelegate
 {
     public:
     // Typedef for function pointers
-	typedef std::vector<std::string> (P::*ValidItemNamesFunction)(const QModelIndex &index);
+    typedef std::vector<std::string> (P::*AvailableItemsFunction)(const QModelIndex &index);
 
     private:
     // Parent object of valid items member function
-    P* functionParent_;
+    P *functionParent_;
     // Function to acquire valid items for the combo box
-    ValidItemNamesFunction validItemNamesFunction_;
+    AvailableItemsFunction availableItemsFunction_;
 
     public:
-    CustomComboDelegate(P *parent, ValidItemNamesFunction validItemNamesFunction) : QItemDelegate(parent), functionParent_(parent), validItemNamesFunction_(validItemNamesFunction)
+    CustomComboDelegate(P *parent, AvailableItemsFunction availableItemsFunction)
+        : QItemDelegate(parent), functionParent_(parent), availableItemsFunction_(availableItemsFunction)
     {
     }
 
@@ -52,15 +53,14 @@ template <class P> class CustomComboDelegate : public QItemDelegate
      */
     public:
     // Create editor
-    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option,
-                                                    const QModelIndex &index) const
+    QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const
     {
         // Create editor widget (in this case a combo box) and add the available options
         QComboBox *editor = new QComboBox(parent);
 
         // Get the vector of allowable item names
-        std::vector<std::string> validNames = (functionParent_->*validItemNamesFunction_)(index);
-        
+        std::vector<std::string> validNames = (functionParent_->*availableItemsFunction_)(index);
+
         // Add our text items to the list
         for (auto name : validNames)
             editor->addItem(QString::fromStdString(name));
@@ -95,8 +95,7 @@ template <class P> class CustomComboDelegate : public QItemDelegate
         model->setData(index, comboBox->currentText(), Qt::EditRole);
     }
     // Update widget geometry
-    void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option,
-                                                        const QModelIndex &index) const
+    void updateEditorGeometry(QWidget *editor, const QStyleOptionViewItem &option, const QModelIndex &index) const
     {
         editor->setGeometry(option.rect);
     }
