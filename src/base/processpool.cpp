@@ -327,14 +327,8 @@ bool ProcessPool::assignProcessesToGroups()
      * Afterwards, an MPI communicator is constructed for each group.
      */
 #ifdef PARALLEL
-<<<<<<< HEAD
     int baseAlloc = worldRanks_.nItems() / maxProcessGroups_;
     int remainder = worldRanks_.nItems() % maxProcessGroups_;
-=======
-    auto baseAlloc = worldRanks_.nItems() / maxProcessGroups_;
-    auto remainder = worldRanks_.nItems() % maxProcessGroups_;
-    ProcessGroup *group;
->>>>>>> 614b3d050... Use auto for int where appropriate.
     CharString rankString;
     for (int n = 0; n < maxProcessGroups_; ++n)
     {
@@ -826,7 +820,7 @@ bool ProcessPool::send(bool value, int targetWorldRank, ProcessPool::Communicato
 {
 #ifdef PARALLEL
     timer_.start();
-    auto data = value;
+    int data = value;
     if (MPI_Send(&data, 1, MPI_INTEGER, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS)
         return false;
     timer_.accumulate();
@@ -1138,11 +1132,7 @@ bool ProcessPool::broadcast(bool &source, int rootRank, ProcessPool::Communicato
 {
 #ifdef PARALLEL
     timer_.start();
-<<<<<<< HEAD
     int result = (source ? 1 : 0);
-=======
-    auto result = source;
->>>>>>> 614b3d050... Use auto for int where appropriate.
     if (MPI_Bcast(&result, 1, MPI_INTEGER, rootRank, communicator(commType)) != MPI_SUCCESS)
     {
         Messenger::print("Failed to broadcast int data from root rank %i.\n", rootRank);
