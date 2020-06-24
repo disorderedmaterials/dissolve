@@ -75,11 +75,12 @@ class IsotopologueCollection : public GenericItemBase
     // Return whether a set exists for the supplied Configuration
     bool contains(const Configuration *cfg) const;
     // Return IsotopologueSet for the specified Configuration
-    std::optional<const IsotopologueSet> getIsotopologueSet(const Configuration *cfg) const;
+    std::optional<std::reference_wrapper<const IsotopologueSet>> getIsotopologueSet(const Configuration *cfg) const;
     // Return whether the Species has a defined set of isotopologues in the specified Configuration
     bool contains(const Configuration *cfg, const Species *sp) const;
     // Return Isotopologues for the Species in the specified Configuration
-    std::optional<const Isotopologues> getIsotopologues(const Configuration *cfg, const Species *sp) const;
+    std::optional<std::reference_wrapper<const Isotopologues>> getIsotopologues(const Configuration *cfg,
+                                                                                const Species *sp) const;
     // Complete the collection by making sure it contains every Species in every Configuration in the supplied list
     void complete(const RefList<Configuration> &configurations);
 

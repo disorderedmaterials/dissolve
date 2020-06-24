@@ -80,7 +80,7 @@ class IsotopologueSet : public GenericItemBase
     // Return whether Isotopologues for the specified Species exists
     bool contains(const Species *sp) const;
     // Return Isotopologues for the specified Species
-    std::optional<const Isotopologues> getIsotopologues(const Species *sp) const;
+    std::optional<std::reference_wrapper<const Isotopologues>> getIsotopologues(const Species *sp) const;
     // Return number of Isotopologues defined
     int nIsotopologues() const;
     // Return vector of all Isotopologues

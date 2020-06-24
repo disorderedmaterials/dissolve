@@ -24,8 +24,7 @@
 #include "templates/reflist.h"
 #include "templates/variantpointer.h"
 #include <QTreeWidget>
-
-template <class T> using optional_ref = std::tuple<T &, bool>;
+#include <optional>
 
 #pragma once
 
@@ -415,11 +414,13 @@ template <class P, class T> class TreeWidgetItemManager
     // Return whether the specified QTreeWidgetItem is mapped to a reference
     bool isMapped(QTreeWidgetItem *item) const { return (referenceMap_.find(item) != referenceMap_.end()); }
     // Retrieve reference associated to specified QTreeWidgetItem
-    optional_ref<T> reference(QTreeWidgetItem *item) const
+    std::optional<std::reference_wrapper<T>> reference(QTreeWidgetItem *item) const
     {
         auto it = referenceMap_.find(item);
+        if (it == referenceMap_.end())
+            return {};
 
-        return std::make_tuple(it->second, it == referenceMap_.end());
+        return it->second;
     }
 
     /*
