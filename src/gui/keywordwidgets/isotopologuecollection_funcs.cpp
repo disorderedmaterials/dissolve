@@ -40,8 +40,9 @@ IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget
     ui_.setupUi(dropWidget());
 
     // Set delegates for table
-    ui_.IsotopologueTree->setItemDelegateForColumn(2, new CustomComboDelegate<IsotopologueCollectionKeywordWidget>(
-                                                          this, &IsotopologueCollectionKeywordWidget::availableIsotopologueNames));
+    ui_.IsotopologueTree->setItemDelegateForColumn(2,
+                                                   new CustomComboDelegate<IsotopologueCollectionKeywordWidget>(
+                                                       this, &IsotopologueCollectionKeywordWidget::availableIsotopologueNames));
     ui_.IsotopologueTree->setItemDelegateForColumn(3, new ExponentialSpinDelegate(this));
 
     // Connect signals / slots
