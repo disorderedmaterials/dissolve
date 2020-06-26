@@ -158,5 +158,6 @@ void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
             Renderable::Data1DRenderable, CharString("%s//OriginalBragg//%s", currentConfiguration_->niceName(), id.get()),
             CharString("Full//%s", id.get()), "Full");
     });
+
     reflectionsGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);
 }

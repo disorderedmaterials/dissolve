@@ -375,14 +375,15 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (isotopologues_.contains(cfg))
         {
             // Get the set...
-            auto topeSet = isotopologues_.getIsotopologueSet(cfg);
-            if (!topeSet)
+            auto topeSetData = isotopologues_.getIsotopologueSet(cfg);
+            if (!topeSetData)
             {
                 return Messenger::error("Could not locate IsotopologueSet");
             }
+            const IsotopologueSet &topeSet = *topeSetData;
 
             // Iterate over Species present in the set
-            for (auto &topes : (*topeSet).constIsotopologues())
+            for (auto &topes : topeSet.constIsotopologues())
             {
                 // Find the referenced Species in our SpeciesInfo list
                 auto *spInfo = cfg->usedSpeciesInfo(topes.species());

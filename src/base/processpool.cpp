@@ -2031,7 +2031,7 @@ bool ProcessPool::assemble(Array<double> &array, int nData, Array<double> &rootD
 bool ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-    bool decision = true;
+    auto decision = true;
     if (!broadcast(decision, rootRank, commType))
         return Messenger::error("Error telling processes to proceed.\n");
 #endif
@@ -2042,7 +2042,7 @@ bool ProcessPool::decideTrue(int rootRank, ProcessPool::CommunicatorType commTyp
 bool ProcessPool::decideFalse(int rootRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-    bool decision = false;
+    auto decision = false;
     if (!broadcast(decision, rootRank, commType))
         return Messenger::error("Error telling processes to stop.\n");
 #endif
@@ -2066,7 +2066,7 @@ bool ProcessPool::allTrue(bool value, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     // First, sum all bool values of the processes in the pool
-    int summedResult = (value ? 1 : 0);
+    auto summedResult = (value ? 1 : 0);
     if (!allSum(&summedResult, 1, commType))
         return false;
     if (commType == ProcessPool::GroupLeadersCommunicator)
@@ -2086,7 +2086,7 @@ bool ProcessPool::equality(bool b, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     // First, sum all bool values of the processes in the pool
-    int summedResult = (b ? 1 : 0);
+    auto summedResult = (b ? 1 : 0);
     if (!allSum(&summedResult, 1, commType))
         return false;
     // Now check the sum - if it's zero, then everything must have been 'false'.

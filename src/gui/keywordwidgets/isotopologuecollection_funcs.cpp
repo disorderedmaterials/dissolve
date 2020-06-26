@@ -24,13 +24,12 @@
 #include "classes/species.h"
 #include "genericitems/listhelper.h"
 #include "gui/delegates/combolist.hui"
+#include "gui/delegates/customcombodelegate.h"
 #include "gui/delegates/exponentialspin.hui"
-#include "gui/delegates/isotopologuecombo.hui"
 #include "gui/delegates/usedspeciescombo.hui"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/isotopologuecollection.h"
 #include "module/module.h"
-#include "templates/variantpointer.h"
 
 IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget *parent, KeywordBase *keyword,
                                                                          const CoreData &coreData)
@@ -41,7 +40,9 @@ IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget
     ui_.setupUi(dropWidget());
 
     // Set delegates for table
-    ui_.IsotopologueTree->setItemDelegateForColumn(2, new IsotopologueComboDelegate(this));
+    ui_.IsotopologueTree->setItemDelegateForColumn(2,
+                                                   new CustomComboDelegate<IsotopologueCollectionKeywordWidget>(
+                                                       this, &IsotopologueCollectionKeywordWidget::availableIsotopologueNames));
     ui_.IsotopologueTree->setItemDelegateForColumn(3, new ExponentialSpinDelegate(this));
 
     // Connect signals / slots
@@ -70,6 +71,41 @@ IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget
 /*
  * Widgets
  */
+
+// Return valid Isotopologue names for specified model index
+std::vector<std::string> IsotopologueCollectionKeywordWidget::availableIsotopologueNames(const QModelIndex &index)
+{
+    // We are expecting to be given a QModelIndex which locates an item representing a IsotopologueWeight
+    // The column of the provided child model index must therefore be '2'
+    if (index.column() != 2)
+    {
+        // TODO Raise Exception
+        Messenger::error("IsotopologueCollectionKeywordWidget::availableIsotopologueNames() - Not a suitable column (!= 2).\n");
+        return std::vector<std::string>();
+    }
+
+    // Get the parent and grandparent model indices to get the positions (rows) of the Isopologues and IsotopologueSets
+    const auto topesIndex = index.parent();
+    const auto setIndex = topesIndex.parent();
+    if (!topesIndex.isValid() || !setIndex.isValid())
+    {
+        // TODO Raise Exception
+        Messenger::error("IsotopologueCollectionKeywordWidget::availableIsotopologueNames() - Parent (Isotopologues) and/or "
+                         "grandparent (IsotopologueSet) not valid.\n");
+        return std::vector<std::string>();
+    }
+
+    auto &isotopologueSet = keyword_->data().isotopologueSets()[setIndex.row()];
+    auto &isotopologues = isotopologueSet.isotopologues()[topesIndex.row()];
+
+    // Construct valid names list
+    std::vector<std::string> validNames = {"Natural"};
+    ListIterator<Isotopologue> topeIterator(isotopologues.species()->isotopologues());
+    while (Isotopologue *tope = topeIterator.iterate())
+        validNames.push_back(tope->name());
+
+    return validNames;
+}
 
 void IsotopologueCollectionKeywordWidget::autoButton_clicked(bool checked)
 {
@@ -104,90 +140,120 @@ void IsotopologueCollectionKeywordWidget::addButton_clicked(bool checked)
             break;
         }
     }
-    else if (!item->text(0).isEmpty())
+    else if (isotopologueSetsItemManager_.isMapped(item))
     {
-        // Configuration, so add next missing Species
-        IsotopologueSet *set = VariantPointer<IsotopologueSet>(item->data(0, Qt::UserRole));
-        if (!set)
+        // IsotopologueSet (Configuration), so add next Species
+        auto data = isotopologueSetsItemManager_.reference(item);
+        if (!data)
+        {
+            // TODO Raise Exception
+            Messenger::error("Reference for IsotopologueSet not in map.\n");
             return;
+        }
+        IsotopologueSet &set = *data;
 
-        ListIterator<SpeciesInfo> speciesIterator(set->configuration()->usedSpecies());
+        ListIterator<SpeciesInfo> speciesIterator(set.configuration()->usedSpecies());
         while (SpeciesInfo *spInfo = speciesIterator.iterate())
         {
-            if (set->contains(spInfo->species()))
-                continue;
-
-            set->add(spInfo->species()->naturalIsotopologue(), 1.0);
-
-            break;
-        }
-    }
-    else if (!item->text(1).isEmpty())
-    {
-        // Species, so add next missing Isotopologue
-        IsotopologueSet *set = VariantPointer<IsotopologueSet>(item->data(0, Qt::UserRole));
-        if (!set)
-            return;
-
-        Isotopologues *topes = VariantPointer<Isotopologues>(item->data(1, Qt::UserRole));
-        if (!topes)
-            return;
-
-        Species *sp = topes->species();
-
-        // Natural first
-        if (!topes->contains(sp->naturalIsotopologue()))
-            set->add(sp->naturalIsotopologue(), 1.0);
-        else
-        {
-            ListIterator<Isotopologue> topeIterator(sp->isotopologues());
-            while (Isotopologue *tope = topeIterator.iterate())
+            if (!set.contains(spInfo->species()))
             {
-                if (topes->contains(tope))
-                    continue;
-
-                set->add(tope, 1.0);
-
+                set.add(spInfo->species()->naturalIsotopologue(), 1.0);
                 break;
             }
         }
     }
-    else
+    else if (isotopologuesItemManager_.isMapped(item))
     {
-        // IsotopologueWeight, so add next missing Isotopologue
-        IsotopologueSet *set = VariantPointer<IsotopologueSet>(item->data(0, Qt::UserRole));
-        if (!set)
-            return;
-
-        IsotopologueWeight *isoWeight = VariantPointer<IsotopologueWeight>(item->data(1, Qt::UserRole));
-        if (!isoWeight)
-            return;
-
-        Species *sp = isoWeight->isotopologue()->parent();
-
-        auto data = set->getIsotopologues(sp);
-
-        // TODO Raise exception if isotopologue set not found
-        if (!data)
+        // Get IsotopologueSet reference
+        auto setData = isotopologueSetsItemManager_.reference(item->parent());
+        if (!setData)
         {
-            Messenger::error("IsotopologueSet does not contain Species.\n");
+            // TODO Raise Exception
+            Messenger::error("Reference for IsotopologueSet not in map.\n");
+            return;
         }
-        auto &topes = *data;
+        IsotopologueSet &set = *setData;
+
+        // Get Isotopologues reference
+        auto topesData = isotopologuesItemManager_.reference(item);
+        if (!topesData)
+        {
+            // TODO Raise Exception
+            Messenger::error("Reference for Isotopologues not in map.\n");
+            return;
+        }
+        Isotopologues &topes = *topesData;
+
+        auto *sp = topes.species();
 
         // Natural first
         if (!topes.contains(sp->naturalIsotopologue()))
-            set->add(sp->naturalIsotopologue(), 1.0);
+            set.add(sp->naturalIsotopologue(), 1.0);
+        else
+        {
+            ListIterator<Isotopologue> topeIterator(sp->isotopologues());
+            while (auto *tope = topeIterator.iterate())
+            {
+                if (!topes.contains(tope))
+                {
+                    set.add(tope, 1.0);
+                    break;
+                }
+            }
+        }
+    }
+    else if (isotopologueWeightItemManager_.isMapped(item))
+    {
+        // Get toplevel item parent (two levels up) so we have access to the IsotopologueSet
+        QTreeWidgetItem *topLevelItem = item->parent();
+        while (topLevelItem->parent())
+            topLevelItem = topLevelItem->parent();
+        auto setData = isotopologueSetsItemManager_.reference(topLevelItem);
+        if (!setData)
+        {
+            // TODO Raise Exception
+            Messenger::error("Reference for IsotopologueSet not in map.\n");
+            return;
+        }
+        IsotopologueSet &set = *setData;
+
+        // Get IsotopologueWeight reference
+        auto weightData = isotopologueWeightItemManager_.reference(item);
+        if (!weightData)
+        {
+            // TODO Raise Exception
+            Messenger::error("Reference for IsotopologueWeight not in map.\n");
+            return;
+        }
+        IsotopologueWeight &topeWeight = *weightData;
+
+        // Grab relevant Species
+        auto *sp = topeWeight.isotopologue()->parent();
+
+        // Get available Isotopologues
+        auto data = set.getIsotopologues(sp);
+        // TODO Raise exception if isotopologue set not found
+        if (!data)
+        {
+            // TODO Raise Exception
+            Messenger::error("IsotopologueSet does not contain Species.\n");
+            return;
+        }
+        const Isotopologues &topes = *data;
+
+        // Natural first
+        if (!topes.contains(sp->naturalIsotopologue()))
+            set.add(sp->naturalIsotopologue(), 1.0);
         else
         {
             ListIterator<Isotopologue> topeIterator(sp->isotopologues());
             while (Isotopologue *tope = topeIterator.iterate())
             {
-                if (topes.contains(tope))
-                    continue;
-
-                set->add(tope, 1.0);
-
-                break;
+                if (!topes.contains(tope))
+                {
+                    set.add(tope, 1.0);
+                    break;
+                }
             }
         }
     }
@@ -210,36 +276,39 @@ void IsotopologueCollectionKeywordWidget::removeButton_clicked(bool checked)
     if (isotopologueSetsItemManager_.isMapped(item))
     {
         // Get IsotopologueSet reference
-        auto data = isotopologueSetsItemManager_.reference(item);
-        if (std::get<1>(data))
+        auto setData = isotopologueSetsItemManager_.reference(item);
+        if (!setData)
         {
             // TODO Raise Exception
             Messenger::error("Reference for IsotopologueSet not in map.\n");
             return;
         }
-        keyword_->data().remove(&std::get<0>(data));
+        IsotopologueSet &set = *setData;
+        keyword_->data().remove(&set);
     }
     else if (isotopologuesItemManager_.isMapped(item))
     {
         // Get IsotopologueSet reference
         auto setData = isotopologueSetsItemManager_.reference(item->parent());
-        if (std::get<1>(setData))
+        if (!setData)
         {
             // TODO Raise Exception
             Messenger::error("Reference for IsotopologueSet not in map.\n");
             return;
         }
+        IsotopologueSet &set = *setData;
 
         // Get Isotopologues reference
         auto topesData = isotopologuesItemManager_.reference(item);
-        if (std::get<1>(topesData))
+        if (!topesData)
         {
             // TODO Raise Exception
             Messenger::error("Reference for Isotopologues not in map.\n");
             return;
         }
+        Isotopologues &topes = *topesData;
 
-        keyword_->data().remove(&std::get<0>(setData), std::get<0>(topesData).species());
+        keyword_->data().remove(&set, topes.species());
     }
     else if (isotopologueWeightItemManager_.isMapped(item))
     {
@@ -250,23 +319,25 @@ void IsotopologueCollectionKeywordWidget::removeButton_clicked(bool checked)
 
         // Get IsotopologueSet reference
         auto setData = isotopologueSetsItemManager_.reference(topLevelItem);
-        if (std::get<1>(setData))
+        if (!setData)
         {
             // TODO Raise Exception
             Messenger::error("Reference for IsotopologueSet not in map.\n");
             return;
         }
+        IsotopologueSet &set = *setData;
 
         // Get IsotopologueWeight reference
         auto weightData = isotopologueWeightItemManager_.reference(item);
-        if (std::get<1>(weightData))
+        if (!weightData)
         {
             // TODO Raise Exception
             Messenger::error("Reference for IsotopologueWeight not in map.\n");
             return;
         }
+        IsotopologueWeight &weight = *weightData;
 
-        keyword_->data().remove(&std::get<0>(setData), &std::get<0>(weightData));
+        keyword_->data().remove(&set, &weight);
     }
 
     // Manually flag that the keyword data has changed
@@ -291,26 +362,26 @@ void IsotopologueCollectionKeywordWidget::isotopologueTree_itemChanged(QTreeWidg
 
     // Get IsotopologueWeight reference
     auto weightData = isotopologueWeightItemManager_.reference(item);
-    if (std::get<1>(weightData))
+    if (weightData)
     {
         // TODO Raise Exception
         Messenger::error("Reference for IsotopologueWeight not in map.\n");
         return;
     }
-    auto &weight = std::get<0>(weightData);
+    IsotopologueWeight &weight = *weightData;
 
     // Column of passed item tells us the type of data we need to change
     if (column == 2)
     {
         // Editing the Isotopologue - need the parent item in order to validate it
         auto topesData = isotopologuesItemManager_.reference(item->parent());
-        if (std::get<1>(topesData))
+        if (topesData)
         {
             // TODO Raise Exception
             Messenger::error("Reference for Isotopologues not in map.\n");
             return;
         }
-        auto &topes = std::get<0>(topesData);
+        Isotopologues &topes = *topesData;
         auto *iso = topes.species()->findIsotopologue(qPrintable(item->text(column)));
         if (!iso)
             return;
