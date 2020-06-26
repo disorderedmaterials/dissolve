@@ -95,13 +95,13 @@ bool AtomTypeSelectionKeyword::read(LineParser &parser, int startArg, CoreData &
     for (int n = startArg; n < parser.nArgs(); ++n)
     {
         // Do we recognise the AtomType?
-        AtomType *atomType = NULL;
-        ListIterator<AtomType> typeIterator(coreData.constAtomTypes());
-        while ((atomType = typeIterator.iterate()))
-            if (DissolveSys::sameString(atomType->name(), parser.argc(n)))
-                break;
-        if (!atomType)
+        auto it =
+            std::find_if(coreData.constAtomTypes().begin(), coreData.constAtomTypes().end(), [&parser, n](const auto atomType) {
+                return DissolveSys::sameString(atomType->name(), parser.argc(n));
+            });
+        if (it == coreData.constAtomTypes().end())
             return Messenger::error("Unrecognised AtomType '%s' found in list.\n", parser.argc(n));
+        auto atomType = *it;
 
         // If the AtomType is in the list already, complain
         if (data_.contains(*atomType))

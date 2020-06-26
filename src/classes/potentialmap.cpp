@@ -51,7 +51,7 @@ bool PotentialMap::initialise(const std::vector<std::shared_ptr<AtomType>> &mast
     clear();
 
     // Create PairPotential matrix
-    nTypes_ = masterAtomTypes.nItems();
+    nTypes_ = masterAtomTypes.size();
     potentialMatrix_.initialise(nTypes_, nTypes_);
 
     // Loop over defined PairPotentials
