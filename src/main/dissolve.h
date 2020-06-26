@@ -63,7 +63,7 @@ class Dissolve
 
     /*
      * Atom Types
-     * (Exposes List<AtomType> in coreData_)
+     * (Exposes std::vector<std::shared_ptr<AtomType>> in coreData_)
      */
     public:
     // Add AtomType with specified Element
@@ -71,7 +71,7 @@ class Dissolve
     // Return number of AtomTypes in list
     int nAtomTypes() const;
     // Return AtomTypes list
-    List<AtomType> &atomTypes();
+    std::vector<std::shared_ptr<AtomType>> &atomTypes();
     // Return nth AtomType in list
     AtomType *atomType(int n);
     // Search for AtomType by name

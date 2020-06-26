@@ -80,7 +80,7 @@ class ScatteringMatrix
      */
     public:
     // Initialise from supplied list of AtomTypes
-    void initialise(const List<AtomType> &types, Array2D<Data1D> &estimatedSQ, const char *objectNamePrefix,
+    void initialise(const std::vector<std::shared_ptr<AtomType>> &types, Array2D<Data1D> &estimatedSQ, const char *objectNamePrefix,
                     const char *groupName);
     // Finalise
     bool finalise();

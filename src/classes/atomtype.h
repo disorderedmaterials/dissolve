@@ -30,7 +30,7 @@
 class Element;
 
 // AtomType Definition
-class AtomType : public ListItem<AtomType>
+class AtomType
 {
     public:
     AtomType();

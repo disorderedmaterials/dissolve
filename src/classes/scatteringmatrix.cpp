@@ -211,8 +211,8 @@ Array2D<double> ScatteringMatrix::matrixProduct() const { return inverseA_ * A_;
  */
 
 // Initialise from supplied list of AtomTypes
-void ScatteringMatrix::initialise(const List<AtomType> &types, Array2D<Data1D> &estimatedSQ, const char *objectNamePrefix,
-                                  const char *groupName)
+void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &types, Array2D<Data1D> &estimatedSQ,
+                                  const char *objectNamePrefix, const char *groupName)
 {
     // Clear coefficients matrix and its inverse_, and empty our typePairs_ and data_ lists
     A_.clear();

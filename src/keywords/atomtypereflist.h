@@ -24,15 +24,17 @@
 #include "classes/atomtype.h"
 #include "keywords/data.h"
 #include "templates/reflist.h"
+#include <memory>
+#include <vector>
 
 // Forward Declarations
 class Configuration;
 
 // Keyword with AtomType RefList Data
-class AtomTypeRefListKeyword : public KeywordData<RefList<AtomType> &>
+class AtomTypeRefListKeyword : public KeywordData<std::vector<std::shared_ptr<AtomType>> &>
 {
     public:
-    AtomTypeRefListKeyword(RefList<AtomType> &targetRefList);
+    AtomTypeRefListKeyword(std::vector<std::shared_ptr<AtomType>> &targetRefList);
     ~AtomTypeRefListKeyword();
 
     /*

@@ -26,6 +26,8 @@
 #include "classes/masterintra.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
+#include <memory>
+#include <vector>
 
 // Forward Declarations
 class AtomType;
@@ -48,7 +50,7 @@ class CoreData
      */
     private:
     // Core AtomTypes list
-    List<AtomType> atomTypes_;
+    std::vector<std::shared_ptr<AtomType>> atomTypes_;
     // AtomTypes version
     VersionCounter atomTypesVersion_;
 
@@ -60,9 +62,9 @@ class CoreData
     // Return number of AtomTypes in list
     int nAtomTypes() const;
     // Return core AtomTypes list
-    List<AtomType> &atomTypes();
+    std::vector<std::shared_ptr<AtomType>> &atomTypes();
     // Return core AtomTypes list (const)
-    const List<AtomType> &constAtomTypes() const;
+    const std::vector<std::shared_ptr<AtomType>> &constAtomTypes() const;
     // Return nth AtomType in list
     AtomType *atomType(int n);
     // Generate unique AtomType name with base name provided

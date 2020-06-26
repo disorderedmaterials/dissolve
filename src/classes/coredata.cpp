@@ -78,10 +78,10 @@ void CoreData::removeAtomType(AtomType *at) { atomTypes_.remove(at); }
 int CoreData::nAtomTypes() const { return atomTypes_.nItems(); }
 
 // Return core AtomTypes list
-List<AtomType> &CoreData::atomTypes() { return atomTypes_; }
+std::vector<std::shared_ptr<AtomType>> &CoreData::atomTypes() { return atomTypes_; }
 
 // Return core AtomTypes list (const)
-const List<AtomType> &CoreData::constAtomTypes() const { return atomTypes_; }
+const std::vector<std::shared_ptr<AtomType>> &CoreData::constAtomTypes() const { return atomTypes_; }
 
 // Return nth AtomType in list
 AtomType *CoreData::atomType(int n) { return atomTypes_[n]; }

@@ -51,7 +51,7 @@ class PotentialMap
 
     public:
     // Initialise map
-    bool initialise(const List<AtomType> &masterAtomTypes, const List<PairPotential> &pairPotentials,
+    bool initialise(const std::vector<std::shared_ptr<AtomType>> &masterAtomTypes, const List<PairPotential> &pairPotentials,
                     double pairPotentialRange);
     // Return PairPotential range
     double range() const;

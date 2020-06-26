@@ -24,8 +24,8 @@
 #include "classes/atomtype.h"
 #include "classes/coredata.h"
 
-AtomTypeRefListKeyword::AtomTypeRefListKeyword(RefList<AtomType> &targetRefList)
-    : KeywordData<RefList<AtomType> &>(KeywordBase::AtomTypeRefListData, targetRefList)
+AtomTypeRefListKeyword::AtomTypeRefListKeyword(std::vector<std::shared_ptr<AtomType>> &targetRefList)
+    : KeywordData<std::vector<std::shared_ptr<AtomType>> &>(KeywordBase::AtomTypeRefListData, targetRefList)
 {
 }
 

@@ -35,7 +35,7 @@ AtomType *Dissolve::addAtomType(Element *el)
 int Dissolve::nAtomTypes() const { return coreData_.nAtomTypes(); }
 
 // Return core AtomTypes list
-List<AtomType> &Dissolve::atomTypes() { return coreData_.atomTypes(); }
+std::vector<std::shared_ptr<AtomType>> &Dissolve::atomTypes() { return coreData_.atomTypes(); }
 
 // Return nth AtomType in list
 AtomType *Dissolve::atomType(int n) { return coreData_.atomType(n); }
