@@ -55,7 +55,7 @@ int Dissolve::indexOf(PairPotential *pp) { return pairPotentials_.indexOf(pp); }
 int Dissolve::nPairPotentials() const { return pairPotentials_.nItems(); }
 
 // Add new pair potential to list
-PairPotential *Dissolve::addPairPotential(AtomType *at1, AtomType *at2)
+PairPotential *Dissolve::addPairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2)
 {
     PairPotential *pp = pairPotentials_.add();
     pp->setUp(at1, at2);
@@ -70,7 +70,7 @@ const List<PairPotential> &Dissolve::pairPotentials() const { return pairPotenti
 PairPotential *Dissolve::pairPotential(int n) { return pairPotentials_[n]; }
 
 // Return whether specified PairPotential is defined
-PairPotential *Dissolve::pairPotential(AtomType *at1, AtomType *at2) const
+PairPotential *Dissolve::pairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2) const
 {
     for (auto *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
     {
@@ -109,7 +109,7 @@ void Dissolve::regeneratePairPotentials()
 }
 
 // Generate all necessary PairPotentials, adding missing terms where necessary
-bool Dissolve::generatePairPotentials(AtomType *onlyInvolving)
+bool Dissolve::generatePairPotentials(std::shared_ptr<AtomType> onlyInvolving)
 {
     // Check current AtomTypes version against the last one we generated at
     if (pairPotentialAtomTypeVersion_ == coreData_.atomTypesVersion())
@@ -121,9 +121,9 @@ bool Dissolve::generatePairPotentials(AtomType *onlyInvolving)
     auto nUndefined = 0;
 
     // Loop over all atomtype pairs and update / add pair potentials as necessary
-    for (AtomType *at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next())
+    for (std::shared_ptr<AtomType> at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next())
     {
-        for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next())
+        for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next())
         {
             // If an AtomType was supplied, only generate the pair potential if one of its AtomTypes matches
             if (onlyInvolving && (at1 != onlyInvolving) && (at2 != onlyInvolving))

@@ -118,7 +118,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
     Element *el;
     CharString arg1, arg2;
-    AtomType *at;
+    std::shared_ptr<AtomType> at;
     Isotopologue *iso;
     SpeciesAngle *a;
     SpeciesAtom *i;
@@ -774,7 +774,7 @@ bool Species::write(LineParser &parser, const char *prefix)
                                    iso->name()))
                 return false;
             RefDataListIterator<AtomType, Isotope *> isotopeIterator(iso->isotopes());
-            while (AtomType *atomType = isotopeIterator.iterate())
+            while (std::shared_ptr<AtomType> atomType = isotopeIterator.iterate())
             {
                 // No need to write anything that's the natural isotope...
                 if (isotopeIterator.currentData()->A() == 0)

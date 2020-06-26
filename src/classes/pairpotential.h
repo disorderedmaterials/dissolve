@@ -107,7 +107,7 @@ class PairPotential : public ListItem<PairPotential>
      */
     private:
     // Original source AtomTypes
-    AtomType *atomTypeI_, *atomTypeJ_;
+    std::shared_ptr<AtomType> atomTypeI_, *atomTypeJ_;
     // Parameters for short-range potential
     double parameters_[MAXSRPARAMETERS];
     // Short range type (determined from AtomTypes)
@@ -123,7 +123,7 @@ class PairPotential : public ListItem<PairPotential>
 
     public:
     // Set up PairPotential parameters from specified AtomTypes
-    bool setUp(AtomType *typeI, AtomType *typeJ);
+    bool setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ);
     // Return short-ranged type
     Forcefield::ShortRangeType shortRangeType() const;
     // Return first AtomType name
@@ -131,9 +131,9 @@ class PairPotential : public ListItem<PairPotential>
     // Return second AtomType name
     const char *atomTypeNameJ() const;
     // Return first source AtomType
-    AtomType *atomTypeI() const;
+    std::shared_ptr<AtomType> atomTypeI() const;
     // Return second source AtomType
-    AtomType *atomTypeJ() const;
+    std::shared_ptr<AtomType> atomTypeJ() const;
     // Set parameter specified
     void setParameter(int index, double value);
     // Return short-range parameter specified

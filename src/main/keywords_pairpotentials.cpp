@@ -51,7 +51,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
 {
     Messenger::print("\nParsing %s block...\n", BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
 
-    AtomType *at1;
+    std::shared_ptr<AtomType> at1;
     PairPotential::CoulombTruncationScheme cTrunc;
     PairPotential::ShortRangeTruncationScheme srTrunc;
     auto blockDone = false, error = false;

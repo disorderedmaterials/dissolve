@@ -69,7 +69,7 @@ void Dissolve::copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom
     }
 
     // Search for the existing atom's AtomType by name, and create it if it doesn't exist
-    AtomType *at = findAtomType(sourceAtom->atomType()->name());
+    std::shared_ptr<AtomType> at = findAtomType(sourceAtom->atomType()->name());
     if (!at)
     {
         at = addAtomType(sourceAtom->element());

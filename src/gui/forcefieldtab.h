@@ -68,7 +68,7 @@ class ForcefieldTab : public QWidget, public MainTab
     // Row update function for ImpropersTable
     void updateImpropersTableRow(int row, MasterIntra *masterImproper, bool createItems);
     // Row update function for AtomTypesTable
-    void updateAtomTypesTableRow(int row, AtomType *atomType, bool createItems);
+    void updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> atomType, bool createItems);
     // Row update function for PairPotentialsTable
     void updatePairPotentialsTableRow(int row, PairPotential *pairPotential, bool createItems);
 

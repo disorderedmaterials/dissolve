@@ -58,7 +58,7 @@ class AddForcefieldTermsWizard : public WizardWidget
 
     private:
     // Return (mapped) name to use for specified type
-    const char *mappedName(const AtomType *at);
+    const char *mappedName(const std::shared_ptr<AtomType> at);
 
     public:
     // Set Dissolve reference
@@ -119,7 +119,7 @@ class AddForcefieldTermsWizard : public WizardWidget
      */
     private:
     // Row update function for AtomTypesConflictsList
-    void updateAtomTypesConflictsListRow(int row, AtomType *atomType, bool createItem);
+    void updateAtomTypesConflictsListRow(int row, std::shared_ptr<AtomType> atomType, bool createItem);
     // Update page with AtomTypes in our temporary Dissolve reference
     void updateAtomTypesConflictsPage();
     // Check for atom type naming conflicts

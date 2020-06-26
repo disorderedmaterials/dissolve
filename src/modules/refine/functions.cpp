@@ -80,7 +80,7 @@ Data1D RefineModule::calculateCR(const Data1D &sq, double normFactor, double rMi
 }
 
 // Determine modification to bonds based on supplied delta g(r), returning features extracted from deltaGR
-bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, AtomType *typeI, AtomType *typeJ,
+bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ,
                                    Data1D &deltaBond)
 {
     // TODO - this function is out-of-date and no longer works

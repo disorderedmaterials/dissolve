@@ -124,7 +124,7 @@ class RefineModule : public Module
                        WindowFunction windowFunction = WindowFunction(), BroadeningFunction broadening = BroadeningFunction(),
                        bool unbroaden = false);
     // Determine modification to bonds based on supplied delta g(r)
-    bool modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, AtomType *typeI, AtomType *typeJ, Data1D &deltaBond);
+    bool modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ, Data1D &deltaBond);
     // Return value of fit equation given specified parameters
     inline double fitEquation(double x, double xCentre, double delta, double widthSquared, double AL, double AC, double AR);
     // Two-exponential, 5-parameter cost function for modifyBondTerms() fitting

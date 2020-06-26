@@ -48,7 +48,7 @@ bool AtomTypeRefListKeyword::read(LineParser &parser, int startArg, CoreData &co
     for (int n = startArg; n < parser.nArgs(); ++n)
     {
         // Do we recognise the AtomType?
-        AtomType *atomType = coreData.findAtomType(parser.argc(n));
+        std::shared_ptr<AtomType> atomType = coreData.findAtomType(parser.argc(n));
         if (!atomType)
             return Messenger::error("Unrecognised AtomType '%s' found in list.\n", parser.argc(n));
 
@@ -88,4 +88,4 @@ bool AtomTypeRefListKeyword::write(LineParser &parser, const char *keywordName, 
  */
 
 // Prune any references to the supplied AtomType in the contained data
-void AtomTypeRefListKeyword::removeReferencesTo(AtomType *at) { data_.remove(at); }
+void AtomTypeRefListKeyword::removeReferencesTo(std::shared_ptr<AtomType> at) { data_.remove(at); }

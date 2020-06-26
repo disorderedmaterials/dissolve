@@ -78,7 +78,7 @@ void Isotopologue::update()
     // Loop over Atoms in species, get their assigned AtomTypes, and searching for them in the oldItems list
     for (auto *i = parent_->firstAtom(); i != NULL; i = i->next())
     {
-        AtomType *at = i->atomType();
+        std::shared_ptr<AtomType> at = i->atomType();
         if (at == NULL)
         {
             Messenger::error("NULL_POINTER - Found NULL AtomType pointer for Atom %i in Isotopologue::update().\n",
@@ -104,7 +104,7 @@ void Isotopologue::update()
 }
 
 // Set Isotope associated to AtomType
-bool Isotopologue::setAtomTypeIsotope(AtomType *at, Isotope *isotope)
+bool Isotopologue::setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *isotope)
 {
     // Check for NULL pointer
     if (at == NULL)
@@ -127,7 +127,7 @@ bool Isotopologue::setAtomTypeIsotope(AtomType *at, Isotope *isotope)
 }
 
 // Return Isotope for specified AtomType
-Isotope *Isotopologue::atomTypeIsotope(AtomType *at) const
+Isotope *Isotopologue::atomTypeIsotope(std::shared_ptr<AtomType> at) const
 {
     RefDataItem<AtomType, Isotope *> *rdi = isotopes_.contains(at);
     if (!rdi)

@@ -49,7 +49,7 @@ class ScatteringMatrix
      */
     private:
     // Reference pairs of AtomTypes
-    std::vector<std::tuple<AtomType *, AtomType *>> typePairs_;
+    std::vector<std::tuple<AtomType *, std::shared_ptr<AtomType> >> typePairs_;
     // Coefficients matrix (A) (ci * cj * bi * bj * (typei == typej ? 1 : 2)) (n * n)
     Array2D<double> A_;
     // Inverse of coefficients matrix
@@ -61,9 +61,9 @@ class ScatteringMatrix
     // Return number of reference AtomType pairs
     int nPairs() const;
     // Return index of specified AtomType pair
-    int pairIndex(AtomType *typeI, AtomType *typeJ) const;
+    int pairIndex(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ) const;
     // Return weight of the specified AtomType pair in the inverse matrix
-    double pairWeightInverse(AtomType *typeI, AtomType *typeJ, int dataIndex) const;
+    double pairWeightInverse(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ, int dataIndex) const;
     // Print the matrix
     void print() const;
     // Print the inverse matrix
@@ -87,5 +87,5 @@ class ScatteringMatrix
     // Add reference data with its associated Weights, applying optional factor to those weights and the data itself
     bool addReferenceData(const Data1D &weightedData, NeutronWeights &dataWeights, double factor = 1.0);
     // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-    bool addPartialReferenceData(Data1D &weightedData, AtomType *at1, AtomType *at2, double dataWeight, double factor = 1.0);
+    bool addPartialReferenceData(Data1D &weightedData, std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2, double dataWeight, double factor = 1.0);
 };

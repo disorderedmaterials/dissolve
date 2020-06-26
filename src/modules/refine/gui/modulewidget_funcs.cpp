@@ -268,10 +268,10 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule *module)
 
         // Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the partialSQGraph_
         n = 0;
-        for (AtomType *at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
+        for (std::shared_ptr<AtomType> at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
         {
             m = n;
-            for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
+            for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
             {
                 CharString id("%s-%s/%s", at1->name(), at2->name(), group->name());
 

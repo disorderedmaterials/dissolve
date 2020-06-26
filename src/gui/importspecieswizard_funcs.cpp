@@ -265,7 +265,7 @@ void ImportSpeciesWizard::on_SpeciesList_currentRowChanged(int currentRow)
  */
 
 // Row update function for AtomTypesList
-void ImportSpeciesWizard::updateAtomTypesListRow(int row, AtomType *atomType, bool createItem)
+void ImportSpeciesWizard::updateAtomTypesListRow(int row, std::shared_ptr<AtomType> atomType, bool createItem)
 {
     QListWidgetItem *item;
     if (createItem)
@@ -294,7 +294,7 @@ void ImportSpeciesWizard::updateAtomTypesPage()
     // Determine whether we have any naming conflicts
     auto conflicts = false;
     ListIterator<AtomType> typeIterator(temporaryCoreData_.constAtomTypes());
-    while (AtomType *at = typeIterator.iterate())
+    while (std::shared_ptr<AtomType> at = typeIterator.iterate())
         if (dissolveReference_->findAtomType(at->name()))
         {
             conflicts = true;
@@ -322,7 +322,7 @@ void ImportSpeciesWizard::atomTypesListEdited(QWidget *lineEdit)
     for (int n = 0; n < ui_.AtomTypesList->count(); ++n)
     {
         QListWidgetItem *item = ui_.AtomTypesList->item(n);
-        AtomType *at = VariantPointer<AtomType>(item->data(Qt::UserRole));
+        std::shared_ptr<AtomType> at = VariantPointer<AtomType>(item->data(Qt::UserRole));
         if (!at)
             continue;
 
@@ -344,7 +344,7 @@ void ImportSpeciesWizard::on_AtomTypesPrefixButton_clicked(bool checked)
     QList<QListWidgetItem *>::iterator i;
     for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
     {
-        AtomType *at = VariantPointer<AtomType>((*i)->data(Qt::UserRole));
+        std::shared_ptr<AtomType> at = VariantPointer<AtomType>((*i)->data(Qt::UserRole));
         at->setName(CharString("%s%s", qPrintable(prefix), at->name()));
     }
 
@@ -363,7 +363,7 @@ void ImportSpeciesWizard::on_AtomTypesSuffixButton_clicked(bool checked)
     QList<QListWidgetItem *>::iterator i;
     for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
     {
-        AtomType *at = VariantPointer<AtomType>((*i)->data(Qt::UserRole));
+        std::shared_ptr<AtomType> at = VariantPointer<AtomType>((*i)->data(Qt::UserRole));
         at->setName(CharString("%s%s", at->name(), qPrintable(suffix)));
     }
 

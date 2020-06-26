@@ -331,7 +331,7 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
         return;
     Vec3<double> r = speciesAtom->r();
     // Column of passed item tells us the type of data we need to change
-    AtomType *atomType;
+    std::shared_ptr<AtomType> atomType;
     switch (w->column())
     {
         // Element

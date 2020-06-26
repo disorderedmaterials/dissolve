@@ -79,7 +79,7 @@ AddForcefieldTermsWizard::~AddForcefieldTermsWizard() {}
  */
 
 // Return (mapped) name to use for specified type
-const char *AddForcefieldTermsWizard::mappedName(const AtomType *at)
+const char *AddForcefieldTermsWizard::mappedName(const std::shared_ptr<AtomType> at)
 {
     RefDataItem<const AtomType, CharString> *item = typeNameMappings_.contains(at);
     if (!item)
@@ -505,7 +505,7 @@ void AddForcefieldTermsWizard::on_ForcefieldWidget_forcefieldDoubleClicked()
  */
 
 // Row update function for AtomTypesConflictsList
-void AddForcefieldTermsWizard::updateAtomTypesConflictsListRow(int row, AtomType *atomType, bool createItem)
+void AddForcefieldTermsWizard::updateAtomTypesConflictsListRow(int row, std::shared_ptr<AtomType> atomType, bool createItem)
 {
     QListWidgetItem *item;
     if (createItem)

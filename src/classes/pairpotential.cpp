@@ -160,7 +160,7 @@ void PairPotential::setData1DNames()
 }
 
 // Set up PairPotential parameters from specified AtomTypes
-bool PairPotential::setUp(AtomType *typeI, AtomType *typeJ)
+bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ)
 {
     // Check for NULL pointers
     if (typeI == NULL)
@@ -273,10 +273,10 @@ const char *PairPotential::atomTypeNameJ() const
 }
 
 // Return first source AtomType
-AtomType *PairPotential::atomTypeI() const { return atomTypeI_; }
+std::shared_ptr<AtomType> PairPotential::atomTypeI() const { return atomTypeI_; }
 
 // Return second source AtomType
-AtomType *PairPotential::atomTypeJ() const { return atomTypeJ_; }
+std::shared_ptr<AtomType> PairPotential::atomTypeJ() const { return atomTypeJ_; }
 
 // Set parameter with index specified
 void PairPotential::setParameter(int index, double value)

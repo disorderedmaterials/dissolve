@@ -266,10 +266,10 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Set object names in combinedUnweightedSQ
         i = 0;
-        for (AtomType *at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+        for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
         {
             j = i;
-            for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+            for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
                 combinedUnweightedSQ.at(i, j).setObjectTag(
                     CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
         }
@@ -347,10 +347,10 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Create the array
             simulatedReferenceData_.createEmpty(combinedUnweightedSQ.linearArraySize());
             i = 0;
-            for (AtomType *at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+            for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
             {
                 j = i;
-                for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+                for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
                 {
                     // Weight in the matrix will be based on the natural isotope and the summed
                     // concentration weight
@@ -400,10 +400,10 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                                         uniqueName_, GenericItem::InRestartFileFlag);
         estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
         i = 0;
-        for (AtomType *at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+        for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
         {
             j = i;
-            for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+            for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
             {
                 // Grab experimental g(r) contained and make sure its object name is set
                 auto &expGR = estimatedGR.at(i, j);
@@ -436,10 +436,10 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
             deltaSQ.initialise(nTypes, nTypes, true);
 
         i = 0;
-        for (AtomType *at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+        for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
         {
             j = i;
-            for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+            for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
             {
                 // Grab difference partial and make sure its object name is set
                 auto &dSQ = deltaSQ.at(i, j);
@@ -515,10 +515,10 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
             const auto rFraction = 0.95;
             const auto thresholdValue = 0.1;
             i = 0;
-            for (AtomType *at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+            for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
             {
                 j = i;
-                for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+                for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
                 {
                     // Grab unbound g(r)
                     auto &gr = summedUnweightedGR.unboundPartial(i, j);
@@ -556,10 +556,10 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Data1D cr;
         Array<double> crgr;
         i = 0;
-        for (AtomType *at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+        for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
         {
             j = i;
-            for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+            for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
             {
                 // Grab potential perturbation container, clear it, and make sure its object name is set
                 auto &dPhiR = groupDeltaPhiR.at(i, j);
@@ -756,10 +756,10 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Normalise and store our combined partial errors
      */
     i = 0;
-    for (AtomType *at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+    for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
     {
         j = i;
-        for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+        for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
         {
             auto &partialErrors = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(),
                                                                      CharString("PartialError_%s-%s", at1->name(), at2->name()),
@@ -783,10 +783,10 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, Array2D<Data1D>());
 
             i = 0;
-            for (AtomType *at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+            for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
             {
                 j = i;
-                for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+                for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
                 {
                     // Assess error of partial if requested, and decide whether to adjust potential
                     if (onlyWhenErrorStable)
@@ -832,10 +832,10 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
     double phiMagTot = 0.0;
     i = 0;
-    for (AtomType *at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+    for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
     {
         j = i;
-        for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+        for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
         {
             // Grab pointer to the relevant pair potential
             PairPotential *pp = dissolve.pairPotential(at1, at2);

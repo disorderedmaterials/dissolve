@@ -235,7 +235,7 @@ bool Forcefield::assignAtomType(SpeciesAtom *i, CoreData &coreData) const
     if (atomType)
     {
         // Check if an AtomType of the same name already exists - if it does, just use that one
-        AtomType *at = coreData.findAtomType(atomType->name());
+        std::shared_ptr<AtomType> at = coreData.findAtomType(atomType->name());
         if (!at)
         {
             at = coreData.addAtomType(i->element());

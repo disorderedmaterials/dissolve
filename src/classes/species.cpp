@@ -127,7 +127,7 @@ bool Species::checkSetUp()
     for (auto *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
     {
         RefDataListIterator<AtomType, Isotope *> isotopeIterator(iso->isotopes());
-        while (AtomType *atomType = isotopeIterator.iterate())
+        while (std::shared_ptr<AtomType> atomType = isotopeIterator.iterate())
         {
             if (isotopeIterator.currentData() == NULL)
             {

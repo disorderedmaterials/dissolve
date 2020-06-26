@@ -77,7 +77,7 @@ void SpeciesAtom::setCharge(double charge) { charge_ = charge; }
 double SpeciesAtom::charge() const { return charge_; }
 
 // Set AtomType of SpeciesAtom
-void SpeciesAtom::setAtomType(AtomType *at)
+void SpeciesAtom::setAtomType(std::shared_ptr<AtomType> at)
 {
     // Check elements
     if (at && (at->element() != element_))
@@ -93,7 +93,7 @@ void SpeciesAtom::setAtomType(AtomType *at)
 }
 
 // Return SpeciesAtomType of SpeciesAtom
-AtomType *SpeciesAtom::atomType() const { return atomType_; }
+std::shared_ptr<AtomType> SpeciesAtom::atomType() const { return atomType_; }
 
 // Set List index (0->[N-1])
 void SpeciesAtom::setIndex(int id) { index_ = id; }

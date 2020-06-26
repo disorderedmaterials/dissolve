@@ -36,7 +36,7 @@ ScatteringMatrix::ScatteringMatrix() {}
 int ScatteringMatrix::nPairs() const { return typePairs_.size(); }
 
 // Return index of specified AtomType pair
-int ScatteringMatrix::pairIndex(AtomType *typeI, AtomType *typeJ) const
+int ScatteringMatrix::pairIndex(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ) const
 {
     auto index = 0;
     for (auto [i, j] : typePairs_)
@@ -52,7 +52,8 @@ int ScatteringMatrix::pairIndex(AtomType *typeI, AtomType *typeJ) const
 }
 
 // Return weight of the specified AtomType pair in the inverse matrix
-double ScatteringMatrix::pairWeightInverse(AtomType *typeI, AtomType *typeJ, int dataIndex) const
+double ScatteringMatrix::pairWeightInverse(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ,
+                                           int dataIndex) const
 {
     /*
      * The required row of the inverse matrix is the index of the AtomType pair.
@@ -221,9 +222,9 @@ void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &
     typePairs_.clear();
 
     // Copy atom types
-    for (AtomType *at1 = types.first(); at1 != NULL; at1 = at1->next())
+    for (std::shared_ptr<AtomType> at1 = types.first(); at1 != NULL; at1 = at1->next())
     {
-        for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next())
+        for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next())
         {
             typePairs_.emplace_back(at1, at2);
         }
@@ -301,8 +302,8 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeigh
 }
 
 // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, AtomType *at1, AtomType *at2, double dataWeight,
-                                               double factor)
+bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, std::shared_ptr<AtomType> at1,
+                                               std::shared_ptr<AtomType> at2, double dataWeight, double factor)
 {
     // Extend the scattering matrix by one row
     A_.addRow(typePairs_.size());

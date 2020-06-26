@@ -53,7 +53,7 @@ void SpeciesTab::updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, in
 }
 
 // IsotopologuesTree item update function
-void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, AtomType *atomType,
+void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, std::shared_ptr<AtomType> atomType,
                                                   Isotope *isotope, bool createItem)
 {
     QTreeWidgetItem *item;
@@ -157,7 +157,7 @@ void SpeciesTab::on_IsotopologuesTree_itemChanged(QTreeWidgetItem *item, int col
     else if (column == 2)
     {
         // Set neutron isotope - need to get AtomType from column 1...
-        AtomType *atomType = VariantPointer<AtomType>(item->data(1, Qt::UserRole));
+        std::shared_ptr<AtomType> atomType = VariantPointer<AtomType>(item->data(1, Qt::UserRole));
         Isotope *isotope = VariantPointer<Isotope>(item->data(2, Qt::UserRole));
         if (isotope)
             isotopologue->setAtomTypeIsotope(atomType, isotope);

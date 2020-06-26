@@ -71,9 +71,9 @@ class Isotopologue : public ListItem<Isotopologue>
     // Update AtomType/Isotope RefList
     void update();
     // Set AtomType/Isotope pair in list
-    bool setAtomTypeIsotope(AtomType *at, Isotope *isotope);
+    bool setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *isotope);
     // Return Isotope for specified AtomType
-    Isotope *atomTypeIsotope(AtomType *at) const;
+    Isotope *atomTypeIsotope(std::shared_ptr<AtomType> at) const;
     // Return AtomType/Isotope pairs list
     const RefDataList<AtomType, Isotope *> &isotopes() const;
     // Return nth Atom/Isotope pair

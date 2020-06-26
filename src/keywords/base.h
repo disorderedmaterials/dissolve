@@ -205,7 +205,7 @@ class KeywordBase : public ListItem<KeywordBase>
 
     protected:
     // Prune any references to the supplied AtomType in the contained data
-    virtual void removeReferencesTo(AtomType *at);
+    virtual void removeReferencesTo(std::shared_ptr<AtomType> at);
     // Prune any references to the supplied Configuration in the contained data
     virtual void removeReferencesTo(Configuration *cfg);
     // Prune any references to the supplied Isotopologue in the contained data

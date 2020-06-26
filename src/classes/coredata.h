@@ -56,9 +56,9 @@ class CoreData
 
     public:
     // Add new AtomType
-    AtomType *addAtomType(Element *el);
+    std::shared_ptr<AtomType> addAtomType(Element *el);
     // Remove specified AtomType
-    void removeAtomType(AtomType *at);
+    void removeAtomType(std::shared_ptr<AtomType> at);
     // Return number of AtomTypes in list
     int nAtomTypes() const;
     // Return core AtomTypes list
@@ -66,11 +66,11 @@ class CoreData
     // Return core AtomTypes list (const)
     const std::vector<std::shared_ptr<AtomType>> &constAtomTypes() const;
     // Return nth AtomType in list
-    AtomType *atomType(int n);
+    std::shared_ptr<AtomType> atomType(int n);
     // Generate unique AtomType name with base name provided
     const char *uniqueAtomTypeName(const char *baseName) const;
     // Search for AtomType by name
-    AtomType *findAtomType(const char *name) const;
+    std::shared_ptr<AtomType> findAtomType(const char *name) const;
     // Bump AtomTypes version
     void bumpAtomTypesVersion();
     // Return AtomTypes version

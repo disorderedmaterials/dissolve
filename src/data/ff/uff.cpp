@@ -644,7 +644,7 @@ bool Forcefield_UFF::assignAtomTypes(Species *sp, CoreData &coreData, bool keepE
         else
         {
             // Check if an AtomType of the same name already exists - if it does, just use that one
-            AtomType *at = coreData.findAtomType(uffType->name());
+            std::shared_ptr<AtomType> at = coreData.findAtomType(uffType->name());
             if (!at)
             {
                 at = coreData.addAtomType(i->element());

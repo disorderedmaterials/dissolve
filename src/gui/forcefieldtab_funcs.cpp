@@ -308,7 +308,7 @@ void ForcefieldTab::updateImpropersTableRow(int row, MasterIntra *masterImproper
 }
 
 // Row update function for AtomTypesTable
-void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType *atomType, bool createItems)
+void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> atomType, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -549,7 +549,7 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
     if (!ok)
         return;
 
-    AtomType *at = dissolve_.addAtomType(element);
+    std::shared_ptr<AtomType> at = dissolve_.addAtomType(element);
 
     Locker refreshLocker(refreshLock_);
 
@@ -568,7 +568,7 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target AtomType from the passed widget
-    AtomType *atomType = w ? VariantPointer<AtomType>(w->data(Qt::UserRole)) : NULL;
+    std::shared_ptr<AtomType> atomType = w ? VariantPointer<AtomType>(w->data(Qt::UserRole)) : NULL;
     if (!atomType)
         return;
 
