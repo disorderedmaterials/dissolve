@@ -66,7 +66,7 @@ namespace XRayFormFactors
 {
 
 // Return Waasmaier & Kirfel (1995) form factor data for given element and formal charge (if it exists)
-std::optional<std::reference_wrapper<const FormFactorData>> wk1995Data(int Z, int formalCharge)
+OptionalReferenceWrapper<const FormFactorData> wk1995Data(int Z, int formalCharge)
 {
     /*
      * New Analytical Scattering Factor Functions for Free Atoms and Ions

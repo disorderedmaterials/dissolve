@@ -20,11 +20,11 @@
 */
 
 #include "templates/list.h"
+#include "templates/optionalref.h"
 #include "templates/refdatalist.h"
 #include "templates/reflist.h"
 #include "templates/variantpointer.h"
 #include <QTreeWidget>
-#include <optional>
 
 #pragma once
 
@@ -414,7 +414,7 @@ template <class P, class T> class TreeWidgetItemManager
     // Return whether the specified QTreeWidgetItem is mapped to a reference
     bool isMapped(QTreeWidgetItem *item) const { return (referenceMap_.find(item) != referenceMap_.end()); }
     // Retrieve reference associated to specified QTreeWidgetItem
-    std::optional<std::reference_wrapper<T>> reference(QTreeWidgetItem *item) const
+    OptionalReferenceWrapper<T> reference(QTreeWidgetItem *item) const
     {
         auto it = referenceMap_.find(item);
         if (it == referenceMap_.end())
