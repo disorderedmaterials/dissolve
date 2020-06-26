@@ -24,13 +24,13 @@
 #include <QComboBox>
 #include <QModelIndex>
 #include <QObject>
-#include <QtWidgets/QItemDelegate>
+#include <QStyledItemDelegate>
 
 // Forward Declarations
 /* none */
 
 // Custom Combo Delegate
-template <class P> class CustomComboDelegate : public QItemDelegate
+template <class P> class CustomComboDelegate : public QStyledItemDelegate
 {
     public:
     // Typedef for function pointers
@@ -44,7 +44,7 @@ template <class P> class CustomComboDelegate : public QItemDelegate
 
     public:
     CustomComboDelegate(P *parent, AvailableItemsFunction availableItemsFunction)
-        : QItemDelegate(parent), functionParent_(parent), availableItemsFunction_(availableItemsFunction)
+        : QStyledItemDelegate(parent), functionParent_(parent), availableItemsFunction_(availableItemsFunction)
     {
     }
 
@@ -76,14 +76,7 @@ template <class P> class CustomComboDelegate : public QItemDelegate
         // Get the current text and search for it in the combo
         QString value = index.model()->data(index, Qt::EditRole).toString();
 
-        for (int n = 0; n < comboBox->count(); ++n)
-        {
-            if (comboBox->itemText(n) == value)
-            {
-                comboBox->setCurrentIndex(n);
-                break;
-            }
-        }
+        comboBox->setCurrentText(value);
     }
     // Get value from editing widget, and set back in model
     void setModelData(QWidget *editor, QAbstractItemModel *model, const QModelIndex &index) const
