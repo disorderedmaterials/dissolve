@@ -253,7 +253,7 @@ std::shared_ptr<AtomType> AtomTypeList::atomType(int n)
 }
 
 // Return AtomTypeData for specified AtomType
-std::optional<std::reference_wrapper<const AtomTypeData>> AtomTypeList::atomTypeData(std::shared_ptr<AtomType> atomType)
+OptionalReferenceWrapper<const AtomTypeData> AtomTypeList::atomTypeData(std::shared_ptr<AtomType> atomType)
 {
     auto it = std::find_if(types_.begin(), types_.end(), [&atomType](const auto &atd) { return atomType == atd.atomType(); });
     if (it == types_.end())

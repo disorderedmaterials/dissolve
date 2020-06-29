@@ -126,7 +126,7 @@ bool IsotopologueCollection::contains(const Configuration *cfg) const
 }
 
 // Return IsotopologueSet for the specified Configuration
-std::optional<const IsotopologueSet> IsotopologueCollection::getIsotopologueSet(const Configuration *cfg) const
+OptionalReferenceWrapper<const IsotopologueSet> IsotopologueCollection::getIsotopologueSet(const Configuration *cfg) const
 {
     auto it = std::find_if(isotopologueSets_.cbegin(), isotopologueSets_.cend(),
                            [cfg](const auto &set) { return set.configuration() == cfg; });
@@ -146,7 +146,8 @@ bool IsotopologueCollection::contains(const Configuration *cfg, const Species *s
 }
 
 // Return Isotopologues for the Species in the specified Configuration
-std::optional<const Isotopologues> IsotopologueCollection::getIsotopologues(const Configuration *cfg, const Species *sp) const
+OptionalReferenceWrapper<const Isotopologues> IsotopologueCollection::getIsotopologues(const Configuration *cfg,
+                                                                                       const Species *sp) const
 {
     auto it = std::find_if(isotopologueSets_.cbegin(), isotopologueSets_.cend(),
                            [cfg](const auto &set) { return set.configuration() == cfg; });

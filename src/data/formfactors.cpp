@@ -40,7 +40,7 @@ EnumOptions<XRayFormFactors::XRayFormFactorData> xRayFormFactorData()
 }
 
 // Return form factor data from specified dataset for given element and formal charge (if it exists)
-optional_reference_wrapper<const FormFactorData> formFactorData(XRayFormFactorData dataSet, int Z, int formalCharge)
+OptionalReferenceWrapper<const FormFactorData> formFactorData(XRayFormFactorData dataSet, int Z, int formalCharge)
 {
     switch (dataSet)
     {
@@ -54,7 +54,7 @@ optional_reference_wrapper<const FormFactorData> formFactorData(XRayFormFactorDa
 }
 
 // Return form factor data from specified dataset for given element and formal charge (if it exists)
-optional_reference_wrapper<const FormFactorData> formFactorData(XRayFormFactorData dataSet, Element *el, int formalCharge)
+OptionalReferenceWrapper<const FormFactorData> formFactorData(XRayFormFactorData dataSet, Element *el, int formalCharge)
 {
     return formFactorData(dataSet, el->Z(), formalCharge);
 }

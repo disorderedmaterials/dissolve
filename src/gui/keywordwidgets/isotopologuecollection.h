@@ -53,6 +53,10 @@ class IsotopologueCollectionKeywordWidget : public KeywordDropDown, public Keywo
     // Main form declaration
     Ui::IsotopologueRefListWidget ui_;
 
+    private:
+    // Return valid Isotopologue names for specified model index
+    std::vector<std::string> availableIsotopologueNames(const QModelIndex &index);
+
     private slots:
     void autoButton_clicked(bool checked);
     void addButton_clicked(bool checked);
