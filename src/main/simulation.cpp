@@ -59,7 +59,7 @@ bool Dissolve::prepare()
 
     // Reassign AtomType indices (in case one or more have been added / removed)
     auto count = 0;
-    for (auto *at = atomTypes().first(); at != NULL; at = at->next(), ++count)
+    for (auto at : atomTypes())
         at->setIndex(count);
 
     // Check Configurations
@@ -80,7 +80,7 @@ bool Dissolve::prepare()
         {
             auto &types = cfg->usedAtomTypesList();
             totalQ = std::accumulate(types.begin(), types.end(), totalQ, [](auto acc, const auto &atd) {
-                return acc + atd.population() * atd.atomType().parameters().charge();
+                return acc + atd.population() * atd.atomType()->parameters().charge();
             });
         }
         else

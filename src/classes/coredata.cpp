@@ -56,7 +56,8 @@ void CoreData::clear()
 // Add new AtomType
 std::shared_ptr<AtomType> CoreData::addAtomType(Element *el)
 {
-    std::shared_ptr<AtomType> newAtomType = atomTypes_.add();
+    atomTypes_.emplace_back();
+    auto newAtomType = atomTypes_.back();
 
     // Create a suitable unique name
     newAtomType->setName(uniqueAtomTypeName(el->symbol()));
@@ -72,10 +73,13 @@ std::shared_ptr<AtomType> CoreData::addAtomType(Element *el)
 }
 
 // Remove specified AtomType
-void CoreData::removeAtomType(std::shared_ptr<AtomType> at) { atomTypes_.remove(at); }
+void CoreData::removeAtomType(std::shared_ptr<AtomType> at)
+{
+    atomTypes_.erase(std::remove(atomTypes_.begin(), atomTypes_.end(), at));
+}
 
 // Return number of AtomTypes in list
-int CoreData::nAtomTypes() const { return atomTypes_.nItems(); }
+int CoreData::nAtomTypes() const { return atomTypes_.size(); }
 
 // Return core AtomTypes list
 std::vector<std::shared_ptr<AtomType>> &CoreData::atomTypes() { return atomTypes_; }
@@ -110,13 +114,15 @@ const char *CoreData::uniqueAtomTypeName(const char *base) const
 }
 
 // Search for AtomType by name
-std::shared_ptr<AtomType> CoreData::findAtomType(const char *name) const
+std::optional<std::shared_ptr<AtomType>> CoreData::findAtomType(const char *name) const
 {
-    for (auto *at = atomTypes_.first(); at != NULL; at = at->next())
-        if (DissolveSys::sameString(at->name(), name))
-            return at;
-
-    return NULL;
+    auto it = std::find_if(atomTypes_.begin(), atomTypes_.end(),
+                           [&name](const auto &at) { return DissolveSys::sameString(at->name(), name); });
+    if (it == atomTypes_.end())
+    {
+        return std::nullopt;
+    }
+    return *it;
 }
 
 // Bump AtomTypes version

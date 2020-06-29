@@ -77,7 +77,11 @@ void DynamicSiteProcedureNode::generateSites(std::shared_ptr<const Molecule> mol
         }
 
         // If the Atom's AtomType is listed in our target AtomType list, add this atom as a site
-        if (atomTypes_.contains(molecule->atom(n)->speciesAtom()->atomType()))
+	auto it = std::find(
+			    atomTypes_.begin(),
+			    atomTypes_.end(),
+			    molecule->atom(n)->speciesAtom()->atomType());
+        if (atomTypes_.end() != it)
         {
             generatedSites_.add(Site(molecule, molecule->atom(n)->r()));
             continue;

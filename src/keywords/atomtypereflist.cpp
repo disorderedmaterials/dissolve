@@ -48,16 +48,18 @@ bool AtomTypeRefListKeyword::read(LineParser &parser, int startArg, CoreData &co
     for (int n = startArg; n < parser.nArgs(); ++n)
     {
         // Do we recognise the AtomType?
-        std::shared_ptr<AtomType> atomType = coreData.findAtomType(parser.argc(n));
-        if (!atomType)
+        auto opt_atomType = coreData.findAtomType(parser.argc(n));
+        if (!opt_atomType)
             return Messenger::error("Unrecognised AtomType '%s' found in list.\n", parser.argc(n));
 
+	auto atomType = *opt_atomType;
+
         // If the AtomType is in the list already, complain
-        if (data_.contains(atomType))
+	if (std::find(data_.begin(), data_.end(), atomType) != data_.end())
             return Messenger::error("AtomType '%s' specified in list twice.\n", parser.argc(n));
 
         // All OK - add it to our selection list
-        data_.append(atomType);
+        data_.push_back(atomType);
     }
 
     set_ = true;
@@ -69,7 +71,7 @@ bool AtomTypeRefListKeyword::read(LineParser &parser, int startArg, CoreData &co
 bool AtomTypeRefListKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
     // Don't write anything if there are no items in the list
-    if (data_.nItems() == 0)
+    if (data_.empty())
         return true;
 
     // Loop over the AtomType selection list
@@ -88,4 +90,4 @@ bool AtomTypeRefListKeyword::write(LineParser &parser, const char *keywordName, 
  */
 
 // Prune any references to the supplied AtomType in the contained data
-void AtomTypeRefListKeyword::removeReferencesTo(std::shared_ptr<AtomType> at) { data_.remove(at); }
+void AtomTypeRefListKeyword::removeReferencesTo(std::shared_ptr<AtomType> at) { data_.erase(std::remove(data_.begin(), data_.end(), at)); }

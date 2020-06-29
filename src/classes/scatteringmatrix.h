@@ -23,8 +23,7 @@
 
 #include "math/data1d.h"
 #include "templates/array2d.h"
-#include "templates/list.h"
-#include "templates/reflist.h"
+#include <memory>
 #include <tuple>
 #include <vector>
 
@@ -49,7 +48,7 @@ class ScatteringMatrix
      */
     private:
     // Reference pairs of AtomTypes
-    std::vector<std::tuple<AtomType *, std::shared_ptr<AtomType> >> typePairs_;
+    std::vector<std::tuple<std::shared_ptr<AtomType>, std::shared_ptr<AtomType> >> typePairs_;
     // Coefficients matrix (A) (ci * cj * bi * bj * (typei == typej ? 1 : 2)) (n * n)
     Array2D<double> A_;
     // Inverse of coefficients matrix

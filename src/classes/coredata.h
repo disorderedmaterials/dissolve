@@ -27,6 +27,7 @@
 #include "templates/list.h"
 #include "templates/reflist.h"
 #include <memory>
+#include <optional>
 #include <vector>
 
 // Forward Declarations
@@ -70,7 +71,7 @@ class CoreData
     // Generate unique AtomType name with base name provided
     const char *uniqueAtomTypeName(const char *baseName) const;
     // Search for AtomType by name
-    std::shared_ptr<AtomType> findAtomType(const char *name) const;
+    std::optional<std::shared_ptr<AtomType>> findAtomType(const char *name) const;
     // Bump AtomTypes version
     void bumpAtomTypesVersion();
     // Return AtomTypes version

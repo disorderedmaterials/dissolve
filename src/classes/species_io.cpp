@@ -119,6 +119,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     Element *el;
     CharString arg1, arg2;
     std::shared_ptr<AtomType> at;
+    std::optional<decltype(at)> opt_at;
     Isotopologue *iso;
     SpeciesAngle *a;
     SpeciesAtom *i;
@@ -230,13 +231,15 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     at = NULL;
                 else
                 {
-                    at = coreData.findAtomType(parser.argc(6));
+                    opt_at = coreData.findAtomType(parser.argc(6));
                     if (!at)
                     {
                         Messenger::printVerbose("Creating AtomType '%s'...\n", parser.argc(6));
                         at = coreData.addAtomType(el);
                         at->setName(parser.argc(6));
                     }
+                    else
+                        at = *opt_at;
                 }
 
                 // Finally, set AtomType for the Atom
@@ -446,8 +449,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     arg1 = DissolveSys::beforeChar(parser.argc(n), '=');
                     arg2 = DissolveSys::afterChar(parser.argc(n), '=');
 
-                    at = coreData.findAtomType(arg1.get());
-                    if (at == NULL)
+                    opt_at = coreData.findAtomType(arg1.get());
+                    if (!opt_at)
                     {
                         Messenger::error("Failed to find AtomType '%s', referred to in Isotopologue '%s', "
                                          "Species '%s'\n",
@@ -455,6 +458,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         error = true;
                         break;
                     }
+                    at = *opt_at;
 
                     // Is the supplied isotope valid for the AtomType's element?
                     el = at->element();
@@ -773,14 +777,13 @@ bool Species::write(LineParser &parser, const char *prefix)
             if (!parser.writeLineF("%s%s  '%s'", newPrefix.get(), keywords().keyword(Species::IsotopologueKeyword),
                                    iso->name()))
                 return false;
-            RefDataListIterator<AtomType, Isotope *> isotopeIterator(iso->isotopes());
-            while (std::shared_ptr<AtomType> atomType = isotopeIterator.iterate())
+            for (auto [atomType, isotope] : iso->isotopes())
             {
                 // No need to write anything that's the natural isotope...
-                if (isotopeIterator.currentData()->A() == 0)
+                if (isotope->A() == 0)
                     continue;
 
-                if (!parser.writeLineF("  %s=%i", atomType->name(), isotopeIterator.currentData()->A()))
+                if (!parser.writeLineF("  %s=%i", atomType->name(), isotope->A()))
                     return false;
             }
             if (!parser.writeLineF("\n"))

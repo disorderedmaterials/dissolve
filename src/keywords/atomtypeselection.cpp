@@ -104,11 +104,11 @@ bool AtomTypeSelectionKeyword::read(LineParser &parser, int startArg, CoreData &
         auto atomType = *it;
 
         // If the AtomType is in the list already, complain
-        if (data_.contains(*atomType))
+        if (data_.contains(atomType))
             return Messenger::error("AtomType '%s' specified in selection list twice.\n", parser.argc(n));
 
         // All OK - add it to our selection list
-        data_.add(*atomType);
+        data_.add(atomType);
     }
 
     set_ = true;
@@ -135,4 +135,4 @@ bool AtomTypeSelectionKeyword::write(LineParser &parser, const char *keywordName
  */
 
 // Prune any references to the supplied AtomType in the contained data
-void AtomTypeSelectionKeyword::removeReferencesTo(AtomType &at) { data_.remove(at); }
+void AtomTypeSelectionKeyword::removeReferencesTo(std::shared_ptr<AtomType> at) { data_.remove(at); }

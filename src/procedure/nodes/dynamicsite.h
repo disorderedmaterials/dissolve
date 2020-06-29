@@ -26,6 +26,7 @@
 #include "templates/refdatalist.h"
 #include "templates/reflist.h"
 #include <memory>
+#include <vector>
 
 // Forward Declarations
 class SelectProcedureNode;

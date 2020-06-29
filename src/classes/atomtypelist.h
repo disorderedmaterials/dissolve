@@ -55,13 +55,13 @@ class AtomTypeList : public GenericItemBase
     // Zero populations of all types in the list
     void zero();
     // Add the specified AtomType to the list, returning the AtomTypeData
-    AtomTypeData &add(AtomType &atomType, double popAdd = 0);
+    AtomTypeData &add(std::shared_ptr<AtomType> atomType, double popAdd = 0);
     // Add the AtomTypes in the supplied list into this one, increasing populations etc.
     void add(const AtomTypeList &source);
     // Remove specified AtomType from the list
-    void remove(AtomType &atomType);
+    void remove(std::shared_ptr<AtomType> atomType);
     // Add/increase this AtomType/Isotope pair, returning the index of the AtomType in the list
-    void addIsotope(AtomType &atomType, Isotope *tope = NULL, double popAdd = 0);
+    void addIsotope(std::shared_ptr<AtomType> atomType, Isotope *tope = NULL, double popAdd = 0);
     // Finalise list, calculating fractional populations etc.
     void finalise();
     // Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values
@@ -69,9 +69,9 @@ class AtomTypeList : public GenericItemBase
     // Make all AtomTypeData in the list reference only their natural isotope
     void naturalise();
     // Check for presence of AtomType in list
-    bool contains(AtomType &atomType) const;
+    bool contains(std::shared_ptr<AtomType> atomType) const;
     // Check for presence of AtomType/Isotope pair in list
-    bool contains(AtomType &atomType, Isotope *tope);
+    bool contains(std::shared_ptr<AtomType> atomType, Isotope *tope);
     // Return number of AtomType/Isotopes in list
     int nItems() const;
     // Return first item in list
@@ -81,15 +81,15 @@ class AtomTypeList : public GenericItemBase
     // Return opening iterator
     std::vector<AtomTypeData>::const_iterator end() const;
     // Return index of AtomType in list
-    int indexOf(AtomType &atomtype) const;
+    int indexOf(std::shared_ptr<AtomType> atomtype) const;
     // Return index of names AtomType in list
     int indexOf(const char *name) const;
     // Return total population of all types in list
     double totalPopulation() const;
     // Return nth referenced AtomType
-    AtomType &atomType(int n);
+    std::shared_ptr<AtomType> atomType(int n);
     // Return AtomTypeData for specified AtomType
-    std::optional<std::reference_wrapper<const AtomTypeData>> atomTypeData(AtomType &atomType);
+    std::optional<std::reference_wrapper<const AtomTypeData>> atomTypeData(std::shared_ptr<AtomType> atomType);
     // Print AtomType populations
     void print() const;
 

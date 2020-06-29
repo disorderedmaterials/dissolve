@@ -75,10 +75,10 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
     Array2D<Array<double>> &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
     i = 0;
-    for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+    for (auto at1 = dissolve.atomTypes().begin(); at1 != dissolve.atomTypes().end(); ++at1, ++i)
     {
         j = i;
-        for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+        for (auto at2 = at1; at2 != dissolve.atomTypes().end(); ++at2, ++j)
         {
             Array<double> &potCoeff = coefficients.at(i, j);
 
@@ -107,10 +107,10 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
             truncate(ep, rminpt, rmaxpt);
 
             // Grab pointer to the relevant pair potential
-            PairPotential *pp = dissolve.pairPotential(at1, at2);
+            PairPotential *pp = dissolve.pairPotential(*at1, *at2);
             if (!pp)
             {
-                Messenger::error("Failed to find PairPotential for AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
+                Messenger::error("Failed to find PairPotential for AtomTypes '%s' and '%s'.\n", (*at1)->name(), (*at2)->name());
                 return false;
             }
 

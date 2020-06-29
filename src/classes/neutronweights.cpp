@@ -217,7 +217,7 @@ void NeutronWeights::calculateWeightingMatrices()
                 else
                 {
                     // Get the Isotope associated to this AtomType in the current Isotopologue
-                    Isotope *isotope = tope->atomTypeIsotope(&(atd1->atomType()));
+                    Isotope *isotope = tope->atomTypeIsotope(atd1->atomType());
                     bi = isotope->boundCoherent();
                 }
                 bi *= 0.1;
@@ -240,7 +240,7 @@ void NeutronWeights::calculateWeightingMatrices()
                     else
                     {
                         // Get the Isotope associated to this AtomType in the current Isotopologue
-                        Isotope *isotope = tope->atomTypeIsotope(&atd2->atomType());
+                        Isotope *isotope = tope->atomTypeIsotope(atd2->atomType());
                         bj = isotope->boundCoherent();
                     }
                     bj *= 0.1;
@@ -290,7 +290,7 @@ void NeutronWeights::createFromIsotopologues(const AtomTypeList &exchangeableTyp
             for (auto *i = topes.species()->firstAtom(); i != NULL; i = i->next())
             {
                 Isotope *iso = tope->atomTypeIsotope(i->atomType());
-                atomTypes_.addIsotope(*i->atomType(), iso, isoWeight.weight() * topes.speciesPopulation());
+                atomTypes_.addIsotope(i->atomType(), iso, isoWeight.weight() * topes.speciesPopulation());
             }
         }
     }

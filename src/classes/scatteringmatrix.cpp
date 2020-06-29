@@ -222,16 +222,16 @@ void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &
     typePairs_.clear();
 
     // Copy atom types
-    for (std::shared_ptr<AtomType> at1 = types.first(); at1 != NULL; at1 = at1->next())
+    for (auto at1 = types.begin(); at1 != types.end(); ++at1)
     {
-        for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next())
+        for (auto at2 = at1; at2 != types.end(); ++at2)
         {
-            typePairs_.emplace_back(at1, at2);
+            typePairs_.emplace_back(*at1, *at2);
         }
     }
 
     // Create partials array
-    estimatedSQ.initialise(types.nItems(), types.nItems(), true);
+    estimatedSQ.initialise(types.size(), types.size(), true);
     Data1D *partials = estimatedSQ.linearArray();
     auto index = 0;
     for (auto [i, j] : typePairs_)
@@ -280,12 +280,12 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeigh
     {
         for (int m = n; m < nUsedTypes; ++m)
         {
-            auto colIndex = pairIndex(&usedTypes.atomType(n), &usedTypes.atomType(m));
+            auto colIndex = pairIndex(usedTypes.atomType(n), usedTypes.atomType(m));
             if (colIndex == -1)
             {
                 Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
                                  "('%s' and/or '%s').\n",
-                                 usedTypes.atomType(n).name(), usedTypes.atomType(m).name());
+                                 usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
                 return false;
             }
 

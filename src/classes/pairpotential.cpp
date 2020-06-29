@@ -163,12 +163,12 @@ void PairPotential::setData1DNames()
 bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ)
 {
     // Check for NULL pointers
-    if (typeI == NULL)
+    if (typeI == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL AtomType pointer (typeI) given to PairPotential::setUp().\n");
         return false;
     }
-    if (typeJ == NULL)
+    if (typeJ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL AtomType pointer (typeJ) given to PairPotential::setUp().\n");
         return false;

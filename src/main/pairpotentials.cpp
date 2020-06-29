@@ -22,6 +22,7 @@
 #include "classes/atomtype.h"
 #include "genericitems/listhelper.h"
 #include "main/dissolve.h"
+#include "templates/algorithms.h"
 
 // Set maximum distance for tabulated PairPotentials
 void Dissolve::setPairPotentialRange(double range)
@@ -121,28 +122,28 @@ bool Dissolve::generatePairPotentials(std::shared_ptr<AtomType> onlyInvolving)
     auto nUndefined = 0;
 
     // Loop over all atomtype pairs and update / add pair potentials as necessary
-    for (std::shared_ptr<AtomType> at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next())
+    for (auto at1 = coreData_.atomTypes().begin(); at1 != coreData_.atomTypes().end(); ++at1)
     {
-        for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next())
+        for (auto at2 = at1; at2 != coreData_.atomTypes().end(); ++at2)
         {
             // If an AtomType was supplied, only generate the pair potential if one of its AtomTypes matches
-            if (onlyInvolving && (at1 != onlyInvolving) && (at2 != onlyInvolving))
+            if (onlyInvolving && (*at1 != onlyInvolving) && (*at2 != onlyInvolving))
                 continue;
 
             // Does a PairPotential for this AtomType pair already exist?
-            PairPotential *pot = pairPotential(at1, at2);
+            PairPotential *pot = pairPotential(*at1, *at2);
             if (pot)
             {
-                Messenger::print("Updating existing PairPotential for interaction between '%s' and '%s'...\n", at1->name(),
-                                 at2->name());
-                if (!pot->setUp(at1, at2))
+                Messenger::print("Updating existing PairPotential for interaction between '%s' and '%s'...\n", (*at1)->name(),
+                                 (*at2)->name());
+                if (!pot->setUp(*at1, *at2))
                     return false;
             }
             else
             {
-                Messenger::print("Adding new PairPotential for interaction between '%s' and '%s'...\n", at1->name(),
-                                 at2->name());
-                pot = addPairPotential(at1, at2);
+                Messenger::print("Adding new PairPotential for interaction between '%s' and '%s'...\n", (*at1)->name(),
+                                 (*at2)->name());
+                pot = addPairPotential(*at1, *at2);
             }
 
             // Check the implied short-range form of the potential

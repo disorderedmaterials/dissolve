@@ -269,7 +269,7 @@ bool Dissolve::saveInput(const char *filename)
     // Atom Type Parameters
     if (!parser.writeLineF("  # Atom Type Parameters\n"))
         return false;
-    for (auto *atomType = atomTypes().first(); atomType != NULL; atomType = atomType->next())
+    for (auto atomType : atomTypes())
     {
         CharString s("  %s  %s  %s  %12.6e  %s",
                      PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword), atomType->name(),

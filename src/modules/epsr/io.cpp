@@ -155,13 +155,13 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
             return Messenger::error("Failed to read pair potential atom types from pcof file.\n");
 
         // Find the atom types to which these cofficients relate
-        std::shared_ptr<AtomType> at1 = dissolve.findAtomType(parser.argc(0));
+        auto at1 = dissolve.findAtomType(parser.argc(0));
         if (!at1)
             return Messenger::error("Unrecognised AtomType '%s' referenced in pcof file.\n", parser.argc(0));
-        std::shared_ptr<AtomType> at2 = dissolve.findAtomType(parser.argc(1));
+        auto at2 = dissolve.findAtomType(parser.argc(1));
         if (!at2)
             return Messenger::error("Unrecognised AtomType '%s' referenced in pcof file.\n", parser.argc(1));
-        Messenger::print("Found %s-%s potential...\n", at1->name(), at2->name());
+        Messenger::print("Found %s-%s potential...\n", (*at1)->name(), (*at2)->name());
 
         // Next line contains ??? and ??? TODO
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

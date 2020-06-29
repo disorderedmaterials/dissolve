@@ -26,6 +26,7 @@
 #include "templates/orderedpointerdataarray.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"
+#include <memory>
 #include <vector>
 
 // Forward Declarations

@@ -226,7 +226,7 @@ const AtomTypeList &Species::usedAtomTypes()
         usedAtomTypes_.clear();
         for (auto *i = atoms_.first(); i != NULL; i = i->next())
             if (i->atomType())
-                usedAtomTypes_.add(*i->atomType(), 1);
+                usedAtomTypes_.add(i->atomType(), 1);
 
         usedAtomTypesPoint_ = atomTypesVersion_;
     }

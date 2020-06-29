@@ -52,6 +52,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
     Messenger::print("\nParsing %s block...\n", BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
 
     std::shared_ptr<AtomType> at1;
+    std::optional<decltype(at1)> opt_at;
     PairPotential::CoulombTruncationScheme cTrunc;
     PairPotential::ShortRangeTruncationScheme srTrunc;
     auto blockDone = false, error = false;
@@ -153,8 +154,8 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 }
 
                 // Find / create AtomType and check element...
-                at1 = dissolve->findAtomType(parser.argc(1));
-                if (!at1)
+                opt_at = dissolve->findAtomType(parser.argc(1));
+                if (!opt_at)
                 {
                     Messenger::warn("Unknown atom type '%s' referenced in PairPotentials block - creating "
                                     "it now...\n",
@@ -162,14 +163,17 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                     at1 = dissolve->addAtomType(&Elements::element(parser.argc(2)));
                     at1->setName(parser.argc(1));
                 }
-                else if (&Elements::element(parser.argc(2)) != at1->element())
+                else if (&Elements::element(parser.argc(2)) != (*opt_at)->element())
                 {
+                    at1 = *opt_at;
                     Messenger::error("Element '%s' does not match that for the existing atom type '%s' in "
                                      "PairPotentials block.\n",
                                      parser.argc(2), parser.argc(1));
                     error = true;
                     break;
                 }
+                else
+                    at1 = *opt_at;
 
                 // Set charge value
                 at1->parameters().setCharge(parser.argd(3));

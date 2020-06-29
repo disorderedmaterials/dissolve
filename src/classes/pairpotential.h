@@ -26,6 +26,7 @@
 #include "math/data1d.h"
 #include "math/interpolator.h"
 #include "templates/list.h"
+#include <memory>
 
 // Forward Declarations
 class AtomType;
@@ -107,7 +108,7 @@ class PairPotential : public ListItem<PairPotential>
      */
     private:
     // Original source AtomTypes
-    std::shared_ptr<AtomType> atomTypeI_, *atomTypeJ_;
+    std::shared_ptr<AtomType> atomTypeI_, atomTypeJ_;
     // Parameters for short-range potential
     double parameters_[MAXSRPARAMETERS];
     // Short range type (determined from AtomTypes)

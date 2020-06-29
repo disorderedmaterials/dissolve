@@ -418,23 +418,23 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
     auto sourceNTypes = source.atomTypes_.nItems();
     for (typeI = 0; typeI < sourceNTypes; ++typeI)
     {
-        AtomType &atI = source.atomTypes_.atomType(typeI);
+        auto atI = source.atomTypes_.atomType(typeI);
         localI = atomTypes_.indexOf(atI);
         if (localI == -1)
         {
             Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
-                             atI.name());
+                             atI->name());
             return false;
         }
 
         for (typeJ = typeI; typeJ < sourceNTypes; ++typeJ)
         {
-            auto &atJ = source.atomTypes_.atomType(typeJ);
+            auto atJ = source.atomTypes_.atomType(typeJ);
             localJ = atomTypes_.indexOf(atJ);
             if (localJ == -1)
             {
                 Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
-                                 atJ.name());
+                                 atJ->name());
                 return false;
             }
 
@@ -501,20 +501,20 @@ void PartialSet::operator+=(const PartialSet &source)
     // Loop over partials in source set
     const auto &types = source.atomTypes();
     for_each_pair(types.begin(), types.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
-        AtomType &atI = atd1.atomType();
-        AtomType &atJ = atd2.atomType();
+        auto atI = atd1.atomType();
+        auto atJ = atd2.atomType();
         int localI = atomTypes_.indexOf(atI);
         int localJ = atomTypes_.indexOf(atJ);
         if (localI == -1)
         {
             Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
-                             atI.name());
+                             atI->name());
             return;
         }
         if (localJ == -1)
         {
             Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
-                             atJ.name());
+                             atJ->name());
             return;
         }
 
