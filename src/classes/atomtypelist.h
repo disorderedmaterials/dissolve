@@ -24,7 +24,7 @@
 #include "classes/atomtypedata.h"
 #include "classes/coredata.h"
 #include "genericitems/base.h"
-#include <optional>
+#include "templates/optionalref.h"
 #include <tuple>
 #include <vector>
 
@@ -89,7 +89,7 @@ class AtomTypeList : public GenericItemBase
     // Return nth referenced AtomType
     AtomType &atomType(int n);
     // Return AtomTypeData for specified AtomType
-    std::optional<std::reference_wrapper<const AtomTypeData>> atomTypeData(AtomType &atomType);
+    OptionalReferenceWrapper<const AtomTypeData> atomTypeData(AtomType &atomType);
     // Print AtomType populations
     void print() const;
 

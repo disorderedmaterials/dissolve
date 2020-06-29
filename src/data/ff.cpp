@@ -194,32 +194,33 @@ void Forcefield::addImproperTerm(const char *typeI, const char *typeJ, const cha
 }
 
 // Return bond term for the supplied atom type pair (if it exists)
-std::optional<std::reference_wrapper<const ForcefieldBondTerm>> Forcefield::getBondTerm(const ForcefieldAtomType *i,
-                                                                                        const ForcefieldAtomType *j) const
+OptionalReferenceWrapper<const ForcefieldBondTerm> Forcefield::getBondTerm(const ForcefieldAtomType *i,
+                                                                           const ForcefieldAtomType *j) const
 {
     return termMatch_(bondTerms_, i, j);
 }
 
 // Return angle term for the supplied atom type trio (if it exists)
-std::optional<std::reference_wrapper<const ForcefieldAngleTerm>>
+OptionalReferenceWrapper<const ForcefieldAngleTerm>
 Forcefield::getAngleTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k) const
 {
     return termMatch_(angleTerms_, i, j, k);
 }
 
 // Return torsion term for the supplied atom type quartet (if it exists)
-std::optional<std::reference_wrapper<const ForcefieldTorsionTerm>> Forcefield::getTorsionTerm(const ForcefieldAtomType *i,
-                                                                                              const ForcefieldAtomType *j,
-                                                                                              const ForcefieldAtomType *k,
-                                                                                              const ForcefieldAtomType *l) const
+OptionalReferenceWrapper<const ForcefieldTorsionTerm> Forcefield::getTorsionTerm(const ForcefieldAtomType *i,
+                                                                                 const ForcefieldAtomType *j,
+                                                                                 const ForcefieldAtomType *k,
+                                                                                 const ForcefieldAtomType *l) const
 {
     return termMatch_(torsionTerms_, i, j, k, l);
 }
 
 // Return improper term for the supplied atom type quartet (if it exists)
-std::optional<std::reference_wrapper<const ForcefieldImproperTerm>>
-Forcefield::getImproperTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k,
-                            const ForcefieldAtomType *l) const
+OptionalReferenceWrapper<const ForcefieldImproperTerm> Forcefield::getImproperTerm(const ForcefieldAtomType *i,
+                                                                                   const ForcefieldAtomType *j,
+                                                                                   const ForcefieldAtomType *k,
+                                                                                   const ForcefieldAtomType *l) const
 {
     return termMatch_(improperTerms_, i, j, k, l);
 }

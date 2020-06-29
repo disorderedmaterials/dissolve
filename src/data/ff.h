@@ -32,9 +32,9 @@
 #include "data/ffimproperterm.h"
 #include "data/ffparameters.h"
 #include "data/fftorsionterm.h"
+#include "templates/optionalref.h"
 #include <algorithm>
 #include <functional>
-#include <optional>
 #include <tuple>
 #include <vector>
 
@@ -138,24 +138,25 @@ class Forcefield : public Elements
                          SpeciesImproper::ImproperFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0,
                          double data3 = 0.0);
     // Match any kind of term
-    template <class T, typename... Args>
-    static std::optional<std::reference_wrapper<const T>> termMatch_(std::vector<T>, Args...);
+    template <class T, typename... Args> static OptionalReferenceWrapper<const T> termMatch_(std::vector<T>, Args...);
 
     public:
     // Return bond term for the supplied atom type pair (if it exists)
-    virtual std::optional<std::reference_wrapper<const ForcefieldBondTerm>> getBondTerm(const ForcefieldAtomType *i,
-                                                                                        const ForcefieldAtomType *j) const;
+    virtual OptionalReferenceWrapper<const ForcefieldBondTerm> getBondTerm(const ForcefieldAtomType *i,
+                                                                           const ForcefieldAtomType *j) const;
     // Return angle term for the supplied atom type trio (if it exists)
-    virtual std::optional<std::reference_wrapper<const ForcefieldAngleTerm>>
+    virtual OptionalReferenceWrapper<const ForcefieldAngleTerm>
     getAngleTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k) const;
     // Return torsion term for the supplied atom type quartet (if it exists)
-    virtual std::optional<std::reference_wrapper<const ForcefieldTorsionTerm>>
-    getTorsionTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k,
-                   const ForcefieldAtomType *l) const;
+    virtual OptionalReferenceWrapper<const ForcefieldTorsionTerm> getTorsionTerm(const ForcefieldAtomType *i,
+                                                                                 const ForcefieldAtomType *j,
+                                                                                 const ForcefieldAtomType *k,
+                                                                                 const ForcefieldAtomType *l) const;
     // Return improper term for the supplied atom type quartet (if it exists)
-    virtual std::optional<std::reference_wrapper<const ForcefieldImproperTerm>>
-    getImproperTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k,
-                    const ForcefieldAtomType *l) const;
+    virtual OptionalReferenceWrapper<const ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType *i,
+                                                                                   const ForcefieldAtomType *j,
+                                                                                   const ForcefieldAtomType *k,
+                                                                                   const ForcefieldAtomType *l) const;
 
     /*
      * Term Assignment
@@ -219,7 +220,7 @@ class Forcefield : public Elements
 };
 
 template <class T, typename... Args>
-std::optional<std::reference_wrapper<const T>> Forcefield::termMatch_(std::vector<T> container, Args... args)
+OptionalReferenceWrapper<const T> Forcefield::termMatch_(std::vector<T> container, Args... args)
 {
     auto it = std::find_if(container.begin(), container.end(), [&](const T &item) { return item.isMatch(args...); });
     if (it == container.end())
