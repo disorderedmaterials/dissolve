@@ -504,14 +504,9 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         combinedCWeights = 0.0;
 
         // Set object names in combinedUnweightedSQ
-        i = 0;
-        for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
-        {
-            j = i;
-            for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
-                combinedUnweightedSQ.at(i, j).setObjectTag(
-                    CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
-        }
+        for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+            CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name());
+        });
 
         // Realise storage for generated S(Q), and initialise a scattering matrix
         auto &estimatedSQ = GenericListHelper<Array2D<Data1D>>::realise(dissolve.processingModuleData(), "EstimatedSQ",
@@ -562,8 +557,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             double factor = 1.0;
             auto &types = unweightedSQ.atomTypes();
             for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {
-                auto globalI = atd1.atomType().index();
-                auto globalJ = atd2.atomType().index();
+                auto globalI = atd1.atomType()->index();
+                auto globalJ = atd2.atomType()->index();
 
                 Data1D partialIJ = unweightedSQ.constUnboundPartial(i, j);
                 Interpolator::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ), partialIJ, factor);
@@ -593,23 +588,19 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Create the array
         simulatedReferenceData_.createEmpty(combinedUnweightedSQ.linearArraySize());
-        i = 0;
-        for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
-        {
-            j = i;
-            for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
-            {
-                // Copy the unweighted data and wight weight it according to the natural isotope / concentration
-                // factor calculated above
-                auto data = combinedUnweightedSQ.at(i, j);
-                data.setName(CharString("Simulated %s-%s", at1->name(), at2->name()));
+        for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                            [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                                // Copy the unweighted data and wight weight it according to the natural isotope / concentration
+                                // factor calculated above
+                                auto data = combinedUnweightedSQ.at(i, j);
+                                data.setName(CharString("Simulated %s-%s", at1->name(), at2->name()));
 
-                // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
-                if (!scatteringMatrix.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback)))
-                    return Messenger::error("EPSR: Failed to augment scattering matrix with partial %s-%s.\n", at1->name(),
-                                            at2->name());
-            }
-        }
+                                // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
+                                if (!scatteringMatrix.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback)))
+                                    return Messenger::error("EPSR: Failed to augment scattering matrix with partial %s-%s.\n",
+                                                            at1->name(), at2->name());
+                                return std::nullopt;
+                            });
 
         scatteringMatrix.finalise();
         scatteringMatrix.print();
@@ -651,24 +642,21 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Test Mode
         if (testMode)
         {
-            i = 0;
-            for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
-            {
-                j = i;
-                for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
-                {
-                    testDataName = CharString("EstimatedSQ-%s-%s", at1->name(), at2->name());
-                    if (testData_.containsData(testDataName))
-                    {
-                        double error = Error::percent(estimatedSQ.at(i, j), testData_.data(testDataName));
-                        Messenger::print("Generated S(Q) reference data '%s' has error of %7.3f%% with "
-                                         "calculated data and is %s (threshold is %6.3f%%)\n\n",
-                                         testDataName.get(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-                        if (error > testThreshold)
-                            return false;
-                    }
-                }
-            }
+            for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                                [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                                    testDataName = CharString("EstimatedSQ-%s-%s", at1->name(), at2->name());
+                                    if (testData_.containsData(testDataName))
+                                    {
+                                        double error = Error::percent(estimatedSQ.at(i, j), testData_.data(testDataName));
+                                        Messenger::print("Generated S(Q) reference data '%s' has error of %7.3f%% with "
+                                                         "calculated data and is %s (threshold is %6.3f%%)\n\n",
+                                                         testDataName.get(), error, error <= testThreshold ? "OK" : "NOT OK",
+                                                         testThreshold);
+                                        if (error > testThreshold)
+                                            return false;
+                                    }
+                                    return std::nullopt;
+                                });
         }
 
         /*
@@ -678,24 +666,18 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         auto &estimatedGR = GenericListHelper<Array2D<Data1D>>::realise(dissolve.processingModuleData(), "EstimatedGR",
                                                                         uniqueName_, GenericItem::InRestartFileFlag);
         estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
-        i = 0;
-        for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
-        {
-            j = i;
-            for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
-            {
-                // Grab experimental g(r) container and make sure its object name is set
-                auto &expGR = estimatedGR.at(i, j);
-                expGR.setObjectTag(
-                    CharString("%s//EstimatedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
+        for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+            // Grab experimental g(r) container and make sure its object name is set
+            auto &expGR = estimatedGR.at(i, j);
+            expGR.setObjectTag(
+                CharString("%s//EstimatedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
-                // Copy experimental S(Q) and FT it
-                expGR = estimatedSQ.at(i, j);
-                Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * combinedRho.at(i, j)), 0.0, 0.05, 30.0,
-                                WindowFunction(WindowFunction::Lorch0Window));
-                expGR.values() += 1.0;
-            }
-        }
+            // Copy experimental S(Q) and FT it
+            expGR = estimatedSQ.at(i, j);
+            Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * combinedRho.at(i, j)), 0.0, 0.05, 30.0,
+                            WindowFunction(WindowFunction::Lorch0Window));
+            expGR.values() += 1.0;
+        });
 
         /*
          * Generate summed unweighted g(r) from all source Module data
@@ -719,24 +701,18 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 dissolve.processingModuleData(), CharString("FitCoefficients_%s", module->uniqueName()), uniqueName_);
 
             // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
-            i = 0;
-            for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
-            {
-                j = i;
-                for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
-                {
-                    double weight = scatteringMatrix.pairWeightInverse(at1, at2, dataIndex);
+            for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+                double weight = scatteringMatrix.pairWeightInverse(at1, at2, dataIndex);
 
-                    // Halve contribution from unlike terms to avoid adding double the potential for those
-                    // partials
-                    if (i != j)
-                        weight *= 0.5;
+                // Halve contribution from unlike terms to avoid adding double the potential for those
+                // partials
+                if (i != j)
+                    weight *= 0.5;
 
-                    // Store fluctuation coefficients ready for addition to potential coefficients later on.
-                    for (int n = 0; n < ncoeffp; ++n)
-                        fluctuationCoefficients.at(i, j, n) += weight * fitCoefficients.constAt(n);
-                }
-            }
+                // Store fluctuation coefficients ready for addition to potential coefficients later on.
+                for (int n = 0; n < ncoeffp; ++n)
+                    fluctuationCoefficients.at(i, j, n) += weight * fitCoefficients.constAt(n);
+            });
 
             // Increase dataIndex
             ++dataIndex;
@@ -749,33 +725,27 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         // Sum fluctuation coefficients in to the potential coefficients
         Array2D<Array<double>> &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
-        i = 0;
-        for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
-        {
-            j = i;
-            for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
-            {
-                Array<double> &potCoeff = coefficients.at(i, j);
+        for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+            Array<double> &potCoeff = coefficients.at(i, j);
 
-                // Zero potential before adding in fluctuation coefficients?
-                if (overwritePotentials)
-                    potCoeff = 0.0;
+            // Zero potential before adding in fluctuation coefficients?
+            if (overwritePotentials)
+                potCoeff = 0.0;
 
-                // Perform smoothing of the fluctuation coefficients before we sum them into the potential (the
-                // un-smoothed coefficients are stored)
-                Data1D smoothedCoefficients;
-                for (int n = 0; n < ncoeffp; ++n)
-                    smoothedCoefficients.addPoint(n, fluctuationCoefficients.constAt(i, j, n));
-                Filters::kolmogorovZurbenko(smoothedCoefficients, 3, 5);
+            // Perform smoothing of the fluctuation coefficients before we sum them into the potential (the
+            // un-smoothed coefficients are stored)
+            Data1D smoothedCoefficients;
+            for (int n = 0; n < ncoeffp; ++n)
+                smoothedCoefficients.addPoint(n, fluctuationCoefficients.constAt(i, j, n));
+            Filters::kolmogorovZurbenko(smoothedCoefficients, 3, 5);
 
-                // Add in fluctuation coefficients
-                for (int n = 0; n < ncoeffp; ++n)
-                    potCoeff[n] += weighting * smoothedCoefficients.value(n);
+            // Add in fluctuation coefficients
+            for (int n = 0; n < ncoeffp; ++n)
+                potCoeff[n] += weighting * smoothedCoefficients.value(n);
 
-                // Set first term to zero (following EPSR)
-                potCoeff[0] = 0.0;
-            }
-        }
+            // Set first term to zero (following EPSR)
+            potCoeff[0] = 0.0;
+        });
 
         // Determine absolute energy of empirical potentials
         energabs = absEnergyEP(dissolve);
@@ -834,20 +804,16 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         if (procPool.isMaster())
         {
-            i = 0;
-            for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
-            {
-                j = i;
-                for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
-                {
-                    // Grab pointer to the relevant pair potential
-                    PairPotential *pp = dissolve.pairPotential(at1, at2);
+            for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                          [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                              // Grab pointer to the relevant pair potential
+                              PairPotential *pp = dissolve.pairPotential(at1, at2);
 
-                    Data1DExportFileFormat exportFormat(CharString("EP-%s-%s.txt", at1->name(), at2->name()));
-                    if (!exportFormat.exportData(pp->uAdditional()))
-                        return procPool.decideFalse();
-                }
-            }
+                              Data1DExportFileFormat exportFormat(CharString("EP-%s-%s.txt", at1->name(), at2->name()));
+                              if (!exportFormat.exportData(pp->uAdditional()))
+                                  return procPool.decideFalse();
+                              return std::nullopt;
+                          });
             procPool.decideTrue();
         }
         else if (!procPool.decision())
@@ -859,24 +825,20 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             Array2D<Array<double>> &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
-            i = 0;
-            for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
-            {
-                j = i;
-                for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
-                {
-                    // Grab reference to coefficients
-                    Array<double> &potCoeff = coefficients.at(i, j);
+            for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                          [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                              // Grab reference to coefficients
+                              Array<double> &potCoeff = coefficients.at(i, j);
 
-                    LineParser fileParser;
-                    if (!fileParser.openOutput(CharString("PCof-%s-%s.txt", at1->name(), at2->name())))
-                        return procPool.decideFalse();
-                    for (int n = 0; n < potCoeff.nItems(); ++n)
-                        if (!fileParser.writeLineF("%f\n", potCoeff[n]))
-                            return procPool.decideFalse();
-                    fileParser.closeFiles();
-                }
-            }
+                              LineParser fileParser;
+                              if (!fileParser.openOutput(CharString("PCof-%s-%s.txt", at1->name(), at2->name())))
+                                  return procPool.decideFalse();
+                              for (int n = 0; n < potCoeff.nItems(); ++n)
+                                  if (!fileParser.writeLineF("%f\n", potCoeff[n]))
+                                      return procPool.decideFalse();
+                              fileParser.closeFiles();
+                              return std::nullopt;
+                          });
             procPool.decideTrue();
         }
         else if (!procPool.decision())

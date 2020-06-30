@@ -79,7 +79,8 @@ void AtomTypeSelectionKeywordWidget::updateSelectionRow(int row, AtomType &atomT
     }
     else
         item = ui.SelectionList->item(row);
-    item->setCheckState(selection.contains(atomType) ? Qt::Checked : Qt::Unchecked);
+    auto it = std::find(selection.begin(), selection.end(), atomType);
+    item->setCheckState(it != selection.end() ? Qt::Checked : Qt::Unchecked);
 }
 
 // List item changed

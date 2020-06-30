@@ -25,6 +25,7 @@
 #include "math/gaussfit.h"
 #include "math/poissonfit.h"
 #include "modules/epsr/epsr.h"
+#include "templates/algorithms.h"
 
 // Return list of target Modules / data for refeinement
 const RefDataList<Module, ModuleGroup *> &EPSRModule::allTargets() const { return groupedTargets_.modules(); }
@@ -190,32 +191,26 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
 
     double absEnergyEP = 0.0;
 
-    auto i = 0;
-    for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
-    {
-        auto j = i;
-        for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+    for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+        Array<double> &potCoeff = coefficients.at(i, j);
+
+        double cMin = potCoeff.nItems() == 0 ? 0.0 : potCoeff.constAt(0);
+        double cMax = cMin;
+        for (int n = 1; n < potCoeff.nItems(); ++n)
         {
-            Array<double> &potCoeff = coefficients.at(i, j);
-
-            double cMin = potCoeff.nItems() == 0 ? 0.0 : potCoeff.constAt(0);
-            double cMax = cMin;
-            for (int n = 1; n < potCoeff.nItems(); ++n)
-            {
-                if (potCoeff.constAt(n) < cMin)
-                    cMin = potCoeff.constAt(n);
-                if (potCoeff.constAt(n) > cMax)
-                    cMax = potCoeff.constAt(n);
-            }
-
-            double range = cMax - cMin;
-            if (range > absEnergyEP)
-                absEnergyEP = range;
-
-            // Output information
-            Messenger::print("  abs_energy_ep>    %4s %4s %12.6f\n", at1->name(), at2->name(), range);
+            if (potCoeff.constAt(n) < cMin)
+                cMin = potCoeff.constAt(n);
+            if (potCoeff.constAt(n) > cMax)
+                cMax = potCoeff.constAt(n);
         }
-    }
+
+        double range = cMax - cMin;
+        if (range > absEnergyEP)
+            absEnergyEP = range;
+
+        // Output information
+        Messenger::print("  abs_energy_ep>    %4s %4s %12.6f\n", at1->name(), at2->name(), range);
+    });
 
     return absEnergyEP;
 }
