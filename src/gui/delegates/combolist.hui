@@ -27,6 +27,8 @@
 #include <QModelIndex>
 #include <QObject>
 #include <QtWidgets/QItemDelegate>
+#include <memory>
+#include <vector>
 
 // Base class for source List
 class ComboListItems
@@ -130,6 +132,37 @@ template <class T> class ComboNameListItems : public ComboListItems
     }
     // Return text entry for nth item
     const char *currentItemText() { return (currentItem_ ? currentItem_->name() : "NULL"); }
+};
+
+// Templated Item Source for ComboList (utilising T's name())
+template <class T> class ComboSharedNameListItems : public ComboListItems
+{
+    public:
+    // Constructor
+    ComboSharedNameListItems(const std::vector<std::shared_ptr<T>> &items) : items_(items), currentItem_(items.cbegin()) {}
+
+    private:
+    // Associated item list
+    const std::vector<std::shared_ptr<T>> &items_;
+    // Current iteration item
+    typename std::vector<std::shared_ptr<T>>::const_iterator currentItem_;
+
+    /*
+     * Access
+     */
+    public:
+    // Return number of items in list
+    int nItems() { return items_.size(); }
+    // Restart list iteration
+    void restartIterator() { currentItem_ = items_.cbegin(); }
+    // Move to next item in list
+    bool nextItem()
+    {
+        ++currentItem_;
+        return currentItem_ < items_.cend();
+    }
+    // Return text entry for nth item
+    const char *currentItemText() { return (*currentItem_ ? (*currentItem_)->name() : "NULL"); }
 };
 
 // Templated EnumOptions Source for ComboList

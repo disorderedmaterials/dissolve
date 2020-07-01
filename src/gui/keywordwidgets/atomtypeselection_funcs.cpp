@@ -31,6 +31,9 @@
 #include <QString>
 #include <algorithm>
 
+Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
+Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
+
 AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
     : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
@@ -56,7 +59,7 @@ AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget *parent, 
  */
 
 // Selection list update function
-void AtomTypeSelectionKeywordWidget::updateSelectionRow(int row, AtomType &atomType, bool createItem)
+void AtomTypeSelectionKeywordWidget::updateSelectionRow(int row, std::shared_ptr<AtomType> atomType, bool createItem)
 {
     // Grab the target AtomTypeSelection
     auto &selection = keyword_->data();
@@ -64,22 +67,21 @@ void AtomTypeSelectionKeywordWidget::updateSelectionRow(int row, AtomType &atomT
     QListWidgetItem *item;
     if (createItem)
     {
-        auto location =
-            std::find_if(atomTypes_.begin(), atomTypes_.end(), [&atomType](const AtomType &at) { return &at == &atomType; });
+        auto location = std::find_if(atomTypes_.begin(), atomTypes_.end(), [&atomType](auto at) { return at == atomType; });
         if (location == atomTypes_.end())
         {
             atomTypes_.push_back(atomType);
-            location = std::find_if(atomTypes_.begin(), atomTypes_.end(),
-                                    [&atomType](const AtomType &at) { return &at == &atomType; });
+            location = std::find_if(atomTypes_.begin(), atomTypes_.end(), [&atomType](auto at) { return at == atomType; });
         }
-        item = new QListWidgetItem(atomType.name());
+        item = new QListWidgetItem(atomType->name());
         item->setData(Qt::UserRole, QVariant::fromValue(location - atomTypes_.begin()));
         item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
         ui.SelectionList->insertItem(row, item);
     }
     else
         item = ui.SelectionList->item(row);
-    auto it = std::find(selection.begin(), selection.end(), atomType);
+    auto it = std::find_if(selection.begin(), selection.end(),
+                           [&atomType](const AtomTypeData &atd) { return atd.atomType() == atomType; });
     item->setCheckState(it != selection.end() ? Qt::Checked : Qt::Unchecked);
 }
 

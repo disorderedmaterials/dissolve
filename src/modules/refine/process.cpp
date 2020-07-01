@@ -265,14 +265,10 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
         combinedCWeights = 0.0;
 
         // Set object names in combinedUnweightedSQ
-        i = 0;
-        for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
-        {
-            j = i;
-            for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
-                combinedUnweightedSQ.at(i, j).setObjectTag(
-                    CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
-        }
+        for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+            combinedUnweightedSQ.at(i, j).setObjectTag(
+                CharString("%s//UnweightedSQ//%s//%s-%s", uniqueName(), group->name(), at1->name(), at2->name()));
+        });
 
         // Realise storage for generated S(Q), and reinitialise the scattering matrix
         auto &estimatedSQ = GenericListHelper<Array2D<Data1D>>::realise(dissolve.processingModuleData(), "EstimatedSQ",
@@ -313,8 +309,8 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
             double factor = 1.0;
             auto &types = unweightedSQ.atomTypes();
             for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {
-                auto globalI = atd1.atomType().index();
-                auto globalJ = atd2.atomType().index();
+                auto globalI = atd1.atomType()->index();
+                auto globalJ = atd2.atomType()->index();
 
                 Data1D partialIJ = unweightedSQ.constPartial(i, j);
                 Interpolator::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ), partialIJ, factor);
@@ -346,12 +342,9 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             // Create the array
             simulatedReferenceData_.createEmpty(combinedUnweightedSQ.linearArraySize());
-            i = 0;
-            for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
-            {
-                j = i;
-                for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
-                {
+            for_each_pair_early(
+                dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
                     // Weight in the matrix will be based on the natural isotope and the summed
                     // concentration weight
                     double factor = Isotopes::naturalIsotope(at1->element())->boundCoherent() *
@@ -368,8 +361,8 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     if (!scatteringMatrix_.addPartialReferenceData(data, at1, at2, factor, (1.0 - augmentationParam)))
                         return Messenger::error("Refine: Failed to augment scattering matrix with partial %s-%s.\n",
                                                 at1->name(), at2->name());
-                }
-            }
+                    return std::nullopt;
+                });
         }
         else if (augmentationStyle != RefineModule::NoAugmentation)
         {
@@ -399,24 +392,18 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
         auto &estimatedGR = GenericListHelper<Array2D<Data1D>>::realise(dissolve.processingModuleData(), "EstimatedGR",
                                                                         uniqueName_, GenericItem::InRestartFileFlag);
         estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
-        i = 0;
-        for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
-        {
-            j = i;
-            for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
-            {
-                // Grab experimental g(r) contained and make sure its object name is set
-                auto &expGR = estimatedGR.at(i, j);
-                expGR.setObjectTag(
-                    CharString("%s//EstimatedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
+        for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+            // Grab experimental g(r) contained and make sure its object name is set
+            auto &expGR = estimatedGR.at(i, j);
+            expGR.setObjectTag(
+                CharString("%s//EstimatedGR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
 
-                // Copy experimental S(Q) and FT it
-                expGR = estimatedSQ.at(i, j);
-                Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * combinedRho.at(i, j)), 0.0, 0.05, 30.0,
-                                WindowFunction(WindowFunction::Lorch0Window));
-                expGR.values() += 1.0;
-            }
-        }
+            // Copy experimental S(Q) and FT it
+            expGR = estimatedSQ.at(i, j);
+            Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * combinedRho.at(i, j)), 0.0, 0.05, 30.0,
+                            WindowFunction(WindowFunction::Lorch0Window));
+            expGR.values() += 1.0;
+        });
 
         /*
          * Generate summed unweighted g(r) from all source Module data
@@ -436,15 +423,15 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
             deltaSQ.initialise(nTypes, nTypes, true);
 
         i = 0;
-        for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+        for (auto at1 = dissolve.atomTypes().begin(); at1 != dissolve.atomTypes().end(); ++at1, ++i)
         {
             j = i;
-            for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+            for (auto at2 = at1; at2 != dissolve.atomTypes().end(); ++at2, ++j)
             {
                 // Grab difference partial and make sure its object name is set
                 auto &dSQ = deltaSQ.at(i, j);
                 dSQ.setObjectTag(
-                    CharString("%s//DeltaSQ//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
+                    CharString("%s//DeltaSQ//%s//%s-%s", uniqueName_.get(), group->name(), (*at1)->name(), (*at2)->name()));
 
                 // Reset the difference partial
                 dSQ.clear();
@@ -515,10 +502,10 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
             const auto rFraction = 0.95;
             const auto thresholdValue = 0.1;
             i = 0;
-            for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+            for (auto at1 = dissolve.atomTypes().begin(); at1 != dissolve.atomTypes().end(); ++at1, ++i)
             {
                 j = i;
-                for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+                for (auto at2 = at1; at2 != dissolve.atomTypes().end(); ++at2, ++j)
                 {
                     // Grab unbound g(r)
                     auto &gr = summedUnweightedGR.unboundPartial(i, j);
@@ -543,7 +530,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                     Messenger::print("Minimum radius for %s-%s interatomic potential determined to be %f "
                                      "Angstroms.\n",
-                                     at1->name(), at2->name(), minimumRadii.constAt(i, j));
+                                     (*at1)->name(), (*at2)->name(), minimumRadii.constAt(i, j));
                 }
             }
         }
@@ -556,21 +543,21 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Data1D cr;
         Array<double> crgr;
         i = 0;
-        for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+        for (auto at1 = dissolve.atomTypes().begin(); at1 != dissolve.atomTypes().end(); ++at1, ++i)
         {
             j = i;
-            for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+            for (auto at2 = at1; at2 != dissolve.atomTypes().end(); ++at2, ++j)
             {
                 // Grab potential perturbation container, clear it, and make sure its object name is set
                 auto &dPhiR = groupDeltaPhiR.at(i, j);
                 dPhiR.clear();
                 dPhiR.setObjectTag(
-                    CharString("%s//DeltaPhiR//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
+                    CharString("%s//DeltaPhiR//%s//%s-%s", uniqueName_.get(), group->name(), (*at1)->name(), (*at2)->name()));
 
                 // Grab delta g(r) container and make sure its object name is set
                 auto &inversion = groupDeltaGR.at(i, j);
                 inversion.setObjectTag(
-                    CharString("%s//Inversion//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
+                    CharString("%s//Inversion//%s//%s-%s", uniqueName_.get(), group->name(), (*at1)->name(), (*at2)->name()));
 
                 // Set the default weighting factor for the pair potential addition
                 weight = weighting;
@@ -614,13 +601,13 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                     // Store fitted parameters
                     GenericListHelper<Array<double>>::realise(dissolve.processingModuleData(),
-                                                              CharString("%s-%s-GaussianX", at1->name(), at2->name()),
+                                                              CharString("%s-%s-GaussianX", (*at1)->name(), (*at2)->name()),
                                                               uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.x();
                     GenericListHelper<Array<double>>::realise(dissolve.processingModuleData(),
-                                                              CharString("%s-%s-GaussianA", at1->name(), at2->name()),
+                                                              CharString("%s-%s-GaussianA", (*at1)->name(), (*at2)->name()),
                                                               uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.A();
                     GenericListHelper<Array<double>>::realise(dissolve.processingModuleData(),
-                                                              CharString("%s-%s-GaussianFWHM", at1->name(), at2->name()),
+                                                              CharString("%s-%s-GaussianFWHM", (*at1)->name(), (*at2)->name()),
                                                               uniqueName_, GenericItem::InRestartFileFlag) = gaussFit.fwhm();
 
                     // DEBUG
@@ -756,14 +743,14 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Normalise and store our combined partial errors
      */
     i = 0;
-    for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+    for (auto at1 = dissolve.atomTypes().begin(); at1 != dissolve.atomTypes().end(); ++at1, ++i)
     {
         j = i;
-        for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+        for (auto at2 = at1; at2 != dissolve.atomTypes().end(); ++at2, ++j)
         {
-            auto &partialErrors = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(),
-                                                                     CharString("PartialError_%s-%s", at1->name(), at2->name()),
-                                                                     uniqueName_, GenericItem::InRestartFileFlag);
+            auto &partialErrors = GenericListHelper<Data1D>::realise(
+                dissolve.processingModuleData(), CharString("PartialError_%s-%s", (*at1)->name(), (*at2)->name()), uniqueName_,
+                GenericItem::InRestartFileFlag);
             // TODO This will be a straight sum of errors over groups, and may not be entirely representative? Needs
             // to be weighted?
             partialErrors.addPoint(dissolve.iteration(), globalCombinedErrors.constAt(i, j));
@@ -783,16 +770,16 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 dissolve.processingModuleData(), CharString("DeltaPhiR_%s", group->name()), uniqueName_, Array2D<Data1D>());
 
             i = 0;
-            for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+            for (auto at1 = dissolve.atomTypes().begin(); at1 != dissolve.atomTypes().end(); ++at1, ++i)
             {
                 j = i;
-                for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+                for (auto at2 = at1; at2 != dissolve.atomTypes().end(); ++at2, ++j)
                 {
                     // Assess error of partial if requested, and decide whether to adjust potential
                     if (onlyWhenErrorStable)
                     {
                         const auto &partialErrors = GenericListHelper<Data1D>::value(
-                            dissolve.processingModuleData(), CharString("PartialError_%s-%s", at1->name(), at2->name()),
+                            dissolve.processingModuleData(), CharString("PartialError_%s-%s", (*at1)->name(), (*at2)->name()),
                             uniqueName_);
                         if (partialErrors.nValues() >= errorStabilityWindow)
                         {
@@ -805,7 +792,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                  "%e %%/step (absolute threshold value is %e, stable = "
                                                  "%s) so no "
                                                  "potential adjustment will be made.\n",
-                                                 errorStabilityWindow, at1->name(), at2->name(), grad, thresholdValue,
+                                                 errorStabilityWindow, (*at1)->name(), (*at2)->name(), grad, thresholdValue,
                                                  DissolveSys::btoa(fabs(grad) <= thresholdValue));
                                 continue;
                             }
@@ -813,11 +800,11 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Grab pointer to the relevant pair potential
-                    PairPotential *pp = dissolve.pairPotential(at1, at2);
+                    PairPotential *pp = dissolve.pairPotential(*at1, *at2);
                     if (!pp)
                     {
-                        Messenger::error("Failed to find PairPotential for AtomTypes '%s' and '%s'.\n", at1->name(),
-                                         at2->name());
+                        Messenger::error("Failed to find PairPotential for AtomTypes '%s' and '%s'.\n", (*at1)->name(),
+                                         (*at2)->name());
                         return false;
                     }
 
@@ -832,13 +819,13 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
     double phiMagTot = 0.0;
     i = 0;
-    for (std::shared_ptr<AtomType> at1 = dissolve.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++i)
+    for (auto at1 = dissolve.atomTypes().begin(); at1 != dissolve.atomTypes().end(); ++at1, ++i)
     {
         j = i;
-        for (std::shared_ptr<AtomType> at2 = at1; at2 != NULL; at2 = at2->next(), ++j)
+        for (auto at2 = at1; at2 != dissolve.atomTypes().end(); ++at2, ++j)
         {
             // Grab pointer to the relevant pair potential
-            PairPotential *pp = dissolve.pairPotential(at1, at2);
+            PairPotential *pp = dissolve.pairPotential(*at1, *at2);
             if (!pp)
                 continue;
 

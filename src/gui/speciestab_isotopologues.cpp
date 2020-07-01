@@ -24,6 +24,9 @@
 #include "gui/gui.h"
 #include "gui/helpers/treewidgetupdater.h"
 #include "gui/speciestab.h"
+#include <memory>
+
+Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
 
 /*
  * Private Functions
@@ -53,8 +56,8 @@ void SpeciesTab::updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, in
 }
 
 // IsotopologuesTree item update function
-void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, std::shared_ptr<AtomType> atomType,
-                                                  Isotope *isotope, bool createItem)
+void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex,
+                                                  std::shared_ptr<AtomType> atomType, Isotope *isotope, bool createItem)
 {
     QTreeWidgetItem *item;
 
@@ -62,7 +65,7 @@ void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, i
     if (createItem)
     {
         item = new QTreeWidgetItem;
-        item->setData(1, Qt::UserRole, VariantPointer<AtomType>(atomType));
+        item->setData(1, Qt::UserRole, QVariant::fromValue(atomType));
         item->setData(2, Qt::UserRole, VariantPointer<Isotope>(isotope));
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
         parentItem->insertChild(childIndex, item);
@@ -157,7 +160,7 @@ void SpeciesTab::on_IsotopologuesTree_itemChanged(QTreeWidgetItem *item, int col
     else if (column == 2)
     {
         // Set neutron isotope - need to get AtomType from column 1...
-        std::shared_ptr<AtomType> atomType = VariantPointer<AtomType>(item->data(1, Qt::UserRole));
+        std::shared_ptr<AtomType> atomType = item->data(1, Qt::UserRole).value<std::shared_ptr<AtomType>>();
         Isotope *isotope = VariantPointer<Isotope>(item->data(2, Qt::UserRole));
         if (isotope)
             isotopologue->setAtomTypeIsotope(atomType, isotope);

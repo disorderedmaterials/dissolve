@@ -31,6 +31,8 @@
 #include <QFileDialog>
 #include <QInputDialog>
 
+Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
+
 AddForcefieldTermsWizard::AddForcefieldTermsWizard(QWidget *parent) : temporaryDissolve_(temporaryCoreData_)
 {
     dissolveReference_ = NULL;
@@ -81,11 +83,12 @@ AddForcefieldTermsWizard::~AddForcefieldTermsWizard() {}
 // Return (mapped) name to use for specified type
 const char *AddForcefieldTermsWizard::mappedName(const std::shared_ptr<AtomType> at)
 {
-    RefDataItem<const AtomType, CharString> *item = typeNameMappings_.contains(at);
-    if (!item)
+    // RefDataItem<const AtomType, CharString> *item = typeNameMappings_.contains(at);
+    auto it = typeNameMappings_.find(at);
+    if (it == typeNameMappings_.end())
         return "???";
     else
-        return item->data();
+        return std::get<CharString>(*it);
 }
 
 // Set Dissolve reference
@@ -289,7 +292,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
             for (int i = 0; i < ui_.AtomTypesConflictsList->count(); ++i)
             {
                 QListWidgetItem *item = ui_.AtomTypesConflictsList->item(i);
-                typeNameMappings_.append(VariantPointer<AtomType>(item->data(Qt::UserRole)), qPrintable(item->text()));
+                typeNameMappings_[item->data(Qt::UserRole).value<std::shared_ptr<AtomType>>()] = qPrintable(item->text());
             }
 
             // Assign intramolecular terms
@@ -511,7 +514,7 @@ void AddForcefieldTermsWizard::updateAtomTypesConflictsListRow(int row, std::sha
     if (createItem)
     {
         item = new QListWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+        item->setData(Qt::UserRole, QVariant::fromValue(atomType));
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
         ui_.AtomTypesConflictsList->insertItem(row, item);
     }

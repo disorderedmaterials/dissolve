@@ -24,6 +24,7 @@
 #include "gui/ui_addforcefieldtermswizard.h"
 #include "gui/wizardwidget.hui"
 #include "main/dissolve.h"
+#include <map>
 
 // Forward Declarations
 class Forcefield;
@@ -54,7 +55,7 @@ class AddForcefieldTermsWizard : public WizardWidget
     // Species pointer with newly-applied Forcefield terms
     Species *modifiedSpecies_;
     // List of atom type name mappings to be applied
-    RefDataList<const AtomType, CharString> typeNameMappings_;
+    std::map<std::shared_ptr<AtomType>, CharString> typeNameMappings_;
 
     private:
     // Return (mapped) name to use for specified type

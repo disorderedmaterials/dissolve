@@ -322,6 +322,7 @@ void SpeciesTab::updateAtomTableSelection()
 
 void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
 {
+    std::optional<std::shared_ptr<AtomType>> opt_atomType;
     if (refreshLock_.isLocked())
         return;
 
@@ -340,11 +341,15 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
         // AtomType
         case (1):
             // Check the text to see if it is an existing AtomType - if not, we should create it
-            atomType = dissolve_.findAtomType(qPrintable(w->text()));
-            if (!atomType)
+            opt_atomType = dissolve_.findAtomType(qPrintable(w->text()));
+            if (!opt_atomType)
             {
                 atomType = dissolve_.addAtomType(speciesAtom->element());
                 atomType->setName(qPrintable(w->text()));
+            }
+            else
+            {
+                atomType = *opt_atomType;
             }
             speciesAtom->setAtomType(atomType);
             dissolveWindow_->setModified();
