@@ -24,8 +24,7 @@
 #include "data/ff.h"
 
 // Forward Declarations
-class CoreData;
-class SpeciesAtom;
+/* none */
 
 // SPC/Fw Forcefield
 class Forcefield_SPCFw : public Forcefield
