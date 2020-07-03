@@ -11,7 +11,17 @@ stages:
     displayName: 'Build and Package'
     jobs:
       - job: 'linux_serialgui'
+        displayName: 'Build Linux (Serial/GUI, ubuntu-latest)'
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - template: templates/build-linux-serial-gui.yml
+            parameters:
+              ppa: 'beineri/opt-qt-5.12.0-xenial'
+              qtver: 512
+      - job: 'linux_serialgui_appimage'
         displayName: 'Build Linux (Serial/GUI, ubuntu-16.04)'
+        condition: eq(0,1)
         pool:
           vmImage: 'ubuntu-16.04'
         steps:
@@ -60,13 +70,13 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
-          - task: DownloadBuildArtifacts@0
-            inputs:
-              buildType: 'current'
-              specificBuildWithTriggering: true
-              downloadType: 'single'
-              artifactName: 'linux-artifacts'
-            displayName: 'Download Linux Artifacts'
+          #- task: DownloadBuildArtifacts@0
+          #  inputs:
+          #    buildType: 'current'
+          #    specificBuildWithTriggering: true
+          #    downloadType: 'single'
+          #    artifactName: 'linux-artifacts'
+          #  displayName: 'Download Linux Artifacts'
           - task: DownloadBuildArtifacts@0
             inputs:
               buildType: 'current'
