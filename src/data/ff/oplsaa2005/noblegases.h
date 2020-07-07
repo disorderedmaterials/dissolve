@@ -47,13 +47,4 @@ class Forcefield_OPLSAA2005_NobleGases : public OPLSAA2005BaseForcefield
     const char *name() const;
     // Return description for Forcefield
     const char *description() const;
-    // Return short-range interaction style for AtomTypes
-    Forcefield::ShortRangeType shortRangeType() const;
-
-    /*
-     * Atom Type Data
-     */
-    public:
-    // Determine and return atom type for specified SpeciesAtom
-    ForcefieldAtomType *determineAtomType(SpeciesAtom *i) const;
 };
