@@ -24,22 +24,32 @@
 #include "classes/speciesatom.h"
 #include "data/ffatomtype.h"
 
+Forcefield_OPLSAA2005_Alkanes::Forcefield_OPLSAA2005_Alkanes() {}
+
+Forcefield_OPLSAA2005_Alkanes::~Forcefield_OPLSAA2005_Alkanes() {}
+
 /*
- * OPLS-AA (2005) Alkanes
+ * Set Up
  */
 
-Forcefield_OPLSAA2005_Alkanes::Forcefield_OPLSAA2005_Alkanes()
+// Set up / create all forcefield data ready for use
+bool Forcefield_OPLSAA2005_Alkanes::setUp()
 {
     // Copy required types from OPLS-AA (2005) core list
     // -- AA Alkanes
-    copyAtomType(oplsAtomTypeById(135), "CT3", "nbonds=4,nh=3", "CT");
-    copyAtomType(oplsAtomTypeById(136), "CT2", "nbonds=4,nh=2", "CT");
-    copyAtomType(oplsAtomTypeById(137), "CT1", "nbonds=4,nh=1", "CT");
-    copyAtomType(oplsAtomTypeById(138), "CT4", "nbonds=4,nh=4", "CT");
-    copyAtomType(oplsAtomTypeById(140), "HC", "-[&135,&136,&137,&138]");
-}
+    if (!copyAtomType(oplsAtomTypeById(135), "CT3", "nbonds=4,nh=3", "CT"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(136), "CT2", "nbonds=4,nh=2", "CT"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(137), "CT1", "nbonds=4,nh=1", "CT"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(138), "CT4", "nbonds=4,nh=4", "CT"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(140), "HC", "-[&135,&136,&137,&138]"))
+        return false;
 
-Forcefield_OPLSAA2005_Alkanes::~Forcefield_OPLSAA2005_Alkanes() {}
+    return true;
+}
 
 /*
  * Definition

@@ -34,6 +34,13 @@ class Forcefield_SPCFw : public Forcefield
     ~Forcefield_SPCFw();
 
     /*
+     * Set Up
+     */
+    public:
+    // Set up / create all forcefield data ready for use
+    bool setUp();
+
+    /*
      * Definition
      */
     public:

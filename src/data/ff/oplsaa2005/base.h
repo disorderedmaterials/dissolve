@@ -48,7 +48,7 @@ class OPLSAA2005BaseForcefield : public Forcefield
      */
     public:
     // Return the base ForcefieldAtomType with specified id (if it exists)
-    const ForcefieldAtomType &oplsAtomTypeById(int id) const;
+    OptionalReferenceWrapper<const ForcefieldAtomType> oplsAtomTypeById(int id) const;
 
     /*
      * Term Data

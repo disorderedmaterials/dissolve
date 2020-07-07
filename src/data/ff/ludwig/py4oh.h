@@ -35,6 +35,13 @@ class Forcefield_Py4OH_Ludwig : public Forcefield
     ~Forcefield_Py4OH_Ludwig();
 
     /*
+     * Set Up
+     */
+    public:
+    // Set up / create all forcefield data ready for use
+    bool setUp();
+
+    /*
      * Definition
      */
     public:

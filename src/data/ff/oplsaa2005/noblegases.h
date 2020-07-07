@@ -40,6 +40,13 @@ class Forcefield_OPLSAA2005_NobleGases : public OPLSAA2005BaseForcefield
     ~Forcefield_OPLSAA2005_NobleGases();
 
     /*
+     * Set Up
+     */
+    public:
+    // Set up / create all forcefield data ready for use
+    bool setUp();
+
+    /*
      * Definition
      */
     public:

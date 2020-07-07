@@ -71,12 +71,19 @@ void Forcefield::addAtomType(int Z, int index, const char *name, const char *net
 }
 
 // Copy existing atom type
-void Forcefield::copyAtomType(const ForcefieldAtomType &sourceType, const char *newTypeName, const char *netaDefinition,
-                              const char *equivalentName)
+bool Forcefield::copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType> sourceType, const char *newTypeName,
+                              const char *netaDefinition, const char *equivalentName)
 {
-    atomTypes_.emplace_back(this, sourceType, newTypeName, netaDefinition, equivalentName);
+    // Check for valid reference
+    if (!sourceType)
+        return Messenger::error("Can't copy atom type with new name '%s' into forcefield '%s' as no sourceType was provided.\n",
+                                newTypeName, name());
+
+    atomTypes_.emplace_back(this, *sourceType, newTypeName, netaDefinition, equivalentName);
 
     atomTypesByElementPrivate_[atomTypes_.back().Z()].push_back(atomTypes_.back());
+
+    return true;
 }
 
 // Determine and return atom type for specified SpeciesAtom from supplied Array of types

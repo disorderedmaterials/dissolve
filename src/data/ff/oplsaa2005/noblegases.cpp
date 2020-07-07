@@ -24,21 +24,31 @@
 #include "classes/speciesatom.h"
 #include "data/ffatomtype.h"
 
-/*
- * OPLS-AA (2005) Noble Gases
- */
-
-Forcefield_OPLSAA2005_NobleGases::Forcefield_OPLSAA2005_NobleGases()
-{
-    // Copy required types from OPLS-AA (2005) core list
-    copyAtomType(oplsAtomTypeById(101), "He");
-    copyAtomType(oplsAtomTypeById(102), "Ne");
-    copyAtomType(oplsAtomTypeById(103), "Ar");
-    copyAtomType(oplsAtomTypeById(104), "Kr");
-    copyAtomType(oplsAtomTypeById(105), "Xe");
-}
+Forcefield_OPLSAA2005_NobleGases::Forcefield_OPLSAA2005_NobleGases() {}
 
 Forcefield_OPLSAA2005_NobleGases::~Forcefield_OPLSAA2005_NobleGases() {}
+
+/*
+ * Set Up
+ */
+
+// Set up / create all forcefield data ready for use
+bool Forcefield_OPLSAA2005_NobleGases::setUp()
+{
+    // Copy required types from OPLS-AA (2005) core list
+    if (!copyAtomType(oplsAtomTypeById(101), "He"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(102), "Ne"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(103), "Ar"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(104), "Kr"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(105), "Xe"))
+        return false;
+
+    return true;
+}
 
 /*
  * Definition
