@@ -19,10 +19,10 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "data/ff/kulmala2010.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/speciesatom.h"
-#include "data/ff/kulmala2010.h"
 #include "data/ffangleterm.h"
 #include "data/ffatomtype.h"
 #include "data/ffbondterm.h"
@@ -104,12 +104,12 @@ Forcefield_Kulmala2010::Forcefield_Kulmala2010()
     // -- Dimethylammonium Ion
     addBondTerm("NDM", "CDM", SpeciesBond::HarmonicForm, 3071.0, 1.499);
     addBondTerm("NDM", "HDM", SpeciesBond::HarmonicForm, 3632.0, 1.01);
-    addBondTerm("CDM", "HCD", SpeciesBond::HarmonicForm, 2845.12, 1.09);    // Missing from SI - taken from OPLS-AA
+    addBondTerm("CDM", "HCD", SpeciesBond::HarmonicForm, 2845.12, 1.09); // Missing from SI - taken from OPLS-AA
     addAngleTerm("CDM", "NDM", "CDM", SpeciesAngle::HarmonicForm, 418.4, 114.3);
     addAngleTerm("HDM", "NDM", "CDM", SpeciesAngle::HarmonicForm, 418.4, 109.2);
     addAngleTerm("HCD", "CDM", "NDM", SpeciesAngle::HarmonicForm, 209.2, 108.5);
     addAngleTerm("HDM", "NDM", "HDM", SpeciesAngle::HarmonicForm, 292.9, 105.5);
-    addAngleTerm("HCD", "CDM", "HCD", SpeciesAngle::HarmonicForm, 276.144, 107.8);    // Missing from SI - taken from OPLS-AA
+    addAngleTerm("HCD", "CDM", "HCD", SpeciesAngle::HarmonicForm, 276.144, 107.8); // Missing from SI - taken from OPLS-AA
     addTorsionTerm("HCD", "CDM", "NDM", "HDM", SpeciesTorsion::Cos3Form, 0.0, 0.0, 0.0, 0.0);
     addTorsionTerm("HCD", "CDM", "NDM", "CDM", SpeciesTorsion::Cos3Form, 0.0, 0.0, 3.3765, 0.0);
 }
