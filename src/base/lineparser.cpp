@@ -772,8 +772,6 @@ void LineParser::getAllArgsDelim(int optionMask)
             // Add this char to the list
             arguments_.push_back(arg);
         }
-        else
-            delete arg;
     }
 }
 
