@@ -41,7 +41,16 @@
  * All energy values are in kJ/mol.
  */
 
-Forcefield_Py4OH_Ludwig::Forcefield_Py4OH_Ludwig()
+Forcefield_Py4OH_Ludwig::Forcefield_Py4OH_Ludwig() {}
+
+Forcefield_Py4OH_Ludwig::~Forcefield_Py4OH_Ludwig() {}
+
+/*
+ * Set Up
+ */
+
+// Set up / create all forcefield data ready for use
+bool Forcefield_Py4OH_Ludwig::setUp()
 {
     // Short-Range Parameters
     addParameters("nc", 0.711302, 3.250);
@@ -131,9 +140,9 @@ Forcefield_Py4OH_Ludwig::Forcefield_Py4OH_Ludwig()
     addImproperTerm("ca", "ca", "ca", "ha", SpeciesImproper::CosineForm, 4.606, 2.0, 180.0);
     addImproperTerm("ca", "nc", "ca", "ha", SpeciesImproper::CosineForm, 4.606, 2.0, 180.0);
     addImproperTerm("ca", "ca", "nc", "ct", SpeciesImproper::CosineForm, 4.606, 2.0, 180.0);
-}
 
-Forcefield_Py4OH_Ludwig::~Forcefield_Py4OH_Ludwig() {}
+    return true;
+}
 
 /*
  * Definition

@@ -35,6 +35,13 @@ class Forcefield_NTf2_Ludwig : public Forcefield
     ~Forcefield_NTf2_Ludwig();
 
     /*
+     * Set Up
+     */
+    public:
+    // Set up / create all forcefield data ready for use
+    bool setUp();
+
+    /*
      * Definition
      */
     public:

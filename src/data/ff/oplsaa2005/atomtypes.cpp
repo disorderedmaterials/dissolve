@@ -60,9 +60,9 @@ const char *OPLSAA2005BaseForcefield::publicationReferences() const
  */
 
 // Return the base ForcefieldAtomType with specified id (if it exists)
-const ForcefieldAtomType &OPLSAA2005BaseForcefield::oplsAtomTypeById(int id) const
+OptionalReferenceWrapper<const ForcefieldAtomType> OPLSAA2005BaseForcefield::oplsAtomTypeById(int id) const
 {
-    static ForcefieldAtomType atomTypes[] = {
+    static const std::vector<ForcefieldAtomType> atomTypes = {
         // 	Z	El	FFID	Name		NETA	Description
         //						q	Epsilon	Sigma
         {NULL, ELEMENT_H, 1, "H", "", "", 0.000000, 0.125520, 2.460000},
@@ -976,14 +976,8 @@ const ForcefieldAtomType &OPLSAA2005BaseForcefield::oplsAtomTypeById(int id) con
         {NULL, ELEMENT_H, 1239, "HA", "", "H4  thiazole jlj0003", 0.200000, 0.125520, 2.420000},
         {NULL, ELEMENT_H, 1240, "HA", "", "H5  thiazole jlj0003", 0.200000, 0.125520, 2.420000}};
 
-    const auto nAtomTypes = 898;
-
-    // Search through list
-    for (int n = 0; n < nAtomTypes; ++n)
-        if (atomTypes[n].index() == id)
-            return atomTypes[n];
-
-    // No match found
-    static ForcefieldAtomType dummyType(NULL, ELEMENT_XX, 0, "??", "", "<undefined>", 0.0, 0.0, 0.0);
-    return dummyType;
+    auto it = std::find_if(atomTypes.cbegin(), atomTypes.cend(), [&](const auto &data) { return data.index() == id; });
+    if (it == atomTypes.end())
+        return {};
+    return *it;
 }

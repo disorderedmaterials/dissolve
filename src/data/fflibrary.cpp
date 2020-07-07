@@ -41,21 +41,31 @@ std::vector<std::shared_ptr<Forcefield>> ForcefieldLibrary::forcefields_;
  * Private Functions
  */
 
+// Set up supplied forcefield for use, and add to internal list
+bool ForcefieldLibrary::registerForcefield(std::shared_ptr<Forcefield> ff)
+{
+    // Set up the forcefield, returning if not successful
+    if (!ff->setUp())
+        return Messenger::error("Failed to set up forcefield '%s' - it will not be registered.\n", ff->name());
+
+    forcefields_.push_back(ff);
+}
+
 // Register Forcefields for use
 void ForcefieldLibrary::registerForcefields()
 {
-    forcefields_.push_back(std::make_shared<Forcefield_OPLSAA2005_Alcohols>());
-    forcefields_.push_back(std::make_shared<Forcefield_OPLSAA2005_Alkanes>());
-    forcefields_.push_back(std::make_shared<Forcefield_OPLSAA2005_Alkenes>());
-    forcefields_.push_back(std::make_shared<Forcefield_OPLSAA2005_Aromatics>());
-    forcefields_.push_back(std::make_shared<Forcefield_OPLSAA2005_Diols>());
-    forcefields_.push_back(std::make_shared<Forcefield_OPLSAA2005_NobleGases>());
-    forcefields_.push_back(std::make_shared<Forcefield_OPLSAA2005_Triols>());
-    forcefields_.push_back(std::make_shared<Forcefield_SPCFw>());
-    forcefields_.push_back(std::make_shared<Forcefield_UFF>());
-    forcefields_.push_back(std::make_shared<Forcefield_NTf2_Ludwig>());
-    forcefields_.push_back(std::make_shared<Forcefield_Py5_Ludwig>());
-    forcefields_.push_back(std::make_shared<Forcefield_Py4OH_Ludwig>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alcohols>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alkanes>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alkenes>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Aromatics>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Diols>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_NobleGases>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Triols>());
+    registerForcefield(std::make_shared<Forcefield_SPCFw>());
+    registerForcefield(std::make_shared<Forcefield_UFF>());
+    registerForcefield(std::make_shared<Forcefield_NTf2_Ludwig>());
+    registerForcefield(std::make_shared<Forcefield_Py5_Ludwig>());
+    registerForcefield(std::make_shared<Forcefield_Py4OH_Ludwig>());
 }
 
 /*

@@ -40,7 +40,16 @@
  * All energy values are in kJ/mol.
  */
 
-Forcefield_NTf2_Ludwig::Forcefield_NTf2_Ludwig()
+Forcefield_NTf2_Ludwig::Forcefield_NTf2_Ludwig() {}
+
+Forcefield_NTf2_Ludwig::~Forcefield_NTf2_Ludwig() {}
+
+/*
+ * Set Up
+ */
+
+// Set up / create all forcefield data ready for use
+bool Forcefield_NTf2_Ludwig::setUp()
 {
     // Short-Range Parameters
     addParameters("F", 0.066516, 2.655);
@@ -83,9 +92,9 @@ Forcefield_NTf2_Ludwig::Forcefield_NTf2_Ludwig()
     addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosineForm, -0.0298, 4.0, 0.0, 1);
     addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosineForm, 0.6905, 5.0, 0.0, 1);
     addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosineForm, 1.0165, 6.0, 0.0, 1);
-}
 
-Forcefield_NTf2_Ludwig::~Forcefield_NTf2_Ludwig() {}
+    return true;
+}
 
 /*
  * Definition

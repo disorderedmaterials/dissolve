@@ -25,24 +25,35 @@
 #include "data/ff/oplsaa2005/alkanes.h"
 #include "data/ffatomtype.h"
 
+Forcefield_OPLSAA2005_Alkenes::Forcefield_OPLSAA2005_Alkenes() {}
+
+Forcefield_OPLSAA2005_Alkenes::~Forcefield_OPLSAA2005_Alkenes() {}
+
 /*
- * OPLS-AA (2005) Noble Gases
+ * Set Up
  */
 
-Forcefield_OPLSAA2005_Alkenes::Forcefield_OPLSAA2005_Alkenes()
+// Set up / create all forcefield data ready for use
+bool Forcefield_OPLSAA2005_Alkenes::setUp()
 {
     // Add required types from OPLS-AA (2005) core list
     // -- AA Alkenes
-    copyAtomType(oplsAtomTypeById(141), "CM_a", "nbonds=3,nh=0,-C", "CM");
-    copyAtomType(oplsAtomTypeById(142), "CM_a", "nbonds=3,nh=1,-C", "CM");
-    copyAtomType(oplsAtomTypeById(143), "CM_a", "nbonds=3,nh=2,-C", "CM");
-    copyAtomType(oplsAtomTypeById(144), "HC_d", "-C(nbonds=3)", "HC");
+    if (!copyAtomType(oplsAtomTypeById(141), "CM_a", "nbonds=3,nh=0,-C", "CM"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(142), "CM_a", "nbonds=3,nh=1,-C", "CM"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(143), "CM_a", "nbonds=3,nh=2,-C", "CM"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(144), "HC_d", "-C(nbonds=3)", "HC"))
+        return false;
     // -- AA Dienes
-    copyAtomType(oplsAtomTypeById(150), "C=", "nbonds=3,nh=1,-C(nh=1,nbonds=3)");
-    copyAtomType(oplsAtomTypeById(178), "C=", "nbonds=3,nh=0,-C(nh=0,nbonds=3)");
-}
+    if (!copyAtomType(oplsAtomTypeById(150), "C=", "nbonds=3,nh=1,-C(nh=1,nbonds=3)"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(178), "C=", "nbonds=3,nh=0,-C(nh=0,nbonds=3)"))
+        return false;
 
-Forcefield_OPLSAA2005_Alkenes::~Forcefield_OPLSAA2005_Alkenes() {}
+    return true;
+}
 
 /*
  * Definition

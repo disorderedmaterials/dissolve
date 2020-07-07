@@ -34,6 +34,13 @@ class Forcefield_OPLSAA2005_Alcohols : public Forcefield_OPLSAA2005_Alkanes
     ~Forcefield_OPLSAA2005_Alcohols();
 
     /*
+     * Set Up
+     */
+    public:
+    // Set up / create all forcefield data ready for use
+    bool setUp();
+
+    /*
      * Definition
      */
     public:

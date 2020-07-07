@@ -24,24 +24,35 @@
 #include "classes/speciesatom.h"
 #include "data/ffatomtype.h"
 
+Forcefield_OPLSAA2005_Alcohols::Forcefield_OPLSAA2005_Alcohols() {}
+
+Forcefield_OPLSAA2005_Alcohols::~Forcefield_OPLSAA2005_Alcohols() {}
+
 /*
- * OPLS-AA (2005) Noble Gases
+ * Set Up
  */
 
-Forcefield_OPLSAA2005_Alcohols::Forcefield_OPLSAA2005_Alcohols()
+// Set up / create all forcefield data ready for use
+bool Forcefield_OPLSAA2005_Alcohols::setUp()
 {
     // Copy required types from OPLS-AA (2005) core list
     // -- Mono alcohols
-    copyAtomType(oplsAtomTypeById(154), "OH", "nh=1,-C(-O(root,-H))");
-    copyAtomType(oplsAtomTypeById(155), "HO", "-&154");
-    copyAtomType(oplsAtomTypeById(157), "CT", "nh>=2,-O");
-    copyAtomType(oplsAtomTypeById(158), "CT", "nh=1,-O");
-    copyAtomType(oplsAtomTypeById(159), "CT", "nh=0,-O");
+    if (!copyAtomType(oplsAtomTypeById(154), "OH", "nh=1,-C(-O(root,-H))"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(155), "HO", "-&154"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(157), "CT", "nh>=2,-O"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(158), "CT", "nh=1,-O"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(159), "CT", "nh=0,-O"))
+        return false;
     // -- Methanol
-    copyAtomType(oplsAtomTypeById(156), "HC", "-C(nh=3,-&154)");
-}
+    if (!copyAtomType(oplsAtomTypeById(156), "HC", "-C(nh=3,-&154)"))
+        return false;
 
-Forcefield_OPLSAA2005_Alcohols::~Forcefield_OPLSAA2005_Alcohols() {}
+    return false;
+}
 
 /*
  * Definition

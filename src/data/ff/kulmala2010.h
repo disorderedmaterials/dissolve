@@ -34,6 +34,13 @@ class Forcefield_Kulmala2010 : public Forcefield
     ~Forcefield_Kulmala2010();
 
     /*
+     * Set Up
+     */
+    public:
+    // Set up / create all forcefield data ready for use
+    bool setUp();
+
+    /*
      * Definition
      */
     public:
