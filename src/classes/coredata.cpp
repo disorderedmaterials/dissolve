@@ -56,8 +56,8 @@ void CoreData::clear()
 // Add new AtomType
 std::shared_ptr<AtomType> CoreData::addAtomType(Element *el)
 {
-    atomTypes_.emplace_back();
-    auto newAtomType = atomTypes_.back();
+    auto newAtomType = std::make_shared<AtomType>();
+    atomTypes_.push_back(newAtomType);
 
     // Create a suitable unique name
     newAtomType->setName(uniqueAtomTypeName(el->symbol()));
