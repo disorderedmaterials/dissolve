@@ -34,10 +34,10 @@
  */
 
 // Return bond term for the supplied atom type pair (if it exists)
-OptionalReferenceWrapper<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::bondTerm(const ForcefieldAtomType *i,
-                                                                                      const ForcefieldAtomType *j) const
+OptionalReferenceWrapper<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::bondTerm(const ForcefieldAtomType &i,
+                                                                                      const ForcefieldAtomType &j) const
 {
-    static std::vector<ForcefieldBondTerm> bondTerms = {
+    static const std::vector<ForcefieldBondTerm> bondTerms = {
         //	i	j	Type (Harmonic)			k	eq
         {"OW", "HW", SpeciesBond::HarmonicForm, 5020.8, 0.9572},
         /* { "OW",	"LP",	SpeciesBond::HarmonicForm,	7531.2,	0.175 }, */
@@ -399,9 +399,9 @@ OptionalReferenceWrapper<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::bon
 
 // Return angle term for the supplied atom type trio (if it exists)
 OptionalReferenceWrapper<const ForcefieldAngleTerm>
-OPLSAA2005BaseForcefield::angleTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k) const
+OPLSAA2005BaseForcefield::angleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k) const
 {
-    static std::vector<ForcefieldAngleTerm> angleTerms = {
+    static const std::vector<ForcefieldAngleTerm> angleTerms = {
         //	i	j	k	Type (Harmonic)			k	eq
         {"HW", "OW", "HW", SpeciesAngle::HarmonicForm, 627.6, 109.5},
         /* { "HW",	"OW",	"LP",	SpeciesAngle::HarmonicForm,	418.4,		54.75 }, */
@@ -1413,10 +1413,10 @@ OPLSAA2005BaseForcefield::angleTerm(const ForcefieldAtomType *i, const Forcefiel
 }
 
 // Return torsion term for the supplied atom type quartet (if it exists)
-OptionalReferenceWrapper<const ForcefieldTorsionTerm> OPLSAA2005BaseForcefield::torsionTerm(const ForcefieldAtomType *i,
-                                                                                            const ForcefieldAtomType *j,
-                                                                                            const ForcefieldAtomType *k,
-                                                                                            const ForcefieldAtomType *l) const
+OptionalReferenceWrapper<const ForcefieldTorsionTerm> OPLSAA2005BaseForcefield::torsionTerm(const ForcefieldAtomType &i,
+                                                                                            const ForcefieldAtomType &j,
+                                                                                            const ForcefieldAtomType &k,
+                                                                                            const ForcefieldAtomType &l) const
 {
     static std::vector<ForcefieldTorsionTerm> torsionTerms = {
         //	i	j	k	l	Type (CosineForm)		k		n	eq	s
@@ -2172,10 +2172,10 @@ OptionalReferenceWrapper<const ForcefieldTorsionTerm> OPLSAA2005BaseForcefield::
 }
 
 // Return improper term for the supplied atom type quartet (if it exists)
-OptionalReferenceWrapper<const ForcefieldImproperTerm> OPLSAA2005BaseForcefield::improperTerm(const ForcefieldAtomType *i,
-                                                                                              const ForcefieldAtomType *j,
-                                                                                              const ForcefieldAtomType *k,
-                                                                                              const ForcefieldAtomType *l) const
+OptionalReferenceWrapper<const ForcefieldImproperTerm> OPLSAA2005BaseForcefield::improperTerm(const ForcefieldAtomType &i,
+                                                                                              const ForcefieldAtomType &j,
+                                                                                              const ForcefieldAtomType &k,
+                                                                                              const ForcefieldAtomType &l) const
 {
     static std::vector<ForcefieldImproperTerm> improperTerms = {};
     return Forcefield::termMatch_(improperTerms, i, j, k, l);

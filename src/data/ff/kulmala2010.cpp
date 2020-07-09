@@ -40,7 +40,16 @@
  * All energy values are in kJ/mol.
  */
 
-Forcefield_Kulmala2010::Forcefield_Kulmala2010()
+Forcefield_Kulmala2010::Forcefield_Kulmala2010() {}
+
+Forcefield_Kulmala2010::~Forcefield_Kulmala2010() {}
+
+/*
+ * Set Up
+ */
+
+// Set up / create all forcefield data ready for use
+bool Forcefield_Kulmala2010::setUp()
 {
     // Atom types
     // -- Water (SPC/E)
@@ -112,9 +121,9 @@ Forcefield_Kulmala2010::Forcefield_Kulmala2010()
     addAngleTerm("HCD", "CDM", "HCD", SpeciesAngle::HarmonicForm, 276.144, 107.8); // Missing from SI - taken from OPLS-AA
     addTorsionTerm("HCD", "CDM", "NDM", "HDM", SpeciesTorsion::Cos3Form, 0.0, 0.0, 0.0, 0.0);
     addTorsionTerm("HCD", "CDM", "NDM", "CDM", SpeciesTorsion::Cos3Form, 0.0, 0.0, 3.3765, 0.0);
-}
 
-Forcefield_Kulmala2010::~Forcefield_Kulmala2010() {}
+    return true;
+}
 
 /*
  * Definition

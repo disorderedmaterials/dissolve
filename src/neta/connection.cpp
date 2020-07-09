@@ -26,7 +26,7 @@
 #include "templates/refdatalist.h"
 
 NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Element *> targetElements,
-                                       std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt)
+                                       std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes, SpeciesBond::BondType bt)
     : NETANode(parent, NETANode::ConnectionNode)
 {
     allowedElements_ = targetElements;
@@ -186,10 +186,10 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
             break;
         }
         if (atomScore == NETANode::NoMatch)
-            for (auto type : allowedAtomTypes_)
+            for (const ForcefieldAtomType& atomType : allowedAtomTypes_)
             {
                 // Evaluate the neighbour against the atom type
-                auto typeScore = type->neta().score(j);
+                auto typeScore = atomType.neta().score(j);
                 if (typeScore == NETANode::NoMatch)
                     continue;
 

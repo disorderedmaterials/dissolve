@@ -47,7 +47,7 @@ class SpeciesAtom;
 class Forcefield : public Elements
 {
     public:
-    Forcefield() = default;
+    Forcefield();
     virtual ~Forcefield() = default;
 
     /*
@@ -103,18 +103,18 @@ class Forcefield : public Elements
     bool copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType> sourceType, const char *newTypeName,
                       const char *netaDefinition = NULL, const char *equivalentName = NULL);
     // Determine and return atom type for specified SpeciesAtom from supplied Array of types
-    static ForcefieldAtomType *
+    static OptionalReferenceWrapper<const ForcefieldAtomType>
     determineAtomType(SpeciesAtom *i, const std::vector<std::vector<std::reference_wrapper<ForcefieldAtomType>>> &atomTypes);
     // Determine and return atom type for specified SpeciesAtom
-    virtual ForcefieldAtomType *determineAtomType(SpeciesAtom *i) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(SpeciesAtom *i) const;
 
     public:
     // Return named short-range parameters (if they exist)
     const ForcefieldParameters *shortRangeParameters(const char *name) const;
     // Return the named ForcefieldAtomType (if it exists)
-    virtual ForcefieldAtomType *atomTypeByName(const char *name, Element *element = NULL) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeByName(const char *name, Element *element = NULL) const;
     // Return the ForcefieldAtomType with specified id (if it exists)
-    virtual ForcefieldAtomType *atomTypeById(int id, Element *element = NULL) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeById(int id, Element *element = NULL) const;
 
     /*
      * Term Data
@@ -149,21 +149,21 @@ class Forcefield : public Elements
 
     public:
     // Return bond term for the supplied atom type pair (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldBondTerm> getBondTerm(const ForcefieldAtomType *i,
-                                                                           const ForcefieldAtomType *j) const;
+    virtual OptionalReferenceWrapper<const ForcefieldBondTerm> getBondTerm(const ForcefieldAtomType &i,
+                                                                           const ForcefieldAtomType &j) const;
     // Return angle term for the supplied atom type trio (if it exists)
     virtual OptionalReferenceWrapper<const ForcefieldAngleTerm>
-    getAngleTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k) const;
+    getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k) const;
     // Return torsion term for the supplied atom type quartet (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldTorsionTerm> getTorsionTerm(const ForcefieldAtomType *i,
-                                                                                 const ForcefieldAtomType *j,
-                                                                                 const ForcefieldAtomType *k,
-                                                                                 const ForcefieldAtomType *l) const;
+    virtual OptionalReferenceWrapper<const ForcefieldTorsionTerm> getTorsionTerm(const ForcefieldAtomType &i,
+                                                                                 const ForcefieldAtomType &j,
+                                                                                 const ForcefieldAtomType &k,
+                                                                                 const ForcefieldAtomType &l) const;
     // Return improper term for the supplied atom type quartet (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType *i,
-                                                                                   const ForcefieldAtomType *j,
-                                                                                   const ForcefieldAtomType *k,
-                                                                                   const ForcefieldAtomType *l) const;
+    virtual OptionalReferenceWrapper<const ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType &i,
+                                                                                   const ForcefieldAtomType &j,
+                                                                                   const ForcefieldAtomType &k,
+                                                                                   const ForcefieldAtomType &l) const;
 
     /*
      * Term Assignment
