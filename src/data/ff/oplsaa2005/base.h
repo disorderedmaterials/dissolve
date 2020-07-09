@@ -55,17 +55,17 @@ class OPLSAA2005BaseForcefield : public Forcefield
      */
     public:
     // Return bond term for the supplied atom type pair (if it exists)
-    OptionalReferenceWrapper<const ForcefieldBondTerm> bondTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j) const;
+    OptionalReferenceWrapper<const ForcefieldBondTerm> bondTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j) const;
     // Return angle term for the supplied atom type trio (if it exists)
-    OptionalReferenceWrapper<const ForcefieldAngleTerm> angleTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j,
-                                                                  const ForcefieldAtomType *k) const;
+    OptionalReferenceWrapper<const ForcefieldAngleTerm> angleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                                  const ForcefieldAtomType &k) const;
     // Return torsion term for the supplied atom type quartet (if it exists)
-    OptionalReferenceWrapper<const ForcefieldTorsionTerm> torsionTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j,
-                                                                      const ForcefieldAtomType *k,
-                                                                      const ForcefieldAtomType *l) const;
+    OptionalReferenceWrapper<const ForcefieldTorsionTerm> torsionTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j,
+                                                                      const ForcefieldAtomType &k,
+                                                                      const ForcefieldAtomType &l) const;
     // Return improper term for the supplied atom type quartet (if it exists)
-    OptionalReferenceWrapper<const ForcefieldImproperTerm> improperTerm(const ForcefieldAtomType *i,
-                                                                        const ForcefieldAtomType *j,
-                                                                        const ForcefieldAtomType *k,
-                                                                        const ForcefieldAtomType *l) const;
+    OptionalReferenceWrapper<const ForcefieldImproperTerm> improperTerm(const ForcefieldAtomType &i,
+                                                                        const ForcefieldAtomType &j,
+                                                                        const ForcefieldAtomType &k,
+                                                                        const ForcefieldAtomType &l) const;
 };

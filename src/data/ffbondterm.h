@@ -50,7 +50,7 @@ class ForcefieldBondTerm
 
     public:
     // Return if this term matches the atom types supplied
-    bool isMatch(const ForcefieldAtomType *i, const ForcefieldAtomType *j) const;
+    bool isMatch(const ForcefieldAtomType &i, const ForcefieldAtomType &j) const;
     // Return functional form index of interaction
     SpeciesBond::BondFunction form() const;
     // Return array of parameters

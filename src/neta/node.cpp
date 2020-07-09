@@ -74,7 +74,7 @@ int NETANode::nBranchNodes() const { return branch_.nItems(); }
 
 // Create connectivity node from current targets
 NETAConnectionNode *NETANode::createConnectionNode(std::vector<Element *> targetElements,
-                                                   std::vector<ForcefieldAtomType *> targetAtomTypes)
+                                                   std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
 {
     // Create the new node and own it
     NETAConnectionNode *node = new NETAConnectionNode(parent_, targetElements, targetAtomTypes);
@@ -85,7 +85,7 @@ NETAConnectionNode *NETANode::createConnectionNode(std::vector<Element *> target
 
 // Create presence node in the branch
 NETAPresenceNode *NETANode::createPresenceNode(std::vector<Element *> targetElements,
-                                               std::vector<ForcefieldAtomType *> targetAtomTypes)
+                                               std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
 {
     // Create the new node and own it
     NETAPresenceNode *node = new NETAPresenceNode(parent_, targetElements, targetAtomTypes);

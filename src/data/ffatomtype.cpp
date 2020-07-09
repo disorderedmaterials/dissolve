@@ -24,7 +24,7 @@
 #include "data/ffparameters.h"
 #include "neta/generator.h"
 
-ForcefieldAtomType::ForcefieldAtomType(Forcefield *parent, int Z, int index, const char *name, const char *netaDefinition,
+ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int index, const char *name, const char *netaDefinition,
                                        const char *description, double q, double data0, double data1, double data2,
                                        double data3)
     : ElementReference(Z)
@@ -44,7 +44,7 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield *parent, int Z, int index, con
         Messenger::error("Failed to generate NETA for atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(),
                          parent ? parent->name() : "???", netaDefinition);
 }
-ForcefieldAtomType::ForcefieldAtomType(Forcefield *parent, int Z, int index, const char *name, const char *netaDefinition,
+ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int index, const char *name, const char *netaDefinition,
                                        const char *description, double q, const char *parameterReference)
     : ElementReference(Z)
 {
@@ -61,7 +61,7 @@ ForcefieldAtomType::ForcefieldAtomType(Forcefield *parent, int Z, int index, con
         Messenger::error("Failed to generate NETA for atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(),
                          parent ? parent->name() : "???", netaDefinition);
 }
-ForcefieldAtomType::ForcefieldAtomType(Forcefield *parent, const ForcefieldAtomType &sourceType, const char *newTypeName,
+ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, const ForcefieldAtomType &sourceType, const char *newTypeName,
                                        const char *netaDefinition, const char *equivalentName)
     : ElementReference(sourceType.Z())
 {

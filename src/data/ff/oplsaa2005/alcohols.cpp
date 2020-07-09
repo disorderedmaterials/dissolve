@@ -21,8 +21,6 @@
 
 #include "data/ff/oplsaa2005/alcohols.h"
 #include "base/sysfunc.h"
-#include "classes/speciesatom.h"
-#include "data/ffatomtype.h"
 
 Forcefield_OPLSAA2005_Alcohols::Forcefield_OPLSAA2005_Alcohols() {}
 
@@ -51,7 +49,7 @@ bool Forcefield_OPLSAA2005_Alcohols::setUp()
     if (!copyAtomType(oplsAtomTypeById(156), "HC", "-C(nh=3,-&154)"))
         return false;
 
-    return false;
+    return true;
 }
 
 /*
