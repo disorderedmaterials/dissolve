@@ -28,7 +28,7 @@ using namespace std;
 #include <cstdio>
 #include <cstdlib>
 
-CharString::CharString() : ListItem<CharString>()
+CharString::CharString()
 {
     // Private variables
     data_ = NULL;
@@ -36,7 +36,7 @@ CharString::CharString() : ListItem<CharString>()
     endPosition_ = 0;
 }
 
-CharString::CharString(int emptysize) : ListItem<CharString>()
+CharString::CharString(int emptysize)
 {
     // Private variables
     data_ = NULL;
@@ -46,7 +46,7 @@ CharString::CharString(int emptysize) : ListItem<CharString>()
     createEmpty(emptysize);
 }
 
-CharString::CharString(const char *fmt, ...) : ListItem<CharString>()
+CharString::CharString(const char *fmt, ...)
 {
     // Private variables
     data_ = NULL;
@@ -65,7 +65,7 @@ CharString::CharString(const char *fmt, ...) : ListItem<CharString>()
 }
 
 // Copy constructor
-CharString::CharString(const CharString &source) : ListItem<CharString>()
+CharString::CharString(const CharString &source)
 {
     // Private variables
     data_ = NULL;

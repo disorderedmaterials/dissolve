@@ -763,17 +763,15 @@ void LineParser::getAllArgsDelim(int optionMask)
     while (!endOfLine_)
     {
         // Create new, empty CharString
-        arg = new CharString;
+        CharString arg;
 
         // We must pass on the current optionMask, else it will be reset by the default value in getNextArg()
-        if (getNextArg(optionMask, arg))
+        if (getNextArg(optionMask, &arg))
         {
             // printf("getAllArgsDelim arg=%i [%s]\n", arguments_.nItems(), arg->get());
             // Add this char to the list
-            arguments_.own(arg);
+            arguments_.push_back(arg);
         }
-        else
-            delete arg;
     }
 }
 
@@ -1251,7 +1249,7 @@ LineParser::ParseReturnValue LineParser::skipLines(int nlines)
  */
 
 // Returns number of arguments grabbed from last parse
-int LineParser::nArgs() const { return arguments_.nItems(); }
+int LineParser::nArgs() const { return arguments_.size(); }
 
 // Returns the specified argument as a character string
 const char *LineParser::argc(int i)
@@ -1261,7 +1259,7 @@ const char *LineParser::argc(int i)
         printf("Warning: Argument %i is out of range - returning \"NULL\"...\n", i);
         return "NULL";
     }
-    return arguments_[i]->get();
+    return arguments_[i].get();
 }
 
 // Returns the specified argument as an integer
@@ -1272,7 +1270,7 @@ int LineParser::argi(int i)
         printf("Warning: Argument %i is out of range - returning 0...\n", i);
         return 0;
     }
-    return arguments_[i]->asInteger();
+    return arguments_[i].asInteger();
 }
 
 // Returns the specified argument as a long integer
@@ -1283,7 +1281,7 @@ long int LineParser::argli(int i)
         printf("Warning: Argument %i is out of range - returning 0...\n", i);
         return 0;
     }
-    return arguments_[i]->asLongInteger();
+    return arguments_[i].asLongInteger();
 }
 
 // Returns the specified argument as a double
@@ -1294,7 +1292,7 @@ double LineParser::argd(int i)
         printf("Warning: Argument %i is out of range - returning 0.0...\n", i);
         return 0.0;
     }
-    return arguments_[i]->asDouble();
+    return arguments_[i].asDouble();
 }
 
 // Returns the specified argument as a bool
@@ -1305,7 +1303,7 @@ bool LineParser::argb(int i)
         printf("Warning: Argument %i is out of range - returning false...\n", i);
         return false;
     }
-    return arguments_[i]->asBool();
+    return arguments_[i].asBool();
 }
 
 // Returns the specified argument as a float

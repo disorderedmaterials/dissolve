@@ -28,6 +28,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <vector>
 
 #define MAXLINELENGTH 8092
 
@@ -199,7 +200,7 @@ class LineParser
     // Temporary string variable
     char tempArg_[MAXLINELENGTH];
     // Parsed arguments
-    List<CharString> arguments_;
+    std::vector<CharString> arguments_;
     // Whether the end of the string has been found in get_next_arg()
     bool endOfLine_;
 

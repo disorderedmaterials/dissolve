@@ -24,7 +24,7 @@
 #include "templates/listitem.h"
 
 // Character String
-class CharString : public ListItem<CharString>
+class CharString
 {
     public:
     CharString();

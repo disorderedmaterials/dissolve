@@ -11,7 +11,14 @@ stages:
     displayName: 'Build and Package'
     jobs:
       - job: 'linux_serialgui'
+        displayName: 'Build Linux (Serial/GUI, ubuntu-18.04)'
+        pool:
+          vmImage: 'ubuntu-18.04'
+        steps:
+          - template: templates/build-linux-serial-gui.yml
+      - job: 'linux_serialgui_appimage'
         displayName: 'Build Linux (Serial/GUI, ubuntu-16.04)'
+        condition: eq(0,1)
         pool:
           vmImage: 'ubuntu-16.04'
         steps:
@@ -60,13 +67,13 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
-          - task: DownloadBuildArtifacts@0
-            inputs:
-              buildType: 'current'
-              specificBuildWithTriggering: true
-              downloadType: 'single'
-              artifactName: 'linux-artifacts'
-            displayName: 'Download Linux Artifacts'
+          #- task: DownloadBuildArtifacts@0
+          #  inputs:
+          #    buildType: 'current'
+          #    specificBuildWithTriggering: true
+          #    downloadType: 'single'
+          #    artifactName: 'linux-artifacts'
+          #  displayName: 'Download Linux Artifacts'
           - task: DownloadBuildArtifacts@0
             inputs:
               buildType: 'current'
@@ -91,10 +98,10 @@ stages:
               SHORTHASH=`git rev-parse --short HEAD`
               VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
               # Linux AppImages
-              cd $(System.ArtifactsDirectory)/linux-artifacts
-              mv -v Dissolve-${SHORTHASH}-x86_64.AppImage Dissolve-${VERSION}-${SHORTHASH}-x86_64.AppImage
-              mv -v Dissolve-GUI-${SHORTHASH}-x86_64.AppImage Dissolve-GUI-${VERSION}-${SHORTHASH}-x86_64.AppImage
-              cd ../
+              #cd $(System.ArtifactsDirectory)/linux-artifacts
+              #mv -v Dissolve-${SHORTHASH}-x86_64.AppImage Dissolve-${VERSION}-${SHORTHASH}-x86_64.AppImage
+              #mv -v Dissolve-GUI-${SHORTHASH}-x86_64.AppImage Dissolve-GUI-${VERSION}-${SHORTHASH}-x86_64.AppImage
+              #cd ../
               # OSX Disk Images
               cd $(System.ArtifactsDirectory)/osx-artifacts
               mv -v Dissolve-GUI-${VERSION}.dmg Dissolve-GUI-${VERSION}-${SHORTHASH}-Catalina.dmg
@@ -109,7 +116,7 @@ stages:
               SHORTHASH=`git rev-parse --short HEAD`
               DATE=`date`
               VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
-              ./ci/scripts/update-release -r projectdissolve/dissolve -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u $(System.ArtifactsDirectory)/linux-artifacts/*AppImage $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg examples/*zip examples/*.tar.gz
+              ./ci/scripts/update-release -r projectdissolve/dissolve -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg examples/*zip examples/*.tar.gz
             env:
               GITHUB_TOKEN: $(REPO_SECRET)
             displayName: 'Update Continuous Release (GitHub)'
