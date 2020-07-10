@@ -48,6 +48,7 @@ NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition &definition, con
     expectName_ = false;
 
     definition_ = &definition;
+    definition_->clear();
     associatedForcefield_ = associatedFF;
     generator_ = this;
 
@@ -409,7 +410,7 @@ bool NETADefinitionGenerator::generate(NETADefinition &neta, const char *netaDef
     // Generate definition
     auto result = NETADefinitionGenerator_parse() == 0;
     if (!result)
-        definition_->clear();
+        neta.clear();
 
     return result;
 }
