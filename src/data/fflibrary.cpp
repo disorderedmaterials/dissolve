@@ -49,23 +49,25 @@ bool ForcefieldLibrary::registerForcefield(std::shared_ptr<Forcefield> ff)
         return Messenger::error("Failed to set up forcefield '%s' - it will not be registered.\n", ff->name());
 
     forcefields_.push_back(ff);
+
+    return true;
 }
 
 // Register Forcefields for use
 void ForcefieldLibrary::registerForcefields()
 {
-    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alcohols>());
-    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alkanes>());
-    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alkenes>());
-    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Aromatics>());
-    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Diols>());
-    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_NobleGases>());
-    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Triols>());
+//     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alcohols>());
+//     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alkanes>());
+//     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alkenes>());
+//     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Aromatics>());
+//     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Diols>());
+//     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_NobleGases>());
+//     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Triols>());
     registerForcefield(std::make_shared<Forcefield_SPCFw>());
-    registerForcefield(std::make_shared<Forcefield_UFF>());
-    registerForcefield(std::make_shared<Forcefield_NTf2_Ludwig>());
-    registerForcefield(std::make_shared<Forcefield_Py5_Ludwig>());
-    registerForcefield(std::make_shared<Forcefield_Py4OH_Ludwig>());
+//     registerForcefield(std::make_shared<Forcefield_UFF>());
+//     registerForcefield(std::make_shared<Forcefield_NTf2_Ludwig>());
+//     registerForcefield(std::make_shared<Forcefield_Py5_Ludwig>());
+//     registerForcefield(std::make_shared<Forcefield_Py4OH_Ludwig>());
 }
 
 /*
@@ -75,7 +77,7 @@ void ForcefieldLibrary::registerForcefields()
 // Return list of available Forcefields
 std::vector<std::shared_ptr<Forcefield>> &ForcefieldLibrary::forcefields()
 {
-    // If the list is empty, we haven't yet constructed the list...
+    // If the list is empty, construct the forcefield objects
     if (forcefields_.empty())
         registerForcefields();
 
@@ -85,11 +87,6 @@ std::vector<std::shared_ptr<Forcefield>> &ForcefieldLibrary::forcefields()
 // Return named Forcefield, if it exists
 std::shared_ptr<Forcefield> ForcefieldLibrary::forcefield(const std::string name)
 {
-    for (auto &ff : forcefields())
-    {
-        if (DissolveSys::sameString(ff->name(), name.c_str()))
-            return ff;
-    }
     auto it = std::find_if(forcefields().begin(), forcefields().end(), [&name](const std::shared_ptr<Forcefield> ff) {
         return DissolveSys::sameString(ff->name(), name.c_str());
     });

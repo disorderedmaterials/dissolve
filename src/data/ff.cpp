@@ -96,15 +96,18 @@ bool Forcefield::copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType>
 // Determine and return atom type for specified SpeciesAtom from supplied Array of types
 OptionalReferenceWrapper<const ForcefieldAtomType>
 Forcefield::determineAtomType(SpeciesAtom *i,
-                              const std::vector<std::vector<std::reference_wrapper<ForcefieldAtomType>>> &atomTypes)
+                              const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes)
 {
+    printf("In DAT\n");
     // Go through AtomTypes defined for the target's element, and check NETA scores
     auto bestScore = -1;
     OptionalReferenceWrapper<const ForcefieldAtomType> bestType;
     for (const auto &typeRef : atomTypes[i->element()->Z()])
     {
+        printf("Checking atom type for element %i\n", i->element()->Z());
         // Get the scoring for this type
         auto &type = typeRef.get();
+        printf("THISTYPE = %s\n", type.name());
         auto score = type.neta().score(i);
         if (score > bestScore)
         {
@@ -113,6 +116,7 @@ Forcefield::determineAtomType(SpeciesAtom *i,
         }
     }
 
+    printf("Finish DAT\n");
     return bestType;
 }
 
@@ -147,8 +151,8 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeByName(co
     for (int Z = startZ; Z <= endZ; ++Z)
     {
         // Go through types associated to the Element
-        auto it = std::find_if(atomTypesByElementPrivate_[Z].begin(), atomTypesByElementPrivate_[Z].end(),
-                               [&name](ForcefieldAtomType &type) { return DissolveSys::sameString(type.name(), name); });
+        auto it = std::find_if(atomTypesByElementPrivate_[Z].cbegin(), atomTypesByElementPrivate_[Z].cend(),
+                               [&name](const auto &type) { return DissolveSys::sameString(type.get().name(), name); });
         if (it != atomTypesByElementPrivate_[Z].end())
             return OptionalReferenceWrapper<const ForcefieldAtomType>(*it);
     }
@@ -164,8 +168,8 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int 
     for (int Z = startZ; Z <= endZ; ++Z)
     {
         // Go through types associated to the Element
-        auto it = std::find_if(atomTypesByElementPrivate_[Z].begin(), atomTypesByElementPrivate_[Z].end(),
-                               [&id](ForcefieldAtomType &type) { return type.index() == id; });
+        auto it = std::find_if(atomTypesByElementPrivate_[Z].cbegin(), atomTypesByElementPrivate_[Z].cend(),
+                               [&id](const auto &type) { return type.get().index() == id; });
         if (it != atomTypesByElementPrivate_[Z].end())
             return OptionalReferenceWrapper<const ForcefieldAtomType>(*it);
     }

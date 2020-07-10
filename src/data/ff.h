@@ -88,7 +88,7 @@ class Forcefield : public Elements
     // Atom type data
     std::vector<ForcefieldAtomType> atomTypes_;
     // Atom type data, grouped by element
-    std::vector<std::vector<std::reference_wrapper<ForcefieldAtomType>>> atomTypesByElementPrivate_;
+    std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> atomTypesByElementPrivate_;
 
     protected:
     // Add short-range parameters
@@ -104,7 +104,7 @@ class Forcefield : public Elements
                       const char *netaDefinition = NULL, const char *equivalentName = NULL);
     // Determine and return atom type for specified SpeciesAtom from supplied Array of types
     static OptionalReferenceWrapper<const ForcefieldAtomType>
-    determineAtomType(SpeciesAtom *i, const std::vector<std::vector<std::reference_wrapper<ForcefieldAtomType>>> &atomTypes);
+    determineAtomType(SpeciesAtom *i, const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes);
     // Determine and return atom type for specified SpeciesAtom
     virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(SpeciesAtom *i) const;
 
