@@ -232,7 +232,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 else
                 {
                     opt_at = coreData.findAtomType(parser.argc(6));
-                    if (!at)
+                    if (!opt_at)
                     {
                         Messenger::printVerbose("Creating AtomType '%s'...\n", parser.argc(6));
                         at = coreData.addAtomType(el);
