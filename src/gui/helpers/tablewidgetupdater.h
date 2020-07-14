@@ -24,20 +24,19 @@
 #include "templates/list.h"
 #include "templates/refdatalist.h"
 #include "templates/reflist.h"
-#include "templates/variantpointer.h"
 #include <QTableWidget>
 
 #pragma once
 
 // TableWidgetUpdater - Constructor-only template class to update contents of a QTableWidget, preserving original items as much
 // as possible
-template <class T, class I, typename... Args> class TableWidgetUpdater
+template <class T, class I, typename Raw = I *, typename... Args> class TableWidgetUpdater
 {
     // Typedefs for passed functions
-    typedef void (T::*TableWidgetRowUpdateFunction)(int row, I *item, bool createItems, Args... args);
+    typedef void (T::*TableWidgetRowUpdateFunction)(int row, Raw item, bool createItems, Args... args);
 
     private:
-    static void inner_(QTableWidget *table, int rowCount, I *dataItem, T *functionParent,
+    static void inner_(QTableWidget *table, int rowCount, Raw dataItem, T *functionParent,
                        TableWidgetRowUpdateFunction updateRow, Args... args)
     {
         // Our table may or may not be populated, and with different items to those in the list.
@@ -48,7 +47,7 @@ template <class T, class I, typename... Args> class TableWidgetUpdater
         while (rowCount < table->rowCount())
         {
             auto tableItem = table->item(rowCount, 0);
-            I *rowData = (tableItem ? VariantPointer<I>(tableItem->data(Qt::UserRole)) : NULL);
+            auto rowData = (tableItem ? tableItem->data(Qt::UserRole).value<Raw>() : NULL);
             if (rowData == dataItem)
             {
                 // Update the current row and quit the loop

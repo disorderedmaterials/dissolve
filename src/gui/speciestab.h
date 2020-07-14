@@ -21,6 +21,11 @@
 
 #pragma once
 
+#include "classes/speciesangle.h"
+#include "classes/speciesatom.h"
+#include "classes/speciesbond.h"
+#include "classes/speciesimproper.h"
+#include "classes/speciestorsion.h"
 #include "gui/maintab.h"
 #include "gui/ui_speciestab.h"
 
@@ -29,10 +34,12 @@ class AtomType;
 class Isotope;
 class Isotopologue;
 class Species;
-class SpeciesAtom;
-class SpeciesBond;
-class SpeciesAngle;
-class SpeciesTorsion;
+
+Q_DECLARE_METATYPE(SpeciesAtom *)
+Q_DECLARE_METATYPE(SpeciesBond *)
+Q_DECLARE_METATYPE(SpeciesAngle *)
+Q_DECLARE_METATYPE(SpeciesTorsion *)
+Q_DECLARE_METATYPE(SpeciesImproper *)
 
 // Species Tab
 class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab

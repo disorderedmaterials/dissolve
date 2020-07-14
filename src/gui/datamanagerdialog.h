@@ -26,6 +26,8 @@
 #include "templates/list.h"
 #include <QDialog>
 
+Q_DECLARE_METATYPE(ReferencePoint *)
+
 // Forward Declarations
 class Dissolve;
 class GenericItem;

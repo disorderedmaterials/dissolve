@@ -26,6 +26,7 @@
 #include "gui/helpers/tablewidgetupdater.h"
 #include "gui/keywordwidgets/expressionvariablelist.h"
 #include "procedure/nodes/node.h"
+#include "templates/variantpointer.h"
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QString>
