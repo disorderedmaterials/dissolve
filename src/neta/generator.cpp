@@ -365,7 +365,10 @@ bool NETADefinitionGenerator::addAtomTypeTarget(const char *typeName)
 std::vector<Element *> NETADefinitionGenerator::targetElements() { return targetElements_; }
 
 // Return target ForcefieldAtomTypes array
-std::vector<std::reference_wrapper<const ForcefieldAtomType>> NETADefinitionGenerator::targetAtomTypes() { return targetAtomTypes_; }
+std::vector<std::reference_wrapper<const ForcefieldAtomType>> NETADefinitionGenerator::targetAtomTypes()
+{
+    return targetAtomTypes_;
+}
 
 // Clear element / atomtype targets
 void NETADefinitionGenerator::clearTargets()

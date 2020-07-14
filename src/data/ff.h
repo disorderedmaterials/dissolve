@@ -104,7 +104,8 @@ class Forcefield : public Elements
                       const char *netaDefinition = NULL, const char *equivalentName = NULL);
     // Determine and return atom type for specified SpeciesAtom from supplied Array of types
     static OptionalReferenceWrapper<const ForcefieldAtomType>
-    determineAtomType(SpeciesAtom *i, const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes);
+    determineAtomType(SpeciesAtom *i,
+                      const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes);
     // Determine and return atom type for specified SpeciesAtom
     virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(SpeciesAtom *i) const;
 

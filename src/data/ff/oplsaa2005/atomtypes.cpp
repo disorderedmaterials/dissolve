@@ -979,6 +979,6 @@ OptionalReferenceWrapper<const ForcefieldAtomType> OPLSAA2005BaseForcefield::opl
     const auto it = std::find_if(atomTypes.cbegin(), atomTypes.cend(), [&](const auto &data) { return data.index() == id; });
     if (it == atomTypes.cend())
         return {};
-    const ForcefieldAtomType& at = *it;
+    const ForcefieldAtomType &at = *it;
     return OptionalReferenceWrapper<const ForcefieldAtomType>(at);
 }

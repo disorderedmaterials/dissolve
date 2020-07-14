@@ -313,8 +313,7 @@ OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::uffAtomTypeByName(co
 // Return first UFF atom type for specified element
 OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::uffAtomTypeForElement(int el) const
 {
-    auto it = std::find_if(uffAtomTypes().begin(), uffAtomTypes().end(),
-                           [&](auto &data) { return data.Z() == el; });
+    auto it = std::find_if(uffAtomTypes().begin(), uffAtomTypes().end(), [&](auto &data) { return data.Z() == el; });
     if (it == uffAtomTypes().end())
         return {};
     return *it;
@@ -450,7 +449,8 @@ OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::determineUFFAtomType
  */
 
 // Generate bond parameters for the supplied UFF atom types
-bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond *bondTerm, const UFFAtomType &i, const UFFAtomType &j) const
+bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond *bondTerm, const UFFAtomType &i,
+                                      const UFFAtomType &j) const
 {
     // Calculate rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
     const auto sumr = i.r() + j.r();
@@ -553,8 +553,8 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle *angleTer
 }
 
 // Generate torsion parameters for the supplied UFF atom types
-bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion *torsionTerm, const UFFAtomType &i, const UFFAtomType &j,
-                                         const UFFAtomType &k, const UFFAtomType &l) const
+bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion *torsionTerm, const UFFAtomType &i,
+                                         const UFFAtomType &j, const UFFAtomType &k, const UFFAtomType &l) const
 {
     /*
      * There are seven cases to consider, listed in decreasing complexity:
@@ -671,7 +671,7 @@ bool Forcefield_UFF::assignAtomTypes(Species *sp, CoreData &coreData, bool keepE
             Messenger::print("No UFF type available for Atom %i of Species (%s).\n", i->index() + 1, i->element()->symbol());
         else
         {
-            const UFFAtomType& uffType = *optTypeRef;
+            const UFFAtomType &uffType = *optTypeRef;
 
             // Check if an AtomType of the same name already exists - if it does, just use that one
             AtomType *at = coreData.findAtomType(uffType.name());

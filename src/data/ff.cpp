@@ -33,10 +33,7 @@
 #include "data/ffparameters.h"
 #include "data/fftorsionterm.h"
 
-Forcefield::Forcefield()
-{
-        atomTypesByElementPrivate_.resize(Elements::nElements());
-}
+Forcefield::Forcefield() { atomTypesByElementPrivate_.resize(Elements::nElements()); }
 
 /*
  * Definition
@@ -98,16 +95,13 @@ OptionalReferenceWrapper<const ForcefieldAtomType>
 Forcefield::determineAtomType(SpeciesAtom *i,
                               const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes)
 {
-    printf("In DAT\n");
     // Go through AtomTypes defined for the target's element, and check NETA scores
     auto bestScore = -1;
     OptionalReferenceWrapper<const ForcefieldAtomType> bestType;
     for (const auto &typeRef : atomTypes[i->element()->Z()])
     {
-        printf("Checking atom type for element %i\n", i->element()->Z());
         // Get the scoring for this type
         auto &type = typeRef.get();
-        printf("THISTYPE = %s\n", type.name());
         auto score = type.neta().score(i);
         if (score > bestScore)
         {
@@ -116,7 +110,6 @@ Forcefield::determineAtomType(SpeciesAtom *i,
         }
     }
 
-    printf("Finish DAT\n");
     return bestType;
 }
 
@@ -249,7 +242,8 @@ OptionalReferenceWrapper<const ForcefieldImproperTerm> Forcefield::getImproperTe
 bool Forcefield::assignAtomType(SpeciesAtom *i, CoreData &coreData) const
 {
     auto optRef = determineAtomType(i);
-    if (!optRef) return false;
+    if (!optRef)
+        return false;
 
     const ForcefieldAtomType &atomType = *optRef;
 
@@ -348,11 +342,11 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
         auto optTypeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element());
         if (!optTypeI)
             return Messenger::error("Couldn't locate object for atom type named '%s'.\n", i->atomType()->name());
-        const ForcefieldAtomType& typeI = *optTypeI;
+        const ForcefieldAtomType &typeI = *optTypeI;
         auto optTypeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
         if (!optTypeJ)
             return Messenger::error("Couldn't locate object for atom type named '%s'.\n", j->atomType()->name());
-        const ForcefieldAtomType& typeJ = *optTypeJ;
+        const ForcefieldAtomType &typeJ = *optTypeJ;
 
         auto optTerm = getBondTerm(typeI, typeJ);
         if (!optTerm)
@@ -378,15 +372,15 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
         auto optTypeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element());
         if (!optTypeI)
             return Messenger::error("Couldn't locate object for atom type named '%s'.\n", i->atomType()->name());
-        const ForcefieldAtomType& typeI = *optTypeI;
+        const ForcefieldAtomType &typeI = *optTypeI;
         auto optTypeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
         if (!optTypeJ)
             return Messenger::error("Couldn't locate object for atom type named '%s'.\n", j->atomType()->name());
-        const ForcefieldAtomType& typeJ = *optTypeJ;
+        const ForcefieldAtomType &typeJ = *optTypeJ;
         auto optTypeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element());
         if (!optTypeK)
             return Messenger::error("Couldn't locate object for atom type named '%s'.\n", k->atomType()->name());
-        const ForcefieldAtomType& typeK = *optTypeK;
+        const ForcefieldAtomType &typeK = *optTypeK;
 
         auto optTerm = getAngleTerm(typeI, typeJ, typeK);
         if (!optTerm)
@@ -414,19 +408,19 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
         auto optTypeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element());
         if (!optTypeI)
             return Messenger::error("Couldn't locate object for atom type named '%s'.\n", i->atomType()->name());
-        const ForcefieldAtomType& typeI = *optTypeI;
+        const ForcefieldAtomType &typeI = *optTypeI;
         auto optTypeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
         if (!optTypeJ)
             return Messenger::error("Couldn't locate object for atom type named '%s'.\n", j->atomType()->name());
-        const ForcefieldAtomType& typeJ = *optTypeJ;
+        const ForcefieldAtomType &typeJ = *optTypeJ;
         auto optTypeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element());
         if (!optTypeK)
             return Messenger::error("Couldn't locate object for atom type named '%s'.\n", k->atomType()->name());
-        const ForcefieldAtomType& typeK = *optTypeK;
+        const ForcefieldAtomType &typeK = *optTypeK;
         auto optTypeL = determineTypes ? determineAtomType(l) : atomTypeByName(l->atomType()->name(), l->element());
         if (!optTypeL)
             return Messenger::error("Couldn't locate object for atom type named '%s'.\n", l->atomType()->name());
-        const ForcefieldAtomType& typeL = *optTypeL;
+        const ForcefieldAtomType &typeL = *optTypeL;
 
         auto optTerm = getTorsionTerm(typeI, typeJ, typeK, typeL);
         if (!optTerm)
@@ -450,11 +444,10 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
             if (i->nBonds() < 3)
                 continue;
 
-            auto optTypeI =
-                determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element());
+            auto optTypeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->element());
             if (!optTypeI)
                 return Messenger::error("Couldn't locate object for atom type named '%s'.\n", i->atomType()->name());
-            const ForcefieldAtomType& typeI = *optTypeI;
+            const ForcefieldAtomType &typeI = *optTypeI;
             if (selectionOnly && (!i->isSelected()))
                 continue;
 
@@ -463,11 +456,10 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
             {
                 // Get SpeciesAtom 'j'
                 SpeciesAtom *j = i->bond(indexJ)->partner(i);
-                auto optTypeJ =
-                    determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
+                auto optTypeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
                 if (!optTypeJ)
                     return Messenger::error("Couldn't locate object for atom type named '%s'.\n", j->atomType()->name());
-                const ForcefieldAtomType& typeJ = *optTypeJ;
+                const ForcefieldAtomType &typeJ = *optTypeJ;
                 if (selectionOnly && (!j->isSelected()))
                     continue;
 
@@ -475,11 +467,10 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                 {
                     // Get SpeciesAtom 'k'
                     SpeciesAtom *k = i->bond(indexK)->partner(i);
-                    auto optTypeK =
-                        determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element());
+                    auto optTypeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element());
                     if (!optTypeK)
                         return Messenger::error("Couldn't locate object for atom type named '%s'.\n", k->atomType()->name());
-                    const ForcefieldAtomType& typeK = *optTypeK;
+                    const ForcefieldAtomType &typeK = *optTypeK;
                     if (selectionOnly && (!k->isSelected()))
                         continue;
 
@@ -492,7 +483,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                         if (!optTypeL)
                             return Messenger::error("Couldn't locate object for atom type named '%s'.\n",
                                                     l->atomType()->name());
-                        const ForcefieldAtomType& typeL = *optTypeL;
+                        const ForcefieldAtomType &typeL = *optTypeL;
                         if (selectionOnly && (!l->isSelected()))
                             continue;
 

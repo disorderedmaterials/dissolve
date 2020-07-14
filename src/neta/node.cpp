@@ -73,8 +73,9 @@ NETANode *NETANode::lastBranchNode() { return branch_.last(); }
 int NETANode::nBranchNodes() const { return branch_.nItems(); }
 
 // Create connectivity node from current targets
-NETAConnectionNode *NETANode::createConnectionNode(std::vector<Element *> targetElements,
-                                                   std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
+NETAConnectionNode *
+NETANode::createConnectionNode(std::vector<Element *> targetElements,
+                               std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
 {
     // Create the new node and own it
     NETAConnectionNode *node = new NETAConnectionNode(parent_, targetElements, targetAtomTypes);

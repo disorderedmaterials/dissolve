@@ -36,7 +36,8 @@ class NETAPresenceNode : public NETANode
 {
     public:
     NETAPresenceNode(NETADefinition *parent, std::vector<Element *> targetElements,
-                     std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes, SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
+                     std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes,
+                     SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
     ~NETAPresenceNode();
 
     private:

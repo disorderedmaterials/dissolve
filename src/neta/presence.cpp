@@ -24,7 +24,8 @@
 #include "data/ffatomtype.h"
 
 NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Element *> targetElements,
-                                   std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes, SpeciesBond::BondType bt)
+                                   std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes,
+                                   SpeciesBond::BondType bt)
     : NETANode(parent, NETANode::PresenceNode)
 {
     allowedElements_ = targetElements;

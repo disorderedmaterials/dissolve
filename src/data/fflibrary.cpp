@@ -56,18 +56,18 @@ bool ForcefieldLibrary::registerForcefield(std::shared_ptr<Forcefield> ff)
 // Register Forcefields for use
 void ForcefieldLibrary::registerForcefields()
 {
-//     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alcohols>());
-//     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alkanes>());
-//     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alkenes>());
-//     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Aromatics>());
-//     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Diols>());
-//     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_NobleGases>());
-//     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Triols>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alcohols>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alkanes>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alkenes>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Aromatics>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Diols>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_NobleGases>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Triols>());
     registerForcefield(std::make_shared<Forcefield_SPCFw>());
-//     registerForcefield(std::make_shared<Forcefield_UFF>());
-//     registerForcefield(std::make_shared<Forcefield_NTf2_Ludwig>());
-//     registerForcefield(std::make_shared<Forcefield_Py5_Ludwig>());
-//     registerForcefield(std::make_shared<Forcefield_Py4OH_Ludwig>());
+    registerForcefield(std::make_shared<Forcefield_UFF>());
+    registerForcefield(std::make_shared<Forcefield_NTf2_Ludwig>());
+    registerForcefield(std::make_shared<Forcefield_Py5_Ludwig>());
+    registerForcefield(std::make_shared<Forcefield_Py4OH_Ludwig>());
 }
 
 /*
