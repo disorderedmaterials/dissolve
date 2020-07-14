@@ -44,8 +44,8 @@ void PotentialMap::clear() { potentialMatrix_.clear(); }
  */
 
 // Initialise maps
-bool PotentialMap::initialise(const std::vector<std::shared_ptr<AtomType>> &masterAtomTypes, const List<PairPotential> &pairPotentials,
-                              double pairPotentialRange)
+bool PotentialMap::initialise(const std::vector<std::shared_ptr<AtomType>> &masterAtomTypes,
+                              const List<PairPotential> &pairPotentials, double pairPotentialRange)
 {
     // Clear old data first
     clear();

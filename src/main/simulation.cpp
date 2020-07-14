@@ -60,7 +60,7 @@ bool Dissolve::prepare()
     // Reassign AtomType indices (in case one or more have been added / removed)
     auto count = 0;
     for (auto at : atomTypes())
-        at->setIndex(count);
+        at->setIndex(count++);
 
     // Check Configurations
     for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
