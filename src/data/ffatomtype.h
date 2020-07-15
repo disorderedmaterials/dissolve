@@ -43,11 +43,15 @@ class ForcefieldAtomType : public ElementReference
     ForcefieldAtomType(const Forcefield *parent, const ForcefieldAtomType &sourceType, const char *newTypeName,
                        const char *netaDefinition = NULL, const char *equivalentName = NULL);
     virtual ~ForcefieldAtomType();
+    ForcefieldAtomType(const ForcefieldAtomType& source);
+    ForcefieldAtomType(const ForcefieldAtomType&& source);
 
     /*
      * Identity
      */
     private:
+    // Containing forcefield for the atom type
+    const Forcefield *parent_;
     // Index of atom type
     int index_;
     // Name of atom type

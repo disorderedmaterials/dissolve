@@ -29,6 +29,7 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int inde
                                        double data3)
     : ElementReference(Z)
 {
+    parent_ = parent;
     index_ = index;
     name_ = name;
     description_ = description;
@@ -48,6 +49,7 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int inde
                                        const char *description, double q, const char *parameterReference)
     : ElementReference(Z)
 {
+    parent_ = parent;
     index_ = index;
     name_ = name;
     description_ = description;
@@ -65,6 +67,8 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, const Forcefiel
                                        const char *netaDefinition, const char *equivalentName)
     : ElementReference(sourceType.Z())
 {
+    parent_ = parent;
+
     // Copy data from the supplied source
     index_ = sourceType.index_;
     name_ = newTypeName;
@@ -79,6 +83,30 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, const Forcefiel
 }
 
 ForcefieldAtomType::~ForcefieldAtomType() {}
+
+ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType& source) : ElementReference(source.Z())
+{
+    parent_ = source.parent_;
+    index_ = source.index_;
+    name_ = source.name_;
+    description_ = source.description_;
+    equivalentName_ = source.equivalentName_;
+    parameters_ = source.parameters_;
+    parameterReference_ = source.parameterReference_;
+    neta_.set(source.neta_.definitionString(), parent_);
+}
+
+ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType&& source) : ElementReference(source.Z())
+{
+    parent_ = source.parent_;
+    index_ = source.index_;
+    name_ = source.name_;
+    description_ = source.description_;
+    equivalentName_ = source.equivalentName_;
+    parameters_ = source.parameters_;
+    parameterReference_ = source.parameterReference_;
+    neta_.set(source.neta_.definitionString(), parent_);
+}
 
 /*
  * Identity
