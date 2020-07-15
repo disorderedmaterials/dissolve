@@ -50,10 +50,8 @@ NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition &definition, con
     // Initialise generator
     setSource(definitionText);
 
-    // Set pointers and clear old definition
+    // Set pointers
     definition_ = &definition;
-    definition_->clear();
-    definition_->setDefinitionString(definitionText);
     associatedForcefield_ = associatedFF;
     generator_ = this;
 
@@ -411,7 +409,7 @@ bool NETADefinitionGenerator::generate(NETADefinition &neta, const char *netaDef
     // Generate definition
     auto result = NETADefinitionGenerator_parse() == 0;
     if (!result)
-        neta.clear();
+        Messenger::error("Failed to generate NETA definition from string '%s'.\n", netaDefinition);
 
     return result;
 }

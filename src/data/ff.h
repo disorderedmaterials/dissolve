@@ -53,13 +53,9 @@ class Forcefield : public Elements
     /*
      * Set Up
      */
-    protected:
+    public:
     // Set up / create all forcefield terms
     virtual bool setUp() = 0;
-
-    public:
-    // Prepare forcefield for use
-    bool prepare();
 
     /*
      * Definition
@@ -108,6 +104,8 @@ class Forcefield : public Elements
     virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(SpeciesAtom *i) const;
 
     public:
+    // Create NETA definitions for all atom types from stored defs
+    bool createNETADefinitions();
     // Return named short-range parameters (if they exist)
     const OptionalReferenceWrapper<const ForcefieldParameters> shortRangeParameters(const char *name) const;
     // Return the named ForcefieldAtomType (if it exists)

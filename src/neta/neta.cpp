@@ -30,28 +30,21 @@
 
 NETADefinition::NETADefinition() : rootNode_(this) {}
 
-NETADefinition::~NETADefinition() { clear(); }
+NETADefinition::~NETADefinition() { rootNode_.clear(); }
 
 /*
  * Data
  */
 
-// Clear contents of definition
-void NETADefinition::clear()
-{
-    definitionString_.clear();
-    rootNode_.clear();
-}
-
 // Return root node pointer
 NETARootNode *NETADefinition::rootNode() { return &rootNode_; }
 
-// Set NETADefinition from supplied string
-bool NETADefinition::set(const char *netaDefinition, const Forcefield *associatedFF)
+// Create definition from stored string
+bool NETADefinition::create(const Forcefield *associatedFF)
 {
-    clear();
+    rootNode_.clear();
 
-    return NETADefinitionGenerator::generate(*this, netaDefinition, associatedFF);
+    return NETADefinitionGenerator::generate(*this, definitionString_, associatedFF);
 }
 
 // Set generating string

@@ -29,55 +29,40 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int inde
                                        double data3)
     : ElementReference(Z)
 {
-    parent_ = parent;
     index_ = index;
     name_ = name;
+    neta_.setDefinitionString(netaDefinition);
     description_ = description;
     parameters_.setCharge(q);
     parameters_.setParameter(0, data0);
     parameters_.setParameter(1, data1);
     parameters_.setParameter(2, data2);
     parameters_.setParameter(3, data3);
-
-    // Generate NETA
-    if (netaDefinition && (!neta_.set(netaDefinition, parent)))
-        Messenger::error("Failed to generate NETA for atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(),
-                         parent ? parent->name() : "???", netaDefinition);
 }
 ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int index, const char *name, const char *netaDefinition,
                                        const char *description, double q, const char *parameterReference)
     : ElementReference(Z)
 {
-    parent_ = parent;
     index_ = index;
     name_ = name;
+    neta_.setDefinitionString(netaDefinition);
     description_ = description;
     parameters_.setCharge(q);
     parameterReference_ = parent->shortRangeParameters(parameterReference);
     if (!parameterReference_)
         Messenger::error("Reference parameters named '%s' are not defined in the forcefield '%s'.\n", parameterReference, parent->name());
-
-    // Generate NETA
-    if (netaDefinition && (!neta_.set(netaDefinition, parent)))
-        Messenger::error("Failed to generate NETA for atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(),
-                         parent ? parent->name() : "???", netaDefinition);
 }
 ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, const ForcefieldAtomType &sourceType, const char *newTypeName,
                                        const char *netaDefinition, const char *equivalentName)
     : ElementReference(sourceType.Z())
 {
-    parent_ = parent;
-
     // Copy data from the supplied source
     index_ = sourceType.index_;
     name_ = newTypeName;
+    neta_.setDefinitionString(netaDefinition);
     description_ = sourceType.description_;
     parameters_ = sourceType.parameters_;
 
-    // Generate NETA
-    if (netaDefinition && (!neta_.set(netaDefinition, parent)))
-        Messenger::error("Failed to generate NETA for copied atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(),
-                         parent ? parent->name() : "???", netaDefinition);
     // Equivalent name provided?
     if (equivalentName)
         equivalentName_ = equivalentName;
@@ -87,26 +72,24 @@ ForcefieldAtomType::~ForcefieldAtomType() {}
 
 ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &source) : ElementReference(source.Z())
 {
-    parent_ = source.parent_;
     index_ = source.index_;
     name_ = source.name_;
+    neta_.setDefinitionString(source.neta_.definitionString());
     description_ = source.description_;
     equivalentName_ = source.equivalentName_;
     parameters_ = source.parameters_;
     parameterReference_ = source.parameterReference_;
-    neta_.set(source.neta_.definitionString(), parent_);
 }
 
 ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &&source) : ElementReference(source.Z())
 {
-    parent_ = source.parent_;
     index_ = source.index_;
     name_ = source.name_;
+    neta_.setDefinitionString(source.neta_.definitionString());
     description_ = source.description_;
     equivalentName_ = source.equivalentName_;
     parameters_ = source.parameters_;
     parameterReference_ = source.parameterReference_;
-    neta_.set(source.neta_.definitionString(), parent_);
 }
 
 /*
@@ -138,6 +121,15 @@ const char *ForcefieldAtomType::equivalentName() const
 
 // Return description for type
 const char *ForcefieldAtomType::description() const { return description_.get(); }
+
+
+
+/*
+ * Recognition
+ */
+
+// Create NETA definition for the atom type
+bool ForcefieldAtomType::createNETA(const Forcefield *parentFF) { return neta_.create(parentFF); }
 
 // Return NETA definition for the atom type
 const NETADefinition &ForcefieldAtomType::neta() const { return neta_; }

@@ -34,25 +34,6 @@
 #include "data/fftorsionterm.h"
 
 /*
- * Set Up
- */
-
-// Prepare forcefield for use
-bool Forcefield::prepare()
-{
-    if (!setUp())
-        return false;
-
-    // Create reference vectors of atom types by element
-    atomTypesByElementPrivate_.resize(Elements::nElements());
-
-    for (auto &atomType : atomTypes_)
-        atomTypesByElementPrivate_[atomType.Z()].push_back(atomType);
-
-    return true;
-}
-
-/*
  * Definition
  */
 
@@ -72,6 +53,19 @@ EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
 /*
  * Atom Type Data
  */
+
+// Create NETA definitions for all atom types from stored defs
+bool Forcefield::createNETADefinitions()
+{
+    auto nFailed = 0;
+    for (auto &atomType : atomTypes_)
+        if (!atomType.createNETA(this)) ++nFailed;
+
+    if (nFailed > 0)
+        Messenger::error("Failed to create %i NETA %s for the forcefield '%s'.\n", nFailed, nFailed == 1 ? "definition" : "definitions", name());
+
+    return (nFailed == 0);
+}
 
 // Add new atom type with its own parameters
 void Forcefield::addAtomType(int Z, int index, const char *name, const char *netaDefinition, const char *description, double q,

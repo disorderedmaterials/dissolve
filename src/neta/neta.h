@@ -49,12 +49,10 @@ class NETADefinition
     CharString definitionString_;
 
     public:
-    // Clear all definition data
-    void clear();
     // Return root node pointer
     NETARootNode *rootNode();
-    // Set NETADefinition from supplied string
-    bool set(const char *netaDefinition, const Forcefield *associatedFF = NULL);
+    // Create definition from stored string
+    bool create(const Forcefield *associatedFF = nullptr);
     // Set generating string
     void setDefinitionString(const char *definition);
     // Return original generating string

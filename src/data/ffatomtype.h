@@ -51,8 +51,6 @@ class ForcefieldAtomType : public ElementReference
      * Identity
      */
     private:
-    // Containing forcefield for the atom type
-    const Forcefield *parent_;
     // Index of atom type
     int index_;
     // Name of atom type
@@ -61,8 +59,6 @@ class ForcefieldAtomType : public ElementReference
     CharString equivalentName_;
     // Brief description of tyoe
     CharString description_;
-    // NETA definition for the atom type
-    NETADefinition neta_;
 
     public:
     // Return index of type
@@ -73,6 +69,17 @@ class ForcefieldAtomType : public ElementReference
     const char *equivalentName() const;
     // Return description for type
     const char *description() const;
+
+    /*
+     * Recognition
+     */
+    private:
+    // NETA definition for the atom type
+    NETADefinition neta_;
+
+    public:
+    // Create NETA definition for the atom type
+    bool createNETA(const Forcefield *parentFF);
     // Return NETA definition for the atom type
     const NETADefinition &neta() const;
 
