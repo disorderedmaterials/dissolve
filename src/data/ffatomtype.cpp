@@ -41,7 +41,7 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int inde
     parameters_.setParameter(3, data3);
 
     // Generate NETA
-    if (!neta_.set(netaDefinition, parent))
+    if (netaDefinition && (!neta_.set(netaDefinition, parent)))
         Messenger::error("Failed to generate NETA for atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(),
                          parent ? parent->name() : "???", netaDefinition);
 }
@@ -59,7 +59,7 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int inde
         Messenger::error("Parameters named '%s' are not defined in the forcefield '%s'.\n", parameterReference, parent->name());
 
     // Generate NETA
-    if (!neta_.set(netaDefinition, parent))
+    if (netaDefinition && (!neta_.set(netaDefinition, parent)))
         Messenger::error("Failed to generate NETA for atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(),
                          parent ? parent->name() : "???", netaDefinition);
 }
@@ -74,9 +74,12 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, const Forcefiel
     name_ = newTypeName;
     description_ = sourceType.description_;
     parameters_ = sourceType.parameters_;
-    neta_.set(netaDefinition ? netaDefinition : sourceType.neta().definitionString(), parent);
     parameterReference_ = NULL;
 
+    // Generate NETA
+    if (netaDefinition && (!neta_.set(netaDefinition, parent)))
+        Messenger::error("Failed to generate NETA for copied atom type '%s' in forcefield '%s' from string '%s'.\n", name_.get(),
+                         parent ? parent->name() : "???", netaDefinition);
     // Equivalent name provided?
     if (equivalentName)
         equivalentName_ = equivalentName;

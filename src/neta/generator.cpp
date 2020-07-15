@@ -53,6 +53,7 @@ NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition &definition, con
     // Set pointers and clear old definition
     definition_ = &definition;
     definition_->clear();
+    definition_->setDefinitionString(definitionText);
     associatedForcefield_ = associatedFF;
     generator_ = this;
 
@@ -404,12 +405,8 @@ void NETADefinitionGenerator::setExpectName(bool b) { expectName_ = b; }
 // Static generation functions
 bool NETADefinitionGenerator::generate(NETADefinition &neta, const char *netaDefinition, const Forcefield *associatedFF)
 {
-    // Set the source string
-    neta.setDefinitionString(netaDefinition);
-    // 	if ((netaDefinition == NULL) || (netaDefinition[0] == '\0')) return true;
-
     // Create a generator
-    NETADefinitionGenerator generator(neta, neta.definitionString(), associatedFF);
+    NETADefinitionGenerator generator(neta, netaDefinition, associatedFF);
 
     // Generate definition
     auto result = NETADefinitionGenerator_parse() == 0;
