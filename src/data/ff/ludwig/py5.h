@@ -24,15 +24,14 @@
 #include "data/ff.h"
 
 // Forward Declarations
-class CoreData;
-class SpeciesAtom;
+/* none */
 
 // Py4OH Forcefield
 class Forcefield_Ludwig_Py5 : public Forcefield
 {
     public:
-    Forcefield_Ludwig_Py5();
-    ~Forcefield_Ludwig_Py5();
+    Forcefield_Ludwig_Py5() = default;
+    ~Forcefield_Ludwig_Py5() = default;
 
     /*
      * Set Up

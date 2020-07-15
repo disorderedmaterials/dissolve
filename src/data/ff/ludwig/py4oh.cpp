@@ -20,30 +20,17 @@
 */
 
 #include "data/ff/ludwig/py4oh.h"
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
-#include "classes/speciesatom.h"
-#include "data/ffangleterm.h"
-#include "data/ffatomtype.h"
-#include "data/ffbondterm.h"
-#include "data/ffimproperterm.h"
-#include "data/ffparameters.h"
-#include "data/fftorsionterm.h"
 
 /*
  * Implements "1‐(4‐hydroxybutyl)pyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine"
- * W. L. Jorgensen,	D. S. Maxwell,	and J. Tirado-Rives
- * J. Am. Chem. Soc. 118,	11225-11236 (1996).
- * W. L. Jorgensen and N. A. McDonald,	Theochem 424,	145-155 (1998).
- * W. L. Jorgensen and N. A. McDonald,	J. Phys. Chem. B 102,	8049-8059 (1998).
+ * W. L. Jorgensen, D. S. Maxwell, and J. Tirado-Rives
+ * J. Am. Chem. Soc. 118, 11225-11236 (1996).
+ * W. L. Jorgensen and N. A. McDonald, Theochem 424, 145-155 (1998).
+ * W. L. Jorgensen and N. A. McDonald, J. Phys. Chem. B 102, 8049-8059 (1998).
  * Notes:
  * Any inconsistencies between the forcefield as implemented here and the original work are the sole responsibility of JB.
  * All energy values are in kJ/mol.
  */
-
-Forcefield_Ludwig_Py4OH::Forcefield_Ludwig_Py4OH() {}
-
-Forcefield_Ludwig_Py4OH::~Forcefield_Ludwig_Py4OH() {}
 
 /*
  * Set Up

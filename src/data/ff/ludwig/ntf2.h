@@ -24,15 +24,14 @@
 #include "data/ff.h"
 
 // Forward Declarations
-class CoreData;
-class SpeciesAtom;
+/* none */
 
 // NTf2 Forcefield by Ludwig Group
 class Forcefield_Ludwig_NTf2 : public Forcefield
 {
     public:
-    Forcefield_Ludwig_NTf2();
-    ~Forcefield_Ludwig_NTf2();
+    Forcefield_Ludwig_NTf2() = default;
+    ~Forcefield_Ludwig_NTf2() = default;
 
     /*
      * Set Up

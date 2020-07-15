@@ -20,15 +20,6 @@
 */
 
 #include "data/ff/ludwig/py5.h"
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
-#include "classes/speciesatom.h"
-#include "data/ffangleterm.h"
-#include "data/ffatomtype.h"
-#include "data/ffbondterm.h"
-#include "data/ffimproperterm.h"
-#include "data/ffparameters.h"
-#include "data/fftorsionterm.h"
 
 /*
  * Implements "1-pentylpyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine"
@@ -40,10 +31,6 @@
  * Any inconsistencies between the forcefield as implemented here and the original work are the sole responsibility of JB.
  * All energy values are in kJ/mol.
  */
-
-Forcefield_Ludwig_Py5::Forcefield_Ludwig_Py5() {}
-
-Forcefield_Ludwig_Py5::~Forcefield_Ludwig_Py5() {}
 
 /*
  * Set Up
