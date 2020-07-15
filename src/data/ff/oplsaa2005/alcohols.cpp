@@ -20,7 +20,7 @@
 */
 
 #include "data/ff/oplsaa2005/alcohols.h"
-#include "base/sysfunc.h"
+
 /*
  * Set Up
  */

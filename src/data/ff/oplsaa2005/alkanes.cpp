@@ -20,9 +20,6 @@
 */
 
 #include "data/ff/oplsaa2005/alkanes.h"
-#include "base/sysfunc.h"
-#include "classes/speciesatom.h"
-#include "data/ffatomtype.h"
 
 /*
  * Set Up
