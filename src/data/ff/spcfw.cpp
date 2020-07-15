@@ -46,7 +46,7 @@ Forcefield_SPCFw::~Forcefield_SPCFw() {}
  * Set Up
  */
 
-// Set up / create all forcefield data ready for use
+// Set up / create all forcefield terms
 bool Forcefield_SPCFw::setUp()
 {
     // Atom types

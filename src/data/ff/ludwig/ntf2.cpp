@@ -48,7 +48,7 @@ Forcefield_NTf2_Ludwig::~Forcefield_NTf2_Ludwig() {}
  * Set Up
  */
 
-// Set up / create all forcefield data ready for use
+// Set up / create all forcefield terms
 bool Forcefield_NTf2_Ludwig::setUp()
 {
     // Short-Range Parameters

@@ -44,8 +44,8 @@ class Forcefield_UFF : public Forcefield
     /*
      * Set Up
      */
-    public:
-    // Set up / create all forcefield data ready for use
+    protected:
+    // Set up / create all forcefield terms
     bool setUp();
 
     /*

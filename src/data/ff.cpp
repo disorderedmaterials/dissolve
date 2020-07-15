@@ -33,7 +33,23 @@
 #include "data/ffparameters.h"
 #include "data/fftorsionterm.h"
 
-Forcefield::Forcefield() { atomTypesByElementPrivate_.resize(Elements::nElements()); }
+/*
+ * Set Up
+ */
+
+// Prepare forcefield for use
+bool Forcefield::prepare()
+{
+    if (!setUp()) return false;
+
+    // Create reference vectors of atom types by element
+    atomTypesByElementPrivate_.resize(Elements::nElements());
+
+    for (auto &atomType : atomTypes_)
+        atomTypesByElementPrivate_[atomType.Z()].push_back(atomType);
+
+    return true;
+}
 
 /*
  * Definition
@@ -61,8 +77,6 @@ void Forcefield::addAtomType(int Z, int index, const char *name, const char *net
                              double data0, double data1, double data2, double data3)
 {
     atomTypes_.emplace_back(this, Z, index, name, netaDefinition, description, q, data0, data1, data2, data3);
-
-    atomTypesByElementPrivate_[Z].push_back(atomTypes_.back());
 }
 
 // Add new atom type referencing existing parameters by name
@@ -70,8 +84,6 @@ void Forcefield::addAtomType(int Z, int index, const char *name, const char *net
                              const char *parameterReference)
 {
     atomTypes_.emplace_back(this, Z, index, name, netaDefinition, description, q, parameterReference);
-
-    atomTypesByElementPrivate_[Z].push_back(atomTypes_.back());
 }
 
 // Copy existing atom type
@@ -84,8 +96,6 @@ bool Forcefield::copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType>
                                 newTypeName, name());
 
     atomTypes_.emplace_back(this, *sourceTypeRef, newTypeName, netaDefinition, equivalentName);
-
-    atomTypesByElementPrivate_[atomTypes_.back().Z()].push_back(atomTypes_.back());
 
     return true;
 }

@@ -45,7 +45,7 @@ Forcefield_UFF::~Forcefield_UFF() {}
  * Set Up
  */
 
-// Set up / create all forcefield data ready for use
+// Set up / create all forcefield terms
 bool Forcefield_UFF::setUp() { return true; }
 
 /*

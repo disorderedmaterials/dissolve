@@ -36,8 +36,8 @@ class Forcefield_OPLSAA2005_Aromatics : public OPLSAA2005BaseForcefield
     /*
      * Set Up
      */
-    public:
-    // Set up / create all forcefield data ready for use
+    protected:
+    // Set up / create all forcefield terms
     bool setUp();
 
     /*

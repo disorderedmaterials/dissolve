@@ -49,7 +49,7 @@ Forcefield_Py5_Ludwig::~Forcefield_Py5_Ludwig() {}
  * Set Up
  */
 
-// Set up / create all forcefield data ready for use
+// Set up / create all forcefield terms
 bool Forcefield_Py5_Ludwig::setUp()
 {
     // Short-Range Parameters

@@ -32,7 +32,7 @@ Forcefield_OPLSAA2005_Alkanes::~Forcefield_OPLSAA2005_Alkanes() {}
  * Set Up
  */
 
-// Set up / create all forcefield data ready for use
+// Set up / create all forcefield terms
 bool Forcefield_OPLSAA2005_Alkanes::setUp()
 {
     // Copy required types from OPLS-AA (2005) core list

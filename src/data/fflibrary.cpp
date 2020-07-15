@@ -45,8 +45,8 @@ std::vector<std::shared_ptr<Forcefield>> ForcefieldLibrary::forcefields_;
 bool ForcefieldLibrary::registerForcefield(std::shared_ptr<Forcefield> ff)
 {
     // Set up the forcefield, returning if not successful
-    if (!ff->setUp())
-        return Messenger::error("Failed to set up forcefield '%s' - it will not be registered.\n", ff->name());
+    if (!ff->prepare())
+        return Messenger::error("Failed to prepare and set up forcefield '%s' - it will not be registered.\n", ff->name());
 
     forcefields_.push_back(ff);
 

@@ -47,15 +47,19 @@ class SpeciesAtom;
 class Forcefield : public Elements
 {
     public:
-    Forcefield();
+    Forcefield() = default;
     virtual ~Forcefield() = default;
 
     /*
      * Set Up
      */
-    public:
-    // Set up / create all forcefield data ready for use
+    protected:
+    // Set up / create all forcefield terms
     virtual bool setUp() = 0;
+
+    public:
+    // Prepare forcefield for use
+    bool prepare();
 
     /*
      * Definition
