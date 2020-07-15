@@ -109,7 +109,7 @@ class Forcefield : public Elements
 
     public:
     // Return named short-range parameters (if they exist)
-    const ForcefieldParameters *shortRangeParameters(const char *name) const;
+    const OptionalReferenceWrapper<const ForcefieldParameters> shortRangeParameters(const char *name) const;
     // Return the named ForcefieldAtomType (if it exists)
     virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeByName(const char *name) const;
     // Return the ForcefieldAtomType with specified id (if it exists)

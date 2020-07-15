@@ -34,7 +34,6 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int inde
     name_ = name;
     description_ = description;
     parameters_.setCharge(q);
-    parameterReference_ = NULL;
     parameters_.setParameter(0, data0);
     parameters_.setParameter(1, data1);
     parameters_.setParameter(2, data2);
@@ -56,7 +55,7 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int inde
     parameters_.setCharge(q);
     parameterReference_ = parent->shortRangeParameters(parameterReference);
     if (!parameterReference_)
-        Messenger::error("Parameters named '%s' are not defined in the forcefield '%s'.\n", parameterReference, parent->name());
+        Messenger::error("Reference parameters named '%s' are not defined in the forcefield '%s'.\n", parameterReference, parent->name());
 
     // Generate NETA
     if (netaDefinition && (!neta_.set(netaDefinition, parent)))
@@ -74,7 +73,6 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, const Forcefiel
     name_ = newTypeName;
     description_ = sourceType.description_;
     parameters_ = sourceType.parameters_;
-    parameterReference_ = NULL;
 
     // Generate NETA
     if (netaDefinition && (!neta_.set(netaDefinition, parent)))
@@ -128,8 +126,14 @@ const char *ForcefieldAtomType::equivalentName() const
     if (!equivalentName_.isEmpty())
         return equivalentName_.get();
 
-    // If parameters are referenced, return their name. Otherwise, return ours.
-    return (parameterReference_ ? parameterReference_->name() : name_.get());
+    // If parameters are referenced, return their name. Otherwise, return ours
+    if (parameterReference_)
+    {
+        const ForcefieldParameters &ffparams = *parameterReference_;
+        return ffparams.name();
+    }
+
+    return name_.get();
 }
 
 // Return description for type
@@ -147,7 +151,10 @@ const InteractionParameters &ForcefieldAtomType::parameters() const
 {
     // If reference parameters are defined, return those
     if (parameterReference_)
-        return parameterReference_->parameters();
+    {
+        const ForcefieldParameters &ffparams = *parameterReference_;
+        return ffparams.parameters();
+    }
 
     return parameters_;
 }

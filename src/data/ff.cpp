@@ -131,14 +131,14 @@ void Forcefield::addParameters(const char *name, double data0, double data1, dou
 }
 
 // Return named short-range parameters (if they exist)
-const ForcefieldParameters *Forcefield::shortRangeParameters(const char *name) const
+const OptionalReferenceWrapper<const ForcefieldParameters> Forcefield::shortRangeParameters(const char *name) const
 {
     auto it = std::find_if(shortRangeParameters_.begin(), shortRangeParameters_.end(),
                            [&name](const auto &params) { return DissolveSys::sameString(name, params.name()); });
     if (it != shortRangeParameters_.end())
-        return &*it;
+        return *it;
 
-    return nullptr;
+    return {};
 }
 
 // Return the named ForcefieldAtomType (if it exists)

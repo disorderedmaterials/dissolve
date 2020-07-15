@@ -25,6 +25,7 @@
 #include "base/parameters.h"
 #include "data/elements.h"
 #include "neta/neta.h"
+#include "templates/optionalref.h"
 
 // Forward Declarations
 class Forcefield;
@@ -80,7 +81,7 @@ class ForcefieldAtomType : public ElementReference
      */
     private:
     // Parameters that this atom type references (if any)
-    const ForcefieldParameters *parameterReference_;
+    OptionalReferenceWrapper<const ForcefieldParameters> parameterReference_;
     // Interatomic interaction parameters for this atom type
     InteractionParameters parameters_;
 
