@@ -59,10 +59,12 @@ bool Forcefield::createNETADefinitions()
 {
     auto nFailed = 0;
     for (auto &atomType : atomTypes_)
-        if (!atomType.createNETA(this)) ++nFailed;
+        if (!atomType.createNETA(this))
+            ++nFailed;
 
     if (nFailed > 0)
-        Messenger::error("Failed to create %i NETA %s for the forcefield '%s'.\n", nFailed, nFailed == 1 ? "definition" : "definitions", name());
+        Messenger::error("Failed to create %i NETA %s for the forcefield '%s'.\n", nFailed,
+                         nFailed == 1 ? "definition" : "definitions", name());
 
     return (nFailed == 0);
 }

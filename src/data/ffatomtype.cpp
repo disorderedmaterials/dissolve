@@ -50,7 +50,8 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int inde
     parameters_.setCharge(q);
     parameterReference_ = parent->shortRangeParameters(parameterReference);
     if (!parameterReference_)
-        Messenger::error("Reference parameters named '%s' are not defined in the forcefield '%s'.\n", parameterReference, parent->name());
+        Messenger::error("Reference parameters named '%s' are not defined in the forcefield '%s'.\n", parameterReference,
+                         parent->name());
 }
 ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, const ForcefieldAtomType &sourceType, const char *newTypeName,
                                        const char *netaDefinition, const char *equivalentName)
@@ -121,8 +122,6 @@ const char *ForcefieldAtomType::equivalentName() const
 
 // Return description for type
 const char *ForcefieldAtomType::description() const { return description_.get(); }
-
-
 
 /*
  * Recognition
