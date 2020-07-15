@@ -91,8 +91,6 @@ class Forcefield : public Elements
     std::vector<ForcefieldParameters> shortRangeParameters_;
     // Atom type data
     std::vector<ForcefieldAtomType> atomTypes_;
-    // Atom type data, grouped by element
-    std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> atomTypesByElementPrivate_;
 
     protected:
     // Add short-range parameters
@@ -106,10 +104,6 @@ class Forcefield : public Elements
     // Copy existing atom type
     bool copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType> sourceType, const char *newTypeName,
                       const char *netaDefinition = NULL, const char *equivalentName = NULL);
-    // Determine and return atom type for specified SpeciesAtom from supplied Array of types
-    static OptionalReferenceWrapper<const ForcefieldAtomType>
-    determineAtomType(SpeciesAtom *i,
-                      const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes);
     // Determine and return atom type for specified SpeciesAtom
     virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(SpeciesAtom *i) const;
 
@@ -117,9 +111,9 @@ class Forcefield : public Elements
     // Return named short-range parameters (if they exist)
     const ForcefieldParameters *shortRangeParameters(const char *name) const;
     // Return the named ForcefieldAtomType (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeByName(const char *name, Element *element = NULL) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeByName(const char *name) const;
     // Return the ForcefieldAtomType with specified id (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeById(int id, Element *element = NULL) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeById(int id) const;
 
     /*
      * Term Data
