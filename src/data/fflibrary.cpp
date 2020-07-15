@@ -24,6 +24,7 @@
 #include "data/ff/ludwig/ntf2.h"
 #include "data/ff/ludwig/py4oh.h"
 #include "data/ff/ludwig/py5.h"
+#include "data/ff/kulmala2010.h"
 #include "data/ff/oplsaa2005/alcohols.h"
 #include "data/ff/oplsaa2005/alkanes.h"
 #include "data/ff/oplsaa2005/alkenes.h"
@@ -61,6 +62,7 @@ bool ForcefieldLibrary::registerForcefield(std::shared_ptr<Forcefield> ff)
 // Register Forcefields for use
 void ForcefieldLibrary::registerForcefields()
 {
+    registerForcefield(std::make_shared<Forcefield_Kulmala2010>());
     registerForcefield(std::make_shared<Forcefield_Ludwig_NTf2>());
     registerForcefield(std::make_shared<Forcefield_Ludwig_Py5>());
     registerForcefield(std::make_shared<Forcefield_Ludwig_Py4OH>());
