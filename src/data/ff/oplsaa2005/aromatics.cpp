@@ -43,7 +43,7 @@ bool Forcefield_OPLSAA2005_Aromatics::setUp()
     if (!copyAtomType(oplsAtomTypeById(147), "CNap", "ring(size=6,n>=2),nbonds=3,-C(n=3)", "CA"))
         return false;
     // -- Toluene
-    if (!copyAtomType(oplsAtomTypeById(148), "CT", "nh=3, -C(ring=6)"))
+    if (!copyAtomType(oplsAtomTypeById(148), "CT", "nh=3, -C(ring(size=6))"))
         return false;
     // -- Ethylbenzene
     if (!copyAtomType(oplsAtomTypeById(149), "CT", "nh=2, -C(nh=3), -C(ring(size=6))"))
