@@ -38,8 +38,8 @@ class SpeciesTorsion;
 class Forcefield_UFF : public Forcefield
 {
     public:
-    Forcefield_UFF();
-    ~Forcefield_UFF();
+    Forcefield_UFF() = default;
+    ~Forcefield_UFF() = default;
 
     /*
      * Set Up

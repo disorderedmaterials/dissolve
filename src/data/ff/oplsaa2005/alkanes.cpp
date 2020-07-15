@@ -24,10 +24,6 @@
 #include "classes/speciesatom.h"
 #include "data/ffatomtype.h"
 
-Forcefield_OPLSAA2005_Alkanes::Forcefield_OPLSAA2005_Alkanes() {}
-
-Forcefield_OPLSAA2005_Alkanes::~Forcefield_OPLSAA2005_Alkanes() {}
-
 /*
  * Set Up
  */

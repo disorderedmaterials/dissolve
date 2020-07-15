@@ -36,8 +36,8 @@ class SpeciesTorsion;
 class Forcefield_OPLSAA2005_NobleGases : public OPLSAA2005BaseForcefield
 {
     public:
-    Forcefield_OPLSAA2005_NobleGases();
-    ~Forcefield_OPLSAA2005_NobleGases();
+    Forcefield_OPLSAA2005_NobleGases() = default;
+    ~Forcefield_OPLSAA2005_NobleGases() = default;
 
     /*
      * Set Up

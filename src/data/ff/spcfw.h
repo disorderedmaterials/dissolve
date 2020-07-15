@@ -30,8 +30,8 @@
 class Forcefield_SPCFw : public Forcefield
 {
     public:
-    Forcefield_SPCFw();
-    ~Forcefield_SPCFw();
+    Forcefield_SPCFw() = default;
+    ~Forcefield_SPCFw() = default;
 
     /*
      * Set Up

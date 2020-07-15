@@ -24,10 +24,6 @@
 #include "classes/speciesatom.h"
 #include "data/ffatomtype.h"
 
-Forcefield_OPLSAA2005_Diols::Forcefield_OPLSAA2005_Diols() {}
-
-Forcefield_OPLSAA2005_Diols::~Forcefield_OPLSAA2005_Diols() {}
-
 /*
  * Set Up
  */

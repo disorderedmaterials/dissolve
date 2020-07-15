@@ -30,8 +30,8 @@
 class Forcefield_OPLSAA2005_Aromatics : public OPLSAA2005BaseForcefield
 {
     public:
-    Forcefield_OPLSAA2005_Aromatics();
-    ~Forcefield_OPLSAA2005_Aromatics();
+    Forcefield_OPLSAA2005_Aromatics() = default;
+    ~Forcefield_OPLSAA2005_Aromatics() = default;
 
     /*
      * Set Up

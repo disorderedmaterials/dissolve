@@ -25,10 +25,6 @@
 #include "data/ff/oplsaa2005/alkanes.h"
 #include "data/ffatomtype.h"
 
-Forcefield_OPLSAA2005_Alkenes::Forcefield_OPLSAA2005_Alkenes() {}
-
-Forcefield_OPLSAA2005_Alkenes::~Forcefield_OPLSAA2005_Alkenes() {}
-
 /*
  * Set Up
  */

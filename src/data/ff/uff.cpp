@@ -37,10 +37,6 @@
  * in kcal.
  */
 
-Forcefield_UFF::Forcefield_UFF() : Forcefield() {}
-
-Forcefield_UFF::~Forcefield_UFF() {}
-
 /*
  * Set Up
  */

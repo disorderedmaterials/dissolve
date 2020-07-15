@@ -30,8 +30,8 @@
 class Forcefield_OPLSAA2005_Alcohols : public Forcefield_OPLSAA2005_Alkanes
 {
     public:
-    Forcefield_OPLSAA2005_Alcohols();
-    ~Forcefield_OPLSAA2005_Alcohols();
+    Forcefield_OPLSAA2005_Alcohols() = default;
+    ~Forcefield_OPLSAA2005_Alcohols() = default;
 
     /*
      * Set Up

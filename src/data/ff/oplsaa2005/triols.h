@@ -30,8 +30,8 @@
 class Forcefield_OPLSAA2005_Triols : public Forcefield_OPLSAA2005_Alkanes
 {
     public:
-    Forcefield_OPLSAA2005_Triols();
-    ~Forcefield_OPLSAA2005_Triols();
+    Forcefield_OPLSAA2005_Triols() = default;
+    ~Forcefield_OPLSAA2005_Triols() = default;
 
     /*
      * Set Up

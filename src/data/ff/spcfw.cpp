@@ -38,10 +38,6 @@
  * All energy values are in kJ/mol.
  */
 
-Forcefield_SPCFw::Forcefield_SPCFw() {}
-
-Forcefield_SPCFw::~Forcefield_SPCFw() {}
-
 /*
  * Set Up
  */

@@ -21,11 +21,6 @@
 
 #include "data/ff/oplsaa2005/alcohols.h"
 #include "base/sysfunc.h"
-
-Forcefield_OPLSAA2005_Alcohols::Forcefield_OPLSAA2005_Alcohols() {}
-
-Forcefield_OPLSAA2005_Alcohols::~Forcefield_OPLSAA2005_Alcohols() {}
-
 /*
  * Set Up
  */
