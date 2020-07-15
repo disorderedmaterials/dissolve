@@ -36,8 +36,12 @@ template <class T, class I, typename Raw = I *, typename... Args> class TableWid
     typedef void (T::*TableWidgetRowUpdateFunction)(int row, Raw item, bool createItems, Args... args);
 
     private:
-    static void inner_(QTableWidget *table, int rowCount, Raw dataItem, T *functionParent,
-                       TableWidgetRowUpdateFunction updateRow, Args... args)
+    // For a given QTableWidget, ensure that the given dataItem is at
+    // the given rowCount index.  If there are other items in the way,
+    // remove them.  If the item isn't in the table, add it.  Finally,
+    // updateRow.
+    static void updateItemAtIndex(QTableWidget *table, int rowCount, Raw dataItem, T *functionParent,
+                                  TableWidgetRowUpdateFunction updateRow, Args... args)
     {
         // Our table may or may not be populated, and with different items to those in the list.
 
@@ -79,7 +83,7 @@ template <class T, class I, typename Raw = I *, typename... Args> class TableWid
         ListIterator<I> dataIterator(list);
         while (I *dataItem = dataIterator.iterate())
         {
-            inner_(table, rowCount, dataItem, functionParent, updateRow);
+            updateItemAtIndex(table, rowCount, dataItem, functionParent, updateRow);
             ++rowCount;
         }
 
@@ -93,7 +97,7 @@ template <class T, class I, typename Raw = I *, typename... Args> class TableWid
 
         for (I *dataItem : list)
         {
-            inner_(table, rowCount, dataItem, functionParent, updateRow);
+            updateItemAtIndex(table, rowCount, dataItem, functionParent, updateRow);
             ++rowCount;
         }
         table->setRowCount(rowCount);
@@ -105,7 +109,7 @@ template <class T, class I, typename Raw = I *, typename... Args> class TableWid
         DynamicArrayIterator<I> dataIterator(array);
         while (I *dataItem = dataIterator.iterate())
         {
-            inner_(table, rowCount, dataItem, functionParent, updateRow);
+            updateItemAtIndex(table, rowCount, dataItem, functionParent, updateRow);
             ++rowCount;
         }
 
@@ -121,7 +125,7 @@ template <class T, class I, typename Raw = I *, typename... Args> class TableWid
         auto itemIterator(list);
         while (I *dataItem = itemIterator.iterate())
         {
-            inner_(table, rowCount, dataItem, functionParent, updateRow, itemIterator.currentData());
+            updateItemAtIndex(table, rowCount, dataItem, functionParent, updateRow, itemIterator.currentData());
             ++rowCount;
         }
     }
