@@ -47,6 +47,10 @@ NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition &definition, con
     clearTargets();
     expectName_ = false;
 
+    // Initialise generator
+    setSource(definitionText);
+
+    // Set pointers and clear old definition
     definition_ = &definition;
     definition_->clear();
     associatedForcefield_ = associatedFF;
@@ -54,9 +58,6 @@ NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition &definition, con
 
     // Add the rootNode of the definition as the first context
     contextStack_.append(definition.rootNode());
-
-    // Initialise generator
-    setSource(definitionText);
 }
 
 NETADefinitionGenerator::~NETADefinitionGenerator() {}
