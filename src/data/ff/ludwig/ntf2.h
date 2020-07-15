@@ -28,11 +28,11 @@ class CoreData;
 class SpeciesAtom;
 
 // NTf2 Forcefield by Ludwig Group
-class Forcefield_NTf2_Ludwig : public Forcefield
+class Forcefield_Ludwig_NTf2 : public Forcefield
 {
     public:
-    Forcefield_NTf2_Ludwig();
-    ~Forcefield_NTf2_Ludwig();
+    Forcefield_Ludwig_NTf2();
+    ~Forcefield_Ludwig_NTf2();
 
     /*
      * Set Up

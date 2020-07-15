@@ -41,16 +41,16 @@
  * All energy values are in kJ/mol.
  */
 
-Forcefield_Py4OH_Ludwig::Forcefield_Py4OH_Ludwig() {}
+Forcefield_Ludwig_Py4OH::Forcefield_Ludwig_Py4OH() {}
 
-Forcefield_Py4OH_Ludwig::~Forcefield_Py4OH_Ludwig() {}
+Forcefield_Ludwig_Py4OH::~Forcefield_Ludwig_Py4OH() {}
 
 /*
  * Set Up
  */
 
 // Set up / create all forcefield terms
-bool Forcefield_Py4OH_Ludwig::setUp()
+bool Forcefield_Ludwig_Py4OH::setUp()
 {
     // Short-Range Parameters
     addParameters("nc", 0.711302, 3.250);
@@ -149,10 +149,10 @@ bool Forcefield_Py4OH_Ludwig::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_Py4OH_Ludwig::name() const { return "1‐(4‐hydroxybutyl)pyridinium cation (Py4OH)"; }
+const char *Forcefield_Ludwig_Py4OH::name() const { return "1‐(4‐hydroxybutyl)pyridinium cation (Py4OH)"; }
 
 // Return description for Forcefield
-const char *Forcefield_Py4OH_Ludwig::description() const
+const char *Forcefield_Ludwig_Py4OH::description() const
 {
     return "Implements of 1‐(4‐hydroxybutyl)pyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine; "
            "W. L. Jorgensen,	D. S. Maxwell, and J. Tirado-Rives, <i>Journal of the "
@@ -160,4 +160,4 @@ const char *Forcefield_Py4OH_Ludwig::description() const
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_Py4OH_Ludwig::shortRangeType() const { return Forcefield::LennardJonesType; }
+Forcefield::ShortRangeType Forcefield_Ludwig_Py4OH::shortRangeType() const { return Forcefield::LennardJonesType; }

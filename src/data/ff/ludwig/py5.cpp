@@ -41,16 +41,16 @@
  * All energy values are in kJ/mol.
  */
 
-Forcefield_Py5_Ludwig::Forcefield_Py5_Ludwig() {}
+Forcefield_Ludwig_Py5::Forcefield_Ludwig_Py5() {}
 
-Forcefield_Py5_Ludwig::~Forcefield_Py5_Ludwig() {}
+Forcefield_Ludwig_Py5::~Forcefield_Ludwig_Py5() {}
 
 /*
  * Set Up
  */
 
 // Set up / create all forcefield terms
-bool Forcefield_Py5_Ludwig::setUp()
+bool Forcefield_Ludwig_Py5::setUp()
 {
     // Short-Range Parameters
     addParameters("nc", 0.711302, 3.250);
@@ -146,10 +146,10 @@ bool Forcefield_Py5_Ludwig::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_Py5_Ludwig::name() const { return "1-pentylpyridinium cation (Py5)"; }
+const char *Forcefield_Ludwig_Py5::name() const { return "1-pentylpyridinium cation (Py5)"; }
 
 // Return description for Forcefield
-const char *Forcefield_Py5_Ludwig::description() const
+const char *Forcefield_Ludwig_Py5::description() const
 {
     return "Implements of 1‐pentylpyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine; W. L. "
            "Jorgensen, D. S. Maxwell, and J. Tirado-Rives, <i>Journal of the American "
@@ -158,4 +158,4 @@ const char *Forcefield_Py5_Ludwig::description() const
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_Py5_Ludwig::shortRangeType() const { return Forcefield::LennardJonesType; }
+Forcefield::ShortRangeType Forcefield_Ludwig_Py5::shortRangeType() const { return Forcefield::LennardJonesType; }

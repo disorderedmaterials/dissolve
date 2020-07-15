@@ -28,11 +28,11 @@ class CoreData;
 class SpeciesAtom;
 
 // Py4OH Forcefield
-class Forcefield_Py5_Ludwig : public Forcefield
+class Forcefield_Ludwig_Py5 : public Forcefield
 {
     public:
-    Forcefield_Py5_Ludwig();
-    ~Forcefield_Py5_Ludwig();
+    Forcefield_Ludwig_Py5();
+    ~Forcefield_Ludwig_Py5();
 
     /*
      * Set Up

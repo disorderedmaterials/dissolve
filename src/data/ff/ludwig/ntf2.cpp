@@ -40,16 +40,16 @@
  * All energy values are in kJ/mol.
  */
 
-Forcefield_NTf2_Ludwig::Forcefield_NTf2_Ludwig() {}
+Forcefield_Ludwig_NTf2::Forcefield_Ludwig_NTf2() {}
 
-Forcefield_NTf2_Ludwig::~Forcefield_NTf2_Ludwig() {}
+Forcefield_Ludwig_NTf2::~Forcefield_Ludwig_NTf2() {}
 
 /*
  * Set Up
  */
 
 // Set up / create all forcefield terms
-bool Forcefield_NTf2_Ludwig::setUp()
+bool Forcefield_Ludwig_NTf2::setUp()
 {
     // Short-Range Parameters
     addParameters("F", 0.066516, 2.655);
@@ -101,14 +101,14 @@ bool Forcefield_NTf2_Ludwig::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_NTf2_Ludwig::name() const { return "bis(trifluoromethylsulfonyl)imide anion (NTf2) by Ludwig Group"; }
+const char *Forcefield_Ludwig_NTf2::name() const { return "bis(trifluoromethylsulfonyl)imide anion (NTf2) by Ludwig Group"; }
 
 // Return description for Forcefield
-const char *Forcefield_NTf2_Ludwig::description() const
+const char *Forcefield_Ludwig_NTf2::description() const
 {
     return "J. Neumann, B. Golub, L.-M. Odebrecht, R. Ludwig, D. Paschek: bis(trifluoromethylsulfonyl)imide anion by "
            "Ludwig Group, <em>J. Chem. Phys.</em> <b>148</b>, 193828 (2018).";
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_NTf2_Ludwig::shortRangeType() const { return Forcefield::LennardJonesType; }
+Forcefield::ShortRangeType Forcefield_Ludwig_NTf2::shortRangeType() const { return Forcefield::LennardJonesType; }
