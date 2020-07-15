@@ -277,7 +277,7 @@ int NETADefinitionGenerator::lex()
 
     // We have found a symbolic character (or a pair) that corresponds to an operator
     // Return immediately in the case of brackets, dash, comma, and ampersand
-    if ((c == '(') || (c == ')') || (c == '-') || (c == ',') || (c == '&'))
+    if ((c == '(') || (c == ')') || (c == '-') || (c == ',') || (c == '&') || (c == '[') || (c == ']'))
     {
         Messenger::printVerbose("NETA (%p): found symbol [%c]\n", definition_, c);
         return c;
