@@ -150,7 +150,8 @@ class Forcefield : public Elements
                          SpeciesImproper::ImproperFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0,
                          double data3 = 0.0);
     // Match any kind of term
-    template <class T, typename... Args> static OptionalReferenceWrapper<const T> termMatch_(const std::vector<T> &, Args&&...);
+    template <class T, typename... Args>
+    static OptionalReferenceWrapper<const T> termMatch_(const std::vector<T> &, Args &&...);
 
     public:
     // Return bond term for the supplied atom type pair (if it exists)
@@ -232,9 +233,10 @@ class Forcefield : public Elements
 };
 
 template <class T, typename... Args>
-OptionalReferenceWrapper<const T> Forcefield::termMatch_(const std::vector<T> &container, Args&&... args)
+OptionalReferenceWrapper<const T> Forcefield::termMatch_(const std::vector<T> &container, Args &&... args)
 {
-    auto it = std::find_if(container.begin(), container.end(), [&](const T &item) { return item.isMatch(std::forward<Args>(args)...); });
+    auto it = std::find_if(container.begin(), container.end(),
+                           [&](const T &item) { return item.isMatch(std::forward<Args>(args)...); });
     if (it == container.end())
         return {};
     return *it;

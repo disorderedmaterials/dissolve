@@ -84,7 +84,7 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, const Forcefiel
 
 ForcefieldAtomType::~ForcefieldAtomType() {}
 
-ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType& source) : ElementReference(source.Z())
+ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &source) : ElementReference(source.Z())
 {
     parent_ = source.parent_;
     index_ = source.index_;
@@ -96,7 +96,7 @@ ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType& source) : Eleme
     neta_.set(source.neta_.definitionString(), parent_);
 }
 
-ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType&& source) : ElementReference(source.Z())
+ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &&source) : ElementReference(source.Z())
 {
     parent_ = source.parent_;
     index_ = source.index_;

@@ -40,7 +40,8 @@
 // Prepare forcefield for use
 bool Forcefield::prepare()
 {
-    if (!setUp()) return false;
+    if (!setUp())
+        return false;
 
     // Create reference vectors of atom types by element
     atomTypesByElementPrivate_.resize(Elements::nElements());
