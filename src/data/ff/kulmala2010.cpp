@@ -20,12 +20,6 @@
 */
 
 #include "data/ff/kulmala2010.h"
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
-#include "classes/speciesatom.h"
-#include "data/ffangleterm.h"
-#include "data/ffatomtype.h"
-#include "data/ffbondterm.h"
 
 /*
  * Implements forcefield found in "Enhancing effect of dimethylamine in sulfuric acid nucleation in the presence
