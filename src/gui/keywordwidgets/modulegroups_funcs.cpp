@@ -27,6 +27,7 @@
 #include "module/group.h"
 #include "module/groups.h"
 #include "module/module.h"
+#include "templates/variantpointer.h"
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QString>
