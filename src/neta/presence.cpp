@@ -95,10 +95,6 @@ bool NETAPresenceNode::setModifier(const char *modifier, ComparisonOperator op, 
 // Evaluate the node and return its score
 int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &availableAtoms) const
 {
-    // 	printf("I AM THE PRESENCE - availableAtoms size = %i:\n", availableAtoms.nItems());
-    // 	for (const SpeciesAtom* iii : availableAtoms) printf("   -- %p %i %s\n", iii, iii->userIndex(),
-    // iii->element()->symbol());
-
     // We expect the passed SpeciesAtom 'i' to be NULL, as our potential targets are held in availableAtoms (which we will
     // modify as appropriate)
     if (i != NULL)
@@ -178,10 +174,6 @@ int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &av
         ++nMatches;
         totalScore += atomScore;
         matches.append(j);
-
-        // Have we matched enough? If so break out early.
-        if (compareValues(nMatches, repeatCountOperator_, repeatCount_))
-            break;
     }
 
     // Did we find the required number of matches in the provided list?
