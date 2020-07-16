@@ -60,16 +60,16 @@ bool Forcefield_Kulmala2010::setUp()
     // -- Ammonium Ion
     addAtomType(ELEMENT_H, 7, "HN+", "-N(nh=4)", "Ammonium ion hydrogen", 0.44, 0.12552, 2.5);
     addAtomType(ELEMENT_N, 8, "NH+", "-H(n=4)", "Ammonium ion nitrogen", -0.76, 0.71128, 3.25);
-    // -- Sulfuric Acid
-    addAtomType(ELEMENT_S, 9, "SA", "-O(nh=1,n=2),-O(nh=0,n=2)", "Sulfuric acid sulfur", 1.1, 1.046, 3.55);
-    addAtomType(ELEMENT_O, 10, "OHA", "nh=1,-&9", "Sulfuric acid hydroxyl oxygen", -0.53, 0.71176, 3.0);
-    addAtomType(ELEMENT_O, 11, "OA", "nh=0,-&9", "Sulfuric acid oxygen", -0.46, 0.71176, 3.0);
-    addAtomType(ELEMENT_H, 12, "HSA", "-O(-&9)", "Sulfuric acid hydroxyl hydrogen", 0.44, 0.0, 0.0);
+    // -- Sulphuric Acid
+    addAtomType(ELEMENT_S, 9, "SA", "-O(nh=1,n=2)", "Sulphuric acid sulfur", 1.1, 1.046, 3.55);
+    addAtomType(ELEMENT_O, 10, "OHA", "nh=1,-&9", "Sulphuric acid hydroxyl oxygen", -0.53, 0.71176, 3.0);
+    addAtomType(ELEMENT_O, 11, "OA", "nh=0,-&9", "Sulphuric acid oxygen", -0.46, 0.71176, 3.0);
+    addAtomType(ELEMENT_H, 12, "HSA", "-O(-&9)", "Sulphuric acid hydroxyl hydrogen", 0.44, 0.0, 0.0);
     // -- Hydrogen Sulfate Ion
-    addAtomType(ELEMENT_S, 13, "SA-", "-O(nh=1,n=1),-O(nh=0,n=3)", "Hydrogen sulfate sulfur", 1.27, 1.046, 3.55);
-    addAtomType(ELEMENT_O, 14, "OHA-", "nh=1,-&13", "Hydrogen sulfate hydroxyl oxygen", -0.64, 0.71176, 3.0);
-    addAtomType(ELEMENT_O, 15, "OA-", "nh=0,-&13", "Hydrogen sulfate oxygen", -0.67, 0.71176, 3.0);
-    addAtomType(ELEMENT_H, 16, "HSA-", "-O(-&13)", "Hydrogen sulfate hydroxyl hydrogen", 0.38, 0.0, 0.0);
+    addAtomType(ELEMENT_S, 13, "SA-", "-O(nh=1,n=1),-O(nh=0,n=3)", "Hydrogen sulphate sulfur", 1.27, 1.046, 3.55);
+    addAtomType(ELEMENT_O, 14, "OHA-", "nh=1,-&13", "Hydrogen sulphate hydroxyl oxygen", -0.64, 0.71176, 3.0);
+    addAtomType(ELEMENT_O, 15, "OA-", "nh=0,-&13", "Hydrogen sulphate oxygen", -0.67, 0.71176, 3.0);
+    addAtomType(ELEMENT_H, 16, "HSA-", "-O(-&13)", "Hydrogen sulphate hydroxyl hydrogen", 0.38, 0.0, 0.0);
     // -- Dimethylammonium Ion
     addAtomType(ELEMENT_N, 17, "NDM", "nh=2,-C(nh=3,n=2)", "Dimethylammonium ion nitrogen", -0.12, 0.71128, 3.25);
     addAtomType(ELEMENT_H, 18, "HDM", "-&17", "Dimethylammonium ion hydrogen", 0.31, 0.12550, 2.5);
@@ -89,7 +89,7 @@ bool Forcefield_Kulmala2010::setUp()
     // -- Ammonium Ion
     addBondTerm("HN+", "NH+", SpeciesBond::HarmonicForm, 3660.3, 1.013);
     addAngleTerm("HN+", "NH+", "HN+", SpeciesAngle::HarmonicForm, 518.26, 109.47);
-    // -- Sulfuric Acid
+    // -- Sulphuric Acid
     addBondTerm("SA", "OA", SpeciesBond::HarmonicForm, 6258.0, 1.411);
     addBondTerm("SA", "OHA", SpeciesBond::HarmonicForm, 3083.8, 1.571);
     addBondTerm("OHA*", "HSA*", SpeciesBond::HarmonicForm, 4561.1, 0.949);
