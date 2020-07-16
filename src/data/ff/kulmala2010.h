@@ -36,7 +36,7 @@ class Forcefield_Kulmala2010 : public Forcefield
     /*
      * Set Up
      */
-    protected:
+    public:
     // Set up / create all forcefield terms
     bool setUp();
 
