@@ -138,10 +138,7 @@ template <class T, class I> class TreeWidgetUpdater
 
         ListIterator<I> dataIterator(data);
         while (I *dataItem = dataIterator.iterate())
-        {
-            updateTreeChildren(parentItem, count, dataItem, functionParent, updateChildFunction);
-            ++count;
-        }
+            updateTreeChildren(parentItem, count++, dataItem, functionParent, updateChildFunction);
 
         // If there are still items remaining in the widget, delete them now
         while (count < parentItem->childCount())
@@ -155,10 +152,7 @@ template <class T, class I> class TreeWidgetUpdater
         int count = 0;
 
         for (auto &dataItem : data)
-        {
-            updateTreeTopLevel(treeWidget, count, dataItem, functionParent, updateTopLevelFunction);
-            ++count;
-        }
+            updateTreeTopLevel(treeWidget, count++, dataItem, functionParent, updateTopLevelFunction);
 
         // If there are still items remaining in the widget, delete them now
         while (count < treeWidget->topLevelItemCount())
@@ -175,10 +169,7 @@ template <class T, class I> class TreeWidgetUpdater
         int count = 0;
 
         for (auto &dataItem : data)
-        {
-            updateTreeChildren(parentItem, count, dataItem, functionParent, updateChildFunction);
-            ++count;
-        }
+            updateTreeChildren(parentItem, count++, dataItem, functionParent, updateChildFunction);
 
         // If there are still items remaining in the widget, delete them now
         while (count < parentItem->childCount())
