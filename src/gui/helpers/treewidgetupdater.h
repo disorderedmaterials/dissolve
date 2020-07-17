@@ -96,8 +96,8 @@ template <class T, class I> class TreeWidgetUpdater
                            },
                            count, dataItem);
     }
-    void updateTreeTopLeve(QTreeWidget *treeWidget, int count, I *dataItem, T *functionParent,
-                           TreeWidgetTopLevelUpdateFunction updateTopLevelFunction)
+    void updateTreeTopLevel(QTreeWidget *treeWidget, int count, I *dataItem, T *functionParent,
+                            TreeWidgetTopLevelUpdateFunction updateTopLevelFunction)
     {
         genericTreeUpdater([treeWidget](int index) { return treeWidget->topLevelItem(index); },
                            [treeWidget]() { return treeWidget->topLevelItemCount(); },
@@ -118,7 +118,7 @@ template <class T, class I> class TreeWidgetUpdater
         ListIterator<I> dataIterator(data);
         while (I *dataItem = dataIterator.iterate())
         {
-            updateTreeTopLeve(treeWidget, count, dataItem, functionParent, updateTopLevelFunction);
+            updateTreeTopLevel(treeWidget, count, dataItem, functionParent, updateTopLevelFunction);
             ++count;
         }
 
@@ -156,7 +156,7 @@ template <class T, class I> class TreeWidgetUpdater
 
         for (auto &dataItem : data)
         {
-            updateTreeTopLeve(treeWidget, count, dataItem, functionParent, updateTopLevelFunction);
+            updateTreeTopLevel(treeWidget, count, dataItem, functionParent, updateTopLevelFunction);
             ++count;
         }
 
