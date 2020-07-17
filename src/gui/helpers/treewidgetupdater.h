@@ -25,6 +25,7 @@
 #include "templates/reflist.h"
 #include "templates/variantpointer.h"
 #include <QTreeWidget>
+#include <functional>
 
 #pragma once
 
@@ -38,40 +39,52 @@ template <class T, class I> class TreeWidgetUpdater
     typedef void (T::*TreeWidgetChildUpdateFunction)(QTreeWidgetItem *parentItem, int childIndex, I *data, bool createItem);
 
     private:
-    void innerChild_(QTreeWidgetItem *parentItem, int count, I *dataItem, T *functionParent,
-                     TreeWidgetChildUpdateFunction updateChildFunction)
+    void innerAlgorithm_(std::function<QTreeWidgetItem *(int)> accessor, std::function<int()> counter,
+                         std::function<void(QTreeWidgetItem *)> remover, std::function<void(int, I *, bool)> updater, int count,
+                         I *dataItem)
     {
         // Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.
 
         // If there is an item already at this child position, check it
         // If it represents the current pointer data, just update it and move on. Otherwise, delete it and check
         // again
-        while (count < parentItem->childCount())
+        while (count < counter())
         {
-            QTreeWidgetItem *treeItem = parentItem->child(count);
+            QTreeWidgetItem *treeItem = accessor(count);
             I *rowData = (treeItem ? VariantPointer<I>(treeItem->data(0, Qt::UserRole)) : NULL);
             if (rowData == dataItem)
             {
                 // Update the current row and quit the loop
-                (functionParent->*updateChildFunction)(parentItem, count, dataItem, false);
+                updater(count, dataItem, false);
 
                 break;
             }
             else
             {
-                parentItem->removeChild(treeItem);
+                remover(treeItem);
                 delete treeItem;
             }
         }
 
         // If the current child index is (now) out of range, add a new item to the parent
-        if (count == parentItem->childCount())
+        if (count == counter())
         {
             // Create new item
-            (functionParent->*updateChildFunction)(parentItem, count, dataItem, true);
+            updater(count, dataItem, true);
         }
 
         ++count;
+    }
+    void innerChild_(QTreeWidgetItem *parentItem, int count, I *dataItem, T *functionParent,
+                     TreeWidgetChildUpdateFunction updateChildFunction)
+    {
+        innerAlgorithm_([parentItem](int index) { return parentItem->child(index); },
+                        [parentItem]() { return parentItem->childCount(); },
+                        [parentItem](auto child) { parentItem->removeChild(child); },
+                        [parentItem, functionParent, updateChildFunction](int index, I *item, bool something) {
+                            return (functionParent->*updateChildFunction)(parentItem, index, item, something);
+                        },
+                        count, dataItem);
     }
     void innerTop_(QTreeWidget *treeWidget, int count, I *dataItem, T *functionParent,
                    TreeWidgetTopLevelUpdateFunction updateTopLevelFunction)
