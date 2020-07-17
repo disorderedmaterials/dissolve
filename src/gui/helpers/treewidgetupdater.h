@@ -39,9 +39,19 @@ template <class T, class I> class TreeWidgetUpdater
     typedef void (T::*TreeWidgetChildUpdateFunction)(QTreeWidgetItem *parentItem, int childIndex, I *data, bool createItem);
 
     private:
-    void innerAlgorithm_(std::function<QTreeWidgetItem *(int)> accessor, std::function<int()> counter,
-                         std::function<void(int index, QTreeWidgetItem *)> remover, std::function<void(int, I *, bool)> updater,
-                         int count, I *dataItem)
+    // To update a tree, we need four helper functions and two values
+    // The four helper functions are
+    // accessor = a function to find the item at an index
+    // counter = a function to find the current number of items in the tree
+    // remover = a function to erase an item from an index
+    // updater = a function to update an item at a location
+    //
+    // The two values are the index in question and the updated value
+    // for the item.
+
+    void genericTreeUpdater(std::function<QTreeWidgetItem *(int)> accessor, std::function<int()> counter,
+                            std::function<void(int index, QTreeWidgetItem *)> remover,
+                            std::function<void(int, I *, bool)> updater, int count, I *dataItem)
     {
         // Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.
 
@@ -75,27 +85,27 @@ template <class T, class I> class TreeWidgetUpdater
 
         ++count;
     }
-    void innerChild_(QTreeWidgetItem *parentItem, int count, I *dataItem, T *functionParent,
-                     TreeWidgetChildUpdateFunction updateChildFunction)
+    void updateTreeChildren(QTreeWidgetItem *parentItem, int count, I *dataItem, T *functionParent,
+                            TreeWidgetChildUpdateFunction updateChildFunction)
     {
-        innerAlgorithm_([parentItem](int index) { return parentItem->child(index); },
-                        [parentItem]() { return parentItem->childCount(); },
-                        [parentItem](int unused, auto child) { parentItem->removeChild(child); },
-                        [parentItem, functionParent, updateChildFunction](int index, I *item, bool something) {
-                            return (functionParent->*updateChildFunction)(parentItem, index, item, something);
-                        },
-                        count, dataItem);
+        genericTreeUpdater([parentItem](int index) { return parentItem->child(index); },
+                           [parentItem]() { return parentItem->childCount(); },
+                           [parentItem](int unused, auto child) { parentItem->removeChild(child); },
+                           [parentItem, functionParent, updateChildFunction](int index, I *item, bool something) {
+                               return (functionParent->*updateChildFunction)(parentItem, index, item, something);
+                           },
+                           count, dataItem);
     }
-    void innerTop_(QTreeWidget *treeWidget, int count, I *dataItem, T *functionParent,
-                   TreeWidgetTopLevelUpdateFunction updateTopLevelFunction)
+    void updateTreeTopLeve(QTreeWidget *treeWidget, int count, I *dataItem, T *functionParent,
+                           TreeWidgetTopLevelUpdateFunction updateTopLevelFunction)
     {
-        innerAlgorithm_([treeWidget](int index) { return treeWidget->topLevelItem(index); },
-                        [treeWidget]() { return treeWidget->topLevelItemCount(); },
-                        [treeWidget](int index, auto unused) { treeWidget->takeTopLevelItem(index); },
-                        [treeWidget, functionParent, updateTopLevelFunction](int index, I *item, bool something) {
-                            return (functionParent->*updateTopLevelFunction)(treeWidget, index, item, something);
-                        },
-                        count, dataItem);
+        genericTreeUpdater([treeWidget](int index) { return treeWidget->topLevelItem(index); },
+                           [treeWidget]() { return treeWidget->topLevelItemCount(); },
+                           [treeWidget](int index, auto unused) { treeWidget->takeTopLevelItem(index); },
+                           [treeWidget, functionParent, updateTopLevelFunction](int index, I *item, bool something) {
+                               return (functionParent->*updateTopLevelFunction)(treeWidget, index, item, something);
+                           },
+                           count, dataItem);
     }
 
     public:
@@ -108,7 +118,7 @@ template <class T, class I> class TreeWidgetUpdater
         ListIterator<I> dataIterator(data);
         while (I *dataItem = dataIterator.iterate())
         {
-            innerTop_(treeWidget, count, dataItem, functionParent, updateTopLevelFunction);
+            updateTreeTopLeve(treeWidget, count, dataItem, functionParent, updateTopLevelFunction);
             ++count;
         }
 
@@ -129,7 +139,7 @@ template <class T, class I> class TreeWidgetUpdater
         ListIterator<I> dataIterator(data);
         while (I *dataItem = dataIterator.iterate())
         {
-            innerChild_(parentItem, count, dataItem, functionParent, updateChildFunction);
+            updateTreeChildren(parentItem, count, dataItem, functionParent, updateChildFunction);
             ++count;
         }
 
@@ -146,7 +156,7 @@ template <class T, class I> class TreeWidgetUpdater
 
         for (auto &dataItem : data)
         {
-            innerTop_(treeWidget, count, dataItem, functionParent, updateTopLevelFunction);
+            updateTreeTopLeve(treeWidget, count, dataItem, functionParent, updateTopLevelFunction);
             ++count;
         }
 
@@ -166,7 +176,7 @@ template <class T, class I> class TreeWidgetUpdater
 
         for (auto &dataItem : data)
         {
-            innerChild_(parentItem, count, dataItem, functionParent, updateChildFunction);
+            updateTreeChildren(parentItem, count, dataItem, functionParent, updateChildFunction);
             ++count;
         }
 
