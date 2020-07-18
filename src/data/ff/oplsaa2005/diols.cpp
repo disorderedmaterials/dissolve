@@ -28,6 +28,10 @@
 // Set up / create all forcefield terms
 bool Forcefield_OPLSAA2005_Diols::setUp()
 {
+    // Call setup function in OPLS-AA Alkanes base FF
+    if (!Forcefield_OPLSAA2005_Alkanes::setUp())
+        return false;
+
     // Copy required types from OPLS-AA (2005) core list
     // -- Diols
     if (!copyAtomType(oplsAtomTypeById(169), "OH", "nh=1,-C(-O(root,-H))"))

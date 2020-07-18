@@ -28,6 +28,10 @@
 // Set up / create all forcefield terms
 bool Forcefield_OPLSAA2005_Alkenes::setUp()
 {
+    // Call setup function in OPLS-AA Alkanes base FF
+    if (!Forcefield_OPLSAA2005_Alkanes::setUp())
+        return false;
+
     // Add required types from OPLS-AA (2005) core list
     // -- AA Alkenes
     if (!copyAtomType(oplsAtomTypeById(141), "CM_a", "nbonds=3,nh=0,-C", "CM"))
