@@ -5,7 +5,6 @@
 #include "classes/speciesatom.h"
 #include "data/ffatomtype.h"
 #include "templates/dynamicarray.h"
-#include "templates/refdatalist.h"
 #include <algorithm>
 
 NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::RingNode)
@@ -65,8 +64,8 @@ bool NETARingNode::setModifier(std::string_view modifier, ComparisonOperator op,
  */
 
 // Locate rings in which the specified atom is involved
-void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &rings, std::vector<const SpeciesAtom *> &path,
-                             const int minSize, const int maxSize) const
+void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &rings,
+                             std::vector<const SpeciesAtom *> &path, const int minSize, const int maxSize) const
 {
     // Check whether the path is already at the maximum size - if so, return immediately.
     if (path.size() == maxSize)
@@ -112,7 +111,7 @@ void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &
 }
 
 // Evaluate the node and return its score
-int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom*> &matchPath) const
+int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const
 {
     // Generate array of rings of specified size that the atom 'i' is present in
     List<SpeciesRing> rings;

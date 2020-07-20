@@ -7,7 +7,6 @@
 #include "neta/connection.h"
 #include "neta/logic.h"
 #include "neta/root.h"
-#include "templates/list.h"
 
 // Forward Declarations
 class Forcefield;

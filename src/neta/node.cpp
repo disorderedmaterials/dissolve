@@ -7,7 +7,6 @@
 #include "neta/node.h"
 #include "neta/presence.h"
 #include "neta/ring.h"
-#include "templates/reflist.h"
 
 // Return enum options for NodeTypes
 EnumOptions<NETANode::NodeType> NETANode::nodeTypes()
@@ -174,7 +173,7 @@ bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
 void NETANode::setReverseLogic() { reverseLogic_ = true; }
 
 // Evaluate the node and return its score
-int NETANode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom*> &atomData) const
+int NETANode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &atomData) const
 {
     auto totalScore = 0;
 
