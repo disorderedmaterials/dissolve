@@ -112,7 +112,7 @@ void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &
 }
 
 // Evaluate the node and return its score
-int NETARingNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
+int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom*> &matchPath) const
 {
     // Generate array of rings of specified size that the atom 'i' is present in
     List<SpeciesRing> rings;
@@ -168,9 +168,9 @@ int NETARingNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchP
         {
             // Disordered search - try to match the branch definition against this ring, in any order (provide all
             // atoms in the ring at once)
-            RefList<const SpeciesAtom> ringAtoms;
+            std::vector<const SpeciesAtom*> ringAtoms;
             for (int n = 0; n < ring->size(); ++n)
-                ringAtoms.append(ring->atom(n));
+                ringAtoms.push_back(ring->atom(n));
 
             for (auto node : branch_)
             {

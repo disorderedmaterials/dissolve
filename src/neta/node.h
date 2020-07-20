@@ -136,5 +136,5 @@ class NETANode
     // Set node to use reverse logic
     void setReverseLogic();
     // Evaluate the node and return its score
-    virtual int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &atomData) const;
+    virtual int score(const SpeciesAtom *i, std::vector<const SpeciesAtom*> &atomData) const;
 };

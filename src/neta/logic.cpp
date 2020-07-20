@@ -19,7 +19,7 @@ NETALogicNode::~NETALogicNode() {}
  */
 
 // Evaluate the node and return its score
-int NETALogicNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
+int NETALogicNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom*> &matchPath) const
 {
     int score1 = NETANode::NoMatch, score2 = NETANode::NoMatch, totalscore = NETANode::NoMatch;
     switch (logic_)

@@ -64,7 +64,7 @@ bool NETARootNode::setModifier(std::string_view modifier, ComparisonOperator op,
  */
 
 // Evaluate the node and return its score
-int NETARootNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
+int NETARootNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom*> &matchPath) const
 {
     auto totalScore = 0;
 

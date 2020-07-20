@@ -6,6 +6,7 @@
 #include "data/ffatomtype.h"
 #include "templates/dynamicarray.h"
 #include "templates/refdatalist.h"
+#include <algorithm>
 
 NETAConnectionNode::NETAConnectionNode(NETADefinition *parent,
                                        std::vector<std::reference_wrapper<const Element>> targetElements,
@@ -139,22 +140,18 @@ bool NETAConnectionNode::setFlag(std::string_view flag, bool state)
  */
 
 // Evaluate the node and return its score
-int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
+int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom*> &matchPath) const
 {
     // Get directly connected atoms about 'i', excluding any that have already been matched
     RefDataList<const SpeciesAtom, int> neighbours;
     for (const SpeciesBond &bond : i->bonds())
     {
         const auto *partner = bond.partner(i);
-        if (partner == matchPath.firstItem())
-        {
-            // We may allow the path's root atom to be matched again, if the allowRootMatch_ is set...
-            if (!allowRootMatch_)
-                continue;
-        }
-        else if (matchPath.contains(partner))
-            continue;
-        neighbours.append(partner, NETANode::NoMatch);
+
+        // Search for this species atom in the current match path
+        auto atomIt = std::find_if(matchPath.begin(), matchPath.end(), [partner](const auto spAtom) { return spAtom == partner; });
+        if (atomIt == matchPath.end()) neighbours.append(partner, NETANode::NoMatch);
+        else if (atomIt == matchPath.begin() && allowRootMatch_) neighbours.append(partner, NETANode::NoMatch);
     }
 
     // Loop over neighbour atoms
@@ -170,10 +167,10 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
                 continue;
 
             // Process branch definition via the base class, using a copy of the current match path
-            RefList<const SpeciesAtom> branchMatchPath = matchPath;
+            auto branchMatchPath = matchPath;
 
             // Add ourselves to the match path so we can't backtrack
-            branchMatchPath.append(i);
+            branchMatchPath.push_back(i);
 
             auto branchScore = NETANode::score(j, branchMatchPath);
             if (branchScore == NETANode::NoMatch)
@@ -194,7 +191,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
                     continue;
 
                 // Process branch definition via the base class, using a copy of the current match path
-                RefList<const SpeciesAtom> branchMatchPath = matchPath;
+                auto branchMatchPath = matchPath;
                 auto branchScore = NETANode::score(j, branchMatchPath);
                 if (branchScore == NETANode::NoMatch)
                     continue;
@@ -252,7 +249,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
             continue;
 
         totalScore += neighbourIterator.currentData();
-        matchPath.append(j);
+        matchPath.push_back(j);
     }
 
     return totalScore;

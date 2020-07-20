@@ -174,11 +174,11 @@ bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
 void NETANode::setReverseLogic() { reverseLogic_ = true; }
 
 // Evaluate the node and return its score
-int NETANode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &atomData) const
+int NETANode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom*> &atomData) const
 {
     auto totalScore = 0;
 
-    // Loop over nodes in branch in sequence
+    // Loop over branch nodes in sequence
     for (auto node : branch_)
     {
         // Get the score from the node, returning early if NoMatch is encountered
