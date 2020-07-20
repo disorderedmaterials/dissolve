@@ -3,22 +3,18 @@
 
 #pragma once
 
-#include "templates/list.h"
-#include "templates/listitem.h"
-#include "templates/orderedpointerdataarray.h"
-#include "templates/reflist.h"
-#include "templates/vector3.h"
 #include <vector>
 
 // Forward Declarations
 class SpeciesAtom;
 
 // SpeciesRing Definition
-class SpeciesRing : public ListItem<SpeciesRing>
+class SpeciesRing
 {
     public:
-    SpeciesRing();
-    ~SpeciesRing();
+    SpeciesRing(const std::vector<const SpeciesAtom *> atoms = {});
+    ~SpeciesRing() = default;
+    bool operator==(const SpeciesRing &other);
 
     /*
      * Atoms
@@ -38,10 +34,4 @@ class SpeciesRing : public ListItem<SpeciesRing>
     int size() const;
     // Print ring information
     void print() const;
-
-    /*
-     * Comparison
-     */
-    public:
-    bool operator==(const SpeciesRing &other);
 };

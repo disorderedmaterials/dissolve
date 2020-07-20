@@ -53,7 +53,7 @@ class NETARingNode : public NETANode
      */
     private:
     // Locate rings in which the specified atom is involved
-    void findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &rings, std::vector<const SpeciesAtom *> &path,
+    void findRings(const SpeciesAtom *currentAtom, std::vector<SpeciesRing> &rings, std::vector<const SpeciesAtom *> &path,
                    const int minSize, const int maxSize) const;
 
     public:

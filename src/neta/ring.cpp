@@ -64,7 +64,7 @@ bool NETARingNode::setModifier(std::string_view modifier, ComparisonOperator op,
  */
 
 // Locate rings in which the specified atom is involved
-void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &rings,
+void NETARingNode::findRings(const SpeciesAtom *currentAtom, std::vector<SpeciesRing> &rings,
                              std::vector<const SpeciesAtom *> &path, const int minSize, const int maxSize) const
 {
     // Check whether the path is already at the maximum size - if so, return immediately.
@@ -76,7 +76,6 @@ void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &
 
     // Loop over bonds to the atom
     const SpeciesAtom *j;
-    SpeciesRing *ring;
     for (const SpeciesBond &bond : currentAtom->bonds())
     {
         /*
@@ -93,8 +92,7 @@ void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &
                 continue;
 
             // Add new ring
-            ring = rings.add();
-            ring->setAtoms(path);
+            rings.emplace_back(path);
 
             // Continue with the next bond
             continue;
@@ -114,7 +112,7 @@ void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &
 int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const
 {
     // Generate array of rings of specified size that the atom 'i' is present in
-    List<SpeciesRing> rings;
+    std::vector<SpeciesRing> rings;
     std::vector<const SpeciesAtom *> ringPath;
     if (sizeValue_ == -1)
         findRings(i, rings, ringPath, 3, 6);
@@ -132,32 +130,14 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
         findRings(i, rings, ringPath, 3, 99);
 
     // Prune rings for duplicates
-    ListIterator<SpeciesRing> ringIterator(rings);
-    while (SpeciesRing *ring = ringIterator.iterate())
-    {
-        // Check this ring against others in the list - if we find a duplicate, we can remove it and then move on with
-        // the next ring.
-        for (auto *other = ring->next(); other != nullptr; other = other->next())
-        {
-            if ((*ring) == (*other))
-            {
-                rings.remove(other);
-                break;
-            }
-        }
-    }
-    // 	ringIterator.restart();
-    // 	while (SpeciesRing* ring = ringIterator.iterate()) ring->print();
+    for (auto it = rings.begin(); it != rings.end(); ++it)
+        rings.erase(std::remove_if(it + 1, rings.end(), [&it](const auto &otherIt) { return *it == otherIt; }));
 
     // Loop over rings
     auto nMatches = 0, totalScore = 0;
     int nodeScore;
-    ringIterator.restart();
-    while (SpeciesRing *ring = ringIterator.iterate())
+    for (auto ring : rings)
     {
-        // Copy the atoms in the ring into an array we can modify
-        std::vector<const SpeciesAtom *> ringAtoms = ring->atoms();
-
         // Check through atoms in the ring - either in order or not - to see if the ring matches
         if (false)
         {
@@ -165,12 +145,9 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
         }
         else
         {
-            // Disordered search - try to match the branch definition against this ring, in any order (provide all
+            // Disordered search - try to match the branch definition against this ring, in any order (provide a copy of all
             // atoms in the ring at once)
-            std::vector<const SpeciesAtom*> ringAtoms;
-            for (int n = 0; n < ring->size(); ++n)
-                ringAtoms.push_back(ring->atom(n));
-
+            std::vector<const SpeciesAtom *> ringAtoms = ring.atoms();
             for (auto node : branch_)
             {
                 nodeScore = node->score(nullptr, ringAtoms);
