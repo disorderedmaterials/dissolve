@@ -19,11 +19,13 @@ class NETAVisitor : private NETAParserVisitor
     // Encompassing forcefield for the definition (if any)
     const Forcefield *associatedForcefield_;
     // Context stack
-    std::vector<NETANode *> contextStack_;
+    std::vector<std::shared_ptr<NETANode>> contextStack_;
+    // Parse error counter
+    int errorCounter_;
 
     private:
     // Return the topmost context in the stack
-    NETANode *currentNETAContext() const;
+    std::shared_ptr<NETANode> currentNETAContext() const;
 
     public:
     // Construct description within supplied object, from given tree

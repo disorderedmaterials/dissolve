@@ -4,8 +4,6 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "templates/list.h"
-#include "templates/listitem.h"
 #include "templates/reflist.h"
 #include <memory>
 #include <vector>
@@ -20,7 +18,7 @@ class NETARingNode;
 class SpeciesAtom;
 
 // NETA Node
-class NETANode : public ListItem<NETANode>
+class NETANode
 {
     public:
     // Node types
@@ -86,24 +84,21 @@ class NETANode : public ListItem<NETANode>
      */
     protected:
     // Branch of nodes
-    List<NETANode> branch_;
+    std::vector<std::shared_ptr<NETANode>> branch_;
 
     public:
     // Clear all nodes
     void clear();
-    // Return last node of branch
-    NETANode *lastBranchNode();
-    // Return number of nodes defined in branch
-    int nBranchNodes() const;
     // Create connectivity node in the branch
-    NETAConnectionNode *
+    std::shared_ptr<NETAConnectionNode>
     createConnectionNode(std::vector<std::reference_wrapper<const Element>> targetElements = {},
                          std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
     // Create presence node in the branch
-    NETAPresenceNode *createPresenceNode(std::vector<std::reference_wrapper<const Element>> targetElements = {},
-                                         std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
+    std::shared_ptr<NETAPresenceNode>
+    createPresenceNode(std::vector<std::reference_wrapper<const Element>> targetElements = {},
+                       std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
     // Create ring node in the branch
-    NETARingNode *createRingNode();
+    std::shared_ptr<NETARingNode> createRingNode();
 
     /*
      * Modifiers

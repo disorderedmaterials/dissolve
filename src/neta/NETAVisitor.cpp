@@ -13,7 +13,7 @@
  */
 
 // Return the topmost context in the stack
-NETANode *NETAVisitor::currentNETAContext() const
+std::shared_ptr<NETANode> NETAVisitor::currentNETAContext() const
 {
     // TODO Assert that we have a valid context?
     return contextStack_.back();
@@ -52,8 +52,7 @@ antlrcpp::Any NETAVisitor::visitRingNodeSequence(NETAParser::RingNodeSequenceCon
 
 antlrcpp::Any NETAVisitor::visitConnectionNode(NETAParser::ConnectionNodeContext *context)
 {
-    NETAConnectionNode *connection = currentNETAContext()->createConnectionNode();
-    contextStack_.push_back(connection);
+    contextStack_.push_back(currentNETAContext()->createConnectionNode());
 
     auto result = visitChildren(context);
 
@@ -64,8 +63,7 @@ antlrcpp::Any NETAVisitor::visitConnectionNode(NETAParser::ConnectionNodeContext
 
 antlrcpp::Any NETAVisitor::visitPresenceNode(NETAParser::PresenceNodeContext *context)
 {
-    NETAPresenceNode *presence = currentNETAContext()->createPresenceNode();
-    contextStack_.push_back(presence);
+    contextStack_.push_back(currentNETAContext()->createPresenceNode());
 
     auto result = visitChildren(context);
 
@@ -76,8 +74,7 @@ antlrcpp::Any NETAVisitor::visitPresenceNode(NETAParser::PresenceNodeContext *co
 
 antlrcpp::Any NETAVisitor::visitRingNode(NETAParser::RingNodeContext *context)
 {
-    NETARingNode *ring = currentNETAContext()->createRingNode();
-    contextStack_.push_back(ring);
+    contextStack_.push_back(currentNETAContext()->createRingNode());
 
     auto result = visitChildren(context);
 

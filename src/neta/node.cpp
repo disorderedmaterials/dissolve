@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2020 Team Dissolve and contributors
 
-#include "neta/node.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 #include "neta/connection.h"
+#include "neta/node.h"
 #include "neta/presence.h"
 #include "neta/ring.h"
 #include "templates/reflist.h"
@@ -35,7 +35,7 @@ EnumOptions<NETANode::ComparisonOperator> NETANode::comparisonOperators()
     return options;
 }
 
-NETANode::NETANode(NETADefinition *parent, NETANode::NodeType type) : ListItem<NETANode>()
+NETANode::NETANode(NETADefinition *parent, NETANode::NodeType type)
 {
     reverseLogic_ = false;
     parent_ = parent;
@@ -77,41 +77,34 @@ bool NETANode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 // Clear all nodes
 void NETANode::clear() { branch_.clear(); }
 
-// Return last node of branch
-NETANode *NETANode::lastBranchNode() { return branch_.last(); }
-
-// Return number of nodes defined in branch
-int NETANode::nBranchNodes() const { return branch_.nItems(); }
-
-// Create connectivity node from current targets
-NETAConnectionNode *
+// Create connectivity node in the branch
+std::shared_ptr<NETAConnectionNode>
 NETANode::createConnectionNode(std::vector<std::reference_wrapper<const Element>> targetElements,
                                std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
 {
-    // Create the new node and own it
-    NETAConnectionNode *node = new NETAConnectionNode(parent_, targetElements, targetAtomTypes);
-    branch_.own(node);
+    auto node = std::make_shared<NETAConnectionNode>(parent_, targetElements, targetAtomTypes);
+    branch_.push_back(node);
 
     return node;
 }
 
 // Create presence node in the branch
-NETAPresenceNode *NETANode::createPresenceNode(std::vector<std::reference_wrapper<const Element>> targetElements,
-                                               std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
+std::shared_ptr<NETAPresenceNode>
+NETANode::createPresenceNode(std::vector<std::reference_wrapper<const Element>> targetElements,
+                             std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
 {
-    // Create the new node and own it
-    NETAPresenceNode *node = new NETAPresenceNode(parent_, targetElements, targetAtomTypes);
-    branch_.own(node);
+    auto node = std::make_shared<NETAPresenceNode>(parent_, targetElements, targetAtomTypes);
+    branch_.push_back(node);
 
     return node;
 }
 
 // Create ring node in the branch
-NETARingNode *NETANode::createRingNode()
+std::shared_ptr<NETARingNode> NETANode::createRingNode()
 {
     // Create the new node and own it
-    auto *node = new NETARingNode(parent_);
-    branch_.own(node);
+    auto node = std::make_shared<NETARingNode>(parent_);
+    branch_.push_back(node);
 
     return node;
 }
@@ -186,8 +179,7 @@ int NETANode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &atomData) 
     auto totalScore = 0;
 
     // Loop over nodes in branch in sequence
-    ListIterator<NETANode> branchIterator(branch_);
-    while (NETANode *node = branchIterator.iterate())
+    for (auto node : branch_)
     {
         // Get the score from the node, returning early if NoMatch is encountered
         auto nodeScore = node->score(i, atomData);

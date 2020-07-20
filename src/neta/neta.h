@@ -25,13 +25,13 @@ class NETADefinition
      */
     private:
     // Root node of the definition
-    NETARootNode rootNode_;
+    std::shared_ptr<NETARootNode> rootNode_;
     // Original definition string
     std::string definitionString_;
 
     public:
     // Return root node pointer
-    NETARootNode *rootNode();
+    std::shared_ptr<NETARootNode> rootNode();
     // Create definition from stored string
     bool create(const Forcefield *associatedFF = nullptr);
     // Set generating string
