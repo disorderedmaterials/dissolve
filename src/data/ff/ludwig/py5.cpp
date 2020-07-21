@@ -20,15 +20,6 @@
 */
 
 #include "data/ff/ludwig/py5.h"
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
-#include "classes/speciesatom.h"
-#include "data/ffangleterm.h"
-#include "data/ffatomtype.h"
-#include "data/ffbondterm.h"
-#include "data/ffimproperterm.h"
-#include "data/ffparameters.h"
-#include "data/fftorsionterm.h"
 
 /*
  * Implements "1-pentylpyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine"
@@ -41,7 +32,12 @@
  * All energy values are in kJ/mol.
  */
 
-Forcefield_Py5_Ludwig::Forcefield_Py5_Ludwig()
+/*
+ * Set Up
+ */
+
+// Set up / create all forcefield terms
+bool Forcefield_Ludwig_Py5::setUp()
 {
     // Short-Range Parameters
     addParameters("nc", 0.711302, 3.250);
@@ -128,19 +124,19 @@ Forcefield_Py5_Ludwig::Forcefield_Py5_Ludwig()
     addImproperTerm("ca", "ca", "ca", "ha", SpeciesImproper::CosineForm, 4.606, 2.0, 180.0);
     addImproperTerm("ca", "nc", "ca", "ha", SpeciesImproper::CosineForm, 4.606, 2.0, 180.0);
     addImproperTerm("ca", "ca", "nc", "ct", SpeciesImproper::CosineForm, 4.606, 2.0, 180.0);
-}
 
-Forcefield_Py5_Ludwig::~Forcefield_Py5_Ludwig() {}
+    return true;
+}
 
 /*
  * Definition
  */
 
 // Return name of Forcefield
-const char *Forcefield_Py5_Ludwig::name() const { return "1-pentylpyridinium cation (Py5)"; }
+const char *Forcefield_Ludwig_Py5::name() const { return "1-pentylpyridinium cation (Py5)"; }
 
 // Return description for Forcefield
-const char *Forcefield_Py5_Ludwig::description() const
+const char *Forcefield_Ludwig_Py5::description() const
 {
     return "Implements of 1‐pentylpyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine; W. L. "
            "Jorgensen, D. S. Maxwell, and J. Tirado-Rives, <i>Journal of the American "
@@ -149,4 +145,4 @@ const char *Forcefield_Py5_Ludwig::description() const
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_Py5_Ludwig::shortRangeType() const { return Forcefield::LennardJonesType; }
+Forcefield::ShortRangeType Forcefield_Ludwig_Py5::shortRangeType() const { return Forcefield::LennardJonesType; }

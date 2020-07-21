@@ -20,36 +20,44 @@
 */
 
 #include "data/ff/oplsaa2005/aromatics.h"
-#include "base/sysfunc.h"
-#include "classes/speciesatom.h"
-#include "data/ffatomtype.h"
 
 /*
- * OPLS-AA (2005) Aromatics
+ * Set Up
  */
 
-Forcefield_OPLSAA2005_Aromatics::Forcefield_OPLSAA2005_Aromatics()
+// Set up / create all forcefield terms
+bool Forcefield_OPLSAA2005_Aromatics::setUp()
 {
     // Copy required types from OPLS-AA (2005) core list
     // -- AA Alkanes
-    copyAtomType(oplsAtomTypeById(135), "CT", "nh=3");
-    copyAtomType(oplsAtomTypeById(140), "HC", "-&135");
+    if (!copyAtomType(oplsAtomTypeById(135), "CT", "nh=3"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(140), "HC", "-&135"))
+        return false;
     // -- Benzene
-    copyAtomType(oplsAtomTypeById(145), "CA", "ring(size=6),-C(n=2),-H(n=1)");
-    copyAtomType(oplsAtomTypeById(146), "HA", "-&145");
+    if (!copyAtomType(oplsAtomTypeById(145), "CA", "ring(size=6),-C(n=2),-H(n=1)"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(146), "HA", "-&145"))
+        return false;
     // -- Napthalene (or larger aromatics)
-    copyAtomType(oplsAtomTypeById(147), "CNap", "ring(size=6,n>=2),nbonds=3,-C(n=3)", "CA");
+    if (!copyAtomType(oplsAtomTypeById(147), "CNap", "ring(size=6,n>=2),nbonds=3,-C(n=3)", "CA"))
+        return false;
     // -- Toluene
-    copyAtomType(oplsAtomTypeById(148), "CT", "nh=3, -C(ring=6)");
+    if (!copyAtomType(oplsAtomTypeById(148), "CT", "nh=3, -C(ring(size=6))"))
+        return false;
     // -- Ethylbenzene
-    copyAtomType(oplsAtomTypeById(149), "CT", "nh=2, -C(nh=3), -C(ring(size=6))");
+    if (!copyAtomType(oplsAtomTypeById(149), "CT", "nh=2, -C(nh=3), -C(ring(size=6))"))
+        return false;
     // -- Phenol
-    copyAtomType(oplsAtomTypeById(166), "CA", "nbonds=3,-O(-H),-C(n=2)");
-    copyAtomType(oplsAtomTypeById(167), "OH", "-&166");
-    copyAtomType(oplsAtomTypeById(168), "HO", "-&167");
-}
+    if (!copyAtomType(oplsAtomTypeById(166), "CA", "nbonds=3,-O(-H),-C(n=2)"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(167), "OH", "-&166"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(168), "HO", "-&167"))
+        return false;
 
-Forcefield_OPLSAA2005_Aromatics::~Forcefield_OPLSAA2005_Aromatics() {}
+    return true;
+}
 
 /*
  * Definition

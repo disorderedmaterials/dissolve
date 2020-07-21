@@ -23,6 +23,7 @@
 
 #include "classes/speciesbond.h"
 #include "neta/node.h"
+#include <memory>
 #include <vector>
 
 // Forward Declarations
@@ -35,14 +36,15 @@ class NETAPresenceNode : public NETANode
 {
     public:
     NETAPresenceNode(NETADefinition *parent, std::vector<Element *> targetElements,
-                     std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
+                     std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes,
+                     SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
     ~NETAPresenceNode();
 
     private:
     // Array of elements that the current context atom may be
     std::vector<Element *> allowedElements_;
     // Array of ForcefieldAtomTypes that the current context atom may be
-    std::vector<ForcefieldAtomType *> allowedAtomTypes_;
+    std::vector<std::reference_wrapper<const ForcefieldAtomType>> allowedAtomTypes_;
 
     /*
      * Modifiers

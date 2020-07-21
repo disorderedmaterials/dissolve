@@ -103,7 +103,6 @@ node:
 /* Target Element / Type Generic */
 targetList:
 	target						{ $$ = NULL; }
-	| '[' target ']'				{ $$ = NULL; }
 	| '[' targets ']'				{ $$ = NULL; }
 	;
 

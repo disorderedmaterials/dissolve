@@ -25,6 +25,7 @@
 #include "base/parameters.h"
 #include "data/elements.h"
 #include "neta/neta.h"
+#include "templates/optionalref.h"
 
 // Forward Declarations
 class Forcefield;
@@ -34,15 +35,17 @@ class ForcefieldParameters;
 class ForcefieldAtomType : public ElementReference
 {
     public:
-    ForcefieldAtomType(Forcefield *parent = NULL, int Z = 0, int index = -1, const char *name = NULL,
+    ForcefieldAtomType(const Forcefield *parent = NULL, int Z = 0, int index = -1, const char *name = NULL,
                        const char *netaDefinition = NULL, const char *description = NULL, double q = 0.0, double data0 = 0.0,
                        double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
-    ForcefieldAtomType(Forcefield *parent = NULL, int Z = 0, int index = -1, const char *name = NULL,
+    ForcefieldAtomType(const Forcefield *parent = NULL, int Z = 0, int index = -1, const char *name = NULL,
                        const char *netaDefinition = NULL, const char *description = NULL, double q = 0.0,
                        const char *parameterReference = NULL);
-    ForcefieldAtomType(Forcefield *parent, const ForcefieldAtomType &sourceType, const char *newTypeName,
+    ForcefieldAtomType(const Forcefield *parent, const ForcefieldAtomType &sourceType, const char *newTypeName,
                        const char *netaDefinition = NULL, const char *equivalentName = NULL);
     virtual ~ForcefieldAtomType();
+    ForcefieldAtomType(const ForcefieldAtomType &source);
+    ForcefieldAtomType(const ForcefieldAtomType &&source);
 
     /*
      * Identity
@@ -56,8 +59,6 @@ class ForcefieldAtomType : public ElementReference
     CharString equivalentName_;
     // Brief description of tyoe
     CharString description_;
-    // NETA definition for the atom type
-    NETADefinition neta_;
 
     public:
     // Return index of type
@@ -68,6 +69,17 @@ class ForcefieldAtomType : public ElementReference
     const char *equivalentName() const;
     // Return description for type
     const char *description() const;
+
+    /*
+     * Recognition
+     */
+    private:
+    // NETA definition for the atom type
+    NETADefinition neta_;
+
+    public:
+    // Create NETA definition for the atom type
+    bool createNETA(const Forcefield *parentFF);
     // Return NETA definition for the atom type
     const NETADefinition &neta() const;
 
@@ -76,7 +88,7 @@ class ForcefieldAtomType : public ElementReference
      */
     private:
     // Parameters that this atom type references (if any)
-    const ForcefieldParameters *parameterReference_;
+    OptionalReferenceWrapper<const ForcefieldParameters> parameterReference_;
     // Interatomic interaction parameters for this atom type
     InteractionParameters parameters_;
 

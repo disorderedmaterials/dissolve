@@ -30,8 +30,15 @@
 class Forcefield_OPLSAA2005_Alkenes : public Forcefield_OPLSAA2005_Alkanes
 {
     public:
-    Forcefield_OPLSAA2005_Alkenes();
-    ~Forcefield_OPLSAA2005_Alkenes();
+    Forcefield_OPLSAA2005_Alkenes() = default;
+    ~Forcefield_OPLSAA2005_Alkenes() = default;
+
+    /*
+     * Set Up
+     */
+    protected:
+    // Set up / create all forcefield terms
+    bool setUp();
 
     /*
      * Definition

@@ -35,7 +35,7 @@ const Forcefield *NETADefinitionGenerator::associatedForcefield_ = NULL;
 NETADefinition *NETADefinitionGenerator::definition_ = NULL;
 NETADefinitionGenerator *NETADefinitionGenerator::generator_ = NULL;
 std::vector<Element *> NETADefinitionGenerator::targetElements_;
-std::vector<ForcefieldAtomType *> NETADefinitionGenerator::targetAtomTypes_;
+std::vector<std::reference_wrapper<const ForcefieldAtomType>> NETADefinitionGenerator::targetAtomTypes_;
 RefList<NETANode> NETADefinitionGenerator::contextStack_;
 bool NETADefinitionGenerator::expectName_ = false;
 
@@ -47,15 +47,16 @@ NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition &definition, con
     clearTargets();
     expectName_ = false;
 
+    // Initialise generator
+    setSource(definitionText);
+
+    // Set pointers
     definition_ = &definition;
     associatedForcefield_ = associatedFF;
     generator_ = this;
 
     // Add the rootNode of the definition as the first context
     contextStack_.append(definition.rootNode());
-
-    // Initialise generator
-    setSource(definitionText);
 }
 
 NETADefinitionGenerator::~NETADefinitionGenerator() {}
@@ -276,7 +277,7 @@ int NETADefinitionGenerator::lex()
 
     // We have found a symbolic character (or a pair) that corresponds to an operator
     // Return immediately in the case of brackets, dash, comma, and ampersand
-    if ((c == '(') || (c == ')') || (c == '-') || (c == ',') || (c == '&'))
+    if ((c == '(') || (c == ')') || (c == '-') || (c == ',') || (c == '&') || (c == '[') || (c == ']'))
     {
         Messenger::printVerbose("NETA (%p): found symbol [%c]\n", definition_, c);
         return c;
@@ -332,13 +333,13 @@ bool NETADefinitionGenerator::addAtomTypeTarget(int id)
     if (!associatedForcefield_)
         return false;
 
-    ForcefieldAtomType *at = associatedForcefield_->atomTypeById(id);
-    if (!at)
+    auto optRef = associatedForcefield_->atomTypeById(id);
+    if (!optRef)
         return Messenger::error(
             "No forcefield atom type with index %i exists in forcefield '%s', so can't add it as a target.\n", id,
             associatedForcefield_->name());
 
-    targetAtomTypes_.push_back(at);
+    targetAtomTypes_.push_back(*optRef);
 
     return true;
 }
@@ -350,12 +351,12 @@ bool NETADefinitionGenerator::addAtomTypeTarget(const char *typeName)
     if (!associatedForcefield_)
         return false;
 
-    ForcefieldAtomType *at = associatedForcefield_->atomTypeByName(typeName);
-    if (!at)
+    auto optTypeRef = associatedForcefield_->atomTypeByName(typeName);
+    if (!optTypeRef)
         return Messenger::error("Unknown forcefield atom type '%s' passed to NETADefinitionGenerator::addTarget().\n",
                                 typeName);
 
-    targetAtomTypes_.push_back(at);
+    targetAtomTypes_.push_back(*optTypeRef);
 
     return true;
 }
@@ -364,7 +365,10 @@ bool NETADefinitionGenerator::addAtomTypeTarget(const char *typeName)
 std::vector<Element *> NETADefinitionGenerator::targetElements() { return targetElements_; }
 
 // Return target ForcefieldAtomTypes array
-std::vector<ForcefieldAtomType *> NETADefinitionGenerator::targetAtomTypes() { return targetAtomTypes_; }
+std::vector<std::reference_wrapper<const ForcefieldAtomType>> NETADefinitionGenerator::targetAtomTypes()
+{
+    return targetAtomTypes_;
+}
 
 // Clear element / atomtype targets
 void NETADefinitionGenerator::clearTargets()
@@ -399,17 +403,13 @@ void NETADefinitionGenerator::setExpectName(bool b) { expectName_ = b; }
 // Static generation functions
 bool NETADefinitionGenerator::generate(NETADefinition &neta, const char *netaDefinition, const Forcefield *associatedFF)
 {
-    // Set the source string
-    neta.setDefinitionString(netaDefinition);
-    // 	if ((netaDefinition == NULL) || (netaDefinition[0] == '\0')) return true;
-
     // Create a generator
-    NETADefinitionGenerator generator(neta, neta.definitionString(), associatedFF);
+    NETADefinitionGenerator generator(neta, netaDefinition, associatedFF);
 
     // Generate definition
     auto result = NETADefinitionGenerator_parse() == 0;
     if (!result)
-        definition_->clear();
+        Messenger::error("Failed to generate NETA definition from string '%s'.\n", netaDefinition);
 
     return result;
 }

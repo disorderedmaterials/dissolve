@@ -20,15 +20,6 @@
 */
 
 #include "data/ff/ludwig/ntf2.h"
-#include "base/sysfunc.h"
-#include "classes/atomtype.h"
-#include "classes/speciesatom.h"
-#include "data/ffangleterm.h"
-#include "data/ffatomtype.h"
-#include "data/ffbondterm.h"
-#include "data/ffimproperterm.h"
-#include "data/ffparameters.h"
-#include "data/fftorsionterm.h"
 
 /*
  * Implements "Revisiting imidazolium based ionic liquids: Effect of the conformation bias of the [NTf2] anion studied by
@@ -40,7 +31,12 @@
  * All energy values are in kJ/mol.
  */
 
-Forcefield_NTf2_Ludwig::Forcefield_NTf2_Ludwig()
+/*
+ * Set Up
+ */
+
+// Set up / create all forcefield terms
+bool Forcefield_Ludwig_NTf2::setUp()
 {
     // Short-Range Parameters
     addParameters("F", 0.066516, 2.655);
@@ -83,23 +79,23 @@ Forcefield_NTf2_Ludwig::Forcefield_NTf2_Ludwig()
     addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosineForm, -0.0298, 4.0, 0.0, 1);
     addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosineForm, 0.6905, 5.0, 0.0, 1);
     addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosineForm, 1.0165, 6.0, 0.0, 1);
-}
 
-Forcefield_NTf2_Ludwig::~Forcefield_NTf2_Ludwig() {}
+    return true;
+}
 
 /*
  * Definition
  */
 
 // Return name of Forcefield
-const char *Forcefield_NTf2_Ludwig::name() const { return "bis(trifluoromethylsulfonyl)imide anion (NTf2) by Ludwig Group"; }
+const char *Forcefield_Ludwig_NTf2::name() const { return "bis(trifluoromethylsulfonyl)imide anion (NTf2) by Ludwig Group"; }
 
 // Return description for Forcefield
-const char *Forcefield_NTf2_Ludwig::description() const
+const char *Forcefield_Ludwig_NTf2::description() const
 {
     return "J. Neumann, B. Golub, L.-M. Odebrecht, R. Ludwig, D. Paschek: bis(trifluoromethylsulfonyl)imide anion by "
            "Ludwig Group, <em>J. Chem. Phys.</em> <b>148</b>, 193828 (2018).";
 }
 
 // Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_NTf2_Ludwig::shortRangeType() const { return Forcefield::LennardJonesType; }
+Forcefield::ShortRangeType Forcefield_Ludwig_NTf2::shortRangeType() const { return Forcefield::LennardJonesType; }

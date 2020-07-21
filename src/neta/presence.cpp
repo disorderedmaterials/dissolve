@@ -24,7 +24,8 @@
 #include "data/ffatomtype.h"
 
 NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Element *> targetElements,
-                                   std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt)
+                                   std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes,
+                                   SpeciesBond::BondType bt)
     : NETANode(parent, NETANode::PresenceNode)
 {
     allowedElements_ = targetElements;
@@ -128,10 +129,10 @@ int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &av
             break;
         }
         if (atomScore == NETANode::NoMatch)
-            for (const auto *type : allowedAtomTypes_)
+            for (const ForcefieldAtomType &atomType : allowedAtomTypes_)
             {
                 // Evaluate the neighbour against the atom type
-                auto typeScore = type->neta().score(j);
+                auto typeScore = atomType.neta().score(j);
                 if (typeScore == NETANode::NoMatch)
                     continue;
 

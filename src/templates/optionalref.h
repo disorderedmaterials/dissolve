@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <memory>
 #include <optional>
 
 template <class T> using OptionalReferenceWrapper = std::optional<std::reference_wrapper<T>>;
