@@ -1,4 +1,8 @@
 add_library(ff
+  # Kulmala 2010
+  kulmala2010.cpp
+  kulmala2010.h
+
   # SPC/Fw
   spcfw.cpp
   spcfw.h

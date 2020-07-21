@@ -66,7 +66,7 @@ bool Dissolve::prepare()
     for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
     {
         // Check Box extent against pair potential range
-        double maxPPRange = cfg->box()->inscribedSphereRadius();
+        auto maxPPRange = cfg->box()->inscribedSphereRadius();
         if (pairPotentialRange_ > maxPPRange)
         {
             Messenger::error("PairPotential range (%f) is longer than the shortest non-minimum image distance (%f).\n",
@@ -75,7 +75,7 @@ bool Dissolve::prepare()
         }
 
         // Check total charge of Configuration
-        double totalQ = 0.0;
+        auto totalQ = 0.0;
         if (pairPotentialsIncludeCoulomb_)
         {
             auto &types = cfg->usedAtomTypesList();
@@ -86,7 +86,7 @@ bool Dissolve::prepare()
         else
         {
             ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
-            while (SpeciesInfo *spInfo = spInfoIterator.iterate())
+            while (auto *spInfo = spInfoIterator.iterate())
                 totalQ += spInfo->species()->totalChargeOnAtoms() * spInfo->population();
         }
         if (fabs(totalQ) > 1.0e-5)
@@ -104,7 +104,7 @@ bool Dissolve::prepare()
         return false;
 
     // Check Modules have suitable numbers of Configuration targets
-    for (Module *module : moduleInstances_)
+    for (auto *module : moduleInstances_)
     {
         if (module->isDisabled())
             continue;
@@ -147,7 +147,7 @@ bool Dissolve::iterate(int nIterations)
         /*
          *  0)	Print schedule of tasks to run, and write heartbeat file
          */
-        double thisTime = 0.0;
+        auto thisTime = 0.0;
         auto nEnabledModules = 0;
 
         for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
@@ -299,7 +299,7 @@ bool Dissolve::iterate(int nIterations)
             auto layerExecutionCount = iteration_ / layer->frequency();
 
             ListIterator<Module> processingIterator(layer->modules());
-            while (Module *module = processingIterator.iterate())
+            while (auto *module = processingIterator.iterate())
             {
                 if (!module->runThisIteration(layerExecutionCount))
                     continue;
