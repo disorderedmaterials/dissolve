@@ -95,7 +95,7 @@ class ForceKernel
      */
     public:
     // Calculate SpeciesBond forces
-    void forces(const SpeciesBond *b, const Atom *i, const Atom *j);
+    void forces(const SpeciesBond &bond, const Atom *i, const Atom *j);
     // Calculate SpeciesBond forces for specified Atom only
     void forces(const Atom *onlyThis, const SpeciesBond *b, const Atom *i, const Atom *j);
     // Calculate SpeciesAngle forces

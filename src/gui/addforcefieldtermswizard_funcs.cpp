@@ -152,18 +152,22 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
     // Copy intramolecular terms
     if (!ui_.IntramolecularTermsAssignNoneRadio->isChecked())
     {
-        DynamicArrayIterator<SpeciesBond> originalBondIterator(targetSpecies_->bonds());
-        DynamicArrayConstIterator<SpeciesBond> modifiedBondIterator(modifiedSpecies_->constBonds());
-        while (SpeciesBond *originalBond = originalBondIterator.iterate())
+        auto originalBondIterator = targetSpecies_->bonds().begin();
+        auto modifiedBondIterator = modifiedSpecies_->constBonds().cbegin();
+        while (originalBondIterator != targetSpecies_->bonds().end())
         {
-            const SpeciesBond *modifiedBond = modifiedBondIterator.iterate();
+            auto &originalBond = *originalBondIterator;
+            const auto &modifiedBond = *modifiedBondIterator;
 
             // Selection only?
-            if (intraSelectionOnly && (!originalBond->isSelected()))
+            if (intraSelectionOnly && (!originalBond.isSelected()))
                 continue;
 
             // Copy interaction parameters, including MasterIntra if necessary
-            dissolve.copySpeciesIntra(modifiedBond, originalBond);
+            dissolve.copySpeciesIntra(&modifiedBond, &originalBond);
+
+            ++originalBondIterator;
+            ++modifiedBondIterator;
         }
 
         DynamicArrayIterator<SpeciesAngle> originalAngleIterator(targetSpecies_->angles());
@@ -312,19 +316,18 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                     CharString termName;
 
                     // Loop over bonds in the modified species
-                    DynamicArrayIterator<SpeciesBond> bondIterator(modifiedSpecies_->bonds());
-                    while (SpeciesBond *bond = bondIterator.iterate())
+                    for (auto &bond : modifiedSpecies_->bonds())
                     {
                         // Selection only?
-                        if ((flags & Forcefield::SelectionOnlyFlag) && (!bond->isSelected()))
+                        if ((flags & Forcefield::SelectionOnlyFlag) && (!bond.isSelected()))
                             continue;
 
                         // Construct a name for the master term based on the atom types - order atom
                         // types alphabetically for consistency
-                        if (QString(mappedName(bond->i()->atomType())) < QString(mappedName(bond->j()->atomType())))
-                            termName.sprintf("%s-%s", mappedName(bond->i()->atomType()), mappedName(bond->j()->atomType()));
+                        if (QString(mappedName(bond.i()->atomType())) < QString(mappedName(bond.j()->atomType())))
+                            termName.sprintf("%s-%s", mappedName(bond.i()->atomType()), mappedName(bond.j()->atomType()));
                         else
-                            termName.sprintf("%s-%s", mappedName(bond->j()->atomType()), mappedName(bond->i()->atomType()));
+                            termName.sprintf("%s-%s", mappedName(bond.j()->atomType()), mappedName(bond.i()->atomType()));
 
                         // Search for an existing master term by this name
                         MasterIntra *master = temporaryCoreData_.hasMasterBond(termName);
@@ -332,10 +335,10 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                         {
                             // Create it now
                             master = temporaryCoreData_.addMasterBond(termName);
-                            master->setForm(bond->form());
-                            master->setParameters(bond->parameters());
+                            master->setForm(bond.form());
+                            master->setParameters(bond.parameters());
                         }
-                        bond->setMasterParameters(master);
+                        bond.setMasterParameters(master);
                     }
 
                     // Loop over angles in the modified species

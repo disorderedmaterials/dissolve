@@ -23,7 +23,6 @@
 
 #include "base/enumoptions.h"
 #include "classes/speciesintra.h"
-#include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
 class SpeciesAtom;
@@ -31,18 +30,14 @@ class Species;
 class ProcessPool;
 
 // SpeciesBond Definition
-class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
+class SpeciesBond : public SpeciesIntra
 {
     public:
-    SpeciesBond();
-    ~SpeciesBond();
-
-    /*
-     * DynamicArrayObject Virtuals
-     */
-    public:
-    // Clear object, ready for re-use
-    void clear();
+    SpeciesBond(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr);
+    ~SpeciesBond() = default;
+    SpeciesBond(SpeciesBond &source);
+    SpeciesBond(SpeciesBond &&source);
+    SpeciesBond &operator=(SpeciesBond &&source);
 
     /*
      * SpeciesAtom Information
@@ -54,12 +49,10 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
     SpeciesAtom *j_;
 
     public:
-    // Set SpeciesAtoms involved in interaction
-    void setAtoms(SpeciesAtom *i, SpeciesAtom *j);
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
     // Return second SpeciesAtom
-    SpeciesAtom *j() const;
+    SpeciesAtom *j() const; 
     // Return the 'other' SpeciesAtom
     SpeciesAtom *partner(const SpeciesAtom *i) const;
     // Return index (in parent Species) of first SpeciesAtom
@@ -69,9 +62,11 @@ class SpeciesBond : public SpeciesIntra, public DynamicArrayObject<SpeciesBond>
     // Return index (in parent Species) of nth SpeciesAtom
     int index(int n) const;
     // Return whether SpeciesAtoms match those specified
-    bool matches(SpeciesAtom *i, SpeciesAtom *j) const;
+    bool matches(const SpeciesAtom *i, const SpeciesAtom *j) const;
     // Return whether all atoms in the interaction are currently selected
     bool isSelected() const;
+    // Detach from current atoms
+    void detach();
 
     /*
      * Bond Type

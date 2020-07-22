@@ -169,14 +169,13 @@ Species *Dissolve::copySpecies(const Species *species)
     }
 
     // Duplicate bonds
-    DynamicArrayConstIterator<SpeciesBond> bondIterator(species->constBonds());
-    while (const SpeciesBond *b = bondIterator.iterate())
+    for (const auto &bond : species->constBonds())
     {
         // Create the bond in the new Species
-        SpeciesBond *newBond = newSpecies->addBond(b->indexI(), b->indexJ());
+        auto &newBond = newSpecies->addBond(bond.indexI(), bond.indexJ());
 
         // Copy interaction parameters, including MasterIntra if necessary
-        copySpeciesIntra(b, newBond);
+        copySpeciesIntra(&bond, &newBond);
     }
 
     // Duplicate angles

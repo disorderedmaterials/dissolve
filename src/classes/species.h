@@ -141,7 +141,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
      */
     private:
     // Array of bonds between atoms in the Species
-    DynamicArray<SpeciesBond> bonds_;
+    std::vector<SpeciesBond> bonds_;
     // Array of angles between atoms in the Species
     DynamicArray<SpeciesAngle> angles_;
     // Array of torsions between atoms in the Species
@@ -157,25 +157,25 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 
     public:
     // Add new SpeciesBond definition (from SpeciesAtom*)
-    SpeciesBond *addBond(SpeciesAtom *i, SpeciesAtom *j);
+    SpeciesBond &addBond(SpeciesAtom *i, SpeciesAtom *j);
     // Add new SpeciesBond definition
-    SpeciesBond *addBond(int i, int j);
+    SpeciesBond &addBond(int i, int j);
     // Remove bond between specified SpeciesAtoms*
-    bool removeBond(SpeciesAtom *i, SpeciesAtom *j);
+    void removeBond(SpeciesAtom *i, SpeciesAtom *j);
     // Return number of SpeciesBonds defined
     int nBonds() const;
     // Return array of SpeciesBond
-    DynamicArray<SpeciesBond> &bonds();
+    std::vector<SpeciesBond> &bonds();
     // Return array of SpeciesBonds (const)
-    const DynamicArray<SpeciesBond> &constBonds() const;
+    const std::vector<SpeciesBond> &constBonds() const;
     // Return whether SpeciesBond between SpeciesAtoms exists
     bool hasBond(SpeciesAtom *i, SpeciesAtom *j) const;
     // Return the SpeciesBond between the specified SpeciesAtoms
-    SpeciesBond *bond(SpeciesAtom *i, SpeciesAtom *j);
+    OptionalReferenceWrapper<SpeciesBond> getBond(SpeciesAtom *i, SpeciesAtom *j);
     // Return the SpeciesBond between the specified SpeciesAtom indices
-    SpeciesBond *bond(int i, int j);
+    OptionalReferenceWrapper<SpeciesBond> getBond(int i, int j);
     // Return the SpeciesBond between the specified SpeciesAtoms (const)
-    const SpeciesBond *constBond(SpeciesAtom *i, SpeciesAtom *j) const;
+    OptionalReferenceWrapper<const SpeciesBond> getConstBond(SpeciesAtom *i, SpeciesAtom *j) const;
     // Add missing bonds
     void addMissingBonds(double tolerance = 1.1);
     // Add new SpeciesAngle definition

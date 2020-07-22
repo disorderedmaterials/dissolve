@@ -445,12 +445,12 @@ OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::determineUFFAtomType
  */
 
 // Generate bond parameters for the supplied UFF atom types
-bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond *bondTerm, const UFFAtomType &i,
+bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, const UFFAtomType &i,
                                       const UFFAtomType &j) const
 {
     // Calculate rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
     const auto sumr = i.r() + j.r();
-    const auto rBO = -0.1332 * sumr * log(bondTerm->bondOrder());
+    const auto rBO = -0.1332 * sumr * log(bond.bondOrder());
 
     // Calculate rEN : Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
     const auto chi = sqrt(i.chi()) - sqrt(j.chi());
@@ -466,8 +466,8 @@ bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond *bondTerm, 
 
     // Set the parameters and form of the new bond term
     // Functional form is Harmonic : U = 0.5 * k * (r - eq)**2
-    bondTerm->setForm(SpeciesBond::HarmonicForm);
-    bondTerm->setParameters(k, rij);
+    bond.setForm(SpeciesBond::HarmonicForm);
+    bond.setParameters(k, rij);
 
     return true;
 }
@@ -478,17 +478,19 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle *angleTer
 {
     // rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
     // We need the bond orders of the involved bonds...
-    const SpeciesBond *ij = sp->constBond(angleTerm->i(), angleTerm->j());
-    if (!ij)
+    const auto &ijRef = sp->getConstBond(angleTerm->i(), angleTerm->j());
+    if (!ijRef)
         return Messenger::error("Can't locate bond i-j for bond order retrieval.\n");
-    const SpeciesBond *jk = sp->constBond(angleTerm->j(), angleTerm->k());
-    if (!jk)
+    const auto &jkRef = sp->getConstBond(angleTerm->j(), angleTerm->k());
+    if (!jkRef)
         return Messenger::error("Can't locate bond j-k for bond order retrieval.\n");
 
+    const SpeciesBond &ij = *ijRef;
+    const SpeciesBond &jk = *jkRef;
     const auto sumrij = i.r() + j.r();
     const auto sumrjk = j.r() + k.r();
-    const auto rBOij = -0.1332 * sumrij * log(ij->bondOrder());
-    const auto rBOjk = -0.1332 * sumrjk * log(jk->bondOrder());
+    const auto rBOij = -0.1332 * sumrij * log(ij.bondOrder());
+    const auto rBOjk = -0.1332 * sumrjk * log(jk.bondOrder());
 
     // rEN : Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
     const auto chiij = sqrt(i.chi()) - sqrt(j.chi());
@@ -608,9 +610,12 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion *tors
     {
         // Case e) j and k are both sp2 centres
         // Force constant is adjusted based on current bond order
-        const SpeciesBond *jk = sp->constBond(torsionTerm->j(), torsionTerm->k());
-        if (jk)
-            V = 5.0 * sqrt(j.U() * k.U()) * (1.0 + 4.18 * log(jk->bondOrder()));
+        auto jkRef = sp->getConstBond(torsionTerm->j(), torsionTerm->k());
+        if (jkRef)
+        {
+            const SpeciesBond &jk = *jkRef;
+            V = 5.0 * sqrt(j.U() * k.U()) * (1.0 + 4.18 * log(jk.bondOrder()));
+        }
         else
         {
             Messenger::error("Can't generate correct force constant for torsion, since the SpeciesBond jk is NULL.\n");
@@ -702,13 +707,12 @@ bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
     auto selectionOnly = flags & Forcefield::SelectionOnlyFlag;
 
     // Generate bond terms
-    DynamicArrayIterator<SpeciesBond> bondIterator(sp->bonds());
-    while (SpeciesBond *bond = bondIterator.iterate())
+    for (auto &bond : sp->bonds())
     {
-        SpeciesAtom *i = bond->i();
-        SpeciesAtom *j = bond->j();
+        auto *i = bond.i();
+        auto *j = bond.j();
 
-        if (selectionOnly && (!bond->isSelected()))
+        if (selectionOnly && (!bond.isSelected()))
             continue;
 
         auto typeI = determineTypes ? determineUFFAtomType(i) : uffAtomTypeByName(i->atomType()->name());

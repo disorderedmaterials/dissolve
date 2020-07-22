@@ -655,7 +655,7 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
  */
 
 // Return SpeciesBond energy
-double EnergyKernel::energy(const SpeciesBond *b, const Atom *i, const Atom *j)
+double EnergyKernel::energy(const SpeciesBond &bond, const Atom *i, const Atom *j)
 {
 #ifdef CHECKS
     // Check for spurious bond distances
@@ -665,9 +665,9 @@ double EnergyKernel::energy(const SpeciesBond *b, const Atom *i, const Atom *j)
 #endif
     // Determine whether we need to apply minimum image to the distance calculation
     if (i->cell()->mimRequired(j->cell()))
-        return b->energy(box_->minimumDistance(i, j));
+        return bond.energy(box_->minimumDistance(i, j));
     else
-        return b->energy((i->r() - j->r()).magnitude());
+        return bond.energy((i->r() - j->r()).magnitude());
 }
 
 // Return SpeciesAngle energy
@@ -741,9 +741,9 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, c
     double intraEnergy = 0.0;
 
     // Add energy from SpeciesBond terms
-    for (const auto *bond : spAtom->bonds())
+    for (const auto &bond : spAtom->bonds())
     {
-        intraEnergy += energy(bond, mol->atom(bond->indexI()), mol->atom(bond->indexJ()));
+        intraEnergy += energy(*bond, mol->atom(bond->indexI()), mol->atom(bond->indexJ()));
     }
 
     // Add energy from SpeciesAngle terms
@@ -778,9 +778,8 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol)
     const Species *sp = mol->species();
 
     // Loop over Bonds
-    DynamicArrayConstIterator<SpeciesBond> bondIterator(mol->species()->constBonds());
-    while (const SpeciesBond *b = bondIterator.iterate())
-        energy(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
+    for (const auto &bond : mol->species()->constBonds())
+        energy(bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()));
 
     // Loop over Angles
     DynamicArrayConstIterator<SpeciesAngle> angleIterator(mol->species()->constAngles());

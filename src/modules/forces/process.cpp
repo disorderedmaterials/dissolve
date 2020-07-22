@@ -223,17 +223,16 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 if (testIntra)
                 {
                     // Bond forces
-                    DynamicArrayConstIterator<SpeciesBond> bondIterator(molN->species()->constBonds());
-                    while (const SpeciesBond *b = bondIterator.iterate())
+                    for (const auto &bond : molN->species()->constBonds())
                     {
                         // Grab pointers to atoms involved in bond
-                        i = molN->atom(b->indexI());
-                        j = molN->atom(b->indexJ());
+                        i = molN->atom(bond.indexI());
+                        j = molN->atom(bond.indexJ());
 
                         // Determine final forces
                         vecji = box->minimumVector(i, j);
                         r = vecji.magAndNormalise();
-                        vecji *= b->force(r);
+                        vecji *= bond.force(r);
                         intraFx[i->arrayIndex()] -= vecji.x;
                         intraFy[i->arrayIndex()] -= vecji.y;
                         intraFz[i->arrayIndex()] -= vecji.z;

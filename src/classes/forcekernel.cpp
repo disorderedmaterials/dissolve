@@ -446,7 +446,7 @@ void ForceKernel::forces(const Atom *i, ProcessPool::DivisionStrategy strategy)
  */
 
 // Calculate Bond forces
-void ForceKernel::forces(const SpeciesBond *b, const Atom *i, const Atom *j)
+void ForceKernel::forces(const SpeciesBond &bond, const Atom *i, const Atom *j)
 {
     // Determine whether we need to apply minimum image to the vector calculation
     Vec3<double> vecji;
@@ -464,7 +464,7 @@ void ForceKernel::forces(const SpeciesBond *b, const Atom *i, const Atom *j)
 #endif
 
     // Determine final forces
-    vecji *= b->force(distance);
+    vecji *= bond.force(distance);
 
     // Calculate forces
     auto index = i->arrayIndex();

@@ -166,13 +166,12 @@ void Species::print()
         Messenger::print("\n  Bonds:\n");
         Messenger::print("      I     J    Form             Parameters\n");
         Messenger::print("    ---------------------------------------------------------------------------------\n");
-        DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds());
-        while (const SpeciesBond *b = bondIterator.iterate())
+        for (const auto &bond : bonds_)
         {
-            CharString s("   %4i  %4i    %c%-12s", b->indexI() + 1, b->indexJ() + 1, b->masterParameters() ? '@' : ' ',
-                         SpeciesBond::bondFunctions().keywordFromInt(b->form()));
+            CharString s("   %4i  %4i    %c%-12s", bond.indexI() + 1, bond.indexJ() + 1, bond.masterParameters() ? '@' : ' ',
+                         SpeciesBond::bondFunctions().keywordFromInt(bond.form()));
             for (int n = 0; n < MAXINTRAPARAMS; ++n)
-                s.strcatf("  %12.4e", b->parameter(n));
+                s.strcatf("  %12.4e", bond.parameter(n));
             Messenger::print("%s\n", s.get());
         }
     }

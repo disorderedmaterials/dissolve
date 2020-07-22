@@ -128,15 +128,14 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix)
 }
 
 // Transform selected atoms with supplied matrix, around specified origin
-void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, const Vec3<double> &origin, int nTargetAtoms,
-                         int *targetAtoms)
+void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, const Vec3<double> &origin, const std::vector<int> &targetAtoms)
 {
     // Loop over supplied Atoms
     Vec3<double> newR;
     Atom *i;
-    for (int n = 0; n < nTargetAtoms; ++n)
+    for (auto index : targetAtoms)
     {
-        i = atom(targetAtoms[n]);
+        i = atom(index);
         newR = transformationMatrix * box->minimumVector(origin, i->r()) + origin;
         i->setCoordinates(newR);
     }
@@ -150,8 +149,8 @@ void Molecule::translate(const Vec3<double> delta)
 }
 
 // Translate specified atoms by the delta specified
-void Molecule::translate(const Vec3<double> &delta, int nTargetAtoms, int *targetAtoms)
+void Molecule::translate(const Vec3<double> &delta, const std::vector<int> &targetAtoms)
 {
-    for (int n = 0; n < nTargetAtoms; ++n)
-        atom(targetAtoms[n])->translateCoordinates(delta);
+    for (auto i : targetAtoms)
+        atom(i)->translateCoordinates(delta);
 }

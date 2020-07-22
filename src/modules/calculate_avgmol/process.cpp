@@ -52,9 +52,8 @@ bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             ListIterator<SpeciesAtom> atomIterator(targetSpecies_->atoms());
             while (SpeciesAtom *i = atomIterator.iterate())
                 averageSpecies_.addAtom(i->element(), i->r());
-            DynamicArrayIterator<SpeciesBond> bondIterator(targetSpecies_->bonds());
-            while (SpeciesBond *b = bondIterator.iterate())
-                averageSpecies_.addBond(b->indexI(), b->indexJ());
+            for (const auto &bond : targetSpecies_->bonds())
+                averageSpecies_.addBond(bond.indexI(), bond.indexJ());
         }
     }
 

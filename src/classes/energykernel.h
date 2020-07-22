@@ -100,7 +100,7 @@ class EnergyKernel
      */
     public:
     // Return SpeciesBond energy
-    double energy(const SpeciesBond *b, const Atom *i, const Atom *j);
+    double energy(const SpeciesBond &bond, const Atom *i, const Atom *j);
     // Return SpeciesAngle energy
     double energy(const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k);
     // Return SpeciesTorsion energy

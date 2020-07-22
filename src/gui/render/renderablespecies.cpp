@@ -208,19 +208,18 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
         }
 
         // Draw bonds
-        DynamicArrayConstIterator<SpeciesBond> bondIterator(source_->constBonds());
-        while (const SpeciesBond *b = bondIterator.iterate())
+        for (const auto &bond : source_->constBonds())
         {
             // Determine half delta i-j for bond
-            const auto ri = b->i()->r();
-            const auto rj = b->j()->r();
+            const auto ri = bond.i()->r();
+            const auto rj = bond.j()->r();
             const auto dij = (rj - ri) * 0.5;
 
             // Draw bond halves
             lineSpeciesPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
-                                        ElementColours::colour(b->i()->element()));
+                                        ElementColours::colour(bond.i()->element()));
             lineSpeciesPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
-                                        ElementColours::colour(b->j()->element()));
+                                        ElementColours::colour(bond.j()->element()));
         }
     }
     else if (displayStyle_ == SpheresStyle)
@@ -250,9 +249,8 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
         }
 
         // Draw bonds
-        DynamicArrayConstIterator<SpeciesBond> bondIterator(source_->constBonds());
-        while (const SpeciesBond *b = bondIterator.iterate())
-            createCylinderBond(speciesAssembly_, b->i(), b->j(), spheresBondRadius_);
+        for (const auto &bond : source_->constBonds())
+            createCylinderBond(speciesAssembly_, bond.i(), bond.j(), spheresBondRadius_);
     }
 }
 

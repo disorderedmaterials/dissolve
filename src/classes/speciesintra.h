@@ -24,6 +24,7 @@
 #include "base/charstring.h"
 #include "templates/array.h"
 #include "templates/reflist.h"
+#include <vector>
 
 #define MAXINTRAPARAMS 4
 
@@ -39,7 +40,10 @@ class SpeciesIntra
 {
     public:
     SpeciesIntra();
-    virtual ~SpeciesIntra();
+    virtual ~SpeciesIntra() = default;
+    SpeciesIntra(SpeciesIntra &source);
+    SpeciesIntra(SpeciesIntra &&source);
+    SpeciesIntra &operator=(SpeciesIntra &&source);
     // Interaction Type
     enum InteractionType
     {
@@ -112,25 +116,17 @@ class SpeciesIntra
      */
     private:
     // Number of SpeciesAtoms attached to termini (number of items stored in attached_ arrays)
-    int nAttached_[2];
-    // Arrays of indices (in)directly attached to termini
-    int *attached_[2];
-    // Size of attached_ SpeciesAtoms arrays (maximum number of items that may be stored)
-    int arraySize_[2];
+    std::vector<int> attached_[2];
     // Whether the term is contained within a cycle
     bool inCycle_;
 
     public:
-    // Clear and delete all arrays
-    void deleteAttachedAtomArrays();
     // Set attached SpeciesAtoms for terminus specified
     void setAttachedAtoms(int terminus, const RefList<SpeciesAtom> &atoms);
     // Set attached SpeciesAtoms for terminus specified (single SpeciesAtom)
     void setAttachedAtoms(int terminus, SpeciesAtom *atom);
-    // Return number of attached SpeciesAtoms for terminus specified
-    int nAttached(int terminus) const;
-    // Return array of attached indices for terminus specified
-    int *attached(int terminus) const;
+    // Return vector of attached indices for terminus specified
+    const std::vector<int> &attachedAtoms(int terminus) const;
     // Set whether the term is contained within a cycle
     void setInCycle(bool b);
     // Return whether the term is contained within a cycle

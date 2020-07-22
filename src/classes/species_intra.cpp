@@ -23,6 +23,7 @@
 #include "classes/box.h"
 #include "classes/species.h"
 #include "data/atomicradius.h"
+#include <algorithm>
 
 /*
  * Private
@@ -35,19 +36,17 @@ void Species::updateIntramolecularTerms()
     SpeciesBond *ij, *kl;
 
     // Loop over bonds 'jk'
-    DynamicArrayIterator<SpeciesBond> jkIterator(bonds_);
-    while (SpeciesBond *jk = jkIterator.iterate())
+    for (auto &jk : bonds_)
     {
         // Get atoms 'j' and 'k'
-        j = jk->i();
-        k = jk->j();
+        j = jk.i();
+        k = jk.j();
 
         // Loop over bonds 'ij'
-        for (int ijIndex = 0; ijIndex < j->nBonds(); ++ijIndex)
+        for (auto *ij : j->bonds())
         {
-            // Get bond 'ij' and check for 'ij' == 'jk'
-            ij = j->bond(ijIndex);
-            if (ij == jk)
+            // Avoid 'ij' == 'jk'
+            if (ij == &jk)
                 continue;
 
             // Get atom 'i'
@@ -58,11 +57,10 @@ void Species::updateIntramolecularTerms()
                 addAngle(i, j, k);
 
             // Loop over bonds 'kl'
-            for (int klIndex = 0; klIndex < k->nBonds(); ++klIndex)
+            for (auto *kl : k->bonds())
             {
-                // Get bond 'kl' and check for 'kl' == 'jk'
-                kl = k->bond(klIndex);
-                if (kl == jk)
+                // Avoid 'kl' == 'jk'
+                if (kl == &jk)
                     continue;
 
                 // Get atom 'l'
@@ -74,7 +72,7 @@ void Species::updateIntramolecularTerms()
 
                 // If the torsion i-j-k-l doesn't already exist, add it now.
                 if (!hasTorsion(i, j, k, l))
-                    addTorsion(ij->partner(j), j, jk->partner(j), kl->partner(jk->partner(j)));
+                    addTorsion(i, j, k, l);
             }
         }
     }
@@ -132,34 +130,19 @@ void Species::updateIntramolecularTerms()
  */
 
 // Add new SpeciesBond definition (from SpeciesAtoms*)
-SpeciesBond *Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
+SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
 {
-    // Check ownership of these Atoms
-    if (!atoms_.contains(i))
-    {
-        Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'i' is not owned by Species '%s' in Species::addBond().\n", name_.get());
-        return NULL;
-    }
-    if (!atoms_.contains(j))
-    {
-        Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'j' is not owned by Species '%s' in Species::addBond().\n", name_.get());
-        return NULL;
-    }
-
     // Check for existence of Bond already
-    if (hasBond(i, j))
+    auto bondRef = getBond(i, j);
+    if (bondRef)
     {
         Messenger::warn("Refused to add a new SpeciesBond between atoms %i and %i in Species '%s' since it already exists.\n",
                         i->userIndex(), j->userIndex(), name_.get());
-        return NULL;
+        return *bondRef;
     }
 
     // OK to add new Bond
-    SpeciesBond *b = bonds_.add();
-    b->setParent(this);
-    b->setAtoms(i, j);
-    i->addBond(b);
-    j->addBond(b);
+    bonds_.emplace_back(i, j).setParent(this);
 
     // Update higher-order connectivity?
     if (autoUpdateIntramolecularTerms_)
@@ -167,114 +150,79 @@ SpeciesBond *Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
 
     ++version_;
 
-    return b;
+    return bonds_.back();
 }
 
 // Add new SpeciesBond definition
-SpeciesBond *Species::addBond(int i, int j)
+SpeciesBond &Species::addBond(int i, int j)
 {
-    if ((i < 0) || (i >= atoms_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addBond() is out of range (%i) for "
-                         "Species '%s'.\n",
-                         i, name_.get());
-        return NULL;
-    }
-    if ((j < 0) || (j >= atoms_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addBond() is out of range (%i) for "
-                         "Species '%s'.\n",
-                         j, name_.get());
-        return NULL;
-    }
-
     return addBond(atoms_[i], atoms_[j]);
 }
 
-// Remove bond between specified SpeciesAtoms*
-bool Species::removeBond(SpeciesAtom *i, SpeciesAtom *j)
+// Remove bond between specified SpeciesAtoms
+void Species::removeBond(SpeciesAtom *i, SpeciesAtom *j)
 {
-    // Find the bond
-    DynamicArrayIterator<SpeciesBond> bondIterator(bonds_);
-    while (SpeciesBond *b = bondIterator.iterate())
-        if (b->matches(i, j))
-        {
-            b->deleteAttachedAtomArrays();
-            b->detachFromMasterIntra();
-
-            i->removeBond(b);
-            j->removeBond(b);
-
-            bonds_.removeWithReorder(bondIterator.currentIndex());
-            ++version_;
-
-            return true;
-        }
-
-    return false;
+    auto it = std::remove_if(bonds_.begin(), bonds_.end(), [i,j](const auto &bond) { return bond.matches(i,j); });
+    std::for_each(it, bonds_.end(), [](auto &bond) { bond.detach(); });
+    bonds_.erase(it);
 }
 
 // Return number of SpeciesBonds defined
-int Species::nBonds() const { return bonds_.nItems(); }
+int Species::nBonds() const { return bonds_.size(); }
 
 // Return array of SpeciesBond
-DynamicArray<SpeciesBond> &Species::bonds() { return bonds_; }
+std::vector<SpeciesBond> &Species::bonds() { return bonds_; }
 
 // Return array of SpeciesBond (const)
-const DynamicArray<SpeciesBond> &Species::constBonds() const { return bonds_; }
+const std::vector<SpeciesBond> &Species::constBonds() const { return bonds_; }
 
 // Return whether SpeciesBond between specified SpeciesAtoms exists
 bool Species::hasBond(SpeciesAtom *i, SpeciesAtom *j) const
 {
-    DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds_);
-    while (const SpeciesBond *b = bondIterator.iterate())
-        if (b->matches(i, j))
-            return true;
+    auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i,j](const auto &bond) { return bond.matches(i, j); });
 
-    return false;
+    return it != bonds_.cend();
 }
 
 // Return the SpeciesBond between the specified SpeciesAtoms
-SpeciesBond *Species::bond(SpeciesAtom *i, SpeciesAtom *j)
+OptionalReferenceWrapper<SpeciesBond> Species::getBond(SpeciesAtom *i, SpeciesAtom *j)
 {
-    DynamicArrayIterator<SpeciesBond> bondIterator(bonds_);
-    while (SpeciesBond *b = bondIterator.iterate())
-        if (b->matches(i, j))
-            return b;
+    auto it = std::find_if(bonds_.begin(), bonds_.end(), [i,j](auto &bond) { return bond.matches(i,j); });
+    if (it == bonds_.end())
+        return {};
 
-    return NULL;
+    return *it;
 }
 
 // Return the SpeciesBond between the specified SpeciesAtom indices
-SpeciesBond *Species::bond(int i, int j)
+OptionalReferenceWrapper<SpeciesBond> Species::getBond(int i, int j)
 {
     if ((i < 0) || (i >= nAtoms()))
     {
         Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::hasBond() is out of range (%i) for "
                          "Species '%s'\n",
                          i, name_.get());
-        return NULL;
+        return {};
     }
     if ((j < 0) || (j >= nAtoms()))
     {
         Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::hasBond() is out of range (%i) for "
                          "Species '%s'\n",
                          j, name_.get());
-        return NULL;
+        return {};
     }
 
-    return bond(atoms_[i], atoms_[j]);
+    return getBond(atoms_[i], atoms_[j]);
 }
 
 // Return the SpeciesBond between the specified SpeciesAtoms (const)
-const SpeciesBond *Species::constBond(SpeciesAtom *i, SpeciesAtom *j) const
+OptionalReferenceWrapper<const SpeciesBond> Species::getConstBond(SpeciesAtom *i, SpeciesAtom *j) const
 {
-    DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds_);
-    while (const SpeciesBond *b = bondIterator.iterate())
-        if (b->matches(i, j))
-            return b;
+    auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i,j](const auto &bond) { return bond.matches(i,j); });
+    if (it == bonds_.end())
+        return {};
 
-    return NULL;
+    return *it;
 }
 
 // Add missing bonds
@@ -617,32 +565,31 @@ bool Species::attachedAtomListsGenerated() const { return attachedAtomListsGener
 void Species::generateAttachedAtomLists()
 {
     // Bonds
-    DynamicArrayIterator<SpeciesBond> bondIterator(bonds_);
-    while (SpeciesBond *b = bondIterator.iterate())
+    for (auto &bond : bonds_)
     {
         // Select all Atoms attached to Atom 'i', excluding the Bond as a path
         clearAtomSelection();
-        selectFromAtom(b->i(), b);
+        selectFromAtom(bond.i(), &bond);
 
         // If the list now contains Atom j, the two atoms are present in a cycle of some sort, and we can only add the
         // Atom 'i' itself In that case we can also finish the list for Atom 'j', and continue the loop.
-        if (selectedAtoms_.contains(b->j()))
+        if (selectedAtoms_.contains(bond.j()))
         {
             Messenger::printVerbose("Bond between Atoms %i-%i is present in a cycle, so a minimal set of attached "
                                     "atoms will be used.\n",
-                                    b->i()->userIndex(), b->j()->userIndex());
-            b->setAttachedAtoms(0, b->i());
-            b->setAttachedAtoms(1, b->j());
-            b->setInCycle(true);
+                                    bond.i()->userIndex(), bond.j()->userIndex());
+            bond.setAttachedAtoms(0, bond.i());
+            bond.setAttachedAtoms(1, bond.j());
+            bond.setInCycle(true);
             continue;
         }
         else
-            b->setAttachedAtoms(0, selectedAtoms_);
+            bond.setAttachedAtoms(0, selectedAtoms_);
 
         // Select all Atoms attached to Atom 'i', excluding the Bond as a path
         clearAtomSelection();
-        selectFromAtom(b->j(), b);
-        b->setAttachedAtoms(1, selectedAtoms_);
+        selectFromAtom(bond.j(), &bond);
+        bond.setAttachedAtoms(1, selectedAtoms_);
     }
 
     // Angles - termini are 'i' and 'k'
@@ -730,9 +677,8 @@ void Species::generateAttachedAtomLists()
 // Detach master term links for all interaction types, copying parameters to local SpeciesIntra
 void Species::detachFromMasterTerms()
 {
-    DynamicArrayIterator<SpeciesBond> bondIterator(bonds_);
-    while (SpeciesBond *b = bondIterator.iterate())
-        b->detachFromMasterIntra();
+    for (auto &bond : bonds_)
+        bond.detachFromMasterIntra();
 
     DynamicArrayIterator<SpeciesAngle> angleIterator(angles_);
     while (SpeciesAngle *a = angleIterator.iterate())

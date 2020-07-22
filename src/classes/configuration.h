@@ -216,8 +216,8 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
     void updateCellLocation(Atom *i);
     // Update Cell location of specified Molecule
     void updateCellLocation(std::shared_ptr<Molecule> mol);
-    // Update Cell location of specified Atom indices (in array)
-    void updateCellLocation(int nIndices, int *atomIndices, int indexOffset);
+    // Update Cell location of specified Atom indices
+    void updateCellLocation(const std::vector<int> &targetAtoms, int indexOffset);
 
     /*
      * Modules

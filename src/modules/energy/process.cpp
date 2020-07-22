@@ -175,11 +175,10 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 }
 
                 // Bond energy
-                DynamicArrayConstIterator<SpeciesBond> bondIterator(molN->species()->constBonds());
-                while (const SpeciesBond *b = bondIterator.iterate())
+                for (const auto &bond : molN->species()->constBonds())
                 {
-                    r = cfg->box()->minimumDistance(molN->atom(b->indexI()), molN->atom(b->indexJ()));
-                    correctIntraEnergy += b->energy(r);
+                    r = cfg->box()->minimumDistance(molN->atom(bond.indexI()), molN->atom(bond.indexJ()));
+                    correctIntraEnergy += bond.energy(r);
                 }
 
                 // Angle energy

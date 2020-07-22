@@ -26,44 +26,80 @@
 #include "data/atomicmass.h"
 #include "templates/enumhelpers.h"
 
-SpeciesBond::SpeciesBond() : SpeciesIntra(), DynamicArrayObject<SpeciesBond>() { clear(); }
-
-SpeciesBond::~SpeciesBond() {}
-
-/*
- * DynamicArrayObject Virtuals
- */
-
-// Clear object, ready for re-use
-void SpeciesBond::clear()
+SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra()
 {
-    parent_ = NULL;
-    i_ = NULL;
-    j_ = NULL;
+    printf("CTor for SPB\n");
+    i_ = i;
+    j_ = j;
     bondType_ = SpeciesBond::SingleBond;
     form_ = SpeciesBond::NoForm;
+
+    // Add ourself to the list of bonds on each atom
+    if (i_ && j_)
+    {
+        i_->addBond(this);
+        j_->addBond(this);
+    }
 }
+
+SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source)
+{
+    printf("Copy Constructor for SPB\n");
+    //this->operator=(source);
+}
+
+SpeciesBond::SpeciesBond(SpeciesBond &&source) : SpeciesIntra(std::move(source))
+{
+    printf("Move Constructor for SPB\n");
+    // Detach source bond referred to by the species atoms
+    if (source.i_ && source.j_)
+    {
+        source.i_->removeBond(&source);
+        source.j_->removeBond(&source);
+    }
+
+    // Copy data
+    i_ = source.i_;
+    j_ = source.j_;
+    if (i_ && j_)
+    {
+        i_->addBond(this);
+        j_->addBond(this);
+    }
+    bondType_ = source.bondType_;
+    form_ = source.form_;
+
+    // Reset source data
+    source.i_ = nullptr;
+    source.j_ = nullptr;
+}
+
+SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source)
+{
+    printf("Move Assignment Operator SPB\n");
+    // Detach any current atoms
+    if (i_ && j_) detach();
+
+    // Copy data
+    i_ = source.i_;
+    j_ = source.j_;
+    if (i_ && j_)
+    {
+        i_->addBond(this);
+        j_->addBond(this);
+    }
+    bondType_ = source.bondType_;
+    form_ = source.form_;
+    SpeciesIntra::operator=(std::move(source));
+
+    // Clean source
+    source.detach();
+}
+
 
 /*
  * SpeciesAtom Information
  */
-
-// Set SpeciesAtoms involved in SpeciesBond
-void SpeciesBond::setAtoms(SpeciesAtom *i, SpeciesAtom *j)
-{
-    i_ = i;
-    j_ = j;
-#ifdef CHECKS
-    if (i_ == NULL)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom i in SpeciesBond::set().\n");
-    if (j_ == NULL)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom j in SpeciesBond::set().\n");
-#endif
-    if (i_)
-        i_->addBond(this);
-    if (j_)
-        j_->addBond(this);
-}
 
 // Return first SpeciesAtom involved in interaction
 SpeciesAtom *SpeciesBond::i() const { return i_; }
@@ -113,7 +149,7 @@ int SpeciesBond::index(int n) const
 }
 
 // Return whether SpeciesAtoms in Angle match those specified
-bool SpeciesBond::matches(SpeciesAtom *i, SpeciesAtom *j) const
+bool SpeciesBond::matches(const SpeciesAtom *i, const SpeciesAtom *j) const
 {
     if ((i_ == i) && (j_ == j))
         return true;
@@ -133,6 +169,19 @@ bool SpeciesBond::isSelected() const
     }
 #endif
     return (i_->isSelected() && j_->isSelected());
+}
+
+// Detach from current atoms
+void SpeciesBond::detach()
+{
+    printf("DETACHING....\n");
+    if (i_ && j_)
+    {
+        i_->removeBond(this);
+        j_->removeBond(this);
+    }
+    i_ = nullptr;
+    j_ = nullptr;
 }
 
 /*

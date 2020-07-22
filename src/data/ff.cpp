@@ -320,13 +320,12 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
     auto selectionOnly = flags & Forcefield::SelectionOnlyFlag;
 
     // Assign bond terms
-    DynamicArrayIterator<SpeciesBond> bondIterator(sp->bonds());
-    while (SpeciesBond *bond = bondIterator.iterate())
+    for (auto& bond : sp->bonds())
     {
-        SpeciesAtom *i = bond->i();
-        SpeciesAtom *j = bond->j();
+        auto *i = bond.i();
+        auto *j = bond.j();
 
-        if (selectionOnly && (!bond->isSelected()))
+        if (selectionOnly && (!bond.isSelected()))
             continue;
 
         auto optTypeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name());
@@ -344,8 +343,8 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                                     typeI.equivalentName(), typeJ.equivalentName());
 
         const ForcefieldBondTerm &term = *optTerm;
-        bond->setForm(term.form());
-        bond->setParameters(term.parameters());
+        bond.setForm(term.form());
+        bond.setParameters(term.parameters());
     }
 
     // Generate angle parameters

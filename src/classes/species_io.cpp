@@ -122,7 +122,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     Isotopologue *iso;
     SpeciesAngle *a;
     SpeciesAtom *i;
-    SpeciesBond *b;
+    OptionalReferenceWrapper<SpeciesBond> b;
     SpeciesImproper *imp;
     SpeciesTorsion *t;
     SpeciesSite *site;
@@ -258,7 +258,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                  * '@' it is a reference to master parameters
                  */
                 if (parser.nArgs() == 3)
-                    b->setForm(SpeciesBond::NoForm);
+                    b->get().setForm(SpeciesBond::NoForm);
                 else if (parser.argc(3)[0] == '@')
                 {
                     // Search through master Bond parameters to see if this name exists
@@ -270,7 +270,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
 
-                    b->setMasterParameters(master);
+                    b->get().setMasterParameters(master);
                 }
                 else
                 {
@@ -283,7 +283,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
                     bf = SpeciesBond::bondFunctions().enumeration(parser.argc(3));
 
-                    b->setForm(bf);
+                    b->get().setForm(bf);
                     for (int n = 0; n < SpeciesBond::bondFunctions().minArgs(bf); ++n)
                     {
                         if (!parser.hasArg(4 + n))
@@ -294,16 +294,16 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                             error = true;
                             break;
                         }
-                        b->setParameter(n, parser.argd(n + 4));
+                        b->get().setParameter(n, parser.argd(n + 4));
                     }
                 }
 
                 // Perform any final setup on the Bond
-                b->setUp();
+                b->get().setUp();
                 break;
             case (Species::BondTypeKeyword):
                 // Find the specified bond
-                b = bond(parser.argi(1) - 1, parser.argi(2) - 1);
+                b = getBond(parser.argi(1) - 1, parser.argi(2) - 1);
                 if (!b)
                 {
                     Messenger::error("Tried to set the bond type of bond between atoms %i and %i, but this bond "
@@ -321,7 +321,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     error = true;
                     break;
                 }
-                b->setBondType(bt);
+                b->get().setBondType(bt);
                 break;
             case (Species::ChargeKeyword):
                 i = atom(parser.argi(1) - 1);
@@ -606,39 +606,38 @@ bool Species::write(LineParser &parser, const char *prefix)
 
     // Bonds
     RefList<const SpeciesBond> bondTypes[SpeciesBond::nBondTypes];
-    if (nBonds() > 0)
+    if (bonds_.size() > 0)
     {
         if (!parser.writeLineF("\n%s# Bonds\n", newPrefix.get()))
             return false;
-        DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds());
-        while (const SpeciesBond *b = bondIterator.iterate())
+        for (const auto &bond : bonds_)
         {
-            if (b->form() == SpeciesBond::NoForm)
+            if (bond.form() == SpeciesBond::NoForm)
             {
                 if (!parser.writeLineF("%s%s  %3i  %3i\n", newPrefix.get(), keywords().keyword(Species::BondKeyword),
-                                       b->indexI() + 1, b->indexJ() + 1))
+                                       bond.indexI() + 1, bond.indexJ() + 1))
                     return false;
             }
-            else if (b->masterParameters())
+            else if (bond.masterParameters())
             {
                 if (!parser.writeLineF("%s%s  %3i  %3i  @%s\n", newPrefix.get(), keywords().keyword(Species::BondKeyword),
-                                       b->indexI() + 1, b->indexJ() + 1, b->masterParameters()->name()))
+                                       bond.indexI() + 1, bond.indexJ() + 1, bond.masterParameters()->name()))
                     return false;
             }
             else
             {
-                CharString s("%s%s  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::BondKeyword), b->indexI() + 1,
-                             b->indexJ() + 1, SpeciesBond::bondFunctions().keywordFromInt(b->form()));
-                for (int n = 0; n < SpeciesBond::bondFunctions().minArgs((SpeciesBond::BondFunction)b->form()); ++n)
-                    s.strcatf("  %8.3f", b->parameter(n));
+                CharString s("%s%s  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::BondKeyword), bond.indexI() + 1,
+                             bond.indexJ() + 1, SpeciesBond::bondFunctions().keywordFromInt(bond.form()));
+                for (int n = 0; n < SpeciesBond::bondFunctions().minArgs((SpeciesBond::BondFunction)bond.form()); ++n)
+                    s.strcatf("  %8.3f", bond.parameter(n));
                 if (!parser.writeLineF("%s\n", s.get()))
                     return false;
             }
 
             // Add the bond to the reflist corresponding to its indicated bond type (unless it is a SingleBond,
             // which we will ignore as this is the default)
-            if (b->bondType() != SpeciesBond::SingleBond)
-                bondTypes[b->bondType()].append(b);
+            if (bond.bondType() != SpeciesBond::SingleBond)
+                bondTypes[bond.bondType()].append(&bond);
         }
 
         // Any bond type information to write?

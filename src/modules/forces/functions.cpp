@@ -58,9 +58,8 @@ void ForcesModule::intramolecularForces(ProcessPool &procPool, Configuration *cf
         mol = molecules[m];
 
         // Loop over Bonds
-        DynamicArrayConstIterator<SpeciesBond> bondIterator(mol->species()->constBonds());
-        while (const SpeciesBond *b = bondIterator.iterate())
-            kernel.forces(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
+        for (const auto &bond : mol->species()->constBonds())
+            kernel.forces(bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()));
 
         // Loop over Angles
         DynamicArrayConstIterator<SpeciesAngle> angleIterator(mol->species()->constAngles());
