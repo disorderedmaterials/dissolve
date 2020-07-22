@@ -162,10 +162,6 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     SpeciesBond *addBond(int i, int j);
     // Remove bond between specified SpeciesAtoms*
     bool removeBond(SpeciesAtom *i, SpeciesAtom *j);
-    // Reconnect existing SpeciesBond
-    bool reconnectBond(SpeciesBond *bond, SpeciesAtom *i, SpeciesAtom *j);
-    // Reconnect existing SpeciesBond
-    bool reconnectBond(SpeciesBond *bond, int i, int j);
     // Return number of SpeciesBonds defined
     int nBonds() const;
     // Return array of SpeciesBond
@@ -186,10 +182,6 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     SpeciesAngle *addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
     // Add new SpeciesAngle definition
     SpeciesAngle *addAngle(int i, int j, int k);
-    // Reconnect existing SpeciesAngle
-    bool reconnectAngle(SpeciesAngle *angle, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
-    // Reconnect existing SpeciesAngle
-    bool reconnectAngle(SpeciesAngle *angle, int i, int j, int k);
     // Return number of SpeciesAngle defined
     int nAngles() const;
     // Return array of SpeciesAngle
@@ -202,10 +194,6 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     SpeciesTorsion *addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Add new SpeciesTorsion definition
     SpeciesTorsion *addTorsion(int i, int j, int k, int l);
-    // Reconnect existing SpeciesTorsion
-    bool reconnectTorsion(SpeciesTorsion *torsion, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    // Reconnect existing SpeciesTorsion
-    bool reconnectTorsion(SpeciesTorsion *torsion, int i, int j, int k, int l);
     // Return number of SpeciesTorsion defined
     int nTorsions() const;
     // Return array of SpeciesTorsion
@@ -218,10 +206,6 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     SpeciesImproper *addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Add new SpeciesImproper definition
     SpeciesImproper *addImproper(int i, int j, int k, int l);
-    // Reconnect existing SpeciesImproper
-    bool reconnectImproper(SpeciesImproper *improper, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    // Reconnect existing SpeciesImproper
-    bool reconnectImproper(SpeciesImproper *improper, int i, int j, int k, int l);
     // Return number of SpeciesImproper defined
     int nImpropers() const;
     // Return array of SpeciesImproper

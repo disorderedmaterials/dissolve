@@ -411,21 +411,13 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Column of passed item tells us the type of data we need to change
-    int i, j;
     auto updateRow = false;
     switch (w->column())
     {
         // Atom Indices
         case (0):
         case (1):
-            // Get both atom indices and set the atoms in the interaction
-            i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
-            j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
-            if (species_->reconnectBond(speciesBond, i, j))
-            {
-                updateRow = true;
-                dissolveWindow_->setModified();
-            }
+            Messenger::error("Atom indices in intramolecular interactions are not editable.\n");
             break;
         // Functional Form
         case (2):
@@ -478,7 +470,6 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Column of passed item tells us the type of data we need to change
-    int i, j, k;
     auto updateRow = false;
     switch (w->column())
     {
@@ -486,15 +477,7 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem *w)
         case (0):
         case (1):
         case (2):
-            // Get all atom indices and set the atoms in the interaction
-            i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
-            j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
-            k = ui_.BondTable->item(w->row(), 2)->text().toInt() - 1;
-            if (species_->reconnectAngle(speciesAngle, i, j, k))
-            {
-                updateRow = true;
-                dissolveWindow_->setModified();
-            }
+            Messenger::error("Atom indices in intramolecular interactions are not editable.\n");
             break;
         // Functional Form
         case (3):
@@ -547,7 +530,6 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Column of passed item tells us the type of data we need to change
-    int i, j, k, l;
     auto updateRow = false;
     switch (w->column())
     {
@@ -556,16 +538,7 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem *w)
         case (1):
         case (2):
         case (3):
-            // Get all atom indices and set the atoms in the interaction
-            i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
-            j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
-            k = ui_.BondTable->item(w->row(), 2)->text().toInt() - 1;
-            l = ui_.BondTable->item(w->row(), 3)->text().toInt() - 1;
-            if (species_->reconnectTorsion(speciesTorsion, i, j, k, l))
-            {
-                updateRow = true;
-                dissolveWindow_->setModified();
-            }
+            Messenger::error("Atom indices in intramolecular interactions are not editable.\n");
             break;
         // Functional Form
         case (4):
@@ -618,7 +591,6 @@ void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Column of passed item tells us the type of data we need to change
-    int i, j, k, l;
     auto updateRow = false;
     switch (w->column())
     {
@@ -627,16 +599,7 @@ void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem *w)
         case (1):
         case (2):
         case (3):
-            // Get all atom indices and set the atoms in the interaction
-            i = ui_.BondTable->item(w->row(), 0)->text().toInt() - 1;
-            j = ui_.BondTable->item(w->row(), 1)->text().toInt() - 1;
-            k = ui_.BondTable->item(w->row(), 2)->text().toInt() - 1;
-            l = ui_.BondTable->item(w->row(), 3)->text().toInt() - 1;
-            if (species_->reconnectImproper(speciesImproper, i, j, k, l))
-            {
-                updateRow = true;
-                dissolveWindow_->setModified();
-            }
+            Messenger::error("Atom indices in intramolecular interactions are not editable.\n");
             break;
         // Functional Form
         case (4):
