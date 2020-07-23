@@ -365,7 +365,7 @@ double SpeciesTorsion::force(double angleInDegrees) const
     else if (form() == SpeciesTorsion::Cos4Form)
     {
         /*
-         * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) )
+         * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) + 4 * k4*sin(4*phi) )
          *
          * Parameters:
          * 0 : force constant k1
@@ -374,7 +374,8 @@ double SpeciesTorsion::force(double angleInDegrees) const
          * 3 : force constant k4
          */
         return dphi_dcosphi * 0.5 *
-               (params[0] * sin(phi) + params[1] * sin(2.0 * phi) + params[2] * sin(3.0 * phi) + params[3] * sin(4.0 * phi));
+               (-params[0] * sin(phi) + 2.0 * params[1] * sin(2.0 * phi) - 3.0 * params[2] * sin(3.0 * phi) +
+               4.0 * params[3] * sin(4.0 * phi));
     }
     else if (form() == SpeciesTorsion::Cos3CForm)
     {
