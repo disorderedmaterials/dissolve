@@ -1,118 +1,122 @@
 /*
-	*** Fourier Transforms
-	*** src/math/ft.cpp
-	Copyright T. Youngs 2012-2020
+    *** Fourier Transforms
+    *** src/math/ft.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "math/ft.h"
 #include "base/sysfunc.h"
 #include "math/data1d.h"
 
-// Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening function, modification function, and window applied (if requested)
-bool Fourier::sineFT(Data1D &data, double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction, BroadeningFunction broadening)
+// Perform Fourier sine transform of current distribution function, over range specified, and with specified broadening
+// function, modification function, and window applied (if requested)
+bool Fourier::sineFT(Data1D &data, double normFactor, double wMin, double wStep, double wMax, WindowFunction windowFunction,
+                     BroadeningFunction broadening)
 {
-	/*
-	 * Perform sine Fourier transform of current data. Function has no notion of forward or backwards transforms - normalisation and broadening functions must
-	 * be suitable for the required purpose. Broadening functions are applied to the transformed function utilising convolution theorem:
-	 *
-	 * 	f(x) and g(x) are the original functions, while F(q) and G(q) are their Fourier transforms.
-	 * 	Pointwise multiplication (.) in one domain equals convolution (*) in the other:
-	 *
-	 * 	FT[ f(x) * g(x) ] = F(q) . G(q)
-	 * 	FT[ f(x) . g(x) ] = F(q) * G(q)
-	 *
-	 * Since the ultimate goal of this function is to generate the broadened FT of the input data (with the broadening applied to the transformed data, rather than
-	 * applied to the input data and then transformed) we require the first case listed above. The quantity we want is the pointwise multiplication of the FT of the
-	 * input data with the broadening functions given, so we can simply perform the convolution of the input data with the *FT* of the broadening functions, and FT
-	 * the result.
-	 */
+    /*
+     * Perform sine Fourier transform of current data. Function has no notion of forward or backwards transforms -
+     * normalisation and broadening functions must be suitable for the required purpose. Broadening functions are applied to
+     * the transformed function utilising convolution theorem:
+     *
+     * 	f(x) and g(x) are the original functions, while F(q) and G(q) are their Fourier transforms.
+     * 	Pointwise multiplication (.) in one domain equals convolution (*) in the other:
+     *
+     * 	FT[ f(x) * g(x) ] = F(q) . G(q)
+     * 	FT[ f(x) . g(x) ] = F(q) * G(q)
+     *
+     * Since the ultimate goal of this function is to generate the broadened FT of the input data (with the broadening
+     * applied to the transformed data, rather than applied to the input data and then transformed) we require the first
+     * case listed above. The quantity we want is the pointwise multiplication of the FT of the input data with the
+     * broadening functions given, so we can simply perform the convolution of the input data with the *FT* of the
+     * broadening functions, and FT the result.
+     */
 
-	// Set up window function for the present data
-	windowFunction.setUp(data);
+    // Set up window function for the present data
+    windowFunction.setUp(data);
 
-	// Grab x and y arrays
-	const Array<double> &x = data.constXAxis();
-	const Array<double> &y = data.constValues();
+    // Grab x and y arrays
+    const auto &x = data.constXAxis();
+    const auto &y = data.constValues();
 
-	int m;
-	const int nX = x.nItems();
-	double window, broaden;
+    int m;
+    const auto nX = x.nItems();
+    double window, broaden;
 
-	// Create working arrays
-	Array<double> newX;
-	Array<double> newY;
+    // Create working arrays
+    Array<double> newX;
+    Array<double> newY;
 
-	// Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
-	double ft, deltaX;
-	double omega = wMin;
-	while (omega <= wMax)
-	{
-		ft = 0.0;
-		if (omega > 0.0)
-		{
-			for (m = 0; m < nX - 1; ++m)
-			{
-				deltaX = x.constAt(m + 1) - x.constAt(m);
+    // Perform Fourier sine transform, apply general and omega-dependent broadening, as well as window function
+    double ft, deltaX;
+    double omega = wMin;
+    while (omega <= wMax)
+    {
+        ft = 0.0;
+        if (omega > 0.0)
+        {
+            for (m = 0; m < nX - 1; ++m)
+            {
+                deltaX = x.constAt(m + 1) - x.constAt(m);
 
-				// Get window value at this position in the function
-				window = windowFunction.y(x.constAt(m), omega);
+                // Get window value at this position in the function
+                window = windowFunction.y(x.constAt(m), omega);
 
-				// Calculate broadening
-				broaden = broadening.yFT(x.constAt(m), omega);
+                // Calculate broadening
+                broaden = broadening.yFT(x.constAt(m), omega);
 
-				ft += sin(x.constAt(m) * omega) * x.constAt(m) * broaden * window * y.constAt(m) * deltaX;
-			}
+                ft += sin(x.constAt(m) * omega) * x.constAt(m) * broaden * window * y.constAt(m) * deltaX;
+            }
 
-			// Normalise w.r.t. omega
-			if (omega > 0.0)
-				ft /= omega;
-		}
-		else
-		{
-			for (m = 0; m < nX - 1; ++m)
-			{
-				deltaX = x.constAt(m + 1) - x.constAt(m);
+            // Normalise w.r.t. omega
+            if (omega > 0.0)
+                ft /= omega;
+        }
+        else
+        {
+            for (m = 0; m < nX - 1; ++m)
+            {
+                deltaX = x.constAt(m + 1) - x.constAt(m);
 
-				// Get window value at this position in the function
-				window = windowFunction.y(x.constAt(m), omega);
+                // Get window value at this position in the function
+                window = windowFunction.y(x.constAt(m), omega);
 
-				// Calculate broadening
-				broaden = broadening.yFT(x.constAt(m), omega);
+                // Calculate broadening
+                broaden = broadening.yFT(x.constAt(m), omega);
 
-				ft += x.constAt(m) * broaden * window * y.constAt(m) * deltaX;
-			}
-		}
+                ft += x.constAt(m) * broaden * window * y.constAt(m) * deltaX;
+            }
+        }
 
-		// Add point
-		newX.add(omega);
-		newY.add(ft);
+        // Add point
+        newX.add(omega);
+        newY.add(ft);
 
-		omega += wStep;
-	}
+        omega += wStep;
+    }
 
-	// Apply normalisation factor
-	newY *= normFactor;
+    // Apply normalisation factor
+    newY *= normFactor;
 
-	// Transfer working arrays to this object
-	data.xAxis() = newX;
-	data.values() = newY;
+    // Transfer working arrays to this object
+    data.xAxis() = newX;
+    data.values() = newY;
 
-	return true;
+    return true;
 }
 
 // // Fourier transform current data, applying line-width broadening in real-space using the modified Lorch function

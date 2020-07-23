@@ -1,63 +1,63 @@
 /*
-	*** Procedure Node Block Widget - Functions
-	*** src/gui/charts/procedurenode_funcs.cpp
-	Copyright T. Youngs 2012-2020
+    *** Procedure Node Block Widget - Functions
+    *** src/gui/charts/procedurenode_funcs.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/charts/proceduremetrics.h"
 #include "gui/charts/procedurenode.h"
-// #include "gui/keywordwidgets/widget.h"
 #include "procedure/nodes/node.h"
 #include "templates/variantpointer.h"
 #include <QPainter>
+#include <QPainterPath>
 
-// Constructor
-ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget *parent, ProcedureNode *node, const CoreData &coreData) : QWidget(parent), ChartBlock()
+ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget *parent, ProcedureNode *node, const CoreData &coreData)
+    : QWidget(parent), ChartBlock()
 {
-	// Set up user interface
-	ui_.setupUi(this);
+    // Set up user interface
+    ui_.setupUi(this);
 
-	refreshing_ = false;
+    refreshing_ = false;
 
-	// Set necessary values on the widget itself
-	ProcedureChartMetrics metrics;
-	setContentsMargins(metrics.blockMargins());
-	dragHandleRect_ = QRect(0, 0, metrics.dragHandleWidth(), 1);
+    // Set necessary values on the widget itself
+    ProcedureChartMetrics metrics;
+    setContentsMargins(metrics.blockMargins());
+    dragHandleRect_ = QRect(0, 0, metrics.dragHandleWidth(), 1);
 
-	// Set the node pointer
-	node_ = node;
+    // Set the node pointer
+    node_ = node;
 
-	// Hide the keywords control frame to start with
-	ui_.KeywordsControlWidget->setVisible(false);
+    // Hide the keywords control frame to start with
+    ui_.KeywordsControlWidget->setVisible(false);
 
-	// Hide the name label if it is not required
-	if (!node_->mustBeNamed())
-		ui_.BottomLabel->setVisible(false);
+    // Hide the name label if it is not required
+    if (!node_->mustBeNamed())
+        ui_.BottomLabel->setVisible(false);
 
-	// Set up our keywords widget
-	ui_.NodeKeywordsWidget->setUp(node->keywords(), coreData);
-	connect(ui_.NodeKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));
+    // Set up our keywords widget
+    ui_.NodeKeywordsWidget->setUp(node->keywords(), coreData);
+    connect(ui_.NodeKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));
 
-	// Update our controls
-	ui_.TopLabel->setText(ProcedureNode::nodeTypes().keyword(node_->type()));
-	updateControls();
+    // Update our controls
+    ui_.TopLabel->setText(ProcedureNode::nodeTypes().keyword(node_->type()));
+    updateControls();
 
-	updateGeometry();
+    updateGeometry();
 }
 
 ProcedureChartNodeBlock::~ProcedureChartNodeBlock() {}
@@ -79,9 +79,9 @@ void ProcedureChartNodeBlock::setDisplayColour(QColor colour) { displayColour_ =
 // Set whether the keywords widget is expanded or not, and whether this is permanent
 void ProcedureChartNodeBlock::setKeywordsExpanded(bool expanded, bool permanent)
 {
-	on_ToggleKeywordsButton_clicked(expanded);
+    on_ToggleKeywordsButton_clicked(expanded);
 
-	ui_.ToggleKeywordsButton->setDisabled(permanent);
+    ui_.ToggleKeywordsButton->setDisabled(permanent);
 }
 
 // Hide the remove button (e.g. when shown in a ModuleTab)
@@ -92,12 +92,12 @@ RefList<ProcedureChartNodeBlock> &ProcedureChartNodeBlock::branchWidgets() { ret
 
 void ProcedureChartNodeBlock::on_ToggleKeywordsButton_clicked(bool checked)
 {
-	ui_.KeywordsControlWidget->setVisible(checked);
+    ui_.KeywordsControlWidget->setVisible(checked);
 
-	adjustSize();
-	updateGeometry();
+    adjustSize();
+    updateGeometry();
 
-	emit(keywordsToggled());
+    emit(keywordsToggled());
 }
 
 void ProcedureChartNodeBlock::on_RemoveButton_clicked(bool checked) { emit(remove(node_)); }
@@ -109,36 +109,36 @@ void ProcedureChartNodeBlock::on_RemoveButton_clicked(bool checked) { emit(remov
 // Paint event
 void ProcedureChartNodeBlock::paintEvent(QPaintEvent *event)
 {
-	if (!node_)
-		return;
+    if (!node_)
+        return;
 
-	ProcedureChartMetrics metrics;
+    ProcedureChartMetrics metrics;
 
-	QPainter painter(this);
+    QPainter painter(this);
 
-	// Set up the basic pen
-	QPen pen;
-	pen.setWidth(metrics.blockBorderWidth());
-	pen.setColor(displayColour_);
-	painter.setPen(pen);
+    // Set up the basic pen
+    QPen pen;
+    pen.setWidth(metrics.blockBorderWidth());
+    pen.setColor(displayColour_);
+    painter.setPen(pen);
 
-	QPainterPath borderPath;
-	borderPath.moveTo(metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
-	borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderMidPoint());
-	borderPath.lineTo(width() - metrics.blockBorderWidth(), height() - metrics.blockBorderMidPoint());
-	borderPath.lineTo(width() - metrics.blockBorderWidth(), metrics.blockBorderMidPoint());
-	borderPath.closeSubpath();
+    QPainterPath borderPath;
+    borderPath.moveTo(metrics.blockBorderMidPoint(), metrics.blockBorderMidPoint());
+    borderPath.lineTo(metrics.blockBorderMidPoint(), height() - metrics.blockBorderMidPoint());
+    borderPath.lineTo(width() - metrics.blockBorderWidth(), height() - metrics.blockBorderMidPoint());
+    borderPath.lineTo(width() - metrics.blockBorderWidth(), metrics.blockBorderMidPoint());
+    borderPath.closeSubpath();
 
-	// Ready - draw the border + fill!
-	painter.setBrush(Qt::white);
-	painter.drawPath(borderPath);
+    // Ready - draw the border + fill!
+    painter.setBrush(Qt::white);
+    painter.drawPath(borderPath);
 
-	// Draw the drag handle, updating its height first
-	painter.setBrush(displayColour_);
-	pen.setWidth(1);
-	painter.setPen(pen);
-	dragHandleRect_.setHeight(height());
-	painter.drawRect(dragHandleRect_);
+    // Draw the drag handle, updating its height first
+    painter.setBrush(displayColour_);
+    pen.setWidth(1);
+    painter.setPen(pen);
+    dragHandleRect_.setHeight(height());
+    painter.drawRect(dragHandleRect_);
 }
 
 /*
@@ -164,10 +164,10 @@ int ProcedureChartNodeBlock::widgetHeight() const { return sizeHint().height(); 
 // Return whether the supplied point (on the parent chart) allows a drag operation to begin
 bool ProcedureChartNodeBlock::isDragPoint(QPoint point) const
 {
-	if (dragHandleRect_.translated(geometry().left(), geometry().top()).contains(point))
-		return true;
+    if (dragHandleRect_.translated(geometry().left(), geometry().top()).contains(point))
+        return true;
 
-	return false;
+    return false;
 }
 
 /*
@@ -177,32 +177,32 @@ bool ProcedureChartNodeBlock::isDragPoint(QPoint point) const
 // Update controls within widget
 void ProcedureChartNodeBlock::updateControls()
 {
-	if (!node_)
-		return;
+    if (!node_)
+        return;
 
-	refreshing_ = true;
+    refreshing_ = true;
 
-	// Set information panel contents
-	ui_.BottomLabel->setText(node_->name());
+    // Set information panel contents
+    ui_.BottomLabel->setText(node_->name());
 
-	// Update keywords
-	ui_.NodeKeywordsWidget->updateControls();
+    // Update keywords
+    ui_.NodeKeywordsWidget->updateControls();
 
-	refreshing_ = false;
+    refreshing_ = false;
 }
 
 // Disable sensitive controls
 void ProcedureChartNodeBlock::disableSensitiveControls()
 {
-	ui_.KeywordsControlWidget->setEnabled(false);
-	ui_.RemoveButton->setEnabled(false);
+    ui_.KeywordsControlWidget->setEnabled(false);
+    ui_.RemoveButton->setEnabled(false);
 }
 
 // Enable sensitive controls
 void ProcedureChartNodeBlock::enableSensitiveControls()
 {
-	ui_.KeywordsControlWidget->setEnabled(true);
-	ui_.RemoveButton->setEnabled(true);
+    ui_.KeywordsControlWidget->setEnabled(true);
+    ui_.RemoveButton->setEnabled(true);
 }
 
 /*

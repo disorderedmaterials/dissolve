@@ -12,37 +12,63 @@ DaySuffix() {
   esac
 }
 
-# Check that a version information was correctly supplied
-if [ "$#" -eq "0" ]
+usage() {
+  echo "Usage:  $0 [-c] [-p] [-m] [-i] [-r] [-s X.Y.Z]"
+  echo "	-c	Check current version numbering"
+  echo "        -m	Increase major version number (X.0.0)"
+  echo "        -i	Increase minor version number (0.X.0)"
+  echo "        -p	Increase patch version number (0.0.X)"
+  echo "        -s	Set version explicitly to X.Y.Z"
+  echo "        -x	Don't modify visible version numbers in docs, web, and readme" 
+}
+
+# Check for no args provided
+if [ $# == 0 ]
 then
-  echo "Checking current version numbers only..."
-  TEST="true"
-elif [ "$1" = "bump" ]
-then
-  echo "Bumping version number..."
-  MAJOR=`grep 'set(VERSION_MAJOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MAJOR \"\([0-9a-z\.]\+\)\")/\1/g'`
-  MINOR=`grep 'set(VERSION_MINOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MINOR \"\([0-9a-z\.]\+\)\")/\1/g'`
-  PATCH=`grep 'set(VERSION_PATCH' ./CMakeLists.txt | sed -e 's/set(VERSION_PATCH \"\([0-9a-z\.]\+\)\")/\1/g'`
-  echo "Current version is $MAJOR.$MINOR.$PATCH"
-  PATCH=$(($PATCH+1))
-  echo "New version will be $MAJOR.$MINOR.$PATCH"
-  TEST="false"
-elif [ "$#" -ne "3" ]
-then
-  echo "Improper version number supplied (use 'changeversion MAJOR MINOR PATCH', 'bump' to increase patch number, or no args to check existing files)"
+  usage
   exit 1
-else
-  MAJOR=$1
-  MINOR=$2
-  PATCH=$3
-  TEST="false"
-  echo "Changing version numbers in files (to ${MAJOR}.${MINOR}.{$PATCH}..."
 fi
 
+# Get current version number
+MAJOR=`grep 'set(VERSION_MAJOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MAJOR \"\([0-9a-z\.]\+\)\")/\1/g'`
+MINOR=`grep 'set(VERSION_MINOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MINOR \"\([0-9a-z\.]\+\)\")/\1/g'`
+PATCH=`grep 'set(VERSION_PATCH' ./CMakeLists.txt | sed -e 's/set(VERSION_PATCH \"\([0-9a-z\.]\+\)\")/\1/g'`
+CHECK="false"
+MODIFYVISIBLE="true"
+
+while getopts "cmipxs:" opt
+do
+  case $opt in
+    c) CHECK="true"
+       echo "Current version numbers will be checked - no modifications will be made";;
+    m) echo "Major version number will be increased from $MAJOR to $((MAJOR+1))"
+       MAJOR=$((MAJOR+1))
+       MINOR=0
+       PATCH=0;;
+    i) echo "Minor version number will be increased from $MINOR to $((MINOR+1))"
+       MINOR=$((MINOR+1))
+       PATCH=0;;
+    p) echo "Minor version number will be increased from $PATCH to $((PATCH+1))"
+       PATCH=$((PATCH+1));;
+    s) MAJOR=$(echo $OPTARG | cut -f1 -d.)
+       MINOR=$(echo $OPTARG | cut -f2 -d.)
+       PATCH=$(echo $OPTARG | cut -f3 -d.)
+       echo "Version will be set explicitly to MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH";;
+    x) echo "Version numbers visible externally (e.g. web, docs, README.md) will not be modified"
+       MODIFYVISIBLE="false";;
+    h) usage;;
+    \? ) echo "Error: Unrecognised switch '$opt'"
+	 usage
+         exit 1;;
+    * ) echo "Error: Extra operands given."
+        usage
+        exit 1;;
+  esac
+done
+
 # Program (version.h)
-if [ "$TEST" = "false" ]
+if [ "$CHECK" = "false" ]
 then
-  #cp src/main/version.h src/main/version.h.orig
   sed -i -e "s/#define DISSOLVEVERSION \"[0-9\.]\+\(.*\)\"/#define DISSOLVEVERSION \"$MAJOR.$MINOR.$PATCH\"\1/g" src/version.h
 fi
 echo -n "           version.h (Program Version) : "
@@ -50,7 +76,7 @@ grep '#define DISSOLVEVERSION' src/version.h | sed -e 's/#define DISSOLVEVERSION
 
 
 # ./CMakeLists.txt
-if [ "$TEST" = "false" ]
+if [ "$CHECK" = "false" ]
 then
   sed -i -e "s/set(VERSION_MAJOR \"\([0-9\.]\+\)\")/set(VERSION_MAJOR \"$MAJOR\")/g" -e "s/set(VERSION_MINOR \"\([0-9a-z\.]\+\)\")/set(VERSION_MINOR \"$MINOR\")/g" -e "s/set(VERSION_PATCH \"\([0-9a-z\.]\+\)\")/set(VERSION_PATCH \"$PATCH\")/g" CMakeLists.txt
 fi
@@ -63,7 +89,7 @@ grep 'set(VERSION_PATCH' ./CMakeLists.txt | sed -e 's/set(VERSION_PATCH \"\([0-9
 
 
 # OSX build files
-if [ "$TEST" = "false" ]
+if [ "$CHECK" = "false" ]
 then
   sed -i -e "s/APP_VERSION=\"\([0-9a-z\.]\+\)\"/APP_VERSION=\"$MAJOR.$MINOR.$PATCH\"/g" ./ci/osx/dissolve.dmginfo
   sed -i -e "s/APP_VERSION=\"\([0-9a-z\.]\+\)\"/APP_VERSION=\"$MAJOR.$MINOR.$PATCH\"/g" ./ci/osx/dissolve-gui.dmginfo
@@ -77,7 +103,7 @@ echo -n "dissolve-mpi.dmginfo (Program Version) : "
 grep 'APP_VERSION=' ./ci/osx/dissolve-mpi.dmginfo | sed -e 's/APP_VERSION=\"\([0-9a-z\.]\+\)\"/\1/g'
 
 # Windows build files
-if [ "$TEST" = "false" ]
+if [ "$CHECK" = "false" ]
 then
   sed -i -e "s/#define MyAppVersion \"[0-9\.]*\"/#define MyAppVersion \"$MAJOR.$MINOR.$PATCH\"/g" -e "s/OutputBaseFilename=Dissolve-GUI-[0-9\.]*-Win64/OutputBaseFilename=Dissolve-GUI-$MAJOR.$MINOR.$PATCH-Win64/g" ci/windows/dissolve-gui.iss
 fi
@@ -87,28 +113,28 @@ echo -n "    dissolve-gui.iss (Output Filename) : "
 grep 'OutputBaseFilename' ci/windows/dissolve-gui.iss | sed -e 's/OutputBaseFilename=Dissolve-GUI-\([0-9\.]*\)-Win64/\1/g'
 
 # Documentation
-if [ "$TEST" = "false" ]
+if [ "$CHECK" = "false" ] && [ "$MODIFYVISIBLE" = "true" ]
 then
   DAYSUFFIX=`DaySuffix`
   TODAY=`date "+%A %-d${DAYSUFFIX} %B %Y"`
-  sed -i -e "s/Current Version: [0-9\.]*, \(.*\)_/Current Version: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" docs/index.md
+  sed -i -e "s/Last Release: [0-9\.]*, \(.*\)_/Last Release: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" docs/index.md
 fi
 echo -n "       Documentation (Program Version) : "
-grep 'Current Version:' docs/index.md | sed -e 's/.*Version: \([0-9\.]*\),.*/\1/g'
+grep 'Last Release:' docs/index.md | sed -e 's/.*Release: \([0-9\.]*\),.*/\1/g'
 echo -n "                  Documentation (Date) : "
-grep 'Current Version:' docs/index.md | sed -e "s/.*Version: .*, \(.*\)_/\1/g"
+grep 'Last Release:' docs/index.md | sed -e "s/.*Release: .*, \(.*\)_/\1/g"
 
 # README.md
-if [ "$TEST" = "false" ]
+if [ "$CHECK" = "false" ] && [ "$MODIFYVISIBLE" = "true" ]
 then
   DAYSUFFIX=`DaySuffix`
   TODAY=`date "+%A %-d${DAYSUFFIX} %B %Y"`
-  sed -i -e "s/Current Version: [0-9\.]*, \(.*\)_/Current Version: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" README.md
+  sed -i -e "s/Last Release: [0-9\.]*, \(.*\)_/Last Release: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" README.md
 fi
 echo -n "           README.md (Program Version) : "
-grep 'Current Version:' README.md | sed -e 's/.*Version: \([0-9\.]*\),.*/\1/g'
+grep 'Last Release:' README.md | sed -e 's/.*Release: \([0-9\.]*\),.*/\1/g'
 echo -n "                      README.md (Date) : "
-grep 'Current Version:' README.md | sed -e "s/.*Version: .*, \(.*\)_/\1/g"
+grep 'Last Release:' README.md | sed -e "s/.*Release: .*, \(.*\)_/\1/g"
 
 exit 0
 

@@ -1,22 +1,22 @@
 /*
-	*** Configuration Widget - Functions
-	*** src/gui/configurationwidget_funcs.cpp
-	Copyright T. Youngs 2013-2020
+    *** Configuration Widget - Functions
+    *** src/gui/configurationwidget_funcs.cpp
+    Copyright T. Youngs 2013-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "classes/configuration.h"
@@ -27,18 +27,16 @@
 #include "main/dissolve.h"
 #include <QButtonGroup>
 
-// Constructor
 ConfigurationWidget::ConfigurationWidget(QWidget *parent) : QWidget(parent)
 {
-	// Set up our UI
-	ui_.setupUi(this);
+    // Set up our UI
+    ui_.setupUi(this);
 
-	// Connect signals / slots
-	connect(ui_.ConfigurationView, SIGNAL(dataModified()), this, SLOT(notifyDataModified()));
-	connect(ui_.ConfigurationView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));
+    // Connect signals / slots
+    connect(ui_.ConfigurationView, SIGNAL(dataModified()), this, SLOT(notifyDataModified()));
+    connect(ui_.ConfigurationView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));
 }
 
-// Destructor
 ConfigurationWidget::~ConfigurationWidget() {}
 
 /*
@@ -57,16 +55,16 @@ void ConfigurationWidget::postRedisplay() { ui_.ConfigurationView->postRedisplay
 // Update toolbar to reflect current viewer state
 void ConfigurationWidget::updateToolbar()
 {
-	// Set current interaction mode
-	switch (configurationViewer()->interactionMode())
-	{
-	default:
-		break;
-	}
+    // Set current interaction mode
+    switch (configurationViewer()->interactionMode())
+    {
+        default:
+            break;
+    }
 
-	// Set checkable buttons
-	ui_.ViewAxesVisibleButton->setChecked(configurationViewer()->axesVisible());
-	ui_.ViewSpheresButton->setChecked(configurationViewer()->renderableDrawStyle() != RenderableConfiguration::LinesStyle);
+    // Set checkable buttons
+    ui_.ViewAxesVisibleButton->setChecked(configurationViewer()->axesVisible());
+    ui_.ViewSpheresButton->setChecked(configurationViewer()->renderableDrawStyle() != RenderableConfiguration::LinesStyle);
 }
 
 /*
@@ -76,9 +74,9 @@ void ConfigurationWidget::updateToolbar()
 // Set target Configuration, updating widget as necessary
 void ConfigurationWidget::setConfiguration(Configuration *cfg)
 {
-	ui_.ConfigurationView->setConfiguration(cfg);
+    ui_.ConfigurationView->setConfiguration(cfg);
 
-	updateToolbar();
+    updateToolbar();
 }
 
 // Return contained ConfigurationViewer
@@ -90,26 +88,30 @@ ConfigurationViewer *ConfigurationWidget::configurationViewer() { return ui_.Con
 
 void ConfigurationWidget::on_ViewResetButton_clicked(bool checked)
 {
-	configurationViewer()->view().showAllData();
-	configurationViewer()->view().resetViewMatrix();
+    configurationViewer()->view().showAllData();
+    configurationViewer()->view().resetViewMatrix();
 
-	configurationViewer()->postRedisplay();
+    configurationViewer()->postRedisplay();
 }
 
 void ConfigurationWidget::on_ViewSpheresButton_clicked(bool checked)
 {
-	configurationViewer()->setRenderableDrawStyle(checked ? RenderableConfiguration::SpheresStyle : RenderableConfiguration::LinesStyle);
+    configurationViewer()->setRenderableDrawStyle(checked ? RenderableConfiguration::SpheresStyle
+                                                          : RenderableConfiguration::LinesStyle);
 
-	configurationViewer()->notifyStyleModified();
+    configurationViewer()->notifyStyleModified();
 
-	configurationViewer()->postRedisplay();
+    configurationViewer()->postRedisplay();
 }
 
 void ConfigurationWidget::on_ViewAxesVisibleButton_clicked(bool checked)
 {
-	configurationViewer()->setAxesVisible(checked);
+    configurationViewer()->setAxesVisible(checked);
 
-	configurationViewer()->postRedisplay();
+    configurationViewer()->postRedisplay();
 }
 
-void ConfigurationWidget::on_ViewCopyToClipboardButton_clicked(bool checked) { configurationViewer()->copyViewToClipboard(checked); }
+void ConfigurationWidget::on_ViewCopyToClipboardButton_clicked(bool checked)
+{
+    configurationViewer()->copyViewToClipboard(checked);
+}

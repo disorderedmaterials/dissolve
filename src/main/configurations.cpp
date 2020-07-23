@@ -1,22 +1,22 @@
 /*
-	*** Dissolve - Configurations
-	*** src/main/configurations.cpp
-	Copyright T. Youngs 2012-2020
+    *** Dissolve - Configurations
+    *** src/main/configurations.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "base/lineparser.h"
@@ -28,39 +28,39 @@
 // Add new Configuration
 Configuration *Dissolve::addConfiguration()
 {
-	Configuration *cfg = coreData_.addConfiguration();
+    Configuration *cfg = coreData_.addConfiguration();
 
-	return cfg;
+    return cfg;
 }
 
 // Own specified Configuration
 bool Dissolve::ownConfiguration(Configuration *cfg)
 {
-	// Sanity check - do we already own this Configuration?
-	if (coreData_.configurations().contains(cfg))
-		return Messenger::error("Already own Configuration '%s', so nothing to do.\n", cfg->name());
+    // Sanity check - do we already own this Configuration?
+    if (coreData_.configurations().contains(cfg))
+        return Messenger::error("Already own Configuration '%s', so nothing to do.\n", cfg->name());
 
-	coreData_.configurations().own(cfg);
+    coreData_.configurations().own(cfg);
 
-	return true;
+    return true;
 }
 
 // Remove specified Configuration
 void Dissolve::removeConfiguration(Configuration *cfg)
 {
-	if (!cfg)
-		return;
+    if (!cfg)
+        return;
 
-	// Remove any references to the Modules in the Configuration's local processing layer before we delete it
-	ListIterator<Module> moduleIterator(cfg->modules());
-	while (Module *module = moduleIterator.iterate())
-		removeReferencesTo(module);
+    // Remove any references to the Modules in the Configuration's local processing layer before we delete it
+    ListIterator<Module> moduleIterator(cfg->modules());
+    while (Module *module = moduleIterator.iterate())
+        removeReferencesTo(module);
 
-	// Remove references to the Configuration itself
-	removeReferencesTo(cfg);
+    // Remove references to the Configuration itself
+    removeReferencesTo(cfg);
 
-	// Now safe to remove the Configuration
-	coreData_.removeConfiguration(cfg);
+    // Now safe to remove the Configuration
+    coreData_.removeConfiguration(cfg);
 }
 
 // Return number of defined Configurations
@@ -78,9 +78,9 @@ Configuration *Dissolve::findConfiguration(const char *name) const { return core
 // Find configuration by 'nice' name
 Configuration *Dissolve::findConfigurationByNiceName(const char *name) const
 {
-	for (Configuration *cfg = constConfigurations().first(); cfg != NULL; cfg = cfg->next())
-		if (DissolveSys::sameString(name, cfg->niceName()))
-			return cfg;
+    for (auto *cfg = constConfigurations().first(); cfg != NULL; cfg = cfg->next())
+        if (DissolveSys::sameString(name, cfg->niceName()))
+            return cfg;
 
-	return NULL;
+    return NULL;
 }

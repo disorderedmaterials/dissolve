@@ -1,31 +1,32 @@
 /*
-	*** Keyword - Broadening Function
-	*** src/keywords/broadeningfunction.cpp
-	Copyright T. Youngs 2012-2020
+    *** Keyword - Broadening Function
+    *** src/keywords/broadeningfunction.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "keywords/broadeningfunction.h"
 #include "base/lineparser.h"
 
-// Constructor
-BroadeningFunctionKeyword::BroadeningFunctionKeyword(BroadeningFunction value) : KeywordData<BroadeningFunction>(KeywordBase::BroadeningFunctionData, value) {}
+BroadeningFunctionKeyword::BroadeningFunctionKeyword(BroadeningFunction value)
+    : KeywordData<BroadeningFunction>(KeywordBase::BroadeningFunctionData, value)
+{
+}
 
-// Destructor
 BroadeningFunctionKeyword::~BroadeningFunctionKeyword() {}
 
 /*
@@ -39,20 +40,21 @@ int BroadeningFunctionKeyword::minArguments() const { return 1; }
 int BroadeningFunctionKeyword::maxArguments() const { return MAXBROADENINGFUNCTIONPARAMS; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool BroadeningFunctionKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
+bool BroadeningFunctionKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
-	bool result = data_.set(parser, startArg);
-	if (result)
-		set_ = true;
+    auto result = data_.set(parser, startArg);
+    if (result)
+        set_ = true;
 
-	return result;
+    return result;
 }
 
 // Write keyword data to specified LineParser
 bool BroadeningFunctionKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
 {
-	CharString params;
-	for (int n = 0; n < BroadeningFunction::nFunctionParameters(data_.function()); ++n)
-		params.strcatf("  %f", data_.parameter(n));
-	return parser.writeLineF("%s%s  '%s'%s\n", prefix, keywordName, BroadeningFunction::functionType(data_.function()), params.get());
+    CharString params;
+    for (int n = 0; n < BroadeningFunction::nFunctionParameters(data_.function()); ++n)
+        params.strcatf("  %f", data_.parameter(n));
+    return parser.writeLineF("%s%s  '%s'%s\n", prefix, keywordName, BroadeningFunction::functionType(data_.function()),
+                             params.get());
 }

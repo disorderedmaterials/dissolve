@@ -7,6 +7,7 @@ steps:
   - bash: |
       set -ex
       # -- General
+      sudo apt-get update -q
       sudo apt-get install bison ninja-build libopenmpi-dev openmpi-bin openmpi-common
     displayName: 'Install Prerequisites'
   - bash: |

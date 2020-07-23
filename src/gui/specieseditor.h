@@ -1,26 +1,25 @@
 /*
-	*** Species Editor
-	*** src/gui/specieseditor.h
-	Copyright T. Youngs 2019-2020
+    *** Species Editor
+    *** src/gui/specieseditor.h
+    Copyright T. Youngs 2019-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_VIEWER_SPECIESEDITOR_H
-#define DISSOLVE_VIEWER_SPECIESEDITOR_H
+#pragma once
 
 #include "gui/ui_specieseditor.h"
 
@@ -30,75 +29,72 @@ class CoreData;
 // Species Widget
 class SpeciesEditor : public QWidget
 {
-	// All Qt declarations must include this macro
-	Q_OBJECT
+    // All Qt declarations must include this macro
+    Q_OBJECT
 
-      public:
-	// Constructor / Destructor
-	SpeciesEditor(QWidget *parent = 0);
-	~SpeciesEditor();
+    public:
+    SpeciesEditor(QWidget *parent = 0);
+    ~SpeciesEditor();
 
-      private:
-	// Main CoreData
-	CoreData *coreData_;
+    private:
+    // Main CoreData
+    CoreData *coreData_;
 
-      public:
-	// Set main CoreData pointer
-	void setCoreData(CoreData *coreData);
+    public:
+    // Set main CoreData pointer
+    void setCoreData(CoreData *coreData);
 
-	/*
-	 * UI
-	 */
-      private:
-	// Main form declaration
-	Ui::SpeciesEditor ui_;
+    /*
+     * UI
+     */
+    private:
+    // Main form declaration
+    Ui::SpeciesEditor ui_;
 
-      private slots:
-	// Notify that the style of displayed data in the underlying viewer has changed
-	void notifyStyleModified();
-	// Notify that the displayed data in the underlying viewer has changed
-	void notifyDataModified();
+    private slots:
+    // Notify that the style of displayed data in the underlying viewer has changed
+    void notifyStyleModified();
+    // Notify that the displayed data in the underlying viewer has changed
+    void notifyDataModified();
 
-      public slots:
-	// Post redisplay in the underlying view
-	void postRedisplay();
-	// Update toolbar to reflect current viewer state
-	void updateToolbar();
-	// Update status bar
-	void updateStatusBar();
+    public slots:
+    // Post redisplay in the underlying view
+    void postRedisplay();
+    // Update toolbar to reflect current viewer state
+    void updateToolbar();
+    // Update status bar
+    void updateStatusBar();
 
-      signals:
-	// Style of displayed data has been modified
-	void styleModified();
-	// Displayed data has been modified
-	void dataModified();
+    signals:
+    // Style of displayed data has been modified
+    void styleModified();
+    // Displayed data has been modified
+    void dataModified();
 
-	/*
-	 * Species Viewer
-	 */
-      public:
-	// Set target Species, updating widget as necessary
-	void setSpecies(Species *sp);
-	// Return contained SpeciesViewer
-	SpeciesViewer *speciesViewer();
+    /*
+     * Species Viewer
+     */
+    public:
+    // Set target Species, updating widget as necessary
+    void setSpecies(Species *sp);
+    // Return contained SpeciesViewer
+    SpeciesViewer *speciesViewer();
 
-	/*
-	 * ToolBar
-	 */
-      private slots:
-	// Interaction
-	void on_InteractionViewButton_clicked(bool checked);
-	void on_InteractionDrawButton_clicked(bool checked);
-	void on_InteractionDrawElementButton_clicked(bool checked);
-	void on_InteractionDeleteButton_clicked(bool checked);
-	// View
-	void on_ViewResetButton_clicked(bool checked);
-	void on_ViewSpheresButton_clicked(bool checked);
-	void on_ViewAxesVisibleButton_clicked(bool checked);
-	void on_ViewCopyToClipboardButton_clicked(bool checked);
-	// Tools
-	void on_ToolsCalculateBondingButton_clicked(bool checked);
-	void on_ToolsMinimiseButton_clicked(bool checked);
+    /*
+     * ToolBar
+     */
+    private slots:
+    // Interaction
+    void on_InteractionViewButton_clicked(bool checked);
+    void on_InteractionDrawButton_clicked(bool checked);
+    void on_InteractionDrawElementButton_clicked(bool checked);
+    void on_InteractionDeleteButton_clicked(bool checked);
+    // View
+    void on_ViewResetButton_clicked(bool checked);
+    void on_ViewSpheresButton_clicked(bool checked);
+    void on_ViewAxesVisibleButton_clicked(bool checked);
+    void on_ViewCopyToClipboardButton_clicked(bool checked);
+    // Tools
+    void on_ToolsCalculateBondingButton_clicked(bool checked);
+    void on_ToolsMinimiseButton_clicked(bool checked);
 };
-
-#endif

@@ -1,26 +1,25 @@
 /*
-	*** Select GenericItem Dialog
-	*** src/gui/selectgenericitemdialog.h
-	Copyright T. Youngs 2012-2020
+    *** Select GenericItem Dialog
+    *** src/gui/selectgenericitemdialog.h
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_DIALOG_SELECTGENERICITEM_H
-#define DISSOLVE_DIALOG_SELECTGENERICITEM_H
+#pragma once
 
 #include "genericitems/listhelper.h"
 #include "gui/ui_selectgenericitemdialog.h"
@@ -36,91 +35,87 @@ class SelectGenericItemWidget;
 // Select GenericItem Dialog
 class SelectGenericItemDialog : public QDialog
 {
-	Q_OBJECT
+    Q_OBJECT
 
-      public:
-	// Constructor
-	SelectGenericItemDialog(QWidget *parent, Dissolve &dissolve);
-	// Destructor
-	~SelectGenericItemDialog();
+    public:
+    SelectGenericItemDialog(QWidget *parent, Dissolve &dissolve);
+    ~SelectGenericItemDialog();
 
-      private:
-	// Main form declaration
-	Ui::SelectGenericItemDialog ui_;
-	// Reference to Dissolve
-	Dissolve &dissolve_;
+    private:
+    // Main form declaration
+    Ui::SelectGenericItemDialog ui_;
+    // Reference to Dissolve
+    Dissolve &dissolve_;
 
-      private:
-	// Append GenericItems to table under specified source
-	template <class T> void addToTable(RefList<T> &items, const char *source)
-	{
-		QTableWidgetItem *item;
-		int count = ui_.ItemsTable->rowCount();
-		ui_.ItemsTable->setRowCount(count + items.nItems());
-		for (T *templatedItem : items)
-		{
-			// Item name
-			item = new QTableWidgetItem(templatedItem->name());
-			item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-			item->setData(Qt::UserRole, VariantPointer<T>(templatedItem));
-			ui_.ItemsTable->setItem(count, 0, item);
+    private:
+    // Append GenericItems to table under specified source
+    template <class T> void addToTable(RefList<T> &items, const char *source)
+    {
+        QTableWidgetItem *item;
+        int count = ui_.ItemsTable->rowCount();
+        ui_.ItemsTable->setRowCount(count + items.nItems());
+        for (T *templatedItem : items)
+        {
+            // Item name
+            item = new QTableWidgetItem(templatedItem->name());
+            item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+            item->setData(Qt::UserRole, VariantPointer<T>(templatedItem));
+            ui_.ItemsTable->setItem(count, 0, item);
 
-			// Item source
-			item = new QTableWidgetItem(source);
-			item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-			ui_.ItemsTable->setItem(count, 1, item);
+            // Item source
+            item = new QTableWidgetItem(source);
+            item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+            ui_.ItemsTable->setItem(count, 1, item);
 
-			// Object tag
-			item = new QTableWidgetItem(templatedItem->objectTag());
-			item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-			ui_.ItemsTable->setItem(count, 2, item);
+            // Object tag
+            item = new QTableWidgetItem(templatedItem->objectTag());
+            item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+            ui_.ItemsTable->setItem(count, 2, item);
 
-			++count;
-		}
-	}
+            ++count;
+        }
+    }
 
-	// Update the table of GenericItems, optionally filtering them by name and description
-	void updateGenericItemTable(GenericItem *current, QString filter);
+    // Update the table of GenericItems, optionally filtering them by name and description
+    void updateGenericItemTable(GenericItem *current, QString filter);
 
-      private slots:
-	void on_FilterEdit_textChanged(const QString &text);
-	void on_ItemsTable_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *prevItem);
-	void on_ItemsTable_itemDoubleClicked(QTableWidgetItem *w);
-	void on_SelectButton_clicked(bool checked);
-	void on_CancelButton_clicked(bool checked);
+    private slots:
+    void on_FilterEdit_textChanged(const QString &text);
+    void on_ItemsTable_currentItemChanged(QTableWidgetItem *currentItem, QTableWidgetItem *prevItem);
+    void on_ItemsTable_itemDoubleClicked(QTableWidgetItem *w);
+    void on_SelectButton_clicked(bool checked);
+    void on_CancelButton_clicked(bool checked);
 
-      signals:
-	void genericItemSelectionChanged(bool isValid);
+    signals:
+    void genericItemSelectionChanged(bool isValid);
 
-      public:
-	// Run the dialog, returning the selected GenericItem
-	template <class T> T *selectGenericItem(T *currentItem = NULL)
-	{
-		// Populate the table with available items of the specified class type
-		RefList<T> items;
+    public:
+    // Run the dialog, returning the selected GenericItem
+    template <class T> T *selectGenericItem(T *currentItem = NULL)
+    {
+        // Populate the table with available items of the specified class type
+        RefList<T> items;
 
-		// -- Processing Module Data
-		items = GenericListHelper<T>::items(dissolve_.processingModuleData());
-		addToTable<T>(items, "Processing");
+        // -- Processing Module Data
+        items = GenericListHelper<T>::items(dissolve_.processingModuleData());
+        addToTable<T>(items, "Processing");
 
-		show();
+        show();
 
-		if (exec() == QDialog::Accepted)
-		{
-			// Get item in first column on the current row
-			int row = ui_.ItemsTable->currentRow();
-			if (row == -1)
-				return NULL;
-			QTableWidgetItem *item = ui_.ItemsTable->item(row, 0);
+        if (exec() == QDialog::Accepted)
+        {
+            // Get item in first column on the current row
+            int row = ui_.ItemsTable->currentRow();
+            if (row == -1)
+                return NULL;
+            QTableWidgetItem *item = ui_.ItemsTable->item(row, 0);
 
-			// Retrieve the data pointer
-			T *dataItem = VariantPointer<T>(item->data(Qt::UserRole));
+            // Retrieve the data pointer
+            T *dataItem = VariantPointer<T>(item->data(Qt::UserRole));
 
-			return dataItem;
-		}
-		else
-			return NULL;
-	}
+            return dataItem;
+        }
+        else
+            return NULL;
+    }
 };
-
-#endif

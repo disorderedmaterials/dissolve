@@ -1,43 +1,42 @@
 /*
-	*** Renderable Group
-	*** src/gui/render/renderablegroup.cpp
-	Copyright T. Youngs 2013-2020
+    *** Renderable Group
+    *** src/gui/render/renderablegroup.cpp
+    Copyright T. Youngs 2013-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/render/renderablegroup.h"
 #include "gui/render/renderable.h"
 
-// Constructor
 RenderableGroup::RenderableGroup(const char *name, StockColours::StockColour colour) : ListItem<RenderableGroup>()
 {
-	name_ = name;
+    name_ = name;
 
-	visible_ = true;
+    visible_ = true;
 
-	colouringStyle_ = RenderableGroup::NoGroupColouring;
-	automaticStockColourUsageCount_.initialise(StockColours::nStockColours);
-	automaticStockColourUsageCount_ = 0;
-	setFixedStockColour(StockColours::BlackStockColour);
-	lineStipple_ = LineStipple::NoStipple;
+    colouringStyle_ = RenderableGroup::NoGroupColouring;
+    automaticStockColourUsageCount_.initialise(StockColours::nStockColours);
+    automaticStockColourUsageCount_ = 0;
+    setFixedStockColour(StockColours::BlackStockColour);
+    lineStipple_ = LineStipple::NoStipple;
 
-	verticalShiftStyle_ = GroupVerticalShifting;
-	verticalShift_ = 0.0;
-	verticalShiftMultiplier_ = 1.0;
+    verticalShiftStyle_ = GroupVerticalShifting;
+    verticalShift_ = 0.0;
+    verticalShiftMultiplier_ = 1.0;
 }
 
 /*
@@ -54,39 +53,40 @@ const char *RenderableGroup::name() const { return name_.get(); }
 // Associate Renderable to group (if it isn't already)
 void RenderableGroup::associateRenderable(Renderable *renderable)
 {
-	if (renderables_.contains(renderable))
-	{
-		Messenger::warn("Group '%s' already contains the Renderable '%s', so not adding it again.\n", name(), renderable->name());
-		return;
-	}
+    if (renderables_.contains(renderable))
+    {
+        Messenger::warn("Group '%s' already contains the Renderable '%s', so not adding it again.\n", name(),
+                        renderable->name());
+        return;
+    }
 
-	renderables_.append(renderable);
+    renderables_.append(renderable);
 
-	// Apply colouring information if necessary
-	setRenderableColour(renderable);
+    // Apply colouring information if necessary
+    setRenderableColour(renderable);
 
-	// Apply vertical shift to the renderable if necessary
-	setRenderableVerticalShift(renderable, renderables_.nItems() - 1);
+    // Apply vertical shift to the renderable if necessary
+    setRenderableVerticalShift(renderable, renderables_.nItems() - 1);
 
-	// Apply line style if necessary
-	setRenderableLineStyle(renderable);
+    // Apply line style if necessary
+    setRenderableLineStyle(renderable);
 }
 
 // Remove Renderable from group (if it exists)
 void RenderableGroup::removeRenderable(Renderable *renderable)
 {
-	if (!renderables_.contains(renderable))
-	{
-		Messenger::warn("Renderable '%s' is not present in the group '%s', so can't remove it.\n", renderable->name(), name());
-		return;
-	}
+    if (!renderables_.contains(renderable))
+    {
+        Messenger::warn("Renderable '%s' is not present in the group '%s', so can't remove it.\n", renderable->name(), name());
+        return;
+    }
 
-	// Remove shift from the renderable first, if one is being applied
-	renderable->setValuesTransformEnabled(false);
-	renderable->setValuesTransformEquation("value");
+    // Remove shift from the renderable first, if one is being applied
+    renderable->setValuesTransformEnabled(false);
+    renderable->setValuesTransformEquation("value");
 
-	renderables_.remove(renderable);
-	renderable->setGroup(NULL);
+    renderables_.remove(renderable);
+    renderable->setGroup(NULL);
 }
 
 // Return whether the group is used by the specified renderable
@@ -101,14 +101,14 @@ bool RenderableGroup::isEmpty() const { return renderables_.nItems() == 0; }
 // Empty the group, removing all Renderable targets
 void RenderableGroup::empty()
 {
-	while (Renderable *renderable = renderables_.firstItem())
-	{
-		renderables_.remove(renderable);
-		renderable->setGroup(NULL);
-	}
+    while (Renderable *renderable = renderables_.firstItem())
+    {
+        renderables_.remove(renderable);
+        renderable->setGroup(NULL);
+    }
 
-	// Reset colour counters
-	automaticStockColourUsageCount_ = 0;
+    // Reset colour counters
+    automaticStockColourUsageCount_ = 0;
 }
 
 /*
@@ -128,48 +128,50 @@ bool RenderableGroup::isVisible() const { return visible_; }
 // Return enum options for GroupColouring
 EnumOptions<RenderableGroup::GroupColouring> RenderableGroup::groupColourings()
 {
-	static EnumOptionsList GroupColouringOptions = EnumOptionsList() << EnumOption(RenderableGroup::NoGroupColouring, "None") << EnumOption(RenderableGroup::FixedGroupColouring, "Fixed")
-									 << EnumOption(RenderableGroup::AutomaticIndividualColouring, "Automatic");
+    static EnumOptionsList GroupColouringOptions = EnumOptionsList()
+                                                   << EnumOption(RenderableGroup::NoGroupColouring, "None")
+                                                   << EnumOption(RenderableGroup::FixedGroupColouring, "Fixed")
+                                                   << EnumOption(RenderableGroup::AutomaticIndividualColouring, "Automatic");
 
-	static EnumOptions<RenderableGroup::GroupColouring> options("GroupColouring", GroupColouringOptions);
+    static EnumOptions<RenderableGroup::GroupColouring> options("GroupColouring", GroupColouringOptions);
 
-	return options;
+    return options;
 }
 
 // Set colour information for the supplied Renderable, according to our settings
 void RenderableGroup::setRenderableColour(Renderable *rend)
 {
-	if (colouringStyle_ == FixedGroupColouring)
-		rend->setColour(fixedStockColour_);
-	else if (colouringStyle_ == AutomaticIndividualColouring)
-	{
-		// Find the StockColour with the lowest usage count
-		int lowestId = 0;
-		for (int colourId = 0; colourId < StockColours::nStockColours; ++colourId)
-		{
-			if (automaticStockColourUsageCount_[colourId] < automaticStockColourUsageCount_[lowestId])
-				lowestId = colourId;
-		}
+    if (colouringStyle_ == FixedGroupColouring)
+        rend->setColour(fixedStockColour_);
+    else if (colouringStyle_ == AutomaticIndividualColouring)
+    {
+        // Find the StockColour with the lowest usage count
+        auto lowestId = 0;
+        for (int colourId = 0; colourId < StockColours::nStockColours; ++colourId)
+        {
+            if (automaticStockColourUsageCount_[colourId] < automaticStockColourUsageCount_[lowestId])
+                lowestId = colourId;
+        }
 
-		rend->setColour((StockColours::StockColour)lowestId);
+        rend->setColour((StockColours::StockColour)lowestId);
 
-		++automaticStockColourUsageCount_[lowestId];
-	}
+        ++automaticStockColourUsageCount_[lowestId];
+    }
 }
 
 // Set all renderable colours
 void RenderableGroup::setRenderableColours()
 {
-	for (Renderable *renderable : renderables_)
-		setRenderableColour(renderable);
+    for (Renderable *renderable : renderables_)
+        setRenderableColour(renderable);
 }
 
 // Set colouring style for the group
 void RenderableGroup::setColouringStyle(RenderableGroup::GroupColouring colouringStyle)
 {
-	colouringStyle_ = colouringStyle;
+    colouringStyle_ = colouringStyle;
 
-	setRenderableColours();
+    setRenderableColours();
 }
 
 // Return colouring style for the group
@@ -178,9 +180,9 @@ RenderableGroup::GroupColouring RenderableGroup::colouringStyle() const { return
 // Set fixed stock colour for the group
 void RenderableGroup::setFixedStockColour(StockColours::StockColour stockColour)
 {
-	fixedStockColour_ = stockColour;
+    fixedStockColour_ = stockColour;
 
-	setRenderableColours();
+    setRenderableColours();
 }
 
 // Return fixed stock colour associated to the group
@@ -193,23 +195,23 @@ StockColours::StockColour RenderableGroup::fixedStockColour() const { return fix
 // Set line style for the supplied Renderable, according to our settings
 void RenderableGroup::setRenderableLineStyle(Renderable *rend)
 {
-	if (lineStipple_ != LineStipple::NoStipple)
-		rend->lineStyle().setStipple(lineStipple_);
+    if (lineStipple_ != LineStipple::NoStipple)
+        rend->lineStyle().setStipple(lineStipple_);
 }
 
 // Set all Renderable line styles
 void RenderableGroup::setRenderableLineStyles()
 {
-	for (Renderable *renderable : renderables_)
-		setRenderableLineStyle(renderable);
+    for (Renderable *renderable : renderables_)
+        setRenderableLineStyle(renderable);
 }
 
 // Set line stipple for the group
 void RenderableGroup::setLineStipple(LineStipple::StippleType stipple)
 {
-	lineStipple_ = stipple;
+    lineStipple_ = stipple;
 
-	setRenderableLineStyles();
+    setRenderableLineStyles();
 }
 
 // Return line stipple for the group
@@ -222,42 +224,43 @@ LineStipple::StippleType RenderableGroup::lineStipple() const { return lineStipp
 // Return enum options for VerticalShiftStyle
 EnumOptions<RenderableGroup::VerticalShiftStyle> RenderableGroup::verticalShiftStyles()
 {
-	static EnumOptionsList VerticalShiftStyleOptions = EnumOptionsList()
-							   << EnumOption(RenderableGroup::PreventVerticalShifting, "Prevent") << EnumOption(RenderableGroup::GroupVerticalShifting, "Group")
-							   << EnumOption(RenderableGroup::IndividualVerticalShifting, "Individual");
+    static EnumOptionsList VerticalShiftStyleOptions = EnumOptionsList()
+                                                       << EnumOption(RenderableGroup::PreventVerticalShifting, "Prevent")
+                                                       << EnumOption(RenderableGroup::GroupVerticalShifting, "Group")
+                                                       << EnumOption(RenderableGroup::IndividualVerticalShifting, "Individual");
 
-	static EnumOptions<RenderableGroup::VerticalShiftStyle> options("VerticalShiftStyle", VerticalShiftStyleOptions);
+    static EnumOptions<RenderableGroup::VerticalShiftStyle> options("VerticalShiftStyle", VerticalShiftStyleOptions);
 
-	return options;
+    return options;
 }
 
 // Set vertical shift in specified Renderable
 void RenderableGroup::setRenderableVerticalShift(Renderable *renderable, int rendIndex)
 {
-	renderable->setValuesTransformEnabled(verticalShiftStyle_ != PreventVerticalShifting);
+    renderable->setValuesTransformEnabled(verticalShiftStyle_ != PreventVerticalShifting);
 
-	if (verticalShiftStyle_ == GroupVerticalShifting)
-		renderable->setValuesTransformEquation(CharString("value+%f", verticalShift_ * verticalShiftMultiplier_));
-	else if (verticalShiftStyle_ == IndividualVerticalShifting)
-		renderable->setValuesTransformEquation(CharString("value+%f", verticalShift_ * rendIndex));
-	else
-		renderable->setValuesTransformEquation("value");
+    if (verticalShiftStyle_ == GroupVerticalShifting)
+        renderable->setValuesTransformEquation(CharString("value+%f", verticalShift_ * verticalShiftMultiplier_));
+    else if (verticalShiftStyle_ == IndividualVerticalShifting)
+        renderable->setValuesTransformEquation(CharString("value+%f", verticalShift_ * rendIndex));
+    else
+        renderable->setValuesTransformEquation("value");
 }
 
 // Set vertical shift in all Renderables in the group via their transform equations
 void RenderableGroup::setRenderableVerticalShifts()
 {
-	int index = 0;
-	for (Renderable *renderable : renderables_)
-		setRenderableVerticalShift(renderable, index++);
+    auto index = 0;
+    for (Renderable *renderable : renderables_)
+        setRenderableVerticalShift(renderable, index++);
 }
 
 // Set whether vertical shifting is enabled in this group
 void RenderableGroup::setVerticalShiftStyle(RenderableGroup::VerticalShiftStyle shiftStyle)
 {
-	verticalShiftStyle_ = shiftStyle;
+    verticalShiftStyle_ = shiftStyle;
 
-	setRenderableVerticalShifts();
+    setRenderableVerticalShifts();
 }
 
 // Return vertical shifting in force for this group
@@ -266,8 +269,8 @@ RenderableGroup::VerticalShiftStyle RenderableGroup::verticalShiftStyle() const 
 // Apply the specified vertical shift (if VerticalShiftStyle != PreventVerticalShifting)
 void RenderableGroup::applyVerticalShift(double dy, int groupIndex)
 {
-	verticalShift_ = dy;
-	verticalShiftMultiplier_ = groupIndex;
+    verticalShift_ = dy;
+    verticalShiftMultiplier_ = groupIndex;
 
-	setRenderableVerticalShifts();
+    setRenderableVerticalShifts();
 }

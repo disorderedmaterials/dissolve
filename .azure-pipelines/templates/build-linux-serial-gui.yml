@@ -11,10 +11,10 @@ steps:
   - bash: |
       set -ex
       # -- General
+      sudo apt-get update -q
       sudo apt-get install bison libfreetype6-dev libftgl-dev ninja-build
       # -- Qt
       sudo add-apt-repository ppa:${{ parameters.ppa }} -y
-      sudo apt-get update -q
       sudo apt-get install qt${{ parameters.qtver }}base qt${{ parameters.qtver }}svg qt${{ parameters.qtver }}imageformats -y
     displayName: 'Install Prerequisites'
   - bash: |

@@ -1,60 +1,59 @@
 /*
-	*** Universal Forcefield AtomType
-	*** src/data/ff/uffatomtype.cpp
-	Copyright T. Youngs 2019-2020
+    *** Universal Forcefield AtomType
+    *** src/data/ff/uffatomtype.cpp
+    Copyright T. Youngs 2019-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "data/ff/uffatomtype.h"
 #include "data/ff/uff.h"
 
-// Constructor
-UFFAtomType::UFFAtomType(Forcefield *parent, int z, int index, const char *name, const char *neta, const char *description, double r, double theta, double x, double D, double zeta, double Z,
-			 double chi, int geom, double V, double U)
+UFFAtomType::UFFAtomType(Forcefield *parent, int z, int index, const char *name, const char *neta, const char *description,
+                         double r, double theta, double x, double D, double zeta, double Z, double chi, int geom, double V,
+                         double U)
     : ForcefieldAtomType(parent, z, index, name, neta, description, 0.0, 0.0, 0.0)
 {
-	// Set the atomtype's data
-	r_ = r;
-	theta_ = theta;
-	x_ = x;
-	D_ = D;
-	zeta_ = zeta;
-	Z_ = Z;
-	chi_ = chi;
-	geom_ = geom;
-	V_ = V;
-	U_ = U;
+    // Set the atomtype's data
+    r_ = r;
+    theta_ = theta;
+    x_ = x;
+    D_ = D;
+    zeta_ = zeta;
+    Z_ = Z;
+    chi_ = chi;
+    geom_ = geom;
+    V_ = V;
+    U_ = U;
 }
 
-// Assignment Operator
 UFFAtomType &UFFAtomType::operator=(const UFFAtomType &source)
 {
-	r_ = source.r_;
-	theta_ = source.theta_;
-	x_ = source.x_;
-	D_ = source.D_;
-	zeta_ = source.zeta_;
-	Z_ = source.Z_;
-	chi_ = source.chi_;
-	geom_ = source.geom_;
-	V_ = source.V_;
-	U_ = source.U_;
+    r_ = source.r_;
+    theta_ = source.theta_;
+    x_ = source.x_;
+    D_ = source.D_;
+    zeta_ = source.zeta_;
+    Z_ = source.Z_;
+    chi_ = source.chi_;
+    geom_ = source.geom_;
+    V_ = source.V_;
+    U_ = source.U_;
 
-	return *this;
+    return *this;
 }
 
 /*

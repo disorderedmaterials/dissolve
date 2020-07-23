@@ -1,0 +1,95 @@
+# Input file written by Dissolve v0.7.0 at 14:57:19 on 16-07-2020.
+
+#------------------------------------------------------------------------------#
+#                                 Master Terms                                 #
+#------------------------------------------------------------------------------#
+
+Master
+  Bond  'OA-SA'  Harmonic  6258.000     1.411
+  Bond  'OHA-SA'  Harmonic  3083.800     1.571
+  Bond  'HSA-OHA'  Harmonic  4561.100     0.949
+  Angle  'OA-SA-OA'  Harmonic   224.370   123.690
+  Angle  'OA-SA-OHA'  Harmonic   364.560   107.320
+  Angle  'OHA-SA-OHA'  Harmonic   608.150   101.790
+  Angle  'HSA-OHA-SA'  Harmonic   396.820   110.500
+  Torsion  'HSA-OHA-SA-OA'  Cos3     0.000     0.000     0.000
+  Torsion  'HSA-OHA-SA-OHA'  Cos3   -15.863    -7.797     2.340
+EndMaster
+
+#------------------------------------------------------------------------------#
+#                                   Species                                    #
+#------------------------------------------------------------------------------#
+
+Species 'H2SO4'
+  # Atoms
+  Atom    1    S  -5.688930e-02  -4.753671e-01  -1.150024e-01  'SA'  1.100000e+00
+  Atom    2    O  -8.107062e-01  -1.633467e+00  -3.817230e-01  'OA'  -4.600000e-01
+  Atom    3    O  1.343941e+00  -3.441506e-01  -9.373076e-02  'OA'  -4.600000e-01
+  Atom    4    O  -4.877052e-01  9.383998e-02  1.268748e+00  'OHA'  -5.300000e-01
+  Atom    5    O  -5.075042e-01  6.519261e-01  -1.090145e+00  'OHA'  -5.300000e-01
+  Atom    6    H  2.430273e-01  1.207117e+00  -1.238692e+00  'HSA'  4.400000e-01
+  Atom    7    H  2.758370e-01  5.001012e-01  1.650545e+00  'HSA'  4.400000e-01
+
+  # Bonds
+  Bond    1    2  @OA-SA
+  Bond    1    3  @OA-SA
+  Bond    1    4  @OHA-SA
+  Bond    1    5  @OHA-SA
+  Bond    5    6  @HSA-OHA
+  Bond    4    7  @HSA-OHA
+
+  # Angles
+  Angle    3    1    2  @OA-SA-OA
+  Angle    4    1    2  @OA-SA-OHA
+  Angle    4    1    3  @OA-SA-OHA
+  Angle    5    1    2  @OA-SA-OHA
+  Angle    5    1    3  @OA-SA-OHA
+  Angle    5    1    4  @OHA-SA-OHA
+  Angle    1    5    6  @HSA-OHA-SA
+  Angle    1    4    7  @HSA-OHA-SA
+
+  # Torsions
+  Torsion    2    1    5    6  @HSA-OHA-SA-OA
+  Torsion    3    1    5    6  @HSA-OHA-SA-OA
+  Torsion    4    1    5    6  @HSA-OHA-SA-OHA
+  Torsion    2    1    4    7  @HSA-OHA-SA-OA
+  Torsion    3    1    4    7  @HSA-OHA-SA-OA
+  Torsion    5    1    4    7  @HSA-OHA-SA-OHA
+
+  # Forcefield
+  Forcefield  'Kulmala2010'
+EndSpecies
+
+#------------------------------------------------------------------------------#
+#                               Pair Potentials                                #
+#------------------------------------------------------------------------------#
+
+PairPotentials
+  # Atom Type Parameters
+  Parameters  SA  S  1.100000e+00  LJ  1.046000e+00  3.550000e+00  0.000000e+00  0.000000e+00
+  Parameters  OA  O  -4.600000e-01  LJ  7.117600e-01  3.000000e+00  0.000000e+00  0.000000e+00
+  Parameters  OHA  O  -5.300000e-01  LJ  7.117600e-01  3.000000e+00  0.000000e+00  0.000000e+00
+  Parameters  HSA  H  4.400000e-01  LJ  0.000000e+00  0.000000e+00  0.000000e+00  0.000000e+00
+  Range  15.000000
+  Delta  0.005000
+  IncludeCoulomb  False
+  CoulombTruncation  Shifted
+  ShortRangeTruncation  Shifted
+EndPairPotentials
+
+#------------------------------------------------------------------------------#
+#                                Configurations                                #
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+#                              Processing Layers                               #
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+#                                  Simulation                                  #
+#------------------------------------------------------------------------------#
+
+Simulation
+  Seed  -1
+EndSimulation
+

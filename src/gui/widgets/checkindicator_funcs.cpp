@@ -1,22 +1,22 @@
 /*
-	*** Check Indicator
-	*** src/gui/checkindicator_funcs.cpp
-	Copyright T. Youngs 2012-2020
+    *** Check Indicator
+    *** src/gui/checkindicator_funcs.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/widgets/checkindicator.hui"
@@ -24,17 +24,16 @@
 #include <QPixmap>
 #include <QSizePolicy>
 
-// Constructor
 CheckIndicator::CheckIndicator(QWidget *parent) : QLabel(parent)
 {
-	// Set minimum size
-	setMinimumSize(QSize(20, 20));
-	setMaximumSize(QSize(20, 20));
-	setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-	setScaledContents(true);
+    // Set minimum size
+    setMinimumSize(QSize(20, 20));
+    setMaximumSize(QSize(20, 20));
+    setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    setScaledContents(true);
 
-	// Set default state
-	setNotOK();
+    // Set default state
+    setNotOK();
 }
 
 // Return state of indicator
@@ -47,36 +46,36 @@ CheckIndicator::IndicatorState CheckIndicator::state() const { return state_; }
 // Update state icon
 void CheckIndicator::updateStateIcon()
 {
-	if (state_ == CheckIndicator::OKState)
-		setPixmap(QPixmap(":/general/icons/general_true.svg"));
-	else if (state_ == CheckIndicator::NotOKState)
-		setPixmap(QPixmap(":/general/icons/general_false.svg"));
-	else if (state_ == CheckIndicator::WarningState)
-		setPixmap(QPixmap(":/general/icons/general_warn.svg"));
-	else
-		setPixmap(QPixmap(":/general/icons/general_unknown.svg"));
+    if (state_ == CheckIndicator::OKState)
+        setPixmap(QPixmap(":/general/icons/general_true.svg"));
+    else if (state_ == CheckIndicator::NotOKState)
+        setPixmap(QPixmap(":/general/icons/general_false.svg"));
+    else if (state_ == CheckIndicator::WarningState)
+        setPixmap(QPixmap(":/general/icons/general_warn.svg"));
+    else
+        setPixmap(QPixmap(":/general/icons/general_unknown.svg"));
 }
 
 // Set indicator to OK (green tick)
 void CheckIndicator::setOK(bool isOK)
 {
-	state_ = isOK ? CheckIndicator::OKState : CheckIndicator::NotOKState;
+    state_ = isOK ? CheckIndicator::OKState : CheckIndicator::NotOKState;
 
-	updateStateIcon();
+    updateStateIcon();
 }
 
 // Set indicator to Not OK (red cross)
 void CheckIndicator::setNotOK(bool isNotOK)
 {
-	state_ = isNotOK ? CheckIndicator::NotOKState : CheckIndicator::OKState;
+    state_ = isNotOK ? CheckIndicator::NotOKState : CheckIndicator::OKState;
 
-	updateStateIcon();
+    updateStateIcon();
 }
 
 // Set indicator to Warning (orange bang)
 void CheckIndicator::setWarning()
 {
-	state_ = CheckIndicator::WarningState;
+    state_ = CheckIndicator::WarningState;
 
-	updateStateIcon();
+    updateStateIcon();
 }

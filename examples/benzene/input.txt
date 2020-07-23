@@ -138,7 +138,6 @@ Configuration  'Bulk'
     AddSpecies
       Species  'Benzene'
       Population  '200'
-      ScaleBox  True
       Density  'rho'  g/cm3
       Rotate  True
       Positioning  Random

@@ -1,51 +1,49 @@
 /*
-	*** Orthorhombic Box
-	*** src/classes/box_orthorhombic.cpp
-	Copyright T. Youngs 2012-2020
+    *** Orthorhombic Box
+    *** src/classes/box_orthorhombic.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/cell.h"
 
-// Constructor
 OrthorhombicBox::OrthorhombicBox(const Vec3<double> lengths) : Box()
 {
-	type_ = Box::OrthorhombicBoxType;
+    type_ = Box::OrthorhombicBoxType;
 
-	// Construct axes_
-	axes_.setColumn(0, lengths.x, 0.0, 0.0);
-	axes_.setColumn(1, 0.0, lengths.y, 0.0);
-	axes_.setColumn(2, 0.0, 0.0, lengths.z);
+    // Construct axes_
+    axes_.setColumn(0, lengths.x, 0.0, 0.0);
+    axes_.setColumn(1, 0.0, lengths.y, 0.0);
+    axes_.setColumn(2, 0.0, 0.0, lengths.z);
 
-	// Store Box lengths
-	a_ = lengths.x;
-	b_ = lengths.y;
-	c_ = lengths.z;
-	ra_ = 1.0 / a_;
-	rb_ = 1.0 / b_;
-	rc_ = 1.0 / c_;
+    // Store Box lengths
+    a_ = lengths.x;
+    b_ = lengths.y;
+    c_ = lengths.z;
+    ra_ = 1.0 / a_;
+    rb_ = 1.0 / b_;
+    rc_ = 1.0 / c_;
 
-	// Finalise associated data
-	finalise();
+    // Finalise associated data
+    finalise();
 }
 
-// Destructor
 OrthorhombicBox::~OrthorhombicBox() {}
 
 /*
@@ -55,195 +53,195 @@ OrthorhombicBox::~OrthorhombicBox() {}
 // Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> OrthorhombicBox::minimumImage(const Atom *i, const Atom *ref) const
 {
-	Vec3<double> mimVec = i->r();
-	mimVec -= ref->r();
+    auto mimVec = i->r();
+    mimVec -= ref->r();
 
-	mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-	mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-	mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
+    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
+    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
+    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
-	return mimVec + ref->r();
+    return mimVec + ref->r();
 }
 
 // Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> OrthorhombicBox::minimumImage(const Atom *i, const Vec3<double> &ref) const
 {
-	Vec3<double> mimVec = i->r();
-	mimVec -= ref;
+    auto mimVec = i->r();
+    mimVec -= ref;
 
-	mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-	mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-	mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
+    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
+    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
+    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
-	return mimVec + ref;
+    return mimVec + ref;
 }
 
 // Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> OrthorhombicBox::minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const
 {
-	Vec3<double> mimVec = i;
-	mimVec -= ref;
-	mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-	mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-	mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
+    auto mimVec = i;
+    mimVec -= ref;
+    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
+    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
+    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
-	return mimVec + ref;
+    return mimVec + ref;
 }
 
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> OrthorhombicBox::minimumVector(const Atom *i, const Atom *j) const
 {
-	Vec3<double> mimVec = j->r();
-	mimVec -= i->r();
+    auto mimVec = j->r();
+    mimVec -= i->r();
 
-	mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-	mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-	mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
+    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
+    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
+    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
-	return mimVec;
+    return mimVec;
 }
 
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> OrthorhombicBox::minimumVector(const Atom &i, const Atom &j) const
 {
-	Vec3<double> mimVec = j.r();
-	mimVec -= i.r();
+    auto mimVec = j.r();
+    mimVec -= i.r();
 
-	mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-	mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-	mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
+    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
+    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
+    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
-	return mimVec;
+    return mimVec;
 }
 
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> OrthorhombicBox::minimumVector(const Atom *i, const Vec3<double> &j) const
 {
-	Vec3<double> mimVec = j;
-	mimVec -= i->r();
+    auto mimVec = j;
+    mimVec -= i->r();
 
-	mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-	mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-	mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
+    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
+    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
+    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
-	return mimVec;
+    return mimVec;
 }
 
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> OrthorhombicBox::minimumVector(const Vec3<double> &i, const Vec3<double> &j) const
 {
-	Vec3<double> mimVec = j;
-	mimVec -= i;
+    auto mimVec = j;
+    mimVec -= i;
 
-	mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-	mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-	mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
+    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
+    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
+    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
-	return mimVec;
+    return mimVec;
 }
 
 // Return minimum image distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistance(const Atom *i, const Atom *j) const
 {
-	Vec3<double> mimVec = j->r();
-	mimVec -= i->r();
+    auto mimVec = j->r();
+    mimVec -= i->r();
 
-	mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-	mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-	mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
+    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
+    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
+    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
-	return mimVec.magnitude();
+    return mimVec.magnitude();
 }
 
 // Return minimum image distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistance(const Atom &i, const Atom &j) const
 {
-	Vec3<double> mimVec = j.r();
-	mimVec -= i.r();
+    auto mimVec = j.r();
+    mimVec -= i.r();
 
-	mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-	mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-	mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
+    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
+    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
+    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
-	return mimVec.magnitude();
+    return mimVec.magnitude();
 }
 
 // Return minimum image distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistance(const Atom *i, const Vec3<double> &j) const
 {
-	Vec3<double> mimVec = j;
-	mimVec -= i->r();
+    auto mimVec = j;
+    mimVec -= i->r();
 
-	mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-	mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-	mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
+    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
+    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
+    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
-	return mimVec.magnitude();
+    return mimVec.magnitude();
 }
 
 // Return minimum image distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const
 {
-	Vec3<double> mimVec = j;
-	mimVec -= i;
+    auto mimVec = j;
+    mimVec -= i;
 
-	mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-	mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-	mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
+    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
+    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
+    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
-	return mimVec.magnitude();
+    return mimVec.magnitude();
 }
 
 // Return minimum image squared distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistanceSquared(const Atom *i, const Atom *j) const
 {
-	Vec3<double> mimVec = j->r();
-	mimVec -= i->r();
+    auto mimVec = j->r();
+    mimVec -= i->r();
 
-	mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-	mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-	mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
+    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
+    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
+    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
-	return mimVec.magnitudeSq();
+    return mimVec.magnitudeSq();
 }
 
 // Return minimum image squared distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistanceSquared(const Atom &i, const Atom &j) const
 {
-	Vec3<double> mimVec = j.r();
-	mimVec -= i.r();
+    auto mimVec = j.r();
+    mimVec -= i.r();
 
-	mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-	mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-	mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
+    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
+    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
+    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
-	return mimVec.magnitudeSq();
+    return mimVec.magnitudeSq();
 }
 
 // Return minimum image squared distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistanceSquared(const Atom *i, const Vec3<double> &j) const
 {
-	Vec3<double> mimVec = j;
-	mimVec -= i->r();
+    auto mimVec = j;
+    mimVec -= i->r();
 
-	mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-	mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-	mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
+    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
+    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
+    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
-	return mimVec.magnitudeSq();
+    return mimVec.magnitudeSq();
 }
 
 // Return minimum image squared distance from 'i' to 'j'
 double OrthorhombicBox::minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const
 {
-	Vec3<double> mimVec = j;
-	mimVec -= i;
+    auto mimVec = j;
+    mimVec -= i;
 
-	mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
-	mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
-	mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
+    mimVec.x -= int(mimVec.x * ra_ + (mimVec.x < 0.0 ? -0.5 : 0.5)) * a_;
+    mimVec.y -= int(mimVec.y * rb_ + (mimVec.y < 0.0 ? -0.5 : 0.5)) * b_;
+    mimVec.z -= int(mimVec.z * rc_ + (mimVec.z < 0.0 ? -0.5 : 0.5)) * c_;
 
-	return mimVec.magnitudeSq();
+    return mimVec.magnitudeSq();
 }
 
 /*
@@ -253,45 +251,45 @@ double OrthorhombicBox::minimumDistanceSquared(const Vec3<double> &i, const Vec3
 // Return random coordinate inside Box
 Vec3<double> OrthorhombicBox::randomCoordinate() const
 {
-	Vec3<double> pos;
-	pos.x = a_ * DissolveMath::random();
-	pos.y = b_ * DissolveMath::random();
-	pos.z = c_ * DissolveMath::random();
-	return pos;
+    Vec3<double> pos;
+    pos.x = a_ * DissolveMath::random();
+    pos.y = b_ * DissolveMath::random();
+    pos.z = c_ * DissolveMath::random();
+    return pos;
 }
 
 // Return folded coordinate (i.e. inside current Box)
 Vec3<double> OrthorhombicBox::fold(const Vec3<double> &r) const
 {
-	// Convert coordinate to fractional coords
-	Vec3<double> frac(r.x * ra_, r.y * rb_, r.z * rc_);
+    // Convert coordinate to fractional coords
+    Vec3<double> frac(r.x * ra_, r.y * rb_, r.z * rc_);
 
-	// Fold into Box and divide by integer Cell sizes
-	frac.x -= floor(frac.x);
-	frac.y -= floor(frac.y);
-	frac.z -= floor(frac.z);
-	frac.x *= a_;
-	frac.y *= b_;
-	frac.z *= c_;
-	return frac;
+    // Fold into Box and divide by integer Cell sizes
+    frac.x -= floor(frac.x);
+    frac.y -= floor(frac.y);
+    frac.z -= floor(frac.z);
+    frac.x *= a_;
+    frac.y *= b_;
+    frac.z *= c_;
+    return frac;
 }
 
 // Return folded fractional coordinate (i.e. inside current Box)
 Vec3<double> OrthorhombicBox::foldFrac(const Vec3<double> &r) const
 {
-	// Convert coordinate to fractional coords
-	Vec3<double> frac(r.x * ra_, r.y * rb_, r.z * rc_);
+    // Convert coordinate to fractional coords
+    Vec3<double> frac(r.x * ra_, r.y * rb_, r.z * rc_);
 
-	// Fold into Box and divide by integer Cell sizes
-	frac.x -= floor(frac.x);
-	frac.y -= floor(frac.y);
-	frac.z -= floor(frac.z);
-	return frac;
+    // Fold into Box and divide by integer Cell sizes
+    frac.x -= floor(frac.x);
+    frac.y -= floor(frac.y);
+    frac.z -= floor(frac.z);
+    return frac;
 }
 
 // Convert supplied fractional coordinates to real space
 Vec3<double> OrthorhombicBox::fracToReal(const Vec3<double> &r) const
 {
-	// Multiply by box lengths
-	return Vec3<double>(r.x * a_, r.y * b_, r.z * c_);
+    // Multiply by box lengths
+    return Vec3<double>(r.x * a_, r.y * b_, r.z * c_);
 }

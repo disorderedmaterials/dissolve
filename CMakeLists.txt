@@ -3,8 +3,8 @@ project(Dissolve)
 set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
-set(VERSION_MINOR "6")
-set(VERSION_PATCH "99")
+set(VERSION_MINOR "7")
+set(VERSION_PATCH "0")
 
 set(CMAKE_BUILD_TYPE "Release")
 
@@ -23,8 +23,8 @@ set(CMAKE_AUTOMOC OFF)
 # Set policy for automatic linkage of Qt libs to project
 CMAKE_POLICY(SET CMP0020 NEW)
 
-# Request C++11 Standard Support (Required for Qt 5.7 and certain other parts of the code)
-set(CMAKE_CXX_STANDARD 11)
+# Request C++17 Standard Support (Required for std::optional and auto types in lambda parameters)
+set(CMAKE_CXX_STANDARD 17)
 
 # Catch defines
 if(PARALLEL)

@@ -1,26 +1,25 @@
 /*
-	*** Kernel Flags
-	*** src/classes/kernelflags.h
-	Copyright T. Youngs 2012-2020
+    *** Kernel Flags
+    *** src/classes/kernelflags.h
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DISSOLVE_KERNELFLAGS_H
-#define DISSOLVE_KERNELFLAGS_H
+#pragma once
 
 // Forward Declarations
 /* none */
@@ -28,16 +27,15 @@
 // Kernel Flags
 class KernelFlags
 {
-      public:
-	// Flags controlling Energy and ForceKernel routines. Note that at most, only one Exclude-type flag and the ApplyMinimumImage flag should be or'd together
-	enum Flags
-	{
-		NoFlags = 0,
-		ExcludeSelfFlag = 1,
-		ExcludeIGEJFlag = 2,
-		ExcludeIntraIGEJFlag = 4,
-		ApplyMinimumImageFlag = 8
-	};
+    public:
+    // Flags controlling Energy and ForceKernel routines. Note that at most, only one Exclude-type flag and the
+    // ApplyMinimumImage flag should be or'd together
+    enum Flags
+    {
+        NoFlags = 0,
+        ExcludeSelfFlag = 1,
+        ExcludeIGEJFlag = 2,
+        ExcludeIntraIGEJFlag = 4,
+        ApplyMinimumImageFlag = 8
+    };
 };
-
-#endif

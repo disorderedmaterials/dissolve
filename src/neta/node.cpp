@@ -1,22 +1,22 @@
 /*
-	*** General Node for NETA
-	*** src/expression/node.cpp
-	Copyright T. Youngs 2015-2020
+    *** General Node for NETA
+    *** src/expression/node.cpp
+    Copyright T. Youngs 2015-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "neta/node.h"
@@ -30,24 +30,23 @@
 // Return enum options for SymbolToken
 EnumOptions<NETANode::ComparisonOperator> NETANode::comparisonOperators()
 {
-	static EnumOptionsList ComparisonOperatorOptions = EnumOptionsList() << EnumOption(EqualTo, "=") << EnumOption(NotEqualTo, "!=") << EnumOption(GreaterThan, ">") << EnumOption(LessThan, "<")
-									     << EnumOption(GreaterThanEqualTo, ">=") << EnumOption(LessThanEqualTo, "<=");
+    static EnumOptionsList ComparisonOperatorOptions =
+        EnumOptionsList() << EnumOption(EqualTo, "=") << EnumOption(NotEqualTo, "!=") << EnumOption(GreaterThan, ">")
+                          << EnumOption(LessThan, "<") << EnumOption(GreaterThanEqualTo, ">=")
+                          << EnumOption(LessThanEqualTo, "<=");
 
-	static EnumOptions<NETANode::ComparisonOperator> options("ComparisonOperator", ComparisonOperatorOptions);
+    static EnumOptions<NETANode::ComparisonOperator> options("ComparisonOperator", ComparisonOperatorOptions);
 
-	return options;
+    return options;
 }
-
-// Constructors
 
 NETANode::NETANode(NETADefinition *parent, NETANode::NodeType type) : ListItem<NETANode>()
 {
-	reverseLogic_ = false;
-	parent_ = parent;
-	nodeType_ = type;
+    reverseLogic_ = false;
+    parent_ = parent;
+    nodeType_ = type;
 }
 
-// Destructor
 NETANode::~NETANode() { clear(); }
 
 /*
@@ -74,33 +73,36 @@ NETANode *NETANode::lastBranchNode() { return branch_.last(); }
 int NETANode::nBranchNodes() const { return branch_.nItems(); }
 
 // Create connectivity node from current targets
-NETAConnectionNode *NETANode::createConnectionNode(std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes)
+NETAConnectionNode *
+NETANode::createConnectionNode(std::vector<Element *> targetElements,
+                               std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
 {
-	// Create the new node and own it
-	NETAConnectionNode *node = new NETAConnectionNode(parent_, targetElements, targetAtomTypes);
-	branch_.own(node);
+    // Create the new node and own it
+    NETAConnectionNode *node = new NETAConnectionNode(parent_, targetElements, targetAtomTypes);
+    branch_.own(node);
 
-	return node;
+    return node;
 }
 
 // Create presence node in the branch
-NETAPresenceNode *NETANode::createPresenceNode(std::vector<Element *> targetElements, std::vector<ForcefieldAtomType *> targetAtomTypes)
+NETAPresenceNode *NETANode::createPresenceNode(std::vector<Element *> targetElements,
+                                               std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
 {
-	// Create the new node and own it
-	NETAPresenceNode *node = new NETAPresenceNode(parent_, targetElements, targetAtomTypes);
-	branch_.own(node);
+    // Create the new node and own it
+    NETAPresenceNode *node = new NETAPresenceNode(parent_, targetElements, targetAtomTypes);
+    branch_.own(node);
 
-	return node;
+    return node;
 }
 
 // Create ring node in the branch
 NETARingNode *NETANode::createRingNode()
 {
-	// Create the new node and own it
-	NETARingNode *node = new NETARingNode(parent_);
-	branch_.own(node);
+    // Create the new node and own it
+    auto *node = new NETARingNode(parent_);
+    branch_.own(node);
 
-	return node;
+    return node;
 }
 
 /*
@@ -130,34 +132,34 @@ bool NETANode::setFlag(const char *flag, bool state) { return false; }
 // Return result of comparison between values provided
 bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
 {
-	bool result = false;
+    auto result = false;
 
-	switch (op)
-	{
-	case (EqualTo):
-		result = (lhsValue == rhsValue);
-		break;
-	case (NotEqualTo):
-		result = (lhsValue != rhsValue);
-		break;
-	case (GreaterThan):
-		result = (lhsValue > rhsValue);
-		break;
-	case (LessThan):
-		result = (lhsValue < rhsValue);
-		break;
-	case (GreaterThanEqualTo):
-		result = (lhsValue >= rhsValue);
-		break;
-	case (LessThanEqualTo):
-		result = (lhsValue <= rhsValue);
-		break;
-	default:
-		printf("Internal Error: Unrecognised operator (%i) in NETANode::valueComparison.\n", op);
-		break;
-	}
+    switch (op)
+    {
+        case (EqualTo):
+            result = (lhsValue == rhsValue);
+            break;
+        case (NotEqualTo):
+            result = (lhsValue != rhsValue);
+            break;
+        case (GreaterThan):
+            result = (lhsValue > rhsValue);
+            break;
+        case (LessThan):
+            result = (lhsValue < rhsValue);
+            break;
+        case (GreaterThanEqualTo):
+            result = (lhsValue >= rhsValue);
+            break;
+        case (LessThanEqualTo):
+            result = (lhsValue <= rhsValue);
+            break;
+        default:
+            printf("Internal Error: Unrecognised operator (%i) in NETANode::valueComparison.\n", op);
+            break;
+    }
 
-	return result;
+    return result;
 }
 
 /*
@@ -170,19 +172,19 @@ void NETANode::setReverseLogic() { reverseLogic_ = true; }
 // Evaluate the node and return its score
 int NETANode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &atomData) const
 {
-	int totalScore = 0;
+    auto totalScore = 0;
 
-	// Loop over nodes in branch in sequence
-	ListIterator<NETANode> branchIterator(branch_);
-	while (NETANode *node = branchIterator.iterate())
-	{
-		// Get the score from the node, returning early if NoMatch is encountered
-		int nodeScore = node->score(i, atomData);
-		if (nodeScore == NETANode::NoMatch)
-			return NETANode::NoMatch;
+    // Loop over nodes in branch in sequence
+    ListIterator<NETANode> branchIterator(branch_);
+    while (NETANode *node = branchIterator.iterate())
+    {
+        // Get the score from the node, returning early if NoMatch is encountered
+        auto nodeScore = node->score(i, atomData);
+        if (nodeScore == NETANode::NoMatch)
+            return NETANode::NoMatch;
 
-		totalScore += nodeScore;
-	}
+        totalScore += nodeScore;
+    }
 
-	return totalScore;
+    return totalScore;
 }

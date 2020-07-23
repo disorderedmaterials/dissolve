@@ -1,22 +1,22 @@
 /*
-	*** General Node for Expression
-	*** src/expression/node.cpp
-	Copyright T. Youngs 2015-2020
+    *** General Node for Expression
+    *** src/expression/node.cpp
+    Copyright T. Youngs 2015-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "expression/node.h"
@@ -30,27 +30,25 @@
 // Local constant
 const int MAXNODEARGS = 10;
 
-// Constructors
 ExpressionNode::ExpressionNode() : ListItem<ExpressionNode>()
 {
-	// Private variables
-	readOnly_ = true;
-	parent_ = NULL;
-	nextArgument = NULL;
-	prevArgument = NULL;
-	nodeType_ = ExpressionNode::BasicNode;
+    // Private variables
+    readOnly_ = true;
+    parent_ = NULL;
+    nextArgument = NULL;
+    prevArgument = NULL;
+    nodeType_ = ExpressionNode::BasicNode;
 }
 
-// Destructor
 ExpressionNode::~ExpressionNode() {}
 
 // Copy data
 void ExpressionNode::copy(ExpressionNode *source)
 {
-	nodeType_ = source->nodeType_;
-	parent_ = source->parent_;
-	args_ = source->args_;
-	readOnly_ = source->readOnly_;
+    nodeType_ = source->nodeType_;
+    parent_ = source->parent_;
+    args_ = source->args_;
+    readOnly_ = source->readOnly_;
 }
 
 // Retrieve node type
@@ -74,21 +72,21 @@ int ExpressionNode::nArgs() const { return args_.nItems(); }
 // Set argument specified
 bool ExpressionNode::setArg(int i, ExpressionValue &result)
 {
-	if ((i < 0) || (i >= args_.nItems()))
-	{
-		Messenger::printVerbose("ExpressionNode::setArg : Argument index %i is out of range (node = %p).\n", i, this);
-		return false;
-	}
+    if ((i < 0) || (i >= args_.nItems()))
+    {
+        Messenger::printVerbose("ExpressionNode::setArg : Argument index %i is out of range (node = %p).\n", i, this);
+        return false;
+    }
 
-	// Check read-only attribute of argument
-	if (args_[i]->item()->readOnly())
-	{
-		args_[i]->item()->nodePrint(0);
-		// printf("Argument %i is read-only and can't be set.\n", i);
-		return false;
-	}
+    // Check read-only attribute of argument
+    if (args_[i]->item()->readOnly())
+    {
+        args_[i]->item()->nodePrint(0);
+        // printf("Argument %i is read-only and can't be set.\n", i);
+        return false;
+    }
 
-	return args_[i]->item()->set(result);
+    return args_[i]->item()->set(result);
 }
 
 // Return whether argument i was given
@@ -97,36 +95,36 @@ bool ExpressionNode::hasArg(int i) { return (i < args_.nItems()); }
 // Add list of arguments formas as a plain List<Node>, beginning from supplied list head
 void ExpressionNode::addListArguments(ExpressionNode *leaf)
 {
-	for (ExpressionNode *node = leaf; node != NULL; node = node->next())
-		args_.append(node);
+    for (auto *node = leaf; node != NULL; node = node->next())
+        args_.append(node);
 }
 
 // Add list of arguments formed as a linked Node list
 void ExpressionNode::addJoinedArguments(ExpressionNode *lastleaf)
 {
-	/*
-	 * The supplied leaf may be a single node, or it may be a list of nodes beginning at the *last* node (this is the case if Joined by the parser)
-	 * Therefore, must walk backwards through the list first to get to the head...
-	 */
-	ExpressionNode *first;
-	for (first = lastleaf; first != NULL; first = first->prevArgument)
-		if (first->prevArgument == NULL)
-			break;
-	for (ExpressionNode *node = first; node != NULL; node = node->nextArgument)
-		args_.append(node);
+    /*
+     * The supplied leaf may be a single node, or it may be a list of nodes beginning at the *last* node (this is the case
+     * if Joined by the parser) Therefore, must walk backwards through the list first to get to the head...
+     */
+    ExpressionNode *first;
+    for (first = lastleaf; first != NULL; first = first->prevArgument)
+        if (first->prevArgument == NULL)
+            break;
+    for (auto *node = first; node != NULL; node = node->nextArgument)
+        args_.append(node);
 }
 
 // Add multiple arguments to node
 void ExpressionNode::addArguments(int nargs, ...)
 {
-	// Create variable argument parser
-	va_list vars;
-	va_start(vars, nargs);
+    // Create variable argument parser
+    va_list vars;
+    va_start(vars, nargs);
 
-	// Add arguments in the order they were provided
-	for (int n = 0; n < nargs; n++)
-		addArgument(va_arg(vars, ExpressionNode *));
-	va_end(vars);
+    // Add arguments in the order they were provided
+    for (int n = 0; n < nargs; n++)
+        addArgument(va_arg(vars, ExpressionNode *));
+    va_end(vars);
 }
 
 // Add multiple arguments to node
@@ -135,69 +133,71 @@ void ExpressionNode::addArgument(ExpressionNode *arg) { args_.append(arg); }
 // Return (execute) argument specified
 bool ExpressionNode::arg(int i, ExpressionValue &result)
 {
-	if ((i < 0) || (i >= args_.nItems()))
-	{
-		Messenger::printVerbose("ExpressionNode::arg : Argument index %i is out of range (node = %p).\n", i, this);
-		return false;
-	}
-	return args_[i]->item()->execute(result);
+    if ((i < 0) || (i >= args_.nItems()))
+    {
+        Messenger::printVerbose("ExpressionNode::arg : Argument index %i is out of range (node = %p).\n", i, this);
+        return false;
+    }
+    return args_[i]->item()->execute(result);
 }
 
 // Return (execute) argument specified as a bool
 bool ExpressionNode::argb(int i)
 {
-	if ((i < 0) || (i >= args_.nItems()))
-	{
-		Messenger::printVerbose("ExpressionNode::argb : Argument index %i is out of range (node = %p).\n", i, this);
-		return false;
-	}
+    if ((i < 0) || (i >= args_.nItems()))
+    {
+        Messenger::printVerbose("ExpressionNode::argb : Argument index %i is out of range (node = %p).\n", i, this);
+        return false;
+    }
 
-	ExpressionValue argValue;
-	if (!args_[i]->item()->execute(argValue))
-		Messenger::printVerbose("Couldn't retrieve argument %i.\n", i + 1);
+    ExpressionValue argValue;
+    if (!args_[i]->item()->execute(argValue))
+        Messenger::printVerbose("Couldn't retrieve argument %i.\n", i + 1);
 
-	return (argValue.isInteger() ? argValue.asInteger() > 0 : argValue.asDouble() > 0.0);
+    return (argValue.isInteger() ? argValue.asInteger() > 0 : argValue.asDouble() > 0.0);
 }
 
 // Return (execute) argument specified as an integer
 int ExpressionNode::argi(int i)
 {
-	if ((i < 0) || (i >= args_.nItems()))
-	{
-		Messenger::printVerbose("ExpressionNode::argi : Argument index %i is out of range (node = %p).\n", i, this);
-		return false;
-	}
+    if ((i < 0) || (i >= args_.nItems()))
+    {
+        Messenger::printVerbose("ExpressionNode::argi : Argument index %i is out of range (node = %p).\n", i, this);
+        return false;
+    }
 
-	ExpressionValue argValue;
-	if (!args_[i]->item()->execute(argValue))
-		Messenger::printVerbose("Couldn't retrieve argument %i.\n", i + 1);
+    ExpressionValue argValue;
+    if (!args_[i]->item()->execute(argValue))
+        Messenger::printVerbose("Couldn't retrieve argument %i.\n", i + 1);
 
-	return argValue.asInteger();
+    return argValue.asInteger();
 }
 
 // Return (execute) argument specified as a double
 double ExpressionNode::argd(int i)
 {
-	if ((i < 0) || (i >= args_.nItems()))
-	{
-		Messenger::printVerbose("ExpressionNode::argd : Argument index %i is out of range (node = %p).\n", i, this);
-		return false;
-	}
+    if ((i < 0) || (i >= args_.nItems()))
+    {
+        Messenger::printVerbose("ExpressionNode::argd : Argument index %i is out of range (node = %p).\n", i, this);
+        return false;
+    }
 
-	ExpressionValue argValue;
-	if (!args_[i]->item()->execute(argValue))
-		Messenger::printVerbose("Couldn't retrieve argument %i.\n", i + 1);
+    ExpressionValue argValue;
+    if (!args_[i]->item()->execute(argValue))
+        Messenger::printVerbose("Couldn't retrieve argument %i.\n", i + 1);
 
-	return argValue.asDouble();
+    return argValue.asDouble();
 }
 
 // Return the Node corresponding to the argument, rather than executing it
 ExpressionNode *ExpressionNode::argNode(int i)
 {
-	if ((i < 0) || (i > args_.nItems()))
-	{
-		Messenger::printVerbose("ExpressionNode::argNode : Argument index %i is out of range for returning the argument node (node = %p).\n", i, this);
-		return NULL;
-	}
-	return args_[i]->item();
+    if ((i < 0) || (i > args_.nItems()))
+    {
+        Messenger::printVerbose("ExpressionNode::argNode : Argument index %i is out of range for returning the "
+                                "argument node (node = %p).\n",
+                                i, this);
+        return NULL;
+    }
+    return args_[i]->item();
 }

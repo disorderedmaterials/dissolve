@@ -1,22 +1,22 @@
 /*
-	*** Atom Definition
-	*** src/classes/atom.cpp
-	Copyright T. Youngs 2012-2020
+    *** Atom Definition
+    *** src/classes/atom.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "classes/atom.h"
@@ -24,10 +24,8 @@
 #include "classes/atomtype.h"
 #include "classes/speciesatom.h"
 
-// Constructor
 Atom::Atom() { clear(); }
 
-// Destructor
 Atom::~Atom() {}
 
 /*
@@ -37,13 +35,13 @@ Atom::~Atom() {}
 // Clear object, ready for re-use
 void Atom::clear()
 {
-	molecule_ = NULL;
-	speciesAtom_ = NULL;
-	cell_ = NULL;
+    molecule_ = NULL;
+    speciesAtom_ = NULL;
+    cell_ = NULL;
 
-	// Properties
-	localTypeIndex_ = -1;
-	masterTypeIndex_ = -1;
+    // Properties
+    localTypeIndex_ = -1;
+    masterTypeIndex_ = -1;
 }
 
 /*
@@ -77,19 +75,19 @@ int Atom::localTypeIndex() const { return localTypeIndex_; }
 // Set master AtomType index
 void Atom::setMasterTypeIndex(int id)
 {
-	if (masterTypeIndex_ != -1)
-		Messenger::warn("Warning: Overwriting master AtomType index for Atom '%p'.\n", this);
-	masterTypeIndex_ = id;
+    if (masterTypeIndex_ != -1)
+        Messenger::warn("Warning: Overwriting master AtomType index for Atom '%p'.\n", this);
+    masterTypeIndex_ = id;
 }
 
 // Return master AtomType index
 int Atom::masterTypeIndex() const
 {
 #ifdef CHECKS
-	if (masterTypeIndex_ == -1)
-		Messenger::warn("Global AtomType index has not yet been set for Atom '%p'.\n", this);
+    if (masterTypeIndex_ == -1)
+        Messenger::warn("Global AtomType index has not yet been set for Atom '%p'.\n", this);
 #endif
-	return masterTypeIndex_;
+    return masterTypeIndex_;
 }
 
 /*
@@ -138,21 +136,22 @@ void Atom::translateCoordinates(double dx, double dy, double dz) { setCoordinate
 double Atom::scaling(Atom *j) const
 {
 #ifdef CHECKS
-	if (!speciesAtom_)
-	{
-		Messenger::error("Source SpeciesAtom pointer has not been set in Atom %i, so can't return scaling().\n", arrayIndex());
-		return 0.0;
-	}
-	if (!j)
-	{
-		Messenger::error("Partner Atom 'j' not passed, so can't return scaling().\n");
-		return 0.0;
-	}
-	if (!j->speciesAtom())
-	{
-		Messenger::error("SpeciesAtom pointer has not been set in partner Atom %i, so can't return scaling().\n", j->arrayIndex());
-		return 0.0;
-	}
+    if (!speciesAtom_)
+    {
+        Messenger::error("Source SpeciesAtom pointer has not been set in Atom %i, so can't return scaling().\n", arrayIndex());
+        return 0.0;
+    }
+    if (!j)
+    {
+        Messenger::error("Partner Atom 'j' not passed, so can't return scaling().\n");
+        return 0.0;
+    }
+    if (!j->speciesAtom())
+    {
+        Messenger::error("SpeciesAtom pointer has not been set in partner Atom %i, so can't return scaling().\n",
+                         j->arrayIndex());
+        return 0.0;
+    }
 #endif
-	return speciesAtom_->scaling(j->speciesAtom());
+    return speciesAtom_->scaling(j->speciesAtom());
 }

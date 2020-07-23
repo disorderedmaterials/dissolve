@@ -60,7 +60,6 @@ Configuration  'Water100k'
     AddSpecies
       Species  'Water'
       Population  '100000'
-      ScaleBox  True
       Density  'rho'  atoms/A3
       Rotate  True
       Positioning  Random

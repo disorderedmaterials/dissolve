@@ -1,22 +1,22 @@
 /*
-	*** Renderable Data
-	*** src/gui/view/render/renderable.cpp
-	Copyright T. Youngs 2013-2020
+    *** Renderable Data
+    *** src/gui/view/render/renderable.cpp
+    Copyright T. Youngs 2013-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/render/renderable.h"
@@ -34,55 +34,57 @@ RefList<Renderable> Renderable::instances_;
 // Return enum options for RenderableType
 EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 {
-	static EnumOptionsList RenderableTypeOptions = EnumOptionsList() << EnumOption(Renderable::ConfigurationRenderable, "Configuration") << EnumOption(Renderable::Data1DRenderable, "Data1D")
-									 << EnumOption(Renderable::Data2DRenderable, "Data2D") << EnumOption(Renderable::Data3DRenderable, "Data3D")
-									 << EnumOption(Renderable::SpeciesRenderable, "Species") << EnumOption(Renderable::SpeciesSiteRenderable, "SpeciesSite");
+    static EnumOptionsList RenderableTypeOptions = EnumOptionsList()
+                                                   << EnumOption(Renderable::ConfigurationRenderable, "Configuration")
+                                                   << EnumOption(Renderable::Data1DRenderable, "Data1D")
+                                                   << EnumOption(Renderable::Data2DRenderable, "Data2D")
+                                                   << EnumOption(Renderable::Data3DRenderable, "Data3D")
+                                                   << EnumOption(Renderable::SpeciesRenderable, "Species")
+                                                   << EnumOption(Renderable::SpeciesSiteRenderable, "SpeciesSite");
 
-	static EnumOptions<Renderable::RenderableType> options("ErrorType", RenderableTypeOptions);
+    static EnumOptions<Renderable::RenderableType> options("ErrorType", RenderableTypeOptions);
 
-	return options;
+    return options;
 }
 
-// Constructor
 Renderable::Renderable(Renderable::RenderableType type, const char *objectTag)
 {
-	// Instance
-	instances_.append(this);
+    // Instance
+    instances_.append(this);
 
-	// Identity
-	type_ = type;
-	name_ = "New Renderable";
+    // Identity
+    type_ = type;
+    name_ = "New Renderable";
 
-	// Data tag
-	objectTag_ = objectTag;
+    // Data tag
+    objectTag_ = objectTag;
 
-	// Group
-	group_ = NULL;
+    // Group
+    group_ = NULL;
 
-	// Transform
-	valuesTransformDataVersion_ = -1;
-	limitsMin_.zero();
-	limitsMax_.set(10.0, 10.0, 10.0);
-	positiveLimitsMin_.set(0.1, 0.1, 0.1);
-	positiveLimitsMax_.set(10.0, 10.0, 10.0);
-	valuesMin_ = 0.0;
-	valuesMax_ = 10.0;
-	positiveValuesMin_ = 0.0;
-	positiveValuesMax_ = 10.0;
-	valuesTransform_.setEnabled(false);
-	valuesTransform_.setEquation("value");
+    // Transform
+    valuesTransformDataVersion_ = -1;
+    limitsMin_.zero();
+    limitsMax_.set(10.0, 10.0, 10.0);
+    positiveLimitsMin_.set(0.1, 0.1, 0.1);
+    positiveLimitsMax_.set(10.0, 10.0, 10.0);
+    valuesMin_ = 0.0;
+    valuesMax_ = 10.0;
+    positiveValuesMin_ = 0.0;
+    positiveValuesMax_ = 10.0;
+    valuesTransform_.setEnabled(false);
+    valuesTransform_.setEquation("value");
 
-	// Rendering Versions
-	lastDataVersion_ = -1;
-	lastAxesVersion_ = -1;
-	lastStyleVersion_ = -1;
+    // Rendering Versions
+    lastDataVersion_ = -1;
+    lastAxesVersion_ = -1;
+    lastStyleVersion_ = -1;
 
-	// Display
-	visible_ = true;
-	styleVersion_ = 0;
+    // Display
+    visible_ = true;
+    styleVersion_ = 0;
 }
 
-// Destructor
 Renderable::~Renderable() { instances_.remove(this); }
 
 /*
@@ -114,109 +116,109 @@ const char *Renderable::objectTag() const { return objectTag_.get(); }
 // Invalidate renderable data for specified object tag
 int Renderable::invalidate(const char *objectTag)
 {
-	int count = 0;
-	for (Renderable *rend : instances_)
-	{
-		if (!DissolveSys::sameString(objectTag, rend->objectTag_))
-			continue;
+    auto count = 0;
+    for (Renderable *rend : instances_)
+    {
+        if (!DissolveSys::sameString(objectTag, rend->objectTag_))
+            continue;
 
-		rend->invalidateDataSource();
+        rend->invalidateDataSource();
 
-		++count;
-	}
-	return count;
+        ++count;
+    }
+    return count;
 }
 
 // Invalidate all renderables
 void Renderable::invalidateAll()
 {
-	for (Renderable *rend : instances_)
-		rend->invalidateDataSource();
+    for (Renderable *rend : instances_)
+        rend->invalidateDataSource();
 }
 
 // Return coordinate minima of all data (after value transform if enabled)
 Vec3<double> Renderable::limitsMin()
 {
-	// Make sure transformed values are up to date
-	transformValues();
+    // Make sure transformed values are up to date
+    transformValues();
 
-	return limitsMin_;
+    return limitsMin_;
 }
 
 // Return coordinate maxima of all data (after value transform if enabled)
 Vec3<double> Renderable::limitsMax()
 {
-	// Make sure transformed values are up to date
-	transformValues();
+    // Make sure transformed values are up to date
+    transformValues();
 
-	return limitsMax_;
+    return limitsMax_;
 }
 
 // Return positive coordinate minima of all data (after value transform if enabled)
 Vec3<double> Renderable::positiveLimitsMin()
 {
-	// Make sure transformed values are up to date
-	transformValues();
+    // Make sure transformed values are up to date
+    transformValues();
 
-	return positiveLimitsMin_;
+    return positiveLimitsMin_;
 }
 
 // Return positive coordinate maxima of all data (after value transform if enabled)
 Vec3<double> Renderable::positiveLimitsMax()
 {
-	// Make sure transformed values are up to date
-	transformValues();
+    // Make sure transformed values are up to date
+    transformValues();
 
-	return positiveLimitsMax_;
+    return positiveLimitsMax_;
 }
 
 // Return minimum of transformed values
 double Renderable::valuesMin()
 {
-	// Make sure transformed values are up to date
-	transformValues();
+    // Make sure transformed values are up to date
+    transformValues();
 
-	return valuesMin_;
+    return valuesMin_;
 }
 
 // Return maximum of transformed values
 double Renderable::valuesMax()
 {
-	// Make sure transformed values are up to date
-	transformValues();
+    // Make sure transformed values are up to date
+    transformValues();
 
-	return valuesMax_;
+    return valuesMax_;
 }
 
 // Return minimum positive of transformed values
 double Renderable::positiveValuesMin()
 {
-	// Make sure transformed values are up to date
-	transformValues();
+    // Make sure transformed values are up to date
+    transformValues();
 
-	return positiveValuesMin_;
+    return positiveValuesMin_;
 }
 
 // Return maximum positive of transformed values
 double Renderable::positiveValuesMax()
 {
-	// Make sure transformed values are up to date
-	transformValues();
+    // Make sure transformed values are up to date
+    transformValues();
 
-	return positiveValuesMax_;
+    return positiveValuesMax_;
 }
 
 // Set values transform equation specified
 void Renderable::setValuesTransformEquation(const char *transformEquation)
 {
-	valuesTransform_.setEquation(transformEquation);
+    valuesTransform_.setEquation(transformEquation);
 
-	// Make sure transformed data is up to date
-	if (valuesTransform_.enabled())
-	{
-		valuesTransformDataVersion_ = -1;
-		transformValues();
-	}
+    // Make sure transformed data is up to date
+    if (valuesTransform_.enabled())
+    {
+        valuesTransformDataVersion_ = -1;
+        transformValues();
+    }
 }
 
 // Return values transform equation
@@ -228,11 +230,11 @@ bool Renderable::valuesTransformEquationValid() const { return valuesTransform_.
 // Set whether values transform is enabled
 void Renderable::setValuesTransformEnabled(bool enabled)
 {
-	valuesTransform_.setEnabled(enabled);
+    valuesTransform_.setEnabled(enabled);
 
-	// Make sure transformed data is up to date
-	valuesTransformDataVersion_ = -1;
-	transformValues();
+    // Make sure transformed data is up to date
+    valuesTransformDataVersion_ = -1;
+    transformValues();
 }
 
 // Return whether values transform is enabled
@@ -264,15 +266,18 @@ void Renderable::setVisible(bool visible) { visible_ = visible; }
 // Return whether Renderable is visible
 bool Renderable::isVisible() const
 {
-	// Group visibility overrides our own (*if* we are currently visible)...
-	return (visible_ ? (group_ ? group_->isVisible() : visible_) : false);
+    // Group visibility overrides our own (*if* we are currently visible)...
+    return (visible_ ? (group_ ? group_->isVisible() : visible_) : false);
 }
 
 // Set basic colour
 void Renderable::setColour(int r, int g, int b, int a) { colour_.setSingleColour(QColor(r, g, b, a)); }
 
 // Set basic colour
-void Renderable::setColour(StockColours::StockColour stockColour) { colour_.setSingleColour(StockColours::stockColour(stockColour)); }
+void Renderable::setColour(StockColours::StockColour stockColour)
+{
+    colour_.setSingleColour(StockColours::stockColour(stockColour));
+}
 
 // Return local colour definition for display
 ColourDefinition &Renderable::colour() { return colour_; }
@@ -294,7 +299,10 @@ int Renderable::styleVersion() const { return styleVersion_; }
 Primitive *Renderable::createPrimitive(GLenum type, bool colourData) { return primitives_.add(type, colourData); }
 
 // Reinitialise managed Primitive list to the size specified
-void Renderable::reinitialisePrimitives(int newSize, GLenum type, bool colourData) { primitives_.reinitialise(newSize, type, colourData); }
+void Renderable::reinitialisePrimitives(int newSize, GLenum type, bool colourData)
+{
+    primitives_.reinitialise(newSize, type, colourData);
+}
 
 // Return number of primitives managed by the Renderable
 int Renderable::nPrimitives() const { return primitives_.nPrimitives(); }
@@ -306,56 +314,58 @@ Primitive *Renderable::primitive(int n) { return primitives_[n]; }
 void Renderable::removePrimitive(Primitive *primitive) { primitives_.remove(primitive); }
 
 // Update primitives and send to display
-void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, bool pushAndPop, const QOpenGLContext *context, double pixelScaling)
+void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, bool pushAndPop, const QOpenGLContext *context,
+                                         double pixelScaling)
 {
-	// If this Renderable is not visible, return now
-	if (!visible_)
-		return;
+    // If this Renderable is not visible, return now
+    if (!visible_)
+        return;
 
-	// Grab axes for the View
-	const Axes &axes = view.constAxes();
+    // Grab axes for the View
+    const Axes &axes = view.constAxes();
 
-	// Grab copy of the relevant colour definition for this Renderable
-	const ColourDefinition &colourDefinition = colour();
+    // Grab copy of the relevant colour definition for this Renderable
+    const ColourDefinition &colourDefinition = colour();
 
-	// Check whether the primitive for this Renderable needs updating
-	bool upToDate = true;
-	if (forceUpdate)
-		upToDate = false;
-	else if (lastAxesVersion_ != axes.version())
-		upToDate = false;
-	else if (!DissolveSys::sameString(lastColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()), true))
-		upToDate = false;
-	else if (lastDataVersion_ != dataVersion())
-		upToDate = false;
-	else if (lastStyleVersion_ != styleVersion())
-		upToDate = false;
+    // Check whether the primitive for this Renderable needs updating
+    auto upToDate = true;
+    if (forceUpdate)
+        upToDate = false;
+    else if (lastAxesVersion_ != axes.version())
+        upToDate = false;
+    else if (!DissolveSys::sameString(lastColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()),
+                                      true))
+        upToDate = false;
+    else if (lastDataVersion_ != dataVersion())
+        upToDate = false;
+    else if (lastStyleVersion_ != styleVersion())
+        upToDate = false;
 
-	// If the primitive is out of date, recreate it's data.
-	if (!upToDate)
-	{
-		// Recreate Primitives for the underlying data
-		recreatePrimitives(view, colourDefinition);
+    // If the primitive is out of date, recreate it's data.
+    if (!upToDate)
+    {
+        // Recreate Primitives for the underlying data
+        recreatePrimitives(view, colourDefinition);
 
-		// Pop old Primitive instance (if they exist)
-		if (primitives_.nInstances() != 0)
-			primitives_.popInstance(context);
-	}
+        // Pop old Primitive instance (if they exist)
+        if (primitives_.nInstances() != 0)
+            primitives_.popInstance(context);
+    }
 
-	// If there are no current instances, or we are forcing a push/pop of an instance, push an instance here
-	if ((primitives_.nInstances() == 0) || pushAndPop)
-		primitives_.pushInstance(context);
+    // If there are no current instances, or we are forcing a push/pop of an instance, push an instance here
+    if ((primitives_.nInstances() == 0) || pushAndPop)
+        primitives_.pushInstance(context);
 
-	// Send to GL
-	sendToGL(pixelScaling);
+    // Send to GL
+    sendToGL(pixelScaling);
 
-	// Pop current instances if required
-	if (pushAndPop)
-		primitives_.popInstance(context);
+    // Pop current instances if required
+    if (pushAndPop)
+        primitives_.popInstance(context);
 
-	// Store version points for the up-to-date primitive
-	lastAxesVersion_ = axes.version();
-	lastColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.version());
-	lastDataVersion_ = dataVersion();
-	lastStyleVersion_ = styleVersion();
+    // Store version points for the up-to-date primitive
+    lastAxesVersion_ = axes.version();
+    lastColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.version());
+    lastDataVersion_ = dataVersion();
+    lastStyleVersion_ = styleVersion();
 }

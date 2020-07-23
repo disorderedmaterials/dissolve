@@ -1,22 +1,22 @@
 /*
-	*** Procedure Editor Functions
-	*** src/gui/procedureeditor_funcs.cpp
-	Copyright T. Youngs 2012-2020
+    *** Procedure Editor Functions
+    *** src/gui/procedureeditor_funcs.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "base/lineparser.h"
@@ -27,15 +27,14 @@
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 
-// Constructor / Destructor
 ProcedureEditor::ProcedureEditor(QWidget *parent) : QWidget(parent)
 {
-	ui_.setupUi(this);
+    ui_.setupUi(this);
 
-	procedure_ = NULL;
-	chart_ = NULL;
+    procedure_ = NULL;
+    chart_ = NULL;
 
-	refreshing_ = false;
+    refreshing_ = false;
 }
 
 ProcedureEditor::~ProcedureEditor() {}
@@ -47,20 +46,20 @@ ProcedureEditor::~ProcedureEditor() {}
 // Set up to display / edit the target Procedure
 void ProcedureEditor::setUp(Procedure *procedure, const CoreData &coreData)
 {
-	procedure_ = procedure;
+    procedure_ = procedure;
 
-	// Create the ProcedureChart and add it to the scroll area
-	chart_ = new ProcedureChart(procedure, coreData);
-	chart_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
-	ui_.ProcedureScrollArea->setWidget(chart_);
-	ui_.ProcedureScrollArea->setWidgetResizable(true);
-	ui_.ProcedureScrollArea->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
+    // Create the ProcedureChart and add it to the scroll area
+    chart_ = new ProcedureChart(procedure, coreData);
+    chart_->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    ui_.ProcedureScrollArea->setWidget(chart_);
+    ui_.ProcedureScrollArea->setWidgetResizable(true);
+    ui_.ProcedureScrollArea->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 
-	// Connect signals / slots
-	connect(chart_, SIGNAL(dataModified()), this, SLOT(chartDataModified()));
-	connect(chart_, SIGNAL(requiredSizeChanged()), this, SLOT(chartSizeChanged()));
+    // Connect signals / slots
+    connect(chart_, SIGNAL(dataModified()), this, SLOT(chartDataModified()));
+    connect(chart_, SIGNAL(requiredSizeChanged()), this, SLOT(chartSizeChanged()));
 
-	updateControls();
+    updateControls();
 }
 
 // 	// Add MimeTreeWidgetItems for each Module, adding them to a parent category item
@@ -74,8 +73,8 @@ void ProcedureEditor::setUp(Procedure *procedure, const CoreData &coreData)
 // 		// Find category for this Module (if it exists) or create a new one
 // 		MimeTreeWidgetItem* categoryItem = NULL;
 // 		RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
-// 		while (categoryItem = categoryIterator.iterate()) if (DissolveSys::sameString(module->category(), categoryIterator.currentData())) break;
-// 		if (categoryItem == NULL)
+// 		while (categoryItem = categoryIterator.iterate()) if (DissolveSys::sameString(module->category(),
+// categoryIterator.currentData())) break; 		if (categoryItem == NULL)
 // 		{
 // 			categoryItem = new MimeTreeWidgetItem((QTreeWidget*)NULL, 1000);
 // 			categoryItem->setText(0, module->category());
@@ -96,8 +95,8 @@ void ProcedureEditor::setUp(Procedure *procedure, const CoreData &coreData)
 // 	// Populate the available Modules tree with the categories we now have
 // 	ui_.AvailableModulesTree->clear();
 // 	RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
-// 	while (MimeTreeWidgetItem* categoryItem = categoryIterator.iterate()) ui_.AvailableModulesTree->addTopLevelItem(categoryItem);
-// 	ui_.AvailableModulesTree->resizeColumnToContents(0);
+// 	while (MimeTreeWidgetItem* categoryItem = categoryIterator.iterate())
+// ui_.AvailableModulesTree->addTopLevelItem(categoryItem); 	ui_.AvailableModulesTree->resizeColumnToContents(0);
 // 	ui_.AvailableModulesTree->sortByColumn(0, Qt::AscendingOrder);
 // 	ui_.AvailableModulesTree->setSortingEnabled(true);
 // 	ui_.AvailableModulesTree->expandAll();
@@ -112,25 +111,25 @@ void ProcedureEditor::setUp(Procedure *procedure, const CoreData &coreData)
 // Update controls in tab
 void ProcedureEditor::updateControls()
 {
-	refreshing_ = true;
+    refreshing_ = true;
 
-	chart_->updateControls();
+    chart_->updateControls();
 
-	refreshing_ = false;
+    refreshing_ = false;
 }
 
 // Disable sensitive controls within tab
 void ProcedureEditor::disableSensitiveControls()
 {
-	// 	ui_.AvailableModulesTree->setEnabled(false);
-	chart_->disableSensitiveControls();
+    // 	ui_.AvailableModulesTree->setEnabled(false);
+    chart_->disableSensitiveControls();
 }
 
 // Enable sensitive controls within tab
 void ProcedureEditor::enableSensitiveControls()
 {
-	// 	ui_.AvailableModulesTree->setEnabled(true);
-	chart_->enableSensitiveControls();
+    // 	ui_.AvailableModulesTree->setEnabled(true);
+    chart_->enableSensitiveControls();
 }
 
 /*
@@ -159,7 +158,8 @@ void ProcedureEditor::enableSensitiveControls()
 // 			while (Configuration* cfg = configIterator.iterate())
 // 			{
 // 				newInstance->addTargetConfiguration(cfg);
-// 				if ((newInstance->nRequiredTargets() != -1) && (newInstance->nRequiredTargets() == newInstance->nTargetConfigurations())) break;
+// 				if ((newInstance->nRequiredTargets() != -1) && (newInstance->nRequiredTargets() ==
+// newInstance->nTargetConfigurations())) break;
 // 			}
 // 		}
 // 	}
@@ -179,19 +179,19 @@ void ProcedureEditor::enableSensitiveControls()
 // Write widget state through specified LineParser
 bool ProcedureEditor::writeState(LineParser &parser) const
 {
-	if (!chart_->writeState(parser))
-		return false;
+    if (!chart_->writeState(parser))
+        return false;
 
-	return true;
+    return true;
 }
 
 // Read widget state through specified LineParser
 bool ProcedureEditor::readState(LineParser &parser)
 {
-	if (!chart_->readState(parser))
-		return false;
+    if (!chart_->readState(parser))
+        return false;
 
-	return true;
+    return true;
 }
 
 /*

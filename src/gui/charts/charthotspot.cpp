@@ -1,35 +1,34 @@
 /*
-	*** Chart Hot Spot
-	*** src/gui/charts/charthotspot.cpp
-	Copyright T. Youngs 2012-2020
+    *** Chart Hot Spot
+    *** src/gui/charts/charthotspot.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/charts/charthotspot.h"
 #include <stdio.h>
 
-// Constructor
 ChartHotSpot::ChartHotSpot() : ListItem<ChartHotSpot>()
 {
-	row_ = -1;
-	column_ = -1;
-	type_ = ChartHotSpot::nHotSpotTypes;
-	blockAfter_ = NULL;
-	blockBefore_ = NULL;
+    row_ = -1;
+    column_ = -1;
+    type_ = ChartHotSpot::nHotSpotTypes;
+    blockAfter_ = NULL;
+    blockBefore_ = NULL;
 }
 
 ChartHotSpot::~ChartHotSpot() {}
@@ -47,8 +46,8 @@ ChartHotSpot::HotSpotType ChartHotSpot::type() const { return type_; }
 // Set location information
 void ChartHotSpot::setLocation(int row, int column)
 {
-	row_ = row;
-	column_ = column;
+    row_ = row;
+    column_ = column;
 }
 
 // Return row in which the hotspot exists
@@ -75,8 +74,8 @@ bool ChartHotSpot::contains(QPoint p) const { return geometry_.contains(p); }
 // Set blocks urrounding the hotspot
 void ChartHotSpot::setSurroundingBlocks(ChartBlock *blockBefore, ChartBlock *blockAfter)
 {
-	blockBefore_ = blockBefore;
-	blockAfter_ = blockAfter;
+    blockBefore_ = blockBefore;
+    blockAfter_ = blockAfter;
 }
 
 // Return pointer to ChartBlock immediately before the hotspot

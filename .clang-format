@@ -1,7 +1,8 @@
 BasedOnStyle: LLVM
 
 BreakBeforeBraces: Allman
-ColumnLimit: 200
-IndentWidth: 8
-TabWidth: 8
-UseTab: Always
+ColumnLimit: 128
+IndentWidth: 4
+TabWidth: 4
+AccessModifierOffset: 0
+IndentCaseLabels: true

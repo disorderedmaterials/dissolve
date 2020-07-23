@@ -1,26 +1,27 @@
 /*
-	*** Forcefield Library
-	*** src/data/fflibrary.cpp
-	Copyright T. Youngs 2019-2020
+    *** Forcefield Library
+    *** src/data/fflibrary.cpp
+    Copyright T. Youngs 2019-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "data/fflibrary.h"
 #include "base/sysfunc.h"
+#include "data/ff/kulmala2010.h"
 #include "data/ff/ludwig/ntf2.h"
 #include "data/ff/ludwig/py4oh.h"
 #include "data/ff/ludwig/py5.h"
@@ -35,27 +36,45 @@
 #include "data/ff/uff.h"
 
 // Static Members
-List<Forcefield> ForcefieldLibrary::forcefields_;
+std::vector<std::shared_ptr<Forcefield>> ForcefieldLibrary::forcefields_;
 
 /*
  * Private Functions
  */
 
+// Set up supplied forcefield for use, and add to internal list
+bool ForcefieldLibrary::registerForcefield(std::shared_ptr<Forcefield> ff)
+{
+    // Set up the forcefield, returning if not successful
+    if (!ff->setUp())
+        return Messenger::error("Failed to set up forcefield '%s' - it will not be registered.\n", ff->name());
+
+    // Generate NETA definitions for all atom types in the forcefield
+    if (!ff->createNETADefinitions())
+        return Messenger::error("Failed to generate NETA definitions for forcefield '%s' - it will not be registered.\n",
+                                ff->name());
+
+    forcefields_.push_back(ff);
+
+    return true;
+}
+
 // Register Forcefields for use
 void ForcefieldLibrary::registerForcefields()
 {
-	forcefields_.own(new Forcefield_OPLSAA2005_Alcohols);
-	forcefields_.own(new Forcefield_OPLSAA2005_Alkanes);
-	forcefields_.own(new Forcefield_OPLSAA2005_Alkenes);
-	forcefields_.own(new Forcefield_OPLSAA2005_Aromatics);
-	forcefields_.own(new Forcefield_OPLSAA2005_Diols);
-	forcefields_.own(new Forcefield_OPLSAA2005_NobleGases);
-	forcefields_.own(new Forcefield_OPLSAA2005_Triols);
-	forcefields_.own(new Forcefield_SPCFw);
-	forcefields_.own(new Forcefield_UFF);
-	forcefields_.own(new Forcefield_NTf2_Ludwig);
-	forcefields_.own(new Forcefield_Py5_Ludwig);
-	forcefields_.own(new Forcefield_Py4OH_Ludwig);
+    registerForcefield(std::make_shared<Forcefield_Kulmala2010>());
+    registerForcefield(std::make_shared<Forcefield_Ludwig_NTf2>());
+    registerForcefield(std::make_shared<Forcefield_Ludwig_Py5>());
+    registerForcefield(std::make_shared<Forcefield_Ludwig_Py4OH>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alcohols>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alkanes>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alkenes>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Aromatics>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Diols>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_NobleGases>());
+    registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Triols>());
+    registerForcefield(std::make_shared<Forcefield_SPCFw>());
+    registerForcefield(std::make_shared<Forcefield_UFF>());
 }
 
 /*
@@ -63,22 +82,23 @@ void ForcefieldLibrary::registerForcefields()
  */
 
 // Return list of available Forcefields
-List<Forcefield> &ForcefieldLibrary::forcefields()
+std::vector<std::shared_ptr<Forcefield>> &ForcefieldLibrary::forcefields()
 {
-	// If the list is empty, we haven't yet constructed the list...
-	if (forcefields_.nItems() == 0)
-		registerForcefields();
+    // If the list is empty, construct the forcefield objects
+    if (forcefields_.empty())
+        registerForcefields();
 
-	return forcefields_;
+    return forcefields_;
 }
 
 // Return named Forcefield, if it exists
-Forcefield *ForcefieldLibrary::forcefield(const char *name)
+std::shared_ptr<Forcefield> ForcefieldLibrary::forcefield(const std::string name)
 {
-	ListIterator<Forcefield> ffIterator(forcefields());
-	while (Forcefield *ff = ffIterator.iterate())
-		if (DissolveSys::sameString(ff->name(), name))
-			return ff;
+    auto it = std::find_if(forcefields().begin(), forcefields().end(), [&name](const std::shared_ptr<Forcefield> ff) {
+        return DissolveSys::sameString(ff->name(), name.c_str());
+    });
+    if (it == forcefields().end())
+        return nullptr;
 
-	return NULL;
+    return *it;
 }

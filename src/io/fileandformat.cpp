@@ -1,41 +1,38 @@
 /*
-	*** File/Format Base Class
-	*** src/io/fileandformat.cpp
-	Copyright T. Youngs 2012-2020
+    *** File/Format Base Class
+    *** src/io/fileandformat.cpp
+    Copyright T. Youngs 2012-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "io/fileandformat.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-// Constructors
 FileAndFormat::FileAndFormat(int format) { format_ = format; }
 
 FileAndFormat::FileAndFormat(const char *filename, int format)
 {
-	filename_ = filename;
-	format_ = format;
+    filename_ = filename;
+    format_ = format;
 }
 
-// Destructor
 FileAndFormat::~FileAndFormat() {}
 
-// Conversion operators
 FileAndFormat::operator const char *() const { return filename_.get(); }
 
 /*
@@ -45,11 +42,11 @@ FileAndFormat::operator const char *() const { return filename_.get(); }
 // Convert text string to format index
 int FileAndFormat::format(const char *s) const
 {
-	for (int n = 0; n < nFormats(); ++n)
-		if (DissolveSys::sameString(s, formatKeyword(n)))
-			return n;
+    for (int n = 0; n < nFormats(); ++n)
+        if (DissolveSys::sameString(s, formatKeyword(n)))
+            return n;
 
-	return nFormats();
+    return nFormats();
 }
 
 // Set format index
@@ -61,26 +58,26 @@ int FileAndFormat::formatIndex() const { return format_; }
 // Return format string
 const char *FileAndFormat::format() const
 {
-	if ((format_ < 0) || (format_ >= nFormats()))
-		return "???";
-	else
-		return formatKeyword(format_);
+    if ((format_ < 0) || (format_ >= nFormats()))
+        return "???";
+    else
+        return formatKeyword(format_);
 }
 
 // Return nice format string
 const char *FileAndFormat::description() const
 {
-	if ((format_ < 0) || (format_ >= nFormats()))
-		return "???";
-	else
-		return formatDescription(format_);
+    if ((format_ < 0) || (format_ >= nFormats()))
+        return "???";
+    else
+        return formatDescription(format_);
 }
 
 // Print available formats
 void FileAndFormat::printAvailableFormats() const
 {
-	for (int n = 0; n < nFormats(); ++n)
-		Messenger::print("  %12s  %s\n", formatKeyword(n), formatDescription(n));
+    for (int n = 0; n < nFormats(); ++n)
+        Messenger::print("  %12s  %s\n", formatKeyword(n), formatDescription(n));
 }
 
 /*
@@ -90,8 +87,8 @@ void FileAndFormat::printAvailableFormats() const
 // Return whether the file actually exists
 bool FileAndFormat::fileExists() const
 {
-	// If no filename is currently set, return false. Otherwise, check for it
-	return (filename_.isEmpty() ? false : DissolveSys::fileExists(filename_));
+    // If no filename is currently set, return false. Otherwise, check for it
+    return (filename_.isEmpty() ? false : DissolveSys::fileExists(filename_));
 }
 
 // Set filename / basename
@@ -110,12 +107,12 @@ bool FileAndFormat::hasFilename() const { return (!filename_.isEmpty()); }
 // Return whether a filename and format have been set
 bool FileAndFormat::hasValidFileAndFormat() const
 {
-	if (filename_.isEmpty())
-		return false;
-	if ((format_ < 0) || (format_ >= nFormats()))
-		return false;
+    if (filename_.isEmpty())
+        return false;
+    if ((format_ < 0) || (format_ >= nFormats()))
+        return false;
 
-	return true;
+    return true;
 }
 
 /*
@@ -130,55 +127,61 @@ KeywordList &FileAndFormat::keywords() { return keywords_; }
  */
 
 // Read format / filename from specified parser
-bool FileAndFormat::read(LineParser &parser, int startArg, const char *endKeyword, const CoreData &coreData)
+bool FileAndFormat::read(LineParser &parser, int startArg, const char *endKeyword, CoreData &coreData)
 {
-	// Convert first argument to format type
-	format_ = format(parser.argc(startArg));
-	if (format_ == nFormats())
-	{
-		Messenger::print("Unrecognised format '%s' given for file. Recognised formats are:\n\n", parser.argc(startArg));
+    // Convert first argument to format type
+    format_ = format(parser.argc(startArg));
+    if (format_ == nFormats())
+    {
+        Messenger::print("Unrecognised format '%s' given for file. Recognised formats are:\n\n", parser.argc(startArg));
 
-		printAvailableFormats();
+        printAvailableFormats();
 
-		return false;
-	}
+        return false;
+    }
 
-	// Set filename if present
-	if (parser.hasArg(startArg + 1))
-	{
-		filename_ = parser.argc(startArg + 1);
+    // Set filename if present
+    if (parser.hasArg(startArg + 1))
+    {
+        filename_ = parser.argc(startArg + 1);
 
-		// Check that the file exists?
-		if (fileMustExist() && (!DissolveSys::fileExists(filename_)))
-			return Messenger::error("Specified file '%s' does not exist.\n", filename_.get());
-	}
+        // Check that the file exists?
+        if (fileMustExist() && (!DissolveSys::fileExists(filename_)))
+            return Messenger::error("Specified file '%s' does not exist.\n", filename_.get());
+    }
 
-	// Parse any additional options until we find the end of the block
-	while (!parser.eofOrBlank())
-	{
-		// Read the next line
-		if (parser.getArgsDelim() != LineParser::Success)
-			return false;
+    // Parse any additional options until we find the end of the block
+    while (!parser.eofOrBlank())
+    {
+        // Read the next line
+        if (parser.getArgsDelim() != LineParser::Success)
+            return false;
 
-		// Is this the end of the block?
-		if (DissolveSys::sameString(parser.argc(0), endKeyword))
-			break;
+        // Is this the end of the block?
+        if (DissolveSys::sameString(parser.argc(0), endKeyword))
+            break;
 
-		// Do we recognise the keyword?
-		KeywordBase *keyword = keywords_.find(parser.argc(0));
-		if (!keyword)
-			return Messenger::error("Unrecognised option '%s' found in file and format block.\n", parser.argc(0));
+        // Do we recognise the keyword?
+        KeywordBase *keyword = keywords_.find(parser.argc(0));
+        if (!keyword)
+            return Messenger::error("Unrecognised option '%s' found in file and format block.\n", parser.argc(0));
 
-		// Read in the keyword's data
-		if (!keyword->read(parser, 1, coreData))
-			return Messenger::error("Error reading option '%s'.\n", keyword->name());
-	}
+        // Read in the keyword's data
+        if (!keyword->read(parser, 1, coreData))
+            return Messenger::error("Error reading option '%s'.\n", keyword->name());
+    }
 
-	return true;
+    return true;
 }
 
 // Write format / filename to specified parser
-bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, const char *prefix) { return parser.writeLineF("%s%s  '%s'\n", prefix, formatKeyword(format_), filename_.get()); }
+bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, const char *prefix)
+{
+    return parser.writeLineF("%s%s  '%s'\n", prefix, formatKeyword(format_), filename_.get());
+}
 
 // Write options and end block
-bool FileAndFormat::writeBlock(LineParser &parser, const char *prefix) { return keywords_.write(parser, CharString("%s  ", prefix)); }
+bool FileAndFormat::writeBlock(LineParser &parser, const char *prefix)
+{
+    return keywords_.write(parser, CharString("%s  ", prefix));
+}

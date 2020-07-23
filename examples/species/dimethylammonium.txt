@@ -1,0 +1,123 @@
+# Input file written by Dissolve v0.7.0 at 14:54:56 on 16-07-2020.
+
+#------------------------------------------------------------------------------#
+#                                 Master Terms                                 #
+#------------------------------------------------------------------------------#
+
+Master
+  Bond  'HDM-NDM'  Harmonic  3632.000     1.010
+  Bond  'CDM-NDM'  Harmonic  3071.000     1.499
+  Bond  'CDM-HCD'  Harmonic  2845.120     1.090
+  Angle  'HDM-NDM-HDM'  Harmonic   292.900   105.500
+  Angle  'CDM-NDM-HDM'  Harmonic   418.400   109.200
+  Angle  'CDM-NDM-CDM'  Harmonic   418.400   114.300
+  Angle  'HCD-CDM-NDM'  Harmonic   209.200   108.500
+  Angle  'HCD-CDM-HCD'  Harmonic   276.144   107.800
+  Torsion  'HCD-CDM-NDM-HDM'  Cos3     0.000     0.000     0.000
+  Torsion  'CDM-NDM-CDM-HCD'  Cos3     0.000     0.000     3.377
+EndMaster
+
+#------------------------------------------------------------------------------#
+#                                   Species                                    #
+#------------------------------------------------------------------------------#
+
+Species 'Dimethylammonium'
+  # Atoms
+  Atom    1    N  -4.419618e-01  3.846193e-01  2.836396e-02  'NDM'  -1.200000e-01
+  Atom    2    H  -1.323786e+00  3.646508e-01  -4.733102e-01  'HDM'  3.100000e-01
+  Atom    3    H  -5.058079e-01  1.227870e+00  5.893395e-01  'HDM'  3.100000e-01
+  Atom    4    C  -3.596701e-01  -8.183025e-01  9.414258e-01  'CDM'  -2.000000e-01
+  Atom    5    C  6.913028e-01  5.296320e-01  -9.625324e-01  'CDM'  -2.000000e-01
+  Atom    6    H  1.658520e+00  6.193195e-01  -4.611075e-01  'HCD'  1.500000e-01
+  Atom    7    H  7.465967e-01  -3.251489e-01  -1.641456e+00  'HCD'  1.500000e-01
+  Atom    8    H  5.619408e-01  1.424068e+00  -1.578126e+00  'HCD'  1.500000e-01
+  Atom    9    H  -3.609572e-01  -1.754681e+00  3.781023e-01  'HCD'  1.500000e-01
+  Atom   10    H  -1.211826e+00  -8.512418e-01  1.625755e+00  'HCD'  1.500000e-01
+  Atom   11    H  5.456495e-01  -8.007856e-01  1.553546e+00  'HCD'  1.500000e-01
+
+  # Bonds
+  Bond    1    2  @HDM-NDM
+  Bond    1    3  @HDM-NDM
+  Bond    1    4  @CDM-NDM
+  Bond    1    5  @CDM-NDM
+  Bond    5    6  @CDM-HCD
+  Bond    5    7  @CDM-HCD
+  Bond    5    8  @CDM-HCD
+  Bond    4    9  @CDM-HCD
+  Bond    4   10  @CDM-HCD
+  Bond   11    4  @CDM-HCD
+
+  # Angles
+  Angle    3    1    2  @HDM-NDM-HDM
+  Angle    4    1    2  @CDM-NDM-HDM
+  Angle    4    1    3  @CDM-NDM-HDM
+  Angle    5    1    2  @CDM-NDM-HDM
+  Angle    5    1    3  @CDM-NDM-HDM
+  Angle    5    1    4  @CDM-NDM-CDM
+  Angle    1    5    6  @HCD-CDM-NDM
+  Angle    1    5    7  @HCD-CDM-NDM
+  Angle    7    5    6  @HCD-CDM-HCD
+  Angle    1    5    8  @HCD-CDM-NDM
+  Angle    8    5    6  @HCD-CDM-HCD
+  Angle    8    5    7  @HCD-CDM-HCD
+  Angle    1    4    9  @HCD-CDM-NDM
+  Angle    1    4   10  @HCD-CDM-NDM
+  Angle   10    4    9  @HCD-CDM-HCD
+  Angle    1    4   11  @HCD-CDM-NDM
+  Angle   11    4    9  @HCD-CDM-HCD
+  Angle   11    4   10  @HCD-CDM-HCD
+
+  # Torsions
+  Torsion    2    1    5    6  @HCD-CDM-NDM-HDM
+  Torsion    3    1    5    6  @HCD-CDM-NDM-HDM
+  Torsion    4    1    5    6  @CDM-NDM-CDM-HCD
+  Torsion    2    1    5    7  @HCD-CDM-NDM-HDM
+  Torsion    3    1    5    7  @HCD-CDM-NDM-HDM
+  Torsion    4    1    5    7  @CDM-NDM-CDM-HCD
+  Torsion    2    1    5    8  @HCD-CDM-NDM-HDM
+  Torsion    3    1    5    8  @HCD-CDM-NDM-HDM
+  Torsion    4    1    5    8  @CDM-NDM-CDM-HCD
+  Torsion    2    1    4    9  @HCD-CDM-NDM-HDM
+  Torsion    3    1    4    9  @HCD-CDM-NDM-HDM
+  Torsion    5    1    4    9  @CDM-NDM-CDM-HCD
+  Torsion    2    1    4   10  @HCD-CDM-NDM-HDM
+  Torsion    3    1    4   10  @HCD-CDM-NDM-HDM
+  Torsion    5    1    4   10  @CDM-NDM-CDM-HCD
+  Torsion    2    1    4   11  @HCD-CDM-NDM-HDM
+  Torsion    3    1    4   11  @HCD-CDM-NDM-HDM
+  Torsion    5    1    4   11  @CDM-NDM-CDM-HCD
+EndSpecies
+
+#------------------------------------------------------------------------------#
+#                               Pair Potentials                                #
+#------------------------------------------------------------------------------#
+
+PairPotentials
+  # Atom Type Parameters
+  Parameters  NDM  N  -1.200000e-01  LJ  7.112800e-01  3.250000e+00  0.000000e+00  0.000000e+00
+  Parameters  HDM  H  3.100000e-01  LJ  1.255000e-01  2.500000e+00  0.000000e+00  0.000000e+00
+  Parameters  CDM  C  -2.000000e-01  LJ  2.761400e-01  3.500000e+00  0.000000e+00  0.000000e+00
+  Parameters  HCD  H  1.500000e-01  LJ  1.255000e-01  2.500000e+00  0.000000e+00  0.000000e+00
+  Range  15.000000
+  Delta  0.005000
+  IncludeCoulomb  False
+  CoulombTruncation  Shifted
+  ShortRangeTruncation  Shifted
+EndPairPotentials
+
+#------------------------------------------------------------------------------#
+#                                Configurations                                #
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+#                              Processing Layers                               #
+#------------------------------------------------------------------------------#
+
+#------------------------------------------------------------------------------#
+#                                  Simulation                                  #
+#------------------------------------------------------------------------------#
+
+Simulation
+  Seed  -1
+EndSimulation
+

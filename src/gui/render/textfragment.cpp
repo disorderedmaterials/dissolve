@@ -1,45 +1,43 @@
 /*
-	*** Text Fragment
-	*** src/gui/render/textfragment.cpp
-	Copyright T. Youngs 2013-2020
+    *** Text Fragment
+    *** src/gui/render/textfragment.cpp
+    Copyright T. Youngs 2013-2020
 
-	This file is part of Dissolve.
+    This file is part of Dissolve.
 
-	Dissolve is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
+    Dissolve is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-	Dissolve is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
+    Dissolve is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-	You should have received a copy of the GNU General Public License
-	along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
+    You should have received a copy of the GNU General Public License
+    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #include "gui/render/textfragment.h"
 
-// Constructor
 TextFragment::TextFragment() : ListItem<TextFragment>()
 {
-	scale_ = 1.0;
-	italic_ = false;
-	bold_ = false;
+    scale_ = 1.0;
+    italic_ = false;
+    bold_ = false;
 }
 
-// Destructor
 TextFragment::~TextFragment() {}
 
 // Set fragment data
 void TextFragment::set(QString &text, double scale, Vec3<double> translation, bool italic, bool bold)
 {
-	text_ = text;
-	scale_ = scale;
-	translation_ = translation;
-	italic_ = italic;
-	bold_ = bold;
+    text_ = text;
+    scale_ = scale;
+    translation_ = translation;
+    italic_ = italic;
+    bold_ = bold;
 }
 
 // Return text of fragment
