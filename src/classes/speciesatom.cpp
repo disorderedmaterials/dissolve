@@ -121,11 +121,10 @@ void SpeciesAtom::addBond(SpeciesBond *bond)
     {
         bonds_.push_back(bond);
     }
-    printf("Number of bonds attached to atom %i is now %i\n", index_, bonds_.size());
 }
 
 // Remove Bond reference
-void SpeciesAtom::removeBond(SpeciesBond *b) { bonds_.erase(find(bonds_.begin(), bonds_.end(), b)); printf("NBONDS after remove on atom %i is now %i\n", index_, bonds_.size());}
+void SpeciesAtom::removeBond(SpeciesBond *b) { bonds_.erase(find(bonds_.begin(), bonds_.end(), b)); }
 
 // Clear all Bond references
 void SpeciesAtom::clearBonds() { bonds_.clear(); }

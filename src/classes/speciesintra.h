@@ -43,6 +43,7 @@ class SpeciesIntra
     virtual ~SpeciesIntra() = default;
     SpeciesIntra(SpeciesIntra &source);
     SpeciesIntra(SpeciesIntra &&source);
+    SpeciesIntra &operator=(const SpeciesIntra &source);
     SpeciesIntra &operator=(SpeciesIntra &&source);
     // Interaction Type
     enum InteractionType

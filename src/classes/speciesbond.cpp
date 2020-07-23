@@ -28,7 +28,6 @@
 
 SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra()
 {
-    printf("CTor for SPB\n");
     i_ = i;
     j_ = j;
     bondType_ = SpeciesBond::SingleBond;
@@ -44,13 +43,11 @@ SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra()
 
 SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source)
 {
-    printf("Copy Constructor for SPB\n");
-    //this->operator=(source);
+    this->operator=(source);
 }
 
 SpeciesBond::SpeciesBond(SpeciesBond &&source) : SpeciesIntra(std::move(source))
 {
-    printf("Move Constructor for SPB\n");
     // Detach source bond referred to by the species atoms
     if (source.i_ && source.j_)
     {
@@ -74,9 +71,25 @@ SpeciesBond::SpeciesBond(SpeciesBond &&source) : SpeciesIntra(std::move(source))
     source.j_ = nullptr;
 }
 
+SpeciesBond &SpeciesBond::operator=(const SpeciesBond &source)
+{
+    // Copy data
+    i_ = source.i_;
+    j_ = source.j_;
+    if (i_ && j_)
+    {
+        i_->addBond(this);
+        j_->addBond(this);
+    }
+    bondType_ = source.bondType_;
+    form_ = source.form_;
+    SpeciesIntra::operator=(source);
+
+    return *this;
+}
+
 SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source)
 {
-    printf("Move Assignment Operator SPB\n");
     // Detach any current atoms
     if (i_ && j_) detach();
 
@@ -94,6 +107,8 @@ SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source)
 
     // Clean source
     source.detach();
+
+    return *this;
 }
 
 

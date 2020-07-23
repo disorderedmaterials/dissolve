@@ -37,6 +37,7 @@ class SpeciesBond : public SpeciesIntra
     ~SpeciesBond() = default;
     SpeciesBond(SpeciesBond &source);
     SpeciesBond(SpeciesBond &&source);
+    SpeciesBond &operator=(const SpeciesBond &source);
     SpeciesBond &operator=(SpeciesBond &&source);
 
     /*
