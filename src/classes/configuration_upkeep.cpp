@@ -62,6 +62,6 @@ void Configuration::updateCellLocation(std::shared_ptr<Molecule> mol)
 // Update Cell location of specified Atom indices
 void Configuration::updateCellLocation(const std::vector<int> &targetAtoms, int indexOffset)
 {
-    for (auto i : targetAtoms)
+    for (const auto i : targetAtoms)
         updateCellLocation(atoms_[i + indexOffset]);
 }
