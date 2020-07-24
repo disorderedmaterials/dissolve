@@ -133,7 +133,7 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
     // Loop over supplied Atoms
     Vec3<double> newR;
     Atom *i;
-    for (auto index : targetAtoms)
+    for (const auto index : targetAtoms)
     {
         i = atom(index);
         newR = transformationMatrix * box->minimumVector(origin, i->r()) + origin;
