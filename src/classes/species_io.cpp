@@ -606,7 +606,7 @@ bool Species::write(LineParser &parser, const char *prefix)
 
     // Bonds
     RefList<const SpeciesBond> bondTypes[SpeciesBond::nBondTypes];
-    if (bonds_.size() > 0)
+    if (!bonds_.empty())
     {
         if (!parser.writeLineF("\n%s# Bonds\n", newPrefix.get()))
             return false;
