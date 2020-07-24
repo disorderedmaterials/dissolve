@@ -151,6 +151,6 @@ void Molecule::translate(const Vec3<double> delta)
 // Translate specified atoms by the delta specified
 void Molecule::translate(const Vec3<double> &delta, const std::vector<int> &targetAtoms)
 {
-    for (auto i : targetAtoms)
+    for (const auto i : targetAtoms)
         atom(i)->translateCoordinates(delta);
 }
