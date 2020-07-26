@@ -25,49 +25,100 @@
 #include "classes/speciesatom.h"
 #include "templates/enumhelpers.h"
 
-SpeciesAngle::SpeciesAngle() : SpeciesIntra(), DynamicArrayObject<SpeciesAngle>() { clear(); }
-
-SpeciesAngle::~SpeciesAngle() {}
-
-/*
- * DynamicArrayObject Virtuals
- */
-
-// Clear object, ready for re-use
-void SpeciesAngle::clear()
+SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : SpeciesIntra()
 {
-    parent_ = NULL;
-    i_ = NULL;
-    j_ = NULL;
-    k_ = NULL;
+    i_ = i;
+    j_ = j;
+    k_ = k;
     form_ = SpeciesAngle::NoForm;
+
+    // Add ourself to the list of bonds on each atom
+    if (i_ && j_ && k_)
+    {
+        i_->addAngle(this);
+        j_->addAngle(this);
+        k_->addAngle(this);
+    }
+}
+
+SpeciesAngle::SpeciesAngle(SpeciesAngle &source) : SpeciesIntra(source)
+{
+    this->operator=(source);
+}
+
+SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) : SpeciesIntra(source)
+{
+    // Detach source bond referred to by the species atoms
+    if (source.i_ && source.j_ && source.k_)
+    {
+        source.i_->removeAngle(&source);
+        source.j_->removeAngle(&source);
+        source.k_->removeAngle(&source);
+    }
+
+    // Copy data
+    i_ = source.i_;
+    j_ = source.j_;
+    k_ = source.k_;
+    if (i_ && j_ && k_)
+    {
+        i_->addAngle(this);
+        j_->addAngle(this);
+        k_->addAngle(this);
+    }
+    form_ = source.form_;
+
+    // Reset source data
+    source.i_ = nullptr;
+    source.j_ = nullptr;
+    source.k_ = nullptr;
+}
+
+SpeciesAngle &SpeciesAngle::operator=(const SpeciesAngle &source)
+{
+    // Copy data
+    i_ = source.i_;
+    j_ = source.j_;
+    k_ = source.k_;
+    if (i_ && j_ && k_)
+    {
+        i_->addAngle(this);
+        j_->addAngle(this);
+        k_->addAngle(this);
+    }
+    form_ = source.form_;
+    SpeciesIntra::operator=(source);
+
+    return *this;
+}
+
+SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &&source)
+{
+    // Detach any current atoms
+    if (i_ && j_ && k_) detach();
+
+    // Copy data
+    i_ = source.i_;
+    j_ = source.j_;
+    k_ = source.k_;
+    if (i_ && j_ && k_)
+    {
+        i_->addAngle(this);
+        j_->addAngle(this);
+        k_->addAngle(this);
+    }
+    form_ = source.form_;
+    SpeciesIntra::operator=(source);
+
+    // Clean source
+    source.detach();
+
+    return *this;
 }
 
 /*
  * Atom Information
  */
-
-// Set SpeciesAtoms involved in interaction
-void SpeciesAngle::setAtoms(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
-{
-    i_ = i;
-    j_ = j;
-    k_ = k;
-#ifdef CHECKS
-    if (i_ == NULL)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* i in SpeciesAngle::set().\n");
-    if (j_ == NULL)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* j in SpeciesAngle::set().\n");
-    if (k_ == NULL)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesAngle::set().\n");
-#endif
-    if (i_)
-        i_->addAngle(this);
-    if (j_)
-        j_->addAngle(this);
-    if (k_)
-        k_->addAngle(this);
-}
 
 // Return first SpeciesAtom
 SpeciesAtom *SpeciesAngle::i() const { return i_; }
@@ -154,6 +205,20 @@ bool SpeciesAngle::isSelected() const
     }
 #endif
     return (i_->isSelected() && j_->isSelected() && k_->isSelected());
+}
+
+// Detach from current atoms
+void SpeciesAngle::detach()
+{
+    if (i_ && j_ && k_)
+    {
+        i_->removeAngle(this);
+        j_->removeAngle(this);
+        k_->removeAngle(this);
+    }
+    i_ = nullptr;
+    j_ = nullptr;
+    k_ = nullptr;
 }
 
 /*

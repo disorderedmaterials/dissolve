@@ -33,14 +33,15 @@
 void Species::updateIntramolecularTerms()
 {
     SpeciesAtom *i, *j, *k, *l;
-    SpeciesBond *ij, *kl;
 
+    printf("UIT nbonds = %i\n", bonds_.size());
     // Loop over bonds 'jk'
     for (auto &jk : bonds_)
     {
         // Get atoms 'j' and 'k'
         j = jk.i();
         k = jk.j();
+        printf("UIT   jk = %i-%i (%p)\n", j->index(), k->index(), &jk);
 
         // Loop over bonds 'ij'
         for (auto *ij : j->bonds())
@@ -51,6 +52,8 @@ void Species::updateIntramolecularTerms()
 
             // Get atom 'i'
             i = ij->partner(j);
+
+            printf("UIT     ij = %i-%i (%p)\n", i->index(), j->index(), ij);
 
             // Attempt to add angle term 'ijk' if 'i' > 'k'
             if (!hasAngle(i, j, k))
@@ -77,29 +80,12 @@ void Species::updateIntramolecularTerms()
         }
     }
 
+    printf("NOW HERE (%p) n = %i\n", this, angles_.size());
     // Check existing angle terms for any that are invalid
-    auto anglePos = 0, origNAngles = angles_.nItems();
-    for (int n = 0; n < origNAngles; ++n)
-    {
-        // Grab the angle
-        SpeciesAngle *angle = angles_[anglePos];
+    angles_.erase(std::remove_if(angles_.begin(), angles_.end(), [&](auto &angle) { return false; }));
+//     angles_.erase(std::remove_if(angles_.begin(), angles_.end(), [&](auto &angle) { printf("gurrrr\n"); return !atoms_.contains(angle.i()) || !atoms_.contains(angle.j()) || !atoms_.contains(angle.k()) || !hasBond(angle.i(), angle.j()) || !hasBond(angle.j(), angle.k()); }));
 
-        // Check if this angle is still valid (i.e. i-j and j-k are owned by the Species and still bound)
-        if ((!atoms_.contains(angle->i())) || (!atoms_.contains(angle->j())) || (!atoms_.contains(angle->k())))
-        {
-            angles_.removeWithReorder(anglePos);
-            continue;
-        }
-        if ((!hasBond(angle->i(), angle->j())) || (!hasBond(angle->j(), angle->k())))
-        {
-            angles_.removeWithReorder(anglePos);
-            continue;
-        }
-
-        // OK, so increase position and continue
-        ++anglePos;
-    }
-
+    printf("SJDJDJ\n");
     auto torsionPos = 0, origNTorsions = torsions_.nItems();
     for (int n = 0; n < origNTorsions; ++n)
     {
@@ -156,6 +142,7 @@ SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
 // Add new SpeciesBond definition
 SpeciesBond &Species::addBond(int i, int j)
 {
+    printf("ADDBOND %i %i (natoms = %i)\n", i, j, nAtoms());
     return addBond(atoms_[i], atoms_[j]);
 }
 
@@ -260,89 +247,56 @@ void Species::addMissingBonds(double tolerance)
 }
 
 // Add new SpeciesAngle definition (from supplied SpeciesAtom pointers)
-SpeciesAngle *Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
+SpeciesAngle &Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
 {
-    // Check ownership of these Atoms
-    if (!atoms_.contains(i))
-    {
-        Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'i' is not owned by Species '%s' in Species::addAngle().\n", name_.get());
-        return NULL;
-    }
-    if (!atoms_.contains(j))
-    {
-        Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'j' is not owned by Species '%s' in Species::addAngle().\n", name_.get());
-        return NULL;
-    }
-    if (!atoms_.contains(k))
-    {
-        Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'k' is not owned by Species '%s' in Species::addAngle().\n", name_.get());
-        return NULL;
-    }
-
     // Check for existence of Angle already
-    if (hasAngle(i, j, k))
+    auto angleRef = getAngle(i, j, k);
+    if (angleRef)
     {
         Messenger::warn("Refused to add a new Angle between atoms %i, %i and %i in Species '%s' since it already exists.\n",
                         i->userIndex(), j->userIndex(), k->userIndex(), name_.get());
-        return NULL;
+        return *angleRef;
     }
 
     // OK to add new angle
-    SpeciesAngle *a = angles_.add();
-    a->setParent(this);
-    a->setAtoms(i, j, k);
+    angles_.emplace_back(i, j, k).setParent(this);
 
     ++version_;
 
-    return a;
+    return angles_.back();
 }
 
 // Add new SpeciesAngle definition
-SpeciesAngle *Species::addAngle(int i, int j, int k)
+SpeciesAngle &Species::addAngle(int i, int j, int k)
 {
-    if ((i < 0) || (i >= atoms_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addAngle() is out of range (%i) for "
-                         "Species '%s'\n",
-                         i, name_.get());
-        return NULL;
-    }
-    if ((j < 0) || (j >= atoms_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addAngle() is out of range (%i) for "
-                         "Species '%s'\n",
-                         j, name_.get());
-        return NULL;
-    }
-    if ((k < 0) || (k >= atoms_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Internal index 'k' supplied to Species::addAngle() is out of range (%i) for "
-                         "Species '%s'\n",
-                         k, name_.get());
-        return NULL;
-    }
-
     return addAngle(atoms_[i], atoms_[j], atoms_[k]);
 }
 
 // Return number of SpeciesAngles defined
-int Species::nAngles() const { return angles_.nItems(); }
+int Species::nAngles() const { return angles_.size(); }
 
 // Return array of SpeciesAngle
-DynamicArray<SpeciesAngle> &Species::angles() { return angles_; }
+std::vector<SpeciesAngle> &Species::angles() { return angles_; }
 
 // Return array of SpeciesAngle (const)
-const DynamicArray<SpeciesAngle> &Species::constAngles() const { return angles_; }
+const std::vector<SpeciesAngle> &Species::constAngles() const { return angles_; }
 
 // Return whether SpeciesAngle between SpeciesAtoms exists
 bool Species::hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const
 {
-    DynamicArrayConstIterator<SpeciesAngle> angleIterator(angles_);
-    while (const SpeciesAngle *a = angleIterator.iterate())
-        if (a->matches(i, j, k))
-            return true;
+    auto it = std::find_if(angles_.cbegin(), angles_.cend(), [i,j,k](const auto &angle) { return angle.matches(i, j, k); });
 
-    return false;
+    return it != angles_.cend();
+}
+
+// Return the SpeciesAngle between the specified SpeciesAtoms
+OptionalReferenceWrapper<SpeciesAngle> Species::getAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
+{
+    auto it = std::find_if(angles_.begin(), angles_.end(), [i,j,k](auto &angle) { return angle.matches(i, j, k); });
+    if (it == angles_.end())
+        return {};
+
+    return *it;
 }
 
 // Add new SpeciesTorsion definition (from supplied SpeciesAtom pointers)
@@ -593,43 +547,42 @@ void Species::generateAttachedAtomLists()
     }
 
     // Angles - termini are 'i' and 'k'
-    DynamicArrayIterator<SpeciesAngle> angleIterator(angles_);
-    while (SpeciesAngle *a = angleIterator.iterate())
+    for (auto &angle : angles_)
     {
         // Grab relevant Bonds (if they exist)
-        SpeciesBond *ji = a->j()->hasBond(a->i());
-        SpeciesBond *jk = a->j()->hasBond(a->k());
+        auto *ji = angle.j()->hasBond(angle.i());
+        auto *jk = angle.j()->hasBond(angle.k());
 
         // Select all Atoms attached to Atom 'i', excluding the Bond ji as a path
         clearAtomSelection();
-        selectFromAtom(a->i(), ji, jk);
+        selectFromAtom(angle.i(), ji, jk);
 
         // Remove Atom 'j' from the list if it's there
-        selectedAtoms_.remove(a->j());
+        selectedAtoms_.remove(angle.j());
 
         // If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the
         // Atom 'i' itself In that case we can also finish the list for Atom 'k', and continue the loop.
-        if (selectedAtoms_.contains(a->k()))
+        if (selectedAtoms_.contains(angle.k()))
         {
             Messenger::printVerbose("Angle between Atoms %i-%i-%i is present in a cycle, so a minimal set of "
                                     "attached atoms will be used.\n",
-                                    a->i()->userIndex(), a->j()->userIndex(), a->k()->userIndex());
-            a->setAttachedAtoms(0, a->i());
-            a->setAttachedAtoms(1, a->k());
-            a->setInCycle(true);
+                                    angle.i()->userIndex(), angle.j()->userIndex(), angle.k()->userIndex());
+            angle.setAttachedAtoms(0, angle.i());
+            angle.setAttachedAtoms(1, angle.k());
+            angle.setInCycle(true);
             continue;
         }
         else
-            a->setAttachedAtoms(0, selectedAtoms_);
+            angle.setAttachedAtoms(0, selectedAtoms_);
 
         // Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
         clearAtomSelection();
-        selectFromAtom(a->k(), ji, jk);
+        selectFromAtom(angle.k(), ji, jk);
 
         // Remove Atom 'j' from the list if it's there
-        selectedAtoms_.remove(a->j());
+        selectedAtoms_.remove(angle.j());
 
-        a->setAttachedAtoms(1, selectedAtoms_);
+        angle.setAttachedAtoms(1, selectedAtoms_);
     }
 
     // Torsions - termini are 'j' and 'k'
@@ -680,9 +633,8 @@ void Species::detachFromMasterTerms()
     for (auto &bond : bonds_)
         bond.detachFromMasterIntra();
 
-    DynamicArrayIterator<SpeciesAngle> angleIterator(angles_);
-    while (SpeciesAngle *a = angleIterator.iterate())
-        a->detachFromMasterIntra();
+    for (auto &angle : angles_)
+        angle.detachFromMasterIntra();
 
     DynamicArrayIterator<SpeciesTorsion> torsionIterator(torsions_);
     while (SpeciesTorsion *t = torsionIterator.iterate())

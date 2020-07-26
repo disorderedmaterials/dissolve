@@ -79,7 +79,7 @@ class Forcefield_UFF : public Forcefield
     // Generate bond parameters for the supplied UFF atom types
     bool generateBondTerm(const Species *sp, SpeciesBond &bond, const UFFAtomType &i, const UFFAtomType &j) const;
     // Generate angle parameters for the supplied UFF atom types
-    bool generateAngleTerm(const Species *sp, SpeciesAngle *angleTerm, const UFFAtomType &i, const UFFAtomType &j,
+    bool generateAngleTerm(const Species *sp, SpeciesAngle &angle, const UFFAtomType &i, const UFFAtomType &j,
                            const UFFAtomType &k) const;
     // Generate torsion parameters for the supplied UFF atom types
     bool generateTorsionTerm(const Species *sp, SpeciesTorsion *torsionTerm, const UFFAtomType &i, const UFFAtomType &j,

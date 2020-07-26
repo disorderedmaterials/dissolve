@@ -348,14 +348,13 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
     }
 
     // Generate angle parameters
-    DynamicArrayIterator<SpeciesAngle> angleIterator(sp->angles());
-    while (SpeciesAngle *angle = angleIterator.iterate())
+    for (auto &angle : sp->angles())
     {
-        SpeciesAtom *i = angle->i();
-        SpeciesAtom *j = angle->j();
-        SpeciesAtom *k = angle->k();
+        auto *i = angle.i();
+        auto *j = angle.j();
+        auto *k = angle.k();
 
-        if (selectionOnly && (!angle->isSelected()))
+        if (selectionOnly && (!angle.isSelected()))
             continue;
 
         auto optTypeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name());
@@ -378,8 +377,8 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                                     typeK.equivalentName());
 
         const ForcefieldAngleTerm &term = *optTerm;
-        angle->setForm(term.form());
-        angle->setParameters(term.parameters());
+        angle.setForm(term.form());
+        angle.setParameters(term.parameters());
     }
 
     // Generate torsion parameters

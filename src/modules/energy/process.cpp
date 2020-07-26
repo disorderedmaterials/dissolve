@@ -182,20 +182,16 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 }
 
                 // Angle energy
-                DynamicArrayConstIterator<SpeciesAngle> angleIterator(molN->species()->constAngles());
-                while (const SpeciesAngle *a = angleIterator.iterate())
+                for (const auto &angle : molN->species()->constAngles())
                 {
                     // Get vectors 'j-i' and 'j-k'
-                    vecji = cfg->box()->minimumVector(molN->atom(a->indexJ()), molN->atom(a->indexI()));
-                    vecjk = cfg->box()->minimumVector(molN->atom(a->indexJ()), molN->atom(a->indexK()));
+                    vecji = cfg->box()->minimumVector(molN->atom(angle.indexJ()), molN->atom(angle.indexI()));
+                    vecjk = cfg->box()->minimumVector(molN->atom(angle.indexJ()), molN->atom(angle.indexK()));
 
-                    // Calculate angle
+                    // Calculate angle and determine angle energy
                     vecji.normalise();
                     vecjk.normalise();
-                    angle = Box::angleInDegrees(vecji, vecjk);
-
-                    // Determine Angle energy
-                    correctIntraEnergy += a->energy(angle);
+                    correctIntraEnergy += angle.energy(Box::angleInDegrees(vecji, vecjk));
                 }
 
                 // Torsion energy

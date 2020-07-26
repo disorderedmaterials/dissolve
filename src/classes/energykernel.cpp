@@ -671,7 +671,7 @@ double EnergyKernel::energy(const SpeciesBond &bond, const Atom *i, const Atom *
 }
 
 // Return SpeciesAngle energy
-double EnergyKernel::energy(const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k)
+double EnergyKernel::energy(const SpeciesAngle &angle, const Atom *i, const Atom *j, const Atom *k)
 {
     Vec3<double> vecji, vecjk;
 
@@ -690,7 +690,7 @@ double EnergyKernel::energy(const SpeciesAngle *a, const Atom *i, const Atom *j,
     vecjk.normalise();
 
     // Determine Angle energy
-    return a->energy(Box::angleInDegrees(vecji, vecjk));
+    return angle.energy(Box::angleInDegrees(vecji, vecjk));
 }
 
 // Return SpeciesTorsion energy
@@ -747,9 +747,9 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, c
     }
 
     // Add energy from SpeciesAngle terms
-    for (const auto *angle : spAtom->angles())
+    for (const auto &angle : spAtom->angles())
     {
-        intraEnergy += energy(angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()), mol->atom(angle->indexK()));
+        intraEnergy += energy(*angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()), mol->atom(angle->indexK()));
     }
 
     // Add energy from SpeciesTorsion terms
@@ -782,9 +782,8 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol)
         energy(bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()));
 
     // Loop over Angles
-    DynamicArrayConstIterator<SpeciesAngle> angleIterator(mol->species()->constAngles());
-    while (const SpeciesAngle *a = angleIterator.iterate())
-        energy(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
+    for (const auto &angle : mol->species()->constAngles())
+        energy(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()), mol->atom(angle.indexK()));
 
     // Loop over Torsions
     DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());

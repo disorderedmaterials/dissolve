@@ -523,7 +523,7 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesBond *b, const Atom 
 }
 
 // Calculate Angle forces
-void ForceKernel::forces(const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k)
+void ForceKernel::forces(const SpeciesAngle &angle, const Atom *i, const Atom *j, const Atom *k)
 {
     Vec3<double> vecji, vecjk;
 
@@ -541,10 +541,10 @@ void ForceKernel::forces(const SpeciesAngle *a, const Atom *i, const Atom *j, co
     const auto magji = vecji.magAndNormalise();
     const auto magjk = vecjk.magAndNormalise();
     double dp;
-    const auto angle = Box::angleInDegrees(vecji, vecjk, dp);
+    const auto angleInDegrees = Box::angleInDegrees(vecji, vecjk, dp);
 
     // Determine Angle force vectors for atoms
-    const auto force = a->force(angle);
+    const auto force = angle.force(angleInDegrees);
     const auto forcei = (vecjk - vecji * dp) * force / magji;
     const auto forcek = (vecji - vecjk * dp) * force / magjk;
 

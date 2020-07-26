@@ -473,15 +473,15 @@ bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, cons
 }
 
 // Generate angle parameters for the supplied UFF atom types
-bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle *angleTerm, const UFFAtomType &i, const UFFAtomType &j,
+bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle &angle, const UFFAtomType &i, const UFFAtomType &j,
                                        const UFFAtomType &k) const
 {
     // rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
     // We need the bond orders of the involved bonds...
-    const auto &ijRef = sp->getConstBond(angleTerm->i(), angleTerm->j());
+    const auto &ijRef = sp->getConstBond(angle.i(), angle.j());
     if (!ijRef)
         return Messenger::error("Can't locate bond i-j for bond order retrieval.\n");
-    const auto &jkRef = sp->getConstBond(angleTerm->j(), angleTerm->k());
+    const auto &jkRef = sp->getConstBond(angle.j(), angle.k());
     if (!jkRef)
         return Messenger::error("Can't locate bond j-k for bond order retrieval.\n");
 
@@ -537,15 +537,15 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle *angleTer
         const auto c1 = -4.0 * c2 * cosTheta;
         const auto c0 = c2 * (2.0 * cosTheta * cosTheta + 1.0);
 
-        angleTerm->setForm(SpeciesAngle::Cos2Form);
-        angleTerm->setParameters(forcek, c0, c1, c2);
+        angle.setForm(SpeciesAngle::Cos2Form);
+        angle.setParameters(forcek, c0, c1, c2);
 
         return true;
     }
 
     // Setup terms for the specific case (n != 0)
-    angleTerm->setForm(SpeciesAngle::CosineForm);
-    angleTerm->setParameters(forcek / (n * n), n, 0.0, -1.0);
+    angle.setForm(SpeciesAngle::CosineForm);
+    angle.setParameters(forcek / (n * n), n, 0.0, -1.0);
 
     return true;
 }
@@ -723,14 +723,13 @@ bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
     }
 
     // Generate angle terms
-    DynamicArrayIterator<SpeciesAngle> angleIterator(sp->angles());
-    while (SpeciesAngle *angle = angleIterator.iterate())
+    for (auto &angle : sp->angles())
     {
-        SpeciesAtom *i = angle->i();
-        SpeciesAtom *j = angle->j();
-        SpeciesAtom *k = angle->k();
+        auto *i = angle.i();
+        auto *j = angle.j();
+        auto *k = angle.k();
 
-        if (selectionOnly && (!angle->isSelected()))
+        if (selectionOnly && (!angle.isSelected()))
             continue;
 
         auto typeI = determineTypes ? determineUFFAtomType(i) : uffAtomTypeByName(i->atomType()->name());

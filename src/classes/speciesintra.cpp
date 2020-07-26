@@ -39,11 +39,6 @@ SpeciesIntra::SpeciesIntra(SpeciesIntra &source)
     (*this) = source;
 }
 
-SpeciesIntra::SpeciesIntra(SpeciesIntra &&source)
-{
-    (*this) = std::move(source);
-}
-
 SpeciesIntra &SpeciesIntra::operator=(const SpeciesIntra &source)
 {
     parent_ = source.parent_;
@@ -53,28 +48,6 @@ SpeciesIntra &SpeciesIntra::operator=(const SpeciesIntra &source)
     attached_[0] = source.attached_[0];
     attached_[1] = source.attached_[1];
     inCycle_ = source.inCycle_;
-
-    return *this;
-}
-
-SpeciesIntra &SpeciesIntra::operator=(SpeciesIntra &&source)
-{
-    // Copy data
-    parent_ = source.parent_;
-    masterParameters_ = source.masterParameters_;
-    for (int n = 0; n < MAXINTRAPARAMS; ++n)
-        parameters_[n] = source.parameters_[n];
-
-    attached_[0] = source.attached_[0];
-    attached_[1] = source.attached_[1];
-    inCycle_ = source.inCycle_;
-
-    // Reset source
-    source.parent_ = nullptr;
-    source.masterParameters_ = nullptr;
-    source.attached_[0].clear();
-    source.attached_[1].clear();
-    source.inCycle_ = false;
 
     return *this;
 }

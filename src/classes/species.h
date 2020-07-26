@@ -143,7 +143,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Array of bonds between atoms in the Species
     std::vector<SpeciesBond> bonds_;
     // Array of angles between atoms in the Species
-    DynamicArray<SpeciesAngle> angles_;
+    std::vector<SpeciesAngle> angles_;
     // Array of torsions between atoms in the Species
     DynamicArray<SpeciesTorsion> torsions_;
     // Array of impropers between atoms in the Species
@@ -179,17 +179,19 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Add missing bonds
     void addMissingBonds(double tolerance = 1.1);
     // Add new SpeciesAngle definition
-    SpeciesAngle *addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
-    // Add new SpeciesAngle definition
-    SpeciesAngle *addAngle(int i, int j, int k);
+    SpeciesAngle &addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
+    // Add new SpeciesAngle dedefinitionfinition
+    SpeciesAngle &addAngle(int i, int j, int k);
     // Return number of SpeciesAngle defined
     int nAngles() const;
     // Return array of SpeciesAngle
-    DynamicArray<SpeciesAngle> &angles();
+    std::vector<SpeciesAngle> &angles();
     // Return array of SpeciesAngle (const)
-    const DynamicArray<SpeciesAngle> &constAngles() const;
+    const std::vector<SpeciesAngle> &constAngles() const;
     // Return whether SpeciesAngle between SpeciesAtoms exists
     bool hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const;
+    // Return the SpeciesAngle between the specified SpeciesAtoms
+    OptionalReferenceWrapper<SpeciesAngle> getAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
     // Add new SpeciesTorsion definition (from SpeciesAtom*)
     SpeciesTorsion *addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Add new SpeciesTorsion definition

@@ -120,7 +120,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     CharString arg1, arg2;
     AtomType *at;
     Isotopologue *iso;
-    SpeciesAngle *a;
+    OptionalReferenceWrapper<SpeciesAngle> a;
     SpeciesAtom *i;
     OptionalReferenceWrapper<SpeciesBond> b;
     SpeciesImproper *imp;
@@ -169,7 +169,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                  * '@' it is a reference to master parameters
                  */
                 if (parser.nArgs() == 4)
-                    a->setForm(SpeciesAngle::NoForm);
+                    a->get().setForm(SpeciesAngle::NoForm);
                 else if (parser.argc(4)[0] == '@')
                 {
                     // Search through master Angle parameters to see if this name exists
@@ -181,7 +181,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
 
-                    a->setMasterParameters(master);
+                    a->get().setMasterParameters(master);
                 }
                 else
                 {
@@ -193,7 +193,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
                     af = SpeciesAngle::angleFunctions().enumeration(parser.argc(4));
 
-                    a->setForm(af);
+                    a->get().setForm(af);
                     for (int n = 0; n < SpeciesAngle::angleFunctions().minArgs(af); ++n)
                     {
                         if (!parser.hasArg(n + 5))
@@ -204,12 +204,12 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                             error = true;
                             break;
                         }
-                        a->setParameter(n, parser.argd(n + 5));
+                        a->get().setParameter(n, parser.argd(n + 5));
                     }
                 }
 
                 // Perform any final setup on the Angle
-                a->setUp();
+                a->get().setUp();
                 break;
             case (Species::AtomKeyword):
                 el = Elements::elementPointer(parser.argc(2));
@@ -665,28 +665,27 @@ bool Species::write(LineParser &parser, const char *prefix)
     {
         if (!parser.writeLineF("\n%s# Angles\n", newPrefix.get()))
             return false;
-        DynamicArrayConstIterator<SpeciesAngle> angleIterator(angles());
-        while (const SpeciesAngle *a = angleIterator.iterate())
+        for (const auto &angle : angles_)
         {
-            if (a->form() == SpeciesAngle::NoForm)
+            if (angle.form() == SpeciesAngle::NoForm)
             {
                 if (!parser.writeLineF("%s%s  %3i  %3i  %3i\n", newPrefix.get(), keywords().keyword(Species::AngleKeyword),
-                                       a->indexI() + 1, a->indexJ() + 1, a->indexK() + 1))
+                                       angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1))
                     return false;
             }
-            else if (a->masterParameters())
+            else if (angle.masterParameters())
             {
                 if (!parser.writeLineF("%s%s  %3i  %3i  %3i  @%s\n", newPrefix.get(), keywords().keyword(Species::AngleKeyword),
-                                       a->indexI() + 1, a->indexJ() + 1, a->indexK() + 1, a->masterParameters()->name()))
+                                       angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1, angle.masterParameters()->name()))
                     return false;
             }
             else
             {
                 CharString s("%s%s  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::AngleKeyword),
-                             a->indexI() + 1, a->indexJ() + 1, a->indexK() + 1,
-                             SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
-                for (int n = 0; n < SpeciesAngle::angleFunctions().minArgs((SpeciesAngle::AngleFunction)a->form()); ++n)
-                    s.strcatf("  %8.3f", a->parameter(n));
+                             angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
+                             SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
+                for (int n = 0; n < SpeciesAngle::angleFunctions().minArgs((SpeciesAngle::AngleFunction)angle.form()); ++n)
+                    s.strcatf("  %8.3f", angle.parameter(n));
                 if (!parser.writeLineF("%s\n", s.get()))
                     return false;
             }

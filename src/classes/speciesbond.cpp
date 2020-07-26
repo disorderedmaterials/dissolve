@@ -46,7 +46,7 @@ SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source)
     this->operator=(source);
 }
 
-SpeciesBond::SpeciesBond(SpeciesBond &&source) : SpeciesIntra(std::move(source))
+SpeciesBond::SpeciesBond(SpeciesBond &&source) : SpeciesIntra(source)
 {
     // Detach source bond referred to by the species atoms
     if (source.i_ && source.j_)
@@ -103,14 +103,13 @@ SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source)
     }
     bondType_ = source.bondType_;
     form_ = source.form_;
-    SpeciesIntra::operator=(std::move(source));
+    SpeciesIntra::operator=(source);
 
     // Clean source
     source.detach();
 
     return *this;
 }
-
 
 /*
  * SpeciesAtom Information
@@ -189,7 +188,6 @@ bool SpeciesBond::isSelected() const
 // Detach from current atoms
 void SpeciesBond::detach()
 {
-    printf("DETACHING....\n");
     if (i_ && j_)
     {
         i_->removeBond(this);

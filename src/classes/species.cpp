@@ -181,13 +181,12 @@ void Species::print()
         Messenger::print("\n  Angles:\n");
         Messenger::print("      I     J     K    Form             Parameters\n");
         Messenger::print("    ---------------------------------------------------------------------------------------\n");
-        DynamicArrayConstIterator<SpeciesAngle> angleIterator(angles());
-        while (const SpeciesAngle *a = angleIterator.iterate())
+        for (const auto &angle : angles_)
         {
-            CharString s("   %4i  %4i  %4i    %c%-12s", a->indexI() + 1, a->indexJ() + 1, a->indexK() + 1,
-                         a->masterParameters() ? '@' : ' ', SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
+            CharString s("   %4i  %4i  %4i    %c%-12s", angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
+                         angle.masterParameters() ? '@' : ' ', SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
             for (int n = 0; n < MAXINTRAPARAMS; ++n)
-                s.strcatf("  %12.4e", a->parameter(n));
+                s.strcatf("  %12.4e", angle.parameter(n));
             Messenger::print("%s\n", s.get());
         }
     }

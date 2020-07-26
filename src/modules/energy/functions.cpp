@@ -69,9 +69,8 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
             bondEnergy += kernel.energy(bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()));
 
         // Loop over Angles
-        DynamicArrayConstIterator<SpeciesAngle> angleIterator(mol->species()->constAngles());
-        while (const SpeciesAngle *a = angleIterator.iterate())
-            angleEnergy += kernel.energy(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
+        for (const auto &angle : mol->species()->constAngles())
+            angleEnergy += kernel.energy(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()), mol->atom(angle.indexK()));
 
         // Loop over Torsions
         DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());

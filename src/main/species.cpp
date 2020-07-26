@@ -179,14 +179,13 @@ Species *Dissolve::copySpecies(const Species *species)
     }
 
     // Duplicate angles
-    DynamicArrayConstIterator<SpeciesAngle> angleIterator(species->constAngles());
-    while (const SpeciesAngle *a = angleIterator.iterate())
+    for (const auto &angle : species->constAngles())
     {
         // Create the angle in the new Species
-        SpeciesAngle *newAngle = newSpecies->addAngle(a->indexI(), a->indexJ(), a->indexK());
+        auto &newAngle = newSpecies->addAngle(angle.indexI(), angle.indexJ(), angle.indexK());
 
         // Copy interaction parameters, including MasterIntra if necessary
-        copySpeciesIntra(a, newAngle);
+        copySpeciesIntra(&angle, &newAngle);
     }
 
     // Duplicate torsions

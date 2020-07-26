@@ -242,25 +242,21 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Angle forces
-                    DynamicArrayConstIterator<SpeciesAngle> angleIterator(molN->species()->constAngles());
-                    while (const SpeciesAngle *a = angleIterator.iterate())
+                    for (const auto &angle : molN->species()->constAngles())
                     {
                         // Grab pointers to atoms involved in angle
-                        i = molN->atom(a->indexI());
-                        j = molN->atom(a->indexJ());
-                        k = molN->atom(a->indexK());
+                        i = molN->atom(angle.indexI());
+                        j = molN->atom(angle.indexJ());
+                        k = molN->atom(angle.indexK());
 
                         // Get vectors 'j-i' and 'j-k'
                         vecji = box->minimumVector(j, i);
                         vecjk = box->minimumVector(j, k);
-
-                        // Calculate angle
                         magji = vecji.magAndNormalise();
                         magjk = vecjk.magAndNormalise();
-                        angle = Box::angleInDegrees(vecji, vecjk, dp);
 
                         // Determine Angle force vectors for atoms
-                        force = a->force(angle);
+                        force = angle.force(Box::angleInDegrees(vecji, vecjk, dp));
                         forcei = vecjk - vecji * dp;
                         forcei *= force / magji;
                         forcek = vecji - vecjk * dp;
