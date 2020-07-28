@@ -313,11 +313,19 @@ bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
         auto population = parser.argd(1);
         auto fraction = parser.argd(2);
         auto boundCoherent = parser.argd(3);
+        auto nIsotopes = parser.argi(4);
         auto &atomType = *coreData.findAtomType(typeName);
 
         // types_.emplace_back(types_.size(), atomType, population);
         types_.emplace_back(atomType, population, fraction, boundCoherent);
         auto &atd = types_.back();
+        for (int i = 0; i<nIsotopes; ++i)
+        {
+            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+                return false;
+            auto isotope = Isotopes::isotope(parser.argi(0), parser.argi(1));
+            atd.add(isotope, parser.argd(2));
+        }
     }
 
     return true;
