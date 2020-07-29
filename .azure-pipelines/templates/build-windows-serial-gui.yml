@@ -39,7 +39,8 @@ steps:
       git clone ${{ parameters.ftglrepo }} ftgl-latest
       mkdir ftgl-build
       cd ftgl-build
-      cmake -G "Ninja" ..\ftgl-latest -DFREETYPE_DIR:string=$(Build.BinariesDirectory)\freetype-build
+      $env:FREETYPE_DIR = "$(Build.BinariesDirectory)\freetype-build"
+      cmake -G "Ninja" ..\ftgl-latest
       ninja
     displayName: 'Build FTGL'
   - powershell: |
