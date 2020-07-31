@@ -206,7 +206,12 @@ EnumOptions<SpeciesTorsion::TorsionFunction> SpeciesTorsion::torsionFunctions()
                                                     << EnumOption(SpeciesTorsion::Cos3Form, "Cos3", 3, 3)
                                                     << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4, 4)
                                                     << EnumOption(SpeciesTorsion::Cos3CForm, "Cos3C", 4, 4)
+                                                    << EnumOption(SpeciesTorsion::Cos6Form, "Cos6", 5, 5)
                                                     << EnumOption(SpeciesTorsion::Cos6Form, "Cos6", 6, 6)
+                                                    << EnumOption(SpeciesTorsion::Cos6Form, "Cos6", 7, 7)
+                                                    << EnumOption(SpeciesTorsion::Cos6Form, "Cos6", 8, 8)
+                                                    << EnumOption(SpeciesTorsion::Cos6Form, "Cos6", 9, 9)
+                                                    << EnumOption(SpeciesTorsion::Cos6Form, "Cos6", 10, 10)
                                                     << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3, 3);
 
     static EnumOptions<SpeciesTorsion::TorsionFunction> options("TorsionFunction", TorsionFunctionOptions);
@@ -291,10 +296,25 @@ double SpeciesTorsion::energy(double angleInDegrees) const
         return params[0] +
                0.5 * (params[1] * (1.0 + cos(phi)) + params[2] * (1.0 - cos(2.0 * phi)) + params[3] * (1.0 + cos(3.0 * phi)));
     }
+    else if (form() == SpeciesTorsion::Cos5Form)
+    {
+        /*
+         * U(phi) = 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) + k4*(1-cos(4*phi)) + k5*(1+cos(5*phi)) )
+         *
+         * Parameters:
+         * 0 : force constant k1
+         * 1 : force constant k2
+         * 2 : force constant k3
+         * 3 : force constant k4
+         * 4 : force constant k5
+         */
+        return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0 * phi)) + params[2] * (1.0 + cos(3.0 * phi)) +
+                      params[3] * (1.0 - cos(4.0 * phi)) + params[4] * (1.0 + cos(5.0 * phi)));
+    }
     else if (form() == SpeciesTorsion::Cos6Form)
     {
         /*
-         * U(phi) = 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) + k4*(1-cos(4*phi)) + k5*(1+cos(5*phi)) + k6*(1-cos(6*phi)))
+         * U(phi) = 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) + k4*(1-cos(4*phi)) + k5*(1+cos(5*phi)) + k6*(1-cos(6*phi)) )
          *
          * Parameters:
          * 0 : force constant k1
@@ -306,6 +326,81 @@ double SpeciesTorsion::energy(double angleInDegrees) const
          */
         return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0 * phi)) + params[2] * (1.0 + cos(3.0 * phi)) +
                       params[3] * (1.0 - cos(4.0 * phi)) + params[4] * (1.0 + cos(5.0 * phi)) + params[5] * (1.0 - cos(6.0 * phi)));
+    }
+    else if (form() == SpeciesTorsion::Cos7Form)
+    {
+        /*
+         * U(phi) = 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) + k4*(1-cos(4*phi)) + k5*(1+cos(5*phi)) + k6*(1-cos(6*phi)) + k7*(1+cos(7*phi)) )
+         *
+         * Parameters:
+         * 0 : force constant k1
+         * 1 : force constant k2
+         * 2 : force constant k3
+         * 3 : force constant k4
+         * 4 : force constant k5
+         * 5 : force constant k6
+         * 6 : force constant k7
+         */
+        return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0 * phi)) + params[2] * (1.0 + cos(3.0 * phi)) +
+                      params[3] * (1.0 - cos(4.0 * phi)) + params[4] * (1.0 + cos(5.0 * phi)) + params[5] * (1.0 - cos(6.0 * phi)) + params[6] * (1.0 + cos(7.0 * phi)));
+    }
+    else if (form() == SpeciesTorsion::Cos8Form)
+    {
+        /*
+         * U(phi) = 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) + k4*(1-cos(4*phi)) + k5*(1+cos(5*phi)) + k6*(1-cos(6*phi)) + k7*(1+cos(7*phi)) + k8*(1-cos(8*phi)) )
+         *
+         * Parameters:
+         * 0 : force constant k1
+         * 1 : force constant k2
+         * 2 : force constant k3
+         * 3 : force constant k4
+         * 4 : force constant k5
+         * 5 : force constant k6
+         * 6 : force constant k7
+         * 7 : force constant k8
+         */
+        return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0 * phi)) + params[2] * (1.0 + cos(3.0 * phi)) +
+                      params[3] * (1.0 - cos(4.0 * phi)) + params[4] * (1.0 + cos(5.0 * phi)) + params[5] * (1.0 - cos(6.0 * phi)) + params[6] * (1.0 + cos(7.0 * phi)) + params[7] * (1.0 - cos(8.0 * phi)));
+    }
+    else if (form() == SpeciesTorsion::Cos9Form)
+    {
+        /*
+         * U(phi) = 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) + k4*(1-cos(4*phi)) + k5*(1+cos(5*phi)) + k6*(1-cos(6*phi)) + k7*(1+cos(7*phi)) + k8*(1-cos(8*phi)) + k9*(1+cos(9*phi)) )
+         *
+         * Parameters:
+         * 0 : force constant k1
+         * 1 : force constant k2
+         * 2 : force constant k3
+         * 3 : force constant k4
+         * 4 : force constant k5
+         * 5 : force constant k6
+         * 6 : force constant k7
+         * 7 : force constant k8
+         * 8 : force constant k9
+         */
+        return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0 * phi)) + params[2] * (1.0 + cos(3.0 * phi)) +
+                      params[3] * (1.0 - cos(4.0 * phi)) + params[4] * (1.0 + cos(5.0 * phi)) + params[5] * (1.0 - cos(6.0 * phi)) + params[6] * (1.0 + cos(7.0 * phi)) + params[7] * (1.0 - cos(8.0 * phi)) + params[8] * (1.0 + cos(9.0 * phi)));
+    }
+    else if (form() == SpeciesTorsion::Cos10Form)
+    {
+        /*
+         * U(phi) = 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) + k4*(1-cos(4*phi)) + k5*(1+cos(5*phi)) + k6*(1-cos(6*phi)) + k7*(1+cos(7*phi)) + k8*(1-cos(8*phi)) + k9*(1+cos(9*phi)) + k10*(1-cos(10*phi)) )
+         *
+         * Parameters:
+         * 0 : force constant k1
+         * 1 : force constant k2
+         * 2 : force constant k3
+         * 3 : force constant k4
+         * 4 : force constant k5
+         * 5 : force constant k6
+         * 6 : force constant k7
+         * 7 : force constant k8
+         * 8 : force constant k9
+         * 9 : force constant k10
+         */
+        return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0 * phi)) + params[2] * (1.0 + cos(3.0 * phi)) +
+                      params[3] * (1.0 - cos(4.0 * phi)) + params[4] * (1.0 + cos(5.0 * phi)) + params[5] * (1.0 - cos(6.0 * phi)) + params[6] * (1.0 + cos(7.0 * phi)) + params[7] * (1.0 - cos(8.0 * phi)) + params[8] * (1.0 + cos(9.0 * phi)) +
+                      params[9] * (1.0 - cos(10.0 * phi)));
     }
     else if (form() == SpeciesTorsion::UFFCosineForm)
     {
@@ -391,6 +486,23 @@ double SpeciesTorsion::force(double angleInDegrees) const
         return dphi_dcosphi * 0.5 *
                (-params[1] * sin(phi) + 2.0 * params[2] * sin(2.0 * phi) - 3.0 * params[3] * sin(3.0 * phi));
     }
+
+    else if (form() == SpeciesTorsion::Cos5Form)
+    {
+        /*
+         * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) + 4 * k4*sin(4*phi) - 5 * k5*(sin(5*phi)) )
+         *
+         * Parameters:
+         * 0 : force constant k1
+         * 1 : force constant k2
+         * 2 : force constant k3
+         * 3 : force constant k4
+         * 4 : force constant k5
+         */
+        return dphi_dcosphi * 0.5 *
+               (-params[0] * sin(phi) + 2.0 * params[1] * sin(2.0 * phi) - 3.0 * params[2] * sin(3.0 * phi) +
+               4.0 * params[3] * sin(4.0 * phi) - 5.0 * params[4] * sin(5.0 * phi) );
+    }
     else if (form() == SpeciesTorsion::Cos6Form)
     {
         /*
@@ -407,6 +519,89 @@ double SpeciesTorsion::force(double angleInDegrees) const
         return dphi_dcosphi * 0.5 *
                (-params[0] * sin(phi) + 2.0 * params[1] * sin(2.0 * phi) - 3.0 * params[2] * sin(3.0 * phi) +
                4.0 * params[3] * sin(4.0 * phi) - 5.0 * params[4] * sin(5.0 * phi) + 6.0 * params[5] * sin(6.0 * phi));
+    }
+    else if (form() == SpeciesTorsion::Cos7Form)
+    {
+        /*
+         * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) + 4 * k4*sin(4*phi) - 5 * k5*(sin(5*phi)) + 6 * k6*sin(6*phi) - 7 * k7*sin(7*phi) )
+         *
+         * Parameters:
+         * 0 : force constant k1
+         * 1 : force constant k2
+         * 2 : force constant k3
+         * 3 : force constant k4
+         * 4 : force constant k5
+         * 5 : force constant k6
+         * 6 : force constant k7
+         */
+        return dphi_dcosphi * 0.5 *
+               (-params[0] * sin(phi) + 2.0 * params[1] * sin(2.0 * phi) - 3.0 * params[2] * sin(3.0 * phi) +
+               4.0 * params[3] * sin(4.0 * phi) - 5.0 * params[4] * sin(5.0 * phi) + 6.0 * params[5] * sin(6.0 * phi) - 
+               7.0 * params[6] * sin(7.0 * phi) );
+    }
+    else if (form() == SpeciesTorsion::Cos8Form)
+    {
+        /*
+         * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) + 4 * k4*sin(4*phi) - 5 * k5*(sin(5*phi)) + 6 * k6*sin(6*phi) - 7 * k7*sin(7*phi) + 8 * k8*sin(8*phi) )
+         *
+         * Parameters:
+         * 0 : force constant k1
+         * 1 : force constant k2
+         * 2 : force constant k3
+         * 3 : force constant k4
+         * 4 : force constant k5
+         * 5 : force constant k6
+         * 6 : force constant k7
+         * 7 : force constant k8
+         */
+        return dphi_dcosphi * 0.5 *
+               (-params[0] * sin(phi) + 2.0 * params[1] * sin(2.0 * phi) - 3.0 * params[2] * sin(3.0 * phi) +
+               4.0 * params[3] * sin(4.0 * phi) - 5.0 * params[4] * sin(5.0 * phi) + 6.0 * params[5] * sin(6.0 * phi) - 
+               7.0 * params[6] * sin(7.0 * phi) + 8.0 * params[7] * sin(8.0 * phi) );
+    }
+    else if (form() == SpeciesTorsion::Cos9Form)
+    {
+        /*
+         * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) + 4 * k4*sin(4*phi) - 5 * k5*(sin(5*phi)) + 6 * k6*sin(6*phi) - 7 * k7*sin(7*phi) + 8 * k8*sin(8*phi) - 9 * k9*(sin(9*phi)) )
+         *
+         * Parameters:
+         * 0 : force constant k1
+         * 1 : force constant k2
+         * 2 : force constant k3
+         * 3 : force constant k4
+         * 4 : force constant k5
+         * 5 : force constant k6
+         * 6 : force constant k7
+         * 7 : force constant k8
+         * 8 : force constant k9
+         */
+        return dphi_dcosphi * 0.5 *
+               (-params[0] * sin(phi) + 2.0 * params[1] * sin(2.0 * phi) - 3.0 * params[2] * sin(3.0 * phi) +
+               4.0 * params[3] * sin(4.0 * phi) - 5.0 * params[4] * sin(5.0 * phi) + 6.0 * params[5] * sin(6.0 * phi) - 
+               7.0 * params[6] * sin(7.0 * phi) + 8.0 * params[7] * sin(8.0 * phi) - 9.0 * params[8] * sin(9.0 * phi));
+    }
+    else if (form() == SpeciesTorsion::Cos10Form)
+    {
+        /*
+         * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) + 4 * k4*sin(4*phi) - 5 * k5*(sin(5*phi)) + 6 * k6*sin(6*phi) - 7 * k7*sin(7*phi) + 8 * k8*sin(8*phi) - 9 * k9*(sin(9*phi)) + 10 * k10*sin(10*phi) )
+         *
+         * Parameters:
+         * 0 : force constant k1
+         * 1 : force constant k2
+         * 2 : force constant k3
+         * 3 : force constant k4
+         * 4 : force constant k5
+         * 5 : force constant k6
+         * 6 : force constant k7
+         * 7 : force constant k8
+         * 8 : force constant k9
+         * 9 : force constant k10
+         */
+        return dphi_dcosphi * 0.5 *
+               (-params[0] * sin(phi) + 2.0 * params[1] * sin(2.0 * phi) - 3.0 * params[2] * sin(3.0 * phi) +
+               4.0 * params[3] * sin(4.0 * phi) - 5.0 * params[4] * sin(5.0 * phi) + 6.0 * params[5] * sin(6.0 * phi) - 
+               7.0 * params[6] * sin(7.0 * phi) + 8.0 * params[7] * sin(8.0 * phi) - 9.0 * params[8] * sin(9.0 * phi) +
+               10.0 * params[9] * sin(10.0 * phi));
     }
     else if (form() == SpeciesTorsion::UFFCosineForm)
     {

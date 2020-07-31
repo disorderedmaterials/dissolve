@@ -25,7 +25,7 @@
 #include "templates/array.h"
 #include "templates/reflist.h"
 
-#define MAXINTRAPARAMS 6
+#define MAXINTRAPARAMS 10
 
 // Forward Declarations
 class SpeciesAtom;
