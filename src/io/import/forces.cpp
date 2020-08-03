@@ -83,7 +83,7 @@ bool ForceImportFileFormat::importData(Array<double> &fx, Array<double> &fy, Arr
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
-        return Messenger::error("Couldn't open file '%s' for loading Data2D data.\n", filename_.get());
+        return Messenger::error("Couldn't open file '%s' for loading forces data.\n", filename_.get());
 
     // Import the data
     auto result = importData(parser, fx, fy, fz);

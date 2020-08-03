@@ -90,7 +90,7 @@ bool CoordinateImportFileFormat::importData(Array<Vec3<double>> &r, ProcessPool 
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
-        return Messenger::error("Couldn't open file '%s' for loading Data2D data.\n", filename_.get());
+        return Messenger::error("Couldn't open file '%s' for loading coordinates data.\n", filename_.get());
 
     // Import the data
     auto result = importData(parser, r);
