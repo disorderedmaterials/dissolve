@@ -1236,7 +1236,7 @@ LineParser::ParseReturnValue LineParser::skipLines(int nlines)
     LineParser::ParseReturnValue result;
     for (int n = 0; n < nlines; ++n)
     {
-        result = readNextLine(LineParser::Defaults);
+        result = readNextLine(LineParser::KeepBlanks);
         if (result != LineParser::Success)
             return result;
     }
