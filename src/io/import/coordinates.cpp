@@ -52,9 +52,10 @@ void CoordinateImportFileFormat::setUpKeywords() {}
 EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> CoordinateImportFileFormat::coordinateImportFormats()
 {
     static EnumOptionsList CoordinateImportFormats =
-        EnumOptionsList() << EnumOption(CoordinateImportFileFormat::XYZCoordinates, "xyz", "Simple XYZ")
-                          << EnumOption(CoordinateImportFileFormat::DLPOLYCoordinates, "dlpoly", "DL_POLY CONFIG")
-                          << EnumOption(CoordinateImportFileFormat::EPSRCoordinates, "epsr", "EPSR ATO");
+        EnumOptionsList() << EnumOption(CoordinateImportFileFormat::DLPOLYCoordinates, "dlpoly", "DL_POLY CONFIG")
+                          << EnumOption(CoordinateImportFileFormat::EPSRCoordinates, "epsr", "EPSR ATO")
+                          << EnumOption(CoordinateImportFileFormat::MoscitoCoordinates, "moscito", "Moscito structure file")
+                          << EnumOption(CoordinateImportFileFormat::XYZCoordinates, "xyz", "Simple XYZ");
 
     static EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> options("CoordinateImportFileFormat",
                                                                                    CoordinateImportFormats);
@@ -105,12 +106,14 @@ bool CoordinateImportFileFormat::importData(LineParser &parser, Array<Vec3<doubl
 {
     // Import the data
     auto result = false;
-    if (coordinateFormat() == CoordinateImportFileFormat::XYZCoordinates)
-        result = importXYZ(parser, r);
-    else if (coordinateFormat() == CoordinateImportFileFormat::DLPOLYCoordinates)
+    if (coordinateFormat() == CoordinateImportFileFormat::DLPOLYCoordinates)
         result = importDLPOLY(parser, r);
     else if (coordinateFormat() == CoordinateImportFileFormat::EPSRCoordinates)
         result = importEPSR(parser, r);
+    else if (coordinateFormat() == CoordinateImportFileFormat::MoscitoCoordinates)
+        result = importMoscito(parser, r);
+    else if (coordinateFormat() == CoordinateImportFileFormat::XYZCoordinates)
+        result = importXYZ(parser, r);
     else
         Messenger::error("Don't know how to load coordinates in format '%s'.\n", formatKeyword(coordinateFormat()));
 
