@@ -74,7 +74,7 @@ void SpeciesWidget::updateToolbar()
 void SpeciesWidget::updateStatusBar()
 {
     // Get displayed Species
-    const Species *sp = speciesViewer()->species();
+    const auto *sp = speciesViewer()->species();
 
     // Set interaction mode text
     ui_.ModeLabel->setText(speciesViewer()->interactionModeText());
@@ -134,7 +134,7 @@ void SpeciesWidget::on_ViewCopyToClipboardButton_clicked(bool checked) { species
 void SpeciesWidget::on_ToolsCalculateBondingButton_clicked(bool checked)
 {
     // Get displayed Species
-    Species *sp = speciesViewer()->species();
+    auto *sp = speciesViewer()->species();
     if (!sp)
         return;
 
@@ -149,15 +149,13 @@ void SpeciesWidget::on_ToolsCalculateBondingButton_clicked(bool checked)
 void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 {
     // Get displayed Species
-    Species *sp = speciesViewer()->species();
+    auto *sp = speciesViewer()->species();
     if (!sp)
         return;
 
     // Apply forcefield terms now?
     if (sp->forcefield())
-    {
         sp->applyForcefieldTerms(*coreData_);
-    }
 
     // Check that the Species set up is valid
     if (!sp->checkSetUp())
