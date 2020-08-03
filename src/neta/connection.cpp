@@ -36,7 +36,7 @@ NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Eleme
 
     // Modifiers
     repeatCount_ = 1;
-    repeatCountOperator_ = NETANode::EqualTo;
+    repeatCountOperator_ = NETANode::GreaterThanEqualTo;
     nBondsValue_ = -1;
     nBondsValueOperator_ = NETANode::EqualTo;
     nHydrogensValue_ = -1;
@@ -231,13 +231,17 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
         // Found a match, so increase the match count and store the score
         ++nMatches;
         neighbourIterator.currentData() = atomScore;
+
+        // Exit early in the case of GreaterThan GreaterThanEqualTo logic
+        if ((repeatCountOperator_ == NETANode::GreaterThan || repeatCountOperator_ == NETANode::GreaterThanEqualTo) && compareValues(nMatches, repeatCountOperator_, repeatCount_))
+            break;
     }
 
     // Did we find the required number of matches in the neighbour list?
     if (!compareValues(nMatches, repeatCountOperator_, repeatCount_))
         return NETANode::NoMatch;
 
-    // Generate total score and add matched atoms to path
+    // Generate total score and add matched atoms to the path
     auto totalScore = 0;
     neighbourIterator.restart();
     while (const SpeciesAtom *j = neighbourIterator.iterate())
