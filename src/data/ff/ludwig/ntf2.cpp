@@ -88,7 +88,7 @@ bool Forcefield_Ludwig_NTf2::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_Ludwig_NTf2::name() const { return "bis(trifluoromethylsulfonyl)imide anion (NTf2) by Ludwig Group"; }
+const char *Forcefield_Ludwig_NTf2::name() const { return "Ludwig NTf2 Anion"; }
 
 // Return description for Forcefield
 const char *Forcefield_Ludwig_NTf2::description() const

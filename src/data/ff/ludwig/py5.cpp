@@ -133,7 +133,7 @@ bool Forcefield_Ludwig_Py5::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_Ludwig_Py5::name() const { return "1-pentylpyridinium cation (Py5)"; }
+const char *Forcefield_Ludwig_Py5::name() const { return "Ludwig Py5 Cation"; }
 
 // Return description for Forcefield
 const char *Forcefield_Ludwig_Py5::description() const

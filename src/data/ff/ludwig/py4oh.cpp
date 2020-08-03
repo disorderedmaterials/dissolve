@@ -52,7 +52,7 @@ bool Forcefield_Ludwig_Py4OH::setUp()
     addAtomType(ELEMENT_N, 1, "nc", "nbonds=3,ring(size=6,C(n=5),N)", "Nitrogen in pyridine ring", 0.1014, "nc");
     addAtomType(ELEMENT_C, 2, "ca_o", "nbonds=3,ring(size=6,C(n=5),N),-N,-C,-H", "Carbon in aromatic ring, ortho", 0.0568,
                 "ca");
-    addAtomType(ELEMENT_C, 3, "ca_m", "nbonds=3,ring(size=6,C(n=5),N),-C,-H,-C", "Carbon in aromatic ring, meta", -0.2214,
+    addAtomType(ELEMENT_C, 3, "ca_m", "nbonds=3,ring(size=6,C(n=5),N),-C(n=2),-H", "Carbon in aromatic ring, meta", -0.2214,
                 "ca");
     addAtomType(ELEMENT_C, 4, "ca_p", "nbonds=3,ring(size=6,C(n=5),N),-C(n=2,-C(-N))", "Carbon in aromatic ring, para", 0.1747,
                 "ca");
@@ -136,7 +136,7 @@ bool Forcefield_Ludwig_Py4OH::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_Ludwig_Py4OH::name() const { return "1‐(4‐hydroxybutyl)pyridinium cation (Py4OH)"; }
+const char *Forcefield_Ludwig_Py4OH::name() const { return "Ludwig Py4OH Cation"; }
 
 // Return description for Forcefield
 const char *Forcefield_Ludwig_Py4OH::description() const
