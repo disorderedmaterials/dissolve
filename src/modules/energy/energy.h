@@ -79,26 +79,30 @@ class EnergyModule : public Module
      * Functions
      */
     public:
-    // Return total intramolecular energy
-    static double intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap);
-    // Return total intramolecular energy, storing components in provided variables
-    static double intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                                       double &bondEnergy, double &angleEnergy, double &torsionEnergy);
-    // Return total interatomic energy
+    // Energy Stability Enum
+    enum EnergyStability {
+        NotAssessable = -1,
+        EnergyStable = 0,
+        EnergyUnstable = 1
+    };
+    // Return total interatomic energy of Configuration
     static double interAtomicEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap);
-    // Return total energy (interatomic and intramolecular)
-    static double totalEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap);
-    // Return total energy (interatomic and intramolecular), storing components in provided variables
-    static double totalEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, double &interEnergy,
-                              double &bondEnergy, double &angleEnergy, double &torsionEnergy);
     // Return total intermolecular energy
     static double interMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap);
-    // Check energy stability of specified Configuration, returning 1 if the energy is not stable, or -1 if stability could
-    // not be assessed
-    static int checkStability(Configuration *cfg);
-    // Check energy stability of specified Configurations, returning the number that failed, or -1 if stability could not be
-    // assessed
-    static int checkStability(const RefList<Configuration> &configurations);
+    // Return total intramolecular energy of Configuration
+    static double intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap);
+    // Return total intramolecular energy of Configuration, storing components in provided variables
+    static double intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+                                       double &bondEnergy, double &angleEnergy, double &torsionEnergy);
+    // Return total energy (interatomic and intramolecular) of Configuration
+    static double totalEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap);
+    // Return total energy (interatomic and intramolecular) of Configuration, storing components in provided variables
+    static double totalEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, double &interEnergy,
+                              double &bondEnergy, double &angleEnergy, double &torsionEnergy);
+    // Check energy stability of specified Configuration
+    static EnergyStability checkStability(Configuration *cfg);
+    // Check energy stability of specified Configurations, returning the number that are unstable
+    static int nUnstable(const RefList<Configuration> &configurations);
 
     /*
      * GUI Widget
