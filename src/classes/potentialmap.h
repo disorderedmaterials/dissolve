@@ -28,6 +28,7 @@
 class PairPotential;
 class Atom;
 class Molecule;
+class SpeciesAtom;
 
 // PotentialMap Definition
 class PotentialMap
@@ -60,8 +61,10 @@ class PotentialMap
      * Energy / Force
      */
     public:
-    // Return energy between Atom types at distance specified
+    // Return energy between Atoms at distance specified
     double energy(const Atom *i, const Atom *j, double r) const;
+    // Return energy between SpeciesAtoms at distance specified
+    double energy(const SpeciesAtom *i, const SpeciesAtom *j, double r) const;
     // Return analytic energy between Atom types at distance specified
     double analyticEnergy(const Atom *i, const Atom *j, double r) const;
     // Return force between Atom types at distance specified

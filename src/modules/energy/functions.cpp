@@ -21,10 +21,10 @@
 
 #include "classes/configuration.h"
 #include "classes/energykernel.h"
+#include "classes/potentialmap.h"
 #include "classes/species.h"
 #include "genericitems/listhelper.h"
 #include "modules/energy/energy.h"
-
 
 // Return total interatomic energy of Configuration
 double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap)
@@ -54,6 +54,46 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Configuration *cfg
     Messenger::printVerbose("Interatomic Energy (World) is %15.9e\n", totalEnergy);
 
     return totalEnergy;
+}
+
+// Return total interatomic energy of Species
+double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap)
+{
+    double r, angle;
+    SpeciesAtom *i, *j;
+    Vec3<double> rI;
+    double scale, energy = 0.0;
+    const auto cutoff = potentialMap.range();
+
+    // Get start/end for loop
+    auto loopStart = procPool.twoBodyLoopStart(sp->nAtoms());
+    auto loopEnd = procPool.twoBodyLoopEnd(sp->nAtoms());
+
+    // Double loop over species atoms
+    for (auto indexI = loopStart; indexI <= loopEnd; ++indexI)
+    {
+        i = sp->atom(indexI);
+        rI = i->r();
+
+        for (int indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
+        {
+            j = sp->atom(indexJ);
+
+            // Get interatomic distance
+            r = (j->r() - rI).magnitude();
+            if (r > cutoff)
+                continue;
+
+            // Get intramolecular scaling of atom pair
+            scale = i->scaling(j);
+            if (scale < 1.0e-3)
+                continue;
+
+            energy += potentialMap.energy(i, j, r) * scale;
+        }
+    }
+
+    return energy;
 }
 
 // Return total intermolecular energy of Configuration
@@ -165,6 +205,33 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
     return totalIntra;
 }
 
+// Return total intramolecular energy of Species
+double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Species *sp)
+{
+    auto energy = 0.0;
+
+    // Loop over bonds
+    DynamicArrayConstIterator<SpeciesBond> bondIterator(sp->constBonds());
+    while (const SpeciesBond *b = bondIterator.iterate())
+        energy += EnergyKernel::energy(b);
+
+    // Loop over angles
+    DynamicArrayConstIterator<SpeciesAngle> angleIterator(sp->constAngles());
+    while (const SpeciesAngle *a = angleIterator.iterate())
+        energy += EnergyKernel::energy(a);
+
+    // Loop over torsions
+    DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(sp->constTorsions());
+    while (const SpeciesTorsion *t = torsionIterator.iterate())
+        energy += EnergyKernel::energy(t);
+
+    // Loop over impropers
+    DynamicArrayConstIterator<SpeciesImproper> improperIterator(sp->constImpropers());
+    while (const SpeciesImproper *i = improperIterator.iterate())
+        energy += EnergyKernel::energy(i);
+
+    return energy;
+}
 
 // Return total energy (interatomic and intramolecular) of Configuration
 double EnergyModule::totalEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap)
@@ -180,6 +247,12 @@ double EnergyModule::totalEnergy(ProcessPool &procPool, Configuration *cfg, cons
     intraMolecularEnergy(procPool, cfg, potentialMap, bondEnergy, angleEnergy, torsionEnergy);
 
     return interEnergy + bondEnergy + angleEnergy + torsionEnergy;
+}
+
+// Return total energy (interatomic and intramolecular) of Species
+double EnergyModule::totalEnergy(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap)
+{
+    return (interAtomicEnergy(procPool, sp, potentialMap) + intraMolecularEnergy(procPool, sp));
 }
 
 // Check energy stability of specified Configuration

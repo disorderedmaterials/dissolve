@@ -80,13 +80,16 @@ class EnergyModule : public Module
      */
     public:
     // Energy Stability Enum
-    enum EnergyStability {
+    enum EnergyStability
+    {
         NotAssessable = -1,
         EnergyStable = 0,
         EnergyUnstable = 1
     };
     // Return total interatomic energy of Configuration
     static double interAtomicEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap);
+    // Return total interatomic energy of Species
+    static double interAtomicEnergy(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap);
     // Return total intermolecular energy
     static double interMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap);
     // Return total intramolecular energy of Configuration
@@ -94,11 +97,15 @@ class EnergyModule : public Module
     // Return total intramolecular energy of Configuration, storing components in provided variables
     static double intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                                        double &bondEnergy, double &angleEnergy, double &torsionEnergy);
+    // Return total intramolecular energy of Species
+    static double intraMolecularEnergy(ProcessPool &procPool, Species *sp);
     // Return total energy (interatomic and intramolecular) of Configuration
     static double totalEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap);
     // Return total energy (interatomic and intramolecular) of Configuration, storing components in provided variables
     static double totalEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, double &interEnergy,
                               double &bondEnergy, double &angleEnergy, double &torsionEnergy);
+    // Return total energy (interatomic and intramolecular) of Species
+    static double totalEnergy(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap);
     // Check energy stability of specified Configuration
     static EnergyStability checkStability(Configuration *cfg);
     // Check energy stability of specified Configurations, returning the number that are unstable

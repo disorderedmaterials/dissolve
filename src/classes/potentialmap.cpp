@@ -140,6 +140,18 @@ double PotentialMap::energy(const Atom *i, const Atom *j, double r) const
         return (pp->energy(r) + pp->analyticCoulombEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
 }
 
+// Return energy between master atom types at distance specified
+double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r) const
+{
+    // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
+    // interpolated potential
+    PairPotential *pp = potentialMatrix_.constAt(i->atomType()->index(), j->atomType()->index());
+    if (pp->includeCoulomb())
+        return pp->energy(r);
+    else
+        return (pp->energy(r) + pp->analyticCoulombEnergy(i->charge() * j->charge(), r));
+}
+
 // Return analytic energy between Atom types at squared distance specified
 double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r) const
 {
