@@ -24,58 +24,8 @@
 #include "classes/species.h"
 #include "modules/forces/forces.h"
 
-/*
- * Total Forces on All Atoms
- */
-
-// Calculate total intramolecular forces
-void ForcesModule::intramolecularForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                                        Array<double> &fx, Array<double> &fy, Array<double> &fz)
-{
-    /*
-     * Calculate the total intramolecular forces within the supplied Configuration, arising from Bond, Angle, and Torsion
-     * terms in all molecules.
-     *
-     * Calculated forces are added in to the provided arrays. Assembly of the arrays over processes must be performed by the
-     * calling function.
-     *
-     * This is a parallel routine.
-     */
-
-    // Create a ForceKernel
-    ForceKernel kernel(procPool, cfg, potentialMap, fx, fy, fz);
-
-    // Set start/stride for parallel loop
-    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
-
-    // Loop over Molecules
-    std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
-    std::shared_ptr<const Molecule> mol;
-    for (int m = start; m < cfg->nMolecules(); m += stride)
-    {
-        // Get Molecule pointer
-        mol = molecules[m];
-
-        // Loop over Bonds
-        DynamicArrayConstIterator<SpeciesBond> bondIterator(mol->species()->constBonds());
-        while (const SpeciesBond *b = bondIterator.iterate())
-            kernel.forces(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
-
-        // Loop over Angles
-        DynamicArrayConstIterator<SpeciesAngle> angleIterator(mol->species()->constAngles());
-        while (const SpeciesAngle *a = angleIterator.iterate())
-            kernel.forces(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
-
-        // Loop over Torsions
-        DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
-        while (const SpeciesTorsion *t = torsionIterator.iterate())
-            kernel.forces(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
-    }
-}
-
 // Calculate interatomic forces within the supplied Configuration
-void ForcesModule::interatomicForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                                      Array<double> &fx, Array<double> &fy, Array<double> &fz)
 {
     /*
@@ -119,47 +69,38 @@ void ForcesModule::interatomicForces(ProcessPool &procPool, Configuration *cfg, 
     }
 }
 
-// Calculate total forces within the supplied Configuration
-void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, Array<double> &fx,
-                               Array<double> &fy, Array<double> &fz)
+// Calculate interatomic forces on specified atoms within the specified Configuration
+void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
+                                     const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz)
 {
     /*
-     * Calculates the total forces within the supplied Configuration, arising from PairPotential interactions
-     * and intramolecular contributions.
+     * Calculates the interatomic forces in the specified Configuration arising from contributions from PairPotential
+     * interactions between individual atoms, and accounting for intramolecular terms
      *
-     * This is a serial routine (subroutines called from within are parallel).
+     * This is a parallel routine, with processes operating as process groups.
      */
 
-    // Create a Timer
-    Timer timer;
+    // Create a ForceKernel
+    ForceKernel kernel(procPool, cfg, potentialMap, fx, fy, fz);
 
-    // Calculate interatomic forces
-    timer.start();
-    interatomicForces(procPool, cfg, potentialMap, fx, fy, fz);
-    timer.stop();
-    Messenger::printVerbose("Time to do interatomic forces was %s.\n", timer.totalTimeString());
+    ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
-    // Calculate intramolecular forces
-    timer.start();
-    intramolecularForces(procPool, cfg, potentialMap, fx, fy, fz);
-    timer.stop();
-    Messenger::printVerbose("Time to do intramolecular forces was %s.\n", timer.totalTimeString());
+    // Set start/stride for parallel loop
+    auto start = procPool.interleavedLoopStart(strategy);
+    auto stride = procPool.interleavedLoopStride(strategy);
 
-    // Gather forces together over all processes
-    if (!procPool.allSum(fx, cfg->nAtoms()))
-        return;
-    if (!procPool.allSum(fy, cfg->nAtoms()))
-        return;
-    if (!procPool.allSum(fz, cfg->nAtoms()))
-        return;
+    // Loop over supplied atom indices
+    const DynamicArray<Atom> &atoms = cfg->atoms();
+    for (int n = start; n < targetIndices.nItems(); n += stride)
+    {
+        const Atom *i = atoms.constValue(targetIndices.constAt(n));
+
+        kernel.forces(i, ProcessPool::subDivisionStrategy(strategy));
+    }
 }
 
-/*
- * Total Forces on Subset of Atoms
- */
-
-// Calculate total intramolecular forces acting on specific atoms
-void ForcesModule::intramolecularForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
+// Calculate total intramolecular forces acting on specific atoms in Configuration
+void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
                                         const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy,
                                         Array<double> &fz)
 {
@@ -209,34 +150,85 @@ void ForcesModule::intramolecularForces(ProcessPool &procPool, Configuration *cf
     }
 }
 
-// Calculate interatomic forces on specified atoms within the specified Configuration
-void ForcesModule::interatomicForces(ProcessPool &procPool, Configuration *cfg, const Array<int> &targetIndices,
-                                     const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy, Array<double> &fz)
+// Calculate total intramolecular forces in Configuration
+void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
+                                        Array<double> &fx, Array<double> &fy, Array<double> &fz)
 {
     /*
-     * Calculates the interatomic forces in the specified Configuration arising from contributions from PairPotential
-     * interactions between individual atoms, and accounting for intramolecular terms
+     * Calculate the total intramolecular forces within the supplied Configuration, arising from Bond, Angle, and Torsion
+     * terms in all molecules.
      *
-     * This is a parallel routine, with processes operating as process groups.
+     * Calculated forces are added in to the provided arrays. Assembly of the arrays over processes must be performed by the
+     * calling function.
+     *
+     * This is a parallel routine.
      */
 
     // Create a ForceKernel
     ForceKernel kernel(procPool, cfg, potentialMap, fx, fy, fz);
 
-    ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
-
     // Set start/stride for parallel loop
-    auto start = procPool.interleavedLoopStart(strategy);
-    auto stride = procPool.interleavedLoopStride(strategy);
+    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
-    // Loop over supplied atom indices
-    const DynamicArray<Atom> &atoms = cfg->atoms();
-    for (int n = start; n < targetIndices.nItems(); n += stride)
+    // Loop over Molecules
+    std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
+    std::shared_ptr<const Molecule> mol;
+    for (int m = start; m < cfg->nMolecules(); m += stride)
     {
-        const Atom *i = atoms.constValue(targetIndices.constAt(n));
+        // Get Molecule pointer
+        mol = molecules[m];
 
-        kernel.forces(i, ProcessPool::subDivisionStrategy(strategy));
+        // Loop over Bonds
+        DynamicArrayConstIterator<SpeciesBond> bondIterator(mol->species()->constBonds());
+        while (const SpeciesBond *b = bondIterator.iterate())
+            kernel.forces(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
+
+        // Loop over Angles
+        DynamicArrayConstIterator<SpeciesAngle> angleIterator(mol->species()->constAngles());
+        while (const SpeciesAngle *a = angleIterator.iterate())
+            kernel.forces(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
+
+        // Loop over Torsions
+        DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
+        while (const SpeciesTorsion *t = torsionIterator.iterate())
+            kernel.forces(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
     }
+}
+
+// Calculate total forces within the supplied Configuration
+void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, Array<double> &fx,
+                               Array<double> &fy, Array<double> &fz)
+{
+    /*
+     * Calculates the total forces within the supplied Configuration, arising from PairPotential interactions
+     * and intramolecular contributions.
+     *
+     * This is a serial routine (subroutines called from within are parallel).
+     */
+
+    // Create a Timer
+    Timer timer;
+
+    // Calculate interatomic forces
+    timer.start();
+    interAtomicForces(procPool, cfg, potentialMap, fx, fy, fz);
+    timer.stop();
+    Messenger::printVerbose("Time to do interatomic forces was %s.\n", timer.totalTimeString());
+
+    // Calculate intramolecular forces
+    timer.start();
+    intraMolecularForces(procPool, cfg, potentialMap, fx, fy, fz);
+    timer.stop();
+    Messenger::printVerbose("Time to do intramolecular forces was %s.\n", timer.totalTimeString());
+
+    // Gather forces together over all processes
+    if (!procPool.allSum(fx, cfg->nAtoms()))
+        return;
+    if (!procPool.allSum(fy, cfg->nAtoms()))
+        return;
+    if (!procPool.allSum(fz, cfg->nAtoms()))
+        return;
 }
 
 // Calculate forces acting on specific atoms within the specified Configuration (arising from all atoms)
@@ -258,13 +250,13 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
 
     // Calculate interatomic forces
     timer.start();
-    interatomicForces(procPool, cfg, targetIndices, potentialMap, fx, fy, fz);
+    interAtomicForces(procPool, cfg, targetIndices, potentialMap, fx, fy, fz);
     timer.stop();
     Messenger::printVerbose("Time to do partial interatomic forces was %s.\n", timer.totalTimeString());
 
     // Calculate intramolecular forces
     timer.start();
-    intramolecularForces(procPool, cfg, targetIndices, potentialMap, fx, fy, fz);
+    intraMolecularForces(procPool, cfg, targetIndices, potentialMap, fx, fy, fz);
     timer.stop();
     Messenger::printVerbose("Time to do partial intramolecular forces was %s.\n", timer.totalTimeString());
 
