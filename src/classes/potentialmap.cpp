@@ -100,7 +100,7 @@ double PotentialMap::range() const { return range_; }
  * Energy / Force
  */
 
-// Return energy between Atom types at squared distance specified
+// Return energy between Atoms at distance specified
 double PotentialMap::energy(const Atom *i, const Atom *j, double r) const
 {
 #ifdef CHECKS
@@ -140,7 +140,7 @@ double PotentialMap::energy(const Atom *i, const Atom *j, double r) const
         return (pp->energy(r) + pp->analyticCoulombEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
 }
 
-// Return energy between master atom types at distance specified
+// Return energy between SpeciesAtoms at distance specified
 double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r) const
 {
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
@@ -152,7 +152,7 @@ double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r
         return (pp->energy(r) + pp->analyticCoulombEnergy(i->charge() * j->charge(), r));
 }
 
-// Return analytic energy between Atom types at squared distance specified
+// Return analytic energy between Atom types at distance specified
 double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r) const
 {
 #ifdef CHECKS
@@ -185,7 +185,7 @@ double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r) cons
         return (pp->analyticEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
 }
 
-// Return force between Atom types at squared distance specified
+// Return force between Atoms at distance specified
 double PotentialMap::force(const Atom *i, const Atom *j, double r) const
 {
 #ifdef CHECKS
