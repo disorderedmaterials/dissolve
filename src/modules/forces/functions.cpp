@@ -39,7 +39,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     const CellArray &cellArray = cfg->cells();
 
     // Create a ForceKernel
-    ForceKernel kernel(procPool, cfg, potentialMap, fx, fy, fz);
+    ForceKernel kernel(procPool, cfg->box(), potentialMap, fx, fy, fz);
 
     Cell *cell;
 
@@ -81,7 +81,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
      */
 
     // Create a ForceKernel
-    ForceKernel kernel(procPool, cfg, potentialMap, fx, fy, fz);
+    ForceKernel kernel(procPool, cfg->box(), potentialMap, fx, fy, fz);
 
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
@@ -115,7 +115,7 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
      */
 
     // Create a ForceKernel
-    ForceKernel kernel(procPool, cfg, potentialMap, fx, fy, fz);
+    ForceKernel kernel(procPool, cfg->box(), potentialMap, fx, fy, fz);
 
     // Set start/stride for parallel loop
     auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
@@ -165,7 +165,7 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
      */
 
     // Create a ForceKernel
-    ForceKernel kernel(procPool, cfg, potentialMap, fx, fy, fz);
+    ForceKernel kernel(procPool, cfg->box(), potentialMap, fx, fy, fz);
 
     // Set start/stride for parallel loop
     auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);

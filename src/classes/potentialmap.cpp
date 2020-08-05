@@ -225,7 +225,19 @@ double PotentialMap::force(const Atom *i, const Atom *j, double r) const
         return (pp->force(r) + pp->analyticCoulombForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
 }
 
-// Return analytic force between Atom types at squared distance specified
+// Return force between SpeciesAtoms at distance specified
+double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r) const
+{
+    // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
+    // interpolated potential
+    PairPotential *pp = potentialMatrix_.constAt(i->atomType()->index(), j->atomType()->index());
+    if (pp->includeCoulomb())
+        return pp->force(r);
+    else
+        return (pp->force(r) + pp->analyticCoulombForce(i->charge() * j->charge(), r));
+}
+
+// Return analytic force between Atom types at distance specified
 double PotentialMap::analyticForce(const Atom *i, const Atom *j, double r) const
 {
 #ifdef CHECKS
