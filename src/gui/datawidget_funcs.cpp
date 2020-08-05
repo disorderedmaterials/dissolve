@@ -229,7 +229,7 @@ void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int top
     item->setCheckState(0, data->isVisible() ? Qt::Checked : Qt::Unchecked);
 
     // Update child items
-    TreeWidgetRefListUpdater<DataWidget, Renderable> renderableUpdater(item, data->renderables(), this,
+    TreeWidgetUpdater<DataWidget, Renderable> renderableUpdater(item, data->renderables(), this,
                                                                        &DataWidget::dataTreeItemUpdateFunction);
 }
 
