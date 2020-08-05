@@ -100,20 +100,18 @@ class EnergyKernel
      * Intramolecular Terms
      */
     public:
-    // Return SpeciesBond energy
+    // Return SpeciesBond energy at Atoms specified
     double energy(const SpeciesBond *b, const Atom *i, const Atom *j);
     // Return SpeciesBond energy
     static double energy(const SpeciesBond *b);
-    // Return SpeciesAngle energy
+    // Return SpeciesAngle energy at Atoms specified
     double energy(const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k);
     // Return SpeciesAngle energy
     static double energy(const SpeciesAngle *a);
-    // Return SpeciesTorsion energy
+    // Return SpeciesTorsion energy at Atoms specified
     double energy(const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
     // Return SpeciesTorsion energy
     static double energy(const SpeciesTorsion *t);
-    // Return SpeciesImproper energy
-    static double energy(const SpeciesImproper *i);
     // Return intramolecular energy for the supplied Atom
     double intramolecularEnergy(std::shared_ptr<const Molecule> mol, const Atom *i);
     // Return intramolecular energy for the supplied Molecule
