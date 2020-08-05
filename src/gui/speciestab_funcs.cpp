@@ -68,7 +68,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     ui_.ImproperTable->horizontalHeader()->setVisible(true);
 
     // Set up SpeciesViewer
-    ui_.ViewerWidget->setCoreData(&dissolve.coreData());
+    ui_.ViewerWidget->setDissolve(&dissolve);
     ui_.ViewerWidget->setSpecies(species_);
 
     // Set up SiteViewer
