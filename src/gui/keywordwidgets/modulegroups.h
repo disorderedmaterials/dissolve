@@ -25,10 +25,10 @@
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/ui_modulegroups.h"
 #include "keywords/modulegroups.h"
+#include "module/module.h"
 #include <QWidget>
 
 // Forward Declarations
-class Module;
 class ModuleGroup;
 
 class ModuleGroupsKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
@@ -78,3 +78,5 @@ class ModuleGroupsKeywordWidget : public KeywordDropDown, public KeywordWidgetBa
     // Update summary text
     void updateSummaryText();
 };
+
+Q_DECLARE_METATYPE(Module *);

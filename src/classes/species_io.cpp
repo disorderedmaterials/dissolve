@@ -379,6 +379,12 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 break;
             case (Species::ForcefieldKeyword):
                 forcefield_ = ForcefieldLibrary::forcefield(parser.argc(1));
+                if (!forcefield_)
+                {
+                    Messenger::error("No forcefield named '%s' exists.\n", parser.argc(1));
+                    error = true;
+                    break;
+                }
                 break;
             case (Species::ImproperKeyword):
                 // Check the functional form specified - if it starts with '@' it is a reference to master

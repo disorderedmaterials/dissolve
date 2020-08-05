@@ -84,10 +84,6 @@ bool NETARootNode::setModifier(const char *modifier, ComparisonOperator op, int 
 // Evaluate the node and return its score
 int NETARootNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
 {
-    // 	printf("I AM THE ROOT - matchPath size = %i:\n", matchPath.nItems());
-    // 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(),
-    // iii->element()->symbol()); 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
-
     auto totalScore = 0;
 
     // Check any specified modifier values

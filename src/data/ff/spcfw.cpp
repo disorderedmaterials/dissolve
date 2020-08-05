@@ -38,7 +38,12 @@
  * All energy values are in kJ/mol.
  */
 
-Forcefield_SPCFw::Forcefield_SPCFw()
+/*
+ * Set Up
+ */
+
+// Set up / create all forcefield terms
+bool Forcefield_SPCFw::setUp()
 {
     // Atom types
     addAtomType(ELEMENT_H, 1, "HW", "-O(nh=2)", "Water hydrogen", 0.41, 0.0, 0.0);
@@ -49,9 +54,9 @@ Forcefield_SPCFw::Forcefield_SPCFw()
 
     // Angle terms
     addAngleTerm("HW", "OW", "HW", SpeciesAngle::HarmonicForm, 317.5656, 113.24);
-}
 
-Forcefield_SPCFw::~Forcefield_SPCFw() {}
+    return true;
+}
 
 /*
  * Definition

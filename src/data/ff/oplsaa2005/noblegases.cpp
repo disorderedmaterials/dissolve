@@ -20,25 +20,28 @@
 */
 
 #include "data/ff/oplsaa2005/noblegases.h"
-#include "base/sysfunc.h"
-#include "classes/speciesatom.h"
-#include "data/ffatomtype.h"
 
 /*
- * OPLS-AA (2005) Noble Gases
+ * Set Up
  */
 
-Forcefield_OPLSAA2005_NobleGases::Forcefield_OPLSAA2005_NobleGases()
+// Set up / create all forcefield terms
+bool Forcefield_OPLSAA2005_NobleGases::setUp()
 {
     // Copy required types from OPLS-AA (2005) core list
-    copyAtomType(oplsAtomTypeById(101), "He");
-    copyAtomType(oplsAtomTypeById(102), "Ne");
-    copyAtomType(oplsAtomTypeById(103), "Ar");
-    copyAtomType(oplsAtomTypeById(104), "Kr");
-    copyAtomType(oplsAtomTypeById(105), "Xe");
-}
+    if (!copyAtomType(oplsAtomTypeById(101), "He"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(102), "Ne"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(103), "Ar"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(104), "Kr"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(105), "Xe"))
+        return false;
 
-Forcefield_OPLSAA2005_NobleGases::~Forcefield_OPLSAA2005_NobleGases() {}
+    return true;
+}
 
 /*
  * Definition
@@ -52,47 +55,4 @@ const char *Forcefield_OPLSAA2005_NobleGases::description() const
 {
     static CharString desc("Noble gases from OPLS-AA (2005).<br/><br/>References: %s", publicationReferences());
     return desc.get();
-}
-
-// Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_OPLSAA2005_NobleGases::shortRangeType() const
-{
-    return Forcefield::LennardJonesGeometricType;
-}
-
-/*
- * Atom Type Data
- */
-
-// Determine and return atom type for specified SpeciesAtom
-ForcefieldAtomType *Forcefield_OPLSAA2005_NobleGases::determineAtomType(SpeciesAtom *i) const
-{
-    switch (i->element()->Z())
-    {
-        // Helium
-        case (ELEMENT_HE):
-            return atomTypeByName("He", i->element());
-            break;
-        // Neon
-        case (ELEMENT_NE):
-            return atomTypeByName("Ne", i->element());
-            break;
-        // Argon
-        case (ELEMENT_AR):
-            return atomTypeByName("Ar", i->element());
-            break;
-        // Krypton
-        case (ELEMENT_KR):
-            return atomTypeByName("Kr", i->element());
-            break;
-        // Xenon
-        case (ELEMENT_XE):
-            return atomTypeByName("Xe", i->element());
-            break;
-        // Default
-        default:
-            break;
-    }
-
-    return NULL;
 }

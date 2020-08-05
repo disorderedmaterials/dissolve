@@ -25,6 +25,7 @@
 #include "templates/list.h"
 #include "templates/listitem.h"
 #include "templates/reflist.h"
+#include <memory>
 #include <vector>
 
 // Forward Declarations
@@ -103,10 +104,10 @@ class NETANode : public ListItem<NETANode>
     int nBranchNodes() const;
     // Create connectivity node in the branch
     NETAConnectionNode *createConnectionNode(std::vector<Element *> targetElements,
-                                             std::vector<ForcefieldAtomType *> targetAtomTypes);
+                                             std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes);
     // Create presence node in the branch
     NETAPresenceNode *createPresenceNode(std::vector<Element *> targetElements,
-                                         std::vector<ForcefieldAtomType *> targetAtomTypes);
+                                         std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes);
     // Create ring node in the branch
     NETARingNode *createRingNode();
 

@@ -51,6 +51,13 @@ class Forcefield : public Elements
     virtual ~Forcefield() = default;
 
     /*
+     * Set Up
+     */
+    public:
+    // Set up / create all forcefield terms
+    virtual bool setUp() = 0;
+
+    /*
      * Definition
      */
     public:
@@ -80,8 +87,6 @@ class Forcefield : public Elements
     std::vector<ForcefieldParameters> shortRangeParameters_;
     // Atom type data
     std::vector<ForcefieldAtomType> atomTypes_;
-    // Atom type data, grouped by element
-    std::vector<std::vector<std::reference_wrapper<ForcefieldAtomType>>> atomTypesByElementPrivate_;
 
     protected:
     // Add short-range parameters
@@ -93,21 +98,20 @@ class Forcefield : public Elements
     void addAtomType(int Z, int index, const char *name, const char *netaDefinition, const char *description, double q,
                      const char *parameterReference);
     // Copy existing atom type
-    void copyAtomType(const ForcefieldAtomType &sourceType, const char *newTypeName, const char *netaDefinition = NULL,
-                      const char *equivalentName = NULL);
-    // Determine and return atom type for specified SpeciesAtom from supplied Array of types
-    static ForcefieldAtomType *
-    determineAtomType(SpeciesAtom *i, const std::vector<std::vector<std::reference_wrapper<ForcefieldAtomType>>> &atomTypes);
+    bool copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType> sourceType, const char *newTypeName,
+                      const char *netaDefinition = NULL, const char *equivalentName = NULL);
     // Determine and return atom type for specified SpeciesAtom
-    virtual ForcefieldAtomType *determineAtomType(SpeciesAtom *i) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(SpeciesAtom *i) const;
 
     public:
+    // Create NETA definitions for all atom types from stored defs
+    bool createNETADefinitions();
     // Return named short-range parameters (if they exist)
-    const ForcefieldParameters *shortRangeParameters(const char *name) const;
+    const OptionalReferenceWrapper<const ForcefieldParameters> shortRangeParameters(const char *name) const;
     // Return the named ForcefieldAtomType (if it exists)
-    virtual ForcefieldAtomType *atomTypeByName(const char *name, Element *element = NULL) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeByName(const char *name) const;
     // Return the ForcefieldAtomType with specified id (if it exists)
-    virtual ForcefieldAtomType *atomTypeById(int id, Element *element = NULL) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeById(int id) const;
 
     /*
      * Term Data
@@ -138,25 +142,26 @@ class Forcefield : public Elements
                          SpeciesImproper::ImproperFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0,
                          double data3 = 0.0);
     // Match any kind of term
-    template <class T, typename... Args> static OptionalReferenceWrapper<const T> termMatch_(std::vector<T>, Args...);
+    template <class T, typename... Args>
+    static OptionalReferenceWrapper<const T> termMatch_(const std::vector<T> &, Args &&...);
 
     public:
     // Return bond term for the supplied atom type pair (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldBondTerm> getBondTerm(const ForcefieldAtomType *i,
-                                                                           const ForcefieldAtomType *j) const;
+    virtual OptionalReferenceWrapper<const ForcefieldBondTerm> getBondTerm(const ForcefieldAtomType &i,
+                                                                           const ForcefieldAtomType &j) const;
     // Return angle term for the supplied atom type trio (if it exists)
     virtual OptionalReferenceWrapper<const ForcefieldAngleTerm>
-    getAngleTerm(const ForcefieldAtomType *i, const ForcefieldAtomType *j, const ForcefieldAtomType *k) const;
+    getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k) const;
     // Return torsion term for the supplied atom type quartet (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldTorsionTerm> getTorsionTerm(const ForcefieldAtomType *i,
-                                                                                 const ForcefieldAtomType *j,
-                                                                                 const ForcefieldAtomType *k,
-                                                                                 const ForcefieldAtomType *l) const;
+    virtual OptionalReferenceWrapper<const ForcefieldTorsionTerm> getTorsionTerm(const ForcefieldAtomType &i,
+                                                                                 const ForcefieldAtomType &j,
+                                                                                 const ForcefieldAtomType &k,
+                                                                                 const ForcefieldAtomType &l) const;
     // Return improper term for the supplied atom type quartet (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType *i,
-                                                                                   const ForcefieldAtomType *j,
-                                                                                   const ForcefieldAtomType *k,
-                                                                                   const ForcefieldAtomType *l) const;
+    virtual OptionalReferenceWrapper<const ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType &i,
+                                                                                   const ForcefieldAtomType &j,
+                                                                                   const ForcefieldAtomType &k,
+                                                                                   const ForcefieldAtomType &l) const;
 
     /*
      * Term Assignment
@@ -220,9 +225,10 @@ class Forcefield : public Elements
 };
 
 template <class T, typename... Args>
-OptionalReferenceWrapper<const T> Forcefield::termMatch_(std::vector<T> container, Args... args)
+OptionalReferenceWrapper<const T> Forcefield::termMatch_(const std::vector<T> &container, Args &&... args)
 {
-    auto it = std::find_if(container.begin(), container.end(), [&](const T &item) { return item.isMatch(args...); });
+    auto it = std::find_if(container.begin(), container.end(),
+                           [&](const T &item) { return item.isMatch(std::forward<Args>(args)...); });
     if (it == container.end())
         return {};
     return *it;

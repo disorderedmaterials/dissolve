@@ -26,7 +26,8 @@
 #include "templates/refdatalist.h"
 
 NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Element *> targetElements,
-                                       std::vector<ForcefieldAtomType *> targetAtomTypes, SpeciesBond::BondType bt)
+                                       std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes,
+                                       SpeciesBond::BondType bt)
     : NETANode(parent, NETANode::ConnectionNode)
 {
     allowedElements_ = targetElements;
@@ -137,10 +138,6 @@ bool NETAConnectionNode::setFlag(const char *flag, bool state)
 // Evaluate the node and return its score
 int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
 {
-    // 	printf("I AM THE CONNECTION - matchPath size = %i:\n", matchPath.nItems());
-    // 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(),
-    // iii->element()->symbol()); 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
-
     // Get directly connected atoms about 'i', excluding any that have already been matched
     RefDataList<const SpeciesAtom, int> neighbours;
     for (const auto *bond : i->bonds())
@@ -186,10 +183,10 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
             break;
         }
         if (atomScore == NETANode::NoMatch)
-            for (auto type : allowedAtomTypes_)
+            for (const ForcefieldAtomType &atomType : allowedAtomTypes_)
             {
                 // Evaluate the neighbour against the atom type
-                auto typeScore = type->neta().score(j);
+                auto typeScore = atomType.neta().score(j);
                 if (typeScore == NETANode::NoMatch)
                     continue;
 
@@ -226,7 +223,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
                 if (bond->partner(j)->element()->Z() == ELEMENT_H)
                     ++nH;
             if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_))
-                return NETANode::NoMatch;
+                continue;
 
             ++atomScore;
         }
@@ -234,10 +231,6 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
         // Found a match, so increase the match count and store the score
         ++nMatches;
         neighbourIterator.currentData() = atomScore;
-
-        // Have we matched enough? If so break out early.
-        if (compareValues(nMatches, repeatCountOperator_, repeatCount_))
-            break;
     }
 
     // Did we find the required number of matches in the neighbour list?

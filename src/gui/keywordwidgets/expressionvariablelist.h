@@ -24,9 +24,11 @@
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/ui_expressionvariablelist.h"
 #include "keywords/expressionvariablelist.h"
+#include "procedure/nodes/node.h"
+
+Q_DECLARE_METATYPE(ExpressionNode *);
 
 // Forward Declarations
-class ExpressionNode;
 class QWidget;
 
 class ExpressionVariableListKeywordWidget : public QWidget, public KeywordWidgetBase

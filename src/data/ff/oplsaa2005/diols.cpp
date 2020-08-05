@@ -20,26 +20,33 @@
 */
 
 #include "data/ff/oplsaa2005/diols.h"
-#include "base/sysfunc.h"
-#include "classes/speciesatom.h"
-#include "data/ffatomtype.h"
 
 /*
- * OPLS-AA (2005) Noble Gases
+ * Set Up
  */
 
-Forcefield_OPLSAA2005_Diols::Forcefield_OPLSAA2005_Diols()
+// Set up / create all forcefield terms
+bool Forcefield_OPLSAA2005_Diols::setUp()
 {
+    // Call setup function in OPLS-AA Alkanes base FF
+    if (!Forcefield_OPLSAA2005_Alkanes::setUp())
+        return false;
+
     // Copy required types from OPLS-AA (2005) core list
     // -- Diols
-    copyAtomType(oplsAtomTypeById(169), "OH", "nh=1,-C(-O(root,-H))");
-    copyAtomType(oplsAtomTypeById(170), "HO", "-&169");
-    copyAtomType(oplsAtomTypeById(157), "CT", "nh>=2,-O");
-    copyAtomType(oplsAtomTypeById(158), "CT", "nh=1,-O");
-    copyAtomType(oplsAtomTypeById(159), "CT", "nh=0,-O");
-}
+    if (!copyAtomType(oplsAtomTypeById(169), "OH", "nh=1,-C(-O(root,-H))"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(170), "HO", "-&169"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(157), "CT", "nh>=2,-O"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(158), "CT", "nh=1,-O"))
+        return false;
+    if (!copyAtomType(oplsAtomTypeById(159), "CT", "nh=0,-O"))
+        return false;
 
-Forcefield_OPLSAA2005_Diols::~Forcefield_OPLSAA2005_Diols() {}
+    return true;
+}
 
 /*
  * Definition

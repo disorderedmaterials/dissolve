@@ -319,10 +319,18 @@ bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
             return Messenger::error("Could not find atom type %s", typeName);
 
         auto atomType = *opt_atomType;
+        auto nIsotopes = parser.argi(4);
 
         // types_.emplace_back(types_.size(), atomType, population);
         types_.emplace_back(atomType, population, fraction, boundCoherent);
         auto &atd = types_.back();
+        for (int i = 0; i < nIsotopes; ++i)
+        {
+            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+                return false;
+            auto isotope = Isotopes::isotope(parser.argi(0), parser.argi(1));
+            atd.add(isotope, parser.argd(2));
+        }
     }
 
     return true;

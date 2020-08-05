@@ -24,15 +24,21 @@
 #include "data/ff.h"
 
 // Forward Declarations
-class CoreData;
-class SpeciesAtom;
+/* none */
 
 // SPC/Fw Forcefield
 class Forcefield_SPCFw : public Forcefield
 {
     public:
-    Forcefield_SPCFw();
-    ~Forcefield_SPCFw();
+    Forcefield_SPCFw() = default;
+    ~Forcefield_SPCFw() = default;
+
+    /*
+     * Set Up
+     */
+    protected:
+    // Set up / create all forcefield terms
+    bool setUp();
 
     /*
      * Definition

@@ -93,7 +93,7 @@ class NETADefinitionGenerator
     // Temporary element array used in definition creation
     static std::vector<Element *> targetElements_;
     // Temporary atomtype array used in definition creation
-    static std::vector<ForcefieldAtomType *> targetAtomTypes_;
+    static std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes_;
     // Context (branch) stack
     static RefList<NETANode> contextStack_;
     // Whether to recognise text elements as generic names, rather than an element or unrecognised token
@@ -109,7 +109,7 @@ class NETADefinitionGenerator
     // Return target Elements array
     static std::vector<Element *> targetElements();
     // Return target ForcefieldAtomTypes array
-    static std::vector<ForcefieldAtomType *> targetAtomTypes();
+    static std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes();
     // Clear element / atomtype targets
     static void clearTargets();
     // Return topmost context

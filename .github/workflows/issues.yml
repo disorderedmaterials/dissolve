@@ -54,5 +54,5 @@ jobs:
       with:
         action-token: "${{ secrets.MAIN_SECRET }}"
         project-url: "https://github.com/projectdissolve/dissolve/projects/6"
-        column-name: "Distribution"
-        label-name: "Scope: Distribution"
+        column-name: "CI"
+        label-name: "Scope: CI"
