@@ -671,10 +671,7 @@ double EnergyKernel::energy(const SpeciesBond *b, const Atom *i, const Atom *j)
 }
 
 // Return SpeciesBond energy
-double EnergyKernel::energy(const SpeciesBond *b)
-{
-    return b->energy((b->j()->r() - b->i()->r()).magnitude());
-}
+double EnergyKernel::energy(const SpeciesBond *b) { return b->energy((b->j()->r() - b->i()->r()).magnitude()); }
 
 // Return SpeciesAngle energy at Atoms specified
 double EnergyKernel::energy(const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k)
