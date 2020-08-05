@@ -117,8 +117,8 @@ double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, 
 
 // Return energy of adjusted coordinates, following the force vectors by the supplied amount
 template <>
-double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, Species *sp,
-                                                         const PotentialMap &potentialMap, double delta)
+double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap,
+                                                         double delta)
 {
     for (auto n = 0; n < sp->nAtoms(); ++n)
         sp->setAtomCoordinates(n, xRef_[n] + xForce_[n] * delta, yRef_[n] + yForce_[n] * delta, zRef_[n] + zForce_[n] * delta);
