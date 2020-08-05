@@ -304,6 +304,10 @@ class GeometryOptimisationModule : public Module
         }
     }
 
+    public:
+    // Geometry optimise supplied Species
+    bool optimiseSpecies(Dissolve &dissolve, ProcessPool &procPool, Species *sp);
+
     /*
      * GUI Widget
      */
