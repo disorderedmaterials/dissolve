@@ -225,11 +225,6 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Species *sp)
     while (const SpeciesTorsion *t = torsionIterator.iterate())
         energy += EnergyKernel::energy(t);
 
-    // Loop over impropers
-    DynamicArrayConstIterator<SpeciesImproper> improperIterator(sp->constImpropers());
-    while (const SpeciesImproper *i = improperIterator.iterate())
-        energy += EnergyKernel::energy(i);
-
     return energy;
 }
 
