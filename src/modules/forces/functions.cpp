@@ -19,8 +19,10 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/forcekernel.h"
+#include "classes/potentialmap.h"
 #include "classes/species.h"
 #include "modules/forces/forces.h"
 
@@ -96,6 +98,46 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
         const Atom *i = atoms.constValue(targetIndices.constAt(n));
 
         kernel.forces(i, ProcessPool::subDivisionStrategy(strategy));
+    }
+}
+
+// Calculate interatomic forces within the specified Species
+void ForcesModule::interAtomicForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap, Array<double> &fx,
+                                     Array<double> &fy, Array<double> &fz)
+{
+    double scale, r, magjisq;
+    const auto cutoffSq = potentialMap.range() * potentialMap.range();
+    Vec3<double> vecij;
+    SpeciesAtom *j;
+    for (auto indexI = 0; indexI < sp->nAtoms() - 1; ++indexI)
+    {
+        auto *i = sp->atom(indexI);
+
+        for (int indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
+        {
+            j = sp->atom(indexJ);
+
+            // Get intramolecular scaling of atom pair
+            scale = i->scaling(j);
+            if (scale < 1.0e-3)
+                continue;
+
+            // Determine final forces
+            vecij = j->r() - i->r();
+            magjisq = vecij.magnitudeSq();
+            if (magjisq > cutoffSq)
+                continue;
+            r = sqrt(magjisq);
+            vecij /= r;
+
+            vecij *= potentialMap.force(i, j, r) * scale;
+            fx[indexI] += vecij.x;
+            fy[indexI] += vecij.y;
+            fz[indexI] += vecij.z;
+            fx[indexJ] -= vecij.x;
+            fy[indexJ] -= vecij.y;
+            fz[indexJ] -= vecij.z;
+        }
     }
 }
 
@@ -179,21 +221,44 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
         // Get Molecule pointer
         mol = molecules[m];
 
-        // Loop over Bonds
+        // Loop over bonds
         DynamicArrayConstIterator<SpeciesBond> bondIterator(mol->species()->constBonds());
         while (const SpeciesBond *b = bondIterator.iterate())
             kernel.forces(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
 
-        // Loop over Angles
+        // Loop over angles
         DynamicArrayConstIterator<SpeciesAngle> angleIterator(mol->species()->constAngles());
         while (const SpeciesAngle *a = angleIterator.iterate())
             kernel.forces(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
 
-        // Loop over Torsions
+        // Loop over torsions
         DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
         while (const SpeciesTorsion *t = torsionIterator.iterate())
             kernel.forces(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
     }
+}
+
+// Calculate total intramolecular forces in Species
+void ForcesModule::intraMolecularForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap, Array<double> &fx,
+                                        Array<double> &fy, Array<double> &fz)
+{
+    NonPeriodicBox box(1.0);
+    ForceKernel kernel(procPool, &box, potentialMap, fx, fy, fz);
+
+    // Loop over bonds
+    DynamicArrayConstIterator<SpeciesBond> bondIterator(sp->constBonds());
+    while (const SpeciesBond *b = bondIterator.iterate())
+        kernel.forces(b);
+
+    // Loop over angles
+    DynamicArrayConstIterator<SpeciesAngle> angleIterator(sp->constAngles());
+    while (const SpeciesAngle *a = angleIterator.iterate())
+        kernel.forces(a);
+
+    // Loop over torsions
+    DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(sp->constTorsions());
+    while (const SpeciesTorsion *t = torsionIterator.iterate())
+        kernel.forces(t);
 }
 
 // Calculate total forces within the supplied Configuration
@@ -300,4 +365,13 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg,
 
     // Call the atomic index-based function
     totalForces(procPool, cfg, indices, potentialMap, fx, fy, fz);
+}
+
+// Calculate total forces within the specified Species
+void ForcesModule::totalForces(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap, Array<double> &fx,
+                               Array<double> &fy, Array<double> &fz)
+{
+    interAtomicForces(procPool, sp, potentialMap, fx, fy, fz);
+
+    intraMolecularForces(procPool, sp, potentialMap, fx, fy, fz);
 }
