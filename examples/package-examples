@@ -1,6 +1,8 @@
 #!/bin/bash
 
-# Package Example Data - Must be run from the examples/ dir
+#-----------------------------------------------------------#
+# Package Example Data - Must be run from the examples/ dir #
+#-----------------------------------------------------------#
 
 DISSOLVEVERSION=""
 
@@ -36,7 +38,13 @@ fi
 ARCHIVEDIR="Dissolve-${DISSOLVEVERSION}-ExampleData"
 FILES=()
 
-# Set file targets
+#-----------------------------------------------------------#
+#                     Set File Targets                      #
+#-----------------------------------------------------------#
+
+#----------#
+# Examples #
+#----------#
 
 # -- Argon
 FILES+=(argon/input.txt) 
@@ -52,16 +60,26 @@ FILES+=(benzene/data/5050.mint01)
 FILES+=(silica_bulk/input.txt)
 FILES+=(silica_bulk/data/SiO2_NIMROD.mint01)
 
-# -- Species Data
-FILES+=(species/benzene.dsp)
-
 # -- Water
 FILES+=(water/input.txt)
 FILES+=(water/data/SLS18498-H2O.mint01)
 FILES+=(water/data/SLS18500-HDO5050.mint01)
 FILES+=(water/data/SLS18502-D2O.mint01)
 
-# Assemble file list from all dirs
+#------------#
+# Other Data #
+#------------#
+
+# -- Species Data
+FILES+=(species/*.txt)
+
+# -- Example Coordinates
+FILES+=(xyz/*.xyz)
+
+
+#-----------------------------------------------------------#
+#                    Assemble Files                         #
+#-----------------------------------------------------------#
 
 mkdir ${ARCHIVEDIR}
 for file in "${FILES[@]}"
@@ -80,3 +98,4 @@ rm -rf ${ARCHIVEDIR}
 
 # All done.
 
+exit 0
