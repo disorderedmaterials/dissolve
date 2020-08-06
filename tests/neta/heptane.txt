@@ -1,0 +1,110 @@
+Species 'Heptane'
+  # Atoms
+  Atom    1    C  -2.512458e+00  -4.297086e-01  1.129543e-01  'None'  -1.800000e-01
+  Atom    2    C  -1.296323e+00  4.456275e-01  9.428744e-02  'None'  -1.200000e-01
+  Atom    3    C  1.464787e-02  -2.798742e-01  -8.091826e-03  'None'  -1.200000e-01
+  Atom    4    C  1.241877e+00  5.832093e-01  -3.044739e-02  'None'  -1.200000e-01
+  Atom    5    C  2.544769e+00  -1.502261e-01  -1.523865e-01  'None'  -1.800000e-01
+  Atom    6    H  -3.407404e+00  1.707209e-01  1.816857e-01  'None'  6.000000e-02
+  Atom    7    H  -2.490113e+00  -1.100028e+00  9.596875e-01  'None'  6.000000e-02
+  Atom    8    H  -2.573432e+00  -1.023033e+00  -7.875881e-01  'None'  6.000000e-02
+  Atom    9    H  -1.379718e+00  1.128782e+00  -7.397669e-01  'None'  6.000000e-02
+  Atom   10    H  -1.297876e+00  1.050756e+00  9.905031e-01  'None'  6.000000e-02
+  Atom   11    H  9.616430e-02  -9.665514e-01  8.222601e-01  'None'  6.000000e-02
+  Atom   12    H  4.525274e-03  -8.799677e-01  -9.069123e-01  'None'  6.000000e-02
+  Atom   13    H  1.163534e+00  1.277914e+00  -8.555258e-01  'None'  6.000000e-02
+  Atom   14    H  1.269240e+00  1.175882e+00  8.743445e-01  'None'  6.000000e-02
+  Atom   15    H  3.371357e+00  5.457823e-01  -1.730191e-01  'None'  6.000000e-02
+  Atom   16    H  2.684458e+00  -8.218280e-01  6.831995e-01  'None'  6.000000e-02
+  Atom   17    H  2.566751e+00  -7.274569e-01  -1.065184e+00  'None'  6.000000e-02
+
+  # Bonds
+  Bond    1    2
+  Bond    2    3
+  Bond    3    4
+  Bond    4    5
+  Bond    1    6
+  Bond    1    7
+  Bond    1    8
+  Bond    2    9
+  Bond   10    2
+  Bond    3   11
+  Bond    3   12
+  Bond    4   13
+  Bond    4   14
+  Bond    5   15
+  Bond    5   16
+  Bond    5   17
+
+  # Angles
+  Angle    1    2    3
+  Angle    2    3    4
+  Angle    3    4    5
+  Angle    6    1    2
+  Angle    7    1    2
+  Angle    7    1    6
+  Angle    8    1    2
+  Angle    8    1    6
+  Angle    8    1    7
+  Angle    1    2    9
+  Angle    9    2    3
+  Angle    1    2   10
+  Angle   10    2    3
+  Angle   10    2    9
+  Angle    2    3   11
+  Angle   11    3    4
+  Angle    2    3   12
+  Angle   12    3    4
+  Angle   12    3   11
+  Angle    3    4   13
+  Angle   13    4    5
+  Angle    3    4   14
+  Angle   14    4    5
+  Angle   14    4   13
+  Angle    4    5   15
+  Angle    4    5   16
+  Angle   16    5   15
+  Angle    4    5   17
+  Angle   17    5   15
+  Angle   17    5   16
+
+  # Torsions
+  Torsion    1    2    3    4
+  Torsion    2    3    4    5
+  Torsion    6    1    2    3
+  Torsion    7    1    2    3
+  Torsion    8    1    2    3
+  Torsion    6    1    2    9
+  Torsion    7    1    2    9
+  Torsion    8    1    2    9
+  Torsion    9    2    3    4
+  Torsion    6    1    2   10
+  Torsion    7    1    2   10
+  Torsion    8    1    2   10
+  Torsion   10    2    3    4
+  Torsion    1    2    3   11
+  Torsion    9    2    3   11
+  Torsion   10    2    3   11
+  Torsion   11    3    4    5
+  Torsion    1    2    3   12
+  Torsion    9    2    3   12
+  Torsion   10    2    3   12
+  Torsion   12    3    4    5
+  Torsion    2    3    4   13
+  Torsion   11    3    4   13
+  Torsion   12    3    4   13
+  Torsion    2    3    4   14
+  Torsion   11    3    4   14
+  Torsion   12    3    4   14
+  Torsion    3    4    5   15
+  Torsion   13    4    5   15
+  Torsion   14    4    5   15
+  Torsion    3    4    5   16
+  Torsion   13    4    5   16
+  Torsion   14    4    5   16
+  Torsion    3    4    5   17
+  Torsion   13    4    5   17
+  Torsion   14    4    5   17
+
+  Forcefield  'OPLSAA2005/Alkanes'
+EndSpecies

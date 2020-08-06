@@ -1,0 +1,81 @@
+Species '1,3-propanediol'
+  # Atoms
+  Atom    1    C  -1.336390e+00  -2.166313e-01  -2.643242e-01  'None'  1.450000e-01
+  Atom    2    C  -5.580831e-02  1.969121e-01  4.006424e-01  'None'  -1.200000e-01
+  Atom    3    C  1.203002e+00  -2.642974e-01  -2.740181e-01  'None'  1.450000e-01
+  Atom    4    O  2.327035e+00  2.258409e-01  4.276803e-01  'None'  -7.000000e-01
+  Atom    5    O  -2.450612e+00  2.421280e-01  4.735249e-01  'None'  -7.000000e-01
+  Atom    6    H  -1.379145e+00  -1.294505e+00  -3.362600e-01  'None'  6.000000e-02
+  Atom    7    H  -1.376393e+00  1.803877e-01  -1.269042e+00  'None'  6.000000e-02
+  Atom    8    H  -5.576718e-02  -1.808053e-01  1.413994e+00  'None'  6.000000e-02
+  Atom    9    H  -2.998695e-02  1.275428e+00  4.683195e-01  'None'  6.000000e-02
+  Atom   10    H  1.226741e+00  9.360106e-02  -1.293953e+00  'None'  6.000000e-02
+  Atom   11    H  1.229270e+00  -1.344897e+00  -3.001876e-01  'None'  6.000000e-02
+  Atom   12    H  3.116849e+00  -9.885752e-02  1.959909e-02  'None'  4.350000e-01
+  Atom   13    H  -2.418796e+00  1.185696e+00  5.340260e-01  'None'  4.350000e-01
+
+  # Bonds
+  Bond    1    2
+  Bond    2    3
+  Bond    3    4
+  Bond    1    5
+  Bond    1    6
+  Bond    1    7
+  Bond    2    8
+  Bond    2    9
+  Bond    3   10
+  Bond    3   11
+  Bond    4   12
+  Bond    5   13
+
+  # Angles
+  Angle    1    2    3
+  Angle    2    3    4
+  Angle    5    1    2
+  Angle    6    1    2
+  Angle    6    1    5
+  Angle    7    1    2
+  Angle    7    1    5
+  Angle    7    1    6
+  Angle    1    2    8
+  Angle    8    2    3
+  Angle    1    2    9
+  Angle    9    2    3
+  Angle    9    2    8
+  Angle    2    3   10
+  Angle   10    3    4
+  Angle    2    3   11
+  Angle   11    3    4
+  Angle   11    3   10
+  Angle    3    4   12
+  Angle    1    5   13
+
+  # Torsions
+  Torsion    1    2    3    4
+  Torsion    5    1    2    3
+  Torsion    6    1    2    3
+  Torsion    7    1    2    3
+  Torsion    5    1    2    8
+  Torsion    6    1    2    8
+  Torsion    7    1    2    8
+  Torsion    8    2    3    4
+  Torsion    5    1    2    9
+  Torsion    6    1    2    9
+  Torsion    7    1    2    9
+  Torsion    9    2    3    4
+  Torsion    1    2    3   10
+  Torsion    8    2    3   10
+  Torsion    9    2    3   10
+  Torsion    1    2    3   11
+  Torsion    8    2    3   11
+  Torsion    9    2    3   11
+  Torsion    2    3    4   12
+  Torsion   10    3    4   12
+  Torsion   11    3    4   12
+  Torsion    2    1    5   13
+  Torsion    6    1    5   13
+  Torsion    7    1    5   13
+
+  Forcefield  'OPLSAA2005/Diols'
+EndSpecies
+

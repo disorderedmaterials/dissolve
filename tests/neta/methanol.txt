@@ -1,0 +1,33 @@
+Species 'Methanol'
+  # Atoms
+  Atom    1    C  3.413690e-01  1.199640e-01  -4.430163e-02  'None'  1.450000e-01
+  Atom    2    O  -9.265791e-01  -3.425229e-01  -4.577432e-01  'None'  -6.830000e-01
+  Atom    3    H  -1.468049e+00  -4.997640e-01  3.024601e-01  'None'  4.180000e-01
+  Atom    4    H  2.750356e-01  1.114836e+00  3.749080e-01  'None'  4.000000e-02
+  Atom    5    H  1.027597e+00  1.519417e-01  -8.758279e-01  'None'  4.000000e-02
+  Atom    6    H  7.506264e-01  -5.444546e-01  7.005046e-01  'None'  4.000000e-02
+
+  # Bonds
+  Bond    2    1  Harmonic  2677.760     1.410
+  Bond    3    2  Harmonic  4627.500     0.945
+  Bond    1    4  Harmonic  2845.120     1.080
+  Bond    1    5  Harmonic  2845.120     1.080
+  Bond    1    6  Harmonic  2845.120     1.080
+
+  # Angles
+  Angle    3    2    1  Harmonic   460.240   108.500
+  Angle    2    1    4  Harmonic   292.880   109.500
+  Angle    2    1    5  Harmonic   292.880   109.500
+  Angle    5    1    4  Harmonic   276.144   107.800
+  Angle    2    1    6  Harmonic   292.880   109.500
+  Angle    6    1    4  Harmonic   276.144   107.800
+  Angle    6    1    5  Harmonic   276.144   107.800
+
+  # Torsions
+  Torsion    3    2    1    4  Cos3     0.000     0.000     1.474
+  Torsion    3    2    1    5  Cos3     0.000     0.000     1.474
+  Torsion    3    2    1    6  Cos3     0.000     0.000     1.474
+
+  # Forcefield
+  Forcefield  'OPLSAA2005/Alcohols'
+EndSpecies
