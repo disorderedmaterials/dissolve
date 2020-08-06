@@ -365,7 +365,7 @@ bool AtomTypeList::broadcast(ProcessPool &procPool, const int root, const CoreDa
             return false;
         for (auto &type : types_)
         {
-            CharString name = type.atomType().name();
+            CharString name = type.atomType()->name();
             if (!procPool.broadcast(name, root))
                 return false;
             if (!type.broadcast(procPool, root, coreData))
@@ -386,8 +386,8 @@ bool AtomTypeList::broadcast(ProcessPool &procPool, const int root, const CoreDa
             CharString typeName;
             if (!procPool.broadcast(typeName), root)
                 return false;
-            auto &atomType = *coreData.findAtomType(typeName);
-            types_.emplace_back(atomType);
+            auto atomType = coreData.findAtomType(typeName);
+            types_.emplace_back(*atomType);
             auto &item = types_.back();
             if (!item.broadcast(procPool, root, coreData))
                 return false;
