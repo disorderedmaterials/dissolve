@@ -572,9 +572,8 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem *w)
 
     // Get target AtomType from the passed widget
     if (w == nullptr)
-    {
         return;
-    }
+
     std::shared_ptr<AtomType> atomType = w->data(Qt::UserRole).value<std::shared_ptr<AtomType>>();
     if (!atomType)
         return;

@@ -348,9 +348,7 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
                 atomType->setName(qPrintable(w->text()));
             }
             else
-            {
                 atomType = *opt_atomType;
-            }
             speciesAtom->setAtomType(atomType);
             dissolveWindow_->setModified();
             break;
