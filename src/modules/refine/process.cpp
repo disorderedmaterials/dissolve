@@ -422,53 +422,46 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (created)
             deltaSQ.initialise(nTypes, nTypes, true);
 
-        i = 0;
-        for (auto at1 = dissolve.atomTypes().begin(); at1 != dissolve.atomTypes().end(); ++at1, ++i)
-        {
-            j = i;
-            for (auto at2 = at1; at2 != dissolve.atomTypes().end(); ++at2, ++j)
+        for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+            // Grab difference partial and make sure its object name is set
+            auto &dSQ = deltaSQ.at(i, j);
+            dSQ.setObjectTag(CharString("%s//DeltaSQ//%s//%s-%s", uniqueName_.get(), group->name(), at1->name(), at2->name()));
+
+            // Reset the difference partial
+            dSQ.clear();
+
+            // Create the difference partial
+            const Array<double> x1 = estimatedSQ.at(i, j).constXAxis();
+            const Array<double> y1 = estimatedSQ.at(i, j).constValues();
+            auto &simulatedSQ = combinedUnweightedSQ.at(i, j);
+            Interpolator interpolatedSimSQ(simulatedSQ);
+
+            // Determine allowable range for fit, based on requested values and limits of generated /
+            // simulated datasets
+            double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
+            if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedSQ.xAxis().firstValue()))
+                deltaSQMin = std::max(x1.firstValue(), simulatedSQ.xAxis().firstValue());
+            if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedSQ.xAxis().lastValue()))
+                deltaSQMax = std::min(x1.lastValue(), simulatedSQ.xAxis().lastValue());
+
+            Data1D refSQTrimmed;
+            double x;
+            for (int n = 0; n < x1.nItems(); ++n)
             {
-                // Grab difference partial and make sure its object name is set
-                auto &dSQ = deltaSQ.at(i, j);
-                dSQ.setObjectTag(
-                    CharString("%s//DeltaSQ//%s//%s-%s", uniqueName_.get(), group->name(), (*at1)->name(), (*at2)->name()));
+                x = x1.constAt(n);
+                if (x < deltaSQMin)
+                    continue;
+                if (x > deltaSQMax)
+                    break;
+                refSQTrimmed.addPoint(x, y1.constAt(n));
 
-                // Reset the difference partial
-                dSQ.clear();
-
-                // Create the difference partial
-                const Array<double> x1 = estimatedSQ.at(i, j).constXAxis();
-                const Array<double> y1 = estimatedSQ.at(i, j).constValues();
-                auto &simulatedSQ = combinedUnweightedSQ.at(i, j);
-                Interpolator interpolatedSimSQ(simulatedSQ);
-
-                // Determine allowable range for fit, based on requested values and limits of generated /
-                // simulated datasets
-                double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
-                if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedSQ.xAxis().firstValue()))
-                    deltaSQMin = std::max(x1.firstValue(), simulatedSQ.xAxis().firstValue());
-                if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedSQ.xAxis().lastValue()))
-                    deltaSQMax = std::min(x1.lastValue(), simulatedSQ.xAxis().lastValue());
-
-                Data1D refSQTrimmed;
-                double x;
-                for (int n = 0; n < x1.nItems(); ++n)
-                {
-                    x = x1.constAt(n);
-                    if (x < deltaSQMin)
-                        continue;
-                    if (x > deltaSQMax)
-                        break;
-                    refSQTrimmed.addPoint(x, y1.constAt(n));
-
-                    dSQ.addPoint(x, y1.constAt(n) - interpolatedSimSQ.y(x));
-                }
-
-                // Calculate current error between experimental and simulation partials and sum it into our
-                // array
-                globalCombinedErrors.at(i, j) += Error::percent(refSQTrimmed, simulatedSQ);
+                dSQ.addPoint(x, y1.constAt(n) - interpolatedSimSQ.y(x));
             }
-        }
+
+            // Calculate current error between experimental and simulation partials and sum it into our
+            // array
+            globalCombinedErrors.at(i, j) += Error::percent(refSQTrimmed, simulatedSQ);
+        });
 
         /*
          * Create perturbations to interatomic potentials
@@ -501,38 +494,33 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Define a fraction of the determined g(r) non-zero point that will become our radius limit
             const auto rFraction = 0.95;
             const auto thresholdValue = 0.1;
-            i = 0;
-            for (auto at1 = dissolve.atomTypes().begin(); at1 != dissolve.atomTypes().end(); ++at1, ++i)
-            {
-                j = i;
-                for (auto at2 = at1; at2 != dissolve.atomTypes().end(); ++at2, ++j)
-                {
-                    // Grab unbound g(r)
-                    auto &gr = summedUnweightedGR.unboundPartial(i, j);
 
-                    // Find first non-zero (above the threshold value) point in g(r)
-                    int n;
-                    for (n = 0; n < gr.nValues(); ++n)
-                        if (gr.value(n) > thresholdValue)
-                            break;
-                    if (n < gr.nValues())
-                    {
-                        double x = gr.xAxis(n) * rFraction;
-                        if (x < globalMinimumRadius)
-                            minimumRadii.at(i, j) = globalMinimumRadius;
-                        else if (x < globalMaximumRadius)
-                            minimumRadii.at(i, j) = x;
-                        else
-                            minimumRadii.at(i, j) = globalMaximumRadius;
-                    }
+            for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+                // Grab unbound g(r)
+                auto &gr = summedUnweightedGR.unboundPartial(i, j);
+
+                // Find first non-zero (above the threshold value) point in g(r)
+                int n;
+                for (n = 0; n < gr.nValues(); ++n)
+                    if (gr.value(n) > thresholdValue)
+                        break;
+                if (n < gr.nValues())
+                {
+                    double x = gr.xAxis(n) * rFraction;
+                    if (x < globalMinimumRadius)
+                        minimumRadii.at(i, j) = globalMinimumRadius;
+                    else if (x < globalMaximumRadius)
+                        minimumRadii.at(i, j) = x;
                     else
                         minimumRadii.at(i, j) = globalMaximumRadius;
-
-                    Messenger::print("Minimum radius for %s-%s interatomic potential determined to be %f "
-                                     "Angstroms.\n",
-                                     (*at1)->name(), (*at2)->name(), minimumRadii.constAt(i, j));
                 }
-            }
+                else
+                    minimumRadii.at(i, j) = globalMaximumRadius;
+
+                Messenger::print("Minimum radius for %s-%s interatomic potential determined to be %f "
+                                 "Angstroms.\n",
+                                 at1->name(), at2->name(), minimumRadii.constAt(i, j));
+            });
         }
         else
             minimumRadii = globalMinimumRadius;
@@ -742,20 +730,14 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
     /*
      * Normalise and store our combined partial errors
      */
-    i = 0;
-    for (auto at1 = dissolve.atomTypes().begin(); at1 != dissolve.atomTypes().end(); ++at1, ++i)
-    {
-        j = i;
-        for (auto at2 = at1; at2 != dissolve.atomTypes().end(); ++at2, ++j)
-        {
-            auto &partialErrors = GenericListHelper<Data1D>::realise(
-                dissolve.processingModuleData(), CharString("PartialError_%s-%s", (*at1)->name(), (*at2)->name()), uniqueName_,
-                GenericItem::InRestartFileFlag);
-            // TODO This will be a straight sum of errors over groups, and may not be entirely representative? Needs
-            // to be weighted?
-            partialErrors.addPoint(dissolve.iteration(), globalCombinedErrors.constAt(i, j));
-        }
-    }
+    for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+        auto &partialErrors = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(),
+                                                                 CharString("PartialError_%s-%s", at1->name(), at2->name()),
+                                                                 uniqueName_, GenericItem::InRestartFileFlag);
+        // TODO This will be a straight sum of errors over groups, and may not be entirely representative? Needs
+        // to be weighted?
+        partialErrors.addPoint(dissolve.iteration(), globalCombinedErrors.constAt(i, j));
+    });
 
     // Perform actual modification to potential, adding in deltaPhiR calculated over all groups
     if (modifyPotential)

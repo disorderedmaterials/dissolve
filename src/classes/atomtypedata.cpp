@@ -31,7 +31,7 @@
 #include "templates/broadcastlist.h"
 #include <string.h>
 
-AtomTypeData::AtomTypeData(std::shared_ptr<AtomType>type, double population, double fraction, double boundCoherent, int nIso)
+AtomTypeData::AtomTypeData(std::shared_ptr<AtomType> type, double population, double fraction, double boundCoherent, int nIso)
     : atomType_(type), exchangeable_(false), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
 {
     isotopes_.clear();
@@ -62,7 +62,7 @@ AtomTypeData::AtomTypeData(LineParser &parser, const CoreData &coreData, int lis
 }
 
 // Initialise Constructor
-AtomTypeData::AtomTypeData(int listIndex, std::shared_ptr<AtomType>type, double population)
+AtomTypeData::AtomTypeData(int listIndex, std::shared_ptr<AtomType> type, double population)
     : atomType_(type), listIndex_(listIndex), population_(population)
 {
     exchangeable_ = false;
@@ -124,7 +124,7 @@ void AtomTypeData::zeroPopulations()
 int AtomTypeData::listIndex() const { return listIndex_; }
 
 // Return reference AtomType
-std::shared_ptr<AtomType>AtomTypeData::atomType() const { return atomType_; }
+std::shared_ptr<AtomType> AtomTypeData::atomType() const { return atomType_; }
 
 // Set exchangeable flag
 void AtomTypeData::setAsExchangeable() { exchangeable_ = true; }

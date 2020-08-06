@@ -230,7 +230,7 @@ void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int top
 
     // Update child items
     TreeWidgetUpdater<DataWidget, Renderable> renderableUpdater(item, data->renderables(), this,
-                                                                       &DataWidget::dataTreeItemUpdateFunction);
+                                                                &DataWidget::dataTreeItemUpdateFunction);
 }
 
 // Data tree item update function

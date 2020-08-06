@@ -52,10 +52,10 @@ bool AtomTypeRefListKeyword::read(LineParser &parser, int startArg, CoreData &co
         if (!opt_atomType)
             return Messenger::error("Unrecognised AtomType '%s' found in list.\n", parser.argc(n));
 
-	auto atomType = *opt_atomType;
+        auto atomType = *opt_atomType;
 
         // If the AtomType is in the list already, complain
-	if (std::find(data_.begin(), data_.end(), atomType) != data_.end())
+        if (std::find(data_.begin(), data_.end(), atomType) != data_.end())
             return Messenger::error("AtomType '%s' specified in list twice.\n", parser.argc(n));
 
         // All OK - add it to our selection list
@@ -90,4 +90,7 @@ bool AtomTypeRefListKeyword::write(LineParser &parser, const char *keywordName, 
  */
 
 // Prune any references to the supplied AtomType in the contained data
-void AtomTypeRefListKeyword::removeReferencesTo(std::shared_ptr<AtomType> at) { data_.erase(std::remove(data_.begin(), data_.end(), at)); }
+void AtomTypeRefListKeyword::removeReferencesTo(std::shared_ptr<AtomType> at)
+{
+    data_.erase(std::remove(data_.begin(), data_.end(), at));
+}

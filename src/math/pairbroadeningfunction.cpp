@@ -276,7 +276,8 @@ CharString PairBroadeningFunction::summary() const
 }
 
 // Return a BroadeningFunction tailored to the specified AtomType pair, using intramolecular data if required
-BroadeningFunction PairBroadeningFunction::broadeningFunction(std::shared_ptr<AtomType>at1, std::shared_ptr<AtomType>at2, SpeciesIntra *intra)
+BroadeningFunction PairBroadeningFunction::broadeningFunction(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2,
+                                                              SpeciesIntra *intra)
 {
     BroadeningFunction result;
 

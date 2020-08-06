@@ -482,8 +482,8 @@ void ForcefieldTab::updateControls()
     ui_.MasterImpropersTable->resizeColumnsToContents();
 
     // AtomTypes Table
-    TableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(ui_.AtomTypesTable, dissolve_.atomTypes(), this,
-                                                                 &ForcefieldTab::updateAtomTypesTableRow);
+    TableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(
+        ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     // PairPotentials
@@ -556,8 +556,8 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 
     Locker refreshLocker(refreshLock_);
 
-    TableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(ui_.AtomTypesTable, dissolve_.atomTypes(), this,
-                                                                 &ForcefieldTab::updateAtomTypesTableRow);
+    TableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(
+        ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     dissolveWindow_->setModified();
