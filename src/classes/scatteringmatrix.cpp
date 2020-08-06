@@ -24,6 +24,7 @@
 #include "classes/neutronweights.h"
 #include "math/interpolator.h"
 #include "math/svd.h"
+#include "templates/algorithms.h"
 #include <algorithm>
 
 ScatteringMatrix::ScatteringMatrix() {}
@@ -222,13 +223,7 @@ void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &
     typePairs_.clear();
 
     // Copy atom types
-    for (auto at1 = types.begin(); at1 != types.end(); ++at1)
-    {
-        for (auto at2 = at1; at2 != types.end(); ++at2)
-        {
-            typePairs_.emplace_back(*at1, *at2);
-        }
-    }
+    for_each_pair(types.begin(), types.end(), [this](int i, auto at1, int j, auto at2) { typePairs_.emplace_back(at1, at2); });
 
     // Create partials array
     estimatedSQ.initialise(types.size(), types.size(), true);
