@@ -19,8 +19,6 @@ Species 'Water'
   # Angles
   Angle    3    1    2  harmonic  418.4  109.0
 
-  # Forcefield
-  Forcefield  'SPC/Fw'
 EndSpecies
 
 #------------------------------------------------------------------------------#
