@@ -67,14 +67,8 @@ void Isotopologue::update()
 
     // Construct a temporary RefList, and move all existing RefListItems to it
     std::vector<std::tuple<std::shared_ptr<AtomType>, Isotope *>> oldItems;
-    std::tuple<std::shared_ptr<AtomType>, Isotope *> rli;
-    //FIXME: There has to be a way of running this as a for loop
-    while (!isotopes_.empty() && std::get<std::shared_ptr<AtomType>>(isotopes_.back()) != nullptr)
-    {
-        rli = isotopes_.back();
-        isotopes_.erase(std::remove(isotopes_.begin(), isotopes_.end(), rli));
-        oldItems.push_back(rli);
-    }
+    std::copy(isotopes_.begin(), isotopes_.end(), oldItems.begin());
+    isotopes_.clear();
 
     // Loop over Atoms in species, get their assigned AtomTypes, and searching for them in the oldItems list
     for (auto *i = parent_->firstAtom(); i != NULL; i = i->next())
