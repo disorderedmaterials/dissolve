@@ -51,8 +51,8 @@ void SpeciesTab::updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, in
     item->setText(0, data->name());
 
     // Update child items
-    TreeWidgetRefDataListUpdater<SpeciesTab, AtomType, Isotope *> isotopeUpdater(item, data->isotopes(), this,
-                                                                                 &SpeciesTab::updateIsotopologuesTreeChildItem);
+    TreeWidgetRefDataListUpdater<SpeciesTab, std::shared_ptr<AtomType>, Isotope *> isotopeUpdater(
+        item, data->isotopes(), this, &SpeciesTab::updateIsotopologuesTreeChildItem);
 }
 
 // IsotopologuesTree item update function

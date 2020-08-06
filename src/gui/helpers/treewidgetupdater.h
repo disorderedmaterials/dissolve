@@ -196,19 +196,18 @@ template <class T, class I> class TreeWidgetUpdater
 template <class T, class I, class D> class TreeWidgetRefDataListUpdater
 {
     // Typedefs for passed functions
-    typedef void (T::*TreeWidgetChildUpdateFunction)(QTreeWidgetItem *parentItem, int childIndex, I *item, D data,
+    typedef void (T::*TreeWidgetChildUpdateFunction)(QTreeWidgetItem *parentItem, int childIndex, I item, D data,
                                                      bool createItem);
 
     public:
-    TreeWidgetRefDataListUpdater(QTreeWidgetItem *parentItem, const RefDataList<I, D> &list, T *functionParent,
+    TreeWidgetRefDataListUpdater(QTreeWidgetItem *parentItem, const std::vector<std::tuple<I, D>> &list, T *functionParent,
                                  TreeWidgetChildUpdateFunction updateChildFunction)
     {
         QTreeWidgetItem *treeItem;
 
         int count = 0;
 
-        RefDataListIterator<I, D> itemIterator(list);
-        while (I *dataItem = itemIterator.iterate())
+        for (auto [dataItem, dataData] : list)
         {
             // Our QTreeWidgetItem may or may not be populated, and with different items to those in the list.
 
@@ -218,11 +217,11 @@ template <class T, class I, class D> class TreeWidgetRefDataListUpdater
             while (count < parentItem->childCount())
             {
                 treeItem = parentItem->child(count);
-                I *rowData = (treeItem ? VariantPointer<I>(treeItem->data(1, Qt::UserRole)) : NULL);
+                I rowData = (treeItem ? treeItem->data(1, Qt::UserRole).value<I>() : NULL);
                 if (rowData == dataItem)
                 {
                     // Update the current row and quit the loop
-                    (functionParent->*updateChildFunction)(parentItem, count, dataItem, itemIterator.currentData(), false);
+                    (functionParent->*updateChildFunction)(parentItem, count, dataItem, dataData, false);
 
                     break;
                 }
@@ -234,7 +233,7 @@ template <class T, class I, class D> class TreeWidgetRefDataListUpdater
             if (count == parentItem->childCount())
             {
                 // Create new item
-                (functionParent->*updateChildFunction)(parentItem, count, dataItem, itemIterator.currentData(), true);
+                (functionParent->*updateChildFunction)(parentItem, count, dataItem, dataData, true);
             }
 
             ++count;
