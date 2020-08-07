@@ -197,10 +197,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     // Check number of args provided
                     if (!SpeciesAngle::angleFunctions().validNArgs(af, parser.nArgs() - 5))
                     {
-                        Messenger::error("Angle function type '%s' requires %s %i parameters\n",
-                                         SpeciesAngle::angleFunctions().keyword(af),
-                                         SpeciesAngle::angleFunctions().exactNArgs(af) ? "exactly" : "at least",
-                                         SpeciesAngle::angleFunctions().minArgs(af));
                         error = true;
                         break;
                     }
@@ -289,10 +285,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     // Check number of args provided
                     if (!SpeciesBond::bondFunctions().validNArgs(bf, parser.nArgs() - 4))
                     {
-                        Messenger::error("Bond function type '%s' requires %s %i parameters\n",
-                                         SpeciesBond::bondFunctions().keyword(bf),
-                                         SpeciesBond::bondFunctions().exactNArgs(bf) ? "exactly" : "at least",
-                                         SpeciesBond::bondFunctions().minArgs(bf));
                         error = true;
                         break;
                     }
@@ -433,10 +425,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     // Check number of args provided
                     if (!SpeciesImproper::improperFunctions().validNArgs(impf, parser.nArgs() - 6))
                     {
-                        Messenger::error("Improper function type '%s' requires %s %i parameters\n",
-                                         SpeciesImproper::improperFunctions().keyword(impf),
-                                         SpeciesImproper::improperFunctions().exactNArgs(impf) ? "exactly" : "at least",
-                                         SpeciesImproper::improperFunctions().minArgs(impf));
                         error = true;
                         break;
                     }
@@ -549,10 +537,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     // Check number of args provided
                     if (!SpeciesTorsion::torsionFunctions().validNArgs(tf, parser.nArgs() - 6))
                     {
-                        Messenger::error("Torsion function type '%s' requires %s %i parameters\n",
-                                         SpeciesTorsion::torsionFunctions().keyword(tf),
-                                         SpeciesTorsion::torsionFunctions().exactNArgs(tf) ? "exactly" : "at least",
-                                         SpeciesTorsion::torsionFunctions().minArgs(tf));
                         error = true;
                         break;
                     }
