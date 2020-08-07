@@ -65,7 +65,6 @@ bool CoordinateImportFileFormat::importMoscito(LineParser &parser, Array<Vec3<do
         if (parser.getArgsDelim(LineParser::KeepBlanks) != LineParser::Success)
             return false;
         auto nAtoms = parser.argi(1);
-        printf("NAtoms = %i\n", nAtoms);
 
         // Read in atom coordinates
         for (auto i = 0; i < nAtoms; ++i)
@@ -75,9 +74,11 @@ bool CoordinateImportFileFormat::importMoscito(LineParser &parser, Array<Vec3<do
                 return false;
 
             // Read coordinates (in nm)
-            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+            // Coordinates are in fixed format (15.8e) with *no spacing between values*
+            if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
                 return false;
-            r.add(parser.arg3d(0) * 10.0);
+            std::string coords = parser.line();
+            r.add(Vec3<double>(std::stof(coords.substr(0,15)) * 10.0, std::stof(coords.substr(16,15)) * 10.0, std::stof(coords.substr(16)) * 10.0));
 
             // Skip velocity and force lines
             if (parser.skipLines(2) != LineParser::Success)
