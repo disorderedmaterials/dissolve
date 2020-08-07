@@ -1,6 +1,6 @@
 #!/bin/bash -l
 
-# Run all system tests, or those explictily specified on the command line
+# Run all system tests, or those explictly specified on the command line
 
 NFAILED=0
 EXITONFAIL="TRUE"
@@ -8,7 +8,7 @@ SERIALBINARY=../src/dissolve
 PARALLELBINARY=../src/dissolve-mpi
 TESTS=""
 NTESTS="0"
-COMMONARGS="-x -i"
+COMMONARGS="-x -i -n 1"
 
 while getopts "as:p:" op
 do
