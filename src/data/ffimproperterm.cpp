@@ -24,18 +24,14 @@
 #include "data/ffatomtype.h"
 
 ForcefieldImproperTerm::ForcefieldImproperTerm(const char *typeI, const char *typeJ, const char *typeK, const char *typeL,
-                                               SpeciesImproper::ImproperFunction form, double data0, double data1, double data2,
-                                               double data3)
+                                               SpeciesImproper::ImproperFunction form, const std::vector<double> parameters)
 {
     typeI_ = typeI;
     typeJ_ = typeJ;
     typeK_ = typeK;
     typeL_ = typeL;
     form_ = form;
-    parameters_[0] = data0;
-    parameters_[1] = data1;
-    parameters_[2] = data2;
-    parameters_[3] = data3;
+    parameters_ = parameters;
 }
 
 ForcefieldImproperTerm::~ForcefieldImproperTerm() {}
