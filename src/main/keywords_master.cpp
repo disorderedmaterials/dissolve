@@ -28,11 +28,11 @@
 // Return enum option info for MasterKeyword
 EnumOptions<MasterBlock::MasterKeyword> MasterBlock::keywords()
 {
-    static EnumOptionsList MasterKeywords = EnumOptionsList() << EnumOption(MasterBlock::AngleKeyword, "Angle", 3, 11)
-                                                              << EnumOption(MasterBlock::BondKeyword, "Bond", 3, 11)
+    static EnumOptionsList MasterKeywords = EnumOptionsList() << EnumOption(MasterBlock::AngleKeyword, "Angle", 2, 11)
+                                                              << EnumOption(MasterBlock::BondKeyword, "Bond", 2, 11)
                                                               << EnumOption(MasterBlock::EndMasterKeyword, "EndMaster")
-                                                              << EnumOption(MasterBlock::ImproperKeyword, "Improper", 3, 11)
-                                                              << EnumOption(MasterBlock::TorsionKeyword, "Torsion", 3, 11);
+                                                              << EnumOption(MasterBlock::ImproperKeyword, "Improper", 2, 11)
+                                                              << EnumOption(MasterBlock::TorsionKeyword, "Torsion", 2, 11);
 
     static EnumOptions<MasterBlock::MasterKeyword> options("MasterKeyword", MasterKeywords);
 
