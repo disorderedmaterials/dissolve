@@ -102,6 +102,12 @@ template <class T> class EnumOptions : public EnumOptionsBase
         const auto &opt = option(enumeration);
         return opt.maxArgs();
     }
+    // Return whether an exact number of arguments is required
+    bool exactNArgs(T enumeration) const
+    {
+        const auto &opt = option(enumeration);
+        return opt.minArgs() == opt.maxArgs();
+    }
     // Check number of arguments provided to keyword
     bool validNArgs(T enumeration, int nArgsProvided) const
     {
