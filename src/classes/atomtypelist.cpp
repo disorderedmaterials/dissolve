@@ -316,7 +316,7 @@ bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
         auto opt_atomType = coreData.findAtomType(typeName);
 
         if (!opt_atomType)
-            return Messenger::error("Could not find atom type %s", typeName);
+            return Messenger::error("Could not find atom type %s", typeName.get());
 
         auto atomType = *opt_atomType;
         auto nIsotopes = parser.argi(4);
