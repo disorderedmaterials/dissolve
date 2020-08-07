@@ -70,6 +70,7 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const
     auto loopEnd = procPool.twoBodyLoopEnd(sp->nAtoms());
 
     // Double loop over species atoms
+    // NOTE PR #334 : use for_each_pair
     for (auto indexI = loopStart; indexI <= loopEnd; ++indexI)
     {
         i = sp->atom(indexI);

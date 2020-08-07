@@ -109,6 +109,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Species *sp, const P
     const auto cutoffSq = potentialMap.range() * potentialMap.range();
     Vec3<double> vecij;
     SpeciesAtom *j;
+    // NOTE PR #334 : use for_each_pair
     for (auto indexI = 0; indexI < sp->nAtoms() - 1; ++indexI)
     {
         auto *i = sp->atom(indexI);
