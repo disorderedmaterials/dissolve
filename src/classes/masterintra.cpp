@@ -27,8 +27,6 @@ MasterIntra::MasterIntra() : SpeciesIntra(), ListItem<MasterIntra>()
 {
     parent_ = NULL;
     masterParameters_ = NULL;
-    for (int n = 0; n < MAXINTRAPARAMS; ++n)
-        parameters_[n] = 0.0;
 }
 
 MasterIntra::~MasterIntra() {}

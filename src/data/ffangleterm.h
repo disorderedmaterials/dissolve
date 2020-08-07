@@ -47,7 +47,7 @@ class ForcefieldAngleTerm
     // Functional form of interaction
     SpeciesAngle::AngleFunction form_;
     // Parameters for interaction
-    double parameters_[MAXINTRAPARAMS];
+    std::vector<double> parameters_;
 
     public:
     // Return if this term matches the atom types supplied
@@ -55,5 +55,5 @@ class ForcefieldAngleTerm
     // Return functional form index of interaction
     SpeciesAngle::AngleFunction form() const;
     // Return array of parameters
-    const double *parameters() const;
+    const std::vector<double> &parameters() const;
 };

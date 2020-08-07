@@ -62,4 +62,4 @@ bool ForcefieldTorsionTerm::isMatch(const ForcefieldAtomType &i, const Forcefiel
 SpeciesTorsion::TorsionFunction ForcefieldTorsionTerm::form() const { return form_; }
 
 // Return array of parameters
-const double *ForcefieldTorsionTerm::parameters() const { return parameters_; }
+const std::vector<double> &ForcefieldTorsionTerm::parameters() const { return parameters_; }

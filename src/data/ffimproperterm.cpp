@@ -62,4 +62,4 @@ bool ForcefieldImproperTerm::isMatch(const ForcefieldAtomType &i, const Forcefie
 SpeciesImproper::ImproperFunction ForcefieldImproperTerm::form() const { return form_; }
 
 // Return array of parameters
-const double *ForcefieldImproperTerm::parameters() const { return parameters_; }
+const std::vector<double> &ForcefieldImproperTerm::parameters() const { return parameters_; }

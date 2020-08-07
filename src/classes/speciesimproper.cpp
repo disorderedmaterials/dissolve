@@ -223,7 +223,7 @@ SpeciesIntra::InteractionType SpeciesImproper::type() const { return SpeciesIntr
 double SpeciesImproper::energy(double angleInDegrees) const
 {
     // Get pointer to relevant parameters array
-    const auto *params = parameters();
+    const auto &params = parameters();
 
     // Convert torsion angle from degrees to radians
     double phi = angleInDegrees / DEGRAD;
@@ -252,7 +252,7 @@ double SpeciesImproper::energy(double angleInDegrees) const
 double SpeciesImproper::force(double angleInDegrees) const
 {
     // Get pointer to relevant parameters array
-    const auto *params = parameters();
+    const auto &params = parameters();
 
     // Convert torsion angle from degrees to radians, and calculate derivative w.r.t. change in torsion angle
     double phi = angleInDegrees / DEGRAD;

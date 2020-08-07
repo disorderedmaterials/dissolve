@@ -47,7 +47,7 @@ class ForcefieldTorsionTerm
     // Functional form of interaction
     SpeciesTorsion::TorsionFunction form_;
     // Parameters for interaction
-    double parameters_[MAXINTRAPARAMS];
+    std::vector<double> parameters_;
 
     public:
     // Return if this term matches the atom types supplied
@@ -56,5 +56,5 @@ class ForcefieldTorsionTerm
     // Return functional form index of interaction
     SpeciesTorsion::TorsionFunction form() const;
     // Return array of parameters
-    const double *parameters() const;
+    const std::vector<double> &parameters() const;
 };

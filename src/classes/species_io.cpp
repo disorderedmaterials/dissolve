@@ -192,20 +192,22 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
                     af = SpeciesAngle::angleFunctions().enumeration(parser.argc(4));
-
                     a->setForm(af);
-                    for (int n = 0; n < SpeciesAngle::angleFunctions().minArgs(af); ++n)
+
+                    // Check number of args provided
+                    if (!SpeciesAngle::angleFunctions().validNArgs(af, parser.nArgs() - 5))
                     {
-                        if (!parser.hasArg(n + 5))
-                        {
-                            Messenger::error("Angle function type '%s' requires %i parameters\n",
-                                             SpeciesAngle::angleFunctions().keyword(af),
-                                             SpeciesAngle::angleFunctions().minArgs(af));
-                            error = true;
-                            break;
-                        }
-                        a->setParameter(n, parser.argd(n + 5));
+                        Messenger::error("Angle function type '%s' requires %s %i parameters\n",
+                                         SpeciesAngle::angleFunctions().keyword(af),
+                                         SpeciesAngle::angleFunctions().exactNArgs(af) ? "exactly" : "at least",
+                                         SpeciesAngle::angleFunctions().minArgs(af));
+                        error = true;
+                        break;
                     }
+
+                    // Set parameters
+                    for (auto n = 5; n < parser.nArgs(); ++n)
+                        a->addParameter(parser.argd(n));
                 }
 
                 // Perform any final setup on the Angle
@@ -282,20 +284,22 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
                     bf = SpeciesBond::bondFunctions().enumeration(parser.argc(3));
-
                     b->setForm(bf);
-                    for (int n = 0; n < SpeciesBond::bondFunctions().minArgs(bf); ++n)
+
+                    // Check number of args provided
+                    if (!SpeciesBond::bondFunctions().validNArgs(bf, parser.nArgs() - 4))
                     {
-                        if (!parser.hasArg(4 + n))
-                        {
-                            Messenger::error("Bond function type '%s' requires %i parameters\n",
-                                             SpeciesBond::bondFunctions().keyword(bf),
-                                             SpeciesBond::bondFunctions().minArgs(bf));
-                            error = true;
-                            break;
-                        }
-                        b->setParameter(n, parser.argd(n + 4));
+                        Messenger::error("Bond function type '%s' requires %s %i parameters\n",
+                                         SpeciesBond::bondFunctions().keyword(bf),
+                                         SpeciesBond::bondFunctions().exactNArgs(bf) ? "exactly" : "at least",
+                                         SpeciesBond::bondFunctions().minArgs(bf));
+                        error = true;
+                        break;
                     }
+
+                    // Set parameters
+                    for (auto n = 4; n < parser.nArgs(); ++n)
+                        b->addParameter(parser.argd(n));
                 }
 
                 // Perform any final setup on the Bond
@@ -404,7 +408,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         error = true;
                         break;
                     }
-                    t->setMasterParameters(master);
+                    imp->setMasterParameters(master);
                 }
                 else
                 {
@@ -424,23 +428,26 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         error = true;
                         break;
                     }
-                    t->setForm(tf);
-                    for (int n = 0; n < SpeciesImproper::improperFunctions().minArgs(impf); ++n)
+                    imp->setForm(impf);
+
+                    // Check number of args provided
+                    if (!SpeciesImproper::improperFunctions().validNArgs(impf, parser.nArgs() - 6))
                     {
-                        if (!parser.hasArg(n + 6))
-                        {
-                            Messenger::error("Improper function type '%s' requires %i parameters\n",
-                                             SpeciesImproper::improperFunctions().keyword(impf),
-                                             SpeciesImproper::improperFunctions().minArgs(impf));
-                            error = true;
-                            break;
-                        }
-                        t->setParameter(n, parser.argd(n + 6));
+                        Messenger::error("Improper function type '%s' requires %s %i parameters\n",
+                                         SpeciesImproper::improperFunctions().keyword(impf),
+                                         SpeciesImproper::improperFunctions().exactNArgs(impf) ? "exactly" : "at least",
+                                         SpeciesImproper::improperFunctions().minArgs(impf));
+                        error = true;
+                        break;
                     }
+
+                    // Set parameters
+                    for (auto n = 6; n < parser.nArgs(); ++n)
+                        imp->addParameter(parser.argd(n));
                 }
 
                 // Perform any final setup on the Improper
-                t->setUp();
+                imp->setUp();
                 break;
             case (Species::IsotopologueKeyword):
                 iso = addIsotopologue(uniqueIsotopologueName(parser.argc(1)));
@@ -537,20 +544,22 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
                     tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argc(5));
-
                     t->setForm(tf);
-                    for (int n = 0; n < SpeciesTorsion::torsionFunctions().minArgs(tf); ++n)
+
+                    // Check number of args provided
+                    if (!SpeciesTorsion::torsionFunctions().validNArgs(tf, parser.nArgs() - 6))
                     {
-                        if (!parser.hasArg(n + 6))
-                        {
-                            Messenger::error("Torsion function type '%s' requires %i parameters\n",
-                                             SpeciesTorsion::torsionFunctions().keyword(tf),
-                                             SpeciesTorsion::torsionFunctions().minArgs(tf));
-                            error = true;
-                            break;
-                        }
-                        t->setParameter(n, parser.argd(n + 6));
+                        Messenger::error("Torsion function type '%s' requires %s %i parameters\n",
+                                         SpeciesTorsion::torsionFunctions().keyword(tf),
+                                         SpeciesTorsion::torsionFunctions().exactNArgs(tf) ? "exactly" : "at least",
+                                         SpeciesTorsion::torsionFunctions().minArgs(tf));
+                        error = true;
+                        break;
                     }
+
+                    // Set parameters
+                    for (auto n = 6; n < parser.nArgs(); ++n)
+                        t->addParameter(parser.argd(n));
                 }
 
                 // Perform any final setup on the Torsion

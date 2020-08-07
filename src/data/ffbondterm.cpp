@@ -56,4 +56,4 @@ bool ForcefieldBondTerm::isMatch(const ForcefieldAtomType &i, const ForcefieldAt
 SpeciesBond::BondFunction ForcefieldBondTerm::form() const { return form_; }
 
 // Return array of parameters
-const double *ForcefieldBondTerm::parameters() const { return parameters_; }
+const std::vector<double> &ForcefieldBondTerm::parameters() const { return parameters_; }

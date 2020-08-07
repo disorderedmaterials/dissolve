@@ -180,7 +180,7 @@ void SpeciesAngle::setUp() {}
 double SpeciesAngle::fundamentalFrequency(double reducedMass) const
 {
     // Get pointer to relevant parameters array
-    const auto *params = parameters();
+    const auto &params = parameters();
 
     double k = 0.0;
     if (form() == SpeciesAngle::HarmonicForm)
@@ -214,7 +214,7 @@ SpeciesIntra::InteractionType SpeciesAngle::type() const { return SpeciesIntra::
 double SpeciesAngle::energy(double angleInDegrees) const
 {
     // Get pointer to relevant parameters array
-    const auto *params = parameters();
+    const auto &params = parameters();
 
     if (form() == SpeciesAngle::NoForm)
         return 0.0;
@@ -266,7 +266,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
 double SpeciesAngle::force(double angleInDegrees) const
 {
     // Get pointer to relevant parameters array
-    const auto *params = parameters();
+    const auto &params = parameters();
 
     // Convert angle to radians
     const auto angleInRadians = angleInDegrees / DEGRAD;

@@ -60,4 +60,4 @@ bool ForcefieldAngleTerm::isMatch(const ForcefieldAtomType &i, const ForcefieldA
 SpeciesAngle::AngleFunction ForcefieldAngleTerm::form() const { return form_; }
 
 // Return array of parameters
-const double *ForcefieldAngleTerm::parameters() const { return parameters_; }
+const std::vector<double> &ForcefieldAngleTerm::parameters() const { return parameters_; }

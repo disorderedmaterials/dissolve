@@ -93,14 +93,10 @@ class SpeciesTorsion : public SpeciesIntra, public DynamicArrayObject<SpeciesTor
         NoForm,
         CosineForm,
         Cos3Form,
-        Cos4Form,
         Cos3CForm,
-        Cos5Form,
-        Cos6Form,
-        Cos7Form,
-        Cos8Form,
-        Cos9Form,
-        Cos10Form,
+        Cos4Form,
+        CosNForm,
+        CosNCForm,
         UFFCosineForm
     };
     // Return enum options for TorsionFunction

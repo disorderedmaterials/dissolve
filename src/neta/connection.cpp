@@ -233,7 +233,8 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
         neighbourIterator.currentData() = atomScore;
 
         // Exit early in the case of GreaterThan GreaterThanEqualTo logic
-        if ((repeatCountOperator_ == NETANode::GreaterThan || repeatCountOperator_ == NETANode::GreaterThanEqualTo) && compareValues(nMatches, repeatCountOperator_, repeatCount_))
+        if ((repeatCountOperator_ == NETANode::GreaterThan || repeatCountOperator_ == NETANode::GreaterThanEqualTo) &&
+            compareValues(nMatches, repeatCountOperator_, repeatCount_))
             break;
     }
 
