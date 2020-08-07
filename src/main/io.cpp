@@ -49,7 +49,7 @@ bool Dissolve::loadInput(LineParser &parser)
         if (parser.getArgsDelim() != LineParser::Success)
             break;
 
-        // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+        // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!BlockKeywords::keywords().isValid(parser.argc(0)))
             return BlockKeywords::keywords().errorAndPrintValid(parser.argc(0));
         auto kwd = BlockKeywords::keywords().enumeration(parser.argc(0));
