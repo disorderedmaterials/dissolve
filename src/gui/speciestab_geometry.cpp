@@ -62,7 +62,7 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool crea
     item->setSelected(speciesAtom->isSelected());
 
     // Coordinates
-    for (int n = 0; n < 3; ++n)
+    for (auto n = 0; n < 3; ++n)
     {
         if (createItems)
         {
@@ -97,7 +97,7 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
     QTableWidgetItem *item;
 
     // Atom Indices
-    for (int n = 0; n < 2; ++n)
+    for (auto n = 0; n < 2; ++n)
     {
         if (createItems)
         {
@@ -125,7 +125,7 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
                                                   : SpeciesBond::bondFunctions().keywordFromInt(speciesBond->form()));
 
     // Interaction Parameters
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < 4; ++n)
     {
         if (createItems)
         {
@@ -147,7 +147,7 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
     QTableWidgetItem *item;
 
     // Atom Indices
-    for (int n = 0; n < 3; ++n)
+    for (auto n = 0; n < 3; ++n)
     {
         if (createItems)
         {
@@ -175,7 +175,7 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
                                                    : SpeciesAngle::angleFunctions().keywordFromInt(speciesAngle->form()));
 
     // Interaction Parameters
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < 4; ++n)
     {
         if (createItems)
         {
@@ -197,7 +197,7 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
     QTableWidgetItem *item;
 
     // Atom Indices
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < 4; ++n)
     {
         if (createItems)
         {
@@ -226,7 +226,7 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
                       : SpeciesTorsion::torsionFunctions().keywordFromInt(speciesTorsion->form()));
 
     // Interaction Parameters
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < 4; ++n)
     {
         if (createItems)
         {
@@ -248,7 +248,7 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
     QTableWidgetItem *item;
 
     // Atom Indices
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < 4; ++n)
     {
         if (createItems)
         {
@@ -277,7 +277,7 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
                       : SpeciesImproper::improperFunctions().keywordFromInt(speciesImproper->form()));
 
     // Interaction Parameters
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < 4; ++n)
     {
         if (createItems)
         {
@@ -306,7 +306,7 @@ void SpeciesTab::updateAtomTableSelection()
     SpeciesAtom *i;
 
     // Set atom selection in table to reflect the atom data
-    for (int n = 0; n < ui_.AtomTable->rowCount(); ++n)
+    for (auto n = 0; n < ui_.AtomTable->rowCount(); ++n)
     {
         item = ui_.AtomTable->item(n, 0);
         i = VariantPointer<SpeciesAtom>(item->data(Qt::UserRole));
@@ -389,7 +389,7 @@ void SpeciesTab::on_AtomTable_itemSelectionChanged()
     SpeciesAtom *i;
 
     // Set atom selection in viewer to be same as the table
-    for (int n = 0; n < ui_.AtomTable->rowCount(); ++n)
+    for (auto n = 0; n < ui_.AtomTable->rowCount(); ++n)
     {
         item = ui_.AtomTable->item(n, 0);
         i = VariantPointer<SpeciesAtom>(item->data(Qt::UserRole));
