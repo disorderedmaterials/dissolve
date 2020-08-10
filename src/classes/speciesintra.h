@@ -85,8 +85,6 @@ class SpeciesIntra
     void setForm(int form);
     // Return functional form index of interaction
     int form() const;
-    //     // Set all parameters
-    //     void setParameters(double a, double b = 0.0, double c = 0.0, double d = 0.0);
     // Add parameter to interaction
     void addParameter(double param);
     // Set all parameters
@@ -97,12 +95,6 @@ class SpeciesIntra
     double parameter(int id) const;
     // Return array of parameters
     const std::vector<double> &parameters() const;
-    //     // Return parameters as Array<double>
-    //     Array<double> parametersAsArray() const;
-    //     // Set parameters from double*
-    //     void setParameters(Array<double> params);
-    //     // Set parameters from Array<double>
-    //     void setParameters(const double *params);
     // Set up any necessary parameters
     virtual void setUp() = 0;
     // Calculate and return fundamental frequency for the interaction

@@ -82,22 +82,6 @@ void SpeciesIntra::setForm(int form) { form_ = form; }
 // Return functional form index of interaction
 int SpeciesIntra::form() const { return masterParameters_ ? masterParameters_->form_ : form_; }
 
-// // Set all parameters
-// void SpeciesIntra::setParameters(double a, double b, double c, double d)
-// {
-//     // Does this intramolecular interaction reference a set of master parameters?
-//     if (masterParameters_)
-//     {
-//         Messenger::error("Refused to set intramolecular parameter since master parameters are referenced.\n");
-//         return;
-//     }
-//
-//     parameters_[0] = a;
-//     parameters_[1] = b;
-//     parameters_[2] = c;
-//     parameters_[3] = d;
-// }
-
 // Add parameter to interaction
 void SpeciesIntra::addParameter(double param)
 {
@@ -161,32 +145,6 @@ const std::vector<double> &SpeciesIntra::parameters() const
 {
     return masterParameters_ ? masterParameters_->parameters() : parameters_;
 }
-
-// // Return parameters as Array<double>
-// Array<double> SpeciesIntra::parametersAsArray() const
-// {
-//     Array<double> params;
-//     for (int n = 0; n < MAXINTRAPARAMS; ++n)
-//         params.add(parameters()[n]);
-//     return params;
-// }
-//
-// // Set parameters from double*
-// void SpeciesIntra::setParameters(const double *params)
-// {
-//     // Does this intramolecular interaction reference a set of master parameters?
-//     if (masterParameters_)
-//     {
-//         Messenger::error("Refused to set intramolecular parameters array since master parameters are referenced.\n");
-//         return;
-//     }
-//
-//     for (int n = 0; n < MAXINTRAPARAMS; ++n)
-//         parameters_[n] = params[n];
-// }
-//
-// // Set parameters from Array<double>
-// void SpeciesIntra::setParameters(Array<double> params) { setParameters(params.array()); }
 
 /*
  * Connections
