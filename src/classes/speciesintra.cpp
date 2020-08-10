@@ -130,6 +130,12 @@ void SpeciesIntra::setParameters(const std::vector<double> &params)
     parameters_ = params;
 }
 
+// Return number of parameters defined
+int SpeciesIntra::nParameters() const
+{
+    return parameters_.size();
+}
+
 // Return nth parameter
 double SpeciesIntra::parameter(int id) const
 {

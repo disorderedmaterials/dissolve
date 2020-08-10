@@ -91,6 +91,8 @@ class SpeciesIntra
     void setParameters(const std::vector<double> &params);
     // Set existing parameter
     void setParameter(int id, double value);
+    // Return number of parameters defined
+    int nParameters() const;
     // Return nth parameter
     double parameter(int id) const;
     // Return array of parameters
