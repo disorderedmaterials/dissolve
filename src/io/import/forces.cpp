@@ -22,6 +22,7 @@
 #include "io/import/forces.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "keywords/double.h"
 
 ForceImportFileFormat::ForceImportFileFormat(ForceImportFileFormat::ForceImportFormat format) : FileAndFormat(format)
 {
@@ -40,7 +41,10 @@ ForceImportFileFormat::~ForceImportFileFormat() {}
  */
 
 // Set up keywords for the format
-void ForceImportFileFormat::setUpKeywords() {}
+void ForceImportFileFormat::setUpKeywords()
+{
+    keywords_.add("Conversion", new DoubleKeyword(1.0), "Factor", "Factor to multiply forces by (for unit conversion etc.)");
+}
 
 /*
  * Format Access
@@ -50,8 +54,8 @@ void ForceImportFileFormat::setUpKeywords() {}
 EnumOptions<ForceImportFileFormat::ForceImportFormat> ForceImportFileFormat::forceImportFormats()
 {
     static EnumOptionsList ForceImportFileFormats =
-        EnumOptionsList() << EnumOption(ForceImportFileFormat::XYZForces, "xyz", "Simple X,Y,Z,f(x,y,z) Data")
-                          << EnumOption(ForceImportFileFormat::DLPOLYForces, "dlpoly", "DL_POLY Config File Forces");
+        EnumOptionsList() << EnumOption(ForceImportFileFormat::DLPOLYForces, "dlpoly", "DL_POLY Config File Forces")
+                          << EnumOption(ForceImportFileFormat::XYZForces, "xyz", "Simple XYZ Force Data");
 
     static EnumOptions<ForceImportFileFormat::ForceImportFormat> options("ForceImportFileFormat", ForceImportFileFormats);
 
@@ -104,6 +108,12 @@ bool ForceImportFileFormat::importData(LineParser &parser, Array<double> &fx, Ar
         return importDLPOLY(parser, fx, fy, fz);
     else
         Messenger::error("Don't know how to load forces in format '%s'.\n", formatKeyword(forceFormat()));
+
+    // Apply factor to data
+    auto factor = keywords_.asDouble("Factor");
+    fx *= factor;
+    fy *= factor;
+    fz *= factor;
 
     return result;
 }

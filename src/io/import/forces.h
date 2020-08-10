@@ -34,8 +34,8 @@ class ForceImportFileFormat : public FileAndFormat
     // Forces Formats
     enum ForceImportFormat
     {
-        XYZForces,
         DLPOLYForces,
+        XYZForces,
         nForceImportFormats
     };
     ForceImportFileFormat(ForceImportFormat format = XYZForces);
