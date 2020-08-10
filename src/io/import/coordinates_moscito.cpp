@@ -78,7 +78,7 @@ bool CoordinateImportFileFormat::importMoscito(LineParser &parser, Array<Vec3<do
             if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
                 return false;
             std::string coords = parser.line();
-            r.add(Vec3<double>(std::stof(coords.substr(0,15)) * 10.0, std::stof(coords.substr(16,15)) * 10.0, std::stof(coords.substr(16)) * 10.0));
+            r.add(Vec3<double>(std::stof(coords.substr(0,15)) * 10.0, std::stof(coords.substr(15,15)) * 10.0, std::stof(coords.substr(30)) * 10.0));
 
             // Skip velocity and force lines
             if (parser.skipLines(2) != LineParser::Success)
