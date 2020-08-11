@@ -28,10 +28,17 @@
 
 SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra()
 {
-    i_ = i;
-    j_ = j;
+    assign(i, j);
     bondType_ = SpeciesBond::SingleBond;
     form_ = SpeciesBond::NoForm;
+}
+
+SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source) { this->operator=(source); }
+
+void SpeciesBond::assign(SpeciesAtom *i, SpeciesAtom *j)
+{
+    i_ = i;
+    j_ = j;
 
     // Add ourself to the list of bonds on each atom
     if (i_ && j_)
@@ -39,11 +46,6 @@ SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra()
         i_->addBond(this);
         j_->addBond(this);
     }
-}
-
-SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source)
-{
-    this->operator=(source);
 }
 
 SpeciesBond::SpeciesBond(SpeciesBond &&source) : SpeciesIntra(source)
@@ -56,13 +58,7 @@ SpeciesBond::SpeciesBond(SpeciesBond &&source) : SpeciesIntra(source)
     }
 
     // Copy data
-    i_ = source.i_;
-    j_ = source.j_;
-    if (i_ && j_)
-    {
-        i_->addBond(this);
-        j_->addBond(this);
-    }
+    assign(source.i_, source.j_);
     bondType_ = source.bondType_;
     form_ = source.form_;
 
@@ -91,16 +87,11 @@ SpeciesBond &SpeciesBond::operator=(const SpeciesBond &source)
 SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source)
 {
     // Detach any current atoms
-    if (i_ && j_) detach();
+    if (i_ && j_)
+        detach();
 
     // Copy data
-    i_ = source.i_;
-    j_ = source.j_;
-    if (i_ && j_)
-    {
-        i_->addBond(this);
-        j_->addBond(this);
-    }
+    assign(source.i_, source.j_);
     bondType_ = source.bondType_;
     form_ = source.form_;
     SpeciesIntra::operator=(source);
@@ -390,13 +381,7 @@ bool SpeciesBond::broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atom
 
     // Slaves now take SpeciesAtom pointers from supplied List
     if (procPool.isSlave())
-    {
-        setAtoms(atoms.item(buffer[0]), atoms.item(buffer[1]));
-        if (i_ != NULL)
-            i_->addBond(this);
-        if (j_ != NULL)
-            j_->addBond(this);
-    }
+        assign(atoms.item(buffer[0]), atoms.item(buffer[1]));
 
     // Send parameter info
     if (!procPool.broadcast(parameters_, MAXINTRAPARAMS))

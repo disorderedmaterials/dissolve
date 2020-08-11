@@ -152,11 +152,9 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
     // Copy intramolecular terms
     if (!ui_.IntramolecularTermsAssignNoneRadio->isChecked())
     {
-        auto originalBondIterator = targetSpecies_->bonds().begin();
         auto modifiedBondIterator = modifiedSpecies_->constBonds().cbegin();
-        while (originalBondIterator != targetSpecies_->bonds().end())
+        for (auto &originalBond : targetSpecies_->bonds())
         {
-            auto &originalBond = *originalBondIterator;
             const auto &modifiedBond = *modifiedBondIterator;
 
             // Selection only?
@@ -166,7 +164,6 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
             // Copy interaction parameters, including MasterIntra if necessary
             dissolve.copySpeciesIntra(&modifiedBond, &originalBond);
 
-            ++originalBondIterator;
             ++modifiedBondIterator;
         }
 

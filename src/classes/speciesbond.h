@@ -48,12 +48,14 @@ class SpeciesBond : public SpeciesIntra
     SpeciesAtom *i_;
     // Second SpeciesAtom in interaction
     SpeciesAtom *j_;
+    // Assign the two atoms in the bond
+    void assign(SpeciesAtom *i, SpeciesAtom *j);
 
     public:
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
     // Return second SpeciesAtom
-    SpeciesAtom *j() const; 
+    SpeciesAtom *j() const;
     // Return the 'other' SpeciesAtom
     SpeciesAtom *partner(const SpeciesAtom *i) const;
     // Return index (in parent Species) of first SpeciesAtom
