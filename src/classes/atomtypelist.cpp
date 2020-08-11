@@ -109,7 +109,7 @@ void AtomTypeList::remove(std::shared_ptr<AtomType> atomType)
 // Add/increase this AtomType/Isotope pair
 void AtomTypeList::addIsotope(std::shared_ptr<AtomType> atomType, Isotope *tope, double popAdd)
 {
-    AtomTypeData &atd = add(atomType, 0);
+    auto &atd = add(atomType, 0);
 
     // Add / increase isotope population
     if (tope != NULL)
@@ -276,7 +276,7 @@ void AtomTypeList::print() const
             Messenger::print("%c %-8s  %-3s    -     %-10i    %10.6f (of world) %6.3f\n", exch, atd.atomTypeName(),
                              atd.atomType()->element()->symbol(), atd.population(), atd.fraction(), atd.boundCoherent());
 
-            for (auto *topeData = atd.isotopeData(); topeData != NULL; topeData = topeData->next())
+            for (const auto *topeData = atd.isotopeData(); topeData != NULL; topeData = topeData->next())
             {
                 Messenger::print("                   %-3i   %-10.6e  %10.6f (of type)  %6.3f\n", topeData->isotope()->A(),
                                  topeData->population(), topeData->fraction(), topeData->isotope()->boundCoherent());

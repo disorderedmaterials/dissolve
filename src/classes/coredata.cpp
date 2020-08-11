@@ -119,9 +119,7 @@ std::optional<std::shared_ptr<AtomType>> CoreData::findAtomType(const char *name
     auto it = std::find_if(atomTypes_.begin(), atomTypes_.end(),
                            [&name](const auto &at) { return DissolveSys::sameString(at->name(), name); });
     if (it == atomTypes_.end())
-    {
         return std::nullopt;
-    }
     return *it;
 }
 

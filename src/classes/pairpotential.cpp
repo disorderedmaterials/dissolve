@@ -165,11 +165,13 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
     // Check for NULL pointers
     if (typeI == nullptr)
     {
+        // TODO Raise Exception
         Messenger::error("NULL_POINTER - NULL AtomType pointer (typeI) given to PairPotential::setUp().\n");
         return false;
     }
     if (typeJ == nullptr)
     {
+        // TODO Raise Exception
         Messenger::error("NULL_POINTER - NULL AtomType pointer (typeJ) given to PairPotential::setUp().\n");
         return false;
     }

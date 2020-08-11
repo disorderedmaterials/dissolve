@@ -128,7 +128,7 @@ bool Species::checkSetUp()
     {
         for (auto [atomType, isotope] : iso->isotopes())
         {
-            if (isotope == nullptr)
+            if (!isotope)
             {
                 Messenger::error("Isotopologue '%s' does not refer to an elemental Isotope for AtomType '%s'.\n", iso->name(),
                                  atomType->name());

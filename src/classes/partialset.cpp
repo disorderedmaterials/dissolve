@@ -418,7 +418,7 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
     auto sourceNTypes = source.atomTypes_.nItems();
     for (typeI = 0; typeI < sourceNTypes; ++typeI)
     {
-        auto atI = source.atomTypes_.atomType(typeI);
+        const auto atI = source.atomTypes_.atomType(typeI);
         localI = atomTypes_.indexOf(atI);
         if (localI == -1)
         {
@@ -429,7 +429,7 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
 
         for (typeJ = typeI; typeJ < sourceNTypes; ++typeJ)
         {
-            auto atJ = source.atomTypes_.atomType(typeJ);
+            const auto atJ = source.atomTypes_.atomType(typeJ);
             localJ = atomTypes_.indexOf(atJ);
             if (localJ == -1)
             {
@@ -501,8 +501,8 @@ void PartialSet::operator+=(const PartialSet &source)
     // Loop over partials in source set
     const auto &types = source.atomTypes();
     for_each_pair(types.begin(), types.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
-        auto atI = atd1.atomType();
-        auto atJ = atd2.atomType();
+        const auto atI = atd1.atomType();
+        const auto atJ = atd2.atomType();
         int localI = atomTypes_.indexOf(atI);
         int localJ = atomTypes_.indexOf(atJ);
         if (localI == -1)

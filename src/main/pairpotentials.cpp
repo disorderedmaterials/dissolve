@@ -22,7 +22,6 @@
 #include "classes/atomtype.h"
 #include "genericitems/listhelper.h"
 #include "main/dissolve.h"
-#include "templates/algorithms.h"
 
 // Set maximum distance for tabulated PairPotentials
 void Dissolve::setPairPotentialRange(double range)
@@ -131,7 +130,7 @@ bool Dissolve::generatePairPotentials(std::shared_ptr<AtomType> onlyInvolving)
                 continue;
 
             // Does a PairPotential for this AtomType pair already exist?
-            PairPotential *pot = pairPotential(*at1, *at2);
+            auto *pot = pairPotential(*at1, *at2);
             if (pot)
             {
                 Messenger::print("Updating existing PairPotential for interaction between '%s' and '%s'...\n", (*at1)->name(),

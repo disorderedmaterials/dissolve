@@ -74,7 +74,7 @@ void Isotopologue::update()
     for (auto *i = parent_->firstAtom(); i != NULL; i = i->next())
     {
         std::shared_ptr<AtomType> at = i->atomType();
-        if (at == NULL)
+        if (!at)
         {
             Messenger::error("NULL_POINTER - Found NULL AtomType pointer for Atom %i in Isotopologue::update().\n",
                              i->userIndex());
@@ -104,7 +104,7 @@ void Isotopologue::update()
 bool Isotopologue::setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *isotope)
 {
     // Check for NULL pointer
-    if (at == NULL)
+    if (!at)
     {
         Messenger::error("NULL_POINTER - NULL AtomType pointer passed to Isotopologue::setAtomTypeIsotope().\n");
         return false;
