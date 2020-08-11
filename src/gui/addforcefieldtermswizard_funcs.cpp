@@ -193,6 +193,20 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
             // Copy interaction parameters, including MasterIntra if necessary
             dissolve.copySpeciesIntra(modifiedTorsion, originalTorsion);
         }
+
+        DynamicArrayIterator<SpeciesImproper> originalImproperIterator(targetSpecies_->impropers());
+        DynamicArrayConstIterator<SpeciesImproper> modifiedImproperIterator(modifiedSpecies_->constImpropers());
+        while (SpeciesImproper *originalImproper = originalImproperIterator.iterate())
+        {
+            const SpeciesImproper *modifiedImproper = modifiedImproperIterator.iterate();
+
+            // Selection only?
+            if (intraSelectionOnly && (!originalImproper->isSelected()))
+                continue;
+
+            // Copy interaction parameters, including MasterIntra if necessary
+            dissolve.copySpeciesIntra(modifiedImproper, originalImproper);
+        }
     }
 
     return true;
