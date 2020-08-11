@@ -35,6 +35,7 @@ class ForceImportFileFormat : public FileAndFormat
     enum ForceImportFormat
     {
         DLPOLYForces,
+        MoscitoForces,
         XYZForces,
         nForceImportFormats
     };
@@ -75,10 +76,12 @@ class ForceImportFileFormat : public FileAndFormat
      * Import Functions
      */
     private:
-    // Import XYZ forces through specified parser
-    bool importXYZ(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
     // Import DL_POLY forces through specified parser
     bool importDLPOLY(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
+    // Import Moscito forces through specified parser
+    bool importMoscito(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
+    // Import XYZ forces through specified parser
+    bool importXYZ(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
 
     public:
     // Import forces using current filename and format

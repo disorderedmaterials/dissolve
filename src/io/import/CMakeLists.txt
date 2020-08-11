@@ -13,6 +13,7 @@ add_library(import
   data3d.cpp
   forces.cpp
   forces_dlpoly.cpp
+  forces_moscito.cpp
   forces_xyz.cpp
   trajectory.cpp
 

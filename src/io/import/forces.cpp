@@ -55,6 +55,7 @@ EnumOptions<ForceImportFileFormat::ForceImportFormat> ForceImportFileFormat::for
 {
     static EnumOptionsList ForceImportFileFormats =
         EnumOptionsList() << EnumOption(ForceImportFileFormat::DLPOLYForces, "dlpoly", "DL_POLY Config File Forces")
+                          << EnumOption(ForceImportFileFormat::MoscitoForces, "moscito", "Moscito Structure File FOrces")
                           << EnumOption(ForceImportFileFormat::XYZForces, "xyz", "Simple XYZ Force Data");
 
     static EnumOptions<ForceImportFileFormat::ForceImportFormat> options("ForceImportFileFormat", ForceImportFileFormats);
@@ -102,10 +103,13 @@ bool ForceImportFileFormat::importData(LineParser &parser, Array<double> &fx, Ar
 {
     // Import the data
     auto result = false;
-    if (forceFormat() == ForceImportFileFormat::XYZForces)
-        result = importXYZ(parser, fx, fy, fz);
-    else if (forceFormat() == ForceImportFileFormat::DLPOLYForces)
+    if (forceFormat() == ForceImportFileFormat::DLPOLYForces)
         return importDLPOLY(parser, fx, fy, fz);
+    else if (forceFormat() == ForceImportFileFormat::MoscitoForces)
+        return importMoscito(parser, fx, fy, fz);
+    else if (forceFormat() == ForceImportFileFormat::XYZForces)
+        result = importXYZ(parser, fx, fy, fz);
+
     else
         Messenger::error("Don't know how to load forces in format '%s'.\n", formatKeyword(forceFormat()));
 
