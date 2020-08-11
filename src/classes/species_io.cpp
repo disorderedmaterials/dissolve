@@ -66,7 +66,7 @@ bool Species::loadFromXYZ(const char *filename)
     name_ = parser.line();
     int success;
     Element *el;
-    for (int n = 0; n < nAtoms; ++n)
+    for (auto n = 0; n < nAtoms; ++n)
     {
         success = parser.getArgsDelim(LineParser::Defaults);
         if (success != 0)
@@ -441,7 +441,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 iso = addIsotopologue(uniqueIsotopologueName(parser.argc(1)));
                 Messenger::printVerbose("Added Isotopologue '%s' to Species '%s'\n", iso->name(), name());
                 // Each parser argument is a string of the form ATOMTYPE=ISO
-                for (int n = 2; n < parser.nArgs(); ++n)
+                for (auto n = 2; n < parser.nArgs(); ++n)
                 {
                     // Split argument into parts before and after '='
                     arg1 = DissolveSys::beforeChar(parser.argc(n), '=');
@@ -604,7 +604,7 @@ bool Species::write(LineParser &parser, const char *prefix)
         if (!parser.writeLineF("\n%s# Bonds\n", newPrefix.get()))
             return false;
         DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds());
-        while (const SpeciesBond *b = bondIterator.iterate())
+        while (const auto *b = bondIterator.iterate())
         {
             if (b->form() == SpeciesBond::NoForm)
             {
@@ -622,7 +622,7 @@ bool Species::write(LineParser &parser, const char *prefix)
             {
                 CharString s("%s%s  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::BondKeyword), b->indexI() + 1,
                              b->indexJ() + 1, SpeciesBond::bondFunctions().keywordFromInt(b->form()));
-                for (int n = 0; n < b->nParameters(); ++n)
+                for (auto n = 0; n < b->nParameters(); ++n)
                     s.strcatf("  %8.3f", b->parameter(n));
                 if (!parser.writeLineF("%s\n", s.get()))
                     return false;
@@ -636,7 +636,7 @@ bool Species::write(LineParser &parser, const char *prefix)
 
         // Any bond type information to write?
         auto bondTypeHeaderWritten = false;
-        for (int bt = 1; bt < SpeciesBond::nBondTypes; ++bt)
+        for (auto bt = 1; bt < SpeciesBond::nBondTypes; ++bt)
             if (bondTypes[bt].nItems() > 0)
             {
                 // Write header if it hasn't been written already
@@ -646,7 +646,7 @@ bool Species::write(LineParser &parser, const char *prefix)
                         return false;
                     bondTypeHeaderWritten = true;
                 }
-                for (const SpeciesBond *bond : bondTypes[bt])
+                for (const auto *bond : bondTypes[bt])
                     if (!parser.writeLineF("%s%s  %3i  %3i  %s\n", newPrefix.get(),
                                            keywords().keyword(Species::BondTypeKeyword), bond->indexI() + 1, bond->indexJ() + 1,
                                            SpeciesBond::bondType((SpeciesBond::BondType)bt)))
@@ -660,7 +660,7 @@ bool Species::write(LineParser &parser, const char *prefix)
         if (!parser.writeLineF("\n%s# Angles\n", newPrefix.get()))
             return false;
         DynamicArrayConstIterator<SpeciesAngle> angleIterator(angles());
-        while (const SpeciesAngle *a = angleIterator.iterate())
+        while (const auto *a = angleIterator.iterate())
         {
             if (a->form() == SpeciesAngle::NoForm)
             {
@@ -679,7 +679,7 @@ bool Species::write(LineParser &parser, const char *prefix)
                 CharString s("%s%s  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::AngleKeyword),
                              a->indexI() + 1, a->indexJ() + 1, a->indexK() + 1,
                              SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
-                for (int n = 0; n < a->nParameters(); ++n)
+                for (auto n = 0; n < a->nParameters(); ++n)
                     s.strcatf("  %8.3f", a->parameter(n));
                 if (!parser.writeLineF("%s\n", s.get()))
                     return false;
@@ -693,7 +693,7 @@ bool Species::write(LineParser &parser, const char *prefix)
         if (!parser.writeLineF("\n%s# Torsions\n", newPrefix.get()))
             return false;
         DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(torsions());
-        while (const SpeciesTorsion *t = torsionIterator.iterate())
+        while (const auto *t = torsionIterator.iterate())
         {
             if (t->form() == SpeciesTorsion::NoForm)
             {
@@ -714,7 +714,7 @@ bool Species::write(LineParser &parser, const char *prefix)
                 CharString s("%s%s  %3i  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::TorsionKeyword),
                              t->indexI() + 1, t->indexJ() + 1, t->indexK() + 1, t->indexL() + 1,
                              SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
-                for (int n = 0; n < t->nParameters(); ++n)
+                for (auto n = 0; n < t->nParameters(); ++n)
                     s.strcatf("  %8.3f", t->parameter(n));
                 if (!parser.writeLineF("%s\n", s.get()))
                     return false;
@@ -728,7 +728,7 @@ bool Species::write(LineParser &parser, const char *prefix)
         if (!parser.writeLineF("\n%s# Impropers\n", newPrefix.get()))
             return false;
         DynamicArrayConstIterator<SpeciesImproper> improperIterator(impropers());
-        while (const SpeciesImproper *imp = improperIterator.iterate())
+        while (const auto *imp = improperIterator.iterate())
         {
             if (imp->masterParameters())
             {
@@ -742,7 +742,7 @@ bool Species::write(LineParser &parser, const char *prefix)
                 CharString s("%s%s  %3i  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::ImproperKeyword),
                              imp->indexI() + 1, imp->indexJ() + 1, imp->indexK() + 1, imp->indexL() + 1,
                              SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
-                for (int n = 0; n < imp->nParameters(); ++n)
+                for (auto n = 0; n < imp->nParameters(); ++n)
                     s.strcatf("  %8.3f", imp->parameter(n));
                 if (!parser.writeLineF("%s\n", s.get()))
                     return false;
