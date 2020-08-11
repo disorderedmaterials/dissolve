@@ -73,12 +73,7 @@ bool Forcefield_Ludwig_NTf2::setUp()
     //{ this, "F", "C", "S", "O", SpeciesTorsion::CosineForm, { 0,0,0,0 } );
     addTorsionTerm("O", "S", "N", "S", SpeciesTorsion::NoForm);
     //{ this, "O", "S", "N", "S", SpeciesTorsion::CosineForm, { 0,0,0,0 } );
-    addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosineForm, {23.7647, 1.0, 0.0, 1});
-    addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosineForm, {6.2081, 2.0, 0.0, 1});
-    addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosineForm, {-2.3684, 3.0, 0.0, 1});
-    addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosineForm, {-0.0298, 4.0, 0.0, 1});
-    addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosineForm, {0.6905, 5.0, 0.0, 1});
-    addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosineForm, {1.0165, 6.0, 0.0, 1});
+    addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosNForm, {23.7647, 6.2081, -2.3684, -0.0298, 0.6905, 1.0165});
 
     return true;
 }

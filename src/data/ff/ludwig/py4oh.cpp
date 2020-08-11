@@ -99,23 +99,11 @@ bool Forcefield_Ludwig_Py4OH::setUp()
     // Torsion Terms
     addTorsionTerm("*", "ca", "ca", "*", SpeciesTorsion::CosineForm, {15.178, 2.0, 180.0, 1});
     addTorsionTerm("*", "ca", "nc", "*", SpeciesTorsion::CosineForm, {15.178, 2.0, 180.0, 1});
-    addTorsionTerm("ca", "nc", "ct", "ct", SpeciesTorsion::CosineForm, {-0.3579, 2.0, 0.0, 1});
-    addTorsionTerm("ca", "nc", "ct", "ct", SpeciesTorsion::CosineForm, {-0.4037, 4.0, 0.0, 1});
-    addTorsionTerm("nc", "ct", "ct", "ct", SpeciesTorsion::CosineForm, {-3.7014, 1.0, 0.0, 1});
-    addTorsionTerm("nc", "ct", "ct", "ct", SpeciesTorsion::CosineForm, {6.9923, 3.0, 0.0, 1});
-    addTorsionTerm("ct", "ct", "ct", "ct", SpeciesTorsion::CosineForm, {-0.2825, 1.0, 0.0, 1});
-    addTorsionTerm("ct", "ct", "ct", "ct", SpeciesTorsion::CosineForm, {0.6065, 2.0, 0.0, 1});
-    addTorsionTerm("ct", "ct", "ct", "ct", SpeciesTorsion::CosineForm, {4.6858, 3.0, 0.0, 1});
-    addTorsionTerm("ct", "ct", "ct", "ct", SpeciesTorsion::CosineForm, {0.7018, 4.0, 0.0, 1});
-    addTorsionTerm("ct", "ct", "ct", "ct", SpeciesTorsion::CosineForm, {0.4468, 5.0, 0.0, 1});
-    addTorsionTerm("ct", "ct", "ct", "ct", SpeciesTorsion::CosineForm, {0.4564, 6.0, 0.0, 1});
-    addTorsionTerm("ct", "ct", "ct", "oh", SpeciesTorsion::CosineForm, {-2.3748, 1.0, 0.0, 1});
-    addTorsionTerm("ct", "ct", "ct", "oh", SpeciesTorsion::CosineForm, {6.8089, 3.0, 0.0, 1});
-    addTorsionTerm("ct", "ct", "ct", "oh", SpeciesTorsion::CosineForm, {0.9531, 4.0, 0.0, 1});
-    addTorsionTerm("ct", "ct", "oh", "ho", SpeciesTorsion::CosineForm, {-3.5552, 1.0, 0.0, 1});
-    addTorsionTerm("ct", "ct", "oh", "ho", SpeciesTorsion::CosineForm, {0.5886, 2.0, 0.0, 1});
-    addTorsionTerm("ct", "ct", "oh", "ho", SpeciesTorsion::CosineForm, {2.5272, 3.0, 0.0, 1});
-    addTorsionTerm("ct", "ct", "oh", "ho", SpeciesTorsion::CosineForm, {0.1504, 4.0, 0.0, 1});
+    addTorsionTerm("ca", "nc", "ct", "ct", SpeciesTorsion::CosNForm, {0.0, -0.3579, 0.0, -0.4037});
+    addTorsionTerm("nc", "ct", "ct", "ct", SpeciesTorsion::CosNForm, {-3.7014, 0.0, 6.9923});
+    addTorsionTerm("ct", "ct", "ct", "ct", SpeciesTorsion::CosNForm, {-0.2825, 0.6065, 4.6858, 0.7018, 0.4468, 0.4564});
+    addTorsionTerm("ct", "ct", "ct", "oh", SpeciesTorsion::CosNForm, {-2.3748, 0.0, 6.8089, 0.9531});
+    addTorsionTerm("ct", "ct", "oh", "ho", SpeciesTorsion::CosNForm, {-3.5552, 0.5886, 2.5272, 0.1504});
     addTorsionTerm("hc", "ct", "ct", "hc", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
     addTorsionTerm("hc", "ct", "ct", "ct", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
     addTorsionTerm("hc", "ct", "nc", "ca", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
