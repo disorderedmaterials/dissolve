@@ -141,11 +141,11 @@ template <class T> class EnumOptions : public EnumOptionsBase
                 if ((nArgsProvided >= opt.minArgs()) && (nArgsProvided <= opt.maxArgs()))
                     return true;
                 else
-                    return Messenger::error("'%s' keyword '%s' requires %s %i %s, but %i %s provided.\n", name(), opt.keyword(),
-                                            opt.minArgs() == opt.maxArgs() ? "exactly" : nArgsProvided < opt.minArgs() ? "at least" : "at most",
-                                            nArgsProvided < opt.minArgs() ? opt.minArgs() : opt.maxArgs(),
-                                            opt.minArgs() == 1 ? "argument" : "arguments",
-                                            nArgsProvided, nArgsProvided == 1 ? "was" : "were");
+                    return Messenger::error(
+                        "'%s' keyword '%s' requires %s %i %s, but %i %s provided.\n", name(), opt.keyword(),
+                        opt.minArgs() == opt.maxArgs() ? "exactly" : nArgsProvided < opt.minArgs() ? "at least" : "at most",
+                        nArgsProvided < opt.minArgs() ? opt.minArgs() : opt.maxArgs(),
+                        opt.minArgs() == 1 ? "argument" : "arguments", nArgsProvided, nArgsProvided == 1 ? "was" : "were");
                 break;
         }
 

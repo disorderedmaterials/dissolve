@@ -87,7 +87,7 @@ bool ForceImportFileFormat::importMoscito(LineParser &parser, Array<double> &fx,
              *
              *          kJ mol-1  =>  10 J mol-1   =   F * 100.0
              *              nm-1  =>  Angstroms-1  =   F / 10.0
-             * 
+             *
              * Final conversion factor =  * 10.0
              */
 
@@ -95,8 +95,8 @@ bool ForceImportFileFormat::importMoscito(LineParser &parser, Array<double> &fx,
             if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
                 return false;
             std::string coords = parser.line();
-            fx.add(std::stof(coords.substr(0,15)) * 10.0);
-            fy.add(std::stof(coords.substr(15,15)) * 10.0);
+            fx.add(std::stof(coords.substr(0, 15)) * 10.0);
+            fy.add(std::stof(coords.substr(15, 15)) * 10.0);
             fz.add(std::stof(coords.substr(30)) * 10.0);
         }
     }
