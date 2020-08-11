@@ -622,7 +622,7 @@ bool Species::write(LineParser &parser, const char *prefix)
             {
                 CharString s("%s%s  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::BondKeyword), b->indexI() + 1,
                              b->indexJ() + 1, SpeciesBond::bondFunctions().keywordFromInt(b->form()));
-                for (int n = 0; n < SpeciesBond::bondFunctions().minArgs((SpeciesBond::BondFunction)b->form()); ++n)
+                for (int n = 0; n < b->nParameters(); ++n)
                     s.strcatf("  %8.3f", b->parameter(n));
                 if (!parser.writeLineF("%s\n", s.get()))
                     return false;
@@ -679,7 +679,7 @@ bool Species::write(LineParser &parser, const char *prefix)
                 CharString s("%s%s  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::AngleKeyword),
                              a->indexI() + 1, a->indexJ() + 1, a->indexK() + 1,
                              SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
-                for (int n = 0; n < SpeciesAngle::angleFunctions().minArgs((SpeciesAngle::AngleFunction)a->form()); ++n)
+                for (int n = 0; n < a->nParameters(); ++n)
                     s.strcatf("  %8.3f", a->parameter(n));
                 if (!parser.writeLineF("%s\n", s.get()))
                     return false;
@@ -714,7 +714,7 @@ bool Species::write(LineParser &parser, const char *prefix)
                 CharString s("%s%s  %3i  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::TorsionKeyword),
                              t->indexI() + 1, t->indexJ() + 1, t->indexK() + 1, t->indexL() + 1,
                              SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
-                for (int n = 0; n < SpeciesTorsion::torsionFunctions().minArgs((SpeciesTorsion::TorsionFunction)t->form()); ++n)
+                for (int n = 0; n < t->nParameters(); ++n)
                     s.strcatf("  %8.3f", t->parameter(n));
                 if (!parser.writeLineF("%s\n", s.get()))
                     return false;
@@ -742,8 +742,7 @@ bool Species::write(LineParser &parser, const char *prefix)
                 CharString s("%s%s  %3i  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::ImproperKeyword),
                              imp->indexI() + 1, imp->indexJ() + 1, imp->indexK() + 1, imp->indexL() + 1,
                              SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
-                for (int n = 0;
-                     n < SpeciesImproper::improperFunctions().minArgs((SpeciesImproper::ImproperFunction)imp->form()); ++n)
+                for (int n = 0; n < imp->nParameters(); ++n)
                     s.strcatf("  %8.3f", imp->parameter(n));
                 if (!parser.writeLineF("%s\n", s.get()))
                     return false;
