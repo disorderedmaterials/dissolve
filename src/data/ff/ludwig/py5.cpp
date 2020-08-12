@@ -100,8 +100,7 @@ bool Forcefield_Ludwig_Py5::setUp()
     // Torsion Terms
     addTorsionTerm("*", "ca", "ca", "*", SpeciesTorsion::CosineForm, {15.178, 2.0, 180.0, 1});
     addTorsionTerm("*", "ca", "nc", "*", SpeciesTorsion::CosineForm, {15.178, 2.0, 180.0, 1});
-    addTorsionTerm("ca", "nc", "ct", "ct", SpeciesTorsion::CosineForm, {-0.4172, 2.0, 0.0, 1});
-    addTorsionTerm("ca", "nc", "ct", "ct", SpeciesTorsion::CosineForm, {-0.4759, 4.0, 0.0, 1});
+    addTorsionTerm("ca", "nc", "ct", "ct", SpeciesTorsion::CosNForm, {0.0, -0.4172, 0.0, -0.4759});
     addTorsionTerm("nc", "ct", "ct", "ct", SpeciesTorsion::CosNForm, {-2.9885, 0.0, 6.7221, 0.3547});
     addTorsionTerm("ct", "ct", "ct", "ct", SpeciesTorsion::CosNForm, {-0.4882, 0.2620, 5.3908, 0.6635, 0.3339});
     addTorsionTerm("ct", "ct", "ct", "cm", SpeciesTorsion::CosNForm, {0.0, 0.0, 6.0396, 0.5463});
