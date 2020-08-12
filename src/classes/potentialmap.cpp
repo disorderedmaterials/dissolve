@@ -135,7 +135,7 @@ double PotentialMap::energy(const Atom *i, const Atom *j, double r) const
     // interpolated potential
     PairPotential *pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
     return pp->energy(r) +
-           (pp->includeCoulomb() ? pp->analyticCoulombEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r) : 0);
+           (pp->includeCoulomb() ? 0 : pp->analyticCoulombEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
 }
 
 // Return energy between SpeciesAtoms at distance specified
@@ -144,7 +144,7 @@ double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
     PairPotential *pp = potentialMatrix_.constAt(i->atomType()->index(), j->atomType()->index());
-    return pp->energy(r) + (pp->includeCoulomb() ? pp->analyticCoulombEnergy(i->charge() * j->charge(), r) : 0);
+    return pp->energy(r) + (pp->includeCoulomb() ? 0 : pp->analyticCoulombEnergy(i->charge() * j->charge(), r));
 }
 
 // Return analytic energy between Atom types at distance specified
@@ -174,10 +174,8 @@ double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r) cons
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being local to the atom
     // types
     PairPotential *pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
-    if (pp->includeCoulomb())
-        pp->analyticEnergy(r);
-    else
-        return (pp->analyticEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
+    return pp->includeCoulomb() ? pp->analyticEnergy(r)
+                                : pp->analyticEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r);
 }
 
 // Return force between Atoms at distance specified
@@ -214,10 +212,9 @@ double PotentialMap::force(const Atom *i, const Atom *j, double r) const
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
     PairPotential *pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
-    if (pp->includeCoulomb())
-        return pp->force(r);
-    else
-        return (pp->force(r) + pp->analyticCoulombForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
+    return pp->includeCoulomb()
+               ? pp->force(r)
+               : pp->force(r) + pp->analyticCoulombForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r);
 }
 
 // Return force between SpeciesAtoms at distance specified
@@ -226,10 +223,7 @@ double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r)
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
     PairPotential *pp = potentialMatrix_.constAt(i->atomType()->index(), j->atomType()->index());
-    if (pp->includeCoulomb())
-        return pp->force(r);
-    else
-        return (pp->force(r) + pp->analyticCoulombForce(i->charge() * j->charge(), r));
+    return pp->includeCoulomb() ? pp->force(r) : pp->force(r) + pp->analyticCoulombForce(i->charge() * j->charge(), r);
 }
 
 // Return analytic force between Atom types at distance specified
@@ -259,8 +253,6 @@ double PotentialMap::analyticForce(const Atom *i, const Atom *j, double r) const
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
     PairPotential *pp = potentialMatrix_.constAt(i->masterTypeIndex(), j->masterTypeIndex());
-    if (pp->includeCoulomb())
-        return pp->analyticForce(r);
-    else
-        return (pp->analyticForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
+    return pp->includeCoulomb() ? pp->analyticForce(r)
+                                : pp->analyticForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r);
 }
