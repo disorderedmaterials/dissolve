@@ -334,12 +334,12 @@ bool Dissolve::saveInput(const char *filename)
         if (cfg->inputCoordinates().hasValidFileAndFormat())
         {
             if (!cfg->inputCoordinates().writeFilenameAndFormat(
-                    parser, CharString("    %s  ",
+                    parser, CharString("  %s  ",
                                        ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword))))
                 return false;
-            if (!cfg->inputCoordinates().writeBlock(parser, "      "))
+            if (!cfg->inputCoordinates().writeBlock(parser, "    "))
                 return false;
-            if (!parser.writeLineF("    End%s\n",
+            if (!parser.writeLineF("  End%s\n",
                                    ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword)))
                 return false;
         }
