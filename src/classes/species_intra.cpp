@@ -34,7 +34,7 @@ void Species::updateIntramolecularTerms()
 {
     SpeciesAtom *i, *j, *k, *l;
 
-    printf("UIT nbonds = %i\n", bonds_.size());
+    printf("UIT nbonds = %l\n", bonds_.size());
     // Loop over bonds 'jk'
     for (auto &jk : bonds_)
     {
@@ -80,7 +80,7 @@ void Species::updateIntramolecularTerms()
         }
     }
 
-    printf("NOW HERE (%p) n = %i\n", this, angles_.size());
+    printf("NOW HERE (%p) n = %l\n", this, angles_.size());
     // Check existing angle terms for any that are invalid
     angles_.erase(std::remove_if(angles_.begin(), angles_.end(), [&](auto &angle) { return false; }));
 //     angles_.erase(std::remove_if(angles_.begin(), angles_.end(), [&](auto &angle) { printf("gurrrr\n"); return !atoms_.contains(angle.i()) || !atoms_.contains(angle.j()) || !atoms_.contains(angle.k()) || !hasBond(angle.i(), angle.j()) || !hasBond(angle.j(), angle.k()); }));
