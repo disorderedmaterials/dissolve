@@ -23,7 +23,7 @@ jobs:
           ./go -a -s ./dissolve
         displayName: 'Run Serial System Tests'
       - bash: |
-          mkdir test-outputs
+          mkdir test-output
           cp -rv $(System.ArtifactsDirectory)/linux-tests-serial/*.out test-output/
         displayName: 'Copy Test Output'
         condition: always()
@@ -57,7 +57,7 @@ jobs:
           ./go -a -p ./dissolve-mpi
         displayName: 'Run Parallel System Tests'
       - bash: |
-          mkdir test-outputs
+          mkdir test-output
           cp -rv $(System.ArtifactsDirectory)/linux-tests-parallel/*.out test-output/
         displayName: 'Copy Test Output'
         condition: always()
