@@ -23,14 +23,16 @@ jobs:
           ./go -a -s ./dissolve
         displayName: 'Run Serial System Tests'
       - bash: |
-          mkdir test-outputs
+          mkdir test-output
           cp -rv $(System.ArtifactsDirectory)/linux-tests-serial/*.out test-output/
         displayName: 'Copy Test Output'
+        condition: always()
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: "test-output/"
           ArtifactName: 'linux-test-output-serial'
         displayName: 'Publish Serial Test Output Artifacts'
+        condition: always()
   - job:
     condition: eq('${{ parameters.parallel }}', true)
     displayName: 'System Tests (Parallel)'
@@ -55,11 +57,13 @@ jobs:
           ./go -a -p ./dissolve-mpi
         displayName: 'Run Parallel System Tests'
       - bash: |
-          mkdir test-outputs
+          mkdir test-output
           cp -rv $(System.ArtifactsDirectory)/linux-tests-parallel/*.out test-output/
         displayName: 'Copy Test Output'
+        condition: always()
       - task: PublishBuildArtifacts@1
         inputs:
           PathtoPublish: "test-output/"
           ArtifactName: 'linux-test-output-parallel'
         displayName: 'Publish Parallel Test Output Artifacts'
+        condition: always()

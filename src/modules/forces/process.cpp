@@ -391,7 +391,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 Timer interTimer;
                 interTimer.start();
 
-                interatomicForces(procPool, cfg, dissolve.potentialMap(), checkInterFx, checkInterFy, checkInterFz);
+                interAtomicForces(procPool, cfg, dissolve.potentialMap(), checkInterFx, checkInterFy, checkInterFz);
                 if (!procPool.allSum(checkInterFx, cfg->nAtoms()))
                     return false;
                 if (!procPool.allSum(checkInterFy, cfg->nAtoms()))
@@ -409,7 +409,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 Timer intraTimer;
                 intraTimer.start();
 
-                intramolecularForces(procPool, cfg, dissolve.potentialMap(), checkIntraFx, checkIntraFy, checkIntraFz);
+                intraMolecularForces(procPool, cfg, dissolve.potentialMap(), checkIntraFx, checkIntraFy, checkIntraFz);
                 if (!procPool.allSum(checkIntraFx, cfg->nAtoms()))
                     return false;
                 if (!procPool.allSum(checkIntraFy, cfg->nAtoms()))
@@ -639,14 +639,14 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Calculate interatomic forces
             Timer interTimer;
             interTimer.start();
-            interatomicForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
+            interAtomicForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
             interTimer.stop();
             Messenger::printVerbose("Forces: Time to do interatomic forces was %s.\n", interTimer.totalTimeString());
 
             // Calculate intramolecular forces
             Timer intraTimer;
             intraTimer.start();
-            intramolecularForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
+            intraMolecularForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
             intraTimer.stop();
 
             Messenger::print("Forces: Time to do interatomic forces was %s, intramolecular forces was %s (%s comms).\n",

@@ -41,20 +41,16 @@ class SpeciesTorsion;
 class ForceKernel
 {
     public:
-    ForceKernel(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, Array<double> &fx,
-                Array<double> &fy, Array<double> &fz, double cutoffDistance = -1.0);
-    ~ForceKernel();
+    ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, Array<double> &fx, Array<double> &fy,
+                Array<double> &fz, double cutoffDistance = -1.0);
+    ~ForceKernel() = default;
 
     /*
      * Source Data
      */
     protected:
-    // Source Configuration
-    const Configuration *configuration_;
     // Source Box (from Configuration)
     const Box *box_;
-    // Source CellArray (from Configuration)
-    const CellArray &cells_;
     // Potential map to use
     const PotentialMap &potentialMap_;
     // Squared cutoff distance to use in calculation
@@ -93,17 +89,38 @@ class ForceKernel
     /*
      * Intramolecular Terms
      */
+    private:
+    // Local calculated angle parameters
+    double theta_;
+    Vec3<double> dfi_dtheta_, dfk_dtheta_;
+    // Local calculated torsion parameters
+    double phi_;
+    Matrix3 dxpj_dij_, dxpj_dkj_, dxpk_dkj_, dxpk_dlk_;
+    Vec3<double> dcos_dxpj_, dcos_dxpk_;
+
+    private:
+    // Calculate angle force parameters from supplied vectors, storing result in local class variables
+    void calculateAngleParameters(Vec3<double> vecji, Vec3<double> vecjk);
+    // Calculate torsion force parameters from supplied vectors, storing result in local class variables
+    void calculateTorsionParameters(const Vec3<double> vecji, const Vec3<double> vecjk, const Vec3<double> veckl);
+
     public:
     // Calculate SpeciesBond forces
     void forces(const SpeciesBond *b, const Atom *i, const Atom *j);
+    // Calculate SpeciesBond forces
+    void forces(const SpeciesBond *b);
     // Calculate SpeciesBond forces for specified Atom only
     void forces(const Atom *onlyThis, const SpeciesBond *b, const Atom *i, const Atom *j);
     // Calculate SpeciesAngle forces
     void forces(const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k);
+    // Calculate SpeciesAngle forces
+    void forces(const SpeciesAngle *a);
     // Calculate SpeciesAngle forces for specified Atom only
     void forces(const Atom *onlyThis, const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k);
     // Calculate SpeciesTorsion forces
     void forces(const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
+    // Calculate SpeciesTorsion forces
+    void forces(const SpeciesTorsion *t);
     // Calculate SpeciesTorsion forces for specified Atom only
     void forces(const Atom *onlyThis, const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
 
