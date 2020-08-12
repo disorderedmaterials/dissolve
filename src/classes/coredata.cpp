@@ -114,12 +114,12 @@ const char *CoreData::uniqueAtomTypeName(const char *base) const
 }
 
 // Search for AtomType by name
-std::optional<std::shared_ptr<AtomType>> CoreData::findAtomType(const char *name) const
+std::shared_ptr<AtomType> CoreData::findAtomType(const char *name) const
 {
     auto it = std::find_if(atomTypes_.begin(), atomTypes_.end(),
                            [&name](const auto &at) { return DissolveSys::sameString(at->name(), name); });
     if (it == atomTypes_.end())
-        return std::nullopt;
+        return nullptr;
     return *it;
 }
 

@@ -48,11 +48,9 @@ bool AtomTypeRefListKeyword::read(LineParser &parser, int startArg, CoreData &co
     for (int n = startArg; n < parser.nArgs(); ++n)
     {
         // Do we recognise the AtomType?
-        auto opt_atomType = coreData.findAtomType(parser.argc(n));
-        if (!opt_atomType)
+        auto atomType = coreData.findAtomType(parser.argc(n));
+        if (!atomType)
             return Messenger::error("Unrecognised AtomType '%s' found in list.\n", parser.argc(n));
-
-        auto atomType = *opt_atomType;
 
         // If the AtomType is in the list already, complain
         if (std::find(data_.begin(), data_.end(), atomType) != data_.end())

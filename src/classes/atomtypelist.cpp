@@ -313,12 +313,11 @@ bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
         auto population = parser.argd(1);
         auto fraction = parser.argd(2);
         auto boundCoherent = parser.argd(3);
-        auto opt_atomType = coreData.findAtomType(typeName);
+        auto atomType = coreData.findAtomType(typeName);
 
-        if (!opt_atomType)
+        if (!atomType)
             return Messenger::error("Could not find atom type %s", typeName.get());
 
-        auto atomType = *opt_atomType;
         auto nIsotopes = parser.argi(4);
 
         // types_.emplace_back(types_.size(), atomType, population);
@@ -387,7 +386,7 @@ bool AtomTypeList::broadcast(ProcessPool &procPool, const int root, const CoreDa
             if (!procPool.broadcast(typeName), root)
                 return false;
             auto atomType = coreData.findAtomType(typeName);
-            types_.emplace_back(*atomType);
+            types_.emplace_back(atomType);
             auto &item = types_.back();
             if (!item.broadcast(procPool, root, coreData))
                 return false;

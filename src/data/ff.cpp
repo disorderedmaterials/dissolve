@@ -238,9 +238,8 @@ bool Forcefield::assignAtomType(SpeciesAtom *i, CoreData &coreData) const
     const ForcefieldAtomType &atomType = *optRef;
 
     // Check if an AtomType of the same name already exists - if it does, just use that one
-    std::shared_ptr<AtomType> at;
-    auto opt_at = coreData.findAtomType(atomType.name());
-    if (!opt_at)
+    auto at = coreData.findAtomType(atomType.name());
+    if (!at)
     {
         at = coreData.addAtomType(i->element());
         at->setName(atomType.name());
@@ -256,7 +255,6 @@ bool Forcefield::assignAtomType(SpeciesAtom *i, CoreData &coreData) const
     }
     else
     {
-        at = *opt_at;
         Messenger::print("Re-using AtomType '%s' for atom %i (%s).\n", at->name(), i->userIndex(), i->element()->symbol());
 
         // If the current atomtype is empty, set its parameters

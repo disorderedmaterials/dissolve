@@ -71,7 +71,7 @@ class CoreData
     // Generate unique AtomType name with base name provided
     const char *uniqueAtomTypeName(const char *baseName) const;
     // Search for AtomType by name
-    std::optional<std::shared_ptr<AtomType>> findAtomType(const char *name) const;
+    std::shared_ptr<AtomType> findAtomType(const char *name) const;
     // Bump AtomTypes version
     void bumpAtomTypesVersion();
     // Return AtomTypes version

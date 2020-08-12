@@ -48,7 +48,7 @@ AtomTypeData::AtomTypeData(const AtomTypeData &source) : atomType_(source.atomTy
 
 // Read data through specified LineParser
 AtomTypeData::AtomTypeData(LineParser &parser, const CoreData &coreData, int listIndex)
-    : atomType_(*coreData.findAtomType(parser.argc(0))), listIndex_(listIndex)
+    : atomType_(coreData.findAtomType(parser.argc(0))), listIndex_(listIndex)
 {
     population_ = parser.argd(1);
     fraction_ = parser.argd(2);
@@ -229,7 +229,7 @@ bool AtomTypeData::broadcast(ProcessPool &procPool, const int root, const CoreDa
     if (procPool.poolRank() == root)
         typeName = atomType_->name();
     procPool.broadcast(typeName, root);
-    atomType_ = *coreData.findAtomType(typeName);
+    atomType_ = coreData.findAtomType(typeName);
 
     // Broadcast the IsotopeData list
     BroadcastList<IsotopeData> topeBroadcaster(procPool, root, isotopes_, coreData);
