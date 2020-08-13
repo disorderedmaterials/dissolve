@@ -34,7 +34,7 @@ bool ForceImportFileFormat::importXYZ(LineParser &parser, Array<double> &fx, Arr
      *   ...
      */
 
-    // Read in number of atoms and initiliase arrays
+    // Read in number of atoms and initialise arrays
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     auto nAtoms = parser.argi(0);
@@ -43,13 +43,13 @@ bool ForceImportFileFormat::importXYZ(LineParser &parser, Array<double> &fx, Arr
     fy.initialise(nAtoms);
     fz.initialise(nAtoms);
 
-    for (int n = 0; n < nAtoms; ++n)
+    for (auto n = 0; n < nAtoms; ++n)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        fx[n] = parser.argd(0);
-        fy[n] = parser.argd(1);
-        fz[n] = parser.argd(2);
+        fx[n] = parser.argd(1);
+        fy[n] = parser.argd(2);
+        fz[n] = parser.argd(3);
     }
 
     return true;

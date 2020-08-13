@@ -44,7 +44,7 @@ bool ForceImportFileFormat::importDLPOLY(LineParser &parser, Array<double> &fx, 
     if (parser.skipLines(1) != LineParser::Success)
         return false;
 
-    // Read in keytrj, imcon, and number of atoms, and initiliase arrays
+    // Read in keytrj, imcon, and number of atoms, and initialise arrays
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
 
