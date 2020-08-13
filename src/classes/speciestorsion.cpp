@@ -204,8 +204,10 @@ EnumOptions<SpeciesTorsion::TorsionFunction> SpeciesTorsion::torsionFunctions()
                                                     << EnumOption(SpeciesTorsion::NoForm, "None", 0, 0)
                                                     << EnumOption(SpeciesTorsion::CosineForm, "Cos", 4, 4)
                                                     << EnumOption(SpeciesTorsion::Cos3Form, "Cos3", 3, 3)
-                                                    << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4, 4)
                                                     << EnumOption(SpeciesTorsion::Cos3CForm, "Cos3C", 4, 4)
+                                                    << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4, 4)
+                                                    << EnumOption(SpeciesTorsion::CosNForm, "CosN", 1, 10)
+                                                    << EnumOption(SpeciesTorsion::CosNCForm, "CosNC", 1, 11)
                                                     << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3, 3);
 
     static EnumOptions<SpeciesTorsion::TorsionFunction> options("TorsionFunction", TorsionFunctionOptions);
@@ -262,6 +264,20 @@ double SpeciesTorsion::energy(double angleInDegrees) const
          */
         return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0 * phi)) + params[2] * (1.0 + cos(3.0 * phi)));
     }
+    else if (form() == SpeciesTorsion::Cos3CForm)
+    {
+        /*
+         * U(phi) = k0 + 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) )
+         *
+         * Parameters:
+         * 0 : force constant k0
+         * 1 : force constant k1
+         * 2 : force constant k2
+         * 3 : force constant k3
+         */
+        return params[0] +
+               0.5 * (params[1] * (1.0 + cos(phi)) + params[2] * (1.0 - cos(2.0 * phi)) + params[3] * (1.0 + cos(3.0 * phi)));
+    }
     else if (form() == SpeciesTorsion::Cos4Form)
     {
         /*
@@ -276,19 +292,43 @@ double SpeciesTorsion::energy(double angleInDegrees) const
         return 0.5 * (params[0] * (1.0 + cos(phi)) + params[1] * (1.0 - cos(2.0 * phi)) + params[2] * (1.0 + cos(3.0 * phi)) +
                       params[3] * (1.0 - cos(4.0 * phi)));
     }
-    else if (form() == SpeciesTorsion::Cos3CForm)
+    else if (form() == SpeciesTorsion::CosNForm)
     {
         /*
-         * U(phi) = k0 + 0.5 * ( k1*(1+cos(phi)) + k2*(1-cos(2*phi)) + k3*(1+cos(3*phi)) )
+         *           1
+         * U(phi) = SUM  k(n) * ( 1 + cos( n * phi ) )
+         *           n
+         *
+         * Parameters:
+         * 0 : force constant k1
+         * 1 : force constant k2
+         * 2 : ...
+         * n-1 : force constant kn
+         */
+        auto result = 0.0;
+        for (auto n = 0; n < params.size(); ++n)
+            result += params[n] * (1.0 + cos((n + 1) * phi));
+
+        return result;
+    }
+    else if (form() == SpeciesTorsion::CosNCForm)
+    {
+        /*
+         *           0
+         * U(phi) = SUM  k(n) * ( 1 + cos( n * phi ) )
+         *           n
          *
          * Parameters:
          * 0 : force constant k0
          * 1 : force constant k1
-         * 2 : force constant k2
-         * 3 : force constant k3
+         * 2 : ...
+         * n : force constant kn
          */
-        return params[0] +
-               0.5 * (params[1] * (1.0 + cos(phi)) + params[2] * (1.0 - cos(2.0 * phi)) + params[3] * (1.0 + cos(3.0 * phi)));
+        auto result = 0.0;
+        for (auto n = 0; n < params.size(); ++n)
+            result += params[n] * (1.0 + cos(n * phi));
+
+        return result;
     }
     else if (form() == SpeciesTorsion::UFFCosineForm)
     {
@@ -345,20 +385,6 @@ double SpeciesTorsion::force(double angleInDegrees) const
         return dphi_dcosphi * 0.5 *
                (-params[0] * sin(phi) + 2.0 * params[1] * sin(2.0 * phi) - 3.0 * params[2] * sin(3.0 * phi));
     }
-    else if (form() == SpeciesTorsion::Cos4Form)
-    {
-        /*
-         * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) )
-         *
-         * Parameters:
-         * 0 : force constant k1
-         * 1 : force constant k2
-         * 2 : force constant k3
-         * 3 : force constant k4
-         */
-        return dphi_dcosphi * 0.5 *
-               (params[0] * sin(phi) + params[1] * sin(2.0 * phi) + params[2] * sin(3.0 * phi) + params[3] * sin(4.0 * phi));
-    }
     else if (form() == SpeciesTorsion::Cos3CForm)
     {
         /*
@@ -372,6 +398,62 @@ double SpeciesTorsion::force(double angleInDegrees) const
          */
         return dphi_dcosphi * 0.5 *
                (-params[1] * sin(phi) + 2.0 * params[2] * sin(2.0 * phi) - 3.0 * params[3] * sin(3.0 * phi));
+    }
+    else if (form() == SpeciesTorsion::Cos4Form)
+    {
+        /*
+         * dU/dphi = 0.5 * ( -k1*sin(phi) + 2 * k2*sin(2*phi) - 3 * k3*(sin(3*phi)) + 4 * k4*sin(4*phi) )
+         *
+         * Parameters:
+         * 0 : force constant k1
+         * 1 : force constant k2
+         * 2 : force constant k3
+         * 3 : force constant k4
+         */
+        return dphi_dcosphi * 0.5 *
+               (-params[0] * sin(phi) + 2.0 * params[1] * sin(2.0 * phi) - 3.0 * params[2] * sin(3.0 * phi) +
+                4.0 * params[3] * sin(4.0 * phi));
+    }
+    else if (form() == SpeciesTorsion::CosNForm)
+    {
+        /*
+         *           1
+         * U(phi) = SUM  -k(n) * ( n * sin( n * phi ) )
+         *           n
+         *
+         * Parameters:
+         * 0 : force constant k1
+         * 1 : force constant k2
+         * 2 : ...
+         * n-1 : force constant kn
+         */
+        auto result = 0.0;
+        auto c = 1;
+        for (auto n = 0; n < params.size(); ++n)
+        {
+            result -= params[n] * (c * sin(c * phi));
+            ++c;
+        }
+        return dphi_dcosphi * result;
+    }
+    else if (form() == SpeciesTorsion::CosNCForm)
+    {
+        /*
+         *           0
+         * U(phi) = SUM  -k(n) * ( n + sin( n * phi ) )
+         *           n
+         *
+         * Parameters:
+         * 0 : force constant k0
+         * 1 : force constant k1
+         * 2 : ...
+         * n : force constant kn
+         */
+        auto result = 0.0;
+        for (auto n = 1; n < params.size(); ++n)
+            result -= params[n] * (n * sin(n * phi));
+
+        return dphi_dcosphi * result;
     }
     else if (form() == SpeciesTorsion::UFFCosineForm)
     {
