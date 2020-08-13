@@ -71,59 +71,51 @@ bool Forcefield_Ludwig_Py5::setUp()
     addAtomType(ELEMENT_H, 17, "hm", "nbonds=1,-&16", "Hydrogen of Tail End", 0.0480, "hm");
 
     // Bond Terms
-    addBondTerm("ha", "ca", SpeciesBond::HarmonicForm, 3071., 1.080);
-    addBondTerm("ca", "ca", SpeciesBond::HarmonicForm, 3925., 1.400);
-    addBondTerm("nc", "ca", SpeciesBond::HarmonicForm, 4042., 1.339);
-    addBondTerm("nc", "ct", SpeciesBond::HarmonicForm, 4042, 1.339);
-    addBondTerm("ct", "ct", SpeciesBond::HarmonicForm, 2244.1, 1.529);
-    addBondTerm("ct", "hc", SpeciesBond::HarmonicForm, 2847.0, 1.09);
-    addBondTerm("ct", "cm", SpeciesBond::HarmonicForm, 2244.1, 1.529);
-    addBondTerm("cm", "hm", SpeciesBond::HarmonicForm, 2847.0, 1.09);
+    addBondTerm("ha", "ca", SpeciesBond::HarmonicForm, {3071., 1.080});
+    addBondTerm("ca", "ca", SpeciesBond::HarmonicForm, {3925., 1.400});
+    addBondTerm("nc", "ca", SpeciesBond::HarmonicForm, {4042., 1.339});
+    addBondTerm("nc", "ct", SpeciesBond::HarmonicForm, {4042, 1.339});
+    addBondTerm("ct", "ct", SpeciesBond::HarmonicForm, {2244.1, 1.529});
+    addBondTerm("ct", "hc", SpeciesBond::HarmonicForm, {2847.0, 1.09});
+    addBondTerm("ct", "cm", SpeciesBond::HarmonicForm, {2244.1, 1.529});
+    addBondTerm("cm", "hm", SpeciesBond::HarmonicForm, {2847.0, 1.09});
 
     // Angle Terms
-    addAngleTerm("ca", "ca", "ca", SpeciesAngle::HarmonicForm, 527.2, 120.0);
-    addAngleTerm("ca", "ca", "nc", SpeciesAngle::HarmonicForm, 585.8, 124.0);
-    addAngleTerm("ca", "nc", "ca", SpeciesAngle::HarmonicForm, 585.8, 117.0);
-    addAngleTerm("ca", "ca", "ha", SpeciesAngle::HarmonicForm, 292.9, 120.0);
-    addAngleTerm("nc", "ca", "ha", SpeciesAngle::HarmonicForm, 292.9, 116.0);
-    addAngleTerm("ca", "nc", "ct", SpeciesAngle::HarmonicForm, 585.8, 121.5);
-    addAngleTerm("nc", "ct", "ct", SpeciesAngle::HarmonicForm, 487.43, 112.7);
-    addAngleTerm("hc", "ct", "nc", SpeciesAngle::HarmonicForm, 313.26, 110.7);
-    addAngleTerm("hc", "ct", "hc", SpeciesAngle::HarmonicForm, 275.7, 107.8);
-    addAngleTerm("hc", "ct", "ct", SpeciesAngle::HarmonicForm, 313.26, 110.7);
-    addAngleTerm("hc", "ct", "cm", SpeciesAngle::HarmonicForm, 313.26, 110.7);
-    addAngleTerm("hm", "cm", "ct", SpeciesAngle::HarmonicForm, 313.26, 110.7);
-    addAngleTerm("hm", "cm", "hm", SpeciesAngle::HarmonicForm, 275.7, 107.8);
-    addAngleTerm("ct", "ct", "ct", SpeciesAngle::HarmonicForm, 487.43, 112.7);
-    addAngleTerm("ct", "ct", "cm", SpeciesAngle::HarmonicForm, 487.43, 112.7);
+    addAngleTerm("ca", "ca", "ca", SpeciesAngle::HarmonicForm, {527.2, 120.0});
+    addAngleTerm("ca", "ca", "nc", SpeciesAngle::HarmonicForm, {585.8, 124.0});
+    addAngleTerm("ca", "nc", "ca", SpeciesAngle::HarmonicForm, {585.8, 117.0});
+    addAngleTerm("ca", "ca", "ha", SpeciesAngle::HarmonicForm, {292.9, 120.0});
+    addAngleTerm("nc", "ca", "ha", SpeciesAngle::HarmonicForm, {292.9, 116.0});
+    addAngleTerm("ca", "nc", "ct", SpeciesAngle::HarmonicForm, {585.8, 121.5});
+    addAngleTerm("nc", "ct", "ct", SpeciesAngle::HarmonicForm, {487.43, 112.7});
+    addAngleTerm("hc", "ct", "nc", SpeciesAngle::HarmonicForm, {313.26, 110.7});
+    addAngleTerm("hc", "ct", "hc", SpeciesAngle::HarmonicForm, {275.7, 107.8});
+    addAngleTerm("hc", "ct", "ct", SpeciesAngle::HarmonicForm, {313.26, 110.7});
+    addAngleTerm("hc", "ct", "cm", SpeciesAngle::HarmonicForm, {313.26, 110.7});
+    addAngleTerm("hm", "cm", "ct", SpeciesAngle::HarmonicForm, {313.26, 110.7});
+    addAngleTerm("hm", "cm", "hm", SpeciesAngle::HarmonicForm, {275.7, 107.8});
+    addAngleTerm("ct", "ct", "ct", SpeciesAngle::HarmonicForm, {487.43, 112.7});
+    addAngleTerm("ct", "ct", "cm", SpeciesAngle::HarmonicForm, {487.43, 112.7});
 
     // Torsion Terms
-    addTorsionTerm("*", "ca", "ca", "*", SpeciesTorsion::CosineForm, 15.178, 2.0, 180.0, 1);
-    addTorsionTerm("*", "ca", "nc", "*", SpeciesTorsion::CosineForm, 15.178, 2.0, 180.0, 1);
-    addTorsionTerm("ca", "nc", "ct", "ct", SpeciesTorsion::CosineForm, -0.4172, 2.0, 0.0, 1);
-    addTorsionTerm("ca", "nc", "ct", "ct", SpeciesTorsion::CosineForm, -0.4759, 4.0, 0.0, 1);
-    addTorsionTerm("nc", "ct", "ct", "ct", SpeciesTorsion::CosineForm, -2.9885, 1.0, 0.0, 1);
-    addTorsionTerm("nc", "ct", "ct", "ct", SpeciesTorsion::CosineForm, 6.7221, 3.0, 0.0, 1);
-    addTorsionTerm("nc", "ct", "ct", "ct", SpeciesTorsion::CosineForm, 0.3547, 4.0, 0.0, 1);
-    addTorsionTerm("ct", "ct", "ct", "ct", SpeciesTorsion::CosineForm, -0.4882, 1.0, 0.0, 1);
-    addTorsionTerm("ct", "ct", "ct", "ct", SpeciesTorsion::CosineForm, 0.2620, 2.0, 0.0, 1);
-    addTorsionTerm("ct", "ct", "ct", "ct", SpeciesTorsion::CosineForm, 5.3908, 3.0, 0.0, 1);
-    addTorsionTerm("ct", "ct", "ct", "ct", SpeciesTorsion::CosineForm, 0.6635, 4.0, 0.0, 1);
-    addTorsionTerm("ct", "ct", "ct", "ct", SpeciesTorsion::CosineForm, 0.3339, 5.0, 0.0, 1);
-    addTorsionTerm("ct", "ct", "ct", "cm", SpeciesTorsion::CosineForm, 6.0396, 3.0, 0.0, 1);
-    addTorsionTerm("ct", "ct", "ct", "cm", SpeciesTorsion::CosineForm, 0.5463, 4.0, 0.0, 1);
-    addTorsionTerm("ct", "ct", "cm", "hm", SpeciesTorsion::CosineForm, 1.8773, 3.0, 0.0, 1);
-    addTorsionTerm("hc", "ct", "ct", "hc", SpeciesTorsion::CosineForm, 0.0000, 3.0, 0.0, 1);
-    addTorsionTerm("hc", "ct", "cm", "hm", SpeciesTorsion::CosineForm, 0.0000, 3.0, 0.0, 1);
-    addTorsionTerm("hc", "ct", "ct", "ct", SpeciesTorsion::CosineForm, 0.0000, 3.0, 0.0, 1);
-    addTorsionTerm("hc", "ct", "ct", "cm", SpeciesTorsion::CosineForm, 0.0000, 3.0, 0.0, 1);
-    addTorsionTerm("hc", "ct", "ct", "nc", SpeciesTorsion::CosineForm, 0.0000, 3.0, 0.0, 1);
-    addTorsionTerm("hc", "ct", "nc", "ca", SpeciesTorsion::CosineForm, 0.0000, 3.0, 0.0, 1);
+    addTorsionTerm("*", "ca", "ca", "*", SpeciesTorsion::CosineForm, {15.178, 2.0, 180.0, 1});
+    addTorsionTerm("*", "ca", "nc", "*", SpeciesTorsion::CosineForm, {15.178, 2.0, 180.0, 1});
+    addTorsionTerm("ca", "nc", "ct", "ct", SpeciesTorsion::CosNForm, {0.0, -0.4172, 0.0, -0.4759});
+    addTorsionTerm("nc", "ct", "ct", "ct", SpeciesTorsion::CosNForm, {-2.9885, 0.0, 6.7221, 0.3547});
+    addTorsionTerm("ct", "ct", "ct", "ct", SpeciesTorsion::CosNForm, {-0.4882, 0.2620, 5.3908, 0.6635, 0.3339});
+    addTorsionTerm("ct", "ct", "ct", "cm", SpeciesTorsion::CosNForm, {0.0, 0.0, 6.0396, 0.5463});
+    addTorsionTerm("ct", "ct", "cm", "hm", SpeciesTorsion::CosineForm, {1.8773, 3.0, 0.0, 1});
+    addTorsionTerm("hc", "ct", "ct", "hc", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
+    addTorsionTerm("hc", "ct", "cm", "hm", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
+    addTorsionTerm("hc", "ct", "ct", "ct", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
+    addTorsionTerm("hc", "ct", "ct", "cm", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
+    addTorsionTerm("hc", "ct", "ct", "nc", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
+    addTorsionTerm("hc", "ct", "nc", "ca", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
 
     // Improper Terms
-    addImproperTerm("ca", "ca", "ca", "ha", SpeciesImproper::CosineForm, 4.606, 2.0, 180.0);
-    addImproperTerm("ca", "nc", "ca", "ha", SpeciesImproper::CosineForm, 4.606, 2.0, 180.0);
-    addImproperTerm("ca", "ca", "nc", "ct", SpeciesImproper::CosineForm, 4.606, 2.0, 180.0);
+    addImproperTerm("ca", "ca", "ca", "ha", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0});
+    addImproperTerm("ca", "nc", "ca", "ha", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0});
+    addImproperTerm("ca", "ca", "nc", "ct", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0});
 
     return true;
 }
@@ -133,7 +125,7 @@ bool Forcefield_Ludwig_Py5::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_Ludwig_Py5::name() const { return "1-pentylpyridinium cation (Py5)"; }
+const char *Forcefield_Ludwig_Py5::name() const { return "Ludwig Py5 Cation"; }
 
 // Return description for Forcefield
 const char *Forcefield_Ludwig_Py5::description() const
