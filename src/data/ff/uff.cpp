@@ -445,8 +445,7 @@ OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::determineUFFAtomType
  */
 
 // Generate bond parameters for the supplied UFF atom types
-bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, const UFFAtomType &i,
-                                      const UFFAtomType &j) const
+bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, const UFFAtomType &i, const UFFAtomType &j) const
 {
     // Calculate rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
     const auto sumr = i.r() + j.r();
@@ -742,15 +741,14 @@ bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
     }
 
     // Generate torsion terms
-    DynamicArrayIterator<SpeciesTorsion> torsionIterator(sp->torsions());
-    while (SpeciesTorsion *torsion = torsionIterator.iterate())
+    for (auto &torsion : sp->torsions())
     {
-        SpeciesAtom *i = torsion->i();
-        SpeciesAtom *j = torsion->j();
-        SpeciesAtom *k = torsion->k();
-        SpeciesAtom *l = torsion->l();
+        SpeciesAtom *i = torsion.i();
+        SpeciesAtom *j = torsion.j();
+        SpeciesAtom *k = torsion.k();
+        SpeciesAtom *l = torsion.l();
 
-        if (selectionOnly && (!torsion->isSelected()))
+        if (selectionOnly && (!torsion.isSelected()))
             continue;
 
         auto typeI = determineTypes ? determineUFFAtomType(i) : uffAtomTypeByName(i->atomType()->name());
@@ -758,7 +756,8 @@ bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
         auto typeK = determineTypes ? determineUFFAtomType(k) : uffAtomTypeByName(k->atomType()->name());
         auto typeL = determineTypes ? determineUFFAtomType(l) : uffAtomTypeByName(l->atomType()->name());
 
-        if (!typeI || !typeJ || !typeK || !typeL || !generateTorsionTerm(sp, torsion, *typeI, *typeJ, *typeK, *typeL))
+        // FIXME: Pass torsion by reference instead of by pointer
+        if (!typeI || !typeJ || !typeK || !typeL || !generateTorsionTerm(sp, &torsion, *typeI, *typeJ, *typeK, *typeL))
             return Messenger::error("Failed to create parameters for torsion %i-%i-%i-%i.\n", i->userIndex(), j->userIndex(),
                                     k->userIndex(), l->userIndex());
     }

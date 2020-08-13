@@ -197,13 +197,12 @@ void Species::print()
         Messenger::print("      I     J     K     L    Form             Parameters\n");
         Messenger::print("    ---------------------------------------------------------------------------------------------\n");
         // Loop over Torsions
-        DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(torsions());
-        while (const SpeciesTorsion *t = torsionIterator.iterate())
+	for (const auto &t : torsions())
         {
-            CharString s("   %4i  %4i  %4i  %4i    %c%-12s", t->indexI() + 1, t->indexJ() + 1, t->indexK() + 1, t->indexL() + 1,
-                         t->masterParameters() ? '@' : ' ', SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
+            CharString s("   %4i  %4i  %4i  %4i    %c%-12s", t.indexI() + 1, t.indexJ() + 1, t.indexK() + 1, t.indexL() + 1,
+                         t.masterParameters() ? '@' : ' ', SpeciesTorsion::torsionFunctions().keywordFromInt(t.form()));
             for (int n = 0; n < MAXINTRAPARAMS; ++n)
-                s.strcatf("  %12.4e", t->parameter(n));
+                s.strcatf("  %12.4e", t.parameter(n));
             Messenger::print("%s\n", s.get());
         }
     }

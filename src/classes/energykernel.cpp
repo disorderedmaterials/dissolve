@@ -28,6 +28,7 @@
 #include "classes/potentialmap.h"
 #include "classes/species.h"
 #include <iterator>
+#include <numeric>
 
 EnergyKernel::EnergyKernel(ProcessPool &procPool, Configuration *config, const PotentialMap &potentialMap, double energyCutoff)
     : configuration_(config), cells_(config->cells()), potentialMap_(potentialMap), processPool_(procPool)
@@ -694,7 +695,7 @@ double EnergyKernel::energy(const SpeciesAngle &angle, const Atom *i, const Atom
 }
 
 // Return SpeciesTorsion energy
-double EnergyKernel::energy(const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
+double EnergyKernel::energy(const SpeciesTorsion &torsion, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
 {
     Vec3<double> vecji, vecjk, veckl, xpj, xpk, dcos_dxpj, dcos_dxpk, temp, force;
     Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
@@ -713,7 +714,7 @@ double EnergyKernel::energy(const SpeciesTorsion *t, const Atom *i, const Atom *
     else
         veckl = l->r() - k->r();
 
-    return t->energy(Box::torsionInDegrees(vecji, vecjk, veckl));
+    return torsion.energy(Box::torsionInDegrees(vecji, vecjk, veckl));
 }
 
 // Return intramolecular energy for the supplied Atom
@@ -752,12 +753,11 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, c
         intraEnergy += energy(*angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()), mol->atom(angle->indexK()));
     }
 
-    // Add energy from SpeciesTorsion terms
-    for (const auto *torsion : spAtom->torsions())
-    {
-        intraEnergy += energy(torsion, mol->atom(torsion->indexI()), mol->atom(torsion->indexJ()), mol->atom(torsion->indexK()),
-                              mol->atom(torsion->indexL()));
-    }
+    intraEnergy += std::accumulate(spAtom->torsions().begin(), spAtom->torsions().end(), 0.0,
+                                   [this, &mol](const auto acc, const auto &torsion) {
+                                       return acc + energy(*torsion, mol->atom(torsion->indexI()), mol->atom(torsion->indexJ()),
+                                                           mol->atom(torsion->indexK()), mol->atom(torsion->indexL()));
+                                   });
 
     return intraEnergy;
 }
@@ -786,9 +786,8 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol)
         energy(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()), mol->atom(angle.indexK()));
 
     // Loop over Torsions
-    DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
-    while (const SpeciesTorsion *t = torsionIterator.iterate())
-        energy(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
+    for (const auto &t : mol->species()->constTorsions())
+        energy(t, mol->atom(t.indexI()), mol->atom(t.indexJ()), mol->atom(t.indexK()), mol->atom(t.indexL()));
 
     return intraEnergy;
 }

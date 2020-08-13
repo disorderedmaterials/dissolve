@@ -25,9 +25,88 @@
 #include "classes/speciesatom.h"
 #include "templates/enumhelpers.h"
 
-SpeciesTorsion::SpeciesTorsion() : SpeciesIntra(), DynamicArrayObject<SpeciesTorsion>() { clear(); }
+SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) : SpeciesIntra()
+{
 
-SpeciesTorsion::~SpeciesTorsion() {}
+    parent_ = nullptr;
+    i_ = i;
+    j_ = j;
+    k_ = k;
+    l_ = l;
+    form_ = SpeciesTorsion::NoForm;
+
+    // Add ourself to the list of bonds on each atom
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->addTorsion(this, 1.0);
+        j_->addTorsion(this, 1.0);
+        k_->addTorsion(this, 1.0);
+        l_->addTorsion(this, l_->scaling(i));
+    }
+}
+
+SpeciesTorsion::SpeciesTorsion(const SpeciesTorsion &source) { this->operator=(source); }
+
+SpeciesTorsion::~SpeciesTorsion() { detach(); }
+
+SpeciesTorsion &SpeciesTorsion::operator=(const SpeciesTorsion &source)
+{
+    i_ = source.i_;
+    j_ = source.j_;
+    k_ = source.k_;
+    l_ = source.l_;
+
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->addTorsion(this, 1.0);
+        j_->addTorsion(this, 1.0);
+        k_->addTorsion(this, 1.0);
+        l_->addTorsion(this, source.l_->scaling(source.i_));
+    }
+    form_ = source.form_;
+    SpeciesIntra::operator=(source);
+
+    return *this;
+}
+
+SpeciesTorsion &SpeciesTorsion::operator=(SpeciesTorsion &&source)
+{
+    if (i_ && j_ && k_ && l_)
+        detach();
+
+    i_ = source.i_;
+    j_ = source.j_;
+    k_ = source.k_;
+    l_ = source.l_;
+
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->addTorsion(this, 1.0);
+        j_->addTorsion(this, 1.0);
+        k_->addTorsion(this, 1.0);
+        l_->addTorsion(this, source.l_->scaling(source.i_));
+    }
+    form_ = source.form_;
+    SpeciesIntra::operator=(source);
+
+    return *this;
+}
+
+// Detach from current atoms
+void SpeciesTorsion::detach()
+{
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->removeTorsion(this);
+        j_->removeTorsion(this);
+        k_->removeTorsion(this);
+        l_->removeTorsion(this);
+    }
+    i_ = nullptr;
+    j_ = nullptr;
+    k_ = nullptr;
+    l_ = nullptr;
+}
 
 /*
  * DynamicArrayObject Virtuals

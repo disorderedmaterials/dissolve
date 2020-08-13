@@ -66,9 +66,9 @@ void ForcesModule::intramolecularForces(ProcessPool &procPool, Configuration *cf
             kernel.forces(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()), mol->atom(angle.indexK()));
 
         // Loop over Torsions
-        DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
-        while (const SpeciesTorsion *t = torsionIterator.iterate())
-            kernel.forces(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
+        for (const auto &torsion : mol->species()->constTorsions())
+            kernel.forces(&torsion, mol->atom(torsion.indexI()), mol->atom(torsion.indexJ()), mol->atom(torsion.indexK()),
+                          mol->atom(torsion.indexL()));
     }
 }
 

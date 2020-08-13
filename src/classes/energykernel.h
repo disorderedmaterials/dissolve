@@ -104,7 +104,7 @@ class EnergyKernel
     // Return SpeciesAngle energy
     double energy(const SpeciesAngle &angle, const Atom *i, const Atom *j, const Atom *k);
     // Return SpeciesTorsion energy
-    double energy(const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
+    double energy(const SpeciesTorsion &t, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
     // Return intramolecular energy for the supplied Atom
     double intramolecularEnergy(std::shared_ptr<const Molecule> mol, const Atom *i);
     // Return intramolecular energy for the supplied Molecule

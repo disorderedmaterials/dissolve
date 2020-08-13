@@ -275,14 +275,13 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Torsion forces
-                    DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(molN->species()->constTorsions());
-                    while (const SpeciesTorsion *t = torsionIterator.iterate())
+                    for (const auto &torsion : molN->species()->constTorsions())
                     {
                         // Grab pointers to atoms involved in angle
-                        i = molN->atom(t->indexI());
-                        j = molN->atom(t->indexJ());
-                        k = molN->atom(t->indexK());
-                        l = molN->atom(t->indexL());
+                        i = molN->atom(torsion.indexI());
+                        j = molN->atom(torsion.indexJ());
+                        k = molN->atom(torsion.indexK());
+                        l = molN->atom(torsion.indexL());
 
                         // Calculate vectors, ensuring we account for minimum image
                         vecji = box->minimumVector(j, i);
@@ -300,7 +299,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         else if (dp > 1.0)
                             dp = 1.0;
                         phi = acos(dp);
-                        du_dphi = t->force(phi * DEGRAD);
+                        du_dphi = torsion.force(phi * DEGRAD);
 
                         /* Construct derivatives of perpendicular axis (cross product) w.r.t. component
                          *vectors. E.g. d (rij x rkj)

@@ -195,18 +195,17 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 }
 
                 // Torsion energy
-                DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(molN->species()->constTorsions());
-                while (const SpeciesTorsion *t = torsionIterator.iterate())
+                for (const auto &torsion : molN->species()->constTorsions())
                 {
                     // Get vectors 'j-i', 'j-k' and 'k-l'
-                    vecji = cfg->box()->minimumVector(molN->atom(t->indexJ()), molN->atom(t->indexI()));
-                    vecjk = cfg->box()->minimumVector(molN->atom(t->indexJ()), molN->atom(t->indexK()));
-                    veckl = cfg->box()->minimumVector(molN->atom(t->indexK()), molN->atom(t->indexL()));
+                    vecji = cfg->box()->minimumVector(molN->atom(torsion.indexJ()), molN->atom(torsion.indexI()));
+                    vecjk = cfg->box()->minimumVector(molN->atom(torsion.indexJ()), molN->atom(torsion.indexK()));
+                    veckl = cfg->box()->minimumVector(molN->atom(torsion.indexK()), molN->atom(torsion.indexL()));
 
                     angle = Box::torsionInDegrees(vecji, vecjk, veckl);
 
                     // Determine Torsion energy
-                    correctIntraEnergy += t->energy(angle);
+                    correctIntraEnergy += torsion.energy(angle);
                 }
             }
             testTimer.stop();

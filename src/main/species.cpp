@@ -189,14 +189,14 @@ Species *Dissolve::copySpecies(const Species *species)
     }
 
     // Duplicate torsions
-    DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(species->constTorsions());
-    while (const SpeciesTorsion *t = torsionIterator.iterate())
+    for (const auto &torsion : species->constTorsions())
     {
         // Create the torsion in the new Species
-        SpeciesTorsion *newTorsion = newSpecies->addTorsion(t->indexI(), t->indexJ(), t->indexK(), t->indexL());
+        SpeciesTorsion &newTorsion =
+            newSpecies->addTorsion(torsion.indexI(), torsion.indexJ(), torsion.indexK(), torsion.indexL());
 
         // Copy interaction parameters, including MasterIntra if necessary
-        copySpeciesIntra(t, newTorsion);
+        copySpeciesIntra(&torsion, &newTorsion);
     }
 
     // Duplicate impropers

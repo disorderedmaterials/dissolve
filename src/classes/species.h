@@ -145,7 +145,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Array of angles between atoms in the Species
     std::vector<SpeciesAngle> angles_;
     // Array of torsions between atoms in the Species
-    DynamicArray<SpeciesTorsion> torsions_;
+    std::vector<SpeciesTorsion> torsions_;
     // Array of impropers between atoms in the Species
     DynamicArray<SpeciesImproper> impropers_;
     // Whether the attached atoms lists have been created
@@ -193,17 +193,19 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Return the SpeciesAngle between the specified SpeciesAtoms
     OptionalReferenceWrapper<SpeciesAngle> getAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
     // Add new SpeciesTorsion definition (from SpeciesAtom*)
-    SpeciesTorsion *addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    SpeciesTorsion &addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Add new SpeciesTorsion definition
-    SpeciesTorsion *addTorsion(int i, int j, int k, int l);
+    SpeciesTorsion &addTorsion(int i, int j, int k, int l);
     // Return number of SpeciesTorsion defined
     int nTorsions() const;
     // Return array of SpeciesTorsion
-    DynamicArray<SpeciesTorsion> &torsions();
+    std::vector<SpeciesTorsion> &torsions();
     // Return array of SpeciesTorsion (const)
-    const DynamicArray<SpeciesTorsion> &constTorsions() const;
+    const std::vector<SpeciesTorsion> &constTorsions() const;
     // Return whether SpeciesTorsion between SpeciesAtoms exists
     bool hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
+    // Return the SpeciesTorsion between the specified SpeciesAtoms
+    OptionalReferenceWrapper<SpeciesTorsion> getTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Add new SpeciesImproper definition (from SpeciesAtom*)
     SpeciesImproper *addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Add new SpeciesImproper definition

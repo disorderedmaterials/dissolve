@@ -124,7 +124,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     SpeciesAtom *i;
     OptionalReferenceWrapper<SpeciesBond> b;
     SpeciesImproper *imp;
-    SpeciesTorsion *t;
+    OptionalReferenceWrapper<SpeciesTorsion> torsion;
     SpeciesSite *site;
     SpeciesBond::BondFunction bf;
     SpeciesAngle::AngleFunction af;
@@ -404,7 +404,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         error = true;
                         break;
                     }
-                    t->setMasterParameters(master);
+                    torsion->get().setMasterParameters(master);
                 }
                 else
                 {
@@ -424,7 +424,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         error = true;
                         break;
                     }
-                    t->setForm(tf);
+                    torsion->get().setForm(tf);
                     for (int n = 0; n < SpeciesImproper::improperFunctions().minArgs(impf); ++n)
                     {
                         if (!parser.hasArg(n + 6))
@@ -435,12 +435,12 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                             error = true;
                             break;
                         }
-                        t->setParameter(n, parser.argd(n + 6));
+                        torsion->get().setParameter(n, parser.argd(n + 6));
                     }
                 }
 
                 // Perform any final setup on the Improper
-                t->setUp();
+                torsion->get().setUp();
                 break;
             case (Species::IsotopologueKeyword):
                 iso = addIsotopologue(uniqueIsotopologueName(parser.argc(1)));
@@ -499,8 +499,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 break;
             case (Species::TorsionKeyword):
                 // Create a new angle definition between the specified atoms
-                t = addTorsion(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
-                if (!t)
+                torsion = addTorsion(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
+                if (!torsion)
                 {
                     error = true;
                     break;
@@ -513,7 +513,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                  * '@' it is a reference to master parameters
                  */
                 if (parser.nArgs() == 5)
-                    t->setForm(SpeciesTorsion::NoForm);
+                    torsion->get().setForm(SpeciesTorsion::NoForm);
                 else if (parser.argc(5)[0] == '@')
                 {
                     // Search through master Torsion parameters to see if this name exists
@@ -525,7 +525,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
 
-                    t->setMasterParameters(master);
+                    torsion->get().setMasterParameters(master);
                 }
                 else
                 {
@@ -538,7 +538,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
                     tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argc(5));
 
-                    t->setForm(tf);
+                    torsion->get().setForm(tf);
                     for (int n = 0; n < SpeciesTorsion::torsionFunctions().minArgs(tf); ++n)
                     {
                         if (!parser.hasArg(n + 6))
@@ -549,12 +549,12 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                             error = true;
                             break;
                         }
-                        t->setParameter(n, parser.argd(n + 6));
+                        torsion->get().setParameter(n, parser.argd(n + 6));
                     }
                 }
 
                 // Perform any final setup on the Torsion
-                t->setUp();
+                torsion->get().setUp();
                 break;
             default:
                 printf("DEV_OOPS - Species block keyword '%s' not accounted for.\n", keywords().keyword(kwd));
@@ -676,7 +676,8 @@ bool Species::write(LineParser &parser, const char *prefix)
             else if (angle.masterParameters())
             {
                 if (!parser.writeLineF("%s%s  %3i  %3i  %3i  @%s\n", newPrefix.get(), keywords().keyword(Species::AngleKeyword),
-                                       angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1, angle.masterParameters()->name()))
+                                       angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
+                                       angle.masterParameters()->name()))
                     return false;
             }
             else
@@ -697,30 +698,30 @@ bool Species::write(LineParser &parser, const char *prefix)
     {
         if (!parser.writeLineF("\n%s# Torsions\n", newPrefix.get()))
             return false;
-        DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(torsions());
-        while (const SpeciesTorsion *t = torsionIterator.iterate())
+        for (const auto &torsion : torsions())
         {
-            if (t->form() == SpeciesTorsion::NoForm)
+            if (torsion.form() == SpeciesTorsion::NoForm)
             {
                 if (!parser.writeLineF("%s%s  %3i  %3i  %3i  %3i\n", newPrefix.get(),
-                                       keywords().keyword(Species::TorsionKeyword), t->indexI() + 1, t->indexJ() + 1,
-                                       t->indexK() + 1, t->indexL() + 1))
+                                       keywords().keyword(Species::TorsionKeyword), torsion.indexI() + 1, torsion.indexJ() + 1,
+                                       torsion.indexK() + 1, torsion.indexL() + 1))
                     return false;
             }
-            else if (t->masterParameters())
+            else if (torsion.masterParameters())
             {
                 if (!parser.writeLineF("%s%s  %3i  %3i  %3i  %3i  @%s\n", newPrefix.get(),
-                                       keywords().keyword(Species::TorsionKeyword), t->indexI() + 1, t->indexJ() + 1,
-                                       t->indexK() + 1, t->indexL() + 1, t->masterParameters()->name()))
+                                       keywords().keyword(Species::TorsionKeyword), torsion.indexI() + 1, torsion.indexJ() + 1,
+                                       torsion.indexK() + 1, torsion.indexL() + 1, torsion.masterParameters()->name()))
                     return false;
             }
             else
             {
                 CharString s("%s%s  %3i  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::TorsionKeyword),
-                             t->indexI() + 1, t->indexJ() + 1, t->indexK() + 1, t->indexL() + 1,
-                             SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
-                for (int n = 0; n < SpeciesTorsion::torsionFunctions().minArgs((SpeciesTorsion::TorsionFunction)t->form()); ++n)
-                    s.strcatf("  %8.3f", t->parameter(n));
+                             torsion.indexI() + 1, torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
+                             SpeciesTorsion::torsionFunctions().keywordFromInt(torsion.form()));
+                for (int n = 0; n < SpeciesTorsion::torsionFunctions().minArgs((SpeciesTorsion::TorsionFunction)torsion.form());
+                     ++n)
+                    s.strcatf("  %8.3f", torsion.parameter(n));
                 if (!parser.writeLineF("%s\n", s.get()))
                     return false;
             }

@@ -34,7 +34,7 @@ void Species::updateIntramolecularTerms()
 {
     SpeciesAtom *i, *j, *k, *l;
 
-    printf("UIT nbonds = %l\n", bonds_.size());
+    printf("UIT nbonds = %li\n", bonds_.size());
     // Loop over bonds 'jk'
     for (auto &jk : bonds_)
     {
@@ -80,35 +80,21 @@ void Species::updateIntramolecularTerms()
         }
     }
 
-    printf("NOW HERE (%p) n = %l\n", this, angles_.size());
+    printf("NOW HERE (%p) n = %li\n", this, angles_.size());
     // Check existing angle terms for any that are invalid
-    angles_.erase(std::remove_if(angles_.begin(), angles_.end(), [&](auto &angle) { return false; }));
-//     angles_.erase(std::remove_if(angles_.begin(), angles_.end(), [&](auto &angle) { printf("gurrrr\n"); return !atoms_.contains(angle.i()) || !atoms_.contains(angle.j()) || !atoms_.contains(angle.k()) || !hasBond(angle.i(), angle.j()) || !hasBond(angle.j(), angle.k()); }));
+    angles_.erase(std::remove_if(angles_.begin(), angles_.end(), [this](const auto &angle) {
+        return ((!atoms_.contains(angle.i())) || (!atoms_.contains(angle.j())) || (!atoms_.contains(angle.k()))) ||
+               ((!hasBond(angle.i(), angle.j())) || (!hasBond(angle.j(), angle.k())));
+    }));
 
     printf("SJDJDJ\n");
-    auto torsionPos = 0, origNTorsions = torsions_.nItems();
-    for (int n = 0; n < origNTorsions; ++n)
-    {
-        // Grab the angle
-        SpeciesTorsion *torsion = torsions_[torsionPos];
-
-        // Check if this torsion is still valid (i.e. i-j, j-k, and k-l are owned by the Species and still bound)
-        if ((!atoms_.contains(torsion->i())) || (!atoms_.contains(torsion->j())) || (!atoms_.contains(torsion->k())) ||
-            (!atoms_.contains(torsion->l())))
-        {
-            torsions_.removeWithReorder(torsionPos);
-            continue;
-        }
-        if ((!hasBond(torsion->i(), torsion->j())) || (!hasBond(torsion->j(), torsion->k())) ||
-            (!hasBond(torsion->k(), torsion->l())))
-        {
-            torsions_.removeWithReorder(torsionPos);
-            continue;
-        }
-
-        // OK, so increase position and continue
-        ++torsionPos;
-    }
+    // remove torsions with invalid atoms or bonds
+    torsions_.erase(std::remove_if(torsions_.begin(), torsions_.end(), [this](const auto &torsion) {
+        return ((!atoms_.contains(torsion.i())) || (!atoms_.contains(torsion.j())) || (!atoms_.contains(torsion.k())) ||
+                (!atoms_.contains(torsion.l()))) ||
+               ((!hasBond(torsion.i(), torsion.j())) || (!hasBond(torsion.j(), torsion.k())) ||
+                (!hasBond(torsion.k(), torsion.l())));
+    }));
 }
 
 /*
@@ -149,7 +135,7 @@ SpeciesBond &Species::addBond(int i, int j)
 // Remove bond between specified SpeciesAtoms
 void Species::removeBond(SpeciesAtom *i, SpeciesAtom *j)
 {
-    auto it = std::remove_if(bonds_.begin(), bonds_.end(), [i,j](const auto &bond) { return bond.matches(i,j); });
+    auto it = std::remove_if(bonds_.begin(), bonds_.end(), [i, j](const auto &bond) { return bond.matches(i, j); });
     std::for_each(it, bonds_.end(), [](auto &bond) { bond.detach(); });
     bonds_.erase(it);
 }
@@ -166,7 +152,7 @@ const std::vector<SpeciesBond> &Species::constBonds() const { return bonds_; }
 // Return whether SpeciesBond between specified SpeciesAtoms exists
 bool Species::hasBond(SpeciesAtom *i, SpeciesAtom *j) const
 {
-    auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i,j](const auto &bond) { return bond.matches(i, j); });
+    auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i, j](const auto &bond) { return bond.matches(i, j); });
 
     return it != bonds_.cend();
 }
@@ -174,7 +160,7 @@ bool Species::hasBond(SpeciesAtom *i, SpeciesAtom *j) const
 // Return the SpeciesBond between the specified SpeciesAtoms
 OptionalReferenceWrapper<SpeciesBond> Species::getBond(SpeciesAtom *i, SpeciesAtom *j)
 {
-    auto it = std::find_if(bonds_.begin(), bonds_.end(), [i,j](auto &bond) { return bond.matches(i,j); });
+    auto it = std::find_if(bonds_.begin(), bonds_.end(), [i, j](auto &bond) { return bond.matches(i, j); });
     if (it == bonds_.end())
         return {};
 
@@ -205,7 +191,7 @@ OptionalReferenceWrapper<SpeciesBond> Species::getBond(int i, int j)
 // Return the SpeciesBond between the specified SpeciesAtoms (const)
 OptionalReferenceWrapper<const SpeciesBond> Species::getConstBond(SpeciesAtom *i, SpeciesAtom *j) const
 {
-    auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i,j](const auto &bond) { return bond.matches(i,j); });
+    auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i, j](const auto &bond) { return bond.matches(i, j); });
     if (it == bonds_.end())
         return {};
 
@@ -267,10 +253,7 @@ SpeciesAngle &Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
 }
 
 // Add new SpeciesAngle definition
-SpeciesAngle &Species::addAngle(int i, int j, int k)
-{
-    return addAngle(atoms_[i], atoms_[j], atoms_[k]);
-}
+SpeciesAngle &Species::addAngle(int i, int j, int k) { return addAngle(atoms_[i], atoms_[j], atoms_[k]); }
 
 // Return number of SpeciesAngles defined
 int Species::nAngles() const { return angles_.size(); }
@@ -284,7 +267,7 @@ const std::vector<SpeciesAngle> &Species::constAngles() const { return angles_; 
 // Return whether SpeciesAngle between SpeciesAtoms exists
 bool Species::hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const
 {
-    auto it = std::find_if(angles_.cbegin(), angles_.cend(), [i,j,k](const auto &angle) { return angle.matches(i, j, k); });
+    auto it = std::find_if(angles_.cbegin(), angles_.cend(), [i, j, k](const auto &angle) { return angle.matches(i, j, k); });
 
     return it != angles_.cend();
 }
@@ -292,36 +275,47 @@ bool Species::hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const
 // Return the SpeciesAngle between the specified SpeciesAtoms
 OptionalReferenceWrapper<SpeciesAngle> Species::getAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
 {
-    auto it = std::find_if(angles_.begin(), angles_.end(), [i,j,k](auto &angle) { return angle.matches(i, j, k); });
+    auto it = std::find_if(angles_.begin(), angles_.end(), [i, j, k](auto &angle) { return angle.matches(i, j, k); });
     if (it == angles_.end())
         return {};
 
     return *it;
 }
 
+// Return the SpeciesTorsion between the specified SpeciesAtoms
+OptionalReferenceWrapper<SpeciesTorsion> Species::getTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+{
+    auto it =
+        std::find_if(torsions_.begin(), torsions_.end(), [i, j, k, l](auto &torsion) { return torsion.matches(i, j, k, l); });
+    if (it == torsions_.end())
+        return {};
+
+    return *it;
+}
+
 // Add new SpeciesTorsion definition (from supplied SpeciesAtom pointers)
-SpeciesTorsion *Species::addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+SpeciesTorsion &Species::addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {
     // Check ownership of these Atoms
     if (!atoms_.contains(i))
     {
         Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'i' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
-        return NULL;
+        // Throw exception
     }
     if (!atoms_.contains(j))
     {
         Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'j' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
-        return NULL;
+        // Throw exception
     }
     if (!atoms_.contains(k))
     {
         Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'k' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
-        return NULL;
+        // Throw exception
     }
     if (!atoms_.contains(l))
     {
         Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'l' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
-        return NULL;
+        // Throw exception
     }
 
     // Check for existence of Torsion already
@@ -330,72 +324,67 @@ SpeciesTorsion *Species::addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom 
         Messenger::warn("Refused to add a new Torsion between atoms %i, %i, %i and %i in Species '%s' since it already "
                         "exists.\n",
                         i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_.get());
-        return NULL;
+        return *getTorsion(i, j, k, l);
     }
 
     // OK to add new torsion
-    SpeciesTorsion *t = torsions_.add();
-    t->setParent(this);
-    t->setAtoms(i, j, k, l);
+    torsions_.emplace_back(i, j, k, l);
+    torsions_.back().setParent(this);
 
     ++version_;
 
-    return t;
+    return torsions_.back();
 }
 
 // Add new SpeciesTorsion definition
-SpeciesTorsion *Species::addTorsion(int i, int j, int k, int l)
+SpeciesTorsion &Species::addTorsion(int i, int j, int k, int l)
 {
     if ((i < 0) || (i >= atoms_.nItems()))
     {
         Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addTorsion() is out of range (%i) for "
                          "Species '%s'\n",
                          i, name_.get());
-        return NULL;
+        // Throw Exception
     }
     if ((j < 0) || (j >= atoms_.nItems()))
     {
         Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addTorsion() is out of range (%i) for "
                          "Species '%s'\n",
                          j, name_.get());
-        return NULL;
+        // Throw Exception
     }
     if ((k < 0) || (k >= atoms_.nItems()))
     {
         Messenger::print("OUT_OF_RANGE - Internal index 'k' supplied to Species::addTorsion() is out of range (%i) for "
                          "Species '%s'\n",
                          k, name_.get());
-        return NULL;
+        // Throw Exception
     }
     if ((l < 0) || (l >= atoms_.nItems()))
     {
         Messenger::print("OUT_OF_RANGE - Internal index 'l' supplied to Species::addTorsion() is out of range (%i) for "
                          "Species '%s'\n",
                          l, name_.get());
-        return NULL;
+        // Throw Exception
     }
 
     return addTorsion(atoms_[i], atoms_[j], atoms_[k], atoms_[l]);
 }
 
 // Return number of SpeciesTorsions defined
-int Species::nTorsions() const { return torsions_.nItems(); }
+int Species::nTorsions() const { return torsions_.size(); }
 
 // Return array of SpeciesTorsions
-DynamicArray<SpeciesTorsion> &Species::torsions() { return torsions_; }
+std::vector<SpeciesTorsion> &Species::torsions() { return torsions_; }
 
 // Return array of SpeciesTorsions (const)
-const DynamicArray<SpeciesTorsion> &Species::constTorsions() const { return torsions_; }
+const std::vector<SpeciesTorsion> &Species::constTorsions() const { return torsions_; }
 
 // Return whether SpeciesTorsion between SpeciesAtoms exists
 bool Species::hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const
 {
-    DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(torsions_);
-    while (const SpeciesTorsion *t = torsionIterator.iterate())
-        if (t->matches(i, j, k, l))
-            return true;
-
-    return false;
+    auto it = std::find_if(torsions_.cbegin(), torsions_.cend(), [&](const auto &t) { return t.matches(i, j, k, l); });
+    return it != torsions_.end();
 }
 
 // Add new SpeciesImproper definition (from SpeciesAtom*)
@@ -586,42 +575,42 @@ void Species::generateAttachedAtomLists()
     }
 
     // Torsions - termini are 'j' and 'k'
-    DynamicArrayIterator<SpeciesTorsion> torsionIterator(torsions_);
-    while (SpeciesTorsion *t = torsionIterator.iterate())
+    for (auto &torsion : torsions_)
     {
         // Grab relevant Bond (if it exists)
-        SpeciesBond *jk = t->j()->hasBond(t->k());
+        SpeciesBond *jk = torsion.j()->hasBond(torsion.k());
 
         // Select all Atoms attached to Atom 'j', excluding the Bond ji as a path
         clearAtomSelection();
-        selectFromAtom(t->j(), jk);
+        selectFromAtom(torsion.j(), jk);
 
         // Remove Atom 'j' from the list
-        selectedAtoms_.remove(t->j());
+        selectedAtoms_.remove(torsion.j());
 
         // If the list now contains Atom k, the two atoms are present in a cycle of some sort, and we can only add the
         // Atom 'i'
-        if (selectedAtoms_.contains(t->k()))
+        if (selectedAtoms_.contains(torsion.k()))
         {
             Messenger::printVerbose("Torsion between Atoms %i-%i-%i-%i is present in a cycle, so a minimal set of "
                                     "attached atoms will be used.\n",
-                                    t->i()->userIndex(), t->j()->userIndex(), t->k()->userIndex(), t->l()->userIndex());
-            t->setAttachedAtoms(0, t->i());
-            t->setAttachedAtoms(1, t->l());
-            t->setInCycle(true);
+                                    torsion.i()->userIndex(), torsion.j()->userIndex(), torsion.k()->userIndex(),
+                                    torsion.l()->userIndex());
+            torsion.setAttachedAtoms(0, torsion.i());
+            torsion.setAttachedAtoms(1, torsion.l());
+            torsion.setInCycle(true);
             continue;
         }
         else
-            t->setAttachedAtoms(0, selectedAtoms_);
+            torsion.setAttachedAtoms(0, selectedAtoms_);
 
         // Select all Atoms attached to Atom 'k', excluding the Bond jk as a path
         clearAtomSelection();
-        selectFromAtom(t->k(), jk);
+        selectFromAtom(torsion.k(), jk);
 
         // Remove Atom 'k' from the list
-        selectedAtoms_.remove(t->k());
+        selectedAtoms_.remove(torsion.k());
 
-        t->setAttachedAtoms(1, selectedAtoms_);
+        torsion.setAttachedAtoms(1, selectedAtoms_);
     }
 
     attachedAtomListsGenerated_ = true;
@@ -636,7 +625,6 @@ void Species::detachFromMasterTerms()
     for (auto &angle : angles_)
         angle.detachFromMasterIntra();
 
-    DynamicArrayIterator<SpeciesTorsion> torsionIterator(torsions_);
-    while (SpeciesTorsion *t = torsionIterator.iterate())
-        t->detachFromMasterIntra();
+    for (auto &torsion : torsions_)
+        torsion.detachFromMasterIntra();
 }

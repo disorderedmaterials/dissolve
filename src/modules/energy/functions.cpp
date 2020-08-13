@@ -24,6 +24,7 @@
 #include "classes/species.h"
 #include "genericitems/listhelper.h"
 #include "modules/energy/energy.h"
+#include <numeric>
 
 // Return total intramolecular energy
 double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap)
@@ -70,13 +71,15 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
 
         // Loop over Angles
         for (const auto &angle : mol->species()->constAngles())
-            angleEnergy += kernel.energy(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()), mol->atom(angle.indexK()));
+            angleEnergy +=
+                kernel.energy(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()), mol->atom(angle.indexK()));
 
         // Loop over Torsions
-        DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
-        while (const SpeciesTorsion *t = torsionIterator.iterate())
-            torsionEnergy += kernel.energy(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()),
-                                           mol->atom(t->indexL()));
+        torsionEnergy += std::accumulate(mol->species()->constTorsions().cbegin(), mol->species()->constTorsions().cend(), 0,
+                                         [&mol, &kernel](auto const acc, const auto &t) {
+                                             return acc + kernel.energy(t, mol->atom(t.indexI()), mol->atom(t.indexJ()),
+                                                                        mol->atom(t.indexK()), mol->atom(t.indexL()));
+                                         });
     }
 
     double totalIntra = bondEnergy + angleEnergy + torsionEnergy;
@@ -178,8 +181,8 @@ double EnergyModule::interMolecularEnergy(ProcessPool &procPool, Configuration *
     return totalEnergy;
 }
 
-// Check energy stability of specified Configuration, returning 1 if the energy is not stable, or -1 if stability could not be
-// assessed
+// Check energy stability of specified Configuration, returning 1 if the energy is not stable, or -1 if stability could not
+// be assessed
 int EnergyModule::checkStability(Configuration *cfg)
 {
     // First, check if the Configuration is targetted by an EnergyModule

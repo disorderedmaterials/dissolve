@@ -320,7 +320,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
     auto selectionOnly = flags & Forcefield::SelectionOnlyFlag;
 
     // Assign bond terms
-    for (auto& bond : sp->bonds())
+    for (auto &bond : sp->bonds())
     {
         auto *i = bond.i();
         auto *j = bond.j();
@@ -382,15 +382,14 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
     }
 
     // Generate torsion parameters
-    DynamicArrayIterator<SpeciesTorsion> torsionIterator(sp->torsions());
-    while (SpeciesTorsion *torsion = torsionIterator.iterate())
+    for (auto &torsion : sp->torsions())
     {
-        SpeciesAtom *i = torsion->i();
-        SpeciesAtom *j = torsion->j();
-        SpeciesAtom *k = torsion->k();
-        SpeciesAtom *l = torsion->l();
+        SpeciesAtom *i = torsion.i();
+        SpeciesAtom *j = torsion.j();
+        SpeciesAtom *k = torsion.k();
+        SpeciesAtom *l = torsion.l();
 
-        if (selectionOnly && (!torsion->isSelected()))
+        if (selectionOnly && (!torsion.isSelected()))
             continue;
 
         auto optTypeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name());
@@ -417,8 +416,8 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                                     typeJ.equivalentName(), typeK.equivalentName(), typeL.equivalentName());
 
         const ForcefieldTorsionTerm &term = *optTerm;
-        torsion->setForm(term.form());
-        torsion->setParameters(term.parameters());
+        torsion.setForm(term.form());
+        torsion.setParameters(term.parameters());
     }
 
     // Generate improper terms
