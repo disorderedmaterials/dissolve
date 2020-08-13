@@ -208,7 +208,7 @@ bool Dissolve::saveInput(const char *filename)
         {
             CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(),
                          SpeciesBond::bondFunctions().keywordFromInt(b->form()));
-            for (int n = 0; n < SpeciesBond::bondFunctions().minArgs((SpeciesBond::BondFunction)b->form()); ++n)
+            for (auto n = 0; n < b->nParameters(); ++n)
                 s.strcatf("  %8.3f", b->parameter(n));
             if (!parser.writeLineF("%s\n", s.get()))
                 return false;
@@ -218,7 +218,7 @@ bool Dissolve::saveInput(const char *filename)
         {
             CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword), a->name(),
                          SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
-            for (int n = 0; n < SpeciesAngle::angleFunctions().minArgs((SpeciesAngle::AngleFunction)a->form()); ++n)
+            for (auto n = 0; n < a->nParameters(); ++n)
                 s.strcatf("  %8.3f", a->parameter(n));
             if (!parser.writeLineF("%s\n", s.get()))
                 return false;
@@ -228,7 +228,7 @@ bool Dissolve::saveInput(const char *filename)
         {
             CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword), t->name(),
                          SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
-            for (int n = 0; n < SpeciesTorsion::torsionFunctions().minArgs((SpeciesTorsion::TorsionFunction)t->form()); ++n)
+            for (auto n = 0; n < t->nParameters(); ++n)
                 s.strcatf("  %8.3f", t->parameter(n));
             if (!parser.writeLineF("%s\n", s.get()))
                 return false;
@@ -238,8 +238,7 @@ bool Dissolve::saveInput(const char *filename)
         {
             CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword), imp->name(),
                          SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
-            for (int n = 0; n < SpeciesImproper::improperFunctions().minArgs((SpeciesImproper::ImproperFunction)imp->form());
-                 ++n)
+            for (auto n = 0; n < imp->nParameters(); ++n)
                 s.strcatf("  %8.3f", imp->parameter(n));
             if (!parser.writeLineF("%s\n", s.get()))
                 return false;

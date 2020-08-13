@@ -28,8 +28,6 @@ SpeciesIntra::SpeciesIntra()
 {
     parent_ = NULL;
     masterParameters_ = NULL;
-    for (int n = 0; n < MAXINTRAPARAMS; ++n)
-        parameters_[n] = 0.0;
 
     nAttached_[0] = 0;
     nAttached_[1] = 0;
@@ -70,8 +68,7 @@ void SpeciesIntra::detachFromMasterIntra()
 
     // Copy master term parameters over our own
     form_ = masterParameters_->form();
-    for (int n = 0; n < MAXINTRAPARAMS; ++n)
-        parameters_[n] = masterParameters_->parameter(n);
+    parameters_ = masterParameters_->parameters_;
 
     masterParameters_ = NULL;
 }
@@ -85,15 +82,28 @@ void SpeciesIntra::setForm(int form) { form_ = form; }
 // Return functional form index of interaction
 int SpeciesIntra::form() const { return masterParameters_ ? masterParameters_->form_ : form_; }
 
-// Set nth parameter
+// Add parameter to interaction
+void SpeciesIntra::addParameter(double param)
+{
+    // Does this intramolecular interaction reference a set of master parameters?
+    if (masterParameters_)
+    {
+        Messenger::error("Refused to set intramolecular parameter since master parameters are referenced.\n");
+        return;
+    }
+
+    parameters_.push_back(param);
+}
+
+// Set existing parameter
 void SpeciesIntra::setParameter(int id, double value)
 {
 #ifdef CHECKS
-    if ((id < 0) || (id >= MAXINTRAPARAMS))
+    if ((id < 0) || (id >= parameters_.size()))
     {
-        Messenger::error("Tried to add a parameter to a SpeciesIntra definition, but the index is out of range (%i vs "
-                         "%i parameters max).\n",
-                         id, MAXINTRAPARAMS);
+        Messenger::error("Tried to set a parameter in a SpeciesIntra definition, but the index is out of range (%i vs "
+                         "%i parameters current).\n",
+                         id, parameters_.size());
         return;
     }
 #endif
@@ -108,33 +118,24 @@ void SpeciesIntra::setParameter(int id, double value)
 }
 
 // Set all parameters
-void SpeciesIntra::setParameters(double a, double b, double c, double d)
+void SpeciesIntra::setParameters(const std::vector<double> &params)
 {
     // Does this intramolecular interaction reference a set of master parameters?
     if (masterParameters_)
     {
-        Messenger::error("Refused to set intramolecular parameter since master parameters are referenced.\n");
+        Messenger::error("Refused to set intramolecular parameters since master parameters are referenced.\n");
         return;
     }
 
-    parameters_[0] = a;
-    parameters_[1] = b;
-    parameters_[2] = c;
-    parameters_[3] = d;
+    parameters_ = params;
 }
+
+// Return number of parameters defined
+int SpeciesIntra::nParameters() const { return parameters_.size(); }
 
 // Return nth parameter
 double SpeciesIntra::parameter(int id) const
 {
-#ifdef CHECKS
-    if ((id < 0) || (id >= MAXINTRAPARAMS))
-    {
-        Messenger::error("Tried to return a parameter from a SpeciesIntra definition, but the index is out of range "
-                         "(%i vs %i parameters max).\n",
-                         id, MAXINTRAPARAMS);
-        return 0.0;
-    }
-#endif
     // Does this intramolecular interaction reference a set of master parameters?
     if (masterParameters_)
         return masterParameters_->parameter(id);
@@ -143,33 +144,10 @@ double SpeciesIntra::parameter(int id) const
 }
 
 // Return array of parameters
-const double *SpeciesIntra::parameters() const { return masterParameters_ ? masterParameters_->parameters() : parameters_; }
-
-// Return parameters as Array<double>
-Array<double> SpeciesIntra::parametersAsArray() const
+const std::vector<double> &SpeciesIntra::parameters() const
 {
-    Array<double> params;
-    for (int n = 0; n < MAXINTRAPARAMS; ++n)
-        params.add(parameters()[n]);
-    return params;
+    return masterParameters_ ? masterParameters_->parameters() : parameters_;
 }
-
-// Set parameters from double*
-void SpeciesIntra::setParameters(const double *params)
-{
-    // Does this intramolecular interaction reference a set of master parameters?
-    if (masterParameters_)
-    {
-        Messenger::error("Refused to set intramolecular parameters array since master parameters are referenced.\n");
-        return;
-    }
-
-    for (int n = 0; n < MAXINTRAPARAMS; ++n)
-        parameters_[n] = params[n];
-}
-
-// Set parameters from Array<double>
-void SpeciesIntra::setParameters(Array<double> params) { setParameters(params.array()); }
 
 /*
  * Connections

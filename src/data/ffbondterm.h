@@ -34,7 +34,7 @@ class ForcefieldBondTerm
 {
     public:
     ForcefieldBondTerm(const char *typeI = NULL, const char *typeJ = NULL, SpeciesBond::BondFunction form = SpeciesBond::NoForm,
-                       double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+                       const std::vector<double> parameters = {});
     ~ForcefieldBondTerm();
 
     /*
@@ -46,7 +46,7 @@ class ForcefieldBondTerm
     // Functional form of interaction
     SpeciesBond::BondFunction form_;
     // Parameters for interaction
-    double parameters_[MAXINTRAPARAMS];
+    std::vector<double> parameters_;
 
     public:
     // Return if this term matches the atom types supplied
@@ -54,5 +54,5 @@ class ForcefieldBondTerm
     // Return functional form index of interaction
     SpeciesBond::BondFunction form() const;
     // Return array of parameters
-    const double *parameters() const;
+    const std::vector<double> &parameters() const;
 };

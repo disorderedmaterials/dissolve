@@ -128,19 +128,17 @@ class Forcefield : public Elements
 
     protected:
     // Add bond term
-    void addBondTerm(const char *typeI, const char *typeJ, SpeciesBond::BondFunction form, double data0 = 0.0,
-                     double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+    void addBondTerm(const char *typeI, const char *typeJ, SpeciesBond::BondFunction form,
+                     const std::vector<double> parameters = {});
     // Add angle term
     void addAngleTerm(const char *typeI, const char *typeJ, const char *typeK, SpeciesAngle::AngleFunction form,
-                      double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+                      const std::vector<double> parameters = {});
     // Add torsion term
     void addTorsionTerm(const char *typeI, const char *typeJ, const char *typeK, const char *typeL,
-                        SpeciesTorsion::TorsionFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0,
-                        double data3 = 0.0);
+                        SpeciesTorsion::TorsionFunction form, const std::vector<double> parameters = {});
     // Add improper term
     void addImproperTerm(const char *typeI, const char *typeJ, const char *typeK, const char *typeL,
-                         SpeciesImproper::ImproperFunction form, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0,
-                         double data3 = 0.0);
+                         SpeciesImproper::ImproperFunction form, const std::vector<double> parameters = {});
     // Match any kind of term
     template <class T, typename... Args>
     static OptionalReferenceWrapper<const T> termMatch_(const std::vector<T> &, Args &&...);

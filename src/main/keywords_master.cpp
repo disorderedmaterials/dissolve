@@ -97,7 +97,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                     // Set parameters
                     for (auto n = 3; n < parser.nArgs(); ++n)
                     {
-                        masterIntra->setParameter(n - 3, parser.argd(n));
+                        masterIntra->addParameter(parser.argd(n));
                         termInfo.strcatf("  %12.4e", parser.argd(n));
                     }
 
@@ -135,6 +135,8 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                     // Set parameters
                     for (auto n = 3; n < parser.nArgs(); ++n)
                     {
+                        masterIntra->addParameter(parser.argd(n));
+                        termInfo.strcatf("  %12.4e", parser.argd(n));
                     }
 
                     Messenger::printVerbose("Defined master bond term: %s\n", termInfo.get());
@@ -175,8 +177,8 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                     // Set parameters
                     for (auto n = 3; n < parser.nArgs(); ++n)
                     {
-                        masterIntra->setParameter(n - 3, parser.argd(n));
-                        termInfo.strcatf("  %12.4e", masterIntra->parameter(n - 3));
+                        masterIntra->addParameter(parser.argd(n));
+                        termInfo.strcatf("  %12.4e", parser.argd(n));
                     }
 
                     Messenger::printVerbose("Defined master improper term: %s\n", termInfo.get());
@@ -213,8 +215,8 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                     // Set parameters
                     for (auto n = 3; n < parser.nArgs(); ++n)
                     {
-                        masterIntra->setParameter(n - 3, parser.argd(n));
-                        termInfo.strcatf("  %12.4e", masterIntra->parameter(n - 3));
+                        masterIntra->addParameter(parser.argd(n));
+                        termInfo.strcatf("  %12.4e", parser.argd(n));
                     }
 
                     Messenger::printVerbose("Defined master torsion term: %s\n", termInfo.get());
