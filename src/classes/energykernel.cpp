@@ -801,17 +801,18 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol)
     // Loop over Bonds
     DynamicArrayConstIterator<SpeciesBond> bondIterator(mol->species()->constBonds());
     while (const SpeciesBond *b = bondIterator.iterate())
-        energy(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
+        intraEnergy += energy(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
 
     // Loop over Angles
     DynamicArrayConstIterator<SpeciesAngle> angleIterator(mol->species()->constAngles());
     while (const SpeciesAngle *a = angleIterator.iterate())
-        energy(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
+        intraEnergy += energy(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
 
     // Loop over Torsions
     DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
     while (const SpeciesTorsion *t = torsionIterator.iterate())
-        energy(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
+        intraEnergy +=
+            energy(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
 
     return intraEnergy;
 }
