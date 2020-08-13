@@ -102,6 +102,12 @@ template <class T> class EnumOptions : public EnumOptionsBase
         const auto &opt = option(enumeration);
         return opt.maxArgs();
     }
+    // Return whether an exact number of arguments is required
+    bool exactNArgs(T enumeration) const
+    {
+        const auto &opt = option(enumeration);
+        return opt.minArgs() == opt.maxArgs();
+    }
     // Check number of arguments provided to keyword
     bool validNArgs(T enumeration, int nArgsProvided) const
     {
@@ -135,8 +141,11 @@ template <class T> class EnumOptions : public EnumOptionsBase
                 if ((nArgsProvided >= opt.minArgs()) && (nArgsProvided <= opt.maxArgs()))
                     return true;
                 else
-                    return Messenger::error("'%s' keyword '%s' requires %i arguments, but %i %s provided.\n", name(),
-                                            opt.keyword(), opt.minArgs(), nArgsProvided, nArgsProvided == 1 ? "was" : "were");
+                    return Messenger::error(
+                        "'%s' keyword '%s' requires %s %i %s, but %i %s provided.\n", name(), opt.keyword(),
+                        opt.minArgs() == opt.maxArgs() ? "exactly" : nArgsProvided < opt.minArgs() ? "at least" : "at most",
+                        nArgsProvided < opt.minArgs() ? opt.minArgs() : opt.maxArgs(),
+                        opt.minArgs() == 1 ? "argument" : "arguments", nArgsProvided, nArgsProvided == 1 ? "was" : "were");
                 break;
         }
 
