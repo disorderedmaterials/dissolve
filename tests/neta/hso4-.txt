@@ -1,0 +1,33 @@
+Species 'HSO4-'
+  # Atoms
+  Atom    1    S  -3.504149e-02  -3.177874e-01  3.008656e-01  'None'  1.270000e+00
+  Atom    2    O  -6.655822e-01  -1.500230e+00  -2.122139e-01  'None'  -6.700000e-01
+  Atom    3    O  1.384407e+00  -2.399286e-01  1.065400e-01  'None'  -6.700000e-01
+  Atom    4    O  -5.139403e-01  1.722867e-01  1.561603e+00  'None'  -6.700000e-01
+  Atom    5    O  -5.138677e-01  8.163051e-01  -7.270577e-01  'None'  -6.400000e-01
+  Atom    6    H  3.440243e-01  1.069354e+00  -1.029737e+00  'None'  3.800000e-01
+
+  # Bonds
+  Bond    1    2
+  Bond    1    3
+  Bond    1    4
+  Bond    1    5
+  Bond    5    6
+
+  # Angles
+  Angle    3    1    2
+  Angle    4    1    2
+  Angle    4    1    3
+  Angle    5    1    2
+  Angle    5    1    3
+  Angle    5    1    4
+  Angle    1    5    6
+
+  # Torsions
+  Torsion    2    1    5    6
+  Torsion    3    1    5    6
+  Torsion    4    1    5    6
+
+  # Forcefield
+  Forcefield  'Kulmala2010'
+EndSpecies

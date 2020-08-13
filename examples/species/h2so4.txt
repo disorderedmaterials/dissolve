@@ -56,8 +56,6 @@ Species 'H2SO4'
   Torsion    3    1    4    7  @HSA-OHA-SA-OA
   Torsion    5    1    4    7  @HSA-OHA-SA-OHA
 
-  # Forcefield
-  Forcefield  'Kulmala2010'
 EndSpecies
 
 #------------------------------------------------------------------------------#

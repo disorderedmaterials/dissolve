@@ -220,10 +220,10 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
     if (onlyWhenEnergyStable)
     {
-        auto stabilityResult = EnergyModule::checkStability(configs);
-        if (stabilityResult == -1)
+        auto stabilityResult = EnergyModule::nUnstable(configs);
+        if (stabilityResult == EnergyModule::NotAssessable)
             return false;
-        else if (stabilityResult != 0)
+        else if (stabilityResult > 0)
         {
             Messenger::print("At least one Configuration energy is not yet stable. No potential refinement will be "
                              "performed this iteration.\n");

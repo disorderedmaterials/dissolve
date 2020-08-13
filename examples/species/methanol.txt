@@ -34,8 +34,6 @@ Species 'Methanol'
   Torsion    3    2    1    5  Cos3     0.000     0.000     1.474
   Torsion    3    2    1    6  Cos3     0.000     0.000     1.474
 
-  # Forcefield
-  Forcefield  'OPLSAA2005/Alcohols'
 EndSpecies
 
 #------------------------------------------------------------------------------#

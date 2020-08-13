@@ -21,11 +21,113 @@
 
 #include "classes/configuration.h"
 #include "classes/energykernel.h"
+#include "classes/potentialmap.h"
 #include "classes/species.h"
 #include "genericitems/listhelper.h"
 #include "modules/energy/energy.h"
 
-// Return total intramolecular energy
+// Return total interatomic energy of Configuration
+double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap)
+{
+    /*
+     * Calculates the total interatomic energy of the system, i.e. the energy contributions from PairPotential
+     * interactions between individual Atoms, accounting for intramolecular terms
+     *
+     * This is a parallel routine, with processes operating as process groups.
+     */
+
+    // Create an EnergyKernel
+    EnergyKernel kernel(procPool, cfg, potentialMap);
+
+    // Set the strategy
+    ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
+
+    // Grab the Cell array and calculate total energy
+    const CellArray &cellArray = cfg->cells();
+    double totalEnergy = kernel.energy(cellArray, false, strategy, false);
+
+    // Print process-local energy
+    Messenger::printVerbose("Interatomic Energy (Local) is %15.9e\n", totalEnergy);
+
+    // Sum energy over all processes in the pool and print
+    procPool.allSum(&totalEnergy, 1, strategy);
+    Messenger::printVerbose("Interatomic Energy (World) is %15.9e\n", totalEnergy);
+
+    return totalEnergy;
+}
+
+// Return total interatomic energy of Species
+double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap)
+{
+    double r, angle;
+    SpeciesAtom *i, *j;
+    Vec3<double> rI;
+    double scale, energy = 0.0;
+    const auto cutoff = potentialMap.range();
+
+    // Get start/end for loop
+    auto loopStart = procPool.twoBodyLoopStart(sp->nAtoms());
+    auto loopEnd = procPool.twoBodyLoopEnd(sp->nAtoms());
+
+    // Double loop over species atoms
+    // NOTE PR #334 : use for_each_pair
+    for (auto indexI = loopStart; indexI <= loopEnd; ++indexI)
+    {
+        i = sp->atom(indexI);
+        rI = i->r();
+
+        for (int indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
+        {
+            j = sp->atom(indexJ);
+
+            // Get interatomic distance
+            r = (j->r() - rI).magnitude();
+            if (r > cutoff)
+                continue;
+
+            // Get intramolecular scaling of atom pair
+            scale = i->scaling(j);
+            if (scale < 1.0e-3)
+                continue;
+
+            energy += potentialMap.energy(i, j, r) * scale;
+        }
+    }
+
+    return energy;
+}
+
+// Return total intermolecular energy of Configuration
+double EnergyModule::interMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap)
+{
+    /*
+     * Calculates the total intermolecular energy of the system, i.e. the energy contributions from PairPotential
+     * interactions between individual Atoms of different Molecules, thus neglecting intramolecular terms
+     *
+     * This is a parallel routine, with processes operating as process groups.
+     */
+
+    // Create an EnergyKernel
+    EnergyKernel kernel(procPool, cfg, potentialMap);
+
+    // Set the strategy
+    ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
+
+    // Grab the Cell array and calculate total energy
+    const CellArray &cellArray = cfg->cells();
+    double totalEnergy = kernel.energy(cellArray, true, strategy, false);
+
+    // Print process-local energy
+    Messenger::printVerbose("Intermolecular Energy (Local) is %15.9e\n", totalEnergy);
+
+    // Sum energy over all processes in the pool and print
+    procPool.allSum(&totalEnergy, 1, strategy);
+    Messenger::printVerbose("Intermolecular Energy (World) is %15.9e\n", totalEnergy);
+
+    return totalEnergy;
+}
+
+// Return total intramolecular energy of Configuration
 double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap)
 {
     double bondEnergy, angleEnergy, torsionEnergy;
@@ -33,7 +135,7 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
     return intraMolecularEnergy(procPool, cfg, potentialMap, bondEnergy, angleEnergy, torsionEnergy);
 }
 
-// Return total intramolecular energy, storing components in provided variables
+// Return total intramolecular energy of Configuration, storing components in provided variables
 double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                                           double &bondEnergy, double &angleEnergy, double &torsionEnergy)
 {
@@ -104,43 +206,36 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
     return totalIntra;
 }
 
-// Return total interatomic energy
-double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap)
+// Return total intramolecular energy of Species
+double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Species *sp)
 {
-    /*
-     * Calculates the total interatomic energy of the system, i.e. the energy contributions from PairPotential
-     * interactions between individual Atoms, accounting for intramolecular terms
-     *
-     * This is a parallel routine, with processes operating as process groups.
-     */
+    auto energy = 0.0;
 
-    // Create an EnergyKernel
-    EnergyKernel kernel(procPool, cfg, potentialMap);
+    // Loop over bonds
+    DynamicArrayConstIterator<SpeciesBond> bondIterator(sp->constBonds());
+    while (const SpeciesBond *b = bondIterator.iterate())
+        energy += EnergyKernel::energy(b);
 
-    // Set the strategy
-    ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
+    // Loop over angles
+    DynamicArrayConstIterator<SpeciesAngle> angleIterator(sp->constAngles());
+    while (const SpeciesAngle *a = angleIterator.iterate())
+        energy += EnergyKernel::energy(a);
 
-    // Grab the Cell array and calculate total energy
-    const CellArray &cellArray = cfg->cells();
-    double totalEnergy = kernel.energy(cellArray, false, strategy, false);
+    // Loop over torsions
+    DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(sp->constTorsions());
+    while (const SpeciesTorsion *t = torsionIterator.iterate())
+        energy += EnergyKernel::energy(t);
 
-    // Print process-local energy
-    Messenger::printVerbose("Interatomic Energy (Local) is %15.9e\n", totalEnergy);
-
-    // Sum energy over all processes in the pool and print
-    procPool.allSum(&totalEnergy, 1, strategy);
-    Messenger::printVerbose("Interatomic Energy (World) is %15.9e\n", totalEnergy);
-
-    return totalEnergy;
+    return energy;
 }
 
-// Return total energy (interatomic and intramolecular)
+// Return total energy (interatomic and intramolecular) of Configuration
 double EnergyModule::totalEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap)
 {
     return (interAtomicEnergy(procPool, cfg, potentialMap) + intraMolecularEnergy(procPool, cfg, potentialMap));
 }
 
-// Return total energy (interatomic and intramolecular), storing components in provided variables
+// Return total energy (interatomic and intramolecular) of Configuration, storing components in provided variables
 double EnergyModule::totalEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
                                  double &interEnergy, double &bondEnergy, double &angleEnergy, double &torsionEnergy)
 {
@@ -150,39 +245,14 @@ double EnergyModule::totalEnergy(ProcessPool &procPool, Configuration *cfg, cons
     return interEnergy + bondEnergy + angleEnergy + torsionEnergy;
 }
 
-// Return total intermolecular energy
-double EnergyModule::interMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap)
+// Return total energy (interatomic and intramolecular) of Species
+double EnergyModule::totalEnergy(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap)
 {
-    /*
-     * Calculates the total intermolecular energy of the system, i.e. the energy contributions from PairPotential
-     * interactions between individual Atoms of different Molecules, thus neglecting intramolecular terms
-     *
-     * This is a parallel routine, with processes operating as process groups.
-     */
-
-    // Create an EnergyKernel
-    EnergyKernel kernel(procPool, cfg, potentialMap);
-
-    // Set the strategy
-    ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
-
-    // Grab the Cell array and calculate total energy
-    const CellArray &cellArray = cfg->cells();
-    double totalEnergy = kernel.energy(cellArray, true, strategy, false);
-
-    // Print process-local energy
-    Messenger::printVerbose("Intermolecular Energy (Local) is %15.9e\n", totalEnergy);
-
-    // Sum energy over all processes in the pool and print
-    procPool.allSum(&totalEnergy, 1, strategy);
-    Messenger::printVerbose("Intermolecular Energy (World) is %15.9e\n", totalEnergy);
-
-    return totalEnergy;
+    return (interAtomicEnergy(procPool, sp, potentialMap) + intraMolecularEnergy(procPool, sp));
 }
 
-// Check energy stability of specified Configuration, returning 1 if the energy is not stable, or -1 if stability could not be
-// assessed
-int EnergyModule::checkStability(Configuration *cfg)
+// Check energy stability of specified Configuration
+EnergyModule::EnergyStability EnergyModule::checkStability(Configuration *cfg)
 {
     // First, check if the Configuration is targetted by an EnergyModule
     if (!GenericListHelper<bool>::value(cfg->moduleData(), "_IsEnergyModuleTarget", NULL, false))
@@ -190,7 +260,7 @@ int EnergyModule::checkStability(Configuration *cfg)
         Messenger::error("Configuration '%s' is not targeted by any EnergyModule, so stability cannot be assessed. "
                          "Check your setup!\n",
                          cfg->name());
-        return -1;
+        return EnergyModule::NotAssessable;
     }
 
     // Retrieve the EnergyStable flag from the Configuration's module data
@@ -200,22 +270,21 @@ int EnergyModule::checkStability(Configuration *cfg)
         if (!stable)
         {
             Messenger::print("Energy for Configuration '%s' is not yet stable.\n", cfg->name());
-            return Module::ExactlyOneTarget;
+            return EnergyModule::EnergyUnstable;
         }
     }
     else
     {
         Messenger::warn("No energy stability information is present in Configuration '%s' (yet) - check your setup.\n",
                         cfg->name());
-        return -1;
+        return EnergyModule::NotAssessable;
     }
 
-    return Module::ZeroTargets;
+    return EnergyModule::EnergyStable;
 }
 
-// Check energy stability of specified Configurations, returning the number that failed, or -1 if stability could not be
-// assessed
-int EnergyModule::checkStability(const RefList<Configuration> &configurations)
+// Check energy stability of specified Configurations, returning the number that failed
+int EnergyModule::nUnstable(const RefList<Configuration> &configurations)
 {
     auto nFailed = 0;
 
@@ -224,10 +293,10 @@ int EnergyModule::checkStability(const RefList<Configuration> &configurations)
         // Check the stability of this Configuration
         auto result = checkStability(cfg);
 
-        if (result == 1)
+        if (result == EnergyModule::EnergyStable)
             ++nFailed;
-        else if (result == -1)
-            return -1;
+        else if (result == EnergyModule::NotAssessable)
+            return EnergyModule::NotAssessable;
     }
 
     return nFailed;

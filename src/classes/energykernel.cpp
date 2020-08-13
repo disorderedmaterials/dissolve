@@ -654,7 +654,7 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
  * Intramolecular Terms
  */
 
-// Return SpeciesBond energy
+// Return SpeciesBond energy at Atoms specified
 double EnergyKernel::energy(const SpeciesBond *b, const Atom *i, const Atom *j)
 {
 #ifdef CHECKS
@@ -670,7 +670,10 @@ double EnergyKernel::energy(const SpeciesBond *b, const Atom *i, const Atom *j)
         return b->energy((i->r() - j->r()).magnitude());
 }
 
-// Return SpeciesAngle energy
+// Return SpeciesBond energy
+double EnergyKernel::energy(const SpeciesBond *b) { return b->energy((b->j()->r() - b->i()->r()).magnitude()); }
+
+// Return SpeciesAngle energy at Atoms specified
 double EnergyKernel::energy(const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k)
 {
     Vec3<double> vecji, vecjk;
@@ -693,11 +696,23 @@ double EnergyKernel::energy(const SpeciesAngle *a, const Atom *i, const Atom *j,
     return a->energy(Box::angleInDegrees(vecji, vecjk));
 }
 
-// Return SpeciesTorsion energy
+// Return SpeciesAngle energy
+double EnergyKernel::energy(const SpeciesAngle *a)
+{
+    Vec3<double> vecji = a->i()->r() - a->j()->r(), vecjk = a->k()->r() - a->j()->r();
+
+    // Normalise vectors
+    vecji.normalise();
+    vecjk.normalise();
+
+    // Determine Angle energy
+    return a->energy(Box::angleInDegrees(vecji, vecjk));
+}
+
+// Return SpeciesTorsion energy at Atoms specified
 double EnergyKernel::energy(const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
 {
-    Vec3<double> vecji, vecjk, veckl, xpj, xpk, dcos_dxpj, dcos_dxpk, temp, force;
-    Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
+    Vec3<double> vecji, vecjk, veckl;
 
     // Calculate vectors, ensuring we account for minimum image
     if (j->cell()->mimRequired(i->cell()))
@@ -714,6 +729,12 @@ double EnergyKernel::energy(const SpeciesTorsion *t, const Atom *i, const Atom *
         veckl = l->r() - k->r();
 
     return t->energy(Box::torsionInDegrees(vecji, vecjk, veckl));
+}
+
+// Return SpeciesTorsion energy
+double EnergyKernel::energy(const SpeciesTorsion *t)
+{
+    return t->energy(Box::torsionInDegrees(t->i()->r() - t->j()->r(), t->k()->r() - t->j()->r(), t->l()->r() - t->k()->r()));
 }
 
 // Return intramolecular energy for the supplied Atom
