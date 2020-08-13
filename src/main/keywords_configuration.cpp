@@ -61,7 +61,7 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
 
-        // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+        // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!keywords().isValid(parser.argc(0)))
             return keywords().errorAndPrintValid(parser.argc(0));
         auto kwd = keywords().enumeration(parser.argc(0));

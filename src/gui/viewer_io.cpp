@@ -167,7 +167,7 @@ bool BaseViewer::readAxisBlock(LineParser &parser, Axes &axes, int axis, bool st
         if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success)
             return false;
 
-        // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+        // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!axisKeywords().isValid(parser.argc(0)))
             return axisKeywords().errorAndPrintValid(parser.argc(0));
         auto kwd = axisKeywords().enumeration(parser.argc(0));
@@ -494,7 +494,7 @@ bool BaseViewer::readRenderableBlock(LineParser &parser, Renderable *renderable,
         if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success)
             return false;
 
-        // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+        // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!renderableKeywords().isValid(parser.argc(0)))
             return renderableKeywords().errorAndPrintValid(parser.argc(0));
         auto kwd = renderableKeywords().enumeration(parser.argc(0));
@@ -744,7 +744,7 @@ bool BaseViewer::readRenderableGroupBlock(LineParser &parser, RenderableGroup *g
         if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success)
             return false;
 
-        // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+        // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!renderableGroupKeywords().isValid(parser.argc(0)))
             return renderableGroupKeywords().errorAndPrintValid(parser.argc(0));
         auto kwd = renderableGroupKeywords().enumeration(parser.argc(0));
@@ -886,7 +886,7 @@ bool BaseViewer::readViewBlock(LineParser &parser, bool strictBlockEnd)
         if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success)
             return false;
 
-        // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+        // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!viewKeywords().isValid(parser.argc(0)))
             return viewKeywords().errorAndPrintValid(parser.argc(0));
         auto kwd = viewKeywords().enumeration(parser.argc(0));

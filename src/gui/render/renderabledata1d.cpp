@@ -352,7 +352,7 @@ bool RenderableData1D::readStyleBlock(LineParser &parser)
         if (parser.getArgsDelim(LineParser::SemiColonLineBreaks) != LineParser::Success)
             return false;
 
-        // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+        // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!data1DStyleKeywords().isValid(parser.argc(0)))
             return data1DStyleKeywords().errorAndPrintValid(parser.argc(0));
         auto kwd = data1DStyleKeywords().enumeration(parser.argc(0));

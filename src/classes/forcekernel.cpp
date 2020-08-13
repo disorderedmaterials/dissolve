@@ -500,7 +500,7 @@ void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec
     dcos_dxpk_ = (xpj - xpk * dp) / magxpk;
 }
 
-// Calculate Bond forces
+// Calculate SpeciesBond forces
 void ForceKernel::forces(const SpeciesBond *b, const Atom *i, const Atom *j)
 {
     // Determine whether we need to apply minimum image to the vector calculation
@@ -532,7 +532,7 @@ void ForceKernel::forces(const SpeciesBond *b, const Atom *i, const Atom *j)
     fz_[index] += vecji.z;
 }
 
-// Calculate Bond forces for specified Atom only
+// Calculate SpeciesBond forces for specified Atom only
 void ForceKernel::forces(const Atom *onlyThis, const SpeciesBond *b, const Atom *i, const Atom *j)
 {
 #ifdef CHECKS
@@ -577,7 +577,7 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesBond *b, const Atom 
     }
 }
 
-// Calculate Bond forces
+// Calculate SpeciesBond forces
 void ForceKernel::forces(const SpeciesBond *b)
 {
     auto vecji = b->j()->r() - b->i()->r();
@@ -634,7 +634,7 @@ void ForceKernel::forces(const SpeciesAngle *a, const Atom *i, const Atom *j, co
     fz_[index] += dfk_dtheta_.z;
 }
 
-// Calculate Angle forces for specified Atom only
+// Calculate SpeciesAngle forces for specified Atom only
 void ForceKernel::forces(const Atom *onlyThis, const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k)
 {
     Vec3<double> vecji, vecjk;
@@ -684,7 +684,7 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesAngle *a, const Atom
     }
 }
 
-// Calculate Angle forces
+// Calculate SpeciesAngle forces
 void ForceKernel::forces(const SpeciesAngle *a)
 {
     calculateAngleParameters(a->i()->r() - a->j()->r(), a->k()->r() - a->j()->r());
@@ -756,7 +756,7 @@ void ForceKernel::forces(const SpeciesTorsion *t, const Atom *i, const Atom *j, 
     fz_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(2));
 }
 
-// Calculate Torsion forces for specified Atom only
+// Calculate SpeciesTorsion forces for specified Atom only
 void ForceKernel::forces(const Atom *onlyThis, const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k,
                          const Atom *l)
 {
@@ -812,7 +812,7 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesTorsion *t, const At
     }
 }
 
-// Calculate Torsion force
+// Calculate SpeciesTorsion forces
 void ForceKernel::forces(const SpeciesTorsion *t)
 {
     // Calculate vectors, ensuring we account for minimum image
