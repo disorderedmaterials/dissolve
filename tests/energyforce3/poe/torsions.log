@@ -1,0 +1,684 @@
+################################################################################
+#                                                                              #
+#    MOSCITO 4.180                                                             #
+#                                                                              #
+#    Dietmar Paschek, Department of Physical Chemistry                         #
+#    University of Dortmund, D-44221 Dortmund, Germany                         #
+#    dietmar.paschek@udo.edu                                                   #
+#                                                                              #
+#    Alfons Geiger, Department of Physical Chemistry                           #
+#    University of Dortmund, D-44221 Dortmund, Germany                         #
+#    geiger@pc2a.chemie.uni-dortmund.de                                        #
+#                                                                              #
+#    http://ganter.chemie.uni-dortmund.de/MOSCITO/                             #
+#                                                                              #
+#    MOSCITO Copyright (C) Dietmar Paschek and Alfons Geiger 1997-2003.        #
+#                                                                              #
+#    MOSCITO is free software ; you can redistribute it and/or modify it       #
+#    under the terms of the GNU General Public License as published by the     #
+#    Free Software Foundation (See file COPYING for details).                  #
+#    This program is distributed in the hope that it will be useful, but       #
+#    WITHOUT ANY WARRANTY.                                                     #
+#                                                                              #
+################################################################################
+
+--------------------------------------------------------------------------------
+  SYSTEM DEFINITION
+--------------------------------------------------------------------------------
+
+  Nonbonded Interactions :
+  ------------------------
+
+     Number of NB Interaction Sites:   3
+
+     No.   Label    Mass (g/mol)     q (e)   Number
+      1     c31       15.0240      0.0000     128
+      2     o2        16.0000      0.0000     128
+      3     c23       14.0160      0.0000     128
+
+     Site--Site Lennard-Jones Parameter:
+
+     (i)   (j)     (i)    (j)       Sigma_ij (A)    Epsilon_ij (K)
+      1     1       c31    c31        0.0000           0.0000
+      1     2       c31    o2         0.0000           0.0000
+      1     3       c31    c23        0.0000           0.0000
+      2     2       o2     o2         0.0000           0.0000
+      2     3       o2     c23        0.0000           0.0000
+      3     3       c23    c23        0.0000           0.0000
+
+--------------------------------------------------------------------------------
+
+  Molecular Setup:
+  ------------------
+
+     Number of Molecules:   1
+
+     ---------------------------------------------------------------
+
+     Molecule: 1
+     Label   : poe6      
+
+     No.   Label   Int.-Site         x (A)    y (A)    z (A)
+      1     c31        1          0.0000   1.3199  -2.5699
+      2     o2         2          0.0000   1.3199  -1.1699
+      3     c23        3          0.0000   0.0000  -0.7033
+      4     c23        3          0.0000   0.0000   0.8067
+      5     o2         2          0.0000  -1.3200   1.2734
+      6     c31        1          0.0000  -1.3200   2.3634
+
+     Molecular Mass (g/mol)      :     90.0800
+               Charge (e)        :      0.0000
+               Dipole Moment (D) :      0.0000
+
+     Degrees of Motional Freedom:   18
+
+     Excluded Interaction Pairs:   12
+          1    2
+          2    3
+          3    4
+          4    5
+          5    6
+          1    3
+          2    4
+          3    5
+          4    6
+          1    4
+          2    5
+          3    6
+
+     Harmonic Bonds:    5         [  r_0 (A),  k (kJ/(mol*A**2))  ] 
+          1    2      1.4100      0.0000
+          2    3      1.4100      0.0000
+          3    4      1.5400      0.0000
+          4    5      1.4100      0.0000
+          5    6      1.4100      0.0000
+
+     Angles:    4                 [  theta (deg.),  k(kJ/(mol*rad**2) ] 
+          1    2    3      0.0000      0.0000
+          2    3    4      0.0000      0.0000
+          3    4    5      0.0000      0.0000
+          4    5    6      0.0000      0.0000
+
+     Dihedrals:   24
+
+          Proper:   24            [  phi (deg.),  k (kJ/mol), mult.  ] 
+               1    2    3    4      0.0000     -0.2539      0.0000
+               1    2    3    4      0.0000     -5.1600      1.0000
+               1    2    3    4      0.0000     -0.6971      2.0000
+               1    2    3    4      0.0000      5.3501      3.0000
+               1    2    3    4      0.0000      0.8031      4.0000
+               1    2    3    4      0.0000      0.2831      5.0000
+               1    2    3    4      0.0000      0.0953      6.0000
+               1    2    3    4      0.0000     -0.0580      7.0000
+               2    3    4    5      0.0000     -7.7597      0.0000
+               2    3    4    5      0.0000      7.5853      1.0000
+               2    3    4    5      0.0000      6.7052      2.0000
+               2    3    4    5      0.0000      8.4007      3.0000
+               2    3    4    5      0.0000      0.6322      4.0000
+               2    3    4    5      0.0000      0.1106      5.0000
+               2    3    4    5      0.0000      0.3596      6.0000
+               2    3    4    5      0.0000      0.0168      7.0000
+               3    4    5    6      0.0000     -0.2539      0.0000
+               3    4    5    6      0.0000     -5.1600      1.0000
+               3    4    5    6      0.0000     -0.6971      2.0000
+               3    4    5    6      0.0000      5.3501      3.0000
+               3    4    5    6      0.0000      0.8031      4.0000
+               3    4    5    6      0.0000      0.2831      5.0000
+               3    4    5    6      0.0000      0.0953      6.0000
+               3    4    5    6      0.0000     -0.0580      7.0000
+
+
+--------------------------------------------------------------------------------
+  SIMULATION OUTLINE
+--------------------------------------------------------------------------------
+
+
+   Number of all Molecules:   64
+
+        No.   Label       Number
+         1     poe6         64
+
+   Number of all Interaction Sites:  384
+
+        No.   Label       Number
+         1     c31         128
+         2     o2          128
+         3     c23         128
+
+  System Specifications :
+  -----------------------
+
+     Simulation box [x,y,z] (A)       :    22.9858  22.9858  22.9858
+     Temperature (K)                  :    298.0000
+     Pressure (MPa)                   :      0.0000
+     Molar Volume (cm**3/mol)         :  114.2748
+     Density (g/cm**3)                :    0.7883
+
+
+  Technical Specifications :
+  --------------------------
+
+     Initial configuation treatment:
+        The total linear and angular momentum has been removed from 
+        the initial configuation.
+
+     Verlet NEIGHBOR LIST is employed:
+        The NB-List is buildt up using a linked-cell
+        algorithm due to Hockney and Eastwood:
+           Initial Cell-Grid Dimensions  :     2    2    2
+
+        Dynamic NB-List update due to particle displacement
+     Cut-off Radii:
+        List Cut-off Radius (A)       :  10.0000
+        Potential Cut-off Radius (A)  :   9.0000
+
+     Constraints Tolerance for SHAKE:0.100000E-02
+
+     Weak Coupling to Pressure and Thermo Reservoir
+     using the Berendsen Method:
+
+        Coupling Constants:
+           k_T  (1/ps)       :  0.0000E+00
+           k_p  (1/(MPa*ps)) :  0.0000E+00
+
+        Pressure Coupling: Box shape is conserved
+
+     Timestep (fs) :  0.0000
+
+     Particle Mesh Ewald (PME) Summation is used:
+
+        PME Routines using Cardinal B-Spline Interpolation provided by :
+        T. Darden, NIH, Research Triangle Park, North Carolina 27709
+
+        Convergence Parameter ALPHA (1/A)   : 0.29778
+        FFT Charge Grid Dimensions          :   18   18   18
+        Spline Interpolation Order          :    4
+
+        Memory requirements:
+           Total size of HEAP storage       :         315
+           Total size of STACK storage      :       24122
+
+     Force Evaluation: <<conserve-keyword>>
+
+          The total net-force is removed every step in order to enhance
+          momentum conservation.
+
+  Run Specifications :
+  --------------------
+
+     Steps                 :         10
+     First recorded Step   :          1
+     Total Run Length (ps) :       0.0000
+
+
+
+--------------------------------------------------------------------------------
+  OUPUT CONFIGURATION
+--------------------------------------------------------------------------------
+
+
+      System Data is written to >>mos.data<<
+         Output Frequency:    1
+
+      Restart-File Creation every n`th Step:  1000
+
+
+--------------------------------------------------------------------------------
+  RUNNING AVERAGES
+--------------------------------------------------------------------------------
+
+
+--------------------------------------------------------------------------------
+   STEP:     1
+
+          T(K)    :    298.6127      0.0000
+
+          p (MPa)   :      0.0000      0.0000
+          p_x (MPa) :      0.0000      0.0000
+          p_y (MPa) :      0.0000      0.0000
+          p_z (MPa) :      0.0000      0.0000
+
+          Box x (nm) :      2.2986      0.0000
+          Box y (nm) :      2.2986      0.0000
+          Box z (nm) :      2.2986      0.0000
+
+          E total (kJ/mol) :     25.1540      0.0000
+          E kin (kJ/mol)   :     22.2872      0.0000
+          E pot (kJ/mol)   :      2.8669      0.0000
+
+          E inter (kJ/mol) :      0.0000      0.0000
+          E intra (kJ/mol) :      2.8669      0.0000
+
+          E LJ (kJ/mol)    :      0.0000      0.0000
+
+          E Coul.(total)(kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.1  (kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.2  (kJ/mol)  :      0.0000      0.0000
+          E Coul.(real) (kJ/mol)  :      0.0000      0.0000
+          E Coul.(rec.) (kJ/mol)  :      0.0000      0.0000
+
+          E h.bd (kJ/mol)      :      0.0000      0.0000
+          E anh.bd (kJ/mol)    :      0.0000      0.0000
+          E ang (kJ/mol)       :      0.0000      0.0000
+          E 180 ang (kJ/mol)   :      0.0000      0.0000
+          E imp.dihed.(kJ/mol) :      0.0000      0.0000
+          E dihed.(kJ/mol)     :      2.8669      0.0000
+
+          E umbrella (kJ/mol)  :      0.0000      0.0000
+
+
+--------------------------------------------------------------------------------
+   STEP:     2
+
+          T(K)    :      1.2600      0.0000
+
+          p (MPa)   :      0.0000      0.0000
+          p_x (MPa) :      0.0000      0.0000
+          p_y (MPa) :      0.0000      0.0000
+          p_z (MPa) :      0.0000      0.0000
+
+          Box x (nm) :      2.2986      0.0000
+          Box y (nm) :      2.2986      0.0000
+          Box z (nm) :      2.2986      0.0000
+
+          E total (kJ/mol) :      2.9609      0.0000
+          E kin (kJ/mol)   :      0.0940      0.0000
+          E pot (kJ/mol)   :      2.8669      0.0000
+
+          E inter (kJ/mol) :      0.0000      0.0000
+          E intra (kJ/mol) :      2.8669      0.0000
+
+          E LJ (kJ/mol)    :      0.0000      0.0000
+
+          E Coul.(total)(kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.1  (kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.2  (kJ/mol)  :      0.0000      0.0000
+          E Coul.(real) (kJ/mol)  :      0.0000      0.0000
+          E Coul.(rec.) (kJ/mol)  :      0.0000      0.0000
+
+          E h.bd (kJ/mol)      :      0.0000      0.0000
+          E anh.bd (kJ/mol)    :      0.0000      0.0000
+          E ang (kJ/mol)       :      0.0000      0.0000
+          E 180 ang (kJ/mol)   :      0.0000      0.0000
+          E imp.dihed.(kJ/mol) :      0.0000      0.0000
+          E dihed.(kJ/mol)     :      2.8669      0.0000
+
+          E umbrella (kJ/mol)  :      0.0000      0.0000
+
+
+--------------------------------------------------------------------------------
+   STEP:     3
+
+          T(K)    :      1.2600      0.0000
+
+          p (MPa)   :      0.0000      0.0000
+          p_x (MPa) :      0.0000      0.0000
+          p_y (MPa) :      0.0000      0.0000
+          p_z (MPa) :      0.0000      0.0000
+
+          Box x (nm) :      2.2986      0.0000
+          Box y (nm) :      2.2986      0.0000
+          Box z (nm) :      2.2986      0.0000
+
+          E total (kJ/mol) :      2.9609      0.0000
+          E kin (kJ/mol)   :      0.0940      0.0000
+          E pot (kJ/mol)   :      2.8669      0.0000
+
+          E inter (kJ/mol) :      0.0000      0.0000
+          E intra (kJ/mol) :      2.8669      0.0000
+
+          E LJ (kJ/mol)    :      0.0000      0.0000
+
+          E Coul.(total)(kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.1  (kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.2  (kJ/mol)  :      0.0000      0.0000
+          E Coul.(real) (kJ/mol)  :      0.0000      0.0000
+          E Coul.(rec.) (kJ/mol)  :      0.0000      0.0000
+
+          E h.bd (kJ/mol)      :      0.0000      0.0000
+          E anh.bd (kJ/mol)    :      0.0000      0.0000
+          E ang (kJ/mol)       :      0.0000      0.0000
+          E 180 ang (kJ/mol)   :      0.0000      0.0000
+          E imp.dihed.(kJ/mol) :      0.0000      0.0000
+          E dihed.(kJ/mol)     :      2.8669      0.0000
+
+          E umbrella (kJ/mol)  :      0.0000      0.0000
+
+
+--------------------------------------------------------------------------------
+   STEP:     4
+
+          T(K)    :      1.2600      0.0000
+
+          p (MPa)   :      0.0000      0.0000
+          p_x (MPa) :      0.0000      0.0000
+          p_y (MPa) :      0.0000      0.0000
+          p_z (MPa) :      0.0000      0.0000
+
+          Box x (nm) :      2.2986      0.0000
+          Box y (nm) :      2.2986      0.0000
+          Box z (nm) :      2.2986      0.0000
+
+          E total (kJ/mol) :      2.9609      0.0000
+          E kin (kJ/mol)   :      0.0940      0.0000
+          E pot (kJ/mol)   :      2.8669      0.0000
+
+          E inter (kJ/mol) :      0.0000      0.0000
+          E intra (kJ/mol) :      2.8669      0.0000
+
+          E LJ (kJ/mol)    :      0.0000      0.0000
+
+          E Coul.(total)(kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.1  (kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.2  (kJ/mol)  :      0.0000      0.0000
+          E Coul.(real) (kJ/mol)  :      0.0000      0.0000
+          E Coul.(rec.) (kJ/mol)  :      0.0000      0.0000
+
+          E h.bd (kJ/mol)      :      0.0000      0.0000
+          E anh.bd (kJ/mol)    :      0.0000      0.0000
+          E ang (kJ/mol)       :      0.0000      0.0000
+          E 180 ang (kJ/mol)   :      0.0000      0.0000
+          E imp.dihed.(kJ/mol) :      0.0000      0.0000
+          E dihed.(kJ/mol)     :      2.8669      0.0000
+
+          E umbrella (kJ/mol)  :      0.0000      0.0000
+
+
+--------------------------------------------------------------------------------
+   STEP:     5
+
+          T(K)    :      1.2600      0.0000
+
+          p (MPa)   :      0.0000      0.0000
+          p_x (MPa) :      0.0000      0.0000
+          p_y (MPa) :      0.0000      0.0000
+          p_z (MPa) :      0.0000      0.0000
+
+          Box x (nm) :      2.2986      0.0000
+          Box y (nm) :      2.2986      0.0000
+          Box z (nm) :      2.2986      0.0000
+
+          E total (kJ/mol) :      2.9609      0.0000
+          E kin (kJ/mol)   :      0.0940      0.0000
+          E pot (kJ/mol)   :      2.8669      0.0000
+
+          E inter (kJ/mol) :      0.0000      0.0000
+          E intra (kJ/mol) :      2.8669      0.0000
+
+          E LJ (kJ/mol)    :      0.0000      0.0000
+
+          E Coul.(total)(kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.1  (kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.2  (kJ/mol)  :      0.0000      0.0000
+          E Coul.(real) (kJ/mol)  :      0.0000      0.0000
+          E Coul.(rec.) (kJ/mol)  :      0.0000      0.0000
+
+          E h.bd (kJ/mol)      :      0.0000      0.0000
+          E anh.bd (kJ/mol)    :      0.0000      0.0000
+          E ang (kJ/mol)       :      0.0000      0.0000
+          E 180 ang (kJ/mol)   :      0.0000      0.0000
+          E imp.dihed.(kJ/mol) :      0.0000      0.0000
+          E dihed.(kJ/mol)     :      2.8669      0.0000
+
+          E umbrella (kJ/mol)  :      0.0000      0.0000
+
+
+--------------------------------------------------------------------------------
+   STEP:     6
+
+          T(K)    :      1.2600      0.0000
+
+          p (MPa)   :      0.0000      0.0000
+          p_x (MPa) :      0.0000      0.0000
+          p_y (MPa) :      0.0000      0.0000
+          p_z (MPa) :      0.0000      0.0000
+
+          Box x (nm) :      2.2986      0.0000
+          Box y (nm) :      2.2986      0.0000
+          Box z (nm) :      2.2986      0.0000
+
+          E total (kJ/mol) :      2.9609      0.0000
+          E kin (kJ/mol)   :      0.0940      0.0000
+          E pot (kJ/mol)   :      2.8669      0.0000
+
+          E inter (kJ/mol) :      0.0000      0.0000
+          E intra (kJ/mol) :      2.8669      0.0000
+
+          E LJ (kJ/mol)    :      0.0000      0.0000
+
+          E Coul.(total)(kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.1  (kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.2  (kJ/mol)  :      0.0000      0.0000
+          E Coul.(real) (kJ/mol)  :      0.0000      0.0000
+          E Coul.(rec.) (kJ/mol)  :      0.0000      0.0000
+
+          E h.bd (kJ/mol)      :      0.0000      0.0000
+          E anh.bd (kJ/mol)    :      0.0000      0.0000
+          E ang (kJ/mol)       :      0.0000      0.0000
+          E 180 ang (kJ/mol)   :      0.0000      0.0000
+          E imp.dihed.(kJ/mol) :      0.0000      0.0000
+          E dihed.(kJ/mol)     :      2.8669      0.0000
+
+          E umbrella (kJ/mol)  :      0.0000      0.0000
+
+
+--------------------------------------------------------------------------------
+   STEP:     7
+
+          T(K)    :      1.2600      0.0000
+
+          p (MPa)   :      0.0000      0.0000
+          p_x (MPa) :      0.0000      0.0000
+          p_y (MPa) :      0.0000      0.0000
+          p_z (MPa) :      0.0000      0.0000
+
+          Box x (nm) :      2.2986      0.0000
+          Box y (nm) :      2.2986      0.0000
+          Box z (nm) :      2.2986      0.0000
+
+          E total (kJ/mol) :      2.9609      0.0000
+          E kin (kJ/mol)   :      0.0940      0.0000
+          E pot (kJ/mol)   :      2.8669      0.0000
+
+          E inter (kJ/mol) :      0.0000      0.0000
+          E intra (kJ/mol) :      2.8669      0.0000
+
+          E LJ (kJ/mol)    :      0.0000      0.0000
+
+          E Coul.(total)(kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.1  (kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.2  (kJ/mol)  :      0.0000      0.0000
+          E Coul.(real) (kJ/mol)  :      0.0000      0.0000
+          E Coul.(rec.) (kJ/mol)  :      0.0000      0.0000
+
+          E h.bd (kJ/mol)      :      0.0000      0.0000
+          E anh.bd (kJ/mol)    :      0.0000      0.0000
+          E ang (kJ/mol)       :      0.0000      0.0000
+          E 180 ang (kJ/mol)   :      0.0000      0.0000
+          E imp.dihed.(kJ/mol) :      0.0000      0.0000
+          E dihed.(kJ/mol)     :      2.8669      0.0000
+
+          E umbrella (kJ/mol)  :      0.0000      0.0000
+
+
+--------------------------------------------------------------------------------
+   STEP:     8
+
+          T(K)    :      1.2600      0.0000
+
+          p (MPa)   :      0.0000      0.0000
+          p_x (MPa) :      0.0000      0.0000
+          p_y (MPa) :      0.0000      0.0000
+          p_z (MPa) :      0.0000      0.0000
+
+          Box x (nm) :      2.2986      0.0000
+          Box y (nm) :      2.2986      0.0000
+          Box z (nm) :      2.2986      0.0000
+
+          E total (kJ/mol) :      2.9609      0.0000
+          E kin (kJ/mol)   :      0.0940      0.0000
+          E pot (kJ/mol)   :      2.8669      0.0000
+
+          E inter (kJ/mol) :      0.0000      0.0000
+          E intra (kJ/mol) :      2.8669      0.0000
+
+          E LJ (kJ/mol)    :      0.0000      0.0000
+
+          E Coul.(total)(kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.1  (kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.2  (kJ/mol)  :      0.0000      0.0000
+          E Coul.(real) (kJ/mol)  :      0.0000      0.0000
+          E Coul.(rec.) (kJ/mol)  :      0.0000      0.0000
+
+          E h.bd (kJ/mol)      :      0.0000      0.0000
+          E anh.bd (kJ/mol)    :      0.0000      0.0000
+          E ang (kJ/mol)       :      0.0000      0.0000
+          E 180 ang (kJ/mol)   :      0.0000      0.0000
+          E imp.dihed.(kJ/mol) :      0.0000      0.0000
+          E dihed.(kJ/mol)     :      2.8669      0.0000
+
+          E umbrella (kJ/mol)  :      0.0000      0.0000
+
+
+--------------------------------------------------------------------------------
+   STEP:     9
+
+          T(K)    :      1.2600      0.0000
+
+          p (MPa)   :      0.0000      0.0000
+          p_x (MPa) :      0.0000      0.0000
+          p_y (MPa) :      0.0000      0.0000
+          p_z (MPa) :      0.0000      0.0000
+
+          Box x (nm) :      2.2986      0.0000
+          Box y (nm) :      2.2986      0.0000
+          Box z (nm) :      2.2986      0.0000
+
+          E total (kJ/mol) :      2.9609      0.0000
+          E kin (kJ/mol)   :      0.0940      0.0000
+          E pot (kJ/mol)   :      2.8669      0.0000
+
+          E inter (kJ/mol) :      0.0000      0.0000
+          E intra (kJ/mol) :      2.8669      0.0000
+
+          E LJ (kJ/mol)    :      0.0000      0.0000
+
+          E Coul.(total)(kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.1  (kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.2  (kJ/mol)  :      0.0000      0.0000
+          E Coul.(real) (kJ/mol)  :      0.0000      0.0000
+          E Coul.(rec.) (kJ/mol)  :      0.0000      0.0000
+
+          E h.bd (kJ/mol)      :      0.0000      0.0000
+          E anh.bd (kJ/mol)    :      0.0000      0.0000
+          E ang (kJ/mol)       :      0.0000      0.0000
+          E 180 ang (kJ/mol)   :      0.0000      0.0000
+          E imp.dihed.(kJ/mol) :      0.0000      0.0000
+          E dihed.(kJ/mol)     :      2.8669      0.0000
+
+          E umbrella (kJ/mol)  :      0.0000      0.0000
+
+
+--------------------------------------------------------------------------------
+   STEP:    10
+
+          T(K)    :      1.2600      0.0000
+
+          p (MPa)   :      0.0000      0.0000
+          p_x (MPa) :      0.0000      0.0000
+          p_y (MPa) :      0.0000      0.0000
+          p_z (MPa) :      0.0000      0.0000
+
+          Box x (nm) :      2.2986      0.0000
+          Box y (nm) :      2.2986      0.0000
+          Box z (nm) :      2.2986      0.0000
+
+          E total (kJ/mol) :      2.9609      0.0000
+          E kin (kJ/mol)   :      0.0940      0.0000
+          E pot (kJ/mol)   :      2.8669      0.0000
+
+          E inter (kJ/mol) :      0.0000      0.0000
+          E intra (kJ/mol) :      2.8669      0.0000
+
+          E LJ (kJ/mol)    :      0.0000      0.0000
+
+          E Coul.(total)(kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.1  (kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.2  (kJ/mol)  :      0.0000      0.0000
+          E Coul.(real) (kJ/mol)  :      0.0000      0.0000
+          E Coul.(rec.) (kJ/mol)  :      0.0000      0.0000
+
+          E h.bd (kJ/mol)      :      0.0000      0.0000
+          E anh.bd (kJ/mol)    :      0.0000      0.0000
+          E ang (kJ/mol)       :      0.0000      0.0000
+          E 180 ang (kJ/mol)   :      0.0000      0.0000
+          E imp.dihed.(kJ/mol) :      0.0000      0.0000
+          E dihed.(kJ/mol)     :      2.8669      0.0000
+
+          E umbrella (kJ/mol)  :      0.0000      0.0000
+
+--------------------------------------------------------------------------------
+  TOTAL AVERAGE
+--------------------------------------------------------------------------------
+
+   ALL STEPS:       10
+
+          T(K)    :     30.9953     89.2058
+
+          p (MPa)   :      0.0000      0.0000
+          p_x (MPa) :      0.0000      0.0000
+          p_y (MPa) :      0.0000      0.0000
+          p_z (MPa) :      0.0000      0.0000
+
+          Box x (nm) :      2.2986      0.0000
+          Box y (nm) :      2.2986      0.0000
+          Box z (nm) :      2.2986      0.0000
+
+          E total (kJ/mol) :      5.1802      6.6579
+          E kin (kJ/mol)   :      2.3134      6.6579
+          E pot (kJ/mol)   :      2.8669      0.0000
+
+          E inter (kJ/mol) :      0.0000      0.0000
+          E intra (kJ/mol) :      2.8669      0.0000
+
+          E LJ (kJ/mol)    :      0.0000      0.0000
+
+          E Coul.(total)(kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.1  (kJ/mol)  :      0.0000      0.0000
+          E Coul Cor.2  (kJ/mol)  :      0.0000      0.0000
+          E Coul.(real) (kJ/mol)  :      0.0000      0.0000
+          E Coul.(rec.) (kJ/mol)  :      0.0000      0.0000
+
+          E h.bd (kJ/mol)      :      0.0000      0.0000
+          E anh.bd (kJ/mol)    :      0.0000      0.0000
+          E ang (kJ/mol)       :      0.0000      0.0000
+          E 180 ang (kJ/mol)   :      0.0000      0.0000
+          E imp.dihed.(kJ/mol) :      0.0000      0.0000
+          E dihed.(kJ/mol)     :      2.8669      0.0000
+
+          E umbrella (kJ/mol)  :      0.0000      0.0000
+
+--------------------------------------------------------------------------------
+  PROGRAM TIMINGS (s)
+--------------------------------------------------------------------------------
+
+   Total Step Time             :    0.0020
+
+   Neighbor List Update        :    0.0000     0.00 %
+   Reciprocal Lattice Sum      :    0.0020   100.00 %
+   Molecular Self Term         :    0.0000     0.00 %
+   Real Space Term             :    0.0000     0.00 %
+
+   Bonded intramol. Int.       :    0.0000     0.00 %
+   Non-Bonded intramol. Int.   :    0.0000     0.00 %
+   Mod. Non-Bd. intramol. Int. :    0.0000     0.00 %
+
+   Substrate Interaction       :    0.0000     0.00 %
+
+   Shake                       :    0.0000     0.00 %
+
+--------------------------------------------------------------------------------
+   MISC 
+--------------------------------------------------------------------------------
+
+   Neighborlist update frequency :  Infinity
