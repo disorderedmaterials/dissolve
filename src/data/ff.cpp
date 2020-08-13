@@ -294,10 +294,11 @@ int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignm
         if ((strategy == Forcefield::TypeSelection) && (!i->isSelected()))
             continue;
 
-        // Messenger::print("No forcefield type available for Atom %i of Species (%s).\n", i->index()+1,
-        // i->element()->symbol());
         if (!assignAtomType(i, coreData))
+        {
+            Messenger::error("No matching forcefield type for atom %i (%s).\n", i->userIndex(), i->element()->symbol());
             ++nFailed;
+        }
     }
 
     if (nFailed)

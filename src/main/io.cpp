@@ -76,7 +76,10 @@ bool Dissolve::loadInput(LineParser &parser)
 
                 // Prepare the Configuration
                 if (!cfg->initialiseContent(worldPool(), pairPotentialRange_))
-                    Messenger::warn("Failed to prepare configuration '%s'.\n", cfg->name());
+                {
+                    error = true;
+                    break;
+                }
                 break;
             case (BlockKeywords::LayerBlockKeyword):
                 // Check to see if a processing layer with this name already exists...

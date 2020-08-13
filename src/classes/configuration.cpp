@@ -138,11 +138,9 @@ bool Configuration::loadCoordinates(LineParser &parser, CoordinateImportFileForm
 
     // Temporary array now contains some number of atoms - does it match the number in the configuration's molecules?
     if (atoms_.nItems() != r.nItems())
-    {
-        Messenger::error("Number of atoms read from initial coordinates file (%i) does not match that in Configuration (%i).\n",
-                         r.nItems(), atoms_.nItems());
-        return false;
-    }
+        return Messenger::error(
+            "Number of atoms read from initial coordinates file (%i) does not match that in Configuration (%i).\n", r.nItems(),
+            atoms_.nItems());
 
     // All good, so copy atom coordinates over into our array
     for (int n = 0; n < atoms_.nItems(); ++n)
