@@ -61,6 +61,12 @@ void Isotopologue::update()
     // Check for valid parent_
     if (parent_ == NULL)
     {
+        // The update function is called three places in the code, all
+        // in species_isotopologues.cpp.  The instance on line 52 occurs
+        // immediately after setting the value.  The instance on line 38
+        // occurs on naturalIsotopologue_, whose parent is set
+        // immediately. The only remaining option is the call in line
+        // 30, which indexes through all of the isopologue values.
         Messenger::error("NULL_POINTER - Found NULL parent_ pointer in Isotopologue::update().\n");
         return;
     }
