@@ -130,14 +130,15 @@ double EnergyModule::interMolecularEnergy(ProcessPool &procPool, Configuration *
 // Return total intramolecular energy of Configuration
 double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap)
 {
-    double bondEnergy, angleEnergy, torsionEnergy;
+    double bondEnergy, angleEnergy, torsionEnergy, improperEnergy;
 
-    return intraMolecularEnergy(procPool, cfg, potentialMap, bondEnergy, angleEnergy, torsionEnergy);
+    return intraMolecularEnergy(procPool, cfg, potentialMap, bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
 }
 
 // Return total intramolecular energy of Configuration, storing components in provided variables
 double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                                          double &bondEnergy, double &angleEnergy, double &torsionEnergy)
+                                          double &bondEnergy, double &angleEnergy, double &torsionEnergy,
+                                          double &improperEnergy)
 {
     /*
      * Calculate the total intramolecular energy of the system, arising from Bond, Angle, and Torsion
@@ -152,6 +153,7 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
     bondEnergy = 0;
     angleEnergy = 0;
     torsionEnergy = 0;
+    improperEnergy = 0;
 
     ProcessPool::DivisionStrategy strategy = ProcessPool::PoolStrategy;
 
@@ -181,27 +183,37 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
         while (const SpeciesTorsion *t = torsionIterator.iterate())
             torsionEnergy += kernel.energy(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()),
                                            mol->atom(t->indexL()));
+
+        // Loop over impropers
+        DynamicArrayConstIterator<SpeciesImproper> improperIterator(mol->species()->constImpropers());
+        while (const SpeciesImproper *imp = improperIterator.iterate())
+            improperEnergy += kernel.energy(imp, mol->atom(imp->indexI()), mol->atom(imp->indexJ()), mol->atom(imp->indexK()),
+                                            mol->atom(imp->indexL()));
     }
 
-    double totalIntra = bondEnergy + angleEnergy + torsionEnergy;
+    double totalIntra = bondEnergy + angleEnergy + torsionEnergy + improperEnergy;
 
-    Messenger::printVerbose("Intramolecular Energy (Local) is %15.9e kJ/mol (%15.9e bond + %15.9e angle + %15.9e torsion)\n",
-                            totalIntra, bondEnergy, angleEnergy, torsionEnergy);
+    Messenger::printVerbose(
+        "Intramolecular Energy (Local) is %15.9e kJ/mol (%15.9e bond + %15.9e angle + %15.9e torsion + %15.9e improper)\n",
+        totalIntra, bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
 
     // Sum energy and print
-    double values[3];
+    double values[4];
     values[0] = bondEnergy;
     values[1] = angleEnergy;
     values[2] = torsionEnergy;
-    procPool.allSum(values, 3, strategy);
+    values[3] = improperEnergy;
+    procPool.allSum(values, 4, strategy);
     bondEnergy = values[0];
     angleEnergy = values[1];
     torsionEnergy = values[2];
+    improperEnergy = values[3];
 
-    totalIntra = bondEnergy + angleEnergy + torsionEnergy;
+    totalIntra = bondEnergy + angleEnergy + torsionEnergy + improperEnergy;
 
-    Messenger::printVerbose("Intramolecular Energy (World) is %15.9e kJ/mol (%15.9e bond + %15.9e angle + %15.9e torsion)\n",
-                            totalIntra, bondEnergy, angleEnergy, torsionEnergy);
+    Messenger::printVerbose(
+        "Intramolecular Energy (World) is %15.9e kJ/mol (%15.9e bond + %15.9e angle + %15.9e torsion + %15.9e improper)\n",
+        totalIntra, bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
 
     return totalIntra;
 }
@@ -237,12 +249,13 @@ double EnergyModule::totalEnergy(ProcessPool &procPool, Configuration *cfg, cons
 
 // Return total energy (interatomic and intramolecular) of Configuration, storing components in provided variables
 double EnergyModule::totalEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                                 double &interEnergy, double &bondEnergy, double &angleEnergy, double &torsionEnergy)
+                                 double &interEnergy, double &bondEnergy, double &angleEnergy, double &torsionEnergy,
+                                 double &improperEnergy)
 {
     interEnergy = interAtomicEnergy(procPool, cfg, potentialMap);
-    intraMolecularEnergy(procPool, cfg, potentialMap, bondEnergy, angleEnergy, torsionEnergy);
+    intraMolecularEnergy(procPool, cfg, potentialMap, bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
 
-    return interEnergy + bondEnergy + angleEnergy + torsionEnergy;
+    return interEnergy + bondEnergy + angleEnergy + torsionEnergy + improperEnergy;
 }
 
 // Return total energy (interatomic and intramolecular) of Species
