@@ -200,14 +200,13 @@ Species *Dissolve::copySpecies(const Species *species)
     }
 
     // Duplicate impropers
-    DynamicArrayConstIterator<SpeciesImproper> improperIterator(species->constImpropers());
-    while (const SpeciesImproper *t = improperIterator.iterate())
+    for (auto &t : species->constImpropers())
     {
         // Create the improper in the new Species
-        SpeciesImproper *newImproper = newSpecies->addImproper(t->indexI(), t->indexJ(), t->indexK(), t->indexL());
+        auto &newImproper = newSpecies->addImproper(t.indexI(), t.indexJ(), t.indexK(), t.indexL());
 
         // Copy interaction parameters, including MasterIntra if necessary
-        copySpeciesIntra(*t, *newImproper);
+        copySpeciesIntra(t, newImproper);
     }
 
     return newSpecies;

@@ -123,7 +123,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     OptionalReferenceWrapper<SpeciesAngle> a;
     SpeciesAtom *i;
     OptionalReferenceWrapper<SpeciesBond> b;
-    SpeciesImproper *imp;
+    OptionalReferenceWrapper<SpeciesImproper> imp;
     OptionalReferenceWrapper<SpeciesTorsion> torsion;
     SpeciesSite *site;
     SpeciesBond::BondFunction bf;
@@ -733,24 +733,23 @@ bool Species::write(LineParser &parser, const char *prefix)
     {
         if (!parser.writeLineF("\n%s# Impropers\n", newPrefix.get()))
             return false;
-        DynamicArrayConstIterator<SpeciesImproper> improperIterator(impropers());
-        while (const SpeciesImproper *imp = improperIterator.iterate())
+        for (auto &imp : impropers())
         {
-            if (imp->masterParameters())
+            if (imp.masterParameters())
             {
                 if (!parser.writeLineF("%s%s  %3i  %3i  %3i  %3i  @%s\n", newPrefix.get(),
-                                       keywords().keyword(Species::ImproperKeyword), imp->indexI() + 1, imp->indexJ() + 1,
-                                       imp->indexK() + 1, imp->indexL() + 1, imp->masterParameters()->name()))
+                                       keywords().keyword(Species::ImproperKeyword), imp.indexI() + 1, imp.indexJ() + 1,
+                                       imp.indexK() + 1, imp.indexL() + 1, imp.masterParameters()->name()))
                     return false;
             }
             else
             {
                 CharString s("%s%s  %3i  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::ImproperKeyword),
-                             imp->indexI() + 1, imp->indexJ() + 1, imp->indexK() + 1, imp->indexL() + 1,
-                             SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
-                for (int n = 0;
-                     n < SpeciesImproper::improperFunctions().minArgs((SpeciesImproper::ImproperFunction)imp->form()); ++n)
-                    s.strcatf("  %8.3f", imp->parameter(n));
+                             imp.indexI() + 1, imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1,
+                             SpeciesImproper::improperFunctions().keywordFromInt(imp.form()));
+                for (int n = 0; n < SpeciesImproper::improperFunctions().minArgs((SpeciesImproper::ImproperFunction)imp.form());
+                     ++n)
+                    s.strcatf("  %8.3f", imp.parameter(n));
                 if (!parser.writeLineF("%s\n", s.get()))
                     return false;
             }

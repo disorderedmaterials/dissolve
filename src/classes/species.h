@@ -31,7 +31,6 @@
 #include "classes/speciessite.h"
 #include "classes/speciestorsion.h"
 #include "io/import/coordinates.h"
-#include "templates/dynamicarray.h"
 #include "templates/objectstore.h"
 #include <memory>
 
@@ -147,7 +146,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Array of torsions between atoms in the Species
     std::vector<SpeciesTorsion> torsions_;
     // Array of impropers between atoms in the Species
-    DynamicArray<SpeciesImproper> impropers_;
+    std::vector<SpeciesImproper> impropers_;
     // Whether the attached atoms lists have been created
     bool attachedAtomListsGenerated_;
 
@@ -207,19 +206,19 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Return the SpeciesTorsion between the specified SpeciesAtoms
     OptionalReferenceWrapper<SpeciesTorsion> getTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Add new SpeciesImproper definition (from SpeciesAtom*)
-    SpeciesImproper *addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    SpeciesImproper &addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Add new SpeciesImproper definition
-    SpeciesImproper *addImproper(int i, int j, int k, int l);
+    SpeciesImproper &addImproper(int i, int j, int k, int l);
     // Return number of SpeciesImproper defined
     int nImpropers() const;
     // Return array of SpeciesImproper
-    DynamicArray<SpeciesImproper> &impropers();
+    std::vector<SpeciesImproper> &impropers();
     // Return array of SpeciesImproper (const)
-    const DynamicArray<SpeciesImproper> &constImpropers() const;
+    const std::vector<SpeciesImproper> &constImpropers() const;
     // Return whether SpeciesImproper between SpeciesAtoms exists
     bool hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
     // Return the SpeciesImproper between the specified SpeciesAtoms (if it exists)
-    SpeciesImproper *improper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    OptionalReferenceWrapper<SpeciesImproper> improper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Return whether the attached atoms lists have been created
     bool attachedAtomListsGenerated() const;
     // Generate attached Atom lists for all intramolecular terms
