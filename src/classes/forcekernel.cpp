@@ -144,7 +144,6 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
     Atom *ii, *jj;
     Vec3<double> rI;
     std::shared_ptr<Molecule> molI;
-    int i, j, index;
     double scale;
 
     // Get start/stride for specified loop context
@@ -245,7 +244,6 @@ void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::Divi
 
     // Grab the array of Atoms in the supplied Cell
     OrderedVector<Atom *> &otherAtoms = cell->atoms();
-    auto nOtherAtoms = cell->nAtoms();
 
     // Get start/stride for specified loop context
     auto start = processPool_.interleavedLoopStart(strategy);
@@ -314,7 +312,6 @@ void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::Divi
         else
         {
             index = 0;
-            auto indexJ = otherAtoms.begin();
             for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
             {
                 // Grab other Atom pointer
