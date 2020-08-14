@@ -22,6 +22,7 @@
 #pragma once
 
 #include "templates/list.h"
+#include <memory>
 
 // Forward Declarations
 class AtomType;
@@ -36,12 +37,13 @@ class ProcessPool;
 class AtomTypeData
 {
     public:
-    AtomTypeData(AtomType &type, double population = 0, double fraction = 0, double boundCoherent = 0, int nIso = 0);
+    AtomTypeData(std::shared_ptr<AtomType> type, double population = 0, double fraction = 0, double boundCoherent = 0,
+                 int nIso = 0);
     AtomTypeData(const AtomTypeData &source);
     // Read data through specified LineParser
     AtomTypeData(LineParser &parser, const CoreData &coreData, int listIndex);
     // Old Initialise
-    AtomTypeData(int listIndex, AtomType &atomType, double population);
+    AtomTypeData(int listIndex, std::shared_ptr<AtomType> atomType, double population);
     // Assignment Operator
     void operator=(const AtomTypeData &source);
 
@@ -52,7 +54,7 @@ class AtomTypeData
     // List index of AtomTypeData in AtomTypeList
     int listIndex_;
     // Reference AtomType
-    AtomType &atomType_;
+    std::shared_ptr<AtomType> atomType_;
     // Whether the AtomType has been marked as exchangeable
     bool exchangeable_;
     // Isotopes information (if any)
@@ -74,7 +76,7 @@ class AtomTypeData
     // Return list index of AtomTypeData in AtomTypeList
     int listIndex() const;
     // Return reference AtomType
-    AtomType &atomType() const;
+    std::shared_ptr<AtomType> atomType() const;
     // Set exchangeable flag
     void setAsExchangeable();
     // Return whether the associated AtomType is exchangeable

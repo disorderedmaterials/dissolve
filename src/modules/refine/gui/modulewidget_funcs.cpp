@@ -28,6 +28,7 @@
 #include "module/group.h"
 #include "modules/refine/gui/modulewidget.h"
 #include "modules/refine/refine.h"
+#include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
 RefineModuleWidget::RefineModuleWidget(QWidget *parent, RefineModule *module, Dissolve &dissolve)
@@ -267,92 +268,82 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule *module)
         }
 
         // Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the partialSQGraph_
-        n = 0;
-        for (AtomType *at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
-        {
-            m = n;
-            for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
-            {
-                CharString id("%s-%s/%s", at1->name(), at2->name(), group->name());
+        for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
+            CharString id("%s-%s/%s", at1->name(), at2->name(), group->name());
 
-                /*
-                 * Partial Structure Factors
-                 */
+            /*
+             * Partial Structure Factors
+             */
 
-                // Unweighted estimated partial
-                Renderable *estSQ = partialSQGraph_->createRenderable(
-                    Renderable::Data1DRenderable,
-                    CharString("%s//EstimatedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()),
-                    CharString("ExpSQ//%s", id.get()), CharString("%s Estimated", id.get()));
-                partialSQGraph_->addRenderableToGroup(estSQ, id.get());
+            // Unweighted estimated partial
+            Renderable *estSQ = partialSQGraph_->createRenderable(
+                Renderable::Data1DRenderable,
+                CharString("%s//EstimatedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()),
+                CharString("ExpSQ//%s", id.get()), CharString("%s Estimated", id.get()));
+            partialSQGraph_->addRenderableToGroup(estSQ, id.get());
 
-                // Calculated / summed partial
-                Renderable *calcSQ = partialSQGraph_->createRenderable(
-                    Renderable::Data1DRenderable,
-                    CharString("%s//UnweightedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()),
-                    CharString("CalcSQ//%s", id.get()), CharString("%s Calc", id.get()));
-                calcSQ->lineStyle().setStipple(LineStipple::QuarterDashStipple);
-                partialSQGraph_->addRenderableToGroup(calcSQ, id.get());
+            // Calculated / summed partial
+            Renderable *calcSQ = partialSQGraph_->createRenderable(
+                Renderable::Data1DRenderable,
+                CharString("%s//UnweightedSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()),
+                CharString("CalcSQ//%s", id.get()), CharString("%s Calc", id.get()));
+            calcSQ->lineStyle().setStipple(LineStipple::QuarterDashStipple);
+            partialSQGraph_->addRenderableToGroup(calcSQ, id.get());
 
-                // Deltas
-                Renderable *deltaSQ = partialSQGraph_->createRenderable(
-                    Renderable::Data1DRenderable,
-                    CharString("%s//DeltaSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()),
-                    CharString("DeltaSQ//%s", id.get()), CharString("%s Delta", id.get()));
-                deltaSQ->lineStyle().setStipple(LineStipple::DotStipple);
-                partialSQGraph_->addRenderableToGroup(deltaSQ, id.get());
+            // Deltas
+            Renderable *deltaSQ = partialSQGraph_->createRenderable(
+                Renderable::Data1DRenderable,
+                CharString("%s//DeltaSQ//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()),
+                CharString("DeltaSQ//%s", id.get()), CharString("%s Delta", id.get()));
+            deltaSQ->lineStyle().setStipple(LineStipple::DotStipple);
+            partialSQGraph_->addRenderableToGroup(deltaSQ, id.get());
 
-                /*
-                 * Partial RDFs
-                 */
+            /*
+             * Partial RDFs
+             */
 
-                // Experimentally-determined unweighted partial
-                Renderable *estGR = partialGRGraph_->createRenderable(
-                    Renderable::Data1DRenderable,
-                    CharString("%s//EstimatedGR//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()),
-                    CharString("ExpGR//%s", id.get()), CharString("%s Estimated", id.get()));
-                partialGRGraph_->addRenderableToGroup(estGR, id.get());
+            // Experimentally-determined unweighted partial
+            Renderable *estGR = partialGRGraph_->createRenderable(
+                Renderable::Data1DRenderable,
+                CharString("%s//EstimatedGR//%s//%s-%s", module_->uniqueName(), group->name(), at1->name(), at2->name()),
+                CharString("ExpGR//%s", id.get()), CharString("%s Estimated", id.get()));
+            partialGRGraph_->addRenderableToGroup(estGR, id.get());
 
-                // Calculated / summed partial
-                Renderable *calcGR =
-                    partialGRGraph_->createRenderable(Renderable::Data1DRenderable,
-                                                      CharString("%s//UnweightedGR//%s//%s-%s//Full", module_->uniqueName(),
-                                                                 group->name(), at1->name(), at2->name()),
-                                                      CharString("CalcGR//%s", id.get()), CharString("%s Calc", id.get()));
-                calcGR->lineStyle().setStipple(LineStipple::QuarterDashStipple);
-                partialGRGraph_->addRenderableToGroup(calcGR, id.get());
+            // Calculated / summed partial
+            Renderable *calcGR = partialGRGraph_->createRenderable(
+                Renderable::Data1DRenderable,
+                CharString("%s//UnweightedGR//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()),
+                CharString("CalcGR//%s", id.get()), CharString("%s Calc", id.get()));
+            calcGR->lineStyle().setStipple(LineStipple::QuarterDashStipple);
+            partialGRGraph_->addRenderableToGroup(calcGR, id.get());
 
-                /*
-                 * Phi(r)
-                 */
+            /*
+             * Phi(r)
+             */
 
-                // Generated potential
-                Renderable *deltaPhiR = deltaPhiRGraph_->createRenderable(
-                    Renderable::Data1DRenderable,
-                    CharString("%s//DeltaPhiR//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(),
-                               at2->name()),
-                    CharString("DeltaPhiR//%s//%s-%s", group->name(), at1->name(), at2->name()),
-                    CharString("%s dphi(r)", id.get()));
+            // Generated potential
+            Renderable *deltaPhiR = deltaPhiRGraph_->createRenderable(
+                Renderable::Data1DRenderable,
+                CharString("%s//DeltaPhiR//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()),
+                CharString("DeltaPhiR//%s//%s-%s", group->name(), at1->name(), at2->name()),
+                CharString("%s dphi(r)", id.get()));
 
-                // Inversion (delta g(r), FT etc.)
-                Renderable *inversion = deltaPhiRGraph_->createRenderable(
-                    Renderable::Data1DRenderable,
-                    CharString("%s//Inversion//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(),
-                               at2->name()),
-                    CharString("Inversion//%s//%s-%s", group->name(), at1->name(), at2->name()),
-                    CharString("%s dFull(r)", id.get()));
-                inversion->lineStyle().setStipple(LineStipple::QuarterDashStipple);
+            // Inversion (delta g(r), FT etc.)
+            Renderable *inversion = deltaPhiRGraph_->createRenderable(
+                Renderable::Data1DRenderable,
+                CharString("%s//Inversion//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()),
+                CharString("Inversion//%s//%s-%s", group->name(), at1->name(), at2->name()),
+                CharString("%s dFull(r)", id.get()));
+            inversion->lineStyle().setStipple(LineStipple::QuarterDashStipple);
 
-                // Delta g(r)
-                Renderable *deltaBond =
-                    deltaPhiRGraph_->createRenderable(Renderable::Data1DRenderable,
-                                                      CharString("%s//DeltaGRBond//%s//%s-%s//Full", module_->uniqueName(),
-                                                                 group->name(), at1->name(), at2->name()),
-                                                      CharString("DeltaGR//%s//%s-%s", group->name(), at1->name(), at2->name()),
-                                                      CharString("%s dBound(r)", id.get()));
-                deltaBond->lineStyle().setStipple(LineStipple::DotStipple);
-            }
-        }
+            // Delta g(r)
+            Renderable *deltaBond = deltaPhiRGraph_->createRenderable(
+                Renderable::Data1DRenderable,
+                CharString("%s//DeltaGRBond//%s//%s-%s//Full", module_->uniqueName(), group->name(), at1->name(), at2->name()),
+                CharString("DeltaGR//%s//%s-%s", group->name(), at1->name(), at2->name()),
+                CharString("%s dBound(r)", id.get()));
+            deltaBond->lineStyle().setStipple(LineStipple::DotStipple);
+        });
     }
 
     // Add phi magnitude data

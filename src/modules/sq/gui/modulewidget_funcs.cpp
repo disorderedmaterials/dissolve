@@ -26,6 +26,7 @@
 #include "main/dissolve.h"
 #include "modules/sq/gui/modulewidget.h"
 #include "modules/sq/sq.h"
+#include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
 SQModuleWidget::SQModuleWidget(QWidget *parent, SQModule *module, Dissolve &dissolve)
@@ -160,30 +161,25 @@ void SQModuleWidget::setGraphDataTargets(SQModule *module)
 
     // Add partials
     auto n = 0;
-    for (AtomType *at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
-    {
-        auto m = n;
-        for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
-        {
-            CharString id("%s-%s", at1->name(), at2->name());
+    for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
+        CharString id("%s-%s", at1->name(), at2->name());
 
-            // Partial g(r)
+        // Partial g(r)
 
-            Renderable *fullGR = partialGRGraph_->createRenderable(
-                Renderable::Data1DRenderable,
-                CharString("%s//UnweightedGR//%s-%s//Full", module_->uniqueName(), at1->name(), at2->name()),
-                CharString("GR//%s", id.get()), id.get());
-            partialGRGraph_->addRenderableToGroup(fullGR, id.get());
+        Renderable *fullGR = partialGRGraph_->createRenderable(
+            Renderable::Data1DRenderable,
+            CharString("%s//UnweightedGR//%s-%s//Full", module_->uniqueName(), at1->name(), at2->name()),
+            CharString("GR//%s", id.get()), id.get());
+        partialGRGraph_->addRenderableToGroup(fullGR, id.get());
 
-            // Partial S(Q)
+        // Partial S(Q)
 
-            Renderable *fullSQ = partialSQGraph_->createRenderable(
-                Renderable::Data1DRenderable,
-                CharString("%s//UnweightedSQ//%s-%s//Full", module_->uniqueName(), at1->name(), at2->name()),
-                CharString("SQ//%s", id.get()), id.get());
-            partialSQGraph_->addRenderableToGroup(fullSQ, id.get());
-        }
-    }
+        Renderable *fullSQ = partialSQGraph_->createRenderable(
+            Renderable::Data1DRenderable,
+            CharString("%s//UnweightedSQ//%s-%s//Full", module_->uniqueName(), at1->name(), at2->name()),
+            CharString("SQ//%s", id.get()), id.get());
+        partialSQGraph_->addRenderableToGroup(fullSQ, id.get());
+    });
 
     // Add calculated total G(r)
     Renderable *totalGR = totalGRGraph_->createRenderable(

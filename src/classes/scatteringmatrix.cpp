@@ -24,6 +24,7 @@
 #include "classes/neutronweights.h"
 #include "math/interpolator.h"
 #include "math/svd.h"
+#include "templates/algorithms.h"
 #include <algorithm>
 
 ScatteringMatrix::ScatteringMatrix() {}
@@ -36,7 +37,7 @@ ScatteringMatrix::ScatteringMatrix() {}
 int ScatteringMatrix::nPairs() const { return typePairs_.size(); }
 
 // Return index of specified AtomType pair
-int ScatteringMatrix::pairIndex(AtomType *typeI, AtomType *typeJ) const
+int ScatteringMatrix::pairIndex(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ) const
 {
     auto index = 0;
     for (auto [i, j] : typePairs_)
@@ -52,7 +53,8 @@ int ScatteringMatrix::pairIndex(AtomType *typeI, AtomType *typeJ) const
 }
 
 // Return weight of the specified AtomType pair in the inverse matrix
-double ScatteringMatrix::pairWeightInverse(AtomType *typeI, AtomType *typeJ, int dataIndex) const
+double ScatteringMatrix::pairWeightInverse(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ,
+                                           int dataIndex) const
 {
     /*
      * The required row of the inverse matrix is the index of the AtomType pair.
@@ -211,8 +213,8 @@ Array2D<double> ScatteringMatrix::matrixProduct() const { return inverseA_ * A_;
  */
 
 // Initialise from supplied list of AtomTypes
-void ScatteringMatrix::initialise(const List<AtomType> &types, Array2D<Data1D> &estimatedSQ, const char *objectNamePrefix,
-                                  const char *groupName)
+void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &types, Array2D<Data1D> &estimatedSQ,
+                                  const char *objectNamePrefix, const char *groupName)
 {
     // Clear coefficients matrix and its inverse_, and empty our typePairs_ and data_ lists
     A_.clear();
@@ -221,16 +223,10 @@ void ScatteringMatrix::initialise(const List<AtomType> &types, Array2D<Data1D> &
     typePairs_.clear();
 
     // Copy atom types
-    for (AtomType *at1 = types.first(); at1 != NULL; at1 = at1->next())
-    {
-        for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next())
-        {
-            typePairs_.emplace_back(at1, at2);
-        }
-    }
+    for_each_pair(types.begin(), types.end(), [this](int i, auto at1, int j, auto at2) { typePairs_.emplace_back(at1, at2); });
 
     // Create partials array
-    estimatedSQ.initialise(types.nItems(), types.nItems(), true);
+    estimatedSQ.initialise(types.size(), types.size(), true);
     Data1D *partials = estimatedSQ.linearArray();
     auto index = 0;
     for (auto [i, j] : typePairs_)
@@ -279,12 +275,12 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeigh
     {
         for (int m = n; m < nUsedTypes; ++m)
         {
-            auto colIndex = pairIndex(&usedTypes.atomType(n), &usedTypes.atomType(m));
+            auto colIndex = pairIndex(usedTypes.atomType(n), usedTypes.atomType(m));
             if (colIndex == -1)
             {
                 Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
                                  "('%s' and/or '%s').\n",
-                                 usedTypes.atomType(n).name(), usedTypes.atomType(m).name());
+                                 usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
                 return false;
             }
 
@@ -301,8 +297,8 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeigh
 }
 
 // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
-bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, AtomType *at1, AtomType *at2, double dataWeight,
-                                               double factor)
+bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, std::shared_ptr<AtomType> at1,
+                                               std::shared_ptr<AtomType> at2, double dataWeight, double factor)
 {
     // Extend the scattering matrix by one row
     A_.addRow(typePairs_.size());

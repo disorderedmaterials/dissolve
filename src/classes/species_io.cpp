@@ -118,7 +118,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
     Element *el;
     CharString arg1, arg2;
-    AtomType *at;
+    std::shared_ptr<AtomType> at;
     Isotopologue *iso;
     SpeciesAngle *a;
     SpeciesAtom *i;
@@ -453,7 +453,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     arg2 = DissolveSys::afterChar(parser.argc(n), '=');
 
                     at = coreData.findAtomType(arg1.get());
-                    if (at == NULL)
+                    if (!at)
                     {
                         Messenger::error("Failed to find AtomType '%s', referred to in Isotopologue '%s', "
                                          "Species '%s'\n",
@@ -779,14 +779,13 @@ bool Species::write(LineParser &parser, const char *prefix)
             if (!parser.writeLineF("%s%s  '%s'", newPrefix.get(), keywords().keyword(Species::IsotopologueKeyword),
                                    iso->name()))
                 return false;
-            RefDataListIterator<AtomType, Isotope *> isotopeIterator(iso->isotopes());
-            while (AtomType *atomType = isotopeIterator.iterate())
+            for (auto [atomType, isotope] : iso->isotopes())
             {
                 // No need to write anything that's the natural isotope...
-                if (isotopeIterator.currentData()->A() == 0)
+                if (isotope->A() == 0)
                     continue;
 
-                if (!parser.writeLineF("  %s=%i", atomType->name(), isotopeIterator.currentData()->A()))
+                if (!parser.writeLineF("  %s=%i", atomType->name(), isotope->A()))
                     return false;
             }
             if (!parser.writeLineF("\n"))

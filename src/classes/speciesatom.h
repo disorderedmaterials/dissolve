@@ -26,6 +26,7 @@
 #include "templates/orderedpointerdataarray.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"
+#include <memory>
 #include <vector>
 
 // Forward Declarations
@@ -57,7 +58,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
     // Charge (if contained in file)
     double charge_;
     // Assigned AtomType
-    AtomType *atomType_;
+    std::shared_ptr<AtomType> atomType_;
     // Index in Species
     int index_;
     // Whether the atom is currently selected
@@ -83,9 +84,9 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
     // Return charge of Atom
     double charge() const;
     // Set AtomType of Atom
-    void setAtomType(AtomType *at);
+    void setAtomType(std::shared_ptr<AtomType> at);
     // Return AtomType of Atom
-    AtomType *atomType() const;
+    std::shared_ptr<AtomType> atomType() const;
     // Set List index (0->[N-1])
     void setIndex(int id);
     // Return List index (0->[N-1])

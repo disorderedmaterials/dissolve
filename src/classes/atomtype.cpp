@@ -24,7 +24,7 @@
 #include "data/elements.h"
 #include <string.h>
 
-AtomType::AtomType() : ListItem<AtomType>()
+AtomType::AtomType()
 {
     element_ = NULL;
     name_ = "XX";

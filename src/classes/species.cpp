@@ -126,16 +126,15 @@ bool Species::checkSetUp()
      */
     for (auto *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
     {
-        RefDataListIterator<AtomType, Isotope *> isotopeIterator(iso->isotopes());
-        while (AtomType *atomType = isotopeIterator.iterate())
+        for (auto [atomType, isotope] : iso->isotopes())
         {
-            if (isotopeIterator.currentData() == NULL)
+            if (!isotope)
             {
                 Messenger::error("Isotopologue '%s' does not refer to an elemental Isotope for AtomType '%s'.\n", iso->name(),
                                  atomType->name());
                 ++nErrors;
             }
-            else if (!Isotopes::isotope(atomType->element(), isotopeIterator.currentData()->A()))
+            else if (!Isotopes::isotope(atomType->element(), isotope->A()))
             {
                 Messenger::error("Isotopologue '%s' does not refer to a suitable Isotope for AtomType '%s'.\n", iso->name(),
                                  atomType->name());

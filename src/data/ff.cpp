@@ -238,7 +238,7 @@ bool Forcefield::assignAtomType(SpeciesAtom *i, CoreData &coreData) const
     const ForcefieldAtomType &atomType = *optRef;
 
     // Check if an AtomType of the same name already exists - if it does, just use that one
-    AtomType *at = coreData.findAtomType(atomType.name());
+    auto at = coreData.findAtomType(atomType.name());
     if (!at)
     {
         at = coreData.addAtomType(i->element());

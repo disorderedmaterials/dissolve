@@ -31,7 +31,7 @@
 #include "templates/broadcastlist.h"
 #include <string.h>
 
-AtomTypeData::AtomTypeData(AtomType &type, double population, double fraction, double boundCoherent, int nIso)
+AtomTypeData::AtomTypeData(std::shared_ptr<AtomType> type, double population, double fraction, double boundCoherent, int nIso)
     : atomType_(type), exchangeable_(false), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
 {
     isotopes_.clear();
@@ -48,7 +48,7 @@ AtomTypeData::AtomTypeData(const AtomTypeData &source) : atomType_(source.atomTy
 
 // Read data through specified LineParser
 AtomTypeData::AtomTypeData(LineParser &parser, const CoreData &coreData, int listIndex)
-    : atomType_(*coreData.findAtomType(parser.argc(0))), listIndex_(listIndex)
+    : atomType_(coreData.findAtomType(parser.argc(0))), listIndex_(listIndex)
 {
     population_ = parser.argd(1);
     fraction_ = parser.argd(2);
@@ -62,7 +62,7 @@ AtomTypeData::AtomTypeData(LineParser &parser, const CoreData &coreData, int lis
 }
 
 // Initialise Constructor
-AtomTypeData::AtomTypeData(int listIndex, AtomType &type, double population)
+AtomTypeData::AtomTypeData(int listIndex, std::shared_ptr<AtomType> type, double population)
     : atomType_(type), listIndex_(listIndex), population_(population)
 {
     exchangeable_ = false;
@@ -124,7 +124,7 @@ void AtomTypeData::zeroPopulations()
 int AtomTypeData::listIndex() const { return listIndex_; }
 
 // Return reference AtomType
-AtomType &AtomTypeData::atomType() const { return atomType_; }
+std::shared_ptr<AtomType> AtomTypeData::atomType() const { return atomType_; }
 
 // Set exchangeable flag
 void AtomTypeData::setAsExchangeable() { exchangeable_ = true; }
@@ -154,7 +154,7 @@ void AtomTypeData::naturalise()
     // Clear the isotopes list and add on the natural isotope, keeping the current population
     isotopes_.clear();
     IsotopeData *topeData = isotopes_.add();
-    topeData->initialise(Isotopes::naturalIsotope(atomType_.element()));
+    topeData->initialise(Isotopes::naturalIsotope(atomType_->element()));
     topeData->add(population_);
     topeData->finalise(population_);
     boundCoherent_ = topeData->isotope()->boundCoherent();
@@ -197,7 +197,7 @@ void AtomTypeData::setBoundCoherent(double d) { boundCoherent_ = d; }
 double AtomTypeData::boundCoherent() const { return boundCoherent_; }
 
 // Return referenced AtomType name
-const char *AtomTypeData::atomTypeName() const { return atomType_.name(); }
+const char *AtomTypeData::atomTypeName() const { return atomType_->name(); }
 
 /*
  * I/O
@@ -207,7 +207,7 @@ const char *AtomTypeData::atomTypeName() const { return atomType_.name(); }
 bool AtomTypeData::write(LineParser &parser)
 {
     // Line Contains: AtomType name, exchangeable flag, population, fraction, boundCoherent, and nIsotopes
-    if (!parser.writeLineF("%s %f %f %f %i\n", atomType_.name(), population_, fraction_, boundCoherent_, isotopes_.nItems()))
+    if (!parser.writeLineF("%s %f %f %f %i\n", atomType_->name(), population_, fraction_, boundCoherent_, isotopes_.nItems()))
         return false;
     ListIterator<IsotopeData> isotopeIterator(isotopes_);
     while (IsotopeData *topeData = isotopeIterator.iterate())
@@ -227,9 +227,9 @@ bool AtomTypeData::broadcast(ProcessPool &procPool, const int root, const CoreDa
     // For the atomType_, use the fact that the AtomType names are unique...
     CharString typeName;
     if (procPool.poolRank() == root)
-        typeName = atomType_.name();
+        typeName = atomType_->name();
     procPool.broadcast(typeName, root);
-    atomType_ = *coreData.findAtomType(typeName);
+    atomType_ = coreData.findAtomType(typeName);
 
     // Broadcast the IsotopeData list
     BroadcastList<IsotopeData> topeBroadcaster(procPool, root, isotopes_, coreData);

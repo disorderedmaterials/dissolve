@@ -119,7 +119,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
     // Initialise content array
     void initialiseArrays(int nMolecules);
     // Return specified used type
-    AtomType &usedAtomType(int index);
+    std::shared_ptr<AtomType> usedAtomType(int index);
     // Return specified used type data
     AtomTypeData &usedAtomTypeData(int index);
     // Return first AtomTypeData for this Configuration

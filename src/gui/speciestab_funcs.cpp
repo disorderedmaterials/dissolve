@@ -45,7 +45,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     // Set item delegates in tables
     // -- SpeciesAtomTable
     ui_.AtomTable->setItemDelegateForColumn(
-        1, new ComboListDelegate(this, new ComboNameListItems<AtomType>(dissolve_.atomTypes())));
+        1, new ComboListDelegate(this, new ComboSharedNameListItems<AtomType>(dissolve_.atomTypes())));
     for (int n = 2; n < 6; ++n)
         ui_.AtomTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
     ui_.AtomTable->horizontalHeader()->setFont(font());

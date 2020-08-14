@@ -210,7 +210,7 @@ Vec3<double> KeywordBase::asVec3Double()
  */
 
 // Prune any references to the supplied AtomType in the contained data
-void KeywordBase::removeReferencesTo(AtomType *at)
+void KeywordBase::removeReferencesTo(std::shared_ptr<AtomType> at)
 {
     // Default action - ignore
 }

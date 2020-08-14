@@ -26,6 +26,7 @@
 #include "main/dissolve.h"
 #include "modules/neutronsq/gui/modulewidget.h"
 #include "modules/neutronsq/neutronsq.h"
+#include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
 NeutronSQModuleWidget::NeutronSQModuleWidget(QWidget *parent, NeutronSQModule *module, Dissolve &dissolve)
@@ -191,53 +192,47 @@ void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule *module)
     CharString blockData;
 
     // Add partials
-    auto n = 0;
-    for (AtomType *at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
-    {
-        auto m = n;
-        for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
-        {
-            CharString id("%s-%s", at1->name(), at2->name());
+    for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
+        CharString id("%s-%s", at1->name(), at2->name());
 
-            /*
-             * Partial g(r)
-             */
+        /*
+         * Partial g(r)
+         */
 
-            // Full partial
-            partialGRGraph_->createRenderable(Renderable::Data1DRenderable,
-                                              CharString("%s//WeightedGR//%s//Full", module_->uniqueName(), id.get()),
-                                              CharString("%s (Full)", id.get()), "Full");
+        // Full partial
+        partialGRGraph_->createRenderable(Renderable::Data1DRenderable,
+                                          CharString("%s//WeightedGR//%s//Full", module_->uniqueName(), id.get()),
+                                          CharString("%s (Full)", id.get()), "Full");
 
-            // Bound partial
-            partialGRGraph_->createRenderable(Renderable::Data1DRenderable,
-                                              CharString("%s//WeightedGR//%s//Bound", module_->uniqueName(), id.get()),
-                                              CharString("%s (Bound)", id.get()), "Bound");
+        // Bound partial
+        partialGRGraph_->createRenderable(Renderable::Data1DRenderable,
+                                          CharString("%s//WeightedGR//%s//Bound", module_->uniqueName(), id.get()),
+                                          CharString("%s (Bound)", id.get()), "Bound");
 
-            // Unbound partial
-            partialGRGraph_->createRenderable(Renderable::Data1DRenderable,
-                                              CharString("%s//WeightedGR//%s//Unbound", module_->uniqueName(), id.get()),
-                                              CharString("%s (Unbound)", id.get()), "Unbound");
+        // Unbound partial
+        partialGRGraph_->createRenderable(Renderable::Data1DRenderable,
+                                          CharString("%s//WeightedGR//%s//Unbound", module_->uniqueName(), id.get()),
+                                          CharString("%s (Unbound)", id.get()), "Unbound");
 
-            /*
-             * Partial S(Q)
-             */
+        /*
+         * Partial S(Q)
+         */
 
-            // Full partial
-            partialSQGraph_->createRenderable(Renderable::Data1DRenderable,
-                                              CharString("%s//WeightedSQ//%s//Full", module_->uniqueName(), id.get()),
-                                              CharString("%s (Full)", id.get()), "Full");
+        // Full partial
+        partialSQGraph_->createRenderable(Renderable::Data1DRenderable,
+                                          CharString("%s//WeightedSQ//%s//Full", module_->uniqueName(), id.get()),
+                                          CharString("%s (Full)", id.get()), "Full");
 
-            // Bound partial
-            partialSQGraph_->createRenderable(Renderable::Data1DRenderable,
-                                              CharString("%s//WeightedSQ//%s//Bound", module_->uniqueName(), id.get()),
-                                              CharString("%s (Bound)", id.get()), "Bound");
+        // Bound partial
+        partialSQGraph_->createRenderable(Renderable::Data1DRenderable,
+                                          CharString("%s//WeightedSQ//%s//Bound", module_->uniqueName(), id.get()),
+                                          CharString("%s (Bound)", id.get()), "Bound");
 
-            // Unbound partial
-            partialSQGraph_->createRenderable(Renderable::Data1DRenderable,
-                                              CharString("%s//WeightedSQ//%s//Unbound", module_->uniqueName(), id.get()),
-                                              CharString("%s (Unbound)", id.get()), "Unbound");
-        }
-    }
+        // Unbound partial
+        partialSQGraph_->createRenderable(Renderable::Data1DRenderable,
+                                          CharString("%s//WeightedSQ//%s//Unbound", module_->uniqueName(), id.get()),
+                                          CharString("%s (Unbound)", id.get()), "Unbound");
+    });
 
     // Add calculated total G(r)
     Renderable *totalGR = totalGRGraph_->createRenderable(

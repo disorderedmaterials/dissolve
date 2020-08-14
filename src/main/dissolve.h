@@ -63,19 +63,20 @@ class Dissolve
 
     /*
      * Atom Types
-     * (Exposes List<AtomType> in coreData_)
+     * (Exposes std::vector<std::shared_ptr<AtomType>> in coreData_)
      */
     public:
     // Add AtomType with specified Element
-    AtomType *addAtomType(Element *el);
+    std::shared_ptr<AtomType> addAtomType(Element *el);
     // Return number of AtomTypes in list
     int nAtomTypes() const;
     // Return AtomTypes list
-    List<AtomType> &atomTypes();
+    std::vector<std::shared_ptr<AtomType>> &atomTypes();
     // Return nth AtomType in list
-    AtomType *atomType(int n);
+    std::shared_ptr<AtomType> atomType(int n);
     // Search for AtomType by name
-    AtomType *findAtomType(const char *name) const;
+    std::optional<std::shared_ptr<AtomType>> findAtomType(const char *name) const;
+
     // Clear all AtomTypes
     void clearAtomTypes();
 
@@ -156,13 +157,13 @@ class Dissolve
     // Return number of defined PairPotentials
     int nPairPotentials() const;
     // Add new pair potential to list
-    PairPotential *addPairPotential(AtomType *at1, AtomType *at2);
+    PairPotential *addPairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2);
     // Return PairPotentials list
     const List<PairPotential> &pairPotentials() const;
     // Return nth PairPotential in list
     PairPotential *pairPotential(int n);
     // Return whether specified PairPotential is defined
-    PairPotential *pairPotential(AtomType *at1, AtomType *at2) const;
+    PairPotential *pairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2) const;
     // Return whether specified PairPotential is defined
     PairPotential *pairPotential(const char *at1, const char *at2) const;
     // Return map for PairPotentials
@@ -170,7 +171,7 @@ class Dissolve
     // Clear and regenerate all PairPotentials, replacing those currently defined
     void regeneratePairPotentials();
     // Generate all necessary PairPotentials, adding missing terms where necessary
-    bool generatePairPotentials(AtomType *onlyInvolving = NULL);
+    bool generatePairPotentials(std::shared_ptr<AtomType> onlyInvolving = NULL);
 
     /*
      * Configurations

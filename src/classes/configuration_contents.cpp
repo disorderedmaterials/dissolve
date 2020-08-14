@@ -53,7 +53,7 @@ void Configuration::initialiseArrays(int nMolecules)
 }
 
 // Return specified used type
-AtomType &Configuration::usedAtomType(int index) { return usedAtomTypes_.atomType(index); }
+std::shared_ptr<AtomType> Configuration::usedAtomType(int index) { return usedAtomTypes_.atomType(index); }
 
 // Return specified used type data
 AtomTypeData &Configuration::usedAtomTypeData(int index) { return usedAtomTypes_[index]; }
@@ -180,7 +180,7 @@ Atom *Configuration::addAtom(const SpeciesAtom *sourceAtom, std::shared_ptr<Mole
     newAtom->setCoordinates(r);
 
     // Update our typeIndex (non-isotopic) and set local and master type indices
-    AtomTypeData &atd = usedAtomTypes_.add(*sourceAtom->atomType(), 1);
+    AtomTypeData &atd = usedAtomTypes_.add(sourceAtom->atomType(), 1);
     newAtom->setLocalTypeIndex(atd.listIndex());
     newAtom->setMasterTypeIndex(sourceAtom->atomType()->index());
 

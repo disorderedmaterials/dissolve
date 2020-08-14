@@ -54,9 +54,10 @@ void CoreData::clear()
  */
 
 // Add new AtomType
-AtomType *CoreData::addAtomType(Element *el)
+std::shared_ptr<AtomType> CoreData::addAtomType(Element *el)
 {
-    AtomType *newAtomType = atomTypes_.add();
+    auto newAtomType = std::make_shared<AtomType>();
+    atomTypes_.push_back(newAtomType);
 
     // Create a suitable unique name
     newAtomType->setName(uniqueAtomTypeName(el->symbol()));
@@ -72,19 +73,22 @@ AtomType *CoreData::addAtomType(Element *el)
 }
 
 // Remove specified AtomType
-void CoreData::removeAtomType(AtomType *at) { atomTypes_.remove(at); }
+void CoreData::removeAtomType(std::shared_ptr<AtomType> at)
+{
+    atomTypes_.erase(std::remove(atomTypes_.begin(), atomTypes_.end(), at));
+}
 
 // Return number of AtomTypes in list
-int CoreData::nAtomTypes() const { return atomTypes_.nItems(); }
+int CoreData::nAtomTypes() const { return atomTypes_.size(); }
 
 // Return core AtomTypes list
-List<AtomType> &CoreData::atomTypes() { return atomTypes_; }
+std::vector<std::shared_ptr<AtomType>> &CoreData::atomTypes() { return atomTypes_; }
 
 // Return core AtomTypes list (const)
-const List<AtomType> &CoreData::constAtomTypes() const { return atomTypes_; }
+const std::vector<std::shared_ptr<AtomType>> &CoreData::constAtomTypes() const { return atomTypes_; }
 
 // Return nth AtomType in list
-AtomType *CoreData::atomType(int n) { return atomTypes_[n]; }
+std::shared_ptr<AtomType> CoreData::atomType(int n) { return atomTypes_[n]; }
 
 // Generate unique AtomType name with base name provided
 const char *CoreData::uniqueAtomTypeName(const char *base) const
@@ -110,13 +114,13 @@ const char *CoreData::uniqueAtomTypeName(const char *base) const
 }
 
 // Search for AtomType by name
-AtomType *CoreData::findAtomType(const char *name) const
+std::shared_ptr<AtomType> CoreData::findAtomType(const char *name) const
 {
-    for (auto *at = atomTypes_.first(); at != NULL; at = at->next())
-        if (DissolveSys::sameString(at->name(), name))
-            return at;
-
-    return NULL;
+    auto it = std::find_if(atomTypes_.begin(), atomTypes_.end(),
+                           [&name](const auto &at) { return DissolveSys::sameString(at->name(), name); });
+    if (it == atomTypes_.end())
+        return nullptr;
+    return *it;
 }
 
 // Bump AtomTypes version

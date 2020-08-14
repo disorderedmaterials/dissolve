@@ -34,6 +34,9 @@
 #include "main/dissolve.h"
 #include <QListWidgetItem>
 
+Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
+Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
+
 ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title)
     : MainTab(dissolveWindow, dissolve, parent, title, this)
 {
@@ -308,7 +311,7 @@ void ForcefieldTab::updateImpropersTableRow(int row, MasterIntra *masterImproper
 }
 
 // Row update function for AtomTypesTable
-void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType *atomType, bool createItems)
+void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> atomType, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -316,7 +319,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType *atomType, bool cr
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+        item->setData(Qt::UserRole, QVariant::fromValue(atomType));
         ui_.AtomTypesTable->setItem(row, 0, item);
     }
     else
@@ -327,7 +330,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType *atomType, bool cr
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+        item->setData(Qt::UserRole, QVariant::fromValue(atomType));
         item->setFlags(Qt::NoItemFlags);
         ui_.AtomTypesTable->setItem(row, 1, item);
     }
@@ -339,7 +342,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType *atomType, bool cr
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+        item->setData(Qt::UserRole, QVariant::fromValue(atomType));
         ui_.AtomTypesTable->setItem(row, 2, item);
     }
     else
@@ -350,7 +353,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType *atomType, bool cr
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+        item->setData(Qt::UserRole, QVariant::fromValue(atomType));
         ui_.AtomTypesTable->setItem(row, 3, item);
     }
     else
@@ -363,7 +366,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, AtomType *atomType, bool cr
         if (createItems)
         {
             item = new QTableWidgetItem;
-            item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+            item->setData(Qt::UserRole, QVariant::fromValue(atomType));
             ui_.AtomTypesTable->setItem(row, n + 4, item);
         }
         else
@@ -479,8 +482,8 @@ void ForcefieldTab::updateControls()
     ui_.MasterImpropersTable->resizeColumnsToContents();
 
     // AtomTypes Table
-    TableWidgetUpdater<ForcefieldTab, AtomType> atomTypesUpdater(ui_.AtomTypesTable, dissolve_.atomTypes(), this,
-                                                                 &ForcefieldTab::updateAtomTypesTableRow);
+    TableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(
+        ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     // PairPotentials
@@ -549,12 +552,12 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
     if (!ok)
         return;
 
-    AtomType *at = dissolve_.addAtomType(element);
+    std::shared_ptr<AtomType> at = dissolve_.addAtomType(element);
 
     Locker refreshLocker(refreshLock_);
 
-    TableWidgetUpdater<ForcefieldTab, AtomType> atomTypesUpdater(ui_.AtomTypesTable, dissolve_.atomTypes(), this,
-                                                                 &ForcefieldTab::updateAtomTypesTableRow);
+    TableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(
+        ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
     ui_.AtomTypesTable->resizeColumnsToContents();
 
     dissolveWindow_->setModified();
@@ -568,7 +571,10 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target AtomType from the passed widget
-    AtomType *atomType = w ? VariantPointer<AtomType>(w->data(Qt::UserRole)) : NULL;
+    if (w == nullptr)
+        return;
+
+    std::shared_ptr<AtomType> atomType = w->data(Qt::UserRole).value<std::shared_ptr<AtomType>>();
     if (!atomType)
         return;
 
