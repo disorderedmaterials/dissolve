@@ -22,6 +22,7 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/box.h"
+#include "classes/forcekernel.h"
 #include "classes/species.h"
 #include "genericitems/listhelper.h"
 #include "main/dissolve.h"
@@ -299,6 +300,53 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                                 dxpk_dlk, dcos_dxpj, dcos_dxpk);
                         du_dphi = t->force(phi * DEGRAD);
 
+                        // Sum forces on Atoms
+                        auto index = i->arrayIndex();
+                        intraFx[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(0));
+                        intraFy[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(1));
+                        intraFz[index] += du_dphi * dcos_dxpj.dp(dxpj_dij.columnAsVec3(2));
+
+                        index = j->arrayIndex();
+                        intraFx[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(0) - dxpj_dkj.columnAsVec3(0)) -
+                                                     dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0)));
+                        intraFy[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(1) - dxpj_dkj.columnAsVec3(1)) -
+                                                     dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1)));
+                        intraFz[index] += du_dphi * (dcos_dxpj.dp(-dxpj_dij.columnAsVec3(2) - dxpj_dkj.columnAsVec3(2)) -
+                                                     dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2)));
+
+                        index = k->arrayIndex();
+                        intraFx[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(0) - dxpk_dlk.columnAsVec3(0)) +
+                                                     dcos_dxpj.dp(dxpj_dkj.columnAsVec3(0)));
+                        intraFy[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(1) - dxpk_dlk.columnAsVec3(1)) +
+                                                     dcos_dxpj.dp(dxpj_dkj.columnAsVec3(1)));
+                        intraFz[index] += du_dphi * (dcos_dxpk.dp(dxpk_dkj.columnAsVec3(2) - dxpk_dlk.columnAsVec3(2)) +
+                                                     dcos_dxpj.dp(dxpj_dkj.columnAsVec3(2)));
+
+                        index = l->arrayIndex();
+                        intraFx[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(0));
+                        intraFy[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(1));
+                        intraFz[index] += du_dphi * dcos_dxpk.dp(dxpk_dlk.columnAsVec3(2));
+                    }
+
+                    // Improper forces
+                    DynamicArrayConstIterator<SpeciesImproper> improperIterator(molN->species()->constImpropers());
+                    while (const SpeciesImproper *imp = improperIterator.iterate())
+                    {
+                        // Grab pointers to atoms involved in angle
+                        i = molN->atom(imp->indexI());
+                        j = molN->atom(imp->indexJ());
+                        k = molN->atom(imp->indexK());
+                        l = molN->atom(imp->indexL());
+
+                        // Calculate vectors, ensuring we account for minimum image
+                        vecji = box->minimumVector(j, i);
+                        vecjk = box->minimumVector(j, k);
+                        veckl = box->minimumVector(k, l);
+
+                        // Calculate improper force parameters
+                        ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl, phi, dxpj_dij, dxpj_dkj, dxpk_dkj,
+                                                                dxpk_dlk, dcos_dxpj, dcos_dxpk);
+                        du_dphi = imp->force(phi * DEGRAD);
 
                         // Sum forces on Atoms
                         auto index = i->arrayIndex();

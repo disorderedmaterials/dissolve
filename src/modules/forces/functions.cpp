@@ -174,22 +174,21 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
 
         // Calculate forces from SpeciesBond terms
         for (const auto *bond : spAtom->bonds())
-        {
             kernel.forces(i, bond, mol->atom(bond->indexI()), mol->atom(bond->indexJ()));
-        }
 
         // Calculate forces from SpeciesAngle terms
         for (const auto *angle : spAtom->angles())
-        {
             kernel.forces(i, angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()), mol->atom(angle->indexK()));
-        }
 
         // Calculate forces from SpeciesTorsion terms
         for (const auto *torsion : spAtom->torsions())
-        {
             kernel.forces(i, torsion, mol->atom(torsion->indexI()), mol->atom(torsion->indexJ()), mol->atom(torsion->indexK()),
                           mol->atom(torsion->indexL()));
-        }
+
+        // Calculate forces from SpeciesImproper terms
+        for (const auto *improper : spAtom->impropers())
+            kernel.forces(i, improper, mol->atom(improper->indexI()), mol->atom(improper->indexJ()),
+                          mol->atom(improper->indexK()), mol->atom(improper->indexL()));
     }
 }
 
@@ -236,6 +235,12 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
         DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
         while (const SpeciesTorsion *t = torsionIterator.iterate())
             kernel.forces(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
+
+        // Loop over impropers
+        DynamicArrayConstIterator<SpeciesImproper> improperIterator(mol->species()->constImpropers());
+        while (const SpeciesImproper *imp = improperIterator.iterate())
+            kernel.forces(imp, mol->atom(imp->indexI()), mol->atom(imp->indexJ()), mol->atom(imp->indexK()),
+                          mol->atom(imp->indexL()));
     }
 }
 
@@ -260,6 +265,11 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Species *sp, cons
     DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(sp->constTorsions());
     while (const SpeciesTorsion *t = torsionIterator.iterate())
         kernel.forces(t);
+
+    // Loop over impropers
+    DynamicArrayConstIterator<SpeciesImproper> improperIterator(sp->constImpropers());
+    while (const SpeciesImproper *imp = improperIterator.iterate())
+        kernel.forces(imp);
 }
 
 // Calculate total forces within the supplied Configuration
