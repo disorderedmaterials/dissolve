@@ -187,7 +187,7 @@ class Forcefield : public Elements
     // Assign suitable AtomTypes to the supplied Species, returning the number of failures
     int assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy) const;
     // Assign intramolecular parameters to the supplied Species
-    virtual bool assignIntramolecular(Species *sp, int flags = 0) const;
+    virtual bool assignIntramolecular(Species *sp, int flags = Forcefield::GenerateImpropersFlag) const;
 
     /*
      * Atom Environment Helpers
