@@ -123,10 +123,10 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra *sourceIntra, SpeciesIntra *d
         }
         else if (sourceIntra->type() == SpeciesIntra::ImproperInteraction)
         {
-            master = coreData_.hasMasterTorsion(sourceIntra->masterParameters()->name());
+            master = coreData_.hasMasterImproper(sourceIntra->masterParameters()->name());
             if (!master)
             {
-                master = coreData_.addMasterTorsion(sourceIntra->masterParameters()->name());
+                master = coreData_.addMasterImproper(sourceIntra->masterParameters()->name());
                 master->setParameters(sourceIntra->parameters());
             }
         }

@@ -54,6 +54,10 @@ AddForcefieldTermsWizard::AddForcefieldTermsWizard(QWidget *parent) : temporaryD
     masterTorsionItemParent_->setFlags(Qt::ItemIsEnabled);
     masterTorsionItemParent_->setText(0, "Torsions");
     masterTorsionItemParent_->setExpanded(true);
+    masterImproperItemParent_ = new QTreeWidgetItem(ui_.MasterTermsTree);
+    masterImproperItemParent_->setFlags(Qt::ItemIsEnabled);
+    masterImproperItemParent_->setText(0, "Impropers");
+    masterImproperItemParent_->setExpanded(true);
 
     // Register pages with the wizard
     registerPage(AddForcefieldTermsWizard::SelectForcefieldPage, "Select Forcefield", AddForcefieldTermsWizard::AtomTypesPage);
@@ -114,12 +118,8 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
      * We have the original Species (which should exist in the provided Dissolve object) in currentSpecies()
      * and the temporary species modifiedSpecies_ which contains the new Forcefield terms.
      *
-     * So, we will assume that the ordering of all data (atoms, bonds etc.) in the two are the same, and then:
-     *
-     * 1) Loop over atoms and copy / reassign AtomTypes
-     * 2) Loop over bonds and create / assign parameters / MasterTerms (if BondTermsCheck is checked)
-     * 3) Loop over angles and create / assign parameters / MasterTerms (if AngleTermsCheck is checked)
-     * 4) Loop over torsions and create / assign parameters / MasterTerms (if TorsionTermsCheck is checked)
+     * So, we will assume that the ordering of all data (atoms, bonds etc.) in the two are the same, and then copy and reassign
+     * AtomTypes and intramolecular terms.
      */
 
     auto typesSelectionOnly = ui_.AtomTypesAssignSelectionRadio->isChecked();
@@ -407,15 +407,12 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                             continue;
 
                         // Construct a name for the master term based on the atom types - order atom
-                        // types alphabetically for consistency
-                        if (QString(mappedName(improper->i()->atomType())) < QString(mappedName(improper->l()->atomType())))
-                            termName.sprintf("%s-%s-%s-%s", mappedName(improper->i()->atomType()),
-                                             mappedName(improper->j()->atomType()), mappedName(improper->k()->atomType()),
-                                             mappedName(improper->l()->atomType()));
-                        else
-                            termName.sprintf("%s-%s-%s-%s", mappedName(improper->l()->atomType()),
-                                             mappedName(improper->k()->atomType()), mappedName(improper->j()->atomType()),
-                                             mappedName(improper->i()->atomType()));
+                        // types for j-l alphabetically for consistency
+                        QStringList jkl = QStringList()
+                                          << mappedName(improper->j()->atomType()) << mappedName(improper->k()->atomType())
+                                          << mappedName(improper->l()->atomType());
+                        jkl.sort();
+                        termName.sprintf("%s-%s", mappedName(improper->i()->atomType()), qPrintable(jkl.join("-")));
 
                         // Search for an existing master term by this name
                         MasterIntra *master = temporaryCoreData_.hasMasterImproper(termName);
@@ -652,6 +649,9 @@ void AddForcefieldTermsWizard::updateMasterTermsPage()
     TreeWidgetUpdater<AddForcefieldTermsWizard, MasterIntra> torsionUpdater(
         masterTorsionItemParent_, temporaryCoreData_.masterTorsions(), this,
         &AddForcefieldTermsWizard::updateMasterTermsTreeChild);
+    TreeWidgetUpdater<AddForcefieldTermsWizard, MasterIntra> improperUpdater(
+        masterImproperItemParent_, temporaryCoreData_.masterImpropers(), this,
+        &AddForcefieldTermsWizard::updateMasterTermsTreeChild);
 
     // Determine whether we have any naming conflicts
     auto conflicts = false;
@@ -671,6 +671,13 @@ void AddForcefieldTermsWizard::updateMasterTermsPage()
         }
     ListIterator<MasterIntra> torsionIterator(temporaryCoreData_.masterTorsions());
     while (MasterIntra *intra = torsionIterator.iterate())
+        if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
+        {
+            conflicts = true;
+            break;
+        }
+    ListIterator<MasterIntra> improperIterator(temporaryCoreData_.masterTorsions());
+    while (MasterIntra *intra = improperIterator.iterate())
         if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
         {
             conflicts = true;
