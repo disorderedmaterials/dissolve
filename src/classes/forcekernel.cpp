@@ -863,3 +863,146 @@ void ForceKernel::forces(const SpeciesTorsion *t)
     fy_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(1));
     fz_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(2));
 }
+
+// Calculate SpeciesImproper forces
+void ForceKernel::forces(const SpeciesImproper *imp, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
+{
+    // Calculate vectors, ensuring we account for minimum image
+    Vec3<double> vecji, vecjk, veckl;
+    if (j->cell()->mimRequired(i->cell()))
+        vecji = box_->minimumVector(j, i);
+    else
+        vecji = i->r() - j->r();
+    if (j->cell()->mimRequired(k->cell()))
+        vecjk = box_->minimumVector(j, k);
+    else
+        vecjk = k->r() - j->r();
+    if (k->cell()->mimRequired(l->cell()))
+        veckl = box_->minimumVector(k, l);
+    else
+        veckl = l->r() - k->r();
+
+    calculateTorsionParameters(vecji, vecjk, veckl);
+    const auto du_dphi = imp->force(phi_ * DEGRAD);
+
+    // Calculate forces on atom i
+    auto index = i->arrayIndex();
+    fx_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(0));
+    fy_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(1));
+    fz_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(2));
+
+    index = j->arrayIndex();
+    fx_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(0) - dxpj_dkj_.columnAsVec3(0)) -
+                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0)));
+    fy_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(1) - dxpj_dkj_.columnAsVec3(1)) -
+                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1)));
+    fz_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(2) - dxpj_dkj_.columnAsVec3(2)) -
+                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2)));
+
+    index = k->arrayIndex();
+    fx_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0) - dxpk_dlk_.columnAsVec3(0)) +
+                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(0)));
+    fy_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1) - dxpk_dlk_.columnAsVec3(1)) +
+                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(1)));
+    fz_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2) - dxpk_dlk_.columnAsVec3(2)) +
+                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(2)));
+
+    index = l->arrayIndex();
+    fx_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(0));
+    fy_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(1));
+    fz_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(2));
+}
+
+// Calculate SpeciesImproper forces for specified Atom only
+void ForceKernel::forces(const Atom *onlyThis, const SpeciesImproper *imp, const Atom *i, const Atom *j, const Atom *k,
+                         const Atom *l)
+{
+    // Calculate vectors, ensuring we account for minimum image
+    Vec3<double> vecji, vecjk, veckl;
+    if (j->cell()->mimRequired(i->cell()))
+        vecji = box_->minimumVector(j, i);
+    else
+        vecji = i->r() - j->r();
+    if (j->cell()->mimRequired(k->cell()))
+        vecjk = box_->minimumVector(j, k);
+    else
+        vecjk = k->r() - j->r();
+    if (k->cell()->mimRequired(l->cell()))
+        veckl = box_->minimumVector(k, l);
+    else
+        veckl = l->r() - k->r();
+
+    calculateTorsionParameters(vecji, vecjk, veckl);
+    const auto du_dphi = imp->force(phi_ * DEGRAD);
+
+    // Calculate forces for specified atom
+    auto index = onlyThis->arrayIndex();
+    if (onlyThis == i)
+    {
+        fx_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(0));
+        fy_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(1));
+        fz_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(2));
+    }
+    else if (onlyThis == j)
+    {
+        fx_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(0) - dxpj_dkj_.columnAsVec3(0)) -
+                                 dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0)));
+        fy_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(1) - dxpj_dkj_.columnAsVec3(1)) -
+                                 dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1)));
+        fz_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(2) - dxpj_dkj_.columnAsVec3(2)) -
+                                 dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2)));
+    }
+    else if (onlyThis == k)
+    {
+        fx_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0) - dxpk_dlk_.columnAsVec3(0)) +
+                                 dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(0)));
+        fy_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1) - dxpk_dlk_.columnAsVec3(1)) +
+                                 dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(1)));
+        fz_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2) - dxpk_dlk_.columnAsVec3(2)) +
+                                 dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(2)));
+    }
+    else
+    {
+        fx_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(0));
+        fy_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(1));
+        fz_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(2));
+    }
+}
+
+// Calculate SpeciesImproper forces
+void ForceKernel::forces(const SpeciesImproper *imp)
+{
+    // Calculate vectors, ensuring we account for minimum image
+    const Vec3<double> vecji = imp->i()->r() - imp->j()->r(), vecjk = imp->k()->r() - imp->j()->r(),
+                       veckl = imp->l()->r() - imp->k()->r();
+
+    calculateTorsionParameters(vecji, vecjk, veckl);
+    const auto du_dphi = imp->force(phi_ * DEGRAD);
+
+    // Calculate forces on atom i
+    auto index = imp->i()->index();
+    fx_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(0));
+    fy_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(1));
+    fz_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(2));
+
+    index = imp->j()->index();
+    fx_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(0) - dxpj_dkj_.columnAsVec3(0)) -
+                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0)));
+    fy_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(1) - dxpj_dkj_.columnAsVec3(1)) -
+                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1)));
+    fz_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(2) - dxpj_dkj_.columnAsVec3(2)) -
+                             dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2)));
+
+    index = imp->k()->index();
+    fx_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0) - dxpk_dlk_.columnAsVec3(0)) +
+                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(0)));
+    fy_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1) - dxpk_dlk_.columnAsVec3(1)) +
+                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(1)));
+    fz_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2) - dxpk_dlk_.columnAsVec3(2)) +
+                             dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(2)));
+
+    index = imp->l()->index();
+    fx_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(0));
+    fy_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(1));
+    fz_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(2));
+}
