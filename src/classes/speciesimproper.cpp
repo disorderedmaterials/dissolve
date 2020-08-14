@@ -65,6 +65,15 @@ void SpeciesImproper::setAtoms(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, S
     if (l_ == NULL)
         Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* l in SpeciesImproper::set().\n");
 #endif
+
+    if (i_)
+        i_->addImproper(this);
+    if (j_)
+        j_->addImproper(this);
+    if (k_)
+        k_->addImproper(this);
+    if (l_)
+        l_->addImproper(this);
 }
 
 // Return first SpeciesAtom

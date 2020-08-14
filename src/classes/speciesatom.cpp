@@ -212,6 +212,24 @@ SpeciesTorsion *SpeciesAtom::torsion(int index) { return torsions_.at(index); }
 // Return array of Torsions in which the Atom is involved
 const std::vector<SpeciesTorsion *> &SpeciesAtom::torsions() const { return torsions_; }
 
+// Add specified SpeciesImproper to Atom
+void SpeciesAtom::addImproper(SpeciesImproper *improper) { impropers_.push_back(improper); }
+
+// Remove improper reference
+void SpeciesAtom::removeImproper(SpeciesImproper *improper)
+{
+    impropers_.erase(find(impropers_.begin(), impropers_.end(), improper));
+}
+
+// Return the number of Impropers in which the Atom is involved
+int SpeciesAtom::nImpropers() const { return impropers_.size(); }
+
+// Return specified improper
+SpeciesImproper *SpeciesAtom::improper(int index) { return impropers_.at(index); }
+
+// Return array of Impropers in which the Atom is involved
+const std::vector<SpeciesImproper *> &SpeciesAtom::impropers() const { return impropers_; }
+
 // Return scaling factor to employ with specified Atom
 double SpeciesAtom::scaling(const SpeciesAtom *j) const
 {
