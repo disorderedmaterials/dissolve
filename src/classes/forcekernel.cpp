@@ -445,59 +445,13 @@ void ForceKernel::forces(const Atom *i, ProcessPool::DivisionStrategy strategy)
 // Calculate angle force parameters from supplied vectors, storing result in local class variables
 void ForceKernel::calculateAngleParameters(Vec3<double> vecji, Vec3<double> vecjk)
 {
-    // Calculate angle
-    const auto magji = vecji.magAndNormalise();
-    const auto magjk = vecjk.magAndNormalise();
-    double dp;
-    theta_ = Box::angleInDegrees(vecji, vecjk, dp);
-
-    // Determine force vectors for atoms
-    dfi_dtheta_ = (vecjk - vecji * dp) / magji;
-    dfk_dtheta_ = (vecji - vecjk * dp) / magjk;
+    calculateAngleParameters(vecji, vecjk, theta_, dfi_dtheta_, dfk_dtheta_);
 }
 
-// Calculate torsion force parameters from supplied vectors, storing result in local class variables
+// Calculate SpeciesTorsion forces parameters from supplied vectors, storing result in local class variables
 void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec3<double> vecjk, const Vec3<double> veckl)
 {
-    // Calculate cross products and torsion angle formed (in radians)
-    Vec3<double> xpj = vecji * vecjk;
-    Vec3<double> xpk = veckl * vecjk;
-    const auto magxpj = xpj.magAndNormalise();
-    const auto magxpk = xpk.magAndNormalise();
-    auto dp = xpj.dp(xpk);
-    if (dp < -1.0)
-        dp = -1.0;
-    else if (dp > 1.0)
-        dp = 1.0;
-    phi_ = acos(dp);
-
-    /*
-     * Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
-     * E.g.
-     *	d (rij x rkj)
-     *	------------- = rij[cp(n+2)] * U[cp(n+1)] - rij[cp(n+1)] * U[cp(n+2)]
-     *	d rkj[n]
-     *
-     * where cp is a cylic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a unit vector in the n direction.
-     * So,
-     *	d (rij x rkj)
-     *	------------- = rij[2] * U[1] - rij[1] * U[2]
-     *	d rkj[0]
-     *			= rij[z] * (0,1,0) - rij[y] * (0,0,1)
-     *
-     *			= (0,rij[z],0) - (0,0,rij[y])
-     *
-     *			= (0,rij[z],-rij[y])
-     */
-
-    dxpj_dij_.makeCrossProductMatrix(vecjk);
-    dxpj_dkj_.makeCrossProductMatrix(-vecji);
-    dxpk_dkj_.makeCrossProductMatrix(-veckl);
-    dxpk_dlk_.makeCrossProductMatrix(vecjk);
-
-    // Construct derivatives of cos(phi) w.r.t. perpendicular axes
-    dcos_dxpj_ = (xpk - xpj * dp) / magxpj;
-    dcos_dxpk_ = (xpj - xpk * dp) / magxpk;
+    calculateTorsionParameters(vecji, vecjk, veckl, phi_, dxpj_dij_, dxpj_dkj_, dxpk_dkj_, dxpk_dlk_, dcos_dxpj_, dcos_dxpk_);
 }
 
 // Calculate Bond forces
@@ -599,7 +553,22 @@ void ForceKernel::forces(const SpeciesBond *b)
     fz_[index] += vecji.z;
 }
 
-// Calculate Angle forces
+// Calculate angle force parameters from supplied vectors, storing results in supplied variables
+void ForceKernel::calculateAngleParameters(Vec3<double> vecji, Vec3<double> vecjk, double &theta, Vec3<double> &dfi_dtheta,
+                                           Vec3<double> &dfk_dtheta)
+{
+    // Calculate angle
+    const auto magji = vecji.magAndNormalise();
+    const auto magjk = vecjk.magAndNormalise();
+    double dp;
+    theta = Box::angleInDegrees(vecji, vecjk, dp);
+
+    // Determine force vectors for atoms
+    dfi_dtheta = (vecjk - vecji * dp) / magji;
+    dfk_dtheta = (vecji - vecjk * dp) / magjk;
+}
+
+// Calculate SpeciesAngle forces
 void ForceKernel::forces(const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k)
 {
     Vec3<double> vecji, vecjk;
@@ -707,7 +676,53 @@ void ForceKernel::forces(const SpeciesAngle *a)
     fz_[index] += dfk_dtheta_.z;
 }
 
-// Calculate Torsion force
+// Calculate torsion force parameters from supplied vectors, storing results in supplied variables
+void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec3<double> vecjk, const Vec3<double> veckl,
+                                             double &phi, Matrix3 &dxpj_dij, Matrix3 &dxpj_dkj, Matrix3 &dxpk_dkj,
+                                             Matrix3 &dxpk_dlk, Vec3<double> &dcos_dxpj, Vec3<double> &dcos_dxpk)
+{
+    // Calculate cross products and torsion angle formed (in radians)
+    Vec3<double> xpj = vecji * vecjk;
+    Vec3<double> xpk = veckl * vecjk;
+    const auto magxpj = xpj.magAndNormalise();
+    const auto magxpk = xpk.magAndNormalise();
+    auto dp = xpj.dp(xpk);
+    if (dp < -1.0)
+        dp = -1.0;
+    else if (dp > 1.0)
+        dp = 1.0;
+    phi = acos(dp);
+
+    /*
+     * Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
+     * E.g.
+     *	d (rij x rkj)
+     *	------------- = rij[cp(n+2)] * U[cp(n+1)] - rij[cp(n+1)] * U[cp(n+2)]
+     *	d rkj[n]
+     *
+     * where cp is a cylic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a unit vector in the n direction.
+     * So,
+     *	d (rij x rkj)
+     *	------------- = rij[2] * U[1] - rij[1] * U[2]
+     *	d rkj[0]
+     *			= rij[z] * (0,1,0) - rij[y] * (0,0,1)
+     *
+     *			= (0,rij[z],0) - (0,0,rij[y])
+     *
+     *			= (0,rij[z],-rij[y])
+     */
+
+    dxpj_dij.makeCrossProductMatrix(vecjk);
+    dxpj_dkj.makeCrossProductMatrix(-vecji);
+    dxpk_dkj.makeCrossProductMatrix(-veckl);
+    dxpk_dlk.makeCrossProductMatrix(vecjk);
+
+    // Construct derivatives of cos(phi) w.r.t. perpendicular axes
+    dcos_dxpj = (xpk - xpj * dp) / magxpj;
+    dcos_dxpk = (xpj - xpk * dp) / magxpk;
+}
+
+// Calculate SpeciesTorsion forces
 void ForceKernel::forces(const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
 {
     // Calculate vectors, ensuring we account for minimum image

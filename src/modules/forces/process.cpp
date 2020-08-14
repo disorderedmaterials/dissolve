@@ -294,45 +294,11 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         vecjk = box->minimumVector(j, k);
                         veckl = box->minimumVector(k, l);
 
-                        // Calculate cross products and torsion angle formed (in radians)
-                        xpj = vecji * vecjk;
-                        xpk = veckl * vecjk;
-                        magxpj = xpj.magAndNormalise();
-                        magxpk = xpk.magAndNormalise();
-                        dp = xpj.dp(xpk);
-                        if (dp < -1.0)
-                            dp = -1.0;
-                        else if (dp > 1.0)
-                            dp = 1.0;
-                        phi = acos(dp);
+                        // Calculate torsion force parameters
+                        ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl, phi, dxpj_dij, dxpj_dkj, dxpk_dkj,
+                                                                dxpk_dlk, dcos_dxpj, dcos_dxpk);
                         du_dphi = t->force(phi * DEGRAD);
 
-                        /* Construct derivatives of perpendicular axis (cross product) w.r.t. component
-                         *vectors. E.g. d (rij x rkj)
-                         *	------------- = rij[cp(n+2)] * U[cp(n+1)] - rij[cp(n+1)] * U[cp(n+2)]
-                         *	d rkj[n]
-                         *
-                         * where cp is a cylic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a
-                         *unit vector in the n direction. So, d (rij x rkj)
-                         *	------------- = rij[2] * U[1] - rij[1] * U[2]
-                         *	d rkj[0]
-                         *			= rij[z] * (0,1,0) - rij[y] * (0,0,1)
-                         *
-                         *			= (0,rij[z],0) - (0,0,rij[y])
-                         *
-                         *			= (0,rij[z],-rij[y])
-                         */
-
-                        dxpj_dij.makeCrossProductMatrix(vecjk);
-                        temp = -vecji;
-                        dxpj_dkj.makeCrossProductMatrix(temp);
-                        temp = -veckl;
-                        dxpk_dkj.makeCrossProductMatrix(temp);
-                        dxpk_dlk.makeCrossProductMatrix(vecjk);
-
-                        // Construct derivatives of cos(phi) w.r.t. perpendicular axes
-                        dcos_dxpj = (xpk - xpj * dp) / magxpj;
-                        dcos_dxpk = (xpj - xpk * dp) / magxpk;
 
                         // Sum forces on Atoms
                         auto index = i->arrayIndex();
