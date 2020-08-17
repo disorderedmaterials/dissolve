@@ -289,7 +289,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
 
             // Update any type name mappings we have
             typeNameMappings_.clear();
-            for (int i = 0; i < ui_.AtomTypesConflictsList->count(); ++i)
+            for (auto i = 0; i < ui_.AtomTypesConflictsList->count(); ++i)
             {
                 QListWidgetItem *item = ui_.AtomTypesConflictsList->item(i);
                 typeNameMappings_[item->data(Qt::UserRole).value<std::shared_ptr<AtomType>>()] = qPrintable(item->text());

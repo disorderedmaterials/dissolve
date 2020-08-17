@@ -145,7 +145,7 @@ bool Configuration::loadCoordinates(LineParser &parser, CoordinateImportFileForm
     }
 
     // All good, so copy atom coordinates over into our array
-    for (int n = 0; n < atoms_.nItems(); ++n)
+    for (auto n = 0; n < atoms_.nItems(); ++n)
         atoms_[n]->setCoordinates(r[n]);
 
     return true;
