@@ -130,8 +130,11 @@ bool Data3DImportFileFormat::importData(LineParser &parser, Data3D &data)
 {
     // Import the data
     auto result = false;
-    // 	if (data3DFormat() == Data3DImportFileFormat::CartesianData3D) result = importCartesian(parser, data);
-    Messenger::error("Don't know how to load Data3D in format '%s'.\n", formatKeyword(data3DFormat()));
+    switch (data3DFormat())
+    {
+        default:
+            Messenger::error("Don't know how to load Data3D in format '%s'.\n", formatKeyword(data3DFormat()));
+    }
 
     return result;
 }

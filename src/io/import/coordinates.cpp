@@ -106,16 +106,23 @@ bool CoordinateImportFileFormat::importData(LineParser &parser, Array<Vec3<doubl
 {
     // Import the data
     auto result = false;
-    if (coordinateFormat() == CoordinateImportFileFormat::DLPOLYCoordinates)
-        result = importDLPOLY(parser, r);
-    else if (coordinateFormat() == CoordinateImportFileFormat::EPSRCoordinates)
-        result = importEPSR(parser, r);
-    else if (coordinateFormat() == CoordinateImportFileFormat::MoscitoCoordinates)
-        result = importMoscito(parser, r);
-    else if (coordinateFormat() == CoordinateImportFileFormat::XYZCoordinates)
-        result = importXYZ(parser, r);
-    else
-        Messenger::error("Don't know how to load coordinates in format '%s'.\n", formatKeyword(coordinateFormat()));
+    switch (coordinateFormat())
+    {
+        case (CoordinateImportFileFormat::DLPOLYCoordinates):
+            result = importDLPOLY(parser, r);
+            break;
+        case (CoordinateImportFileFormat::EPSRCoordinates):
+            result = importEPSR(parser, r);
+            break;
+        case (CoordinateImportFileFormat::MoscitoCoordinates):
+            result = importMoscito(parser, r);
+            break;
+        case (CoordinateImportFileFormat::XYZCoordinates):
+            result = importXYZ(parser, r);
+            break;
+        default:
+            Messenger::error("Don't know how to load coordinates in format '%s'.\n", formatKeyword(coordinateFormat()));
+    }
 
     return result;
 }

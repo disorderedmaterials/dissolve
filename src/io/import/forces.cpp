@@ -103,15 +103,20 @@ bool ForceImportFileFormat::importData(LineParser &parser, Array<double> &fx, Ar
 {
     // Import the data
     auto result = false;
-    if (forceFormat() == ForceImportFileFormat::DLPOLYForces)
-        return importDLPOLY(parser, fx, fy, fz);
-    else if (forceFormat() == ForceImportFileFormat::MoscitoForces)
-        return importMoscito(parser, fx, fy, fz);
-    else if (forceFormat() == ForceImportFileFormat::XYZForces)
-        result = importXYZ(parser, fx, fy, fz);
-
-    else
-        Messenger::error("Don't know how to load forces in format '%s'.\n", formatKeyword(forceFormat()));
+    switch (forceFormat())
+    {
+        case (ForceImportFileFormat::DLPOLYForces):
+            result = importDLPOLY(parser, fx, fy, fz);
+            break;
+        case (ForceImportFileFormat::MoscitoForces):
+            result = importMoscito(parser, fx, fy, fz);
+            break;
+        case (ForceImportFileFormat::XYZForces):
+            result = importXYZ(parser, fx, fy, fz);
+            break;
+        default:
+            Messenger::error("Don't know how to load forces in format '%s'.\n", formatKeyword(forceFormat()));
+    }
 
     // Apply factor to data
     auto factor = keywords_.asDouble("Factor");

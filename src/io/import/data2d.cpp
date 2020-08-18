@@ -104,10 +104,14 @@ bool Data2DImportFileFormat::importData(LineParser &parser, Data2D &data)
 {
     // Import the data
     auto result = false;
-    if (data2DFormat() == Data2DImportFileFormat::CartesianData2D)
-        result = importCartesian(parser, data);
-    else
-        Messenger::error("Don't know how to load Data2D of format '%s'.\n", formatKeyword(data2DFormat()));
+    switch (data2DFormat())
+    {
+        case (Data2DImportFileFormat::CartesianData2D):
+            result = importCartesian(parser, data);
+            break;
+        default:
+            Messenger::error("Don't know how to load Data2D of format '%s'.\n", formatKeyword(data2DFormat()));
+    }
 
     return result;
 }
