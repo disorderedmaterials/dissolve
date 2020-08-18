@@ -82,19 +82,24 @@ void Species::updateIntramolecularTerms()
 
     printf("NOW HERE (%p) n = %li\n", this, angles_.size());
     // Check existing angle terms for any that are invalid
-    angles_.erase(std::remove_if(angles_.begin(), angles_.end(), [this](const auto &angle) {
-        return ((!atoms_.contains(angle.i())) || (!atoms_.contains(angle.j())) || (!atoms_.contains(angle.k()))) ||
-               ((!hasBond(angle.i(), angle.j())) || (!hasBond(angle.j(), angle.k())));
-    }));
+    angles_.erase(std::remove_if(angles_.begin(), angles_.end(),
+                                 [this](const auto &angle) {
+                                     return ((!atoms_.contains(angle.i())) || (!atoms_.contains(angle.j())) ||
+                                             (!atoms_.contains(angle.k()))) ||
+                                            ((!hasBond(angle.i(), angle.j())) || (!hasBond(angle.j(), angle.k())));
+                                 }),
+                  angles_.end());
 
     printf("SJDJDJ\n");
     // remove torsions with invalid atoms or bonds
-    torsions_.erase(std::remove_if(torsions_.begin(), torsions_.end(), [this](const auto &torsion) {
-        return ((!atoms_.contains(torsion.i())) || (!atoms_.contains(torsion.j())) || (!atoms_.contains(torsion.k())) ||
-                (!atoms_.contains(torsion.l()))) ||
-               ((!hasBond(torsion.i(), torsion.j())) || (!hasBond(torsion.j(), torsion.k())) ||
-                (!hasBond(torsion.k(), torsion.l())));
-    }));
+    torsions_.erase(std::remove_if(torsions_.begin(), torsions_.end(),
+                                   [this](const auto &torsion) {
+                                       return ((!atoms_.contains(torsion.i())) || (!atoms_.contains(torsion.j())) ||
+                                               (!atoms_.contains(torsion.k())) || (!atoms_.contains(torsion.l()))) ||
+                                              ((!hasBond(torsion.i(), torsion.j())) || (!hasBond(torsion.j(), torsion.k())) ||
+                                               (!hasBond(torsion.k(), torsion.l())));
+                                   }),
+                    torsions_.end());
 }
 
 /*
