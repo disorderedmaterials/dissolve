@@ -24,8 +24,7 @@
 #include "base/charstring.h"
 #include "templates/array.h"
 #include "templates/reflist.h"
-
-#define MAXINTRAPARAMS 4
+#include <vector>
 
 // Forward Declarations
 class SpeciesAtom;
@@ -71,7 +70,7 @@ class SpeciesIntra
     // Index of functional form of interaction
     int form_;
     // Parameters for interaction
-    double parameters_[MAXINTRAPARAMS];
+    std::vector<double> parameters_;
 
     public:
     // Set linked master from which parameters should be taken
@@ -86,20 +85,18 @@ class SpeciesIntra
     void setForm(int form);
     // Return functional form index of interaction
     int form() const;
-    // Set nth parameter
-    void setParameter(int id, double value);
+    // Add parameter to interaction
+    void addParameter(double param);
     // Set all parameters
-    void setParameters(double a, double b = 0.0, double c = 0.0, double d = 0.0);
+    void setParameters(const std::vector<double> &params);
+    // Set existing parameter
+    void setParameter(int id, double value);
+    // Return number of parameters defined
+    int nParameters() const;
     // Return nth parameter
     double parameter(int id) const;
     // Return array of parameters
-    const double *parameters() const;
-    // Return parameters as Array<double>
-    Array<double> parametersAsArray() const;
-    // Set parameters from double*
-    void setParameters(Array<double> params);
-    // Set parameters from Array<double>
-    void setParameters(const double *params);
+    const std::vector<double> &parameters() const;
     // Set up any necessary parameters
     virtual void setUp() = 0;
     // Calculate and return fundamental frequency for the interaction

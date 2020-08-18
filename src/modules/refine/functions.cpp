@@ -171,8 +171,9 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, st
                     Messenger::print("Fitting suggests mismatch of equilibrium bond lengths - adjusting "
                                      "from %f to %f Angstroms.\n",
                                      xCentreStart_, newEq);
-                    if (masterIntra->form() == SpeciesBond::HarmonicForm)
-                        masterIntra->setParameter(1, newEq);
+                    Messenger::warn("ADJUSTING EQ BOND LENGTHS WAS REMOVED.\n");
+                    //                     if (masterIntra->form() == SpeciesBond::HarmonicForm)
+                    //                         masterIntra->setParameter(1, newEq);
                 }
                 else
                     continue;
@@ -193,8 +194,9 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, st
                     if (masterIntra->form() == SpeciesBond::HarmonicForm)
                         newK = masterIntra->parameter(0) * 0.9;
                     Messenger::print("Fitting suggests wrong force constant - adjusting to %f kJ/mol/A**2.\n", newK);
-                    if (masterIntra->form() == SpeciesBond::HarmonicForm)
-                        masterIntra->setParameter(0, newK);
+                    Messenger::warn("ADJUSTING FORCE CONSTANTS WAS REMOVED.\n");
+                    //                     if (masterIntra->form() == SpeciesBond::HarmonicForm)
+                    //                         masterIntra->setParameter(0, newK);
                 }
                 else
                     continue;
@@ -234,8 +236,9 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, st
             Messenger::print("Exp2 fitting suggests mismatch of equilibrium bond lengths - adjusting from %f to %f "
                              "Angstroms.\n",
                              xCentreStart_, newEq);
-            if (masterIntra->form() == SpeciesBond::HarmonicForm)
-                masterIntra->setParameter(1, newEq);
+            Messenger::warn("ADJUSTING EQ BOND LENGTHS WAS REMOVED.\n");
+            //             if (masterIntra->form() == SpeciesBond::HarmonicForm)
+            //                 masterIntra->setParameter(1, newEq);
         }
 
         // One of our masterbonds has provided a good fit to the data - we may as well stop here

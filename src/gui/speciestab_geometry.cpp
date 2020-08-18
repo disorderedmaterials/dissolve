@@ -125,7 +125,7 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
                                                   : SpeciesBond::bondFunctions().keywordFromInt(speciesBond->form()));
 
     // Interaction Parameters
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < speciesBond->nParameters(); ++n)
     {
         if (createItems)
         {
@@ -175,7 +175,7 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
                                                    : SpeciesAngle::angleFunctions().keywordFromInt(speciesAngle->form()));
 
     // Interaction Parameters
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < speciesAngle->nParameters(); ++n)
     {
         if (createItems)
         {
@@ -226,7 +226,7 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
                       : SpeciesTorsion::torsionFunctions().keywordFromInt(speciesTorsion->form()));
 
     // Interaction Parameters
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < speciesTorsion->nParameters(); ++n)
     {
         if (createItems)
         {
@@ -277,7 +277,7 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
                       : SpeciesImproper::improperFunctions().keywordFromInt(speciesImproper->form()));
 
     // Interaction Parameters
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < speciesImproper->nParameters(); ++n)
     {
         if (createItems)
         {

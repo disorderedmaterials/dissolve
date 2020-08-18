@@ -35,7 +35,7 @@ class ForcefieldImproperTerm
     public:
     ForcefieldImproperTerm(const char *typeI = NULL, const char *typeJ = NULL, const char *typeK = NULL,
                            const char *typeL = NULL, SpeciesImproper::ImproperFunction form = SpeciesImproper::NoForm,
-                           double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+                           const std::vector<double> parameters = {});
     ~ForcefieldImproperTerm();
 
     /*
@@ -47,7 +47,7 @@ class ForcefieldImproperTerm
     // Functional form of interaction
     SpeciesImproper::ImproperFunction form_;
     // Parameters for interaction
-    double parameters_[MAXINTRAPARAMS];
+    std::vector<double> parameters_;
 
     public:
     // Return if this term matches the atom types supplied
@@ -56,5 +56,5 @@ class ForcefieldImproperTerm
     // Return functional form index of interaction
     SpeciesImproper::ImproperFunction form() const;
     // Return array of parameters
-    const double *parameters() const;
+    const std::vector<double> &parameters() const;
 };

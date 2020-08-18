@@ -34,9 +34,10 @@ class CoordinateImportFileFormat : public FileAndFormat
     // Coordinate Import Formats
     enum CoordinateImportFormat
     {
-        XYZCoordinates,
         DLPOLYCoordinates,
         EPSRCoordinates,
+        MoscitoCoordinates,
+        XYZCoordinates,
         nCoordinateImportFormats
     };
     CoordinateImportFileFormat(CoordinateImportFormat format = XYZCoordinates);
@@ -80,6 +81,8 @@ class CoordinateImportFileFormat : public FileAndFormat
     bool importDLPOLY(LineParser &parser, Array<Vec3<double>> &r);
     // Import EPSR ATO coordinates through specified parser
     bool importEPSR(LineParser &parser, Array<Vec3<double>> &r);
+    // Import Moscito coordinates through specified parser
+    bool importMoscito(LineParser &parser, Array<Vec3<double>> &r);
     // Import xyz coordinates through specified parser
     bool importXYZ(LineParser &parser, Array<Vec3<double>> &r);
 

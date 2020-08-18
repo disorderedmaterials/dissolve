@@ -102,7 +102,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra *sourceIntra, SpeciesIntra *d
             if (!master)
             {
                 master = coreData_.addMasterBond(sourceIntra->masterParameters()->name());
-                master->setParameters(sourceIntra->parametersAsArray());
+                master->setParameters(sourceIntra->parameters());
             }
         }
         else if (sourceIntra->type() == SpeciesIntra::AngleInteraction)
@@ -111,7 +111,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra *sourceIntra, SpeciesIntra *d
             if (!master)
             {
                 master = coreData_.addMasterAngle(sourceIntra->masterParameters()->name());
-                master->setParameters(sourceIntra->parametersAsArray());
+                master->setParameters(sourceIntra->parameters());
             }
         }
         else if (sourceIntra->type() == SpeciesIntra::TorsionInteraction)
@@ -120,7 +120,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra *sourceIntra, SpeciesIntra *d
             if (!master)
             {
                 master = coreData_.addMasterTorsion(sourceIntra->masterParameters()->name());
-                master->setParameters(sourceIntra->parametersAsArray());
+                master->setParameters(sourceIntra->parameters());
             }
         }
         else if (sourceIntra->type() == SpeciesIntra::ImproperInteraction)
@@ -129,7 +129,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra *sourceIntra, SpeciesIntra *d
             if (!master)
             {
                 master = coreData_.addMasterTorsion(sourceIntra->masterParameters()->name());
-                master->setParameters(sourceIntra->parametersAsArray());
+                master->setParameters(sourceIntra->parameters());
             }
         }
 
@@ -143,7 +143,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra *sourceIntra, SpeciesIntra *d
     {
         // Just copy over form / parameters
         destIntra->setForm(sourceIntra->form());
-        destIntra->setParameters(sourceIntra->parametersAsArray());
+        destIntra->setParameters(sourceIntra->parameters());
     }
 }
 

@@ -467,7 +467,7 @@ bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond *bondTerm, 
     // Set the parameters and form of the new bond term
     // Functional form is Harmonic : U = 0.5 * k * (r - eq)**2
     bondTerm->setForm(SpeciesBond::HarmonicForm);
-    bondTerm->setParameters(k, rij);
+    bondTerm->setParameters({k, rij});
 
     return true;
 }
@@ -536,14 +536,14 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle *angleTer
         const auto c0 = c2 * (2.0 * cosTheta * cosTheta + 1.0);
 
         angleTerm->setForm(SpeciesAngle::Cos2Form);
-        angleTerm->setParameters(forcek, c0, c1, c2);
+        angleTerm->setParameters({forcek, c0, c1, c2});
 
         return true;
     }
 
     // Setup terms for the specific case (n != 0)
     angleTerm->setForm(SpeciesAngle::CosineForm);
-    angleTerm->setParameters(forcek / (n * n), n, 0.0, -1.0);
+    angleTerm->setParameters({forcek / (n * n), double(n), 0.0, -1.0});
 
     return true;
 }
@@ -647,7 +647,7 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion *tors
 
     // Store the generated parameters
     torsionTerm->setForm(SpeciesTorsion::UFFCosineForm);
-    torsionTerm->setParameters(V, n, phi0);
+    torsionTerm->setParameters({V, n, phi0});
 
     return true;
 }

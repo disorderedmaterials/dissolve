@@ -170,7 +170,7 @@ void ForcefieldTab::updateBondsTableRow(int row, MasterIntra *masterBond, bool c
     item->setText(SpeciesBond::bondFunctions().keywordFromInt(masterBond->form()));
 
     // Parameters
-    for (int n = 0; n < MAXINTRAPARAMS; ++n)
+    for (int n = 0; n < masterBond->parameters().size(); ++n)
     {
         if (createItems)
         {
@@ -212,7 +212,7 @@ void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra *masterAngle, bool
     item->setText(SpeciesAngle::angleFunctions().keywordFromInt(masterAngle->form()));
 
     // Parameters
-    for (int n = 0; n < MAXINTRAPARAMS; ++n)
+    for (int n = 0; n < masterAngle->parameters().size(); ++n)
     {
         if (createItems)
         {
@@ -254,7 +254,7 @@ void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra *masterTorsion, 
     item->setText(SpeciesTorsion::torsionFunctions().keywordFromInt(masterTorsion->form()));
 
     // Parameters
-    for (int n = 0; n < MAXINTRAPARAMS; ++n)
+    for (int n = 0; n < masterTorsion->parameters().size(); ++n)
     {
         if (createItems)
         {
@@ -296,7 +296,7 @@ void ForcefieldTab::updateImpropersTableRow(int row, MasterIntra *masterImproper
     item->setText(SpeciesImproper::improperFunctions().keywordFromInt(masterImproper->form()));
 
     // Parameters
-    for (int n = 0; n < MAXINTRAPARAMS; ++n)
+    for (int n = 0; n < masterImproper->parameters().size(); ++n)
     {
         if (createItems)
         {
@@ -361,7 +361,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
     item->setText(Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()));
 
     // Parameters
-    for (int n = 0; n < MAXINTRAPARAMS; ++n)
+    for (int n = 0; n < MAXSRPARAMETERS; ++n)
     {
         if (createItems)
         {
@@ -441,7 +441,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential *pairPot
     item->setText(QString::number(pairPotential->chargeJ()));
 
     // Parameters
-    for (int n = 0; n < MAXINTRAPARAMS; ++n)
+    for (int n = 0; n < MAXSRPARAMETERS; ++n)
     {
         if (createItems)
         {

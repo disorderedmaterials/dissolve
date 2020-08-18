@@ -223,7 +223,7 @@ SpeciesIntra::InteractionType SpeciesImproper::type() const { return SpeciesIntr
 double SpeciesImproper::energy(double angleInDegrees) const
 {
     // Get pointer to relevant parameters array
-    const auto *params = parameters();
+    const auto &params = parameters();
 
     // Convert torsion angle from degrees to radians
     double phi = angleInDegrees / DEGRAD;
@@ -252,7 +252,7 @@ double SpeciesImproper::energy(double angleInDegrees) const
 double SpeciesImproper::force(double angleInDegrees) const
 {
     // Get pointer to relevant parameters array
-    const auto *params = parameters();
+    const auto &params = parameters();
 
     // Convert torsion angle from degrees to radians, and calculate derivative w.r.t. change in torsion angle
     double phi = angleInDegrees / DEGRAD;
@@ -276,43 +276,4 @@ double SpeciesImproper::force(double angleInDegrees) const
 
     Messenger::error("Functional form of SpeciesImproper term not accounted for, so can't calculate force.\n");
     return 0.0;
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool SpeciesImproper::broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms)
-{
-#ifdef PARALLEL
-    int buffer[4];
-
-    // Put atom indices into buffer and send
-    if (procPool.isMaster())
-    {
-        buffer[0] = indexI();
-        buffer[1] = indexJ();
-        buffer[2] = indexK();
-        buffer[3] = indexL();
-    }
-    if (!procPool.broadcast(buffer, 4))
-        return false;
-
-    // Slaves now take Atom pointers from supplied List
-    if (procPool.isSlave())
-    {
-        i_ = atoms.item(buffer[0]);
-        j_ = atoms.item(buffer[1]);
-        k_ = atoms.item(buffer[2]);
-        l_ = atoms.item(buffer[3]);
-    }
-
-    // Send parameter info
-    if (!procPool.broadcast(parameters_, MAXINTRAPARAMS))
-        return false;
-    if (!procPool.broadcast(form_))
-        return false;
-#endif
-    return true;
 }

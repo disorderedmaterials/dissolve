@@ -23,16 +23,13 @@
 #include "data/ff.h"
 #include "data/ffatomtype.h"
 
-ForcefieldBondTerm::ForcefieldBondTerm(const char *typeI, const char *typeJ, SpeciesBond::BondFunction form, double data0,
-                                       double data1, double data2, double data3)
+ForcefieldBondTerm::ForcefieldBondTerm(const char *typeI, const char *typeJ, SpeciesBond::BondFunction form,
+                                       const std::vector<double> parameters)
 {
     typeI_ = typeI;
     typeJ_ = typeJ;
     form_ = form;
-    parameters_[0] = data0;
-    parameters_[1] = data1;
-    parameters_[2] = data2;
-    parameters_[3] = data3;
+    parameters_ = parameters;
 }
 
 ForcefieldBondTerm::~ForcefieldBondTerm() {}
@@ -56,4 +53,4 @@ bool ForcefieldBondTerm::isMatch(const ForcefieldAtomType &i, const ForcefieldAt
 SpeciesBond::BondFunction ForcefieldBondTerm::form() const { return form_; }
 
 // Return array of parameters
-const double *ForcefieldBondTerm::parameters() const { return parameters_; }
+const std::vector<double> &ForcefieldBondTerm::parameters() const { return parameters_; }

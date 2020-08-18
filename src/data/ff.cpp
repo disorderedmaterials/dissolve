@@ -165,31 +165,31 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int 
  */
 
 // Add bond term
-void Forcefield::addBondTerm(const char *typeI, const char *typeJ, SpeciesBond::BondFunction form, double data0, double data1,
-                             double data2, double data3)
+void Forcefield::addBondTerm(const char *typeI, const char *typeJ, SpeciesBond::BondFunction form,
+                             const std::vector<double> parameters)
 {
-    bondTerms_.emplace_back(typeI, typeJ, form, data0, data1, data2, data3);
+    bondTerms_.emplace_back(typeI, typeJ, form, parameters);
 }
 
 // Add angle term
 void Forcefield::addAngleTerm(const char *typeI, const char *typeJ, const char *typeK, SpeciesAngle::AngleFunction form,
-                              double data0, double data1, double data2, double data3)
+                              const std::vector<double> parameters)
 {
-    angleTerms_.emplace_back(typeI, typeJ, typeK, form, data0, data1, data2, data3);
+    angleTerms_.emplace_back(typeI, typeJ, typeK, form, parameters);
 }
 
 // Add torsion term
 void Forcefield::addTorsionTerm(const char *typeI, const char *typeJ, const char *typeK, const char *typeL,
-                                SpeciesTorsion::TorsionFunction form, double data0, double data1, double data2, double data3)
+                                SpeciesTorsion::TorsionFunction form, const std::vector<double> parameters)
 {
-    torsionTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, data0, data1, data2, data3);
+    torsionTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameters);
 }
 
 // Add improper term
 void Forcefield::addImproperTerm(const char *typeI, const char *typeJ, const char *typeK, const char *typeL,
-                                 SpeciesImproper::ImproperFunction form, double data0, double data1, double data2, double data3)
+                                 SpeciesImproper::ImproperFunction form, const std::vector<double> parameters)
 {
-    improperTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, data0, data1, data2, data3);
+    improperTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameters);
 }
 
 // Return bond term for the supplied atom type pair (if it exists)
@@ -294,10 +294,11 @@ int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignm
         if ((strategy == Forcefield::TypeSelection) && (!i->isSelected()))
             continue;
 
-        // Messenger::print("No forcefield type available for Atom %i of Species (%s).\n", i->index()+1,
-        // i->element()->symbol());
         if (!assignAtomType(i, coreData))
+        {
+            Messenger::error("No matching forcefield type for atom %i (%s).\n", i->userIndex(), i->element()->symbol());
             ++nFailed;
+        }
     }
 
     if (nFailed)

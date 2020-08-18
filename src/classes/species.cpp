@@ -170,7 +170,7 @@ void Species::print()
         {
             CharString s("   %4i  %4i    %c%-12s", b->indexI() + 1, b->indexJ() + 1, b->masterParameters() ? '@' : ' ',
                          SpeciesBond::bondFunctions().keywordFromInt(b->form()));
-            for (int n = 0; n < MAXINTRAPARAMS; ++n)
+            for (int n = 0; n < b->parameters().size(); ++n)
                 s.strcatf("  %12.4e", b->parameter(n));
             Messenger::print("%s\n", s.get());
         }
@@ -186,7 +186,7 @@ void Species::print()
         {
             CharString s("   %4i  %4i  %4i    %c%-12s", a->indexI() + 1, a->indexJ() + 1, a->indexK() + 1,
                          a->masterParameters() ? '@' : ' ', SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
-            for (int n = 0; n < MAXINTRAPARAMS; ++n)
+            for (int n = 0; n < a->parameters().size(); ++n)
                 s.strcatf("  %12.4e", a->parameter(n));
             Messenger::print("%s\n", s.get());
         }
@@ -203,7 +203,7 @@ void Species::print()
         {
             CharString s("   %4i  %4i  %4i  %4i    %c%-12s", t->indexI() + 1, t->indexJ() + 1, t->indexK() + 1, t->indexL() + 1,
                          t->masterParameters() ? '@' : ' ', SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
-            for (int n = 0; n < MAXINTRAPARAMS; ++n)
+            for (int n = 0; n < t->parameters().size(); ++n)
                 s.strcatf("  %12.4e", t->parameter(n));
             Messenger::print("%s\n", s.get());
         }
@@ -221,7 +221,7 @@ void Species::print()
             CharString s("   %4i  %4i  %4i  %4i    %c%-12s", imp->indexI() + 1, imp->indexJ() + 1, imp->indexK() + 1,
                          imp->indexL() + 1, imp->masterParameters() ? '@' : ' ',
                          SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
-            for (int n = 0; n < MAXINTRAPARAMS; ++n)
+            for (int n = 0; n < imp->parameters().size(); ++n)
                 s.strcatf("  %12.4e", imp->parameter(n));
             Messenger::print("%s\n", s.get());
         }
