@@ -114,7 +114,7 @@ bool Forcefield_Ludwig_Py4OH::setUp()
     // Improper Terms
     addImproperTerm("ca", "ca", "ca", "ha", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0});
     addImproperTerm("ca", "nc", "ca", "ha", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0});
-    addImproperTerm("ca", "ca", "nc", "ct", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0});
+    addImproperTerm("nc", "ca", "ca", "ct", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0});
 
     return true;
 }

@@ -35,6 +35,7 @@ class Configuration;
 class PotentialMap;
 class SpeciesAngle;
 class SpeciesBond;
+class SpeciesImproper;
 class SpeciesTorsion;
 
 // ForceKernel
@@ -111,18 +112,31 @@ class ForceKernel
     void forces(const SpeciesBond *b);
     // Calculate SpeciesBond forces for specified Atom only
     void forces(const Atom *onlyThis, const SpeciesBond *b, const Atom *i, const Atom *j);
+    // Calculate angle force parameters from supplied vectors, storing results in supplied variables
+    static void calculateAngleParameters(Vec3<double> vecji, Vec3<double> vecjk, double &theta, Vec3<double> &dfi_dtheta,
+                                         Vec3<double> &dfk_dtheta);
     // Calculate SpeciesAngle forces
     void forces(const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k);
     // Calculate SpeciesAngle forces
     void forces(const SpeciesAngle *a);
     // Calculate SpeciesAngle forces for specified Atom only
     void forces(const Atom *onlyThis, const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k);
+    // Calculate torsion force parameters from supplied vectors, storing results in supplied variables
+    static void calculateTorsionParameters(const Vec3<double> vecji, const Vec3<double> vecjk, const Vec3<double> veckl,
+                                           double &phi, Matrix3 &dxpj_dij, Matrix3 &dxpj_dkj, Matrix3 &dxpk_dkj,
+                                           Matrix3 &dxpk_dlk, Vec3<double> &dcos_dxpj, Vec3<double> &dcos_dxpk);
     // Calculate SpeciesTorsion forces
     void forces(const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
     // Calculate SpeciesTorsion forces
     void forces(const SpeciesTorsion *t);
     // Calculate SpeciesTorsion forces for specified Atom only
     void forces(const Atom *onlyThis, const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
+    // Calculate SpeciesImproper forces
+    void forces(const SpeciesImproper *t, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
+    // Calculate SpeciesImproper forces
+    void forces(const SpeciesImproper *t);
+    // Calculate SpeciesImproper forces for specified Atom only
+    void forces(const Atom *onlyThis, const SpeciesImproper *t, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
 
     /*
      * Parallel Comms

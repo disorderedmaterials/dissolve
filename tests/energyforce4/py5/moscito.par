@@ -1,0 +1,29 @@
+#...........................Forcefield declaration
+structurefile
+#restart
+stop  momentum
+#...........................Force calculation
+rcut                9.0
+neighborlist 15 
+rcutnb              9.0
+#...........................SHAKE setup
+shake               0.001 
+#...........................Ewald summation setup
+ewald   grid  fast # newton  
+alpha   5.36
+kspace pme           18          18          18 4
+conserve
+#...........................MD run specifications
+timestep            1.0e-10
+steps               10
+#...........................Weak coupling control
+temperature         298.0
+#pressure            0.1
+scale  temperature  0.005 
+#scale  pressure y   5.0e-7 independently
+#scale  stop         500
+#...........................MD-Output setup
+firststep      1
+sysdata       1
+logdata       1  
+restartdata 1000

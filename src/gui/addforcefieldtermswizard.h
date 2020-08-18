@@ -146,7 +146,7 @@ class AddForcefieldTermsWizard : public WizardWidget
      */
     private:
     // Parental tree widgets for master terms
-    QTreeWidgetItem *masterBondItemParent_, *masterAngleItemParent_, *masterTorsionItemParent_;
+    QTreeWidgetItem *masterBondItemParent_, *masterAngleItemParent_, *masterTorsionItemParent_, *masterImproperItemParent_;
 
     private:
     // Row update function for MasterTermsTree

@@ -737,6 +737,28 @@ double EnergyKernel::energy(const SpeciesTorsion *t)
     return t->energy(Box::torsionInDegrees(t->i()->r() - t->j()->r(), t->k()->r() - t->j()->r(), t->l()->r() - t->k()->r()));
 }
 
+// Return SpeciesImproper energy
+double EnergyKernel::energy(const SpeciesImproper *imp, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
+{
+    Vec3<double> vecji, vecjk, veckl;
+
+    // Calculate vectors, ensuring we account for minimum image
+    if (j->cell()->mimRequired(i->cell()))
+        vecji = box_->minimumVector(j, i);
+    else
+        vecji = i->r() - j->r();
+    if (j->cell()->mimRequired(k->cell()))
+        vecjk = box_->minimumVector(j, k);
+    else
+        vecjk = k->r() - j->r();
+    if (k->cell()->mimRequired(l->cell()))
+        veckl = box_->minimumVector(k, l);
+    else
+        veckl = l->r() - k->r();
+
+    return imp->energy(Box::torsionInDegrees(vecji, vecjk, veckl));
+}
+
 // Return intramolecular energy for the supplied Atom
 double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, const Atom *i)
 {
@@ -759,26 +781,25 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, c
     if ((spAtom->nBonds() == 0) && (spAtom->nAngles() == 0) && (spAtom->nTorsions() == 0))
         return 0.0;
 
-    double intraEnergy = 0.0;
+    auto intraEnergy = 0.0;
 
     // Add energy from SpeciesBond terms
     for (const auto *bond : spAtom->bonds())
-    {
         intraEnergy += energy(bond, mol->atom(bond->indexI()), mol->atom(bond->indexJ()));
-    }
 
     // Add energy from SpeciesAngle terms
     for (const auto *angle : spAtom->angles())
-    {
         intraEnergy += energy(angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()), mol->atom(angle->indexK()));
-    }
 
     // Add energy from SpeciesTorsion terms
     for (const auto *torsion : spAtom->torsions())
-    {
         intraEnergy += energy(torsion, mol->atom(torsion->indexI()), mol->atom(torsion->indexJ()), mol->atom(torsion->indexK()),
                               mol->atom(torsion->indexL()));
-    }
+
+    // Add energy from SpeciesImproper terms
+    for (const auto *improper : spAtom->impropers())
+        intraEnergy += energy(improper, mol->atom(improper->indexI()), mol->atom(improper->indexJ()),
+                              mol->atom(improper->indexK()), mol->atom(improper->indexL()));
 
     return intraEnergy;
 }
@@ -794,25 +815,29 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol)
     }
 #endif
 
-    double intraEnergy = 0.0;
+    auto intraEnergy = 0.0;
 
-    const Species *sp = mol->species();
-
-    // Loop over Bonds
+    // Loop over bonds
     DynamicArrayConstIterator<SpeciesBond> bondIterator(mol->species()->constBonds());
     while (const SpeciesBond *b = bondIterator.iterate())
         intraEnergy += energy(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
 
-    // Loop over Angles
+    // Loop over angles
     DynamicArrayConstIterator<SpeciesAngle> angleIterator(mol->species()->constAngles());
     while (const SpeciesAngle *a = angleIterator.iterate())
         intraEnergy += energy(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
 
-    // Loop over Torsions
+    // Loop over torsions
     DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
     while (const SpeciesTorsion *t = torsionIterator.iterate())
         intraEnergy +=
             energy(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
+
+    // Loop over impropers
+    DynamicArrayConstIterator<SpeciesImproper> improperIterator(mol->species()->constImpropers());
+    while (const SpeciesImproper *imp = improperIterator.iterate())
+        intraEnergy +=
+            energy(imp, mol->atom(imp->indexI()), mol->atom(imp->indexJ()), mol->atom(imp->indexK()), mol->atom(imp->indexL()));
 
     return intraEnergy;
 }

@@ -35,6 +35,7 @@ class Element;
 class Species;
 class SpeciesAngle;
 class SpeciesBond;
+class SpeciesImproper;
 class SpeciesTorsion;
 class ProcessPool;
 
@@ -110,6 +111,8 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
     std::vector<SpeciesAngle *> angles_;
     // List of torsions which this atom participates in
     std::vector<SpeciesTorsion *> torsions_;
+    // List of torsions which this atom participates in
+    std::vector<SpeciesImproper *> impropers_;
     // Ordered list of Atoms with scaled or excluded interactions
     OrderedPointerDataArray<SpeciesAtom, double> exclusions_;
 
@@ -148,6 +151,16 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
     SpeciesTorsion *torsion(int index);
     // Return array of Torsions in which the Atom is involved
     const std::vector<SpeciesTorsion *> &torsions() const;
+    // Add specified SpeciesImproper to Atom
+    void addImproper(SpeciesImproper *improper);
+    // Remove improper reference
+    void removeImproper(SpeciesImproper *t);
+    // Return the number of SpeciesImpropers in which the Atom is involved
+    int nImpropers() const;
+    // Return specified improper
+    SpeciesImproper *improper(int index);
+    // Return array of Impropers in which the Atom is involved
+    const std::vector<SpeciesImproper *> &impropers() const;
     // Return scaling factor to employ with specified Atom
     double scaling(const SpeciesAtom *j) const;
 

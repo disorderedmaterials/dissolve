@@ -96,14 +96,14 @@ class EnergyModule : public Module
     static double intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap);
     // Return total intramolecular energy of Configuration, storing components in provided variables
     static double intraMolecularEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
-                                       double &bondEnergy, double &angleEnergy, double &torsionEnergy);
+                                       double &bondEnergy, double &angleEnergy, double &torsionEnergy, double &improperEnergy);
     // Return total intramolecular energy of Species
     static double intraMolecularEnergy(ProcessPool &procPool, Species *sp);
-    // Return total energy (interatomic and intramolecular) of Configuration
+    // Return total energy (interatomic and intramolecular)
     static double totalEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap);
     // Return total energy (interatomic and intramolecular) of Configuration, storing components in provided variables
     static double totalEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap, double &interEnergy,
-                              double &bondEnergy, double &angleEnergy, double &torsionEnergy);
+                              double &bondEnergy, double &angleEnergy, double &torsionEnergy, double &improperEnergy);
     // Return total energy (interatomic and intramolecular) of Species
     static double totalEnergy(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap);
     // Check energy stability of specified Configuration
