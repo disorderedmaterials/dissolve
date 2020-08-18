@@ -152,47 +152,39 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
     // Copy intramolecular terms
     if (!ui_.IntramolecularTermsAssignNoneRadio->isChecked())
     {
-        auto modifiedBondIterator = modifiedSpecies_->constBonds().cbegin();
+        auto modifiedBond = modifiedSpecies_->constBonds().cbegin();
         for (auto &originalBond : targetSpecies_->bonds())
         {
-            const auto &modifiedBond = *modifiedBondIterator;
-
             // Selection only?
             if (intraSelectionOnly && (!originalBond.isSelected()))
                 continue;
 
             // Copy interaction parameters, including MasterIntra if necessary
-            dissolve.copySpeciesIntra(&modifiedBond, &originalBond);
+            dissolve.copySpeciesIntra(*modifiedBond, originalBond);
 
-            ++modifiedBondIterator;
+            ++modifiedBond;
         }
 
-        DynamicArrayIterator<SpeciesAngle> originalAngleIterator(targetSpecies_->angles());
-        DynamicArrayConstIterator<SpeciesAngle> modifiedAngleIterator(modifiedSpecies_->constAngles());
-        while (SpeciesAngle *originalAngle = originalAngleIterator.iterate())
+        auto modifiedAngle = modifiedSpecies_->constAngles().cbegin();
+        for (auto &originalAngle : targetSpecies_->angles())
         {
-            const SpeciesAngle *modifiedAngle = modifiedAngleIterator.iterate();
-
             // Selection only?
-            if (intraSelectionOnly && (!originalAngle->isSelected()))
-                continue;
-
-            // Copy interaction parameters, including MasterIntra if necessary
-            dissolve.copySpeciesIntra(modifiedAngle, originalAngle);
+            if (!intraSelectionOnly || originalAngle.isSelected())
+                // Copy interaction parameters, including MasterIntra if necessary
+                dissolve.copySpeciesIntra(*modifiedAngle, originalAngle);
+            modifiedAngle++;
         }
 
-        DynamicArrayIterator<SpeciesTorsion> originalTorsionIterator(targetSpecies_->torsions());
-        DynamicArrayConstIterator<SpeciesTorsion> modifiedTorsionIterator(modifiedSpecies_->constTorsions());
-        while (SpeciesTorsion *originalTorsion = originalTorsionIterator.iterate())
+        auto modifiedTorsion = modifiedSpecies_->constTorsions().cbegin();
+        for (auto &originalTorsion : targetSpecies_->torsions())
         {
-            const SpeciesTorsion *modifiedTorsion = modifiedTorsionIterator.iterate();
 
             // Selection only?
-            if (intraSelectionOnly && (!originalTorsion->isSelected()))
-                continue;
+            if (!intraSelectionOnly || originalTorsion.isSelected())
+                dissolve.copySpeciesIntra(*modifiedTorsion, originalTorsion);
+            modifiedTorsion++;
 
             // Copy interaction parameters, including MasterIntra if necessary
-            dissolve.copySpeciesIntra(modifiedTorsion, originalTorsion);
         }
     }
 
@@ -339,21 +331,20 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                     }
 
                     // Loop over angles in the modified species
-                    DynamicArrayIterator<SpeciesAngle> angleIterator(modifiedSpecies_->angles());
-                    while (SpeciesAngle *angle = angleIterator.iterate())
+                    for (auto &angle : modifiedSpecies_->angles())
                     {
                         // Selection only?
-                        if ((flags & Forcefield::SelectionOnlyFlag) && (!angle->isSelected()))
+                        if ((flags & Forcefield::SelectionOnlyFlag) && (!angle.isSelected()))
                             continue;
 
                         // Construct a name for the master term based on the atom types - order atom
                         // types alphabetically for consistency
-                        if (QString(mappedName(angle->i()->atomType())) < QString(mappedName(angle->k()->atomType())))
-                            termName.sprintf("%s-%s-%s", mappedName(angle->i()->atomType()), mappedName(angle->j()->atomType()),
-                                             mappedName(angle->k()->atomType()));
+                        if (QString(mappedName(angle.i()->atomType())) < QString(mappedName(angle.k()->atomType())))
+                            termName.sprintf("%s-%s-%s", mappedName(angle.i()->atomType()), mappedName(angle.j()->atomType()),
+                                             mappedName(angle.k()->atomType()));
                         else
-                            termName.sprintf("%s-%s-%s", mappedName(angle->k()->atomType()), mappedName(angle->j()->atomType()),
-                                             mappedName(angle->i()->atomType()));
+                            termName.sprintf("%s-%s-%s", mappedName(angle.k()->atomType()), mappedName(angle.j()->atomType()),
+                                             mappedName(angle.i()->atomType()));
 
                         // Search for an existing master term by this name
                         MasterIntra *master = temporaryCoreData_.hasMasterAngle(termName);
@@ -361,30 +352,29 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                         {
                             // Create it now
                             master = temporaryCoreData_.addMasterAngle(termName);
-                            master->setForm(angle->form());
-                            master->setParameters(angle->parameters());
+                            master->setForm(angle.form());
+                            master->setParameters(angle.parameters());
                         }
-                        angle->setMasterParameters(master);
+                        angle.setMasterParameters(master);
                     }
 
                     // Loop over torsions in the modified species
-                    DynamicArrayIterator<SpeciesTorsion> torsionIterator(modifiedSpecies_->torsions());
-                    while (SpeciesTorsion *torsion = torsionIterator.iterate())
+                    for (auto &torsion : modifiedSpecies_->torsions())
                     {
                         // Selection only?
-                        if ((flags & Forcefield::SelectionOnlyFlag) && (!torsion->isSelected()))
+                        if ((flags & Forcefield::SelectionOnlyFlag) && (!torsion.isSelected()))
                             continue;
 
                         // Construct a name for the master term based on the atom types - order atom
                         // types alphabetically for consistency
-                        if (QString(mappedName(torsion->i()->atomType())) < QString(mappedName(torsion->l()->atomType())))
-                            termName.sprintf("%s-%s-%s-%s", mappedName(torsion->i()->atomType()),
-                                             mappedName(torsion->j()->atomType()), mappedName(torsion->k()->atomType()),
-                                             mappedName(torsion->l()->atomType()));
+                        if (QString(mappedName(torsion.i()->atomType())) < QString(mappedName(torsion.l()->atomType())))
+                            termName.sprintf("%s-%s-%s-%s", mappedName(torsion.i()->atomType()),
+                                             mappedName(torsion.j()->atomType()), mappedName(torsion.k()->atomType()),
+                                             mappedName(torsion.l()->atomType()));
                         else
-                            termName.sprintf("%s-%s-%s-%s", mappedName(torsion->l()->atomType()),
-                                             mappedName(torsion->k()->atomType()), mappedName(torsion->j()->atomType()),
-                                             mappedName(torsion->i()->atomType()));
+                            termName.sprintf("%s-%s-%s-%s", mappedName(torsion.l()->atomType()),
+                                             mappedName(torsion.k()->atomType()), mappedName(torsion.j()->atomType()),
+                                             mappedName(torsion.i()->atomType()));
 
                         // Search for an existing master term by this name
                         MasterIntra *master = temporaryCoreData_.hasMasterTorsion(termName);
@@ -392,30 +382,29 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                         {
                             // Create it now
                             master = temporaryCoreData_.addMasterTorsion(termName);
-                            master->setForm(torsion->form());
-                            master->setParameters(torsion->parameters());
+                            master->setForm(torsion.form());
+                            master->setParameters(torsion.parameters());
                         }
-                        torsion->setMasterParameters(master);
+                        torsion.setMasterParameters(master);
                     }
 
                     // Loop over impropers in the modified species
-                    DynamicArrayIterator<SpeciesImproper> improperIterator(modifiedSpecies_->impropers());
-                    while (SpeciesImproper *improper = improperIterator.iterate())
+                    for (auto &improper : modifiedSpecies_->impropers())
                     {
                         // Selection only?
-                        if ((flags & Forcefield::SelectionOnlyFlag) && (!improper->isSelected()))
+                        if ((flags & Forcefield::SelectionOnlyFlag) && (!improper.isSelected()))
                             continue;
 
                         // Construct a name for the master term based on the atom types - order atom
                         // types alphabetically for consistency
-                        if (QString(mappedName(improper->i()->atomType())) < QString(mappedName(improper->l()->atomType())))
-                            termName.sprintf("%s-%s-%s-%s", mappedName(improper->i()->atomType()),
-                                             mappedName(improper->j()->atomType()), mappedName(improper->k()->atomType()),
-                                             mappedName(improper->l()->atomType()));
+                        if (QString(mappedName(improper.i()->atomType())) < QString(mappedName(improper.l()->atomType())))
+                            termName.sprintf("%s-%s-%s-%s", mappedName(improper.i()->atomType()),
+                                             mappedName(improper.j()->atomType()), mappedName(improper.k()->atomType()),
+                                             mappedName(improper.l()->atomType()));
                         else
-                            termName.sprintf("%s-%s-%s-%s", mappedName(improper->l()->atomType()),
-                                             mappedName(improper->k()->atomType()), mappedName(improper->j()->atomType()),
-                                             mappedName(improper->i()->atomType()));
+                            termName.sprintf("%s-%s-%s-%s", mappedName(improper.l()->atomType()),
+                                             mappedName(improper.k()->atomType()), mappedName(improper.j()->atomType()),
+                                             mappedName(improper.i()->atomType()));
 
                         // Search for an existing master term by this name
                         MasterIntra *master = temporaryCoreData_.hasMasterImproper(termName);
@@ -423,10 +412,10 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                         {
                             // Create it now
                             master = temporaryCoreData_.addMasterImproper(termName);
-                            master->setForm(improper->form());
-                            master->setParameters(improper->parameters());
+                            master->setForm(improper.form());
+                            master->setParameters(improper.parameters());
                         }
-                        improper->setMasterParameters(master);
+                        improper.setMasterParameters(master);
                     }
                 }
             }

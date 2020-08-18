@@ -550,7 +550,7 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle &angle, c
 }
 
 // Generate torsion parameters for the supplied UFF atom types
-bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion *torsionTerm, const UFFAtomType &i,
+bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion &torsionTerm, const UFFAtomType &i,
                                          const UFFAtomType &j, const UFFAtomType &k, const UFFAtomType &l) const
 {
     /*
@@ -609,7 +609,7 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion *tors
     {
         // Case e) j and k are both sp2 centres
         // Force constant is adjusted based on current bond order
-        auto jkRef = sp->getConstBond(torsionTerm->j(), torsionTerm->k());
+        auto jkRef = sp->getConstBond(torsionTerm.j(), torsionTerm.k());
         if (jkRef)
         {
             const SpeciesBond &jk = *jkRef;
@@ -650,8 +650,8 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion *tors
     V *= 4.184;
 
     // Store the generated parameters
-    torsionTerm->setForm(SpeciesTorsion::UFFCosineForm);
-    torsionTerm->setParameters(V, n, phi0);
+    torsionTerm.setForm(SpeciesTorsion::UFFCosineForm);
+    torsionTerm.setParameters(V, n, phi0);
 
     return true;
 }
@@ -756,8 +756,7 @@ bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
         auto typeK = determineTypes ? determineUFFAtomType(k) : uffAtomTypeByName(k->atomType()->name());
         auto typeL = determineTypes ? determineUFFAtomType(l) : uffAtomTypeByName(l->atomType()->name());
 
-        // FIXME: Pass torsion by reference instead of by pointer
-        if (!typeI || !typeJ || !typeK || !typeL || !generateTorsionTerm(sp, &torsion, *typeI, *typeJ, *typeK, *typeL))
+        if (!typeI || !typeJ || !typeK || !typeL || !generateTorsionTerm(sp, torsion, *typeI, *typeJ, *typeK, *typeL))
             return Messenger::error("Failed to create parameters for torsion %i-%i-%i-%i.\n", i->userIndex(), j->userIndex(),
                                     k->userIndex(), l->userIndex());
     }
