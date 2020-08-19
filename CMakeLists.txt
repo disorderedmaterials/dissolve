@@ -249,6 +249,7 @@ set(BASIC_LINK_LIBS
   main classes module io export import neta procedure procedurenodes keywords expression genericitems base math data ff
 
   # Forcefields
+  ff_pcl2019
   ff_ludwig
   ff_oplsaa2005
 

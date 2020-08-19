@@ -14,6 +14,7 @@ add_library(ff
   uffatomtype.h
 )
 
+add_subdirectory(pcl2019)
 add_subdirectory(ludwig)
 add_subdirectory(oplsaa2005)
 
