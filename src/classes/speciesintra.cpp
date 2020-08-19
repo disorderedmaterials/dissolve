@@ -41,6 +41,7 @@ SpeciesIntra &SpeciesIntra::operator=(const SpeciesIntra &source)
     parent_ = source.parent_;
     masterParameters_ = source.masterParameters_;
     parameters_.clear();
+    parameters_.resize(source.parameters_.size());
     std::copy(source.parameters_.begin(), source.parameters_.end(), parameters_.begin());
     attached_[0] = source.attached_[0];
     attached_[1] = source.attached_[1];
