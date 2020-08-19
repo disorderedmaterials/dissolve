@@ -161,7 +161,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
         auto at2 = dissolve.findAtomType(parser.argc(1));
         if (!at2)
             return Messenger::error("Unrecognised AtomType '%s' referenced in pcof file.\n", parser.argc(1));
-        Messenger::print("Found %s-%s potential...\n", (*at1)->name(), (*at2)->name());
+        Messenger::print("Found %s-%s potential...\n", at1->name(), at2->name());
 
         // Next line contains ??? and ??? TODO
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -169,7 +169,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
 
         // Grab the coefficient storage from the module data and read the coefficients in - they will all be on one
         // single line in the file.
-        Array<double> &coefficients = potentialCoefficients.at((*at1)->index(), (*at2)->index());
+        Array<double> &coefficients = potentialCoefficients.at(at1->index(), at2->index());
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return Messenger::error("Failed to read coefficients from pcof file.\n");
         if (parser.nArgs() != ncoeffp)

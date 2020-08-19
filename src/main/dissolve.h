@@ -75,8 +75,7 @@ class Dissolve
     // Return nth AtomType in list
     std::shared_ptr<AtomType> atomType(int n);
     // Search for AtomType by name
-    std::optional<std::shared_ptr<AtomType>> findAtomType(const char *name) const;
-
+    std::shared_ptr<AtomType> findAtomType(const char *name) const;
     // Clear all AtomTypes
     void clearAtomTypes();
 
