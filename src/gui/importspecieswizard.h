@@ -106,7 +106,7 @@ class ImportSpeciesWizard : public WizardWidget
      */
     private:
     // Row update function for AtomTypesList
-    void updateAtomTypesListRow(int row, AtomType *atomType, bool createItem);
+    void updateAtomTypesListRow(int row, std::shared_ptr<AtomType> atomType, bool createItem);
     // Update page with AtomTypes in our temporary Dissolve reference
     void updateAtomTypesPage();
 

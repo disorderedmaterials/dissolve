@@ -1,0 +1,17 @@
+Species 'Water'
+  # Atoms
+  Atom    1    O     5.139     5.968     0.000  'None'    -0.82
+  Atom    2    H     3.924     5.424     0.000  'None'     0.41
+  Atom    3    H     6.088     5.120     0.000  'None'     0.41
+
+  # Bonds
+  Bond    1    2
+  Bond    3    1
+
+  # Angles
+  Angle    3    1    2
+
+  # Forcefield
+  Forcefield  'SPC/Fw'
+EndSpecies
+

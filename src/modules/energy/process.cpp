@@ -207,6 +207,20 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     // Determine Torsion energy
                     correctIntraEnergy += torsion.energy(angle);
                 }
+
+                // Improper energy
+                for (const auto &imp : molN->species()->constImpropers())
+                {
+                    // Get vectors 'j-i', 'j-k' and 'k-l'
+                    vecji = cfg->box()->minimumVector(molN->atom(imp.indexJ()), molN->atom(imp.indexI()));
+                    vecjk = cfg->box()->minimumVector(molN->atom(imp.indexJ()), molN->atom(imp.indexK()));
+                    veckl = cfg->box()->minimumVector(molN->atom(imp.indexK()), molN->atom(imp.indexL()));
+
+                    angle = Box::torsionInDegrees(vecji, vecjk, veckl);
+
+                    // Determine improper energy
+                    correctIntraEnergy += imp.energy(angle);
+                }
             }
             testTimer.stop();
 
@@ -308,9 +322,9 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Calculate intramolecular and intermolecular correction energy
             Timer intraTimer;
-            double bondEnergy, angleEnergy, torsionEnergy;
-            double intraEnergy =
-                intraMolecularEnergy(procPool, cfg, dissolve.potentialMap(), bondEnergy, angleEnergy, torsionEnergy);
+            double bondEnergy, angleEnergy, torsionEnergy, improperEnergy;
+            double intraEnergy = intraMolecularEnergy(procPool, cfg, dissolve.potentialMap(), bondEnergy, angleEnergy,
+                                                      torsionEnergy, improperEnergy);
             intraTimer.stop();
 
             Messenger::print("Time to do interatomic energy was %s, intramolecular energy was %s (%s comms).\n",

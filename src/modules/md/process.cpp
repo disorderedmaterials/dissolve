@@ -104,9 +104,9 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (onlyWhenEnergyStable)
         {
             auto stabilityResult = EnergyModule::checkStability(cfg);
-            if (stabilityResult == -1)
+            if (stabilityResult == EnergyModule::NotAssessable)
                 return false;
-            else if (stabilityResult == 1)
+            else if (stabilityResult == EnergyModule::EnergyUnstable)
             {
                 Messenger::print("Skipping MD for Configuration '%s'.\n", cfg->niceName());
                 continue;

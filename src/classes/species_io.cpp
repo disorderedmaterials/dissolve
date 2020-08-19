@@ -66,7 +66,7 @@ bool Species::loadFromXYZ(const char *filename)
     name_ = parser.line();
     int success;
     Element *el;
-    for (int n = 0; n < nAtoms; ++n)
+    for (auto n = 0; n < nAtoms; ++n)
     {
         success = parser.getArgsDelim(LineParser::Defaults);
         if (success != 0)
@@ -118,7 +118,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
     Element *el;
     CharString arg1, arg2;
-    AtomType *at;
+    std::shared_ptr<AtomType> at;
     Isotopologue *iso;
     OptionalReferenceWrapper<SpeciesAngle> a;
     SpeciesAtom *i;
@@ -143,7 +143,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
 
-        // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+        // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!keywords().isValid(parser.argc(0)))
             return keywords().errorAndPrintValid(parser.argc(0));
         auto kwd = keywords().enumeration(parser.argc(0));
@@ -192,20 +192,18 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
                     af = SpeciesAngle::angleFunctions().enumeration(parser.argc(4));
-
                     a->get().setForm(af);
-                    for (int n = 0; n < SpeciesAngle::angleFunctions().minArgs(af); ++n)
+
+                    // Check number of args provided
+                    if (!SpeciesAngle::angleFunctions().validNArgs(af, parser.nArgs() - 5))
                     {
-                        if (!parser.hasArg(n + 5))
-                        {
-                            Messenger::error("Angle function type '%s' requires %i parameters\n",
-                                             SpeciesAngle::angleFunctions().keyword(af),
-                                             SpeciesAngle::angleFunctions().minArgs(af));
-                            error = true;
-                            break;
-                        }
-                        a->get().setParameter(n, parser.argd(n + 5));
+                        error = true;
+                        break;
                     }
+
+                    // Set parameters
+                    for (auto n = 5; n < parser.nArgs(); ++n)
+                        a->get().addParameter(parser.argd(n));
                 }
 
                 // Perform any final setup on the Angle
@@ -282,20 +280,18 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
                     bf = SpeciesBond::bondFunctions().enumeration(parser.argc(3));
-
                     b->get().setForm(bf);
-                    for (int n = 0; n < SpeciesBond::bondFunctions().minArgs(bf); ++n)
+
+                    // Check number of args provided
+                    if (!SpeciesBond::bondFunctions().validNArgs(bf, parser.nArgs() - 4))
                     {
-                        if (!parser.hasArg(4 + n))
-                        {
-                            Messenger::error("Bond function type '%s' requires %i parameters\n",
-                                             SpeciesBond::bondFunctions().keyword(bf),
-                                             SpeciesBond::bondFunctions().minArgs(bf));
-                            error = true;
-                            break;
-                        }
-                        b->get().setParameter(n, parser.argd(n + 4));
+                        error = true;
+                        break;
                     }
+
+                    // Set parameters
+                    for (auto n = 4; n < parser.nArgs(); ++n)
+                        b->get().addParameter(parser.argd(n));
                 }
 
                 // Perform any final setup on the Bond
@@ -404,7 +400,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         error = true;
                         break;
                     }
-                    torsion->get().setMasterParameters(master);
+                    imp->get().setMasterParameters(master);
                 }
                 else
                 {
@@ -424,36 +420,35 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         error = true;
                         break;
                     }
-                    torsion->get().setForm(tf);
-                    for (int n = 0; n < SpeciesImproper::improperFunctions().minArgs(impf); ++n)
+                    imp->get().setForm(impf);
+
+                    // Check number of args provided
+                    if (!SpeciesImproper::improperFunctions().validNArgs(impf, parser.nArgs() - 6))
                     {
-                        if (!parser.hasArg(n + 6))
-                        {
-                            Messenger::error("Improper function type '%s' requires %i parameters\n",
-                                             SpeciesImproper::improperFunctions().keyword(impf),
-                                             SpeciesImproper::improperFunctions().minArgs(impf));
-                            error = true;
-                            break;
-                        }
-                        torsion->get().setParameter(n, parser.argd(n + 6));
+                        error = true;
+                        break;
                     }
+
+                    // Set parameters
+                    for (auto n = 6; n < parser.nArgs(); ++n)
+                        imp->get().addParameter(parser.argd(n));
                 }
 
                 // Perform any final setup on the Improper
-                torsion->get().setUp();
+                imp->get().setUp();
                 break;
             case (Species::IsotopologueKeyword):
                 iso = addIsotopologue(uniqueIsotopologueName(parser.argc(1)));
                 Messenger::printVerbose("Added Isotopologue '%s' to Species '%s'\n", iso->name(), name());
                 // Each parser argument is a string of the form ATOMTYPE=ISO
-                for (int n = 2; n < parser.nArgs(); ++n)
+                for (auto n = 2; n < parser.nArgs(); ++n)
                 {
                     // Split argument into parts before and after '='
                     arg1 = DissolveSys::beforeChar(parser.argc(n), '=');
                     arg2 = DissolveSys::afterChar(parser.argc(n), '=');
 
                     at = coreData.findAtomType(arg1.get());
-                    if (at == NULL)
+                    if (!at)
                     {
                         Messenger::error("Failed to find AtomType '%s', referred to in Isotopologue '%s', "
                                          "Species '%s'\n",
@@ -537,20 +532,18 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
                     tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argc(5));
-
                     torsion->get().setForm(tf);
-                    for (int n = 0; n < SpeciesTorsion::torsionFunctions().minArgs(tf); ++n)
+
+                    // Check number of args provided
+                    if (!SpeciesTorsion::torsionFunctions().validNArgs(tf, parser.nArgs() - 6))
                     {
-                        if (!parser.hasArg(n + 6))
-                        {
-                            Messenger::error("Torsion function type '%s' requires %i parameters\n",
-                                             SpeciesTorsion::torsionFunctions().keyword(tf),
-                                             SpeciesTorsion::torsionFunctions().minArgs(tf));
-                            error = true;
-                            break;
-                        }
-                        torsion->get().setParameter(n, parser.argd(n + 6));
+                        error = true;
+                        break;
                     }
+
+                    // Set parameters
+                    for (auto n = 6; n < parser.nArgs(); ++n)
+                        torsion->get().addParameter(parser.argd(n));
                 }
 
                 // Perform any final setup on the Torsion
@@ -642,7 +635,7 @@ bool Species::write(LineParser &parser, const char *prefix)
 
         // Any bond type information to write?
         auto bondTypeHeaderWritten = false;
-        for (int bt = 1; bt < SpeciesBond::nBondTypes; ++bt)
+        for (auto bt = 1; bt < SpeciesBond::nBondTypes; ++bt)
             if (bondTypes[bt].nItems() > 0)
             {
                 // Write header if it hasn't been written already
@@ -652,7 +645,7 @@ bool Species::write(LineParser &parser, const char *prefix)
                         return false;
                     bondTypeHeaderWritten = true;
                 }
-                for (const SpeciesBond *bond : bondTypes[bt])
+                for (const auto *bond : bondTypes[bt])
                     if (!parser.writeLineF("%s%s  %3i  %3i  %s\n", newPrefix.get(),
                                            keywords().keyword(Species::BondTypeKeyword), bond->indexI() + 1, bond->indexJ() + 1,
                                            SpeciesBond::bondType((SpeciesBond::BondType)bt)))
@@ -665,7 +658,7 @@ bool Species::write(LineParser &parser, const char *prefix)
     {
         if (!parser.writeLineF("\n%s# Angles\n", newPrefix.get()))
             return false;
-        for (const auto &angle : angles_)
+        for (const auto &angle : angles())
         {
             if (angle.form() == SpeciesAngle::NoForm)
             {
@@ -685,7 +678,7 @@ bool Species::write(LineParser &parser, const char *prefix)
                 CharString s("%s%s  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::AngleKeyword),
                              angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
                              SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
-                for (int n = 0; n < SpeciesAngle::angleFunctions().minArgs((SpeciesAngle::AngleFunction)angle.form()); ++n)
+                for (int n = 0; n < angle.nParameters(); ++n)
                     s.strcatf("  %8.3f", angle.parameter(n));
                 if (!parser.writeLineF("%s\n", s.get()))
                     return false;
@@ -719,9 +712,8 @@ bool Species::write(LineParser &parser, const char *prefix)
                 CharString s("%s%s  %3i  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::TorsionKeyword),
                              torsion.indexI() + 1, torsion.indexJ() + 1, torsion.indexK() + 1, torsion.indexL() + 1,
                              SpeciesTorsion::torsionFunctions().keywordFromInt(torsion.form()));
-                for (int n = 0; n < SpeciesTorsion::torsionFunctions().minArgs((SpeciesTorsion::TorsionFunction)torsion.form());
-                     ++n)
-                    s.strcatf("  %8.3f", torsion.parameter(n));
+                for (auto param : torsion.parameters())
+                    s.strcatf("  %8.3f", param);
                 if (!parser.writeLineF("%s\n", s.get()))
                     return false;
             }
@@ -747,8 +739,7 @@ bool Species::write(LineParser &parser, const char *prefix)
                 CharString s("%s%s  %3i  %3i  %3i  %3i  %s", newPrefix.get(), keywords().keyword(Species::ImproperKeyword),
                              imp.indexI() + 1, imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1,
                              SpeciesImproper::improperFunctions().keywordFromInt(imp.form()));
-                for (int n = 0; n < SpeciesImproper::improperFunctions().minArgs((SpeciesImproper::ImproperFunction)imp.form());
-                     ++n)
+                for (auto n = 0; n < imp.nParameters(); ++n)
                     s.strcatf("  %8.3f", imp.parameter(n));
                 if (!parser.writeLineF("%s\n", s.get()))
                     return false;
@@ -777,14 +768,13 @@ bool Species::write(LineParser &parser, const char *prefix)
             if (!parser.writeLineF("%s%s  '%s'", newPrefix.get(), keywords().keyword(Species::IsotopologueKeyword),
                                    iso->name()))
                 return false;
-            RefDataListIterator<AtomType, Isotope *> isotopeIterator(iso->isotopes());
-            while (AtomType *atomType = isotopeIterator.iterate())
+            for (auto [atomType, isotope] : iso->isotopes())
             {
                 // No need to write anything that's the natural isotope...
-                if (isotopeIterator.currentData()->A() == 0)
+                if (isotope->A() == 0)
                     continue;
 
-                if (!parser.writeLineF("  %s=%i", atomType->name(), isotopeIterator.currentData()->A()))
+                if (!parser.writeLineF("  %s=%i", atomType->name(), isotope->A()))
                     return false;
             }
             if (!parser.writeLineF("\n"))

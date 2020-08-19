@@ -99,8 +99,10 @@ class SpeciesTorsion : public SpeciesIntra
         NoForm,
         CosineForm,
         Cos3Form,
-        Cos4Form,
         Cos3CForm,
+        Cos4Form,
+        CosNForm,
+        CosNCForm,
         UFFCosineForm
     };
     // Return enum options for TorsionFunction
@@ -117,11 +119,4 @@ class SpeciesTorsion : public SpeciesIntra
     double energy(double angleInDegrees) const;
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data from Master to all Slaves
-    bool broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms);
 };

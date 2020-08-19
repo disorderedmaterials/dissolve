@@ -24,18 +24,14 @@
 #include "data/ffatomtype.h"
 
 ForcefieldTorsionTerm::ForcefieldTorsionTerm(const char *typeI, const char *typeJ, const char *typeK, const char *typeL,
-                                             SpeciesTorsion::TorsionFunction form, double data0, double data1, double data2,
-                                             double data3)
+                                             SpeciesTorsion::TorsionFunction form, const std::vector<double> parameters)
 {
     typeI_ = typeI;
     typeJ_ = typeJ;
     typeK_ = typeK;
     typeL_ = typeL;
     form_ = form;
-    parameters_[0] = data0;
-    parameters_[1] = data1;
-    parameters_[2] = data2;
-    parameters_[3] = data3;
+    parameters_ = parameters;
 }
 
 ForcefieldTorsionTerm::~ForcefieldTorsionTerm() {}
@@ -62,4 +58,4 @@ bool ForcefieldTorsionTerm::isMatch(const ForcefieldAtomType &i, const Forcefiel
 SpeciesTorsion::TorsionFunction ForcefieldTorsionTerm::form() const { return form_; }
 
 // Return array of parameters
-const double *ForcefieldTorsionTerm::parameters() const { return parameters_; }
+const std::vector<double> &ForcefieldTorsionTerm::parameters() const { return parameters_; }

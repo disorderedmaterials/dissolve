@@ -126,16 +126,15 @@ bool Species::checkSetUp()
      */
     for (auto *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
     {
-        RefDataListIterator<AtomType, Isotope *> isotopeIterator(iso->isotopes());
-        while (AtomType *atomType = isotopeIterator.iterate())
+        for (auto [atomType, isotope] : iso->isotopes())
         {
-            if (isotopeIterator.currentData() == NULL)
+            if (!isotope)
             {
                 Messenger::error("Isotopologue '%s' does not refer to an elemental Isotope for AtomType '%s'.\n", iso->name(),
                                  atomType->name());
                 ++nErrors;
             }
-            else if (!Isotopes::isotope(atomType->element(), isotopeIterator.currentData()->A()))
+            else if (!Isotopes::isotope(atomType->element(), isotope->A()))
             {
                 Messenger::error("Isotopologue '%s' does not refer to a suitable Isotope for AtomType '%s'.\n", iso->name(),
                                  atomType->name());
@@ -170,8 +169,8 @@ void Species::print()
         {
             CharString s("   %4i  %4i    %c%-12s", bond.indexI() + 1, bond.indexJ() + 1, bond.masterParameters() ? '@' : ' ',
                          SpeciesBond::bondFunctions().keywordFromInt(bond.form()));
-            for (int n = 0; n < MAXINTRAPARAMS; ++n)
-                s.strcatf("  %12.4e", bond.parameter(n));
+            for (auto param : bond.parameters())
+                s.strcatf("  %12.4e", param);
             Messenger::print("%s\n", s.get());
         }
     }
@@ -185,8 +184,8 @@ void Species::print()
         {
             CharString s("   %4i  %4i  %4i    %c%-12s", angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
                          angle.masterParameters() ? '@' : ' ', SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
-            for (int n = 0; n < MAXINTRAPARAMS; ++n)
-                s.strcatf("  %12.4e", angle.parameter(n));
+            for (auto param : angle.parameters())
+                s.strcatf("  %12.4e", param);
             Messenger::print("%s\n", s.get());
         }
     }
@@ -197,12 +196,12 @@ void Species::print()
         Messenger::print("      I     J     K     L    Form             Parameters\n");
         Messenger::print("    ---------------------------------------------------------------------------------------------\n");
         // Loop over Torsions
-	for (const auto &t : torsions())
+        for (const auto &t : torsions())
         {
             CharString s("   %4i  %4i  %4i  %4i    %c%-12s", t.indexI() + 1, t.indexJ() + 1, t.indexK() + 1, t.indexL() + 1,
                          t.masterParameters() ? '@' : ' ', SpeciesTorsion::torsionFunctions().keywordFromInt(t.form()));
-            for (int n = 0; n < MAXINTRAPARAMS; ++n)
-                s.strcatf("  %12.4e", t.parameter(n));
+            for (auto param : t.parameters())
+                s.strcatf("  %12.4e", param);
             Messenger::print("%s\n", s.get());
         }
     }
@@ -218,8 +217,8 @@ void Species::print()
             CharString s("   %4i  %4i  %4i  %4i    %c%-12s", imp.indexI() + 1, imp.indexJ() + 1, imp.indexK() + 1,
                          imp.indexL() + 1, imp.masterParameters() ? '@' : ' ',
                          SpeciesImproper::improperFunctions().keywordFromInt(imp.form()));
-            for (int n = 0; n < MAXINTRAPARAMS; ++n)
-                s.strcatf("  %12.4e", imp.parameter(n));
+            for (auto param : imp.parameters())
+                s.strcatf("  %12.4e", param);
             Messenger::print("%s\n", s.get());
         }
     }

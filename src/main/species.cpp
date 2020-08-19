@@ -69,14 +69,16 @@ void Dissolve::copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom
     }
 
     // Search for the existing atom's AtomType by name, and create it if it doesn't exist
-    AtomType *at = findAtomType(sourceAtom->atomType()->name());
-    if (!at)
+    std::shared_ptr<AtomType> at;
+    auto opt_at = findAtomType(sourceAtom->atomType()->name());
+    if (!opt_at)
     {
         at = addAtomType(sourceAtom->element());
         at->setName(sourceAtom->atomType()->name());
         at->parameters() = sourceAtom->atomType()->parameters();
         at->setShortRangeType(sourceAtom->atomType()->shortRangeType());
     }
+    at = *opt_at;
 
     destAtom->setAtomType(at);
 }
@@ -100,7 +102,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
             if (!master)
             {
                 master = coreData_.addMasterBond(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parametersAsArray());
+                master->setParameters(sourceIntra.parameters());
             }
         }
         else if (sourceIntra.type() == SpeciesIntra::AngleInteraction)
@@ -109,7 +111,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
             if (!master)
             {
                 master = coreData_.addMasterAngle(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parametersAsArray());
+                master->setParameters(sourceIntra.parameters());
             }
         }
         else if (sourceIntra.type() == SpeciesIntra::TorsionInteraction)
@@ -118,16 +120,16 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
             if (!master)
             {
                 master = coreData_.addMasterTorsion(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parametersAsArray());
+                master->setParameters(sourceIntra.parameters());
             }
         }
         else if (sourceIntra.type() == SpeciesIntra::ImproperInteraction)
         {
-            master = coreData_.hasMasterTorsion(sourceIntra.masterParameters()->name());
+            master = coreData_.hasMasterImproper(sourceIntra.masterParameters()->name());
             if (!master)
             {
-                master = coreData_.addMasterTorsion(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parametersAsArray());
+                master = coreData_.addMasterImproper(sourceIntra.masterParameters()->name());
+                master->setParameters(sourceIntra.parameters());
             }
         }
 
@@ -141,7 +143,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
     {
         // Just copy over form / parameters
         destIntra.setForm(sourceIntra.form());
-        destIntra.setParameters(sourceIntra.parametersAsArray());
+        destIntra.setParameters(sourceIntra.parameters());
     }
 }
 

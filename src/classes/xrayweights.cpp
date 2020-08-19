@@ -60,13 +60,13 @@ bool XRayWeights::initialiseFormFactors()
 
     for (auto &atd : atomTypes_)
     {
-        auto &at = atd.atomType();
+        auto at = atd.atomType();
 
         // Try to retrieve form factor data for this atom type (element, formal charge [TODO])
-        auto data = XRayFormFactors::formFactorData(formFactors_, at.element());
+        auto data = XRayFormFactors::formFactorData(formFactors_, at->element());
         if (!data)
             return Messenger::error("No form factor data present for element %s (formal charge %i) in x-ray data set '%s'.\n",
-                                    at.element()->symbol(), 0, XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
+                                    at->element()->symbol(), 0, XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
 
         formFactorData_.push_back(*data);
     }
@@ -98,7 +98,7 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
 
         // Loop over Atoms in the Species
         for (auto *i = sp->firstAtom(); i != NULL; i = i->next())
-            atomTypes_.add(*i->atomType(), spInfo->population());
+            atomTypes_.add(i->atomType(), spInfo->population());
     }
 
     // Perform final setup based on now-completed atomtypes list
@@ -109,7 +109,7 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
 void XRayWeights::addSpecies(const Species *sp, int population)
 {
     for (auto *i = sp->firstAtom(); i != NULL; i = i->next())
-        atomTypes_.add(*i->atomType(), population);
+        atomTypes_.add(i->atomType(), population);
 
     valid_ = false;
 }

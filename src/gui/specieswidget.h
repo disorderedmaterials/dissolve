@@ -24,7 +24,7 @@
 #include "gui/ui_specieswidget.h"
 
 // Forward Declarations
-class CoreData;
+class Dissolve;
 
 // Species Widget
 class SpeciesWidget : public QWidget
@@ -34,15 +34,15 @@ class SpeciesWidget : public QWidget
 
     public:
     SpeciesWidget(QWidget *parent = 0);
-    ~SpeciesWidget();
+    ~SpeciesWidget() = default;
 
     private:
-    // Main CoreData
-    CoreData *coreData_;
+    // Main Dissolve pointer
+    Dissolve *dissolve_;
 
     public:
-    // Set main CoreData pointer
-    void setCoreData(CoreData *coreData);
+    // Set main Dissolve pointer
+    void setDissolve(Dissolve *dissolve);
 
     /*
      * UI

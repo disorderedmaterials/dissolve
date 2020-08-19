@@ -29,6 +29,9 @@
 #include <QFileDialog>
 #include <QInputDialog>
 
+Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
+Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
+
 ImportSpeciesWizard::ImportSpeciesWizard(QWidget *parent) : temporaryDissolve_(temporaryCoreData_)
 {
     dissolveReference_ = NULL;
@@ -265,13 +268,14 @@ void ImportSpeciesWizard::on_SpeciesList_currentRowChanged(int currentRow)
  */
 
 // Row update function for AtomTypesList
-void ImportSpeciesWizard::updateAtomTypesListRow(int row, AtomType *atomType, bool createItem)
+void ImportSpeciesWizard::updateAtomTypesListRow(int row, std::shared_ptr<AtomType> atomType, bool createItem)
 {
     QListWidgetItem *item;
     if (createItem)
     {
         item = new QListWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<AtomType>(atomType));
+        QVariant variant = QVariant::fromValue(atomType);
+        item->setData(Qt::UserRole, variant);
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
         ui_.AtomTypesList->insertItem(row, item);
     }
@@ -293,13 +297,10 @@ void ImportSpeciesWizard::updateAtomTypesPage()
 
     // Determine whether we have any naming conflicts
     auto conflicts = false;
-    ListIterator<AtomType> typeIterator(temporaryCoreData_.constAtomTypes());
-    while (AtomType *at = typeIterator.iterate())
-        if (dissolveReference_->findAtomType(at->name()))
-        {
-            conflicts = true;
-            break;
-        }
+    auto it = std::find_if(temporaryCoreData_.constAtomTypes().begin(), temporaryCoreData_.constAtomTypes().end(),
+                           [this](const auto at) { return dissolveReference_->findAtomType(at->name()); });
+    if (it != temporaryCoreData_.constAtomTypes().end())
+        conflicts = true;
     ui_.AtomTypesIndicator->setNotOK(conflicts);
     if (conflicts)
         ui_.AtomTypesIndicatorLabel->setText("One or more AtomTypes in the imported Species conflict with existing types");
@@ -322,7 +323,7 @@ void ImportSpeciesWizard::atomTypesListEdited(QWidget *lineEdit)
     for (int n = 0; n < ui_.AtomTypesList->count(); ++n)
     {
         QListWidgetItem *item = ui_.AtomTypesList->item(n);
-        AtomType *at = VariantPointer<AtomType>(item->data(Qt::UserRole));
+        std::shared_ptr<AtomType> at = item->data(Qt::UserRole).value<std::shared_ptr<AtomType>>();
         if (!at)
             continue;
 
@@ -344,7 +345,7 @@ void ImportSpeciesWizard::on_AtomTypesPrefixButton_clicked(bool checked)
     QList<QListWidgetItem *>::iterator i;
     for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
     {
-        AtomType *at = VariantPointer<AtomType>((*i)->data(Qt::UserRole));
+        std::shared_ptr<AtomType> at = (*i)->data(Qt::UserRole).value<std::shared_ptr<AtomType>>();
         at->setName(CharString("%s%s", qPrintable(prefix), at->name()));
     }
 
@@ -363,7 +364,7 @@ void ImportSpeciesWizard::on_AtomTypesSuffixButton_clicked(bool checked)
     QList<QListWidgetItem *>::iterator i;
     for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
     {
-        AtomType *at = VariantPointer<AtomType>((*i)->data(Qt::UserRole));
+        std::shared_ptr<AtomType> at = (*i)->data(Qt::UserRole).value<std::shared_ptr<AtomType>>();
         at->setName(CharString("%s%s", at->name(), qPrintable(suffix)));
     }
 

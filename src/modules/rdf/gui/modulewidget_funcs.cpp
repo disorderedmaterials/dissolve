@@ -26,6 +26,7 @@
 #include "main/dissolve.h"
 #include "modules/rdf/gui/modulewidget.h"
 #include "modules/rdf/rdf.h"
+#include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
 RDFModuleWidget::RDFModuleWidget(QWidget *parent, RDFModule *module, Dissolve &dissolve)
@@ -159,31 +160,23 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 
     CharString blockData;
     const AtomTypeList cfgTypes = currentConfiguration_->usedAtomTypesList();
-    auto n = 0;
-    for (AtomType *at1 = dissolve_.atomTypes().first(); at1 != NULL; at1 = at1->next(), ++n)
-    {
-        auto m = n;
-        for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next(), ++m)
-        {
-            CharString id("%s-%s", at1->name(), at2->name());
+    for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
+        CharString id("%s-%s", at1->name(), at2->name());
 
-            // Full partial
-            partialsGraph_->createRenderable(
-                Renderable::Data1DRenderable,
-                CharString("%s//UnweightedGR//%s//Full", currentConfiguration_->niceName(), id.get()),
-                CharString("%s (Full)", id.get()), "Full");
+        // Full partial
+        partialsGraph_->createRenderable(Renderable::Data1DRenderable,
+                                         CharString("%s//UnweightedGR//%s//Full", currentConfiguration_->niceName(), id.get()),
+                                         CharString("%s (Full)", id.get()), "Full");
 
-            // Bound partial
-            partialsGraph_->createRenderable(
-                Renderable::Data1DRenderable,
-                CharString("%s//UnweightedGR//%s//Bound", currentConfiguration_->niceName(), id.get()),
-                CharString("%s (Bound)", id.get()), "Bound");
+        // Bound partial
+        partialsGraph_->createRenderable(Renderable::Data1DRenderable,
+                                         CharString("%s//UnweightedGR//%s//Bound", currentConfiguration_->niceName(), id.get()),
+                                         CharString("%s (Bound)", id.get()), "Bound");
 
-            // Unbound partial
-            partialsGraph_->createRenderable(
-                Renderable::Data1DRenderable,
-                CharString("%s//UnweightedGR//%s//Unbound", currentConfiguration_->niceName(), id.get()),
-                CharString("%s (Unbound)", id.get()), "Unbound");
-        }
-    }
+        // Unbound partial
+        partialsGraph_->createRenderable(
+            Renderable::Data1DRenderable,
+            CharString("%s//UnweightedGR//%s//Unbound", currentConfiguration_->niceName(), id.get()),
+            CharString("%s (Unbound)", id.get()), "Unbound");
+    });
 }

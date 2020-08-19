@@ -35,8 +35,6 @@ Species 'Ammonium'
   Angle    5    1    3  @HN+-NH+-HN+
   Angle    5    1    4  @HN+-NH+-HN+
 
-  # Forcefield
-  Forcefield  'Kulmala2010'
 EndSpecies
 
 #------------------------------------------------------------------------------#

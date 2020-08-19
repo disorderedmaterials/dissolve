@@ -36,6 +36,7 @@ class PotentialMap;
 class Molecule;
 class SpeciesBond;
 class SpeciesAngle;
+class SpeciesImproper;
 class SpeciesTorsion;
 
 // Energy Kernel
@@ -99,12 +100,20 @@ class EnergyKernel
      * Intramolecular Terms
      */
     public:
+    // Return SpeciesBond energy at Atoms specified
+    double energy(const SpeciesBond &b, const Atom *i, const Atom *j);
     // Return SpeciesBond energy
-    double energy(const SpeciesBond &bond, const Atom *i, const Atom *j);
+    static double energy(const SpeciesBond &b);
+    // Return SpeciesAngle energy at Atoms specified
+    double energy(const SpeciesAngle &a, const Atom *i, const Atom *j, const Atom *k);
     // Return SpeciesAngle energy
-    double energy(const SpeciesAngle &angle, const Atom *i, const Atom *j, const Atom *k);
-    // Return SpeciesTorsion energy
+    static double energy(const SpeciesAngle &a);
+    // Return SpeciesTorsion energy at Atoms specified
     double energy(const SpeciesTorsion &t, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
+    // Return SpeciesTorsion energy
+    static double energy(const SpeciesTorsion &t);
+    // Return SpeciesImproper energy
+    double energy(const SpeciesImproper &imp, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
     // Return intramolecular energy for the supplied Atom
     double intramolecularEnergy(std::shared_ptr<const Molecule> mol, const Atom *i);
     // Return intramolecular energy for the supplied Molecule

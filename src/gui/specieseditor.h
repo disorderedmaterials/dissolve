@@ -24,7 +24,7 @@
 #include "gui/ui_specieseditor.h"
 
 // Forward Declarations
-class CoreData;
+class Dissolve;
 
 // Species Widget
 class SpeciesEditor : public QWidget
@@ -37,12 +37,12 @@ class SpeciesEditor : public QWidget
     ~SpeciesEditor();
 
     private:
-    // Main CoreData
-    CoreData *coreData_;
+    // Main Dissolve pointer
+    Dissolve *dissolve_;
 
     public:
-    // Set main CoreData pointer
-    void setCoreData(CoreData *coreData);
+    // Set main Dissolve pointer
+    void setDissolve(Dissolve *dissolve);
 
     /*
      * UI

@@ -129,11 +129,4 @@ class SpeciesBond : public SpeciesIntra
     double energy(double distance) const;
     // Return force multiplier for specified distance
     double force(double distance) const;
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data from Master to all Slaves
-    bool broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms);
 };

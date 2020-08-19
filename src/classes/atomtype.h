@@ -24,13 +24,12 @@
 #include "base/charstring.h"
 #include "base/parameters.h"
 #include "data/ff.h"
-#include "templates/listitem.h"
 
 // Forward Declarations
 class Element;
 
 // AtomType Definition
-class AtomType : public ListItem<AtomType>
+class AtomType
 {
     public:
     AtomType();

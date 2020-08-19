@@ -49,7 +49,7 @@ bool Dissolve::loadInput(LineParser &parser)
         if (parser.getArgsDelim() != LineParser::Success)
             break;
 
-        // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+        // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!BlockKeywords::keywords().isValid(parser.argc(0)))
             return BlockKeywords::keywords().errorAndPrintValid(parser.argc(0));
         auto kwd = BlockKeywords::keywords().enumeration(parser.argc(0));
@@ -76,7 +76,10 @@ bool Dissolve::loadInput(LineParser &parser)
 
                 // Prepare the Configuration
                 if (!cfg->initialiseContent(worldPool(), pairPotentialRange_))
-                    Messenger::warn("Failed to prepare configuration '%s'.\n", cfg->name());
+                {
+                    error = true;
+                    break;
+                }
                 break;
             case (BlockKeywords::LayerBlockKeyword):
                 // Check to see if a processing layer with this name already exists...
@@ -208,7 +211,7 @@ bool Dissolve::saveInput(const char *filename)
         {
             CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::BondKeyword), b->name(),
                          SpeciesBond::bondFunctions().keywordFromInt(b->form()));
-            for (int n = 0; n < SpeciesBond::bondFunctions().minArgs((SpeciesBond::BondFunction)b->form()); ++n)
+            for (auto n = 0; n < b->nParameters(); ++n)
                 s.strcatf("  %8.3f", b->parameter(n));
             if (!parser.writeLineF("%s\n", s.get()))
                 return false;
@@ -218,7 +221,7 @@ bool Dissolve::saveInput(const char *filename)
         {
             CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword), a->name(),
                          SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
-            for (int n = 0; n < SpeciesAngle::angleFunctions().minArgs((SpeciesAngle::AngleFunction)a->form()); ++n)
+            for (auto n = 0; n < a->nParameters(); ++n)
                 s.strcatf("  %8.3f", a->parameter(n));
             if (!parser.writeLineF("%s\n", s.get()))
                 return false;
@@ -228,7 +231,7 @@ bool Dissolve::saveInput(const char *filename)
         {
             CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword), t->name(),
                          SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
-            for (int n = 0; n < SpeciesTorsion::torsionFunctions().minArgs((SpeciesTorsion::TorsionFunction)t->form()); ++n)
+            for (auto n = 0; n < t->nParameters(); ++n)
                 s.strcatf("  %8.3f", t->parameter(n));
             if (!parser.writeLineF("%s\n", s.get()))
                 return false;
@@ -238,8 +241,7 @@ bool Dissolve::saveInput(const char *filename)
         {
             CharString s("  %s  '%s'  %s", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword), imp->name(),
                          SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
-            for (int n = 0; n < SpeciesImproper::improperFunctions().minArgs((SpeciesImproper::ImproperFunction)imp->form());
-                 ++n)
+            for (auto n = 0; n < imp->nParameters(); ++n)
                 s.strcatf("  %8.3f", imp->parameter(n));
             if (!parser.writeLineF("%s\n", s.get()))
                 return false;
@@ -269,7 +271,7 @@ bool Dissolve::saveInput(const char *filename)
     // Atom Type Parameters
     if (!parser.writeLineF("  # Atom Type Parameters\n"))
         return false;
-    for (auto *atomType = atomTypes().first(); atomType != NULL; atomType = atomType->next())
+    for (auto atomType : atomTypes())
     {
         CharString s("  %s  %s  %s  %12.6e  %s",
                      PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword), atomType->name(),
@@ -331,12 +333,12 @@ bool Dissolve::saveInput(const char *filename)
         if (cfg->inputCoordinates().hasValidFileAndFormat())
         {
             if (!cfg->inputCoordinates().writeFilenameAndFormat(
-                    parser, CharString("    %s  ",
-                                       ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword))))
+                    parser,
+                    CharString("  %s  ", ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword))))
                 return false;
-            if (!cfg->inputCoordinates().writeBlock(parser, "      "))
+            if (!cfg->inputCoordinates().writeBlock(parser, "    "))
                 return false;
-            if (!parser.writeLineF("    End%s\n",
+            if (!parser.writeLineF("  End%s\n",
                                    ConfigurationBlock::keywords().keyword(ConfigurationBlock::InputCoordinatesKeyword)))
                 return false;
         }

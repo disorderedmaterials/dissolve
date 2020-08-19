@@ -28,11 +28,11 @@
 // Return enum option info for MasterKeyword
 EnumOptions<MasterBlock::MasterKeyword> MasterBlock::keywords()
 {
-    static EnumOptionsList MasterKeywords = EnumOptionsList() << EnumOption(MasterBlock::AngleKeyword, "Angle", 2, 7)
-                                                              << EnumOption(MasterBlock::BondKeyword, "Bond", 2, 6)
+    static EnumOptionsList MasterKeywords = EnumOptionsList() << EnumOption(MasterBlock::AngleKeyword, "Angle", 2, 11)
+                                                              << EnumOption(MasterBlock::BondKeyword, "Bond", 2, 11)
                                                               << EnumOption(MasterBlock::EndMasterKeyword, "EndMaster")
-                                                              << EnumOption(MasterBlock::ImproperKeyword, "Improper", 2, 8)
-                                                              << EnumOption(MasterBlock::TorsionKeyword, "Torsion", 2, 8);
+                                                              << EnumOption(MasterBlock::ImproperKeyword, "Improper", 2, 11)
+                                                              << EnumOption(MasterBlock::TorsionKeyword, "Torsion", 2, 11);
 
     static EnumOptions<MasterBlock::MasterKeyword> options("MasterKeyword", MasterKeywords);
 
@@ -58,7 +58,7 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
 
-        // Do we recognise this keyword and, if so, do we have the appropriate number of arguments?
+        // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
         if (!keywords().isValid(parser.argc(0)))
             return keywords().errorAndPrintValid(parser.argc(0));
         auto kwd = keywords().enumeration(parser.argc(0));
@@ -87,18 +87,18 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                     CharString termInfo("     %-10s  %-12s", masterIntra->name(),
                                         SpeciesAngle::angleFunctions().keywordFromInt(masterIntra->form()));
 
-                    for (int n = 0; n < SpeciesAngle::angleFunctions().minArgs(af); ++n)
+                    // Check number of args provided
+                    if (!SpeciesAngle::angleFunctions().validNArgs(af, parser.nArgs() - 3))
                     {
-                        if (!parser.hasArg(n + 3))
-                        {
-                            Messenger::error("Angle function type '%s' requires %i parameters\n",
-                                             SpeciesAngle::angleFunctions().keywordFromInt(af),
-                                             SpeciesAngle::angleFunctions().minArgs(af));
-                            error = true;
-                            break;
-                        }
-                        masterIntra->setParameter(n, parser.argd(n + 3));
-                        termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
+                        error = true;
+                        break;
+                    }
+
+                    // Set parameters
+                    for (auto n = 3; n < parser.nArgs(); ++n)
+                    {
+                        masterIntra->addParameter(parser.argd(n));
+                        termInfo.strcatf("  %12.4e", parser.argd(n));
                     }
 
                     Messenger::printVerbose("Defined master angle term: %s\n", termInfo.get());
@@ -125,18 +125,18 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                     CharString termInfo("%-10s  %-12s", masterIntra->name(),
                                         SpeciesBond::bondFunctions().keywordFromInt(masterIntra->form()));
 
-                    for (int n = 0; n < SpeciesBond::bondFunctions().minArgs(bf); ++n)
+                    // Check number of args provided
+                    if (!SpeciesBond::bondFunctions().validNArgs(bf, parser.nArgs() - 3))
                     {
-                        if (!parser.hasArg(n + 3))
-                        {
-                            Messenger::error("Bond function type '%s' requires %i parameters\n",
-                                             SpeciesBond::bondFunctions().keywordFromInt(bf),
-                                             SpeciesBond::bondFunctions().minArgs(bf));
-                            error = true;
-                            break;
-                        }
-                        masterIntra->setParameter(n, parser.argd(n + 3));
-                        termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
+                        error = true;
+                        break;
+                    }
+
+                    // Set parameters
+                    for (auto n = 3; n < parser.nArgs(); ++n)
+                    {
+                        masterIntra->addParameter(parser.argd(n));
+                        termInfo.strcatf("  %12.4e", parser.argd(n));
                     }
 
                     Messenger::printVerbose("Defined master bond term: %s\n", termInfo.get());
@@ -167,18 +167,18 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                     CharString termInfo("     %-10s  %-12s", masterIntra->name(),
                                         SpeciesImproper::improperFunctions().keywordFromInt(masterIntra->form()));
 
-                    for (int n = 0; n < SpeciesImproper::improperFunctions().minArgs(impf); ++n)
+                    // Check number of args provided
+                    if (!SpeciesImproper::improperFunctions().validNArgs(impf, parser.nArgs() - 3))
                     {
-                        if (!parser.hasArg(n + 3))
-                        {
-                            Messenger::error("Improper function type '%s' requires %i parameters\n",
-                                             SpeciesImproper::improperFunctions().keyword(impf),
-                                             SpeciesImproper::improperFunctions().minArgs(impf));
-                            error = true;
-                            break;
-                        }
-                        masterIntra->setParameter(n, parser.argd(n + 3));
-                        termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
+                        error = true;
+                        break;
+                    }
+
+                    // Set parameters
+                    for (auto n = 3; n < parser.nArgs(); ++n)
+                    {
+                        masterIntra->addParameter(parser.argd(n));
+                        termInfo.strcatf("  %12.4e", parser.argd(n));
                     }
 
                     Messenger::printVerbose("Defined master improper term: %s\n", termInfo.get());
@@ -205,18 +205,18 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                     CharString termInfo("     %-10s  %-12s", masterIntra->name(),
                                         SpeciesTorsion::torsionFunctions().keywordFromInt(masterIntra->form()));
 
-                    for (int n = 0; n < SpeciesTorsion::torsionFunctions().minArgs(tf); ++n)
+                    // Check number of args provided
+                    if (!SpeciesTorsion::torsionFunctions().validNArgs(tf, parser.nArgs() - 3))
                     {
-                        if (!parser.hasArg(n + 3))
-                        {
-                            Messenger::error("Torsion function type '%s' requires %i parameters\n",
-                                             SpeciesTorsion::torsionFunctions().keyword(tf),
-                                             SpeciesTorsion::torsionFunctions().minArgs(tf));
-                            error = true;
-                            break;
-                        }
-                        masterIntra->setParameter(n, parser.argd(n + 3));
-                        termInfo.strcatf("  %12.4e", masterIntra->parameter(n));
+                        error = true;
+                        break;
+                    }
+
+                    // Set parameters
+                    for (auto n = 3; n < parser.nArgs(); ++n)
+                    {
+                        masterIntra->addParameter(parser.argd(n));
+                        termInfo.strcatf("  %12.4e", parser.argd(n));
                     }
 
                     Messenger::printVerbose("Defined master torsion term: %s\n", termInfo.get());

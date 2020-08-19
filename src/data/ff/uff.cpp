@@ -466,7 +466,7 @@ bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, cons
     // Set the parameters and form of the new bond term
     // Functional form is Harmonic : U = 0.5 * k * (r - eq)**2
     bond.setForm(SpeciesBond::HarmonicForm);
-    bond.setParameters(k, rij);
+    bond.setParameters({k, rij});
 
     return true;
 }
@@ -537,14 +537,14 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle &angle, c
         const auto c0 = c2 * (2.0 * cosTheta * cosTheta + 1.0);
 
         angle.setForm(SpeciesAngle::Cos2Form);
-        angle.setParameters(forcek, c0, c1, c2);
+        angle.setParameters({forcek, c0, c1, c2});
 
         return true;
     }
 
     // Setup terms for the specific case (n != 0)
     angle.setForm(SpeciesAngle::CosineForm);
-    angle.setParameters(forcek / (n * n), n, 0.0, -1.0);
+    angle.setParameters({forcek / (n * n), n, 0.0, -1.0});
 
     return true;
 }
@@ -651,7 +651,7 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion &tors
 
     // Store the generated parameters
     torsionTerm.setForm(SpeciesTorsion::UFFCosineForm);
-    torsionTerm.setParameters(V, n, phi0);
+    torsionTerm.setParameters({V, n, phi0});
 
     return true;
 }
@@ -674,8 +674,9 @@ bool Forcefield_UFF::assignAtomTypes(Species *sp, CoreData &coreData, bool keepE
             const UFFAtomType &uffType = *optTypeRef;
 
             // Check if an AtomType of the same name already exists - if it does, just use that one
-            AtomType *at = coreData.findAtomType(uffType.name());
-            if (!at)
+            std::shared_ptr<AtomType> at;
+            auto opt_at = coreData.findAtomType(uffType.name());
+            if (!opt_at)
             {
                 at = coreData.addAtomType(i->element());
                 at->setName(uffType.name());

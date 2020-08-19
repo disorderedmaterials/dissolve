@@ -80,8 +80,8 @@ Data1D RefineModule::calculateCR(const Data1D &sq, double normFactor, double rMi
 }
 
 // Determine modification to bonds based on supplied delta g(r), returning features extracted from deltaGR
-bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, AtomType *typeI, AtomType *typeJ,
-                                   Data1D &deltaBond)
+bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, std::shared_ptr<AtomType> typeI,
+                                   std::shared_ptr<AtomType> typeJ, Data1D &deltaBond)
 {
     // TODO - this function is out-of-date and no longer works
     return false;
@@ -171,8 +171,9 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, At
                     Messenger::print("Fitting suggests mismatch of equilibrium bond lengths - adjusting "
                                      "from %f to %f Angstroms.\n",
                                      xCentreStart_, newEq);
-                    if (masterIntra->form() == SpeciesBond::HarmonicForm)
-                        masterIntra->setParameter(1, newEq);
+                    Messenger::warn("ADJUSTING EQ BOND LENGTHS WAS REMOVED.\n");
+                    //                     if (masterIntra->form() == SpeciesBond::HarmonicForm)
+                    //                         masterIntra->setParameter(1, newEq);
                 }
                 else
                     continue;
@@ -193,8 +194,9 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, At
                     if (masterIntra->form() == SpeciesBond::HarmonicForm)
                         newK = masterIntra->parameter(0) * 0.9;
                     Messenger::print("Fitting suggests wrong force constant - adjusting to %f kJ/mol/A**2.\n", newK);
-                    if (masterIntra->form() == SpeciesBond::HarmonicForm)
-                        masterIntra->setParameter(0, newK);
+                    Messenger::warn("ADJUSTING FORCE CONSTANTS WAS REMOVED.\n");
+                    //                     if (masterIntra->form() == SpeciesBond::HarmonicForm)
+                    //                         masterIntra->setParameter(0, newK);
                 }
                 else
                     continue;
@@ -234,8 +236,9 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, At
             Messenger::print("Exp2 fitting suggests mismatch of equilibrium bond lengths - adjusting from %f to %f "
                              "Angstroms.\n",
                              xCentreStart_, newEq);
-            if (masterIntra->form() == SpeciesBond::HarmonicForm)
-                masterIntra->setParameter(1, newEq);
+            Messenger::warn("ADJUSTING EQ BOND LENGTHS WAS REMOVED.\n");
+            //             if (masterIntra->form() == SpeciesBond::HarmonicForm)
+            //                 masterIntra->setParameter(1, newEq);
         }
 
         // One of our masterbonds has provided a good fit to the data - we may as well stop here

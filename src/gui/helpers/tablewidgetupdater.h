@@ -25,6 +25,7 @@
 #include "templates/refdatalist.h"
 #include "templates/reflist.h"
 #include <QTableWidget>
+#include <memory>
 
 #pragma once
 
@@ -123,6 +124,22 @@ template <class T, class I, typename Raw = I *, typename... Args> class TableWid
 
         DynamicArrayIterator<I> dataIterator(array);
         while (I *dataItem = dataIterator.iterate())
+        {
+            updateItemAtIndex(table, rowCount, dataItem, functionParent, updateRow);
+            ++rowCount;
+        }
+
+        // Set the number of table rows again here in order to catch the case where there were zero data items to
+        // iterate over
+        table->setRowCount(rowCount);
+    }
+    TableWidgetUpdater(QTableWidget *table, const std::vector<std::shared_ptr<I>> &list, T *functionParent,
+                       TableWidgetRowUpdateFunction updateRow)
+    {
+
+        int rowCount = 0;
+
+        for (auto dataItem : list)
         {
             updateItemAtIndex(table, rowCount, dataItem, functionParent, updateRow);
             ++rowCount;

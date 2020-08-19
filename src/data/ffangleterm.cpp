@@ -24,17 +24,13 @@
 #include "data/ffatomtype.h"
 
 ForcefieldAngleTerm::ForcefieldAngleTerm(const char *typeI, const char *typeJ, const char *typeK,
-                                         SpeciesAngle::AngleFunction form, double data0, double data1, double data2,
-                                         double data3)
+                                         SpeciesAngle::AngleFunction form, const std::vector<double> parameters)
 {
     typeI_ = typeI;
     typeJ_ = typeJ;
     typeK_ = typeK;
     form_ = form;
-    parameters_[0] = data0;
-    parameters_[1] = data1;
-    parameters_[2] = data2;
-    parameters_[3] = data3;
+    parameters_ = parameters;
 }
 
 ForcefieldAngleTerm::~ForcefieldAngleTerm() {}
@@ -60,4 +56,4 @@ bool ForcefieldAngleTerm::isMatch(const ForcefieldAtomType &i, const ForcefieldA
 SpeciesAngle::AngleFunction ForcefieldAngleTerm::form() const { return form_; }
 
 // Return array of parameters
-const double *ForcefieldAngleTerm::parameters() const { return parameters_; }
+const std::vector<double> &ForcefieldAngleTerm::parameters() const { return parameters_; }

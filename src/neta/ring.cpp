@@ -29,7 +29,7 @@
 NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::RingNode)
 {
     repeatCount_ = 1;
-    repeatCountOperator_ = NETANode::EqualTo;
+    repeatCountOperator_ = NETANode::GreaterThanEqualTo;
     sizeValue_ = -1;
     sizeValueOperator_ = NETANode::EqualTo;
 }

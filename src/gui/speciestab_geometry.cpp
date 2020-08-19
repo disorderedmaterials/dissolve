@@ -62,7 +62,7 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool crea
     item->setSelected(speciesAtom->isSelected());
 
     // Coordinates
-    for (int n = 0; n < 3; ++n)
+    for (auto n = 0; n < 3; ++n)
     {
         if (createItems)
         {
@@ -97,7 +97,7 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
     QTableWidgetItem *item;
 
     // Atom Indices
-    for (int n = 0; n < 2; ++n)
+    for (auto n = 0; n < 2; ++n)
     {
         if (createItems)
         {
@@ -124,7 +124,7 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
                                                   : SpeciesBond::bondFunctions().keywordFromInt(speciesBond->form()));
 
     // Interaction Parameters
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < speciesBond->nParameters(); ++n)
     {
         if (createItems)
         {
@@ -146,7 +146,7 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
     QTableWidgetItem *item;
 
     // Atom Indices
-    for (int n = 0; n < 3; ++n)
+    for (auto n = 0; n < 3; ++n)
     {
         if (createItems)
         {
@@ -173,7 +173,7 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
                                                    : SpeciesAngle::angleFunctions().keywordFromInt(speciesAngle->form()));
 
     // Interaction Parameters
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < speciesAngle->nParameters(); ++n)
     {
         if (createItems)
         {
@@ -195,7 +195,7 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
     QTableWidgetItem *item;
 
     // Atom Indices
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < 4; ++n)
     {
         if (createItems)
         {
@@ -223,7 +223,7 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
                       : SpeciesTorsion::torsionFunctions().keywordFromInt(speciesTorsion->form()));
 
     // Interaction Parameters
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < speciesTorsion->nParameters(); ++n)
     {
         if (createItems)
         {
@@ -244,7 +244,7 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
     QTableWidgetItem *item;
 
     // Atom Indices
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < 4; ++n)
     {
         if (createItems)
         {
@@ -272,7 +272,7 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
                       : SpeciesImproper::improperFunctions().keywordFromInt(speciesImproper->form()));
 
     // Interaction Parameters
-    for (int n = 0; n < 4; ++n)
+    for (auto n = 0; n < speciesImproper->nParameters(); ++n)
     {
         if (createItems)
         {
@@ -301,7 +301,7 @@ void SpeciesTab::updateAtomTableSelection()
     SpeciesAtom *i;
 
     // Set atom selection in table to reflect the atom data
-    for (int n = 0; n < ui_.AtomTable->rowCount(); ++n)
+    for (auto n = 0; n < ui_.AtomTable->rowCount(); ++n)
     {
         item = ui_.AtomTable->item(n, 0);
         i = VariantPointer<SpeciesAtom>(item->data(Qt::UserRole));
@@ -317,6 +317,7 @@ void SpeciesTab::updateAtomTableSelection()
 
 void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
 {
+    std::optional<std::shared_ptr<AtomType>> opt_atomType;
     if (refreshLock_.isLocked())
         return;
 
@@ -326,7 +327,7 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
         return;
     Vec3<double> r = speciesAtom->r();
     // Column of passed item tells us the type of data we need to change
-    AtomType *atomType;
+    std::shared_ptr<AtomType> atomType;
     switch (w->column())
     {
         // Element
@@ -335,12 +336,14 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
         // AtomType
         case (1):
             // Check the text to see if it is an existing AtomType - if not, we should create it
-            atomType = dissolve_.findAtomType(qPrintable(w->text()));
-            if (!atomType)
+            opt_atomType = dissolve_.findAtomType(qPrintable(w->text()));
+            if (!opt_atomType)
             {
                 atomType = dissolve_.addAtomType(speciesAtom->element());
                 atomType->setName(qPrintable(w->text()));
             }
+            else
+                atomType = *opt_atomType;
             speciesAtom->setAtomType(atomType);
             dissolveWindow_->setModified();
             break;
@@ -384,7 +387,7 @@ void SpeciesTab::on_AtomTable_itemSelectionChanged()
     SpeciesAtom *i;
 
     // Set atom selection in viewer to be same as the table
-    for (int n = 0; n < ui_.AtomTable->rowCount(); ++n)
+    for (auto n = 0; n < ui_.AtomTable->rowCount(); ++n)
     {
         item = ui_.AtomTable->item(n, 0);
         i = VariantPointer<SpeciesAtom>(item->data(Qt::UserRole));

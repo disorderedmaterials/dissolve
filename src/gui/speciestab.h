@@ -129,8 +129,8 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
     void updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, int topLevelItemIndex, Isotopologue *data,
                                              bool createItem);
     // IsotopologuesTree item update function
-    void updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, AtomType *item, Isotope *data,
-                                          bool createItem);
+    void updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, std::shared_ptr<AtomType> item,
+                                          Isotope *data, bool createItem);
     // Return currently-selected Isotopologue
     Isotopologue *currentIsotopologue();
 

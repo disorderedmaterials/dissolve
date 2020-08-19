@@ -1,0 +1,73 @@
+baseURL = "http://projectdissolve.com/"
+languageCode = "en-us"
+#title = "Dissolve"
+theme = "docsy"
+
+enableInlineShortcodes = true
+relativeURLs = true
+## Configuration for BlackFriday markdown parser: https://github.com/russross/blackfriday
+[blackfriday]
+plainIDAnchors = true
+hrefTargetBlank = true
+angledQuotes = false
+latexDashes = true
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+[menu]
+  [[menu.main]]
+    name = "Home"
+    url = "/"
+    weight = 1
+    
+  [[menu.main]]
+    name = "Downloads"
+    url = "#downloads"
+    weight = 2
+
+  [[menu.main]]
+    name = "Forum"
+    url = "https://forum.projectdissolve.com"
+    weight = 4
+
+#   [[menu.main]]
+#     name = "Documentation"
+#     url = "#"
+#     weight = 3
+#     
+#   [[menu.main]]
+#     name = "User Guide"
+#     parent = "Documentation"
+#     url = "docs/userguide"
+#     weight = 1
+#     
+#   [[menu.main]]
+#     name = "Examples"
+#     parent = "Documentation"
+#     url = "docs/examples"
+#     weight = 2
+
+[params]
+copyright = "Dr Tristan G. Youngs, Simona (2019-)"
+#privacy_policy = "???????"
+
+# User interface configuration
+[params.ui]
+#  Set to true to disable breadcrumb navigation.
+breadcrumb_disable = true
+# Enable to show the side bar menu in its compact state
+sidebar_menu_compact = true
+#  Set to false if you don't want to display a logo (/assets/icons/logo.svg) in the top nav bar
+navbar_logo = true
+
+#
+[params.links]
+# End user relevant links. These will show up on left side of footer and in the community page if you have one.
+ [[params.links.developer]]
+	name = "GitHub"
+	url = "https://github.com/projectdissolve/dissolve"
+	icon = "fab fa-github"
+        desc = "Development takes place here!"

@@ -1,0 +1,20 @@
+name: Generating PDFs
+
+on: 
+  push:
+    paths: docs/examples/**
+
+jobs:
+  build:
+     
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Argon
+      run: |
+        cd docs/examples/argon
+        cp index.md all.md
+        for a in step*md; do gawk 'NR > 7{print $0}' $a >> all.md; done
+
+     

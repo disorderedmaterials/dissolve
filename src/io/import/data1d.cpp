@@ -108,14 +108,20 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
 {
     // Import the data
     auto result = false;
-    if (data1DFormat() == Data1DImportFileFormat::XYData1D)
-        result = importXY(parser, data);
-    else if (data1DFormat() == Data1DImportFileFormat::HistogramData1D)
-        result = importHistogram(parser, data);
-    else if (data1DFormat() == Data1DImportFileFormat::GudrunMintData1D)
-        result = importGudrunMint(parser, data);
-    else
-        Messenger::error("Don't know how to load Data1D of format '%s'.\n", formatKeyword(data1DFormat()));
+    switch (data1DFormat())
+    {
+        case (Data1DImportFileFormat::XYData1D):
+            result = importXY(parser, data);
+            break;
+        case (Data1DImportFileFormat::HistogramData1D):
+            result = importHistogram(parser, data);
+            break;
+        case (Data1DImportFileFormat::GudrunMintData1D):
+            result = importGudrunMint(parser, data);
+            break;
+        default:
+            Messenger::error("Don't know how to load Data1D of format '%s'.\n", formatKeyword(data1DFormat()));
+    }
 
     // If we failed, may as well return now
     if (!result)

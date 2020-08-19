@@ -55,7 +55,7 @@ int Dissolve::indexOf(PairPotential *pp) { return pairPotentials_.indexOf(pp); }
 int Dissolve::nPairPotentials() const { return pairPotentials_.nItems(); }
 
 // Add new pair potential to list
-PairPotential *Dissolve::addPairPotential(AtomType *at1, AtomType *at2)
+PairPotential *Dissolve::addPairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2)
 {
     PairPotential *pp = pairPotentials_.add();
     pp->setUp(at1, at2);
@@ -70,7 +70,7 @@ const List<PairPotential> &Dissolve::pairPotentials() const { return pairPotenti
 PairPotential *Dissolve::pairPotential(int n) { return pairPotentials_[n]; }
 
 // Return whether specified PairPotential is defined
-PairPotential *Dissolve::pairPotential(AtomType *at1, AtomType *at2) const
+PairPotential *Dissolve::pairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2) const
 {
     for (auto *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
     {
@@ -109,7 +109,7 @@ void Dissolve::regeneratePairPotentials()
 }
 
 // Generate all necessary PairPotentials, adding missing terms where necessary
-bool Dissolve::generatePairPotentials(AtomType *onlyInvolving)
+bool Dissolve::generatePairPotentials(std::shared_ptr<AtomType> onlyInvolving)
 {
     // Check current AtomTypes version against the last one we generated at
     if (pairPotentialAtomTypeVersion_ == coreData_.atomTypesVersion())
@@ -121,28 +121,28 @@ bool Dissolve::generatePairPotentials(AtomType *onlyInvolving)
     auto nUndefined = 0;
 
     // Loop over all atomtype pairs and update / add pair potentials as necessary
-    for (AtomType *at1 = coreData_.atomTypes().first(); at1 != NULL; at1 = at1->next())
+    for (auto at1 = coreData_.atomTypes().begin(); at1 != coreData_.atomTypes().end(); ++at1)
     {
-        for (AtomType *at2 = at1; at2 != NULL; at2 = at2->next())
+        for (auto at2 = at1; at2 != coreData_.atomTypes().end(); ++at2)
         {
             // If an AtomType was supplied, only generate the pair potential if one of its AtomTypes matches
-            if (onlyInvolving && (at1 != onlyInvolving) && (at2 != onlyInvolving))
+            if (onlyInvolving && (*at1 != onlyInvolving) && (*at2 != onlyInvolving))
                 continue;
 
             // Does a PairPotential for this AtomType pair already exist?
-            PairPotential *pot = pairPotential(at1, at2);
+            auto *pot = pairPotential(*at1, *at2);
             if (pot)
             {
-                Messenger::print("Updating existing PairPotential for interaction between '%s' and '%s'...\n", at1->name(),
-                                 at2->name());
-                if (!pot->setUp(at1, at2))
+                Messenger::print("Updating existing PairPotential for interaction between '%s' and '%s'...\n", (*at1)->name(),
+                                 (*at2)->name());
+                if (!pot->setUp(*at1, *at2))
                     return false;
             }
             else
             {
-                Messenger::print("Adding new PairPotential for interaction between '%s' and '%s'...\n", at1->name(),
-                                 at2->name());
-                pot = addPairPotential(at1, at2);
+                Messenger::print("Adding new PairPotential for interaction between '%s' and '%s'...\n", (*at1)->name(),
+                                 (*at2)->name());
+                pot = addPairPotential(*at1, *at2);
             }
 
             // Check the implied short-range form of the potential

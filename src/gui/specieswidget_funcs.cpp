@@ -25,12 +25,15 @@
 #include "gui/specieswidget.h"
 #include "gui/widgets/elementselector.hui"
 #include "main/dissolve.h"
+#include "modules/geomopt/geomopt.h"
 #include "procedure/nodes/addspecies.h"
 #include "procedure/nodes/box.h"
 #include <QButtonGroup>
 
 SpeciesWidget::SpeciesWidget(QWidget *parent) : QWidget(parent)
 {
+    dissolve_ = nullptr;
+
     // Set up our UI
     ui_.setupUi(this);
 
@@ -44,10 +47,8 @@ SpeciesWidget::SpeciesWidget(QWidget *parent) : QWidget(parent)
     updateStatusBar();
 }
 
-SpeciesWidget::~SpeciesWidget() {}
-
-// Set main CoreData pointer
-void SpeciesWidget::setCoreData(CoreData *coreData) { coreData_ = coreData; }
+// Set main Dissolve pointer
+void SpeciesWidget::setDissolve(Dissolve *dissolve) { dissolve_ = dissolve; }
 
 /*
  * UI
@@ -74,7 +75,7 @@ void SpeciesWidget::updateToolbar()
 void SpeciesWidget::updateStatusBar()
 {
     // Get displayed Species
-    const Species *sp = speciesViewer()->species();
+    const auto *sp = speciesViewer()->species();
 
     // Set interaction mode text
     ui_.ModeLabel->setText(speciesViewer()->interactionModeText());
@@ -134,7 +135,7 @@ void SpeciesWidget::on_ViewCopyToClipboardButton_clicked(bool checked) { species
 void SpeciesWidget::on_ToolsCalculateBondingButton_clicked(bool checked)
 {
     // Get displayed Species
-    Species *sp = speciesViewer()->species();
+    auto *sp = speciesViewer()->species();
     if (!sp)
         return;
 
@@ -149,55 +150,20 @@ void SpeciesWidget::on_ToolsCalculateBondingButton_clicked(bool checked)
 void SpeciesWidget::on_ToolsMinimiseButton_clicked(bool checked)
 {
     // Get displayed Species
-    Species *sp = speciesViewer()->species();
+    auto *sp = speciesViewer()->species();
     if (!sp)
         return;
 
     // Apply forcefield terms now?
     if (sp->forcefield())
-    {
-        sp->applyForcefieldTerms(*coreData_);
-    }
+        sp->applyForcefieldTerms(dissolve_->coreData());
 
     // Check that the Species set up is valid
     if (!sp->checkSetUp())
         return;
 
-    // Create a temporary CoreData and Dissolve
-    CoreData temporaryCoreData;
-    Dissolve temporaryDissolve(temporaryCoreData);
-    if (!temporaryDissolve.registerMasterModules())
-        return;
-
-    // Copy our target species to the temporary structure, and create a simple Configuration from it
-    Species *temporarySpecies = temporaryDissolve.copySpecies(sp);
-    Configuration *temporaryCfg = temporaryDissolve.addConfiguration();
-    Procedure &generator = temporaryCfg->generator();
-    generator.addRootSequenceNode(new BoxProcedureNode(Vec3<double>(1.0, 1.0, 1.0), Vec3<double>(90, 90, 90), true));
-    AddSpeciesProcedureNode *addSpeciesNode = new AddSpeciesProcedureNode(temporarySpecies, 1, 0.0001);
-    addSpeciesNode->setKeyword<bool>("Rotate", false);
-    addSpeciesNode->setEnumeration<AddSpeciesProcedureNode::PositioningType>("Positioning",
-                                                                             AddSpeciesProcedureNode::CentralPositioning);
-    generator.addRootSequenceNode(addSpeciesNode);
-    if (!temporaryCfg->initialiseContent(temporaryDissolve.worldPool(), 15.0))
-        return;
-
-    // Create a Geometry Optimisation Module in a new processing layer, and set everything up
-    if (!temporaryDissolve.createModuleInLayer("GeometryOptimisation", "Processing", temporaryCfg))
-        return;
-    if (!temporaryDissolve.generatePairPotentials())
-        return;
-
-    // Run the calculation
-    if (!temporaryDissolve.prepare())
-        return;
-    temporaryDissolve.iterate(1);
-
-    // Copy the optimised coordinates from the temporary Configuration to the target Species
-    ListIterator<SpeciesAtom> atomIterator(sp->atoms());
-    auto index = 0;
-    while (SpeciesAtom *i = atomIterator.iterate())
-        sp->setAtomCoordinates(i, temporaryCfg->atom(index++)->r());
+    GeometryOptimisationModule optimiser;
+    optimiser.optimiseSpecies(*dissolve_, dissolve_->worldPool(), sp);
 
     // Centre the Species back at the origin
     sp->centreAtOrigin();

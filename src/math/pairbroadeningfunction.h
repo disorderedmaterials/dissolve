@@ -26,6 +26,7 @@
 #include "math/broadeningfunction.h"
 #include "templates/array.h"
 #include "templates/array2d.h"
+#include <memory>
 
 // Forward Declarations
 class AtomType;
@@ -102,7 +103,8 @@ class PairBroadeningFunction : public GenericItemBase
     // Return short summary of function and its parameters
     CharString summary() const;
     // Return a BroadeningFunction tailored to the specified AtomType pair
-    BroadeningFunction broadeningFunction(AtomType &at1, AtomType &at2, SpeciesIntra *intra = NULL);
+    BroadeningFunction broadeningFunction(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2,
+                                          SpeciesIntra *intra = NULL);
 
     /*
      * GenericItemBase Implementations

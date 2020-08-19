@@ -99,11 +99,4 @@ class SpeciesAngle : public SpeciesIntra
     double energy(double angleInDegrees) const;
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
-
-    /*
-     * Parallel Comms
-     */
-    public:
-    // Broadcast data from Master to all Slaves
-    bool broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms);
 };

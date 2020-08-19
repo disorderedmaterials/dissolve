@@ -240,7 +240,7 @@ EnumOptions<SpeciesBond::BondFunction> SpeciesBond::bondFunctions()
 void SpeciesBond::setUp()
 {
     // Get pointer to relevant parameters array
-    const auto *params = parameters();
+    const auto &params = parameters();
 
     /*
      * Depending on the form, we may have other dependent parameters to set up
@@ -261,7 +261,7 @@ void SpeciesBond::setUp()
 double SpeciesBond::fundamentalFrequency(double reducedMass) const
 {
     // Get pointer to relevant parameters array
-    const auto *params = parameters();
+    const auto &params = parameters();
 
     double k = 0.0;
     if (form() == SpeciesBond::HarmonicForm)
@@ -294,7 +294,7 @@ SpeciesIntra::InteractionType SpeciesBond::type() const { return SpeciesIntra::B
 double SpeciesBond::energy(double distance) const
 {
     // Get pointer to relevant parameters array
-    const auto *params = parameters();
+    const auto &params = parameters();
 
     if (form() == SpeciesBond::NoForm)
         return 0.0;
@@ -330,7 +330,7 @@ double SpeciesBond::energy(double distance) const
 double SpeciesBond::force(double distance) const
 {
     // Get pointer to relevant parameters array
-    const auto *params = parameters();
+    const auto &params = parameters();
 
     if (form() == SpeciesBond::NoForm)
         return 0.0;
@@ -358,36 +358,4 @@ double SpeciesBond::force(double distance) const
 
     Messenger::error("Functional form of SpeciesBond term not accounted for, so can't calculate force.\n");
     return 0.0;
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool SpeciesBond::broadcast(ProcessPool &procPool, const List<SpeciesAtom> &atoms)
-{
-#ifdef PARALLEL
-    int buffer[2];
-
-    // Put atom indices into buffer and send
-    if (procPool.isMaster())
-    {
-        buffer[0] = indexI();
-        buffer[1] = indexJ();
-    }
-    if (!procPool.broadcast(buffer, 2))
-        return false;
-
-    // Slaves now take SpeciesAtom pointers from supplied List
-    if (procPool.isSlave())
-        assign(atoms.item(buffer[0]), atoms.item(buffer[1]));
-
-    // Send parameter info
-    if (!procPool.broadcast(parameters_, MAXINTRAPARAMS))
-        return false;
-    if (!procPool.broadcast(form_))
-        return false;
-#endif
-    return true;
 }

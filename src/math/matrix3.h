@@ -146,5 +146,5 @@ class Matrix3
      */
     public:
     // Construct 'cross-product' matrix of the supplied vector using cyclic permutations
-    void makeCrossProductMatrix(Vec3<double> &v);
+    void makeCrossProductMatrix(const Vec3<double> &v);
 };
