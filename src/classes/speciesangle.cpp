@@ -41,10 +41,7 @@ SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : Spe
     }
 }
 
-SpeciesAngle::SpeciesAngle(SpeciesAngle &source) : SpeciesIntra(source)
-{
-    this->operator=(source);
-}
+SpeciesAngle::SpeciesAngle(SpeciesAngle &source) : SpeciesIntra(source) { this->operator=(source); }
 
 SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) : SpeciesIntra(source)
 {
@@ -95,7 +92,8 @@ SpeciesAngle &SpeciesAngle::operator=(const SpeciesAngle &source)
 SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &&source)
 {
     // Detach any current atoms
-    if (i_ && j_ && k_) detach();
+    if (i_ && j_ && k_)
+        detach();
 
     // Copy data
     i_ = source.i_;

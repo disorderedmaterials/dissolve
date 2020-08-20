@@ -128,7 +128,8 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix)
 }
 
 // Transform selected atoms with supplied matrix, around specified origin
-void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, const Vec3<double> &origin, const std::vector<int> &targetAtoms)
+void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, const Vec3<double> &origin,
+                         const std::vector<int> &targetAtoms)
 {
     // Loop over supplied Atoms
     Vec3<double> newR;

@@ -80,7 +80,8 @@ class Molecule : public DynamicArrayObject<Molecule>, public std::enable_shared_
     // Transform molecule with supplied matrix, using centre of geometry as the origin
     void transform(const Box *box, const Matrix3 &transformationMatrix);
     // Transform selected atoms with supplied matrix, around specified origin
-    void transform(const Box *box, const Matrix3 &transformationMatrix, const Vec3<double> &origin, const std::vector<int> &targetAtoms);
+    void transform(const Box *box, const Matrix3 &transformationMatrix, const Vec3<double> &origin,
+		   const std::vector<int> &targetAtoms);
     // Translate whole molecule by the delta specified
     void translate(const Vec3<double> delta);
     // Translate specified atoms by the delta specified
