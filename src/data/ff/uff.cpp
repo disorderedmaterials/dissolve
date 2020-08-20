@@ -516,7 +516,7 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle &angle, c
 
     // To determine angle form and necessary coefficients, use 'geom' integer data (which represents the third letter of the
     // atom name. This idea is shamelessly stolen from MCCCS Towhee!
-    auto n = 0;
+    auto n = 0.0;
     const auto geom = j.geom();
 
     if (geom == 0)
