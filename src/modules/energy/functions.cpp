@@ -179,17 +179,14 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
                 kernel.energy(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()), mol->atom(angle.indexK()));
 
         // Loop over Torsions
-        torsionEnergy += std::accumulate(mol->species()->constTorsions().cbegin(), mol->species()->constTorsions().cend(), 0,
-                                         [&mol, &kernel](auto const acc, const auto &t) {
-                                             return acc + kernel.energy(t, mol->atom(t.indexI()), mol->atom(t.indexJ()),
-                                                                        mol->atom(t.indexK()), mol->atom(t.indexL()));
-                                         });
+        for (const auto &torsion : mol->species()->constTorsions())
+            torsionEnergy += kernel.energy(torsion, mol->atom(torsion.indexI()), mol->atom(torsion.indexJ()),
+                                           mol->atom(torsion.indexK()), mol->atom(torsion.indexL()));
 
-        improperEnergy += std::accumulate(mol->species()->constImpropers().cbegin(), mol->species()->constImpropers().cend(), 0,
-                                          [&mol, &kernel](auto const acc, const auto &imp) {
-                                              return acc + kernel.energy(imp, mol->atom(imp.indexI()), mol->atom(imp.indexJ()),
-                                                                         mol->atom(imp.indexK()), mol->atom(imp.indexL()));
-                                          });
+        // Loop over Impropers
+        for (const auto &improper : mol->species()->constImpropers())
+            improperEnergy += kernel.energy(improper, mol->atom(improper.indexI()), mol->atom(improper.indexJ()),
+                                            mol->atom(improper.indexK()), mol->atom(improper.indexL()));
     }
 
     double totalIntra = bondEnergy + angleEnergy + torsionEnergy + improperEnergy;
