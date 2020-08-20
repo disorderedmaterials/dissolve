@@ -38,10 +38,10 @@ SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, S
     // Add ourself to the list of bonds on each atom
     if (i_ && j_ && k_ && l_)
     {
-        i_->addTorsion(this, 1.0);
-        j_->addTorsion(this, 1.0);
-        k_->addTorsion(this, 1.0);
-        l_->addTorsion(this, l_->scaling(i));
+        i_->addTorsion(this, 0.5);
+        j_->addTorsion(this, 0.5);
+        k_->addTorsion(this, 0.5);
+        l_->addTorsion(this, 0.5);
     }
 }
 
