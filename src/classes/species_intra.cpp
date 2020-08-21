@@ -87,7 +87,6 @@ void Species::updateIntramolecularTerms()
                                  }),
                   angles_.end());
 
-    printf("SJDJDJ\n");
     // remove torsions with invalid atoms or bonds
     torsions_.erase(std::remove_if(torsions_.begin(), torsions_.end(),
                                    [this](const auto &torsion) {
