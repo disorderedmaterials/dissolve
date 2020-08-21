@@ -229,16 +229,16 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Species *sp)
     auto energy = 0.0;
 
     // Loop over bonds
-    for (const auto &b : sp->constBonds())
-        energy += EnergyKernel::energy(b);
+    for (const auto &bond : sp->constBonds())
+        energy += EnergyKernel::energy(bond);
 
     // Loop over angles
-    for (const auto &a : sp->constAngles())
-        energy += EnergyKernel::energy(a);
+    for (const auto &angle : sp->constAngles())
+        energy += EnergyKernel::energy(angle);
 
     // Loop over torsions
-    for (const auto &t : sp->constTorsions())
-        energy += EnergyKernel::energy(t);
+    for (const auto &torsion : sp->constTorsions())
+        energy += EnergyKernel::energy(torsion);
 
     return energy;
 }
