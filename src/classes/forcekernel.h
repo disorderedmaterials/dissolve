@@ -130,13 +130,15 @@ class ForceKernel
     // Calculate SpeciesTorsion forces
     void forces(const SpeciesTorsion &torsion);
     // Calculate SpeciesTorsion forces for specified Atom only
-    void forces(const Atom *onlyThis, const SpeciesTorsion &torsion, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
+    void forces(const Atom *onlyThis, const SpeciesTorsion &torsion, const Atom *i, const Atom *j, const Atom *k,
+                const Atom *l);
     // Calculate SpeciesImproper forces
     void forces(const SpeciesImproper &torsion, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
     // Calculate SpeciesImproper forces
     void forces(const SpeciesImproper &torsion);
     // Calculate SpeciesImproper forces for specified Atom only
-    void forces(const Atom *onlyThis, const SpeciesImproper &torsion, const Atom *i, const Atom *j, const Atom *k, const Atom *l);
+    void forces(const Atom *onlyThis, const SpeciesImproper &torsion, const Atom *i, const Atom *j, const Atom *k,
+                const Atom *l);
 
     /*
      * Parallel Comms
