@@ -66,7 +66,7 @@ void SpeciesImproper::clear()
  */
 
 // Set Atoms involved in Improper
-void SpeciesImproper::setAtoms(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+void SpeciesImproper::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {
     i_ = i;
     j_ = j;

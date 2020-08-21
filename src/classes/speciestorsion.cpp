@@ -128,7 +128,7 @@ void SpeciesTorsion::clear()
  */
 
 // Set Atoms involved in Torsion
-void SpeciesTorsion::setAtoms(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+void SpeciesTorsion::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {
     i_ = i;
     j_ = j;

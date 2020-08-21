@@ -60,7 +60,7 @@ class SpeciesImproper : public SpeciesIntra
 
     public:
     // Set Atoms involved in Improper
-    void setAtoms(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    void assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
     // Return second SpeciesAtom
