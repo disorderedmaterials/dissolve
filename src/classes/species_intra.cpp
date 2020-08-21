@@ -34,7 +34,6 @@ void Species::updateIntramolecularTerms()
 {
     SpeciesAtom *i, *j, *k, *l;
 
-    printf("UIT nbonds = %li\n", bonds_.size());
     // Loop over bonds 'jk'
     for (auto &jk : bonds_)
     {
