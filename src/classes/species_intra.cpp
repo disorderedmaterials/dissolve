@@ -40,7 +40,6 @@ void Species::updateIntramolecularTerms()
         // Get atoms 'j' and 'k'
         j = jk.i();
         k = jk.j();
-        printf("UIT   jk = %i-%i (%p)\n", j->index(), k->index(), &jk);
 
         // Loop over bonds 'ij'
         for (auto *ij : j->bonds())
