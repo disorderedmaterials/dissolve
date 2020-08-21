@@ -836,7 +836,7 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol)
         intraEnergy += energy(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()), mol->atom(angle.indexK()));
 
     // Loop over Torsions
-    for (const auto &t : mol->species()->constTorsions())
+    for (const auto &torsion : mol->species()->constTorsions())
         intraEnergy += energy(t, mol->atom(t.indexI()), mol->atom(t.indexJ()), mol->atom(t.indexK()), mol->atom(t.indexL()));
 
     // Loop over Impropers
