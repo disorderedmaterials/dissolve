@@ -181,7 +181,7 @@ void IsotopologueCollection::complete(const RefList<Configuration> &configuratio
         while (SpeciesInfo *spInfo = spInfoIterator.iterate())
         {
             // If the Species already exists in our set, nothing more to do...
-            if (it->contains(spInfo->species()))
+            if (setForCfg->contains(spInfo->species()))
                 continue;
 
             // Add the natural isotopologue for this Species

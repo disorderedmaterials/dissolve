@@ -41,7 +41,7 @@ std::vector<std::shared_ptr<AtomType>> &Dissolve::atomTypes() { return coreData_
 std::shared_ptr<AtomType> Dissolve::atomType(int n) { return coreData_.atomType(n); }
 
 // Search for AtomType by name
-std::optional<std::shared_ptr<AtomType>> Dissolve::findAtomType(const char *name) const { return coreData_.findAtomType(name); }
+std::shared_ptr<AtomType> Dissolve::findAtomType(const char *name) const { return coreData_.findAtomType(name); }
 
 // Clear all AtomTypes
 void Dissolve::clearAtomTypes() { coreData_.atomTypes().clear(); }
