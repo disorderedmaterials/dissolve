@@ -78,7 +78,6 @@ void Species::updateIntramolecularTerms()
         }
     }
 
-    printf("NOW HERE (%p) n = %li\n", this, angles_.size());
     // Check existing angle terms for any that are invalid
     angles_.erase(std::remove_if(angles_.begin(), angles_.end(),
                                  [this](const auto &angle) {
