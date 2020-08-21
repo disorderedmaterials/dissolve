@@ -183,8 +183,8 @@ const Data3D &RenderableData3D::transformedData()
     if (!valuesTransform_.enabled())
         transformedData_ = *source_;
     else
-      // Make sure the transformed data is up-to-date
-      transformValues();
+        // Make sure the transformed data is up-to-date
+        transformValues();
 
     return transformedData_;
 }
