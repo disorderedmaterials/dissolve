@@ -529,22 +529,22 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesBond &bond, const At
 }
 
 // Calculate SpeciesBond forces
-void ForceKernel::forces(const SpeciesBond &b)
+void ForceKernel::forces(const SpeciesBond &bond)
 {
-    auto vecji = b.j()->r() - b.i()->r();
+    auto vecji = bond.j()->r() - bond.i()->r();
 
     // Get distance and normalise vector ready for force calculation
     const auto distance = vecji.magAndNormalise();
 
     // Determine final forces
-    vecji *= b.force(distance);
+    vecji *= bond.force(distance);
 
     // Calculate forces
-    auto index = b.i()->index();
+    auto index = bond.i()->index();
     fx_[index] -= vecji.x;
     fy_[index] -= vecji.y;
     fz_[index] -= vecji.z;
-    index = b.j()->index();
+    index = bond.j()->index();
     fx_[index] += vecji.x;
     fy_[index] += vecji.y;
     fz_[index] += vecji.z;
@@ -651,23 +651,23 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesAngle &angle, const 
 }
 
 // Calculate SpeciesAngle forces
-void ForceKernel::forces(const SpeciesAngle &a)
+void ForceKernel::forces(const SpeciesAngle &angle)
 {
-    calculateAngleParameters(a.i()->r() - a.j()->r(), a.k()->r() - a.j()->r());
-    const auto force = a.force(theta_);
+    calculateAngleParameters(angle.i()->r() - angle.j()->r(), angle.k()->r() - angle.j()->r());
+    const auto force = angle.force(theta_);
     dfi_dtheta_ *= force;
     dfk_dtheta_ *= force;
 
     // Store forces
-    auto index = a.i()->index();
+    auto index = angle.i()->index();
     fx_[index] += dfi_dtheta_.x;
     fy_[index] += dfi_dtheta_.y;
     fz_[index] += dfi_dtheta_.z;
-    index = a.j()->index();
+    index = angle.j()->index();
     fx_[index] -= dfi_dtheta_.x + dfk_dtheta_.x;
     fy_[index] -= dfi_dtheta_.y + dfk_dtheta_.y;
     fz_[index] -= dfi_dtheta_.z + dfk_dtheta_.z;
-    index = a.k()->index();
+    index = angle.k()->index();
     fx_[index] += dfk_dtheta_.x;
     fy_[index] += dfk_dtheta_.y;
     fz_[index] += dfk_dtheta_.z;
@@ -863,7 +863,7 @@ void ForceKernel::forces(const SpeciesTorsion &torsion)
 }
 
 // Calculate SpeciesImproper forces
-void ForceKernel::forces(const SpeciesImproper &imp, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
+void ForceKernel::forces(const SpeciesImproper &improper, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
 {
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
@@ -881,7 +881,7 @@ void ForceKernel::forces(const SpeciesImproper &imp, const Atom *i, const Atom *
         veckl = l->r() - k->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = imp.force(phi_ * DEGRAD);
+    const auto du_dphi = improper.force(phi_ * DEGRAD);
 
     // Calculate forces on atom i
     auto index = i->arrayIndex();

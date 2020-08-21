@@ -175,7 +175,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
             if (!intraSelectionOnly || originalAngle.isSelected())
                 // Copy interaction parameters, including MasterIntra if necessary
                 dissolve.copySpeciesIntra(*modifiedAngle, originalAngle);
-            modifiedAngle++;
+            ++modifiedAngle;
         }
 
         auto modifiedTorsion = modifiedSpecies_->constTorsions().cbegin();
@@ -185,7 +185,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
             // Selection only?
             if (!intraSelectionOnly || originalTorsion.isSelected())
                 dissolve.copySpeciesIntra(*modifiedTorsion, originalTorsion);
-            modifiedTorsion++;
+            ++modifiedTorsion;
 
             // Copy interaction parameters, including MasterIntra if necessary
         }

@@ -53,8 +53,6 @@ void Species::updateIntramolecularTerms()
             // Get atom 'i'
             i = ij->partner(j);
 
-            printf("UIT     ij = %i-%i (%p)\n", i->index(), j->index(), ij);
-
             // Attempt to add angle term 'ijk' if 'i' > 'k'
             if (!hasAngle(i, j, k))
                 addAngle(i, j, k);

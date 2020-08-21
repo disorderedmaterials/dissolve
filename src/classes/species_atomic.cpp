@@ -45,10 +45,7 @@ void Species::removeAtom(SpeciesAtom *i)
 
     // Remove any bond terms that involve 'i'
     while (i->nBonds())
-    {
-        printf("NBONDS = %i - removing %p\n", i->nBonds(), i->bond(0));
         removeBond(i, i->bond(0)->partner(i));
-    }
 
     // Now remove the atom
     atoms_.remove(i);

@@ -169,7 +169,7 @@ void Species::print()
         {
             CharString s("   %4i  %4i    %c%-12s", bond.indexI() + 1, bond.indexJ() + 1, bond.masterParameters() ? '@' : ' ',
                          SpeciesBond::bondFunctions().keywordFromInt(bond.form()));
-            for (auto param : bond.parameters())
+            for (const auto param : bond.parameters())
                 s.strcatf("  %12.4e", param);
             Messenger::print("%s\n", s.get());
         }
@@ -184,7 +184,7 @@ void Species::print()
         {
             CharString s("   %4i  %4i  %4i    %c%-12s", angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
                          angle.masterParameters() ? '@' : ' ', SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
-            for (auto param : angle.parameters())
+            for (const auto param : angle.parameters())
                 s.strcatf("  %12.4e", param);
             Messenger::print("%s\n", s.get());
         }
@@ -196,11 +196,12 @@ void Species::print()
         Messenger::print("      I     J     K     L    Form             Parameters\n");
         Messenger::print("    ---------------------------------------------------------------------------------------------\n");
         // Loop over Torsions
-        for (const auto &t : torsions())
+        for (const auto &torsion : torsions())
         {
-            CharString s("   %4i  %4i  %4i  %4i    %c%-12s", t.indexI() + 1, t.indexJ() + 1, t.indexK() + 1, t.indexL() + 1,
-                         t.masterParameters() ? '@' : ' ', SpeciesTorsion::torsionFunctions().keywordFromInt(t.form()));
-            for (auto param : t.parameters())
+            CharString s("   %4i  %4i  %4i  %4i    %c%-12s", torsion.indexI() + 1, torsion.indexJ() + 1, torsion.indexK() + 1,
+                         torsion.indexL() + 1, torsion.masterParameters() ? '@' : ' ',
+                         SpeciesTorsion::torsionFunctions().keywordFromInt(torsion.form()));
+            for (const auto param : torsion.parameters())
                 s.strcatf("  %12.4e", param);
             Messenger::print("%s\n", s.get());
         }
@@ -212,12 +213,12 @@ void Species::print()
         Messenger::print("      I     J     K     L    Form             Parameters\n");
         Messenger::print("    ---------------------------------------------------------------------------------------------\n");
         // Loop over Impropers
-        for (auto &imp : impropers())
+        for (auto &improper : impropers())
         {
-            CharString s("   %4i  %4i  %4i  %4i    %c%-12s", imp.indexI() + 1, imp.indexJ() + 1, imp.indexK() + 1,
-                         imp.indexL() + 1, imp.masterParameters() ? '@' : ' ',
-                         SpeciesImproper::improperFunctions().keywordFromInt(imp.form()));
-            for (auto param : imp.parameters())
+            CharString s("   %4i  %4i  %4i  %4i    %c%-12s", improper.indexI() + 1, improper.indexJ() + 1,
+                         improper.indexK() + 1, improper.indexL() + 1, improper.masterParameters() ? '@' : ' ',
+                         SpeciesImproper::improperFunctions().keywordFromInt(improper.form()));
+            for (const auto param : improper.parameters())
                 s.strcatf("  %12.4e", param);
             Messenger::print("%s\n", s.get());
         }

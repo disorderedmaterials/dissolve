@@ -58,10 +58,10 @@ SpeciesTorsion &SpeciesTorsion::operator=(const SpeciesTorsion &source)
 
     if (i_ && j_ && k_ && l_)
     {
-        i_->addTorsion(this, 1.0);
-        j_->addTorsion(this, 1.0);
-        k_->addTorsion(this, 1.0);
-        l_->addTorsion(this, source.l_->scaling(source.i_));
+        i_->addTorsion(this, 0.5);
+        j_->addTorsion(this, 0.5);
+        k_->addTorsion(this, 0.5);
+        l_->addTorsion(this, 0.5);
     }
     form_ = source.form_;
     SpeciesIntra::operator=(source);
@@ -81,10 +81,10 @@ SpeciesTorsion &SpeciesTorsion::operator=(SpeciesTorsion &&source)
 
     if (i_ && j_ && k_ && l_)
     {
-        i_->addTorsion(this, 1.0);
-        j_->addTorsion(this, 1.0);
-        k_->addTorsion(this, 1.0);
-        l_->addTorsion(this, source.l_->scaling(source.i_));
+        i_->addTorsion(this, 0.5);
+        j_->addTorsion(this, 0.5);
+        k_->addTorsion(this, 0.5);
+        l_->addTorsion(this, 0.5);
     }
     form_ = source.form_;
     SpeciesIntra::operator=(source);
