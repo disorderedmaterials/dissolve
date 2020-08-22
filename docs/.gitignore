@@ -1,5 +1,0 @@
-# Git ignore file for docs/
-Gemfile.lock
-_config.yml
-.jekyll-metadata
-_site

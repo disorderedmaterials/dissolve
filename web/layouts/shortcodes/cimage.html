@@ -1,0 +1,5 @@
+{{ $src := .Get "src"  }}
+<p>
+    <img style='display: block; {{ with .Get "width" }}width: {{ . }}; {{ end }}margin-left: auto; margin-right: auto;' src="{{ $src }}"></img>
+</p>
+{{ with .Get "caption" }}<p style="font-size: 90%; text-align: center;"><i>{{ . | safeHTML | markdownify }}</i></p>{{ end }}

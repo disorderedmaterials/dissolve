@@ -1,0 +1,212 @@
+.td-navbar .navbar-brand {
+    svg {
+        margin: 5px 10px;
+        height: 35px;
+    }
+}
+
+.label {
+    border-radius: 5px;
+    display: inline-block;
+    margin: 5px auto 5px 0;
+    color: white;
+    padding: 3px 25px 3px 25px;
+    font-size: 14px;
+}
+
+.label-blue {
+    background-color: #3176d9;
+}
+
+.label-red {
+    background-color: red;
+}
+
+.label.label-yellow {
+    background-color: #fff12c;
+    color: black;
+}
+
+// Left-aligned button
+.btn.left { 
+    border-radius: 5px;
+    width: inherit;
+    margin: 5px auto 5px 0;
+    background-color: #3176d9;
+    color: white;
+    padding: auto;
+}
+
+// Right-aligned button
+.btn.right {
+    border-radius: 5px;
+    width: inherit;
+    margin: 5px auto 5px 0;
+    background-color: #3176d9;
+    color: white;
+    padding: auto;
+    float: right;
+}
+
+.btn.left:hover, .btn.right:hover{
+    background: #1e53a0 linear-gradient(180deg, #3176d9, #1e53a0) repeat-x;
+}
+
+/*
+ * Blockquote Basic Style
+ */
+
+blockquote {
+  width: 60%;
+  margin: 24px auto;
+  color: #555555;
+  padding-left: 50px;
+  padding-top: 15px;
+  padding-bottom: 1px;
+  padding-right: 10px;
+  border-left: 8px solid #ddd ;
+  line-height: 1.6;
+  position: relative;
+  background: #f9f9f9;
+}
+
+blockquote::before {
+  content: '';
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  color: #ddd;
+  left: 15px;
+  top: 12px;
+  background-repeat: no-repeat;
+}
+
+blockquote::after {
+  content: '';
+}
+
+//blockquote p strong {
+//  padding: 0.05em 0.2em;
+//  margin: 0;
+//  background-color: rgba(0,0,0,0.05);
+//  border-radius: 0.25rem;
+//}
+
+/*
+ * Blockquote-Specific Stylings
+ */
+
+// Tip
+blockquote.tip {
+  border-left: 8px solid #78C0A8;
+}
+blockquote.tip::before {
+  background-image: url(/img/blocktip.svg);
+}
+
+// Warning
+blockquote.warn {
+  border-left: 8px solid #fb9a49;
+}
+blockquote.warn::before {
+  background-image: url(/img/blockwarn.svg);
+}
+
+// Question
+blockquote.question {
+  border-left: 8px solid #329819;
+}
+blockquote.question::before {
+  background-image: url(/img/blockquestion.svg);
+}
+
+// Action (Quote-style)
+blockquote.actionquote {
+  border-left: 8px solid #478cc6;
+}
+
+// Action (General)
+blockquote.action {
+  width: 85%;
+  margin-bottom: 10px;
+  line-height: 1.0;
+  border-left: 8px solid #478cc6;
+}
+blockquote.iconaction {
+  width: 85%;
+  margin-bottom: 10px;
+  line-height: 1.0;
+  border-left: 8px solid #6947c6;
+}
+blockquote.step {
+  width: 85%;
+  margin-bottom: 10px;
+  line-height: 1.0;
+  border-left: 16px solid #aebfcd;
+}
+blockquote.step::before {
+  left: 5px;
+  top: 10px;
+  background-image: url(/img/action-general.svg);
+}
+
+// Action (Dissolve)
+blockquote.action-menu {
+  font-weight: bold;
+  border-left: 8px solid #478cc6;
+}
+blockquote.action-dissolve::before {
+  background-image: url(/img/action-dissolve.png);
+}
+
+// Action (Tabs)
+blockquote.action-tabs::before {
+  left: 8px;
+  top: 8px;
+  background-image: url(/img/action-tabs.svg);
+}
+
+// Action (Groups)
+blockquote.action-groups::before {
+  left: 8px;
+  top: 8px;
+  background-image: url(/img/action-groups.svg);
+}
+
+// Action (Menu)
+blockquote.action-menu {
+  font-weight: bold;
+}
+blockquote.action-menu::before {
+  left: 8px;
+  background-image: url(/img/action-menu.svg);
+}
+
+// Action (Mouse)
+blockquote.action-mouse::before {
+  left: 10px;
+  top: 8px;
+  background-image: url(/img/action-mouse.svg);
+}
+
+// Action (Key)
+blockquote.action-key {
+  font-weight: bold;
+}
+blockquote.action-key::before {
+  left: 10px;
+  top: 8px;
+  background-image: url(/img/action-key.svg);
+}
+
+// Action (Edit)
+blockquote.action-edit::before {
+  background-image: url(/img/action-edit.svg);
+}
+
+// Action (Settings)
+blockquote.action-settings {
+}
+blockquote.action-settings::before {
+  background-image: url(/img/action-settings.svg);
+}

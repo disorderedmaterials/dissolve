@@ -1,0 +1,9 @@
+{{ $type := .Get "type"  }}
+<style>
+blockquote.action-{{ $type }}::before {
+  background-image: url(/img/{{ $type }}.png);
+}
+</style>
+<blockquote class="action action-{{ $type }}">
+{{ with .Get "text" }}<p>{{ . | safeHTML | markdownify }}</p>{{ end }}
+</blockquote>
