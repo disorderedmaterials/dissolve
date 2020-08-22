@@ -8,6 +8,11 @@ pr:
   branches:
     include:
       - '*'
+  paths:
+    exclude:
+    - examples/*
+    - web/*
+    - README.md
 
 stages:
   - template: templates/code-quality-checks.yml
