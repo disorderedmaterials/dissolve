@@ -1,0 +1,15 @@
+name: EpicBot
+
+on:
+  issues:
+    types: [opened, closed, reopened, edited]
+
+jobs:
+  manage_epics:
+    runs-on: ubuntu-latest
+    name: Manage Epics
+    steps:
+      - name: Checkout
+        uses: projectdissolve/epicbot@v1
+        with:
+          secret-token: "${{ secrets.GITHUB_TOKEN }}"
