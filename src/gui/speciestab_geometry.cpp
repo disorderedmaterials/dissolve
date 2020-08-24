@@ -103,11 +103,12 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
         {
             item = new QTableWidgetItem;
             item->setData(Qt::UserRole, VariantPointer<SpeciesBond>(speciesBond));
-            item->setFlags(Qt::ItemIsEnabled | (speciesBond->masterParameters() ? Qt::ItemIsSelectable : Qt::ItemIsEditable));
+            item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             ui_.BondTable->setItem(row, n, item);
         }
         else
             item = ui_.BondTable->item(row, n);
+
         item->setText(QString::number(speciesBond->index(n) + 1));
     }
 
@@ -134,6 +135,7 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
         }
         else
             item = ui_.BondTable->item(row, n + 3);
+
         item->setText(QString::number(speciesBond->parameter(n)));
         item->setFlags(speciesBond->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
                                                        : Qt::ItemIsEnabled | Qt::ItemIsEditable);
@@ -152,11 +154,12 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
         {
             item = new QTableWidgetItem;
             item->setData(Qt::UserRole, VariantPointer<SpeciesAngle>(speciesAngle));
-            item->setFlags(Qt::ItemIsEnabled | (speciesAngle->masterParameters() ? Qt::ItemIsSelectable : Qt::ItemIsEditable));
+            item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             ui_.AngleTable->setItem(row, n, item);
         }
         else
             item = ui_.AngleTable->item(row, n);
+
         item->setText(QString::number(speciesAngle->index(n) + 1));
     }
 
@@ -169,6 +172,7 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
     }
     else
         item = ui_.AngleTable->item(row, 3);
+
     item->setText(speciesAngle->masterParameters() ? QString("@%1").arg(speciesAngle->masterParameters()->name())
                                                    : SpeciesAngle::angleFunctions().keywordFromInt(speciesAngle->form()));
 
@@ -183,6 +187,7 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
         }
         else
             item = ui_.AngleTable->item(row, n + 4);
+
         item->setText(QString::number(speciesAngle->parameter(n)));
         item->setFlags(speciesAngle->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
                                                         : Qt::ItemIsEnabled | Qt::ItemIsEditable);
@@ -201,12 +206,12 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
         {
             item = new QTableWidgetItem;
             item->setData(Qt::UserRole, VariantPointer<SpeciesTorsion>(speciesTorsion));
-            item->setFlags(Qt::ItemIsEnabled |
-                           (speciesTorsion->masterParameters() ? Qt::ItemIsSelectable : Qt::ItemIsEditable));
+            item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             ui_.TorsionTable->setItem(row, n, item);
         }
         else
             item = ui_.TorsionTable->item(row, n);
+
         item->setText(QString::number(speciesTorsion->index(n) + 1));
     }
 
@@ -230,12 +235,12 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
         {
             item = new QTableWidgetItem;
             item->setData(Qt::UserRole, VariantPointer<SpeciesTorsion>(speciesTorsion));
-            item->setFlags(Qt::ItemIsEnabled |
-                           (speciesTorsion->masterParameters() ? Qt::ItemIsSelectable : Qt::ItemIsEditable));
+            item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             ui_.TorsionTable->setItem(row, n + 5, item);
         }
         else
             item = ui_.TorsionTable->item(row, n + 5);
+
         item->setText(QString::number(speciesTorsion->parameter(n)));
     }
 }
@@ -252,8 +257,7 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
         {
             item = new QTableWidgetItem;
             item->setData(Qt::UserRole, VariantPointer<SpeciesImproper>(speciesImproper));
-            item->setFlags(Qt::ItemIsEnabled |
-                           (speciesImproper->masterParameters() ? Qt::ItemIsSelectable : Qt::ItemIsEditable));
+            item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             ui_.ImproperTable->setItem(row, n, item);
         }
         else
@@ -270,6 +274,7 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
     }
     else
         item = ui_.ImproperTable->item(row, 4);
+
     item->setText(speciesImproper->masterParameters()
                       ? QString("@%1").arg(speciesImproper->masterParameters()->name())
                       : SpeciesImproper::improperFunctions().keywordFromInt(speciesImproper->form()));
@@ -285,6 +290,7 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
         }
         else
             item = ui_.ImproperTable->item(row, n + 5);
+
         item->setText(QString::number(speciesImproper->parameter(n)));
         item->setFlags(speciesImproper->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
                                                            : Qt::ItemIsEnabled | Qt::ItemIsEditable);
