@@ -445,12 +445,11 @@ OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::determineUFFAtomType
  */
 
 // Generate bond parameters for the supplied UFF atom types
-bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond *bondTerm, const UFFAtomType &i,
-                                      const UFFAtomType &j) const
+bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, const UFFAtomType &i, const UFFAtomType &j) const
 {
     // Calculate rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
     const auto sumr = i.r() + j.r();
-    const auto rBO = -0.1332 * sumr * log(bondTerm->bondOrder());
+    const auto rBO = -0.1332 * sumr * log(bond.bondOrder());
 
     // Calculate rEN : Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
     const auto chi = sqrt(i.chi()) - sqrt(j.chi());
@@ -466,29 +465,31 @@ bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond *bondTerm, 
 
     // Set the parameters and form of the new bond term
     // Functional form is Harmonic : U = 0.5 * k * (r - eq)**2
-    bondTerm->setForm(SpeciesBond::HarmonicForm);
-    bondTerm->setParameters({k, rij});
+    bond.setForm(SpeciesBond::HarmonicForm);
+    bond.setParameters({k, rij});
 
     return true;
 }
 
 // Generate angle parameters for the supplied UFF atom types
-bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle *angleTerm, const UFFAtomType &i, const UFFAtomType &j,
+bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle &angle, const UFFAtomType &i, const UFFAtomType &j,
                                        const UFFAtomType &k) const
 {
     // rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
     // We need the bond orders of the involved bonds...
-    const SpeciesBond *ij = sp->constBond(angleTerm->i(), angleTerm->j());
-    if (!ij)
+    const auto &ijRef = sp->getConstBond(angle.i(), angle.j());
+    if (!ijRef)
         return Messenger::error("Can't locate bond i-j for bond order retrieval.\n");
-    const SpeciesBond *jk = sp->constBond(angleTerm->j(), angleTerm->k());
-    if (!jk)
+    const auto &jkRef = sp->getConstBond(angle.j(), angle.k());
+    if (!jkRef)
         return Messenger::error("Can't locate bond j-k for bond order retrieval.\n");
 
+    const SpeciesBond &ij = *ijRef;
+    const SpeciesBond &jk = *jkRef;
     const auto sumrij = i.r() + j.r();
     const auto sumrjk = j.r() + k.r();
-    const auto rBOij = -0.1332 * sumrij * log(ij->bondOrder());
-    const auto rBOjk = -0.1332 * sumrjk * log(jk->bondOrder());
+    const auto rBOij = -0.1332 * sumrij * log(ij.bondOrder());
+    const auto rBOjk = -0.1332 * sumrjk * log(jk.bondOrder());
 
     // rEN : Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
     const auto chiij = sqrt(i.chi()) - sqrt(j.chi());
@@ -515,7 +516,7 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle *angleTer
 
     // To determine angle form and necessary coefficients, use 'geom' integer data (which represents the third letter of the
     // atom name. This idea is shamelessly stolen from MCCCS Towhee!
-    auto n = 0;
+    auto n = 0.0;
     const auto geom = j.geom();
 
     if (geom == 0)
@@ -535,21 +536,21 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle *angleTer
         const auto c1 = -4.0 * c2 * cosTheta;
         const auto c0 = c2 * (2.0 * cosTheta * cosTheta + 1.0);
 
-        angleTerm->setForm(SpeciesAngle::Cos2Form);
-        angleTerm->setParameters({forcek, c0, c1, c2});
+        angle.setForm(SpeciesAngle::Cos2Form);
+        angle.setParameters({forcek, c0, c1, c2});
 
         return true;
     }
 
     // Setup terms for the specific case (n != 0)
-    angleTerm->setForm(SpeciesAngle::CosineForm);
-    angleTerm->setParameters({forcek / (n * n), double(n), 0.0, -1.0});
+    angle.setForm(SpeciesAngle::CosineForm);
+    angle.setParameters({forcek / (n * n), n, 0.0, -1.0});
 
     return true;
 }
 
 // Generate torsion parameters for the supplied UFF atom types
-bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion *torsionTerm, const UFFAtomType &i,
+bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion &torsionTerm, const UFFAtomType &i,
                                          const UFFAtomType &j, const UFFAtomType &k, const UFFAtomType &l) const
 {
     /*
@@ -608,9 +609,12 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion *tors
     {
         // Case e) j and k are both sp2 centres
         // Force constant is adjusted based on current bond order
-        const SpeciesBond *jk = sp->constBond(torsionTerm->j(), torsionTerm->k());
-        if (jk)
-            V = 5.0 * sqrt(j.U() * k.U()) * (1.0 + 4.18 * log(jk->bondOrder()));
+        auto jkRef = sp->getConstBond(torsionTerm.j(), torsionTerm.k());
+        if (jkRef)
+        {
+            const SpeciesBond &jk = *jkRef;
+            V = 5.0 * sqrt(j.U() * k.U()) * (1.0 + 4.18 * log(jk.bondOrder()));
+        }
         else
         {
             Messenger::error("Can't generate correct force constant for torsion, since the SpeciesBond jk is NULL.\n");
@@ -646,8 +650,8 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion *tors
     V *= 4.184;
 
     // Store the generated parameters
-    torsionTerm->setForm(SpeciesTorsion::UFFCosineForm);
-    torsionTerm->setParameters({V, n, phi0});
+    torsionTerm.setForm(SpeciesTorsion::UFFCosineForm);
+    torsionTerm.setParameters({V, n, phi0});
 
     return true;
 }
@@ -703,13 +707,12 @@ bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
     auto selectionOnly = flags & Forcefield::SelectionOnlyFlag;
 
     // Generate bond terms
-    DynamicArrayIterator<SpeciesBond> bondIterator(sp->bonds());
-    while (SpeciesBond *bond = bondIterator.iterate())
+    for (auto &bond : sp->bonds())
     {
-        SpeciesAtom *i = bond->i();
-        SpeciesAtom *j = bond->j();
+        auto *i = bond.i();
+        auto *j = bond.j();
 
-        if (selectionOnly && (!bond->isSelected()))
+        if (selectionOnly && (!bond.isSelected()))
             continue;
 
         auto typeI = determineTypes ? determineUFFAtomType(i) : uffAtomTypeByName(i->atomType()->name());
@@ -720,14 +723,13 @@ bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
     }
 
     // Generate angle terms
-    DynamicArrayIterator<SpeciesAngle> angleIterator(sp->angles());
-    while (SpeciesAngle *angle = angleIterator.iterate())
+    for (auto &angle : sp->angles())
     {
-        SpeciesAtom *i = angle->i();
-        SpeciesAtom *j = angle->j();
-        SpeciesAtom *k = angle->k();
+        auto *i = angle.i();
+        auto *j = angle.j();
+        auto *k = angle.k();
 
-        if (selectionOnly && (!angle->isSelected()))
+        if (selectionOnly && (!angle.isSelected()))
             continue;
 
         auto typeI = determineTypes ? determineUFFAtomType(i) : uffAtomTypeByName(i->atomType()->name());
@@ -740,15 +742,14 @@ bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
     }
 
     // Generate torsion terms
-    DynamicArrayIterator<SpeciesTorsion> torsionIterator(sp->torsions());
-    while (SpeciesTorsion *torsion = torsionIterator.iterate())
+    for (auto &torsion : sp->torsions())
     {
-        SpeciesAtom *i = torsion->i();
-        SpeciesAtom *j = torsion->j();
-        SpeciesAtom *k = torsion->k();
-        SpeciesAtom *l = torsion->l();
+        SpeciesAtom *i = torsion.i();
+        SpeciesAtom *j = torsion.j();
+        SpeciesAtom *k = torsion.k();
+        SpeciesAtom *l = torsion.l();
 
-        if (selectionOnly && (!torsion->isSelected()))
+        if (selectionOnly && (!torsion.isSelected()))
             continue;
 
         auto typeI = determineTypes ? determineUFFAtomType(i) : uffAtomTypeByName(i->atomType()->name());

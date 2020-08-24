@@ -113,7 +113,7 @@ class Dissolve
     // Copy AtomType, creating a new one if necessary
     void copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom);
     // Copy intramolecular interaction parameters, adding MasterIntra if necessary
-    void copySpeciesIntra(const SpeciesIntra *sourceIntra, SpeciesIntra *destIntra);
+    void copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &destIntra);
     // Copy Species
     Species *copySpecies(const Species *species);
 

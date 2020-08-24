@@ -31,7 +31,6 @@
 #include "classes/speciessite.h"
 #include "classes/speciestorsion.h"
 #include "io/import/coordinates.h"
-#include "templates/dynamicarray.h"
 #include "templates/objectstore.h"
 #include <memory>
 
@@ -141,13 +140,13 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
      */
     private:
     // Array of bonds between atoms in the Species
-    DynamicArray<SpeciesBond> bonds_;
+    std::vector<SpeciesBond> bonds_;
     // Array of angles between atoms in the Species
-    DynamicArray<SpeciesAngle> angles_;
+    std::vector<SpeciesAngle> angles_;
     // Array of torsions between atoms in the Species
-    DynamicArray<SpeciesTorsion> torsions_;
+    std::vector<SpeciesTorsion> torsions_;
     // Array of impropers between atoms in the Species
-    DynamicArray<SpeciesImproper> impropers_;
+    std::vector<SpeciesImproper> impropers_;
     // Whether the attached atoms lists have been created
     bool attachedAtomListsGenerated_;
 
@@ -157,81 +156,69 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 
     public:
     // Add new SpeciesBond definition (from SpeciesAtom*)
-    SpeciesBond *addBond(SpeciesAtom *i, SpeciesAtom *j);
+    SpeciesBond &addBond(SpeciesAtom *i, SpeciesAtom *j);
     // Add new SpeciesBond definition
-    SpeciesBond *addBond(int i, int j);
+    SpeciesBond &addBond(int i, int j);
     // Remove bond between specified SpeciesAtoms*
-    bool removeBond(SpeciesAtom *i, SpeciesAtom *j);
-    // Reconnect existing SpeciesBond
-    bool reconnectBond(SpeciesBond *bond, SpeciesAtom *i, SpeciesAtom *j);
-    // Reconnect existing SpeciesBond
-    bool reconnectBond(SpeciesBond *bond, int i, int j);
+    void removeBond(SpeciesAtom *i, SpeciesAtom *j);
     // Return number of SpeciesBonds defined
     int nBonds() const;
     // Return array of SpeciesBond
-    DynamicArray<SpeciesBond> &bonds();
+    std::vector<SpeciesBond> &bonds();
     // Return array of SpeciesBonds (const)
-    const DynamicArray<SpeciesBond> &constBonds() const;
+    const std::vector<SpeciesBond> &constBonds() const;
     // Return whether SpeciesBond between SpeciesAtoms exists
     bool hasBond(SpeciesAtom *i, SpeciesAtom *j) const;
     // Return the SpeciesBond between the specified SpeciesAtoms
-    SpeciesBond *bond(SpeciesAtom *i, SpeciesAtom *j);
+    OptionalReferenceWrapper<SpeciesBond> getBond(SpeciesAtom *i, SpeciesAtom *j);
     // Return the SpeciesBond between the specified SpeciesAtom indices
-    SpeciesBond *bond(int i, int j);
+    OptionalReferenceWrapper<SpeciesBond> getBond(int i, int j);
     // Return the SpeciesBond between the specified SpeciesAtoms (const)
-    const SpeciesBond *constBond(SpeciesAtom *i, SpeciesAtom *j) const;
+    OptionalReferenceWrapper<const SpeciesBond> getConstBond(SpeciesAtom *i, SpeciesAtom *j) const;
     // Add missing bonds
     void addMissingBonds(double tolerance = 1.1);
     // Add new SpeciesAngle definition
-    SpeciesAngle *addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
-    // Add new SpeciesAngle definition
-    SpeciesAngle *addAngle(int i, int j, int k);
-    // Reconnect existing SpeciesAngle
-    bool reconnectAngle(SpeciesAngle *angle, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
-    // Reconnect existing SpeciesAngle
-    bool reconnectAngle(SpeciesAngle *angle, int i, int j, int k);
+    SpeciesAngle &addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
+    // Add new SpeciesAngle dedefinitionfinition
+    SpeciesAngle &addAngle(int i, int j, int k);
     // Return number of SpeciesAngle defined
     int nAngles() const;
     // Return array of SpeciesAngle
-    DynamicArray<SpeciesAngle> &angles();
+    std::vector<SpeciesAngle> &angles();
     // Return array of SpeciesAngle (const)
-    const DynamicArray<SpeciesAngle> &constAngles() const;
+    const std::vector<SpeciesAngle> &constAngles() const;
     // Return whether SpeciesAngle between SpeciesAtoms exists
     bool hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const;
+    // Return the SpeciesAngle between the specified SpeciesAtoms
+    OptionalReferenceWrapper<SpeciesAngle> getAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
     // Add new SpeciesTorsion definition (from SpeciesAtom*)
-    SpeciesTorsion *addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    SpeciesTorsion &addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Add new SpeciesTorsion definition
-    SpeciesTorsion *addTorsion(int i, int j, int k, int l);
-    // Reconnect existing SpeciesTorsion
-    bool reconnectTorsion(SpeciesTorsion *torsion, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    // Reconnect existing SpeciesTorsion
-    bool reconnectTorsion(SpeciesTorsion *torsion, int i, int j, int k, int l);
+    SpeciesTorsion &addTorsion(int i, int j, int k, int l);
     // Return number of SpeciesTorsion defined
     int nTorsions() const;
     // Return array of SpeciesTorsion
-    DynamicArray<SpeciesTorsion> &torsions();
+    std::vector<SpeciesTorsion> &torsions();
     // Return array of SpeciesTorsion (const)
-    const DynamicArray<SpeciesTorsion> &constTorsions() const;
+    const std::vector<SpeciesTorsion> &constTorsions() const;
     // Return whether SpeciesTorsion between SpeciesAtoms exists
     bool hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
+    // Return the SpeciesTorsion between the specified SpeciesAtoms
+    OptionalReferenceWrapper<SpeciesTorsion> getTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Add new SpeciesImproper definition (from SpeciesAtom*)
-    SpeciesImproper *addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    SpeciesImproper &addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Add new SpeciesImproper definition
-    SpeciesImproper *addImproper(int i, int j, int k, int l);
-    // Reconnect existing SpeciesImproper
-    bool reconnectImproper(SpeciesImproper *improper, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    // Reconnect existing SpeciesImproper
-    bool reconnectImproper(SpeciesImproper *improper, int i, int j, int k, int l);
+    SpeciesImproper &addImproper(int i, int j, int k, int l);
     // Return number of SpeciesImproper defined
     int nImpropers() const;
     // Return array of SpeciesImproper
-    DynamicArray<SpeciesImproper> &impropers();
+    std::vector<SpeciesImproper> &impropers();
     // Return array of SpeciesImproper (const)
-    const DynamicArray<SpeciesImproper> &constImpropers() const;
+    const std::vector<SpeciesImproper> &constImpropers() const;
     // Return whether SpeciesImproper between SpeciesAtoms exists
     bool hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const;
     // Return the SpeciesImproper between the specified SpeciesAtoms (if it exists)
-    SpeciesImproper *improper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    OptionalReferenceWrapper<SpeciesImproper> improper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Return whether the attached atoms lists have been created
     bool attachedAtomListsGenerated() const;
     // Generate attached Atom lists for all intramolecular terms

@@ -174,20 +174,20 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
 
         // Calculate forces from SpeciesBond terms
         for (const auto *bond : spAtom->bonds())
-            kernel.forces(i, bond, mol->atom(bond->indexI()), mol->atom(bond->indexJ()));
+            kernel.forces(i, *bond, mol->atom(bond->indexI()), mol->atom(bond->indexJ()));
 
         // Calculate forces from SpeciesAngle terms
         for (const auto *angle : spAtom->angles())
-            kernel.forces(i, angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()), mol->atom(angle->indexK()));
+            kernel.forces(i, *angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()), mol->atom(angle->indexK()));
 
         // Calculate forces from SpeciesTorsion terms
         for (const auto *torsion : spAtom->torsions())
-            kernel.forces(i, torsion, mol->atom(torsion->indexI()), mol->atom(torsion->indexJ()), mol->atom(torsion->indexK()),
+            kernel.forces(i, *torsion, mol->atom(torsion->indexI()), mol->atom(torsion->indexJ()), mol->atom(torsion->indexK()),
                           mol->atom(torsion->indexL()));
 
         // Calculate forces from SpeciesImproper terms
         for (const auto *improper : spAtom->impropers())
-            kernel.forces(i, improper, mol->atom(improper->indexI()), mol->atom(improper->indexJ()),
+            kernel.forces(i, *improper, mol->atom(improper->indexI()), mol->atom(improper->indexJ()),
                           mol->atom(improper->indexK()), mol->atom(improper->indexL()));
     }
 }
@@ -222,25 +222,22 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
         mol = molecules[m];
 
         // Loop over bonds
-        DynamicArrayConstIterator<SpeciesBond> bondIterator(mol->species()->constBonds());
-        while (const SpeciesBond *b = bondIterator.iterate())
-            kernel.forces(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
+        for (const auto &bond : mol->species()->constBonds())
+            kernel.forces(bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()));
 
         // Loop over angles
-        DynamicArrayConstIterator<SpeciesAngle> angleIterator(mol->species()->constAngles());
-        while (const SpeciesAngle *a = angleIterator.iterate())
-            kernel.forces(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
+        for (const auto &angle : mol->species()->constAngles())
+            kernel.forces(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()), mol->atom(angle.indexK()));
 
         // Loop over torsions
-        DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
-        while (const SpeciesTorsion *t = torsionIterator.iterate())
-            kernel.forces(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()), mol->atom(t->indexL()));
+        for (const auto &torsion : mol->species()->constTorsions())
+            kernel.forces(torsion, mol->atom(torsion.indexI()), mol->atom(torsion.indexJ()), mol->atom(torsion.indexK()),
+                          mol->atom(torsion.indexL()));
 
         // Loop over impropers
-        DynamicArrayConstIterator<SpeciesImproper> improperIterator(mol->species()->constImpropers());
-        while (const SpeciesImproper *imp = improperIterator.iterate())
-            kernel.forces(imp, mol->atom(imp->indexI()), mol->atom(imp->indexJ()), mol->atom(imp->indexK()),
-                          mol->atom(imp->indexL()));
+        for (const auto &imp : mol->species()->constImpropers())
+            kernel.forces(imp, mol->atom(imp.indexI()), mol->atom(imp.indexJ()), mol->atom(imp.indexK()),
+                          mol->atom(imp.indexL()));
     }
 }
 
@@ -252,23 +249,19 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Species *sp, cons
     ForceKernel kernel(procPool, &box, potentialMap, fx, fy, fz);
 
     // Loop over bonds
-    DynamicArrayConstIterator<SpeciesBond> bondIterator(sp->constBonds());
-    while (const SpeciesBond *b = bondIterator.iterate())
+    for (const auto &b : sp->constBonds())
         kernel.forces(b);
 
     // Loop over angles
-    DynamicArrayConstIterator<SpeciesAngle> angleIterator(sp->constAngles());
-    while (const SpeciesAngle *a = angleIterator.iterate())
+    for (const auto &a : sp->constAngles())
         kernel.forces(a);
 
     // Loop over torsions
-    DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(sp->constTorsions());
-    while (const SpeciesTorsion *t = torsionIterator.iterate())
+    for (const auto &t : sp->constTorsions())
         kernel.forces(t);
 
     // Loop over impropers
-    DynamicArrayConstIterator<SpeciesImproper> improperIterator(sp->constImpropers());
-    while (const SpeciesImproper *imp = improperIterator.iterate())
+    for (const auto &imp : sp->constImpropers())
         kernel.forces(imp);
 }
 

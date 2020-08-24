@@ -25,9 +25,26 @@
 #include "classes/speciesatom.h"
 #include "templates/enumhelpers.h"
 
-SpeciesImproper::SpeciesImproper() : SpeciesIntra(), DynamicArrayObject<SpeciesImproper>() { clear(); }
+SpeciesImproper::SpeciesImproper() : SpeciesIntra() { clear(); }
 
-SpeciesImproper::~SpeciesImproper() {}
+SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+    : SpeciesIntra(), i_(i), j_(j), k_(k), l_(l)
+{
+}
+
+SpeciesImproper::SpeciesImproper(SpeciesImproper &&source) : SpeciesIntra(source)
+{
+    i_ = source.i_;
+    j_ = source.j_;
+    k_ = source.k_;
+    l_ = source.l_;
+    form_ = source.form_;
+
+    source.i_ = nullptr;
+    source.j_ = nullptr;
+    source.k_ = nullptr;
+    source.l_ = nullptr;
+}
 
 /*
  * DynamicArrayObject Virtuals
@@ -49,7 +66,7 @@ void SpeciesImproper::clear()
  */
 
 // Set Atoms involved in Improper
-void SpeciesImproper::setAtoms(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+void SpeciesImproper::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {
     i_ = i;
     j_ = j;

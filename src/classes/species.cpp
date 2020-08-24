@@ -165,13 +165,12 @@ void Species::print()
         Messenger::print("\n  Bonds:\n");
         Messenger::print("      I     J    Form             Parameters\n");
         Messenger::print("    ---------------------------------------------------------------------------------\n");
-        DynamicArrayConstIterator<SpeciesBond> bondIterator(bonds());
-        while (const SpeciesBond *b = bondIterator.iterate())
+        for (const auto &bond : bonds_)
         {
-            CharString s("   %4i  %4i    %c%-12s", b->indexI() + 1, b->indexJ() + 1, b->masterParameters() ? '@' : ' ',
-                         SpeciesBond::bondFunctions().keywordFromInt(b->form()));
-            for (int n = 0; n < b->parameters().size(); ++n)
-                s.strcatf("  %12.4e", b->parameter(n));
+            CharString s("   %4i  %4i    %c%-12s", bond.indexI() + 1, bond.indexJ() + 1, bond.masterParameters() ? '@' : ' ',
+                         SpeciesBond::bondFunctions().keywordFromInt(bond.form()));
+            for (const auto param : bond.parameters())
+                s.strcatf("  %12.4e", param);
             Messenger::print("%s\n", s.get());
         }
     }
@@ -181,13 +180,12 @@ void Species::print()
         Messenger::print("\n  Angles:\n");
         Messenger::print("      I     J     K    Form             Parameters\n");
         Messenger::print("    ---------------------------------------------------------------------------------------\n");
-        DynamicArrayConstIterator<SpeciesAngle> angleIterator(angles());
-        while (const SpeciesAngle *a = angleIterator.iterate())
+        for (const auto &angle : angles_)
         {
-            CharString s("   %4i  %4i  %4i    %c%-12s", a->indexI() + 1, a->indexJ() + 1, a->indexK() + 1,
-                         a->masterParameters() ? '@' : ' ', SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
-            for (int n = 0; n < a->parameters().size(); ++n)
-                s.strcatf("  %12.4e", a->parameter(n));
+            CharString s("   %4i  %4i  %4i    %c%-12s", angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
+                         angle.masterParameters() ? '@' : ' ', SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
+            for (const auto param : angle.parameters())
+                s.strcatf("  %12.4e", param);
             Messenger::print("%s\n", s.get());
         }
     }
@@ -198,13 +196,13 @@ void Species::print()
         Messenger::print("      I     J     K     L    Form             Parameters\n");
         Messenger::print("    ---------------------------------------------------------------------------------------------\n");
         // Loop over Torsions
-        DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(torsions());
-        while (const SpeciesTorsion *t = torsionIterator.iterate())
+        for (const auto &torsion : torsions())
         {
-            CharString s("   %4i  %4i  %4i  %4i    %c%-12s", t->indexI() + 1, t->indexJ() + 1, t->indexK() + 1, t->indexL() + 1,
-                         t->masterParameters() ? '@' : ' ', SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
-            for (int n = 0; n < t->parameters().size(); ++n)
-                s.strcatf("  %12.4e", t->parameter(n));
+            CharString s("   %4i  %4i  %4i  %4i    %c%-12s", torsion.indexI() + 1, torsion.indexJ() + 1, torsion.indexK() + 1,
+                         torsion.indexL() + 1, torsion.masterParameters() ? '@' : ' ',
+                         SpeciesTorsion::torsionFunctions().keywordFromInt(torsion.form()));
+            for (const auto param : torsion.parameters())
+                s.strcatf("  %12.4e", param);
             Messenger::print("%s\n", s.get());
         }
     }
@@ -215,14 +213,13 @@ void Species::print()
         Messenger::print("      I     J     K     L    Form             Parameters\n");
         Messenger::print("    ---------------------------------------------------------------------------------------------\n");
         // Loop over Impropers
-        DynamicArrayConstIterator<SpeciesImproper> improperIterator(impropers());
-        while (const SpeciesImproper *imp = improperIterator.iterate())
+        for (auto &improper : impropers())
         {
-            CharString s("   %4i  %4i  %4i  %4i    %c%-12s", imp->indexI() + 1, imp->indexJ() + 1, imp->indexK() + 1,
-                         imp->indexL() + 1, imp->masterParameters() ? '@' : ' ',
-                         SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
-            for (int n = 0; n < imp->parameters().size(); ++n)
-                s.strcatf("  %12.4e", imp->parameter(n));
+            CharString s("   %4i  %4i  %4i  %4i    %c%-12s", improper.indexI() + 1, improper.indexJ() + 1,
+                         improper.indexK() + 1, improper.indexL() + 1, improper.masterParameters() ? '@' : ' ',
+                         SpeciesImproper::improperFunctions().keywordFromInt(improper.form()));
+            for (const auto param : improper.parameters())
+                s.strcatf("  %12.4e", param);
             Messenger::print("%s\n", s.get());
         }
     }

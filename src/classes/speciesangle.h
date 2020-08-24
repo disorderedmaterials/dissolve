@@ -23,7 +23,6 @@
 
 #include "base/enumoptions.h"
 #include "classes/speciesintra.h"
-#include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
 class SpeciesAtom;
@@ -31,18 +30,15 @@ class Species;
 class ProcessPool;
 
 // SpeciesAngle Definition
-class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle>
+class SpeciesAngle : public SpeciesIntra
 {
     public:
-    SpeciesAngle();
-    ~SpeciesAngle();
-
-    /*
-     * DynamicArrayObject Virtuals
-     */
-    public:
-    // Clear object, ready for re-use
-    void clear();
+    SpeciesAngle(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr, SpeciesAtom *k = nullptr);
+    ~SpeciesAngle() = default;
+    SpeciesAngle(SpeciesAngle &source);
+    SpeciesAngle(SpeciesAngle &&source);
+    SpeciesAngle &operator=(const SpeciesAngle &source);
+    SpeciesAngle &operator=(SpeciesAngle &&source);
 
     /*
      * SpeciesAtom Information
@@ -56,8 +52,6 @@ class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle
     SpeciesAtom *k_;
 
     public:
-    // Set SpeciesAtoms involved in interaction
-    void setAtoms(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
     // Return second (central) SpeciesAtom
@@ -76,6 +70,8 @@ class SpeciesAngle : public SpeciesIntra, public DynamicArrayObject<SpeciesAngle
     bool matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const;
     // Return whether all atoms in the interaction are currently selected
     bool isSelected() const;
+    // Detach from current atoms
+    void detach();
 
     /*
      * Interaction Parameters

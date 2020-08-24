@@ -452,7 +452,7 @@ void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec
 }
 
 // Calculate SpeciesBond forces
-void ForceKernel::forces(const SpeciesBond *b, const Atom *i, const Atom *j)
+void ForceKernel::forces(const SpeciesBond &bond, const Atom *i, const Atom *j)
 {
     // Determine whether we need to apply minimum image to the vector calculation
     Vec3<double> vecji;
@@ -470,7 +470,7 @@ void ForceKernel::forces(const SpeciesBond *b, const Atom *i, const Atom *j)
 #endif
 
     // Determine final forces
-    vecji *= b->force(distance);
+    vecji *= bond.force(distance);
 
     // Calculate forces
     auto index = i->arrayIndex();
@@ -484,7 +484,7 @@ void ForceKernel::forces(const SpeciesBond *b, const Atom *i, const Atom *j)
 }
 
 // Calculate SpeciesBond forces for specified Atom only
-void ForceKernel::forces(const Atom *onlyThis, const SpeciesBond *b, const Atom *i, const Atom *j)
+void ForceKernel::forces(const Atom *onlyThis, const SpeciesBond &bond, const Atom *i, const Atom *j)
 {
 #ifdef CHECKS
     if ((i != onlyThis) && (j != onlyThis))
@@ -510,7 +510,7 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesBond *b, const Atom 
 #endif
 
     // Determine final forces
-    vecji *= b->force(distance);
+    vecji *= bond.force(distance);
 
     // Calculate forces
     auto index = onlyThis->arrayIndex();
@@ -529,22 +529,22 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesBond *b, const Atom 
 }
 
 // Calculate SpeciesBond forces
-void ForceKernel::forces(const SpeciesBond *b)
+void ForceKernel::forces(const SpeciesBond &bond)
 {
-    auto vecji = b->j()->r() - b->i()->r();
+    auto vecji = bond.j()->r() - bond.i()->r();
 
     // Get distance and normalise vector ready for force calculation
     const auto distance = vecji.magAndNormalise();
 
     // Determine final forces
-    vecji *= b->force(distance);
+    vecji *= bond.force(distance);
 
     // Calculate forces
-    auto index = b->i()->index();
+    auto index = bond.i()->index();
     fx_[index] -= vecji.x;
     fy_[index] -= vecji.y;
     fz_[index] -= vecji.z;
-    index = b->j()->index();
+    index = bond.j()->index();
     fx_[index] += vecji.x;
     fy_[index] += vecji.y;
     fz_[index] += vecji.z;
@@ -566,7 +566,7 @@ void ForceKernel::calculateAngleParameters(Vec3<double> vecji, Vec3<double> vecj
 }
 
 // Calculate SpeciesAngle forces
-void ForceKernel::forces(const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k)
+void ForceKernel::forces(const SpeciesAngle &angle, const Atom *i, const Atom *j, const Atom *k)
 {
     Vec3<double> vecji, vecjk;
 
@@ -581,7 +581,7 @@ void ForceKernel::forces(const SpeciesAngle *a, const Atom *i, const Atom *j, co
         vecjk = k->r() - j->r();
 
     calculateAngleParameters(vecji, vecjk);
-    const auto force = a->force(theta_);
+    const auto force = angle.force(theta_);
     dfi_dtheta_ *= force;
     dfk_dtheta_ *= force;
 
@@ -601,7 +601,7 @@ void ForceKernel::forces(const SpeciesAngle *a, const Atom *i, const Atom *j, co
 }
 
 // Calculate SpeciesAngle forces for specified Atom only
-void ForceKernel::forces(const Atom *onlyThis, const SpeciesAngle *a, const Atom *i, const Atom *j, const Atom *k)
+void ForceKernel::forces(const Atom *onlyThis, const SpeciesAngle &angle, const Atom *i, const Atom *j, const Atom *k)
 {
     Vec3<double> vecji, vecjk;
 
@@ -624,7 +624,7 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesAngle *a, const Atom
         vecjk = k->r() - j->r();
 
     calculateAngleParameters(vecji, vecjk);
-    const auto force = a->force(theta_);
+    const auto force = angle.force(theta_);
     dfi_dtheta_ *= force;
     dfk_dtheta_ *= force;
 
@@ -651,23 +651,23 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesAngle *a, const Atom
 }
 
 // Calculate SpeciesAngle forces
-void ForceKernel::forces(const SpeciesAngle *a)
+void ForceKernel::forces(const SpeciesAngle &angle)
 {
-    calculateAngleParameters(a->i()->r() - a->j()->r(), a->k()->r() - a->j()->r());
-    const auto force = a->force(theta_);
+    calculateAngleParameters(angle.i()->r() - angle.j()->r(), angle.k()->r() - angle.j()->r());
+    const auto force = angle.force(theta_);
     dfi_dtheta_ *= force;
     dfk_dtheta_ *= force;
 
     // Store forces
-    auto index = a->i()->index();
+    auto index = angle.i()->index();
     fx_[index] += dfi_dtheta_.x;
     fy_[index] += dfi_dtheta_.y;
     fz_[index] += dfi_dtheta_.z;
-    index = a->j()->index();
+    index = angle.j()->index();
     fx_[index] -= dfi_dtheta_.x + dfk_dtheta_.x;
     fy_[index] -= dfi_dtheta_.y + dfk_dtheta_.y;
     fz_[index] -= dfi_dtheta_.z + dfk_dtheta_.z;
-    index = a->k()->index();
+    index = angle.k()->index();
     fx_[index] += dfk_dtheta_.x;
     fy_[index] += dfk_dtheta_.y;
     fz_[index] += dfk_dtheta_.z;
@@ -720,7 +720,7 @@ void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec
 }
 
 // Calculate SpeciesTorsion forces
-void ForceKernel::forces(const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
+void ForceKernel::forces(const SpeciesTorsion &torsion, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
 {
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
@@ -738,7 +738,7 @@ void ForceKernel::forces(const SpeciesTorsion *t, const Atom *i, const Atom *j, 
         veckl = l->r() - k->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = t->force(phi_ * DEGRAD);
+    const auto du_dphi = torsion.force(phi_ * DEGRAD);
 
     // Calculate forces on atom i
     auto index = i->arrayIndex();
@@ -769,7 +769,7 @@ void ForceKernel::forces(const SpeciesTorsion *t, const Atom *i, const Atom *j, 
 }
 
 // Calculate SpeciesTorsion forces for specified Atom only
-void ForceKernel::forces(const Atom *onlyThis, const SpeciesTorsion *t, const Atom *i, const Atom *j, const Atom *k,
+void ForceKernel::forces(const Atom *onlyThis, const SpeciesTorsion &torsion, const Atom *i, const Atom *j, const Atom *k,
                          const Atom *l)
 {
     // Calculate vectors, ensuring we account for minimum image
@@ -788,7 +788,7 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesTorsion *t, const At
         veckl = l->r() - k->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = t->force(phi_ * DEGRAD);
+    const auto du_dphi = torsion.force(phi_ * DEGRAD);
 
     // Calculate forces for specified atom
     auto index = onlyThis->arrayIndex();
@@ -825,21 +825,22 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesTorsion *t, const At
 }
 
 // Calculate SpeciesTorsion forces
-void ForceKernel::forces(const SpeciesTorsion *t)
+void ForceKernel::forces(const SpeciesTorsion &torsion)
 {
     // Calculate vectors, ensuring we account for minimum image
-    const Vec3<double> vecji = t->i()->r() - t->j()->r(), vecjk = t->k()->r() - t->j()->r(), veckl = t->l()->r() - t->k()->r();
+    const Vec3<double> vecji = torsion.i()->r() - torsion.j()->r(), vecjk = torsion.k()->r() - torsion.j()->r(),
+                       veckl = torsion.l()->r() - torsion.k()->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = t->force(phi_ * DEGRAD);
+    const auto du_dphi = torsion.force(phi_ * DEGRAD);
 
     // Calculate forces on atom i
-    auto index = t->i()->index();
+    auto index = torsion.i()->index();
     fx_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(0));
     fy_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(1));
     fz_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(2));
 
-    index = t->j()->index();
+    index = torsion.j()->index();
     fx_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(0) - dxpj_dkj_.columnAsVec3(0)) -
                              dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0)));
     fy_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(1) - dxpj_dkj_.columnAsVec3(1)) -
@@ -847,7 +848,7 @@ void ForceKernel::forces(const SpeciesTorsion *t)
     fz_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(2) - dxpj_dkj_.columnAsVec3(2)) -
                              dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2)));
 
-    index = t->k()->index();
+    index = torsion.k()->index();
     fx_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0) - dxpk_dlk_.columnAsVec3(0)) +
                              dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(0)));
     fy_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1) - dxpk_dlk_.columnAsVec3(1)) +
@@ -855,14 +856,14 @@ void ForceKernel::forces(const SpeciesTorsion *t)
     fz_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2) - dxpk_dlk_.columnAsVec3(2)) +
                              dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(2)));
 
-    index = t->l()->index();
+    index = torsion.l()->index();
     fx_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(0));
     fy_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(1));
     fz_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(2));
 }
 
 // Calculate SpeciesImproper forces
-void ForceKernel::forces(const SpeciesImproper *imp, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
+void ForceKernel::forces(const SpeciesImproper &improper, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
 {
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
@@ -880,7 +881,7 @@ void ForceKernel::forces(const SpeciesImproper *imp, const Atom *i, const Atom *
         veckl = l->r() - k->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = imp->force(phi_ * DEGRAD);
+    const auto du_dphi = improper.force(phi_ * DEGRAD);
 
     // Calculate forces on atom i
     auto index = i->arrayIndex();
@@ -911,7 +912,7 @@ void ForceKernel::forces(const SpeciesImproper *imp, const Atom *i, const Atom *
 }
 
 // Calculate SpeciesImproper forces for specified Atom only
-void ForceKernel::forces(const Atom *onlyThis, const SpeciesImproper *imp, const Atom *i, const Atom *j, const Atom *k,
+void ForceKernel::forces(const Atom *onlyThis, const SpeciesImproper &imp, const Atom *i, const Atom *j, const Atom *k,
                          const Atom *l)
 {
     // Calculate vectors, ensuring we account for minimum image
@@ -930,7 +931,7 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesImproper *imp, const
         veckl = l->r() - k->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = imp->force(phi_ * DEGRAD);
+    const auto du_dphi = imp.force(phi_ * DEGRAD);
 
     // Calculate forces for specified atom
     auto index = onlyThis->arrayIndex();
@@ -967,22 +968,22 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesImproper *imp, const
 }
 
 // Calculate SpeciesImproper forces
-void ForceKernel::forces(const SpeciesImproper *imp)
+void ForceKernel::forces(const SpeciesImproper &imp)
 {
     // Calculate vectors, ensuring we account for minimum image
-    const Vec3<double> vecji = imp->i()->r() - imp->j()->r(), vecjk = imp->k()->r() - imp->j()->r(),
-                       veckl = imp->l()->r() - imp->k()->r();
+    const Vec3<double> vecji = imp.i()->r() - imp.j()->r(), vecjk = imp.k()->r() - imp.j()->r(),
+                       veckl = imp.l()->r() - imp.k()->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
-    const auto du_dphi = imp->force(phi_ * DEGRAD);
+    const auto du_dphi = imp.force(phi_ * DEGRAD);
 
     // Calculate forces on atom i
-    auto index = imp->i()->index();
+    auto index = imp.i()->index();
     fx_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(0));
     fy_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(1));
     fz_[index] += du_dphi * dcos_dxpj_.dp(dxpj_dij_.columnAsVec3(2));
 
-    index = imp->j()->index();
+    index = imp.j()->index();
     fx_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(0) - dxpj_dkj_.columnAsVec3(0)) -
                              dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0)));
     fy_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(1) - dxpj_dkj_.columnAsVec3(1)) -
@@ -990,7 +991,7 @@ void ForceKernel::forces(const SpeciesImproper *imp)
     fz_[index] += du_dphi * (dcos_dxpj_.dp(-dxpj_dij_.columnAsVec3(2) - dxpj_dkj_.columnAsVec3(2)) -
                              dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2)));
 
-    index = imp->k()->index();
+    index = imp.k()->index();
     fx_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(0) - dxpk_dlk_.columnAsVec3(0)) +
                              dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(0)));
     fy_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(1) - dxpk_dlk_.columnAsVec3(1)) +
@@ -998,7 +999,7 @@ void ForceKernel::forces(const SpeciesImproper *imp)
     fz_[index] += du_dphi * (dcos_dxpk_.dp(dxpk_dkj_.columnAsVec3(2) - dxpk_dlk_.columnAsVec3(2)) +
                              dcos_dxpj_.dp(dxpj_dkj_.columnAsVec3(2)));
 
-    index = imp->l()->index();
+    index = imp.l()->index();
     fx_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(0));
     fy_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(1));
     fz_[index] += du_dphi * dcos_dxpk_.dp(dxpk_dlk_.columnAsVec3(2));

@@ -23,7 +23,6 @@
 
 #include "base/enumoptions.h"
 #include "classes/speciesintra.h"
-#include "templates/dynamicarrayobject.h"
 
 // Forward Declarations
 class SpeciesAtom;
@@ -31,11 +30,13 @@ class Species;
 class ProcessPool;
 
 // SpeciesImproper Definition
-class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesImproper>
+class SpeciesImproper : public SpeciesIntra
 {
     public:
     SpeciesImproper();
-    ~SpeciesImproper();
+    SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    ~SpeciesImproper() = default;
+    SpeciesImproper(SpeciesImproper &&source);
 
     /*
      * DynamicArrayObject Virtuals
@@ -59,7 +60,7 @@ class SpeciesImproper : public SpeciesIntra, public DynamicArrayObject<SpeciesIm
 
     public:
     // Set Atoms involved in Improper
-    void setAtoms(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
+    void assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
     // Return second SpeciesAtom

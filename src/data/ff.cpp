@@ -321,13 +321,12 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
     auto selectionOnly = flags & Forcefield::SelectionOnlyFlag;
 
     // Assign bond terms
-    DynamicArrayIterator<SpeciesBond> bondIterator(sp->bonds());
-    while (SpeciesBond *bond = bondIterator.iterate())
+    for (auto &bond : sp->bonds())
     {
-        SpeciesAtom *i = bond->i();
-        SpeciesAtom *j = bond->j();
+        auto *i = bond.i();
+        auto *j = bond.j();
 
-        if (selectionOnly && (!bond->isSelected()))
+        if (selectionOnly && (!bond.isSelected()))
             continue;
 
         auto optTypeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name());
@@ -345,19 +344,18 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                                     typeI.equivalentName(), typeJ.equivalentName());
 
         const ForcefieldBondTerm &term = *optTerm;
-        bond->setForm(term.form());
-        bond->setParameters(term.parameters());
+        bond.setForm(term.form());
+        bond.setParameters(term.parameters());
     }
 
     // Generate angle parameters
-    DynamicArrayIterator<SpeciesAngle> angleIterator(sp->angles());
-    while (SpeciesAngle *angle = angleIterator.iterate())
+    for (auto &angle : sp->angles())
     {
-        SpeciesAtom *i = angle->i();
-        SpeciesAtom *j = angle->j();
-        SpeciesAtom *k = angle->k();
+        auto *i = angle.i();
+        auto *j = angle.j();
+        auto *k = angle.k();
 
-        if (selectionOnly && (!angle->isSelected()))
+        if (selectionOnly && (!angle.isSelected()))
             continue;
 
         auto optTypeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name());
@@ -380,20 +378,19 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                                     typeK.equivalentName());
 
         const ForcefieldAngleTerm &term = *optTerm;
-        angle->setForm(term.form());
-        angle->setParameters(term.parameters());
+        angle.setForm(term.form());
+        angle.setParameters(term.parameters());
     }
 
     // Generate torsion parameters
-    DynamicArrayIterator<SpeciesTorsion> torsionIterator(sp->torsions());
-    while (SpeciesTorsion *torsion = torsionIterator.iterate())
+    for (auto &torsion : sp->torsions())
     {
-        SpeciesAtom *i = torsion->i();
-        SpeciesAtom *j = torsion->j();
-        SpeciesAtom *k = torsion->k();
-        SpeciesAtom *l = torsion->l();
+        SpeciesAtom *i = torsion.i();
+        SpeciesAtom *j = torsion.j();
+        SpeciesAtom *k = torsion.k();
+        SpeciesAtom *l = torsion.l();
 
-        if (selectionOnly && (!torsion->isSelected()))
+        if (selectionOnly && (!torsion.isSelected()))
             continue;
 
         auto optTypeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name());
@@ -420,8 +417,8 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                                     typeJ.equivalentName(), typeK.equivalentName(), typeL.equivalentName());
 
         const ForcefieldTorsionTerm &term = *optTerm;
-        torsion->setForm(term.form());
-        torsion->setParameters(term.parameters());
+        torsion.setForm(term.form());
+        torsion.setParameters(term.parameters());
     }
 
     // Generate improper terms
@@ -483,7 +480,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                             const ForcefieldImproperTerm &term = *optTerm;
                             // Check to see if the Species already has an improper definition - if
                             // not create one
-                            SpeciesImproper *improper = sp->improper(i, j, k, l);
+                            auto improper = sp->improper(i, j, k, l);
                             if (!improper)
                                 improper = sp->addImproper(i, j, k, l);
 
@@ -491,8 +488,8 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                                              j->userIndex(), k->userIndex(), l->userIndex(), typeI.equivalentName(),
                                              typeJ.equivalentName(), typeK.equivalentName(), typeL.equivalentName());
 
-                            improper->setForm(term.form());
-                            improper->setParameters(term.parameters());
+                            improper->get().setForm(term.form());
+                            improper->get().setParameters(term.parameters());
                         }
                     }
                 }

@@ -224,17 +224,16 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 if (testIntra)
                 {
                     // Bond forces
-                    DynamicArrayConstIterator<SpeciesBond> bondIterator(molN->species()->constBonds());
-                    while (const SpeciesBond *b = bondIterator.iterate())
+                    for (const auto &bond : molN->species()->constBonds())
                     {
                         // Grab pointers to atoms involved in bond
-                        i = molN->atom(b->indexI());
-                        j = molN->atom(b->indexJ());
+                        i = molN->atom(bond.indexI());
+                        j = molN->atom(bond.indexJ());
 
                         // Determine final forces
                         vecji = box->minimumVector(i, j);
                         r = vecji.magAndNormalise();
-                        vecji *= b->force(r);
+                        vecji *= bond.force(r);
                         intraFx[i->arrayIndex()] -= vecji.x;
                         intraFy[i->arrayIndex()] -= vecji.y;
                         intraFz[i->arrayIndex()] -= vecji.z;
@@ -244,25 +243,21 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Angle forces
-                    DynamicArrayConstIterator<SpeciesAngle> angleIterator(molN->species()->constAngles());
-                    while (const SpeciesAngle *a = angleIterator.iterate())
+                    for (const auto &angle : molN->species()->constAngles())
                     {
                         // Grab pointers to atoms involved in angle
-                        i = molN->atom(a->indexI());
-                        j = molN->atom(a->indexJ());
-                        k = molN->atom(a->indexK());
+                        i = molN->atom(angle.indexI());
+                        j = molN->atom(angle.indexJ());
+                        k = molN->atom(angle.indexK());
 
                         // Get vectors 'j-i' and 'j-k'
                         vecji = box->minimumVector(j, i);
                         vecjk = box->minimumVector(j, k);
-
-                        // Calculate angle
                         magji = vecji.magAndNormalise();
                         magjk = vecjk.magAndNormalise();
-                        angle = Box::angleInDegrees(vecji, vecjk, dp);
 
                         // Determine Angle force vectors for atoms
-                        force = a->force(angle);
+                        force = angle.force(Box::angleInDegrees(vecji, vecjk, dp));
                         forcei = vecjk - vecji * dp;
                         forcei *= force / magji;
                         forcek = vecji - vecjk * dp;
@@ -281,14 +276,13 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Torsion forces
-                    DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(molN->species()->constTorsions());
-                    while (const SpeciesTorsion *t = torsionIterator.iterate())
+                    for (const auto &torsion : molN->species()->constTorsions())
                     {
                         // Grab pointers to atoms involved in angle
-                        i = molN->atom(t->indexI());
-                        j = molN->atom(t->indexJ());
-                        k = molN->atom(t->indexK());
-                        l = molN->atom(t->indexL());
+                        i = molN->atom(torsion.indexI());
+                        j = molN->atom(torsion.indexJ());
+                        k = molN->atom(torsion.indexK());
+                        l = molN->atom(torsion.indexL());
 
                         // Calculate vectors, ensuring we account for minimum image
                         vecji = box->minimumVector(j, i);
@@ -298,7 +292,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         // Calculate torsion force parameters
                         ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl, phi, dxpj_dij, dxpj_dkj, dxpk_dkj,
                                                                 dxpk_dlk, dcos_dxpj, dcos_dxpk);
-                        du_dphi = t->force(phi * DEGRAD);
+                        du_dphi = torsion.force(phi * DEGRAD);
 
                         // Sum forces on Atoms
                         auto index = i->arrayIndex();
@@ -329,14 +323,13 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Improper forces
-                    DynamicArrayConstIterator<SpeciesImproper> improperIterator(molN->species()->constImpropers());
-                    while (const SpeciesImproper *imp = improperIterator.iterate())
+                    for (const auto &imp : molN->species()->constImpropers())
                     {
                         // Grab pointers to atoms involved in angle
-                        i = molN->atom(imp->indexI());
-                        j = molN->atom(imp->indexJ());
-                        k = molN->atom(imp->indexK());
-                        l = molN->atom(imp->indexL());
+                        i = molN->atom(imp.indexI());
+                        j = molN->atom(imp.indexJ());
+                        k = molN->atom(imp.indexK());
+                        l = molN->atom(imp.indexL());
 
                         // Calculate vectors, ensuring we account for minimum image
                         vecji = box->minimumVector(j, i);
@@ -346,7 +339,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         // Calculate improper force parameters
                         ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl, phi, dxpj_dij, dxpj_dkj, dxpk_dkj,
                                                                 dxpk_dlk, dcos_dxpj, dcos_dxpk);
-                        du_dphi = imp->force(phi * DEGRAD);
+                        du_dphi = imp.force(phi * DEGRAD);
 
                         // Sum forces on Atoms
                         auto index = i->arrayIndex();

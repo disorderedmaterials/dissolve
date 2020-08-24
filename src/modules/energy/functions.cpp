@@ -25,6 +25,7 @@
 #include "classes/species.h"
 #include "genericitems/listhelper.h"
 #include "modules/energy/energy.h"
+#include <numeric>
 
 // Return total interatomic energy of Configuration
 double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap)
@@ -168,27 +169,31 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
         // Get Molecule pointer
         mol = molecules[m];
 
-        // Loop over Bonds
-        DynamicArrayConstIterator<SpeciesBond> bondIterator(mol->species()->constBonds());
-        while (const SpeciesBond *b = bondIterator.iterate())
-            bondEnergy += kernel.energy(b, mol->atom(b->indexI()), mol->atom(b->indexJ()));
+        // Loop over Bond
+        bondEnergy += std::accumulate(mol->species()->constBonds().cbegin(), mol->species()->constBonds().cend(), 0.0,
+                                      [&mol, &kernel](auto const acc, const auto &t) {
+                                          return acc + kernel.energy(t, mol->atom(t.indexI()), mol->atom(t.indexJ()));
+                                      });
 
-        // Loop over Angles
-        DynamicArrayConstIterator<SpeciesAngle> angleIterator(mol->species()->constAngles());
-        while (const SpeciesAngle *a = angleIterator.iterate())
-            angleEnergy += kernel.energy(a, mol->atom(a->indexI()), mol->atom(a->indexJ()), mol->atom(a->indexK()));
+        // Loop over Angle
+        angleEnergy += std::accumulate(mol->species()->constAngles().cbegin(), mol->species()->constAngles().cend(), 0.0,
+                                       [&mol, &kernel](auto const acc, const auto &t) {
+                                           return acc + kernel.energy(t, mol->atom(t.indexI()), mol->atom(t.indexJ()),
+                                                                      mol->atom(t.indexK()));
+                                       });
 
         // Loop over Torsions
-        DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(mol->species()->constTorsions());
-        while (const SpeciesTorsion *t = torsionIterator.iterate())
-            torsionEnergy += kernel.energy(t, mol->atom(t->indexI()), mol->atom(t->indexJ()), mol->atom(t->indexK()),
-                                           mol->atom(t->indexL()));
+        torsionEnergy += std::accumulate(mol->species()->constTorsions().cbegin(), mol->species()->constTorsions().cend(), 0.0,
+                                         [&mol, &kernel](auto const acc, const auto &t) {
+                                             return acc + kernel.energy(t, mol->atom(t.indexI()), mol->atom(t.indexJ()),
+                                                                        mol->atom(t.indexK()), mol->atom(t.indexL()));
+                                         });
 
-        // Loop over impropers
-        DynamicArrayConstIterator<SpeciesImproper> improperIterator(mol->species()->constImpropers());
-        while (const SpeciesImproper *imp = improperIterator.iterate())
-            improperEnergy += kernel.energy(imp, mol->atom(imp->indexI()), mol->atom(imp->indexJ()), mol->atom(imp->indexK()),
-                                            mol->atom(imp->indexL()));
+        improperEnergy += std::accumulate(mol->species()->constImpropers().cbegin(), mol->species()->constImpropers().cend(),
+                                          0.0, [&mol, &kernel](auto const acc, const auto &imp) {
+                                              return acc + kernel.energy(imp, mol->atom(imp.indexI()), mol->atom(imp.indexJ()),
+                                                                         mol->atom(imp.indexK()), mol->atom(imp.indexL()));
+                                          });
     }
 
     double totalIntra = bondEnergy + angleEnergy + torsionEnergy + improperEnergy;
@@ -224,19 +229,16 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Species *sp)
     auto energy = 0.0;
 
     // Loop over bonds
-    DynamicArrayConstIterator<SpeciesBond> bondIterator(sp->constBonds());
-    while (const SpeciesBond *b = bondIterator.iterate())
-        energy += EnergyKernel::energy(b);
+    for (const auto &bond : sp->constBonds())
+        energy += EnergyKernel::energy(bond);
 
     // Loop over angles
-    DynamicArrayConstIterator<SpeciesAngle> angleIterator(sp->constAngles());
-    while (const SpeciesAngle *a = angleIterator.iterate())
-        energy += EnergyKernel::energy(a);
+    for (const auto &angle : sp->constAngles())
+        energy += EnergyKernel::energy(angle);
 
     // Loop over torsions
-    DynamicArrayConstIterator<SpeciesTorsion> torsionIterator(sp->constTorsions());
-    while (const SpeciesTorsion *t = torsionIterator.iterate())
-        energy += EnergyKernel::energy(t);
+    for (const auto &torsion : sp->constTorsions())
+        energy += EnergyKernel::energy(torsion);
 
     return energy;
 }

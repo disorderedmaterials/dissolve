@@ -76,6 +76,21 @@ template <class T, class I, typename Raw = I *, typename... Args> class TableWid
     }
 
     public:
+    TableWidgetUpdater(QTableWidget *table, std::vector<I> &vector, T *functionParent, TableWidgetRowUpdateFunction updateRow)
+    {
+
+        int rowCount = 0;
+
+        for (auto &dataItem : vector)
+        {
+            updateItemAtIndex(table, rowCount, &dataItem, functionParent, updateRow);
+            ++rowCount;
+        }
+
+        // Set the number of table rows again here in order to catch the case where there were zero data items to
+        // iterate over
+        table->setRowCount(rowCount);
+    }
     TableWidgetUpdater(QTableWidget *table, const List<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
     {
 

@@ -26,19 +26,29 @@
 
 SpeciesIntra::SpeciesIntra()
 {
-    parent_ = NULL;
-    masterParameters_ = NULL;
+    parent_ = nullptr;
+    masterParameters_ = nullptr;
 
-    nAttached_[0] = 0;
-    nAttached_[1] = 0;
-    attached_[0] = NULL;
-    attached_[1] = NULL;
-    arraySize_[0] = 0;
-    arraySize_[1] = 0;
+    attached_[0] = {};
+    attached_[1] = {};
     inCycle_ = false;
 }
 
-SpeciesIntra::~SpeciesIntra() { deleteAttachedAtomArrays(); }
+SpeciesIntra::SpeciesIntra(SpeciesIntra &source) { (*this) = source; }
+
+SpeciesIntra &SpeciesIntra::operator=(const SpeciesIntra &source)
+{
+    parent_ = source.parent_;
+    masterParameters_ = source.masterParameters_;
+    parameters_.clear();
+    parameters_.resize(source.parameters_.size());
+    std::copy(source.parameters_.begin(), source.parameters_.end(), parameters_.begin());
+    attached_[0] = source.attached_[0];
+    attached_[1] = source.attached_[1];
+    inCycle_ = source.inCycle_;
+
+    return *this;
+}
 
 /*
  * Basic Data
@@ -153,55 +163,25 @@ const std::vector<double> &SpeciesIntra::parameters() const
  * Connections
  */
 
-// Clear and delete all arrays
-void SpeciesIntra::deleteAttachedAtomArrays()
-{
-    for (int n = 0; n < 2; ++n)
-    {
-        if (attached_[n] != NULL)
-            delete[] attached_[n];
-        attached_[n] = NULL;
-        nAttached_[n] = 0;
-        arraySize_[n] = 0;
-    }
-}
-
 // Set attached SpeciesAtoms for the terminus specified
 void SpeciesIntra::setAttachedAtoms(int terminus, const RefList<SpeciesAtom> &atoms)
 {
-    // Is the current array non-existent or too small to hold the new list?
-    if ((!attached_[terminus]) || (atoms.nItems() > arraySize_[terminus]))
-    {
-        // Delete existing array if it is there
-        if (attached_[terminus])
-            delete[] attached_[terminus];
-
-        // Create new array just big enough to hold the number of SpeciesAtoms in the list
-        arraySize_[terminus] = atoms.nItems();
-        attached_[terminus] = new int[arraySize_[terminus]];
-    }
-
-    // Zero the current count of items in the array
-    nAttached_[terminus] = 0;
+    attached_[terminus].clear();
 
     // Add the SpeciesAtoms in the list
     for (RefListItem<SpeciesAtom> *refAtom = atoms.first(); refAtom != NULL; refAtom = refAtom->next())
-        attached_[terminus][nAttached_[terminus]++] = refAtom->item()->index();
+        attached_[terminus].push_back(refAtom->item()->index());
 }
 
 // Set attached SpeciesAtoms for terminus specified (single SpeciesAtom)
 void SpeciesIntra::setAttachedAtoms(int terminus, SpeciesAtom *atom)
 {
-    RefList<SpeciesAtom> atoms;
-    atoms.append(atom);
-    setAttachedAtoms(terminus, atoms);
+    attached_[terminus].clear();
+    attached_[terminus].push_back(atom->index());
 }
 
-// Return number of attached SpeciesAtoms for terminus specified
-int SpeciesIntra::nAttached(int terminus) const { return nAttached_[terminus]; }
-
-// Return array of attached indices for terminus specified
-int *SpeciesIntra::attached(int terminus) const { return attached_[terminus]; }
+// Return vector of attached indices for terminus specified
+const std::vector<int> &SpeciesIntra::attachedAtoms(int terminus) const { return attached_[terminus]; }
 
 // Set whether the term is contained within a cycle
 void SpeciesIntra::setInCycle(bool b) { inCycle_ = b; }
