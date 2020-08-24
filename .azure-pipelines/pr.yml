@@ -54,12 +54,24 @@ stages:
           vmImage: 'macos-latest' 
         steps:
           - template: templates/build-osx-serial-gui.yml
+          - template: templates/package-osx-serial-gui.yml
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "packages/"
+              ArtifactName: 'osx-artifacts'
+            displayName: 'Publish OSX Artifacts'
       - job: 'windows_serialgui'
         displayName: 'Build Windows (Serial/GUI, windows-latest)'
         pool:
           vmImage: 'windows-latest' 
         steps:
           - template: templates/build-windows-serial-gui.yml
+          - template: templates/package-windows-serial-gui.yml
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "packages/"
+              ArtifactName: 'windows-artifacts'
+            displayName: 'Publish Windows Artifacts'
 
   # Run System Tests
   - stage: 'system_tests_serial'
