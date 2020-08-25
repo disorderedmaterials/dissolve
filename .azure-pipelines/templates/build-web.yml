@@ -1,4 +1,7 @@
 parameters:
+  - name: deploy
+    default: true
+    type: boolean
   - name: hugo_version
     default: '0.74.3'
   - name: use_current_hash
@@ -65,15 +68,18 @@ steps:
     displayName: 'Rewrite Edit Links'
   - task: DownloadSecureFile@1
     name: privateKey
-    displayName: 'Download Secure Files'
     inputs:
       secureFile: id_rsa_dd
+    condition: eq('${{ parameters.deploy }}', true)
+    displayName: 'Download Secure Files'
   - task: DownloadSecureFile@1
     name: machineId
-    displayName: 'Download Secure Files'
     inputs:
       secureFile: pd_hostkey
+    condition: eq('${{ parameters.deploy }}', true)
+    displayName: 'Download Secure Files'
   - bash: |
       chmod 0600 $(privateKey.secureFilePath) $(machineId.secureFilePath)
       rsync -avz --delete -e "ssh -o UserKnownHostsFile=$(machineId.secureFilePath) -i $(privateKey.secureFilePath) -p 2212 -l doctordissolve" web/public/ 87.117.225.2:/home/www/www.projectdissolve.com/public_html/
+    condition: eq('${{ parameters.deploy }}', true)
     displayName: 'SSH Deploy to Server'
