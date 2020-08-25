@@ -26,6 +26,11 @@ CMAKE_POLICY(SET CMP0020 NEW)
 # Request C++17 Standard Support (Required for std::optional and auto types in lambda parameters)
 set(CMAKE_CXX_STANDARD 17)
 
+# Include Conan Packages
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
+set(EXTRA_LINK_LIBS ${EXTRA_LINK_LIBS} ${CONAN_LIBS})
+
 # Catch defines
 if(PARALLEL)
   ADD_DEFINITIONS("-DPARALLEL")
