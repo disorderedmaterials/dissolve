@@ -12,7 +12,7 @@ pr:
 stages:
   - template: templates/code-quality-checks.yml
 
-  # Build Executables
+  # Build and Package Executables
   - stage: 'build'
     displayName: 'Build'
     jobs:
@@ -25,6 +25,8 @@ stages:
             parameters:
               extraflags: '-DCHECKS:bool=true'
               ppa: 'beineri/opt-qt-5.13.2-bionic'
+              qtver: 513
+          - template: templates/package-linux-serial-gui.yml
               qtver: 513
           - bash: |
               cp build/dissolve tests/

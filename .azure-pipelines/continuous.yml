@@ -16,17 +16,10 @@ stages:
           vmImage: 'ubuntu-18.04'
         steps:
           - template: templates/build-linux-serial-gui.yml
-      - job: 'linux_serialgui_appimage'
-        displayName: 'Build Linux (Serial/GUI, ubuntu-16.04)'
-        condition: eq(0,1)
-        pool:
-          vmImage: 'ubuntu-16.04'
-        steps:
-          - template: templates/build-linux-serial-gui.yml
-            parameters:
-              ppa: 'beineri/opt-qt-5.12.0-xenial'
-              qtver: 512
+              ppa: 'beineri/opt-qt-5.13.2-bionic'
+              qtver: 513
           - template: templates/package-linux-serial-gui.yml
+              qtver: 513
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "packages/"
@@ -67,13 +60,13 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
-          #- task: DownloadBuildArtifacts@0
-          #  inputs:
-          #    buildType: 'current'
-          #    specificBuildWithTriggering: true
-          #    downloadType: 'single'
-          #    artifactName: 'linux-artifacts'
-          #  displayName: 'Download Linux Artifacts'
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              specificBuildWithTriggering: true
+              downloadType: 'single'
+              artifactName: 'linux-artifacts'
+            displayName: 'Download Linux Artifacts'
           - task: DownloadBuildArtifacts@0
             inputs:
               buildType: 'current'
@@ -98,10 +91,10 @@ stages:
               SHORTHASH=`git rev-parse --short HEAD`
               VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
               # Linux AppImages
-              #cd $(System.ArtifactsDirectory)/linux-artifacts
-              #mv -v Dissolve-${SHORTHASH}-x86_64.AppImage Dissolve-${VERSION}-${SHORTHASH}-x86_64.AppImage
-              #mv -v Dissolve-GUI-${SHORTHASH}-x86_64.AppImage Dissolve-GUI-${VERSION}-${SHORTHASH}-x86_64.AppImage
-              #cd ../
+              cd $(System.ArtifactsDirectory)/linux-artifacts
+              mv -v Dissolve-${SHORTHASH}-x86_64.AppImage Dissolve-${VERSION}-${SHORTHASH}-x86_64.AppImage
+              mv -v Dissolve-GUI-${SHORTHASH}-x86_64.AppImage Dissolve-GUI-${VERSION}-${SHORTHASH}-x86_64.AppImage
+              cd ../
               # OSX Disk Images
               cd $(System.ArtifactsDirectory)/osx-artifacts
               mv -v Dissolve-GUI-${VERSION}.dmg Dissolve-GUI-${VERSION}-${SHORTHASH}-Catalina.dmg
