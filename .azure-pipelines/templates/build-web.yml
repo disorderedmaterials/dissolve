@@ -28,11 +28,8 @@ steps:
   - bash: |
       set -ex
       wget https://github.com/gohugoio/hugo/releases/download/v${{ parameters.hugo_version }}/hugo_extended_${{ parameters.hugo_version }}_Linux-64bit.deb -O '$(Pipeline.Workspace)/hugo.deb'
-    displayName: 'Download Hugo (Extended Version)'
-  - bash: |
-      set -ex
       sudo dpkg -i $(Pipeline.Workspace)/hugo*.deb
-    displayName: 'Install Hugo'
+    displayName: 'Download & Install Hugo (Extended Version)'
   - bash: |
       set -ex
       if [ "${{ parameters.use_current_hash }}" = "true" ]
