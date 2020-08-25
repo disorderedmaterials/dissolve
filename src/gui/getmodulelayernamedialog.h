@@ -48,7 +48,7 @@ class GetModuleLayerNameDialog : public QDialog
 
     public:
     // Run the dialog
-    bool get(const ModuleLayer *currentModuleLayer, const char *currentName);
+    bool get(const ModuleLayer *currentModuleLayer, const QString &currentName);
     // Return the name string
     QString newName() const;
 

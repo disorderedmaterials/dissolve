@@ -162,11 +162,11 @@ SequenceProcedureNode *SelectProcedureNode::addForEachBranch(ProcedureNode::Node
  */
 
 // Prepare any necessary data, ready for execution
-bool SelectProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList)
+bool SelectProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Check for at least one site being defined
     if ((speciesSites_.nItems() == 0) && (dynamicSites_.nItems() == 0))
-        return Messenger::error("No sites are defined in the Select node '%s'.\n", name());
+        return Messenger::error("No sites are defined in the Select node '{}'.\n", name());
 
     // Prep some variables
     nSelections_ = 0;
@@ -190,8 +190,8 @@ bool SelectProcedureNode::prepare(Configuration *cfg, const char *prefix, Generi
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
-                                                                GenericList &targetList)
+ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
+                                                                std::string_view prefix, GenericList &targetList)
 {
     // Create our arrays of sites
     sites_.clear();
@@ -289,7 +289,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
 }
 
 // Finalise any necessary data after execution
-bool SelectProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+bool SelectProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // If one exists, finalise the ForEach branch nodes
     if (forEachBranch_ && (!forEachBranch_->finalise(procPool, cfg, prefix, targetList)))
@@ -301,11 +301,11 @@ bool SelectProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, co
             return false;
 
     // Print out summary information
-    Messenger::print("Select - Site '%s': Number of selections made = %i (last contained %i sites).\n", name(), nSelections_,
+    Messenger::print("Select - Site '{}': Number of selections made = {} (last contained {} sites).\n", name(), nSelections_,
                      sites_.nItems());
-    Messenger::print("Select - Site '%s': Average number of sites selected per selection = %.2f.\n", name(),
+    Messenger::print("Select - Site '{}': Average number of sites selected per selection = {:.2f}.\n", name(),
                      nSelections_ == 0 ? 0 : double(nCumulativeSites_) / nSelections_);
-    Messenger::print("Select - Site '%s': Cumulative number of sites selected = %i.\n", name(), nCumulativeSites_);
+    Messenger::print("Select - Site '{}': Cumulative number of sites selected = {}.\n", name(), nCumulativeSites_);
 
     return true;
 }

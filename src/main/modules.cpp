@@ -67,13 +67,13 @@ bool Dissolve::registerMasterModule(Module *masterInstance)
     {
         if (DissolveSys::sameString(module->type(), masterInstance->type()))
         {
-            Messenger::error("Two modules cannot have the same name (%s).\n", module->type());
+            Messenger::error("Two modules cannot have the same name ({}).\n", module->type());
             return false;
         }
     }
 
     // Set the unique name of the Module
-    masterInstance->setUniqueName(CharString("%s_MASTER", masterInstance->type()));
+    masterInstance->setUniqueName(fmt::format("{}_MASTER", masterInstance->type()));
 
     // Own the module into our master instances list
     masterModules_.own(masterInstance);
@@ -147,19 +147,19 @@ bool Dissolve::registerMasterModules()
     if (!registerMasterModule(new TestModule))
         return false;
 
-    Messenger::print("Module Information (%i available):\n", masterModules_.nItems());
+    Messenger::print("Module Information ({} available):\n", masterModules_.nItems());
     ListIterator<Module> moduleIterator(masterModules_);
     while (Module *module = moduleIterator.iterate())
     {
-        Messenger::print(" --> %s\n", module->type());
-        Messenger::print("     %s\n", module->brief());
+        Messenger::print(" --> {}\n", module->type());
+        Messenger::print("     {}\n", module->brief());
     }
 
     return true;
 }
 
 // Search for master Module of the named type
-Module *Dissolve::findMasterModule(const char *moduleType) const
+Module *Dissolve::findMasterModule(std::string_view moduleType) const
 {
     ListIterator<Module> moduleIterator(masterModules_);
     while (Module *module = moduleIterator.iterate())
@@ -175,21 +175,21 @@ Module *Dissolve::findMasterModule(const char *moduleType) const
 const List<Module> &Dissolve::masterModules() const { return masterModules_; }
 
 // Create a Module instance for the named Module type
-Module *Dissolve::createModuleInstance(const char *moduleType)
+Module *Dissolve::createModuleInstance(std::string_view moduleType)
 {
     Module *masterModule = findMasterModule(moduleType);
     if (!masterModule)
     {
-        Messenger::error("No Module type '%s' exists.\n", moduleType);
+        Messenger::error("No Module type '{}' exists.\n", moduleType);
         return NULL;
     }
 
     // Find a suitable unique name for the Module
     auto instanceId = 1;
-    CharString uniqueName;
+    std::string uniqueName;
     do
     {
-        uniqueName.sprintf("%s%02i", moduleType, instanceId++);
+        uniqueName = fmt::format("{}{:02d}", moduleType, instanceId++);
     } while (findModuleInstance(uniqueName));
 
     // Create a new instance of the specified Module and add it to our list
@@ -201,7 +201,7 @@ Module *Dissolve::createModuleInstance(const char *moduleType)
 }
 
 // Create a Module instance for the named Module type, and add it to the specified layer
-Module *Dissolve::createModuleInstance(const char *moduleType, ModuleLayer *destinationLayer, bool configurationLocal)
+Module *Dissolve::createModuleInstance(std::string_view moduleType, ModuleLayer *destinationLayer, bool configurationLocal)
 {
     Module *module = createModuleInstance(moduleType);
     if (!module)
@@ -216,9 +216,9 @@ Module *Dissolve::createModuleInstance(const char *moduleType, ModuleLayer *dest
 }
 
 // Search for any instance of any Module with the specified unique name
-Module *Dissolve::findModuleInstance(const char *uniqueName)
+Module *Dissolve::findModuleInstance(std::string_view uniqueName)
 {
-    for (Module *module : moduleInstances_)
+    for (auto *module : moduleInstances_)
         if (DissolveSys::sameString(module->uniqueName(), uniqueName))
             return module;
 
@@ -226,11 +226,11 @@ Module *Dissolve::findModuleInstance(const char *uniqueName)
 }
 
 // Search for any instance of any Module with the specified Module type
-RefList<Module> Dissolve::findModuleInstances(const char *moduleType)
+RefList<Module> Dissolve::findModuleInstances(std::string_view moduleType)
 {
     RefList<Module> instances;
 
-    for (Module *module : moduleInstances_)
+    for (auto *module : moduleInstances_)
         if (DissolveSys::sameString(module->type(), moduleType))
             instances.append(module);
 
@@ -238,26 +238,21 @@ RefList<Module> Dissolve::findModuleInstances(const char *moduleType)
 }
 
 // Generate unique Module name with base name provided
-const char *Dissolve::uniqueModuleName(const char *name, Module *excludeThis)
+std::string Dissolve::uniqueModuleName(std::string_view name, Module *excludeThis)
 {
-    static CharString uniqueName;
-    CharString baseName = name;
-    uniqueName = baseName;
-    auto suffix = 0;
-
-    // Must always have a baseName
-    if (baseName.isEmpty())
-        baseName = "Unnamed";
+    std::string_view baseName = name.empty() ? "Unnamed" : name;
+    std::string uniqueName{baseName};
 
     // Find an unused name starting with the baseName provided
-    while (Module *existingModule = findModuleInstance(uniqueName))
+    auto suffix = 0;
+    while (const auto *existingModule = findModuleInstance(uniqueName))
     {
         if (existingModule == excludeThis)
             break;
 
         // Increase suffix value and regenerate uniqueName from baseName
         ++suffix;
-        uniqueName.sprintf("%s%02i", baseName.get(), suffix);
+        uniqueName = fmt::format("{}{:02d}", baseName, suffix);
     }
 
     return uniqueName;

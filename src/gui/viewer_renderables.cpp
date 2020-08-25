@@ -42,8 +42,8 @@ void BaseViewer::ownRenderable(Renderable *newRenderable)
 {
     // Warn if an existing Renderable has the same name as this one
     if (renderable(newRenderable->name()))
-        Messenger::warn("A Renderable named '%s' already exists, and another with the same name is being added...\n",
-                        newRenderable->name());
+        fmt::print("A Renderable named '{}' already exists, and another with the same name is being added...\n",
+                   newRenderable->name());
 
     // Own the new Renderable
     renderables_.own(newRenderable);
@@ -52,8 +52,8 @@ void BaseViewer::ownRenderable(Renderable *newRenderable)
 }
 
 // Create Renderable by type and object identifier
-Renderable *BaseViewer::createRenderable(Renderable::RenderableType type, const char *objectTag, const char *name,
-                                         const char *groupName)
+Renderable *BaseViewer::createRenderable(Renderable::RenderableType type, std::string_view objectTag, std::string_view name,
+                                         std::string_view groupName)
 {
     Renderable *renderable = RenderableFactory::create(type, objectTag);
     if (renderable)
@@ -65,7 +65,7 @@ Renderable *BaseViewer::createRenderable(Renderable::RenderableType type, const 
         renderables_.own(renderable);
 
         // Set the group, if one was provided
-        if (groupName)
+        if (!groupName.empty())
             groupManager_.addToGroup(renderable, groupName);
     }
 
@@ -102,34 +102,34 @@ int BaseViewer::nRenderables() const { return renderables_.nItems(); }
 const List<Renderable> &BaseViewer::renderables() const { return renderables_; }
 
 // Return named Renderable
-Renderable *BaseViewer::renderable(const char *name) const
+Renderable *BaseViewer::renderable(std::string_view name) const
 {
     ListIterator<Renderable> renderableIterator(renderables_);
     while (Renderable *rend = renderableIterator.iterate())
-        if (DissolveSys::sameString(name, rend->name()))
+        if (name == rend->name())
             return rend;
 
     return NULL;
 }
 
 // Return Renderable with specified objectTag (if it exists)
-Renderable *BaseViewer::renderableWithTag(const char *objectTag) const
+Renderable *BaseViewer::renderableWithTag(std::string_view objectTag) const
 {
     ListIterator<Renderable> renderableIterator(renderables_);
     while (Renderable *rend = renderableIterator.iterate())
-        if (DissolveSys::sameString(objectTag, rend->objectTag()))
+        if (objectTag == rend->objectTag())
             return rend;
 
     return NULL;
 }
 
 // Set visibility of named Renderable
-void BaseViewer::setRenderableVisible(const char *name, bool visible)
+void BaseViewer::setRenderableVisible(std::string_view name, bool visible)
 {
     Renderable *rend = renderable(name);
     if (!rend)
     {
-        Messenger::error("No Renderable named '%s' exists, so can't set its visibility.\n", name);
+        fmt::print("No Renderable named '{}' exists, so can't set its visibility.\n", name);
         return;
     }
 
@@ -139,12 +139,12 @@ void BaseViewer::setRenderableVisible(const char *name, bool visible)
 }
 
 // Return visibility of named Renderable
-bool BaseViewer::isRenderableVisible(const char *name) const
+bool BaseViewer::isRenderableVisible(std::string_view name) const
 {
     Renderable *rend = renderable(name);
     if (!rend)
     {
-        Messenger::error("No Renderable named '%s' exists, so can't return its visibility.\n", name);
+        fmt::print("No Renderable named '{}' exists, so can't get its visibility.\n", name);
         return false;
     }
 
@@ -159,7 +159,7 @@ bool BaseViewer::isRenderableVisible(const char *name) const
 RenderableGroupManager &BaseViewer::groupManager() { return groupManager_; }
 
 // Add Renderable to specified group
-void BaseViewer::addRenderableToGroup(Renderable *rend, const char *group)
+void BaseViewer::addRenderableToGroup(Renderable *rend, std::string_view group)
 {
     groupManager_.addToGroup(rend, group);
 

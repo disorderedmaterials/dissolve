@@ -37,9 +37,9 @@ Process2DProcedureNode::Process2DProcedureNode(const Collect2DProcedureNode *tar
 {
     keywords_.add("Target", new NodeKeyword<const Collect2DProcedureNode>(this, ProcedureNode::Collect2DNode, false, target),
                   "SourceData", "Collect2D node containing the data to process");
-    keywords_.add("Target", new CharStringKeyword("Counts"), "LabelValue", "Label for the value axis");
-    keywords_.add("Target", new CharStringKeyword("X"), "LabelX", "Label for the x axis");
-    keywords_.add("Target", new CharStringKeyword("Y"), "LabelY", "Label for the y axis");
+    keywords_.add("Target", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
+    keywords_.add("Target", new StringKeyword("X"), "LabelX", "Label for the x axis");
+    keywords_.add("Target", new StringKeyword("Y"), "LabelY", "Label for the y axis");
     keywords_.add("Export", new BoolKeyword(false), "Save", "Save processed data to disk");
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
                   "Branch providing normalisation operations for the data");
@@ -81,13 +81,13 @@ const Data2D &Process2DProcedureNode::processedData() const
 }
 
 // Return value label
-const char *Process2DProcedureNode::valueLabel() const { return keywords_.asString("LabelValue"); }
+std::string Process2DProcedureNode::valueLabel() const { return keywords_.asString("LabelValue"); }
 
 // Return x axis label
-const char *Process2DProcedureNode::xAxisLabel() const { return keywords_.asString("LabelX"); }
+std::string Process2DProcedureNode::xAxisLabel() const { return keywords_.asString("LabelX"); }
 
 // Return y axis label
-const char *Process2DProcedureNode::yAxisLabel() const { return keywords_.asString("LabelY"); }
+std::string Process2DProcedureNode::yAxisLabel() const { return keywords_.asString("LabelY"); }
 
 /*
  * Branches
@@ -113,12 +113,12 @@ SequenceProcedureNode *Process2DProcedureNode::branch() { return normalisationBr
  */
 
 // Prepare any necessary data, ready for execution
-bool Process2DProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList)
+bool Process2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Retrieve the Collect2D node target
     collectNode_ = keywords_.retrieve<const Collect2DProcedureNode *>("SourceData");
     if (!collectNode_)
-        return Messenger::error("No source Collect2D node set in '%s'.\n", name());
+        return Messenger::error("No source Collect2D node set in '{}'.\n", name());
 
     if (normalisationBranch_)
         normalisationBranch_->prepare(cfg, prefix, targetList);
@@ -128,16 +128,16 @@ bool Process2DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
 
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult Process2DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                   const char *prefix, GenericList &targetList)
+                                                                   std::string_view prefix, GenericList &targetList)
 {
     // Retrieve / realise the normalised data from the supplied list
     bool created;
-    auto &data = GenericListHelper<Data2D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix,
+    auto &data = GenericListHelper<Data2D>::realise(targetList, fmt::format("{}_{}", name(), cfg->niceName()), prefix,
                                                     GenericItem::InRestartFileFlag, &created);
     processedData_ = &data;
 
     data.setName(name());
-    data.setObjectTag(CharString("%s//Process2D//%s//%s", prefix, cfg->name(), name()));
+    data.setObjectTag(fmt::format("{}//Process2D//{}//{}", prefix, cfg->name(), name()));
 
     // Copy the averaged data from the associated Process1D node
     data = collectNode_->accumulatedData();
@@ -167,7 +167,7 @@ ProcedureNode::NodeExecutionResult Process2DProcedureNode::execute(ProcessPool &
     {
         if (procPool.isMaster())
         {
-            Data2DExportFileFormat exportFormat(CharString("%s_%s.txt", name(), cfg->name()));
+            Data2DExportFileFormat exportFormat(fmt::format("{}_{}.txt", name(), cfg->name()));
             if (exportFormat.exportData(data))
                 procPool.decideTrue();
             else
@@ -184,7 +184,8 @@ ProcedureNode::NodeExecutionResult Process2DProcedureNode::execute(ProcessPool &
 }
 
 // Finalise any necessary data after execution
-bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+bool Process2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                      GenericList &targetList)
 {
     return true;
 }

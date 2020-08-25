@@ -32,7 +32,7 @@
 #include <QMdiArea>
 #include <QMdiSubWindow>
 
-MainTab::MainTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, QWidget *page)
+MainTab::MainTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title, QWidget *page)
     : dissolve_(dissolve)
 {
     dissolveWindow_ = dissolveWindow;
@@ -65,14 +65,14 @@ EnumOptions<MainTab::TabType> MainTab::tabTypes()
 // Raise suitable dialog for entering / checking new tab name
 QString MainTab::getNewTitle(bool &ok)
 {
-    return QInputDialog::getText(page_, "Rename Tab", "Enter the new name for the tab", QLineEdit::Normal, title_.get(), &ok);
+    return QInputDialog::getText(page_, "Rename Tab", "Enter the new name for the tab", QLineEdit::Normal, title_, &ok);
 }
 
 // Return page widget
 QWidget *MainTab::page() const { return page_; }
 
 // Return title of tab
-const char *MainTab::title() const { return title_.get(); }
+const QString MainTab::title() const { return title_; }
 
 /*
  * Management
@@ -91,7 +91,7 @@ bool MainTab::rename()
     auto tabIndex = tabWidget_->indexOf(page_);
     if (tabIndex == -1)
     {
-        Messenger::print("Couldn't rename tab '%s' since its page widget could not be found.\n", title_.get());
+        Messenger::print("Couldn't rename tab '{}' since its page widget could not be found.\n", qPrintable(title_));
         return false;
     }
 

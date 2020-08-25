@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "data/elements.h"
 #include "templates/list.h"
 #include "templates/refdatalist.h"
@@ -32,7 +31,6 @@
 // Forward Declarations
 class AtomType;
 class Isotope;
-class ProcessPool;
 class Species;
 
 /*
@@ -42,7 +40,7 @@ class Isotopologue : public ListItem<Isotopologue>
 {
     public:
     Isotopologue();
-    ~Isotopologue();
+    ~Isotopologue() = default;
 
     /*
      * Basic Information
@@ -51,7 +49,7 @@ class Isotopologue : public ListItem<Isotopologue>
     // Parent Species
     Species *parent_;
     // Descriptive name
-    CharString name_;
+    std::string name_;
 
     public:
     // Set parent Species
@@ -59,9 +57,9 @@ class Isotopologue : public ListItem<Isotopologue>
     // Return parent Species
     Species *parent() const;
     // Set name of Isotopologue
-    void setName(const char *name);
+    void setName(std::string_view name);
     // Return name of Isotopologue
-    const char *name() const;
+    std::string_view name() const;
 
     /*
      * Isotope Definition

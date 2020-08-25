@@ -29,14 +29,14 @@
 template <> class GenericItemContainer<Array2D<DummyClass>> : public GenericItem
 {
     public:
-    GenericItemContainer<Array2D<DummyClass>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
+    GenericItemContainer<Array2D<DummyClass>>(std::string_view name, int flags = 0) : GenericItem(name, flags) {}
 
     /*
      * Item Class
      */
     protected:
     // Create a new GenericItem containing same class as current type
-    GenericItem *createItem(const char *className, const char *name, int flags = 0)
+    GenericItem *createItem(std::string_view className, std::string_view name, int flags = 0)
     {
         if (DissolveSys::sameString(className, "Array2D<Data1D>"))
             return new GenericItemContainer<Array2D<Data1D>>(name, flags);
@@ -45,7 +45,7 @@ template <> class GenericItemContainer<Array2D<DummyClass>> : public GenericItem
 
     public:
     // Return class name contained in item
-    const char *itemClassName() { return "Array2D<DummyClass>"; }
+    std::string_view itemClassName() { return "Array2D<DummyClass>"; }
 
     /*
      * I/O

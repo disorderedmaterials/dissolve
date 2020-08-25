@@ -47,7 +47,7 @@ ModuleBlock::ModuleBlock(QWidget *parent, Module *module, Dissolve &dissolve)
     module_ = module;
 
     // Set the icon and module type label
-    ui_.TopLabel->setText(module_->type());
+    ui_.TopLabel->setText(QString::fromStdString(std::string(module_->type())));
     ui_.IconLabel->setPixmap(modulePixmap(module_));
 
     // Set event filtering so that we do not blindly accept mouse wheel events in the frequency spin (problematic since we
@@ -77,7 +77,7 @@ Module *ModuleBlock::module() const { return module_; }
 QPixmap ModuleBlock::modulePixmap(const Module *module)
 {
     if (module)
-        return modulePixmap(module->type());
+        return modulePixmap(QString::fromStdString(std::string(module->type())));
 
     return QPixmap(":/modules/icons/modules_generic.svg");
 }
@@ -93,7 +93,10 @@ QPixmap ModuleBlock::modulePixmap(QString moduleType)
     return QPixmap(":/modules/icons/modules_generic.svg");
 }
 
-void ModuleBlock::on_RemoveButton_clicked(bool checked) { emit(remove(module_->uniqueName())); }
+void ModuleBlock::on_RemoveButton_clicked(bool checked)
+{
+    emit(remove(QString::fromStdString(std::string(module_->uniqueName()))));
+}
 
 void ModuleBlock::on_NameEdit_editingFinished()
 {
@@ -101,15 +104,15 @@ void ModuleBlock::on_NameEdit_editingFinished()
         return;
 
     // If the name is the same, return now
-    if (ui_.NameEdit->text() == module_->uniqueName())
+    if (DissolveSys::sameString(qPrintable(ui_.NameEdit->text()), module_->uniqueName(), true))
         return;
 
     // Check that the new name is unique
-    CharString uniqueName = dissolve_.uniqueModuleName(qPrintable(ui_.NameEdit->text()), module_);
+    std::string uniqueName = dissolve_.uniqueModuleName(qPrintable(ui_.NameEdit->text()), module_);
 
     module_->setUniqueName(uniqueName);
 
-    ui_.NameEdit->setText(uniqueName.get());
+    ui_.NameEdit->setText(QString::fromStdString(uniqueName));
 
     emit(dataModified());
 }
@@ -181,7 +184,7 @@ void ModuleBlock::paintEvent(QPaintEvent *event)
  */
 
 // Return type of this block
-const char *ModuleBlock::blockType() { return "Module"; }
+const QString ModuleBlock::blockType() const { return "Module"; }
 
 /*
  * Widget (ChartBlock Reimplementations)
@@ -218,7 +221,7 @@ void ModuleBlock::updateControls()
     refreshing_ = true;
 
     // Set unique name
-    ui_.NameEdit->setText(module_->uniqueName());
+    ui_.NameEdit->setText(QString::fromStdString(std::string(module_->uniqueName())));
 
     // Set 'enabled' button status
     ui_.EnabledButton->setChecked(module_->isEnabled());
@@ -250,8 +253,8 @@ void ModuleBlock::updateControls()
         else
         {
             toolTip += "Current configuration targets:\n";
-            for (Configuration *cfg : module_->targetConfigurations())
-                toolTip += QString("- %1\n").arg(cfg->name());
+            for (const auto *cfg : module_->targetConfigurations())
+                toolTip += QString("- %1\n").arg(QString::fromStdString(std::string(cfg->name())));
         }
 
         ui_.ConfigurationsLabel->setText(QString::number(module_->nTargetConfigurations()));

@@ -44,7 +44,7 @@ Transformer::Transformer(const Transformer &source) { (*this) = source; }
 void Transformer::operator=(const Transformer &source)
 {
     // Set equation from old expression
-    setEquation(source.text_.get());
+    setEquation(source.equation_.expressionString());
     enabled_ = source.enabled_;
 }
 
@@ -59,16 +59,15 @@ void Transformer::setEnabled(bool b) { enabled_ = b; }
 bool Transformer::enabled() const { return enabled_; }
 
 // Set equation, returning if it was successfully generated
-bool Transformer::setEquation(const char *equation)
+bool Transformer::setEquation(std::string_view equation)
 {
-    text_ = equation;
-    valid_ = equation_.set(text_);
+    valid_ = equation_.set(equation);
 
     return valid_;
 }
 
 // Return text used to generate last equation_
-const char *Transformer::text() const { return text_.get(); }
+std::string_view Transformer::text() const { return equation_.expressionString(); }
 
 // Return whether current equation is valid
 bool Transformer::valid() const { return valid_; }

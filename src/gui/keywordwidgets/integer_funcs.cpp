@@ -29,7 +29,7 @@ IntegerKeywordWidget::IntegerKeywordWidget(QWidget *parent, KeywordBase *keyword
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<IntegerKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into IntegerKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into IntegerKeyword.\n", keyword->name());
     else
     {
         // Set minimum and maximum values

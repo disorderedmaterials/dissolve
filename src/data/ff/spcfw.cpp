@@ -63,10 +63,10 @@ bool Forcefield_SPCFw::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_SPCFw::name() const { return "SPC/Fw"; }
+std::string_view Forcefield_SPCFw::name() const { return "SPC/Fw"; }
 
 // Return description for Forcefield
-const char *Forcefield_SPCFw::description() const
+std::string_view Forcefield_SPCFw::description() const
 {
     return "Implements Yujie Wu, Harald L. Tepper and Gregory A. Voth, 'Flexible simple point-charge water model with "
            "improved liquid-state properties', <i>Journal of Chemical Physics</i> "

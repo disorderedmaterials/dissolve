@@ -49,12 +49,13 @@ bool Forcefield_OPLSAA2005_Alkanes::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_OPLSAA2005_Alkanes::name() const { return "OPLSAA2005/Alkanes"; }
+std::string_view Forcefield_OPLSAA2005_Alkanes::name() const { return "OPLSAA2005/Alkanes"; }
 
 // Return description for Forcefield
-const char *Forcefield_OPLSAA2005_Alkanes::description() const
+std::string_view Forcefield_OPLSAA2005_Alkanes::description() const
 {
-    static CharString desc("Alkanes from OPLS-AA (2005), covering linear and branched alkanes.<br/><br/>References: %s",
-                           publicationReferences());
-    return desc.get();
+    static std::string desc = fmt::format(
+        "Alkanes from OPLS-AA (2005), covering linear and branched alkanes.<br/><br/>References: {}", publicationReferences());
+
+    return desc;
 }

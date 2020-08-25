@@ -96,8 +96,8 @@ void CalculateRDFModule::initialise()
     // Process1D: @dataName
     processDistance_ = new Process1DProcedureNode(collectDistance_);
     processDistance_->setName("RDF");
-    processDistance_->setKeyword<CharString>("LabelValue", "g(r)");
-    processDistance_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
+    processDistance_->setKeyword<std::string>("LabelValue", "g(r)");
+    processDistance_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
 
     SequenceProcedureNode *rdfNormalisation = processDistance_->addNormalisationBranch();
     rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(selectA_));

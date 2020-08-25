@@ -29,7 +29,7 @@ Array<List<Isotope>> Isotopes::isotopesByElementPrivate_;
  * Isotopic Neutron Scattering Data
  */
 
-Isotope::Isotope(int z, int A, const char *spin, double mass, double bc, double bi, double sc, double si, double totalxs,
+Isotope::Isotope(int z, int A, std::string_view spin, double mass, double bc, double bi, double sc, double si, double totalxs,
                  double absxs)
     : ElementReference(z), ListItem<Isotope>()
 {
@@ -500,7 +500,7 @@ List<Isotope> &Isotopes::isotopesByElement(int Z)
 
     if ((Z < 0) || (Z > nElements()))
     {
-        Messenger::error("Isotopes::isotopesByElement() - Element with Z=%i is out of range!\n", Z);
+        Messenger::error("Isotopes::isotopesByElement() - Element with Z={} is out of range!\n", Z);
         return isotopesByElementPrivate_[0];
     }
 

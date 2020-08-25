@@ -27,13 +27,13 @@
 #include <QLabel>
 #include <QMessageBox>
 
-Integrator1DGizmo::Integrator1DGizmo(Dissolve &dissolve, const char *uniqueName) : Gizmo(dissolve, uniqueName)
+Integrator1DGizmo::Integrator1DGizmo(Dissolve &dissolve, const QString uniqueName) : Gizmo(dissolve, uniqueName)
 {
     // Set up user interface
     ui_.setupUi(this);
 
     // Grab the DataViewer pointer from the
-    View &view = ui_.PlotWidget->view();
+    auto &view = ui_.PlotWidget->view();
     view.setViewType(View::FlatXYView);
     view.axes().setTitle(0, "X");
     view.axes().setRange(0, 0.0, 10.0);
@@ -55,14 +55,14 @@ Integrator1DGizmo::~Integrator1DGizmo() {}
  */
 
 // Return string specifying Gizmo type
-const char *Integrator1DGizmo::type() const { return "Integrator1D"; }
+const QString Integrator1DGizmo::type() const { return "Integrator1D"; }
 
 /*
  * UI
  */
 
 // Window close event
-void Integrator1DGizmo::closeEvent(QCloseEvent *event) { emit(windowClosed(uniqueName_.get())); }
+void Integrator1DGizmo::closeEvent(QCloseEvent *event) { emit(windowClosed(uniqueName_)); }
 
 // Update controls within widget
 void Integrator1DGizmo::updateControls()

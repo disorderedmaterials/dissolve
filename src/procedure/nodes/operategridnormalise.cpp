@@ -47,7 +47,7 @@ bool OperateGridNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Con
 
     // Determine bin width from first points of data
     double xBinWidth = targetData1D_->xAxis().at(1) - targetData1D_->xAxis().at(0);
-    Messenger::print("OperateGridNormalise - Grid point spacing is %e.\n", xBinWidth);
+    Messenger::print("OperateGridNormalise - Grid point spacing is {:e}.\n", xBinWidth);
 
     (*targetData1D_) /= xBinWidth;
 
@@ -66,7 +66,7 @@ bool OperateGridNormaliseProcedureNode::operateData2D(ProcessPool &procPool, Con
     double xBinWidth = targetData2D_->xAxis().at(1) - targetData2D_->xAxis().at(0);
     double yBinWidth = targetData2D_->yAxis().at(1) - targetData2D_->yAxis().at(0);
     double binArea = xBinWidth * yBinWidth;
-    Messenger::print("OperateGridNormalise - Grid pixel area is %e.\n", binArea);
+    Messenger::print("OperateGridNormalise - Grid pixel area is {:e}.\n", binArea);
 
     (*targetData2D_) /= binArea;
 
@@ -88,7 +88,7 @@ bool OperateGridNormaliseProcedureNode::operateData3D(ProcessPool &procPool, Con
     double yBinWidth = targetData3D_->yAxis().at(1) - targetData3D_->yAxis().at(0);
     double zBinWidth = targetData3D_->zAxis().at(1) - targetData3D_->zAxis().at(0);
     double binVolume = xBinWidth * yBinWidth * zBinWidth;
-    Messenger::print("OperateGridNormalise - Grid voxel volume is %e.\n", binVolume);
+    Messenger::print("OperateGridNormalise - Grid voxel volume is {:e}.\n", binVolume);
 
     (*targetData3D_) /= binVolume;
 

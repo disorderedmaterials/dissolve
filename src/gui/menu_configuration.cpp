@@ -96,11 +96,11 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
                                             NodeValue("rho", paramsNode->parameterReferences())));
         else
         {
-            CharString parameterName("ratio%c", 65 + count);
+            std::string parameterName = fmt::format("ratio{}", char(65 + count));
             paramsNode->addParameter(parameterName, 1);
 
             generator.addRootSequenceNode(new AddSpeciesProcedureNode(
-                sp, NodeValue(CharString("%s*populationA", parameterName.get()), paramsNode->parameterReferences()),
+                sp, NodeValue(fmt::format("{}*populationA", parameterName), paramsNode->parameterReferences()),
                 NodeValue("rho", paramsNode->parameterReferences())));
         }
 
@@ -164,5 +164,5 @@ void DissolveWindow::on_ConfigurationExportToXYZAction_triggered(bool checked)
         QMessageBox::warning(this, "Error", "Failed to export the configuration. Check the messages for details.",
                              QMessageBox::Ok, QMessageBox::Ok);
     else
-        Messenger::print("Successfully exported configuration '%s' to '%s'.\n", cfg->name(), fileAndFormat.filename());
+        Messenger::print("Successfully exported configuration '{}' to '{}'.\n", cfg->name(), fileAndFormat.filename());
 }

@@ -33,7 +33,7 @@ Vec3NodeValueKeywordWidget::Vec3NodeValueKeywordWidget(QWidget *parent, KeywordB
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<Vec3NodeValueKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into Vec3NodeValueKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into Vec3NodeValueKeyword.\n", keyword->name());
     else
         updateValue();
 
@@ -124,11 +124,11 @@ void Vec3NodeValueKeywordWidget::updateValue()
 {
     refreshing_ = true;
 
-    ui_.ValueAEdit->setText(keyword_->data().x.asString().get());
+    ui_.ValueAEdit->setText(QString::fromStdString(keyword_->data().x.asString()));
     ui_.ValueAValidIndicator->setOK(keyword_->data().x.isValid());
-    ui_.ValueBEdit->setText(keyword_->data().y.asString().get());
+    ui_.ValueBEdit->setText(QString::fromStdString(keyword_->data().y.asString()));
     ui_.ValueBValidIndicator->setOK(keyword_->data().y.isValid());
-    ui_.ValueCEdit->setText(keyword_->data().z.asString().get());
+    ui_.ValueCEdit->setText(QString::fromStdString(keyword_->data().z.asString()));
     ui_.ValueCValidIndicator->setOK(keyword_->data().z.isValid());
 
     refreshing_ = false;

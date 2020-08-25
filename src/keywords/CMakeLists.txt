@@ -4,7 +4,6 @@ add_library(keywords
   base.cpp
   bool.cpp
   broadeningfunction.cpp
-  charstring.cpp
   data1dstore.cpp
   data2dstore.cpp
   data3dstore.cpp
@@ -36,6 +35,7 @@ add_library(keywords
   speciesreflist.cpp
   speciessite.cpp
   speciessitereflist.cpp
+  stdstring.cpp
   vec3double.cpp
   vec3integer.cpp
   vec3nodevalue.cpp
@@ -46,7 +46,6 @@ add_library(keywords
   base.h
   bool.h
   broadeningfunction.h
-  charstring.h
   data.h
   data1dstore.h
   data2dstore.h
@@ -81,6 +80,7 @@ add_library(keywords
   speciesreflist.h
   speciessite.h
   speciessitereflist.h
+  stdstring.h
   vec3double.h
   vec3integer.h
   vec3labels.h

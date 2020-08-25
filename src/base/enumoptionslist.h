@@ -22,18 +22,18 @@
 #pragma once
 
 #include "base/enumoption.h"
-#include "templates/array.h"
+#include <vector>
 
 // Enum Options List
 class EnumOptionsList
 {
     private:
     // List of options
-    Array<EnumOption> options_;
+    std::vector<EnumOption> options_;
 
     public:
     // Return list of options
-    const Array<EnumOption> &options() const;
+    const std::vector<EnumOption> &options() const;
     // Add item
     EnumOptionsList &operator<<(EnumOption option);
 };

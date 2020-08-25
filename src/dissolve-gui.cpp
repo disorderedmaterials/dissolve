@@ -30,11 +30,11 @@
 #include <stdlib.h>
 #include <time.h>
 
-int main(int argc, char **argv)
+int main(int args, char **argv)
 {
 #ifdef PARALLEL
     // Initialise parallel communication
-    ProcessPool::initialiseMPI(&argc, &argv);
+    ProcessPool::initialiseMPI(&args, &argv);
 #endif
 
     // Instantiate main classes
@@ -43,10 +43,10 @@ int main(int argc, char **argv)
 
     // Parse CLI options...
     auto n = 1;
-    CharString inputFile, restartFile;
+    std::string inputFile, restartFile;
     auto nIterations = 0;
     auto ignoreRestart = false, ignoreLayout = false;
-    while (n < argc)
+    while (n < args)
     {
         if (argv[n][0] == '-')
         {
@@ -54,19 +54,19 @@ int main(int argc, char **argv)
             switch (argv[n][1])
             {
                 case ('h'):
-                    printf("Dissolve version %s\n\nAvailable CLI options are:\n\n", DISSOLVEVERSION);
-                    printf("\t-h\t\tPrint what you're reading now\n");
-                    printf("\t-i\t\tIgnore restart file\n");
-                    printf("\t-I\t\tIgnore GUI state file\n");
-                    printf("\t-q\t\tQuiet mode - print no output\n");
-                    printf("\t-r <N>\t\tSet restart file frequency (default = 10)\n");
-                    printf("\t-t <file>\tLoad restart data from specified file (but still write to "
-                           "standard "
-                           "restart file)\n");
-                    printf("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
-                    printf("\t-x\t\tDon't write restart or heartbeat files (but still read in the restart "
-                           "file if "
-                           "present)\n");
+                    Messenger::print("Dissolve version {}\n\nAvailable CLI options are:\n\n", DISSOLVEVERSION);
+                    Messenger::print("\t-h\t\tPrint what you're reading now\n");
+                    Messenger::print("\t-i\t\tIgnore restart file\n");
+                    Messenger::print("\t-I\t\tIgnore GUI state file\n");
+                    Messenger::print("\t-q\t\tQuiet mode - print no output\n");
+                    Messenger::print("\t-r <N>\t\tSet restart file frequency (default = 10)\n");
+                    Messenger::print("\t-t <file>\tLoad restart data from specified file (but still write to "
+                                     "standard "
+                                     "restart file)\n");
+                    Messenger::print("\t-v\t\tVerbose mode - be a little more descriptive throughout\n");
+                    Messenger::print("\t-x\t\tDon't write restart or heartbeat files (but still read in the restart "
+                                     "file if "
+                                     "present)\n");
                     ProcessPool::finalise();
                     return 0;
                     break;
@@ -80,14 +80,14 @@ int main(int argc, char **argv)
                     break;
                 case ('n'):
                     ++n;
-                    if (n == argc)
+                    if (n == args)
                     {
                         Messenger::error("Expected number of iterations.\n");
                         Messenger::ceaseRedirect();
                         return 1;
                     }
                     nIterations = atoi(argv[n]);
-                    Messenger::print("%i main-loop iterations will be performed, then the GUI will be launched.\n",
+                    Messenger::print("{} main-loop iterations will be performed, then the GUI will be launched.\n",
                                      nIterations);
                     break;
                 case ('q'):
@@ -96,7 +96,7 @@ int main(int argc, char **argv)
                 case ('r'):
                     // Next argument is integer restart file frequency
                     ++n;
-                    if (n == argc)
+                    if (n == args)
                     {
                         Messenger::error("Expected restart file frequency.\n");
                         Messenger::ceaseRedirect();
@@ -109,20 +109,20 @@ int main(int argc, char **argv)
                         Messenger::print("Restart file will be written after every iteration.\n",
                                          dissolve.restartFileFrequency());
                     else
-                        Messenger::print("Restart file will be written after every %i iterations.\n",
+                        Messenger::print("Restart file will be written after every {} iterations.\n",
                                          dissolve.restartFileFrequency());
                     break;
                 case ('t'):
                     // Next argument is filename
                     ++n;
-                    if (n == argc)
+                    if (n == args)
                     {
                         Messenger::error("Expected restart data filename.\n");
                         Messenger::ceaseRedirect();
                         return 1;
                     }
                     restartFile = argv[n];
-                    Messenger::print("Restart data will be loaded from '%s'.\n", restartFile.get());
+                    Messenger::print("Restart data will be loaded from '{}'.\n", restartFile);
                     break;
                 case ('v'):
                     Messenger::setVerbose(true);
@@ -134,8 +134,8 @@ int main(int argc, char **argv)
                     Messenger::print("No restart or heartbeat files will be written.\n");
                     break;
                 default:
-                    printf("Unrecognised command-line switch '%s'.\n", argv[n]);
-                    printf("Run with -h to see available switches.\n");
+                    Messenger::print("Unrecognised command-line switch '{}'.\n", argv[n]);
+                    Messenger::print("Run with -h to see available switches.\n");
                     ProcessPool::finalise();
                     return 1;
                     break;
@@ -144,11 +144,11 @@ int main(int argc, char **argv)
         else
         {
             // Input filename?
-            if (inputFile.isEmpty())
+            if (inputFile.empty())
                 inputFile = argv[n];
             else
             {
-                printf("Error: More than one input file specified?\n");
+                Messenger::print("Error: More than one input file specified?\n");
                 return 1;
             }
         }
@@ -157,8 +157,8 @@ int main(int argc, char **argv)
     }
 
     // Print GPL license information
-    Messenger::print("Dissolve-GUI version %s, Copyright (C) 2012-2020 T. Youngs.\n", DISSOLVEVERSION);
-    Messenger::print("Source repository: %s.\n", DISSOLVEREPO);
+    Messenger::print("Dissolve-GUI version {}, Copyright (C) 2012-2020 T. Youngs.\n", DISSOLVEVERSION);
+    Messenger::print("Source repository: {}.\n", DISSOLVEREPO);
     Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
     Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
     Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
@@ -176,7 +176,7 @@ int main(int argc, char **argv)
      */
 
     // Create the main QApplication */
-    QApplication app(argc, argv);
+    QApplication app(args, argv);
     QCoreApplication::setOrganizationName("ProjectAten");
     QCoreApplication::setOrganizationDomain("www.projectaten.com");
     QCoreApplication::setApplicationName("Dissolve-GUI");
@@ -195,7 +195,7 @@ int main(int argc, char **argv)
     DissolveWindow dissolveWindow(dissolve);
 
     // If an input file was specified, load it here
-    if ((!inputFile.isEmpty()) && (!dissolveWindow.openLocalFile(inputFile, restartFile, ignoreRestart, ignoreLayout)))
+    if ((!inputFile.empty()) && (!dissolveWindow.openLocalFile(inputFile, restartFile, ignoreRestart, ignoreLayout)))
     {
         ProcessPool::finalise();
         return 1;

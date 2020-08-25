@@ -27,7 +27,7 @@
 template <> class GenericItemContainer<Array<double>> : public GenericItem
 {
     public:
-    GenericItemContainer<Array<double>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
+    GenericItemContainer<Array<double>>(std::string_view name, int flags = 0) : GenericItem(name, flags) {}
 
     /*
      * Data
@@ -45,7 +45,7 @@ template <> class GenericItemContainer<Array<double>> : public GenericItem
      */
     protected:
     // Create a new GenericItem containing same class as current type
-    GenericItem *createItem(const char *className, const char *name, int flags = 0)
+    GenericItem *createItem(std::string_view className, std::string_view name, int flags = 0)
     {
         if (DissolveSys::sameString(className, itemClassName()))
             return new GenericItemContainer<Array<double>>(name, flags);
@@ -54,7 +54,7 @@ template <> class GenericItemContainer<Array<double>> : public GenericItem
 
     public:
     // Return class name contained in item
-    const char *itemClassName() { return "Array<double>"; }
+    std::string_view itemClassName() { return "Array<double>"; }
 
     /*
      * I/O
@@ -67,10 +67,10 @@ template <> class GenericItemContainer<Array<double>> : public GenericItem
     // Write specified data through specified parser
     static bool write(const Array<double> &thisData, LineParser &parser)
     {
-        parser.writeLineF("%i\n", thisData.nItems());
+        parser.writeLineF("{}\n", thisData.nItems());
         for (int n = 0; n < thisData.nItems(); ++n)
         {
-            if (!parser.writeLineF("%16.9e\n", thisData.constAt(n)))
+            if (!parser.writeLineF("{:16.9e}\n", thisData.constAt(n)))
                 return false;
         }
         return true;

@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/enumoptions.h"
 #include "base/lock.h"
 #include "module/module.h"
@@ -42,7 +41,7 @@ class QWidget;
 class MainTab
 {
     public:
-    MainTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, QWidget *page);
+    MainTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title, QWidget *page);
     virtual ~MainTab();
     // Tab Types
     enum TabType
@@ -70,7 +69,7 @@ class MainTab
     // Page widget
     QWidget *page_;
     // Unique title (name) of tab
-    CharString title_;
+    QString title_;
 
     protected:
     // Raise suitable dialog for entering / checking new tab name
@@ -82,7 +81,7 @@ class MainTab
     // Return page widget
     QWidget *page() const;
     // Return title of tab
-    const char *title() const;
+    const QString title() const;
 
     /*
      * Management

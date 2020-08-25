@@ -147,7 +147,7 @@ void SampledDouble::operator/=(double x)
  */
 
 // Return class name
-const char *SampledDouble::itemClassName() { return "SampledDouble"; }
+std::string_view SampledDouble::itemClassName() { return "SampledDouble"; }
 
 // Read data through specified LineParser
 bool SampledDouble::read(LineParser &parser, CoreData &coreData)
@@ -162,7 +162,7 @@ bool SampledDouble::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool SampledDouble::write(LineParser &parser) { return parser.writeLineF("%f  %i  %f\n", mean_, count_, m2_); }
+bool SampledDouble::write(LineParser &parser) { return parser.writeLineF("{}  {}  {}\n", mean_, count_, m2_); }
 
 /*
  * Parallel Comms
@@ -230,12 +230,12 @@ bool SampledDouble::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
     if (!procPool.equality(count_))
-        return Messenger::error("SampledDouble count is not equivalent (process %i has %i).\n", procPool.poolRank(), count_);
+        return Messenger::error("SampledDouble count is not equivalent (process {} has {}).\n", procPool.poolRank(), count_);
     if (!procPool.equality(mean_))
-        return Messenger::error("SampledDouble mean value is not equivalent (process %i has %e).\n", procPool.poolRank(),
+        return Messenger::error("SampledDouble mean value is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
                                 mean_);
     if (!procPool.equality(m2_))
-        return Messenger::error("SampledDouble m2 value is not equivalent (process %i has %e).\n", procPool.poolRank(), m2_);
+        return Messenger::error("SampledDouble m2 value is not equivalent (process {} has {:e}).\n", procPool.poolRank(), m2_);
 #endif
     return true;
 }

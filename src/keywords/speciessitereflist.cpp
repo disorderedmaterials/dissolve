@@ -57,20 +57,20 @@ bool SpeciesSiteRefListKeyword::read(LineParser &parser, int startArg, CoreData 
     for (int n = startArg; n < parser.nArgs() - 1; n += 2)
     {
         // Find target Species (first argument)
-        Species *sp = coreData.findSpecies(parser.argc(n));
+        Species *sp = coreData.findSpecies(parser.argsv(n));
         if (!sp)
         {
-            Messenger::error("Error adding SpeciesSite - no Species named '%s' exists.\n", parser.argc(startArg));
+            Messenger::error("Error adding SpeciesSite - no Species named '{}' exists.\n", parser.argsv(startArg));
             return false;
         }
 
         // Find specified Site (second argument) in the Species
-        SpeciesSite *site = sp->findSite(parser.argc(n + 1));
+        SpeciesSite *site = sp->findSite(parser.argsv(n + 1));
         if (!site)
-            return Messenger::error("Error setting SpeciesSite - no such site named '%s' exists in Species '%s'.\n",
-                                    parser.argc(n + 1), sp->name());
+            return Messenger::error("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n",
+                                    parser.argsv(n + 1), sp->name());
         if (axesRequired_ && (!site->hasAxes()))
-            return Messenger::error("Can't add site '%s' to keyword '%s', as the keyword requires axes "
+            return Messenger::error("Can't add site '{}' to keyword '{}', as the keyword requires axes "
                                     "specifications for all sites.\n",
                                     site->name(), name());
 
@@ -84,18 +84,18 @@ bool SpeciesSiteRefListKeyword::read(LineParser &parser, int startArg, CoreData 
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesSiteRefListKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool SpeciesSiteRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     // If there are no sites in the list, no need to write anything
     if (data_.nItems() == 0)
         return true;
 
     // Loop over list of SpeciesSiteReferences
-    CharString sites;
+    std::string sites;
     for (SpeciesSite *site : data_)
-        sites.strcatf("  '%s'  '%s'", site->parent()->name(), site->name());
+        sites += fmt::format("  '{}'  '{}'", site->parent()->name(), site->name());
 
-    if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, sites.get()))
+    if (!parser.writeLineF("{}{}{}\n", prefix, keywordName, sites))
         return false;
 
     return true;

@@ -74,7 +74,7 @@ bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, Configuration *cfg, 
     unweightedsq.formTotal(true);
 
     timer.stop();
-    Messenger::print("Finished Fourier transform and summation of partial g(r) into partial S(Q) (%s elapsed, %s comms).\n",
+    Messenger::print("Finished Fourier transform and summation of partial g(r) into partial S(Q) ({} elapsed, {} comms).\n",
                      timer.totalTimeString(), procPool.accumulatedTimeString());
 
     return true;
@@ -91,28 +91,28 @@ bool SQModule::sumUnweightedSQ(ProcessPool &procPool, Module *module, GenericLis
 
     // Set up PartialSet container
     summedUnweightedSQ.setUpPartials(combinedAtomTypes, module->uniqueName(), "unweighted", "sq", "Q, 1/Angstroms");
-    summedUnweightedSQ.setObjectTags(CharString("%s//UnweightedSQ", module->uniqueName()));
+    summedUnweightedSQ.setObjectTags(fmt::format("{}//UnweightedSQ", module->uniqueName()));
 
     // Loop over Configurations again, summing into the PartialSet we have just set up
     // We will keep a running total of the weights associated with each Configuration, and re-weight the entire set of
     // partials at the end.
     double totalWeight = 0.0;
-    CharString fingerprint;
+    std::string fingerprint;
     for (Configuration *cfg : module->targetConfigurations())
     {
         // Update fingerprint
         fingerprint +=
-            fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion()) : CharString("_%i", cfg->contentsVersion());
+            fingerprint.empty() ? fmt::format("{}", cfg->contentsVersion()) : fmt::format("_{}", cfg->contentsVersion());
 
         // Get weighting factor for this Configuration to contribute to the summed partials
-        auto weight = GenericListHelper<double>::value(moduleData, CharString("ConfigurationWeight_%s", cfg->niceName()),
+        auto weight = GenericListHelper<double>::value(moduleData, fmt::format("ConfigurationWeight_{}", cfg->niceName()),
                                                        module->uniqueName(), 1.0);
         totalWeight += weight;
-        Messenger::print("Weight for Configuration '%s' is %f (total weight is now %f).\n", cfg->name(), weight, totalWeight);
+        Messenger::print("Weight for Configuration '{}' is {} (total weight is now {}).\n", cfg->name(), weight, totalWeight);
 
         // Grab partials for Configuration and add into our set
         if (!cfg->moduleData().contains("UnweightedSQ"))
-            return Messenger::error("Couldn't find UnweightedSQ data for Configuration '%s'.\n", cfg->name());
+            return Messenger::error("Couldn't find UnweightedSQ data for Configuration '{}'.\n", cfg->name());
         auto cfgPartialSQ = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedSQ");
         summedUnweightedSQ.addPartials(cfgPartialSQ, weight);
     }

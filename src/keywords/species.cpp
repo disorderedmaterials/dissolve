@@ -42,10 +42,10 @@ int SpeciesKeyword::maxArguments() const { return 1; }
 bool SpeciesKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Find target Species (first argument)
-    data_ = coreData.findSpecies(parser.argc(startArg));
+    data_ = coreData.findSpecies(parser.argsv(startArg));
     if (!data_)
     {
-        Messenger::error("Error setting Species - no Species named '%s' exists.\n", parser.argc(startArg));
+        Messenger::error("Error setting Species - no Species named '{}' exists.\n", parser.argsv(startArg));
         return false;
     }
 
@@ -55,14 +55,14 @@ bool SpeciesKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool SpeciesKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     if (data_)
     {
-        if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_->name()))
+        if (!parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_->name()))
             return false;
     }
-    else if (!parser.writeLineF("%s%s  '?_?'\n", prefix, name()))
+    else if (!parser.writeLineF("{}{}  '?_?'\n", prefix, name()))
         return false;
 
     return true;

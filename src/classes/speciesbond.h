@@ -86,9 +86,9 @@ class SpeciesBond : public SpeciesIntra
         nBondTypes
     };
     // Convert bond type string to functional form
-    static BondType bondType(const char *s);
+    static BondType bondType(std::string_view s);
     // Return bond type functional form text
-    static const char *bondType(BondType bt);
+    static std::string_view bondType(BondType bt);
     // Return bond order for specified bond type
     static double bondOrder(BondType bt);
 

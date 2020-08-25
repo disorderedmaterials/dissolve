@@ -85,10 +85,8 @@ class View
         FlatZYView,
         nViewTypes
     };
-    // Convert text string to ViewType
-    static ViewType viewType(const char *s);
-    // Convert ViewType to text string
-    static const char *viewType(ViewType vt);
+    // Return enum options for ViewType
+    static EnumOptions<View::ViewType> &viewTypes();
     // AutoFollow type
     enum AutoFollowType
     {
@@ -97,10 +95,8 @@ class View
         XAutoFollow,
         nAutoFollowTypes
     };
-    // Convert text string to AutoFollowType
-    static AutoFollowType autoFollowType(const char *s);
-    // Convert AutoFollowType to text string
-    static const char *autoFollowType(AutoFollowType aft);
+    // Return enum options for AutoFollowType
+    static EnumOptions<View::AutoFollowType> &autoFollowTypes();
 
     private:
     // Type of view to use

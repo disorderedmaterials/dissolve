@@ -94,11 +94,11 @@ class MainTabsWidget : public QTabWidget
     // Find WorkspaceTab containing specified page widget
     WorkspaceTab *workspaceTab(QWidget *page);
     // Find tab with title specified
-    MainTab *findTab(const char *title);
+    MainTab *findTab(const QString title);
     // Find tab with specified page widget
     MainTab *findTab(QWidget *page);
     // Generate unique tab name with base name provided
-    const char *uniqueTabName(const char *base);
+    const QString uniqueTabName(const QString base);
 
     /*
      * Tab Management
@@ -117,7 +117,7 @@ class MainTabsWidget : public QTabWidget
     // Remove the ModuleTab for the specified Module, if it exists
     void removeModuleTab(Module *module);
     // Add on a new workspace tab
-    MainTab *addWorkspaceTab(DissolveWindow *dissolveWindow, const char *title);
+    MainTab *addWorkspaceTab(DissolveWindow *dissolveWindow, const QString title);
 
     /*
      * Display

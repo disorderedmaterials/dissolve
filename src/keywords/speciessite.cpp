@@ -53,21 +53,21 @@ int SpeciesSiteKeyword::maxArguments() const { return 2; }
 bool SpeciesSiteKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Find target Species (first argument)
-    Species *sp = coreData.findSpecies(parser.argc(startArg));
+    Species *sp = coreData.findSpecies(parser.argsv(startArg));
     if (!sp)
     {
-        Messenger::error("Error setting SpeciesSite - no Species named '%s' exists.\n", parser.argc(startArg));
+        Messenger::error("Error setting SpeciesSite - no Species named '{}' exists.\n", parser.argsv(startArg));
         return false;
     }
 
     // Find specified Site (second argument) in the Species
-    data_ = sp->findSite(parser.argc(startArg + 1));
+    data_ = sp->findSite(parser.argsv(startArg + 1));
     if (!data_)
-        return Messenger::error("Error setting SpeciesSite - no such site named '%s' exists in Species '%s'.\n",
-                                parser.argc(startArg + 1), sp->name());
+        return Messenger::error("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n",
+                                parser.argsv(startArg + 1), sp->name());
     if (axesRequired_ && (!data_->hasAxes()))
         return Messenger::error(
-            "Can't select site '%s' for keyword '%s', as the keyword requires axes specifications to be present.\n",
+            "Can't select site '{}' for keyword '{}', as the keyword requires axes specifications to be present.\n",
             data_->name(), name());
 
     set_ = true;
@@ -76,14 +76,14 @@ bool SpeciesSiteKeyword::read(LineParser &parser, int startArg, CoreData &coreDa
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesSiteKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool SpeciesSiteKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     if (data_)
     {
-        if (!parser.writeLineF("%s%s  '%s'  '%s'\n", prefix, keywordName, data_->parent()->name(), data_->name()))
+        if (!parser.writeLineF("{}{}  '{}'  '{}'\n", prefix, keywordName, data_->parent()->name(), data_->name()))
             return false;
     }
-    else if (!parser.writeLineF("%s%s  '?_?'  '?_?'\n", prefix, name()))
+    else if (!parser.writeLineF("{}{}  '?_?'  '?_?'\n", prefix, name()))
         return false;
 
     return true;

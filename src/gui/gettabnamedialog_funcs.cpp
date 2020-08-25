@@ -33,7 +33,7 @@ GetTabNameDialog::GetTabNameDialog(QWidget *parent, RefList<const MainTab> curre
 GetTabNameDialog::~GetTabNameDialog() {}
 
 // Run the dialog
-bool GetTabNameDialog::get(const MainTab *currentTab, const char *currentName)
+bool GetTabNameDialog::get(const MainTab *currentTab, const QString &currentName)
 {
     currentTab_ = currentTab;
 
@@ -66,7 +66,7 @@ void GetTabNameDialog::on_NameEdit_textChanged(const QString text)
             if (currentTab_ == tab)
                 continue;
 
-            if (DissolveSys::sameString(tab->title(), qPrintable(text)))
+            if (tab->title() == text)
             {
                 nameValid = false;
                 break;

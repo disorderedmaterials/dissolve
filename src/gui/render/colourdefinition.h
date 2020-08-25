@@ -50,10 +50,8 @@ class ColourDefinition
         CustomGradientStyle,
         nColourStyles
     };
-    // Convert text string to ColourStyle
-    static ColourStyle colourStyle(const char *s);
-    // Convert ColourStyle to text string
-    static const char *colourStyle(ColourDefinition::ColourStyle cs);
+    // Return enum options for ColourStyle
+    static EnumOptions<ColourDefinition::ColourStyle> &colourStyles();
 
     /*
      * Style

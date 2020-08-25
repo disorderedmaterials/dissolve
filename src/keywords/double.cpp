@@ -101,11 +101,11 @@ bool DoubleKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
         if (!setData(parser.argd(startArg)))
         {
             if (minimumLimit_ && maximumLimit_)
-                Messenger::error("Value %f is out of range for keyword. Valid range is %f <= n <= %f.\n", data_, min_, max_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n <= {}.\n", data_, min_, max_);
             else if (minimumLimit_)
-                Messenger::error("Value %f is out of range for keyword. Valid range is %f <= n.\n", data_, min_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", data_, min_);
             else
-                Messenger::error("Value %f is out of range for keyword. Valid range is n <= %f.\n", data_, max_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is n <= {}.\n", data_, max_);
 
             return false;
         }
@@ -116,9 +116,9 @@ bool DoubleKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 }
 
 // Write keyword data to specified LineParser
-bool DoubleKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool DoubleKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
-    return parser.writeLineF("%s%s  %12.5e\n", prefix, keywordName, data_);
+    return parser.writeLineF("{}{}  {:12.5e}\n", prefix, keywordName, data_);
 }
 
 /*
@@ -135,4 +135,4 @@ int DoubleKeyword::asInt() { return data_; }
 double DoubleKeyword::asDouble() { return data_; }
 
 // Return value (as string)
-const char *DoubleKeyword::asString() { return DissolveSys::ftoa(data_); }
+std::string DoubleKeyword::asString() { return fmt::format("{}", data_); }

@@ -27,7 +27,7 @@ Data3DImportFileFormat::Data3DImportFileFormat(Data3DImportFileFormat::Data3DImp
 {
     setUpKeywords();
 }
-Data3DImportFileFormat::Data3DImportFileFormat(const char *filename, Data3DImportFileFormat::Data3DImportFormat format)
+Data3DImportFileFormat::Data3DImportFileFormat(std::string_view filename, Data3DImportFileFormat::Data3DImportFormat format)
     : FileAndFormat(filename, format)
 {
     setUpKeywords();
@@ -47,7 +47,7 @@ void Data3DImportFileFormat::setUpKeywords() {}
  */
 
 // Return enum options for Data3DImportFormat
-EnumOptions<Data3DImportFileFormat::Data3DImportFormat> Data3DImportFileFormat::data3DImportFormats()
+EnumOptions<Data3DImportFileFormat::Data3DImportFormat> &Data3DImportFileFormat::data3DImportFormats()
 {
     static EnumOptionsList Data3DImportFormats =
         EnumOptionsList() << EnumOption(Data3DImportFileFormat::CartesianData3D, "cartesian", "Cartesian X,Y,Z,f(x,y,z) data");
@@ -61,10 +61,13 @@ EnumOptions<Data3DImportFileFormat::Data3DImportFormat> Data3DImportFileFormat::
 int Data3DImportFileFormat::nFormats() const { return Data3DImportFileFormat::nData3DImportFormats; }
 
 // Return format keyword for supplied index
-const char *Data3DImportFileFormat::formatKeyword(int id) const { return data3DImportFormats().keywordByIndex(id); }
+std::string_view Data3DImportFileFormat::formatKeyword(int id) const { return data3DImportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-const char *Data3DImportFileFormat::formatDescription(int id) const { return data3DImportFormats().descriptionByIndex(id); }
+std::string_view Data3DImportFileFormat::formatDescription(int id) const
+{
+    return data3DImportFormats().descriptionByIndex(id);
+}
 
 // Return current format as Data3DImportFormat
 Data3DImportFileFormat::Data3DImportFormat Data3DImportFileFormat::data3DFormat() const
@@ -77,11 +80,11 @@ Data3DImportFileFormat::Data3DImportFormat Data3DImportFileFormat::data3DFormat(
  */
 
 // Parse additional argument
-bool Data3DImportFileFormat::parseArgument(const char *arg)
+bool Data3DImportFileFormat::parseArgument(std::string_view arg)
 {
     // Split arg into parts before and after the '='
-    CharString key = DissolveSys::beforeChar(arg, '=');
-    CharString value = DissolveSys::afterChar(arg, '=');
+    std::string_view key = DissolveSys::beforeChar(arg, '=');
+    std::string_view value = DissolveSys::afterChar(arg, '=');
     if (key == "template")
         templateSourceObjectTag_ = value;
     else
@@ -94,15 +97,15 @@ bool Data3DImportFileFormat::parseArgument(const char *arg)
 bool Data3DImportFileFormat::hasAdditionalArguments() const { return true; }
 
 // Return additional arguments as string
-const char *Data3DImportFileFormat::additionalArguments() const
+std::string Data3DImportFileFormat::additionalArguments() const
 {
-    static CharString args;
+    std::string args;
 
     args.clear();
-    if (!templateSourceObjectTag_.isEmpty())
-        args.sprintf("template='%s'", templateSourceObjectTag_.get());
+    if (!templateSourceObjectTag_.empty())
+        args += fmt::format("template='{}'", templateSourceObjectTag_);
 
-    return args.get();
+    return args;
 }
 
 /*
@@ -115,7 +118,7 @@ bool Data3DImportFileFormat::importData(Data3D &data, ProcessPool *procPool)
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
-        return Messenger::error("Couldn't open file '%s' for loading Data3D data.\n", filename_.get());
+        return Messenger::error("Couldn't open file '{}' for loading Data3D data.\n", filename_);
 
     // Import the data
     auto result = importData(parser, data);
@@ -133,7 +136,7 @@ bool Data3DImportFileFormat::importData(LineParser &parser, Data3D &data)
     switch (data3DFormat())
     {
         default:
-            Messenger::error("Don't know how to load Data3D in format '%s'.\n", formatKeyword(data3DFormat()));
+            Messenger::error("Don't know how to load Data3D in format '{}'.\n", formatKeyword(data3DFormat()));
     }
 
     return result;

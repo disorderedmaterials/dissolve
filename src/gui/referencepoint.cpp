@@ -26,13 +26,13 @@ ReferencePoint::ReferencePoint() : ListItem<ReferencePoint>() {}
 ReferencePoint::~ReferencePoint() {}
 
 // Set suffix for data items
-void ReferencePoint::setSuffix(const char *suffix) { suffix_ = suffix; }
+void ReferencePoint::setSuffix(std::string_view suffix) { suffix_ = suffix; }
 
 // Return suffix for data items
-const char *ReferencePoint::suffix() const { return suffix_.get(); }
+std::string_view ReferencePoint::suffix() const { return suffix_; }
 
 // Set restart file from which the reference point data was read
-void ReferencePoint::setRestartFile(const char *restartFile) { restartFile_ = restartFile; }
+void ReferencePoint::setRestartFile(std::string_view restartFile) { restartFile_ = restartFile; }
 
 // Return restart file from which the reference point data was read
-const char *ReferencePoint::restartFile() const { return restartFile_.get(); }
+std::string_view ReferencePoint::restartFile() const { return restartFile_; }

@@ -34,7 +34,7 @@ NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget *pa
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<NodeValueEnumOptionsBaseKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into NodeValueEnumOptionsBaseKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into NodeValueEnumOptionsBaseKeyword.\n", keyword->name());
     else
     {
         // Get the underlying EnumOptionsBase
@@ -43,7 +43,7 @@ NodeValueEnumOptionsKeywordWidget::NodeValueEnumOptionsKeywordWidget(QWidget *pa
         // Populate the combo with the available keywords
         for (int n = 0; n < options.nOptions(); ++n)
         {
-            ui_.OptionsCombo->addItem(options.keywordByIndex(n));
+            ui_.OptionsCombo->addItem(QString::fromStdString(std::string(options.keywordByIndex(n))));
             if (options.currentOptionIndex() == n)
                 ui_.OptionsCombo->setCurrentIndex(n);
         }
@@ -104,7 +104,7 @@ void NodeValueEnumOptionsKeywordWidget::updateValue()
 {
     refreshing_ = true;
 
-    ui_.ValueEdit->setText(keyword_->value().asString().get());
+    ui_.ValueEdit->setText(QString::fromStdString(keyword_->value().asString()));
     ui_.ValueValidIndicator->setOK(keyword_->value().isValid());
     ui_.OptionsCombo->setCurrentIndex(keyword_->baseOptions().currentOptionIndex());
 

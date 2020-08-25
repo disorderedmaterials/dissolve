@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include <string>
+
 // Forward Declarations
 /* none */
 
@@ -47,5 +49,5 @@ class OutputHandler
      */
     public:
     // Output text to device
-    virtual void outputText(const char *text) = 0;
+    virtual void outputText(std::string s) = 0;
 };

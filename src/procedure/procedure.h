@@ -34,7 +34,7 @@ class ProcessPool;
 class Procedure
 {
     public:
-    Procedure(ProcedureNode::NodeContext context, const char *blockTerminationKeyword = "EndProcedure");
+    Procedure(ProcedureNode::NodeContext context, std::string_view blockTerminationKeyword = "EndProcedure");
     ~Procedure();
 
     /*
@@ -54,9 +54,9 @@ class Procedure
     // Return root sequence
     const SequenceProcedureNode &rootSequence() const;
     // Return the block termination keyword for the Procedure
-    const char *blockTerminationKeyword() const;
+    std::string_view blockTerminationKeyword() const;
     // Return named node if present, and which matches the (optional) type given
-    ProcedureNode *node(const char *name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
+    ProcedureNode *node(std::string_view name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
 
     /*
      * Execute
@@ -67,7 +67,7 @@ class Procedure
 
     public:
     // Run procedure on specified Configuration, storing / retrieving generated data from supplied list
-    bool execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
+    bool execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList);
 
     /*
      * Read / Write
@@ -76,5 +76,5 @@ class Procedure
     // Read procedure from specified LineParser
     bool read(LineParser &parser, CoreData &coreData);
     // Write procedure to specified LineParser
-    bool write(LineParser &parser, const char *prefix);
+    bool write(LineParser &parser, std::string_view prefix);
 };

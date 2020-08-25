@@ -48,7 +48,7 @@ AtomTypeData::AtomTypeData(const AtomTypeData &source) : atomType_(source.atomTy
 
 // Read data through specified LineParser
 AtomTypeData::AtomTypeData(LineParser &parser, const CoreData &coreData, int listIndex)
-    : atomType_(coreData.findAtomType(parser.argc(0))), listIndex_(listIndex)
+    : atomType_(coreData.findAtomType(parser.argsv(0))), listIndex_(listIndex)
 {
     population_ = parser.argd(1);
     fraction_ = parser.argd(2);
@@ -197,7 +197,7 @@ void AtomTypeData::setBoundCoherent(double d) { boundCoherent_ = d; }
 double AtomTypeData::boundCoherent() const { return boundCoherent_; }
 
 // Return referenced AtomType name
-const char *AtomTypeData::atomTypeName() const { return atomType_->name(); }
+std::string_view AtomTypeData::atomTypeName() const { return atomType_->name(); }
 
 /*
  * I/O
@@ -207,7 +207,7 @@ const char *AtomTypeData::atomTypeName() const { return atomType_->name(); }
 bool AtomTypeData::write(LineParser &parser)
 {
     // Line Contains: AtomType name, exchangeable flag, population, fraction, boundCoherent, and nIsotopes
-    if (!parser.writeLineF("%s %f %f %f %i\n", atomType_->name(), population_, fraction_, boundCoherent_, isotopes_.nItems()))
+    if (!parser.writeLineF("{} {} {} {} {}\n", atomType_->name(), population_, fraction_, boundCoherent_, isotopes_.nItems()))
         return false;
     ListIterator<IsotopeData> isotopeIterator(isotopes_);
     while (IsotopeData *topeData = isotopeIterator.iterate())
@@ -225,7 +225,7 @@ bool AtomTypeData::write(LineParser &parser)
 bool AtomTypeData::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 {
     // For the atomType_, use the fact that the AtomType names are unique...
-    CharString typeName;
+    std::string typeName;
     if (procPool.poolRank() == root)
         typeName = atomType_->name();
     procPool.broadcast(typeName, root);
@@ -247,28 +247,28 @@ bool AtomTypeData::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
     if (!procPool.equality(atomTypeName()))
-        return Messenger::error("AtomTypeData atom type name is not equivalent (process %i has '%s').\n", procPool.poolRank(),
+        return Messenger::error("AtomTypeData atom type name is not equivalent (process {} has '{}').\n", procPool.poolRank(),
                                 atomTypeName());
     if (!procPool.equality(population_))
-        return Messenger::error("AtomTypeData population is not equivalent (process %i has %i).\n", procPool.poolRank(),
+        return Messenger::error("AtomTypeData population is not equivalent (process {} has {}).\n", procPool.poolRank(),
                                 population_);
     if (!procPool.equality(fraction_))
-        return Messenger::error("AtomTypeData fraction is not equivalent (process %i has %e).\n", procPool.poolRank(),
+        return Messenger::error("AtomTypeData fraction is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
                                 fraction_);
     if (!procPool.equality(boundCoherent_))
-        return Messenger::error("AtomTypeData bound coherent is not equivalent (process %i has %e).\n", procPool.poolRank(),
+        return Messenger::error("AtomTypeData bound coherent is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
                                 boundCoherent_);
 
     // Number of isotopes
     if (!procPool.equality(isotopes_.nItems()))
-        return Messenger::error("AtomTypeData number of isotopes is not equivalent (process %i has %i).\n", procPool.poolRank(),
+        return Messenger::error("AtomTypeData number of isotopes is not equivalent (process {} has {}).\n", procPool.poolRank(),
                                 isotopes_.nItems());
     ListIterator<IsotopeData> isotopeIterator(isotopes_);
     auto count = 0;
     while (IsotopeData *topeData = isotopeIterator.iterate())
     {
         if (!topeData->equality(procPool))
-            return Messenger::error("AtomTypeData entry for isotope data %i is not equivalent.\n", count);
+            return Messenger::error("AtomTypeData entry for isotope data {} is not equivalent.\n", count);
         ++count;
     }
 #endif

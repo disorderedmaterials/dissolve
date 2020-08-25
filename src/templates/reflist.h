@@ -21,9 +21,9 @@
 
 #pragma once
 
+#include "base/messenger.h"
 #include <iterator>
 #include <stddef.h>
-#include <stdio.h>
 
 // Forward Declarations
 template <class T> class RefList;
@@ -141,7 +141,7 @@ template <class T> class RefList
 #ifdef CHECKS
         if ((index < 0) || (index >= nItems_))
         {
-            printf("Array index (%i) out of bounds (%i items in RefList)\n", index, nItems_);
+            Messenger::error("Array index ({}) out of bounds ({} items in RefList)\n", index, nItems_);
             return NULL;
         }
 #endif
@@ -272,7 +272,6 @@ template <class T> class RefList
         if (target)
             return addAfter(target, item);
 
-        printf("Couldn't find specified item %p in RefList, so adding to end.\n", item);
         return add(item);
     }
     // Add reference before the specified item
@@ -303,7 +302,6 @@ template <class T> class RefList
         if (target)
             return addBefore(target, item);
 
-        printf("Couldn't find specified item %p in RefList, so adding to start.\n", item);
         return addStart(item);
     }
     // Add reference to list, unless already there
@@ -319,10 +317,8 @@ template <class T> class RefList
     void cut(RefListItem<T> *item)
     {
         if (item == NULL)
-        {
-            printf("Internal Error: NULL pointer passed to RefList<T>::cut().\n");
             return;
-        }
+
         RefListItem<T> *prev, *next;
         prev = item->prev_;
         next = item->next_;
@@ -345,7 +341,7 @@ template <class T> class RefList
         // In the interests of 'pointer cleanliness, refuse to own the item if its pointers are not NULL
         if ((item->next_ != NULL) || (item->prev_ != NULL))
         {
-            printf("RefList::own() <<<< Refused to own an item that still had links to other items >>>>\n");
+            fmt::print("RefList::own() <<<< Refused to own an item that still had links to other items >>>>\n");
             return;
         }
         listHead_ == NULL ? listHead_ = item : listTail_->next_ = item;
@@ -359,10 +355,8 @@ template <class T> class RefList
     void remove(RefListItem<T> *item)
     {
         if (item == NULL)
-        {
-            printf("Internal Error: NULL pointer passed to RefList<T>::remove().\n");
             return;
-        }
+
         // Delete a specific RefDataItem from the list
         item->prev_ == NULL ? listHead_ = item->next_ : item->prev_->next_ = item->next_;
         item->next_ == NULL ? listTail_ = item->prev_ : item->next_->prev_ = item->prev_;
@@ -382,10 +376,8 @@ template <class T> class RefList
     void removeFirst()
     {
         if (listHead_ == NULL)
-        {
-            printf("Internal Error: No item to delete in  RefList<T>::removeFirst().\n");
             return;
-        }
+
         remove(listHead_);
         regenerate_ = true;
     }
@@ -393,10 +385,8 @@ template <class T> class RefList
     void removeLast()
     {
         if (listTail_ == NULL)
-        {
-            printf("Internal Error: No item to delete in  RefList<T>::removeFirst().\n");
             return;
-        }
+
         remove(listTail_);
         regenerate_ = true;
     }
@@ -404,10 +394,8 @@ template <class T> class RefList
     void swap(T *item1, T *item2)
     {
         if ((item1 == NULL) || (item2 == NULL))
-        {
-            printf("Internal Error: NULL pointer(s) passed to RefList<T>::swap().\n", item1, item2);
             return;
-        }
+
         T *prev1 = item1->prev, *next1 = item1->next_;
         item1->prev_ = item2->prev_;
         item1->next_ = item2->next_;
@@ -428,22 +416,16 @@ template <class T> class RefList
                 break;
             ri = ri->next_;
             if (ri == NULL)
-                printf("Internal Error: Not enough items in list (requested %i, had %i) in "
-                       "RefList::fillArray()\n",
-                       n, nItems_);
+                return;
         }
         regenerate_ = true;
     }
     // Return nth item in list
     T *item(int n)
     {
-#ifdef CHECKS
         if ((n < 0) || (n >= nItems_))
-        {
-            printf("Array index (%i) out of bounds (%i items in RefList).\n", n, nItems_);
-            return NULL;
-        }
-#endif
+            throw std::runtime_error(fmt::format("Array index ({}) out of bounds ({} items in RefList).", n, nItems_));
+
         // Use array() function to return item
         return array()[n]->item();
     }

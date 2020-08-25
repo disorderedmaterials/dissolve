@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "base/enumoptions.h"
 #include <QString>
 
 // Forward Declarations
@@ -40,10 +41,8 @@ class NumberFormat
         ScientificFormat,
         nNumberFormats
     };
-    // Convert text string to FormatType
-    static FormatType formatType(QString s);
-    // Convert FormatType to text string
-    static const char *formatType(FormatType id);
+    // Return enum options for FormatType
+    static EnumOptions<NumberFormat::FormatType> &formatTypes();
 
     /*
      * Definition

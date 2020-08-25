@@ -61,7 +61,7 @@ int CalculateAxisAngleProcedureNode::dimensionality() const { return 1; }
  */
 
 // Prepare any necessary data, ready for execution
-bool CalculateAxisAngleProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList)
+bool CalculateAxisAngleProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Call the base class function
     if (!CalculateProcedureNodeBase::prepare(cfg, prefix, targetList))
@@ -76,14 +76,14 @@ bool CalculateAxisAngleProcedureNode::prepare(Configuration *cfg, const char *pr
 
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult CalculateAxisAngleProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                            const char *prefix, GenericList &targetList)
+                                                                            std::string_view prefix, GenericList &targetList)
 {
 #ifdef CHECKS
     for (int n = 0; n < nSitesRequired(); ++n)
     {
         if (sites_[n]->currentSite() == NULL)
         {
-            Messenger::error("Observable %i has no current site.\n", n);
+            Messenger::error("Observable {} has no current site.\n", n);
             return ProcedureNode::Failure;
         }
     }

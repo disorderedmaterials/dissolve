@@ -36,20 +36,22 @@ class Data1DExportFileFormat : public FileAndFormat
         XYData1D,
         nData1DExportFormats
     };
-    Data1DExportFileFormat(const char *filename = NULL, Data1DExportFormat format = Data1DExportFileFormat::XYData1D);
+    Data1DExportFileFormat(std::string_view filename = "", Data1DExportFormat format = Data1DExportFileFormat::XYData1D);
 
     /*
      * Format Access
      */
-    public:
+    private:
     // Return enum options for Data1DExportFormat
-    static EnumOptions<Data1DExportFileFormat::Data1DExportFormat> data1DExportFormats();
+    static EnumOptions<Data1DExportFileFormat::Data1DExportFormat> &data1DExportFormats();
+
+    public:
     // Return number of available formats
     int nFormats() const;
     // Return format keyword for supplied index
-    const char *formatKeyword(int id) const;
+    std::string_view formatKeyword(int id) const;
     // Return description string for supplied index
-    const char *formatDescription(int id) const;
+    std::string_view formatDescription(int id) const;
     // Return current format as Data1DExportFormat
     Data1DExportFormat data1DFormat() const;
 

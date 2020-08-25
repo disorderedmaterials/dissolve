@@ -70,7 +70,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
     {
         // Set our array of valid values
         for (int n = 0; n < KeywordData<EnumOptions<E>>::data_.nOptions(); ++n)
-            validKeywords_.add(KeywordData<EnumOptions<E>>::data_.keywordByIndex(n));
+            validKeywords_.emplace_back(std::string(KeywordData<EnumOptions<E>>::data_.keywordByIndex(n)));
     }
     ~EnumOptionsKeyword() {}
 
@@ -79,13 +79,13 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
      */
     private:
     // List of valid keyword values
-    Array<CharString> validKeywords_;
+    std::vector<std::string> validKeywords_;
 
     public:
     // Return validation list
-    const Array<CharString> &validationList() { return validKeywords_; }
+    const std::vector<std::string> &validationList() { return validKeywords_; }
     // Validate supplied value
-    bool isValid(CharString value) { return KeywordData<EnumOptions<E>>::data_.isValid(value.get()); }
+    bool isValid(std::string_view value) { return KeywordData<EnumOptions<E>>::data_.isValid(value); }
 
     /*
      * Arguments
@@ -101,12 +101,12 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
         if (parser.hasArg(startArg))
         {
             // Check validity of the supplied keyword...
-            if (!KeywordData<EnumOptions<E>>::data_.isValid(parser.argc(startArg)))
-                return KeywordData<EnumOptions<E>>::data_.errorAndPrintValid(parser.argc(startArg));
+            if (!KeywordData<EnumOptions<E>>::data_.isValid(parser.argsv(startArg)))
+                return KeywordData<EnumOptions<E>>::data_.errorAndPrintValid(parser.argsv(startArg));
 
             // Keyword recognised...
             EnumOptions<E> newOptions(KeywordData<EnumOptions<E>>::data_);
-            newOptions.setCurrentOption(parser.argc(startArg));
+            newOptions.setCurrentOption(parser.argsv(startArg));
             if (!KeywordData<EnumOptions<E>>::setData(newOptions))
                 return Messenger::error("An odd thing happened....\n");
 
@@ -116,9 +116,9 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
         return false;
     }
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, const char *keywordName, const char *prefix)
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
     {
-        return parser.writeLineF("%s%s  %s\n", prefix, keywordName, KeywordData<EnumOptions<E>>::data_.currentOptionKeyword());
+        return parser.writeLineF("{}{}  {}\n", prefix, keywordName, KeywordData<EnumOptions<E>>::data_.currentOptionKeyword());
     }
 
     /*
@@ -144,5 +144,5 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
      */
     public:
     // Return value (as string)
-    const char *asString() { return KeywordData<EnumOptions<E>>::data_.currentOptionKeyword(); }
+    std::string asString() { return std::string(KeywordData<EnumOptions<E>>::data_.currentOptionKeyword()); }
 };

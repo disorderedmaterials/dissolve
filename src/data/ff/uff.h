@@ -53,9 +53,9 @@ class Forcefield_UFF : public Forcefield
      */
     public:
     // Return name of Forcefield
-    const char *name() const;
+    std::string_view name() const;
     // Return description for Forcefield
-    const char *description() const;
+    std::string_view description() const;
     // Return short-range interaction style for AtomTypes
     Forcefield::ShortRangeType shortRangeType() const;
 
@@ -66,7 +66,7 @@ class Forcefield_UFF : public Forcefield
     // Return UFF atom types
     const std::vector<UFFAtomType> &uffAtomTypes() const;
     // Return UFF atom type with name specified
-    OptionalReferenceWrapper<const UFFAtomType> uffAtomTypeByName(const char *name) const;
+    OptionalReferenceWrapper<const UFFAtomType> uffAtomTypeByName(std::string_view name) const;
     // Return first UFF atom type for specified element
     OptionalReferenceWrapper<const UFFAtomType> uffAtomTypeForElement(int el) const;
     // Determine and return atom type for specified SpeciesAtom

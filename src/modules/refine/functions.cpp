@@ -138,7 +138,7 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, st
             xCentre = masterIntra->parameter(1);
         else
         {
-            Messenger::error("Functional form of MasterIntra '%s' not recognised, so can't extract equilibrium value.\n",
+            Messenger::error("Functional form of MasterIntra '{}' not recognised, so can't extract equilibrium value.\n",
                              masterIntra->name());
             return false;
         }
@@ -149,10 +149,10 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, st
         AC = 0.0;
         AR = 1.0;
 
-        Messenger::print("Examining master bond term '%s' - current equilibrium value is %f Angstroms...\n",
+        Messenger::print("Examining master bond term '{}' - current equilibrium value is {} Angstroms...\n",
                          masterIntra->name(), xCentre);
         double fitValue = minimiserLCR.minimise();
-        Messenger::print("Fit (cost = %f): x = %f, delta = %f, width = %f, AL = %f, AC = %f, AR = %f\n", fitValue, xCentre,
+        Messenger::print("Fit (cost = {}): x = {}, delta = {}, width = {}, AL = {}, AC = {}, AR = {}\n", fitValue, xCentre,
                          delta, width, AL, AC, AR);
 
         // Check the final fit value
@@ -169,7 +169,7 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, st
                     // Adjust the equilibrium bond length...
                     double newEq = xCentreStart_ + 0.1 * (xCentre - xCentreStart_);
                     Messenger::print("Fitting suggests mismatch of equilibrium bond lengths - adjusting "
-                                     "from %f to %f Angstroms.\n",
+                                     "from {} to {} Angstroms.\n",
                                      xCentreStart_, newEq);
                     Messenger::warn("ADJUSTING EQ BOND LENGTHS WAS REMOVED.\n");
                     //                     if (masterIntra->form() == SpeciesBond::HarmonicForm)
@@ -178,7 +178,7 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, st
                 else
                     continue;
 
-                Messenger::print("Resulting magnitude of fit is below threshold (A = %f), so no modification "
+                Messenger::print("Resulting magnitude of fit is below threshold (A = {}), so no modification "
                                  "will be performed.\n",
                                  AL);
                 continue;
@@ -193,7 +193,7 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, st
                     double newK;
                     if (masterIntra->form() == SpeciesBond::HarmonicForm)
                         newK = masterIntra->parameter(0) * 0.9;
-                    Messenger::print("Fitting suggests wrong force constant - adjusting to %f kJ/mol/A**2.\n", newK);
+                    Messenger::print("Fitting suggests wrong force constant - adjusting to {} kJ/mol/A**2.\n", newK);
                     Messenger::warn("ADJUSTING FORCE CONSTANTS WAS REMOVED.\n");
                     //                     if (masterIntra->form() == SpeciesBond::HarmonicForm)
                     //                         masterIntra->setParameter(0, newK);
@@ -211,7 +211,7 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, st
                 xCentre = masterIntra->parameter(1);
             else
             {
-                Messenger::error("Functional form of MasterIntra '%s' not recognised, so can't extract "
+                Messenger::error("Functional form of MasterIntra '{}' not recognised, so can't extract "
                                  "equilibrium value.\n",
                                  masterIntra->name());
                 return false;
@@ -225,7 +225,7 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, st
 
             if (fitValue > 5.0)
             {
-                Messenger::print("Final cost value is above threshold (cost = %f) so no modification will be "
+                Messenger::print("Final cost value is above threshold (cost = {}) so no modification will be "
                                  "performed.\n",
                                  fitValue);
                 continue;
@@ -233,7 +233,7 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, st
 
             // Adjust the equilibrium bond length...
             double newEq = xCentreStart_ + 0.1 * (xCentre - xCentreStart_);
-            Messenger::print("Exp2 fitting suggests mismatch of equilibrium bond lengths - adjusting from %f to %f "
+            Messenger::print("Exp2 fitting suggests mismatch of equilibrium bond lengths - adjusting from {} to {} "
                              "Angstroms.\n",
                              xCentreStart_, newEq);
             Messenger::warn("ADJUSTING EQ BOND LENGTHS WAS REMOVED.\n");

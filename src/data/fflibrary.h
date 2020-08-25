@@ -45,5 +45,5 @@ class ForcefieldLibrary
     // Return list of available Forcefields
     static std::vector<std::shared_ptr<Forcefield>> &forcefields();
     // Return named Forcefield, if it exists
-    static std::shared_ptr<Forcefield> forcefield(const std::string name);
+    static std::shared_ptr<Forcefield> forcefield(std::string_view name);
 };

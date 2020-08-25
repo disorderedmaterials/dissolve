@@ -35,7 +35,7 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Check for zero Configuration targets
     if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
     for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
@@ -50,8 +50,8 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const auto angleThreshold = keywords_.asDouble("AngleThreshold");
         const auto distanceThreshold = keywords_.asDouble("DistanceThreshold");
 
-        Messenger::print("Checks: Threshold for distance checks is %f Angstroms\n", distanceThreshold);
-        Messenger::print("Checks: Threshold for angle checks is %f degrees\n", angleThreshold);
+        Messenger::print("Checks: Threshold for distance checks is {} Angstroms\n", distanceThreshold);
+        Messenger::print("Checks: Threshold for angle checks is {} degrees\n", angleThreshold);
 
         Atom **atoms = cfg->atoms().array();
 
@@ -68,7 +68,7 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
             actual = cfg->box()->minimumDistance(atoms[d->indices(0)], atoms[d->indices(1)]);
             delta = fabs(actual - d->value());
             ok = delta < distanceThreshold;
-            Messenger::print("Distance between Atoms %i and %i is %f Angstroms, and is %s (delta = %f, tolerance = %f).\n",
+            Messenger::print("Distance between Atoms {} and {} is {} Angstroms, and is {} (delta = {}, tolerance = {}).\n",
                              d->indices(0) + 1, d->indices(1) + 1, actual, ok ? "OK" : "NOT OK", delta, distanceThreshold);
 
             // Check consistency between processes
@@ -89,7 +89,7 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
             actual = cfg->box()->angleInDegrees(atoms[a->indices(0)], atoms[a->indices(1)], atoms[a->indices(2)]);
             delta = fabs(actual - a->value());
             ok = delta < angleThreshold;
-            Messenger::print("Angle between Atoms %i, %i and %i is %f degrees, and is %s (delta = %f, tolerance = %f).\n",
+            Messenger::print("Angle between Atoms {}, {} and {} is {} degrees, and is {} (delta = {}, tolerance = {}).\n",
                              a->indices(0) + 1, a->indices(1) + 1, a->indices(2) + 1, actual, ok ? "OK" : "NOT OK", delta,
                              angleThreshold);
 

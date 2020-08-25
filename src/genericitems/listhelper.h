@@ -30,20 +30,16 @@ template <class T> class GenericListHelper
 {
     public:
     // Add new named item of template-guided type to specified list
-    static T &add(GenericList &targetList, const char *name, const char *prefix = NULL, int flags = -1)
+    static T &add(GenericList &targetList, std::string_view name, std::string_view prefix = "", int flags = -1)
     {
         // Construct full name
-        CharString varName;
-        if (DissolveSys::isEmpty(prefix))
-            varName = name;
-        else
-            varName.sprintf("%s_%s", prefix, name);
+        std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
         // Does the named variable already exist in the list?
         GenericItem *existingItem = targetList.find(varName);
         if (existingItem)
         {
-            printf("WARNING - Item '%s' already exists in the list - a dummy value will be returned instead.\n", varName.get());
+            Messenger::warn("Item '{}' already exists in the list - a dummy value will be returned instead.\n", varName);
             static T dummy;
             return dummy;
         }
@@ -56,21 +52,17 @@ template <class T> class GenericListHelper
         return newItem->data();
     }
     // Return named (const) item from specified list as template-guided type
-    static const T &value(GenericList &sourceList, const char *name, const char *prefix = NULL, T defaultValue = T(),
+    static const T &value(GenericList &sourceList, std::string_view name, std::string_view prefix = "", T defaultValue = T(),
                           bool *found = NULL)
     {
         // Construct full name
-        CharString varName;
-        if (DissolveSys::isEmpty(prefix))
-            varName = name;
-        else
-            varName.sprintf("%s_%s", prefix, name);
+        std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
         // Find item in the list
         GenericItem *item = sourceList.find(varName);
         if (!item)
         {
-            Messenger::printVerbose("No item named '%s' in list - default value item will be returned.\n", varName.get());
+            Messenger::printVerbose("No item named '{}' in list - default value item will be returned.\n", varName);
             static T dummy;
             dummy = defaultValue;
             if (found != NULL)
@@ -81,34 +73,25 @@ template <class T> class GenericListHelper
         // Cast to correct type
         GenericItemContainer<T> *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
         if (!castItem)
-        {
-            printf("That didn't work, because its of the wrong type.\n");
-            static T dummy;
-            if (found != NULL)
-                (*found) = false;
-            return dummy;
-        }
+            throw std::runtime_error(
+                fmt::format("GenericListHelper::value({}) failed, because the target item is of the wrong type.", name));
 
         if (found != NULL)
             (*found) = true;
         return castItem->data();
     }
     // Retrieve named item from specified list as template-guided type, assuming that it is going to be modified
-    static T &retrieve(GenericList &sourceList, const char *name, const char *prefix = NULL, T defaultValue = T(),
+    static T &retrieve(GenericList &sourceList, std::string_view name, std::string_view prefix = "", T defaultValue = T(),
                        bool *found = NULL)
     {
         // Construct full name
-        CharString varName;
-        if (DissolveSys::isEmpty(prefix))
-            varName = name;
-        else
-            varName.sprintf("%s_%s", prefix, name);
+        std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
         // Find item in the list
         GenericItem *item = sourceList.find(varName);
         if (!item)
         {
-            Messenger::printVerbose("No item named '%s' in list - default value item will be returned.\n", varName.get());
+            Messenger::printVerbose("No item named '{}' in list - default value item will be returned.\n", varName);
             static T dummy;
             dummy = defaultValue;
             if (found != NULL)
@@ -119,13 +102,8 @@ template <class T> class GenericListHelper
         // Cast to correct type
         GenericItemContainer<T> *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
         if (!castItem)
-        {
-            printf("That didn't work, because its of the wrong type.\n");
-            static T dummy;
-            if (found != NULL)
-                (*found) = false;
-            return dummy;
-        }
+            throw std::runtime_error(
+                fmt::format("GenericListHelper::retrieve({}) failed, because the item is not of the specified type.", name));
 
         // Bump the version of the item
         item->bumpVersion();
@@ -135,15 +113,11 @@ template <class T> class GenericListHelper
         return castItem->data();
     }
     // Create or retrieve named item from specified list as template-guided type
-    static T &realise(GenericList &sourceList, const char *name, const char *prefix = NULL, int flags = -1,
+    static T &realise(GenericList &sourceList, std::string_view name, std::string_view prefix = "", int flags = -1,
                       bool *created = NULL)
     {
         // Construct full name
-        CharString varName;
-        if (DissolveSys::isEmpty(prefix))
-            varName = name;
-        else
-            varName.sprintf("%s_%s", prefix, name);
+        std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
         // Find item in the list - if it isn't there, create it and return
         GenericItem *item = sourceList.find(varName);
@@ -157,11 +131,8 @@ template <class T> class GenericListHelper
         // Cast to correct type
         GenericItemContainer<T> *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
         if (!castItem)
-        {
-            printf("That didn't work, because its of the wrong type.\n");
-            static T dummy;
-            return dummy;
-        }
+            throw std::runtime_error(fmt::format(
+                "GenericListHelper::realise({}) failed, because the item couldn't be cast to the desired type.", name));
 
         // Update flags
         if (flags >= 0)
@@ -185,8 +156,11 @@ template <class T> class GenericListHelper
                 // Cast to correct type
                 GenericItemContainer<T> *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
                 if (!castItem)
+                    throw std::runtime_error(
+                        fmt::format("GenericListHelper::items() failed to retrieve item {} as it is not actually class {}.",
+                                    item->itemClassName(), T::itemClassName()));
                 {
-                    printf("That didn't work, because its of the wrong type.\n");
+                    Messenger::error("That didn't work, because its of the wrong type.\n");
                     continue;
                 }
 

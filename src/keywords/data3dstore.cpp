@@ -50,10 +50,10 @@ int Data3DStoreKeyword::maxArguments() const
 // Parse arguments from supplied LineParser, starting at given argument offset
 bool Data3DStoreKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
-    Messenger::print("Reading test data '%s' from file '%s' (format=%s)...\n", parser.argc(startArg), parser.argc(startArg + 2),
-                     parser.argc(startArg + 1));
+    Messenger::print("Reading test data '{}' from file '{}' (format={})...\n", parser.argsv(startArg),
+                     parser.argsv(startArg + 2), parser.argsv(startArg + 1));
 
-    if (!data_.addData(parser.argc(startArg), parser, startArg + 1, CharString("End%s", name()), coreData))
+    if (!data_.addData(parser.argsv(startArg), parser, startArg + 1, fmt::format("End{}", name()), coreData))
         return Messenger::error("Failed to add data.\n");
 
     set_ = true;
@@ -62,18 +62,18 @@ bool Data3DStoreKeyword::read(LineParser &parser, int startArg, CoreData &coreDa
 }
 
 // Write keyword data to specified LineParser
-bool Data3DStoreKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool Data3DStoreKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     // Loop over list of one-dimensional data
     RefDataListIterator<Data3D, Data3DImportFileFormat> dataIterator(data_.dataReferences());
     while (Data3D *data = dataIterator.iterate())
     {
         Data3DImportFileFormat &ff = dataIterator.currentData();
-        if (!ff.writeFilenameAndFormat(parser, CharString("%s%s  '%s'  ", prefix, keywordName, data->name())))
+        if (!ff.writeFilenameAndFormat(parser, fmt::format("{}{}  '{}'  ", prefix, keywordName, data->name())))
             return false;
-        if (!ff.writeBlock(parser, CharString("%s  ", prefix)))
+        if (!ff.writeBlock(parser, fmt::format("{}  ", prefix)))
             return false;
-        if (!parser.writeLineF("%sEnd%s\n", prefix, name()))
+        if (!parser.writeLineF("{}End{}\n", prefix, name()))
             return false;
     }
 

@@ -110,16 +110,16 @@ SequenceProcedureNode *Collect1DProcedureNode::branch() { return subCollectBranc
  */
 
 // Prepare any necessary data, ready for execution
-bool Collect1DProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList)
+bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Construct our data name, and search for it in the supplied list
-    CharString dataName("%s_%s_Bins", name(), cfg->niceName());
+    std::string dataName = fmt::format("{}_{}_Bins", name(), cfg->niceName());
     bool created;
     auto &target =
-        GenericListHelper<Histogram1D>::realise(targetList, dataName.get(), prefix, GenericItem::InRestartFileFlag, &created);
+        GenericListHelper<Histogram1D>::realise(targetList, dataName, prefix, GenericItem::InRestartFileFlag, &created);
     if (created)
     {
-        Messenger::printVerbose("One-dimensional histogram data for '%s' was not in the target list, so it will now be "
+        Messenger::printVerbose("One-dimensional histogram data for '{}' was not in the target list, so it will now be "
                                 "initialised...\n",
                                 name());
         target.initialise(minimum(), maximum(), binWidth());
@@ -134,7 +134,7 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
     // Retrieve the observable
     std::tie(xObservable_, xObservableIndex_) = keywords_.retrieve<std::tuple<CalculateProcedureNodeBase *, int>>("QuantityX");
     if (!xObservable_)
-        return Messenger::error("No valid x quantity set in '%s'.\n", name());
+        return Messenger::error("No valid x quantity set in '{}'.\n", name());
 
     // Prepare any branches
     if (subCollectBranch_ && (!subCollectBranch_->prepare(cfg, prefix, targetList)))
@@ -145,12 +145,12 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
 
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                   const char *prefix, GenericList &targetList)
+                                                                   std::string_view prefix, GenericList &targetList)
 {
 #ifdef CHECKS
     if (!xObservable_)
     {
-        Messenger::error("No CalculateProcedureNodeBase pointer set in Collect1DProcedureNode '%s'.\n", name());
+        Messenger::error("No CalculateProcedureNodeBase pointer set in Collect1DProcedureNode '{}'.\n", name());
         return ProcedureNode::Failure;
     }
 #endif
@@ -162,12 +162,13 @@ ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool &
 }
 
 // Finalise any necessary data after execution
-bool Collect1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+bool Collect1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                      GenericList &targetList)
 {
 #ifdef CHECKS
     if (!histogram_)
     {
-        Messenger::error("No Data1D pointer set in Collect1DProcedureNode '%s'.\n", name());
+        Messenger::error("No Data1D pointer set in Collect1DProcedureNode '{}'.\n", name());
         return ProcedureNode::Failure;
     }
 #endif

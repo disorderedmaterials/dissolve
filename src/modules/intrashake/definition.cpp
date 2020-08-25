@@ -22,13 +22,16 @@
 #include "modules/intrashake/intrashake.h"
 
 // Return type of module
-const char *IntraShakeModule::type() const { return "IntraShake"; }
+std::string_view IntraShakeModule::type() const { return "IntraShake"; }
 
 // Return category for module
-const char *IntraShakeModule::category() const { return "Evolution"; }
+std::string_view IntraShakeModule::category() const { return "Evolution"; }
 
 // Return brief description of module
-const char *IntraShakeModule::brief() const { return "Perform Monte Carlo shakes on intramolecular terms within Molecules"; }
+std::string_view IntraShakeModule::brief() const
+{
+    return "Perform Monte Carlo shakes on intramolecular terms within Molecules";
+}
 
 // Return the number of Configuration targets this Module requires
 int IntraShakeModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }

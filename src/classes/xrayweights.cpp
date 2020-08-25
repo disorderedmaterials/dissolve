@@ -65,7 +65,7 @@ bool XRayWeights::initialiseFormFactors()
         // Try to retrieve form factor data for this atom type (element, formal charge [TODO])
         auto data = XRayFormFactors::formFactorData(formFactors_, at->element());
         if (!data)
-            return Messenger::error("No form factor data present for element %s (formal charge %i) in x-ray data set '%s'.\n",
+            return Messenger::error("No form factor data present for element {} (formal charge {}) in x-ray data set '{}'.\n",
                                     at->element()->symbol(), 0, XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
 
         formFactorData_.push_back(*data);
@@ -186,7 +186,7 @@ Array<double> XRayWeights::formFactor(int typeIndexI, const Array<double> &Q) co
 #ifdef CHECKS
     if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
     {
-        Messenger::error("XRayWeights::formFactorProduct() - Type i index %i is out of range.\n", typeIndexI);
+        Messenger::error("XRayWeights::formFactorProduct() - Type i index {} is out of range.\n", typeIndexI);
         return 0.0;
     }
 #endif
@@ -208,12 +208,12 @@ double XRayWeights::formFactorProduct(int typeIndexI, int typeIndexJ, double Q) 
 #ifdef CHECKS
     if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
     {
-        Messenger::error("XRayWeights::formFactorProduct() - Type i index %i is out of range.\n", typeIndexI);
+        Messenger::error("XRayWeights::formFactorProduct() - Type i index {} is out of range.\n", typeIndexI);
         return 0.0;
     }
     if ((typeIndexJ < 0) || (typeIndexJ >= formFactorData_.size()))
     {
-        Messenger::error("XRayWeights::formFactorProduct() - Type j index %i is out of range.\n", typeIndexJ);
+        Messenger::error("XRayWeights::formFactorProduct() - Type j index {} is out of range.\n", typeIndexJ);
         return 0.0;
     }
 #endif
@@ -233,12 +233,12 @@ Array<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const Array<do
 #ifdef CHECKS
     if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
     {
-        Messenger::error("XRayWeights::weight() - Type i index %i is out of range.\n", typeIndexI);
+        Messenger::error("XRayWeights::weight() - Type i index {} is out of range.\n", typeIndexI);
         return 0.0;
     }
     if ((typeIndexJ < 0) || (typeIndexJ >= formFactorData_.size()))
     {
-        Messenger::error("XRayWeights::weight() - Type j index %i is out of range.\n", typeIndexJ);
+        Messenger::error("XRayWeights::weight() - Type j index {} is out of range.\n", typeIndexJ);
         return 0.0;
     }
 #endif
@@ -264,7 +264,7 @@ bool XRayWeights::isValid() const { return valid_; }
  */
 
 // Return class name
-const char *XRayWeights::itemClassName() { return "XRayWeights"; }
+std::string_view XRayWeights::itemClassName() { return "XRayWeights"; }
 
 // Read data through specified LineParser
 bool XRayWeights::read(LineParser &parser, CoreData &coreData)
@@ -274,7 +274,7 @@ bool XRayWeights::read(LineParser &parser, CoreData &coreData)
     // Read form factor dataset to use
     if (!parser.getArgsDelim())
         return false;
-    formFactors_ = XRayFormFactors::xRayFormFactorData().enumeration(parser.argc(0));
+    formFactors_ = XRayFormFactors::xRayFormFactorData().enumeration(parser.argsv(0));
 
     // Read AtomTypeList
     if (!atomTypes_.read(parser, coreData))
@@ -287,7 +287,7 @@ bool XRayWeights::read(LineParser &parser, CoreData &coreData)
 bool XRayWeights::write(LineParser &parser)
 {
     // Write x-ray form factor dataset
-    if (!parser.writeLineF("%s\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors_)))
+    if (!parser.writeLineF("{}\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors_)))
         return false;
 
     // Write AtomTypeList
@@ -336,7 +336,7 @@ bool XRayWeights::equality(ProcessPool &procPool)
     if (!procPool.equality(preFactors_))
         return Messenger::error("XRayWeights bound coherent matrix is not equivalent.\n");
     if (!procPool.equality(valid_))
-        return Messenger::error("XRayWeights validity is not equivalent (process %i has %i).\n", procPool.poolRank(), valid_);
+        return Messenger::error("XRayWeights validity is not equivalent (process {} has {}).\n", procPool.poolRank(), valid_);
 #endif
     return true;
 }

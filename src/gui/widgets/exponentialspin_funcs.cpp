@@ -74,9 +74,8 @@ void ExponentialSpin::removeLimits()
 QString ExponentialSpin::textFromValue(double value) const
 {
     const auto exponentFormatThreshold = 3;
-    // 	printf("Here we are in updateText, setting [%s].\n", qPrintable(value_.text(precision)));
     DoubleExp de(value);
-    return de.asString(exponentFormatThreshold, decimals()).get();
+    return QString::fromStdString(de.asString(exponentFormatThreshold, decimals()));
 }
 
 // Validate supplied text

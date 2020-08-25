@@ -50,11 +50,11 @@ class RDFModule : public Module
      */
     public:
     // Return type of module
-    const char *type() const;
+    std::string_view type() const;
     // Return category for module
-    const char *category() const;
+    std::string_view category() const;
     // Return brief description of module
-    const char *brief() const;
+    std::string_view brief() const;
     // Return the number of Configuration targets this Module requires
     int nRequiredTargets() const;
 
@@ -119,13 +119,14 @@ class RDFModule : public Module
     static bool testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold);
     // Test calculated partial against supplied reference data
     static bool testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
-                                     const char *typeIorTotal, const char *typeJ = NULL, const char *target = NULL);
+                                     std::string_view typeIorTotal, std::string_view typeJ = NULL,
+                                     std::string_view target = NULL);
     // Test calculated vs reference data (two source sets)
     static bool testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partials,
-                                      const char *prefix);
+                                      std::string_view prefix);
     // Test calculated vs reference data (two source sets)
     static bool testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partialsA,
-                                      const char *prefixA, const PartialSet &partialsB, const char *prefixB);
+                                      std::string_view prefixA, const PartialSet &partialsB, std::string_view prefixB);
 
     /*
      * GUI Widget

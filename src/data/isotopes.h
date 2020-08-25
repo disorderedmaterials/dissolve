@@ -29,8 +29,8 @@
 class Isotope : public ElementReference, public ListItem<Isotope>
 {
     public:
-    Isotope(int z = 0, int A = 0, const char *spin = NULL, double mass = 0.0, double bc = 0.0, double bi = 0.0, double sc = 0.0,
-            double si = 0.0, double totalxs = 0.0, double absxs = 0.0);
+    Isotope(int z = 0, int A = 0, std::string_view spin = "", double mass = 0.0, double bc = 0.0, double bi = 0.0,
+            double sc = 0.0, double si = 0.0, double totalxs = 0.0, double absxs = 0.0);
     Isotope &operator=(const Isotope &source);
 
     /*
@@ -42,7 +42,7 @@ class Isotope : public ElementReference, public ListItem<Isotope>
     // Isotope mass(given C = 12)
     double mass_;
     // Nuclear spin description
-    const char *spin_;
+    std::string spin_;
     // Bound coherent scattering length (fm)
     double boundCoherent_;
     // Bound incoherent scattering length (fm)

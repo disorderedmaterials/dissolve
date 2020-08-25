@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/enumoptions.h"
 #include "base/version.h"
 #include "templates/array.h"
@@ -47,7 +46,7 @@ class SpeciesSite : public ListItem<SpeciesSite>
      */
     private:
     // Name of site
-    CharString name_;
+    std::string name_;
     // Parent Species
     Species *parent_;
     // Version of the SpeciesSite
@@ -55,9 +54,9 @@ class SpeciesSite : public ListItem<SpeciesSite>
 
     public:
     // Set name of site
-    void setName(const char *newName);
+    void setName(std::string_view newName);
     // Return anme of site
-    const char *name() const;
+    std::string_view name() const;
     // Set Species parent
     void setParent(Species *sp);
     // Return species parent
@@ -151,5 +150,5 @@ class SpeciesSite : public ListItem<SpeciesSite>
     // Read site definition from specified LineParser
     bool read(LineParser &parser);
     // Write site definition to specified LineParser
-    bool write(LineParser &parser, const char *prefix);
+    bool write(LineParser &parser, std::string_view prefix);
 };

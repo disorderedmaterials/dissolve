@@ -33,7 +33,7 @@ class CoreData;
 class GenericItem : public ListItem<GenericItem>
 {
     public:
-    GenericItem(const char *name, int flags);
+    GenericItem(std::string_view name, int flags);
     virtual ~GenericItem();
     // Item Flags
     enum ItemFlag
@@ -53,22 +53,22 @@ class GenericItem : public ListItem<GenericItem>
 
     protected:
     // Create a new GenericItem containing same class as current type
-    virtual GenericItem *createItem(const char *className, const char *name, int flags = 0) = 0;
+    virtual GenericItem *createItem(std::string_view className, std::string_view name, int flags = 0) = 0;
 
     public:
     // Return class name contained in item
-    virtual const char *itemClassName() = 0;
+    virtual std::string_view itemClassName() = 0;
     // Add class to list of representative itemClasses_
     static void addItemClass(GenericItem *item);
     // Return new, empty GenericItem containing the class specified
-    static GenericItem *newItem(const char *className, const char *name, int flags = 0);
+    static GenericItem *newItem(std::string_view className, std::string_view name, int flags = 0);
 
     /*
      * Item Contents
      */
     private:
     // Name associated to the item
-    CharString name_;
+    std::string name_;
     // Version of the item
     int version_;
     // Flags
@@ -76,9 +76,9 @@ class GenericItem : public ListItem<GenericItem>
 
     public:
     // Set item name
-    void setName(const char *name);
+    void setName(std::string_view name);
     // Return item name
-    const char *name();
+    std::string_view name() const;
     // Return version of the item
     int version() const;
     // Set version of the item

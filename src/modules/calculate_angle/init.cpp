@@ -215,8 +215,8 @@ void CalculateAngleModule::initialise()
     // Process1D: 'RDF(AB)'
     processAB_ = new Process1DProcedureNode(collectAB_);
     processAB_->setName("RDF(AB)");
-    processAB_->setKeyword<CharString>("LabelValue", "g\\sub{AB}(r)");
-    processAB_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
+    processAB_->setKeyword<std::string>("LabelValue", "g\\sub{AB}(r)");
+    processAB_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
     SequenceProcedureNode *rdfABNormalisation = processAB_->addNormalisationBranch();
     RefList<const SelectProcedureNode> normAB;
     normAB.append(selectB_);
@@ -230,8 +230,8 @@ void CalculateAngleModule::initialise()
     // Process1D: 'RDF(BC)'
     processBC_ = new Process1DProcedureNode(collectBC_);
     processBC_->setName("RDF(BC)");
-    processBC_->setKeyword<CharString>("LabelValue", "g\\sub{BC}(r)");
-    processBC_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
+    processBC_->setKeyword<std::string>("LabelValue", "g\\sub{BC}(r)");
+    processBC_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
     SequenceProcedureNode *rdfBCNormalisation = processBC_->addNormalisationBranch();
     RefList<const SelectProcedureNode> normBC;
     normBC.append(selectB_);
@@ -245,8 +245,8 @@ void CalculateAngleModule::initialise()
     // Process1D: 'ANGLE(ABC)'
     processAngle_ = new Process1DProcedureNode(collectABC_);
     processAngle_->setName("Angle(ABC)");
-    processAngle_->setKeyword<CharString>("LabelValue", "Normalised Frequency");
-    processAngle_->setKeyword<CharString>("LabelX", "\\symbol{theta}, \\symbol{degrees}");
+    processAngle_->setKeyword<std::string>("LabelValue", "Normalised Frequency");
+    processAngle_->setKeyword<std::string>("LabelX", "\\symbol{theta}, \\symbol{degrees}");
     SequenceProcedureNode *angleNormalisation = processAngle_->addNormalisationBranch();
     angleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(x)"));
     angleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
@@ -255,9 +255,9 @@ void CalculateAngleModule::initialise()
     // Process2D: 'DAngle (A-B)-C'
     processDAngleAB_ = new Process2DProcedureNode(collectDAngleAB_);
     processDAngleAB_->setName("DAngle((A-B)-C)");
-    processDAngleAB_->setKeyword<CharString>("LabelValue", "g\\sub{AB}(r)");
-    processDAngleAB_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
-    processDAngleAB_->setKeyword<CharString>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
+    processDAngleAB_->setKeyword<std::string>("LabelValue", "g\\sub{AB}(r)");
+    processDAngleAB_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
+    processDAngleAB_->setKeyword<std::string>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
     SequenceProcedureNode *dAngleABNormalisation = processDAngleAB_->addNormalisationBranch();
     dAngleABNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(y)"));
     dAngleABNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
@@ -266,9 +266,9 @@ void CalculateAngleModule::initialise()
     // Process2D: 'DAngle A-(B-C)'
     processDAngleBC_ = new Process2DProcedureNode(collectDAngleBC_);
     processDAngleBC_->setName("DAngle(A-(B-C))");
-    processDAngleBC_->setKeyword<CharString>("LabelValue", "g\\sub{BC}(r)");
-    processDAngleBC_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
-    processDAngleBC_->setKeyword<CharString>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
+    processDAngleBC_->setKeyword<std::string>("LabelValue", "g\\sub{BC}(r)");
+    processDAngleBC_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
+    processDAngleBC_->setKeyword<std::string>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
     SequenceProcedureNode *dAngleBCNormalisation = processDAngleBC_->addNormalisationBranch();
     dAngleBCNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(y)"));
     dAngleBCNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));

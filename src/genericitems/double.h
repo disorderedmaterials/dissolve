@@ -27,7 +27,7 @@
 template <> class GenericItemContainer<double> : public GenericItem
 {
     public:
-    GenericItemContainer<double>(const char *name, int flags = 0) : GenericItem(name, flags) {}
+    GenericItemContainer<double>(std::string_view name, int flags = 0) : GenericItem(name, flags) {}
 
     /*
      * Data
@@ -45,7 +45,7 @@ template <> class GenericItemContainer<double> : public GenericItem
      */
     protected:
     // Create a new GenericItem containing same class as current type
-    GenericItem *createItem(const char *className, const char *name, int flags = 0)
+    GenericItem *createItem(std::string_view className, std::string_view name, int flags = 0)
     {
         if (DissolveSys::sameString(className, itemClassName()))
             return new GenericItemContainer<double>(name, flags);
@@ -54,14 +54,14 @@ template <> class GenericItemContainer<double> : public GenericItem
 
     public:
     // Return class name contained in item
-    const char *itemClassName() { return "double"; }
+    std::string_view itemClassName() { return "double"; }
 
     /*
      * I/O
      */
     public:
     // Write data through specified parser
-    bool write(LineParser &parser) { return parser.writeLineF("%16.9e\n", data_); }
+    bool write(LineParser &parser) { return parser.writeLineF("{:16.9e}\n", data_); }
     // Read data through specified parser
     bool read(LineParser &parser, CoreData &coreData)
     {

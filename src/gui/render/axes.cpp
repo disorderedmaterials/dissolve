@@ -119,20 +119,17 @@ Axes::~Axes() {}
  * Definition
  */
 
-// AutoScale methods
-const char *AutoScaleKeywords[Axes::nAutoScaleMethods] = {"None", "Expanding", "Full"};
-
-// Convert text string to AutoScaleMethod
-Axes::AutoScaleMethod Axes::autoScaleMethod(const char *s)
+// Return enum options for AutoScaleMethod
+EnumOptions<Axes::AutoScaleMethod> &Axes::autoScaleMethods()
 {
-    for (int n = 0; n < Axes::nAutoScaleMethods; ++n)
-        if (DissolveSys::sameString(s, AutoScaleKeywords[n]))
-            return (Axes::AutoScaleMethod)n;
-    return Axes::nAutoScaleMethods;
-}
+    static EnumOptionsList AutoScaleOptions = EnumOptionsList() << EnumOption(Axes::NoAutoScale, "None")
+                                                                << EnumOption(Axes::ExpandingAutoScale, "Expanding")
+                                                                << EnumOption(Axes::FullAutoScale, "Full");
 
-// Convert AutoScaleMethod to text string
-const char *Axes::autoScaleMethod(Axes::AutoScaleMethod scale) { return AutoScaleKeywords[scale]; }
+    static EnumOptions<Axes::AutoScaleMethod> options("AutoScaleMethod", AutoScaleOptions);
+
+    return options;
+}
 
 // Recalculate minimum, maximum, and centre coordinates of axes
 void Axes::updateCoordinates()
@@ -907,7 +904,7 @@ TextPrimitive::TextAnchor Axes::labelAnchor(int axis) const
 }
 
 // Set title for specified axis
-void Axes::setTitle(int axis, const char *title)
+void Axes::setTitle(int axis, std::string_view title)
 {
     title_[axis] = title;
 
@@ -915,7 +912,7 @@ void Axes::setTitle(int axis, const char *title)
 }
 
 // Return title for specified axis
-const char *Axes::title(int axis) const { return title_[axis].get(); }
+std::string_view Axes::title(int axis) const { return title_[axis]; }
 
 // Set orientation of titles for specified axis
 void Axes::setTitleOrientationNEW(int axis, int component, double value)
@@ -1155,7 +1152,7 @@ void Axes::updateAxisPrimitives()
             // For the log axis, the associated surface data coordinate will already be in log form
             if (max_[axis] < 0.0)
             {
-                Messenger::print("Axis range is inappropriate for a log scale (%f < x < %f). Axis will not be drawn.\n",
+                Messenger::print("Axis range is inappropriate for a log scale ({} < x < {}). Axis will not be drawn.\n",
                                  min_[axis], max_[axis]);
                 return;
             }
@@ -1308,8 +1305,8 @@ void Axes::updateAxisPrimitives()
             adjustment = tickDir * titleDistances_[axis];
 
         // -- Add primitive
-        titlePrimitives_[axis].add(fontInstance_, title_[axis].get(), u, titleAnchor(axis), adjustment, titleTransform,
-                                   parentView_.titlePointSize(),
+        titlePrimitives_[axis].add(fontInstance_, QString::fromStdString(title_[axis]), u, titleAnchor(axis), adjustment,
+                                   titleTransform, parentView_.titlePointSize(),
                                    parentView_.isFlatView() ? false : parentView_.flatLabelsIn3D());
     }
 

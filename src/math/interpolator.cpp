@@ -371,8 +371,6 @@ double Interpolator::y(double x, int interval)
         double vk2 = y_.constAt(interval + 2);
         double t1 = vk0 + (vk1 - vk0) * ppp;
         double t2 = vk1 + (vk2 - vk1) * (ppp - 1.0);
-        // 		printf("%f %20.14e %20.14e %20.14e %20.14e %20.14e\n", xValue, vk0, vk1, vk2, ppp,
-        // t1+(t2-t1)*ppp*0.5);
         return t1 + (t2 - t1) * ppp * 0.5;
     }
 
@@ -406,7 +404,6 @@ double Interpolator::approximate(const Data1D &data, double x)
         else
             left = i;
     }
-    // 	printf("L/R = %i/%i : %f < %f < %f\n", left, right, xData.value(left), x, xData.value(right));
 
     double ppp = (x - xData.constAt(left)) / (xData.constAt(right) - xData.constAt(left));
 
@@ -416,7 +413,7 @@ double Interpolator::approximate(const Data1D &data, double x)
 
     double t1 = vk0 + (vk1 - vk0) * ppp;
     double t2 = vk1 + (vk2 - vk1) * (ppp - 1.0);
-    // 		printf("%f %20.14e %20.14e %20.14e %20.14e %20.14e\n", xValue, vk0, vk1, vk2, ppp, t1+(t2-t1)*ppp*0.5);
+
     return t1 + (t2 - t1) * ppp * 0.5;
 }
 

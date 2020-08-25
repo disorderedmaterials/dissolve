@@ -176,7 +176,7 @@ const AtomicMassData &AtomicMass::massData(int Z)
 
     if ((Z < 0) || (Z > nElements()))
     {
-        Messenger::error("AtomicMass::mass() - Element with Z=%i is out of range!\n", Z);
+        Messenger::error("AtomicMass::mass() - Element with Z={} is out of range!\n", Z);
         return massData[0];
     }
 

@@ -32,9 +32,9 @@
 #include "main/dissolve.h"
 #include <QMessageBox>
 
-SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title,
+SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
                        Species *species)
-    : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Species: %s", title), this)
+    : ListItem<SpeciesTab>(), MainTab(dissolveWindow, dissolve, parent, QString("Species: %1").arg(title), this)
 {
     ui_.setupUi(this);
 
@@ -130,7 +130,7 @@ QString SpeciesTab::getNewTitle(bool &ok)
 {
     // Get a new, valid name for the Species
     GetSpeciesNameDialog nameDialog(this, dissolve_.coreData());
-    ok = nameDialog.get(species_, species_->name());
+    ok = nameDialog.get(species_, QString::fromStdString(std::string(species_->name())));
 
     if (ok)
     {
@@ -151,7 +151,8 @@ bool SpeciesTab::canClose() const
 {
     // Check that we really want to delete this tab
     QMessageBox queryBox;
-    queryBox.setText(QString("Really delete the species '%1'?\nThis cannot be undone!").arg(species_->name()));
+    queryBox.setText(QString("Really delete the species '%1'?\nThis cannot be undone!")
+                         .arg(QString::fromStdString(std::string(species_->name()))));
     queryBox.setInformativeText("Proceed?");
     queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     queryBox.setDefaultButton(QMessageBox::No);

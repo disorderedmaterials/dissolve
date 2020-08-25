@@ -20,10 +20,10 @@
 */
 
 #include "math/doubleexp.h"
+#include "base/sysfunc.h"
+#include <fmt/core.h>
 #include <limits>
 #include <math.h>
-#include <stdio.h>
-#include <string.h>
 
 DoubleExp::DoubleExp()
 {
@@ -88,32 +88,6 @@ void DoubleExp::set(double value)
     }
 
     recalculate();
-    // 	printf("  -- Input value %f gives mantissa of %f and exponent of %i, giving value of %e\n", value, mantissa_,
-    // exponent_, value_);
-}
-
-// Set from supplied text
-void DoubleExp::set(const char *text)
-{
-    // Copy the string
-    static char s[128];
-    strcpy(s, text);
-
-    // 	printf("DoubleExp::set(const char*) - Original string is '%s'\n", text);
-    // Use strtok to get first part of string, before any exponent
-    char *mant = strtok(s, "Ee");
-    mantissa_ = atof(mant);
-    // 	printf("DoubleExp::set(const char*) - Mantissa is %f (%s)\n", mantissa_, mant);
-
-    // Call strtok a second time to see if we have an exponent
-    char *expo = strtok(NULL, "Ee");
-    if (expo)
-        exponent_ = atoi(expo);
-    else
-        exponent_ = 0;
-    // 	printf("DoubleExp::set(const char*) - Exponent is %i (%s)\n", exponent_, expo ? expo : "NULL");
-
-    recalculate();
 }
 
 // Set mantissa
@@ -137,7 +111,7 @@ void DoubleExp::setExponent(int exponent)
 int DoubleExp::exponent() const { return exponent_; }
 
 // Return value as string
-CharString DoubleExp::asString(const int exponentThreshold, const int maxDecimals) const
+std::string DoubleExp::asString(const int exponentThreshold, const int maxDecimals) const
 {
     /*
      * Check the absolute value against the provided threshold, and decide whether to use scientific or normal formatting.
@@ -152,20 +126,18 @@ CharString DoubleExp::asString(const int exponentThreshold, const int maxDecimal
      */
 
     auto scientificNotation = abs(exponent_) > exponentThreshold;
-    char formatString[32];
-    sprintf(formatString, "%%.%if", maxDecimals);
 
     // Print the mantissa or full value to a formatted string, and strip any trailing zeroes
-    CharString mantissaString(formatString, scientificNotation ? mantissa_ : value_);
+    std::string mantissaString = fmt::format("{:.{}f}", scientificNotation ? mantissa_ : value_, maxDecimals);
     auto dot = mantissaString.find('.');
-    if (dot != -1)
+    if (dot != std::string::npos)
     {
         auto nZeroesAtEnd = 0;
         auto nDecimals = 0;
 
         // Start the search at [dot+2], skipping the dot and the first char after it - we will always allow one lone
         // zero after the decimal point
-        for (int n = dot + 2; n < mantissaString.length(); ++n)
+        for (auto n = dot + 2; n < mantissaString.length(); ++n)
         {
             // If this character is '0', increase our counter
             // If anything else, reset the counter
@@ -177,7 +149,7 @@ CharString DoubleExp::asString(const int exponentThreshold, const int maxDecimal
             // Increase the number of decimal places
             ++nDecimals;
         }
-        mantissaString.eraseEnd(nZeroesAtEnd);
+        mantissaString.erase(mantissaString.length() - nZeroesAtEnd);
     }
 
     /*
@@ -187,5 +159,5 @@ CharString DoubleExp::asString(const int exponentThreshold, const int maxDecimal
     if ((!scientificNotation) || (exponent_ == 0))
         return mantissaString;
     else
-        return CharString("%sE%i", mantissaString.get(), exponent_);
+        return fmt::format("{}E{}", mantissaString, exponent_);
 }

@@ -26,9 +26,9 @@
 #include "main/dissolve.h"
 #include <QMessageBox>
 
-LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title,
+LayerTab::LayerTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
                    ModuleLayer *layer)
-    : ListItem<LayerTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Layer: %s", title), this)
+    : ListItem<LayerTab>(), MainTab(dissolveWindow, dissolve, parent, QString("Layer: %1").arg(title), this)
 {
     ui_.setupUi(this);
 
@@ -58,7 +58,7 @@ QString LayerTab::getNewTitle(bool &ok)
 {
     // Get a new, valid name for the layer
     GetModuleLayerNameDialog nameDialog(this, dissolve_.processingLayers());
-    ok = nameDialog.get(moduleLayer_, moduleLayer_->name());
+    ok = nameDialog.get(moduleLayer_, QString::fromStdString(std::string(moduleLayer_->name())));
 
     if (ok)
     {
@@ -79,7 +79,8 @@ bool LayerTab::canClose() const
 {
     // Check that we really want to delete this tab
     QMessageBox queryBox;
-    queryBox.setText(QString("Really delete the layer '%1'?\nThis cannot be undone!").arg(moduleLayer_->name()));
+    queryBox.setText(QString("Really delete the layer '%1'?\nThis cannot be undone!")
+                         .arg(QString::fromStdString(std::string(moduleLayer_->name()))));
     queryBox.setInformativeText("Proceed?");
     queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     queryBox.setDefaultButton(QMessageBox::No);
@@ -91,7 +92,7 @@ bool LayerTab::canClose() const
     // Before closing, we must close any tabs that are displaying our associated Modules
     ListIterator<Module> moduleIterator(moduleLayer_->modules());
     while (Module *module = moduleIterator.iterate())
-        dissolveWindow_->removeModuleTab(module->uniqueName());
+        dissolveWindow_->removeModuleTab(QString::fromStdString(std::string(module->uniqueName())));
 
     return true;
 }

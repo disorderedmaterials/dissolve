@@ -60,7 +60,7 @@ bool LinkToKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 }
 
 // Write keyword data to specified LineParser
-bool LinkToKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool LinkToKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     Messenger::warn("Don't call LinkToKeyword::write() - go through base().\n");
     return data_->write(parser, data_->name(), prefix);

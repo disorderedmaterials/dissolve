@@ -19,7 +19,6 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/charstring.h"
 #include "gui/charts/chart.hui"
 #include "gui/widgets/mimestrings.h"
 #include <QApplication>

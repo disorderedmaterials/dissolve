@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "data3d.h"
 #include "expression/expression.h"
 #include "templates/array.h"
@@ -49,8 +48,6 @@ class Transformer
     bool enabled_;
     // Transform equation
     Expression equation_;
-    // Text used to generate last equation_
-    CharString text_;
     // Whether current equation is valid
     bool valid_;
     // X variable in equation
@@ -68,9 +65,9 @@ class Transformer
     // Return whether transform is enabled
     bool enabled() const;
     // Set equation, returning if it was successfully generated
-    bool setEquation(const char *equation);
-    // Return text used to generate last equation_
-    const char *text() const;
+    bool setEquation(std::string_view equation);
+    // Return text used to generate last equation
+    std::string_view text() const;
     // Return whether current equation is valid
     bool valid() const;
 

@@ -159,7 +159,6 @@ void ModuleListChart::updateContentBlocks()
             // Widget already exists, so remove the reference from nodeWidgets_ and add it to the new list
             newWidgets.append(block);
             moduleBlockWidgets_.remove(block);
-            Messenger::printVerbose("Using existing ModuleBlock %p for Module %p (%s).\n", block, module, module->uniqueName());
         }
         else
         {
@@ -169,7 +168,6 @@ void ModuleListChart::updateContentBlocks()
             connect(block, SIGNAL(remove(const QString &)), this, SLOT(blockRemovalRequested(const QString &)));
             newWidgets.append(block);
             chartBlocks_.append(block);
-            Messenger::printVerbose("Creating new ModuleBlock %p for Module %p (%s).\n", block, module, module->uniqueName());
         }
     }
 
@@ -299,7 +297,7 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
     else if (strings->hasData(MimeString::ModuleType))
     {
         // Create a new instance of the specified module type
-        Module *newModule = dissolve_.createModuleInstance(qPrintable(strings->data(MimeString::ModuleType)));
+        Module *newModule = dissolve_.createModuleInstance(strings->data(MimeString::ModuleType));
 
         // Cast the blocks either side of the current hotspot up to ModuleBlocks, and get their Modules
         auto *moduleBlockBefore = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockBefore());
@@ -352,7 +350,7 @@ void ModuleListChart::blockDoubleClicked(ChartBlock *block)
         return;
 
     // Emit the relevant signal
-    emit(ChartBase::blockDoubleClicked(moduleBlock->module()->uniqueName()));
+    emit(ChartBase::blockDoubleClicked(QString::fromStdString(std::string(moduleBlock->module()->uniqueName()))));
 }
 
 // The chart has requested removal of one of its blocks
@@ -365,7 +363,7 @@ void ModuleListChart::blockRemovalRequested(const QString &blockIdentifier)
     Module *module = moduleList_->find(qPrintable(blockIdentifier));
     if (!module)
     {
-        Messenger::error("Can't find module to remove (%s) in our target list!\n", qPrintable(blockIdentifier));
+        Messenger::error("Can't find module to remove ({}) in our target list!\n", qPrintable(blockIdentifier));
         return;
     }
 
@@ -413,7 +411,7 @@ void ModuleListChart::blockSelectionChanged(ChartBlock *block)
         return;
 
     // Emit the relevant signal
-    emit(ChartBase::blockSelectionChanged(moduleBlock->module()->uniqueName()));
+    emit(ChartBase::blockSelectionChanged(QString::fromStdString(std::string(moduleBlock->module()->uniqueName()))));
 }
 
 /*

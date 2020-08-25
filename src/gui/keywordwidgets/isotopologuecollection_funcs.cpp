@@ -57,7 +57,7 @@ IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<IsotopologueCollectionKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into IsotopologueCollectionKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into IsotopologueCollectionKeyword.\n", keyword->name());
     else
     {
         // Set current information
@@ -102,7 +102,7 @@ std::vector<std::string> IsotopologueCollectionKeywordWidget::availableIsotopolo
     std::vector<std::string> validNames = {"Natural"};
     ListIterator<Isotopologue> topeIterator(isotopologues.species()->isotopologues());
     while (Isotopologue *tope = topeIterator.iterate())
-        validNames.push_back(tope->name());
+        validNames.push_back(std::string(tope->name()));
 
     return validNames;
 }
@@ -404,7 +404,7 @@ void IsotopologueCollectionKeywordWidget::isotopologueTree_itemChanged(QTreeWidg
         emit(keywordValueChanged(keyword_->optionMask()));
     }
     else
-        Messenger::error("Don't know what to do with data from column %i of Isotopologue table.\n", column);
+        Messenger::error("Don't know what to do with data from column {} of Isotopologue table.\n", column);
 }
 
 void IsotopologueCollectionKeywordWidget::isotopologueTree_currentItemChanged(QTreeWidgetItem *currentItem,
@@ -425,7 +425,7 @@ void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeRootItem(QTreeWi
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 
     // Set item data
-    item->setText(0, topeSet.configuration()->name());
+    item->setText(0, QString::fromStdString(std::string(topeSet.configuration()->name())));
 
     // Update child (Isotopologues) items
     isotopologuesItemManager_.updateChildren(item, topeSet.isotopologues(),
@@ -440,7 +440,7 @@ void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeChildItem(QTreeW
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 
     // Set item data
-    item->setText(1, topes.species()->name());
+    item->setText(1, QString::fromStdString(std::string(topes.species()->name())));
 
     // Update child (IsotopologueWeight) items
     isotopologueWeightItemManager_.updateChildren(item, topes.mix(),
@@ -454,7 +454,7 @@ void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeSubChildItem(QTr
     if (itemIsNew)
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 
-    item->setText(2, isoWeight.isotopologue()->name());
+    item->setText(2, QString::fromStdString(std::string(isoWeight.isotopologue()->name())));
     item->setText(3, QString::number(isoWeight.weight()));
 }
 

@@ -52,7 +52,7 @@ void BaseViewer::initializeGL()
     if ((!hasOpenGLFeature(QOpenGLFunctions::Buffers)) &&
         (PrimitiveInstance::globalInstanceType() == PrimitiveInstance::VBOInstance))
     {
-        printf("VBO extension is requested but not available, so reverting to display lists instead.\n");
+        Messenger::warn("VBO extension is requested but not available, so reverting to display lists instead.\n");
         PrimitiveInstance::setGlobalInstanceType(PrimitiveInstance::ListInstance);
     }
 
@@ -123,9 +123,6 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
     // Set-up the GL viewport
     glViewport(view_.viewportMatrix()[0] + xOffset, view_.viewportMatrix()[1] + yOffset, view_.viewportMatrix()[2],
                view_.viewportMatrix()[3]);
-    // 		printf("Viewport for pane '%s' is %i %i %i %i (offset = %i %i)\n" , qPrintable(view_.name()),
-    // view_.viewportMatrix()[0], view_.viewportMatrix()[1], view_.viewportMatrix()[2], view_.viewportMatrix()[3], xOffset,
-    // yOffset);
 
     // Apply our View's projection matrix
     glMatrixMode(GL_PROJECTION);
@@ -164,10 +161,10 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
                 {
                     view_.axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse,
                                                                 view_.textZScale());
-                    updateQuery(BaseViewer::AxisTickLabelObject, DissolveSys::itoa(axis), CharString("%c", 88 + axis));
+                    updateQuery(BaseViewer::AxisTickLabelObject, fmt::format("{}", axis), fmt::format("{}", char(88 + axis)));
                     view_.axes().titlePrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse,
                                                                 view_.textZScale());
-                    updateQuery(BaseViewer::AxisTitleLabelObject, DissolveSys::itoa(axis), CharString("%c", 88 + axis));
+                    updateQuery(BaseViewer::AxisTitleLabelObject, fmt::format("{}", axis), fmt::format("{}", char(88 + axis)));
                 }
         }
 
@@ -180,14 +177,14 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
             {
                 view_.axes().gridLineMinorStyle(axis).sendToGL(pixelScaling_);
                 view_.axes().gridLineMinorPrimitive(axis).sendToGL();
-                updateQuery(BaseViewer::GridLineMinorObject, DissolveSys::itoa(axis), CharString("%c", 88 + axis));
+                updateQuery(BaseViewer::GridLineMinorObject, fmt::format("{}", axis), fmt::format("{}", char(88 + axis)));
             }
         for (int axis = 0; axis < 3; ++axis)
             if (view_.axes().visible(axis) && (axis != skipAxis))
             {
                 view_.axes().gridLineMajorStyle(axis).sendToGL(pixelScaling_);
                 view_.axes().gridLineMajorPrimitive(axis).sendToGL();
-                updateQuery(BaseViewer::GridLineMajorObject, DissolveSys::itoa(axis), CharString("%c", 88 + axis));
+                updateQuery(BaseViewer::GridLineMajorObject, fmt::format("{}", axis), fmt::format("{}", char(88 + axis)));
             }
 
         // -- Reset line style, ensure polygons are now filled, and render the axis lines
@@ -196,7 +193,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
             if (view_.axes().visible(axis) && (axis != skipAxis))
             {
                 view_.axes().axisPrimitive(axis).sendToGL();
-                updateQuery(BaseViewer::AxisLineObject, DissolveSys::itoa(axis), CharString("%c", 88 + axis));
+                updateQuery(BaseViewer::AxisLineObject, fmt::format("{}", axis), fmt::format("{}", char(88 + axis)));
             }
         glEnable(GL_LIGHTING);
         glDisable(GL_LINE_SMOOTH);
@@ -336,12 +333,6 @@ GLsizei BaseViewer::contextHeight() const { return contextHeight_; }
 
 // Return the current width of the drawing area
 GLsizei BaseViewer::contextWidth() const { return contextWidth_; }
-
-// Set up font instance with supplied font
-bool BaseViewer::setUpFont(const char *fontFileName) { return fontInstance_.setUp(fontFileName); }
-
-// Return font instance
-FontInstance &BaseViewer::fontInstance() { return fontInstance_; }
 
 // Check for GL error
 void BaseViewer::checkGlError()
@@ -518,7 +509,7 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
 
             // Generate this tile
             if (!offscreenBuffer_->bind())
-                printf("Failed to bind framebuffer object.\n");
+                Messenger::error("Failed to bind framebuffer object.\n");
             setupGL();
             renderGL(-x * tileWidth, -y * tileHeight);
             QImage fboImage(offscreenBuffer_->toImage());

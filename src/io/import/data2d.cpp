@@ -28,7 +28,7 @@ Data2DImportFileFormat::Data2DImportFileFormat(Data2DImportFileFormat::Data2DImp
 {
     setUpKeywords();
 }
-Data2DImportFileFormat::Data2DImportFileFormat(const char *filename, Data2DImportFileFormat::Data2DImportFormat format)
+Data2DImportFileFormat::Data2DImportFileFormat(std::string_view filename, Data2DImportFileFormat::Data2DImportFormat format)
     : FileAndFormat(filename, format)
 {
     setUpKeywords();
@@ -54,7 +54,7 @@ void Data2DImportFileFormat::setUpKeywords()
  */
 
 // Return enum options for Data2DImportFormat
-EnumOptions<Data2DImportFileFormat::Data2DImportFormat> Data2DImportFileFormat::data2DImportFormats()
+EnumOptions<Data2DImportFileFormat::Data2DImportFormat> &Data2DImportFileFormat::data2DImportFormats()
 {
     static EnumOptionsList Data2DImportFormats =
         EnumOptionsList() << EnumOption(Data2DImportFileFormat::CartesianData2D, "cartesian", "Cartesian X,Y,f(X,Y) data");
@@ -68,10 +68,13 @@ EnumOptions<Data2DImportFileFormat::Data2DImportFormat> Data2DImportFileFormat::
 int Data2DImportFileFormat::nFormats() const { return Data2DImportFileFormat::nData2DImportFormats; }
 
 // Return format keyword for supplied index
-const char *Data2DImportFileFormat::formatKeyword(int id) const { return data2DImportFormats().keywordByIndex(id); }
+std::string_view Data2DImportFileFormat::formatKeyword(int id) const { return data2DImportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-const char *Data2DImportFileFormat::formatDescription(int id) const { return data2DImportFormats().descriptionByIndex(id); }
+std::string_view Data2DImportFileFormat::formatDescription(int id) const
+{
+    return data2DImportFormats().descriptionByIndex(id);
+}
 
 // Return current format as Data2DImportFormat
 Data2DImportFileFormat::Data2DImportFormat Data2DImportFileFormat::data2DFormat() const
@@ -89,7 +92,7 @@ bool Data2DImportFileFormat::importData(Data2D &data, ProcessPool *procPool)
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
-        return Messenger::error("Couldn't open file '%s' for loading Data2D data.\n", filename_.get());
+        return Messenger::error("Couldn't open file '{}' for loading Data2D data.\n", filename_);
 
     // Import the data
     auto result = importData(parser, data);
@@ -110,7 +113,7 @@ bool Data2DImportFileFormat::importData(LineParser &parser, Data2D &data)
             result = importCartesian(parser, data);
             break;
         default:
-            Messenger::error("Don't know how to load Data2D of format '%s'.\n", formatKeyword(data2DFormat()));
+            Messenger::error("Don't know how to load Data2D of format '{}'.\n", formatKeyword(data2DFormat()));
     }
 
     return result;

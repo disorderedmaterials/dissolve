@@ -61,9 +61,9 @@ class NETARootNode : public NETANode
     // Return enum options for NETARootModifiers
     static EnumOptions<NETARootNode::NETARootModifier> modifiers();
     // Return whether the specified modifier is valid for this node
-    bool isValidModifier(const char *s) const;
+    bool isValidModifier(std::string_view s) const;
     // Set value and comparator for specified modifier
-    bool setModifier(const char *modifier, ComparisonOperator op, int value);
+    bool setModifier(std::string_view modifier, ComparisonOperator op, int value);
 
     /*
      * Scoring

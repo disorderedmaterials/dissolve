@@ -168,7 +168,7 @@ void DissolveWindow::addOutputHandler()
  */
 
 // Open specified input file from the CLI
-bool DissolveWindow::openLocalFile(const char *inputFile, const char *restartFile, bool ignoreRestartFile,
+bool DissolveWindow::openLocalFile(std::string_view inputFile, std::string_view restartFile, bool ignoreRestartFile,
                                    bool ignoreLayoutFile)
 {
     // Clear any existing tabs etc.
@@ -178,7 +178,7 @@ bool DissolveWindow::openLocalFile(const char *inputFile, const char *restartFil
     dissolve_.clear();
 
     // Set the current dir to the location of the new file
-    QFileInfo inputFileInfo(inputFile);
+    QFileInfo inputFileInfo(QString::fromStdString(std::string(inputFile)));
 
     // Load the input file
     Messenger::banner("Parse Input File");
@@ -198,23 +198,23 @@ bool DissolveWindow::openLocalFile(const char *inputFile, const char *restartFil
     Messenger::banner("Parse Restart File");
     if (!ignoreRestartFile)
     {
-        CharString actualRestartFile = restartFile;
-        if (actualRestartFile.isEmpty())
-            actualRestartFile.sprintf("%s.restart", dissolve_.inputFilename());
+        std::string actualRestartFile{restartFile};
+        if (actualRestartFile.empty())
+            actualRestartFile = fmt::format("{}.restart", dissolve_.inputFilename());
 
         if (DissolveSys::fileExists(actualRestartFile))
         {
-            Messenger::print("\nRestart file '%s' exists and will be loaded.\n", actualRestartFile.get());
+            Messenger::print("\nRestart file '{}' exists and will be loaded.\n", actualRestartFile);
             if (!dissolve_.loadRestart(actualRestartFile))
                 QMessageBox::warning(this, "Restart file contained errors.",
                                      "The restart file failed to load correctly.\nSee the messages for more details.",
                                      QMessageBox::Ok, QMessageBox::Ok);
 
             // Reset the restart filename to be the standard one
-            dissolve_.setRestartFilename(CharString("%s.restart", dissolve_.inputFilename()));
+            dissolve_.setRestartFilename(fmt::format("{}.restart", dissolve_.inputFilename()));
         }
         else
-            Messenger::print("\nRestart file '%s' does not exist.\n", actualRestartFile.get());
+            Messenger::print("\nRestart file '{}' does not exist.\n", actualRestartFile);
     }
     else
         Messenger::print("\nRestart file (if it exists) will be ignored.\n");
@@ -226,17 +226,17 @@ bool DissolveWindow::openLocalFile(const char *inputFile, const char *restartFil
     refreshing_ = false;
 
     // Does a window state exist for this input file?
-    stateFilename_.sprintf("%s.state", dissolve_.inputFilename());
+    stateFilename_ = QStringLiteral("%1.state").arg(QString::fromStdString(std::string(dissolve_.inputFilename())));
 
     // Try to load in the window state file
-    if (DissolveSys::fileExists(stateFilename_) && (!ignoreLayoutFile))
+    if (QFile::exists(stateFilename_) && (!ignoreLayoutFile))
         loadState();
 
     localSimulation_ = true;
 
     // Check the beat file
-    CharString beatFile("%s.beat", dissolve_.inputFilename());
-    if (DissolveSys::fileExists(beatFile))
+    QString beatFile = QStringLiteral("%1.beat").arg(QString::fromStdString(std::string(dissolve_.inputFilename())));
+    if (QFile::exists(beatFile))
     {
         // TODO
         // 		if (
@@ -270,7 +270,7 @@ void DissolveWindow::initialiseSystemTemplates()
         SystemTemplate *sysTemp = systemTemplates_.add();
         if (!sysTemp->read(dir))
         {
-            Messenger::error("Error reading the template info file '%s'.\n", qPrintable(dir.filePath("info.xml")));
+            Messenger::error("Error reading the template info file '{}'.\n", qPrintable(dir.filePath("info.xml")));
             systemTemplates_.remove(sysTemp);
             continue;
         }
@@ -285,9 +285,11 @@ void DissolveWindow::initialiseSystemTemplates()
 void DissolveWindow::updateWindowTitle()
 {
     // Window Title
-    QString title = QString("Dissolve v%1 - %2%3")
-                        .arg(DISSOLVEVERSION, dissolve_.hasInputFilename() ? dissolve_.inputFilename() : "<untitled>",
-                             modified_ ? "(*)" : "");
+    QString title =
+        QString("Dissolve v%1 - %2%3")
+            .arg(DISSOLVEVERSION,
+                 dissolve_.hasInputFilename() ? QString::fromStdString(std::string(dissolve_.inputFilename())) : "<untitled>",
+                 modified_ ? "(*)" : "");
     setWindowTitle(title);
 
     // Update save menu item
@@ -304,7 +306,7 @@ void DissolveWindow::updateControlsFrame()
     ui_.ControlReloadButton->setEnabled(dissolveState_ == DissolveWindow::MonitoringState);
 
     // Set current iteration number
-    ui_.ControlIterationLabel->setText(CharString("%06i", dissolve_.iteration()).get());
+    ui_.ControlIterationLabel->setText(QStringLiteral("%1").arg(dissolve_.iteration(), 6, 10, QLatin1Char('0')));
 
     // Set relevant file locations
     if (localSimulation_)
@@ -312,7 +314,8 @@ void DissolveWindow::updateControlsFrame()
         localSimulationIndicator_->setPixmap(QPixmap(":/general/icons/general_local.svg"));
         restartFileIndicator_->setEnabled(dissolve_.hasRestartFilename());
         restartFileIndicator_->setToolTip(dissolve_.hasRestartFilename()
-                                              ? CharString("Current restart file is '%s'", dissolve_.restartFilename()).get()
+                                              ? QStringLiteral("Current restart file is '%1'")
+                                                    .arg(QString::fromStdString(std::string(dissolve_.restartFilename())))
                                               : "No restart file available");
         heartbeatFileIndicator_->setEnabled(false);
         heartbeatFileIndicator_->setToolTip("Heartbeat file not monitored.");
@@ -366,13 +369,14 @@ void DissolveWindow::updateWhileRunning(int iterationsRemaining)
     refreshing_ = true;
 
     // Set current iteration number
-    ui_.ControlIterationLabel->setText(CharString("%06i", dissolve_.iteration()).get());
+    ui_.ControlIterationLabel->setText(QStringLiteral("%1").arg(dissolve_.iteration(), 6, 10, QLatin1Char('0')));
 
     // Set ETA text if we can
     if (iterationsRemaining == -1)
         etaLabel_->setText("ETA: --:--:--");
     else
-        etaLabel_->setText(QString("ETA: %1").arg(Timer::etaString(iterationsRemaining * dissolve_.iterationTime())));
+        etaLabel_->setText(QStringLiteral("ETA: %1").arg(
+            QString::fromStdString(Timer::etaString(iterationsRemaining * dissolve_.iterationTime()))));
 
     // Enable data access in Renderables, and update all tabs.
     Renderable::setSourceDataAccessEnabled(true);

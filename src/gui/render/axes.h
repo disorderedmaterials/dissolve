@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "base/charstring.h"
+#include "base/enumoptions.h"
 #include "base/version.h"
 #include "gui/render/linestyle.h"
 #include "gui/render/numberformat.h"
@@ -60,10 +60,8 @@ class Axes
         FullAutoScale,
         nAutoScaleMethods
     };
-    // Convert text string to AutoScaleMethod
-    static AutoScaleMethod autoScaleMethod(const char *s);
-    // Convert AutoScaleMethod to text string
-    static const char *autoScaleMethod(AutoScaleMethod scale);
+    // Return enum options for AutoScaleMethod
+    static EnumOptions<Axes::AutoScaleMethod> &autoScaleMethods();
 
     private:
     // Data limits for surface generation
@@ -257,7 +255,7 @@ class Axes
     // Axis label text anchor positions
     TextPrimitive::TextAnchor labelAnchor_[3];
     // Axis titles
-    CharString title_[3];
+    std::string title_[3];
     // Orientation of axis titles (rotations around x, y, and z axes)
     Vec3<double> titleOrientation_[3];
     // Title distances from axes
@@ -289,9 +287,9 @@ class Axes
     // Return axis label text anchor position for specified axis
     TextPrimitive::TextAnchor labelAnchor(int axis) const;
     // Set title for specified axis
-    void setTitle(int axis, const char *title);
+    void setTitle(int axis, std::string_view title);
     // Return title for specified axis
-    const char *title(int axis) const;
+    std::string_view title(int axis) const;
     // Set orientation of titles for specified axis
     void setTitleOrientationNEW(int axis, int component, double value);
     // Return orientation of titles for specified axis

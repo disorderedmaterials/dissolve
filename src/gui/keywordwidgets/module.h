@@ -64,7 +64,7 @@ class ModuleKeywordWidget : public QWidget, public KeywordWidgetBase
      */
     private:
     // Return text (for ComboBox item) for supplied Module
-    const char *uniqueNameOfModule(const Module *module);
+    QString uniqueNameOfModule(const Module *module);
 
     public:
     // Update value displayed in widget

@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "keywords/list.h"
 #include "templates/list.h"
 
@@ -34,10 +33,9 @@ class FileAndFormat
 {
     public:
     FileAndFormat(int format = 0);
-    FileAndFormat(const char *filename = NULL, int format = 0);
-    virtual ~FileAndFormat();
-    // Conversion to const char*
-    operator const char *() const;
+    FileAndFormat(std::string_view filename = "", int format = 0);
+    virtual ~FileAndFormat() = default;
+    operator std::string_view() const;
 
     /*
      * Available Formats
@@ -50,19 +48,19 @@ class FileAndFormat
     // Return number of available formats
     virtual int nFormats() const = 0;
     // Return format keyword for supplied index
-    virtual const char *formatKeyword(int id) const = 0;
+    virtual std::string_view formatKeyword(int id) const = 0;
     // Return description string for supplied index
-    virtual const char *formatDescription(int id) const = 0;
+    virtual std::string_view formatDescription(int id) const = 0;
     // Convert text string to format index
-    int format(const char *s) const;
+    int format(std::string_view fmtString) const;
     // Set format index
     void setFormatIndex(int id);
     // Return format index
     int formatIndex() const;
     // Return format string
-    const char *format() const;
+    std::string_view format() const;
     // Return description string
-    const char *description() const;
+    std::string_view description() const;
     // Print available formats
     void printAvailableFormats() const;
 
@@ -71,7 +69,7 @@ class FileAndFormat
      */
     protected:
     // Associated filename / basename
-    CharString filename_;
+    std::string filename_;
 
     public:
     // Return whether the file must exist
@@ -79,9 +77,9 @@ class FileAndFormat
     // Return whether the file actually exists
     bool fileExists() const;
     // Set filename / basename
-    void setFilename(const char *filename);
+    void setFilename(std::string_view filename);
     // Return filename / basename
-    const char *filename() const;
+    std::string_view filename() const;
 
     /*
      * Check
@@ -108,9 +106,9 @@ class FileAndFormat
      */
     public:
     // Read format / filename from specified parser
-    bool read(LineParser &parser, int startArg, const char *endKeyword, CoreData &coreData);
+    bool read(LineParser &parser, int startArg, std::string_view endKeyword, CoreData &coreData);
     // Write format / filename to specified parser
-    bool writeFilenameAndFormat(LineParser &parser, const char *prefix);
+    bool writeFilenameAndFormat(LineParser &parser, std::string_view prefix);
     // Write options and end block
-    bool writeBlock(LineParser &parser, const char *prefix);
+    bool writeBlock(LineParser &parser, std::string_view prefix);
 };

@@ -28,7 +28,7 @@ BoolKeywordWidget::BoolKeywordWidget(QWidget *parent, KeywordBase *keyword, cons
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<BoolKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into BoolKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into BoolKeyword.\n", keyword->name());
     else
     {
         // Set current value

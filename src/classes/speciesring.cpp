@@ -46,10 +46,11 @@ int SpeciesRing::size() const { return atoms_.size(); }
 // Print ring information
 void SpeciesRing::print() const
 {
-    printf("Ring(%lu) :", atoms_.size());
+    Messenger::print("Ring({}) :", atoms_.size());
+    std::string atomString;
     for (const auto *atom : atoms_)
-        printf(" %2i(%s)", atom->userIndex(), atom->element()->symbol());
-    printf("\n");
+        atomString += fmt::format(" {}({})", atom->userIndex(), atom->element()->symbol());
+    Messenger::print(atomString);
 }
 
 /*

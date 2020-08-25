@@ -32,7 +32,8 @@ Data2DStore::~Data2DStore() {}
  */
 
 // Add named data reference to store, reading file and format from specified parser / starting argument
-bool Data2DStore::addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword, CoreData &coreData)
+bool Data2DStore::addData(std::string_view dataName, LineParser &parser, int startArg, std::string_view endKeyword,
+                          CoreData &coreData)
 {
     // Create new data
     Data2D *data = data_.add();
@@ -50,7 +51,7 @@ bool Data2DStore::addData(const char *dataName, LineParser &parser, int startArg
 }
 
 // Check to see if the named data is present in the store
-bool Data2DStore::containsData(const char *name) const
+bool Data2DStore::containsData(std::string_view name) const
 {
     ListIterator<Data2D> dataIterator(data_);
     while (Data2D *data = dataIterator.iterate())
@@ -61,7 +62,7 @@ bool Data2DStore::containsData(const char *name) const
 }
 
 // Return named data
-const Data2D &Data2DStore::data(const char *name) const
+const Data2D &Data2DStore::data(std::string_view name) const
 {
     ListIterator<Data2D> dataIterator(data_);
     while (Data2D *xyData = dataIterator.iterate())
@@ -69,7 +70,7 @@ const Data2D &Data2DStore::data(const char *name) const
             return (*xyData);
 
     static Data2D dummy;
-    Messenger::warn("Data named '%s' was requested from Data2DStore, but it does not exist. Returning an empty Data2D...\n",
+    Messenger::warn("Data named '{}' was requested from Data2DStore, but it does not exist. Returning an empty Data2D...\n",
                     name);
     return dummy;
 }

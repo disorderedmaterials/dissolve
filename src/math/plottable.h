@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "math/sampleddouble.h"
 #include "templates/array.h"
 
@@ -50,13 +49,13 @@ class PlottableData
 
     protected:
     // Name of plottable
-    CharString name_;
+    std::string name_;
 
     public:
     // Set name of plottable
-    void setName(const char *name);
+    void setName(std::string_view name);
     // Return name of plottable
-    const char *name() const;
+    std::string_view name() const;
 
     /*
      * Axis Information

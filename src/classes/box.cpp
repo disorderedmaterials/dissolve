@@ -58,9 +58,6 @@ void Box::operator=(const Box &source)
  * Basic Definition
  */
 
-// Box Type Keywords
-const char *BoxTypeKeywords[] = {"NonPeriodic", "Cubic", "Orthorhombic", "Monoclinic", "Triclinic"};
-
 // Return enum options for BoxType
 EnumOptions<Box::BoxType> Box::boxTypes()
 {
@@ -115,7 +112,7 @@ double Box::axisLength(int n) const
 #ifdef CHECKS
     if ((n < 0) || (n > 2))
     {
-        Messenger::print("OUT_OF_RANGE - Requested length for a bad axis (%i) in Box::axisLength().\n", n);
+        Messenger::print("OUT_OF_RANGE - Requested length for a bad axis ({}) in Box::axisLength().\n", n);
         return 0.0;
     }
 #endif
@@ -131,7 +128,7 @@ double Box::axisAngle(int n) const
 #ifdef CHECKS
     if ((n < 0) || (n > 2))
     {
-        Messenger::print("OUT_OF_RANGE - Requested angle for a bad axis (%i) in Box::axisAngle().\n", n);
+        Messenger::print("OUT_OF_RANGE - Requested angle for a bad axis ({}) in Box::axisAngle().\n", n);
         return 0.0;
     }
 #endif
@@ -272,7 +269,7 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
 
     // Divide points over processes
     const auto nPointsPerProcess = nPoints / procPool.nProcesses();
-    Messenger::print("Number of insertion points per process is %i, total is %i\n", nPointsPerProcess,
+    Messenger::print("Number of insertion points per process is {}, total is {}\n", nPointsPerProcess,
                      nPointsPerProcess * procPool.nProcesses());
 
     // Pre-waste random numbers so that the random number generators in all processes line up

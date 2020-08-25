@@ -30,7 +30,7 @@
 template <class Species> RefDataList<Species, int> ObjectStore<Species>::objects_;
 template <class Species> int ObjectStore<Species>::objectCount_ = 0;
 template <class Species> int ObjectStore<Species>::objectType_ = ObjectInfo::SpeciesObject;
-template <class Species> const char *ObjectStore<Species>::objectTypeName_ = "Species";
+template <class Species> std::string_view ObjectStore<Species>::objectTypeName_ = "Species";
 
 Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
 {
@@ -63,10 +63,10 @@ void Species::clear()
  */
 
 // Set name of the Species
-void Species::setName(const char *name) { name_ = name; }
+void Species::setName(std::string_view name) { name_ = name; }
 
 // Return the name of the Species
-const char *Species::name() const { return name_.get(); }
+std::string_view Species::name() const { return name_; }
 
 // Check set-up of Species
 bool Species::checkSetUp()
@@ -87,7 +87,7 @@ bool Species::checkSetUp()
     {
         if (i->atomType() == NULL)
         {
-            Messenger::error("Atom %i (%s) has no associated AtomType.\n", i->userIndex(), i->element()->symbol());
+            Messenger::error("Atom {} ({}) has no associated AtomType.\n", i->userIndex(), i->element()->symbol());
             ++nErrors;
         }
     }
@@ -101,7 +101,7 @@ bool Species::checkSetUp()
     {
         if ((i->nBonds() == 0) && (atoms_.nItems() > 1))
         {
-            Messenger::error("SpeciesAtom %i (%s) participates in no Bonds, but is part of a multi-atom Species.\n",
+            Messenger::error("SpeciesAtom {} ({}) participates in no Bonds, but is part of a multi-atom Species.\n",
                              i->userIndex(), i->element()->symbol());
             ++nErrors;
         }
@@ -112,7 +112,7 @@ bool Species::checkSetUp()
             SpeciesAtom *partner = bond->partner(i);
             if (!partner->hasBond(i))
             {
-                Messenger::error("SpeciesAtom %i references a Bond to SpeciesAtom %i, but SpeciesAtom %i does not.\n",
+                Messenger::error("SpeciesAtom {} references a Bond to SpeciesAtom {}, but SpeciesAtom {} does not.\n",
                                  i->userIndex(), partner->userIndex(), partner->userIndex());
                 ++nErrors;
             }
@@ -130,13 +130,13 @@ bool Species::checkSetUp()
         {
             if (!isotope)
             {
-                Messenger::error("Isotopologue '%s' does not refer to an elemental Isotope for AtomType '%s'.\n", iso->name(),
+                Messenger::error("Isotopologue '{}' does not refer to an elemental Isotope for AtomType '{}'.\n", iso->name(),
                                  atomType->name());
                 ++nErrors;
             }
             else if (!Isotopes::isotope(atomType->element(), isotope->A()))
             {
-                Messenger::error("Isotopologue '%s' does not refer to a suitable Isotope for AtomType '%s'.\n", iso->name(),
+                Messenger::error("Isotopologue '{}' does not refer to a suitable Isotope for AtomType '{}'.\n", iso->name(),
                                  atomType->name());
                 ++nErrors;
             }
@@ -155,9 +155,9 @@ void Species::print()
     for (int n = 0; n < nAtoms(); ++n)
     {
         SpeciesAtom *i = atoms_[n];
-        Messenger::print("    %4i  %3s  %4s (%2i)  %12.4e  %12.4e  %12.4e  %12.4e\n", n + 1, i->element()->symbol(),
-                         (i->atomType() ? i->atomType()->name() : "??"), (i->atomType() ? i->atomType()->index() : -1),
-                         i->r().x, i->r().y, i->r().z, i->charge());
+        Messenger::print("    {:4d}  {:3}  {:4} ({:2d})  {:12.4e}  {:12.4e}  {:12.4e}  {:12.4e}\n", n + 1,
+                         i->element()->symbol(), (i->atomType() ? i->atomType()->name() : "??"),
+                         (i->atomType() ? i->atomType()->index() : -1), i->r().x, i->r().y, i->r().z, i->charge());
     }
 
     if (nBonds() > 0)
@@ -167,11 +167,12 @@ void Species::print()
         Messenger::print("    ---------------------------------------------------------------------------------\n");
         for (const auto &bond : bonds_)
         {
-            CharString s("   %4i  %4i    %c%-12s", bond.indexI() + 1, bond.indexJ() + 1, bond.masterParameters() ? '@' : ' ',
-                         SpeciesBond::bondFunctions().keywordFromInt(bond.form()));
+            std::string line =
+                fmt::format("   {:4d}  {:4d}    {}{:<12}", bond.indexI() + 1, bond.indexJ() + 1,
+                            bond.masterParameters() ? '@' : ' ', SpeciesBond::bondFunctions().keywordFromInt(bond.form()));
             for (const auto param : bond.parameters())
-                s.strcatf("  %12.4e", param);
-            Messenger::print("%s\n", s.get());
+                line += fmt::format("  {:12.4e}", param);
+            Messenger::print(line);
         }
     }
 
@@ -182,11 +183,12 @@ void Species::print()
         Messenger::print("    ---------------------------------------------------------------------------------------\n");
         for (const auto &angle : angles_)
         {
-            CharString s("   %4i  %4i  %4i    %c%-12s", angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
-                         angle.masterParameters() ? '@' : ' ', SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
+            std::string line =
+                fmt::format("   {:4d}  {:4d}  {:4d}    {}{:<12}", angle.indexI() + 1, angle.indexJ() + 1, angle.indexK() + 1,
+                            angle.masterParameters() ? '@' : ' ', SpeciesAngle::angleFunctions().keywordFromInt(angle.form()));
             for (const auto param : angle.parameters())
-                s.strcatf("  %12.4e", param);
-            Messenger::print("%s\n", s.get());
+                line += fmt::format("  {:12.4e}", param);
+            Messenger::print(line);
         }
     }
 
@@ -198,12 +200,13 @@ void Species::print()
         // Loop over Torsions
         for (const auto &torsion : torsions())
         {
-            CharString s("   %4i  %4i  %4i  %4i    %c%-12s", torsion.indexI() + 1, torsion.indexJ() + 1, torsion.indexK() + 1,
-                         torsion.indexL() + 1, torsion.masterParameters() ? '@' : ' ',
-                         SpeciesTorsion::torsionFunctions().keywordFromInt(torsion.form()));
+            std::string line =
+                fmt::format("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}", torsion.indexI() + 1, torsion.indexJ() + 1,
+                            torsion.indexK() + 1, torsion.indexL() + 1, torsion.masterParameters() ? '@' : ' ',
+                            SpeciesTorsion::torsionFunctions().keywordFromInt(torsion.form()));
             for (const auto param : torsion.parameters())
-                s.strcatf("  %12.4e", param);
-            Messenger::print("%s\n", s.get());
+                line += fmt::format("  {:12.4e}", param);
+            Messenger::print(line);
         }
     }
 
@@ -215,12 +218,13 @@ void Species::print()
         // Loop over Impropers
         for (auto &improper : impropers())
         {
-            CharString s("   %4i  %4i  %4i  %4i    %c%-12s", improper.indexI() + 1, improper.indexJ() + 1,
-                         improper.indexK() + 1, improper.indexL() + 1, improper.masterParameters() ? '@' : ' ',
-                         SpeciesImproper::improperFunctions().keywordFromInt(improper.form()));
+            std::string line =
+                fmt::format("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}", improper.indexI() + 1, improper.indexJ() + 1,
+                            improper.indexK() + 1, improper.indexL() + 1, improper.masterParameters() ? '@' : ' ',
+                            SpeciesImproper::improperFunctions().keywordFromInt(improper.form()));
             for (const auto param : improper.parameters())
-                s.strcatf("  %12.4e", param);
-            Messenger::print("%s\n", s.get());
+                line += fmt::format("  {:12.4e}", param);
+            Messenger::print(line);
         }
     }
 }

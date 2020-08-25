@@ -139,9 +139,9 @@ bool GeometryOptimisationModule::optimiseSpecies(Dissolve &dissolve, ProcessPool
     initialStepSize_ = keywords_.asDouble("StepSize");
 
     // Print argument/parameter summary
-    Messenger::print("Optimise: Maximum number of cycles is %i.\n", nCycles_);
-    Messenger::print("Optimise: Base convergence tolerance is %e.\n", tolerance_);
-    Messenger::print("Optimise: Initial step size to be used is %e.\n", initialStepSize_);
+    Messenger::print("Optimise: Maximum number of cycles is {}.\n", nCycles_);
+    Messenger::print("Optimise: Base convergence tolerance is {}.\n", tolerance_);
+    Messenger::print("Optimise: Initial step size to be used is {}.\n", initialStepSize_);
     Messenger::print("\n");
 
     // Initialise working arrays for coordinates and forces

@@ -48,7 +48,7 @@ class GetTabNameDialog : public QDialog
 
     public:
     // Run the dialog
-    bool get(const MainTab *currentTab, const char *currentName);
+    bool get(const MainTab *currentTab, const QString &currentName);
     // Return the name string
     QString newName() const;
 

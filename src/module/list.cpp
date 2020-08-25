@@ -62,7 +62,7 @@ bool ModuleList::own(Module *module, Module *addBeforeThis)
 void ModuleList::cut(Module *module) { modules_.cut(module); }
 
 // Find associated Module by unique name
-Module *ModuleList::find(const char *uniqueName) const
+Module *ModuleList::find(std::string_view uniqueName) const
 {
     ListIterator<Module> moduleIterator(modules_);
     while (Module *module = moduleIterator.iterate())

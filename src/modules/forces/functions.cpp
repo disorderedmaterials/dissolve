@@ -283,13 +283,13 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
     timer.start();
     interAtomicForces(procPool, cfg, potentialMap, fx, fy, fz);
     timer.stop();
-    Messenger::printVerbose("Time to do interatomic forces was %s.\n", timer.totalTimeString());
+    Messenger::printVerbose("Time to do interatomic forces was {}.\n", timer.totalTimeString());
 
     // Calculate intramolecular forces
     timer.start();
     intraMolecularForces(procPool, cfg, potentialMap, fx, fy, fz);
     timer.stop();
-    Messenger::printVerbose("Time to do intramolecular forces was %s.\n", timer.totalTimeString());
+    Messenger::printVerbose("Time to do intramolecular forces was {}.\n", timer.totalTimeString());
 
     // Gather forces together over all processes
     if (!procPool.allSum(fx, cfg->nAtoms()))
@@ -321,13 +321,13 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg, const 
     timer.start();
     interAtomicForces(procPool, cfg, targetIndices, potentialMap, fx, fy, fz);
     timer.stop();
-    Messenger::printVerbose("Time to do partial interatomic forces was %s.\n", timer.totalTimeString());
+    Messenger::printVerbose("Time to do partial interatomic forces was {}.\n", timer.totalTimeString());
 
     // Calculate intramolecular forces
     timer.start();
     intraMolecularForces(procPool, cfg, targetIndices, potentialMap, fx, fy, fz);
     timer.stop();
-    Messenger::printVerbose("Time to do partial intramolecular forces was %s.\n", timer.totalTimeString());
+    Messenger::printVerbose("Time to do partial intramolecular forces was {}.\n", timer.totalTimeString());
 
     // Gather forces together over all processes
     if (!procPool.allSum(fx, cfg->nAtoms()))

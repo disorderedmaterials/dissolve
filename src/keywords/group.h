@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "keywords/base.h"
 #include "templates/listitem.h"
 #include "templates/reflist.h"
@@ -40,13 +39,13 @@ class KeywordGroup : public ListItem<KeywordGroup>
      */
     private:
     // Name of the group
-    CharString name_;
+    std::string name_;
 
     public:
     // Set name of group
-    void setName(const char *name);
+    void setName(std::string_view name);
     // Return name of group
-    const char *name() const;
+    std::string_view name() const;
 
     /*
      * Keyword Group
@@ -63,9 +62,10 @@ class KeywordGroup : public ListItem<KeywordGroup>
 
     public:
     // Add keyword (pass-thru to KeywordList)
-    bool add(KeywordBase *object, const char *keyword, const char *description, int optionMask = KeywordBase::NoOptions);
+    bool add(KeywordBase *object, std::string_view keyword, std::string_view description,
+             int optionMask = KeywordBase::NoOptions);
     // Add keyword (pass-thru to KeywordList)
-    bool add(KeywordBase *object, const char *keyword, const char *description, const char *arguments,
+    bool add(KeywordBase *object, std::string_view keyword, std::string_view description, std::string_view arguments,
              int optionMask = KeywordBase::NoOptions);
     // Return reference list of keywords in group
     RefList<KeywordBase> &keywords();

@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/messenger.h"
 #include "templates/list.h"
 #include "templates/vector3.h"
@@ -158,8 +157,6 @@ template <class A> class Array2D
         half_ = half;
         if ((nrows > 0) && (ncolumns > 0))
             resize(nrows, ncolumns);
-        // 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array2D::initialise()
-        // (r=%i, c=%i)\n", nrows, ncolumns);
     }
     // Add empty row to array
     void addRow(int nCols = -1)
@@ -210,12 +207,12 @@ template <class A> class Array2D
         static A dummy;
         if ((row < 0) || (row >= nRows_))
         {
-            Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::at() (nRows = %i).\n", row, nRows_);
+            Messenger::print("OUT_OF_RANGE - Row number ({}) is out of range in Array2D::at() (nRows = {}).\n", row, nRows_);
             return dummy;
         }
         if ((column < 0) || (column >= nColumns_))
         {
-            Messenger::print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::at() (nColumns = %i).\n", column,
+            Messenger::print("OUT_OF_RANGE - Column number ({}) is out of range in Array2D::at() (nColumns = {}).\n", column,
                              nColumns_);
             return dummy;
         }
@@ -237,13 +234,13 @@ template <class A> class Array2D
         static A dummy;
         if ((row < 0) || (row >= nRows_))
         {
-            Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::constAt() (nRows = %i).\n", row,
+            Messenger::print("OUT_OF_RANGE - Row number ({}) is out of range in Array2D::constAt() (nRows = {}).\n", row,
                              nRows_);
             return dummy;
         }
         if ((column < 0) || (column >= nColumns_))
         {
-            Messenger::print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::constAt() (nColumns = %i).\n",
+            Messenger::print("OUT_OF_RANGE - Column number ({}) is out of range in Array2D::constAt() (nColumns = {}).\n",
                              column, nColumns_);
             return dummy;
         }
@@ -265,13 +262,13 @@ template <class A> class Array2D
         static A dummy;
         if ((row < 0) || (row >= nRows_))
         {
-            Messenger::print("OUT_OF_RANGE - Row number (%i) is out of range in Array2D::pointerAt() (nRows = %i).\n", row,
+            Messenger::print("OUT_OF_RANGE - Row number ({}) is out of range in Array2D::pointerAt() (nRows = {}).\n", row,
                              nRows_);
             return &dummy;
         }
         if ((column < 0) || (column >= nColumns_))
         {
-            Messenger::print("OUT_OF_RANGE - Column number (%i) is out of range in Array2D::pointerAt() (nColumns = %i).\n",
+            Messenger::print("OUT_OF_RANGE - Column number ({}) is out of range in Array2D::pointerAt() (nColumns = {}).\n",
                              column, nColumns_);
             return &dummy;
         }
@@ -307,7 +304,7 @@ template <class A> class Array2D
         static A dummy;
         if ((index < 0) || (index >= linearSize_))
         {
-            Messenger::print("OUT_OF_RANGE - Index (%i) is out of range in Array2D::linearValue() (linearSize = %i).\n", index,
+            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in Array2D::linearValue() (linearSize = {}).\n", index,
                              linearSize_);
             return dummy;
         }
@@ -321,7 +318,7 @@ template <class A> class Array2D
         static A dummy;
         if ((index < 0) || (index >= linearSize_))
         {
-            Messenger::print("OUT_OF_RANGE - Index (%i) is out of range in Array2D::constLinearValue() (linearSize = %i).\n",
+            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in Array2D::constLinearValue() (linearSize = {}).\n",
                              index, linearSize_);
             return dummy;
         }
@@ -363,7 +360,7 @@ template <class A> class Array2D
         // Check array sizes are compatible
         if (nColumns_ != B.nRows_)
         {
-            Messenger::error("Can't add matrices together, as they have incompatible sizes (%ix%i and %ix%i, RxC)\n", nRows_,
+            Messenger::error("Can't add matrices together, as they have incompatible sizes ({}x{} and {}x{}, RxC)\n", nRows_,
                              nColumns_, B.nRows_, B.nColumns_);
             return;
         }
@@ -376,7 +373,7 @@ template <class A> class Array2D
         // Check array sizes are compatible
         if (nColumns_ != B.nRows_)
         {
-            Messenger::error("Can't subtract matrices, as they have incompatible sizes (%ix%i and %ix%i, RxC)\n", nRows_,
+            Messenger::error("Can't subtract matrices, as they have incompatible sizes ({}x{} and {}x{}, RxC)\n", nRows_,
                              nColumns_, B.nRows_, B.nColumns_);
             return;
         }
@@ -389,7 +386,7 @@ template <class A> class Array2D
         // Check array sizes are compatible
         if (nColumns_ != B.nRows_)
         {
-            Messenger::error("Can't multiply matrices together, as they have incompatible sizes (%ix%i and %ix%i, RxC)\n",
+            Messenger::error("Can't multiply matrices together, as they have incompatible sizes ({}x{} and {}x{}, RxC)\n",
                              nRows_, nColumns_, B.nRows_, B.nColumns_);
             return Array2D<A>();
         }
@@ -418,16 +415,16 @@ template <class A> class Array2D
      */
     public:
     // Print matrix
-    void print(const char *title = "Array2D<A>") const
+    void print(std::string_view title = "Array2D<A>") const
     {
-        Messenger::print("'%s' : %i rows x %i columns:\n", title, nRows_, nColumns_);
-        CharString line;
+        Messenger::print("'{}' : {} rows x {} columns:\n", title, nRows_, nColumns_);
+        std::string line;
         for (int row = 0; row < nRows_; ++row)
         {
-            line.sprintf("R%2i :", row);
+            line += fmt::format("R{:2i} :", row);
             for (int column = 0; column < nColumns_; ++column)
-                line.strcatf(" %e", constAt(row, column));
-            Messenger::print("%s\n", line.get());
+                line += fmt::format(" {:e}", constAt(row, column));
+            Messenger::print("{}\n", line);
         }
     }
     // Transpose (in-place) the current array

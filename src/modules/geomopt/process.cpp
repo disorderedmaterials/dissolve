@@ -34,14 +34,14 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPo
     initialStepSize_ = keywords_.asDouble("StepSize");
 
     // Print argument/parameter summary
-    Messenger::print("Optimise: Maximum number of cycles is %i.\n", nCycles_);
-    Messenger::print("Optimise: Base convergence tolerance is %e.\n", tolerance_);
-    Messenger::print("Optimise: Initial step size to be used is %e.\n", initialStepSize_);
+    Messenger::print("Optimise: Maximum number of cycles is {}.\n", nCycles_);
+    Messenger::print("Optimise: Base convergence tolerance is {:e}.\n", tolerance_);
+    Messenger::print("Optimise: Initial step size to be used is {:e}.\n", initialStepSize_);
     Messenger::print("\n");
 
     // Check for zero Configuration targets
     if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
     for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())

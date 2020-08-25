@@ -24,7 +24,7 @@
 #include "base/sysfunc.h"
 #include "math/data2d.h"
 
-Data2DExportFileFormat::Data2DExportFileFormat(const char *filename, Data2DExportFormat format)
+Data2DExportFileFormat::Data2DExportFileFormat(std::string_view filename, Data2DExportFormat format)
     : FileAndFormat(filename, format)
 {
 }
@@ -34,7 +34,7 @@ Data2DExportFileFormat::Data2DExportFileFormat(const char *filename, Data2DExpor
  */
 
 // Return enum options for Data2DExportFormat
-EnumOptions<Data2DExportFileFormat::Data2DExportFormat> Data2DExportFileFormat::data2DExportFormats()
+EnumOptions<Data2DExportFileFormat::Data2DExportFormat> &Data2DExportFileFormat::data2DExportFormats()
 {
     static EnumOptionsList Data2DExportFormats =
         EnumOptionsList() << EnumOption(Data2DExportFileFormat::BlockData2D, "block", "Block Data")
@@ -49,10 +49,13 @@ EnumOptions<Data2DExportFileFormat::Data2DExportFormat> Data2DExportFileFormat::
 int Data2DExportFileFormat::nFormats() const { return Data2DExportFileFormat::nData2DExportFormats; }
 
 // Return format keyword for supplied index
-const char *Data2DExportFileFormat::formatKeyword(int id) const { return data2DExportFormats().keywordByIndex(id); }
+std::string_view Data2DExportFileFormat::formatKeyword(int id) const { return data2DExportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-const char *Data2DExportFileFormat::formatDescription(int id) const { return data2DExportFormats().descriptionByIndex(id); }
+std::string_view Data2DExportFileFormat::formatDescription(int id) const
+{
+    return data2DExportFormats().descriptionByIndex(id);
+}
 
 // Return current format as CoordinateExportFormat
 Data2DExportFileFormat::Data2DExportFormat Data2DExportFileFormat::data2DFormat() const
@@ -68,7 +71,7 @@ Data2DExportFileFormat::Data2DExportFormat Data2DExportFileFormat::data2DFormat(
 bool Data2DExportFileFormat::exportBlock(LineParser &parser, const Data2D &data)
 {
     // Export header comment
-    if (!parser.writeLineF("# %i blocks (nX) of %i points (nY).\n", data.constXAxis().nItems(), data.constYAxis().nItems()))
+    if (!parser.writeLineF("# {} blocks (nX) of {} points (nY).\n", data.constXAxis().nItems(), data.constYAxis().nItems()))
         return false;
 
     // Export datapoints, separating each block of a specific x value with a single blank line
@@ -76,7 +79,7 @@ bool Data2DExportFileFormat::exportBlock(LineParser &parser, const Data2D &data)
     for (int x = 0; x < values.nRows(); ++x)
     {
         for (int y = 0; y < values.nColumns(); ++y)
-            if (!parser.writeLineF("%15.9f\n", values.constAt(x, y)))
+            if (!parser.writeLineF("{:15.9f}\n", values.constAt(x, y)))
                 return false;
         if (!parser.writeLineF("\n"))
             return false;
@@ -95,7 +98,7 @@ bool Data2DExportFileFormat::exportCartesian(LineParser &parser, const Data2D &d
     for (int x = 0; x < values.nRows(); ++x)
     {
         for (int y = 0; y < values.nColumns(); ++y)
-            if (!parser.writeLineF("%15.9f %15.9f %15.9f\n", xAxis.constAt(x), yAxis.constAt(y), values.constAt(x, y)))
+            if (!parser.writeLineF("{:15.9f} {:15.9f} {:15.9f}\n", xAxis.constAt(x), yAxis.constAt(y), values.constAt(x, y)))
                 return false;
         if (!parser.writeLineF("\n"))
             return false;

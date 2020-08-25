@@ -83,7 +83,7 @@ PairPotential *Dissolve::pairPotential(std::shared_ptr<AtomType> at1, std::share
 }
 
 // Return whether specified PairPotential is defined
-PairPotential *Dissolve::pairPotential(const char *at1, const char *at2) const
+PairPotential *Dissolve::pairPotential(std::string_view at1, std::string_view at2) const
 {
     for (auto *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
     {
@@ -133,14 +133,14 @@ bool Dissolve::generatePairPotentials(std::shared_ptr<AtomType> onlyInvolving)
             auto *pot = pairPotential(*at1, *at2);
             if (pot)
             {
-                Messenger::print("Updating existing PairPotential for interaction between '%s' and '%s'...\n", (*at1)->name(),
+                Messenger::print("Updating existing PairPotential for interaction between '{}' and '{}'...\n", (*at1)->name(),
                                  (*at2)->name());
                 if (!pot->setUp(*at1, *at2))
                     return false;
             }
             else
             {
-                Messenger::print("Adding new PairPotential for interaction between '%s' and '%s'...\n", (*at1)->name(),
+                Messenger::print("Adding new PairPotential for interaction between '{}' and '{}'...\n", (*at1)->name(),
                                  (*at2)->name());
                 pot = addPairPotential(*at1, *at2);
             }
@@ -152,7 +152,7 @@ bool Dissolve::generatePairPotentials(std::shared_ptr<AtomType> onlyInvolving)
                 return false;
 
             // Retrieve additional potential from the processing module data, if present
-            CharString itemName("Potential_%s-%s_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
+            std::string itemName = fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
             if (!processingModuleData_.contains(itemName, "Dissolve"))
                 continue;
             pot->setUAdditional(GenericListHelper<Data1D>::retrieve(processingModuleData_, itemName, "Dissolve", Data1D()));

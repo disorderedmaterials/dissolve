@@ -82,7 +82,7 @@ void SpeciesAtom::setAtomType(std::shared_ptr<AtomType> at)
     // Check elements
     if (at && (at->element() != element_))
     {
-        Messenger::warn("Refused to assign AtomType '%s' to an atom of element %s, since the element of the AtomType is %s.\n",
+        Messenger::warn("Refused to assign AtomType '{}' to an atom of element {}, since the element of the AtomType is {}.\n",
                         at->name(), element_->symbol(), at->element()->symbol());
         return;
     }

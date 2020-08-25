@@ -82,7 +82,7 @@ void Species::setAtomCoordinates(int id, double x, double y, double z)
 #ifdef CHECKS
     if ((id < 0) || (id >= atoms_.nItems()))
     {
-        Messenger::error("Atom index %i is out of range - nAtoms = %i\n", id, atoms_.nItems());
+        Messenger::error("Atom index {} is out of range - nAtoms = {}\n", id, atoms_.nItems());
         return;
     }
 #endif

@@ -28,7 +28,7 @@ GetGizmoNameDialog::GetGizmoNameDialog(QWidget *parent) { ui_.setupUi(this); }
 GetGizmoNameDialog::~GetGizmoNameDialog() {}
 
 // Run the dialog
-bool GetGizmoNameDialog::get(const Gizmo *currentGizmo, const char *currentName)
+bool GetGizmoNameDialog::get(const Gizmo *currentGizmo, const QString &currentName)
 {
     currentGizmo_ = currentGizmo;
 

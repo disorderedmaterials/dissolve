@@ -22,13 +22,13 @@
 #include "modules/atomshake/atomshake.h"
 
 // Return type of module
-const char *AtomShakeModule::type() const { return "AtomShake"; }
+std::string_view AtomShakeModule::type() const { return "AtomShake"; }
 
 // Return category for module
-const char *AtomShakeModule::category() const { return "Evolution"; }
+std::string_view AtomShakeModule::category() const { return "Evolution"; }
 
 // Return brief description of module
-const char *AtomShakeModule::brief() const { return "Perform atomic Monte Carlo on all atoms"; }
+std::string_view AtomShakeModule::brief() const { return "Perform atomic Monte Carlo on all atoms"; }
 
 // Return the number of Configuration targets this Module requires
 int AtomShakeModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

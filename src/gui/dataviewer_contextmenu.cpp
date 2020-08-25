@@ -100,7 +100,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable *rend)
     italicFont.setItalic(true);
 
     // Add header
-    action = menu.addAction(queryObjectInfo());
+    action = menu.addAction(QString::fromStdString(std::string(queryObjectInfo())));
     action->setEnabled(false);
     action->setFont(italicFont);
     menu.addSeparator();
@@ -116,7 +116,8 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable *rend)
     QMenu *copyToMenu = menu.addMenu("&Copy to...");
     copyToMenu->setFont(menu.font());
     // Get list of viable destinations that will accept our data
-    RefList<Gizmo> destinations = Gizmo::allThatAccept(Renderable::renderableTypes().keyword(rend->type()));
+    RefList<Gizmo> destinations =
+        Gizmo::allThatAccept(QString::fromStdString(std::string(Renderable::renderableTypes().keyword(rend->type()))));
     if (destinations.nItems() == 0)
         copyToMenu->setEnabled(false);
     else
@@ -159,7 +160,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable *rend)
                     Data1DExportFileFormat exportFormat(qPrintable(filename));
                     Data1D *data = Data1D::findObject(rend->objectTag());
                     if (!data)
-                        Messenger::error("Failed to locate data to export (tag = %s).\n", rend->objectTag());
+                        fmt::print("Failed to locate data to export (tag = {}).\n", rend->objectTag());
                     else
                         exportFormat.exportData(*data);
                 }
@@ -168,7 +169,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable *rend)
                     Data2DExportFileFormat exportFormat(qPrintable(filename));
                     Data2D *data = Data2D::findObject(rend->objectTag());
                     if (!data)
-                        Messenger::error("Failed to locate data to export (tag = %s).\n", rend->objectTag());
+                        fmt::print("Failed to locate data to export (tag = {}).\n", rend->objectTag());
                     else
                         exportFormat.exportData(*data);
                 }
@@ -177,7 +178,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable *rend)
                     Data3DExportFileFormat exportFormat(qPrintable(filename));
                     Data3D *data = Data3D::findObject(rend->objectTag());
                     if (!data)
-                        Messenger::error("Failed to locate data to export (tag = %s).\n", rend->objectTag());
+                        fmt::print("Failed to locate data to export (tag = {}).", rend->objectTag());
                     else
                         exportFormat.exportData(*data);
                 }
@@ -188,7 +189,8 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable *rend)
             Gizmo *destination = copyToActions.dataForItem(selectedAction);
             if (!destination)
                 return;
-            destination->sendData(Renderable::renderableTypes().keyword(rend->type()), rend->objectTag(), rend->name());
+            destination->sendData(QString::fromStdString(std::string(Renderable::renderableTypes().keyword(rend->type()))),
+                                  rend->objectTag(), rend->name());
         }
         else if (selectedAction == removeAction)
             removeRenderable(rend);

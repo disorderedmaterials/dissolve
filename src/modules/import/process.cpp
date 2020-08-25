@@ -35,7 +35,7 @@ bool ImportModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Check for zero Configuration targets
     if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
     for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
@@ -54,16 +54,16 @@ bool ImportModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
         if (readTrajectory)
         {
-            Messenger::print("Import: Reading trajectory file frame from '%s' into Configuration '%s'...\n",
+            Messenger::print("Import: Reading trajectory file frame from '{}' into Configuration '{}'...\n",
                              trajectoryFile_.filename(), cfg->name());
 
             // Open the file
             LineParser parser(&procPool);
             if ((!parser.openInput(trajectoryFile_.filename())) || (!parser.isFileGoodForReading()))
-                return Messenger::error("Couldn't open trajectory file '%s'.\n", trajectoryFile_.filename());
+                return Messenger::error("Couldn't open trajectory file '{}'.\n", trajectoryFile_.filename());
 
             // Does a seek position exist in the processing module info?
-            CharString streamPosName("TrajectoryPosition_%s", cfg->niceName());
+            std::string streamPosName = fmt::format("TrajectoryPosition_{}", cfg->niceName());
             if (dissolve.processingModuleData().contains(streamPosName, uniqueName()))
             {
                 // Retrieve the streampos and go to it in the file
@@ -81,7 +81,7 @@ bool ImportModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     cfg->incrementContentsVersion();
                     break;
                 default:
-                    return Messenger::error("Bad TGAY - he hasn't implemented reading of trajectory frames of format %i.\n",
+                    return Messenger::error("Bad TGAY - he hasn't implemented reading of trajectory frames of format {}.\n",
                                             trajectoryFile_.trajectoryFormat());
                     break;
             }

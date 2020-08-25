@@ -126,20 +126,20 @@ void CalculateDAngleModuleWidget::setGraphDataTargets(CalculateDAngleModule *mod
     for (Configuration *cfg : module_->targetConfigurations())
     {
         // Calculated B...C RDF
-        Renderable *rdf = rdfGraph_->createRenderable(
-            Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF(BC)", module_->uniqueName(), cfg->niceName()),
+        auto *rdf = rdfGraph_->createRenderable(
+            Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//RDF(BC)", module_->uniqueName(), cfg->niceName()),
             "B...C g(r)");
         rdf->setColour(StockColours::BlueStockColour);
 
         // Calculated angle histogram
-        Renderable *angle = angleGraph_->createRenderable(
-            Renderable::Data1DRenderable, CharString("%s//Process1D//%s//Angle(ABC)", module_->uniqueName(), cfg->niceName()),
+        auto *angle = angleGraph_->createRenderable(
+            Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//Angle(ABC)", module_->uniqueName(), cfg->niceName()),
             "A-B...C Angle");
         angle->setColour(StockColours::RedStockColour);
 
         // Calculated distance-angle map
-        Renderable *dAngle = dAngleGraph_->createRenderable(
-            Renderable::Data2DRenderable, CharString("%s//Process2D//%s//DAngle(A-BC)", module_->uniqueName(), cfg->niceName()),
-            "B...C vs A-B...C//%s");
+        auto *dAngle = dAngleGraph_->createRenderable(
+            Renderable::Data2DRenderable,
+            fmt::format("{}//Process2D//{}//DAngle(A-BC)", module_->uniqueName(), cfg->niceName()), "B...C vs A-B...C");
     }
 }

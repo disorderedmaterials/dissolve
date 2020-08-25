@@ -35,7 +35,7 @@ class GraphGizmo : public QWidget, public Gizmo
     Q_OBJECT
 
     public:
-    GraphGizmo(Dissolve &dissolve, const char *uniqueName);
+    GraphGizmo(Dissolve &dissolve, const QString uniqueName);
     ~GraphGizmo();
 
     /*
@@ -43,7 +43,7 @@ class GraphGizmo : public QWidget, public Gizmo
      */
     public:
     // Return string specifying Gizmo type
-    const char *type() const;
+    const QString type() const;
 
     /*
      * UI
@@ -69,9 +69,9 @@ class GraphGizmo : public QWidget, public Gizmo
      */
     public:
     // Return whether this Gizmo accepts data of the specified type
-    bool acceptsData(const char *dataType);
+    bool acceptsData(std::string_view dataType);
     // Send data (referenced by its object tag) to the Gizmo
-    bool sendData(const char *dataType, const char *objectTag, const char *name);
+    bool sendData(std::string_view dataType, std::string_view objectTag, std::string_view name);
 
     /*
      * Data

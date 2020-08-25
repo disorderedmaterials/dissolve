@@ -37,9 +37,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Check for zero Configuration targets
     if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
-
-    CharString varName;
+        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     const auto &qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
     const auto qDelta = keywords_.asDouble("QDelta");
@@ -51,19 +49,19 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto &windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
 
     // Print argument/parameter summary
-    Messenger::print("SQ: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n", qMin,
+    Messenger::print("SQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n", qMin,
                      qMax, qDelta);
     if (windowFunction.function() == WindowFunction::NoWindow)
         Messenger::print("SQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
     else
-        Messenger::print("SQ: Window function to be applied in Fourier transforms is %s (%s).",
-                         WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary().get());
+        Messenger::print("SQ: Window function to be applied in Fourier transforms is {} ({}).",
+                         WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary());
     if (qBroadening.function() == BroadeningFunction::NoFunction)
         Messenger::print("SQ: No broadening will be applied to calculated S(Q).");
     else
-        Messenger::print("SQ: Broadening to be applied in calculated S(Q) is %s (%s).",
-                         BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary().get());
-    Messenger::print("SQ: Save data is %s.\n", DissolveSys::onOff(saveData));
+        Messenger::print("SQ: Broadening to be applied in calculated S(Q) is {} ({}).",
+                         BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary());
+    Messenger::print("SQ: Save data is {}.\n", DissolveSys::onOff(saveData));
     Messenger::print("\n");
 
     /*
@@ -77,7 +75,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Get unweighted g(r) for this Configuration - we don't supply a specific Module prefix, since the unweighted
         // g(r) may come from one of many RDF-type modules
         if (!cfg->moduleData().contains("UnweightedGR"))
-            return Messenger::error("Couldn't locate UnweightedGR for Configuration '%s'.\n", cfg->name());
+            return Messenger::error("Couldn't locate UnweightedGR for Configuration '{}'.\n", cfg->name());
         const auto &unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
 
         // Does a PartialSet already exist for this Configuration?
@@ -85,13 +83,13 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         auto &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "SQ",
                                                                     GenericItem::InRestartFileFlag, &wasCreated);
         if (wasCreated)
-            unweightedsq.setUpPartials(unweightedgr.atomTypes(), CharString("%s-%s", cfg->niceName(), uniqueName()),
+            unweightedsq.setUpPartials(unweightedgr.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()),
                                        "unweighted", "sq", "Q, 1/Angstroms");
 
         // Is the PartialSet already up-to-date?
-        if (DissolveSys::sameString(unweightedsq.fingerprint(), CharString("%i", cfg->moduleData().version("UnweightedGR"))))
+        if (DissolveSys::sameString(unweightedsq.fingerprint(), fmt::format("{}", cfg->moduleData().version("UnweightedGR"))))
         {
-            Messenger::print("SQ: Unweighted partial S(Q) are up-to-date for Configuration '%s'.\n", cfg->name());
+            Messenger::print("SQ: Unweighted partial S(Q) are up-to-date for Configuration '{}'.\n", cfg->name());
             continue;
         }
 
@@ -101,8 +99,8 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             return false;
 
         // Set names of resources (Data1D) within the PartialSet
-        unweightedsq.setObjectTags(CharString("%s//%s//%s", cfg->niceName(), "SQ", "UnweightedSQ"));
-        unweightedsq.setFingerprint(CharString("%i", cfg->moduleData().version("UnweightedGR")));
+        unweightedsq.setObjectTags(fmt::format("{}//{}//{}", cfg->niceName(), "SQ", "UnweightedSQ"));
+        unweightedsq.setFingerprint(fmt::format("{}", cfg->moduleData().version("UnweightedGR")));
 
         // Save data if requested
         if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, unweightedsq.save())))

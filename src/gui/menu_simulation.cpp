@@ -123,9 +123,9 @@ void DissolveWindow::on_SimulationSaveRestartPointAction_triggered(bool checked)
         return;
 
     if (dissolve_.saveRestart(qPrintable(filename)))
-        Messenger::print("Saved restart point to '%s'.\n", qPrintable(filename));
+        Messenger::print("Saved restart point to '{}'.\n", qPrintable(filename));
     else
-        Messenger::error("Failed to save restart point to '%s'.\n", qPrintable(filename));
+        Messenger::error("Failed to save restart point to '{}'.\n", qPrintable(filename));
 }
 
 void DissolveWindow::on_SimulationDataManagerAction_triggered(bool checked)

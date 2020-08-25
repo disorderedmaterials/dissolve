@@ -38,8 +38,8 @@ Process1DProcedureNode::Process1DProcedureNode(const Collect1DProcedureNode *tar
 {
     keywords_.add("Target", new NodeKeyword<const Collect1DProcedureNode>(this, ProcedureNode::Collect1DNode, false, target),
                   "SourceData", "Collect1D node containing the data to process");
-    keywords_.add("Target", new CharStringKeyword("Y"), "LabelValue", "Label for the value axis");
-    keywords_.add("Target", new CharStringKeyword("X"), "LabelX", "Label for the x axis");
+    keywords_.add("Target", new StringKeyword("Y"), "LabelValue", "Label for the value axis");
+    keywords_.add("Target", new StringKeyword("X"), "LabelX", "Label for the x axis");
     keywords_.add("Export", new BoolKeyword(false), "Save", "Save processed data to disk");
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
                   "Branch providing normalisation operations for the data");
@@ -84,10 +84,10 @@ const Data1D &Process1DProcedureNode::processedData() const
 }
 
 // Return value label
-const char *Process1DProcedureNode::valueLabel() const { return keywords_.asString("LabelValue"); }
+std::string Process1DProcedureNode::valueLabel() const { return keywords_.asString("LabelValue"); }
 
 // Return x axis label
-const char *Process1DProcedureNode::xAxisLabel() const { return keywords_.asString("LabelX"); }
+std::string Process1DProcedureNode::xAxisLabel() const { return keywords_.asString("LabelX"); }
 
 /*
  * Branches
@@ -113,12 +113,12 @@ SequenceProcedureNode *Process1DProcedureNode::branch() { return normalisationBr
  */
 
 // Prepare any necessary data, ready for execution
-bool Process1DProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList)
+bool Process1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Retrieve the Collect1D node target
     collectNode_ = keywords_.retrieve<const Collect1DProcedureNode *>("SourceData");
     if (!collectNode_)
-        return Messenger::error("No source Collect1D node set in '%s'.\n", name());
+        return Messenger::error("No source Collect1D node set in '{}'.\n", name());
 
     if (normalisationBranch_)
         normalisationBranch_->prepare(cfg, prefix, targetList);
@@ -128,16 +128,16 @@ bool Process1DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
 
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult Process1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                   const char *prefix, GenericList &targetList)
+                                                                   std::string_view prefix, GenericList &targetList)
 {
     // Retrieve / realise the normalised data from the supplied list
     bool created;
-    auto &data = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix,
+    auto &data = GenericListHelper<Data1D>::realise(targetList, fmt::format("{}_{}", name(), cfg->niceName()), prefix,
                                                     GenericItem::InRestartFileFlag, &created);
     processedData_ = &data;
 
     data.setName(name());
-    data.setObjectTag(CharString("%s//Process1D//%s//%s", prefix, cfg->name(), name()));
+    data.setObjectTag(fmt::format("{}//Process1D//{}//{}", prefix, cfg->name(), name()));
 
     // Copy the averaged data from the associated Process1D node
     data = collectNode_->accumulatedData();
@@ -167,7 +167,7 @@ ProcedureNode::NodeExecutionResult Process1DProcedureNode::execute(ProcessPool &
     {
         if (procPool.isMaster())
         {
-            Data1DExportFileFormat exportFormat(CharString("%s_%s.txt", name(), cfg->name()));
+            Data1DExportFileFormat exportFormat(fmt::format("{}_{}.txt", name(), cfg->name()));
             if (exportFormat.exportData(data))
                 procPool.decideTrue();
             else
@@ -184,7 +184,8 @@ ProcedureNode::NodeExecutionResult Process1DProcedureNode::execute(ProcessPool &
 }
 
 // Finalise any necessary data after execution
-bool Process1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+bool Process1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                      GenericList &targetList)
 {
     return true;
 }

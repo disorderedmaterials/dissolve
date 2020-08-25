@@ -22,7 +22,7 @@
 #include "gui/render/renderablegroup.h"
 #include "gui/render/renderable.h"
 
-RenderableGroup::RenderableGroup(const char *name, StockColours::StockColour colour) : ListItem<RenderableGroup>()
+RenderableGroup::RenderableGroup(std::string_view name, StockColours::StockColour colour) : ListItem<RenderableGroup>()
 {
     name_ = name;
 
@@ -44,7 +44,7 @@ RenderableGroup::RenderableGroup(const char *name, StockColours::StockColour col
  */
 
 // Return name of group
-const char *RenderableGroup::name() const { return name_.get(); }
+std::string_view RenderableGroup::name() const { return name_; }
 
 /*
  * Renderable Targets
@@ -55,8 +55,7 @@ void RenderableGroup::associateRenderable(Renderable *renderable)
 {
     if (renderables_.contains(renderable))
     {
-        Messenger::warn("Group '%s' already contains the Renderable '%s', so not adding it again.\n", name(),
-                        renderable->name());
+        fmt::print("Group '{}' already contains the Renderable '{}', so not adding it again.\n", name(), renderable->name());
         return;
     }
 
@@ -77,7 +76,7 @@ void RenderableGroup::removeRenderable(Renderable *renderable)
 {
     if (!renderables_.contains(renderable))
     {
-        Messenger::warn("Renderable '%s' is not present in the group '%s', so can't remove it.\n", renderable->name(), name());
+        fmt::print("Renderable '{}' is not present in the group '{}', so can't remove it.\n", renderable->name(), name());
         return;
     }
 
@@ -240,9 +239,9 @@ void RenderableGroup::setRenderableVerticalShift(Renderable *renderable, int ren
     renderable->setValuesTransformEnabled(verticalShiftStyle_ != PreventVerticalShifting);
 
     if (verticalShiftStyle_ == GroupVerticalShifting)
-        renderable->setValuesTransformEquation(CharString("value+%f", verticalShift_ * verticalShiftMultiplier_));
+        renderable->setValuesTransformEquation(fmt::format("value+{}", verticalShift_ * verticalShiftMultiplier_));
     else if (verticalShiftStyle_ == IndividualVerticalShifting)
-        renderable->setValuesTransformEquation(CharString("value+%f", verticalShift_ * rendIndex));
+        renderable->setValuesTransformEquation(fmt::format("value+{}", verticalShift_ * rendIndex));
     else
         renderable->setValuesTransformEquation("value");
 }

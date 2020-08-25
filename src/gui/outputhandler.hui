@@ -56,8 +56,8 @@ class GUIOutputHandler : public QObject, public OutputHandler
      */
     public:
     // Print text
-    void outputText(const char *text);
+    void outputText(std::string s);
 
     signals:
-    void printText(const QString &);
+    void printText(const QString &s);
 };

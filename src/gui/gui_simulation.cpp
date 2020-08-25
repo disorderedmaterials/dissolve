@@ -118,7 +118,7 @@ void DissolveWindow::on_MainTabs_currentChanged(int index)
     MainTab *currentTab = dynamic_cast<MainTab *>(ui_.MainTabs->widget(index));
     if (!currentTab)
     {
-        Messenger::print("Can't cast this tab widget (index %i) into a MainTab.\n", index);
+        Messenger::print("Can't cast this tab widget (index {}) into a MainTab.\n", index);
         return;
     }
 

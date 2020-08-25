@@ -100,7 +100,7 @@ class AtomTypeData
     // Return calculated bound coherent scattering over all Isotopes
     double boundCoherent() const;
     // Return referenced AtomType name
-    const char *atomTypeName() const;
+    std::string_view atomTypeName() const;
 
     /*
      * I/O

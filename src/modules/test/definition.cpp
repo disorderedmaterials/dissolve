@@ -22,13 +22,13 @@
 #include "modules/test/test.h"
 
 // Return type of module
-const char *TestModule::type() const { return "Test"; }
+std::string_view TestModule::type() const { return "Test"; }
 
 // Return category for module
-const char *TestModule::category() const { return "HIDDEN"; }
+std::string_view TestModule::category() const { return "HIDDEN"; }
 
 // Return brief description of module
-const char *TestModule::brief() const { return "Development Module"; }
+std::string_view TestModule::brief() const { return "Development Module"; }
 
 // Return the number of Configuration targets this Module requires
 int TestModule::nRequiredTargets() const { return Module::ZeroTargets; }

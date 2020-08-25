@@ -34,7 +34,7 @@ class ProcedureModule;
 class ModuleKeywordBase
 {
     public:
-    ModuleKeywordBase(const char *moduleType);
+    ModuleKeywordBase(std::string_view moduleType);
     virtual ~ModuleKeywordBase();
 
     /*
@@ -42,11 +42,11 @@ class ModuleKeywordBase
      */
     private:
     // Target module type to allow
-    const char *moduleType_;
+    std::string_view moduleType_;
 
     public:
     // Return target module type to allow
-    const char *moduleType() const;
+    std::string_view moduleType() const;
     // Set the target module
     virtual bool setModule(Module *module) = 0;
     // Return the current target module as the base class
@@ -64,7 +64,7 @@ class ModuleKeywordBase
 template <class M> class ModuleKeyword : public ModuleKeywordBase, public KeywordData<M *>
 {
     public:
-    ModuleKeyword(const char *moduleType, M *module = NULL)
+    ModuleKeyword(std::string_view moduleType, M *module = NULL)
         : ModuleKeywordBase(moduleType), KeywordData<M *>(KeywordBase::ModuleData, module)
     {
     }
@@ -81,21 +81,21 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
     // Parse arguments from supplied LineParser, starting at given argument offset
     bool read(LineParser &parser, int startArg, CoreData &coreData)
     {
-        Module *module = coreData.findModule(parser.argc(startArg));
+        Module *module = coreData.findModule(parser.argsv(startArg));
         if (!module)
-            return Messenger::error("Module '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg),
+            return Messenger::error("Module '{}' given to keyword {} doesn't exist.\n", parser.argsv(startArg),
                                     KeywordBase::name());
 
         return setModule(module);
     }
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, const char *keywordName, const char *prefix)
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
     {
         // No need to write the keyword if the module pointer is null
         if (KeywordData<M *>::data_ == NULL)
             return true;
 
-        if (!parser.writeLineF("%s%s  '%s'\n", prefix, KeywordBase::name(), KeywordData<M *>::data_->uniqueName()))
+        if (!parser.writeLineF("{}{}  '{}'\n", prefix, KeywordBase::name(), KeywordData<M *>::data_->uniqueName()))
             return false;
 
         return true;
@@ -114,8 +114,8 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
         // Attempt to case the supplied pointer to a Module of our type
         M *castModule = dynamic_cast<M *>(module);
         if (!castModule)
-            return Messenger::error("Module '%s' given to keyword %s is of the wrong type (%s) - only a module of "
-                                    "type '%s' can be accepted.\n",
+            return Messenger::error("Module '{}' given to keyword {} is of the wrong type ({}) - only a module of "
+                                    "type '{}' can be accepted.\n",
                                     module->uniqueName(), KeywordBase::name(), module->type(), moduleType());
 
         KeywordData<M *>::data_ = castModule;

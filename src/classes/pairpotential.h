@@ -43,12 +43,8 @@ class PairPotential : public ListItem<PairPotential>
         ShiftedCoulombTruncation, /* Shifted and truncated */
         nCoulombTruncationSchemes /* Number of Coulomb truncation schemes */
     };
-    // Convert text string to CoulombTruncationScheme
-    static CoulombTruncationScheme coulombTruncationScheme(const char *s);
-    // Convert CoulombTruncationScheme to text string
-    static const char *coulombTruncationScheme(CoulombTruncationScheme id);
-    // Return CoulombTruncationScheme array
-    static const char **coulombTruncationSchemes();
+    // Return enum options for CoulombTruncationScheme
+    static EnumOptions<PairPotential::CoulombTruncationScheme> &coulombTruncationSchemes();
     // Short-Range Truncation Scheme enum
     enum ShortRangeTruncationScheme
     {
@@ -57,12 +53,8 @@ class PairPotential : public ListItem<PairPotential>
         CosineShortRangeTruncation,  /* Cosine-multiplied truncation */
         nShortRangeTruncationSchemes /* Number of Short-Range truncation schemes */
     };
-    // Convert text string to ShortRangeTruncationScheme
-    static ShortRangeTruncationScheme shortRangeTruncationScheme(const char *s);
-    // Convert ShortRangeTruncationScheme to text string
-    static const char *shortRangeTruncationScheme(ShortRangeTruncationScheme id);
-    // Return ShortRangeTruncationScheme array
-    static const char **shortRangeTruncationSchemes();
+    // Return enum options for ShortRangeTruncationScheme
+    static EnumOptions<PairPotential::ShortRangeTruncationScheme> &shortRangeTruncationSchemes();
 
     /*
      * Seed Interaction Type
@@ -128,9 +120,9 @@ class PairPotential : public ListItem<PairPotential>
     // Return short-ranged type
     Forcefield::ShortRangeType shortRangeType() const;
     // Return first AtomType name
-    const char *atomTypeNameI() const;
+    std::string_view atomTypeNameI() const;
     // Return second AtomType name
-    const char *atomTypeNameJ() const;
+    std::string_view atomTypeNameJ() const;
     // Return first source AtomType
     std::shared_ptr<AtomType> atomTypeI() const;
     // Return second source AtomType

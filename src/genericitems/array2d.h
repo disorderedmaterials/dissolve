@@ -27,7 +27,7 @@
 template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
 {
     public:
-    GenericItemContainer<Array2D<T>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
+    GenericItemContainer<Array2D<T>>(std::string_view name, int flags = 0) : GenericItem(name, flags) {}
 
     /*
      * Data
@@ -45,7 +45,7 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
      */
     protected:
     // Create a new GenericItem containing same class as current type
-    GenericItem *createItem(const char *className, const char *name, int flags = 0)
+    GenericItem *createItem(std::string_view className, std::string_view name, int flags = 0)
     {
         if (DissolveSys::sameString(className, itemClassName()))
             return new GenericItemContainer<Array2D<T>>(name, flags);
@@ -54,10 +54,10 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
 
     public:
     // Return class name contained in item
-    const char *itemClassName()
+    std::string_view itemClassName()
     {
-        static CharString className("Array2D<%s>", T::itemClassName());
-        return className.get();
+        static std::string className = fmt::format("Array2D<{}>", T::itemClassName());
+        return className;
     }
 
     /*
@@ -67,7 +67,7 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
     // Write data through specified parser
     bool write(LineParser &parser)
     {
-        parser.writeLineF("%i  %i  %s\n", data_.nRows(), data_.nColumns(), DissolveSys::btoa(data_.halved()));
+        parser.writeLineF("{}  {}  {}\n", data_.nRows(), data_.nColumns(), DissolveSys::btoa(data_.halved()));
         for (int n = 0; n < data_.linearArraySize(); ++n)
             if (!data_.linearValue(n).write(parser))
                 return false;

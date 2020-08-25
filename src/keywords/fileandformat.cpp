@@ -23,10 +23,9 @@
 #include "base/lineparser.h"
 #include "io/fileandformat.h"
 
-FileAndFormatKeyword::FileAndFormatKeyword(FileAndFormat &fileAndFormat, const char *endKeyword)
-    : KeywordData<FileAndFormat &>(KeywordBase::FileAndFormatData, fileAndFormat)
+FileAndFormatKeyword::FileAndFormatKeyword(FileAndFormat &fileAndFormat, std::string_view endKeyword)
+    : KeywordData<FileAndFormat &>(KeywordBase::FileAndFormatData, fileAndFormat), endKeyword_{endKeyword}
 {
-    endKeyword_ = endKeyword;
 }
 
 FileAndFormatKeyword::~FileAndFormatKeyword() {}
@@ -68,13 +67,13 @@ bool FileAndFormatKeyword::read(LineParser &parser, int startArg, CoreData &core
 }
 
 // Write keyword data to specified LineParser
-bool FileAndFormatKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool FileAndFormatKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
-    if (!data_.writeFilenameAndFormat(parser, CharString("%s%s  ", prefix, keywordName)))
+    if (!data_.writeFilenameAndFormat(parser, fmt::format("{}{}  ", prefix, keywordName)))
         return false;
     if (!data_.writeBlock(parser, prefix))
         return false;
-    if (!parser.writeLineF("%sEnd%s\n", prefix, keywordName))
+    if (!parser.writeLineF("{}End{}\n", prefix, keywordName))
         return false;
 
     return true;

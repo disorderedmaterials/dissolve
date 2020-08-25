@@ -43,7 +43,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Check for zero Configuration targets
     if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
     for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
@@ -69,13 +69,14 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const auto rRT = 1.0 / (.008314472 * cfg->temperature());
 
         // Print argument/parameter summary
-        Messenger::print("MolShake: Cutoff distance is %f.\n", cutoffDistance);
-        Messenger::print("MolShake: Performing %i shake(s) per Molecule.\n", nShakesPerMolecule);
-        Messenger::print("MolShake: Step size for translation adjustments is %f Angstroms (allowed range is %f <= "
-                         "delta <= %f).\n",
+        Messenger::print("MolShake: Cutoff distance is {}.\n", cutoffDistance);
+        Messenger::print("MolShake: Performing {} shake(s) per Molecule.\n", nShakesPerMolecule);
+        Messenger::print("MolShake: Step size for translation adjustments is {:.5f} Angstroms (allowed range is {} <= "
+                         "delta <= {}).\n",
                          translationStepSize, translationStepSizeMin, translationStepSizeMax);
-        Messenger::print("MolShake: Step size for rotation adjustments is %f degrees (allowed range is %f <= delta <= %f).\n",
-                         rotationStepSize, rotationStepSizeMin, rotationStepSizeMax);
+        Messenger::print(
+            "MolShake: Step size for rotation adjustments is {:.5f} degrees (allowed range is {} <= delta <= {}).\n",
+            rotationStepSize, rotationStepSizeMin, rotationStepSizeMax);
         Messenger::print("\n");
 
         ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
@@ -254,16 +255,16 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         timer.stop();
 
-        Messenger::print("Total energy delta was %10.4e kJ/mol.\n", totalDelta);
+        Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
 
         // Calculate and print acceptance rates
         double transRate = double(nTranslationsAccepted) / nTranslationAttempts;
         double rotRate = double(nRotationsAccepted) / nRotationAttempts;
-        Messenger::print("Total number of attempted moves was %i (%s work, %s comms)\n", nGeneralAttempts,
+        Messenger::print("Total number of attempted moves was {} ({} work, {} comms)\n", nGeneralAttempts,
                          timer.totalTimeString(), procPool.accumulatedTimeString());
-        Messenger::print("Overall translation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0 * transRate,
+        Messenger::print("Overall translation acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * transRate,
                          nTranslationsAccepted, nTranslationAttempts);
-        Messenger::print("Overall rotation acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0 * rotRate,
+        Messenger::print("Overall rotation acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * rotRate,
                          nRotationsAccepted, nRotationAttempts);
 
         // Update and set translation step size
@@ -273,7 +274,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         else if (translationStepSize > translationStepSizeMax)
             translationStepSize = translationStepSizeMax;
 
-        Messenger::print("Updated step size for translations is %f Angstroms.\n", translationStepSize);
+        Messenger::print("Updated step size for translations is {:.5f} Angstroms.\n", translationStepSize);
 
         // Update and set rotation step size
         rotationStepSize *= (nRotationsAccepted == 0) ? 0.8 : rotRate / targetAcceptanceRate;
@@ -282,7 +283,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         else if (rotationStepSize > rotationStepSizeMax)
             rotationStepSize = rotationStepSizeMax;
 
-        Messenger::print("Updated step size for rotations is %f degrees.\n", rotationStepSize);
+        Messenger::print("Updated step size for rotations is {:.5f} degrees.\n", rotationStepSize);
 
         // Increase contents version in Configuration
         if ((nRotationsAccepted > 0) || (nTranslationsAccepted > 0))

@@ -129,35 +129,30 @@ const GLuint *View::viewportMatrix() const { return viewportMatrix_; }
  * Projection / View
  */
 
-// View types
-const char *ViewTypeKeywords[View::nViewTypes] = {"Normal", "AutoStretched", "FlatXY", "FlatXZ", "FlatZY"};
-
-// Convert text string to ViewType
-View::ViewType View::viewType(const char *s)
+// Return enum options for FormatType
+EnumOptions<View::ViewType> &View::viewTypes()
 {
-    for (int n = 0; n < View::nViewTypes; ++n)
-        if (DissolveSys::sameString(s, ViewTypeKeywords[n]))
-            return (View::ViewType)n;
-    return View::nViewTypes;
+    static EnumOptionsList ViewTypeOptions =
+        EnumOptionsList() << EnumOption(View::NormalView, "Normal") << EnumOption(View::AutoStretchedView, "AutoStretched")
+                          << EnumOption(View::FlatXYView, "FlatXY") << EnumOption(View::FlatXZView, "FlatXZ")
+                          << EnumOption(View::FlatZYView, "FlatZY");
+
+    static EnumOptions<View::ViewType> options("ViewType", ViewTypeOptions);
+
+    return options;
 }
 
-// Convert ViewType to text string
-const char *View::viewType(View::ViewType vt) { return ViewTypeKeywords[vt]; }
-
-// AutoFollow types
-const char *AutoFollowTypeKeywords[View::nAutoFollowTypes] = {"None", "All", "X"};
-
-// Convert text string to AutoFollowType
-View::AutoFollowType View::autoFollowType(const char *s)
+// Return enum options for FormatType
+EnumOptions<View::AutoFollowType> &View::autoFollowTypes()
 {
-    for (int n = 0; n < View::nAutoFollowTypes; ++n)
-        if (DissolveSys::sameString(s, AutoFollowTypeKeywords[n]))
-            return (View::AutoFollowType)n;
-    return View::nAutoFollowTypes;
-}
+    static EnumOptionsList AutoFollowTypeOptions = EnumOptionsList() << EnumOption(View::NoAutoFollow, "None")
+                                                                     << EnumOption(View::AllAutoFollow, "All")
+                                                                     << EnumOption(View::XAutoFollow, "X");
 
-// Convert AutoFollowType to text string
-const char *View::autoFollowType(View::AutoFollowType aft) { return AutoFollowTypeKeywords[aft]; }
+    static EnumOptions<View::AutoFollowType> options("AutoFollowType", AutoFollowTypeOptions);
+
+    return options;
+}
 
 // Return calculated projection matrix
 Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) const
@@ -535,11 +530,9 @@ Vec3<double> View::screenToData(int x, int y, double z) const
         dy = viewportMatrix_[1] + viewportMatrix_[3] * (temp.y / temp.w + 1.0) * 0.5 - newy;
 
         worldr.add((x - newx) / dx, (y - newy) / dy, 0.0, 0.0);
-        // 		printf ("N=%i", n); worldr.print();
         temp = projectionMatrix_ * worldr;
         newx = viewportMatrix_[0] + viewportMatrix_[2] * (temp.x / temp.w + 1.0) * 0.5;
         newy = viewportMatrix_[1] + viewportMatrix_[3] * (temp.y / temp.w + 1.0) * 0.5;
-        // 		printf("NEW dx = %f, dy = %f, wantedxy = %f, %f\n", newx, newy, x, y);
         if ((x == newx) && (y == newy))
             break;
     }
@@ -555,9 +548,6 @@ double View::screenToAxis(int axis, int x, int y, bool clamp) const
     if (axis == -1)
         return 0.0;
 
-    // 	printf("Test: min=%f, max=%f\n", min_[0], max_[0]);
-    // 	rMouseLast_.print();
-    // 	axisCoordMin_[0].print();
     // Project axis coordinates to get a screen-based yardstick
     auto axmin = dataToScreen(axes_.coordMin(axis));
     auto axmax = dataToScreen(axes_.coordMax(axis));
@@ -571,8 +561,6 @@ double View::screenToAxis(int axis, int x, int y, bool clamp) const
     auto ratio = am.magnitude() / ab.magnitude();
     abNorm.normalise();
     amNorm.normalise();
-    // 	double angle = acos(abNorm.dp(amNorm));
-    //	printf("Angle = %f, %f\n", angle, angle * DEGRAD);
 
     // Calculate slice axis value - no need to account for inverted axes here, since this is accounted for in the vectors
     // axmin and axmax
@@ -582,7 +570,6 @@ double View::screenToAxis(int axis, int x, int y, bool clamp) const
             pow(10, abNorm.dp(amNorm) * ratio * (log10(axes_.max(axis)) - log10(axes_.min(axis))) + log10(axes_.min(axis)));
     else
         axisValue = abNorm.dp(amNorm) * ratio * (axes_.max(axis) - axes_.min(axis)) + axes_.min(axis);
-    //	printf("slicevalue = %f (%f)\n", axisValue, abNorm.dp(amNorm)*ratio);
 
     // Clamp value to data range
     if (clamp)
@@ -591,7 +578,6 @@ double View::screenToAxis(int axis, int x, int y, bool clamp) const
             axisValue = axes_.min(axis);
         else if (axisValue > axes_.max(axis))
             axisValue = axes_.max(axis);
-        // 	printf("ACMAG = %f, X = %f\n", ratio, axisValue);
     }
 
     return axisValue;

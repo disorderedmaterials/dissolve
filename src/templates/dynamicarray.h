@@ -71,9 +71,7 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
     // Determine array offset of object
     int objectOffset(T *object)
     {
-        // 	printf("in objectoffset: %li %li\n", intptr_t(object), intptr_t(&objectArray_[0]));
         intptr_t offset = intptr_t(object) - intptr_t(&objectArray_[0]);
-        // 	printf("Offset = %li\n", offset);
         if (offset < 0)
             return -1;
         int index = offset / objectSize_;
@@ -91,7 +89,7 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
         }
         catch (std::bad_alloc &alloc)
         {
-            Messenger::error("ArrayChunk<T>() - Failed to allocate sufficient memory for objectArray_. Exception was : %s\n",
+            Messenger::error("ArrayChunk<T>() - Failed to allocate sufficient memory for objectArray_. Exception was : {}\n",
                              alloc.what());
             return false;
         }
@@ -103,7 +101,7 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
         }
         catch (std::bad_alloc &alloc)
         {
-            Messenger::error("ArrayChunk<T>() - Failed to allocate sufficient memory for objectUsed_. Exception was : %s\n",
+            Messenger::error("ArrayChunk<T>() - Failed to allocate sufficient memory for objectUsed_. Exception was : {}\n",
                              alloc.what());
             return false;
         }
@@ -168,7 +166,7 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
         }
 
         // Shouldn't get here!
-        printf("Internal Error - ArrayChunk.\n");
+        Messenger::error("ArrayChunk.\n");
         return object;
     }
     // Return specified object to pool
@@ -249,7 +247,7 @@ template <class T> class DynamicArray
         }
 
         // If we get here, then something has gone horribly wrong...
-        printf("Internal Error - Couldn't find an empty chunk to return an object from.\n");
+        Messenger::error("Couldn't find an empty chunk to return an object from.\n");
         return NULL;
     }
     // Return specified object to chunk stack
@@ -266,7 +264,7 @@ template <class T> class DynamicArray
         }
 
         // Couldn't find it!
-        printf("Internal Error - Tried to return an object (%p) to a DynamicArray chunk which didn't produce it.\n", object);
+        Messenger::error("Tried to return an object to a DynamicArray chunk which didn't produce it.\n");
         return false;
     }
 
@@ -353,7 +351,7 @@ template <class T> class DynamicArray
 #ifdef CHECKS
         if ((index < 0) || (index >= array_.nItems()))
         {
-            Messenger::error("Array index %i is out of bounds (array size = %i).\n", index, array_.nItems());
+            Messenger::error("Array index {} is out of bounds (array size = {}).\n", index, array_.nItems());
             return NULL;
         }
 #endif
@@ -364,7 +362,7 @@ template <class T> class DynamicArray
     {
         if ((index < 0) || (index >= array_.nItems()))
         {
-            Messenger::error("Array index %i is out of bounds (array size = %i).\n", index, array_.nItems());
+            Messenger::error("Array index {} is out of bounds (array size = {}).\n", index, array_.nItems());
             return NULL;
         }
 

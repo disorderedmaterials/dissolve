@@ -68,7 +68,7 @@ void RDFModule::initialise()
                   "<True|False>");
     keywords_.add("Test", new Data1DStoreKeyword(testData_), "TestReference", "Specify test reference data",
                   "<target> <fileformat> <filename> [x=1] [y=2]");
-    keywords_.add("Test", new DoubleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails",
+    keywords_.add("Test", new DoubleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%error) above which test fails",
                   "<threshold[0.1]>");
 
     // Export

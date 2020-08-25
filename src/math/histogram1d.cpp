@@ -27,7 +27,7 @@
 template <class Histogram1D> RefDataList<Histogram1D, int> ObjectStore<Histogram1D>::objects_;
 template <class Histogram1D> int ObjectStore<Histogram1D>::objectCount_ = 0;
 template <class Histogram1D> int ObjectStore<Histogram1D>::objectType_ = ObjectInfo::Histogram1DObject;
-template <class Histogram1D> const char *ObjectStore<Histogram1D>::objectTypeName_ = "Histogram1D";
+template <class Histogram1D> std::string_view ObjectStore<Histogram1D>::objectTypeName_ = "Histogram1D";
 
 Histogram1D::Histogram1D() : ListItem<Histogram1D>(), ObjectStore<Histogram1D>(this)
 {
@@ -172,7 +172,7 @@ void Histogram1D::add(Histogram1D &other, int factor)
 {
     if (nBins_ != other.nBins_)
     {
-        Messenger::print("BAD_USAGE - Can't add Histogram1D data since arrays are not the same size (%i vs %i).\n", nBins_,
+        Messenger::print("BAD_USAGE - Can't add Histogram1D data since arrays are not the same size ({} vs {}).\n", nBins_,
                          other.nBins_);
         return;
     }
@@ -205,7 +205,7 @@ void Histogram1D::operator=(const Histogram1D &source)
  */
 
 // Return class name
-const char *Histogram1D::itemClassName() { return "Histogram1D"; }
+std::string_view Histogram1D::itemClassName() { return "Histogram1D"; }
 
 // Read data through specified LineParser
 bool Histogram1D::read(LineParser &parser, CoreData &coreData)
@@ -235,11 +235,11 @@ bool Histogram1D::read(LineParser &parser, CoreData &coreData)
 // Write data through specified LineParser
 bool Histogram1D::write(LineParser &parser)
 {
-    if (!parser.writeLineF("%s\n", objectTag()))
+    if (!parser.writeLineF("{}\n", objectTag()))
         return false;
-    if (!parser.writeLineF("%f %f %f\n", minimum_, maximum_, binWidth_))
+    if (!parser.writeLineF("{} {} {}\n", minimum_, maximum_, binWidth_))
         return false;
-    if (!parser.writeLineF("%li  %li\n", nBinned_, nMissed_))
+    if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
         return false;
     for (int n = 0; n < nBins_; ++n)
         if (!averages_[n].write(parser))
@@ -298,26 +298,26 @@ bool Histogram1D::equality(ProcessPool &procPool)
 #ifdef PARALLEL
     // Check number of items in arrays first
     if (!procPool.equality(minimum_))
-        return Messenger::error("Histogram1D minimum value is not equivalent (process %i has %e).\n", procPool.poolRank(),
+        return Messenger::error("Histogram1D minimum value is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
                                 minimum_);
     if (!procPool.equality(maximum_))
-        return Messenger::error("Histogram1D maximum value is not equivalent (process %i has %e).\n", procPool.poolRank(),
+        return Messenger::error("Histogram1D maximum value is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
                                 maximum_);
     if (!procPool.equality(binWidth_))
-        return Messenger::error("Histogram1D bin width is not equivalent (process %i has %e).\n", procPool.poolRank(),
+        return Messenger::error("Histogram1D bin width is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
                                 binWidth_);
     if (!procPool.equality(nBins_))
-        return Messenger::error("Histogram1D number of bins is not equivalent (process %i has %i).\n", procPool.poolRank(),
+        return Messenger::error("Histogram1D number of bins is not equivalent (process {} has {}).\n", procPool.poolRank(),
                                 nBins_);
     if (!procPool.equality(binCentres_))
         return Messenger::error("Histogram1D bin centre values not equivalent.\n");
     if (!procPool.equality(bins_))
         return Messenger::error("Histogram1D bin values not equivalent.\n");
     if (!procPool.equality(nBinned_))
-        return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n",
+        return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process {} has {}).\n",
                                 procPool.poolRank(), nBinned_);
     if (!procPool.equality(nMissed_))
-        return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process %i has %li).\n",
+        return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process {} has {}).\n",
                                 procPool.poolRank(), nBinned_);
     for (int n = 0; n < averages_.nItems(); ++n)
         if (!averages_[n].equality(procPool))

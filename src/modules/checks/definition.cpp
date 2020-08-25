@@ -22,13 +22,13 @@
 #include "modules/checks/checks.h"
 
 // Return type of module
-const char *ChecksModule::type() const { return "Checks"; }
+std::string_view ChecksModule::type() const { return "Checks"; }
 
 // Return category for module
-const char *ChecksModule::category() const { return "Checks & Tests"; }
+std::string_view ChecksModule::category() const { return "Checks & Tests"; }
 
 // Return brief description of module
-const char *ChecksModule::brief() const { return "Conduct simple checks on Configurations"; }
+std::string_view ChecksModule::brief() const { return "Conduct simple checks on Configurations"; }
 
 // Return the number of Configuration targets this Module requires
 int ChecksModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }

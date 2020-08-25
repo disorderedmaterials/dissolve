@@ -20,7 +20,7 @@
 */
 
 #include "base/lock.h"
-#include <stdio.h>
+#include "base/messenger.h"
 
 /*
  * Lock
@@ -38,7 +38,7 @@ void Lock::removeLockLevel()
 {
     --lockCounter_;
     if (lockCounter_ < 0)
-        printf("Warning - Lock count has been forced into negative numbers!\n");
+        Messenger::error("Warning - Lock count has been forced into negative numbers!\n");
 }
 
 // Return whether we are currently locked

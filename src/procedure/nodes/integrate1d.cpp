@@ -70,19 +70,19 @@ const SampledDouble &Integrate1DProcedureNode::integral(int index) const { retur
  */
 
 // Prepare any necessary data, ready for execution
-bool Integrate1DProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList)
+bool Integrate1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Retrieve the Process1D node target
     processNode_ = keywords_.retrieve<const Process1DProcedureNode *>("SourceData");
     if (!processNode_)
-        return Messenger::error("No source Process1D node set in '%s'.\n", name());
+        return Messenger::error("No source Process1D node set in '{}'.\n", name());
 
     return true;
 }
 
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult Integrate1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                     const char *prefix, GenericList &targetList)
+                                                                     std::string_view prefix, GenericList &targetList)
 {
     // Get ranges
     auto rangeA = keywords_.retrieve<Range>("RangeA");
@@ -95,18 +95,19 @@ ProcedureNode::NodeExecutionResult Integrate1DProcedureNode::execute(ProcessPool
     integral_[2] += Integrator::trapezoid(processNode_->processedData(), keywords_.retrieve<Range>("RangeC"));
 
     // Print info
-    Messenger::print("Integrate1D - Range A: %e +/- %e over %e < x < %e.\n", integral_[0].mean(), integral_[0].stDev(),
+    Messenger::print("Integrate1D - Range A: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[0].mean(), integral_[0].stDev(),
                      rangeA.minimum(), rangeA.maximum());
-    Messenger::print("Integrate1D - Range B: %e +/- %e over %e < x < %e.\n", integral_[1].mean(), integral_[1].stDev(),
+    Messenger::print("Integrate1D - Range B: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[1].mean(), integral_[1].stDev(),
                      rangeB.minimum(), rangeB.maximum());
-    Messenger::print("Integrate1D - Range C: %e +/- %e over %e < x < %e.\n", integral_[2].mean(), integral_[2].stDev(),
+    Messenger::print("Integrate1D - Range C: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[2].mean(), integral_[2].stDev(),
                      rangeC.minimum(), rangeC.maximum());
 
     return ProcedureNode::Success;
 }
 
 // Finalise any necessary data after execution
-bool Integrate1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+bool Integrate1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                        GenericList &targetList)
 {
     return true;
 }

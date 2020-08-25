@@ -83,11 +83,11 @@ class GaussFit
     // Return current full-width half-maximum values
     const Array<double> &fwhm() const;
     // Save coefficients to specified file
-    bool saveCoefficients(const char *filename) const;
+    bool saveCoefficients(std::string_view filename) const;
     // Print coefficients
     void printCoefficients() const;
     // Save Fourier-transformed Gaussians to individual files
-    bool saveFTGaussians(const char *filenamePrefix, double xStep = -1.0) const;
+    bool saveFTGaussians(std::string_view filenamePrefix, double xStep = -1.0) const;
 
     /*
      * Fitting

@@ -1005,9 +1005,9 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
     //    Input, int NL, the number of linear searches.
     //
     {
-        Messenger::print("Linear searches = %i\n", nl);
-        Messenger::print("Function evaluations = %i\n", nf);
-        Messenger::print("Function value FX = %e\n", fx);
+        Messenger::print("Linear searches = {}\n", nl);
+        Messenger::print("Function evaluations = {}\n", nf);
+        Messenger::print("Function value FX = {:e}\n", fx);
 
         if (n <= 4 || 2 < prin)
         {
@@ -1307,7 +1307,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
     }
     //****************************************************************************80
 
-    void r8mat_print(int m, int n, double a[], const char *title)
+    void r8mat_print(int m, int n, double a[], std::string_view title)
 
     //****************************************************************************80
     //
@@ -1351,7 +1351,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
     }
     //****************************************************************************80
 
-    void r8mat_print_some(int m, int n, double a[], int ilo, int jlo, int ihi, int jhi, const char *title)
+    void r8mat_print_some(int m, int n, double a[], int ilo, int jlo, int ihi, int jhi, std::string_view title)
 
     //****************************************************************************80
     //
@@ -1401,7 +1401,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         int j2hi;
         int j2lo;
 
-        Messenger::print("%s\n", title);
+        Messenger::print("{}\n", title);
 
         if (m <= 0 || n <= 0)
         {
@@ -1431,7 +1431,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
             Messenger::print("  Col:    ");
             for (j = j2lo; j <= j2hi; j++)
             {
-                Messenger::print("%10i   ", j - 1);
+                Messenger::print("{:10d}   ", j - 1);
             }
             Messenger::print("\n");
             Messenger::print("  Row\n");
@@ -1460,10 +1460,10 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
                 //
                 //  Print out (up to) 5 entries in row I, that lie in the current strip.
                 //
-                Messenger::print("%fi: ", i - 1);
+                Messenger::print("{}i: ", i - 1);
                 for (j = j2lo; j <= j2hi; j++)
                 {
-                    Messenger::print("%12.4e  ", a[i - 1 + (j - 1) * m]);
+                    Messenger::print("{:12.4e} ", a[i - 1 + (j - 1) * m]);
                 }
                 Messenger::print("\n");
             }
@@ -1717,7 +1717,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
     }
     //****************************************************************************80
 
-    void r8vec_print(int n, double a[], const char *title)
+    void r8vec_print(int n, double a[], std::string_view title)
 
     //****************************************************************************80
     //
@@ -1752,10 +1752,10 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
     {
         int i;
 
-        Messenger::print("%s\n", title);
+        Messenger::print("{}\n", title);
         for (i = 0; i < n; i++)
         {
-            Messenger::print("  %8i: %14.6e\n", i, a[i]);
+            Messenger::print("  {:8i}: {:14.6e}\n", i, a[i]);
         }
 
         return;

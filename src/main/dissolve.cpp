@@ -35,15 +35,12 @@
 
 // Static Members (ObjectInfo)
 bool ObjectInfo::autoSuffixing_ = false;
-CharString ObjectInfo::autoSuffix_;
+std::string ObjectInfo::autoSuffix_;
 
 Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
 {
     // Set Module instances list in our core data
     coreData_.setModuleInstances(&moduleInstances_);
-
-    // Set pointer to the input filename
-    coreData_.setInputFilename(&inputFilename_);
 
     // Set core simulation variables
     seed_ = -1;
@@ -108,7 +105,7 @@ void Dissolve::clear()
     nIterationsPerformed_ = 0;
 
     // I/O
-    inputFilename_.clear();
+    setInputFilename("");
     restartFilename_.clear();
     saveRestartTimes_ = 0.0;
 }
@@ -119,8 +116,8 @@ void Dissolve::registerGenericItems()
     GenericItem::addItemClass(new GenericItemContainer<bool>("bool"));
     GenericItem::addItemClass(new GenericItemContainer<int>("int"));
     GenericItem::addItemClass(new GenericItemContainer<double>("double"));
-    GenericItem::addItemClass(new GenericItemContainer<CharString>("CharString"));
-    GenericItem::addItemClass(new GenericItemContainer<std::streampos>("StreamPos"));
+    GenericItem::addItemClass(new GenericItemContainer<std::streampos>("streampos"));
+    GenericItem::addItemClass(new GenericItemContainer<std::string>("string"));
 
     GenericItem::addItemClass(new GenericItemContainer<Vec3<int>>("Vec3<int>"));
     GenericItem::addItemClass(new GenericItemContainer<Vec3<double>>("Vec3<double>"));

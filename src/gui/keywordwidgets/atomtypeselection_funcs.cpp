@@ -46,7 +46,7 @@ AtomTypeSelectionKeywordWidget::AtomTypeSelectionKeywordWidget(QWidget *parent, 
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<AtomTypeSelectionKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into AtomTypeSelectionKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into AtomTypeSelectionKeyword.\n", keyword->name());
     else
     {
         // Set current information
@@ -73,7 +73,7 @@ void AtomTypeSelectionKeywordWidget::updateSelectionRow(int row, std::shared_ptr
             atomTypes_.push_back(atomType);
             location = std::find_if(atomTypes_.begin(), atomTypes_.end(), [&atomType](auto at) { return at == atomType; });
         }
-        item = new QListWidgetItem(atomType->name());
+        item = new QListWidgetItem(QString::fromStdString(std::string(atomType->name())));
         item->setData(Qt::UserRole, QVariant::fromValue(location - atomTypes_.begin()));
         item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
         ui.SelectionList->insertItem(row, item);
@@ -142,11 +142,12 @@ void AtomTypeSelectionKeywordWidget::updateSummaryText()
         setSummaryText("<None>");
     else
     {
-        CharString summaryText = std::accumulate(std::next(selection.begin()), selection.end(),
-                                                 CharString(selection.first().atomTypeName()), [](auto &acc, const auto &atd) {
-                                                     acc.strcatf(", %s", atd.atomTypeName());
-                                                     return acc;
-                                                 });
+        QString summaryText = std::accumulate(
+            std::next(selection.begin()), selection.end(),
+            QString::fromStdString(std::string(selection.first().atomTypeName())), [](auto &acc, const auto &atd) {
+                acc += QString(", %1").arg(QString::fromStdString(std::string(atd.atomTypeName())));
+                return acc;
+            });
         setSummaryText(summaryText);
     }
 }

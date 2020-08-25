@@ -49,7 +49,7 @@ class SelectGenericItemDialog : public QDialog
 
     private:
     // Append GenericItems to table under specified source
-    template <class T> void addToTable(RefList<T> &items, const char *source)
+    template <class T> void addToTable(RefList<T> &items, QString source)
     {
         QTableWidgetItem *item;
         int count = ui_.ItemsTable->rowCount();
@@ -57,7 +57,7 @@ class SelectGenericItemDialog : public QDialog
         for (T *templatedItem : items)
         {
             // Item name
-            item = new QTableWidgetItem(templatedItem->name());
+            item = new QTableWidgetItem(QString::fromStdString(std::string(templatedItem->name())));
             item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             item->setData(Qt::UserRole, VariantPointer<T>(templatedItem));
             ui_.ItemsTable->setItem(count, 0, item);
@@ -68,7 +68,7 @@ class SelectGenericItemDialog : public QDialog
             ui_.ItemsTable->setItem(count, 1, item);
 
             // Object tag
-            item = new QTableWidgetItem(templatedItem->objectTag());
+            item = new QTableWidgetItem(QString::fromStdString(std::string(templatedItem->objectTag())));
             item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             ui_.ItemsTable->setItem(count, 2, item);
 

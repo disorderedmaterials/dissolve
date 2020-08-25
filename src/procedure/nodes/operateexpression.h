@@ -31,7 +31,7 @@
 class OperateExpressionProcedureNode : public OperateProcedureNodeBase
 {
     public:
-    OperateExpressionProcedureNode(const char *expressionText = "");
+    OperateExpressionProcedureNode(std::string_view expressionText = "");
     ~OperateExpressionProcedureNode();
 
     /*

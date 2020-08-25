@@ -56,12 +56,12 @@ bool NodeBranchKeyword::read(LineParser &parser, int startArg, CoreData &coreDat
 {
     // Check that a branch hasn't already been defined
     if (*data_)
-        return Messenger::error("Only one %s branch may be defined in a %s node.\n", name(),
+        return Messenger::error("Only one {} branch may be defined in a {} node.\n", name(),
                                 ProcedureNode::nodeTypes().keyword(parentNode_->type()));
 
     // Create and parse a new branch
     (*data_) =
-        new SequenceProcedureNode(branchContext_, parentNode_->scope()->procedure(), parentNode_, CharString("End%s", name()));
+        new SequenceProcedureNode(branchContext_, parentNode_->scope()->procedure(), parentNode_, fmt::format("End{}", name()));
     if (!(*data_)->read(parser, coreData))
         return false;
 
@@ -69,21 +69,21 @@ bool NodeBranchKeyword::read(LineParser &parser, int startArg, CoreData &coreDat
 }
 
 // Write keyword data to specified LineParser
-bool NodeBranchKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool NodeBranchKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     if (!(*data_) || ((*data_)->nNodes() == 0))
         return true;
 
     // Write keyword name as the start of the branch
-    if (!parser.writeLineF("%s%s\n", prefix, name()))
+    if (!parser.writeLineF("{}{}\n", prefix, name()))
         return false;
 
     // Write branch information
-    if (!(*data_)->write(parser, CharString("%s  ", prefix)))
+    if (!(*data_)->write(parser, fmt::format("{}  ", prefix)))
         return false;
 
     // Write end keyword based on the name
-    if (!parser.writeLineF("%sEnd%s\n", prefix, name()))
+    if (!parser.writeLineF("{}End{}\n", prefix, name()))
         return false;
 
     return true;

@@ -26,7 +26,7 @@
 #include "classes/speciesatom.h"
 #include "data/elements.h"
 
-TrajectoryExportFileFormat::TrajectoryExportFileFormat(const char *filename, TrajectoryExportFormat format)
+TrajectoryExportFileFormat::TrajectoryExportFileFormat(std::string_view filename, TrajectoryExportFormat format)
     : FileAndFormat(filename, format)
 {
 }
@@ -36,7 +36,7 @@ TrajectoryExportFileFormat::TrajectoryExportFileFormat(const char *filename, Tra
  */
 
 // Return enum options for TrajectoryExportFormat
-EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> TrajectoryExportFileFormat::trajectoryExportFormats()
+EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> &TrajectoryExportFileFormat::trajectoryExportFormats()
 {
     static EnumOptionsList TrajectoryExportFormats =
         EnumOptionsList() << EnumOption(TrajectoryExportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory");
@@ -51,10 +51,13 @@ EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> TrajectoryExport
 int TrajectoryExportFileFormat::nFormats() const { return TrajectoryExportFileFormat::nTrajectoryExportFormats; }
 
 // Return format keyword for supplied index
-const char *TrajectoryExportFileFormat::formatKeyword(int id) const { return trajectoryExportFormats().keywordByIndex(id); }
+std::string_view TrajectoryExportFileFormat::formatKeyword(int id) const
+{
+    return trajectoryExportFormats().keywordByIndex(id);
+}
 
 // Return description string for supplied index
-const char *TrajectoryExportFileFormat::formatDescription(int id) const
+std::string_view TrajectoryExportFileFormat::formatDescription(int id) const
 {
     return trajectoryExportFormats().descriptionByIndex(id);
 }
@@ -73,17 +76,17 @@ TrajectoryExportFileFormat::TrajectoryExportFormat TrajectoryExportFileFormat::t
 bool TrajectoryExportFileFormat::exportXYZ(LineParser &parser, Configuration *cfg)
 {
     // Write number of atoms and title
-    if (!parser.writeLineF("%i\n", cfg->nAtoms()))
+    if (!parser.writeLineF("{}\n", cfg->nAtoms()))
         return false;
-    if (!parser.writeLineF("%s @ %i\n", cfg->name(), cfg->contentsVersion()))
+    if (!parser.writeLineF("{} @ {}\n", cfg->name(), cfg->contentsVersion()))
         return false;
 
     // Write Atoms
     for (int n = 0; n < cfg->nAtoms(); ++n)
     {
         Atom *i = cfg->atom(n);
-        if (!parser.writeLineF("%-3s   %15.9f  %15.9f  %15.9f\n", i->speciesAtom()->element()->symbol(), i->r().x, i->r().y,
-                               i->r().z))
+        if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", i->speciesAtom()->element()->symbol(), i->r().x,
+                               i->r().y, i->r().z))
             return false;
     }
 

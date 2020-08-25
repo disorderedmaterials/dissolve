@@ -24,8 +24,8 @@
 #include "math/constants.h"
 #include "math/mathfunc.h"
 #include "templates/listitem.h"
+#include <fmt/core.h>
 #include <math.h>
-#include <stdio.h>
 
 // 3D vector
 template <class T> class Vec3
@@ -94,7 +94,8 @@ template <class T> class Vec3
             return y;
         else if (index == 2)
             return z;
-        printf("Vec3 - element index %i is out of bounds.\n", index);
+
+        throw std::runtime_error(fmt::format("Vec3 - element index {} is out of bounds.", index));
         return T();
     }
 
@@ -189,7 +190,8 @@ template <class T> class Vec3
             return y;
         else if (index == 2)
             return z;
-        printf("Vec3 - array access failed - index %i is out of bounds.\n", index);
+
+        throw std::runtime_error(fmt::format("Vec3 - array access failed - index {} is out of bounds.", index));
 
         static T dummy;
         return dummy;
@@ -367,7 +369,7 @@ template <class T> class Vec3
         *this = newvec;
     }
     // Prints the contents of the vector
-    void print() const { printf("%8.4f %8.4f %8.4f\n", (double)x, (double)y, (double)z); }
+    void print() const { fmt::print("{} {} {}\n", x, y, z); }
     // Generate random unit vector
     void randomUnit()
     {
@@ -416,7 +418,7 @@ template <class T> class Vec3
         else if (index == 2)
             return Vec3<T>(0, 0, 1);
 
-        printf("Vec3 - array access failed - index %i is out of bounds.\n", index);
+        throw std::runtime_error(fmt::format("Vec3 - unit() generation failed - index {} is out of bounds.", index));
         return Vec3<T>();
     }
     // Swap the two specified elements

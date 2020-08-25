@@ -24,7 +24,7 @@
 #include "base/sysfunc.h"
 #include "math/data1d.h"
 
-Data1DExportFileFormat::Data1DExportFileFormat(const char *filename, Data1DExportFormat format)
+Data1DExportFileFormat::Data1DExportFileFormat(std::string_view filename, Data1DExportFormat format)
     : FileAndFormat(filename, format)
 {
 }
@@ -34,7 +34,7 @@ Data1DExportFileFormat::Data1DExportFileFormat(const char *filename, Data1DExpor
  */
 
 // Return enum options for Data1DExportFormat
-EnumOptions<Data1DExportFileFormat::Data1DExportFormat> Data1DExportFileFormat::data1DExportFormats()
+EnumOptions<Data1DExportFileFormat::Data1DExportFormat> &Data1DExportFileFormat::data1DExportFormats()
 {
     static EnumOptionsList Data1DExportFormats =
         EnumOptionsList() << EnumOption(Data1DExportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)");
@@ -48,10 +48,13 @@ EnumOptions<Data1DExportFileFormat::Data1DExportFormat> Data1DExportFileFormat::
 int Data1DExportFileFormat::nFormats() const { return Data1DExportFileFormat::nData1DExportFormats; }
 
 // Return format keyword for supplied index
-const char *Data1DExportFileFormat::formatKeyword(int id) const { return data1DExportFormats().keywordByIndex(id); }
+std::string_view Data1DExportFileFormat::formatKeyword(int id) const { return data1DExportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-const char *Data1DExportFileFormat::formatDescription(int id) const { return data1DExportFormats().descriptionByIndex(id); }
+std::string_view Data1DExportFileFormat::formatDescription(int id) const
+{
+    return data1DExportFormats().descriptionByIndex(id);
+}
 
 // Return current format as CoordinateExportFormat
 Data1DExportFileFormat::Data1DExportFormat Data1DExportFileFormat::data1DFormat() const
@@ -72,12 +75,12 @@ bool Data1DExportFileFormat::exportXY(LineParser &parser, const Data1D &data)
     {
         const auto &errors = data.constErrors();
         for (int n = 0; n < x.nItems(); ++n)
-            if (!parser.writeLineF("%16.10e  %16.10e  %16.10e\n", x.constAt(n), values.constAt(n), errors.constAt(n)))
+            if (!parser.writeLineF("{:16.10e}  {:16.10e}  {:16.10e}\n", x.constAt(n), values.constAt(n), errors.constAt(n)))
                 return false;
     }
     else
         for (int n = 0; n < x.nItems(); ++n)
-            if (!parser.writeLineF("%16.10e  %16.10e\n", x.constAt(n), values.constAt(n)))
+            if (!parser.writeLineF("{:16.10e}  {:16.10e}\n", x.constAt(n), values.constAt(n)))
                 return false;
 
     return true;

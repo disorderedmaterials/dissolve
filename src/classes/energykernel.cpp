@@ -55,7 +55,7 @@ double EnergyKernel::energyWithoutMim(const Atom *i, const Atom *j)
 // Return PairPotential energy between atoms provided as pointers (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom *i, const Atom *j)
 {
-    // 	Messenger::print("EnergyKernel::atoms(*,*) - energy %i-%i is %f at %f mim\n",
+    // 	Messenger::print("EnergyKernel::atoms(*,*) - energy {}-{} is {} at {} mim\n",
     // min(i->arrayIndex(),j->arrayIndex()), max(i->arrayIndex(),j->arrayIndex()), pairPotentialEnergy(i->masterTypeIndex(),
     // j->masterTypeIndex(), box_->minimumDistance(j, i)), box_->minimumDistance(j, i));
     return pairPotentialEnergy(i, j, box_->minimumDistance(j, i));
@@ -82,11 +82,7 @@ double EnergyKernel::energy(const Atom *i, const Atom *j, bool applyMim, bool ex
 #endif
     // If Atoms are the same, we refuse to calculate
     if (i == j)
-    {
-        // 		printf("Warning: Refusing to calculate self-energy in
-        // EnergyKernel::energy(Atom,Atom,bool,bool).\n");
         return 0.0;
-    }
 
     // Check indices of Atoms if required
     if (excludeIgeJ && (i->arrayIndex() >= j->arrayIndex()))
@@ -662,7 +658,7 @@ double EnergyKernel::energy(const SpeciesBond &bond, const Atom *i, const Atom *
     // Check for spurious bond distances
     double distance = i->cell()->mimRequired(j->cell()) ? box_->minimumDistance(i, j) : (i->r() - j->r()).magnitude();
     if (distance > 5.0)
-        printf("!!! Long bond: %i-%i = %f Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
+        Messenger::print("!!! Long bond: {}-{} = {} Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
 #endif
     // Determine whether we need to apply minimum image to the distance calculation
     if (i->cell()->mimRequired(j->cell()))

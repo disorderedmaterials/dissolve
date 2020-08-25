@@ -26,7 +26,7 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-RenderableSpecies::RenderableSpecies(const Species *source, const char *objectTag)
+RenderableSpecies::RenderableSpecies(const Species *source, std::string_view objectTag)
     : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
 {
     // Set defaults
@@ -544,7 +544,7 @@ bool RenderableSpecies::writeStyleBlock(LineParser &parser, int indentLevel) con
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 
-    if (!parser.writeLineF("%s%s  %s\n", indent, speciesStyleKeywords().keyword(RenderableSpecies::DisplayKeyword),
+    if (!parser.writeLineF("{}{}  {}\n", indent, speciesStyleKeywords().keyword(RenderableSpecies::DisplayKeyword),
                            speciesDisplayStyles().keyword(displayStyle_)))
         return false;
 
@@ -561,9 +561,9 @@ bool RenderableSpecies::readStyleBlock(LineParser &parser)
             return false;
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
-        if (!speciesStyleKeywords().isValid(parser.argc(0)))
-            return speciesStyleKeywords().errorAndPrintValid(parser.argc(0));
-        auto kwd = speciesStyleKeywords().enumeration(parser.argc(0));
+        if (!speciesStyleKeywords().isValid(parser.argsv(0)))
+            return speciesStyleKeywords().errorAndPrintValid(parser.argsv(0));
+        auto kwd = speciesStyleKeywords().enumeration(parser.argsv(0));
         if (!speciesStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 
@@ -572,16 +572,16 @@ bool RenderableSpecies::readStyleBlock(LineParser &parser)
         {
             // Display style
             case (RenderableSpecies::DisplayKeyword):
-                if (!speciesDisplayStyles().isValid(parser.argc(1)))
-                    return speciesDisplayStyles().errorAndPrintValid(parser.argc(1));
-                displayStyle_ = speciesDisplayStyles().enumeration(parser.argc(1));
+                if (!speciesDisplayStyles().isValid(parser.argsv(1)))
+                    return speciesDisplayStyles().errorAndPrintValid(parser.argsv(1));
+                displayStyle_ = speciesDisplayStyles().enumeration(parser.argsv(1));
                 break;
             // End of block
             case (RenderableSpecies::EndStyleKeyword):
                 return true;
             // Unrecognised Keyword
             default:
-                Messenger::warn("Unrecognised display style keyword for RenderableSpecies: %s\n", parser.argc(0));
+                Messenger::warn("Unrecognised display style keyword for RenderableSpecies: {}\n", parser.argsv(0));
                 return false;
                 break;
         }

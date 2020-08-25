@@ -50,11 +50,10 @@ bool BroadeningFunctionKeyword::read(LineParser &parser, int startArg, CoreData 
 }
 
 // Write keyword data to specified LineParser
-bool BroadeningFunctionKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool BroadeningFunctionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
-    CharString params;
+    std::string params;
     for (int n = 0; n < BroadeningFunction::nFunctionParameters(data_.function()); ++n)
-        params.strcatf("  %f", data_.parameter(n));
-    return parser.writeLineF("%s%s  '%s'%s\n", prefix, keywordName, BroadeningFunction::functionType(data_.function()),
-                             params.get());
+        params += fmt::format("  {}", data_.parameter(n));
+    return parser.writeLineF("{}{}  '{}'{}\n", prefix, keywordName, BroadeningFunction::functionType(data_.function()), params);
 }

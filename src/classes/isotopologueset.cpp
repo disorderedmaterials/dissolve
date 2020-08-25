@@ -149,7 +149,7 @@ const std::vector<Isotopologues> &IsotopologueSet::constIsotopologues() const { 
  */
 
 // Return class name
-const char *IsotopologueSet::itemClassName() { return "IsotopologueSet"; }
+std::string_view IsotopologueSet::itemClassName() { return "IsotopologueSet"; }
 
 // Read data through specified LineParser
 bool IsotopologueSet::read(LineParser &parser, CoreData &coreData)
@@ -157,10 +157,10 @@ bool IsotopologueSet::read(LineParser &parser, CoreData &coreData)
     clear();
 
     // Find target Configuration (first argument) and number of Species defined (second argument)
-    configuration_ = coreData.findConfiguration(parser.argc(0));
+    configuration_ = coreData.findConfiguration(parser.argsv(0));
     if (!configuration_)
     {
-        Messenger::error("Error reading IsotopologueSet - no Configuration named '%s' exists.\n", parser.argc(0));
+        Messenger::error("Error reading IsotopologueSet - no Configuration named '{}' exists.\n", parser.argsv(0));
         return false;
     }
     const auto nSpecies = parser.argi(1);
@@ -180,7 +180,7 @@ bool IsotopologueSet::read(LineParser &parser, CoreData &coreData)
 bool IsotopologueSet::write(LineParser &parser)
 {
     // Write Configuration name and number of Isotopologues we have defined
-    if (!parser.writeLineF("'%s'  %i\n", configuration_->name(), isotopologues_.size()))
+    if (!parser.writeLineF("'{}'  {}\n", configuration_->name(), isotopologues_.size()))
         return false;
 
     // Write details for each set of Isotopologues

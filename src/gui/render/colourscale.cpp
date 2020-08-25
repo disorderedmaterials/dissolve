@@ -100,7 +100,7 @@ void ColourScale::setPoint(int position, double value, QColor colour)
     // Check position supplied
     if ((position < 0) || (position >= points_.nItems()))
     {
-        printf("Scale point position to set (%i) is invalid - nItems = %i.\n", position, points_.nItems());
+        Messenger::error("Scale point position to set ({}) is invalid - nItems = {}.\n", position, points_.nItems());
         return;
     }
 
@@ -150,7 +150,7 @@ void ColourScale::removePoint(int position)
     // Check position supplied
     if ((position < 0) || (position >= points_.nItems()))
     {
-        printf("Scale point position to set (%i) is invalid - nItems = %i.\n", position, points_.nItems());
+        Messenger::error("Scale point position to set ({}) is invalid - nItems = {}.\n", position, points_.nItems());
         return;
     }
 
@@ -227,8 +227,7 @@ void ColourScale::colour(double value, GLfloat *rgba) const
         }
     }
 
-    // Shouldn't ever get here
-    printf("Oh dear - fell through to the bottom of ColourScale::colour().\n");
+    // Shouldn't ever get here - TODO Raise Exception?
     rgba[0] = 0.0;
     rgba[1] = 0.0;
     rgba[2] = 0.0;

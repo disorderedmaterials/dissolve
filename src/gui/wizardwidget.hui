@@ -87,9 +87,9 @@ class WizardWidget : public QWidget
     // Add empty page
     WizardWidgetPageInfo *addPage();
     // Register normal page
-    WizardWidgetPageInfo *registerPage(int index, const char *title, int nextIndex = -1);
+    WizardWidgetPageInfo *registerPage(int index, QString title, int nextIndex = -1);
     // Register choice page (no Finish / Next buttons)
-    void registerChoicePage(int index, const char *title);
+    void registerChoicePage(int index, QString title);
     // Find page with specified index
     WizardWidgetPageInfo *findPage(int index);
 

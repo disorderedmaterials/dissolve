@@ -70,7 +70,7 @@ void EPSRModule::initialise()
     keywords_.add("Expansion Function", new IntegerKeyword(-1, -1), "NCoeffP",
                   "Number of coefficients used to define the empirical potential (-1 for automatic)");
     keywords_.add("Expansion Function", new IntegerKeyword(1000, 0), "NPItSs", "Number of steps for refining the potential");
-    keywords_.add("Expansion Function", new CharStringKeyword(""), "PCofFile",
+    keywords_.add("Expansion Function", new StringKeyword(""), "PCofFile",
                   "EPSR pcof file from which to read starting coefficients from");
     keywords_.add("Expansion Function", new DoubleKeyword(0.01, 0.001, 1.0), "PSigma1",
                   "Width for Poisson functions in reciprocal space (N.B. this is psigma2 in EPSR)");
@@ -85,7 +85,7 @@ void EPSRModule::initialise()
     keywords_.add("Test", new BoolKeyword(false), "Test", "Test against supplied reference data", "<True|False>");
     keywords_.add("Test", new Data1DStoreKeyword(testData_), "TestReference", "Specify test reference data",
                   "<target> <fileformat> <filename> [x=1] [y=2]");
-    keywords_.add("Test", new DoubleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%%error) above which test fails",
+    keywords_.add("Test", new DoubleKeyword(0.1, 1.0e-5), "TestThreshold", "Test threshold (%error) above which test fails",
                   "<threshold[0.1]>");
     keywords_.add("Test", new BoolKeyword(false), "OverwritePotentials",
                   "Overwrite potentials each time rather than summing them", "<True|False>");

@@ -36,20 +36,22 @@ class TrajectoryExportFileFormat : public FileAndFormat
         XYZTrajectory,
         nTrajectoryExportFormats
     };
-    TrajectoryExportFileFormat(const char *filename = NULL, TrajectoryExportFormat format = XYZTrajectory);
+    TrajectoryExportFileFormat(std::string_view filename = "", TrajectoryExportFormat format = XYZTrajectory);
 
     /*
      * Format Access
      */
-    public:
+    private:
     // Return enum options for TrajectoryExportFormat
-    static EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> trajectoryExportFormats();
+    static EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> &trajectoryExportFormats();
+
+    public:
     // Return number of available formats
     int nFormats() const;
     // Return format keyword for supplied index
-    const char *formatKeyword(int id) const;
+    std::string_view formatKeyword(int id) const;
     // Return description string for supplied index
-    const char *formatDescription(int id) const;
+    std::string_view formatDescription(int id) const;
     // Return current format as TrajectoryExportFormat
     TrajectoryExportFormat trajectoryFormat() const;
 

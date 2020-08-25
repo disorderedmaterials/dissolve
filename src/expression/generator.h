@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/enumoptions.h"
 #include "templates/reflist.h"
 
@@ -36,7 +35,7 @@ class ExpressionVariable;
 class ExpressionGenerator
 {
     private:
-    ExpressionGenerator(Expression &expression, const char *expressionText);
+    ExpressionGenerator(Expression &expression, std::string_view expressionText);
 
     public:
     ~ExpressionGenerator();
@@ -77,7 +76,7 @@ class ExpressionGenerator
 
     private:
     // Source expression string
-    CharString expressionString_;
+    std::string expressionString_;
     // Integer position in stringSource, total length of string, and starting position of current token/function
     int stringPos_, stringLength_, tokenStart_, functionStart_;
     // Whether to use additional pre-defined constants
@@ -85,7 +84,7 @@ class ExpressionGenerator
 
     private:
     // Set string source for lexer
-    void setSource(const char *expressionText);
+    void setSource(std::string_view expressionText);
     // Get next character from current input stream
     char getChar();
     // Peek next character from current input stream

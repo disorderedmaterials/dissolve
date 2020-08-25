@@ -52,15 +52,15 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
      */
     private:
     // Name of the Species
-    CharString name_;
+    std::string name_;
     // Version of the Species
     VersionCounter version_;
 
     public:
     // Set name of the Species
-    void setName(const char *name);
+    void setName(std::string_view name);
     // Return the name of the Species
-    const char *name() const;
+    std::string_view name() const;
     // Check set-up of Species
     bool checkSetUp();
     // Print Species information
@@ -264,7 +264,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Update and return natural isotopologue
     Isotopologue *naturalIsotopologue();
     // Add a new Isotopologue to this Species
-    Isotopologue *addIsotopologue(const char *baseName);
+    Isotopologue *addIsotopologue(std::string_view baseName);
     // Remove specified Isotopologue from this Species
     void removeIsotopologue(Isotopologue *iso);
     // Return number of defined Isotopologues
@@ -276,9 +276,9 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Return whether the specified Isotopologue exists
     bool hasIsotopologue(const Isotopologue *iso) const;
     // Generate unique Isotopologue name with base name provided
-    const char *uniqueIsotopologueName(const char *baseName, const Isotopologue *exclude = NULL) const;
+    std::string uniqueIsotopologueName(std::string_view baseName, const Isotopologue *exclude = NULL);
     // Search for Isotopologue by name
-    Isotopologue *findIsotopologue(const char *name);
+    Isotopologue *findIsotopologue(std::string_view name, const Isotopologue *exclude = NULL);
     // Return index of specified Isotopologue
     int indexOfIsotopologue(const Isotopologue *iso) const;
 
@@ -291,7 +291,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 
     public:
     // Add a new SpeciesSite to this Species
-    SpeciesSite *addSite(const char *name = NULL);
+    SpeciesSite *addSite(std::string_view name = "");
     // Remove specified SpeciesSite
     void removeSite(SpeciesSite *site);
     // Return number of defined SpeciesSites
@@ -301,9 +301,9 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Return nth SpeciesSite defined
     SpeciesSite *site(int n);
     // Generate unique site name with base name provided
-    const char *uniqueSiteName(const char *baseName, SpeciesSite *exclude = NULL) const;
+    std::string uniqueSiteName(std::string_view base, const SpeciesSite *exclude = NULL) const;
     // Search for SpeciesSite by name
-    SpeciesSite *findSite(const char *name) const;
+    SpeciesSite *findSite(std::string_view name, const SpeciesSite *exclude = NULL) const;
 
     /*
      * Transforms
@@ -340,9 +340,9 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
      */
     public:
     // Load Species information from XYZ file
-    bool loadFromXYZ(const char *filename);
+    bool loadFromXYZ(std::string_view filename);
     // Load Species from file
-    bool load(const char *filename);
+    bool load(std::string_view filename);
 
     /*
      * Read / Write
@@ -370,5 +370,5 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Read Species definition from specified LineParser
     bool read(LineParser &parser, CoreData &coreData);
     // Write Species definition to specified LineParser
-    bool write(LineParser &parser, const char *prefix);
+    bool write(LineParser &parser, std::string_view prefix);
 };

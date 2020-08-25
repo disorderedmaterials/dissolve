@@ -28,15 +28,15 @@ class EnumOptionsBase
 {
     public:
     EnumOptionsBase();
-    EnumOptionsBase(const char *name, const EnumOptionsList &options);
-    EnumOptionsBase(const char *name, const EnumOptionsList &options, int defaultEnumeration);
+    EnumOptionsBase(std::string_view name, const EnumOptionsList &options);
+    EnumOptionsBase(std::string_view name, const EnumOptionsList &options, int defaultEnumeration);
 
     /*
      * Name
      */
     protected:
     // Name of options (e.g. from source enumeration)
-    const char *name_;
+    std::string name_;
 
     protected:
     // Unrecognised option
@@ -44,14 +44,14 @@ class EnumOptionsBase
 
     public:
     // Return name of options (e.g. from source enumeration)
-    const char *name() const;
+    std::string_view name() const;
 
     /*
      * Enum Option Data
      */
     protected:
     // Options
-    Array<EnumOption> options_;
+    std::vector<EnumOption> options_;
     // Current option index in local options_ array
     int currentOptionIndex_;
 
@@ -59,13 +59,13 @@ class EnumOptionsBase
     // Return number of options available
     int nOptions() const;
     // Return nth keyword in the list
-    const char *keywordByIndex(int index) const;
+    std::string_view keywordByIndex(int index) const;
     // Return description for the nth keyword in the list
-    const char *descriptionByIndex(int index) const;
+    std::string_view descriptionByIndex(int index) const;
     // Return option by keyword
-    const EnumOption &option(const char *keyword) const;
+    const EnumOption &option(std::string_view keyword) const;
     // Return current option keyword
-    const char *currentOptionKeyword() const;
+    std::string_view currentOptionKeyword() const;
     // Return current option
     const EnumOption &currentOption() const;
     // Return current option index
@@ -73,16 +73,16 @@ class EnumOptionsBase
     // Set current option index
     bool setCurrentOptionIndex(int index);
     // Set current option from keyword
-    bool setCurrentOption(const char *keyword);
+    bool setCurrentOption(std::string_view keyword);
     // Return whether specified option keyword is valid
-    bool isValid(const char *keyword) const;
+    bool isValid(std::string_view keyword) const;
 
     /*
      * Error Reporting
      */
     public:
     // Raise error, printing valid options
-    bool errorAndPrintValid(const char *badKeyword) const;
+    bool errorAndPrintValid(std::string_view badKeyword) const;
 
     /*
      * Operators

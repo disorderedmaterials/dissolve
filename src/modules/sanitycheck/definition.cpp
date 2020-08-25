@@ -22,13 +22,13 @@
 #include "modules/sanitycheck/sanitycheck.h"
 
 // Return type of module
-const char *SanityCheckModule::type() const { return "SanityCheck"; }
+std::string_view SanityCheckModule::type() const { return "SanityCheck"; }
 
 // Return category for module
-const char *SanityCheckModule::category() const { return "Checks & Tests"; }
+std::string_view SanityCheckModule::category() const { return "Checks & Tests"; }
 
 // Return brief description of module
-const char *SanityCheckModule::brief() const { return "Perform data sanity checks across all processes"; }
+std::string_view SanityCheckModule::brief() const { return "Perform data sanity checks across all processes"; }
 
 // Return the number of Configuration targets this Module requires
 int SanityCheckModule::nRequiredTargets() const { return Module::ZeroTargets; }

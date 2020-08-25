@@ -47,7 +47,7 @@ class GetSpeciesNameDialog : public QDialog
 
     public:
     // Run the dialog
-    bool get(const Species *currentSpecies, const char *currentName);
+    bool get(const Species *currentSpecies, const QString &currentName);
     // Return the name string
     QString newName() const;
 

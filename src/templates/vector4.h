@@ -98,7 +98,9 @@ template <class T> class Vec4
             return z;
         else if (index == 3)
             return w;
-        printf("Vec4 - retrieve index %i is out of range.\n", index);
+
+        throw std::runtime_error(fmt::format("Vec4 - array access failed - index {} is out of bounds.", index));
+
         return T();
     }
 
@@ -161,7 +163,8 @@ template <class T> class Vec4
             return z;
         else if (index == 3)
             return w;
-        printf("Vec4 - array access failed - index %i is out of bounds.\n", index);
+
+        throw std::runtime_error(fmt::format("Vec4 - array access failed - index {} is out of bounds.", index));
         return 0;
     }
 
@@ -185,5 +188,5 @@ template <class T> class Vec4
     }
 
     // Print
-    void print() const { printf("vec(xyzw) = %8.4f %8.4f %8.4f %8.4f\n", (double)x, (double)y, (double)z, (double)w); }
+    void print() const { fmt::print("vec(xyzw) = {} {} {} {}\n", x, y, z, w); }
 };

@@ -114,20 +114,20 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
     bool read(LineParser &parser, int startArg, CoreData &coreData)
     {
         if (!parentNode())
-            return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n",
+            return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
                                     KeywordBase::name());
 
         // Locate the named node in scope - don't prune by type yet (we'll check that in setNode())
-        ProcedureNode *node =
-            onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg)) : parentNode()->nodeExists(parser.argc(startArg));
+        ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argsv(startArg))
+                                            : parentNode()->nodeExists(parser.argsv(startArg));
         if (!node)
-            return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg),
+            return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(startArg),
                                     KeywordBase::name());
 
         return setNode(node);
     }
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, const char *keywordName, const char *prefix)
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
     {
         // Grab the node pointer
         const N *node = std::get<0>(KeywordData<std::tuple<N *, int>>::data_);
@@ -135,12 +135,12 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
         // If an index was set, write it after the node name
         if (std::get<1>(KeywordData<std::tuple<N *, int>>::data_) >= 0)
         {
-            if (!parser.writeLineF("%s%s  '%s'\n", prefix, KeywordBase::name(), node ? node->name() : "???"))
+            if (!parser.writeLineF("{}{}  '{}'\n", prefix, KeywordBase::name(), node ? node->name() : "???"))
                 return false;
         }
         else
         {
-            if (!parser.writeLineF("%s%s  '%s'  %i\n", prefix, KeywordBase::name(), node ? node->name() : "???",
+            if (!parser.writeLineF("{}{}  '{}'  {}\n", prefix, KeywordBase::name(), node ? node->name() : "???",
                                    std::get<1>(KeywordData<std::tuple<N *, int>>::data_)))
                 return false;
         }
@@ -159,7 +159,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
             return false;
 
         if (!node->isType(nodeType()))
-            return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(),
+            return Messenger::error("Node '{}' is of type {}, but the {} keyword requires a node of type {}.\n", node->name(),
                                     ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(),
                                     ProcedureNode::nodeTypes().keyword(nodeType()));
 

@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "gui/render/colourdefinition.h"
 #include "gui/render/linestipple.h"
 #include "gui/stockcolours.h"
@@ -33,18 +32,18 @@ class Renderable;
 class RenderableGroup : public ListItem<RenderableGroup>
 {
     public:
-    RenderableGroup(const char *name, StockColours::StockColour colour);
+    RenderableGroup(std::string_view name, StockColours::StockColour colour);
 
     /*
      * Name
      */
     private:
     // Name of the group
-    CharString name_;
+    std::string name_;
 
     public:
     // Return name of group
-    const char *name() const;
+    std::string_view name() const;
 
     /*
      * Renderable Targets

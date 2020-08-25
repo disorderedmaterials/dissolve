@@ -63,7 +63,7 @@ bool Distributor::addSoftLock(int cellIndex)
     // We can't soft-lock a cell if it is currently being modified ( == HardLocked )
     if (cellLocks_[cellIndex] == HardLocked)
     {
-        Messenger::error("Can't add a soft lock to Cell index %i since it is being modified.\n", cellIndex);
+        Messenger::error("Can't add a soft lock to Cell index {} since it is being modified.\n", cellIndex);
         return false;
     }
 
@@ -80,12 +80,12 @@ bool Distributor::removeSoftLock(int cellIndex)
     // remove
     if (cellLocks_[cellIndex] == NoLocks)
     {
-        Messenger::error("Can't remove a soft lock from Cell index %i since there are no soft locks to remove.\n", cellIndex);
+        Messenger::error("Can't remove a soft lock from Cell index {} since there are no soft locks to remove.\n", cellIndex);
         return false;
     }
     else if (cellLocks_[cellIndex] == HardLocked)
     {
-        Messenger::error("Can't remove a soft lock from Cell index %i since it is being modified (there are no soft "
+        Messenger::error("Can't remove a soft lock from Cell index {} since it is being modified (there are no soft "
                          "locks to remove).\n",
                          cellIndex);
         return false;
@@ -119,7 +119,7 @@ bool Distributor::addHardLocks(Array<Cell *> cells)
 
     // Form a list of unique surrounding cells that we need to soft-lock
     Array<Cell *> softCells = surroundingCells(cells);
-    Messenger::printVerbose("Hard-locking %i cells and soft-locking %i surrounding ones...\n", cells.nItems(),
+    Messenger::printVerbose("Hard-locking {} cells and soft-locking {} surrounding ones...\n", cells.nItems(),
                             softCells.nItems());
 
     // Loop over Cells to hard-lock
@@ -131,12 +131,12 @@ bool Distributor::addHardLocks(Array<Cell *> cells)
         // We can't hard-lock a cell if it is currently being modified ( == HardLocked ) or is soft-locked ( > 0 )
         if (cellLocks_[cellId] == HardLocked)
         {
-            Messenger::error("Can't add a hard lock to Cell index %i since it is already being modified.\n", cellId);
+            Messenger::error("Can't add a hard lock to Cell index {} since it is already being modified.\n", cellId);
             return false;
         }
         else if (cellLocks_[cellId] > NoLocks)
         {
-            Messenger::error("Can't add a hard lock to Cell index %i since it already has soft locks (%i).\n", cellId,
+            Messenger::error("Can't add a hard lock to Cell index {} since it already has soft locks ({}).\n", cellId,
                              cellLocks_[cellId]);
             return false;
         }
@@ -162,7 +162,7 @@ bool Distributor::removeHardLocks(Array<Cell *> cells)
 
     // Form a list of unique surrounding cells that we need to soft-lock
     Array<Cell *> softCells = surroundingCells(cells);
-    Messenger::printVerbose("Hard-unlocking %i cells and soft-unlocking %i surrounding ones...\n", cells.nItems(),
+    Messenger::printVerbose("Hard-unlocking {} cells and soft-unlocking {} surrounding ones...\n", cells.nItems(),
                             softCells.nItems());
 
     // Loop over Cells to hard-unlock
@@ -174,12 +174,12 @@ bool Distributor::removeHardLocks(Array<Cell *> cells)
         // We can't hard-unlock a cell unless it is currently hard-locked (obviously!)
         if (cellLocks_[cellId] == NoLocks)
         {
-            Messenger::error("Can't remove a hard lock from Cell index %i since there is no hard lock to remove.\n", cellId);
+            Messenger::error("Can't remove a hard lock from Cell index {} since there is no hard lock to remove.\n", cellId);
             return false;
         }
         else if (cellLocks_[cellId] > NoLocks)
         {
-            Messenger::error("Can't remove a hard lock from Cell index %i since there are only soft locks to remove.\n",
+            Messenger::error("Can't remove a hard lock from Cell index {} since there are only soft locks to remove.\n",
                              cellId);
             return false;
         }
@@ -414,8 +414,8 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
                             // changes before the calculation begins
                             changesBroadcastRequired = true;
                             ++nChangeBroadcastsRequired_;
-                            Messenger::printVerbose("Changes broadcast required - Cell %i is required by "
-                                                    "process/group %i, and process/group %i has modified it.\n",
+                            Messenger::printVerbose("Changes broadcast required - Cell {} is required by "
+                                                    "process/group {}, and process/group {} has modified it.\n",
                                                     cellIndex, processOrGroup, cellContentsModifiedBy_[cellIndex]);
 
                             // Reset the modified by flags here - this makes the assumption that the
@@ -437,7 +437,7 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
         // Did we find a valid object?
         if (nextObject == Distributor::NoneAvailable)
         {
-            Messenger::printVerbose("No viable objects left to distribute for group / process %i.\n", processOrGroup);
+            Messenger::printVerbose("No viable objects left to distribute for group / process {}.\n", processOrGroup);
 
             lastObjectDistributed_[processOrGroup] = Distributor::NoneAvailable;
 
@@ -449,7 +449,7 @@ int Distributor::nextAvailableObject(bool &changesBroadcastRequired)
         else
         {
             // We have found a viable object for this process / group
-            Messenger::printVerbose("Next object for process/group %i is %i (number already distributed = %i).\n",
+            Messenger::printVerbose("Next object for process/group {} is {} (number already distributed = {}).\n",
                                     processOrGroup, nextObject, nObjectsDistributed_);
             lastObjectDistributed_[processOrGroup] = nextObject;
             lastHardLockedCells_[processOrGroup] = hardLocksRequired;
@@ -492,7 +492,7 @@ bool Distributor::finishedWithObject()
 
             // Sanity check - has this cell been modified by somebody else?
             if (cellContentsModifiedBy_[cellIndex] != -1)
-                Messenger::warn("Cell index %i contents modified twice (%i and %i)?\n", cellIndex,
+                Messenger::warn("Cell index {} contents modified twice ({} and {})?\n", cellIndex,
                                 cellContentsModifiedBy_[cellIndex], processOrGroup);
 
             cellContentsModifiedBy_[cellIndex] = processOrGroup;

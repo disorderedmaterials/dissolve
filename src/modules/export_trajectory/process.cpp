@@ -35,7 +35,7 @@ bool ExportTrajectoryModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Check for zero Configuration targets
     if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration target set for module '%s'.\n", uniqueName());
+        return Messenger::error("No configuration target set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
     auto *cfg = targetConfigurations_.firstItem();
@@ -46,12 +46,12 @@ bool ExportTrajectoryModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Only the pool master saves the data
     if (procPool.isMaster())
     {
-        Messenger::print("Export: Appending trajectory file (%s) for Configuration '%s'...\n", trajectoryFormat_.description(),
+        Messenger::print("Export: Appending trajectory file ({}) for Configuration '{}'...\n", trajectoryFormat_.description(),
                          cfg->name());
 
         if (!trajectoryFormat_.exportData(cfg))
         {
-            Messenger::print("Export: Failed to append trajectory file '%s'.\n", trajectoryFormat_.filename());
+            Messenger::print("Export: Failed to append trajectory file '{}'.\n", trajectoryFormat_.filename());
             procPool.decideFalse();
             return false;
         }

@@ -35,13 +35,10 @@ class NodeValue
     NodeValue();
     NodeValue(const int i);
     NodeValue(const double d);
-    NodeValue(const char *expressionText, RefList<ExpressionVariable> parameters);
+    NodeValue(std::string_view expressionText, RefList<ExpressionVariable> parameters);
     ~NodeValue();
-    // Assignment from integer
     void operator=(const int value);
-    // Assignment from integer
     void operator=(const double value);
-    // Conversion (to double)
     operator double();
 
     /*
@@ -70,7 +67,7 @@ class NodeValue
     // Set double value
     bool set(double value);
     // Set from expression text
-    bool set(const char *expressionText, RefList<ExpressionVariable> parameters);
+    bool set(std::string_view expressionText, RefList<ExpressionVariable> parameters);
     // Return whether value is currently valid
     bool isValid() const;
 
@@ -83,5 +80,5 @@ class NodeValue
     // Return contained value as double
     double asDouble();
     // Return value represented as a string
-    CharString asString(bool addQuotesIfRequired = false) const;
+    std::string asString(bool addQuotesIfRequired = false) const;
 };

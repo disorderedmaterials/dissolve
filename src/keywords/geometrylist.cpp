@@ -59,7 +59,7 @@ bool GeometryListKeyword::read(LineParser &parser, int startArg, CoreData &coreD
     for (int i = startArg; i <= (startArg + maxArguments() - 1); i++)
     {
         if (parser.argi(i) < 1)
-            return Messenger::error("Index value, %i, not appropriate", parser.argi(i));
+            return Messenger::error("Index value, {}, not appropriate", parser.argi(i));
     }
 
     if (maxArguments() == 3)
@@ -77,17 +77,17 @@ bool GeometryListKeyword::read(LineParser &parser, int startArg, CoreData &coreD
 }
 
 // Write keyword data to specified LineParser
-bool GeometryListKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool GeometryListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
-    CharString index;
+    std::string index;
 
     ListIterator<Geometry> GeoIterator(data_);
     while (Geometry *ref = GeoIterator.iterate())
     {
         index.clear();
         for (int n = 0; n < maxArguments() - 1; ++n)
-            index.strcatf("  %i", ref->indices(n) + 1);
-        if (!parser.writeLineF("%s%s%s  %12.4e\n", prefix, keywordName, index.get(), ref->value()))
+            index += fmt::format("  {}", ref->indices(n) + 1);
+        if (!parser.writeLineF("{}{}{}  {:12.4e}\n", prefix, keywordName, index, ref->value()))
             return false;
     }
 

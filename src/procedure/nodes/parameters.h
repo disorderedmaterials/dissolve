@@ -55,11 +55,11 @@ class ParametersProcedureNode : public ProcedureNode
 
     public:
     // Add new integer parameter
-    bool addParameter(const char *name, int initialValue = 0);
+    bool addParameter(std::string_view name, int initialValue = 0);
     // Add new double parameter
-    bool addParameter(const char *name, double initialValue = 0.0);
+    bool addParameter(std::string_view name, double initialValue = 0.0);
     // Return whether this node has the named parameter specified
-    ExpressionVariable *hasParameter(const char *name, ExpressionVariable *excludeParameter);
+    ExpressionVariable *hasParameter(std::string_view name, ExpressionVariable *excludeParameter);
     // Return list of all parameters for this node
     RefList<ExpressionVariable> parameterReferences() const;
 
@@ -68,8 +68,8 @@ class ParametersProcedureNode : public ProcedureNode
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
+    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList);
     // Execute node, targetting the supplied Configuration
-    ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+    ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                                GenericList &targetList);
 };

@@ -49,11 +49,10 @@ EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> PairPotentialsBlock::key
 // Parse PairPotentials block
 bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
 {
-    Messenger::print("\nParsing %s block...\n", BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
+    Messenger::print("\nParsing {} block...\n", BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
 
     std::shared_ptr<AtomType> at1;
     std::optional<decltype(at1)> opt_at;
-    PairPotential::CoulombTruncationScheme cTrunc;
     PairPotential::ShortRangeTruncationScheme srTrunc;
     auto blockDone = false, error = false;
 
@@ -64,9 +63,9 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
             return false;
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
-        if (!keywords().isValid(parser.argc(0)))
-            return keywords().errorAndPrintValid(parser.argc(0));
-        auto kwd = keywords().enumeration(parser.argc(0));
+        if (!keywords().isValid(parser.argsv(0)))
+            return keywords().errorAndPrintValid(parser.argsv(0));
+        auto kwd = keywords().enumeration(parser.argsv(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 
@@ -74,101 +73,52 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
         switch (kwd)
         {
             case (PairPotentialsBlock::CoulombTruncationKeyword):
-                cTrunc = PairPotential::coulombTruncationScheme(parser.argc(1));
-                if (cTrunc == PairPotential::nCoulombTruncationSchemes)
+                if (PairPotential::coulombTruncationSchemes().isValid(parser.argsv(1)))
+                    PairPotential::setCoulombTruncationScheme(
+                        PairPotential::coulombTruncationSchemes().enumeration(parser.argsv(1)));
+                else
                 {
-                    Messenger::error("Unknown Coulomb truncation scheme '%s' used in PairPotentials block.\n", parser.argc(1));
+                    PairPotential::coulombTruncationSchemes().errorAndPrintValid(parser.argsv(1));
                     error = true;
-                    break;
                 }
-                PairPotential::setCoulombTruncationScheme(cTrunc);
                 break;
             case (PairPotentialsBlock::DeltaKeyword):
                 dissolve->setPairPotentialDelta(parser.argd(1));
                 break;
             case (PairPotentialsBlock::EndPairPotentialsKeyword):
-                Messenger::print("Found end of %s block.\n",
+                Messenger::print("Found end of {} block.\n",
                                  BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
                 blockDone = true;
                 break;
-                // 			case (PairPotentialsBlock::GenerateKeyword):
-                // 				// Get short-range type
-                // 				if (!Forcefield::shortRangeTypes().isValid(parser.argc(1)))
-                // 				{
-                // 					Forcefield::shortRangeTypes().errorAndPrintValid(parser.argc(1));
-                // 					error = true;
-                // 					break;
-                // 				}
-                // 				srType =
-                // Forcefield::shortRangeTypes().enumeration(parser.argc(1));
-                //
-                // 				// Grab AtomTypes...
-                // 				at1 = dissolve->findAtomType(parser.argc(2));
-                // 				at2 = dissolve->findAtomType(parser.argc(3));
-                // 				if ((!at1) || (!at2))
-                // 				{
-                // 					Messenger::error("Unknown AtomType '%s' referenced in
-                // PairPotentials
-                // block.\n", at1 ? parser.argc(3) : parser.argc(2)); 					error =
-                // true; break;
-                // 				}
-                // 				pot = dissolve->pairPotential(at1, at2);
-                // 				if (pot) Messenger::warn("Overwriting previous PairPotential
-                // parameters for interaction between '%s' and '%s'...\n", parser.argc(2), parser.argc(3)); else
-                // 				{
-                // 					Messenger::printVerbose("Adding PairPotential for
-                // interaction between
-                // '%s' and '%s'...\n", parser.argc(2), parser.argc(3)); pot = dissolve->addPairPotential(at1,
-                // at2);
-                // 				}
-                //
-                // 				// Now set the short-range type
-                // 				pot->setShortRangeType(srType);
-                //
-                // 				// If more parameters were supplied, these will for the basis
-                // for the potential. Otherwise, generate from existing AtomType parameters.
-                // 				// Read in the parameters - qi, qj, p1, p2, ...
-                // 					if (parser.hasArg(4)) pot->setChargeI(parser.argd(4));
-                // 					if (parser.hasArg(5)) pot->setChargeJ(parser.argd(5));
-                // 					for (int n=6; n<parser.nArgs(); ++n)
-                // pot->setParameter(n-6,
-                // parser.argd(n)); 					CharString s("q(I)=%f, q(J)=%f",
-                // pot->chargeI(),
-                // pot->chargeJ()); 					for (int n=0; n<MAXSRPARAMETERS; ++n)
-                // s.strcatf(", p%i=%f", n+1, pot->parameter(n));
-                // Messenger::printVerbose("Pair potential between '%s' and '%s' will be generated from
-                // parameters : %s\n", at1->name(), at2->name(), s.get());
-                // 				}
-                // 				break;
             case (PairPotentialsBlock::IncludeCoulombKeyword):
                 dissolve->setPairPotentialsIncludeCoulomb(parser.argb(1));
                 break;
             case (PairPotentialsBlock::ParametersKeyword):
                 // Sanity check element
-                if (Elements::element(parser.argc(2)).isUnknown())
+                if (Elements::element(parser.argsv(2)).isUnknown())
                 {
-                    Messenger::error("Unknown element '%s' given for atom type '%s' in PairPotentials block.\n", parser.argc(2),
-                                     parser.argc(1));
+                    Messenger::error("Unknown element '{}' given for atom type '{}' in PairPotentials block.\n",
+                                     parser.argsv(2), parser.argsv(1));
                     error = true;
                     break;
                 }
 
                 // Find / create AtomType and check element...
-                opt_at = dissolve->findAtomType(parser.argc(1));
+                opt_at = dissolve->findAtomType(parser.argsv(1));
                 if (!opt_at)
                 {
-                    Messenger::warn("Unknown atom type '%s' referenced in PairPotentials block - creating "
+                    Messenger::warn("Unknown atom type '{}' referenced in PairPotentials block - creating "
                                     "it now...\n",
-                                    parser.argc(1));
-                    at1 = dissolve->addAtomType(&Elements::element(parser.argc(2)));
-                    at1->setName(parser.argc(1));
+                                    parser.argsv(1));
+                    at1 = dissolve->addAtomType(&Elements::element(parser.argsv(2)));
+                    at1->setName(parser.argsv(1));
                 }
-                else if (&Elements::element(parser.argc(2)) != (*opt_at)->element())
+                else if (&Elements::element(parser.argsv(2)) != (*opt_at)->element())
                 {
                     at1 = *opt_at;
-                    Messenger::error("Element '%s' does not match that for the existing atom type '%s' in "
+                    Messenger::error("Element '{}' does not match that for the existing atom type '{}' in "
                                      "PairPotentials block.\n",
-                                     parser.argc(2), parser.argc(1));
+                                     parser.argsv(2), parser.argsv(1));
                     error = true;
                     break;
                 }
@@ -179,13 +129,13 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 at1->parameters().setCharge(parser.argd(3));
 
                 // Get short-range type
-                if (!Forcefield::shortRangeTypes().isValid(parser.argc(4)))
+                if (!Forcefield::shortRangeTypes().isValid(parser.argsv(4)))
                 {
-                    Forcefield::shortRangeTypes().errorAndPrintValid(parser.argc(4));
+                    Forcefield::shortRangeTypes().errorAndPrintValid(parser.argsv(4));
                     error = true;
                     break;
                 }
-                at1->setShortRangeType(Forcefield::shortRangeTypes().enumeration(parser.argc(4)));
+                at1->setShortRangeType(Forcefield::shortRangeTypes().enumeration(parser.argsv(4)));
 
                 // Set interaction parameters
                 for (int n = 5; n < parser.nArgs(); ++n)
@@ -195,22 +145,22 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 dissolve->setPairPotentialRange(parser.argd(1));
                 break;
             case (PairPotentialsBlock::ShortRangeTruncationKeyword):
-                srTrunc = PairPotential::shortRangeTruncationScheme(parser.argc(1));
-                if (srTrunc == PairPotential::nShortRangeTruncationSchemes)
+                if (PairPotential::shortRangeTruncationSchemes().isValid(parser.argsv(1)))
+                    PairPotential::setShortRangeTruncationScheme(
+                        PairPotential::shortRangeTruncationSchemes().enumeration(parser.argsv(1)));
+                else
                 {
-                    Messenger::error("Unknown short-range truncation scheme '%s' used in PairPotentials block.\n",
-                                     parser.argc(1));
+                    PairPotential::shortRangeTruncationSchemes().errorAndPrintValid(parser.argsv(1));
                     error = true;
-                    break;
                 }
-                PairPotential::setShortRangeTruncationScheme(srTrunc);
                 break;
             case (PairPotentialsBlock::ShortRangeTruncationWidthKeyword):
                 PairPotential::setShortRangeTruncationWidth(parser.argd(1));
                 break;
             default:
-                printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n",
-                       BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword), keywords().keyword(kwd));
+                Messenger::error("{} block keyword '{}' not accounted for.\n",
+                                 BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword),
+                                 keywords().keyword(kwd));
                 error = true;
                 break;
         }
@@ -227,7 +177,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
     // If there's no error and the blockDone flag isn't set, return an error
     if (!error && !blockDone)
     {
-        Messenger::error("Unterminated %s block found.\n",
+        Messenger::error("Unterminated {} block found.\n",
                          BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
         error = true;
     }

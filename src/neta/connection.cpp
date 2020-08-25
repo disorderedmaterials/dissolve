@@ -65,14 +65,14 @@ EnumOptions<NETAConnectionNode::NETAConnectionModifier> NETAConnectionNode::modi
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETAConnectionNode::isValidModifier(const char *s) const { return (modifiers().isValid(s)); }
+bool NETAConnectionNode::isValidModifier(std::string_view s) const { return (modifiers().isValid(s)); }
 
 // Set value and comparator for specified modifier
-bool NETAConnectionNode::setModifier(const char *modifier, ComparisonOperator op, int value)
+bool NETAConnectionNode::setModifier(std::string_view modifier, ComparisonOperator op, int value)
 {
     // Check that the supplied index is valid
     if (!modifiers().isValid(modifier))
-        return Messenger::error("Invalid modifier '%s' passed to NETAConnectionNode.\n", modifier);
+        return Messenger::error("Invalid modifier '{}' passed to NETAConnectionNode.\n", modifier);
 
     switch (modifiers().enumeration(modifier))
     {
@@ -89,7 +89,7 @@ bool NETAConnectionNode::setModifier(const char *modifier, ComparisonOperator op
             repeatCountOperator_ = op;
             break;
         default:
-            return Messenger::error("Don't know how to handle modifier '%s' in connection node.\n", modifier);
+            return Messenger::error("Don't know how to handle modifier '{}' in connection node.\n", modifier);
     }
 
     return true;
@@ -110,14 +110,14 @@ EnumOptions<NETAConnectionNode::NETAConnectionFlag> NETAConnectionNode::flags()
 }
 
 // Return whether the specified flag is valid for this node
-bool NETAConnectionNode::isValidFlag(const char *s) const { return (flags().isValid(s)); }
+bool NETAConnectionNode::isValidFlag(std::string_view s) const { return (flags().isValid(s)); }
 
 // Set specified flag
-bool NETAConnectionNode::setFlag(const char *flag, bool state)
+bool NETAConnectionNode::setFlag(std::string_view flag, bool state)
 {
     // Check that the supplied index is valid
     if (!flags().isValid(flag))
-        return Messenger::error("Invalid flag '%s' passed to NETAConnectionNode.\n", flag);
+        return Messenger::error("Invalid flag '{}' passed to NETAConnectionNode.\n", flag);
 
     switch (flags().enumeration(flag))
     {
@@ -125,7 +125,7 @@ bool NETAConnectionNode::setFlag(const char *flag, bool state)
             allowRootMatch_ = state;
             break;
         default:
-            return Messenger::error("Don't know how to handle flag '%s' in connection node.\n", flag);
+            return Messenger::error("Don't know how to handle flag '{}' in connection node.\n", flag);
     }
 
     return true;

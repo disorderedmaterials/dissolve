@@ -120,10 +120,10 @@ bool Forcefield_Kulmala2010::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_Kulmala2010::name() const { return "Kulmala2010"; }
+std::string_view Forcefield_Kulmala2010::name() const { return "Kulmala2010"; }
 
 // Return description for Forcefield
-const char *Forcefield_Kulmala2010::description() const
+std::string_view Forcefield_Kulmala2010::description() const
 {
     return "Implements forcefield found in 'Enhancing effect of dimethylamine in sulfuric acid nucleation in the presence of "
            "water – a computational study', V. Loukonen, T. Kurten, I. K. Ortega, H. Vehkamaki, A. A. H. Padua, K. Sellegri, "

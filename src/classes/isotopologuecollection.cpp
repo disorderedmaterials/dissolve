@@ -195,7 +195,7 @@ void IsotopologueCollection::complete(const RefList<Configuration> &configuratio
  */
 
 // Return class name
-const char *IsotopologueCollection::itemClassName() { return "IsotopologueCollection"; }
+std::string_view IsotopologueCollection::itemClassName() { return "IsotopologueCollection"; }
 
 // Read data through specified LineParser
 bool IsotopologueCollection::read(LineParser &parser, CoreData &coreData)
@@ -220,7 +220,7 @@ bool IsotopologueCollection::read(LineParser &parser, CoreData &coreData)
 bool IsotopologueCollection::write(LineParser &parser)
 {
     // Write number of Configurations in the collection
-    if (!parser.writeLineF("%i\n", isotopologueSets_.size()))
+    if (!parser.writeLineF("{}\n", isotopologueSets_.size()))
         return false;
 
     // Write details for each set of Isotopologues

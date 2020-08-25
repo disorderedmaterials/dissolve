@@ -41,12 +41,12 @@ int ExpressionKeyword::minArguments() const { return 1; }
 int ExpressionKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ExpressionKeyword::read(LineParser &parser, int startArg, CoreData &coreData) { return setValue(parser.argc(startArg)); }
+bool ExpressionKeyword::read(LineParser &parser, int startArg, CoreData &coreData) { return setValue(parser.argsv(startArg)); }
 
 // Write keyword data to specified LineParser
-bool ExpressionKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool ExpressionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
-    if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_.expressionString()))
+    if (!parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_.expressionString()))
         return false;
 
     return true;
@@ -57,7 +57,7 @@ bool ExpressionKeyword::write(LineParser &parser, const char *keywordName, const
  */
 
 // Set the value from supplied expression text
-bool ExpressionKeyword::setValue(const char *expressionText)
+bool ExpressionKeyword::setValue(std::string_view expressionText)
 {
     if (!data_.set(expressionText))
         return false;

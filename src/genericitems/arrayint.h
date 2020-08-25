@@ -27,7 +27,7 @@
 template <> class GenericItemContainer<Array<int>> : public GenericItem
 {
     public:
-    GenericItemContainer<Array<int>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
+    GenericItemContainer<Array<int>>(std::string_view name, int flags = 0) : GenericItem(name, flags) {}
 
     /*
      * Data
@@ -45,7 +45,7 @@ template <> class GenericItemContainer<Array<int>> : public GenericItem
      */
     protected:
     // Create a new GenericItem containing same class as current type
-    GenericItem *createItem(const char *className, const char *name, int flags = 0)
+    GenericItem *createItem(std::string_view className, std::string_view name, int flags = 0)
     {
         if (DissolveSys::sameString(className, itemClassName()))
             return new GenericItemContainer<Array<int>>(name, flags);
@@ -54,7 +54,7 @@ template <> class GenericItemContainer<Array<int>> : public GenericItem
 
     public:
     // Return class name contained in item
-    const char *itemClassName() { return "Array<int>"; }
+    std::string_view itemClassName() { return "Array<int>"; }
 
     /*
      * I/O
@@ -63,10 +63,10 @@ template <> class GenericItemContainer<Array<int>> : public GenericItem
     // Write data through specified parser
     bool write(LineParser &parser)
     {
-        parser.writeLineF("%i\n", data_.nItems());
+        parser.writeLineF("{}\n", data_.nItems());
         for (int n = 0; n < data_.nItems(); ++n)
         {
-            if (!parser.writeLineF("%i\n", data_.constAt(n)))
+            if (!parser.writeLineF("{}\n", data_.constAt(n)))
                 return false;
         }
         return true;

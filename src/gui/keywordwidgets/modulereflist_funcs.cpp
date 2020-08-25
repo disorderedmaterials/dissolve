@@ -62,7 +62,7 @@ void ModuleRefListKeywordWidget::updateSelectionRow(int row, Module *module, boo
     QListWidgetItem *item;
     if (createItem)
     {
-        item = new QListWidgetItem(module->uniqueName());
+        item = new QListWidgetItem(QString::fromStdString(std::string(module->uniqueName())));
         item->setData(Qt::UserRole, VariantPointer<Module>(module));
         item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
         ui_.SelectionList->insertItem(row, item);
@@ -97,7 +97,7 @@ void ModuleRefListKeywordWidget::updateWidgetValues(const CoreData &coreData)
 {
     refreshing_ = true;
 
-    // Get a RefList of current Modules that are of the correct type
+    // Get a list of current Modules that are of the correct type
     RefList<Module> availableModules = coreData.findModules(keyword_->moduleTypes());
 
     // Update the list widget
@@ -134,14 +134,13 @@ void ModuleRefListKeywordWidget::updateSummaryText()
         setSummaryText("<None>");
     else
     {
-        CharString summaryText;
+        QString summaryText;
         auto first = true;
         for (Module *module : selection)
         {
-            if (first)
-                summaryText = module->uniqueName();
-            else
-                summaryText.strcatf(", %s", module->uniqueName());
+            if (!first)
+                summaryText += ", ";
+            summaryText += QString::fromStdString(std::string(module->uniqueName()));
             first = false;
         }
         setSummaryText(summaryText);

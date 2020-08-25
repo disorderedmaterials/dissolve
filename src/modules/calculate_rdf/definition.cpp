@@ -22,13 +22,13 @@
 #include "modules/calculate_rdf/rdf.h"
 
 // Return type of module
-const char *CalculateRDFModule::type() const { return "CalculateRDF"; }
+std::string_view CalculateRDFModule::type() const { return "CalculateRDF"; }
 
 // Return category for module
-const char *CalculateRDFModule::category() const { return "Analysis"; }
+std::string_view CalculateRDFModule::category() const { return "Analysis"; }
 
 // Return brief description of module
-const char *CalculateRDFModule::brief() const { return "Calculate radial distribution functions between sites"; }
+std::string_view CalculateRDFModule::brief() const { return "Calculate radial distribution functions between sites"; }
 
 // Return the number of Configuration targets this Module requires
 int CalculateRDFModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

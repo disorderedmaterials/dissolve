@@ -41,7 +41,7 @@ class Data1DImportFileFormat : public FileAndFormat
         nData1DImportFormats
     };
     Data1DImportFileFormat(Data1DImportFormat format = XYData1D);
-    Data1DImportFileFormat(const char *filename, Data1DImportFormat format = XYData1D);
+    Data1DImportFileFormat(std::string_view filename, Data1DImportFormat format = XYData1D);
     ~Data1DImportFileFormat();
 
     /*
@@ -54,15 +54,17 @@ class Data1DImportFileFormat : public FileAndFormat
     /*
      * Format Access
      */
-    public:
+    private:
     // Return enum options for Data1DImportFormat
-    static EnumOptions<Data1DImportFileFormat::Data1DImportFormat> data1DImportFormats();
+    static EnumOptions<Data1DImportFileFormat::Data1DImportFormat> &data1DImportFormats();
+
+    public:
     // Return number of available formats
     int nFormats() const;
     // Return format keyword for supplied index
-    const char *formatKeyword(int id) const;
+    std::string_view formatKeyword(int id) const;
     // Return description string for supplied index
-    const char *formatDescription(int id) const;
+    std::string_view formatDescription(int id) const;
     // Return current format as Data1DImportFormat
     Data1DImportFormat data1DFormat() const;
 

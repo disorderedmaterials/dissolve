@@ -28,7 +28,7 @@ Data1DImportFileFormat::Data1DImportFileFormat(Data1DImportFileFormat::Data1DImp
 {
     setUpKeywords();
 }
-Data1DImportFileFormat::Data1DImportFileFormat(const char *filename, Data1DImportFileFormat::Data1DImportFormat format)
+Data1DImportFileFormat::Data1DImportFileFormat(std::string_view filename, Data1DImportFileFormat::Data1DImportFormat format)
     : FileAndFormat(filename, format)
 {
     setUpKeywords();
@@ -55,7 +55,7 @@ void Data1DImportFileFormat::setUpKeywords()
  */
 
 // Return enum options for Data1DImportFormat
-EnumOptions<Data1DImportFileFormat::Data1DImportFormat> Data1DImportFileFormat::data1DImportFormats()
+EnumOptions<Data1DImportFileFormat::Data1DImportFormat> &Data1DImportFileFormat::data1DImportFormats()
 {
     static EnumOptionsList Data1DImportFormats =
         EnumOptionsList() << EnumOption(Data1DImportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)")
@@ -72,10 +72,13 @@ EnumOptions<Data1DImportFileFormat::Data1DImportFormat> Data1DImportFileFormat::
 int Data1DImportFileFormat::nFormats() const { return Data1DImportFileFormat::nData1DImportFormats; }
 
 // Return format keyword for supplied index
-const char *Data1DImportFileFormat::formatKeyword(int id) const { return data1DImportFormats().keywordByIndex(id); }
+std::string_view Data1DImportFileFormat::formatKeyword(int id) const { return data1DImportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-const char *Data1DImportFileFormat::formatDescription(int id) const { return data1DImportFormats().descriptionByIndex(id); }
+std::string_view Data1DImportFileFormat::formatDescription(int id) const
+{
+    return data1DImportFormats().descriptionByIndex(id);
+}
 
 // Return current format as Data1DImportFormat
 Data1DImportFileFormat::Data1DImportFormat Data1DImportFileFormat::data1DFormat() const
@@ -93,7 +96,7 @@ bool Data1DImportFileFormat::importData(Data1D &data, ProcessPool *procPool)
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
-        return Messenger::error("Couldn't open file '%s' for loading Data1D data.\n", filename_.get());
+        return Messenger::error("Couldn't open file '{}' for loading Data1D data.\n", filename_);
 
     // Import the data
     auto result = importData(parser, data);
@@ -120,7 +123,7 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
             result = importGudrunMint(parser, data);
             break;
         default:
-            Messenger::error("Don't know how to load Data1D of format '%s'.\n", formatKeyword(data1DFormat()));
+            Messenger::error("Don't know how to load Data1D of format '{}'.\n", formatKeyword(data1DFormat()));
     }
 
     // If we failed, may as well return now
@@ -133,7 +136,7 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
     if (removeAverage > 0.0)
     {
         double level = Filters::subtractAverage(data, removeAverage);
-        Messenger::print("Removed average level of %f from data, forming average over x >= %f.\n", level, removeAverage);
+        Messenger::print("Removed average level of {} from data, forming average over x >= {}.\n", level, removeAverage);
     }
 
     return result;

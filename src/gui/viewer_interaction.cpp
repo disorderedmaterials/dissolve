@@ -26,7 +26,7 @@
  */
 
 // Return text describing current interaction mode
-const char *BaseViewer::interactionModeText() const { return "??? Unknown interaction mode"; }
+const QString BaseViewer::interactionModeText() const { return "??? Unknown interaction mode"; }
 
 // Start interaction
 void BaseViewer::startInteraction() {}

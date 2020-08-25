@@ -24,9 +24,9 @@
 #include <string.h>
 
 // Add a new SpeciesSite to this Species
-SpeciesSite *Species::addSite(const char *name)
+SpeciesSite *Species::addSite(std::string_view name)
 {
-    SpeciesSite *site = sites_.add();
+    auto *site = sites_.add();
     site->setParent(this);
     site->setName(uniqueSiteName(name));
 
@@ -40,19 +40,8 @@ void Species::removeSite(SpeciesSite *site)
         Messenger::error("NULL_POINTER - NULL SpeciesSite passed to Species::removeSite().\n");
     else if (sites_.contains(site))
     {
-        CharString tempName = site->name();
+        Messenger::print("Removed SpeciesSite '{}' from Species '{}'.\n", site->name(), name_);
         sites_.remove(site);
-        Messenger::print("Removed SpeciesSite '%s' from Species '%s'.\n", tempName.get(), name_.get());
-    }
-    else
-    {
-        Messenger::print("BAD_REMOVE - Can't remove specified SpeciesSite '%s' from Species '%s' since it doesn't exist.\n",
-                         site->name(), name_.get());
-        if (!site->parent())
-            Messenger::print("BAD_CLASS - No parent pointer set in Isotopologue '%s'.\n", site->name());
-        else
-            Messenger::print("BAD_REMOVE - Parent Species (%s) of SpeciesSite '%s' is different from this one (%s).\n",
-                             site->parent()->name(), site->name(), name());
     }
 }
 
@@ -66,38 +55,27 @@ const List<SpeciesSite> &Species::sites() const { return sites_; }
 SpeciesSite *Species::site(int n) { return sites_[n]; }
 
 // Generate unique site name with base name provided
-const char *Species::uniqueSiteName(const char *baseName, SpeciesSite *exclude) const
+std::string Species::uniqueSiteName(std::string_view base, const SpeciesSite *exclude) const
 {
-    static CharString uniqueName;
-    CharString existingName = baseName;
-    auto highest = -1;
-
-    if (existingName.isEmpty())
-        existingName = "NewSite";
+    std::string_view baseName = base.empty() ? "NewSite" : base;
+    std::string uniqueName{baseName};
 
     // Find all existing names which are the same as 'existingName' up to the first '_', and get the highest appended number
-    for (auto *site = sites_.first(); site != NULL; site = site->next())
-    {
-        if (site == exclude)
-            continue;
-        if (strcmp(existingName, site->name()) == 0)
-            highest = 0;
-        else if (strcmp(existingName, DissolveSys::beforeLastChar(site->name(), '_')) == 0)
-            highest = atoi(DissolveSys::afterLastChar(site->name(), '_'));
-    }
-    if (highest > -1)
-        uniqueName.sprintf("%s_%i", existingName.get(), ++highest);
-    else
-        uniqueName = existingName;
+    auto highest = 0;
+    while (findSite(uniqueName, exclude))
+        uniqueName = fmt::format("{}_{}", baseName, ++highest);
 
     return uniqueName;
 }
 
 // Search for SpeciesSite by name
-SpeciesSite *Species::findSite(const char *name) const
+SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *exclude) const
 {
     for (auto *site = sites_.first(); site != NULL; site = site->next())
-        if (DissolveSys::sameString(name, site->name()))
+        if (site == exclude)
+            continue;
+        else if (DissolveSys::sameString(name, site->name()))
             return site;
+
     return NULL;
 }

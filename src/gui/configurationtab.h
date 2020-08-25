@@ -36,7 +36,7 @@ class ConfigurationTab : public QWidget, public ListItem<ConfigurationTab>, publ
     Q_OBJECT
 
     public:
-    ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title,
+    ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
                      Configuration *cfg);
     ~ConfigurationTab();
 

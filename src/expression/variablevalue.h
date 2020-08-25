@@ -30,7 +30,7 @@ class ExpressionVariable;
 class ExpressionVariableValue : public ExpressionNode
 {
     public:
-    ExpressionVariableValue(ExpressionVariable *var = 0);
+    ExpressionVariableValue(ExpressionVariable *var = nullptr);
     ~ExpressionVariableValue();
 
     /*
@@ -46,7 +46,7 @@ class ExpressionVariableValue : public ExpressionNode
     // Get variable target
     ExpressionVariable *variable() const;
     // Return name of variable target
-    const char *name() const;
+    std::string_view name() const;
 
     /*
      * Inherited Virtuals
@@ -55,7 +55,7 @@ class ExpressionVariableValue : public ExpressionNode
     // Execute node
     bool execute(ExpressionValue &result);
     // Print node contents
-    void nodePrint(int offset, const char *prefix = "");
+    void nodePrint(int offset, std::string_view prefix = "");
     // Set from ExpressionValue
     bool set(ExpressionValue value);
     // Initialise node
