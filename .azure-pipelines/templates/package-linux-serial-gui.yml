@@ -17,8 +17,8 @@ steps:
       wget -q https://github.com/probonopd/linuxdeployqt/releases/download/continuous/linuxdeployqt-continuous-x86_64.AppImage -O linuxdeployqt
       chmod u+x ./linuxdeployqt
       # Run on the targets
-      ./linuxdeployqt Dissolve-continuous.AppDir/usr/share/applications/*.desktop -appimage
-      ./linuxdeployqt Dissolve-GUI-continuous.AppDir/usr/share/applications/*.desktop -appimage
+      ./linuxdeployqt Dissolve-continuous.AppDir/usr/share/applications/*.desktop -appimage -unsupported-allow-new-glibc
+      ./linuxdeployqt Dissolve-GUI-continuous.AppDir/usr/share/applications/*.desktop -appimage -unsupported-allow-new-glibc
       # Store artifacts
       mkdir packages
       mv Dissolve-*-x86_64.AppImage packages
