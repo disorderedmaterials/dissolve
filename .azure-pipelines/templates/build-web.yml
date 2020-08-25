@@ -3,7 +3,7 @@ parameters:
     default: '0.74.3'
   - name: use_current_hash
     default: false
-  - name: repo_dir_url
+  - name: web_dir_root
     default: 'github.com/projectdissolve/dissolve/edit/develop/web'
   - name: last_hash_url
     default: 'https://www.projectdissolve.com'
@@ -61,7 +61,7 @@ steps:
   - bash: |
       set -ex
       # Remove language ('en') from 'Edit on GitHub' path links
-      find web/public/ -iname *.html -exec sed -i "s:${{ parameters.repo_dir_url }}/content/en/docs/:${{ parameters.repo_dir_url }}/content/docs/:g" {} +
+      find web/public/ -iname *.html -exec sed -i "s:${{ parameters.web_dir_root }}/content/en/docs/:${{ parameters.web_dir_root }}/content/docs/:g" {} +
     displayName: 'Rewrite Edit Links'
   - task: DownloadSecureFile@1
     name: privateKey
