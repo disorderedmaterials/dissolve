@@ -16,9 +16,11 @@ stages:
           vmImage: 'ubuntu-18.04'
         steps:
           - template: templates/build-linux-serial-gui.yml
+            parameters:
               ppa: 'beineri/opt-qt-5.13.2-bionic'
               qtver: 513
           - template: templates/package-linux-serial-gui.yml
+            parameters:
               qtver: 513
           - task: PublishBuildArtifacts@1
             inputs:
