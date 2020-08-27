@@ -22,4 +22,4 @@
 #pragma once
 
 #define DISSOLVEVERSION "0.7.0"
-#define DISSOLVEREPO "https://github.com/trisyoungs/dissolve.git"
+#define DISSOLVEREPO "https://github.com/projectdissolve/dissolve.git"
