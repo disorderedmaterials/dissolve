@@ -362,7 +362,7 @@ void IsotopologueCollectionKeywordWidget::isotopologueTree_itemChanged(QTreeWidg
 
     // Get IsotopologueWeight reference
     auto weightData = isotopologueWeightItemManager_.reference(item);
-    if (weightData)
+    if (!weightData)
     {
         // TODO Raise Exception
         Messenger::error("Reference for IsotopologueWeight not in map.\n");
@@ -375,7 +375,7 @@ void IsotopologueCollectionKeywordWidget::isotopologueTree_itemChanged(QTreeWidg
     {
         // Editing the Isotopologue - need the parent item in order to validate it
         auto topesData = isotopologuesItemManager_.reference(item->parent());
-        if (topesData)
+        if (!topesData)
         {
             // TODO Raise Exception
             Messenger::error("Reference for Isotopologues not in map.\n");
