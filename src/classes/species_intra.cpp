@@ -125,11 +125,7 @@ SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
 }
 
 // Add new SpeciesBond definition
-SpeciesBond &Species::addBond(int i, int j)
-{
-    printf("ADDBOND %i %i (natoms = %i)\n", i, j, nAtoms());
-    return addBond(atoms_[i], atoms_[j]);
-}
+SpeciesBond &Species::addBond(int i, int j) { return addBond(atoms_[i], atoms_[j]); }
 
 // Remove bond between specified SpeciesAtoms
 void Species::removeBond(SpeciesAtom *i, SpeciesAtom *j)
