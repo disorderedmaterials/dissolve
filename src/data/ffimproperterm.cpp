@@ -33,6 +33,8 @@ ForcefieldImproperTerm::ForcefieldImproperTerm(std::string_view typeI, std::stri
     typeL_ = typeL;
     form_ = form;
     parameters_ = parameters;
+    if (!SpeciesImproper::improperFunctions().validNArgs(form, parameters_.size()))
+        throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldImproperTerm."));
 }
 
 ForcefieldImproperTerm::~ForcefieldImproperTerm() {}

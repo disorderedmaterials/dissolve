@@ -30,6 +30,8 @@ ForcefieldBondTerm::ForcefieldBondTerm(std::string_view typeI, std::string_view 
     typeJ_ = typeJ;
     form_ = form;
     parameters_ = parameters;
+    if (!SpeciesBond::bondFunctions().validNArgs(form, parameters_.size()))
+        throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldBondTerm."));
 }
 
 ForcefieldBondTerm::~ForcefieldBondTerm() {}

@@ -33,6 +33,8 @@ ForcefieldTorsionTerm::ForcefieldTorsionTerm(std::string_view typeI, std::string
     typeL_ = typeL;
     form_ = form;
     parameters_ = parameters;
+    if (!SpeciesTorsion::torsionFunctions().validNArgs(form, parameters_.size()))
+        throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldTorsionTerm."));
 }
 
 ForcefieldTorsionTerm::~ForcefieldTorsionTerm() {}
