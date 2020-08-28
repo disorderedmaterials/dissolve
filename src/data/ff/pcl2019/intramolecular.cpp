@@ -15,93 +15,93 @@
 
 // Return bond term for the supplied atom type pair (if it exists)
 OptionalReferenceWrapper<const ForcefieldBondTerm> PCL2019BaseForcefield::getBondTerm(const ForcefieldAtomType &i,
-                                                                                         const ForcefieldAtomType &j) const
+                                                                                      const ForcefieldAtomType &j) const
 {
-    static const std::vector<ForcefieldBondTerm> bondTerms = {
-        //	i	j	Type (Harmonic)			k	eq
-        // i j    pot    re/A    kr/kJmol-1
-        // alkanes OPLS-AA JACS118(1996)11225, JPC100(1996)18010
-        {"HC", "CT", SpeciesBond::HarmonicForm, {2845.0, 1.090}},
-        {"CT", "CT", SpeciesBond::HarmonicForm, {2242.0, 1.529}},
-        // aromatics AMBER JACS 117(1995)5179
-        {"CA", "CA", SpeciesBond::HarmonicForm, {3924.6, 1.400}},
-        {"CA", "HA", SpeciesBond::HarmonicForm, {3071.1, 1.080}},
-        // toluene AMBER JACS 117(1995)5179
-        {"CA", "CT", SpeciesBond::HarmonicForm, {2652.7, 1.510}},
-        // pyridinium JPCB110(2006)19586
-        {"CA", "NA", SpeciesBond::HarmonicForm, {4042.0, 1.340}},
-        // dialkylimidazolium JPCB108(2004)2038
-        {"CR", "HA", SpeciesBond::HarmonicForm, {2845.0, 1.080}},
-        {"CW", "HA", SpeciesBond::HarmonicForm, {2845.0, 1.080}},
-        {"CR", "NA", SpeciesBond::HarmonicForm, {3992.0, 1.315}},
-        {"CW", "NA", SpeciesBond::HarmonicForm, {3574.0, 1.378}},
-        {"CW", "CW", SpeciesBond::HarmonicForm, {4352.0, 1.341}},
-        {"NA", "CT", SpeciesBond::HarmonicForm, {2820.0, 1.466}},
-        // dialkylimethylmidazolium JPCB112(2008)5039
-        {"CR", "CT", SpeciesBond::HarmonicForm, {2653.0, 1.510}},
-        // fluoroalkyl JPCA105(2001)4118, JPCA106(2002)10116
-        {"CT", "CF", SpeciesBond::HarmonicForm, {2242.6, 1.529}},
-        {"F", "CF", SpeciesBond::HarmonicForm, {3071.1, 1.332}},
-        {"CF", "CF", SpeciesBond::HarmonicForm, {2242.6, 1.529}},
-        // ammonium, pyrrolidinium OPLS-AA JACS121(1999)4827, AMBER
-        {"NT", "CT", SpeciesBond::HarmonicForm, {3196.6, 1.448}},
-        {"HN", "NT", SpeciesBond::HarmonicForm, {3632.0, 1.010}},
-        // guanidinium
-        {"HG", "NG", SpeciesBond::HarmonicForm, {3632.0, 1.010}},
-        {"NG", "CG", SpeciesBond::HarmonicForm, {4027.7, 1.340}},
-        // phosphonium OPLS-AA JPCB110(2006)19586
-        {"PT", "CT", SpeciesBond::HarmonicForm, {3550.0, 1.81}},
-        // hydroxyl OPLS-AA JACS 118(1996)11225, JPC 100(1996)18010
-        {"CT", "OH", SpeciesBond::HarmonicForm, {2677.8, 1.410}},
-        {"HO", "OH", SpeciesBond::HarmonicForm, {4627.5, 0.945}},
-        // tetrafluoroborate
-        {"B", "F", SpeciesBond::HarmonicForm, {3235.0, 1.394}},
-        // hexafluorophosphate JCSPerkin2(1999)2365
-        {"P", "F", SpeciesBond::HarmonicForm, {3100.0, 1.606}},
-        // triflate and bistriflamide JPCB108(2004)16893
-        {"FB", "CF", SpeciesBond::HarmonicForm, {3698.0, 1.323}},
-        {"CF", "SB", SpeciesBond::HarmonicForm, {1950.0, 1.818}},
-        {"SB", "OB", SpeciesBond::HarmonicForm, {5331.0, 1.437}},
-        {"NB", "SB", SpeciesBond::HarmonicForm, {3137.0, 1.570}},
-        // bis(fluorosulfonyl)amide
-        {"FB", "SB", SpeciesBond::HarmonicForm, {1879.0, 1.575}},
-        // dicyanamide JPCB110(2006)19586
-        {"N3", "CZ", SpeciesBond::HarmonicForm, {4206.0, 1.310}},
-        {"CZ", "NZ", SpeciesBond::HarmonicForm, {5439.2, 1.157}},
-        // acetate OPLS-AA
-        {"CO", "O2", SpeciesBond::HarmonicForm, {5489.0, 1.250}},
-        {"CT", "CO", SpeciesBond::HarmonicForm, {2653.0, 1.522}},
-        // alkylsulfates JPCB112(2008)5039
-        {"CT", "OC", SpeciesBond::HarmonicForm, {745.8, 1.402}},
-        {"OS", "SO", SpeciesBond::HarmonicForm, {5331.0, 1.455}},
-        {"OC", "SO", SpeciesBond::HarmonicForm, {1789.6, 1.633}},
-        // alkylsulfonates JPCB112(2008)
-        {"CT", "SO", SpeciesBond::HarmonicForm, {1970.0, 1.792}},
-        // thiocyanate JCP128(2008)154504, our MP2
-        {"SK", "CK", SpeciesBond::HarmonicForm, {2836.8, 1.67}},
-        {"CK", "NK", SpeciesBond::HarmonicForm, {12221.5, 1.19}},
-        // tricyanomethanide MG Martin STTR report 2008
-        // C3A  CN  harm   1.408   1799.12
-        // CN   NC  harm   1.167   5062.64
-        // tricyanomethanide OPLS nitriles
-        {"C3A", "CN", SpeciesBond::HarmonicForm, {3347.2, 1.412}},
-        {"CN", "NC", SpeciesBond::HarmonicForm, {5439.2, 1.157}},
-        // tosylate JPCB 112 (2008) 5039
-        {"CA", "SO", SpeciesBond::HarmonicForm, {1970.0, 1.797}}};
+    static const std::vector<ForcefieldBondTerm> bondTerms = {//	i	j	Type (Harmonic)			k	eq
+                                                              // i j    pot    re/A    kr/kJmol-1
+                                                              // alkanes OPLS-AA JACS118(1996)11225, JPC100(1996)18010
+                                                              {"HC", "CT", SpeciesBond::HarmonicForm, {2845.0, 1.090}},
+                                                              {"CT", "CT", SpeciesBond::HarmonicForm, {2242.0, 1.529}},
+                                                              // aromatics AMBER JACS 117(1995)5179
+                                                              {"CA", "CA", SpeciesBond::HarmonicForm, {3924.6, 1.400}},
+                                                              {"CA", "HA", SpeciesBond::HarmonicForm, {3071.1, 1.080}},
+                                                              // toluene AMBER JACS 117(1995)5179
+                                                              {"CA", "CT", SpeciesBond::HarmonicForm, {2652.7, 1.510}},
+                                                              // pyridinium JPCB110(2006)19586
+                                                              {"CA", "NA", SpeciesBond::HarmonicForm, {4042.0, 1.340}},
+                                                              // dialkylimidazolium JPCB108(2004)2038
+                                                              {"CR", "HA", SpeciesBond::HarmonicForm, {2845.0, 1.080}},
+                                                              {"CW*", "HA", SpeciesBond::HarmonicForm, {2845.0, 1.080}},
+                                                              {"CR", "NA", SpeciesBond::HarmonicForm, {3992.0, 1.315}},
+                                                              {"CW*", "NA", SpeciesBond::HarmonicForm, {3574.0, 1.378}},
+                                                              {"CW*", "CW*", SpeciesBond::HarmonicForm, {4352.0, 1.341}},
+                                                              {"NA", "CT", SpeciesBond::HarmonicForm, {2820.0, 1.466}},
+                                                              // alkylimidazolium JPCB 110 (2006) 19586
+                                                              {"HN", "NA", SpeciesBond::HarmonicForm, {3632.0, 1.010}},
+                                                              // dialkylimethylmidazolium JPCB112(2008)5039
+                                                              {"CR", "CT", SpeciesBond::HarmonicForm, {2653.0, 1.510}},
+                                                              // fluoroalkyl JPCA105(2001)4118, JPCA106(2002)10116
+                                                              {"CT", "CF", SpeciesBond::HarmonicForm, {2242.6, 1.529}},
+                                                              {"F", "CF", SpeciesBond::HarmonicForm, {3071.1, 1.332}},
+                                                              {"CF", "CF", SpeciesBond::HarmonicForm, {2242.6, 1.529}},
+                                                              // ammonium, pyrrolidinium OPLS-AA JACS121(1999)4827, AMBER
+                                                              {"NT", "CT", SpeciesBond::HarmonicForm, {3196.6, 1.448}},
+                                                              {"HN", "NT", SpeciesBond::HarmonicForm, {3632.0, 1.010}},
+                                                              // guanidinium
+                                                              {"HG", "NG", SpeciesBond::HarmonicForm, {3632.0, 1.010}},
+                                                              {"NG", "CG", SpeciesBond::HarmonicForm, {4027.7, 1.340}},
+                                                              // phosphonium OPLS-AA JPCB110(2006)19586
+                                                              {"PT", "CT", SpeciesBond::HarmonicForm, {3550.0, 1.81}},
+                                                              // hydroxyl OPLS-AA JACS 118(1996)11225, JPC 100(1996)18010
+                                                              {"CT", "OH", SpeciesBond::HarmonicForm, {2677.8, 1.410}},
+                                                              {"HO", "OH", SpeciesBond::HarmonicForm, {4627.5, 0.945}},
+                                                              // tetrafluoroborate
+                                                              {"B", "F", SpeciesBond::HarmonicForm, {3235.0, 1.394}},
+                                                              // hexafluorophosphate JCSPerkin2(1999)2365
+                                                              {"P", "F", SpeciesBond::HarmonicForm, {3100.0, 1.606}},
+                                                              // triflate and bistriflamide JPCB108(2004)16893
+                                                              {"FB", "CF", SpeciesBond::HarmonicForm, {3698.0, 1.323}},
+                                                              {"CF", "SB", SpeciesBond::HarmonicForm, {1950.0, 1.818}},
+                                                              {"SB", "OB", SpeciesBond::HarmonicForm, {5331.0, 1.437}},
+                                                              {"NB", "SB", SpeciesBond::HarmonicForm, {3137.0, 1.570}},
+                                                              // bis(fluorosulfonyl)amide
+                                                              {"FB", "SB", SpeciesBond::HarmonicForm, {1879.0, 1.575}},
+                                                              // dicyanamide JPCB110(2006)19586
+                                                              {"N3", "CZ", SpeciesBond::HarmonicForm, {4206.0, 1.310}},
+                                                              {"CZ", "NZ", SpeciesBond::HarmonicForm, {5439.2, 1.157}},
+                                                              // acetate OPLS-AA
+                                                              {"CO", "O2", SpeciesBond::HarmonicForm, {5489.0, 1.250}},
+                                                              {"CT", "CO", SpeciesBond::HarmonicForm, {2653.0, 1.522}},
+                                                              // alkylsulfates JPCB112(2008)5039
+                                                              {"CT", "OC", SpeciesBond::HarmonicForm, {745.8, 1.402}},
+                                                              {"OS", "SO", SpeciesBond::HarmonicForm, {5331.0, 1.455}},
+                                                              {"OC", "SO", SpeciesBond::HarmonicForm, {1789.6, 1.633}},
+                                                              // alkylsulfonates JPCB112(2008)
+                                                              {"CT", "SO", SpeciesBond::HarmonicForm, {1970.0, 1.792}},
+                                                              // thiocyanate JCP128(2008)154504, our MP2
+                                                              {"SK", "CK", SpeciesBond::HarmonicForm, {2836.8, 1.67}},
+                                                              {"CK", "NK", SpeciesBond::HarmonicForm, {12221.5, 1.19}},
+                                                              // tricyanomethanide MG Martin STTR report 2008
+                                                              // C3A  CN  harm   1.408   1799.12
+                                                              // CN   NC  harm   1.167   5062.64
+                                                              // tricyanomethanide OPLS nitriles
+                                                              {"C3A", "CN", SpeciesBond::HarmonicForm, {3347.2, 1.412}},
+                                                              {"CN", "NC", SpeciesBond::HarmonicForm, {5439.2, 1.157}},
+                                                              // tosylate JPCB 112 (2008) 5039
+                                                              {"CA", "SO", SpeciesBond::HarmonicForm, {1970.0, 1.797}}};
 
     return Forcefield::termMatch_(bondTerms, i, j);
 }
 
 // Return angle term for the supplied atom type trio (if it exists)
-OptionalReferenceWrapper<const ForcefieldAngleTerm> PCL2019BaseForcefield::getAngleTerm(const ForcefieldAtomType &i,
-                                                                                           const ForcefieldAtomType &j,
-                                                                                           const ForcefieldAtomType &k) const
+OptionalReferenceWrapper<const ForcefieldAngleTerm>
+PCL2019BaseForcefield::getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k) const
 {
     static const std::vector<ForcefieldAngleTerm> angleTerms = {
         //	i	j	k	Type (Harmonic)			k	eq
         // alkyl OPLS-AA JACS118(1996)11225, JPC100(1996)18010
         {"CT", "CT", "CT", SpeciesAngle::HarmonicForm, {488.3, 112.7}},
-        {"CT", "CT", "HC", SpeciesAngle::HarmonicForm, {313.8, 110.7}}, 
+        {"CT", "CT", "HC", SpeciesAngle::HarmonicForm, {313.8, 110.7}},
         {"HC", "CT", "HC", SpeciesAngle::HarmonicForm, {276.1, 107.8}},
         // aromatics AMBER JACS 117(1995)5179
         {"CA", "CA", "HA", SpeciesAngle::HarmonicForm, {292.9, 120.0}},
@@ -115,16 +115,19 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> PCL2019BaseForcefield::getAn
         {"CA", "CA", "NA", SpeciesAngle::HarmonicForm, {585.8, 120.0}},
         {"NA", "CA", "HA", SpeciesAngle::HarmonicForm, {292.9, 120.0}},
         // dialkylimidazolium JPCB108(2004)2038
-        {"CW", "NA", "CR", SpeciesAngle::HarmonicForm, {585.8, 108.0}},
-        {"CW", "NA", "CT", SpeciesAngle::HarmonicForm, {585.8, 125.6}},
+        {"CW*", "NA", "CR", SpeciesAngle::HarmonicForm, {585.8, 108.0}},
+        {"CW*", "NA", "CT", SpeciesAngle::HarmonicForm, {585.8, 125.6}},
         {"CR", "NA", "CT", SpeciesAngle::HarmonicForm, {585.8, 126.4}},
         {"NA", "CR", "HA", SpeciesAngle::HarmonicForm, {292.9, 125.1}},
         {"NA", "CR", "NA", SpeciesAngle::HarmonicForm, {585.8, 109.8}},
-        {"NA", "CW", "CW", SpeciesAngle::HarmonicForm, {585.8, 107.1}},
-        {"NA", "CW", "HA", SpeciesAngle::HarmonicForm, {292.9, 122.0}},
-        {"CW", "CW", "HA", SpeciesAngle::HarmonicForm, {292.9, 130.9}},
+        {"NA", "CW*", "CW*", SpeciesAngle::HarmonicForm, {585.8, 107.1}},
+        {"NA", "CW*", "HA", SpeciesAngle::HarmonicForm, {292.9, 122.0}},
+        {"CW*", "CW*", "HA", SpeciesAngle::HarmonicForm, {292.9, 130.9}},
         {"NA", "CT", "HC", SpeciesAngle::HarmonicForm, {313.8, 110.7}},
         {"NA", "CT", "CT", SpeciesAngle::HarmonicForm, {488.3, 112.7}},
+        // alkylimidazolium JPCB 110 (2006) 19586
+        {"CR", "NA", "HN", SpeciesAngle::HarmonicForm, {292.9, 125.4}},
+        {"CW*", "NA", "HN", SpeciesAngle::HarmonicForm, {292.9, 126.6}},
         // dialkylimethylmidazolium JPCB112(2008)5039
         {"CT", "CR", "NA", SpeciesAngle::HarmonicForm, {585.8, 125.8}},
         {"CR", "CT", "HC", SpeciesAngle::HarmonicForm, {313.8, 110.7}},
@@ -158,15 +161,15 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> PCL2019BaseForcefield::getAn
         // tetrafluoroborate anion
         {"F", "B", "F", SpeciesAngle::HarmonicForm, {669.5, 109.5}},
         // hexafluorophosphate JCSPerkin2(1999)2365
-        {"F", "P", "F", SpeciesAngle::HarmonicForm, {1165.0, 90.0}},  
+        {"F", "P", "F", SpeciesAngle::HarmonicForm, {1165.0, 90.0}},
         // triflate and bistriflamide JPCB108(2004)16893
         {"FB", "CF", "FB", SpeciesAngle::HarmonicForm, {781.0, 107.1}},
         {"FB", "CF", "SB", SpeciesAngle::HarmonicForm, {694.0, 111.7}},
         {"OB", "SB", "OB", SpeciesAngle::HarmonicForm, {969.0, 118.5}},
         {"CF", "SB", "OB", SpeciesAngle::HarmonicForm, {870.0, 102.6}},
-        {"NB", "SB", "OB", SpeciesAngle::HarmonicForm, {789.0, 113.6}}, 
-        {"NB", "SB", "CF", SpeciesAngle::HarmonicForm, {764.0, 103.5}}, 
-        {"SB", "NB", "SB", SpeciesAngle::HarmonicForm, {671.0, 125.6}},   
+        {"NB", "SB", "OB", SpeciesAngle::HarmonicForm, {789.0, 113.6}},
+        {"NB", "SB", "CF", SpeciesAngle::HarmonicForm, {764.0, 103.5}},
+        {"SB", "NB", "SB", SpeciesAngle::HarmonicForm, {671.0, 125.6}},
         // longer perfluoroalkanesulfonylamides
         {"SB", "CF", "CF", SpeciesAngle::HarmonicForm, {418.4, 115.9}},
         {"FB", "CF", "CF", SpeciesAngle::HarmonicForm, {418.4, 109.5}},
@@ -206,9 +209,10 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> PCL2019BaseForcefield::getAn
 }
 
 // Return torsion term for the supplied atom type quartet (if it exists)
-OptionalReferenceWrapper<const ForcefieldTorsionTerm>
-PCL2019BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k,
-                                         const ForcefieldAtomType &l) const
+OptionalReferenceWrapper<const ForcefieldTorsionTerm> PCL2019BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i,
+                                                                                            const ForcefieldAtomType &j,
+                                                                                            const ForcefieldAtomType &k,
+                                                                                            const ForcefieldAtomType &l) const
 {
     static std::vector<ForcefieldTorsionTerm> torsionTerms = {
         //	i	j	k	l	Type (CosineForm)		k		n	eq	s
@@ -234,25 +238,30 @@ PCL2019BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forcefi
         {"CA", "NA", "CT", "HC", SpeciesTorsion::Cos4Form, {0.0000, 0.0000, 0.0000, 0.0000}},
         {"CA", "NA", "CT", "CT", SpeciesTorsion::Cos4Form, {0.0000, 1.0920, 0.0000, 0.7930}},
         // dialkylimidazolium JPCB 108 (2004) 2038
-        {"CW", "NA", "CR", "NA", SpeciesTorsion::Cos4Form, {0.0000, 19.4600, 0.0000, 0.0000}},
-        {"CW", "NA", "CR", "HA", SpeciesTorsion::Cos4Form, {0.0000, 19.4600, 0.0000, 0.0000}},
+        {"CW*", "NA", "CR", "NA", SpeciesTorsion::Cos4Form, {0.0000, 19.4600, 0.0000, 0.0000}},
+        {"CW*", "NA", "CR", "HA", SpeciesTorsion::Cos4Form, {0.0000, 19.4600, 0.0000, 0.0000}},
         {"CT", "NA", "CR", "NA", SpeciesTorsion::Cos4Form, {0.0000, 19.4600, 0.0000, 0.0000}},
         {"CT", "NA", "CR", "HA", SpeciesTorsion::Cos4Form, {0.0000, 19.4600, 0.0000, 0.0000}},
-        {"CR", "NA", "CW", "CW", SpeciesTorsion::Cos4Form, {0.0000, 12.5520, 0.0000, 0.0000}},
-        {"CR", "NA", "CW", "HA", SpeciesTorsion::Cos4Form, {0.0000, 12.5520, 0.0000, 0.0000}},
-        {"CT", "NA", "CW", "CW", SpeciesTorsion::Cos4Form, {0.0000, 12.5520, 0.0000, 0.0000}},
-        {"CT", "NA", "CW", "HA", SpeciesTorsion::Cos4Form, {0.0000, 12.5520, 0.0000, 0.0000}},
-        {"NA", "CW", "CW", "NA", SpeciesTorsion::Cos4Form, {0.0000, 44.9800, 0.0000, 0.0000}},
-        {"NA", "CW", "CW", "HA", SpeciesTorsion::Cos4Form, {0.0000, 44.9800, 0.0000, 0.0000}},
-        {"HA", "CW", "CW", "HA", SpeciesTorsion::Cos4Form, {0.0000, 44.9800, 0.0000, 0.0000}},
-        {"CW", "NA", "CT", "HC", SpeciesTorsion::Cos4Form, {0.0000, 0.0000, 0.5190, 0.0000}},
+        {"CR", "NA", "CW*", "CW*", SpeciesTorsion::Cos4Form, {0.0000, 12.5520, 0.0000, 0.0000}},
+        {"CR", "NA", "CW*", "HA", SpeciesTorsion::Cos4Form, {0.0000, 12.5520, 0.0000, 0.0000}},
+        {"CT", "NA", "CW*", "CW*", SpeciesTorsion::Cos4Form, {0.0000, 12.5520, 0.0000, 0.0000}},
+        {"CT", "NA", "CW*", "HA", SpeciesTorsion::Cos4Form, {0.0000, 12.5520, 0.0000, 0.0000}},
+        {"NA", "CW*", "CW*", "NA", SpeciesTorsion::Cos4Form, {0.0000, 44.9800, 0.0000, 0.0000}},
+        {"NA", "CW*", "CW*", "HA", SpeciesTorsion::Cos4Form, {0.0000, 44.9800, 0.0000, 0.0000}},
+        {"HA", "CW*", "CW*", "HA", SpeciesTorsion::Cos4Form, {0.0000, 44.9800, 0.0000, 0.0000}},
+        {"CW*", "NA", "CT", "HC", SpeciesTorsion::Cos4Form, {0.0000, 0.0000, 0.5190, 0.0000}},
         {"CR", "NA", "CT", "HC", SpeciesTorsion::Cos4Form, {0.0000, 0.0000, 0.0000, 0.0000}},
-        {"CW", "NA", "CT", "CT", SpeciesTorsion::Cos4Form, {-7.1535, 6.1064, 0.7939, 0.0000}},
+        {"CW*", "NA", "CT", "CT", SpeciesTorsion::Cos4Form, {-7.1535, 6.1064, 0.7939, 0.0000}},
         {"CR", "NA", "CT", "CT", SpeciesTorsion::Cos4Form, {-5.2691, 0.0000, 0.0000, 0.0000}},
         {"NA", "CT", "CT", "CT", SpeciesTorsion::Cos4Form, {-7.4797, 3.1642, -1.2026, 0.0000}},
         {"NA", "CT", "CT", "HC", SpeciesTorsion::Cos4Form, {0.0000, 0.0000, 0.3670, 0.0000}},
+        // alkylimidazolium JPCB 110 (2006) 19586
+        {"HA", "NA", "CR", "NA", SpeciesTorsion::Cos4Form, {0.0000, 19.4600, 0.0000, 0.0000}},
+        {"HA", "NA", "CR", "HA", SpeciesTorsion::Cos4Form, {0.0000, 19.4600, 0.0000, 0.0000}},
+        {"HA", "NA", "CW*", "CW*", SpeciesTorsion::Cos4Form, {0.0000, 12.5500, 0.0000, 0.0000}},
+        {"HA", "NA", "CW*", "HA", SpeciesTorsion::Cos4Form, {0.0000, 12.5500, 0.0000, 0.0000}},
         // dialkylimethylmidazolium JPCB 112 (2008) 5039
-        {"CW", "NA", "CR", "CT", SpeciesTorsion::Cos4Form, {0.0000, 19.4600, 0.0000, 0.0000}},
+        {"CW*", "NA", "CR", "CT", SpeciesTorsion::Cos4Form, {0.0000, 19.4600, 0.0000, 0.0000}},
         {"CT", "NA", "CR", "CT", SpeciesTorsion::Cos4Form, {0.0000, 19.4600, 0.0000, 0.0000}},
         {"NA", "CR", "CT", "HC", SpeciesTorsion::Cos4Form, {0.0000, 0.0000, 0.0000, 0.0000}},
         // benzylimidazolium AMBER wildcards
@@ -326,34 +335,35 @@ PCL2019BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forcefi
         // tricyanomethanide
         // NC  CN  C3A CN   opls   0.0000    0.0000    0.0000    0.0000
         // tosylate our MP2, OPLS aromatics
-        {"CA", "CA", "SO", "OS", SpeciesTorsion::Cos4Form, {0.0000, 0.0000, 0.0000, 0.0000}}, 
+        {"CA", "CA", "SO", "OS", SpeciesTorsion::Cos4Form, {0.0000, 0.0000, 0.0000, 0.0000}},
         {"SO", "CA", "CA", "CA", SpeciesTorsion::Cos4Form, {0.0000, 30.3340, 0.0000, 0.0000}},
-        {"SO", "CA", "CA", "HA", SpeciesTorsion::Cos4Form, {0.0000, 30.3340, 0.0000, 0.0000}}, 
+        {"SO", "CA", "CA", "HA", SpeciesTorsion::Cos4Form, {0.0000, 30.3340, 0.0000, 0.0000}},
         {"HC", "CT", "CA", "CA", SpeciesTorsion::Cos4Form, {0.0000, 0.0000, 0.0000, 0.0000}}};
 
     return Forcefield::termMatch_(torsionTerms, i, j, k, l);
 }
 
 // Return improper term for the supplied atom type quartet (if it exists)
-OptionalReferenceWrapper<const ForcefieldImproperTerm>
-PCL2019BaseForcefield::getImproperTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k,
-                                          const ForcefieldAtomType &l) const
+OptionalReferenceWrapper<const ForcefieldImproperTerm> PCL2019BaseForcefield::getImproperTerm(const ForcefieldAtomType &i,
+                                                                                              const ForcefieldAtomType &j,
+                                                                                              const ForcefieldAtomType &k,
+                                                                                              const ForcefieldAtomType &l) const
 {
     // Improper terms from the original forcefield file have the central atom as the third one.
     // Presented here, the original third atom is placed first.
     static std::vector<ForcefieldImproperTerm> improperTerms = {
         // improper C aromatics AMBER JACS 117 (1995) 5179
-        {"CA" ,"CA", "CA", "HA", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
+        {"CA", "CA", "CA", "HA", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
         {"CA", "CA", "CA", "CA", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
         {"CA", "CA", "CA", "CT", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
-        {"NA", "CA", "CA", "CT", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}}, 
-        {"CA", "CA", "NA", "HA", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}}, 
+        {"NA", "CA", "CA", "CT", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
+        {"CA", "CA", "NA", "HA", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
         // improper imidazolium ring AMBER JACS 117 (1995) 5179
-        {"NA", "CR", "CW", "CT", SpeciesImproper::Cos4Form, {0.0000, 8.3680, 0.0000, 0.0000}},
-        {"NA", "CR", "CW", "HA", SpeciesImproper::Cos4Form, {0.0000, 8.3680, 0.0000, 0.0000}},
+        {"NA", "CR", "CW*", "CT", SpeciesImproper::Cos4Form, {0.0000, 8.3680, 0.0000, 0.0000}},
+        {"NA", "CR", "CW*", "HA", SpeciesImproper::Cos4Form, {0.0000, 8.3680, 0.0000, 0.0000}},
         {"CR", "NA", "NA", "HA", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
         {"CR", "NA", "NA", "CT", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
-        {"CW", "NA", "CW", "HA", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
+        {"CW*", "NA", "CW*", "HA", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
         // improper tricyanomethanide AMBER JACS 117 (1995) 5179
         {"C3A", "CN", "CN", "CN", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
         // improper carbonyl AMBER JACS 117 (1995 )5179
