@@ -37,8 +37,6 @@ ForcefieldTorsionTerm::ForcefieldTorsionTerm(std::string_view typeI, std::string
         throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldTorsionTerm."));
 }
 
-ForcefieldTorsionTerm::~ForcefieldTorsionTerm() {}
-
 /*
  * Data
  */

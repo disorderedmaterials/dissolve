@@ -35,7 +35,7 @@ class ForcefieldImproperTerm
     ForcefieldImproperTerm(std::string_view typeI = "", std::string_view typeJ = "", std::string_view typeK = "",
                            std::string_view typeL = "", SpeciesImproper::ImproperFunction form = SpeciesImproper::NoForm,
                            const std::vector<double> parameters = {});
-    ~ForcefieldImproperTerm();
+    ~ForcefieldImproperTerm() = default;
 
     /*
      * Data

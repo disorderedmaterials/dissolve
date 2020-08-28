@@ -34,8 +34,6 @@ ForcefieldBondTerm::ForcefieldBondTerm(std::string_view typeI, std::string_view 
         throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldBondTerm."));
 }
 
-ForcefieldBondTerm::~ForcefieldBondTerm() {}
-
 /*
  * Data
  */

@@ -35,8 +35,6 @@ ForcefieldAngleTerm::ForcefieldAngleTerm(std::string_view typeI, std::string_vie
         throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldAngleTerm."));
 }
 
-ForcefieldAngleTerm::~ForcefieldAngleTerm() {}
-
 /*
  * Data
  */

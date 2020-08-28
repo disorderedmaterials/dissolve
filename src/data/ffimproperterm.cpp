@@ -37,8 +37,6 @@ ForcefieldImproperTerm::ForcefieldImproperTerm(std::string_view typeI, std::stri
         throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldImproperTerm."));
 }
 
-ForcefieldImproperTerm::~ForcefieldImproperTerm() {}
-
 /*
  * Data
  */
