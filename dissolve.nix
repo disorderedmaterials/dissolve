@@ -1,15 +1,17 @@
 {pkgs ? import <nixos> {}}:
 
 let
-  parallel = true;
+  parallel = false;
+  gui = true;
   cmakeBool = x: if x then "ON" else "OFF";
 in
 
+assert pkgs.lib.asserts.assertMsg (gui != parallel) "The GUI cannot be built in parallel mode";
 pkgs.stdenv.mkDerivation {
   name = "dissolve";
   cmakeFlags = [
     "-DCMAKE_BUILD_TYPE=Release"
-    "-DGUI=OFF"
+    "-DGUI=${cmakeBool gui}"
     "-DPARALLEL=${cmakeBool parallel}"
   ];
   buildInputs = [
