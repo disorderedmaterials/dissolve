@@ -28,6 +28,8 @@ pkgs.stdenv.mkDerivation {
     pkgs.qt5.full
     pkgs.tbb
   ];
+  nativeBuildInputs = [pkgs.qt5.wrapQtAppsHook];
+
   src = pkgs.fetchFromGitHub {
     owner = "projectdissolve";
     repo = "dissolve";
