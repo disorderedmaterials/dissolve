@@ -612,17 +612,15 @@ double EnergyKernel::correct(const Atom *i)
     double scale, r, correctionEnergy = 0.0;
     const auto rI = i->r();
 
-    for (auto *j : atoms)
-    {
+    correctionEnergy = std::accumulate(atoms.begin(), atoms.end(), 0.0, [&](const auto &acc, auto *j) {
         if (i == j)
-            continue;
+            return acc;
         scale = 1.0 - i->scaling(j);
-        if (scale > 1.0e-3)
-        {
-            r = box_->minimumDistance(rI, j->r());
-            correctionEnergy += pairPotentialEnergy(i, j, r) * scale;
-        }
-    }
+        if (scale <= 1.0e-3)
+            return acc;
+        r = box_->minimumDistance(rI, j->r());
+        return acc + pairPotentialEnergy(i, j, r) * scale;
+    });
 
     return -correctionEnergy;
 }
