@@ -26,9 +26,13 @@
 void CheckSpeciesModule::initialise()
 {
     // Target Species
-    keywords_.add("Species", new SpeciesKeyword(), "Species", "Target species to check");
+    keywords_.add("Target", new SpeciesKeyword(), "Species", "Target species to check");
 
     // Checks
-    keywords_.add("AtomType", new IntegerStringVectorKeyword(atomTypes_, 1, 1), "AtomType",
+    keywords_.add("Atoms", new IntegerStringVectorKeyword(atomTypes_, 1, 1), "AtomType",
                   "Check that atom index <id> has the atom type <type>", "<id> <type>");
+    keywords_.add("Intramolecular", new IntegerDoubleVectorKeyword(bondParameters_, 2), "Bond",
+                  "Check that the bond <i>-<j> has the correct parameters", "<i> <j> <p1> [p2...]");
+    keywords_.add("Intramolecular", new DoubleKeyword(1.0e-3), "Tolerance",
+                  "Tolerance beyond which parameters are said to differ");
 }

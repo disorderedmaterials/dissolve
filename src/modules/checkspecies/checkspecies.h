@@ -70,9 +70,15 @@ class CheckSpeciesModule : public Module
     bool process(Dissolve &dissolve, ProcessPool &procPool);
 
     /*
-     * Data
+     * Functions / Data
      */
+    private:
+    // Check supplied parameter vectors for consistency, returning false if any differ by the supplied tolerance
+    bool checkParameters(const std::vector<double> &source, const std::vector<double> &ref, const double tolerance);
+
     private:
     // Atom types to check against indices
     std::vector<std::tuple<std::vector<int>, std::vector<std::string>>> atomTypes_;
+    // Bond parameters to check
+    std::vector<std::tuple<std::vector<int>, std::vector<double>>> bondParameters_;
 };

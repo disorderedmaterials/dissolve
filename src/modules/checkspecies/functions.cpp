@@ -20,3 +20,28 @@
 */
 
 #include "modules/checkspecies/checkspecies.h"
+
+// Check supplied parameter vectors for consistency, returning false if any differ by the supplied tolerance
+bool CheckSpeciesModule::checkParameters(const std::vector<double> &source, const std::vector<double> &ref,
+                                         const double tolerance)
+{
+    auto result = true;
+
+    for (auto n = 0; n < std::min(source.size(), ref.size()); ++n)
+    {
+        if (fabs(source.at(n) - ref.at(n)) >= tolerance)
+        {
+            Messenger::print("  ... parameter {} is incorrect ({:.5e} vs. {:.5e} reference, delta = {:.5e}", n + 1,
+                             source.at(n), ref.at(n), fabs(source.at(n) - ref.at(n)));
+            result = false;
+        }
+    }
+
+    if (source.size() != ref.size())
+    {
+        Messenger::print("  ... number of parameters supplied to check is inconsistent ({} vs. {})", source.size(), ref.size());
+        result = false;
+    }
+
+    return result;
+}

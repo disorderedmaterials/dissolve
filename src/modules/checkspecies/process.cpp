@@ -28,12 +28,14 @@
 // Run main processing
 bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-    // Check that a valid Species was specified
+    // Retrieve necessary keyword values
     Species *sp = keywords_.retrieve<Species *>("Species");
     if (!sp)
         return Messenger::error("No target species provided.\n");
+    const auto tolerance = keywords_.asDouble("Tolerance");
 
     Messenger::print("CheckSpecies: Target species is '{}'.\n", sp->name());
+    Messenger::print("CheckSpecies: Tolerance for parameter checks is {:.5e}.", tolerance);
 
     // Check atom types
     auto nAtomTypesFailed = 0;
@@ -69,5 +71,30 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Messenger::print("\n{} atoms have incorrect types.", nAtomTypesFailed);
     }
 
-    return (nAtomTypesFailed == 0);
+    // Check bond parameters
+    auto nBondsFailed = 0;
+    if (bondParameters_.size() != 0)
+    {
+        Messenger::print("\nChecking bond parameters...\n");
+        for (const auto &bondData : bondParameters_)
+        {
+            // Find the bond in the species
+            auto &indices = std::get<0>(bondData);
+            const auto optBond = sp->getBond(indices.at(0) - 1, indices.at(1) - 1);
+            if (!optBond)
+                return Messenger::error("No bond {}-{} exists in the species.", indices.at(0), indices.at(1));
+            const SpeciesBond &bond = *optBond;
+
+            // Check parameter values
+            if (checkParameters(bond.parameters(), std::get<1>(bondData), tolerance))
+                Messenger::print("Bond {}-{} has the correct parameters.", indices.at(0), indices.at(1));
+            else
+            {
+                Messenger::print("Parameters for bond {}-{} are incorrect - see above.", indices.at(0), indices.at(1));
+                ++nBondsFailed;
+            }
+        }
+    }
+
+    return (nAtomTypesFailed + nBondsFailed) == 0;
 }
