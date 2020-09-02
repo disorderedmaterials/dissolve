@@ -1,11 +1,16 @@
 {pkgs ? import <nixos> {}}:
 
+let
+  parallel = true;
+  cmakeBool = x: if x then "ON" else "OFF";
+in
+
 pkgs.stdenv.mkDerivation {
   name = "dissolve";
   cmakeFlags = [
     "-DCMAKE_BUILD_TYPE=Release"
     "-DGUI=OFF"
-    "-DPARALLEL=OFF"
+    "-DPARALLEL=${cmakeBool parallel}"
   ];
   buildInputs = [
     pkgs.antlr
