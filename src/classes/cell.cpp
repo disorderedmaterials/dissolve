@@ -70,6 +70,7 @@ const Vec3<double> &Cell::centre() const { return centre_; }
 
 // Return array of contained Atoms
 OrderedVector<Atom *> &Cell::atoms() { return atoms_; }
+const OrderedVector<Atom *> &Cell::atoms() const { return atoms_; }
 
 // Return array of contained Atoms, ordered by their array indices
 const OrderedVector<Atom *> &Cell::indexOrderedAtoms() const { return indexOrderedAtoms_; }

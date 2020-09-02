@@ -299,7 +299,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
 }
 
 // Return PairPotential energy between Atom and Cell contents
-double EnergyKernel::energy(const Atom *i, Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(const Atom *i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 #ifdef CHECKS
     if (i == NULL)
@@ -570,14 +570,11 @@ double EnergyKernel::energy(const Atom *i, ProcessPool::DivisionStrategy strateg
 // Return PairPotential energy of Molecule with world
 double EnergyKernel::energy(std::shared_ptr<const Molecule> mol, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
-    Atom *ii;
-    Cell *cellI;
     double totalEnergy = 0.0;
 
-    for (int i = 0; i < mol->nAtoms(); ++i)
+    for (auto *ii : mol->atoms())
     {
-        ii = mol->atom(i);
-        cellI = ii->cell();
+        auto *cellI = ii->cell();
 
         // This Atom with its own Cell
         totalEnergy += energy(ii, cellI, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
