@@ -10,10 +10,7 @@ pkgs.stdenv.mkDerivation {
   buildInputs = [
     pkgs.antlr
     pkgs.bison
-    pkgs.ccls
-    pkgs.clang-tools
     pkgs.cmake
-    pkgs.distcc
     pkgs.freetype
     pkgs.ftgl
     pkgs.gdb
@@ -23,7 +20,6 @@ pkgs.stdenv.mkDerivation {
     pkgs.openmpi
     pkgs.qt5.full
     pkgs.tbb
-    pkgs.valgrind
   ];
   src = pkgs.fetchFromGitHub {
     owner = "projectdissolve";
