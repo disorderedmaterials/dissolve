@@ -39,6 +39,7 @@ add_library(keywords
   vec3double.cpp
   vec3integer.cpp
   vec3nodevalue.cpp
+  vector_id.cpp
   vector_is.cpp
   windowfunction.cpp
 
@@ -86,6 +87,7 @@ add_library(keywords
   vec3integer.h
   vec3labels.h
   vec3nodevalue.h
+  vector_id.h
   vector_is.h
   windowfunction.h
 )

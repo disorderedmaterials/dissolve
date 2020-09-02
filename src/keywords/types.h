@@ -68,5 +68,6 @@
 #include "keywords/vec3double.h"
 #include "keywords/vec3integer.h"
 #include "keywords/vec3nodevalue.h"
+#include "keywords/vector_id.h"
 #include "keywords/vector_is.h"
 #include "keywords/windowfunction.h"
