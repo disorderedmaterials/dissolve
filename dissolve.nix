@@ -1,8 +1,8 @@
-{pkgs ? import <nixos> {}}:
+{pkgs ? import <nixos> {},
+  parallel ? false,
+  gui ? false}:
 
 let
-  parallel = false;
-  gui = false;
   cmakeBool = x: if x then "ON" else "OFF";
 in
 
