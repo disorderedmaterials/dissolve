@@ -277,15 +277,10 @@ OptionalReferenceWrapper<SpeciesAngle> Species::getAngle(SpeciesAtom *i, Species
     return *it;
 }
 
-// Return the SpeciesTorsion between the specified SpeciesAtoms
-OptionalReferenceWrapper<SpeciesTorsion> Species::getTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+// Return the SpeciesAngle between the specified SpeciesAtom indic
+OptionalReferenceWrapper<SpeciesAngle> Species::getAngle(int i, int j, int k)
 {
-    auto it =
-        std::find_if(torsions_.begin(), torsions_.end(), [i, j, k, l](auto &torsion) { return torsion.matches(i, j, k, l); });
-    if (it == torsions_.end())
-        return {};
-
-    return *it;
+    return getAngle(atoms_[i], atoms_[j], atoms_[k]);
 }
 
 // Add new SpeciesTorsion definition (from supplied SpeciesAtom pointers)
@@ -331,6 +326,23 @@ bool Species::hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Species
     return it != torsions_.end();
 }
 
+// Return the SpeciesTorsion between the specified SpeciesAtoms
+OptionalReferenceWrapper<SpeciesTorsion> Species::getTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+{
+    auto it =
+        std::find_if(torsions_.begin(), torsions_.end(), [i, j, k, l](auto &torsion) { return torsion.matches(i, j, k, l); });
+    if (it == torsions_.end())
+        return {};
+
+    return *it;
+}
+
+// Return the SpeciesTorsion between the specified SpeciesAtom indices
+OptionalReferenceWrapper<SpeciesTorsion> Species::getTorsion(int i, int j, int k, int l)
+{
+    return getTorsion(atoms_[i], atoms_[j], atoms_[k], atoms_[l]);
+}
+
 // Add new SpeciesImproper definition (from SpeciesAtom*)
 SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {
@@ -340,7 +352,7 @@ SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAto
         Messenger::warn("Refused to add a new Improper between atoms {}, {}, {} and {} in Species '{}' since it "
                         "already exists.\n",
                         i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_);
-        return *improper(i, j, k, l);
+        return *getImproper(i, j, k, l);
     }
 
     // OK to add new improper
@@ -378,7 +390,7 @@ bool Species::hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Specie
 }
 
 // Return the SpeciesImproper between the specified SpeciesAtoms (if it exists)
-OptionalReferenceWrapper<SpeciesImproper> Species::improper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+OptionalReferenceWrapper<SpeciesImproper> Species::getImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {
     auto it = std::find_if(impropers_.begin(), impropers_.end(),
                            [i, j, k, l](auto &improper) { return improper.matches(i, j, k, l); });
@@ -386,6 +398,12 @@ OptionalReferenceWrapper<SpeciesImproper> Species::improper(SpeciesAtom *i, Spec
         return {};
 
     return *it;
+}
+
+// Return the SpeciesImproper between the specified SpeciesAtom indices
+OptionalReferenceWrapper<SpeciesImproper> Species::getImproper(int i, int j, int k, int l)
+{
+    return getImproper(atoms_[i], atoms_[j], atoms_[k], atoms_[l]);
 }
 
 // Return whether the attached atoms lists have been created
