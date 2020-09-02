@@ -2,7 +2,7 @@
 
 let
   parallel = false;
-  gui = true;
+  gui = false;
   cmakeBool = x: if x then "ON" else "OFF";
 in
 
@@ -28,7 +28,7 @@ pkgs.stdenv.mkDerivation {
     pkgs.libglvnd.dev
     pkgs.qt5.full
   ];
-  nativeBuildInputs = [pkgs.qt5.wrapQtAppsHook];
+  nativeBuildInputs = pkgs.lib.optional gui pkgs.qt5.wrapQtAppsHook;
 
   src = pkgs.fetchFromGitHub {
     owner = "projectdissolve";
