@@ -33,6 +33,7 @@
 #include "modules/calculate_sdf/sdf.h"
 #include "modules/calibration/calibration.h"
 #include "modules/checks/checks.h"
+#include "modules/checkspecies/checkspecies.h"
 #include "modules/datatest/datatest.h"
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
@@ -109,6 +110,8 @@ bool Dissolve::registerMasterModules()
     if (!registerMasterModule(new CalibrationModule))
         return false;
     if (!registerMasterModule(new ChecksModule))
+        return false;
+    if (!registerMasterModule(new CheckSpeciesModule))
         return false;
     if (!registerMasterModule(new DataTestModule))
         return false;

@@ -209,6 +209,7 @@ set(BASIC_LINK_LIBS
   calculatesdfmodule
   calibrationmodule
   checksmodule
+  checkspeciesmodule
   datatestmodule
   energymodule
   epsrmodule
