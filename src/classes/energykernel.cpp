@@ -580,13 +580,19 @@ double EnergyKernel::energy(std::shared_ptr<const Molecule> mol, ProcessPool::Di
         totalEnergy += energy(ii, cellI, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
 
         // Cell neighbours not requiring minimum image
-        for (auto *neighbour : cellI->cellNeighbours())
-            totalEnergy += energy(ii, neighbour, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+        totalEnergy +=
+            std::accumulate(cellI->cellNeighbours().begin(), cellI->cellNeighbours().end(), 0.0,
+                            [&ii, this, &strategy](const auto &acc, const auto *neighbour) {
+                                return acc + energy(ii, neighbour, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+                            });
 
         // Cell neighbours requiring minimum image
-        for (auto *neighbour : cellI->mimCellNeighbours())
-            totalEnergy +=
-                energy(ii, neighbour, KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+        totalEnergy += std::accumulate(
+            cellI->mimCellNeighbours().begin(), cellI->mimCellNeighbours().end(), 0.0,
+            [&ii, this, &strategy](const auto &acc, const auto *neighbour) {
+                return acc + energy(ii, neighbour, KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag,
+                                    strategy, false);
+            });
     }
 
     // Perform relevant sum if requested
