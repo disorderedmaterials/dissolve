@@ -6,7 +6,7 @@ let
   cmakeBool = x: if x then "ON" else "OFF";
 in
 
-assert pkgs.lib.asserts.assertMsg (gui != parallel) "The GUI cannot be built in parallel mode";
+assert pkgs.lib.asserts.assertMsg (!(gui && parallel)) "The GUI cannot be built in parallel mode";
 pkgs.stdenv.mkDerivation {
   name = "dissolve";
   cmakeFlags = [
@@ -18,15 +18,15 @@ pkgs.stdenv.mkDerivation {
     pkgs.antlr
     pkgs.bison
     pkgs.cmake
+  ] ++ pkgs.lib.optionals parallel [
+    pkgs.openmpi
+  ] ++ pkgs.lib.optionals gui [
     pkgs.freetype
     pkgs.ftgl
-    pkgs.gdb
     pkgs.libGL
     pkgs.libglvnd
     pkgs.libglvnd.dev
-    pkgs.openmpi
     pkgs.qt5.full
-    pkgs.tbb
   ];
   nativeBuildInputs = [pkgs.qt5.wrapQtAppsHook];
 
