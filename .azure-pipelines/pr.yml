@@ -18,6 +18,9 @@ stages:
         pool:
           vmImage: 'ubuntu-18.04' 
         steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: templates/set-short-hash.yml
           - template: templates/build-linux-serial-gui.yml
             parameters:
               extraflags: '-DCHECKS:bool=true'
@@ -36,6 +39,9 @@ stages:
         pool:
           vmImage: 'ubuntu-18.04' 
         steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: templates/set-short-hash.yml
           - template: templates/build-linux-parallel.yml
           - bash: |
               cp build-parallel/bin/dissolve-mpi tests/
@@ -50,6 +56,9 @@ stages:
         pool:
           vmImage: 'macos-latest' 
         steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: templates/set-short-hash.yml
           - template: templates/build-osx-serial-gui.yml
           - template: templates/package-osx-serial-gui.yml
           - task: PublishBuildArtifacts@1
@@ -62,6 +71,9 @@ stages:
         pool:
           vmImage: 'windows-latest' 
         steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: templates/set-short-hash.yml
           - template: templates/build-windows-serial-gui.yml
           - template: templates/package-windows-serial-gui.yml
           - task: PublishBuildArtifacts@1

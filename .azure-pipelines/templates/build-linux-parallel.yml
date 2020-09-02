@@ -3,7 +3,6 @@ parameters:
     default: ''
 
 steps:
-  - checkout: self
   - bash: |
       set -ex
       # -- General
