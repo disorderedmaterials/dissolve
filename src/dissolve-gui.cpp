@@ -23,7 +23,7 @@
 #include "base/processpool.h"
 #include "gui/gui.h"
 #include "main/dissolve.h"
-#include "version.h"
+#include "main/version.h"
 #include <QSurfaceFormat>
 #include <clocale>
 #include <ctime>
@@ -54,7 +54,7 @@ int main(int args, char **argv)
             switch (argv[n][1])
             {
                 case ('h'):
-                    Messenger::print("Dissolve version {}\n\nAvailable CLI options are:\n\n", DISSOLVEVERSION);
+                    Messenger::print("Dissolve version {}\n\nAvailable CLI options are:\n\n", Version::info());
                     Messenger::print("\t-h\t\tPrint what you're reading now\n");
                     Messenger::print("\t-i\t\tIgnore restart file\n");
                     Messenger::print("\t-I\t\tIgnore GUI state file\n");
@@ -157,7 +157,7 @@ int main(int args, char **argv)
     }
 
     // Print GPL license information
-    Messenger::print("Dissolve-GUI version {}, Copyright (C) 2012-2020 T. Youngs.\n", DISSOLVEVERSION);
+    Messenger::print("Dissolve-GUI version {}, Copyright (C) 2012-2020 T. Youngs.\n", Version::info());
     Messenger::print("Source repository: {}.\n", DISSOLVEREPO);
     Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
     Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");

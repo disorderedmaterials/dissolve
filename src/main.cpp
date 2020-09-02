@@ -22,7 +22,7 @@
 #include "base/messenger.h"
 #include "base/processpool.h"
 #include "main/dissolve.h"
-#include "version.h"
+#include "main/version.h"
 #include <ctime>
 #include <stdlib.h>
 #include <time.h>
@@ -52,9 +52,9 @@ int main(int args, char **argv)
             {
                 case ('h'):
 #ifdef PARALLEL
-                    Messenger::print("Dissolve PARALLEL version {}, Copyright (C) 2012-2020 T. Youngs.\n\n", DISSOLVEVERSION);
+                    Messenger::print("Dissolve PARALLEL version {}, Copyright (C) 2012-2020 T. Youngs.\n\n", Version::info());
 #else
-                    Messenger::print("Dissolve SERIAL version {}, Copyright (C) 2012-2020 T. Youngs.\n\n", DISSOLVEVERSION);
+                    Messenger::print("Dissolve SERIAL version {}, Copyright (C) 2012-2020 T. Youngs.\n\n", Version::info());
 #endif
                     Messenger::print("Recognised CLI options are:\n\n");
                     Messenger::print("\t-c\t\tCheck input and set-up only - don't perform any main-loop "
@@ -204,9 +204,9 @@ int main(int args, char **argv)
 
     // Print GPL license information
 #ifdef PARALLEL
-    Messenger::print("Dissolve PARALLEL version {}, Copyright (C) 2012-2020 T. Youngs.\n", DISSOLVEVERSION);
+    Messenger::print("Dissolve PARALLEL version {}, Copyright (C) 2012-2020 T. Youngs.\n", Version::info());
 #else
-    Messenger::print("Dissolve SERIAL version {}, Copyright (C) 2012-2020 T. Youngs.\n", DISSOLVEVERSION);
+    Messenger::print("Dissolve SERIAL version {}, Copyright (C) 2012-2020 T. Youngs.\n", Version::info());
 #endif
     Messenger::print("Source repository: {}.\n", DISSOLVEREPO);
     Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
