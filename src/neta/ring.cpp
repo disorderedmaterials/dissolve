@@ -172,7 +172,6 @@ int NETARingNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchP
             for (int n = 0; n < ring->size(); ++n)
                 ringAtoms.append(ring->atom(n));
 
-            const SpeciesAtom *matchedAtom;
             ListIterator<NETANode> branchIterator(branch_);
             while (NETANode *node = branchIterator.iterate())
             {
