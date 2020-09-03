@@ -28,7 +28,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # Include Conan Packages
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-conan_basic_setup()
+conan_basic_setup(CMAKE_TARGETS)
 set(EXTRA_LINK_LIBS ${EXTRA_LINK_LIBS} ${CONAN_LIBS})
 
 # Catch defines
@@ -327,4 +327,3 @@ if(GUI)
     ${EXTRA_LINK_LIBS}
   )
 endif(GUI)
-
