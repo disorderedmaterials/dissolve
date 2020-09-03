@@ -49,6 +49,11 @@ bool ForcefieldLibrary::registerForcefield(std::shared_ptr<Forcefield> ff)
     if (!ff->prepare())
         return Messenger::error("Failed to prepare and set up forcefield '{}' - it will not be registered.\n", ff->name());
 
+    // Generate NETA definitions for all atom types in the forcefield
+    if (!ff->createNETADefinitions())
+        return Messenger::error("Failed to generate NETA definitions for forcefield '{}' - it will not be registered.\n",
+                                ff->name());
+
     forcefields_.push_back(ff);
 
     return true;
