@@ -173,6 +173,10 @@ int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &av
         ++nMatches;
         totalScore += atomScore;
         matches.append(j);
+
+        // Don't match more than we need to - check the repeatCount
+        if (compareValues(nMatches, repeatCountOperator_, repeatCount_))
+            break;
     }
 
     // Did we find the required number of matches in the provided list?
