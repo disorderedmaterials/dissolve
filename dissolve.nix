@@ -37,4 +37,9 @@ pkgs.stdenv.mkDerivation {
     sha256 = "0fxbh4d4wbapv1yhjm7vb9xnnv9h4v22k8x9jpmd3xvc0i687g42";
   };
   installPhase = "cp -r .$prefix $out";
+  meta = {
+    name = "Dissolve";
+    description = "Simulation software for scattering off disordered materials";
+    longDescription = "TODO: Write long description";
+  };
 }
