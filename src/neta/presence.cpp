@@ -5,9 +5,8 @@
 #include "classes/speciesatom.h"
 #include "data/ffatomtype.h"
 
-NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Element *> targetElements,
-                                   std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes,
-                                   SpeciesBond::BondType bt)
+NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<std::reference_wrapper<const Element>> targetElements,
+                                   std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
     : NETANode(parent, NETANode::PresenceNode)
 {
     allowedElements_ = targetElements;
@@ -22,6 +21,26 @@ NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Element *
 }
 
 NETAPresenceNode::~NETAPresenceNode() {}
+
+/*
+ * Atom Targets
+ */
+
+// Add element target to node
+bool NETAPresenceNode::addElementTarget(const Element &el)
+{
+    allowedElements_.push_back(el);
+
+    return true;
+}
+
+// Add forcefield type target to node
+bool NETAPresenceNode::addFFTypeTarget(const ForcefieldAtomType &ffType)
+{
+    allowedAtomTypes_.push_back(ffType);
+
+    return true;
+}
 
 /*
  * Modifiers
@@ -40,7 +59,7 @@ EnumOptions<NETAPresenceNode::NETACharacterModifier> NETAPresenceNode::modifiers
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETAPresenceNode::isValidModifier(std::string_view s) const { return (modifiers().isValid(s)); }
+bool NETAPresenceNode::isValidModifier(std::string_view s) const { return modifiers().isValid(s); }
 
 // Set value and comparator for specified modifier
 bool NETAPresenceNode::setModifier(std::string_view modifier, ComparisonOperator op, int value)
@@ -89,9 +108,9 @@ int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &av
     {
         // Evaluate the atom against our elements
         int atomScore = NETANode::NoMatch;
-        for (const auto *element : allowedElements_)
+        for (const auto &element : allowedElements_)
         {
-            if (j->element() != element)
+            if (j->element() != &element.get())
                 continue;
 
             // Process branch definition via the base class, using a fresh path

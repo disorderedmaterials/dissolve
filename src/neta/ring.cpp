@@ -34,7 +34,7 @@ EnumOptions<NETARingNode::NETARingModifier> NETARingNode::modifiers()
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETARingNode::isValidModifier(std::string_view s) const { return (modifiers().isValid(s)); }
+bool NETARingNode::isValidModifier(std::string_view s) const { return modifiers().isValid(s); }
 
 // Set value and comparator for specified modifier
 bool NETARingNode::setModifier(std::string_view modifier, ComparisonOperator op, int value)
