@@ -71,13 +71,13 @@ steps:
     inputs:
       secureFile: id_rsa_dd
     condition: eq('${{ parameters.deploy }}', true)
-    displayName: 'Download Secure Files'
+    displayName: 'Download Private Key'
   - task: DownloadSecureFile@1
     name: machineId
     inputs:
       secureFile: pd_hostkey
     condition: eq('${{ parameters.deploy }}', true)
-    displayName: 'Download Secure Files'
+    displayName: 'Download Host Fingerprint'
   - bash: |
       chmod 0600 $(privateKey.secureFilePath) $(machineId.secureFilePath)
       rsync -avz --delete -e "ssh -o UserKnownHostsFile=$(machineId.secureFilePath) -i $(privateKey.secureFilePath) -p 2212 -l doctordissolve" web/public/ 87.117.225.2:/home/www/www.projectdissolve.com/public_html/
