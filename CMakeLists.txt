@@ -29,7 +29,6 @@ set(CMAKE_CXX_STANDARD 17)
 # Include Conan Packages
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup(CMAKE_TARGETS)
-set(EXTRA_LINK_LIBS ${EXTRA_LINK_LIBS} ${CONAN_LIBS})
 
 # Catch defines
 if(PARALLEL)
@@ -242,6 +241,9 @@ endif()
 
 # Build CLI target executable
 target_link_libraries( ${target_name}
+
+  PUBLIC
+
   ${WHOLE_ARCHIVE_FLAG}
 
   ${BASIC_LINK_LIBS}
@@ -271,7 +273,13 @@ target_link_libraries( ${target_name}
   testmodulenogui
   ${NO_WHOLE_ARCHIVE_FLAG}
 
+  PRIVATE
+
   ${EXTRA_LINK_LIBS}
+
+  INTERFACE
+
+  CONAN_PKG::fmt
 )
 
 # Build GUI target executables
@@ -279,6 +287,9 @@ if(GUI)
 
   # Main Dissolve GUI
   target_link_libraries( ${gui_target_name}
+
+    PUBLIC
+
     ${WHOLE_ARCHIVE_FLAG}
 
     ${BASIC_LINK_LIBS}
@@ -318,6 +329,8 @@ if(GUI)
 
     ${NO_WHOLE_ARCHIVE_FLAG}
 
+    PRIVATE
+
     # External libs
     Qt5::Widgets Qt5::Core Qt5::PrintSupport
     ${FTGL_LIBRARIES}
@@ -325,5 +338,9 @@ if(GUI)
     ${FREETYPE_LIBRARIES}
 
     ${EXTRA_LINK_LIBS}
+
+    INTERFACE
+
+    CONAN_PKG::fmt
   )
 endif(GUI)
