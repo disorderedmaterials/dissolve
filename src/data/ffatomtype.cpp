@@ -4,7 +4,6 @@
 #include "data/ffatomtype.h"
 #include "data/ff.h"
 #include "data/ffparameters.h"
-#include "neta/generator.h"
 
 ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int index, std::string_view name,
                                        std::string_view netaDefinition, std::string_view description, double q, double data0,
