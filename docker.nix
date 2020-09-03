@@ -12,7 +12,7 @@ pkgs.dockerTools.buildImage {
   contents = dissolve;
   created = "now";
   config = {
-    Cmd = ["${dissolve}/bin/dissolve"];
+    EntryPoint = ["/bin/dissolve"];
     WorkingDir = "/data";
     Volumes = {
       "/data" = {};
