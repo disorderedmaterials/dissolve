@@ -33,13 +33,14 @@ KeywordList::~KeywordList() {}
  */
 
 // Add keyword
-bool KeywordList::add(KeywordBase *object, const char *name, const char *description, int optionMask)
+bool KeywordList::add(KeywordBase *object, std::string_view name, std::string_view description, int optionMask)
 {
     return add(object, name, description, "", optionMask);
 }
 
 // Add keyword (including argument description)
-bool KeywordList::add(KeywordBase *object, const char *name, const char *description, const char *arguments, int optionMask)
+bool KeywordList::add(KeywordBase *object, std::string_view name, std::string_view description, std::string_view arguments,
+                      int optionMask)
 {
     // Take ownership of the passed object, and set its basic information
     keywords_.own(object);
@@ -49,22 +50,24 @@ bool KeywordList::add(KeywordBase *object, const char *name, const char *descrip
 }
 
 // Add keyword to named group
-bool KeywordList::add(const char *groupName, KeywordBase *object, const char *name, const char *description, int optionMask)
+bool KeywordList::add(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
+                      int optionMask)
 {
     KeywordGroup *group = addGroup(groupName);
     return group->add(object, name, description, optionMask);
 }
 
 // Add keyword to named group (including argument description)
-bool KeywordList::add(const char *groupName, KeywordBase *object, const char *name, const char *description,
-                      const char *arguments, int optionMask)
+bool KeywordList::add(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
+                      std::string_view arguments, int optionMask)
 {
     KeywordGroup *group = addGroup(groupName);
     return group->add(object, name, description, arguments, optionMask);
 }
 
 // Add link to specified keyword that exists elsewhere
-bool KeywordList::link(const char *groupName, KeywordBase *object, const char *name, const char *description, int optionMask)
+bool KeywordList::link(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
+                       int optionMask)
 {
     if (!object)
         return Messenger::error("NULL KeywordBase* passed to KeywordList::link().\n");
@@ -74,8 +77,8 @@ bool KeywordList::link(const char *groupName, KeywordBase *object, const char *n
 }
 
 // Add link to specified keyword that exists elsewhere (including argument description)
-bool KeywordList::link(const char *groupName, KeywordBase *object, const char *name, const char *description,
-                       const char *arguments, int optionMask)
+bool KeywordList::link(std::string_view groupName, KeywordBase *object, std::string_view name, std::string_view description,
+                       std::string_view arguments, int optionMask)
 {
     if (!object)
         return Messenger::error("NULL KeywordBase* passed to KeywordList::link().\n");
@@ -85,7 +88,7 @@ bool KeywordList::link(const char *groupName, KeywordBase *object, const char *n
 }
 
 // Find named keyword
-KeywordBase *KeywordList::find(const char *name) const
+KeywordBase *KeywordList::find(std::string_view name) const
 {
     for (auto *kwd = keywords_.first(); kwd != NULL; kwd = kwd->next())
         if (DissolveSys::sameString(name, kwd->name()))
@@ -102,7 +105,7 @@ const List<KeywordBase> &KeywordList::keywords() const { return keywords_; }
  */
 
 // Create and/or return named keyword group
-KeywordGroup *KeywordList::addGroup(const char *name)
+KeywordGroup *KeywordList::addGroup(std::string_view name)
 {
     // Check that a group with the specified name doesn't already exist
     KeywordGroup *group = NULL;
@@ -128,13 +131,13 @@ const List<KeywordGroup> &KeywordList::groups() const { return groups_; }
  */
 
 // Return simple keyword value (as bool)
-bool KeywordList::asBool(const char *name) const
+bool KeywordList::asBool(std::string_view name) const
 {
     // Find the named keyword
     KeywordBase *keyword = find(name);
     if (!keyword)
     {
-        Messenger::warn("No Module keyword named '%s' exists to return as a bool. Returning 'false'...\n", name);
+        Messenger::warn("No Module keyword named '{}' exists to return as a bool. Returning 'false'...\n", name);
         return false;
     }
 
@@ -142,13 +145,13 @@ bool KeywordList::asBool(const char *name) const
 }
 
 // Return simple keyword value (as int)
-int KeywordList::asInt(const char *name) const
+int KeywordList::asInt(std::string_view name) const
 {
     // Find the named keyword
     KeywordBase *keyword = find(name);
     if (!keyword)
     {
-        Messenger::warn("No Module keyword named '%s' exists to return as an int. Returning '0'...\n", name);
+        Messenger::warn("No Module keyword named '{}' exists to return as an int. Returning '0'...\n", name);
         return 0;
     }
 
@@ -156,13 +159,13 @@ int KeywordList::asInt(const char *name) const
 }
 
 // Return simple keyword value (as double)
-double KeywordList::asDouble(const char *name) const
+double KeywordList::asDouble(std::string_view name) const
 {
     // Find the named keyword
     KeywordBase *keyword = find(name);
     if (!keyword)
     {
-        Messenger::warn("No Module keyword named '%s' exists to return as a double. Returning '0.0'...\n", name);
+        Messenger::warn("No Module keyword named '{}' exists to return as a double. Returning '0.0'...\n", name);
         return 0.0;
     }
 
@@ -170,13 +173,13 @@ double KeywordList::asDouble(const char *name) const
 }
 
 // Return simple keyword value (as string)
-const char *KeywordList::asString(const char *name) const
+std::string KeywordList::asString(std::string_view name) const
 {
     // Find the named keyword
     KeywordBase *keyword = find(name);
     if (!keyword)
     {
-        Messenger::warn("No Module keyword named '%s' exists to return as a string. Returning 'NULL'...\n", name);
+        Messenger::warn("No Module keyword named '{}' exists to return as a string. Returning 'NULL'...\n", name);
         return "NULL";
     }
 
@@ -184,13 +187,13 @@ const char *KeywordList::asString(const char *name) const
 }
 
 // Return simple keyword value (as Vec3<int>)
-Vec3<int> KeywordList::asVec3Int(const char *name) const
+Vec3<int> KeywordList::asVec3Int(std::string_view name) const
 {
     // Find the named keyword
     KeywordBase *keyword = find(name);
     if (!keyword)
     {
-        Messenger::warn("No Module keyword named '%s' exists to return as a Vec3<int>. Returning '(0,0,0)'...\n", name);
+        Messenger::warn("No Module keyword named '{}' exists to return as a Vec3<int>. Returning '(0,0,0)'...\n", name);
         return Vec3<int>(0, 0, 0);
     }
 
@@ -198,13 +201,13 @@ Vec3<int> KeywordList::asVec3Int(const char *name) const
 }
 
 // Return simple keyword value (as Vec3<double>)
-Vec3<double> KeywordList::asVec3Double(const char *name) const
+Vec3<double> KeywordList::asVec3Double(std::string_view name) const
 {
     // Find the named keyword
     KeywordBase *keyword = find(name);
     if (!keyword)
     {
-        Messenger::warn("No Module keyword named '%s' exists to return as a Vec3<double>. Returning '(0.0,0.0,0.0)'...\n",
+        Messenger::warn("No Module keyword named '{}' exists to return as a Vec3<double>. Returning '(0.0,0.0,0.0)'...\n",
                         name);
         return Vec3<double>(0.0, 0.0, 0.0);
     }
@@ -213,13 +216,13 @@ Vec3<double> KeywordList::asVec3Double(const char *name) const
 }
 
 // Return whether the specified keyword data has ever been set
-bool KeywordList::isSet(const char *name) const
+bool KeywordList::isSet(std::string_view name) const
 {
     // Find the named keyword
     KeywordBase *keyword = find(name);
     if (!keyword)
     {
-        Messenger::warn("No Module keyword named '%s' exists to check whether it is set. Returning 'false'...\n", name);
+        Messenger::warn("No Module keyword named '{}' exists to check whether it is set. Returning 'false'...\n", name);
         return false;
     }
 
@@ -227,13 +230,13 @@ bool KeywordList::isSet(const char *name) const
 }
 
 // Flag that the specified keyword has been set by some external means
-void KeywordList::hasBeenSet(const char *name)
+void KeywordList::hasBeenSet(std::string_view name)
 {
     // Find the named keyword
     KeywordBase *keyword = find(name);
     if (!keyword)
     {
-        Messenger::warn("No Module keyword named '%s' exists to check whether it is set. Returning 'false'...\n", name);
+        Messenger::warn("No Module keyword named '{}' exists to check whether it is set. Returning 'false'...\n", name);
         return;
     }
 
@@ -248,7 +251,7 @@ void KeywordList::hasBeenSet(const char *name)
 KeywordBase::ParseResult KeywordList::parse(LineParser &parser, CoreData &coreData)
 {
     // Do we recognise the first item (the 'keyword')?
-    KeywordBase *keyword = find(parser.argc(0));
+    KeywordBase *keyword = find(parser.argsv(0));
     if (!keyword)
         return KeywordBase::Unrecognised;
 
@@ -259,7 +262,7 @@ KeywordBase::ParseResult KeywordList::parse(LineParser &parser, CoreData &coreDa
     // All OK, so parse the keyword
     if (!keyword->read(parser, 1, coreData))
     {
-        Messenger::error("Failed to parse arguments for keyword '%s'.\n", keyword->name());
+        Messenger::error("Failed to parse arguments for keyword '{}'.\n", keyword->name());
         return KeywordBase::Failed;
     }
 
@@ -267,7 +270,7 @@ KeywordBase::ParseResult KeywordList::parse(LineParser &parser, CoreData &coreDa
 }
 
 // Write all keywords to specified LineParser
-bool KeywordList::write(LineParser &parser, const char *prefix, bool onlyIfSet)
+bool KeywordList::write(LineParser &parser, std::string_view prefix, bool onlyIfSet)
 {
     ListIterator<KeywordBase> keywordIterator(keywords_);
     while (KeywordBase *keyword = keywordIterator.iterate())
@@ -286,7 +289,7 @@ bool KeywordList::write(LineParser &parser, const char *prefix, bool onlyIfSet)
 }
 
 // Write all keywords in groups to specified LineParser
-bool KeywordList::writeGroups(LineParser &parser, const char *prefix, bool onlyIfSet)
+bool KeywordList::writeGroups(LineParser &parser, std::string_view prefix, bool onlyIfSet)
 {
     // Loop over keyword groups
     auto firstGroup = true;
@@ -308,7 +311,7 @@ bool KeywordList::writeGroups(LineParser &parser, const char *prefix, bool onlyI
                 if ((!firstGroup) && (!parser.writeLineF("\n")))
                     return false;
 
-                if (!parser.writeLineF("%s# %s\n", prefix, group->name()))
+                if (!parser.writeLineF("{}# {}\n", prefix, group->name()))
                     return false;
             }
 

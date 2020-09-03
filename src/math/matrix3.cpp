@@ -144,9 +144,9 @@ void Matrix3::setIdentity()
 void Matrix3::print() const
 {
     Messenger::print("CMaj   [012]     [345]     [678]\n");
-    Messenger::print("        %8.4f %8.4f %8.4f\n", matrix_[0], matrix_[3], matrix_[6]);
-    Messenger::print("        %8.4f %8.4f %8.4f\n", matrix_[1], matrix_[4], matrix_[7]);
-    Messenger::print("        %8.4f %8.4f %8.4f\n", matrix_[2], matrix_[5], matrix_[8]);
+    Messenger::print("        {:8.4f} {:8.4f} {:8.4f}\n", matrix_[0], matrix_[3], matrix_[6]);
+    Messenger::print("        {:8.4f} {:8.4f} {:8.4f}\n", matrix_[1], matrix_[4], matrix_[7]);
+    Messenger::print("        {:8.4f} {:8.4f} {:8.4f}\n", matrix_[2], matrix_[5], matrix_[8]);
 }
 
 // Set zero matrix
@@ -279,17 +279,7 @@ void Matrix3::invert()
 }
 
 // Return nth value of matrix
-double Matrix3::value(int n) const
-{
-#ifdef CHECKS
-    if ((n < 0) || (n > 8))
-    {
-        printf("Value %i is out of range for a Matrix3.\n", n);
-        return 0.0;
-    }
-#endif
-    return matrix_[n];
-}
+double Matrix3::value(int n) const { return matrix_[n]; }
 
 // Return maximal element
 double Matrix3::max() const

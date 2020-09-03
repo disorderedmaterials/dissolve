@@ -21,8 +21,8 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "templates/listitem.h"
+#include <string>
 
 // Forward Declarations
 /* none */
@@ -39,17 +39,17 @@ class ReferencePoint : public ListItem<ReferencePoint>
      */
     private:
     // Suffix applied to data items from the referenced file
-    CharString suffix_;
+    std::string suffix_;
     // Restart file from which the reference point data was read
-    CharString restartFile_;
+    std::string restartFile_;
 
     public:
     // Set suffix for data items
-    void setSuffix(const char *suffix);
+    void setSuffix(std::string_view suffix);
     // Return suffix for data items
-    const char *suffix() const;
+    std::string_view suffix() const;
     // Set restart file from which the reference point data was read
-    void setRestartFile(const char *restartFile);
+    void setRestartFile(std::string_view restartFile);
     // Return restart file from which the reference point data was read
-    const char *restartFile() const;
+    std::string_view restartFile() const;
 };

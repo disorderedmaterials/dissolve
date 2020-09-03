@@ -28,7 +28,7 @@
 template <> class GenericItemContainer<std::streampos> : public GenericItem
 {
     public:
-    GenericItemContainer<std::streampos>(const char *name, int flags = 0) : GenericItem(name, flags) {}
+    GenericItemContainer<std::streampos>(std::string_view name, int flags = 0) : GenericItem(name, flags) {}
 
     /*
      * Data
@@ -46,7 +46,7 @@ template <> class GenericItemContainer<std::streampos> : public GenericItem
      */
     protected:
     // Create a new GenericItem containing same class as current type
-    GenericItem *createItem(const char *className, const char *name, int flags = 0)
+    GenericItem *createItem(std::string_view className, std::string_view name, int flags = 0)
     {
         if (DissolveSys::sameString(className, itemClassName()))
             return new GenericItemContainer<std::streampos>(name, flags);
@@ -55,7 +55,7 @@ template <> class GenericItemContainer<std::streampos> : public GenericItem
 
     public:
     // Return class name contained in item
-    const char *itemClassName() { return "streampos"; }
+    std::string_view itemClassName() { return "streampos"; }
 
     /*
      * I/O

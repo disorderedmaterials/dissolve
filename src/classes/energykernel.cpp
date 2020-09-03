@@ -55,7 +55,7 @@ double EnergyKernel::energyWithoutMim(const Atom *i, const Atom *j)
 // Return PairPotential energy between atoms provided as pointers (minimum image calculation)
 double EnergyKernel::energyWithMim(const Atom *i, const Atom *j)
 {
-    // 	Messenger::print("EnergyKernel::atoms(*,*) - energy %i-%i is %f at %f mim\n",
+    // 	Messenger::print("EnergyKernel::atoms(*,*) - energy {}-{} is {} at {} mim\n",
     // min(i->arrayIndex(),j->arrayIndex()), max(i->arrayIndex(),j->arrayIndex()), pairPotentialEnergy(i->masterTypeIndex(),
     // j->masterTypeIndex(), box_->minimumDistance(j, i)), box_->minimumDistance(j, i));
     return pairPotentialEnergy(i, j, box_->minimumDistance(j, i));
@@ -82,11 +82,7 @@ double EnergyKernel::energy(const Atom *i, const Atom *j, bool applyMim, bool ex
 #endif
     // If Atoms are the same, we refuse to calculate
     if (i == j)
-    {
-        // 		printf("Warning: Refusing to calculate self-energy in
-        // EnergyKernel::energy(Atom,Atom,bool,bool).\n");
         return 0.0;
-    }
 
     // Check indices of Atoms if required
     if (excludeIgeJ && (i->arrayIndex() >= j->arrayIndex()))
@@ -299,7 +295,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
 }
 
 // Return PairPotential energy between Atom and Cell contents
-double EnergyKernel::energy(const Atom *i, Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(const Atom *i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 #ifdef CHECKS
     if (i == NULL)
@@ -570,26 +566,29 @@ double EnergyKernel::energy(const Atom *i, ProcessPool::DivisionStrategy strateg
 // Return PairPotential energy of Molecule with world
 double EnergyKernel::energy(std::shared_ptr<const Molecule> mol, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
-    Atom *ii;
-    Cell *cellI;
     double totalEnergy = 0.0;
 
-    for (int i = 0; i < mol->nAtoms(); ++i)
+    for (auto *ii : mol->atoms())
     {
-        ii = mol->atom(i);
-        cellI = ii->cell();
+        auto *cellI = ii->cell();
 
         // This Atom with its own Cell
         totalEnergy += energy(ii, cellI, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
 
         // Cell neighbours not requiring minimum image
-        for (auto *neighbour : cellI->cellNeighbours())
-            totalEnergy += energy(ii, neighbour, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+        totalEnergy +=
+            std::accumulate(cellI->cellNeighbours().begin(), cellI->cellNeighbours().end(), 0.0,
+                            [&ii, this, &strategy](const auto &acc, const auto *neighbour) {
+                                return acc + energy(ii, neighbour, KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+                            });
 
         // Cell neighbours requiring minimum image
-        for (auto *neighbour : cellI->mimCellNeighbours())
-            totalEnergy +=
-                energy(ii, neighbour, KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag, strategy, false);
+        totalEnergy += std::accumulate(
+            cellI->mimCellNeighbours().begin(), cellI->mimCellNeighbours().end(), 0.0,
+            [&ii, this, &strategy](const auto &acc, const auto *neighbour) {
+                return acc + energy(ii, neighbour, KernelFlags::ApplyMinimumImageFlag | KernelFlags::ExcludeIntraIGEJFlag,
+                                    strategy, false);
+            });
     }
 
     // Perform relevant sum if requested
@@ -609,17 +608,15 @@ double EnergyKernel::correct(const Atom *i)
     double scale, r, correctionEnergy = 0.0;
     const auto rI = i->r();
 
-    for (auto *j : atoms)
-    {
+    correctionEnergy = std::accumulate(atoms.begin(), atoms.end(), 0.0, [&](const auto &acc, auto *j) {
         if (i == j)
-            continue;
+            return acc;
         scale = 1.0 - i->scaling(j);
-        if (scale > 1.0e-3)
-        {
-            r = box_->minimumDistance(rI, j->r());
-            correctionEnergy += pairPotentialEnergy(i, j, r) * scale;
-        }
-    }
+        if (scale <= 1.0e-3)
+            return acc;
+        r = box_->minimumDistance(rI, j->r());
+        return acc + pairPotentialEnergy(i, j, r) * scale;
+    });
 
     return -correctionEnergy;
 }
@@ -662,7 +659,7 @@ double EnergyKernel::energy(const SpeciesBond &bond, const Atom *i, const Atom *
     // Check for spurious bond distances
     double distance = i->cell()->mimRequired(j->cell()) ? box_->minimumDistance(i, j) : (i->r() - j->r()).magnitude();
     if (distance > 5.0)
-        printf("!!! Long bond: %i-%i = %f Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
+        Messenger::print("!!! Long bond: {}-{} = {} Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
 #endif
     // Determine whether we need to apply minimum image to the distance calculation
     if (i->cell()->mimRequired(j->cell()))
@@ -828,22 +825,30 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol)
     auto intraEnergy = 0.0;
 
     // Loop over Bonds
-    for (const auto &bond : mol->species()->constBonds())
-        intraEnergy += energy(bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()));
-
+    intraEnergy = std::accumulate(mol->species()->constBonds().begin(), mol->species()->constBonds().end(), intraEnergy,
+                                  [mol, this](const auto acc, const auto &bond) {
+                                      return acc + energy(bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()));
+                                  });
     // Loop over Angles
-    for (const auto &angle : mol->species()->constAngles())
-        intraEnergy += energy(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()), mol->atom(angle.indexK()));
+    intraEnergy = std::accumulate(mol->species()->constAngles().begin(), mol->species()->constAngles().end(), intraEnergy,
+                                  [mol, this](const auto acc, const auto &angle) {
+                                      return acc + energy(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()),
+                                                          mol->atom(angle.indexK()));
+                                  });
 
     // Loop over Torsions
-    for (const auto &torsion : mol->species()->constTorsions())
-        intraEnergy += energy(torsion, mol->atom(torsion.indexI()), mol->atom(torsion.indexJ()), mol->atom(torsion.indexK()),
-                              mol->atom(torsion.indexL()));
+    intraEnergy = std::accumulate(mol->species()->constTorsions().begin(), mol->species()->constTorsions().end(), intraEnergy,
+                                  [mol, this](const auto acc, const auto &torsion) {
+                                      return acc + energy(torsion, mol->atom(torsion.indexI()), mol->atom(torsion.indexJ()),
+                                                          mol->atom(torsion.indexK()), mol->atom(torsion.indexL()));
+                                  });
 
     // Loop over Impropers
-    for (const auto &improper : mol->species()->constImpropers())
-        intraEnergy += energy(improper, mol->atom(improper.indexI()), mol->atom(improper.indexJ()),
-                              mol->atom(improper.indexK()), mol->atom(improper.indexL()));
+    intraEnergy = std::accumulate(mol->species()->constImpropers().begin(), mol->species()->constImpropers().end(), intraEnergy,
+                                  [mol, this](const auto acc, const auto &improper) {
+                                      return acc + energy(improper, mol->atom(improper.indexI()), mol->atom(improper.indexJ()),
+                                                          mol->atom(improper.indexK()), mol->atom(improper.indexL()));
+                                  });
 
     return intraEnergy;
 }

@@ -40,7 +40,7 @@ SpeciesSiteKeywordWidget::SpeciesSiteKeywordWidget(QWidget *parent, KeywordBase 
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<SpeciesSiteKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into SpeciesSiteKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into SpeciesSiteKeyword.\n", keyword->name());
     else
     {
         // Set current information
@@ -89,15 +89,15 @@ void SpeciesSiteKeywordWidget::updateWidgetValues(const CoreData &coreData)
     ui_.SpeciesTabs->clear();
 
     // Create button group for the radio buttons
-    QButtonGroup *buttonGroup = new QButtonGroup(this);
+    auto *buttonGroup = new QButtonGroup(this);
 
     // Add new tabs in, one for each defined Species, and each containing checkboxes for each available site
     ListIterator<Species> speciesIterator(coreData_.constSpecies());
-    while (Species *sp = speciesIterator.iterate())
+    while (auto *sp = speciesIterator.iterate())
     {
         // Create the widget to hold our checkboxes for this Species
-        QWidget *widget = new QWidget();
-        QVBoxLayout *layout = new QVBoxLayout;
+        auto *widget = new QWidget();
+        auto *layout = new QVBoxLayout;
         layout->setContentsMargins(4, 4, 4, 4);
         layout->setSpacing(4);
         widget->setLayout(layout);
@@ -112,9 +112,9 @@ void SpeciesSiteKeywordWidget::updateWidgetValues(const CoreData &coreData)
         {
             // Loop over sites defined in this Species
             ListIterator<SpeciesSite> siteIterator(sp->sites());
-            while (SpeciesSite *site = siteIterator.iterate())
+            while (auto *site = siteIterator.iterate())
             {
-                QRadioButton *radioButton = new QRadioButton(site->name());
+                auto *radioButton = new QRadioButton(QString::fromStdString(std::string(site->name())));
                 if (keyword_->data() == site)
                     radioButton->setChecked(true);
                 connect(radioButton, SIGNAL(clicked(bool)), this, SLOT(siteRadioButton_clicked(bool)));
@@ -132,7 +132,7 @@ void SpeciesSiteKeywordWidget::updateWidgetValues(const CoreData &coreData)
         }
 
         // Create the page in the tabs
-        ui_.SpeciesTabs->addTab(widget, sp->name());
+        ui_.SpeciesTabs->addTab(widget, QString::fromStdString(std::string(sp->name())));
     }
 
     updateSummaryText();
@@ -150,7 +150,8 @@ void SpeciesSiteKeywordWidget::updateKeywordData()
 void SpeciesSiteKeywordWidget::updateSummaryText()
 {
     if (keyword_->data())
-        setSummaryText(CharString("%s (%s)", keyword_->data()->name(), keyword_->data()->parent()->name()));
+        setSummaryText(
+            QString::fromStdString(fmt::format("{} ({})", keyword_->data()->name(), keyword_->data()->parent()->name())));
     else
         setSummaryText("<None>");
 }

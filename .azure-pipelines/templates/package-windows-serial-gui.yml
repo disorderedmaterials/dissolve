@@ -15,7 +15,7 @@ steps:
       $env:MINGW_DIR = $env:Qt5_DIR
       $env:FREETYPE_DIR += "$(Build.BinariesDirectory)\freetype-build"
       $env:FTGL_DIR += "$(Build.BinariesDirectory)\ftgl-build"
-      $env:DISSOLVE_DIR = $(Get-Location).path + "\build"
+      $env:DISSOLVE_DIR = $(Get-Location).path + "\build\bin"
       # Run Inno Setup Compiler
       iscc.exe /O.\ .\ci\windows\dissolve-gui.iss
       $exe = Get-ChildItem  .\*.exe

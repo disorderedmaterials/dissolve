@@ -50,11 +50,11 @@ class DataTestModule : public Module
      */
     public:
     // Return type of module
-    const char *type() const;
+    std::string_view type() const;
     // Return category for module
-    const char *category() const;
+    std::string_view category() const;
     // Return brief description of module
-    const char *brief() const;
+    std::string_view brief() const;
     // Return the number of Configuration targets this Module requires
     int nRequiredTargets() const;
 
@@ -88,7 +88,8 @@ class DataTestModule : public Module
     private:
     // Find reference Data
     template <class T>
-    const T &findReferenceData(const char *dataIdentifier, Module *targetModule, GenericList &processingModuleData, bool &found)
+    const T &findReferenceData(std::string_view dataIdentifier, Module *targetModule, GenericList &processingModuleData,
+                               bool &found)
     {
         static T dummy;
 
@@ -113,8 +114,8 @@ class DataTestModule : public Module
 
                 if (!found)
                 {
-                    Messenger::error("Data named '%s_%s' exists, but is not of the correct type (is %s rather than "
-                                     "%s).\n",
+                    Messenger::error("Data named '{}_{}' exists, but is not of the correct type (is {} rather than "
+                                     "{}).\n",
                                      targetModule->uniqueName(), dataIdentifier,
                                      moduleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(),
                                      T::itemClassName());
@@ -131,8 +132,8 @@ class DataTestModule : public Module
 
                 if (!found)
                 {
-                    Messenger::error("Data named '%s' exists, but is not of the correct type (is %s rather than "
-                                     "%s).\n",
+                    Messenger::error("Data named '{}' exists, but is not of the correct type (is {} rather than "
+                                     "{}).\n",
                                      dataIdentifier,
                                      moduleData.find(dataIdentifier, targetModule->uniqueName())->itemClassName(),
                                      T::itemClassName());

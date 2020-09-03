@@ -40,7 +40,7 @@ SpeciesRefListKeywordWidget::SpeciesRefListKeywordWidget(QWidget *parent, Keywor
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<SpeciesRefListKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into SpeciesRefListKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into SpeciesRefListKeyword.\n", keyword->name());
     else
     {
         // Set current information
@@ -61,7 +61,7 @@ void SpeciesRefListKeywordWidget::updateSelectionRow(int row, Species *sp, bool 
     QListWidgetItem *item;
     if (createItem)
     {
-        item = new QListWidgetItem(sp->name());
+        item = new QListWidgetItem(QString::fromStdString(std::string(sp->name())));
         item->setData(Qt::UserRole, VariantPointer<Species>(sp));
         item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
         ui_.SelectionList->insertItem(row, item);
@@ -128,16 +128,10 @@ void SpeciesRefListKeywordWidget::updateSummaryText()
         setSummaryText("<None>");
     else
     {
-        CharString summaryText;
-        auto first = true;
+        std::string summaryText;
         for (Species *sp : selection)
-        {
-            if (first)
-                summaryText = sp->name();
-            else
-                summaryText.strcatf(", %s", sp->name());
-            first = false;
-        }
-        setSummaryText(summaryText);
+            summaryText += fmt::format("{}{}", summaryText.empty() ? "" : ", ", sp->name());
+
+        setSummaryText(QString::fromStdString(summaryText));
     }
 }

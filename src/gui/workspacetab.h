@@ -36,7 +36,7 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
     Q_OBJECT
 
     public:
-    WorkspaceTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title);
+    WorkspaceTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title);
     ~WorkspaceTab();
     // Main form declaration
     Ui::WorkspaceTab ui;
@@ -78,7 +78,7 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
 
     public:
     // Create Gizmo with specified type in this workspace
-    Gizmo *createGizmo(const char *type);
+    Gizmo *createGizmo(QString type);
 
     /*
      * Context Menu

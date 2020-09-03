@@ -29,7 +29,7 @@
 template <class Data2D> RefDataList<Data2D, int> ObjectStore<Data2D>::objects_;
 template <class Data2D> int ObjectStore<Data2D>::objectCount_ = 0;
 template <class Data2D> int ObjectStore<Data2D>::objectType_ = ObjectInfo::Data2DObject;
-template <class Data2D> const char *ObjectStore<Data2D>::objectTypeName_ = "Data2D";
+template <class Data2D> std::string_view ObjectStore<Data2D>::objectTypeName_ = "Data2D";
 
 Data2D::Data2D() : PlottableData(PlottableData::TwoAxisPlottable), ListItem<Data2D>(), ObjectStore<Data2D>(this)
 {
@@ -161,7 +161,7 @@ double &Data2D::xAxis(int index)
     if ((index < 0) || (index >= x_.nItems()))
     {
         static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in Data2D::xAxis().\n", index);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data2D::xAxis().\n", index);
         return dummy;
     }
 #endif
@@ -177,7 +177,7 @@ double Data2D::constXAxis(int index) const
 #ifdef CHECKS
     if ((index < 0) || (index >= x_.nItems()))
     {
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in Data2D::constXAxis().\n", index);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data2D::constXAxis().\n", index);
         return 0.0;
     }
 #endif
@@ -202,7 +202,7 @@ double &Data2D::yAxis(int index)
     if ((index < 0) || (index >= y_.nItems()))
     {
         static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::yAxis().\n", index);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y_ array in Data2D::yAxis().\n", index);
         return dummy;
     }
 #endif
@@ -217,7 +217,7 @@ double Data2D::constYAxis(int index) const
 #ifdef CHECKS
     if ((index < 0) || (index >= y_.nItems()))
     {
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for y_ array in Data2D::constYAxis().\n", index);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y_ array in Data2D::constYAxis().\n", index);
         return 0.0;
     }
 #endif
@@ -242,13 +242,13 @@ double &Data2D::value(int xIndex, int yIndex)
     if ((xIndex < 0) || (xIndex >= x_.nItems()))
     {
         static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for x axis in Data2D::value().\n", xIndex);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data2D::value().\n", xIndex);
         return dummy;
     }
     if ((yIndex < 0) || (yIndex >= y_.nItems()))
     {
         static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for y axis in Data2D::value().\n", yIndex);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data2D::value().\n", yIndex);
         return dummy;
     }
 #endif
@@ -263,12 +263,12 @@ double Data2D::constValue(int xIndex, int yIndex) const
 #ifdef CHECKS
     if ((xIndex < 0) || (xIndex >= x_.nItems()))
     {
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for x axis in Data2D::constValue().\n", xIndex);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data2D::constValue().\n", xIndex);
         return 0.0;
     }
     if ((yIndex < 0) || (yIndex >= y_.nItems()))
     {
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for y axis in Data2D::constValue().\n", yIndex);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data2D::constValue().\n", yIndex);
         return 0.0;
     }
 #endif
@@ -348,7 +348,7 @@ double &Data2D::error(int xIndex, int yIndex)
     if (!hasError_)
     {
         static double dummy;
-        Messenger::warn("This Data2D (name='%s', tag='%s') has no errors to return, but error(int) was requested.\n", name(),
+        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but error(int) was requested.\n", name(),
                         objectTag());
         return dummy;
     }
@@ -356,13 +356,13 @@ double &Data2D::error(int xIndex, int yIndex)
     if ((xIndex < 0) || (xIndex >= x_.nItems()))
     {
         static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for x axis in Data2D::error().\n", xIndex);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data2D::error().\n", xIndex);
         return dummy;
     }
     if ((yIndex < 0) || (yIndex >= y_.nItems()))
     {
         static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for y axis in Data2D::error().\n", yIndex);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data2D::error().\n", yIndex);
         return dummy;
     }
 #endif
@@ -377,19 +377,19 @@ double Data2D::constError(int xIndex, int yIndex) const
 {
     if (!hasError_)
     {
-        Messenger::warn("This Data2D (name='%s', tag='%s') has no errors to return, but constError(int,int) was requested.\n",
+        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but constError(int,int) was requested.\n",
                         name(), objectTag());
         return 0.0;
     }
 #ifdef CHECKS
     if ((xIndex < 0) || (xIndex >= x_.nItems()))
     {
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for x axis in Data2D::constError().\n", xIndex);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data2D::constError().\n", xIndex);
         return 0.0;
     }
     if ((yIndex < 0) || (yIndex >= y_.nItems()))
     {
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for y axis in Data2D::constError().\n", yIndex);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data2D::constError().\n", yIndex);
         return 0.0;
     }
 #endif
@@ -401,7 +401,7 @@ double Data2D::constError(int xIndex, int yIndex) const
 Array2D<double> &Data2D::errors()
 {
     if (!hasError_)
-        Messenger::warn("This Data2D (name='%s', tag='%s') has no errors to return, but errors() was requested.\n", name(),
+        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
                         objectTag());
 
     ++version_;
@@ -413,7 +413,7 @@ Array2D<double> &Data2D::errors()
 const Array2D<double> &Data2D::constErrors2D() const
 {
     if (!hasError_)
-        Messenger::warn("This Data2D (name='%s', tag='%s') has no errors to return, but constErrors2D() was requested.\n",
+        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but constErrors2D() was requested.\n",
                         name(), objectTag());
 
     return errors_;
@@ -474,7 +474,7 @@ void Data2D::operator/=(const double factor)
  */
 
 // Return class name
-const char *Data2D::itemClassName() { return "Data2D"; }
+std::string_view Data2D::itemClassName() { return "Data2D"; }
 
 // Read data through specified LineParser
 bool Data2D::read(LineParser &parser, CoreData &coreData)
@@ -549,23 +549,23 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
 bool Data2D::write(LineParser &parser)
 {
     // Write object tag and name
-    if (!parser.writeLineF("%s\n", objectTag()))
+    if (!parser.writeLineF("{}\n", objectTag()))
         return false;
-    if (!parser.writeLineF("%s\n", name()))
+    if (!parser.writeLineF("{}\n", name()))
         return false;
 
     // Write axis sizes and errors flag
-    if (!parser.writeLineF("%i  %i  %s\n", x_.nItems(), y_.nItems(), DissolveSys::btoa(hasError_)))
+    if (!parser.writeLineF("{}  {}  {}\n", x_.nItems(), y_.nItems(), DissolveSys::btoa(hasError_)))
         return false;
 
     // Write x axis array
     for (int x = 0; x < x_.nItems(); ++x)
-        if (!parser.writeLineF("%e\n", x_[x]))
+        if (!parser.writeLineF("{:e}\n", x_[x]))
             return false;
 
     // Write y axis array
     for (int y = 0; y < y_.nItems(); ++y)
-        if (!parser.writeLineF("%e\n", y_[y]))
+        if (!parser.writeLineF("{:e}\n", y_[y]))
             return false;
 
     // Write values / errors
@@ -574,7 +574,7 @@ bool Data2D::write(LineParser &parser)
         for (int x = 0; x < x_.nItems(); ++x)
         {
             for (int y = 0; y < y_.nItems(); ++y)
-                if (!parser.writeLineF("%e  %e\n", values_.constAt(x, y), errors_.constAt(x, y)))
+                if (!parser.writeLineF("{:e}  {:e}\n", values_.constAt(x, y), errors_.constAt(x, y)))
                     return false;
         }
     }
@@ -583,7 +583,7 @@ bool Data2D::write(LineParser &parser)
         for (int x = 0; x < x_.nItems(); ++x)
         {
             for (int y = 0; y < y_.nItems(); ++y)
-                if (!parser.writeLineF("%e\n", values_.constAt(x, y)))
+                if (!parser.writeLineF("{:e}\n", values_.constAt(x, y)))
                     return false;
         }
     }

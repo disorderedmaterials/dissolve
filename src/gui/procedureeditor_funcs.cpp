@@ -62,48 +62,6 @@ void ProcedureEditor::setUp(Procedure *procedure, const CoreData &coreData)
     updateControls();
 }
 
-// 	// Add MimeTreeWidgetItems for each Module, adding them to a parent category item
-// 	moduleCategories_.clear();
-// 	ListIterator<Module> moduleIterator(dissolveWindow->dissolve().masterModules());
-// 	while (const Module* module = moduleIterator.iterate())
-// 	{
-// 		// Check that the category is not 'HIDDEN' (in which case we don't show it)
-// 		if (DissolveSys::sameString("HIDDEN", module->category())) continue;
-//
-// 		// Find category for this Module (if it exists) or create a new one
-// 		MimeTreeWidgetItem* categoryItem = NULL;
-// 		RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
-// 		while (categoryItem = categoryIterator.iterate()) if (DissolveSys::sameString(module->category(),
-// categoryIterator.currentData())) break; 		if (categoryItem == NULL)
-// 		{
-// 			categoryItem = new MimeTreeWidgetItem((QTreeWidget*)NULL, 1000);
-// 			categoryItem->setText(0, module->category());
-// 			categoryItem->setFlags(Qt::ItemIsEnabled);
-// 			moduleCategories_.append(categoryItem, module->category());
-// 		}
-//
-// 		// Create item for the Module
-// 		MimeTreeWidgetItem* item = new MimeTreeWidgetItem(categoryItem, 1000);
-// 		item->setIcon(0, ModuleChartModuleBlock::modulePixmap(module));
-// 		item->setText(0, module->type());
-// 		item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
-// 		item->setData(0, Qt::UserRole, VariantPointer<const Module>(module));
-// 		item->setToolTip(0, module->brief());
-// 		item->addMimeString(MimeString::ModuleType, module->type());
-// 	}
-//
-// 	// Populate the available Modules tree with the categories we now have
-// 	ui_.AvailableModulesTree->clear();
-// 	RefDataListIterator<MimeTreeWidgetItem,CharString> categoryIterator(moduleCategories_);
-// 	while (MimeTreeWidgetItem* categoryItem = categoryIterator.iterate())
-// ui_.AvailableModulesTree->addTopLevelItem(categoryItem); 	ui_.AvailableModulesTree->resizeColumnToContents(0);
-// 	ui_.AvailableModulesTree->sortByColumn(0, Qt::AscendingOrder);
-// 	ui_.AvailableModulesTree->setSortingEnabled(true);
-// 	ui_.AvailableModulesTree->expandAll();
-
-// Hide palette group initially
-// 	ui_.PaletteGroup->setVisible(false);
-
 /*
  * Update
  */
@@ -135,42 +93,6 @@ void ProcedureEditor::enableSensitiveControls()
 /*
  * Widget Functions
  */
-
-// void ProcedureEditor::on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item)
-// {
-// 	if (!moduleProcedure_) return;
-//
-// 	// Get the Module associated to the double-clicked item
-// 	const Module* module = VariantPointer<const Module>(item->data(0, Qt::UserRole));
-// 	if (!module) return;
-//
-// 	// Create a new instance of the Module
-// 	Module* newInstance = dissolveWindow_->dissolve().createModuleInstance(module->type());
-// 	newInstance->setConfigurationLocal(localConfiguration_);
-//
-// 	// Set Configuration targets as appropriate
-// 	if (newInstance->nRequiredTargets() != 0)
-// 	{
-// 		if (localConfiguration_) newInstance->addTargetConfiguration(localConfiguration_);
-// 		else
-// 		{
-// 			ListIterator<Configuration> configIterator(dissolveWindow_->dissolve().configurations());
-// 			while (Configuration* cfg = configIterator.iterate())
-// 			{
-// 				newInstance->addTargetConfiguration(cfg);
-// 				if ((newInstance->nRequiredTargets() != -1) && (newInstance->nRequiredTargets() ==
-// newInstance->nTargetConfigurations())) break;
-// 			}
-// 		}
-// 	}
-//
-// 	moduleProcedure_->own(newInstance);
-//
-// 	updateControls();
-//
-// 	// Flag that the current data has changed
-// 	dissolveWindow_->setModified();
-// }
 
 /*
  * State

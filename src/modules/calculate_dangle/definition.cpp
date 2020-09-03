@@ -22,13 +22,13 @@
 #include "modules/calculate_dangle/dangle.h"
 
 // Return type of module
-const char *CalculateDAngleModule::type() const { return "CalculateDAngle"; }
+std::string_view CalculateDAngleModule::type() const { return "CalculateDAngle"; }
 
 // Return category for module
-const char *CalculateDAngleModule::category() const { return "Analysis"; }
+std::string_view CalculateDAngleModule::category() const { return "Analysis"; }
 
 // Return brief description of module
-const char *CalculateDAngleModule::brief() const { return "Calculate distance/angle maps"; }
+std::string_view CalculateDAngleModule::brief() const { return "Calculate distance/angle maps"; }
 
 // Return the number of Configuration targets this Module requires
 int CalculateDAngleModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

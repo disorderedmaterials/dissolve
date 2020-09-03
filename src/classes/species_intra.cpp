@@ -107,8 +107,8 @@ SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
     auto bondRef = getBond(i, j);
     if (bondRef)
     {
-        Messenger::warn("Refused to add a new SpeciesBond between atoms %i and %i in Species '%s' since it already exists.\n",
-                        i->userIndex(), j->userIndex(), name_.get());
+        Messenger::warn("Refused to add a new SpeciesBond between atoms {} and {} in Species '{}' since it already exists.\n",
+                        i->userIndex(), j->userIndex(), name_);
         return *bondRef;
     }
 
@@ -167,16 +167,16 @@ OptionalReferenceWrapper<SpeciesBond> Species::getBond(int i, int j)
 {
     if ((i < 0) || (i >= nAtoms()))
     {
-        Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::hasBond() is out of range (%i) for "
-                         "Species '%s'\n",
-                         i, name_.get());
+        Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::hasBond() is out of range ({}) for "
+                         "Species '{}'\n",
+                         i, name_);
         return {};
     }
     if ((j < 0) || (j >= nAtoms()))
     {
-        Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::hasBond() is out of range (%i) for "
-                         "Species '%s'\n",
-                         j, name_.get());
+        Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::hasBond() is out of range ({}) for "
+                         "Species '{}'\n",
+                         j, name_);
         return {};
     }
 
@@ -234,8 +234,8 @@ SpeciesAngle &Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
     auto angleRef = getAngle(i, j, k);
     if (angleRef)
     {
-        Messenger::warn("Refused to add a new Angle between atoms %i, %i and %i in Species '%s' since it already exists.\n",
-                        i->userIndex(), j->userIndex(), k->userIndex(), name_.get());
+        Messenger::warn("Refused to add a new Angle between atoms {}, {} and {} in Species '{}' since it already exists.\n",
+                        i->userIndex(), j->userIndex(), k->userIndex(), name_);
         return *angleRef;
     }
 
@@ -291,34 +291,12 @@ OptionalReferenceWrapper<SpeciesTorsion> Species::getTorsion(SpeciesAtom *i, Spe
 // Add new SpeciesTorsion definition (from supplied SpeciesAtom pointers)
 SpeciesTorsion &Species::addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {
-    // Check ownership of these Atoms
-    if (!atoms_.contains(i))
-    {
-        Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'i' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
-        // Throw exception
-    }
-    if (!atoms_.contains(j))
-    {
-        Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'j' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
-        // Throw exception
-    }
-    if (!atoms_.contains(k))
-    {
-        Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'k' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
-        // Throw exception
-    }
-    if (!atoms_.contains(l))
-    {
-        Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'l' is not owned by Species '%s' in Species::addTorsion.\n", name_.get());
-        // Throw exception
-    }
-
     // Check for existence of Torsion already
     if (hasTorsion(i, j, k, l))
     {
-        Messenger::warn("Refused to add a new Torsion between atoms %i, %i, %i and %i in Species '%s' since it already "
+        Messenger::warn("Refused to add a new Torsion between atoms {}, {}, {} and {} in Species '{}' since it already "
                         "exists.\n",
-                        i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_.get());
+                        i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_);
         return *getTorsion(i, j, k, l);
     }
 
@@ -334,35 +312,6 @@ SpeciesTorsion &Species::addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom 
 // Add new SpeciesTorsion definition
 SpeciesTorsion &Species::addTorsion(int i, int j, int k, int l)
 {
-    if ((i < 0) || (i >= atoms_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addTorsion() is out of range (%i) for "
-                         "Species '%s'\n",
-                         i, name_.get());
-        // Throw Exception
-    }
-    if ((j < 0) || (j >= atoms_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addTorsion() is out of range (%i) for "
-                         "Species '%s'\n",
-                         j, name_.get());
-        // Throw Exception
-    }
-    if ((k < 0) || (k >= atoms_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Internal index 'k' supplied to Species::addTorsion() is out of range (%i) for "
-                         "Species '%s'\n",
-                         k, name_.get());
-        // Throw Exception
-    }
-    if ((l < 0) || (l >= atoms_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Internal index 'l' supplied to Species::addTorsion() is out of range (%i) for "
-                         "Species '%s'\n",
-                         l, name_.get());
-        // Throw Exception
-    }
-
     return addTorsion(atoms_[i], atoms_[j], atoms_[k], atoms_[l]);
 }
 
@@ -385,38 +334,12 @@ bool Species::hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Species
 // Add new SpeciesImproper definition (from SpeciesAtom*)
 SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
 {
-    // Check ownership of these Atoms
-    if (!atoms_.contains(i))
-    {
-        Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'i' is not owned by Species '%s' in Species::addImproper.\n",
-                         name_.get());
-        // throw exception
-    }
-    if (!atoms_.contains(j))
-    {
-        Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'j' is not owned by Species '%s' in Species::addImproper.\n",
-                         name_.get());
-        // throw exception
-    }
-    if (!atoms_.contains(k))
-    {
-        Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'k' is not owned by Species '%s' in Species::addImproper.\n",
-                         name_.get());
-        // throw exception
-    }
-    if (!atoms_.contains(l))
-    {
-        Messenger::print("BAD_OWNERSHIP - SpeciesAtom 'l' is not owned by Species '%s' in Species::addImproper.\n",
-                         name_.get());
-        // throw exception
-    }
-
     // Check for existence of Improper already
     if (hasImproper(i, j, k, l))
     {
-        Messenger::warn("Refused to add a new Improper between atoms %i, %i, %i and %i in Species '%s' since it "
+        Messenger::warn("Refused to add a new Improper between atoms {}, {}, {} and {} in Species '{}' since it "
                         "already exists.\n",
-                        i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_.get());
+                        i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex(), name_);
         return *improper(i, j, k, l);
     }
 
@@ -431,35 +354,6 @@ SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAto
 // Add new SpeciesImproper definition
 SpeciesImproper &Species::addImproper(int i, int j, int k, int l)
 {
-    if ((i < 0) || (i >= atoms_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::addImproper() is out of range (%i) "
-                         "for Species '%s'\n",
-                         i, name_.get());
-        // throw exception
-    }
-    if ((j < 0) || (j >= atoms_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::addImproper() is out of range (%i) "
-                         "for Species '%s'\n",
-                         j, name_.get());
-        // throw exception
-    }
-    if ((k < 0) || (k >= atoms_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Internal index 'k' supplied to Species::addImproper() is out of range (%i) "
-                         "for Species '%s'\n",
-                         k, name_.get());
-        // throw exception
-    }
-    if ((l < 0) || (l >= atoms_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Internal index 'l' supplied to Species::addImproper() is out of range (%i) "
-                         "for Species '%s'\n",
-                         l, name_.get());
-        // throw exception
-    }
-
     return addImproper(atoms_[i], atoms_[j], atoms_[k], atoms_[l]);
 }
 
@@ -511,7 +405,7 @@ void Species::generateAttachedAtomLists()
         // Atom 'i' itself In that case we can also finish the list for Atom 'j', and continue the loop.
         if (selectedAtoms_.contains(bond.j()))
         {
-            Messenger::printVerbose("Bond between Atoms %i-%i is present in a cycle, so a minimal set of attached "
+            Messenger::printVerbose("Bond between Atoms {}-{} is present in a cycle, so a minimal set of attached "
                                     "atoms will be used.\n",
                                     bond.i()->userIndex(), bond.j()->userIndex());
             bond.setAttachedAtoms(0, bond.i());
@@ -546,7 +440,7 @@ void Species::generateAttachedAtomLists()
         // Atom 'i' itself In that case we can also finish the list for Atom 'k', and continue the loop.
         if (selectedAtoms_.contains(angle.k()))
         {
-            Messenger::printVerbose("Angle between Atoms %i-%i-%i is present in a cycle, so a minimal set of "
+            Messenger::printVerbose("Angle between Atoms {}-{}-{} is present in a cycle, so a minimal set of "
                                     "attached atoms will be used.\n",
                                     angle.i()->userIndex(), angle.j()->userIndex(), angle.k()->userIndex());
             angle.setAttachedAtoms(0, angle.i());
@@ -584,7 +478,7 @@ void Species::generateAttachedAtomLists()
         // Atom 'i'
         if (selectedAtoms_.contains(torsion.k()))
         {
-            Messenger::printVerbose("Torsion between Atoms %i-%i-%i-%i is present in a cycle, so a minimal set of "
+            Messenger::printVerbose("Torsion between Atoms {}-{}-{}-{} is present in a cycle, so a minimal set of "
                                     "attached atoms will be used.\n",
                                     torsion.i()->userIndex(), torsion.j()->userIndex(), torsion.k()->userIndex(),
                                     torsion.l()->userIndex());

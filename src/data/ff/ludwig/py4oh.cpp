@@ -124,10 +124,10 @@ bool Forcefield_Ludwig_Py4OH::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_Ludwig_Py4OH::name() const { return "Ludwig Py4OH Cation"; }
+std::string_view Forcefield_Ludwig_Py4OH::name() const { return "Ludwig Py4OH Cation"; }
 
 // Return description for Forcefield
-const char *Forcefield_Ludwig_Py4OH::description() const
+std::string_view Forcefield_Ludwig_Py4OH::description() const
 {
     return "Implements of 1‐(4‐hydroxybutyl)pyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine; "
            "W. L. Jorgensen,	D. S. Maxwell, and J. Tirado-Rives, <i>Journal of the "

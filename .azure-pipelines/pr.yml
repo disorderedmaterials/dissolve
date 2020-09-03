@@ -24,7 +24,7 @@ stages:
               ppa: 'beineri/opt-qt-5.13.2-bionic'
               qtver: 513
           - bash: |
-              cp build/dissolve tests/
+              cp build/bin/dissolve tests/
             displayName: 'Copy Executable'
           - task: PublishBuildArtifacts@1
             inputs:
@@ -38,7 +38,7 @@ stages:
         steps:
           - template: templates/build-linux-parallel.yml
           - bash: |
-              cp build-parallel/dissolve-mpi tests/
+              cp build-parallel/bin/dissolve-mpi tests/
             displayName: 'Copy Executable'
           - task: PublishBuildArtifacts@1
             inputs:

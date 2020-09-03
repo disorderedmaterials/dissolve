@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "expression/expression.h"
 #include "math/data1d.h"
 #include "procedure/nodes/node.h"
@@ -102,12 +101,12 @@ class Fit1DProcedureNode : public ProcedureNode
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
+    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList);
     // Execute node, targetting the supplied Configuration
-    ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+    ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                                GenericList &targetList);
     // Finalise any necessary data after execution
-    bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
+    bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList);
 
     /*
      * Read / Write
@@ -116,5 +115,5 @@ class Fit1DProcedureNode : public ProcedureNode
     // Read structure from specified LineParser
     bool read(LineParser &parser, CoreData &coreData);
     // Write structure to specified LineParser
-    bool write(LineParser &parser, const char *prefix);
+    bool write(LineParser &parser, std::string_view prefix);
 };

@@ -224,7 +224,7 @@ void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int top
         item = treeWidget->topLevelItem(topLevelItemIndex);
 
     // Set item data
-    item->setText(0, data->name());
+    item->setText(0, QString::fromStdString(std::string(data->name())));
     // 	item->setIcon(0, QIcon(":/general/icons/general_true.svg"));
     item->setCheckState(0, data->isVisible() ? Qt::Checked : Qt::Unchecked);
 
@@ -248,7 +248,7 @@ void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int chi
         item = parentItem->child(childIndex);
 
     // Set item data
-    item->setText(0, data->name());
+    item->setText(0, QString::fromStdString(std::string(data->name())));
     // 	item->setIcon(0, QIcon(":/general/icons/general_true.svg"));
     item->setCheckState(0, data->isVisible() ? Qt::Checked : Qt::Unchecked);
 }
@@ -330,22 +330,22 @@ void DataWidget::updateStatusBar()
     ui_.ModeLabel->setText(dataViewer()->interactionModeText());
 
     // Update coordinate information
-    View &view = dataViewer()->view();
+    auto &view = dataViewer()->view();
     const auto rLocal = dataViewer()->current2DAxesCoordinates();
     QString text;
     switch (view.viewType())
     {
         case (View::FlatXYView):
-            text.sprintf("x = %e, y = %e", rLocal.x, rLocal.y);
+            text = QString("x = {%1}, y = {%2}").arg(rLocal.x, rLocal.y);
             break;
         case (View::FlatXZView):
-            text.sprintf("x = %e, z = %e", rLocal.x, rLocal.z);
+            text = QString("x = {%1}, z = {%2}").arg(rLocal.x, rLocal.z);
             break;
         case (View::FlatZYView):
-            text.sprintf("z = %e, y = %e", rLocal.z, rLocal.y);
+            text = QString("z = {%1}, y = {%2}").arg(rLocal.z, rLocal.y);
             break;
         default:
-            text.sprintf("x = %e, y = %e, z = %e", rLocal.x, rLocal.y, rLocal.z);
+            text = QString("x = {%1}, y = {%2}, z = {%3}").arg(rLocal.x, rLocal.y, rLocal.z);
             break;
     }
 

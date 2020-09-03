@@ -55,7 +55,7 @@ void Molecule::addAtom(Atom *i)
     atoms_.push_back(i);
 
     if (i->molecule() != NULL)
-        Messenger::warn("Molecule parent is already set in Atom id %i, and we are about to overwrite it...\n", i->arrayIndex());
+        Messenger::warn("Molecule parent is already set in Atom id {}, and we are about to overwrite it...\n", i->arrayIndex());
     std::shared_ptr<Molecule> parent = shared_from_this();
     i->setMolecule(parent);
 }
@@ -65,6 +65,7 @@ int Molecule::nAtoms() const { return atoms_.size(); }
 
 // Return atoms array
 std::vector<Atom *> &Molecule::atoms() { return atoms_; }
+const std::vector<Atom *> &Molecule::atoms() const { return atoms_; }
 
 // Return nth Atom pointer
 Atom *Molecule::atom(int n) const
@@ -72,7 +73,7 @@ Atom *Molecule::atom(int n) const
 #ifdef CHECKS
     if ((n < 0) || (n >= nAtoms()))
     {
-        Messenger::print("OUT_OF_RANGE - Atom index %i is out of range in Molecule::atom().\n", n);
+        Messenger::print("OUT_OF_RANGE - Atom index {} is out of range in Molecule::atom().\n", n);
         return NULL;
     }
 #endif

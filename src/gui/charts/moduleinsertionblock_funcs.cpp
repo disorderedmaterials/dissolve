@@ -106,7 +106,7 @@ void ModuleInsertionBlock::setWidgetGeometry(int left, int top, int width, int h
 // Set icons to reflect insertion of specified Module
 void ModuleInsertionBlock::setDisplayModuleInsertion(QString moduleType)
 {
-    printf("THIS IS TODO!\n");
+    // TODO
     // 	ui_.ModuleIconLabel->setPixmap(ModuleBlock::modulePixmap(qPrintable(moduleType)));
     // 	ui_.ModuleIconLabel->setVisible(true);
 }

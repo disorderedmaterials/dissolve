@@ -28,9 +28,9 @@
 #include "gui/widgets/nocontrols.h"
 #include "main/dissolve.h"
 
-ModuleTab::ModuleTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title,
+ModuleTab::ModuleTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
                      Module *module)
-    : ListItem<ModuleTab>(), MainTab(dissolveWindow, dissolve, parent, module->uniqueName(), this), module_(module)
+    : ListItem<ModuleTab>(), MainTab(dissolveWindow, dissolve, parent, title, this), module_(module)
 {
     ui_.setupUi(this);
 
@@ -76,8 +76,8 @@ void ModuleTab::initialiseControls(Module *module)
     // Check if we have already created a widget...
     if (controlsWidget_)
     {
-        Messenger::error("Already have a controls widget for this ModuleControlWidget (%s), so will not create another one.\n",
-                         title());
+        Messenger::error("Already have a controls widget for this ModuleControlWidget ({}), so will not create another one.\n",
+                         qPrintable(title()));
         return;
     }
 
@@ -95,7 +95,7 @@ void ModuleTab::initialiseControls(Module *module)
     // Create a module widget if there are additional GUI elements available for the Module
     moduleWidget_ = module->createWidget(NULL, dissolve_);
     if (moduleWidget_ == NULL)
-        Messenger::printVerbose("Module '%s' did not provide a valid controller widget.\n", module->type());
+        Messenger::printVerbose("Module '{}' did not provide a valid controller widget.\n", module->type());
     else
     {
         moduleWidget_->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
@@ -192,7 +192,7 @@ bool ModuleTab::writeState(LineParser &parser) const
         collapsedIndex = 0;
     else if (moduleWidget_ && (sizes.at(1) == 0))
         collapsedIndex = 1;
-    if (!parser.writeLineF("%i\n", collapsedIndex))
+    if (!parser.writeLineF("{}\n", collapsedIndex))
         return false;
 
     // Write any state information associated with the displayed ModuleWidget

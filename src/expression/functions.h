@@ -22,6 +22,7 @@
 #pragma once
 
 #include "expression/value.h"
+#include <string_view>
 
 // Forward declarations
 class ExpressionFunction;
@@ -35,13 +36,13 @@ class ExpressionFunctionData
 {
     public:
     // Function keyword
-    const char *keyword;
+    std::string_view keyword;
     // Number of arguments required by the function
     int nArguments;
     // Function argument names
-    const char *argText;
+    std::string_view argText;
     // Function description
-    const char *description;
+    std::string_view description;
 };
 
 // Expression Functions
@@ -109,7 +110,7 @@ class ExpressionFunctions
         nFunctions
     };
     // Return enumerated function id from string
-    static Function function(const char *s);
+    static Function function(std::string_view s);
 
     /*
      * Function declarations

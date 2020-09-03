@@ -24,7 +24,6 @@
 // Random number buffer size
 #define RANDBUFFERSIZE 16172
 
-#include "base/charstring.h"
 #include "base/processgroup.h"
 #include "base/timer.h"
 #include "templates/array.h"
@@ -96,7 +95,7 @@ class ProcessPool
     // Reset accumulated Comm time
     void resetAccumulatedTime();
     // Return accumulated time string
-    const char *accumulatedTimeString();
+    std::string accumulatedTimeString();
 
     /*
      * Process Identification
@@ -128,8 +127,6 @@ class ProcessPool
     int groupRank() const;
     // Return whether this process is a group leader
     bool groupLeader() const;
-    // Return process info string
-    const char *processInfo();
 
     /*
      * Pool Data
@@ -145,7 +142,7 @@ class ProcessPool
 
     private:
     // Name of this pool
-    CharString name_;
+    std::string name_;
     // Array of world ranks in this pool
     Array<int> worldRanks_;
     // Array of process groups within the pool, referencing pool ranks of processes
@@ -173,9 +170,9 @@ class ProcessPool
 
     public:
     // Set up pool with processes specified
-    bool setUp(const char *name, Array<int> worldRanks, int groupPopulation);
+    bool setUp(std::string_view name, Array<int> worldRanks, int groupPopulation);
     // Return name of pool
-    const char *name();
+    std::string_view name() const;
     // Return total number of processes in pool
     int nProcesses() const;
     // Return root (first) world rank of this pool
@@ -270,8 +267,8 @@ class ProcessPool
      * Broadcast Functions
      */
     public:
-    // Broadcast CharString
-    bool broadcast(CharString &source, int rootRank = 0,
+    // Broadcast std::string
+    bool broadcast(std::string &source, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast char data
     bool broadcast(char *source, int rootRank = 0,
@@ -383,8 +380,10 @@ class ProcessPool
     bool equality(long int i, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Check equality of double value across involved processes
     bool equality(double x, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
-    // Check equality of CharString value across involved processes
-    bool equality(const char *s, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Check equality of string value across involved processes
+    bool equality(std::string s, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Check equality of string view across involved processes
+    bool equality(std::string_view s, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Check equality of Vec3<double> value across involved processes
     bool equality(Vec3<double> v, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Check equality of Vec3<int> value across involved processes

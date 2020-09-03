@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "expression/node.h"
 
 // Variable
@@ -36,7 +35,7 @@ class ExpressionVariable : public ExpressionNode
      */
     protected:
     // Name of the variable
-    CharString name_;
+    std::string name_;
     // Value of variable
     ExpressionValue value_;
     // Initial value of new variable
@@ -44,9 +43,9 @@ class ExpressionVariable : public ExpressionNode
 
     public:
     // Set name of variable
-    void setName(const char *s);
+    void setName(std::string_view s);
     // Get name of variable
-    const char *name() const;
+    std::string_view name() const;
     // Set initial value expression
     bool setInitialValue(ExpressionNode *node);
     // Return Node corresponding to initial value
@@ -70,7 +69,7 @@ class ExpressionVariable : public ExpressionNode
      */
     public:
     // Print node contents
-    void nodePrint(int offset, const char *prefix = "");
+    void nodePrint(int offset, std::string_view prefix = "");
     // Initialise node
     bool initialise();
 };

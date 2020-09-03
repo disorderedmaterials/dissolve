@@ -83,7 +83,7 @@ class ConfigurationViewer : public BaseViewer
 
     public:
     // Return text describing current interaction mode
-    const char *interactionModeText() const;
+    const QString interactionModeText() const;
 
     /*
      * Source Configuration

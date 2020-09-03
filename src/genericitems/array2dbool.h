@@ -27,7 +27,7 @@
 template <> class GenericItemContainer<Array2D<bool>> : public GenericItem
 {
     public:
-    GenericItemContainer<Array2D<bool>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
+    GenericItemContainer<Array2D<bool>>(std::string_view name, int flags = 0) : GenericItem(name, flags) {}
 
     /*
      * Data
@@ -45,7 +45,7 @@ template <> class GenericItemContainer<Array2D<bool>> : public GenericItem
      */
     protected:
     // Create a new GenericItem containing same class as current type
-    GenericItem *createItem(const char *className, const char *name, int flags = 0)
+    GenericItem *createItem(std::string_view className, std::string_view name, int flags = 0)
     {
         if (DissolveSys::sameString(className, itemClassName()))
             return new GenericItemContainer<Array2D<bool>>(name, flags);
@@ -54,7 +54,7 @@ template <> class GenericItemContainer<Array2D<bool>> : public GenericItem
 
     public:
     // Return class name contained in item
-    const char *itemClassName() { return "Array2D<bool>"; }
+    std::string_view itemClassName() { return "Array2D<bool>"; }
 
     /*
      * I/O
@@ -67,9 +67,9 @@ template <> class GenericItemContainer<Array2D<bool>> : public GenericItem
     // Write specified data through specified parser
     static bool write(const Array2D<bool> &thisData, LineParser &parser)
     {
-        parser.writeLineF("%i  %i  %s\n", thisData.nRows(), thisData.nColumns(), DissolveSys::btoa(thisData.halved()));
+        parser.writeLineF("{}  {}  {}\n", thisData.nRows(), thisData.nColumns(), DissolveSys::btoa(thisData.halved()));
         for (int n = 0; n < thisData.linearArraySize(); ++n)
-            if (!parser.writeLineF("%c\n", thisData.constLinearValue(n) ? 'T' : 'F'))
+            if (!parser.writeLineF("{}\n", thisData.constLinearValue(n) ? 'T' : 'F'))
                 return false;
         return true;
     }
@@ -85,7 +85,7 @@ template <> class GenericItemContainer<Array2D<bool>> : public GenericItem
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
-            thisData.linearArray()[n] = (parser.argc(0)[0] == 'T' || parser.argc(0)[0] == 't');
+            thisData.linearArray()[n] = (parser.argsv(0)[0] == 'T' || parser.argsv(0)[0] == 't');
         }
         return true;
     }

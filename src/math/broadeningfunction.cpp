@@ -46,52 +46,52 @@ void BroadeningFunction::operator=(const BroadeningFunction &source)
     staticOmega_ = source.staticOmega_;
 }
 
-const char *BroadeningFunctionKeywords[] = {"None", "Gaussian", "ScaledGaussian", "OmegaDependentGaussian", "GaussianC2"};
+std::string_view BroadeningFunctionKeywords[] = {"None", "Gaussian", "ScaledGaussian", "OmegaDependentGaussian", "GaussianC2"};
 int BroadeningFunctionNParameters[] = {0, 1, 2, 1, 2};
 
-const char *BroadeningFunctionParameters[][MAXBROADENINGFUNCTIONPARAMS] = {{
-                                                                               "",
-                                                                               "",
-                                                                               "",
-                                                                               "",
-                                                                               "",
-                                                                               "",
-                                                                           },
-                                                                           {
-                                                                               "FWHM",
-                                                                               "",
-                                                                               "",
-                                                                               "",
-                                                                               "",
-                                                                               "",
-                                                                           },
-                                                                           {
-                                                                               "A",
-                                                                               "FWHM",
-                                                                               "",
-                                                                               "",
-                                                                               "",
-                                                                               "",
-                                                                           },
-                                                                           {
-                                                                               "FWHM",
-                                                                               "",
-                                                                               "",
-                                                                               "",
-                                                                               "",
-                                                                               "",
-                                                                           },
-                                                                           {
-                                                                               "FWHM1 (independent)",
-                                                                               "FWHM2 (dependent)",
-                                                                               "",
-                                                                               "",
-                                                                               "",
-                                                                               "",
-                                                                           }};
+std::string_view BroadeningFunctionParameters[][MAXBROADENINGFUNCTIONPARAMS] = {{
+                                                                                    "",
+                                                                                    "",
+                                                                                    "",
+                                                                                    "",
+                                                                                    "",
+                                                                                    "",
+                                                                                },
+                                                                                {
+                                                                                    "FWHM",
+                                                                                    "",
+                                                                                    "",
+                                                                                    "",
+                                                                                    "",
+                                                                                    "",
+                                                                                },
+                                                                                {
+                                                                                    "A",
+                                                                                    "FWHM",
+                                                                                    "",
+                                                                                    "",
+                                                                                    "",
+                                                                                    "",
+                                                                                },
+                                                                                {
+                                                                                    "FWHM",
+                                                                                    "",
+                                                                                    "",
+                                                                                    "",
+                                                                                    "",
+                                                                                    "",
+                                                                                },
+                                                                                {
+                                                                                    "FWHM1 (independent)",
+                                                                                    "FWHM2 (dependent)",
+                                                                                    "",
+                                                                                    "",
+                                                                                    "",
+                                                                                    "",
+                                                                                }};
 
 // Return FunctionType from supplied string
-BroadeningFunction::FunctionType BroadeningFunction::functionType(const char *s)
+BroadeningFunction::FunctionType BroadeningFunction::functionType(std::string_view s)
 {
     for (int n = 0; n < nFunctionTypes; ++n)
         if (DissolveSys::sameString(s, BroadeningFunctionKeywords[n]))
@@ -100,13 +100,16 @@ BroadeningFunction::FunctionType BroadeningFunction::functionType(const char *s)
 }
 
 // Return FunctionType name
-const char *BroadeningFunction::functionType(BroadeningFunction::FunctionType func) { return BroadeningFunctionKeywords[func]; }
+std::string_view BroadeningFunction::functionType(BroadeningFunction::FunctionType func)
+{
+    return BroadeningFunctionKeywords[func];
+}
 
 // Return number of parameters needed to define function
 int BroadeningFunction::nFunctionParameters(FunctionType func) { return BroadeningFunctionNParameters[func]; }
 
 // Return description for FunctionType
-const char *BroadeningFunction::functionDescription(FunctionType func)
+std::string_view BroadeningFunction::functionDescription(FunctionType func)
 {
     switch (func)
     {
@@ -159,17 +162,17 @@ bool BroadeningFunction::set(LineParser &parser, int startArg)
         parameters_[n] = 0.0;
 
     // First argument is the form of the function
-    BroadeningFunction::FunctionType funcType = BroadeningFunction::functionType(parser.argc(startArg));
+    BroadeningFunction::FunctionType funcType = BroadeningFunction::functionType(parser.argsv(startArg));
     if (funcType == BroadeningFunction::nFunctionTypes)
     {
-        Messenger::error("Unrecognised Function type '%s'.\n", parser.argc(startArg));
+        Messenger::error("Unrecognised Function type '{}'.\n", parser.argsv(startArg));
         return false;
     }
 
     // Do we have the right number of arguments for the function specified?
     if ((parser.nArgs() - startArg) < BroadeningFunction::nFunctionParameters(funcType))
     {
-        Messenger::error("Too few parameters supplied for Function '%s' (expected %i, found %i).\n",
+        Messenger::error("Too few parameters supplied for Function '{}' (expected {}, found {}).\n",
                          BroadeningFunction::functionType(funcType), BroadeningFunction::nFunctionParameters(funcType),
                          parser.nArgs() - startArg);
         return false;
@@ -199,7 +202,7 @@ bool BroadeningFunction::set(LineParser &parser, int startArg)
             parameters_[1] = parser.argd(startArg + 2);
             break;
         default:
-            Messenger::error("Function form '%s' not accounted for in BroadeningFunction::set(LineParser&,int).\n",
+            Messenger::error("Function form '{}' not accounted for in BroadeningFunction::set(LineParser&,int).\n",
                              BroadeningFunction::functionType(funcType));
             return false;
     }
@@ -223,22 +226,17 @@ double BroadeningFunction::parameter(int index) const { return parameters_[index
 double *BroadeningFunction::parameters() { return parameters_; }
 
 // Return specified parameter name
-const char *BroadeningFunction::parameterName(int index) const { return BroadeningFunctionParameters[function_][index]; }
+std::string_view BroadeningFunction::parameterName(int index) const { return BroadeningFunctionParameters[function_][index]; }
 
 // Return short summary of function parameters
-CharString BroadeningFunction::parameterSummary() const
+std::string BroadeningFunction::parameterSummary() const
 {
     if (BroadeningFunctionNParameters[function_] == 0)
         return "<No Parameters>";
 
-    CharString result;
-    for (int n = 0; n < BroadeningFunctionNParameters[function_]; ++n)
-    {
-        if (n == 0)
-            result.strcatf("%s=%f", BroadeningFunctionParameters[function_][n], parameters_[n]);
-        else
-            result.strcatf(", %s=%f", BroadeningFunctionParameters[function_][n], parameters_[n]);
-    }
+    std::string result;
+    for (auto n = 0; n < BroadeningFunctionNParameters[function_]; ++n)
+        result += fmt::format("{}{}={}", n == 0 ? "" : ", ", BroadeningFunctionParameters[function_][n], parameters_[n]);
 
     return result;
 }
@@ -279,7 +277,7 @@ void BroadeningFunction::setUpDependentParameters()
             parameters_[5] = 1.0 / parameters_[3];
             break;
         default:
-            Messenger::error("Function form '%s' not accounted for in BroadeningFunction::setUpDependentParameters().\n",
+            Messenger::error("Function form '{}' not accounted for in BroadeningFunction::setUpDependentParameters().\n",
                              BroadeningFunction::functionType(function_));
     }
 }
@@ -366,7 +364,7 @@ double BroadeningFunction::yActual(double x, double omega) const
                        (2.0 * (parameters_[2] + parameters_[3] * omega) * (parameters_[2] + parameters_[3] * omega)));
             break;
         default:
-            Messenger::warn("BroadeningFunction::value() - Function id %i not accounted for.\n", function_);
+            Messenger::warn("BroadeningFunction::value() - Function id {} not accounted for.\n", function_);
             break;
     }
 
@@ -442,7 +440,7 @@ double BroadeningFunction::yFTActual(double x, double omega) const
             return exp(-(0.5 * x * x * (parameters_[2] + parameters_[3] * omega) * (parameters_[2] + parameters_[3] * omega)));
             break;
         default:
-            Messenger::warn("BroadeningFunction::ft() - Function id %i not accounted for.\n", function_);
+            Messenger::warn("BroadeningFunction::ft() - Function id {} not accounted for.\n", function_);
             break;
     }
 
@@ -533,7 +531,7 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX) const
             return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * (parameters_[0] + parameters_[1] * staticOmega_));
             break;
         default:
-            Messenger::warn("BroadeningFunction::discreteKernelNormalisation(dx) - Function id %i not accounted for.\n",
+            Messenger::warn("BroadeningFunction::discreteKernelNormalisation(dx) - Function id {} not accounted for.\n",
                             function_);
             break;
     }
@@ -612,7 +610,7 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX, double ome
             return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * (parameters_[0] + parameters_[1] * omega));
             break;
         default:
-            Messenger::warn("BroadeningFunction::discreteKernelNormalisation(dx,omega) - Function id %i not "
+            Messenger::warn("BroadeningFunction::discreteKernelNormalisation(dx,omega) - Function id {} not "
                             "accounted for.\n",
                             function_);
             break;
@@ -626,14 +624,14 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX, double ome
  */
 
 // Return class name
-const char *BroadeningFunction::itemClassName() { return "BroadeningFunction"; }
+std::string_view BroadeningFunction::itemClassName() { return "BroadeningFunction"; }
 
 // Read data through specified LineParser
 bool BroadeningFunction::read(LineParser &parser, CoreData &coreData)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    function_ = functionType(parser.argc(0));
+    function_ = functionType(parser.argsv(0));
     for (int n = 0; n < nFunctionParameters(function_); ++n)
         parameters_[n] = parser.argd(n + 1);
     return true;
@@ -642,10 +640,10 @@ bool BroadeningFunction::read(LineParser &parser, CoreData &coreData)
 // Write data through specified LineParser
 bool BroadeningFunction::write(LineParser &parser)
 {
-    CharString line("%s", functionType(function_));
+    std::string line{functionType(function_)};
     for (int n = 0; n < nFunctionParameters(function_); ++n)
-        line.strcatf(" %16.9e", parameters_[n]);
-    return parser.writeLine(line.get());
+        line += fmt::format(" {:16.9e}", parameters_[n]);
+    return parser.writeLine(line);
 }
 
 /*
@@ -669,7 +667,7 @@ bool BroadeningFunction::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
     if (!procPool.equality(EnumCast<BroadeningFunction::FunctionType>(function_)))
-        return Messenger::error("BroadeningFunction function type is not equivalent (process %i has %i).\n",
+        return Messenger::error("BroadeningFunction function type is not equivalent (process {} has {}).\n",
                                 procPool.poolRank(), function_);
     if (!procPool.equality(parameters_, MAXBROADENINGFUNCTIONPARAMS))
         return Messenger::error("BroadeningFunction parameters are not equivalent.\n");

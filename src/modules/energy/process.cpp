@@ -50,7 +50,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Check for zero Configuration targets
     if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
     for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
@@ -81,14 +81,14 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             if (testAnalytic)
                 Messenger::print("Energy: Exact, analytical potential will be used in test.");
             if (hasReferenceInter)
-                Messenger::print("Energy: Reference interatomic energy is %15.9e kJ/mol.\n", testReferenceInter);
+                Messenger::print("Energy: Reference interatomic energy is {:15.9e} kJ/mol.\n", testReferenceInter);
             if (hasReferenceIntra)
-                Messenger::print("Energy: Reference intramolecular energy is %15.9e kJ/mol.\n", testReferenceIntra);
+                Messenger::print("Energy: Reference intramolecular energy is {:15.9e} kJ/mol.\n", testReferenceIntra);
         }
 
         Messenger::print("\n");
 
-        Messenger::print("Calculating total energy for Configuration '%s'...\n", cfg->name());
+        Messenger::print("Calculating total energy for Configuration '{}'...\n", cfg->name());
         // Calculate the total energy
         if (testMode)
         {
@@ -124,7 +124,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 {
                     i = molN->atom(ii);
 
-                    // 					Messenger::print("Atom %i r = %f %f %f\n", ii,
+                    // 					Messenger::print("Atom {} r = {} {} {}\n", ii,
                     // molN->atom(ii)->r().x, molN->atom(ii)->r().y, molN->atom(ii)->r().z);
                     for (int jj = ii + 1; jj < molN->nAtoms(); ++jj)
                     {
@@ -224,10 +224,10 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             }
             testTimer.stop();
 
-            Messenger::print("Correct interatomic pairpotential energy is %15.9e kJ/mol\n", correctInterEnergy);
-            Messenger::print("Correct intramolecular energy is %15.9e kJ/mol\n", correctIntraEnergy);
-            Messenger::print("Correct total energy is %15.9e kJ/mol\n", correctInterEnergy + correctIntraEnergy);
-            Messenger::print("Time to do total (test) energy was %s.\n", testTimer.totalTimeString());
+            Messenger::print("Correct interatomic pairpotential energy is {:15.9e} kJ/mol\n", correctInterEnergy);
+            Messenger::print("Correct intramolecular energy is {:15.9e} kJ/mol\n", correctIntraEnergy);
+            Messenger::print("Correct total energy is {:15.9e} kJ/mol\n", correctInterEnergy + correctIntraEnergy);
+            Messenger::print("Time to do total (test) energy was {}.\n", testTimer.totalTimeString());
 
             /*
              * Test Calculation End
@@ -247,11 +247,11 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             double intraEnergy = intraMolecularEnergy(procPool, cfg, dissolve.potentialMap());
             intraTimer.stop();
 
-            Messenger::print("Production interatomic pairpotential energy is %15.9e kJ/mol\n", interEnergy);
-            Messenger::print("Production intramolecular energy is %15.9e kJ/mol\n", intraEnergy);
-            Messenger::print("Total production energy is %15.9e kJ/mol\n", interEnergy + intraEnergy);
-            Messenger::print("Time to do interatomic energy was %s.\n", interTimer.totalTimeString());
-            Messenger::print("Time to do intramolecular energy was %s.\n", intraTimer.totalTimeString());
+            Messenger::print("Production interatomic pairpotential energy is {:15.9e} kJ/mol\n", interEnergy);
+            Messenger::print("Production intramolecular energy is {:15.9e} kJ/mol\n", intraEnergy);
+            Messenger::print("Total production energy is {:15.9e} kJ/mol\n", interEnergy + intraEnergy);
+            Messenger::print("Time to do interatomic energy was {}.\n", interTimer.totalTimeString());
+            Messenger::print("Time to do intramolecular energy was {}.\n", intraTimer.totalTimeString());
 
             /*
              * Production Calculation Ends
@@ -262,15 +262,15 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             if (hasReferenceInter)
             {
                 delta = testReferenceInter - correctInterEnergy;
-                Messenger::print("Reference interatomic energy delta with correct value is %15.9e kJ/mol and "
-                                 "is %s (threshold is %10.3e kJ/mol)\n",
+                Messenger::print("Reference interatomic energy delta with correct value is {:15.9e} kJ/mol and "
+                                 "is {} (threshold is {:10.3e} kJ/mol)\n",
                                  delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
                 if (!procPool.allTrue(fabs(delta) < testThreshold))
                     return false;
 
                 delta = testReferenceInter - interEnergy;
-                Messenger::print("Reference interatomic energy delta with production value is %15.9e kJ/mol "
-                                 "and is %s (threshold is %10.3e kJ/mol)\n",
+                Messenger::print("Reference interatomic energy delta with production value is {:15.9e} kJ/mol "
+                                 "and is {} (threshold is {:10.3e} kJ/mol)\n",
                                  delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
                 if (!procPool.allTrue(fabs(delta) < testThreshold))
                     return false;
@@ -278,15 +278,15 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             if (hasReferenceIntra)
             {
                 delta = testReferenceIntra - correctIntraEnergy;
-                Messenger::print("Reference intramolecular energy delta with correct value is %15.9e kJ/mol "
-                                 "and is %s (threshold is %10.3e kJ/mol)\n",
+                Messenger::print("Reference intramolecular energy delta with correct value is {:15.9e} kJ/mol "
+                                 "and is {} (threshold is {:10.3e} kJ/mol)\n",
                                  delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
                 if (!procPool.allTrue(fabs(delta) < testThreshold))
                     return false;
 
                 delta = testReferenceIntra - intraEnergy;
-                Messenger::print("Reference intramolecular energy delta with production value is %15.9e kJ/mol "
-                                 "and is %s (threshold is %10.3e kJ/mol)\n",
+                Messenger::print("Reference intramolecular energy delta with production value is {:15.9e} kJ/mol "
+                                 "and is {} (threshold is {:10.3e} kJ/mol)\n",
                                  delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
                 if (!procPool.allTrue(fabs(delta) < testThreshold))
                     return false;
@@ -296,9 +296,9 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             double interDelta = correctInterEnergy - interEnergy;
             double intraDelta = correctIntraEnergy - intraEnergy;
             Messenger::print("Comparing 'correct' with production values...\n");
-            Messenger::print("Interatomic energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n", interDelta,
-                             fabs(interDelta) < testThreshold ? "OK" : "NOT OK", testThreshold);
-            Messenger::print("Intramolecular energy delta is %15.9e kJ/mol and is %s (threshold is %10.3e kJ/mol)\n",
+            Messenger::print("Interatomic energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
+                             interDelta, fabs(interDelta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+            Messenger::print("Intramolecular energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
                              intraDelta, fabs(intraDelta) < testThreshold ? "OK" : "NOT OK", testThreshold);
 
             // All OK?
@@ -327,42 +327,42 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                       torsionEnergy, improperEnergy);
             intraTimer.stop();
 
-            Messenger::print("Time to do interatomic energy was %s, intramolecular energy was %s (%s comms).\n",
+            Messenger::print("Time to do interatomic energy was {}, intramolecular energy was {} ({} comms).\n",
                              interTimer.totalTimeString(), intraTimer.totalTimeString(), procPool.accumulatedTimeString());
-            Messenger::print("Total Energy (World) is %15.9e kJ/mol (%15.9e kJ/mol interatomic + %15.9e kJ/mol "
+            Messenger::print("Total Energy (World) is {:15.9e} kJ/mol ({:15.9e} kJ/mol interatomic + {:15.9e} kJ/mol "
                              "intramolecular).\n",
                              interEnergy + intraEnergy, interEnergy, intraEnergy);
-            Messenger::print("Intramolecular contributions are - bonds = %15.9e kJ/mol, angles = %15.9e kJ/mol, "
-                             "torsions = %15.9e kJ/mol.\n",
+            Messenger::print("Intramolecular contributions are - bonds = {:15.9e} kJ/mol, angles = {:15.9e} kJ/mol, "
+                             "torsions = {:15.9e} kJ/mol.\n",
                              bondEnergy, angleEnergy, torsionEnergy);
 
             // Store current energies in the Configuration in case somebody else needs them
             auto &interData =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Inter", uniqueName(), GenericItem::InRestartFileFlag);
             interData.addPoint(dissolve.iteration(), interEnergy);
-            interData.setObjectTag(CharString("%s//%s//Inter", cfg->niceName(), uniqueName()));
+            interData.setObjectTag(fmt::format("{}//{}//Inter", cfg->niceName(), uniqueName()));
             auto &intraData =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Intra", uniqueName(), GenericItem::InRestartFileFlag);
             intraData.addPoint(dissolve.iteration(), intraEnergy);
-            intraData.setObjectTag(CharString("%s//%s//Intra", cfg->niceName(), uniqueName()));
+            intraData.setObjectTag(fmt::format("{}//{}//Intra", cfg->niceName(), uniqueName()));
             auto &bondData =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Bond", uniqueName(), GenericItem::InRestartFileFlag);
             bondData.addPoint(dissolve.iteration(), bondEnergy);
-            bondData.setObjectTag(CharString("%s//%s//Bond", cfg->niceName(), uniqueName()));
+            bondData.setObjectTag(fmt::format("{}//{}//Bond", cfg->niceName(), uniqueName()));
             auto &angleData =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Angle", uniqueName(), GenericItem::InRestartFileFlag);
             angleData.addPoint(dissolve.iteration(), angleEnergy);
-            angleData.setObjectTag(CharString("%s//%s//Angle", cfg->niceName(), uniqueName()));
+            angleData.setObjectTag(fmt::format("{}//{}//Angle", cfg->niceName(), uniqueName()));
             auto &torsionData =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Torsion", uniqueName(), GenericItem::InRestartFileFlag);
             torsionData.addPoint(dissolve.iteration(), torsionEnergy);
-            torsionData.setObjectTag(CharString("%s//%s//Torsion", cfg->niceName(), uniqueName()));
+            torsionData.setObjectTag(fmt::format("{}//{}//Torsion", cfg->niceName(), uniqueName()));
 
             // Append to arrays of total energies
             auto &totalEnergyArray =
                 GenericListHelper<Data1D>::realise(cfg->moduleData(), "Total", uniqueName(), GenericItem::InRestartFileFlag);
             totalEnergyArray.addPoint(dissolve.iteration(), interEnergy + intraEnergy);
-            totalEnergyArray.setObjectTag(CharString("%s//%s//Total", cfg->niceName(), uniqueName()));
+            totalEnergyArray.setObjectTag(fmt::format("{}//{}//Total", cfg->niceName(), uniqueName()));
 
             // Determine stability of energy
             // Check number of points already stored for the Configuration
@@ -377,8 +377,8 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 double thresholdValue = fabs(stabilityThreshold * yMean);
                 stable = fabs(grad) < thresholdValue;
 
-                Messenger::print("Gradient of last %i points is %e kJ/mol/step (absolute threshold value is "
-                                 "%e, stable = %s).\n",
+                Messenger::print("Gradient of last {} points is {:e} kJ/mol/step (absolute threshold value is "
+                                 "{:e}, stable = {}).\n",
                                  stabilityWindow, grad, thresholdValue, DissolveSys::btoa(stable));
             }
 
@@ -392,20 +392,21 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             if (saveData)
             {
                 LineParser parser;
-                CharString filename("%s.energy.txt", cfg->niceName());
+                std::string filename = fmt::format("{}.energy.txt", cfg->niceName());
 
                 if (!DissolveSys::fileExists(filename))
                 {
                     parser.openOutput(filename);
-                    parser.writeLineF("# Energies for Configuration '%s'.\n", cfg->name());
+                    parser.writeLineF("# Energies for Configuration '{}'.\n", cfg->name());
                     parser.writeLine("# All values in kJ/mol.\n");
                     parser.writeLine("# Iteration   Total         Inter         Bond          Angle        "
                                      " Torsion       Gradient      S?\n");
                 }
                 else
                     parser.appendOutput(filename);
-                parser.writeLineF("  %10i  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %i\n", dissolve.iteration(),
-                                  interEnergy + intraEnergy, interEnergy, bondEnergy, angleEnergy, torsionEnergy, grad, stable);
+                parser.writeLineF("  {:10d}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {}\n",
+                                  dissolve.iteration(), interEnergy + intraEnergy, interEnergy, bondEnergy, angleEnergy,
+                                  torsionEnergy, grad, stable);
                 parser.closeFiles();
             }
         }

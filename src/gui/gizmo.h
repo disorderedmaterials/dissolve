@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/sysfunc.h"
 #include "templates/listitem.h"
 #include "templates/reflist.h"
@@ -36,7 +35,7 @@ class QMdiSubWindow;
 class Gizmo : public ListItem<Gizmo>
 {
     public:
-    Gizmo(Dissolve &dissolve, const char *uniqueName);
+    Gizmo(Dissolve &dissolve, const QString uniqueName);
     virtual ~Gizmo();
 
     /*
@@ -44,7 +43,7 @@ class Gizmo : public ListItem<Gizmo>
      */
     protected:
     // Unique name of gizmo
-    CharString uniqueName_;
+    QString uniqueName_;
     // Reference to Dissolve
     Dissolve &dissolve_;
     // QMdiSubWindow containing the Gizmo
@@ -54,27 +53,27 @@ class Gizmo : public ListItem<Gizmo>
 
     public:
     // Return string specifying Gizmo type
-    virtual const char *type() const = 0;
+    virtual const QString type() const = 0;
     // Set unique name of gizmo
-    void setUniqueName(const char *uniqueName);
+    void setUniqueName(const QString uniqueName);
     // Return unique name for Gizmo based on basename provided
-    static const char *uniqueName(const char *base);
+    static const QString uniqueName(const QString base);
     // Return unique name of gizmo
-    const char *uniqueName();
+    const QString uniqueName() const;
     // Set QMdiSubWindow containing the Gizmo
     void setWindow(QMdiSubWindow *window);
     // Return QMdiSubWindow containing the Gizmo
     QMdiSubWindow *window();
     // Find Gizmo with unique name provided
-    static Gizmo *find(const char *uniqueName, const Gizmo *excludeThis = NULL);
+    static Gizmo *find(const QString uniqueName, const Gizmo *excludeThis = NULL);
     // Find Gizmo contained in specified subwindow
     static Gizmo *find(QMdiSubWindow *window);
     // Find all Gizmos of the specified type
-    template <class G> static RefList<G> findAll(const char *gizmoType)
+    template <class G> static RefList<G> findAll(const QString gizmoType)
     {
         RefList<G> gizmos;
         for (Gizmo *gizmo : allGizmos_)
-            if (DissolveSys::sameString(gizmo->type(), gizmoType))
+            if (gizmo->type() == gizmoType)
                 gizmos.append(dynamic_cast<G *>(gizmo));
         return gizmos;
     }
@@ -103,11 +102,11 @@ class Gizmo : public ListItem<Gizmo>
      */
     public:
     // Return whether this Gizmo accepts data of the specified type
-    virtual bool acceptsData(const char *dataType);
+    virtual bool acceptsData(const QString &dataType);
     // Return all Gizmos that accept data of the specified type
-    static RefList<Gizmo> allThatAccept(const char *dataType);
+    static RefList<Gizmo> allThatAccept(const QString &ataType);
     // Send data (referenced by its object tag) to the Gizmo
-    virtual bool sendData(const char *dataType, const char *objectTag, const char *name = NULL);
+    virtual bool sendData(const QString &dataType, std::string_view objectTag, std::string_view name = "");
 
     /*
      * State

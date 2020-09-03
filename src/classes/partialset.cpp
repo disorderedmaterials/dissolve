@@ -47,8 +47,8 @@ PartialSet::~PartialSet()
  */
 
 // Set up PartialSet
-bool PartialSet::setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth, const char *prefix, const char *tag,
-                       const char *suffix, const char *abscissaUnits)
+bool PartialSet::setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth, std::string_view prefix,
+                       std::string_view tag, std::string_view suffix, std::string_view abscissaUnits)
 {
     // Set up partial arrays
     if (!setUpPartials(atomTypes, prefix, tag, suffix, abscissaUnits))
@@ -63,8 +63,8 @@ bool PartialSet::setUp(const AtomTypeList &atomTypes, double rdfRange, double bi
 }
 
 // Set up PartialSet without initialising histogram arrays
-bool PartialSet::setUpPartials(const AtomTypeList &atomTypes, const char *prefix, const char *tag, const char *suffix,
-                               const char *abscissaUnits)
+bool PartialSet::setUpPartials(const AtomTypeList &atomTypes, std::string_view prefix, std::string_view tag,
+                               std::string_view suffix, std::string_view abscissaUnits)
 {
     abscissaUnits_ = abscissaUnits;
 
@@ -79,17 +79,16 @@ bool PartialSet::setUpPartials(const AtomTypeList &atomTypes, const char *prefix
     emptyBoundPartials_ = false;
 
     // Set up array matrices for partials
-    CharString title;
+    std::string title;
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
-        title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
-        partials_.at(n, m).setName(title.get());
-        boundPartials_.at(n, m).setName(title.get());
-        unboundPartials_.at(n, m).setName(title.get());
+        title = fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
+        partials_.at(n, m).setName(title);
+        boundPartials_.at(n, m).setName(title);
+        unboundPartials_.at(n, m).setName(title);
     });
 
     // Set up array for total
-    title.sprintf("%s-%s-total.%s", prefix, tag, suffix);
-    total_.setName(title);
+    total_.setName(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
     total_.clear();
 
     fingerprint_ = "NO_FINGERPRINT";
@@ -157,10 +156,10 @@ double PartialSet::rdfRange() const { return rdfRange_; }
 double PartialSet::rdfBinWidth() const { return rdfBinWidth_; }
 
 // Set new fingerprint
-void PartialSet::setFingerprint(const char *fingerprint) { fingerprint_ = fingerprint; }
+void PartialSet::setFingerprint(std::string_view fingerprint) { fingerprint_ = fingerprint; }
 
 // Return fingerprint of partials
-const char *PartialSet::fingerprint() const { return fingerprint_.get(); }
+std::string_view PartialSet::fingerprint() const { return fingerprint_; }
 
 // Return full histogram specified
 Histogram1D &PartialSet::fullHistogram(int i, int j) { return fullHistograms_.at(i, j); }
@@ -297,79 +296,76 @@ bool PartialSet::save()
         for (typeJ = typeI; typeJ < nTypes; ++typeJ)
         {
             // Open file and check that we're OK to proceed writing to it
-            const char *filename = partials_.at(typeI, typeJ).name();
-            Messenger::printVerbose("Writing partial file '%s'...\n", filename);
+            std::string filename{partials_.at(typeI, typeJ).name()};
+            Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
             parser.openOutput(filename, true);
             if (!parser.isFileGoodForWriting())
             {
-                Messenger::error("Couldn't open file '%s' for writing.\n", filename);
+                Messenger::error("Couldn't open file '{}' for writing.\n", filename);
                 return false;
             }
 
             auto &full = partials_.at(typeI, typeJ);
             auto &bound = boundPartials_.at(typeI, typeJ);
             auto &unbound = unboundPartials_.at(typeI, typeJ);
-            parser.writeLineF("# %-14s  %-16s  %-16s  %-16s\n", abscissaUnits_.get(), "Full", "Bound", "Unbound");
+            parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits_, "Full", "Bound", "Unbound");
             for (n = 0; n < full.nValues(); ++n)
-                parser.writeLineF("%16.9e  %16.9e  %16.9e  %16.9e\n", full.constXAxis(n), full.constValue(n),
+                parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.constXAxis(n), full.constValue(n),
                                   bound.constValue(n), unbound.constValue(n));
             parser.closeFiles();
         }
     }
 
-    Messenger::printVerbose("Writing total file '%s'...\n", total_.name());
+    Messenger::printVerbose("Writing total file '{}'...\n", total_.name());
     Data1DExportFileFormat exportFormat(total_.name());
     return exportFormat.exportData(total_);
 }
 
 // Name all object based on the supplied prefix
-void PartialSet::setObjectTags(const char *prefix, const char *suffix)
+void PartialSet::setObjectTags(std::string_view prefix, std::string_view suffix)
 {
     // Set up suffix (if any)
-    CharString actualSuffix;
+    std::string actualSuffix;
     if (suffix != NULL)
-        actualSuffix.sprintf("_%s", suffix);
+        actualSuffix = fmt::format("_{}", suffix);
 
     objectNamePrefix_ = prefix;
 
-    for_each_pair(atomTypes_.begin(), atomTypes_.end(),
-                  [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
-                      partials_.at(typeI, typeJ)
-                          .setObjectTag(CharString("%s//%s-%s//Full%s", prefix, at1.atomTypeName(), at2.atomTypeName(),
-                                                   actualSuffix.get()));
-                      boundPartials_.at(typeI, typeJ)
-                          .setObjectTag(CharString("%s//%s-%s//Bound%s", prefix, at1.atomTypeName(), at2.atomTypeName(),
-                                                   actualSuffix.get()));
-                      unboundPartials_.at(typeI, typeJ)
-                          .setObjectTag(CharString("%s//%s-%s//Unbound%s", prefix, at1.atomTypeName(), at2.atomTypeName(),
-                                                   actualSuffix.get()));
-                  });
+    for_each_pair(
+        atomTypes_.begin(), atomTypes_.end(), [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
+            partials_.at(typeI, typeJ)
+                .setObjectTag(fmt::format("{}//{}-{}//Full{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
+            boundPartials_.at(typeI, typeJ)
+                .setObjectTag(fmt::format("{}//{}-{}//Bound{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
+            unboundPartials_.at(typeI, typeJ)
+                .setObjectTag(
+                    fmt::format("{}//{}-{}//Unbound{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
+        });
 
-    total_.setObjectTag(CharString("%s//Total%s", prefix, actualSuffix.get()));
+    total_.setObjectTag(fmt::format("{}//Total{}", prefix, actualSuffix));
 }
 
 // Return prefix applied to object names
-const char *PartialSet::objectNamePrefix() const { return objectNamePrefix_.get(); }
+std::string_view PartialSet::objectNamePrefix() const { return objectNamePrefix_; }
 
 // Set underlying Data1D file names
-void PartialSet::setFileNames(const char *prefix, const char *tag, const char *suffix)
+void PartialSet::setFileNames(std::string_view prefix, std::string_view tag, std::string_view suffix)
 {
     auto nTypes = atomTypes_.nItems();
 
     // Set titles for partials
-    CharString title;
+    std::string title;
     int n = 0, m = 0;
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
-        title.sprintf("%s-%s-%s-%s.%s", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
-        partials_.at(n, m).setName(title.get());
-        boundPartials_.at(n, m).setName(title.get());
-        unboundPartials_.at(n, m).setName(title.get());
+        title = fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
+        partials_.at(n, m).setName(title);
+        boundPartials_.at(n, m).setName(title);
+        unboundPartials_.at(n, m).setName(title);
     });
 
     // Set up array for total
-    title.sprintf("%s-%s-total.%s", prefix, tag, suffix);
-    total_.setName(title);
+    total_.setName(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
 }
 
 /*
@@ -422,7 +418,7 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
         localI = atomTypes_.indexOf(atI);
         if (localI == -1)
         {
-            Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
+            Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
                              atI->name());
             return false;
         }
@@ -433,7 +429,7 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
             localJ = atomTypes_.indexOf(atJ);
             if (localJ == -1)
             {
-                Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
+                Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
                                  atJ->name());
                 return false;
             }
@@ -490,8 +486,6 @@ void PartialSet::operator+=(const PartialSet &source)
     // If we currently contain no data, just copy the source data
     if (atomTypes_.nItems() == 0)
     {
-        // 		setUpPartials(source.atomTypes(), source.objectNamePrefix(), "", CharString("%p", this),
-        // source.abscissaUnits_.get());
         (*this) = source;
         return;
     }
@@ -507,13 +501,13 @@ void PartialSet::operator+=(const PartialSet &source)
         int localJ = atomTypes_.indexOf(atJ);
         if (localI == -1)
         {
-            Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
+            Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
                              atI->name());
             return;
         }
         if (localJ == -1)
         {
-            Messenger::error("AtomType '%s' not present in this PartialSet, so can't add in the associated data.\n",
+            Messenger::error("AtomType '{}' not present in this PartialSet, so can't add in the associated data.\n",
                              atJ->name());
             return;
         }
@@ -556,7 +550,7 @@ void PartialSet::operator*=(const double factor)
  */
 
 // Return class name
-const char *PartialSet::itemClassName() { return "PartialSet"; }
+std::string_view PartialSet::itemClassName() { return "PartialSet"; }
 
 // Read data through specified LineParser
 bool PartialSet::read(LineParser &parser, CoreData &coreData)
@@ -611,11 +605,11 @@ bool PartialSet::write(LineParser &parser)
     // TODO To reduce filesize we could write abscissa first, and then each Y datset afterwards since they all share a
     // common scale
 
-    if (!parser.writeLineF("%s\n", objectNamePrefix_.get()))
+    if (!parser.writeLineF("{}\n", objectNamePrefix_))
         return false;
-    if (!parser.writeLineF("%s\n", abscissaUnits_.get()))
+    if (!parser.writeLineF("{}\n", abscissaUnits_))
         return false;
-    if (!parser.writeLineF("%s\n", fingerprint_.get()))
+    if (!parser.writeLineF("{}\n", fingerprint_))
         return false;
 
     // Write out AtomTypes first
@@ -691,11 +685,11 @@ bool PartialSet::equality(ProcessPool &procPool)
         for (int typeJ = typeI; typeJ < nTypes; ++typeJ)
         {
             if (!partials_.at(typeI, typeJ).equality(procPool))
-                return Messenger::error("PartialSet full partial %i-%i is not equivalent.\n", typeI, typeJ);
+                return Messenger::error("PartialSet full partial {}-{} is not equivalent.\n", typeI, typeJ);
             if (!boundPartials_.at(typeI, typeJ).equality(procPool))
-                return Messenger::error("PartialSet bound partial %i-%i is not equivalent.\n", typeI, typeJ);
+                return Messenger::error("PartialSet bound partial {}-{} is not equivalent.\n", typeI, typeJ);
             if (!unboundPartials_.at(typeI, typeJ).equality(procPool))
-                return Messenger::error("PartialSet unbound partial %i-%i is not equivalent.\n", typeI, typeJ);
+                return Messenger::error("PartialSet unbound partial {}-{} is not equivalent.\n", typeI, typeJ);
         }
     }
     if (!total_.equality(procPool))

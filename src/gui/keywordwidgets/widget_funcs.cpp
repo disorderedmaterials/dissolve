@@ -74,13 +74,6 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = broadeningFunctionWidget;
         base = broadeningFunctionWidget;
     }
-    else if (type == KeywordBase::CharStringData)
-    {
-        CharStringKeywordWidget *charWidget = new CharStringKeywordWidget(NULL, keywordBase, coreData);
-        connect(charWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = charWidget;
-        base = charWidget;
-    }
     else if (type == KeywordBase::DoubleData)
     {
         DoubleKeywordWidget *doubleWidget = new DoubleKeywordWidget(NULL, keywordBase, coreData);
@@ -226,6 +219,13 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = speciesSiteRefListWidget;
         base = speciesSiteRefListWidget;
     }
+    else if (type == KeywordBase::StringData)
+    {
+        StringKeywordWidget *charWidget = new StringKeywordWidget(NULL, keywordBase, coreData);
+        connect(charWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+        widget = charWidget;
+        base = charWidget;
+    }
     else if (type == KeywordBase::WindowFunctionData)
     {
         WindowFunctionKeywordWidget *windowFunctionWidget = new WindowFunctionKeywordWidget(NULL, keywordBase, coreData);
@@ -259,7 +259,7 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
     // list of widgets
     if (widget)
     {
-        widget->setToolTip(keyword->description());
+        widget->setToolTip(QString::fromStdString(std::string(keyword->description())));
         keywordWidgets.append(base);
     }
 
@@ -314,19 +314,19 @@ void KeywordsWidget::setUp(const KeywordList &keywords, const CoreData &coreData
                     (keyword->type() == KeywordBase::Data3DStoreData))
                     continue;
 
-                Messenger::error("Can't create widget for keyword '%s' (%s).\n", keyword->name(),
+                Messenger::error("Can't create widget for keyword '{}' ({}).\n", keyword->name(),
                                  KeywordBase::keywordDataType(keyword->type()));
                 continue;
             }
 
             // Create a label and add it and the widget to our layout
-            QLabel *nameLabel = new QLabel(keyword->name());
-            nameLabel->setToolTip(keyword->description());
+            QLabel *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
+            nameLabel->setToolTip(QString::fromStdString(std::string(keyword->description())));
             groupLayout->addRow(nameLabel, widget);
         }
 
         // Group is finished, so add the widget as a new tab in our QToolBox
-        addItem(groupWidget, group->name());
+        addItem(groupWidget, QString::fromStdString(std::string(group->name())));
     }
 
     // If there are any 'group-orphaned' keywords, add these at the bottom
@@ -343,13 +343,13 @@ void KeywordsWidget::setUp(const KeywordList &keywords, const CoreData &coreData
 
             if (!widget)
             {
-                Messenger::error("Can't create widget for keyword '%s'.\n", keyword->name());
+                Messenger::error("Can't create widget for keyword '{}'.\n", keyword->name());
                 continue;
             }
 
             // Create a label and add it and the widget to our layout
-            QLabel *nameLabel = new QLabel(keyword->name());
-            nameLabel->setToolTip(keyword->description());
+            QLabel *nameLabel = new QLabel(QString::fromStdString(std::string(keyword->name())));
+            nameLabel->setToolTip(QString::fromStdString(std::string(keyword->description())));
             groupLayout->addRow(nameLabel, widget);
         }
 

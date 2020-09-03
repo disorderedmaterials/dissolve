@@ -32,7 +32,7 @@ GetModuleLayerNameDialog::GetModuleLayerNameDialog(QWidget *parent, const List<M
 GetModuleLayerNameDialog::~GetModuleLayerNameDialog() {}
 
 // Run the dialog
-bool GetModuleLayerNameDialog::get(const ModuleLayer *moduleLayer, const char *currentName)
+bool GetModuleLayerNameDialog::get(const ModuleLayer *moduleLayer, const QString &currentName)
 {
     moduleLayer_ = moduleLayer;
 

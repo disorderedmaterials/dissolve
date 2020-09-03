@@ -62,9 +62,9 @@ void DataViewer::endInteraction()
             {
                 // Single, targetted click - get the clicked object
                 // TODO What action are we performing here? Would this be better as a right-click action,
-                // raising a context menu? 				ViewerObject obj =
-                // queryAt(rMouseLast_.x, rMouseLast_.y); printf("Object Type = %s, info = [%s]\n",
-                // BaseViewer::viewerObject(obj), queryObjectInfo());
+                // raising a context menu?
+                // ViewerObject obj = queryAt(rMouseLast_.x, rMouseLast_.y);
+                // Messenger::print("Object Type = {}, info = [{}]\n", BaseViewer::viewerObject(obj), queryObjectInfo());
             }
             else
             {
@@ -104,7 +104,7 @@ void DataViewer::endInteraction()
             }
             break;
         default:
-            printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode());
+            Messenger::error("Internal Error: Don't know how to complete interaction mode {}\n", interactionMode());
             break;
     }
 }
@@ -125,7 +125,7 @@ void DataViewer::cancelInteraction()
  */
 
 // Return text describing current interaction mode
-const char *DataViewer::interactionModeText() const
+const QString DataViewer::interactionModeText() const
 {
     switch (interactionMode())
     {

@@ -22,7 +22,7 @@
 #include "math/averaging.h"
 
 // Return enum option info for AveragingScheme
-EnumOptions<Averaging::AveragingScheme> Averaging::averagingSchemes()
+EnumOptions<Averaging::AveragingScheme> &Averaging::averagingSchemes()
 {
     static EnumOptionsList AveragingSchemeOptions = EnumOptionsList()
                                                     << EnumOption(Averaging::LinearAveraging, "Linear")

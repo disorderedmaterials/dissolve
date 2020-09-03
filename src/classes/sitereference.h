@@ -21,8 +21,8 @@
 
 #pragma once
 
-#include "base/charstring.h"
-#include "templates/list.h"
+#include "templates/listitem.h"
+#include <string>
 
 // Forward Declarations
 class SiteStack;
@@ -31,17 +31,17 @@ class SiteStack;
 class SiteReference : public ListItem<SiteReference>
 {
     public:
-    SiteReference(SiteStack &siteStack, const char *name);
+    SiteReference(SiteStack &siteStack, std::string_view name);
 
     private:
     // Referenced stack of sites
     SiteStack &siteStack_;
     // Name of this site stack (in the context of an Analyser)
-    CharString name_;
+    std::string name_;
 
     public:
     // Return referenced stack of sites
     SiteStack &siteStack() const;
     // Return name of this site stack (in the context of an Analyser)
-    const char *name() const;
+    std::string_view name() const;
 };

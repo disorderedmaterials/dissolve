@@ -175,7 +175,7 @@ int SpeciesImproper::index(int n) const
     else if (n == 3)
         return indexL();
 
-    Messenger::error("SpeciesAtom index %i is out of range in SpeciesImproper::index(int). Returning 0...\n");
+    Messenger::error("SpeciesAtom index {} is out of range in SpeciesImproper::index(int). Returning 0...\n");
     return 0;
 }
 

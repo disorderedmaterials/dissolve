@@ -80,7 +80,7 @@ class ScatteringMatrix
     public:
     // Initialise from supplied list of AtomTypes
     void initialise(const std::vector<std::shared_ptr<AtomType>> &types, Array2D<Data1D> &estimatedSQ,
-                    const char *objectNamePrefix, const char *groupName);
+                    std::string_view objectNamePrefix, std::string_view groupName);
     // Finalise
     bool finalise();
     // Add reference data with its associated Weights, applying optional factor to those weights and the data itself

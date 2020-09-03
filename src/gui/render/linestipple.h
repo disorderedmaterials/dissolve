@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include <QString>
 #include <QVector>
 #include <QtGui/qopengl.h>
 
@@ -45,9 +44,9 @@ class LineStipple
         nStippleTypes
     };
     // Convert text string to StippleType
-    static LineStipple::StippleType stippleType(QString s);
+    static LineStipple::StippleType stippleType(std::string_view s);
     // Convert InputBlock to text string
-    static const char *stippleType(LineStipple::StippleType stipple);
+    static std::string_view stippleType(LineStipple::StippleType stipple);
 
     /*
      * Stipple
@@ -58,7 +57,7 @@ class LineStipple
     // Line stipple pattern
     GLushort stipplePattern;
     // Name of stipple
-    const char *name;
+    std::string name;
 
     public:
     // Add stipple pattern to specified QComboBox

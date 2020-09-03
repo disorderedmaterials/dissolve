@@ -24,21 +24,6 @@
 #include <math/doubleexp.h>
 #include <stdio.h>
 
-// FormatType Keywords
-const char *FormatTypeKeywords[] = {"Decimal", "Integer", "Scientific"};
-
-// Convert text string to FormatType
-NumberFormat::FormatType NumberFormat::formatType(QString s)
-{
-    for (int n = 0; n < NumberFormat::nNumberFormats; ++n)
-        if (s == FormatTypeKeywords[n])
-            return (NumberFormat::FormatType)n;
-    return NumberFormat::nNumberFormats;
-}
-
-// Convert FormatType to text string
-const char *NumberFormat::formatType(NumberFormat::FormatType ft) { return FormatTypeKeywords[ft]; }
-
 NumberFormat::NumberFormat()
 {
     type_ = NumberFormat::DecimalFormat;
@@ -49,6 +34,18 @@ NumberFormat::NumberFormat()
 }
 
 NumberFormat::~NumberFormat() {}
+
+// Return enum options for FormatType
+EnumOptions<NumberFormat::FormatType> &NumberFormat::formatTypes()
+{
+    static EnumOptionsList FormatTypeOptions = EnumOptionsList() << EnumOption(NumberFormat::DecimalFormat, "Decimal")
+                                                                 << EnumOption(NumberFormat::IntegerFormat, "Integer")
+                                                                 << EnumOption(NumberFormat::ScientificFormat, "Scientific");
+
+    static EnumOptions<NumberFormat::FormatType> options("FormatType", FormatTypeOptions);
+
+    return options;
+}
 
 /*
  * Definition

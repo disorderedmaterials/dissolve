@@ -33,14 +33,15 @@ WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget *parent, Keywor
     layout->setSpacing(4);
     functionCombo_ = new QComboBox;
     for (int n = 0; n < WindowFunction::nFunctionTypes; ++n)
-        functionCombo_->addItem(WindowFunction::functionType((WindowFunction::FunctionType)n));
+        functionCombo_->addItem(
+            QString::fromStdString(std::string(WindowFunction::functionType((WindowFunction::FunctionType)n))));
     layout->addWidget(functionCombo_);
     connect(functionCombo_, SIGNAL(currentTextChanged(QString)), this, SLOT(functionComboChanged(QString)));
 
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<WindowFunctionKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into WindowFunctionKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into WindowFunctionKeyword.\n", keyword->name());
     else
     {
         // Set current information

@@ -51,7 +51,7 @@ bool CoordinateImportFileFormat::importDLPOLY(LineParser &parser, Array<Vec3<dou
     auto keytrj = parser.argi(0);
     auto imcon = parser.argi(1);
     auto nAtoms = parser.hasArg(2) ? parser.argi(2) : 0;
-    Messenger::print(" --> Expecting coordinates for %i atoms (DLPOLY keytrj=%i, imcon=%i).\n", nAtoms, keytrj, imcon);
+    Messenger::print(" --> Expecting coordinates for {} atoms (DLPOLY keytrj={}, imcon={}).\n", nAtoms, keytrj, imcon);
     r.clear();
 
     // Skip cell information if given

@@ -22,13 +22,13 @@
 #include "modules/energy/energy.h"
 
 // Return type of module
-const char *EnergyModule::type() const { return "Energy"; }
+std::string_view EnergyModule::type() const { return "Energy"; }
 
 // Return category for module
-const char *EnergyModule::category() const { return "Forcefield"; }
+std::string_view EnergyModule::category() const { return "Forcefield"; }
 
 // Return brief description of module
-const char *EnergyModule::brief() const { return "Calculate the total energy of a Configuration"; }
+std::string_view EnergyModule::brief() const { return "Calculate the total energy of a Configuration"; }
 
 // Return the number of Configuration targets this Module requires
 int EnergyModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }

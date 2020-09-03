@@ -1,6 +1,6 @@
 /*
-    *** Keyword - CharString
-    *** src/keywords/charstring.cpp
+    *** Keyword - String
+    *** src/keywords/stdstring.cpp
     Copyright T. Youngs 2012-2020
 
     This file is part of Dissolve.
@@ -19,30 +19,30 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "keywords/charstring.h"
+#include "keywords/stdstring.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 
-CharStringKeyword::CharStringKeyword(CharString value) : KeywordData<CharString>(KeywordBase::CharStringData, value) {}
+StringKeyword::StringKeyword(std::string_view value) : KeywordData<std::string>(KeywordBase::StringData, std::string(value)) {}
 
-CharStringKeyword::~CharStringKeyword() {}
+StringKeyword::~StringKeyword() {}
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int CharStringKeyword::minArguments() const { return 1; }
+int StringKeyword::minArguments() const { return 1; }
 
 // Return minimum number of arguments accepted
-int CharStringKeyword::maxArguments() const { return 1; }
+int StringKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool CharStringKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool StringKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     if (parser.hasArg(startArg))
     {
-        if (!setData(parser.argc(startArg)))
+        if (!setData(std::string(parser.argsv(startArg))))
             return false;
 
         return true;
@@ -52,9 +52,9 @@ bool CharStringKeyword::read(LineParser &parser, int startArg, CoreData &coreDat
 }
 
 // Write keyword data to specified LineParser
-bool CharStringKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool StringKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
-    return parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_.get());
+    return parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_);
 }
 
 /*
@@ -62,13 +62,13 @@ bool CharStringKeyword::write(LineParser &parser, const char *keywordName, const
  */
 
 // Return value (as bool)
-bool CharStringKeyword::asBool() { return DissolveSys::atob(data_); }
+bool StringKeyword::asBool() { return DissolveSys::stob(data_); }
 
 // Return value (as int)
-int CharStringKeyword::asInt() { return atoi(data_); }
+int StringKeyword::asInt() { return std::stoi(data_); }
 
 // Return value (as double)
-double CharStringKeyword::asDouble() { return atof(data_); }
+double StringKeyword::asDouble() { return std::stof(data_); }
 
 // Return value (as string)
-const char *CharStringKeyword::asString() { return data_; }
+std::string StringKeyword::asString() { return data_; }

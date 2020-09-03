@@ -242,10 +242,10 @@ void Matrix4::setIdentity()
 void Matrix4::print() const
 {
     Messenger::print("CMaj   [0123]    [4567]    [8901] Translate\n");
-    Messenger::print("        %8.4f %8.4f %8.4f %8.4f\n", matrix_[0], matrix_[4], matrix_[8], matrix_[12]);
-    Messenger::print("        %8.4f %8.4f %8.4f %8.4f\n", matrix_[1], matrix_[5], matrix_[9], matrix_[13]);
-    Messenger::print("        %8.4f %8.4f %8.4f %8.4f\n", matrix_[2], matrix_[6], matrix_[10], matrix_[14]);
-    Messenger::print("Scale   %8.4f %8.4f %8.4f %8.4f\n", matrix_[3], matrix_[7], matrix_[11], matrix_[15]);
+    Messenger::print("        {:8.4f} {:8.4f} {:8.4f} {:8.4f}\n", matrix_[0], matrix_[4], matrix_[8], matrix_[12]);
+    Messenger::print("        {:8.4f} {:8.4f} {:8.4f} {:8.4f}\n", matrix_[1], matrix_[5], matrix_[9], matrix_[13]);
+    Messenger::print("        {:8.4f} {:8.4f} {:8.4f} {:8.4f}\n", matrix_[2], matrix_[6], matrix_[10], matrix_[14]);
+    Messenger::print("Scale   {:8.4f} {:8.4f} {:8.4f} {:8.4f}\n", matrix_[3], matrix_[7], matrix_[11], matrix_[15]);
 }
 
 // Set zero matrix

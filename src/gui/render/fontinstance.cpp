@@ -52,10 +52,10 @@ bool FontInstance::setUp(QString fontFileName)
     if (fontFile_.isEmpty())
         fontData_ = new QResource(":/fonts/fonts/FreeSans.ttf");
     else
-        fontData_ = new QResource(fontFileName);
+        fontData_ = new QResource(fontFile_);
     if (fontData_->size() <= 0)
     {
-        printf("Font data is empty - correct resource path specified?\n");
+        Messenger::error("Font data is empty - correct resource path specified?\n");
         return false;
     }
 
@@ -63,7 +63,7 @@ bool FontInstance::setUp(QString fontFileName)
     auto *newFont = new FTPolygonFont(fontData_->data(), fontData_->size());
     if (newFont->Error())
     {
-        printf("Error generating font.\n");
+        Messenger::error("Error generating font.\n");
         delete newFont;
         fontBaseHeight_ = 1.0;
         return false;
@@ -101,14 +101,14 @@ double FontInstance::fontBaseHeight() const { return fontBaseHeight_; }
 double FontInstance::fontFullHeight() const { return fontFullHeight_; }
 
 // Return bounding box for specified string
-FTBBox FontInstance::boundingBox(QString text) const
+FTBBox FontInstance::boundingBox(std::string_view text) const
 {
     if (!font_)
         return FTBBox();
 
     // Need to be a little careful here - we will put a '.' either side of the text so we get the full width of strings with
     // trailing spaces..
-    FTBBox box = font_->BBox(qPrintable("." + text.toUtf8() + "."));
+    FTBBox box = font_->BBox(fmt::format(".{}.", text).c_str());
     // 	double newWidth = box.Upper().X() - dotWidth_;
     // 	box.Upper().X(newWidth);
     return FTBBox(box.Lower(), FTPoint(box.Upper().X() - dotWidth_, box.Upper().Y()));
@@ -136,12 +136,12 @@ bool FontInstance::setFaceSize(double faceSize)
 }
 
 // Render supplied text
-bool FontInstance::renderText(const char *text) const
+bool FontInstance::renderText(std::string text) const
 {
     if (!font_)
         return false;
 
-    font_->Render(text);
+    font_->Render(text.c_str());
 
     return true;
 }
@@ -151,7 +151,7 @@ bool FontInstance::renderText(const char *text) const
  */
 
 // Calculate bounding box for specified string
-void FontInstance::boundingBox(QString text, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const
+void FontInstance::boundingBox(std::string_view text, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const
 {
     FTBBox box = boundingBox(text);
     lowerLeft.set(box.Lower().X(), box.Lower().Y(), box.Lower().Z());
@@ -161,14 +161,14 @@ void FontInstance::boundingBox(QString text, Vec3<double> &lowerLeft, Vec3<doubl
 }
 
 // Calculate bounding box width for specified string
-double FontInstance::boundingBoxWidth(QString text) const
+double FontInstance::boundingBoxWidth(std::string_view text) const
 {
     FTBBox box = boundingBox(text);
     return scaleFactor_ * (box.Upper().X() - box.Lower().X());
 }
 
 // Calculate bounding box height for specified string
-double FontInstance::boundingBoxHeight(QString text) const
+double FontInstance::boundingBoxHeight(std::string_view text) const
 {
     FTBBox box = boundingBox(text);
     return scaleFactor_ * (box.Upper().Y() - box.Lower().Y());

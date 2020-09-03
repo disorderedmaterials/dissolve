@@ -20,7 +20,7 @@
 */
 
 #include "expression/value.h"
-#include "base/charstring.h"
+#include <fmt/core.h>
 
 ExpressionValue::ExpressionValue()
 {
@@ -108,16 +108,9 @@ int ExpressionValue::asInteger() const { return (type_ == IntegerType ? valueI_ 
 double ExpressionValue::asDouble() const { return (type_ == IntegerType ? double(valueI_) : valueD_); }
 
 // Return result as a string
-const char *ExpressionValue::asString() const
+std::string ExpressionValue::asString() const
 {
-    static CharString result;
-
-    if (type_ == IntegerType)
-        result.sprintf("%i", valueI_);
-    else
-        result.sprintf("%12.6e", valueD_);
-
-    return result.get();
+    return (type_ == IntegerType ? fmt::format("{}", valueI_) : fmt::format("{:12.6e}", valueD_));
 }
 
 // Return pointer to integer value

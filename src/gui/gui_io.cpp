@@ -29,7 +29,7 @@ bool DissolveWindow::saveState()
 {
     // Open file for writing
     LineParser stateParser;
-    stateParser.openOutput(stateFilename_);
+    stateParser.openOutput(qPrintable(stateFilename_));
     if (!stateParser.isFileGoodForWriting())
         return false;
 
@@ -37,7 +37,7 @@ bool DissolveWindow::saveState()
     ListIterator<ReferencePoint> referencePointIterator(referencePoints_);
     while (ReferencePoint *refPoint = referencePointIterator.iterate())
     {
-        if (!stateParser.writeLineF("ReferencePoint  '%s'  '%s'\n", refPoint->suffix(), refPoint->restartFile()))
+        if (!stateParser.writeLineF("ReferencePoint  '{}'  '{}'\n", refPoint->suffix(), refPoint->restartFile()))
             return false;
     }
 
@@ -46,7 +46,7 @@ bool DissolveWindow::saveState()
     for (const MainTab *tab : tabs)
     {
         // Write tab type and title
-        if (!stateParser.writeLineF("Tab  '%s'  %s\n", tab->title(), MainTab::tabTypes().keyword(tab->type())))
+        if (!stateParser.writeLineF("Tab  '{}'  {}\n", qPrintable(tab->title()), MainTab::tabTypes().keyword(tab->type())))
             return false;
 
         // Write tab state
@@ -55,7 +55,7 @@ bool DissolveWindow::saveState()
     }
 
     // Write current tab index
-    if (!stateParser.writeLineF("TabIndex  %i\n", ui_.MainTabs->currentIndex()))
+    if (!stateParser.writeLineF("TabIndex  {}\n", ui_.MainTabs->currentIndex()))
         return false;
 
     stateParser.closeFiles();
@@ -68,7 +68,7 @@ bool DissolveWindow::loadState()
 {
     // Open file for reading
     LineParser stateParser;
-    stateParser.openInput(stateFilename_);
+    stateParser.openInput(qPrintable(stateFilename_));
     if (!stateParser.isFileGoodForReading())
         return false;
 
@@ -78,15 +78,15 @@ bool DissolveWindow::loadState()
             break;
 
         // First argument indicates the type of data
-        if (DissolveSys::sameString(stateParser.argc(0), "TabIndex"))
+        if (DissolveSys::sameString(stateParser.argsv(0), "TabIndex"))
         {
             // Set current tab index
             ui_.MainTabs->setCurrentIndex(stateParser.argi(1));
         }
-        else if (DissolveSys::sameString(stateParser.argc(0), "Tab"))
+        else if (DissolveSys::sameString(stateParser.argsv(0), "Tab"))
         {
             // If any of our current tabs match the title, call it's readState() function
-            MainTab *tab = ui_.MainTabs->findTab(stateParser.argc(1));
+            MainTab *tab = ui_.MainTabs->findTab(QString::fromStdString(std::string(stateParser.argsv(1))));
             if (tab)
             {
                 if (!tab->readState(stateParser, dissolve_.coreData()))
@@ -95,49 +95,49 @@ bool DissolveWindow::loadState()
             else
             {
                 // Must first create the tab first.
-                if (DissolveSys::sameString(stateParser.argc(2), "ModuleTab"))
+                if (DissolveSys::sameString(stateParser.argsv(2), "ModuleTab"))
                 {
                     // The title represents the unique name of the Module, so find it now
-                    Module *module = dissolve_.findModuleInstance(stateParser.argc(1));
+                    Module *module = dissolve_.findModuleInstance(stateParser.argsv(1));
                     if (!module)
-                        return Messenger::error("Failed to find Module instance '%s' for display in a ModuleTab.\n",
-                                                stateParser.argc(1));
+                        return Messenger::error("Failed to find Module instance '{}' for display in a ModuleTab.\n",
+                                                stateParser.argsv(1));
 
                     tab = ui_.MainTabs->addModuleTab(this, module);
                 }
-                else if (DissolveSys::sameString(stateParser.argc(2), "WorkspaceTab"))
+                else if (DissolveSys::sameString(stateParser.argsv(2), "WorkspaceTab"))
                 {
                     // Create a new workspace with the desired name
-                    tab = ui_.MainTabs->addWorkspaceTab(this, stateParser.argc(1));
+                    tab = ui_.MainTabs->addWorkspaceTab(this, QString::fromStdString(std::string(stateParser.argsv(1))));
                 }
                 else
-                    return Messenger::error("Unrecognised tab ('%s') or tab type ('%s') found in state file.\n",
-                                            stateParser.argc(1), stateParser.argc(2));
+                    return Messenger::error("Unrecognised tab ('{}') or tab type ('{}') found in state file.\n",
+                                            stateParser.argsv(1), stateParser.argsv(2));
 
                 // Now read state information
                 if (!tab->readState(stateParser, dissolve_.coreData()))
                     return false;
             }
         }
-        else if (DissolveSys::sameString(stateParser.argc(0), "ReferencePoint"))
+        else if (DissolveSys::sameString(stateParser.argsv(0), "ReferencePoint"))
         {
             ReferencePoint *refPoint = referencePoints_.add();
-            refPoint->setSuffix(stateParser.argc(1));
-            refPoint->setRestartFile(stateParser.argc(2));
+            refPoint->setSuffix(stateParser.argsv(1));
+            refPoint->setRestartFile(stateParser.argsv(2));
 
             if (!DissolveSys::fileExists(refPoint->restartFile()))
                 QMessageBox::warning(this, "Error loading reference point",
                                      QString("Couldn't load reference point data from '%1' as the file does not exist.\n")
-                                         .arg(refPoint->restartFile()));
+                                         .arg(QString::fromStdString(std::string(refPoint->restartFile()))));
             else if (!dissolve_.loadRestartAsReference(refPoint->restartFile(), refPoint->suffix()))
                 QMessageBox::warning(this, "Error loading reference point",
                                      QString("Couldn't load reference point data from '%1'.\nThis may be because your "
                                              "simulation setup doesn't match that expected by the restart data.\n")
-                                         .arg(refPoint->restartFile()));
+                                         .arg(QString::fromStdString(std::string(refPoint->restartFile()))));
         }
         else
         {
-            Messenger::error("Unrecognised entry '%s' in state file.\n", stateParser.argc(0));
+            Messenger::error("Unrecognised entry '{}' in state file.\n", stateParser.argsv(0));
             return false;
         }
     }

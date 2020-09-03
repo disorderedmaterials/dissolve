@@ -23,7 +23,7 @@
 #include "data/ff.h"
 #include "data/ffatomtype.h"
 
-ForcefieldBondTerm::ForcefieldBondTerm(const char *typeI, const char *typeJ, SpeciesBond::BondFunction form,
+ForcefieldBondTerm::ForcefieldBondTerm(std::string_view typeI, std::string_view typeJ, SpeciesBond::BondFunction form,
                                        const std::vector<double> parameters)
 {
     typeI_ = typeI;

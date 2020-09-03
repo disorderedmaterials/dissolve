@@ -29,7 +29,7 @@ EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget *parent, KeywordBase 
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<EnumOptionsBaseKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into EnumOptionsBaseKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into EnumOptionsBaseKeyword.\n", keyword->name());
     else
     {
         // Get the underlying EnumOptionsBase
@@ -38,7 +38,7 @@ EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget *parent, KeywordBase 
         // Populate the combo with the available keywords
         for (int n = 0; n < options.nOptions(); ++n)
         {
-            addItem(options.keywordByIndex(n));
+            addItem(QString::fromStdString(std::string(options.keywordByIndex(n))));
             if (options.currentOptionIndex() == n)
                 setCurrentIndex(n);
         }

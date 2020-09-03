@@ -37,21 +37,20 @@ bool ExportPairPotentialsModule::process(Dissolve &dissolve, ProcessPool &procPo
     if (procPool.isMaster())
     {
         // Store the current (root) pair potential filename
-        CharString rootPPName = pairPotentialFormat_.filename();
+        std::string rootPPName{pairPotentialFormat_.filename()};
 
         for (auto *pp = dissolve.pairPotentials().first(); pp != NULL; pp = pp->next())
         {
-            Messenger::print("Export: Writing pair potential file (%s) for %s-%s...\n", pairPotentialFormat_.description(),
+            Messenger::print("Export: Writing pair potential file ({}) for {}-{}...\n", pairPotentialFormat_.description(),
                              pp->atomTypeNameI(), pp->atomTypeNameJ());
 
             // Generate filename
-            pairPotentialFormat_.setFilename(
-                CharString("%s-%s-%s.pp", rootPPName.get(), pp->atomTypeNameI(), pp->atomTypeNameJ()));
+            pairPotentialFormat_.setFilename(fmt::format("{}-{}-{}.pp", rootPPName, pp->atomTypeNameI(), pp->atomTypeNameJ()));
 
             // Append pair potential
             if (!pairPotentialFormat_.exportData(pp))
             {
-                Messenger::print("Export: Failed to export pair potential file '%s'.\n", pairPotentialFormat_.filename());
+                Messenger::print("Export: Failed to export pair potential file '{}'.\n", pairPotentialFormat_.filename());
                 pairPotentialFormat_.setFilename(rootPPName);
                 procPool.decideFalse();
                 return false;

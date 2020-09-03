@@ -40,50 +40,50 @@ KeywordBase::~KeywordBase()
 }
 
 // Value Keyword Data Type Keywords
-const char *KeywordDataTypeKeywords[] = {"AtomTypeRefList",
-                                         "AtomTypeSelection",
-                                         "Bool",
-                                         "BroadeningFunction",
-                                         "CharString",
-                                         "Data1DStore",
-                                         "Data2DStore",
-                                         "Data3DStore",
-                                         "Double",
-                                         "DynamicSites",
-                                         "ElementRefList",
-                                         "EnumOptions",
-                                         "Expression",
-                                         "ExpressionVariableList",
-                                         "FileAndFormat",
-                                         "GeometryList",
-                                         "Integer",
-                                         "IsotopologueCollection",
-                                         "IsotopologueList",
-                                         "LinkToKeyword",
-                                         "Module",
-                                         "ModuleGroups",
-                                         "ModuleRefList",
-                                         "Node",
-                                         "NodeAndInteger",
-                                         "NodeArray",
-                                         "NodeBranch",
-                                         "NodeRefList",
-                                         "NodeValue",
-                                         "NodeValueEnumOptions",
-                                         "PairBroadeningFunction",
-                                         "Procedure",
-                                         "Range",
-                                         "Species",
-                                         "SpeciesRefList",
-                                         "SpeciesSite",
-                                         "SpeciesSiteRefList",
-                                         "Vec3<Double>",
-                                         "Vec3<Integer>",
-                                         "Vec3<NodeValue>",
-                                         "WindowFunction"};
+std::string_view KeywordDataTypeKeywords[] = {"AtomTypeRefList",
+                                              "AtomTypeSelection",
+                                              "Bool",
+                                              "BroadeningFunction",
+                                              "Data1DStore",
+                                              "Data2DStore",
+                                              "Data3DStore",
+                                              "Double",
+                                              "DynamicSites",
+                                              "ElementRefList",
+                                              "EnumOptions",
+                                              "Expression",
+                                              "ExpressionVariableList",
+                                              "FileAndFormat",
+                                              "GeometryList",
+                                              "Integer",
+                                              "IsotopologueCollection",
+                                              "IsotopologueList",
+                                              "LinkToKeyword",
+                                              "Module",
+                                              "ModuleGroups",
+                                              "ModuleRefList",
+                                              "Node",
+                                              "NodeAndInteger",
+                                              "NodeArray",
+                                              "NodeBranch",
+                                              "NodeRefList",
+                                              "NodeValue",
+                                              "NodeValueEnumOptions",
+                                              "PairBroadeningFunction",
+                                              "Procedure",
+                                              "Range",
+                                              "Species",
+                                              "SpeciesRefList",
+                                              "SpeciesSite",
+                                              "SpeciesSiteRefList",
+                                              "String",
+                                              "Vec3<Double>",
+                                              "Vec3<Integer>",
+                                              "Vec3<NodeValue>",
+                                              "WindowFunction"};
 
 // Return ValueType name
-const char *KeywordBase::keywordDataType(KeywordDataType kdt) { return KeywordDataTypeKeywords[kdt]; }
+std::string_view KeywordBase::keywordDataType(KeywordDataType kdt) { return KeywordDataTypeKeywords[kdt]; }
 
 /*
  * Base Pointer Return
@@ -97,7 +97,7 @@ KeywordBase *KeywordBase::base() { return this; }
  */
 
 // Set name, description, arguments, and option mask
-void KeywordBase::set(const char *name, const char *description, const char *arguments, int optionMask)
+void KeywordBase::set(std::string_view name, std::string_view description, std::string_view arguments, int optionMask)
 {
     name_ = name;
     arguments_ = arguments;
@@ -115,13 +115,13 @@ void KeywordBase::hasBeenSet() { set_ = true; }
 KeywordBase::KeywordDataType KeywordBase::type() const { return type_; }
 
 // Return name of data type stored by keyword
-const char *KeywordBase::typeName() const { return KeywordDataTypeKeywords[type_]; }
+std::string_view KeywordBase::typeName() const { return KeywordDataTypeKeywords[type_]; }
 
 // Return keyword name
-const char *KeywordBase::name() const { return name_.get(); }
+std::string_view KeywordBase::name() const { return name_; }
 
 // Return keyword description
-const char *KeywordBase::description() const { return description_.get(); }
+std::string_view KeywordBase::description() const { return description_; }
 
 // Return keyword option mask
 int KeywordBase::optionMask() const { return optionMask_; }
@@ -141,12 +141,12 @@ bool KeywordBase::validNArgs(int nArgsProvided) const
 {
     if (nArgsProvided < minArguments())
     {
-        Messenger::error("Not enough arguments given to %s keyword '%s'.\n", typeName(), name());
+        Messenger::error("Not enough arguments given to {} keyword '{}'.\n", typeName(), name());
         return false;
     }
     if ((maxArguments() >= 0) && (nArgsProvided > maxArguments()))
     {
-        Messenger::error("Too many arguments given to %s keyword '%s'.\n", typeName(), name());
+        Messenger::error("Too many arguments given to {} keyword '{}'.\n", typeName(), name());
         return false;
     }
 
@@ -160,7 +160,7 @@ bool KeywordBase::validNArgs(int nArgsProvided) const
 // Return value (as bool)
 bool KeywordBase::asBool()
 {
-    Messenger::warn("No suitable conversion to bool from KeywordDataType %i (%s) exists. Returning 'false'.\n", type_,
+    Messenger::warn("No suitable conversion to bool from KeywordDataType {} ({}) exists. Returning 'false'.\n", type_,
                     KeywordBase::keywordDataType(type_));
     return false;
 }
@@ -168,7 +168,7 @@ bool KeywordBase::asBool()
 // Return value (as int)
 int KeywordBase::asInt()
 {
-    Messenger::warn("No suitable conversion to int from KeywordDataType %i (%s) exists. Returning '0'.\n", type_,
+    Messenger::warn("No suitable conversion to int from KeywordDataType {} ({}) exists. Returning '0'.\n", type_,
                     KeywordBase::keywordDataType(type_));
     return 0;
 }
@@ -176,15 +176,15 @@ int KeywordBase::asInt()
 // Return value (as double)
 double KeywordBase::asDouble()
 {
-    Messenger::warn("No suitable conversion to double from KeywordDataType %i (%s) exists. Returning '0.0'.\n", type_,
+    Messenger::warn("No suitable conversion to double from KeywordDataType {} ({}) exists. Returning '0.0'.\n", type_,
                     KeywordBase::keywordDataType(type_));
     return 0.0;
 }
 
 // Return value (as string)
-const char *KeywordBase::asString()
+std::string KeywordBase::asString()
 {
-    Messenger::warn("No suitable conversion to string from KeywordDataType %i (%s) exists. Returning 'NULL'.\n", type_,
+    Messenger::warn("No suitable conversion to string from KeywordDataType {} ({}) exists. Returning 'NULL'.\n", type_,
                     KeywordBase::keywordDataType(type_));
     return "NULL";
 }
@@ -192,7 +192,7 @@ const char *KeywordBase::asString()
 // Return value as Vec3<int>
 Vec3<int> KeywordBase::asVec3Int()
 {
-    Messenger::warn("No suitable conversion to Vec3<int> from KeywordDataType %i (%s) exists. Returning '(0,0,0)'.\n", type_,
+    Messenger::warn("No suitable conversion to Vec3<int> from KeywordDataType {} ({}) exists. Returning '(0,0,0)'.\n", type_,
                     KeywordBase::keywordDataType(type_));
     return Vec3<int>(0, 0, 0);
 }
@@ -200,7 +200,7 @@ Vec3<int> KeywordBase::asVec3Int()
 // Return value as Vec3<double>
 Vec3<double> KeywordBase::asVec3Double()
 {
-    Messenger::warn("No suitable conversion to Vec3<double> from KeywordDataType %i (%s) exists. Returning '(0.0,0.0,0.0)'.\n",
+    Messenger::warn("No suitable conversion to Vec3<double> from KeywordDataType {} ({}) exists. Returning '(0.0,0.0,0.0)'.\n",
                     type_, KeywordBase::keywordDataType(type_));
     return Vec3<double>(0.0, 0.0, 0.0);
 }

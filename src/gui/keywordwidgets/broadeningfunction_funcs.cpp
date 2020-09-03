@@ -34,7 +34,8 @@ BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget *parent
 
     // Add BroadeningFunction types to Combo
     for (int n = 0; n < BroadeningFunction::nFunctionTypes; ++n)
-        ui_.FunctionCombo->addItem(BroadeningFunction::functionType((BroadeningFunction::FunctionType)n));
+        ui_.FunctionCombo->addItem(
+            QString::fromStdString(std::string(BroadeningFunction::functionType((BroadeningFunction::FunctionType)n))));
 
     // Set deltas on spinboxes
     ui_.Parameter0Spin->setSingleStep(0.01);
@@ -56,7 +57,7 @@ BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget *parent
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<BroadeningFunctionKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into BroadeningFunctionKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into BroadeningFunctionKeyword.\n", keyword->name());
     else
     {
         // Set current information
@@ -108,37 +109,27 @@ void BroadeningFunctionKeywordWidget::updateWidgetValues(const CoreData &coreDat
     auto &broadeningFunction = keyword_->data();
 
     // Summary text on KeywordDropDown button
-    setSummaryText(BroadeningFunction::functionType(broadeningFunction.function()));
+    setSummaryText(QString::fromStdString(std::string(BroadeningFunction::functionType(broadeningFunction.function()))));
 
     // Widgets
     ui_.FunctionCombo->setCurrentIndex(broadeningFunction.function());
-    ui_.FunctionDescriptionLabel->setText(BroadeningFunction::functionDescription(broadeningFunction.function()));
+    ui_.FunctionDescriptionLabel->setText(
+        QString::fromStdString(std::string(BroadeningFunction::functionDescription(broadeningFunction.function()))));
 
-    auto nParams = BroadeningFunction::nFunctionParameters(broadeningFunction.function());
-    ui_.Parameter0Spin->setValue(nParams > 0 ? broadeningFunction.parameter(0) : 0.0);
-    ui_.Parameter0Label->setText(nParams > 0 ? broadeningFunction.parameterName(0) : "N/A");
-    ui_.Parameter0Spin->setEnabled(nParams > 0);
-    ui_.Parameter0Label->setEnabled(nParams > 0);
-    ui_.Parameter1Spin->setValue(nParams > 1 ? broadeningFunction.parameter(1) : 0.0);
-    ui_.Parameter1Label->setText(nParams > 1 ? broadeningFunction.parameterName(1) : "N/A");
-    ui_.Parameter1Spin->setEnabled(nParams > 1);
-    ui_.Parameter1Label->setEnabled(nParams > 1);
-    ui_.Parameter2Spin->setValue(nParams > 2 ? broadeningFunction.parameter(2) : 0.0);
-    ui_.Parameter2Label->setText(nParams > 2 ? broadeningFunction.parameterName(2) : "N/A");
-    ui_.Parameter2Spin->setEnabled(nParams > 2);
-    ui_.Parameter2Label->setEnabled(nParams > 2);
-    ui_.Parameter3Spin->setValue(nParams > 3 ? broadeningFunction.parameter(3) : 0.0);
-    ui_.Parameter3Label->setText(nParams > 3 ? broadeningFunction.parameterName(3) : "N/A");
-    ui_.Parameter3Spin->setEnabled(nParams > 3);
-    ui_.Parameter3Label->setEnabled(nParams > 3);
-    ui_.Parameter4Spin->setValue(nParams > 4 ? broadeningFunction.parameter(4) : 0.0);
-    ui_.Parameter4Label->setText(nParams > 4 ? broadeningFunction.parameterName(4) : "N/A");
-    ui_.Parameter4Spin->setEnabled(nParams > 4);
-    ui_.Parameter4Label->setEnabled(nParams > 4);
-    ui_.Parameter5Spin->setValue(nParams > 5 ? broadeningFunction.parameter(5) : 0.0);
-    ui_.Parameter5Label->setText(nParams > 5 ? broadeningFunction.parameterName(5) : "N/A");
-    ui_.Parameter5Spin->setEnabled(nParams > 5);
-    ui_.Parameter5Label->setEnabled(nParams > 5);
+    const auto nParams = BroadeningFunction::nFunctionParameters(broadeningFunction.function());
+
+    std::vector<ExponentialSpin *> spins = {ui_.Parameter0Spin, ui_.Parameter1Spin, ui_.Parameter2Spin,
+                                            ui_.Parameter3Spin, ui_.Parameter4Spin, ui_.Parameter5Spin};
+    std::vector<QLabel *> labels = {ui_.Parameter0Label, ui_.Parameter1Label, ui_.Parameter2Label,
+                                    ui_.Parameter3Label, ui_.Parameter4Label, ui_.Parameter5Label};
+
+    for (auto n = 0; n < MAXBROADENINGFUNCTIONPARAMS; ++n)
+    {
+        spins[n]->setValue(nParams > n ? broadeningFunction.parameter(0) : 0.0);
+        labels[n]->setText(nParams > n ? QString::fromStdString(std::string(broadeningFunction.parameterName(n))) : "N/A");
+        spins[n]->setEnabled(nParams > n);
+        labels[n]->setEnabled(nParams > n);
+    }
 
     refreshing_ = false;
 }

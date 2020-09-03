@@ -19,7 +19,6 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/charstring.h"
 #include "templates/list.h"
 #include "templates/refdatalist.h"
 #include "templates/reflist.h"
@@ -72,14 +71,14 @@ template <class I> class ComboBoxUpdater
             comboBox->setCurrentIndex(indexIfNoCurrentItem);
     }
 
-    // Update QComboBox from supplied RefDataList, using the CharString data as the item's name
-    ComboBoxUpdater(QComboBox *comboBox, const RefDataList<I, CharString> &data, const I *currentItem, int startIndex = 0,
+    // Update QComboBox from supplied RefDataList, using the QString data as the item's name
+    ComboBoxUpdater(QComboBox *comboBox, const RefDataList<I, std::string> &data, const I *currentItem, int startIndex = 0,
                     int indexIfNoCurrentItem = -1)
     {
         comboBox_ = comboBox;
         currentIndex_ = startIndex;
 
-        RefDataListIterator<I, CharString> dataIterator(data);
+        RefDataListIterator<I, std::string> dataIterator(data);
         while (I *dataItem = dataIterator.iterate())
             updateItem(dataIterator.currentData(), dataItem, dataItem == currentItem);
 
@@ -100,7 +99,7 @@ template <class I> class ComboBoxUpdater
 
     private:
     // Update item at specified position in combo box (if it exists)
-    void updateItem(const char *itemText, I *itemData, bool isCurrent)
+    void updateItem(std::string_view itemText, I *itemData, bool isCurrent)
     {
         /*
          * If there is an entry already at this index, check it:
@@ -115,7 +114,7 @@ template <class I> class ComboBoxUpdater
             if (oldData == itemData)
             {
                 // Data pointer matches - make sure the text is up to date
-                comboBox_->setItemText(currentIndex_, itemText);
+                comboBox_->setItemText(currentIndex_, QString::fromStdString(std::string(itemText)));
 
                 break;
             }
@@ -130,7 +129,7 @@ template <class I> class ComboBoxUpdater
         if (currentIndex_ == comboBox_->count())
         {
             // Create new item
-            comboBox_->addItem(itemText, VariantPointer<I>(itemData));
+            comboBox_->addItem(QString::fromStdString(std::string(itemText)), VariantPointer<I>(itemData));
         }
 
         // Select this item if it is the current one
@@ -147,7 +146,7 @@ template <class I> class ComboBoxUpdater
 template <class T, class I> class ComboBoxTextUpdater
 {
     // Typedefs for passed functions
-    typedef const char *(T::*ComboBoxItemTextFunction)(const I *item);
+    typedef QString (T::*ComboBoxItemTextFunction)(const I *item);
 
     public:
     // Update QComboBox from supplied RefList, using provided function to acquire text to display for item

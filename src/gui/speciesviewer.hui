@@ -97,7 +97,7 @@ class SpeciesViewer : public BaseViewer
 
     public:
     // Return text describing current interaction mode
-    const char *interactionModeText() const;
+    const QString interactionModeText() const;
     // Set current Element for DrawInteraction
     void setDrawElement(Element *element);
     // Return current Element for DrawInteraction

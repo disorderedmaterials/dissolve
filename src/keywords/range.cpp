@@ -60,7 +60,7 @@ bool RangeKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 }
 
 // Write keyword data to specified LineParser
-bool RangeKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool RangeKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
-    return parser.writeLineF("%s%s  %12.6e  %12.6e\n", prefix, keywordName, data_.minimum(), data_.maximum());
+    return parser.writeLineF("{}{}  {:12.6e}  {:12.6e}\n", prefix, keywordName, data_.minimum(), data_.maximum());
 }

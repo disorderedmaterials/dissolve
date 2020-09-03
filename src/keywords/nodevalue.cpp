@@ -42,12 +42,12 @@ int NodeValueKeyword::minArguments() const { return 1; }
 int NodeValueKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool NodeValueKeyword::read(LineParser &parser, int startArg, CoreData &coreData) { return setValue(parser.argc(startArg)); }
+bool NodeValueKeyword::read(LineParser &parser, int startArg, CoreData &coreData) { return setValue(parser.argsv(startArg)); }
 
 // Write keyword data to specified LineParser
-bool NodeValueKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool NodeValueKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
-    if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, data_.asString().get()))
+    if (!parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, data_.asString()))
         return false;
 
     return true;
@@ -58,7 +58,7 @@ bool NodeValueKeyword::write(LineParser &parser, const char *keywordName, const 
  */
 
 // Set the value from supplied expression text
-bool NodeValueKeyword::setValue(const char *expressionText)
+bool NodeValueKeyword::setValue(std::string_view expressionText)
 {
     if (!data_.set(expressionText, parentNode_->parametersInScope()))
         return false;

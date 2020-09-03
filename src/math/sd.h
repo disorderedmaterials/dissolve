@@ -93,9 +93,6 @@ template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
         Array<double> grad = gradient(values_);
         stepSize = 1.0;
 
-        printf("Starting error = %f\n", currentError);
-        for (int n = 0; n < grad.nItems(); ++n)
-            printf("GRAD %i = %f\n", n, grad[n]);
         for (cycle = 0; cycle < maxIterations; cycle++)
         {
             // Minimise along gradient vector
@@ -110,12 +107,10 @@ template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
             {
                 trialAlpha = gradientMove(values_, grad, stepSize);
                 trialError = (object_.*costFunction_)(trialAlpha.array(), trialAlpha.nItems());
-                printf("Trial Alpha[10] = %f, step = %f, error = %f\n", trialAlpha[10], stepSize, trialError);
                 if (trialError > currentError)
                     stepSize *= 0.5;
             } while (trialError > currentError);
 
-            printf("Current error = %f\n", trialError);
             currentError = trialError;
 
             // Complex method begins here
@@ -137,9 +132,9 @@ template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
         }
 
         if (converged)
-            Messenger::print("Steepest descent converged in %i steps.", cycle + 1);
+            Messenger::print("Steepest descent converged in {} steps.", cycle + 1);
         else
-            Messenger::print("Steepest descent did not converge within %i steps.", maxIterations);
+            Messenger::print("Steepest descent did not converge within {} steps.", maxIterations);
 
         // Set minimised values back into their original variables
         for (int n = 0; n < targets_.nItems(); ++n)

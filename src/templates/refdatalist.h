@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include <fmt/core.h>
 #include <stddef.h>
 #include <stdio.h>
 
@@ -112,7 +113,7 @@ template <class T, class D> class RefDataList
 #ifdef CHECKS
         if ((index < 0) || (index >= nItems_))
         {
-            printf("Array index (%i) out of bounds (%i items in RefDataList)\n", index, nItems_);
+            fmt::print("Array index ({}) out of bounds ({} items in RefDataList)\n", index, nItems_);
             return NULL;
         }
 #endif
@@ -245,7 +246,6 @@ template <class T, class D> class RefDataList
         if (target)
             return addAfter(target, item);
 
-        printf("Couldn't find specified item %p in RefDataList, so adding to end.\n", item);
         return add(item);
     }
     // Add reference before the specified item
@@ -276,7 +276,6 @@ template <class T, class D> class RefDataList
         if (target)
             return addBefore(target, item);
 
-        printf("Couldn't find specified item %p in RefDataList, so adding to start.\n", item);
         return addStart(item);
     }
     // Add reference to list, unless already there, in which case we just set the data
@@ -294,7 +293,7 @@ template <class T, class D> class RefDataList
     {
         if (item == NULL)
         {
-            printf("Internal Error: NULL pointer passed to RefDataList<T>::cut().\n");
+            fmt::print("NULL pointer passed to RefDataList<T>::cut().\n");
             return;
         }
         RefDataItem<T, D> *prev, *next;
@@ -319,7 +318,7 @@ template <class T, class D> class RefDataList
         // In the interests of 'pointer cleanliness, refuse to own the item if its pointers are not NULL
         if ((item->next_ != NULL) || (item->prev_ != NULL))
         {
-            printf("RefList::own() <<<< Refused to own an item that still had links to other items >>>>\n");
+            fmt::print("RefList::own() <<<< Refused to own an item that still had links to other items >>>>\n");
             return;
         }
         listHead_ == NULL ? listHead_ = item : listTail_->next_ = item;
@@ -334,7 +333,7 @@ template <class T, class D> class RefDataList
     {
         if (item == NULL)
         {
-            printf("Internal Error: NULL pointer passed to RefDataList<T,D>::remove().\n");
+            fmt::print("NULL pointer passed to RefDataList<T,D>::remove().\n");
             return;
         }
         // Delete a specific RefDataItem from the list
@@ -370,7 +369,7 @@ template <class T, class D> class RefDataList
     {
         if (listHead_ == NULL)
         {
-            printf("Internal Error: No item to delete in  RefDataList<T,D>::removeFirst().\n");
+            fmt::print("No item to delete in  RefDataList<T,D>::removeFirst().\n");
             return;
         }
         remove(listHead_);
@@ -381,7 +380,7 @@ template <class T, class D> class RefDataList
     {
         if (listTail_ == NULL)
         {
-            printf("Internal Error: No item to delete in  RefDataList<T,D>::removeFirst().\n");
+            fmt::print("No item to delete in  RefDataList<T,D>::removeFirst().\n");
             return;
         }
         remove(listTail_);
@@ -412,7 +411,7 @@ template <class T, class D> class RefDataList
     {
         if ((item1 == NULL) || (item2 == NULL))
         {
-            printf("Internal Error: NULL pointer(s) passed to RefDataList<T,D>::swap().\n", item1, item2);
+            fmt::print("NULL pointer(s) passed to RefDataList<T,D>::swap().\n", item1, item2);
             return;
         }
         T *prev1 = item1->prev, *next1 = item1->next_;
@@ -435,9 +434,9 @@ template <class T, class D> class RefDataList
                 break;
             ri = ri->next_;
             if (ri == NULL)
-                printf("Internal Error: Not enough items in list (requested %i, had %i) in "
-                       "RefDataList::fillArray()\n",
-                       n, nItems_);
+                fmt::print("Not enough items in list (requested {}, had {}) in "
+                           "RefDataList::fillArray()\n",
+                           n, nItems_);
         }
         regenerate_ = true;
     }
@@ -447,7 +446,7 @@ template <class T, class D> class RefDataList
 #ifdef CHECKS
         if ((n < 0) || (n >= nItems_))
         {
-            printf("Array index (%i) out of bounds (%i items in RefDataList)\n", n, nItems_);
+            fmt::print("Array index ({}) out of bounds ({} items in RefDataList)\n", n, nItems_);
             return NULL;
         }
 #endif
@@ -627,7 +626,7 @@ template <class T, class D> class RefDataListIterator
         if (currentItem_)
             currentItem_->data_ = data;
         else
-            printf("No current item, so can't set data in RefDataListIterator.\n");
+            fmt::print("No current item, so can't set data in RefDataListIterator.\n");
     }
     // Return reference to current data
     D &currentData()

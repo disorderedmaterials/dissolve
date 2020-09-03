@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/sysfunc.h"
 #include "templates/refdatalist.h"
 #include <stdio.h>
@@ -58,7 +57,7 @@ class ObjectInfo
     // Target object id
     int id_;
     // Target object tag
-    CharString tag_;
+    std::string tag_;
 
     public:
     // Set object target type and id
@@ -72,9 +71,9 @@ class ObjectInfo
     // Return target object id
     int id() const { return id_; }
     // Set object tag
-    void setTag(const char *tag) { tag_ = tag; }
+    void setTag(std::string_view tag) { tag_ = tag; }
     // Return object tag
-    const char *tag() const { return tag_.get(); }
+    std::string_view tag() const { return tag_; }
 
     /*
      * Tag Control
@@ -83,11 +82,11 @@ class ObjectInfo
     // Whether automatic suffixing of tags is enabled
     static bool autoSuffixing_;
     // Suffix to append (if autoSuffixing_)
-    static CharString autoSuffix_;
+    static std::string autoSuffix_;
 
     public:
     // Enable automatic suffixing of tags
-    static void enableAutoSuffixing(const char *suffix)
+    static void enableAutoSuffixing(std::string_view suffix)
     {
         autoSuffixing_ = true;
         autoSuffix_ = suffix;
@@ -97,7 +96,7 @@ class ObjectInfo
     // Return whether automatic suffixing of tags is enabled
     static bool autoSuffixing() { return autoSuffixing_; }
     // Return suffix to append (if autoSuffixing_)
-    static const char *autoSuffix() { return autoSuffix_.get(); }
+    static std::string_view autoSuffix() { return autoSuffix_; }
 };
 
 // Object Store
@@ -118,7 +117,7 @@ template <class T> class ObjectStore
         // Store the parent object pointer, and add it to the master list
         object_ = object;
         objectInfo_.set(objectType_, objectCount_++);
-        setObjectTag(CharString("%p", object_));
+        setObjectTag(fmt::format("{}", fmt::ptr(object_)));
         objects_.append(object_, objectInfo_.id());
     }
     ~ObjectStore<T>()
@@ -138,7 +137,7 @@ template <class T> class ObjectStore
     // Object type identifier
     static int objectType_;
     // Object type name
-    static const char *objectTypeName_;
+    static std::string_view objectTypeName_;
 
     /*
      * Object Data
@@ -157,47 +156,50 @@ template <class T> class ObjectStore
     // Return object information
     ObjectInfo objectInfo() { return objectInfo_; }
     // Set tag for this object, prepending type name prefix
-    void setObjectTag(const char *tag)
+    void setObjectTag(std::string_view tag)
     {
         // Get actual tag of object - does the supplied tag already contain a type prefix?
-        CharString objectTag;
-        if (strchr(tag, '%'))
+        std::string objectTag;
+        std::string_view typePrefix = DissolveSys::beforeChar(tag, '%');
+        if (!typePrefix.empty())
         {
-            CharString typePrefix = DissolveSys::beforeChar(tag, '%');
             objectTag = DissolveSys::afterChar(tag, '%');
 
             // Do a sanity check on the type prefix...
             if (!DissolveSys::sameString(typePrefix, objectTypeName_))
-                Messenger::error("Setting an object tag (%s) with a string that contains the wrong type prefix "
-                                 "('%s', while this class is '%s').\n",
-                                 tag, typePrefix.get(), objectTypeName_);
+                Messenger::error("Setting an object tag ({}) with a string that contains the wrong type prefix "
+                                 "('{}', while this class is '{}').\n",
+                                 tag, typePrefix, objectTypeName_);
         }
         else
             objectTag = tag;
 
         // Append auto-suffix
         if (ObjectInfo::autoSuffixing())
-            objectTag = CharString("%s@%s", objectTag.get(), ObjectInfo::autoSuffix());
+            objectTag = fmt::format("{}@{}", objectTag, ObjectInfo::autoSuffix());
 
 #ifdef CHECKS
         // Check for duplicate value already in list
-        if (!objectTag.isEmpty())
+        if (!objectTag.empty())
         {
-            T *object = findObject(CharString("%s%%%s", objectTypeName_, objectTag.get()));
+            // Assemble object name
+            std::string objectName = fmt::format("{}%{}", objectTypeName_, objectTag);
+
+            T *object = findObject(objectName);
             if (object && (object != this))
             {
-                Messenger::warn("ObjectStore<%s>::setObjectTag() - The object '%s%%%s' already exists in the "
+                Messenger::warn("ObjectStore<{}>::setObjectTag() - The object '{}%{}' already exists in the "
                                 "ObjectStore. Behaviour will be undefined...\n",
-                                objectTypeName_, objectTypeName_, objectTag.get());
+                                objectTypeName_, objectTypeName_, objectTag);
             }
         }
 #endif
-        objectInfo_.setTag(CharString("%s%%%s", objectTypeName_, objectTag.get()));
+        objectInfo_.setTag(fmt::format("{}%{}", objectTypeName_, objectTag));
     }
     // Return object tag
-    const char *objectTag() const { return objectInfo_.tag(); }
+    std::string_view objectTag() const { return objectInfo_.tag(); }
     // Return whether object tag matches that supplied
-    bool objectTagIs(const char *tag) const { return (DissolveSys::sameString(objectInfo_.tag(), tag, true)); }
+    bool objectTagIs(std::string_view tag) const { return (DissolveSys::sameString(objectInfo_.tag(), tag, true)); }
 
     /*
      * Object List
@@ -209,29 +211,6 @@ template <class T> class ObjectStore
     static int objectCount_;
 
     public:
-    // Return whether specified object still exists
-    static bool objectValid(T *object)
-    {
-        if ((object == NULL) || (!objects_.contains(object)))
-            return false;
-        return true;
-    }
-    // Return whether specified object still exists, reporting errors if it does not
-    static bool objectValid(T *object, const char *objectDescription)
-    {
-        if (object == NULL)
-        {
-            Messenger::printVerbose("Invalid Object: Specified %s is NULL.\n", objectDescription);
-            return false;
-        }
-        else if (!objects_.contains(object))
-        {
-            Messenger::printVerbose("Invalid Object: Specified %s no longer exists (original pointer was %p).\n",
-                                    objectDescription, object);
-            return false;
-        }
-        return true;
-    }
     // Return number of available objects
     static int nObjects() { return objects_.nItems(); }
     // Return object with specified ID
@@ -248,24 +227,21 @@ template <class T> class ObjectStore
         // Find the RefDataItem object in the list
         RefDataItem<T, int> *targetRefItem = objects_.contains(target);
         if (targetRefItem == NULL)
-        {
-            printf("Internal Error: Couldn't find specified object %p in object list.\n", target);
-            return false;
-        }
+            return Messenger::error("Couldn't find specified object {} in object list.\n", fmt::ptr(target));
 
         // Can we find an object with the same id?
         RefDataItem<T, int> *rj = objects_.containsData(id);
         if ((rj != NULL) && (rj != targetRefItem))
         {
-            printf("Internal Error: Another object with id %i already exists in the ObjectStore, so refusing to "
-                   "duplicate it.\n",
-                   id);
+            Messenger::error("Another object with id {} already exists in the ObjectStore, so refusing to "
+                             "duplicate it.\n",
+                             id);
             return false;
         }
 
         if (rj == targetRefItem)
         {
-            printf("ObjectStore::setObjectId() - Target object already has id specified (%i).\n", id);
+            Messenger::error("ObjectStore::setObjectId() - Target object already has id specified ({}).\n", id);
             return true;
         }
 
@@ -274,22 +250,15 @@ template <class T> class ObjectStore
 
         return true;
     }
-    // Return whether the specified object tag is an object of this type
-    static bool isObject(const char *objectTag)
-    {
-        // Get part before '%', which denotes the type
-        const char *prefix = DissolveSys::beforeChar(objectTag, '%');
-        return DissolveSys::sameString(prefix, objectTypeName_);
-    }
     // Find specified object by its tag
-    static T *findObject(const char *objectTag)
+    static T *findObject(const std::string_view objectTag)
     {
         // Does the supplied tag contain a type prefix? If so, check it and then strip it
-        CharString typePrefix = DissolveSys::beforeChar(objectTag, '%');
-        if (typePrefix.isEmpty())
+        std::string_view typePrefix = DissolveSys::beforeChar(objectTag, '%');
+        if (typePrefix.empty())
         {
             // No type prefix, so add ours and do the search
-            CharString tag("%s%%%s", objectTypeName_, objectTag);
+            std::string tag = fmt::format("{}%{}", objectTypeName_, objectTag);
             for (RefDataItem<T, int> *ri = objects_.first(); ri != NULL; ri = ri->next())
             {
                 if (ri->item()->objectTagIs(tag))
@@ -301,7 +270,7 @@ template <class T> class ObjectStore
             // Check the type prefix
             if (!DissolveSys::sameString(typePrefix, objectTypeName_))
             {
-                Messenger::error("Searched for object '%s' in a store containing objects of type '%s'.\n", typePrefix.get(),
+                Messenger::error("Searched for object '{}' in a store containing objects of type '{}'.\n", typePrefix,
                                  objectTypeName_);
                 return NULL;
             }

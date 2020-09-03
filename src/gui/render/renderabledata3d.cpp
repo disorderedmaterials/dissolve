@@ -28,7 +28,7 @@
 #include "templates/array2d.h"
 #include "templates/array3d.h"
 
-RenderableData3D::RenderableData3D(const Data3D *source, const char *objectTag)
+RenderableData3D::RenderableData3D(const Data3D *source, std::string_view objectTag)
     : Renderable(Renderable::Data3DRenderable, objectTag), source_(source)
 {
     // Set style defaults
@@ -593,8 +593,6 @@ void RenderableData3D::marchingCubesOriginal(const Array<double> &displayXAbscis
                 if ((vertex[7] >= lowerCutoff) && (vertex[7] <= upperCutoff))
                     cubeType += 128;
 
-                // 				if (cubeType != 0) printf("CubeType %i %i %i = %i\n", i, j, k,
-                // cubeType);
                 if ((cubeType != 0) && (cubeType != 255))
                 {
                     // Get edges from list and draw triangles or points
@@ -620,8 +618,6 @@ void RenderableData3D::marchingCubesOriginal(const Array<double> &displayXAbscis
                         r.multiply(dx, dy, dz);
                         r *= ipol;
 
-                        // printf("Gradient A = "); gradient[edgevertices[faces[n]][0]].print();
-                        // printf("Gradient B = "); gradient[edgevertices[faces[n]][1]].print();
                         normal = -(gradient[edgevertices[faces[n]][0]] +
                                    (gradient[edgevertices[faces[n]][1]] - gradient[edgevertices[faces[n]][0]]) * ipol);
                         normal.normalise();
@@ -721,13 +717,13 @@ bool RenderableData3D::writeStyleBlock(LineParser &parser, int indentLevel) cons
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 
-    if (!parser.writeLineF("%s%s  %s\n", indent, data3DStyleKeywords().keyword(RenderableData3D::DisplayKeyword),
+    if (!parser.writeLineF("{}{}  {}\n", indent, data3DStyleKeywords().keyword(RenderableData3D::DisplayKeyword),
                            data3DDisplayStyles().keyword(displayStyle_)))
         return false;
-    if (!parser.writeLineF("%s%s  %e\n", indent, data3DStyleKeywords().keyword(RenderableData3D::LowerCutoffKeyword),
+    if (!parser.writeLineF("{}{}  {:e}\n", indent, data3DStyleKeywords().keyword(RenderableData3D::LowerCutoffKeyword),
                            lowerCutoff_))
         return false;
-    if (!parser.writeLineF("%s%s  %e\n", indent, data3DStyleKeywords().keyword(RenderableData3D::UpperCutoffKeyword),
+    if (!parser.writeLineF("{}{}  {:e}\n", indent, data3DStyleKeywords().keyword(RenderableData3D::UpperCutoffKeyword),
                            upperCutoff_))
         return false;
 
@@ -744,9 +740,9 @@ bool RenderableData3D::readStyleBlock(LineParser &parser)
             return false;
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
-        if (!data3DStyleKeywords().isValid(parser.argc(0)))
-            return data3DStyleKeywords().errorAndPrintValid(parser.argc(0));
-        auto kwd = data3DStyleKeywords().enumeration(parser.argc(0));
+        if (!data3DStyleKeywords().isValid(parser.argsv(0)))
+            return data3DStyleKeywords().errorAndPrintValid(parser.argsv(0));
+        auto kwd = data3DStyleKeywords().enumeration(parser.argsv(0));
         if (!data3DStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 
@@ -755,9 +751,9 @@ bool RenderableData3D::readStyleBlock(LineParser &parser)
         {
             // Display style
             case (RenderableData3D::DisplayKeyword):
-                if (!data3DDisplayStyles().isValid(parser.argc(1)))
-                    return data3DDisplayStyles().errorAndPrintValid(parser.argc(1));
-                displayStyle_ = data3DDisplayStyles().enumeration(parser.argc(1));
+                if (!data3DDisplayStyles().isValid(parser.argsv(1)))
+                    return data3DDisplayStyles().errorAndPrintValid(parser.argsv(1));
+                displayStyle_ = data3DDisplayStyles().enumeration(parser.argsv(1));
                 break;
             // End of block
             case (RenderableData3D::EndStyleKeyword):
@@ -772,7 +768,7 @@ bool RenderableData3D::readStyleBlock(LineParser &parser)
                 break;
             // Unrecognised Keyword
             default:
-                Messenger::warn("Unrecognised display style keyword for RenderableData3D: %s\n", parser.argc(0));
+                Messenger::warn("Unrecognised display style keyword for RenderableData3D: {}\n", parser.argsv(0));
                 return false;
                 break;
         }

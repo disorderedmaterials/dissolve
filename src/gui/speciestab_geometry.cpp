@@ -46,7 +46,7 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool crea
     }
     else
         item = ui_.AtomTable->item(row, 0);
-    item->setText(speciesAtom->element()->name());
+    item->setText(QString::fromStdString(std::string(speciesAtom->element()->name())));
     item->setSelected(speciesAtom->isSelected());
 
     // AtomType
@@ -58,7 +58,7 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool crea
     }
     else
         item = ui_.AtomTable->item(row, 1);
-    item->setText(speciesAtom->atomType() ? speciesAtom->atomType()->name() : "");
+    item->setText(speciesAtom->atomType() ? QString::fromStdString(std::string(speciesAtom->atomType()->name())) : "");
     item->setSelected(speciesAtom->isSelected());
 
     // Coordinates
@@ -121,8 +121,9 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
     }
     else
         item = ui_.BondTable->item(row, 2);
-    item->setText(speciesBond->masterParameters() ? QString("@%1").arg(speciesBond->masterParameters()->name())
-                                                  : SpeciesBond::bondFunctions().keywordFromInt(speciesBond->form()));
+    item->setText(speciesBond->masterParameters()
+                      ? QString("@%1").arg(QString::fromStdString(std::string(speciesBond->masterParameters()->name())))
+                      : QString::fromStdString(std::string(SpeciesBond::bondFunctions().keywordFromInt(speciesBond->form()))));
 
     // Interaction Parameters
     for (auto n = 0; n < speciesBond->nParameters(); ++n)
@@ -173,8 +174,10 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
     else
         item = ui_.AngleTable->item(row, 3);
 
-    item->setText(speciesAngle->masterParameters() ? QString("@%1").arg(speciesAngle->masterParameters()->name())
-                                                   : SpeciesAngle::angleFunctions().keywordFromInt(speciesAngle->form()));
+    item->setText(
+        speciesAngle->masterParameters()
+            ? QString("@%1").arg(QString::fromStdString(std::string(speciesAngle->masterParameters()->name())))
+            : QString::fromStdString(std::string(SpeciesAngle::angleFunctions().keywordFromInt(speciesAngle->form()))));
 
     // Interaction Parameters
     for (auto n = 0; n < speciesAngle->nParameters(); ++n)
@@ -224,9 +227,10 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
     }
     else
         item = ui_.TorsionTable->item(row, 4);
-    item->setText(speciesTorsion->masterParameters()
-                      ? QString("@%1").arg(speciesTorsion->masterParameters()->name())
-                      : SpeciesTorsion::torsionFunctions().keywordFromInt(speciesTorsion->form()));
+    item->setText(
+        speciesTorsion->masterParameters()
+            ? QString("@%1").arg(QString::fromStdString(std::string(speciesTorsion->masterParameters()->name())))
+            : QString::fromStdString(std::string(SpeciesTorsion::torsionFunctions().keywordFromInt(speciesTorsion->form()))));
 
     // Interaction Parameters
     for (auto n = 0; n < speciesTorsion->nParameters(); ++n)
@@ -276,8 +280,9 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
         item = ui_.ImproperTable->item(row, 4);
 
     item->setText(speciesImproper->masterParameters()
-                      ? QString("@%1").arg(speciesImproper->masterParameters()->name())
-                      : SpeciesImproper::improperFunctions().keywordFromInt(speciesImproper->form()));
+                      ? QString("@%1").arg(QString::fromStdString(std::string(speciesImproper->masterParameters()->name())))
+                      : QString::fromStdString(
+                            std::string(SpeciesImproper::improperFunctions().keywordFromInt(speciesImproper->form()))));
 
     // Interaction Parameters
     for (auto n = 0; n < speciesImproper->nParameters(); ++n)
@@ -382,7 +387,7 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
             dissolveWindow_->setModified();
             break;
         default:
-            Messenger::error("Don't know what to do with data from column %i of SpeciesAtom table.\n", w->column());
+            Messenger::error("Don't know what to do with data from column {} of SpeciesAtom table.\n", w->column());
             break;
     }
 }
@@ -459,7 +464,7 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem *w)
                 speciesBond->setParameter(w->column() - 3, w->text().toDouble());
             break;
         default:
-            Messenger::error("Don't know what to do with data from column %i of Bond table.\n", w->column());
+            Messenger::error("Don't know what to do with data from column {} of Bond table.\n", w->column());
             break;
     }
 
@@ -519,7 +524,7 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem *w)
                 speciesAngle->setParameter(w->column() - 4, w->text().toDouble());
             break;
         default:
-            Messenger::error("Don't know what to do with data from column %i of Angle table.\n", w->column());
+            Messenger::error("Don't know what to do with data from column {} of Angle table.\n", w->column());
             break;
     }
 
@@ -580,7 +585,7 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem *w)
                 speciesTorsion->setParameter(w->column() - 5, w->text().toDouble());
             break;
         default:
-            Messenger::error("Don't know what to do with data from column %i of Torsion table.\n", w->column());
+            Messenger::error("Don't know what to do with data from column {} of Torsion table.\n", w->column());
             break;
     }
 
@@ -641,7 +646,7 @@ void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem *w)
                 speciesImproper->setParameter(w->column() - 5, w->text().toDouble());
             break;
         default:
-            Messenger::error("Don't know what to do with data from column %i of Improper table.\n", w->column());
+            Messenger::error("Don't know what to do with data from column {} of Improper table.\n", w->column());
             break;
     }
 

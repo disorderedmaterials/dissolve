@@ -1,6 +1,6 @@
 /*
-    *** Keyword Widget - CharString
-    *** src/gui/keywordwidgets/charstring.hui
+    *** Keyword Widget - String
+    *** src/gui/keywordwidgets/stdstring.hui
     Copyright T. Youngs 2012-2020
 
     This file is part of Dissolve.
@@ -22,27 +22,27 @@
 #pragma once
 
 #include "gui/keywordwidgets/base.h"
-#include "keywords/charstring.h"
+#include "keywords/stdstring.h"
 #include <QLineEdit>
 
 // Forward Declarations
 /* none */
 
-class CharStringKeywordWidget : public QLineEdit, public KeywordWidgetBase
+class StringKeywordWidget : public QLineEdit, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro
     Q_OBJECT
 
     public:
     // Constructor
-    CharStringKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    StringKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
     /*
      * Keyword
      */
     private:
     // Associated keyword
-    CharStringKeyword *keyword_;
+    StringKeyword *keyword_;
 
     /*
      * Signals / Slots

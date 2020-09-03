@@ -44,7 +44,7 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Execute the analysis on the Configurations targeted by the RDF module
     for (Configuration *cfg : rdfModule->targetConfigurations())
     {
-        if (!analyser_.execute(procPool, cfg, CharString("%s//Analyser", uniqueName()), dissolve.processingModuleData()))
+        if (!analyser_.execute(procPool, cfg, fmt::format("{}//Analyser", uniqueName()), dissolve.processingModuleData()))
             return Messenger::error("CalculateCN experienced problems with its analysis.\n");
     }
 
@@ -54,8 +54,8 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         const auto delta = keywords_.asDouble("TestRangeA") - coordinationNumber(0).value();
 
-        Messenger::print("Reference coordination number delta with correct value for range A is %15.9e and is %s "
-                         "(threshold is %10.3e)\n",
+        Messenger::print("Reference coordination number delta with correct value for range A is {:15.9e} and is {} "
+                         "(threshold is {:10.3e})\n",
                          delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
         if (!procPool.allTrue(fabs(delta) < testThreshold))
             return false;
@@ -69,8 +69,8 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         const auto delta = keywords_.asDouble("TestRangeB") - coordinationNumber(1).value();
 
-        Messenger::print("Reference coordination number delta with correct value for range B is %15.9e and is %s "
-                         "(threshold is %10.3e)\n",
+        Messenger::print("Reference coordination number delta with correct value for range B is {:15.9e} and is {} "
+                         "(threshold is {:10.3e})\n",
                          delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
         if (!procPool.allTrue(fabs(delta) < testThreshold))
             return false;
@@ -84,8 +84,8 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         const auto delta = keywords_.asDouble("TestRangeC") - coordinationNumber(2).value();
 
-        Messenger::print("Reference coordination number delta with correct value for range C is %15.9e and is %s "
-                         "(threshold is %10.3e)\n",
+        Messenger::print("Reference coordination number delta with correct value for range C is {:15.9e} and is {} "
+                         "(threshold is {:10.3e})\n",
                          delta, fabs(delta) < testThreshold ? "OK" : "NOT OK", testThreshold);
         if (!procPool.allTrue(fabs(delta) < testThreshold))
             return false;

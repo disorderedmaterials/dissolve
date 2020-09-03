@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/parameters.h"
 #include "classes/speciestorsion.h"
 
@@ -33,8 +32,8 @@ class ForcefieldAtomType;
 class ForcefieldTorsionTerm
 {
     public:
-    ForcefieldTorsionTerm(const char *typeI = NULL, const char *typeJ = NULL, const char *typeK = NULL,
-                          const char *typeL = NULL, SpeciesTorsion::TorsionFunction form = SpeciesTorsion::NoForm,
+    ForcefieldTorsionTerm(std::string_view typeI = "", std::string_view typeJ = "", std::string_view typeK = "",
+                          std::string_view typeL = "", SpeciesTorsion::TorsionFunction form = SpeciesTorsion::NoForm,
                           const std::vector<double> parameters = {});
     ~ForcefieldTorsionTerm();
 
@@ -43,7 +42,7 @@ class ForcefieldTorsionTerm
      */
     private:
     // Type names involved in interaction
-    CharString typeI_, typeJ_, typeK_, typeL_;
+    std::string typeI_, typeJ_, typeK_, typeL_;
     // Functional form of interaction
     SpeciesTorsion::TorsionFunction form_;
     // Parameters for interaction

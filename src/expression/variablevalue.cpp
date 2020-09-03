@@ -20,8 +20,8 @@
 */
 
 #include "expression/variablevalue.h"
+#include "base/messenger.h"
 #include "expression/variable.h"
-#include <string.h>
 
 ExpressionVariableValue::ExpressionVariableValue(ExpressionVariable *var) : ExpressionNode(), variable_(var)
 {
@@ -39,11 +39,11 @@ void ExpressionVariableValue::setVariable(ExpressionVariable *variable) { variab
 ExpressionVariable *ExpressionVariableValue::variable() const { return variable_; }
 
 // Return name of variable target
-const char *ExpressionVariableValue::name() const
+std::string_view ExpressionVariableValue::name() const
 {
     if (variable_ == NULL)
     {
-        printf("Internal Error: ExpressionVariableValue contains a NULL Variable pointer.\n");
+        Messenger::error("ExpressionVariableValue contains a NULL Variable pointer.\n");
         return "NULL";
     }
     return variable_->name();
@@ -58,24 +58,24 @@ bool ExpressionVariableValue::execute(ExpressionValue &result)
 {
     if (variable_ == NULL)
     {
-        printf("Internal Error: ExpressionVariableValue contains a NULL Variable pointer and can't be executed.\n");
+        Messenger::error("ExpressionVariableValue contains a NULL Variable pointer and can't be executed.\n");
         return false;
     }
 
     // Call the local variable's execute() function to get the base value
     auto success = variable_->execute(result);
     if (!success)
-        printf("Variable retrieval ('%s') failed.\n", variable_->name());
+        Messenger::error("Variable retrieval ('{}') failed.\n", variable_->name());
 
     return success;
 }
 
 // Print node contents
-void ExpressionVariableValue::nodePrint(int offset, const char *prefix)
+void ExpressionVariableValue::nodePrint(int offset, std::string_view prefix)
 {
     if (variable_ == NULL)
     {
-        printf("Internal Error: ExpressionVariableValue contains a NULL Variable pointer and can't be printed.\n");
+        Messenger::error("ExpressionVariableValue contains a NULL Variable pointer and can't be printed.\n");
         return;
     }
     // Call the local variables nodePrint() function
@@ -87,7 +87,7 @@ bool ExpressionVariableValue::set(ExpressionValue value)
 {
     if (variable_ == NULL)
     {
-        printf("Internal Error: ExpressionVariableValue contains a NULL Variable pointer and can't be set.\n");
+        Messenger::error("ExpressionVariableValue contains a NULL Variable pointer and can't be set.\n");
         return false;
     }
     auto result = true;
@@ -95,7 +95,7 @@ bool ExpressionVariableValue::set(ExpressionValue value)
     // Call the local variable's set() function
     result = variable_->set(value);
     if (!result)
-        printf("Variable set failed.\n");
+        Messenger::error("Variable set failed.\n");
 
     return result;
 }
@@ -105,7 +105,7 @@ bool ExpressionVariableValue::initialise()
 {
     if (variable_ == NULL)
     {
-        printf("Internal Error: ExpressionVariableValue contains a NULL Variable pointer and can't be initialised.\n");
+        Messenger::error("ExpressionVariableValue contains a NULL Variable pointer and can't be initialised.\n");
         return false;
     }
     return variable_->initialise();

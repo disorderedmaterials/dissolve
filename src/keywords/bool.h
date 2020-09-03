@@ -44,7 +44,7 @@ class BoolKeyword : public KeywordData<bool>
     // Parse arguments from supplied LineParser, starting at given argument offset
     bool read(LineParser &parser, int startArg, CoreData &coreData);
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, const char *keywordName, const char *prefix);
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix);
 
     /*
      * Conversion
@@ -57,5 +57,5 @@ class BoolKeyword : public KeywordData<bool>
     // Return value (as double)
     double asDouble();
     // Return value (as string)
-    const char *asString();
+    std::string asString();
 };

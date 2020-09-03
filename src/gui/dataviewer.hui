@@ -93,7 +93,7 @@ class DataViewer : public BaseViewer
 
     public:
     // Return text describing current interaction mode
-    const char *interactionModeText() const;
+    const QString interactionModeText() const;
     // Return clicked interaction coordinate on axis
     double clickedInteractionCoordinate();
     // Return current interaction coordinate on axis

@@ -28,7 +28,7 @@ bool GaussJordan::invert(Array2D<double> &A)
     // Matrix must be square, and not stored as a half-matrix
     if (A.nRows() != A.nColumns())
     {
-        Messenger::error("Can't invert this Array2D since it is not square (it is %ix%i).\n", A.nRows(), A.nColumns());
+        Messenger::error("Can't invert this Array2D since it is not square (it is {}x{}).\n", A.nRows(), A.nColumns());
         return false;
     }
     if (A.halved())

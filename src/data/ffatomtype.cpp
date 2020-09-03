@@ -24,9 +24,9 @@
 #include "data/ffparameters.h"
 #include "neta/generator.h"
 
-ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int index, const char *name, const char *netaDefinition,
-                                       const char *description, double q, double data0, double data1, double data2,
-                                       double data3)
+ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int index, std::string_view name,
+                                       std::string_view netaDefinition, std::string_view description, double q, double data0,
+                                       double data1, double data2, double data3)
     : ElementReference(Z)
 {
     index_ = index;
@@ -39,8 +39,9 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int inde
     parameters_.setParameter(2, data2);
     parameters_.setParameter(3, data3);
 }
-ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int index, const char *name, const char *netaDefinition,
-                                       const char *description, double q, const char *parameterReference)
+ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int index, std::string_view name,
+                                       std::string_view netaDefinition, std::string_view description, double q,
+                                       std::string_view parameterReference)
     : ElementReference(Z)
 {
     index_ = index;
@@ -50,11 +51,12 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int inde
     parameters_.setCharge(q);
     parameterReference_ = parent->shortRangeParameters(parameterReference);
     if (!parameterReference_)
-        Messenger::error("Reference parameters named '%s' are not defined in the forcefield '%s'.\n", parameterReference,
+        Messenger::error("Reference parameters named '{}' are not defined in the forcefield '{}'.\n", parameterReference,
                          parent->name());
 }
-ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, const ForcefieldAtomType &sourceType, const char *newTypeName,
-                                       const char *netaDefinition, const char *equivalentName)
+ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, const ForcefieldAtomType &sourceType,
+                                       std::string_view newTypeName, std::string_view netaDefinition,
+                                       std::string_view equivalentName)
     : ElementReference(sourceType.Z())
 {
     // Copy data from the supplied source
@@ -65,7 +67,7 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, const Forcefiel
     parameters_ = sourceType.parameters_;
 
     // Equivalent name provided?
-    if (equivalentName)
+    if (!equivalentName.empty())
         equivalentName_ = equivalentName;
 }
 
@@ -101,14 +103,14 @@ ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &&source) : Elem
 int ForcefieldAtomType::index() const { return index_; }
 
 // Return name of type
-const char *ForcefieldAtomType::name() const { return name_.get(); }
+std::string_view ForcefieldAtomType::name() const { return name_; }
 
 // Return equivalent name of type
-const char *ForcefieldAtomType::equivalentName() const
+std::string_view ForcefieldAtomType::equivalentName() const
 {
     // Return defined equivalent name first, if defined
-    if (!equivalentName_.isEmpty())
-        return equivalentName_.get();
+    if (!equivalentName_.empty())
+        return equivalentName_;
 
     // If parameters are referenced, return their name. Otherwise, return ours
     if (parameterReference_)
@@ -117,11 +119,11 @@ const char *ForcefieldAtomType::equivalentName() const
         return ffparams.name();
     }
 
-    return name_.get();
+    return name_;
 }
 
 // Return description for type
-const char *ForcefieldAtomType::description() const { return description_.get(); }
+std::string_view ForcefieldAtomType::description() const { return description_; }
 
 /*
  * Recognition

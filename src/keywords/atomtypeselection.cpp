@@ -97,15 +97,15 @@ bool AtomTypeSelectionKeyword::read(LineParser &parser, int startArg, CoreData &
         // Do we recognise the AtomType?
         auto it =
             std::find_if(coreData.constAtomTypes().begin(), coreData.constAtomTypes().end(), [&parser, n](const auto atomType) {
-                return DissolveSys::sameString(atomType->name(), parser.argc(n));
+                return DissolveSys::sameString(atomType->name(), parser.argsv(n));
             });
         if (it == coreData.constAtomTypes().end())
-            return Messenger::error("Unrecognised AtomType '%s' found in list.\n", parser.argc(n));
+            return Messenger::error("Unrecognised AtomType '{}' found in list.\n", parser.argsv(n));
         auto atomType = *it;
 
         // If the AtomType is in the list already, complain
         if (data_.contains(atomType))
-            return Messenger::error("AtomType '%s' specified in selection list twice.\n", parser.argc(n));
+            return Messenger::error("AtomType '{}' specified in selection list twice.\n", parser.argsv(n));
 
         // All OK - add it to our selection list
         data_.add(atomType);
@@ -117,14 +117,14 @@ bool AtomTypeSelectionKeyword::read(LineParser &parser, int startArg, CoreData &
 }
 
 // Write keyword data to specified LineParser
-bool AtomTypeSelectionKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool AtomTypeSelectionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     // Loop over the AtomType selection list
-    CharString selection;
+    std::string selection;
     for (auto &atd : data_)
-        selection.strcatf("  %s", atd.atomTypeName());
+        selection += fmt::format("  {}", atd.atomTypeName());
 
-    if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, selection.get()))
+    if (!parser.writeLineF("{}{}{}\n", prefix, keywordName, selection))
         return false;
 
     return true;

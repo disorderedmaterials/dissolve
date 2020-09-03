@@ -52,7 +52,7 @@ class ModuleList
     // Remove specified Module from list (but don't delete it)
     void cut(Module *module);
     // Find associated Module by unique name
-    Module *find(const char *uniqueName) const;
+    Module *find(std::string_view uniqueName) const;
     // Return whether specified Module is present in the list
     bool contains(Module *searchModule) const;
     // Return number of Modules in the list

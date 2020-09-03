@@ -25,25 +25,25 @@
 #include "main/dissolve.h"
 #include "modules/epsr/epsr.h"
 
-// EPSR PCof Keywords
-const char *EPSRPCofKeywordKeywords[] = {"addpottype", "expecf", "gaussian", "ncoeffp", "npitss",  "paccept", "pdmax",
-                                         "pdstep",     "power",  "psigma2",  "q",       "rbroad",  "rcharge", "refpotfac",
-                                         "reppottype", "rmaxpt", "rminfac",  "rminpt",  "roverlap"};
-
-// Convert text string to EPSRPCofKeyword
-EPSRModule::EPSRPCofKeyword EPSRModule::epsrPCofKeyword(const char *s)
+// Return enum options for EPSRPCofKeyword
+EnumOptions<EPSRModule::EPSRPCofKeyword> &EPSRModule::epsrPCofKeywords()
 {
-    for (int n = 0; n < EPSRModule::nEPSRPCofKeywords; ++n)
-        if (DissolveSys::sameString(s, EPSRPCofKeywordKeywords[n]))
-            return (EPSRModule::EPSRPCofKeyword)n;
-    return EPSRModule::nEPSRPCofKeywords;
+    static EnumOptionsList PCOFKeywordOptions =
+        EnumOptionsList()
+        << EnumOption(EPSRModule::AddPotTypePCofKeyword, "addpottype") << EnumOption(EPSRModule::ExpecFPCofKeyword, "expecf")
+        << EnumOption(EPSRModule::GaussianPCofKeyword, "gaussian") << EnumOption(EPSRModule::NCoeffPPCofKeyword, "ncoeffp")
+        << EnumOption(EPSRModule::NPItSSPCofKeyword, "npitss") << EnumOption(EPSRModule::PAcceptPCofKeyword, "paccept")
+        << EnumOption(EPSRModule::PDMaxPCofKeyword, "pdmax") << EnumOption(EPSRModule::PDStepPCofKeyword, "pdstep")
+        << EnumOption(EPSRModule::PowerPCofKeyword, "power") << EnumOption(EPSRModule::PSigma2PCofKeyword, "psigma2")
+        << EnumOption(EPSRModule::QuitPCofKeyword, "q") << EnumOption(EPSRModule::RBroadPCofKeyword, "rbroad")
+        << EnumOption(EPSRModule::RChargePCofKeyword, "rcharge") << EnumOption(EPSRModule::RefPotFacPCofKeyword, "refpotfac")
+        << EnumOption(EPSRModule::RepPotTypePCofKeyword, "reppottype") << EnumOption(EPSRModule::RMaxPtPCofKeyword, "rmaxpt")
+        << EnumOption(EPSRModule::RMinFacPCofKeyword, "rminfac") << EnumOption(EPSRModule::RMinPtPCofKeyword, "rminpt")
+        << EnumOption(EPSRModule::ROverlapPCofKeyword, "roverlap");
 }
 
-// Convert EPSRPCofKeyword to text string
-const char *EPSRModule::epsrPCofKeyword(EPSRModule::EPSRPCofKeyword pcofkwd) { return EPSRPCofKeywordKeywords[pcofkwd]; }
-
 // Read data from supplied pcof file
-bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char *filename)
+bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string_view filename)
 {
     /*
      * Read EPSR potential coefficients from supplied file.
@@ -64,7 +64,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return Messenger::error("Failed to read pcof file.\n");
 
-        EPSRModule::EPSRPCofKeyword keyword = epsrPCofKeyword(parser.argc(0));
+        EPSRModule::EPSRPCofKeyword keyword = epsrPCofKeywords().enumeration(parser.argsv(0));
         switch (keyword)
         {
             case (EPSRModule::AddPotTypePCofKeyword):
@@ -74,7 +74,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
             case (EPSRModule::GaussianPCofKeyword):
                 keywords_.set<EPSRModule::ExpansionFunctionType>(
                     "expansionfunction",
-                    (DissolveSys::sameString(parser.argc(1), "Poisson") || DissolveSys::sameString(parser.argc(1), "T")
+                    (DissolveSys::sameString(parser.argsv(1), "Poisson") || DissolveSys::sameString(parser.argsv(1), "T")
                          ? EPSRModule::PoissonExpansionFunction
                          : EPSRModule::GaussianExpansionFunction));
                 break;
@@ -123,7 +123,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
             case (EPSRModule::ROverlapPCofKeyword):
                 break;
             default:
-                Messenger::warn("Unrecognised pcof file keyword '%s'...\n", parser.argc(0));
+                Messenger::warn("Unrecognised pcof file keyword '{}'...\n", parser.argsv(0));
                 continue;
         }
 
@@ -147,7 +147,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return Messenger::error("Failed to read number of pair potentials from pcof file.\n");
     auto nPots = parser.argi(0);
-    Messenger::print("Number of potentials in pcof file = %i\n", nPots);
+    Messenger::print("Number of potentials in pcof file = {}\n", nPots);
     for (int n = 0; n < nPots; ++n)
     {
         // First line of potential contains the two atom types it is related to, and its index (in EPSR)
@@ -155,13 +155,14 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
             return Messenger::error("Failed to read pair potential atom types from pcof file.\n");
 
         // Find the atom types to which these cofficients relate
-        auto at1 = dissolve.findAtomType(parser.argc(0));
+        auto at1 = dissolve.findAtomType(parser.argsv(0));
         if (!at1)
-            return Messenger::error("Unrecognised AtomType '%s' referenced in pcof file.\n", parser.argc(0));
-        auto at2 = dissolve.findAtomType(parser.argc(1));
+            return Messenger::error("Unrecognised AtomType '{}' referenced in pcof file.\n", parser.argsv(0));
+        auto at2 = dissolve.findAtomType(parser.argsv(1));
         if (!at2)
-            return Messenger::error("Unrecognised AtomType '%s' referenced in pcof file.\n", parser.argc(1));
-        Messenger::print("Found %s-%s potential...\n", at1->name(), at2->name());
+            return Messenger::error("Unrecognised AtomType '{}' referenced in pcof file.\n", parser.argsv(1));
+
+        Messenger::print("Found {}-{} potential...\n", at1->name(), at2->name());
 
         // Next line contains ??? and ??? TODO
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -173,7 +174,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, const char 
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return Messenger::error("Failed to read coefficients from pcof file.\n");
         if (parser.nArgs() != ncoeffp)
-            return Messenger::error("Number of potential coefficients (%i) does not match ncoeffp (%i).\n", parser.nArgs(),
+            return Messenger::error("Number of potential coefficients ({}) does not match ncoeffp ({}).\n", parser.nArgs(),
                                     ncoeffp);
         for (int i = 0; i < ncoeffp; ++i)
             coefficients[i] = parser.argd(i);

@@ -46,7 +46,7 @@ void RenderableGroupManager::clear()
  */
 
 // Create named group, or return existing group by the same name
-RenderableGroup *RenderableGroupManager::createGroup(const char *name)
+RenderableGroup *RenderableGroupManager::createGroup(std::string_view name)
 {
     // Does a group with this name already exist?
     RenderableGroup *renderableGroup = group(name);
@@ -73,15 +73,15 @@ RenderableGroup *RenderableGroupManager::createGroup(const char *name)
 }
 
 // Add Renderable to its specified group, creating / associating as necessary
-RenderableGroup *RenderableGroupManager::addToGroup(Renderable *renderable, const char *groupName)
+RenderableGroup *RenderableGroupManager::addToGroup(Renderable *renderable, std::string_view groupName)
 {
     // Check to see if the Renderable is already associated to a group...
     if (renderable->group())
     {
-        if (DissolveSys::sameString(renderable->group()->name(), groupName))
+        if (renderable->group()->name() == groupName)
         {
-            Messenger::print("Renderable '%s' already associated to group '%s'...\n", renderable->name(),
-                             renderable->group()->name());
+            fmt::print("Renderable '{}' already associated to group '{}'...\n", renderable->name(),
+                       renderable->group()->name());
             return renderable->group();
         }
 
@@ -100,10 +100,10 @@ RenderableGroup *RenderableGroupManager::addToGroup(Renderable *renderable, cons
 }
 
 // Return named group, if it exists
-RenderableGroup *RenderableGroupManager::group(const char *name)
+RenderableGroup *RenderableGroupManager::group(std::string_view name)
 {
     for (auto *group = groups_.first(); group != NULL; group = group->next())
-        if (DissolveSys::sameString(group->name(), name))
+        if (group->name() == name)
             return group;
     return NULL;
 }
@@ -152,27 +152,21 @@ void RenderableGroupManager::emptyGroups()
  */
 
 // Set colouring style for named group
-void RenderableGroupManager::setGroupColouring(const char *groupName, RenderableGroup::GroupColouring colouringStyle)
+void RenderableGroupManager::setGroupColouring(std::string_view groupName, RenderableGroup::GroupColouring colouringStyle)
 {
     RenderableGroup *g = group(groupName);
     if (!g)
-    {
-        Messenger::printVerbose("Creating RenderableGroup '%s' so we can set its colouring style...\n", groupName);
         g = createGroup(groupName);
-    }
 
     g->setColouringStyle(colouringStyle);
 }
 
 // Set fixed colour for named group
-void RenderableGroupManager::setGroupFixedColour(const char *groupName, StockColours::StockColour stockColour)
+void RenderableGroupManager::setGroupFixedColour(std::string_view groupName, StockColours::StockColour stockColour)
 {
     RenderableGroup *g = group(groupName);
     if (!g)
-    {
-        Messenger::printVerbose("Creating RenderableGroup '%s' so we can set its fixed colour...\n", groupName);
         g = createGroup(groupName);
-    }
 
     g->setFixedStockColour(stockColour);
 }
@@ -182,14 +176,11 @@ void RenderableGroupManager::setGroupFixedColour(const char *groupName, StockCol
  */
 
 // Line stipple to use for group
-void RenderableGroupManager::setGroupStipple(const char *groupName, LineStipple::StippleType stipple)
+void RenderableGroupManager::setGroupStipple(std::string_view groupName, LineStipple::StippleType stipple)
 {
     RenderableGroup *g = group(groupName);
     if (!g)
-    {
-        Messenger::printVerbose("Creating RenderableGroup '%s' so we can set its stipple...\n", groupName);
         g = createGroup(groupName);
-    }
 
     g->setLineStipple(stipple);
 }
@@ -213,14 +204,12 @@ void RenderableGroupManager::setRenderableGroupShifts()
 }
 
 // Set vertical shifting style for named group
-void RenderableGroupManager::setGroupVerticalShifting(const char *groupName, RenderableGroup::VerticalShiftStyle shiftStyle)
+void RenderableGroupManager::setGroupVerticalShifting(std::string_view groupName,
+                                                      RenderableGroup::VerticalShiftStyle shiftStyle)
 {
     RenderableGroup *g = group(groupName);
     if (!g)
-    {
-        Messenger::printVerbose("Creating RenderableGroup '%s' so we can set its vertical shifting...\n", groupName);
         g = createGroup(groupName);
-    }
 
     g->setVerticalShiftStyle(shiftStyle);
 }

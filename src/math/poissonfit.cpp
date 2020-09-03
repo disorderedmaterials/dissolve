@@ -202,7 +202,7 @@ bool PoissonFit::ignoreZerothTerm() const { return ignoreZerothTerm_; }
 const Array<double> &PoissonFit::C() const { return C_; }
 
 // Save coefficients to specified file
-bool PoissonFit::saveCoefficients(const char *filename) const
+bool PoissonFit::saveCoefficients(std::string_view filename) const
 {
     LineParser parser;
     if (!parser.openOutput(filename))
@@ -210,7 +210,7 @@ bool PoissonFit::saveCoefficients(const char *filename) const
 
     parser.writeLineF("#   C\n");
     for (int n = 0; n < nPoissons_; ++n)
-        parser.writeLineF("%f\n", C_.constAt(n));
+        parser.writeLineF("{}\n", C_.constAt(n));
 
     parser.closeFiles();
 
@@ -343,7 +343,7 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
             poissonMinimiser.setMaxIterations(100);
             poissonMinimiser.setStepSize(0.01);
             currentError_ = poissonMinimiser.minimise();
-            Messenger::printVerbose("PoissonFit::reFitC() - P = %i, error = %f\n", p, currentError_);
+            Messenger::printVerbose("PoissonFit::reFitC() - P = {}, error = {}\n", p, currentError_);
 
             // If we are not at the end of the Gaussian array, move the index backwards so the next set overlaps a
             // little with this one

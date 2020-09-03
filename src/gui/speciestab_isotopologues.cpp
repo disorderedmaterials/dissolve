@@ -48,7 +48,7 @@ void SpeciesTab::updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, in
         item = treeWidget->topLevelItem(topLevelItemIndex);
 
     // Set item data
-    item->setText(0, data->name());
+    item->setText(0, QString::fromStdString(std::string(data->name())));
 
     // Update child items
     TreeWidgetRefDataListUpdater<SpeciesTab, std::shared_ptr<AtomType>, Isotope *> isotopeUpdater(
@@ -72,7 +72,7 @@ void SpeciesTab::updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, i
     }
     else
         item = parentItem->child(childIndex);
-    item->setText(1, atomType->name());
+    item->setText(1, QString::fromStdString(std::string(atomType->name())));
     item->setText(2, IsotopeComboDelegate::textForIsotope(isotope));
 }
 
@@ -147,7 +147,7 @@ void SpeciesTab::on_IsotopologuesTree_itemChanged(QTreeWidgetItem *item, int col
 
             // Update the item text (we may have modified the name to avoid a clash)
             Locker refreshLocker(refreshLock_);
-            item->setText(0, isotopologue->name());
+            item->setText(0, QString::fromStdString(std::string(isotopologue->name())));
             refreshLocker.unlock();
 
             dissolveWindow_->setModified();

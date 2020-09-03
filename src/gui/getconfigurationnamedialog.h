@@ -47,7 +47,7 @@ class GetConfigurationNameDialog : public QDialog
 
     public:
     // Run the dialog
-    bool get(const Configuration *currentConfiguration, const char *currentName);
+    bool get(const Configuration *currentConfiguration, const QString &currentName);
     // Return the name string
     QString newName() const;
 

@@ -52,7 +52,7 @@ bool CoordinateImportFileFormat::importMoscito(LineParser &parser, Array<Vec3<do
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     auto nMolecules = parser.argi(0);
-    Messenger::print(" --> Structure file contains %i molecules.\n", nMolecules);
+    Messenger::print(" --> Structure file contains {} molecules.\n", nMolecules);
 
     r.clear();
     for (auto n = 0; n < nMolecules; ++n)
@@ -77,7 +77,7 @@ bool CoordinateImportFileFormat::importMoscito(LineParser &parser, Array<Vec3<do
             // Coordinates are in fixed format (15.8e) with *no spacing between values*
             if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
                 return false;
-            std::string coords = parser.line();
+            std::string coords{parser.line()};
             r.add(Vec3<double>(std::stof(coords.substr(0, 15)) * 10.0, std::stof(coords.substr(15, 15)) * 10.0,
                                std::stof(coords.substr(30)) * 10.0));
 

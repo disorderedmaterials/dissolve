@@ -73,7 +73,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
 
     // Construct local arrays of atom type positions
     nTypes = partialSet.nAtomTypes();
-    Messenger::printVerbose("Constructing local partial working arrays for %i types.\n", nTypes);
+    Messenger::printVerbose("Constructing local partial working arrays for {} types.\n", nTypes);
     const Box *box = cfg->box();
     Vec3<double> *r[nTypes];
     int maxr[nTypes], nr[nTypes];
@@ -273,15 +273,15 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
     // Is the PartialSet already up-to-date?
     // If so, can exit now, *unless* the Test method is requested, in which case we go ahead and calculate anyway
     alreadyUpToDate = false;
-    if (DissolveSys::sameString(originalgr.fingerprint(), CharString("%i", cfg->contentsVersion())) &&
+    if (DissolveSys::sameString(originalgr.fingerprint(), fmt::format("{}", cfg->contentsVersion())) &&
         (method != RDFModule::TestMethod))
     {
-        Messenger::print("Partial g(r) are up-to-date for Configuration '%s'.\n", cfg->name());
+        Messenger::print("Partial g(r) are up-to-date for Configuration '{}'.\n", cfg->name());
         alreadyUpToDate = true;
         return true;
     }
 
-    Messenger::print("Calculating partial g(r) for Configuration '%s'...\n", cfg->name());
+    Messenger::print("Calculating partial g(r) for Configuration '{}'...\n", cfg->name());
 
     /*
      * Make sure histograms are set up, and reset any existing data
@@ -309,7 +309,7 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
                               : calculateGRSimple(procPool, cfg, originalgr, rdfBinWidth);
     }
     timer.stop();
-    Messenger::print("Finished calculation of partials (%s elapsed, %s comms).\n", timer.totalTimeString(),
+    Messenger::print("Finished calculation of partials ({} elapsed, {} comms).\n", timer.totalTimeString(),
                      procPool.accumulatedTimeString());
 
     /*
@@ -350,7 +350,7 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
     }
 
     timer.stop();
-    Messenger::print("Finished calculation of intramolecular partials (%s elapsed, %s comms).\n", timer.totalTimeString(),
+    Messenger::print("Finished calculation of intramolecular partials ({} elapsed, {} comms).\n", timer.totalTimeString(),
                      procPool.accumulatedTimeString());
 
     /*
@@ -388,14 +388,14 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
     // Sum total functions
     originalgr.formTotal(true);
     timer.stop();
-    Messenger::print("Finished summation and normalisation of partial g(r) data (%s elapsed, %s comms).\n",
+    Messenger::print("Finished summation and normalisation of partial g(r) data ({} elapsed, {} comms).\n",
                      timer.totalTimeString(), procPool.accumulatedTimeString());
 
     /*
      * Partials are now up-to-date
      */
 
-    originalgr.setFingerprint(CharString("%i", cfg->contentsVersion()));
+    originalgr.setFingerprint(fmt::format("{}", cfg->contentsVersion()));
 
     return true;
 }
@@ -665,7 +665,7 @@ double RDFModule::summedRho(Module *module, GenericList &processingModuleData)
     for (Configuration *cfg : module->targetConfigurations())
     {
         auto weight = GenericListHelper<double>::value(
-            processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
+            processingModuleData, fmt::format("ConfigurationWeight_{}", cfg->niceName()), module->uniqueName(), 1.0);
         totalWeight += weight;
 
         rho0 += weight / cfg->atomicDensity();
@@ -690,7 +690,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericLi
 
     // Set up PartialSet container
     summedUnweightedGR.setUpPartials(combinedAtomTypes, module->uniqueName(), "unweighted", "gr", "r, Angstroms");
-    summedUnweightedGR.setObjectTags(CharString("%s//UnweightedGR", module->uniqueName()));
+    summedUnweightedGR.setObjectTags(fmt::format("{}//UnweightedGR", module->uniqueName()));
 
     // Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight
     // RefList for simplicity
@@ -700,8 +700,8 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericLi
     {
         // Get weighting factor for this Configuration to contribute to the summed partials
         auto weight = GenericListHelper<double>::value(
-            processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
-        Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
+            processingModuleData, fmt::format("ConfigurationWeight_{}", cfg->niceName()), module->uniqueName(), 1.0);
+        Messenger::print("Weight for Configuration '{}' is {}.\n", cfg->name(), weight);
 
         // Add our Configuration target
         configWeights.append(cfg, weight);
@@ -716,20 +716,20 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericLi
     rho0 = 1.0 / rho0;
 
     // Sum Configurations into the PartialSet
-    CharString fingerprint;
+    std::string fingerprint;
     weightsIterator.restart();
     while (Configuration *cfg = weightsIterator.iterate())
     {
         // Update fingerprint
         fingerprint +=
-            fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion()) : CharString("_%i", cfg->contentsVersion());
+            fingerprint.empty() ? fmt::format("{}", cfg->contentsVersion()) : fmt::format("_{}", cfg->contentsVersion());
 
         // Calculate weighting factor
         double weight = ((weightsIterator.currentData() / totalWeight) * cfg->atomicDensity()) / rho0;
 
         // Grab partials for Configuration and add into our set
         if (!cfg->moduleData().contains("UnweightedGR"))
-            return Messenger::error("Couldn't find UnweightedGR data for Configuration '%s'.\n", cfg->name());
+            return Messenger::error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
         auto cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }
@@ -756,15 +756,15 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
         {
             // Get weighting factor for this Configuration to contribute to the summed partials
             auto weight = GenericListHelper<double>::value(
-                processingModuleData, CharString("ConfigurationWeight_%s", cfg->niceName()), module->uniqueName(), 1.0);
-            Messenger::print("Weight for Configuration '%s' is %f.\n", cfg->name(), weight);
+                processingModuleData, fmt::format("ConfigurationWeight_{}", cfg->niceName()), module->uniqueName(), 1.0);
+            Messenger::print("Weight for Configuration '{}' is {}.\n", cfg->name(), weight);
 
             // Add our Configuration target
             configWeights.append(cfg, weight);
             totalWeight += weight;
         }
     }
-    Messenger::print("Total weight over all Configurations for summed unweighted g(r) is %f (%i Configurations)\n", totalWeight,
+    Messenger::print("Total weight over all Configurations for summed unweighted g(r) is {} ({} Configurations)\n", totalWeight,
                      configWeights.nItems());
 
     // Calculate overall density of combined system, normalising the Configuration weights as we go, and create an
@@ -780,30 +780,30 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
         combinedAtomTypes.add(cfg->usedAtomTypesList());
     }
     rho0 = 1.0 / rho0;
-    Messenger::print("Effective density for summed unweighted g(r) over group is %f atoms/Angstrom**3.\n", rho0);
+    Messenger::print("Effective density for summed unweighted g(r) over group is {} atoms/Angstrom**3.\n", rho0);
 
     // Finalise the combined AtomTypes matrix
     combinedAtomTypes.finalise();
 
     // Set up PartialSet container
     summedUnweightedGR.setUpPartials(combinedAtomTypes, parentModule->uniqueName(), "unweighted", "gr", "r, Angstroms");
-    summedUnweightedGR.setObjectTags(CharString("%s//UnweightedGR//%s", parentModule->uniqueName(), moduleGroup->name()));
+    summedUnweightedGR.setObjectTags(fmt::format("{}//UnweightedGR//{}", parentModule->uniqueName(), moduleGroup->name()));
 
     // Sum Configurations into the PartialSet
-    CharString fingerprint;
+    std::string fingerprint;
     weightsIterator.restart();
     while (Configuration *cfg = weightsIterator.iterate())
     {
         // Update fingerprint
         fingerprint +=
-            fingerprint.isEmpty() ? CharString("%i", cfg->contentsVersion()) : CharString("_%i", cfg->contentsVersion());
+            fingerprint.empty() ? fmt::format("{}", cfg->contentsVersion()) : fmt::format("_{}", cfg->contentsVersion());
 
         // Calculate weighting factor
         double weight = (weightsIterator.currentData() * cfg->atomicDensity()) / rho0;
 
         // *Copy* the partials for the Configuration, subtract 1.0, and add into our set
         if (!cfg->moduleData().contains("UnweightedGR"))
-            return Messenger::error("Couldn't find UnweightedGR data for Configuration '%s'.\n", cfg->name());
+            return Messenger::error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
         auto cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
         cfgPartialGR -= 1.0;
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
@@ -828,8 +828,8 @@ bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double
     for_each_pair(atomTypes.begin(), atomTypes.end(), [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) {
         // Full partial
         error = Error::percent(setA.partial(n, m), setB.partial(n, m));
-        Messenger::print("Test reference full partial '%s-%s' has error of %7.3f%% with calculated data and is "
-                         "%s (threshold is %6.3f%%)\n\n",
+        Messenger::print("Test reference full partial '{}-{}' has error of {:7.3f}% with calculated data and is "
+                         "{} (threshold is {:6.3f}%)\n\n",
                          typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
                          testThreshold);
         if (error > testThreshold)
@@ -837,8 +837,8 @@ bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double
 
         // Bound partial
         error = Error::percent(setA.boundPartial(n, m), setB.boundPartial(n, m));
-        Messenger::print("Test reference bound partial '%s-%s' has error of %7.3f%% with calculated data and "
-                         "is %s (threshold is %6.3f%%)\n\n",
+        Messenger::print("Test reference bound partial '{}-{}' has error of {:7.3f}% with calculated data and "
+                         "is {} (threshold is {:6.3f}%)\n\n",
                          typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
                          testThreshold);
         if (error > testThreshold)
@@ -846,8 +846,8 @@ bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double
 
         // Unbound reference
         error = Error::percent(setA.unboundPartial(n, m), setB.unboundPartial(n, m));
-        Messenger::print("Test reference unbound partial '%s-%s' has error of %7.3f%% with calculated data and "
-                         "is %s (threshold is %6.3f%%)\n\n",
+        Messenger::print("Test reference unbound partial '{}-{}' has error of {:7.3f}% with calculated data and "
+                         "is {} (threshold is {:6.3f}%)\n\n",
                          typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
                          testThreshold);
         if (error > testThreshold)
@@ -856,7 +856,7 @@ bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double
 
     // Total reference data supplied?
     error = Error::percent(setA.total(), setB.total());
-    Messenger::print("Test reference total has error of %7.3f%% with calculated data and is %s (threshold is %6.3f%%)\n\n",
+    Messenger::print("Test reference total has error of {:7.3f}% with calculated data and is {} (threshold is {:6.3f}%)\n\n",
                      error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
     if (error > testThreshold)
         return false;
@@ -866,7 +866,7 @@ bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double
 
 // Test calculated partial against supplied reference data
 bool RDFModule::testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
-                                     const char *typeIorTotal, const char *typeJ, const char *target)
+                                     std::string_view typeIorTotal, std::string_view typeJ, std::string_view target)
 {
     // We either expect two AtomType names and a target next, or the target 'total'
     auto testResult = false;
@@ -874,8 +874,8 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
     {
         double error = Error::percent(partials.constTotal(), testData);
         testResult = (error <= testThreshold);
-        Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is "
-                         "%6.3f%%)\n\n",
+        Messenger::print("Test reference data '{}' has error of {:7.3f}% with calculated data and is {} (threshold is "
+                         "{:6.3f}%)\n\n",
                          testData.name(), error, testResult ? "OK" : "NOT OK", testThreshold);
     }
     else
@@ -884,7 +884,7 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
         auto indexI = partials.atomTypes().indexOf(typeIorTotal);
         auto indexJ = partials.atomTypes().indexOf(typeJ);
         if ((indexI == -1) || (indexJ == -1))
-            return Messenger::error("Unrecognised test data name '%s'.\n", testData.name());
+            return Messenger::error("Unrecognised test data name '{}'.\n", testData.name());
 
         // AtomTypes are valid, so check the 'target'
         double error = -1.0;
@@ -895,11 +895,11 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
         else if (DissolveSys::sameString(target, "full"))
             error = Error::percent(partials.constPartial(indexI, indexJ), testData);
         else
-            return Messenger::error("Unrecognised test data name '%s'.\n", testData.name());
+            return Messenger::error("Unrecognised test data name '{}'.\n", testData.name());
 
         testResult = (error <= testThreshold);
-        Messenger::print("Test reference data '%s' has error of %7.3f%% with calculated data and is %s (threshold is "
-                         "%6.3f%%)\n\n",
+        Messenger::print("Test reference data '{}' has error of {:7.3f}% with calculated data and is {} (threshold is "
+                         "{:6.3f}%)\n\n",
                          testData.name(), error, testResult ? "OK" : "NOT OK", testThreshold);
     }
 
@@ -908,7 +908,7 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
 
 // Test calculated vs reference data (two source sets)
 bool RDFModule::testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partials,
-                                      const char *prefix)
+                                      std::string_view prefix)
 {
     LineParser parser;
 
@@ -917,8 +917,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     while (Data1D *data = dataIterator.iterate())
     {
         // Grab the name, replace hyphens with '-', and parse the string into arguments
-        CharString dataName = data->name();
-        dataName.replace('-', ' ');
+        std::string dataName{data->name()};
+        std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
         // Sanity check on number of arguments
@@ -926,11 +926,11 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
             return Messenger::error("Test data has no name?");
 
         // Check first argument to check it has the corect prefix
-        if (!DissolveSys::sameString(prefix, parser.argc(0)))
-            return Messenger::error("Unrecognised test data name '%s'.\n", data->name());
+        if (!DissolveSys::sameString(prefix, parser.argsv(0)))
+            return Messenger::error("Unrecognised test data name '{}'.\n", data->name());
 
-        if (!testReferencePartial(partials, testThreshold, *data, parser.argc(1), parser.hasArg(2) ? parser.argc(2) : NULL,
-                                  parser.hasArg(3) ? parser.argc(3) : NULL))
+        if (!testReferencePartial(partials, testThreshold, *data, parser.argsv(1), parser.hasArg(2) ? parser.argsv(2) : NULL,
+                                  parser.hasArg(3) ? parser.argsv(3) : NULL))
             return false;
     }
 
@@ -939,7 +939,7 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
 
 // Test calculated vs reference data (two source sets)
 bool RDFModule::testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partialsA,
-                                      const char *prefixA, const PartialSet &partialsB, const char *prefixB)
+                                      std::string_view prefixA, const PartialSet &partialsB, std::string_view prefixB)
 {
     LineParser parser;
 
@@ -948,8 +948,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     while (Data1D *data = dataIterator.iterate())
     {
         // Grab the name, replace hyphens with '-', and parse the string into arguments
-        CharString dataName = data->name();
-        dataName.replace('-', ' ');
+        std::string dataName{data->name()};
+        std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
         // Sanity check on number of arguments
@@ -958,16 +958,16 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
 
         // Check first argument to determine PartialSet, then pass on the data
         auto setA = false;
-        if (DissolveSys::sameString(prefixA, parser.argc(0)))
+        if (DissolveSys::sameString(prefixA, parser.argsv(0)))
             setA = true;
-        else if (DissolveSys::sameString(prefixB, parser.argc(0)))
+        else if (DissolveSys::sameString(prefixB, parser.argsv(0)))
             setA = false;
         else
-            return Messenger::error("Unrecognised test data name '%s'.\n", data->name());
+            return Messenger::error("Unrecognised test data name '{}'.\n", data->name());
         const PartialSet &targetSet = (setA ? partialsA : partialsB);
 
-        if (!testReferencePartial(targetSet, testThreshold, *data, parser.argc(1), parser.hasArg(2) ? parser.argc(2) : NULL,
-                                  parser.hasArg(3) ? parser.argc(3) : NULL))
+        if (!testReferencePartial(targetSet, testThreshold, *data, parser.argsv(1), parser.hasArg(2) ? parser.argsv(2) : NULL,
+                                  parser.hasArg(3) ? parser.argsv(3) : NULL))
             return false;
     }
 

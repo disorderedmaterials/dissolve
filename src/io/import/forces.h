@@ -40,7 +40,7 @@ class ForceImportFileFormat : public FileAndFormat
         nForceImportFormats
     };
     ForceImportFileFormat(ForceImportFormat format = XYZForces);
-    ForceImportFileFormat(const char *filename, ForceImportFormat format = XYZForces);
+    ForceImportFileFormat(std::string_view filename, ForceImportFormat format = XYZForces);
     ~ForceImportFileFormat();
 
     /*
@@ -53,15 +53,17 @@ class ForceImportFileFormat : public FileAndFormat
     /*
      * Format Access
      */
-    public:
+    private:
     // Return enum options for ForceImportFormat
-    static EnumOptions<ForceImportFileFormat::ForceImportFormat> forceImportFormats();
+    static EnumOptions<ForceImportFileFormat::ForceImportFormat> &forceImportFormats();
+
+    public:
     // Return number of available formats
     int nFormats() const;
     // Return format keyword for supplied index
-    const char *formatKeyword(int id) const;
+    std::string_view formatKeyword(int id) const;
     // Return description string for supplied index
-    const char *formatDescription(int id) const;
+    std::string_view formatDescription(int id) const;
     // Return current format as ForceImportFormat
     ForceImportFormat forceFormat() const;
 

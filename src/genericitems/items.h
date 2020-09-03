@@ -28,9 +28,9 @@
  */
 
 #include "genericitems/bool.h"
-#include "genericitems/charstring.h"
 #include "genericitems/double.h"
 #include "genericitems/int.h"
+#include "genericitems/stdstring.h"
 #include "genericitems/streampos.h"
 
 #include "genericitems/vec3double.h"

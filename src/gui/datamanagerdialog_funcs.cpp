@@ -44,8 +44,8 @@ DataManagerDialog::~DataManagerDialog() {}
  */
 
 // Append GenericItems to table under specified source
-void DataManagerDialog::addItemsToTable(QTableWidget *table, List<GenericItem> &items, const char *locationName,
-                                        const char *locationIconResource)
+void DataManagerDialog::addItemsToTable(QTableWidget *table, List<GenericItem> &items, const QString locationName,
+                                        const QString locationIconResource)
 {
     // Create icon
     QIcon locationIcon = QPixmap(locationIconResource);
@@ -57,13 +57,13 @@ void DataManagerDialog::addItemsToTable(QTableWidget *table, List<GenericItem> &
     while (GenericItem *genericItem = itemIterator.iterate())
     {
         // Item name
-        item = new QTableWidgetItem(genericItem->name());
+        item = new QTableWidgetItem(QString::fromStdString(std::string(genericItem->name())));
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         item->setData(Qt::UserRole, VariantPointer<GenericItem>(genericItem));
         table->setItem(count, 0, item);
 
         // Item type
-        item = new QTableWidgetItem(genericItem->itemClassName());
+        item = new QTableWidgetItem(QString::fromStdString(std::string(genericItem->itemClassName())));
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         table->setItem(count, 1, item);
 
@@ -103,7 +103,7 @@ void DataManagerDialog::filterTable(QTableWidget *table, GenericItem *current, Q
         else
         {
             // Check name
-            QString name = genericItem->name();
+            QString name = QString::fromStdString(std::string(genericItem->name()));
             auto inName = name.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
 
             // Hide the item?
@@ -133,7 +133,7 @@ void DataManagerDialog::referencePointRowUpdate(int row, ReferencePoint *refPoin
     }
     else
         item = ui_.ReferencePointsTable->item(row, 0);
-    item->setText(refPoint->suffix());
+    item->setText(QString::fromStdString(std::string(refPoint->suffix())));
 
     // Restart file name
     if (createItems)
@@ -144,7 +144,7 @@ void DataManagerDialog::referencePointRowUpdate(int row, ReferencePoint *refPoin
     }
     else
         item = ui_.ReferencePointsTable->item(row, 1);
-    item->setText(refPoint->restartFile());
+    item->setText(QString::fromStdString(std::string(refPoint->restartFile())));
 }
 
 // Return currently-selected ReferencePoint
@@ -166,7 +166,8 @@ void DataManagerDialog::updateControls()
                     ":/dissolve/icons/dissolve.png");
     ListIterator<Configuration> configIterator(dissolve_.configurations());
     while (Configuration *cfg = configIterator.iterate())
-        addItemsToTable(ui_.SimulationDataTable, cfg->moduleData().items(), cfg->name(), ":/tabs/icons/tabs_configuration.svg");
+        addItemsToTable(ui_.SimulationDataTable, cfg->moduleData().items(), QString::fromStdString(std::string(cfg->name())),
+                        ":/tabs/icons/tabs_configuration.svg");
     ui_.SimulationDataTable->resizeColumnsToContents();
 
     // Populate reference points table
@@ -189,10 +190,10 @@ void DataManagerDialog::on_ReferencePointRemoveButton_clicked(bool checked)
         return;
 
     // For the provided suffix, we need to prune all processing data lists of associated data
-    dissolve_.processingModuleData().pruneWithSuffix(qPrintable(refPoint->suffix()));
+    dissolve_.processingModuleData().pruneWithSuffix(refPoint->suffix());
     ListIterator<Configuration> configIterator(dissolve_.configurations());
     while (Configuration *cfg = configIterator.iterate())
-        cfg->moduleData().pruneWithSuffix(qPrintable(refPoint->suffix()));
+        cfg->moduleData().pruneWithSuffix(refPoint->suffix());
 
     updateControls();
 }
@@ -218,7 +219,7 @@ void DataManagerDialog::on_ReferencePointOpenButton_clicked(bool checked)
     refPoint->setSuffix(qPrintable(suffix));
 
     // Load the data
-    if (!dissolve_.loadRestartAsReference(qPrintable(refPoint->restartFile()), qPrintable(refPoint->suffix())))
+    if (!dissolve_.loadRestartAsReference(refPoint->restartFile(), refPoint->suffix()))
         QMessageBox::warning(this, "Error loading reference point",
                              "Couldn't load the reference point data specified.\nThis may be because your simulation "
                              "setup doesn't match that expected by the restart data.\n");
@@ -243,10 +244,10 @@ void DataManagerDialog::on_ReferencePointCreateButton_clicked(bool checked)
         return;
 
     if (dissolve_.saveRestart(qPrintable(filename)))
-        Messenger::print("Saved reference point to '%s'.\n", qPrintable(filename));
+        Messenger::print("Saved reference point to '{}'.\n", qPrintable(filename));
     else
     {
-        Messenger::error("Failed to save reference point to '%s'.\n", qPrintable(filename));
+        Messenger::error("Failed to save reference point to '{}'.\n", qPrintable(filename));
         return;
     }
 

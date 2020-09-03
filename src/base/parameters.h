@@ -23,8 +23,6 @@
 
 #define MAXSRPARAMETERS 4
 
-#include "base/charstring.h"
-
 // Interatomic Interaction Parameters
 class InteractionParameters
 {

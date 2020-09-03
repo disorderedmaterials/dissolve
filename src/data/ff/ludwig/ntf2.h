@@ -45,9 +45,9 @@ class Forcefield_Ludwig_NTf2 : public Forcefield
      */
     public:
     // Return name of Forcefield
-    const char *name() const;
+    std::string_view name() const;
     // Return description for Forcefield
-    const char *description() const;
+    std::string_view description() const;
     // Return short-range interaction style for AtomTypes
     Forcefield::ShortRangeType shortRangeType() const;
 };

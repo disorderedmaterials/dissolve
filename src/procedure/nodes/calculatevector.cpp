@@ -58,7 +58,7 @@ int CalculateVectorProcedureNode::dimensionality() const { return 3; }
  */
 
 // Prepare any necessary data, ready for execution
-bool CalculateVectorProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList)
+bool CalculateVectorProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Call the base class function
     if (!CalculateProcedureNodeBase::prepare(cfg, prefix, targetList))
@@ -72,14 +72,14 @@ bool CalculateVectorProcedureNode::prepare(Configuration *cfg, const char *prefi
 
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult CalculateVectorProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                         const char *prefix, GenericList &targetList)
+                                                                         std::string_view prefix, GenericList &targetList)
 {
 #ifdef CHECKS
     for (int n = 0; n < nSitesRequired(); ++n)
     {
         if (sites_[n]->currentSite() == NULL)
         {
-            Messenger::error("Observable %i has no current site.\n", n);
+            Messenger::error("Observable {} has no current site.\n", n);
             return ProcedureNode::Failure;
         }
     }

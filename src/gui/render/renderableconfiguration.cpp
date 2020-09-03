@@ -29,7 +29,7 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-RenderableConfiguration::RenderableConfiguration(const Configuration *source, const char *objectTag)
+RenderableConfiguration::RenderableConfiguration(const Configuration *source, std::string_view objectTag)
     : Renderable(Renderable::ConfigurationRenderable, objectTag), source_(source)
 {
     // Set defaults
@@ -336,7 +336,7 @@ bool RenderableConfiguration::writeStyleBlock(LineParser &parser, int indentLeve
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 
-    if (!parser.writeLineF("%s%s  %s\n", indent, configurationStyleKeywords().keyword(RenderableConfiguration::DisplayKeyword),
+    if (!parser.writeLineF("{}{}  {}\n", indent, configurationStyleKeywords().keyword(RenderableConfiguration::DisplayKeyword),
                            configurationDisplayStyles().keyword(displayStyle_)))
         return false;
 
@@ -353,9 +353,9 @@ bool RenderableConfiguration::readStyleBlock(LineParser &parser)
             return false;
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
-        if (!configurationStyleKeywords().isValid(parser.argc(0)))
-            return configurationStyleKeywords().errorAndPrintValid(parser.argc(0));
-        auto kwd = configurationStyleKeywords().enumeration(parser.argc(0));
+        if (!configurationStyleKeywords().isValid(parser.argsv(0)))
+            return configurationStyleKeywords().errorAndPrintValid(parser.argsv(0));
+        auto kwd = configurationStyleKeywords().enumeration(parser.argsv(0));
         if (!configurationStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 
@@ -364,16 +364,16 @@ bool RenderableConfiguration::readStyleBlock(LineParser &parser)
         {
             // Display style
             case (RenderableConfiguration::DisplayKeyword):
-                if (!configurationDisplayStyles().isValid(parser.argc(1)))
-                    return configurationDisplayStyles().errorAndPrintValid(parser.argc(1));
-                displayStyle_ = configurationDisplayStyles().enumeration(parser.argc(1));
+                if (!configurationDisplayStyles().isValid(parser.argsv(1)))
+                    return configurationDisplayStyles().errorAndPrintValid(parser.argsv(1));
+                displayStyle_ = configurationDisplayStyles().enumeration(parser.argsv(1));
                 break;
             // End of block
             case (RenderableConfiguration::EndStyleKeyword):
                 return true;
             // Unrecognised Keyword
             default:
-                Messenger::warn("Unrecognised display style keyword for RenderableConfiguration: %s\n", parser.argc(0));
+                Messenger::warn("Unrecognised display style keyword for RenderableConfiguration: {}\n", parser.argsv(0));
                 return false;
                 break;
         }

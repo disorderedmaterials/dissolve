@@ -21,16 +21,14 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/processpool.h"
 #include "templates/list.h"
 #include "templates/vector3.h"
+#include <fmt/format.h>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <vector>
-
-#define MAXLINELENGTH 8092
 
 // Forward Declarations
 /* none */
@@ -64,19 +62,17 @@ class LineParser
     };
 
     /*
-     * Source line/file and read options
+     * Source / Destination Streams
      */
     private:
     // Associated process pool (if any)
     ProcessPool *processPool_;
     // Current input filename (if any)
-    CharString inputFilename_;
+    std::string inputFilename_;
     // Current output filename (if any)
-    CharString outputFilename_;
+    std::string outputFilename_;
     // Line to parse
-    char line_[MAXLINELENGTH];
-    // Length of line_
-    int lineLength_;
+    std::string line_;
     // Current reading position in line
     int linePos_;
     // Integer line number of last read line
@@ -91,34 +87,32 @@ class LineParser
     std::stringstream *cachedFile_;
 
     private:
+    // Reset data
+    void reset();
     // Return current stream for input
     std::istream *inputStream() const;
 
     public:
-    // Reset data
-    void reset();
     // Return associated process pool (if any)
     ProcessPool *processPool() const;
     // Return filename of current inputFile (if any)
-    const char *inputFilename() const;
+    std::string_view inputFilename() const;
     // Return filename of current outputFile (if any)
-    const char *outputFilename() const;
-    // Return pointer to start of current line
-    const char *line() const;
-    // Set line target
-    void setLine(const char *s);
+    std::string_view outputFilename() const;
+    // Return current line
+    std::string_view line() const;
     // Return integer line number of last read line
     int lastLineNo() const;
     // Return read-only status of file
     bool isFileReadOnly() const;
     // Open new file for reading
-    bool openInput(const char *filename);
+    bool openInput(std::string_view filename);
     // Open input string for reading
-    bool openInputString(const char *string);
+    bool openInputString(std::string_view s);
     // Open new stream for writing
-    bool openOutput(const char *filename, bool directOutput = true);
+    bool openOutput(std::string_view filename, bool directOutput = true);
     // Open existing stream for writing
-    bool appendOutput(const char *filename);
+    bool appendOutput(std::string_view filename);
     // Close file(s)
     void closeFiles();
     // Return whether current file source is good for reading
@@ -146,42 +140,85 @@ class LineParser
     bool fileInput_;
     // Whether output is cached or direct
     bool directOutput_;
+    // Whether the end of the string has been found in getNextArg()
+    bool endOfLine_;
+
+    private:
+    // Gets next delimited arg from internal line
+    bool getNextArg(int optionMask, std::string &destarg);
     // Gets all delimited args from internal line
     void getAllArgsDelim(int optionMask);
-    // Working storage for text to write
-    char workingText_[8096];
 
     public:
-    // Gets next delimited arg from internal line
-    bool getNextArg(int optionMask, CharString *destarg);
-    // Gets next n chars from internal line
-    bool getNextN(int optionMask, int length, CharString *destarg = NULL);
     // Read line from file and do delimited parse
     ParseReturnValue getArgsDelim(int optionMask = LineParser::Defaults);
-    // Get rest of line starting at next delimited part
-    bool getRestDelim(CharString *destarg = NULL);
-    // Set line and parse using delimiters
-    void getArgsDelim(int optionMask, const char *s);
-    // Get next delimited chunk from file (not line)
-    bool getCharsDelim(CharString *destarg = NULL);
-    // Get next delimited chunk from string, removing grabbed part
-    bool getCharsDelim(int optionMask, CharString *source, CharString *destarg);
+    // Set line and parse into delimited arguments
+    void getArgsDelim(int optionMask, std::string_view s);
     // Read next line from internal source file, setting as parsing source
     ParseReturnValue readNextLine(int optionMask);
-    // Read next line from internal source file, setting as parsing source and storing in specified CharString
-    ParseReturnValue readNextLine(int optionMask, CharString &dest);
+    // Read next line from internal source file, setting as parsing source and copying to specified string
+    ParseReturnValue readNextLine(int optionMask, std::string &dest);
     // Skip 'n' lines from internal file
-    ParseReturnValue skipLines(int nskip);
-    // Get next delimited argument from internal line
-    bool getArgDelim(int optionMask, CharString *destarg);
-    // Return a number of characters from the input stream
-    const char *getChars(int nchars, bool skipeol = true);
+    ParseReturnValue skipLines(int nlines);
     // Write line to file
-    bool writeLine(const char *s) const;
+    bool writeLine(std::string_view s) const;
     // Write formatted line to file
-    bool writeLineF(const char *fmt, ...) const;
+    template <typename... Args> bool writeLineF(std::string_view format, Args... args) const
+    {
+        auto result = true;
+
+        // Master handles the writing
+        if ((!processPool_) || processPool_->isMaster())
+        {
+            if (!directOutput_)
+            {
+                if (cachedFile_ == NULL)
+                {
+                    Messenger::print("Unable to delayed-writeLineF - destination cache is not open.\n");
+                    result = false;
+                    if (processPool_ && (!processPool_->broadcast(result)))
+                        return false;
+                    return false;
+                }
+            }
+            else if (outputFile_ == NULL)
+            {
+                Messenger::print("Unable to direct-writeLineF - destination file is not open.\n");
+                result = false;
+                if (processPool_ && (!processPool_->broadcast(result)))
+                    return false;
+                return false;
+            }
+
+            // Format the line and store it
+            if (directOutput_)
+                (*outputFile_) << fmt::format(format, args...);
+            else
+                (*cachedFile_) << fmt::format(format, args...);
+        }
+
+        // Broadcast result of write
+        if (processPool_ && (!processPool_->broadcast(result)))
+            return false;
+
+        return result;
+    }
     // Print banner comment of fixed width
-    bool writeBannerComment(const char *fmt, ...);
+    template <typename... Args> bool writeBannerComment(std::string_view format, Args... args)
+    {
+        const auto bannerWidth = 80;
+        static std::string bannerBorder = fmt::format("#{0:=^{1}}#", "", bannerWidth - 2);
+
+        // Finally, print the banner
+        if (!writeLineF("\n{}\n", bannerBorder))
+            return false;
+        if (!writeLineF("#{:^{}}#", fmt::format(format, args...), bannerWidth - 2))
+            return false;
+        if (!writeLineF("\n{}\n", bannerBorder))
+            return false;
+
+        return true;
+    }
     // Write long int argument as single line
     bool writeArg(long int i) const;
     // Write long long int argument as single line
@@ -197,18 +234,14 @@ class LineParser
      * Argument Data
      */
     private:
-    // Temporary string variable
-    char tempArg_[MAXLINELENGTH];
     // Parsed arguments
-    std::vector<CharString> arguments_;
-    // Whether the end of the string has been found in get_next_arg()
-    bool endOfLine_;
+    std::vector<std::string> arguments_;
 
     public:
     // Returns number of arguments grabbed from last parse
     int nArgs() const;
-    // Returns the specified argument as a character string
-    const char *argc(int i);
+    // Returns the specified argument as a string view
+    std::string_view argsv(int i);
     // Returns the specified argument as an integer
     int argi(int i);
     // Returns the specified argument as a long integer
@@ -217,22 +250,10 @@ class LineParser
     double argd(int i);
     // Returns the specified argument as a bool
     bool argb(int i);
-    // Returns the specified argument as a float
-    float argf(int i);
     // Return the specified and next two arguments as a Vec3<int>
     Vec3<int> arg3i(int i);
     // Return the specified and next two arguments as a Vec3<double>
     Vec3<double> arg3d(int i);
     // Returns whether the specified argument exists
     bool hasArg(int i) const;
-    // Return specified argument as int, placing in variable provided
-    bool argAs(int i, int &destination);
-    // Return specified argument as double, placing in variable provided
-    bool argAs(int i, double &destination);
-    // Return specified argument as bool, placing in variable provided
-    bool argAs(int i, bool &destination);
-    // Return specified argument as Vec3<double>, placing in variable provided
-    bool argAs(int i, Vec3<int> &destination);
-    // Return specified argument as Vec3<double>, placing in variable provided
-    bool argAs(int i, Vec3<double> &destination);
 };

@@ -95,7 +95,7 @@ bool AddConfigurationWizard::displayControlPage(int index)
 {
     // Check page index given
     if ((index < 0) || (index >= AddConfigurationWizard::nPages))
-        return Messenger::error("Page index %i not recognised.\n", index);
+        return Messenger::error("Page index {} not recognised.\n", index);
 
     // Update controls / check flow
     switch (index)
@@ -185,7 +185,8 @@ void AddConfigurationWizard::reset()
     importTarget_ = new Configuration;
 
     // Set a new, unique name ready on the final page
-    ui_.FinishNameEdit->setText(dissolveReference_->constCoreData().uniqueConfigurationName("NewConfiguration"));
+    ui_.FinishNameEdit->setText(
+        QString::fromStdString(std::string(dissolveReference_->constCoreData().uniqueConfigurationName("NewConfiguration"))));
 }
 
 /*
@@ -216,10 +217,7 @@ void AddConfigurationWizard::on_StartCreateTemplateButton_clicked(bool checked)
 void AddConfigurationWizard::on_FinishNameEdit_textChanged(const QString text)
 {
     if (!dissolveReference_)
-    {
-        printf("Internal Error: Dissolve pointer has not been set in AddConfigurationWizard.\n");
         return;
-    }
 
     // Name of the prospective Configuration has been changed, so make sure it is valid
     bool nameIsValid;

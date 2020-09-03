@@ -22,7 +22,8 @@
 #pragma once
 
 #include "base/outputhandler.h"
-#include <stdarg.h>
+#include <fmt/format.h>
+#include <functional>
 
 // Forward Declarations
 class LineParser;
@@ -30,9 +31,6 @@ class LineParser;
 // Global messaging handler
 class Messenger
 {
-    public:
-    Messenger();
-
     /*
      * General Print Routines
      */
@@ -45,20 +43,10 @@ class Messenger
     static bool verbose_;
     // Master-only mode
     static bool masterOnly_;
-    // Storage for text to print
-    static char text_[8096];
-    // Working storage for text to print
-    static char workingText_[8096];
 
     private:
-    // Master text creation / formatting routine
-    static void createText(const char *indentText, const char *format, va_list arguments);
-    // Master text creation / formatting routine (indent text only, for banners etc.)
-    static void createText(const char *indentText);
-    // Create and print text
-    static void createAndPrintText(const char *indentText, const char *format, va_list arguments);
-    // Create and print text (simple)
-    static void createAndPrintText(const char *text);
+    // Split supplied text into lines (delimited by '\n') and send for output
+    static void splitAndPrint(std::string_view text);
 
     public:
     // Set status of quiet mode
@@ -75,18 +63,93 @@ class Messenger
     static bool isVerbose();
     // Set status of master-only mode
     static void setMasterOnly(bool b);
+    // Print normal message (no formatters)
+    static void print(std::string_view s);
     // Print normal message
-    static void print(const char *fmt, ...);
+    template <typename... Args> static void print(std::string_view format, Args... args)
+    {
+        if (quiet_ || muted_)
+            return;
+
+        splitAndPrint(fmt::format(format, args...));
+    }
     // Print verbose message
-    static void printVerbose(const char *fmt, ...);
+    template <typename... Args> static void printVerbose(std::string_view format, Args... args)
+    {
+        if (quiet_ || muted_ || (!verbose_))
+            return;
+
+        splitAndPrint(fmt::format(format, args...));
+    }
     // Print error message
-    static bool error(const char *fmt, ...);
+    template <typename... Args> static bool error(std::string_view format, Args... args)
+    {
+        if (quiet_ || muted_)
+            return false;
+
+        outputBlank();
+        if (outputHandler_)
+            outputHandler_->styleForError();
+        setOutputPrefix("***  ERROR");
+        outputBlank();
+        splitAndPrint(fmt::format(format, args...));
+        outputBlank();
+        clearOutputPrefix();
+        if (outputHandler_)
+            outputHandler_->resetStyling();
+        outputBlank();
+
+        return false;
+    }
     // Print warn message
-    static void warn(const char *fmt, ...);
+    template <typename... Args> static void warn(std::string_view format, Args... args)
+    {
+        if (quiet_ || muted_)
+            return;
+
+        if (outputHandler_)
+            outputHandler_->styleForWarning();
+        setOutputPrefix("***  WARN ");
+        outputBlank();
+        splitAndPrint(fmt::format(format, args...));
+        outputBlank();
+        clearOutputPrefix();
+        if (outputHandler_)
+            outputHandler_->resetStyling();
+    }
     // Print banner message
-    static void banner(const char *fmt, ...);
+    template <typename... Args> static void banner(std::string_view format, Args... args)
+    {
+        if (quiet_ || muted_)
+            return;
+
+        const auto bannerWidth = 80;
+        static std::string bannerBorder(bannerWidth, '=');
+
+        std::string bannerText = fmt::format(format, args...);
+
+        outputBlank();
+        outputText(bannerBorder);
+        outputText(fmt::format("*{:^78}*", bannerText));
+        outputText(bannerBorder);
+        outputBlank();
+    }
     // Print heading message
-    static void heading(const char *fmt, ...);
+    template <typename... Args> static void heading(std::string_view format, Args... args)
+    {
+        if (quiet_ || muted_)
+            return;
+
+        const auto headingWidth = 80;
+        static std::string headingBorder(headingWidth, '-');
+
+        std::string headingText = fmt::format(format, args...);
+
+        outputBlank();
+        outputText(fmt::format("*{:^80}*", headingText));
+        outputText(headingBorder);
+        outputBlank();
+    }
 
     /*
      * Text Output Routine
@@ -94,12 +157,22 @@ class Messenger
     private:
     // Output handler (if any)
     static OutputHandler *outputHandler_;
+    // Text to prefix to all output (if any)
+    static std::string outputPrefix_;
+
+    private:
+    // Set prefix text
+    static void setOutputPrefix(std::string_view prefix);
+    // Clear prefix text
+    static void clearOutputPrefix();
+    // Output text to relevant handler
+    static void outputText(std::string_view s);
+    // Output blank line (with prefix if set) to relevant handler
+    static void outputBlank();
 
     public:
     // Set output handler
     static void setOutputHandler(OutputHandler *outputHandler);
-    // Print text
-    static void outputText(const char *text);
 
     /*
      * File Redirection
@@ -112,7 +185,7 @@ class Messenger
 
     public:
     // Enable redirection of all messaging to specified file
-    static bool enableRedirect(const char *filename);
+    static bool enableRedirect(std::string_view filename);
     // Cease redirection of messaging to file
     static void ceaseRedirect();
 };

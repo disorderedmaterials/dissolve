@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/enumoptions.h"
 #include "neta/connection.h"
 #include "neta/logic.h"
@@ -46,7 +45,7 @@ class NETADefinition
     // Root node of the definition
     NETARootNode rootNode_;
     // Original definition string
-    CharString definitionString_;
+    std::string definitionString_;
 
     public:
     // Return root node pointer
@@ -54,9 +53,9 @@ class NETADefinition
     // Create definition from stored string
     bool create(const Forcefield *associatedFF = nullptr);
     // Set generating string
-    void setDefinitionString(const char *definition);
+    void setDefinitionString(std::string_view definition);
     // Return original generating string
-    const char *definitionString() const;
+    std::string_view definitionString() const;
 
     /*
      * Matching

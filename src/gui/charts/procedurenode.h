@@ -97,7 +97,7 @@ class ProcedureChartNodeBlock : public QWidget, public ChartBlock
      */
     public:
     // Return type of this block
-    const char *blockType();
+    const QString blockType() const;
 
     /*
      * Widget (ChartBlock Reimplementations)

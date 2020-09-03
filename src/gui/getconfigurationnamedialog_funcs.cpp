@@ -32,7 +32,7 @@ GetConfigurationNameDialog::GetConfigurationNameDialog(QWidget *parent, const Co
 GetConfigurationNameDialog::~GetConfigurationNameDialog() {}
 
 // Run the dialog
-bool GetConfigurationNameDialog::get(const Configuration *currentConfiguration, const char *currentName)
+bool GetConfigurationNameDialog::get(const Configuration *currentConfiguration, const QString &currentName)
 {
     configuration_ = currentConfiguration;
 

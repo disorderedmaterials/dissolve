@@ -20,7 +20,6 @@
 */
 
 #include "data/elements.h"
-#include "base/charstring.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 #include <ctype.h>
@@ -29,12 +28,9 @@
  * Element
  */
 
-Element::Element(int Z, const char *name, const char *symbol, int group)
+Element::Element(int Z, std::string_view name, std::string_view symbol, int group)
+    : Z_(Z), name_{name}, symbol_{symbol}, group_(group)
 {
-    Z_ = Z;
-    name_ = name;
-    symbol_ = symbol;
-    group_ = group;
 }
 
 /*
@@ -48,10 +44,10 @@ int Element::Z() const { return Z_; }
 bool Element::isUnknown() const { return Z_ == 0; }
 
 // Return name of element
-const char *Element::name() const { return name_; }
+std::string_view Element::name() const { return name_; }
 
 // Return symbol of element
-const char *Element::symbol() const { return symbol_; }
+std::string_view Element::symbol() const { return symbol_; }
 
 // Return group for element
 int Element::group() const { return group_; }
@@ -114,7 +110,7 @@ Element &Elements::element(int Z)
 {
     if ((Z < 0) || (Z > nElements()))
     {
-        Messenger::error("Element with Z=%i is out of range!\n", Z);
+        Messenger::error("Element with Z={} is out of range!\n", Z);
         return elements()[0];
     }
 
@@ -122,40 +118,36 @@ Element &Elements::element(int Z)
 }
 
 // Return Element with corresponding symbol
-Element &Elements::element(const char *symbol)
+Element &Elements::element(std::string_view symbol)
 {
-    static CharString cleaned;
-    cleaned.clear();
-    int n, nDigits = 0, count = 0;
-    for (n = 0; symbol[n] != '\0'; n++)
+    std::string cleaned;
+    auto nDigits = 0;
+    for (const auto c : symbol)
     {
-        if (symbol[n] == ' ')
+        if (c == ' ')
             continue;
-        else if ((symbol[n] > 64) && (symbol[n] < 91))
-            cleaned += (count == 0 ? symbol[n] : tolower(symbol[n]));
-        else if ((symbol[n] > 96) && (symbol[n] < 123))
-            cleaned += (count == 0 ? toupper(symbol[n]) : symbol[n]);
-        else if ((symbol[n] > 47) && (symbol[n] < 58))
+        else if (std::isalpha(c))
+            cleaned += c;
+        else if (std::isdigit(c))
         {
-            cleaned += symbol[n];
+            cleaned += c;
             ++nDigits;
         }
         else
             break;
-        ++count;
     }
 
     // Pure digit given?
-    if (count == nDigits)
+    if (cleaned.size() == nDigits)
     {
-        auto Z = atoi(cleaned.get());
+        auto Z = std::stoi(cleaned);
         if ((Z < 0) || (Z > nElements()))
             return elements()[0];
         else
             return elements()[Z];
     }
     else
-        for (n = 0; n < nElements(); n++)
+        for (int n = 0; n < nElements(); n++)
             if (cleaned == elements()[n].symbol())
                 return elements()[n];
 
@@ -166,16 +158,13 @@ Element &Elements::element(const char *symbol)
 Element *Elements::elementPointer(int Z) { return &element(Z); }
 
 // Return pointer to Element with corresponding symbol
-Element *Elements::elementPointer(const char *symbol) { return &element(symbol); }
-
-// Return total number of defined elements
-int Elements::nElements() { return 119; }
+Element *Elements::elementPointer(std::string_view symbol) { return &element(symbol); }
 
 // Return name of element with specified Z
-const char *Elements::name(int Z) { return element(Z).name(); }
+std::string_view Elements::name(int Z) { return element(Z).name(); }
 
 // Return symbol of element with specified Z
-const char *Elements::symbol(int Z) { return element(Z).symbol(); }
+std::string_view Elements::symbol(int Z) { return element(Z).symbol(); }
 
 // Return group for element with specified Z
 int Elements::group(int Z) { return element(Z).group(); }
@@ -195,7 +184,7 @@ const Element &ElementReference::element() const { return element_; }
 int ElementReference::Z() const { return element_.Z(); }
 
 // Return name of element
-const char *ElementReference::name() const { return element_.name(); }
+std::string_view ElementReference::name() const { return element_.name(); }
 
 // Return symbol of element
-const char *ElementReference::symbol() const { return element_.symbol(); }
+std::string_view ElementReference::symbol() const { return element_.symbol(); }

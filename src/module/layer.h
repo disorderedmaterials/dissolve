@@ -21,8 +21,8 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "module/list.h"
+#include "templates/listitem.h"
 
 // Forward Declarations
 class Module;
@@ -40,7 +40,7 @@ class ModuleLayer : public ModuleList, public ListItem<ModuleLayer>
      */
     private:
     // Name of layer
-    CharString name_;
+    std::string name_;
     // Whether the layer is enabled
     bool enabled_;
     // Frequency, relative to the main iteration counter, at which to execute the layer
@@ -48,9 +48,9 @@ class ModuleLayer : public ModuleList, public ListItem<ModuleLayer>
 
     public:
     // Set name of layer
-    void setName(const char *name);
+    void setName(std::string_view name);
     // Return name of layer
-    const char *name() const;
+    std::string_view name() const;
     // Set whether the layer is enabled
     void setEnabled(bool enabled);
     // Return whether the layer is enabled
@@ -60,7 +60,7 @@ class ModuleLayer : public ModuleList, public ListItem<ModuleLayer>
     // Return frequency, relative to the main iteration counter, at which to execute the layer
     int frequency() const;
     // Return short descriptive text relating frequency to supplied iteration number
-    const char *frequencyDetails(int iteration) const;
+    std::string frequencyDetails(int iteration) const;
     // Return whether the layer should execute this iteration
     bool runThisIteration(int iteration) const;
 };

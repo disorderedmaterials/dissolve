@@ -158,7 +158,6 @@ void DataViewer::contextMenuRequested(QPoint pos)
 {
     // Check for object under current coordinates...
     ViewerObject objectType = queryAt(rMouseLast_.x, rMouseLast_.y);
-    // 	printf("object type = %i [%s] [%s]\n", objectType, queryObjectInfo(), queryObjectSubInfo());
 
     // Set up the menu according to the clicked object
     if (objectType == BaseViewer::RenderableObject)
@@ -167,7 +166,7 @@ void DataViewer::contextMenuRequested(QPoint pos)
         Renderable *rend = renderableWithTag(queryObjectInfo());
         if (!rend)
         {
-            Messenger::error("Couldn't locate renderable with tag '%s' in the DataViewer...\n", queryObjectInfo());
+            fmt::print("Couldn't locate renderable with tag '{}' in the DataViewer...", queryObjectInfo());
             return;
         }
 

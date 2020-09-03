@@ -269,7 +269,7 @@ void SpeciesViewer::endInteraction()
             postRedisplay();
             break;
         default:
-            printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode());
+            Messenger::error("Don't know how to complete interaction mode {}\n", interactionMode());
             break;
     }
 }
@@ -293,7 +293,7 @@ void SpeciesViewer::cancelInteraction()
  */
 
 // Return text describing current interaction mode
-const char *SpeciesViewer::interactionModeText() const
+const QString SpeciesViewer::interactionModeText() const
 {
     switch (interactionMode())
     {

@@ -38,10 +38,10 @@ SpeciesSite::~SpeciesSite() {}
  */
 
 // Set name of site
-void SpeciesSite::setName(const char *newName) { name_ = newName; }
+void SpeciesSite::setName(std::string_view newName) { name_ = newName; }
 
 // Return anme of site
-const char *SpeciesSite::name() const { return name_.get(); }
+std::string_view SpeciesSite::name() const { return name_; }
 
 // Set Species parent
 void SpeciesSite::setParent(Species *sp) { parent_ = sp; }
@@ -64,7 +64,7 @@ bool SpeciesSite::addOriginAtom(SpeciesAtom *originAtom)
 
     // If the SpeciesAtom already exists in the list, complain
     if (originAtoms_.contains(originAtom))
-        return Messenger::error("Origin atom index %i specified twice for site '%s'.\n", originAtom->index(), name_.get());
+        return Messenger::error("Origin atom index {} specified twice for site '{}'.\n", originAtom->index(), name_);
 
     originAtoms_.append(originAtom);
 
@@ -145,7 +145,7 @@ bool SpeciesSite::addXAxisAtom(SpeciesAtom *xAxisAtom)
 
     // If the SpeciesAtom already exists in the list, complain
     if (xAxisAtoms_.contains(xAxisAtom))
-        return Messenger::error("X-axis atom index %i specified twice for site '%s'.\n", xAxisAtom->index(), name_.get());
+        return Messenger::error("X-axis atom index {} specified twice for site '{}'.\n", xAxisAtom->index(), name_);
 
     xAxisAtoms_.append(xAxisAtom);
 
@@ -215,7 +215,7 @@ bool SpeciesSite::addYAxisAtom(SpeciesAtom *yAxisAtom)
 
     // If the SpeciesAtom already exists in the list, complain
     if (yAxisAtoms_.contains(yAxisAtom))
-        return Messenger::error("Y-axis atom index %i specified twice for site '%s'.\n", yAxisAtom->index(), name_.get());
+        return Messenger::error("Y-axis atom index {} specified twice for site '{}'.\n", yAxisAtom->index(), name_);
 
     yAxisAtoms_.append(yAxisAtom);
 
@@ -387,7 +387,7 @@ EnumOptions<SpeciesSite::SiteKeyword> SpeciesSite::keywords()
 // Read site definition from specified LineParser
 bool SpeciesSite::read(LineParser &parser)
 {
-    Messenger::printVerbose("\nReading information for Site '%s'...\n", name());
+    Messenger::printVerbose("\nReading information for Site '{}'...\n", name());
 
     auto blockDone = false, error = false;
 
@@ -398,9 +398,9 @@ bool SpeciesSite::read(LineParser &parser)
             return false;
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
-        if (!keywords().isValid(parser.argc(0)))
-            return keywords().errorAndPrintValid(parser.argc(0));
-        auto kwd = keywords().enumeration(parser.argc(0));
+        if (!keywords().isValid(parser.argsv(0)))
+            return keywords().errorAndPrintValid(parser.argsv(0));
+        auto kwd = keywords().enumeration(parser.argsv(0));
         if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 
@@ -408,7 +408,7 @@ bool SpeciesSite::read(LineParser &parser)
         switch (kwd)
         {
             case (SpeciesSite::EndSiteKeyword):
-                Messenger::print("Found end of Site '%s'.\n", name());
+                Messenger::print("Found end of Site '{}'.\n", name());
                 blockDone = true;
                 break;
             case (SpeciesSite::OriginKeyword):
@@ -416,7 +416,7 @@ bool SpeciesSite::read(LineParser &parser)
                 {
                     if (!addOriginAtom(parser.argi(n) - 1))
                     {
-                        Messenger::error("Failed to add origin atom for site '%s'.\n", name());
+                        Messenger::error("Failed to add origin atom for site '{}'.\n", name());
                         error = true;
                         break;
                     }
@@ -430,7 +430,7 @@ bool SpeciesSite::read(LineParser &parser)
                 {
                     if (!addXAxisAtom(parser.argi(n) - 1))
                     {
-                        Messenger::error("Failed to add x-axis atom for site '%s'.\n", name());
+                        Messenger::error("Failed to add x-axis atom for site '{}'.\n", name());
                         error = true;
                         break;
                     }
@@ -441,14 +441,14 @@ bool SpeciesSite::read(LineParser &parser)
                 {
                     if (!addYAxisAtom(parser.argi(n) - 1))
                     {
-                        Messenger::error("Failed to add y-axis atom for site '%s'.\n", name());
+                        Messenger::error("Failed to add y-axis atom for site '{}'.\n", name());
                         error = true;
                         break;
                     }
                 }
                 break;
             default:
-                printf("DEV_OOPS - Site block keyword '%s' not accounted for.\n", keywords().keyword(kwd));
+                Messenger::error("Site block keyword '{}' not accounted for.\n", keywords().keyword(kwd));
                 error = true;
                 break;
         }
@@ -473,10 +473,10 @@ bool SpeciesSite::read(LineParser &parser)
 }
 
 // Write site definition to specified LineParser
-bool SpeciesSite::write(LineParser &parser, const char *prefix)
+bool SpeciesSite::write(LineParser &parser, std::string_view prefix)
 {
     // Write start of site definition
-    if (!parser.writeLineF("%sSite  '%s'\n", prefix, name()))
+    if (!parser.writeLineF("{}Site  '{}'\n", prefix, name()))
         return false;
 
     // Origin atom indices
@@ -484,16 +484,16 @@ bool SpeciesSite::write(LineParser &parser, const char *prefix)
     {
         Array<int> indices = originAtomIndices();
 
-        CharString atomIndices;
+        std::string atomIndices;
         for (int n = 0; n < indices.nItems(); ++n)
-            atomIndices.strcatf("  %i", indices[n] + 1);
+            atomIndices += fmt::format("  {}", indices[n] + 1);
 
-        if (!parser.writeLineF("%s  %s%s\n", prefix, keywords().keyword(OriginKeyword), atomIndices.get()))
+        if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(OriginKeyword), atomIndices))
             return false;
     }
 
     // Origin mass weighted?
-    if (originMassWeighted_ && (!parser.writeLineF("%s  %s  True\n", prefix, keywords().keyword(OriginMassWeightedKeyword))))
+    if (originMassWeighted_ && (!parser.writeLineF("{}  {}  True\n", prefix, keywords().keyword(OriginMassWeightedKeyword))))
         return false;
 
     // X-Axis atom indices
@@ -501,11 +501,11 @@ bool SpeciesSite::write(LineParser &parser, const char *prefix)
     {
         Array<int> indices = xAxisAtomIndices();
 
-        CharString atomIndices;
+        std::string atomIndices;
         for (int n = 0; n < indices.nItems(); ++n)
-            atomIndices.strcatf("  %i", indices[n] + 1);
+            atomIndices += fmt::format("  {}", indices[n] + 1);
 
-        if (!parser.writeLineF("%s  %s%s\n", prefix, keywords().keyword(XAxisKeyword), atomIndices.get()))
+        if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(XAxisKeyword), atomIndices))
             return false;
     }
 
@@ -514,16 +514,16 @@ bool SpeciesSite::write(LineParser &parser, const char *prefix)
     {
         Array<int> indices = yAxisAtomIndices();
 
-        CharString atomIndices;
+        std::string atomIndices;
         for (int n = 0; n < indices.nItems(); ++n)
-            atomIndices.strcatf("  %i", indices[n] + 1);
+            atomIndices += fmt::format("  {}", indices[n] + 1);
 
-        if (!parser.writeLineF("%s  %s%s\n", prefix, keywords().keyword(YAxisKeyword), atomIndices.get()))
+        if (!parser.writeLineF("{}  {}{}\n", prefix, keywords().keyword(YAxisKeyword), atomIndices))
             return false;
     }
 
     // Write start of site definition
-    if (!parser.writeLineF("%s%s\n", prefix, keywords().keyword(EndSiteKeyword)))
+    if (!parser.writeLineF("{}{}\n", prefix, keywords().keyword(EndSiteKeyword)))
         return false;
 
     return true;

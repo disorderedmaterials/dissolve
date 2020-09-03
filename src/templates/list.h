@@ -87,7 +87,7 @@ template <class T> class List
     {
         if ((index < 0) || (index >= nItems_))
         {
-            Messenger::error("LIST_OPERATOR[] - Array index (%i) out of bounds (%i items in List).\n", index, nItems_);
+            Messenger::error("LIST_OPERATOR[] - Array index ({}) out of bounds ({} items in List).\n", index, nItems_);
             return NULL;
         }
         return array()[index];
@@ -350,7 +350,7 @@ template <class T> class List
     {
         if ((pos < 0) || (pos >= nItems_))
         {
-            Messenger::error("Internal Error: Invalid position %i passed to List<T>::remove(int pos) (nItems_ = %i)\n", pos,
+            Messenger::error("Internal Error: Invalid position {} passed to List<T>::remove(int pos) (nItems_ = {})\n", pos,
                              nItems_);
             return;
         }
@@ -452,7 +452,7 @@ template <class T> class List
     {
         if ((n < 0) || (n >= nItems_))
         {
-            Messenger::error("Internal Error: List array index %i is out of bounds in List<T>::item().\n", n);
+            Messenger::error("Internal Error: List array index {} is out of bounds in List<T>::item().\n", n);
             return NULL;
         }
         int count = -1;
@@ -474,7 +474,7 @@ template <class T> class List
                 break;
             i = i->next_;
             if (i == NULL)
-                Messenger::error("List::fillArray <<<< Not enough items in list - requested %i, had %i >>>>\n", nItems,
+                Messenger::error("List::fillArray <<<< Not enough items in list - requested {}, had {} >>>>\n", nItems,
                                  nItems_);
         }
     }
@@ -525,10 +525,8 @@ template <class T> class List
     void swap(T *item1, T *item2)
     {
         if ((item1 == NULL) || (item2 == NULL))
-        {
-            Messenger::error("Internal Error: NULL pointer(s) passed to List<T>::swap(%p,%p).\n", item1, item2);
             return;
-        }
+
         // If the items are adjacent, swap the pointers 'outside' the pair and swap the next/prev between them
         T *n1, *n2, *p1, *p2;
         if ((item1->next_ == item2) || (item2->next_ == item1))
@@ -558,21 +556,17 @@ template <class T> class List
         else
         {
             // Store the list pointers of the two items
-            // printf("Item 1 %p next %p prev %p\n",item1,item1->next_,item1->prev_);
-            // printf("Item 2 %p next %p prev %p\n",item2,item2->next_,item2->prev_);
-            // printf("Item 1 nextprev %p prevnext %p\n",item1->next_->prev_,item1->prev_->next_);
-            // printf("Item 2 nextprev %p prevnext %p\n",item2->next_->prev_,item2->prev_->next_);
             n1 = item1->next_;
             p1 = item1->prev_;
             n2 = item2->next_;
             p2 = item2->prev_;
+
             // Set new values of swapped items
             item1->next_ = n2;
             item1->prev_ = p2;
             item2->next_ = n1;
             item2->prev_ = p1;
-            // printf("Item 1 next %p prev %p\n",item1->next_,item1->prev_);
-            // printf("Item 2 next %p prev %p\n",item2->next_,item2->prev_);
+
             // Set new values of items around swapped items
             if (item1->next_ != NULL)
                 item1->next_->prev_ = item1;
@@ -590,8 +584,6 @@ template <class T> class List
                 item2->prev_->next_ = item2;
             else
                 listHead_ = item2;
-            // printf("Item 1 nextprev %p prevnext %p\n",item1->next_->prev_,item1->prev_->next_);
-            // printf("Item 2 nextprev %p prevnext %p\n",item2->next_->prev_,item2->prev_->next_);
         }
         regenerate_ = true;
     }
@@ -632,14 +624,14 @@ template <class T> class List
         // Check positions
         if ((target < 0) || (target >= nItems_))
         {
-            Messenger::error("Internal Error: Old position (%i) is out of range (0 - %i) in List<T>::move\n", target,
+            Messenger::error("Internal Error: Old position ({}) is out of range (0 - {}) in List<T>::move\n", target,
                              nItems_ - 1);
             return;
         }
         int newpos = target + delta;
         if ((newpos < 0) || (newpos >= nItems_))
         {
-            Messenger::error("Internal Error: New position (%i) is out of range (0 - %i) in List<T>::move\n", newpos,
+            Messenger::error("Internal Error: New position ({}) is out of range (0 - {}) in List<T>::move\n", newpos,
                              nItems_ - 1);
             return;
         }
@@ -777,13 +769,13 @@ template <class T> class List
         // Check positions
         if ((id1 < 0) || (id1 >= nItems_))
         {
-            Messenger::error("Internal Error: First index (%i) is out of range (0 - %i) in List<T>::swapByIndex\n", id1,
+            Messenger::error("Internal Error: First index ({}) is out of range (0 - {}) in List<T>::swapByIndex\n", id1,
                              nItems_ - 1);
             return;
         }
         if ((id2 < 0) || (id2 >= nItems_))
         {
-            Messenger::error("Internal Error: Second index (%i) is out of range (0 - %i) in List<T>::swapByIndex\n", id2,
+            Messenger::error("Internal Error: Second index ({}) is out of range (0 - {}) in List<T>::swapByIndex\n", id2,
                              nItems_ - 1);
             return;
         }

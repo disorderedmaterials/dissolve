@@ -31,7 +31,7 @@ class Axes;
 class RenderableData1D : public Renderable
 {
     public:
-    RenderableData1D(const Data1D *source, const char *objectTag);
+    RenderableData1D(const Data1D *source, std::string_view objectTag);
     ~RenderableData1D();
 
     /*

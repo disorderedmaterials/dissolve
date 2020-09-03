@@ -55,7 +55,7 @@ class Module : public ListItem<Module>
      */
     protected:
     // Unique name of Module
-    CharString uniqueName_;
+    std::string uniqueName_;
 
     public:
     // Target Configurations Enum
@@ -66,15 +66,15 @@ class Module : public ListItem<Module>
         ExactlyOneTarget = 1
     };
     // Return type of Module
-    virtual const char *type() const = 0;
+    virtual std::string_view type() const = 0;
     // Return category for Module
-    virtual const char *category() const = 0;
+    virtual std::string_view category() const = 0;
     // Set unique name of Module
-    void setUniqueName(const char *uniqueName);
+    void setUniqueName(std::string_view uniqueName);
     // Return unique name of Module
-    const char *uniqueName() const;
+    std::string_view uniqueName() const;
     // Return brief description of Module
-    virtual const char *brief() const = 0;
+    virtual std::string_view brief() const = 0;
     // Return the number of Configuration targets this Module requires
     virtual int nRequiredTargets() const = 0;
 
@@ -89,7 +89,8 @@ class Module : public ListItem<Module>
     // Return list of recognised keywords
     KeywordList &keywords();
     // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
-    KeywordBase::ParseResult parseKeyword(LineParser &parser, Dissolve *dissolve, GenericList &targetList, const char *prefix);
+    KeywordBase::ParseResult parseKeyword(LineParser &parser, Dissolve *dissolve, GenericList &targetList,
+                                          std::string_view prefix);
     // Print valid keywords
     void printValidKeywords();
 
@@ -117,7 +118,7 @@ class Module : public ListItem<Module>
     // Return whether the Module should run this iteration
     bool runThisIteration(int iteration) const;
     // Return short descriptive text relating frequency to supplied iteration number
-    const char *frequencyDetails(int iteration) const;
+    std::string frequencyDetails(int iteration) const;
     // Set whether the Module is enabled
     void setEnabled(bool b);
     // Return whether the Module is enabled

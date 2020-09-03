@@ -38,7 +38,7 @@ class Data3DImportFileFormat : public FileAndFormat
         nData3DImportFormats
     };
     Data3DImportFileFormat(Data3DImportFormat format = CartesianData3D);
-    Data3DImportFileFormat(const char *filename, Data3DImportFormat format = CartesianData3D);
+    Data3DImportFileFormat(std::string_view filename, Data3DImportFormat format = CartesianData3D);
     ~Data3DImportFileFormat();
     Data3DImportFileFormat(const Data3DImportFileFormat &source);
     void operator=(const Data3DImportFileFormat &source);
@@ -53,15 +53,17 @@ class Data3DImportFileFormat : public FileAndFormat
     /*
      * Format Access
      */
-    public:
+    private:
     // Return enum options for Data3DImportFormat
-    static EnumOptions<Data3DImportFileFormat::Data3DImportFormat> data3DImportFormats();
+    static EnumOptions<Data3DImportFileFormat::Data3DImportFormat> &data3DImportFormats();
+
+    public:
     // Return number of available formats
     int nFormats() const;
     // Return format keyword for supplied index
-    const char *formatKeyword(int id) const;
+    std::string_view formatKeyword(int id) const;
     // Return description string for supplied index
-    const char *formatDescription(int id) const;
+    std::string_view formatDescription(int id) const;
     // Return current format as Data3DImportFormat
     Data3DImportFormat data3DFormat() const;
 
@@ -70,7 +72,7 @@ class Data3DImportFileFormat : public FileAndFormat
      */
     private:
     // Object tag of Data3D upon which to template arrays before importing
-    CharString templateSourceObjectTag_;
+    std::string templateSourceObjectTag_;
 
     /*
      * Filename / Basename
@@ -84,11 +86,11 @@ class Data3DImportFileFormat : public FileAndFormat
      */
     protected:
     // Parse additional argument
-    bool parseArgument(const char *arg);
+    bool parseArgument(std::string_view arg);
     // Return whether this file/format has any additional arguments to write
     bool hasAdditionalArguments() const;
     // Return additional arguments as string
-    const char *additionalArguments() const;
+    std::string additionalArguments() const;
 
     /*
      * Data Import

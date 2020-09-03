@@ -55,29 +55,29 @@ int IsotopologueCollectionKeyword::maxArguments() const { return 4; }
 bool IsotopologueCollectionKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Find target Configuration (first argument)
-    Configuration *cfg = coreData.findConfiguration(parser.argc(startArg));
+    Configuration *cfg = coreData.findConfiguration(parser.argsv(startArg));
     if (!cfg)
     {
-        Messenger::error("Error defining Isotopologue reference - no Configuration named '%s' exists.\n",
-                         parser.argc(startArg));
+        Messenger::error("Error defining Isotopologue reference - no Configuration named '{}' exists.\n",
+                         parser.argsv(startArg));
         return false;
     }
 
     // Is this Configuration allowed?
     if (!allowedConfigurations_.contains(cfg))
-        return Messenger::error("Configuration '%s' is not a valid target for this isotopologue collection.\n", cfg->name());
+        return Messenger::error("Configuration '{}' is not a valid target for this isotopologue collection.\n", cfg->name());
 
     // Find specified Species (second argument)
-    Species *sp = coreData.findSpecies(parser.argc(startArg + 1));
+    Species *sp = coreData.findSpecies(parser.argsv(startArg + 1));
     if (!sp)
-        return Messenger::error("Error defining Isotopologue reference - no Species named '%s' exists.\n",
-                                parser.argc(startArg + 1));
+        return Messenger::error("Error defining Isotopologue reference - no Species named '{}' exists.\n",
+                                parser.argsv(startArg + 1));
 
     // Finally, locate isotopologue definition for species (third argument)
-    Isotopologue *iso = sp->findIsotopologue(parser.argc(startArg + 2));
+    Isotopologue *iso = sp->findIsotopologue(parser.argsv(startArg + 2));
     if (!iso)
-        return Messenger::error("Error defining Isotopologue reference - no Isotopologue named '%s' exists for Species '%s'.\n",
-                                parser.argc(startArg + 2), sp->name());
+        return Messenger::error("Error defining Isotopologue reference - no Isotopologue named '{}' exists for Species '{}'.\n",
+                                parser.argsv(startArg + 2), sp->name());
 
     // Add the isotopologue to the collection
     data_.add(cfg, iso, parser.argd(startArg + 3));
@@ -88,7 +88,7 @@ bool IsotopologueCollectionKeyword::read(LineParser &parser, int startArg, CoreD
 }
 
 // Write keyword data to specified LineParser
-bool IsotopologueCollectionKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool IsotopologueCollectionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     // Loop over list of IsotopologueReferences
     for (auto set : data_.isotopologueSets())
@@ -97,7 +97,7 @@ bool IsotopologueCollectionKeyword::write(LineParser &parser, const char *keywor
         {
             for (auto isoWeight : topes.mix())
             {
-                if (!parser.writeLineF("%s%s  '%s'  '%s'  '%s'  %f\n", prefix, keywordName, set.configuration()->name(),
+                if (!parser.writeLineF("{}{}  '{}'  '{}'  '{}'  {}\n", prefix, keywordName, set.configuration()->name(),
                                        topes.species()->name(), isoWeight.isotopologue()->name(), isoWeight.weight()))
                     return false;
             }

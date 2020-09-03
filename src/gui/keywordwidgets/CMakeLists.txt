@@ -29,12 +29,12 @@ SET(keywordwidgets_MOC_HDRS
   vec3nodevalue.h
 
   bool.hui
-  charstring.hui
   double.hui
   dropwidget.hui
   enumoptions.hui
   integer.hui
   species.hui
+  stdstring.hui
   widget.hui
 
   windowfunction.hui
@@ -76,7 +76,6 @@ SET(keywordwidgets_SRCS
   atomtypeselection_funcs.cpp
   bool_funcs.cpp
   broadeningfunction_funcs.cpp
-  charstring_funcs.cpp
   dialog_funcs.cpp
   double_funcs.cpp
   dropdown_funcs.cpp
@@ -100,6 +99,7 @@ SET(keywordwidgets_SRCS
   speciesreflist_funcs.cpp
   speciessite_funcs.cpp
   speciessitereflist_funcs.cpp
+  stdstring_funcs.cpp
   widget_funcs.cpp
   windowfunction_funcs.cpp
   vec3double_funcs.cpp

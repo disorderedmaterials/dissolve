@@ -25,6 +25,9 @@ steps:
       python -m aqt install --outputdir $(Build.BinariesDirectory)\\Qt ${{ parameters.qtver }} windows desktop win64_mingw73 -m qtcore qtgui qtwidgets qtprintsupport
     displayName: 'Install Qt'
   - powershell: |
+      python -m pip install conan
+    displayName: 'Install Conan' 
+  - powershell: |
       $ErrorActionPreference = 'Stop'
       cd $(Build.BinariesDirectory)
       git clone ${{ parameters.ftrepo }} freetype-latest
@@ -55,6 +58,8 @@ steps:
       $env:LIB += "$(Build.BinariesDirectory)\ftgl-build\src;"
       mkdir build
       cd build
+      conan install -s compiler="gcc" --remote=conan-center ../
+      cat conanbuildinfo.cmake
       cmake -G "Ninja" -DGUI:bool=true ${{ parameters.extraflags }} ../
       ninja
     displayName: 'Build'

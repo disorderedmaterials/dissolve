@@ -19,7 +19,6 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "base/charstring.h"
 #include "base/enumoptions.h"
 #include "base/messenger.h"
 #include <stddef.h>
@@ -35,7 +34,7 @@ EnumOption::EnumOption()
     minArgs_ = 0;
     maxArgs_ = 0;
 }
-EnumOption::EnumOption(const int enumeration, const char *keyword, int minArgs, int maxArgs)
+EnumOption::EnumOption(const int enumeration, std::string_view keyword, int minArgs, int maxArgs)
 {
     enumeration_ = enumeration;
     keyword_ = keyword;
@@ -43,7 +42,7 @@ EnumOption::EnumOption(const int enumeration, const char *keyword, int minArgs, 
     minArgs_ = minArgs;
     maxArgs_ = (maxArgs == 0 ? minArgs : maxArgs);
 }
-EnumOption::EnumOption(const int enumeration, const char *keyword, const char *description, int minArgs, int maxArgs)
+EnumOption::EnumOption(const int enumeration, std::string_view keyword, std::string_view description, int minArgs, int maxArgs)
 {
     enumeration_ = enumeration;
     keyword_ = keyword;
@@ -59,10 +58,10 @@ bool EnumOption::isValid() const { return true; }
 int EnumOption::enumeration() const { return enumeration_; }
 
 // Return option keyword
-const char *EnumOption::keyword() const { return keyword_; }
+std::string_view EnumOption::keyword() const { return keyword_; }
 
 // Return option description
-const char *EnumOption::description() const { return description_; }
+std::string_view EnumOption::description() const { return description_; }
 
 // Return whether the option has any associated arguments
 bool EnumOption::hasArguments() const { return (minArgs_ != 0); }

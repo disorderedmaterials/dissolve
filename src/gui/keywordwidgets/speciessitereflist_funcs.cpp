@@ -40,7 +40,7 @@ SpeciesSiteRefListKeywordWidget::SpeciesSiteRefListKeywordWidget(QWidget *parent
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<SpeciesSiteRefListKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into SpeciesSiteRefListKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into SpeciesSiteRefListKeyword.\n", keyword->name());
     else
     {
         // Set current information
@@ -119,7 +119,7 @@ void SpeciesSiteRefListKeywordWidget::updateWidgetValues(const CoreData &coreDat
             ListIterator<SpeciesSite> siteIterator(sp->sites());
             while (SpeciesSite *site = siteIterator.iterate())
             {
-                QCheckBox *checkBox = new QCheckBox(site->name());
+                QCheckBox *checkBox = new QCheckBox(QString::fromStdString(std::string(site->name())));
                 if (keyword_->data().contains(site))
                     checkBox->setChecked(true);
                 connect(checkBox, SIGNAL(clicked(bool)), this, SLOT(siteCheckBox_clicked(bool)));
@@ -136,7 +136,7 @@ void SpeciesSiteRefListKeywordWidget::updateWidgetValues(const CoreData &coreDat
         }
 
         // Create the page in the tabs
-        ui_.SpeciesTabs->addTab(widget, sp->name());
+        ui_.SpeciesTabs->addTab(widget, QString::fromStdString(std::string(sp->name())));
     }
 
     updateSummaryText();
@@ -153,7 +153,7 @@ void SpeciesSiteRefListKeywordWidget::updateKeywordData()
 // Update summary text
 void SpeciesSiteRefListKeywordWidget::updateSummaryText()
 {
-    CharString siteText;
+    QString siteText;
     if (keyword_->data().nItems() == 0)
         siteText = "<None>";
     else
@@ -161,10 +161,9 @@ void SpeciesSiteRefListKeywordWidget::updateSummaryText()
         auto first = true;
         for (SpeciesSite *site : keyword_->data())
         {
-            if (first)
-                siteText.strcatf("%s (%s)", site->name(), site->parent()->name());
-            else
-                siteText.strcatf(", %s (%s)", site->name(), site->parent()->name());
+            if (!first)
+                siteText += ", ";
+            siteText += QString::fromStdString(fmt::format("{} ({})", site->name(), site->parent()->name()));
             first = false;
         }
     }

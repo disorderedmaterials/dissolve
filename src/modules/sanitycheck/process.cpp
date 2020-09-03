@@ -42,20 +42,20 @@ bool SanityCheckModule::process(Dissolve &dissolve, ProcessPool &procPool)
             PairPotential *pp = dissolve.pairPotential(*at1, *at2);
             if (!pp)
             {
-                Messenger::error("Failed to find PairPotential for AtomTypes '%s' and '%s'.\n", (*at1)->name(), (*at2)->name());
+                Messenger::error("Failed to find PairPotential for AtomTypes '{}' and '{}'.\n", (*at1)->name(), (*at2)->name());
                 return false;
             }
 
             // Check for equality
-            Messenger::printVerbose("Sanity checking PairPotential %s-%s...\n", (*at1)->name(), (*at2)->name());
+            Messenger::printVerbose("Sanity checking PairPotential {}-{}...\n", (*at1)->name(), (*at2)->name());
             if (!pp->uOriginal().equality(procPool))
-                return Messenger::error("Sanity check failed - PairPotential %s-%s uOriginal are not equal.\n", (*at1)->name(),
+                return Messenger::error("Sanity check failed - PairPotential {}-{} uOriginal are not equal.\n", (*at1)->name(),
                                         (*at2)->name());
             if (!pp->uFull().equality(procPool))
-                return Messenger::error("Sanity check failed - PairPotential %s-%s uFull are not equal.\n", (*at1)->name(),
+                return Messenger::error("Sanity check failed - PairPotential {}-{} uFull are not equal.\n", (*at1)->name(),
                                         (*at2)->name());
             if (!pp->uAdditional().equality(procPool))
-                return Messenger::error("Sanity check failed - PairPotential %s-%s uAdditional are not equal.\n",
+                return Messenger::error("Sanity check failed - PairPotential {}-{} uAdditional are not equal.\n",
                                         (*at1)->name(), (*at2)->name());
         }
     }
@@ -66,21 +66,21 @@ bool SanityCheckModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         // TODO This is the most basic sanity checking we can do. Need to extend to bonds, angles, molecules etc.
         // Number of Atoms and atomic positions
-        Messenger::printVerbose("Sanity checking Configuration %s atoms...\n", cfg->name());
+        Messenger::printVerbose("Sanity checking Configuration {} atoms...\n", cfg->name());
         if (!procPool.equality(cfg->nAtoms()))
-            return Messenger::error("Failed sanity check for Configuration '%s' nAtoms (%i).\n", cfg->name(), cfg->nAtoms());
+            return Messenger::error("Failed sanity check for Configuration '{}' nAtoms ({}).\n", cfg->name(), cfg->nAtoms());
         for (int n = 0; n < cfg->nAtoms(); ++n)
         {
             auto r = cfg->atom(n)->r();
             if (!procPool.equality(cfg->atom(n)->r()))
-                return Messenger::error("Failed sanity check for Configuration '%s' atom position %i (%f %f %f).\n",
+                return Messenger::error("Failed sanity check for Configuration '{}' atom position {} ({} {} {}).\n",
                                         cfg->name(), n, r.x, r.y, r.z);
         }
 
         // Module data within the Configuration
-        Messenger::printVerbose("Sanity checking Configuration %s module data...\n", cfg->name());
+        Messenger::printVerbose("Sanity checking Configuration {} module data...\n", cfg->name());
         if (!cfg->moduleData().equality(procPool))
-            return Messenger::error("Failed sanity check for Configuration '%s' module data.\n", cfg->name());
+            return Messenger::error("Failed sanity check for Configuration '{}' module data.\n", cfg->name());
     }
 
     // Processing module data

@@ -41,8 +41,8 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (!targetModule)
         Messenger::print("DataTest: No target Module specified for data location - only tags will be searched.\n");
     else
-        Messenger::print("DataTest: Target Module '%s' will be used as search prefix for data.\n", targetModule->uniqueName());
-    Messenger::print("DataTest: Error calculation is '%s', threshold is %e.", Error::errorTypes().keyword(errorType),
+        Messenger::print("DataTest: Target Module '{}' will be used as search prefix for data.\n", targetModule->uniqueName());
+    Messenger::print("DataTest: Error calculation is '{}', threshold is {:e}.", Error::errorTypes().keyword(errorType),
                      testThreshold);
     Messenger::print("\n");
 
@@ -58,16 +58,16 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (!found)
         {
             if (targetModule)
-                return Messenger::error("No data named '%s_%s' or '%s', or tagged '%s', exists.\n", targetModule->uniqueName(),
+                return Messenger::error("No data named '{}_{}' or '{}', or tagged '{}', exists.\n", targetModule->uniqueName(),
                                         testData1D->name(), testData1D->name(), testData1D->name());
             else
-                return Messenger::error("No data with tag '%s' exists.\n", testData1D->name());
+                return Messenger::error("No data with tag '{}' exists.\n", testData1D->name());
         }
-        Messenger::print("Located reference data with tag '%s'.\n", data.objectTag());
+        Messenger::print("Located reference data with tag '{}'.\n", data.objectTag());
 
         // Generate the error estimate and compare against the threshold value
         double error = Error::error(errorType, data, *testData1D, true);
-        Messenger::print("Target data '%s' has error of %7.3f with calculated data and is %s (threshold is %6.3e)\n\n",
+        Messenger::print("Target data '{}' has error of {:7.3f} with calculated data and is {} (threshold is {:6.3e})\n\n",
                          testData1D->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
         if (error > testThreshold)
             return false;
@@ -85,17 +85,17 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (!found)
         {
             if (targetModule)
-                return Messenger::error("No data named '%s_%s' or '%s', or tagged '%s', exists.\n", targetModule->uniqueName(),
+                return Messenger::error("No data named '{}_{}' or '{}', or tagged '{}', exists.\n", targetModule->uniqueName(),
                                         testData2D->name(), testData2D->name(), testData2D->name());
             else
-                return Messenger::error("No data with tag '%s' exists.\n", testData2D->name());
+                return Messenger::error("No data with tag '{}' exists.\n", testData2D->name());
         }
-        Messenger::print("Located reference data with tag '%s'.\n", data.objectTag());
+        Messenger::print("Located reference data with tag '{}'.\n", data.objectTag());
 
         // Generate the error estimate and compare against the threshold value
         // 		double error = Error::error(errorType, data, *testData2D, true);
-        // 		Messenger::print("Target data '%s' has error of %7.3f with calculated data and is %s (threshold
-        // is %6.3e)\n\n", testData2D->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold); if
+        // 		Messenger::print("Target data '{}' has error of {:7.3f} with calculated data and is {} (threshold
+        // is {:6.3e})\n\n", testData2D->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold); if
         // (error > testThreshold) return false;
 
         return Messenger::error("Error calculation between 2D datasets is not yet implemented.\n");

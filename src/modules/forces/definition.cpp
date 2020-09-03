@@ -22,13 +22,13 @@
 #include "modules/forces/forces.h"
 
 // Return type of module
-const char *ForcesModule::type() const { return "Forces"; }
+std::string_view ForcesModule::type() const { return "Forces"; }
 
 // Return category for module
-const char *ForcesModule::category() const { return "Forcefield"; }
+std::string_view ForcesModule::category() const { return "Forcefield"; }
 
 // Return brief description of module
-const char *ForcesModule::brief() const { return "Calculate the total atomic forces within a Configuration"; }
+std::string_view ForcesModule::brief() const { return "Calculate the total atomic forces within a Configuration"; }
 
 // Return the number of Configuration targets this Module requires
 int ForcesModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }

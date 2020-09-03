@@ -48,7 +48,7 @@ class RegionalDistributor
         DistributedFlag
     };
     // Return string for specified MoleculeStatusFlag
-    const char *moleculeStatusFlag(MoleculeStatusFlag flag);
+    std::string_view moleculeStatusFlag(MoleculeStatusFlag flag);
     // Cell Status Flag
     enum CellStatusFlag
     {
@@ -58,7 +58,7 @@ class RegionalDistributor
         ReadByManyFlag
     };
     // Return string for specified CellStatusFlag
-    const char *cellStatusFlag(CellStatusFlag flag);
+    std::string_view cellStatusFlag(CellStatusFlag flag);
 
     /*
      * Core

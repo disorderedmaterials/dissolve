@@ -124,17 +124,17 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
     bool read(LineParser &parser, int startArg, CoreData &coreData)
     {
         if (!parentNode())
-            return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n",
+            return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
                                     KeywordBase::name());
 
         // Loop over arguments
         for (int n = startArg; n < parser.nArgs(); ++n)
         {
             // Locate the named node - don't prune by type yet (we'll check that in setNode())
-            ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg))
-                                                : parentNode()->nodeExists(parser.argc(startArg));
+            ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argsv(startArg))
+                                                : parentNode()->nodeExists(parser.argsv(startArg));
             if (!node)
-                return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg),
+                return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(startArg),
                                         KeywordBase::name());
 
             if (!addNode(node))
@@ -144,19 +144,19 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
         return true;
     }
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, const char *keywordName, const char *prefix)
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
     {
         if (KeywordData<Array<N *> &>::data_.nItems() == 0)
             return true;
 
-        CharString nodes;
+        std::string nodes;
         for (int n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
         {
             N *node = KeywordData<Array<N *> &>::data_[n];
-            nodes.strcatf("  '%s'", node ? node->name() : "???");
+            nodes += fmt::format("  '{}'", node ? node->name() : "???");
         }
 
-        if (!parser.writeLineF("%s%s  %s\n", prefix, KeywordBase::name(), nodes.get()))
+        if (!parser.writeLineF("{}{}  {}\n", prefix, KeywordBase::name(), nodes))
             return false;
 
         return true;
@@ -174,11 +174,11 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
 
         // Check if array extension is allowed
         if (!NodeArrayKeywordBase::isVariableSize())
-            return Messenger::error("Can't dynamically add a node to the fixed-size NodeArray keyword '%s'.\n",
+            return Messenger::error("Can't dynamically add a node to the fixed-size NodeArray keyword '{}'.\n",
                                     KeywordBase::name());
 
         if (node->type() != nodeType())
-            return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(),
+            return Messenger::error("Node '{}' is of type {}, but the {} keyword requires a node of type {}.\n", node->name(),
                                     ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(),
                                     ProcedureNode::nodeTypes().keyword(nodeType()));
 
@@ -189,7 +189,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
 
         // If we only accept unique nodes over all array elements, check that this node is not already in the array
         if (NodeArrayKeywordBase::nodesAreUnique() && (indexOfNode(node) != -1))
-            return Messenger::error("Node '%s' is already present in the array for keyword %s.\n", castNode->name(),
+            return Messenger::error("Node '{}' is already present in the array for keyword {}.\n", castNode->name(),
                                     KeywordBase::name());
 
         // Add the node to the list
@@ -207,11 +207,11 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
 
         // Check array index provided
         if ((arrayIndex < 0) || (arrayIndex >= KeywordData<Array<N *> &>::data_.nItems()))
-            return Messenger::error("Array index %i is out of bounds for the NodeArray keyword '%s'.\n", arrayIndex,
+            return Messenger::error("Array index {} is out of bounds for the NodeArray keyword '{}'.\n", arrayIndex,
                                     KeywordBase::name());
 
         if (node->type() != nodeType())
-            return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(),
+            return Messenger::error("Node '{}' is of type {}, but the {} keyword requires a node of type {}.\n", node->name(),
                                     ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(),
                                     ProcedureNode::nodeTypes().keyword(nodeType()));
 
@@ -222,7 +222,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
 
         // If we only accept unique nodes over all array elements, check that this node is not already in the array
         if (NodeArrayKeywordBase::nodesAreUnique() && (indexOfNode(node) != -1))
-            return Messenger::error("Node '%s' is already present in the array for keyword %s.\n", castNode->name(),
+            return Messenger::error("Node '{}' is already present in the array for keyword {}.\n", castNode->name(),
                                     KeywordBase::name());
 
         // Set the node pointer in the specified position
@@ -238,7 +238,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
         // Check array index provided
         if ((arrayIndex < 0) || (arrayIndex >= KeywordData<Array<N *> &>::data_.nItems()))
             return Messenger::error(
-                "Array index %i is out of bounds for the NodeArray keyword '%s', so can't clear the element.\n", arrayIndex,
+                "Array index {} is out of bounds for the NodeArray keyword '{}', so can't clear the element.\n", arrayIndex,
                 KeywordBase::name());
 
         // Set the node pointer in the specified position

@@ -83,8 +83,8 @@ void ChangeStore::updateAtomsLocal(int nAtoms, int *indices)
 #ifdef CHECKS
         if ((indices[n] < 0) || (indices[n] >= targetAtoms_.nItems()))
         {
-            Messenger::print("OUT_OF_RANGE - Supplied indices_[n] (%i) is out of range in "
-                             "ChangeStore::updateAtomsLocal() (nTargetAtoms = %i)\n",
+            Messenger::print("OUT_OF_RANGE - Supplied indices_[n] ({}) is out of range in "
+                             "ChangeStore::updateAtomsLocal() (nTargetAtoms = {})\n",
                              n, indices_[n], targetAtoms_.nItems());
             continue;
         }
@@ -100,7 +100,7 @@ void ChangeStore::updateAtom(int id)
 #ifdef CHECKS
     if ((id < 0) || (id >= targetAtoms_.nItems()))
     {
-        Messenger::print("OUT_OF_RANGE - Specified index %i is out of range in ChangeStore::updateAtom() (nTargetAtoms = %i)\n",
+        Messenger::print("OUT_OF_RANGE - Specified index {} is out of range in ChangeStore::updateAtom() (nTargetAtoms = {})\n",
                          id, targetAtoms_.nItems());
         return;
     }
@@ -112,10 +112,8 @@ void ChangeStore::updateAtom(int id)
 // Revert all atoms to their previous positions
 void ChangeStore::revertAll()
 {
-    // 	printf("In Revert...\n");
     for (auto *item = targetAtoms_.first(); item != NULL; item = item->next())
         item->revertPosition();
-    // 	printf("Done Revert.\n");
 }
 
 // Revert specified index to stored position
@@ -124,7 +122,7 @@ void ChangeStore::revert(int id)
 #ifdef CHECKS
     if ((id < 0) || (id >= targetAtoms_.nItems()))
     {
-        Messenger::print("OUT_OF_RANGE - Index of Atom (%i) is out of range in ChangeStore::revert() (nAtoms = %i).\n", id,
+        Messenger::print("OUT_OF_RANGE - Index of Atom ({}) is out of range in ChangeStore::revert() (nAtoms = {}).\n", id,
                          targetAtoms_.nItems());
         return;
     }
@@ -166,7 +164,7 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
     if (!processPool_.allSum(&nTotalChanges, 1))
         return false;
 
-    Messenger::printVerbose("We think there are %i changes in total to distribute.\n", nTotalChanges);
+    Messenger::printVerbose("We think there are {} changes in total to distribute.\n", nTotalChanges);
 
     // All processes now resize their arrays so they are large enough to hold the total number of changes
     if (nTotalChanges == 0)
@@ -212,8 +210,8 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
 #ifdef CHECKS
         if ((indices_[n] < 0) || (indices_[n] >= cfg->nAtoms()))
         {
-            Messenger::print("OUT_OF_RANGE - Index of Atom change (%i) is out of range in "
-                             "ChangeStore::distribute() (nAtoms = %i).\n",
+            Messenger::print("OUT_OF_RANGE - Index of Atom change ({}) is out of range in "
+                             "ChangeStore::distribute() (nAtoms = {}).\n",
                              indices_[n], cfg->nAtoms());
             continue;
         }

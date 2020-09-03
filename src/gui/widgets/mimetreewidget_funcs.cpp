@@ -84,10 +84,7 @@ void MimeTreeWidget::mouseMoveEvent(QMouseEvent *event)
     // Cast the item into a MimeTreeWidgetItem
     auto *mimeItem = dynamic_cast<MimeTreeWidgetItem *>(item);
     if (!item)
-    {
-        printf("Failed to cast QTreeWidgetItem into MimeTreeWidgetItem.\n");
         return;
-    }
 
     // Construct mime data for drag event - copy MimeStrings object from MimeTreeWidget
     auto *mimeData = new MimeStrings;

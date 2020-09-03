@@ -32,7 +32,7 @@ CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, CalculateRDF
     // Set up RDF graph
     rdfGraph_ = ui_.RDFPlotWidget->dataViewer();
 
-    View &view = rdfGraph_->view();
+    auto &view = rdfGraph_->view();
     view.setViewType(View::FlatXYView);
     view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
     view.axes().setMax(0, 10.0);
@@ -94,12 +94,12 @@ void CalculateRDFModuleWidget::setGraphDataTargets()
         return;
 
     // Loop over Configuration targets in Module
-    for (Configuration *cfg : module_->targetConfigurations())
+    for (const auto *cfg : module_->targetConfigurations())
     {
         // Calculated RDF
-        Renderable *rdf = rdfGraph_->createRenderable(
-            Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF", module_->uniqueName(), cfg->niceName()),
-            CharString("RDF//%s", cfg->niceName()), cfg->niceName());
+        auto *rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable,
+                                                fmt::format("{}//Process1D//{}//RDF", module_->uniqueName(), cfg->niceName()),
+                                                fmt::format("RDF//{}", cfg->niceName()), cfg->niceName());
         rdf->setColour(StockColours::BlueStockColour);
     }
 }

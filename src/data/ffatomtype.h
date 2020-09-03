@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/parameters.h"
 #include "data/elements.h"
 #include "neta/neta.h"
@@ -35,14 +34,14 @@ class ForcefieldParameters;
 class ForcefieldAtomType : public ElementReference
 {
     public:
-    ForcefieldAtomType(const Forcefield *parent = NULL, int Z = 0, int index = -1, const char *name = NULL,
-                       const char *netaDefinition = NULL, const char *description = NULL, double q = 0.0, double data0 = 0.0,
-                       double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
-    ForcefieldAtomType(const Forcefield *parent = NULL, int Z = 0, int index = -1, const char *name = NULL,
-                       const char *netaDefinition = NULL, const char *description = NULL, double q = 0.0,
-                       const char *parameterReference = NULL);
-    ForcefieldAtomType(const Forcefield *parent, const ForcefieldAtomType &sourceType, const char *newTypeName,
-                       const char *netaDefinition = NULL, const char *equivalentName = NULL);
+    ForcefieldAtomType(const Forcefield *parent = NULL, int Z = 0, int index = -1, std::string_view name = NULL,
+                       std::string_view netaDefinition = NULL, std::string_view description = NULL, double q = 0.0,
+                       double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+    ForcefieldAtomType(const Forcefield *parent = NULL, int Z = 0, int index = -1, std::string_view name = NULL,
+                       std::string_view netaDefinition = NULL, std::string_view description = NULL, double q = 0.0,
+                       std::string_view parameterReference = NULL);
+    ForcefieldAtomType(const Forcefield *parent, const ForcefieldAtomType &sourceType, std::string_view newTypeName,
+                       std::string_view netaDefinition = NULL, std::string_view equivalentName = NULL);
     virtual ~ForcefieldAtomType();
     ForcefieldAtomType(const ForcefieldAtomType &source);
     ForcefieldAtomType(const ForcefieldAtomType &&source);
@@ -54,21 +53,21 @@ class ForcefieldAtomType : public ElementReference
     // Index of atom type
     int index_;
     // Name of atom type
-    CharString name_;
+    std::string name_;
     // Equivalent name, if defined
-    CharString equivalentName_;
+    std::string equivalentName_;
     // Brief description of tyoe
-    CharString description_;
+    std::string description_;
 
     public:
     // Return index of type
     int index() const;
     // Return name of type
-    const char *name() const;
+    std::string_view name() const;
     // Return equivalent name of type
-    const char *equivalentName() const;
+    std::string_view equivalentName() const;
     // Return description for type
-    const char *description() const;
+    std::string_view description() const;
 
     /*
      * Recognition

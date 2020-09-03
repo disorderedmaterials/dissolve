@@ -48,11 +48,12 @@ bool Forcefield_OPLSAA2005_NobleGases::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_OPLSAA2005_NobleGases::name() const { return "OPLSAA2005/NobleGases"; }
+std::string_view Forcefield_OPLSAA2005_NobleGases::name() const { return "OPLSAA2005/NobleGases"; }
 
 // Return description for Forcefield
-const char *Forcefield_OPLSAA2005_NobleGases::description() const
+std::string_view Forcefield_OPLSAA2005_NobleGases::description() const
 {
-    static CharString desc("Noble gases from OPLS-AA (2005).<br/><br/>References: %s", publicationReferences());
-    return desc.get();
+    static std::string desc = fmt::format("Noble gases from OPLS-AA (2005).<br/><br/>References: {}", publicationReferences());
+
+    return desc;
 }

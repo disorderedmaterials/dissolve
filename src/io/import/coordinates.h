@@ -41,7 +41,7 @@ class CoordinateImportFileFormat : public FileAndFormat
         nCoordinateImportFormats
     };
     CoordinateImportFileFormat(CoordinateImportFormat format = XYZCoordinates);
-    CoordinateImportFileFormat(const char *filename, CoordinateImportFormat format = XYZCoordinates);
+    CoordinateImportFileFormat(std::string_view filename, CoordinateImportFormat format = XYZCoordinates);
     ~CoordinateImportFileFormat();
 
     /*
@@ -54,15 +54,17 @@ class CoordinateImportFileFormat : public FileAndFormat
     /*
      * Format Access
      */
-    public:
+    private:
     // Return enum options for CoordinateImportFormat
-    static EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> coordinateImportFormats();
+    static EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> &coordinateImportFormats();
+
+    public:
     // Return number of available formats
     int nFormats() const;
     // Return format keyword for supplied index
-    const char *formatKeyword(int id) const;
+    std::string_view formatKeyword(int id) const;
     // Return description string for supplied index
-    const char *formatDescription(int id) const;
+    std::string_view formatDescription(int id) const;
     // Return current format as CoordinateImportFormat
     CoordinateImportFormat coordinateFormat() const;
 

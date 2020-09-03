@@ -48,11 +48,11 @@ class GeometryOptimisationModule : public Module
      */
     public:
     // Return type of module
-    const char *type() const;
+    std::string_view type() const;
     // Return category for module
-    const char *category() const;
+    std::string_view category() const;
     // Return brief description of module
-    const char *brief() const;
+    std::string_view brief() const;
     // Return the number of Configuration targets this Module requires
     int nRequiredTargets() const;
 
@@ -114,8 +114,8 @@ class GeometryOptimisationModule : public Module
         // Calculate deltas between bound values
         double dxy = bounds[0] - bounds[1];
         double dyz = bounds[2] - bounds[1];
-        Messenger::printVerbose("Trying Golden Search -  %f-%f-%f, dxy = %12.5e, dyz = %12.5e", bounds.x, bounds.y, bounds.z,
-                                dxy, dyz);
+        Messenger::printVerbose("Trying Golden Search -  {}-{}-{}, dxy = {:12.5e}, dyz = {:12.5e}", bounds.x, bounds.y,
+                                bounds.z, dxy, dyz);
 
         // Select largest of two intervals to be the target of the search
         auto xyLargest = fabs(dxy) > fabs(dyz);
@@ -123,7 +123,7 @@ class GeometryOptimisationModule : public Module
 
         // Test energy at new trial minimum
         double eNew = energyAtGradientPoint(procPool, target, potentialMap, newMinimum);
-        Messenger::printVerbose("--> GOLD point is %12.5e [%12.5e] ", eNew, newMinimum);
+        Messenger::printVerbose("--> GOLD point is {:12.5e} [{:12.5e}] ", eNew, newMinimum);
 
         // Set order for checking of energy points
         Vec3<int> order(1, xyLargest ? 0 : 2, xyLargest ? 2 : 0);
@@ -133,7 +133,7 @@ class GeometryOptimisationModule : public Module
         {
             if (eNew < energies[order[n]])
             {
-                Messenger::printVerbose("--> GOLD point is lower than point %i...", order[n]);
+                Messenger::printVerbose("--> GOLD point is lower than point {}...", order[n]);
 
                 // Overwrite the outermost bound with the old minimum
                 bounds[xyLargest ? 0 : 2] = newMinimum;
@@ -167,8 +167,9 @@ class GeometryOptimisationModule : public Module
         bounds.z = 2.0 * stepSize;
         energies.z = energyAtGradientPoint(procPool, target, potentialMap, bounds.z);
 
-        Messenger::printVerbose("Initial bounding values/energies = %12.5e (%12.5e) %12.5e (%12.5e) %12.5e (%12.5e)", bounds[0],
-                                energies[0], bounds[1], energies[1], bounds[2], energies[2]);
+        Messenger::printVerbose(
+            "Initial bounding values/energies = {:12.5e} ({:12.5e}) {:12.5e} ({:12.5e}) {:12.5e} ({:12.5e})", bounds[0],
+            energies[0], bounds[1], energies[1], bounds[2], energies[2]);
 
         // Perform linesearch along the gradient vector
         do
@@ -176,8 +177,8 @@ class GeometryOptimisationModule : public Module
             // Sort w.r.t. energy so that the minimum is in the central point
             sortBoundsAndEnergies(bounds, energies);
 
-            Messenger::printVerbose("Energies [Bounds] = %12.5e (%12.5e) %12.5e (%12.5e) %12.5e (%12.5e)", energies[0],
-                                    bounds[0], energies[1], bounds[1], energies[2], bounds[2]);
+            Messenger::printVerbose("Energies [Bounds] = {:12.5e} ({:12.5e}) {:12.5e} ({:12.5e}) {:12.5e} ({:12.5e})",
+                                    energies[0], bounds[0], energies[1], bounds[1], energies[2], bounds[2]);
 
             // Perform parabolic interpolation to find new minimium point
             double b10 = bounds[1] - bounds[0];
@@ -189,7 +190,7 @@ class GeometryOptimisationModule : public Module
             // Compute energy of new point and check that it went down...
             double eNew = energyAtGradientPoint(procPool, target, potentialMap, newBound);
 
-            Messenger::printVerbose("PARABOLIC point gives energy %12.5e @ %12.5e", eNew, newBound);
+            Messenger::printVerbose("PARABOLIC point gives energy {:12.5e} @ {:12.5e}", eNew, newBound);
             if (eNew < energies[1])
             {
                 // New point found...
@@ -229,12 +230,12 @@ class GeometryOptimisationModule : public Module
                 if (nPointsAccepted == 0)
                     break;
             }
-            // 		printf("DIFF = %f, 2tol = %f\n", fabs(bounds[0]-bounds[2]), 2.0 * tolerance);
+            // 		printf("DIFF = {}, 2tol = {}\n", fabs(bounds[0]-bounds[2]), 2.0 * tolerance);
             // 		++count;
             // 		if (count > 10) break;
         } while (fabs(bounds[0] - bounds[2]) > (2.0 * tolerance));
-        // 	printf("Final bounding values are %12.5e %12.5e %12.5e\n",bounds[0],bounds[1],bounds[2]);
-        // 	printf("             energies are %12.5e %12.5e %12.5e\n",energies[0],energies[1],energies[2]);
+        // 	printf("Final bounding values are {:12.5e} {:12.5e} {:12.5e}\n",bounds[0],bounds[1],bounds[2]);
+        // 	printf("             energies are {:12.5e} {:12.5e} {:12.5e}\n",energies[0],energies[1],energies[2]);
 
         // Sort w.r.t. energy so that the minimum is in the central point
         sortBoundsAndEnergies(bounds, energies);
@@ -257,9 +258,10 @@ class GeometryOptimisationModule : public Module
         // Set initial step size - the line minimiser will modify this as we proceed
         double stepSize = initialStepSize_;
 
-        Messenger::print("Cycle  %-16s  %-16s  %-16s  %-16s  %-16s\n", "E(total), kJ/mol", "dE, kJ/mol", "RMS(force)", "dRMS",
-                         "Step Size");
-        Messenger::print(" --    %16.9e  %-16s  %16.9e  %-16s  %16.9e\n", oldEnergy, "------", oldRMSForce, "------", stepSize);
+        Messenger::print("Cycle  {:16s}  {:16s}  {:16s}  {:16s}  {:16s}\n", "E(total), kJ/mol", "dE, kJ/mol", "RMS(force)",
+                         "dRMS", "Step Size");
+        Messenger::print(" --    {:16.9e}  {:16s}  {:16.9e}  {:16s}  {:16.9e}\n", oldEnergy, "------", oldRMSForce, "------",
+                         stepSize);
 
         auto nStepSizeResets = 0;
         for (int cycle = 1; cycle <= nCycles_; ++cycle)
@@ -280,7 +282,8 @@ class GeometryOptimisationModule : public Module
             double dF = newRMSForce - oldRMSForce;
 
             // Print summary
-            Messenger::print("%5i  %16.9e  %16.9e  %16.9e  %16.9e  %16.9e\n", cycle, newEnergy, dE, newRMSForce, dF, stepSize);
+            Messenger::print("{:5i}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", cycle, newEnergy, dE, newRMSForce, dF,
+                             stepSize);
 
             // Check convergence
             if ((fabs(dE) < tolerance_) || (fabs(dF) < tolerance_))
@@ -293,7 +296,7 @@ class GeometryOptimisationModule : public Module
                 }
                 else
                 {
-                    Messenger::print(" *** Steepest Descent converged at step %i ***", cycle);
+                    Messenger::print(" *** Steepest Descent converged at step {} ***", cycle);
                     break;
                 }
             }

@@ -31,7 +31,7 @@
 #include <stdarg.h>
 #include <string.h>
 
-Expression::Expression(const char *expressionText) { set(expressionText); }
+Expression::Expression(std::string_view expressionText) { set(expressionText); }
 
 Expression::~Expression() { clear(); }
 
@@ -73,27 +73,27 @@ void Expression::clear()
 bool Expression::isValid() const { return (statements_.nItems() != 0); }
 
 // Set Expression from supplied string
-bool Expression::set(const char *expressionString)
+bool Expression::set(std::string_view expressionString)
 {
     clear();
 
     expressionString_ = expressionString;
 
-    return (expressionString_.isEmpty() ? false : ExpressionGenerator::generate(*this));
+    return (expressionString_.empty() ? false : ExpressionGenerator::generate(*this));
 }
 
 // Set Expression from supplied string and external variables
-bool Expression::set(const char *expressionString, RefList<ExpressionVariable> externalVariables)
+bool Expression::set(std::string_view expressionString, RefList<ExpressionVariable> externalVariables)
 {
     clear();
 
     expressionString_ = expressionString;
 
-    return (expressionString_.isEmpty() ? false : ExpressionGenerator::generate(*this, externalVariables));
+    return (expressionString_.empty() ? false : ExpressionGenerator::generate(*this, externalVariables));
 }
 
-// Return original generating string`
-const char *Expression::expressionString() const { return expressionString_.get(); }
+// Return original generating string
+std::string_view Expression::expressionString() const { return expressionString_; }
 
 /*
  * Execution
@@ -102,17 +102,16 @@ const char *Expression::expressionString() const { return expressionString_.get(
 // Print expression
 void Expression::print()
 {
-    printf("Leaf Structure (%i statements):\n", statements_.nItems());
+    Messenger::print("Leaf Structure ({} statements):\n", statements_.nItems());
     auto n = 1;
     for (RefListItem<ExpressionNode> *ri = statements_.first(); ri != NULL; ri = ri->next())
     {
-        printf("-------------------------------------------------------------\n");
-        printf("Statement %i:\n", n);
-        printf("item pointer is %p\n", ri->item());
+        Messenger::print("-------------------------------------------------------------\n");
+        Messenger::print("Statement {}:\n", n);
         ri->item()->nodePrint(1);
         n++;
     }
-    printf("-------------------------------------------------------------\n");
+    Messenger::print("-------------------------------------------------------------\n");
 }
 
 /*
@@ -124,10 +123,9 @@ bool Expression::addStatement(ExpressionNode *leaf)
 {
     if (leaf == NULL)
     {
-        printf("Internal Error: NULL Node passed to Expression::addStatement().\n");
+        Messenger::print("Internal Error: NULL Node passed to Expression::addStatement().\n");
         return false;
     }
-    Messenger::printVerbose("Added statement node %p\n", leaf);
     leaf->setParent(this);
     statements_.append(leaf);
 
@@ -140,7 +138,6 @@ ExpressionNode *Expression::addOperator(ExpressionFunctions::Function func, Expr
     // Create new command node
     auto *leaf = new ExpressionFunction(func);
     nodes_.own(leaf);
-    Messenger::printVerbose("Added operator '%s' (%p)...\n", ExpressionFunctions::data[func].keyword, leaf);
 
     // Add arguments and set parent
     leaf->addArguments(1, arg1);
@@ -157,7 +154,6 @@ ExpressionNode *Expression::addFunctionNodeWithArglist(ExpressionFunctions::Func
     // Create new command node
     auto *leaf = new ExpressionFunction(func);
     nodes_.own(leaf);
-    Messenger::printVerbose("Added function '%s' (%p)...\n", ExpressionFunctions::data[func].keyword, leaf);
 
     // Add argument list to node and set parent
     leaf->addJoinedArguments(arglist);
@@ -166,7 +162,7 @@ ExpressionNode *Expression::addFunctionNodeWithArglist(ExpressionFunctions::Func
     // Check that the correct number of arguments were given to the function
     if (leaf->nArgs() != ExpressionFunctions::data[func].nArguments)
     {
-        Messenger::error("Function %s requires exactly %i %s.\n", ExpressionFunctions::data[func].keyword,
+        Messenger::error("Function {} requires exactly {} {}.\n", ExpressionFunctions::data[func].keyword,
                          ExpressionFunctions::data[func].nArguments,
                          ExpressionFunctions::data[func].nArguments == 1 ? "argument" : "arguments");
         return NULL;
@@ -182,7 +178,6 @@ ExpressionNode *Expression::addFunctionNode(ExpressionFunctions::Function func, 
     // Create new command node
     auto *leaf = new ExpressionFunction(func);
     nodes_.own(leaf);
-    Messenger::printVerbose("Added function '%s' (%p)...\n", ExpressionFunctions::data[func].keyword, leaf);
 
     if (a1 != NULL)
         leaf->addArgument(a1);
@@ -197,7 +192,7 @@ ExpressionNode *Expression::addFunctionNode(ExpressionFunctions::Function func, 
     // Check that the correct number of arguments were given to the function
     if (leaf->nArgs() != ExpressionFunctions::data[func].nArguments)
     {
-        Messenger::error("Function %s requires exactly %i %s.\n", ExpressionFunctions::data[func].keyword,
+        Messenger::error("Function {} requires exactly {} {}.\n", ExpressionFunctions::data[func].keyword,
                          ExpressionFunctions::data[func].nArguments,
                          ExpressionFunctions::data[func].nArguments == 1 ? "argument" : "arguments");
         return NULL;
@@ -221,7 +216,6 @@ ExpressionNode *Expression::joinArguments(ExpressionNode *arg1, ExpressionNode *
 {
     arg1->prevArgument = arg2;
     arg2->nextArgument = arg1;
-    Messenger::printVerbose("Joining arguments %p and %p\n", arg1, arg2);
 
     return arg1;
 }
@@ -236,8 +230,6 @@ ExpressionNode *Expression::joinCommands(ExpressionNode *node1, ExpressionNode *
         leaf->addArgument(node1);
     if (node2 != NULL)
         leaf->addArgument(node2);
-
-    Messenger::printVerbose("Joined command nodes %p and %p (joiner node is %p)\n", node1, node2, leaf);
 
     return leaf;
 }
@@ -266,9 +258,9 @@ ExpressionVariable *Expression::createConstant(ExpressionValue value, bool persi
 }
 
 // Create integer variable, with optional ExpressionNode as initial value source
-ExpressionVariable *Expression::createIntegerVariable(const char *name, bool persistent, ExpressionNode *initialValue)
+ExpressionVariable *Expression::createIntegerVariable(std::string_view name, bool persistent, ExpressionNode *initialValue)
 {
-    Messenger::printVerbose("A new integer variable '%s' is being created.\n", name);
+    Messenger::printVerbose("A new integer variable '{}' is being created.\n", name);
 
     ExpressionVariable *var = new ExpressionVariable(ExpressionValue(0));
     var->setName(name);
@@ -288,15 +280,15 @@ ExpressionVariable *Expression::createIntegerVariable(const char *name, bool per
     // Store reference
     variables_.append(var);
 
-    Messenger::printVerbose("Created integer variable '%s'.\n", name);
+    Messenger::printVerbose("Created integer variable '{}'.\n", name);
 
     return var;
 }
 
 // Create double variable, with optional ExpressionNode as initial value source
-ExpressionVariable *Expression::createDoubleVariable(const char *name, bool persistent, ExpressionNode *initialValue)
+ExpressionVariable *Expression::createDoubleVariable(std::string_view name, bool persistent, ExpressionNode *initialValue)
 {
-    Messenger::printVerbose("A new double variable '%s' is being created.\n", name);
+    Messenger::printVerbose("A new double variable '{}' is being created.\n", name);
 
     ExpressionVariable *var = new ExpressionVariable(ExpressionValue(0.0));
     var->setName(name);
@@ -316,13 +308,13 @@ ExpressionVariable *Expression::createDoubleVariable(const char *name, bool pers
     // Store reference
     variables_.append(var);
 
-    Messenger::printVerbose("Created double variable '%s'.\n", name);
+    Messenger::printVerbose("Created double variable '{}'.\n", name);
 
     return var;
 }
 
 // Create variable with supplied initial value
-ExpressionVariable *Expression::createVariableWithValue(const char *name, ExpressionValue initialValue, bool persistent)
+ExpressionVariable *Expression::createVariableWithValue(std::string_view name, ExpressionValue initialValue, bool persistent)
 {
     ExpressionVariable *var = new ExpressionVariable(initialValue);
     var->setName(name);
@@ -336,7 +328,7 @@ ExpressionVariable *Expression::createVariableWithValue(const char *name, Expres
     // Store reference
     variables_.append(var);
 
-    Messenger::printVerbose("Created %s variable '%s'.\n", initialValue.isInteger() ? "integer" : "double", name);
+    Messenger::printVerbose("Created {} variable '{}'.\n", initialValue.isInteger() ? "integer" : "double", name);
 
     return var;
 }
@@ -345,13 +337,13 @@ ExpressionVariable *Expression::createVariableWithValue(const char *name, Expres
 void Expression::setExternalVariables(RefList<ExpressionVariable> externalVariables) { externalVariables_ = externalVariables; }
 
 // Search for variable in current scope
-ExpressionVariable *Expression::variable(const char *name)
+ExpressionVariable *Expression::variable(std::string_view name)
 {
     // Search external variables
     for (auto variable : externalVariables_)
         if (DissolveSys::sameString(variable->name(), name))
         {
-            Messenger::printVerbose("...external variable '%s' found.\n", name);
+            Messenger::printVerbose("...external variable '{}' found.\n", name);
             return variable;
         }
 
@@ -360,11 +352,11 @@ ExpressionVariable *Expression::variable(const char *name)
         if (DissolveSys::sameString(variable->name(), name))
             if (DissolveSys::sameString(variable->name(), name))
             {
-                Messenger::printVerbose("...internal variable '%s' found.\n", name);
+                Messenger::printVerbose("...internal variable '{}' found.\n", name);
                 return variable;
             }
 
-    Messenger::printVerbose("...variable '%s' not found.\n", name);
+    Messenger::printVerbose("...variable '{}' not found.\n", name);
     return NULL;
 }
 
@@ -391,7 +383,7 @@ bool Expression::execute(ExpressionValue &result)
     }
 
     if (!success)
-        Messenger::error("Expression execution failed for '%s'.\n", expressionString_.get());
+        Messenger::error("Expression execution failed for '{}'.\n", expressionString_);
 
     return success;
 }

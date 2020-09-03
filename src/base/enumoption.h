@@ -21,15 +21,16 @@
 
 #pragma once
 
-#include <stddef.h>
+#include <string>
 
 // Enum Option
 class EnumOption
 {
     public:
     EnumOption();
-    EnumOption(const int enumeration, const char *keyword, int minArgs = 0, int maxArgs = 0);
-    EnumOption(const int enumeration, const char *keyword, const char *description, int minArgs = 0, int maxArgs = 0);
+    EnumOption(const int enumeration, std::string_view keyword, int minArgs = 0, int maxArgs = 0);
+    EnumOption(const int enumeration, std::string_view keyword, std::string_view description, int minArgs = 0, int maxArgs = 0);
+    virtual ~EnumOption() = default;
 
     /*
      * Definition
@@ -47,9 +48,9 @@ class EnumOption
     // Option enumeration (i.e. from enum value)
     int enumeration_;
     // Option keyword
-    const char *keyword_;
+    std::string keyword_;
     // Option description / long text
-    const char *description_;
+    std::string description_;
     // Whether the option has any associated arguments
     bool hasArguments_;
     // Minimum number of arguments the option takes
@@ -63,9 +64,9 @@ class EnumOption
     // Return option enumeration (i.e. from enum value)
     int enumeration() const;
     // Return option keyword
-    const char *keyword() const;
+    std::string_view keyword() const;
     // Return option description
-    const char *description() const;
+    std::string_view description() const;
     // Return whether the option has any associated arguments
     bool hasArguments() const;
     // Return minimum number of arguments the option takes

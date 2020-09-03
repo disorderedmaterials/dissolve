@@ -78,6 +78,7 @@ class Cell
     public:
     // Return array of contained Atoms
     OrderedVector<Atom *> &atoms();
+    const OrderedVector<Atom *> &atoms() const;
     // Return array of contained Atoms, ordered by their array indices
     const OrderedVector<Atom *> &indexOrderedAtoms() const;
     // Return number of Atoms in array

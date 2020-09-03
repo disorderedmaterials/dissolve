@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "classes/speciesintra.h"
 #include "templates/array2d.h"
 #include "templates/listitem.h"
@@ -43,15 +42,15 @@ class MasterIntra : public SpeciesIntra, public ListItem<MasterIntra>
      */
     protected:
     // Name for interaction
-    CharString name_;
+    std::string name_;
     // Type of this interaction
     SpeciesIntra::InteractionType type_;
 
     public:
     // Set name for interaction (if relevant)
-    void setName(const char *name);
+    void setName(std::string_view name);
     // Return name for interaction
-    const char *name() const;
+    std::string_view name() const;
     // Set type of interaction
     void setType(SpeciesIntra::InteractionType type);
 

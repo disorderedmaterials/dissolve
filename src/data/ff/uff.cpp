@@ -49,10 +49,10 @@ bool Forcefield_UFF::setUp() { return true; }
  */
 
 // Return name of Forcefield
-const char *Forcefield_UFF::name() const { return "UFF"; }
+std::string_view Forcefield_UFF::name() const { return "UFF"; }
 
 // Return description for Forcefield
-const char *Forcefield_UFF::description() const
+std::string_view Forcefield_UFF::description() const
 {
     return "Implements 'UFF, a Full Periodic Table Force Field for Molecular Mechanics and Molecular Dynamics "
            "Simulations', A. K. Rappe, C. J. Casewit, K. S. Colwell, W. A. Goddard III, and W. "
@@ -297,7 +297,7 @@ const std::vector<UFFAtomType> &Forcefield_UFF::uffAtomTypes() const
 }
 
 // Return UFF atom type with name specified
-OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::uffAtomTypeByName(const char *name) const
+OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::uffAtomTypeByName(std::string_view name) const
 {
     auto it = std::find_if(uffAtomTypes().begin(), uffAtomTypes().end(),
                            [&](auto &data) { return DissolveSys::sameString(data.name(), name); });
@@ -520,7 +520,7 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle &angle, c
     const auto geom = j.geom();
 
     if (geom == 0)
-        Messenger::error("Unable to generate angle function around central atom '%s'.\n", j.name());
+        Messenger::error("Unable to generate angle function around central atom '{}'.\n", j.name());
     else if (geom == 1)
         n = 1;
     else if (geom == 2)
@@ -668,7 +668,7 @@ bool Forcefield_UFF::assignAtomTypes(Species *sp, CoreData &coreData, bool keepE
 
         auto optTypeRef = determineUFFAtomType(i);
         if (!optTypeRef)
-            Messenger::print("No UFF type available for Atom %i of Species (%s).\n", i->index() + 1, i->element()->symbol());
+            Messenger::print("No UFF type available for Atom {} of Species ({}).\n", i->index() + 1, i->element()->symbol());
         else
         {
             const UFFAtomType &uffType = *optTypeRef;
@@ -719,7 +719,7 @@ bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
         auto typeJ = determineTypes ? determineUFFAtomType(j) : uffAtomTypeByName(j->atomType()->name());
 
         if (!typeI || !typeJ || !generateBondTerm(sp, bond, *typeI, *typeJ))
-            return Messenger::error("Failed to create parameters for bond %i-%i.\n", i->userIndex(), j->userIndex());
+            return Messenger::error("Failed to create parameters for bond {}-{}.\n", i->userIndex(), j->userIndex());
     }
 
     // Generate angle terms
@@ -737,7 +737,7 @@ bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
         auto typeK = determineTypes ? determineUFFAtomType(k) : uffAtomTypeByName(k->atomType()->name());
 
         if (!typeI || !typeJ || !typeK || !generateAngleTerm(sp, angle, *typeI, *typeJ, *typeK))
-            return Messenger::error("Failed to create parameters for angle %i-%i-%i.\n", i->userIndex(), j->userIndex(),
+            return Messenger::error("Failed to create parameters for angle {}-{}-{}.\n", i->userIndex(), j->userIndex(),
                                     k->userIndex());
     }
 
@@ -758,116 +758,12 @@ bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
         auto typeL = determineTypes ? determineUFFAtomType(l) : uffAtomTypeByName(l->atomType()->name());
 
         if (!typeI || !typeJ || !typeK || !typeL || !generateTorsionTerm(sp, torsion, *typeI, *typeJ, *typeK, *typeL))
-            return Messenger::error("Failed to create parameters for torsion %i-%i-%i-%i.\n", i->userIndex(), j->userIndex(),
+            return Messenger::error("Failed to create parameters for torsion {}-{}-{}-{}.\n", i->userIndex(), j->userIndex(),
                                     k->userIndex(), l->userIndex());
     }
 
     return true;
 }
-
-//
-// int torsiongenerator(ffbound newterm, atom i, atom j, atom k, atom l)
-// {
-// 	# There are seven cases to consider, listed in decreasing complexity:
-// 	#   a) j and k are both group 16 (old group 6) atoms, and both are sp3 centres
-// 	#   b) j or k is a group 16 atom, while the other is an sp2 or resonant centre
-// 	#   c) j or k is an sp3 atom, while the other is an sp2/resonant centre bound to another sp2/resonant centre
-// 	#   d) j and k are both sp3 centres
-// 	#   e) j and k are both sp2 centres
-// 	#   f) j is sp2 and k is sp3 (or vice versa)
-// 	#   g) everything else (no torsional barrier)
-//
-// 	# The original formula in the paper is given as a sum over cosine terms, but this reduces to: 0.5 * V * (1 - cos(n*eq) *
-// cos(n*phi)) 	# Aten's single cosine potential has the form: forcek * (1 + s*cos(period*phi - eq)) 	# Therefore: forcek =
-// 0.5 * V 	#		  s = -cos(n*eq) 	#	     period = n 	#		 eq = 0.0
-//
-// 	ffatom fi = i.type;
-// 	ffatom fj = j.type;
-// 	ffatom fk = k.type;
-// 	ffatom fl = l.type;
-// 	int groupj = aten.elements[j.z].group;
-// 	int groupk = aten.elements[k.z].group;
-// 	int geomi = fi.dataI("geom");
-// 	if (geomi == 9) geomi = 2;
-// 	int geomj = fj.dataI("geom");
-// 	if (geomj == 9) geomj = 2;
-// 	int geomk = fk.dataI("geom");
-// 	if (geomk == 9) geomk = 2;
-// 	int geoml = fl.dataI("geom");
-// 	if (geoml == 9) geoml = 2;
-// 	double n, forcek, s;
-//
-// 	# Here we go...
-// 	if ((groupj == 16) && (groupk == 16) && (geomj == 3) && (geomk == 3))
-// 	{
-// 		# Case a) j and k are both group 16 (old group 6) atoms, and both are sp3 centres
-// 		double vj = 6.8, vk = 6.8;
-// 		# V value is 2.0 for oxygen, 6.8 otherwise
-// 		if (j.z == 8) vj = 2.0;
-// 		if (k.z == 8) vk = 2.0;
-// 		vj = aten.convertEnergy(vj, "kcal");
-// 		vk = aten.convertEnergy(vk, "kcal");
-// 		forcek = sqrt(vj*vk);
-// 		n = 2.0;
-// 		s = -cos(n*180.0);
-// 	}
-// 	else if ( ((groupj == 16) && (geomj == 3) && (geomk == 2)) || ((groupk == 16) && (geomk == 3) && (geomj == 2)) )
-// 	{
-// 		# Case b) j or k is a group 16 atom, while the other is an sp2 or resonant centre
-// 		# Since bond order is 1.0, ln term in eq 17 is zero...
-// 		forcek = 5.0 * sqrt(fj.dataD("U")*fk.dataD("U"));
-// 		n = 2.0;
-// 		s = -cos(n*90.0);
-// 	}
-// 	else if ((geomj == 3) && (geomk == 3))
-// 	{
-// 		# Case d) j and k are both sp3 centres
-// 		forcek = sqrt(j->V()*k->V());
-// 		n = 3.0;
-// 		s = -cos(n*180.0);
-// 	}
-// 	else if ((geomj == 2) && (geomk == 2))
-// 	{
-// 		# Case e) j and k are both sp2 centres
-// 		# Force constant is adjusted based on current bond order
-// 		forcek = 5.0 * sqrt(fj.dataD("U")*fk.dataD("U")) * (1.0 + 4.18*ln( j.findBond(k).order() ));
-// 		#printf("sp2-sp2  Vi=%f Vj=%f lnbond=%f\n", fj.dataD("U"),fk.dataD("U"),ln( j.findBond(k).order() ));
-// 		n = 2.0;
-// 		s = -cos(n*180.0);
-// 	}
-// 	else if ( ((geomj == 3) && (geomk == 2)) || ((geomk == 3) && (geomj == 2)) )
-// 	{
-// 		# Case f) j is sp2 and k is sp3 (or vice versa)
-// 		n = 6.0;
-// 		s = -cos(n*0.0);
-// 		forcek = aten.convertEnergy(1.0, "kcal");
-// 	}
-// 	else
-// 	{
-// 		# Case c) j or k is an sp3 atom, while the other is an sp2/resonant centre bound to another sp2/resonant centre
-// 		# Case g) everything else
-// 		if ( ((geomj == 3) && (geomk == 2) && (geoml == 2)) || ((geomk == 3) && (geomj == 2) && (geomi == 2)) )
-// 		{
-// 			forcek = aten.convertEnergy(2.0, "kcal");
-// 			n = 3.0;
-// 			s = -cos(n*180.0);
-// 		}
-// 		else
-// 		{
-// 			# Everything else....
-// 			forcek = 0.0;
-// 			n = 1.0;
-// 			s = 1.0;
-// 		}
-// 	}
-//
-// 	# Store the generated parameters
-// 	# Parameter order is: forcek, n, eq, s
-// 	newterm.form = "cos";
-// 	newterm.data = { 0.5*forcek, n, 0.0, s };
-// 	verbose("Generated cos torsion information for %s-%s-%s-%s : k=%f, n=%f, eq=0.0, s=%f\n",
-// fi.equivalent,fj.equivalent,fk.equivalent,fj.equivalent,forcek,n,s); 	return 0;
-// }
 
 // Perform some test calculations
 void Forcefield_UFF::test() const {}

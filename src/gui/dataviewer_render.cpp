@@ -45,15 +45,15 @@ void DataViewer::render2DOverlay()
      * Draw indicators in top-left corner
      */
 
-    CharString indicatorText;
+    QString indicatorText;
     if (view_.autoFollowType() == View::AllAutoFollow)
         indicatorText += "|A| ";
     else if (view_.autoFollowType() == View::XAutoFollow)
         indicatorText += "A\\sub{X} ";
     if (groupManager_.verticalShiftAmount() > 0)
-        indicatorText.strcatf("S\\sub{%i}", groupManager_.verticalShiftAmount());
+        indicatorText += QString("S\\sub{%1}").arg(groupManager_.verticalShiftAmount());
     TextPrimitive indicatorPrimitive;
-    indicatorPrimitive.set(fontInstance_, indicatorText.get(),
+    indicatorPrimitive.set(fontInstance_, indicatorText,
                            Vec3<double>(overlaySpacing, view_.viewportMatrix()[3] - overlaySpacing, 0.0),
                            TextPrimitive::TopLeftAnchor, Vec3<double>(), Matrix4(), overlayTextSize, false);
     glColor3d(0.0, 0.0, 0.0);
@@ -117,7 +117,7 @@ void DataViewer::render2DOverlay()
         glPushMatrix();
         glColor3d(0.0, 0.0, 0.0);
         glScaled(overlayTextSize, overlayTextSize, overlayTextSize);
-        fontInstance_.renderText(rend->name());
+        fontInstance_.renderText(std::string(rend->name()));
         glPopMatrix();
 
         // Shift to next position

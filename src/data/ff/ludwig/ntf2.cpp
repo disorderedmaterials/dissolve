@@ -83,10 +83,10 @@ bool Forcefield_Ludwig_NTf2::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_Ludwig_NTf2::name() const { return "Ludwig NTf2 Anion"; }
+std::string_view Forcefield_Ludwig_NTf2::name() const { return "Ludwig NTf2 Anion"; }
 
 // Return description for Forcefield
-const char *Forcefield_Ludwig_NTf2::description() const
+std::string_view Forcefield_Ludwig_NTf2::description() const
 {
     return "J. Neumann, B. Golub, L.-M. Odebrecht, R. Ludwig, D. Paschek: bis(trifluoromethylsulfonyl)imide anion by "
            "Ludwig Group, <em>J. Chem. Phys.</em> <b>148</b>, 193828 (2018).";

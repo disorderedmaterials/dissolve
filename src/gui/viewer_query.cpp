@@ -24,11 +24,11 @@
 #include <QOpenGLFramebufferObject>
 
 // ViewerObject Keywords
-const char *ViewerObjectKeywords[] = {"No Object",       "Axis Line",       "Axis Tick Label", "Axis Title Label",
-                                      "Major Grid Line", "Minor Grid Line", "Renderable"};
+std::string_view ViewerObjectKeywords[] = {"No Object",       "Axis Line",       "Axis Tick Label", "Axis Title Label",
+                                           "Major Grid Line", "Minor Grid Line", "Renderable"};
 
 // Return description of viewer object
-const char *BaseViewer::viewerObject(BaseViewer::ViewerObject vo) { return ViewerObjectKeywords[vo]; }
+std::string_view BaseViewer::viewerObject(BaseViewer::ViewerObject vo) { return ViewerObjectKeywords[vo]; }
 
 /*
  * Private Functions
@@ -63,7 +63,7 @@ void BaseViewer::generateQueryImage()
 
     // Generate this tile
     if (!offscreenBuffer_->bind())
-        printf("Failed to bind framebuffer object.\n");
+        Messenger::error("Failed to bind framebuffer object.\n");
     setupGL();
     renderGL();
 
@@ -93,7 +93,7 @@ void BaseViewer::generateQueryImage()
  */
 
 // Update object query, setting supplied information if the sample area has changed significantly
-void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, const char *info, const char *subInfo)
+void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, std::string_view info, std::string_view subInfo)
 {
     // Return immediately if we are not querying
     if ((!queryingObjects_) || (!offscreenBuffer_))
@@ -128,7 +128,6 @@ void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, const char *in
 
     // Set the object info if the colour change threshold was reached
     const auto threshold = 1.0; //(0.5 * queryRegionHeight_*queryRegionWidth_) * 0.25;
-                                // 	printf("Delta = %f, threshold = %f\n", delta, threshold);
     if (delta > threshold)
     {
         queryObjectType_ = objectType;
@@ -208,7 +207,7 @@ BaseViewer::ViewerObject BaseViewer::queryAt(int x, int y)
 }
 
 // Info for object at query coordinates
-const char *BaseViewer::queryObjectInfo() const { return queryObjectInfo_.get(); }
+std::string_view BaseViewer::queryObjectInfo() const { return queryObjectInfo_; }
 
 // Return sub-info for object at query coordinates
-const char *BaseViewer::queryObjectSubInfo() const { return queryObjectSubInfo_.get(); }
+std::string_view BaseViewer::queryObjectSubInfo() const { return queryObjectSubInfo_; }

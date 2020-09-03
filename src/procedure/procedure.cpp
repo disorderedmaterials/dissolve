@@ -24,7 +24,7 @@
 #include "base/sysfunc.h"
 #include "classes/configuration.h"
 
-Procedure::Procedure(ProcedureNode::NodeContext context, const char *blockTerminationKeyword)
+Procedure::Procedure(ProcedureNode::NodeContext context, std::string_view blockTerminationKeyword)
     : rootSequence_(context, this, NULL, blockTerminationKeyword)
 {
     context_ = context;
@@ -50,17 +50,17 @@ void Procedure::addRootSequenceNode(ProcedureNode *node)
 const SequenceProcedureNode &Procedure::rootSequence() const { return rootSequence_; }
 
 // Return the block termination keyword for the Procedure
-const char *Procedure::blockTerminationKeyword() const { return rootSequence_.blockTerminationKeyword(); }
+std::string_view Procedure::blockTerminationKeyword() const { return rootSequence_.blockTerminationKeyword(); }
 
 // Return named node if present, and which matches the (optional) type given
-ProcedureNode *Procedure::node(const char *name, ProcedureNode::NodeType nt) const { return rootSequence_.node(name, nt); }
+ProcedureNode *Procedure::node(std::string_view name, ProcedureNode::NodeType nt) const { return rootSequence_.node(name, nt); }
 
 /*
  * Execute
  */
 
 // Run procedure for specified Configuration, storing / retrieving generated data from supplied list
-bool Procedure::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+bool Procedure::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Depending on context, we may or may not operate on the supplied Configuration
     if (context_ == ProcedureNode::AnalysisContext)
@@ -72,7 +72,7 @@ bool Procedure::execute(ProcessPool &procPool, Configuration *cfg, const char *p
             // A Configuration we've processed before - check the index
             if (cfg->contentsVersion() == ri->data())
             {
-                Messenger::warn("Refusing to analyse Configuration '%s' since it has not changed.\n", cfg->name());
+                Messenger::warn("Refusing to analyse Configuration '{}' since it has not changed.\n", cfg->name());
                 return true;
             }
             else
@@ -110,4 +110,4 @@ bool Procedure::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write structure to specified LineParser
-bool Procedure::write(LineParser &parser, const char *prefix) { return rootSequence_.write(parser, prefix); }
+bool Procedure::write(LineParser &parser, std::string_view prefix) { return rootSequence_.write(parser, prefix); }

@@ -26,7 +26,7 @@
 // Static Singletons
 RefList<Gizmo> Gizmo::allGizmos_;
 
-Gizmo::Gizmo(Dissolve &dissolve, const char *uniqueName) : ListItem<Gizmo>(), dissolve_(dissolve)
+Gizmo::Gizmo(Dissolve &dissolve, const QString uniqueName) : ListItem<Gizmo>(), dissolve_(dissolve)
 {
     window_ = NULL;
     uniqueName_ = uniqueName;
@@ -41,38 +41,28 @@ Gizmo::~Gizmo() { allGizmos_.remove(this); }
  */
 
 // Set unique name of widget
-void Gizmo::setUniqueName(const char *uniqueName)
+void Gizmo::setUniqueName(const QString uniqueName)
 {
     uniqueName_ = uniqueName;
     if (window_)
-        window_->setWindowTitle(uniqueName);
+        window_->setWindowTitle(uniqueName_);
 }
 
 // Return unique name for Gizmo based on basename provided
-const char *Gizmo::uniqueName(const char *base)
+const QString Gizmo::uniqueName(const QString base)
 {
-    static CharString uniqueName;
-    CharString baseName = base;
-    uniqueName = baseName;
-    auto suffix = 0;
-
-    // Must always have a baseName
-    if (baseName.isEmpty())
-        baseName = "NewGizmo";
+    QString uniqueName = base;
 
     // Find an unused name starting with the baseName provided
+    auto suffix = 0;
     while (find(uniqueName))
-    {
-        // Increase suffix value and regenerate uniqueName from baseName
-        ++suffix;
-        uniqueName.sprintf("%s%i", baseName.get(), suffix);
-    }
+        uniqueName = QString("%1%2").arg(base).arg(++suffix);
 
     return uniqueName;
 }
 
 // Return unique name of widget
-const char *Gizmo::uniqueName() { return uniqueName_.get(); }
+const QString Gizmo::uniqueName() const { return uniqueName_; }
 
 // Set QMdiSubWindow containing the Gizmo
 void Gizmo::setWindow(QMdiSubWindow *window) { window_ = window; }
@@ -81,14 +71,14 @@ void Gizmo::setWindow(QMdiSubWindow *window) { window_ = window; }
 QMdiSubWindow *Gizmo::window() { return window_; }
 
 // Find Gizmo with unique name provided
-Gizmo *Gizmo::find(const char *uniqueName, const Gizmo *excludeThis)
+Gizmo *Gizmo::find(const QString uniqueName, const Gizmo *excludeThis)
 {
     for (Gizmo *gizmo : allGizmos_)
     {
         if (gizmo == excludeThis)
             continue;
 
-        if (DissolveSys::sameString(gizmo->uniqueName(), uniqueName))
+        if (gizmo->uniqueName() == uniqueName)
             return gizmo;
     }
 
@@ -110,10 +100,10 @@ Gizmo *Gizmo::find(QMdiSubWindow *window)
  */
 
 // Return whether this Gizmo accepts data of the specified type
-bool Gizmo::acceptsData(const char *dataType) { return false; }
+bool Gizmo::acceptsData(const QString &dataType) { return false; }
 
 // Return all Gizmos that accept data of the specified type
-RefList<Gizmo> Gizmo::allThatAccept(const char *dataType)
+RefList<Gizmo> Gizmo::allThatAccept(const QString &dataType)
 {
     RefList<Gizmo> gizmos;
 
@@ -125,4 +115,4 @@ RefList<Gizmo> Gizmo::allThatAccept(const char *dataType)
 }
 
 // Send data (referenced by its object tag) to the Gizmo
-bool Gizmo::sendData(const char *dataType, const char *objectTag, const char *name) { return false; }
+bool Gizmo::sendData(const QString &dataType, std::string_view objectTag, std::string_view name) { return false; }

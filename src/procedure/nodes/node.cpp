@@ -85,7 +85,7 @@ ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType) : ListItem<Proced
 
     // Assign default, unique name to the node
     static int nodeCount = 0;
-    name_ = CharString("Node%04i", ++nodeCount);
+    name_ = fmt::format("Node{:04d}", ++nodeCount);
 }
 
 ProcedureNode::~ProcedureNode() {}
@@ -113,19 +113,19 @@ bool ProcedureNode::isType(ProcedureNode::NodeType thisType) const
 bool ProcedureNode::mustBeNamed() const { return true; }
 
 // Set node name (and nice name)
-void ProcedureNode::setName(const char *name)
+void ProcedureNode::setName(std::string_view name)
 {
     name_ = name;
 
     // Generate a nice name (i.e. no spaces, slashes etc.)
-    niceName_ = DissolveSys::niceName(name_);
+    niceName_ = DissolveSys::niceName(name);
 }
 
 // Return node name
-const char *ProcedureNode::name() const { return name_.get(); }
+std::string_view ProcedureNode::name() const { return name_; }
 
 // Return nice node name
-const char *ProcedureNode::niceName() const { return niceName_.get(); }
+std::string_view ProcedureNode::niceName() const { return niceName_; }
 
 /*
  * Keywords
@@ -163,7 +163,7 @@ ProcedureNode::NodeContext ProcedureNode::scopeContext() const
 }
 
 // Return named node if it is currently in scope, and optionally matches the type given
-ProcedureNode *ProcedureNode::nodeInScope(const char *name, ProcedureNode::NodeType nt)
+ProcedureNode *ProcedureNode::nodeInScope(std::string_view name, ProcedureNode::NodeType nt)
 {
     if (!scope_)
         return NULL;
@@ -181,7 +181,7 @@ RefList<ProcedureNode> ProcedureNode::nodesInScope(ProcedureNode::NodeType nt)
 }
 
 // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
-ProcedureNode *ProcedureNode::nodeExists(const char *name, ProcedureNode *excludeNode, ProcedureNode::NodeType nt) const
+ProcedureNode *ProcedureNode::nodeExists(std::string_view name, ProcedureNode *excludeNode, ProcedureNode::NodeType nt) const
 {
     if (!scope_)
         return NULL;
@@ -199,7 +199,7 @@ RefList<ProcedureNode> ProcedureNode::nodes(ProcedureNode::NodeType nt)
 }
 
 // Return whether the named parameter is currently in scope
-ExpressionVariable *ProcedureNode::parameterInScope(const char *name, ExpressionVariable *excludeParameter)
+ExpressionVariable *ProcedureNode::parameterInScope(std::string_view name, ExpressionVariable *excludeParameter)
 {
     if (!scope_)
         return NULL;
@@ -208,7 +208,7 @@ ExpressionVariable *ProcedureNode::parameterInScope(const char *name, Expression
 }
 
 // Return whether the named parameter exists anywhere in the same Procedure
-ExpressionVariable *ProcedureNode::parameterExists(const char *name, ExpressionVariable *excludeParameter) const
+ExpressionVariable *ProcedureNode::parameterExists(std::string_view name, ExpressionVariable *excludeParameter) const
 {
     if (!scope_)
         return NULL;
@@ -240,7 +240,7 @@ SequenceProcedureNode *ProcedureNode::branch() { return NULL; }
  */
 
 // Return whether this node has the named parameter specified
-ExpressionVariable *ProcedureNode::hasParameter(const char *name, ExpressionVariable *excludeParameter) { return NULL; }
+ExpressionVariable *ProcedureNode::hasParameter(std::string_view name, ExpressionVariable *excludeParameter) { return NULL; }
 
 // Return references to all parameters for this node
 RefList<ExpressionVariable> ProcedureNode::parameterReferences() const { return RefList<ExpressionVariable>(); }
@@ -250,10 +250,10 @@ RefList<ExpressionVariable> ProcedureNode::parameterReferences() const { return 
  */
 
 // Prepare any necessary data, ready for execution
-bool ProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList) { return true; }
+bool ProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
 
 // Finalise any necessary data after execution
-bool ProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+bool ProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     return true;
 }
@@ -273,17 +273,17 @@ bool ProcedureNode::read(LineParser &parser, CoreData &coreData)
             return false;
 
         // Is this the end of the node block?
-        if (DissolveSys::sameString(parser.argc(0), CharString("End%s", nodeTypes().keyword(type_))))
+        if (DissolveSys::sameString(parser.argsv(0), fmt::format("End{}", nodeTypes().keyword(type_))))
             return true;
 
         // Try to parse this line as a keyword
         KeywordBase::ParseResult result = keywords_.parse(parser, coreData);
         if (result == KeywordBase::Failed)
-            return Messenger::error("Failed to parse keyword '%s'.\n", parser.argc(0));
+            return Messenger::error("Failed to parse keyword '{}'.\n", parser.argsv(0));
         else if (result == KeywordBase::Success)
             continue;
         else if (result == KeywordBase::Unrecognised)
-            return Messenger::error("Unrecognised keyword '%s' found while parsing %s node.\n", parser.argc(0),
+            return Messenger::error("Unrecognised keyword '{}' found while parsing {} node.\n", parser.argsv(0),
                                     nodeTypes().keyword(type_));
     }
 
@@ -291,29 +291,29 @@ bool ProcedureNode::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write node data to specified LineParser
-bool ProcedureNode::write(LineParser &parser, const char *prefix)
+bool ProcedureNode::write(LineParser &parser, std::string_view prefix)
 {
     // Block Start - does this node have a required name?
     if (mustBeNamed())
     {
-        if (!parser.writeLineF("%s%s  '%s'\n", prefix, ProcedureNode::nodeTypes().keyword(type_), name()))
+        if (!parser.writeLineF("{}{}  '{}'\n", prefix, ProcedureNode::nodeTypes().keyword(type_), name()))
             return false;
     }
     else
     {
-        if (!parser.writeLineF("%s%s\n", prefix, ProcedureNode::nodeTypes().keyword(type_)))
+        if (!parser.writeLineF("{}{}\n", prefix, ProcedureNode::nodeTypes().keyword(type_)))
             return false;
     }
 
     // Create new prefix
-    CharString newPrefix("  %s", prefix);
+    std::string newPrefix = fmt::format("  {}", prefix);
 
     // Write keywords
     if (!keywords_.write(parser, newPrefix, false))
         return false;
 
     // Block End
-    if (!parser.writeLineF("%sEnd%s\n", prefix, nodeTypes().keyword(type_)))
+    if (!parser.writeLineF("{}End{}\n", prefix, nodeTypes().keyword(type_)))
         return false;
 
     return true;

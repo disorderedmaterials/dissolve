@@ -38,7 +38,7 @@ bool Dissolve::ownConfiguration(Configuration *cfg)
 {
     // Sanity check - do we already own this Configuration?
     if (coreData_.configurations().contains(cfg))
-        return Messenger::error("Already own Configuration '%s', so nothing to do.\n", cfg->name());
+        return Messenger::error("Already own Configuration '{}', so nothing to do.\n", cfg->name());
 
     coreData_.configurations().own(cfg);
 
@@ -73,10 +73,10 @@ List<Configuration> &Dissolve::configurations() { return coreData_.configuration
 const List<Configuration> &Dissolve::constConfigurations() const { return coreData_.configurations(); }
 
 // Find configuration by name
-Configuration *Dissolve::findConfiguration(const char *name) const { return coreData_.findConfiguration(name); }
+Configuration *Dissolve::findConfiguration(std::string_view name) const { return coreData_.findConfiguration(name); }
 
 // Find configuration by 'nice' name
-Configuration *Dissolve::findConfigurationByNiceName(const char *name) const
+Configuration *Dissolve::findConfigurationByNiceName(std::string_view name) const
 {
     for (auto *cfg = constConfigurations().first(); cfg != NULL; cfg = cfg->next())
         if (DissolveSys::sameString(name, cfg->niceName()))

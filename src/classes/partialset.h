@@ -50,9 +50,9 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     // RDF bin width used to initialise arrays
     double rdfBinWidth_;
     // Fingerprint for these partials (e.g. reflecting Configuration indices at which they were calculated)
-    CharString fingerprint_;
+    std::string fingerprint_;
     // Abscissa units for contained data
-    CharString abscissaUnits_;
+    std::string abscissaUnits_;
     // Histograms used for calculating full atom-atom partials in r
     Array2D<Histogram1D> fullHistograms_;
     // Histograms used for calculating bound atom-atom partials in r
@@ -70,15 +70,15 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     // Total function
     Data1D total_;
     // Prefix applied to object names
-    CharString objectNamePrefix_;
+    std::string objectNamePrefix_;
 
     public:
     // Set up PartialSet, including initialising histograms for g(r) use
-    bool setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth, const char *prefix, const char *tag,
-               const char *suffix, const char *abscissaUnits);
+    bool setUp(const AtomTypeList &atomTypes, double rdfRange, double binWidth, std::string_view prefix, std::string_view tag,
+               std::string_view suffix, std::string_view abscissaUnits);
     // Set up PartialSet without initialising histogram arrays
-    bool setUpPartials(const AtomTypeList &atomTypes, const char *prefix, const char *tag, const char *suffix,
-                       const char *abscissaUnits);
+    bool setUpPartials(const AtomTypeList &atomTypes, std::string_view prefix, std::string_view tag, std::string_view suffix,
+                       std::string_view abscissaUnits);
     // Set up histogram arrays for g(r) calculation
     void setUpHistograms(double rdfRange, double binWidth);
     // Reset partial arrays
@@ -92,9 +92,9 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     // Return RDF bin width used to initialise arrays
     double rdfBinWidth() const;
     // Set new fingerprint
-    void setFingerprint(const char *fingerprint);
+    void setFingerprint(std::string_view fingerprint);
     // Return fingerprint of partials
-    const char *fingerprint() const;
+    std::string_view fingerprint() const;
     // Return full histogram specified
     Histogram1D &fullHistogram(int i, int j);
     // Return bound histogram specified
@@ -128,11 +128,11 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     // Save all partials and total
     bool save();
     // Name all object based on the supplied prefix
-    void setObjectTags(const char *prefix, const char *suffix = NULL);
+    void setObjectTags(std::string_view prefix, std::string_view suffix = "");
     // Return prefix applied to object names
-    const char *objectNamePrefix() const;
+    std::string_view objectNamePrefix() const;
     // Set underlying Data1D file names
-    void setFileNames(const char *prefix, const char *tag, const char *suffix);
+    void setFileNames(std::string_view prefix, std::string_view tag, std::string_view suffix);
 
     /*
      * Manipulation
@@ -164,7 +164,7 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
      */
     public:
     // Return class name
-    static const char *itemClassName();
+    static std::string_view itemClassName();
     // Read data through specified LineParser
     bool read(LineParser &parser, CoreData &coreData);
     // Write data through specified LineParser

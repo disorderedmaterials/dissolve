@@ -44,7 +44,7 @@ class MimeTreeWidgetItem : public QTreeWidgetItem
 
     public:
     // Add mime data of specified type
-    void addMimeString(MimeString::MimeStringType type, QString data);
+    void addMimeString(MimeString::MimeStringType type, std::string_view data);
     // Return mime strings
     MimeStrings &mimeStrings();
 };

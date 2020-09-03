@@ -51,44 +51,32 @@ PairPotential::PairPotential() : ListItem<PairPotential>(), uFullInterpolation_(
     shortRangeType_ = Forcefield::UndefinedType;
 }
 
-// Coulomb Truncation Scheme Keywords
-const char *CoulombTruncationSchemeKeywords[] = {"None", "Shifted"};
-
-// Convert text string to TruncationScheme
-PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme(const char *s)
+// Return enum option info for CoulombTruncationScheme
+EnumOptions<PairPotential::CoulombTruncationScheme> &PairPotential::coulombTruncationSchemes()
 {
-    for (int n = 0; n < PairPotential::nCoulombTruncationSchemes; ++n)
-        if (DissolveSys::sameString(s, CoulombTruncationSchemeKeywords[n]))
-            return (PairPotential::CoulombTruncationScheme)n;
-    return PairPotential::nCoulombTruncationSchemes;
+    static EnumOptionsList CoulombTruncationSchemeOptions = EnumOptionsList()
+                                                            << EnumOption(PairPotential::NoCoulombTruncation, "None")
+                                                            << EnumOption(PairPotential::ShiftedCoulombTruncation, "Shifted");
+
+    static EnumOptions<PairPotential::CoulombTruncationScheme> options("CoulombTruncationScheme",
+                                                                       CoulombTruncationSchemeOptions);
+
+    return options;
 }
 
-// Convert CoulombTruncationScheme to text string
-const char *PairPotential::coulombTruncationScheme(CoulombTruncationScheme id) { return CoulombTruncationSchemeKeywords[id]; }
-
-// Return CoulombTruncationScheme array
-const char **PairPotential::coulombTruncationSchemes() { return CoulombTruncationSchemeKeywords; }
-
-// Short-Range Truncation Scheme Keywords
-const char *ShortRangeTruncationSchemeKeywords[] = {"None", "Shifted", "Cosine"};
-
-// Convert text string to ShortRangeTruncationScheme
-PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationScheme(const char *s)
+// Return enum option info for ShortRangeTruncationScheme
+EnumOptions<PairPotential::ShortRangeTruncationScheme> &PairPotential::shortRangeTruncationSchemes()
 {
-    for (int n = 0; n < PairPotential::nShortRangeTruncationSchemes; ++n)
-        if (DissolveSys::sameString(s, ShortRangeTruncationSchemeKeywords[n]))
-            return (PairPotential::ShortRangeTruncationScheme)n;
-    return PairPotential::nShortRangeTruncationSchemes;
-}
+    static EnumOptionsList ShortRangeTruncationSchemeOptions =
+        EnumOptionsList() << EnumOption(PairPotential::NoShortRangeTruncation, "None")
+                          << EnumOption(PairPotential::ShiftedShortRangeTruncation, "Shifted")
+                          << EnumOption(PairPotential::CosineShortRangeTruncation, "Cosine");
 
-// Convert ShortRangeTruncationScheme to text string
-const char *PairPotential::shortRangeTruncationScheme(ShortRangeTruncationScheme id)
-{
-    return ShortRangeTruncationSchemeKeywords[id];
-}
+    static EnumOptions<PairPotential::ShortRangeTruncationScheme> options("ShortRangeTruncationScheme",
+                                                                          ShortRangeTruncationSchemeOptions);
 
-// Return ShortRangeTruncationScheme array
-const char **PairPotential::shortRangeTruncationSchemes() { return ShortRangeTruncationSchemeKeywords; }
+    return options;
+}
 
 /*
  * Seed Interaction Type
@@ -146,17 +134,17 @@ void PairPotential::setData1DNames()
         return;
     }
 
-    uFull_.setName(CharString("%s-%s", atomTypeI_->name(), atomTypeJ_->name()));
-    uFull_.setObjectTag(CharString("PairPotential//%s-%s//Full", atomTypeI_->name(), atomTypeJ_->name()));
+    uFull_.setName(fmt::format("{}-{}", atomTypeI_->name(), atomTypeJ_->name()));
+    uFull_.setObjectTag(fmt::format("PairPotential//{}-{}//Full", atomTypeI_->name(), atomTypeJ_->name()));
 
-    uAdditional_.setName(CharString("%s-%s (Add)", atomTypeI_->name(), atomTypeJ_->name()));
-    uAdditional_.setObjectTag(CharString("PairPotential//%s-%s//Additional", atomTypeI_->name(), atomTypeJ_->name()));
+    uAdditional_.setName(fmt::format("{}-{} (Add)", atomTypeI_->name(), atomTypeJ_->name()));
+    uAdditional_.setObjectTag(fmt::format("PairPotential//{}-{}//Additional", atomTypeI_->name(), atomTypeJ_->name()));
 
-    uOriginal_.setName(CharString("%s-%s (Orig)", atomTypeI_->name(), atomTypeJ_->name()));
-    uOriginal_.setObjectTag(CharString("PairPotential//%s-%s//Original", atomTypeI_->name(), atomTypeJ_->name()));
+    uOriginal_.setName(fmt::format("{}-{} (Orig)", atomTypeI_->name(), atomTypeJ_->name()));
+    uOriginal_.setObjectTag(fmt::format("PairPotential//{}-{}//Original", atomTypeI_->name(), atomTypeJ_->name()));
 
-    dUFull_.setName(CharString("%s-%s (dU/dr)", atomTypeI_->name(), atomTypeJ_->name()));
-    dUFull_.setObjectTag(CharString("PairPotential//%s-%s//Force", atomTypeI_->name(), atomTypeJ_->name()));
+    dUFull_.setName(fmt::format("{}-{} (dU/dr)", atomTypeI_->name(), atomTypeJ_->name()));
+    dUFull_.setObjectTag(fmt::format("PairPotential//{}-{}//Force", atomTypeI_->name(), atomTypeJ_->name()));
 }
 
 // Set up PairPotential parameters from specified AtomTypes
@@ -186,14 +174,14 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
     if (paramsI.isEmpty() || paramsJ.isEmpty())
     {
         if (paramsI.isEmpty() && paramsJ.isEmpty())
-            Messenger::error("Can't set parameters for PairPotential since neither AtomType (%s and %s) contain "
+            Messenger::error("Can't set parameters for PairPotential since neither AtomType ({} and {}) contain "
                              "any parameters.\n",
                              atomTypeI_->name(), atomTypeJ_->name());
         else if (paramsI.isEmpty())
-            Messenger::error("Can't set parameters for PairPotential since AtomType %s contains no parameters.\n",
+            Messenger::error("Can't set parameters for PairPotential since AtomType {} contains no parameters.\n",
                              atomTypeI_->name());
         else
-            Messenger::error("Can't set parameters for PairPotential since AtomType %s contains no parameters.\n",
+            Messenger::error("Can't set parameters for PairPotential since AtomType {} contains no parameters.\n",
                              atomTypeJ_->name());
         return false;
     }
@@ -205,7 +193,7 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
         switch (shortRangeType_)
         {
             case (Forcefield::UndefinedType):
-                return Messenger::error("PairPotential between atom types '%s' and '%s' is undefined.\n", atomTypeI_->name(),
+                return Messenger::error("PairPotential between atom types '{}' and '{}' is undefined.\n", atomTypeI_->name(),
                                         atomTypeJ_->name());
             case (Forcefield::NoInteractionType):
                 break;
@@ -232,7 +220,7 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
                 chargeJ_ = paramsJ.charge();
                 break;
             default:
-                Messenger::error("Short-range type %i is not accounted for in PairPotential::setUp().\n", shortRangeType_);
+                Messenger::error("Short-range type {} is not accounted for in PairPotential::setUp().\n", shortRangeType_);
                 return false;
         }
     }
@@ -240,8 +228,8 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
     {
         // Can't mix parameters of different functional forms in general, so complain...
         shortRangeType_ = Forcefield::UndefinedType;
-        return Messenger::error("Can't generate potential parameters between atom types '%s' and '%s', which have "
-                                "short-range types %s and %s.\nAdd a suitable potential manually.\n",
+        return Messenger::error("Can't generate potential parameters between atom types '{}' and '{}', which have "
+                                "short-range types {} and {}.\nAdd a suitable potential manually.\n",
                                 atomTypeI_->name(), atomTypeJ_->name(),
                                 Forcefield::shortRangeTypes().keyword(atomTypeI_->shortRangeType()),
                                 Forcefield::shortRangeTypes().keyword(atomTypeJ_->shortRangeType()));
@@ -251,7 +239,7 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
 }
 
 // Return first AtomType name
-const char *PairPotential::atomTypeNameI() const
+std::string_view PairPotential::atomTypeNameI() const
 {
     // Check for NULL pointers
     if (atomTypeI_ == NULL)
@@ -263,7 +251,7 @@ const char *PairPotential::atomTypeNameI() const
 }
 
 // Return second AtomType name
-const char *PairPotential::atomTypeNameJ() const
+std::string_view PairPotential::atomTypeNameJ() const
 {
     // Check for NULL pointers
     if (atomTypeJ_ == NULL)
@@ -286,7 +274,7 @@ void PairPotential::setParameter(int index, double value)
 #ifdef CHECKS
     if ((index < 0) || (index >= MAXSRPARAMETERS))
     {
-        Messenger::error("OUT_OF_RANGE - PairPotential Parameter index %i is out of range (MAXSRPARAMETERS = %i) so it "
+        Messenger::error("OUT_OF_RANGE - PairPotential Parameter index {} is out of range (MAXSRPARAMETERS = {}) so it "
                          "cannot be set.\n",
                          index, MAXSRPARAMETERS);
         return;
@@ -301,7 +289,7 @@ double PairPotential::parameter(int index) const
 #ifdef CHECKS
     if ((index < 0) || (index >= MAXSRPARAMETERS))
     {
-        Messenger::error("OUT_OF_RANGE - PairPotential Parameter index %i is out of range (MAXSRPARAMETERS = %i) so it "
+        Messenger::error("OUT_OF_RANGE - PairPotential Parameter index {} is out of range (MAXSRPARAMETERS = {}) so it "
                          "cannot be returned.\n",
                          index, MAXSRPARAMETERS);
         return 0.0;
@@ -363,7 +351,7 @@ double PairPotential::analyticShortRangeEnergy(double r, Forcefield::ShortRangeT
         return energy;
     }
 
-    Messenger::error("Short-range interaction type %i is not accounted for in PairPotential::analyticShortRangeEnergy(). "
+    Messenger::error("Short-range interaction type {} is not accounted for in PairPotential::analyticShortRangeEnergy(). "
                      "Returning 0.0...\n",
                      type);
 
@@ -416,7 +404,7 @@ double PairPotential::analyticShortRangeForce(double r, Forcefield::ShortRangeTy
         }
     }
 
-    Messenger::error("Short-range interaction type %i is not accounted for in PairPotential::analyticShortRangeForce(). "
+    Messenger::error("Short-range interaction type {} is not accounted for in PairPotential::analyticShortRangeForce(). "
                      "Returning 0.0...\n",
                      type);
 
@@ -560,7 +548,7 @@ double PairPotential::energy(double r)
 #ifdef CHECKS
     if (int(r * rDelta_) < 0)
     {
-        Messenger::print("BAD_VALUE - Bin value of r is negative (%i) in PairPotential::energy.\n", int(r * rDelta_));
+        Messenger::print("BAD_VALUE - Bin value of r is negative ({}) in PairPotential::energy.\n", int(r * rDelta_));
         return 0.0;
     }
 #endif
@@ -612,7 +600,7 @@ double PairPotential::force(double r)
 #ifdef CHECKS
     if (int(r * rDelta_) < 0)
     {
-        Messenger::print("BAD_VALUE - Bin value of r is negative (%i) in PairPotential::force.\n", int(r * rDelta_));
+        Messenger::print("BAD_VALUE - Bin value of r is negative ({}) in PairPotential::force.\n", int(r * rDelta_));
         return 0.0;
     }
 #endif

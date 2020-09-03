@@ -49,11 +49,11 @@ class SanityCheckModule : public Module
      */
     public:
     // Return type of module
-    const char *type() const;
+    std::string_view type() const;
     // Return category for module
-    const char *category() const;
+    std::string_view category() const;
     // Return brief description of module
-    const char *brief() const;
+    std::string_view brief() const;
     // Return the number of Configuration targets this Module requires
     int nRequiredTargets() const;
 

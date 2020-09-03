@@ -58,14 +58,14 @@ EnumOptions<NETAPresenceNode::NETACharacterModifier> NETAPresenceNode::modifiers
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETAPresenceNode::isValidModifier(const char *s) const { return (modifiers().isValid(s)); }
+bool NETAPresenceNode::isValidModifier(std::string_view s) const { return (modifiers().isValid(s)); }
 
 // Set value and comparator for specified modifier
-bool NETAPresenceNode::setModifier(const char *modifier, ComparisonOperator op, int value)
+bool NETAPresenceNode::setModifier(std::string_view modifier, ComparisonOperator op, int value)
 {
     // Check that the supplied index is valid
     if (!modifiers().isValid(modifier))
-        return Messenger::error("Invalid modifier '%s' passed to NETAPresenceNode.\n", modifier);
+        return Messenger::error("Invalid modifier '{}' passed to NETAPresenceNode.\n", modifier);
 
     switch (modifiers().enumeration(modifier))
     {
@@ -82,7 +82,7 @@ bool NETAPresenceNode::setModifier(const char *modifier, ComparisonOperator op, 
             repeatCountOperator_ = op;
             break;
         default:
-            return Messenger::error("Don't know how to handle modifier '%s' in character node.\n", modifier);
+            return Messenger::error("Don't know how to handle modifier '{}' in character node.\n", modifier);
     }
 
     return true;
@@ -98,7 +98,7 @@ int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &av
     // We expect the passed SpeciesAtom 'i' to be NULL, as our potential targets are held in availableAtoms (which we will
     // modify as appropriate)
     if (i != NULL)
-        printf("Don't pass target atom to NETAPresenceNode - pass a list of possible atoms instead...\n");
+        return Messenger::error("Don't pass target atom to NETAPresenceNode - pass a list of possible atoms instead...\n");
 
     // Loop over the provided possible list of atoms
     auto nMatches = 0, totalScore = 0;

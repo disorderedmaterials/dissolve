@@ -38,32 +38,37 @@ TextPrimitive::TextPrimitive() : ListItem<TextPrimitive>() {}
 
 TextPrimitive::~TextPrimitive() {}
 
-// Text Anchor Keywords
-const char *TextAnchorKeywords[] = {"TopLeft",     "TopMiddle",  "TopRight",     "MiddleLeft", "Central",
-                                    "MiddleRight", "BottomLeft", "BottomMiddle", "BottomRight"};
-
-// Convert text string to TextAnchor
-TextPrimitive::TextAnchor TextPrimitive::textAnchor(const char *s)
+// Return enum options for TextAnchor
+EnumOptions<TextPrimitive::TextAnchor> &TextPrimitive::textAnchors()
 {
-    for (int n = 0; n < TextPrimitive::nTextAnchors; ++n)
-        if (DissolveSys::sameString(s, TextAnchorKeywords[n]))
-            return (TextPrimitive::TextAnchor)n;
-    return TextPrimitive::nTextAnchors;
+    static EnumOptionsList TextAnchorOptions = EnumOptionsList()
+                                               << EnumOption(TextPrimitive::TopLeftAnchor, "TopLeft")
+                                               << EnumOption(TextPrimitive::TopMiddleAnchor, "TopMiddle")
+                                               << EnumOption(TextPrimitive::TopRightAnchor, "TopRight")
+                                               << EnumOption(TextPrimitive::MiddleLeftAnchor, "MiddleLeft")
+                                               << EnumOption(TextPrimitive::CentralAnchor, "Central")
+                                               << EnumOption(TextPrimitive::MiddleRightAnchor, "MiddleRight")
+                                               << EnumOption(TextPrimitive::BottomLeftAnchor, "BottomLeft")
+                                               << EnumOption(TextPrimitive::BottomMiddleAnchor, "BottomMiddle")
+                                               << EnumOption(TextPrimitive::BottomRightAnchor, "BottomRight");
+
+    static EnumOptions<TextPrimitive::TextAnchor> options("TextAnchor", TextAnchorOptions);
+
+    return options;
 }
 
-// Convert TextAnchor to text string
-const char *TextPrimitive::textAnchor(TextPrimitive::TextAnchor anchor) { return TextAnchorKeywords[anchor]; }
-
-// Escape Sequence Keywords
-const char *EscapeSequenceKeywords[] = {"b", "it", "n", "sub", "sup", "sym"};
-
-// Convert text string to EscapeSequence
-TextPrimitive::EscapeSequence TextPrimitive::escapeSequence(const char *s)
+// Return enum options for TextAnchor
+EnumOptions<TextPrimitive::EscapeSequence> &TextPrimitive::escapeSequences()
 {
-    for (int n = 0; n < TextPrimitive::nEscapeSequences; ++n)
-        if (DissolveSys::sameString(s, EscapeSequenceKeywords[n]))
-            return (TextPrimitive::EscapeSequence)n;
-    return TextPrimitive::nEscapeSequences;
+    static EnumOptionsList EscapeSequenceOptions =
+        EnumOptionsList() << EnumOption(TextPrimitive::BoldEscape, "b") << EnumOption(TextPrimitive::ItalicEscape, "it")
+                          << EnumOption(TextPrimitive::NewLineEscape, "n") << EnumOption(TextPrimitive::SubScriptEscape, "sub")
+                          << EnumOption(TextPrimitive::SuperScriptEscape, "sup")
+                          << EnumOption(TextPrimitive::SymbolEscape, "sym");
+
+    static EnumOptions<TextPrimitive::EscapeSequence> options("EscapeSequence", EscapeSequenceOptions);
+
+    return options;
 }
 
 // Set data
@@ -167,7 +172,7 @@ void TextPrimitive::boundingBox(FontInstance &fontInstance, Vec3<double> &lowerL
 {
     // Set initial lowerLeft and upperRight from the first primitive in the list
     if (fragments_.first())
-        fontInstance.boundingBox(fragments_.first()->text(), lowerLeft, upperRight);
+        fontInstance.boundingBox(qPrintable(fragments_.first()->text()), lowerLeft, upperRight);
     else
     {
         // No fragments in list!
@@ -182,7 +187,7 @@ void TextPrimitive::boundingBox(FontInstance &fontInstance, Vec3<double> &lowerL
     for (auto *fragment = fragments_.first()->next(); fragment != NULL; fragment = fragment->next())
     {
         // Get bounding box for this fragment
-        fontInstance.boundingBox(fragment->text(), ll, ur);
+        fontInstance.boundingBox(qPrintable(fragment->text()), ll, ur);
 
         // Scale the box by the current scaling factor...
         ur.x = ll.x + (ur.x - ll.x) * fragment->scale();
@@ -220,7 +225,7 @@ void TextPrimitive::render(FontInstance &fontInstance, const Matrix4 &viewMatrix
             glDisable(GL_LINE_STIPPLE);
             glLineWidth(1.0);
             Vec3<double> ll, ur;
-            fontInstance.boundingBox(fragment->text(), ll, ur);
+            fontInstance.boundingBox(qPrintable(fragment->text()), ll, ur);
             glBegin(GL_LINE_LOOP);
             glVertex3d(ll.x, ll.y, 0.0);
             glVertex3d(ur.x, ll.y, 0.0);
@@ -236,12 +241,12 @@ void TextPrimitive::render(FontInstance &fontInstance, const Matrix4 &viewMatrix
         {
             // Render the text twice - once with lines, and once with polygon fill
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            fontInstance.renderText(fragment->text().toUtf8());
+            fontInstance.renderText(qPrintable(fragment->text().toUtf8()));
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            fontInstance.renderText(fragment->text().toUtf8());
+            fontInstance.renderText(qPrintable(fragment->text().toUtf8()));
         }
         else
-            fontInstance.renderText(fragment->text().toUtf8());
+            fontInstance.renderText(qPrintable(fragment->text().toUtf8()));
     }
 }
 
@@ -332,14 +337,16 @@ int TextPrimitive::lex()
     if (isEscape)
     {
         // Is the text a recognised escape?
-        TextPrimitive::EscapeSequence es = TextPrimitive::escapeSequence(qPrintable(token));
-        if (es == TextPrimitive::nEscapeSequences)
+        if (TextPrimitive::escapeSequences().isValid(qPrintable(token)))
         {
-            Messenger::printVerbose("Error: String '%s' is not a valid escape sequence.\n", qPrintable(token));
+            TextPrimitiveParser_lval.escSeq = TextPrimitive::escapeSequences().enumeration(qPrintable(token));
+            return DISSOLVE_TEXT_ESCAPE;
+        }
+        else
+        {
+            Messenger::printVerbose("Error: String '{}' is not a valid escape sequence.\n", qPrintable(token));
             return DISSOLVE_TEXT_FAIL;
         }
-        TextPrimitiveParser_lval.escSeq = es;
-        return DISSOLVE_TEXT_ESCAPE;
     }
     else
     {
@@ -402,7 +409,7 @@ bool TextPrimitive::addFragment(QString text)
     fragment->set(textToAdd, format->scale(), translation, format->italic(), format->bold());
 
     // We have just added some text, so update the horizontal position
-    horizontalPosition_ += fontInstance_->boundingBoxWidth(textToAdd) * format->scale();
+    horizontalPosition_ += fontInstance_->boundingBoxWidth(qPrintable(textToAdd)) * format->scale();
 
     return true;
 }
@@ -448,7 +455,7 @@ bool TextPrimitive::addEscape(TextPrimitive::EscapeSequence escSeq)
             newFormat->setSymbol(true);
             break;
         default:
-            Messenger::print("Escape %i not handled in TextPrimitive::addEscape().\n", escSeq);
+            Messenger::print("Escape {} not handled in TextPrimitive::addEscape().\n", escSeq);
             return false;
             break;
     }

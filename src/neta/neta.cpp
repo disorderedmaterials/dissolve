@@ -48,10 +48,10 @@ bool NETADefinition::create(const Forcefield *associatedFF)
 }
 
 // Set generating string
-void NETADefinition::setDefinitionString(const char *definition) { definitionString_ = definition; }
+void NETADefinition::setDefinitionString(std::string_view definition) { definitionString_ = definition; }
 
 // Return original generating string
-const char *NETADefinition::definitionString() const { return definitionString_.get(); }
+std::string_view NETADefinition::definitionString() const { return definitionString_; }
 
 /*
  * Matching

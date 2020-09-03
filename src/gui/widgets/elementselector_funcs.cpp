@@ -54,10 +54,11 @@ ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
         button->setCheckable(true);
         button->setAutoExclusive(true);
         elementButtons_.append(button, &Elements::element(n));
-        button->setText(Elements::symbol(n));
+        button->setText(QString::fromStdString(std::string(Elements::symbol(n))));
         button->setMinimumSize(24, 24);
         // 		button->setMaximumSize(24,24);
-        button->setToolTip(QString("%1 (%2)").arg(Elements::name(n), Elements::symbol(n)));
+        button->setToolTip(QString("%1 (%2)").arg(QString::fromStdString(std::string(Elements::name(n))),
+                                                  QString::fromStdString(std::string(Elements::symbol(n)))));
 
         QObject::connect(button, SIGNAL(clicked(bool)), this, SLOT(elementButtonClicked(bool)));
     }
@@ -160,10 +161,7 @@ void ElementSelector::elementButtonClicked(bool checked)
     // Cast sender
     auto *button = qobject_cast<QToolButton *>(sender());
     if (!button)
-    {
-        printf("ElementSelector::elementButtonClicked - Sender was not a QToolButton.\n");
         currentElement_ = NULL;
-    }
 
     RefDataItem<QToolButton, Element *> *ri = elementButtons_.contains(button);
     currentElement_ = ri ? ri->data() : NULL;
@@ -213,7 +211,7 @@ Element *ElementSelector::currentElement() const { return currentElement_; }
  */
 
 // Get Element from user via input dialog
-Element *ElementSelector::getElement(QWidget *parent, const char *title, const char *labelText, Element *element, bool *ok,
+Element *ElementSelector::getElement(QWidget *parent, QString title, QString labelText, Element *element, bool *ok,
                                      Qt::WindowFlags flags)
 {
     // Create a QDialog for use

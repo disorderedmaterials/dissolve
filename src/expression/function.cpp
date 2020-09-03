@@ -20,7 +20,6 @@
 */
 
 #include "expression/function.h"
-#include "base/charstring.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 #include <stdarg.h>
@@ -40,18 +39,13 @@ ExpressionFunction::~ExpressionFunction() {}
 ExpressionFunctions::Function ExpressionFunction::function() const { return function_; }
 
 // Execute command
-bool ExpressionFunction::execute(ExpressionValue &result)
-{
-    // Execute the command
-    // printf("Node function is %i (%s)\n", function_, commands.data[function_].keyword);
-    return expressionFunctions.call(function_, this, result);
-}
+bool ExpressionFunction::execute(ExpressionValue &result) { return expressionFunctions.call(function_, this, result); }
 
 // Print node contents
-void ExpressionFunction::nodePrint(int offset, const char *prefix)
+void ExpressionFunction::nodePrint(int offset, std::string_view prefix)
 {
     // Construct tabbed offset
-    CharString tab;
+    std::string tab;
     for (int n = 0; n < offset - 1; n++)
         tab += '\t';
     if (offset > 1)
@@ -59,8 +53,7 @@ void ExpressionFunction::nodePrint(int offset, const char *prefix)
     tab += prefix;
 
     // Output node data
-    // 	printf("Function id = %p\n", function_);
-    printf("[CN]%s%s (Function) (%i arguments)\n", tab.get(), ExpressionFunctions::data[function_].keyword, args_.nItems());
+    Messenger::print("[CN]{}{} (Function) ({} arguments)\n", tab, ExpressionFunctions::data[function_].keyword, args_.nItems());
     // Output Argument data
     for (RefListItem<ExpressionNode> *ri = args_.first(); ri != NULL; ri = ri->next())
         ri->item()->nodePrint(offset + 1);
@@ -69,13 +62,13 @@ void ExpressionFunction::nodePrint(int offset, const char *prefix)
 // Set from ExpressionValue
 bool ExpressionFunction::set(ExpressionValue value)
 {
-    printf("Internal Error: Trying to 'set' a FunctionNode.\n");
+    Messenger::error("Internal Error: Trying to 'set' a FunctionNode.\n");
     return false;
 }
 
 // Initialise node
 bool ExpressionFunction::initialise()
 {
-    printf("Internal Error: A FunctionNode cannot be initialised.\n");
+    Messenger::error("Internal Error: A FunctionNode cannot be initialised.\n");
     return false;
 }

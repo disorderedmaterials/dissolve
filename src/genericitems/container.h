@@ -28,7 +28,7 @@
 template <class T> class GenericItemContainer : public GenericItem
 {
     public:
-    GenericItemContainer<T>(const char *name, int flags = 0) : GenericItem(name, flags) {}
+    GenericItemContainer<T>(std::string_view name, int flags = 0) : GenericItem(name, flags) {}
 
     /*
      * Data
@@ -46,7 +46,7 @@ template <class T> class GenericItemContainer : public GenericItem
      */
     protected:
     // Create a new GenericItem containing same class as current type
-    GenericItem *createItem(const char *className, const char *name, int flags = 0)
+    GenericItem *createItem(std::string_view className, std::string_view name, int flags = 0)
     {
         if (DissolveSys::sameString(className, itemClassName()))
             return new GenericItemContainer<T>(name, flags);
@@ -55,7 +55,7 @@ template <class T> class GenericItemContainer : public GenericItem
 
     public:
     // Return class name contained in item
-    virtual const char *itemClassName() { return T::itemClassName(); }
+    virtual std::string_view itemClassName() { return T::itemClassName(); }
 
     /*
      * I/O

@@ -36,7 +36,7 @@ class ModuleTab : public QWidget, public ListItem<ModuleTab>, public MainTab
     Q_OBJECT
 
     public:
-    ModuleTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Module *module);
+    ModuleTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title, Module *module);
     ~ModuleTab();
 
     /*

@@ -51,7 +51,7 @@ void WizardWidget::setUpHeaderAndFooter(QWidget *widget)
         connect(headerUi_.CloseButton, SIGNAL(clicked(bool)), this, SLOT(closeWizard(bool)));
     }
     else
-        printf("Header widget not found.\n");
+        Messenger::error("Header widget not found.\n");
 
     QWidget *footerWidget = widget->findChild<QWidget *>("WizardFooterWidget");
     if (footerWidget)
@@ -67,7 +67,7 @@ void WizardWidget::setUpHeaderAndFooter(QWidget *widget)
         connect(footerUi_.FinishButton, SIGNAL(clicked(bool)), this, SLOT(finishWizard(bool)));
     }
     else
-        printf("Footer widget not found.\n");
+        Messenger::error("Footer widget not found.\n");
 }
 
 // Set icon in header
@@ -154,12 +154,12 @@ WizardWidgetPageInfo *WizardWidget::addPage()
 }
 
 // Register page
-WizardWidgetPageInfo *WizardWidget::registerPage(int index, const char *title, int nextIndex)
+WizardWidgetPageInfo *WizardWidget::registerPage(int index, QString title, int nextIndex)
 {
     // Check that the specified index isn't already registered...
     WizardWidgetPageInfo *page = findPage(index);
     if (page)
-        printf("Internal Error: Page with index %i has already been registered.\n", index);
+        Messenger::error("Page with index {} has already been registered.\n", index);
     else
         page = pages_.add();
 
@@ -170,7 +170,7 @@ WizardWidgetPageInfo *WizardWidget::registerPage(int index, const char *title, i
 }
 
 // Register choice page (no Finish / Next buttons)
-void WizardWidget::registerChoicePage(int index, const char *title)
+void WizardWidget::registerChoicePage(int index, QString title)
 {
     WizardWidgetPageInfo *page = registerPage(index, title);
 
@@ -289,7 +289,7 @@ void WizardWidget::goBack()
     // We cannot go back further than the first item in history_, so if there is only one item in the history_ do nothing
     if (history_.nItems() == 1)
     {
-        printf("Can't go back further than the first page visited.\n");
+        Messenger::warn("Can't go back further than the first page visited.\n");
         return;
     }
 

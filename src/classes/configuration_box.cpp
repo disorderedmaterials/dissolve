@@ -32,7 +32,7 @@ bool Configuration::createBox(const Vec3<double> lengths, const Vec3<double> ang
     // Remove old box if present
     if (box_ != NULL)
     {
-        Messenger::printVerbose("Removing existing Box definition for Configuration '%s'...\n", niceName());
+        Messenger::printVerbose("Removing existing Box definition for Configuration '{}'...\n", niceName());
         delete box_;
         box_ = NULL;
     }
@@ -93,7 +93,7 @@ void Configuration::applySizeFactor(const PotentialMap &potentialMap)
         // size factor
         if (fabs(sizeFactorRatio - 1.0) > 1.0e-5)
         {
-            Messenger::print("Requested SizeFactor for Configuration is %f, current SizeFactor is %f, so scaling "
+            Messenger::print("Requested SizeFactor for Configuration is {}, current SizeFactor is {}, so scaling "
                              "Box contents.\n",
                              requestedSizeFactor_, appliedSizeFactor_);
 
@@ -126,11 +126,11 @@ void Configuration::applySizeFactor(const PotentialMap &potentialMap)
             requestedSizeFactor_ *= reductionFactor;
             if (requestedSizeFactor_ < 1.0)
                 requestedSizeFactor_ = 1.0;
-            Messenger::print("Intermolecular energy is zero or negative, so reducing SizeFactor to %f\n", requestedSizeFactor_);
+            Messenger::print("Intermolecular energy is zero or negative, so reducing SizeFactor to {}\n", requestedSizeFactor_);
         }
         else
         {
-            Messenger::print("Intermolecular energy is positive, so SizeFactor remains at %f\n", requestedSizeFactor_);
+            Messenger::print("Intermolecular energy is positive, so SizeFactor remains at {}\n", requestedSizeFactor_);
             break;
         }
     }

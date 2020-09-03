@@ -107,12 +107,12 @@ void BraggReflection::scaleIntensity(int typeI, int typeJ, double factor)
 #ifdef CHECKS
     if ((typeI < 0) || (typeI > intensities_.nRows()))
     {
-        Messenger::error("Type index i of %i is out of range for BraggReflection intensities.\n", typeI);
+        Messenger::error("Type index i of {} is out of range for BraggReflection intensities.\n", typeI);
         return;
     }
     if ((typeJ < 0) || (typeJ > intensities_.nColumns()))
     {
-        Messenger::error("Type index j of %i is out of range for BraggReflection intensities.\n", typeJ);
+        Messenger::error("Type index j of {} is out of range for BraggReflection intensities.\n", typeJ);
         return;
     }
 #endif
@@ -133,7 +133,7 @@ int BraggReflection::nKVectors() const { return nKVectors_; }
  */
 
 // Return class name
-const char *BraggReflection::itemClassName() { return "BraggReflection"; }
+std::string_view BraggReflection::itemClassName() { return "BraggReflection"; }
 
 // Read data through specified parser
 bool BraggReflection::read(LineParser &parser, CoreData &coreData)
@@ -156,7 +156,7 @@ bool BraggReflection::read(LineParser &parser, CoreData &coreData)
 bool BraggReflection::write(LineParser &parser)
 {
     // Write index, Q centre, and number of contributing K-vectors
-    if (!parser.writeLineF("%i  %f  %i\n", index_, q_, nKVectors_))
+    if (!parser.writeLineF("{}  {}  {}\n", index_, q_, nKVectors_))
         return false;
 
     // Write intensities array
@@ -191,11 +191,11 @@ bool BraggReflection::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
     if (!procPool.equality(q_))
-        return Messenger::error("BraggReflection Q value is not equivalent (process %i has %e).\n", procPool.poolRank(), q_);
+        return Messenger::error("BraggReflection Q value is not equivalent (process {} has {:e}).\n", procPool.poolRank(), q_);
     if (!procPool.equality(index_))
-        return Messenger::error("BraggReflection index is not equivalent (process %i has %i).\n", procPool.poolRank(), index_);
+        return Messenger::error("BraggReflection index is not equivalent (process {} has {}).\n", procPool.poolRank(), index_);
     if (!procPool.equality(nKVectors_))
-        return Messenger::error("BraggReflection nKVectors is not equivalent (process %i has %i).\n", procPool.poolRank(),
+        return Messenger::error("BraggReflection nKVectors is not equivalent (process {} has {}).\n", procPool.poolRank(),
                                 nKVectors_);
     if (!procPool.equality(intensities_))
         return Messenger::error("BraggReflection intensities are not equivalent.\n");

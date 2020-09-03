@@ -71,9 +71,7 @@ template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
     // Determine array offset of object
     int objectOffset(T *object)
     {
-        // 	printf("in objectoffset: %li %li\n", intptr_t(object), intptr_t(&objectArray_[0]));
         intptr_t offset = intptr_t(object) - intptr_t(&objectArray_[0]);
-        // 	printf("Offset = %li\n", offset);
         if (offset < 0)
             return -1;
         int index = offset / objectSize_;
@@ -122,7 +120,7 @@ template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
         }
 
         // Shouldn't get here!
-        printf("Internal Error - ObjectChunk.\n");
+        Messenger::error("ObjectChunk.\n");
         return object;
     }
     // Return specified object to pool
@@ -221,7 +219,7 @@ template <class T> class ObjectFactory
         }
 
         // If we get here, then something has gone horribly wrong...
-        printf("Internal Error - Couldn't find an empty chunk to return an object from.\n");
+        Messenger::error("Couldn't find an empty chunk to return an object from.\n");
         return NULL;
     }
     // Return specified object to factory
@@ -233,7 +231,7 @@ template <class T> class ObjectFactory
                 return;
 
         // Couldn't find it!
-        printf("Internal Error - Tried to return an object to an ObjectFactory which didn't produce it.\n");
+        Messenger::error("Tried to return an object to an ObjectFactory which didn't produce it.\n");
     }
     // Mark all objects as unused
     void markAllObjectsUnused()

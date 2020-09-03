@@ -52,7 +52,7 @@ bool ForceImportFileFormat::importMoscito(LineParser &parser, Array<double> &fx,
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     auto nMolecules = parser.argi(0);
-    Messenger::print(" --> Structure file contains %i molecules.\n", nMolecules);
+    Messenger::print(" --> Structure file contains {} molecules.\n", nMolecules);
 
     // Can't pre-initialise for number of atoms as it is unknown at this point
     fx.clear();
@@ -94,7 +94,7 @@ bool ForceImportFileFormat::importMoscito(LineParser &parser, Array<double> &fx,
             // Forces are in fixed format (15.8e) with *no spacing between values*
             if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
                 return false;
-            std::string coords = parser.line();
+            std::string coords{parser.line()};
             fx.add(std::stof(coords.substr(0, 15)) * 10.0);
             fy.add(std::stof(coords.substr(15, 15)) * 10.0);
             fz.add(std::stof(coords.substr(30)) * 10.0);

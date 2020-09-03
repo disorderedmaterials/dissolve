@@ -56,8 +56,8 @@ class DataManagerDialog : public QDialog
 
     private:
     // Append GenericItems to table under specified source
-    void addItemsToTable(QTableWidget *table, List<GenericItem> &items, const char *locationName,
-                         const char *locationIconResource);
+    void addItemsToTable(QTableWidget *table, List<GenericItem> &items, const QString locationName,
+                         const QString locationIconResource);
     // Update the specified table of GenericItems, optionally filtering them by name and description
     void filterTable(QTableWidget *table, GenericItem *current, QString filter);
     // Update ReferencePoint table row

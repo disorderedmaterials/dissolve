@@ -22,13 +22,13 @@
 #include "modules/benchmark/benchmark.h"
 
 // Return type of module
-const char *BenchmarkModule::type() const { return "Benchmark"; }
+std::string_view BenchmarkModule::type() const { return "Benchmark"; }
 
 // Return category for module
-const char *BenchmarkModule::category() const { return "NO CATEGORY ASSIGNED"; }
+std::string_view BenchmarkModule::category() const { return "NO CATEGORY ASSIGNED"; }
 
 // Return brief description of module
-const char *BenchmarkModule::brief() const { return "Perform benchmarking on a variety of functions"; }
+std::string_view BenchmarkModule::brief() const { return "Perform benchmarking on a variety of functions"; }
 
 // Return the number of Configuration targets this Module requires
 int BenchmarkModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }

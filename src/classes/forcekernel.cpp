@@ -105,11 +105,7 @@ void ForceKernel::forces(const Atom *i, const Atom *j, bool applyMim, bool exclu
 #endif
     // If Atoms are the same, we refuse to calculate
     if (i == j)
-    {
-        // 		printf("Warning: Refusing to calculate self-energy in
-        // ForceKernel::forces(Atom,Atom,bool,bool).\n");
         return;
-    }
 
     // Check indices of Atoms if required
     if (excludeIgeJ && (i >= j))
@@ -466,7 +462,7 @@ void ForceKernel::forces(const SpeciesBond &bond, const Atom *i, const Atom *j)
 
 #ifdef CHECKS
     if (distance > 5.0)
-        printf("!!! Long bond: %i-%i = %f Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
+        Messenger::print("!!! Long bond: {}-{} = {} Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
 #endif
 
     // Determine final forces
@@ -506,7 +502,7 @@ void ForceKernel::forces(const Atom *onlyThis, const SpeciesBond &bond, const At
 
 #ifdef CHECKS
     if (distance > 5.0)
-        printf("!!! Long bond: %i-%i = %f Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
+        Messenger::print("!!! Long bond: {}-{} = {} Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
 #endif
 
     // Determine final forces

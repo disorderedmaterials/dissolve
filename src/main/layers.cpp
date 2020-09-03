@@ -49,7 +49,7 @@ void Dissolve::removeProcessingLayer(ModuleLayer *layer)
 }
 
 // Find named processing layer
-ModuleLayer *Dissolve::findProcessingLayer(const char *name) const
+ModuleLayer *Dissolve::findProcessingLayer(std::string_view name) const
 {
     ListIterator<ModuleLayer> layerIterator(processingLayers_);
     while (ModuleLayer *layer = layerIterator.iterate())
@@ -64,7 +64,7 @@ bool Dissolve::ownProcessingLayer(ModuleLayer *layer)
 {
     // Sanity check - do we already own this Configuration?
     if (processingLayers_.contains(layer))
-        return Messenger::error("Already own ModuleLayer '%s', so nothing to do.\n", layer->name());
+        return Messenger::error("Already own ModuleLayer '{}', so nothing to do.\n", layer->name());
 
     processingLayers_.own(layer);
 
@@ -75,24 +75,15 @@ bool Dissolve::ownProcessingLayer(ModuleLayer *layer)
 int Dissolve::nProcessingLayers() const { return processingLayers_.nItems(); }
 
 // Generate unique processing layer name with base name provided
-const char *Dissolve::uniqueProcessingLayerName(const char *base) const
+std::string Dissolve::uniqueProcessingLayerName(std::string_view base) const
 {
-    static CharString uniqueName;
-    CharString baseName = base;
-    uniqueName = baseName;
-    auto suffix = 0;
-
-    // Must always have a baseName
-    if (baseName.isEmpty())
-        baseName = "Unnamed";
+    std::string_view baseName = base.empty() ? "Unnamed" : base;
+    std::string uniqueName{baseName};
 
     // Find an unused name starting with the baseName provided
+    auto suffix = 0;
     while (findProcessingLayer(uniqueName))
-    {
-        // Increase suffix value and regenerate uniqueName from baseName
-        ++suffix;
-        uniqueName.sprintf("%s%i", baseName.get(), suffix);
-    }
+        uniqueName = fmt::format("{}{}", baseName, ++suffix);
 
     return uniqueName;
 }
@@ -104,7 +95,7 @@ List<ModuleLayer> &Dissolve::processingLayers() { return processingLayers_; }
 GenericList &Dissolve::processingModuleData() { return processingModuleData_; }
 
 // Create and add a named Module to the named layer (creating it if necessary), with optional Configuration target
-Module *Dissolve::createModuleInLayer(const char *moduleType, const char *layerName, Configuration *cfg)
+Module *Dissolve::createModuleInLayer(std::string_view moduleType, std::string_view layerName, Configuration *cfg)
 {
     // First, attempt to create a new Module with the specified name
     Module *module = createModuleInstance(moduleType);

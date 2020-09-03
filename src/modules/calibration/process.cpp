@@ -56,7 +56,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
             for (Configuration *cfg : module->targetConfigurations())
                 configs.addUnique(cfg);
         }
-        Messenger::print("%i Configuration(s) are involved over all RDF Module targets.\n", configs.nItems());
+        Messenger::print("{} Configuration(s) are involved over all RDF Module targets.\n", configs.nItems());
 
         /*
          * Are the energies of all involved Configurations stable (if OnlyWhenEnergyStable option is on)
@@ -117,7 +117,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 case (PairBroadeningFunction::GaussianElementPairFunction):
                     if (broadeningAdded[broadening.function()])
                     {
-                        Messenger::print("Broadening function of type '%s' used over multiple RDF modules, so "
+                        Messenger::print("Broadening function of type '{}' used over multiple RDF modules, so "
                                          "parameters will only be added once.\n",
                                          PairBroadeningFunction::functionType(broadening.function()));
                         continue;
@@ -137,7 +137,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // reassemble the target NeutronSQ data
         double error = broadeningMinimiser.minimise();
 
-        Messenger::print("Total RMSE over all specified datasets is %f.\n", error);
+        Messenger::print("Total RMSE over all specified datasets is {}.\n", error);
 
         // Make sure that we re-broaden the RDFs and NeutronSQ data by the correct (optimal) values before we leave
         // Store alpha parameters in the PairBroadeningFunction in the associated RDF modules
@@ -147,8 +147,8 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto &broadening =
                 rdfModule->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
 
-            Messenger::print("Optimal IntraBroadening parameters for '%s' are now: %s\n", rdfModule->uniqueName(),
-                             broadening.summary().get());
+            Messenger::print("Optimal IntraBroadening parameters for '{}' are now: {}\n", rdfModule->uniqueName(),
+                             broadening.summary());
 
             // Recalculate the UnweightedGR for all Configurations targeted by the RDFModule
             auto smoothing = rdfModule->keywords().asInt("Smoothing");
@@ -162,7 +162,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Store the new broadening parameters in the restart file for info only (they won't be read in and
             // used)
             GenericListHelper<PairBroadeningFunction>::realise(dissolve.processingModuleData(),
-                                                               CharString("%s-IntraBroadening", rdfModule->uniqueName()),
+                                                               fmt::format("{}-IntraBroadening", rdfModule->uniqueName()),
                                                                uniqueName(), GenericItem::InRestartFileFlag) = broadening;
         }
 

@@ -35,7 +35,7 @@ RangeKeywordWidget::RangeKeywordWidget(QWidget *parent, KeywordBase *keyword, co
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<RangeKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into RangeKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into RangeKeyword.\n", keyword->name());
     else
     {
         // Set current values

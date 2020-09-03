@@ -190,7 +190,7 @@ bool RenderableSpeciesSite::writeStyleBlock(LineParser &parser, int indentLevel)
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 
-    if (!parser.writeLineF("%s%s  %s\n", indent, speciesSiteStyleKeywords().keyword(RenderableSpeciesSite::DisplayKeyword),
+    if (!parser.writeLineF("{}{}  {}\n", indent, speciesSiteStyleKeywords().keyword(RenderableSpeciesSite::DisplayKeyword),
                            speciesSiteDisplayStyles().keyword(displayStyle_)))
         return false;
 
@@ -207,9 +207,9 @@ bool RenderableSpeciesSite::readStyleBlock(LineParser &parser)
             return false;
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
-        if (!speciesSiteStyleKeywords().isValid(parser.argc(0)))
-            return speciesSiteStyleKeywords().errorAndPrintValid(parser.argc(0));
-        auto kwd = speciesSiteStyleKeywords().enumeration(parser.argc(0));
+        if (!speciesSiteStyleKeywords().isValid(parser.argsv(0)))
+            return speciesSiteStyleKeywords().errorAndPrintValid(parser.argsv(0));
+        auto kwd = speciesSiteStyleKeywords().enumeration(parser.argsv(0));
         if (!speciesSiteStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 
@@ -218,16 +218,16 @@ bool RenderableSpeciesSite::readStyleBlock(LineParser &parser)
         {
             // Display style
             case (RenderableSpeciesSite::DisplayKeyword):
-                if (!speciesSiteDisplayStyles().isValid(parser.argc(1)))
-                    return speciesSiteDisplayStyles().errorAndPrintValid(parser.argc(1));
-                displayStyle_ = speciesSiteDisplayStyles().enumeration(parser.argc(1));
+                if (!speciesSiteDisplayStyles().isValid(parser.argsv(1)))
+                    return speciesSiteDisplayStyles().errorAndPrintValid(parser.argsv(1));
+                displayStyle_ = speciesSiteDisplayStyles().enumeration(parser.argsv(1));
                 break;
             // End of block
             case (RenderableSpeciesSite::EndStyleKeyword):
                 return true;
             // Unrecognised Keyword
             default:
-                Messenger::warn("Unrecognised display style keyword for RenderableSpeciesSite: %s\n", parser.argc(0));
+                Messenger::warn("Unrecognised display style keyword for RenderableSpeciesSite: {}\n", parser.argsv(0));
                 return false;
                 break;
         }

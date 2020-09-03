@@ -51,14 +51,14 @@ EnumOptions<NETARootNode::NETARootModifier> NETARootNode::modifiers()
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETARootNode::isValidModifier(const char *s) const { return (modifiers().isValid(s)); }
+bool NETARootNode::isValidModifier(std::string_view s) const { return (modifiers().isValid(s)); }
 
 // Set value and comparator for specified modifier
-bool NETARootNode::setModifier(const char *modifier, ComparisonOperator op, int value)
+bool NETARootNode::setModifier(std::string_view modifier, ComparisonOperator op, int value)
 {
     // Check that the supplied index is valid
     if (!modifiers().isValid(modifier))
-        return Messenger::error("Invalid modifier '%s' passed to NETARootNode.\n", modifier);
+        return Messenger::error("Invalid modifier '{}' passed to NETARootNode.\n", modifier);
 
     switch (modifiers().enumeration(modifier))
     {
@@ -71,7 +71,7 @@ bool NETARootNode::setModifier(const char *modifier, ComparisonOperator op, int 
             nHydrogensValueOperator_ = op;
             break;
         default:
-            return Messenger::error("Don't know how to handle modifier '%s' in root node.\n", modifier);
+            return Messenger::error("Don't know how to handle modifier '{}' in root node.\n", modifier);
     }
 
     return true;

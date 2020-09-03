@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstringlist.h"
 #include "keywords/data.h"
 #include "templates/reflist.h"
 
@@ -33,7 +32,7 @@ class ModuleRefListKeyword : public KeywordData<RefList<Module> &>
 {
     public:
     ModuleRefListKeyword(RefList<Module> &references, int maxModules = -1);
-    ModuleRefListKeyword(RefList<Module> &references, CharStringList allowedModuleTypes, int maxModules = -1);
+    ModuleRefListKeyword(RefList<Module> &references, const std::vector<std::string> &allowedModuleTypes, int maxModules = -1);
     ~ModuleRefListKeyword();
 
     /*
@@ -41,7 +40,7 @@ class ModuleRefListKeyword : public KeywordData<RefList<Module> &>
      */
     private:
     // Module type(s) to allow
-    CharStringList moduleTypes_;
+    std::vector<std::string> moduleTypes_;
     // Maximum number of modules to allow in list (-1 for any number)
     int maxModules_;
 
@@ -51,7 +50,7 @@ class ModuleRefListKeyword : public KeywordData<RefList<Module> &>
 
     public:
     // Return the Module type(s) to allow
-    const CharStringList &moduleTypes() const;
+    const std::vector<std::string> &moduleTypes() const;
     // Return maximum number of Modules to allow in the list
     int maxModules() const;
 
@@ -66,7 +65,7 @@ class ModuleRefListKeyword : public KeywordData<RefList<Module> &>
     // Parse arguments from supplied LineParser, starting at given argument offset
     bool read(LineParser &parser, int startArg, CoreData &coreData);
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, const char *keywordName, const char *prefix);
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix);
 
     /*
      * Object Management

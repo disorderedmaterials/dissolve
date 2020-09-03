@@ -90,7 +90,7 @@ class SiteViewer : public BaseViewer
 
     public:
     // Return text describing current interaction mode
-    const char *interactionModeText() const;
+    const QString interactionModeText() const;
 
     /*
      * Source Species and Site

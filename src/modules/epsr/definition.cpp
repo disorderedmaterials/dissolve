@@ -22,13 +22,13 @@
 #include "modules/epsr/epsr.h"
 
 // Return type of module
-const char *EPSRModule::type() const { return "EPSR"; }
+std::string_view EPSRModule::type() const { return "EPSR"; }
 
 // Return category for module
-const char *EPSRModule::category() const { return "Forcefield"; }
+std::string_view EPSRModule::category() const { return "Forcefield"; }
 
 // Return brief description of module
-const char *EPSRModule::brief() const { return "Refine interatomic potentials in a manner consistent with EPSR"; }
+std::string_view EPSRModule::brief() const { return "Refine interatomic potentials in a manner consistent with EPSR"; }
 
 // Return the number of Configuration targets this Module requires
 int EPSRModule::nRequiredTargets() const { return Module::ZeroTargets; }

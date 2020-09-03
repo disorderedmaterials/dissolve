@@ -159,7 +159,7 @@ Module Forces
   Configuration  'Liquid'
   TestReference  dlpoly  'dlpoly_torsions/REVCON'
   EndTestReference
-  TestThreshold  0.1
+  TestThreshold  0.12
 EndModule
 
 Module SanityCheck

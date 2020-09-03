@@ -54,7 +54,7 @@ bool ParametersProcedureNode::mustBeNamed() const { return false; }
  */
 
 // Add new integer parameter
-bool ParametersProcedureNode::addParameter(const char *name, int initialValue)
+bool ParametersProcedureNode::addParameter(std::string_view name, int initialValue)
 {
     // Create a new one
     ExpressionVariable *parameter = new ExpressionVariable;
@@ -63,13 +63,13 @@ bool ParametersProcedureNode::addParameter(const char *name, int initialValue)
 
     // Set the initial value
     if (!parameter->set(initialValue))
-        return Messenger::error("Failed to set initial value for parameter '%s'.\n", name);
+        return Messenger::error("Failed to set initial value for parameter '{}'.\n", name);
 
     return true;
 }
 
 // Add new double parameter
-bool ParametersProcedureNode::addParameter(const char *name, double initialValue)
+bool ParametersProcedureNode::addParameter(std::string_view name, double initialValue)
 {
     // Create a new one
     ExpressionVariable *parameter = new ExpressionVariable;
@@ -78,13 +78,13 @@ bool ParametersProcedureNode::addParameter(const char *name, double initialValue
 
     // Set the initial value
     if (!parameter->set(initialValue))
-        return Messenger::error("Failed to set initial value for parameter '%s'.\n", name);
+        return Messenger::error("Failed to set initial value for parameter '{}'.\n", name);
 
     return true;
 }
 
 // Return whether this node has the named parameter specified
-ExpressionVariable *ParametersProcedureNode::hasParameter(const char *name, ExpressionVariable *excludeParameter)
+ExpressionVariable *ParametersProcedureNode::hasParameter(std::string_view name, ExpressionVariable *excludeParameter)
 {
     // Search integer parameters
     ListIterator<ExpressionNode> integerIterator(integerParameters_);
@@ -146,11 +146,11 @@ RefList<ExpressionVariable> ParametersProcedureNode::parameterReferences() const
  */
 
 // Prepare any necessary data, ready for execution
-bool ParametersProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList) { return true; }
+bool ParametersProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
 
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult ParametersProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                    const char *prefix, GenericList &targetList)
+                                                                    std::string_view prefix, GenericList &targetList)
 {
     return ProcedureNode::Success;
 }

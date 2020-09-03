@@ -24,7 +24,7 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-RenderableData1D::RenderableData1D(const Data1D *source, const char *objectTag)
+RenderableData1D::RenderableData1D(const Data1D *source, std::string_view objectTag)
     : Renderable(Renderable::Data1DRenderable, objectTag), source_(source)
 {
     // Set style defaults
@@ -336,7 +336,7 @@ bool RenderableData1D::writeStyleBlock(LineParser &parser, int indentLevel) cons
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 
-    if (!parser.writeLineF("%s%s  %s\n", indent, data1DStyleKeywords().keyword(RenderableData1D::DisplayKeyword),
+    if (!parser.writeLineF("{}{}  {}\n", indent, data1DStyleKeywords().keyword(RenderableData1D::DisplayKeyword),
                            data1DDisplayStyles().keyword(displayStyle_)))
         return false;
 
@@ -353,9 +353,9 @@ bool RenderableData1D::readStyleBlock(LineParser &parser)
             return false;
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
-        if (!data1DStyleKeywords().isValid(parser.argc(0)))
-            return data1DStyleKeywords().errorAndPrintValid(parser.argc(0));
-        auto kwd = data1DStyleKeywords().enumeration(parser.argc(0));
+        if (!data1DStyleKeywords().isValid(parser.argsv(0)))
+            return data1DStyleKeywords().errorAndPrintValid(parser.argsv(0));
+        auto kwd = data1DStyleKeywords().enumeration(parser.argsv(0));
         if (!data1DStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 
@@ -364,16 +364,16 @@ bool RenderableData1D::readStyleBlock(LineParser &parser)
         {
             // Display style
             case (RenderableData1D::DisplayKeyword):
-                if (!data1DDisplayStyles().isValid(parser.argc(1)))
-                    return data1DDisplayStyles().errorAndPrintValid(parser.argc(1));
-                displayStyle_ = data1DDisplayStyles().enumeration(parser.argc(1));
+                if (!data1DDisplayStyles().isValid(parser.argsv(1)))
+                    return data1DDisplayStyles().errorAndPrintValid(parser.argsv(1));
+                displayStyle_ = data1DDisplayStyles().enumeration(parser.argsv(1));
                 break;
             // End of block
             case (RenderableData1D::EndStyleKeyword):
                 return true;
             // Unrecognised Keyword
             default:
-                Messenger::warn("Unrecognised display style keyword for RenderableData1D: %s\n", parser.argc(0));
+                Messenger::warn("Unrecognised display style keyword for RenderableData1D: {}\n", parser.argsv(0));
                 return false;
                 break;
         }

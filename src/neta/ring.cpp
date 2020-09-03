@@ -52,14 +52,14 @@ EnumOptions<NETARingNode::NETARingModifier> NETARingNode::modifiers()
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETARingNode::isValidModifier(const char *s) const { return (modifiers().isValid(s)); }
+bool NETARingNode::isValidModifier(std::string_view s) const { return (modifiers().isValid(s)); }
 
 // Set value and comparator for specified modifier
-bool NETARingNode::setModifier(const char *modifier, ComparisonOperator op, int value)
+bool NETARingNode::setModifier(std::string_view modifier, ComparisonOperator op, int value)
 {
     // Check that the supplied index is valid
     if (!modifiers().isValid(modifier))
-        return Messenger::error("Invalid modifier '%s' passed to NETARingNode.\n", modifier);
+        return Messenger::error("Invalid modifier '{}' passed to NETARingNode.\n", modifier);
 
     switch (modifiers().enumeration(modifier))
     {
@@ -72,7 +72,7 @@ bool NETARingNode::setModifier(const char *modifier, ComparisonOperator op, int 
             repeatCountOperator_ = op;
             break;
         default:
-            return Messenger::error("Don't know how to handle modifier '%s' in ring node.\n", modifier);
+            return Messenger::error("Don't know how to handle modifier '{}' in ring node.\n", modifier);
     }
 
     return true;
@@ -132,10 +132,6 @@ void NETARingNode::findRings(const SpeciesAtom *currentAtom, List<SpeciesRing> &
 // Evaluate the node and return its score
 int NETARingNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
 {
-    // 	printf("I AM THE RING - matchPath size = %i:\n", matchPath.nItems());
-    // 	for (const SpeciesAtom* iii : matchPath) printf("   -- %p %i %s\n", iii, iii->userIndex(),
-    // iii->element()->symbol()); 	printf("SITTING ON SPECIESATOM %i (%s)\n", i->userIndex(), i->element()->symbol());
-
     // Generate array of rings of specified size that the atom 'i' is present in
     List<SpeciesRing> rings;
     std::vector<const SpeciesAtom *> ringPath;

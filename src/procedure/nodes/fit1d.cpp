@@ -103,9 +103,6 @@ double Fit1DProcedureNode::equationCost(const Array<double> &alpha)
 
     cost /= referenceData_.nValues();
 
-    // 	printf("For A = %f c = %f, cost = %f\n", fitTargets_.first()->item->value(),
-    // fitTargets_.first()->next->item->value(), sqrt(cost));
-
     return sqrt(cost);
 }
 
@@ -117,17 +114,17 @@ void Fit1DProcedureNode::setSaveData(bool on) { saveData_ = on; }
  */
 
 // Prepare any necessary data, ready for execution
-bool Fit1DProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList) { return true; }
+bool Fit1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult Fit1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
-                                                               GenericList &targetList)
+ProcedureNode::NodeExecutionResult Fit1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
+                                                               std::string_view prefix, GenericList &targetList)
 {
     return ProcedureNode::Success;
 }
 
 // Finalise any necessary data after execution
-bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Copy reference data from the associated node
     Collect1DProcedureNode *collect1DNode;
@@ -150,20 +147,20 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, con
             return Messenger::error("No node type set in Fit1DProcedureNode::finalise().\n");
             break;
         default:
-            return Messenger::error("No suitable data to extract from a node of type '%s'.\n",
+            return Messenger::error("No suitable data to extract from a node of type '{}'.\n",
                                     ProcedureNode::nodeTypes().keyword(dataNode_.type()));
     }
 
     // Print equation info
-    Messenger::print("Expression to fit is: %s\n", equation_.expressionString());
+    Messenger::print("Expression to fit is: {}\n", equation_.expressionString());
     for (ExpressionVariable *var : equation_.variables())
     {
         if (var == xVariable_)
-            Messenger::print("  %10s                (axis variable)\n", var->name());
+            Messenger::print("  {:10}                (axis variable)\n", var->name());
         else if (fitTargets_.contains(var))
-            Messenger::print("  %10s = %e (fit)\n", var->name(), var->value().asDouble());
+            Messenger::print("  {:10} = {:e} (fit)\n", var->name(), var->value().asDouble());
         else
-            Messenger::print("  %10s = %e (constant)\n", var->name(), var->value().asDouble());
+            Messenger::print("  {:10} = {:e} (constant)\n", var->name(), var->value().asDouble());
     }
     Messenger::print("\n");
 
@@ -182,16 +179,16 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, con
 
         Messenger::print("Optimised values:\n");
         for (ExpressionVariable *var : fitTargets_)
-            Messenger::print("  %10s = %e\n", var->name(), var->value().asDouble());
+            Messenger::print("  {:10} = {:e}\n", var->name(), var->value().asDouble());
     }
 
     // Generate final fit data
     // Retrieve / realise the data from the supplied list
-    auto &data = GenericListHelper<Data1D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix,
+    auto &data = GenericListHelper<Data1D>::realise(targetList, fmt::format("{}_{}", name(), cfg->niceName()), prefix,
                                                     GenericItem::InRestartFileFlag);
 
     data.setName(name());
-    data.setObjectTag(CharString("%s//Fit1D//%s//%s", prefix, cfg->name(), name()));
+    data.setObjectTag(fmt::format("{}//Fit1D//{}//{}", prefix, cfg->name(), name()));
     data.clear();
 
     double cost = 0.0;
@@ -212,23 +209,23 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, con
         if (procPool.isMaster())
         {
             LineParser parser;
-            if (!parser.openOutput(CharString("%s_%s.fit", name(), cfg->name())))
+            if (!parser.openOutput(fmt::format("{}_{}.fit", name(), cfg->name())))
                 return procPool.decideFalse();
-            if (!parser.writeLineF("# Fit Equation : %s\n", equation_.expressionString()))
+            if (!parser.writeLineF("# Fit Equation : {}\n", equation_.expressionString()))
                 return procPool.decideFalse();
             for (ExpressionVariable *var : equation_.variables())
             {
                 if (var == xVariable_)
                 {
-                    if (!parser.writeLineF("#  %10s                (axis variable)\n", var->name()))
+                    if (!parser.writeLineF("#  {:10}                (axis variable)\n", var->name()))
                         return procPool.decideFalse();
                 }
                 else if (fitTargets_.contains(var))
                 {
-                    if (!parser.writeLineF("#  %10s = %e (fit)\n", var->name(), var->value().asDouble()))
+                    if (!parser.writeLineF("#  {:10} = {:e} (fit)\n", var->name(), var->value().asDouble()))
                         return procPool.decideFalse();
                 }
-                else if (!parser.writeLineF("#  %10s = %e (constant)\n", var->name(), var->value().asDouble()))
+                else if (!parser.writeLineF("#  {:10} = {:e} (constant)\n", var->name(), var->value().asDouble()))
                     return procPool.decideFalse();
             }
 
@@ -254,7 +251,7 @@ bool Fit1DProcedureNode::read(LineParser &parser, CoreData &coreData)
 {
     // The current line in the parser may contain a node name for us
     if (parser.nArgs() == 2)
-        setName(parser.argc(1));
+        setName(parser.argsv(1));
 
     ExpressionVariable *var;
 
@@ -266,9 +263,9 @@ bool Fit1DProcedureNode::read(LineParser &parser, CoreData &coreData)
             return false;
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
-        if (!fit1DNodeKeywords().isValid(parser.argc(0)))
-            return fit1DNodeKeywords().errorAndPrintValid(parser.argc(0));
-        Fit1DNodeKeyword nk = fit1DNodeKeywords().enumeration(parser.argc(0));
+        if (!fit1DNodeKeywords().isValid(parser.argsv(0)))
+            return fit1DNodeKeywords().errorAndPrintValid(parser.argsv(0));
+        Fit1DNodeKeyword nk = fit1DNodeKeywords().enumeration(parser.argsv(0));
         if (!fit1DNodeKeywords().validNArgs(nk, parser.nArgs() - 1))
             return false;
 
@@ -276,7 +273,7 @@ bool Fit1DProcedureNode::read(LineParser &parser, CoreData &coreData)
         switch (nk)
         {
             case (Fit1DProcedureNode::ConstantKeyword):
-                var = equation_.createVariableWithValue(parser.argc(1), parser.argd(2), true);
+                var = equation_.createVariableWithValue(parser.argsv(1), parser.argd(2), true);
                 if (!var)
                     return Messenger::error("Failed to create constant.\n");
                 constants_.append(var);
@@ -284,13 +281,13 @@ bool Fit1DProcedureNode::read(LineParser &parser, CoreData &coreData)
             case (Fit1DProcedureNode::EndFit1DKeyword):
                 return true;
             case (Fit1DProcedureNode::EquationKeyword):
-                if (!equation_.set(parser.argc(1)))
+                if (!equation_.set(parser.argsv(1)))
                     return Messenger::error("Failed to create expression.\n");
                 break;
             case (Fit1DProcedureNode::FitKeyword):
-                var = equation_.createVariableWithValue(parser.argc(1), parser.argd(2), true);
+                var = equation_.createVariableWithValue(parser.argsv(1), parser.argd(2), true);
                 if (!var)
-                    return Messenger::error("Failed to create variable '%s'.\n", parser.argc(1));
+                    return Messenger::error("Failed to create variable '{}'.\n", parser.argsv(1));
                 fitTargets_.append(var);
                 break;
             case (Fit1DProcedureNode::MethodKeyword):
@@ -304,11 +301,11 @@ bool Fit1DProcedureNode::read(LineParser &parser, CoreData &coreData)
                     return Messenger::error("Couldn't set source data for node.\n");
                 break;
             case (Fit1DProcedureNode::nFit1DNodeKeywords):
-                return Messenger::error("Unrecognised Fit1D node keyword '%s' found.\n", parser.argc(0));
+                return Messenger::error("Unrecognised Fit1D node keyword '{}' found.\n", parser.argsv(0));
                 break;
             default:
-                return Messenger::error("Epic Developer Fail - Don't know how to deal with the Fit1D node keyword '%s'.\n",
-                                        parser.argc(0));
+                return Messenger::error("Epic Developer Fail - Don't know how to deal with the Fit1D node keyword '{}'.\n",
+                                        parser.argsv(0));
         }
     }
 
@@ -316,40 +313,41 @@ bool Fit1DProcedureNode::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write structure to specified LineParser
-bool Fit1DProcedureNode::write(LineParser &parser, const char *prefix)
+bool Fit1DProcedureNode::write(LineParser &parser, std::string_view prefix)
 {
     // Block Start
-    if (!parser.writeLineF("%s%s\n", prefix, ProcedureNode::nodeTypes().keyword(type_)))
+    if (!parser.writeLineF("{}{}\n", prefix, ProcedureNode::nodeTypes().keyword(type_)))
         return false;
 
     // Constants
     for (ExpressionVariable *var : constants_)
-        if (!parser.writeLineF("%s  %s  %s  %12.6e\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::ConstantKeyword),
-                               var->name(), var->value().asDouble()))
+        if (!parser.writeLineF("{}  {}  {}  {:12.6e}\n", prefix,
+                               fit1DNodeKeywords().keyword(Fit1DProcedureNode::ConstantKeyword), var->name(),
+                               var->value().asDouble()))
             return false;
 
     // Constants
     for (ExpressionVariable *var : fitTargets_)
-        if (!parser.writeLineF("%s  %s  %s  %12.6e\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::FitKeyword),
+        if (!parser.writeLineF("{}  {}  {}  {:12.6e}\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::FitKeyword),
                                var->name(), var->value().asDouble()))
             return false;
 
     // Equation
-    if (!parser.writeLineF("%s  %s  '%s'\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::EquationKeyword),
+    if (!parser.writeLineF("{}  {}  '{}'\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::EquationKeyword),
                            equation_.expressionString()))
         return false;
 
     // Source data
     if (!dataNode_.write(parser,
-                         CharString("%s  %s", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::SourceDataKeyword))))
+                         fmt::format("{}  {}", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::SourceDataKeyword))))
         return false;
 
     // Control
-    if (saveData_ && !parser.writeLineF("%s  %s  On\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::SaveKeyword)))
+    if (saveData_ && !parser.writeLineF("{}  {}  On\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::SaveKeyword)))
         return false;
 
     // Block End
-    if (!parser.writeLineF("%s%s\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::EndFit1DKeyword)))
+    if (!parser.writeLineF("{}{}\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::EndFit1DKeyword)))
         return false;
 
     return true;

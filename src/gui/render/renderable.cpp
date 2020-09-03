@@ -47,7 +47,7 @@ EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
     return options;
 }
 
-Renderable::Renderable(Renderable::RenderableType type, const char *objectTag)
+Renderable::Renderable(Renderable::RenderableType type, std::string_view objectTag)
 {
     // Instance
     instances_.append(this);
@@ -92,10 +92,10 @@ Renderable::~Renderable() { instances_.remove(this); }
  */
 
 // Set name of Renderable
-void Renderable::setName(const char *name) { name_ = name; }
+void Renderable::setName(std::string_view name) { name_ = name; }
 
 // Return name of Renderable
-const char *Renderable::name() { return name_.get(); }
+std::string_view Renderable::name() { return name_; }
 
 // Return type of Renderable
 Renderable::RenderableType Renderable::type() const { return type_; }
@@ -111,15 +111,15 @@ void Renderable::setSourceDataAccessEnabled(bool b) { sourceDataAccessEnabled_ =
 bool Renderable::sourceDataAccessEnabled() { return sourceDataAccessEnabled_; }
 
 // Return identifying tag for source data object
-const char *Renderable::objectTag() const { return objectTag_.get(); }
+std::string_view Renderable::objectTag() const { return objectTag_; }
 
 // Invalidate renderable data for specified object tag
-int Renderable::invalidate(const char *objectTag)
+int Renderable::invalidate(std::string_view objectTag)
 {
     auto count = 0;
     for (Renderable *rend : instances_)
     {
-        if (!DissolveSys::sameString(objectTag, rend->objectTag_))
+        if (objectTag != rend->objectTag_)
             continue;
 
         rend->invalidateDataSource();
@@ -209,7 +209,7 @@ double Renderable::positiveValuesMax()
 }
 
 // Set values transform equation specified
-void Renderable::setValuesTransformEquation(const char *transformEquation)
+void Renderable::setValuesTransformEquation(std::string_view transformEquation)
 {
     valuesTransform_.setEquation(transformEquation);
 
@@ -222,7 +222,7 @@ void Renderable::setValuesTransformEquation(const char *transformEquation)
 }
 
 // Return values transform equation
-const char *Renderable::valuesTransformEquation() const { return valuesTransform_.text(); }
+std::string_view Renderable::valuesTransformEquation() const { return valuesTransform_.text(); }
 
 // Return whether values transform equation is valid
 bool Renderable::valuesTransformEquationValid() const { return valuesTransform_.valid(); }
@@ -333,8 +333,8 @@ void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, boo
         upToDate = false;
     else if (lastAxesVersion_ != axes.version())
         upToDate = false;
-    else if (!DissolveSys::sameString(lastColourDefinitionFingerprint_, CharString("%p@%i", group_, colourDefinition.version()),
-                                      true))
+    else if (!DissolveSys::sameString(lastColourDefinitionFingerprint_,
+                                      fmt::format("{}@{}", fmt::ptr(group_), colourDefinition.version()), true))
         upToDate = false;
     else if (lastDataVersion_ != dataVersion())
         upToDate = false;
@@ -365,7 +365,7 @@ void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, boo
 
     // Store version points for the up-to-date primitive
     lastAxesVersion_ = axes.version();
-    lastColourDefinitionFingerprint_.sprintf("%p@%i", group_, colourDefinition.version());
+    lastColourDefinitionFingerprint_ = fmt::format("{}@{}", fmt::ptr(group_), colourDefinition.version());
     lastDataVersion_ = dataVersion();
     lastStyleVersion_ = styleVersion();
 }

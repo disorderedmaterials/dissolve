@@ -36,8 +36,8 @@
 #include <QMessageBox>
 
 ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent,
-                                   const char *title, Configuration *cfg)
-    : ListItem<ConfigurationTab>(), MainTab(dissolveWindow, dissolve, parent, CharString("Configuration: %s", title), this)
+                                   const QString title, Configuration *cfg)
+    : ListItem<ConfigurationTab>(), MainTab(dissolveWindow, dissolve, parent, QString("Configuration: %1").arg(title), this)
 {
     ui_.setupUi(this);
 
@@ -47,7 +47,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
 
     // Populate coordinates file format combo
     for (int n = 0; n < cfg->inputCoordinates().nFormats(); ++n)
-        ui_.CoordinatesFileFormatCombo->addItem(cfg->inputCoordinates().formatKeyword(n));
+        ui_.CoordinatesFileFormatCombo->addItem(QString::fromStdString(std::string(cfg->inputCoordinates().formatKeyword(n))));
 
     // Populate density units combo
     ComboEnumOptionsPopulator(ui_.DensityUnitsCombo, Units::densityUnits());
@@ -81,7 +81,7 @@ QString ConfigurationTab::getNewTitle(bool &ok)
 {
     // Get a new, valid name for the Configuration
     GetConfigurationNameDialog nameDialog(this, dissolve_.coreData());
-    ok = nameDialog.get(configuration_, configuration_->name());
+    ok = nameDialog.get(configuration_, QString::fromStdString(std::string(configuration_->name())));
 
     if (ok)
     {
@@ -102,7 +102,8 @@ bool ConfigurationTab::canClose() const
 {
     // Check that we really want to delete this tab
     QMessageBox queryBox;
-    queryBox.setText(QString("Really delete the configuration '%1'?\nThis cannot be undone!").arg(configuration_->name()));
+    queryBox.setText(QString("Really delete the configuration '%1'?\nThis cannot be undone!")
+                         .arg(QString::fromStdString(std::string(configuration_->name()))));
     queryBox.setInformativeText("Proceed?");
     queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     queryBox.setDefaultButton(QMessageBox::No);
@@ -149,7 +150,7 @@ void ConfigurationTab::updateControls()
 
     // Current Box
     const Box *box = configuration_->box();
-    ui_.CurrentBoxTypeLabel->setText(Box::boxTypes().keyword(box->type()));
+    ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
     ui_.CurrentBoxALabel->setText(QString::number(box->axisLengths().x));
     ui_.CurrentBoxBLabel->setText(QString::number(box->axisLengths().y));
     ui_.CurrentBoxCLabel->setText(QString::number(box->axisLengths().z));
@@ -159,7 +160,7 @@ void ConfigurationTab::updateControls()
     updateDensityLabel();
 
     // Input Coordinates
-    ui_.CoordinatesFileEdit->setText(configuration_->inputCoordinates().filename());
+    ui_.CoordinatesFileEdit->setText(QString::fromStdString(std::string(configuration_->inputCoordinates().filename())));
     ui_.CoordinatesFileFormatCombo->setCurrentIndex(configuration_->inputCoordinates().formatIndex());
 
     // Size Factor
@@ -197,7 +198,8 @@ void ConfigurationTab::on_GeneratorRegenerateButton_clicked(bool checked)
 {
     // Are we sure that's what we want to do?
     QMessageBox queryBox;
-    queryBox.setText(QString("This will erase the current contents of the Configuration '%1'.").arg(configuration_->name()));
+    queryBox.setText(QString("This will erase the current contents of the Configuration '%1'.")
+                         .arg(QString::fromStdString(std::string(configuration_->name()))));
     queryBox.setInformativeText("Proceed?");
     queryBox.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
     queryBox.setDefaultButton(QMessageBox::No);

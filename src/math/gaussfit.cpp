@@ -119,7 +119,7 @@ Data1D GaussFit::Ax() const
 const Array<double> &GaussFit::fwhm() const { return fwhm_; }
 
 // Save coefficients to specified file
-bool GaussFit::saveCoefficients(const char *filename) const
+bool GaussFit::saveCoefficients(std::string_view filename) const
 {
     LineParser parser;
     if (!parser.openOutput(filename))
@@ -127,7 +127,7 @@ bool GaussFit::saveCoefficients(const char *filename) const
 
     parser.writeLineF("#  x  A  FWHM\n");
     for (int n = 0; n < nGaussians_; ++n)
-        parser.writeLineF("%f  %f  %f\n", x_.constAt(n), A_.constAt(n), fwhm_.constAt(n));
+        parser.writeLineF("{}  {}  {}\n", x_.constAt(n), A_.constAt(n), fwhm_.constAt(n));
 
     parser.closeFiles();
 
@@ -137,32 +137,32 @@ bool GaussFit::saveCoefficients(const char *filename) const
 // Print coefficients
 void GaussFit::printCoefficients() const
 {
-    Messenger::print("Fitted nGaussians = %i:\n", nGaussians_);
+    Messenger::print("Fitted nGaussians = {}:\n", nGaussians_);
     Messenger::print(" Gauss     A         x         FWHM\n");
     for (int n = 0; n < nGaussians_; ++n)
-        Messenger::print("  %4i  =  %f %f %f\n", n, A_.constAt(n), x_.constAt(n), fwhm_.constAt(n));
+        Messenger::print("  {:4d}  =  {} {} {}\n", n, A_.constAt(n), x_.constAt(n), fwhm_.constAt(n));
 }
 
 // Save Fourier-transformed Gaussians to individual files
-bool GaussFit::saveFTGaussians(const char *filenamePrefix, double xStep) const
+bool GaussFit::saveFTGaussians(std::string_view filenamePrefix, double xStep) const
 {
     double xDelta = (xStep < 0.0 ? referenceData_.constXAxis(1) - referenceData_.constXAxis(0) : xStep);
     for (int n = 0; n < nGaussians_; ++n)
     {
         LineParser parser;
-        if (!parser.openOutput(CharString("%s-%03i.gauss", filenamePrefix, n)))
+        if (!parser.openOutput(fmt::format("{}-{:03d}.gauss", filenamePrefix, n)))
             return false;
 
         double xCentre = x_.constAt(n);
         double A = A_.constAt(n);
         double fwhm = fwhm_.constAt(n);
-        if (!parser.writeLineF("#  x=%f  A=%f  fwhm=%f\n", xCentre, A, fwhm))
+        if (!parser.writeLineF("#  x={}  A={}  fwhm={}\n", xCentre, A, fwhm))
             return false;
 
         double x = referenceData_.constXAxis().firstValue();
         while (x < referenceData_.constXAxis().lastValue())
         {
-            parser.writeLineF("%f  %f\n", x, gaussianFT(x, xCentre, A, fwhm));
+            parser.writeLineF("{}  {}\n", x, gaussianFT(x, xCentre, A, fwhm));
             x += xDelta;
         }
 
@@ -317,7 +317,7 @@ double GaussFit::sweepFitA(FunctionSpace::SpaceType space, double xMin, int samp
 
             // Optimise this set of Gaussians
             currentError_ = gaussMinimiser.minimise();
-            Messenger::printVerbose("GaussFit::reFitA() - G = %i, error = %f\n", g, currentError_);
+            Messenger::printVerbose("GaussFit::reFitA() - G = {}, error = {}\n", g, currentError_);
 
             // If we are not at the end of the Gaussian array, move the index backwards so the next set overlaps a
             // little with this one
@@ -384,7 +384,7 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
                 trialA = referenceDelta.value(n);
                 trialFWHM = 0.25;
 
-                Messenger::printVerbose("Attempting Gaussian addition for peak/trough located at x = %f\n", trialX);
+                Messenger::printVerbose("Attempting Gaussian addition for peak/trough located at x = {}\n", trialX);
 
                 // Set up minimiser, minimising test Gaussian only
                 PrAxisMinimiser<GaussFit> gaussMinimiser(*this, &GaussFit::costAnalyticAFX);
@@ -399,22 +399,22 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
                 // Sanity check fitted parameters before we (potentially) accept the new function
                 if (fabs(trialA) < 1.0e-4)
                 {
-                    Messenger::printVerbose("Rejecting new Gaussian x = %f, A = %f, FWHM = %f - amplitude is too small\n",
+                    Messenger::printVerbose("Rejecting new Gaussian x = {}, A = {}, FWHM = {} - amplitude is too small\n",
                                             trialX, trialA, fabs(trialFWHM));
                 }
                 else if (fabs(trialFWHM) < 1.0e-2)
                 {
-                    Messenger::printVerbose("Rejecting new Gaussian x = %f, A = %f, FWHM = %f - FWHM is too small\n", trialX,
+                    Messenger::printVerbose("Rejecting new Gaussian x = {}, A = {}, FWHM = {} - FWHM is too small\n", trialX,
                                             trialA, fabs(trialFWHM));
                 }
                 else if ((trialError < currentError_) || (nGaussians_ == 0))
                 {
                     if (nGaussians_ == 0)
-                        Messenger::printVerbose("Accepting first Gaussian at x = %f, A = %f, FWHM = %f - error is %f\n", trialX,
+                        Messenger::printVerbose("Accepting first Gaussian at x = {}, A = {}, FWHM = {} - error is {}\n", trialX,
                                                 trialA, fabs(trialFWHM), trialError);
                     else
-                        Messenger::printVerbose("Accepting new Gaussian x = %f, A = %f, FWHM = %f - "
-                                                "error reduced from %f to %f\n",
+                        Messenger::printVerbose("Accepting new Gaussian x = {}, A = {}, FWHM = {} - "
+                                                "error reduced from {} to {}\n",
                                                 trialX, trialA, fabs(trialFWHM), currentError_, trialError);
                     currentError_ = trialError;
 
@@ -443,8 +443,8 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
                         break;
                 }
                 else
-                    Messenger::printVerbose("Rejecting new Gaussian x = %f, A = %f, FWHM = %f - error "
-                                            "increased from %f to %f\n",
+                    Messenger::printVerbose("Rejecting new Gaussian x = {}, A = {}, FWHM = {} - error "
+                                            "increased from {} to {}\n",
                                             trialX, trialA, fabs(trialFWHM), currentError_, trialError);
             }
 
@@ -459,7 +459,7 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
         // Check on error
         if (currentError_ <= requiredError)
         {
-            Messenger::printVerbose("Required error threshold (%f) achieved - current error is %f, nGaussians = %i\n",
+            Messenger::printVerbose("Required error threshold ({}) achieved - current error is {}, nGaussians = {}\n",
                                     requiredError, currentError_, nGaussians_);
             break;
         }
@@ -467,7 +467,7 @@ double GaussFit::constructReal(double requiredError, int maxGaussians)
         // Check on nGaussians
         if (nGaussians_ == maxGaussians)
         {
-            Messenger::printVerbose("Maximum number of Gaussians (%i) reached - current error is %f\n", nGaussians_,
+            Messenger::printVerbose("Maximum number of Gaussians ({}) reached - current error is {}\n", nGaussians_,
                                     currentError_);
             break;
         }

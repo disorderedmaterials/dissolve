@@ -64,13 +64,14 @@ bool Forcefield_OPLSAA2005_Aromatics::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_OPLSAA2005_Aromatics::name() const { return "OPLSAA2005/Aromatics"; }
+std::string_view Forcefield_OPLSAA2005_Aromatics::name() const { return "OPLSAA2005/Aromatics"; }
 
 // Return description for Forcefield
-const char *Forcefield_OPLSAA2005_Aromatics::description() const
+std::string_view Forcefield_OPLSAA2005_Aromatics::description() const
 {
-    static CharString desc(
-        "Aromatics from OPLS-AA (2005), covering benzene, toluene, napthalene, ethylbenzene.<br/><br/>References: %s",
+    static std::string desc = fmt::format(
+        "Aromatics from OPLS-AA (2005), covering benzene, toluene, napthalene, ethylbenzene.<br/><br/>References: {}",
         publicationReferences());
-    return desc.get();
+
+    return desc;
 }

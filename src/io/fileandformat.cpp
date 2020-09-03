@@ -25,25 +25,19 @@
 
 FileAndFormat::FileAndFormat(int format) { format_ = format; }
 
-FileAndFormat::FileAndFormat(const char *filename, int format)
-{
-    filename_ = filename;
-    format_ = format;
-}
+FileAndFormat::FileAndFormat(std::string_view filename, int format) : format_(format), filename_{filename} {}
 
-FileAndFormat::~FileAndFormat() {}
-
-FileAndFormat::operator const char *() const { return filename_.get(); }
+FileAndFormat::operator std::string_view() const { return filename_; }
 
 /*
  * Formats
  */
 
 // Convert text string to format index
-int FileAndFormat::format(const char *s) const
+int FileAndFormat::format(std::string_view fmtString) const
 {
     for (int n = 0; n < nFormats(); ++n)
-        if (DissolveSys::sameString(s, formatKeyword(n)))
+        if (DissolveSys::sameString(fmtString, formatKeyword(n)))
             return n;
 
     return nFormats();
@@ -56,7 +50,7 @@ void FileAndFormat::setFormatIndex(int id) { format_ = id; }
 int FileAndFormat::formatIndex() const { return format_; }
 
 // Return format string
-const char *FileAndFormat::format() const
+std::string_view FileAndFormat::format() const
 {
     if ((format_ < 0) || (format_ >= nFormats()))
         return "???";
@@ -65,7 +59,7 @@ const char *FileAndFormat::format() const
 }
 
 // Return nice format string
-const char *FileAndFormat::description() const
+std::string_view FileAndFormat::description() const
 {
     if ((format_ < 0) || (format_ >= nFormats()))
         return "???";
@@ -77,7 +71,7 @@ const char *FileAndFormat::description() const
 void FileAndFormat::printAvailableFormats() const
 {
     for (int n = 0; n < nFormats(); ++n)
-        Messenger::print("  %12s  %s\n", formatKeyword(n), formatDescription(n));
+        Messenger::print("  {:12}  {}\n", formatKeyword(n), formatDescription(n));
 }
 
 /*
@@ -88,26 +82,26 @@ void FileAndFormat::printAvailableFormats() const
 bool FileAndFormat::fileExists() const
 {
     // If no filename is currently set, return false. Otherwise, check for it
-    return (filename_.isEmpty() ? false : DissolveSys::fileExists(filename_));
+    return (filename_.empty() ? false : DissolveSys::fileExists(filename_));
 }
 
 // Set filename / basename
-void FileAndFormat::setFilename(const char *filename) { filename_ = filename; }
+void FileAndFormat::setFilename(std::string_view filename) { filename_ = filename; }
 
 // Return filename / basename
-const char *FileAndFormat::filename() const { return filename_.get(); }
+std::string_view FileAndFormat::filename() const { return filename_; }
 
 /*
  * Check
  */
 
 // Return whether a filename has been set
-bool FileAndFormat::hasFilename() const { return (!filename_.isEmpty()); }
+bool FileAndFormat::hasFilename() const { return (!filename_.empty()); }
 
 // Return whether a filename and format have been set
 bool FileAndFormat::hasValidFileAndFormat() const
 {
-    if (filename_.isEmpty())
+    if (filename_.empty())
         return false;
     if ((format_ < 0) || (format_ >= nFormats()))
         return false;
@@ -127,13 +121,13 @@ KeywordList &FileAndFormat::keywords() { return keywords_; }
  */
 
 // Read format / filename from specified parser
-bool FileAndFormat::read(LineParser &parser, int startArg, const char *endKeyword, CoreData &coreData)
+bool FileAndFormat::read(LineParser &parser, int startArg, std::string_view endKeyword, CoreData &coreData)
 {
     // Convert first argument to format type
-    format_ = format(parser.argc(startArg));
+    format_ = format(parser.argsv(startArg));
     if (format_ == nFormats())
     {
-        Messenger::print("Unrecognised format '%s' given for file. Recognised formats are:\n\n", parser.argc(startArg));
+        Messenger::print("Unrecognised format '{}' given for file. Recognised formats are:\n\n", parser.argsv(startArg));
 
         printAvailableFormats();
 
@@ -143,11 +137,11 @@ bool FileAndFormat::read(LineParser &parser, int startArg, const char *endKeywor
     // Set filename if present
     if (parser.hasArg(startArg + 1))
     {
-        filename_ = parser.argc(startArg + 1);
+        filename_ = parser.argsv(startArg + 1);
 
         // Check that the file exists?
         if (fileMustExist() && (!DissolveSys::fileExists(filename_)))
-            return Messenger::error("Specified file '%s' does not exist.\n", filename_.get());
+            return Messenger::error("Specified file '{}' does not exist.\n", filename_);
     }
 
     // Parse any additional options until we find the end of the block
@@ -158,30 +152,30 @@ bool FileAndFormat::read(LineParser &parser, int startArg, const char *endKeywor
             return false;
 
         // Is this the end of the block?
-        if (DissolveSys::sameString(parser.argc(0), endKeyword))
+        if (DissolveSys::sameString(parser.argsv(0), endKeyword))
             break;
 
         // Do we recognise the keyword?
-        KeywordBase *keyword = keywords_.find(parser.argc(0));
+        KeywordBase *keyword = keywords_.find(parser.argsv(0));
         if (!keyword)
-            return Messenger::error("Unrecognised option '%s' found in file and format block.\n", parser.argc(0));
+            return Messenger::error("Unrecognised option '{}' found in file and format block.\n", parser.argsv(0));
 
         // Read in the keyword's data
         if (!keyword->read(parser, 1, coreData))
-            return Messenger::error("Error reading option '%s'.\n", keyword->name());
+            return Messenger::error("Error reading option '{}'.\n", keyword->name());
     }
 
     return true;
 }
 
 // Write format / filename to specified parser
-bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, const char *prefix)
+bool FileAndFormat::writeFilenameAndFormat(LineParser &parser, std::string_view prefix)
 {
-    return parser.writeLineF("%s%s  '%s'\n", prefix, formatKeyword(format_), filename_.get());
+    return parser.writeLineF("{}{}  '{}'\n", prefix, formatKeyword(format_), filename_);
 }
 
 // Write options and end block
-bool FileAndFormat::writeBlock(LineParser &parser, const char *prefix)
+bool FileAndFormat::writeBlock(LineParser &parser, std::string_view prefix)
 {
-    return keywords_.write(parser, CharString("%s  ", prefix));
+    return keywords_.write(parser, fmt::format("{}  ", prefix));
 }

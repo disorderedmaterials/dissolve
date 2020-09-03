@@ -22,13 +22,13 @@
 #include "modules/geomopt/geomopt.h"
 
 // Return type of module
-const char *GeometryOptimisationModule::type() const { return "GeometryOptimisation"; }
+std::string_view GeometryOptimisationModule::type() const { return "GeometryOptimisation"; }
 
 // Return category for module
-const char *GeometryOptimisationModule::category() const { return "Optimisation"; }
+std::string_view GeometryOptimisationModule::category() const { return "Optimisation"; }
 
 // Return brief description of module
-const char *GeometryOptimisationModule::brief() const { return "Optimise geometry with respect to energy (minimise)"; }
+std::string_view GeometryOptimisationModule::brief() const { return "Optimise geometry with respect to energy (minimise)"; }
 
 // Return the number of Configuration targets this Module requires
 int GeometryOptimisationModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }

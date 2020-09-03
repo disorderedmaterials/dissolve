@@ -81,12 +81,12 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
     rLengths.y *= multiplicity.y;
     rLengths.z *= multiplicity.z;
     Messenger::print("Reciprocal axes and lengths (accounting for multiplicity) are:\n");
-    Messenger::print("	r(x) = %e %e %e (%e)\n", rAxes.columnAsVec3(0).x, rAxes.columnAsVec3(0).y, rAxes.columnAsVec3(0).z,
-                     rLengths.x);
-    Messenger::print("	r(y) = %e %e %e (%e)\n", rAxes.columnAsVec3(1).x, rAxes.columnAsVec3(1).y, rAxes.columnAsVec3(1).z,
-                     rLengths.y);
-    Messenger::print("	r(z) = %e %e %e (%e)\n", rAxes.columnAsVec3(2).x, rAxes.columnAsVec3(2).y, rAxes.columnAsVec3(2).z,
-                     rLengths.z);
+    Messenger::print("	r(x) = {:e} {:e} {:e} ({:e})\n", rAxes.columnAsVec3(0).x, rAxes.columnAsVec3(0).y,
+                     rAxes.columnAsVec3(0).z, rLengths.x);
+    Messenger::print("	r(y) = {:e} {:e} {:e} ({:e})\n", rAxes.columnAsVec3(1).x, rAxes.columnAsVec3(1).y,
+                     rAxes.columnAsVec3(1).z, rLengths.y);
+    Messenger::print("	r(z) = {:e} {:e} {:e} ({:e})\n", rAxes.columnAsVec3(2).x, rAxes.columnAsVec3(2).y,
+                     rAxes.columnAsVec3(2).z, rLengths.z);
 
     int n, m, h, k, l, kAbs, lAbs;
     double *cosTermsH, *sinTermsH, *cosTermsK, *sinTermsK, *cosTermsL, *sinTermsL;
@@ -191,10 +191,10 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
             braggReflections.add(tempReflections[n]);
         }
 
-        Messenger::print("Bragg calculation spans %i k-vectors (max HKL = %i x %i x %i) over %f <= Q <= %f (%s elapsed).\n",
+        Messenger::print("Bragg calculation spans {} k-vectors (max HKL = {} x {} x {}) over {} <= Q <= {} ({} elapsed).\n",
                          braggKVectors.nItems(), braggMaximumHKL.x, braggMaximumHKL.y, braggMaximumHKL.z, qMin, qMax,
                          timer.elapsedTimeString());
-        Messenger::print("%i unique Bragg reflections found using a Q resolution of %f Angstroms**-1.\n",
+        Messenger::print("{} unique Bragg reflections found using a Q resolution of {} Angstroms**-1.\n",
                          braggReflections.nItems(), qDelta);
 
         // Create atom working arrays
@@ -268,7 +268,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
         }
     }
     timer.stop();
-    Messenger::print("Calculated atomic cos/sin terms (%s elapsed)\n", timer.totalTimeString());
+    Messenger::print("Calculated atomic cos/sin terms ({} elapsed)\n", timer.totalTimeString());
 
     // Calculate k-vector contributions
     KVector *kVectors = braggKVectors.array();
@@ -316,7 +316,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
         }
     }
     timer.stop();
-    Messenger::print("Calculated atomic contributions to k-vectors (%s elapsed)\n", timer.totalTimeString());
+    Messenger::print("Calculated atomic contributions to k-vectors ({} elapsed)\n", timer.totalTimeString());
 
     // Zero Bragg reflection intensities
     BraggReflection *reflections = braggReflections.array();
@@ -352,7 +352,7 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
     const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(cfg->moduleData(), "BraggReflections", "",
                                                                                     Array<BraggReflection>(), &found);
     if (!found)
-        return Messenger::error("Failed to find BraggReflection array in module data for Configuration '%s'.\n", cfg->name());
+        return Messenger::error("Failed to find BraggReflection array in module data for Configuration '{}'.\n", cfg->name());
     const auto nReflections = braggReflections.nItems();
 
     // Realise / retrieve storage for the Bragg partial S(Q) and combined F(Q)
@@ -381,7 +381,7 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
     auto &braggTotal = GenericListHelper<Data1D>::realise(cfg->moduleData(), "OriginalBraggTotal", "",
                                                           GenericItem::InRestartFileFlag, &wasCreated);
     if (wasCreated)
-        braggTotal.setObjectTag(CharString("%s//OriginalBragg//Total", cfg->niceName()));
+        braggTotal.setObjectTag(fmt::format("{}//OriginalBragg//Total", cfg->niceName()));
     braggTotal.clear();
 
     // Zero Bragg partials
@@ -395,7 +395,8 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
     for_each_pair(types.begin(), types.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
         // Retrieve partial container and make sure its object tag is set
         auto &partial = braggPartials.at(typeI, typeJ);
-        partial.setObjectTag(CharString("%s//OriginalBragg//%s-%s", cfg->niceName(), atd1.atomTypeName(), atd2.atomTypeName()));
+        partial.setObjectTag(
+            fmt::format("{}//OriginalBragg//{}-{}", cfg->niceName(), atd1.atomTypeName(), atd2.atomTypeName()));
 
         // Loop over defined Bragg reflections
         for (int n = 0; n < nReflections; ++n)
@@ -425,7 +426,7 @@ bool BraggModule::reBinReflections(ProcessPool &procPool, Configuration *cfg, Ar
     const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(cfg->moduleData(), "BraggReflections", "",
                                                                                     Array<BraggReflection>(), &found);
     if (!found)
-        return Messenger::error("Failed to find BraggReflection array in module data for Configuration '%s'.\n", cfg->name());
+        return Messenger::error("Failed to find BraggReflection array in module data for Configuration '{}'.\n", cfg->name());
     const auto nReflections = braggReflections.nItems();
 
     const auto nTypes = cfg->nUsedAtomTypes();
@@ -446,7 +447,7 @@ bool BraggModule::reBinReflections(ProcessPool &procPool, Configuration *cfg, Ar
         bin = braggReflections.constAt(n).q() / qDelta;
         if ((bin < 0) || (bin >= nBins))
         {
-            Messenger::warn("Reflection %i is at Q = %f Angstroms**-1, which is outside of the current Q range.\n", n,
+            Messenger::warn("Reflection {} is at Q = {} Angstroms**-1, which is outside of the current Q range.\n", n,
                             braggReflections.constAt(n).q());
             continue;
         }

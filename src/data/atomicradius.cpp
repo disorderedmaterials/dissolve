@@ -72,7 +72,7 @@ const AtomicRadiusData &AtomicRadius::radiusData(int Z)
 
     if ((Z < 0) || (Z > nElements()))
     {
-        Messenger::error("AtomicRadius::radius() - Element with Z=%i is out of range!\n", Z);
+        Messenger::error("AtomicRadius::radius() - Element with Z={} is out of range!\n", Z);
         return radiusData[0];
     }
 

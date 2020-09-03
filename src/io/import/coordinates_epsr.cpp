@@ -37,7 +37,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
     if (parser.nArgs() == 3)
     {
         double boxSize = parser.argd(1);
-        Messenger::print("File has a cubic cell (side length %f Angstroms)", boxSize);
+        Messenger::print("File has a cubic cell (side length {} Angstroms)", boxSize);
         // 		targetModel()->setCell(Vec3<double>(boxSize,boxSize,boxSize), Vec3<double>(90,90,90));
     }
     else
@@ -75,7 +75,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
     Vec3<double> com, delta;
     for (int m = 0; m < nMols; m++)
     {
-        Messenger::printVerbose("Importing molecule %i from EPSR ato file...\n", m + 1);
+        Messenger::printVerbose("Importing molecule {} from EPSR ato file...\n", m + 1);
 
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
@@ -138,7 +138,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
 
             // If a DIHedral, we expect an integer which defines the number of constraints, and thus the number of
             // lines to skip before the main
-            if (DissolveSys::sameString(parser.argc(0), "DIH"))
+            if (DissolveSys::sameString(parser.argsv(0), "DIH"))
             {
                 if (parser.getArgsDelim() != LineParser::Success)
                     return false;

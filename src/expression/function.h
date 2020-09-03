@@ -48,7 +48,7 @@ class ExpressionFunction : public ExpressionNode
     // Execute command
     bool execute(ExpressionValue &result);
     // Print node contents
-    void nodePrint(int offset, const char *prefix = "");
+    void nodePrint(int offset, std::string_view prefix = "");
     // Set from ExpressionValue
     bool set(ExpressionValue value);
     // Initialise node

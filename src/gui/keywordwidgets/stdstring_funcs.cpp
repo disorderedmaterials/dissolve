@@ -1,6 +1,6 @@
 /*
-    *** Keyword Widget - CharString
-    *** src/gui/keywordwidgets/charstring_funcs.cpp
+    *** Keyword Widget - String
+    *** src/gui/keywordwidgets/stdstring_funcs.cpp
     Copyright T. Youngs 2012-2020
 
     This file is part of Dissolve.
@@ -20,19 +20,17 @@
 */
 
 #include "genericitems/listhelper.h"
-#include "gui/keywordwidgets/charstring.hui"
+#include "gui/keywordwidgets/stdstring.hui"
 
-CharStringKeywordWidget::CharStringKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+StringKeywordWidget::StringKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
     : QLineEdit(parent), KeywordWidgetBase(coreData)
 {
     // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<CharStringKeyword *>(keyword);
+    keyword_ = dynamic_cast<StringKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into CharStringKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into StringKeyword.\n", keyword->name());
     else
-    {
-        setText(keyword_->asString());
-    }
+        setText(QString::fromStdString(keyword_->asString()));
 
     // Connect the currentTextChanged signal to our own slot
     connect(this, SIGNAL(textChanged(QString)), this, SLOT(myTextChanged(QString)));
@@ -43,7 +41,7 @@ CharStringKeywordWidget::CharStringKeywordWidget(QWidget *parent, KeywordBase *k
  */
 
 // Line edit text changed
-void CharStringKeywordWidget::myTextChanged(const QString &text)
+void StringKeywordWidget::myTextChanged(const QString &text)
 {
     if (refreshing_)
         return;
@@ -58,11 +56,11 @@ void CharStringKeywordWidget::myTextChanged(const QString &text)
  */
 
 // Update value displayed in widget
-void CharStringKeywordWidget::updateValue()
+void StringKeywordWidget::updateValue()
 {
     refreshing_ = true;
 
-    setText(keyword_->asString());
+    setText(QString::fromStdString(keyword_->asString()));
 
     refreshing_ = false;
 }

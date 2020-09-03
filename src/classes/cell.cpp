@@ -70,6 +70,7 @@ const Vec3<double> &Cell::centre() const { return centre_; }
 
 // Return array of contained Atoms
 OrderedVector<Atom *> &Cell::atoms() { return atoms_; }
+const OrderedVector<Atom *> &Cell::atoms() const { return atoms_; }
 
 // Return array of contained Atoms, ordered by their array indices
 const OrderedVector<Atom *> &Cell::indexOrderedAtoms() const { return indexOrderedAtoms_; }
@@ -92,7 +93,7 @@ bool Cell::addAtom(Atom *i)
     indexOrderedAtoms_.insert(i);
 
     if (i->cell())
-        Messenger::warn("About to set Cell pointer in Atom %i, but this will overwrite an existing value.\n", i->arrayIndex());
+        Messenger::warn("About to set Cell pointer in Atom {}, but this will overwrite an existing value.\n", i->arrayIndex());
     i->setCell(this);
 
     return true;
@@ -116,7 +117,7 @@ bool Cell::removeAtom(Atom *i)
     }
     else
     {
-        Messenger::error("Tried to remove Atom %i from Cell %i, but it was not present.\n", i->arrayIndex(), index_);
+        Messenger::error("Tried to remove Atom {} from Cell {}, but it was not present.\n", i->arrayIndex(), index_);
         return false;
     }
 
@@ -145,10 +146,10 @@ void Cell::addCellNeighbours(OrderedVector<Cell *> &nearNeighbours, OrderedVecto
 
     // Create ordered list of CellNeighbours (including cells from both lists)
     OrderedVector<std::pair<Cell *, bool>> allCells;
-    for (auto *near : nearNeighbours)
-        allCells.emplace(near, false);
-    for (auto *mim : mimNeighbours)
-        allCells.emplace(mim, true);
+    for (auto *nearNbr : nearNeighbours)
+        allCells.emplace(nearNbr, false);
+    for (auto *mimNbr : mimNeighbours)
+        allCells.emplace(mimNbr, true);
 
     if (allCells.size() != (nCellNeighbours_ + nMimCellNeighbours_))
         Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");

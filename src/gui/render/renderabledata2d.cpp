@@ -27,7 +27,7 @@
 #include "math/extrema.h"
 #include "templates/array2d.h"
 
-RenderableData2D::RenderableData2D(const Data2D *source, const char *objectTag)
+RenderableData2D::RenderableData2D(const Data2D *source, std::string_view objectTag)
     : Renderable(Renderable::Data2DRenderable, objectTag), source_(source)
 {
     // Set defaults
@@ -342,7 +342,7 @@ bool RenderableData2D::writeStyleBlock(LineParser &parser, int indentLevel) cons
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 
-    if (!parser.writeLineF("%s%s  %s\n", indent, data2DStyleKeywords().keyword(RenderableData2D::DisplayKeyword),
+    if (!parser.writeLineF("{}{}  {}\n", indent, data2DStyleKeywords().keyword(RenderableData2D::DisplayKeyword),
                            data2DDisplayStyles().keyword(displayStyle_)))
         return false;
 
@@ -359,9 +359,9 @@ bool RenderableData2D::readStyleBlock(LineParser &parser)
             return false;
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
-        if (!data2DStyleKeywords().isValid(parser.argc(0)))
-            return data2DStyleKeywords().errorAndPrintValid(parser.argc(0));
-        auto kwd = data2DStyleKeywords().enumeration(parser.argc(0));
+        if (!data2DStyleKeywords().isValid(parser.argsv(0)))
+            return data2DStyleKeywords().errorAndPrintValid(parser.argsv(0));
+        auto kwd = data2DStyleKeywords().enumeration(parser.argsv(0));
         if (!data2DStyleKeywords().validNArgs(kwd, parser.nArgs() - 1))
             return false;
 
@@ -370,16 +370,16 @@ bool RenderableData2D::readStyleBlock(LineParser &parser)
         {
             // Display style
             case (RenderableData2D::DisplayKeyword):
-                if (!data2DDisplayStyles().isValid(parser.argc(1)))
-                    return data2DDisplayStyles().errorAndPrintValid(parser.argc(1));
-                displayStyle_ = data2DDisplayStyles().enumeration(parser.argc(1));
+                if (!data2DDisplayStyles().isValid(parser.argsv(1)))
+                    return data2DDisplayStyles().errorAndPrintValid(parser.argsv(1));
+                displayStyle_ = data2DDisplayStyles().enumeration(parser.argsv(1));
                 break;
             // End of block
             case (RenderableData2D::EndStyleKeyword):
                 return true;
             // Unrecognised Keyword
             default:
-                Messenger::warn("Unrecognised display style keyword for RenderableData2D: %s\n", parser.argc(0));
+                Messenger::warn("Unrecognised display style keyword for RenderableData2D: {}\n", parser.argsv(0));
                 return false;
                 break;
         }

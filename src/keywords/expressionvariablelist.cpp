@@ -73,26 +73,26 @@ bool ExpressionVariableListKeyword::read(LineParser &parser, int startArg, CoreD
         return Messenger::error("Parent ProcedureNode not set, so can't read ExpressionVariableList data.\n");
 
     // First argument is the name of the parameter to create - does it already exist in the node's current scope?
-    ExpressionVariable *parameter = parentNode_->parameterInScope(parser.argc(startArg));
+    ExpressionVariable *parameter = parentNode_->parameterInScope(parser.argsv(startArg));
     if (parameter)
-        return Messenger::error("A parameter with the name '%s' is already in scope, and cannot be redefined.\n",
-                                parser.argc(startArg));
+        return Messenger::error("A parameter with the name '{}' is already in scope, and cannot be redefined.\n",
+                                parser.argsv(startArg));
 
     // Create a new one
     parameter = new ExpressionVariable;
     data_.own(parameter);
-    parameter->setName(parser.argc(startArg));
+    parameter->setName(parser.argsv(startArg));
 
     // Set the initial value
     if (variableType_ == ExpressionValue::IntegerType)
     {
         if (!parameter->set(parser.argi(startArg + 1)))
-            return Messenger::error("Failed to set initial value for parameter '%s'.\n", parser.argc(startArg));
+            return Messenger::error("Failed to set initial value for parameter '{}'.\n", parser.argsv(startArg));
     }
     else if (variableType_ == ExpressionValue::DoubleType)
     {
         if (!parameter->set(parser.argd(startArg + 1)))
-            return Messenger::error("Failed to set initial value for parameter '%s'.\n", parser.argc(startArg));
+            return Messenger::error("Failed to set initial value for parameter '{}'.\n", parser.argsv(startArg));
     }
 
     set_ = true;
@@ -101,7 +101,7 @@ bool ExpressionVariableListKeyword::read(LineParser &parser, int startArg, CoreD
 }
 
 // Write keyword data to specified LineParser
-bool ExpressionVariableListKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool ExpressionVariableListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     // Loop over list of defined ExpressionNode's (ExpressionVariables)
     ListIterator<ExpressionNode> nodeIterator(data_);
@@ -114,12 +114,12 @@ bool ExpressionVariableListKeyword::write(LineParser &parser, const char *keywor
                              "ExpressionVariableList data.\n");
         else if (variableType_ == ExpressionValue::IntegerType)
         {
-            if (!parser.writeLineF("%s%s  %s  %i\n", prefix, keywordName, var->name(), var->value().asInteger()))
+            if (!parser.writeLineF("{}{}  {}  {}\n", prefix, keywordName, var->name(), var->value().asInteger()))
                 return false;
         }
         else if (variableType_ == ExpressionValue::DoubleType)
         {
-            if (!parser.writeLineF("%s%s  %s  %12.6e\n", prefix, keywordName, var->name(), var->value().asDouble()))
+            if (!parser.writeLineF("{}{}  {}  {:12.6e}\n", prefix, keywordName, var->name(), var->value().asDouble()))
                 return false;
         }
     }

@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "templates/listitem.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"
@@ -50,7 +49,6 @@ class KeywordBase : public ListItem<KeywordBase>
         AtomTypeSelectionData,
         BoolData,
         BroadeningFunctionData,
-        CharStringData,
         Data1DStoreData,
         Data2DStoreData,
         Data3DStoreData,
@@ -83,6 +81,7 @@ class KeywordBase : public ListItem<KeywordBase>
         SpeciesRefListData,
         SpeciesSiteData,
         SpeciesSiteRefListData,
+        StringData,
         Vec3DoubleData,
         Vec3IntegerData,
         Vec3NodeValueData,
@@ -91,7 +90,7 @@ class KeywordBase : public ListItem<KeywordBase>
     KeywordBase(KeywordDataType type);
     virtual ~KeywordBase();
     // Return DataType name
-    static const char *keywordDataType(KeywordDataType kdt);
+    static std::string_view keywordDataType(KeywordDataType kdt);
 
     /*
      * Base Pointer Return
@@ -117,11 +116,11 @@ class KeywordBase : public ListItem<KeywordBase>
     // Data type stored by keyword
     KeywordDataType type_;
     // Keyword name
-    CharString name_;
+    std::string name_;
     // Arguments string (for information)
-    CharString arguments_;
+    std::string arguments_;
     // Description of keyword, if any
-    CharString description_;
+    std::string description_;
     // Keyword option mask
     int optionMask_;
 
@@ -131,7 +130,7 @@ class KeywordBase : public ListItem<KeywordBase>
 
     public:
     // Set name, description, arguments, and option mask
-    void set(const char *name, const char *description, const char *arguments, int optionMask = NoOptions);
+    void set(std::string_view name, std::string_view description, std::string_view arguments, int optionMask = NoOptions);
     // Return whether data has been set
     bool isSet() const;
     // Flag that data has been set by some other means
@@ -139,13 +138,13 @@ class KeywordBase : public ListItem<KeywordBase>
     // Return data type stored by keyword
     KeywordDataType type() const;
     // Return name of data type stored by keyword
-    const char *typeName() const;
+    std::string_view typeName() const;
     // Return keyword name
-    const char *name() const;
+    std::string_view name() const;
     // Return arguments string
-    const char *arguments() const;
+    std::string_view arguments() const;
     // Return keyword description
-    const char *description() const;
+    std::string_view description() const;
     // Return keyword option mask
     int optionMask() const;
     // Return whether specified option is set
@@ -166,7 +165,7 @@ class KeywordBase : public ListItem<KeywordBase>
     // Parse arguments from supplied LineParser, starting at given argument offset
     virtual bool read(LineParser &parser, int startArg, CoreData &coreData) = 0;
     // Write keyword data to specified LineParser
-    virtual bool write(LineParser &parser, const char *keywordName, const char *prefix = "") = 0;
+    virtual bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix = "") = 0;
 
     /*
      * Parse Result
@@ -191,7 +190,7 @@ class KeywordBase : public ListItem<KeywordBase>
     // Return value (as double)
     virtual double asDouble();
     // Return value (as string)
-    virtual const char *asString();
+    virtual std::string asString();
     // Return value as Vec3<int>
     virtual Vec3<int> asVec3Int();
     // Return value as Vec3<double>
