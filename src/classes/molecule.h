@@ -66,6 +66,8 @@ class Molecule : public DynamicArrayObject<Molecule>, public std::enable_shared_
     int nAtoms() const;
     // Return Atoms array
     std::vector<Atom *> &atoms();
+    // Return Atoms array
+    const std::vector<Atom *> &atoms() const;
     // Return nth Atom pointer
     Atom *atom(int n) const;
 
