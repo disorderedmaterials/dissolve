@@ -2,6 +2,6 @@ steps:
   - powershell: |
       $ShortHash = (git rev-parse --short HEAD) -replace("`t|`n|`r", "")
       Write-Output "Current Short Hash = $ShortHash"
-      (Get-Content src/main/version.h) -replace('DISSOLVESHORTHASH ".*"', ('DISSOLVESHORTHASH "'+"$ShortHash"+'"')) | Set-Content src/main/version.h
-      cat src/main/version.h
+      (Get-Content src/main/version.cpp) -replace('DISSOLVESHORTHASH ".*"', ('DISSOLVESHORTHASH "'+"$ShortHash"+'"')) | Set-Content src/main/version.cpp
+      cat src/main/version.cpp
     displayName: 'Set Short Hash'

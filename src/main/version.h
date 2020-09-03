@@ -21,11 +21,7 @@
 
 #pragma once
 
-#include <string>
-
-#define DISSOLVEVERSION "0.7.0"
-#define DISSOLVESHORTHASH ""
-#define DISSOLVEREPO "https://github.com/projectdissolve/dissolve.git"
+#include <string_view>
 
 namespace Version
 {

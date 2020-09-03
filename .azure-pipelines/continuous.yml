@@ -102,14 +102,14 @@ stages:
               artifactName: 'windows-artifacts'
             displayName: 'Download Windows Artifacts'
           - bash: |
-              VERSION=`grep "DISSOLVEVERSION" src/main/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+              VERSION=`grep "DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
               SHORTHASH=`git rev-parse --short HEAD`
               cd ./examples
               ./package-examples -v ${VERSION}-${SHORTHASH}
             displayName: 'Create Example Data Archives'
           - bash: |
               SHORTHASH=`git rev-parse --short HEAD`
-              VERSION=`grep "DISSOLVEVERSION" src/main/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+              VERSION=`grep "DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
               # Linux AppImages
               #cd $(System.ArtifactsDirectory)/linux-artifacts
               #mv -v Dissolve-${SHORTHASH}-x86_64.AppImage Dissolve-${VERSION}-${SHORTHASH}-x86_64.AppImage
@@ -128,7 +128,7 @@ stages:
           - bash: |
               SHORTHASH=`git rev-parse --short HEAD`
               DATE=`date`
-              VERSION=`grep "DISSOLVEVERSION" src/main/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+              VERSION=`grep "DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
               ./ci/scripts/update-release -r projectdissolve/dissolve -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg examples/*zip examples/*.tar.gz
             env:
               GITHUB_TOKEN: $(REPO_SECRET)

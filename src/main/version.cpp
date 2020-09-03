@@ -45,9 +45,6 @@ std::string_view info()
 }
 
 // Return repo url
-std::string_view repoUrl()
-{
-    return DISSOLVEREPO;
-}
+std::string_view repoUrl() { return DISSOLVEREPO; }
 
 }; // namespace Version
