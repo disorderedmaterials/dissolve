@@ -18,6 +18,8 @@ pkgs.stdenv.mkDerivation {
     pkgs.antlr
     pkgs.bison
     pkgs.cmake
+    pkgs.conan
+    pkgs.ninja
   ] ++ pkgs.lib.optionals parallel [
     pkgs.openmpi
   ] ++ pkgs.lib.optionals gui [
@@ -33,8 +35,8 @@ pkgs.stdenv.mkDerivation {
   src = pkgs.fetchFromGitHub {
     owner = "projectdissolve";
     repo = "dissolve";
-    rev = "e8da2be5c0ca2026464431f7c9cc9d58980bd15f";
-    sha256 = "0fxbh4d4wbapv1yhjm7vb9xnnv9h4v22k8x9jpmd3xvc0i687g42";
+    rev = "cfff4e019";
+    sha256 = "0kj5dx60f306hv3b2r0xgwcrbfz62qm2clwy5pix7mqf1d58djm8";
   };
   installPhase = "cp -r .$prefix $out";
   meta = {
