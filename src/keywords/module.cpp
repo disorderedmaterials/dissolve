@@ -22,7 +22,7 @@
 #include "keywords/module.h"
 #include "module/module.h"
 
-ModuleKeywordBase::ModuleKeywordBase(const char *moduleType) { moduleType_ = moduleType; }
+ModuleKeywordBase::ModuleKeywordBase(std::string_view moduleType) { moduleType_ = moduleType; }
 
 ModuleKeywordBase::~ModuleKeywordBase() {}
 
@@ -31,4 +31,4 @@ ModuleKeywordBase::~ModuleKeywordBase() {}
  */
 
 // Return target Module type to allow
-const char *ModuleKeywordBase::moduleType() const { return moduleType_; }
+std::string_view ModuleKeywordBase::moduleType() const { return moduleType_; }

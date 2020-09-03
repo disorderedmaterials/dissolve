@@ -97,7 +97,7 @@ void ConfigurationViewer::endInteraction()
             setInteractionMode(ConfigurationViewer::DefaultInteraction);
             break;
         default:
-            printf("Internal Error: Don't know how to complete interaction mode %i\n", interactionMode());
+            Messenger::error("Don't know how to complete interaction mode {}\n", interactionMode());
             break;
     }
 }
@@ -118,7 +118,7 @@ void ConfigurationViewer::cancelInteraction()
  */
 
 // Return text describing current interaction mode
-const char *ConfigurationViewer::interactionModeText() const
+const QString ConfigurationViewer::interactionModeText() const
 {
     switch (interactionMode())
     {

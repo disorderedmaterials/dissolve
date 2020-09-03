@@ -47,15 +47,15 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         Data1D referenceData;
         if (!referenceFQ_.importData(referenceData, &procPool))
         {
-            Messenger::error("Failed to load reference data '%s'.\n", referenceFQ_.filename());
+            Messenger::error("Failed to load reference data '{}'.\n", referenceFQ_.filename());
             return false;
         }
 
         // Truncate data beyond QMax
         const auto qMax = keywords_.asDouble("QMax") < 0.0 ? 30.0 : keywords_.asDouble("QMax");
         if (referenceData.constXAxis().lastValue() < qMax)
-            Messenger::warn("Qmax limit of %e Angstroms**-1 for calculated NeutronSQ (%s) is beyond limit of "
-                            "reference data (Qmax = %e Angstroms**-1).\n",
+            Messenger::warn("Qmax limit of {:e} Angstroms**-1 for calculated NeutronSQ ({}) is beyond limit of "
+                            "reference data (Qmax = {:e} Angstroms**-1).\n",
                             qMax, uniqueName(), referenceData.constXAxis().lastValue());
         else
             while (referenceData.constXAxis().lastValue() > qMax)
@@ -65,7 +65,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         if (keywords_.asBool("ReferenceIgnoreFirst"))
         {
             referenceData.removeFirstPoint();
-            Messenger::print("Removed first point from supplied reference data - new Qmin = %e Angstroms**-1.\n",
+            Messenger::print("Removed first point from supplied reference data - new Qmin = {:e} Angstroms**-1.\n",
                              referenceData.constXAxis().firstValue());
         }
 
@@ -77,7 +77,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             NeutronWeights summedWeights;
             if (!calculateSummedWeights(summedWeights))
             {
-                Messenger::error("Couldn't get summed Weights for reference data in NeutronSQ module '%s', and "
+                Messenger::error("Couldn't get summed Weights for reference data in NeutronSQ module '{}', and "
                                  "so can't perform requested normalisation.\n",
                                  uniqueName());
                 return false;
@@ -87,13 +87,13 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             if (normType == NeutronSQModule::AverageOfSquaresNormalisation)
             {
                 referenceData.values() *= summedWeights.boundCoherentAverageOfSquares();
-                Messenger::print("NeutronSQ: Removed <b>**2 normalisation from reference data ('%s'), factor = %f.\n",
+                Messenger::print("NeutronSQ: Removed <b>**2 normalisation from reference data ('{}'), factor = {}.\n",
                                  uniqueName(), summedWeights.boundCoherentAverageOfSquares());
             }
             else if (normType == NeutronSQModule::SquareOfAverageNormalisation)
             {
                 referenceData.values() *= summedWeights.boundCoherentSquareOfAverage();
-                Messenger::print("NeutronSQ: Removed <b**2> normalisation from reference data ('%s'), factor = %f.\n",
+                Messenger::print("NeutronSQ: Removed <b**2> normalisation from reference data ('{}'), factor = {}.\n",
                                  uniqueName(), summedWeights.boundCoherentSquareOfAverage());
             }
         }
@@ -104,22 +104,22 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         if (referenceWindowFunction.function() == WindowFunction::NoWindow)
             Messenger::print("No window function will be applied in Fourier transform of S(Q) to g(r).");
         else
-            Messenger::print("Window function to be applied in Fourier transform of reference data is %s (%s).",
+            Messenger::print("Window function to be applied in Fourier transform of reference data is {} ({}).",
                              WindowFunction::functionType(referenceWindowFunction.function()),
-                             referenceWindowFunction.parameterSummary().get());
+                             referenceWindowFunction.parameterSummary());
 
         // Store the reference data in processing
         referenceData.setName(uniqueName());
         auto &storedData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceData", uniqueName(),
                                                               GenericItem::ProtectedFlag);
-        storedData.setObjectTag(CharString("%s//ReferenceData", uniqueName()));
+        storedData.setObjectTag(fmt::format("{}//ReferenceData", uniqueName()));
         storedData = referenceData;
 
         // Calculate and store the FT of the reference data in processing
         referenceData.setName(uniqueName());
         auto &storedDataFT = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceDataFT",
                                                                 uniqueName(), GenericItem::ProtectedFlag);
-        storedDataFT.setObjectTag(CharString("%s//ReferenceDataFT", uniqueName()));
+        storedDataFT.setObjectTag(fmt::format("{}//ReferenceDataFT", uniqueName()));
         storedDataFT = referenceData;
         double rho = nTargetConfigurations() == 0 ? 0.1 : RDFModule::summedRho(this, dissolve.processingModuleData());
         Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), 0.0, 0.05, 30.0, referenceWindowFunction);
@@ -132,10 +132,10 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         {
             if (procPool.isMaster())
             {
-                Data1DExportFileFormat exportFormat(CharString("%s-ReferenceData.q", uniqueName()));
+                Data1DExportFileFormat exportFormat(fmt::format("{}-ReferenceData.q", uniqueName()));
                 if (!exportFormat.exportData(storedData))
                     return procPool.decideFalse();
-                Data1DExportFileFormat exportFormatFT(CharString("%s-ReferenceData.r", uniqueName()));
+                Data1DExportFileFormat exportFormatFT(fmt::format("{}-ReferenceData.r", uniqueName()));
                 if (!exportFormatFT.exportData(storedDataFT))
                     return procPool.decideFalse();
                 procPool.decideTrue();
@@ -160,9 +160,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Check for zero Configuration targets
     if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
-
-    CharString varName;
+        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     const bool includeBragg = keywords_.asBool("IncludeBragg");
     const auto &braggQBroadening = keywords_.retrieve<BroadeningFunction>("BraggQBroadening", BroadeningFunction());
@@ -178,21 +176,21 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto &windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
 
     // Print argument/parameter summary
-    Messenger::print("NeutronSQ: Calculating S(Q)/F(Q) over %f < Q < %f Angstroms**-1 using step size of %f Angstroms**-1.\n",
+    Messenger::print("NeutronSQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n",
                      qMin, qMax, qDelta);
     if (windowFunction.function() == WindowFunction::NoWindow)
         Messenger::print("NeutronSQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
     else
-        Messenger::print("NeutronSQ: Window function to be applied in Fourier transforms is %s (%s).",
-                         WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary().get());
+        Messenger::print("NeutronSQ: Window function to be applied in Fourier transforms is {} ({}).",
+                         WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary());
     const WindowFunction &referenceWindowFunction =
         keywords_.retrieve<WindowFunction>("ReferenceWindowFunction", WindowFunction());
     if (referenceWindowFunction.function() == WindowFunction::NoWindow)
         Messenger::print("No window function will be applied when calculating representative g(r) from S(Q).");
     else
-        Messenger::print("Window function to be applied when calculating representative g(r) from S(Q) is %s (%s).",
+        Messenger::print("Window function to be applied when calculating representative g(r) from S(Q) is {} ({}).",
                          WindowFunction::functionType(referenceWindowFunction.function()),
-                         referenceWindowFunction.parameterSummary().get());
+                         referenceWindowFunction.parameterSummary());
     if (normalisation == NeutronSQModule::NoNormalisation)
         Messenger::print("NeutronSQ: No normalisation will be applied to total F(Q).\n");
     else if (normalisation == NeutronSQModule::AverageOfSquaresNormalisation)
@@ -202,8 +200,8 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (qBroadening.function() == BroadeningFunction::NoFunction)
         Messenger::print("NeutronSQ: No broadening will be applied to calculated S(Q).");
     else
-        Messenger::print("NeutronSQ: Broadening to be applied in calculated S(Q) is %s (%s).",
-                         BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary().get());
+        Messenger::print("NeutronSQ: Broadening to be applied in calculated S(Q) is {} ({}).",
+                         BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary());
     if (saveUnweighted)
         Messenger::print("NeutronSQ: Unweighted partials and totals will be saved.\n");
     if (saveWeighted)
@@ -215,9 +213,9 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (braggQBroadening.function() == BroadeningFunction::NoFunction)
             Messenger::print("NeutronSQ: No additional broadening will be applied to calculated Bragg S(Q).");
         else
-            Messenger::print("NeutronSQ: Additional broadening to be applied in calculated Bragg S(Q) is %s (%s).",
+            Messenger::print("NeutronSQ: Additional broadening to be applied in calculated Bragg S(Q) is {} ({}).",
                              BroadeningFunction::functionType(braggQBroadening.function()),
-                             braggQBroadening.parameterSummary().get());
+                             braggQBroadening.parameterSummary());
     }
     Messenger::print("\n");
 
@@ -235,24 +233,24 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Get unweighted g(r) for this Configuration - we don't supply a specific Module prefix, since the unweighted
         // g(r) may come from one of many RDF-type modules
         if (!cfg->moduleData().contains("UnweightedGR"))
-            return Messenger::error("Couldn't locate UnweightedGR for Configuration '%s'.\n", cfg->name());
+            return Messenger::error("Couldn't locate UnweightedGR for Configuration '{}'.\n", cfg->name());
         const auto &unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
 
         // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
         auto &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", NULL,
                                                                     GenericItem::InRestartFileFlag, &created);
         if (created)
-            unweightedsq.setUpPartials(unweightedgr.atomTypes(), CharString("%s-%s", cfg->niceName(), uniqueName()),
+            unweightedsq.setUpPartials(unweightedgr.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()),
                                        "unweighted", "sq", "Q, 1/Angstroms");
 
         // Is the PartialSet already up-to-date? Do we force its calculation anyway?
         auto &forceCalculation = GenericListHelper<bool>::retrieve(cfg->moduleData(), "_ForceNeutronSQ", NULL, false);
         const bool sqUpToDate = DissolveSys::sameString(
-            unweightedsq.fingerprint(), CharString("%i/%i", cfg->moduleData().version("UnweightedGR"),
-                                                   includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
+            unweightedsq.fingerprint(), fmt::format("{}/{}", cfg->moduleData().version("UnweightedGR"),
+                                                    includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
         if ((!forceCalculation) && sqUpToDate)
         {
-            Messenger::print("Unweighted partial S(Q) are up-to-date for Configuration '%s'.\n", cfg->name());
+            Messenger::print("Unweighted partial S(Q) are up-to-date for Configuration '{}'.\n", cfg->name());
             continue;
         }
         forceCalculation = false;
@@ -267,14 +265,14 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             // Check if reflection data is present
             if (!cfg->moduleData().contains("BraggReflections"))
-                return Messenger::error("Bragg scattering requested to be included, but Configuration '%s' "
+                return Messenger::error("Bragg scattering requested to be included, but Configuration '{}' "
                                         "contains no reflection data.\n",
                                         cfg->name());
             const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
                 cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>());
             const auto nReflections = braggReflections.nItems();
             const auto braggQMax = braggReflections.constAt(nReflections - 1).q();
-            Messenger::print("Found BraggReflections data for Configuration '%s' (nReflections = %i, QMax = %f "
+            Messenger::print("Found BraggReflections data for Configuration '{}' (nReflections = {}, QMax = {} "
                              "Angstroms**-1).\n",
                              cfg->name(), nReflections, braggQMax);
 
@@ -361,9 +359,9 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Set names of resources (Data1D) within the PartialSet, and tag it with the fingerprint from the source
         // unweighted g(r)
-        unweightedsq.setObjectTags(CharString("%s//%s//%s", cfg->niceName(), "NeutronSQ", "UnweightedSQ"));
-        unweightedsq.setFingerprint(CharString("%i/%i", cfg->moduleData().version("UnweightedGR"),
-                                               includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
+        unweightedsq.setObjectTags(fmt::format("{}//{}//{}", cfg->niceName(), "NeutronSQ", "UnweightedSQ"));
+        unweightedsq.setFingerprint(fmt::format("{}/{}", cfg->moduleData().version("UnweightedGR"),
+                                                includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
 
         // Save data if requested
         if (saveUnweighted && (!MPIRunMaster(procPool, unweightedsq.save())))
@@ -388,7 +386,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 // Find the referenced Species in our SpeciesInfo list
                 auto *spInfo = cfg->usedSpeciesInfo(topes.species());
                 if (!spInfo)
-                    return Messenger::error("Couldn't locate SpeciesInfo for '%s' in the Configuration '%s'.\n",
+                    return Messenger::error("Couldn't locate SpeciesInfo for '{}' in the Configuration '{}'.\n",
                                             topes.species()->name(), cfg->niceName());
 
                 // Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
@@ -404,7 +402,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         while (SpeciesInfo *spInfo = speciesInfoIterator.iterate())
             if (!weights.containsIsotopologues(spInfo->species()))
             {
-                Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is missing "
+                Messenger::print("Isotopologue specification for Species '{}' in Configuration '{}' is missing "
                                  "- natural isotopologue will be used.\n",
                                  spInfo->species()->name(), cfg->name());
 
@@ -413,7 +411,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             }
 
         // Create, print, and store weights
-        Messenger::print("Isotopologue and isotope composition for Configuration '%s':\n\n", cfg->name());
+        Messenger::print("Isotopologue and isotope composition for Configuration '{}':\n\n", cfg->name());
         weights.createFromIsotopologues(exchangeableTypes_);
         weights.print();
 
@@ -421,14 +419,14 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         auto &weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", NULL,
                                                                   GenericItem::InRestartFileFlag, &created);
         if (created)
-            weightedsq.setUpPartials(unweightedsq.atomTypes(), CharString("%s-%s", cfg->niceName(), uniqueName()), "weighted",
+            weightedsq.setUpPartials(unweightedsq.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()), "weighted",
                                      "sq", "Q, 1/Angstroms");
 
         // Calculate weighted S(Q)
         calculateWeightedSQ(unweightedsq, weightedsq, weights, normalisation);
 
         // Set names of resources (Data1D) within the PartialSet
-        weightedsq.setObjectTags(CharString("%s//%s//%s", cfg->niceName(), uniqueName_.get(), "WeightedSQ"));
+        weightedsq.setObjectTags(fmt::format("{}//{}//{}", cfg->niceName(), uniqueName_, "WeightedSQ"));
 
         // Save data if requested
         if (saveWeighted && (!MPIRunMaster(procPool, weightedsq.save())))
@@ -456,10 +454,10 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                                     GenericItem::InRestartFileFlag);
     summedWeightedSQ = summedUnweightedSQ;
     summedWeightedSQ.setFileNames(uniqueName_, "weighted", "sq");
-    summedWeightedSQ.setObjectTags(CharString("%s//%s", uniqueName_.get(), "WeightedSQ"));
+    summedWeightedSQ.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedSQ"));
 
     // Calculate weighted S(Q)
-    Messenger::print("Isotopologue and isotope composition over all Configurations used in '%s':\n\n", uniqueName_.get());
+    Messenger::print("Isotopologue and isotope composition over all Configurations used in '{}':\n\n", uniqueName_);
     NeutronWeights summedWeights;
     if (!calculateSummedWeights(summedWeights))
         return false;
@@ -481,7 +479,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                                     GenericItem::InRestartFileFlag, &created);
     if (created)
         summedWeightedGR.setUpPartials(summedUnweightedSQ.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
-    summedWeightedGR.setObjectTags(CharString("%s//%s", uniqueName_.get(), "WeightedGR"));
+    summedWeightedGR.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedGR"));
 
     // Calculate weighted g(r)
     calculateWeightedGR(summedUnweightedGR, summedWeightedGR, summedWeights, normalisation);
@@ -492,7 +490,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     repGR = summedWeightedSQ.total();
     double rho = nTargetConfigurations() == 0 ? 0.1 : RDFModule::summedRho(this, dissolve.processingModuleData());
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), qMin, qDelta, qMax, referenceWindowFunction);
-    repGR.setObjectTag(CharString("%s//RepresentativeTotalGR", uniqueName_.get()));
+    repGR.setObjectTag(fmt::format("{}//RepresentativeTotalGR", uniqueName_));
 
     // Save data if requested
     if (saveWeighted && (!MPIRunMaster(procPool, summedWeightedSQ.save())))

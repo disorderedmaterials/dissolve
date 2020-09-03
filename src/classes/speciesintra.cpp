@@ -111,8 +111,8 @@ void SpeciesIntra::setParameter(int id, double value)
 #ifdef CHECKS
     if ((id < 0) || (id >= parameters_.size()))
     {
-        Messenger::error("Tried to set a parameter in a SpeciesIntra definition, but the index is out of range (%i vs "
-                         "%i parameters current).\n",
+        Messenger::error("Tried to set a parameter in a SpeciesIntra definition, but the index is out of range ({} vs "
+                         "{} parameters current).\n",
                          id, parameters_.size());
         return;
     }

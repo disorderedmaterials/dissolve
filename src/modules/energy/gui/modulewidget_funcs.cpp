@@ -39,7 +39,7 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, EnergyModule *module) : 
     energyGraph_ = ui_.PlotWidget->dataViewer();
 
     // Start a new, empty session
-    View &view = energyGraph_->view();
+    auto &view = energyGraph_->view();
     view.setViewType(View::FlatXYView);
     view.axes().setTitle(0, "Iteration");
     view.axes().setMax(0, 10.0);
@@ -80,7 +80,7 @@ void EnergyModuleWidget::updateControls(int flags)
     QPalette labelPalette = ui_.StableLabel->palette();
     if (currentConfiguration_)
     {
-        const Data1D &totalEnergyArray =
+        const auto &totalEnergyArray =
             GenericListHelper<Data1D>::value(currentConfiguration_->moduleData(), "Total", module_->uniqueName(), Data1D());
         if (totalEnergyArray.nValues() < stabilityWindow)
             ui_.GradientValueLabel->setText("N/A");
@@ -153,7 +153,7 @@ void EnergyModuleWidget::setGraphDataTargets(EnergyModule *module)
     // Add Configuration targets to the combo box
     ui_.TargetCombo->clear();
     for (Configuration *config : module->targetConfigurations())
-        ui_.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
+        ui_.TargetCombo->addItem(QString::fromStdString(std::string(config->name())), VariantPointer<Configuration>(config));
 }
 
 void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
@@ -168,31 +168,29 @@ void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
 
     // Add data targets
     Renderable *rend;
-    energyGraph_->createRenderable(
-        Renderable::Data1DRenderable,
-        CharString("Data1D%%%s//%s//Total", currentConfiguration_->niceName(), module_->uniqueName()), "Total", "Totals");
+    energyGraph_->createRenderable(Renderable::Data1DRenderable,
+                                   fmt::format("{}//{}//Total", currentConfiguration_->niceName(), module_->uniqueName()),
+                                   "Total", "Totals");
     rend = energyGraph_->createRenderable(
-        Renderable::Data1DRenderable,
-        CharString("Data1D%%%s//%s//Inter", currentConfiguration_->niceName(), module_->uniqueName()), "Inter", "Totals");
+        Renderable::Data1DRenderable, fmt::format("{}//{}//Inter", currentConfiguration_->niceName(), module_->uniqueName()),
+        "Inter", "Totals");
     rend->setColour(StockColours::RedStockColour);
     rend = energyGraph_->createRenderable(
-        Renderable::Data1DRenderable,
-        CharString("Data1D%%%s//%s//Intra", currentConfiguration_->niceName(), module_->uniqueName()), "Intra", "Totals");
+        Renderable::Data1DRenderable, fmt::format("{}//{}//Intra", currentConfiguration_->niceName(), module_->uniqueName()),
+        "Intra", "Totals");
     rend->setColour(StockColours::BlueStockColour);
 
-    rend = energyGraph_->createRenderable(
-        Renderable::Data1DRenderable,
-        CharString("Data1D%%%s//%s//Bond", currentConfiguration_->niceName(), module_->uniqueName()), "Bond", "Intramolecular");
+    rend = energyGraph_->createRenderable(Renderable::Data1DRenderable,
+                                          fmt::format("{}//{}//Bond", currentConfiguration_->niceName(), module_->uniqueName()),
+                                          "Bond", "Intramolecular");
     rend->setColour(StockColours::GreenStockColour);
     rend = energyGraph_->createRenderable(
-        Renderable::Data1DRenderable,
-        CharString("Data1D%%%s//%s//Angle", currentConfiguration_->niceName(), module_->uniqueName()), "Angle",
-        "Intramolecular");
+        Renderable::Data1DRenderable, fmt::format("{}//{}//Angle", currentConfiguration_->niceName(), module_->uniqueName()),
+        "Angle", "Intramolecular");
     rend->setColour(StockColours::PurpleStockColour);
     rend = energyGraph_->createRenderable(
-        Renderable::Data1DRenderable,
-        CharString("Data1D%%%s//%s//Torsion", currentConfiguration_->niceName(), module_->uniqueName()), "Torsion",
-        "Intramolecular");
+        Renderable::Data1DRenderable, fmt::format("{}//{}//Torsion", currentConfiguration_->niceName(), module_->uniqueName()),
+        "Torsion", "Intramolecular");
     rend->setColour(StockColours::OrangeStockColour);
 
     updateControls();

@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/enumoptions.h"
 #include "keywords/list.h"
 #include "templates/listitem.h"
@@ -103,9 +102,9 @@ class ProcedureNode : public ListItem<ProcedureNode>
     // Node type
     NodeType type_;
     // Node name
-    CharString name_;
+    std::string name_;
     // Node nice name
-    CharString niceName_;
+    std::string niceName_;
 
     public:
     // Return node type
@@ -117,11 +116,11 @@ class ProcedureNode : public ListItem<ProcedureNode>
     // Return whether a name for the node must be provided
     virtual bool mustBeNamed() const;
     // Set node name (and nice name)
-    void setName(const char *name);
+    void setName(std::string_view name);
     // Return node name
-    const char *name() const;
+    std::string_view name() const;
     // Return node nice name
-    const char *niceName() const;
+    std::string_view niceName() const;
 
     /*
      * Keywords
@@ -134,9 +133,9 @@ class ProcedureNode : public ListItem<ProcedureNode>
     // Return keywords for this node
     const KeywordList &keywords() const;
     // Set specified keyword (pass-thru to KeywordList::set<D>())
-    template <class D> bool setKeyword(const char *name, D value) { return keywords_.set<D>(name, value); }
+    template <class D> bool setKeyword(std::string_view name, D value) { return keywords_.set<D>(name, value); }
     // Set specified enum keyword (pass-thru to KeywordList::setEnumeration<D>())
-    template <class E> bool setEnumeration(const char *name, E enumeration)
+    template <class E> bool setEnumeration(std::string_view name, E enumeration)
     {
         return keywords_.setEnumeration<E>(name, enumeration);
     }
@@ -158,18 +157,18 @@ class ProcedureNode : public ListItem<ProcedureNode>
     // Return context of scope in which this node exists
     ProcedureNode::NodeContext scopeContext() const;
     // Return named node if it is currently in scope, and optionally matches the type given
-    ProcedureNode *nodeInScope(const char *name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes);
+    ProcedureNode *nodeInScope(std::string_view name, ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes);
     // Return list of nodes of specified type present in this node's scope
     RefList<ProcedureNode> nodesInScope(ProcedureNode::NodeType nt);
     // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
-    ProcedureNode *nodeExists(const char *name, ProcedureNode *excludeNode = NULL,
+    ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = NULL,
                               ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
     // Return list of nodes of specified type present in the Procedure
     RefList<ProcedureNode> nodes(ProcedureNode::NodeType nt);
     // Return whether the named parameter is currently in scope
-    ExpressionVariable *parameterInScope(const char *name, ExpressionVariable *excludeParameter = NULL);
+    ExpressionVariable *parameterInScope(std::string_view name, ExpressionVariable *excludeParameter = NULL);
     // Return whether the named parameter exists anywhere in the same Procedure
-    ExpressionVariable *parameterExists(const char *name, ExpressionVariable *excludeParameter = NULL) const;
+    ExpressionVariable *parameterExists(std::string_view name, ExpressionVariable *excludeParameter = NULL) const;
     // Create and return reference list of parameters in scope
     RefList<ExpressionVariable> parametersInScope();
 
@@ -187,7 +186,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
      */
     public:
     // Return whether this node has the named parameter specified
-    virtual ExpressionVariable *hasParameter(const char *name, ExpressionVariable *excludeParameter = NULL);
+    virtual ExpressionVariable *hasParameter(std::string_view name, ExpressionVariable *excludeParameter = NULL);
     // Return references to all parameters for this node
     virtual RefList<ExpressionVariable> parameterReferences() const;
 
@@ -203,12 +202,12 @@ class ProcedureNode : public ListItem<ProcedureNode>
         SomethingElse
     };
     // Prepare any necessary data, ready for execution
-    virtual bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
+    virtual bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList);
     // Execute node, targetting the supplied Configuration
-    virtual NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+    virtual NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                         GenericList &targetList) = 0;
     // Finalise any necessary data after execution
-    virtual bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
+    virtual bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList);
 
     /*
      * Read / Write
@@ -217,5 +216,5 @@ class ProcedureNode : public ListItem<ProcedureNode>
     // Read node data from specified LineParser
     virtual bool read(LineParser &parser, CoreData &coreData);
     // Write node data to specified LineParser
-    virtual bool write(LineParser &parser, const char *prefix);
+    virtual bool write(LineParser &parser, std::string_view prefix);
 };

@@ -85,14 +85,14 @@ AddForcefieldTermsWizard::~AddForcefieldTermsWizard() {}
  */
 
 // Return (mapped) name to use for specified type
-const char *AddForcefieldTermsWizard::mappedName(const std::shared_ptr<AtomType> at)
+const QString AddForcefieldTermsWizard::mappedName(const std::shared_ptr<AtomType> at)
 {
-    // RefDataItem<const AtomType, CharString> *item = typeNameMappings_.contains(at);
+    // RefDataItem<const AtomType, std::string> *item = typeNameMappings_.contains(at);
     auto it = typeNameMappings_.find(at);
     if (it == typeNameMappings_.end())
         return "???";
     else
-        return std::get<CharString>(*it);
+        return std::get<QString>(*it);
 }
 
 // Set Dissolve reference
@@ -203,7 +203,7 @@ bool AddForcefieldTermsWizard::displayControlPage(int index)
 {
     // Check page index given
     if ((index < 0) || (index >= AddForcefieldTermsWizard::nPages))
-        return Messenger::error("Page index %i not recognised.\n", index);
+        return Messenger::error("Page index {} not recognised.\n", index);
 
     // Page index is valid, so show it - no need to switch/case
     ui_.MainStack->setCurrentIndex(index);
@@ -305,7 +305,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                 // Reduce to master terms?
                 if (!ui_.NoMasterTermsCheck->isChecked())
                 {
-                    CharString termName;
+                    QString termName;
 
                     // Loop over bonds in the modified species
                     for (auto &bond : modifiedSpecies_->bonds())
@@ -317,16 +317,16 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                         // Construct a name for the master term based on the atom types - order atom
                         // types alphabetically for consistency
                         if (QString(mappedName(bond.i()->atomType())) < QString(mappedName(bond.j()->atomType())))
-                            termName.sprintf("%s-%s", mappedName(bond.i()->atomType()), mappedName(bond.j()->atomType()));
+                            termName = QString("%1-%2").arg(mappedName(bond.i()->atomType()), mappedName(bond.j()->atomType()));
                         else
-                            termName.sprintf("%s-%s", mappedName(bond.j()->atomType()), mappedName(bond.i()->atomType()));
+                            termName = QString("%1-%2").arg(mappedName(bond.j()->atomType()), mappedName(bond.i()->atomType()));
 
                         // Search for an existing master term by this name
-                        MasterIntra *master = temporaryCoreData_.hasMasterBond(termName);
+                        MasterIntra *master = temporaryCoreData_.hasMasterBond(qPrintable(termName));
                         if (!master)
                         {
                             // Create it now
-                            master = temporaryCoreData_.addMasterBond(termName);
+                            master = temporaryCoreData_.addMasterBond(qPrintable(termName));
                             master->setForm(bond.form());
                             master->setParameters(bond.parameters());
                         }
@@ -343,18 +343,20 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                         // Construct a name for the master term based on the atom types - order atom
                         // types alphabetically for consistency
                         if (QString(mappedName(angle.i()->atomType())) < QString(mappedName(angle.k()->atomType())))
-                            termName.sprintf("%s-%s-%s", mappedName(angle.i()->atomType()), mappedName(angle.j()->atomType()),
-                                             mappedName(angle.k()->atomType()));
+                            termName = QString("%1-%2-%3")
+                                           .arg(mappedName(angle.i()->atomType()), mappedName(angle.j()->atomType()),
+                                                mappedName(angle.k()->atomType()));
                         else
-                            termName.sprintf("%s-%s-%s", mappedName(angle.k()->atomType()), mappedName(angle.j()->atomType()),
-                                             mappedName(angle.i()->atomType()));
+                            termName = QString("%1-%2-%3")
+                                           .arg(mappedName(angle.k()->atomType()), mappedName(angle.j()->atomType()),
+                                                mappedName(angle.i()->atomType()));
 
                         // Search for an existing master term by this name
-                        MasterIntra *master = temporaryCoreData_.hasMasterAngle(termName);
+                        MasterIntra *master = temporaryCoreData_.hasMasterAngle(qPrintable(termName));
                         if (!master)
                         {
                             // Create it now
-                            master = temporaryCoreData_.addMasterAngle(termName);
+                            master = temporaryCoreData_.addMasterAngle(qPrintable(termName));
                             master->setForm(angle.form());
                             master->setParameters(angle.parameters());
                         }
@@ -371,20 +373,20 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                         // Construct a name for the master term based on the atom types - order atom
                         // types alphabetically for consistency
                         if (QString(mappedName(torsion.i()->atomType())) < QString(mappedName(torsion.l()->atomType())))
-                            termName.sprintf("%s-%s-%s-%s", mappedName(torsion.i()->atomType()),
-                                             mappedName(torsion.j()->atomType()), mappedName(torsion.k()->atomType()),
-                                             mappedName(torsion.l()->atomType()));
+                            termName = QString("%1-%2-%3-%4")
+                                           .arg(mappedName(torsion.i()->atomType()), mappedName(torsion.j()->atomType()),
+                                                mappedName(torsion.k()->atomType()), mappedName(torsion.l()->atomType()));
                         else
-                            termName.sprintf("%s-%s-%s-%s", mappedName(torsion.l()->atomType()),
-                                             mappedName(torsion.k()->atomType()), mappedName(torsion.j()->atomType()),
-                                             mappedName(torsion.i()->atomType()));
+                            termName = QString("%1-%2-%3-%4")
+                                           .arg(mappedName(torsion.l()->atomType()), mappedName(torsion.k()->atomType()),
+                                                mappedName(torsion.j()->atomType()), mappedName(torsion.i()->atomType()));
 
                         // Search for an existing master term by this name
-                        MasterIntra *master = temporaryCoreData_.hasMasterTorsion(termName);
+                        MasterIntra *master = temporaryCoreData_.hasMasterTorsion(qPrintable(termName));
                         if (!master)
                         {
                             // Create it now
-                            master = temporaryCoreData_.addMasterTorsion(termName);
+                            master = temporaryCoreData_.addMasterTorsion(qPrintable(termName));
                             master->setForm(torsion.form());
                             master->setParameters(torsion.parameters());
                         }
@@ -404,14 +406,14 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                                           << mappedName(improper.j()->atomType()) << mappedName(improper.k()->atomType())
                                           << mappedName(improper.l()->atomType());
                         jkl.sort();
-                        termName.sprintf("%s-%s", mappedName(improper.i()->atomType()), qPrintable(jkl.join("-")));
+                        termName = QString("%1-%2").arg(mappedName(improper.i()->atomType()), qPrintable(jkl.join("-")));
 
                         // Search for an existing master term by this name
-                        MasterIntra *master = temporaryCoreData_.hasMasterImproper(termName);
+                        MasterIntra *master = temporaryCoreData_.hasMasterImproper(qPrintable(termName));
                         if (!master)
                         {
                             // Create it now
-                            master = temporaryCoreData_.addMasterImproper(termName);
+                            master = temporaryCoreData_.addMasterImproper(qPrintable(termName));
                             master->setForm(improper.form());
                             master->setParameters(improper.parameters());
                         }
@@ -421,6 +423,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
             }
 
             updateMasterTermsPage();
+            break;
         default:
             break;
     }
@@ -508,7 +511,7 @@ void AddForcefieldTermsWizard::updateAtomTypesConflictsListRow(int row, std::sha
         item = ui_.AtomTypesConflictsList->item(row);
 
     // Set item data
-    item->setText(atomType->name());
+    item->setText(QString::fromStdString(std::string(atomType->name())));
     item->setIcon(QIcon(dissolveReference_->findAtomType(atomType->name()) ? ":/general/icons/general_warn.svg"
                                                                            : ":/general/icons/general_true.svg"));
 }
@@ -624,7 +627,7 @@ void AddForcefieldTermsWizard::updateMasterTermsTreeChild(QTreeWidgetItem *paren
         item = parent->child(childIndex);
 
     // Set item data
-    item->setText(0, masterIntra->name());
+    item->setText(0, QString::fromStdString(std::string(masterIntra->name())));
     item->setIcon(0, QIcon(dissolveReference_->constCoreData().findMasterTerm(masterIntra->name())
                                ? ":/general/icons/general_warn.svg"
                                : ":/general/icons/general_true.svg"));
@@ -738,7 +741,7 @@ void AddForcefieldTermsWizard::on_MasterTermsPrefixButton_clicked(bool checked)
     for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
     {
         MasterIntra *intra = VariantPointer<MasterIntra>((*i)->data(0, Qt::UserRole));
-        intra->setName(CharString("%s%s", qPrintable(prefix), intra->name()));
+        intra->setName(fmt::format("{}{}", qPrintable(prefix), intra->name()));
     }
 
     updateMasterTermsPage();
@@ -757,7 +760,7 @@ void AddForcefieldTermsWizard::on_MasterTermsSuffixButton_clicked(bool checked)
     for (i = selectedItems.begin(); i != selectedItems.end(); ++i)
     {
         MasterIntra *intra = VariantPointer<MasterIntra>((*i)->data(0, Qt::UserRole));
-        intra->setName(CharString("%s%s", intra->name(), qPrintable(suffix)));
+        intra->setName(fmt::format("{}{}", intra->name(), qPrintable(suffix)));
     }
 
     updateMasterTermsPage();

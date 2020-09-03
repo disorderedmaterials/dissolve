@@ -22,13 +22,13 @@
 #include "modules/neutronsq/neutronsq.h"
 
 // Return type of module
-const char *NeutronSQModule::type() const { return "NeutronSQ"; }
+std::string_view NeutronSQModule::type() const { return "NeutronSQ"; }
 
 // Return category for module
-const char *NeutronSQModule::category() const { return "Correlation Functions"; }
+std::string_view NeutronSQModule::category() const { return "Correlation Functions"; }
 
 // Return brief description of module
-const char *NeutronSQModule::brief() const { return "Calculate neutron-weighted S(Q)"; }
+std::string_view NeutronSQModule::brief() const { return "Calculate neutron-weighted S(Q)"; }
 
 // Return the number of Configuration targets this Module requires
 int NeutronSQModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }

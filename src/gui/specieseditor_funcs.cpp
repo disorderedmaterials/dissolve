@@ -87,7 +87,7 @@ void SpeciesEditor::updateToolbar()
     }
 
     // Set drawing element symbol
-    ui_.InteractionDrawElementButton->setText(speciesViewer()->drawElement()->symbol());
+    ui_.InteractionDrawElementButton->setText(QString::fromStdString(std::string(speciesViewer()->drawElement()->symbol())));
 
     // Set checkable buttons
     ui_.ViewAxesVisibleButton->setChecked(speciesViewer()->axesVisible());
@@ -104,8 +104,9 @@ void SpeciesEditor::updateStatusBar()
     ui_.ModeLabel->setText(speciesViewer()->interactionModeText());
 
     // Set / update empirical formula for the Species and its current atom selection
-    ui_.FormulaLabel->setText(sp ? EmpiricalFormula::formula(sp, true) : "--");
-    ui_.SelectionLabel->setText(sp && (sp->nSelectedAtoms() > 0) ? EmpiricalFormula::formula(sp->selectedAtoms(), true) : "--");
+    ui_.FormulaLabel->setText(sp ? QString::fromStdString(EmpiricalFormula::formula(sp, true)) : "--");
+    ui_.SelectionLabel->setText(
+        sp && (sp->nSelectedAtoms() > 0) ? QString::fromStdString(EmpiricalFormula::formula(sp->selectedAtoms(), true)) : "--");
 }
 
 /*

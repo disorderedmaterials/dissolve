@@ -56,12 +56,13 @@ bool Forcefield_OPLSAA2005_Alcohols::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_OPLSAA2005_Alcohols::name() const { return "OPLSAA2005/Alcohols"; }
+std::string_view Forcefield_OPLSAA2005_Alcohols::name() const { return "OPLSAA2005/Alcohols"; }
 
 // Return description for Forcefield
-const char *Forcefield_OPLSAA2005_Alcohols::description() const
+std::string_view Forcefield_OPLSAA2005_Alcohols::description() const
 {
-    static CharString desc("Alcohols from OPLS-AA (2005), covering mono-alcohols only.<br/><br/>References: %s",
-                           publicationReferences());
-    return desc.get();
+    static std::string desc = fmt::format("Alcohols from OPLS-AA (2005), covering mono-alcohols only.<br/><br/>References: {}",
+                                          publicationReferences());
+
+    return desc;
 }

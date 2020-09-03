@@ -55,14 +55,14 @@ int CalculateDistanceProcedureNode::dimensionality() const { return 1; }
 
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult CalculateDistanceProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                           const char *prefix, GenericList &targetList)
+                                                                           std::string_view prefix, GenericList &targetList)
 {
 #ifdef CHECKS
     for (int n = 0; n < nSitesRequired(); ++n)
     {
         if (sites_[n]->currentSite() == NULL)
         {
-            Messenger::error("Observable %i has no current site.\n", n);
+            Messenger::error("Observable {} has no current site.\n", n);
             return ProcedureNode::Failure;
         }
     }

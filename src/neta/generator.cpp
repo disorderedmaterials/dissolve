@@ -39,7 +39,7 @@ std::vector<std::reference_wrapper<const ForcefieldAtomType>> NETADefinitionGene
 RefList<NETANode> NETADefinitionGenerator::contextStack_;
 bool NETADefinitionGenerator::expectName_ = false;
 
-NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition &definition, const char *definitionText,
+NETADefinitionGenerator::NETADefinitionGenerator(NETADefinition &definition, std::string_view definitionText,
                                                  const Forcefield *associatedFF)
 {
     // Clear any possible old data
@@ -76,18 +76,18 @@ NETADefinitionGenerator *NETADefinitionGenerator::generator() { return generator
  */
 
 // Set string source for lexer
-void NETADefinitionGenerator::setSource(const char *definitionText)
+void NETADefinitionGenerator::setSource(std::string_view definitionText)
 {
     // Set parsing source, always ensuring that we have a terminating ';'
     definitionString_ = definitionText;
     definitionString_ += ';';
 
     stringPos_ = 0;
-    stringLength_ = strlen(definitionString_);
+    stringLength_ = definitionString_.size();
     tokenStart_ = 0;
     functionStart_ = -1;
 
-    Messenger::printVerbose("Parser source string is '%s', length is %i\n", definitionString_.get(), stringLength_);
+    Messenger::printVerbose("Parser source string is '{}', length is {}\n", definitionString_, stringLength_);
 }
 
 // Get next character from current input stream
@@ -126,7 +126,7 @@ int NETADefinitionGenerator::lex()
 {
     int n;
     bool done, hasExp;
-    static CharString token;
+    static std::string token;
     char c;
     token.clear();
 
@@ -145,7 +145,6 @@ int NETADefinitionGenerator::lex()
      */
     if (c == '.' || isdigit(c))
     {
-        Messenger::printVerbose("NETA (%p): found the start of a number...\n", definition_);
         auto isInteger = (c != '.');
         hasExp = false;
         token += c;
@@ -165,7 +164,7 @@ int NETADefinitionGenerator::lex()
                 // Check for previous exponential in number
                 if (hasExp)
                 {
-                    printf("Error: Number has two exponentiations (e/E).\n");
+                    Messenger::error("Number has two exponentiations (e/E).\n");
                     return 0;
                 }
                 token += 'E';
@@ -175,7 +174,7 @@ int NETADefinitionGenerator::lex()
             {
                 // We allow '-' or '+' only as part of an exponentiation, so if it is not preceeded by 'E' we
                 // stop parsing
-                if ((!token.isEmpty()) && (!(token.lastChar() == 'E')))
+                if ((!token.empty()) && (!(token.back() == 'E')))
                 {
                     unGetChar();
                     done = true;
@@ -193,16 +192,12 @@ int NETADefinitionGenerator::lex()
         // We now have the number as a text token...
         if (isInteger)
         {
-            NETADefinitionGenerator_lval.integerConst = token.asInteger();
-            Messenger::printVerbose("NETA (%p): found an integer constant [%s] [%i]\n", definition_, token.get(),
-                                    NETADefinitionGenerator_lval.integerConst);
+            NETADefinitionGenerator_lval.integerConst = std::stoi(token);
             return DISSOLVE_NETA_INTEGERCONSTANT;
         }
         else
         {
-            NETADefinitionGenerator_lval.doubleConst = token.asDouble();
-            Messenger::printVerbose("NETA (%p): found a double constant [%s] [%e]\n", definition_, token.get(),
-                                    NETADefinitionGenerator_lval.doubleConst);
+            NETADefinitionGenerator_lval.doubleConst = std::stof(token);
             return DISSOLVE_NETA_DOUBLECONSTANT;
         }
     }
@@ -218,7 +213,6 @@ int NETADefinitionGenerator::lex()
             c = getChar();
         } while (isalnum(c) || (c == '_'));
         unGetChar();
-        Messenger::printVerbose("NETA (%p): found an alpha token [%s]...\n", definition_, token.get());
 
         // Extended context?
         if (DissolveSys::sameString(token, "ring"))
@@ -235,7 +229,7 @@ int NETADefinitionGenerator::lex()
             if ((c2 == '=') || (c2 == '>') || (c2 == '<') || (c2 == '!'))
             {
                 Messenger::printVerbose("NETA : ...which is a valid modifier for this context.\n");
-                NETADefinitionGenerator_lval.name = token.get();
+                NETADefinitionGenerator_lval.name = &token;
                 return DISSOLVE_NETA_MODIFIER;
             }
         }
@@ -244,7 +238,7 @@ int NETADefinitionGenerator::lex()
         if (context() && context()->isValidFlag(token))
         {
             Messenger::printVerbose("NETA : ...which is a valid flag for this context.\n");
-            NETADefinitionGenerator_lval.name = token.get();
+            NETADefinitionGenerator_lval.name = &token;
             return DISSOLVE_NETA_FLAG;
         }
 
@@ -255,33 +249,27 @@ int NETADefinitionGenerator::lex()
             if (!el.isUnknown())
             {
                 NETADefinitionGenerator_lval.elementZ = el.Z();
-                Messenger::printVerbose("NETA (%p): ...which is an element symbol (Z=%i)", definition_, el.Z());
                 return DISSOLVE_NETA_ELEMENT;
             }
 
             // If we get to here then we have found an unrecognised alphanumeric token
-            Messenger::printVerbose("NETA (%p): ...which is unrecognised.\n", definition_);
-            NETADefinitionGenerator_lval.name = token.get();
+            NETADefinitionGenerator_lval.name = &token;
         }
         else
         {
             // Assumed generic name
-            Messenger::printVerbose("NETA (%p): ...which is a generic name.\n", definition_);
-            NETADefinitionGenerator_lval.name = token.get();
+            NETADefinitionGenerator_lval.name = &token;
             return DISSOLVE_NETA_NAME;
         }
 
-        Messenger::error("Unknown token '%s' encountered in NETA definition.\n", token.get());
+        Messenger::error("Unknown token '{}' encountered in NETA definition.\n", token);
         return 0;
     }
 
     // We have found a symbolic character (or a pair) that corresponds to an operator
     // Return immediately in the case of brackets, dash, comma, and ampersand
     if ((c == '(') || (c == ')') || (c == '-') || (c == ',') || (c == '&') || (c == '[') || (c == ']'))
-    {
-        Messenger::printVerbose("NETA (%p): found symbol [%c]\n", definition_, c);
         return c;
-    }
     token += c;
 
     // Similarly, if the next character is a period, bracket or double quotes, return immediately
@@ -300,10 +288,9 @@ int NETADefinitionGenerator::lex()
         token += c;
     }
 
-    Messenger::printVerbose("NETA (%p): found symbol [%s]\n", definition_, token.get());
-    if (NETANode::comparisonOperators().isValid(token.get()))
+    if (NETANode::comparisonOperators().isValid(token))
     {
-        NETADefinitionGenerator_lval.valueOperator = NETANode::comparisonOperators().enumeration(token.get());
+        NETADefinitionGenerator_lval.valueOperator = NETANode::comparisonOperators().enumeration(token);
         return DISSOLVE_NETA_OPERATOR;
     }
 
@@ -319,7 +306,7 @@ bool NETADefinitionGenerator::addElementTarget(int elementZ)
 {
     Element &el = Elements::element(elementZ);
     if (el.isUnknown())
-        return Messenger::error("Unknown element Z %i passed to NETADefinitionGenerator::addTarget().\n", elementZ);
+        return Messenger::error("Unknown element Z {} passed to NETADefinitionGenerator::addTarget().\n", elementZ);
 
     targetElements_.push_back(&el);
 
@@ -336,7 +323,7 @@ bool NETADefinitionGenerator::addAtomTypeTarget(int id)
     auto optRef = associatedForcefield_->atomTypeById(id);
     if (!optRef)
         return Messenger::error(
-            "No forcefield atom type with index %i exists in forcefield '%s', so can't add it as a target.\n", id,
+            "No forcefield atom type with index {} exists in forcefield '{}', so can't add it as a target.\n", id,
             associatedForcefield_->name());
 
     targetAtomTypes_.push_back(*optRef);
@@ -345,7 +332,7 @@ bool NETADefinitionGenerator::addAtomTypeTarget(int id)
 }
 
 // Add atomtype target to array (by name)
-bool NETADefinitionGenerator::addAtomTypeTarget(const char *typeName)
+bool NETADefinitionGenerator::addAtomTypeTarget(std::string_view typeName)
 {
     // Is a forcefield available to search?
     if (!associatedForcefield_)
@@ -353,7 +340,7 @@ bool NETADefinitionGenerator::addAtomTypeTarget(const char *typeName)
 
     auto optTypeRef = associatedForcefield_->atomTypeByName(typeName);
     if (!optTypeRef)
-        return Messenger::error("Unknown forcefield atom type '%s' passed to NETADefinitionGenerator::addTarget().\n",
+        return Messenger::error("Unknown forcefield atom type '{}' passed to NETADefinitionGenerator::addTarget().\n",
                                 typeName);
 
     targetAtomTypes_.push_back(*optTypeRef);
@@ -401,7 +388,7 @@ void NETADefinitionGenerator::popContext() { contextStack_.removeLast(); }
 void NETADefinitionGenerator::setExpectName(bool b) { expectName_ = b; }
 
 // Static generation functions
-bool NETADefinitionGenerator::generate(NETADefinition &neta, const char *netaDefinition, const Forcefield *associatedFF)
+bool NETADefinitionGenerator::generate(NETADefinition &neta, std::string_view netaDefinition, const Forcefield *associatedFF)
 {
     // Create a generator
     NETADefinitionGenerator generator(neta, netaDefinition, associatedFF);
@@ -409,7 +396,7 @@ bool NETADefinitionGenerator::generate(NETADefinition &neta, const char *netaDef
     // Generate definition
     auto result = NETADefinitionGenerator_parse() == 0;
     if (!result)
-        Messenger::error("Failed to generate NETA definition from string '%s'.\n", netaDefinition);
+        Messenger::error("Failed to generate NETA definition from string '{}'.\n", netaDefinition);
 
     return result;
 }

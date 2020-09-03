@@ -44,11 +44,10 @@ EnumOptions<ModuleBlock::ModuleKeyword> ModuleBlock::keywords()
 bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, GenericList &targetList,
                         bool moduleInConfiguration)
 {
-    Messenger::print("\nParsing %s block '%s'...\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
+    Messenger::print("\nParsing {} block '{}'...\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
                      module->type());
 
     Configuration *targetCfg;
-    CharString varName, dataName;
     auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())
@@ -58,9 +57,9 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
             return false;
 
         // Do we recognise this keyword and, if so, do we have an appropriate number of arguments?
-        if (keywords().isValid(parser.argc(0)))
+        if (keywords().isValid(parser.argsv(0)))
         {
-            auto kwd = keywords().enumeration(parser.argc(0));
+            auto kwd = keywords().enumeration(parser.argsv(0));
             if (!keywords().validNArgs(kwd, parser.nArgs() - 1))
                 return false;
 
@@ -69,12 +68,12 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
             {
                 case (ModuleBlock::ConfigurationKeyword):
                     // Find the named Configuration
-                    targetCfg = dissolve->findConfiguration(parser.argc(1));
+                    targetCfg = dissolve->findConfiguration(parser.argsv(1));
                     if (!targetCfg)
                     {
-                        Messenger::error("Can't associate Configuration '%s' to the Module '%s', since no "
+                        Messenger::error("Can't associate Configuration '{}' to the Module '{}', since no "
                                          "Configuration by this name exists.\n",
-                                         parser.argc(1), module->type());
+                                         parser.argsv(1), module->type());
                         error = true;
                         break;
                     }
@@ -82,21 +81,21 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
                     // Add it as a target
                     if (!module->addTargetConfiguration(targetCfg))
                     {
-                        Messenger::error("Failed to add Configuration target in Module '%s'.\n", module->type());
+                        Messenger::error("Failed to add Configuration target in Module '{}'.\n", module->type());
                         error = true;
                         break;
                     }
 
                     // Create weight data if a second argument was provided
                     if (parser.hasArg(2))
-                        GenericListHelper<double>::add(targetList, CharString("ConfigurationWeight_%s", targetCfg->niceName()),
+                        GenericListHelper<double>::add(targetList, fmt::format("ConfigurationWeight_{}", targetCfg->niceName()),
                                                        module->uniqueName()) = parser.argd(2);
                     break;
                 case (ModuleBlock::DisableKeyword):
                     module->setEnabled(false);
                     break;
                 case (ModuleBlock::EndModuleKeyword):
-                    Messenger::print("Found end of %s block.\n",
+                    Messenger::print("Found end of {} block.\n",
                                      BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword));
                     blockDone = true;
                     break;
@@ -107,8 +106,9 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
                     // Never used, since it is accounted for in the beginning 'if'
                     break;
                 default:
-                    printf("DEV_OOPS - %s block keyword '%s' not accounted for.\n",
-                           BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword), keywords().keyword(kwd));
+                    Messenger::error("{} block keyword '{}' not accounted for.\n",
+                                     BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
+                                     keywords().keyword(kwd));
                     error = true;
                     break;
             }
@@ -116,16 +116,16 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
         else
         {
             // Might be a keyword defined in the Module itself?
-            auto result = module->parseKeyword(parser, dissolve, targetList, module->uniqueName());
+            auto result = module->parseKeyword(parser, dissolve, targetList, std::string(module->uniqueName()));
             if (result == 0)
                 error = true;
             else if (result == -1)
             {
-                Messenger::error("Unrecognised %s block keyword '%s' found, and the Module '%s' contains no "
+                Messenger::error("Unrecognised {} block keyword '{}' found, and the Module '{}' contains no "
                                  "option with this name.\n",
-                                 BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword), parser.argc(0),
+                                 BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword), parser.argsv(0),
                                  module->type());
-                keywords().errorAndPrintValid(parser.argc(0));
+                keywords().errorAndPrintValid(parser.argsv(0));
                 module->printValidKeywords();
                 error = true;
             }
@@ -143,7 +143,7 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
     // If there's no error and the blockDone flag isn't set, return an error
     if (!error && !blockDone)
     {
-        Messenger::error("Unterminated %s block found.\n",
+        Messenger::error("Unterminated {} block found.\n",
                          BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword));
         error = true;
     }

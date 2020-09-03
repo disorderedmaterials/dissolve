@@ -35,14 +35,14 @@ bool ExportCoordinatesModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Copy coordinates format
     CoordinateExportFileFormat format(coordinatesFormat_.filename(), coordinatesFormat_.coordinateFormat());
     if (tagWithIteration)
-        format.setFilename(CharString("%s.%i", coordinatesFormat_.filename(), dissolve.iteration()));
+        format.setFilename(fmt::format("{}.{}", coordinatesFormat_.filename(), dissolve.iteration()));
 
     if (!format.hasValidFileAndFormat())
         Messenger::error("No valid file/format set for coordinate export.\n");
 
     // Check for zero Configuration targets
     if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     auto *cfg = targetConfigurations_.firstItem();
 
@@ -52,12 +52,12 @@ bool ExportCoordinatesModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Only the pool master saves the data
     if (procPool.isMaster())
     {
-        Messenger::print("Export: Writing coordinates file (%s) for Configuration '%s'...\n", format.description(),
+        Messenger::print("Export: Writing coordinates file ({}) for Configuration '{}'...\n", format.description(),
                          cfg->name());
 
         if (!format.exportData(cfg))
         {
-            Messenger::print("Export: Failed to export coordinates file '%s'.\n", format.filename());
+            Messenger::print("Export: Failed to export coordinates file '{}'.\n", format.filename());
             procPool.decideFalse();
             return false;
         }

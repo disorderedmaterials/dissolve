@@ -56,7 +56,7 @@ List<Species> &Dissolve::species() { return coreData_.species(); }
 Species *Dissolve::species(int n) { return coreData_.species(n); }
 
 // Search for Species by name
-Species *Dissolve::findSpecies(const char *name) const { return coreData_.findSpecies(name); }
+Species *Dissolve::findSpecies(std::string_view name) const { return coreData_.findSpecies(name); }
 
 // Copy AtomType, creating a new one if necessary
 void Dissolve::copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom)

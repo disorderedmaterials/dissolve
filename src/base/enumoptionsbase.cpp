@@ -20,7 +20,7 @@
 */
 
 #include "base/enumoptionsbase.h"
-#include "base/charstring.h"
+#include "base/messenger.h"
 #include "base/sysfunc.h"
 #include <stddef.h>
 
@@ -31,7 +31,7 @@ EnumOptionsBase::EnumOptionsBase()
     currentOptionIndex_ = -1;
 }
 
-EnumOptionsBase::EnumOptionsBase(const char *name, const EnumOptionsList &options)
+EnumOptionsBase::EnumOptionsBase(std::string_view name, const EnumOptionsList &options)
 {
     name_ = name;
     options_ = options.options();
@@ -39,14 +39,13 @@ EnumOptionsBase::EnumOptionsBase(const char *name, const EnumOptionsList &option
     currentOptionIndex_ = -1;
 }
 
-EnumOptionsBase::EnumOptionsBase(const char *name, const EnumOptionsList &options, int defaultEnumeration)
+EnumOptionsBase::EnumOptionsBase(std::string_view name, const EnumOptionsList &options, int defaultEnumeration)
 {
     name_ = name;
     options_ = options.options();
-    ;
 
     currentOptionIndex_ = -1;
-    for (int n = 0; n < options_.nItems(); ++n)
+    for (int n = 0; n < options_.size(); ++n)
         if (options_[n].enumeration() == defaultEnumeration)
         {
             currentOptionIndex_ = n;
@@ -55,51 +54,51 @@ EnumOptionsBase::EnumOptionsBase(const char *name, const EnumOptionsList &option
 }
 
 // Return name of options (e.g. from source enumeration)
-const char *EnumOptionsBase::name() const { return name_; }
+std::string_view EnumOptionsBase::name() const { return name_; }
 
 // Return number of options available
-int EnumOptionsBase::nOptions() const { return options_.nItems(); }
+int EnumOptionsBase::nOptions() const { return options_.size(); }
 
 // Return nth keyword in the list
-const char *EnumOptionsBase::keywordByIndex(int index) const
+std::string_view EnumOptionsBase::keywordByIndex(int index) const
 {
-    if ((index < 0) || (index >= options_.nItems()))
+    if ((index < 0) || (index >= options_.size()))
     {
-        Messenger::error("Keyword index %i out of range for EnumOptions '%s'.\n", index, name_);
+        Messenger::error("Keyword index {} out of range for EnumOptions '{}'.\n", index, name_);
         return unrecognisedOption_.keyword();
     }
 
-    return options_.constAt(index).keyword();
+    return options_[index].keyword();
 }
 
 // Return description for the nth keyword in the list
-const char *EnumOptionsBase::descriptionByIndex(int index) const
+std::string_view EnumOptionsBase::descriptionByIndex(int index) const
 {
-    if ((index < 0) || (index >= options_.nItems()))
+    if ((index < 0) || (index >= options_.size()))
     {
-        Messenger::error("Keyword index %i out of range for EnumOptions '%s'.\n", index, name_);
+        Messenger::error("Keyword index {} out of range for EnumOptions '{}'.\n", index, name_);
         return unrecognisedOption_.keyword();
     }
 
-    return options_.constAt(index).description();
+    return options_[index].description();
 }
 
 // Return option by keyword
-const EnumOption &EnumOptionsBase::option(const char *keyword) const
+const EnumOption &EnumOptionsBase::option(std::string_view keyword) const
 {
-    for (int n = 0; n < options_.nItems(); ++n)
-        if (DissolveSys::sameString(keyword, options_.constAt(n).keyword()))
-            return options_.constAt(n);
+    for (int n = 0; n < options_.size(); ++n)
+        if (DissolveSys::sameString(keyword, options_[n].keyword()))
+            return options_[n];
     return unrecognisedOption_;
 }
 
 // Return current option keyword
-const char *EnumOptionsBase::currentOptionKeyword() const
+std::string_view EnumOptionsBase::currentOptionKeyword() const
 {
     if (currentOptionIndex_ == -1)
         return "UNDEFINED";
 
-    return options_.constAt(currentOptionIndex_).keyword();
+    return options_[currentOptionIndex_].keyword();
 }
 
 // Return current option
@@ -108,7 +107,7 @@ const EnumOption &EnumOptionsBase::currentOption() const
     if (currentOptionIndex_ == -1)
         return unrecognisedOption_;
 
-    return options_.constAt(currentOptionIndex_);
+    return options_[currentOptionIndex_];
 }
 
 // Return current option index
@@ -117,8 +116,8 @@ int EnumOptionsBase::currentOptionIndex() const { return currentOptionIndex_; }
 // Set current option index
 bool EnumOptionsBase::setCurrentOptionIndex(int index)
 {
-    if ((index < 0) || (index >= options_.nItems()))
-        return Messenger::error("EnumOptions index %i is out of range for '%s'.\n", index, name());
+    if ((index < 0) || (index >= options_.size()))
+        return Messenger::error("EnumOptions index {} is out of range for '{}'.\n", index, name());
 
     currentOptionIndex_ = index;
 
@@ -126,10 +125,10 @@ bool EnumOptionsBase::setCurrentOptionIndex(int index)
 }
 
 // Set current option from keyword
-bool EnumOptionsBase::setCurrentOption(const char *keyword)
+bool EnumOptionsBase::setCurrentOption(std::string_view keyword)
 {
-    for (int n = 0; n < options_.nItems(); ++n)
-        if (DissolveSys::sameString(keyword, options_.constAt(n).keyword()))
+    for (int n = 0; n < options_.size(); ++n)
+        if (DissolveSys::sameString(keyword, options_[n].keyword()))
         {
             currentOptionIndex_ = n;
             return true;
@@ -139,21 +138,21 @@ bool EnumOptionsBase::setCurrentOption(const char *keyword)
 }
 
 // Return whether specified option keyword is valid
-bool EnumOptionsBase::isValid(const char *keyword) const
+bool EnumOptionsBase::isValid(std::string_view keyword) const
 {
-    for (int n = 0; n < options_.nItems(); ++n)
-        if (DissolveSys::sameString(keyword, options_.constAt(n).keyword()))
+    for (int n = 0; n < options_.size(); ++n)
+        if (DissolveSys::sameString(keyword, options_[n].keyword()))
             return true;
     return false;
 }
 
 // Raise error, printing valid options
-bool EnumOptionsBase::errorAndPrintValid(const char *badKeyword) const
+bool EnumOptionsBase::errorAndPrintValid(std::string_view badKeyword) const
 {
-    CharString validValueString;
-    for (int n = 0; n < options_.nItems(); ++n)
-        validValueString += CharString(n == 0 ? "%s" : ", %s", options_.constAt(n).keyword());
-    Messenger::error("'%s' is not a valid %s.\nValid options are:  %s", badKeyword, name_, validValueString.get());
+    std::string validValueString;
+    for (int n = 0; n < options_.size(); ++n)
+        validValueString += fmt::format(n == 0 ? "{}" : ", {}", options_[n].keyword());
+    Messenger::error("'{}' is not a valid {}.\nValid options are:  {}", badKeyword, name_, validValueString);
 
     return false;
 }

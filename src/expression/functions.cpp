@@ -109,7 +109,7 @@ ExpressionFunctionData ExpressionFunctions::data[ExpressionFunctions::nFunctions
     {"tan", 1, "double angle", "Return tangent of specified angle"}};
 
 // Return enumerated command from string
-ExpressionFunctions::Function ExpressionFunctions::function(const char *s)
+ExpressionFunctions::Function ExpressionFunctions::function(std::string_view s)
 {
     for (int result = ExpressionFunctions::NoFunction; result < ExpressionFunctions::nFunctions; result++)
         if (DissolveSys::sameString(data[result].keyword, s))

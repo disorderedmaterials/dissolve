@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/parameters.h"
 #include "classes/speciesbond.h"
 
@@ -33,8 +32,8 @@ class ForcefieldAtomType;
 class ForcefieldBondTerm
 {
     public:
-    ForcefieldBondTerm(const char *typeI = NULL, const char *typeJ = NULL, SpeciesBond::BondFunction form = SpeciesBond::NoForm,
-                       const std::vector<double> parameters = {});
+    ForcefieldBondTerm(std::string_view typeI = "", std::string_view typeJ = "",
+                       SpeciesBond::BondFunction form = SpeciesBond::NoForm, const std::vector<double> parameters = {});
     ~ForcefieldBondTerm();
 
     /*
@@ -42,7 +41,7 @@ class ForcefieldBondTerm
      */
     private:
     // Type names involved in interaction
-    CharString typeI_, typeJ_;
+    std::string typeI_, typeJ_;
     // Functional form of interaction
     SpeciesBond::BondFunction form_;
     // Parameters for interaction

@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "gui/render/colourdefinition.h"
 #include "gui/render/linestyle.h"
 #include "gui/render/primitiveassembly.h"
@@ -50,7 +49,7 @@ class Renderable : public ListItem<Renderable>
     };
     // Return enum options for RenderableType
     static EnumOptions<RenderableType> renderableTypes();
-    Renderable(RenderableType type, const char *objectTag);
+    Renderable(RenderableType type, std::string_view objectTag);
     virtual ~Renderable();
 
     /*
@@ -65,15 +64,15 @@ class Renderable : public ListItem<Renderable>
      */
     protected:
     // Name of Renderable
-    CharString name_;
+    std::string name_;
     // Type of Renderable
     RenderableType type_;
 
     public:
     // Set name of Renderable
-    void setName(const char *name);
+    void setName(std::string_view name);
     // Return name of Renderable
-    const char *name();
+    std::string_view name();
     // Return type of Renderable
     RenderableType type() const;
 
@@ -84,7 +83,7 @@ class Renderable : public ListItem<Renderable>
     // Whether access to source data is currently enabled
     static bool sourceDataAccessEnabled_;
     // Identifying tag for source data object
-    CharString objectTag_;
+    std::string objectTag_;
     // Equation transformer for values
     Transformer valuesTransform_;
     // Coordinate limits of all data (after value transform if enabled)
@@ -114,9 +113,9 @@ class Renderable : public ListItem<Renderable>
     // Return whether access to source data is currently enabled
     static bool sourceDataAccessEnabled();
     // Return identifying tag for source data object
-    const char *objectTag() const;
+    std::string_view objectTag() const;
     // Invalidate renderable data for specified object tag
-    static int invalidate(const char *objectTag);
+    static int invalidate(std::string_view objectTag);
     // Invalidate all renderables
     static void invalidateAll();
     // Return version of data
@@ -138,9 +137,9 @@ class Renderable : public ListItem<Renderable>
     // Return maximum positive of transformed values
     double positiveValuesMax();
     // Set values transform equation
-    void setValuesTransformEquation(const char *transformEquation);
+    void setValuesTransformEquation(std::string_view transformEquation);
     // Return values transform equation
-    const char *valuesTransformEquation() const;
+    std::string_view valuesTransformEquation() const;
     // Return whether the values transform equation is valid
     bool valuesTransformEquationValid() const;
     // Set whether values transform is enabled
@@ -214,7 +213,7 @@ class Renderable : public ListItem<Renderable>
     // Data version at which bespoke primitives / assembled list were last created
     int lastDataVersion_;
     // ColourDefinition fingerprint at which primitives were last created
-    CharString lastColourDefinitionFingerprint_;
+    std::string lastColourDefinitionFingerprint_;
     // Axes version at which primitives were last created
     int lastAxesVersion_;
     // Style version at which primitives were last created

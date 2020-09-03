@@ -116,18 +116,18 @@ class NETANode : public ListItem<NETANode>
      */
     public:
     // Return whether the specified modifier is valid for this node
-    virtual bool isValidModifier(const char *s) const;
+    virtual bool isValidModifier(std::string_view s) const;
     // Set value and comparator for specified modifier
-    virtual bool setModifier(const char *modifier, ComparisonOperator op, int value);
+    virtual bool setModifier(std::string_view modifier, ComparisonOperator op, int value);
 
     /*
      * Flags
      */
     public:
     // Return whether the specified flag is valid for this node
-    virtual bool isValidFlag(const char *s) const;
+    virtual bool isValidFlag(std::string_view s) const;
     // Set specified flag
-    virtual bool setFlag(const char *flag, bool state);
+    virtual bool setFlag(std::string_view flag, bool state);
 
     /*
      * Value Comparison

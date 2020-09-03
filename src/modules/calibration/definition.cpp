@@ -22,13 +22,13 @@
 #include "modules/calibration/calibration.h"
 
 // Return type of module
-const char *CalibrationModule::type() const { return "Calibrate"; }
+std::string_view CalibrationModule::type() const { return "Calibrate"; }
 
 // Return category for module
-const char *CalibrationModule::category() const { return "Optimisation"; }
+std::string_view CalibrationModule::category() const { return "Optimisation"; }
 
 // Return brief description of module
-const char *CalibrationModule::brief() const { return "Calibrate various parameters"; }
+std::string_view CalibrationModule::brief() const { return "Calibrate various parameters"; }
 
 // Return the number of Configuration targets this Module requires
 int CalibrationModule::nRequiredTargets() const { return Module::ZeroTargets; }

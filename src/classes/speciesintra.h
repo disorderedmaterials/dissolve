@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "templates/array.h"
 #include "templates/reflist.h"
 #include <vector>

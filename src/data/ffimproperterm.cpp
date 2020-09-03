@@ -23,8 +23,9 @@
 #include "data/ff.h"
 #include "data/ffatomtype.h"
 
-ForcefieldImproperTerm::ForcefieldImproperTerm(const char *typeI, const char *typeJ, const char *typeK, const char *typeL,
-                                               SpeciesImproper::ImproperFunction form, const std::vector<double> parameters)
+ForcefieldImproperTerm::ForcefieldImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
+                                               std::string_view typeL, SpeciesImproper::ImproperFunction form,
+                                               const std::vector<double> parameters)
 {
     typeI_ = typeI;
     typeJ_ = typeJ;

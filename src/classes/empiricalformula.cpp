@@ -23,103 +23,49 @@
 #include "classes/species.h"
 #include "data/elements.h"
 
-EmpiricalFormula::EmpiricalFormula()
+// Construct empirical formula from supplied element counts
+std::string EmpiricalFormula::constructFormula(const std::vector<int> &elCounts, bool richText)
 {
-    // Initialise element counts array
-    elementCounts_.initialise(Elements::nElements());
-}
-
-EmpiricalFormula::~EmpiricalFormula() {}
-
-/*
- * Construction
- */
-
-// Clear counts array
-void EmpiricalFormula::reset()
-{
-    for (int n = 0; n < Elements::nElements(); ++n)
-        elementCounts_[n] = 0;
-}
-
-// Add to empirical formula
-void EmpiricalFormula::add(Element *element, int count)
-{
-#ifdef CHECKS
-    if (element == NULL)
-    {
-        Messenger::error("EmpiricalFormula::add() - Element is NULL.\n");
-        return;
-    }
-#endif
-    elementCounts_[element->Z()] += count;
-}
-
-// Return current empirical formula
-const char *EmpiricalFormula::formula()
-{
-    formula_.clear();
+    std::string s;
 
     // Loop over elements in descending order
-    for (int n = Elements::nElements() - 1; n >= 0; --n)
+    for (auto n = Elements::nElements() - 1; n >= 0; --n)
     {
-        if (elementCounts_[n] == 0)
+        if (elCounts[n] == 0)
             continue;
-        else if (elementCounts_[n] > 1)
-            formula_.strcatf("%s%i", Elements::symbol(n), elementCounts_[n]);
+        else if (elCounts[n] > 1)
+        {
+            if (richText)
+                s += fmt::format("{}<sub>{}</sub>", Elements::symbol(n), elCounts[n]);
+            else
+                s += fmt::format("{}{}", Elements::symbol(n), elCounts[n]);
+        }
         else
-            formula_.strcatf("%s", Elements::symbol(n));
+            s += fmt::format("{}", Elements::symbol(n));
     }
 
-    return formula_.get();
+    return s;
 }
-
-// Return rich text of current empirical formula
-const char *EmpiricalFormula::richTextFormula()
-{
-    formula_.clear();
-
-    // Loop over elements in descending order
-    for (int n = Elements::nElements() - 1; n >= 0; --n)
-    {
-        if (elementCounts_[n] == 0)
-            continue;
-        else if (elementCounts_[n] > 1)
-            formula_.strcatf("%s<sub>%i</sub>", Elements::symbol(n), elementCounts_[n]);
-        else
-            formula_.strcatf("%s", Elements::symbol(n));
-    }
-
-    return formula_.get();
-}
-
-/*
- * Convenience Functions
- */
 
 // Return empirical formula for supplied Species
-const char *EmpiricalFormula::formula(const Species *species, bool richText)
+std::string EmpiricalFormula::formula(const Species *species, bool richText)
 {
-    static EmpiricalFormula formula;
-
-    formula.reset();
+    std::vector<int> elCounts(Elements::nElements(), 0);
 
     ListIterator<SpeciesAtom> atomIterator(species->atoms());
     while (SpeciesAtom *i = atomIterator.iterate())
-        formula.add(i->element());
+        ++elCounts[i->element()->Z()];
 
-    return (richText ? formula.richTextFormula() : formula.formula());
+    return constructFormula(elCounts, richText);
 }
 
 // Return empirical formula for supplied SpeciesAtom reflist
-const char *EmpiricalFormula::formula(const RefList<SpeciesAtom> &atoms, bool richText)
+std::string EmpiricalFormula::formula(const RefList<SpeciesAtom> &atoms, bool richText)
 {
-    static EmpiricalFormula formula;
+    std::vector<int> elCounts(Elements::nElements(), 0);
 
-    formula.reset();
+    for (const auto *i : atoms)
+        ++elCounts[i->element()->Z()];
 
-    for (SpeciesAtom *i : atoms)
-        formula.add(i->element());
-
-    return (richText ? formula.richTextFormula() : formula.formula());
+    return constructFormula(elCounts, richText);
 }

@@ -36,10 +36,10 @@ MasterIntra::~MasterIntra() {}
  */
 
 // Set name for interaction (if relevant)
-void MasterIntra::setName(const char *name) { name_ = name; }
+void MasterIntra::setName(std::string_view name) { name_ = name; }
 
 // Return name for interaction
-const char *MasterIntra::name() const { return name_.get(); }
+std::string_view MasterIntra::name() const { return name_; }
 
 // Set type of interaction
 void MasterIntra::setType(SpeciesIntra::InteractionType type) { type_ = type; }

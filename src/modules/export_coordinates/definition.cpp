@@ -22,13 +22,13 @@
 #include "modules/export_coordinates/exportcoords.h"
 
 // Return type of module
-const char *ExportCoordinatesModule::type() const { return "ExportCoordinates"; }
+std::string_view ExportCoordinatesModule::type() const { return "ExportCoordinates"; }
 
 // Return category for module
-const char *ExportCoordinatesModule::category() const { return "Input / Output"; }
+std::string_view ExportCoordinatesModule::category() const { return "Input / Output"; }
 
 // Return brief description of module
-const char *ExportCoordinatesModule::brief() const { return "Export coordinates for one or more Configurations"; }
+std::string_view ExportCoordinatesModule::brief() const { return "Export coordinates for one or more Configurations"; }
 
 // Return the number of Configuration targets this Module requires
 int ExportCoordinatesModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

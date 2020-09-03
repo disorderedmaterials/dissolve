@@ -136,14 +136,13 @@ void RDFModuleWidget::setGraphDataTargets(RDFModule *module)
     // Add Configuration targets to the combo box
     ui_.TargetCombo->clear();
     for (Configuration *config : module->targetConfigurations())
-        ui_.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
+        ui_.TargetCombo->addItem(QString::fromStdString(std::string(config->name())), VariantPointer<Configuration>(config));
 
     // Loop over Configurations and add total G(R)
-    CharString blockData;
     for (Configuration *cfg : module->targetConfigurations())
     {
         // Add calculated total G(r)
-        totalsGraph_->createRenderable(Renderable::Data1DRenderable, CharString("%s//UnweightedGR//Total", cfg->niceName()),
+        totalsGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//UnweightedGR//Total", cfg->niceName()),
                                        cfg->niceName(), "Calc");
     }
 }
@@ -158,25 +157,23 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
     if (!currentConfiguration_)
         return;
 
-    CharString blockData;
     const AtomTypeList cfgTypes = currentConfiguration_->usedAtomTypesList();
     for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
-        CharString id("%s-%s", at1->name(), at2->name());
+        const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
         // Full partial
         partialsGraph_->createRenderable(Renderable::Data1DRenderable,
-                                         CharString("%s//UnweightedGR//%s//Full", currentConfiguration_->niceName(), id.get()),
-                                         CharString("%s (Full)", id.get()), "Full");
+                                         fmt::format("{}//UnweightedGR//{}//Full", currentConfiguration_->niceName(), id),
+                                         fmt::format("{} (Full)", id), "Full");
 
         // Bound partial
         partialsGraph_->createRenderable(Renderable::Data1DRenderable,
-                                         CharString("%s//UnweightedGR//%s//Bound", currentConfiguration_->niceName(), id.get()),
-                                         CharString("%s (Bound)", id.get()), "Bound");
+                                         fmt::format("{}//UnweightedGR//{}//Bound", currentConfiguration_->niceName(), id),
+                                         fmt::format("{} (Bound)", id), "Bound");
 
         // Unbound partial
-        partialsGraph_->createRenderable(
-            Renderable::Data1DRenderable,
-            CharString("%s//UnweightedGR//%s//Unbound", currentConfiguration_->niceName(), id.get()),
-            CharString("%s (Unbound)", id.get()), "Unbound");
+        partialsGraph_->createRenderable(Renderable::Data1DRenderable,
+                                         fmt::format("{}//UnweightedGR//{}//Unbound", currentConfiguration_->niceName(), id),
+                                         fmt::format("{} (Unbound)", id), "Unbound");
     });
 }

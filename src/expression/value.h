@@ -21,6 +21,8 @@
 
 #pragma once
 
+#include <string>
+
 // Forward declarations
 /* none */
 
@@ -66,7 +68,7 @@ class ExpressionValue
     // Return as double (regardless of current type)
     double asDouble() const;
     // Return result as a string
-    const char *asString() const;
+    std::string asString() const;
     // Return pointer to integer value
     int *integerPointer();
     // Return pointer to double value

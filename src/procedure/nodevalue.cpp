@@ -22,6 +22,7 @@
 #include "procedure/nodevalue.h"
 #include "base/sysfunc.h"
 #include "expression/generator.h"
+#include <string>
 
 NodeValue::NodeValue()
 {
@@ -41,7 +42,7 @@ NodeValue::NodeValue(const double d)
     valueD_ = d;
     type_ = DoubleNodeValue;
 }
-NodeValue::NodeValue(const char *expressionText, RefList<ExpressionVariable> parameters)
+NodeValue::NodeValue(std::string_view expressionText, RefList<ExpressionVariable> parameters)
 {
     valueI_ = 0;
     valueD_ = 0.0;
@@ -82,7 +83,7 @@ bool NodeValue::set(double value)
 }
 
 // Set from expression text
-bool NodeValue::set(const char *expressionText, RefList<ExpressionVariable> parameters)
+bool NodeValue::set(std::string_view expressionText, RefList<ExpressionVariable> parameters)
 {
     // Is this just a plain number, rather than an equation.
     bool isFloatingPoint;
@@ -90,9 +91,9 @@ bool NodeValue::set(const char *expressionText, RefList<ExpressionVariable> para
     {
         type_ = isFloatingPoint ? DoubleNodeValue : IntegerNodeValue;
         if (isFloatingPoint)
-            valueD_ = atof(expressionText);
+            valueD_ = std::stof(std::string(expressionText));
         else
-            valueI_ = atoi(expressionText);
+            valueI_ = std::stoi(std::string(expressionText));
     }
     else
     {
@@ -134,21 +135,17 @@ double NodeValue::asDouble()
 }
 
 // Return value represented as a string
-CharString NodeValue::asString(bool addQuotesIfRequired) const
+std::string NodeValue::asString(bool addQuotesIfRequired) const
 {
-    CharString result;
-
     if (type_ == IntegerNodeValue)
-        result = DissolveSys::itoa(valueI_);
+        return fmt::format("{}", valueI_);
     else if (type_ == DoubleNodeValue)
-        result = DissolveSys::ftoa(valueD_, "%12.6e");
+        return fmt::format("{:12.6e}", valueD_);
     else
     {
         if (addQuotesIfRequired)
-            result = CharString("'%s'", expression_.expressionString());
+            return fmt::format("'{}'", expression_.expressionString());
         else
-            result = CharString("%s", expression_.expressionString());
+            return fmt::format("{}", expression_.expressionString());
     }
-
-    return result;
 }

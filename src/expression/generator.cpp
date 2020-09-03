@@ -24,6 +24,7 @@
 #include "base/sysfunc.h"
 #include "expression/expression.h"
 #include "expression/generator_grammar.hh"
+#include "math/constants.h"
 #include <ctype.h>
 #include <stdarg.h>
 #include <string.h>
@@ -32,7 +33,7 @@
 Expression *ExpressionGenerator::expression_ = NULL;
 ExpressionGenerator *ExpressionGenerator::generator_ = NULL;
 
-ExpressionGenerator::ExpressionGenerator(Expression &expression, const char *expressionText)
+ExpressionGenerator::ExpressionGenerator(Expression &expression, std::string_view expressionText)
 {
     // Private variables
     useAdditionalConstants_ = false;
@@ -75,18 +76,18 @@ EnumOptions<int> ExpressionGenerator::symbolTokens()
 }
 
 // Set string source for lexer
-void ExpressionGenerator::setSource(const char *expressionText)
+void ExpressionGenerator::setSource(std::string_view expressionText)
 {
     // Set parsing source, always ensuring that we have a terminating ';'
     expressionString_ = expressionText;
     expressionString_ += ';';
 
     stringPos_ = 0;
-    stringLength_ = strlen(expressionString_);
+    stringLength_ = expressionString_.size();
     tokenStart_ = 0;
     functionStart_ = -1;
 
-    Messenger::printVerbose("Parser source string is '%s', length is %i\n", expressionString_.get(), stringLength_);
+    Messenger::printVerbose("Parser source string is '{}', length is {}\n", expressionString_, stringLength_);
 }
 
 // Get next character from current input stream
@@ -125,7 +126,7 @@ int ExpressionGenerator::lex()
 {
     int n;
     bool done, hasExp;
-    static CharString token, name;
+    static std::string token, name;
     char c;
     token.clear();
 
@@ -144,7 +145,6 @@ int ExpressionGenerator::lex()
      */
     if (c == '.' || isdigit(c))
     {
-        Messenger::printVerbose("LEXER (%p): found the start of a number...\n", this);
         auto isInteger = (c != '.');
         hasExp = false;
         token += c;
@@ -164,7 +164,7 @@ int ExpressionGenerator::lex()
                 // Check for previous exponential in number
                 if (hasExp)
                 {
-                    printf("Error: Number has two exponentiations (e/E).\n");
+                    Messenger::error("Number has two exponentiations (e/E).\n");
                     return 0;
                 }
                 token += 'E';
@@ -174,7 +174,7 @@ int ExpressionGenerator::lex()
             {
                 // We allow '-' or '+' only as part of an exponentiation, so if it is not preceeded by 'E' we
                 // stop parsing
-                if ((!token.isEmpty()) && (!(token.lastChar() == 'E')))
+                if ((!token.empty()) && (!(token.back() == 'E')))
                 {
                     unGetChar();
                     done = true;
@@ -192,16 +192,12 @@ int ExpressionGenerator::lex()
         // We now have the number as a text token...
         if (isInteger)
         {
-            ExpressionGenerator_lval.integerConst = token.asInteger();
-            Messenger::printVerbose("LEXER (%p): found an integer constant [%s] [%i]\n", this, token.get(),
-                                    ExpressionGenerator_lval.integerConst);
+            ExpressionGenerator_lval.integerConst = std::stoi(token);
             return DISSOLVE_EXPR_INTEGERCONSTANT;
         }
         else
         {
-            ExpressionGenerator_lval.doubleConst = token.asDouble();
-            Messenger::printVerbose("LEXER (%p): found a double constant [%s] [%e]\n", this, token.get(),
-                                    ExpressionGenerator_lval.doubleConst);
+            ExpressionGenerator_lval.doubleConst = std::stof(token);
             return DISSOLVE_EXPR_DOUBLECONSTANT;
         }
     }
@@ -217,7 +213,6 @@ int ExpressionGenerator::lex()
             c = getChar();
         } while (isalnum(c) || (c == '_'));
         unGetChar();
-        Messenger::printVerbose("LEXER (%p): found an alpha token [%s]...\n", this, token.get());
 
         // Built-in numeric constants
         if (token == "Pi")
@@ -273,32 +268,26 @@ int ExpressionGenerator::lex()
         else if (token == "else")
             n = DISSOLVE_EXPR_ELSE;
         if (n != 0)
-        {
-            Messenger::printVerbose("LEXER (%p): ...which is a high-level keyword (%i)\n", this, n);
             return n;
-        }
 
         // Is it an existing variable?
         ExpressionVariable *v = expression_->variable(token);
         if (v != NULL)
         {
-            Messenger::printVerbose("LEXER (%p): ...which is an existing variable (->VAR)\n", this);
             ExpressionGenerator_lval.variable = v;
             return DISSOLVE_EXPR_VAR;
         }
 
         // Is it a known function keyword?
-        n = ExpressionFunctions::function(token.get());
+        n = ExpressionFunctions::function(token);
         if (n != ExpressionFunctions::nFunctions)
         {
-            Messenger::printVerbose("LEXER (%p): ... which is a function (->FUNCCALL).\n", this);
             ExpressionGenerator_lval.functionId = n;
             functionStart_ = tokenStart_;
             return DISSOLVE_EXPR_FUNCCALL;
         }
 
         // If we get to here then we have found an unrecognised alphanumeric token
-        Messenger::printVerbose("LEXER (%p): ...which is unrecognised (->NEWTOKEN)\n", this);
         name = token;
         ExpressionGenerator_lval.name = &name;
         return DISSOLVE_EXPR_NEWTOKEN;
@@ -308,10 +297,7 @@ int ExpressionGenerator::lex()
     // Return immediately in the case of brackets, comma, and semicolon
     if ((c == '(') || (c == ')') || (c == ';') || (c == ',') || (c == '{') || (c == '}') || (c == '[') || (c == ']') ||
         (c == '%') || (c == ':'))
-    {
-        Messenger::printVerbose("LEXER (%p): found symbol [%c]\n", this, c);
         return c;
-    }
     token += c;
 
     // Similarly, if the next character is a period, bracket or double quotes, return immediately
@@ -328,19 +314,16 @@ int ExpressionGenerator::lex()
     {
         c = getChar();
         token += c;
-        Messenger::printVerbose("LEXER (%p): found symbol [%s]\n", this, token.get());
-        if (symbolTokens().isValid(token.get()))
-            return symbolTokens().enumeration(token.get());
+        if (symbolTokens().isValid(token))
+            return symbolTokens().enumeration(token);
         else
-            Messenger::error("Unrecognised symbol '%s' found in input.\n", token.get());
+            Messenger::error("Unrecognised symbol '{}' found in input.\n", token);
     }
     else
     {
         // Make sure that this is a known symbol
         if ((c == '$') || (c == '%') || (c == '&') || (c == '@') || (c == '?') || (c == ':'))
-        {
-            printf("Error: Unrecognised symbol found in input (%c).\n", c);
-        }
+            Messenger::error("Unrecognised symbol found in input ({}).\n", c);
         else
             return c;
     }

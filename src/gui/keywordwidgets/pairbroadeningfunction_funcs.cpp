@@ -48,7 +48,7 @@ PairBroadeningFunctionKeywordWidget::PairBroadeningFunctionKeywordWidget(QWidget
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<PairBroadeningFunctionKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into PairBroadeningFunctionKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into PairBroadeningFunctionKeyword.\n", keyword->name());
     else
     {
         // Set current information
@@ -124,7 +124,8 @@ void PairBroadeningFunctionKeywordWidget::updateWidgetValues(const CoreData &cor
     // 	ui_.FrequencyAngleConstantSpin->setValue(pairBroadeningFunction.frequencyAngleConstant());
 
     // Set summary text
-    setSummaryText(PairBroadeningFunction::functionType(pairBroadeningFunction.function()));
+    setSummaryText(
+        QString::fromStdString(std::string(PairBroadeningFunction::functionType(pairBroadeningFunction.function()))));
 
     refreshing_ = false;
 }

@@ -55,11 +55,11 @@ class AddForcefieldTermsWizard : public WizardWidget
     // Species pointer with newly-applied Forcefield terms
     Species *modifiedSpecies_;
     // List of atom type name mappings to be applied
-    std::map<std::shared_ptr<AtomType>, CharString> typeNameMappings_;
+    std::map<std::shared_ptr<AtomType>, QString> typeNameMappings_;
 
     private:
     // Return (mapped) name to use for specified type
-    const char *mappedName(const std::shared_ptr<AtomType> at);
+    const QString mappedName(const std::shared_ptr<AtomType> at);
 
     public:
     // Set Dissolve reference

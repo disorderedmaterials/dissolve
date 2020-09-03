@@ -46,7 +46,7 @@ AtomTypeData &AtomTypeList::operator[](unsigned int n)
 #ifdef CHECKS
     if ((n < 0) || (n >= types_.size()))
     {
-        Messenger::print("OUT_OF_RANGE - Specified index %i out of range in AtomTypeList::operator[].\n", n);
+        Messenger::print("OUT_OF_RANGE - Specified index {} out of range in AtomTypeList::operator[].\n", n);
     }
 #endif
     return types_[n];
@@ -218,7 +218,7 @@ int AtomTypeList::indexOf(std::shared_ptr<AtomType> atomtype) const
 }
 
 // Return index of names AtomType in list
-int AtomTypeList::indexOf(const char *name) const
+int AtomTypeList::indexOf(std::string_view name) const
 {
     auto count = 0;
     for (auto &atd : types_)
@@ -246,7 +246,7 @@ std::shared_ptr<AtomType> AtomTypeList::atomType(int n)
 #ifdef CHECKS
     if ((n < 0) || (n >= types_.size()))
     {
-        Messenger::print("OUT_OF_RANGE - Specified index %i out of range in AtomTypeList::atomType().\n");
+        Messenger::print("OUT_OF_RANGE - Specified index {} out of range in AtomTypeList::atomType().\n");
     }
 #endif
     return types_[n].atomType();
@@ -273,17 +273,18 @@ void AtomTypeList::print() const
         // If there are isotopes defined, print them
         if (atd.isotopeData())
         {
-            Messenger::print("%c %-8s  %-3s    -     %-10i    %10.6f (of world) %6.3f\n", exch, atd.atomTypeName(),
+            Messenger::print("{} {:<8}  {:<3}    -     {:<10d}    {:10.6f} (of world) {:6.3f}\n", exch, atd.atomTypeName(),
                              atd.atomType()->element()->symbol(), atd.population(), atd.fraction(), atd.boundCoherent());
 
             for (const auto *topeData = atd.isotopeData(); topeData != NULL; topeData = topeData->next())
             {
-                Messenger::print("                   %-3i   %-10.6e  %10.6f (of type)  %6.3f\n", topeData->isotope()->A(),
-                                 topeData->population(), topeData->fraction(), topeData->isotope()->boundCoherent());
+                Messenger::print("                   {:<3d}   {:<10.6e}  {:10.6f} (of type)  {:6.3f}\n",
+                                 topeData->isotope()->A(), topeData->population(), topeData->fraction(),
+                                 topeData->isotope()->boundCoherent());
             }
         }
         else
-            Messenger::print("%c %-8s  %-3s          %-10i  %8.6f     --- N/A ---\n", exch, atd.atomTypeName(),
+            Messenger::print("{} {:<8}  {:<3}          {:<10d}  {:8.6f}     --- N/A ---\n", exch, atd.atomTypeName(),
                              atd.atomType()->element()->symbol(), atd.population(), atd.fraction());
 
         Messenger::print("  -----------------------------------------------------------------\n");
@@ -295,7 +296,7 @@ void AtomTypeList::print() const
  */
 
 // Return class name
-const char *AtomTypeList::itemClassName() { return "AtomTypeList"; }
+std::string_view AtomTypeList::itemClassName() { return "AtomTypeList"; }
 
 // Read data through specified LineParser
 bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
@@ -309,15 +310,12 @@ bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        CharString typeName = parser.argc(0);
+        auto atomType = coreData.findAtomType(parser.argsv(0));
+        if (!atomType)
+            return Messenger::error("Could not find atom type {}.", parser.argsv(0));
         auto population = parser.argd(1);
         auto fraction = parser.argd(2);
         auto boundCoherent = parser.argd(3);
-        auto atomType = coreData.findAtomType(typeName);
-
-        if (!atomType)
-            return Messenger::error("Could not find atom type %s", typeName.get());
-
         auto nIsotopes = parser.argi(4);
 
         // types_.emplace_back(types_.size(), atomType, population);
@@ -338,7 +336,7 @@ bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
 // Write data through specified LineParser
 bool AtomTypeList::write(LineParser &parser)
 {
-    if (!parser.writeLineF("%i  # nItems\n", types_.size()))
+    if (!parser.writeLineF("{}  # nItems\n", types_.size()))
         return false;
     for (auto &atd : types_)
         if (!atd.write(parser))
@@ -364,7 +362,7 @@ bool AtomTypeList::broadcast(ProcessPool &procPool, const int root, const CoreDa
             return false;
         for (auto &type : types_)
         {
-            CharString name = type.atomType()->name();
+            std::string name{type.atomType()->name()};
             if (!procPool.broadcast(name, root))
                 return false;
             if (!type.broadcast(procPool, root, coreData))
@@ -382,7 +380,7 @@ bool AtomTypeList::broadcast(ProcessPool &procPool, const int root, const CoreDa
         for (int n = 0; n < count; ++n)
         {
             // Slaves must create a suitable structure first, and then join the broadcast
-            CharString typeName;
+            std::string typeName;
             if (!procPool.broadcast(typeName), root)
                 return false;
             auto atomType = coreData.findAtomType(typeName);
@@ -404,11 +402,11 @@ bool AtomTypeList::equality(ProcessPool &procPool)
 #ifdef PARALLEL
     // Check number of types in list first
     if (!procPool.equality((long int)types_.size()))
-        return Messenger::error("AtomTypeList size is not equivalent (process %i has %i).\n", procPool.poolRank(),
+        return Messenger::error("AtomTypeList size is not equivalent (process {} has {}).\n", procPool.poolRank(),
                                 types_.size());
     for (auto &atd : types_)
         if (!atd.equality(procPool))
-            return Messenger::error("AtomTypeList entry for type '%s' is not equivalent.\n", atd.atomTypeName());
+            return Messenger::error("AtomTypeList entry for type '{}' is not equivalent.\n", atd.atomTypeName());
 #endif
     return true;
 }

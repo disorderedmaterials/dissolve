@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "math/matrix4.h"
 
 // Forward Declarations
@@ -30,31 +29,28 @@
 // Symmetry Generator
 class SymmetryGenerator
 {
-    public:
-    SymmetryGenerator();
-
     /*
      * Generator Information
      */
     private:
     // Generator text (if any)
-    CharString text_;
+    std::string text_;
     // Generator matrix
     Matrix4 matrix_;
 
     private:
     // Set partial element of matrix in specified row
-    void setMatrixPart(int row, const char *part);
+    void setMatrixPart(int row, std::string_view part);
 
     public:
     // Set from plain text string
-    bool set(const char *s);
+    bool set(std::string_view s);
     // Set rotation matrix row (not including translation vector)
     void setRotationRow(int row, double x, double y, double z);
     // Set translation column
     void setTranslation(double tx, double ty, double tz, double divisor);
     // Return generator text
-    const char *text() const;
+    std::string_view text() const;
     // Return matrix for generator
     const Matrix4 &matrix() const;
 };

@@ -56,7 +56,7 @@ class FontInstance
 
     public:
     // Set up font with font filename specified
-    bool setUp(QString fontFileName = QString());
+    bool setUp(QString fontFileName = "");
     // Return whether font exists and is ready for use
     bool fontOK() const;
     // Return full height of font
@@ -75,20 +75,20 @@ class FontInstance
     // Set face size
     bool setFaceSize(double faceSize);
     // Render supplied text
-    bool renderText(const char *text) const;
+    bool renderText(std::string text) const;
 
     /*
      * Bounding Box Calculation
      */
     private:
     // Return bounding box for specified string
-    FTBBox boundingBox(QString text) const;
+    FTBBox boundingBox(std::string_view text) const;
 
     public:
     // Calculate bounding box for specified string
-    void boundingBox(QString text, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const;
+    void boundingBox(std::string_view text, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const;
     // Calculate bounding box width for specified string
-    double boundingBoxWidth(QString text) const;
+    double boundingBoxWidth(std::string_view text) const;
     // Calculate bounding box height for specified string
-    double boundingBoxHeight(QString text) const;
+    double boundingBoxHeight(std::string_view text) const;
 };

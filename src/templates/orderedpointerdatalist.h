@@ -204,7 +204,7 @@ template <class T, class D> class OrderedPointerDataList
     {
         if (xitem == NULL)
         {
-            printf("Internal Error: NULL pointer passed to OrderedPointerDataList<T,D>::remove().\n");
+            Messenger::error("NULL pointer passed to OrderedPointerDataList<T,D>::remove().\n");
             return;
         }
         // Delete a specific item from the list
@@ -235,7 +235,7 @@ template <class T, class D> class OrderedPointerDataList
     {
         if (item == NULL)
         {
-            printf("Internal Error: NULL pointer passed to OrderedPointerDataList<T,D>::cut().\n");
+            Messenger::error("NULL pointer passed to OrderedPointerDataList<T,D>::cut().\n");
             return;
         }
 
@@ -305,7 +305,7 @@ template <class T, class D> class OrderedPointerDataList
 #ifdef CHECKS
         if (object == NULL)
         {
-            printf("NULL_POINTER - NULL object passed to OrderedPointerDataList<T,D>::add().\n");
+            Messenger::error("NULL_POINTER - NULL object passed to OrderedPointerDataList<T,D>::add().\n");
             return;
         }
 #endif
@@ -319,7 +319,7 @@ template <class T, class D> class OrderedPointerDataList
 #ifdef CHECKS
         if (object == NULL)
         {
-            printf("NULL_POINTER - NULL object passed to OrderedPointerDataList<T,D>::add().\n");
+            Messenger::error("NULL_POINTER - NULL object passed to OrderedPointerDataList<T,D>::add().\n");
             return;
         }
 #endif
@@ -343,7 +343,7 @@ template <class T, class D> class OrderedPointerDataList
 #ifdef CHECKS
         if (object == NULL)
         {
-            printf("NULL_POINTER - NULL object passed to OrderedPointerDataList<T,D>::addAtEnd().\n");
+            Messenger::error("NULL_POINTER - NULL object passed to OrderedPointerDataList<T,D>::addAtEnd().\n");
             return;
         }
 #endif
@@ -353,25 +353,15 @@ template <class T, class D> class OrderedPointerDataList
             insertAfter(object, NULL);
         else if (listTail_->object() < object)
             insertAfter(object, listTail_)->setData(data);
-        else
-            printf("BAD_USAGE - Attempted to add object %p to end of OrderedPointerDataList, but last item in list "
-                   "is %p\n",
-                   object, listTail_);
     }
     // Remove item reference from list
     void remove(T *object)
     {
         // Get item for specified objectIndex
         OrderedPointerDataListItem<T, D> *item = contains(object);
-#ifdef CHECKS
         if (item == NULL)
-        {
-            printf("Internal Error: Specified object (%p) does not exist in this OrderedPointerDataList, so it "
-                   "cannot be removed.\n",
-                   object);
             return;
-        }
-#endif
+
         remove(item);
     }
     // Remove item reference from the list (but don't complain if it isn't there)
@@ -389,15 +379,9 @@ template <class T, class D> class OrderedPointerDataList
     {
         // Get item for specified objectIndex
         OrderedPointerDataListItem<T, D> *item = contains(object);
-#ifdef CHECKS
         if (item == NULL)
-        {
-            printf("Internal Error: Specified object (%p) does not exist in this OrderedPointerDataList, so it "
-                   "cannot be moved.\n",
-                   object);
             return;
-        }
-#endif
+
         // Add to target list, then delete from this list
         targetList.add(item->object());
         remove(item);
@@ -539,7 +523,7 @@ template <class T, class D> class OrderedPointerDataList
 #ifdef CHECKS
         if ((index < 0) || (index >= nItems_))
         {
-            printf("LIST_OPERATOR[] - Array index (%i) out of bounds (%i items in List) >>>>\n", index, nItems_);
+            Messenger::error("LIST_OPERATOR[] - Array index ({}) out of bounds ({} items in List) >>>>\n", index, nItems_);
             return NULL;
         }
 #endif

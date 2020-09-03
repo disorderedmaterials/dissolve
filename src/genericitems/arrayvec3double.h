@@ -27,7 +27,7 @@
 template <> class GenericItemContainer<Array<Vec3<double>>> : public GenericItem
 {
     public:
-    GenericItemContainer<Array<Vec3<double>>>(const char *name, int flags = 0) : GenericItem(name, flags) {}
+    GenericItemContainer<Array<Vec3<double>>>(std::string_view name, int flags = 0) : GenericItem(name, flags) {}
 
     /*
      * Data
@@ -45,7 +45,7 @@ template <> class GenericItemContainer<Array<Vec3<double>>> : public GenericItem
      */
     protected:
     // Create a new GenericItem containing same class as current type
-    GenericItem *createItem(const char *className, const char *name, int flags = 0)
+    GenericItem *createItem(std::string_view className, std::string_view name, int flags = 0)
     {
         if (DissolveSys::sameString(className, itemClassName()))
             return new GenericItemContainer<Array<Vec3<double>>>(name, flags);
@@ -54,7 +54,7 @@ template <> class GenericItemContainer<Array<Vec3<double>>> : public GenericItem
 
     public:
     // Return class name contained in item
-    const char *itemClassName() { return "Array<Vec3<double>>"; }
+    std::string_view itemClassName() { return "Array<Vec3<double>>"; }
 
     /*
      * I/O
@@ -63,11 +63,11 @@ template <> class GenericItemContainer<Array<Vec3<double>>> : public GenericItem
     // Write data through specified parser
     bool write(LineParser &parser)
     {
-        parser.writeLineF("%i\n", data_.nItems());
+        parser.writeLineF("{}\n", data_.nItems());
         Vec3<double> *array = data_.array();
         for (int n = 0; n < data_.nItems(); ++n)
         {
-            if (!parser.writeLineF("%16.9e %16.9e %16.9e\n", array[n].x, array[n].y, array[n].z))
+            if (!parser.writeLineF("{:16.9e} {:16.9e} {:16.9e}\n", array[n].x, array[n].y, array[n].z))
                 return false;
         }
         return true;

@@ -54,7 +54,7 @@ void SelectGenericItemDialog::updateGenericItemTable(GenericItem *current, QStri
         else
         {
             // Check name
-            QString name = genericItem->name();
+            QString name = QString::fromStdString(std::string(genericItem->name()));
             auto inName = name.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
 
             // Check object tag

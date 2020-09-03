@@ -26,7 +26,7 @@
 #include "gui/render/renderablespecies.h"
 
 // Create Renderable of specified type
-Renderable *RenderableFactory::create(Renderable::RenderableType renderableType, const char *objectTag)
+Renderable *RenderableFactory::create(Renderable::RenderableType renderableType, std::string_view objectTag)
 {
     Renderable *renderable = NULL;
 
@@ -39,8 +39,8 @@ Renderable *RenderableFactory::create(Renderable::RenderableType renderableType,
     else if (renderableType == Renderable::SpeciesRenderable)
         renderable = new RenderableSpecies(Species::findObject(objectTag), objectTag);
     else
-        Messenger::error("Don't know how to create a Renderable of type '%s' (object tag = '%s'.\n",
-                         Renderable::renderableTypes().keyword(renderableType), objectTag);
+        fmt::print("Don't know how to create a Renderable of type '{}' (object tag = '{}').\n",
+                   Renderable::renderableTypes().keyword(renderableType), objectTag);
 
     return renderable;
 }

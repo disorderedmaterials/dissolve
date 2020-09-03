@@ -27,7 +27,7 @@ TrajectoryImportFileFormat::TrajectoryImportFileFormat(TrajectoryImportFileForma
 {
     setUpKeywords();
 }
-TrajectoryImportFileFormat::TrajectoryImportFileFormat(const char *filename,
+TrajectoryImportFileFormat::TrajectoryImportFileFormat(std::string_view filename,
                                                        TrajectoryImportFileFormat::TrajectoryImportFormat format)
     : FileAndFormat(filename, format)
 {
@@ -48,7 +48,7 @@ void TrajectoryImportFileFormat::setUpKeywords() {}
  */
 
 // Return enum options for TrajectoryImportFormat
-EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> TrajectoryImportFileFormat::trajectoryImportFormats()
+EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> &TrajectoryImportFileFormat::trajectoryImportFormats()
 {
     static EnumOptionsList TrajectoryImportFormats =
         EnumOptionsList() << EnumOption(TrajectoryImportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory");
@@ -63,10 +63,13 @@ EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> TrajectoryImport
 int TrajectoryImportFileFormat::nFormats() const { return TrajectoryImportFileFormat::nTrajectoryImportFormats; }
 
 // Return format keyword for supplied index
-const char *TrajectoryImportFileFormat::formatKeyword(int id) const { return trajectoryImportFormats().keywordByIndex(id); }
+std::string_view TrajectoryImportFileFormat::formatKeyword(int id) const
+{
+    return trajectoryImportFormats().keywordByIndex(id);
+}
 
 // Return description string for supplied index
-const char *TrajectoryImportFileFormat::formatDescription(int id) const
+std::string_view TrajectoryImportFileFormat::formatDescription(int id) const
 {
     return trajectoryImportFormats().descriptionByIndex(id);
 }

@@ -86,7 +86,7 @@ class Isotopologues : public GenericItemBase
      */
     public:
     // Return class name
-    static const char *itemClassName();
+    static std::string_view itemClassName();
     // Read data through specified LineParser
     bool read(LineParser &parser, CoreData &coreData);
     // Write data through specified LineParser

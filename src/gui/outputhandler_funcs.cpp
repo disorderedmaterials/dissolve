@@ -56,4 +56,4 @@ void GUIOutputHandler::resetStyling()
  */
 
 // Print text
-void GUIOutputHandler::outputText(const char *text) { emit(printText(QString(text))); }
+void GUIOutputHandler::outputText(std::string s) { emit(printText(QStringLiteral("%1\n").arg(s.c_str()))); }

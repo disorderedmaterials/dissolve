@@ -28,7 +28,7 @@ ForceImportFileFormat::ForceImportFileFormat(ForceImportFileFormat::ForceImportF
 {
     setUpKeywords();
 }
-ForceImportFileFormat::ForceImportFileFormat(const char *filename, ForceImportFileFormat::ForceImportFormat format)
+ForceImportFileFormat::ForceImportFileFormat(std::string_view filename, ForceImportFileFormat::ForceImportFormat format)
     : FileAndFormat(filename, format)
 {
     setUpKeywords();
@@ -51,7 +51,7 @@ void ForceImportFileFormat::setUpKeywords()
  */
 
 // Return enum options for ForceImportFormat
-EnumOptions<ForceImportFileFormat::ForceImportFormat> ForceImportFileFormat::forceImportFormats()
+EnumOptions<ForceImportFileFormat::ForceImportFormat> &ForceImportFileFormat::forceImportFormats()
 {
     static EnumOptionsList ForceImportFileFormats =
         EnumOptionsList() << EnumOption(ForceImportFileFormat::DLPOLYForces, "dlpoly", "DL_POLY Config File Forces")
@@ -67,10 +67,10 @@ EnumOptions<ForceImportFileFormat::ForceImportFormat> ForceImportFileFormat::for
 int ForceImportFileFormat::nFormats() const { return ForceImportFileFormat::nForceImportFormats; }
 
 // Return format keyword for supplied index
-const char *ForceImportFileFormat::formatKeyword(int id) const { return forceImportFormats().keywordByIndex(id); }
+std::string_view ForceImportFileFormat::formatKeyword(int id) const { return forceImportFormats().keywordByIndex(id); }
 
 // Return description string for supplied index
-const char *ForceImportFileFormat::formatDescription(int id) const { return forceImportFormats().descriptionByIndex(id); }
+std::string_view ForceImportFileFormat::formatDescription(int id) const { return forceImportFormats().descriptionByIndex(id); }
 
 // Return current format as ForceImportFormat
 ForceImportFileFormat::ForceImportFormat ForceImportFileFormat::forceFormat() const
@@ -88,7 +88,7 @@ bool ForceImportFileFormat::importData(Array<double> &fx, Array<double> &fy, Arr
     // Open file and check that we're OK to proceed importing from it
     LineParser parser(procPool);
     if ((!parser.openInput(filename_)) || (!parser.isFileGoodForReading()))
-        return Messenger::error("Couldn't open file '%s' for loading forces data.\n", filename_.get());
+        return Messenger::error("Couldn't open file '{}' for loading forces data.\n", filename_);
 
     // Import the data
     auto result = importData(parser, fx, fy, fz);
@@ -115,7 +115,7 @@ bool ForceImportFileFormat::importData(LineParser &parser, Array<double> &fx, Ar
             result = importXYZ(parser, fx, fy, fz);
             break;
         default:
-            Messenger::error("Don't know how to load forces in format '%s'.\n", formatKeyword(forceFormat()));
+            Messenger::error("Don't know how to load forces in format '{}'.\n", formatKeyword(forceFormat()));
     }
 
     // Apply factor to data

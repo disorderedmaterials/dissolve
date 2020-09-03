@@ -75,7 +75,7 @@ bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, CoreData &c
 
     // Check for required axes?
     if (axesRequired_ && (!dynamicSite->hasAxes()))
-        return Messenger::error("Dynamic sites defined for keyword '%s' must have axes defined.\n", name());
+        return Messenger::error("Dynamic sites defined for keyword '{}' must have axes defined.\n", name());
 
     set_ = true;
 
@@ -83,7 +83,7 @@ bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, CoreData &c
 }
 
 // Write keyword data to specified LineParser
-bool DynamicSiteNodesKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool DynamicSiteNodesKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     // Loop over list of dynamic sites in the RefList
     for (auto dynamicSite : data_)

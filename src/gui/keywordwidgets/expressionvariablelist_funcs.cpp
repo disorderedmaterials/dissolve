@@ -41,7 +41,7 @@ ExpressionVariableListKeywordWidget::ExpressionVariableListKeywordWidget(QWidget
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<ExpressionVariableListKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into ExpressionVariableListKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into ExpressionVariableListKeyword.\n", keyword->name());
     else
     {
         // Set current information
@@ -78,7 +78,7 @@ void ExpressionVariableListKeywordWidget::updateVariableTableRow(int row, Expres
     }
     else
         item = ui_.VariablesTable->item(row, 0);
-    item->setText(var->name());
+    item->setText(QString::fromStdString(std::string(var->name())));
 
     // Value
     if (createItem)
@@ -89,7 +89,7 @@ void ExpressionVariableListKeywordWidget::updateVariableTableRow(int row, Expres
     }
     else
         item = ui_.VariablesTable->item(row, 1);
-    item->setText(var->value().asString());
+    item->setText(QString::fromStdString(var->value().asString()));
 }
 
 // Variable data changed
@@ -111,8 +111,8 @@ void ExpressionVariableListKeywordWidget::on_VariablesTable_itemChanged(QTableWi
             // Check that the name is not currently in use anywhere in the Procedure
             if (keyword_->parentNode()->parameterExists(qPrintable(w->text()), var))
             {
-                Messenger::error("A Node with name '%s' already exists elsewhere in the Procedure.\n", qPrintable(w->text()));
-                w->setText(var->name());
+                Messenger::error("A Node with name '{}' already exists elsewhere in the Procedure.\n", qPrintable(w->text()));
+                w->setText(QString::fromStdString(std::string(var->name())));
                 return;
             }
             else

@@ -25,7 +25,7 @@
 #include "procedure/nodes/nodes.h"
 
 SequenceProcedureNode::SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure,
-                                             ProcedureNode *parentNode, const char *blockTerminationKeyword)
+                                             ProcedureNode *parentNode, std::string_view blockTerminationKeyword)
     : ProcedureNode(ProcedureNode::SequenceNode)
 {
     context_ = context;
@@ -74,7 +74,7 @@ void SequenceProcedureNode::addNode(ProcedureNode *node)
         return;
 
     if (!node->isContextRelevant(context_))
-        Messenger::error("Node '%s' (type = '%s') is not relevant to the '%s' context.\n", node->name(),
+        Messenger::error("Node '{}' (type = '{}') is not relevant to the '{}' context.\n", node->name(),
                          ProcedureNode::nodeTypes().keyword(node->type()), ProcedureNode::nodeContexts().keyword(context_));
 
     sequence_.own(node);
@@ -91,7 +91,7 @@ int SequenceProcedureNode::nNodes() const { return sequence_.nItems(); }
  */
 
 // Return named node if it exists anywhere in our sequence or below, and optionally matches the type given
-ProcedureNode *SequenceProcedureNode::searchNodes(const char *name, ProcedureNode *excludeNode,
+ProcedureNode *SequenceProcedureNode::searchNodes(std::string_view name, ProcedureNode *excludeNode,
                                                   ProcedureNode::NodeType nt) const
 {
     ListIterator<ProcedureNode> nodeIterator(sequence_);
@@ -123,7 +123,7 @@ ProcedureNode *SequenceProcedureNode::searchNodes(const char *name, ProcedureNod
 }
 
 // Search through the Procedure for the named parameter
-ExpressionVariable *SequenceProcedureNode::searchParameters(const char *name, ExpressionVariable *excludeParameter) const
+ExpressionVariable *SequenceProcedureNode::searchParameters(std::string_view name, ExpressionVariable *excludeParameter) const
 {
     ListIterator<ProcedureNode> nodeIterator(sequence_);
     while (ProcedureNode *node = nodeIterator.iterate())
@@ -152,7 +152,7 @@ const Procedure *SequenceProcedureNode::procedure() const { return procedure_; }
 ProcedureNode::NodeContext SequenceProcedureNode::sequenceContext() const { return context_; }
 
 // Return named node if present in this sequence, and which matches the (optional) type given
-ProcedureNode *SequenceProcedureNode::node(const char *name, ProcedureNode::NodeType nt) const
+ProcedureNode *SequenceProcedureNode::node(std::string_view name, ProcedureNode::NodeType nt) const
 {
     ListIterator<ProcedureNode> nodeIterator(sequence_);
     while (ProcedureNode *node = nodeIterator.iterate())
@@ -204,7 +204,8 @@ RefList<ProcedureNode> SequenceProcedureNode::nodes(ProcedureNode *queryingNode,
 }
 
 // Return named node if it is currently in scope, and optionally matches the type given
-ProcedureNode *SequenceProcedureNode::nodeInScope(ProcedureNode *queryingNode, const char *name, ProcedureNode::NodeType nt)
+ProcedureNode *SequenceProcedureNode::nodeInScope(ProcedureNode *queryingNode, std::string_view name,
+                                                  ProcedureNode::NodeType nt)
 {
     // Is this node present in our own sequence?
     if (queryingNode && (!sequence_.contains(queryingNode)))
@@ -266,7 +267,8 @@ RefList<ProcedureNode> SequenceProcedureNode::nodesInScope(ProcedureNode *queryi
 }
 
 // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
-ProcedureNode *SequenceProcedureNode::nodeExists(const char *name, ProcedureNode *excludeNode, ProcedureNode::NodeType nt) const
+ProcedureNode *SequenceProcedureNode::nodeExists(std::string_view name, ProcedureNode *excludeNode,
+                                                 ProcedureNode::NodeType nt) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
     if (parentNode_)
@@ -277,7 +279,7 @@ ProcedureNode *SequenceProcedureNode::nodeExists(const char *name, ProcedureNode
 }
 
 // Return whether the named parameter is currently in scope
-ExpressionVariable *SequenceProcedureNode::parameterInScope(ProcedureNode *queryingNode, const char *name,
+ExpressionVariable *SequenceProcedureNode::parameterInScope(ProcedureNode *queryingNode, std::string_view name,
                                                             ExpressionVariable *excludeParameter)
 {
     // Is this node present in our own sequence?
@@ -305,7 +307,7 @@ ExpressionVariable *SequenceProcedureNode::parameterInScope(ProcedureNode *query
 }
 
 // Return whether the named parameter exists in this sequence or its children (branches)
-ExpressionVariable *SequenceProcedureNode::parameterExists(const char *name, ExpressionVariable *excludeParameter) const
+ExpressionVariable *SequenceProcedureNode::parameterExists(std::string_view name, ExpressionVariable *excludeParameter) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
     if (parentNode_)
@@ -346,7 +348,7 @@ RefList<ExpressionVariable> SequenceProcedureNode::parametersInScope(ProcedureNo
  */
 
 // Prepare any necessary data, ready for execution
-bool SequenceProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList)
+bool SequenceProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Loop over nodes in the list, preparing each in turn
     ListIterator<ProcedureNode> nodeIterator(sequence_);
@@ -358,8 +360,8 @@ bool SequenceProcedureNode::prepare(Configuration *cfg, const char *prefix, Gene
 }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult SequenceProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
-                                                                  GenericList &targetList)
+ProcedureNode::NodeExecutionResult SequenceProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
+                                                                  std::string_view prefix, GenericList &targetList)
 {
     ProcedureNode::NodeExecutionResult result = ProcedureNode::Success;
 
@@ -383,7 +385,8 @@ ProcedureNode::NodeExecutionResult SequenceProcedureNode::execute(ProcessPool &p
 }
 
 // Finalise any necessary data after execution
-bool SequenceProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+bool SequenceProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                     GenericList &targetList)
 {
     // Loop over nodes in the list, finalising each in turn
     ListIterator<ProcedureNode> nodeIterator(sequence_);
@@ -399,10 +402,10 @@ bool SequenceProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, 
  */
 
 // Set block termination keyword for current context when reading
-void SequenceProcedureNode::setBlockTerminationKeyword(const char *endKeyword) { blockTerminationKeyword_ = endKeyword; }
+void SequenceProcedureNode::setBlockTerminationKeyword(std::string_view endKeyword) { blockTerminationKeyword_ = endKeyword; }
 
 // Return block termination keyword for current context
-const char *SequenceProcedureNode::blockTerminationKeyword() const { return blockTerminationKeyword_.get(); }
+std::string_view SequenceProcedureNode::blockTerminationKeyword() const { return blockTerminationKeyword_; }
 
 // Read structure from specified LineParser
 bool SequenceProcedureNode::read(LineParser &parser, CoreData &coreData)
@@ -415,13 +418,13 @@ bool SequenceProcedureNode::read(LineParser &parser, CoreData &coreData)
             return false;
 
         // Is the first argument the block termination keyword for the current context?
-        if (DissolveSys::sameString(parser.argc(0), blockTerminationKeyword_))
+        if (DissolveSys::sameString(parser.argsv(0), blockTerminationKeyword_))
             break;
 
         // Is the first argument on the current line a valid control keyword?
-        if (sequenceNodeKeywords().isValid(parser.argc(0)))
+        if (sequenceNodeKeywords().isValid(parser.argsv(0)))
         {
-            SequenceNodeKeyword nk = sequenceNodeKeywords().enumeration(parser.argc(0));
+            SequenceNodeKeyword nk = sequenceNodeKeywords().enumeration(parser.argsv(0));
             switch (nk)
             {
                 case (SequenceProcedureNode::nSequenceNodeKeywords):
@@ -431,9 +434,9 @@ bool SequenceProcedureNode::read(LineParser &parser, CoreData &coreData)
 
         // Not a control keyword, so must be a node type
         ProcedureNode *newNode = NULL;
-        if (!ProcedureNode::nodeTypes().isValid(parser.argc(0)))
-            return Messenger::error("Unrecognised node type '%s' found.\n", parser.argc(0));
-        ProcedureNode::NodeType nt = ProcedureNode::nodeTypes().enumeration(parser.argc(0));
+        if (!ProcedureNode::nodeTypes().isValid(parser.argsv(0)))
+            return Messenger::error("Unrecognised node type '{}' found.\n", parser.argsv(0));
+        ProcedureNode::NodeType nt = ProcedureNode::nodeTypes().enumeration(parser.argsv(0));
         switch (nt)
         {
             case (ProcedureNode::AddSpeciesNode):
@@ -516,34 +519,34 @@ bool SequenceProcedureNode::read(LineParser &parser, CoreData &coreData)
                 newNode = new SequenceProcedureNode(ProcedureNode::NoContext, procedure(), this);
                 break;
             case (ProcedureNode::nNodeTypes):
-                return Messenger::error("Unrecognised procedure node type '%s' found.\n", parser.argc(0));
+                return Messenger::error("Unrecognised procedure node type '{}' found.\n", parser.argsv(0));
                 break;
             default:
-                return Messenger::error("Epic Developer Fail - Don't know how to create a node of type '%s'.\n",
-                                        parser.argc(0));
+                return Messenger::error("Epic Developer Fail - Don't know how to create a node of type '{}'.\n",
+                                        parser.argsv(0));
         }
 
         // Check for clash of names with existing node in scope
-        if (nodeInScope(sequence_.last(), parser.hasArg(1) ? parser.argc(1) : newNode->name()))
+        if (nodeInScope(sequence_.last(), parser.hasArg(1) ? parser.argsv(1) : newNode->name()))
         {
-            return Messenger::error("A node named '%s' is already in scope.\n",
-                                    parser.hasArg(1) ? parser.argc(1) : newNode->name());
+            return Messenger::error("A node named '{}' is already in scope.\n",
+                                    parser.hasArg(1) ? parser.argsv(1) : newNode->name());
         }
 
         // Set the name of the node if it is required
         if (newNode->mustBeNamed())
         {
             if (!parser.hasArg(1))
-                Messenger::error("A name must be given explicitly to a node of type %s.\n",
+                Messenger::error("A name must be given explicitly to a node of type {}.\n",
                                  ProcedureNode::nodeTypes().keyword(newNode->type()));
             else
-                newNode->setName(parser.argc(1));
+                newNode->setName(parser.argsv(1));
         }
 
         // Is the new node permitted in our context?
         if (!newNode->isContextRelevant(context_))
         {
-            return Messenger::error("'%s' node not allowed / relevant in '%s' context.\n",
+            return Messenger::error("'{}' node not allowed / relevant in '{}' context.\n",
                                     ProcedureNode::nodeTypes().keyword(newNode->type()),
                                     ProcedureNode::nodeContexts().keyword(context_));
         }
@@ -561,7 +564,7 @@ bool SequenceProcedureNode::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write structure to specified LineParser
-bool SequenceProcedureNode::write(LineParser &parser, const char *prefix)
+bool SequenceProcedureNode::write(LineParser &parser, std::string_view prefix)
 {
     // Block Start - should have already been written by the calling function, since we don't know the keyword we are linked
     // to

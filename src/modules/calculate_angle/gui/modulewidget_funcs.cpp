@@ -177,30 +177,30 @@ void CalculateAngleModuleWidget::setGraphDataTargets(CalculateAngleModule *modul
         return;
 
     // Calculated A...B RDF
-    Renderable *rdfAB = rdfABGraph_->createRenderable(
-        Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF(AB)", module_->uniqueName(), cfg->niceName()),
+    auto *rdfAB = rdfABGraph_->createRenderable(
+        Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//RDF(AB)", module_->uniqueName(), cfg->niceName()),
         "B...C g(r)");
     rdfAB->setColour(StockColours::BlueStockColour);
 
     // Calculated B...C RDF
-    Renderable *rdfBC = rdfBCGraph_->createRenderable(
-        Renderable::Data1DRenderable, CharString("%s//Process1D//%s//RDF(BC)", module_->uniqueName(), cfg->niceName()),
+    auto *rdfBC = rdfBCGraph_->createRenderable(
+        Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//RDF(BC)", module_->uniqueName(), cfg->niceName()),
         "B...C g(r)");
     rdfBC->setColour(StockColours::BlueStockColour);
 
     // Calculated angle histogram
-    Renderable *angle = angleGraph_->createRenderable(
-        Renderable::Data1DRenderable, CharString("%s//Process1D//%s//Angle(ABC)", module_->uniqueName(), cfg->niceName()),
+    auto *angle = angleGraph_->createRenderable(
+        Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//Angle(ABC)", module_->uniqueName(), cfg->niceName()),
         "A-B...C Angle");
     angle->setColour(StockColours::RedStockColour);
 
     // Calculated (A-B)-C distance-angle map
-    Renderable *dAngleAB = dAngleABGraph_->createRenderable(
-        Renderable::Data2DRenderable, CharString("%s//Process2D//%s//DAngle((A-B)-C)", module_->uniqueName(), cfg->niceName()),
+    auto *dAngleAB = dAngleABGraph_->createRenderable(
+        Renderable::Data2DRenderable, fmt::format("{}//Process2D//{}//DAngle((A-B)-C)", module_->uniqueName(), cfg->niceName()),
         "A-B vs A-B-C");
 
     // Calculated A-(B-C) distance-angle map
-    Renderable *dAngleBC = dAngleBCGraph_->createRenderable(
-        Renderable::Data2DRenderable, CharString("%s//Process2D//%s//DAngle(A-(B-C))", module_->uniqueName(), cfg->niceName()),
+    auto *dAngleBC = dAngleBCGraph_->createRenderable(
+        Renderable::Data2DRenderable, fmt::format("{}//Process2D//{}//DAngle(A-(B-C))", module_->uniqueName(), cfg->niceName()),
         "B-C vs A-B-C");
 }

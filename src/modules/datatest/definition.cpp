@@ -22,13 +22,13 @@
 #include "modules/datatest/datatest.h"
 
 // Return type of module
-const char *DataTestModule::type() const { return "DataTest"; }
+std::string_view DataTestModule::type() const { return "DataTest"; }
 
 // Return category for module
-const char *DataTestModule::category() const { return "Checks & Tests"; }
+std::string_view DataTestModule::category() const { return "Checks & Tests"; }
 
 // Return brief description of module
-const char *DataTestModule::brief() const { return "Test named data in other modules against reference data"; }
+std::string_view DataTestModule::brief() const { return "Test named data in other modules against reference data"; }
 
 // Return the number of Configuration targets this Module requires
 int DataTestModule::nRequiredTargets() const { return Module::ZeroTargets; }

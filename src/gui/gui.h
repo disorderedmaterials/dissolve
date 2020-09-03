@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "gui/maintab.h"
 #include "gui/outputhandler.hui"
 #include "gui/referencepoint.h"
@@ -112,7 +111,7 @@ class DissolveWindow : public QMainWindow
      */
     public:
     // Open specified input file
-    bool openLocalFile(const char *inputFile, const char *restartFile, bool ignoreRestartFile, bool ignoreLayoutFile);
+    bool openLocalFile(std::string_view inputFile, std::string_view restartFile, bool ignoreRestartFile, bool ignoreLayoutFile);
 
     /*
      * System Templates
@@ -319,7 +318,7 @@ class DissolveWindow : public QMainWindow
      */
     private:
     // Filename containing current GUI state
-    CharString stateFilename_;
+    QString stateFilename_;
 
     public:
     // Save current GUI state

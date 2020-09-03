@@ -149,7 +149,7 @@ int SpeciesBond::index(int n) const
     else if (n == 1)
         return indexJ();
 
-    Messenger::error("SpeciesAtom index %i is out of range in SpeciesBond::index(int). Returning 0...\n");
+    Messenger::error("SpeciesAtom index {} is out of range in SpeciesBond::index(int). Returning 0...\n");
     return 0;
 }
 
@@ -193,11 +193,11 @@ void SpeciesBond::detach()
  */
 
 // Bond type keywords
-const char *BondTypeKeywords[] = {"Single", "Double", "Triple", "Quadruple", "Aromatic"};
+std::string_view BondTypeKeywords[] = {"Single", "Double", "Triple", "Quadruple", "Aromatic"};
 double BondTypeOrders[] = {1.0, 2.0, 3.0, 4.0, 1.5};
 
 // Convert bond type string to functional form
-SpeciesBond::BondType SpeciesBond::bondType(const char *s)
+SpeciesBond::BondType SpeciesBond::bondType(std::string_view s)
 {
     for (int n = 0; n < SpeciesBond::nBondTypes; ++n)
         if (DissolveSys::sameString(s, BondTypeKeywords[n]))
@@ -206,7 +206,7 @@ SpeciesBond::BondType SpeciesBond::bondType(const char *s)
 }
 
 // Return bond type functional form text
-const char *SpeciesBond::bondType(SpeciesBond::BondType bt) { return BondTypeKeywords[bt]; }
+std::string_view SpeciesBond::bondType(SpeciesBond::BondType bt) { return BondTypeKeywords[bt]; }
 
 // Return bond order for specified bond type
 double SpeciesBond::bondOrder(SpeciesBond::BondType bt) { return BondTypeOrders[bt]; }

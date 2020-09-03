@@ -22,7 +22,7 @@
 #include "data/ffparameters.h"
 #include "data/ff.h"
 
-ForcefieldParameters::ForcefieldParameters(const char *name, double data0, double data1, double data2, double data3)
+ForcefieldParameters::ForcefieldParameters(std::string_view name, double data0, double data1, double data2, double data3)
     : ListItem<ForcefieldParameters>()
 {
     name_ = name;
@@ -39,7 +39,7 @@ ForcefieldParameters::~ForcefieldParameters() {}
  */
 
 // Return name of type
-const char *ForcefieldParameters::name() const { return name_.get(); }
+std::string_view ForcefieldParameters::name() const { return name_; }
 
 /*
  * Parameters

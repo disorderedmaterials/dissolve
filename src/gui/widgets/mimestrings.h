@@ -21,15 +21,13 @@
 
 #pragma once
 
-#include "templates/list.h"
-#include "templates/listitem.h"
 #include <QMimeData>
 
 // Forward declarations
 /* none */
 
 // Mime String Object
-class MimeString : public ListItem<MimeString>
+class MimeString
 {
     public:
     // Mime Strings Data Type
@@ -40,19 +38,19 @@ class MimeString : public ListItem<MimeString>
         ModuleType, /* Module type */
         nMimeStringTypes
     };
-    MimeString(MimeString::MimeStringType type = NoMimeType, QString data = QString());
+    MimeString(MimeString::MimeStringType type = NoMimeType, std::string_view data = "");
 
     private:
     // Type of data contained in string
     MimeStringType type_;
     // String data
-    QString data_;
+    std::string data_;
 
     public:
     // Return type of data contained in string
     MimeStringType type() const;
     // Return string data
-    QString data() const;
+    std::string_view data() const;
 };
 
 // Mime Strings Data
@@ -77,17 +75,17 @@ class MimeStrings : public QMimeData
      */
     private:
     // List of mime strings
-    List<MimeString> strings_;
+    std::vector<MimeString> strings_;
 
     public:
     // Add mime string
-    void add(MimeString::MimeStringType type, QString data);
+    void add(MimeString::MimeStringType type, std::string_view data);
     // Add mime strings from source MimeStrings
     void add(MimeStrings &sourceStrings);
     // Return whether the specified MimeString data is present
     bool hasData(MimeString::MimeStringType type) const;
     // Return the data for the specified type
-    QString data(MimeString::MimeStringType type) const;
+    std::string_view data(MimeString::MimeStringType type) const;
     // Return mime strings
-    List<MimeString> &strings();
+    std::vector<MimeString> &strings();
 };

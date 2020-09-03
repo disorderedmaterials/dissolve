@@ -40,7 +40,7 @@ class ChartBlock : public ListItem<ChartBlock>
      */
     public:
     // Return type of this block
-    virtual const char *blockType() = 0;
+    virtual const QString blockType() const = 0;
 
     /*
      * Widget

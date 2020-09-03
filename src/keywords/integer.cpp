@@ -100,11 +100,11 @@ bool IntegerKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
         if (!setData(parser.argi(startArg)))
         {
             if (minimumLimit_ && maximumLimit_)
-                Messenger::error("Value %i is out of range for keyword. Valid range is %i <= n <= %i.\n", data_, min_, max_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n <= {}.\n", data_, min_, max_);
             else if (minimumLimit_)
-                Messenger::error("Value %i is out of range for keyword. Valid range is %i <= n.\n", data_, min_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is {} <= n.\n", data_, min_);
             else
-                Messenger::error("Value %i is out of range for keyword. Valid range is n <= %i.\n", data_, max_);
+                Messenger::error("Value {} is out of range for keyword. Valid range is n <= {}.\n", data_, max_);
 
             return false;
         }
@@ -115,9 +115,9 @@ bool IntegerKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 }
 
 // Write keyword data to specified LineParser
-bool IntegerKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool IntegerKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
-    return parser.writeLineF("%s%s  %i\n", prefix, keywordName, data_);
+    return parser.writeLineF("{}{}  {}\n", prefix, keywordName, data_);
 }
 
 /*
@@ -134,4 +134,4 @@ int IntegerKeyword::asInt() { return data_; }
 double IntegerKeyword::asDouble() { return data_ * 1.0; }
 
 // Return value (as string)
-const char *IntegerKeyword::asString() { return DissolveSys::itoa(data_); }
+std::string IntegerKeyword::asString() { return fmt::format("{}", data_); }

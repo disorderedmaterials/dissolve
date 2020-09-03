@@ -1,6 +1,4 @@
 add_library(base
-  charstring.cpp
-  charstringlist.cpp
   enumoption.cpp
   enumoptionsbase.cpp
   enumoptionslist.cpp
@@ -17,8 +15,6 @@ add_library(base
   units.cpp
   version.cpp
   
-  charstring.h
-  charstringlist.h
   enumoption.h
   enumoptionsbase.h
   enumoptions.h

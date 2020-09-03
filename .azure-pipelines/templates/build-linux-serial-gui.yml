@@ -12,11 +12,16 @@ steps:
       set -ex
       # -- General
       sudo apt-get update -q
-      sudo apt-get install bison libfreetype6-dev libftgl-dev ninja-build
+      sudo apt-get install bison libfreetype6-dev libftgl-dev ninja-build python3-setuptools
       # -- Qt
       sudo add-apt-repository ppa:${{ parameters.ppa }} -y
       sudo apt-get install qt${{ parameters.qtver }}base qt${{ parameters.qtver }}svg qt${{ parameters.qtver }}imageformats -y
     displayName: 'Install Prerequisites'
+  - bash: |
+      set -ex
+      sudo pip3 install wheel
+      sudo pip3 install conan
+    displayName: 'Install Conan'
   - bash: |
       set -ex
       QT_BASE_DIR="/opt/qt${{ parameters.qtver }}"
@@ -25,6 +30,7 @@ steps:
       export LD_LIBRARY_PATH=$QT_BASE_DIR/lib/x86_64-linux-gnu:$QT_BASE_DIR/lib:$LD_LIBRARY_PATH
       mkdir build
       cd build
+      conan install --remote=conan-center ../
       cmake -G "Ninja" -DGUI:bool=true ${{ parameters.extraflags }} ../
       ninja
     displayName: 'Build'

@@ -22,13 +22,13 @@
 #include "modules/rdf/rdf.h"
 
 // Return type of module
-const char *RDFModule::type() const { return "RDF"; }
+std::string_view RDFModule::type() const { return "RDF"; }
 
 // Return category for module
-const char *RDFModule::category() const { return "Correlation Functions"; }
+std::string_view RDFModule::category() const { return "Correlation Functions"; }
 
 // Return brief description of module
-const char *RDFModule::brief() const { return "Calculate partial and total g(r)"; }
+std::string_view RDFModule::brief() const { return "Calculate partial and total g(r)"; }
 
 // Return the number of Configuration targets this Module requires
 int RDFModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }

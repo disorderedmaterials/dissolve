@@ -44,7 +44,7 @@
  */
 
 // Return formatted publication references
-const char *OPLSAA2005BaseForcefield::publicationReferences() const
+std::string_view OPLSAA2005BaseForcefield::publicationReferences() const
 {
     return "W. L. Jorgensen, D. S. Maxwell, and J. Tirado-Rives, <i>J. Am. Chem. Soc.</i> <b>118</b>, 11225-11236 "
            "(1996).\nW. L. Jorgensen and N. A. McDonald, <i>Theochem</i> <b>424</b>, 145-155 "

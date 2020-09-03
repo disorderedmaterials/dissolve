@@ -27,7 +27,7 @@ ExpressionVariable::ExpressionVariable(ExpressionValue value, bool readOnly) : E
 {
     // Private variables
     static int count = 0;
-    name_.sprintf("_ExpressionVariable%02i", count++);
+    name_ = fmt::format("_ExpressionVariable{:02d}", count++);
     initialValue_ = NULL;
     nodeType_ = ExpressionNode::VariableNode;
     value_ = value;
@@ -38,10 +38,10 @@ ExpressionVariable::ExpressionVariable(ExpressionValue value, bool readOnly) : E
 ExpressionVariable::~ExpressionVariable() {}
 
 // Set name of variable
-void ExpressionVariable::setName(const char *s) { name_ = s; }
+void ExpressionVariable::setName(std::string_view s) { name_ = s; }
 
 // Get name of variable
-const char *ExpressionVariable::name() const { return name_.get(); }
+std::string_view ExpressionVariable::name() const { return name_; }
 
 // Initialise variable
 bool ExpressionVariable::initialise()
@@ -57,7 +57,7 @@ bool ExpressionVariable::initialise()
                 return true;
             else
             {
-                Messenger::error("Failed to initialise variable '%s'.\n", name_.get());
+                Messenger::error("Failed to initialise variable '{}'.\n", name_);
                 return false;
             }
         }
@@ -87,10 +87,7 @@ ExpressionNode *ExpressionVariable::initialValue() const { return initialValue_;
 bool ExpressionVariable::set(ExpressionValue value)
 {
     if (readOnly_)
-    {
-        printf("A constant value (in this case a double) cannot be assigned to.\n");
-        return false;
-    }
+        return Messenger::error("A constant value (in this case a double) cannot be assigned to.\n");
 
     value_ = value;
 
@@ -112,10 +109,10 @@ bool ExpressionVariable::execute(ExpressionValue &value)
 }
 
 // Print node contents
-void ExpressionVariable::nodePrint(int offset, const char *prefix)
+void ExpressionVariable::nodePrint(int offset, std::string_view prefix)
 {
     // Construct tabbed offset
-    CharString tab;
+    std::string tab;
     for (int n = 0; n < offset - 1; n++)
         tab += '\t';
     if (offset > 1)
@@ -126,15 +123,15 @@ void ExpressionVariable::nodePrint(int offset, const char *prefix)
     if (readOnly_)
     {
         if (value_.isInteger())
-            printf("[C]%s%i (constant integer value)\n", tab.get(), value_.asInteger());
+            Messenger::print("[C]{}{} (constant integer value)\n", tab, value_.asInteger());
         else
-            printf("[C]%s%f (constant double value)\n", tab.get(), value_.asDouble());
+            Messenger::print("[C]{}{} (constant double value)\n", tab, value_.asDouble());
     }
     else
     {
         if (value_.isInteger())
-            printf("[V]%s%i (integer variable '%s')\n", tab.get(), value_.asInteger(), name());
+            Messenger::print("[V]{}{} (integer variable '{}')\n", tab, value_.asInteger(), name());
         else
-            printf("[V]%s%f (double variable '%s')\n", tab.get(), value_.asDouble(), name());
+            Messenger::print("[V]{}{} (double variable '{}')\n", tab, value_.asDouble(), name());
     }
 }

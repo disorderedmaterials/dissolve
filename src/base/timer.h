@@ -21,8 +21,8 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include <ctime>
+#include <string>
 
 // Timer
 class Timer
@@ -43,14 +43,12 @@ class Timer
     clock_t splitTime_;
     // Total time
     clock_t totalTime_;
-    // Local string storage
-    CharString timeString_;
     // Whether the timer is running or not
     bool running_;
 
     private:
     // Return time string based on provided tick count
-    const char *timeString(clock_t ticks);
+    std::string timeString(clock_t ticks);
 
     public:
     // Start timer
@@ -64,13 +62,13 @@ class Timer
     // Zero total time
     void zero();
     // Return current elapsed time as a time string
-    const char *elapsedTimeString();
+    std::string elapsedTimeString();
     // Return total time (after stop()) as a time string
-    const char *totalTimeString();
+    std::string totalTimeString();
     // Return number of seconds elapsed
     double secondsElapsed() const;
     // Return time string for number of seconds provided
-    static const char *timeString(double seconds);
+    static std::string timeString(double seconds);
     // Return ETA string for number of seconds provided
-    static const char *etaString(double seconds);
+    static std::string etaString(double seconds);
 };

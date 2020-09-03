@@ -39,7 +39,7 @@ class OPLSAA2005BaseForcefield : public Forcefield
      */
     public:
     // Return formatted publication references
-    const char *publicationReferences() const;
+    std::string_view publicationReferences() const;
     // Return short-range interaction style for AtomTypes
     Forcefield::ShortRangeType shortRangeType() const;
 

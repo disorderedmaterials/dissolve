@@ -91,7 +91,7 @@ double IsotopeData::fraction() const { return fraction_; }
 // Write data through specified LineParser
 bool IsotopeData::write(LineParser &parser)
 {
-    return parser.writeLineF("%i %i %i %f\n", isotope_->Z(), isotope_->A(), population_, fraction_);
+    return parser.writeLineF("{} {} {} {}\n", isotope_->Z(), isotope_->A(), population_, fraction_);
 }
 
 // Read data through specified LineParser
@@ -135,16 +135,16 @@ bool IsotopeData::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
     if (!procPool.equality(isotope_->element().Z()))
-        return Messenger::error("IsotopeData element z is not equivalent (process %i has '%s').\n", procPool.poolRank(),
+        return Messenger::error("IsotopeData element z is not equivalent (process {} has '{}').\n", procPool.poolRank(),
                                 isotope_->element().Z());
     if (!procPool.equality(isotope_->A()))
-        return Messenger::error("IsotopeData isotope A is not equivalent (process %i has %i).\n", procPool.poolRank(),
+        return Messenger::error("IsotopeData isotope A is not equivalent (process {} has {}).\n", procPool.poolRank(),
                                 isotope_->A());
     if (!procPool.equality(population_))
-        return Messenger::error("IsotopeData population is not equivalent (process %i has %i).\n", procPool.poolRank(),
+        return Messenger::error("IsotopeData population is not equivalent (process {} has {}).\n", procPool.poolRank(),
                                 population_);
     if (!procPool.equality(fraction_))
-        return Messenger::error("IsotopeData fraction is not equivalent (process %i has %e).\n", procPool.poolRank(),
+        return Messenger::error("IsotopeData fraction is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
                                 fraction_);
 #endif
     return true;

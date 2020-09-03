@@ -27,7 +27,7 @@
 #include <QLabel>
 #include <QMessageBox>
 
-GraphGizmo::GraphGizmo(Dissolve &dissolve, const char *uniqueName) : Gizmo(dissolve, uniqueName)
+GraphGizmo::GraphGizmo(Dissolve &dissolve, const QString uniqueName) : Gizmo(dissolve, uniqueName)
 {
     // Set up user interface
     ui_.setupUi(this);
@@ -56,14 +56,14 @@ GraphGizmo::~GraphGizmo() {}
  */
 
 // Return string specifying Gizmo type
-const char *GraphGizmo::type() const { return "Graph"; }
+const QString GraphGizmo::type() const { return "Graph"; }
 
 /*
  * UI
  */
 
 // Window close event
-void GraphGizmo::closeEvent(QCloseEvent *event) { emit(windowClosed(uniqueName_.get())); }
+void GraphGizmo::closeEvent(QCloseEvent *event) { emit(windowClosed(uniqueName_)); }
 
 // Update controls within widget
 void GraphGizmo::updateControls()
@@ -87,7 +87,7 @@ void GraphGizmo::enableSensitiveControls() {}
  */
 
 // Return whether this Gizmo accepts data of the specified type
-bool GraphGizmo::acceptsData(const char *dataType)
+bool GraphGizmo::acceptsData(std::string_view dataType)
 {
     if (DissolveSys::sameString("Data1D", dataType))
         return true;
@@ -100,7 +100,7 @@ bool GraphGizmo::acceptsData(const char *dataType)
 }
 
 // Send data (referenced by its object tag) to the Gizmo
-bool GraphGizmo::sendData(const char *dataType, const char *objectTag, const char *name)
+bool GraphGizmo::sendData(std::string_view dataType, std::string_view objectTag, std::string_view name)
 {
     Renderable::RenderableType rendType = Renderable::renderableTypes().enumeration(dataType);
     if ((rendType != Renderable::Data1DRenderable) && (rendType != Renderable::Data2DRenderable) &&

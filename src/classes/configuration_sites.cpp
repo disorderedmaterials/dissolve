@@ -37,7 +37,7 @@ const SiteStack *Configuration::siteStack(SpeciesSite *site)
     // Recreate the stack list
     if (!stack->create(this, site))
     {
-        Messenger::error("Failed to create stack for site '%s' in Configuration '%s'.\n", site->name(), name());
+        Messenger::error("Failed to create stack for site '{}' in Configuration '{}'.\n", site->name(), name());
         siteStacks_.remove(stack);
         return NULL;
     }

@@ -29,15 +29,15 @@
 class Element
 {
     public:
-    Element(int Z, const char *name, const char *symbol, int group);
+    Element(int Z, std::string_view name, std::string_view symbol, int group);
 
     private:
     // Atomic number (Z)
     int Z_;
     // Element name
-    const char *name_;
+    std::string_view name_;
     // Element symbol
-    const char *symbol_;
+    std::string_view symbol_;
     // Group in periodic table
     int group_;
 
@@ -47,9 +47,9 @@ class Element
     // Return whether the element is unknown
     bool isUnknown() const;
     // Return name of element
-    const char *name() const;
+    std::string_view name() const;
     // Return symbol of element
-    const char *symbol() const;
+    std::string_view symbol() const;
     // Return group for element
     int group() const;
 };
@@ -68,17 +68,17 @@ class Elements
     // Return Element with corresponding Z
     static Element &element(int Z);
     // Return Element with corresponding symbol
-    static Element &element(const char *symbol);
+    static Element &element(std::string_view symbol);
     // Return pointer to Element with corresponding Z
     static Element *elementPointer(int Z);
     // Return pointer to Element with corresponding symbol
-    static Element *elementPointer(const char *symbol);
+    static Element *elementPointer(std::string_view symbol);
     // Return total number of defined elements
-    static int nElements();
+    static constexpr int nElements() { return 119; }
     // Return name of element with specified Z
-    static const char *name(int Z);
+    static std::string_view name(int Z);
     // Return symbol of element with specified Z
-    static const char *symbol(int Z);
+    static std::string_view symbol(int Z);
     // Return group for element with specified Z
     static int group(int Z);
 
@@ -122,9 +122,9 @@ class ElementReference
     // Return atomic number (Z)
     int Z() const;
     // Return name of element
-    const char *name() const;
+    std::string_view name() const;
     // Return symbol of element
-    const char *symbol() const;
+    std::string_view symbol() const;
 };
 
 // Element defines

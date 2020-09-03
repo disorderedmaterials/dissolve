@@ -55,12 +55,13 @@ bool Forcefield_OPLSAA2005_Triols::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_OPLSAA2005_Triols::name() const { return "OPLSAA2005/Triols"; }
+std::string_view Forcefield_OPLSAA2005_Triols::name() const { return "OPLSAA2005/Triols"; }
 
 // Return description for Forcefield
-const char *Forcefield_OPLSAA2005_Triols::description() const
+std::string_view Forcefield_OPLSAA2005_Triols::description() const
 {
-    static CharString desc("Alcohols from OPLS-AA (2005), covering triols only.<br/><br/>References: %s",
-                           publicationReferences());
-    return desc.get();
+    static std::string desc =
+        fmt::format("Alcohols from OPLS-AA (2005), covering triols only.<br/><br/>References: {}", publicationReferences());
+
+    return desc;
 }

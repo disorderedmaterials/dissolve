@@ -34,7 +34,7 @@
 template <class Configuration> RefDataList<Configuration, int> ObjectStore<Configuration>::objects_;
 template <class Configuration> int ObjectStore<Configuration>::objectCount_ = 0;
 template <class Configuration> int ObjectStore<Configuration>::objectType_ = ObjectInfo::ConfigurationObject;
-template <class Configuration> const char *ObjectStore<Configuration>::objectTypeName_ = "Configuration";
+template <class Configuration> std::string_view ObjectStore<Configuration>::objectTypeName_ = "Configuration";
 
 Configuration::Configuration()
     : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext, "EndGenerator")
@@ -75,7 +75,7 @@ void Configuration::clear()
  */
 
 // Set name of the Configuration
-void Configuration::setName(const char *name)
+void Configuration::setName(std::string_view name)
 {
     name_ = name;
 
@@ -84,10 +84,10 @@ void Configuration::setName(const char *name)
 }
 
 // Return name of the Configuration
-const char *Configuration::name() const { return name_.get(); }
+std::string_view Configuration::name() const { return name_; }
 
 // Return nice name of the Configuration
-const char *Configuration::niceName() const { return niceName_.get(); }
+std::string_view Configuration::niceName() const { return niceName_; }
 
 // Return the current generator
 Procedure &Configuration::generator() { return generator_; }
@@ -99,10 +99,10 @@ bool Configuration::generate(ProcessPool &procPool, double pairPotentialRange)
     empty();
 
     // Generate the contents
-    Messenger::print("\nExecuting generator procedure for Configuration '%s'...\n\n", niceName());
+    Messenger::print("\nExecuting generator procedure for Configuration '{}'...\n\n", niceName());
     auto result = generator_.execute(procPool, this, "Generator", moduleData_);
     if (!result)
-        return Messenger::error("Failed to generate Configuration '%s'.\n", niceName());
+        return Messenger::error("Failed to generate Configuration '{}'.\n", niceName());
     Messenger::print("\n");
 
     // Set-up Cells for the Box
@@ -119,7 +119,7 @@ bool Configuration::generate(ProcessPool &procPool, double pairPotentialRange)
 
     // Sanity check the contents - if we have zero atoms then there's a problem!
     if (nAtoms() == 0)
-        return Messenger::error("Generated contents for Configuration '%s' contains no atoms!\n", name());
+        return Messenger::error("Generated contents for Configuration '{}' contains no atoms!\n", name());
 
     return true;
 }
@@ -139,7 +139,7 @@ bool Configuration::loadCoordinates(LineParser &parser, CoordinateImportFileForm
     // Temporary array now contains some number of atoms - does it match the number in the configuration's molecules?
     if (atoms_.nItems() != r.nItems())
         return Messenger::error(
-            "Number of atoms read from initial coordinates file (%i) does not match that in Configuration (%i).\n", r.nItems(),
+            "Number of atoms read from initial coordinates file ({}) does not match that in Configuration ({}).\n", r.nItems(),
             atoms_.nItems());
 
     // All good, so copy atom coordinates over into our array
@@ -176,7 +176,7 @@ bool Configuration::initialiseContent(ProcessPool &procPool, double pairPotentia
         {
             if (DissolveSys::fileExists(inputCoordinates_))
             {
-                Messenger::print("Loading initial coordinates from file '%s'...\n", inputCoordinates_.filename());
+                Messenger::print("Loading initial coordinates from file '{}'...\n", inputCoordinates_.filename());
                 LineParser inputFileParser(&procPool);
                 if (!inputFileParser.openInput(inputCoordinates_))
                     return false;
@@ -188,7 +188,7 @@ bool Configuration::initialiseContent(ProcessPool &procPool, double pairPotentia
                 updateCellContents();
             }
             else
-                return Messenger::error("Input coordinates file '%s' specified for Configuration '%s', but the "
+                return Messenger::error("Input coordinates file '{}' specified for Configuration '{}', but the "
                                         "file doesn't exist.\n",
                                         name(), inputCoordinates_.filename());
         }
@@ -255,7 +255,7 @@ bool Configuration::broadcastCoordinates(ProcessPool &procPool, int rootRank)
     // Master assembles Atom coordinate arrays...
     if (procPool.poolRank() == rootRank)
     {
-        Messenger::printVerbose("Process rank %i is assembling coordinate data...\n", procPool.poolRank());
+        Messenger::printVerbose("Process rank {} is assembling coordinate data...\n", procPool.poolRank());
         for (int n = 0; n < atoms_.nItems(); ++n)
         {
             x[n] = atoms_[n]->r().x;

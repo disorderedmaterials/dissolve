@@ -32,7 +32,7 @@
 #include <QMdiSubWindow>
 #include <QMenu>
 
-WorkspaceTab::WorkspaceTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title)
+WorkspaceTab::WorkspaceTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
     : ListItem<WorkspaceTab>(), MainTab(dissolveWindow, dissolve, parent, title, this)
 {
     ui.setupUi(this);
@@ -117,7 +117,7 @@ void WorkspaceTab::removeGizmo(QString uniqueName)
     Gizmo *gizmo = Gizmo::find(qPrintable(uniqueName));
     if (!gizmo)
     {
-        Messenger::error("Received signal to remove gizmo '%s' but it cannot be found...\n", qPrintable(uniqueName));
+        Messenger::error("Received signal to remove gizmo '{}' but it cannot be found...\n", qPrintable(uniqueName));
         return;
     }
 
@@ -125,20 +125,20 @@ void WorkspaceTab::removeGizmo(QString uniqueName)
 }
 
 // Create Gizmo with specified type
-Gizmo *WorkspaceTab::createGizmo(const char *type)
+Gizmo *WorkspaceTab::createGizmo(QString type)
 {
     Gizmo *gizmo = NULL;
     QWidget *widget = NULL;
 
     // Check the type of the provided gizmo...
-    if (DissolveSys::sameString(type, "Graph"))
+    if (type == "Graph")
     {
         GraphGizmo *graph = new GraphGizmo(dissolveWindow_->dissolve(), Gizmo::uniqueName("Graph"));
         connect(graph, SIGNAL(windowClosed(QString)), this, SLOT(removeGizmo(QString)));
         gizmo = graph;
         widget = graph;
     }
-    else if (DissolveSys::sameString(type, "Integrator1D"))
+    else if (type == "Integrator1D")
     {
         Integrator1DGizmo *integrator1D = new Integrator1DGizmo(dissolveWindow_->dissolve(), Gizmo::uniqueName("Integrator1D"));
         connect(integrator1D, SIGNAL(windowClosed(QString)), this, SLOT(removeGizmo(QString)));
@@ -147,7 +147,8 @@ Gizmo *WorkspaceTab::createGizmo(const char *type)
     }
     else
     {
-        Messenger::error("Couldn't add gizmo to workspace '%s - unrecognised type '%s' encountered.\n", title(), type);
+        Messenger::error("Couldn't add gizmo to workspace '{} - unrecognised type '{}' encountered.\n", qPrintable(title()),
+                         qPrintable(type));
         return NULL;
     }
 
@@ -192,29 +193,6 @@ void WorkspaceTab::showContextMenu(const QPoint &pos)
     connect(gizmoMenu->addAction("Graph"), SIGNAL(triggered(bool)), this, SLOT(contextMenuAddGizmo(bool)));
     connect(gizmoMenu->addAction("Integrator1D"), SIGNAL(triggered(bool)), this, SLOT(contextMenuAddGizmo(bool)));
 
-    // Modules within Configurations
-    // 	menuItem = parent->addAction("Configurations");
-    // 	menuItem->setFont(italicFont);
-    // 	menuItem->setEnabled(false);
-    // 	ListIterator<Configuration> configIterator(dissolve_.configurations());
-    // 	while (Configuration* cfg = configIterator.iterate())
-    // 	{
-    // 		QMenu* cfgMenu = parent->addMenu(cfg->name());
-    // 		if (cfg->nModules() == 0)
-    // 		{
-    // 			QAction* moduleItem = cfgMenu->addAction("No Local Modules");
-    // 			moduleItem->setFont(italicFont);
-    // 			moduleItem->setEnabled(false);
-    // 		}
-    // 		ListIterator<Module> moduleIterator(cfg->modules());
-    // 		while (Module* module= moduleIterator.iterate())
-    // 		{
-    // 			QAction* moduleItem = cfgMenu->addAction(CharString("%s (%s)", module->type(),
-    // module->uniqueName()).get()); 			moduleItem->setData(VariantPointer<Module>(module));
-    // connect(moduleItem, SIGNAL(triggered(bool)), this, SLOT(contextMenuModuleSelected(bool)));
-    // 		}
-    // 	}
-
     menu.exec(mapToGlobal(pos));
 }
 
@@ -248,12 +226,12 @@ bool WorkspaceTab::readState(LineParser &parser, const CoreData &coreData)
         // Read line from the file, which should contain the gizmo type
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
-        Gizmo *gizmo = createGizmo(parser.argc(0));
+        Gizmo *gizmo = createGizmo(QString::fromStdString(std::string(parser.argsv(0))));
         if (gizmo == NULL)
-            return Messenger::error("Unrecognised gizmo type '%s' in workspace '%s'.\n", parser.argc(0), title());
+            return Messenger::error("Unrecognised gizmo type '{}' in workspace '{}'.\n", parser.argsv(0), qPrintable(title()));
 
         // Set the unique name
-        gizmo->setUniqueName(Gizmo::uniqueName(parser.argc(1)));
+        gizmo->setUniqueName(Gizmo::uniqueName(QString::fromStdString(std::string(parser.argsv(1)))));
 
         // Read in the widget's geometry / state / flags
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -280,7 +258,7 @@ bool WorkspaceTab::readState(LineParser &parser, const CoreData &coreData)
 bool WorkspaceTab::writeState(LineParser &parser) const
 {
     // Write tab state information:   nGizmos
-    if (!parser.writeLineF("%i      # NGizmos\n", gizmos_.nItems()))
+    if (!parser.writeLineF("{}      # NGizmos\n", gizmos_.nItems()))
         return false;
 
     // Loop over our subwindow list
@@ -288,12 +266,12 @@ bool WorkspaceTab::writeState(LineParser &parser) const
     while (Gizmo *gizmo = gizmoIterator.iterate())
     {
         // Write Gizmo type
-        if (!parser.writeLineF("%s  '%s'\n", gizmo->type(), gizmo->uniqueName()))
+        if (!parser.writeLineF("{}  '{}'\n", qPrintable(gizmo->type()), qPrintable(gizmo->uniqueName())))
             return false;
 
         // Write window geometry / state
         QRect geometry = gizmo->window()->geometry();
-        if (!parser.writeLineF("%i %i %i %i %s %s\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(),
+        if (!parser.writeLineF("{} {} {} {} {} {}\n", geometry.x(), geometry.y(), geometry.width(), geometry.height(),
                                DissolveSys::btoa(gizmo->window()->isMaximized()),
                                DissolveSys::btoa(gizmo->window()->isShaded())))
             return false;

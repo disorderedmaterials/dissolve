@@ -74,7 +74,7 @@ bool ExpressionNode::setArg(int i, ExpressionValue &result)
 {
     if ((i < 0) || (i >= args_.nItems()))
     {
-        Messenger::printVerbose("ExpressionNode::setArg : Argument index %i is out of range (node = %p).\n", i, this);
+        Messenger::printVerbose("ExpressionNode::setArg : Argument index {} is out of range.\n", i);
         return false;
     }
 
@@ -82,7 +82,6 @@ bool ExpressionNode::setArg(int i, ExpressionValue &result)
     if (args_[i]->item()->readOnly())
     {
         args_[i]->item()->nodePrint(0);
-        // printf("Argument %i is read-only and can't be set.\n", i);
         return false;
     }
 
@@ -135,7 +134,7 @@ bool ExpressionNode::arg(int i, ExpressionValue &result)
 {
     if ((i < 0) || (i >= args_.nItems()))
     {
-        Messenger::printVerbose("ExpressionNode::arg : Argument index %i is out of range (node = %p).\n", i, this);
+        Messenger::printVerbose("ExpressionNode::arg : Argument index {} is out of range.\n", i);
         return false;
     }
     return args_[i]->item()->execute(result);
@@ -146,13 +145,13 @@ bool ExpressionNode::argb(int i)
 {
     if ((i < 0) || (i >= args_.nItems()))
     {
-        Messenger::printVerbose("ExpressionNode::argb : Argument index %i is out of range (node = %p).\n", i, this);
+        Messenger::printVerbose("ExpressionNode::argb : Argument index {} is out of range.\n", i);
         return false;
     }
 
     ExpressionValue argValue;
     if (!args_[i]->item()->execute(argValue))
-        Messenger::printVerbose("Couldn't retrieve argument %i.\n", i + 1);
+        Messenger::printVerbose("Couldn't retrieve argument {}.\n", i + 1);
 
     return (argValue.isInteger() ? argValue.asInteger() > 0 : argValue.asDouble() > 0.0);
 }
@@ -162,13 +161,13 @@ int ExpressionNode::argi(int i)
 {
     if ((i < 0) || (i >= args_.nItems()))
     {
-        Messenger::printVerbose("ExpressionNode::argi : Argument index %i is out of range (node = %p).\n", i, this);
+        Messenger::printVerbose("ExpressionNode::argi : Argument index {} is out of range.\n", i);
         return false;
     }
 
     ExpressionValue argValue;
     if (!args_[i]->item()->execute(argValue))
-        Messenger::printVerbose("Couldn't retrieve argument %i.\n", i + 1);
+        Messenger::printVerbose("Couldn't retrieve argument {}.\n", i + 1);
 
     return argValue.asInteger();
 }
@@ -178,13 +177,13 @@ double ExpressionNode::argd(int i)
 {
     if ((i < 0) || (i >= args_.nItems()))
     {
-        Messenger::printVerbose("ExpressionNode::argd : Argument index %i is out of range (node = %p).\n", i, this);
+        Messenger::printVerbose("ExpressionNode::argd : Argument index {} is out of range.\n", i);
         return false;
     }
 
     ExpressionValue argValue;
     if (!args_[i]->item()->execute(argValue))
-        Messenger::printVerbose("Couldn't retrieve argument %i.\n", i + 1);
+        Messenger::printVerbose("Couldn't retrieve argument {}.\n", i + 1);
 
     return argValue.asDouble();
 }
@@ -194,9 +193,9 @@ ExpressionNode *ExpressionNode::argNode(int i)
 {
     if ((i < 0) || (i > args_.nItems()))
     {
-        Messenger::printVerbose("ExpressionNode::argNode : Argument index %i is out of range for returning the "
-                                "argument node (node = %p).\n",
-                                i, this);
+        Messenger::printVerbose("ExpressionNode::argNode : Argument index {} is out of range for returning the "
+                                "argument node.\n",
+                                i);
         return NULL;
     }
     return args_[i]->item();

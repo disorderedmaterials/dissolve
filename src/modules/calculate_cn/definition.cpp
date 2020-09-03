@@ -22,13 +22,13 @@
 #include "modules/calculate_cn/cn.h"
 
 // Return type of module
-const char *CalculateCNModule::type() const { return "CalculateCN"; }
+std::string_view CalculateCNModule::type() const { return "CalculateCN"; }
 
 // Return category for module
-const char *CalculateCNModule::category() const { return "Analysis"; }
+std::string_view CalculateCNModule::category() const { return "Analysis"; }
 
 // Return brief description of module
-const char *CalculateCNModule::brief() const
+std::string_view CalculateCNModule::brief() const
 {
     return "Calculate coordination numbers from an existing radial distribution function";
 }

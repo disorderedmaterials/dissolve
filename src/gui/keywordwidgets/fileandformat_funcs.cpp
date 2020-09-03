@@ -41,7 +41,7 @@ FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget *parent, KeywordB
     keyword_ = dynamic_cast<FileAndFormatKeyword *>(keyword);
     if (!keyword_)
     {
-        Messenger::error("Couldn't cast base keyword '%s' into FileAndFormatKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into FileAndFormatKeyword.\n", keyword->name());
         return;
     }
 
@@ -50,7 +50,7 @@ FileAndFormatKeywordWidget::FileAndFormatKeywordWidget(QWidget *parent, KeywordB
     // Populate combo with the file formats available
     ui_.FormatCombo->clear();
     for (int n = 0; n < keyword_->data().nFormats(); ++n)
-        ui_.FormatCombo->addItem(keyword_->data().formatKeyword(n));
+        ui_.FormatCombo->addItem(QString::fromStdString(std::string(keyword_->data().formatKeyword(n))));
 
     // If the FileAndFormat has keyword options, enable the options button.
     ui_.OptionsButton->setEnabled(keyword_->hasOptions());
@@ -96,17 +96,16 @@ void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
 
     // Determine what sort of dialog we need to raise...
     QString filename;
+    QFileInfo fileInfo(QString::fromStdString(std::string(fileAndFormat.filename())));
     if (fileAndFormat.fileMustExist())
     {
         // Input File
-        QFileInfo fileInfo(fileAndFormat.filename());
         filename =
             QFileDialog::getOpenFileName(this, tr("Select Input File"), fileInfo.absoluteFilePath(), tr("All Files (*.*)"));
     }
     else
     {
         // Output File
-        QFileInfo fileInfo(fileAndFormat.filename());
         filename =
             QFileDialog::getSaveFileName(this, tr("Select Output File"), fileInfo.absoluteFilePath(), tr("All Files (*.*)"));
     }
@@ -114,7 +113,7 @@ void FileAndFormatKeywordWidget::on_FileSelectButton_clicked(bool checked)
     if (!filename.isEmpty())
     {
         // Set relative path to file, using the current input file as the reference point
-        QFileInfo fileInfo(coreData_.inputFilename());
+        QFileInfo fileInfo(QString::fromStdString(std::string(coreData_.inputFilename())));
         ui_.FileEdit->setText(fileInfo.dir().relativeFilePath(filename));
         updateKeywordData();
         updateWidgetValues(coreData_);
@@ -156,7 +155,7 @@ void FileAndFormatKeywordWidget::checkFileValidity()
     if (fileAndFormat.fileMustExist())
     {
         ui_.FileExistsIndicator->setVisible(true);
-        auto ok = fileAndFormat.hasFilename() ? QFile::exists(fileAndFormat.filename()) : false;
+        auto ok = fileAndFormat.hasFilename() ? DissolveSys::fileExists(fileAndFormat.filename()) : false;
         ui_.FileExistsIndicator->setOK(ok);
     }
     else
@@ -175,7 +174,7 @@ void FileAndFormatKeywordWidget::updateWidgetValues(const CoreData &coreData)
     auto &fileAndFormat = keyword_->data();
 
     // UPdate widgets
-    ui_.FileEdit->setText(fileAndFormat.filename());
+    ui_.FileEdit->setText(QString::fromStdString(std::string(fileAndFormat.filename())));
     ui_.FormatCombo->setCurrentIndex(fileAndFormat.formatIndex());
     checkFileValidity();
 

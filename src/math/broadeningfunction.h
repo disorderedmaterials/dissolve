@@ -23,7 +23,6 @@
 
 #define MAXBROADENINGFUNCTIONPARAMS 6
 
-#include "base/charstring.h"
 #include "genericitems/base.h"
 
 // Forward Declarations
@@ -45,13 +44,13 @@ class BroadeningFunction : public GenericItemBase
         nFunctionTypes
     };
     // Return FunctionType from supplied string
-    static FunctionType functionType(const char *s);
+    static FunctionType functionType(std::string_view s);
     // Return FunctionType name
-    static const char *functionType(FunctionType func);
+    static std::string_view functionType(FunctionType func);
     // Return number of parameters needed to define FunctionType
     static int nFunctionParameters(FunctionType func);
     // Return description for FunctionType
-    static const char *functionDescription(FunctionType func);
+    static std::string_view functionDescription(FunctionType func);
 
     public:
     BroadeningFunction(FunctionType function = NoFunction, double p1 = 0.0, double p2 = 0.0, double p3 = 0.0, double p4 = 0.0,
@@ -88,9 +87,9 @@ class BroadeningFunction : public GenericItemBase
     // Return parameters array
     double *parameters();
     // Return specified parameter name
-    const char *parameterName(int index) const;
+    std::string_view parameterName(int index) const;
     // Return short summary of function parameters
-    CharString parameterSummary() const;
+    std::string parameterSummary() const;
     // Set up any dependent parameters based on the current parameters
     void setUpDependentParameters();
     // Set inversion state
@@ -126,7 +125,7 @@ class BroadeningFunction : public GenericItemBase
      */
     public:
     // Return class name
-    static const char *itemClassName();
+    static std::string_view itemClassName();
     // Read data through specified LineParser
     bool read(LineParser &parser, CoreData &coreData);
     // Write data through specified LineParser

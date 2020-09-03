@@ -38,10 +38,10 @@ ModuleLayer::~ModuleLayer() {}
  */
 
 // Set name of layer
-void ModuleLayer::setName(const char *name) { name_ = name; }
+void ModuleLayer::setName(std::string_view name) { name_ = name; }
 
 // Return name of layer
-const char *ModuleLayer::name() const { return name_.get(); }
+std::string_view ModuleLayer::name() const { return name_; }
 
 // Set whether the layer is enabled
 void ModuleLayer::setEnabled(bool enabled) { enabled_ = enabled; }
@@ -56,10 +56,9 @@ void ModuleLayer::setFrequency(int frequency) { frequency_ = frequency; }
 int ModuleLayer::frequency() const { return frequency_; }
 
 // Return short descriptive text relating frequency to supplied iteration number
-const char *ModuleLayer::frequencyDetails(int iteration) const
+std::string ModuleLayer::frequencyDetails(int iteration) const
 {
-    static CharString result;
-
+    // Check edge cases
     if (frequency_ < 0)
         return "NEGATIVE?";
     else if ((!enabled_) || (frequency_ == 0))
@@ -68,16 +67,13 @@ const char *ModuleLayer::frequencyDetails(int iteration) const
         return "every time";
     else if ((iteration % frequency_) == 0)
         return "this iteration";
-    else
-    {
-        // Calculate number of steps necessary to get to next multiple of the frequency_
-        auto nToGo = frequency_ - (iteration - frequency_ * (iteration / frequency_));
-        if (nToGo == 1)
-            return "next iteration";
 
-        result.sprintf("in %i steps time", nToGo);
-        return result.get();
-    }
+    // Calculate number of steps necessary to get to next multiple of the frequency_
+    auto nToGo = frequency_ - (iteration - frequency_ * (iteration / frequency_));
+    if (nToGo == 1)
+        return "next iteration";
+
+    return fmt::format("in {} steps time", nToGo);
 }
 
 // Return whether the layer should execute this iteration

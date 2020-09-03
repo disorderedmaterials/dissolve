@@ -44,31 +44,31 @@ class GenericList
     // Add specified item to list (from base class pointer)
     void add(GenericItem *item);
     // Create an item of the specified type
-    GenericItem *create(const char *name, const char *itemClassName, int version = 0, int flags = 0);
+    GenericItem *create(std::string_view name, std::string_view itemClassName, int version = 0, int flags = 0);
     // Return whether the named item is contained in the list
-    bool contains(const char *name, const char *prefix = NULL);
+    bool contains(std::string_view name, std::string_view prefix = "");
     // Return if named item, if it exists, is of specified type
-    bool isItemOfType(const char *type, const char *name, const char *prefix = NULL);
+    bool isItemOfType(std::string_view type, std::string_view name, std::string_view prefix = "");
     // Return item list
     List<GenericItem> &items();
     // Return the named item from the list
-    GenericItem *find(const char *name);
+    GenericItem *find(std::string_view name);
     // Return the named item from the list (with prefix)
-    GenericItem *find(const char *name, const char *prefix);
+    GenericItem *find(std::string_view name, std::string_view prefix);
     // Return the version of the named item from the list
-    int version(const char *name, const char *prefix = NULL) const;
+    int version(std::string_view name, std::string_view prefix = "") const;
     // Return list of all items with specified prefix (before first '_')
-    RefList<GenericItem> itemsWithPrefix(const char *prefix);
+    RefList<GenericItem> itemsWithPrefix(std::string_view prefix);
     // Return list of all items with specified class type
-    RefList<GenericItem> itemsWithClassName(const char *className);
+    RefList<GenericItem> itemsWithClassName(std::string_view className);
     // List all items
     void listItems();
     // Remove named item
-    bool remove(const char *name, const char *prefix);
+    bool remove(std::string_view name, std::string_view prefix);
     // Rename item
-    bool rename(const char *oldName, const char *oldPrefix, const char *newName, const char *newPrefix);
+    bool rename(std::string_view oldName, std::string_view oldPrefix, std::string_view newName, std::string_view newPrefix);
     // Prune all items with '@suffix'
-    void pruneWithSuffix(const char *suffix);
+    void pruneWithSuffix(std::string_view suffix);
 
     /*
      * Parallel Comms

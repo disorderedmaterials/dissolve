@@ -21,9 +21,9 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/parameters.h"
-#include "templates/list.h"
+#include "templates/listitem.h"
+#include <string>
 
 // Forward Declarations
 class Forcefield;
@@ -32,7 +32,7 @@ class Forcefield;
 class ForcefieldParameters : public ListItem<ForcefieldParameters>
 {
     public:
-    ForcefieldParameters(const char *name = NULL, double data0 = 0.0, double data1 = 0.0, double data2 = 0.0,
+    ForcefieldParameters(std::string_view name = "", double data0 = 0.0, double data1 = 0.0, double data2 = 0.0,
                          double data3 = 0.0);
     ~ForcefieldParameters();
 
@@ -41,11 +41,11 @@ class ForcefieldParameters : public ListItem<ForcefieldParameters>
      */
     private:
     // Name of parameters
-    CharString name_;
+    std::string name_;
 
     public:
-    // Return name of type
-    const char *name() const;
+    // Return name of parameter
+    std::string_view name() const;
 
     /*
      * Parameters

@@ -35,7 +35,7 @@ class Integrator1DGizmo : public QWidget, public Gizmo
     Q_OBJECT
 
     public:
-    Integrator1DGizmo(Dissolve &dissolve, const char *uniqueName);
+    Integrator1DGizmo(Dissolve &dissolve, const QString uniqueName);
     ~Integrator1DGizmo();
 
     /*
@@ -43,7 +43,7 @@ class Integrator1DGizmo : public QWidget, public Gizmo
      */
     public:
     // Return string specifying Gizmo type
-    const char *type() const;
+    const QString type() const;
 
     /*
      * UI

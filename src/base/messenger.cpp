@@ -34,94 +34,28 @@ bool Messenger::verbose_ = false;
 bool Messenger::redirect_ = false;
 bool Messenger::masterOnly_ = false;
 LineParser Messenger::parser_; //= new LineParser;
-char Messenger::text_[8096];
-char Messenger::workingText_[8096];
 OutputHandler *Messenger::outputHandler_ = NULL;
-
-Messenger::Messenger() {}
+std::string Messenger::outputPrefix_;
 
 /*
  * General Print Routines (Private)
  */
 
-// Master text creation / formatting routine
-void Messenger::createText(const char *indentText, const char *format, va_list arguments)
+// Split supplied text into lines (delimited by '\n') and send for output
+void Messenger::splitAndPrint(std::string_view s)
 {
-    // Reset main text string storage
-    text_[0] = '\0';
-
-    // First, vsprintf the supplied format/arguments into workingText_
-    vsprintf(workingText_, format, arguments);
-
-    // Now, use strtok to split the workingText_ up into lines, prepending the indentText and/or process id to each
-    CharString prependedLine;
-    char *startChar = workingText_;
-    char *endChar = workingText_;
-    auto lastPart = (*endChar == '\0');
-    while (!lastPart)
+    // The created text may be over multiple lines (separated by '\n') so split it, prepending the prefix and/or process id to
+    // each line as necessary
+    size_t pos = s.find('\n');
+    do
     {
-        // Find end position of next segment, which is either a newline or NULL (if it is the latter, note that it is
-        // the true end of the string) We will set this end position to be NULL regardless, since a newline will be
-        // appended in the next part
-        while ((*endChar != '\n') && (*endChar != '\0'))
-            endChar++;
-        if (*endChar == '\0')
-            lastPart = true;
-        *endChar = '\0';
+        // Output the current line (up to the next newline delimiter)
+        outputText(s.substr(0, pos));
 
-        // If we were given some 'indentText', print copies of it before the message
-        if (indentText != NULL)
-        {
-            if (redirect_ || (ProcessPool::nWorldProcesses() == 1))
-                prependedLine.sprintf("%s %s\n", indentText, startChar);
-            else
-                prependedLine.sprintf("[%i] %s %s\n", ProcessPool::worldRank(), indentText, startChar);
-        }
-        else
-        {
-            if (redirect_ || (ProcessPool::nWorldProcesses() == 1))
-                prependedLine.sprintf("%s\n", startChar);
-            else
-                prependedLine.sprintf("[%i] %s\n", ProcessPool::worldRank(), startChar);
-        }
-        strcat(text_, prependedLine.get());
-
-        // Move our endChar position to the next character, and set the startChar to this position as well
-        ++endChar;
-        startChar = endChar;
-
-        // Make an additional check for this being the actual string terminator
-        if (*endChar == '\0')
-            break;
-    }
-}
-
-// Master text creation / formatting routine
-void Messenger::createAndPrintText(const char *indentText, const char *format, va_list arguments)
-{
-    if (masterOnly_ && (!ProcessPool::isWorldMaster()))
-        return;
-
-    createText(indentText, format, arguments);
-
-    outputText(text_);
-}
-
-// Create and print text (simple)
-void Messenger::createAndPrintText(const char *text)
-{
-    if (masterOnly_ && (!ProcessPool::isWorldMaster()))
-        return;
-
-    // Reset main text string storage
-    text_[0] = '\0';
-
-    if (redirect_ || (ProcessPool::nWorldProcesses() == 1))
-        sprintf(text_, "%s\n", text);
-    else
-        sprintf(text_, "[%i] %s\n", ProcessPool::worldRank(), text);
-
-    outputText(text_);
+        // Adjust our view of the working string and find the next newline (if any)
+        s = s.substr(pos + 1);
+        pos = s.find('\n');
+    } while (pos != std::string::npos);
 }
 
 /*
@@ -149,174 +83,105 @@ bool Messenger::isVerbose() { return verbose_; }
 // Set status of master-only mode
 void Messenger::setMasterOnly(bool b) { masterOnly_ = b; }
 
-// Print standard message
-void Messenger::print(const char *fmt, ...)
+// Print normal message (no formatters)
+void Messenger::print(std::string_view s)
 {
     if (quiet_ || muted_)
         return;
 
-    va_list arguments;
-    va_start(arguments, fmt);
-    createAndPrintText(NULL, fmt, arguments);
-    va_end(arguments);
-}
-
-// Print verbose message
-void Messenger::printVerbose(const char *fmt, ...)
-{
-    if (quiet_ || muted_ || (!verbose_))
-        return;
-
-    va_list arguments;
-    va_start(arguments, fmt);
-    createAndPrintText(NULL, fmt, arguments);
-    va_end(arguments);
-}
-
-// Print error message
-bool Messenger::error(const char *fmt, ...)
-{
-    if (quiet_ || muted_)
-        return false;
-
-    va_list arguments;
-    va_start(arguments, fmt);
-
-    outputText("\n");
-    if (outputHandler_)
-        outputHandler_->styleForError();
-    createAndPrintText("***  ERROR");
-    createAndPrintText("***  ERROR    ", fmt, arguments);
-    createAndPrintText("***  ERROR");
-    if (outputHandler_)
-        outputHandler_->resetStyling();
-    outputText("\n");
-
-    va_end(arguments);
-
-    return false;
-}
-
-// Print warning message
-void Messenger::warn(const char *fmt, ...)
-{
-    if (quiet_ || muted_)
-        return;
-
-    va_list arguments;
-    va_start(arguments, fmt);
-
-    if (outputHandler_)
-        outputHandler_->styleForWarning();
-    outputText("\n!!! WARNING\n");
-    createAndPrintText("!!! WARNING   ", fmt, arguments);
-    outputText("!!! WARNING\n\n");
-    if (outputHandler_)
-        outputHandler_->resetStyling();
-
-    va_end(arguments);
-}
-
-// Print banner message of specified width
-void Messenger::banner(const char *fmt, ...)
-{
-    if (quiet_ || muted_)
-        return;
-
-    static CharString bannerChars;
-    const auto width = 80;
-    if (bannerChars.length() < width)
-    {
-        bannerChars.createEmpty(width + 1);
-        bannerChars.fill('=');
-    }
-
-    // First, create the text using vsprintf
-    va_list arguments;
-    va_start(arguments, fmt);
-    vsprintf(workingText_, fmt, arguments);
-    va_end(arguments);
-    CharString bannerText = workingText_;
-
-    // Now, get the length of the banner text and create a format for printing it into a line 80 chars wide
-    auto leftPad = (width - bannerText.length()) / 2 - 1;
-    auto rightPad = width - bannerText.length() - leftPad - 2;
-    char bannerFormat[64];
-    sprintf(bannerFormat, "%%s\n%%c%%%is%%s%%%is%%c\n%%s", leftPad, rightPad);
-
-    // Finally, print the banner
-    outputText("\n");
-    print(bannerFormat, bannerChars.get(), '*', " ", bannerText.get(), " ", '*', bannerChars.get());
-    outputText("\n");
-}
-
-// Print heading message
-void Messenger::heading(const char *fmt, ...)
-{
-    if (quiet_ || muted_)
-        return;
-
-    static CharString bannerChars;
-    const auto width = 80;
-    if (bannerChars.length() < width)
-    {
-        bannerChars.createEmpty(width + 1);
-        bannerChars.fill('-');
-    }
-
-    // First, create the text using vsprintf
-    va_list arguments;
-    va_start(arguments, fmt);
-    vsprintf(workingText_, fmt, arguments);
-    va_end(arguments);
-    CharString bannerText = workingText_;
-
-    // Now, get the length of the banner text and create a format for printing it into a line 80 chars wide
-    auto leftPad = (width - bannerText.length()) / 2 - 1;
-    auto rightPad = width - bannerText.length() - leftPad - 2;
-    char bannerFormat[64];
-    sprintf(bannerFormat, "%%%is%%s%%%is", leftPad, rightPad);
-
-    outputText("\n");
-    print(bannerFormat, " ", bannerText.get(), " ");
-    print("%s\n", bannerChars.get());
-    outputText("\n");
+    splitAndPrint(s);
 }
 
 /*
  * Text Output Routine
  */
 
-// Set output handler
-void Messenger::setOutputHandler(OutputHandler *outputHandler) { outputHandler_ = outputHandler; }
+// Set prefix text
+void Messenger::setOutputPrefix(std::string_view prefix) { outputPrefix_ = prefix; }
 
-// Print text
-void Messenger::outputText(const char *text)
+// Clear prefix text
+void Messenger::clearOutputPrefix() { outputPrefix_.clear(); }
+
+// Output text to relevant handler
+void Messenger::outputText(std::string_view s)
 {
-    // If we are redirecting to files, use the parser_
-    if (redirect_)
-        parser_.writeLineF("%s", text);
+    if (outputPrefix_.empty())
+    {
+        // If we are redirecting to files, use the parser_
+        if (redirect_)
+            parser_.writeLineF("{}", std::string(s));
+        else
+        {
+            // Not redirecting - has an OutputHandler been defined?
+            if (outputHandler_)
+                outputHandler_->outputText(std::string(s));
+            else
+                std::cout << s << std::endl;
+        }
+    }
     else
     {
-        // Not redirecting - has an OutputHandler been defined?
-        if (outputHandler_)
-            outputHandler_->outputText(text);
+        // If we are redirecting to files, use the parser_
+        if (redirect_)
+            parser_.writeLineF("{} {}", outputPrefix_, s);
         else
-            printf("%s", text);
+        {
+            // Not redirecting - has an OutputHandler been defined?
+            if (outputHandler_)
+                outputHandler_->outputText(fmt::format("{} {}", outputPrefix_, s));
+            else
+                std::cout << outputPrefix_ << " " << s << std::endl;
+        }
     }
 }
+
+// Output blank line (with prefix if set) to relevant handler
+void Messenger::outputBlank()
+{
+    if (outputPrefix_.empty())
+    {
+        // If we are redirecting to files, use the parser_
+        if (redirect_)
+            parser_.writeLine("");
+        else
+        {
+            // Not redirecting - has an OutputHandler been defined?
+            if (outputHandler_)
+                outputHandler_->outputText("");
+            else
+                std::cout << std::endl;
+        }
+    }
+    else
+    {
+        // If we are redirecting to files, use the parser_
+        if (redirect_)
+            parser_.writeLineF("{}\n", outputPrefix_);
+        else
+        {
+            // Not redirecting - has an OutputHandler been defined?
+            if (outputHandler_)
+                outputHandler_->outputText(outputPrefix_);
+            else
+                std::cout << outputPrefix_ << std::endl;
+        }
+    }
+}
+
+// Set output handler
+void Messenger::setOutputHandler(OutputHandler *outputHandler) { outputHandler_ = outputHandler; }
 
 /*
  * File Redirection
  */
 
 // Enable redirection of all messaging to specified file
-bool Messenger::enableRedirect(const char *filename)
+bool Messenger::enableRedirect(std::string_view filename)
 {
     parser_.openOutput(filename, true);
     if (!parser_.isFileGoodForWriting())
     {
-        Messenger::print("Couldn't open output file '%s' for writing.\n", filename);
+        Messenger::print("Couldn't open output file '{}' for writing.\n", filename);
         return false;
     }
 

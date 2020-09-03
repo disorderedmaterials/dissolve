@@ -25,7 +25,7 @@
 #include "classes/pairpotential.h"
 #include "math/data1d.h"
 
-PairPotentialExportFileFormat::PairPotentialExportFileFormat(const char *filename, PairPotentialExportFormat format)
+PairPotentialExportFileFormat::PairPotentialExportFileFormat(std::string_view filename, PairPotentialExportFormat format)
     : FileAndFormat(filename, format)
 {
 }
@@ -35,7 +35,7 @@ PairPotentialExportFileFormat::PairPotentialExportFileFormat(const char *filenam
  */
 
 // Return enum options for PairPotentialExportFormat
-EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat>
+EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> &
 PairPotentialExportFileFormat::pairPotentialExportFormats()
 {
     static EnumOptionsList PairPotentialExportFormats =
@@ -52,13 +52,13 @@ PairPotentialExportFileFormat::pairPotentialExportFormats()
 int PairPotentialExportFileFormat::nFormats() const { return PairPotentialExportFileFormat::nPairPotentialExportFormats; }
 
 // Return format keyword for supplied index
-const char *PairPotentialExportFileFormat::formatKeyword(int id) const
+std::string_view PairPotentialExportFileFormat::formatKeyword(int id) const
 {
     return pairPotentialExportFormats().keywordByIndex(id);
 }
 
 // Return description string for supplied index
-const char *PairPotentialExportFileFormat::formatDescription(int id) const
+std::string_view PairPotentialExportFileFormat::formatDescription(int id) const
 {
     return pairPotentialExportFormats().descriptionByIndex(id);
 }
@@ -84,17 +84,18 @@ bool PairPotentialExportFileFormat::exportBlock(LineParser &parser, PairPotentia
     const auto nPoints = pp->nPoints();
 
     // Write header comment
-    if (!parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "", "Full", "Derivative", "Original", "Additional",
-                           "Exact(Orig)", "Exact(Deriv)"))
+    if (!parser.writeLineF("#{:9}  {:12}  {:12}  {:12}  {:12}  {:12}  {:12}\n", "", "Full", "Derivative", "Original",
+                           "Additional", "Exact(Orig)", "Exact(Deriv)"))
         return false;
-    if (!parser.writeLineF("#%9s  %12s  %12s  %12s  %12s  %12s  %12s\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)", "U(kJ/mol)",
-                           "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)"))
+    if (!parser.writeLineF("#{:9}  {:12}  {:12}  {:12}  {:12}  {:12}  {:12}\n", "r(Angs)", "U(kJ/mol)", "dU(kJ/mol/Ang)",
+                           "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)"))
         return false;
 
     for (int n = 0; n < nPoints; ++n)
-        if (!parser.writeLineF("%10.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e  %12.6e\n", uOriginal.constXAxis(n),
-                               uFull.constValue(n), dUFull.constValue(n), uOriginal.constValue(n), uAdditional.constValue(n),
-                               pp->analyticEnergy(uOriginal.constXAxis(n)), pp->analyticForce(uOriginal.constXAxis(n))))
+        if (!parser.writeLineF("{:10.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}\n",
+                               uOriginal.constXAxis(n), uFull.constValue(n), dUFull.constValue(n), uOriginal.constValue(n),
+                               uAdditional.constValue(n), pp->analyticEnergy(uOriginal.constXAxis(n)),
+                               pp->analyticForce(uOriginal.constXAxis(n))))
             return false;
 
     return true;
@@ -109,21 +110,21 @@ bool PairPotentialExportFileFormat::exportDLPOLY(LineParser &parser, PairPotenti
     const auto nPoints = pp->nPoints();
 
     // Write header (record 1)
-    if (!parser.writeLineF("%-72s\n", "TABLE file written by Dissolve"))
+    if (!parser.writeLineF("{:<72}\n", "TABLE file written by Dissolve"))
         return false;
 
     // Write mesh information (record 2)
-    if (!parser.writeLineF("%20.10e%20.10e%10i\n", pp->delta(), pp->range(), nPoints))
+    if (!parser.writeLineF("{:20.10e}{:20.10e}{:10d}\n", pp->delta(), pp->range(), nPoints))
         return false;
 
     // Write pair potential header record
-    if (!parser.writeLineF("%-8s%-8s%20.10e%20.10e\n", pp->atomTypeNameI(), pp->atomTypeNameJ(), 0.0, 0.0))
+    if (!parser.writeLineF("{:<8}{:<8}{:20.10e}{:20.10e}\n", pp->atomTypeNameI(), pp->atomTypeNameJ(), 0.0, 0.0))
         return false;
 
     // Write energy data
     for (int n = 0; n < nPoints; ++n)
     {
-        if (!parser.writeLineF("%17.12e ", uFull.constValue(n)))
+        if (!parser.writeLineF("{:17.12e} ", uFull.constValue(n)))
             return false;
         if (((n + 1) % 4 == 0) || (n == (nPoints - 1)))
         {
@@ -135,7 +136,7 @@ bool PairPotentialExportFileFormat::exportDLPOLY(LineParser &parser, PairPotenti
     // Write force data
     for (int n = 0; n < nPoints; ++n)
     {
-        if (!parser.writeLineF("%17.12e ", dUFull.constValue(n)))
+        if (!parser.writeLineF("{:17.12e} ", dUFull.constValue(n)))
             return false;
         if (((n + 1) % 4 == 0) || (n == (nPoints - 1)))
         {

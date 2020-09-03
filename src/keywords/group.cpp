@@ -29,10 +29,10 @@ KeywordGroup::KeywordGroup(KeywordList &keywordList) : ListItem<KeywordGroup>(),
  */
 
 // Set name of group
-void KeywordGroup::setName(const char *name) { name_ = name; }
+void KeywordGroup::setName(std::string_view name) { name_ = name; }
 
 // Return name of group
-const char *KeywordGroup::name() const { return name_.get(); }
+std::string_view KeywordGroup::name() const { return name_; }
 
 /*
  * Keyword Group
@@ -42,7 +42,7 @@ const char *KeywordGroup::name() const { return name_.get(); }
 void KeywordGroup::addKeywordToGroup(KeywordBase *object) { keywords_.append(object); }
 
 // Add keyword (pass-thru to KeywordList)
-bool KeywordGroup::add(KeywordBase *object, const char *keyword, const char *description, int optionMask)
+bool KeywordGroup::add(KeywordBase *object, std::string_view keyword, std::string_view description, int optionMask)
 {
     if (!keywordList_.add(object, keyword, description, "", optionMask))
         return false;
@@ -53,7 +53,8 @@ bool KeywordGroup::add(KeywordBase *object, const char *keyword, const char *des
 }
 
 // Add keyword (pass-thru to KeywordList)
-bool KeywordGroup::add(KeywordBase *object, const char *keyword, const char *description, const char *arguments, int optionMask)
+bool KeywordGroup::add(KeywordBase *object, std::string_view keyword, std::string_view description, std::string_view arguments,
+                       int optionMask)
 {
     if (!keywordList_.add(object, keyword, description, arguments, optionMask))
         return false;

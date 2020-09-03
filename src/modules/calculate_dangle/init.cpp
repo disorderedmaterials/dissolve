@@ -166,8 +166,8 @@ void CalculateDAngleModule::initialise()
     // Process1D: 'RDF(BC)'
     processDistance_ = new Process1DProcedureNode(collectDistance_);
     processDistance_->setName("RDF(BC)");
-    processDistance_->setKeyword<CharString>("LabelValue", "g(r)");
-    processDistance_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
+    processDistance_->setKeyword<std::string>("LabelValue", "g(r)");
+    processDistance_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
 
     SequenceProcedureNode *rdfNormalisation = processDistance_->addNormalisationBranch();
     RefList<const SelectProcedureNode> sitePopulationNormalisers;
@@ -181,8 +181,8 @@ void CalculateDAngleModule::initialise()
     // Process1D: 'ANGLE(ABC)'
     processAngle_ = new Process1DProcedureNode(collectAngle_);
     processAngle_->setName("Angle(ABC)");
-    processAngle_->setKeyword<CharString>("LabelValue", "Normalised Frequency");
-    processAngle_->setKeyword<CharString>("LabelX", "\\symbol{theta}, \\symbol{degrees}");
+    processAngle_->setKeyword<std::string>("LabelValue", "Normalised Frequency");
+    processAngle_->setKeyword<std::string>("LabelX", "\\symbol{theta}, \\symbol{degrees}");
     SequenceProcedureNode *angleNormalisation = processAngle_->addNormalisationBranch();
     angleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(x)"));
     angleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));
@@ -191,9 +191,9 @@ void CalculateDAngleModule::initialise()
     // Process2D: 'DAngle'
     processDAngle_ = new Process2DProcedureNode(collectDAngle_);
     processDAngle_->setName("DAngle(A-BC)");
-    processDAngle_->setKeyword<CharString>("LabelValue", "g(r)");
-    processDAngle_->setKeyword<CharString>("LabelX", "r, \\symbol{Angstrom}");
-    processDAngle_->setKeyword<CharString>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
+    processDAngle_->setKeyword<std::string>("LabelValue", "g(r)");
+    processDAngle_->setKeyword<std::string>("LabelX", "r, \\symbol{Angstrom}");
+    processDAngle_->setKeyword<std::string>("LabelY", "\\symbol{theta}, \\symbol{degrees}");
     SequenceProcedureNode *dAngleNormalisation = processDAngle_->addNormalisationBranch();
     dAngleNormalisation->addNode(new OperateExpressionProcedureNode("value/sin(y)"));
     dAngleNormalisation->addNode(new OperateNormaliseProcedureNode(1.0));

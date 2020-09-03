@@ -96,26 +96,26 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
     bool read(LineParser &parser, int startArg, CoreData &coreData)
     {
         if (!parentNode())
-            return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n",
+            return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
                                     KeywordBase::name());
 
         // Locate the named node - don't prune by type yet (we'll check that in setNode())
-        ProcedureNode *node =
-            onlyInScope() ? parentNode()->nodeInScope(parser.argc(startArg)) : parentNode()->nodeExists(parser.argc(startArg));
+        ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argsv(startArg))
+                                            : parentNode()->nodeExists(parser.argsv(startArg));
         if (!node)
-            return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(startArg),
+            return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(startArg),
                                     KeywordBase::name());
 
         return setNode(node);
     }
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, const char *keywordName, const char *prefix)
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
     {
         // No need to write the keyword if the node pointer is null
         if (KeywordData<N *>::data_ == NULL)
             return true;
 
-        if (!parser.writeLineF("%s%s  '%s'\n", prefix, KeywordBase::name(), KeywordData<N *>::data_->name()))
+        if (!parser.writeLineF("{}{}  '{}'\n", prefix, KeywordBase::name(), KeywordData<N *>::data_->name()))
             return false;
 
         return true;
@@ -132,7 +132,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
             return false;
 
         if (!node->isType(nodeType()))
-            return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(),
+            return Messenger::error("Node '{}' is of type {}, but the {} keyword requires a node of type {}.\n", node->name(),
                                     ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(),
                                     ProcedureNode::nodeTypes().keyword(nodeType()));
 

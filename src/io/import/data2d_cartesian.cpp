@@ -57,7 +57,7 @@ bool Data2DImportFileFormat::importCartesian(LineParser &parser, Data2D &data)
         // Check number of arguments
         if (parser.nArgs() != 3)
         {
-            Messenger::warn("Skipping bad line: %s...\n", parser.line());
+            Messenger::warn("Skipping bad line: {}...\n", parser.line());
             continue;
         }
 
@@ -66,14 +66,14 @@ bool Data2DImportFileFormat::importCartesian(LineParser &parser, Data2D &data)
         auto xBin = (x - xMin) / xDelta;
         if ((xBin < 0) || (xBin >= data.constXAxis().nItems()))
         {
-            Messenger::warn("Coordinates x=%e y=%e are out-of-range (xBin = %i, nBins = %i).\n", x, y, xBin,
+            Messenger::warn("Coordinates x={:e} y={:e} are out-of-range (xBin = {}, nBins = {}).\n", x, y, xBin,
                             data.constXAxis().nItems());
             continue;
         }
         auto yBin = (y - yMin) / yDelta;
         if ((yBin < 0) || (yBin >= data.constYAxis().nItems()))
         {
-            Messenger::warn("Coordinates x=%e y=%e are out-of-range (yBin = %i, nBins = %i).\n", x, y, yBin,
+            Messenger::warn("Coordinates x={:e} y={:e} are out-of-range (yBin = {}, nBins = {}).\n", x, y, yBin,
                             data.constYAxis().nItems());
             continue;
         }

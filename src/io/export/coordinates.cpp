@@ -28,7 +28,7 @@
 #include "classes/speciesatom.h"
 #include "data/atomicmass.h"
 
-CoordinateExportFileFormat::CoordinateExportFileFormat(const char *filename, CoordinateExportFormat format)
+CoordinateExportFileFormat::CoordinateExportFileFormat(std::string_view filename, CoordinateExportFormat format)
     : FileAndFormat(filename, format)
 {
 }
@@ -54,10 +54,13 @@ EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat> CoordinateExport
 int CoordinateExportFileFormat::nFormats() const { return CoordinateExportFileFormat::nCoordinateExportFormats; }
 
 // Return format keyword for supplied index
-const char *CoordinateExportFileFormat::formatKeyword(int id) const { return coordinateExportFormats().keywordByIndex(id); }
+std::string_view CoordinateExportFileFormat::formatKeyword(int id) const
+{
+    return coordinateExportFormats().keywordByIndex(id);
+}
 
 // Return description string for supplied index
-const char *CoordinateExportFileFormat::formatDescription(int id) const
+std::string_view CoordinateExportFileFormat::formatDescription(int id) const
 {
     return coordinateExportFormats().descriptionByIndex(id);
 }
@@ -76,17 +79,17 @@ CoordinateExportFileFormat::CoordinateExportFormat CoordinateExportFileFormat::c
 bool CoordinateExportFileFormat::exportXYZ(LineParser &parser, Configuration *cfg)
 {
     // Export number of atoms and title
-    if (!parser.writeLineF("%i\n", cfg->nAtoms()))
+    if (!parser.writeLineF("{}\n", cfg->nAtoms()))
         return false;
-    if (!parser.writeLineF("%s @ %i\n", cfg->name(), cfg->contentsVersion()))
+    if (!parser.writeLineF("{} @ {}\n", cfg->name(), cfg->contentsVersion()))
         return false;
 
     // Export Atoms
     for (int n = 0; n < cfg->nAtoms(); ++n)
     {
         Atom *i = cfg->atom(n);
-        if (!parser.writeLineF("%-3s   %15.9f  %15.9f  %15.9f\n", i->speciesAtom()->element()->symbol(), i->r().x, i->r().y,
-                               i->r().z))
+        if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", i->speciesAtom()->element()->symbol(), i->r().x,
+                               i->r().y, i->r().z))
             return false;
     }
 
@@ -97,37 +100,37 @@ bool CoordinateExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
 bool CoordinateExportFileFormat::exportDLPOLY(LineParser &parser, Configuration *cfg)
 {
     // Export title
-    if (!parser.writeLineF("%s @ %i\n", cfg->name(), cfg->contentsVersion()))
+    if (!parser.writeLineF("{} @ {}\n", cfg->name(), cfg->contentsVersion()))
         return false;
 
     // Export keytrj and imcon
     if (cfg->box()->type() == Box::NonPeriodicBoxType)
     {
-        if (!parser.writeLineF("%10i%10i\n", 0, 0))
+        if (!parser.writeLineF("{:10d}{:10d}\n", 0, 0))
             return false;
     }
     else if (cfg->box()->type() == Box::CubicBoxType)
     {
-        if (!parser.writeLineF("%10i%10i\n", 0, 1))
+        if (!parser.writeLineF("{:10d}{:10d}\n", 0, 1))
             return false;
     }
     else if (cfg->box()->type() == Box::OrthorhombicBoxType)
     {
-        if (!parser.writeLineF("%10i%10i\n", 0, 2))
+        if (!parser.writeLineF("{:10d}{:10d}\n", 0, 2))
             return false;
     }
     else
-        parser.writeLineF("%10i%10i\n", 0, 3);
+        parser.writeLineF("{:10d}{:10d}\n", 0, 3);
 
     // Export Cell
     if (cfg->box()->type() != Box::NonPeriodicBoxType)
     {
         Matrix3 axes = cfg->box()->axes();
-        if (!parser.writeLineF("%20.12f%20.12f%20.12f\n", axes[0], axes[1], axes[2]))
+        if (!parser.writeLineF("{:20.12f}{:20.12f}{:20.12f}\n", axes[0], axes[1], axes[2]))
             return false;
-        if (!parser.writeLineF("%20.12f%20.12f%20.12f\n", axes[3], axes[4], axes[5]))
+        if (!parser.writeLineF("{:20.12f}{:20.12f}{:20.12f}\n", axes[3], axes[4], axes[5]))
             return false;
-        if (!parser.writeLineF("%20.12f%20.12f%20.12f\n", axes[6], axes[7], axes[8]))
+        if (!parser.writeLineF("{:20.12f}{:20.12f}{:20.12f}\n", axes[6], axes[7], axes[8]))
             return false;
     }
 
@@ -135,8 +138,9 @@ bool CoordinateExportFileFormat::exportDLPOLY(LineParser &parser, Configuration 
     for (int n = 0; n < cfg->nAtoms(); ++n)
     {
         Atom *i = cfg->atom(n);
-        if (!parser.writeLineF("%-6s%10i%20.10f\n%20.12f%20.12f%20.12f\n", cfg->usedAtomType(i->localTypeIndex())->name(),
-                               n + 1, AtomicMass::mass(i->speciesAtom()->element()), i->r().x, i->r().y, i->r().z))
+        if (!parser.writeLineF("{:<6}{:10d}{:20.10f}\n{:20.12f}{:20.12f}{:20.12f}\n",
+                               cfg->usedAtomType(i->localTypeIndex())->name(), n + 1,
+                               AtomicMass::mass(i->speciesAtom()->element()), i->r().x, i->r().y, i->r().z))
             return false;
     }
 

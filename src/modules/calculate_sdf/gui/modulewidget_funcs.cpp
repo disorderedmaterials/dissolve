@@ -93,15 +93,15 @@ void CalculateSDFModuleWidget::updateControls(int flags)
     }
 
     // Update available reference molecule combo
-    RefDataList<Species, CharString> refMolecules;
+    RefDataList<Species, std::string> refMolecules;
     // -- Find available AvgMol results
     RefList<CalculateAvgMolModule> avgMolModules = coreData_.findModulesByClass<CalculateAvgMolModule>();
     for (CalculateAvgMolModule *module : avgMolModules)
-        refMolecules.append(&module->averageSpecies(), CharString("%s (AvgMol)", module->averageSpecies().name()));
+        refMolecules.append(&module->averageSpecies(), fmt::format("{} (AvgMol)", module->averageSpecies().name()));
     // -- Add on current species
     ListIterator<Species> speciesIterator(coreData_.constSpecies());
     while (Species *sp = speciesIterator.iterate())
-        refMolecules.append(sp, CharString("%s (Species)", sp->name()));
+        refMolecules.append(sp, fmt::format("{} (Species)", sp->name()));
     ComboBoxUpdater<Species> refMoleculeUpdater(ui_.ReferenceMoleculeCombo, refMolecules, referenceMolecule_, 1, 0);
 
     refreshing_ = false;
@@ -153,15 +153,15 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
     {
         // Calculated SDF
         sdfRenderable_ = dynamic_cast<RenderableData3D *>(sdfGraph_->createRenderable(
-            Renderable::Data3DRenderable, CharString("%s//Process3D//%s//SDF", module_->uniqueName(), cfg->niceName()),
-            CharString("SDF//%s", cfg->niceName()), cfg->niceName()));
+            Renderable::Data3DRenderable, fmt::format("{}//Process3D//{}//SDF", module_->uniqueName(), cfg->niceName()),
+            fmt::format("SDF//{}", cfg->niceName()), cfg->niceName()));
 
         if (sdfRenderable_)
         {
             sdfRenderable_->setColour(StockColours::BlueStockColour);
 
-            double lowerCutoff = (cfg->nMolecules() / cfg->box()->volume()) * 3.0;
-            double upperCutoff = 1.0;
+            auto lowerCutoff = (cfg->nMolecules() / cfg->box()->volume()) * 3.0;
+            auto upperCutoff = 1.0;
 
             // Set cutoff limits and initial values in spin widgets
             ui_.LowerCutoffSpin->setValue(lowerCutoff);

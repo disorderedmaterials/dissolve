@@ -20,7 +20,7 @@ int NETADefinitionGenerator_lex(void);
 void NETADefinitionGenerator_error(char *s);
 
 // Local Variables
-CharString localName;
+std::string localName;
 
 %}
 
@@ -31,7 +31,7 @@ CharString localName;
 %union {
 	void* atomTargetDummy;				/* Dummy Type for Atom Targets*/
 	int elementZ;					/* Element Z */
-	const char* name;				/* Character pointer for names */
+	std::string *name;				/* Character pointer for names */
 	NETANode* node;					/* NETADefinition node pointer */
 	NETANode::ComparisonOperator valueOperator;	/* Comparison Operator */
 	int integerConst;				/* Constant integer value */
@@ -116,7 +116,7 @@ targets:
 target:
 	DISSOLVE_NETA_ELEMENT				{ if (!NETADefinitionGenerator::addElementTarget($1)) YYABORT; $$ = NULL; }
 	| '&' setExpectName DISSOLVE_NETA_INTEGERCONSTANT unsetExpectName		{ if (!NETADefinitionGenerator::addAtomTypeTarget($3)) YYABORT; $$ = NULL; }
-	| '&' setExpectName DISSOLVE_NETA_NAME unsetExpectName		{ if (!NETADefinitionGenerator::addAtomTypeTarget(yylval.name)) YYABORT; $$ = NULL; }
+	| '&' setExpectName DISSOLVE_NETA_NAME unsetExpectName		{ if (!NETADefinitionGenerator::addAtomTypeTarget(*yylval.name)) YYABORT; $$ = NULL; }
 	;
 
 /* Context Modifiers */
@@ -153,7 +153,7 @@ popContext:
 	/* empty */					{ NETADefinitionGenerator::popContext(); }
 	;
 storeName:
-	/* empty */					{ localName = yylval.name; }
+	/* empty */					{ localName = *yylval.name; }
 	;
 setExpectName:
 	/* empty */					{ NETADefinitionGenerator::setExpectName(true); }

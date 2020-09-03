@@ -11,10 +11,10 @@ APP_NAME=Dissolve
 APP_VERSION="0.7.0"
 
 # -- APP_BIN : List of binaries (space-separated, with paths) to include in the bundle
-APP_BIN="build/dissolve-gui.app/Contents/MacOS/dissolve"
+APP_BIN="build/bin/dissolve-gui.app/Contents/MacOS/dissolve"
 
 # -- APP_PLIST : Specify the Info.plist file to use in the bundle
-APP_PLIST="build/dissolve.app/Contents/Info.plist"
+APP_PLIST="build/bin/dissolve.app/Contents/Info.plist"
 
 # -- APP_ICON : A 1024x1024 png file from which to create an icon set
 #APP_ICON="../extra/logo1024.png"

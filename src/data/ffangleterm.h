@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/parameters.h"
 #include "classes/speciesangle.h"
 
@@ -33,7 +32,7 @@ class ForcefieldAtomType;
 class ForcefieldAngleTerm
 {
     public:
-    ForcefieldAngleTerm(const char *typeI = NULL, const char *typeJ = NULL, const char *typeK = NULL,
+    ForcefieldAngleTerm(std::string_view typeI = "", std::string_view typeJ = "", std::string_view typeK = "",
                         SpeciesAngle::AngleFunction form = SpeciesAngle::NoForm, const std::vector<double> parameters = {});
     ~ForcefieldAngleTerm();
 
@@ -42,7 +41,7 @@ class ForcefieldAngleTerm
      */
     private:
     // Type names involved in interaction
-    CharString typeI_, typeJ_, typeK_;
+    std::string typeI_, typeJ_, typeK_;
     // Functional form of interaction
     SpeciesAngle::AngleFunction form_;
     // Parameters for interaction

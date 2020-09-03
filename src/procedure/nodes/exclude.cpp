@@ -50,8 +50,8 @@ bool ExcludeProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
  */
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult ExcludeProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
-                                                                 GenericList &targetList)
+ProcedureNode::NodeExecutionResult ExcludeProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
+                                                                 std::string_view prefix, GenericList &targetList)
 {
     // Exclude based on Sites?
     if (sameSites_.at(0) && sameSites_.at(1))

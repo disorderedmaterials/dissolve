@@ -58,7 +58,7 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
     // Get origin atom indices from site, and grab the Configuration's Box
     Array<int> originAtomIndices = speciesSite->originAtomIndices();
     if (originAtomIndices.nItems() == 0)
-        return Messenger::error("No origin atoms defined in SpeciesSite '%s'.\n", speciesSite->name());
+        return Messenger::error("No origin atoms defined in SpeciesSite '{}'.\n", speciesSite->name());
     const Box *box = configuration_->box();
 
     // If the site has axes, grab the atom indices involved
@@ -88,7 +88,7 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
 #ifdef CHECKS
         for (int i = 0; i < originAtomIndices.nItems(); ++i)
             if ((originAtomIndices[i] < 0) || (originAtomIndices[i] >= molecule->nAtoms()))
-                return Messenger::error("Origin atom index %i is out of range for molecule (contains %i atoms).\n",
+                return Messenger::error("Origin atom index {} is out of range for molecule (contains {} atoms).\n",
                                         originAtomIndices[i], molecule->nAtoms());
 #endif
         if (speciesSite->originMassWeighted())
@@ -121,11 +121,11 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
 #ifdef CHECKS
             for (int i = 0; i < xAxisAtomIndices.nItems(); ++i)
                 if ((xAxisAtomIndices[i] < 0) || (xAxisAtomIndices[i] >= molecule->nAtoms()))
-                    return Messenger::error("X-axis atom index %i is out of range for molecule (contains %i atoms).\n",
+                    return Messenger::error("X-axis atom index {} is out of range for molecule (contains {} atoms).\n",
                                             xAxisAtomIndices[i], molecule->nAtoms());
             for (int i = 0; i < yAxisAtomIndices.nItems(); ++i)
                 if ((yAxisAtomIndices[i] < 0) || (yAxisAtomIndices[i] >= molecule->nAtoms()))
-                    return Messenger::error("Y-axis atom index %i is out of range for molecule (contains %i atoms).\n",
+                    return Messenger::error("Y-axis atom index {} is out of range for molecule (contains {} atoms).\n",
                                             yAxisAtomIndices[i], molecule->nAtoms());
 #endif
             // Get average position of supplied x-axis atoms

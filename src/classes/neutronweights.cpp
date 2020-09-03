@@ -105,10 +105,10 @@ void NeutronWeights::print() const
         for (auto it = topes.constMix().begin(); it != topes.constMix().end(); ++it)
         {
             if (it == topes.constMix().begin())
-                Messenger::print("  %-15s  %-15s  %-10i  %f\n", topes.species()->name(), it->isotopologue()->name(),
+                Messenger::print("  {:<15}  {:<15}  {:<10d}  {}\n", topes.species()->name(), it->isotopologue()->name(),
                                  topes.speciesPopulation(), it->weight());
             else
-                Messenger::print("                   %-15s              %f\n", it->isotopologue()->name(), it->weight());
+                Messenger::print("                   {:<15}              {}\n", it->isotopologue()->name(), it->weight());
         }
     }
 
@@ -116,8 +116,8 @@ void NeutronWeights::print() const
     Messenger::print("\n");
     atomTypes_.print();
 
-    Messenger::print("\nCalculated average scattering lengths: <b>**2 = %f, <b**2> = %f\n", boundCoherentSquareOfAverage_,
-                     boundCoherentAverageOfSquares_);
+    Messenger::print("\nCalculated average scattering lengths: <b>**2 = {:.5f}, <b**2> = {:.5f}\n",
+                     boundCoherentSquareOfAverage_, boundCoherentAverageOfSquares_);
 }
 
 /*
@@ -185,12 +185,12 @@ void NeutronWeights::calculateWeightingMatrices()
                           // Find this AtomType in our local AtomTypeList
                           int typeI = atomTypes_.indexOf(atd1.atomType());
                           if (typeI == -1)
-                              Messenger::error("Failed to find AtomType '%s' in local NeutronWeights.\n", atd1.atomTypeName());
+                              Messenger::error("Failed to find AtomType '{}' in local NeutronWeights.\n", atd1.atomTypeName());
 
                           // Get AtomType for this Atom and find it in our local AtomTypeList
                           int typeJ = atomTypes_.indexOf(atd2.atomType());
                           if (typeJ == -1)
-                              Messenger::error("Failed to find AtomType '%s' in local NeutronWeights.\n", atd2.atomTypeName());
+                              Messenger::error("Failed to find AtomType '{}' in local NeutronWeights.\n", atd2.atomTypeName());
 
                           intraFlag.at(typeI, typeJ) = true;
                       });
@@ -349,7 +349,7 @@ bool NeutronWeights::isValid() const { return valid_; }
  */
 
 // Return class name
-const char *NeutronWeights::itemClassName() { return "NeutronWeights"; }
+std::string_view NeutronWeights::itemClassName() { return "NeutronWeights"; }
 
 // Read data through specified LineParser
 bool NeutronWeights::read(LineParser &parser, CoreData &coreData)
@@ -399,7 +399,7 @@ bool NeutronWeights::write(LineParser &parser)
         return false;
 
     // Write isotopologue mixtures
-    if (!parser.writeLineF("%i  # nItems\n", isotopologueMixtures_.size()))
+    if (!parser.writeLineF("{}  # nItems\n", isotopologueMixtures_.size()))
         return false;
     for (auto &topes : isotopologueMixtures_)
         if (!topes.write(parser))
@@ -416,7 +416,7 @@ bool NeutronWeights::write(LineParser &parser)
         return false;
 
     // Write averages
-    if (!parser.writeLineF("%f %f\n", boundCoherentAverageOfSquares_, boundCoherentSquareOfAverage_))
+    if (!parser.writeLineF("{} {}\n", boundCoherentAverageOfSquares_, boundCoherentSquareOfAverage_))
         return false;
 
     return true;
@@ -468,13 +468,13 @@ bool NeutronWeights::equality(ProcessPool &procPool)
     if (!procPool.equality(intramolecularWeights_))
         return Messenger::error("Intramolecular weights matrix is not equivalent.\n");
     if (!procPool.equality(boundCoherentAverageOfSquares_))
-        return Messenger::error("NeutronWeights bound coherent average of squares is not equivalent (process %i has %e).\n",
+        return Messenger::error("NeutronWeights bound coherent average of squares is not equivalent (process {} has {:e}).\n",
                                 procPool.poolRank(), boundCoherentAverageOfSquares_);
     if (!procPool.equality(boundCoherentSquareOfAverage_))
-        return Messenger::error("NeutronWeights bound coherent square of average is not equivalent (process %i has %e).\n",
+        return Messenger::error("NeutronWeights bound coherent square of average is not equivalent (process {} has {:e}).\n",
                                 procPool.poolRank(), boundCoherentSquareOfAverage_);
     if (!procPool.equality(valid_))
-        return Messenger::error("NeutronWeights validity is not equivalent (process %i has %i).\n", procPool.poolRank(),
+        return Messenger::error("NeutronWeights validity is not equivalent (process {} has {}).\n", procPool.poolRank(),
                                 valid_);
 #endif
     return true;

@@ -129,15 +129,15 @@ bool Vec3DoubleKeyword::read(LineParser &parser, int startArg, CoreData &coreDat
             if (!isValid(n, parser.argd(startArg + n)))
             {
                 if (minimumLimit_[n] && maximumLimit_[n])
-                    Messenger::error("Value %12.6e is out of range for keyword '%s'. Valid range is  <= n "
-                                     "<= %12.6e.\n",
+                    Messenger::error("Value {:12.6e} is out of range for keyword '{}'. Valid range is  <= n "
+                                     "<= {:12.6e}.\n",
                                      data_[n], name(), min_[n], max_[n]);
                 else if (minimumLimit_[n])
-                    Messenger::error("Value %12.6e is out of range for keyword '%s'. Valid range is %12.6e <= n.\n", data_[n],
-                                     name(), min_[n]);
+                    Messenger::error("Value {:12.6e} is out of range for keyword '{}'. Valid range is {:12.6e} <= n.\n",
+                                     data_[n], name(), min_[n]);
                 else
-                    Messenger::error("Value %12.6e is out of range for keyword '%s'. Valid range is n <= %12.6e.\n", data_[n],
-                                     name(), max_[n]);
+                    Messenger::error("Value {:12.6e} is out of range for keyword '{}'. Valid range is n <= {:12.6e}.\n",
+                                     data_[n], name(), max_[n]);
 
                 return false;
             }
@@ -152,9 +152,9 @@ bool Vec3DoubleKeyword::read(LineParser &parser, int startArg, CoreData &coreDat
 }
 
 // Write keyword data to specified LineParser
-bool Vec3DoubleKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool Vec3DoubleKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
-    return parser.writeLineF("%s%s  %12.6e  %12.6e  %12.6e\n", prefix, keywordName, data_.x, data_.y, data_.z);
+    return parser.writeLineF("{}{}  {:12.6e}  {:12.6e}  {:12.6e}\n", prefix, keywordName, data_.x, data_.y, data_.z);
 }
 
 /*

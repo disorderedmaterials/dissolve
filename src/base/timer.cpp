@@ -20,21 +20,16 @@
 */
 
 #include "base/timer.h"
-#include "base/charstring.h"
+#include <fmt/core.h>
 
-Timer::Timer()
-{
-    totalTime_ = 0;
-    running_ = false;
-    start();
-}
+Timer::Timer() : totalTime_(0), running_(false) { start(); }
 
 /*
  * Timing Routines
  */
 
 // Return time string based on provided tick count
-const char *Timer::timeString(clock_t ticks)
+std::string Timer::timeString(clock_t ticks)
 {
     auto n = ticks / CLOCKS_PER_SEC;
     auto hours = n / 3600;
@@ -43,12 +38,11 @@ const char *Timer::timeString(clock_t ticks)
     n %= 60;
     double seconds = ticks / double(CLOCKS_PER_SEC) - hours * 3600 - minutes * 60;
     if (hours != 0)
-        timeString_.sprintf("%i hours, %i minutes, and %0.2f seconds", hours, minutes, seconds);
+        return fmt::format("{} hours, {} minutes, and {:0.2f} seconds", hours, minutes, seconds);
     else if (minutes != 0)
-        timeString_.sprintf("%i minutes and %0.2f seconds", minutes, seconds);
+        return fmt::format("{} minutes and {:0.2f} seconds", minutes, seconds);
     else
-        timeString_.sprintf("%0.2f seconds", seconds);
-    return timeString_.get();
+        return fmt::format("{:0.2f} seconds", seconds);
 }
 
 // Start timer
@@ -84,7 +78,7 @@ void Timer::accumulate() { totalTime_ += clock() - startTime_; }
 void Timer::zero() { totalTime_ = 0; }
 
 // Return current elapsed time as a time string
-const char *Timer::elapsedTimeString()
+std::string Timer::elapsedTimeString()
 {
     if (running_)
         return timeString(clock() - startTime_);
@@ -93,7 +87,7 @@ const char *Timer::elapsedTimeString()
 }
 
 // Return total time (after stop()) as a time string
-const char *Timer::totalTimeString() { return timeString(totalTime_); }
+std::string Timer::totalTimeString() { return timeString(totalTime_); }
 
 // Return number of seconds elapsed
 double Timer::secondsElapsed() const
@@ -105,35 +99,28 @@ double Timer::secondsElapsed() const
 }
 
 // Return time string for number of seconds provided
-const char *Timer::timeString(double seconds)
+std::string Timer::timeString(double seconds)
 {
-    static CharString result;
-
     auto hours = int(seconds) / 3600;
     seconds -= hours * 3600;
     auto minutes = int(seconds) / 60;
     seconds -= minutes * 60;
 
     if (hours != 0)
-        result.sprintf("%i hours, %i minutes, and %0.1f seconds", hours, minutes, seconds);
+        return fmt::format("{} hours, {} minutes, and {:0.1f} seconds", hours, minutes, seconds);
     else if (minutes != 0)
-        result.sprintf("%i minutes and %0.1f seconds", minutes, seconds);
+        return fmt::format("{} minutes and {:0.1f} seconds", minutes, seconds);
     else
-        result.sprintf("%0.1f seconds", seconds);
-    return result.get();
+        return fmt::format("{:0.1f} seconds", seconds);
 }
 
 // Return ETA string for number of seconds provided
-const char *Timer::etaString(double seconds)
+std::string Timer::etaString(double seconds)
 {
-    static CharString result;
-
     auto hours = int(seconds) / 3600;
     seconds -= hours * 3600;
     auto minutes = int(seconds) / 60;
     seconds -= minutes * 60;
 
-    result.sprintf("%02i:%02i:%02i", hours, minutes, int(seconds));
-
-    return result.get();
+    return fmt::format("{:02d}:{:02d}:{:02d}", hours, minutes, int(seconds));
 }

@@ -1,6 +1,6 @@
 /*
-    *** Generic Item Container - CharString
-    *** src/genericitems/charstring.h
+    *** Generic Item Container - std::string
+    *** src/genericitems/stdstring.h
     Copyright T. Youngs 2012-2020
 
     This file is part of Dissolve.
@@ -22,46 +22,47 @@
 #pragma once
 
 #include "genericitems/container.h"
+#include <string>
 
-// GenericItemContainer<CharString>
-template <> class GenericItemContainer<CharString> : public GenericItem
+// GenericItemContainer<std::string>
+template <> class GenericItemContainer<std::string> : public GenericItem
 {
     public:
-    GenericItemContainer<CharString>(const char *name, int flags = 0) : GenericItem(name, flags) {}
+    GenericItemContainer<std::string>(std::string_view name, int flags = 0) : GenericItem(name, flags) {}
 
     /*
      * Data
      */
     private:
     // Data item
-    CharString data_;
+    std::string data_;
 
     public:
     // Return data item
-    CharString &data() { return data_; }
+    std::string &data() { return data_; }
 
     /*
      * Item Class
      */
     protected:
     // Create a new GenericItem containing same class as current type
-    GenericItem *createItem(const char *className, const char *name, int flags = 0)
+    GenericItem *createItem(std::string_view className, std::string_view name, int flags = 0)
     {
         if (DissolveSys::sameString(className, itemClassName()))
-            return new GenericItemContainer<CharString>(name, flags);
+            return new GenericItemContainer<std::string>(name, flags);
         return NULL;
     }
 
     public:
     // Return class name contained in item
-    const char *itemClassName() { return "CharString"; }
+    std::string_view itemClassName() { return "std::string"; }
 
     /*
      * I/O
      */
     public:
     // Write data through specified parser
-    bool write(LineParser &parser) { return parser.writeLineF("%s\n", data_.get()); }
+    bool write(LineParser &parser) { return parser.writeLineF("{}\n", data_); }
     // Read data through specified parser
     bool read(LineParser &parser, CoreData &coreData)
     {

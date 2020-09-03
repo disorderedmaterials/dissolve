@@ -118,7 +118,7 @@ bool NeutronSQModule::calculateSummedWeights(NeutronWeights &summedWeights) cons
             // explicit Isotopologue definition
             if (!data)
             {
-                Messenger::print("Isotopologue specification for Species '%s' in Configuration '%s' is "
+                Messenger::print("Isotopologue specification for Species '{}' in Configuration '{}' is "
                                  "missing, so the natural isotopologue will be used.\n",
                                  spInfo->species()->name(), cfg->name());
 

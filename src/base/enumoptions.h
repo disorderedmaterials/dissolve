@@ -22,6 +22,7 @@
 #pragma once
 
 #include "base/enumoptionsbase.h"
+#include "base/messenger.h"
 #include "base/sysfunc.h"
 
 // Enum Options
@@ -29,8 +30,8 @@ template <class T> class EnumOptions : public EnumOptionsBase
 {
     public:
     EnumOptions() : EnumOptionsBase() {}
-    EnumOptions(const char *name, const EnumOptionsList &options) : EnumOptionsBase(name, options) {}
-    EnumOptions(const char *name, const EnumOptionsList &options, T defaultEnumeration)
+    EnumOptions(std::string_view name, const EnumOptionsList &options) : EnumOptionsBase(name, options) {}
+    EnumOptions(std::string_view name, const EnumOptionsList &options, T defaultEnumeration)
         : EnumOptionsBase(name, options, defaultEnumeration)
     {
     }
@@ -40,13 +41,13 @@ template <class T> class EnumOptions : public EnumOptionsBase
      */
     public:
     // Return enumeration in T
-    T enumeration(const char *keyword) const
+    T enumeration(std::string_view keyword) const
     {
-        for (int n = 0; n < options_.nItems(); ++n)
-            if (DissolveSys::sameString(keyword, options_.constAt(n).keyword()))
-                return (T)options_.constAt(n).enumeration();
+        for (int n = 0; n < options_.size(); ++n)
+            if (DissolveSys::sameString(keyword, options_[n].keyword()))
+                return (T)options_[n].enumeration();
 
-        Messenger::warn("Option '%s' is not recognised, so can't return its enumeration.\n", keyword);
+        Messenger::warn("Option '{}' is not recognised, so can't return its enumeration.\n", keyword);
 
         return (T)-1;
     }
@@ -60,34 +61,34 @@ template <class T> class EnumOptions : public EnumOptionsBase
             return (T)-1;
         }
 
-        return (T)options_.constAt(currentOptionIndex_).enumeration();
+        return (T)options_[currentOptionIndex_].enumeration();
     }
     // Return enumerated keyword
-    const char *keyword(T enumeration) const
+    std::string_view keyword(T enumeration) const
     {
-        for (int n = 0; n < options_.nItems(); ++n)
-            if (options_.constAt(n).enumeration() == enumeration)
-                return options_.constAt(n).keyword();
+        for (int n = 0; n < options_.size(); ++n)
+            if (options_[n].enumeration() == enumeration)
+                return options_[n].keyword();
         return "ENUMERATION_NOT_VALID";
     }
     // Return enumerated keyword from uncast integer
-    const char *keywordFromInt(int uncastEnumeration) const
+    std::string_view keywordFromInt(int uncastEnumeration) const
     {
-        for (int n = 0; n < options_.nItems(); ++n)
-            if (options_.constAt(n).enumeration() == uncastEnumeration)
-                return options_.constAt(n).keyword();
+        for (int n = 0; n < options_.size(); ++n)
+            if (options_[n].enumeration() == uncastEnumeration)
+                return options_[n].keyword();
         return "ENUMERATION_NOT_VALID";
     }
     // Return option with enumeration specified
     const EnumOption &option(T enumeration) const
     {
-        for (int n = 0; n < options_.nItems(); ++n)
-            if (options_.constAt(n).enumeration() == enumeration)
-                return options_.constAt(n);
+        for (int n = 0; n < options_.size(); ++n)
+            if (options_[n].enumeration() == enumeration)
+                return options_[n];
         return unrecognisedOption_;
     }
     // Return option with keyword specified
-    const EnumOption &option(const char *keyword) const { return EnumOptionsBase::option(keyword); }
+    const EnumOption &option(std::string_view keyword) const { return EnumOptionsBase::option(keyword); }
     // Return minimum number of arguments for the specified enumeration
     int minArgs(T enumeration) const
     {
@@ -120,20 +121,20 @@ template <class T> class EnumOptions : public EnumOptionsBase
                 if (nArgsProvided == 0)
                     return true;
                 else
-                    return Messenger::error("'%s' keyword '%s' does not take any arguments.\n", name(), opt.keyword());
+                    return Messenger::error("'{}' keyword '{}' does not take any arguments.\n", name(), opt.keyword());
                 break;
             case (EnumOption::OneOrMoreArguments):
                 if (nArgsProvided > 0)
                     return true;
                 else
-                    return Messenger::error("'%s' keyword '%s' requires one or more arguments, but none were provided.\n",
+                    return Messenger::error("'{}' keyword '{}' requires one or more arguments, but none were provided.\n",
                                             name(), opt.keyword());
                 break;
             case (EnumOption::EnumOption::OptionalSecondArgument):
                 if ((nArgsProvided == 1) || (nArgsProvided == 2))
                     return true;
                 else
-                    return Messenger::error("'%s' keyword '%s' requires one or two arguments, but %i %s provided.\n", name(),
+                    return Messenger::error("'{}' keyword '{}' requires one or two arguments, but {} {} provided.\n", name(),
                                             opt.keyword(), nArgsProvided, nArgsProvided == 1 ? "was" : "were");
                 break;
             default:
@@ -142,7 +143,7 @@ template <class T> class EnumOptions : public EnumOptionsBase
                     return true;
                 else
                     return Messenger::error(
-                        "'%s' keyword '%s' requires %s %i %s, but %i %s provided.\n", name(), opt.keyword(),
+                        "'{}s' keyword '{}' requires {} {} {}, but {} {} provided.\n", name(), opt.keyword(),
                         opt.minArgs() == opt.maxArgs() ? "exactly" : nArgsProvided < opt.minArgs() ? "at least" : "at most",
                         nArgsProvided < opt.minArgs() ? opt.minArgs() : opt.maxArgs(),
                         opt.minArgs() == 1 ? "argument" : "arguments", nArgsProvided, nArgsProvided == 1 ? "was" : "were");

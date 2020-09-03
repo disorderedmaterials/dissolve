@@ -26,7 +26,8 @@
  * Spacegroup Name Data
  */
 
-SpacegroupNameData::SpacegroupNameData(const char *name, const char *formattedName) : name_(name), formattedName_(formattedName)
+SpacegroupNameData::SpacegroupNameData(std::string_view name, std::string_view formattedName)
+    : name_(name), formattedName_(formattedName)
 {
 }
 
@@ -273,7 +274,7 @@ static const SpacegroupNameData &spacegroupNameData(int id)
 
     if ((id < 0) || (id > 230))
     {
-        Messenger::error("Spacegroups::spacegroupNameData() - Spacegroup with id=%i is out of range!\n", id);
+        Messenger::error("Spacegroups::spacegroupNameData() - Spacegroup with id={} is out of range!\n", id);
         return spacegroupNameData[0];
     }
 

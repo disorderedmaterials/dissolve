@@ -50,11 +50,10 @@ bool WindowFunctionKeyword::read(LineParser &parser, int startArg, CoreData &cor
 }
 
 // Write keyword data to specified LineParser
-bool WindowFunctionKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool WindowFunctionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
-    CharString params;
+    std::string params;
     for (int n = 0; n < WindowFunction::nFunctionParameters(data_.function()); ++n)
-        params.strcatf("  %f", data_.parameter(n));
-    return parser.writeLineF("%s%s  '%s'%s\n", prefix, keywordName, WindowFunction::functionType(data_.function()),
-                             params.get());
+        params += fmt::format("  {}", data_.parameter(n));
+    return parser.writeLineF("{}{}  '{}'{}\n", prefix, keywordName, WindowFunction::functionType(data_.function()), params);
 }

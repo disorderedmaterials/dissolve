@@ -21,47 +21,23 @@
 
 #pragma once
 
-#include "base/charstring.h"
-#include "templates/array.h"
+#include "data/elements.h"
 #include "templates/reflist.h"
 
 // Forward Declarations
-class Element;
 class Species;
 class SpeciesAtom;
 
 // Empirical Formula Generator
 class EmpiricalFormula
 {
-    public:
-    EmpiricalFormula();
-    ~EmpiricalFormula();
-
-    /*
-     * Construction
-     */
     private:
-    // Element counts
-    Array<int> elementCounts_;
-    // Formula string
-    CharString formula_;
+    // Construct empirical formula from supplied element counts
+    static std::string constructFormula(const std::vector<int> &elCounts, bool richText = false);
 
-    public:
-    // Clear counts array
-    void reset();
-    // Add to empirical formula
-    void add(Element *element, int count = 1);
-    // Return current empirical formula
-    const char *formula();
-    // Return rich text of current empirical formula
-    const char *richTextFormula();
-
-    /*
-     * Convenience Functions
-     */
     public:
     // Return empirical formula for supplied Species
-    static const char *formula(const Species *species, bool richText = false);
+    static std::string formula(const Species *species, bool richText = false);
     // Return empirical formula for supplied SpeciesAtom reflist
-    static const char *formula(const RefList<SpeciesAtom> &atoms, bool richText = false);
+    static std::string formula(const RefList<SpeciesAtom> &atoms, bool richText = false);
 };

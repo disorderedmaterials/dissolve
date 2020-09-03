@@ -29,7 +29,7 @@ CalculateAvgMolModule::CalculateAvgMolModule() : Module()
 {
     // Set unique name for this instance of the Module
     static int instanceId = 0;
-    uniqueName_.sprintf("%s%02i", type(), instanceId++);
+    uniqueName_ = fmt::format("{}{:02d}", type(), instanceId++);
 
     // Initialise Module - set up keywords etc.
     initialise();

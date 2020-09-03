@@ -121,7 +121,7 @@ class ExpressionNode : public ListItem<ExpressionNode>
     // Get reduced value of node
     virtual bool execute(ExpressionValue &result) = 0;
     // Print layout of current node
-    virtual void nodePrint(int offset, const char *prefix = "") = 0;
+    virtual void nodePrint(int offset, std::string_view prefix = "") = 0;
     // Reset node
     virtual bool initialise() = 0;
 };

@@ -37,7 +37,7 @@ NodeRefListKeywordWidget::NodeRefListKeywordWidget(QWidget *parent, KeywordBase 
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<NodeRefListKeywordBase *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into NodeKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into NodeKeyword.\n", keyword->name());
     else
     {
         // Set current information
@@ -91,7 +91,7 @@ void NodeRefListKeywordWidget::updateListRow(int row, ProcedureNode *node, bool 
         item = ui_.NodeList->item(row);
 
     // Set item data
-    item->setText(node->name());
+    item->setText(QString::fromStdString(std::string(node->name())));
     item->setCheckState(keyword_->hasNode(node) ? Qt::Checked : Qt::Unchecked);
 }
 

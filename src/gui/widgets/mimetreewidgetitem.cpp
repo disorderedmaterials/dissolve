@@ -29,7 +29,7 @@ MimeTreeWidgetItem::MimeTreeWidgetItem(QTreeWidgetItem *parent, int type) : QTre
  */
 
 // Add mime data of specified type
-void MimeTreeWidgetItem::addMimeString(MimeString::MimeStringType type, QString data) { mimeStrings_.add(type, data); }
+void MimeTreeWidgetItem::addMimeString(MimeString::MimeStringType type, std::string_view data) { mimeStrings_.add(type, data); }
 
 // Return mime strings
 MimeStrings &MimeTreeWidgetItem::mimeStrings() { return mimeStrings_; }

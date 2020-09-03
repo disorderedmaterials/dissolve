@@ -71,7 +71,7 @@ template <class T, class D> class OrderedPointerDataArray
 #ifdef CHECKS
         if ((index < 0) || (index >= nItems_))
         {
-            Messenger::error("OrderedPointerDataArray<T,D>::operator[](%i) - Array index out of bounds (%i items "
+            Messenger::error("OrderedPointerDataArray<T,D>::operator[]({}) - Array index out of bounds ({} items "
                              "in array).\n",
                              index, nItems_);
             return NULL;
@@ -138,7 +138,7 @@ template <class T, class D> class OrderedPointerDataArray
 #ifdef CHECKS
         if ((index < 0) || (index >= nItems_))
         {
-            Messenger::error("OrderedPointerDataArray<T,D>::value(%i) - Array index out of bounds (%i items in array).\n",
+            Messenger::error("OrderedPointerDataArray<T,D>::value({}) - Array index out of bounds ({} items in array).\n",
                              index, nItems_);
             return NULL;
         }
@@ -152,7 +152,7 @@ template <class T, class D> class OrderedPointerDataArray
 #ifdef CHECKS
         if ((index < 0) || (index >= nItems_))
         {
-            Messenger::error("OrderedPointerDataArray<T,D>::data(%i) - Array index out of bounds (%i items in array).\n", index,
+            Messenger::error("OrderedPointerDataArray<T,D>::data({}) - Array index out of bounds ({} items in array).\n", index,
                              nItems_);
             return D();
         }
@@ -244,7 +244,7 @@ template <class T, class D> class OrderedPointerDataArray
 #ifdef CHECKS
         if ((index < 0) || (index >= nItems_))
         {
-            Messenger::error("OrderedPointerDataArray<T,D>::setData(%i) - Array index out of bounds (%i items in array).\n",
+            Messenger::error("OrderedPointerDataArray<T,D>::setData({}) - Array index out of bounds ({} items in array).\n",
                              index, nItems_);
             return;
         }
@@ -275,7 +275,7 @@ template <class T, class D> class OrderedPointerDataArray
                 return true;
             }
         }
-        Messenger::print("OrderedPointerDataArray<T,D>::remove(%p) - Couldn't find pointer in array.\n", ptr);
+
         return false;
     }
     // Return array index of pointer within the list

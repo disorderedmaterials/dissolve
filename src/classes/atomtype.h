@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/parameters.h"
 #include "data/ff.h"
 
@@ -40,15 +39,15 @@ class AtomType
      */
     private:
     // Name
-    CharString name_;
+    std::string name_;
     // Associated Element
     Element *element_;
 
     public:
     // Set name of AtomType
-    void setName(const char *name);
+    void setName(std::string_view name);
     // Return name of AtomType
-    const char *name() const;
+    std::string_view name() const;
     // Set atomic element
     void setElement(Element *el);
     // Return atomic Element

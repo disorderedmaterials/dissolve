@@ -29,7 +29,7 @@ DoubleKeywordWidget::DoubleKeywordWidget(QWidget *parent, KeywordBase *keyword, 
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<DoubleKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into DoubleKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into DoubleKeyword.\n", keyword->name());
     else
     {
         // Set minimum and maximum values

@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "procedure/nodes/node.h"
 #include "templates/reflist.h"
 
@@ -60,9 +59,9 @@ class Process1DProcedureNode : public ProcedureNode
     // Return processed data
     const Data1D &processedData() const;
     // Return value label
-    const char *valueLabel() const;
+    std::string valueLabel() const;
     // Return x axis label
-    const char *xAxisLabel() const;
+    std::string xAxisLabel() const;
 
     /*
      * Branches
@@ -84,10 +83,10 @@ class Process1DProcedureNode : public ProcedureNode
      */
     public:
     // Prepare any necessary data, ready for execution
-    bool prepare(Configuration *cfg, const char *prefix, GenericList &targetList);
+    bool prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList);
     // Execute node, targetting the supplied Configuration
-    ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+    ProcedureNode::NodeExecutionResult execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                                GenericList &targetList);
     // Finalise any necessary data after execution
-    bool finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList);
+    bool finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix, GenericList &targetList);
 };

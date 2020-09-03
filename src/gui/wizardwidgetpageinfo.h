@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "gui/wizardwidgethighlight.h"
 #include "templates/list.h"
 #include "templates/listitem.h"
@@ -52,19 +51,19 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
     // Identifying index for this page
     int index_;
     // Title text for page
-    CharString title_;
+    QString title_;
     // Resource location for icon
-    CharString iconUrl_;
+    QString iconUrl_;
     // Index of the 'next' page (for linear progressions)
     int nextIndex_;
 
     public:
     // Set page information
-    void set(int index, const char *title, int nextIndex = -1);
+    void set(int index, const QString title, int nextIndex = -1);
     // Set page index
     void setIndex(int index);
     // Set page title
-    void setTitle(const char *title);
+    void setTitle(const QString title);
     // Set next page index
     void setNextPageIndex(int nextIndex);
     // Set page type
@@ -74,7 +73,7 @@ class WizardWidgetPageInfo : public ListItem<WizardWidgetPageInfo>
     // Return identifying index for page
     int index() const;
     // Return title text for page
-    const char *title() const;
+    const QString title() const;
     // Return index of the 'next' page
     int nextIndex() const;
     // Return whether this is an exit (finish) point

@@ -68,7 +68,7 @@ void KeywordDropDown::dropWidgetHidden()
  */
 
 // Set summary text on call button
-void KeywordDropDown::setSummaryText(const char *text) { ui_.CallDropWidgetButton->setText(text); }
+void KeywordDropDown::setSummaryText(const QString s) { ui_.CallDropWidgetButton->setText(s); }
 
 // Set icon on call button
 void KeywordDropDown::setSummaryIcon(QIcon icon) { ui_.CallDropWidgetButton->setIcon(icon); }

@@ -44,7 +44,7 @@ class GetGizmoNameDialog : public QDialog
 
     public:
     // Run the dialog
-    bool get(const Gizmo *currentGizmo, const char *currentName);
+    bool get(const Gizmo *currentGizmo, const QString &currentName);
     // Return the name string
     QString newName() const;
 

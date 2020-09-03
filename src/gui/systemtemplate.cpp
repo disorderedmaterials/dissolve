@@ -54,14 +54,14 @@ bool SystemTemplate::read(const QDir rootResourceDir)
     // Set up an XML stream reader on the expected template info file
     QFile infoFile(rootResourceDir.filePath("info.xml"));
     if (!infoFile.open(QIODevice::ReadOnly | QIODevice::Text))
-        return Messenger::error("Couldn't open template system info file '%s'.\n", qPrintable(infoFile.fileName()));
+        return Messenger::error("Couldn't open template system info file '{}'.\n", qPrintable(infoFile.fileName()));
     QXmlStreamReader infoReader(&infoFile);
 
     // Check that we have a file with the correct root node
     if (!infoReader.readNextStartElement())
         return Messenger::error("Failed to do initial read from system template xml.\n");
     if (infoReader.name() != "systemtemplate")
-        return Messenger::error("System template file has wrong root node type (%s).\n",
+        return Messenger::error("System template file has wrong root node type ({}).\n",
                                 qPrintable(infoReader.name().toString()));
 
     QString inputFileResource;
@@ -84,7 +84,7 @@ bool SystemTemplate::read(const QDir rootResourceDir)
             description_ = infoReader.readElementText();
         else
         {
-            Messenger::error("Unrecognised token '%s' found in system template.\n", qPrintable(token));
+            Messenger::error("Unrecognised token '{}' found in system template.\n", qPrintable(token));
             return false;
         }
     }
@@ -94,7 +94,7 @@ bool SystemTemplate::read(const QDir rootResourceDir)
     {
         QFile file(inputFileResource);
         if (!file.open(QIODevice::ReadOnly))
-            return Messenger::error("Failed to open input file data for template '%s'.\n", qPrintable(name_));
+            return Messenger::error("Failed to open input file data for template '{}'.\n", qPrintable(name_));
         else
             inputFileData_ = file.readAll();
         file.close();
@@ -125,7 +125,7 @@ QToolButton *SystemTemplate::toolButton() const { return toolButton_; }
 QToolButton *SystemTemplate::createButton()
 {
     if (toolButton_)
-        Messenger::warn("A QToolButton already exists for the SystemTemplate '%s'. It will be overwritten.\n",
+        Messenger::warn("A QToolButton already exists for the SystemTemplate '{}'. It will be overwritten.\n",
                         qPrintable(name_));
     toolButton_ = new QToolButton;
     toolButton_->setText(name_);

@@ -32,7 +32,7 @@ GetSpeciesNameDialog::GetSpeciesNameDialog(QWidget *parent, const CoreData &core
 GetSpeciesNameDialog::~GetSpeciesNameDialog() {}
 
 // Run the dialog
-bool GetSpeciesNameDialog::get(const Species *species, const char *currentName)
+bool GetSpeciesNameDialog::get(const Species *species, const QString &currentName)
 {
     species_ = species;
 

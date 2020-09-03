@@ -125,10 +125,10 @@ bool Forcefield_Ludwig_Py5::setUp()
  */
 
 // Return name of Forcefield
-const char *Forcefield_Ludwig_Py5::name() const { return "Ludwig Py5 Cation"; }
+std::string_view Forcefield_Ludwig_Py5::name() const { return "Ludwig Py5 Cation"; }
 
 // Return description for Forcefield
-const char *Forcefield_Ludwig_Py5::description() const
+std::string_view Forcefield_Ludwig_Py5::description() const
 {
     return "Implements of 1‐pentylpyridinium cation based on OPLS All Atom Forcefield for benzene and pyridine; W. L. "
            "Jorgensen, D. S. Maxwell, and J. Tirado-Rives, <i>Journal of the American "

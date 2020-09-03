@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "expression/functions.h"
 #include "expression/node.h"
 #include "templates/list.h"
@@ -34,7 +33,7 @@ class Node;
 class Expression
 {
     public:
-    Expression(const char *expressionText = NULL);
+    Expression(std::string_view expressionText = "");
     ~Expression();
     Expression(const Expression &source);
     void operator=(const Expression &source);
@@ -44,7 +43,7 @@ class Expression
      */
     private:
     // Original generating string
-    CharString expressionString_;
+    std::string expressionString_;
 
     public:
     // Clear all expression data
@@ -52,11 +51,11 @@ class Expression
     // Return whether current expression is valid (contains at least one node)
     bool isValid() const;
     // Set Expression from supplied string
-    bool set(const char *expressionString);
+    bool set(std::string_view expressionString);
     // Set Expression from supplied string and external variables
-    bool set(const char *expressionString, RefList<ExpressionVariable> externalVariables);
+    bool set(std::string_view expressionString, RefList<ExpressionVariable> externalVariables);
     // Return original generating string`
-    const char *expressionString() const;
+    std::string_view expressionString() const;
 
     /*
      * Nodes
@@ -73,7 +72,7 @@ class Expression
     // Add a node representing a whole statement to the execution list
     bool addStatement(ExpressionNode *node);
     // Add an operator to the Expression
-    ExpressionNode *addOperator(ExpressionFunctions::Function func, ExpressionNode *arg1, ExpressionNode *arg2 = NULL);
+    ExpressionNode *addOperator(ExpressionFunctions::Function func, ExpressionNode *arg1, ExpressionNode *arg2 = nullptr);
     // Associate a command-based node to the Expression
     ExpressionNode *addFunctionNodeWithArglist(ExpressionFunctions::Function func, ExpressionNode *arglist);
     // Add a function node to the list (overloaded to accept simple arguments instead of a list)
@@ -103,15 +102,17 @@ class Expression
     // Create numeric constant
     ExpressionVariable *createConstant(ExpressionValue value, bool persistent = false);
     // Create integer variable, with optional ExpressionNode as initial value source
-    ExpressionVariable *createIntegerVariable(const char *name, bool persistent = false, ExpressionNode *initialValue = NULL);
+    ExpressionVariable *createIntegerVariable(std::string_view name, bool persistent = false,
+                                              ExpressionNode *initialValue = NULL);
     // Create double variable, with optional ExpressionNode as initial value source
-    ExpressionVariable *createDoubleVariable(const char *name, bool persistent = false, ExpressionNode *initialValue = NULL);
+    ExpressionVariable *createDoubleVariable(std::string_view name, bool persistent = false,
+                                             ExpressionNode *initialValue = NULL);
     // Create variable with supplied initial value
-    ExpressionVariable *createVariableWithValue(const char *name, ExpressionValue initialValue, bool persistent = false);
+    ExpressionVariable *createVariableWithValue(std::string_view name, ExpressionValue initialValue, bool persistent = false);
     // Set list of external variables
     void setExternalVariables(RefList<ExpressionVariable> externalVariables);
     // Search for variable
-    ExpressionVariable *variable(const char *name);
+    ExpressionVariable *variable(std::string_view name);
     // Return list of variables
     RefList<ExpressionVariable> &variables();
     // Return list of constants

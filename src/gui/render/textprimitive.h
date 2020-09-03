@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "base/enumoptions.h"
 #include "gui/render/textformat.h"
 #include "gui/render/textfragment.h"
 #include "math/cuboid.h"
@@ -55,10 +56,8 @@ class TextPrimitive : public ListItem<TextPrimitive>
         BottomRightAnchor,
         nTextAnchors
     };
-    // Convert text string to TextAnchor
-    static TextAnchor textAnchor(const char *s);
-    // Convert TextAnchor to text string
-    static const char *textAnchor(TextAnchor anchor);
+    // Return enum options for TextAnchor
+    static EnumOptions<TextPrimitive::TextAnchor> &textAnchors();
     // Escape Sequence enum
     enum EscapeSequence
     {
@@ -70,8 +69,8 @@ class TextPrimitive : public ListItem<TextPrimitive>
         SymbolEscape,
         nEscapeSequences
     };
-    // Convert text string to EscapeSequence
-    static EscapeSequence escapeSequence(const char *s);
+    // Return enum options for TextAnchor
+    static EnumOptions<TextPrimitive::EscapeSequence> &escapeSequences();
 
     /*
      * Definition

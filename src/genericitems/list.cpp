@@ -41,13 +41,13 @@ void GenericList::clearAll() { items_.clear(); }
 void GenericList::add(GenericItem *item) { items_.own(item); }
 
 // Create an item of the specified type
-GenericItem *GenericList::create(const char *name, const char *itemClassName, int version, int flags)
+GenericItem *GenericList::create(std::string_view name, std::string_view itemClassName, int version, int flags)
 {
     // Check for existing item with this name
     GenericItem *newItem = find(name);
     if (newItem)
     {
-        Messenger::printVerbose("Item named '%s' already exists in the list, so returning it instead of creating a new one.\n",
+        Messenger::printVerbose("Item named '{}' already exists in the list, so returning it instead of creating a new one.\n",
                                 name);
         return newItem;
     }
@@ -56,7 +56,7 @@ GenericItem *GenericList::create(const char *name, const char *itemClassName, in
     newItem = GenericItem::newItem(itemClassName, name);
     if (!newItem)
     {
-        Messenger::error("GenericList::create() doesn't know how to create an item of type '%s'\n", itemClassName);
+        Messenger::error("GenericList::create() doesn't know how to create an item of type '{}'\n", itemClassName);
         return NULL;
     }
 
@@ -73,24 +73,20 @@ GenericItem *GenericList::create(const char *name, const char *itemClassName, in
 }
 
 // Return whether the named item is contained in the list
-bool GenericList::contains(const char *name, const char *prefix)
+bool GenericList::contains(std::string_view name, std::string_view prefix)
 {
     // Construct full name
-    CharString varName;
-    if (DissolveSys::isEmpty(prefix))
-        varName = name;
-    else
-        varName.sprintf("%s_%s", prefix, name);
+    std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
     for (auto *item = items_.first(); item != NULL; item = item->next())
-        if (DissolveSys::sameString(item->name(), varName.get()))
+        if (DissolveSys::sameString(item->name(), varName))
             return true;
 
     return false;
 }
 
 // Return if named item, if it exists, is of specified type
-bool GenericList::isItemOfType(const char *type, const char *name, const char *prefix)
+bool GenericList::isItemOfType(std::string_view type, std::string_view name, std::string_view prefix)
 {
     GenericItem *item = find(name, prefix);
     if (!item)
@@ -103,7 +99,7 @@ bool GenericList::isItemOfType(const char *type, const char *name, const char *p
 List<GenericItem> &GenericList::items() { return items_; }
 
 // Return the named item from the list
-GenericItem *GenericList::find(const char *name)
+GenericItem *GenericList::find(std::string_view name)
 {
     for (auto *item = items_.first(); item != NULL; item = item->next())
         if (DissolveSys::sameString(item->name(), name))
@@ -112,47 +108,37 @@ GenericItem *GenericList::find(const char *name)
 }
 
 // Return the named item from the list (with prefix)
-GenericItem *GenericList::find(const char *name, const char *prefix)
+GenericItem *GenericList::find(std::string_view name, std::string_view prefix)
 {
     // Construct full name
-    CharString varName;
-    if (DissolveSys::isEmpty(prefix))
-        varName = name;
-    else
-        varName.sprintf("%s_%s", prefix, name);
+    std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
     for (auto *item = items_.first(); item != NULL; item = item->next())
-        if (DissolveSys::sameString(item->name(), varName.get()))
+        if (DissolveSys::sameString(item->name(), varName))
             return item;
     return NULL;
 }
 
 // Return the version of the named item from the list
-int GenericList::version(const char *name, const char *prefix) const
+int GenericList::version(std::string_view name, std::string_view prefix) const
 {
     // Construct full name
-    CharString varName;
-    if (DissolveSys::isEmpty(prefix))
-        varName = name;
-    else
-        varName.sprintf("%s_%s", prefix, name);
+    std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
     for (auto *item = items_.first(); item != NULL; item = item->next())
-        if (DissolveSys::sameString(item->name(), varName.get()))
+        if (DissolveSys::sameString(item->name(), varName))
             return item->version();
 
     return -99;
 }
 
 // Return list of all items with specified prefix (before first '_')
-RefList<GenericItem> GenericList::itemsWithPrefix(const char *prefix)
+RefList<GenericItem> GenericList::itemsWithPrefix(std::string_view prefix)
 {
     RefList<GenericItem> items;
-    CharString itemUniqueName;
     for (auto *item = items_.first(); item != NULL; item = item->next())
     {
-        itemUniqueName = DissolveSys::beforeChar(item->name(), '_');
-        if (itemUniqueName == prefix)
+        if (DissolveSys::beforeChar(item->name(), '_') == prefix)
             items.append(item);
     }
 
@@ -160,7 +146,7 @@ RefList<GenericItem> GenericList::itemsWithPrefix(const char *prefix)
 }
 
 // Return list of all items with specified class name
-RefList<GenericItem> GenericList::itemsWithClassName(const char *className)
+RefList<GenericItem> GenericList::itemsWithClassName(std::string_view className)
 {
     RefList<GenericItem> items;
     for (auto *item = items_.first(); item != NULL; item = item->next())
@@ -175,17 +161,17 @@ void GenericList::listItems()
 {
     auto count = 0;
     for (auto *item = items_.first(); item != NULL; item = item->next(), ++count)
-        Messenger::print("  %3i  %s", count, item->name());
+        Messenger::print("  {:3d}  {}", count, item->name());
 }
 
 // Remove named item
-bool GenericList::remove(const char *name, const char *prefix)
+bool GenericList::remove(std::string_view name, std::string_view prefix)
 {
     // First, find the named item
     GenericItem *item = find(name, prefix);
     if (!item)
     {
-        Messenger::printVerbose("Couldn't find named item '%s' (prefix = '%s') in the list, so can't remove it.\n", name,
+        Messenger::printVerbose("Couldn't find named item '{}' (prefix = '{}') in the list, so can't remove it.\n", name,
                                 prefix);
         return false;
     }
@@ -195,27 +181,28 @@ bool GenericList::remove(const char *name, const char *prefix)
 }
 
 // Rename item
-bool GenericList::rename(const char *oldName, const char *oldPrefix, const char *newName, const char *newPrefix)
+bool GenericList::rename(std::string_view oldName, std::string_view oldPrefix, std::string_view newName,
+                         std::string_view newPrefix)
 {
     // First, find the named item
     GenericItem *item = find(oldName, oldPrefix);
     if (!item)
     {
-        Messenger::printVerbose("Couldn't find named item '%s' (prefix = '%s') in the list, so can't rename it.\n", oldName,
+        Messenger::printVerbose("Couldn't find named item '{}' (prefix = '{}') in the list, so can't rename it.\n", oldName,
                                 oldPrefix);
         return false;
     }
 
-    if (DissolveSys::isEmpty(newPrefix))
+    if (newPrefix.empty())
         item->setName(newName);
     else
-        item->setName(CharString("%s_%s", newPrefix, newName));
+        item->setName(fmt::format("{}_{}", newPrefix, newName));
 
     return true;
 }
 
 // Prune all items with '@suffix'
-void GenericList::pruneWithSuffix(const char *suffix)
+void GenericList::pruneWithSuffix(std::string_view suffix)
 {
     GenericItem *nextItem = NULL;
     GenericItem *item = items_.first();
@@ -241,7 +228,7 @@ bool GenericList::broadcast(ProcessPool &procPool, const int root, const CoreDat
 {
     for (auto *item = items_.first(); item != NULL; item = item->next())
     {
-        Messenger::printVerbose("Broadcasting data '%s' (%s)...\n", item->name(), item->itemClassName());
+        Messenger::printVerbose("Broadcasting data '{}' ({})...\n", item->name(), item->itemClassName());
         if (!item->broadcast(procPool, root, coreData))
             return false;
     }
@@ -255,7 +242,7 @@ bool GenericList::equality(ProcessPool &procPool)
     // If found, we note that we've already done this data, check it for equality, and move on.
     // If we can't find the data, we'll complain but move on.
     RefList<GenericItem> checkedItems;
-    CharString itemName, itemClassName;
+    std::string itemName, itemClassName;
     auto nFailed = 0;
     for (int n = 0; n < procPool.nProcesses(); ++n)
     {
@@ -274,7 +261,7 @@ bool GenericList::equality(ProcessPool &procPool)
                 if (!procPool.decideTrue(n))
                     return false;
 
-                Messenger::printVerbose("Checking equality of item '%s'...\n", item->name());
+                Messenger::printVerbose("Checking equality of item '{}'...\n", item->name());
 
                 // Send name of item - slaves will try to find it, so we need to check that everybody does...
                 itemName = item->name();
@@ -282,7 +269,7 @@ bool GenericList::equality(ProcessPool &procPool)
                     return false;
                 if (!procPool.allTrue(true))
                 {
-                    Messenger::error("GenericList equality check failed - item '%s' is not present on all "
+                    Messenger::error("GenericList equality check failed - item '{}' is not present on all "
                                      "processes.\n",
                                      item->name());
                     ++nFailed;
@@ -295,8 +282,8 @@ bool GenericList::equality(ProcessPool &procPool)
                     return false;
                 if (!procPool.allTrue(true))
                 {
-                    Messenger::error("GenericList equality check failed - item '%s' is not of the same "
-                                     "type (%s) on all processes.\n",
+                    Messenger::error("GenericList equality check failed - item '{}' is not of the same "
+                                     "type ({}) on all processes.\n",
                                      item->name(), item->itemClassName());
                     ++nFailed;
                     continue;
@@ -304,7 +291,7 @@ bool GenericList::equality(ProcessPool &procPool)
 
                 // Check the item for equality
                 if (!item->equality(procPool))
-                    return Messenger::error("Failed equality check for module data '%s'.\n", item->name());
+                    return Messenger::error("Failed equality check for module data '{}'.\n", item->name());
 
                 // Add the item to our checked list
                 checkedItems.append(item);
@@ -321,13 +308,13 @@ bool GenericList::equality(ProcessPool &procPool)
                 if (!procPool.broadcast(itemName, n))
                     return false;
 
-                Messenger::printVerbose("Checking equality of item '%s'...\n", itemName.get());
+                Messenger::printVerbose("Checking equality of item '{}'...\n", itemName);
 
                 // Do we have an item of this name?
                 GenericItem *item = find(itemName);
                 if (!procPool.allTrue(item))
                 {
-                    Messenger::error("GenericList equality check failed - item '%s' not found on process %i.\n", item->name(),
+                    Messenger::error("GenericList equality check failed - item '{}' not found on process {}.\n", item->name(),
                                      procPool.poolRank());
                     ++nFailed;
                     continue;
@@ -338,8 +325,8 @@ bool GenericList::equality(ProcessPool &procPool)
                     return false;
                 if (!procPool.allTrue(DissolveSys::sameString(item->itemClassName(), itemClassName)))
                 {
-                    Messenger::error("GenericList equality check failed - item '%s' not of the correct "
-                                     "type (is %s) on process %i.\n",
+                    Messenger::error("GenericList equality check failed - item '{}' not of the correct "
+                                     "type (is {}) on process {}.\n",
                                      item->name(), item->itemClassName(), procPool.poolRank());
                     ++nFailed;
                     continue;
@@ -347,7 +334,7 @@ bool GenericList::equality(ProcessPool &procPool)
 
                 // Check the item for equality
                 if (!item->equality(procPool))
-                    return Messenger::error("Failed equality check for module data '%s'.\n", item->name());
+                    return Messenger::error("Failed equality check for module data '{}'.\n", item->name());
 
                 // Add the item to our checked list
                 checkedItems.append(item);

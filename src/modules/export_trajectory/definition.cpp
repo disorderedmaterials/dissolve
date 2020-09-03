@@ -22,13 +22,13 @@
 #include "modules/export_trajectory/exporttraj.h"
 
 // Return type of module
-const char *ExportTrajectoryModule::type() const { return "ExportTrajectory"; }
+std::string_view ExportTrajectoryModule::type() const { return "ExportTrajectory"; }
 
 // Return category for module
-const char *ExportTrajectoryModule::category() const { return "Input / Output"; }
+std::string_view ExportTrajectoryModule::category() const { return "Input / Output"; }
 
 // Return brief description of module
-const char *ExportTrajectoryModule::brief() const { return "Export trajectory for a Configuration"; }
+std::string_view ExportTrajectoryModule::brief() const { return "Export trajectory for a Configuration"; }
 
 // Return the number of Configuration targets this Module requires
 int ExportTrajectoryModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

@@ -99,11 +99,11 @@ EnumOptions<AddSpeciesProcedureNode::PositioningType> AddSpeciesProcedureNode::p
  */
 
 // Prepare any necessary data, ready for execution
-bool AddSpeciesProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList) { return true; }
+bool AddSpeciesProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
 
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                    const char *prefix, GenericList &targetList)
+                                                                    std::string_view prefix, GenericList &targetList)
 {
     const auto requestedPopulation = keywords_.asInt("Population");
     auto *sp = keywords_.retrieve<Species *>("Species");
@@ -117,11 +117,11 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
     // Can't add the Species if it has any missing core information
     if (!sp->checkSetUp())
     {
-        Messenger::error("Can't add Species '%s' because it is not set up correctly.\n", sp->name());
+        Messenger::error("Can't add Species '{}' because it is not set up correctly.\n", sp->name());
         return ProcedureNode::Failure;
     }
 
-    Messenger::print("[AddSpecies] Adding species '%s' - population is %i.\n", sp->name(), requestedPopulation);
+    Messenger::print("[AddSpecies] Adding species '{}' - population is {}.\n", sp->name(), requestedPopulation);
 
     // If a density was not given, just add new molecules to the current box without adjusting its size
     auto &densityAndUnits = keywords_.retrieve<Venum<NodeValue, Units::DensityUnits>>("Density");
@@ -143,15 +143,15 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
         else
             requiredVolume = ((sp->mass() * requestedPopulation) / AVOGADRO) / (density / 1.0E24);
 
-        Messenger::print("[AddSpecies] Density for new species is %f %s.\n", density,
+        Messenger::print("[AddSpecies] Density for new species is {} {}.\n", density,
                          Units::densityUnits().keyword(densityAndUnits.enumeration()));
-        Messenger::print("[AddSpecies] Required volume for new species is %f cubic Angstroms.\n", requiredVolume);
+        Messenger::print("[AddSpecies] Required volume for new species is {} cubic Angstroms.\n", requiredVolume);
 
         // If the current box has no atoms in it, absorb the current volume rather than adding to it
         if (cfg->nAtoms() > 0)
             requiredVolume += currentVolume;
         else
-            Messenger::print("[AddSpecies] Current box is empty, so new volume will be set to exactly %f cubic Angstroms.\n",
+            Messenger::print("[AddSpecies] Current box is empty, so new volume will be set to exactly {} cubic Angstroms.\n",
                              requiredVolume);
 
         double scaleFactor = pow(requiredVolume / currentVolume, 1.0 / 3.0);
@@ -162,7 +162,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
         // Scale the current Box so there is enough space for our new species
         cfg->scaleBox(scaleFactor);
 
-        Messenger::print("[AddSpecies] New box volume is %e cubic Angstroms (scale factor was %f).\n", cfg->box()->volume(),
+        Messenger::print("[AddSpecies] New box volume is {:e} cubic Angstroms (scale factor was {}).\n", cfg->box()->volume(),
                          scaleFactor);
     }
     else if (boxAction == AddSpeciesProcedureNode::ScaleVolume)
@@ -175,7 +175,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
             existingRequiredVolume = cfg->nAtoms() / density;
         else
             existingRequiredVolume = cfg->atomicMass() / (density / 1.0E24);
-        Messenger::print("[AddSpecies] Existing contents requires volume of %f cubic Angstroms at specified density.\n",
+        Messenger::print("[AddSpecies] Existing contents requires volume of {} cubic Angstroms at specified density.\n",
                          existingRequiredVolume);
 
         // Determine volume required to contain the population of the specified Species at the requested density
@@ -185,7 +185,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
         else
             requiredVolume = ((sp->mass() * requestedPopulation) / AVOGADRO) / (density / 1.0E24);
 
-        Messenger::print("[AddSpecies] Required volume for new species is %f cubic Angstroms.\n", requiredVolume);
+        Messenger::print("[AddSpecies] Required volume for new species is {} cubic Angstroms.\n", requiredVolume);
 
         // Add on required volume for existing box contents
         if (cfg->nAtoms() > 0)
@@ -199,7 +199,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
         // Scale the current Box so there is enough space for our new species
         cfg->scaleBox(scaleFactor);
 
-        Messenger::print("[AddSpecies] Current box scaled by %f - new volume is %e cubic Angstroms.\n", scaleFactor,
+        Messenger::print("[AddSpecies] Current box scaled by {} - new volume is {:e} cubic Angstroms.\n", scaleFactor,
                          cfg->box()->volume());
     }
 
@@ -207,7 +207,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
     auto positioning = keywords_.enumeration<AddSpeciesProcedureNode::PositioningType>("Positioning");
     auto rotate = keywords_.asBool("Rotate");
 
-    Messenger::print("[AddSpecies] Positioning type is '%s' and rotation is %s.\n",
+    Messenger::print("[AddSpecies] Positioning type is '{}' and rotation is {}.\n",
                      AddSpeciesProcedureNode::positioningTypes().keyword(positioning), rotate ? "on" : "off");
 
     // Now we add the molecules
@@ -257,7 +257,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
         }
     }
 
-    Messenger::print("[AddSpecies] New box density is %e cubic Angstroms (%f g/cm3).\n", cfg->atomicDensity(),
+    Messenger::print("[AddSpecies] New box density is {:e} cubic Angstroms ({} g/cm3).\n", cfg->atomicDensity(),
                      cfg->chemicalDensity());
 
     return ProcedureNode::Success;

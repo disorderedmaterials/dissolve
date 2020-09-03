@@ -70,11 +70,11 @@ template <class V, class E> class Venum
     // Return enumeration
     E enumeration() const { return enumOptions_.enumeration(); }
     // Return enumeration as string
-    const char *enumerationAsString() const { return enumOptions_.currentOption().keyword(); }
+    std::string_view enumerationAsString() const { return enumOptions_.currentOption().keyword(); }
     // Set enumeration by index
     bool setEnumerationByIndex(int index) { return enumOptions_.setCurrentOptionIndex(index); }
     // Set enumeration from string
-    bool setEnumeration(const char *option)
+    bool setEnumeration(std::string_view option)
     {
         if (enumOptions_.isValid(option))
         {

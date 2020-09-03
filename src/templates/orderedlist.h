@@ -256,7 +256,7 @@ template <class T> void OrderedList<T>::remove(OrderedListItem<T> *xitem)
 {
     if (xitem == NULL)
     {
-        printf("Internal Error: NULL pointer passed to OrderedList<T>::remove().\n");
+        Messenger::error("NULL pointer passed to OrderedList<T>::remove().\n");
         return;
     }
     // Delete a specific item from the list
@@ -289,7 +289,7 @@ template <class T> void OrderedList<T>::cut(OrderedListItem<T> *item)
 {
     if (item == NULL)
     {
-        printf("Internal Error: NULL pointer passed to OrderedList<T>::cut().\n");
+        Messenger::error("NULL pointer passed to OrderedList<T>::cut().\n");
         return;
     }
 
@@ -374,9 +374,9 @@ template <class T> void OrderedList<T>::addAtEnd(T object)
     else if (listTail_->objectIndex() < object->index())
         insertAfter(object, listTail_);
     else
-        printf("BAD_USAGE - Attempted to add object with index %i to end of OrderedList, but last item in list has "
-               "index %i\n",
-               object->index(), listTail_->objectIndex());
+        Messenger::error("BAD_USAGE - Attempted to add object with index {} to end of OrderedList, but last item in list has "
+                         "index {}\n",
+                         object->index(), listTail_->objectIndex());
 }
 
 // Remove item reference from list
@@ -387,7 +387,7 @@ template <class T> void OrderedList<T>::remove(int objectIndex)
 #ifdef CHECKS
     if (item == NULL)
     {
-        printf("Internal Error: Specified objectIndex (%i) does not exist in this OrderedList.\n", objectIndex);
+        Messenger::error("Specified objectIndex ({}) does not exist in this OrderedList.\n", objectIndex);
         return;
     }
 #endif
@@ -413,7 +413,7 @@ template <class T> void OrderedList<T>::move(int objectIndex, OrderedList<T> &ta
 #ifdef CHECKS
     if (item == NULL)
     {
-        printf("Internal Error: Specified objectIndex (%i) does not exist in this OrderedList.\n", objectIndex);
+        Messenger::error("Specified objectIndex ({}) does not exist in this OrderedList.\n", objectIndex);
         return;
     }
 #endif
@@ -570,7 +570,7 @@ template <class T> OrderedListItem<T> *OrderedList<T>::operator[](int index)
 #ifdef CHECKS
     if ((index < 0) || (index >= nItems_))
     {
-        printf("LIST_OPERATOR[] - Array index (%i) out of bounds (%i items in List) >>>>\n", index, nItems_);
+        Messenger::error("LIST_OPERATOR[] - Array index ({}) out of bounds ({} items in List) >>>>\n", index, nItems_);
         return NULL;
     }
 #endif

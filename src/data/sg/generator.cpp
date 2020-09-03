@@ -25,15 +25,13 @@
 #include "data/sg/sginfo.h"
 #include <string.h>
 
-SymmetryGenerator::SymmetryGenerator() {}
-
 // Set partial element of matrix or translation vector
-void SymmetryGenerator::setMatrixPart(int row, const char *part)
+void SymmetryGenerator::setMatrixPart(int row, std::string_view part)
 {
     // The string provided either contains (-)xyz, or a translation amount
     auto pos = 0;
     auto multiplier = 0;
-    CharString a, b;
+    std::string a, b;
 
     // Check for plus/minus signs
     if (part[0] == '-')
@@ -47,7 +45,6 @@ void SymmetryGenerator::setMatrixPart(int row, const char *part)
     else
         ++pos;
 
-    // printf("MULTIPLIER = %i, original=[%s], now=[%s]\n", multiplier, s, c);
     // Now, check if this character is x, y, or z.
     switch (part[pos])
     {
@@ -65,15 +62,15 @@ void SymmetryGenerator::setMatrixPart(int row, const char *part)
             break;
         default:
             // Must be a number, and hence part of the translation vector
-            a = DissolveSys::beforeStr(part, "/");
-            b = DissolveSys::afterStr(part, "/");
-            matrix_[12 + row] = a.asDouble() / b.asDouble();
+            a = DissolveSys::beforeChar(part, '/');
+            b = DissolveSys::afterChar(part, '/');
+            matrix_[12 + row] = std::stof(a) / std::stof(b);
             break;
     }
 }
 
 // Set from plain text string
-bool SymmetryGenerator::set(const char *s)
+bool SymmetryGenerator::set(std::string_view s)
 {
     LineParser parser;
 
@@ -81,7 +78,7 @@ bool SymmetryGenerator::set(const char *s)
     parser.getArgsDelim(LineParser::Defaults, s);
     if (parser.nArgs() != 3)
     {
-        Messenger::print("Tried to set a symmetry Generator from text ('%s') that didn't split into three arguments.", s);
+        Messenger::print("Tried to set a symmetry Generator from text ('{}') that didn't split into three arguments.", s);
         return false;
     }
 
@@ -92,23 +89,23 @@ bool SymmetryGenerator::set(const char *s)
     for (int n = 0; n < 3; ++n)
     {
         // Step through characters in 'part', adding until we find a (second) 'delimiting' character
-        CharString subString;
-        for (int i = 0; i < strlen(parser.argc(n)); ++i)
+        std::string subString;
+        for (int i = 0; i < parser.argsv(n).length(); ++i)
         {
-            char c = parser.argc(n)[i];
+            char c = parser.argsv(n)[i];
             // Store old sub-part if we find a new delimiting character, and our subString is not empty
-            if (((c == '-') || (c == '+')) && (!subString.isEmpty()))
+            if (((c == '-') || (c == '+')) && (!subString.empty()))
             {
                 // This constitutes a sub-part of the string
-                setMatrixPart(n, subString.get());
+                setMatrixPart(n, subString);
                 subString.clear();
             }
             subString += c;
         }
 
         // Check for remaining 'item'
-        if (!subString.isEmpty())
-            setMatrixPart(n, subString.get());
+        if (!subString.empty())
+            setMatrixPart(n, subString);
     }
 
     return true;
@@ -126,7 +123,7 @@ void SymmetryGenerator::setTranslation(double tx, double ty, double tz, double d
 }
 
 // Return generator text
-const char *SymmetryGenerator::text() const { return text_.get(); }
+std::string_view SymmetryGenerator::text() const { return text_; }
 
 // Return matrix of generator
 const Matrix4 &SymmetryGenerator::matrix() const { return matrix_; }

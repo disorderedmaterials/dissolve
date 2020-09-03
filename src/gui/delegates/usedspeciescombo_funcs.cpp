@@ -42,7 +42,8 @@ QWidget *UsedSpeciesComboDelegate::createEditor(QWidget *parent, const QStyleOpt
     {
         for (auto *spInfo = cfg->usedSpecies().first(); spInfo != NULL; spInfo = spInfo->next())
         {
-            editor->addItem(spInfo->species()->name(), VariantPointer<Species>(spInfo->species()));
+            editor->addItem(QString::fromStdString(std::string(spInfo->species()->name())),
+                            VariantPointer<Species>(spInfo->species()));
         }
     }
     else

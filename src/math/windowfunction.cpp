@@ -46,12 +46,12 @@ void WindowFunction::operator=(const WindowFunction &source)
 WindowFunction::~WindowFunction() {}
 
 // Window Function keywords
-const char *WindowFunctionKeywords[] = {"None", "Bartlett", "Hann", "Lanczos", "Nuttall", "Sine", "Lorch0"};
+std::string_view WindowFunctionKeywords[] = {"None", "Bartlett", "Hann", "Lanczos", "Nuttall", "Sine", "Lorch0"};
 
 int WindowFunctionNParameters[] = {0, 0, 0, 0, 0, 0, 0};
 
 // Return FunctionType from supplied string
-WindowFunction::FunctionType WindowFunction::functionType(const char *s)
+WindowFunction::FunctionType WindowFunction::functionType(std::string_view s)
 {
     for (int n = 0; n < nFunctionTypes; ++n)
         if (DissolveSys::sameString(s, WindowFunctionKeywords[n]))
@@ -60,13 +60,13 @@ WindowFunction::FunctionType WindowFunction::functionType(const char *s)
 }
 
 // Return FunctionType name
-const char *WindowFunction::functionType(WindowFunction::FunctionType func) { return WindowFunctionKeywords[func]; }
+std::string_view WindowFunction::functionType(WindowFunction::FunctionType func) { return WindowFunctionKeywords[func]; }
 
 // Return number of parameters needed to define function
 int WindowFunction::nFunctionParameters(FunctionType func) { return WindowFunctionNParameters[func]; }
 
 // Return description for FunctionType
-const char *WindowFunction::functionDescription(FunctionType func)
+std::string_view WindowFunction::functionDescription(FunctionType func)
 {
     switch (func)
     {
@@ -118,17 +118,17 @@ void WindowFunction::set(WindowFunction::FunctionType function, double p1, doubl
 bool WindowFunction::set(LineParser &parser, int startArg)
 {
     // First argument is the form of the function
-    WindowFunction::FunctionType funcType = WindowFunction::functionType(parser.argc(startArg));
+    WindowFunction::FunctionType funcType = WindowFunction::functionType(parser.argsv(startArg));
     if (funcType == WindowFunction::nFunctionTypes)
     {
-        Messenger::error("Unrecognised Function type '%s'.\n", parser.argc(startArg));
+        Messenger::error("Unrecognised Function type '{}'.\n", parser.argsv(startArg));
         return false;
     }
 
     // Do we have the right number of arguments for the function specified?
     if ((parser.nArgs() - startArg) < WindowFunction::nFunctionParameters(funcType))
     {
-        Messenger::error("Too few parameters supplied for Function '%s' (expected %i, found %i).\n",
+        Messenger::error("Too few parameters supplied for Function '{}' (expected {}, found {}).\n",
                          WindowFunction::functionType(funcType), WindowFunction::nFunctionParameters(funcType),
                          parser.nArgs() - startArg);
         return false;
@@ -148,7 +148,7 @@ bool WindowFunction::set(LineParser &parser, int startArg)
             // No fixed parameters.
             break;
         default:
-            Messenger::error("Function form '%s' not accounted for in set(LineParser&,int).\n",
+            Messenger::error("Function form '{}' not accounted for in set(LineParser&,int).\n",
                              WindowFunction::functionType(funcType));
             return false;
     }
@@ -163,7 +163,7 @@ WindowFunction::FunctionType WindowFunction::function() const { return function_
 double WindowFunction::parameter(int n) const { return parameters_[n]; }
 
 // Return short summary of function parameters
-CharString WindowFunction::parameterSummary() const
+std::string WindowFunction::parameterSummary() const
 {
     switch (function_)
     {
@@ -179,7 +179,7 @@ CharString WindowFunction::parameterSummary() const
             return "Delta0=PI/xMax";
             break;
         default:
-            Messenger::warn("WindowFunction::value(x) - Function id %i not accounted for.\n", function_);
+            Messenger::warn("WindowFunction::value(x) - Function id {} not accounted for.\n", function_);
             break;
     }
 
@@ -206,7 +206,7 @@ bool WindowFunction::setUp(const Data1D &data)
             parameters_[0] = PI / xMax_;
             break;
         default:
-            Messenger::warn("WindowFunction::value(x) - Function id %i not accounted for.\n", function_);
+            Messenger::warn("WindowFunction::value(x) - Function id {} not accounted for.\n", function_);
             break;
     }
 
@@ -221,7 +221,7 @@ double WindowFunction::y(double x, double omega) const
 
 #ifdef CHECKS
     if ((chi < 0.0) || (chi > 1.0))
-        Messenger::warn("Position for window function is out of range (%f).\n", chi);
+        Messenger::warn("Position for window function is out of range ({}).\n", chi);
 #endif
 
     switch (function_)
@@ -258,7 +258,7 @@ double WindowFunction::y(double x, double omega) const
             return sin(x * parameters_[0]) / (x * parameters_[0]);
             break;
         default:
-            Messenger::warn("WindowFunction::value() - Function id %i not accounted for.\n", function_);
+            Messenger::warn("WindowFunction::value() - Function id {} not accounted for.\n", function_);
             break;
     }
 
@@ -270,14 +270,14 @@ double WindowFunction::y(double x, double omega) const
  */
 
 // Return class name
-const char *WindowFunction::itemClassName() { return "WindowFunction"; }
+std::string_view WindowFunction::itemClassName() { return "WindowFunction"; }
 
 // Read data through specified LineParser
 bool WindowFunction::read(LineParser &parser, CoreData &coreData)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    function_ = functionType(parser.argc(0));
+    function_ = functionType(parser.argsv(0));
     for (int n = 0; n < nFunctionParameters(function_); ++n)
         parameters_[n] = parser.argd(n + 1);
     return true;
@@ -286,10 +286,10 @@ bool WindowFunction::read(LineParser &parser, CoreData &coreData)
 // Write data through specified LineParser
 bool WindowFunction::write(LineParser &parser)
 {
-    CharString line("%s", functionType(function_));
+    std::string line{functionType(function_)};
     for (int n = 0; n < nFunctionParameters(function_); ++n)
-        line.strcatf(" %16.9e", parameters_[n]);
-    return parser.writeLine(line.get());
+        line += fmt::format(" {:16.9e}", parameters_[n]);
+    return parser.writeLine(line);
 }
 
 /*
@@ -315,7 +315,7 @@ bool WindowFunction::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
     if (!procPool.equality(EnumCast<WindowFunction::FunctionType>(function_)))
-        return Messenger::error("WindowFunction function type is not equivalent (process %i has %i).\n", procPool.poolRank(),
+        return Messenger::error("WindowFunction function type is not equivalent (process {} has {}).\n", procPool.poolRank(),
                                 function_);
     if (!procPool.equality(parameters_, MAXWINDOWFUNCTIONPARAMS))
         return Messenger::error("WindowFunction parameters are not equivalent.\n");

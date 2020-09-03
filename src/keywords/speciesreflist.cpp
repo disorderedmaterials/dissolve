@@ -54,9 +54,9 @@ bool SpeciesRefListKeyword::read(LineParser &parser, int startArg, CoreData &cor
     // Each argument is the name of a Species that we will add to our list
     for (int n = startArg; n < parser.nArgs(); ++n)
     {
-        Species *sp = coreData.findSpecies(parser.argc(n));
+        Species *sp = coreData.findSpecies(parser.argsv(n));
         if (!sp)
-            return Messenger::error("Error defining Species targets - no Species named '%s' exists.\n", parser.argc(n));
+            return Messenger::error("Error defining Species targets - no Species named '{}' exists.\n", parser.argsv(n));
 
         data_.append(sp);
     }
@@ -67,14 +67,14 @@ bool SpeciesRefListKeyword::read(LineParser &parser, int startArg, CoreData &cor
 }
 
 // Write keyword data to specified LineParser
-bool SpeciesRefListKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool SpeciesRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     // Loop over list of Species
-    CharString speciesString;
+    std::string speciesString;
     for (Species *sp : data_)
-        speciesString.strcatf("  %s", sp->name());
+        speciesString += fmt::format("  {}", sp->name());
 
-    if (!parser.writeLineF("%s%s  %s\n", prefix, keywordName, speciesString.get()))
+    if (!parser.writeLineF("{}{}  {}\n", prefix, keywordName, speciesString))
         return false;
 
     return true;

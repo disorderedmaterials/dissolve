@@ -22,13 +22,13 @@
 #include "modules/import/import.h"
 
 // Return type of module
-const char *ImportModule::type() const { return "Import"; }
+std::string_view ImportModule::type() const { return "Import"; }
 
 // Return category for module
-const char *ImportModule::category() const { return "Input / Output"; }
+std::string_view ImportModule::category() const { return "Input / Output"; }
 
 // Return brief description of module
-const char *ImportModule::brief() const { return "Import data to the target Configuration"; }
+std::string_view ImportModule::brief() const { return "Import data to the target Configuration"; }
 
 // Return the number of Configuration targets this Module requires
 int ImportModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

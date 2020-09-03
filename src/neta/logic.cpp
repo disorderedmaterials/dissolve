@@ -39,7 +39,6 @@ NETALogicNode::~NETALogicNode() {}
 // Evaluate the node and return its score
 int NETALogicNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
 {
-    // 	printf("I AM THE LOGIC\n");
     int score1 = NETANode::NoMatch, score2 = NETANode::NoMatch, totalscore = NETANode::NoMatch;
     switch (logic_)
     {
@@ -78,7 +77,7 @@ int NETALogicNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &match
             }
             break;
         default:
-            printf("Internal Error: Unrecognised logic in NETA::score.\n");
+            Messenger::error("Unrecognised logic in NETA::score.\n");
             break;
     }
 

@@ -22,19 +22,17 @@
 #include "module/group.h"
 #include "base/sysfunc.h"
 
-ModuleGroup::ModuleGroup(const char *name) : ListItem<ModuleGroup>() { name_ = name; }
-
-ModuleGroup::~ModuleGroup() {}
+ModuleGroup::ModuleGroup(std::string_view name) : ListItem<ModuleGroup>(), name_{name} {}
 
 /*
  * Module Group
  */
 
 // Return name of group
-const char *ModuleGroup::name() { return name_.get(); }
+std::string_view ModuleGroup::name() const { return name_; }
 
 // Return whether name of group is as specified
-bool ModuleGroup::isName(const char *queryName) { return DissolveSys::sameString(name_, queryName); }
+bool ModuleGroup::isName(std::string_view queryName) const { return DissolveSys::sameString(name_, queryName); }
 
 // Associate Module to group
 void ModuleGroup::add(Module *module) { modules_.addUnique(module); }

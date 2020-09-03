@@ -125,16 +125,15 @@ void BraggModuleWidget::setGraphDataTargets()
 
     // Add Configuration targets to the combo box
     ui_.TargetCombo->clear();
-    for (Configuration *config : module_->targetConfigurations())
-        ui_.TargetCombo->addItem(config->name(), VariantPointer<Configuration>(config));
+    for (const auto *cfg : module_->targetConfigurations())
+        ui_.TargetCombo->addItem(QString::fromStdString(std::string(cfg->name())), VariantPointer<Configuration>(cfg));
 
     // Loop over Configurations and add total Bragg F(Q)
-    CharString blockData;
-    for (Configuration *cfg : module_->targetConfigurations())
+    for (const auto *cfg : module_->targetConfigurations())
     {
         // Original F(Q)
-        Renderable *originalFQ = totalsGraph_->createRenderable(
-            Renderable::Data1DRenderable, CharString("%s//OriginalBragg//Total", cfg->niceName()), cfg->niceName(), "Totals");
+        totalsGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//OriginalBragg//Total", cfg->niceName()),
+                                       cfg->niceName(), "Totals");
     }
 }
 
@@ -148,15 +147,14 @@ void BraggModuleWidget::on_TargetCombo_currentIndexChanged(int index)
     if (!currentConfiguration_)
         return;
 
-    CharString blockData;
     auto &types = currentConfiguration_->usedAtomTypesList();
     for_each_pair(types.begin(), types.end(), [&](int n, const AtomTypeData &atd1, int m, const AtomTypeData &atd2) {
-        CharString id("%s-%s", atd1.atomTypeName(), atd2.atomTypeName());
+        const std::string id = fmt::format("{}-{}", atd1.atomTypeName(), atd2.atomTypeName());
 
         // Original S(Q)
-        Renderable *originalSQ = reflectionsGraph_->createRenderable(
-            Renderable::Data1DRenderable, CharString("%s//OriginalBragg//%s", currentConfiguration_->niceName(), id.get()),
-            CharString("Full//%s", id.get()), "Full");
+        reflectionsGraph_->createRenderable(Renderable::Data1DRenderable,
+                                            fmt::format("{}//OriginalBragg//{}", currentConfiguration_->niceName(), id),
+                                            fmt::format("Full//{}", id), "Full");
     });
 
     reflectionsGraph_->groupManager().setGroupColouring("Full", RenderableGroup::AutomaticIndividualColouring);

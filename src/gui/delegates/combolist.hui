@@ -50,55 +50,7 @@ class ComboListItems
     // Move to next item in list
     virtual bool nextItem() = 0;
     // Return text entry for nth item
-    virtual const char *currentItemText() = 0;
-};
-
-// Enum-Access Item Source
-class ComboListEnumItems : public ComboListItems
-{
-    public:
-    // Constructor
-    ComboListEnumItems(int nItems, const char **items)
-    {
-        nItems_ = nItems;
-        items_ = items;
-        currentItem_ = -1;
-    }
-
-    private:
-    // Number of items in array
-    int nItems_;
-    // Array of items
-    const char **items_;
-    // Current item index in array
-    int currentItem_;
-
-    /*
-     * Access
-     */
-    public:
-    // Return number of items in list
-    int nItems() { return nItems_; }
-    // Restart list iteration
-    void restartIterator() { currentItem_ = -1; }
-    // Move to next item in list
-    bool nextItem()
-    {
-        // If already at the end of the list (== -2) return false immediately
-        if (currentItem_ == -2)
-            return false;
-        ++currentItem_;
-
-        // If this is a valid index, return true
-        if (currentItem_ < nItems_)
-            return true;
-
-        // Not a vlaid index, so set item index to -2 (end of list) and return false
-        currentItem_ = -2;
-        return false;
-    }
-    // Return text entry for nth item
-    const char *currentItemText() { return (currentItem_ < 0 ? "NULL" : items_[currentItem_]); }
+    virtual QString currentItemText() = 0;
 };
 
 // Templated Item Source for ComboList (utilising T's name())
@@ -131,7 +83,7 @@ template <class T> class ComboNameListItems : public ComboListItems
         return currentItem_;
     }
     // Return text entry for nth item
-    const char *currentItemText() { return (currentItem_ ? currentItem_->name() : "NULL"); }
+    QString currentItemText() { return (currentItem_ ? QString::fromStdString(std::string(currentItem_->name())) : "NULL"); }
 };
 
 // Templated Item Source for ComboList (utilising T's name())
@@ -162,7 +114,10 @@ template <class T> class ComboSharedNameListItems : public ComboListItems
         return currentItem_ < items_.cend();
     }
     // Return text entry for nth item
-    const char *currentItemText() { return (*currentItem_ ? (*currentItem_)->name() : "NULL"); }
+    QString currentItemText()
+    {
+        return (*currentItem_ ? QString::fromStdString(std::string((*currentItem_)->name())) : "NULL");
+    }
 };
 
 // Templated EnumOptions Source for ComboList
@@ -193,7 +148,11 @@ template <class E> class ComboEnumOptionsItems : public ComboListItems
         return (currentItemIndex_ < nItems());
     }
     // Return text entry for nth item
-    const char *currentItemText() { return (currentItemIndex_ < nItems() ? items_.keywordByIndex(currentItemIndex_) : "NULL"); }
+    QString currentItemText()
+    {
+        return (currentItemIndex_ < nItems() ? QString::fromStdString(std::string(items_.keywordByIndex(currentItemIndex_)))
+                                             : "NULL");
+    }
 };
 
 // Delegate class, providing list of name()s in a QComboBox

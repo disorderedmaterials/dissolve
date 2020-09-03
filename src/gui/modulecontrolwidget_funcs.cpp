@@ -70,7 +70,7 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
     }
 
     // Set the icon and module type label
-    ui_.TopLabel->setText(module_->type());
+    ui_.TopLabel->setText(QString::fromStdString(std::string(module_->type())));
     ui_.IconLabel->setPixmap(ModuleBlock::modulePixmap(module_));
 
     // Set up our keywords widget
@@ -104,7 +104,7 @@ void ModuleControlWidget::updateControls()
     refreshing_ = true;
 
     // Set unique name
-    ui_.NameEdit->setText(module_->uniqueName());
+    ui_.NameEdit->setText(QString::fromStdString(std::string(module_->uniqueName())));
 
     // Set 'enabled' button status
     ui_.EnabledButton->setChecked(module_->isEnabled());
@@ -115,11 +115,12 @@ void ModuleControlWidget::updateControls()
 
     // Update Configuration list and HeaderFrame tooltip
     ui_.ConfigurationTargetList->clear();
-    CharString toolTip("Targets: ");
+    QString toolTip("Targets: ");
     ListIterator<Configuration> configIterator(dissolve_->constConfigurations());
     while (Configuration *cfg = configIterator.iterate())
     {
-        QListWidgetItem *item = new QListWidgetItem(cfg->name(), ui_.ConfigurationTargetList);
+        QListWidgetItem *item =
+            new QListWidgetItem(QString::fromStdString(std::string(cfg->name())), ui_.ConfigurationTargetList);
         item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
         item->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
 
@@ -127,17 +128,15 @@ void ModuleControlWidget::updateControls()
         {
             item->setCheckState(Qt::Checked);
 
-            if (configIterator.isFirst())
-                toolTip.strcatf("%s", cfg->name());
-            else
-                toolTip.strcatf(", %s", cfg->name());
+            toolTip +=
+                QString("%1%2").arg(configIterator.isFirst() ? "" : ", ", QString::fromStdString(std::string(cfg->name())));
         }
         else
             item->setCheckState(Qt::Unchecked);
     }
     ui_.ConfigurationTargetGroup->setVisible((!module_->configurationLocal()) &&
                                              (module_->nRequiredTargets() != Module::ZeroTargets));
-    ui_.HeaderFrame->setToolTip(toolTip.get());
+    ui_.HeaderFrame->setToolTip(toolTip);
 
     // Update keywords
     ui_.ModuleKeywordsWidget->updateControls();
@@ -174,15 +173,15 @@ void ModuleControlWidget::on_NameEdit_editingFinished()
         return;
 
     // If the name is the same, return now
-    if (ui_.NameEdit->text() == module_->uniqueName())
+    if (DissolveSys::sameString(qPrintable(ui_.NameEdit->text()), module_->uniqueName(), true))
         return;
 
     // Check that the new name is unique
-    CharString uniqueName = dissolve_->uniqueModuleName(qPrintable(ui_.NameEdit->text()), module_);
+    std::string uniqueName = dissolve_->uniqueModuleName(qPrintable(ui_.NameEdit->text()), module_);
 
     module_->setUniqueName(uniqueName);
 
-    ui_.NameEdit->setText(uniqueName.get());
+    ui_.NameEdit->setText(QString::fromStdString(uniqueName));
 
     emit(dataModified());
 }

@@ -30,10 +30,10 @@ PlottableData::PlottableData(PlottableData::PlottableDataType type) { type_ = ty
  */
 
 // Set name of plottable
-void PlottableData::setName(const char *name) { name_ = name; }
+void PlottableData::setName(std::string_view name) { name_ = name; }
 
 // Return name of plottable
-const char *PlottableData::name() const { return name_.get(); }
+std::string_view PlottableData::name() const { return name_; }
 
 /*
  * Axis Information

@@ -34,7 +34,7 @@ ModuleKeywordWidget::ModuleKeywordWidget(QWidget *parent, KeywordBase *keyword, 
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<ModuleKeywordBase *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into ModuleKeywordBase.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into ModuleKeywordBase.\n", keyword->name());
     else
     {
         updateValue();
@@ -69,10 +69,10 @@ void ModuleKeywordWidget::on_ModuleCombo_currentIndexChanged(int index)
  */
 
 // Return text (for ComboBox item) for supplied Module
-const char *ModuleKeywordWidget::uniqueNameOfModule(const Module *module)
+QString ModuleKeywordWidget::uniqueNameOfModule(const Module *module)
 {
     if (module)
-        return module->uniqueName();
+        return QString::fromStdString(std::string(module->uniqueName()));
     else
         return "NULL";
 }

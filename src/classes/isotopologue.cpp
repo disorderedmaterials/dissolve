@@ -25,9 +25,7 @@
 #include "classes/species.h"
 #include "data/isotopes.h"
 
-Isotopologue::Isotopologue() : ListItem<Isotopologue>() { parent_ = NULL; }
-
-Isotopologue::~Isotopologue() {}
+Isotopologue::Isotopologue() : ListItem<Isotopologue>(), parent_(nullptr) {}
 
 /*
  * Basic Information
@@ -40,10 +38,10 @@ void Isotopologue::setParent(Species *parent) { parent_ = parent; }
 Species *Isotopologue::parent() const { return parent_; }
 
 // Set name of Isotopologue
-void Isotopologue::setName(const char *name) { name_ = name; }
+void Isotopologue::setName(std::string_view name) { name_ = name; }
 
 // Return name of Isotopologue
-const char *Isotopologue::name() const { return name_.get(); }
+std::string_view Isotopologue::name() const { return name_; }
 
 /*
  * Isotope Definition
@@ -82,7 +80,7 @@ void Isotopologue::update()
         std::shared_ptr<AtomType> at = i->atomType();
         if (!at)
         {
-            Messenger::error("NULL_POINTER - Found NULL AtomType pointer for Atom %i in Isotopologue::update().\n",
+            Messenger::error("NULL_POINTER - Found NULL AtomType pointer for Atom {} in Isotopologue::update().\n",
                              i->userIndex());
             continue;
         }
@@ -121,7 +119,7 @@ bool Isotopologue::setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *iso
     // RefDataItem<AtomType, Isotope *> *rdi = isotopes_.contains(at);
     if (it == isotopes_.end())
     {
-        Messenger::error("AtomType '%s' not found in Isotopologue '%s'.\n", at->name(), name_.get());
+        Messenger::error("AtomType '{}' not found in Isotopologue '{}'.\n", at->name(), name_);
         return false;
     }
 
@@ -137,8 +135,7 @@ Isotope *Isotopologue::atomTypeIsotope(std::shared_ptr<AtomType> at) const
     // RefDataItem<AtomType, Isotope *> *rdi = isotopes_.contains(at);
     if (it == isotopes_.end())
     {
-        Messenger::error("Couldn't retrieve AtomType '%s' from Isotopologue '%s' as it doesn't exist.\n", at->name(),
-                         name_.get());
+        Messenger::error("Couldn't retrieve AtomType '{}' from Isotopologue '{}' as it doesn't exist.\n", at->name(), name_);
         return NULL;
     }
     return std::get<1>(*it);

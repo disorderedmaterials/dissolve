@@ -47,11 +47,11 @@ class Data1DStore
 
     public:
     // Add named data reference to store, reading file and format from specified parser / starting argument
-    bool addData(const char *dataName, LineParser &parser, int startArg, const char *endKeyword, CoreData &coreData);
+    bool addData(std::string_view dataName, LineParser &parser, int startArg, std::string_view endKeyword, CoreData &coreData);
     // Check to see if the named data is present in the store
-    bool containsData(const char *name) const;
+    bool containsData(std::string_view name) const;
     // Return named data
-    const Data1D &data(const char *name) const;
+    const Data1D &data(std::string_view name) const;
     // Return list of all data
     const List<Data1D> &data() const;
     // Return list of all data references

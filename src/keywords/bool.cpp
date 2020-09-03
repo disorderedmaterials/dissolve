@@ -50,9 +50,9 @@ bool BoolKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 }
 
 // Write keyword data to specified LineParser
-bool BoolKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool BoolKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
-    return parser.writeLineF("%s%s  %s\n", prefix, keywordName, DissolveSys::btoa(data_));
+    return parser.writeLineF("{}{}  {}\n", prefix, keywordName, DissolveSys::btoa(data_));
 }
 
 /*
@@ -69,4 +69,4 @@ int BoolKeyword::asInt() { return data_ ? 1 : 0; }
 double BoolKeyword::asDouble() { return data_ ? 1.0 : 0.0; }
 
 // Return value (as string)
-const char *BoolKeyword::asString() { return DissolveSys::btoa(data_); }
+std::string BoolKeyword::asString() { return std::string(DissolveSys::btoa(data_)); }

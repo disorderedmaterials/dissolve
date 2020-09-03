@@ -176,7 +176,7 @@ int SpeciesAngle::index(int n) const
     else if (n == 2)
         return indexK();
 
-    Messenger::error("SpeciesAtom index %i is out of range in SpeciesAngle::index(int). Returning 0...\n");
+    Messenger::error("SpeciesAtom index {} is out of range in SpeciesAngle::index(int). Returning 0...\n");
     return 0;
 }
 
@@ -257,15 +257,12 @@ double SpeciesAngle::fundamentalFrequency(double reducedMass) const
 
     // Convert force constant from (assumed) kJ mol-1 A-2 into J m-2 (kg s-2)
     k *= 1000.0 * 1.0e20 / AVOGADRO;
-    // 	printf("K = %f\n", k);
 
     // Convert reduced mass from amu to kg
     double mu = reducedMass / (AVOGADRO * 1000.0);
-    // 	printf("mu = %e\n", mu);
 
     // Calculate fundamental frequency
     double v = (1.0 / TWOPI) * sqrt(k / mu);
-    // 	printf("v = %e\n", v);
 
     return v;
 }

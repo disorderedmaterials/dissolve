@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "base/charstring.h"
+#include <string>
 
 // Mantissa/exponent class
 class DoubleExp
@@ -66,8 +66,6 @@ class DoubleExp
     void set(double mantissa, int exponent);
     // Set from normal value
     void set(double value);
-    // Set from supplied text
-    void set(const char *text);
     // Set mantissa
     void setMantissa(double mantissa);
     // Return mantissa
@@ -77,5 +75,5 @@ class DoubleExp
     // Return exponent
     int exponent() const;
     // Return value as string
-    CharString asString(const int exponentThreshold = 3, const int maxDecimals = 4) const;
+    std::string asString(const int exponentThreshold = 3, const int maxDecimals = 4) const;
 };

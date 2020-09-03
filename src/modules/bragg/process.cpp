@@ -41,7 +41,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Check for zero Configuration targets
     if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     const auto averaging = keywords_.asInt("Averaging");
     if (!Averaging::averagingSchemes().isValid(keywords_.asString("AveragingScheme")))
@@ -57,13 +57,13 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const bool saveReflections = keywords_.asBool("SaveReflections");
 
     // Print argument/parameter summary
-    Messenger::print("Bragg: Calculating Bragg S(Q) over %f < Q < %f Angstroms**-1 using bin size of %f Angstroms**-1.\n", qMin,
+    Messenger::print("Bragg: Calculating Bragg S(Q) over {} < Q < {} Angstroms**-1 using bin size of {} Angstroms**-1.\n", qMin,
                      qMax, qDelta);
-    Messenger::print("Bragg: Multiplicity is (%i %i %i).\n", multiplicity.x, multiplicity.y, multiplicity.z);
+    Messenger::print("Bragg: Multiplicity is ({} {} {}).\n", multiplicity.x, multiplicity.y, multiplicity.z);
     if (averaging <= 1)
         Messenger::print("Bragg: No averaging of reflections will be performed.\n");
     else
-        Messenger::print("Bragg: Reflections will be averaged over %i sets (scheme = %s).\n", averaging,
+        Messenger::print("Bragg: Reflections will be averaged over {} sets (scheme = {}).\n", averaging,
                          Averaging::averagingSchemes().keyword(averagingScheme));
     Messenger::print("\n");
 
@@ -85,7 +85,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // If we are already up-to-date, then theres nothing more to do for this Configuration
         if (alreadyUpToDate)
         {
-            Messenger::print("Bragg data is up-to-date for Configuration '%s'.\n", cfg->name());
+            Messenger::print("Bragg data is up-to-date for Configuration '{}'.\n", cfg->name());
             continue;
         }
 
@@ -107,17 +107,17 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
             const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
                 cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>(), &found);
             if (!found)
-                return Messenger::error("Failed to find BraggReflection array in module data for Configuration '%s'.\n",
+                return Messenger::error("Failed to find BraggReflection array in module data for Configuration '{}'.\n",
                                         cfg->name());
 
             // Open a file and save the basic reflection data
             LineParser braggParser(&procPool);
-            if (!braggParser.openOutput(CharString("%s-Bragg.txt", cfg->niceName())))
+            if (!braggParser.openOutput(fmt::format("{}-Bragg.txt", cfg->niceName())))
                 return false;
             braggParser.writeLineF("#   ID      Q       nKVecs    Intensity(0,0)\n");
             for (int n = 0; n < braggReflections.nItems(); ++n)
             {
-                if (!braggParser.writeLineF("%6i  %10.6f  %8i  %10.6e\n", n, braggReflections.constAt(n).q(),
+                if (!braggParser.writeLineF("{:6d}  {:10.6f}  {:8d}  {:10.6e}\n", n, braggReflections.constAt(n).q(),
                                             braggReflections.constAt(n).nKVectors(),
                                             braggReflections.constAt(n).intensity(0, 0)))
                     return false;
@@ -129,15 +129,15 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
             for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {
                 LineParser intensityParser(&procPool);
                 if (!intensityParser.openOutput(
-                        CharString("%s-Bragg-%s-%s.txt", cfg->niceName(), atd1.atomTypeName(), atd2.atomTypeName())))
+                        fmt::format("{}-Bragg-{}-{}.txt", cfg->niceName(), atd1.atomTypeName(), atd2.atomTypeName())))
                     return false;
-                intensityParser.writeLineF("#     Q      Intensity(%s,%s)\n", atd1.atomTypeName(), atd2.atomTypeName());
+                intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
                 for (int n = 0; n < braggReflections.nItems(); ++n)
                 {
-                    if (!intensityParser.writeLineF("%10.6f  %10.6e\n", braggReflections.constAt(n).q(),
+                    if (!intensityParser.writeLineF("{:10.6f}  {:10.6e}\n", braggReflections.constAt(n).q(),
                                                     braggReflections.constAt(n).intensity(i, j)))
                         return false;
-                    intensityParser.writeLineF("#     Q      Intensity(%s,%s)\n", atd1.atomTypeName(), atd2.atomTypeName());
+                    intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
                 }
                 intensityParser.closeFiles();
             });

@@ -47,13 +47,13 @@ bool ElementRefListKeyword::read(LineParser &parser, int startArg, CoreData &cor
     for (int n = startArg; n < parser.nArgs(); ++n)
     {
         // Do we recognise the Element?
-        Element *el = Elements::elementPointer(parser.argc(n));
+        Element *el = Elements::elementPointer(parser.argsv(n));
         if (!el)
-            return Messenger::error("Unrecognised Element '%s' found in list.\n", parser.argc(n));
+            return Messenger::error("Unrecognised Element '{}' found in list.\n", parser.argsv(n));
 
         // If the Element is in the list already, complain
         if (data_.contains(el))
-            return Messenger::error("Element '%s' specified in list twice.\n", parser.argc(n));
+            return Messenger::error("Element '{}' specified in list twice.\n", parser.argsv(n));
 
         // All OK - add it to our selection list
         data_.append(el);
@@ -65,18 +65,18 @@ bool ElementRefListKeyword::read(LineParser &parser, int startArg, CoreData &cor
 }
 
 // Write keyword data to specified LineParser
-bool ElementRefListKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool ElementRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     // Don't write anything if there are no items in the list
     if (data_.nItems() == 0)
         return true;
 
     // Loop over the Element list
-    CharString elements;
+    std::string elements;
     for (auto el : data_)
-        elements.strcatf("  %s", el->symbol());
+        elements += fmt::format("  {}", el->symbol());
 
-    if (!parser.writeLineF("%s%s%s\n", prefix, keywordName, elements.get()))
+    if (!parser.writeLineF("{}{}{}\n", prefix, keywordName, elements))
         return false;
 
     return true;

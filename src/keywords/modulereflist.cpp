@@ -31,7 +31,8 @@ ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, int maxM
     maxModules_ = maxModules;
 }
 
-ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, CharStringList allowedModuleTypes, int maxModules)
+ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, const std::vector<std::string> &allowedModuleTypes,
+                                           int maxModules)
     : KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references)
 {
     moduleTypes_ = allowedModuleTypes;
@@ -48,7 +49,7 @@ ModuleRefListKeyword::~ModuleRefListKeyword() {}
 bool ModuleRefListKeyword::isDataEmpty() const { return data_.nItems() > 0; }
 
 // Return the Module type(s) to allow
-const CharStringList &ModuleRefListKeyword::moduleTypes() const { return moduleTypes_; }
+const std::vector<std::string> &ModuleRefListKeyword::moduleTypes() const { return moduleTypes_; }
 
 // Return maximum number of Modules to allow in the list
 int ModuleRefListKeyword::maxModules() const { return maxModules_; }
@@ -70,18 +71,24 @@ bool ModuleRefListKeyword::read(LineParser &parser, int startArg, CoreData &core
     for (int n = startArg; n < parser.nArgs(); ++n)
     {
         // Find specified Module by its unique name
-        Module *module = coreData.findModule(parser.argc(n));
+        Module *module = coreData.findModule(parser.argsv(n));
         if (!module)
         {
-            Messenger::error("No Module named '%s' exists.\n", parser.argc(n));
+            Messenger::error("No Module named '{}' exists.\n", parser.argsv(n));
             return false;
         }
 
-        // Check the module's type
-        if ((moduleTypes_.nItems() > 0) && (!moduleTypes_.contains(module->type())))
+        // Check the module's type (if a list has been specified)
+        if ((moduleTypes_.size() > 0) && (std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(), [module](const auto &s) {
+                                              return s == module->type();
+                                          }) == moduleTypes_.cend()))
         {
-            Messenger::error("Module '%s' is of type '%s', and is not permitted in this list (allowed types = %s).\n",
-                             parser.argc(n), module->type(), moduleTypes_.asCommaSeparatedList());
+            std::string allowedTypes;
+            for (const auto &s : moduleTypes_)
+                allowedTypes += allowedTypes.empty() ? s : ", " + s;
+
+            Messenger::error("Module '{}' is of type '{}', and is not permitted in this list (allowed types = {}).\n",
+                             parser.argsv(n), module->type(), allowedTypes);
             return false;
         }
 
@@ -94,12 +101,12 @@ bool ModuleRefListKeyword::read(LineParser &parser, int startArg, CoreData &core
 }
 
 // Write keyword data to specified LineParser
-bool ModuleRefListKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool ModuleRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     // Loop over list of referenced Modules
     for (Module *module : data_)
     {
-        if (!parser.writeLineF("%s%s  '%s'\n", prefix, keywordName, module->uniqueName()))
+        if (!parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, module->uniqueName()))
             return false;
     }
 

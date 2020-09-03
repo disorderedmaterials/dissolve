@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "base/parameters.h"
 #include "classes/speciesimproper.h"
 
@@ -33,8 +32,8 @@ class ForcefieldAtomType;
 class ForcefieldImproperTerm
 {
     public:
-    ForcefieldImproperTerm(const char *typeI = NULL, const char *typeJ = NULL, const char *typeK = NULL,
-                           const char *typeL = NULL, SpeciesImproper::ImproperFunction form = SpeciesImproper::NoForm,
+    ForcefieldImproperTerm(std::string_view typeI = "", std::string_view typeJ = "", std::string_view typeK = "",
+                           std::string_view typeL = "", SpeciesImproper::ImproperFunction form = SpeciesImproper::NoForm,
                            const std::vector<double> parameters = {});
     ~ForcefieldImproperTerm();
 
@@ -43,7 +42,7 @@ class ForcefieldImproperTerm
      */
     private:
     // Type names involved in interaction
-    CharString typeI_, typeJ_, typeK_, typeL_;
+    std::string typeI_, typeJ_, typeK_, typeL_;
     // Functional form of interaction
     SpeciesImproper::ImproperFunction form_;
     // Parameters for interaction

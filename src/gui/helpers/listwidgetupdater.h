@@ -229,7 +229,7 @@ template <class T, class I> class ListWidgetUpdater
                 if (rowData == dataItem)
                 {
                     // Update the current row and quit the loop
-                    listWidgetItem->setText(dataItem->name());
+                    listWidgetItem->setText(QString::fromStdString(std::string(dataItem->name())));
 
                     break;
                 }
@@ -248,7 +248,7 @@ template <class T, class I> class ListWidgetUpdater
                 listWidgetItem = new QListWidgetItem;
                 listWidget->addItem(listWidgetItem);
                 listWidgetItem->setData(Qt::UserRole, VariantPointer<I>(dataItem));
-                listWidgetItem->setText(dataItem->name());
+                listWidgetItem->setText(QString::fromStdString(std::string(dataItem->name())));
                 if (flags != Qt::NoItemFlags)
                     listWidgetItem->setFlags(listWidgetItem->flags() | flags);
             }

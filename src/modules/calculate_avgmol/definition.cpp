@@ -22,13 +22,13 @@
 #include "modules/calculate_avgmol/avgmol.h"
 
 // Return type of module
-const char *CalculateAvgMolModule::type() const { return "CalculateAvgMol"; }
+std::string_view CalculateAvgMolModule::type() const { return "CalculateAvgMol"; }
 
 // Return category for module
-const char *CalculateAvgMolModule::category() const { return "Analysis / Geometry"; }
+std::string_view CalculateAvgMolModule::category() const { return "Analysis / Geometry"; }
 
 // Return brief description of module
-const char *CalculateAvgMolModule::brief() const
+std::string_view CalculateAvgMolModule::brief() const
 {
     return "Calculate average atomic positions of a species around an oriented site";
 }

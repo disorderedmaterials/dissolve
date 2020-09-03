@@ -83,7 +83,7 @@ class AtomTypeList : public GenericItemBase
     // Return index of AtomType in list
     int indexOf(std::shared_ptr<AtomType> atomtype) const;
     // Return index of names AtomType in list
-    int indexOf(const char *name) const;
+    int indexOf(std::string_view name) const;
     // Return total population of all types in list
     double totalPopulation() const;
     // Return nth referenced AtomType
@@ -98,7 +98,7 @@ class AtomTypeList : public GenericItemBase
      */
     public:
     // Return class name
-    static const char *itemClassName();
+    static std::string_view itemClassName();
     // Read data through specified LineParser
     bool read(LineParser &parser, CoreData &coreData);
     // Write data through specified LineParser

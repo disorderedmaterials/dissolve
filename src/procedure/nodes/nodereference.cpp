@@ -85,43 +85,43 @@ bool ProcedureNodeReference::read(LineParser &parser, int startArg, CoreData &co
     // If two arguments are provided, the second is the identifying name of an AnalyseModule
     if (parser.nArgs() == (startArg + 2))
     {
-        Module *module = coreData.findModule(parser.argc(startArg + 1));
+        Module *module = coreData.findModule(parser.argsv(startArg + 1));
         if (!module)
-            return Messenger::error("No Analyse module named '%s' exists.\n", parser.argc(startArg + 1));
+            return Messenger::error("No Analyse module named '{}' exists.\n", parser.argsv(startArg + 1));
         if (!DissolveSys::sameString("Analyse", module->type()))
-            return Messenger::error("Specified module '%s' must be an Analyse module.\n", parser.argc(startArg + 1));
+            return Messenger::error("Specified module '{}' must be an Analyse module.\n", parser.argsv(startArg + 1));
 
         // Found the target AnalyseModule, so cast it up and search for the named node in its Analyser
         analyseModuleParent_ = dynamic_cast<AnalyseModule *>(module);
         if (!analyseModuleParent_)
             return Messenger::error("Couldn't cast module into an AnalyseModule.\n");
 
-        node_ = analyseModuleParent_->analyser().node(parser.argc(startArg));
+        node_ = analyseModuleParent_->analyser().node(parser.argsv(startArg));
 
         if (!node_)
-            return Messenger::error("No node named '%s' exists in the Analyse module specified (%s).\n", parser.argc(startArg),
-                                    parser.argc(startArg + 1));
+            return Messenger::error("No node named '{}' exists in the Analyse module specified ({}).\n", parser.argsv(startArg),
+                                    parser.argsv(startArg + 1));
     }
     else
     {
-        node_ = procedure->node(parser.argc(startArg));
+        node_ = procedure->node(parser.argsv(startArg));
 
         if (!node_)
-            return Messenger::error("No node named '%s' exists in the current Procedure.\n", parser.argc(startArg));
+            return Messenger::error("No node named '{}' exists in the current Procedure.\n", parser.argsv(startArg));
     }
 
     // Check the type of the node
     if (!allowedTypes_[node_->type()])
-        return Messenger::error("Node '%s' is not of the correct type.\n", node_->name());
+        return Messenger::error("Node '{}' is not of the correct type.\n", node_->name());
 
     return (node_ != NULL);
 }
 
 // Write structure to specified LineParser
-bool ProcedureNodeReference::write(LineParser &parser, const char *prefix)
+bool ProcedureNodeReference::write(LineParser &parser, std::string_view prefix)
 {
     if (analyseModuleParent_)
-        return parser.writeLineF("%s  '%s'  '%s'\n", prefix, node_->name(), analyseModuleParent_->uniqueName());
+        return parser.writeLineF("{}  '{}'  '{}'\n", prefix, node_->name(), analyseModuleParent_->uniqueName());
     else
-        return parser.writeLineF("%s  '%s'\n", prefix, node_->name());
+        return parser.writeLineF("{}  '{}'\n", prefix, node_->name());
 }

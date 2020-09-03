@@ -30,11 +30,7 @@
 #include "module/list.h"
 #include "module/module.h"
 
-CoreData::CoreData()
-{
-    moduleInstances_ = NULL;
-    inputFilename_ = NULL;
-}
+CoreData::CoreData() { moduleInstances_ = NULL; }
 
 CoreData::~CoreData() {}
 
@@ -91,30 +87,20 @@ const std::vector<std::shared_ptr<AtomType>> &CoreData::constAtomTypes() const {
 std::shared_ptr<AtomType> CoreData::atomType(int n) { return atomTypes_[n]; }
 
 // Generate unique AtomType name with base name provided
-const char *CoreData::uniqueAtomTypeName(const char *base) const
+std::string CoreData::uniqueAtomTypeName(std::string_view base) const
 {
-    static CharString uniqueName;
-    CharString baseName = base;
-    uniqueName = baseName;
-    auto suffix = 0;
-
-    // Must always have a baseName
-    if (baseName.isEmpty())
-        baseName = "Unnamed";
+    std::string uniqueName{base};
 
     // Find an unused name starting with the baseName provided
+    auto suffix = 0;
     while (findAtomType(uniqueName))
-    {
-        // Increase suffix value and regenerate uniqueName from baseName
-        ++suffix;
-        uniqueName.sprintf("%s%i", baseName.get(), suffix);
-    }
+        uniqueName = fmt::format("{}{}", base, ++suffix);
 
     return uniqueName;
 }
 
 // Search for AtomType by name
-std::shared_ptr<AtomType> CoreData::findAtomType(const char *name) const
+std::shared_ptr<AtomType> CoreData::findAtomType(std::string_view name) const
 {
     auto it = std::find_if(atomTypes_.begin(), atomTypes_.end(),
                            [&name](const auto &at) { return DissolveSys::sameString(at->name(), name); });
@@ -134,12 +120,12 @@ int CoreData::atomTypesVersion() const { return atomTypesVersion_; }
  */
 
 // Add new master Bond parameters
-MasterIntra *CoreData::addMasterBond(const char *name)
+MasterIntra *CoreData::addMasterBond(std::string_view name)
 {
     // Check for existence of master Bond already
     if (hasMasterBond(name))
     {
-        Messenger::error("Refused to add a new master Bond named '%s' since one with the same name already exists.\n", name);
+        Messenger::error("Refused to add a new master Bond named '{}' since one with the same name already exists.\n", name);
         return NULL;
     }
 
@@ -161,10 +147,10 @@ const List<MasterIntra> &CoreData::masterBonds() const { return masterBonds_; }
 MasterIntra *CoreData::masterBond(int n) { return masterBonds_[n]; }
 
 // Return whether named master Bond parameters exist
-MasterIntra *CoreData::hasMasterBond(const char *name) const
+MasterIntra *CoreData::hasMasterBond(std::string_view name) const
 {
     // Remove leading '@' if necessary
-    const char *trimmedName = name[0] == '@' ? &name[1] : name;
+    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
     for (auto *b = masterBonds_.first(); b != NULL; b = b->next())
         if (DissolveSys::sameString(trimmedName, b->name()))
@@ -173,12 +159,12 @@ MasterIntra *CoreData::hasMasterBond(const char *name) const
 }
 
 // Add new master Angle parameters
-MasterIntra *CoreData::addMasterAngle(const char *name)
+MasterIntra *CoreData::addMasterAngle(std::string_view name)
 {
     // Check for existence of master Angle already
     if (hasMasterAngle(name))
     {
-        Messenger::error("Refused to add a new master Angle named '%s' since one with the same name already exists.\n", name);
+        Messenger::error("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name);
         return NULL;
     }
 
@@ -200,10 +186,10 @@ const List<MasterIntra> &CoreData::masterAngles() const { return masterAngles_; 
 MasterIntra *CoreData::masterAngle(int n) { return masterAngles_[n]; }
 
 // Return whether named master Angle parameters exist
-MasterIntra *CoreData::hasMasterAngle(const char *name) const
+MasterIntra *CoreData::hasMasterAngle(std::string_view name) const
 {
     // Remove leading '@' if necessary
-    const char *trimmedName = name[0] == '@' ? &name[1] : name;
+    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
     for (auto *a = masterAngles_.first(); a != NULL; a = a->next())
         if (DissolveSys::sameString(trimmedName, a->name()))
@@ -212,12 +198,12 @@ MasterIntra *CoreData::hasMasterAngle(const char *name) const
 }
 
 // Add new master Torsion parameters
-MasterIntra *CoreData::addMasterTorsion(const char *name)
+MasterIntra *CoreData::addMasterTorsion(std::string_view name)
 {
     // Check for existence of master Torsion already
     if (hasMasterTorsion(name))
     {
-        Messenger::error("Refused to add a new master Torsion named '%s' since one with the same name already exists.\n", name);
+        Messenger::error("Refused to add a new master Torsion named '{}' since one with the same name already exists.\n", name);
         return NULL;
     }
 
@@ -239,10 +225,10 @@ const List<MasterIntra> &CoreData::masterTorsions() const { return masterTorsion
 MasterIntra *CoreData::masterTorsion(int n) { return masterTorsions_[n]; }
 
 // Return whether named master Torsion parameters exist
-MasterIntra *CoreData::hasMasterTorsion(const char *name) const
+MasterIntra *CoreData::hasMasterTorsion(std::string_view name) const
 {
     // Remove leading '@' if necessary
-    const char *trimmedName = name[0] == '@' ? &name[1] : name;
+    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
     for (auto *t = masterTorsions_.first(); t != NULL; t = t->next())
         if (DissolveSys::sameString(trimmedName, t->name()))
@@ -251,12 +237,12 @@ MasterIntra *CoreData::hasMasterTorsion(const char *name) const
 }
 
 // Add new master Improper parameters
-MasterIntra *CoreData::addMasterImproper(const char *name)
+MasterIntra *CoreData::addMasterImproper(std::string_view name)
 {
     // Check for existence of master Improper already
     if (hasMasterImproper(name))
     {
-        Messenger::error("Refused to add a new master Improper named '%s' since one with the same name already exists.\n",
+        Messenger::error("Refused to add a new master Improper named '{}' since one with the same name already exists.\n",
                          name);
         return NULL;
     }
@@ -279,10 +265,10 @@ const List<MasterIntra> &CoreData::masterImpropers() const { return masterImprop
 MasterIntra *CoreData::masterImproper(int n) { return masterImpropers_[n]; }
 
 // Return whether named master Improper parameters exist
-MasterIntra *CoreData::hasMasterImproper(const char *name) const
+MasterIntra *CoreData::hasMasterImproper(std::string_view name) const
 {
     // Remove leading '@' if necessary
-    const char *trimmedName = name[0] == '@' ? &name[1] : name;
+    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
     for (auto *t = masterImpropers_.first(); t != NULL; t = t->next())
         if (DissolveSys::sameString(trimmedName, t->name()))
@@ -291,10 +277,10 @@ MasterIntra *CoreData::hasMasterImproper(const char *name) const
 }
 
 // Return the named master term (of any form) if it exists
-MasterIntra *CoreData::findMasterTerm(const char *name) const
+MasterIntra *CoreData::findMasterTerm(std::string_view name) const
 {
     // Remove leading '@' if necessary
-    const char *trimmedName = name[0] == '@' ? &name[1] : name;
+    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
     for (auto *b = masterBonds_.first(); b != NULL; b = b->next())
         if (DissolveSys::sameString(trimmedName, b->name()))
@@ -351,30 +337,21 @@ const List<Species> &CoreData::constSpecies() const { return species_; }
 Species *CoreData::species(int n) { return species_[n]; }
 
 // Generate unique Species name with base name provided
-const char *CoreData::uniqueSpeciesName(const char *base) const
+std::string CoreData::uniqueSpeciesName(std::string_view base) const
 {
-    static CharString uniqueName;
-    CharString baseName = base;
-    uniqueName = baseName;
-    auto suffix = 0;
-
-    // Must always have a baseName
-    if (baseName.isEmpty())
-        baseName = "Unnamed";
+    std::string_view baseName = base.empty() ? "Unnamed" : base;
+    std::string uniqueName{baseName};
 
     // Find an unused name starting with the baseName provided
+    auto suffix = 0;
     while (findSpecies(uniqueName))
-    {
-        // Increase suffix value and regenerate uniqueName from baseName
-        ++suffix;
-        uniqueName.sprintf("%s%i", baseName.get(), suffix);
-    }
+        uniqueName = fmt::format("{}{}", baseName, ++suffix);
 
     return uniqueName;
 }
 
 // Search for Species by name
-Species *CoreData::findSpecies(const char *name) const
+Species *CoreData::findSpecies(std::string_view name) const
 {
     for (auto *sp = species_.first(); sp != NULL; sp = sp->next())
         if (DissolveSys::sameString(sp->name(), name))
@@ -414,30 +391,25 @@ const List<Configuration> &CoreData::constConfigurations() const { return config
 Configuration *CoreData::configuration(int n) { return configurations_[n]; }
 
 // Generate unique Configuration name with base name provided
-const char *CoreData::uniqueConfigurationName(const char *base) const
+std::string CoreData::uniqueConfigurationName(std::string_view base) const
 {
-    static CharString uniqueName;
-    CharString baseName = base;
-    uniqueName = baseName;
+    std::string baseName = base.empty() ? "Unnamed" : std::string(base);
+    std::string uniqueName = baseName;
     auto suffix = 0;
-
-    // Must always have a baseName
-    if (baseName.isEmpty())
-        baseName = "Unnamed";
 
     // Find an unused name starting with the baseName provided
     while (findConfiguration(uniqueName))
     {
         // Increase suffix value and regenerate uniqueName from baseName
         ++suffix;
-        uniqueName.sprintf("%s%i", baseName.get(), suffix);
+        uniqueName = fmt::format("{}{}", baseName, suffix);
     }
 
     return uniqueName;
 }
 
 // Search for Configuration by name
-Configuration *CoreData::findConfiguration(const char *name) const
+Configuration *CoreData::findConfiguration(std::string_view name) const
 {
     for (auto *cfg = configurations_.first(); cfg != NULL; cfg = cfg->next())
         if (DissolveSys::sameString(cfg->name(), name))
@@ -454,13 +426,10 @@ Configuration *CoreData::findConfiguration(const char *name) const
 void CoreData::setModuleInstances(RefList<Module> *moduleInstances) { moduleInstances_ = moduleInstances; }
 
 // Search for any instance of any module with the specified unique name
-Module *CoreData::findModule(const char *uniqueName) const
+Module *CoreData::findModule(std::string_view uniqueName) const
 {
     if (!moduleInstances_)
-    {
-        printf("Error - RefList<Module> pointer not set in CoreData.\n");
         return NULL;
-    }
 
     for (auto module : *moduleInstances_)
         if (DissolveSys::sameString(module->uniqueName(), uniqueName))
@@ -470,7 +439,7 @@ Module *CoreData::findModule(const char *uniqueName) const
 }
 
 // Search for and return any instance(s) of the specified Module type
-RefList<Module> CoreData::findModules(const char *moduleType) const
+RefList<Module> CoreData::findModules(std::string_view moduleType) const
 {
     RefList<Module> modules;
 
@@ -482,12 +451,13 @@ RefList<Module> CoreData::findModules(const char *moduleType) const
 }
 
 // Search for and return any instance(s) of the specified Module type
-RefList<Module> CoreData::findModules(const CharStringList &moduleTypes) const
+RefList<Module> CoreData::findModules(const std::vector<std::string> moduleTypes) const
 {
     RefList<Module> modules;
 
     for (auto module : *moduleInstances_)
-        if (moduleTypes.contains(module->type()))
+        if (std::find_if(moduleTypes.cbegin(), moduleTypes.cend(), [module](const auto &s) { return s == module->type(); }) !=
+            moduleTypes.cend())
             modules.append(module);
 
     return modules;
@@ -498,7 +468,7 @@ RefList<Module> CoreData::findModules(const CharStringList &moduleTypes) const
  */
 
 // Set pointer to the current input filename
-void CoreData::setInputFilename(const CharString *inputFilePtr) { inputFilename_ = inputFilePtr; }
+void CoreData::setInputFilename(std::string_view filename) { inputFilename_ = filename; }
 
-// Return the current input filename (from Dissolve)
-const char *CoreData::inputFilename() const { return (inputFilename_ ? inputFilename_->get() : "NO_INPUTFILENAME_SET"); }
+// Return the current input filename
+std::string_view CoreData::inputFilename() const { return inputFilename_; }

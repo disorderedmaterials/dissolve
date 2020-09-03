@@ -33,7 +33,7 @@ CalculateCNModuleWidget::CalculateCNModuleWidget(QWidget *parent, CalculateCNMod
     // Set up RDF graph
     rdfGraph_ = ui_.RDFPlotWidget;
 
-    View &view = rdfGraph_->view();
+    auto &view = rdfGraph_->view();
     view.setViewType(View::FlatXYView);
     view.axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
     view.axes().setMax(0, 10.0);

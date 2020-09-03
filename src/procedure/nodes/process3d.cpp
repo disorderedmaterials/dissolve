@@ -35,10 +35,10 @@ Process3DProcedureNode::Process3DProcedureNode(const Collect3DProcedureNode *tar
 {
     keywords_.add("Target", new NodeKeyword<const Collect3DProcedureNode>(this, ProcedureNode::Collect3DNode, false, target),
                   "SourceData", "Collect3D node containing the data to process");
-    keywords_.add("Target", new CharStringKeyword("Y"), "LabelValue", "Label for the value axis");
-    keywords_.add("Target", new CharStringKeyword("X"), "LabelX", "Label for the x axis");
-    keywords_.add("Target", new CharStringKeyword("Y"), "LabelY", "Label for the y axis");
-    keywords_.add("Target", new CharStringKeyword("Z"), "LabelZ", "Label for the z axis");
+    keywords_.add("Target", new StringKeyword("Y"), "LabelValue", "Label for the value axis");
+    keywords_.add("Target", new StringKeyword("X"), "LabelX", "Label for the x axis");
+    keywords_.add("Target", new StringKeyword("Y"), "LabelY", "Label for the y axis");
+    keywords_.add("Target", new StringKeyword("Z"), "LabelZ", "Label for the z axis");
     keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndSave"), "Save", "Save processed data to disk");
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
                   "Branch providing normalisation operations for the data");
@@ -80,16 +80,16 @@ const Data3D &Process3DProcedureNode::processedData() const
 }
 
 // Return value label
-const char *Process3DProcedureNode::valueLabel() const { return keywords_.asString("LabelValue"); }
+std::string Process3DProcedureNode::valueLabel() const { return keywords_.asString("LabelValue"); }
 
 // Return x axis label
-const char *Process3DProcedureNode::xAxisLabel() const { return keywords_.asString("LabelX"); }
+std::string Process3DProcedureNode::xAxisLabel() const { return keywords_.asString("LabelX"); }
 
 // Return y axis label
-const char *Process3DProcedureNode::yAxisLabel() const { return keywords_.asString("LabelY"); }
+std::string Process3DProcedureNode::yAxisLabel() const { return keywords_.asString("LabelY"); }
 
 // Return z axis label
-const char *Process3DProcedureNode::zAxisLabel() const { return keywords_.asString("LabelZ"); }
+std::string Process3DProcedureNode::zAxisLabel() const { return keywords_.asString("LabelZ"); }
 
 /*
  * Branches
@@ -115,12 +115,12 @@ SequenceProcedureNode *Process3DProcedureNode::branch() { return normalisationBr
  */
 
 // Prepare any necessary data, ready for execution
-bool Process3DProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList)
+bool Process3DProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Retrieve the Collect1D node target
     collectNode_ = keywords_.retrieve<const Collect3DProcedureNode *>("SourceData");
     if (!collectNode_)
-        return Messenger::error("No source Collect3D node set in '%s'.\n", name());
+        return Messenger::error("No source Collect3D node set in '{}'.\n", name());
 
     if (normalisationBranch_)
         normalisationBranch_->prepare(cfg, prefix, targetList);
@@ -130,16 +130,16 @@ bool Process3DProcedureNode::prepare(Configuration *cfg, const char *prefix, Gen
 
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                   const char *prefix, GenericList &targetList)
+                                                                   std::string_view prefix, GenericList &targetList)
 {
     // Retrieve / realise the normalised data from the supplied list
     bool created;
-    auto &data = GenericListHelper<Data3D>::realise(targetList, CharString("%s_%s", name(), cfg->niceName()), prefix,
+    auto &data = GenericListHelper<Data3D>::realise(targetList, fmt::format("{}_{}", name(), cfg->niceName()), prefix,
                                                     GenericItem::InRestartFileFlag, &created);
     processedData_ = &data;
 
     data.setName(name());
-    data.setObjectTag(CharString("%s//Process3D//%s//%s", prefix, cfg->name(), name()));
+    data.setObjectTag(fmt::format("{}//Process3D//{}//{}", prefix, cfg->name(), name()));
 
     // Copy the averaged data from the associated Process3D node
     data = collectNode_->accumulatedData();
@@ -185,7 +185,8 @@ ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool &
 }
 
 // Finalise any necessary data after execution
-bool Process3DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, const char *prefix, GenericList &targetList)
+bool Process3DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
+                                      GenericList &targetList)
 {
     return true;
 }

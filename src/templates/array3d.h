@@ -122,8 +122,6 @@ template <class A> class Array3D
 
         if ((nX > 0) && (nY > 0) && (nZ > 0))
             resize(nX, nY, nZ);
-        // 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array3D::initialise()
-        // (r=%i, c=%i)\n", nrows, ncolumns);
     }
     // Return specified element as modifiable reference
     A &at(int x, int y, int z)
@@ -132,17 +130,17 @@ template <class A> class Array3D
         static A dummy;
         if ((x < 0) || (x >= nX_))
         {
-            Messenger::print("OUT_OF_RANGE - X index (%i) is out of range in Array3D::at() (nX_ = %i).\n", x, nX_);
+            Messenger::print("OUT_OF_RANGE - X index ({}) is out of range in Array3D::at() (nX_ = {}).\n", x, nX_);
             return dummy;
         }
         if ((y < 0) || (y >= nY_))
         {
-            Messenger::print("OUT_OF_RANGE - Y index (%i) is out of range in Array3D::at() (nY_ = %i).\n", y, nY_);
+            Messenger::print("OUT_OF_RANGE - Y index ({}) is out of range in Array3D::at() (nY_ = {}).\n", y, nY_);
             return dummy;
         }
         if ((z < 0) || (z >= nZ_))
         {
-            Messenger::print("OUT_OF_RANGE - Z index (%i) is out of range in Array3D::at() (nZ_ = %i).\n", z, nZ_);
+            Messenger::print("OUT_OF_RANGE - Z index ({}) is out of range in Array3D::at() (nZ_ = {}).\n", z, nZ_);
             return dummy;
         }
 #endif
@@ -155,17 +153,17 @@ template <class A> class Array3D
         static A dummy;
         if ((x < 0) || (x >= nX_))
         {
-            Messenger::print("OUT_OF_RANGE - X index (%i) is out of range in Array3D::constAt() (nX_ = %i).\n", x, nX_);
+            Messenger::print("OUT_OF_RANGE - X index ({}) is out of range in Array3D::constAt() (nX_ = {}).\n", x, nX_);
             return dummy;
         }
         if ((y < 0) || (y >= nY_))
         {
-            Messenger::print("OUT_OF_RANGE - Y index (%i) is out of range in Array3D::constAt() (nY_ = %i).\n", y, nY_);
+            Messenger::print("OUT_OF_RANGE - Y index ({}) is out of range in Array3D::constAt() (nY_ = {}).\n", y, nY_);
             return dummy;
         }
         if ((z < 0) || (z >= nZ_))
         {
-            Messenger::print("OUT_OF_RANGE - Z index (%i) is out of range in Array3D::constAt() (nZ_ = %i).\n", z, nZ_);
+            Messenger::print("OUT_OF_RANGE - Z index ({}) is out of range in Array3D::constAt() (nZ_ = {}).\n", z, nZ_);
             return dummy;
         }
 #endif
@@ -178,17 +176,17 @@ template <class A> class Array3D
         static A dummy;
         if ((x < 0) || (x >= nX_))
         {
-            Messenger::print("OUT_OF_RANGE - X index (%i) is out of range in Array3D::ptr() (nX_ = %i).\n", x, nX_);
+            Messenger::print("OUT_OF_RANGE - X index ({}) is out of range in Array3D::ptr() (nX_ = {}).\n", x, nX_);
             return dummy;
         }
         if ((y < 0) || (y >= nY_))
         {
-            Messenger::print("OUT_OF_RANGE - Y index (%i) is out of range in Array3D::ptr() (nY_ = %i).\n", y, nY_);
+            Messenger::print("OUT_OF_RANGE - Y index ({}) is out of range in Array3D::ptr() (nY_ = {}).\n", y, nY_);
             return dummy;
         }
         if ((z < 0) || (z >= nZ_))
         {
-            Messenger::print("OUT_OF_RANGE - Z index (%i) is out of range in Array3D::ptr() (nZ_ = %i).\n", z, nZ_);
+            Messenger::print("OUT_OF_RANGE - Z index ({}) is out of range in Array3D::ptr() (nZ_ = {}).\n", z, nZ_);
             return dummy;
         }
 #endif
@@ -211,7 +209,7 @@ template <class A> class Array3D
         static A dummy;
         if ((index < 0) || (index >= linearSize_))
         {
-            Messenger::print("OUT_OF_RANGE - Index (%i) is out of range in Array3D::linearValue() (linearSize = %i).\n", index,
+            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in Array3D::linearValue() (linearSize = {}).\n", index,
                              linearSize_);
             return dummy;
         }
@@ -225,7 +223,7 @@ template <class A> class Array3D
         static A dummy;
         if ((index < 0) || (index >= linearSize_))
         {
-            Messenger::print("OUT_OF_RANGE - Index (%i) is out of range in Array3D::constLinearValue() (linearSize = %i).\n",
+            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in Array3D::constLinearValue() (linearSize = {}).\n",
                              index, linearSize_);
             return dummy;
         }
@@ -369,8 +367,6 @@ template <class A> class OffsetArray3D
             for (int n = 0; n < nZ_; ++n)
                 sliceOffsets_[n] = n * nX_ * nY_;
         }
-        // 		else printf("BAD_USAGE - Zero or negative row/column size(s) given to Array3D::initialise()
-        // (r=%i, c=%i)\n", nrows, ncolumns);
     }
     // Return specified element as reference
     A &at(int x, int y, int z)
@@ -379,22 +375,22 @@ template <class A> class OffsetArray3D
         static A dummy;
         if ((x < xMin_) || (x > xMax_))
         {
-            Messenger::print("OUT_OF_RANGE - X index (%i) is out of range in OffsetArray3D::ref() (xMin_ = %i, "
-                             "xMax_ = %i).\n",
+            Messenger::print("OUT_OF_RANGE - X index ({}) is out of range in OffsetArray3D::ref() (xMin_ = {}, "
+                             "xMax_ = {}).\n",
                              x, xMin_, xMax_);
             return dummy;
         }
         if ((y < yMin_) || (y > yMax_))
         {
-            Messenger::print("OUT_OF_RANGE - Y index (%i) is out of range in OffsetArray3D::ref() (yMin_ = %i, "
-                             "yMay_ = %i).\n",
+            Messenger::print("OUT_OF_RANGE - Y index ({}) is out of range in OffsetArray3D::ref() (yMin_ = {}, "
+                             "yMay_ = {}).\n",
                              y, yMin_, yMax_);
             return dummy;
         }
         if ((z < zMin_) || (z > zMax_))
         {
-            Messenger::print("OUT_OF_RANGE - Z index (%i) is out of range in OffsetArray3D::ref() (zMin_ = %i, "
-                             "zMaz_ = %i).\n",
+            Messenger::print("OUT_OF_RANGE - Z index ({}) is out of range in OffsetArray3D::ref() (zMin_ = {}, "
+                             "zMaz_ = {}).\n",
                              z, zMin_, zMax_);
             return dummy;
         }
@@ -408,22 +404,22 @@ template <class A> class OffsetArray3D
         static A dummy;
         if ((x < xMin_) || (x > xMax_))
         {
-            Messenger::print("OUT_OF_RANGE - X index (%i) is out of range in OffsetArray3D::value() (xMin_ = %i, "
-                             "xMax_ = %i).\n",
+            Messenger::print("OUT_OF_RANGE - X index ({}) is out of range in OffsetArray3D::value() (xMin_ = {}, "
+                             "xMax_ = {}).\n",
                              x, xMin_, xMax_);
             return dummy;
         }
         if ((y < yMin_) || (y > yMax_))
         {
-            Messenger::print("OUT_OF_RANGE - Y index (%i) is out of range in OffsetArray3D::value() (yMin_ = %i, "
-                             "yMay_ = %i).\n",
+            Messenger::print("OUT_OF_RANGE - Y index ({}) is out of range in OffsetArray3D::value() (yMin_ = {}, "
+                             "yMay_ = {}).\n",
                              y, yMin_, yMax_);
             return dummy;
         }
         if ((z < zMin_) || (z > zMax_))
         {
-            Messenger::print("OUT_OF_RANGE - Z index (%i) is out of range in OffsetArray3D::value() (zMin_ = %i, "
-                             "zMaz_ = %i).\n",
+            Messenger::print("OUT_OF_RANGE - Z index ({}) is out of range in OffsetArray3D::value() (zMin_ = {}, "
+                             "zMaz_ = {}).\n",
                              z, zMin_, zMax_);
             return dummy;
         }
@@ -437,22 +433,22 @@ template <class A> class OffsetArray3D
         static A dummy;
         if ((x < xMin_) || (x > xMax_))
         {
-            Messenger::print("OUT_OF_RANGE - X index (%i) is out of range in OffsetArray3D::ptr() (xMin_ = %i, "
-                             "xMax_ = %i).\n",
+            Messenger::print("OUT_OF_RANGE - X index ({}) is out of range in OffsetArray3D::ptr() (xMin_ = {}, "
+                             "xMax_ = {}).\n",
                              x, xMin_, xMax_);
             return dummy;
         }
         if ((y < yMin_) || (y > yMax_))
         {
-            Messenger::print("OUT_OF_RANGE - Y index (%i) is out of range in OffsetArray3D::ptr() (yMin_ = %i, "
-                             "yMay_ = %i).\n",
+            Messenger::print("OUT_OF_RANGE - Y index ({}) is out of range in OffsetArray3D::ptr() (yMin_ = {}, "
+                             "yMay_ = {}).\n",
                              y, yMin_, yMax_);
             return dummy;
         }
         if ((z < zMin_) || (z > zMax_))
         {
-            Messenger::print("OUT_OF_RANGE - Z index (%i) is out of range in OffsetArray3D::ptr() (zMin_ = %i, "
-                             "zMaz_ = %i).\n",
+            Messenger::print("OUT_OF_RANGE - Z index ({}) is out of range in OffsetArray3D::ptr() (zMin_ = {}, "
+                             "zMaz_ = {}).\n",
                              z, zMin_, zMax_);
             return dummy;
         }
@@ -476,8 +472,8 @@ template <class A> class OffsetArray3D
         static A dummy;
         if ((index < 0) || (index >= linearSize_))
         {
-            Messenger::print("OUT_OF_RANGE - Index (%i) is out of range in OffsetArray3D::linearValue() "
-                             "(linearSize = %i).\n",
+            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in OffsetArray3D::linearValue() "
+                             "(linearSize = {}).\n",
                              index, linearSize_);
             return dummy;
         }
@@ -491,8 +487,8 @@ template <class A> class OffsetArray3D
         static A dummy;
         if ((index < 0) || (index >= linearSize_))
         {
-            Messenger::print("OUT_OF_RANGE - Index (%i) is out of range in OffsetArray3D::constLinearValue() "
-                             "(linearSize = %i).\n",
+            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in OffsetArray3D::constLinearValue() "
+                             "(linearSize = {}).\n",
                              index, linearSize_);
             return dummy;
         }

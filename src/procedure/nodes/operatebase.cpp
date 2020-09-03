@@ -76,19 +76,19 @@ void OperateProcedureNodeBase::setTarget(Data3D *target)
 // Operate on Data1D target
 bool OperateProcedureNodeBase::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
-    return Messenger::error("The %s node can't operate on 1-dimensional data.\n", ProcedureNode::nodeTypes().keyword(type_));
+    return Messenger::error("The {} node can't operate on 1-dimensional data.\n", ProcedureNode::nodeTypes().keyword(type_));
 }
 
 // Operate on Data2D target
 bool OperateProcedureNodeBase::operateData2D(ProcessPool &procPool, Configuration *cfg)
 {
-    return Messenger::error("The %s node can't operate on 2-dimensional data.\n", ProcedureNode::nodeTypes().keyword(type_));
+    return Messenger::error("The {} node can't operate on 2-dimensional data.\n", ProcedureNode::nodeTypes().keyword(type_));
 }
 
 // Operate on Data3D target
 bool OperateProcedureNodeBase::operateData3D(ProcessPool &procPool, Configuration *cfg)
 {
-    return Messenger::error("The %s node can't operate on 3-dimensional data.\n", ProcedureNode::nodeTypes().keyword(type_));
+    return Messenger::error("The {} node can't operate on 3-dimensional data.\n", ProcedureNode::nodeTypes().keyword(type_));
 }
 
 /*
@@ -96,11 +96,11 @@ bool OperateProcedureNodeBase::operateData3D(ProcessPool &procPool, Configuratio
  */
 
 // Prepare any necessary data, ready for execution
-bool OperateProcedureNodeBase::prepare(Configuration *cfg, const char *prefix, GenericList &targetList) { return true; }
+bool OperateProcedureNodeBase::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
 
 // Execute node, targetting the supplied Configuration
 ProcedureNode::NodeExecutionResult OperateProcedureNodeBase::execute(ProcessPool &procPool, Configuration *cfg,
-                                                                     const char *prefix, GenericList &targetList)
+                                                                     std::string_view prefix, GenericList &targetList)
 {
     // Run the operation on any data target that exists
     if (targetData1D_ && (!operateData1D(procPool, cfg)))

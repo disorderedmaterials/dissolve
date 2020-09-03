@@ -28,6 +28,7 @@
 #include "gui/delegates/exponentialspin.hui"
 #include "gui/forcefieldtab.h"
 #include "gui/gui.h"
+#include "gui/helpers/combopopulator.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "gui/widgets/elementselector.hui"
@@ -37,7 +38,7 @@
 Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
 Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
 
-ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title)
+ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title)
     : MainTab(dissolveWindow, dissolve, parent, title, this)
 {
     ui_.setupUi(this);
@@ -101,11 +102,8 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
      */
 
     // Set up combo delegates
-    for (int n = 0; n < PairPotential::nCoulombTruncationSchemes; ++n)
-        ui_.CoulombTruncationCombo->addItem(PairPotential::coulombTruncationScheme((PairPotential::CoulombTruncationScheme)n));
-    for (int n = 0; n < PairPotential::nShortRangeTruncationSchemes; ++n)
-        ui_.ShortRangeTruncationCombo->addItem(
-            PairPotential::shortRangeTruncationScheme((PairPotential::ShortRangeTruncationScheme)n));
+    ComboEnumOptionsPopulator coulPopulator(ui_.CoulombTruncationCombo, PairPotential::coulombTruncationSchemes());
+    ComboEnumOptionsPopulator shortPopulator(ui_.ShortRangeTruncationCombo, PairPotential::shortRangeTruncationSchemes());
 
     // Set sensible lower limits and steps for range and delta
     ui_.PairPotentialRangeSpin->setRange(1.0, 1.0e5);
@@ -156,7 +154,7 @@ void ForcefieldTab::updateBondsTableRow(int row, MasterIntra *masterBond, bool c
     }
     else
         item = ui_.MasterBondsTable->item(row, 0);
-    item->setText(masterBond->name());
+    item->setText(QString::fromStdString(std::string(masterBond->name())));
 
     // Functional Form
     if (createItems)
@@ -167,7 +165,8 @@ void ForcefieldTab::updateBondsTableRow(int row, MasterIntra *masterBond, bool c
     }
     else
         item = ui_.MasterBondsTable->item(row, 1);
-    item->setText(SpeciesBond::bondFunctions().keywordFromInt(masterBond->form()));
+    QString text = QString::fromStdString(std::string(SpeciesBond::bondFunctions().keywordFromInt(masterBond->form())));
+    item->setText(text);
 
     // Parameters
     for (int n = 0; n < masterBond->parameters().size(); ++n)
@@ -198,7 +197,7 @@ void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra *masterAngle, bool
     }
     else
         item = ui_.MasterAnglesTable->item(row, 0);
-    item->setText(masterAngle->name());
+    item->setText(QString::fromStdString(std::string(masterAngle->name())));
 
     // Functional Form
     if (createItems)
@@ -209,7 +208,7 @@ void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra *masterAngle, bool
     }
     else
         item = ui_.MasterAnglesTable->item(row, 1);
-    item->setText(SpeciesAngle::angleFunctions().keywordFromInt(masterAngle->form()));
+    item->setText(QString::fromStdString(std::string(SpeciesAngle::angleFunctions().keywordFromInt(masterAngle->form()))));
 
     // Parameters
     for (int n = 0; n < masterAngle->parameters().size(); ++n)
@@ -240,7 +239,7 @@ void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra *masterTorsion, 
     }
     else
         item = ui_.MasterTorsionsTable->item(row, 0);
-    item->setText(masterTorsion->name());
+    item->setText(QString::fromStdString(std::string(masterTorsion->name())));
 
     // Functional Form
     if (createItems)
@@ -251,7 +250,8 @@ void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra *masterTorsion, 
     }
     else
         item = ui_.MasterTorsionsTable->item(row, 1);
-    item->setText(SpeciesTorsion::torsionFunctions().keywordFromInt(masterTorsion->form()));
+    item->setText(
+        QString::fromStdString(std::string(SpeciesTorsion::torsionFunctions().keywordFromInt(masterTorsion->form()))));
 
     // Parameters
     for (int n = 0; n < masterTorsion->parameters().size(); ++n)
@@ -282,7 +282,7 @@ void ForcefieldTab::updateImpropersTableRow(int row, MasterIntra *masterImproper
     }
     else
         item = ui_.MasterImpropersTable->item(row, 0);
-    item->setText(masterImproper->name());
+    item->setText(QString::fromStdString(std::string(masterImproper->name())));
 
     // Functional Form
     if (createItems)
@@ -293,7 +293,8 @@ void ForcefieldTab::updateImpropersTableRow(int row, MasterIntra *masterImproper
     }
     else
         item = ui_.MasterImpropersTable->item(row, 1);
-    item->setText(SpeciesImproper::improperFunctions().keywordFromInt(masterImproper->form()));
+    item->setText(
+        QString::fromStdString(std::string(SpeciesImproper::improperFunctions().keywordFromInt(masterImproper->form()))));
 
     // Parameters
     for (int n = 0; n < masterImproper->parameters().size(); ++n)
@@ -324,7 +325,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
     }
     else
         item = ui_.AtomTypesTable->item(row, 0);
-    item->setText(atomType->name());
+    item->setText(QString::fromStdString(std::string(atomType->name())));
 
     // Target element
     if (createItems)
@@ -336,7 +337,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
     }
     else
         item = ui_.AtomTypesTable->item(row, 1);
-    item->setText(atomType->element()->symbol());
+    item->setText(QString::fromStdString(std::string(atomType->element()->symbol())));
 
     // Charge
     if (createItems)
@@ -358,7 +359,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
     }
     else
         item = ui_.AtomTypesTable->item(row, 3);
-    item->setText(Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()));
+    item->setText(QString::fromStdString(std::string(Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()))));
 
     // Parameters
     for (int n = 0; n < MAXSRPARAMETERS; ++n)
@@ -390,7 +391,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential *pairPot
     }
     else
         item = ui_.PairPotentialsTable->item(row, 0);
-    item->setText(pairPotential->atomTypeNameI());
+    item->setText(QString::fromStdString(std::string(pairPotential->atomTypeNameI())));
 
     // Type J
     if (createItems)
@@ -402,7 +403,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential *pairPot
     }
     else
         item = ui_.PairPotentialsTable->item(row, 1);
-    item->setText(pairPotential->atomTypeNameJ());
+    item->setText(QString::fromStdString(std::string(pairPotential->atomTypeNameJ())));
 
     // Short-Range Form
     if (createItems)
@@ -414,7 +415,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential *pairPot
     }
     else
         item = ui_.PairPotentialsTable->item(row, 2);
-    item->setText(Forcefield::shortRangeTypes().keyword(pairPotential->shortRangeType()));
+    item->setText(QString::fromStdString(std::string(Forcefield::shortRangeTypes().keyword(pairPotential->shortRangeType()))));
 
     // Charge I
     if (createItems)
@@ -563,7 +564,7 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
     dissolveWindow_->setModified();
 }
 
-void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked) { printf("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_AtomTypeRemoveButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
 
 void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem *w)
 {
@@ -607,7 +608,7 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem *w)
             dissolveWindow_->setModified();
             break;
         default:
-            Messenger::error("Don't know what to do with data from column %i of AtomTypes table.\n", w->column());
+            Messenger::error("Don't know what to do with data from column {} of AtomTypes table.\n", w->column());
             break;
     }
 }
@@ -791,14 +792,14 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem *w)
             dissolveWindow_->setModified();
             break;
         default:
-            Messenger::error("Don't know what to do with data from column %i of PairPotentials table.\n", w->column());
+            Messenger::error("Don't know what to do with data from column {} of PairPotentials table.\n", w->column());
             break;
     }
 }
 
-void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked) { printf("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermAddBondButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
 
-void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked) { printf("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermRemoveBondButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
 
 void ForcefieldTab::on_MasterBondsTable_itemChanged(QTableWidgetItem *w)
 {
@@ -832,14 +833,14 @@ void ForcefieldTab::on_MasterBondsTable_itemChanged(QTableWidgetItem *w)
             dissolveWindow_->setModified();
             break;
         default:
-            Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+            Messenger::error("Don't know what to do with data from column {} of MasterIntra table.\n", w->column());
             break;
     }
 }
 
-void ForcefieldTab::on_MasterTermAddAngleButton_clicked(bool checked) { printf("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermAddAngleButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
 
-void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked) { printf("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermRemoveAngleButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
 
 void ForcefieldTab::on_MasterAnglesTable_itemChanged(QTableWidgetItem *w)
 {
@@ -873,14 +874,14 @@ void ForcefieldTab::on_MasterAnglesTable_itemChanged(QTableWidgetItem *w)
             dissolveWindow_->setModified();
             break;
         default:
-            Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+            Messenger::error("Don't know what to do with data from column {} of MasterIntra table.\n", w->column());
             break;
     }
 }
 
-void ForcefieldTab::on_MasterTermAddTorsionButton_clicked(bool checked) { printf("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermAddTorsionButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
 
-void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked) { printf("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermRemoveTorsionButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
 
 void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem *w)
 {
@@ -914,14 +915,14 @@ void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem *w)
             dissolveWindow_->setModified();
             break;
         default:
-            Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+            Messenger::error("Don't know what to do with data from column {} of MasterIntra table.\n", w->column());
             break;
     }
 }
 
-void ForcefieldTab::on_MasterTermAddImproperButton_clicked(bool checked) { printf("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermAddImproperButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
 
-void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked) { printf("NOT IMPLEMENTED YET.\n"); }
+void ForcefieldTab::on_MasterTermRemoveImproperButton_clicked(bool checked) { Messenger::error("NOT IMPLEMENTED YET.\n"); }
 
 void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem *w)
 {
@@ -955,7 +956,7 @@ void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem *w)
             dissolveWindow_->setModified();
             break;
         default:
-            Messenger::error("Don't know what to do with data from column %i of MasterIntra table.\n", w->column());
+            Messenger::error("Don't know what to do with data from column {} of MasterIntra table.\n", w->column());
             break;
     }
 }

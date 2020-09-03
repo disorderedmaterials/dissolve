@@ -60,20 +60,19 @@ void ColourDefinition::operator=(const ColourDefinition &source)
  * Enumerations
  */
 
-// ColourStyle Keywords
-const char *ColourStyleKeywords[] = {"SingleColour", "RGBGradient", "HSVGradient", "CustomGradient"};
-
-// Convert text string to ColourStyle
-ColourDefinition::ColourStyle ColourDefinition::colourStyle(const char *s)
+// Return enum options for ColourStyle
+EnumOptions<ColourDefinition::ColourStyle> &ColourDefinition::colourStyles()
 {
-    for (int n = 0; n < ColourDefinition::nColourStyles; ++n)
-        if (DissolveSys::sameString(s, ColourStyleKeywords[n]))
-            return (ColourDefinition::ColourStyle)n;
-    return ColourDefinition::nColourStyles;
-}
+    static EnumOptionsList ColourStyleOptions = EnumOptionsList()
+                                                << EnumOption(ColourDefinition::SingleColourStyle, "SingleColour")
+                                                << EnumOption(ColourDefinition::RGBGradientStyle, "RGBGradient")
+                                                << EnumOption(ColourDefinition::HSVGradientStyle, "HSVGradient")
+                                                << EnumOption(ColourDefinition::CustomGradientStyle, "CustomGradient");
 
-// Convert ColourStyle to text string
-const char *ColourDefinition::colourStyle(ColourStyle cs) { return ColourStyleKeywords[cs]; }
+    static EnumOptions<ColourDefinition::ColourStyle> options("AutoScaleMethod", ColourStyleOptions);
+
+    return options;
+}
 
 /*
  * Style

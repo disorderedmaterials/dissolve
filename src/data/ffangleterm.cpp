@@ -23,7 +23,7 @@
 #include "data/ff.h"
 #include "data/ffatomtype.h"
 
-ForcefieldAngleTerm::ForcefieldAngleTerm(const char *typeI, const char *typeJ, const char *typeK,
+ForcefieldAngleTerm::ForcefieldAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
                                          SpeciesAngle::AngleFunction form, const std::vector<double> parameters)
 {
     typeI_ = typeI;

@@ -23,53 +23,46 @@
 #include "base/sysfunc.h"
 #include "module/group.h"
 
-ModuleGroups::ModuleGroups() {}
-
-ModuleGroups::~ModuleGroups() {}
-
 /*
  * Module Types
  */
 
 // Add allowed Module type
-void ModuleGroups::addAllowedModuleType(const char *moduleType)
+void ModuleGroups::addAllowedModuleType(std::string_view moduleType)
 {
     // Check if the provided type is already present...
     if (moduleTypeIsAllowed(moduleType))
         return;
 
-    allowedModuleTypes_.add(moduleType);
+    allowedModuleTypes_.push_back(std::string(moduleType));
 }
 
 // Set list of allowed Module types
-void ModuleGroups::setAllowedModuleTypes(const CharStringList &moduleTypes)
-{
-    // Clear existing list
-    allowedModuleTypes_.clear();
-
-    // Add types from source list by hand, rather than copying, so we prune out duplicates
-    for (int n = 0; n < moduleTypes.nItems(); ++n)
-        addAllowedModuleType(moduleTypes.at(n));
-}
+void ModuleGroups::setAllowedModuleTypes(const std::vector<std::string> &moduleTypes) { allowedModuleTypes_ = moduleTypes; }
 
 // Return if specified Module type is allowed in any group
-bool ModuleGroups::moduleTypeIsAllowed(const char *moduleType) const { return allowedModuleTypes_.contains(moduleType); }
+bool ModuleGroups::moduleTypeIsAllowed(std::string_view moduleType) const
+{
+    return std::find_if(allowedModuleTypes_.cbegin(), allowedModuleTypes_.cend(),
+                        [moduleType](const auto &s) { return s == moduleType; }) != allowedModuleTypes_.cend();
+}
 
 // Return list of allowed Module types
-const CharStringList &ModuleGroups::allowedModuleTypes() const { return allowedModuleTypes_; }
+const std::vector<std::string> &ModuleGroups::allowedModuleTypes() const { return allowedModuleTypes_; }
 
 /*
  * Module Groups
  */
 
 // Add Module to specified group, creating it if necessary
-ModuleGroup *ModuleGroups::addModule(Module *module, const char *groupName)
+ModuleGroup *ModuleGroups::addModule(Module *module, std::string_view groupName)
 {
     // Does the specified group exist?
     ModuleGroup *moduleGroup;
     for (moduleGroup = groups_.first(); moduleGroup != NULL; moduleGroup = moduleGroup->next())
         if (DissolveSys::sameString(moduleGroup->name(), groupName))
             break;
+
     if (moduleGroup == NULL)
     {
         moduleGroup = new ModuleGroup(groupName);
@@ -120,9 +113,9 @@ const RefDataList<Module, ModuleGroup *> &ModuleGroups::modules() const { return
 bool ModuleGroups::contains(Module *module) const { return allModules_.contains(module); }
 
 // Return name of group assigned to specified Module (if present)
-const char *ModuleGroups::groupName(Module *module) const
+std::string_view ModuleGroups::groupName(Module *module) const
 {
-    RefDataItem<Module, ModuleGroup *> *ri = allModules_.contains(module);
+    auto *ri = allModules_.contains(module);
 
     return (ri ? ri->data()->name() : "Default");
 }

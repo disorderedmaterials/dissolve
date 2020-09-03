@@ -41,7 +41,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Check for zero Configuration targets
     if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
     for (Configuration *cfg : targetConfigurations_)
@@ -62,11 +62,11 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const auto rRT = 1.0 / (.008314472 * cfg->temperature());
 
         // Print argument/parameter summary
-        Messenger::print("AtomShake: Cutoff distance is %f\n", cutoffDistance);
-        Messenger::print("AtomShake: Performing %i shake(s) per Atom\n", nShakesPerAtom);
-        Messenger::print("AtomShake: Step size for adjustments is %f Angstroms (allowed range is %f <= delta <= %f).\n",
+        Messenger::print("AtomShake: Cutoff distance is {}\n", cutoffDistance);
+        Messenger::print("AtomShake: Performing {} shake(s) per Atom\n", nShakesPerAtom);
+        Messenger::print("AtomShake: Step size for adjustments is {:.5f} Angstroms (allowed range is {} <= delta <= {}).\n",
                          stepSize, stepSizeMin, stepSizeMax);
-        Messenger::print("AtomShake: Target acceptance rate is %f.\n", targetAcceptanceRate);
+        Messenger::print("AtomShake: Target acceptance rate is {}.\n", targetAcceptanceRate);
         Messenger::print("\n");
 
         ProcessPool::DivisionStrategy strategy = procPool.bestStrategy();
@@ -193,14 +193,15 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         timer.stop();
 
-        Messenger::print("Total energy delta was %10.4e kJ/mol.\n", totalDelta);
+        Messenger::print("Total energy delta was {:10.4e} kJ/mol.\n", totalDelta);
 
         // Calculate and print acceptance rate
         double rate = double(nAccepted) / nAttempts;
-        Messenger::print("Total number of attempted moves was %i (%s work, %s comms)\n", nAttempts, timer.totalTimeString(),
+        Messenger::print("Total number of attempted moves was {} ({} work, {} comms)\n", nAttempts, timer.totalTimeString(),
                          procPool.accumulatedTimeString());
 
-        Messenger::print("Overall acceptance rate was %4.2f% (%i of %i attempted moves)\n", 100.0 * rate, nAccepted, nAttempts);
+        Messenger::print("Overall acceptance rate was {:4.2f}% ({} of {} attempted moves)\n", 100.0 * rate, nAccepted,
+                         nAttempts);
 
         // Update and set translation step size
         stepSize *= (nAccepted == 0) ? 0.8 : rate / targetAcceptanceRate;
@@ -209,7 +210,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         else if (stepSize > stepSizeMax)
             stepSize = stepSizeMax;
 
-        Messenger::print("Updated step size is %f Angstroms.\n", stepSize);
+        Messenger::print("Updated step size is {} Angstroms.\n", stepSize);
 
         // Increase contents version in Configuration
         if (nAccepted > 0)

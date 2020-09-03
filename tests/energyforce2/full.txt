@@ -161,7 +161,7 @@ Module Forces
   Configuration  'Liquid'
   TestReference  dlpoly  'dlpoly/REVCON'
   EndTestReference
-  TestThreshold  0.1
+  TestThreshold  4.0
 EndModule
 
 Module SanityCheck
@@ -172,7 +172,7 @@ EndLayer
 # Pair Potentials
 PairPotentials
   Range  12.000000
-  Delta  0.01000
+  Delta  0.00500
   ShortRangeTruncation  None
   IncludeCoulomb  False
   Parameters  'CT'  C   0.0       LJGeometric  0.276144      3.500000  

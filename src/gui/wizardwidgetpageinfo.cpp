@@ -34,7 +34,7 @@ WizardWidgetPageInfo::~WizardWidgetPageInfo() {}
  */
 
 // Set page information
-void WizardWidgetPageInfo::set(int index, const char *title, int nextIndex)
+void WizardWidgetPageInfo::set(int index, const QString title, int nextIndex)
 {
     index_ = index;
     title_ = title;
@@ -45,7 +45,7 @@ void WizardWidgetPageInfo::set(int index, const char *title, int nextIndex)
 void WizardWidgetPageInfo::setIndex(int index) { index_ = index; }
 
 // Set page title
-void WizardWidgetPageInfo::setTitle(const char *title) { title_ = title; }
+void WizardWidgetPageInfo::setTitle(const QString title) { title_ = title; }
 
 // Set next page index
 void WizardWidgetPageInfo::setNextPageIndex(int nextIndex) { nextIndex_ = nextIndex; }
@@ -60,7 +60,7 @@ WizardWidgetPageInfo::PageType WizardWidgetPageInfo::pageType() const { return p
 int WizardWidgetPageInfo::index() const { return index_; }
 
 // Return title text for page
-const char *WizardWidgetPageInfo::title() const { return title_.get(); }
+const QString WizardWidgetPageInfo::title() const { return title_; }
 
 // Return index of the 'next' page
 int WizardWidgetPageInfo::nextIndex() const { return nextIndex_; }
@@ -77,6 +77,7 @@ void WizardWidgetPageInfo::setStackedWidgetPage(QWidget *widget) { stackedWidget
 
 // Return associated widget in QStackedWidget
 QWidget *WizardWidgetPageInfo::stackedWidgetPage() const { return stackedWidgetPage_; }
+
 // Add new widget highlight
 WizardWidgetHighlight *WizardWidgetPageInfo::addWidgetHighlight() { return widgetHighlights_.add(); }
 

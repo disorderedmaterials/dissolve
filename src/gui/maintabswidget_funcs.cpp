@@ -162,10 +162,10 @@ WorkspaceTab *MainTabsWidget::workspaceTab(QWidget *page)
 }
 
 // Find tab with title specified
-MainTab *MainTabsWidget::findTab(const char *title)
+MainTab *MainTabsWidget::findTab(const QString title)
 {
     for (MainTab *tab : allTabs_)
-        if (DissolveSys::sameString(tab->title(), title))
+        if (tab->title() == title)
             return tab;
 
     return NULL;
@@ -182,10 +182,10 @@ MainTab *MainTabsWidget::findTab(QWidget *page)
 }
 
 // Generate unique tab name with base name provided
-const char *MainTabsWidget::uniqueTabName(const char *base)
+const QString MainTabsWidget::uniqueTabName(const QString base)
 {
-    static CharString uniqueName;
-    CharString baseName = base;
+    static QString uniqueName;
+    QString baseName = base;
     uniqueName = baseName;
     auto suffix = 0;
 
@@ -198,7 +198,7 @@ const char *MainTabsWidget::uniqueTabName(const char *base)
     {
         // Increase suffix value and regenerate uniqueName from baseName
         ++suffix;
-        uniqueName.sprintf("%s%i", baseName.get(), suffix);
+        uniqueName = QStringLiteral("%1%2").arg(baseName, suffix);
     }
 
     return uniqueName;
@@ -265,10 +265,11 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
         // If the current tab index is (now) out of range, add a new one
         if (currentTabIndex == speciesTabs_.nItems())
         {
-            SpeciesTab *newTab = new SpeciesTab(dissolveWindow, dissolve, this, sp->name(), sp);
+            QString tabTitle = QString::fromStdString(std::string(sp->name()));
+            SpeciesTab *newTab = new SpeciesTab(dissolveWindow, dissolve, this, tabTitle, sp);
             speciesTabs_.own(newTab);
             allTabs_.append(newTab);
-            insertTab(baseIndex + currentTabIndex, newTab, sp->name());
+            insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
             addTabCloseButton(newTab->page());
             setTabTextColour(newTab->page(), QColor(0, 81, 0));
             setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_species.svg"));
@@ -300,10 +301,11 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
         // If the current tab index is (now) out of range, add a new one
         if (currentTabIndex == configurationTabs_.nItems())
         {
-            ConfigurationTab *newTab = new ConfigurationTab(dissolveWindow, dissolve, this, cfg->name(), cfg);
+            QString tabTitle = QString::fromStdString(std::string(cfg->name()));
+            ConfigurationTab *newTab = new ConfigurationTab(dissolveWindow, dissolve, this, tabTitle, cfg);
             configurationTabs_.own(newTab);
             allTabs_.append(newTab);
-            insertTab(baseIndex + currentTabIndex, newTab, cfg->name());
+            insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
             addTabCloseButton(newTab->page());
             setTabTextColour(newTab->page(), QColor(0, 81, 0));
             setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_configuration.svg"));
@@ -336,10 +338,11 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
         // If the current tab index is (now) out of range, add a new one
         if (currentTabIndex == processingLayerTabs_.nItems())
         {
-            LayerTab *newTab = new LayerTab(dissolveWindow, dissolve, this, layer->name(), layer);
+            QString tabTitle = QString::fromStdString(std::string(layer->name()));
+            LayerTab *newTab = new LayerTab(dissolveWindow, dissolve, this, tabTitle, layer);
             processingLayerTabs_.own(newTab);
             allTabs_.append(newTab);
-            insertTab(baseIndex + currentTabIndex, newTab, layer->name());
+            insertTab(baseIndex + currentTabIndex, newTab, tabTitle);
             addTabCloseButton(newTab->page());
             setTabTextColour(newTab->page(), QColor(0, 81, 0));
             setTabIcon(newTab->page(), QIcon(":/tabs/icons/tabs_modulelayer.svg"));
@@ -355,9 +358,7 @@ void MainTabsWidget::removeByPage(QWidget *page)
 {
     // Delete the tab from the tabwidget first - find its index (based on the page widget pointer) and remove that
     auto indexToRemove = indexOf(page);
-    if (indexToRemove == -1)
-        printf("Couldn't remove tab since its page widget (%p) could not be found.\n", page);
-    else
+    if (indexToRemove)
         removeTab(indexToRemove);
 
     // Now delete the tab from its list - this will delete the actual page widget
@@ -390,8 +391,6 @@ void MainTabsWidget::removeByPage(QWidget *page)
         allTabs_.remove(workspaceTab(page));
         workspaceTabs_.remove(workspaceTab(page));
     }
-    else
-        printf("Couldn't remove tab %p as it could not be found in any list.\n", page);
 
     if (updateAll)
     {
@@ -408,10 +407,11 @@ MainTab *MainTabsWidget::addModuleTab(DissolveWindow *dissolveWindow, Module *mo
     if (!tab)
     {
         // Need to create a new ModuleTab
-        tab = new ModuleTab(dissolveWindow, dissolveWindow->dissolve(), this, module->uniqueName(), module);
+        QString tabTitle = QString::fromStdString(std::string(module->uniqueName()));
+        tab = new ModuleTab(dissolveWindow, dissolveWindow->dissolve(), this, tabTitle, module);
         moduleTabs_.own(tab);
         allTabs_.append(tab);
-        addTab(tab, module->uniqueName());
+        addTab(tab, tabTitle);
         addTabCloseButton(tab);
         setTabIcon(tab->page(), QIcon(ModuleBlock::modulePixmap(module)));
 
@@ -436,7 +436,7 @@ void MainTabsWidget::removeModuleTab(Module *module)
 }
 
 // Add on a new workspace tab
-MainTab *MainTabsWidget::addWorkspaceTab(DissolveWindow *dissolveWindow, const char *title)
+MainTab *MainTabsWidget::addWorkspaceTab(DissolveWindow *dissolveWindow, const QString title)
 {
     // Check that a tab with this title doesn't already exist
     MainTab *tab = findTab(title);
@@ -454,7 +454,7 @@ MainTab *MainTabsWidget::addWorkspaceTab(DissolveWindow *dissolveWindow, const c
         return newWorkspace;
     }
     else
-        Messenger::printVerbose("Tab '%s' already exists, so returning that instead...\n", title);
+        Messenger::printVerbose("Tab '{}' already exists, so returning that instead...\n", qPrintable(title));
 
     return tab;
 }
@@ -474,7 +474,7 @@ MainTab *MainTabsWidget::currentTab() const
     MainTab *currentTab = dynamic_cast<MainTab *>(currentWidget());
     if (!currentTab)
     {
-        Messenger::print("Can't cast current tab (index %i) into a MainTab.\n", currentIndex());
+        Messenger::print("Can't cast current tab (index {}) into a MainTab.\n", currentIndex());
         return NULL;
     }
 
@@ -500,7 +500,7 @@ void MainTabsWidget::setCurrentTab(Species *species)
             return;
         }
 
-    Messenger::error("Can't display SpeciesTab for Species '%s' as it doesn't exist.\n", species->name());
+    Messenger::error("Can't display SpeciesTab for Species '{}' as it doesn't exist.\n", species->name());
 }
 
 // Make specified Configuration tab the current one
@@ -516,7 +516,7 @@ void MainTabsWidget::setCurrentTab(Configuration *cfg)
             return;
         }
 
-    Messenger::error("Can't display ConfigurationTab for Configuration '%s' as it doesn't exist.\n", cfg->name());
+    Messenger::error("Can't display ConfigurationTab for Configuration '{}' as it doesn't exist.\n", cfg->name());
 }
 
 // Make specified processing layer tab the current one
@@ -532,7 +532,7 @@ void MainTabsWidget::setCurrentTab(ModuleLayer *layer)
             return;
         }
 
-    Messenger::error("Can't display LayerTab for processing layer '%s' as it doesn't exist.\n", layer->name());
+    Messenger::error("Can't display LayerTab for processing layer '{}' as it doesn't exist.\n", layer->name());
 }
 
 /*
@@ -588,10 +588,7 @@ void MainTabsWidget::setTabTextColour(QWidget *pageWidget, QColor colour)
     // Find the tab containing the specified page
     auto tabIndex = indexOf(pageWidget);
     if (tabIndex == -1)
-    {
-        Messenger::error("MainTabsWidget::setTabTextColour - Failed to find tab containing widget %p.\n", pageWidget);
         return;
-    }
 
     // Set the style via the tab bar
     mainTabsBar_->setTabTextColor(tabIndex, colour);
@@ -603,10 +600,7 @@ void MainTabsWidget::setTabIcon(QWidget *pageWidget, QIcon icon)
     // Find the tab containing the specified page
     auto tabIndex = indexOf(pageWidget);
     if (tabIndex == -1)
-    {
-        Messenger::error("MainTabsWidget::setTabIcon - Failed to find tab containing widget %p.\n", pageWidget);
         return;
-    }
 
     // Set the style via the tab bar
     mainTabsBar_->setTabIcon(tabIndex, icon);
@@ -618,10 +612,7 @@ QToolButton *MainTabsWidget::addTabCloseButton(QWidget *pageWidget)
     // Find the tab containing the specified page
     auto tabIndex = indexOf(pageWidget);
     if (tabIndex == -1)
-    {
-        Messenger::error("MainTabsWidget::addTabCloseButton - Failed to find tab containing widget %p.\n", pageWidget);
         return NULL;
-    }
 
     // Create a suitable tool button for the tab
     QToolButton *closeButton = new QToolButton;
@@ -653,11 +644,7 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
         // Find the tab containing the page widget (stored as the RefListItem's data)
         auto tabIndex = indexOf(item->data());
         if (tabIndex == -1)
-        {
-            Messenger::error("MainTabsWidget::tabCloseButtonClicked - Failed to find tab containing widget %p.\n",
-                             item->data());
             return;
-        }
 
         // Get the relevant widget (as a MainTab)
         MainTab *tab = dynamic_cast<MainTab *>(widget(tabIndex));
@@ -682,8 +669,6 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
         if ((tabType != MainTab::ModuleTabType) && (tabType != MainTab::WorkspaceTabType))
             emit(dataModified());
     }
-    else
-        printf("Tabs received a close event from an unknown button...\n");
 }
 
 // Tab bar double-clicked

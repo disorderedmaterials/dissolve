@@ -45,7 +45,7 @@ class Forcefield_OPLSAA2005_Alkanes : public OPLSAA2005BaseForcefield
      */
     public:
     // Return name of Forcefield
-    const char *name() const;
+    std::string_view name() const;
     // Return description for Forcefield
-    const char *description() const;
+    std::string_view description() const;
 };

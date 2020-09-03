@@ -53,15 +53,15 @@ int Vec3NodeValueKeyword::maxArguments() const { return 3; }
 bool Vec3NodeValueKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     if (!parentNode_)
-        return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n", name());
+        return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n", name());
 
     if (parser.hasArg(startArg + 2))
     {
-        if (!data_.x.set(parser.argc(startArg), parentNode_->parametersInScope()))
+        if (!data_.x.set(parser.argsv(startArg), parentNode_->parametersInScope()))
             return false;
-        if (!data_.y.set(parser.argc(startArg + 1), parentNode_->parametersInScope()))
+        if (!data_.y.set(parser.argsv(startArg + 1), parentNode_->parametersInScope()))
             return false;
-        if (!data_.z.set(parser.argc(startArg + 2), parentNode_->parametersInScope()))
+        if (!data_.z.set(parser.argsv(startArg + 2), parentNode_->parametersInScope()))
             return false;
 
         hasBeenSet();
@@ -73,10 +73,10 @@ bool Vec3NodeValueKeyword::read(LineParser &parser, int startArg, CoreData &core
 }
 
 // Write keyword data to specified LineParser
-bool Vec3NodeValueKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool Vec3NodeValueKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
-    return parser.writeLineF("%s%s  %s  %s  %s\n", prefix, keywordName, data_.x.asString(true).get(),
-                             data_.y.asString(true).get(), data_.z.asString(true).get());
+    return parser.writeLineF("{}{}  {}  {}  {}\n", prefix, keywordName, data_.x.asString(true), data_.y.asString(true),
+                             data_.z.asString(true));
 }
 
 /*
@@ -84,10 +84,10 @@ bool Vec3NodeValueKeyword::write(LineParser &parser, const char *keywordName, co
  */
 
 // Set the value from supplied expression text
-bool Vec3NodeValueKeyword::setValue(int index, const char *expressionText)
+bool Vec3NodeValueKeyword::setValue(int index, std::string_view expressionText)
 {
     if ((index < 0) || (index > 2))
-        return Messenger::error("Index %i out of range in Vec3NodeValueKeyword::setValue().\n", index);
+        return Messenger::error("Index {} out of range in Vec3NodeValueKeyword::setValue().\n", index);
 
     if (!data_[index].set(expressionText, parentNode_->parametersInScope()))
         return false;

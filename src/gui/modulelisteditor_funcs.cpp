@@ -74,31 +74,31 @@ bool ModuleListEditor::setUp(DissolveWindow *dissolveWindow, ModuleLayer *module
 
         // Find category for this Module (if it exists) or create a new one
         MimeTreeWidgetItem *categoryItem = NULL;
-        RefDataListIterator<MimeTreeWidgetItem, CharString> categoryIterator(moduleCategories_);
+        RefDataListIterator<MimeTreeWidgetItem, QString> categoryIterator(moduleCategories_);
         while ((categoryItem = categoryIterator.iterate()))
-            if (DissolveSys::sameString(module->category(), categoryIterator.currentData()))
+            if (categoryIterator.currentData() == QString::fromStdString(std::string(module->category())))
                 break;
         if (categoryItem == NULL)
         {
             categoryItem = new MimeTreeWidgetItem((QTreeWidget *)NULL, 1000);
-            categoryItem->setText(0, module->category());
+            categoryItem->setText(0, QString::fromStdString(std::string(module->category())));
             categoryItem->setFlags(Qt::ItemIsEnabled);
-            moduleCategories_.append(categoryItem, module->category());
+            moduleCategories_.append(categoryItem, QString::fromStdString(std::string(module->category())));
         }
 
         // Create item for the Module
         MimeTreeWidgetItem *item = new MimeTreeWidgetItem(categoryItem, 1000);
         item->setIcon(0, ModuleBlock::modulePixmap(module));
-        item->setText(0, module->type());
+        item->setText(0, QString::fromStdString(std::string(module->type())));
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsDragEnabled);
         item->setData(0, Qt::UserRole, VariantPointer<const Module>(module));
-        item->setToolTip(0, module->brief());
+        item->setToolTip(0, QString::fromStdString(std::string(module->brief())));
         item->addMimeString(MimeString::ModuleType, module->type());
     }
 
     // Populate the available Modules tree with the categories we now have
     ui_.AvailableModulesTree->clear();
-    RefDataListIterator<MimeTreeWidgetItem, CharString> categoryIterator(moduleCategories_);
+    RefDataListIterator<MimeTreeWidgetItem, QString> categoryIterator(moduleCategories_);
     while (MimeTreeWidgetItem *categoryItem = categoryIterator.iterate())
         ui_.AvailableModulesTree->addTopLevelItem(categoryItem);
     ui_.AvailableModulesTree->sortByColumn(0, Qt::AscendingOrder);

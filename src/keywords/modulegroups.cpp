@@ -32,8 +32,6 @@ ModuleGroupsKeyword::ModuleGroupsKeyword(ModuleGroups &groups)
 {
 }
 
-ModuleGroupsKeyword::~ModuleGroupsKeyword() {}
-
 /*
  * Arguments
  */
@@ -52,23 +50,26 @@ int ModuleGroupsKeyword::maxArguments() const
 bool ModuleGroupsKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Find specified Module by its unique name
-    Module *module = coreData.findModule(parser.argc(startArg));
+    Module *module = coreData.findModule(parser.argsv(startArg));
     if (!module)
     {
-        Messenger::error("No Module named '%s' exists.\n", parser.argc(startArg));
+        Messenger::error("No Module named '{}' exists.\n", parser.argsv(startArg));
         return false;
     }
 
     // Check the module's type
     if (!data_.moduleTypeIsAllowed(module->type()))
     {
-        Messenger::error("Module '%s' is of type '%s', and is not permitted in these groups (allowed types = %s).\n",
-                         parser.argc(startArg), module->type(), data_.allowedModuleTypes().asCommaSeparatedList());
+        std::string allowedTypes;
+        for (const auto &s : data_.allowedModuleTypes())
+            allowedTypes += allowedTypes.empty() ? s : ", " + s;
+        Messenger::error("Module '{}' is of type '{}', and is not permitted in these groups (allowed types = {}).\n",
+                         parser.argsv(startArg), module->type(), allowedTypes);
         return false;
     }
 
     // If a second argument was given, this is the name of the group we should add the Module to. Otherwise, use the default
-    data_.addModule(module, parser.hasArg(startArg + 1) ? parser.argc(startArg + 1) : "Default");
+    data_.addModule(module, parser.hasArg(startArg + 1) ? parser.argsv(startArg + 1) : "Default");
 
     set_ = true;
 
@@ -76,7 +77,7 @@ bool ModuleGroupsKeyword::read(LineParser &parser, int startArg, CoreData &coreD
 }
 
 // Write keyword data to specified LineParser
-bool ModuleGroupsKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool ModuleGroupsKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     // Loop over defined groups
     ListIterator<ModuleGroup> groupIterator(data_.groups());
@@ -85,7 +86,7 @@ bool ModuleGroupsKeyword::write(LineParser &parser, const char *keywordName, con
         // Loop over list of referenced Modules in this group
         for (Module *module : group->modules())
         {
-            if (!parser.writeLineF("%s%s  '%s'  '%s'\n", prefix, keywordName, module->uniqueName(), group->name()))
+            if (!parser.writeLineF("{}{}  '{}'  '{}'\n", prefix, keywordName, module->uniqueName(), group->name()))
                 return false;
         }
     }

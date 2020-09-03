@@ -61,7 +61,7 @@ double CalculateProcedureNodeBase::value(int id) const
 #ifdef CHECKS
     if ((id < 0) || (id >= dimensionality()))
     {
-        Messenger::error("Observable value index %i is out of range for this observable which has a dimensionality of %i.\n",
+        Messenger::error("Observable value index {} is out of range for this observable which has a dimensionality of {}.\n",
                          id, dimensionality());
         return 0.0;
     }
@@ -77,14 +77,14 @@ Vec3<double> CalculateProcedureNodeBase::values() const { return value_; }
  */
 
 // Prepare any necessary data, ready for execution
-bool CalculateProcedureNodeBase::prepare(Configuration *cfg, const char *prefix, GenericList &targetList)
+bool CalculateProcedureNodeBase::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Check that the sites have been properly defined
     for (int n = 0; n < nSitesRequired(); ++n)
     {
         sites_[n] = siteKeywords_[n] ? siteKeywords_[n]->node() : NULL;
         if (!sites_[n])
-            return Messenger::error("Observable site %i is not set.\n", n);
+            return Messenger::error("Observable site {} is not set.\n", n);
     }
 
     return true;

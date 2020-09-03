@@ -22,13 +22,13 @@
 #include "modules/calculate_sdf/sdf.h"
 
 // Return type of module
-const char *CalculateSDFModule::type() const { return "CalculateSDF"; }
+std::string_view CalculateSDFModule::type() const { return "CalculateSDF"; }
 
 // Return category for module
-const char *CalculateSDFModule::category() const { return "Analysis"; }
+std::string_view CalculateSDFModule::category() const { return "Analysis"; }
 
 // Return brief description of module
-const char *CalculateSDFModule::brief() const { return "Calculate spatial density functions around oriented sites"; }
+std::string_view CalculateSDFModule::brief() const { return "Calculate spatial density functions around oriented sites"; }
 
 // Return the number of Configuration targets this Module requires
 int CalculateSDFModule::nRequiredTargets() const { return Module::ExactlyOneTarget; }

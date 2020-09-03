@@ -66,9 +66,9 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
      */
     private:
     // Name of the Configuration
-    CharString name_;
+    std::string name_;
     // Nice name (generated from name_) used for output files
-    CharString niceName_;
+    std::string niceName_;
     // Procedure to generate the Configuration
     Procedure generator_;
     // File / format of input coordinates file, if provided
@@ -78,11 +78,11 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
 
     public:
     // Set name of the Configuration
-    void setName(const char *name);
+    void setName(std::string_view name);
     // Return name of the Configuration
-    const char *name() const;
+    std::string_view name() const;
     // Return nice name of the Configuration
-    const char *niceName() const;
+    std::string_view niceName() const;
     // Return the current generator
     Procedure &generator();
     // Create the Configuration according to its generator Procedure

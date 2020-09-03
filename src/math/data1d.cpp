@@ -28,12 +28,12 @@
 template <class Data1D> RefDataList<Data1D, int> ObjectStore<Data1D>::objects_;
 template <class Data1D> int ObjectStore<Data1D>::objectCount_ = 0;
 template <class Data1D> int ObjectStore<Data1D>::objectType_ = ObjectInfo::Data1DObject;
-template <class Data1D> const char *ObjectStore<Data1D>::objectTypeName_ = "Data1D";
+template <class Data1D> std::string_view ObjectStore<Data1D>::objectTypeName_ = "Data1D";
 
 Data1D::Data1D() : PlottableData(PlottableData::OneAxisPlottable), ListItem<Data1D>(), ObjectStore<Data1D>(this)
 {
     static int count = 0;
-    name_ = CharString("Data1D_%i", ++count);
+    name_ = fmt::format("Data1D_{}", ++count);
 
     hasError_ = false;
 
@@ -132,7 +132,7 @@ void Data1D::addPoint(double x, double value, double error)
     if (hasError_)
         errors_.add(error);
     else
-        Messenger::warn("Tried to addPoint() with an error to Data1D, but this Data1D (name='%s', tag='%s') has no "
+        Messenger::warn("Tried to addPoint() with an error to Data1D, but this Data1D (name='{}', tag='{}') has no "
                         "error information associated with it.\n",
                         name(), objectTag());
 
@@ -170,7 +170,7 @@ double &Data1D::xAxis(int index)
     if ((index < 0) || (index >= x_.nItems()))
     {
         static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in Data1D::xAxis().\n", index);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data1D::xAxis().\n", index);
         return dummy;
     }
 #endif
@@ -185,7 +185,7 @@ double Data1D::constXAxis(int index) const
 #ifdef CHECKS
     if ((index < 0) || (index >= x_.nItems()))
     {
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for x_ array in Data1D::constXAxis().\n", index);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data1D::constXAxis().\n", index);
         return 0.0;
     }
 #endif
@@ -210,7 +210,7 @@ double &Data1D::value(int index)
     if ((index < 0) || (index >= values_.nItems()))
     {
         static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for values_ array in Data1D::value().\n", index);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for values_ array in Data1D::value().\n", index);
         return dummy;
     }
 #endif
@@ -225,7 +225,7 @@ double Data1D::constValue(int index) const
 #ifdef CHECKS
     if ((index < 0) || (index >= values_.nItems()))
     {
-        Messenger::error("OUT_OF_RANGE - Index %i is out of range for values_ array in Data1D::constValue().\n", index);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for values_ array in Data1D::constValue().\n", index);
         return 0.0;
     }
 #endif
@@ -295,7 +295,7 @@ double &Data1D::error(int index)
     if (!hasError_)
     {
         static double dummy;
-        Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but error(int) was requested.\n", name(),
+        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but error(int) was requested.\n", name(),
                         objectTag());
         return dummy;
     }
@@ -310,7 +310,7 @@ double Data1D::constError(int index) const
 {
     if (!hasError_)
     {
-        Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but constError(int) was requested.\n",
+        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but constError(int) was requested.\n",
                         name(), objectTag());
         return 0.0;
     }
@@ -322,7 +322,7 @@ double Data1D::constError(int index) const
 Array<double> &Data1D::errors()
 {
     if (!hasError_)
-        Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but errors() was requested.\n", name(),
+        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
                         objectTag());
 
     ++version_;
@@ -334,7 +334,7 @@ Array<double> &Data1D::errors()
 const Array<double> &Data1D::constErrors() const
 {
     if (!hasError_)
-        Messenger::warn("This Data1D (name='%s', tag='%s') has no errors to return, but constErrors() was requested.\n", name(),
+        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but constErrors() was requested.\n", name(),
                         objectTag());
 
     return errors_;
@@ -380,8 +380,8 @@ void Data1D::operator+=(const Data1D &source)
         // Check x values for consistency
         if (fabs(x_[n] - source.constXAxis(n)) > 1.0e-6)
         {
-            Messenger::error("Failed to += these Data1D together since the x arrays are different (at point %i, x "
-                             "are %e and %e).\n",
+            Messenger::error("Failed to += these Data1D together since the x arrays are different (at point {}, x "
+                             "are {:e} and {:e}).\n",
                              n, x_[n], source.constXAxis(n));
             return;
         }
@@ -425,8 +425,8 @@ void Data1D::operator-=(const Data1D &source)
         // Check x values for consistency
         if (fabs(x_[n] - source.constXAxis(n)) > 1.0e-6)
         {
-            Messenger::error("Failed to -= these Data1D together since the x arrays are different (at point %i, x "
-                             "are %e and %e).\n",
+            Messenger::error("Failed to -= these Data1D together since the x arrays are different (at point {}, x "
+                             "are {:e} and {:e}).\n",
                              n, x_[n], source.constXAxis(n));
             return;
         }
@@ -466,7 +466,7 @@ void Data1D::operator/=(const double factor)
  */
 
 // Return class name
-const char *Data1D::itemClassName() { return "Data1D"; }
+std::string_view Data1D::itemClassName() { return "Data1D"; }
 
 // Read data through specified LineParser
 bool Data1D::read(LineParser &parser, CoreData &coreData)
@@ -508,25 +508,25 @@ bool Data1D::read(LineParser &parser, CoreData &coreData)
 bool Data1D::write(LineParser &parser)
 {
     // Write object tag and name
-    if (!parser.writeLineF("%s\n", objectTag()))
+    if (!parser.writeLineF("{}\n", objectTag()))
         return false;
-    if (!parser.writeLineF("%s\n", name()))
+    if (!parser.writeLineF("{}\n", name()))
         return false;
 
     // Write axis size and errors flag
-    if (!parser.writeLineF("%i %s\n", x_.nItems(), DissolveSys::btoa(hasError_)))
+    if (!parser.writeLineF("{} {}\n", x_.nItems(), DissolveSys::btoa(hasError_)))
         return false;
 
     // Write values / errors
     if (hasError_)
     {
         for (int n = 0; n < x_.nItems(); ++n)
-            if (!parser.writeLineF("%f  %f  %f\n", x_[n], values_[n], errors_[n]))
+            if (!parser.writeLineF("{}  {}  {}\n", x_[n], values_[n], errors_[n]))
                 return false;
     }
     else
         for (int n = 0; n < x_.nItems(); ++n)
-            if (!parser.writeLineF("%f  %f\n", x_[n], values_[n]))
+            if (!parser.writeLineF("{}  {}\n", x_[n], values_[n]))
                 return false;
 
     return true;

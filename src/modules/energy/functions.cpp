@@ -48,11 +48,11 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Configuration *cfg
     double totalEnergy = kernel.energy(cellArray, false, strategy, false);
 
     // Print process-local energy
-    Messenger::printVerbose("Interatomic Energy (Local) is %15.9e\n", totalEnergy);
+    Messenger::printVerbose("Interatomic Energy (Local) is {:15.9e}\n", totalEnergy);
 
     // Sum energy over all processes in the pool and print
     procPool.allSum(&totalEnergy, 1, strategy);
-    Messenger::printVerbose("Interatomic Energy (World) is %15.9e\n", totalEnergy);
+    Messenger::printVerbose("Interatomic Energy (World) is {:15.9e}\n", totalEnergy);
 
     return totalEnergy;
 }
@@ -119,11 +119,11 @@ double EnergyModule::interMolecularEnergy(ProcessPool &procPool, Configuration *
     double totalEnergy = kernel.energy(cellArray, true, strategy, false);
 
     // Print process-local energy
-    Messenger::printVerbose("Intermolecular Energy (Local) is %15.9e\n", totalEnergy);
+    Messenger::printVerbose("Intermolecular Energy (Local) is {:15.9e}\n", totalEnergy);
 
     // Sum energy over all processes in the pool and print
     procPool.allSum(&totalEnergy, 1, strategy);
-    Messenger::printVerbose("Intermolecular Energy (World) is %15.9e\n", totalEnergy);
+    Messenger::printVerbose("Intermolecular Energy (World) is {:15.9e}\n", totalEnergy);
 
     return totalEnergy;
 }
@@ -198,9 +198,9 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
 
     double totalIntra = bondEnergy + angleEnergy + torsionEnergy + improperEnergy;
 
-    Messenger::printVerbose(
-        "Intramolecular Energy (Local) is %15.9e kJ/mol (%15.9e bond + %15.9e angle + %15.9e torsion + %15.9e improper)\n",
-        totalIntra, bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
+    Messenger::printVerbose("Intramolecular Energy (Local) is {:15.9e} kJ/mol ({:15.9e} bond + {:15.9e} angle + {:15.9e} "
+                            "torsion + {:15.9e} improper)\n",
+                            totalIntra, bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
 
     // Sum energy and print
     double values[4];
@@ -216,9 +216,9 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
 
     totalIntra = bondEnergy + angleEnergy + torsionEnergy + improperEnergy;
 
-    Messenger::printVerbose(
-        "Intramolecular Energy (World) is %15.9e kJ/mol (%15.9e bond + %15.9e angle + %15.9e torsion + %15.9e improper)\n",
-        totalIntra, bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
+    Messenger::printVerbose("Intramolecular Energy (World) is {:15.9e} kJ/mol ({:15.9e} bond + {:15.9e} angle + {:15.9e} "
+                            "torsion + {:15.9e} improper)\n",
+                            totalIntra, bondEnergy, angleEnergy, torsionEnergy, improperEnergy);
 
     return totalIntra;
 }
@@ -272,7 +272,7 @@ EnergyModule::EnergyStability EnergyModule::checkStability(Configuration *cfg)
     // First, check if the Configuration is targetted by an EnergyModule
     if (!GenericListHelper<bool>::value(cfg->moduleData(), "_IsEnergyModuleTarget", NULL, false))
     {
-        Messenger::error("Configuration '%s' is not targeted by any EnergyModule, so stability cannot be assessed. "
+        Messenger::error("Configuration '{}' is not targeted by any EnergyModule, so stability cannot be assessed. "
                          "Check your setup!\n",
                          cfg->name());
         return EnergyModule::NotAssessable;
@@ -284,13 +284,13 @@ EnergyModule::EnergyStability EnergyModule::checkStability(Configuration *cfg)
         auto stable = GenericListHelper<bool>::value(cfg->moduleData(), "EnergyStable");
         if (!stable)
         {
-            Messenger::print("Energy for Configuration '%s' is not yet stable.\n", cfg->name());
+            Messenger::print("Energy for Configuration '{}' is not yet stable.\n", cfg->name());
             return EnergyModule::EnergyUnstable;
         }
     }
     else
     {
-        Messenger::warn("No energy stability information is present in Configuration '%s' (yet) - check your setup.\n",
+        Messenger::warn("No energy stability information is present in Configuration '{}' (yet) - check your setup.\n",
                         cfg->name());
         return EnergyModule::NotAssessable;
     }

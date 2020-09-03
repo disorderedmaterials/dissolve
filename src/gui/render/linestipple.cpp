@@ -20,12 +20,12 @@
 */
 
 #include "gui/render/linestipple.h"
+#include "base/sysfunc.h"
 #include <QComboBox>
 #include <QPainter>
 #include <QVector>
 #include <bitset>
 #include <stdio.h>
-#include <string.h>
 
 // Static list of LineStipples
 LineStipple LineStipple::stipple[] = {{1, 0xffff, "Solid"},       {1, 0xaaaa, "Dots"},         {1, 0xcccc, "Fine Dash"},
@@ -33,16 +33,16 @@ LineStipple LineStipple::stipple[] = {{1, 0xffff, "Solid"},       {1, 0xaaaa, "D
                                       {1, 0x6f6f, "Dot Dash 1"}};
 
 // Convert text string to StippleType
-LineStipple::StippleType LineStipple::stippleType(QString s)
+LineStipple::StippleType LineStipple::stippleType(std::string_view s)
 {
     for (int n = 0; n < LineStipple::nStippleTypes; ++n)
-        if (s == LineStipple::stipple[n].name)
+        if (DissolveSys::sameString(s, LineStipple::stipple[n].name))
             return (LineStipple::StippleType)n;
     return LineStipple::nStippleTypes;
 }
 
-// Convert InputBlock to text string
-const char *LineStipple::stippleType(LineStipple::StippleType st) { return LineStipple::stipple[st].name; }
+// Convert StippleType to text string
+std::string_view LineStipple::stippleType(LineStipple::StippleType st) { return LineStipple::stipple[st].name; }
 
 /*
  * Stipple
@@ -70,7 +70,7 @@ void LineStipple::addStippleItem(QComboBox *combo, int lineHeight)
     painter.setPen(pen);
     painter.drawLine(line);
     painter.end();
-    combo->addItem(QIcon(lineImage), name);
+    combo->addItem(QIcon(lineImage), QString::fromStdString(name));
 }
 
 // Return stipple pattern as a Qt-compatible dash pattern
@@ -118,9 +118,6 @@ QVector<qreal> &LineStipple::dashPattern()
     // Ensure that we have an even number of entries in the vector...
     if (pattern.size() % 2 == 1)
         pattern << 0;
-
-    // 	printf("BITS= [%s]\n", test);
-    // 	for (int n=0; n<pattern.size(); ++n) printf("VEC %i = %f\n", n, pattern[n]);
 
     return pattern;
 }

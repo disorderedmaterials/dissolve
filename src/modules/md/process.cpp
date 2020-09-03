@@ -43,7 +43,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Check for zero Configuration targets
     if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     GenericList &moduleData =
         configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
@@ -65,34 +65,34 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto writeTraj = trajectoryFrequency > 0;
 
     // Print argument/parameter summary
-    Messenger::print("MD: Cutoff distance is %f\n", cutoffDistance);
-    Messenger::print("MD: Number of steps = %i\n", nSteps);
+    Messenger::print("MD: Cutoff distance is {}\n", cutoffDistance);
+    Messenger::print("MD: Number of steps = {}\n", nSteps);
     if (onlyWhenEnergyStable)
         Messenger::print("MD: Only peform MD if target Configuration energies are stable.\n");
     if (writeTraj)
-        Messenger::print("MD: Trajectory file will be appended every %i step(s).\n", trajectoryFrequency);
+        Messenger::print("MD: Trajectory file will be appended every {} step(s).\n", trajectoryFrequency);
     else
         Messenger::print("MD: Trajectory file off.\n");
     if (capForce)
-        Messenger::print("MD: Forces will be capped to %10.3e kJ/mol per atom per axis.\n", maxForce / 100.0);
+        Messenger::print("MD: Forces will be capped to {:10.3e} kJ/mol per atom per axis.\n", maxForce / 100.0);
     if (energyFrequency > 0)
-        Messenger::print("MD: Energy will be calculated every %i step(s).\n", energyFrequency);
+        Messenger::print("MD: Energy will be calculated every {} step(s).\n", energyFrequency);
     else
         Messenger::print("MD: Energy will be not be calculated.\n");
     if (outputFrequency > 0)
-        Messenger::print("MD: Summary will be written every %i step(s).\n", outputFrequency);
+        Messenger::print("MD: Summary will be written every {} step(s).\n", outputFrequency);
     else
         Messenger::print("MD: Summary will not be written.\n");
     if (variableTimestep)
         Messenger::print("MD: Variable timestep will be employed.");
     else
-        Messenger::print("MD: Constant timestep of %e ps will be used.\n", deltaT);
+        Messenger::print("MD: Constant timestep of {:e} ps will be used.\n", deltaT);
     if (restrictToSpecies_.nItems() > 0)
     {
-        CharString speciesNames;
+        std::string speciesNames;
         for (Species *sp : restrictToSpecies_)
-            speciesNames.strcatf("  %s", sp->name());
-        Messenger::print("MD: Calculation will be restricted to Species:%s\n", speciesNames.get());
+            speciesNames += fmt::format("  {}", sp->name());
+        Messenger::print("MD: Calculation will be restricted to Species:{}\n", speciesNames);
     }
     Messenger::print("\n");
 
@@ -108,7 +108,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 return false;
             else if (stabilityResult == EnergyModule::EnergyUnstable)
             {
-                Messenger::print("Skipping MD for Configuration '%s'.\n", cfg->niceName());
+                Messenger::print("Skipping MD for Configuration '{}'.\n", cfg->niceName());
                 continue;
             }
         }
@@ -198,13 +198,12 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         LineParser trajParser;
         if (writeTraj)
         {
-            CharString trajectoryFile = cfg->name();
-            trajectoryFile.strcat(".md.xyz");
+            std::string trajectoryFile = fmt::format("{}.md.xyz", cfg->name());
             if (procPool.isMaster())
             {
                 if ((!trajParser.appendOutput(trajectoryFile)) || (!trajParser.isFileGoodForWriting()))
                 {
-                    Messenger::error("Failed to open MD trajectory output file '%s'.\n", trajectoryFile.get());
+                    Messenger::error("Failed to open MD trajectory output file '{}'.\n", trajectoryFile);
                     procPool.decideFalse();
                     return false;
                 }
@@ -320,12 +319,12 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 {
                     peInter = EnergyModule::interAtomicEnergy(procPool, cfg, dissolve.potentialMap());
                     peIntra = EnergyModule::intraMolecularEnergy(procPool, cfg, dissolve.potentialMap());
-                    Messenger::print("  %-10i    %10.3e   %10.3e   %10.3e   %10.3e   %10.3e   %10.3e\n", step, tInstant, ke,
-                                     peInter, peIntra, ke + peIntra + peInter, deltaT);
+                    Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}   {:10.3e}\n", step,
+                                     tInstant, ke, peInter, peIntra, ke + peIntra + peInter, deltaT);
                 }
                 else
-                    Messenger::print("  %-10i    %10.3e   %10.3e                                          %10.3e\n", step,
-                                     tInstant, ke, deltaT);
+                    Messenger::print("  {:<10d}    {:10.3e}   {:10.3e}                                          {:10.3e}\n",
+                                     step, tInstant, ke, deltaT);
             }
 
             // Save trajectory frame
@@ -334,14 +333,14 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 if (procPool.isMaster())
                 {
                     // Write number of atoms
-                    trajParser.writeLineF("%i\n", cfg->nAtoms());
+                    trajParser.writeLineF("{}\n", cfg->nAtoms());
 
                     // Construct and write header
-                    CharString header("Step %i of %i, T = %10.3e, ke = %10.3e", step, nSteps, tInstant, ke);
+                    std::string header = fmt::format("Step {} of {}, T = {:10.3e}, ke = {:10.3e}", step, nSteps, tInstant, ke);
                     if ((energyFrequency > 0) && (step % energyFrequency == 0))
-                        header.strcatf(", inter = %10.3e, intra = %10.3e, tot = %10.3e", peInter, peIntra,
-                                       ke + peInter + peIntra);
-                    if (!trajParser.writeLineF("%s\n", header.get()))
+                        header += fmt::format(", inter = {:10.3e}, intra = {:10.3e}, tot = {:10.3e}", peInter, peIntra,
+                                              ke + peInter + peIntra);
+                    if (!trajParser.writeLine(header))
                     {
                         procPool.decideFalse();
                         return false;
@@ -351,8 +350,8 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     for (int n = 0; n < cfg->nAtoms(); ++n)
                     {
                         Atom *i = atoms[n];
-                        if (!trajParser.writeLineF("%-3s   %10.3f  %10.3f  %10.3f\n", i->speciesAtom()->element()->symbol(),
-                                                   i->r().x, i->r().y, i->r().z))
+                        if (!trajParser.writeLineF("{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n",
+                                                   i->speciesAtom()->element()->symbol(), i->r().x, i->r().y, i->r().z))
                         {
                             procPool.decideFalse();
                             return false;
@@ -372,9 +371,9 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
             trajParser.closeFiles();
 
         if (capForce)
-            Messenger::print("A total of %i forces were capped over the course of the dynamics (%9.3e per step).\n", nCapped,
+            Messenger::print("A total of {} forces were capped over the course of the dynamics ({:9.3e} per step).\n", nCapped,
                              double(nCapped) / nSteps);
-        Messenger::print("%i steps performed (%s work, %s comms)\n", nSteps, timer.totalTimeString(),
+        Messenger::print("{} steps performed ({} work, {} comms)\n", nSteps, timer.totalTimeString(),
                          procPool.accumulatedTimeString());
 
         // Increment configuration changeCount

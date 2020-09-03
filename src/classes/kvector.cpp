@@ -92,7 +92,7 @@ void KVector::addCosTerm(int atomTypeIndex, double value)
 #ifdef CHECKS
     if (atomTypeIndex >= cosTerms_.nItems())
     {
-        Messenger::print("BAD_USAGE - KVector::cosTerms_ index supplied (%i) is greated than the size of the array (%i).\n",
+        Messenger::print("BAD_USAGE - KVector::cosTerms_ index supplied ({}) is greated than the size of the array ({}).\n",
                          atomTypeIndex, cosTerms_.nItems());
         return;
     }
@@ -106,7 +106,7 @@ void KVector::addSinTerm(int atomTypeIndex, double value)
 #ifdef CHECKS
     if (atomTypeIndex >= sinTerms_.nItems())
     {
-        Messenger::print("BAD_USAGE - KVector::sinTerms_ index supplied (%i) is greated than the size of the array (%i).\n",
+        Messenger::print("BAD_USAGE - KVector::sinTerms_ index supplied ({}) is greated than the size of the array ({}).\n",
                          atomTypeIndex, sinTerms_.nItems());
         return;
     }
@@ -153,7 +153,7 @@ double KVector::intensity(int typeI, int typeJ)
  */
 
 // Return class name
-const char *KVector::itemClassName() { return "KVector"; }
+std::string_view KVector::itemClassName() { return "KVector"; }
 
 /*
  * Parallel Comms
@@ -182,7 +182,7 @@ bool KVector::equality(ProcessPool &procPool)
     if (!procPool.equality(hkl_))
         return Messenger::error("KVector hkl value is not equivalent.\n");
     if (!procPool.equality(braggReflectionIndex_))
-        return Messenger::error("KVector bragg reflection index is not equivalent (process %i has %i).\n", procPool.poolRank(),
+        return Messenger::error("KVector bragg reflection index is not equivalent (process {} has {}).\n", procPool.poolRank(),
                                 braggReflectionIndex_);
     if (!procPool.equality(cosTerms_))
         return Messenger::error("KVector cos terms are not equivalent.\n");

@@ -55,10 +55,10 @@ bool BoxProcedureNode::mustBeNamed() const { return false; }
  */
 
 // Prepare any necessary data, ready for execution
-bool BoxProcedureNode::prepare(Configuration *cfg, const char *prefix, GenericList &targetList) { return true; }
+bool BoxProcedureNode::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList) { return true; }
 
 // Execute node, targetting the supplied Configuration
-ProcedureNode::NodeExecutionResult BoxProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, const char *prefix,
+ProcedureNode::NodeExecutionResult BoxProcedureNode::execute(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                                              GenericList &targetList)
 {
     // Retrieve necessary parameters
@@ -70,13 +70,13 @@ ProcedureNode::NodeExecutionResult BoxProcedureNode::execute(ProcessPool &procPo
     if (!cfg->createBox(lengths, angles, nonPeriodic))
         return ProcedureNode::Failure;
 
-    Messenger::print("[Box] Volume is %f cubic Angstroms (reciprocal volume = %e)\n", cfg->box()->volume(),
+    Messenger::print("[Box] Volume is {} cubic Angstroms (reciprocal volume = {:e})\n", cfg->box()->volume(),
                      cfg->box()->reciprocalVolume());
     lengths = cfg->box()->axisLengths();
     angles = cfg->box()->axisAngles();
-    Messenger::print("[Box] Type is %s: A = %10.4e B = %10.4e C = %10.4e, alpha = %10.4e beta = %10.4e gamma = %10.4e\n",
-                     Box::boxTypes().keyword(cfg->box()->type()), lengths.x, lengths.y, lengths.z, angles.x, angles.y,
-                     angles.z);
+    Messenger::print(
+        "[Box] Type is {}: A = {:10.4e} B = {:10.4e} C = {:10.4e}, alpha = {:10.4e} beta = {:10.4e} gamma = {:10.4e}\n",
+        Box::boxTypes().keyword(cfg->box()->type()), lengths.x, lengths.y, lengths.z, angles.x, angles.y, angles.z);
 
     return ProcedureNode::Success;
 }

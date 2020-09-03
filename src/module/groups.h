@@ -21,7 +21,7 @@
 
 #pragma once
 
-#include "base/charstringlist.h"
+#include "module/group.h"
 #include "templates/list.h"
 #include "templates/refdatalist.h"
 
@@ -33,25 +33,25 @@ class ModuleGroup;
 class ModuleGroups
 {
     public:
-    ModuleGroups();
-    ~ModuleGroups();
+    ModuleGroups() = default;
+    ~ModuleGroups() = default;
 
     /*
      * Module Types
      */
     private:
     // List of allowed Module types in any group
-    CharStringList allowedModuleTypes_;
+    std::vector<std::string> allowedModuleTypes_;
 
     public:
     // Add allowed Module type
-    void addAllowedModuleType(const char *moduleType);
+    void addAllowedModuleType(std::string_view moduleType);
     // Set list of allowed Module types
-    void setAllowedModuleTypes(const CharStringList &moduleTypes);
+    void setAllowedModuleTypes(const std::vector<std::string> &moduleTypes);
     // Return if specified Module type is allowed in any group
-    bool moduleTypeIsAllowed(const char *moduleType) const;
+    bool moduleTypeIsAllowed(std::string_view moduleType) const;
     // Return list of allowed Module types
-    const CharStringList &allowedModuleTypes() const;
+    const std::vector<std::string> &allowedModuleTypes() const;
 
     /*
      * Module Groups
@@ -64,7 +64,7 @@ class ModuleGroups
 
     public:
     // Add Module to specified group, creating it if necessary
-    ModuleGroup *addModule(Module *module, const char *groupName);
+    ModuleGroup *addModule(Module *module, std::string_view groupName);
     // Remove Module
     void removeModule(Module *module);
     // Number of Modules present of all groups
@@ -76,5 +76,5 @@ class ModuleGroups
     // Return whether the specified Module is present (in any group)
     bool contains(Module *module) const;
     // Return name of group assigned to specified Module (if present)
-    const char *groupName(Module *module) const;
+    std::string_view groupName(Module *module) const;
 };

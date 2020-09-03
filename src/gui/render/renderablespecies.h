@@ -31,7 +31,7 @@ class Axes;
 class RenderableSpecies : public Renderable
 {
     public:
-    RenderableSpecies(const Species *source, const char *objectTag);
+    RenderableSpecies(const Species *source, std::string_view objectTag);
     ~RenderableSpecies();
 
     /*

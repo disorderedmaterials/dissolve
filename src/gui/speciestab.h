@@ -48,7 +48,8 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
     Q_OBJECT
 
     public:
-    SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const char *title, Species *species);
+    SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTabsWidget *parent, const QString title,
+               Species *species);
     ~SpeciesTab();
 
     /*

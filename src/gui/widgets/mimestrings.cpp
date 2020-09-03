@@ -25,17 +25,13 @@
  * Mime String
  */
 
-MimeString::MimeString(MimeString::MimeStringType type, QString data)
-{
-    type_ = type;
-    data_ = data;
-}
+MimeString::MimeString(MimeString::MimeStringType type, std::string_view data) : type_(type), data_(data) {}
 
 // Return type of data contained in string
 MimeString::MimeStringType MimeString::type() const { return type_; }
 
 // Return string data
-QString MimeString::data() const { return data_; }
+std::string_view MimeString::data() const { return data_; }
 
 /*
  * Mime Strings
@@ -62,38 +58,30 @@ QStringList MimeStrings::formats() const { return QStringList() << "dissolve/mim
 QVariant MimeStrings::retrieveData(const QString &mimeType, QVariant::Type type) const { return QVariant(); }
 
 // Add mime string
-void MimeStrings::add(MimeString::MimeStringType type, QString data)
-{
-    MimeString *mimeString = new MimeString(type, data);
-    strings_.own(mimeString);
-}
+void MimeStrings::add(MimeString::MimeStringType type, std::string_view data) { strings_.emplace_back(type, data); }
 
 // Add mime strings from source MimeStrings
 void MimeStrings::add(MimeStrings &sourceStrings)
 {
-    for (auto *mimeString = sourceStrings.strings().first(); mimeString != NULL; mimeString = mimeString->next())
-        add(mimeString->type(), mimeString->data());
+    for (auto &mimeString : sourceStrings.strings())
+        add(mimeString.type(), mimeString.data());
 }
 
 // Return whether the specified MimeString data is present
 bool MimeStrings::hasData(MimeString::MimeStringType type) const
 {
-    for (auto *mimeString = strings_.first(); mimeString != NULL; mimeString = mimeString->next())
-        if (mimeString->type() == type)
-            return true;
-
-    return false;
+    return (std::find_if(strings_.begin(), strings_.end(),
+                         [type](const auto &mimeString) { return mimeString.type() == type; }) != strings_.end());
 }
 
 // Return the data for the specified type
-QString MimeStrings::data(MimeString::MimeStringType type) const
+std::string_view MimeStrings::data(MimeString::MimeStringType type) const
 {
-    for (auto *mimeString = strings_.first(); mimeString != NULL; mimeString = mimeString->next())
-        if (mimeString->type() == type)
-            return mimeString->data();
+    auto it =
+        std::find_if(strings_.begin(), strings_.end(), [type](const auto &mimeString) { return mimeString.type() == type; });
 
-    return QString();
+    return it == strings_.end() ? "" : it->data();
 }
 
 // Return mime strings
-List<MimeString> &MimeStrings::strings() { return strings_; }
+std::vector<MimeString> &MimeStrings::strings() { return strings_; }

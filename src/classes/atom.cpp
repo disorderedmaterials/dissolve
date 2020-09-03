@@ -76,7 +76,7 @@ int Atom::localTypeIndex() const { return localTypeIndex_; }
 void Atom::setMasterTypeIndex(int id)
 {
     if (masterTypeIndex_ != -1)
-        Messenger::warn("Warning: Overwriting master AtomType index for Atom '%p'.\n", this);
+        Messenger::warn("Warning: Overwriting master AtomType index for atom...\n");
     masterTypeIndex_ = id;
 }
 
@@ -85,7 +85,7 @@ int Atom::masterTypeIndex() const
 {
 #ifdef CHECKS
     if (masterTypeIndex_ == -1)
-        Messenger::warn("Global AtomType index has not yet been set for Atom '%p'.\n", this);
+        Messenger::warn("Global AtomType index has not yet been set for atom...\n");
 #endif
     return masterTypeIndex_;
 }
@@ -138,7 +138,7 @@ double Atom::scaling(Atom *j) const
 #ifdef CHECKS
     if (!speciesAtom_)
     {
-        Messenger::error("Source SpeciesAtom pointer has not been set in Atom %i, so can't return scaling().\n", arrayIndex());
+        Messenger::error("Source SpeciesAtom pointer has not been set in Atom {}, so can't return scaling().\n", arrayIndex());
         return 0.0;
     }
     if (!j)
@@ -148,7 +148,7 @@ double Atom::scaling(Atom *j) const
     }
     if (!j->speciesAtom())
     {
-        Messenger::error("SpeciesAtom pointer has not been set in partner Atom %i, so can't return scaling().\n",
+        Messenger::error("SpeciesAtom pointer has not been set in partner Atom {}, so can't return scaling().\n",
                          j->arrayIndex());
         return 0.0;
     }

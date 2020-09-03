@@ -93,7 +93,7 @@ class PoissonFit
     // Return current C values
     const Array<double> &C() const;
     // Save coefficients to specified file
-    bool saveCoefficients(const char *filename) const;
+    bool saveCoefficients(std::string_view filename) const;
 
     /*
      * Fitting

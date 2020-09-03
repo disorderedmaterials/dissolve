@@ -25,7 +25,7 @@ void ExpressionGenerator_error(char *s);
 /* Type Definition */
 %union {
 	int functionId;				/* Function enum id */
-	CharString* name;			/* Character pointer for names */
+	std::string *name;			/* String pointer for names */
 	ExpressionNode* node;			/* Expression node pointer */
 	ExpressionVariable* variable;		/* Expression variable pointer */
 	int integerConst;			/* Constant integer value */
@@ -112,12 +112,12 @@ function:
 	DISSOLVE_EXPR_FUNCCALL '(' ')'				{
 		$$ = ExpressionGenerator::expression()->addFunctionNode( (ExpressionFunctions::Function) $1);
 		if ($$ == NULL) YYABORT;
-		Messenger::printVerbose("PARSER: function : function '%s'\n", expressionFunctions.data[(ExpressionFunctions::Function) $1].keyword);
+		Messenger::printVerbose("PARSER: function : function '{}'\n", expressionFunctions.data[(ExpressionFunctions::Function) $1].keyword);
 		}
 	| DISSOLVE_EXPR_FUNCCALL '(' expressionlist ')'	{
 		$$ = ExpressionGenerator::expression()->addFunctionNodeWithArglist( (ExpressionFunctions::Function) $1, $3);
 		if ($$ == NULL) YYABORT;
-		Messenger::printVerbose("PARSER: function : function '%s' with exprlist\n", expressionFunctions.data[(ExpressionFunctions::Function) $1].keyword);
+		Messenger::printVerbose("PARSER: function : function '{}' with exprlist\n", expressionFunctions.data[(ExpressionFunctions::Function) $1].keyword);
 		}
 	| DISSOLVE_EXPR_FUNCCALL error				{
 		Messenger::error("Missing brackets after function call?\n");
@@ -151,7 +151,7 @@ expression:
 	| expression DISSOLVE_EXPR_OR expression		{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorOr, $1, $3); }
 	| '(' expression ')'				{ $$ = $2; }
 	| '!' expression				{ $$ = ExpressionGenerator::expression()->addOperator(ExpressionFunctions::OperatorNot, $2); }
-	| DISSOLVE_EXPR_NEWTOKEN				{ Messenger::error("'%s' has not been declared as a function or a variable.\n", (*yylval.name).get()); YYABORT; }
+	| DISSOLVE_EXPR_NEWTOKEN				{ Messenger::error("'{}' has not been declared as a function or a variable.\n", *yylval.name); YYABORT; }
 	;
 
 /* Expression List */

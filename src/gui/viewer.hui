@@ -92,8 +92,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     // Own supplied Renderable and display it
     void ownRenderable(Renderable *newRenderable);
     // Create Renderable by type and object identifier
-    Renderable *createRenderable(Renderable::RenderableType type, const char *objectTag, const char *name,
-                                 const char *groupName = NULL);
+    Renderable *createRenderable(Renderable::RenderableType type, std::string_view objectTag, std::string_view name,
+                                 std::string_view groupName = "");
     // Remove existing Renderable
     void removeRenderable(Renderable *data);
     // Clear all Renderables
@@ -103,13 +103,13 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     // Return list of Renderables
     const List<Renderable> &renderables() const;
     // Return named Renderable
-    Renderable *renderable(const char *name) const;
+    Renderable *renderable(std::string_view name) const;
     // Return Renderable with specified objectTag (if it exists)
-    Renderable *renderableWithTag(const char *objectTag) const;
+    Renderable *renderableWithTag(std::string_view objectTag) const;
     // Set visibility of named Renderable
-    void setRenderableVisible(const char *name, bool visible);
+    void setRenderableVisible(std::string_view name, bool visible);
     // Return visibility of named Renderable
-    bool isRenderableVisible(const char *name) const;
+    bool isRenderableVisible(std::string_view name) const;
     // Emit the signal to notify that the viewing style of data represented in the Viewer has changed
     void notifyStyleModified();
     // Emit the signal to notify that the data has changed
@@ -138,7 +138,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     // Return the group manager for Renderables
     RenderableGroupManager &groupManager();
     // Add Renderable to specified group
-    void addRenderableToGroup(Renderable *rend, const char *group);
+    void addRenderableToGroup(Renderable *rend, std::string_view group);
 
     /*
      * Options
@@ -215,10 +215,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     GLsizei contextHeight() const;
     // Return the current width of the drawing area
     GLsizei contextWidth() const;
-    // Set up font instance with supplied font
-    bool setUpFont(const char *fontFileName = NULL);
-    // Return font instance
-    FontInstance &fontInstance();
     // Check for GL error
     void checkGlError();
     // Refresh widget / scene
@@ -306,7 +302,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     // Return whether the viewer is currently being interacted with
     bool interacting() const;
     // Return text describing current interaction mode
-    virtual const char *interactionModeText() const;
+    virtual const QString interactionModeText() const;
     // Return clicked coordinates (in Axes frame) in 2D view
     Vec3<double> clicked2DAxesCoordinates() const;
     // Return current coordinates (in Axes frame) under mouse in 2D view
@@ -335,7 +331,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
         CustomObject
     };
     // Return description of viewer object
-    static const char *viewerObject(ViewerObject vo);
+    static std::string_view viewerObject(ViewerObject vo);
 
     private:
     // Whether we are currently running an object query
@@ -355,9 +351,9 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     // Type of object found at query coordinates
     ViewerObject queryObjectType_;
     // Information describing object at query coordinates
-    CharString queryObjectInfo_;
+    std::string queryObjectInfo_;
     // Secondary information describing object at query coordinates
-    CharString queryObjectSubInfo_;
+    std::string queryObjectSubInfo_;
 
     private:
     // Generate query image at specified scaling
@@ -365,15 +361,15 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
 
     protected:
     // Update object query, setting supplied information if the sample area has changed significantly
-    void updateQuery(BaseViewer::ViewerObject objectType, const char *info, const char *subInfo = NULL);
+    void updateQuery(BaseViewer::ViewerObject objectType, std::string_view info, std::string_view subInfo = "");
 
     public:
     // Return the type of object at the specified coordinates
     ViewerObject queryAt(int x, int y);
     // Return info for object at query coordinates
-    const char *queryObjectInfo() const;
+    std::string_view queryObjectInfo() const;
     // Return sub-info for object at query coordinates
-    const char *queryObjectSubInfo() const;
+    std::string_view queryObjectSubInfo() const;
 
     /*
      * I/O

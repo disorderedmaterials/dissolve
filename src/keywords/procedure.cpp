@@ -50,21 +50,21 @@ bool ProcedureKeyword::read(LineParser &parser, int startArg, CoreData &coreData
 }
 
 // Write keyword data to specified LineParser
-bool ProcedureKeyword::write(LineParser &parser, const char *keywordName, const char *prefix)
+bool ProcedureKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     // Write the keyword name as the start of the data
-    if (!parser.writeLineF("%s%s\n", prefix, name()))
+    if (!parser.writeLineF("{}{}\n", prefix, name()))
         return false;
 
     // Increase the indent
-    CharString newPrefix("%s  ", prefix);
+    std::string newPrefix = fmt::format("{}  ", prefix);
 
     // Write the node data
     if (!data_.write(parser, newPrefix))
         return false;
 
     // Write the end keyword (based on our name)
-    if (!parser.writeLineF("%sEnd%s\n", prefix, name()))
+    if (!parser.writeLineF("{}End{}\n", prefix, name()))
         return false;
 
     return true;

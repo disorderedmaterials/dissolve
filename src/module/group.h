@@ -21,7 +21,6 @@
 
 #pragma once
 
-#include "base/charstring.h"
 #include "templates/listitem.h"
 #include "templates/reflist.h"
 
@@ -32,23 +31,23 @@ class Module;
 class ModuleGroup : public ListItem<ModuleGroup>
 {
     public:
-    ModuleGroup(const char *name = NULL);
-    ~ModuleGroup();
+    ModuleGroup(std::string_view name = "");
+    ~ModuleGroup() = default;
 
     /*
      * Module Group
      */
     private:
     // Name of the group
-    CharString name_;
+    std::string name_;
     // RefList of Modules in this group
     RefList<Module> modules_;
 
     public:
     // Return name of group
-    const char *name();
+    std::string_view name() const;
     // Return whether name of group is as specified
-    bool isName(const char *queryName);
+    bool isName(std::string_view queryName) const;
     // Associate Module to group
     void add(Module *module);
     // Remove Module from group

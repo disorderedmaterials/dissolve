@@ -35,7 +35,7 @@ Vec3IntegerKeywordWidget::Vec3IntegerKeywordWidget(QWidget *parent, KeywordBase 
     // Cast the pointer up into the parent class type
     keyword_ = dynamic_cast<Vec3IntegerKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '%s' into Vec3IntegerKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into Vec3IntegerKeyword.\n", keyword->name());
     else
     {
         // Set minimum and maximum values for each component

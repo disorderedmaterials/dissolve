@@ -35,14 +35,14 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for zero Configuration targets
     if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration targets set for module '%s'.\n", uniqueName());
+        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Get options
     const auto N = keywords_.asInt("N");
     const auto saveTimings = keywords_.asBool("Save");
 
-    Messenger::print("Benchmark: Test timings will be averaged over %i %s.\n", N, N == 1 ? "run" : "runs");
-    Messenger::print("Benchmark: Test timings %s be saved to disk.\n", saveTimings ? "will" : "will not");
+    Messenger::print("Benchmark: Test timings will be averaged over {} {}.\n", N, N == 1 ? "run" : "runs");
+    Messenger::print("Benchmark: Test timings {} be saved to disk.\n", saveTimings ? "will" : "will not");
     Messenger::print("\n");
 
     // Loop over target Configurations
@@ -68,8 +68,8 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 Messenger::unMute();
                 timing += timer.split();
             }
-            printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "Generator"), "Configuration generator",
-                              timing, saveTimings);
+            printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "Generator"),
+                              "Configuration generator", timing, saveTimings);
         }
 
         /*
@@ -94,7 +94,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 Messenger::unMute();
                 timing += timer.split();
             }
-            printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "RDFCells"),
+            printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "RDFCells"),
                               "RDF (Cells) to half-cell limit", timing, saveTimings);
         }
 
@@ -120,7 +120,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 Messenger::unMute();
                 timing += timer.split();
             }
-            printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "RDFSimple"),
+            printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "RDFSimple"),
                               "RDF (Simple) to half-cell limit", timing, saveTimings);
         }
 
@@ -138,8 +138,8 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 Messenger::unMute();
                 timing += timer.split();
             }
-            printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "IntraEnergy"), "Intramolecular energy",
-                              timing, saveTimings);
+            printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "IntraEnergy"),
+                              "Intramolecular energy", timing, saveTimings);
         }
 
         /*
@@ -156,7 +156,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 Messenger::unMute();
                 timing += timer.split();
             }
-            printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "InterEnergy"), "Interatomic energy",
+            printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "InterEnergy"), "Interatomic energy",
                               timing, saveTimings);
         }
 
@@ -200,7 +200,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 Messenger::unMute();
                 timing += timer.split();
             }
-            printTimingResult(CharString("%s_%s_%s.txt", uniqueName(), cfg->niceName(), "RegionalDist"),
+            printTimingResult(fmt::format("{}_{}_{}.txt", uniqueName(), cfg->niceName(), "RegionalDist"),
                               "Distributor (regional)", timing, saveTimings);
         }
     }
@@ -209,8 +209,8 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
 }
 
 // Print timing information, assessing it against last value in existing timings (if found)
-void BenchmarkModule::printTimingResult(const char *testFile, const char *testDescription, const SampledDouble &timing,
-                                        bool storeNewTiming)
+void BenchmarkModule::printTimingResult(std::string_view testFile, std::string_view testDescription,
+                                        const SampledDouble &timing, bool storeNewTiming)
 {
     auto existingDataAvailable = false;
 
@@ -231,12 +231,12 @@ void BenchmarkModule::printTimingResult(const char *testFile, const char *testDe
     {
         SampledDouble lastTiming = existingTimings.values().last();
         double deltaT = lastTiming.value() - timing.value();
-        Messenger::print("  %50s  %8.4e s (+/- %8.4e s) => %c%0.3e s (%c%0.2f%%)\n", testDescription, timing.value(),
+        Messenger::print("  {:50}  {:8.4e} s (+/- {:8.4e} s) => {}{:0.3e} s ({}{:0.2f}%)\n", testDescription, timing.value(),
                          timing.stDev(), deltaT < timing.value() ? '+' : '-', fabs(deltaT), deltaT < timing.value() ? '+' : '-',
                          fabs((deltaT / timing.value()) * 100.0));
     }
     else
-        Messenger::print("  %50s  %8.4e s (+/- %8.4e s)\n", testDescription, timing.value(), timing.stDev());
+        Messenger::print("  {:50}  {:8.4e} s (+/- {:8.4e} s)\n", testDescription, timing.value(), timing.stDev());
 
     // Store new timing?
     if (storeNewTiming)

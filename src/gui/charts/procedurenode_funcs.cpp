@@ -54,7 +54,7 @@ ProcedureChartNodeBlock::ProcedureChartNodeBlock(QWidget *parent, ProcedureNode 
     connect(ui_.NodeKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));
 
     // Update our controls
-    ui_.TopLabel->setText(ProcedureNode::nodeTypes().keyword(node_->type()));
+    ui_.TopLabel->setText(QString::fromStdString(std::string(ProcedureNode::nodeTypes().keyword(node_->type()))));
     updateControls();
 
     updateGeometry();
@@ -146,7 +146,7 @@ void ProcedureChartNodeBlock::paintEvent(QPaintEvent *event)
  */
 
 // Return type of this block
-const char *ProcedureChartNodeBlock::blockType() { return "Node"; }
+const QString ProcedureChartNodeBlock::blockType() const { return "Node"; }
 
 /*
  * Widget (ChartBlock Reimplementations)
@@ -183,7 +183,7 @@ void ProcedureChartNodeBlock::updateControls()
     refreshing_ = true;
 
     // Set information panel contents
-    ui_.BottomLabel->setText(node_->name());
+    ui_.BottomLabel->setText(QString::fromStdString(std::string(node_->name())));
 
     // Update keywords
     ui_.NodeKeywordsWidget->updateControls();

@@ -27,7 +27,7 @@
 #include "math/data1d.h"
 #include "math/integrator.h"
 
-OperateExpressionProcedureNode::OperateExpressionProcedureNode(const char *expressionText)
+OperateExpressionProcedureNode::OperateExpressionProcedureNode(std::string_view expressionText)
     : OperateProcedureNodeBase(ProcedureNode::OperateExpressionNode)
 {
     // Set up persistent variables and initial expression value

@@ -30,7 +30,7 @@ class FileAndFormat;
 class FileAndFormatKeyword : public KeywordData<FileAndFormat &>
 {
     public:
-    FileAndFormatKeyword(FileAndFormat &fileAndFormat, const char *endKeyword);
+    FileAndFormatKeyword(FileAndFormat &fileAndFormat, std::string_view endKeyword);
     ~FileAndFormatKeyword();
 
     /*
@@ -38,7 +38,7 @@ class FileAndFormatKeyword : public KeywordData<FileAndFormat &>
      */
     private:
     // Keyword that signals the end of 'block' for the data
-    CharString endKeyword_;
+    std::string endKeyword_;
 
     /*
      * Keyword Options
@@ -58,5 +58,5 @@ class FileAndFormatKeyword : public KeywordData<FileAndFormat &>
     // Parse arguments from supplied LineParser, starting at given argument offset
     bool read(LineParser &parser, int startArg, CoreData &coreData);
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, const char *keywordName, const char *prefix);
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix);
 };

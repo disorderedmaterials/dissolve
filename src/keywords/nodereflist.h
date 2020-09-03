@@ -94,7 +94,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
     bool read(LineParser &parser, int startArg, CoreData &coreData)
     {
         if (!parentNode())
-            return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n",
+            return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
                                     KeywordBase::name());
 
         // Loop over arguments
@@ -102,9 +102,9 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
         {
             // Locate the named node - don't prune by type yet (we'll check that in setNode())
             ProcedureNode *node =
-                onlyInScope() ? parentNode()->nodeInScope(parser.argc(n)) : parentNode()->nodeExists(parser.argc(n));
+                onlyInScope() ? parentNode()->nodeInScope(parser.argsv(n)) : parentNode()->nodeExists(parser.argsv(n));
             if (!node)
-                return Messenger::error("Node '%s' given to keyword %s doesn't exist.\n", parser.argc(n), KeywordBase::name());
+                return Messenger::error("Node '{}' given to keyword {} doesn't exist.\n", parser.argsv(n), KeywordBase::name());
 
             if (!addNode(node))
                 return false;
@@ -113,16 +113,16 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
         return true;
     }
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, const char *keywordName, const char *prefix)
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
     {
         if (KeywordData<RefList<N> &>::data_.nItems() == 0)
             return true;
 
-        CharString nodes;
+        std::string nodes;
         for (auto node : KeywordData<RefList<N> &>::data_)
-            nodes.strcatf("  '%s'", node->name());
+            nodes += fmt::format("  '{}'", node->name());
 
-        if (!parser.writeLineF("%s%s  %s\n", prefix, KeywordBase::name(), nodes.get()))
+        if (!parser.writeLineF("{}{}  {}\n", prefix, KeywordBase::name(), nodes))
             return false;
 
         return true;
@@ -139,7 +139,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
             return false;
 
         if (node->type() != nodeType())
-            return Messenger::error("Node '%s' is of type %s, but the %s keyword requires a node of type %s.\n", node->name(),
+            return Messenger::error("Node '{}' is of type {}, but the {} keyword requires a node of type {}.\n", node->name(),
                                     ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(),
                                     ProcedureNode::nodeTypes().keyword(nodeType()));
 
@@ -150,7 +150,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 
         // If this node is already in the list, complain
         if (KeywordData<RefList<N> &>::data_.contains(castNode))
-            return Messenger::error("Node '%s' is already present in this list for keyword %s.\n", castNode->name(),
+            return Messenger::error("Node '{}' is already present in this list for keyword {}.\n", castNode->name(),
                                     KeywordBase::name());
 
         // Add the node to the list
@@ -186,7 +186,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
             return false;
 
         if (node->type() != nodeType())
-            return Messenger::error("Node '%s' is of type %s, but the %s keyword stores nodes of type %s, so not "
+            return Messenger::error("Node '{}' is of type {}, but the {} keyword stores nodes of type {}, so not "
                                     "attempting to remove it.\n",
                                     node->name(), ProcedureNode::nodeTypes().keyword(node->type()), KeywordBase::name(),
                                     ProcedureNode::nodeTypes().keyword(nodeType()));
@@ -198,7 +198,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
 
         // Check that the list actually contains the specified node
         if (!KeywordData<RefList<N> &>::data_.contains(castNode))
-            return Messenger::error("Node '%s' is not in this keyword's (%s) list of nodes, so can't remove it.\n",
+            return Messenger::error("Node '{}' is not in this keyword's ({}) list of nodes, so can't remove it.\n",
                                     castNode->name(), KeywordBase::name());
 
         KeywordData<RefList<N> &>::data_.remove(castNode);

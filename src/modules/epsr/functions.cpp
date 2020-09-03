@@ -34,7 +34,7 @@ const RefDataList<Module, ModuleGroup *> &EPSRModule::allTargets() const { retur
 const ModuleGroups &EPSRModule::groupedTargets() const { return groupedTargets_; }
 
 // Add target Modules
-void EPSRModule::addTargets(RefList<Module> targets, const char *groupName)
+void EPSRModule::addTargets(RefList<Module> targets, std::string_view groupName)
 {
     for (Module *module : targets)
         groupedTargets_.addModule(module, groupName);
@@ -108,7 +108,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
             PairPotential *pp = dissolve.pairPotential(at1, at2);
             if (!pp)
             {
-                Messenger::error("Failed to find PairPotential for AtomTypes '%s' and '%s'.\n", at1->name(), at2->name());
+                Messenger::error("Failed to find PairPotential for AtomTypes '{}' and '{}'.\n", at1->name(), at2->name());
                 return false;
             }
 
@@ -206,7 +206,7 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
             absEnergyEP = range;
 
         // Output information
-        Messenger::print("  abs_energy_ep>    %4s %4s %12.6f\n", at1->name(), at2->name(), range);
+        Messenger::print("  abs_energy_ep>    {:4} {:4} {:12.6f}\n", at1->name(), at2->name(), range);
     });
 
     return absEnergyEP;

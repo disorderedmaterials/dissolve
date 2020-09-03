@@ -59,7 +59,7 @@ class NodeValueEnumOptionsBaseKeyword
      */
     public:
     // Set node value from expression text, informing KeywordBase
-    virtual bool setValue(const char *expressionText) = 0;
+    virtual bool setValue(std::string_view expressionText) = 0;
     // Set new option index, informing KeywordBase
     virtual bool setEnumerationByIndex(int optionIndex) = 0;
 
@@ -105,18 +105,18 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
     {
         // Check that the parent node has been set
         if (!parentNode_)
-            return Messenger::error("Parent node in NodeValueEnumOptions keyword '%s' not set. Can't read data.\n",
+            return Messenger::error("Parent node in NodeValueEnumOptions keyword '{}' not set. Can't read data.\n",
                                     KeywordData<Venum<NodeValue, E>>::name());
 
         // Need two args...
         if (parser.hasArg(startArg + 1))
         {
             // Parse the value to start with...
-            if (!KeywordData<Venum<NodeValue, E>>::data_.value().set(parser.argc(startArg), parentNode_->parametersInScope()))
+            if (!KeywordData<Venum<NodeValue, E>>::data_.value().set(parser.argsv(startArg), parentNode_->parametersInScope()))
                 return false;
 
             // Now the enum option
-            if (!KeywordData<Venum<NodeValue, E>>::data_.setEnumeration(parser.argc(startArg + 1)))
+            if (!KeywordData<Venum<NodeValue, E>>::data_.setEnumeration(parser.argsv(startArg + 1)))
                 return false;
 
             KeywordData<Venum<NodeValue, E>>::hasBeenSet();
@@ -127,10 +127,10 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
         return false;
     }
     // Write keyword data to specified LineParser
-    bool write(LineParser &parser, const char *keywordName, const char *prefix)
+    bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
     {
-        return parser.writeLineF("%s%s  '%s'  %s\n", prefix, KeywordBase::name(),
-                                 KeywordData<Venum<NodeValue, E>>::data_.value().asString().get(),
+        return parser.writeLineF("{}{}  '{}'  {}\n", prefix, KeywordBase::name(),
+                                 KeywordData<Venum<NodeValue, E>>::data_.value().asString(),
                                  KeywordData<Venum<NodeValue, E>>::data_.enumerationAsString());
     }
 
@@ -139,10 +139,10 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
      */
     public:
     // Set node value from expression text, informing KeywordBase
-    bool setValue(const char *expressionText)
+    bool setValue(std::string_view expressionText)
     {
         if (!parentNode_)
-            return Messenger::error("Can't read keyword %s since the parent ProcedureNode has not been set.\n",
+            return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
                                     KeywordBase::name());
 
         bool result = KeywordData<Venum<NodeValue, E>>::data_.value().set(expressionText, parentNode_->parametersInScope());

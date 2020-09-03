@@ -21,23 +21,25 @@
 
 #pragma once
 
+#include <string_view>
+
 // Spacegroup Name Data
 class SpacegroupNameData
 {
     public:
-    SpacegroupNameData(const char *name, const char *formattedName);
+    SpacegroupNameData(std::string_view name, std::string_view formattedName);
 
     private:
     // Name of the spacegroup
-    const char *name_;
+    std::string_view name_;
     // Formatted name of the spacegroup
-    const char *formattedName_;
+    std::string_view formattedName_;
 
     public:
     // Return the name of the spacegroup
-    const char *name() const;
+    std::string_view name() const;
     // Return the formatted name of the spacegroup
-    const char *formattedName() const;
+    std::string_view formattedName() const;
 };
 
 // Spacegroups
