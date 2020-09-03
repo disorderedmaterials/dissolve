@@ -32,5 +32,7 @@ namespace Version
 
 // Return current version information
 std::string_view info();
+// Return repo url
+std::string_view repoUrl();
 
 }; // namespace Version

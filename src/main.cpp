@@ -208,7 +208,7 @@ int main(int args, char **argv)
 #else
     Messenger::print("Dissolve SERIAL version {}, Copyright (C) 2012-2020 T. Youngs.\n", Version::info());
 #endif
-    Messenger::print("Source repository: {}.\n", DISSOLVEREPO);
+    Messenger::print("Source repository: {}.\n", Version::repoUrl());
     Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
     Messenger::print("This is free software, and you are welcome to redistribute it under certain conditions.\n");
     Messenger::print("For more details read the GPL at <http://www.gnu.org/copyleft/gpl.html>.\n");
