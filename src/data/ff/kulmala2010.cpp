@@ -91,15 +91,15 @@ bool Forcefield_Kulmala2010::setUp()
     addAngleTerm("OHA", "SA", "OA", SpeciesAngle::HarmonicForm, {364.56, 107.32});
     addAngleTerm("OHA", "SA", "OHA", SpeciesAngle::HarmonicForm, {608.15, 101.79});
     addAngleTerm("HSA", "OHA", "SA", SpeciesAngle::HarmonicForm, {396.82, 110.5});
-    addTorsionTerm("OA", "SA", "OHA", "HSA", SpeciesTorsion::Cos3Form, {0.0, 0.0, 0.0, 0.0});
-    addTorsionTerm("OHA", "SA", "OHA", "HSA", SpeciesTorsion::Cos3Form, {-15.8628, -7.797, 2.3399, 0.0});
+    addTorsionTerm("OA", "SA", "OHA", "HSA", SpeciesTorsion::Cos3Form, {0.0, 0.0, 0.0});
+    addTorsionTerm("OHA", "SA", "OHA", "HSA", SpeciesTorsion::Cos3Form, {-15.8628, -7.797, 2.3399});
     // -- Hydrogen Sulfate Ion
     addBondTerm("SA-", "OA-", SpeciesBond::HarmonicForm, {5239.9, 1.438});
     addBondTerm("SA-", "OHA-", SpeciesBond::HarmonicForm, {2328.3, 1.634});
     addAngleTerm("OA-", "SA-", "OA-", SpeciesAngle::HarmonicForm, {456.97, 114.76});
     addAngleTerm("OHA-", "SA-", "OA-", SpeciesAngle::HarmonicForm, {814.48, 103.45});
     addAngleTerm("HSA-", "OHA-", "SA-", SpeciesAngle::HarmonicForm, {398.12, 106.39});
-    addTorsionTerm("OA-", "SA-", "OHA-", "HSA-", SpeciesTorsion::Cos3Form, {0.0, 0.0, 0.0, 0.0});
+    addTorsionTerm("OA-", "SA-", "OHA-", "HSA-", SpeciesTorsion::Cos3Form, {0.0, 0.0, 0.0});
     // -- Dimethylammonium Ion
     addBondTerm("NDM", "CDM", SpeciesBond::HarmonicForm, {3071.0, 1.499});
     addBondTerm("NDM", "HDM", SpeciesBond::HarmonicForm, {3632.0, 1.01});
@@ -109,8 +109,8 @@ bool Forcefield_Kulmala2010::setUp()
     addAngleTerm("HCD", "CDM", "NDM", SpeciesAngle::HarmonicForm, {209.2, 108.5});
     addAngleTerm("HDM", "NDM", "HDM", SpeciesAngle::HarmonicForm, {292.9, 105.5});
     addAngleTerm("HCD", "CDM", "HCD", SpeciesAngle::HarmonicForm, {276.144, 107.8}); // Missing from SI - taken from OPLS-AA
-    addTorsionTerm("HCD", "CDM", "NDM", "HDM", SpeciesTorsion::Cos3Form, {0.0, 0.0, 0.0, 0.0});
-    addTorsionTerm("HCD", "CDM", "NDM", "CDM", SpeciesTorsion::Cos3Form, {0.0, 0.0, 3.3765, 0.0});
+    addTorsionTerm("HCD", "CDM", "NDM", "HDM", SpeciesTorsion::Cos3Form, {0.0, 0.0, 0.0});
+    addTorsionTerm("HCD", "CDM", "NDM", "CDM", SpeciesTorsion::Cos3Form, {0.0, 0.0, 3.3765});
 
     return true;
 }

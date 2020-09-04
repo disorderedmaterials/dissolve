@@ -31,9 +31,9 @@ ForcefieldAngleTerm::ForcefieldAngleTerm(std::string_view typeI, std::string_vie
     typeK_ = typeK;
     form_ = form;
     parameters_ = parameters;
+    if (!SpeciesAngle::angleFunctions().validNArgs(form, parameters_.size()))
+        throw(std::runtime_error("Incorrect number of parameters in constructed ForcefieldAngleTerm."));
 }
-
-ForcefieldAngleTerm::~ForcefieldAngleTerm() {}
 
 /*
  * Data
