@@ -45,9 +45,9 @@ latexDashes = true
 
 [params]
 copyright = "Dr Tristan Youngs, Simona (2019-). Built using Hugo/Docsy."
-releaseVersion = "0.7.6"
-devVersion = "0.7.7"
-devShortHash = "72b3681ca"
+releaseVersion = "0.6.1"
+devVersion = "0.7.0"
+devShortHash = ""
 github_repo = "https://github.com/projectdissolve/dissolve"
 github_subdir = "web"
 github_branch = "develop"
