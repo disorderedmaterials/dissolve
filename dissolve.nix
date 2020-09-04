@@ -1,4 +1,4 @@
-{pkgs ? import <nixos> {},
+{pkgs ? import <nixpkgs> {},
   parallel ? false,
   gui ? false}:
 
@@ -14,11 +14,14 @@ pkgs.stdenv.mkDerivation {
     "-DGUI=${cmakeBool gui}"
     "-DPARALLEL=${cmakeBool parallel}"
   ];
+  patches = [./ignore_conan.patch];
   buildInputs = [
     pkgs.antlr
     pkgs.bison
     pkgs.cmake
     pkgs.conan
+    pkgs.fmt
+    pkgs.fmt.dev
     pkgs.ninja
   ] ++ pkgs.lib.optionals parallel [
     pkgs.openmpi

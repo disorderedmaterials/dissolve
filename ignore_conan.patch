@@ -1,0 +1,37 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index a001c8b7d..e220bda66 100755
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -26,9 +26,8 @@ CMAKE_POLICY(SET CMP0020 NEW)
+ # Request C++17 Standard Support (Required for std::optional and auto types in lambda parameters)
+ set(CMAKE_CXX_STANDARD 17)
+ 
+-# Include Conan Packages
+-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+-conan_basic_setup(CMAKE_TARGETS)
++find_package(fmt REQUIRED)
++set(EXTRA_LINK_LIBS ${EXTRA_LINK_LIBS} fmt::fmt)
+ 
+ # Catch defines
+ if(PARALLEL)
+@@ -276,10 +275,6 @@ target_link_libraries( ${target_name}
+   PRIVATE
+ 
+   ${EXTRA_LINK_LIBS}
+-
+-  INTERFACE
+-
+-  CONAN_PKG::fmt
+ )
+ 
+ # Build GUI target executables
+@@ -338,9 +333,5 @@ if(GUI)
+     ${FREETYPE_LIBRARIES}
+ 
+     ${EXTRA_LINK_LIBS}
+-
+-    INTERFACE
+-
+-    CONAN_PKG::fmt
+   )
+ endif(GUI)
