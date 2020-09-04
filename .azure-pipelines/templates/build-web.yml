@@ -1,0 +1,85 @@
+parameters:
+  - name: deploy
+    default: true
+    type: boolean
+  - name: hugo_version
+    default: '0.74.3'
+  - name: use_current_hash
+    default: false
+  - name: web_dir_root
+    default: 'github.com/projectdissolve/dissolve/edit/develop/web'
+  - name: last_hash_url
+    default: 'https://www.projectdissolve.com'
+  - name: last_hash_file
+    default: 'doc_hash'
+
+steps:
+  - checkout: self
+    submodules: true
+    fetchDepth: 1
+  - bash: |
+      git submodule update --init --recursive --depth 1
+    displayName: 'Init Submodules'
+  - bash: |
+      # As noted in https://www.docsy.dev/docs/getting-started/, autoprefixer must be installed locally or postcss won't find it.
+      # Note also that postcss-cli must be installed globally, or errors resulting from files missing from cache will occur
+      # (see https://github.com/google/docsy/issues/235).
+      cd web/
+      sudo npm install -g postcss-cli
+      npm install autoprefixer
+    displayName: 'Install NPM Packages'
+  - bash: |
+      set -ex
+      wget https://github.com/gohugoio/hugo/releases/download/v${{ parameters.hugo_version }}/hugo_extended_${{ parameters.hugo_version }}_Linux-64bit.deb -O '$(Pipeline.Workspace)/hugo.deb'
+      sudo dpkg -i $(Pipeline.Workspace)/hugo*.deb
+    displayName: 'Download & Install Hugo (Extended Version)'
+  - bash: |
+      set -ex
+      if [ "${{ parameters.use_current_hash }}" = "true" ]
+      then
+        # Use short hash from most recent (this) commit
+        SHORTHASH=`git rev-parse --short HEAD`
+      else
+        # Retrieve last hash from web server, and re-use it
+        SHORTHASH=`wget -qO- ${{ parameters.last_hash_url }}/${{ parameters.last_hash_file }}`
+        if [ -z $SHORTHASH ]
+        then
+          echo "Failed to retrieve last hash from doc server - current short hash will be used..."
+          SHORTHASH=`git rev-parse --short HEAD`
+        fi
+      fi
+      echo "Continuous hash will be set to $SHORTHASH"
+      # Set hash in config.toml
+      sed -i "s/devShortHash = .*/devShortHash = \"$SHORTHASH\"/g" web/config.toml
+      grep "devShortHash" web/config.toml
+      # Store current hash in file for upload to server
+      echo $SHORTHASH > web/${{ parameters.last_hash_file }}
+    displayName: 'Set Continuous Short Hash'
+  - bash: |
+      set -ex
+      cd web
+      hugo
+      mv ${{ parameters.last_hash_file }} public/
+    displayName: 'Build Site'
+  - bash: |
+      set -ex
+      # Remove language ('en') from 'Edit on GitHub' path links
+      find web/public/ -iname *.html -exec sed -i "s:${{ parameters.web_dir_root }}/content/en/docs/:${{ parameters.web_dir_root }}/content/docs/:g" {} +
+    displayName: 'Rewrite Edit Links'
+  - task: DownloadSecureFile@1
+    name: privateKey
+    inputs:
+      secureFile: id_rsa_dd
+    condition: eq('${{ parameters.deploy }}', true)
+    displayName: 'Download Private Key'
+  - task: DownloadSecureFile@1
+    name: machineId
+    inputs:
+      secureFile: pd_hostkey
+    condition: eq('${{ parameters.deploy }}', true)
+    displayName: 'Download Host Fingerprint'
+  - bash: |
+      chmod 0600 $(privateKey.secureFilePath) $(machineId.secureFilePath)
+      rsync -avz --delete -e "ssh -o UserKnownHostsFile=$(machineId.secureFilePath) -i $(privateKey.secureFilePath) -p 2212 -l doctordissolve" web/public/ 87.117.225.2:/home/www/www.projectdissolve.com/public_html/
+    condition: eq('${{ parameters.deploy }}', true)
+    displayName: 'SSH Deploy to Server'

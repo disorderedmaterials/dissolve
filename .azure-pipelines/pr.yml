@@ -5,6 +5,11 @@ pr:
   branches:
     include:
       - '*'
+  paths:
+    exclude:
+    - examples/*
+    - web/*
+    - README.md
 
 stages:
   - template: templates/code-quality-checks.yml
@@ -81,3 +86,16 @@ stages:
       - template: templates/system-tests.yml
         parameters:
           parallel: true
+
+  # Web
+  - stage: 'web'
+    displayName: 'Website'
+    jobs:
+      - job: 'buildweb'
+        displayName: 'Test Web Build'
+        pool:
+          vmImage: 'ubuntu-18.04'
+        steps:
+          - template: templates/build-web.yml
+            parameters:
+              deploy: false

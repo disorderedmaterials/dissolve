@@ -1,0 +1,3 @@
+<blockquote class="step" >
+{{ with .Get "text" }}<p>{{ . | safeHTML | markdownify }}</p>{{ end }}
+</blockquote>

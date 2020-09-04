@@ -10,6 +10,6 @@ _Continuous Build Status:_ [![Continuous Build Status](https://dev.azure.com/Pro
 
 Executable installers for all major platforms can be found on the [releases page](https://github.com/projectdissolve/dissolve/releases), including [continuous builds](https://github.com/projectdissolve/dissolve/releases/tag/continuous) from the latest source.
 
-Various tutorial material and examples for **Dissolve** can be [found here](https://trisyoungs.github.io/dissolve/examples/).
+Various tutorial material and examples for **Dissolve** can be [found here](https://www.projectdissolve.com/docs/examples/).
 
-Documentation is a work in progress, and is available [here](https://trisyoungs.github.io/dissolve).
+Documentation is a work in progress, and is available [here](https://www.projectdissolve.com/docs/).
