@@ -31,7 +31,7 @@ DataViewer::DataViewer(QWidget *parent) : BaseViewer(parent)
     view_.setViewType(View::FlatXYView);
 
     // Set options
-    dissolve_ = NULL;
+    dissolve_ = nullptr;
     controlFlags_ = NoFlags;
 }
 

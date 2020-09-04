@@ -60,7 +60,7 @@ BraggModuleWidget::BraggModuleWidget(QWidget *parent, BraggModule *module) : Mod
 
     refreshing_ = false;
 
-    currentConfiguration_ = NULL;
+    currentConfiguration_ = nullptr;
 
     updateControls();
 

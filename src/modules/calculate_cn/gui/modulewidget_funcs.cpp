@@ -91,7 +91,8 @@ void CalculateCNModuleWidget::setGraphDataTargets()
 
     // Get target RDF module
     auto found = false;
-    const CalculateRDFModule *rdfModule = module_->keywords().retrieve<const CalculateRDFModule *>("SourceRDF", NULL, &found);
+    const CalculateRDFModule *rdfModule =
+        module_->keywords().retrieve<const CalculateRDFModule *>("SourceRDF", nullptr, &found);
 
     // If the RDF data for the graph has not yet been found, attempt to locate it now
     if (!rdfDataLocated_)

@@ -33,7 +33,7 @@ class CheckIndicator : public QLabel
 
     public:
     // Constructor / Destructor
-    CheckIndicator(QWidget *parent = NULL);
+    CheckIndicator(QWidget *parent = nullptr);
     // Indicator State enum
     enum IndicatorState
     {

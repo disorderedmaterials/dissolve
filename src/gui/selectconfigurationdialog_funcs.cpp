@@ -64,7 +64,7 @@ Configuration *SelectConfigurationDialog::selectConfiguration()
     if (exec() == QDialog::Accepted)
         return ui_.ConfigurationWidget->currentConfiguration().firstItem();
     else
-        return NULL;
+        return nullptr;
 }
 
 // Run the dialog, returning a list of selected Configuration

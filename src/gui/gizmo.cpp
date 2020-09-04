@@ -28,7 +28,7 @@ RefList<Gizmo> Gizmo::allGizmos_;
 
 Gizmo::Gizmo(Dissolve &dissolve, const QString uniqueName) : ListItem<Gizmo>(), dissolve_(dissolve)
 {
-    window_ = NULL;
+    window_ = nullptr;
     uniqueName_ = uniqueName;
     refreshing_ = false;
     allGizmos_.append(this);
@@ -82,7 +82,7 @@ Gizmo *Gizmo::find(const QString uniqueName, const Gizmo *excludeThis)
             return gizmo;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 // Find Gizmo contained in specified subwindow
@@ -92,7 +92,7 @@ Gizmo *Gizmo::find(QMdiSubWindow *window)
         if (window == gizmo->window())
             return gizmo;
 
-    return NULL;
+    return nullptr;
 }
 
 /*

@@ -24,8 +24,8 @@
 
 FontInstance::FontInstance()
 {
-    fontData_ = NULL;
-    font_ = NULL;
+    fontData_ = nullptr;
+    font_ = nullptr;
     fontBaseHeight_ = 0.0;
     fontFullHeight_ = 0.0;
     dotWidth_ = 0.0;
@@ -42,10 +42,10 @@ bool FontInstance::setUp(QString fontFileName)
     // Delete any previous font
     if (font_)
         delete font_;
-    font_ = NULL;
+    font_ = nullptr;
     if (fontData_)
         delete fontData_;
-    fontData_ = NULL;
+    fontData_ = nullptr;
 
     // Check the fontFileName - if it's empty then we try to load the default font from our resource
     fontFile_ = fontFileName;
@@ -88,11 +88,11 @@ bool FontInstance::setUp(QString fontFileName)
         dotWidth_ = boundingBox.Upper().X() - boundingBox.Lower().X();
     }
 
-    return (font_ != NULL);
+    return (font_ != nullptr);
 }
 
 // Return whether font exists and is ready for use
-bool FontInstance::fontOK() const { return (font_ != NULL); }
+bool FontInstance::fontOK() const { return (font_ != nullptr); }
 
 // Return base height of font
 double FontInstance::fontBaseHeight() const { return fontBaseHeight_; }

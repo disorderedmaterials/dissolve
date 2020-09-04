@@ -22,4 +22,4 @@
 #include "modules/calculate_avgmol/avgmol.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *CalculateAvgMolModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *CalculateAvgMolModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

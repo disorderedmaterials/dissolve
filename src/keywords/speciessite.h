@@ -31,7 +31,7 @@ class SpeciesSite;
 class SpeciesSiteKeyword : public KeywordData<SpeciesSite *>
 {
     public:
-    SpeciesSiteKeyword(SpeciesSite *site = NULL, bool axesRequired = false);
+    SpeciesSiteKeyword(SpeciesSite *site = nullptr, bool axesRequired = false);
     ~SpeciesSiteKeyword();
 
     /*

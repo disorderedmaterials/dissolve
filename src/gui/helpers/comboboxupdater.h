@@ -48,7 +48,7 @@ template <class I> class ComboBoxUpdater
             comboBox_->removeItem(currentIndex_);
 
         // If there is no valid current item, make sure this is reflected in the combobox
-        if (currentItem == NULL)
+        if (currentItem == nullptr)
             comboBox->setCurrentIndex(indexIfNoCurrentItem);
     }
 
@@ -67,7 +67,7 @@ template <class I> class ComboBoxUpdater
             comboBox_->removeItem(currentIndex_);
 
         // If there is no valid current item, make sure this is reflected in the combobox
-        if (currentItem == NULL)
+        if (currentItem == nullptr)
             comboBox->setCurrentIndex(indexIfNoCurrentItem);
     }
 
@@ -87,7 +87,7 @@ template <class I> class ComboBoxUpdater
             comboBox_->removeItem(currentIndex_);
 
         // If there is no valid current item, make sure this is reflected in the combobox
-        if (currentItem == NULL)
+        if (currentItem == nullptr)
             comboBox->setCurrentIndex(indexIfNoCurrentItem);
     }
 
@@ -198,7 +198,7 @@ template <class T, class I> class ComboBoxTextUpdater
             comboBox->removeItem(currentIndex);
 
         // If there is no valid current item, make sure this is reflected in the combobox
-        if (currentItem == NULL)
+        if (currentItem == nullptr)
             comboBox->setCurrentIndex(-1);
     }
 };

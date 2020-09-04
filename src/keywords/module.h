@@ -64,7 +64,7 @@ class ModuleKeywordBase
 template <class M> class ModuleKeyword : public ModuleKeywordBase, public KeywordData<M *>
 {
     public:
-    ModuleKeyword(std::string_view moduleType, M *module = NULL)
+    ModuleKeyword(std::string_view moduleType, M *module = nullptr)
         : ModuleKeywordBase(moduleType), KeywordData<M *>(KeywordBase::ModuleData, module)
     {
     }
@@ -92,7 +92,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
     {
         // No need to write the keyword if the module pointer is null
-        if (KeywordData<M *>::data_ == NULL)
+        if (KeywordData<M *>::data_ == nullptr)
             return true;
 
         if (!parser.writeLineF("{}{}  '{}'\n", prefix, KeywordBase::name(), KeywordData<M *>::data_->uniqueName()))
@@ -144,6 +144,6 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
     void removeReferencesTo(Module *module)
     {
         if (KeywordData<M *>::data_ == module)
-            KeywordData<M *>::data_ = NULL;
+            KeywordData<M *>::data_ = nullptr;
     }
 };

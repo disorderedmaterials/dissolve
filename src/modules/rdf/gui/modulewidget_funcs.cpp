@@ -72,7 +72,7 @@ RDFModuleWidget::RDFModuleWidget(QWidget *parent, RDFModule *module, Dissolve &d
 
     refreshing_ = false;
 
-    currentConfiguration_ = NULL;
+    currentConfiguration_ = nullptr;
 
     updateControls();
 

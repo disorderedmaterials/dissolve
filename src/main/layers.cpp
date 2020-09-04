@@ -56,7 +56,7 @@ ModuleLayer *Dissolve::findProcessingLayer(std::string_view name) const
         if (DissolveSys::sameString(layer->name(), name))
             return layer;
 
-    return NULL;
+    return nullptr;
 }
 
 // Own the specified processing layer
@@ -100,7 +100,7 @@ Module *Dissolve::createModuleInLayer(std::string_view moduleType, std::string_v
     // First, attempt to create a new Module with the specified name
     Module *module = createModuleInstance(moduleType);
     if (!module)
-        return NULL;
+        return nullptr;
 
     // Find / create the specified layer
     ModuleLayer *layer = findProcessingLayer(layerName);

@@ -38,7 +38,7 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
-    for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
+    for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != nullptr; ri = ri->next())
     {
         // Grab Configuration pointer
         Configuration *cfg = ri->item();
@@ -63,7 +63,7 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Loop over distances to check
-        for (auto *d = distances_.first(); d != NULL; d = d->next())
+        for (auto *d = distances_.first(); d != nullptr; d = d->next())
         {
             actual = cfg->box()->minimumDistance(atoms[d->indices(0)], atoms[d->indices(1)]);
             delta = fabs(actual - d->value());
@@ -84,7 +84,7 @@ bool ChecksModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Loop over angles to check
-        for (auto *a = angles_.first(); a != NULL; a = a->next())
+        for (auto *a = angles_.first(); a != nullptr; a = a->next())
         {
             actual = cfg->box()->angleInDegrees(atoms[a->indices(0)], atoms[a->indices(1)], atoms[a->indices(2)]);
             delta = fabs(actual - a->value());

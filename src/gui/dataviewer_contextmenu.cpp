@@ -130,7 +130,7 @@ void DataViewer::showRenderableContextMenu(QPoint pos, Renderable *rend)
     }
 
     // -- Remove Renderable
-    QAction *removeAction = NULL;
+    QAction *removeAction = nullptr;
     if (hasFlag(DataViewer::UserCanRemoveDataFlag))
     {
         menu.addSeparator();

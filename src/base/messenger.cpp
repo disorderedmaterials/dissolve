@@ -34,7 +34,7 @@ bool Messenger::verbose_ = false;
 bool Messenger::redirect_ = false;
 bool Messenger::masterOnly_ = false;
 LineParser Messenger::parser_; //= new LineParser;
-OutputHandler *Messenger::outputHandler_ = NULL;
+OutputHandler *Messenger::outputHandler_ = nullptr;
 std::string Messenger::outputPrefix_;
 
 /*

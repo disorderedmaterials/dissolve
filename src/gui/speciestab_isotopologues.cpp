@@ -82,7 +82,7 @@ Isotopologue *SpeciesTab::currentIsotopologue()
     // Get current item from tree, and check the parent item
     QTreeWidgetItem *item = ui_.IsotopologuesTree->currentItem();
     if (!item)
-        return NULL;
+        return nullptr;
     if (item->parent())
         return VariantPointer<Isotopologue>(item->parent()->data(0, Qt::UserRole));
     else
@@ -137,7 +137,7 @@ void SpeciesTab::on_IsotopologuesTree_itemChanged(QTreeWidgetItem *item, int col
     Isotopologue *isotopologue = currentIsotopologue();
 
     // If a top-level item, then the only possibility is to edit the isotopologue name (column 0)
-    if (item->parent() == NULL)
+    if (item->parent() == nullptr)
     {
         // Name of the isotopologue
         if (column == 0)
@@ -192,5 +192,5 @@ void SpeciesTab::updateIsotopologuesTab()
         ui_.IsotopologuesTree->resizeColumnToContents(0);
     }
     Isotopologue *isotopologue = currentIsotopologue();
-    ui_.IsotopologueRemoveButton->setEnabled(isotopologue != NULL);
+    ui_.IsotopologueRemoveButton->setEnabled(isotopologue != nullptr);
 }

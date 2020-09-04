@@ -55,7 +55,7 @@ template <class T, class I> class ListWidgetUpdater
             while (currentRow < listWidget->count())
             {
                 listWidgetItem = listWidget->item(currentRow);
-                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
+                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : nullptr);
                 if (rowData == dataItem)
                 {
                     // Update the current row and quit the loop
@@ -108,7 +108,7 @@ template <class T, class I> class ListWidgetUpdater
             while (currentRow < listWidget->count())
             {
                 listWidgetItem = listWidget->item(currentRow);
-                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
+                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : nullptr);
                 if (rowData == dataItem)
                 {
                     // Update the current row and quit the loop
@@ -208,7 +208,7 @@ template <class T, class I> class ListWidgetUpdater
     // Update widget from supplied List, assuming that the name() function in class I is the desired text to show in the
     // list
     ListWidgetUpdater(QListWidget *listWidget, const List<I> &list, Qt::ItemFlags flags = Qt::NoItemFlags,
-                      I *currentItem = NULL)
+                      I *currentItem = nullptr)
     {
         QListWidgetItem *listWidgetItem;
 
@@ -225,7 +225,7 @@ template <class T, class I> class ListWidgetUpdater
             while (currentRow < listWidget->count())
             {
                 listWidgetItem = listWidget->item(currentRow);
-                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
+                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : nullptr);
                 if (rowData == dataItem)
                 {
                     // Update the current row and quit the loop
@@ -286,7 +286,7 @@ template <class T, class I> class ListWidgetUpdater
             while (currentRow < listWidget->count())
             {
                 listWidgetItem = listWidget->item(currentRow);
-                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
+                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : nullptr);
                 if (rowData == dataItem)
                 {
                     // Update the current row and quit the loop

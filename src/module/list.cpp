@@ -69,7 +69,7 @@ Module *ModuleList::find(std::string_view uniqueName) const
         if (DissolveSys::sameString(module->uniqueName(), uniqueName))
             return module;
 
-    return NULL;
+    return nullptr;
 }
 
 // Return whether specified Module is present in the list

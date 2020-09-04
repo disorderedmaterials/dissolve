@@ -36,7 +36,7 @@ SpeciesSite *Species::addSite(std::string_view name)
 // Remove specified SpeciesSite
 void Species::removeSite(SpeciesSite *site)
 {
-    if (site == NULL)
+    if (site == nullptr)
         Messenger::error("NULL_POINTER - NULL SpeciesSite passed to Species::removeSite().\n");
     else if (sites_.contains(site))
     {
@@ -71,11 +71,11 @@ std::string Species::uniqueSiteName(std::string_view base, const SpeciesSite *ex
 // Search for SpeciesSite by name
 SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *exclude) const
 {
-    for (auto *site = sites_.first(); site != NULL; site = site->next())
+    for (auto *site = sites_.first(); site != nullptr; site = site->next())
         if (site == exclude)
             continue;
         else if (DissolveSys::sameString(name, site->name()))
             return site;
 
-    return NULL;
+    return nullptr;
 }

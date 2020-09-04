@@ -31,7 +31,7 @@
 
 ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
 {
-    currentElement_ = NULL;
+    currentElement_ = nullptr;
 
     // Create grid layout for widget
     auto *gl = new QGridLayout;
@@ -161,10 +161,10 @@ void ElementSelector::elementButtonClicked(bool checked)
     // Cast sender
     auto *button = qobject_cast<QToolButton *>(sender());
     if (!button)
-        currentElement_ = NULL;
+        currentElement_ = nullptr;
 
     RefDataItem<QToolButton, Element *> *ri = elementButtons_.contains(button);
-    currentElement_ = ri ? ri->data() : NULL;
+    currentElement_ = ri ? ri->data() : nullptr;
 
     // Was this a double-click? Check the timer
     if (doubleClickTimer_.isActive())
@@ -195,7 +195,7 @@ void ElementSelector::setCurrentElement(Element *element)
     currentElement_ = element;
 
     // Find and check the related button
-    if (currentElement_ != NULL)
+    if (currentElement_ != nullptr)
     {
         QToolButton *button = elementButtons_.itemWithData(currentElement_);
         if (button)
@@ -232,7 +232,7 @@ Element *ElementSelector::getElement(QWidget *parent, QString title, QString lab
         new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &inputDialog);
     QObject::connect(buttonBox, SIGNAL(accepted()), &inputDialog, SLOT(accept()));
     QObject::connect(buttonBox, SIGNAL(rejected()), &inputDialog, SLOT(reject()));
-    buttonBox->button(QDialogButtonBox::Ok)->setEnabled(element != NULL);
+    buttonBox->button(QDialogButtonBox::Ok)->setEnabled(element != nullptr);
     QObject::connect(elementSelector, SIGNAL(elementSelected(bool)), buttonBox->button(QDialogButtonBox::Ok),
                      SLOT(setEnabled(bool)));
 

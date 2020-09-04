@@ -31,7 +31,7 @@ class SelectProcedureNode;
 class CalculateVectorProcedureNode : public CalculateProcedureNodeBase
 {
     public:
-    CalculateVectorProcedureNode(SelectProcedureNode *site0 = NULL, SelectProcedureNode *site1 = NULL,
+    CalculateVectorProcedureNode(SelectProcedureNode *site0 = nullptr, SelectProcedureNode *site1 = nullptr,
                                  bool rotateIntoFrame = false);
     ~CalculateVectorProcedureNode();
 

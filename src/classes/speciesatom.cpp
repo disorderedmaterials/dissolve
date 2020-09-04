@@ -29,9 +29,9 @@
 
 SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
 {
-    element_ = NULL;
+    element_ = nullptr;
     charge_ = 0.0;
-    atomType_ = NULL;
+    atomType_ = nullptr;
     r_.zero();
     index_ = -1;
     selected_ = false;

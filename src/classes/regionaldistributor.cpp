@@ -454,7 +454,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(Cell *cell, int pr
         checkedMolecules.insert(mol);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 // Try to find a Molecule target for the process/group
@@ -465,7 +465,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(int processOrGroup
      * If there are no suitable Molecules (or there are no Cells, as is the case at the beginning), pick a suitable Cell
      * close to those already in the list (or one at a suitable starting location for the current process/group).
      */
-    std::shared_ptr<Molecule> molecule = NULL;
+    std::shared_ptr<Molecule> molecule = nullptr;
 
     OrderedPointerListIterator<Cell> lockedCellIterator(lockedCells_[processOrGroup]);
     while (Cell *cell = lockedCellIterator.iterate())
@@ -535,7 +535,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(int processOrGroup
             return molecule;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 // Return next set of Molecule IDs assigned to this process

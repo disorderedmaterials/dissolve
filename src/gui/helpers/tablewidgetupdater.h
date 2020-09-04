@@ -52,7 +52,7 @@ template <class T, class I, typename Raw = I *, typename... Args> class TableWid
         while (rowCount < table->rowCount())
         {
             auto tableItem = table->item(rowCount, 0);
-            auto rowData = (tableItem ? tableItem->data(Qt::UserRole).value<Raw>() : NULL);
+            auto rowData = (tableItem ? tableItem->data(Qt::UserRole).value<Raw>() : nullptr);
             if (rowData == dataItem)
             {
                 // Update the current row and quit the loop

@@ -92,14 +92,14 @@ void ForceKernel::forcesWithMim(const Atom *i, const Atom *j, double scale)
 void ForceKernel::forces(const Atom *i, const Atom *j, bool applyMim, bool excludeIgeJ)
 {
 #ifdef CHECKS
-    if (i == NULL)
+    if (i == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Atom pointer (i) passed to ForceKernel::forces(Atom,Atom,bool,bool).\n");
+        Messenger::error("NULL_POINTER - nullptr (i) passed to ForceKernel::forces(Atom,Atom,bool,bool).\n");
         return;
     }
-    if (j == NULL)
+    if (j == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Atom pointer (j) passed to ForceKernel::forces(Atom,Atom,bool,bool).\n");
+        Messenger::error("NULL_POINTER - nullptr (j) passed to ForceKernel::forces(Atom,Atom,bool,bool).\n");
         return;
     }
 #endif
@@ -122,13 +122,13 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
                          ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
-    if (centralCell == NULL)
+    if (centralCell == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL central Cell pointer passed to "
                          "ForceKernel::forces(Cell,Cell,bool,bool,DivisionStrategy).\n");
         return;
     }
-    if (otherCell == NULL)
+    if (otherCell == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL other Cell pointer passed to "
                          "ForceKernel::forces(Cell,Cell,bool,bool,DivisionStrategy).\n");
@@ -225,7 +225,7 @@ void ForceKernel::forces(Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStra
 void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
-    if (i == NULL)
+    if (i == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL atom pointer passed to ForceKernel::forces(Atom,Cell,int,DivisionStrategy).\n");
         return;
@@ -411,9 +411,9 @@ void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::Divi
 void ForceKernel::forces(const Atom *i, ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
-    if (i == NULL)
+    if (i == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Atom pointer passed to ForceKernel::forces(Atom,DivisionStrategy).\n");
+        Messenger::error("NULL_POINTER - nullptr passed to ForceKernel::forces(Atom,DivisionStrategy).\n");
         return;
     }
 #endif

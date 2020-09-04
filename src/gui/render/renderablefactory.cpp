@@ -28,7 +28,7 @@
 // Create Renderable of specified type
 Renderable *RenderableFactory::create(Renderable::RenderableType renderableType, std::string_view objectTag)
 {
-    Renderable *renderable = NULL;
+    Renderable *renderable = nullptr;
 
     if (renderableType == Renderable::Data1DRenderable)
         renderable = new RenderableData1D(Data1D::findObject(objectTag), objectTag);

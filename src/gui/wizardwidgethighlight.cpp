@@ -22,7 +22,7 @@
 #include "gui/wizardwidgethighlight.h"
 #include <QWidget>
 
-WizardWidgetHighlight::WizardWidgetHighlight() : ListItem<WizardWidgetHighlight>() { widget_ = NULL; }
+WizardWidgetHighlight::WizardWidgetHighlight() : ListItem<WizardWidgetHighlight>() { widget_ = nullptr; }
 
 WizardWidgetHighlight::~WizardWidgetHighlight() {}
 

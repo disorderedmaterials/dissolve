@@ -29,7 +29,7 @@ SelectConfigurationWidget::SelectConfigurationWidget(QWidget *parent) : QWidget(
 {
     ui_.setupUi(this);
 
-    coreData_ = NULL;
+    coreData_ = nullptr;
     minimumSelectionSize_ = 1;
     maximumSelectionSize_ = 1;
 

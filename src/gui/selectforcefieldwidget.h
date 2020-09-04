@@ -53,7 +53,7 @@ class SelectForcefieldWidget : public QWidget
 
     private:
     // Update the list of Forcefields, optionally filtering them by name and description
-    void updateForcefieldsList(std::shared_ptr<Forcefield> current = NULL, QString filter = QString());
+    void updateForcefieldsList(std::shared_ptr<Forcefield> current = nullptr, QString filter = QString());
 
     private slots:
     void on_FilterEdit_textChanged(const QString &text);

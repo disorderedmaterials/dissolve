@@ -37,8 +37,8 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
     {
         nObjects_ = nObjects;
         objectSize_ = 0;
-        objectArray_ = NULL;
-        objectUsed_ = NULL;
+        objectArray_ = nullptr;
+        objectUsed_ = nullptr;
         nextAvailableObject_ = -1;
         nUnusedObjects_ = 0;
     }
@@ -129,7 +129,7 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
     T *nextAvailable()
     {
         if (nextAvailableObject_ == -1)
-            return NULL;
+            return nullptr;
         T *object = &objectArray_[nextAvailableObject_];
         objectUsed_[nextAvailableObject_] = true;
         --nUnusedObjects_;
@@ -200,7 +200,7 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
 template <class T> class DynamicArray
 {
     public:
-    DynamicArray<T>() { currentChunk_ = NULL; }
+    DynamicArray<T>() { currentChunk_ = nullptr; }
 
     /*
      * Storage
@@ -215,11 +215,11 @@ template <class T> class DynamicArray
     // Produce a new object
     T *produce()
     {
-        if (currentChunk_ == NULL)
+        if (currentChunk_ == nullptr)
         {
             currentChunk_ = arrayChunks_.add();
             if (!currentChunk_->initialise())
-                return NULL;
+                return nullptr;
             return currentChunk_->nextAvailable();
         }
         else if (currentChunk_->hasUnusedObjects())
@@ -228,7 +228,7 @@ template <class T> class DynamicArray
         {
             // Must search current chunk list to see if any current chunks have available space. If not, we will
             // create a new one
-            for (ArrayChunk<T> *chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next())
+            for (ArrayChunk<T> *chunk = arrayChunks_.first(); chunk != nullptr; chunk = chunk->next())
             {
                 if (chunk == currentChunk_)
                     continue;
@@ -242,19 +242,19 @@ template <class T> class DynamicArray
             // No dice - make a new chunk
             currentChunk_ = arrayChunks_.add();
             if (!currentChunk_->initialise())
-                return NULL;
+                return nullptr;
             return currentChunk_->nextAvailable();
         }
 
         // If we get here, then something has gone horribly wrong...
         Messenger::error("Couldn't find an empty chunk to return an object from.\n");
-        return NULL;
+        return nullptr;
     }
     // Return specified object to chunk stack
     bool returnObject(T *object)
     {
         // Must find chunk which owns this object
-        for (ArrayChunk<T> *chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next())
+        for (ArrayChunk<T> *chunk = arrayChunks_.first(); chunk != nullptr; chunk = chunk->next())
         {
             if (chunk->returnObject(object))
             {
@@ -283,7 +283,7 @@ template <class T> class DynamicArray
         array_.clear();
 
         // Clear chunks
-        for (ArrayChunk<T> *chunk = arrayChunks_.first(); chunk != NULL; chunk = chunk->next())
+        for (ArrayChunk<T> *chunk = arrayChunks_.first(); chunk != nullptr; chunk = chunk->next())
             chunk->clear();
         currentChunk_ = arrayChunks_.first();
     }
@@ -336,7 +336,7 @@ template <class T> class DynamicArray
         {
             array_[index] = array_[array_.nItems() - 1];
             array_[index]->setArrayIndex(index);
-            array_[array_.nItems() - 1] = NULL;
+            array_[array_.nItems() - 1] = nullptr;
         }
 
         // Tell the array to drop the last item in the list
@@ -352,7 +352,7 @@ template <class T> class DynamicArray
         if ((index < 0) || (index >= array_.nItems()))
         {
             Messenger::error("Array index {} is out of bounds (array size = {}).\n", index, array_.nItems());
-            return NULL;
+            return nullptr;
         }
 #endif
         return array_[index];
@@ -363,7 +363,7 @@ template <class T> class DynamicArray
         if ((index < 0) || (index >= array_.nItems()))
         {
             Messenger::error("Array index {} is out of bounds (array size = {}).\n", index, array_.nItems());
-            return NULL;
+            return nullptr;
         }
 
         return array_.constAt(index);
@@ -397,8 +397,8 @@ template <class T> class DynamicArrayIterator
         if (arrayTarget_.nItems() == 0)
         {
             index_ = 0;
-            pointer_ = NULL;
-            result_ = NULL;
+            pointer_ = nullptr;
+            result_ = nullptr;
         }
         else
         {
@@ -428,7 +428,7 @@ template <class T> class DynamicArrayIterator
             ++index_;
         }
         else
-            return NULL;
+            return nullptr;
 
         return result_;
     }
@@ -447,7 +447,7 @@ template <class T> class DynamicArrayConstIterator
     DynamicArrayConstIterator<T>(const DynamicArray<T> &target) : arrayTarget_(target)
     {
         index_ = 0;
-        result_ = NULL;
+        result_ = nullptr;
     }
 
     private:
@@ -468,7 +468,7 @@ template <class T> class DynamicArrayConstIterator
             ++index_;
         }
         else
-            return NULL;
+            return nullptr;
 
         return result_;
     }

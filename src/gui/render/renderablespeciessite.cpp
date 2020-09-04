@@ -60,14 +60,14 @@ bool RenderableSpeciesSite::validateDataSource()
     if (!sourceDataAccessEnabled_)
         return false;
 
-    return ((speciesSource_ != NULL) && (siteSource_ != NULL));
+    return ((speciesSource_ != nullptr) && (siteSource_ != nullptr));
 }
 
 // Invalidate the current data source
 void RenderableSpeciesSite::invalidateDataSource()
 {
-    speciesSource_ = NULL;
-    siteSource_ = NULL;
+    speciesSource_ = nullptr;
+    siteSource_ = nullptr;
 }
 
 // Return version of data

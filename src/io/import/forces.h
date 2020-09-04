@@ -87,7 +87,7 @@ class ForceImportFileFormat : public FileAndFormat
 
     public:
     // Import forces using current filename and format
-    bool importData(Array<double> &fx, Array<double> &fy, Array<double> &fz, ProcessPool *procPool = NULL);
+    bool importData(Array<double> &fx, Array<double> &fy, Array<double> &fz, ProcessPool *procPool = nullptr);
     // Import forces using supplied parser and current format
     bool importData(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
 };

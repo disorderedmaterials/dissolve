@@ -147,7 +147,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
     // Increment version of current contents
     void incrementContentsVersion();
     // Add Molecule to Configuration based on the supplied Species
-    std::shared_ptr<Molecule> addMolecule(Species *sp, CoordinateSet *sourceCoordinates = NULL);
+    std::shared_ptr<Molecule> addMolecule(Species *sp, CoordinateSet *sourceCoordinates = nullptr);
     // Return number of Molecules in Configuration
     int nMolecules() const;
     // Return array of Molecules

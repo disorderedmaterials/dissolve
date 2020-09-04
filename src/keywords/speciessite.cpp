@@ -97,12 +97,12 @@ bool SpeciesSiteKeyword::write(LineParser &parser, std::string_view keywordName,
 void SpeciesSiteKeyword::removeReferencesTo(Species *sp)
 {
     if (data_ && (data_->parent() == sp))
-        data_ = NULL;
+        data_ = nullptr;
 }
 
 // Prune any references to the supplied Site in the contained data
 void SpeciesSiteKeyword::removeReferencesTo(SpeciesSite *spSite)
 {
     if (data_ == spSite)
-        data_ = NULL;
+        data_ = nullptr;
 }

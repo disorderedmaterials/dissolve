@@ -549,7 +549,8 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 {
     // First, need to get target element for the new AtomType
     bool ok;
-    Element *element = ElementSelector::getElement(this, "Element Selection", "Choose the Element for the AtomType", NULL, &ok);
+    Element *element =
+        ElementSelector::getElement(this, "Element Selection", "Choose the Element for the AtomType", nullptr, &ok);
     if (!ok)
         return;
 
@@ -761,7 +762,7 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target PairPotential from the passed widget
-    PairPotential *pairPotential = w ? VariantPointer<PairPotential>(w->data(Qt::UserRole)) : NULL;
+    PairPotential *pairPotential = w ? VariantPointer<PairPotential>(w->data(Qt::UserRole)) : nullptr;
     if (!pairPotential)
         return;
 
@@ -807,7 +808,7 @@ void ForcefieldTab::on_MasterBondsTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target MasterIntra from the passed widget
-    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
+    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : nullptr;
     if (!masterIntra)
         return;
 
@@ -848,7 +849,7 @@ void ForcefieldTab::on_MasterAnglesTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target MasterIntra from the passed widget
-    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
+    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : nullptr;
     if (!masterIntra)
         return;
 
@@ -889,7 +890,7 @@ void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target MasterIntra from the passed widgetmasterIntra->setForm(SpeciesBond::bondFunction(qPrintable(w->text())));
-    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
+    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : nullptr;
     if (!masterIntra)
         return;
 
@@ -930,7 +931,7 @@ void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target MasterIntra from the passed widgetmasterIntra->setForm(SpeciesBond::bondFunction(qPrintable(w->text())));
-    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
+    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : nullptr;
     if (!masterIntra)
         return;
 

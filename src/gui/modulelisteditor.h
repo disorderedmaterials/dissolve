@@ -40,7 +40,7 @@ class ModuleListEditor : public QWidget
     Q_OBJECT
 
     public:
-    ModuleListEditor(QWidget *parent = NULL);
+    ModuleListEditor(QWidget *parent = nullptr);
     ~ModuleListEditor();
 
     /*
@@ -79,7 +79,7 @@ class ModuleListEditor : public QWidget
 
     public:
     // Set up the ModuleListEditor for the specified ModuleLayer
-    bool setUp(DissolveWindow *dissolveWindow, ModuleLayer *moduleLayer, Configuration *localConfiguration = NULL);
+    bool setUp(DissolveWindow *dissolveWindow, ModuleLayer *moduleLayer, Configuration *localConfiguration = nullptr);
 
     /*
      * Widget Functions

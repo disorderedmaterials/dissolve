@@ -95,9 +95,9 @@ bool NETAPresenceNode::setModifier(std::string_view modifier, ComparisonOperator
 // Evaluate the node and return its score
 int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &availableAtoms) const
 {
-    // We expect the passed SpeciesAtom 'i' to be NULL, as our potential targets are held in availableAtoms (which we will
+    // We expect the passed SpeciesAtom 'i' to be nullptr, as our potential targets are held in availableAtoms (which we will
     // modify as appropriate)
-    if (i != NULL)
+    if (i != nullptr)
         return Messenger::error("Don't pass target atom to NETAPresenceNode - pass a list of possible atoms instead...\n");
 
     // Loop over the provided possible list of atoms

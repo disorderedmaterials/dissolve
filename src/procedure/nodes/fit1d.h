@@ -38,7 +38,7 @@ class NodeScopeStack;
 class Fit1DProcedureNode : public ProcedureNode
 {
     public:
-    Fit1DProcedureNode(Collect1DProcedureNode *target = NULL);
+    Fit1DProcedureNode(Collect1DProcedureNode *target = nullptr);
     ~Fit1DProcedureNode();
 
     /*

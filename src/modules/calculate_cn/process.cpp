@@ -32,7 +32,7 @@ bool CalculateCNModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
     // Check for valid CalculateRDF pointer
     auto found = false;
-    const auto *rdfModule = keywords_.retrieve<const CalculateRDFModule *>("SourceRDF", NULL, &found);
+    const auto *rdfModule = keywords_.retrieve<const CalculateRDFModule *>("SourceRDF", nullptr, &found);
     if ((!found) || (!rdfModule))
         return Messenger::error("No suitable CalculateRDF target set for CalculateCN.\n");
 

@@ -78,9 +78,9 @@ Configuration *Dissolve::findConfiguration(std::string_view name) const { return
 // Find configuration by 'nice' name
 Configuration *Dissolve::findConfigurationByNiceName(std::string_view name) const
 {
-    for (auto *cfg = constConfigurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = constConfigurations().first(); cfg != nullptr; cfg = cfg->next())
         if (DissolveSys::sameString(name, cfg->niceName()))
             return cfg;
 
-    return NULL;
+    return nullptr;
 }

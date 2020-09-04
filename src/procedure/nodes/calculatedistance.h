@@ -31,7 +31,7 @@ class SelectProcedureNode;
 class CalculateDistanceProcedureNode : public CalculateProcedureNodeBase
 {
     public:
-    CalculateDistanceProcedureNode(SelectProcedureNode *site0 = NULL, SelectProcedureNode *site1 = NULL);
+    CalculateDistanceProcedureNode(SelectProcedureNode *site0 = nullptr, SelectProcedureNode *site1 = nullptr);
     ~CalculateDistanceProcedureNode();
 
     /*

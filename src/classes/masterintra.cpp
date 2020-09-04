@@ -25,8 +25,8 @@
 
 MasterIntra::MasterIntra() : SpeciesIntra(), ListItem<MasterIntra>()
 {
-    parent_ = NULL;
-    masterParameters_ = NULL;
+    parent_ = nullptr;
+    masterParameters_ = nullptr;
 }
 
 MasterIntra::~MasterIntra() {}

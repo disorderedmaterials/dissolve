@@ -46,7 +46,7 @@ bool LayerBlock::parse(LineParser &parser, Dissolve *dissolve, ModuleLayer *laye
                      layer->name());
 
     auto blockDone = false, error = false;
-    Module *module = NULL;
+    Module *module = nullptr;
     std::string niceName;
 
     while (!parser.eofOrBlank())

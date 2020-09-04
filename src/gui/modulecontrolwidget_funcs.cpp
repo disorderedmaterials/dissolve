@@ -35,8 +35,8 @@ ModuleControlWidget::ModuleControlWidget(QWidget *parent)
     // Set up user interface
     ui_.setupUi(this);
 
-    dissolve_ = NULL;
-    module_ = NULL;
+    dissolve_ = nullptr;
+    module_ = nullptr;
 
     refreshing_ = false;
 }

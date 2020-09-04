@@ -45,10 +45,10 @@ Process1DProcedureNode::Process1DProcedureNode(const Collect1DProcedureNode *tar
                   "Branch providing normalisation operations for the data");
 
     // Initialise branch
-    normalisationBranch_ = NULL;
+    normalisationBranch_ = nullptr;
 
     // Initialise data pointer
-    processedData_ = NULL;
+    processedData_ = nullptr;
 }
 
 Process1DProcedureNode::~Process1DProcedureNode() {}
@@ -68,7 +68,7 @@ bool Process1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
  */
 
 // Return whether processed data exists
-bool Process1DProcedureNode::hasProcessedData() const { return (processedData_ != NULL); }
+bool Process1DProcedureNode::hasProcessedData() const { return (processedData_ != nullptr); }
 
 // Return processed data
 const Data1D &Process1DProcedureNode::processedData() const
@@ -103,7 +103,7 @@ SequenceProcedureNode *Process1DProcedureNode::addNormalisationBranch()
 }
 
 // Return whether this node has a branch
-bool Process1DProcedureNode::hasBranch() const { return (normalisationBranch_ != NULL); }
+bool Process1DProcedureNode::hasBranch() const { return (normalisationBranch_ != nullptr); }
 
 // Return SequenceNode for the branch (if it exists)
 SequenceProcedureNode *Process1DProcedureNode::branch() { return normalisationBranch_; }

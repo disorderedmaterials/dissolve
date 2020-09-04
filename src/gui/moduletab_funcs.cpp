@@ -36,8 +36,8 @@ ModuleTab::ModuleTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTab
 
     Locker refreshLocker(refreshLock_);
 
-    controlsWidget_ = NULL;
-    moduleWidget_ = NULL;
+    controlsWidget_ = nullptr;
+    moduleWidget_ = nullptr;
     splitter_ = new QSplitter(Qt::Horizontal, this);
 
     // Create a layout, add the splitter, and add it to the window
@@ -93,8 +93,8 @@ void ModuleTab::initialiseControls(Module *module)
     splitter_->addWidget(controlsWidget_);
 
     // Create a module widget if there are additional GUI elements available for the Module
-    moduleWidget_ = module->createWidget(NULL, dissolve_);
-    if (moduleWidget_ == NULL)
+    moduleWidget_ = module->createWidget(nullptr, dissolve_);
+    if (moduleWidget_ == nullptr)
         Messenger::printVerbose("Module '{}' did not provide a valid controller widget.\n", module->type());
     else
     {

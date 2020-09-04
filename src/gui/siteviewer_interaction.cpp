@@ -32,7 +32,7 @@
 SpeciesAtom *SiteViewer::atomAt(int x, int y)
 {
     if (!species_)
-        return NULL;
+        return nullptr;
 
     double lengthScale;
     Vec3<double> rScreen;
@@ -54,7 +54,7 @@ SpeciesAtom *SiteViewer::atomAt(int x, int y)
             return i;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 /*
@@ -167,7 +167,7 @@ void SiteViewer::cancelInteraction()
     }
 
     // Reset other data
-    clickedAtom_ = NULL;
+    clickedAtom_ = nullptr;
 }
 
 /*

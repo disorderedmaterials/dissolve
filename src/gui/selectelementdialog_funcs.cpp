@@ -51,5 +51,5 @@ Element *SelectElementDialog::selectElement(Element *currentElement)
     if (exec() == QDialog::Accepted)
         return ui_.ElementWidget->currentElement();
     else
-        return NULL;
+        return nullptr;
 }

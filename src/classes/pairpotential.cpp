@@ -123,12 +123,12 @@ PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme() 
 void PairPotential::setData1DNames()
 {
     // Check for NULL pointers
-    if (atomTypeI_ == NULL)
+    if (atomTypeI_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL AtomType pointer (atomTypeI_) found in PairPotential::setData1DNames().\n");
         return;
     }
-    if (atomTypeJ_ == NULL)
+    if (atomTypeJ_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL AtomType pointer (atomTypeJ_) found in PairPotential::setData1DNames().\n");
         return;
@@ -242,7 +242,7 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
 std::string_view PairPotential::atomTypeNameI() const
 {
     // Check for NULL pointers
-    if (atomTypeI_ == NULL)
+    if (atomTypeI_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL AtomType pointer found in PairPotential::atomTypeNameI().\n");
         return "NULL";
@@ -254,7 +254,7 @@ std::string_view PairPotential::atomTypeNameI() const
 std::string_view PairPotential::atomTypeNameJ() const
 {
     // Check for NULL pointers
-    if (atomTypeJ_ == NULL)
+    if (atomTypeJ_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL AtomType pointer found in PairPotential::atomTypeNameJ().\n");
         return "NULL";
@@ -468,7 +468,7 @@ void PairPotential::calculateDUFull()
 bool PairPotential::tabulate(double maxR, double delta, bool includeCoulomb)
 {
     // Check that AtomType pointers were set at some pointer
-    if ((atomTypeI_ == NULL) || (atomTypeJ_ == NULL))
+    if ((atomTypeI_ == nullptr) || (atomTypeJ_ == nullptr))
     {
         Messenger::error("NULL_POINTER - One or both AtomTypes in PairPotential are NULL.\n");
         return false;

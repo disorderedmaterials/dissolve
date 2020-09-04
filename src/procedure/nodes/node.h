@@ -161,14 +161,14 @@ class ProcedureNode : public ListItem<ProcedureNode>
     // Return list of nodes of specified type present in this node's scope
     RefList<ProcedureNode> nodesInScope(ProcedureNode::NodeType nt);
     // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
-    ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = NULL,
+    ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = nullptr,
                               ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
     // Return list of nodes of specified type present in the Procedure
     RefList<ProcedureNode> nodes(ProcedureNode::NodeType nt);
     // Return whether the named parameter is currently in scope
-    ExpressionVariable *parameterInScope(std::string_view name, ExpressionVariable *excludeParameter = NULL);
+    ExpressionVariable *parameterInScope(std::string_view name, ExpressionVariable *excludeParameter = nullptr);
     // Return whether the named parameter exists anywhere in the same Procedure
-    ExpressionVariable *parameterExists(std::string_view name, ExpressionVariable *excludeParameter = NULL) const;
+    ExpressionVariable *parameterExists(std::string_view name, ExpressionVariable *excludeParameter = nullptr) const;
     // Create and return reference list of parameters in scope
     RefList<ExpressionVariable> parametersInScope();
 
@@ -186,7 +186,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
      */
     public:
     // Return whether this node has the named parameter specified
-    virtual ExpressionVariable *hasParameter(std::string_view name, ExpressionVariable *excludeParameter = NULL);
+    virtual ExpressionVariable *hasParameter(std::string_view name, ExpressionVariable *excludeParameter = nullptr);
     // Return references to all parameters for this node
     virtual RefList<ExpressionVariable> parameterReferences() const;
 

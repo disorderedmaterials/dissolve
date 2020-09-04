@@ -39,7 +39,7 @@ template <> class GenericItemContainer<Array<DummyClass>> : public GenericItem
     {
         if (DissolveSys::sameString(className, "Array<Data1D>"))
             return new GenericItemContainer<Array<Data1D>>(name, flags);
-        return NULL;
+        return nullptr;
     }
 
     public:

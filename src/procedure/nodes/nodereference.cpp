@@ -32,7 +32,7 @@ ProcedureNodeReference::ProcedureNodeReference(ProcedureNode *node) : ListItem<P
     for (int n = 0; n < ProcedureNode::nNodeTypes; ++n)
         allowedTypes_[n] = false;
 
-    analyseModuleParent_ = NULL;
+    analyseModuleParent_ = nullptr;
 }
 
 ProcedureNodeReference::~ProcedureNodeReference() {}
@@ -58,7 +58,7 @@ void ProcedureNodeReference::setAllowAllNodeTypes()
 }
 
 // Return if node pointer is NULL
-bool ProcedureNodeReference::isNull() const { return (node_ == NULL); }
+bool ProcedureNodeReference::isNull() const { return (node_ == nullptr); }
 
 /*
  * Operators
@@ -80,7 +80,7 @@ void ProcedureNodeReference::operator=(const ProcedureNodeReference &nodeRef)
 // Read structure from specified LineParser
 bool ProcedureNodeReference::read(LineParser &parser, int startArg, CoreData &coreData, const Procedure *procedure)
 {
-    node_ = NULL;
+    node_ = nullptr;
 
     // If two arguments are provided, the second is the identifying name of an AnalyseModule
     if (parser.nArgs() == (startArg + 2))
@@ -114,7 +114,7 @@ bool ProcedureNodeReference::read(LineParser &parser, int startArg, CoreData &co
     if (!allowedTypes_[node_->type()])
         return Messenger::error("Node '{}' is not of the correct type.\n", node_->name());
 
-    return (node_ != NULL);
+    return (node_ != nullptr);
 }
 
 // Write structure to specified LineParser

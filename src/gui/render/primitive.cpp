@@ -209,7 +209,7 @@ void Primitive::popInstance(const QOpenGLContext *context)
     QOpenGLFunctions *glFunctions = context->functions();
 
     PrimitiveInstance *pi = instances_.last();
-    if (pi != NULL)
+    if (pi != nullptr)
     {
         if (pi->context() == context)
         {
@@ -248,7 +248,7 @@ void Primitive::sendToGL() const
     {
         // Grab topmost instance
         PrimitiveInstance *pi = instances_.last();
-        if (pi == NULL)
+        if (pi == nullptr)
             Messenger::error("Internal Error: No instance on stack in primitive.\n");
         else if (pi->type() == PrimitiveInstance::VBOInstance)
         {
@@ -268,7 +268,7 @@ void Primitive::sendToGL() const
             if (indexData_.nItems() != 0)
                 functions->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pi->vboIndexObject());
 
-            glInterleavedArrays(colouredVertexData_ ? GL_C4F_N3F_V3F : GL_N3F_V3F, 0, NULL);
+            glInterleavedArrays(colouredVertexData_ ? GL_C4F_N3F_V3F : GL_N3F_V3F, 0, nullptr);
             if (indexData_.nItems() != 0)
                 glDrawElements(type_, indexData_.nItems(), GL_UNSIGNED_INT, 0);
             else
@@ -309,7 +309,7 @@ GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
 {
     if (colouredVertexData_)
     {
-        if (rgba == NULL)
+        if (rgba == nullptr)
         {
             Messenger::error("Internal Error: No colour given to defineVertex(), but the Primitive requires one.\n");
             return -1;
@@ -321,7 +321,7 @@ GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
         vertexData_.add(rgba[2]);
         vertexData_.add(rgba[3]);
     }
-    else if (rgba != NULL)
+    else if (rgba != nullptr)
     {
         Messenger::error("Internal Error: Colour given to defineVertex(), but the Primitive does not require one.\n");
         return -1;

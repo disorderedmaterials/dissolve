@@ -57,7 +57,7 @@ GenericItem *GenericList::create(std::string_view name, std::string_view itemCla
     if (!newItem)
     {
         Messenger::error("GenericList::create() doesn't know how to create an item of type '{}'\n", itemClassName);
-        return NULL;
+        return nullptr;
     }
 
     // Add the new item to our list
@@ -78,7 +78,7 @@ bool GenericList::contains(std::string_view name, std::string_view prefix)
     // Construct full name
     std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
-    for (auto *item = items_.first(); item != NULL; item = item->next())
+    for (auto *item = items_.first(); item != nullptr; item = item->next())
         if (DissolveSys::sameString(item->name(), varName))
             return true;
 
@@ -101,10 +101,10 @@ List<GenericItem> &GenericList::items() { return items_; }
 // Return the named item from the list
 GenericItem *GenericList::find(std::string_view name)
 {
-    for (auto *item = items_.first(); item != NULL; item = item->next())
+    for (auto *item = items_.first(); item != nullptr; item = item->next())
         if (DissolveSys::sameString(item->name(), name))
             return item;
-    return NULL;
+    return nullptr;
 }
 
 // Return the named item from the list (with prefix)
@@ -113,10 +113,10 @@ GenericItem *GenericList::find(std::string_view name, std::string_view prefix)
     // Construct full name
     std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
-    for (auto *item = items_.first(); item != NULL; item = item->next())
+    for (auto *item = items_.first(); item != nullptr; item = item->next())
         if (DissolveSys::sameString(item->name(), varName))
             return item;
-    return NULL;
+    return nullptr;
 }
 
 // Return the version of the named item from the list
@@ -125,7 +125,7 @@ int GenericList::version(std::string_view name, std::string_view prefix) const
     // Construct full name
     std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
-    for (auto *item = items_.first(); item != NULL; item = item->next())
+    for (auto *item = items_.first(); item != nullptr; item = item->next())
         if (DissolveSys::sameString(item->name(), varName))
             return item->version();
 
@@ -136,7 +136,7 @@ int GenericList::version(std::string_view name, std::string_view prefix) const
 RefList<GenericItem> GenericList::itemsWithPrefix(std::string_view prefix)
 {
     RefList<GenericItem> items;
-    for (auto *item = items_.first(); item != NULL; item = item->next())
+    for (auto *item = items_.first(); item != nullptr; item = item->next())
     {
         if (DissolveSys::beforeChar(item->name(), '_') == prefix)
             items.append(item);
@@ -149,7 +149,7 @@ RefList<GenericItem> GenericList::itemsWithPrefix(std::string_view prefix)
 RefList<GenericItem> GenericList::itemsWithClassName(std::string_view className)
 {
     RefList<GenericItem> items;
-    for (auto *item = items_.first(); item != NULL; item = item->next())
+    for (auto *item = items_.first(); item != nullptr; item = item->next())
         if (DissolveSys::sameString(item->itemClassName(), className))
             items.append(item);
 
@@ -160,7 +160,7 @@ RefList<GenericItem> GenericList::itemsWithClassName(std::string_view className)
 void GenericList::listItems()
 {
     auto count = 0;
-    for (auto *item = items_.first(); item != NULL; item = item->next(), ++count)
+    for (auto *item = items_.first(); item != nullptr; item = item->next(), ++count)
         Messenger::print("  {:3d}  {}", count, item->name());
 }
 
@@ -204,9 +204,9 @@ bool GenericList::rename(std::string_view oldName, std::string_view oldPrefix, s
 // Prune all items with '@suffix'
 void GenericList::pruneWithSuffix(std::string_view suffix)
 {
-    GenericItem *nextItem = NULL;
+    GenericItem *nextItem = nullptr;
     GenericItem *item = items_.first();
-    while (item != NULL)
+    while (item != nullptr)
     {
         if (DissolveSys::endsWith(item->name(), suffix))
         {
@@ -226,7 +226,7 @@ void GenericList::pruneWithSuffix(std::string_view suffix)
 // Broadcast all data
 bool GenericList::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 {
-    for (auto *item = items_.first(); item != NULL; item = item->next())
+    for (auto *item = items_.first(); item != nullptr; item = item->next())
     {
         Messenger::printVerbose("Broadcasting data '{}' ({})...\n", item->name(), item->itemClassName());
         if (!item->broadcast(procPool, root, coreData))
@@ -250,7 +250,7 @@ bool GenericList::equality(ProcessPool &procPool)
         if (procPool.poolRank() == n)
         {
             // Loop over GenericItems in list
-            for (auto *item = items_.first(); item != NULL; item = item->next())
+            for (auto *item = items_.first(); item != nullptr; item = item->next())
             {
                 // If we have already checked this item, move on...
                 if (checkedItems.contains(item))

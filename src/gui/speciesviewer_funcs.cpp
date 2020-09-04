@@ -27,12 +27,12 @@
 SpeciesViewer::SpeciesViewer(QWidget *parent) : BaseViewer(parent)
 {
     // Source data
-    species_ = NULL;
-    speciesRenderable_ = NULL;
+    species_ = nullptr;
+    speciesRenderable_ = nullptr;
 
     // Interaction
     setInteractionMode(SpeciesViewer::DefaultInteraction);
-    clickedAtom_ = NULL;
+    clickedAtom_ = nullptr;
     drawElement_ = &Elements::element(ELEMENT_C);
 
     // Set up the view
@@ -55,7 +55,7 @@ SpeciesViewer::~SpeciesViewer() {}
 void SpeciesViewer::setSpecies(Species *sp)
 {
     species_ = sp;
-    speciesRenderable_ = NULL;
+    speciesRenderable_ = nullptr;
 
     // Clear Renderables
     clearRenderables();

@@ -25,7 +25,7 @@
 #include "classes/configuration.h"
 
 Procedure::Procedure(ProcedureNode::NodeContext context, std::string_view blockTerminationKeyword)
-    : rootSequence_(context, this, NULL, blockTerminationKeyword)
+    : rootSequence_(context, this, nullptr, blockTerminationKeyword)
 {
     context_ = context;
 }

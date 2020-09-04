@@ -22,4 +22,4 @@
 #include "modules/benchmark/benchmark.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *BenchmarkModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *BenchmarkModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

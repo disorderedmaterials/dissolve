@@ -319,4 +319,4 @@ bool Module::readProcessTimes(LineParser &parser)
  */
 
 // Return a new widget controlling this Module
-ModuleWidget *Module::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *Module::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

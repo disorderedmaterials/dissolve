@@ -27,7 +27,7 @@
 
 SpeciesSite::SpeciesSite() : ListItem<SpeciesSite>()
 {
-    parent_ = NULL;
+    parent_ = nullptr;
     originMassWeighted_ = false;
 }
 
@@ -295,9 +295,9 @@ Site *SpeciesSite::createFromParent() const
     // Get origin atom indices from site
     Array<int> originIndices = originAtomIndices();
     if (originIndices.nItems() == 0)
-        return NULL;
+        return nullptr;
 
-    Site *site = NULL;
+    Site *site = nullptr;
 
     // Calculate origin
     Vec3<double> origin;
@@ -357,10 +357,10 @@ Site *SpeciesSite::createFromParent() const
         Vec3<double> z = x * y;
 
         // Store data
-        site = new OrientedSite(NULL, origin, x, y, z);
+        site = new OrientedSite(nullptr, origin, x, y, z);
     }
     else
-        site = new Site(NULL, origin);
+        site = new Site(nullptr, origin);
 
     return site;
 }

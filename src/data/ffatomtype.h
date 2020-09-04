@@ -34,14 +34,14 @@ class ForcefieldParameters;
 class ForcefieldAtomType : public ElementReference
 {
     public:
-    ForcefieldAtomType(const Forcefield *parent = NULL, int Z = 0, int index = -1, std::string_view name = NULL,
-                       std::string_view netaDefinition = NULL, std::string_view description = NULL, double q = 0.0,
+    ForcefieldAtomType(const Forcefield *parent = NULL, int Z = 0, int index = -1, std::string_view name = "",
+                       std::string_view netaDefinition = "", std::string_view description = "", double q = 0.0,
                        double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
-    ForcefieldAtomType(const Forcefield *parent = NULL, int Z = 0, int index = -1, std::string_view name = NULL,
-                       std::string_view netaDefinition = NULL, std::string_view description = NULL, double q = 0.0,
-                       std::string_view parameterReference = NULL);
+    ForcefieldAtomType(const Forcefield *parent = NULL, int Z = 0, int index = -1, std::string_view name = "",
+                       std::string_view netaDefinition = "", std::string_view description = NULL, double q = 0.0,
+                       std::string_view parameterReference = "");
     ForcefieldAtomType(const Forcefield *parent, const ForcefieldAtomType &sourceType, std::string_view newTypeName,
-                       std::string_view netaDefinition = NULL, std::string_view equivalentName = NULL);
+                       std::string_view netaDefinition = "", std::string_view equivalentName = "");
     virtual ~ForcefieldAtomType();
     ForcefieldAtomType(const ForcefieldAtomType &source);
     ForcefieldAtomType(const ForcefieldAtomType &&source);

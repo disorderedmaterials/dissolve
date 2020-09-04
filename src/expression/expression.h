@@ -76,8 +76,9 @@ class Expression
     // Associate a command-based node to the Expression
     ExpressionNode *addFunctionNodeWithArglist(ExpressionFunctions::Function func, ExpressionNode *arglist);
     // Add a function node to the list (overloaded to accept simple arguments instead of a list)
-    ExpressionNode *addFunctionNode(ExpressionFunctions::Function func, ExpressionNode *arg1 = NULL,
-                                    ExpressionNode *arg2 = NULL, ExpressionNode *arg3 = NULL, ExpressionNode *arg4 = NULL);
+    ExpressionNode *addFunctionNode(ExpressionFunctions::Function func, ExpressionNode *arg1 = nullptr,
+                                    ExpressionNode *arg2 = nullptr, ExpressionNode *arg3 = nullptr,
+                                    ExpressionNode *arg4 = nullptr);
     // Add a value node, targetting the supplied variable
     ExpressionNode *addValueNode(ExpressionVariable *var);
     // Join two nodes together
@@ -103,10 +104,10 @@ class Expression
     ExpressionVariable *createConstant(ExpressionValue value, bool persistent = false);
     // Create integer variable, with optional ExpressionNode as initial value source
     ExpressionVariable *createIntegerVariable(std::string_view name, bool persistent = false,
-                                              ExpressionNode *initialValue = NULL);
+                                              ExpressionNode *initialValue = nullptr);
     // Create double variable, with optional ExpressionNode as initial value source
     ExpressionVariable *createDoubleVariable(std::string_view name, bool persistent = false,
-                                             ExpressionNode *initialValue = NULL);
+                                             ExpressionNode *initialValue = nullptr);
     // Create variable with supplied initial value
     ExpressionVariable *createVariableWithValue(std::string_view name, ExpressionValue initialValue, bool persistent = false);
     // Set list of external variables

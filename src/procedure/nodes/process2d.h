@@ -34,7 +34,7 @@ class NodeScopeStack;
 class Process2DProcedureNode : public ProcedureNode
 {
     public:
-    Process2DProcedureNode(const Collect2DProcedureNode *target = NULL);
+    Process2DProcedureNode(const Collect2DProcedureNode *target = nullptr);
     ~Process2DProcedureNode();
 
     /*

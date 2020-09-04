@@ -30,11 +30,11 @@
 bool Configuration::createBox(const Vec3<double> lengths, const Vec3<double> angles, bool nonPeriodic)
 {
     // Remove old box if present
-    if (box_ != NULL)
+    if (box_ != nullptr)
     {
         Messenger::printVerbose("Removing existing Box definition for Configuration '{}'...\n", niceName());
         delete box_;
-        box_ = NULL;
+        box_ = nullptr;
     }
 
     if (nonPeriodic)

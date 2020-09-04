@@ -55,7 +55,7 @@ EnergyModuleWidget::EnergyModuleWidget(QWidget *parent, EnergyModule *module) : 
     view.axes().setNumberFormat(1, numberFormat);
     view.setAutoFollowType(View::XAutoFollow);
 
-    currentConfiguration_ = NULL;
+    currentConfiguration_ = nullptr;
 
     setGraphDataTargets(module_);
 

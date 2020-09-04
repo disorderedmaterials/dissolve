@@ -27,7 +27,7 @@
 ConfigurationViewer::ConfigurationViewer(QWidget *parent) : BaseViewer(parent)
 {
     // Source data
-    configuration_ = NULL;
+    configuration_ = nullptr;
 
     // Interaction
     setInteractionMode(ConfigurationViewer::DefaultInteraction);
@@ -53,7 +53,7 @@ ConfigurationViewer::~ConfigurationViewer() {}
 void ConfigurationViewer::setConfiguration(Configuration *sp)
 {
     configuration_ = sp;
-    configurationRenderable_ = NULL;
+    configurationRenderable_ = nullptr;
 
     // Clear Renderables
     clearRenderables();

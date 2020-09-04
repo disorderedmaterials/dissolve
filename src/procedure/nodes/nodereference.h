@@ -32,7 +32,7 @@ class AnalyseModule;
 class ProcedureNodeReference : public ListItem<ProcedureNodeReference>
 {
     public:
-    ProcedureNodeReference(ProcedureNode *node = NULL);
+    ProcedureNodeReference(ProcedureNode *node = nullptr);
     ~ProcedureNodeReference();
 
     /*

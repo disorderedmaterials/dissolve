@@ -33,7 +33,7 @@ class DropWidget : public QWidget
 
     public:
     // Constructor
-    DropWidget(QWidget *parent = NULL);
+    DropWidget(QWidget *parent = nullptr);
 
     /*
      * Reimplementations

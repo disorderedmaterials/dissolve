@@ -35,7 +35,7 @@ class NodeScopeStack;
 class Sum1DProcedureNode : public ProcedureNode
 {
     public:
-    Sum1DProcedureNode(const Process1DProcedureNode *target = NULL);
+    Sum1DProcedureNode(const Process1DProcedureNode *target = nullptr);
     ~Sum1DProcedureNode();
 
     /*

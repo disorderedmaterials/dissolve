@@ -34,9 +34,9 @@ ExpressionNode::ExpressionNode() : ListItem<ExpressionNode>()
 {
     // Private variables
     readOnly_ = true;
-    parent_ = NULL;
-    nextArgument = NULL;
-    prevArgument = NULL;
+    parent_ = nullptr;
+    nextArgument = nullptr;
+    prevArgument = nullptr;
     nodeType_ = ExpressionNode::BasicNode;
 }
 
@@ -94,7 +94,7 @@ bool ExpressionNode::hasArg(int i) { return (i < args_.nItems()); }
 // Add list of arguments formas as a plain List<Node>, beginning from supplied list head
 void ExpressionNode::addListArguments(ExpressionNode *leaf)
 {
-    for (auto *node = leaf; node != NULL; node = node->next())
+    for (auto *node = leaf; node != nullptr; node = node->next())
         args_.append(node);
 }
 
@@ -106,10 +106,10 @@ void ExpressionNode::addJoinedArguments(ExpressionNode *lastleaf)
      * if Joined by the parser) Therefore, must walk backwards through the list first to get to the head...
      */
     ExpressionNode *first;
-    for (first = lastleaf; first != NULL; first = first->prevArgument)
-        if (first->prevArgument == NULL)
+    for (first = lastleaf; first != nullptr; first = first->prevArgument)
+        if (first->prevArgument == nullptr)
             break;
-    for (auto *node = first; node != NULL; node = node->nextArgument)
+    for (auto *node = first; node != nullptr; node = node->nextArgument)
         args_.append(node);
 }
 
@@ -196,7 +196,7 @@ ExpressionNode *ExpressionNode::argNode(int i)
         Messenger::printVerbose("ExpressionNode::argNode : Argument index {} is out of range for returning the "
                                 "argument node.\n",
                                 i);
-        return NULL;
+        return nullptr;
     }
     return args_[i]->item();
 }

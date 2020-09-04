@@ -28,7 +28,7 @@
 
 IsotopeData::IsotopeData() : ListItem<IsotopeData>()
 {
-    isotope_ = NULL;
+    isotope_ = nullptr;
     population_ = 0.0;
     fraction_ = 0.0;
 }
@@ -50,7 +50,7 @@ void IsotopeData::operator=(const IsotopeData &source)
 bool IsotopeData::initialise(Isotope *isotope)
 {
     isotope_ = isotope;
-    if (isotope_ == NULL)
+    if (isotope_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL Isotope pointer passed to IsotopeData::initialise().\n");
         return false;

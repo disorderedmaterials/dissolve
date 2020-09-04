@@ -75,6 +75,6 @@ class ElementSelector : public QWidget
      */
     public:
     // Get Element from user via input dialog
-    static Element *getElement(QWidget *parent, QString title, QString labelText, Element *element, bool *ok = NULL,
+    static Element *getElement(QWidget *parent, QString title, QString labelText, Element *element, bool *ok = nullptr,
                                Qt::WindowFlags flags = Qt::Dialog);
 };

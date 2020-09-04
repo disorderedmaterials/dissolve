@@ -44,7 +44,7 @@ bool GeometryOptimisationModule::process(Dissolve &dissolve, ProcessPool &procPo
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     // Loop over target Configurations
-    for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != NULL; ri = ri->next())
+    for (RefListItem<Configuration> *ri = targetConfigurations_.first(); ri != nullptr; ri = ri->next())
     {
         // Grab Configuration pointer
         Configuration *cfg = ri->item();

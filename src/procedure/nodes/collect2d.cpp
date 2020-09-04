@@ -54,7 +54,7 @@ Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNodeBase *xObse
                   "Branch which runs if the target quantities were binned successfully");
 
     // Initialise branch
-    subCollectBranch_ = NULL;
+    subCollectBranch_ = nullptr;
 }
 
 Collect2DProcedureNode::~Collect2DProcedureNode() {}
@@ -118,7 +118,7 @@ SequenceProcedureNode *Collect2DProcedureNode::addSubCollectBranch(ProcedureNode
 }
 
 // Return whether this node has a branch
-bool Collect2DProcedureNode::hasBranch() const { return (subCollectBranch_ != NULL); }
+bool Collect2DProcedureNode::hasBranch() const { return (subCollectBranch_ != nullptr); }
 // Return SequenceNode for the branch (if it exists)
 SequenceProcedureNode *Collect2DProcedureNode::branch() { return subCollectBranch_; }
 

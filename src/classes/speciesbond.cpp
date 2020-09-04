@@ -119,7 +119,7 @@ SpeciesAtom *SpeciesBond::partner(const SpeciesAtom *i) const { return (i == i_ 
 int SpeciesBond::indexI() const
 {
 #ifdef CHECKS
-    if (i_ == NULL)
+    if (i_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesBond::indexI(). Returning 0...\n");
         return 0;
@@ -132,7 +132,7 @@ int SpeciesBond::indexI() const
 int SpeciesBond::indexJ() const
 {
 #ifdef CHECKS
-    if (j_ == NULL)
+    if (j_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesBond::indexJ(). Returning 0...\n");
         return 0;
@@ -167,7 +167,7 @@ bool SpeciesBond::matches(const SpeciesAtom *i, const SpeciesAtom *j) const
 bool SpeciesBond::isSelected() const
 {
 #ifdef CHECKS
-    if (i_ == NULL || j_ == NULL)
+    if (i_ == nullptr || j_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesBond::isSelected(). Returning false...\n");
         return false;

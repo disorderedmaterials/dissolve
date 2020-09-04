@@ -34,8 +34,8 @@ Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
 
 ImportSpeciesWizard::ImportSpeciesWizard(QWidget *parent) : temporaryDissolve_(temporaryCoreData_)
 {
-    dissolveReference_ = NULL;
-    importTarget_ = NULL;
+    dissolveReference_ = nullptr;
+    importTarget_ = nullptr;
 
     // Set up our UI, and attach the wizard's widgets to placeholder widgets (if available)
     ui_.setupUi(this);
@@ -88,7 +88,7 @@ Species *ImportSpeciesWizard::importSpecies(Dissolve &dissolve)
     if (!importTarget_)
     {
         Messenger::error("No target Species to import!\n");
-        return NULL;
+        return nullptr;
     }
 
     // Set the final name of the new Species
@@ -158,7 +158,7 @@ bool ImportSpeciesWizard::prepareForNextPage(int currentIndex)
             }
             // Update the Species and AtomTypes lists
             ui_.SpeciesList->clear();
-            for (auto *sp = temporaryDissolve_.species().first(); sp != NULL; sp = sp->next())
+            for (auto *sp = temporaryDissolve_.species().first(); sp != nullptr; sp = sp->next())
             {
                 QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(std::string(sp->name())));
                 item->setData(Qt::UserRole, VariantPointer<Species>(sp));
@@ -254,7 +254,7 @@ void ImportSpeciesWizard::on_SpeciesList_currentRowChanged(int currentRow)
 {
     // Set import target from current row
     if (currentRow == -1)
-        importTarget_ = NULL;
+        importTarget_ = nullptr;
     else
     {
         importTarget_ = VariantPointer<Species>(ui_.SpeciesList->currentItem()->data(Qt::UserRole));
@@ -535,7 +535,7 @@ void ImportSpeciesWizard::on_SpeciesNameEdit_textChanged(const QString text)
     if (text.isEmpty())
         readyForImport = false;
     else
-        readyForImport = dissolveReference_->findSpecies(qPrintable(text)) == NULL;
+        readyForImport = dissolveReference_->findSpecies(qPrintable(text)) == nullptr;
 
     ui_.SpeciesNameIndicator->setOK(readyForImport);
 

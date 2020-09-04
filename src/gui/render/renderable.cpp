@@ -60,7 +60,7 @@ Renderable::Renderable(Renderable::RenderableType type, std::string_view objectT
     objectTag_ = objectTag;
 
     // Group
-    group_ = NULL;
+    group_ = nullptr;
 
     // Transform
     valuesTransformDataVersion_ = -1;

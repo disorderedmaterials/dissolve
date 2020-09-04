@@ -25,7 +25,7 @@
 
 CellArray::CellArray()
 {
-    cells_ = NULL;
+    cells_ = nullptr;
     nCells_ = 0;
 }
 
@@ -38,9 +38,9 @@ CellArray::~CellArray() {}
 // Clear Cell arrays
 void CellArray::clear()
 {
-    if (cells_ != NULL)
+    if (cells_ != nullptr)
         delete[] cells_;
-    cells_ = NULL;
+    cells_ = nullptr;
     nCells_ = 0;
 }
 
@@ -281,7 +281,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
         mimNeighbours.clear();
 
         // Loop over list of (relative) neighbour cell indices
-        for (ListVec3<int> *item = neighbourIndices_.first(); item != NULL; item = item->next())
+        for (ListVec3<int> *item = neighbourIndices_.first(); item != nullptr; item = item->next())
         {
             // Retrieve Cell pointer
             nbr = cell(gridRef.x + item->x, gridRef.y + item->y, gridRef.z + item->z);
@@ -370,14 +370,14 @@ bool CellArray::withinRange(const Cell *a, const Cell *b, double distance)
 {
 #ifdef CHECKS
     // Check for NULL cell pointers
-    if (a == NULL)
+    if (a == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Cell pointer 'a' given to CellArray::withinRange().\n");
+        Messenger::error("NULL_POINTER - nullptr 'a' given to CellArray::withinRange().\n");
         return false;
     }
-    if (b == NULL)
+    if (b == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Cell pointer 'b' given to CellArray::withinRange().\n");
+        Messenger::error("NULL_POINTER - nullptr 'b' given to CellArray::withinRange().\n");
         return false;
     }
 #endif
@@ -406,14 +406,14 @@ bool CellArray::minimumImageRequired(const Cell *a, const Cell *b, double distan
 {
 #ifdef CHECKS
     // Check for NULL cell pointers
-    if (a == NULL)
+    if (a == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Cell pointer 'a' given to CellArray::minimumImageRequired().\n");
+        Messenger::error("NULL_POINTER - nullptr 'a' given to CellArray::minimumImageRequired().\n");
         return false;
     }
-    if (b == NULL)
+    if (b == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Cell pointer 'b' given to CellArray::minimumImageRequired().\n");
+        Messenger::error("NULL_POINTER - nullptr 'b' given to CellArray::minimumImageRequired().\n");
         return false;
     }
 #endif

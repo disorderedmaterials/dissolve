@@ -37,7 +37,7 @@
 class LineParser
 {
     public:
-    LineParser(ProcessPool *procPool = NULL);
+    LineParser(ProcessPool *procPool = nullptr);
     ~LineParser();
     // Parse Options Enum
     enum ParseOption
@@ -172,7 +172,7 @@ class LineParser
         {
             if (!directOutput_)
             {
-                if (cachedFile_ == NULL)
+                if (cachedFile_ == nullptr)
                 {
                     Messenger::print("Unable to delayed-writeLineF - destination cache is not open.\n");
                     result = false;
@@ -181,7 +181,7 @@ class LineParser
                     return false;
                 }
             }
-            else if (outputFile_ == NULL)
+            else if (outputFile_ == nullptr)
             {
                 Messenger::print("Unable to direct-writeLineF - destination file is not open.\n");
                 result = false;

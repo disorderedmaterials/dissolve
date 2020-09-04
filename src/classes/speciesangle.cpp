@@ -131,7 +131,7 @@ SpeciesAtom *SpeciesAngle::k() const { return k_; }
 int SpeciesAngle::indexI() const
 {
 #ifdef CHECKS
-    if (i_ == NULL)
+    if (i_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesAngle::indexI(). Returning 0...\n");
         return 0;
@@ -144,7 +144,7 @@ int SpeciesAngle::indexI() const
 int SpeciesAngle::indexJ() const
 {
 #ifdef CHECKS
-    if (j_ == NULL)
+    if (j_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesAngle::indexJ(). Returning 0...\n");
         return 0;
@@ -157,7 +157,7 @@ int SpeciesAngle::indexJ() const
 int SpeciesAngle::indexK() const
 {
 #ifdef CHECKS
-    if (k_ == NULL)
+    if (k_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'k' found in SpeciesAngle::indexK(). Returning 0...\n");
         return 0;
@@ -196,7 +196,7 @@ bool SpeciesAngle::matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const
 bool SpeciesAngle::isSelected() const
 {
 #ifdef CHECKS
-    if (i_ == NULL || j_ == NULL || k_ == NULL)
+    if (i_ == nullptr || j_ == nullptr || k_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesAngle::isSelected(). Returning false...\n");
         return false;

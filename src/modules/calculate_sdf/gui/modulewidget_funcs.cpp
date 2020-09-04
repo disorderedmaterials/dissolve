@@ -56,12 +56,12 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, CalculateSDF
     sdfView.axes().setRange(2, -10.0, 10.0);
     sdfView.setAutoFollowType(View::AllAutoFollow);
 
-    sdfRenderable_ = NULL;
-    referenceMolecule_ = NULL;
-    referenceMoleculeRenderable_ = NULL;
+    sdfRenderable_ = nullptr;
+    referenceMolecule_ = nullptr;
+    referenceMoleculeRenderable_ = nullptr;
 
     // Add on "<None>" option for reference molecule
-    ui_.ReferenceMoleculeCombo->addItem("<None>", VariantPointer<Species>(NULL));
+    ui_.ReferenceMoleculeCombo->addItem("<None>", VariantPointer<Species>(nullptr));
 
     refreshing_ = false;
 
@@ -142,8 +142,8 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
 {
     // Remove any current data
     sdfGraph_->clearRenderables();
-    sdfRenderable_ = NULL;
-    referenceMoleculeRenderable_ = NULL;
+    sdfRenderable_ = nullptr;
+    referenceMoleculeRenderable_ = nullptr;
 
     if (!module_)
         return;
@@ -205,7 +205,7 @@ void CalculateSDFModuleWidget::on_ReferenceMoleculeCombo_currentIndexChanged(int
 
     // Check index...
     if (index == -1)
-        referenceMolecule_ = NULL;
+        referenceMolecule_ = nullptr;
     else
         referenceMolecule_ = VariantPointer<Species>(ui_.ReferenceMoleculeCombo->currentData());
 

@@ -31,9 +31,9 @@
 #include <string.h>
 
 // Static members
-const Forcefield *NETADefinitionGenerator::associatedForcefield_ = NULL;
-NETADefinition *NETADefinitionGenerator::definition_ = NULL;
-NETADefinitionGenerator *NETADefinitionGenerator::generator_ = NULL;
+const Forcefield *NETADefinitionGenerator::associatedForcefield_ = nullptr;
+NETADefinition *NETADefinitionGenerator::definition_ = nullptr;
+NETADefinitionGenerator *NETADefinitionGenerator::generator_ = nullptr;
 std::vector<Element *> NETADefinitionGenerator::targetElements_;
 std::vector<std::reference_wrapper<const ForcefieldAtomType>> NETADefinitionGenerator::targetAtomTypes_;
 RefList<NETANode> NETADefinitionGenerator::contextStack_;

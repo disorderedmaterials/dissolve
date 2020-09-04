@@ -171,7 +171,7 @@ Module *Dissolve::findMasterModule(std::string_view moduleType) const
             return module;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 // Return master Module instances
@@ -184,7 +184,7 @@ Module *Dissolve::createModuleInstance(std::string_view moduleType)
     if (!masterModule)
     {
         Messenger::error("No Module type '{}' exists.\n", moduleType);
-        return NULL;
+        return nullptr;
     }
 
     // Find a suitable unique name for the Module
@@ -208,7 +208,7 @@ Module *Dissolve::createModuleInstance(std::string_view moduleType, ModuleLayer 
 {
     Module *module = createModuleInstance(moduleType);
     if (!module)
-        return NULL;
+        return nullptr;
 
     // Add the new module instance to the specified destination layer
     destinationLayer->own(module);
@@ -225,7 +225,7 @@ Module *Dissolve::findModuleInstance(std::string_view uniqueName)
         if (DissolveSys::sameString(module->uniqueName(), uniqueName))
             return module;
 
-    return NULL;
+    return nullptr;
 }
 
 // Search for any instance of any Module with the specified Module type

@@ -55,7 +55,7 @@ void ExpressionFunction::nodePrint(int offset, std::string_view prefix)
     // Output node data
     Messenger::print("[CN]{}{} (Function) ({} arguments)\n", tab, ExpressionFunctions::data[function_].keyword, args_.nItems());
     // Output Argument data
-    for (RefListItem<ExpressionNode> *ri = args_.first(); ri != NULL; ri = ri->next())
+    for (RefListItem<ExpressionNode> *ri = args_.first(); ri != nullptr; ri = ri->next())
         ri->item()->nodePrint(offset + 1);
 }
 

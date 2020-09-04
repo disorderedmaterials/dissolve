@@ -61,7 +61,7 @@ Species *SelectSpeciesDialog::selectSpecies()
     if (exec() == QDialog::Accepted)
         return ui_.SpeciesWidget->currentSpecies().firstItem();
     else
-        return NULL;
+        return nullptr;
 }
 
 // Run the dialog, returning a list of selected Species

@@ -77,7 +77,7 @@ ProcedureNode::NodeExecutionResult CalculateVectorProcedureNode::execute(Process
 #ifdef CHECKS
     for (int n = 0; n < nSitesRequired(); ++n)
     {
-        if (sites_[n]->currentSite() == NULL)
+        if (sites_[n]->currentSite() == nullptr)
         {
             Messenger::error("Observable {} has no current site.\n", n);
             return ProcedureNode::Failure;

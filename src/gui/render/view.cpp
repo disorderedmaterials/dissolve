@@ -49,7 +49,7 @@ void View::clear()
 
     // Role
     viewType_ = View::AutoStretchedView;
-    linkedView_ = NULL;
+    linkedView_ = nullptr;
     autoFollowType_ = View::NoAutoFollow;
     autoFollowXLength_ = 20.0;
 
@@ -963,7 +963,7 @@ void View::autoFollowData()
         // Get y range over the horizontal range we've established
         auto first = true;
         double yMin = 0.0, yMax = 0.0, yMinTest = 0.0, yMaxTest = 0.0;
-        for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
+        for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
         {
             // Skip this Renderable if it is not currently visible
             if (!rend->isVisible())
@@ -1029,7 +1029,7 @@ Vec3<double> View::dataMinima()
 
     auto nCounted = 0;
     Vec3<double> v, minima;
-    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1062,7 +1062,7 @@ Vec3<double> View::dataMaxima()
 
     auto nCounted = 0;
     Vec3<double> v, maxima;
-    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1091,7 +1091,7 @@ Vec3<double> View::positiveDataMinima()
 {
     auto nCounted = 0;
     Vec3<double> v, minima;
-    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1124,7 +1124,7 @@ Vec3<double> View::positiveDataMaxima()
 {
     auto nCounted = 0;
     Vec3<double> v, maxima;
-    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())

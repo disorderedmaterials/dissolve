@@ -65,7 +65,7 @@ class Gizmo : public ListItem<Gizmo>
     // Return QMdiSubWindow containing the Gizmo
     QMdiSubWindow *window();
     // Find Gizmo with unique name provided
-    static Gizmo *find(const QString uniqueName, const Gizmo *excludeThis = NULL);
+    static Gizmo *find(const QString uniqueName, const Gizmo *excludeThis = nullptr);
     // Find Gizmo contained in specified subwindow
     static Gizmo *find(QMdiSubWindow *window);
     // Find all Gizmos of the specified type

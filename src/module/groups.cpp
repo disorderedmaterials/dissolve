@@ -59,11 +59,11 @@ ModuleGroup *ModuleGroups::addModule(Module *module, std::string_view groupName)
 {
     // Does the specified group exist?
     ModuleGroup *moduleGroup;
-    for (moduleGroup = groups_.first(); moduleGroup != NULL; moduleGroup = moduleGroup->next())
+    for (moduleGroup = groups_.first(); moduleGroup != nullptr; moduleGroup = moduleGroup->next())
         if (DissolveSys::sameString(moduleGroup->name(), groupName))
             break;
 
-    if (moduleGroup == NULL)
+    if (moduleGroup == nullptr)
     {
         moduleGroup = new ModuleGroup(groupName);
         groups_.own(moduleGroup);

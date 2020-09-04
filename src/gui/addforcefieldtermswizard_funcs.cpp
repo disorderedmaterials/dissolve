@@ -35,9 +35,9 @@ Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
 
 AddForcefieldTermsWizard::AddForcefieldTermsWizard(QWidget *parent) : temporaryDissolve_(temporaryCoreData_)
 {
-    dissolveReference_ = NULL;
-    targetSpecies_ = NULL;
-    modifiedSpecies_ = NULL;
+    dissolveReference_ = nullptr;
+    targetSpecies_ = nullptr;
+    modifiedSpecies_ = nullptr;
 
     // Set up our UI, and attach the wizard's widgets to placeholder widgets (if available)
     ui_.setupUi(this);

@@ -32,7 +32,7 @@ class Molecule;
 class Site
 {
     public:
-    Site(std::shared_ptr<const Molecule> molecule = NULL, Vec3<double> origin = Vec3<double>());
+    Site(std::shared_ptr<const Molecule> molecule = nullptr, Vec3<double> origin = Vec3<double>());
     virtual ~Site();
 
     /*
@@ -59,7 +59,7 @@ class Site
 class OrientedSite : public Site
 {
     public:
-    OrientedSite(std::shared_ptr<const Molecule> molecule = NULL, Vec3<double> origin = Vec3<double>(),
+    OrientedSite(std::shared_ptr<const Molecule> molecule = nullptr, Vec3<double> origin = Vec3<double>(),
                  Vec3<double> xAxis = Vec3<double>(), Vec3<double> yAxis = Vec3<double>(), Vec3<double> zAxis = Vec3<double>());
     ~OrientedSite();
 

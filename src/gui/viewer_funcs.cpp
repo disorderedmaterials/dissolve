@@ -30,11 +30,11 @@ BaseViewer::BaseViewer(QWidget *parent) : QOpenGLWidget(parent), view_(renderabl
     valid_ = false;
     drawing_ = false;
     renderingOffScreen_ = false;
-    offscreenBuffer_ = NULL;
+    offscreenBuffer_ = nullptr;
     pixelScaling_ = 1.0;
 
     // View
-    linkedViewer_ = NULL;
+    linkedViewer_ = nullptr;
 
     // Options
     axesVisible_ = true;

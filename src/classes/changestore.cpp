@@ -71,7 +71,7 @@ void ChangeStore::reset()
 // Update all Atom positions
 void ChangeStore::updateAll()
 {
-    for (auto *item = targetAtoms_.first(); item != NULL; item = item->next())
+    for (auto *item = targetAtoms_.first(); item != nullptr; item = item->next())
         item->updatePosition();
 }
 
@@ -112,7 +112,7 @@ void ChangeStore::updateAtom(int id)
 // Revert all atoms to their previous positions
 void ChangeStore::revertAll()
 {
-    for (auto *item = targetAtoms_.first(); item != NULL; item = item->next())
+    for (auto *item = targetAtoms_.first(); item != nullptr; item = item->next())
         item->revertPosition();
 }
 
@@ -136,7 +136,7 @@ void ChangeStore::storeAndReset()
 {
     ChangeData *item = targetAtoms_.first();
     ChangeData *nextItem;
-    while (item != NULL)
+    while (item != nullptr)
     {
         // Grab pointer to next item
         nextItem = item->next();
@@ -222,7 +222,7 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
     }
 #else
     // Apply atom changes
-    for (auto *data = changes_.first(); data != NULL; data = data->next())
+    for (auto *data = changes_.first(); data != nullptr; data = data->next())
     {
         // Set new coordinates and check cell position (Configuration::updateAtomInCell() will do all this)
         data->revertPosition();

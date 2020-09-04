@@ -22,4 +22,4 @@
 #include "modules/calculate_dangle/dangle.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *CalculateDAngleModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *CalculateDAngleModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

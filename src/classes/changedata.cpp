@@ -26,8 +26,8 @@
 
 ChangeData::ChangeData() : ListItem<ChangeData>()
 {
-    atom_ = NULL;
-    cell_ = NULL;
+    atom_ = nullptr;
+    cell_ = nullptr;
     moved_ = false;
 }
 
@@ -41,9 +41,9 @@ ChangeData::~ChangeData() {}
 void ChangeData::setAtom(Atom *i)
 {
 #ifdef CHECKS
-    if (i == NULL)
+    if (i == nullptr)
     {
-        Messenger::print("NULL_POINTER - NULL Atom pointer passed to ChangeData::setAtom().\n");
+        Messenger::print("NULL_POINTER - nullptr passed to ChangeData::setAtom().\n");
         return;
     }
 #endif

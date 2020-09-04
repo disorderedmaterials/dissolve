@@ -61,7 +61,7 @@ template <class T, class I> class TreeWidgetUpdater
         while (count < counter())
         {
             QTreeWidgetItem *treeItem = accessor(count);
-            I *rowData = (treeItem ? VariantPointer<I>(treeItem->data(0, Qt::UserRole)) : NULL);
+            I *rowData = (treeItem ? VariantPointer<I>(treeItem->data(0, Qt::UserRole)) : nullptr);
             if (rowData == dataItem)
             {
                 // Update the current row and quit the loop
@@ -217,7 +217,7 @@ template <class T, class I, class D> class TreeWidgetRefDataListUpdater
             while (count < parentItem->childCount())
             {
                 treeItem = parentItem->child(count);
-                I rowData = (treeItem ? treeItem->data(1, Qt::UserRole).value<I>() : NULL);
+                I rowData = (treeItem ? treeItem->data(1, Qt::UserRole).value<I>() : nullptr);
                 if (rowData == dataItem)
                 {
                     // Update the current row and quit the loop

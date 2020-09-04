@@ -32,7 +32,7 @@ void SiteViewer::mouseMoved(int dx, int dy)
         return;
 
     auto refresh = false;
-    SpeciesAtom *currentAtom = NULL;
+    SpeciesAtom *currentAtom = nullptr;
 
     // What we do here depends on the current mode
     switch (interactionMode())

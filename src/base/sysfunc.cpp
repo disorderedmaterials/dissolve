@@ -313,7 +313,7 @@ bool DissolveSys::fileExists(std::string_view filename)
 // Return string of current time / date
 std::string DissolveSys::currentTimeAndDate()
 {
-    auto currentTime = time(NULL);
+    auto currentTime = time(nullptr);
     auto *local = localtime(&currentTime);
 
     std::ostringstream timeStream;

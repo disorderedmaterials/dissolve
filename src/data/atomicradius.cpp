@@ -83,7 +83,7 @@ const AtomicRadiusData &AtomicRadius::radiusData(int Z)
 double AtomicRadius::radius(Element *element)
 {
 #ifdef CHECKS
-    if (element == NULL)
+    if (element == nullptr)
     {
         Messenger::error("AtomicRadius::radius() - Element is NULL.\n");
         return 0.0;

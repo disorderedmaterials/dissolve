@@ -53,11 +53,11 @@ SpeciesImproper::SpeciesImproper(SpeciesImproper &&source) : SpeciesIntra(source
 // Clear object, ready for re-use
 void SpeciesImproper::clear()
 {
-    parent_ = NULL;
-    i_ = NULL;
-    j_ = NULL;
-    k_ = NULL;
-    l_ = NULL;
+    parent_ = nullptr;
+    i_ = nullptr;
+    j_ = nullptr;
+    k_ = nullptr;
+    l_ = nullptr;
     form_ = SpeciesImproper::NoForm;
 }
 
@@ -73,13 +73,13 @@ void SpeciesImproper::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Spe
     k_ = k;
     l_ = l;
 #ifdef CHECKS
-    if (i_ == NULL)
+    if (i_ == nullptr)
         Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* i in SpeciesImproper::set().\n");
-    if (j_ == NULL)
+    if (j_ == nullptr)
         Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* j in SpeciesImproper::set().\n");
-    if (k_ == NULL)
+    if (k_ == nullptr)
         Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesImproper::set().\n");
-    if (l_ == NULL)
+    if (l_ == nullptr)
         Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* l in SpeciesImproper::set().\n");
 #endif
 
@@ -115,7 +115,7 @@ bool SpeciesImproper::uses(SpeciesAtom *spAtom) const
 int SpeciesImproper::indexI() const
 {
 #ifdef CHECKS
-    if (i_ == NULL)
+    if (i_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesImproper::indexI(). Returning 0...\n");
         return 0;
@@ -128,7 +128,7 @@ int SpeciesImproper::indexI() const
 int SpeciesImproper::indexJ() const
 {
 #ifdef CHECKS
-    if (j_ == NULL)
+    if (j_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesImproper::indexJ(). Returning 0...\n");
         return 0;
@@ -141,7 +141,7 @@ int SpeciesImproper::indexJ() const
 int SpeciesImproper::indexK() const
 {
 #ifdef CHECKS
-    if (k_ == NULL)
+    if (k_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'k' found in SpeciesImproper::indexK(). Returning 0...\n");
         return 0;
@@ -154,7 +154,7 @@ int SpeciesImproper::indexK() const
 int SpeciesImproper::indexL() const
 {
 #ifdef CHECKS
-    if (l_ == NULL)
+    if (l_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'l' found in SpeciesImproper::indexL(). Returning 0...\n");
         return 0;
@@ -208,7 +208,7 @@ bool SpeciesImproper::matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Sp
 bool SpeciesImproper::isSelected() const
 {
 #ifdef CHECKS
-    if (i_ == NULL || j_ == NULL || k_ == NULL || l_ == NULL)
+    if (i_ == nullptr || j_ == nullptr || k_ == nullptr || l_ == nullptr)
     {
         Messenger::error(
             "NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesImproper::isSelected(). Returning false...\n");

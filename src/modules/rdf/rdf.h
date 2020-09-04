@@ -119,8 +119,7 @@ class RDFModule : public Module
     static bool testReferencePartials(PartialSet &setA, PartialSet &setB, double testThreshold);
     // Test calculated partial against supplied reference data
     static bool testReferencePartial(const PartialSet &partials, double testThreshold, const Data1D &testData,
-                                     std::string_view typeIorTotal, std::string_view typeJ = NULL,
-                                     std::string_view target = NULL);
+                                     std::string_view typeIorTotal, std::string_view typeJ = "", std::string_view target = "");
     // Test calculated vs reference data (two source sets)
     static bool testReferencePartials(const Data1DStore &testData, double testThreshold, const PartialSet &partials,
                                       std::string_view prefix);

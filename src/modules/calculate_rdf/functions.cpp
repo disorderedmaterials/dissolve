@@ -32,7 +32,7 @@ const SelectProcedureNode *CalculateRDFModule::selectANode() const { return sele
 const Process1DProcedureNode *CalculateRDFModule::rdfResult() const
 {
     if ((!processDistance_) || (!processDistance_->hasProcessedData()))
-        return NULL;
+        return nullptr;
 
     return processDistance_;
 }

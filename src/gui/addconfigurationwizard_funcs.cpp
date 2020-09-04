@@ -32,8 +32,8 @@
 
 AddConfigurationWizard::AddConfigurationWizard(QWidget *parent)
 {
-    dissolveReference_ = NULL;
-    importTarget_ = NULL;
+    dissolveReference_ = nullptr;
+    importTarget_ = nullptr;
 
     // Set up our UI, and attach the wizard's widgets to placeholder widgets (if available)
     ui_.setupUi(this);
@@ -69,7 +69,7 @@ void AddConfigurationWizard::setMainDissolveReference(const Dissolve *dissolveRe
 Configuration *AddConfigurationWizard::importConfiguration(Dissolve &dissolve)
 {
     if (!importTarget_)
-        return NULL;
+        return nullptr;
 
     // Set the name of the Configuration from the name edit
     importTarget_->setName(qPrintable(ui_.FinishNameEdit->text()));
@@ -81,7 +81,7 @@ Configuration *AddConfigurationWizard::importConfiguration(Dissolve &dissolve)
 
     Configuration *newCfg = importTarget_;
 
-    importTarget_ = NULL;
+    importTarget_ = nullptr;
 
     return newCfg;
 }
@@ -224,7 +224,7 @@ void AddConfigurationWizard::on_FinishNameEdit_textChanged(const QString text)
     if (text.isEmpty())
         nameIsValid = false;
     else
-        nameIsValid = dissolveReference_->findConfiguration(qPrintable(text)) == NULL;
+        nameIsValid = dissolveReference_->findConfiguration(qPrintable(text)) == nullptr;
 
     ui_.FinishNameIndicator->setOK(nameIsValid);
 

@@ -56,5 +56,5 @@ std::shared_ptr<Forcefield> SelectForcefieldDialog::selectForcefield(std::shared
     if (exec() == QDialog::Accepted)
         return ui_.ForcefieldWidget->currentForcefield();
     else
-        return NULL;
+        return nullptr;
 }

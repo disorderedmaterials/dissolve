@@ -57,7 +57,7 @@ void Isotopologue::update()
      */
 
     // Check for valid parent_
-    if (parent_ == NULL)
+    if (parent_ == nullptr)
     {
         // The update function is called three places in the code, all
         // in species_isotopologues.cpp.  The instance on line 52 occurs
@@ -75,7 +75,7 @@ void Isotopologue::update()
     isotopes_.clear();
 
     // Loop over Atoms in species, get their assigned AtomTypes, and searching for them in the oldItems list
-    for (auto *i = parent_->firstAtom(); i != NULL; i = i->next())
+    for (auto *i = parent_->firstAtom(); i != nullptr; i = i->next())
     {
         std::shared_ptr<AtomType> at = i->atomType();
         if (!at)
@@ -136,7 +136,7 @@ Isotope *Isotopologue::atomTypeIsotope(std::shared_ptr<AtomType> at) const
     if (it == isotopes_.end())
     {
         Messenger::error("Couldn't retrieve AtomType '{}' from Isotopologue '{}' as it doesn't exist.\n", at->name(), name_);
-        return NULL;
+        return nullptr;
     }
     return std::get<1>(*it);
 }

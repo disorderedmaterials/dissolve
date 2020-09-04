@@ -24,7 +24,7 @@
 
 SpeciesInfo::SpeciesInfo() : ListItem<SpeciesInfo>()
 {
-    species_ = NULL;
+    species_ = nullptr;
     population_ = 0;
 }
 

@@ -22,4 +22,4 @@
 #include "modules/sq/sq.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *SQModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *SQModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

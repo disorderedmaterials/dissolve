@@ -75,7 +75,7 @@ bool RenderableSpecies::validateDataSource()
 }
 
 // Invalidate the current data source
-void RenderableSpecies::invalidateDataSource() { source_ = NULL; }
+void RenderableSpecies::invalidateDataSource() { source_ = nullptr; }
 
 // Return version of data
 int RenderableSpecies::dataVersion() { return (validateDataSource() ? source_->version() : -99); }

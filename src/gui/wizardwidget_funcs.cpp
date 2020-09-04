@@ -28,7 +28,7 @@ WizardWidget::WizardWidget()
     footerAvailable_ = false;
     closeButtonAvailable_ = true;
 
-    currentPage_ = NULL;
+    currentPage_ = nullptr;
 }
 
 WizardWidget::~WizardWidget() {}
@@ -139,9 +139,9 @@ void WizardWidget::clearPages()
 {
     pages_.clear();
     history_.clear();
-    currentPage_ = NULL;
+    currentPage_ = nullptr;
 
-    updateHeaderAndFooter(NULL);
+    updateHeaderAndFooter(nullptr);
 }
 
 // Add empty page
@@ -185,7 +185,7 @@ WizardWidgetPageInfo *WizardWidget::findPage(int index)
         if (page->index() == index)
             return page;
 
-    return NULL;
+    return nullptr;
 }
 
 /*
@@ -265,14 +265,14 @@ void WizardWidget::goToPage(int index)
     currentPage_ = findPage(index);
     if (!currentPage_)
     {
-        updateHeaderAndFooter(NULL);
+        updateHeaderAndFooter(nullptr);
         return;
     }
 
     // Instruct the derived class to switch pages
     if (!displayControlPage(index))
     {
-        updateHeaderAndFooter(NULL);
+        updateHeaderAndFooter(nullptr);
         return;
     }
 
@@ -300,14 +300,14 @@ void WizardWidget::goBack()
     currentPage_ = history_.lastItem();
     if (!currentPage_)
     {
-        updateHeaderAndFooter(NULL);
+        updateHeaderAndFooter(nullptr);
         return;
     }
 
     // Instruct the derived class to switch pages
     if (!displayControlPage(currentPage_->index()))
     {
-        updateHeaderAndFooter(NULL);
+        updateHeaderAndFooter(nullptr);
         return;
     }
 

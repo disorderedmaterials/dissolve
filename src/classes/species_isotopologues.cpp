@@ -26,7 +26,7 @@
 // Update current Isotopologues
 void Species::updateIsotopologues()
 {
-    for (auto *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
+    for (auto *iso = isotopologues_.first(); iso != nullptr; iso = iso->next())
         iso->update();
 }
 
@@ -57,7 +57,7 @@ Isotopologue *Species::addIsotopologue(std::string_view baseName)
 // Remove specified Isotopologue from this Species
 void Species::removeIsotopologue(Isotopologue *iso)
 {
-    if (iso == NULL)
+    if (iso == nullptr)
         Messenger::error("NULL_POINTER - NULL Isotopologue passed to Species::removeIsotopologue().\n");
     else if (isotopologues_.contains(iso))
     {
@@ -98,13 +98,13 @@ Isotopologue *Species::findIsotopologue(std::string_view name, const Isotopologu
     if (DissolveSys::sameString("Natural", name))
         return naturalIsotopologue();
 
-    for (auto *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
+    for (auto *iso = isotopologues_.first(); iso != nullptr; iso = iso->next())
         if (iso == exclude)
             continue;
         else if (DissolveSys::sameString(name, iso->name()))
             return iso;
 
-    return NULL;
+    return nullptr;
 }
 
 // Return index of specified Isotopologue

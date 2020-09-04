@@ -40,7 +40,7 @@ Integrator1DGizmo::Integrator1DGizmo(Dissolve &dissolve, const QString uniqueNam
     view.axes().setTitle(1, "Y");
     view.axes().setRange(1, 0.0, 10.0);
 
-    integrationTarget_ = NULL;
+    integrationTarget_ = nullptr;
     integrals_[0] = 0.0;
     integrals_[1] = 0.0;
     integrals_[2] = 0.0;

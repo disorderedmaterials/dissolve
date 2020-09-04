@@ -109,7 +109,7 @@ Renderable *BaseViewer::renderable(std::string_view name) const
         if (name == rend->name())
             return rend;
 
-    return NULL;
+    return nullptr;
 }
 
 // Return Renderable with specified objectTag (if it exists)
@@ -120,7 +120,7 @@ Renderable *BaseViewer::renderableWithTag(std::string_view objectTag) const
         if (objectTag == rend->objectTag())
             return rend;
 
-    return NULL;
+    return nullptr;
 }
 
 // Set visibility of named Renderable

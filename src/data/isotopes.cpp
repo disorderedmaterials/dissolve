@@ -513,20 +513,20 @@ void Isotopes::registerIsotope(Isotope *isotope, int Z) { isotopesByElementPriva
 // Return Isotope with specified A for given Element (if it exists)
 Isotope *Isotopes::isotope(int Z, int A)
 {
-    for (auto *isotope = isotopesByElement(Z).first(); isotope != NULL; isotope = isotope->next())
+    for (auto *isotope = isotopesByElement(Z).first(); isotope != nullptr; isotope = isotope->next())
         if (isotope->A() == A)
             return isotope;
 
-    return NULL;
+    return nullptr;
 }
 
 // Return Isotope with specified A for given Element (if it exists)
 Isotope *Isotopes::isotope(Element *el, int A)
 {
-    if (el == NULL)
+    if (el == nullptr)
     {
         Messenger::error("Isotopes::isotope() - Element is NULL.\n");
-        return NULL;
+        return nullptr;
     }
 
     return isotope(el->Z(), A);

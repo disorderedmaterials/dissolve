@@ -31,7 +31,7 @@
 const Atom *ConfigurationViewer::atomAt(int x, int y)
 {
     if (!configuration_)
-        return NULL;
+        return nullptr;
 
     double lengthScale;
     Vec3<double> rScreen;
@@ -55,7 +55,7 @@ const Atom *ConfigurationViewer::atomAt(int x, int y)
             return i;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 /*

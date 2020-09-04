@@ -30,8 +30,8 @@
 #include <string.h>
 
 // Static members
-Expression *ExpressionGenerator::expression_ = NULL;
-ExpressionGenerator *ExpressionGenerator::generator_ = NULL;
+Expression *ExpressionGenerator::expression_ = nullptr;
+ExpressionGenerator *ExpressionGenerator::generator_ = nullptr;
 
 ExpressionGenerator::ExpressionGenerator(Expression &expression, std::string_view expressionText)
 {
@@ -272,7 +272,7 @@ int ExpressionGenerator::lex()
 
         // Is it an existing variable?
         ExpressionVariable *v = expression_->variable(token);
-        if (v != NULL)
+        if (v != nullptr)
         {
             ExpressionGenerator_lval.variable = v;
             return DISSOLVE_EXPR_VAR;

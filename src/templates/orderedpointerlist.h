@@ -35,7 +35,7 @@ template <class T> class OrderedPointerListItem
      */
 
     public:
-    OrderedPointerListItem<T>(T *object = NULL);
+    OrderedPointerListItem<T>(T *object = nullptr);
     // List pointers
     OrderedPointerListItem<T> *prev, *next;
 
@@ -52,8 +52,8 @@ template <class T> class OrderedPointerListItem
 
 template <class T> OrderedPointerListItem<T>::OrderedPointerListItem(T *object) : object_(object)
 {
-    prev = NULL;
-    next = NULL;
+    prev = nullptr;
+    next = nullptr;
 }
 
 // Set pointer to object
@@ -152,15 +152,15 @@ template <class T> class OrderedPointerList
 
 template <class T> OrderedPointerList<T>::OrderedPointerList()
 {
-    listHead_ = NULL;
-    listTail_ = NULL;
+    listHead_ = nullptr;
+    listTail_ = nullptr;
     nItems_ = 0;
     regenerateItemArray_ = 1;
     regenerateObjectArray_ = 1;
     itemArraySize_ = 0;
     objectArraySize_ = 0;
-    items_ = NULL;
-    objects_ = NULL;
+    items_ = nullptr;
+    objects_ = nullptr;
 }
 
 template <class T> OrderedPointerList<T>::~OrderedPointerList() { clear(); }
@@ -180,9 +180,9 @@ OrderedPointerListItem<T> *OrderedPointerList<T>::insertAfter(T *object, Ordered
     newItem->setObject(object);
 
     // Get pointer to next item in list, after the list item 'afterThis'
-    // If 'afterThis' is NULL, then we insert at the start of the list (and make listHead_ point to the new item)
+    // If 'afterThis' is nullptr, then we insert at the start of the list (and make listHead_ point to the new item)
     OrderedPointerListItem<T> *newNext;
-    if (afterThis == NULL)
+    if (afterThis == nullptr)
     {
         // First item in list will be the newItem, so 'newNext will be the current listHead_
         newNext = listHead_;
@@ -198,7 +198,7 @@ OrderedPointerListItem<T> *OrderedPointerList<T>::insertAfter(T *object, Ordered
     newItem->prev = afterThis;
 
     // Re-point previous pointer of newNext
-    if (newNext != NULL)
+    if (newNext != nullptr)
         newNext->prev = newItem;
     else
         listTail_ = newItem;
@@ -230,9 +230,9 @@ template <class T>
 void OrderedPointerList<T>::insertBefore(OrderedPointerListItem<T> *item, OrderedPointerListItem<T> *beforeThis)
 {
     // Get pointer to prev item in list, after the list item 'beforeThis'
-    // If 'beforeThis' is NULL, then we insert at the end of the list (and make listTail_ point to the new item)
+    // If 'beforeThis' is nullptr, then we insert at the end of the list (and make listTail_ point to the new item)
     OrderedPointerListItem<T> *newPrev;
-    if (beforeThis == NULL)
+    if (beforeThis == nullptr)
     {
         // First item in list will be the item, so newPrev will be the current listTail_
         newPrev = listTail_;
@@ -248,7 +248,7 @@ void OrderedPointerList<T>::insertBefore(OrderedPointerListItem<T> *item, Ordere
     item->next = beforeThis;
 
     // Re-point nextious pointer of newPrev
-    if (newPrev != NULL)
+    if (newPrev != nullptr)
         newPrev->next = item;
     else
         listHead_ = item;
@@ -265,14 +265,14 @@ void OrderedPointerList<T>::insertBefore(OrderedPointerListItem<T> *item, Ordere
 // Remove the specified item from the list
 template <class T> void OrderedPointerList<T>::remove(OrderedPointerListItem<T> *xitem)
 {
-    if (xitem == NULL)
+    if (xitem == nullptr)
     {
         Messenger::error("NULL pointer passed to OrderedPointerList<T>::remove().\n");
         return;
     }
     // Delete a specific item from the list
-    xitem->prev == NULL ? listHead_ = xitem->next : xitem->prev->next = xitem->next;
-    xitem->next == NULL ? listTail_ = xitem->prev : xitem->next->prev = xitem->prev;
+    xitem->prev == nullptr ? listHead_ = xitem->next : xitem->prev->next = xitem->next;
+    xitem->next == nullptr ? listTail_ = xitem->prev : xitem->next->prev = xitem->prev;
     factory_.returnObject(xitem);
     --nItems_;
     regenerateItemArray_ = 1;
@@ -287,18 +287,18 @@ template <class T> OrderedPointerListItem<T> *OrderedPointerList<T>::objectInLis
     while (item)
     {
         if (item->object() > object)
-            return NULL;
+            return nullptr;
         if (item->object() == object)
             return item;
         item = item->next;
     }
-    return NULL;
+    return nullptr;
 }
 
 // Cut - Bridge items over specified item
 template <class T> void OrderedPointerList<T>::cut(OrderedPointerListItem<T> *item)
 {
-    if (item == NULL)
+    if (item == nullptr)
     {
         Messenger::error("NULL pointer passed to OrderedPointerList<T>::cut().\n");
         return;
@@ -310,19 +310,19 @@ template <class T> void OrderedPointerList<T>::cut(OrderedPointerListItem<T> *it
     next = item->next;
 
     // Adjust previous item
-    if (prev == NULL)
+    if (prev == nullptr)
         listHead_ = next;
     else
         prev->next = next;
 
     // Adjust next item
-    if (next == NULL)
+    if (next == nullptr)
         listTail_ = prev;
     else
         next->prev = prev;
 
-    item->next = NULL;
-    item->prev = NULL;
+    item->next = nullptr;
+    item->prev = nullptr;
 
     --nItems_;
     regenerateItemArray_ = 1;
@@ -340,25 +340,25 @@ template <class T> OrderedPointerListItem<T> *OrderedPointerList<T>::nextHighest
             return item;
         item = item->next;
     }
-    return NULL;
+    return nullptr;
 }
 
 //  Remove all items in the list
 template <class T> void OrderedPointerList<T>::clear()
 {
-    for (OrderedPointerListItem<T> *item = listHead_; item != NULL; item = item->next)
+    for (OrderedPointerListItem<T> *item = listHead_; item != nullptr; item = item->next)
         factory_.returnObject(item);
     nItems_ = 0;
-    listHead_ = NULL;
-    listTail_ = NULL;
+    listHead_ = nullptr;
+    listTail_ = nullptr;
 
     // Delete static item anb objects array if they exist
-    if (items_ != NULL)
+    if (items_ != nullptr)
         delete[] items_;
-    items_ = NULL;
-    if (objects_ != NULL)
+    items_ = nullptr;
+    if (objects_ != nullptr)
         delete[] objects_;
-    objects_ = NULL;
+    objects_ = nullptr;
     regenerateItemArray_ = 1;
     regenerateObjectArray_ = 1;
 }
@@ -370,9 +370,9 @@ template <class T> int OrderedPointerList<T>::nItems() const { return nItems_; }
 template <class T> void OrderedPointerList<T>::add(T *object)
 {
 #ifdef CHECKS
-    if (object == NULL)
+    if (object == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL object passed to OrderedPointerList<T>::add().\n");
+        Messenger::error("NULL_POINTER - nullptr passed to OrderedPointerList<T>::add().\n");
         return;
     }
 #endif
@@ -385,9 +385,9 @@ template <class T> void OrderedPointerList<T>::add(T *object)
 template <class T> void OrderedPointerList<T>::addExclusive(T *object)
 {
 #ifdef CHECKS
-    if (object == NULL)
+    if (object == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL object passed to OrderedPointerList<T>::add().\n");
+        Messenger::error("NULL_POINTER - nullptr passed to OrderedPointerList<T>::add().\n");
         return;
     }
 #endif
@@ -410,16 +410,16 @@ template <class T> void OrderedPointerList<T>::addExclusive(T *object)
 template <class T> void OrderedPointerList<T>::addAtEnd(T *object)
 {
 #ifdef CHECKS
-    if (object == NULL)
+    if (object == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL object passed to OrderedPointerList<T>::addAtEnd().\n");
+        Messenger::error("NULL_POINTER - nullptr passed to OrderedPointerList<T>::addAtEnd().\n");
         return;
     }
 #endif
     // Add it directly to the end of the list, provided this adheres to the current order
     // Check object index of last item in list
-    if (listTail_ == NULL)
-        insertAfter(object, NULL);
+    if (listTail_ == nullptr)
+        insertAfter(object, nullptr);
     else if (listTail_->object() < object)
         insertAfter(object, listTail_);
 }
@@ -432,7 +432,7 @@ template <class T> bool OrderedPointerList<T>::removeIfPresent(T *object)
 {
     // Get item for specified object
     OrderedPointerListItem<T> *item = objectInList(object);
-    if (item == NULL)
+    if (item == nullptr)
         return false;
     remove(item);
     return true;
@@ -478,10 +478,10 @@ template <class T> OrderedPointerListItem<T> **OrderedPointerList<T>::items()
         return items_;
 
     // Recreate item array if it is NULL or too small
-    if ((items_ == NULL) || (nItems_ > itemArraySize_))
+    if ((items_ == nullptr) || (nItems_ > itemArraySize_))
     {
         // Delete old list if necessary
-        if (items_ != NULL)
+        if (items_ != nullptr)
             delete[] items_;
 
         // Create new list
@@ -491,7 +491,7 @@ template <class T> OrderedPointerListItem<T> **OrderedPointerList<T>::items()
 
     // Fill in pointers
     int count = 0;
-    for (OrderedPointerListItem<T> *item = listHead_; item != NULL; item = item->next)
+    for (OrderedPointerListItem<T> *item = listHead_; item != nullptr; item = item->next)
         items_[count++] = item;
     regenerateItemArray_ = 0;
     return items_;
@@ -504,10 +504,10 @@ template <class T> T **OrderedPointerList<T>::objects()
         return objects_;
 
     // Recreate object array if it is NULL or too small
-    if ((objects_ == NULL) || (nItems_ > objectArraySize_))
+    if ((objects_ == nullptr) || (nItems_ > objectArraySize_))
     {
         // Delete old list if necessary
-        if (objects_ != NULL)
+        if (objects_ != nullptr)
             delete[] objects_;
 
         // Create new list
@@ -517,7 +517,7 @@ template <class T> T **OrderedPointerList<T>::objects()
 
     // Fill in pointers
     int count = 0;
-    for (OrderedPointerListItem<T> *item = listHead_; item != NULL; item = item->next)
+    for (OrderedPointerListItem<T> *item = listHead_; item != nullptr; item = item->next)
         objects_[count++] = item->object();
     regenerateObjectArray_ = 0;
     return objects_;
@@ -537,7 +537,7 @@ template <class T> void OrderedPointerList<T>::invalidateLists()
 template <class T> void OrderedPointerList<T>::operator=(const OrderedPointerList<T> &other)
 {
     clear();
-    for (OrderedPointerListItem<T> *item = other.listHead_; item != NULL; item = item->next)
+    for (OrderedPointerListItem<T> *item = other.listHead_; item != nullptr; item = item->next)
         addAtEnd(item->object());
 }
 
@@ -547,7 +547,7 @@ template <class T> OrderedPointerListItem<T> *OrderedPointerList<T>::operator[](
     if ((index < 0) || (index >= nItems_))
     {
         Messenger::error("LIST_OPERATOR[] - Array index ({}) out of bounds ({} items in List) >>>>\n", index, nItems_);
-        return NULL;
+        return nullptr;
     }
 #endif
     return items()[index];
@@ -565,7 +565,7 @@ template <class T> class OrderedPointerListIterator
         : reverse_(reverse), targetList_(source)
     {
         finished_ = false;
-        currentItem_ = NULL;
+        currentItem_ = nullptr;
     }
 
     private:
@@ -583,19 +583,19 @@ template <class T> class OrderedPointerListIterator
     T *iterate()
     {
         if (finished_)
-            return NULL;
+            return nullptr;
 
         // Go to initial / next item
-        if (currentItem_ == NULL)
+        if (currentItem_ == nullptr)
             currentItem_ = reverse_ ? targetList_.last() : targetList_.first();
         else
             currentItem_ = reverse_ ? currentItem_->prev : currentItem_->next;
 
         // Check for end of list
-        if (currentItem_ == NULL)
+        if (currentItem_ == nullptr)
             finished_ = true;
 
-        return (currentItem_ ? currentItem_->object() : NULL);
+        return (currentItem_ ? currentItem_->object() : nullptr);
     }
     // Return current item index
     int currentIndex()
@@ -609,6 +609,6 @@ template <class T> class OrderedPointerListIterator
     void restart()
     {
         finished_ = false;
-        currentItem_ = NULL;
+        currentItem_ = nullptr;
     }
 };

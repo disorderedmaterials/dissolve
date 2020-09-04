@@ -479,11 +479,11 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
         // 		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
         // 		{
         // 			Species* sp = spInfo->species();
-        // 			for (const SpeciesBond* b = sp->bonds().first(); b != NULL; b = b->next())
+        // 			for (const SpeciesBond* b = sp->bonds().first(); b != nullptr; b = b->next())
         // bondIntra.addUnique(b->parameterSource(), b); 			for (const SpeciesAngle* a =
-        // sp->angles().first(); a != NULL; a
+        // sp->angles().first(); a != nullptr; a
         // = a->next()) angleIntra.addUnique(a->parameterSource(), a); 			for (const SpeciesTorsion* t =
-        // sp->torsions().first(); t != NULL; t = t->next()) torsionIntra.addUnique(t->parameterSource(), t);
+        // sp->torsions().first(); t != nullptr; t = t->next()) torsionIntra.addUnique(t->parameterSource(), t);
         // 		}
 
         return Messenger::error("Frequency broadening not reimplemented yet.\n");
@@ -870,7 +870,7 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
 {
     // We either expect two AtomType names and a target next, or the target 'total'
     auto testResult = false;
-    if (DissolveSys::sameString(typeIorTotal, "total") && (typeJ == NULL) && (target == NULL))
+    if (DissolveSys::sameString(typeIorTotal, "total") && (typeJ == nullptr) && (target == nullptr))
     {
         double error = Error::percent(partials.constTotal(), testData);
         testResult = (error <= testThreshold);
@@ -929,8 +929,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
         if (!DissolveSys::sameString(prefix, parser.argsv(0)))
             return Messenger::error("Unrecognised test data name '{}'.\n", data->name());
 
-        if (!testReferencePartial(partials, testThreshold, *data, parser.argsv(1), parser.hasArg(2) ? parser.argsv(2) : NULL,
-                                  parser.hasArg(3) ? parser.argsv(3) : NULL))
+        if (!testReferencePartial(partials, testThreshold, *data, parser.argsv(1), parser.hasArg(2) ? parser.argsv(2) : nullptr,
+                                  parser.hasArg(3) ? parser.argsv(3) : nullptr))
             return false;
     }
 
@@ -966,8 +966,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
             return Messenger::error("Unrecognised test data name '{}'.\n", data->name());
         const PartialSet &targetSet = (setA ? partialsA : partialsB);
 
-        if (!testReferencePartial(targetSet, testThreshold, *data, parser.argsv(1), parser.hasArg(2) ? parser.argsv(2) : NULL,
-                                  parser.hasArg(3) ? parser.argsv(3) : NULL))
+        if (!testReferencePartial(targetSet, testThreshold, *data, parser.argsv(1),
+                                  parser.hasArg(2) ? parser.argsv(2) : nullptr, parser.hasArg(3) ? parser.argsv(3) : nullptr))
             return false;
     }
 

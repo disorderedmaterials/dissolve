@@ -22,4 +22,4 @@
 #include "modules/datatest/datatest.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *DataTestModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *DataTestModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }
