@@ -57,8 +57,8 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             std::string_view typeName = std::get<1>(indexName).at(0);
             if ((!at) || ((*at).name() != typeName))
             {
-                Messenger::print("Type for atom {} is {}, which does not match that expected ({}).\n",
-                                 i, at ? (*at).name() : "undefined", typeName);
+                Messenger::print("Type for atom {} is {}, which does not match that expected ({}).\n", i,
+                                 at ? (*at).name() : "undefined", typeName);
                 ++nAtomTypesFailed;
             }
             else
