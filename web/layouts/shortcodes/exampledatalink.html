@@ -1,0 +1,3 @@
+{{ $linkText := .Get "linkText"  }}
+{{ $urlSuffix := .Get "urlSuffix"  }}
+<a href="https://github.com/projectdissolve/dissolve/releases/download/{{ .Site.Params.releaseVersion }}/Dissolve-{{ .Site.Params.releaseVersion }}-ExampleData.{{ with $urlSuffix }}{{ . }}{{ end }}">{{ with $linkText }} {{ . | markdownify }}{{ end }}</a>

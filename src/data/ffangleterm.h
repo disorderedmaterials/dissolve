@@ -34,7 +34,7 @@ class ForcefieldAngleTerm
     public:
     ForcefieldAngleTerm(std::string_view typeI = "", std::string_view typeJ = "", std::string_view typeK = "",
                         SpeciesAngle::AngleFunction form = SpeciesAngle::NoForm, const std::vector<double> parameters = {});
-    ~ForcefieldAngleTerm();
+    ~ForcefieldAngleTerm() = default;
 
     /*
      * Data

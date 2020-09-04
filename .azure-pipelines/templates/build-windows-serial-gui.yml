@@ -58,7 +58,6 @@ steps:
       mkdir build
       cd build
       conan install -s compiler="gcc" --remote=conan-center ../
-      cat conanbuildinfo.cmake
       cmake -G "Ninja" -DGUI:bool=true ${{ parameters.extraflags }} ../
       ninja
     displayName: 'Build'

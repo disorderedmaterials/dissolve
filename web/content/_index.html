@@ -1,0 +1,57 @@
++++
+title = "Dissolve"
+linkTitle = "Home"
++++
+
+{{< blocks/cover title="Dissolve" image_anchor="top" height="min">}}
+<div class="mx-auto">
+    <a class="btn btn-lg btn-primary mr-3 mb-4" href="{{< relref "docs/userguide" >}}">
+        Learn More <i class="fas fa-arrow-alt-circle-right ml-2"></i>
+    </a>
+    <a class="btn btn-lg btn-secondary mr-3 mb-4" href="https://github.com/projectdissolve/dissolve">
+        Github <i class="fab fa-github ml-2 "></i>
+    </a>
+    <p class="lead mt-5">Structure Refinement for Scattering Data</p>
+    {{< blocks/link-down color="info" >}}
+</div>
+{{< /blocks/cover >}}
+
+{{% blocks/lead color="primary" %}}
+<p>Dissolve is a simulation tool for the interrogation of scattering data, typically total neutron scattering data. It builds on the techniques established in the Empirical Potential Structure Refinement (EPSR) method by Soper, using atomistic models to approximate experimental data and allow subsequent detailed analysis.</p>
+<p>Dissolve is intended to be flexible and extensible in order to allow treatment of simple molecular liquids through to complex, heterogeneous systems containing a million atoms and beyond. Dissolve is functional and relatively stable, but is undergoing continual devlopment and improvement by Team Dissolve. Check us out on <a href="https://github.com/projectdissolve">GitHub</a> for more information, current development focus, issues, and associated projects.</p>
+{{% /blocks/lead %}}
+
+<a name="downloads">
+{{< blocks/section color="white">}}
+
+{{% blocks/feature icon="fab fa-linux" title="Linux" %}}
+{{< releaselink urlSuffix="x86_64.AppImage" >}}
+
+{{< continuouslink urlSuffix="x86_64.AppImage" >}}
+{{% /blocks/feature %}}
+
+{{% blocks/feature icon=" fab fa-apple" title="Mac OS" %}}
+{{< releaselink urlSuffix="Catalina.dmg" >}}
+
+{{< continuouslink urlSuffix="Catalina.dmg" >}}
+{{% /blocks/feature %}}
+
+{{% blocks/feature icon="fab fa-windows" title="Windows" %}}
+{{< releaselink urlSuffix="Win64.exe" >}}
+
+{{< continuouslink urlSuffix="Win64.exe" >}}
+{{% /blocks/feature %}}
+
+{{< /blocks/section >}}
+</a>
+
+{{< blocks/section >}}
+{{% blocks/feature icon="fas fa-book" title="User Manual" url="/docs/userguide" url_text="Full descriptions of everything in Dissolve" %}}
+{{% /blocks/feature %}}
+
+{{% blocks/feature icon="fas fa-book-reader" title="Examples" url="/docs/examples" url_text="Detailed tutorials and usage examples" %}}
+{{% /blocks/feature %}}
+
+{{% blocks/feature icon="fas fa-comment" title="Forum" url="https://forum.projectdissolve.com" url_text="Ask the community for help" %}}
+{{% /blocks/feature %}}
+{{< /blocks/section >}}

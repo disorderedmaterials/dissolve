@@ -1,0 +1,16 @@
+/*
+ * Add styles or override variables from the theme here.
+ */
+
+// Define custom font
+@import url('https://fonts.googleapis.com/css2?family=Varela+Round&display=swap');
+body {
+    font-family: 'Varela Round', sans-serif !important;
+}
+
+// Adjust page description ("lead") to have more distinct space before actual content
+.lead {
+    color: #888888;
+    border-bottom: 1px solid #dee2e6 !important;
+    margin-bottom: 16px;
+}

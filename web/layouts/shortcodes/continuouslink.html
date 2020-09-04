@@ -1,0 +1,3 @@
+{{ $urlSuffix := .Get "urlSuffix"  }}
+{{ $textSuffix := .Get "textSuffix"  }}
+<a href="https://github.com/projectdissolve/dissolve/releases/download/continuous/Dissolve-GUI-{{ .Site.Params.devVersion }}-{{ .Site.Params.devShortHash }}-{{ $urlSuffix }}">Development {{ .Site.Params.devVersion }}{{ with $textSuffix }} {{ . | markdownify }}{{ end }}</a>
