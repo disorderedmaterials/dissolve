@@ -1,6 +1,6 @@
 /*
-    *** Dissolve Version Information
-    *** src/version.h
+    *** Version Information
+    *** src/main/version.cpp
     Copyright T. Youngs 2012-2020
 
     This file is part of Dissolve.
@@ -19,7 +19,32 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#pragma once
+#include "main/version.h"
+#include <fmt/core.h>
 
 #define DISSOLVEVERSION "0.7.0"
+#define DISSOLVESHORTHASH ""
 #define DISSOLVEREPO "https://github.com/projectdissolve/dissolve.git"
+
+namespace Version
+{
+
+std::string_view info()
+{
+    static std::string versionString;
+
+    if (versionString.empty())
+    {
+        if (std::string_view(DISSOLVESHORTHASH).empty())
+            versionString = DISSOLVEVERSION;
+        else
+            versionString = fmt::format("{} @ {}", DISSOLVEVERSION, DISSOLVESHORTHASH);
+    }
+
+    return versionString;
+}
+
+// Return repo url
+std::string_view repoUrl() { return DISSOLVEREPO; }
+
+}; // namespace Version

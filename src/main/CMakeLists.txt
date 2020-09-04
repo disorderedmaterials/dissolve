@@ -18,9 +18,11 @@ add_library(main
   pairpotentials.cpp
   simulation.cpp
   species.cpp
+  version.cpp
 
   dissolve.h
   keywords.h
+  version.h
 )
 
 include_directories(

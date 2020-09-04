@@ -17,6 +17,8 @@ stages:
         pool:
           vmImage: 'ubuntu-16.04'
         steps:
+          - checkout: self
+            fetchDepth: 1
           - template: templates/build-linux-serial-gui.yml
             parameters:
               ppa: 'beineri/opt-qt-5.12.0-xenial'
@@ -40,6 +42,8 @@ stages:
         pool:
           vmImage: 'ubuntu-18.04' 
         steps:
+          - checkout: self
+            fetchDepth: 1
           - template: templates/build-linux-parallel.yml
           - bash: |
               cp build-parallel/dissolve-mpi tests/
@@ -54,6 +58,8 @@ stages:
         pool:
           vmImage: 'macos-latest' 
         steps:
+          - checkout: self
+            fetchDepth: 1
           - template: templates/build-osx-serial-gui.yml
           - template: templates/package-osx-serial-gui.yml
           - task: PublishBuildArtifacts@1
@@ -66,6 +72,8 @@ stages:
         pool:
           vmImage: 'windows-latest' 
         steps:
+          - checkout: self
+            fetchDepth: 1
           - template: templates/build-windows-serial-gui.yml
           - template: templates/package-windows-serial-gui.yml
           - task: PublishBuildArtifacts@1
@@ -96,6 +104,7 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
+            fetchDepth: 1
           - task: DownloadBuildArtifacts@0
             inputs:
               buildType: 'current'
@@ -118,13 +127,13 @@ stages:
               artifactName: 'windows-artifacts'
             displayName: 'Download Windows Artifacts'
           - bash: |
-              VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+              VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
               cd ./examples
               ./package-examples -v $VERSION
             displayName: 'Create Example Data Archives'
           - bash: |
               SHORTHASH=`git rev-parse --short HEAD`
-              VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+              VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
               # Linux AppImages
               cd $(System.ArtifactsDirectory)/linux-artifacts
               mv -v Dissolve-${SHORTHASH}-x86_64.AppImage Dissolve-${VERSION}-x86_64.AppImage
@@ -140,7 +149,7 @@ stages:
               cd ../
             displayName: 'Rename Artifacts'
           - bash: |
-              VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+              VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
               ./ci/scripts/update-release -r projectdissolve/dissolve -t ${VERSION} -n "${VERSION}" -f Recent.md $(System.ArtifactsDirectory)/linux-artifacts/*AppImage $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg examples/*zip examples/*.tar.gz
             env:
               GITHUB_TOKEN: $(REPO_SECRET)
