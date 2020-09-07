@@ -128,7 +128,7 @@ class DataTestModule : public Module
             {
                 // Try to retrieve the data as the current type
                 found = false;
-                const T &data = GenericListHelper<T>::value(moduleData, dataIdentifier, NULL, T(), &found);
+                const T &data = GenericListHelper<T>::value(moduleData, dataIdentifier, "", T(), &found);
 
                 if (!found)
                 {
