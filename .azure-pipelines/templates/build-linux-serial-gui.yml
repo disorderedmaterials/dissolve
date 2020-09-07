@@ -7,7 +7,6 @@ parameters:
     default: 513
 
 steps:
-  - checkout: self
   - bash: |
       set -ex
       # -- General

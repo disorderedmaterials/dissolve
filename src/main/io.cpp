@@ -27,7 +27,7 @@
 #include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "main/keywords.h"
-#include "version.h"
+#include "main/version.h"
 #include <string.h>
 
 // Load input file through supplied parser
@@ -192,7 +192,7 @@ bool Dissolve::saveInput(std::string_view filename)
     }
 
     // Write title comment
-    if (!parser.writeLineF("# Input file written by Dissolve v{} at {}.\n", DISSOLVEVERSION, DissolveSys::currentTimeAndDate()))
+    if (!parser.writeLineF("# Input file written by Dissolve v{} at {}.\n", Version::info(), DissolveSys::currentTimeAndDate()))
         return false;
 
     // Write master terms
@@ -747,7 +747,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     }
 
     // Write title comment
-    if (!parser.writeLineF("# Restart file written by Dissolve v{} at {}.\n", DISSOLVEVERSION,
+    if (!parser.writeLineF("# Restart file written by Dissolve v{} at {}.\n", Version::info(),
                            DissolveSys::currentTimeAndDate()))
         return false;
 
@@ -835,7 +835,7 @@ bool Dissolve::saveHeartBeat(std::string_view filename, double estimatedNSecs)
     }
 
     // Write title comment
-    if (!parser.writeLineF("# Heartbeat file written by Dissolve v{} at {}.\n", DISSOLVEVERSION,
+    if (!parser.writeLineF("# Heartbeat file written by Dissolve v{} at {}.\n", Version::info(),
                            DissolveSys::currentTimeAndDate()))
         return false;
 

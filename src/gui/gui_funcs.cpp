@@ -28,7 +28,7 @@
 #include "gui/speciestab.h"
 #include "gui/workspacetab.h"
 #include "main/dissolve.h"
-#include "version.h"
+#include "main/version.h"
 #include <QCloseEvent>
 #include <QDir>
 #include <QDirIterator>
@@ -287,7 +287,7 @@ void DissolveWindow::updateWindowTitle()
     // Window Title
     QString title =
         QString("Dissolve v%1 - %2%3")
-            .arg(DISSOLVEVERSION,
+            .arg(QString::fromStdString(std::string(Version::info())),
                  dissolve_.hasInputFilename() ? QString::fromStdString(std::string(dissolve_.inputFilename())) : "<untitled>",
                  modified_ ? "(*)" : "");
     setWindowTitle(title);

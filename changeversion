@@ -14,9 +14,9 @@ DaySuffix() {
 
 usage() {
   echo "Usage:  $0 [-c] [-p] [-m] [-i] [-r] [-s X.Y.Z]"
-  echo "	-c	Check current version numbering"
-  echo "        -m	Increase major version number (X.0.0)"
-  echo "        -i	Increase minor version number (0.X.0)"
+  echo "        -c	Check current version numbering"
+  echo "        -M	Increase major version number (X.0.0)"
+  echo "        -m	Increase minor version number (0.X.0)"
   echo "        -p	Increase patch version number (0.0.X)"
   echo "        -s	Set version explicitly to X.Y.Z"
   echo "        -x	Don't modify visible version numbers in docs, web, and readme" 
@@ -41,11 +41,11 @@ do
   case $opt in
     c) CHECK="true"
        echo "Current version numbers will be checked - no modifications will be made";;
-    m) echo "Major version number will be increased from $MAJOR to $((MAJOR+1))"
+    M) echo "Major version number will be increased from $MAJOR to $((MAJOR+1))"
        MAJOR=$((MAJOR+1))
        MINOR=0
        PATCH=0;;
-    i) echo "Minor version number will be increased from $MINOR to $((MINOR+1))"
+    m) echo "Minor version number will be increased from $MINOR to $((MINOR+1))"
        MINOR=$((MINOR+1))
        PATCH=0;;
     p) echo "Minor version number will be increased from $PATCH to $((PATCH+1))"
@@ -66,13 +66,13 @@ do
   esac
 done
 
-# Program (version.h)
+# Program (main/version.h)
 if [ "$CHECK" = "false" ]
 then
-  sed -i -e "s/#define DISSOLVEVERSION \"[0-9\.]\+\(.*\)\"/#define DISSOLVEVERSION \"$MAJOR.$MINOR.$PATCH\"\1/g" src/version.h
+  sed -i -e "s/#define DISSOLVEVERSION \"[0-9\.]\+\(.*\)\"/#define DISSOLVEVERSION \"$MAJOR.$MINOR.$PATCH\"\1/g" src/main/version.h
 fi
 echo -n "           version.h (Program Version) : "
-grep '#define DISSOLVEVERSION' src/version.h | sed -e 's/#define DISSOLVEVERSION "\([0-9a-z\.]\+\).*"/\1/g'
+grep '#define DISSOLVEVERSION' src/main/version.h | sed -e 's/#define DISSOLVEVERSION "\([0-9a-z\.]\+\).*"/\1/g'
 
 
 # ./CMakeLists.txt
@@ -112,17 +112,18 @@ grep 'define MyAppVersion' ci/windows/dissolve-gui.iss | sed -e 's/#define MyApp
 echo -n "    dissolve-gui.iss (Output Filename) : "
 grep 'OutputBaseFilename' ci/windows/dissolve-gui.iss | sed -e 's/OutputBaseFilename=Dissolve-GUI-\([0-9\.]*\)-Win64/\1/g'
 
-# Documentation
+# Documentation (config.toml)
 if [ "$CHECK" = "false" ] && [ "$MODIFYVISIBLE" = "true" ]
 then
-  DAYSUFFIX=`DaySuffix`
-  TODAY=`date "+%A %-d${DAYSUFFIX} %B %Y"`
-  sed -i -e "s/Last Release: [0-9\.]*, \(.*\)_/Last Release: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" docs/index.md
+  # Store current development version
+  devVersion=`grep 'devVersion' web/config.toml | sed -e 's/devVersion = "\([0-9\.]*\)"/\1/g'`
+  sed -i -e "s/releaseVersion = \"[0-9\.]*\"/releaseVersion = \"$devVersion\"/g" web/config.toml
+  sed -i -e "s/devVersion = \"[0-9\.]*\"/devVersion = \"$MAJOR.$MINOR.$PATCH\"/g" web/config.toml
 fi
-echo -n "       Documentation (Program Version) : "
-grep 'Last Release:' docs/index.md | sed -e 's/.*Release: \([0-9\.]*\),.*/\1/g'
-echo -n "                  Documentation (Date) : "
-grep 'Last Release:' docs/index.md | sed -e "s/.*Release: .*, \(.*\)_/\1/g"
+echo -n "         config.toml (Web Dev Version) : "
+grep 'devVersion' web/config.toml | sed -e 's/devVersion = "\([0-9\.]*\)"/\1/g'
+echo -n "         config.toml (Release Version) : "
+grep 'releaseVersion' web/config.toml | sed -e 's/releaseVersion = "\([0-9\.]*\)"/\1/g'
 
 # README.md
 if [ "$CHECK" = "false" ] && [ "$MODIFYVISIBLE" = "true" ]
@@ -131,7 +132,7 @@ then
   TODAY=`date "+%A %-d${DAYSUFFIX} %B %Y"`
   sed -i -e "s/Last Release: [0-9\.]*, \(.*\)_/Last Release: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" README.md
 fi
-echo -n "           README.md (Program Version) : "
+echo -n "           README.md (Release Version) : "
 grep 'Last Release:' README.md | sed -e 's/.*Release: \([0-9\.]*\),.*/\1/g'
 echo -n "                      README.md (Date) : "
 grep 'Last Release:' README.md | sed -e "s/.*Release: .*, \(.*\)_/\1/g"

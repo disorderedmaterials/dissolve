@@ -113,9 +113,9 @@ bool Forcefield_Ludwig_Py5::setUp()
     addTorsionTerm("hc", "ct", "nc", "ca", SpeciesTorsion::CosineForm, {0.0000, 3.0, 0.0, 1});
 
     // Improper Terms
-    addImproperTerm("ca", "ca", "ca", "ha", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0});
-    addImproperTerm("ca", "nc", "ca", "ha", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0});
-    addImproperTerm("nc", "ca", "ca", "ct", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0});
+    addImproperTerm("ca", "ca", "ca", "ha", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0, 1});
+    addImproperTerm("ca", "nc", "ca", "ha", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0, 1});
+    addImproperTerm("nc", "ca", "ca", "ct", SpeciesImproper::CosineForm, {4.606, 2.0, 180.0, 1});
 
     return true;
 }

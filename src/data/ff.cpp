@@ -136,6 +136,19 @@ void Forcefield::addParameters(std::string_view name, double data0, double data1
     shortRangeParameters_.emplace_back(name, data0, data1, data2, data3);
 }
 
+// Create NETA definitions for all atom types from stored defs
+bool Forcefield::createNETADefinitions()
+{
+    auto nFailed =
+        std::count_if(atomTypes_.begin(), atomTypes_.end(), [this](auto &atomType) { return !atomType.createNETA(this); });
+
+    if (nFailed > 0)
+        Messenger::error("Failed to create {} NETA {} for the forcefield '{}'.\n", nFailed,
+                         nFailed == 1 ? "definition" : "definitions", name());
+
+    return (nFailed == 0);
+}
+
 // Return named short-range parameters (if they exist)
 const OptionalReferenceWrapper<const ForcefieldParameters> Forcefield::shortRangeParameters(std::string_view name) const
 {

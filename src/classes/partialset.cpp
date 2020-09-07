@@ -327,7 +327,7 @@ void PartialSet::setObjectTags(std::string_view prefix, std::string_view suffix)
 {
     // Set up suffix (if any)
     std::string actualSuffix;
-    if (suffix != NULL)
+    if (!suffix.empty())
         actualSuffix = fmt::format("_{}", suffix);
 
     objectNamePrefix_ = prefix;

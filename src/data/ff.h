@@ -114,6 +114,8 @@ class Forcefield : public Elements
     virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(SpeciesAtom *i) const;
 
     public:
+    // Create NETA definitions for all atom types from stored defs
+    bool createNETADefinitions();
     // Return named short-range parameters (if they exist)
     const OptionalReferenceWrapper<const ForcefieldParameters> shortRangeParameters(std::string_view name) const;
     // Return the named ForcefieldAtomType (if it exists)

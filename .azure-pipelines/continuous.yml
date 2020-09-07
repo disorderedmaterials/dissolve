@@ -1,5 +1,14 @@
 trigger:
-  - develop
+  branches:
+    include:
+    - develop
+  paths:
+    exclude:
+    - examples/*
+    - web/*
+    - README.md
+    include:
+    - /
 
 pr: none
 
@@ -15,6 +24,9 @@ stages:
         pool:
           vmImage: 'ubuntu-18.04'
         steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: templates/set-short-hash.yml
           - template: templates/build-linux-serial-gui.yml
       - job: 'linux_serialgui_appimage'
         displayName: 'Build Linux (Serial/GUI, ubuntu-16.04)'
@@ -22,6 +34,9 @@ stages:
         pool:
           vmImage: 'ubuntu-16.04'
         steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: templates/set-short-hash.yml
           - template: templates/build-linux-serial-gui.yml
             parameters:
               ppa: 'beineri/opt-qt-5.12.0-xenial'
@@ -37,6 +52,9 @@ stages:
         pool:
           vmImage: 'macos-latest' 
         steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: templates/set-short-hash.yml
           - template: templates/build-osx-serial-gui.yml
           - template: templates/package-osx-serial-gui.yml
           - task: PublishBuildArtifacts@1
@@ -49,6 +67,9 @@ stages:
         pool:
           vmImage: 'windows-latest' 
         steps:
+          - checkout: self
+            fetchDepth: 1
+          - template: templates/set-short-hash.yml
           - template: templates/build-windows-serial-gui.yml
           - template: templates/package-windows-serial-gui.yml
           - task: PublishBuildArtifacts@1
@@ -67,6 +88,7 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
+            fetchDepth: 1
           #- task: DownloadBuildArtifacts@0
           #  inputs:
           #    buildType: 'current'
@@ -89,14 +111,14 @@ stages:
               artifactName: 'windows-artifacts'
             displayName: 'Download Windows Artifacts'
           - bash: |
-              VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+              VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
               SHORTHASH=`git rev-parse --short HEAD`
               cd ./examples
               ./package-examples -v ${VERSION}-${SHORTHASH}
             displayName: 'Create Example Data Archives'
           - bash: |
               SHORTHASH=`git rev-parse --short HEAD`
-              VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+              VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
               # Linux AppImages
               #cd $(System.ArtifactsDirectory)/linux-artifacts
               #mv -v Dissolve-${SHORTHASH}-x86_64.AppImage Dissolve-${VERSION}-${SHORTHASH}-x86_64.AppImage
@@ -115,11 +137,19 @@ stages:
           - bash: |
               SHORTHASH=`git rev-parse --short HEAD`
               DATE=`date`
-              VERSION=`grep "DISSOLVEVERSION" src/version.h | sed "s/.*\"\(.*\)\"/\1/g"`
+              VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
               ./ci/scripts/update-release -r projectdissolve/dissolve -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg examples/*zip examples/*.tar.gz
             env:
               GITHUB_TOKEN: $(REPO_SECRET)
             displayName: 'Update Continuous Release (GitHub)'
-#          - bash: |
-#              # TODO
-#            displayName: 'Build and Deploy Web'
+
+  # Web
+  - stage: 'web'
+    displayName: 'Website'
+    jobs:
+      - job: 'buildweb'
+        displayName: 'Rebuild Web'
+        pool:
+          vmImage: 'ubuntu-18.04'
+        steps:
+          - template: templates/build-web.yml

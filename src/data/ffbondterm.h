@@ -34,7 +34,7 @@ class ForcefieldBondTerm
     public:
     ForcefieldBondTerm(std::string_view typeI = "", std::string_view typeJ = "",
                        SpeciesBond::BondFunction form = SpeciesBond::NoForm, const std::vector<double> parameters = {});
-    ~ForcefieldBondTerm();
+    ~ForcefieldBondTerm() = default;
 
     /*
      * Data

@@ -237,14 +237,14 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const auto &unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
 
         // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-        auto &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", NULL,
+        auto &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "",
                                                                     GenericItem::InRestartFileFlag, &created);
         if (created)
             unweightedsq.setUpPartials(unweightedgr.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()),
                                        "unweighted", "sq", "Q, 1/Angstroms");
 
         // Is the PartialSet already up-to-date? Do we force its calculation anyway?
-        auto &forceCalculation = GenericListHelper<bool>::retrieve(cfg->moduleData(), "_ForceNeutronSQ", NULL, false);
+        auto &forceCalculation = GenericListHelper<bool>::retrieve(cfg->moduleData(), "_ForceNeutronSQ", "", false);
         const bool sqUpToDate = DissolveSys::sameString(
             unweightedsq.fingerprint(), fmt::format("{}/{}", cfg->moduleData().version("UnweightedGR"),
                                                     includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
@@ -416,7 +416,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         weights.print();
 
         // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-        auto &weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", NULL,
+        auto &weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", "",
                                                                   GenericItem::InRestartFileFlag, &created);
         if (created)
             weightedsq.setUpPartials(unweightedsq.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()), "weighted",

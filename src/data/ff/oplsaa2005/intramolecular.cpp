@@ -1420,708 +1420,708 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
 {
     static std::vector<ForcefieldTorsionTerm> torsionTerms = {
         //	i	j	k	l	Type (CosineForm)		k		n	eq	s
-        {"HC", "CT", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                      // hydrocarbon
-        {"HC", "C", "C", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                        //
-        {"HC", "C=", "C=", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                      //
-        {"CT", "C=", "C=", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                      //
-        {"CT", "C=", "C=", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                      //
-        {"H3", "N3", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                      // ammonium
-        {"HC", "CT", "CT", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                      // hydrocarbon
-        {"HC", "CT", "CT", "CO", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                      // acetal
-        {"HC", "CO", "CT", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                      // acetal
-        {"CT", "CT", "CT", "CT", SpeciesTorsion::Cos3Form, {5.4392, -0.2092, 0.8368, 0}},           // hydrocarbon
-        {"CT", "CT", "CT", "CO", SpeciesTorsion::Cos3Form, {5.4392, -0.2092, 0.8368, 0}},           // hydrocarbon
-        {"HC", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {0, 0, 1.95811, 0}},                     // alcohols,
-        {"HC", "CT", "CT", "OS", SpeciesTorsion::Cos3Form, {0, 0, 1.95811, 0}},                     // alcohols,
-        {"HC", "CT", "CO", "OS", SpeciesTorsion::Cos3Form, {0, 0, 1.95811, 0}},                     // alcohols,
-        {"CT", "CT", "CT", "O*", SpeciesTorsion::Cos3Form, {7.15882, -2.092, 2.77399, 0}},          // alcohols,
-        {"CT", "CT", "CO", "O*", SpeciesTorsion::Cos3Form, {7.15882, -2.092, 2.77399, 0}},          // alcohols,
-        {"HC", "CM", "CT", "O*", SpeciesTorsion::Cos3Form, {0, 0, 1.95811, 0}},                     // alcohols,
-        {"CT", "CM", "CT", "O*", SpeciesTorsion::Cos3Form, {7.15882, -2.092, 2.77399, 0}},          // alcohols,
-        {"CT", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {-6.49357, 0, 0, 0}},                    // polyols
-        {"HC", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 0, 1.47444, 0}},                     // alcohols
-        {"CT", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {-1.4895, -0.728016, 2.05853, 0}},       // alcohols
-        {"OH", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {39.7815, 0, 0, 0}},                     // diols
-        {"OH", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {51.1871, 0, 0, 0}},                     // triols
-        {"HC", "CT", "OS", "C*", SpeciesTorsion::Cos3Form, {0, 0, 3.17984, 0}},                     // ethers
-        {"HC", "CT", "OS", "CA", SpeciesTorsion::Cos3Form, {0, 0, 3.17984, 0}},                     // ethers
-        {"HC", "CT", "OS", "CM", SpeciesTorsion::Cos3Form, {0, 0, 3.17984, 0}},                     // ethers
-        {"HC", "CM", "OS", "CT", SpeciesTorsion::Cos3Form, {0, 0, 3.17984, 0}},                     // ethers
-        {"HC", "CO", "OS", "CT", SpeciesTorsion::Cos3Form, {0, 0, 3.17984, 0}},                     // ethers
-        {"HC", "CT", "OS", "CO", SpeciesTorsion::Cos3Form, {0, 0, 3.17984, 0}},                     // ethers
-        {"CT", "OS", "CT", "CT", SpeciesTorsion::Cos3Form, {2.7196, -1.046, 2.80328, 0}},           // ethers
-        {"CT", "OS", "CM", "CT", SpeciesTorsion::Cos3Form, {2.7196, -1.046, 2.80328, 0}},           // ethers
-        {"CT", "OS", "CO", "CT", SpeciesTorsion::Cos3Form, {2.7196, -1.046, 2.80328, 0}},           // ethers
-        {"CT", "OS", "CT", "O*", SpeciesTorsion::Cos3Form, {-2.17986, -8.44331, 8.35126, 0}},       // acetals
-        {"NT", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {33.472, 0, 0, 0}},                      // 2-aminoethanol
-        {"OS", "CT", "CT", "OS", SpeciesTorsion::Cos3Form, {-2.3012, 0, 0, 0}},                     // polyethers,
-        {"CT", "OS", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 12.552, 0, 0}},                      // anisole
-        {"CM", "C=", "C=", "CT", SpeciesTorsion::Cos3Form, {0, 0, -1.55645, 0}},                    // diene-
-        {"CM", "C=", "C=", "HC", SpeciesTorsion::Cos3Form, {0, 0, -1.55645, 0}},                    // diene-
-        {"CM", "C=", "C=", "CM", SpeciesTorsion::Cos3Form, {5.95383, 16.9661, 3.58987, 0}},         // diene
-        {"HC", "CT", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // ethyl
-        {"H3", "N3", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // anilinium
-        {"HC", "CT", "CW", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"HC", "CT", "CV", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"HC", "CT", "CR", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"HC", "CT", "CS", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"HC", "CT", "CQ", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"HC", "CT", "CU", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"HC", "CT", "CK", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"HC", "CT", "C*", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"CT", "CT", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // ethyl
-        {"CT", "N3", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // anilinium
-        {"CT", "CT", "CW", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"CT", "CT", "CV", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"CT", "CT", "CR", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"CT", "CT", "CS", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"CT", "CT", "CQ", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"CT", "CT", "CU", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"CT", "CT", "CK", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"CT", "CT", "C*", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aromatics
-        {"O*", "CT", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // benzyl
-        {"C*", "CT", "NA", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // heterocycles
-        {"H*", "CT", "NA", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // heterocycles
-        {"C*", "CT", "N*", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // heterocycles
-        {"H*", "CT", "N*", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // heterocycles
-        {"O", "C", "CR", "O*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // heterocycles
-        {"O", "C", "CR", "N*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // heterocycles
-        {"CA", "CA", "CT", "N*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // aromatics
-        {"*", "Zn", "N", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                              // JACS
-        {"*", "Zn", "O", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                              // JACS
-        {"HC", "CT", "CT", "CA", SpeciesTorsion::Cos3Form, {0, 0, 1.93301, 0}},                     // ethyl
-        {"HC", "CT", "N3", "CA", SpeciesTorsion::Cos3Form, {0, 0, 1.93301, 0}},                     // anilinium
-        {"HC", "CT", "CT", "CW", SpeciesTorsion::Cos3Form, {0, 0, 1.93301, 0}},                     // aromatics
-        {"HC", "CT", "CT", "CV", SpeciesTorsion::Cos3Form, {0, 0, 1.93301, 0}},                     // aromatics
-        {"HC", "CT", "CT", "CR", SpeciesTorsion::Cos3Form, {0, 0, 1.93301, 0}},                     // aromatics
-        {"HC", "CT", "CT", "CS", SpeciesTorsion::Cos3Form, {0, 0, 1.93301, 0}},                     // aromatics
-        {"HC", "CT", "CT", "CQ", SpeciesTorsion::Cos3Form, {0, 0, 1.93301, 0}},                     // aromatics
-        {"HC", "CT", "CT", "CU", SpeciesTorsion::Cos3Form, {0, 0, 1.93301, 0}},                     // aromatics
-        {"HC", "CT", "CT", "CK", SpeciesTorsion::Cos3Form, {0, 0, 1.93301, 0}},                     // aromatics
-        {"HC", "CT", "CT", "C*", SpeciesTorsion::Cos3Form, {0, 0, 1.93301, 0}},                     // aromatics
-        {"CT", "S", "S", "CT", SpeciesTorsion::Cos3Form, {0, -31.0202, 7.13372, 0}},                // disulfide
-        {"HC", "CT", "S", "S", SpeciesTorsion::Cos3Form, {0, 0, 2.33467, 0}},                       // disulfide
-        {"CT", "CT", "S", "S", SpeciesTorsion::Cos3Form, {8.12114, -3.49782, 3.91204, 0}},          // disulfide
-        {"HC", "CT", "SH", "HS", SpeciesTorsion::Cos3Form, {0, 0, 2.00832, 0}},                     // thiol
-        {"CT", "CT", "SH", "HS", SpeciesTorsion::Cos3Form, {-3.17566, -1.17989, 2.84512, 0}},       // thiol
-        {"HC", "CT", "CT", "SH", SpeciesTorsion::Cos3Form, {0, 0, 1.89117, 0}},                     // thiol
-        {"HC", "CT", "CT", "SY", SpeciesTorsion::Cos3Form, {0, 0, 1.89117, 0}},                     //
-        {"HC", "CT", "CT", "S", SpeciesTorsion::Cos3Form, {0, 0, 1.89117, 0}},                      // sulfide
-        {"CT", "CT", "CT", "SH", SpeciesTorsion::Cos3Form, {5.28021, -0.828432, 1.94556, 0}},       // thiol
-        {"CT", "CT", "CT", "SY", SpeciesTorsion::Cos3Form, {5.28021, -0.828432, 1.94556, 0}},       // (mod
-        {"HC", "CT", "NT", "H", SpeciesTorsion::Cos3Form, {0, 0, 1.6736, 0}},                       // amine
-        {"HC", "CT", "CT", "NT", SpeciesTorsion::Cos3Form, {-4.23839, -2.96646, 1.97903, 0}},       // amine
-        {"CT", "CT", "NT", "H", SpeciesTorsion::Cos3Form, {-0.79496, -1.74473, 1.74891, 0}},        // amine
-        {"CT", "CT", "N2", "H", SpeciesTorsion::Cos3Form, {-0.79496, -1.74473, 1.74891, 0}},        // guanidinium
-        {"CT", "CT", "N2", "H3", SpeciesTorsion::Cos3Form, {-0.79496, -1.74473, 1.74891, 0}},       // guanidinium
-        {"CT", "CT", "CT", "NT", SpeciesTorsion::Cos3Form, {10.0081, -2.82002, 2.3012, 0}},         // amine
-        {"HO", "OH", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 7.03749, 0, 0}},                     // phenol
-        {"N", "CT", "CT", "CT", SpeciesTorsion::Cos3Form, {3.53548, -4.02501, 2.98319, 0}},         // Chi-1
-        {"N", "CT", "CT", "C*", SpeciesTorsion::Cos3Form, {3.53548, -4.02501, 2.98319, 0}},         // Chi-1
-        {"N", "CT", "CT", "CA", SpeciesTorsion::Cos3Form, {3.53548, -4.02501, 2.98319, 0}},         // Chi-1
-        {"C", "N", "CT", "C", SpeciesTorsion::Cos3Form, {-9.89516, 3.81581, -3.5564, 0}},           // Phi
-        {"N", "CT", "C", "N", SpeciesTorsion::Cos3Form, {7.59814, 5.11285, 6.6149, 0}},             // Psi
-        {"C", "N", "CT", "CT", SpeciesTorsion::Cos3Form, {0, 1.93301, 0, 0}},                       // Phi'
-        {"CT", "CT", "C", "N", SpeciesTorsion::Cos3Form, {4.90783, 0.790776, -5.0208, 0}},          // Psi'
-        {"C", "N", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // Phi"
-        {"HC", "CT", "C", "N", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // Psi"
-        {"HC", "CM", "C", "N", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             //
-        {"HC", "CT", "C", "NM", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            //
-        {"HC", "CM", "C", "NM", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            //
-        {"CQ", "N", "CT", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            //
-        {"CQ", "N", "CT", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            //
-        {"H", "N", "CT", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                              // peptides
-        {"H", "N", "CT", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // peptides
-        {"H", "N", "CT", "C", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                              // peptides
-        {"*", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                              // peptides
-        {"CT", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // peptides
-        {"N", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                              // peptides
-        {"CT", "C", "N", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0, 0}},                        // amides
-        {"CM", "C", "N", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0, 0}},                        // amides
-        {"HC", "C", "N", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0, 0}},                        // amides
-        {"CT", "C", "NM", "CT", SpeciesTorsion::Cos3Form, {0, 20.5016, 0, 0}},                      // tert.
-        {"O", "C", "NM", "CT", SpeciesTorsion::Cos3Form, {0, 20.5016, 0, 0}},                       // tert.
-        {"CT", "C", "N", "CT", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0, 0}},                  // amides-
-        {"CT", "C", "N", "CA", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0, 0}},                  //
-        {"HC", "C", "N", "CT", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0, 0}},                  // amides-
-        {"O", "C", "N", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0, 0}},                         // amides
-        {"O", "C", "N", "CT", SpeciesTorsion::Cos3Form, {0, 25.4764, 0, 0}},                        // amides
-        {"O", "C", "N", "CA", SpeciesTorsion::Cos3Form, {0, 25.4764, 0, 0}},                        // amides
-        {"O", "C", "N", "CM", SpeciesTorsion::Cos3Form, {0, 25.4764, 0, 0}},                        // amides
-        {"N", "C", "N", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0, 0}},                         // imides
-        {"N", "C", "N", "C", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0, 0}},                    // imides
-        {"CT", "N", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // tert.
-        {"CT", "N2", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // tert.
-        {"CA", "N", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // "
-        {"CT", "NM", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // tert.
-        {"CA", "NM", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // "
-        {"C*", "CA", "SH", "HS", SpeciesTorsion::Cos3Form, {0, 4.6024, 0, 0}},                      // aromatic
-        {"CA", "CA", "SH", "HS", SpeciesTorsion::Cos3Form, {0, 4.6024, 0, 0}},                      // aromatic
-        {"N*", "CA", "SH", "HS", SpeciesTorsion::Cos3Form, {-12.552, 0, 0, 0}},                     // "
-        {"HC", "CT", "S", "CT", SpeciesTorsion::Cos3Form, {0, 0, 2.70705, 0}},                      // sulfide
-        {"HC", "CT", "S", "CA", SpeciesTorsion::Cos3Form, {0, 0, 2.70705, 0}},                      // sulfide
-        {"CT", "CT", "CT", "S", SpeciesTorsion::Cos3Form, {10.9579, -2.59408, 1.07947, 0}},         // sulfide
-        {"CT", "CT", "S", "CT", SpeciesTorsion::Cos3Form, {3.8702, -2.40998, 2.83257, 0}},          // sulfide
-        {"H", "N2", "CA", "N2", SpeciesTorsion::Cos3Form, {0, 16.3176, 0, 0}},                      // guanidinium
-        {"H", "N2", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 16.3176, 0, 0}},                      // guanidinium
-        {"CT", "N2", "CA", "N2", SpeciesTorsion::Cos3Form, {0, 33.2042, 0, 0}},                     // methylguanidinium
-        {"HC", "CT", "N2", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0.740568, 0}},                    // methylguanidinium
-        {"HC", "CT", "N2", "H", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // methylguanidinium
-        {"CT", "CT", "N2", "CA", SpeciesTorsion::Cos3Form, {7.65254, 1.01671, -2.08363, 0}},        // ethylguanidinium
-        {"HC", "CT", "CT", "N2", SpeciesTorsion::Cos3Form, {0, 0, -2.43509, 0}},                    // ethylguanidinium
-        {"C", "N", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, -0.581576, 0}},                     // N-methylformamide
-        {"HC", "CT", "N", "H", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // N-methylformamide
-        {"C", "N", "CT", "CT", SpeciesTorsion::Cos3Form, {-5.84086, -1.78657, 0, 0}},               // N-ethylformamide
-        {"H", "N", "CT", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // N-ethylformamide
-        {"N", "CT", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.94138, 0}},                      // N-ethylformamide
-        {"N", "CT", "CT", "CT", SpeciesTorsion::Cos3Form, {8.21738, 0, 2.75726, 0}},                // N-propylformamide
-        {"C", "NM", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, -0.581576, 0}},                    // tertiary
-        {"C", "NM", "CT", "CT", SpeciesTorsion::Cos3Form, {-5.84086, -1.78657, 0, 0}},              // tertiary
-        {"NM", "CT", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.94138, 0}},                     // tertiary
-        {"NM", "CT", "CT", "CT", SpeciesTorsion::Cos3Form, {8.21738, 0, 2.75726, 0}},               // tertiary
-        {"CM", "CM", "C", "NM", SpeciesTorsion::Cos3Form, {8.368, 0, 0, 0}},                        // tertiary
-        {"CM", "CM", "C", "N", SpeciesTorsion::Cos3Form, {8.368, 0, 0, 0}},                         // vinyl
-        {"HC", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // all
-        {"HC", "C", "C", "O", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                              //
-        {"HC", "CM", "C", "O", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             //
-        {"CT", "CT", "C", "N", SpeciesTorsion::Cos3Form, {13.598, -1.68197, -0.569024, 0}},         // propanamide
-        {"CT", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 4.87854, 0, 0}},                       // propanamide
-        {"HC", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {0, 0, -0.4184, 0}},                      // all
-        {"C", "CT", "CT", "CT", SpeciesTorsion::Cos3Form, {-8.61904, -1.30959, 1.31796, 0}},        // butanamide
-        {"N", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {26.2755, -6.13793, 8.49352, 0}},         // Chi
-        {"C", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {-25.8571, 0, 0, 0}},                     // Chi
-        {"N", "CT", "CT", "S*", SpeciesTorsion::Cos3Form, {5.97475, 0.359824, 0.121336, 0}},        // Chi
-        {"C", "CT", "CT", "S*", SpeciesTorsion::Cos3Form, {-18.1753, -7.17138, 0, 0}},              // Chi
-        {"HC", "CT", "C*", "CW", SpeciesTorsion::Cos3Form, {0, 0, -2.00832, 0}},                    // 3-methylindole
-        {"HC", "CT", "C*", "CB", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // 3-methylindole
-        {"CT", "CT", "C*", "CW", SpeciesTorsion::Cos3Form, {-2.98738, 0, 0, 0}},                    // 3-ethylindole
-        {"CT", "CT", "C*", "CB", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // 3-ethylindole
-        {"HC", "CT", "CC", "N*", SpeciesTorsion::Cos3Form, {0, 0, 1.7531, 0}},                      // HID,
-        {"CT", "CT", "CC", "N*", SpeciesTorsion::Cos3Form, {9.89934, -1.09621, 2.11292, 0}},        // "
-        {"HC", "CT", "N3", "H", SpeciesTorsion::Cos3Form, {0, 0, 1.09202, 0}},                      // ammonium
-        {"CT", "CT", "N3", "H", SpeciesTorsion::Cos3Form, {0, 0, 1.45185, 0}},                      // ammonium
-        {"HC", "CT", "CT", "N3", SpeciesTorsion::Cos3Form, {0, 0, 1.60666, 0}},                     // ammonium
-        {"CT", "CT", "CT", "N3", SpeciesTorsion::Cos3Form, {11.4307, -0.958136, 2.02924, 0}},       // ammonium
-        {"HC", "CT", "NO", "ON", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // nitro
-        {"*T", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 3.43088, 0, 0}},                       // carboxylate
-        {"*T", "CT", "C", "O2", SpeciesTorsion::Cos3Form, {0, 3.43088, 0, 0}},                      // carboxylate
-        {"HC", "CT", "CT", "NO", SpeciesTorsion::Cos3Form, {0, 0, -0.9414, 0}},                     // nitroethane
-        {"CT", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {-13.326, -3.4518, 2.06271, 0}},          // carboxylate
-        {"HC", "CT", "C", "O2", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // caboxylates
-        {"HC", "CT", "C", "OH", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // acids
-        {"CT", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 2.28446, 0, 0}},                       // RCOOH
-        {"CA", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 2.28446, 0, 0}},                       // RCOOH
-        {"CT", "CT", "C", "OH", SpeciesTorsion::Cos3Form, {4.184, 2.28446, 1.8828, 0}},             // RCOOH
-        {"NT", "CT", "C", "OH", SpeciesTorsion::Cos3Form, {22.0078, 3.43088, 0, 0}},                // neutral
-        {"HC", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {-10.8324, -4.69863, 1.12968, 0}},       // axial
-        {"C", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {-2.3012, 0, 4.184, 0}},                   // dicarboxylic
-        {"O", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 23.012, 0, 0}},                        // carboxylic
-        {"CT", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {6.276, 23.012, 0, 0}},                   // carboxylic
-        {"HC", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {6.276, 23.012, 0, 0}},                   // carboxylic
-        {"C", "CT", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0.309616, 0}},                     // dicarboxylic
-        {"CT", "CT", "C", "O", SpeciesTorsion::Cos3Form, {-3.138, -2.3012, -1.046, 0}},             // dicarboxylic
-        {"CT", "CT", "C", "OH", SpeciesTorsion::Cos3Form, {0, 5.90781, 0, 0}},                      // dicarboxylic
-        {"CT", "N", "CT", "C", SpeciesTorsion::Cos3Form, {-7.26761, 5.23418, -14.6482, 0}},         // Proline
-        {"CT", "N", "CT", "CT", SpeciesTorsion::Cos3Form, {19.8866, -3.07106, 0, 0}},               // "
-        {"CT", "CT", "N", "CT", SpeciesTorsion::Cos3Form, {11.9621, 8.61067, -47.1369, 0}},         // "
-        {"CT", "NM", "CT", "C", SpeciesTorsion::Cos3Form, {-7.26761, 5.23418, -14.6482, 0}},        //
-        {"CT", "NM", "CT", "CT", SpeciesTorsion::Cos3Form, {19.8866, -3.07106, 0, 0}},              //
-        {"CT", "CT", "NM", "CT", SpeciesTorsion::Cos3Form, {11.9621, 8.61067, -47.1369, 0}},        //
-        {"CT", "CT", "C+", "CT", SpeciesTorsion::Cos3Form, {0, -4.184, 0, 0}},                      // carbocation
-        {"CT", "CT", "C+", "HC", SpeciesTorsion::Cos3Form, {0, -4.184, 0, 0}},                      // carbocation
-        {"HC", "CT", "C", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.1506, 0}},                       // ketone
-        {"HC", "CT", "C", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.50624, 0}},                      // aldehyde
-        {"HC", "CT", "C", "F", SpeciesTorsion::Cos3Form, {0, 0, 1.50624, 0}},                       // acyl
-        {"HC", "CT", "C", "Cl", SpeciesTorsion::Cos3Form, {0, 0, 1.50624, 0}},                      // acyl
-        {"HC", "CT", "C", "Br", SpeciesTorsion::Cos3Form, {0, 0, 1.50624, 0}},                      // acyl
-        {"CT", "CT", "C", "F", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // acyl
-        {"CT", "CT", "C", "Cl", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // acyl
-        {"CT", "CT", "C", "Br", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // acyl
-        {"CT", "CT", "C", "O", SpeciesTorsion::Cos3Form, {-1.15897, 5.13795, -2.9037, 0}},          // aldehyde
-        {"HC", "CT", "CT", "C(O)", SpeciesTorsion::Cos3Form, {0, 0, -0.317984, 0}},                 // aldehyde
-        {"CT", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {-7.10025, -1.9079, 2.44764, 0}},         // aldehyde
-        {"CA", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {-7.10025, -1.9079, 2.44764, 0}},         // aldehyde
-        {"C*", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {-7.10025, -1.9079, 2.44764, 0}},         //
-        {"CT", "CT", "C", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // aldehyde
-        {"CT", "CT", "C", "CT", SpeciesTorsion::Cos3Form, {6.08354, -0.602496, -3.2426, 0}},        // ketone
-        {"C", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {12.552, 23.012, 0, 0}},                   // oxalic
-        {"CA", "CT", "P", "OS", SpeciesTorsion::Cos3Form, {9.414, 0, 0, 0}},                        // phosphonates
-        {"CT", "P", "OS", "CT", SpeciesTorsion::Cos3Form, {14.644, -13.8072, 6.276, 0}},            // phosphonates
-        {"P", "OS", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                       // phosphonates
-        {"O2", "P", "OS", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // phosphonates
-        {"O", "P", "OS", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // phosphonates
-        {"O", "P", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // phosphonates
-        {"OH", "P", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // phosphonates
-        {"CA", "CA", "CT", "P", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // phosphonates
-        {"CA", "CT", "P", "O2", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // phosphonates
-        {"HC", "CT", "P", "O2", SpeciesTorsion::Cos3Form, {0, 0, 1.046, 0}},                        // phosphonates
-        {"HC", "CT", "P", "OS", SpeciesTorsion::Cos3Form, {0, 0, 1.046, 0}},                        // phosphonates
-        {"O2", "P", "OS", "C*", SpeciesTorsion::Cos3Form, {0, 0, 2.35141, 0}},                      // MeOPO3
-        {"O2", "P", "OS", "CT", SpeciesTorsion::Cos3Form, {3.7656, -12.2591, 11.0458, 0}},          // dimethyl
-        {"CA", "CA", "OS", "P", SpeciesTorsion::Cos3Form, {0, 12.5102, 0, 0}},                      // PhOPO3
-        {"NT", "CT", "CT", "Cl", SpeciesTorsion::Cos3Form, {8.368, 0, 0, 0}},                       // 2-chloroethylamines
-        {"HC", "CT", "CT", "Cl", SpeciesTorsion::Cos3Form, {0, 0, 1.6736, 0}},                      // alkyl
-        {"CT", "CT", "CT", "Cl", SpeciesTorsion::Cos3Form, {0, 0, 1.6736, 0}},                      // alkyl
-        {"Cl", "CT", "CT", "Cl", SpeciesTorsion::Cos3Form, {-1.046, 0, 0, 0}},                      // dichloride
-        {"HC", "CT", "CT", "I", SpeciesTorsion::Cos3Form, {0, 0, 1.6736, 0}},                       // alkyl
-        {"CT", "CT", "CT", "I", SpeciesTorsion::Cos3Form, {0, 0, 1.6736, 0}},                       // alkyl
-        {"HO", "OH", "CT", "CT", SpeciesTorsion::Cos3Form, {18.736, -9.09853, 0, 0}},               // trifluoroethanol
-        {"HC", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 0, 1.99158, 0}},                     // trifluoroethanol
-        {"F", "CT", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.31252, 0}},                      // trifluoroethanol
-        {"F", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {0, 0, 2.25978, 0}},                      // trifluoroethanol
-        {"CT", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {13.3888, 20.5016, 0, 0}},                // 1,2-diacid
-        {"CT", "CT", "C", "O", SpeciesTorsion::Cos3Form, {-4.184, -7.9496, -3.7656, 0}},            // 1,2-diacid
-        {"C", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {3.3472, 0, 3.7656, 0}},                   // 1,2-diacid
-        {"H", "N", "SY", "CA", SpeciesTorsion::Cos3Form, {6.99146, -20.5058, 2.7991, 0}},           // sulfonamide
-        {"HC", "CT", "N", "SY", SpeciesTorsion::Cos3Form, {5.69861, -6.09609, 0.623416, 0}},        // sulfonamide
-        {"CT", "N", "SY", "CA", SpeciesTorsion::Cos3Form, {8.67762, -12.4097, 10.347, 0}},          // sulfonamide
-        {"CT", "CT", "N", "SY", SpeciesTorsion::Cos3Form, {12.2549, -10.5981, 2.07945, 0}},         // sulfonamide
-        {"CA", "CA", "SY", "N", SpeciesTorsion::Cos3Form, {6.9287, -3.21331, -0.489528, 0}},        // sulfonamide
-        {"*", "*", "SY", "OY", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // sulfonamide
-        {"*", "CA", "SY", "OY", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // sulfonamide
-        {"*", "N", "SY", "OY", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // sulfonamide
-        {"*", "CT", "SY", "OY", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // sulfonamide
-        {"*", "CT", "SY", "N", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // sulfonamide
-        {"HC", "CT", "CT", "F", SpeciesTorsion::Cos3Form, {0, 0, 1.6736, 0}},                       // alkyl
-        {"CT", "CT", "CT", "F", SpeciesTorsion::Cos3Form, {1.2552, -1.6736, 1.6736, 0}},            // alkyl
-        {"F", "CT", "CT", "F", SpeciesTorsion::Cos3Form, {-10.46, 0, 1.046, 0}},                    // 1,2-difluoride
-        {"CT", "CT", "CT", "O*", SpeciesTorsion::Cos3Form, {-5.58982, 0, 0, 0}},                    // hexopyranoses
-        {"CT", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {11.188, -12.0625, 4.29278, 0}},         // hexopyranoses
-        {"OH", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {37.9321, 0, 0, 0}},                     // hexopyranoses
-        {"CT", "OS", "CO", "OH", SpeciesTorsion::Cos3Form, {-1.569, -5.68187, 0.016736, 0}},        // hexopyranoses
-        {"CT", "OS", "CO", "OS", SpeciesTorsion::Cos3Form, {-1.569, -5.68187, 0.016736, 0}},        // hexopyranoses
-        {"OS", "CO", "OH", "HO", SpeciesTorsion::Cos3Form, {-5.25929, -7.5563, 0.012552, 0}},       // hexopyranoses
-        {"OH", "CT", "CT", "OS", SpeciesTorsion::Cos3Form, {18.0707, 0, 0, 0}},                     // hexopyranoses
-        {"HC", "CT", "CT", "Br", SpeciesTorsion::Cos3Form, {0, 0, 1.6736, 0}},                      // alkyl
-        {"CT", "CT", "CT", "Br", SpeciesTorsion::Cos3Form, {0, 0, 1.6736, 0}},                      // alkyl
-        {"CA", "CA", "CT", "Br", SpeciesTorsion::Cos3Form, {0, 0, 1.6736, 0}},                      // alkyl
-        {"*", "CA", "CA", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                        // in
-        {"CA", "CA", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "CA", "CA", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CA", "CA", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "CA", "C!", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "CA", "C!", "C!", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "CA", "CA", "C!", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"C!", "CA", "CA", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CA", "C!", "C!", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CA", "C!", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "CA", "C!", "NC", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "C!", "NC", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"C!", "C!", "CA", "NC", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "C!", "CA", "NC", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"C!", "CA", "CA", "NC", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"C!", "C!", "NC", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"C!", "C!", "N", "C", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                        //
-        {"C!", "C!", "CM", "C", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"NC", "C!", "CA", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "CA", "CA", "F", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"CA", "CA", "CA", "Cl", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "CA", "CA", "Br", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "CA", "CA", "I", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"HA", "CA", "CA", "F", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"HA", "CA", "CA", "Cl", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CA", "CA", "Br", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CA", "CA", "I", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"CA", "CA", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "C=", "C=", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"C", "C=", "C=", "C", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                        //
-        {"HA", "CA", "CA", "CT", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CT", "CA", "CA", "CT", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CT", "CA", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "CA", "CA", "CB", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CA", "CA", "CB", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "CA", "CA", "O*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CA", "CA", "O*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CT", "CA", "CA", "O*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"O*", "CA", "CA", "O*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "CA", "CA", "S*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CA", "CA", "S*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CT", "CA", "CA", "S*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"S*", "CA", "CA", "S*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CM", "C!", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CM", "C!", "N", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"HA", "CA", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CT", "CA", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"O*", "CA", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"N*", "CA", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"*", "CB", "CB", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                        //
-        {"C*", "CB", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"N*", "CB", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"N*", "CB", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"*", "CB", "CS", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                        //
-        {"*", "CS", "C", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                         //
-        {"*", "CR", "CS", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                        //
-        {"*", "CS", "CW", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                        //
-        {"C*", "CS", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"C*", "CS", "CW", "H*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"C*", "CS", "CW", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CS", "CW", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CS", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CS", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CS", "CS", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CA", "CU", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"HA", "CW", "OS", "CW", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"*", "NC", "CA", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                        //
-        {"CS", "CW", "OS", "CW", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "NC", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"C*", "NC", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "NC", "CA", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "NC", "NC", "CT", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CA", "NC", "NC", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CT", "NC", "NC", "CT", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"*", "NC", "CB", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                        //
-        {"C*", "NC", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"C*", "NC", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"*", "NA", "CB", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                        //
-        {"*", "NB", "CB", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                        //
-        {"*", "NB", "CR", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                        //
-        {"*", "NB", "CU", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                        //
-        {"C*", "NA", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"C*", "NA", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"C*", "NB", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"N*", "CR", "S", "CW", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"CR", "NB", "CV", "CW", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CR", "NB", "CV", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CU", "CW", "S", "CR", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"CR", "S", "CW", "CV", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"HA", "CW", "S", "CR", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"CW", "S", "CR", "NB", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"S", "CR", "NB", "CU", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"S", "CR", "NB", "CV", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"CR", "NB", "CU", "CW", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CU", "CW", "OS", "CR", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"CW", "OS", "CR", "NB", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"OS", "CR", "NB", "CU", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"NB", "CU", "CW", "OS", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"NB", "CU", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"NB", "CU", "CW", "S", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"NB", "CV", "CW", "OS", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"NB", "CV", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"NB", "CV", "CW", "S", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"*", "N", "CB", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                         //
-        {"HA", "CU", "CW", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"HA", "CW", "CU", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"*", "NC", "CR", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                        //
-        {"*", "NC", "CQ", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                        //
-        {"C*", "NC", "CQ", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"C*", "NC", "CQ", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                      //
-        {"*", "N", "CQ", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                         //
-        {"C*", "N", "CQ", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"C*", "N", "CQ", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                       //
-        {"H", "N", "CQ", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0, 0}},                         //
-        {"*", "CW", "NA", "*", SpeciesTorsion::Cos3Form, {0, 11.7152, 0, 0}},                       //
-        {"*", "NA", "CR", "*", SpeciesTorsion::Cos3Form, {0, 19.4556, 0, 0}},                       //
-        {"HA", "CR", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0, 0}},                        //
-        {"N*", "CR", "NB", "C*", SpeciesTorsion::Cos3Form, {0, 41.84, 0, 0}},                       //
-        {"*", "CR", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0, 0}},                         //
-        {"*", "CW", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0, 0}},                         //
-        {"*", "CR", "NA", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0, 0}},                         //
-        {"HA", "CR", "NA", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0, 0}},                        //
-        {"N*", "CR", "NA", "C*", SpeciesTorsion::Cos3Form, {0, 41.84, 0, 0}},                       //
-        {"*", "CR", "NC", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0, 0}},                         //
-        {"*", "CK", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0, 0}},                         //
-        {"*", "CK", "NA", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0, 0}},                         //
-        {"*", "CK", "NC", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0, 0}},                         //
-        {"*", "NA", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0, 0}},                         //
-        {"*", "NB", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0, 0}},                         //
-        {"*", "NB", "CV", "*", SpeciesTorsion::Cos3Form, {0, 20.0832, 0, 0}},                       //
-        {"*", "CW", "CV", "*", SpeciesTorsion::Cos3Form, {0, 44.978, 0, 0}},                        //
-        {"C*", "CW", "CV", "C*", SpeciesTorsion::Cos3Form, {0, 44.978, 0, 0}},                      //
-        {"C*", "CW", "CV", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0, 0}},                      //
-        {"HA", "CW", "CV", "C*", SpeciesTorsion::Cos3Form, {0, 44.978, 0, 0}},                      //
-        {"HA", "CW", "CV", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0, 0}},                      //
-        {"*", "CW", "CW", "*", SpeciesTorsion::Cos3Form, {0, 44.978, 0, 0}},                        //
-        {"C*", "CW", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 44.978, 0, 0}},                      //
-        {"C*", "CW", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0, 0}},                      //
-        {"H*", "CW", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 44.978, 0, 0}},                      //
-        {"H*", "CW", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0, 0}},                      //
-        {"HA", "CW", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0, 0}},                      //
-        {"S", "CW", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0, 0}},                       //
-        {"S", "CW", "CU", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0, 0}},                       //
-        {"S", "CW", "CV", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0, 0}},                       //
-        {"*", "NA", "CW", "*", SpeciesTorsion::Cos3Form, {0, 20.92, 0, 0}},                         //
-        {"C*", "NA", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 20.92, 0, 0}},                       //
-        {"N*", "NA", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 20.92, 0, 0}},                       //
-        {"C*", "NA", "CW", "H*", SpeciesTorsion::Cos3Form, {0, 20.92, 0, 0}},                       //
-        {"N*", "NA", "CW", "H*", SpeciesTorsion::Cos3Form, {0, 20.92, 0, 0}},                       //
-        {"H", "NA", "CW", "*", SpeciesTorsion::Cos3Form, {0, 20.92, 0, 0}},                         //
-        {"H", "NA", "CR", "*", SpeciesTorsion::Cos3Form, {0, 20.92, 0, 0}},                         //
-        {"H", "NA", "CB", "*", SpeciesTorsion::Cos3Form, {0, 20.92, 0, 0}},                         //
-        {"*", "C*", "CW", "*", SpeciesTorsion::Cos3Form, {0, 54.6012, 0, 0}},                       //
-        {"*", "C*", "CB", "*", SpeciesTorsion::Cos3Form, {0, 14.0164, 0, 0}},                       //
-        {"*", "CA", "CB", "*", SpeciesTorsion::Cos3Form, {0, 29.288, 0, 0}},                        //
-        {"C*", "CA", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 29.288, 0, 0}},                      //
-        {"N*", "CA", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 29.288, 0, 0}},                      //
-        {"C*", "CA", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 29.288, 0, 0}},                      //
-        {"N*", "CA", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 29.288, 0, 0}},                      //
-        {"*", "C", "CB", "*", SpeciesTorsion::Cos3Form, {0, 29.288, 0, 0}},                         //
-        {"O", "C", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 29.288, 0, 0}},                        //
-        {"N*", "C", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 29.288, 0, 0}},                       //
-        {"O", "C", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 29.288, 0, 0}},                        //
-        {"N*", "C", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 29.288, 0, 0}},                       //
-        {"*", "CB", "CN", "*", SpeciesTorsion::Cos3Form, {0, 25.104, 0, 0}},                        //
-        {"*", "NA", "CN", "*", SpeciesTorsion::Cos3Form, {0, 12.7612, 0, 0}},                       //
-        {"*", "CW", "NA", "*", SpeciesTorsion::Cos3Form, {0, 12.552, 0, 0}},                        //
-        {"CT", "CT", "OS", "P", SpeciesTorsion::Cos3Form, {-5.94128, -2.59408, 0.4184, 0}},         // in
-        {"HC", "CT", "C", "OS", SpeciesTorsion::Cos3Form, {0, 0, 0.552288, 0}},                     // esters
-        {"CT", "C", "OS", "CT", SpeciesTorsion::Cos3Form, {19.5351, 21.4388, 0, 0}},                // esters
-        {"HC", "C", "OS", "CT", SpeciesTorsion::Cos3Form, {19.5351, 21.4388, 0, 0}},                // esters
-        {"O", "C", "OS", "CT", SpeciesTorsion::Cos3Form, {0, 21.4388, 0, 0}},                       // esters
-        {"C", "OS", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0.828432, 0}},                     // esters
-        {"CT", "CT", "C", "OS", SpeciesTorsion::Cos3Form, {0, 0, -2.31375, 0}},                     // esters
-        {"CT", "CT", "OS", "C", SpeciesTorsion::Cos3Form, {-5.10448, -0.527184, 1.76565, 0}},       // esters
-        {"CA", "CT", "CT", "N3", SpeciesTorsion::Cos3Form, {4.184, 0, 0, 0}},                       // phenethylammonium-
-        {"CA", "CT", "CT", "NT", SpeciesTorsion::Cos3Form, {-3.3472, 0, 0, 0}},                     // phenethylamines-
-        {"CT", "CT", "NO", "ON", SpeciesTorsion::Cos3Form, {0, 1.6736, 0, 0}},                      // nitroethane
-        {"CA", "CA", "NO", "ON", SpeciesTorsion::Cos3Form, {0, 4.8116, 0, 0}},                      // nitrobenzene
-        {"CT", "NY", "CA", "NZ", SpeciesTorsion::Cos3Form, {0, 15.2758, 0, 0}},                     // neutral
-        {"CT", "CT", "NT", "H", SpeciesTorsion::Cos3Form, {0, 16.736, 0, 0}},                       // azetidine-
-        {"CT", "CT", "NT", "H", SpeciesTorsion::Cos3Form, {0.8368, -1.74473, 1.74891, 0}},          // pyrrolidine
-        {"CT", "NT", "CT", "CT", SpeciesTorsion::Cos3Form, {1.74054, -0.535552, 2.90788, 0}},       // amine
-        {"CT", "NT", "CT", "CT", SpeciesTorsion::Cos3Form, {6.42662, -0.535552, 2.90788, 0}},       // exocyclic
-        {"CT", "NT", "CT", "CT", SpeciesTorsion::Cos3Form, {6.12538, -0.535552, 2.90788, 0}},       // exocyclic
-        {"CT", "CT", "NT", "H", SpeciesTorsion::Cos3Form, {3.4267, -1.74473, 1.74891, 0}},          // cyclic
-        {"CT", "CT", "NT", "H", SpeciesTorsion::Cos3Form, {6.36805, -1.74473, 1.74891, 0}},         // cyclic
-        {"NT", "CT", "CT", "NT", SpeciesTorsion::Cos3Form, {46.1704, -4.05011, 1.12968, 0}},        // amine
-        {"CT", "NT", "CT", "CT", SpeciesTorsion::Cos3Form, {1.74054, -0.535552, 2.90788, 0}},       // amine
-        {"HC", "CT", "NT", "CT", SpeciesTorsion::Cos3Form, {0, 0, 2.34304, 0}},                     // amine
-        {"CT", "CT", "CW", "NA", SpeciesTorsion::Cos3Form, {7.1128, -2.5104, 0, 0}},                // 2-ethyl
-        {"CT", "C=", "C=", "CM", SpeciesTorsion::Cos3Form, {3.7656, 0.96232, -2.11292, 0}},         // 2-Me-1,3-butadiene
-        {"CT", "C=", "C", "O*", SpeciesTorsion::Cos3Form, {3.7656, 0.96232, -2.11292, 0}},          // 2-Me-1,3-butadiene-like
-        {"CT", "CM", "C", "O*", SpeciesTorsion::Cos3Form, {3.7656, 0.96232, -2.11292, 0}},          // 2-Me-1,3-butadiene-like
-        {"CT", "C", "C=", "CM", SpeciesTorsion::Cos3Form, {3.3472, -12.552, 0, 0}},                 // methyl
-        {"CM", "C=", "C", "OH", SpeciesTorsion::Cos3Form, {13.3888, -12.552, 0, 0}},                // acrylic
-        {"CM", "CM", "C", "OH", SpeciesTorsion::Cos3Form, {13.3888, -12.552, 0, 0}},                // acrylic
-        {"CM", "C=", "C", "O", SpeciesTorsion::Cos3Form, {10.46, 25.104, 0, 0}},                    // acrolein
-        {"CM", "CM", "C", "O", SpeciesTorsion::Cos3Form, {10.46, 25.104, 0, 0}},                    // acrolein-like
-        {"CA", "CA", "C", "CT", SpeciesTorsion::Cos3Form, {0, 0.8368, 0, 0}},                       // aryl
-        {"CA", "CA", "C", "HC", SpeciesTorsion::Cos3Form, {0, 0.8368, 0, 0}},                       // aryl
-        {"CA", "CA", "N", "*", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                        // N-phenylamide
-        {"CA", "CA", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                        // N-phenylamide
-        {"CA", "CA", "N", "C", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                        // N-phenylamide
-        {"CA", "CA", "N", "CT", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                       // N-phenylamide
-        {"CA", "CA", "N", "CR", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                       // diarylamine
-        {"CA", "CA", "N", "CW", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                       // diarylamine
-        {"CA", "CA", "NT", "CR", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                      // diarylamine
-        {"CA", "CA", "NT", "CW", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                      // diarylamine
-        {"S", "CR", "N", "CA", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                        // diarylamine
-        {"S", "CR", "NT", "CA", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                       // diarylamine
-        {"NB", "CR", "N", "CA", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                       // diarylamine
-        {"NB", "CR", "NT", "CA", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                      // diarylamine
-        {"S", "CR", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                         // diarylamine
-        {"S", "CR", "NT", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                        // diarylamine
-        {"NB", "CR", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                        // diarylamine
-        {"NB", "CR", "NT", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                       // diarylamine
-        {"OS", "CR", "N", "CA", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                       // diarylamine
-        {"OS", "CR", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                        // diarylamine
-        {"OS", "CW", "N", "CA", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                       // diarylamine
-        {"OS", "CW", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                        // diarylamine
-        {"S", "CW", "N", "CA", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                        // diarylamine
-        {"S", "CW", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                         // diarylamine
-        {"CA", "CA", "N", "CQ", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                       // diarylamine
-        {"CA", "CA", "NT", "CQ", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                      // diarylamine
-        {"CA", "CA", "C", "O", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                        // aryl
-        {"CA", "CA", "C", "OS", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                       // aryl
-        {"CA", "CA", "C", "OH", SpeciesTorsion::Cos3Form, {0, 8.7864, 0, 0}},                       // aryl
-        {"CA", "CA", "OS", "C", SpeciesTorsion::Cos3Form, {0, 10.46, 0, 0}},                        // phenyl
-        {"O", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 20.92, 0, 0}},                         // benzoic
-        {"O", "C", "OS", "CT", SpeciesTorsion::Cos3Form, {0, 20.92, 0, 0}},                         // benzoic
-        {"CA", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {16.736, 20.92, 0, 0}},                   // benzoic
-        {"CA", "C", "OS", "CT", SpeciesTorsion::Cos3Form, {16.736, 20.92, 0, 0}},                   // benzoic
-        {"O", "C", "OS", "CA", SpeciesTorsion::Cos3Form, {0, 20.92, 0, 0}},                         // phenyl
-        {"CT", "C", "OS", "CA", SpeciesTorsion::Cos3Form, {6.276, 20.92, 0, 0}},                    // phenyl
-        {"CA", "CA", "C", "N", SpeciesTorsion::Cos3Form, {0, 4.6024, 0, 0}},                        // aryl
-        {"CA", "CA", "NT", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0, 0}},                      // aniline
-        {"*", "CA", "N2", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0, 0}},                       // aniline-like
-        {"*", "CQ", "N2", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0, 0}},                       // aniline-like
-        {"N*", "CA", "N2", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0, 0}},                      // aniline-like
-        {"CB", "CA", "N2", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0, 0}},                      // aniline-like
-        {"S", "CR", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0, 0}},                        // aniline-like
-        {"OS", "CR", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0, 0}},                       // aniline-like
-        {"CA", "CA", "NT", "CT", SpeciesTorsion::Cos3Form, {-31.7231, 14.3553, 13.3804, 0}},        // substituted-aniline
-        {"CT", "CM", "CT", "CT", SpeciesTorsion::Cos3Form, {11.7863, -0.707096, 2.27191, 0}},       // alkenes
-        {"CM", "CM", "CT", "CT", SpeciesTorsion::Cos3Form, {1.44766, 1.69452, -3.78234, 0}},        // alkenes
-        {"C=", "CM", "CT", "CT", SpeciesTorsion::Cos3Form, {1.44766, 1.69452, -3.78234, 0}},        // alkenes
-        {"CM", "CM", "CA", "CA", SpeciesTorsion::Cos3Form, {5.19234, 14.029, -1.19662, 0}},         // styrene
-        {"CT", "CM", "CA", "CA", SpeciesTorsion::Cos3Form, {0.85772, -2.2217, 0, 0}},               // 1-methylstyrene
-        {"Z", "CM", "X", "Y", SpeciesTorsion::Cos3Form, {0, 125.52, 0, 0}},                         // improper
-        {"*", "CM", "CM", "*", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                        // alkene
-        {"CT", "CM", "CM", "CT", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                      // alkene
-        {"CT", "CM", "C=", "CT", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                      // alkene
-        {"CT", "CM", "C=", "HC", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                      // alkene
-        {"HC", "CM", "C=", "HC", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                      // alkene
-        {"HC", "CM", "C=", "CT", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                      // alkene
-        {"CT", "CM", "CM", "HC", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                      // alkene
-        {"C", "CM", "CM", "HC", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                       // alkene
-        {"HC", "CM", "CM", "HC", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                      // alkene
-        {"HC", "CM", "C=", "C=", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                      // alkene
-        {"Cl", "CM", "CM", "HC", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                      // chloroalkene
-        {"HC", "CM", "CM", "OS", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                      // vinyl
-        {"CT", "CM", "CM", "OS", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                      // vinyl
-        {"HC", "CM", "CM", "OH", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                      // vinyl
-        {"CT", "CM", "CM", "OH", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                      // vinyl
-        {"C", "CM", "CM", "N", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                        // conj.
-        {"CT", "C", "NC", "CT", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                       // imine
-        {"HC", "C", "NC", "HC", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                       // imine
-        {"CT", "C", "NC", "O*", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                       // oxime
-        {"HC", "C", "NC", "O*", SpeciesTorsion::Cos3Form, {0, 58.576, 0, 0}},                       // oxime
-        {"CA", "C!", "C!", "CA", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl
-        {"CA", "C!", "C!", "NC", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "C", "CA", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                      // biphenyl
-        {"CA", "C!", "NA", "NB", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "NA", "CW", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "CW", "NA", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "CW", "OS", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "CM", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "CU", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "CU", "NB", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "CV", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "CV", "NB", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "CR", "OS", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "CR", "NA", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "CR", "NB", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "CW", "S", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                      // biphenyl-like
-        {"CA", "C!", "CR", "S", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                      // biphenyl-like
-        {"CA", "C!", "N", "C", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                       // biphenyl-like
-        {"CA", "C!", "N", "CM", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                      // biphenyl-like
-        {"NC", "C!", "N", "C", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                       // biphenyl-like
-        {"NC", "C!", "N", "CM", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                      // biphenyl-like
-        {"CS", "CS", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CS", "CS", "CS", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"OS", "CS", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"OS", "CS", "CS", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"NA", "CS", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"NA", "CS", "CS", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CW", "CV", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CW", "CV", "CS", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"NB", "CV", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"NB", "CV", "CS", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"N*", "CR", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"N*", "CR", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"*", "N", "CU", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                        // biphenyl-like
-        {"*", "N", "CW", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                        // biphenyl-like
-        {"*", "N", "CS", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                        // biphenyl-like
-        {"*", "CM", "CU", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                       // biphenyl-like
-        {"*", "CM", "CW", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                       // biphenyl-like
-        {"*", "CM", "CS", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                       // biphenyl-like
-        {"NC", "C!", "CU", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"NC", "C!", "CU", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "CU", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"CA", "C!", "CU", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0, 0}},                     // biphenyl-like
-        {"Cl", "CM", "CM", "Cl", SpeciesTorsion::Cos3Form, {-6.6944, 58.576, 0, 0}},                // chloroalkene
-        {"HC", "CT", "P+", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                      // phosphonium
-        {"HC", "CT", "CT", "P+", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                      // "
-        {"CT", "CT", "P+", "CT", SpeciesTorsion::Cos3Form, {4.184, -2.092, 2.092, 0}},              // "
-        {"CK", "N*", "CT", "OS", SpeciesTorsion::Cos3Form, {13.1043, -6.23834, 11.4809, 0}},        // Ping
-        {"CK", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {11.5311, -3.64845, -15.3971, 0}},       // Ping
-        {"C", "NC", "OH", "HO", SpeciesTorsion::Cos3Form, {12.552, 12.552, 0, 0}},                  // oxime
-        {"C", "NC", "OS", "CT", SpeciesTorsion::Cos3Form, {12.552, 12.552, 0, 0}},                  // oxime
-        {"CM", "CM", "OS", "CT", SpeciesTorsion::Cos3Form, {-14.644, 12.552, 0, 0}},                // vinyl
-        {"C=", "CM", "OS", "CT", SpeciesTorsion::Cos3Form, {-14.644, 12.552, 0, 0}},                // vinyl
-        {"CM", "CM", "CT", "F", SpeciesTorsion::Cos3Form, {2.092, 0, 0, 0}},                        // allyl
-        {"CM", "CM", "CT", "O*", SpeciesTorsion::Cos3Form, {2.092, 0, 0, 0}},                       // allyl
-        {"C=", "CM", "CT", "O*", SpeciesTorsion::Cos3Form, {2.092, 0, 0, 0}},                       // allyl
-        {"CM", "C=", "CT", "O*", SpeciesTorsion::Cos3Form, {2.092, 0, 0, 0}},                       // allyl
-        {"CM", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {-3.7656, 0, 0, 0}},                     // allyl
-        {"CA", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {-3.7656, 0, 0, 0}},                     // benzyl
-        {"C=", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {-3.7656, 0, 0, 0}},                     // allyl
-        {"HC", "CT", "SY", "OY", SpeciesTorsion::Cos3Form, {0, 0, 1.4644, 0}},                      // sulfone
-        {"HC", "CT", "SY", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.4644, 0}},                      // sulfone
-        {"HC", "CT", "SY", "CA", SpeciesTorsion::Cos3Form, {0, 0, 1.4644, 0}},                      // sulfone
-        {"CT", "CT", "SY", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // sulfone
-        {"CT", "CT", "SY", "OY", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // sulfone
-        {"HC", "CT", "CT", "SY", SpeciesTorsion::Cos3Form, {0, 0, 1.4644, 0}},                      // sulfone
-        {"HC", "CT", "N3", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.26231, 0}},                     // 2ary
-        {"CT", "CT", "N3", "CT", SpeciesTorsion::Cos3Form, {6.01617, -0.517979, 1.10416, 0}},       // 2ary
-        {"*", "CT", "CZ", "NZ", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // nitriles
-        {"*", "CT", "NZ", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // isonitriles
-        {"HC", "CT", "NZ", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // isonitriles
-        {"*", "CA", "NZ", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // isonitriles
-        {"CA", "CA", "NZ", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // isonitriles
-        {"*", "CZ", "CZ", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // alkynes
-        {"*", "CT", "CZ", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                            // alkynes
-        {"CT", "CT", "CZ", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // alkynes
-        {"HC", "CT", "CZ", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // alkynes
-        {"HC", "CZ", "CZ", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // alkynes
-        {"CT", "CZ", "CZ", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // alkynes
-        {"CA", "CA", "SY", "CT", SpeciesTorsion::Cos3Form, {0, -3.7656, 0, 0}},                     // sulfone
-        {"CR", "NA", "CT", "OS", SpeciesTorsion::Cos3Form, {-6.276, -6.276, 0, 0}},                 // imidazoles,
-        {"CR", "N*", "CT", "OS", SpeciesTorsion::Cos3Form, {-6.276, -6.276, 0, 0}},                 // imidazoles,
-        {"CK", "NA", "CT", "OS", SpeciesTorsion::Cos3Form, {-6.276, -6.276, 0, 0}},                 // imidazoles,
-        {"CK", "N*", "CT", "OS", SpeciesTorsion::Cos3Form, {-6.276, -6.276, 0, 0}},                 // imidazoles,
-        {"C*", "NA", "CT", "OS", SpeciesTorsion::Cos3Form, {6.276, -6.276, 0, 0}},                  // imidazoles,
-        {"C*", "N*", "CT", "OS", SpeciesTorsion::Cos3Form, {6.276, -6.276, 0, 0}},                  // imidazoles,
-        {"CR", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {-4.184, -1.4644, 0, 0}},                // imidazoles,
-        {"CR", "N*", "CT", "CT", SpeciesTorsion::Cos3Form, {-4.184, -1.4644, 0, 0}},                // imidazoles,
-        {"CK", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {-4.184, -1.4644, 0, 0}},                // imidazoles,
-        {"CK", "N*", "CT", "CT", SpeciesTorsion::Cos3Form, {-4.184, -1.4644, 0, 0}},                // imidazoles,
-        {"C*", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {4.184, -1.4644, 0, 0}},                 // imidazoles,
-        {"C*", "N*", "CT", "CT", SpeciesTorsion::Cos3Form, {4.184, -1.4644, 0, 0}},                 // imidazoles,
-        {"N*", "CT", "OS", "CT", SpeciesTorsion::Cos3Form, {-2.092, -6.276, 4.184, 0}},             // imidazoles,
-        {"C*", "NA", "CT", "OS", SpeciesTorsion::Cos3Form, {0, -7.84918, 0, 0}},                    // Ping
-        {"C*", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {0, -2.40998, 0, 0}},                    // Ping
-        {"*", "CY", "CY", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // small
-        {"*", "CY", "Ndoll", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                          // small
-        {"*", "CY", "Cdoll", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                          // small
-        {"CY", "CY", "Cdoll", "Ndoll", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                     // small
-        {"CY", "CY", "Cdoll", "O", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                         // small
-        {"*", "CY", "S", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                              // small
-        {"CY", "CY", "Ndoll", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                         // small
-        {"HC", "CY", "Ndoll", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                        // small
-        {"HC", "CY", "Cdoll", "O", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                         // small
-        {"HC", "CY", "Cdoll", "Ndoll", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                     // small
-        {"N", "CY", "CY", "*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // small
-        {"CY", "CY", "N", "H", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // small
-        {"Cdoll", "CY", "N", "H", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                          // small
-        {"HC", "CY", "N", "C", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // small
-        {"HC", "CY", "N", "H", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                             // small
-        {"C*", "Ndoll", "CT", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                        // small
-        {"C*", "Ndoll", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                        // small
-        {"CY", "Cdoll", "Ndoll", "CT", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0, 0}},          // small
-        {"CY", "Cdoll", "Ndoll", "CY", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0, 0}},          // small
-        {"CY", "N", "CT", "CT", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0, 0}},                 // small
-        {"CY", "Cdoll", "Ndoll", "CA", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0, 0}},          // small
-        {"O", "Cdoll", "Ndoll", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0, 0}},                 // small
-        {"CY", "Cdoll", "Ndoll", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0, 0}},                // small
-        {"O", "Cdoll", "Ndoll", "CT", SpeciesTorsion::Cos3Form, {0, 25.4764, 0, 0}},                // small
-        {"O", "Cdoll", "Ndoll", "CA", SpeciesTorsion::Cos3Form, {0, 25.4764, 0, 0}},                // small
-        {"O", "C", "N", "CY", SpeciesTorsion::Cos3Form, {0, 25.4764, 0, 0}},                        // small
-        {"C", "N", "CY", "CY", SpeciesTorsion::Cos3Form, {-5.84086, -1.78657, 0, 0}},               // small
-        {"C", "N", "CY", "Cdoll", SpeciesTorsion::Cos3Form, {-5.84086, -1.78657, 0, 0}},            // small
-        {"O", "Cdoll", "Ndoll", "CY", SpeciesTorsion::Cos3Form, {0, 83.68, 0, 0}},                  // small
-        {"HC", "CY", "CY", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // small
-        {"HC", "CY", "CY", "CY", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // small
-        {"HC", "CY", "CY", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // small
-        {"CT", "CY", "CY", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // small
-        {"CY", "CY", "CY", "CY", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // small
-        {"HC", "CT", "CY", "CY", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                      // small
-        {"HC", "CT", "CM", "CM", SpeciesTorsion::Cos3Form, {0, 0, -1.55645, 0}},                    // alkenes
-        {"HC", "CT", "CM", "C=", SpeciesTorsion::Cos3Form, {0, 0, -1.55645, 0}},                    // alkenes
-        {"HC", "CT", "C=", "C=", SpeciesTorsion::Cos3Form, {0, 0, -1.55645, 0}},                    // alkenes
-        {"HC", "CT", "C=", "CM", SpeciesTorsion::Cos3Form, {0, 0, -1.55645, 0}},                    // alkenes
-        {"HC", "CM", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.33051, 0}},                     // alkene
-        {"HC", "CT", "CT", "CM", SpeciesTorsion::Cos3Form, {0, 0, 1.53134, 0}},                     // alkene
-        {"HC", "CT", "CT", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 1.53134, 0}},                     // alkyne,
-        {"CT", "CT", "CT", "CZ", SpeciesTorsion::Cos3Form, {0, -2.7196, 0, 0}},                     // alkyne,
-        {"HC", "CT", "CM", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                      // alkenes
-        {"CT", "NT", "OS", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                      // generic
-        {"CT", "NT", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                      // generic
-        {"H", "NT", "OS", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                       // generic
-        {"H", "NT", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                       // generic
-        {"CT", "NT", "NT", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                      // generic
-        {"CT", "NT", "NT", "H", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                       // generic
-        {"H", "NT", "NT", "H", SpeciesTorsion::Cos3Form, {0, 0, 1.2552, 0}},                        // generic
-        {"OS", "C", "N", "CT", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0, 0}},                  // carbamates
-        {"OH", "C", "N", "CT", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0, 0}},                  // carbamates
-        {"OS", "C", "N", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0, 0}},                        // carbamates
-        {"OH", "C", "N", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0, 0}},                        // carbamates
-        {"N", "C", "OS", "CT", SpeciesTorsion::Cos3Form, {-8.368, 20.92, 0, 0}},                    // carbamates
-        {"N", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {-8.368, 20.92, 0, 0}},                    // carbamates
-        {"HC", "NC", "NZ", "NZ", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // azides
-        {"CT", "NC", "NZ", "NZ", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // azides
-        {"CT", "CT", "NC", "NZ", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // azides
+        {"HC", "CT", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         // hydrocarbon
+        {"HC", "C", "C", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                           //
+        {"HC", "C=", "C=", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         //
+        {"CT", "C=", "C=", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         //
+        {"CT", "C=", "C=", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         //
+        {"H3", "N3", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         // ammonium
+        {"HC", "CT", "CT", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         // hydrocarbon
+        {"HC", "CT", "CT", "CO", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         // acetal
+        {"HC", "CO", "CT", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         // acetal
+        {"CT", "CT", "CT", "CT", SpeciesTorsion::Cos3Form, {5.4392, -0.2092, 0.8368}},              // hydrocarbon
+        {"CT", "CT", "CT", "CO", SpeciesTorsion::Cos3Form, {5.4392, -0.2092, 0.8368}},              // hydrocarbon
+        {"HC", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {0, 0, 1.95811}},                        // alcohols,
+        {"HC", "CT", "CT", "OS", SpeciesTorsion::Cos3Form, {0, 0, 1.95811}},                        // alcohols,
+        {"HC", "CT", "CO", "OS", SpeciesTorsion::Cos3Form, {0, 0, 1.95811}},                        // alcohols,
+        {"CT", "CT", "CT", "O*", SpeciesTorsion::Cos3Form, {7.15882, -2.092, 2.77399}},             // alcohols,
+        {"CT", "CT", "CO", "O*", SpeciesTorsion::Cos3Form, {7.15882, -2.092, 2.77399}},             // alcohols,
+        {"HC", "CM", "CT", "O*", SpeciesTorsion::Cos3Form, {0, 0, 1.95811}},                        // alcohols,
+        {"CT", "CM", "CT", "O*", SpeciesTorsion::Cos3Form, {7.15882, -2.092, 2.77399}},             // alcohols,
+        {"CT", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {-6.49357, 0, 0}},                       // polyols
+        {"HC", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 0, 1.47444}},                        // alcohols
+        {"CT", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {-1.4895, -0.728016, 2.05853}},          // alcohols
+        {"OH", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {39.7815, 0, 0}},                        // diols
+        {"OH", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {51.1871, 0, 0}},                        // triols
+        {"HC", "CT", "OS", "C*", SpeciesTorsion::Cos3Form, {0, 0, 3.17984}},                        // ethers
+        {"HC", "CT", "OS", "CA", SpeciesTorsion::Cos3Form, {0, 0, 3.17984}},                        // ethers
+        {"HC", "CT", "OS", "CM", SpeciesTorsion::Cos3Form, {0, 0, 3.17984}},                        // ethers
+        {"HC", "CM", "OS", "CT", SpeciesTorsion::Cos3Form, {0, 0, 3.17984}},                        // ethers
+        {"HC", "CO", "OS", "CT", SpeciesTorsion::Cos3Form, {0, 0, 3.17984}},                        // ethers
+        {"HC", "CT", "OS", "CO", SpeciesTorsion::Cos3Form, {0, 0, 3.17984}},                        // ethers
+        {"CT", "OS", "CT", "CT", SpeciesTorsion::Cos3Form, {2.7196, -1.046, 2.80328}},              // ethers
+        {"CT", "OS", "CM", "CT", SpeciesTorsion::Cos3Form, {2.7196, -1.046, 2.80328}},              // ethers
+        {"CT", "OS", "CO", "CT", SpeciesTorsion::Cos3Form, {2.7196, -1.046, 2.80328}},              // ethers
+        {"CT", "OS", "CT", "O*", SpeciesTorsion::Cos3Form, {-2.17986, -8.44331, 8.35126}},          // acetals
+        {"NT", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {33.472, 0, 0}},                         // 2-aminoethanol
+        {"OS", "CT", "CT", "OS", SpeciesTorsion::Cos3Form, {-2.3012, 0, 0}},                        // polyethers,
+        {"CT", "OS", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 12.552, 0}},                         // anisole
+        {"CM", "C=", "C=", "CT", SpeciesTorsion::Cos3Form, {0, 0, -1.55645}},                       // diene-
+        {"CM", "C=", "C=", "HC", SpeciesTorsion::Cos3Form, {0, 0, -1.55645}},                       // diene-
+        {"CM", "C=", "C=", "CM", SpeciesTorsion::Cos3Form, {5.95383, 16.9661, 3.58987}},            // diene
+        {"HC", "CT", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // ethyl
+        {"H3", "N3", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // anilinium
+        {"HC", "CT", "CW", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"HC", "CT", "CV", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"HC", "CT", "CR", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"HC", "CT", "CS", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"HC", "CT", "CQ", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"HC", "CT", "CU", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"HC", "CT", "CK", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"HC", "CT", "C*", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"CT", "CT", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // ethyl
+        {"CT", "N3", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // anilinium
+        {"CT", "CT", "CW", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"CT", "CT", "CV", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"CT", "CT", "CR", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"CT", "CT", "CS", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"CT", "CT", "CQ", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"CT", "CT", "CU", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"CT", "CT", "CK", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"CT", "CT", "C*", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"O*", "CT", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // benzyl
+        {"C*", "CT", "NA", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // heterocycles
+        {"H*", "CT", "NA", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // heterocycles
+        {"C*", "CT", "N*", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // heterocycles
+        {"H*", "CT", "N*", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // heterocycles
+        {"O", "C", "CR", "O*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // heterocycles
+        {"O", "C", "CR", "N*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // heterocycles
+        {"CA", "CA", "CT", "N*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // aromatics
+        {"*", "Zn", "N", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                 // JACS
+        {"*", "Zn", "O", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                 // JACS
+        {"HC", "CT", "CT", "CA", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // ethyl
+        {"HC", "CT", "N3", "CA", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // anilinium
+        {"HC", "CT", "CT", "CW", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // aromatics
+        {"HC", "CT", "CT", "CV", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // aromatics
+        {"HC", "CT", "CT", "CR", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // aromatics
+        {"HC", "CT", "CT", "CS", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // aromatics
+        {"HC", "CT", "CT", "CQ", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // aromatics
+        {"HC", "CT", "CT", "CU", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // aromatics
+        {"HC", "CT", "CT", "CK", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // aromatics
+        {"HC", "CT", "CT", "C*", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // aromatics
+        {"CT", "S", "S", "CT", SpeciesTorsion::Cos3Form, {0, -31.0202, 7.13372}},                   // disulfide
+        {"HC", "CT", "S", "S", SpeciesTorsion::Cos3Form, {0, 0, 2.33467}},                          // disulfide
+        {"CT", "CT", "S", "S", SpeciesTorsion::Cos3Form, {8.12114, -3.49782, 3.91204}},             // disulfide
+        {"HC", "CT", "SH", "HS", SpeciesTorsion::Cos3Form, {0, 0, 2.00832}},                        // thiol
+        {"CT", "CT", "SH", "HS", SpeciesTorsion::Cos3Form, {-3.17566, -1.17989, 2.84512}},          // thiol
+        {"HC", "CT", "CT", "SH", SpeciesTorsion::Cos3Form, {0, 0, 1.89117}},                        // thiol
+        {"HC", "CT", "CT", "SY", SpeciesTorsion::Cos3Form, {0, 0, 1.89117}},                        //
+        {"HC", "CT", "CT", "S", SpeciesTorsion::Cos3Form, {0, 0, 1.89117}},                         // sulfide
+        {"CT", "CT", "CT", "SH", SpeciesTorsion::Cos3Form, {5.28021, -0.828432, 1.94556}},          // thiol
+        {"CT", "CT", "CT", "SY", SpeciesTorsion::Cos3Form, {5.28021, -0.828432, 1.94556}},          // (mod
+        {"HC", "CT", "NT", "H", SpeciesTorsion::Cos3Form, {0, 0, 1.6736}},                          // amine
+        {"HC", "CT", "CT", "NT", SpeciesTorsion::Cos3Form, {-4.23839, -2.96646, 1.97903}},          // amine
+        {"CT", "CT", "NT", "H", SpeciesTorsion::Cos3Form, {-0.79496, -1.74473, 1.74891}},           // amine
+        {"CT", "CT", "N2", "H", SpeciesTorsion::Cos3Form, {-0.79496, -1.74473, 1.74891}},           // guanidinium
+        {"CT", "CT", "N2", "H3", SpeciesTorsion::Cos3Form, {-0.79496, -1.74473, 1.74891}},          // guanidinium
+        {"CT", "CT", "CT", "NT", SpeciesTorsion::Cos3Form, {10.0081, -2.82002, 2.3012}},            // amine
+        {"HO", "OH", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 7.03749, 0}},                        // phenol
+        {"N", "CT", "CT", "CT", SpeciesTorsion::Cos3Form, {3.53548, -4.02501, 2.98319}},            // Chi-1
+        {"N", "CT", "CT", "C*", SpeciesTorsion::Cos3Form, {3.53548, -4.02501, 2.98319}},            // Chi-1
+        {"N", "CT", "CT", "CA", SpeciesTorsion::Cos3Form, {3.53548, -4.02501, 2.98319}},            // Chi-1
+        {"C", "N", "CT", "C", SpeciesTorsion::Cos3Form, {-9.89516, 3.81581, -3.5564}},              // Phi
+        {"N", "CT", "C", "N", SpeciesTorsion::Cos3Form, {7.59814, 5.11285, 6.6149}},                // Psi
+        {"C", "N", "CT", "CT", SpeciesTorsion::Cos3Form, {0, 1.93301, 0}},                          // Phi'
+        {"CT", "CT", "C", "N", SpeciesTorsion::Cos3Form, {4.90783, 0.790776, -5.0208}},             // Psi'
+        {"C", "N", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // Phi"
+        {"HC", "CT", "C", "N", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // Psi"
+        {"HC", "CM", "C", "N", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                //
+        {"HC", "CT", "C", "NM", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               //
+        {"HC", "CM", "C", "NM", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               //
+        {"CQ", "N", "CT", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               //
+        {"CQ", "N", "CT", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               //
+        {"H", "N", "CT", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                 // peptides
+        {"H", "N", "CT", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // peptides
+        {"H", "N", "CT", "C", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                 // peptides
+        {"*", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                 // peptides
+        {"CT", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // peptides
+        {"N", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                 // peptides
+        {"CT", "C", "N", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0}},                           // amides
+        {"CM", "C", "N", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0}},                           // amides
+        {"HC", "C", "N", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0}},                           // amides
+        {"CT", "C", "NM", "CT", SpeciesTorsion::Cos3Form, {0, 20.5016, 0}},                         // tert.
+        {"O", "C", "NM", "CT", SpeciesTorsion::Cos3Form, {0, 20.5016, 0}},                          // tert.
+        {"CT", "C", "N", "CT", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0}},                     // amides-
+        {"CT", "C", "N", "CA", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0}},                     //
+        {"HC", "C", "N", "CT", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0}},                     // amides-
+        {"O", "C", "N", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0}},                            // amides
+        {"O", "C", "N", "CT", SpeciesTorsion::Cos3Form, {0, 25.4764, 0}},                           // amides
+        {"O", "C", "N", "CA", SpeciesTorsion::Cos3Form, {0, 25.4764, 0}},                           // amides
+        {"O", "C", "N", "CM", SpeciesTorsion::Cos3Form, {0, 25.4764, 0}},                           // amides
+        {"N", "C", "N", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0}},                            // imides
+        {"N", "C", "N", "C", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0}},                       // imides
+        {"CT", "N", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // tert.
+        {"CT", "N2", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // tert.
+        {"CA", "N", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // "
+        {"CT", "NM", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // tert.
+        {"CA", "NM", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // "
+        {"C*", "CA", "SH", "HS", SpeciesTorsion::Cos3Form, {0, 4.6024, 0}},                         // aromatic
+        {"CA", "CA", "SH", "HS", SpeciesTorsion::Cos3Form, {0, 4.6024, 0}},                         // aromatic
+        {"N*", "CA", "SH", "HS", SpeciesTorsion::Cos3Form, {-12.552, 0, 0}},                        // "
+        {"HC", "CT", "S", "CT", SpeciesTorsion::Cos3Form, {0, 0, 2.70705}},                         // sulfide
+        {"HC", "CT", "S", "CA", SpeciesTorsion::Cos3Form, {0, 0, 2.70705}},                         // sulfide
+        {"CT", "CT", "CT", "S", SpeciesTorsion::Cos3Form, {10.9579, -2.59408, 1.07947}},            // sulfide
+        {"CT", "CT", "S", "CT", SpeciesTorsion::Cos3Form, {3.8702, -2.40998, 2.83257}},             // sulfide
+        {"H", "N2", "CA", "N2", SpeciesTorsion::Cos3Form, {0, 16.3176, 0}},                         // guanidinium
+        {"H", "N2", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 16.3176, 0}},                         // guanidinium
+        {"CT", "N2", "CA", "N2", SpeciesTorsion::Cos3Form, {0, 33.2042, 0}},                        // methylguanidinium
+        {"HC", "CT", "N2", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0.740568}},                       // methylguanidinium
+        {"HC", "CT", "N2", "H", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // methylguanidinium
+        {"CT", "CT", "N2", "CA", SpeciesTorsion::Cos3Form, {7.65254, 1.01671, -2.08363}},           // ethylguanidinium
+        {"HC", "CT", "CT", "N2", SpeciesTorsion::Cos3Form, {0, 0, -2.43509}},                       // ethylguanidinium
+        {"C", "N", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, -0.581576}},                        // N-methylformamide
+        {"HC", "CT", "N", "H", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // N-methylformamide
+        {"C", "N", "CT", "CT", SpeciesTorsion::Cos3Form, {-5.84086, -1.78657, 0}},                  // N-ethylformamide
+        {"H", "N", "CT", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // N-ethylformamide
+        {"N", "CT", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.94138}},                         // N-ethylformamide
+        {"N", "CT", "CT", "CT", SpeciesTorsion::Cos3Form, {8.21738, 0, 2.75726}},                   // N-propylformamide
+        {"C", "NM", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, -0.581576}},                       // tertiary
+        {"C", "NM", "CT", "CT", SpeciesTorsion::Cos3Form, {-5.84086, -1.78657, 0}},                 // tertiary
+        {"NM", "CT", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.94138}},                        // tertiary
+        {"NM", "CT", "CT", "CT", SpeciesTorsion::Cos3Form, {8.21738, 0, 2.75726}},                  // tertiary
+        {"CM", "CM", "C", "NM", SpeciesTorsion::Cos3Form, {8.368, 0, 0}},                           // tertiary
+        {"CM", "CM", "C", "N", SpeciesTorsion::Cos3Form, {8.368, 0, 0}},                            // vinyl
+        {"HC", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // all
+        {"HC", "C", "C", "O", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                 //
+        {"HC", "CM", "C", "O", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                //
+        {"CT", "CT", "C", "N", SpeciesTorsion::Cos3Form, {13.598, -1.68197, -0.569024}},            // propanamide
+        {"CT", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 4.87854, 0}},                          // propanamide
+        {"HC", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {0, 0, -0.4184}},                         // all
+        {"C", "CT", "CT", "CT", SpeciesTorsion::Cos3Form, {-8.61904, -1.30959, 1.31796}},           // butanamide
+        {"N", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {26.2755, -6.13793, 8.49352}},            // Chi
+        {"C", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {-25.8571, 0, 0}},                        // Chi
+        {"N", "CT", "CT", "S*", SpeciesTorsion::Cos3Form, {5.97475, 0.359824, 0.121336}},           // Chi
+        {"C", "CT", "CT", "S*", SpeciesTorsion::Cos3Form, {-18.1753, -7.17138, 0}},                 // Chi
+        {"HC", "CT", "C*", "CW", SpeciesTorsion::Cos3Form, {0, 0, -2.00832}},                       // 3-methylindole
+        {"HC", "CT", "C*", "CB", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // 3-methylindole
+        {"CT", "CT", "C*", "CW", SpeciesTorsion::Cos3Form, {-2.98738, 0, 0}},                       // 3-ethylindole
+        {"CT", "CT", "C*", "CB", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // 3-ethylindole
+        {"HC", "CT", "CC", "N*", SpeciesTorsion::Cos3Form, {0, 0, 1.7531}},                         // HID,
+        {"CT", "CT", "CC", "N*", SpeciesTorsion::Cos3Form, {9.89934, -1.09621, 2.11292}},           // "
+        {"HC", "CT", "N3", "H", SpeciesTorsion::Cos3Form, {0, 0, 1.09202}},                         // ammonium
+        {"CT", "CT", "N3", "H", SpeciesTorsion::Cos3Form, {0, 0, 1.45185}},                         // ammonium
+        {"HC", "CT", "CT", "N3", SpeciesTorsion::Cos3Form, {0, 0, 1.60666}},                        // ammonium
+        {"CT", "CT", "CT", "N3", SpeciesTorsion::Cos3Form, {11.4307, -0.958136, 2.02924}},          // ammonium
+        {"HC", "CT", "NO", "ON", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // nitro
+        {"*T", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 3.43088, 0}},                          // carboxylate
+        {"*T", "CT", "C", "O2", SpeciesTorsion::Cos3Form, {0, 3.43088, 0}},                         // carboxylate
+        {"HC", "CT", "CT", "NO", SpeciesTorsion::Cos3Form, {0, 0, -0.9414}},                        // nitroethane
+        {"CT", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {-13.326, -3.4518, 2.06271}},             // carboxylate
+        {"HC", "CT", "C", "O2", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // caboxylates
+        {"HC", "CT", "C", "OH", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // acids
+        {"CT", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 2.28446, 0}},                          // RCOOH
+        {"CA", "CT", "C", "O", SpeciesTorsion::Cos3Form, {0, 2.28446, 0}},                          // RCOOH
+        {"CT", "CT", "C", "OH", SpeciesTorsion::Cos3Form, {4.184, 2.28446, 1.8828}},                // RCOOH
+        {"NT", "CT", "C", "OH", SpeciesTorsion::Cos3Form, {22.0078, 3.43088, 0}},                   // neutral
+        {"HC", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {-10.8324, -4.69863, 1.12968}},          // axial
+        {"C", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {-2.3012, 0, 4.184}},                      // dicarboxylic
+        {"O", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 23.012, 0}},                           // carboxylic
+        {"CT", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {6.276, 23.012, 0}},                      // carboxylic
+        {"HC", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {6.276, 23.012, 0}},                      // carboxylic
+        {"C", "CT", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0.309616}},                        // dicarboxylic
+        {"CT", "CT", "C", "O", SpeciesTorsion::Cos3Form, {-3.138, -2.3012, -1.046}},                // dicarboxylic
+        {"CT", "CT", "C", "OH", SpeciesTorsion::Cos3Form, {0, 5.90781, 0}},                         // dicarboxylic
+        {"CT", "N", "CT", "C", SpeciesTorsion::Cos3Form, {-7.26761, 5.23418, -14.6482}},            // Proline
+        {"CT", "N", "CT", "CT", SpeciesTorsion::Cos3Form, {19.8866, -3.07106, 0}},                  // "
+        {"CT", "CT", "N", "CT", SpeciesTorsion::Cos3Form, {11.9621, 8.61067, -47.1369}},            // "
+        {"CT", "NM", "CT", "C", SpeciesTorsion::Cos3Form, {-7.26761, 5.23418, -14.6482}},           //
+        {"CT", "NM", "CT", "CT", SpeciesTorsion::Cos3Form, {19.8866, -3.07106, 0}},                 //
+        {"CT", "CT", "NM", "CT", SpeciesTorsion::Cos3Form, {11.9621, 8.61067, -47.1369}},           //
+        {"CT", "CT", "C+", "CT", SpeciesTorsion::Cos3Form, {0, -4.184, 0}},                         // carbocation
+        {"CT", "CT", "C+", "HC", SpeciesTorsion::Cos3Form, {0, -4.184, 0}},                         // carbocation
+        {"HC", "CT", "C", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.1506}},                          // ketone
+        {"HC", "CT", "C", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.50624}},                         // aldehyde
+        {"HC", "CT", "C", "F", SpeciesTorsion::Cos3Form, {0, 0, 1.50624}},                          // acyl
+        {"HC", "CT", "C", "Cl", SpeciesTorsion::Cos3Form, {0, 0, 1.50624}},                         // acyl
+        {"HC", "CT", "C", "Br", SpeciesTorsion::Cos3Form, {0, 0, 1.50624}},                         // acyl
+        {"CT", "CT", "C", "F", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // acyl
+        {"CT", "CT", "C", "Cl", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // acyl
+        {"CT", "CT", "C", "Br", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // acyl
+        {"CT", "CT", "C", "O", SpeciesTorsion::Cos3Form, {-1.15897, 5.13795, -2.9037}},             // aldehyde
+        {"HC", "CT", "CT", "C(O)", SpeciesTorsion::Cos3Form, {0, 0, -0.317984}},                    // aldehyde
+        {"CT", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {-7.10025, -1.9079, 2.44764}},            // aldehyde
+        {"CA", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {-7.10025, -1.9079, 2.44764}},            // aldehyde
+        {"C*", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {-7.10025, -1.9079, 2.44764}},            //
+        {"CT", "CT", "C", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aldehyde
+        {"CT", "CT", "C", "CT", SpeciesTorsion::Cos3Form, {6.08354, -0.602496, -3.2426}},           // ketone
+        {"C", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {12.552, 23.012, 0}},                      // oxalic
+        {"CA", "CT", "P", "OS", SpeciesTorsion::Cos3Form, {9.414, 0, 0}},                           // phosphonates
+        {"CT", "P", "OS", "CT", SpeciesTorsion::Cos3Form, {14.644, -13.8072, 6.276}},               // phosphonates
+        {"P", "OS", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                          // phosphonates
+        {"O2", "P", "OS", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // phosphonates
+        {"O", "P", "OS", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // phosphonates
+        {"O", "P", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // phosphonates
+        {"OH", "P", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // phosphonates
+        {"CA", "CA", "CT", "P", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // phosphonates
+        {"CA", "CT", "P", "O2", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // phosphonates
+        {"HC", "CT", "P", "O2", SpeciesTorsion::Cos3Form, {0, 0, 1.046}},                           // phosphonates
+        {"HC", "CT", "P", "OS", SpeciesTorsion::Cos3Form, {0, 0, 1.046}},                           // phosphonates
+        {"O2", "P", "OS", "C*", SpeciesTorsion::Cos3Form, {0, 0, 2.35141}},                         // MeOPO3
+        {"O2", "P", "OS", "CT", SpeciesTorsion::Cos3Form, {3.7656, -12.2591, 11.0458}},             // dimethyl
+        {"CA", "CA", "OS", "P", SpeciesTorsion::Cos3Form, {0, 12.5102, 0}},                         // PhOPO3
+        {"NT", "CT", "CT", "Cl", SpeciesTorsion::Cos3Form, {8.368, 0, 0}},                          // 2-chloroethylamines
+        {"HC", "CT", "CT", "Cl", SpeciesTorsion::Cos3Form, {0, 0, 1.6736}},                         // alkyl
+        {"CT", "CT", "CT", "Cl", SpeciesTorsion::Cos3Form, {0, 0, 1.6736}},                         // alkyl
+        {"Cl", "CT", "CT", "Cl", SpeciesTorsion::Cos3Form, {-1.046, 0, 0}},                         // dichloride
+        {"HC", "CT", "CT", "I", SpeciesTorsion::Cos3Form, {0, 0, 1.6736}},                          // alkyl
+        {"CT", "CT", "CT", "I", SpeciesTorsion::Cos3Form, {0, 0, 1.6736}},                          // alkyl
+        {"HO", "OH", "CT", "CT", SpeciesTorsion::Cos3Form, {18.736, -9.09853, 0}},                  // trifluoroethanol
+        {"HC", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 0, 1.99158}},                        // trifluoroethanol
+        {"F", "CT", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.31252}},                         // trifluoroethanol
+        {"F", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {0, 0, 2.25978}},                         // trifluoroethanol
+        {"CT", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {13.3888, 20.5016, 0}},                   // 1,2-diacid
+        {"CT", "CT", "C", "O", SpeciesTorsion::Cos3Form, {-4.184, -7.9496, -3.7656}},               // 1,2-diacid
+        {"C", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {3.3472, 0, 3.7656}},                      // 1,2-diacid
+        {"H", "N", "SY", "CA", SpeciesTorsion::Cos3Form, {6.99146, -20.5058, 2.7991}},              // sulfonamide
+        {"HC", "CT", "N", "SY", SpeciesTorsion::Cos3Form, {5.69861, -6.09609, 0.623416}},           // sulfonamide
+        {"CT", "N", "SY", "CA", SpeciesTorsion::Cos3Form, {8.67762, -12.4097, 10.347}},             // sulfonamide
+        {"CT", "CT", "N", "SY", SpeciesTorsion::Cos3Form, {12.2549, -10.5981, 2.07945}},            // sulfonamide
+        {"CA", "CA", "SY", "N", SpeciesTorsion::Cos3Form, {6.9287, -3.21331, -0.489528}},           // sulfonamide
+        {"*", "*", "SY", "OY", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // sulfonamide
+        {"*", "CA", "SY", "OY", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // sulfonamide
+        {"*", "N", "SY", "OY", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // sulfonamide
+        {"*", "CT", "SY", "OY", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // sulfonamide
+        {"*", "CT", "SY", "N", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // sulfonamide
+        {"HC", "CT", "CT", "F", SpeciesTorsion::Cos3Form, {0, 0, 1.6736}},                          // alkyl
+        {"CT", "CT", "CT", "F", SpeciesTorsion::Cos3Form, {1.2552, -1.6736, 1.6736}},               // alkyl
+        {"F", "CT", "CT", "F", SpeciesTorsion::Cos3Form, {-10.46, 0, 1.046}},                       // 1,2-difluoride
+        {"CT", "CT", "CT", "O*", SpeciesTorsion::Cos3Form, {-5.58982, 0, 0}},                       // hexopyranoses
+        {"CT", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {11.188, -12.0625, 4.29278}},            // hexopyranoses
+        {"OH", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {37.9321, 0, 0}},                        // hexopyranoses
+        {"CT", "OS", "CO", "OH", SpeciesTorsion::Cos3Form, {-1.569, -5.68187, 0.016736}},           // hexopyranoses
+        {"CT", "OS", "CO", "OS", SpeciesTorsion::Cos3Form, {-1.569, -5.68187, 0.016736}},           // hexopyranoses
+        {"OS", "CO", "OH", "HO", SpeciesTorsion::Cos3Form, {-5.25929, -7.5563, 0.012552}},          // hexopyranoses
+        {"OH", "CT", "CT", "OS", SpeciesTorsion::Cos3Form, {18.0707, 0, 0}},                        // hexopyranoses
+        {"HC", "CT", "CT", "Br", SpeciesTorsion::Cos3Form, {0, 0, 1.6736}},                         // alkyl
+        {"CT", "CT", "CT", "Br", SpeciesTorsion::Cos3Form, {0, 0, 1.6736}},                         // alkyl
+        {"CA", "CA", "CT", "Br", SpeciesTorsion::Cos3Form, {0, 0, 1.6736}},                         // alkyl
+        {"*", "CA", "CA", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           // in
+        {"CA", "CA", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "CA", "CA", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CA", "CA", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "CA", "C!", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "CA", "C!", "C!", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "CA", "CA", "C!", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C!", "CA", "CA", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CA", "C!", "C!", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CA", "C!", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "CA", "C!", "NC", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "C!", "NC", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C!", "C!", "CA", "NC", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "C!", "CA", "NC", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C!", "CA", "CA", "NC", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C!", "C!", "NC", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C!", "C!", "N", "C", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
+        {"C!", "C!", "CM", "C", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"NC", "C!", "CA", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "CA", "CA", "F", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"CA", "CA", "CA", "Cl", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "CA", "CA", "Br", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "CA", "CA", "I", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"HA", "CA", "CA", "F", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"HA", "CA", "CA", "Cl", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CA", "CA", "Br", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CA", "CA", "I", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"CA", "CA", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "C=", "C=", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C", "C=", "C=", "C", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
+        {"HA", "CA", "CA", "CT", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CT", "CA", "CA", "CT", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CT", "CA", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "CA", "CA", "CB", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CA", "CA", "CB", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "CA", "CA", "O*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CA", "CA", "O*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CT", "CA", "CA", "O*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"O*", "CA", "CA", "O*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "CA", "CA", "S*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CA", "CA", "S*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CT", "CA", "CA", "S*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"S*", "CA", "CA", "S*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CM", "C!", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CM", "C!", "N", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"HA", "CA", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CT", "CA", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"O*", "CA", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"N*", "CA", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"*", "CB", "CB", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
+        {"C*", "CB", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"N*", "CB", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"N*", "CB", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"*", "CB", "CS", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
+        {"*", "CS", "C", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                            //
+        {"*", "CR", "CS", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
+        {"*", "CS", "CW", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
+        {"C*", "CS", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C*", "CS", "CW", "H*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C*", "CS", "CW", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CS", "CW", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CS", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CS", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CS", "CS", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CA", "CU", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CW", "OS", "CW", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"*", "NC", "CA", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
+        {"CS", "CW", "OS", "CW", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "NC", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C*", "NC", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "NC", "CA", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "NC", "NC", "CT", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "NC", "NC", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CT", "NC", "NC", "CT", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"*", "NC", "CB", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
+        {"C*", "NC", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C*", "NC", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"*", "NA", "CB", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
+        {"*", "NB", "CB", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
+        {"*", "NB", "CR", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
+        {"*", "NB", "CU", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
+        {"C*", "NA", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C*", "NA", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C*", "NB", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"N*", "CR", "S", "CW", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"CR", "NB", "CV", "CW", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CR", "NB", "CV", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CU", "CW", "S", "CR", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"CR", "S", "CW", "CV", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"HA", "CW", "S", "CR", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"CW", "S", "CR", "NB", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"S", "CR", "NB", "CU", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"S", "CR", "NB", "CV", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"CR", "NB", "CU", "CW", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CU", "CW", "OS", "CR", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CW", "OS", "CR", "NB", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"OS", "CR", "NB", "CU", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"NB", "CU", "CW", "OS", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"NB", "CU", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"NB", "CU", "CW", "S", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"NB", "CV", "CW", "OS", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"NB", "CV", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"NB", "CV", "CW", "S", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"*", "N", "CB", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                            //
+        {"HA", "CU", "CW", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"HA", "CW", "CU", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"*", "NC", "CR", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
+        {"*", "NC", "CQ", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
+        {"C*", "NC", "CQ", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C*", "NC", "CQ", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"*", "N", "CQ", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                            //
+        {"C*", "N", "CQ", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"C*", "N", "CQ", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"H", "N", "CQ", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                            //
+        {"*", "CW", "NA", "*", SpeciesTorsion::Cos3Form, {0, 11.7152, 0}},                          //
+        {"*", "NA", "CR", "*", SpeciesTorsion::Cos3Form, {0, 19.4556, 0}},                          //
+        {"HA", "CR", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                           //
+        {"N*", "CR", "NB", "C*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                          //
+        {"*", "CR", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
+        {"*", "CW", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
+        {"*", "CR", "NA", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
+        {"HA", "CR", "NA", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                           //
+        {"N*", "CR", "NA", "C*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                          //
+        {"*", "CR", "NC", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
+        {"*", "CK", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
+        {"*", "CK", "NA", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
+        {"*", "CK", "NC", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
+        {"*", "NA", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
+        {"*", "NB", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
+        {"*", "NB", "CV", "*", SpeciesTorsion::Cos3Form, {0, 20.0832, 0}},                          //
+        {"*", "CW", "CV", "*", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                           //
+        {"C*", "CW", "CV", "C*", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
+        {"C*", "CW", "CV", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
+        {"HA", "CW", "CV", "C*", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
+        {"HA", "CW", "CV", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
+        {"*", "CW", "CW", "*", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                           //
+        {"C*", "CW", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
+        {"C*", "CW", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
+        {"H*", "CW", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
+        {"H*", "CW", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
+        {"HA", "CW", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
+        {"S", "CW", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                          //
+        {"S", "CW", "CU", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                          //
+        {"S", "CW", "CV", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                          //
+        {"*", "NA", "CW", "*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                            //
+        {"C*", "NA", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                          //
+        {"N*", "NA", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                          //
+        {"C*", "NA", "CW", "H*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                          //
+        {"N*", "NA", "CW", "H*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                          //
+        {"H", "NA", "CW", "*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                            //
+        {"H", "NA", "CR", "*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                            //
+        {"H", "NA", "CB", "*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                            //
+        {"*", "C*", "CW", "*", SpeciesTorsion::Cos3Form, {0, 54.6012, 0}},                          //
+        {"*", "C*", "CB", "*", SpeciesTorsion::Cos3Form, {0, 14.0164, 0}},                          //
+        {"*", "CA", "CB", "*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                           //
+        {"C*", "CA", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                         //
+        {"N*", "CA", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                         //
+        {"C*", "CA", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                         //
+        {"N*", "CA", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                         //
+        {"*", "C", "CB", "*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                            //
+        {"O", "C", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                           //
+        {"N*", "C", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                          //
+        {"O", "C", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                           //
+        {"N*", "C", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                          //
+        {"*", "CB", "CN", "*", SpeciesTorsion::Cos3Form, {0, 25.104, 0}},                           //
+        {"*", "NA", "CN", "*", SpeciesTorsion::Cos3Form, {0, 12.7612, 0}},                          //
+        {"*", "CW", "NA", "*", SpeciesTorsion::Cos3Form, {0, 12.552, 0}},                           //
+        {"CT", "CT", "OS", "P", SpeciesTorsion::Cos3Form, {-5.94128, -2.59408, 0.4184}},            // in
+        {"HC", "CT", "C", "OS", SpeciesTorsion::Cos3Form, {0, 0, 0.552288}},                        // esters
+        {"CT", "C", "OS", "CT", SpeciesTorsion::Cos3Form, {19.5351, 21.4388, 0}},                   // esters
+        {"HC", "C", "OS", "CT", SpeciesTorsion::Cos3Form, {19.5351, 21.4388, 0}},                   // esters
+        {"O", "C", "OS", "CT", SpeciesTorsion::Cos3Form, {0, 21.4388, 0}},                          // esters
+        {"C", "OS", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0.828432}},                        // esters
+        {"CT", "CT", "C", "OS", SpeciesTorsion::Cos3Form, {0, 0, -2.31375}},                        // esters
+        {"CT", "CT", "OS", "C", SpeciesTorsion::Cos3Form, {-5.10448, -0.527184, 1.76565}},          // esters
+        {"CA", "CT", "CT", "N3", SpeciesTorsion::Cos3Form, {4.184, 0, 0}},                          // phenethylammonium-
+        {"CA", "CT", "CT", "NT", SpeciesTorsion::Cos3Form, {-3.3472, 0, 0}},                        // phenethylamines-
+        {"CT", "CT", "NO", "ON", SpeciesTorsion::Cos3Form, {0, 1.6736, 0}},                         // nitroethane
+        {"CA", "CA", "NO", "ON", SpeciesTorsion::Cos3Form, {0, 4.8116, 0}},                         // nitrobenzene
+        {"CT", "NY", "CA", "NZ", SpeciesTorsion::Cos3Form, {0, 15.2758, 0}},                        // neutral
+        {"CT", "CT", "NT", "H", SpeciesTorsion::Cos3Form, {0, 16.736, 0}},                          // azetidine-
+        {"CT", "CT", "NT", "H", SpeciesTorsion::Cos3Form, {0.8368, -1.74473, 1.74891}},             // pyrrolidine
+        {"CT", "NT", "CT", "CT", SpeciesTorsion::Cos3Form, {1.74054, -0.535552, 2.90788}},          // amine
+        {"CT", "NT", "CT", "CT", SpeciesTorsion::Cos3Form, {6.42662, -0.535552, 2.90788}},          // exocyclic
+        {"CT", "NT", "CT", "CT", SpeciesTorsion::Cos3Form, {6.12538, -0.535552, 2.90788}},          // exocyclic
+        {"CT", "CT", "NT", "H", SpeciesTorsion::Cos3Form, {3.4267, -1.74473, 1.74891}},             // cyclic
+        {"CT", "CT", "NT", "H", SpeciesTorsion::Cos3Form, {6.36805, -1.74473, 1.74891}},            // cyclic
+        {"NT", "CT", "CT", "NT", SpeciesTorsion::Cos3Form, {46.1704, -4.05011, 1.12968}},           // amine
+        {"CT", "NT", "CT", "CT", SpeciesTorsion::Cos3Form, {1.74054, -0.535552, 2.90788}},          // amine
+        {"HC", "CT", "NT", "CT", SpeciesTorsion::Cos3Form, {0, 0, 2.34304}},                        // amine
+        {"CT", "CT", "CW", "NA", SpeciesTorsion::Cos3Form, {7.1128, -2.5104, 0}},                   // 2-ethyl
+        {"CT", "C=", "C=", "CM", SpeciesTorsion::Cos3Form, {3.7656, 0.96232, -2.11292}},            // 2-Me-1,3-butadiene
+        {"CT", "C=", "C", "O*", SpeciesTorsion::Cos3Form, {3.7656, 0.96232, -2.11292}},             // 2-Me-1,3-butadiene-like
+        {"CT", "CM", "C", "O*", SpeciesTorsion::Cos3Form, {3.7656, 0.96232, -2.11292}},             // 2-Me-1,3-butadiene-like
+        {"CT", "C", "C=", "CM", SpeciesTorsion::Cos3Form, {3.3472, -12.552, 0}},                    // methyl
+        {"CM", "C=", "C", "OH", SpeciesTorsion::Cos3Form, {13.3888, -12.552, 0}},                   // acrylic
+        {"CM", "CM", "C", "OH", SpeciesTorsion::Cos3Form, {13.3888, -12.552, 0}},                   // acrylic
+        {"CM", "C=", "C", "O", SpeciesTorsion::Cos3Form, {10.46, 25.104, 0}},                       // acrolein
+        {"CM", "CM", "C", "O", SpeciesTorsion::Cos3Form, {10.46, 25.104, 0}},                       // acrolein-like
+        {"CA", "CA", "C", "CT", SpeciesTorsion::Cos3Form, {0, 0.8368, 0}},                          // aryl
+        {"CA", "CA", "C", "HC", SpeciesTorsion::Cos3Form, {0, 0.8368, 0}},                          // aryl
+        {"CA", "CA", "N", "*", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                           // N-phenylamide
+        {"CA", "CA", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                           // N-phenylamide
+        {"CA", "CA", "N", "C", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                           // N-phenylamide
+        {"CA", "CA", "N", "CT", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                          // N-phenylamide
+        {"CA", "CA", "N", "CR", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                          // diarylamine
+        {"CA", "CA", "N", "CW", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                          // diarylamine
+        {"CA", "CA", "NT", "CR", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                         // diarylamine
+        {"CA", "CA", "NT", "CW", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                         // diarylamine
+        {"S", "CR", "N", "CA", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                           // diarylamine
+        {"S", "CR", "NT", "CA", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                          // diarylamine
+        {"NB", "CR", "N", "CA", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                          // diarylamine
+        {"NB", "CR", "NT", "CA", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                         // diarylamine
+        {"S", "CR", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                            // diarylamine
+        {"S", "CR", "NT", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                           // diarylamine
+        {"NB", "CR", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                           // diarylamine
+        {"NB", "CR", "NT", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                          // diarylamine
+        {"OS", "CR", "N", "CA", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                          // diarylamine
+        {"OS", "CR", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                           // diarylamine
+        {"OS", "CW", "N", "CA", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                          // diarylamine
+        {"OS", "CW", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                           // diarylamine
+        {"S", "CW", "N", "CA", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                           // diarylamine
+        {"S", "CW", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                            // diarylamine
+        {"CA", "CA", "N", "CQ", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                          // diarylamine
+        {"CA", "CA", "NT", "CQ", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                         // diarylamine
+        {"CA", "CA", "C", "O", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                           // aryl
+        {"CA", "CA", "C", "OS", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                          // aryl
+        {"CA", "CA", "C", "OH", SpeciesTorsion::Cos3Form, {0, 8.7864, 0}},                          // aryl
+        {"CA", "CA", "OS", "C", SpeciesTorsion::Cos3Form, {0, 10.46, 0}},                           // phenyl
+        {"O", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                            // benzoic
+        {"O", "C", "OS", "CT", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                            // benzoic
+        {"CA", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {16.736, 20.92, 0}},                      // benzoic
+        {"CA", "C", "OS", "CT", SpeciesTorsion::Cos3Form, {16.736, 20.92, 0}},                      // benzoic
+        {"O", "C", "OS", "CA", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                            // phenyl
+        {"CT", "C", "OS", "CA", SpeciesTorsion::Cos3Form, {6.276, 20.92, 0}},                       // phenyl
+        {"CA", "CA", "C", "N", SpeciesTorsion::Cos3Form, {0, 4.6024, 0}},                           // aryl
+        {"CA", "CA", "NT", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0}},                         // aniline
+        {"*", "CA", "N2", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0}},                          // aniline-like
+        {"*", "CQ", "N2", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0}},                          // aniline-like
+        {"N*", "CA", "N2", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0}},                         // aniline-like
+        {"CB", "CA", "N2", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0}},                         // aniline-like
+        {"S", "CR", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0}},                           // aniline-like
+        {"OS", "CR", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0}},                          // aniline-like
+        {"CA", "CA", "NT", "CT", SpeciesTorsion::Cos3Form, {-31.7231, 14.3553, 13.3804}},           // substituted-aniline
+        {"CT", "CM", "CT", "CT", SpeciesTorsion::Cos3Form, {11.7863, -0.707096, 2.27191}},          // alkenes
+        {"CM", "CM", "CT", "CT", SpeciesTorsion::Cos3Form, {1.44766, 1.69452, -3.78234}},           // alkenes
+        {"C=", "CM", "CT", "CT", SpeciesTorsion::Cos3Form, {1.44766, 1.69452, -3.78234}},           // alkenes
+        {"CM", "CM", "CA", "CA", SpeciesTorsion::Cos3Form, {5.19234, 14.029, -1.19662}},            // styrene
+        {"CT", "CM", "CA", "CA", SpeciesTorsion::Cos3Form, {0.85772, -2.2217, 0}},                  // 1-methylstyrene
+        {"Z", "CM", "X", "Y", SpeciesTorsion::Cos3Form, {0, 125.52, 0}},                            // improper
+        {"*", "CM", "CM", "*", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                           // alkene
+        {"CT", "CM", "CM", "CT", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                         // alkene
+        {"CT", "CM", "C=", "CT", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                         // alkene
+        {"CT", "CM", "C=", "HC", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                         // alkene
+        {"HC", "CM", "C=", "HC", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                         // alkene
+        {"HC", "CM", "C=", "CT", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                         // alkene
+        {"CT", "CM", "CM", "HC", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                         // alkene
+        {"C", "CM", "CM", "HC", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                          // alkene
+        {"HC", "CM", "CM", "HC", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                         // alkene
+        {"HC", "CM", "C=", "C=", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                         // alkene
+        {"Cl", "CM", "CM", "HC", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                         // chloroalkene
+        {"HC", "CM", "CM", "OS", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                         // vinyl
+        {"CT", "CM", "CM", "OS", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                         // vinyl
+        {"HC", "CM", "CM", "OH", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                         // vinyl
+        {"CT", "CM", "CM", "OH", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                         // vinyl
+        {"C", "CM", "CM", "N", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                           // conj.
+        {"CT", "C", "NC", "CT", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                          // imine
+        {"HC", "C", "NC", "HC", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                          // imine
+        {"CT", "C", "NC", "O*", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                          // oxime
+        {"HC", "C", "NC", "O*", SpeciesTorsion::Cos3Form, {0, 58.576, 0}},                          // oxime
+        {"CA", "C!", "C!", "CA", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl
+        {"CA", "C!", "C!", "NC", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "C", "CA", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                         // biphenyl
+        {"CA", "C!", "NA", "NB", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "NA", "CW", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CW", "NA", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CW", "OS", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CM", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CU", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CU", "NB", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CV", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CV", "NB", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CR", "OS", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CR", "NA", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CR", "NB", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CW", "S", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                         // biphenyl-like
+        {"CA", "C!", "CR", "S", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                         // biphenyl-like
+        {"CA", "C!", "N", "C", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                          // biphenyl-like
+        {"CA", "C!", "N", "CM", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                         // biphenyl-like
+        {"NC", "C!", "N", "C", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                          // biphenyl-like
+        {"NC", "C!", "N", "CM", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                         // biphenyl-like
+        {"CS", "CS", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CS", "CS", "CS", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"OS", "CS", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"OS", "CS", "CS", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"NA", "CS", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"NA", "CS", "CS", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CW", "CV", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CW", "CV", "CS", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"NB", "CV", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"NB", "CV", "CS", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"N*", "CR", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"N*", "CR", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"*", "N", "CU", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                           // biphenyl-like
+        {"*", "N", "CW", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                           // biphenyl-like
+        {"*", "N", "CS", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                           // biphenyl-like
+        {"*", "CM", "CU", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                          // biphenyl-like
+        {"*", "CM", "CW", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                          // biphenyl-like
+        {"*", "CM", "CS", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                          // biphenyl-like
+        {"NC", "C!", "CU", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"NC", "C!", "CU", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CU", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CU", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"Cl", "CM", "CM", "Cl", SpeciesTorsion::Cos3Form, {-6.6944, 58.576, 0}},                   // chloroalkene
+        {"HC", "CT", "P+", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         // phosphonium
+        {"HC", "CT", "CT", "P+", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         // "
+        {"CT", "CT", "P+", "CT", SpeciesTorsion::Cos3Form, {4.184, -2.092, 2.092}},                 // "
+        {"CK", "N*", "CT", "OS", SpeciesTorsion::Cos3Form, {13.1043, -6.23834, 11.4809}},           // Ping
+        {"CK", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {11.5311, -3.64845, -15.3971}},          // Ping
+        {"C", "NC", "OH", "HO", SpeciesTorsion::Cos3Form, {12.552, 12.552, 0}},                     // oxime
+        {"C", "NC", "OS", "CT", SpeciesTorsion::Cos3Form, {12.552, 12.552, 0}},                     // oxime
+        {"CM", "CM", "OS", "CT", SpeciesTorsion::Cos3Form, {-14.644, 12.552, 0}},                   // vinyl
+        {"C=", "CM", "OS", "CT", SpeciesTorsion::Cos3Form, {-14.644, 12.552, 0}},                   // vinyl
+        {"CM", "CM", "CT", "F", SpeciesTorsion::Cos3Form, {2.092, 0, 0}},                           // allyl
+        {"CM", "CM", "CT", "O*", SpeciesTorsion::Cos3Form, {2.092, 0, 0}},                          // allyl
+        {"C=", "CM", "CT", "O*", SpeciesTorsion::Cos3Form, {2.092, 0, 0}},                          // allyl
+        {"CM", "C=", "CT", "O*", SpeciesTorsion::Cos3Form, {2.092, 0, 0}},                          // allyl
+        {"CM", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {-3.7656, 0, 0}},                        // allyl
+        {"CA", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {-3.7656, 0, 0}},                        // benzyl
+        {"C=", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {-3.7656, 0, 0}},                        // allyl
+        {"HC", "CT", "SY", "OY", SpeciesTorsion::Cos3Form, {0, 0, 1.4644}},                         // sulfone
+        {"HC", "CT", "SY", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.4644}},                         // sulfone
+        {"HC", "CT", "SY", "CA", SpeciesTorsion::Cos3Form, {0, 0, 1.4644}},                         // sulfone
+        {"CT", "CT", "SY", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // sulfone
+        {"CT", "CT", "SY", "OY", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // sulfone
+        {"HC", "CT", "CT", "SY", SpeciesTorsion::Cos3Form, {0, 0, 1.4644}},                         // sulfone
+        {"HC", "CT", "N3", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.26231}},                        // 2ary
+        {"CT", "CT", "N3", "CT", SpeciesTorsion::Cos3Form, {6.01617, -0.517979, 1.10416}},          // 2ary
+        {"*", "CT", "CZ", "NZ", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // nitriles
+        {"*", "CT", "NZ", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // isonitriles
+        {"HC", "CT", "NZ", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // isonitriles
+        {"*", "CA", "NZ", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // isonitriles
+        {"CA", "CA", "NZ", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // isonitriles
+        {"*", "CZ", "CZ", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // alkynes
+        {"*", "CT", "CZ", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // alkynes
+        {"CT", "CT", "CZ", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // alkynes
+        {"HC", "CT", "CZ", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // alkynes
+        {"HC", "CZ", "CZ", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // alkynes
+        {"CT", "CZ", "CZ", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // alkynes
+        {"CA", "CA", "SY", "CT", SpeciesTorsion::Cos3Form, {0, -3.7656, 0}},                        // sulfone
+        {"CR", "NA", "CT", "OS", SpeciesTorsion::Cos3Form, {-6.276, -6.276, 0}},                    // imidazoles,
+        {"CR", "N*", "CT", "OS", SpeciesTorsion::Cos3Form, {-6.276, -6.276, 0}},                    // imidazoles,
+        {"CK", "NA", "CT", "OS", SpeciesTorsion::Cos3Form, {-6.276, -6.276, 0}},                    // imidazoles,
+        {"CK", "N*", "CT", "OS", SpeciesTorsion::Cos3Form, {-6.276, -6.276, 0}},                    // imidazoles,
+        {"C*", "NA", "CT", "OS", SpeciesTorsion::Cos3Form, {6.276, -6.276, 0}},                     // imidazoles,
+        {"C*", "N*", "CT", "OS", SpeciesTorsion::Cos3Form, {6.276, -6.276, 0}},                     // imidazoles,
+        {"CR", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {-4.184, -1.4644, 0}},                   // imidazoles,
+        {"CR", "N*", "CT", "CT", SpeciesTorsion::Cos3Form, {-4.184, -1.4644, 0}},                   // imidazoles,
+        {"CK", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {-4.184, -1.4644, 0}},                   // imidazoles,
+        {"CK", "N*", "CT", "CT", SpeciesTorsion::Cos3Form, {-4.184, -1.4644, 0}},                   // imidazoles,
+        {"C*", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {4.184, -1.4644, 0}},                    // imidazoles,
+        {"C*", "N*", "CT", "CT", SpeciesTorsion::Cos3Form, {4.184, -1.4644, 0}},                    // imidazoles,
+        {"N*", "CT", "OS", "CT", SpeciesTorsion::Cos3Form, {-2.092, -6.276, 4.184}},                // imidazoles,
+        {"C*", "NA", "CT", "OS", SpeciesTorsion::Cos3Form, {0, -7.84918, 0}},                       // Ping
+        {"C*", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {0, -2.40998, 0}},                       // Ping
+        {"*", "CY", "CY", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // small
+        {"*", "CY", "Ndoll", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                             // small
+        {"*", "CY", "Cdoll", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                             // small
+        {"CY", "CY", "Cdoll", "Ndoll", SpeciesTorsion::Cos3Form, {0, 0, 0}},                        // small
+        {"CY", "CY", "Cdoll", "O", SpeciesTorsion::Cos3Form, {0, 0, 0}},                            // small
+        {"*", "CY", "S", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                 // small
+        {"CY", "CY", "Ndoll", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                            // small
+        {"HC", "CY", "Ndoll", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                           // small
+        {"HC", "CY", "Cdoll", "O", SpeciesTorsion::Cos3Form, {0, 0, 0}},                            // small
+        {"HC", "CY", "Cdoll", "Ndoll", SpeciesTorsion::Cos3Form, {0, 0, 0}},                        // small
+        {"N", "CY", "CY", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // small
+        {"CY", "CY", "N", "H", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // small
+        {"Cdoll", "CY", "N", "H", SpeciesTorsion::Cos3Form, {0, 0, 0}},                             // small
+        {"HC", "CY", "N", "C", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // small
+        {"HC", "CY", "N", "H", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // small
+        {"C*", "Ndoll", "CT", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                           // small
+        {"C*", "Ndoll", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                           // small
+        {"CY", "Cdoll", "Ndoll", "CT", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0}},             // small
+        {"CY", "Cdoll", "Ndoll", "CY", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0}},             // small
+        {"CY", "N", "CT", "CT", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0}},                    // small
+        {"CY", "Cdoll", "Ndoll", "CA", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0}},             // small
+        {"O", "Cdoll", "Ndoll", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0}},                    // small
+        {"CY", "Cdoll", "Ndoll", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0}},                   // small
+        {"O", "Cdoll", "Ndoll", "CT", SpeciesTorsion::Cos3Form, {0, 25.4764, 0}},                   // small
+        {"O", "Cdoll", "Ndoll", "CA", SpeciesTorsion::Cos3Form, {0, 25.4764, 0}},                   // small
+        {"O", "C", "N", "CY", SpeciesTorsion::Cos3Form, {0, 25.4764, 0}},                           // small
+        {"C", "N", "CY", "CY", SpeciesTorsion::Cos3Form, {-5.84086, -1.78657, 0}},                  // small
+        {"C", "N", "CY", "Cdoll", SpeciesTorsion::Cos3Form, {-5.84086, -1.78657, 0}},               // small
+        {"O", "Cdoll", "Ndoll", "CY", SpeciesTorsion::Cos3Form, {0, 83.68, 0}},                     // small
+        {"HC", "CY", "CY", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // small
+        {"HC", "CY", "CY", "CY", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // small
+        {"HC", "CY", "CY", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // small
+        {"CT", "CY", "CY", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // small
+        {"CY", "CY", "CY", "CY", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // small
+        {"HC", "CT", "CY", "CY", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         // small
+        {"HC", "CT", "CM", "CM", SpeciesTorsion::Cos3Form, {0, 0, -1.55645}},                       // alkenes
+        {"HC", "CT", "CM", "C=", SpeciesTorsion::Cos3Form, {0, 0, -1.55645}},                       // alkenes
+        {"HC", "CT", "C=", "C=", SpeciesTorsion::Cos3Form, {0, 0, -1.55645}},                       // alkenes
+        {"HC", "CT", "C=", "CM", SpeciesTorsion::Cos3Form, {0, 0, -1.55645}},                       // alkenes
+        {"HC", "CM", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 1.33051}},                        // alkene
+        {"HC", "CT", "CT", "CM", SpeciesTorsion::Cos3Form, {0, 0, 1.53134}},                        // alkene
+        {"HC", "CT", "CT", "CZ", SpeciesTorsion::Cos3Form, {0, 0, 1.53134}},                        // alkyne,
+        {"CT", "CT", "CT", "CZ", SpeciesTorsion::Cos3Form, {0, -2.7196, 0}},                        // alkyne,
+        {"HC", "CT", "CM", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         // alkenes
+        {"CT", "NT", "OS", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         // generic
+        {"CT", "NT", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         // generic
+        {"H", "NT", "OS", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                          // generic
+        {"H", "NT", "OH", "HO", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                          // generic
+        {"CT", "NT", "NT", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         // generic
+        {"CT", "NT", "NT", "H", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                          // generic
+        {"H", "NT", "NT", "H", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                           // generic
+        {"OS", "C", "N", "CT", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0}},                     // carbamates
+        {"OH", "C", "N", "CT", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0}},                     // carbamates
+        {"OS", "C", "N", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0}},                           // carbamates
+        {"OH", "C", "N", "H", SpeciesTorsion::Cos3Form, {0, 20.5016, 0}},                           // carbamates
+        {"N", "C", "OS", "CT", SpeciesTorsion::Cos3Form, {-8.368, 20.92, 0}},                       // carbamates
+        {"N", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {-8.368, 20.92, 0}},                       // carbamates
+        {"HC", "NC", "NZ", "NZ", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // azides
+        {"CT", "NC", "NZ", "NZ", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // azides
+        {"CT", "CT", "NC", "NZ", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // azides
         /* { "HC",	"CT",	"C",	"Seq",	SpeciesTorsion::Cos3Form,	0,	0,	0,	0 }, */         // thiocarbonyl
         /* { "Seq",	"C",	"N",	"H",	SpeciesTorsion::Cos3Form,	4.184,	20.92,	0,	0 }, */ // thioamides
         /* { "Seq",	"C",	"N",	"CT",	SpeciesTorsion::Cos3Form,	0,	27.196,	0,	0 }, */     // thioamides
@@ -2129,41 +2129,41 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         /* { "Seq",	"C",	"N",	"CM",	SpeciesTorsion::Cos3Form,	0,	27.196,	0,	0 }, */     // thioamides
         /* { "Seq",	"C",	"OS",	"CT",	SpeciesTorsion::Cos3Form,	0,	20.92,	0,	0 }, */     // thioesters
         /* { "Seq",	"C",	"OH",	"HO",	SpeciesTorsion::Cos3Form,	0,	23.012,	0,	0 }, */     // thioacids
-        {"CT", "S", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 2.5104, 0, 0}},                       // thioanisole
-        {"O", "C", "C", "CT", SpeciesTorsion::Cos3Form, {0, 2.092, 0, 0}},                          // dicarbonyls
-        {"O", "C", "C", "HC", SpeciesTorsion::Cos3Form, {0, 0.8368, 0, 0}},                         // dicarbonyls
-        {"HC", "C", "C", "CT", SpeciesTorsion::Cos3Form, {3.3472, -3.17984, 0, 0}},                 // dicarbonyls
-        {"HC", "C", "C", "HC", SpeciesTorsion::Cos3Form, {3.3472, 0, 0, 0}},                        // dicarbonyls
-        {"CT", "C", "C", "CT", SpeciesTorsion::Cos3Form, {2.9288, -6.276, 0, 0}},                   // dicarbonyls
-        {"C", "C", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0.35564, 0}},                       // dicarbonyls
-        {"N", "C", "C", "O", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                               // dicarbonyls
-        {"N", "C", "C", "HC", SpeciesTorsion::Cos3Form, {-3.7656, 1.2552, 0, 0}},                   // dicarbonyls
-        {"N", "C", "C", "CT", SpeciesTorsion::Cos3Form, {-2.092, 0.8368, 0, 0}},                    // dicarbonyls
-        {"C", "C", "N", "CT", SpeciesTorsion::Cos3Form, {1.6736, 20.5016, 0, 0}},                   // dicarbonyls
-        {"H", "N", "C", "C", SpeciesTorsion::Cos3Form, {0, 20.5016, 0, 0}},                         // dicarbonyls
-        {"O", "C", "C", "O", SpeciesTorsion::Cos3Form, {6.6944, 13.3888, 0, 0}},                    // dicarbonyls
-        {"CT", "C", "N", "OH", SpeciesTorsion::Cos3Form, {19.0037, 27.627, 4.37228, 0}},            // hydroxamic
-        {"O", "C", "N", "OH", SpeciesTorsion::Cos3Form, {0, 27.627, 0, 0}},                         // hydroxamic
-        {"C", "N", "OH", "HO", SpeciesTorsion::Cos3Form, {23.0915, -28.0328, 2.4309, 0}},           // hydroxamic
-        {"H", "N", "OH", "HO", SpeciesTorsion::Cos3Form, {11.3888, -21.5643, 0, 0}},                // hydroxamic
-        {"F", "CT", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 1.8828, 0, 0}},                       // fluoromethyl
-        {"F", "CT", "CW", "*", SpeciesTorsion::Cos3Form, {0, 1.8828, 0, 0}},                        // fluoromethyl
-        {"F", "CT", "CS", "*", SpeciesTorsion::Cos3Form, {0, 1.8828, 0, 0}},                        // fluoromethyl
-        {"Cl", "CT", "CA", "CA", SpeciesTorsion::Cos3Form, {0, -1.6736, 0, 0}},                     // chloromethyl
-        {"Cl", "CT", "CW", "*", SpeciesTorsion::Cos3Form, {0, -1.6736, 0, 0}},                      // chloromethyl
-        {"Cl", "CT", "CS", "*", SpeciesTorsion::Cos3Form, {0, -1.6736, 0, 0}},                      // chloromethyl
-        {"Cl", "CT", "C", "O", SpeciesTorsion::Cos3Form, {-2.7196, 0, 0, 0}},                       // 2-chloroamide
-        {"Cl", "CT", "C", "N", SpeciesTorsion::Cos3Form, {2.7196, 0, 0, 0}},                        // 2-chloroamide
-        {"CT", "CT", "CT", "Si", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // silane
-        {"CT", "CT", "Si", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // silane
-        {"CT", "CT", "Si", "H", SpeciesTorsion::Cos3Form, {0, 0, 0.6276, 0}},                       // silane
-        {"HC", "CT", "Si", "H", SpeciesTorsion::Cos3Form, {0, 0, 0.75312, 0}},                      // silane
-        {"Si", "CT", "CT", "Si", SpeciesTorsion::Cos3Form, {21.7568, -2.092, 0, 0}},                // silane
-        {"Si", "CT", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0.6276, 0}},                      // silane
-        {"CT", "Si", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0.75312, 0}},                     // silane
-        {"OS", "Si", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // tentative
-        {"OS", "Si", "OS", "Si", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // tentative
-        {"Si", "OS", "Si", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0, 0}},                           // tentative
+        {"CT", "S", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 2.5104, 0}},                          // thioanisole
+        {"O", "C", "C", "CT", SpeciesTorsion::Cos3Form, {0, 2.092, 0}},                             // dicarbonyls
+        {"O", "C", "C", "HC", SpeciesTorsion::Cos3Form, {0, 0.8368, 0}},                            // dicarbonyls
+        {"HC", "C", "C", "CT", SpeciesTorsion::Cos3Form, {3.3472, -3.17984, 0}},                    // dicarbonyls
+        {"HC", "C", "C", "HC", SpeciesTorsion::Cos3Form, {3.3472, 0, 0}},                           // dicarbonyls
+        {"CT", "C", "C", "CT", SpeciesTorsion::Cos3Form, {2.9288, -6.276, 0}},                      // dicarbonyls
+        {"C", "C", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0.35564}},                          // dicarbonyls
+        {"N", "C", "C", "O", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                  // dicarbonyls
+        {"N", "C", "C", "HC", SpeciesTorsion::Cos3Form, {-3.7656, 1.2552, 0}},                      // dicarbonyls
+        {"N", "C", "C", "CT", SpeciesTorsion::Cos3Form, {-2.092, 0.8368, 0}},                       // dicarbonyls
+        {"C", "C", "N", "CT", SpeciesTorsion::Cos3Form, {1.6736, 20.5016, 0}},                      // dicarbonyls
+        {"H", "N", "C", "C", SpeciesTorsion::Cos3Form, {0, 20.5016, 0}},                            // dicarbonyls
+        {"O", "C", "C", "O", SpeciesTorsion::Cos3Form, {6.6944, 13.3888, 0}},                       // dicarbonyls
+        {"CT", "C", "N", "OH", SpeciesTorsion::Cos3Form, {19.0037, 27.627, 4.37228}},               // hydroxamic
+        {"O", "C", "N", "OH", SpeciesTorsion::Cos3Form, {0, 27.627, 0}},                            // hydroxamic
+        {"C", "N", "OH", "HO", SpeciesTorsion::Cos3Form, {23.0915, -28.0328, 2.4309}},              // hydroxamic
+        {"H", "N", "OH", "HO", SpeciesTorsion::Cos3Form, {11.3888, -21.5643, 0}},                   // hydroxamic
+        {"F", "CT", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 1.8828, 0}},                          // fluoromethyl
+        {"F", "CT", "CW", "*", SpeciesTorsion::Cos3Form, {0, 1.8828, 0}},                           // fluoromethyl
+        {"F", "CT", "CS", "*", SpeciesTorsion::Cos3Form, {0, 1.8828, 0}},                           // fluoromethyl
+        {"Cl", "CT", "CA", "CA", SpeciesTorsion::Cos3Form, {0, -1.6736, 0}},                        // chloromethyl
+        {"Cl", "CT", "CW", "*", SpeciesTorsion::Cos3Form, {0, -1.6736, 0}},                         // chloromethyl
+        {"Cl", "CT", "CS", "*", SpeciesTorsion::Cos3Form, {0, -1.6736, 0}},                         // chloromethyl
+        {"Cl", "CT", "C", "O", SpeciesTorsion::Cos3Form, {-2.7196, 0, 0}},                          // 2-chloroamide
+        {"Cl", "CT", "C", "N", SpeciesTorsion::Cos3Form, {2.7196, 0, 0}},                           // 2-chloroamide
+        {"CT", "CT", "CT", "Si", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // silane
+        {"CT", "CT", "Si", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // silane
+        {"CT", "CT", "Si", "H", SpeciesTorsion::Cos3Form, {0, 0, 0.6276}},                          // silane
+        {"HC", "CT", "Si", "H", SpeciesTorsion::Cos3Form, {0, 0, 0.75312}},                         // silane
+        {"Si", "CT", "CT", "Si", SpeciesTorsion::Cos3Form, {21.7568, -2.092, 0}},                   // silane
+        {"Si", "CT", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0.6276}},                         // silane
+        {"CT", "Si", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0.75312}},                        // silane
+        {"OS", "Si", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // tentative
+        {"OS", "Si", "OS", "Si", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // tentative
+        {"Si", "OS", "Si", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // tentative
         {"CT", "CT", "CT", "CT", SpeciesTorsion::Cos4Form, {27.7064, 3.96643, -5.80739, -8.86171}}, // perfluoroalkane
         {"N2", "CA", "CA", "CA", SpeciesTorsion::Cos4Form, {0, 6.77808, 0, -1.84096}}               // benzamidine
     };

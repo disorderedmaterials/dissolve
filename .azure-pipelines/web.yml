@@ -1,0 +1,34 @@
+trigger:
+  branches:
+    include:
+    - develop
+  paths:
+    include:
+    - web/*
+    exclude:
+    - /
+
+# TEST pr: none
+pr:
+  autoCancel: true
+  branches:
+    include:
+      - '*'
+  paths:
+    include:
+    - web/*
+    exclude:
+    - /
+
+stages:
+  - stage: 'web'
+    displayName: 'Website'
+    jobs:
+      - job: 'buildweb'
+        displayName: 'Update Web'
+        pool:
+          vmImage: 'ubuntu-18.04'
+        steps:
+          - template: templates/build-web.yml
+            parameters:
+              use_current_hash: true

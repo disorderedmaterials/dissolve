@@ -9,7 +9,6 @@ parameters:
     default: https://github.com/frankheckenbach/ftgl.git
 
 steps:
-  - checkout: self
   - task: UsePythonVersion@0
     inputs:
       versionSpec: '3.x'
@@ -59,7 +58,6 @@ steps:
       mkdir build
       cd build
       conan install -s compiler="gcc" --remote=conan-center ../
-      cat conanbuildinfo.cmake
       cmake -G "Ninja" -DGUI:bool=true ${{ parameters.extraflags }} ../
       ninja
     displayName: 'Build'

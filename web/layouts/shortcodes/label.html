@@ -1,0 +1,6 @@
+{{ $color := .Get "color"  }}
+{{ $icon := .Get "icon"  }}
+<p class="label label-{{ $color }}">
+{{ with .Get "icon" }}<i class="fas {{ $icon }}"></i>{{ end }}
+{{ with .Get "text" }}{{ . | markdownify }}{{ end }}
+</p>
