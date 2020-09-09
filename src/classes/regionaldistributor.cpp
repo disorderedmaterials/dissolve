@@ -285,7 +285,8 @@ bool RegionalDistributor::canLockCellForEditing(int processOrGroup, int cellInde
 // Assign Molecule to process/group if possible
 bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, int processOrGroup)
 {
-    Cell *primaryCell, *readOnlyCell;
+    Cell *primaryCell;
+    const Cell *readOnlyCell;
     int cellIndex;
 
     // Obvious check first - is the Molecule available for distribution / assignment?
@@ -332,11 +333,11 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
 
     // We are able to lock all Cells that we need to edit, so now construct a list of those within the cutoff range of any
     // primaryCell that we must be able to read (but not modify)
-    OrderedPointerList<Cell> readOnlyCells;
+    OrderedPointerList<const Cell> readOnlyCells;
     for (int c = 0; c < primaryCells.nItems(); ++c)
     {
         // Loop over all cell neighbours for this primary Cell
-        for (auto &neighbour : primaryCells[c]->allCellNeighbours())
+        for (const auto &neighbour : primaryCells[c]->allCellNeighbours())
         {
             readOnlyCell = neighbour.cell();
             cellIndex = readOnlyCell->index();
@@ -380,7 +381,7 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
     }
 
     // For the read-only Cells, we just need to set relevant ownership in the cellLockOwners_ array
-    OrderedPointerListIterator<Cell> readOnlyCellIterator(readOnlyCells);
+    OrderedPointerListIterator<const Cell> readOnlyCellIterator(readOnlyCells);
     while ((readOnlyCell = readOnlyCellIterator.iterate()))
     {
         cellIndex = readOnlyCell->index();
