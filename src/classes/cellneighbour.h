@@ -45,7 +45,7 @@ class CellNeighbour
     // Set cell and mim flag
     void set(Cell *cell, bool useMim);
     // Return referenced cell
-    Cell *cell();
+    const Cell *cell() const;
     // Return whether mim should be applied
     bool useMim();
 };
