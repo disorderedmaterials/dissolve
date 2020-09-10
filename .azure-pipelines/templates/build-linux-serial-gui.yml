@@ -17,7 +17,7 @@ steps:
       sudo apt-get install qt${{ parameters.qtver }}base qt${{ parameters.qtver }}svg qt${{ parameters.qtver }}imageformats -y
     displayName: 'Install Prerequisites'
   - bash: |
-      docker run -v $(pwd):/src -w /src nixos/nix nix-build
+      docker run -v $(pwd):/src -w /src/nix/dissolve.nix nixos/nix nix-build
     displayName: 'Install nix'
   - bash: |
       set -ex
