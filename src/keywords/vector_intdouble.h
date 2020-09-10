@@ -25,10 +25,6 @@
 #include <tuple>
 #include <vector>
 
-// Forward Declarations
-/* none */
-
-// TypeDef
 typedef std::vector<std::tuple<std::vector<int>, std::vector<double>>> IntegerDoubleVectorKeywordData;
 
 // Keyword with list of Tuples of Vectors
