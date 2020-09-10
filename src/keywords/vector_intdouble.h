@@ -1,6 +1,6 @@
 /*
     *** Keyword - Vector of Integer/Double Tuples
-    *** src/keywords/vector_id.h
+    *** src/keywords/vector_intdouble.h
     Copyright T. Youngs 2012-2020
 
     This file is part of Dissolve.

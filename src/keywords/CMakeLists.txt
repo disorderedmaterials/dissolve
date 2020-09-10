@@ -39,8 +39,8 @@ add_library(keywords
   vec3double.cpp
   vec3integer.cpp
   vec3nodevalue.cpp
-  vector_id.cpp
-  vector_is.cpp
+  vector_intdouble.cpp
+  vector_intstring.cpp
   windowfunction.cpp
 
   atomtypereflist.h
@@ -87,8 +87,8 @@ add_library(keywords
   vec3integer.h
   vec3labels.h
   vec3nodevalue.h
-  vector_id.h
-  vector_is.h
+  vector_intdouble.h
+  vector_intstring.h
   windowfunction.h
 )
 

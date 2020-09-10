@@ -1,6 +1,6 @@
 /*
-    *** Keyword - Vector of Integer/String Tuples
-    *** src/keywords/vector_is.cpp
+    *** Keyword - Vector of Integer/Double Tuples
+    *** src/keywords/vector_intdouble.cpp
     Copyright T. Youngs 2012-2020
 
     This file is part of Dissolve.
@@ -19,36 +19,36 @@
     along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "keywords/vector_is.h"
+#include "keywords/vector_intdouble.h"
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 
-IntegerStringVectorKeyword::IntegerStringVectorKeyword::IntegerStringVectorKeyword(IntegerStringVectorKeywordData &data,
+IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword(IntegerDoubleVectorKeywordData &data,
                                                                                    int nRequiredIntegers, int nRequiredValues)
-    : KeywordData<IntegerStringVectorKeywordData &>(KeywordBase::VectorIntegerStringData, data),
+    : KeywordData<IntegerDoubleVectorKeywordData &>(KeywordBase::VectorIntegerDoubleData, data),
       nRequiredIntegers_(nRequiredIntegers), nRequiredValues_(nRequiredValues)
 {
 }
 
-IntegerStringVectorKeyword::~IntegerStringVectorKeyword() {}
+IntegerDoubleVectorKeyword::~IntegerDoubleVectorKeyword() {}
 
 // Return minimum number of arguments accepted
-int IntegerStringVectorKeyword::minArguments() const
+int IntegerDoubleVectorKeyword::minArguments() const
 {
     return (nRequiredIntegers_ + (nRequiredValues_ == -1 ? 1 : nRequiredValues_));
 }
 
 // Return maximum number of arguments accepted
-int IntegerStringVectorKeyword::maxArguments() const
+int IntegerDoubleVectorKeyword::maxArguments() const
 {
     return (nRequiredIntegers_ + (nRequiredValues_ == -1 ? 99 : nRequiredValues_));
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool IntegerStringVectorKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool IntegerDoubleVectorKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     std::vector<int> i;
-    std::vector<std::string> s;
+    std::vector<double> d;
 
     auto argIndex = startArg;
 
@@ -63,8 +63,8 @@ bool IntegerStringVectorKeyword::read(LineParser &parser, int startArg, CoreData
 
     // Read values and check number
     for (auto n = argIndex; n < parser.nArgs(); ++n)
-        s.emplace_back(parser.argsv(n));
-    if (s.size() < (nRequiredValues_ == -1 ? 1 : nRequiredValues_))
+        d.push_back(parser.argd(n));
+    if (d.size() < (nRequiredValues_ == -1 ? 1 : nRequiredValues_))
     {
         if (nRequiredValues_ == -1)
             return Messenger::error("Keyword {} expects at least one double value in addition.\n", name());
@@ -74,7 +74,7 @@ bool IntegerStringVectorKeyword::read(LineParser &parser, int startArg, CoreData
     }
 
     // Add tuple to vector
-    data_.emplace_back(i, s);
+    data_.emplace_back(i, d);
 
     hasBeenSet();
 
@@ -82,15 +82,15 @@ bool IntegerStringVectorKeyword::read(LineParser &parser, int startArg, CoreData
 }
 
 // Write keyword data to specified LineParser
-bool IntegerStringVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool IntegerDoubleVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
-    for (const auto &d : data_)
+    for (const auto &idData : data_)
     {
         std::string line;
-        for (const auto &i : std::get<0>(d))
+        for (const auto &i : std::get<0>(idData))
             line += fmt::format("  {}", i);
-        for (const auto &s : std::get<1>(d))
-            line += fmt::format("  '{}'", s);
+        for (const auto &d : std::get<1>(idData))
+            line += fmt::format("  '{}'", d);
 
         if (!parser.writeLineF("{}{}{}\n", prefix, keywordName, line))
             return false;

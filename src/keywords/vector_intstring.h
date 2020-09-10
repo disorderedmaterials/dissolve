@@ -1,6 +1,6 @@
 /*
     *** Keyword - Vector of Integer/String Tuples
-    *** src/keywords/vector_is.h
+    *** src/keywords/vector_intstring.h
     Copyright T. Youngs 2012-2020
 
     This file is part of Dissolve.
