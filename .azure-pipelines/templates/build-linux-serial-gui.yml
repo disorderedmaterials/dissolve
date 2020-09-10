@@ -18,9 +18,11 @@ steps:
     displayName: 'Install Prerequisites'
   - bash: |
       sh <(curl -L https://nixos.org/nix/install) --daemon
+    displayName: 'Install nix'
+  - bash: |
       nix-channel --update
       nix-channel --list
-    displayName: 'Install nix'
+    displayName: 'Update nix channels'
   - bash: |
       set -ex
       sudo pip3 install wheel
