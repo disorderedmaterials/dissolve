@@ -35,7 +35,8 @@ typedef std::vector<std::tuple<std::vector<int>, std::vector<double>>> IntegerDo
 class IntegerDoubleVectorKeyword : public KeywordData<IntegerDoubleVectorKeywordData &>
 {
     public:
-    IntegerDoubleVectorKeyword(IntegerDoubleVectorKeywordData &data, int nRequiredIntegers, int nRequiredValues = -1);
+    IntegerDoubleVectorKeyword(IntegerDoubleVectorKeywordData &data, int nRequiredIntegers,
+                               std::optional<int> nRequiredValues = std::nullopt);
     ~IntegerDoubleVectorKeyword();
 
     /*
@@ -44,8 +45,8 @@ class IntegerDoubleVectorKeyword : public KeywordData<IntegerDoubleVectorKeyword
     private:
     // Number of required integers
     int nRequiredIntegers_;
-    // Number of required values (or -1 for any number, but at least one)
-    int nRequiredValues_;
+    // Number of required values (or, if not specified, one or more)
+    std::optional<int> nRequiredValues_;
 
     /*
      * Arguments

@@ -24,7 +24,8 @@
 #include "classes/coredata.h"
 
 IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword(IntegerDoubleVectorKeywordData &data,
-                                                                                   int nRequiredIntegers, int nRequiredValues)
+                                                                                   int nRequiredIntegers,
+                                                                                   std::optional<int> nRequiredValues)
     : KeywordData<IntegerDoubleVectorKeywordData &>(KeywordBase::VectorIntegerDoubleData, data),
       nRequiredIntegers_(nRequiredIntegers), nRequiredValues_(nRequiredValues)
 {
@@ -33,16 +34,10 @@ IntegerDoubleVectorKeyword::IntegerDoubleVectorKeyword::IntegerDoubleVectorKeywo
 IntegerDoubleVectorKeyword::~IntegerDoubleVectorKeyword() {}
 
 // Return minimum number of arguments accepted
-int IntegerDoubleVectorKeyword::minArguments() const
-{
-    return (nRequiredIntegers_ + (nRequiredValues_ == -1 ? 1 : nRequiredValues_));
-}
+int IntegerDoubleVectorKeyword::minArguments() const { return (nRequiredIntegers_ + nRequiredValues_.value_or(1)); }
 
 // Return maximum number of arguments accepted
-int IntegerDoubleVectorKeyword::maxArguments() const
-{
-    return (nRequiredIntegers_ + (nRequiredValues_ == -1 ? 99 : nRequiredValues_));
-}
+int IntegerDoubleVectorKeyword::maxArguments() const { return (nRequiredIntegers_ + nRequiredValues_.value_or(99)); }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
 bool IntegerDoubleVectorKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
@@ -64,13 +59,13 @@ bool IntegerDoubleVectorKeyword::read(LineParser &parser, int startArg, CoreData
     // Read values and check number
     for (auto n = argIndex; n < parser.nArgs(); ++n)
         d.push_back(parser.argd(n));
-    if (d.size() < (nRequiredValues_ == -1 ? 1 : nRequiredValues_))
+    if (d.size() < nRequiredValues_.value_or(1))
     {
         if (nRequiredValues_ == -1)
             return Messenger::error("Keyword {} expects at least one double value in addition.\n", name());
         else
-            return Messenger::error("Keyword {} expects exactly {} double {} in addition.\n", name(), nRequiredValues_,
-                                    nRequiredValues_ == 1 ? "value" : "values");
+            return Messenger::error("Keyword {} expects exactly {} double {} in addition.\n", name(), nRequiredValues_.value(),
+                                    nRequiredValues_.value() == 1 ? "value" : "values");
     }
 
     // Add tuple to vector

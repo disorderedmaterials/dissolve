@@ -31,7 +31,8 @@ typedef std::vector<std::tuple<std::vector<int>, std::vector<std::string>>> Inte
 class IntegerStringVectorKeyword : public KeywordData<IntegerStringVectorKeywordData &>
 {
     public:
-    IntegerStringVectorKeyword(IntegerStringVectorKeywordData &data, int nRequiredIntegers, int nRequiredValues = -1);
+    IntegerStringVectorKeyword(IntegerStringVectorKeywordData &data, int nRequiredIntegers,
+                               std::optional<int> nRequiredValues = std::nullopt);
     ~IntegerStringVectorKeyword();
 
     /*
@@ -41,7 +42,7 @@ class IntegerStringVectorKeyword : public KeywordData<IntegerStringVectorKeyword
     // Number of required integers
     int nRequiredIntegers_;
     // Number of required values (or -1 for any number, but at least one)
-    int nRequiredValues_;
+    std::optional<int> nRequiredValues_;
 
     /*
      * Arguments
