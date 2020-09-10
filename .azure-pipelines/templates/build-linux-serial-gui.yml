@@ -17,12 +17,8 @@ steps:
       sudo apt-get install qt${{ parameters.qtver }}base qt${{ parameters.qtver }}svg qt${{ parameters.qtver }}imageformats -y
     displayName: 'Install Prerequisites'
   - bash: |
-      sh <(curl -L https://nixos.org/nix/install) --daemon
+      docker run -v $(pwd):/src -w /src nixos/nix nix-build
     displayName: 'Install nix'
-  - bash: |
-      nix-channel --update
-      nix-channel --list
-    displayName: 'Update nix channels'
   - bash: |
       set -ex
       sudo pip3 install wheel
