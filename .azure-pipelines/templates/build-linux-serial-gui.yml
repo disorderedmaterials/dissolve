@@ -12,11 +12,15 @@ steps:
       # -- General
       sudo apt-get update -q
       sudo apt-get install bison libfreetype6-dev libftgl-dev ninja-build python3-setuptools
-      sh <(curl -L https://nixos.org/nix/install) --daemon
       # -- Qt
       sudo add-apt-repository ppa:${{ parameters.ppa }} -y
       sudo apt-get install qt${{ parameters.qtver }}base qt${{ parameters.qtver }}svg qt${{ parameters.qtver }}imageformats -y
     displayName: 'Install Prerequisites'
+  - bash: |
+      sh <(curl -L https://nixos.org/nix/install) --daemon
+      nix-channel --update
+      nix-channel --list
+    displayName: 'Install nix'
   - bash: |
       set -ex
       sudo pip3 install wheel
