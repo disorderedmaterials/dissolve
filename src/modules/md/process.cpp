@@ -150,7 +150,6 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (created)
         {
             randomVelocities = true;
-
             v.initialise(cfg->nAtoms());
         }
         if (randomVelocities)
