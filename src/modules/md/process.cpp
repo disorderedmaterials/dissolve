@@ -150,6 +150,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (created)
         {
             randomVelocities = true;
+
             v.initialise(cfg->nAtoms());
         }
         if (randomVelocities)
@@ -157,15 +158,18 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         else
             Messenger::print("Existing velocities will be used.\n");
 
+        // Initialise the random number buffer for all processes
+        procPool.initialiseRandomBuffer(ProcessPool::PoolProcessesCommunicator);
+
         Vec3<double> vCom;
         double massSum = 0.0;
         for (n = 0; n < cfg->nAtoms(); ++n)
         {
             if (randomVelocities)
             {
-                v[n].x = exp(DissolveMath::random() - 0.5) / sqrt(TWOPI);
-                v[n].y = exp(DissolveMath::random() - 0.5) / sqrt(TWOPI);
-                v[n].z = exp(DissolveMath::random() - 0.5) / sqrt(TWOPI);
+                v[n].x = exp(procPool.random() - 0.5) / sqrt(TWOPI);
+                v[n].y = exp(procPool.random() - 0.5) / sqrt(TWOPI);
+                v[n].z = exp(procPool.random() - 0.5) / sqrt(TWOPI);
             }
 
             // Grab atom mass for future use
