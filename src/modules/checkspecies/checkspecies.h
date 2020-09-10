@@ -21,7 +21,10 @@
 
 #pragma once
 
+#include "classes/speciesintra.h"
 #include "module/module.h"
+#include "templates/optionalref.h"
+#include <fmt/ranges.h>
 #include <tuple>
 #include <vector>
 
@@ -73,8 +76,48 @@ class CheckSpeciesModule : public Module
      * Functions / Data
      */
     private:
-    // Check supplied parameter vectors for consistency, returning false if any differ by the supplied tolerance
-    bool checkParameters(const std::vector<double> &source, const std::vector<double> &ref, const double tolerance);
+    // Check parameters for the supplied intramolecular term against those supplied
+    template <class T>
+    bool parametersDiffer(std::string_view intraType, OptionalReferenceWrapper<T> term, const std::vector<int> &indices,
+                          const std::vector<double> &refParams, const double tolerance) const
+    {
+        // Format indices string - do this outside of print() and error() calls as the ref would need to be forwarded
+        auto indexString = fmt::format("{}", fmt::join(indices, "-"));
+
+        // Check for an actual intramolecular term
+        if (!term)
+            return Messenger::error("No {} {} exists in the species.", intraType, indexString);
+
+        const T &intra = *term;
+        const auto &sourceParams = intra.parameters();
+
+        // Check parameter values
+        auto result = true;
+
+        for (auto n = 0; n < std::min(sourceParams.size(), refParams.size()); ++n)
+        {
+            if (fabs(sourceParams.at(n) - refParams.at(n)) >= tolerance)
+            {
+                Messenger::print("  ... parameter {} is incorrect ({:.5e} vs. {:.5e} reference, delta = {:.5e}", n + 1,
+                                 sourceParams.at(n), refParams.at(n), fabs(sourceParams.at(n) - refParams.at(n)));
+                result = false;
+            }
+        }
+
+        if (sourceParams.size() != refParams.size())
+        {
+            Messenger::print("  ... number of parameters supplied to check is inconsistent ({} vs. {})", sourceParams.size(),
+                             refParams.size());
+            result = false;
+        }
+
+        if (result)
+            Messenger::print("The {} {} has the correct parameters.", intraType, indexString);
+        else
+            Messenger::print("Parameters for {} {} are incorrect - see above.", intraType, indexString);
+
+        return !result;
+    }
 
     private:
     // Atom types to check against indices
