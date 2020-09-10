@@ -1,4 +1,5 @@
 {pkgs ? import <nixpkgs> {},
+  unstable ? import <unstable> {},
   parallel ? false,
   gui ? false}:
 
@@ -20,8 +21,8 @@ pkgs.stdenv.mkDerivation {
     pkgs.bison
     pkgs.cmake
     pkgs.conan
-    pkgs.fmt
-    pkgs.fmt.dev
+    unstable.fmt
+    unstable.fmt.dev
     pkgs.ninja
   ] ++ pkgs.lib.optionals parallel [
     pkgs.openmpi
@@ -38,8 +39,8 @@ pkgs.stdenv.mkDerivation {
   src = pkgs.fetchFromGitHub {
     owner = "projectdissolve";
     repo = "dissolve";
-    rev = "cfff4e019";
-    sha256 = "0kj5dx60f306hv3b2r0xgwcrbfz62qm2clwy5pix7mqf1d58djm8";
+    rev = "d58b5d1118afc817d22c04ad4319e0b99ed7dbb2";
+    sha256 = "0dwdblnaim9kgrjvvvyz9a8g27izwm6ybcsfa2rc90qg2ys80163";
   };
   installPhase = "cp -r .$prefix $out";
   meta = {
