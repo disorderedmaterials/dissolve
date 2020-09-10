@@ -22,6 +22,7 @@
 #pragma once
 
 #include "keywords/data.h"
+#include <optional>
 #include <tuple>
 #include <vector>
 
