@@ -663,7 +663,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 parser.writeLine("# Force units are 10J/mol.\n");
                 parser.writeLine("# Atom        FX            FY            FZ\n");
                 for (int n = 0; n < cfg->nAtoms(); ++n)
-                    parser.writeLineF("  {:10d}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {}\n", n + 1, fx[n], fy[n], fz[n]);
+                    parser.writeLineF("  {:10d}  {:12.6e}  {:12.6e}  {:12.6e}\n", n + 1, fx[n], fy[n], fz[n]);
                 parser.closeFiles();
             }
         }
