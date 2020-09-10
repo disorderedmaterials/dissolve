@@ -1,6 +1,6 @@
 let
   pkgs = import <nixpkgs> {};
-  dissolve = import ./dissolve.nix {pkgs=pkgs;};
+  dissolve = import ./nix/dissolve.nix {pkgs=pkgs;};
 in
 pkgs.mkShell {
   inputsFrom = [dissolve];
