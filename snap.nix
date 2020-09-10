@@ -13,16 +13,17 @@ pkgs.snapTools.makeSnap {
     description = dissolve.meta.longDescription;
     architecures = [ "amd64" ];
     confinement = "strict";
-    apps.dissolve = {
+    apps.cli = {
       command = "${dissolve}/bin/dissolve";
       plugs = [
         "home"
         "removable-media"
       ];
     };
-    apps.dissolve-gui = {
+    apps.dissolve = {
       command = "${dissolve}/bin/dissolve-gui";
       plugs = [
+        "desktop"
         "home"
         "removable-media"
         "opengl"
