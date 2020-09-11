@@ -23,7 +23,8 @@ steps:
       source ~/.nix-profile/etc/profile.d/nix.sh
       pwd
       cd nix
-      ./nix_build.sh
+      ls *.nix
+      bash ./nix_build.sh
       cd ..
     displayName: 'Install nix'
   - bash: |
