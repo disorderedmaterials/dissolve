@@ -8,6 +8,7 @@ pkgs.mkShell {
     pkgs.ccls
     pkgs.clang-tools
     pkgs.cmake
+    pkgs.conan
     pkgs.distcc
     pkgs.valgrind
   ];

@@ -20,7 +20,6 @@ pkgs.stdenv.mkDerivation {
     pkgs.antlr
     pkgs.bison
     pkgs.cmake
-    pkgs.conan
     unstable.fmt
     unstable.fmt.dev
     pkgs.ninja
