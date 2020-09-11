@@ -507,28 +507,19 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 // Grab reference force arrays and check sizes
                 const auto &referenceFx = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFX", uniqueName());
                 if (referenceFx.nItems() != cfg->nAtoms())
-                {
-                    Messenger::error("Number of force components in ReferenceFX is {}, but the "
-                                     "Configuration '{}' contains {} atoms.\n",
-                                     referenceFx.nItems(), cfg->name(), cfg->nAtoms());
-                    return false;
-                }
+                    return Messenger::error("Number of force components in ReferenceFX is {}, but the "
+                                            "Configuration '{}' contains {} atoms.\n",
+                                            referenceFx.nItems(), cfg->name(), cfg->nAtoms());
                 const auto &referenceFy = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFY", uniqueName());
                 if (referenceFy.nItems() != cfg->nAtoms())
-                {
-                    Messenger::error("Number of force components in ReferenceFY is {}, but the "
-                                     "Configuration '{}' contains {} atoms.\n",
-                                     referenceFy.nItems(), cfg->name(), cfg->nAtoms());
-                    return false;
-                }
+                    return Messenger::error("Number of force components in ReferenceFY is {}, but the "
+                                            "Configuration '{}' contains {} atoms.\n",
+                                            referenceFy.nItems(), cfg->name(), cfg->nAtoms());
                 const auto &referenceFz = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFZ", uniqueName());
                 if (referenceFz.nItems() != cfg->nAtoms())
-                {
-                    Messenger::error("Number of force components in ReferenceFZ is {}, but the "
-                                     "Configuration '{}' contains {} atoms.\n",
-                                     referenceFz.nItems(), cfg->name(), cfg->nAtoms());
-                    return false;
-                }
+                    return Messenger::error("Number of force components in ReferenceFZ is {}, but the "
+                                            "Configuration '{}' contains {} atoms.\n",
+                                            referenceFz.nItems(), cfg->name(), cfg->nAtoms());
 
                 Messenger::print("\nTesting reference forces against calculated 'correct' forces - "
                                  "atoms with erroneous forces will be output...\n");
