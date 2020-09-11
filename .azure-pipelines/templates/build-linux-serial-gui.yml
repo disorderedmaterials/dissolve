@@ -18,6 +18,7 @@ steps:
     displayName: 'Install Prerequisites'
   - bash: |
       set -ex
+      source ~/.nix-profile/etc/profile.d/nix.sh
       cd nix
       bash ./nix_build.sh
       cd ..
