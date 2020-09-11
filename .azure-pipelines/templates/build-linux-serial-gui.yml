@@ -22,7 +22,7 @@ steps:
       ls /nix
       ls ~/.nix-profile
       source ~/.nix-profile/etc/profile.d/nix.sh
-      nix-build --version
+      nix/nix_build.sh
     displayName: 'Install nix'
   - bash: |
       set -ex
