@@ -1,4 +1,4 @@
-{pkgs ? import <nixos> {},
+{pkgs ? import <nixpkgs> {},
   parallel ? false,
   gui ? false}:
 
