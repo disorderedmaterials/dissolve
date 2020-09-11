@@ -19,6 +19,8 @@ steps:
   - bash: |
       sudo install -d -m755 -o $(id -u) -g $(id -g) /nix
       bash <(curl https://nixos.org/nix/install)
+      ls /nix
+      ls ~/.nix-profile
       source ~/.nix-profile/etc/profile.d/nix.sh
       nix-build --version
     displayName: 'Install nix'
