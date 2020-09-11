@@ -9,39 +9,16 @@ parameters:
 steps:
   - bash: |
       set -ex
-      # -- General
-      sudo apt-get update -q
-      sudo apt-get install bison libfreetype6-dev libftgl-dev ninja-build python3-setuptools
-      # -- Qt
-      sudo add-apt-repository ppa:${{ parameters.ppa }} -y
-      sudo apt-get install qt${{ parameters.qtver }}base qt${{ parameters.qtver }}svg qt${{ parameters.qtver }}imageformats -y
-    displayName: 'Install Prerequisites'
-  - bash: |
-      set -ex
       sudo install -d -m755 -o $(id -u) -g $(id -g) /nix
       curl -L https://nixos.org/nix/install | sh
       source ~/.nix-profile/etc/profile.d/nix.sh
       nix-channel --add https://nixos.org/channels/nixos-20.03 nixpkgs
       nix-channel --add https://nixos.org/channels/nixpkgs-unstable unstable
       nix-channel --update
+    displayName: 'Install Prerequisites'
+  - bash: |
+      set -ex
       cd nix
       bash ./nix_build.sh
       cd ..
-    displayName: 'Install nix'
-  - bash: |
-      set -ex
-      sudo pip3 install wheel
-      sudo pip3 install conan
-    displayName: 'Install Conan'
-  - bash: |
-      set -ex
-      QT_BASE_DIR="/opt/qt${{ parameters.qtver }}"
-      export QTDIR=$QT_BASE_DIR
-      export PATH=$QT_BASE_DIR/bin:$PATH
-      export LD_LIBRARY_PATH=$QT_BASE_DIR/lib/x86_64-linux-gnu:$QT_BASE_DIR/lib:$LD_LIBRARY_PATH
-      mkdir build
-      cd build
-      conan install --remote=conan-center ../
-      cmake -G "Ninja" -DGUI:bool=true ${{ parameters.extraflags }} ../
-      ninja
     displayName: 'Build'
