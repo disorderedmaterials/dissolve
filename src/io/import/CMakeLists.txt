@@ -14,7 +14,7 @@ add_library(import
   forces.cpp
   forces_dlpoly.cpp
   forces_moscito.cpp
-  forces_xyz.cpp
+  forces_simple.cpp
   trajectory.cpp
 
   coordinates.h

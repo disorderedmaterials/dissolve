@@ -36,11 +36,11 @@ class ForceImportFileFormat : public FileAndFormat
     {
         DLPOLYForces,
         MoscitoForces,
-        XYZForces,
+        SimpleForces,
         nForceImportFormats
     };
-    ForceImportFileFormat(ForceImportFormat format = XYZForces);
-    ForceImportFileFormat(std::string_view filename, ForceImportFormat format = XYZForces);
+    ForceImportFileFormat(ForceImportFormat format = SimpleForces);
+    ForceImportFileFormat(std::string_view filename, ForceImportFormat format = SimpleForces);
     ~ForceImportFileFormat();
 
     /*
@@ -82,8 +82,8 @@ class ForceImportFileFormat : public FileAndFormat
     bool importDLPOLY(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
     // Import Moscito forces through specified parser
     bool importMoscito(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
-    // Import XYZ forces through specified parser
-    bool importXYZ(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
+    // Import simple formatted forces through specified parser
+    bool importSimple(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz);
 
     public:
     // Import forces using current filename and format

@@ -1,6 +1,6 @@
 /*
-    *** Import - XYZ Forces
-    *** src/io/import/forces_xyz.cpp
+    *** Import - Simple Forces
+    *** src/io/import/forces_simple.cpp
     Copyright T. Youngs 2012-2020
 
     This file is part of Dissolve.
@@ -22,8 +22,8 @@
 #include "base/lineparser.h"
 #include "io/import/forces.h"
 
-// Read XYZ forces from specified file
-bool ForceImportFileFormat::importXYZ(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz)
+// Read simple formatted forces from specified file
+bool ForceImportFileFormat::importSimple(LineParser &parser, Array<double> &fx, Array<double> &fy, Array<double> &fz)
 {
     /*
      * Read force information through the specified line parser.
@@ -32,6 +32,8 @@ bool ForceImportFileFormat::importXYZ(LineParser &parser, Array<double> &fx, Arr
      * Line 1:    nAtoms
      * Line 2:    <atom id>    <fx>    <fy>    <fz>
      *   ...
+     *
+     * Commented lines are allowed, and start with '#'
      */
 
     // Read in number of atoms and initialise arrays
