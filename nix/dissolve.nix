@@ -1,5 +1,5 @@
-{pkgs ? import <nixpkgs> {},
-  unstable ? import <unstable> {},
+{pkgs ? import <nixpkgs> {overlays = [ (import ./overlays.nix)];},
+  unstable ? import <unstable> {overlays = [ (import ./overlays.nix)];},
   parallel ? false,
   gui ? false}:
 
