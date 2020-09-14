@@ -21,6 +21,7 @@ jobs:
           set -ex
           cd $(System.ArtifactsDirectory)/linux-tests-serial
           chmod u+x ./go ./dissolve
+          ls
           ./dissolve
           ./go -a -s ./dissolve
         displayName: 'Run Serial System Tests'
