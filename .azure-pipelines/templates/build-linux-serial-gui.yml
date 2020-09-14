@@ -19,6 +19,8 @@ steps:
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
+      nix-env -iA cachix -f https://cachix.org/api/v1/install
+      cachix use rprospero
       cd nix
       bash ./nix_build.sh
       cd ..
