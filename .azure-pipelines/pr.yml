@@ -41,6 +41,7 @@ stages:
             displayName: 'Publish Serial Test Artifacts'
       - job: 'linux_parallel'
         displayName: 'Build Linux (Parallel, ubuntu-18.04)'
+        condition: eq(1, 2)
         pool:
           vmImage: 'ubuntu-18.04' 
         steps:
@@ -60,6 +61,7 @@ stages:
         displayName: 'Build OSX (Serial/GUI, macos-latest)'
         pool:
           vmImage: 'macos-latest' 
+        condition: eq(1, 2)
         steps:
           - checkout: self
             fetchDepth: 1
@@ -73,6 +75,7 @@ stages:
             displayName: 'Publish OSX Artifacts'
       - job: 'windows_serialgui'
         displayName: 'Build Windows (Serial/GUI, windows-latest)'
+        condition: eq(1, 2)
         pool:
           vmImage: 'windows-latest' 
         steps:
