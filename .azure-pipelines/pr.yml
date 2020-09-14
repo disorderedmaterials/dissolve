@@ -32,7 +32,7 @@ stages:
               ppa: 'beineri/opt-qt-5.13.2-bionic'
               qtver: 513
           - bash: |
-              cp -r nix/result/bin/dissolve tests/dissolve
+              cp nix/result/bin/dissolve tests/dissolve
             displayName: 'Copy Executable'
           - task: PublishBuildArtifacts@1
             inputs:
