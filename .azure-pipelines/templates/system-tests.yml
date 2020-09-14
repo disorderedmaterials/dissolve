@@ -19,8 +19,8 @@ jobs:
         displayName: 'Download Serial Test Artifacts'
       - bash: |
           cd $(System.ArtifactsDirectory)/linux-tests-serial
-          chmod u+x ./go ./dissolve
-          ./go -a -s ./dissolve
+          chmod u+x ./go result/bin/dissolve
+          ./go -a -s ./result/bin/dissolve
         displayName: 'Run Serial System Tests'
       - bash: |
           mkdir test-output
