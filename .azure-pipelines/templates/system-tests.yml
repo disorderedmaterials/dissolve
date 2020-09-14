@@ -20,8 +20,9 @@ jobs:
       - bash: |
           set -ex
           cd $(System.ArtifactsDirectory)/linux-tests-serial
-          chmod u+x ./go ./dissolve
+          chmod u+x ./go
           ls
+          chmod u+x ./dissolve
           ./dissolve
           ./go -a -s ./dissolve
         displayName: 'Run Serial System Tests'
