@@ -107,9 +107,9 @@ bool Species::checkSetUp()
         }
 
         // Check each Bond for two-way consistency
-        for (const auto *bond : i->bonds())
+        for (const SpeciesBond &bond : i->bonds())
         {
-            SpeciesAtom *partner = bond->partner(i);
+            SpeciesAtom *partner = bond.partner(i);
             if (!partner->hasBond(i))
             {
                 Messenger::error("SpeciesAtom {} references a Bond to SpeciesAtom {}, but SpeciesAtom {} does not.\n",

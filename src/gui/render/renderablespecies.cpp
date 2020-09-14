@@ -315,10 +315,10 @@ void RenderableSpecies::recreateSelectionPrimitive()
             else
             {
                 // Draw all bonds from this atom
-                for (const auto *bond : i->bonds())
+                for (const SpeciesBond &bond : i->bonds())
                 {
                     const auto ri = i->r();
-                    const auto dij = (bond->partner(i)->r() - ri) * 0.5;
+                    const auto dij = (bond.partner(i)->r() - ri) * 0.5;
 
                     // Draw bond halves
                     lineSelectionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, colour);

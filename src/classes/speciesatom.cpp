@@ -115,16 +115,14 @@ bool SpeciesAtom::isSelected() const { return selected_; }
  */
 
 // Add Bond reference
-void SpeciesAtom::addBond(SpeciesBond *bond)
+void SpeciesAtom::addBond(SpeciesBond &bond)
 {
-    if (find(bonds_.begin(), bonds_.end(), bond) == bonds_.end())
-    {
+    if (find_if(bonds_.begin(), bonds_.end(), [&bond](const SpeciesBond &b){return &b == &bond;}) == bonds_.end())
         bonds_.push_back(bond);
-    }
 }
 
 // Remove Bond reference
-void SpeciesAtom::removeBond(SpeciesBond *b) { bonds_.erase(find(bonds_.begin(), bonds_.end(), b)); }
+void SpeciesAtom::removeBond(SpeciesBond &b) { bonds_.erase(find_if(bonds_.begin(), bonds_.end(), [&b](const SpeciesBond &bond){return &b == &bond;})); }
 
 // Clear all Bond references
 void SpeciesAtom::clearBonds() { bonds_.clear(); }
@@ -133,16 +131,17 @@ void SpeciesAtom::clearBonds() { bonds_.clear(); }
 int SpeciesAtom::nBonds() const { return bonds_.size(); }
 
 // Return specified bond
-SpeciesBond *SpeciesAtom::bond(int index) { return bonds_.at(index); }
+SpeciesBond &SpeciesAtom::bond(int index) { return bonds_.at(index); }
 
 // Return bonds list
-const std::vector<SpeciesBond *> &SpeciesAtom::bonds() const { return bonds_; }
+const std::vector<std::reference_wrapper<SpeciesBond>> &SpeciesAtom::bonds() const { return bonds_; }
 
 // Return whether Bond to specified Atom exists
-SpeciesBond *SpeciesAtom::hasBond(SpeciesAtom *partner)
+OptionalReferenceWrapper<SpeciesBond> SpeciesAtom::hasBond(SpeciesAtom *partner)
 {
-    auto result = find_if(bonds_.begin(), bonds_.end(), [&](const auto *bond) { return bond->partner(this) == partner; });
-    return result == bonds_.end() ? nullptr : *result;
+    auto result = find_if(bonds_.begin(), bonds_.end(), [&](const SpeciesBond &bond) { return bond.partner(this) == partner; });
+    if (result == bonds_.end()) return std::nullopt;
+    return *result;
 }
 
 // Add specified SpeciesAngle to Atom

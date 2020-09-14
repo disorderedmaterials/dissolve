@@ -45,7 +45,7 @@ void Species::removeAtom(SpeciesAtom *i)
 
     // Remove any bond terms that involve 'i'
     while (i->nBonds())
-        removeBond(i, i->bond(0)->partner(i));
+        removeBond(i, i->bond(0).partner(i));
 
     // Now remove the atom
     atoms_.remove(i);
@@ -154,20 +154,20 @@ void Species::toggleAtomSelection(SpeciesAtom *i)
 }
 
 // Select Atoms along any path from the specified one, ignoring the bond(s) provided
-void Species::selectFromAtom(SpeciesAtom *i, SpeciesBond *exclude, SpeciesBond *excludeToo)
+void Species::selectFromAtom(SpeciesAtom *i, SpeciesBond &exclude, OptionalReferenceWrapper<SpeciesBond> excludeToo)
 {
     // Loop over Bonds on specified Atom
     selectAtom(i);
-    for (const auto *bond : i->bonds())
+    for (const SpeciesBond &bond : i->bonds())
     {
         // Is this either of the excluded bonds?
-        if (exclude == bond)
+        if (&exclude == &bond)
             continue;
-        if (excludeToo == bond)
+        if (excludeToo && &(*excludeToo).get() == &bond)
             continue;
 
         // Get the partner atom in the bond and select it (if it is not selected already)
-        auto *partner = bond->partner(i);
+        auto *partner = bond.partner(i);
 
         if (selectedAtoms_.contains(partner))
             continue;

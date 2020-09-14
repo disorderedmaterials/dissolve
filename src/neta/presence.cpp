@@ -160,10 +160,8 @@ int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &av
         if (nHydrogensValue_ >= 0)
         {
             // Count number of hydrogens attached to this atom
-            auto nH = 0;
-            for (const auto *bond : j->bonds())
-                if (bond->partner(j)->element()->Z() == ELEMENT_H)
-                    ++nH;
+	  auto nH = std::count_if(j->bonds().begin(), j->bonds().end(), [j](const SpeciesBond &bond){
+	      return bond.partner(j)->element()->Z() == ELEMENT_H;});
             if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_))
                 return NETANode::NoMatch;
 

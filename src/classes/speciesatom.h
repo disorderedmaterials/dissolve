@@ -24,6 +24,7 @@
 #include "templates/list.h"
 #include "templates/listitem.h"
 #include "templates/orderedpointerdataarray.h"
+#include "templates/optionalref.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"
 #include <memory>
@@ -106,7 +107,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
      */
     private:
     // List of bonds which this atom participates in
-    std::vector<SpeciesBond *> bonds_;
+    std::vector<std::reference_wrapper<SpeciesBond>> bonds_;
     // List of angles which this atom participates in
     std::vector<SpeciesAngle *> angles_;
     // List of torsions which this atom participates in
@@ -118,19 +119,19 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
 
     public:
     // Add bond reference
-    void addBond(SpeciesBond *b);
+    void addBond(SpeciesBond &b);
     // Remove bond reference
-    void removeBond(SpeciesBond *b);
+    void removeBond(SpeciesBond &b);
     // Clear all bond references
     void clearBonds();
     // Return number of bonds
     int nBonds() const;
     // Return specified bond
-    SpeciesBond *bond(int index);
+    SpeciesBond &bond(int index);
     // Return bonds list
-    const std::vector<SpeciesBond *> &bonds() const;
+    const std::vector<std::reference_wrapper<SpeciesBond>> &bonds() const;
     // Return whether bond to specified atom exists
-    SpeciesBond *hasBond(SpeciesAtom *j);
+    OptionalReferenceWrapper<SpeciesBond> hasBond(SpeciesAtom *j);
     // Add specified Angle to Atom
     void addAngle(SpeciesAngle *angle);
     // Remove angle reference

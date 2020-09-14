@@ -784,8 +784,8 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, c
 
     // Add energy from SpeciesAngle terms
     intraEnergy +=
-        std::accumulate(spAtom->bonds().begin(), spAtom->bonds().end(), 0.0, [this, &mol](const auto acc, const auto &bond) {
-            return acc + energy(*bond, mol->atom(bond->indexI()), mol->atom(bond->indexJ()));
+        std::accumulate(spAtom->bonds().begin(), spAtom->bonds().end(), 0.0, [this, &mol](const auto acc, const SpeciesBond &bond) {
+            return acc + energy(bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()));
         });
 
     // Add energy from SpeciesAngle terms

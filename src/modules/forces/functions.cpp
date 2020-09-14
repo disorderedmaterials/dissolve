@@ -173,8 +173,8 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
         std::shared_ptr<const Molecule> mol = i->molecule();
 
         // Calculate forces from SpeciesBond terms
-        for (const auto *bond : spAtom->bonds())
-            kernel.forces(i, *bond, mol->atom(bond->indexI()), mol->atom(bond->indexJ()));
+        for (const SpeciesBond &bond : spAtom->bonds())
+            kernel.forces(i, bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()));
 
         // Calculate forces from SpeciesAngle terms
         for (const auto *angle : spAtom->angles())
