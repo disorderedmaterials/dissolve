@@ -103,12 +103,12 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             const PotentialMap &potentialMap = dissolve.potentialMap();
             double cutoffSq = potentialMap.range() * potentialMap.range();
 
-            double angle, magjisq, magji, magjk, dp, force, r;
+            double magjisq, magji, magjk, dp, force, r;
             Atom *i, *j, *k, *l;
             Vec3<double> vecji, vecjk, veckl, forcei, forcek;
             Vec3<double> xpj, xpk, dcos_dxpj, dcos_dxpk, temp;
             Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
-            double magxpj, magxpk, phi, du_dphi;
+            double phi, du_dphi;
             std::shared_ptr<Molecule> molN, molM;
             const Box *box = cfg->box();
             double scale;
