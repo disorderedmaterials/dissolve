@@ -74,8 +74,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());
 
-        // Retrieve control parameters from Configuration
-        const bool saveData = keywords_.asBool("Save");
+        // Retrieve control parameters
+        const bool saveData = exportedForces_.hasValidFileAndFormat();
         const bool testMode = keywords_.asBool("Test");
         const bool testAnalytic = keywords_.asBool("TestAnalytic");
         const bool testInter = keywords_.asBool("TestInter");
@@ -645,18 +645,8 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                              interTimer.totalTimeString(), intraTimer.totalTimeString(), procPool.accumulatedTimeString());
 
             // If writing to a file, append it here
-            if (saveData)
-            {
-                LineParser parser;
-                parser.openOutput(fmt::format("{}.forces.txt", cfg->niceName()));
-
-                parser.writeLineF("# Forces for Configuration '{}'.\n", cfg->name());
-                parser.writeLine("# Force units are 10J/mol.\n");
-                parser.writeLine("# Atom        FX            FY            FZ\n");
-                for (int n = 0; n < cfg->nAtoms(); ++n)
-                    parser.writeLineF("  {:10d}  {:12.6e}  {:12.6e}  {:12.6e}\n", n + 1, fx[n], fy[n], fz[n]);
-                parser.closeFiles();
-            }
+            if (saveData && !exportedForces_.exportData(fx, fy, fz))
+                return Messenger::error("Failed to save forces.\n");
         }
     }
 
