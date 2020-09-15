@@ -25,8 +25,6 @@
 #include "base/sysfunc.h"
 #include "templates/enumhelpers.h"
 #include <limits>
-#include <stdarg.h>
-#include <string.h>
 
 LineParser::LineParser(ProcessPool *procPool)
 {
