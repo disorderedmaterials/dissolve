@@ -187,8 +187,8 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
 
         // Calculate forces from SpeciesImproper terms
         for (const SpeciesImproper &improper : spAtom->impropers())
-            kernel.forces(i, improper, mol->atom(improper.indexI()), mol->atom(improper.indexJ()),
-                          mol->atom(improper.indexK()), mol->atom(improper.indexL()));
+            kernel.forces(i, improper, mol->atom(improper.indexI()), mol->atom(improper.indexJ()), mol->atom(improper.indexK()),
+                          mol->atom(improper.indexL()));
     }
 }
 

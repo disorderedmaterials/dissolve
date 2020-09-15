@@ -783,14 +783,14 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, c
     auto intraEnergy = 0.0;
 
     // Add energy from SpeciesAngle terms
-    intraEnergy +=
-        std::accumulate(spAtom->bonds().begin(), spAtom->bonds().end(), 0.0, [this, &mol](const auto acc, const SpeciesBond &bond) {
-            return acc + energy(bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()));
-        });
+    intraEnergy += std::accumulate(spAtom->bonds().begin(), spAtom->bonds().end(), 0.0,
+                                   [this, &mol](const auto acc, const SpeciesBond &bond) {
+                                       return acc + energy(bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()));
+                                   });
 
     // Add energy from SpeciesAngle terms
-    intraEnergy +=
-        std::accumulate(spAtom->angles().begin(), spAtom->angles().end(), 0.0, [this, &mol](const auto acc, const SpeciesAngle &angle) {
+    intraEnergy += std::accumulate(
+        spAtom->angles().begin(), spAtom->angles().end(), 0.0, [this, &mol](const auto acc, const SpeciesAngle &angle) {
             return acc + energy(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()), mol->atom(angle.indexK()));
         });
 
@@ -802,11 +802,11 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, c
                                    });
 
     // Add energy from SpeciesImproper terms
-    intraEnergy += std::accumulate(
-        spAtom->impropers().begin(), spAtom->impropers().end(), 0.0, [this, &mol](const auto acc, const SpeciesImproper &improper) {
-            return acc + energy(improper, mol->atom(improper.indexI()), mol->atom(improper.indexJ()),
-                                mol->atom(improper.indexK()), mol->atom(improper.indexL()));
-        });
+    intraEnergy += std::accumulate(spAtom->impropers().begin(), spAtom->impropers().end(), 0.0,
+                                   [this, &mol](const auto acc, const SpeciesImproper &improper) {
+                                       return acc + energy(improper, mol->atom(improper.indexI()), mol->atom(improper.indexJ()),
+                                                           mol->atom(improper.indexK()), mol->atom(improper.indexL()));
+                                   });
 
     return intraEnergy;
 }

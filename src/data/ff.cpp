@@ -701,8 +701,8 @@ bool Forcefield::isBondPattern(const SpeciesAtom *i, const int nSingle, const in
 // Return whether the specified atom is bound to a specific element (and count thereof)
 bool Forcefield::isBoundTo(const SpeciesAtom *i, Element *element, const int count, bool allowMoreThanCount) const
 {
-    auto found = std::count_if(i->bonds().begin(), i->bonds().end(), [i, element](const SpeciesBond &bond) {
-        return bond.partner(i)->element() == element;});
+    auto found = std::count_if(i->bonds().begin(), i->bonds().end(),
+                               [i, element](const SpeciesBond &bond) { return bond.partner(i)->element() == element; });
 
     return (found < count ? false : (found == count ? true : allowMoreThanCount));
 }

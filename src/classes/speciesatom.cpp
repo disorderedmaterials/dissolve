@@ -117,12 +117,15 @@ bool SpeciesAtom::isSelected() const { return selected_; }
 // Add Bond reference
 void SpeciesAtom::addBond(SpeciesBond &bond)
 {
-    if (find_if(bonds_.begin(), bonds_.end(), [&bond](const SpeciesBond &b){return &b == &bond;}) == bonds_.end())
+    if (find_if(bonds_.begin(), bonds_.end(), [&bond](const SpeciesBond &b) { return &b == &bond; }) == bonds_.end())
         bonds_.push_back(bond);
 }
 
 // Remove Bond reference
-void SpeciesAtom::removeBond(SpeciesBond &b) { bonds_.erase(find_if(bonds_.begin(), bonds_.end(), [&b](const SpeciesBond &bond){return &b == &bond;})); }
+void SpeciesAtom::removeBond(SpeciesBond &b)
+{
+    bonds_.erase(find_if(bonds_.begin(), bonds_.end(), [&b](const SpeciesBond &bond) { return &b == &bond; }));
+}
 
 // Clear all Bond references
 void SpeciesAtom::clearBonds() { bonds_.clear(); }
@@ -140,7 +143,8 @@ const std::vector<std::reference_wrapper<SpeciesBond>> &SpeciesAtom::bonds() con
 OptionalReferenceWrapper<SpeciesBond> SpeciesAtom::hasBond(SpeciesAtom *partner)
 {
     auto result = find_if(bonds_.begin(), bonds_.end(), [&](const SpeciesBond &bond) { return bond.partner(this) == partner; });
-    if (result == bonds_.end()) return std::nullopt;
+    if (result == bonds_.end())
+        return std::nullopt;
     return *result;
 }
 
@@ -159,7 +163,10 @@ void SpeciesAtom::addAngle(SpeciesAngle &angle)
 }
 
 // Remove angle reference
-void SpeciesAtom::removeAngle(SpeciesAngle &angle) { angles_.erase(find_if(angles_.begin(), angles_.end(), [&angle](const SpeciesAngle &a){return &a == &angle;})); }
+void SpeciesAtom::removeAngle(SpeciesAngle &angle)
+{
+    angles_.erase(find_if(angles_.begin(), angles_.end(), [&angle](const SpeciesAngle &a) { return &a == &angle; }));
+}
 
 // Return the number of Angles in which the Atom is involved
 int SpeciesAtom::nAngles() const { return angles_.size(); }
@@ -200,7 +207,11 @@ void SpeciesAtom::addTorsion(SpeciesTorsion &torsion, double scaling14)
 }
 
 // Remove torsion reference
-void SpeciesAtom::removeTorsion(SpeciesTorsion &torsion) { torsions_.erase(find_if(torsions_.begin(), torsions_.end(), [&torsion](const SpeciesTorsion &t){return &t == &torsion;})); }
+void SpeciesAtom::removeTorsion(SpeciesTorsion &torsion)
+{
+    torsions_.erase(
+        find_if(torsions_.begin(), torsions_.end(), [&torsion](const SpeciesTorsion &t) { return &t == &torsion; }));
+}
 
 // Return the number of Torsions in which the Atom is involved
 int SpeciesAtom::nTorsions() const { return torsions_.size(); }
@@ -217,7 +228,8 @@ void SpeciesAtom::addImproper(SpeciesImproper &improper) { impropers_.push_back(
 // Remove improper reference
 void SpeciesAtom::removeImproper(SpeciesImproper &improper)
 {
-  impropers_.erase(find_if(impropers_.begin(), impropers_.end(), [&improper](const SpeciesImproper &i){return &i == &improper;}));
+    impropers_.erase(
+        find_if(impropers_.begin(), impropers_.end(), [&improper](const SpeciesImproper &i) { return &i == &improper; }));
 }
 
 // Return the number of Impropers in which the Atom is involved
