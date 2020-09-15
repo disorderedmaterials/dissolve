@@ -641,6 +641,11 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             intraMolecularForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
             intraTimer.stop();
 
+            // Convert forces to 10J/mol
+            fx *= 100.0;
+            fy *= 100.0;
+            fz *= 100.0;
+
             Messenger::print("Time to do interatomic forces was {}, intramolecular forces was {} ({} comms).\n",
                              interTimer.totalTimeString(), intraTimer.totalTimeString(), procPool.accumulatedTimeString());
 
