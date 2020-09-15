@@ -38,10 +38,10 @@ SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, S
     // Add ourself to the list of bonds on each atom
     if (i_ && j_ && k_ && l_)
     {
-        i_->addTorsion(this, 0.5);
-        j_->addTorsion(this, 0.5);
-        k_->addTorsion(this, 0.5);
-        l_->addTorsion(this, 0.5);
+        i_->addTorsion(*this, 0.5);
+        j_->addTorsion(*this, 0.5);
+        k_->addTorsion(*this, 0.5);
+        l_->addTorsion(*this, 0.5);
     }
 }
 
@@ -58,10 +58,10 @@ SpeciesTorsion &SpeciesTorsion::operator=(const SpeciesTorsion &source)
 
     if (i_ && j_ && k_ && l_)
     {
-        i_->addTorsion(this, 0.5);
-        j_->addTorsion(this, 0.5);
-        k_->addTorsion(this, 0.5);
-        l_->addTorsion(this, 0.5);
+        i_->addTorsion(*this, 0.5);
+        j_->addTorsion(*this, 0.5);
+        k_->addTorsion(*this, 0.5);
+        l_->addTorsion(*this, 0.5);
     }
     form_ = source.form_;
     SpeciesIntra::operator=(source);
@@ -81,10 +81,10 @@ SpeciesTorsion &SpeciesTorsion::operator=(SpeciesTorsion &&source)
 
     if (i_ && j_ && k_ && l_)
     {
-        i_->addTorsion(this, 0.5);
-        j_->addTorsion(this, 0.5);
-        k_->addTorsion(this, 0.5);
-        l_->addTorsion(this, 0.5);
+        i_->addTorsion(*this, 0.5);
+        j_->addTorsion(*this, 0.5);
+        k_->addTorsion(*this, 0.5);
+        l_->addTorsion(*this, 0.5);
     }
     form_ = source.form_;
     SpeciesIntra::operator=(source);
@@ -97,10 +97,10 @@ void SpeciesTorsion::detach()
 {
     if (i_ && j_ && k_ && l_)
     {
-        i_->removeTorsion(this);
-        j_->removeTorsion(this);
-        k_->removeTorsion(this);
-        l_->removeTorsion(this);
+        i_->removeTorsion(*this);
+        j_->removeTorsion(*this);
+        k_->removeTorsion(*this);
+        l_->removeTorsion(*this);
     }
     i_ = nullptr;
     j_ = nullptr;
@@ -145,13 +145,13 @@ void SpeciesTorsion::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Spec
         Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* l in SpeciesTorsion::set().\n");
 #endif
     if (i_)
-        i_->addTorsion(this, 0.5);
+        i_->addTorsion(*this, 0.5);
     if (j_)
-        j_->addTorsion(this, 0.5);
+        j_->addTorsion(*this, 0.5);
     if (k_)
-        k_->addTorsion(this, 0.5);
+        k_->addTorsion(*this, 0.5);
     if (l_)
-        l_->addTorsion(this, 0.5);
+        l_->addTorsion(*this, 0.5);
 }
 
 // Return first SpeciesAtom

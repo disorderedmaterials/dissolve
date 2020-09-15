@@ -145,89 +145,89 @@ OptionalReferenceWrapper<SpeciesBond> SpeciesAtom::hasBond(SpeciesAtom *partner)
 }
 
 // Add specified SpeciesAngle to Atom
-void SpeciesAtom::addAngle(SpeciesAngle *angle)
+void SpeciesAtom::addAngle(SpeciesAngle &angle)
 {
     angles_.push_back(angle);
 
     // Insert the pointers to the other Atoms into the exclusions_ list
-    if (angle->i() != this)
-        exclusions_.add(angle->i());
-    if (angle->j() != this)
-        exclusions_.add(angle->j());
-    if (angle->k() != this)
-        exclusions_.add(angle->k());
+    if (angle.i() != this)
+        exclusions_.add(angle.i());
+    if (angle.j() != this)
+        exclusions_.add(angle.j());
+    if (angle.k() != this)
+        exclusions_.add(angle.k());
 }
 
 // Remove angle reference
-void SpeciesAtom::removeAngle(SpeciesAngle *angle) { angles_.erase(find(angles_.begin(), angles_.end(), angle)); }
+void SpeciesAtom::removeAngle(SpeciesAngle &angle) { angles_.erase(find_if(angles_.begin(), angles_.end(), [&angle](const SpeciesAngle a){return &a == &angle;})); }
 
 // Return the number of Angles in which the Atom is involved
 int SpeciesAtom::nAngles() const { return angles_.size(); }
 
 // Return specified angle
-SpeciesAngle *SpeciesAtom::angle(int index) { return angles_.at(index); }
+SpeciesAngle &SpeciesAtom::angle(int index) { return angles_.at(index); }
 
 // Return array of Angles in which the Atom is involved
-const std::vector<SpeciesAngle *> &SpeciesAtom::angles() const { return angles_; }
+const std::vector<std::reference_wrapper<SpeciesAngle>> &SpeciesAtom::angles() const { return angles_; }
 
 // Add specified SpeciesTorsion to Atom
-void SpeciesAtom::addTorsion(SpeciesTorsion *torsion, double scaling14)
+void SpeciesAtom::addTorsion(SpeciesTorsion &torsion, double scaling14)
 {
     torsions_.push_back(torsion);
 
     // Insert the pointers to the other Atoms into the exclusions_ list
-    if (torsion->i() == this)
+    if (torsion.i() == this)
     {
-        exclusions_.add(torsion->j());
-        exclusions_.add(torsion->k());
-        exclusions_.add(torsion->l(), scaling14);
+        exclusions_.add(torsion.j());
+        exclusions_.add(torsion.k());
+        exclusions_.add(torsion.l(), scaling14);
     }
-    else if (torsion->l() == this)
+    else if (torsion.l() == this)
     {
-        exclusions_.add(torsion->i(), scaling14);
-        exclusions_.add(torsion->j());
-        exclusions_.add(torsion->k());
+        exclusions_.add(torsion.i(), scaling14);
+        exclusions_.add(torsion.j());
+        exclusions_.add(torsion.k());
     }
     else
     {
-        exclusions_.add(torsion->i());
-        exclusions_.add(torsion->l());
-        if (torsion->j() != this)
-            exclusions_.add(torsion->j());
-        if (torsion->k() != this)
-            exclusions_.add(torsion->k());
+        exclusions_.add(torsion.i());
+        exclusions_.add(torsion.l());
+        if (torsion.j() != this)
+            exclusions_.add(torsion.j());
+        if (torsion.k() != this)
+            exclusions_.add(torsion.k());
     }
 }
 
 // Remove torsion reference
-void SpeciesAtom::removeTorsion(SpeciesTorsion *torsion) { torsions_.erase(find(torsions_.begin(), torsions_.end(), torsion)); }
+void SpeciesAtom::removeTorsion(SpeciesTorsion &torsion) { torsions_.erase(find_if(torsions_.begin(), torsions_.end(), [&torsion](const SpeciesTorsion &t){return &t == &torsion;})); }
 
 // Return the number of Torsions in which the Atom is involved
 int SpeciesAtom::nTorsions() const { return torsions_.size(); }
 
 // Return specified torsion
-SpeciesTorsion *SpeciesAtom::torsion(int index) { return torsions_.at(index); }
+SpeciesTorsion &SpeciesAtom::torsion(int index) { return torsions_.at(index); }
 
 // Return array of Torsions in which the Atom is involved
-const std::vector<SpeciesTorsion *> &SpeciesAtom::torsions() const { return torsions_; }
+const std::vector<std::reference_wrapper<SpeciesTorsion>> &SpeciesAtom::torsions() const { return torsions_; }
 
 // Add specified SpeciesImproper to Atom
-void SpeciesAtom::addImproper(SpeciesImproper *improper) { impropers_.push_back(improper); }
+void SpeciesAtom::addImproper(SpeciesImproper &improper) { impropers_.push_back(improper); }
 
 // Remove improper reference
-void SpeciesAtom::removeImproper(SpeciesImproper *improper)
+void SpeciesAtom::removeImproper(SpeciesImproper &improper)
 {
-    impropers_.erase(find(impropers_.begin(), impropers_.end(), improper));
+  impropers_.erase(find_if(impropers_.begin(), impropers_.end(), [&improper](const SpeciesImproper &i){return &i == &improper;}));
 }
 
 // Return the number of Impropers in which the Atom is involved
 int SpeciesAtom::nImpropers() const { return impropers_.size(); }
 
 // Return specified improper
-SpeciesImproper *SpeciesAtom::improper(int index) { return impropers_.at(index); }
+SpeciesImproper &SpeciesAtom::improper(int index) { return impropers_.at(index); }
 
 // Return array of Impropers in which the Atom is involved
-const std::vector<SpeciesImproper *> &SpeciesAtom::impropers() const { return impropers_; }
+const std::vector<std::reference_wrapper<SpeciesImproper>> &SpeciesAtom::impropers() const { return impropers_; }
 
 // Return scaling factor to employ with specified Atom
 double SpeciesAtom::scaling(const SpeciesAtom *j) const

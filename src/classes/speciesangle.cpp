@@ -35,9 +35,9 @@ SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : Spe
     // Add ourself to the list of bonds on each atom
     if (i_ && j_ && k_)
     {
-        i_->addAngle(this);
-        j_->addAngle(this);
-        k_->addAngle(this);
+        i_->addAngle(*this);
+        j_->addAngle(*this);
+        k_->addAngle(*this);
     }
 }
 
@@ -48,9 +48,9 @@ SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) : SpeciesIntra(source)
     // Detach source bond referred to by the species atoms
     if (source.i_ && source.j_ && source.k_)
     {
-        source.i_->removeAngle(&source);
-        source.j_->removeAngle(&source);
-        source.k_->removeAngle(&source);
+        source.i_->removeAngle(source);
+        source.j_->removeAngle(source);
+        source.k_->removeAngle(source);
     }
 
     // Copy data
@@ -59,9 +59,9 @@ SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) : SpeciesIntra(source)
     k_ = source.k_;
     if (i_ && j_ && k_)
     {
-        i_->addAngle(this);
-        j_->addAngle(this);
-        k_->addAngle(this);
+        i_->addAngle(*this);
+        j_->addAngle(*this);
+        k_->addAngle(*this);
     }
     form_ = source.form_;
 
@@ -79,9 +79,9 @@ SpeciesAngle &SpeciesAngle::operator=(const SpeciesAngle &source)
     k_ = source.k_;
     if (i_ && j_ && k_)
     {
-        i_->addAngle(this);
-        j_->addAngle(this);
-        k_->addAngle(this);
+        i_->addAngle(*this);
+        j_->addAngle(*this);
+        k_->addAngle(*this);
     }
     form_ = source.form_;
     SpeciesIntra::operator=(source);
@@ -101,9 +101,9 @@ SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &&source)
     k_ = source.k_;
     if (i_ && j_ && k_)
     {
-        i_->addAngle(this);
-        j_->addAngle(this);
-        k_->addAngle(this);
+        i_->addAngle(*this);
+        j_->addAngle(*this);
+        k_->addAngle(*this);
     }
     form_ = source.form_;
     SpeciesIntra::operator=(source);
@@ -210,9 +210,9 @@ void SpeciesAngle::detach()
 {
     if (i_ && j_ && k_)
     {
-        i_->removeAngle(this);
-        j_->removeAngle(this);
-        k_->removeAngle(this);
+        i_->removeAngle(*this);
+        j_->removeAngle(*this);
+        k_->removeAngle(*this);
     }
     i_ = nullptr;
     j_ = nullptr;
