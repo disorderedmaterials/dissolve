@@ -37,7 +37,7 @@ class SpeciesAngle : public SpeciesIntra
     ~SpeciesAngle() = default;
     SpeciesAngle(SpeciesAngle &source);
     SpeciesAngle(SpeciesAngle &&source);
-    SpeciesAngle &operator=(const SpeciesAngle &source);
+    SpeciesAngle &operator=(SpeciesAngle &source);
     SpeciesAngle &operator=(SpeciesAngle &&source);
 
     /*

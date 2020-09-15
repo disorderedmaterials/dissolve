@@ -71,7 +71,7 @@ SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) : SpeciesIntra(source)
     source.k_ = nullptr;
 }
 
-SpeciesAngle &SpeciesAngle::operator=(const SpeciesAngle &source)
+SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &source)
 {
     // Copy data
     i_ = source.i_;

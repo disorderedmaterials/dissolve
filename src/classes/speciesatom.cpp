@@ -159,7 +159,7 @@ void SpeciesAtom::addAngle(SpeciesAngle &angle)
 }
 
 // Remove angle reference
-void SpeciesAtom::removeAngle(SpeciesAngle &angle) { angles_.erase(find_if(angles_.begin(), angles_.end(), [&angle](const SpeciesAngle a){return &a == &angle;})); }
+void SpeciesAtom::removeAngle(SpeciesAngle &angle) { angles_.erase(find_if(angles_.begin(), angles_.end(), [&angle](const SpeciesAngle &a){return &a == &angle;})); }
 
 // Return the number of Angles in which the Atom is involved
 int SpeciesAtom::nAngles() const { return angles_.size(); }
