@@ -485,13 +485,14 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                      "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol (inter)\n",
                                      n + 1, interFx[n] - checkInterFx[n], interRatio.x, interFy[n] - checkInterFy[n],
                                      interRatio.y, interFz[n] - checkInterFz[n], interRatio.z);
-                    Messenger::print("                                     {:15.8e} ({:5.2f}%) {:15.8e} "
+                    Messenger::print("                                   {:15.8e} ({:5.2f}%) {:15.8e} "
                                      "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol (intra)\n",
-                                     n + 1, intraFx[n] - checkIntraFx[n], intraRatio.x, intraFy[n] - checkIntraFy[n],
-                                     intraRatio.y, intraFz[n] - checkIntraFz[n], intraRatio.z);
+                                     intraFx[n] - checkIntraFx[n], intraRatio.x, intraFy[n] - checkIntraFy[n], intraRatio.y,
+                                     intraFz[n] - checkIntraFz[n], intraRatio.z);
                     ++nFailed1;
                 }
             }
+
             Messenger::print("Number of atoms with failed force components = {} = {}\n", nFailed1,
                              nFailed1 == 0 ? "OK" : "NOT OK");
             Messenger::print("Average error in force components was {}%.\n", sumError / (cfg->nAtoms() * 6));
