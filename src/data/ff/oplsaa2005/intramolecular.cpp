@@ -41,7 +41,7 @@ OptionalReferenceWrapper<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::get
         //	i	j	Type (Harmonic)			k	eq
         {"OW", "HW", SpeciesBond::HarmonicForm, {5020.8, 0.9572}},
         /* { "OW",	"LP",	SpeciesBond::HarmonicForm,	7531.2,	0.175 }, */
-        {"C*", "HC", SpeciesBond::HarmonicForm, {2845.12, 1.08}},
+        {"C^", "HC", SpeciesBond::HarmonicForm, {2845.12, 1.08}},
         {"C", "C2", SpeciesBond::HarmonicForm, {2652.66, 1.522}},
         {"C", "C3", SpeciesBond::HarmonicForm, {2652.66, 1.522}},
         {"C", "CA", SpeciesBond::HarmonicForm, {3347.2, 1.49}},
@@ -55,7 +55,7 @@ OptionalReferenceWrapper<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::get
         {"C$", "N$", SpeciesBond::HarmonicForm, {4100.32, 1.335}},
         {"C", "N", SpeciesBond::HarmonicForm, {4100.32, 1.335}},
         {"C", "NM", SpeciesBond::HarmonicForm, {4100.32, 1.335}},
-        {"C", "N*", SpeciesBond::HarmonicForm, {3548.03, 1.383}},
+        {"C", "N^", SpeciesBond::HarmonicForm, {3548.03, 1.383}},
         {"C", "NA", SpeciesBond::HarmonicForm, {3497.82, 1.388}},
         {"C", "NC", SpeciesBond::HarmonicForm, {3824.18, 1.358}},
         /* { "C",	"Neq",	SpeciesBond::HarmonicForm,	3824.18,	1.29 }, */
@@ -73,13 +73,13 @@ OptionalReferenceWrapper<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::get
         {"CM", "OS", SpeciesBond::HarmonicForm, {3765.6, 1.37}},
         {"CM", "OH", SpeciesBond::HarmonicForm, {3765.6, 1.37}},
         {"C", "OS", SpeciesBond::HarmonicForm, {1790.75, 1.327}},
-        {"C*", "C2", SpeciesBond::HarmonicForm, {2652.66, 1.495}},
-        {"C*", "CB", SpeciesBond::HarmonicForm, {3246.78, 1.459}},
-        /* { "C*",	"CG",	SpeciesBond::HarmonicForm,	4568.93,	1.352 }, */
-        /* { "C*",	"CC",	SpeciesBond::HarmonicForm,	4568.93,	1.352 }, */
-        {"C*", "CT", SpeciesBond::HarmonicForm, {2652.66, 1.495}},
+        {"C^", "C2", SpeciesBond::HarmonicForm, {2652.66, 1.495}},
+        {"C^", "CB", SpeciesBond::HarmonicForm, {3246.78, 1.459}},
+        /* { "C^",	"CG",	SpeciesBond::HarmonicForm,	4568.93,	1.352 }, */
+        /* { "C^",	"CC",	SpeciesBond::HarmonicForm,	4568.93,	1.352 }, */
+        {"C^", "CT", SpeciesBond::HarmonicForm, {2652.66, 1.495}},
         {"CS", "CT", SpeciesBond::HarmonicForm, {2652.66, 1.495}},
-        {"C*", "CW", SpeciesBond::HarmonicForm, {4568.93, 1.352}},
+        {"C^", "CW", SpeciesBond::HarmonicForm, {4568.93, 1.352}},
         {"CA", "CW", SpeciesBond::HarmonicForm, {4568.93, 1.367}},
         {"CS", "CW", SpeciesBond::HarmonicForm, {4568.93, 1.367}},
         {"CS", "CS", SpeciesBond::HarmonicForm, {3924.59, 1.424}},
@@ -118,7 +118,7 @@ OptionalReferenceWrapper<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::get
         {"C3", "CH", SpeciesBond::HarmonicForm, {2175.68, 1.526}},
         {"C3", "CM", SpeciesBond::HarmonicForm, {2652.66, 1.51}},
         {"C3", "N", SpeciesBond::HarmonicForm, {2820.02, 1.449}},
-        {"C3", "N*", SpeciesBond::HarmonicForm, {2820.02, 1.475}},
+        {"C3", "N^", SpeciesBond::HarmonicForm, {2820.02, 1.475}},
         {"C3", "N2", SpeciesBond::HarmonicForm, {2820.02, 1.463}},
         {"C3", "N3", SpeciesBond::HarmonicForm, {3071.06, 1.471}},
         {"C3", "OH", SpeciesBond::HarmonicForm, {3230.05, 1.425}},
@@ -174,7 +174,7 @@ OptionalReferenceWrapper<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::get
         {"CU", "CW", SpeciesBond::HarmonicForm, {4351.36, 1.37}},
         {"CB", "CD", SpeciesBond::HarmonicForm, {3924.59, 1.4}},
         {"CB", "CN", SpeciesBond::HarmonicForm, {3740.5, 1.419}},
-        {"CB", "N*", SpeciesBond::HarmonicForm, {3648.45, 1.374}},
+        {"CB", "N^", SpeciesBond::HarmonicForm, {3648.45, 1.374}},
         {"CB", "NA", SpeciesBond::HarmonicForm, {3648.45, 1.374}},
         {"CB", "NB", SpeciesBond::HarmonicForm, {3464.35, 1.391}},
         {"CB", "NC", SpeciesBond::HarmonicForm, {3857.65, 1.354}},
@@ -191,22 +191,22 @@ OptionalReferenceWrapper<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::get
         {"CD", "CN", SpeciesBond::HarmonicForm, {3924.59, 1.4}},
         /* { "CA",	"CC",	SpeciesBond::HarmonicForm,	3924.59,	1.4 }, */
         /* { "CD",	"CC",	SpeciesBond::HarmonicForm,	3924.59,	1.4 }, */
-        /* { "CE",	"N*",	SpeciesBond::HarmonicForm,	3681.92,	1.371 }, */
+        /* { "CE",	"N^",	SpeciesBond::HarmonicForm,	3681.92,	1.371 }, */
         /* { "CE",	"NB",	SpeciesBond::HarmonicForm,	4426.67,	1.304 }, */
         /* { "CF",	"NB",	SpeciesBond::HarmonicForm,	3430.88,	1.394 }, */
         /* { "CG",	"NA",	SpeciesBond::HarmonicForm,	3573.14,	1.381 }, */
         {"CH", "CH", SpeciesBond::HarmonicForm, {2175.68, 1.526}},
         {"CH", "N", SpeciesBond::HarmonicForm, {2820.02, 1.449}},
-        {"CH", "N*", SpeciesBond::HarmonicForm, {2820.02, 1.475}},
+        {"CH", "N^", SpeciesBond::HarmonicForm, {2820.02, 1.475}},
         {"CH", "OH", SpeciesBond::HarmonicForm, {3230.05, 1.425}},
         {"CH", "OS", SpeciesBond::HarmonicForm, {2677.76, 1.425}},
         /* { "CI",	"NC",	SpeciesBond::HarmonicForm,	4200.74,	1.324 }, */
         /* { "CJ",	"CJ",	SpeciesBond::HarmonicForm,	4594.03,	1.35 }, */
         /* { "CJ",	"CM",	SpeciesBond::HarmonicForm,	4594.03,	1.35 }, */
-        /* { "CJ",	"N*",	SpeciesBond::HarmonicForm,	3748.86,	1.365 }, */
+        /* { "CJ",	"N^",	SpeciesBond::HarmonicForm,	3748.86,	1.365 }, */
         {"CK", "HA", SpeciesBond::HarmonicForm, {2845.12, 1.08}},
         {"CK", "H5", SpeciesBond::HarmonicForm, {3071.06, 1.08}},
-        {"CK", "N*", SpeciesBond::HarmonicForm, {3681.92, 1.371}},
+        {"CK", "N^", SpeciesBond::HarmonicForm, {3681.92, 1.371}},
         {"CK", "NA", SpeciesBond::HarmonicForm, {3681.92, 1.371}},
         {"CK", "NB", SpeciesBond::HarmonicForm, {4426.67, 1.304}},
         {"CM", "CM", SpeciesBond::HarmonicForm, {4594.03, 1.34}},
@@ -230,7 +230,7 @@ OptionalReferenceWrapper<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::get
         {"CZ", "NZ", SpeciesBond::HarmonicForm, {5439.2, 1.157}},
         {"CZ", "CZ", SpeciesBond::HarmonicForm, {9623.2, 1.21}},
         {"HC", "CZ", SpeciesBond::HarmonicForm, {3514.56, 1.08}},
-        {"CM", "N*", SpeciesBond::HarmonicForm, {3748.86, 1.365}},
+        {"CM", "N^", SpeciesBond::HarmonicForm, {3748.86, 1.365}},
         {"CM", "NA", SpeciesBond::HarmonicForm, {3748.86, 1.365}},
         {"CN", "NA", SpeciesBond::HarmonicForm, {3581.5, 1.38}},
         /* { "CP",	"NA",	SpeciesBond::HarmonicForm,	3991.54,	1.343 }, */
@@ -266,8 +266,8 @@ OptionalReferenceWrapper<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::get
         {"CY", "N$", SpeciesBond::HarmonicForm, {2820.02, 1.449}},
         {"CT", "N$", SpeciesBond::HarmonicForm, {2820.02, 1.449}},
         {"CY", "N", SpeciesBond::HarmonicForm, {2820.02, 1.449}},
-        {"CT", "N*", SpeciesBond::HarmonicForm, {2820.02, 1.475}},
-        {"CO", "N*", SpeciesBond::HarmonicForm, {2820.02, 1.475}},
+        {"CT", "N^", SpeciesBond::HarmonicForm, {2820.02, 1.475}},
+        {"CO", "N^", SpeciesBond::HarmonicForm, {2820.02, 1.475}},
         {"CT", "NA", SpeciesBond::HarmonicForm, {2820.02, 1.475}},
         {"CT", "N2", SpeciesBond::HarmonicForm, {2820.02, 1.463}},
         {"CT", "N3", SpeciesBond::HarmonicForm, {3071.06, 1.471}},
@@ -325,7 +325,7 @@ OptionalReferenceWrapper<const ForcefieldBondTerm> OPLSAA2005BaseForcefield::get
         {"CY", "HC", SpeciesBond::HarmonicForm, {2845.12, 1.088}},
         {"H", "N", SpeciesBond::HarmonicForm, {3631.71, 1.01}},
         {"H", "N3", SpeciesBond::HarmonicForm, {3631.71, 1.01}},
-        {"H", "N*", SpeciesBond::HarmonicForm, {3631.71, 1.01}},
+        {"H", "N^", SpeciesBond::HarmonicForm, {3631.71, 1.01}},
         {"H", "N2", SpeciesBond::HarmonicForm, {3631.71, 1.01}},
         {"H", "NA", SpeciesBond::HarmonicForm, {3631.71, 1.01}},
         /* { "H2",	"N",	SpeciesBond::HarmonicForm,	3631.71,	1.01 }, */
@@ -407,8 +407,8 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"HW", "OW", "HW", SpeciesAngle::HarmonicForm, {627.6, 109.5}},
         /* { "HW",	"OW",	"LP",	SpeciesAngle::HarmonicForm,	418.4,		54.75 }, */
         {"OU", "U", "OU", SpeciesAngle::HarmonicForm, {1255.2, 180.0}},
-        {"HC", "C*", "CW", SpeciesAngle::HarmonicForm, {292.88, 126.8}},
-        {"HC", "C*", "CB", SpeciesAngle::HarmonicForm, {292.88, 126.8}},
+        {"HC", "C^", "CW", SpeciesAngle::HarmonicForm, {292.88, 126.8}},
+        {"HC", "C^", "CB", SpeciesAngle::HarmonicForm, {292.88, 126.8}},
         {"HC", "CS", "CW", SpeciesAngle::HarmonicForm, {292.88, 126.8}},
         {"HC", "CS", "CB", SpeciesAngle::HarmonicForm, {292.88, 126.8}},
         {"HA", "CA", "CW", SpeciesAngle::HarmonicForm, {292.88, 126.9}},
@@ -528,29 +528,29 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"NM", "C", "O", SpeciesAngle::HarmonicForm, {669.44, 122.9}},
         {"N", "C", "N", SpeciesAngle::HarmonicForm, {585.76, 114.2}},
         /* { "N",	"C",	"S=",	SpeciesAngle::HarmonicForm,	585.76,		125.0 }, */
-        {"N*", "C", "NA", SpeciesAngle::HarmonicForm, {585.76, 115.4}},
-        {"N*", "C", "NC", SpeciesAngle::HarmonicForm, {585.76, 118.6}},
+        {"N^", "C", "NA", SpeciesAngle::HarmonicForm, {585.76, 115.4}},
+        {"N^", "C", "NC", SpeciesAngle::HarmonicForm, {585.76, 118.6}},
         {"NA", "C", "NA", SpeciesAngle::HarmonicForm, {585.76, 118.6}},
-        {"N*", "C", "O", SpeciesAngle::HarmonicForm, {669.44, 120.9}},
+        {"N^", "C", "O", SpeciesAngle::HarmonicForm, {669.44, 120.9}},
         {"NA", "C", "O", SpeciesAngle::HarmonicForm, {669.44, 120.6}},
         {"NC", "C", "O", SpeciesAngle::HarmonicForm, {669.44, 122.5}},
         {"NC", "C", "NA", SpeciesAngle::HarmonicForm, {585.76, 118.6}},
         {"NA", "CM", "H4", SpeciesAngle::HarmonicForm, {292.88, 119.1}},
-        {"N*", "CM", "H4", SpeciesAngle::HarmonicForm, {292.88, 119.1}},
+        {"N^", "CM", "H4", SpeciesAngle::HarmonicForm, {292.88, 119.1}},
         {"N", "CA", "HA", SpeciesAngle::HarmonicForm, {292.88, 119.1}},
         {"O", "C", "O", SpeciesAngle::HarmonicForm, {669.44, 126.0}},
         {"ON", "NO", "ON", SpeciesAngle::HarmonicForm, {669.44, 125.0}},
         {"O", "C", "OH", SpeciesAngle::HarmonicForm, {669.44, 121.0}},
         {"O2", "C", "O2", SpeciesAngle::HarmonicForm, {669.44, 126.0}},
-        {"C2", "C*", "CB", SpeciesAngle::HarmonicForm, {585.76, 128.6}},
+        {"C2", "C^", "CB", SpeciesAngle::HarmonicForm, {585.76, 128.6}},
         {"C2", "CA", "CB", SpeciesAngle::HarmonicForm, {585.76, 128.6}},
-        /* { "C2",	"C*",	"CG",	SpeciesAngle::HarmonicForm,	585.76,		125.0 }, */
-        /* { "C2",	"C*",	"CC",	SpeciesAngle::HarmonicForm,	585.76,		125.0 }, */
-        {"C2", "C*", "CW", SpeciesAngle::HarmonicForm, {585.76, 125.0}},
-        /* { "CB",	"C*",	"CG",	SpeciesAngle::HarmonicForm,	711.28,		106.4 }, */
-        {"CB", "C*", "CT", SpeciesAngle::HarmonicForm, {585.76, 128.6}},
-        {"CB", "C*", "CW", SpeciesAngle::HarmonicForm, {711.28, 106.4}},
-        {"CT", "C*", "CW", SpeciesAngle::HarmonicForm, {585.76, 125.0}},
+        /* { "C2",	"C^",	"CG",	SpeciesAngle::HarmonicForm,	585.76,		125.0 }, */
+        /* { "C2",	"C^",	"CC",	SpeciesAngle::HarmonicForm,	585.76,		125.0 }, */
+        {"C2", "C^", "CW", SpeciesAngle::HarmonicForm, {585.76, 125.0}},
+        /* { "CB",	"C^",	"CG",	SpeciesAngle::HarmonicForm,	711.28,		106.4 }, */
+        {"CB", "C^", "CT", SpeciesAngle::HarmonicForm, {585.76, 128.6}},
+        {"CB", "C^", "CW", SpeciesAngle::HarmonicForm, {711.28, 106.4}},
+        {"CT", "C^", "CW", SpeciesAngle::HarmonicForm, {585.76, 125.0}},
         /* { "C2",	"CS",	"CG",	SpeciesAngle::HarmonicForm,	585.76,		125.0 }, */
         /* { "C2",	"CS",	"CC",	SpeciesAngle::HarmonicForm,	585.76,		125.0 }, */
         {"C2", "CS", "CW", SpeciesAngle::HarmonicForm, {585.76, 125.0}},
@@ -562,7 +562,7 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"C", "C2", "CH", SpeciesAngle::HarmonicForm, {527.184, 112.4}},
         {"C", "C2", "N", SpeciesAngle::HarmonicForm, {669.44, 110.3}},
         {"C", "C2", "NT", SpeciesAngle::HarmonicForm, {669.44, 111.2}},
-        {"C*", "C2", "CH", SpeciesAngle::HarmonicForm, {527.184, 115.6}},
+        {"C^", "C2", "CH", SpeciesAngle::HarmonicForm, {527.184, 115.6}},
         {"C2", "C2", "C2", SpeciesAngle::HarmonicForm, {527.184, 112.4}},
         {"C2", "C2", "C3", SpeciesAngle::HarmonicForm, {527.184, 112.4}},
         {"C3", "C2", "C3", SpeciesAngle::HarmonicForm, {527.184, 112.4}},
@@ -734,12 +734,12 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"N", "CQ", "NC", SpeciesAngle::HarmonicForm, {585.76, 123.3}},
         {"C", "CS", "CW", SpeciesAngle::HarmonicForm, {585.76, 130.0}},
         {"C", "CB", "CW", SpeciesAngle::HarmonicForm, {585.76, 130.0}},
-        {"C*", "CB", "CA", SpeciesAngle::HarmonicForm, {711.28, 134.9}},
-        {"C*", "CB", "CD", SpeciesAngle::HarmonicForm, {711.28, 134.9}},
+        {"C^", "CB", "CA", SpeciesAngle::HarmonicForm, {711.28, 134.9}},
+        {"C^", "CB", "CD", SpeciesAngle::HarmonicForm, {711.28, 134.9}},
         {"CA", "CB", "CA", SpeciesAngle::HarmonicForm, {711.28, 134.9}},
-        {"C*", "CB", "CN", SpeciesAngle::HarmonicForm, {711.28, 108.8}},
+        {"C^", "CB", "CN", SpeciesAngle::HarmonicForm, {711.28, 108.8}},
         /* { "CA",	"CB",	"CC",	SpeciesAngle::HarmonicForm,	711.28,		108.8 }, */
-        /* { "C*",	"CB",	"CC",	SpeciesAngle::HarmonicForm,	711.28,		108.8 }, */
+        /* { "C^",	"CB",	"CC",	SpeciesAngle::HarmonicForm,	711.28,		108.8 }, */
         {"CS", "CB", "CA", SpeciesAngle::HarmonicForm, {711.28, 134.9}},
         {"CS", "CB", "CD", SpeciesAngle::HarmonicForm, {711.28, 134.9}},
         {"CS", "CB", "CN", SpeciesAngle::HarmonicForm, {711.28, 108.8}},
@@ -747,7 +747,7 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"CA", "CB", "CB", SpeciesAngle::HarmonicForm, {711.28, 117.3}},
         {"CA", "CB", "CN", SpeciesAngle::HarmonicForm, {711.28, 116.2}},
         {"CA", "CB", "NB", SpeciesAngle::HarmonicForm, {585.76, 132.4}},
-        {"CB", "CB", "N*", SpeciesAngle::HarmonicForm, {585.76, 106.2}},
+        {"CB", "CB", "N^", SpeciesAngle::HarmonicForm, {585.76, 106.2}},
         {"CB", "CB", "NA", SpeciesAngle::HarmonicForm, {585.76, 106.2}},
         {"CS", "CR", "NA", SpeciesAngle::HarmonicForm, {585.76, 106.2}},
         {"CB", "CB", "NB", SpeciesAngle::HarmonicForm, {585.76, 111.0}},
@@ -756,7 +756,7 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"CB", "CB", "N", SpeciesAngle::HarmonicForm, {585.76, 127.7}},
         {"CS", "CR", "NC", SpeciesAngle::HarmonicForm, {585.76, 127.7}},
         {"CD", "CB", "CN", SpeciesAngle::HarmonicForm, {711.28, 116.2}},
-        {"N*", "CB", "NC", SpeciesAngle::HarmonicForm, {585.76, 126.2}},
+        {"N^", "CB", "NC", SpeciesAngle::HarmonicForm, {585.76, 126.2}},
         {"NA", "CB", "NC", SpeciesAngle::HarmonicForm, {585.76, 126.2}},
         {"NB", "CB", "N", SpeciesAngle::HarmonicForm, {585.76, 126.2}},
         {"NB", "CR", "N", SpeciesAngle::HarmonicForm, {585.76, 126.2}},
@@ -788,11 +788,11 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"CD", "CD", "CD", SpeciesAngle::HarmonicForm, {711.28, 120.0}},
         {"CD", "CD", "CN", SpeciesAngle::HarmonicForm, {711.28, 120.0}},
         /* { "CD",	"CD",	"CC",	SpeciesAngle::HarmonicForm,	711.28,		120.0 }, */
-        /* { "N*",	"CE",	"NB",	SpeciesAngle::HarmonicForm,	585.76,		113.9 }, */
+        /* { "N^",	"CE",	"NB",	SpeciesAngle::HarmonicForm,	585.76,		113.9 }, */
         /* { "CC",	"CF",	"NB",	SpeciesAngle::HarmonicForm,	585.76,		109.9 }, */
-        /* { "C*",	"CG",	"NA",	SpeciesAngle::HarmonicForm,	585.76,		108.7 }, */
+        /* { "C^",	"CG",	"NA",	SpeciesAngle::HarmonicForm,	585.76,		108.7 }, */
         {"CA", "CA", "NA", SpeciesAngle::HarmonicForm, {585.76, 108.7}},
-        /* { "C*",	"CC",	"NA",	SpeciesAngle::HarmonicForm,	585.76,		108.7 }, */
+        /* { "C^",	"CC",	"NA",	SpeciesAngle::HarmonicForm,	585.76,		108.7 }, */
         /* { "CC",	"CG",	"NA",	SpeciesAngle::HarmonicForm,	585.76,		105.9 }, */
         {"C", "CH", "C2", SpeciesAngle::HarmonicForm, {527.184, 111.1}},
         {"C", "CH", "C3", SpeciesAngle::HarmonicForm, {527.184, 111.1}},
@@ -801,7 +801,7 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"C", "CH", "NT", SpeciesAngle::HarmonicForm, {669.44, 109.7}},
         {"C2", "CH", "CH", SpeciesAngle::HarmonicForm, {527.184, 111.5}},
         {"C2", "CH", "N", SpeciesAngle::HarmonicForm, {669.44, 109.7}},
-        {"C2", "CH", "N*", SpeciesAngle::HarmonicForm, {669.44, 109.5}},
+        {"C2", "CH", "N^", SpeciesAngle::HarmonicForm, {669.44, 109.5}},
         {"C2", "CH", "OS", SpeciesAngle::HarmonicForm, {669.44, 109.5}},
         {"C3", "CH", "C3", SpeciesAngle::HarmonicForm, {527.184, 111.5}},
         {"C3", "CH", "CH", SpeciesAngle::HarmonicForm, {527.184, 111.5}},
@@ -809,19 +809,19 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"C3", "CH", "OH", SpeciesAngle::HarmonicForm, {669.44, 109.5}},
         {"CH", "CH", "CH", SpeciesAngle::HarmonicForm, {527.184, 111.5}},
         {"CH", "CH", "N", SpeciesAngle::HarmonicForm, {669.44, 109.7}},
-        {"CH", "CH", "N*", SpeciesAngle::HarmonicForm, {669.44, 109.5}},
+        {"CH", "CH", "N^", SpeciesAngle::HarmonicForm, {669.44, 109.5}},
         {"CH", "CH", "OH", SpeciesAngle::HarmonicForm, {669.44, 109.5}},
         {"CH", "CH", "OS", SpeciesAngle::HarmonicForm, {669.44, 109.5}},
-        {"N*", "CH", "OS", SpeciesAngle::HarmonicForm, {669.44, 109.5}},
+        {"N^", "CH", "OS", SpeciesAngle::HarmonicForm, {669.44, 109.5}},
         /* { "NC",	"CI",	"NC",	SpeciesAngle::HarmonicForm,	585.76,		129.1 }, */
         /* { "C",	"CJ",	"CJ",	SpeciesAngle::HarmonicForm,	711.28,		120.7 }, */
         /* { "CA",	"CJ",	"CJ",	SpeciesAngle::HarmonicForm,	711.28,		117.0 }, */
-        /* { "CJ",	"CJ",	"N*",	SpeciesAngle::HarmonicForm,	585.76,		121.2 }, */
-        /* { "CM",	"CJ",	"N*",	SpeciesAngle::HarmonicForm,	585.76,		121.2 }, */
-        {"N*", "CK", "NB", SpeciesAngle::HarmonicForm, {585.76, 113.9}},
+        /* { "CJ",	"CJ",	"N^",	SpeciesAngle::HarmonicForm,	585.76,		121.2 }, */
+        /* { "CM",	"CJ",	"N^",	SpeciesAngle::HarmonicForm,	585.76,		121.2 }, */
+        {"N^", "CK", "NB", SpeciesAngle::HarmonicForm, {585.76, 113.9}},
         {"NA", "CK", "NB", SpeciesAngle::HarmonicForm, {585.76, 113.9}},
         {"NA", "CK", "H5", SpeciesAngle::HarmonicForm, {292.88, 123.05}},
-        {"N*", "CK", "H5", SpeciesAngle::HarmonicForm, {292.88, 123.05}},
+        {"N^", "CK", "H5", SpeciesAngle::HarmonicForm, {292.88, 123.05}},
         {"NB", "CK", "H5", SpeciesAngle::HarmonicForm, {292.88, 123.05}},
         {"C", "CM", "C3", SpeciesAngle::HarmonicForm, {711.28, 119.7}},
         /* { "C",	"CM",	"CJ",	SpeciesAngle::HarmonicForm,	711.28,		120.7 }, */
@@ -855,9 +855,9 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"CT", "C+", "HC", SpeciesAngle::HarmonicForm, {1204.99, 120.0}},
         {"CT", "CT", "C+", SpeciesAngle::HarmonicForm, {527.184, 105.0}},
         {"HC", "CT", "C+", SpeciesAngle::HarmonicForm, {292.88, 105.0}},
-        {"CM", "CM", "N*", SpeciesAngle::HarmonicForm, {585.76, 121.2}},
+        {"CM", "CM", "N^", SpeciesAngle::HarmonicForm, {585.76, 121.2}},
         {"CM", "CM", "NA", SpeciesAngle::HarmonicForm, {585.76, 121.2}},
-        {"HC", "CM", "N*", SpeciesAngle::HarmonicForm, {292.88, 119.1}},
+        {"HC", "CM", "N^", SpeciesAngle::HarmonicForm, {292.88, 119.1}},
         {"HC", "CM", "NA", SpeciesAngle::HarmonicForm, {292.88, 119.1}},
         {"CA", "CN", "CB", SpeciesAngle::HarmonicForm, {711.28, 122.7}},
         {"CA", "CN", "NA", SpeciesAngle::HarmonicForm, {585.76, 132.8}},
@@ -879,7 +879,7 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"HA", "CR", "NA", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
         {"HA", "CX", "NA", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
         {"HA", "CR", "NB", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
-        {"HA", "CK", "N*", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
+        {"HA", "CK", "N^", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
         {"HA", "CK", "NA", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
         {"HA", "CK", "NB", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
         {"NA", "CR", "NA", SpeciesAngle::HarmonicForm, {585.76, 120.0}},
@@ -897,8 +897,8 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"C", "CT", "HC", SpeciesAngle::HarmonicForm, {292.88, 109.5}},
         {"C", "CT", "N", SpeciesAngle::HarmonicForm, {527.184, 110.1}},
         {"C", "CT", "NC", SpeciesAngle::HarmonicForm, {527.184, 110.1}},
-        {"C*", "CT", "CT", SpeciesAngle::HarmonicForm, {527.184, 115.6}},
-        {"C*", "CT", "HC", SpeciesAngle::HarmonicForm, {292.88, 109.5}},
+        {"C^", "CT", "CT", SpeciesAngle::HarmonicForm, {527.184, 115.6}},
+        {"C^", "CT", "HC", SpeciesAngle::HarmonicForm, {292.88, 109.5}},
         {"CS", "CT", "CT", SpeciesAngle::HarmonicForm, {527.184, 115.6}},
         {"CS", "CT", "HC", SpeciesAngle::HarmonicForm, {292.88, 109.5}},
         {"CA", "CT", "CT", SpeciesAngle::HarmonicForm, {527.184, 114.0}},
@@ -927,8 +927,8 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"NZ", "CZ", "DM", SpeciesAngle::HarmonicForm, {83.68, 90.0}},
         {"CT", "CT", "N", SpeciesAngle::HarmonicForm, {669.44, 109.7}},
         {"CT", "CT", "NM", SpeciesAngle::HarmonicForm, {669.44, 109.7}},
-        {"CT", "CT", "N*", SpeciesAngle::HarmonicForm, {418.4, 109.5}},
-        {"CT", "CO", "N*", SpeciesAngle::HarmonicForm, {418.4, 109.5}},
+        {"CT", "CT", "N^", SpeciesAngle::HarmonicForm, {418.4, 109.5}},
+        {"CT", "CO", "N^", SpeciesAngle::HarmonicForm, {418.4, 109.5}},
         {"CT", "CT", "N2", SpeciesAngle::HarmonicForm, {669.44, 111.2}},
         {"C", "CT", "N3", SpeciesAngle::HarmonicForm, {669.44, 111.2}},
         {"C", "CT", "NT", SpeciesAngle::HarmonicForm, {669.44, 111.2}},
@@ -1002,8 +1002,8 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         /* { "HC",	"CY",	"O$",	SpeciesAngle::HarmonicForm,	313.8,		117.2 }, */
         {"HC", "CT", "N", SpeciesAngle::HarmonicForm, {292.88, 109.5}},
         {"HC", "CT", "NM", SpeciesAngle::HarmonicForm, {292.88, 109.5}},
-        {"HC", "CT", "N*", SpeciesAngle::HarmonicForm, {292.88, 109.5}},
-        {"HC", "CO", "N*", SpeciesAngle::HarmonicForm, {292.88, 109.5}},
+        {"HC", "CT", "N^", SpeciesAngle::HarmonicForm, {292.88, 109.5}},
+        {"HC", "CO", "N^", SpeciesAngle::HarmonicForm, {292.88, 109.5}},
         {"HC", "CT", "NA", SpeciesAngle::HarmonicForm, {292.88, 109.5}},
         {"HC", "CT", "N2", SpeciesAngle::HarmonicForm, {292.88, 109.5}},
         {"HC", "CT", "N3", SpeciesAngle::HarmonicForm, {292.88, 109.5}},
@@ -1019,14 +1019,14 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"CT", "P+", "CT", SpeciesAngle::HarmonicForm, {376.56, 109.5}},
         {"HC", "CT", "P+", SpeciesAngle::HarmonicForm, {343.088, 109.5}},
         {"HC", "CT", "SH", SpeciesAngle::HarmonicForm, {292.88, 109.5}},
-        {"N*", "CT", "OS", SpeciesAngle::HarmonicForm, {418.4, 109.5}},
-        {"N*", "CO", "OS", SpeciesAngle::HarmonicForm, {418.4, 109.5}},
+        {"N^", "CT", "OS", SpeciesAngle::HarmonicForm, {418.4, 109.5}},
+        {"N^", "CO", "OS", SpeciesAngle::HarmonicForm, {418.4, 109.5}},
         /* { "CC",	"CV",	"HA",	SpeciesAngle::HarmonicForm,	292.88,		120.0 }, */
         /* { "CC",	"CV",	"NB",	SpeciesAngle::HarmonicForm,	585.76,		120.0 }, */
         {"CW", "CW", "NB", SpeciesAngle::HarmonicForm, {585.76, 120.0}},
         {"HA", "CV", "NB", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
-        {"C*", "CW", "HA", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
-        {"C*", "CW", "NA", SpeciesAngle::HarmonicForm, {585.76, 108.7}},
+        {"C^", "CW", "HA", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
+        {"C^", "CW", "NA", SpeciesAngle::HarmonicForm, {585.76, 108.7}},
         /* { "CC",	"CW",	"HA",	SpeciesAngle::HarmonicForm,	292.88,		120.0 }, */
         /* { "CC",	"CW",	"NA",	SpeciesAngle::HarmonicForm,	585.76,		120.0 }, */
         {"H4", "CW", "NA", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
@@ -1053,28 +1053,28 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"H", "N", "H", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
         {"H", "N2", "H", SpeciesAngle::HarmonicForm, {292.88, 113.0}},
         {"H3", "N", "H3", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
-        {"C", "N*", "CH", SpeciesAngle::HarmonicForm, {585.76, 117.6}},
-        /* { "C",	"N*",	"CJ",	SpeciesAngle::HarmonicForm,	585.76,		121.6 }, */
-        {"C", "N*", "CM", SpeciesAngle::HarmonicForm, {585.76, 121.6}},
+        {"C", "N^", "CH", SpeciesAngle::HarmonicForm, {585.76, 117.6}},
+        /* { "C",	"N^",	"CJ",	SpeciesAngle::HarmonicForm,	585.76,		121.6 }, */
+        {"C", "N^", "CM", SpeciesAngle::HarmonicForm, {585.76, 121.6}},
         {"C", "NA", "CM", SpeciesAngle::HarmonicForm, {585.76, 121.6}},
-        {"C", "N*", "CT", SpeciesAngle::HarmonicForm, {585.76, 117.6}},
-        {"C", "N*", "CO", SpeciesAngle::HarmonicForm, {585.76, 117.6}},
-        {"C", "N*", "H", SpeciesAngle::HarmonicForm, {292.88, 119.2}},
-        {"C3", "N*", "CB", SpeciesAngle::HarmonicForm, {585.76, 125.8}},
-        /* { "C3",	"N*",	"CE",	SpeciesAngle::HarmonicForm,	585.76,		128.8 }, */
-        {"C3", "N*", "CK", SpeciesAngle::HarmonicForm, {585.76, 128.8}},
-        /* { "CB",	"N*",	"CE",	SpeciesAngle::HarmonicForm,	585.76,		105.4 }, */
-        {"CB", "N*", "CH", SpeciesAngle::HarmonicForm, {585.76, 125.8}},
-        /* { "CE",	"N*",	"CH",	SpeciesAngle::HarmonicForm,	585.76,		128.8 }, */
-        /* { "CE",	"N*",	"CT",	SpeciesAngle::HarmonicForm,	585.76,		128.8 }, */
-        /* { "CE",	"N*",	"H",	SpeciesAngle::HarmonicForm,	292.88,		127.3 }, */
-        /* { "CH",	"N*",	"CJ",	SpeciesAngle::HarmonicForm,	585.76,		121.2 }, */
-        {"CH", "N*", "CK", SpeciesAngle::HarmonicForm, {585.76, 128.8}},
-        /* { "CJ",	"N*",	"CT",	SpeciesAngle::HarmonicForm,	585.76,		121.2 }, */
-        /* { "CJ",	"N*",	"H",	SpeciesAngle::HarmonicForm,	292.88,		119.2 }, */
-        {"CM", "N*", "CT", SpeciesAngle::HarmonicForm, {585.76, 121.2}},
-        {"CM", "N*", "CO", SpeciesAngle::HarmonicForm, {585.76, 121.2}},
-        {"CM", "N*", "H", SpeciesAngle::HarmonicForm, {292.88, 119.2}},
+        {"C", "N^", "CT", SpeciesAngle::HarmonicForm, {585.76, 117.6}},
+        {"C", "N^", "CO", SpeciesAngle::HarmonicForm, {585.76, 117.6}},
+        {"C", "N^", "H", SpeciesAngle::HarmonicForm, {292.88, 119.2}},
+        {"C3", "N^", "CB", SpeciesAngle::HarmonicForm, {585.76, 125.8}},
+        /* { "C3",	"N^",	"CE",	SpeciesAngle::HarmonicForm,	585.76,		128.8 }, */
+        {"C3", "N^", "CK", SpeciesAngle::HarmonicForm, {585.76, 128.8}},
+        /* { "CB",	"N^",	"CE",	SpeciesAngle::HarmonicForm,	585.76,		105.4 }, */
+        {"CB", "N^", "CH", SpeciesAngle::HarmonicForm, {585.76, 125.8}},
+        /* { "CE",	"N^",	"CH",	SpeciesAngle::HarmonicForm,	585.76,		128.8 }, */
+        /* { "CE",	"N^",	"CT",	SpeciesAngle::HarmonicForm,	585.76,		128.8 }, */
+        /* { "CE",	"N^",	"H",	SpeciesAngle::HarmonicForm,	292.88,		127.3 }, */
+        /* { "CH",	"N^",	"CJ",	SpeciesAngle::HarmonicForm,	585.76,		121.2 }, */
+        {"CH", "N^", "CK", SpeciesAngle::HarmonicForm, {585.76, 128.8}},
+        /* { "CJ",	"N^",	"CT",	SpeciesAngle::HarmonicForm,	585.76,		121.2 }, */
+        /* { "CJ",	"N^",	"H",	SpeciesAngle::HarmonicForm,	292.88,		119.2 }, */
+        {"CM", "N^", "CT", SpeciesAngle::HarmonicForm, {585.76, 121.2}},
+        {"CM", "N^", "CO", SpeciesAngle::HarmonicForm, {585.76, 121.2}},
+        {"CM", "N^", "H", SpeciesAngle::HarmonicForm, {292.88, 119.2}},
         {"CM", "NA", "H", SpeciesAngle::HarmonicForm, {292.88, 119.2}},
         {"C2", "N2", "CA", SpeciesAngle::HarmonicForm, {418.4, 123.2}},
         /* { "C2",	"N2",	"H2",	SpeciesAngle::HarmonicForm,	292.88,		118.4 }, */
@@ -1118,13 +1118,13 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"CR", "NA", "H", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
         {"CW", "NA", "H", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
         {"CX", "NA", "H", SpeciesAngle::HarmonicForm, {292.88, 120.0}},
-        {"CB", "N*", "CK", SpeciesAngle::HarmonicForm, {585.76, 105.4}},
-        {"CB", "N*", "CT", SpeciesAngle::HarmonicForm, {585.76, 125.8}},
-        {"CB", "N*", "CO", SpeciesAngle::HarmonicForm, {585.76, 125.8}},
-        {"CB", "N*", "H", SpeciesAngle::HarmonicForm, {251.04, 125.8}},
-        {"CK", "N*", "CT", SpeciesAngle::HarmonicForm, {585.76, 128.8}},
-        {"CK", "N*", "CO", SpeciesAngle::HarmonicForm, {585.76, 128.8}},
-        {"CK", "N*", "H", SpeciesAngle::HarmonicForm, {251.04, 128.8}},
+        {"CB", "N^", "CK", SpeciesAngle::HarmonicForm, {585.76, 105.4}},
+        {"CB", "N^", "CT", SpeciesAngle::HarmonicForm, {585.76, 125.8}},
+        {"CB", "N^", "CO", SpeciesAngle::HarmonicForm, {585.76, 125.8}},
+        {"CB", "N^", "H", SpeciesAngle::HarmonicForm, {251.04, 125.8}},
+        {"CK", "N^", "CT", SpeciesAngle::HarmonicForm, {585.76, 128.8}},
+        {"CK", "N^", "CO", SpeciesAngle::HarmonicForm, {585.76, 128.8}},
+        {"CK", "N^", "H", SpeciesAngle::HarmonicForm, {251.04, 128.8}},
         {"CB", "NA", "CK", SpeciesAngle::HarmonicForm, {585.76, 105.4}},
         {"CB", "NA", "CT", SpeciesAngle::HarmonicForm, {585.76, 125.8}},
         {"CB", "NA", "H", SpeciesAngle::HarmonicForm, {251.04, 125.8}},
@@ -1392,12 +1392,12 @@ OptionalReferenceWrapper<const ForcefieldAngleTerm> OPLSAA2005BaseForcefield::ge
         {"CM", "CY", "HC", SpeciesAngle::HarmonicForm, {292.88, 109.5}},
         {"CM", "CY", "CY", SpeciesAngle::HarmonicForm, {527.184, 114.0}},
         {"C", "CM", "CY", SpeciesAngle::HarmonicForm, {585.76, 119.7}},
-        {"N*", "CM", "CT", SpeciesAngle::HarmonicForm, {585.76, 120.0}},
+        {"N^", "CM", "CT", SpeciesAngle::HarmonicForm, {585.76, 120.0}},
         {"NA", "CM", "CT", SpeciesAngle::HarmonicForm, {585.76, 120.0}},
         {"S", "CM", "CM", SpeciesAngle::HarmonicForm, {711.28, 119.4}},
-        {"S", "CM", "N*", SpeciesAngle::HarmonicForm, {711.28, 119.4}},
+        {"S", "CM", "N^", SpeciesAngle::HarmonicForm, {711.28, 119.4}},
         {"S", "CM", "NA", SpeciesAngle::HarmonicForm, {711.28, 119.4}},
-        {"N*", "CM", "OS", SpeciesAngle::HarmonicForm, {585.76, 120.0}},
+        {"N^", "CM", "OS", SpeciesAngle::HarmonicForm, {585.76, 120.0}},
         {"NA", "CM", "OS", SpeciesAngle::HarmonicForm, {585.76, 120.0}},
         {"CA", "S", "CM", SpeciesAngle::HarmonicForm, {518.816, 104.2}},
         {"CM", "OS", "CA", SpeciesAngle::HarmonicForm, {627.6, 111.0}},
@@ -1443,7 +1443,7 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"CT", "CT", "OH", "HO", SpeciesTorsion::Cos3Form, {-1.4895, -0.728016, 2.05853}},          // alcohols
         {"OH", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {39.7815, 0, 0}},                        // diols
         {"OH", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {51.1871, 0, 0}},                        // triols
-        {"HC", "CT", "OS", "C*", SpeciesTorsion::Cos3Form, {0, 0, 3.17984}},                        // ethers
+        {"HC", "CT", "OS", "C^", SpeciesTorsion::Cos3Form, {0, 0, 3.17984}},                        // ethers
         {"HC", "CT", "OS", "CA", SpeciesTorsion::Cos3Form, {0, 0, 3.17984}},                        // ethers
         {"HC", "CT", "OS", "CM", SpeciesTorsion::Cos3Form, {0, 0, 3.17984}},                        // ethers
         {"HC", "CM", "OS", "CT", SpeciesTorsion::Cos3Form, {0, 0, 3.17984}},                        // ethers
@@ -1468,7 +1468,7 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"HC", "CT", "CQ", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
         {"HC", "CT", "CU", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
         {"HC", "CT", "CK", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
-        {"HC", "CT", "C*", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"HC", "CT", "C^", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
         {"CT", "CT", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // ethyl
         {"CT", "N3", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // anilinium
         {"CT", "CT", "CW", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
@@ -1478,15 +1478,15 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"CT", "CT", "CQ", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
         {"CT", "CT", "CU", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
         {"CT", "CT", "CK", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
-        {"CT", "CT", "C*", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
+        {"CT", "CT", "C^", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aromatics
         {"O*", "CT", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // benzyl
-        {"C*", "CT", "NA", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // heterocycles
-        {"H*", "CT", "NA", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // heterocycles
-        {"C*", "CT", "N*", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // heterocycles
-        {"H*", "CT", "N*", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // heterocycles
+        {"C^", "CT", "NA", "C^", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // heterocycles
+        {"H*", "CT", "NA", "C^", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // heterocycles
+        {"C^", "CT", "N^", "C^", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // heterocycles
+        {"H*", "CT", "N^", "C^", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // heterocycles
         {"O", "C", "CR", "O*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // heterocycles
-        {"O", "C", "CR", "N*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // heterocycles
-        {"CA", "CA", "CT", "N*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // aromatics
+        {"O", "C", "CR", "N^", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // heterocycles
+        {"CA", "CA", "CT", "N^", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // aromatics
         {"*", "Zn", "N", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                 // JACS
         {"*", "Zn", "O", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                 // JACS
         {"HC", "CT", "CT", "CA", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // ethyl
@@ -1498,7 +1498,7 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"HC", "CT", "CT", "CQ", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // aromatics
         {"HC", "CT", "CT", "CU", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // aromatics
         {"HC", "CT", "CT", "CK", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // aromatics
-        {"HC", "CT", "CT", "C*", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // aromatics
+        {"HC", "CT", "CT", "C^", SpeciesTorsion::Cos3Form, {0, 0, 1.93301}},                        // aromatics
         {"CT", "S", "S", "CT", SpeciesTorsion::Cos3Form, {0, -31.0202, 7.13372}},                   // disulfide
         {"HC", "CT", "S", "S", SpeciesTorsion::Cos3Form, {0, 0, 2.33467}},                          // disulfide
         {"CT", "CT", "S", "S", SpeciesTorsion::Cos3Form, {8.12114, -3.49782, 3.91204}},             // disulfide
@@ -1517,7 +1517,7 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"CT", "CT", "CT", "NT", SpeciesTorsion::Cos3Form, {10.0081, -2.82002, 2.3012}},            // amine
         {"HO", "OH", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 7.03749, 0}},                        // phenol
         {"N", "CT", "CT", "CT", SpeciesTorsion::Cos3Form, {3.53548, -4.02501, 2.98319}},            // Chi-1
-        {"N", "CT", "CT", "C*", SpeciesTorsion::Cos3Form, {3.53548, -4.02501, 2.98319}},            // Chi-1
+        {"N", "CT", "CT", "C^", SpeciesTorsion::Cos3Form, {3.53548, -4.02501, 2.98319}},            // Chi-1
         {"N", "CT", "CT", "CA", SpeciesTorsion::Cos3Form, {3.53548, -4.02501, 2.98319}},            // Chi-1
         {"C", "N", "CT", "C", SpeciesTorsion::Cos3Form, {-9.89516, 3.81581, -3.5564}},              // Phi
         {"N", "CT", "C", "N", SpeciesTorsion::Cos3Form, {7.59814, 5.11285, 6.6149}},                // Psi
@@ -1555,9 +1555,9 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"CA", "N", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // "
         {"CT", "NM", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // tert.
         {"CA", "NM", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // "
-        {"C*", "CA", "SH", "HS", SpeciesTorsion::Cos3Form, {0, 4.6024, 0}},                         // aromatic
+        {"C^", "CA", "SH", "HS", SpeciesTorsion::Cos3Form, {0, 4.6024, 0}},                         // aromatic
         {"CA", "CA", "SH", "HS", SpeciesTorsion::Cos3Form, {0, 4.6024, 0}},                         // aromatic
-        {"N*", "CA", "SH", "HS", SpeciesTorsion::Cos3Form, {-12.552, 0, 0}},                        // "
+        {"N^", "CA", "SH", "HS", SpeciesTorsion::Cos3Form, {-12.552, 0, 0}},                        // "
         {"HC", "CT", "S", "CT", SpeciesTorsion::Cos3Form, {0, 0, 2.70705}},                         // sulfide
         {"HC", "CT", "S", "CA", SpeciesTorsion::Cos3Form, {0, 0, 2.70705}},                         // sulfide
         {"CT", "CT", "CT", "S", SpeciesTorsion::Cos3Form, {10.9579, -2.59408, 1.07947}},            // sulfide
@@ -1592,12 +1592,12 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"C", "CT", "CT", "OH", SpeciesTorsion::Cos3Form, {-25.8571, 0, 0}},                        // Chi
         {"N", "CT", "CT", "S*", SpeciesTorsion::Cos3Form, {5.97475, 0.359824, 0.121336}},           // Chi
         {"C", "CT", "CT", "S*", SpeciesTorsion::Cos3Form, {-18.1753, -7.17138, 0}},                 // Chi
-        {"HC", "CT", "C*", "CW", SpeciesTorsion::Cos3Form, {0, 0, -2.00832}},                       // 3-methylindole
-        {"HC", "CT", "C*", "CB", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // 3-methylindole
-        {"CT", "CT", "C*", "CW", SpeciesTorsion::Cos3Form, {-2.98738, 0, 0}},                       // 3-ethylindole
-        {"CT", "CT", "C*", "CB", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // 3-ethylindole
-        {"HC", "CT", "CC", "N*", SpeciesTorsion::Cos3Form, {0, 0, 1.7531}},                         // HID,
-        {"CT", "CT", "CC", "N*", SpeciesTorsion::Cos3Form, {9.89934, -1.09621, 2.11292}},           // "
+        {"HC", "CT", "C^", "CW", SpeciesTorsion::Cos3Form, {0, 0, -2.00832}},                       // 3-methylindole
+        {"HC", "CT", "C^", "CB", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // 3-methylindole
+        {"CT", "CT", "C^", "CW", SpeciesTorsion::Cos3Form, {-2.98738, 0, 0}},                       // 3-ethylindole
+        {"CT", "CT", "C^", "CB", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // 3-ethylindole
+        {"HC", "CT", "CC", "N^", SpeciesTorsion::Cos3Form, {0, 0, 1.7531}},                         // HID,
+        {"CT", "CT", "CC", "N^", SpeciesTorsion::Cos3Form, {9.89934, -1.09621, 2.11292}},           // "
         {"HC", "CT", "N3", "H", SpeciesTorsion::Cos3Form, {0, 0, 1.09202}},                         // ammonium
         {"CT", "CT", "N3", "H", SpeciesTorsion::Cos3Form, {0, 0, 1.45185}},                         // ammonium
         {"HC", "CT", "CT", "N3", SpeciesTorsion::Cos3Form, {0, 0, 1.60666}},                        // ammonium
@@ -1641,7 +1641,7 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"HC", "CT", "CT", "C(O)", SpeciesTorsion::Cos3Form, {0, 0, -0.317984}},                    // aldehyde
         {"CT", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {-7.10025, -1.9079, 2.44764}},            // aldehyde
         {"CA", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {-7.10025, -1.9079, 2.44764}},            // aldehyde
-        {"C*", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {-7.10025, -1.9079, 2.44764}},            //
+        {"C^", "CT", "CT", "C", SpeciesTorsion::Cos3Form, {-7.10025, -1.9079, 2.44764}},            //
         {"CT", "CT", "C", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // aldehyde
         {"CT", "CT", "C", "CT", SpeciesTorsion::Cos3Form, {6.08354, -0.602496, -3.2426}},           // ketone
         {"C", "C", "OH", "HO", SpeciesTorsion::Cos3Form, {12.552, 23.012, 0}},                      // oxalic
@@ -1656,7 +1656,7 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"CA", "CT", "P", "O2", SpeciesTorsion::Cos3Form, {0, 0, 0}},                               // phosphonates
         {"HC", "CT", "P", "O2", SpeciesTorsion::Cos3Form, {0, 0, 1.046}},                           // phosphonates
         {"HC", "CT", "P", "OS", SpeciesTorsion::Cos3Form, {0, 0, 1.046}},                           // phosphonates
-        {"O2", "P", "OS", "C*", SpeciesTorsion::Cos3Form, {0, 0, 2.35141}},                         // MeOPO3
+        {"O2", "P", "OS", "C^", SpeciesTorsion::Cos3Form, {0, 0, 2.35141}},                         // MeOPO3
         {"O2", "P", "OS", "CT", SpeciesTorsion::Cos3Form, {3.7656, -12.2591, 11.0458}},             // dimethyl
         {"CA", "CA", "OS", "P", SpeciesTorsion::Cos3Form, {0, 12.5102, 0}},                         // PhOPO3
         {"NT", "CT", "CT", "Cl", SpeciesTorsion::Cos3Form, {8.368, 0, 0}},                          // 2-chloroethylamines
@@ -1722,8 +1722,8 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"HA", "CA", "CA", "Cl", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"HA", "CA", "CA", "Br", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"HA", "CA", "CA", "I", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
-        {"CA", "CA", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"HA", "C=", "C=", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CA", "CA", "CA", "N^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "C=", "C=", "C^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"C", "C=", "C=", "C", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
         {"HA", "CA", "CA", "CT", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"CT", "CA", "CA", "CT", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
@@ -1738,25 +1738,25 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"HA", "CA", "CA", "S*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"CT", "CA", "CA", "S*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"S*", "CA", "CA", "S*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"HA", "CM", "C!", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CM", "C!", "N^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"HA", "CM", "C!", "N", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
-        {"HA", "CA", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"CT", "CA", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"O*", "CA", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"N*", "CA", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CA", "CA", "N^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"CT", "CA", "CA", "N^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"O*", "CA", "CA", "N^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"N^", "CA", "CA", "N^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"*", "CB", "CB", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
-        {"C*", "CB", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"N*", "CB", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"N*", "CB", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C^", "CB", "CB", "C^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"N^", "CB", "CB", "C^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"N^", "CB", "CB", "N^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"*", "CB", "CS", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
         {"*", "CS", "C", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                            //
         {"*", "CR", "CS", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
         {"*", "CS", "CW", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
-        {"C*", "CS", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"C*", "CS", "CW", "H*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"C*", "CS", "CW", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"HA", "CS", "CW", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"HA", "CS", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C^", "CS", "CW", "C^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C^", "CS", "CW", "H*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C^", "CS", "CW", "N^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CS", "CW", "N^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"HA", "CS", "CW", "C^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"HA", "CS", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"HA", "CS", "CS", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"HA", "CA", "CU", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
@@ -1764,22 +1764,22 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"*", "NC", "CA", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
         {"CS", "CW", "OS", "CW", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"CA", "NC", "CA", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"C*", "NC", "CA", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C^", "NC", "CA", "N^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"CA", "NC", "CA", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"CA", "NC", "NC", "CT", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"CA", "NC", "NC", "CA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"CT", "NC", "NC", "CT", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"*", "NC", "CB", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
-        {"C*", "NC", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"C*", "NC", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C^", "NC", "CB", "C^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C^", "NC", "CB", "N^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"*", "NA", "CB", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
         {"*", "NB", "CB", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
         {"*", "NB", "CR", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
         {"*", "NB", "CU", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
-        {"C*", "NA", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"C*", "NA", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"C*", "NB", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"N*", "CR", "S", "CW", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"C^", "NA", "CB", "C^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C^", "NA", "CB", "N^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C^", "NB", "CB", "C^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"N^", "CR", "S", "CW", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
         {"CR", "NB", "CV", "CW", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"CR", "NB", "CV", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"CU", "CW", "S", "CR", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
@@ -1803,21 +1803,21 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"HA", "CW", "CU", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
         {"*", "NC", "CR", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
         {"*", "NC", "CQ", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                           //
-        {"C*", "NC", "CQ", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
-        {"C*", "NC", "CQ", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C^", "NC", "CQ", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
+        {"C^", "NC", "CQ", "N^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                         //
         {"*", "N", "CQ", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                            //
-        {"C*", "N", "CQ", "N*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
-        {"C*", "N", "CQ", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"C^", "N", "CQ", "N^", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
+        {"C^", "N", "CQ", "HA", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                          //
         {"H", "N", "CQ", "*", SpeciesTorsion::Cos3Form, {0, 30.334, 0}},                            //
         {"*", "CW", "NA", "*", SpeciesTorsion::Cos3Form, {0, 11.7152, 0}},                          //
         {"*", "NA", "CR", "*", SpeciesTorsion::Cos3Form, {0, 19.4556, 0}},                          //
         {"HA", "CR", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                           //
-        {"N*", "CR", "NB", "C*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                          //
+        {"N^", "CR", "NB", "C^", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                          //
         {"*", "CR", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
         {"*", "CW", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
         {"*", "CR", "NA", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
         {"HA", "CR", "NA", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                           //
-        {"N*", "CR", "NA", "C*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                          //
+        {"N^", "CR", "NA", "C^", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                          //
         {"*", "CR", "NC", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
         {"*", "CK", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
         {"*", "CK", "NA", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
@@ -1826,39 +1826,39 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"*", "NB", "NB", "*", SpeciesTorsion::Cos3Form, {0, 41.84, 0}},                            //
         {"*", "NB", "CV", "*", SpeciesTorsion::Cos3Form, {0, 20.0832, 0}},                          //
         {"*", "CW", "CV", "*", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                           //
-        {"C*", "CW", "CV", "C*", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
-        {"C*", "CW", "CV", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
-        {"HA", "CW", "CV", "C*", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
+        {"C^", "CW", "CV", "C^", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
+        {"C^", "CW", "CV", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
+        {"HA", "CW", "CV", "C^", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
         {"HA", "CW", "CV", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
         {"*", "CW", "CW", "*", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                           //
-        {"C*", "CW", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
-        {"C*", "CW", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
-        {"H*", "CW", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
+        {"C^", "CW", "CW", "C^", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
+        {"C^", "CW", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
+        {"H*", "CW", "CW", "C^", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
         {"H*", "CW", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
         {"HA", "CW", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                         //
         {"S", "CW", "CW", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                          //
         {"S", "CW", "CU", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                          //
         {"S", "CW", "CV", "HA", SpeciesTorsion::Cos3Form, {0, 44.978, 0}},                          //
         {"*", "NA", "CW", "*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                            //
-        {"C*", "NA", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                          //
-        {"N*", "NA", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                          //
-        {"C*", "NA", "CW", "H*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                          //
-        {"N*", "NA", "CW", "H*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                          //
+        {"C^", "NA", "CW", "C^", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                          //
+        {"N^", "NA", "CW", "C^", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                          //
+        {"C^", "NA", "CW", "H*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                          //
+        {"N^", "NA", "CW", "H*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                          //
         {"H", "NA", "CW", "*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                            //
         {"H", "NA", "CR", "*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                            //
         {"H", "NA", "CB", "*", SpeciesTorsion::Cos3Form, {0, 20.92, 0}},                            //
-        {"*", "C*", "CW", "*", SpeciesTorsion::Cos3Form, {0, 54.6012, 0}},                          //
-        {"*", "C*", "CB", "*", SpeciesTorsion::Cos3Form, {0, 14.0164, 0}},                          //
+        {"*", "C^", "CW", "*", SpeciesTorsion::Cos3Form, {0, 54.6012, 0}},                          //
+        {"*", "C^", "CB", "*", SpeciesTorsion::Cos3Form, {0, 14.0164, 0}},                          //
         {"*", "CA", "CB", "*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                           //
-        {"C*", "CA", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                         //
-        {"N*", "CA", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                         //
-        {"C*", "CA", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                         //
-        {"N*", "CA", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                         //
+        {"C^", "CA", "CB", "C^", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                         //
+        {"N^", "CA", "CB", "N^", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                         //
+        {"C^", "CA", "CB", "N^", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                         //
+        {"N^", "CA", "CB", "C^", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                         //
         {"*", "C", "CB", "*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                            //
-        {"O", "C", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                           //
-        {"N*", "C", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                          //
-        {"O", "C", "CB", "N*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                           //
-        {"N*", "C", "CB", "C*", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                          //
+        {"O", "C", "CB", "C^", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                           //
+        {"N^", "C", "CB", "N^", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                          //
+        {"O", "C", "CB", "N^", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                           //
+        {"N^", "C", "CB", "C^", SpeciesTorsion::Cos3Form, {0, 29.288, 0}},                          //
         {"*", "CB", "CN", "*", SpeciesTorsion::Cos3Form, {0, 25.104, 0}},                           //
         {"*", "NA", "CN", "*", SpeciesTorsion::Cos3Form, {0, 12.7612, 0}},                          //
         {"*", "CW", "NA", "*", SpeciesTorsion::Cos3Form, {0, 12.552, 0}},                           //
@@ -1934,7 +1934,7 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"CA", "CA", "NT", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0}},                         // aniline
         {"*", "CA", "N2", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0}},                          // aniline-like
         {"*", "CQ", "N2", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0}},                          // aniline-like
-        {"N*", "CA", "N2", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0}},                         // aniline-like
+        {"N^", "CA", "N2", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0}},                         // aniline-like
         {"CB", "CA", "N2", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0}},                         // aniline-like
         {"S", "CR", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0}},                           // aniline-like
         {"OS", "CR", "N", "H", SpeciesTorsion::Cos3Form, {0, 8.49352, 0}},                          // aniline-like
@@ -1970,14 +1970,14 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"CA", "C!", "C", "CA", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                         // biphenyl
         {"CA", "C!", "NA", "NB", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
         {"CA", "C!", "NA", "CW", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"CA", "C!", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CW", "C^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
         {"CA", "C!", "CW", "NA", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
         {"CA", "C!", "CW", "OS", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"CA", "C!", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"CA", "C!", "CM", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"CA", "C!", "CU", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CS", "C^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CM", "C^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CU", "C^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
         {"CA", "C!", "CU", "NB", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"CA", "C!", "CV", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CV", "C^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
         {"CA", "C!", "CV", "NB", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
         {"CA", "C!", "CR", "OS", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
         {"CA", "C!", "CR", "NA", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
@@ -1988,33 +1988,33 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"CA", "C!", "N", "CM", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                         // biphenyl-like
         {"NC", "C!", "N", "C", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                          // biphenyl-like
         {"NC", "C!", "N", "CM", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                         // biphenyl-like
-        {"CS", "CS", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"CS", "CS", "CS", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"OS", "CS", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"OS", "CS", "CS", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"NA", "CS", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"NA", "CS", "CS", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"CW", "CV", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"CW", "CV", "CS", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"NB", "CV", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"NB", "CV", "CS", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"N*", "CR", "CS", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"N*", "CR", "CW", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CS", "CS", "CS", "C^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CS", "CS", "CS", "N^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"OS", "CS", "CS", "C^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"OS", "CS", "CS", "N^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"NA", "CS", "CS", "C^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"NA", "CS", "CS", "N^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CW", "CV", "CS", "C^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CW", "CV", "CS", "N^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"NB", "CV", "CS", "C^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"NB", "CV", "CS", "N^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"N^", "CR", "CS", "C^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"N^", "CR", "CW", "C^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
         {"*", "N", "CU", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                           // biphenyl-like
         {"*", "N", "CW", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                           // biphenyl-like
         {"*", "N", "CS", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                           // biphenyl-like
         {"*", "CM", "CU", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                          // biphenyl-like
         {"*", "CM", "CW", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                          // biphenyl-like
         {"*", "CM", "CS", "*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                          // biphenyl-like
-        {"NC", "C!", "CU", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"NC", "C!", "CU", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"CA", "C!", "CU", "C*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
-        {"CA", "C!", "CU", "N*", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"NC", "C!", "CU", "C^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"NC", "C!", "CU", "N^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CU", "C^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
+        {"CA", "C!", "CU", "N^", SpeciesTorsion::Cos3Form, {0, 9.07928, 0}},                        // biphenyl-like
         {"Cl", "CM", "CM", "Cl", SpeciesTorsion::Cos3Form, {-6.6944, 58.576, 0}},                   // chloroalkene
         {"HC", "CT", "P+", "CT", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         // phosphonium
         {"HC", "CT", "CT", "P+", SpeciesTorsion::Cos3Form, {0, 0, 1.2552}},                         // "
         {"CT", "CT", "P+", "CT", SpeciesTorsion::Cos3Form, {4.184, -2.092, 2.092}},                 // "
-        {"CK", "N*", "CT", "OS", SpeciesTorsion::Cos3Form, {13.1043, -6.23834, 11.4809}},           // Ping
+        {"CK", "N^", "CT", "OS", SpeciesTorsion::Cos3Form, {13.1043, -6.23834, 11.4809}},           // Ping
         {"CK", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {11.5311, -3.64845, -15.3971}},          // Ping
         {"C", "NC", "OH", "HO", SpeciesTorsion::Cos3Form, {12.552, 12.552, 0}},                     // oxime
         {"C", "NC", "OS", "CT", SpeciesTorsion::Cos3Form, {12.552, 12.552, 0}},                     // oxime
@@ -2048,20 +2048,20 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"CT", "CZ", "CZ", "CT", SpeciesTorsion::Cos3Form, {0, 0, 0}},                              // alkynes
         {"CA", "CA", "SY", "CT", SpeciesTorsion::Cos3Form, {0, -3.7656, 0}},                        // sulfone
         {"CR", "NA", "CT", "OS", SpeciesTorsion::Cos3Form, {-6.276, -6.276, 0}},                    // imidazoles,
-        {"CR", "N*", "CT", "OS", SpeciesTorsion::Cos3Form, {-6.276, -6.276, 0}},                    // imidazoles,
+        {"CR", "N^", "CT", "OS", SpeciesTorsion::Cos3Form, {-6.276, -6.276, 0}},                    // imidazoles,
         {"CK", "NA", "CT", "OS", SpeciesTorsion::Cos3Form, {-6.276, -6.276, 0}},                    // imidazoles,
-        {"CK", "N*", "CT", "OS", SpeciesTorsion::Cos3Form, {-6.276, -6.276, 0}},                    // imidazoles,
-        {"C*", "NA", "CT", "OS", SpeciesTorsion::Cos3Form, {6.276, -6.276, 0}},                     // imidazoles,
-        {"C*", "N*", "CT", "OS", SpeciesTorsion::Cos3Form, {6.276, -6.276, 0}},                     // imidazoles,
+        {"CK", "N^", "CT", "OS", SpeciesTorsion::Cos3Form, {-6.276, -6.276, 0}},                    // imidazoles,
+        {"C^", "NA", "CT", "OS", SpeciesTorsion::Cos3Form, {6.276, -6.276, 0}},                     // imidazoles,
+        {"C^", "N^", "CT", "OS", SpeciesTorsion::Cos3Form, {6.276, -6.276, 0}},                     // imidazoles,
         {"CR", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {-4.184, -1.4644, 0}},                   // imidazoles,
-        {"CR", "N*", "CT", "CT", SpeciesTorsion::Cos3Form, {-4.184, -1.4644, 0}},                   // imidazoles,
+        {"CR", "N^", "CT", "CT", SpeciesTorsion::Cos3Form, {-4.184, -1.4644, 0}},                   // imidazoles,
         {"CK", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {-4.184, -1.4644, 0}},                   // imidazoles,
-        {"CK", "N*", "CT", "CT", SpeciesTorsion::Cos3Form, {-4.184, -1.4644, 0}},                   // imidazoles,
-        {"C*", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {4.184, -1.4644, 0}},                    // imidazoles,
-        {"C*", "N*", "CT", "CT", SpeciesTorsion::Cos3Form, {4.184, -1.4644, 0}},                    // imidazoles,
-        {"N*", "CT", "OS", "CT", SpeciesTorsion::Cos3Form, {-2.092, -6.276, 4.184}},                // imidazoles,
-        {"C*", "NA", "CT", "OS", SpeciesTorsion::Cos3Form, {0, -7.84918, 0}},                       // Ping
-        {"C*", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {0, -2.40998, 0}},                       // Ping
+        {"CK", "N^", "CT", "CT", SpeciesTorsion::Cos3Form, {-4.184, -1.4644, 0}},                   // imidazoles,
+        {"C^", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {4.184, -1.4644, 0}},                    // imidazoles,
+        {"C^", "N^", "CT", "CT", SpeciesTorsion::Cos3Form, {4.184, -1.4644, 0}},                    // imidazoles,
+        {"N^", "CT", "OS", "CT", SpeciesTorsion::Cos3Form, {-2.092, -6.276, 4.184}},                // imidazoles,
+        {"C^", "NA", "CT", "OS", SpeciesTorsion::Cos3Form, {0, -7.84918, 0}},                       // Ping
+        {"C^", "NA", "CT", "CT", SpeciesTorsion::Cos3Form, {0, -2.40998, 0}},                       // Ping
         {"*", "CY", "CY", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // small
         {"*", "CY", "Ndoll", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                             // small
         {"*", "CY", "Cdoll", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                             // small
@@ -2069,7 +2069,7 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"CY", "CY", "Cdoll", "O", SpeciesTorsion::Cos3Form, {0, 0, 0}},                            // small
         {"*", "CY", "S", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                 // small
         {"CY", "CY", "Ndoll", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                            // small
-        {"HC", "CY", "Ndoll", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                           // small
+        {"HC", "CY", "Ndoll", "C^", SpeciesTorsion::Cos3Form, {0, 0, 0}},                           // small
         {"HC", "CY", "Cdoll", "O", SpeciesTorsion::Cos3Form, {0, 0, 0}},                            // small
         {"HC", "CY", "Cdoll", "Ndoll", SpeciesTorsion::Cos3Form, {0, 0, 0}},                        // small
         {"N", "CY", "CY", "*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // small
@@ -2077,8 +2077,8 @@ OPLSAA2005BaseForcefield::getTorsionTerm(const ForcefieldAtomType &i, const Forc
         {"Cdoll", "CY", "N", "H", SpeciesTorsion::Cos3Form, {0, 0, 0}},                             // small
         {"HC", "CY", "N", "C", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // small
         {"HC", "CY", "N", "H", SpeciesTorsion::Cos3Form, {0, 0, 0}},                                // small
-        {"C*", "Ndoll", "CT", "C*", SpeciesTorsion::Cos3Form, {0, 0, 0}},                           // small
-        {"C*", "Ndoll", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                           // small
+        {"C^", "Ndoll", "CT", "C^", SpeciesTorsion::Cos3Form, {0, 0, 0}},                           // small
+        {"C^", "Ndoll", "CT", "HC", SpeciesTorsion::Cos3Form, {0, 0, 0}},                           // small
         {"CY", "Cdoll", "Ndoll", "CT", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0}},             // small
         {"CY", "Cdoll", "Ndoll", "CY", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0}},             // small
         {"CY", "N", "CT", "CT", SpeciesTorsion::Cos3Form, {9.6232, 25.4764, 0}},                    // small

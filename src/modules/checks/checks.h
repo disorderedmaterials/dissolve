@@ -64,6 +64,7 @@ class ChecksModule : public Module
     protected:
     // Perform any necessary initialisation for the Module
     void initialise();
+
     /*
      * Processing
      */

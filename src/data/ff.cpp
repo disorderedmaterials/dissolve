@@ -515,7 +515,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                             const ForcefieldImproperTerm &term = *optTerm;
                             // Check to see if the Species already has an improper definition - if
                             // not create one
-                            auto improper = sp->improper(i, j, k, l);
+                            auto improper = sp->getImproper(i, j, k, l);
                             if (!improper)
                                 improper = sp->addImproper(i, j, k, l);
 

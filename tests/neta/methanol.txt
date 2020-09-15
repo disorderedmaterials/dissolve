@@ -8,26 +8,45 @@ Species 'Methanol'
   Atom    6    H  7.506264e-01  -5.444546e-01  7.005046e-01  'None'  4.000000e-02
 
   # Bonds
-  Bond    2    1  Harmonic  2677.760     1.410
-  Bond    3    2  Harmonic  4627.500     0.945
-  Bond    1    4  Harmonic  2845.120     1.080
-  Bond    1    5  Harmonic  2845.120     1.080
-  Bond    1    6  Harmonic  2845.120     1.080
+  Bond    2    1
+  Bond    3    2
+  Bond    1    4
+  Bond    1    5
+  Bond    1    6
 
   # Angles
-  Angle    3    2    1  Harmonic   460.240   108.500
-  Angle    2    1    4  Harmonic   292.880   109.500
-  Angle    2    1    5  Harmonic   292.880   109.500
-  Angle    5    1    4  Harmonic   276.144   107.800
-  Angle    2    1    6  Harmonic   292.880   109.500
-  Angle    6    1    4  Harmonic   276.144   107.800
-  Angle    6    1    5  Harmonic   276.144   107.800
+  Angle    3    2    1
+  Angle    2    1    4
+  Angle    2    1    5
+  Angle    5    1    4
+  Angle    2    1    6
+  Angle    6    1    4
+  Angle    6    1    5
 
   # Torsions
-  Torsion    3    2    1    4  Cos3     0.000     0.000     1.474
-  Torsion    3    2    1    5  Cos3     0.000     0.000     1.474
-  Torsion    3    2    1    6  Cos3     0.000     0.000     1.474
+  Torsion    3    2    1    4
+  Torsion    3    2    1    5
+  Torsion    3    2    1    6
 
   # Forcefield
   Forcefield  'OPLSAA2005/Alcohols'
 EndSpecies
+
+Layer  'Checks'
+
+  Module  'CheckSpecies'
+    Species  'Methanol'
+    AtomType  1  CT
+    AtomType  2  OH
+    AtomType  3  HO
+    AtomType  4  HC
+    AtomType  5  HC
+    AtomType  6  HC
+    Bond  1  2  2677.76  1.41
+    Bond  1  4  2845.12  1.09
+    Angle  1  2  3  460.24 108.5
+    Angle  5  1  2  292.88  109.5
+    Torsion  4  1  2  3  0.0  0.0  1.47444
+  EndModule
+
+EndLayer

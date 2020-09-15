@@ -29,6 +29,7 @@
  * Notes:
  * Epsilon values have been converted from kcal to kJ.
  * Any inconsistencies between the forcefield as implemented here and the original work are the sole responsibility of TGAY.
+ * Atom types containing '*' (e.g. 'C*', 'N*') are renamed to use '^' as '*' represents a wildcard match in the name.
  *
  * References:
  * W. L. Jorgensen, D. S. Maxwell, and J. Tirado-Rives, J. Am. Chem. Soc. 118, 11225-11236 (1996).
@@ -527,7 +528,7 @@ OptionalReferenceWrapper<const ForcefieldAtomType> OPLSAA2005BaseForcefield::opl
         {this, ELEMENT_O, 497, "OY_a", "", "sulfoxide - all atom", -0.420000, 1.171520, 2.930000},
         {this, ELEMENT_C, 498, "CT", "", "CH3 all-atom C: sulfoxide", -0.035000, 0.276144, 3.500000},
         {this, ELEMENT_C, 499, "CT", "", "CH2 all-atom C: sulfoxide", 0.025000, 0.276144, 3.500000},
-        {this, ELEMENT_C, 500, "Cstar", "", "CG in TRP", 0.075000, 0.292880, 3.550000},
+        {this, ELEMENT_C, 500, "C^", "", "CG in TRP", 0.075000, 0.292880, 3.550000},
         {this, ELEMENT_C, 501, "CB", "", "CD C in TRP", -0.055000, 0.292880, 3.550000},
         {this, ELEMENT_C, 502, "CN", "", "CE C in TRP", 0.130000, 0.292880, 3.550000},
         {this, ELEMENT_N, 503, "NA", "", "NE in TRP", -0.570000, 0.711280, 3.250000},
@@ -855,9 +856,9 @@ OptionalReferenceWrapper<const ForcefieldAtomType> OPLSAA2005BaseForcefield::opl
         {this, ELEMENT_C, 933, "CO", "", "C1' of (ura, thy) by Deping", 0.510000, 0.276144, 3.500000},
         {this, ELEMENT_O, 934, "OH_a", "", "O5' by Deping", -0.655000, 0.711280, 3.120000},
         {this, ELEMENT_H, 935, "HO", "", "H(3') OH by Deping", 0.390000, 0.000000, 0.000000},
-        {this, ELEMENT_N, 936, "N*", "", "Adenine N9 Guanine nucleosides", -0.500000, 0.711280, 3.250000},
-        {this, ELEMENT_N, 937, "N*", "", "Cytosine N1 nucleoside", -0.560000, 0.711280, 3.250000},
-        {this, ELEMENT_N, 938, "N*", "", "Uracil N1 Thymine nucleosides", -0.600000, 0.711280, 3.250000},
+        {this, ELEMENT_N, 936, "N^", "", "Adenine N9 Guanine nucleosides", -0.500000, 0.711280, 3.250000},
+        {this, ELEMENT_N, 937, "N^", "", "Cytosine N1 nucleoside", -0.560000, 0.711280, 3.250000},
+        {this, ELEMENT_N, 938, "N^", "", "Uracil N1 Thymine nucleosides", -0.600000, 0.711280, 3.250000},
         {this, ELEMENT_C, 939, "CZ_a", "", "alkyne RC%CR - only did MC for MeCCMe", 0.000000, 0.878640, 3.300000},
         {this, ELEMENT_N, 940, "N3", "", "N (R3NH+)", -0.100000, 0.711280, 3.250000},
         {this, ELEMENT_H, 941, "H3", "", "H (R3NH+)", 0.290000, 0.000000, 0.000000},

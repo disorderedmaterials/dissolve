@@ -37,3 +37,25 @@ Species 'H2SO4'
   # Forcefield
   Forcefield  'Kulmala2010'
 EndSpecies
+
+Layer  'Checks'
+
+  Module  'CheckSpecies'
+    Species  'H2SO4'
+    AtomType  1  SA
+    AtomType  2  OA
+    AtomType  3  OA
+    AtomType  4  OHA
+    AtomType  5  OHA
+    AtomType  6  HSA
+    AtomType  7  HSA
+
+    Bond  1  2  6258.0  1.411
+    Bond  1  4  3083.8  1.571
+    Bond  4  7  4561.1  0.949
+    Angle  2  1  3  224.37  123.69
+    Angle  7  4  1  396.82  110.50
+    Torsion  7  4  1  3  0.0  0.0  0.0
+  EndModule
+
+EndLayer

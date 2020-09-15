@@ -120,3 +120,33 @@ Species 'Naphthalene'
 
   Forcefield  'OPLSAA2005/Aromatics'
 EndSpecies
+
+Layer  'Checks'
+
+  Module  'CheckSpecies'
+    Species  'Naphthalene'
+    AtomType    1    CA
+    AtomType    2    CA
+    AtomType    3    CNap
+    AtomType    4    CA
+    AtomType    5    CA
+    AtomType    6    CA
+    AtomType    7    CA
+    AtomType    8    CNap
+    AtomType    9    CA
+    AtomType   10    CA
+    AtomType   11    HA
+    AtomType   12    HA
+    AtomType   13    HA
+    AtomType   14    HA
+    AtomType   15    HA
+    AtomType   16    HA
+    AtomType   17    HA
+    AtomType   18    HA
+    Bond  3  8  3924.59  1.4
+    Angle  2  3  8  527.184  120.0
+    Angle  2  3  4  527.184  120.0
+    Torsion    9    1    2    3  0  30.334  0
+  EndModule
+
+EndLayer

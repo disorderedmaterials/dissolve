@@ -79,3 +79,29 @@ Species '1,3-propanediol'
   Forcefield  'OPLSAA2005/Diols'
 EndSpecies
 
+Layer  'Checks'
+
+  Module  'CheckSpecies'
+    Species  '1,3-propanediol'
+    AtomType  1  CT     # Alcohol
+    AtomType  2  CT2    # Central
+    AtomType  3  CT     # Alcohol
+    AtomType  4  OH
+    AtomType  5  OH
+    AtomType  6  HC
+    AtomType  7  HC
+    AtomType  8  HC
+    AtomType  9  HC
+    AtomType  10  HC
+    AtomType  11  HC
+    AtomType  12  HO
+    AtomType  13  HO
+    Bond  5  13  4627.5  0.945
+    Bond  1  5  2677.76  1.41
+    Angle  1  5  13  460.24  108.5
+    Angle  5  1  2   418.4  109.5
+    Torsion  6  1  5  13  0.0  0.0  1.47444
+    Torsion  5  1  2  3  7.15882  -2.092  2.77399
+  EndModule
+
+EndLayer

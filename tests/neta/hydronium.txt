@@ -18,3 +18,18 @@ Species 'Hydronium'
   # Forcefield
   Forcefield  'Kulmala2010'
 EndSpecies
+
+Layer  'Checks'
+
+  Module  'CheckSpecies'
+    Species  'Hydronium'
+    AtomType  1  OW+
+    AtomType  2  HW+
+    AtomType  3  HW+
+    AtomType  4  HW+
+
+    Bond  1  2  4030.0  0.969
+    Angle  2  1  3  451.4  113.1
+  EndModule
+
+EndLayer
