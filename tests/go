@@ -129,12 +129,13 @@ do
 		fi
 	fi
 
-	# Were global arguments for all input files given?
-	BASEARGS="$COMMONARGS"
+	# Were arguments provided for all tests in this directory?
 	if [ -e global.args ]
 	then
-		BASEARGS="$BASEARGS $(<global.args)"
+		BASEARGS="$(<global.args)"
 		echo "Global arguments file provided - common args for all tests are now: $BASEARGS"
+	else
+		BASEARGS="$COMMONARGS"
 	fi
 
 	
@@ -147,7 +148,7 @@ do
 		# Are there specific arguments for the test?
 		if [ -e ${input%.txt}.args ]
 		then
-			ARGS="$ARGS $(<${input%.txt}.args)"
+			ARGS="$(<${input%.txt}.args)"
 		fi
 
 		for nprocs in $TARGETPROCS
