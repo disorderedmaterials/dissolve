@@ -242,7 +242,7 @@ SpeciesAngle &Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
     // OK to add new angle
 
     // We can't use emplace_back since SpeciesAngle needs
-    // to derference its `this` pointer in the constructor
+    // to dereference its `this` pointer in the constructor
     // to update the SpeciesAtoms.
     angles_.push_back(std::move(SpeciesAngle(i, j, k)));
     angles_.back().setParent(this);
@@ -470,7 +470,7 @@ void Species::generateAttachedAtomLists()
     for (auto &torsion : torsions_)
     {
         // Grab relevant Bond (if it exists)
-        OptionalReferenceWrapper<SpeciesBond> jk = torsion.j()->hasBond(torsion.k());
+        auto jk = torsion.j()->hasBond(torsion.k());
 
         // Select all Atoms attached to Atom 'j', excluding the Bond ji as a path
         clearAtomSelection();

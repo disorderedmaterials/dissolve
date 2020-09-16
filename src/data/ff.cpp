@@ -477,7 +477,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
             for (int indexJ = 0; indexJ < i->nBonds() - 2; ++indexJ)
             {
                 // Get SpeciesAtom 'j'
-                SpeciesAtom *j = i->bond(indexJ).partner(i);
+                auto *j = i->bond(indexJ).partner(i);
                 auto optTypeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
                 if (!optTypeJ)
                     return Messenger::error("Couldn't locate object for atom type named '{}'.\n", j->atomType()->name());
@@ -488,7 +488,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                 for (int indexK = indexJ + 1; indexK < i->nBonds() - 1; ++indexK)
                 {
                     // Get SpeciesAtom 'k'
-                    SpeciesAtom *k = i->bond(indexK).partner(i);
+                    auto *k = i->bond(indexK).partner(i);
                     auto optTypeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element());
                     if (!optTypeK)
                         return Messenger::error("Couldn't locate object for atom type named '{}'.\n", k->atomType()->name());
@@ -499,7 +499,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                     for (int indexL = indexK + 1; indexL < i->nBonds(); ++indexL)
                     {
                         // Get SpeciesAtom 'l'
-                        SpeciesAtom *l = i->bond(indexL).partner(i);
+                        auto *l = i->bond(indexL).partner(i);
                         auto optTypeL =
                             determineTypes ? determineAtomType(l) : atomTypeByName(l->atomType()->name(), l->element());
                         if (!optTypeL)
