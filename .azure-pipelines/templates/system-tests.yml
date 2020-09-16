@@ -23,6 +23,7 @@ jobs:
           chmod u+x ./go
           ls
           chmod u+x ./dissolve
+          rm ./dissolve
           ./dissolve
           ./go -a -s ./dissolve
         displayName: 'Run Serial System Tests'
