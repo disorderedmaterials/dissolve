@@ -22,7 +22,7 @@ jobs:
           cd $(System.ArtifactsDirectory)/linux-tests-serial
           chmod u+x ./go ./dissolve
           ls -al
-          ./go -a -s ./dissolve
+          ./go -a -s dissolve
         displayName: 'Run Serial System Tests'
       - bash: |
           mkdir test-output
