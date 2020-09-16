@@ -173,22 +173,22 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
         std::shared_ptr<const Molecule> mol = i->molecule();
 
         // Calculate forces from SpeciesBond terms
-        for (const auto *bond : spAtom->bonds())
-            kernel.forces(i, *bond, mol->atom(bond->indexI()), mol->atom(bond->indexJ()));
+        for (const SpeciesBond &bond : spAtom->bonds())
+            kernel.forces(i, bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()));
 
         // Calculate forces from SpeciesAngle terms
-        for (const auto *angle : spAtom->angles())
-            kernel.forces(i, *angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()), mol->atom(angle->indexK()));
+        for (const SpeciesAngle &angle : spAtom->angles())
+            kernel.forces(i, angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()), mol->atom(angle.indexK()));
 
         // Calculate forces from SpeciesTorsion terms
-        for (const auto *torsion : spAtom->torsions())
-            kernel.forces(i, *torsion, mol->atom(torsion->indexI()), mol->atom(torsion->indexJ()), mol->atom(torsion->indexK()),
-                          mol->atom(torsion->indexL()));
+        for (const SpeciesTorsion &torsion : spAtom->torsions())
+            kernel.forces(i, torsion, mol->atom(torsion.indexI()), mol->atom(torsion.indexJ()), mol->atom(torsion.indexK()),
+                          mol->atom(torsion.indexL()));
 
         // Calculate forces from SpeciesImproper terms
-        for (const auto *improper : spAtom->impropers())
-            kernel.forces(i, *improper, mol->atom(improper->indexI()), mol->atom(improper->indexJ()),
-                          mol->atom(improper->indexK()), mol->atom(improper->indexL()));
+        for (const SpeciesImproper &improper : spAtom->impropers())
+            kernel.forces(i, improper, mol->atom(improper.indexI()), mol->atom(improper.indexJ()), mol->atom(improper.indexK()),
+                          mol->atom(improper.indexL()));
     }
 }
 

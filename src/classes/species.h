@@ -113,7 +113,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Toggle selection state of specified atom
     void toggleAtomSelection(SpeciesAtom *i);
     // Select atoms along any path from the specified one, ignoring the bond(s) provided
-    void selectFromAtom(SpeciesAtom *i, SpeciesBond *exclude, SpeciesBond *excludeToo = NULL);
+    void selectFromAtom(SpeciesAtom *i, SpeciesBond &exclude, OptionalReferenceWrapper<SpeciesBond> excludeToo = std::nullopt);
     // Return current atom selection
     const RefList<SpeciesAtom> &selectedAtoms() const;
     // Return nth selected atom

@@ -23,6 +23,7 @@
 
 #include "templates/list.h"
 #include "templates/listitem.h"
+#include "templates/optionalref.h"
 #include "templates/orderedpointerdataarray.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"
@@ -106,61 +107,61 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
      */
     private:
     // List of bonds which this atom participates in
-    std::vector<SpeciesBond *> bonds_;
+    std::vector<std::reference_wrapper<SpeciesBond>> bonds_;
     // List of angles which this atom participates in
-    std::vector<SpeciesAngle *> angles_;
+    std::vector<std::reference_wrapper<SpeciesAngle>> angles_;
     // List of torsions which this atom participates in
-    std::vector<SpeciesTorsion *> torsions_;
+    std::vector<std::reference_wrapper<SpeciesTorsion>> torsions_;
     // List of torsions which this atom participates in
-    std::vector<SpeciesImproper *> impropers_;
+    std::vector<std::reference_wrapper<SpeciesImproper>> impropers_;
     // Ordered list of Atoms with scaled or excluded interactions
     OrderedPointerDataArray<SpeciesAtom, double> exclusions_;
 
     public:
     // Add bond reference
-    void addBond(SpeciesBond *b);
+    void addBond(SpeciesBond &b);
     // Remove bond reference
-    void removeBond(SpeciesBond *b);
+    void removeBond(SpeciesBond &b);
     // Clear all bond references
     void clearBonds();
     // Return number of bonds
     int nBonds() const;
     // Return specified bond
-    SpeciesBond *bond(int index);
+    SpeciesBond &bond(int index);
     // Return bonds list
-    const std::vector<SpeciesBond *> &bonds() const;
+    const std::vector<std::reference_wrapper<SpeciesBond>> &bonds() const;
     // Return whether bond to specified atom exists
-    SpeciesBond *hasBond(SpeciesAtom *j);
+    OptionalReferenceWrapper<SpeciesBond> hasBond(SpeciesAtom *j);
     // Add specified Angle to Atom
-    void addAngle(SpeciesAngle *angle);
+    void addAngle(SpeciesAngle &angle);
     // Remove angle reference
-    void removeAngle(SpeciesAngle *a);
+    void removeAngle(SpeciesAngle &a);
     // Return the number of SpeciesAngles in which the Atom is involved
     int nAngles() const;
     // Return specified angle
-    SpeciesAngle *angle(int index);
+    SpeciesAngle &angle(int index);
     // Return array of Angles in which the Atom is involved
-    const std::vector<SpeciesAngle *> &angles() const;
+    const std::vector<std::reference_wrapper<SpeciesAngle>> &angles() const;
     // Add specified SpeciesTorsion to Atom
-    void addTorsion(SpeciesTorsion *torsion, double scaling14);
+    void addTorsion(SpeciesTorsion &torsion, double scaling14);
     // Remove torsion reference
-    void removeTorsion(SpeciesTorsion *t);
+    void removeTorsion(SpeciesTorsion &t);
     // Return the number of SpeciesTorsions in which the Atom is involved
     int nTorsions() const;
     // Return specified torsion
-    SpeciesTorsion *torsion(int index);
+    SpeciesTorsion &torsion(int index);
     // Return array of Torsions in which the Atom is involved
-    const std::vector<SpeciesTorsion *> &torsions() const;
+    const std::vector<std::reference_wrapper<SpeciesTorsion>> &torsions() const;
     // Add specified SpeciesImproper to Atom
-    void addImproper(SpeciesImproper *improper);
+    void addImproper(SpeciesImproper &improper);
     // Remove improper reference
-    void removeImproper(SpeciesImproper *t);
+    void removeImproper(SpeciesImproper &t);
     // Return the number of SpeciesImpropers in which the Atom is involved
     int nImpropers() const;
     // Return specified improper
-    SpeciesImproper *improper(int index);
+    SpeciesImproper &improper(int index);
     // Return array of Impropers in which the Atom is involved
-    const std::vector<SpeciesImproper *> &impropers() const;
+    const std::vector<std::reference_wrapper<SpeciesImproper>> &impropers() const;
     // Return scaling factor to employ with specified Atom
     double scaling(const SpeciesAtom *j) const;
 

@@ -477,7 +477,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
             for (int indexJ = 0; indexJ < i->nBonds() - 2; ++indexJ)
             {
                 // Get SpeciesAtom 'j'
-                SpeciesAtom *j = i->bond(indexJ)->partner(i);
+                auto *j = i->bond(indexJ).partner(i);
                 auto optTypeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
                 if (!optTypeJ)
                     return Messenger::error("Couldn't locate object for atom type named '{}'.\n", j->atomType()->name());
@@ -488,7 +488,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                 for (int indexK = indexJ + 1; indexK < i->nBonds() - 1; ++indexK)
                 {
                     // Get SpeciesAtom 'k'
-                    SpeciesAtom *k = i->bond(indexK)->partner(i);
+                    auto *k = i->bond(indexK).partner(i);
                     auto optTypeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->element());
                     if (!optTypeK)
                         return Messenger::error("Couldn't locate object for atom type named '{}'.\n", k->atomType()->name());
@@ -499,7 +499,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                     for (int indexL = indexK + 1; indexL < i->nBonds(); ++indexL)
                     {
                         // Get SpeciesAtom 'l'
-                        SpeciesAtom *l = i->bond(indexL)->partner(i);
+                        auto *l = i->bond(indexL).partner(i);
                         auto optTypeL =
                             determineTypes ? determineAtomType(l) : atomTypeByName(l->atomType()->name(), l->element());
                         if (!optTypeL)
@@ -566,8 +566,8 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
             break;
         // For the remaining types, take averages of bond angles about the atom
         case (2):
-            h = i->bond(0)->partner(i);
-            j = i->bond(1)->partner(i);
+            h = i->bond(0).partner(i);
+            j = i->bond(1).partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             if (angle > 150.0)
                 result = Forcefield::LinearGeometry;
@@ -593,15 +593,15 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
             // 			else if ((largest > 115.0) && (largest < 125.0)) result =
             // Forcefield::TrigPlanarGeometry; 			else if ((largest < 115.0) && (largest > 100.0))
             // result = Forcefield::TetrahedralGeometry; Get largest of the three angles around the central atom
-            h = i->bond(0)->partner(i);
-            j = i->bond(1)->partner(i);
+            h = i->bond(0).partner(i);
+            j = i->bond(1).partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             largest = angle;
-            j = i->bond(2)->partner(i);
+            j = i->bond(2).partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             if (angle > largest)
                 largest = angle;
-            h = i->bond(1)->partner(i);
+            h = i->bond(1).partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             if (angle > largest)
                 largest = angle;
@@ -620,10 +620,10 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
             angle = 0.0;
             for (int n = 0; n < i->nBonds(); ++n)
             {
-                h = i->bond(n)->partner(i);
+                h = i->bond(n).partner(i);
                 for (int m = n + 1; m < i->nBonds(); ++m)
                 {
-                    j = i->bond(m)->partner(i);
+                    j = i->bond(m).partner(i);
                     angle += NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
                 }
             }
@@ -648,9 +648,9 @@ bool Forcefield::isBondPattern(const SpeciesAtom *i, const int nSingle, const in
                                const int nQuadruple, const int nAromatic) const
 {
     auto actualNSingle = 0, actualNDouble = 0, actualNTriple = 0, actualNQuadruple = 0, actualNAromatic = 0;
-    for (const auto *bond : i->bonds())
+    for (const SpeciesBond &bond : i->bonds())
     {
-        switch (bond->bondType())
+        switch (bond.bondType())
         {
             case (SpeciesBond::SingleBond):
                 if (nSingle == actualNSingle)
@@ -701,11 +701,8 @@ bool Forcefield::isBondPattern(const SpeciesAtom *i, const int nSingle, const in
 // Return whether the specified atom is bound to a specific element (and count thereof)
 bool Forcefield::isBoundTo(const SpeciesAtom *i, Element *element, const int count, bool allowMoreThanCount) const
 {
-    auto found = 0;
-
-    for (const auto *bond : i->bonds())
-        if (bond->partner(i)->element() == element)
-            ++found;
+    auto found = std::count_if(i->bonds().begin(), i->bonds().end(),
+                               [i, element](const SpeciesBond &bond) { return bond.partner(i)->element() == element; });
 
     return (found < count ? false : (found == count ? true : allowMoreThanCount));
 }
@@ -725,10 +722,10 @@ int Forcefield::guessOxidationState(const SpeciesAtom *i) const
     // (OS == 0)
     auto nSameElement = 0;
 
-    const std::vector<SpeciesBond *> &bonds = i->bonds();
-    for (const auto *bond : bonds)
+    const auto &bonds = i->bonds();
+    for (const SpeciesBond &bond : bonds)
     {
-        Element *element = bond->partner(i)->element();
+        Element *element = bond.partner(i)->element();
         switch (element->Z())
         {
             // Group 1A - Alkali earth metals (includes Hydrogen)
@@ -752,7 +749,7 @@ int Forcefield::guessOxidationState(const SpeciesAtom *i) const
                 break;
             // Oxygen
             case (ELEMENT_O):
-                if (bond->bondType() == SpeciesBond::DoubleBond)
+                if (bond.bondType() == SpeciesBond::DoubleBond)
                     osBound -= 2;
                 else
                     osBound -= 1;

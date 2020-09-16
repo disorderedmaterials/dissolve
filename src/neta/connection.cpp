@@ -140,9 +140,9 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
 {
     // Get directly connected atoms about 'i', excluding any that have already been matched
     RefDataList<const SpeciesAtom, int> neighbours;
-    for (const auto *bond : i->bonds())
+    for (const SpeciesBond &bond : i->bonds())
     {
-        const auto *partner = bond->partner(i);
+        const auto *partner = bond.partner(i);
         if (partner == matchPath.firstItem())
         {
             // We may allow the path's root atom to be matched again, if the allowRootMatch_ is set...
@@ -218,10 +218,8 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
         if (nHydrogensValue_ >= 0)
         {
             // Count number of hydrogens attached to this atom
-            auto nH = 0;
-            for (const auto *bond : j->bonds())
-                if (bond->partner(j)->element()->Z() == ELEMENT_H)
-                    ++nH;
+            auto nH = std::count_if(j->bonds().begin(), j->bonds().end(),
+                                    [j](const SpeciesBond &bond) { return bond.partner(j)->element()->Z() == ELEMENT_H; });
             if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_))
                 continue;
 
