@@ -499,7 +499,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                     for (int indexL = indexK + 1; indexL < i->nBonds(); ++indexL)
                     {
                         // Get SpeciesAtom 'l'
-                        SpeciesAtom *l = i->bond(indexL).partner(i);
+                        auto *l = i->bond(indexL).partner(i);
                         auto optTypeL =
                             determineTypes ? determineAtomType(l) : atomTypeByName(l->atomType()->name(), l->element());
                         if (!optTypeL)
