@@ -4,6 +4,7 @@ stages:
 
     jobs:
       - job: 'cpp_checks'
+        condition: eq(1, 2)
         displayName: 'C++ Checks'
         pool:
           vmImage: 'ubuntu-18.04'
