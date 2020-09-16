@@ -39,6 +39,11 @@ stages:
               PathtoPublish: "tests/"
               ArtifactName: 'linux-tests-serial'
             displayName: 'Publish Serial Test Artifacts'
+          - task: PublishBuildArtifacts@1
+            inputs:
+              PathtoPublish: "/nix"
+              ArtifactName: 'nix-pool'
+            displayName: 'Publish Serial Test Artifacts'
       - job: 'linux_parallel'
         displayName: 'Build Linux (Parallel, ubuntu-18.04)'
         condition: eq(1, 2)

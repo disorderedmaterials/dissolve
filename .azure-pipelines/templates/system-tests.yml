@@ -17,8 +17,16 @@ jobs:
           downloadType: 'single'
           artifactName: 'linux-tests-serial'
         displayName: 'Download Serial Test Artifacts'
+      - task: DownloadBuildArtifacts@0
+        inputs:
+          buildType: 'current'
+          specificBuildWithTriggering: true
+          downloadType: 'single'
+          artifactName: 'nix-pool'
+        displayName: 'Download Nix Pool Artifacts'
       - bash: |
           set -ex
+          sudo ln -s $(System.ArtifactsDirectory)/nix-pool /nix
           cd $(System.ArtifactsDirectory)/linux-tests-serial
           chmod u+x ./go ./dissolve
           ls -al
