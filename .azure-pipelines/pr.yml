@@ -33,6 +33,7 @@ stages:
               qtver: 513
           - bash: |
               cp nix/result/bin/dissolve tests/dissolve
+              source ~/.nix-profile/etc/profile.d/nix.sh
               nix-instantiate nix/dissolve.nix | xargs nix-store -r | nix-store -q --references | tar czf tests/nix.tar.gz
             displayName: 'Copy Executable'
           - task: PublishBuildArtifacts@1
