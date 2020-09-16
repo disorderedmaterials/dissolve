@@ -471,7 +471,7 @@ void Species::generateAttachedAtomLists()
     for (auto &torsion : torsions_)
     {
         // Grab relevant Bond (if it exists)
-        OptionalReferenceWrapper<SpeciesBond> jk = torsion.j()->hasBond(torsion.k());
+        auto jk = torsion.j()->hasBond(torsion.k());
 
         // Select all Atoms attached to Atom 'j', excluding the Bond ji as a path
         clearAtomSelection();
