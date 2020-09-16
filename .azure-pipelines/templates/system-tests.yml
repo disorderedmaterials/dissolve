@@ -23,9 +23,7 @@ jobs:
           chmod u+x ./go
           ls
           chmod u+x ./dissolve
-          mkdir bin
-          mv ./dissolve bin/
-          ./bin/dissolve
+          ./dissolve
           ./go -a -s ./dissolve
         displayName: 'Run Serial System Tests'
       - bash: |
