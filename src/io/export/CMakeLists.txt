@@ -3,6 +3,7 @@ add_library(export
   data1d.cpp
   data2d.cpp
   data3d.cpp
+  forces.cpp
   pairpotential.cpp
   trajectory.cpp
 
@@ -10,6 +11,7 @@ add_library(export
   data1d.h
   data2d.h
   data3d.h
+  forces.h
   pairpotential.h
   trajectory.h
   )
