@@ -26,7 +26,7 @@ jobs:
         displayName: 'Download Nix Pool Artifacts'
       - bash: |
           set -ex
-          sudo ln -s $(System.ArtifactsDirectory)/nix-pool /nix
+          sudo tar xf -C /nix nix.tar.gz
           cd $(System.ArtifactsDirectory)/linux-tests-serial
           chmod u+x ./go ./dissolve
           ls -al
