@@ -477,7 +477,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
             for (int indexJ = 0; indexJ < i->nBonds() - 2; ++indexJ)
             {
                 // Get SpeciesAtom 'j'
-                SpeciesAtom *j = i->bond(indexJ).partner(i);
+                auto *j = i->bond(indexJ).partner(i);
                 auto optTypeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->element());
                 if (!optTypeJ)
                     return Messenger::error("Couldn't locate object for atom type named '{}'.\n", j->atomType()->name());
