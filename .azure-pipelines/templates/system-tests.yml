@@ -19,7 +19,8 @@ jobs:
         displayName: 'Download Serial Test Artifacts'
       - bash: |
           set -ex
-          sudo tar xf -C /nix nix.tar.gz
+          sudo tar xf -C / nix.tar.gz
+          ls /
           cd $(System.ArtifactsDirectory)/linux-tests-serial
           chmod u+x ./go ./dissolve
           ls -al
