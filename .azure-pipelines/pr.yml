@@ -36,17 +36,16 @@ stages:
             displayName: 'Publish Serial Test Artifacts'
       - job: 'linux_parallel'
         displayName: 'Build Linux (Parallel, ubuntu-18.04)'
-        condition: eq(1, 2)
         pool:
           vmImage: 'ubuntu-18.04' 
         steps:
           - checkout: self
             fetchDepth: 1
           - template: templates/set-short-hash.yml
-          - template: templates/build-linux-parallel.yml
-          - bash: |
-              cp build-parallel/bin/dissolve-mpi tests/
-            displayName: 'Copy Executable'
+          - template: templates/build-serial-gui.yml
+            parameters:
+              extraflags: '-DCHECKS:bool=true'
+              parallel: true
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "tests/"
