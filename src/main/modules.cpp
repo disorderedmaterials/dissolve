@@ -34,6 +34,7 @@
 #include "modules/sanitycheck/sanitycheck.h"
 #include "modules/sq/sq.h"
 #include "modules/test/test.h"
+#include "modules/xraysq/xraysq.h"
 
 /*
  * Module Registration
@@ -130,6 +131,8 @@ bool Dissolve::registerMasterModules()
     if (!registerMasterModule(new SQModule))
         return false;
     if (!registerMasterModule(new TestModule))
+        return false;
+    if (!registerMasterModule(new XRaySQModule))
         return false;
 
     Messenger::print("Module Information ({} available):\n", masterModules_.nItems());
