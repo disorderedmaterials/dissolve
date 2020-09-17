@@ -38,8 +38,8 @@ pkgs.stdenv.mkDerivation {
   src = pkgs.fetchFromGitHub {
     owner = "projectdissolve";
     repo = "dissolve";
-    rev = "d58b5d1118afc817d22c04ad4319e0b99ed7dbb2";
-    sha256 = "0dwdblnaim9kgrjvvvyz9a8g27izwm6ybcsfa2rc90qg2ys80163";
+    rev = "02e868d484c578a63efd1d47fbde973e8b4abe19";
+    sha256 = "0kr0m3bjq7yjlmqyllh2xdgivl6cdrzgqcq9mj0q4zmvxvw30kk3";
   };
   installPhase = "cp -r .$prefix $out";
   meta = {
