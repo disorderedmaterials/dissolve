@@ -42,7 +42,7 @@ stages:
           - checkout: self
             fetchDepth: 1
           - template: templates/set-short-hash.yml
-          - template: templates/build-serial-gui.yml
+          - template: templates/build-linux-serial-gui.yml
             parameters:
               extraflags: '-DCHECKS:bool=true'
               parallel: true
