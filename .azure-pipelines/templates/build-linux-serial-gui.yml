@@ -23,4 +23,5 @@ steps:
       bash ./nix_build.sh
       cd ..
       nix-instantiate nix/dissolve.nix | xargs nix-store -r | xargs nix-store -q --references | xargs tar czf tests/nix.tar.gz
+      cp nix/result/bin/dissolve* tests/
     displayName: 'Build'
