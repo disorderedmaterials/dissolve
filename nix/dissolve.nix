@@ -5,6 +5,15 @@
 
 let
   cmakeBool = x: if x then "ON" else "OFF";
+    gitignoreSrc = pkgs.fetchFromGitHub {
+    owner = "hercules-ci";
+    repo = "gitignore";
+    # put the latest commit sha of gitignore Nix library here:
+    rev = "c4662e662462e7bf3c2a968483478a665d00e717";
+    # use what nix suggests in the mismatch message here:
+    sha256 = "sha256:0000000000000000000000000000000000000000000000000000";
+    };
+    inherit (import gitignoreSrc { inherit (pkgs) lib; }) gitignoreSource;
 in
 
 assert pkgs.lib.asserts.assertMsg (!(gui && parallel)) "The GUI cannot be built in parallel mode";
@@ -35,12 +44,7 @@ pkgs.stdenv.mkDerivation {
   ];
   nativeBuildInputs = pkgs.lib.optional gui pkgs.qt5.wrapQtAppsHook;
 
-  src = pkgs.fetchFromGitHub {
-    owner = "projectdissolve";
-    repo = "dissolve";
-    rev = "02e868d484c578a63efd1d47fbde973e8b4abe19";
-    sha256 = "0kr0m3bjq7yjlmqyllh2xdgivl6cdrzgqcq9mj0q4zmvxvw30kk3";
-  };
+  src = builtins.path { path = ./..; name = "dissolve-source";};
   installPhase = "cp -r .$prefix $out";
   meta = {
     name = "Dissolve";

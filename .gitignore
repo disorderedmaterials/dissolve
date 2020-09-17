@@ -37,3 +37,6 @@ changes
 *.restart
 *.restart.prev
 *.state
+/.dir-locals.el
+/.envrc
+/compile_commands.json
