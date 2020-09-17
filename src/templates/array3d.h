@@ -88,71 +88,29 @@ template <class A> class Array3D
     A &operator[](std::tuple<int, int, int> index)
     {
         auto [x, y, z] = index;
-#ifdef CHECKS
-        static A dummy;
-        if ((x < 0) || (x >= nX_))
-        {
-            Messenger::print("OUT_OF_RANGE - X index ({}) is out of range in Array3D::at() (nX_ = {}).\n", x, nX_);
-            return dummy;
-        }
-        if ((y < 0) || (y >= nY_))
-        {
-            Messenger::print("OUT_OF_RANGE - Y index ({}) is out of range in Array3D::at() (nY_ = {}).\n", y, nY_);
-            return dummy;
-        }
-        if ((z < 0) || (z >= nZ_))
-        {
-            Messenger::print("OUT_OF_RANGE - Z index ({}) is out of range in Array3D::at() (nZ_ = {}).\n", z, nZ_);
-            return dummy;
-        }
-#endif
+        assert(x >= 0 && x < nX_);
+        assert(y >= 0 && y < nY_);
+        assert(z >= 0 && z < nZ_);
+
         return array_[sliceOffsets_[z] + y * nX_ + x];
     }
     // Return specified element as const-reference
     const A &operator[](std::tuple<int, int, int> index) const
     {
         auto [x, y, z] = index;
-#ifdef CHECKS
-        static A dummy;
-        if ((x < 0) || (x >= nX_))
-        {
-            Messenger::print("OUT_OF_RANGE - X index ({}) is out of range in Array3D::at() (nX_ = {}).\n", x, nX_);
-            return dummy;
-        }
-        if ((y < 0) || (y >= nY_))
-        {
-            Messenger::print("OUT_OF_RANGE - Y index ({}) is out of range in Array3D::at() (nY_ = {}).\n", y, nY_);
-            return dummy;
-        }
-        if ((z < 0) || (z >= nZ_))
-        {
-            Messenger::print("OUT_OF_RANGE - Z index ({}) is out of range in Array3D::at() (nZ_ = {}).\n", z, nZ_);
-            return dummy;
-        }
-#endif
+        assert(x >= 0 && x < nX_);
+        assert(y >= 0 && y < nY_);
+        assert(z >= 0 && z < nZ_);
+
         return array_[sliceOffsets_[z] + y * nX_ + x];
     }
     // Return address of specified element
     A *ptr(int x, int y, int z)
     {
-#ifdef CHECKS
-        static A dummy;
-        if ((x < 0) || (x >= nX_))
-        {
-            Messenger::print("OUT_OF_RANGE - X index ({}) is out of range in Array3D::ptr() (nX_ = {}).\n", x, nX_);
-            return dummy;
-        }
-        if ((y < 0) || (y >= nY_))
-        {
-            Messenger::print("OUT_OF_RANGE - Y index ({}) is out of range in Array3D::ptr() (nY_ = {}).\n", y, nY_);
-            return dummy;
-        }
-        if ((z < 0) || (z >= nZ_))
-        {
-            Messenger::print("OUT_OF_RANGE - Z index ({}) is out of range in Array3D::ptr() (nZ_ = {}).\n", z, nZ_);
-            return dummy;
-        }
-#endif
+        assert(x >= 0 && x < nX_);
+        assert(y >= 0 && y < nY_);
+        assert(z >= 0 && z < nZ_);
+
         return &array_[sliceOffsets_[z] + y * nX_ + x];
     }
     // Return array size in x
@@ -177,32 +135,8 @@ template <class A> class Array3D
     typename std::vector<A>::const_iterator cend() const { return array_.cend(); }
     bool empty() const { return array_.empty(); }
     // Return linear value
-    A &linearValue(int index)
-    {
-#ifdef CHECKS
-        static A dummy;
-        if ((index < 0) || (index >= array_.size()))
-        {
-            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in Array3D::linearValue() (linearSize = {}).\n", index,
-                             array_.size());
-            return dummy;
-        }
-#endif
-        return array_[index];
-    }
-    const A &linearValue(int index) const
-    {
-#ifdef CHECKS
-        static A dummy;
-        if ((index < 0) || (index >= array_.size()))
-        {
-            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in Array3D::linearValue() (linearSize = {}).\n", index,
-                             array_.size());
-            return dummy;
-        }
-#endif
-        return array_[index];
-    }
+    A &linearValue(int index) { return array_[index]; }
+    const A &linearValue(int index) const { return array_[index]; }
 
     /*
      * Operators
@@ -325,89 +259,29 @@ template <class A> class OffsetArray3D
     A &operator[](std::tuple<int, int, int> index)
     {
         auto [x, y, z] = index;
-#ifdef CHECKS
-        static A dummy;
-        if ((x < xMin_) || (x > xMax_))
-        {
-            Messenger::print("OUT_OF_RANGE - X index ({}) is out of range in OffsetArray3D::ref() (xMin_ = {}, "
-                             "xMax_ = {}).\n",
-                             x, xMin_, xMax_);
-            return dummy;
-        }
-        if ((y < yMin_) || (y > yMax_))
-        {
-            Messenger::print("OUT_OF_RANGE - Y index ({}) is out of range in OffsetArray3D::ref() (yMin_ = {}, "
-                             "yMay_ = {}).\n",
-                             y, yMin_, yMax_);
-            return dummy;
-        }
-        if ((z < zMin_) || (z > zMax_))
-        {
-            Messenger::print("OUT_OF_RANGE - Z index ({}) is out of range in OffsetArray3D::ref() (zMin_ = {}, "
-                             "zMaz_ = {}).\n",
-                             z, zMin_, zMax_);
-            return dummy;
-        }
-#endif
+        assert(x >= xMin_ && x <= xMax_);
+        assert(y >= yMin_ && y <= yMax_);
+        assert(z >= zMin_ && z <= zMax_);
+
         return array_[sliceOffsets_[z - zMin_] + (y - yMin_) * nX_ + (x - xMin_)];
     }
     // Return specified element as const reference
     const A &operator[](std::tuple<int, int, int> index) const
     {
         auto [x, y, z] = index;
-#ifdef CHECKS
-        static A dummy;
-        if ((x < xMin_) || (x > xMax_))
-        {
-            Messenger::print("OUT_OF_RANGE - X index ({}) is out of range in OffsetArray3D::value() (xMin_ = {}, "
-                             "xMax_ = {}).\n",
-                             x, xMin_, xMax_);
-            return dummy;
-        }
-        if ((y < yMin_) || (y > yMax_))
-        {
-            Messenger::print("OUT_OF_RANGE - Y index ({}) is out of range in OffsetArray3D::value() (yMin_ = {}, "
-                             "yMay_ = {}).\n",
-                             y, yMin_, yMax_);
-            return dummy;
-        }
-        if ((z < zMin_) || (z > zMax_))
-        {
-            Messenger::print("OUT_OF_RANGE - Z index ({}) is out of range in OffsetArray3D::value() (zMin_ = {}, "
-                             "zMaz_ = {}).\n",
-                             z, zMin_, zMax_);
-            return dummy;
-        }
-#endif
+        assert(x >= xMin_ && x <= xMax_);
+        assert(y >= yMin_ && y <= yMax_);
+        assert(z >= zMin_ && z <= zMax_);
+
         return array_[sliceOffsets_[z - zMin_] + (y - yMin_) * nX_ + (x - xMin_)];
     }
     // Return address of specified element
     A *pointerAt(int x, int y, int z)
     {
-#ifdef CHECKS
-        static A dummy;
-        if ((x < xMin_) || (x > xMax_))
-        {
-            Messenger::print("OUT_OF_RANGE - X index ({}) is out of range in OffsetArray3D::ptr() (xMin_ = {}, "
-                             "xMax_ = {}).\n",
-                             x, xMin_, xMax_);
-            return dummy;
-        }
-        if ((y < yMin_) || (y > yMax_))
-        {
-            Messenger::print("OUT_OF_RANGE - Y index ({}) is out of range in OffsetArray3D::ptr() (yMin_ = {}, "
-                             "yMay_ = {}).\n",
-                             y, yMin_, yMax_);
-            return dummy;
-        }
-        if ((z < zMin_) || (z > zMax_))
-        {
-            Messenger::print("OUT_OF_RANGE - Z index ({}) is out of range in OffsetArray3D::ptr() (zMin_ = {}, "
-                             "zMaz_ = {}).\n",
-                             z, zMin_, zMax_);
-            return dummy;
-        }
-#endif
+        assert(x >= xMin_ && x <= xMax_);
+        assert(y >= yMin_ && y <= yMax_);
+        assert(z >= zMin_ && z <= zMax_);
+
         return &array_[sliceOffsets_[z - zMin_] + (y - yMin_) * nX_ + (x - xMin_)];
     }
     // Return array size in x
@@ -425,34 +299,8 @@ template <class A> class OffsetArray3D
     // End iterator
     typename std::vector<A>::iterator end() { return array_.end(); }
     // Return linear value
-    A &linearValue(int index)
-    {
-#ifdef CHECKS
-        static A dummy;
-        if ((index < 0) || (index >= array_.size()))
-        {
-            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in OffsetArray3D::linearValue() "
-                             "(linearSize = {}).\n",
-                             index, array_.size());
-            return dummy;
-        }
-#endif
-        return array_[index];
-    }
-    const A &linearValue(int index) const
-    {
-#ifdef CHECKS
-        static A dummy;
-        if ((index < 0) || (index >= array_.size()))
-        {
-            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in OffsetArray3D::linearValue() "
-                             "(linearSize = {}).\n",
-                             index, array_.size());
-            return dummy;
-        }
-#endif
-        return array_[index];
-    }
+    A &linearValue(int index) { return array_[index]; }
+    const A &linearValue(int index) const { return array_[index]; }
 
     /*
      * Operators

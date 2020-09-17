@@ -71,10 +71,7 @@ void SpeciesSite::removeOriginAtom(SpeciesAtom *originAtom)
 // Add origin atom from index
 bool SpeciesSite::addOriginAtom(int atomIndex)
 {
-#ifdef CHECKS
-    if (!parent_)
-        return Messenger::error("Tried to add an origin atom by index to a SpeciesSite, but no parent Species is set.\n");
-#endif
+    assert(parent_);
     return addOriginAtom(parent_->atom(atomIndex));
 }
 
@@ -139,10 +136,7 @@ bool SpeciesSite::addXAxisAtom(SpeciesAtom *xAxisAtom)
 // Add x-axis atom from index
 bool SpeciesSite::addXAxisAtom(int atomIndex)
 {
-#ifdef CHECKS
-    if (!parent_)
-        return Messenger::error("Tried to add an x-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
-#endif
+    assert(parent_);
     return addXAxisAtom(parent_->atom(atomIndex));
 }
 
@@ -209,10 +203,7 @@ bool SpeciesSite::addYAxisAtom(SpeciesAtom *yAxisAtom)
 // Add y-axis atom from index
 bool SpeciesSite::addYAxisAtom(int atomIndex)
 {
-#ifdef CHECKS
-    if (!parent_)
-        return Messenger::error("Tried to add a y-axis atom by index to a SpeciesSite, but no parent Species is set.\n");
-#endif
+    assert(parent_);
     return addYAxisAtom(parent_->atom(atomIndex));
 }
 

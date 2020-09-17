@@ -66,13 +66,7 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
         if (molecule->species() != targetSpecies)
             continue;
 
-            // Calculate origin
-#ifdef CHECKS
-        for (auto i = 0; i < originAtomIndices.nItems(); ++i)
-            if ((originAtomIndices[i] < 0) || (originAtomIndices[i] >= molecule->nAtoms()))
-                return Messenger::error("Origin atom index {} is out of range for molecule (contains {} atoms).\n",
-                                        originAtomIndices[i], molecule->nAtoms());
-#endif
+        // Calculate origin
         if (speciesSite->originMassWeighted())
         {
             double mass = AtomicMass::mass(molecule->atom(originAtomIndices.firstValue())->speciesAtom()->Z());
@@ -100,16 +94,6 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
         // Calculate axes and store data
         if (sitesHaveOrientation_)
         {
-#ifdef CHECKS
-            for (auto i = 0; i < xAxisAtomIndices.nItems(); ++i)
-                if ((xAxisAtomIndices[i] < 0) || (xAxisAtomIndices[i] >= molecule->nAtoms()))
-                    return Messenger::error("X-axis atom index {} is out of range for molecule (contains {} atoms).\n",
-                                            xAxisAtomIndices[i], molecule->nAtoms());
-            for (auto i = 0; i < yAxisAtomIndices.nItems(); ++i)
-                if ((yAxisAtomIndices[i] < 0) || (yAxisAtomIndices[i] >= molecule->nAtoms()))
-                    return Messenger::error("Y-axis atom index {} is out of range for molecule (contains {} atoms).\n",
-                                            yAxisAtomIndices[i], molecule->nAtoms());
-#endif
             // Get average position of supplied x-axis atoms
             v = molecule->atom(xAxisAtomIndices.firstValue())->r();
             for (auto m = 1; m < xAxisAtomIndices.nItems(); ++m)

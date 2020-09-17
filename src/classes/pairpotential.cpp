@@ -99,16 +99,7 @@ PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme() 
 void PairPotential::setData1DNames()
 {
     // Check for NULL pointers
-    if (atomTypeI_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL AtomType pointer (atomTypeI_) found in PairPotential::setData1DNames().\n");
-        return;
-    }
-    if (atomTypeJ_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL AtomType pointer (atomTypeJ_) found in PairPotential::setData1DNames().\n");
-        return;
-    }
+    assert(atomTypeI_ && atomTypeJ_);
 
     uFull_.setName(fmt::format("{}-{}", atomTypeI_->name(), atomTypeJ_->name()));
     uFull_.setObjectTag(fmt::format("PairPotential//{}-{}//Full", atomTypeI_->name(), atomTypeJ_->name()));
@@ -200,24 +191,14 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
 // Return first AtomType name
 std::string_view PairPotential::atomTypeNameI() const
 {
-    // Check for NULL pointers
-    if (atomTypeI_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL AtomType pointer found in PairPotential::atomTypeNameI().\n");
-        return "NULL";
-    }
+    assert(atomTypeI_);
     return atomTypeI_->name();
 }
 
 // Return second AtomType name
 std::string_view PairPotential::atomTypeNameJ() const
 {
-    // Check for NULL pointers
-    if (atomTypeJ_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL AtomType pointer found in PairPotential::atomTypeNameJ().\n");
-        return "NULL";
-    }
+    assert(atomTypeJ_);
     return atomTypeJ_->name();
 }
 
@@ -481,16 +462,8 @@ void PairPotential::calculateUOriginal(bool recalculateUFull)
 // Return potential at specified r
 double PairPotential::energy(double r)
 {
-    // Perform some checks
-#ifdef CHECKS
-    if (int(r * rDelta_) < 0)
-    {
-        Messenger::print("BAD_VALUE - Bin value of r is negative ({}) in PairPotential::energy.\n", int(r * rDelta_));
-        return 0.0;
-    }
-#endif
+    assert(r >= 0);
 
-    // Return interpolated value
     return uFullInterpolation_.y(r, r * rDelta_);
 }
 
@@ -533,16 +506,8 @@ double PairPotential::analyticCoulombEnergy(double qiqj, double r, PairPotential
 // Return derivative at specified r
 double PairPotential::force(double r)
 {
-    // Perform some checks
-#ifdef CHECKS
-    if (int(r * rDelta_) < 0)
-    {
-        Messenger::print("BAD_VALUE - Bin value of r is negative ({}) in PairPotential::force.\n", int(r * rDelta_));
-        return 0.0;
-    }
-#endif
+    assert(r >= 0);
 
-    // Return interpolated value
     return dUFullInterpolation_.y(r, r * rDelta_);
 }
 

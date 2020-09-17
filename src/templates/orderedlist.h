@@ -366,13 +366,7 @@ template <class T> void OrderedList<T>::remove(int objectIndex)
 {
     // Get item for specified objectIndex
     OrderedListItem<T> *item = contains(objectIndex);
-#ifdef CHECKS
-    if (item == nullptr)
-    {
-        Messenger::error("Specified objectIndex ({}) does not exist in this OrderedList.\n", objectIndex);
-        return;
-    }
-#endif
+    assert(item);
     remove(item);
 }
 
@@ -392,13 +386,8 @@ template <class T> void OrderedList<T>::move(int objectIndex, OrderedList<T> &ta
 {
     // Get item for specified objectIndex
     OrderedListItem<T> *item = contains(objectIndex);
-#ifdef CHECKS
-    if (item == nullptr)
-    {
-        Messenger::error("Specified objectIndex ({}) does not exist in this OrderedList.\n", objectIndex);
-        return;
-    }
-#endif
+    assert(item);
+
     // Add to target list, then delete from this list
     targetList.add(item->object());
     remove(item);
@@ -549,12 +538,7 @@ template <class T> void OrderedList<T>::operator=(const OrderedList<T> &other)
 
 template <class T> OrderedListItem<T> *OrderedList<T>::operator[](int index)
 {
-#ifdef CHECKS
-    if ((index < 0) || (index >= nItems_))
-    {
-        Messenger::error("LIST_OPERATOR[] - Array index ({}) out of bounds ({} items in List) >>>>\n", index, nItems_);
-        return nullptr;
-    }
-#endif
+    assert(index >= 0 && index < nItems_);
+
     return items()[index];
 }

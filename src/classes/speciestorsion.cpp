@@ -148,16 +148,8 @@ void SpeciesTorsion::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Spec
     j_ = j;
     k_ = k;
     l_ = l;
-#ifdef CHECKS
-    if (i_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* i in SpeciesTorsion::set().\n");
-    if (j_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* j in SpeciesTorsion::set().\n");
-    if (k_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesTorsion::set().\n");
-    if (l_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* l in SpeciesTorsion::set().\n");
-#endif
+    assert(i_ && j_ && k_ && l_);
+
     if (i_)
         i_->addTorsion(*this, 0.5);
     if (j_)
@@ -183,52 +175,28 @@ SpeciesAtom *SpeciesTorsion::l() const { return l_; }
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesTorsion::indexI() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesTorsion::indexI(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(i_);
     return i_->index();
 }
 
 // Return index (in parent Species) of second (central) SpeciesAtom
 int SpeciesTorsion::indexJ() const
 {
-#ifdef CHECKS
-    if (j_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesTorsion::indexJ(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(j_);
     return j_->index();
 }
 
 // Return index (in parent Species) of third SpeciesAtom
 int SpeciesTorsion::indexK() const
 {
-#ifdef CHECKS
-    if (k_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'k' found in SpeciesTorsion::indexK(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(k_);
     return k_->index();
 }
 
 // Return index (in parent Species) of fourth SpeciesAtom
 int SpeciesTorsion::indexL() const
 {
-#ifdef CHECKS
-    if (l_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'l' found in SpeciesTorsion::indexL(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(l_);
     return l_->index();
 }
 
@@ -276,13 +244,7 @@ bool SpeciesTorsion::matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Spe
 // Return whether all atoms in the interaction are currently selected
 bool SpeciesTorsion::isSelected() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr || j_ == nullptr || k_ == nullptr || l_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesTorsion::isSelected(). Returning false...\n");
-        return false;
-    }
-#endif
+    assert(i_ && j_ && k_ && l_);
     return (i_->isSelected() && j_->isSelected() && k_->isSelected() && l_->isSelected());
 }
 

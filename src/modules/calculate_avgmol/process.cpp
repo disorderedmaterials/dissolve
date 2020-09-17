@@ -103,13 +103,7 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
     for (auto n = 0; n < stack->nSites(); ++n)
     {
         const Site &s = stack->site(n);
-#ifdef CHECKS
-        if (s.molecule()->species() != targetSpecies_)
-        {
-            Messenger::error("Site species doesn't match target species.\n");
-            continue;
-        }
-#endif
+        assert(s.molecule()->species() == targetSpecies_);
 
         // Get axes and take inverse
         Matrix3 inverseAxes = s.axes();

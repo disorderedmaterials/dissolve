@@ -284,13 +284,8 @@ template <class T, class D> class OrderedPointerDataList
     // Add a new item reference to the list
     void add(T *object, D data = D())
     {
-#ifdef CHECKS
-        if (object == nullptr)
-        {
-            Messenger::error("NULL_POINTER - nullptr passed to OrderedPointerDataList<T,D>::add().\n");
-            return;
-        }
-#endif
+        assert(object);
+
         // Add it in the correct place in the list
         OrderedPointerDataListItem<T, D> *nextLargest = nextHighest(object);
         insertBefore(object, nextLargest)->setData(data);
@@ -298,13 +293,8 @@ template <class T, class D> class OrderedPointerDataList
     // Add a new item reference to the list, unless it is already there
     void addExclusive(T *object, D data = D())
     {
-#ifdef CHECKS
-        if (object == nullptr)
-        {
-            Messenger::error("NULL_POINTER - nullptr passed to OrderedPointerDataList<T,D>::add().\n");
-            return;
-        }
-#endif
+        assert(object);
+
         // Seek the next highest object, checking to see if we find the specified index
         // TODO This can be made much faster - binary chop?
         OrderedPointerDataListItem<T, D> *nextLargest = listHead_;
@@ -322,13 +312,8 @@ template <class T, class D> class OrderedPointerDataList
     // Add a new item reference to the end of the list (with checks)
     void addAtEnd(T *object, D data = D())
     {
-#ifdef CHECKS
-        if (object == nullptr)
-        {
-            Messenger::error("NULL_POINTER - nullptr passed to OrderedPointerDataList<T,D>::addAtEnd().\n");
-            return;
-        }
-#endif
+        assert(object);
+
         // Add it directly to the end of the list, provided this adheres to the current order
         // Check object index of last item in list
         if (listTail_ == nullptr)
@@ -502,13 +487,8 @@ template <class T, class D> class OrderedPointerDataList
     }
     OrderedPointerDataListItem<T, D> *operator[](int index)
     {
-#ifdef CHECKS
-        if ((index < 0) || (index >= nItems_))
-        {
-            Messenger::error("LIST_OPERATOR[] - Array index ({}) out of bounds ({} items in List) >>>>\n", index, nItems_);
-            return nullptr;
-        }
-#endif
+        assert(index >= 0 && index < nItems_);
+
         return items()[index];
     }
 };

@@ -42,16 +42,10 @@ int CalculateAngleProcedureNode::dimensionality() const { return 1; }
 ProcedureNode::NodeExecutionResult CalculateAngleProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
                                                                         std::string_view prefix, GenericList &targetList)
 {
-#ifdef CHECKS
-    for (auto n = 0; n < nSitesRequired(); ++n)
-    {
-        if (sites_[n]->currentSite() == nullptr)
-        {
-            Messenger::error("Observable {} has no current site.\n", n);
-            return ProcedureNode::Failure;
-        }
-    }
-#endif
+    assert(sites_[0] && sites_[0]->currentSite());
+    assert(sites_[1] && sites_[1]->currentSite());
+    assert(sites_[2] && sites_[2]->currentSite());
+
     // Determine the value of the observable
     value_.x = cfg->box()->angleInDegrees(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin(),
                                           sites_[2]->currentSite()->origin());

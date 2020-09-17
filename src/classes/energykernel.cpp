@@ -52,18 +52,8 @@ double EnergyKernel::energyWithMim(const std::shared_ptr<Atom> i, const std::sha
 // Return PairPotential energy between atoms (provided as pointers)
 double EnergyKernel::energy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, bool applyMim, bool excludeIgeJ)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr (i) passed to EnergyKernel::energy(Atom,Atom,bool,bool).\n");
-        return 0.0;
-    }
-    if (j == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr (j) passed to EnergyKernel::energy(Atom,Atom,bool,bool).\n");
-        return 0.0;
-    }
-#endif
+    assert(i && j);
+
     // If Atoms are the same, we refuse to calculate
     if (i == j)
         return 0.0;
@@ -82,19 +72,8 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const std::shared_ptr
 double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, bool excludeIgeJ, bool interMolecular,
                             ProcessPool::DivisionStrategy strategy, bool performSum)
 {
-#ifdef CHECKS
-    if (centralCell == nullptr)
-    {
-        Messenger::error(
-            "NULL_POINTER - nullptr (central cell) pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
-        return 0.0;
-    }
-    if (otherCell == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr (other cell) pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
-        return 0.0;
-    }
-#endif
+    assert(centralCell && otherCell);
+
     double totalEnergy = 0.0;
     auto &centralAtoms = centralCell->atoms();
     auto &otherAtoms = otherCell->atoms();
@@ -280,18 +259,8 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
 double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy,
                             bool performSum)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL atom pointer passed to EnergyKernel::energy(Atom,Cell).\n");
-        return 0.0;
-    }
-    if (cell == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr passed to EnergyKernel::energy(Atom,Cell).\n");
-        return 0.0;
-    }
-#endif
+    assert(i && cell);
+
     double totalEnergy = 0.0;
     std::shared_ptr<Atom> jj;
     double rSq, scale;
@@ -516,13 +485,8 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
 // Return PairPotential energy of Atom with world
 double EnergyKernel::energy(const std::shared_ptr<Atom> i, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr passed to EnergyKernel::energy(Atom,ParallelStyle).\n");
-        return 0.0;
-    }
-#endif
+    assert(i);
+
     Cell *cellI = i->cell();
 
     // This Atom with its own Cell
@@ -749,20 +713,11 @@ double EnergyKernel::energy(const SpeciesImproper &imp)
 // Return intramolecular energy for the supplied Atom
 double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, const std::shared_ptr<Atom> i)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::error("NULL Atom given to EnergyKernel::intraEnergy().\n");
-        return 0.0;
-    }
-    if (i->speciesAtom() == nullptr)
-    {
-        Messenger::error("NULL SpeciesAtom in Atom given to EnergyKernel::intraEnergy().\n");
-        return 0.0;
-    }
-#endif
+    assert(i);
+
     // Get the SpeciesAtom
     const SpeciesAtom *spAtom = i->speciesAtom();
+    assert(spAtom);
 
     // If no terms are present, return zero
     if ((spAtom->nBonds() == 0) && (spAtom->nAngles() == 0) && (spAtom->nTorsions() == 0))
@@ -802,13 +757,7 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, c
 // Return intramolecular energy for the supplied Molecule
 double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol)
 {
-#ifdef CHECKS
-    if (mol == nullptr)
-    {
-        Messenger::error("NULL Molecule pointer given to EnergyKernel::intramolecularEnergy.\n");
-        return 0.0;
-    }
-#endif
+    assert(mol);
 
     auto intraEnergy = 0.0;
 

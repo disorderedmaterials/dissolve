@@ -50,17 +50,7 @@ std::vector<std::shared_ptr<Atom>> &Molecule::atoms() { return atoms_; }
 const std::vector<std::shared_ptr<Atom>> &Molecule::atoms() const { return atoms_; }
 
 // Return nth Atom pointer
-std::shared_ptr<Atom> Molecule::atom(int n) const
-{
-#ifdef CHECKS
-    if ((n < 0) || (n >= nAtoms()))
-    {
-        Messenger::print("OUT_OF_RANGE - Atom index {} is out of range in Molecule::atom().\n", n);
-        return nullptr;
-    }
-#endif
-    return atoms_[n];
-}
+std::shared_ptr<Atom> Molecule::atom(int n) const { return atoms_[n]; }
 
 /*
  * Manipulations

@@ -57,14 +57,7 @@ void ChangeStore::updateAll()
 // Update single atom position
 void ChangeStore::updateAtom(int id)
 {
-#ifdef CHECKS
-    if ((id < 0) || (id >= targetAtoms_.size()))
-    {
-        Messenger::print("OUT_OF_RANGE - Specified index {} is out of range in ChangeStore::updateAtom() (nTargetAtoms = {})\n",
-                         id, targetAtoms_.size());
-        return;
-    }
-#endif
+    assert(id >= 0 && id < targetAtoms_.size());
     targetAtoms_[id].updatePosition();
 }
 
@@ -80,14 +73,7 @@ void ChangeStore::revertAll()
 // Revert specified index to stored position
 void ChangeStore::revert(int id)
 {
-#ifdef CHECKS
-    if ((id < 0) || (id >= targetAtoms_.size()))
-    {
-        Messenger::print("OUT_OF_RANGE - Index of Atom ({}) is out of range in ChangeStore::revert() (nAtoms = {}).\n", id,
-                         targetAtoms_.size());
-        return;
-    }
-#endif
+    assert(id >= 0 && id < targetAtoms_.size());
     targetAtoms_[id].revertPosition();
 }
 
@@ -161,16 +147,9 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
     std::vector<std::shared_ptr<Atom>> &atoms = cfg->atoms();
     for (auto n = 0; n < nTotalChanges; ++n)
     {
-#ifdef CHECKS
-        if ((indices_[n] < 0) || (indices_[n] >= cfg->nAtoms()))
-        {
-            Messenger::print("OUT_OF_RANGE - Index of Atom change ({}) is out of range in "
-                             "ChangeStore::distribute() (nAtoms = {}).\n",
-                             indices_[n], cfg->nAtoms());
-            continue;
-        }
-#endif
-        // Set new coordinates and check cell position
+        assert(indices_[n] >= 0 && indices_[n] < cfg->nAtoms());
+
+        // Set new coordinates and update cell position
         atoms[indices_[n]]->setCoordinates(x_[n], y_[n], z_[n]);
         cfg->updateCellLocation(atoms[indices_[n]]);
     }

@@ -92,13 +92,8 @@ Vec3<double> Box::axisLengths() const
 // Return axis length specified
 double Box::axisLength(int n) const
 {
-#ifdef CHECKS
-    if ((n < 0) || (n > 2))
-    {
-        Messenger::print("OUT_OF_RANGE - Requested length for a bad axis ({}) in Box::axisLength().\n", n);
-        return 0.0;
-    }
-#endif
+    assert(n >= 0 && n < 3);
+
     return axes_.columnMagnitude(n);
 }
 
@@ -108,13 +103,8 @@ Vec3<double> Box::axisAngles() const { return Vec3<double>(axisAngle(0), axisAng
 // Return axis angle specified
 double Box::axisAngle(int n) const
 {
-#ifdef CHECKS
-    if ((n < 0) || (n > 2))
-    {
-        Messenger::print("OUT_OF_RANGE - Requested angle for a bad axis ({}) in Box::axisAngle().\n", n);
-        return 0.0;
-    }
-#endif
+    assert(n >= 0 && n < 3);
+
     Vec3<double> u, v;
     u = axes_.columnAsVec3((n + 1) % 3);
     v = axes_.columnAsVec3((n + 2) % 3);

@@ -69,43 +69,16 @@ void KVector::zeroCosSinTerms()
 }
 
 // Add value to cosTerm index specified
-void KVector::addCosTerm(int atomTypeIndex, double value)
-{
-#ifdef CHECKS
-    if (atomTypeIndex >= cosTerms_.nItems())
-    {
-        Messenger::print("BAD_USAGE - KVector::cosTerms_ index supplied ({}) is greated than the size of the array ({}).\n",
-                         atomTypeIndex, cosTerms_.nItems());
-        return;
-    }
-#endif
-    cosTerms_[atomTypeIndex] += value;
-}
+void KVector::addCosTerm(int atomTypeIndex, double value) { cosTerms_[atomTypeIndex] += value; }
 
 // Add value to sinTerm index specified
-void KVector::addSinTerm(int atomTypeIndex, double value)
-{
-#ifdef CHECKS
-    if (atomTypeIndex >= sinTerms_.nItems())
-    {
-        Messenger::print("BAD_USAGE - KVector::sinTerms_ index supplied ({}) is greated than the size of the array ({}).\n",
-                         atomTypeIndex, sinTerms_.nItems());
-        return;
-    }
-#endif
-    sinTerms_[atomTypeIndex] += value;
-}
+void KVector::addSinTerm(int atomTypeIndex, double value) { sinTerms_[atomTypeIndex] += value; }
 
 // Calculate intensities from stored cos and sin term arrays
 void KVector::calculateIntensities(BraggReflection *reflectionArray)
 {
-#ifdef CHECKS
-    if (reflectionArray == nullptr)
-    {
-        Messenger::print("NULL_POINTER - NULL BraggReflection array found in KVector::calculateIntensities().\n");
-        return;
-    }
-#endif
+    assert(reflectionArray);
+
     // Calculate final intensities from stored cos/sin terms
     // Take account of the half-sphere, doubling intensities of all k-vectors not on h == 0
     // Do *not* multiply cross-terms (i != j) by 2 - we want to generate the unmultiplied intensity for consistency with

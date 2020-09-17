@@ -56,16 +56,9 @@ bool CalculateVectorProcedureNode::prepare(Configuration *cfg, std::string_view 
 ProcedureNode::NodeExecutionResult CalculateVectorProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
                                                                          std::string_view prefix, GenericList &targetList)
 {
-#ifdef CHECKS
-    for (auto n = 0; n < nSitesRequired(); ++n)
-    {
-        if (sites_[n]->currentSite() == nullptr)
-        {
-            Messenger::error("Observable {} has no current site.\n", n);
-            return ProcedureNode::Failure;
-        }
-    }
-#endif
+    assert(sites_[0] && sites_[0]->currentSite());
+    assert(sites_[1] && sites_[1]->currentSite());
+
     // Determine the value of the observable
     value_ = cfg->box()->minimumVector(sites_[0]->currentSite()->origin(), sites_[1]->currentSite()->origin());
 
