@@ -20,7 +20,7 @@ jobs:
       - bash: |
           set -ex
           cd $(System.ArtifactsDirectory)/linux-tests-serial
-          sudo tar xf -C / nix.tar.gz
+          sudo tar xf nix.tar.gz -C /
           ls /
           chmod u+x ./go ./dissolve
           ls -al
