@@ -1,10 +1,8 @@
 parameters:
   - name: extraflags
     default: ''
-  - name: ppa
-    default: 'beineri/opt-qt-5.13.2-bionic'
-  - name: qtver
-    default: 513
+  - name: parallel
+    default: false
 
 steps:
   - bash: |
@@ -20,7 +18,7 @@ steps:
       nix-env -iA cachix -f https://cachix.org/api/v1/install
       cachix use rprospero
       cd nix
-      bash ./nix_build.sh
+      nix-build dissolve.nix --arg parallel ${{parameters.parallel}}
       cd ..
       nix-instantiate nix/dissolve.nix | xargs nix-store -r | xargs nix-store -q --references | xargs tar czf tests/nix.tar.gz
       cp nix/result/bin/dissolve* tests/
