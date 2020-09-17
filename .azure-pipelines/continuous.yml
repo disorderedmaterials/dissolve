@@ -142,14 +142,3 @@ stages:
             env:
               GITHUB_TOKEN: $(REPO_SECRET)
             displayName: 'Update Continuous Release (GitHub)'
-
-  # Web
-  - stage: 'web'
-    displayName: 'Website'
-    jobs:
-      - job: 'buildweb'
-        displayName: 'Rebuild Web'
-        pool:
-          vmImage: 'ubuntu-18.04'
-        steps:
-          - template: templates/build-web.yml
