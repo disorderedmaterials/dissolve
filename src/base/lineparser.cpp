@@ -24,8 +24,7 @@
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "templates/enumhelpers.h"
-#include <stdarg.h>
-#include <string.h>
+#include <limits>
 
 LineParser::LineParser(ProcessPool *procPool)
 {
@@ -879,7 +878,28 @@ double LineParser::argd(int i)
         Messenger::warn("LineParser::argd() - Argument {} is out of range - returning 0.0...\n", i);
         return 0.0;
     }
-    return std::stod(arguments_[i]);
+
+    // Attempt to convert the current argument
+    try
+    {
+        return std::stod(arguments_[i]);
+    }
+    catch (std::out_of_range &rangeError)
+    {
+        std::string exponent{DissolveSys::afterChar(arguments_[i], "eE")};
+        if (exponent.empty())
+            Messenger::warn(
+                "LineParser::argd() : String '{}' causes an out-of-range exception on conversion - returning 0.0...",
+                arguments_[i]);
+        else if (std::stoi(exponent) >= std::numeric_limits<int>::max_exponent)
+            Messenger::warn("LineParser::argd() : String '{}' causes an overflow on conversion - returning 0.0...",
+                            arguments_[i]);
+        else if (std::stoi(exponent) <= std::numeric_limits<int>::min_exponent)
+            Messenger::warn("LineParser::argd() : String '{}' causes an underflow on conversion - returning 0.0...",
+                            arguments_[i]);
+    }
+
+    return 0.0;
 }
 
 // Returns the specified argument as a bool

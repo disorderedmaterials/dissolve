@@ -1,4 +1,0 @@
-{{ $color := .Get "color"  }}
-<p class="label " >
-{{ with .Get "text" }}<p class="label label-{{ $color }}"> {{ . | markdownify }}</p>{{ end }}
-</p>

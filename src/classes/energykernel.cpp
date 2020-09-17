@@ -783,30 +783,30 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, c
     auto intraEnergy = 0.0;
 
     // Add energy from SpeciesAngle terms
-    intraEnergy +=
-        std::accumulate(spAtom->bonds().begin(), spAtom->bonds().end(), 0.0, [this, &mol](const auto acc, const auto &bond) {
-            return acc + energy(*bond, mol->atom(bond->indexI()), mol->atom(bond->indexJ()));
-        });
+    intraEnergy += std::accumulate(spAtom->bonds().begin(), spAtom->bonds().end(), 0.0,
+                                   [this, &mol](const auto acc, const SpeciesBond &bond) {
+                                       return acc + energy(bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()));
+                                   });
 
     // Add energy from SpeciesAngle terms
-    intraEnergy +=
-        std::accumulate(spAtom->angles().begin(), spAtom->angles().end(), 0.0, [this, &mol](const auto acc, const auto &angle) {
-            return acc + energy(*angle, mol->atom(angle->indexI()), mol->atom(angle->indexJ()), mol->atom(angle->indexK()));
+    intraEnergy += std::accumulate(
+        spAtom->angles().begin(), spAtom->angles().end(), 0.0, [this, &mol](const auto acc, const SpeciesAngle &angle) {
+            return acc + energy(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()), mol->atom(angle.indexK()));
         });
 
     // Add energy from SpeciesTorsion terms
     intraEnergy += std::accumulate(spAtom->torsions().begin(), spAtom->torsions().end(), 0.0,
-                                   [this, &mol](const auto acc, const auto &torsion) {
-                                       return acc + energy(*torsion, mol->atom(torsion->indexI()), mol->atom(torsion->indexJ()),
-                                                           mol->atom(torsion->indexK()), mol->atom(torsion->indexL()));
+                                   [this, &mol](const auto acc, const SpeciesTorsion &torsion) {
+                                       return acc + energy(torsion, mol->atom(torsion.indexI()), mol->atom(torsion.indexJ()),
+                                                           mol->atom(torsion.indexK()), mol->atom(torsion.indexL()));
                                    });
 
     // Add energy from SpeciesImproper terms
-    intraEnergy += std::accumulate(
-        spAtom->impropers().begin(), spAtom->impropers().end(), 0.0, [this, &mol](const auto acc, const auto &improper) {
-            return acc + energy(*improper, mol->atom(improper->indexI()), mol->atom(improper->indexJ()),
-                                mol->atom(improper->indexK()), mol->atom(improper->indexL()));
-        });
+    intraEnergy += std::accumulate(spAtom->impropers().begin(), spAtom->impropers().end(), 0.0,
+                                   [this, &mol](const auto acc, const SpeciesImproper &improper) {
+                                       return acc + energy(improper, mol->atom(improper.indexI()), mol->atom(improper.indexJ()),
+                                                           mol->atom(improper.indexK()), mol->atom(improper.indexL()));
+                                   });
 
     return intraEnergy;
 }

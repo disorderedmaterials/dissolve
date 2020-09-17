@@ -1,7 +1,7 @@
 ---
 name: Epic (Project Management Only)
 about: Create an Epic for an upcoming milestone
-title: 'Epic / MAJOR.MINOR / Short Description'
+title: 'Epic / Short Description'
 labels: 'Priority: Medium'
 assignees: ''
 
@@ -9,7 +9,7 @@ assignees: ''
 ### Focus
 Addresses ...
 
-### Workload
+### Tasks
 - [ ] Issue 1
 - [ ] Issue 2
 ...

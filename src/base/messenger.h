@@ -146,7 +146,7 @@ class Messenger
         std::string headingText = fmt::format(format, args...);
 
         outputBlank();
-        outputText(fmt::format("*{:^80}*", headingText));
+        outputText(fmt::format("{:^80}", headingText));
         outputText(headingBorder);
         outputBlank();
     }

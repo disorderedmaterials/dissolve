@@ -37,12 +37,9 @@ bool ForcesModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("Reading test reference forces.\n");
 
         // Realise some arrays to store the forces in
-        Array<double> &fx =
-            GenericListHelper<Array<double>>::realise(dissolve.processingModuleData(), "ReferenceFX", uniqueName());
-        Array<double> &fy =
-            GenericListHelper<Array<double>>::realise(dissolve.processingModuleData(), "ReferenceFY", uniqueName());
-        Array<double> &fz =
-            GenericListHelper<Array<double>>::realise(dissolve.processingModuleData(), "ReferenceFZ", uniqueName());
+        auto &fx = GenericListHelper<Array<double>>::realise(dissolve.processingModuleData(), "ReferenceFX", uniqueName());
+        auto &fy = GenericListHelper<Array<double>>::realise(dissolve.processingModuleData(), "ReferenceFY", uniqueName());
+        auto &fz = GenericListHelper<Array<double>>::realise(dissolve.processingModuleData(), "ReferenceFZ", uniqueName());
 
         // Read in the forces
         if (!referenceForces_.importData(fx, fy, fz, &procPool))
@@ -74,12 +71,12 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());
 
-        // Retrieve control parameters from Configuration
-        const bool saveData = keywords_.asBool("Save");
-        const bool testMode = keywords_.asBool("Test");
-        const bool testAnalytic = keywords_.asBool("TestAnalytic");
-        const bool testInter = keywords_.asBool("TestInter");
-        const bool testIntra = keywords_.asBool("TestIntra");
+        // Retrieve control parameters
+        const auto saveData = exportedForces_.hasValidFileAndFormat();
+        const auto testMode = keywords_.asBool("Test");
+        const auto testAnalytic = keywords_.asBool("TestAnalytic");
+        const auto testInter = keywords_.asBool("TestInter");
+        const auto testIntra = keywords_.asBool("TestIntra");
         const auto testThreshold = keywords_.asDouble("TestThreshold");
 
         // Calculate the total forces
@@ -100,17 +97,17 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
              * Calculation Begins
              */
 
-            const PotentialMap &potentialMap = dissolve.potentialMap();
-            double cutoffSq = potentialMap.range() * potentialMap.range();
+            const auto &potentialMap = dissolve.potentialMap();
+            const auto cutoffSq = potentialMap.range() * potentialMap.range();
 
-            double angle, magjisq, magji, magjk, dp, force, r;
+            double magjisq, magji, magjk, dp, force, r;
             Atom *i, *j, *k, *l;
             Vec3<double> vecji, vecjk, veckl, forcei, forcek;
             Vec3<double> xpj, xpk, dcos_dxpj, dcos_dxpk, temp;
             Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;
-            double magxpj, magxpk, phi, du_dphi;
+            double phi, du_dphi;
             std::shared_ptr<Molecule> molN, molM;
-            const Box *box = cfg->box();
+            const auto *box = cfg->box();
             double scale;
 
             // Allocate the force arrays
@@ -137,17 +134,17 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Calculate interatomic and intramlecular energy in a loop over defined Molecules
             Timer timer;
-            for (int n = 0; n < cfg->nMolecules(); ++n)
+            for (auto n = 0; n < cfg->nMolecules(); ++n)
             {
                 molN = cfg->molecule(n);
 
                 // Intramolecular forces (excluding bound terms) in molecule N
                 if (testInter)
-                    for (int ii = 0; ii < molN->nAtoms() - 1; ++ii)
+                    for (auto ii = 0; ii < molN->nAtoms() - 1; ++ii)
                     {
                         i = molN->atom(ii);
 
-                        for (int jj = ii + 1; jj < molN->nAtoms(); ++jj)
+                        for (auto jj = ii + 1; jj < molN->nAtoms(); ++jj)
                         {
                             j = molN->atom(jj);
 
@@ -179,16 +176,16 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                 // Forces between molecule N and molecule M
                 if (testInter)
-                    for (int m = n + 1; m < cfg->nMolecules(); ++m)
+                    for (auto m = n + 1; m < cfg->nMolecules(); ++m)
                     {
                         molM = cfg->molecule(m);
 
                         // Double loop over atoms
-                        for (int ii = 0; ii < molN->nAtoms(); ++ii)
+                        for (auto ii = 0; ii < molN->nAtoms(); ++ii)
                         {
                             i = molN->atom(ii);
 
-                            for (int jj = 0; jj < molM->nAtoms(); ++jj)
+                            for (auto jj = 0; jj < molM->nAtoms(); ++jj)
                             {
                                 j = molM->atom(jj);
 
@@ -435,15 +432,15 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
              */
 
             // Test 'correct' forces against production forces
-            int nFailed1 = 0;
+            auto nFailed1 = 0;
             bool failed;
             Vec3<double> interRatio, intraRatio;
-            double sumError;
+            auto sumError = 0.0;
 
             Messenger::print("Testing calculated 'correct' forces against calculated production forces - "
                              "atoms with erroneous forces will be output...\n");
-            sumError = 0.0;
-            for (int n = 0; n < cfg->nAtoms(); ++n)
+
+            for (auto n = 0; n < cfg->nAtoms(); ++n)
             {
                 interRatio.set(interFx[n] - checkInterFx[n], interFy[n] - checkInterFy[n], interFz[n] - checkInterFz[n]);
                 intraRatio.set(intraFx[n] - checkIntraFx[n], intraFy[n] - checkIntraFy[n], intraFz[n] - checkIntraFz[n]);
@@ -485,19 +482,20 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                      "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol (inter)\n",
                                      n + 1, interFx[n] - checkInterFx[n], interRatio.x, interFy[n] - checkInterFy[n],
                                      interRatio.y, interFz[n] - checkInterFz[n], interRatio.z);
-                    Messenger::print("                                     {:15.8e} ({:5.2f}%) {:15.8e} "
+                    Messenger::print("                                   {:15.8e} ({:5.2f}%) {:15.8e} "
                                      "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol (intra)\n",
-                                     n + 1, intraFx[n] - checkIntraFx[n], intraRatio.x, intraFy[n] - checkIntraFy[n],
-                                     intraRatio.y, intraFz[n] - checkIntraFz[n], intraRatio.z);
+                                     intraFx[n] - checkIntraFx[n], intraRatio.x, intraFy[n] - checkIntraFy[n], intraRatio.y,
+                                     intraFz[n] - checkIntraFz[n], intraRatio.z);
                     ++nFailed1;
                 }
             }
+
             Messenger::print("Number of atoms with failed force components = {} = {}\n", nFailed1,
                              nFailed1 == 0 ? "OK" : "NOT OK");
             Messenger::print("Average error in force components was {}%.\n", sumError / (cfg->nAtoms() * 6));
 
             // Test reference forces against production (if reference forces present)
-            int nFailed2 = 0, nFailed3 = 0;
+            auto nFailed2 = 0, nFailed3 = 0;
             Vec3<double> totalRatio;
             sumError = 0.0;
             GenericList &moduleData = dissolve.processingModuleData();
@@ -507,33 +505,24 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 // Grab reference force arrays and check sizes
                 const auto &referenceFx = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFX", uniqueName());
                 if (referenceFx.nItems() != cfg->nAtoms())
-                {
-                    Messenger::error("Number of force components in ReferenceFX is {}, but the "
-                                     "Configuration '{}' contains {} atoms.\n",
-                                     referenceFx.nItems(), cfg->name(), cfg->nAtoms());
-                    return false;
-                }
+                    return Messenger::error("Number of force components in ReferenceFX is {}, but the "
+                                            "Configuration '{}' contains {} atoms.\n",
+                                            referenceFx.nItems(), cfg->name(), cfg->nAtoms());
                 const auto &referenceFy = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFY", uniqueName());
                 if (referenceFy.nItems() != cfg->nAtoms())
-                {
-                    Messenger::error("Number of force components in ReferenceFY is {}, but the "
-                                     "Configuration '{}' contains {} atoms.\n",
-                                     referenceFy.nItems(), cfg->name(), cfg->nAtoms());
-                    return false;
-                }
+                    return Messenger::error("Number of force components in ReferenceFY is {}, but the "
+                                            "Configuration '{}' contains {} atoms.\n",
+                                            referenceFy.nItems(), cfg->name(), cfg->nAtoms());
                 const auto &referenceFz = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFZ", uniqueName());
                 if (referenceFz.nItems() != cfg->nAtoms())
-                {
-                    Messenger::error("Number of force components in ReferenceFZ is {}, but the "
-                                     "Configuration '{}' contains {} atoms.\n",
-                                     referenceFz.nItems(), cfg->name(), cfg->nAtoms());
-                    return false;
-                }
+                    return Messenger::error("Number of force components in ReferenceFZ is {}, but the "
+                                            "Configuration '{}' contains {} atoms.\n",
+                                            referenceFz.nItems(), cfg->name(), cfg->nAtoms());
 
                 Messenger::print("\nTesting reference forces against calculated 'correct' forces - "
                                  "atoms with erroneous forces will be output...\n");
                 sumError = 0.0;
-                for (int n = 0; n < cfg->nAtoms(); ++n)
+                for (auto n = 0; n < cfg->nAtoms(); ++n)
                 {
                     totalRatio.x = referenceFx.constAt(n) - (interFx[n] + intraFx[n]);
                     totalRatio.y = referenceFy.constAt(n) - (interFy[n] + intraFy[n]);
@@ -575,7 +564,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                  "atoms with erroneous forces will be output...\n");
 
                 sumError = 0.0;
-                for (int n = 0; n < cfg->nAtoms(); ++n)
+                for (auto n = 0; n < cfg->nAtoms(); ++n)
                 {
                     totalRatio.x = referenceFx.constAt(n) - (checkInterFx[n] + checkIntraFx[n]);
                     totalRatio.y = referenceFy.constAt(n) - (checkInterFy[n] + checkIntraFy[n]);
@@ -650,22 +639,17 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             intraMolecularForces(procPool, cfg, dissolve.potentialMap(), fx, fy, fz);
             intraTimer.stop();
 
+            // Convert forces to 10J/mol
+            fx *= 100.0;
+            fy *= 100.0;
+            fz *= 100.0;
+
             Messenger::print("Time to do interatomic forces was {}, intramolecular forces was {} ({} comms).\n",
                              interTimer.totalTimeString(), intraTimer.totalTimeString(), procPool.accumulatedTimeString());
 
             // If writing to a file, append it here
-            if (saveData)
-            {
-                LineParser parser;
-                parser.openOutput(fmt::format("{}.forces.txt", cfg->niceName()));
-
-                parser.writeLineF("# Forces for Configuration '{}'.\n", cfg->name());
-                parser.writeLine("# Force units are 10J/mol.\n");
-                parser.writeLine("# Atom        FX            FY            FZ\n");
-                for (int n = 0; n < cfg->nAtoms(); ++n)
-                    parser.writeLineF("  {:10d}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {}\n", n + 1, fx[n], fy[n], fz[n]);
-                parser.closeFiles();
-            }
+            if (saveData && !exportedForces_.exportData(fx, fy, fz))
+                return Messenger::error("Failed to save forces.\n");
         }
     }
 

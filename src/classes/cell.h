@@ -109,15 +109,15 @@ class Cell
     // Return total number of Cell neighbours
     int nTotalCellNeighbours() const;
     // Return adjacent Cell neighbour list
-    std::vector<Cell *> cellNeighbours();
+    const std::vector<Cell *> &cellNeighbours() const;
     // Return specified adjacent Cell neighbour
     Cell *cellNeighbour(int id) const;
     // Return list of Cell neighbours requiring minimum image calculation
-    std::vector<Cell *> mimCellNeighbours();
+    const std::vector<Cell *> &mimCellNeighbours() const;
     // Return specified Cell neighbour requiring minimum image calculation
     Cell *mimCellNeighbour(int id) const;
     // Return if the specified Cell requires minimum image calculation
     bool mimRequired(const Cell *otherCell) const;
     // Return list of all Cell neighbours
-    std::vector<CellNeighbour> allCellNeighbours();
+    const std::vector<CellNeighbour> &allCellNeighbours() const;
 };

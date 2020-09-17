@@ -1,2 +1,2 @@
 'NETA' System Test
-Attempt to automatically type a variety of molecules with built-in forcefields
+Automatically type a variety of molecules with built-in forcefields. Atom types and parameters are checked for consistency with expected values.

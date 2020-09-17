@@ -172,13 +172,13 @@ int Cell::nMimCellNeighbours() const { return nMimCellNeighbours_; }
 int Cell::nTotalCellNeighbours() const { return nCellNeighbours_ + nMimCellNeighbours_; }
 
 // Return adjacent Cell neighbour list
-std::vector<Cell *> Cell::cellNeighbours() { return cellNeighbours_; }
+const std::vector<Cell *> &Cell::cellNeighbours() const { return cellNeighbours_; }
 
 // Return specified adjacent Cell neighbour
 Cell *Cell::cellNeighbour(int id) const { return cellNeighbours_[id]; }
 
 // Return list of Cell neighbours requiring minimum image calculation
-std::vector<Cell *> Cell::mimCellNeighbours() { return mimCellNeighbours_; }
+const std::vector<Cell *> &Cell::mimCellNeighbours() const { return mimCellNeighbours_; }
 
 // Return specified Cell neighbour, requiring minimum image calculation
 Cell *Cell::mimCellNeighbour(int id) const { return mimCellNeighbours_[id]; }
@@ -193,4 +193,4 @@ bool Cell::mimRequired(const Cell *otherCell) const
 }
 
 // Return list of all Cell neighbours
-std::vector<CellNeighbour> Cell::allCellNeighbours() { return allCellNeighbours_; }
+const std::vector<CellNeighbour> &Cell::allCellNeighbours() const { return allCellNeighbours_; }

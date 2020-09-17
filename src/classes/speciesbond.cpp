@@ -43,8 +43,8 @@ void SpeciesBond::assign(SpeciesAtom *i, SpeciesAtom *j)
     // Add ourself to the list of bonds on each atom
     if (i_ && j_)
     {
-        i_->addBond(this);
-        j_->addBond(this);
+        i_->addBond(*this);
+        j_->addBond(*this);
     }
 }
 
@@ -53,8 +53,8 @@ SpeciesBond::SpeciesBond(SpeciesBond &&source) : SpeciesIntra(source)
     // Detach source bond referred to by the species atoms
     if (source.i_ && source.j_)
     {
-        source.i_->removeBond(&source);
-        source.j_->removeBond(&source);
+        source.i_->removeBond(source);
+        source.j_->removeBond(source);
     }
 
     // Copy data
@@ -74,8 +74,8 @@ SpeciesBond &SpeciesBond::operator=(const SpeciesBond &source)
     j_ = source.j_;
     if (i_ && j_)
     {
-        i_->addBond(this);
-        j_->addBond(this);
+        i_->addBond(*this);
+        j_->addBond(*this);
     }
     bondType_ = source.bondType_;
     form_ = source.form_;
@@ -181,8 +181,8 @@ void SpeciesBond::detach()
 {
     if (i_ && j_)
     {
-        i_->removeBond(this);
-        j_->removeBond(this);
+        i_->removeBond(*this);
+        j_->removeBond(*this);
     }
     i_ = nullptr;
     j_ = nullptr;

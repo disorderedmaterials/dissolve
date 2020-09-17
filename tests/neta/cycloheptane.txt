@@ -156,3 +156,40 @@ Species 'Cycloheptane'
 
   Forcefield  'OPLSAA2005/Alkanes'
 EndSpecies
+
+Layer  'Checks'
+
+  Module  'CheckSpecies'
+    Species  'Cycloheptane'
+    AtomType    1    CT2
+    AtomType    2    CT2
+    AtomType    3    CT2
+    AtomType    4    CT2
+    AtomType    5    CT2
+    AtomType    6    CT2
+    AtomType    7    CT2
+    AtomType    8    HC
+    AtomType    9    HC
+    AtomType   10    HC
+    AtomType   11    HC
+    AtomType   12    HC
+    AtomType   13    HC
+    AtomType   14    HC
+    AtomType   15    HC
+    AtomType   16    HC
+    AtomType   17    HC
+    AtomType   18    HC
+    AtomType   19    HC
+    AtomType   20    HC
+    AtomType   21    HC
+    Bond  1  2  2242.62  1.529
+    Bond  1  8  2845.12  1.09
+    Angle  1  2  10  313.8  110.7
+    Angle  1  2  3  488.273  112.7
+    Angle  16  5  17  276.144  107.8
+    Torsion  8  1  2  10  0.0  0.0  1.2552
+    Torsion  8  1  2  3  0.0  0.0  1.2552
+    Torsion  1  2  3  4  5.4392  -0.2092  0.8368
+  EndModule
+
+EndLayer

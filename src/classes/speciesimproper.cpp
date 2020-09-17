@@ -84,13 +84,13 @@ void SpeciesImproper::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Spe
 #endif
 
     if (i_)
-        i_->addImproper(this);
+        i_->addImproper(*this);
     if (j_)
-        j_->addImproper(this);
+        j_->addImproper(*this);
     if (k_)
-        k_->addImproper(this);
+        k_->addImproper(*this);
     if (l_)
-        l_->addImproper(this);
+        l_->addImproper(*this);
 }
 
 // Return first SpeciesAtom

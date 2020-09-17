@@ -201,11 +201,11 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
             else
             {
                 // Draw all bonds from this atom
-                for (const auto *bond : i->speciesAtom()->bonds())
+                for (const SpeciesBond &bond : i->speciesAtom()->bonds())
                 {
                     // Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is
                     // the same as 'i' (in which case we skip it, ensuring we draw every bond only once)
-                    partner = i->molecule()->atom(bond->indexJ());
+                    partner = i->molecule()->atom(bond.indexJ());
                     if (i == partner)
                         continue;
 
@@ -217,9 +217,9 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 
                     // Draw bond halves
                     lineConfigurationPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
-                                                      ElementColours::colour(bond->i()->element()));
+                                                      ElementColours::colour(bond.i()->element()));
                     lineConfigurationPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
-                                                      ElementColours::colour(bond->j()->element()));
+                                                      ElementColours::colour(bond.j()->element()));
                 }
             }
         }
@@ -244,11 +244,11 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
             configurationAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
             // Bonds from this atom
-            for (const auto *bond : i->speciesAtom()->bonds())
+            for (const SpeciesBond &bond : i->speciesAtom()->bonds())
             {
                 // Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same
                 // as 'i' (in which case we skip it, ensuring we draw every bond only once)
-                partner = i->molecule()->atom(bond->indexJ());
+                partner = i->molecule()->atom(bond.indexJ());
                 if (i == partner)
                     continue;
 

@@ -21,6 +21,7 @@
 
 #pragma once
 
+#include "io/export/forces.h"
 #include "io/import/forces.h"
 #include "module/module.h"
 #include <memory>
@@ -73,6 +74,8 @@ class ForcesModule : public Module
     private:
     // Reference forces for test
     ForceImportFileFormat referenceForces_;
+    // Force export file and format
+    ForceExportFileFormat exportedForces_;
 
     /*
      * Processing
