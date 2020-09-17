@@ -80,4 +80,6 @@ void EPSRModule::initialise()
     keywords_.add("Export", new BoolKeyword(false), "SaveEstimatedPartials", "Whether to save estimated partials",
                   "<True|False>");
     keywords_.add("Export", new BoolKeyword(false), "SavePCof", "Whether to save potential coefficients", "<True|False>");
+    keywords_.add("Export", new BoolKeyword(false), "SaveSimulatedFR",
+                  "Whether to save simulated F(r) (Fourier transform of calculated F(Q))", "<True|False>");
 }

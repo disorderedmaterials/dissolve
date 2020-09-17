@@ -104,6 +104,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     double rmaxpt = keywords_.asDouble("RMaxPT");
     double rminpt = keywords_.asDouble("RMinPT");
     const bool saveDifferences = keywords_.asBool("SaveDifferenceFunctions");
+    const bool saveSimulatedFR = keywords_.asBool("SaveSimulatedFR");
     const bool saveEmpiricalPotentials = keywords_.asBool("SaveEmpiricalPotentials");
     const bool saveEstimatedPartials = keywords_.asBool("SaveEstimatedPartials");
     const bool savePotentialCoefficients = keywords_.asBool("SavePCof");
@@ -146,6 +147,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("EPSR: Estimated partials will be saved.\n");
     if (savePotentialCoefficients)
         Messenger::print("EPSR: Potential coefficients will be saved.\n");
+    if (saveSimulatedFR)
+        Messenger::print("EPSR: Simulated F(r) (from FT of F(Q)) will be saved.\n");
     if (testMode)
         Messenger::print("EPSR: Test mode is enabled (threshold = {}%).", testThreshold);
     Messenger::print("\n");
@@ -427,6 +430,19 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             {
                 Data1DExportFileFormat exportFormat(fmt::format("{}-DiffFit.q", module->uniqueName()));
                 if (exportFormat.exportData(deltaFQFit))
+                    procPool.decideTrue();
+                else
+                    return procPool.decideFalse();
+            }
+            else if (!procPool.decision())
+                return true;
+        }
+        if (saveSimulatedFR)
+        {
+            if (procPool.isMaster())
+            {
+                Data1DExportFileFormat exportFormat(fmt::format("{}-SimulatedFR.r", module->uniqueName()));
+                if (exportFormat.exportData(simulatedFR))
                     procPool.decideTrue();
                 else
                     return procPool.decideFalse();
