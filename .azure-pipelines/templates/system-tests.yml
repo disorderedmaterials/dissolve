@@ -52,7 +52,7 @@ jobs:
       - bash: |
           cd $(System.ArtifactsDirectory)/linux-tests-parallel
           sudo tar xf nix.tar.gz -C /
-          export PATH = "/nix/store/yrj14i23zp97qrbvjm0kj6argm9hfy3r-openmpi-4.0.4/bin:$PATH"
+          export PATH=/nix/store/yrj14i23zp97qrbvjm0kj6argm9hfy3r-openmpi-4.0.4/bin:$PATH
           ls /nix/store
           chmod u+x ./go ./dissolve-mpi
           ./go -a -p ./dissolve-mpi
