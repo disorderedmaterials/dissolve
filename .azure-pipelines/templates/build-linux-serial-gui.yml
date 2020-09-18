@@ -3,6 +3,8 @@ parameters:
     default: ''
   - name: parallel
     default: false
+  - name: mac
+    default: false
 
 steps:
   - bash: |
@@ -12,6 +14,14 @@ steps:
       source ~/.nix-profile/etc/profile.d/nix.sh
       nix-channel --update
     displayName: 'Install Prerequisites'
+    cond: not(parameters.mac)
+  - bash: |
+      set -ex
+      sh <(curl -L https://nixos.org/nix/install) --darwin-use-unencrypted-nix-store-volume
+      source ~/.nix-profile/etc/profile.d/nix.sh
+      nix-channel --update
+    displayName: 'Install Mac Prerequisites'
+    cond: parameters.mac
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
