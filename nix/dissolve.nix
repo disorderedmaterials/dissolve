@@ -1,7 +1,10 @@
-{pkgs ? import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/252bfe0107587d40092057f338e9ffcf7bbd90cb.tar.gz") {overlays = [ (import ./overlays.nix)];},
-  unstable ? import (fetchTarball "https://github.com/NixOS/nixpkgs/archive/e0508c81809b12013bce95562d556b1e672e3541.tar.gz") {overlays = [ (import ./overlays.nix)];},
-  parallel ? false,
-  gui ? false}:
+{ pkgs ? import (fetchTarball
+  "https://github.com/NixOS/nixpkgs/archive/252bfe0107587d40092057f338e9ffcf7bbd90cb.tar.gz") {
+    overlays = [ (import ./overlays.nix) ];
+  }, unstable ? import (fetchTarball
+    "https://github.com/NixOS/nixpkgs/archive/e0508c81809b12013bce95562d556b1e672e3541.tar.gz") {
+      overlays = [ (import ./overlays.nix) ];
+    }, parallel ? false, gui ? false }:
 
 let
   cmakeBool = x: if x then "ON" else "OFF";
@@ -12,11 +15,11 @@ let
     rev = "c4662e662462e7bf3c2a968483478a665d00e717";
     # use what nix suggests in the mismatch message here:
     sha256 = "sha256:1npnx0h6bd0d7ql93ka7azhj40zgjp815fw2r6smg8ch9p7mzdlx";
-    };
-    inherit (import gitignoreSrc { inherit (pkgs) lib; }) gitignoreSource;
-in
+  };
+  inherit (import gitignoreSrc { inherit (pkgs) lib; }) gitignoreSource;
 
-assert pkgs.lib.asserts.assertMsg (!(gui && parallel)) "The GUI cannot be built in parallel mode";
+in assert pkgs.lib.asserts.assertMsg (!(gui && parallel))
+"The GUI cannot be built in parallel mode";
 pkgs.stdenv.mkDerivation {
   name = "dissolve";
   cmakeFlags = [
@@ -24,7 +27,7 @@ pkgs.stdenv.mkDerivation {
     "-DGUI=${cmakeBool gui}"
     "-DPARALLEL=${cmakeBool parallel}"
   ];
-  patches = [./ignore_conan.patch];
+  patches = [ ./ignore_conan.patch ];
   buildInputs = [
     pkgs.antlr
     pkgs.bison
@@ -32,9 +35,7 @@ pkgs.stdenv.mkDerivation {
     unstable.fmt
     unstable.fmt.dev
     pkgs.ninja
-  ] ++ pkgs.lib.optionals parallel [
-    pkgs.openmpi
-  ] ++ pkgs.lib.optionals gui [
+  ] ++ pkgs.lib.optionals parallel [ pkgs.openmpi ] ++ pkgs.lib.optionals gui [
     pkgs.freetype
     pkgs.ftgl
     pkgs.libGL

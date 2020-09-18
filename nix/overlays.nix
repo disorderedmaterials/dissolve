@@ -1,3 +1,1 @@
-self: super: {
-  jre = super.jre-headless;
-}
+self: super: { jre = super.jre-headless; }
