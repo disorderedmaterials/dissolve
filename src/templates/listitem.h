@@ -21,8 +21,6 @@
 
 #pragma once
 
-#include <stdlib.h> // To get NULL
-
 // Forward Declarations
 template <class T> class List;
 template <class T> class ListIterator;
@@ -33,8 +31,8 @@ template <class T> class ListItem
     public:
     ListItem<T>()
     {
-        prev_ = NULL;
-        next_ = NULL;
+        prev_ = nullptr;
+        next_ = nullptr;
     }
 
     private:

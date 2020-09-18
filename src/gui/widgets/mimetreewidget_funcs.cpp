@@ -98,7 +98,7 @@ void MimeTreeWidget::mouseMoveEvent(QMouseEvent *event)
     {
         // Reset everything, and do not perform a move
         // 		interactionMode_ = NoInteraction;
-        // 		interactionPane_ = NULL;
+        // 		interactionPane_ = nullptr;
         update();
     }
 

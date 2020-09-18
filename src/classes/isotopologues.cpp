@@ -63,7 +63,7 @@ void Isotopologues::pruneMissing()
 bool Isotopologues::addNext()
 {
     // NULL Pointer?
-    if (species_ == NULL)
+    if (species_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL Species pointer in Isotopologues::addNextIsotopologue().\n");
         return false;
@@ -79,11 +79,11 @@ bool Isotopologues::addNext()
 
     // Find unique (unused) Isotopologue
     Isotopologue *iso;
-    for (iso = species_->isotopologues().first(); iso != NULL; iso = iso->next())
+    for (iso = species_->isotopologues().first(); iso != nullptr; iso = iso->next())
         if (!contains(iso))
             break;
 
-    if (iso == NULL)
+    if (iso == nullptr)
     {
         Messenger::error("Couldn't find an unused Isotopologue in Species '{}'.\n", species_->name());
         return false;
@@ -109,7 +109,7 @@ void Isotopologues::add(const Isotopologue *iso, double relativeWeight)
 bool Isotopologues::set(const Isotopologue *iso, double relativeWeight)
 {
     // NULL Pointer?
-    if (iso == NULL)
+    if (iso == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL Isotopologue passed to Isotopologues::setIsotopologue().\n");
         return false;
@@ -197,7 +197,7 @@ bool Isotopologues::read(LineParser &parser, CoreData &coreData)
     if (parser.getArgsDelim() != LineParser::Success)
         return false;
     species_ = coreData.findSpecies(parser.argsv(0));
-    if (species_ == NULL)
+    if (species_ == nullptr)
     {
         Messenger::error("Failed to find Species '{}' while reading Isotopologues.\n", parser.argsv(0));
         return false;

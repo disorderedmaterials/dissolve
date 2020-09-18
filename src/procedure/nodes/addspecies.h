@@ -32,7 +32,7 @@ class Species;
 class AddSpeciesProcedureNode : public ProcedureNode
 {
     public:
-    AddSpeciesProcedureNode(Species *sp = NULL, NodeValue population = 0, NodeValue density = 0.1,
+    AddSpeciesProcedureNode(Species *sp = nullptr, NodeValue population = 0, NodeValue density = 0.1,
                             Units::DensityUnits densityUnits = Units::AtomsPerAngstromUnits);
     ~AddSpeciesProcedureNode();
 

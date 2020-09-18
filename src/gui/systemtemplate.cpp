@@ -28,7 +28,7 @@
 #include <QXmlStreamReader>
 #include <stdlib.h>
 
-SystemTemplate::SystemTemplate() { toolButton_ = NULL; }
+SystemTemplate::SystemTemplate() { toolButton_ = nullptr; }
 
 SystemTemplate::~SystemTemplate() {}
 

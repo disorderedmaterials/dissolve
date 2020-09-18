@@ -44,15 +44,15 @@ void GenericItem::addItemClass(GenericItem *item) { itemClasses_.own(item); }
 GenericItem *GenericItem::newItem(std::string_view className, std::string_view name, int flags)
 {
     // Search through registered item classes list for one matching the class name provided
-    for (auto *item = itemClasses_.first(); item != NULL; item = item->next())
+    for (auto *item = itemClasses_.first(); item != nullptr; item = item->next())
     {
         // See if the item can create a GenericItem of the desired type. If it can't, move on
         GenericItem *newItem = item->createItem(className, name, flags);
-        if (newItem != NULL)
+        if (newItem != nullptr)
             return newItem;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 /*

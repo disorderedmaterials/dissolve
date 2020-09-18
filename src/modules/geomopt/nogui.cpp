@@ -22,4 +22,4 @@
 #include "modules/geomopt/geomopt.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *GeometryOptimisationModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *GeometryOptimisationModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

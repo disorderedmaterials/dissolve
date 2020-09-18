@@ -45,7 +45,7 @@ Collect1DProcedureNode::Collect1DProcedureNode(CalculateProcedureNodeBase *obser
                   "Branch which runs if the target quantity was binned successfully");
 
     // Initialise branch
-    subCollectBranch_ = NULL;
+    subCollectBranch_ = nullptr;
 }
 
 Collect1DProcedureNode::~Collect1DProcedureNode() {}
@@ -100,7 +100,7 @@ SequenceProcedureNode *Collect1DProcedureNode::addSubCollectBranch(ProcedureNode
 }
 
 // Return whether this node has a branch
-bool Collect1DProcedureNode::hasBranch() const { return (subCollectBranch_ != NULL); }
+bool Collect1DProcedureNode::hasBranch() const { return (subCollectBranch_ != nullptr); }
 
 // Return SequenceNode for the branch (if it exists)
 SequenceProcedureNode *Collect1DProcedureNode::branch() { return subCollectBranch_; }

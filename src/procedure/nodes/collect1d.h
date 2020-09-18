@@ -34,7 +34,7 @@ class NodeScopeStack;
 class Collect1DProcedureNode : public ProcedureNode
 {
     public:
-    Collect1DProcedureNode(CalculateProcedureNodeBase *observable = NULL, double rMin = 0.0, double rMax = 10.0,
+    Collect1DProcedureNode(CalculateProcedureNodeBase *observable = nullptr, double rMin = 0.0, double rMax = 10.0,
                            double binWidth = 0.05);
     ~Collect1DProcedureNode();
 

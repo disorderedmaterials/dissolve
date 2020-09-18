@@ -35,7 +35,7 @@ SpeciesSite *SpeciesTab::currentSite()
     // Get current item from tree, and check the parent item
     QListWidgetItem *item = ui_.SiteList->currentItem();
     if (!item)
-        return NULL;
+        return nullptr;
     return VariantPointer<SpeciesSite>(item->data(Qt::UserRole));
 }
 
@@ -84,7 +84,7 @@ void SpeciesTab::on_SiteRemoveButton_clicked(bool checked)
 
     // Remove references to the site, and invalidate our site renderable
     dissolveWindow_->dissolve().removeReferencesTo(site);
-    ui_.SiteViewerWidget->setSite(NULL);
+    ui_.SiteViewerWidget->setSite(nullptr);
 
     // Remove the site proper, and update the sites tab
     species_->removeSite(site);
@@ -156,15 +156,15 @@ void SpeciesTab::updateSitesTab()
     // Update the site list
     ListWidgetUpdater<SpeciesTab, SpeciesSite> siteUpdater(ui_.SiteList, species_->sites(),
                                                            Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
-    if ((current == NULL) && (species_->nSites() != 0))
+    if ((current == nullptr) && (species_->nSites() != 0))
         ui_.SiteList->setCurrentRow(0);
 
     // Check for current site
     SpeciesSite *site = currentSite();
-    ui_.SiteRemoveButton->setEnabled(site != NULL);
-    ui_.SiteOriginGroup->setEnabled(site != NULL);
-    ui_.SiteXAxisGroup->setEnabled(site != NULL);
-    ui_.SiteYAxisGroup->setEnabled(site != NULL);
+    ui_.SiteRemoveButton->setEnabled(site != nullptr);
+    ui_.SiteOriginGroup->setEnabled(site != nullptr);
+    ui_.SiteXAxisGroup->setEnabled(site != nullptr);
+    ui_.SiteYAxisGroup->setEnabled(site != nullptr);
     if (!site)
     {
         ui_.SiteOriginAtomsEdit->clear();

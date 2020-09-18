@@ -34,7 +34,7 @@ void Configuration::empty()
     molecules_.clear();
     atoms_.clear();
     usedAtomTypes_.clear();
-    if (box_ != NULL)
+    if (box_ != nullptr)
         delete box_;
     box_ = new CubicBox(1.0);
     cells_.clear();
@@ -87,11 +87,11 @@ SpeciesInfo *Configuration::addUsedSpecies(Species *sp, int population)
 // Return SpeciesInfo for specified Species
 SpeciesInfo *Configuration::usedSpeciesInfo(Species *sp)
 {
-    for (auto *spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next())
+    for (auto *spInfo = usedSpecies_.first(); spInfo != nullptr; spInfo = spInfo->next())
         if (spInfo->species() == sp)
             return spInfo;
 
-    return NULL;
+    return nullptr;
 }
 
 // Return list of SpeciesInfo for the Configuration
@@ -100,7 +100,7 @@ List<SpeciesInfo> &Configuration::usedSpecies() { return usedSpecies_; }
 // Return if the specified Species is present in the usedSpecies list
 bool Configuration::hasUsedSpecies(Species *sp)
 {
-    for (auto *spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next())
+    for (auto *spInfo = usedSpecies_.first(); spInfo != nullptr; spInfo = spInfo->next())
         if (spInfo->species() == sp)
             return true;
 
@@ -204,7 +204,7 @@ Atom *Configuration::atom(int n)
     {
         Messenger::print("OUT_OF_RANGE - Atom index {} passed to Configuration::atom() is out of range (nAtoms = {}).\n", n,
                          atoms_.nItems());
-        return NULL;
+        return nullptr;
     }
 #endif
     return atoms_[n];

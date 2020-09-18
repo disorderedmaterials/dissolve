@@ -50,7 +50,7 @@ template <class T> class GenericItemContainer<Array<T>> : public GenericItem
     {
         if (DissolveSys::sameString(className, itemClassName()))
             return new GenericItemContainer<Array<T>>(name, flags);
-        return NULL;
+        return nullptr;
     }
 
     public:

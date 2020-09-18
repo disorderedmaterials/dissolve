@@ -28,7 +28,7 @@ ExpressionVariable::ExpressionVariable(ExpressionValue value, bool readOnly) : E
     // Private variables
     static int count = 0;
     name_ = fmt::format("_ExpressionVariable{:02d}", count++);
-    initialValue_ = NULL;
+    initialValue_ = nullptr;
     nodeType_ = ExpressionNode::VariableNode;
     value_ = value;
     readOnly_ = readOnly;
@@ -46,7 +46,7 @@ std::string_view ExpressionVariable::name() const { return name_; }
 // Initialise variable
 bool ExpressionVariable::initialise()
 {
-    if (initialValue_ == NULL)
+    if (initialValue_ == nullptr)
         value_ = 0.0;
     else
     {
@@ -70,7 +70,7 @@ bool ExpressionVariable::initialise()
 bool ExpressionVariable::setInitialValue(ExpressionNode *node)
 {
     initialValue_ = node;
-    if (initialValue_ == NULL)
+    if (initialValue_ == nullptr)
         return true;
 
     return true;

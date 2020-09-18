@@ -107,7 +107,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
         {
             nodeArray.initialise(fixedArraySize);
             for (int n = 0; n < fixedArraySize; ++n)
-                nodeArray[n] = NULL;
+                nodeArray[n] = nullptr;
         }
     }
     ~NodeArrayKeyword() {}
@@ -242,7 +242,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
                 KeywordBase::name());
 
         // Set the node pointer in the specified position
-        KeywordData<Array<N *> &>::data_[arrayIndex] = NULL;
+        KeywordData<Array<N *> &>::data_[arrayIndex] = nullptr;
 
         KeywordData<Array<N *> &>::set_ = true;
 
@@ -291,6 +291,6 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
         // Loop over array items
         for (int n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
             if (KeywordData<Array<N *> &>::data_[n] == castNode)
-                KeywordData<Array<N *> &>::data_[n] = NULL;
+                KeywordData<Array<N *> &>::data_[n] = nullptr;
     }
 };

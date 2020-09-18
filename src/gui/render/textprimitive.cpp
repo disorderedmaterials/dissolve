@@ -27,8 +27,8 @@
 #include <QtGui/qopengl.h>
 
 // Static members
-TextPrimitive *TextPrimitive::target_ = NULL;
-FontInstance *TextPrimitive::fontInstance_ = NULL;
+TextPrimitive *TextPrimitive::target_ = nullptr;
+FontInstance *TextPrimitive::fontInstance_ = nullptr;
 QString TextPrimitive::stringSource_;
 int TextPrimitive::stringPos_, TextPrimitive::stringLength_;
 List<TextFormat> TextPrimitive::formatStack_;
@@ -184,7 +184,7 @@ void TextPrimitive::boundingBox(FontInstance &fontInstance, Vec3<double> &lowerL
     // Loop over remaining fragments, keeping track of the total width of the primitive and the max/min y values
     Vec3<double> ll, ur;
     // 	double width = upperRight.x - lowerLeft.x;
-    for (auto *fragment = fragments_.first()->next(); fragment != NULL; fragment = fragment->next())
+    for (auto *fragment = fragments_.first()->next(); fragment != nullptr; fragment = fragment->next())
     {
         // Get bounding box for this fragment
         fontInstance.boundingBox(qPrintable(fragment->text()), ll, ur);
@@ -214,7 +214,7 @@ void TextPrimitive::render(FontInstance &fontInstance, const Matrix4 &viewMatrix
     Matrix4 textMatrix;
 
     // Loop over fragments
-    for (auto *fragment = fragments_.first(); fragment != NULL; fragment = fragment->next())
+    for (auto *fragment = fragments_.first(); fragment != nullptr; fragment = fragment->next())
     {
         textMatrix = viewMatrix * transformationMatrix(fontInstance, viewMatrixInverse, baseFontSize, fragment);
         glLoadMatrixd(textMatrix.matrix());

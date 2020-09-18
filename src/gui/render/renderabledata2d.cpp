@@ -56,7 +56,7 @@ bool RenderableData2D::validateDataSource()
 }
 
 // Invalidate the current data source
-void RenderableData2D::invalidateDataSource() { source_ = NULL; }
+void RenderableData2D::invalidateDataSource() { source_ = nullptr; }
 
 // Return version of data
 int RenderableData2D::dataVersion() { return (validateDataSource() ? source_->version() : -99); }

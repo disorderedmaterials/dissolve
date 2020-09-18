@@ -82,9 +82,9 @@ int Cell::nAtoms() const { return atoms_.size(); }
 bool Cell::addAtom(Atom *i)
 {
 #ifdef CHECKS
-    if (i == NULL)
+    if (i == nullptr)
     {
-        Messenger::print("NULL_POINTER - NULL Atom pointer given to Cell::addAtom().\n");
+        Messenger::print("NULL_POINTER - nullptr given to Cell::addAtom().\n");
         return false;
     }
 #endif
@@ -103,9 +103,9 @@ bool Cell::addAtom(Atom *i)
 bool Cell::removeAtom(Atom *i)
 {
 #ifdef CHECKS
-    if (i == NULL)
+    if (i == nullptr)
     {
-        Messenger::print("NULL_POINTER - NULL Atom pointer given to Cell::removeAtom().\n");
+        Messenger::print("NULL_POINTER - nullptr given to Cell::removeAtom().\n");
         return false;
     }
 #endif
@@ -113,7 +113,7 @@ bool Cell::removeAtom(Atom *i)
     if (atoms_.erase(i))
     {
         indexOrderedAtoms_.erase(i);
-        i->setCell(NULL);
+        i->setCell(nullptr);
     }
     else
     {

@@ -33,7 +33,7 @@ class ChartScrollArea : public QScrollArea
 
     public:
     // Constructor / Destructor
-    ChartScrollArea(QWidget *parent = NULL);
+    ChartScrollArea(QWidget *parent = nullptr);
     ~ChartScrollArea();
 
     /*

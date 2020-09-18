@@ -90,7 +90,7 @@ class CoordinateImportFileFormat : public FileAndFormat
 
     public:
     // Import coordinates using current filename and format
-    bool importData(Array<Vec3<double>> &r, ProcessPool *procPool = NULL);
+    bool importData(Array<Vec3<double>> &r, ProcessPool *procPool = nullptr);
     // Import coordinates using supplied parser and current format
     bool importData(LineParser &parser, Array<Vec3<double>> &r);
 };

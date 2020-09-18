@@ -113,10 +113,10 @@ SystemTemplate *SelectSystemTemplateDialog::selectTemplate()
     if (exec() == QDialog::Accepted)
     {
         QListWidgetItem *item = ui_.TemplatesList->currentItem();
-        if (item == NULL)
-            return NULL;
+        if (item == nullptr)
+            return nullptr;
         return VariantPointer<SystemTemplate>(item->data(Qt::UserRole));
     }
     else
-        return NULL;
+        return nullptr;
 }

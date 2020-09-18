@@ -113,7 +113,7 @@ void DataManagerDialog::filterTable(QTableWidget *table, GenericItem *current, Q
             // If the item was hidden, and it was selected, reset the current index
             if (hide && item->isSelected())
             {
-                table->setCurrentItem(NULL);
+                table->setCurrentItem(nullptr);
             }
         }
     }
@@ -153,7 +153,7 @@ ReferencePoint *DataManagerDialog::currentReferencePoint() const
     // Get current item from tree, and check the parent item
     QTableWidgetItem *item = ui_.ReferencePointsTable->currentItem();
     if (!item)
-        return NULL;
+        return nullptr;
     return VariantPointer<ReferencePoint>(item->data(Qt::UserRole));
 }
 
@@ -179,7 +179,7 @@ void DataManagerDialog::updateControls()
 // Simulation Data
 void DataManagerDialog::on_SimulationDataFilterEdit_textChanged(const QString &text)
 {
-    filterTable(ui_.SimulationDataTable, NULL, text);
+    filterTable(ui_.SimulationDataTable, nullptr, text);
 }
 
 // Refernce Points

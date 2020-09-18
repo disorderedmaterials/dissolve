@@ -27,14 +27,14 @@
 SiteViewer::SiteViewer(QWidget *parent) : BaseViewer(parent)
 {
     // Source data
-    species_ = NULL;
-    site_ = NULL;
-    speciesRenderable_ = NULL;
-    siteRenderable_ = NULL;
+    species_ = nullptr;
+    site_ = nullptr;
+    speciesRenderable_ = nullptr;
+    siteRenderable_ = nullptr;
 
     // Interaction
     setInteractionMode(SiteViewer::DefaultInteraction);
-    clickedAtom_ = NULL;
+    clickedAtom_ = nullptr;
 
     // Set up the view
     view_.setViewType(View::NormalView);
@@ -56,7 +56,7 @@ SiteViewer::~SiteViewer() {}
 void SiteViewer::setSpecies(Species *sp)
 {
     species_ = sp;
-    speciesRenderable_ = NULL;
+    speciesRenderable_ = nullptr;
 
     // Clear Renderables
     clearRenderables();
@@ -82,9 +82,9 @@ Species *SiteViewer::species() const { return species_; }
 void SiteViewer::setSite(SpeciesSite *site)
 {
     site_ = site;
-    if (siteRenderable_ != NULL)
+    if (siteRenderable_ != nullptr)
         removeRenderable(siteRenderable_);
-    siteRenderable_ = NULL;
+    siteRenderable_ = nullptr;
 
     // Create a new Renderable for the parent Species
     if (site_)

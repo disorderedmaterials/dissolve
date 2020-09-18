@@ -33,14 +33,14 @@ bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
     // Clear species
     averageSpecies_.clear();
 
-    // If the targetSpecies_ is different from the current target site, or the site is NULL, clear the arrays
+    // If the targetSpecies_ is different from the current target site, or the site is nullptr, clear the arrays
     if (!site)
-        targetSpecies_ = NULL;
+        targetSpecies_ = nullptr;
     else
     {
-        if (site->parent() == NULL)
+        if (site->parent() == nullptr)
         {
-            targetSpecies_ = NULL;
+            targetSpecies_ = nullptr;
 
             return Messenger::error("Target site has no parent species.\n");
         }

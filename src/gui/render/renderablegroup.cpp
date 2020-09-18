@@ -85,7 +85,7 @@ void RenderableGroup::removeRenderable(Renderable *renderable)
     renderable->setValuesTransformEquation("value");
 
     renderables_.remove(renderable);
-    renderable->setGroup(NULL);
+    renderable->setGroup(nullptr);
 }
 
 // Return whether the group is used by the specified renderable
@@ -103,7 +103,7 @@ void RenderableGroup::empty()
     while (Renderable *renderable = renderables_.firstItem())
     {
         renderables_.remove(renderable);
-        renderable->setGroup(NULL);
+        renderable->setGroup(nullptr);
     }
 
     // Reset colour counters

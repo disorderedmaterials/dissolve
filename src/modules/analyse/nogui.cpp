@@ -22,4 +22,4 @@
 #include "modules/analyse/analyse.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *AnalyseModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *AnalyseModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

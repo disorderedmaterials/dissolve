@@ -86,7 +86,7 @@ class KeywordList
      */
     public:
     // Retrieve named item from specified list as template-guided type
-    template <class T> T &retrieve(std::string_view name, T defaultValue = T(), bool *found = NULL)
+    template <class T> T &retrieve(std::string_view name, T defaultValue = T(), bool *found = nullptr)
     {
         // Find item in the list
         KeywordBase *item = find(name);
@@ -95,7 +95,7 @@ class KeywordList
             Messenger::printVerbose("No item named '{}' in the keyword list - default value item will be returned.\n", name);
             static T dummy;
             dummy = defaultValue;
-            if (found != NULL)
+            if (found != nullptr)
                 (*found) = false;
             return dummy;
         }
@@ -106,7 +106,7 @@ class KeywordList
             throw std::runtime_error(
                 fmt::format("KeywordList::retrieve({}) failed, because the target item is of the wrong type.", name));
 
-        if (found != NULL)
+        if (found != nullptr)
             (*found) = true;
         return castItem->data();
     }
@@ -155,14 +155,14 @@ class KeywordList
         return true;
     }
     // Retrieve named EnumOptions with specified class, and return its current enumeration
-    template <class E> E enumeration(std::string_view name, bool *found = NULL)
+    template <class E> E enumeration(std::string_view name, bool *found = nullptr)
     {
         // Find item in the list
         KeywordBase *item = find(name);
         if (!item)
         {
             Messenger::error("No item named '{}' in the keyword list - default enumeration of -1 will be returned.\n", name);
-            if (found != NULL)
+            if (found != nullptr)
                 (*found) = false;
             return (E)-1;
         }
@@ -172,12 +172,12 @@ class KeywordList
         if (!castItem)
         {
             Messenger::error("Failed to cast keyword '{}' into EnumOptions<E> because it's of a different type.\n", name);
-            if (found != NULL)
+            if (found != nullptr)
                 (*found) = false;
             return (E)-1;
         }
 
-        if (found != NULL)
+        if (found != nullptr)
             (*found) = true;
         return castItem->data().enumeration();
     }

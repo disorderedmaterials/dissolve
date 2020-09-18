@@ -33,7 +33,7 @@ template <class A> class Array : public ListItem<Array<A>>
     Array(int initialSize = 0) : ListItem<Array<A>>()
     {
         chunkSize_ = 128;
-        array_ = NULL;
+        array_ = nullptr;
         size_ = 0;
         nItems_ = 0;
         if (initialSize > 0)
@@ -41,20 +41,20 @@ template <class A> class Array : public ListItem<Array<A>>
     }
     Array(const Array<A> &source, int firstIndex, int lastIndex) : ListItem<Array<A>>()
     {
-        array_ = NULL;
+        array_ = nullptr;
         size_ = 0;
         nItems_ = 0;
         copy(source, firstIndex, lastIndex);
     }
     ~Array()
     {
-        if (array_ != NULL)
+        if (array_ != nullptr)
             delete[] array_;
     }
     Array(const Array<A> &source)
     {
         chunkSize_ = source.chunkSize_;
-        array_ = NULL;
+        array_ = nullptr;
         size_ = 0;
         nItems_ = 0;
         initialise(source.size_);
@@ -95,7 +95,7 @@ template <class A> class Array : public ListItem<Array<A>>
             return;
 
         // Copy old data to temporary array
-        A *oldItems = NULL;
+        A *oldItems = nullptr;
         if (nItems_ > 0)
         {
             oldItems = new A[nItems_];
@@ -104,7 +104,7 @@ template <class A> class Array : public ListItem<Array<A>>
         }
 
         // Delete old, and create new array
-        if (array_ != NULL)
+        if (array_ != nullptr)
             delete[] array_;
         size_ = newSize;
         try
@@ -215,9 +215,9 @@ template <class A> class Array : public ListItem<Array<A>>
     void clear()
     {
         nItems_ = 0;
-        if (array_ != NULL)
+        if (array_ != nullptr)
             delete[] array_;
-        array_ = NULL;
+        array_ = nullptr;
         size_ = 0;
     }
     // Drop the first item from the array

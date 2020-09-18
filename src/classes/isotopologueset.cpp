@@ -51,7 +51,7 @@ IsotopologueCollection *IsotopologueSet::parentCollection() const { return paren
 // Clear all existing data
 void IsotopologueSet::clear()
 {
-    configuration_ = NULL;
+    configuration_ = nullptr;
     isotopologues_.clear();
 }
 

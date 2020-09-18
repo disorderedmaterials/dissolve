@@ -88,7 +88,7 @@ class Data1DImportFileFormat : public FileAndFormat
 
     public:
     // Import Data1D using current filename and format
-    bool importData(Data1D &data, ProcessPool *procPool = NULL);
+    bool importData(Data1D &data, ProcessPool *procPool = nullptr);
     // Import Data1D using supplied parser and current format
     bool importData(LineParser &parser, Data1D &data);
 };

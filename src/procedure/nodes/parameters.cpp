@@ -110,7 +110,7 @@ ExpressionVariable *ParametersProcedureNode::hasParameter(std::string_view name,
             return var;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 // Return list of all parameters for this node

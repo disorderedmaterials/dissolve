@@ -64,7 +64,7 @@ void Dissolve::copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom
     // Check for no AtomType being set
     if (!sourceAtom->atomType())
     {
-        destAtom->setAtomType(NULL);
+        destAtom->setAtomType(nullptr);
         return;
     }
 
@@ -93,7 +93,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
     if (sourceIntra.masterParameters())
     {
         // Search for MasterIntra by the same name in our main Dissolve instance
-        MasterIntra *master = NULL;
+        MasterIntra *master = nullptr;
         if (sourceIntra.type() == SpeciesIntra::BondInteraction)
         {
             master = coreData_.hasMasterBond(sourceIntra.masterParameters()->name());

@@ -86,7 +86,7 @@ void SelectForcefieldWidget::updateForcefieldsList(std::shared_ptr<Forcefield> c
     }
 }
 
-void SelectForcefieldWidget::on_FilterEdit_textChanged(const QString &text) { updateForcefieldsList(NULL, text); }
+void SelectForcefieldWidget::on_FilterEdit_textChanged(const QString &text) { updateForcefieldsList(nullptr, text); }
 
 void SelectForcefieldWidget::on_ForcefieldsList_currentItemChanged(QListWidgetItem *current, QListWidgetItem *previous)
 {
@@ -124,8 +124,8 @@ void SelectForcefieldWidget::setCurrentForcefield(std::shared_ptr<Forcefield> cu
 std::shared_ptr<Forcefield> SelectForcefieldWidget::currentForcefield() const
 {
     QListWidgetItem *item = ui_.ForcefieldsList->currentItem();
-    if (item == NULL)
-        return NULL;
+    if (item == nullptr)
+        return nullptr;
 
     return item->data(Qt::UserRole).value<std::shared_ptr<Forcefield>>();
 }

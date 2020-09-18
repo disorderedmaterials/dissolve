@@ -170,7 +170,7 @@ class Dissolve
     // Clear and regenerate all PairPotentials, replacing those currently defined
     void regeneratePairPotentials();
     // Generate all necessary PairPotentials, adding missing terms where necessary
-    bool generatePairPotentials(std::shared_ptr<AtomType> onlyInvolving = NULL);
+    bool generatePairPotentials(std::shared_ptr<AtomType> onlyInvolving = nullptr);
 
     /*
      * Configurations
@@ -223,7 +223,7 @@ class Dissolve
     // Search for any instance of any Module with the specified Module type
     RefList<Module> findModuleInstances(std::string_view moduleType);
     // Generate unique Module name with base name provided
-    std::string uniqueModuleName(std::string_view name, Module *excludeThis = NULL);
+    std::string uniqueModuleName(std::string_view name, Module *excludeThis = nullptr);
     // Delete specified Module instance
     bool deleteModuleInstance(Module *instance);
 
@@ -254,7 +254,7 @@ class Dissolve
     // Return data associated with main processing Modules
     GenericList &processingModuleData();
     // Create and add a named Module to the named layer (creating it if necessary), with optional Configuration target
-    Module *createModuleInLayer(std::string_view moduleType, std::string_view layerName, Configuration *cfg = NULL);
+    Module *createModuleInLayer(std::string_view moduleType, std::string_view layerName, Configuration *cfg = nullptr);
 
     /*
      * Simulation

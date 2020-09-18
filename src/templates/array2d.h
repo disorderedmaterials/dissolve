@@ -31,9 +31,9 @@ template <class A> class Array2D
     public:
     Array2D(int nrows = 0, int ncolumns = 0, bool half = false)
     {
-        array_ = NULL;
+        array_ = nullptr;
         linearSize_ = 0;
-        rowOffsets_ = NULL;
+        rowOffsets_ = nullptr;
         nRows_ = 0;
         nColumns_ = 0;
         half_ = half;
@@ -44,21 +44,21 @@ template <class A> class Array2D
     // Clear array data
     void clear()
     {
-        if (array_ != NULL)
+        if (array_ != nullptr)
             delete[] array_;
-        if (rowOffsets_ != NULL)
+        if (rowOffsets_ != nullptr)
             delete[] rowOffsets_;
-        rowOffsets_ = NULL;
-        array_ = NULL;
+        rowOffsets_ = nullptr;
+        array_ = nullptr;
         linearSize_ = 0;
         nRows_ = 0;
         nColumns_ = 0;
     }
     Array2D(const Array2D<A> &source)
     {
-        array_ = NULL;
+        array_ = nullptr;
         linearSize_ = 0;
-        rowOffsets_ = NULL;
+        rowOffsets_ = nullptr;
         nRows_ = 0;
         nColumns_ = 0;
         half_ = false;

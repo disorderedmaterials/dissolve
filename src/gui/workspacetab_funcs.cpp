@@ -127,8 +127,8 @@ void WorkspaceTab::removeGizmo(QString uniqueName)
 // Create Gizmo with specified type
 Gizmo *WorkspaceTab::createGizmo(QString type)
 {
-    Gizmo *gizmo = NULL;
-    QWidget *widget = NULL;
+    Gizmo *gizmo = nullptr;
+    QWidget *widget = nullptr;
 
     // Check the type of the provided gizmo...
     if (type == "Graph")
@@ -149,7 +149,7 @@ Gizmo *WorkspaceTab::createGizmo(QString type)
     {
         Messenger::error("Couldn't add gizmo to workspace '{} - unrecognised type '{}' encountered.\n", qPrintable(title()),
                          qPrintable(type));
-        return NULL;
+        return nullptr;
     }
 
     // Create a new window for the Gizmo's widget and show it
@@ -227,7 +227,7 @@ bool WorkspaceTab::readState(LineParser &parser, const CoreData &coreData)
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
         Gizmo *gizmo = createGizmo(QString::fromStdString(std::string(parser.argsv(0))));
-        if (gizmo == NULL)
+        if (gizmo == nullptr)
             return Messenger::error("Unrecognised gizmo type '{}' in workspace '{}'.\n", parser.argsv(0), qPrintable(title()));
 
         // Set the unique name

@@ -25,9 +25,9 @@
 
 OperateProcedureNodeBase::OperateProcedureNodeBase(ProcedureNode::NodeType nodeType) : ProcedureNode(nodeType)
 {
-    targetData1D_ = NULL;
-    targetData2D_ = NULL;
-    targetData3D_ = NULL;
+    targetData1D_ = nullptr;
+    targetData2D_ = nullptr;
+    targetData3D_ = nullptr;
 }
 
 OperateProcedureNodeBase::~OperateProcedureNodeBase() {}
@@ -53,23 +53,23 @@ bool OperateProcedureNodeBase::mustBeNamed() const { return false; }
 void OperateProcedureNodeBase::setTarget(Data1D *target)
 {
     targetData1D_ = target;
-    targetData2D_ = NULL;
-    targetData3D_ = NULL;
+    targetData2D_ = nullptr;
+    targetData3D_ = nullptr;
 }
 
 // Set target Data2D
 void OperateProcedureNodeBase::setTarget(Data2D *target)
 {
-    targetData1D_ = NULL;
+    targetData1D_ = nullptr;
     targetData2D_ = target;
-    targetData3D_ = NULL;
+    targetData3D_ = nullptr;
 }
 
 // Set target Data3D
 void OperateProcedureNodeBase::setTarget(Data3D *target)
 {
-    targetData1D_ = NULL;
-    targetData2D_ = NULL;
+    targetData1D_ = nullptr;
+    targetData2D_ = nullptr;
     targetData3D_ = target;
 }
 

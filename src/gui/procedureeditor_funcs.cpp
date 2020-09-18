@@ -31,8 +31,8 @@ ProcedureEditor::ProcedureEditor(QWidget *parent) : QWidget(parent)
 {
     ui_.setupUi(this);
 
-    procedure_ = NULL;
-    chart_ = NULL;
+    procedure_ = nullptr;
+    chart_ = nullptr;
 
     refreshing_ = false;
 }

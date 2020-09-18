@@ -282,9 +282,9 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Return whether the specified Isotopologue exists
     bool hasIsotopologue(const Isotopologue *iso) const;
     // Generate unique Isotopologue name with base name provided
-    std::string uniqueIsotopologueName(std::string_view baseName, const Isotopologue *exclude = NULL);
+    std::string uniqueIsotopologueName(std::string_view baseName, const Isotopologue *exclude = nullptr);
     // Search for Isotopologue by name
-    Isotopologue *findIsotopologue(std::string_view name, const Isotopologue *exclude = NULL);
+    Isotopologue *findIsotopologue(std::string_view name, const Isotopologue *exclude = nullptr);
     // Return index of specified Isotopologue
     int indexOfIsotopologue(const Isotopologue *iso) const;
 
@@ -307,9 +307,9 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Return nth SpeciesSite defined
     SpeciesSite *site(int n);
     // Generate unique site name with base name provided
-    std::string uniqueSiteName(std::string_view base, const SpeciesSite *exclude = NULL) const;
+    std::string uniqueSiteName(std::string_view base, const SpeciesSite *exclude = nullptr) const;
     // Search for SpeciesSite by name
-    SpeciesSite *findSite(std::string_view name, const SpeciesSite *exclude = NULL) const;
+    SpeciesSite *findSite(std::string_view name, const SpeciesSite *exclude = nullptr) const;
 
     /*
      * Transforms

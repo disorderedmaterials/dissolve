@@ -56,12 +56,12 @@ void DissolveWindow::on_WorkspaceRenameCurrentGizmoAction_triggered(bool checked
 
 void DissolveWindow::currentWorkspaceGizmoChanged(QMdiSubWindow *gizmoWindow)
 {
-    Gizmo *currentGizmo = gizmoWindow ? Gizmo::find(gizmoWindow) : NULL;
+    Gizmo *currentGizmo = gizmoWindow ? Gizmo::find(gizmoWindow) : nullptr;
     if (!currentGizmo || !gizmoWindow)
     {
         ui_.WorkspaceRenameCurrentGizmoAction->setText("Rename Current Gizmo...");
         ui_.WorkspaceRenameCurrentGizmoAction->setEnabled(false);
-        ui_.WorkspaceRenameCurrentGizmoAction->setData(VariantPointer<Gizmo>(NULL));
+        ui_.WorkspaceRenameCurrentGizmoAction->setData(VariantPointer<Gizmo>(nullptr));
         return;
     }
 

@@ -183,7 +183,7 @@ void DissolveWindow::on_SimulationSetRandomSeedAction_triggered(bool checked)
     dissolve_.setSeed(newSeed);
 
     if (dissolve_.seed() == -1)
-        srand((unsigned)time(NULL));
+        srand((unsigned)time(nullptr));
     else
         srand(dissolve_.seed());
 }

@@ -22,4 +22,4 @@
 #include "modules/epsr/epsr.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *EPSRModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *EPSRModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

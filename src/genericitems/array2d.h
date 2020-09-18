@@ -49,7 +49,7 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
     {
         if (DissolveSys::sameString(className, itemClassName()))
             return new GenericItemContainer<Array2D<T>>(name, flags);
-        return NULL;
+        return nullptr;
     }
 
     public:

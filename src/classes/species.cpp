@@ -34,7 +34,7 @@ template <class Species> std::string_view ObjectStore<Species>::objectTypeName_ 
 
 Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
 {
-    forcefield_ = NULL;
+    forcefield_ = nullptr;
     autoUpdateIntramolecularTerms_ = true;
     attachedAtomListsGenerated_ = false;
     usedAtomTypesPoint_ = -1;
@@ -83,9 +83,9 @@ bool Species::checkSetUp()
     /*
      * AtomTypes
      */
-    for (auto *i = atoms_.first(); i != NULL; i = i->next())
+    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
     {
-        if (i->atomType() == NULL)
+        if (i->atomType() == nullptr)
         {
             Messenger::error("Atom {} ({}) has no associated AtomType.\n", i->userIndex(), i->element()->symbol());
             ++nErrors;
@@ -97,7 +97,7 @@ bool Species::checkSetUp()
     /*
      * IntraMolecular Data
      */
-    for (auto *i = atoms_.first(); i != NULL; i = i->next())
+    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
     {
         if ((i->nBonds() == 0) && (atoms_.nItems() > 1))
         {
@@ -124,7 +124,7 @@ bool Species::checkSetUp()
     /*
      * Check Isotopologues
      */
-    for (auto *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
+    for (auto *iso = isotopologues_.first(); iso != nullptr; iso = iso->next())
     {
         for (auto [atomType, isotope] : iso->isotopes())
         {

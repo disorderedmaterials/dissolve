@@ -38,7 +38,8 @@
 #include <QMdiSubWindow>
 #include <QMessageBox>
 
-DissolveWindow::DissolveWindow(Dissolve &dissolve) : QMainWindow(NULL), dissolve_(dissolve), threadController_(this, dissolve)
+DissolveWindow::DissolveWindow(Dissolve &dissolve)
+    : QMainWindow(nullptr), dissolve_(dissolve), threadController_(this, dissolve)
 {
     // Initialise resources
     Q_INIT_RESOURCE(main);

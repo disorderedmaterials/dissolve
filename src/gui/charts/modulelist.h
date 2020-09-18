@@ -37,7 +37,7 @@ class ModuleList;
 class ModuleListChart : public ChartBase
 {
     public:
-    ModuleListChart(ModuleList *moduleList, Dissolve &dissolve, Configuration *localConfiguration = NULL);
+    ModuleListChart(ModuleList *moduleList, Dissolve &dissolve, Configuration *localConfiguration = nullptr);
     ~ModuleListChart();
 
     /*

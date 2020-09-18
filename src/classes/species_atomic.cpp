@@ -101,7 +101,7 @@ void Species::transmuteAtom(SpeciesAtom *i, Element *el)
         return;
 
     // Remove any existing AtomType assignment
-    i->setAtomType(NULL);
+    i->setAtomType(nullptr);
     i->setElement(el);
 
     ++version_;
@@ -110,7 +110,7 @@ void Species::transmuteAtom(SpeciesAtom *i, Element *el)
 // Clear current Atom selection
 void Species::clearAtomSelection()
 {
-    for (auto *i = atoms_.first(); i != NULL; i = i->next())
+    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
         i->setSelected(false);
 
     selectedAtoms_.clear();
@@ -182,8 +182,8 @@ const RefList<SpeciesAtom> &Species::selectedAtoms() const { return selectedAtom
 SpeciesAtom *Species::selectedAtom(int n)
 {
     RefListItem<SpeciesAtom> *ri = selectedAtoms_[n];
-    if (ri == NULL)
-        return NULL;
+    if (ri == nullptr)
+        return nullptr;
     else
         return ri->item();
 }
@@ -192,7 +192,7 @@ SpeciesAtom *Species::selectedAtom(int n)
 double Species::totalChargeOnAtoms()
 {
     double totalQ = 0.0;
-    for (auto *i = atoms_.first(); i != NULL; i = i->next())
+    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
         totalQ += i->charge();
     return totalQ;
 }
@@ -210,7 +210,7 @@ int Species::atomSelectionVersion() const { return atomSelectionVersion_; }
 double Species::mass() const
 {
     double m = 0.0;
-    for (auto *i = atoms_.first(); i != NULL; i = i->next())
+    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
         m += AtomicMass::mass(i->element());
     return m;
 }
@@ -224,7 +224,7 @@ const AtomTypeList &Species::usedAtomTypes()
     if (usedAtomTypesPoint_ != atomTypesVersion_)
     {
         usedAtomTypes_.clear();
-        for (auto *i = atoms_.first(); i != NULL; i = i->next())
+        for (auto *i = atoms_.first(); i != nullptr; i = i->next())
             if (i->atomType())
                 usedAtomTypes_.add(i->atomType(), 1);
 
@@ -237,8 +237,8 @@ const AtomTypeList &Species::usedAtomTypes()
 // Clear AtomType assignments for all atoms
 void Species::clearAtomTypes()
 {
-    for (auto *i = atoms_.first(); i != NULL; i = i->next())
-        i->setAtomType(NULL);
+    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
+        i->setAtomType(nullptr);
 
     ++atomTypesVersion_;
 }

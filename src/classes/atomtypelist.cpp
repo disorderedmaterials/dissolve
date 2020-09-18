@@ -94,7 +94,7 @@ void AtomTypeList::add(const AtomTypeList &source)
         AtomTypeData &atd = add(newType.atomType());
 
         // Now add Isotope data
-        for (auto *topeData = newType.isotopeData(); topeData != NULL; topeData = topeData->next())
+        for (auto *topeData = newType.isotopeData(); topeData != nullptr; topeData = topeData->next())
             atd.add(topeData->isotope(), topeData->population());
     }
 }
@@ -112,7 +112,7 @@ void AtomTypeList::addIsotope(std::shared_ptr<AtomType> atomType, Isotope *tope,
     auto &atd = add(atomType, 0);
 
     // Add / increase isotope population
-    if (tope != NULL)
+    if (tope != nullptr)
         atd.add(tope, popAdd);
 }
 
@@ -276,7 +276,7 @@ void AtomTypeList::print() const
             Messenger::print("{} {:<8}  {:<3}    -     {:<10d}    {:10.6f} (of world) {:6.3f}\n", exch, atd.atomTypeName(),
                              atd.atomType()->element()->symbol(), atd.population(), atd.fraction(), atd.boundCoherent());
 
-            for (const auto *topeData = atd.isotopeData(); topeData != NULL; topeData = topeData->next())
+            for (const auto *topeData = atd.isotopeData(); topeData != nullptr; topeData = topeData->next())
             {
                 Messenger::print("                   {:<3d}   {:<10.6e}  {:10.6f} (of type)  {:6.3f}\n",
                                  topeData->isotope()->A(), topeData->population(), topeData->fraction(),

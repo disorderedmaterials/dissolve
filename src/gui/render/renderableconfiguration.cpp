@@ -71,7 +71,7 @@ bool RenderableConfiguration::validateDataSource()
 }
 
 // Invalidate the current data source
-void RenderableConfiguration::invalidateDataSource() { source_ = NULL; }
+void RenderableConfiguration::invalidateDataSource() { source_ = nullptr; }
 
 // Return version of data
 int RenderableConfiguration::dataVersion() { return (validateDataSource() ? source_->contentsVersion() : -99); }

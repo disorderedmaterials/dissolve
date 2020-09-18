@@ -22,4 +22,4 @@
 #include "modules/calculate_rdf/rdf.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *CalculateRDFModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *CalculateRDFModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

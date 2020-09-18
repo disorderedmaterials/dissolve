@@ -32,7 +32,7 @@ ModuleListEditor::ModuleListEditor(QWidget *parent) : QWidget(parent)
 {
     ui_.setupUi(this);
 
-    chartWidget_ = NULL;
+    chartWidget_ = nullptr;
 
     refreshing_ = false;
 }
@@ -73,14 +73,14 @@ bool ModuleListEditor::setUp(DissolveWindow *dissolveWindow, ModuleLayer *module
             continue;
 
         // Find category for this Module (if it exists) or create a new one
-        MimeTreeWidgetItem *categoryItem = NULL;
+        MimeTreeWidgetItem *categoryItem = nullptr;
         RefDataListIterator<MimeTreeWidgetItem, QString> categoryIterator(moduleCategories_);
         while ((categoryItem = categoryIterator.iterate()))
             if (categoryIterator.currentData() == QString::fromStdString(std::string(module->category())))
                 break;
-        if (categoryItem == NULL)
+        if (categoryItem == nullptr)
         {
-            categoryItem = new MimeTreeWidgetItem((QTreeWidget *)NULL, 1000);
+            categoryItem = new MimeTreeWidgetItem((QTreeWidget *)nullptr, 1000);
             categoryItem->setText(0, QString::fromStdString(std::string(module->category())));
             categoryItem->setFlags(Qt::ItemIsEnabled);
             moduleCategories_.append(categoryItem, QString::fromStdString(std::string(module->category())));
@@ -168,7 +168,7 @@ void ModuleListEditor::blockSelectionChanged(const QString &blockIdentifier)
 {
     if (blockIdentifier.isEmpty())
     {
-        ui_.ControlsWidget->setModule(NULL, NULL);
+        ui_.ControlsWidget->setModule(nullptr, nullptr);
         ui_.ControlsWidget->setVisible(false);
         return;
     }
@@ -177,7 +177,7 @@ void ModuleListEditor::blockSelectionChanged(const QString &blockIdentifier)
     Module *module = dissolveWindow_->dissolve().findModuleInstance(qPrintable(blockIdentifier));
     if (!module)
     {
-        ui_.ControlsWidget->setModule(NULL, NULL);
+        ui_.ControlsWidget->setModule(nullptr, nullptr);
         ui_.ControlsWidget->setVisible(false);
         return;
     }

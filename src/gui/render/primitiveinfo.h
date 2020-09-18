@@ -51,7 +51,7 @@ class PrimitiveInfo
 class UncolouredPrimitiveInfo : public PrimitiveInfo
 {
     public:
-    UncolouredPrimitiveInfo(Primitive *prim = NULL, Matrix4 transform = Matrix4());
+    UncolouredPrimitiveInfo(Primitive *prim = nullptr, Matrix4 transform = Matrix4());
     ~UncolouredPrimitiveInfo();
 
     private:
@@ -69,7 +69,7 @@ class UncolouredPrimitiveInfo : public PrimitiveInfo
 class ColouredPrimitiveInfo : public PrimitiveInfo
 {
     public:
-    ColouredPrimitiveInfo(Primitive *prim = NULL, Matrix4 transform = Matrix4(), GLfloat r = 0.0, GLfloat g = 0.0,
+    ColouredPrimitiveInfo(Primitive *prim = nullptr, Matrix4 transform = Matrix4(), GLfloat r = 0.0, GLfloat g = 0.0,
                           GLfloat b = 0.0, GLfloat a = 0.0);
     ~ColouredPrimitiveInfo();
 

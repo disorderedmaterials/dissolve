@@ -49,7 +49,7 @@ template <> class GenericItemContainer<double> : public GenericItem
     {
         if (DissolveSys::sameString(className, itemClassName()))
             return new GenericItemContainer<double>(name, flags);
-        return NULL;
+        return nullptr;
     }
 
     public:

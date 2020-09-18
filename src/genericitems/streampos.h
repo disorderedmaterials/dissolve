@@ -50,7 +50,7 @@ template <> class GenericItemContainer<std::streampos> : public GenericItem
     {
         if (DissolveSys::sameString(className, itemClassName()))
             return new GenericItemContainer<std::streampos>(name, flags);
-        return NULL;
+        return nullptr;
     }
 
     public:

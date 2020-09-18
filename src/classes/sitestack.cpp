@@ -29,9 +29,9 @@
 
 SiteStack::SiteStack() : ListItem<SiteStack>()
 {
-    configuration_ = NULL;
+    configuration_ = nullptr;
     configurationIndex_ = -1;
-    speciesSite_ = NULL;
+    speciesSite_ = nullptr;
     sitesInMolecules_ = false;
     sitesHaveOrientation_ = false;
 }

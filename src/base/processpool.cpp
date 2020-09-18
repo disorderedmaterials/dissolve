@@ -1752,7 +1752,7 @@ bool ProcessPool::sum(double *source, int count, int rootRank, ProcessPool::Comm
     else
     {
         // Not the target process, so just send data
-        if (MPI_Reduce(source, NULL, count, MPI_DOUBLE, MPI_SUM, rootRank, communicator(commType)) != MPI_SUCCESS)
+        if (MPI_Reduce(source, nullptr, count, MPI_DOUBLE, MPI_SUM, rootRank, communicator(commType)) != MPI_SUCCESS)
             return false;
     }
     timer_.accumulate();
@@ -1780,7 +1780,7 @@ bool ProcessPool::sum(int *source, int count, int rootRank, ProcessPool::Communi
     else
     {
         // Not the target process, so just send data
-        if (MPI_Reduce(source, NULL, count, MPI_INTEGER, MPI_SUM, rootRank, communicator(commType)) != MPI_SUCCESS)
+        if (MPI_Reduce(source, nullptr, count, MPI_INTEGER, MPI_SUM, rootRank, communicator(commType)) != MPI_SUCCESS)
             return false;
     }
     timer_.accumulate();

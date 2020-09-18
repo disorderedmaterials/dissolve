@@ -259,7 +259,7 @@ void DataWidget::on_DataTree_itemChanged(QTreeWidgetItem *item, int column)
     if (refreshLock_.isLocked())
         return;
 
-    // If this is a top-level item (parent() == NULL) then retrieve the Renderable Group. If not, get the associated
+    // If this is a top-level item (parent() == nullptr) then retrieve the Renderable Group. If not, get the associated
     // Renderable.
     if (item->parent())
     {

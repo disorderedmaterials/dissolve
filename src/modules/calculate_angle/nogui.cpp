@@ -22,4 +22,4 @@
 #include "modules/calculate_angle/angle.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *CalculateAngleModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *CalculateAngleModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

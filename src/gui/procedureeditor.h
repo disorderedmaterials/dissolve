@@ -39,7 +39,7 @@ class ProcedureEditor : public QWidget
     Q_OBJECT
 
     public:
-    ProcedureEditor(QWidget *parent = NULL);
+    ProcedureEditor(QWidget *parent = nullptr);
     ~ProcedureEditor();
 
     /*

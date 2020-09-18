@@ -27,12 +27,12 @@
 VertexChunk::VertexChunk()
 {
     // Public variables
-    next = NULL;
-    prev = NULL;
+    next = nullptr;
+    prev = nullptr;
 
     // Private variables
-    vertexData_ = NULL;
-    centroids_ = NULL;
+    vertexData_ = nullptr;
+    centroids_ = nullptr;
     verticesPerType_ = 0;
     dataPerVertex_ = 0;
     nDefinedVertices_ = 0;
@@ -43,9 +43,9 @@ VertexChunk::VertexChunk()
 
 VertexChunk::~VertexChunk()
 {
-    if (vertexData_ != NULL)
+    if (vertexData_ != nullptr)
         delete[] vertexData_;
-    if (centroids_ != NULL)
+    if (centroids_ != nullptr)
         delete[] centroids_;
 }
 

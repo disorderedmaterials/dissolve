@@ -31,9 +31,9 @@ template <class A> class Array3D
     public:
     Array3D(int nX = 0, int nY = 0, int nZ = 0)
     {
-        array_ = NULL;
+        array_ = nullptr;
         linearSize_ = 0;
-        sliceOffsets_ = NULL;
+        sliceOffsets_ = nullptr;
         nX_ = 0;
         nY_ = 0;
         nZ_ = 0;
@@ -44,12 +44,12 @@ template <class A> class Array3D
     // Clear array data
     void clear()
     {
-        if (array_ != NULL)
+        if (array_ != nullptr)
             delete[] array_;
-        if (sliceOffsets_ != NULL)
+        if (sliceOffsets_ != nullptr)
             delete[] sliceOffsets_;
-        sliceOffsets_ = NULL;
-        array_ = NULL;
+        sliceOffsets_ = nullptr;
+        array_ = nullptr;
         linearSize_ = 0;
         nX_ = 0;
         nY_ = 0;
@@ -57,9 +57,9 @@ template <class A> class Array3D
     }
     Array3D(const Array3D<A> &source)
     {
-        array_ = NULL;
+        array_ = nullptr;
         linearSize_ = 0;
-        sliceOffsets_ = NULL;
+        sliceOffsets_ = nullptr;
         nX_ = 0;
         nY_ = 0;
         nZ_ = 0;
@@ -267,9 +267,9 @@ template <class A> class OffsetArray3D
     public:
     OffsetArray3D(int xMin, int xMax, int yMin, int yMax, int zMin, int zMax)
     {
-        array_ = NULL;
+        array_ = nullptr;
         linearSize_ = 0;
-        sliceOffsets_ = NULL;
+        sliceOffsets_ = nullptr;
 
         initialise(xMin, xMax, yMin, yMax, zMin, zMax);
     }
@@ -277,12 +277,12 @@ template <class A> class OffsetArray3D
     // Clear array data
     void clear()
     {
-        if (array_ != NULL)
+        if (array_ != nullptr)
             delete[] array_;
-        if (sliceOffsets_ != NULL)
+        if (sliceOffsets_ != nullptr)
             delete[] sliceOffsets_;
-        sliceOffsets_ = NULL;
-        array_ = NULL;
+        sliceOffsets_ = nullptr;
+        array_ = nullptr;
         linearSize_ = 0;
         xMin_ = 0;
         yMin_ = 0;
@@ -296,9 +296,9 @@ template <class A> class OffsetArray3D
     }
     OffsetArray3D(const OffsetArray3D<A> &source)
     {
-        array_ = NULL;
+        array_ = nullptr;
         linearSize_ = 0;
-        sliceOffsets_ = NULL;
+        sliceOffsets_ = nullptr;
         xMin_ = 0;
         yMin_ = 0;
         zMin_ = 0;

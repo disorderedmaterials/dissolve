@@ -56,7 +56,7 @@ bool PotentialMap::initialise(const std::vector<std::shared_ptr<AtomType>> &mast
 
     // Loop over defined PairPotentials
     int indexI, indexJ;
-    for (auto *pot = pairPotentials.first(); pot != NULL; pot = pot->next())
+    for (auto *pot = pairPotentials.first(); pot != nullptr; pot = pot->next())
     {
         indexI = pot->atomTypeI()->index();
         indexJ = pot->atomTypeJ()->index();

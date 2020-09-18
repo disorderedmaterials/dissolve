@@ -26,7 +26,7 @@
 
 AtomType::AtomType()
 {
-    element_ = NULL;
+    element_ = nullptr;
     name_ = "XX";
     exchangeable_ = false;
     shortRangeType_ = Forcefield::UndefinedType;

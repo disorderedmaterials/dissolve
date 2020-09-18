@@ -22,4 +22,4 @@
 #include "modules/bragg/bragg.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *BraggModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *BraggModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

@@ -35,9 +35,9 @@ Atom::~Atom() {}
 // Clear object, ready for re-use
 void Atom::clear()
 {
-    molecule_ = NULL;
-    speciesAtom_ = NULL;
-    cell_ = NULL;
+    molecule_ = nullptr;
+    speciesAtom_ = nullptr;
+    cell_ = nullptr;
 
     // Properties
     localTypeIndex_ = -1;

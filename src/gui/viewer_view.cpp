@@ -75,6 +75,6 @@ void BaseViewer::unlinkView()
     }
 
     linkedViewer_->removeDependentViewer(this);
-    linkedViewer_ = NULL;
-    view_.setLinkedView(NULL);
+    linkedViewer_ = nullptr;
+    view_.setLinkedView(nullptr);
 }

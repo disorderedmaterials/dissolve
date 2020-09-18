@@ -38,13 +38,13 @@ LineParser::~LineParser()
 {
     closeFiles();
 
-    if (inputFile_ != NULL)
+    if (inputFile_ != nullptr)
         delete inputFile_;
-    if (outputFile_ != NULL)
+    if (outputFile_ != nullptr)
         delete outputFile_;
-    if (cachedFile_ != NULL)
+    if (cachedFile_ != nullptr)
         delete cachedFile_;
-    if (inputStrings_ != NULL)
+    if (inputStrings_ != nullptr)
         delete inputStrings_;
 }
 
@@ -61,10 +61,10 @@ void LineParser::reset()
     line_.clear();
     linePos_ = 0;
     lastLineNo_ = 0;
-    inputFile_ = NULL;
-    outputFile_ = NULL;
-    cachedFile_ = NULL;
-    inputStrings_ = NULL;
+    inputFile_ = nullptr;
+    outputFile_ = nullptr;
+    cachedFile_ = nullptr;
+    inputStrings_ = nullptr;
     fileInput_ = true;
     directOutput_ = false;
     arguments_.clear();
@@ -99,12 +99,12 @@ bool LineParser::openInput(std::string_view filename)
     // Master needs to check for an existing input file
     if ((!processPool_) || processPool_->isMaster())
     {
-        if (inputFile_ != NULL)
+        if (inputFile_ != nullptr)
         {
             Messenger::warn("LineParser already appears to have an open file...\n");
             inputFile_->close();
             delete inputFile_;
-            inputFile_ = NULL;
+            inputFile_ = nullptr;
         }
     }
 
@@ -136,18 +136,18 @@ bool LineParser::openInput(std::string_view filename)
 // Open input string for reading
 bool LineParser::openInputString(std::string_view s)
 {
-    if (inputFile_ != NULL)
+    if (inputFile_ != nullptr)
     {
         Messenger::warn("LineParser already appears to have an open file...\n");
         inputFile_->close();
         delete inputFile_;
-        inputFile_ = NULL;
+        inputFile_ = nullptr;
     }
-    if (inputStrings_ != NULL)
+    if (inputStrings_ != nullptr)
     {
         Messenger::warn("LineParser already appears to have open strings...\n");
         delete inputStrings_;
-        inputStrings_ = NULL;
+        inputStrings_ = nullptr;
     }
 
     fileInput_ = false;
@@ -173,19 +173,19 @@ bool LineParser::openOutput(std::string_view filename, bool directOutput)
     if ((!processPool_) || processPool_->isMaster())
     {
         // Check for existing output file
-        if ((outputFile_ != NULL) || (cachedFile_ != NULL))
+        if ((outputFile_ != nullptr) || (cachedFile_ != nullptr))
         {
             Messenger::warn("LineParser already appears to have an open file/cache...\n");
-            if (outputFile_ != NULL)
+            if (outputFile_ != nullptr)
             {
                 outputFile_->close();
                 delete outputFile_;
-                outputFile_ = NULL;
+                outputFile_ = nullptr;
             }
-            if (cachedFile_ != NULL)
+            if (cachedFile_ != nullptr)
             {
                 delete cachedFile_;
-                cachedFile_ = NULL;
+                cachedFile_ = nullptr;
             }
         }
 
@@ -223,19 +223,19 @@ bool LineParser::appendOutput(std::string_view filename)
     if ((!processPool_) || processPool_->isMaster())
     {
         // Check for existing output file
-        if ((outputFile_ != NULL) || (cachedFile_ != NULL))
+        if ((outputFile_ != nullptr) || (cachedFile_ != nullptr))
         {
             Messenger::warn("LineParser already appears to have an open file/cache...\n");
-            if (outputFile_ != NULL)
+            if (outputFile_ != nullptr)
             {
                 outputFile_->close();
                 delete outputFile_;
-                outputFile_ = NULL;
+                outputFile_ = nullptr;
             }
-            if (cachedFile_ != NULL)
+            if (cachedFile_ != nullptr)
             {
                 delete cachedFile_;
-                cachedFile_ = NULL;
+                cachedFile_ = nullptr;
             }
         }
 
@@ -262,19 +262,19 @@ void LineParser::closeFiles()
 {
     if ((!processPool_) || processPool_->isMaster())
     {
-        if (inputFile_ != NULL)
+        if (inputFile_ != nullptr)
         {
             inputFile_->close();
             delete inputFile_;
         }
-        if (outputFile_ != NULL)
+        if (outputFile_ != nullptr)
         {
             outputFile_->close();
             delete outputFile_;
         }
     }
 
-    if (inputStrings_ != NULL)
+    if (inputStrings_ != nullptr)
         delete inputStrings_;
 
     reset();
@@ -287,7 +287,7 @@ bool LineParser::isFileGoodForReading() const
     auto result = true;
     if ((!processPool_) || processPool_->isMaster())
     {
-        if (fileInput_ && (inputFile_ == NULL))
+        if (fileInput_ && (inputFile_ == nullptr))
             result = false;
         else if (fileInput_ && (!inputFile_->is_open()))
             result = false;
@@ -311,7 +311,7 @@ bool LineParser::isFileGoodForWriting() const
     {
         if (directOutput_)
         {
-            if (outputFile_ == NULL)
+            if (outputFile_ == nullptr)
                 result = false;
             else if (!outputFile_->is_open())
                 result = false;
@@ -328,7 +328,7 @@ bool LineParser::isFileGoodForWriting() const
 // Peek next character in input stream
 char LineParser::peek() const
 {
-    if (inputStream() == NULL)
+    if (inputStream() == nullptr)
         return '\0';
     return inputStream()->peek();
 }
@@ -337,7 +337,7 @@ char LineParser::peek() const
 std::streampos LineParser::tellg() const
 {
     std::streampos result = 0;
-    if (inputStream() != NULL)
+    if (inputStream() != nullptr)
         result = inputStream()->tellg();
     else
         Messenger::warn("LineParser tried to tellg() on a non-existent input file.\n");
@@ -347,7 +347,7 @@ std::streampos LineParser::tellg() const
 // Seek position in input stream
 void LineParser::seekg(std::streampos pos)
 {
-    if (inputFile_ != NULL)
+    if (inputFile_ != nullptr)
     {
         if (inputStream()->eof())
             inputStream()->clear();
@@ -360,7 +360,7 @@ void LineParser::seekg(std::streampos pos)
 // Seek n bytes in specified direction in input stream
 void LineParser::seekg(std::streamoff off, std::ios_base::seekdir dir)
 {
-    if (inputStream() != NULL)
+    if (inputStream() != nullptr)
         inputFile_->seekg(off, dir);
     else
         Messenger::warn("LineParser tried to seekg() on a non-existent input file.\n");
@@ -369,7 +369,7 @@ void LineParser::seekg(std::streamoff off, std::ios_base::seekdir dir)
 // Rewind input stream to start
 void LineParser::rewind()
 {
-    if (inputStream() != NULL)
+    if (inputStream() != nullptr)
         inputFile_->seekg(0, std::ios::beg);
     else
         Messenger::print("No file currently open to rewind.\n");
@@ -383,7 +383,7 @@ bool LineParser::eofOrBlank() const
     if ((!processPool_) || processPool_->isMaster())
     {
         // Do we have a valid input stream?
-        if (inputStream() == NULL)
+        if (inputStream() == nullptr)
         {
             result = true;
             if (processPool_ && (!processPool_->broadcast(result)))
@@ -592,7 +592,7 @@ LineParser::ParseReturnValue LineParser::readNextLine(int optionMask)
     if ((!processPool_) || processPool_->isMaster())
     {
         // Returns : 0=ok, 1=error, -1=eof
-        if (fileInput_ && (inputFile_ == NULL))
+        if (fileInput_ && (inputFile_ == nullptr))
         {
             Messenger::error("No input file open for LineParser::readNextLine.\n");
             result = LineParser::Fail;
@@ -740,7 +740,7 @@ bool LineParser::writeLine(std::string_view s) const
     {
         if (!directOutput_)
         {
-            if (cachedFile_ == NULL)
+            if (cachedFile_ == nullptr)
             {
                 Messenger::print("Unable to delayed-writeLine - destination cache is not open.\n");
                 return false;
@@ -748,7 +748,7 @@ bool LineParser::writeLine(std::string_view s) const
             else
                 (*cachedFile_) << s << std::endl;
         }
-        else if (outputFile_ == NULL)
+        else if (outputFile_ == nullptr)
         {
             Messenger::print("Unable to direct-writeLine - destination file is not open.\n");
             return false;

@@ -22,4 +22,4 @@
 #include "modules/calculate_sdf/sdf.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *CalculateSDFModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *CalculateSDFModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

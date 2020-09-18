@@ -44,10 +44,10 @@ Process3DProcedureNode::Process3DProcedureNode(const Collect3DProcedureNode *tar
                   "Branch providing normalisation operations for the data");
 
     // Initialise branch
-    normalisationBranch_ = NULL;
+    normalisationBranch_ = nullptr;
 
     // Initialise data pointer
-    processedData_ = NULL;
+    processedData_ = nullptr;
 }
 
 Process3DProcedureNode::~Process3DProcedureNode() {}
@@ -105,7 +105,7 @@ SequenceProcedureNode *Process3DProcedureNode::addNormalisationBranch()
 }
 
 // Return whether this node has a branch
-bool Process3DProcedureNode::hasBranch() const { return (normalisationBranch_ != NULL); }
+bool Process3DProcedureNode::hasBranch() const { return (normalisationBranch_ != nullptr); }
 
 // Return SequenceNode for the branch (if it exists)
 SequenceProcedureNode *Process3DProcedureNode::branch() { return normalisationBranch_; }

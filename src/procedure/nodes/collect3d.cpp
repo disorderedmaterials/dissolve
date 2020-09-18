@@ -63,7 +63,7 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xObse
                   "Branch which runs if the target quantities were binned successfully");
 
     // Initialise branch
-    subCollectBranch_ = NULL;
+    subCollectBranch_ = nullptr;
 }
 Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xyzObservable, double xMin, double xMax,
                                                double xBinWidth, double yMin, double yMax, double yBinWidth, double zMin,
@@ -98,7 +98,7 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xyzOb
                   "Branch which runs if the target quantities were binned successfully");
 
     // Initialise branch
-    subCollectBranch_ = NULL;
+    subCollectBranch_ = nullptr;
 }
 
 Collect3DProcedureNode::~Collect3DProcedureNode() {}
@@ -171,7 +171,7 @@ SequenceProcedureNode *Collect3DProcedureNode::addSubCollectBranch(ProcedureNode
 }
 
 // Return whether this node has a branch
-bool Collect3DProcedureNode::hasBranch() const { return (subCollectBranch_ != NULL); }
+bool Collect3DProcedureNode::hasBranch() const { return (subCollectBranch_ != nullptr); }
 // Return SequenceNode for the branch (if it exists)
 SequenceProcedureNode *Collect3DProcedureNode::branch() { return subCollectBranch_; }
 

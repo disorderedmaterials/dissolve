@@ -162,7 +162,7 @@ ProcedureChartNodeBlock *ProcedureChart::nodeBlock(ProcedureNode *node, const Re
             return branchBlock;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 // Update the content block widgets against the current target data

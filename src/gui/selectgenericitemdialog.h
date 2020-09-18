@@ -91,7 +91,7 @@ class SelectGenericItemDialog : public QDialog
 
     public:
     // Run the dialog, returning the selected GenericItem
-    template <class T> T *selectGenericItem(T *currentItem = NULL)
+    template <class T> T *selectGenericItem(T *currentItem = nullptr)
     {
         // Populate the table with available items of the specified class type
         RefList<T> items;
@@ -107,7 +107,7 @@ class SelectGenericItemDialog : public QDialog
             // Get item in first column on the current row
             int row = ui_.ItemsTable->currentRow();
             if (row == -1)
-                return NULL;
+                return nullptr;
             QTableWidgetItem *item = ui_.ItemsTable->item(row, 0);
 
             // Retrieve the data pointer
@@ -116,6 +116,6 @@ class SelectGenericItemDialog : public QDialog
             return dataItem;
         }
         else
-            return NULL;
+            return nullptr;
     }
 };

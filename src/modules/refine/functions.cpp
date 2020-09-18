@@ -91,7 +91,7 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, st
     const auto idI = typeI->index();
     const auto idJ = typeJ->index();
     RefList<MasterIntra> masterBonds;
-    // 	for (MasterIntra* b = coreData.masterBonds().first(); b != NULL; b = b->next()) if (b->usageCount(idI, idJ) > 0)
+    // 	for (MasterIntra* b = coreData.masterBonds().first(); b != nullptr; b = b->next()) if (b->usageCount(idI, idJ) > 0)
     // masterBonds.append(b);
 
     /*

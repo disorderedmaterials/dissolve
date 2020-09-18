@@ -38,7 +38,7 @@ bool Dissolve::loadInput(LineParser &parser)
 
     // Variables
     Configuration *cfg;
-    ModuleLayer *layer = NULL;
+    ModuleLayer *layer = nullptr;
     Species *sp;
     auto error = false;
 
@@ -203,7 +203,7 @@ bool Dissolve::saveInput(std::string_view filename)
         if (!parser.writeLineF("\n{}\n", BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword)))
             return false;
 
-        for (auto *b = coreData_.masterBonds().first(); b != NULL; b = b->next())
+        for (auto *b = coreData_.masterBonds().first(); b != nullptr; b = b->next())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::BondKeyword),
                                            b->name(), SpeciesBond::bondFunctions().keywordFromInt(b->form()));
@@ -213,7 +213,7 @@ bool Dissolve::saveInput(std::string_view filename)
                 return false;
         }
 
-        for (auto *a = coreData_.masterAngles().first(); a != NULL; a = a->next())
+        for (auto *a = coreData_.masterAngles().first(); a != nullptr; a = a->next())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword),
                                            a->name(), SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
@@ -223,7 +223,7 @@ bool Dissolve::saveInput(std::string_view filename)
                 return false;
         }
 
-        for (auto *t = coreData_.masterTorsions().first(); t != NULL; t = t->next())
+        for (auto *t = coreData_.masterTorsions().first(); t != nullptr; t = t->next())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword),
                                            t->name(), SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
@@ -233,7 +233,7 @@ bool Dissolve::saveInput(std::string_view filename)
                 return false;
         }
 
-        for (auto *imp = coreData_.masterImpropers().first(); imp != NULL; imp = imp->next())
+        for (auto *imp = coreData_.masterImpropers().first(); imp != nullptr; imp = imp->next())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword),
                                            imp->name(), SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
@@ -250,7 +250,7 @@ bool Dissolve::saveInput(std::string_view filename)
 
     // Write Species data
     parser.writeBannerComment("Species");
-    for (auto *sp = species().first(); sp != NULL; sp = sp->next())
+    for (auto *sp = species().first(); sp != nullptr; sp = sp->next())
     {
         if (!parser.writeLineF("\n"))
             return false;
@@ -301,7 +301,7 @@ bool Dissolve::saveInput(std::string_view filename)
     // Write Configurations
     if (!parser.writeBannerComment("Configurations"))
         return false;
-    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
     {
         if (!parser.writeLineF("\n{}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword),
                                cfg->name()))
@@ -767,7 +767,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     }
 
     // Configuration Module Data
-    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
     {
         // Cycle over data store in the Configuration
         ListIterator<GenericItem> itemIterator(cfg->moduleData().items());
@@ -801,7 +801,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     }
 
     // Configurations
-    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
     {
         if (!parser.writeLineF("Configuration  '{}'\n", cfg->name()))
             return false;

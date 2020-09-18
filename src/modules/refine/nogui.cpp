@@ -22,4 +22,4 @@
 #include "modules/refine/refine.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *RefineModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *RefineModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

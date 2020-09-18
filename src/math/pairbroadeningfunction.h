@@ -103,7 +103,7 @@ class PairBroadeningFunction : public GenericItemBase
     std::string summary() const;
     // Return a BroadeningFunction tailored to the specified AtomType pair
     BroadeningFunction broadeningFunction(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2,
-                                          SpeciesIntra *intra = NULL);
+                                          SpeciesIntra *intra = nullptr);
 
     /*
      * GenericItemBase Implementations

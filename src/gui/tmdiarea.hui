@@ -33,7 +33,7 @@ class TMdiArea : public QMdiArea
 
     public:
     // Constructor
-    TMdiArea(DissolveWindow *dissolveWindow, QWidget *parent = NULL);
+    TMdiArea(DissolveWindow *dissolveWindow, QWidget *parent = nullptr);
 
     /*
      * DissolveWindow Pointer

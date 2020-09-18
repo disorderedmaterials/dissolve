@@ -53,7 +53,7 @@ template <class T> class GenericListHelper
     }
     // Return named (const) item from specified list as template-guided type
     static const T &value(GenericList &sourceList, std::string_view name, std::string_view prefix = "", T defaultValue = T(),
-                          bool *found = NULL)
+                          bool *found = nullptr)
     {
         // Construct full name
         std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
@@ -65,7 +65,7 @@ template <class T> class GenericListHelper
             Messenger::printVerbose("No item named '{}' in list - default value item will be returned.\n", varName);
             static T dummy;
             dummy = defaultValue;
-            if (found != NULL)
+            if (found != nullptr)
                 (*found) = false;
             return dummy;
         }
@@ -76,13 +76,13 @@ template <class T> class GenericListHelper
             throw std::runtime_error(
                 fmt::format("GenericListHelper::value({}) failed, because the target item is of the wrong type.", name));
 
-        if (found != NULL)
+        if (found != nullptr)
             (*found) = true;
         return castItem->data();
     }
     // Retrieve named item from specified list as template-guided type, assuming that it is going to be modified
     static T &retrieve(GenericList &sourceList, std::string_view name, std::string_view prefix = "", T defaultValue = T(),
-                       bool *found = NULL)
+                       bool *found = nullptr)
     {
         // Construct full name
         std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
@@ -94,7 +94,7 @@ template <class T> class GenericListHelper
             Messenger::printVerbose("No item named '{}' in list - default value item will be returned.\n", varName);
             static T dummy;
             dummy = defaultValue;
-            if (found != NULL)
+            if (found != nullptr)
                 (*found) = false;
             return dummy;
         }
@@ -108,13 +108,13 @@ template <class T> class GenericListHelper
         // Bump the version of the item
         item->bumpVersion();
 
-        if (found != NULL)
+        if (found != nullptr)
             (*found) = true;
         return castItem->data();
     }
     // Create or retrieve named item from specified list as template-guided type
     static T &realise(GenericList &sourceList, std::string_view name, std::string_view prefix = "", int flags = -1,
-                      bool *created = NULL)
+                      bool *created = nullptr)
     {
         // Construct full name
         std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
@@ -123,7 +123,7 @@ template <class T> class GenericListHelper
         GenericItem *item = sourceList.find(varName);
         if (!item)
         {
-            if (created != NULL)
+            if (created != nullptr)
                 (*created) = true;
             return add(sourceList, name, prefix, flags);
         }
@@ -141,7 +141,7 @@ template <class T> class GenericListHelper
         // Bump the version of the item
         item->bumpVersion();
 
-        if (created != NULL)
+        if (created != nullptr)
             (*created) = false;
         return castItem->data();
     }

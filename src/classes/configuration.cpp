@@ -39,7 +39,7 @@ template <class Configuration> std::string_view ObjectStore<Configuration>::obje
 Configuration::Configuration()
     : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext, "EndGenerator")
 {
-    box_ = NULL;
+    box_ = nullptr;
 
     clear();
 }

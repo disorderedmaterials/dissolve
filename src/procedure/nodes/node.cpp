@@ -81,7 +81,7 @@ EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
 ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType) : ListItem<ProcedureNode>()
 {
     type_ = nodeType;
-    scope_ = NULL;
+    scope_ = nullptr;
 
     // Assign default, unique name to the node
     static int nodeCount = 0;
@@ -148,7 +148,7 @@ SequenceProcedureNode *ProcedureNode::scope() const { return scope_; }
 const Procedure *ProcedureNode::procedure() const
 {
     if (!scope_)
-        return NULL;
+        return nullptr;
 
     return scope_->procedure();
 }
@@ -166,7 +166,7 @@ ProcedureNode::NodeContext ProcedureNode::scopeContext() const
 ProcedureNode *ProcedureNode::nodeInScope(std::string_view name, ProcedureNode::NodeType nt)
 {
     if (!scope_)
-        return NULL;
+        return nullptr;
 
     return scope_->nodeInScope(this, name, nt);
 }
@@ -184,7 +184,7 @@ RefList<ProcedureNode> ProcedureNode::nodesInScope(ProcedureNode::NodeType nt)
 ProcedureNode *ProcedureNode::nodeExists(std::string_view name, ProcedureNode *excludeNode, ProcedureNode::NodeType nt) const
 {
     if (!scope_)
-        return NULL;
+        return nullptr;
 
     return scope_->nodeExists(name, excludeNode, nt);
 }
@@ -202,7 +202,7 @@ RefList<ProcedureNode> ProcedureNode::nodes(ProcedureNode::NodeType nt)
 ExpressionVariable *ProcedureNode::parameterInScope(std::string_view name, ExpressionVariable *excludeParameter)
 {
     if (!scope_)
-        return NULL;
+        return nullptr;
 
     return scope_->parameterInScope(this, name, excludeParameter);
 }
@@ -211,7 +211,7 @@ ExpressionVariable *ProcedureNode::parameterInScope(std::string_view name, Expre
 ExpressionVariable *ProcedureNode::parameterExists(std::string_view name, ExpressionVariable *excludeParameter) const
 {
     if (!scope_)
-        return NULL;
+        return nullptr;
 
     return scope_->parameterExists(name, excludeParameter);
 }
@@ -233,14 +233,14 @@ RefList<ExpressionVariable> ProcedureNode::parametersInScope()
 bool ProcedureNode::hasBranch() const { return false; }
 
 // Return SequenceNode for the branch (if it exists)
-SequenceProcedureNode *ProcedureNode::branch() { return NULL; }
+SequenceProcedureNode *ProcedureNode::branch() { return nullptr; }
 
 /*
  * Parameters
  */
 
 // Return whether this node has the named parameter specified
-ExpressionVariable *ProcedureNode::hasParameter(std::string_view name, ExpressionVariable *excludeParameter) { return NULL; }
+ExpressionVariable *ProcedureNode::hasParameter(std::string_view name, ExpressionVariable *excludeParameter) { return nullptr; }
 
 // Return references to all parameters for this node
 RefList<ExpressionVariable> ProcedureNode::parameterReferences() const { return RefList<ExpressionVariable>(); }

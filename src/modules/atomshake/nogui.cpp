@@ -22,4 +22,4 @@
 #include "modules/atomshake/atomshake.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *AtomShakeModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *AtomShakeModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

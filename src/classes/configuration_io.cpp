@@ -49,7 +49,7 @@ bool Configuration::write(LineParser &parser) const
 
     // Write Molecule types - write sequential Molecules with same type as single line
     auto moleculeCount = 0;
-    const Species *lastType = NULL;
+    const Species *lastType = nullptr;
     for (int n = 0; n < molecules_.size(); ++n)
     {
         // If the last Molecule's Species is the same as this one, increment counter and move on
@@ -118,13 +118,13 @@ bool Configuration::read(LineParser &parser, const List<Species> &availableSpeci
 
     // Read Species types for Molecules
     auto nMolsRead = 0;
-    Species *sp = NULL;
+    Species *sp = nullptr;
     while (nMolsRead < expectedNMols)
     {
         // Read line containing number of molecules and Species name
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        for (sp = availableSpecies.first(); sp != NULL; sp = sp->next())
+        for (sp = availableSpecies.first(); sp != nullptr; sp = sp->next())
             if (DissolveSys::sameString(sp->name(), parser.argsv(1)))
                 break;
         if (!sp)

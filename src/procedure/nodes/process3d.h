@@ -36,7 +36,7 @@ class NodeScopeStack;
 class Process3DProcedureNode : public ProcedureNode
 {
     public:
-    Process3DProcedureNode(const Collect3DProcedureNode *target = NULL);
+    Process3DProcedureNode(const Collect3DProcedureNode *target = nullptr);
     ~Process3DProcedureNode();
 
     /*

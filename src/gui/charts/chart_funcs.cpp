@@ -29,15 +29,15 @@
 ChartBase::ChartBase(QWidget *parent) : QWidget(parent)
 {
     refreshing_ = false;
-    selectedBlock_ = NULL;
+    selectedBlock_ = nullptr;
 
     // Options
     resizeToWidgets_ = true;
 
     // Drag / Drop
     setAcceptDrops(true);
-    draggedBlock_ = NULL;
-    currentHotSpot_ = NULL;
+    draggedBlock_ = nullptr;
+    currentHotSpot_ = nullptr;
 }
 
 ChartBase::~ChartBase() {}
@@ -54,7 +54,7 @@ ChartBlock *ChartBase::dragBlockAt(QPoint point)
         if (block->isDragPoint(point))
             return block;
 
-    return NULL;
+    return nullptr;
 }
 
 /*
@@ -144,7 +144,7 @@ void ChartBase::mouseMoveEvent(QMouseEvent *event)
     // 	...
 
     // Nullify the dragged block
-    draggedBlock_ = NULL;
+    draggedBlock_ = nullptr;
 
     // Recalculate layout
     layOutWidgets(true);
@@ -255,8 +255,8 @@ void ChartBase::dropEvent(QDropEvent *event)
     updateControls();
 
     // Widgets are almost in the right place, so don't animate anything
-    currentHotSpot_ = NULL;
-    draggedBlock_ = NULL;
+    currentHotSpot_ = nullptr;
+    draggedBlock_ = nullptr;
 
     // 	layOutWidgets(animate);
 
@@ -282,18 +282,18 @@ MimeStrings ChartBase::mimeInfo(ChartBlock *block) { return MimeStrings(); }
 // Return hotspot, if any, under specified point
 ChartHotSpot *ChartBase::hotSpotAt(QPoint point)
 {
-    for (auto *hotSpot = hotSpots_.first(); hotSpot != NULL; hotSpot = hotSpot->next())
+    for (auto *hotSpot = hotSpots_.first(); hotSpot != nullptr; hotSpot = hotSpot->next())
         if (hotSpot->contains(point))
             return hotSpot;
 
-    return NULL;
+    return nullptr;
 }
 
 // Reset after drop
 void ChartBase::resetAfterDrop(bool animate)
 {
-    currentHotSpot_ = NULL;
-    draggedBlock_ = NULL;
+    currentHotSpot_ = nullptr;
+    draggedBlock_ = nullptr;
 
     layOutWidgets(animate);
 

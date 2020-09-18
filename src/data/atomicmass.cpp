@@ -187,7 +187,7 @@ const AtomicMassData &AtomicMass::massData(int Z)
 double AtomicMass::mass(Element *element)
 {
 #ifdef CHECKS
-    if (element == NULL)
+    if (element == nullptr)
     {
         Messenger::error("AtomicMass::mass() - Element is NULL.\n");
         return 0.0;
@@ -210,12 +210,12 @@ double AtomicMass::reducedMass(int Z1, int Z2)
 double AtomicMass::reducedMass(Element *e1, Element *e2)
 {
 #ifdef CHECKS
-    if (e1 == NULL)
+    if (e1 == nullptr)
     {
         Messenger::error("AtomicMass::reducedMass() - Element 1 is NULL.\n");
         return 1.0;
     }
-    if (e2 == NULL)
+    if (e2 == nullptr)
     {
         Messenger::error("AtomicMass::reducedMass() - Element 2 is NULL.\n");
         return 1.0;

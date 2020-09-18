@@ -102,19 +102,19 @@ RenderableGroup *RenderableGroupManager::addToGroup(Renderable *renderable, std:
 // Return named group, if it exists
 RenderableGroup *RenderableGroupManager::group(std::string_view name)
 {
-    for (auto *group = groups_.first(); group != NULL; group = group->next())
+    for (auto *group = groups_.first(); group != nullptr; group = group->next())
         if (group->name() == name)
             return group;
-    return NULL;
+    return nullptr;
 }
 
 // Return group for specified Renderable, if one has been assigned
 RenderableGroup *RenderableGroupManager::group(Renderable *renderable)
 {
-    for (auto *group = groups_.first(); group != NULL; group = group->next())
+    for (auto *group = groups_.first(); group != nullptr; group = group->next())
         if (group->usedByRenderable(renderable))
             return group;
-    return NULL;
+    return nullptr;
 }
 
 // Return current RenderableGroups in use
@@ -143,7 +143,7 @@ void RenderableGroupManager::removeFromGroup(Renderable *renderable)
 // Empty all groups of Renderables
 void RenderableGroupManager::emptyGroups()
 {
-    for (auto *group = groups_.first(); group != NULL; group = group->next())
+    for (auto *group = groups_.first(); group != nullptr; group = group->next())
         group->empty();
 }
 
@@ -197,7 +197,7 @@ void RenderableGroupManager::setRenderableGroupShifts()
 {
     // Loop over RenderableGroups
     auto groupIndex = 0;
-    for (auto *group = groups_.first(); group != NULL; group = group->next())
+    for (auto *group = groups_.first(); group != nullptr; group = group->next())
     {
         group->applyVerticalShift(VerticalShiftAmounts[verticalShiftAmount_], groupIndex++);
     }

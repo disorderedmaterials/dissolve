@@ -82,5 +82,5 @@ SymbolData *SymbolData::symbol(QString name)
         if (name == symbols[n].name)
             return &symbols[n];
 
-    return NULL;
+    return nullptr;
 }

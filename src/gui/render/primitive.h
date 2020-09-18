@@ -96,11 +96,11 @@ class Primitive : public ListItem<Primitive>
      */
     public:
     // Define next vertex and normal
-    GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, const GLfloat *rgba = NULL);
+    GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, const GLfloat *rgba = nullptr);
     // Define next vertex and normal
-    GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, Vec3<double> &normal, const GLfloat *rgba = NULL);
+    GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, Vec3<double> &normal, const GLfloat *rgba = nullptr);
     // Define next vertex and normal
-    GLuint defineVertex(Vec3<double> &vertex, Vec3<double> &normal, const GLfloat *rgba = NULL);
+    GLuint defineVertex(Vec3<double> &vertex, Vec3<double> &normal, const GLfloat *rgba = nullptr);
     // Define next index double
     void defineIndices(GLuint a, GLuint b);
     // Define next index triple
@@ -111,9 +111,9 @@ class Primitive : public ListItem<Primitive>
      */
     public:
     // Draw line
-    void line(double x1, double y1, double z1, double x2, double y2, double z2, const GLfloat *rgba = NULL);
+    void line(double x1, double y1, double z1, double x2, double y2, double z2, const GLfloat *rgba = nullptr);
     // Draw line
-    void line(Vec3<double> v1, Vec3<double> v2, const GLfloat *rgba = NULL);
+    void line(Vec3<double> v1, Vec3<double> v2, const GLfloat *rgba = nullptr);
     // Create vertices of sphere with specified radius and quality
     void sphere(double radius, int nstacks, int nslices);
     // Plot cylinder vertices from origin {ox,oy,oz}, following vector {vx,vy,vz}, with radii and quality specified

@@ -30,7 +30,7 @@
 #include "module/list.h"
 #include "module/module.h"
 
-CoreData::CoreData() { moduleInstances_ = NULL; }
+CoreData::CoreData() { moduleInstances_ = nullptr; }
 
 CoreData::~CoreData() {}
 
@@ -126,7 +126,7 @@ MasterIntra *CoreData::addMasterBond(std::string_view name)
     if (hasMasterBond(name))
     {
         Messenger::error("Refused to add a new master Bond named '{}' since one with the same name already exists.\n", name);
-        return NULL;
+        return nullptr;
     }
 
     // OK to add new master Bond
@@ -152,10 +152,10 @@ MasterIntra *CoreData::hasMasterBond(std::string_view name) const
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto *b = masterBonds_.first(); b != NULL; b = b->next())
+    for (auto *b = masterBonds_.first(); b != nullptr; b = b->next())
         if (DissolveSys::sameString(trimmedName, b->name()))
             return b;
-    return NULL;
+    return nullptr;
 }
 
 // Add new master Angle parameters
@@ -165,7 +165,7 @@ MasterIntra *CoreData::addMasterAngle(std::string_view name)
     if (hasMasterAngle(name))
     {
         Messenger::error("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name);
-        return NULL;
+        return nullptr;
     }
 
     // OK to add new master Angle
@@ -191,10 +191,10 @@ MasterIntra *CoreData::hasMasterAngle(std::string_view name) const
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto *a = masterAngles_.first(); a != NULL; a = a->next())
+    for (auto *a = masterAngles_.first(); a != nullptr; a = a->next())
         if (DissolveSys::sameString(trimmedName, a->name()))
             return a;
-    return NULL;
+    return nullptr;
 }
 
 // Add new master Torsion parameters
@@ -204,7 +204,7 @@ MasterIntra *CoreData::addMasterTorsion(std::string_view name)
     if (hasMasterTorsion(name))
     {
         Messenger::error("Refused to add a new master Torsion named '{}' since one with the same name already exists.\n", name);
-        return NULL;
+        return nullptr;
     }
 
     // OK to add new master Torsion
@@ -230,10 +230,10 @@ MasterIntra *CoreData::hasMasterTorsion(std::string_view name) const
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto *t = masterTorsions_.first(); t != NULL; t = t->next())
+    for (auto *t = masterTorsions_.first(); t != nullptr; t = t->next())
         if (DissolveSys::sameString(trimmedName, t->name()))
             return t;
-    return NULL;
+    return nullptr;
 }
 
 // Add new master Improper parameters
@@ -244,7 +244,7 @@ MasterIntra *CoreData::addMasterImproper(std::string_view name)
     {
         Messenger::error("Refused to add a new master Improper named '{}' since one with the same name already exists.\n",
                          name);
-        return NULL;
+        return nullptr;
     }
 
     // OK to add new master Improper
@@ -270,10 +270,10 @@ MasterIntra *CoreData::hasMasterImproper(std::string_view name) const
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto *t = masterImpropers_.first(); t != NULL; t = t->next())
+    for (auto *t = masterImpropers_.first(); t != nullptr; t = t->next())
         if (DissolveSys::sameString(trimmedName, t->name()))
             return t;
-    return NULL;
+    return nullptr;
 }
 
 // Return the named master term (of any form) if it exists
@@ -282,20 +282,20 @@ MasterIntra *CoreData::findMasterTerm(std::string_view name) const
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto *b = masterBonds_.first(); b != NULL; b = b->next())
+    for (auto *b = masterBonds_.first(); b != nullptr; b = b->next())
         if (DissolveSys::sameString(trimmedName, b->name()))
             return b;
-    for (auto *a = masterAngles_.first(); a != NULL; a = a->next())
+    for (auto *a = masterAngles_.first(); a != nullptr; a = a->next())
         if (DissolveSys::sameString(trimmedName, a->name()))
             return a;
-    for (auto *t = masterTorsions_.first(); t != NULL; t = t->next())
+    for (auto *t = masterTorsions_.first(); t != nullptr; t = t->next())
         if (DissolveSys::sameString(trimmedName, t->name()))
             return t;
-    for (auto *i = masterImpropers_.first(); i != NULL; i = i->next())
+    for (auto *i = masterImpropers_.first(); i != nullptr; i = i->next())
         if (DissolveSys::sameString(trimmedName, i->name()))
             return i;
 
-    return NULL;
+    return nullptr;
 }
 
 // Clear all master terms
@@ -353,11 +353,11 @@ std::string CoreData::uniqueSpeciesName(std::string_view base) const
 // Search for Species by name
 Species *CoreData::findSpecies(std::string_view name) const
 {
-    for (auto *sp = species_.first(); sp != NULL; sp = sp->next())
+    for (auto *sp = species_.first(); sp != nullptr; sp = sp->next())
         if (DissolveSys::sameString(sp->name(), name))
             return sp;
 
-    return NULL;
+    return nullptr;
 }
 
 /*
@@ -411,11 +411,11 @@ std::string CoreData::uniqueConfigurationName(std::string_view base) const
 // Search for Configuration by name
 Configuration *CoreData::findConfiguration(std::string_view name) const
 {
-    for (auto *cfg = configurations_.first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations_.first(); cfg != nullptr; cfg = cfg->next())
         if (DissolveSys::sameString(cfg->name(), name))
             return cfg;
 
-    return NULL;
+    return nullptr;
 }
 
 /*
@@ -429,13 +429,13 @@ void CoreData::setModuleInstances(RefList<Module> *moduleInstances) { moduleInst
 Module *CoreData::findModule(std::string_view uniqueName) const
 {
     if (!moduleInstances_)
-        return NULL;
+        return nullptr;
 
     for (auto module : *moduleInstances_)
         if (DissolveSys::sameString(module->uniqueName(), uniqueName))
             return module;
 
-    return NULL;
+    return nullptr;
 }
 
 // Search for and return any instance(s) of the specified Module type

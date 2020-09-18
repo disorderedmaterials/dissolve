@@ -72,27 +72,27 @@ PairPotential *Dissolve::pairPotential(int n) { return pairPotentials_[n]; }
 // Return whether specified PairPotential is defined
 PairPotential *Dissolve::pairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2) const
 {
-    for (auto *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
+    for (auto *pot = pairPotentials_.first(); pot != nullptr; pot = pot->next())
     {
         if ((pot->atomTypeI() == at1) && (pot->atomTypeJ() == at2))
             return pot;
         if ((pot->atomTypeI() == at2) && (pot->atomTypeJ() == at1))
             return pot;
     }
-    return NULL;
+    return nullptr;
 }
 
 // Return whether specified PairPotential is defined
 PairPotential *Dissolve::pairPotential(std::string_view at1, std::string_view at2) const
 {
-    for (auto *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
+    for (auto *pot = pairPotentials_.first(); pot != nullptr; pot = pot->next())
     {
         if (DissolveSys::sameString(pot->atomTypeNameI(), at1) && DissolveSys::sameString(pot->atomTypeNameJ(), at2))
             return pot;
         if (DissolveSys::sameString(pot->atomTypeNameI(), at2) && DissolveSys::sameString(pot->atomTypeNameJ(), at1))
             return pot;
     }
-    return NULL;
+    return nullptr;
 }
 
 // Return map for PairPotentials

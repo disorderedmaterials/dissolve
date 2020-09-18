@@ -76,5 +76,5 @@ bool SpeciesKeyword::write(LineParser &parser, std::string_view keywordName, std
 void SpeciesKeyword::removeReferencesTo(Species *sp)
 {
     if (data_ == sp)
-        data_ = NULL;
+        data_ = nullptr;
 }

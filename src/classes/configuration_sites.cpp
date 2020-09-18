@@ -26,7 +26,7 @@
 const SiteStack *Configuration::siteStack(SpeciesSite *site)
 {
     // Create or find existing stack in our list
-    SiteStack *stack = NULL;
+    SiteStack *stack = nullptr;
     ListIterator<SiteStack> stackIterator(siteStacks_);
     while ((stack = stackIterator.iterate()))
         if (stack->speciesSite() == site)
@@ -39,7 +39,7 @@ const SiteStack *Configuration::siteStack(SpeciesSite *site)
     {
         Messenger::error("Failed to create stack for site '{}' in Configuration '{}'.\n", site->name(), name());
         siteStacks_.remove(stack);
-        return NULL;
+        return nullptr;
     }
 
     return stack;

@@ -24,7 +24,7 @@
 
 CellNeighbour::CellNeighbour()
 {
-    cell_ = NULL;
+    cell_ = nullptr;
     useMim_ = false;
 }
 

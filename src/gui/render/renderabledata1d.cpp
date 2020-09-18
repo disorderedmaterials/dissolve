@@ -55,7 +55,7 @@ bool RenderableData1D::validateDataSource()
 }
 
 // Invalidate the current data source
-void RenderableData1D::invalidateDataSource() { source_ = NULL; }
+void RenderableData1D::invalidateDataSource() { source_ = nullptr; }
 
 // Return version of data
 int RenderableData1D::dataVersion() { return (validateDataSource() ? source_->version() : -99); }

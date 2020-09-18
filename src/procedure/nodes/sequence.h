@@ -32,7 +32,7 @@ class Procedure;
 class SequenceProcedureNode : public ProcedureNode
 {
     public:
-    SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, ProcedureNode *parentNode = NULL,
+    SequenceProcedureNode(ProcedureNode::NodeContext context, const Procedure *procedure, ProcedureNode *parentNode = nullptr,
                           std::string_view blockTerminationKeyword = "");
     ~SequenceProcedureNode();
 
@@ -85,10 +85,10 @@ class SequenceProcedureNode : public ProcedureNode
 
     private:
     // Return named node if it exists anywhere in our sequence or below, and optionally matches the type given
-    ProcedureNode *searchNodes(std::string_view name, ProcedureNode *excludeNode = NULL,
+    ProcedureNode *searchNodes(std::string_view name, ProcedureNode *excludeNode = nullptr,
                                ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
     // Search through the Procedure for the named parameter
-    ExpressionVariable *searchParameters(std::string_view name, ExpressionVariable *excludeParameter = NULL) const;
+    ExpressionVariable *searchParameters(std::string_view name, ExpressionVariable *excludeParameter = nullptr) const;
 
     public:
     // Return parent Procedure to which this sequence belongs
@@ -105,13 +105,13 @@ class SequenceProcedureNode : public ProcedureNode
     // Return list of nodes of specified type present in scope
     RefList<ProcedureNode> nodesInScope(ProcedureNode *queryingNode, ProcedureNode::NodeType nt);
     // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
-    ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = NULL,
+    ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = nullptr,
                               ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
     // Return whether the named parameter is currently in scope
     ExpressionVariable *parameterInScope(ProcedureNode *queryingNode, std::string_view name,
-                                         ExpressionVariable *excludeParameter = NULL);
+                                         ExpressionVariable *excludeParameter = nullptr);
     // Return whether the named parameter exists in this sequence or its children (branches)
-    ExpressionVariable *parameterExists(std::string_view name, ExpressionVariable *excludeParameter = NULL) const;
+    ExpressionVariable *parameterExists(std::string_view name, ExpressionVariable *excludeParameter = nullptr) const;
     // Create and return reference list of parameters in scope
     RefList<ExpressionVariable> parametersInScope(ProcedureNode *queryingNode);
 

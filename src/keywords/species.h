@@ -31,7 +31,7 @@ class Species;
 class SpeciesKeyword : public KeywordData<Species *>
 {
     public:
-    SpeciesKeyword(Species *sp = NULL);
+    SpeciesKeyword(Species *sp = nullptr);
     ~SpeciesKeyword();
 
     /*

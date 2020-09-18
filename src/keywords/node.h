@@ -78,7 +78,7 @@ class NodeKeywordBase
 template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordData<N *>
 {
     public:
-    NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N *node = NULL)
+    NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N *node = nullptr)
         : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<N *>(KeywordBase::NodeData, node)
     {
     }
@@ -112,7 +112,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
     {
         // No need to write the keyword if the node pointer is null
-        if (KeywordData<N *>::data_ == NULL)
+        if (KeywordData<N *>::data_ == nullptr)
             return true;
 
         if (!parser.writeLineF("{}{}  '{}'\n", prefix, KeywordBase::name(), KeywordData<N *>::data_->name()))
@@ -162,6 +162,6 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
     void removeReferencesTo(ProcedureNode *node)
     {
         if (KeywordData<N *>::data_ == node)
-            KeywordData<N *>::data_ = NULL;
+            KeywordData<N *>::data_ = nullptr;
     }
 };

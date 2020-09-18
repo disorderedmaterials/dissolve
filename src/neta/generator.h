@@ -40,7 +40,8 @@ class NETANode;
 class NETADefinitionGenerator
 {
     private:
-    NETADefinitionGenerator(NETADefinition &definition, std::string_view definitionText, const Forcefield *associatedFF = NULL);
+    NETADefinitionGenerator(NETADefinition &definition, std::string_view definitionText,
+                            const Forcefield *associatedFF = nullptr);
 
     public:
     ~NETADefinitionGenerator();

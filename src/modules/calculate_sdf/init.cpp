@@ -75,7 +75,7 @@ void CalculateSDFModule::initialise()
      */
 
     // Select: Site 'A'
-    selectA_ = new SelectProcedureNode(NULL, true);
+    selectA_ = new SelectProcedureNode(nullptr, true);
     selectA_->setName("A");
     SequenceProcedureNode *forEachA = selectA_->addForEachBranch(ProcedureNode::AnalysisContext);
     analyser_.addRootSequenceNode(selectA_);

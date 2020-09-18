@@ -90,11 +90,11 @@ bool KeywordList::link(std::string_view groupName, KeywordBase *object, std::str
 // Find named keyword
 KeywordBase *KeywordList::find(std::string_view name) const
 {
-    for (auto *kwd = keywords_.first(); kwd != NULL; kwd = kwd->next())
+    for (auto *kwd = keywords_.first(); kwd != nullptr; kwd = kwd->next())
         if (DissolveSys::sameString(name, kwd->name()))
             return kwd->base();
 
-    return NULL;
+    return nullptr;
 }
 
 // Return first keyword in list
@@ -108,8 +108,8 @@ const List<KeywordBase> &KeywordList::keywords() const { return keywords_; }
 KeywordGroup *KeywordList::addGroup(std::string_view name)
 {
     // Check that a group with the specified name doesn't already exist
-    KeywordGroup *group = NULL;
-    for (group = groups_.first(); group != NULL; group = group->next())
+    KeywordGroup *group = nullptr;
+    for (group = groups_.first(); group != nullptr; group = group->next())
         if (DissolveSys::sameString(name, group->name()))
             break;
 

@@ -27,8 +27,8 @@ ChartHotSpot::ChartHotSpot() : ListItem<ChartHotSpot>()
     row_ = -1;
     column_ = -1;
     type_ = ChartHotSpot::nHotSpotTypes;
-    blockAfter_ = NULL;
-    blockBefore_ = NULL;
+    blockAfter_ = nullptr;
+    blockBefore_ = nullptr;
 }
 
 ChartHotSpot::~ChartHotSpot() {}

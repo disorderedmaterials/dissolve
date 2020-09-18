@@ -22,4 +22,4 @@
 #include "modules/calculate_cn/cn.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *CalculateCNModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *CalculateCNModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

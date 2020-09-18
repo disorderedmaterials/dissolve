@@ -48,12 +48,12 @@ bool Dissolve::prepare()
 
     // Initialise random seed
     if (seed_ == -1)
-        srand((unsigned)time(NULL));
+        srand((unsigned)time(nullptr));
     else
         srand(seed_);
 
     // Check Species
-    for (auto *sp = species().first(); sp != NULL; sp = sp->next())
+    for (auto *sp = species().first(); sp != nullptr; sp = sp->next())
         if (!sp->checkSetUp())
             return false;
 
@@ -63,7 +63,7 @@ bool Dissolve::prepare()
         at->setIndex(count++);
 
     // Check Configurations
-    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
     {
         // Check Box extent against pair potential range
         auto maxPPRange = cfg->box()->inscribedSphereRadius();
@@ -150,7 +150,7 @@ bool Dissolve::iterate(int nIterations)
         auto thisTime = 0.0;
         auto nEnabledModules = 0;
 
-        for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+        for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
         {
             if (cfg->nModules() == 0)
                 continue;
@@ -218,7 +218,7 @@ bool Dissolve::iterate(int nIterations)
         Messenger::banner("Configuration Processing");
 
         auto result = true;
-        for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+        for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
         {
             // Check for failure of one or more processes / processing tasks
             if (!worldPool().allTrue(result))
@@ -268,7 +268,7 @@ bool Dissolve::iterate(int nIterations)
          */
         Messenger::banner("Reassemble Data");
         // Loop over Configurations
-        for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+        for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
         {
             Messenger::printVerbose("Broadcasting data for Configuration '{}'...\n", cfg->name());
             if (!cfg->broadcastCoordinates(worldPool(), cfg->processPool().rootWorldRank()))
@@ -334,7 +334,7 @@ bool Dissolve::iterate(int nIterations)
                 iteration_;
 
             // Pair Potentials
-            for (auto *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
+            for (auto *pot = pairPotentials_.first(); pot != nullptr; pot = pot->next())
             {
                 GenericListHelper<Data1D>::realise(
                     processingModuleData_,
@@ -429,7 +429,7 @@ void Dissolve::printTiming()
     // Add on space for brackets
     maxLength += 2;
 
-    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
     {
         if (cfg->nModules() == 0)
             continue;

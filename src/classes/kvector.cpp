@@ -118,7 +118,7 @@ void KVector::addSinTerm(int atomTypeIndex, double value)
 void KVector::calculateIntensities(BraggReflection *reflectionArray)
 {
 #ifdef CHECKS
-    if (reflectionArray == NULL)
+    if (reflectionArray == nullptr)
     {
         Messenger::print("NULL_POINTER - NULL BraggReflection array found in KVector::calculateIntensities().\n");
         return;

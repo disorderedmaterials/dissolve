@@ -84,7 +84,7 @@ bool Dissolve::setUpMPIPools()
 
     // Get relative atom counts between each configuration
     Array<int> configSizes;
-    for (auto *cfg = coreData_.configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = coreData_.configurations().first(); cfg != nullptr; cfg = cfg->next())
         configSizes.add(cfg->nAtoms());
     // 	configSizes /= configSizes.min();
 
@@ -95,7 +95,7 @@ bool Dissolve::setUpMPIPools()
 
     // Set up pool based on selected strategy
     auto cfgIndex = 0;
-    for (auto *cfg = coreData_.configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = coreData_.configurations().first(); cfg != nullptr; cfg = cfg->next())
     {
         Messenger::print("Configuration '{}':\n", cfg->name());
 

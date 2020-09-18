@@ -80,7 +80,7 @@ void SpeciesIntra::detachFromMasterIntra()
     form_ = masterParameters_->form();
     parameters_ = masterParameters_->parameters_;
 
-    masterParameters_ = NULL;
+    masterParameters_ = nullptr;
 }
 
 // Return parameter source
@@ -169,7 +169,7 @@ void SpeciesIntra::setAttachedAtoms(int terminus, const RefList<SpeciesAtom> &at
     attached_[terminus].clear();
 
     // Add the SpeciesAtoms in the list
-    for (RefListItem<SpeciesAtom> *refAtom = atoms.first(); refAtom != NULL; refAtom = refAtom->next())
+    for (RefListItem<SpeciesAtom> *refAtom = atoms.first(); refAtom != nullptr; refAtom = refAtom->next())
         attached_[terminus].push_back(refAtom->item()->index());
 }
 

@@ -91,11 +91,11 @@ void AtomTypeData::add(double nAdd) { population_ += nAdd; }
 void AtomTypeData::add(Isotope *tope, double nAdd)
 {
     // Has this isotope already been added to the list?
-    IsotopeData *topeData = NULL;
-    for (topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next())
+    IsotopeData *topeData = nullptr;
+    for (topeData = isotopes_.first(); topeData != nullptr; topeData = topeData->next())
         if (topeData->isotope() == tope)
             break;
-    if (topeData == NULL)
+    if (topeData == nullptr)
     {
         topeData = isotopes_.add();
         topeData->initialise(tope);
@@ -112,7 +112,7 @@ void AtomTypeData::add(Isotope *tope, double nAdd)
 void AtomTypeData::zeroPopulations()
 {
     // Zero individual isotope counts
-    for (auto *topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next())
+    for (auto *topeData = isotopes_.first(); topeData != nullptr; topeData = topeData->next())
         topeData->zeroPopulation();
 
     // Zero totals
@@ -139,12 +139,12 @@ void AtomTypeData::finalise(double totalAtoms)
     fraction_ = population_ / totalAtoms;
 
     // Calculate isotope fractional populations (of AtomType)
-    for (auto *topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next())
+    for (auto *topeData = isotopes_.first(); topeData != nullptr; topeData = topeData->next())
         topeData->finalise(population_);
 
     // Determine bound coherent scattering for AtomType, based on Isotope populations
     boundCoherent_ = 0.0;
-    for (auto *topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next())
+    for (auto *topeData = isotopes_.first(); topeData != nullptr; topeData = topeData->next())
         boundCoherent_ += topeData->fraction() * topeData->isotope()->boundCoherent();
 }
 
@@ -163,7 +163,7 @@ void AtomTypeData::naturalise()
 // Return if specified Isotope is already in the list
 bool AtomTypeData::hasIsotope(Isotope *tope)
 {
-    for (auto *topeData = isotopes_.first(); topeData != NULL; topeData = topeData->next())
+    for (auto *topeData = isotopes_.first(); topeData != nullptr; topeData = topeData->next())
         if (topeData->isotope() == tope)
             return true;
 

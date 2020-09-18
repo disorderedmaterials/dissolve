@@ -23,7 +23,7 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 
-Molecule::Molecule() { species_ = NULL; }
+Molecule::Molecule() { species_ = nullptr; }
 
 Molecule::~Molecule() {}
 
@@ -34,7 +34,7 @@ Molecule::~Molecule() {}
 // Clear object, ready for re-use
 void Molecule::clear()
 {
-    species_ = NULL;
+    species_ = nullptr;
 
     atoms_.clear();
 }
@@ -54,7 +54,7 @@ void Molecule::addAtom(Atom *i)
 {
     atoms_.push_back(i);
 
-    if (i->molecule() != NULL)
+    if (i->molecule() != nullptr)
         Messenger::warn("Molecule parent is already set in Atom id {}, and we are about to overwrite it...\n", i->arrayIndex());
     std::shared_ptr<Molecule> parent = shared_from_this();
     i->setMolecule(parent);
@@ -74,7 +74,7 @@ Atom *Molecule::atom(int n) const
     if ((n < 0) || (n >= nAtoms()))
     {
         Messenger::print("OUT_OF_RANGE - Atom index {} is out of range in Molecule::atom().\n", n);
-        return NULL;
+        return nullptr;
     }
 #endif
     return atoms_[n];

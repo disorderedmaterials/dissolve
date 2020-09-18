@@ -24,7 +24,7 @@
 WizardWidgetPageInfo::WizardWidgetPageInfo() : ListItem<WizardWidgetPageInfo>()
 {
     pageType_ = WizardWidgetPageInfo::NormalPage;
-    stackedWidgetPage_ = NULL;
+    stackedWidgetPage_ = nullptr;
 }
 
 WizardWidgetPageInfo::~WizardWidgetPageInfo() {}
