@@ -1,10 +1,5 @@
-{ pkgs ? import (fetchTarball
-  "https://github.com/NixOS/nixpkgs/archive/252bfe0107587d40092057f338e9ffcf7bbd90cb.tar.gz") {
-    overlays = [ (import ./overlays.nix) ];
-  }, unstable ? import (fetchTarball
-    "https://github.com/NixOS/nixpkgs/archive/e0508c81809b12013bce95562d556b1e672e3541.tar.gz") {
-      overlays = [ (import ./overlays.nix) ];
-    }, parallel ? false, gui ? false }:
+{ pkgs ? import ./linux.nix, unstable ? import ./linux-unstable.nix
+, parallel ? false, gui ? false }:
 
 let
   cmakeBool = x: if x then "ON" else "OFF";
