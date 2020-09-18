@@ -55,12 +55,11 @@ stages:
         displayName: 'Build OSX (Serial/GUI, macos-latest)'
         pool:
           vmImage: 'macos-latest' 
-        condition: eq(1, 2)
         steps:
           - checkout: self
             fetchDepth: 1
           - template: templates/set-short-hash.yml
-          - template: templates/build-osx-serial-gui.yml
+          - template: templates/build-linux-serial-gui.yml
           - template: templates/package-osx-serial-gui.yml
           - task: PublishBuildArtifacts@1
             inputs:
