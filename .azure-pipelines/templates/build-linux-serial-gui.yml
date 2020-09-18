@@ -20,6 +20,7 @@ steps:
       cd nix
       nix-build dissolve.nix --arg parallel ${{ parameters.parallel }}
       cd ..
-      nix-instantiate nix/dissolve.nix --arg parallel ${{ parameters.parallel }} | xargs nix-store -r | xargs nix-store -q --references | xargs tar czf tests/nix.tar.gz
+      # nix-instantiate nix/dissolve.nix --arg parallel ${{ parameters.parallel }} | xargs nix-store -r | xargs nix-store -q --references | xargs tar czf tests/nix.tar.gz
+      tar czf tests/nix.tar.gz /nix/store/*
       cp nix/result/bin/dissolve* tests/
     displayName: 'Build'
