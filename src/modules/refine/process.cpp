@@ -344,7 +344,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
             simulatedReferenceData_.createEmpty(combinedUnweightedSQ.linearArraySize());
             for_each_pair_early(
                 dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
                     // Weight in the matrix will be based on the natural isotope and the summed
                     // concentration weight
                     double factor = Isotopes::naturalIsotope(at1->element())->boundCoherent() *
@@ -361,7 +361,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     if (!scatteringMatrix_.addPartialReferenceData(data, at1, at2, factor, (1.0 - augmentationParam)))
                         return Messenger::error("Refine: Failed to augment scattering matrix with partial {}-{}.\n",
                                                 at1->name(), at2->name());
-                    return std::nullopt;
+                    return EarlyReturn<bool>::Continue();
                 });
         }
         else if (augmentationStyle != RefineModule::NoAugmentation)
