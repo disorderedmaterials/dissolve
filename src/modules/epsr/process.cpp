@@ -600,7 +600,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 if (!scatteringMatrix.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback)))
                                     return Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n",
                                                             at1->name(), at2->name());
-                                return EarlyReturn<bool>::Continue();
+                                return EarlyReturn<bool>::Continue;
                             });
 
         scatteringMatrix.finalise();
@@ -643,20 +643,21 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Test Mode
         if (testMode)
         {
-            for_each_pair_early(
-                dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-                    testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
-                    if (testData_.containsData(testDataName))
-                    {
-                        double error = Error::percent(estimatedSQ.at(i, j), testData_.data(testDataName));
-                        Messenger::print("Generated S(Q) reference data '{}' has error of {:7.3f}% with "
-                                         "calculated data and is {} (threshold is {:6.3f}%)\n\n",
-                                         testDataName, error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-                        if (error > testThreshold)
-                            return EarlyReturn(false);
-                    }
-                    return EarlyReturn<bool>::Continue();
-                });
+            for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
+                                [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
+                                    testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
+                                    if (testData_.containsData(testDataName))
+                                    {
+                                        double error = Error::percent(estimatedSQ.at(i, j), testData_.data(testDataName));
+                                        Messenger::print("Generated S(Q) reference data '{}' has error of {:7.3f}% with "
+                                                         "calculated data and is {} (threshold is {:6.3f}%)\n\n",
+                                                         testDataName, error, error <= testThreshold ? "OK" : "NOT OK",
+                                                         testThreshold);
+                                        if (error > testThreshold)
+                                            return false;
+                                    }
+                                    return EarlyReturn<bool>::Continue;
+                                });
         }
 
         /*

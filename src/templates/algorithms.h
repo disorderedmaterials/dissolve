@@ -37,25 +37,24 @@ template <class Iter, class Lam> void for_each_pair(Iter begin, Iter end, Lam la
     }
 }
 
-enum class EarlyReturnType
-{
-    Return,  // Give an early return value
-    Break,   // Move to the next outer loop
-    Continue // Continue the inner loop
-};
-
 template <typename T> class EarlyReturn
 {
+    public:
+    enum Type
+    {
+        Return,  // Return immediately with the given value
+        Break,   // Move to the next step in the outer loop
+        Continue // Move to the next step in the inner loop
+    };
+
     private:
-    EarlyReturnType type_;
+    Type type_;
     std::optional<T> value_;
 
     public:
-    EarlyReturn(EarlyReturnType t = EarlyReturnType::Continue, std::optional<T> v = std::nullopt) : type_(t), value_(v){};
-    EarlyReturn(const T &val) : type_(EarlyReturnType::Return), value_(val){};
-    static EarlyReturn Break() { return EarlyReturn(EarlyReturnType::Break); }
-    static EarlyReturn Continue() { return EarlyReturn(EarlyReturnType::Break); }
-    EarlyReturnType type() const { return type_; }
+    EarlyReturn(Type t = Type::Continue, std::optional<T> v = std::nullopt) : type_(t), value_(v){};
+    EarlyReturn(const T &val) : type_(Type::Return), value_(val){};
+    Type type() const { return type_; }
     std::optional<T> value() const { return value_; }
 };
 
@@ -72,11 +71,11 @@ auto for_each_pair_early(Iter begin, Iter end, Lam lambda) -> decltype(lambda(0,
             auto result = lambda(i, *elem1, j, *elem2);
             switch (result.type())
             {
-                case EarlyReturnType::Return:
+                case EarlyReturn<decltype(lambda(0, *begin, 0, *end).value())>::Return:
                     return result.value();
-                case EarlyReturnType::Break:
+                case EarlyReturn<decltype(lambda(0, *begin, 0, *end).value())>::Break:
                     break;
-                case EarlyReturnType::Continue:
+                case EarlyReturn<decltype(lambda(0, *begin, 0, *end).value())>::Continue:
                     continue;
             }
         }

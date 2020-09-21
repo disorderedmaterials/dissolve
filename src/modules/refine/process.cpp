@@ -361,7 +361,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     if (!scatteringMatrix_.addPartialReferenceData(data, at1, at2, factor, (1.0 - augmentationParam)))
                         return Messenger::error("Refine: Failed to augment scattering matrix with partial {}-{}.\n",
                                                 at1->name(), at2->name());
-                    return EarlyReturn<bool>::Continue();
+                    return EarlyReturn<bool>::Continue;
                 });
         }
         else if (augmentationStyle != RefineModule::NoAugmentation)

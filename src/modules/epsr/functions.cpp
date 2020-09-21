@@ -77,7 +77,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
 
     i = 0;
     auto result = for_each_pair_early(
-        dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
+				      dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
             Array<double> &potCoeff = coefficients.at(i, j);
 
             // Regenerate empirical potential from the stored coefficients
@@ -109,11 +109,11 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
             if (!pp)
             {
                 Messenger::error("Failed to find PairPotential for AtomTypes '{}' and '{}'.\n", at1->name(), at2->name());
-                return EarlyReturn(false);
+                return false;
             }
 
             pp->setUAdditional(ep);
-            return EarlyReturn<bool>::Continue();
+            return EarlyReturn<bool>::Continue;
         });
 
     return result.value_or(true);
