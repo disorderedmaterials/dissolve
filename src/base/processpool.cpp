@@ -354,10 +354,9 @@ bool ProcessPool::assignProcessesToGroups()
     if (MPI_Comm_create(MPI_COMM_WORLD, groupGroup_, &groupCommunicator_) != MPI_SUCCESS)
         return false;
     MPI_Group_rank(groupGroup_, &groupRank_);
-    Messenger::printVerbose("... Process with pool rank {} (world rank {}) has local group {} ({}), group rank {}, and is "
+    Messenger::printVerbose("... Process with pool rank {} (world rank {}) has local group {}, group rank {}, and is "
                             "a process group {}\n",
-                            poolRank_, worldRank_, groupIndex_, fmt::ptr(groupGroup_), groupRank_,
-                            groupLeader() ? "leader" : "slave");
+                            poolRank_, worldRank_, groupIndex_, groupRank_, groupLeader() ? "leader" : "slave");
 
     // Master now assembles list of group leaders
     bool leader;
