@@ -77,7 +77,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
 
     i = 0;
     auto result = for_each_pair_early(
-        dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+        dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
             Array<double> &potCoeff = coefficients.at(i, j);
 
             // Regenerate empirical potential from the stored coefficients
@@ -113,10 +113,10 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
             }
 
             pp->setUAdditional(ep);
-            return std::nullopt;
+            return EarlyReturn<bool>::Continue;
         });
 
-    return result.value_or(true).value_or(true);
+    return result.value_or(true);
 }
 
 // Generate and return single empirical potential function

@@ -590,7 +590,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Create the array
         simulatedReferenceData_.createEmpty(combinedUnweightedSQ.linearArraySize());
         for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                            [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                            [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
                                 // Copy the unweighted data and wight weight it according to the natural isotope / concentration
                                 // factor calculated above
                                 auto data = combinedUnweightedSQ.at(i, j);
@@ -600,7 +600,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 if (!scatteringMatrix.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback)))
                                     return Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n",
                                                             at1->name(), at2->name());
-                                return std::nullopt;
+                                return EarlyReturn<bool>::Continue;
                             });
 
         scatteringMatrix.finalise();
@@ -644,7 +644,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (testMode)
         {
             for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                                [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                                [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
                                     testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
                                     if (testData_.containsData(testDataName))
                                     {
@@ -656,7 +656,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                         if (error > testThreshold)
                                             return false;
                                     }
-                                    return std::nullopt;
+                                    return EarlyReturn<bool>::Continue;
                                 });
         }
 
