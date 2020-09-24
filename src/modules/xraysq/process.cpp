@@ -375,11 +375,9 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             return false;
         if (saveFormFactors)
         {
-            for_each_pair(
-                unweightedsq.atomTypes().begin(), unweightedsq.atomTypes().end(), [&](int i, auto &at1, int j, auto &at2) {
-                    //                 combinedUnweightedSQ.at(i, j).setObjectTag(
-                    //                     fmt::format("{}//UnweightedSQ//{}//{}-{}", uniqueName(), group->name(), at1->name(),
-                    //                     at2->name()));
+            auto result = for_each_pair_early(
+                unweightedsq.atomTypes().begin(), unweightedsq.atomTypes().end(),
+                [&](int i, auto &at1, int j, auto &at2) -> EarlyReturn<bool> {
                     if (i == j)
                     {
                         if (procPool.isMaster())
@@ -408,7 +406,12 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
                     else if (!procPool.decision())
                         return false;
+
+                    return EarlyReturn<bool>::Continue;
                 });
+
+            if (!result.value_or(true))
+                return Messenger::error("Failed to save form factor data.");
         }
     }
 
