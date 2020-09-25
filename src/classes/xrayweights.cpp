@@ -238,6 +238,42 @@ Array<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const Array<do
     return fijq;
 }
 
+// Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q values
+Array<double> XRayWeights::boundCoherentSquareOfAverage(const Array<double> &Q) const
+{
+    // Initialise results array
+    Array<double> bbar(Q.nItems());
+
+    for (int typeI = 0; typeI < atomTypes_.nItems(); ++typeI)
+    {
+        const double ci = concentrations_.constAt(typeI);
+        auto &fi = formFactorData_[typeI].get();
+
+        for (int n = 0; n < Q.nItems(); ++n)
+            bbar[n] += ci * fi.magnitude(Q.constAt(n));
+    }
+
+    return bbar;
+}
+
+// Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q values
+Array<double> XRayWeights::boundCoherentAverageOfSquares(const Array<double> &Q) const
+{
+    // Initialise results array
+    Array<double> bbar(Q.nItems());
+
+    for (int typeI = 0; typeI < atomTypes_.nItems(); ++typeI)
+    {
+        const double ci = concentrations_.constAt(typeI);
+        auto &fi = formFactorData_[typeI].get();
+
+        for (int n = 0; n < Q.nItems(); ++n)
+            bbar[n] += ci * fi.magnitude(Q.constAt(n)) * fi.magnitude(Q.constAt(n));
+    }
+
+    return bbar;
+}
+
 // Return whether the structure is valid (i.e. has been finalised)
 bool XRayWeights::isValid() const { return valid_; }
 

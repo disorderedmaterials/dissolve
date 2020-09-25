@@ -100,6 +100,7 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
     void operator-=(const Data1D &source);
     void operator-=(const double delta);
     void operator*=(const double factor);
+    void operator*=(const Array<double> &factors);
     void operator/=(const double factor);
 
     /*

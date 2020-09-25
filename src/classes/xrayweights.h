@@ -88,6 +88,10 @@ class XRayWeights : public GenericItemBase
     double weight(int typeIndexI, int typetypeIndexJ, double Q) const;
     // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) over supplied Q values
     Array<double> weight(int typeIndexI, int typeIndexJ, const Array<double> &Q) const;
+    // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q values
+    Array<double> boundCoherentSquareOfAverage(const Array<double> &Q) const;
+    // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q values
+    Array<double> boundCoherentAverageOfSquares(const Array<double> &Q) const;
     // Return whether the structure is valid (i.e. has been finalised)
     bool isValid() const;
 

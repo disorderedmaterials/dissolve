@@ -434,6 +434,19 @@ void Data1D::operator*=(const double factor)
     ++version_;
 }
 
+void Data1D::operator*=(const Array<double> &factors)
+{
+    // Check array sizes
+    if (x_.nItems() != factors.nItems())
+    {
+        Messenger::error("Can't *= this Array with Data1D values since they are of differing sizes.\n");
+        return;
+    }
+
+    for (int n = 0; n < values_.nItems(); ++n)
+        values_[n] *= factors.constAt(n);
+}
+
 void Data1D::operator/=(const double factor)
 {
     ++version_;
