@@ -35,7 +35,6 @@ steps:
       sudo dpkg -i $(Pipeline.Workspace)/hugo*.deb
     displayName: 'Download & Install Hugo (Extended Version)'
   - bash: |
-      set -ex
       if [ "${{ parameters.use_current_hash }}" = "true" ]
       then
         # Use short hash from most recent (this) commit
