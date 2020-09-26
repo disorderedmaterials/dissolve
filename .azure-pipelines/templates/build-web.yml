@@ -3,9 +3,10 @@ parameters:
     default: true
     type: boolean
   - name: hugo_version
-    default: '0.74.3'
+    default: '0.75.1'
   - name: use_current_hash
     default: false
+    type: boolean
   - name: web_dir_root
     default: 'github.com/projectdissolve/dissolve/edit/develop/web'
   - name: last_hash_url
@@ -21,20 +22,11 @@ steps:
       git submodule update --init --recursive --depth 1
     displayName: 'Init Submodules'
   - bash: |
-      # As noted in https://www.docsy.dev/docs/getting-started/, autoprefixer must be installed locally or postcss won't find it.
-      # Note also that postcss-cli must be installed globally, or errors resulting from files missing from cache will occur
-      # (see https://github.com/google/docsy/issues/235).
-      cd web/
-      sudo npm install -g postcss-cli
-      npm install autoprefixer
-    displayName: 'Install NPM Packages'
-  - bash: |
       set -ex
       wget https://github.com/gohugoio/hugo/releases/download/v${{ parameters.hugo_version }}/hugo_extended_${{ parameters.hugo_version }}_Linux-64bit.deb -O '$(Pipeline.Workspace)/hugo.deb'
       sudo dpkg -i $(Pipeline.Workspace)/hugo*.deb
     displayName: 'Download & Install Hugo (Extended Version)'
   - bash: |
-      set -ex
       if [ "${{ parameters.use_current_hash }}" = "true" ]
       then
         # Use short hash from most recent (this) commit
@@ -58,6 +50,7 @@ steps:
   - bash: |
       set -ex
       cd web
+      npm install
       hugo
       mv ${{ parameters.last_hash_file }} public/
     displayName: 'Build Site'

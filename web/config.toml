@@ -44,7 +44,7 @@ latexDashes = true
     weight = 4
 
 [params]
-copyright = "Dr Tristan Youngs, Simona (2019-). Built using Hugo/Docsy."
+copyright = "Dr Tristan Youngs, Simona. Built using Hugo/Docsy."
 releaseVersion = "0.6.1"
 devVersion = "0.7.0"
 devShortHash = ""
