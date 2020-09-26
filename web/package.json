@@ -1,0 +1,16 @@
+{
+  "name": "dissolveweb",
+  "version": "1.0.0",
+  "description": "Website for Dissolve",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "autoprefixer": "^10.0.0",
+    "postcss": "^8.0.5",
+    "postcss-cli": "^8.0.0"
+  }
+}
