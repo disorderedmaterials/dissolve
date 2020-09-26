@@ -3,7 +3,7 @@ parameters:
     default: true
     type: boolean
   - name: hugo_version
-    default: '0.74.3'
+    default: '0.75.1'
   - name: use_current_hash
     default: false
   - name: web_dir_root
