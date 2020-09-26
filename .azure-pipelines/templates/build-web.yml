@@ -19,6 +19,10 @@ steps:
     submodules: true
     fetchDepth: 1
   - bash: |
+      echo $BUILD_SOURCEBRANCH
+      echo $BUILD_SOURCEBRANCHNAME
+    displayName: 'TESTING'
+  - bash: |
       git submodule update --init --recursive --depth 1
     displayName: 'Init Submodules'
   - bash: |
