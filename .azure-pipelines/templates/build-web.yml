@@ -6,6 +6,7 @@ parameters:
     default: '0.75.1'
   - name: use_current_hash
     default: false
+    type: boolean
   - name: web_dir_root
     default: 'github.com/projectdissolve/dissolve/edit/develop/web'
   - name: last_hash_url
