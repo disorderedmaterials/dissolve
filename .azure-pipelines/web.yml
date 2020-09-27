@@ -34,5 +34,5 @@ stages:
         steps:
           - template: templates/build-web.yml
             parameters:
-              deploy: ${{ eq(variables.isDevelop, 'True') }}
-              use_current_hash: ${{ eq(variables.isDevelop, 'True') }}
+              deploy: ${{ eq(variables.isDevelop, True) }}
+              use_current_hash: ${{ eq(variables.isDevelop, True) }}
