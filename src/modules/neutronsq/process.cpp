@@ -357,9 +357,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Get the set...
             auto topeSetData = isotopologues_.getIsotopologueSet(cfg);
             if (!topeSetData)
-            {
                 return Messenger::error("Could not locate IsotopologueSet");
-            }
             const IsotopologueSet &topeSet = *topeSetData;
 
             // Iterate over Species present in the set
