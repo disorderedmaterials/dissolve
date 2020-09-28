@@ -67,10 +67,8 @@ class Averaging
     {
         // Find the 'root' data of type T, which should currently contain the most recently-calculated data
         if (!moduleData.contains(name, prefix))
-        {
-            Messenger::error("Couldn't find root data '{}' (prefix = '{}') in order to perform averaging.\n", name, prefix);
-            return false;
-        }
+            return Messenger::error("Couldn't find root data '{}' (prefix = '{}') in order to perform averaging.\n", name,
+                                    prefix);
         T &currentData = GenericListHelper<T>::retrieve(moduleData, name, prefix);
 
         // Establish the number of existing datasets, and perform management on them
