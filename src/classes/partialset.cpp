@@ -105,21 +105,27 @@ void PartialSet::setUpHistograms(double rdfRange, double binWidth)
 // Reset partial arrays
 void PartialSet::reset()
 {
-    auto nTypes = atomTypes_.nItems();
-    for (int n = 0; n < nTypes; ++n)
-    {
-        for (int m = n; m < nTypes; ++m)
+    // Zero histogram bins if present
+    for (auto n = 0; n < fullHistograms_.nRows(); ++n)
+        for (auto m = n; m < fullHistograms_.nColumns(); ++m)
         {
             fullHistograms_.at(n, m).zeroBins();
             boundHistograms_.at(n, m).zeroBins();
             unboundHistograms_.at(n, m).zeroBins();
+        }
 
+    // Zero partials
+    auto nTypes = atomTypes_.nItems();
+    for (auto n = 0; n < nTypes; ++n)
+        for (auto m = n; m < nTypes; ++m)
+        {
             partials_.at(n, m).values() = 0.0;
             boundPartials_.at(n, m).values() = 0.0;
             unboundPartials_.at(n, m).values() = 0.0;
             emptyBoundPartials_.at(n, m) = true;
         }
-    }
+
+    // Zero total
     total_.values() = 0.0;
 
     fingerprint_ = "NO_FINGERPRINT";
