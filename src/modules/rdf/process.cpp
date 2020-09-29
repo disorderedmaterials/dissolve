@@ -25,8 +25,6 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
     const auto averaging = keywords_.asInt("Averaging");
-    if (!Averaging::averagingSchemes().isValid(keywords_.asString("AveragingScheme")))
-        return Averaging::averagingSchemes().errorAndPrintValid(keywords_.asString("AveragingScheme"));
     auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
     auto &intraBroadening = keywords_.retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
     auto method = keywords_.enumeration<RDFModule::PartialsMethod>("Method");
