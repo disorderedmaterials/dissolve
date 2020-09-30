@@ -66,7 +66,8 @@ class SQModule : public Module
                                       PartialSet &unweightedsq, double qMin, double qDelta, double qMax, double rho,
                                       const WindowFunction &windowFunction, const BroadeningFunction &broadening);
     // Sum unweighted S(Q) over the supplied Module's target Configurations
-    static bool sumUnweightedSQ(ProcessPool &procPool, Module *module, GenericList &moduleData, PartialSet &summedUnweightedSQ);
+    static bool sumUnweightedSQ(ProcessPool &procPool, Module *parentModule, const SQModule *sqModule, GenericList &moduleData,
+                                PartialSet &summedUnweightedSQ);
 
     /*
      * GUI Widget

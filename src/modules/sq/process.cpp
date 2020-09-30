@@ -22,6 +22,9 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (targetConfigurations_.nItems() == 0)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName_);
 
+    const RDFModule *rdfModule = keywords_.retrieve<const RDFModule *>("SourceRDFs", nullptr);
+    if (!rdfModule)
+        return Messenger::error("A source RDF module must be provided.\n");
     const auto averaging = keywords_.asInt("Averaging");
     auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
     const auto &qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
@@ -36,6 +39,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Print argument/parameter summary
     Messenger::print("SQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n", qMin,
                      qMax, qDelta);
+    Messenger::print("SQ: Source RDFs will be taken from module '{}'.\n", rdfModule->uniqueName());
     if (windowFunction.function() == WindowFunction::NoWindow)
         Messenger::print("SQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
     else
@@ -64,20 +68,22 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Get unweighted g(r) for this Configuration - we don't supply a specific Module prefix, since the unweighted
         // g(r) may come from one of many RDF-type modules
-        if (!cfg->moduleData().contains("UnweightedGR"))
+        if (!cfg->moduleData().contains("UnweightedGR", rdfModule->uniqueName()))
             return Messenger::error("Couldn't locate UnweightedGR for Configuration '{}'.\n", cfg->name());
-        const auto &unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
+        const auto &unweightedgr =
+            GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR", rdfModule->uniqueName());
 
         // Does a PartialSet already exist for this Configuration?
         bool wasCreated;
-        auto &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "SQ",
+        auto &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", uniqueName_,
                                                                     GenericItem::InRestartFileFlag, &wasCreated);
         if (wasCreated)
             unweightedsq.setUpPartials(unweightedgr.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName_),
                                        "unweighted", "sq", "Q, 1/Angstroms");
 
         // Is the PartialSet already up-to-date?
-        if (DissolveSys::sameString(unweightedsq.fingerprint(), fmt::format("{}", cfg->moduleData().version("UnweightedGR"))))
+        if (DissolveSys::sameString(unweightedsq.fingerprint(),
+                                    fmt::format("{}", cfg->moduleData().version("UnweightedGR", rdfModule->uniqueName()))))
         {
             Messenger::print("SQ: Unweighted partial S(Q) are up-to-date for Configuration '{}'.\n", cfg->name());
             continue;
@@ -101,7 +107,8 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             {
                 if (!cfg->moduleData().contains(fmt::format("UnweightedSQ_{}", n), uniqueName_))
                     continue;
-                auto &p = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), fmt::format("UnweightedSQ_{}", n), uniqueName_);
+                auto &p =
+                    GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), fmt::format("UnweightedSQ_{}", n), uniqueName_);
                 p.setObjectTags(fmt::format("{}//{}//UnweightedSQ", cfg->niceName(), uniqueName_), fmt::format("Avg{}", n));
             }
 
@@ -123,7 +130,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                                       uniqueName_, GenericItem::InRestartFileFlag);
 
     // Sum the partials from the associated Configurations
-    if (!sumUnweightedSQ(procPool, this, dissolve.processingModuleData(), summedUnweightedSQ))
+    if (!sumUnweightedSQ(procPool, this, this, dissolve.processingModuleData(), summedUnweightedSQ))
         return false;
 
     // Create/retrieve PartialSet for summed unweighted g(r)
@@ -131,7 +138,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                                       uniqueName_, GenericItem::InRestartFileFlag);
 
     // Sum the partials from the associated Configurations
-    if (!RDFModule::sumUnweightedGR(procPool, this, dissolve.processingModuleData(), summedUnweightedGR))
+    if (!RDFModule::sumUnweightedGR(procPool, this, rdfModule, dissolve.processingModuleData(), summedUnweightedGR))
         return false;
 
     return true;

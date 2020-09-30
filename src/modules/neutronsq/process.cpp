@@ -144,6 +144,12 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (targetConfigurations_.nItems() == 0)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
+    const SQModule *sqModule = keywords_.retrieve<const SQModule *>("SourceSQs", nullptr);
+    if (!sqModule)
+        return Messenger::error("A source SQ module must be provided.\n");
+    const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr);
+    if (!rdfModule)
+        return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
     const bool includeBragg = keywords_.asBool("IncludeBragg");
     const auto &braggQBroadening = keywords_.retrieve<BroadeningFunction>("BraggQBroadening", BroadeningFunction());
     auto normalisation = keywords_.enumeration<NeutronSQModule::NormalisationType>("Normalisation");
@@ -160,6 +166,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Print argument/parameter summary
     Messenger::print("NeutronSQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n",
                      qMin, qMax, qDelta);
+    Messenger::print("NeutronSQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
     if (windowFunction.function() == WindowFunction::NoWindow)
         Messenger::print("NeutronSQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
     else
@@ -214,7 +221,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Get unweighted g(r) for this Configuration - we don't supply a specific Module prefix, since the unweighted
         // g(r) may come from one of many RDF-type modules
-        if (!cfg->moduleData().contains("UnweightedGR"))
+        if (!cfg->moduleData().contains("UnweightedGR", rdfModule->uniqueName()))
             return Messenger::error("Couldn't locate UnweightedGR for Configuration '{}'.\n", cfg->name());
         const auto &unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
 
@@ -421,8 +428,8 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto &summedUnweightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedSQ",
                                                                       uniqueName_, GenericItem::InRestartFileFlag);
 
-    // Sum the partials from the associated Configurations
-    if (!SQModule::sumUnweightedSQ(procPool, this, dissolve.processingModuleData(), summedUnweightedSQ))
+    // Sum the unweighted S(Q) from the associated Configurations
+    if (!SQModule::sumUnweightedSQ(procPool, this, sqModule, dissolve.processingModuleData(), summedUnweightedSQ))
         return false;
 
     // Save data if requested
@@ -451,7 +458,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                                       uniqueName_, GenericItem::InRestartFileFlag);
 
     // Sum the partials from the associated Configurations
-    if (!RDFModule::sumUnweightedGR(procPool, this, dissolve.processingModuleData(), summedUnweightedGR))
+    if (!RDFModule::sumUnweightedGR(procPool, this, rdfModule, dissolve.processingModuleData(), summedUnweightedGR))
         return false;
 
     // Create/retrieve PartialSet for summed weighted g(r)

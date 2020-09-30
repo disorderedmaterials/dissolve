@@ -117,6 +117,12 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (targetConfigurations_.nItems() == 0)
         return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
 
+    const SQModule *sqModule = keywords_.retrieve<const SQModule *>("SourceSQs", nullptr);
+    if (!sqModule)
+        return Messenger::error("A source SQ module must be provided.\n");
+    const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr);
+    if (!rdfModule)
+        return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
     const bool includeBragg = keywords_.asBool("IncludeBragg");
     const BroadeningFunction &braggQBroadening =
         keywords_.retrieve<BroadeningFunction>("BraggQBroadening", BroadeningFunction());
@@ -139,6 +145,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print(
         "XRaySQ: Calculating S(Q)/F(Q) over {:.4e} < Q < {:.4e} Angstroms**-1 using step size of {:.4e} Angstroms**-1.\n", qMin,
         qMax, qDelta);
+    Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
     Messenger::print("XRaySQ: Form factors to use are '{}'.\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors));
     if (normalisation == XRaySQModule::NoNormalisation)
         Messenger::print("XRaySQ: No normalisation will be applied to total F(Q).\n");
@@ -194,7 +201,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Get unweighted g(r) for this Configuration - we don't supply a specific Module prefix, since the unweighted g(r) may
         // come from one of many RDF-type modules
-        if (!cfg->moduleData().contains("UnweightedGR"))
+        if (!cfg->moduleData().contains("UnweightedGR", rdfModule->uniqueName()))
             return Messenger::error("Couldn't locate UnweightedGR for Configuration '{}'.\n", cfg->name());
         const PartialSet &unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
 
@@ -405,8 +412,8 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     PartialSet &summedUnweightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedSQ",
                                                                             uniqueName_, GenericItem::InRestartFileFlag);
 
-    // Sum the partials from the associated Configurations
-    if (!SQModule::sumUnweightedSQ(procPool, this, dissolve.processingModuleData(), summedUnweightedSQ))
+    // Sum the unweighted S(Q) from the associated Configurations
+    if (!SQModule::sumUnweightedSQ(procPool, this, sqModule, dissolve.processingModuleData(), summedUnweightedSQ))
         return false;
 
     // Save data if requested
@@ -435,7 +442,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                                             uniqueName_, GenericItem::InRestartFileFlag);
 
     // Sum the partials from the associated Configurations
-    if (!RDFModule::sumUnweightedGR(procPool, this, dissolve.processingModuleData(), summedUnweightedGR))
+    if (!RDFModule::sumUnweightedGR(procPool, this, rdfModule, dissolve.processingModuleData(), summedUnweightedGR))
         return false;
 
     // Create/retrieve PartialSet for summed weighted g(r)

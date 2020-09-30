@@ -3,12 +3,14 @@
 
 #include "keywords/types.h"
 #include "math/averaging.h"
+#include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
 
 // Perform any necessary initialisation for the Module
 void SQModule::initialise()
 {
-    // Q range
+    // Calculation
+    keywords_.add("Calculation", new ModuleKeyword<const RDFModule>("RDF"), "SourceRDFs", "Source RDFs to transform into S(Q)");
     keywords_.add("Calculation", new DoubleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
     keywords_.add("Calculation", new DoubleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
     keywords_.add("Calculation", new DoubleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");

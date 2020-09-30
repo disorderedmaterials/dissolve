@@ -3,6 +3,7 @@
 
 #include "keywords/types.h"
 #include "modules/neutronsq/neutronsq.h"
+#include "modules/sq/sq.h"
 
 // Return enum option info for NormalisationType
 EnumOptions<NeutronSQModule::NormalisationType> NeutronSQModule::normalisationTypes()
@@ -22,6 +23,8 @@ EnumOptions<NeutronSQModule::NormalisationType> NeutronSQModule::normalisationTy
 void NeutronSQModule::initialise()
 {
     // Calculation
+    keywords_.add("Calculation", new ModuleKeyword<const SQModule>("SQ"), "SourceSQs",
+                  "Source unweighted S(Q) to transform into neutron-weighted S(Q)");
     keywords_.add("Calculation", new DoubleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
     keywords_.add("Calculation", new DoubleKeyword(-1.0, -1.0), "QMax",
                   "Maximum Q for calculated S(Q) (and limit at which reference data will be truncated)");
