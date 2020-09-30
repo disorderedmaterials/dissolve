@@ -2,6 +2,7 @@
 // Copyright (c) 2020 Team Dissolve and contributors
 
 #include "keywords/types.h"
+#include "math/averaging.h"
 #include "modules/sq/sq.h"
 
 // Perform any necessary initialisation for the Module
@@ -15,6 +16,12 @@ void SQModule::initialise()
                   "Instrument broadening function to apply when calculating S(Q)");
     keywords_.add("Calculation", new WindowFunctionKeyword(WindowFunction(WindowFunction::NoWindow)), "WindowFunction",
                   "Window function to apply in Fourier-transform of g(r) to S(Q)");
+    keywords_.add("Calculation", new IntegerKeyword(1, 1), "Averaging",
+                  "Number of historical partial sets to combine into final partials", "<1>");
+    keywords_.add(
+        "Calculation",
+        new EnumOptionsKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging),
+        "AveragingScheme", "Weighting scheme to use when averaging partials", "<Linear>");
 
     // Export
     keywords_.add("Export", new BoolKeyword(false), "Save", "Whether to save partials to disk after calculation",
