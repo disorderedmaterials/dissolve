@@ -91,7 +91,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // uniqueName_)
         bool alreadyUpToDate;
         calculateGR(procPool, cfg, method, rdfRange, binWidth, alreadyUpToDate);
-        auto &originalgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "OriginalGR");
+        auto &originalgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "OriginalGR", uniqueName_);
 
         // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
         if ((averaging > 1) && (!alreadyUpToDate))
@@ -99,15 +99,16 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Store the current fingerprint, since we must ensure we retain it in the averaged T.
             std::string currentFingerprint{originalgr.fingerprint()};
 
-            Averaging::average<PartialSet>(cfg->moduleData(), "OriginalGR", "", averaging, averagingScheme);
+            Averaging::average<PartialSet>(cfg->moduleData(), "OriginalGR", uniqueName_, averaging, averagingScheme);
 
             // Need to rename data within the contributing datasets to avoid clashes with the averaged data
             for (int n = averaging; n > 0; --n)
             {
-                if (!cfg->moduleData().contains(fmt::format("OriginalGR_{}", n)))
+                if (!cfg->moduleData().contains(fmt::format("OriginalGR_{}", n), uniqueName_))
                     continue;
-                auto &p = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), fmt::format("OriginalGR_{}", n));
-                p.setObjectTags(fmt::format("{}//OriginalGR", cfg->niceName()), fmt::format("Avg{}", n));
+                auto &p =
+                    GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), fmt::format("OriginalGR_{}", n), uniqueName_);
+                p.setObjectTags(fmt::format("{}//{}//OriginalGR", cfg->niceName(), uniqueName_), fmt::format("Avg{}", n));
             }
 
             // Re-set the object names and fingerprints of the partials
@@ -115,7 +116,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Set names of resources (Data1D) within the PartialSet
-        originalgr.setObjectTags(fmt::format("{}//OriginalGR", cfg->niceName()));
+        originalgr.setObjectTags(fmt::format("{}//{}//OriginalGR", cfg->niceName(), uniqueName_));
 
         // Perform internal test of original g(r)?
         if (internalTest)
@@ -128,12 +129,12 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Form unweighted g(r) from original g(r), applying any requested smoothing / intramolecular broadening
-        PartialSet &unweightedgr =
-            GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", "", GenericItem::InRestartFileFlag);
+        PartialSet &unweightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_,
+                                                                          GenericItem::InRestartFileFlag);
         calculateUnweightedGR(procPool, cfg, originalgr, unweightedgr, intraBroadening, smoothing);
 
         // Set names of resources and filename in Data1D within the PartialSet
-        unweightedgr.setObjectTags(fmt::format("{}//UnweightedGR", cfg->niceName()));
+        unweightedgr.setObjectTags(fmt::format("{}//{}//UnweightedGR", cfg->niceName(), uniqueName_));
         unweightedgr.setFileNames(cfg->niceName(), "unweighted", "rdf");
 
         // Save data if requested
