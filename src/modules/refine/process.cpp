@@ -274,6 +274,12 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                                         module->uniqueName(), NeutronWeights(), &found);
             if (!found)
                 return Messenger::error("Could not locate NeutronWeights for target '{}'.\n", module->uniqueName());
+
+            const SQModule *sqModule = module->keywords().retrieve<const SQModule *>("SourceSQs", nullptr);
+            if (!sqModule)
+                return Messenger::error(
+                    "Module '{}' doesn't source any S(Q) data, so it can't be used to augment the scattering matrix.",
+                    module->uniqueName());
             const auto &unweightedSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ",
                                                                             module->uniqueName(), PartialSet(), &found);
             if (!found)

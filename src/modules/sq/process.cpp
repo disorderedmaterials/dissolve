@@ -99,7 +99,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Is the PartialSet already up-to-date?
         if (DissolveSys::sameString(unweightedsq.fingerprint(),
                                     fmt::format("{}/{}", cfg->moduleData().version("UnweightedGR", rdfModule->uniqueName()),
-                                    includeBragg ? cfg->moduleData().version("BraggReflections") : -1)))
+                                                includeBragg ? cfg->moduleData().version("BraggReflections") : -1)))
         {
             Messenger::print("SQ: Unweighted partial S(Q) are up-to-date for Configuration '{}'.\n", cfg->name());
             continue;
@@ -233,7 +233,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Set names of resources (Data1D) within the PartialSet
         unweightedsq.setObjectTags(fmt::format("{}//{}//{}", cfg->niceName(), uniqueName_, "UnweightedSQ"));
         unweightedsq.setFingerprint(fmt::format("{}/{}", cfg->moduleData().version("UnweightedGR", rdfModule->uniqueName()),
-                                    includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
+                                                includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
         // Save data if requested
         if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, unweightedsq.save())))
             return false;

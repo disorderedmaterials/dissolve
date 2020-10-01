@@ -183,43 +183,11 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());
 
-        // Get unweighted g(r) for this Configuration - we don't supply a specific Module prefix, since the unweighted
-        // g(r) may come from one of many RDF-type modules
-        if (!cfg->moduleData().contains("UnweightedGR", rdfModule->uniqueName()))
-            return Messenger::error("Couldn't locate UnweightedGR for Configuration '{}'.\n", cfg->name());
-        const auto &unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
-
-        // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-        auto &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "",
-                                                                    GenericItem::InRestartFileFlag, &created);
-        if (created)
-            unweightedsq.setUpPartials(unweightedgr.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()),
-                                       "unweighted", "sq", "Q, 1/Angstroms");
-
-        // Is the PartialSet already up-to-date? Do we force its calculation anyway?
-        auto &forceCalculation = GenericListHelper<bool>::retrieve(cfg->moduleData(), "_ForceNeutronSQ", "", false);
-        const bool sqUpToDate = DissolveSys::sameString(
-            unweightedsq.fingerprint(), fmt::format("{}", cfg->moduleData().version("UnweightedGR")));
-        if ((!forceCalculation) && sqUpToDate)
-        {
-            Messenger::print("Unweighted partial S(Q) are up-to-date for Configuration '{}'.\n", cfg->name());
-            continue;
-        }
-        forceCalculation = false;
-
-        // Transform g(r) into S(Q)
-        if (!SQModule::calculateUnweightedSQ(procPool, cfg, unweightedgr, unweightedsq, qMin, qDelta, qMax,
-                                             cfg->atomicDensity(), windowFunction, qBroadening))
-            return false;
-
-        // Set names of resources (Data1D) within the PartialSet, and tag it with the fingerprint from the source
-        // unweighted g(r)
-        unweightedsq.setObjectTags(fmt::format("{}//{}//{}", cfg->niceName(), "NeutronSQ", "UnweightedSQ"));
-        unweightedsq.setFingerprint(fmt::format("{}", cfg->moduleData().version("UnweightedGR")));
-
-        // Save data if requested
-        if (saveUnweighted && (!MPIRunMaster(procPool, unweightedsq.save())))
-            return false;
+        // Get unweighted S(Q) for this Configuration from the specified SQMOdule
+        if (!cfg->moduleData().contains("UnweightedSQ", sqModule->uniqueName()))
+            return Messenger::error("Couldn't locate unweighted S(Q) data for Configuration '{}'.\n", cfg->name());
+        const auto &unweightedsq =
+            GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedSQ", sqModule->uniqueName());
 
         // Construct weights matrix based on Isotopologue specifications and the populations of AtomTypes in the
         // Configuration
@@ -267,8 +235,8 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         weights.createFromIsotopologues(exchangeableTypes_);
         weights.print();
 
-        // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-        auto &weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", "",
+        // Does a PartialSet for the weighted S(Q) already exist for this Configuration?
+        auto &weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", uniqueName_,
                                                                   GenericItem::InRestartFileFlag, &created);
         if (created)
             weightedsq.setUpPartials(unweightedsq.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()), "weighted",
@@ -289,17 +257,11 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Construct the weighted sum of Configuration partials and store in the processing module data list
      */
 
-    // Create/retrieve PartialSet for summed partial S(Q)
-    auto &summedUnweightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedSQ",
-                                                                      uniqueName_, GenericItem::InRestartFileFlag);
-
-    // Sum the unweighted S(Q) from the associated Configurations
-    if (!SQModule::sumUnweightedSQ(procPool, this, sqModule, dissolve.processingModuleData(), summedUnweightedSQ))
-        return false;
-
-    // Save data if requested
-    if (saveUnweighted && (!MPIRunMaster(procPool, summedUnweightedSQ.save())))
-        return false;
+    // Get summed unweighted S(Q) from the specified SQMOdule
+    if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->uniqueName()))
+        return Messenger::error("Couldn't locate summed unweighted S(Q) data.\n");
+    const auto &summedUnweightedSQ =
+        GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ", sqModule->uniqueName());
 
     // Create/retrieve PartialSet for summed partial S(Q)
     auto &summedWeightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedSQ", uniqueName_,
@@ -318,13 +280,15 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                GenericItem::InRestartFileFlag) = summedWeights;
     calculateWeightedSQ(summedUnweightedSQ, summedWeightedSQ, summedWeights, normalisation);
 
-    // Create/retrieve PartialSet for summed unweighted g(r)
-    auto &summedUnweightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR",
-                                                                      uniqueName_, GenericItem::InRestartFileFlag);
-
-    // Sum the partials from the associated Configurations
-    if (!RDFModule::sumUnweightedGR(procPool, this, rdfModule, dissolve.processingModuleData(), summedUnweightedGR))
+    // Save data if requested
+    if (saveWeighted && (!MPIRunMaster(procPool, summedWeightedSQ.save())))
         return false;
+
+    // Get summed unweighted g(r) from the specified RDFMOdule
+    if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->uniqueName()))
+        return Messenger::error("Couldn't locate summed unweighted g(r) data.\n");
+    const auto &summedUnweightedGR =
+        GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedGR", rdfModule->uniqueName());
 
     // Create/retrieve PartialSet for summed weighted g(r)
     auto &summedWeightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedGR", uniqueName_,
@@ -340,13 +304,11 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto &repGR = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RepresentativeTotalGR", uniqueName_,
                                                      GenericItem::InRestartFileFlag);
     repGR = summedWeightedSQ.total();
-    double rho = nTargetConfigurations() == 0 ? 0.1 : RDFModule::summedRho(this, dissolve.processingModuleData());
-    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), qMin, qDelta, qMax, referenceWindowFunction);
+    auto qMin = summedWeightedSQ.total().values().firstValue();
+    auto qMax = summedWeightedSQ.total().values().lastValue();
+    auto rho = nTargetConfigurations() == 0 ? 0.1 : RDFModule::summedRho(this, dissolve.processingModuleData());
+    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), qMin, 0.05, qMax, referenceWindowFunction);
     repGR.setObjectTag(fmt::format("{}//RepresentativeTotalGR", uniqueName_));
-
-    // Save data if requested
-    if (saveWeighted && (!MPIRunMaster(procPool, summedWeightedSQ.save())))
-        return false;
 
     return true;
 }

@@ -662,12 +662,15 @@ double RDFModule::summedRho(Module *module, GenericList &processingModuleData)
 bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, const RDFModule *rdfModule,
                                 GenericList &processingModuleData, PartialSet &summedUnweightedGR)
 {
-    // Create an AtomTypeList containing the sum of atom types over all target configurations
-    AtomTypeList combinedAtomTypes;
+    // Realise an AtomTypeList containing the sum of atom types over all target configurations
+    // TODO Assume weight of 1.0 per configuration now, until #398/#400 are addressed.
+    auto &combinedAtomTypes = GenericListHelper<AtomTypeList>::realise(
+        processingModuleData, "SummedAtomTypes", parentModule->uniqueName(), GenericItem::InRestartFileFlag);
+    combinedAtomTypes.clear();
     for (Configuration *cfg : parentModule->targetConfigurations())
         combinedAtomTypes.add(cfg->usedAtomTypesList());
 
-    // Finalise and print the combined AtomTypes matrix
+    // Finalise and save the combined AtomTypes matrix
     combinedAtomTypes.finalise();
 
     // Set up PartialSet container

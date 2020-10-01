@@ -142,5 +142,13 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
             return false;
     }
 
+    // Create/retrieve PartialSet for summed unweighted g(r)
+    auto &summedUnweightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR",
+                                                                      uniqueName_, GenericItem::InRestartFileFlag);
+
+    // Sum the partials from the associated Configurations
+    if (!RDFModule::sumUnweightedGR(procPool, this, this, dissolve.processingModuleData(), summedUnweightedGR))
+        return false;
+
     return true;
 }
