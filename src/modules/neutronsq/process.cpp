@@ -32,15 +32,15 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             return false;
         }
 
-        // Truncate data beyond QMax
-        const auto qMax = keywords_.asDouble("QMax") < 0.0 ? 30.0 : keywords_.asDouble("QMax");
-        if (referenceData.constXAxis().lastValue() < qMax)
-            Messenger::warn("Qmax limit of {:e} Angstroms**-1 for calculated NeutronSQ ({}) is beyond limit of "
-                            "reference data (Qmax = {:e} Angstroms**-1).\n",
-                            qMax, uniqueName(), referenceData.constXAxis().lastValue());
-        else
-            while (referenceData.constXAxis().lastValue() > qMax)
-                referenceData.removeLastPoint();
+        //         // Truncate data beyond QMax
+        //         const auto qMax = keywords_.asDouble("QMax") < 0.0 ? 30.0 : keywords_.asDouble("QMax");
+        //         if (referenceData.constXAxis().lastValue() < qMax)
+        //             Messenger::warn("Qmax limit of {:e} Angstroms**-1 for calculated NeutronSQ ({}) is beyond limit of "
+        //                             "reference data (Qmax = {:e} Angstroms**-1).\n",
+        //                             qMax, uniqueName(), referenceData.constXAxis().lastValue());
+        //         else
+        //             while (referenceData.constXAxis().lastValue() > qMax)
+        //                 referenceData.removeLastPoint();
 
         // Remove first point?
         if (keywords_.asBool("ReferenceIgnoreFirst"))
@@ -150,25 +150,10 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (!rdfModule)
         return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
     auto normalisation = keywords_.enumeration<NeutronSQModule::NormalisationType>("Normalisation");
-    const auto &qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
-    const auto qDelta = keywords_.asDouble("QDelta");
-    const auto qMin = keywords_.asDouble("QMin");
-    double qMax = keywords_.asDouble("QMax");
-    if (qMax < 0.0)
-        qMax = 30.0;
-    const bool saveUnweighted = keywords_.asBool("SaveUnweighted");
     const bool saveWeighted = keywords_.asBool("SaveWeighted");
-    const auto &windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
 
     // Print argument/parameter summary
-    Messenger::print("NeutronSQ: Calculating S(Q)/F(Q) over {} < Q < {} Angstroms**-1 using step size of {} Angstroms**-1.\n",
-                     qMin, qMax, qDelta);
     Messenger::print("NeutronSQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
-    if (windowFunction.function() == WindowFunction::NoWindow)
-        Messenger::print("NeutronSQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
-    else
-        Messenger::print("NeutronSQ: Window function to be applied in Fourier transforms is {} ({}).",
-                         WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary());
     const WindowFunction &referenceWindowFunction =
         keywords_.retrieve<WindowFunction>("ReferenceWindowFunction", WindowFunction());
     if (referenceWindowFunction.function() == WindowFunction::NoWindow)
@@ -183,13 +168,6 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b>**2");
     else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation)
         Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b**2>");
-    if (qBroadening.function() == BroadeningFunction::NoFunction)
-        Messenger::print("NeutronSQ: No broadening will be applied to calculated S(Q).");
-    else
-        Messenger::print("NeutronSQ: Broadening to be applied in calculated S(Q) is {} ({}).",
-                         BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary());
-    if (saveUnweighted)
-        Messenger::print("NeutronSQ: Unweighted partials and totals will be saved.\n");
     if (saveWeighted)
         Messenger::print("NeutronSQ: Weighted partials and totals will be saved.\n");
     Messenger::print("\n");

@@ -25,12 +25,6 @@ void XRaySQModule::initialise()
     // Calculation
     keywords_.add("Calculation", new ModuleKeyword<const SQModule>("SQ"), "SourceSQs",
                   "Source unweighted S(Q) to transform into xray-weighted S(Q)");
-    keywords_.add("Calculation", new DoubleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
-    keywords_.add("Calculation", new DoubleKeyword(-1.0, -1.0), "QMax",
-                  "Maximum Q for calculated S(Q) (and limit at which reference data will be truncated)");
-    keywords_.add("Calculation", new DoubleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
-    keywords_.add("Calculation", new BroadeningFunctionKeyword(BroadeningFunction()), "QBroadening",
-                  "Broadening function to apply when calculating S(Q)");
     keywords_.add("Calculation",
                   new EnumOptionsKeyword<XRayFormFactors::XRayFormFactorData>(XRayFormFactors::xRayFormFactorData() =
                                                                                   XRayFormFactors::WaasmaierKirfel1995),

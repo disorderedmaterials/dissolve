@@ -25,21 +25,11 @@ void NeutronSQModule::initialise()
     // Calculation
     keywords_.add("Calculation", new ModuleKeyword<const SQModule>("SQ"), "SourceSQs",
                   "Source unweighted S(Q) to transform into neutron-weighted S(Q)");
-    keywords_.add("Calculation", new DoubleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
-    keywords_.add("Calculation", new DoubleKeyword(-1.0, -1.0), "QMax",
-                  "Maximum Q for calculated S(Q) (and limit at which reference data will be truncated)");
-    keywords_.add("Calculation", new DoubleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
-    keywords_.add("Calculation", new BroadeningFunctionKeyword(BroadeningFunction()), "QBroadening",
-                  "Broadening function to apply when calculating S(Q)");
-    keywords_.add("Calculation", new WindowFunctionKeyword(WindowFunction(WindowFunction::NoWindow)), "WindowFunction",
-                  "Window function to apply when Fourier-transforming g(r) to S(Q)");
-
-    // Neutron Isotopes
-    keywords_.add("Neutron Isotopes", new AtomTypeSelectionKeyword(exchangeableTypes_, targetConfigurations_), "Exchangeable",
+    keywords_.add("Calculation", new AtomTypeSelectionKeyword(exchangeableTypes_, targetConfigurations_), "Exchangeable",
                   "Specify AtomTypes that are exchangeable", "<AtomType> [AtomType...]");
-    keywords_.add("Neutron Isotopes", new IsotopologueCollectionKeyword(isotopologues_, targetConfigurations()), "Isotopologue",
+    keywords_.add("Calculation", new IsotopologueCollectionKeyword(isotopologues_, targetConfigurations()), "Isotopologue",
                   "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
-    keywords_.add("Neutron Isotopes",
+    keywords_.add("Calculation",
                   new EnumOptionsKeyword<NeutronSQModule::NormalisationType>(NeutronSQModule::normalisationTypes() =
                                                                                  NeutronSQModule::NoNormalisation),
                   "Normalisation", "Normalisation to apply to total weighted F(Q)");

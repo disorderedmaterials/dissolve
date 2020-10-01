@@ -33,16 +33,17 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             return false;
         }
 
-        // Truncate data beyond QMax
-        const double qMax = keywords_.asDouble("QMax") < 0.0 ? 30.0 : keywords_.asDouble("QMax");
-        if (referenceData.constXAxis().lastValue() < qMax)
-            Messenger::warn(
-                "Qmax limit of {:.4e} Angstroms**-1 for calculated XRaySQ ({}) is beyond limit of reference data (Qmax "
-                "= {:.4e} Angstroms**-1).\n",
-                qMax, uniqueName(), referenceData.constXAxis().lastValue());
-        else
-            while (referenceData.constXAxis().lastValue() > qMax)
-                referenceData.removeLastPoint();
+        //         // Truncate data beyond QMax
+        //         const double qMax = keywords_.asDouble("QMax") < 0.0 ? 30.0 : keywords_.asDouble("QMax");
+        //         if (referenceData.constXAxis().lastValue() < qMax)
+        //             Messenger::warn(
+        //                 "Qmax limit of {:.4e} Angstroms**-1 for calculated XRaySQ ({}) is beyond limit of reference data
+        //                 (Qmax "
+        //                 "= {:.4e} Angstroms**-1).\n",
+        //                 qMax, uniqueName(), referenceData.constXAxis().lastValue());
+        //         else
+        //             while (referenceData.constXAxis().lastValue() > qMax)
+        //                 referenceData.removeLastPoint();
 
         // Remove first point?
         if (keywords_.asBool("ReferenceIgnoreFirst"))
@@ -123,24 +124,13 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (!rdfModule)
         return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
     XRayFormFactors::XRayFormFactorData formFactors = keywords_.enumeration<XRayFormFactors::XRayFormFactorData>("FormFactors");
-    const BroadeningFunction &qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
-    const double qDelta = keywords_.asDouble("QDelta");
-    const double qMin = keywords_.asDouble("QMin");
-    double qMax = keywords_.asDouble("QMax");
     XRaySQModule::NormalisationType normalisation = keywords_.enumeration<XRaySQModule::NormalisationType>("Normalisation");
     const WindowFunction &referenceWindowFunction =
         keywords_.retrieve<WindowFunction>("ReferenceWindowFunction", WindowFunction());
-    if (qMax < 0.0)
-        qMax = 30.0;
     const bool saveFormFactors = keywords_.asBool("SaveFormFactors");
-    const bool saveUnweighted = keywords_.asBool("SaveUnweighted");
     const bool saveWeighted = keywords_.asBool("SaveWeighted");
-    const WindowFunction &windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
 
     // Print argument/parameter summary
-    Messenger::print(
-        "XRaySQ: Calculating S(Q)/F(Q) over {:.4e} < Q < {:.4e} Angstroms**-1 using step size of {:.4e} Angstroms**-1.\n", qMin,
-        qMax, qDelta);
     Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
     Messenger::print("XRaySQ: Form factors to use are '{}'.\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors));
     if (normalisation == XRaySQModule::NoNormalisation)
@@ -149,26 +139,14 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b>**2");
     else if (normalisation == XRaySQModule::SquareOfAverageNormalisation)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b**2>");
-    if (windowFunction.function() == WindowFunction::NoWindow)
-        Messenger::print("XRaySQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
-    else
-        Messenger::print("XRaySQ: Window function to be applied in Fourier transforms is {} ({}).",
-                         WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary());
     if (referenceWindowFunction.function() == WindowFunction::NoWindow)
         Messenger::print("XRaySQ: No window function will be applied when calculating representative g(r) from S(Q).");
     else
         Messenger::print("XRaySQ: Window function to be applied when calculating representative g(r) from S(Q) is {} ({}).",
                          WindowFunction::functionType(referenceWindowFunction.function()),
                          referenceWindowFunction.parameterSummary());
-    if (qBroadening.function() == BroadeningFunction::NoFunction)
-        Messenger::print("XRaySQ: No broadening will be applied to calculated S(Q).");
-    else
-        Messenger::print("XRaySQ: Broadening to be applied in calculated S(Q) is {} ({}).",
-                         BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary());
     if (saveFormFactors)
         Messenger::print("XRaySQ: Combined form factor weightings for atomtype pairs will be saved.\n");
-    if (saveUnweighted)
-        Messenger::print("XRaySQ: Unweighted partials and totals will be saved.\n");
     if (saveWeighted)
         Messenger::print("XRaySQ: Weighted partials and totals will be saved.\n");
     Messenger::print("\n");
