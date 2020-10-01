@@ -150,7 +150,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                     module->uniqueName());
                     return false;
                 }
-                auto calcSQTotal = calcSQ.constTotal();
+                auto calcSQTotal = calcSQ.total();
 
                 error = Error::percent(referenceData, calcSQTotal);
 
@@ -294,7 +294,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 auto globalI = atd1.atomType()->index();
                 auto globalJ = atd2.atomType()->index();
 
-                Data1D partialIJ = unweightedSQ.constPartial(i, j);
+                Data1D partialIJ = unweightedSQ.partial(i, j);
                 Interpolator::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ), partialIJ, factor);
                 combinedRho.at(globalI, globalJ) += rho * factor;
                 combinedFactor.at(globalI, globalJ) += factor;

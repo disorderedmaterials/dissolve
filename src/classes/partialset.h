@@ -85,24 +85,20 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     Histogram1D &unboundHistogram(int i, int j);
     // Return full atom-atom partial specified
     Data1D &partial(int i, int j);
-    // Return full atom-atom partial specified (const)
-    Data1D &constPartial(int i, int j) const;
+    const Data1D &partial(int i, int j) const;
     // Return atom-atom partial for unbound pairs
     Data1D &unboundPartial(int i, int j);
-    // Return atom-atom partial for unbound pairs (const)
-    Data1D &constUnboundPartial(int i, int j) const;
+    const Data1D &unboundPartial(int i, int j) const;
     // Return atom-atom partial for bound pairs
     Data1D &boundPartial(int i, int j);
-    // Return atom-atom partial for bound pairs (const)
-    Data1D &constBoundPartial(int i, int j) const;
+    const Data1D &boundPartial(int i, int j) const;
     // Return whether specified bound partial is empty
     bool isBoundPartialEmpty(int i, int j) const;
     // Sum partials into total
     void formTotal(bool applyConcentrationWeights);
     // Return total function
     Data1D &total();
-    // Return copy of total function
-    Data1D constTotal() const;
+    const Data1D &total() const;
     // Calculate and return total bound function
     Data1D boundTotal(bool applyConcentrationWeights) const;
     // Calculate and return total unbound function

@@ -160,21 +160,15 @@ Histogram1D &PartialSet::unboundHistogram(int i, int j) { return unboundHistogra
 
 // Return full atom-atom partial specified
 Data1D &PartialSet::partial(int i, int j) { return partials_.at(i, j); }
-
-// Return full atom-atom partial specified (const)
-Data1D &PartialSet::constPartial(int i, int j) const { return partials_.constAt(i, j); }
+const Data1D &PartialSet::partial(int i, int j) const { return partials_.constAt(i, j); }
 
 // Return atom-atom partial for unbound pairs
 Data1D &PartialSet::unboundPartial(int i, int j) { return unboundPartials_.at(i, j); }
-
-// Return atom-atom partial for unbound pairs (const)
-Data1D &PartialSet::constUnboundPartial(int i, int j) const { return unboundPartials_.constAt(i, j); }
+const Data1D &PartialSet::unboundPartial(int i, int j) const { return unboundPartials_.constAt(i, j); }
 
 // Return atom-atom partial for bound pairs
 Data1D &PartialSet::boundPartial(int i, int j) { return boundPartials_.at(i, j); }
-
-// Return atom-atom partial for bound pairs (const)
-Data1D &PartialSet::constBoundPartial(int i, int j) const { return boundPartials_.constAt(i, j); }
+const Data1D &PartialSet::boundPartial(int i, int j) const { return boundPartials_.constAt(i, j); }
 
 // Return whether specified bound partial is empty
 bool PartialSet::isBoundPartialEmpty(int i, int j) const { return emptyBoundPartials_.constAt(i, j); }
@@ -212,9 +206,7 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
 
 // Return total function
 Data1D &PartialSet::total() { return total_; }
-
-// Return copy of total function
-Data1D PartialSet::constTotal() const { return total_; }
+const Data1D &PartialSet::total() const { return total_; }
 
 // Calculate and return total bound function
 Data1D PartialSet::boundTotal(bool applyConcentrationWeights) const
@@ -501,9 +493,9 @@ void PartialSet::operator+=(const PartialSet &source)
         }
 
         // Add interpolated source partials to our set
-        Interpolator::addInterpolated(partials_.at(localI, localJ), source.constPartial(typeI, typeJ));
-        Interpolator::addInterpolated(boundPartials_.at(localI, localJ), source.constBoundPartial(typeI, typeJ));
-        Interpolator::addInterpolated(unboundPartials_.at(localI, localJ), source.constUnboundPartial(typeI, typeJ));
+        Interpolator::addInterpolated(partials_.at(localI, localJ), source.partial(typeI, typeJ));
+        Interpolator::addInterpolated(boundPartials_.at(localI, localJ), source.boundPartial(typeI, typeJ));
+        Interpolator::addInterpolated(unboundPartials_.at(localI, localJ), source.unboundPartial(typeI, typeJ));
 
         // If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set correctly
         if (!source.isBoundPartialEmpty(typeI, typeJ))
@@ -511,7 +503,7 @@ void PartialSet::operator+=(const PartialSet &source)
     });
 
     // Add total function
-    Interpolator::addInterpolated(total_, source.constTotal());
+    Interpolator::addInterpolated(total_, source.total());
 }
 
 void PartialSet::operator-=(const double delta) { adjust(-delta); }

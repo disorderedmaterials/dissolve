@@ -220,7 +220,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 module->uniqueName());
                 return false;
             }
-            auto calcSQTotal = calcSQ.constTotal();
+            auto calcSQTotal = calcSQ.total();
 
             // Determine overlapping Q range between the two datasets
             double FQMin = qMin, FQMax = qMax;
@@ -323,7 +323,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         deltaFQ.clear();
         const Array<double> x1 = referenceData.constXAxis();
         const Array<double> y1 = referenceData.constValues();
-        auto simulatedFQ = weightedSQ.constTotal();
+        auto simulatedFQ = weightedSQ.total();
         Interpolator interpolatedSimFQ(simulatedFQ);
 
         // Determine allowable range for fit, based on requested values and limits of generated / simulated datasets.
@@ -559,7 +559,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 auto globalI = atd1.atomType()->index();
                 auto globalJ = atd2.atomType()->index();
 
-                Data1D partialIJ = unweightedSQ.constUnboundPartial(i, j);
+                Data1D partialIJ = unweightedSQ.unboundPartial(i, j);
                 Interpolator::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ), partialIJ, factor);
                 combinedRho.at(globalI, globalJ) += rho * factor;
                 combinedFactor.at(globalI, globalJ) += factor;

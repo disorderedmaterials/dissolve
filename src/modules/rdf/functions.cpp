@@ -396,19 +396,19 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
         {
             for (int j = i; j < unweightedgr.nAtomTypes(); ++j)
             {
-                unweightedgr.boundPartial(i, j).copyArrays(originalgr.constBoundPartial(i, j));
-                unweightedgr.unboundPartial(i, j).copyArrays(originalgr.constUnboundPartial(i, j));
-                unweightedgr.partial(i, j).copyArrays(originalgr.constPartial(i, j));
+                unweightedgr.boundPartial(i, j).copyArrays(originalgr.boundPartial(i, j));
+                unweightedgr.unboundPartial(i, j).copyArrays(originalgr.unboundPartial(i, j));
+                unweightedgr.partial(i, j).copyArrays(originalgr.partial(i, j));
             }
         }
-        unweightedgr.total().copyArrays(originalgr.constTotal());
+        unweightedgr.total().copyArrays(originalgr.total());
     }
 
     // Remove bound partial from full partial
     for (int i = 0; i < unweightedgr.nAtomTypes(); ++i)
     {
         for (int j = i; j < unweightedgr.nAtomTypes(); ++j)
-            unweightedgr.partial(i, j) -= originalgr.constBoundPartial(i, j);
+            unweightedgr.partial(i, j) -= originalgr.boundPartial(i, j);
     }
 
     // Broaden the bound partials according to the supplied PairBroadeningFunction
@@ -621,7 +621,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
     // Add broadened bound partials back in to full partials
     auto &types = unweightedgr.atomTypes();
     for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-        unweightedgr.partial(i, j) += unweightedgr.constBoundPartial(i, j);
+        unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j);
     });
 
     // Apply smoothing if requested
@@ -854,7 +854,7 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
     auto testResult = false;
     if (DissolveSys::sameString(typeIorTotal, "total") && (typeJ == nullptr) && (target == nullptr))
     {
-        double error = Error::percent(partials.constTotal(), testData);
+        double error = Error::percent(partials.total(), testData);
         testResult = (error <= testThreshold);
         Messenger::print("Test reference data '{}' has error of {:7.3f}% with calculated data and is {} (threshold is "
                          "{:6.3f}%)\n\n",
@@ -871,11 +871,11 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
         // AtomTypes are valid, so check the 'target'
         double error = -1.0;
         if (DissolveSys::sameString(target, "bound"))
-            error = Error::percent(partials.constBoundPartial(indexI, indexJ), testData);
+            error = Error::percent(partials.boundPartial(indexI, indexJ), testData);
         else if (DissolveSys::sameString(target, "unbound"))
-            error = Error::percent(partials.constUnboundPartial(indexI, indexJ), testData);
+            error = Error::percent(partials.unboundPartial(indexI, indexJ), testData);
         else if (DissolveSys::sameString(target, "full"))
-            error = Error::percent(partials.constPartial(indexI, indexJ), testData);
+            error = Error::percent(partials.partial(indexI, indexJ), testData);
         else
             return Messenger::error("Unrecognised test data name '{}'.\n", testData.name());
 

@@ -71,7 +71,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double> &
                 GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(), "WeightedSQ", module->uniqueName());
             const Data1D &referenceData =
                 GenericListHelper<Data1D>::value(dissolve_.processingModuleData(), "ReferenceData", module->uniqueName());
-            totalError += Error::rmse(weightedSQ.constTotal(), referenceData, true);
+            totalError += Error::rmse(weightedSQ.total(), referenceData, true);
         }
         if ((target == CalibrationModule::IntraBroadeningTargetBoth) || (target == CalibrationModule::IntraBroadeningTargetGR))
         {
@@ -80,7 +80,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double> &
                 GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(), "WeightedGR", module->uniqueName());
             const Data1D &referenceDataFT =
                 GenericListHelper<Data1D>::value(dissolve_.processingModuleData(), "ReferenceDataFT", module->uniqueName());
-            totalError += Error::rmse(weightedGR.constTotal(), referenceDataFT, true);
+            totalError += Error::rmse(weightedGR.total(), referenceDataFT, true);
         }
     }
 
