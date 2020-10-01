@@ -85,10 +85,10 @@ class XRaySQModule : public Module
 
     public:
     // Calculate weighted g(r) from supplied unweighted g(r) and Weights
-    bool calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, const XRayWeights &weights,
+    bool calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, const XRayWeights &weights,
                              XRaySQModule::NormalisationType normalisation);
     // Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
-    bool calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, const XRayWeights &weights,
+    bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, const XRayWeights &weights,
                              XRaySQModule::NormalisationType normalisation);
     // Calculate Weights matrix summed over target Configurations
     bool calculateSummedWeights(XRayWeights &summedWeights, XRayFormFactors::XRayFormFactorData formFactors) const;

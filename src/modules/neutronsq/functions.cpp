@@ -8,7 +8,7 @@
 #include "modules/neutronsq/neutronsq.h"
 
 // Calculate weighted g(r) from supplied unweighted g(r) and neutron weights
-bool NeutronSQModule::calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
+bool NeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
                                           NeutronSQModule::NormalisationType normalisation)
 {
     int typeI, typeJ;
@@ -45,7 +45,7 @@ bool NeutronSQModule::calculateWeightedGR(PartialSet &unweightedgr, PartialSet &
 }
 
 // Calculate weighted S(Q) from supplied unweighted S(Q) and neutron weights
-bool NeutronSQModule::calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
+bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
                                           NeutronSQModule::NormalisationType normalisation)
 {
     int typeI, typeJ;
