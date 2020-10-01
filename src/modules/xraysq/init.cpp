@@ -42,12 +42,6 @@ void XRaySQModule::initialise()
     keywords_.add("Calculation", new WindowFunctionKeyword(WindowFunction(WindowFunction::NoWindow)), "WindowFunction",
                   "Window function to apply when Fourier-transforming g(r) to S(Q)");
 
-    // Bragg Scattering
-    keywords_.add("Bragg Scattering", new BoolKeyword(false), "IncludeBragg",
-                  "Include Bragg scattering (if reflection data are present in the Configuration)");
-    keywords_.add("Bragg Scattering", new BroadeningFunctionKeyword(BroadeningFunction()), "BraggQBroadening",
-                  "Broadening function to apply, on top of any QBroadening, to Bragg scattering");
-
     // Reference Data
     keywords_.add("Reference Data", new FileAndFormatKeyword(referenceFQ_, "EndReference"), "Reference", "F(Q) reference data",
                   "<format> <filename>", KeywordBase::ModificationRequiresSetUpOption);
