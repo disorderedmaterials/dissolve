@@ -81,7 +81,7 @@ bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Partia
     return true;
 }
 
-// Calculate nwutron weights summed over target Configurations
+// Calculate neutron weights summed over target Configurations
 bool NeutronSQModule::calculateSummedWeights(NeutronWeights &summedWeights) const
 {
     summedWeights.clear();
