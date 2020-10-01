@@ -247,12 +247,8 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (!sumUnweightedSQ(procPool, this, this, dissolve.processingModuleData(), summedUnweightedSQ))
         return false;
 
-    // Create/retrieve PartialSet for summed unweighted g(r)
-    auto &summedUnweightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR",
-                                                                      uniqueName_, GenericItem::InRestartFileFlag);
-
-    // Sum the partials from the associated Configurations
-    if (!RDFModule::sumUnweightedGR(procPool, this, rdfModule, dissolve.processingModuleData(), summedUnweightedGR))
+    // Save data if requested
+    if (saveData && (!MPIRunMaster(procPool, summedUnweightedSQ.save())))
         return false;
 
     return true;
