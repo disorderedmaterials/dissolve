@@ -104,7 +104,7 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     // Calculate and return total unbound function
     Data1D unboundTotal(bool applyConcentrationWeights) const;
     // Save all partials and total
-    bool save();
+    bool save() const;
     // Name all object based on the supplied prefix
     void setObjectTags(std::string_view prefix, std::string_view suffix = "");
     // Return prefix applied to object names

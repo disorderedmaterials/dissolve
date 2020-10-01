@@ -265,7 +265,7 @@ Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
 }
 
 // Save all partials and total
-bool PartialSet::save()
+bool PartialSet::save() const
 {
     LineParser parser;
     int typeI, typeJ, n;
@@ -276,7 +276,7 @@ bool PartialSet::save()
         for (typeJ = typeI; typeJ < nTypes; ++typeJ)
         {
             // Open file and check that we're OK to proceed writing to it
-            std::string filename{partials_.at(typeI, typeJ).name()};
+            std::string filename{partials_.constAt(typeI, typeJ).name()};
             Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
             parser.openOutput(filename, true);
@@ -286,9 +286,9 @@ bool PartialSet::save()
                 return false;
             }
 
-            auto &full = partials_.at(typeI, typeJ);
-            auto &bound = boundPartials_.at(typeI, typeJ);
-            auto &unbound = unboundPartials_.at(typeI, typeJ);
+            auto &full = partials_.constAt(typeI, typeJ);
+            auto &bound = boundPartials_.constAt(typeI, typeJ);
+            auto &unbound = unboundPartials_.constAt(typeI, typeJ);
             parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits_, "Full", "Bound", "Unbound");
             for (n = 0; n < full.nValues(); ++n)
                 parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.constXAxis(n), full.constValue(n),
