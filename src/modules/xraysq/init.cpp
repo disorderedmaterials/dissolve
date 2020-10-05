@@ -14,7 +14,7 @@ void XRaySQModule::initialise()
     keywords_.add("Control",
                   new EnumOptionsKeyword<XRayFormFactors::XRayFormFactorData>(XRayFormFactors::xRayFormFactorData() =
                                                                                   XRayFormFactors::WaasmaierKirfel1995),
-                  "FormFactors", "Form factors to use for weighting");
+                  "FormFactors", "Atomic form factors to use for weighting");
     keywords_.add("Control",
                   new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
                                                                                   StructureFactors::NoNormalisation),
