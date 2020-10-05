@@ -8,9 +8,17 @@ body {
     font-family: 'Varela Round', sans-serif !important;
 }
 
+// Set colours
+$primary: #238fa8;
+$secondary: #6d3671;
+
 // Adjust page description ("lead") to have more distinct space before actual content
 .lead {
     color: #888888;
-    border-bottom: 1px solid #dee2e6 !important;
     margin-bottom: 16px;
+}
+
+// Tweak 'section' to have less padding at the bottom
+.td-block-padding, .td-default main section {
+  padding-bottom: 0px !important;
 }

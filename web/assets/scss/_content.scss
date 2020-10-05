@@ -1,3 +1,4 @@
+// Navbar
 .td-navbar .navbar-brand {
     svg {
         margin: 5px 10px;
@@ -5,6 +6,11 @@
     }
 }
 
+.navbar {
+  background-color: #17132a;
+}
+
+// Labels
 .label {
     border-radius: 5px;
     display: inline-block;
@@ -267,5 +273,3 @@ table {
 a {
 	color: #454a8a;
 }
-=======
->>>>>>> f9e9d1abc... Adjust table formatting.
