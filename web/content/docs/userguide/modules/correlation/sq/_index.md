@@ -1,6 +1,6 @@
 ---
-title: SQ
-description: Calculate unweighted S(Q) and G(r)
----
+title: SQ (Module)
+linkTitle: SQ
+description: Calculate unweighted structure factors
 
 {{< todo-label >}}
