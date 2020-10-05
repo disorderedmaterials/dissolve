@@ -288,13 +288,14 @@ double BroadeningFunction::yActual(double x, double omega) const
             /*
              * Unnormalised Gaussian with no prefactor, centred at zero
              *
-             * Parameters:  0 = FWHM
-             * 		1 = c     	(precalculated from FWHM)
-             * 		2 = 1.0 / c
+             * Parameters:
+             *  0 = FWHM
+             *  1 = c       (precalculated from FWHM)
+             *  2 = 1.0 / c
              *
-             * 	      (     x * x   ) 			  FWHM
+             *            (     x * x   )                    FWHM
              * f(x) = exp ( - --------- )      where c = --------------
-             * 	      (   2 * c * c )		     2 sqrt(2 ln 2)
+             * 	          (   2 * c * c )                2 sqrt(2 ln 2)
              */
             return exp(-(0.5 * x * x * parameters_[2] * parameters_[2]));
             break;
@@ -302,14 +303,15 @@ double BroadeningFunction::yActual(double x, double omega) const
             /*
              * Gaussian with prefactor, centred at zero
              *
-             * Parameters:  0 = A, prefactor
-             * 		1 = FWHM
-             * 		2 = c     	(precalculated from FWHM)
-             * 		3 = 1.0 / c
+             * Parameters:
+             *  0 = A, prefactor
+             *  1 = FWHM
+             *  2 = c       (precalculated from FWHM)
+             *  3 = 1.0 / c
              *
-             * 	        (     x * x   ) 		    FWHM
+             *              (     x * x   )                    FWHM
              * f(x) = A exp ( - --------- )      where c = --------------
-             * 	        (   2 * c * c )		       2 sqrt(2 ln 2)
+             *              (   2 * c * c )                2 sqrt(2 ln 2)
              */
             return parameters_[0] * exp(-(0.5 * x * x * parameters_[3] * parameters_[3]));
             break;
@@ -317,13 +319,14 @@ double BroadeningFunction::yActual(double x, double omega) const
             /*
              * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
              *
-             * Parameters:  0 = FWHM
-             * 		1 = c     	(precalculated from FWHM)
-             * 		2 = 1.0 / c
+             * Parameters:
+             *  0 = FWHM
+             *  1 = c       (precalculated from FWHM)
+             *  2 = 1.0 / c
              *
-             * 	      (         x * x      )		        FWHM
+             *            (         x * x      )                    FWHM
              * f(x) = exp ( - ---------------- )      where c = --------------
-             * 	      (   2 * (c*omega)**2 )		    2 sqrt(2 ln 2)
+             *            (   2 * (c*omega)**2 )                2 sqrt(2 ln 2)
              */
             return exp(-(x * x) / (2.0 * (parameters_[1] * omega) * (parameters_[1] * omega)));
             break;
@@ -331,16 +334,17 @@ double BroadeningFunction::yActual(double x, double omega) const
             /*
              * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
              *
-             * Parameters:  0 = FWHM1
-             * 		1 = FWHM2
-             * 		2 = c1     	(precalculated from FWHM1)
-             * 		3 = c2     	(precalculated from FWHM2)
-             * 		4 = 1.0 / c1
-             * 		5 = 1.0 / c2
+             * Parameters:
+             *  0 = FWHM1
+             *  1 = FWHM2
+             *  2 = c1      (precalculated from FWHM1)
+             *  3 = c2      (precalculated from FWHM2)
+             *  4 = 1.0 / c1
+             *  5 = 1.0 / c2
              *
-             * 	      (         a1 * a1       )			   FWHMn
-             * f(x) = exp ( - ------------------- )      where cn = --------------
-             * 	      (   2 * (c1 + c2*a2)**2 )		       2 sqrt(2 ln 2)
+             *            (            x * x         )                     FWHMn
+             * f(x) = exp ( - ---------------------- )      where cn = --------------
+             *            (   2 * (c1 + c2*omega)**2 )                 2 sqrt(2 ln 2)
              */
             return exp(-(x * x) /
                        (2.0 * (parameters_[2] + parameters_[3] * omega) * (parameters_[2] + parameters_[3] * omega)));
@@ -365,13 +369,14 @@ double BroadeningFunction::yFTActual(double x, double omega) const
             /*
              * Unnormalised Gaussian with no prefactor, centred at zero
              *
-             * Parameters:  0 = FWHM
-             * 		1 = c     	(precalculated from FWHM)
-             * 		2 = 1.0 / c
+             * Parameters:
+             *  0 = FWHM
+             *  1 = c       (precalculated from FWHM)
+             *  2 = 1.0 / c
              *
-             * 	      (   x * x * c * c ) 		      FWHM
+             *            (   x * x * c * c )                    FWHM
              * f(x) = exp ( - ------------- )      where c = --------------
-             * 	      (         2       )	         2 sqrt(2 ln 2)
+             *            (         2       )                2 sqrt(2 ln 2)
              */
             return exp(-(0.5 * x * x * parameters_[1] * parameters_[1]));
             break;
@@ -379,14 +384,15 @@ double BroadeningFunction::yFTActual(double x, double omega) const
             /*
              * Gaussian with prefactor, centred at zero
              *
-             * Parameters:  0 = A, prefactor
-             * 		1 = FWHM
-             * 		2 = c     	(precalculated from FWHM)
-             * 		3 = 1.0 / c
+             * Parameters:
+             *  0 = A, prefactor
+             *  1 = FWHM
+             *  2 = c       (precalculated from FWHM)
+             *  3 = 1.0 / c
              *
-             * 	        (   x * x * c * c ) 		        FWHM
+             *              (   x * x * c * c )                    FWHM
              * f(x) = A exp ( - ------------- )      where c = --------------
-             * 	        (	  2	  )		   2 sqrt(2 ln 2)
+             *              (         2       )                2 sqrt(2 ln 2)
              */
             return parameters_[0] * exp(-(0.5 * x * x * parameters_[2] * parameters_[2]));
             break;
@@ -394,13 +400,14 @@ double BroadeningFunction::yFTActual(double x, double omega) const
             /*
              * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
              *
-             * Parameters:  0 = FWHM
-             * 		1 = c     	(precalculated from FWHM)
-             * 		2 = 1.0 / c
+             * Parameters:
+             *  0 = FWHM
+             *  1 = c       (precalculated from FWHM)
+             *  2 = 1.0 / c
              *
-             * 	      (   x*x * (c*omega)**2 ) 		           FWHM
+             *            (   x*x * (c*omega)**2 )                     FWHM
              * f(x) = exp ( - ------------------ )      where c = --------------
-             * 	      (		   2         )	              2 sqrt(2 ln 2)
+             *            (            2         )                2 sqrt(2 ln 2)
              */
             return exp(-(0.5 * x * x * (parameters_[1] * omega) * (parameters_[1] * omega)));
             break;
@@ -408,16 +415,17 @@ double BroadeningFunction::yFTActual(double x, double omega) const
             /*
              * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
              *
-             * Parameters:  0 = FWHM1
-             * 		1 = FWHM2
-             * 		2 = c1     	(precalculated from FWHM1)
-             * 		3 = c2     	(precalculated from FWHM2)
-             * 		4 = 1.0 / c1
-             * 		5 = 1.0 / c2
+             * Parameters:
+             *  0 = FWHM1
+             *  1 = FWHM2
+             *  2 = c1      (precalculated from FWHM1)
+             *  3 = c2      (precalculated from FWHM2)
+             *  4 = 1.0 / c1
+             *  5 = 1.0 / c2
              *
-             * 	      (   x * x * (c1 + c2*omega)**2 ) 		           FWHMn
+             *            (   x * x * (c1 + c2*omega)**2 )                     FWHMn
              * f(x) = exp ( - -------------------------- )      where cn = --------------
-             * 	      (                2             )	               2 sqrt(2 ln 2)
+             *            (                2             )                 2 sqrt(2 ln 2)
              */
             return exp(-(0.5 * x * x * (parameters_[2] + parameters_[3] * omega) * (parameters_[2] + parameters_[3] * omega)));
             break;
@@ -456,13 +464,14 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX) const
             /*
              * Gaussian with no prefactor, centred at zero
              *
-             * Parameters:  0 = FWHM
-             * 		1 = c     	(precalculated from FWHM)
-             * 		2 = 1.0 / c
+             * Parameters:
+             *  0 = FWHM
+             *  1 = c       (precalculated from FWHM)
+             *  2 = 1.0 / c
              *
-             * 	       2 * deltaX
+             *          2 * deltaX
              * DKN = ----------------------
-             * 	 sqrt(pi / ln 2) * FWHM
+             *       sqrt(pi / ln 2) * FWHM
              */
             return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0]);
             break;
@@ -470,14 +479,15 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX) const
             /*
              * Gaussian with prefactor, centred at zero
              *
-             * Parameters:  0 = A, prefactor
-             * 		1 = FWHM
-             * 		2 = c     	(precalculated from FWHM)
-             * 		3 = 1.0 / c
+             * Parameters:
+             *  0 = A, prefactor
+             *  1 = FWHM
+             *  2 = c       (precalculated from FWHM)
+             *  3 = 1.0 / c
              *
-             * 		 2 * deltaX
+             *           2 * deltaX
              * DKN = --------------------------
-             * 	 sqrt(pi / ln 2) * FWHM * A
+             *       sqrt(pi / ln 2) * FWHM * A
              */
             return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0] * parameters_[1]);
             break;
@@ -485,13 +495,14 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX) const
             /*
              * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
              *
-             * Parameters:  0 = FWHM
-             * 		1 = c     	(precalculated from FWHM)
-             * 		2 = 1.0 / c
+             * Parameters:
+             *  0 = FWHM
+             *  1 = c       (precalculated from FWHM)
+             *  2 = 1.0 / c
              *
-             *		  2 * deltaX
+             *              2 * deltaX
              * DKN = ------------------------------
-             * 	 sqrt(pi / ln 2) * FWHM * omega
+             *       sqrt(pi / ln 2) * FWHM * omega
              */
             return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0] * staticOmega_);
             break;
@@ -499,16 +510,17 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX) const
             /*
              * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
              *
-             * Parameters:  0 = FWHM1
-             * 		1 = FWHM2
-             * 		2 = c1     	(precalculated from FWHM1)
-             * 		3 = c2     	(precalculated from FWHM2)
-             * 		4 = 1.0 / c1
-             * 		5 = 1.0 / c2
+             * Parameters:
+             *  0 = FWHM1
+             *  1 = FWHM2
+             *  2 = c1      (precalculated from FWHM1)
+             *  3 = c2      (precalculated from FWHM2)
+             *  4 = 1.0 / c1
+             *  5 = 1.0 / c2
              *
-             *			2 * deltaX
+             *                  2 * deltaX
              * DKN = ----------------------------------------
-             * 	 sqrt(pi / ln 2) * (FWHM1 + FWHM2 * omega)
+             *       sqrt(pi / ln 2) * (FWHM1 + FWHM2 * omega)
              */
             return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * (parameters_[0] + parameters_[1] * staticOmega_));
             break;
@@ -534,13 +546,14 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX, double ome
             /*
              * Gaussian with no prefactor, centred at zero
              *
-             * Parameters:  0 = FWHM
-             * 		1 = c     	(precalculated from FWHM)
-             * 		2 = 1.0 / c
+             * Parameters:
+             *  0 = FWHM
+             *  1 = c       (precalculated from FWHM)
+             *  2 = 1.0 / c
              *
-             * 	       2 * deltaX
+             *            2 * deltaX
              * DKN = ----------------------
-             * 	 sqrt(pi / ln 2) * FWHM
+             *       sqrt(pi / ln 2) * FWHM
              */
             return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0]);
             break;
@@ -548,14 +561,15 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX, double ome
             /*
              * Gaussian with prefactor, centred at zero
              *
-             * Parameters:  0 = A, prefactor
-             * 		1 = FWHM
-             * 		2 = c     	(precalculated from FWHM)
-             * 		3 = 1.0 / c
+             * Parameters:
+             *  0 = A, prefactor
+             *  1 = FWHM
+             *  2 = c       (precalculated from FWHM)
+             *  3 = 1.0 / c
              *
-             * 		 2 * deltaX
+             *             2 * deltaX
              * DKN = --------------------------
-             * 	 sqrt(pi / ln 2) * FWHM * A
+             *       sqrt(pi / ln 2) * FWHM * A
              */
             return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0] * parameters_[1]);
             break;
@@ -563,13 +577,14 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX, double ome
             /*
              * Unnormalised Gaussian with no prefactor, centred at zero, with variable FWHM
              *
-             * Parameters:  0 = FWHM
-             * 		1 = c     	(precalculated from FWHM)
-             * 		2 = 1.0 / c
+             * Parameters:
+             *  0 = FWHM
+             *  1 = c       (precalculated from FWHM)
+             *  2 = 1.0 / c
              *
-             *		  2 * deltaX
+             *                2 * deltaX
              * DKN = ------------------------------
-             * 	 sqrt(pi / ln 2) * FWHM * omega
+             *       sqrt(pi / ln 2) * FWHM * omega
              */
             return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * parameters_[0] * omega);
             break;
@@ -577,16 +592,17 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX, double ome
             /*
              * Unnormalised Gaussian with no prefactor, centred at zero, with constant and variable FWHM
              *
-             * Parameters:  0 = FWHM1
-             * 		1 = FWHM2
-             * 		2 = c1     	(precalculated from FWHM1)
-             * 		3 = c2     	(precalculated from FWHM2)
-             * 		4 = 1.0 / c1
-             * 		5 = 1.0 / c2
+             * Parameters:
+             *  0 = FWHM1
+             *  1 = FWHM2
+             *  2 = c1      (precalculated from FWHM1)
+             *  3 = c2      (precalculated from FWHM2)
+             *  4 = 1.0 / c1
+             *  5 = 1.0 / c2
              *
-             *			2 * deltaX
+             *                  2 * deltaX
              * DKN = ----------------------------------------
-             * 	 sqrt(pi / ln 2) * (FWHM1 + FWHM2 * omega)
+             *       sqrt(pi / ln 2) * (FWHM1 + FWHM2 * omega)
              */
             return (2.0 * deltaX) / (sqrt(PI / log(2.0)) * (parameters_[0] + parameters_[1] * omega));
             break;
