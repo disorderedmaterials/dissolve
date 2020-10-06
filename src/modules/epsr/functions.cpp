@@ -10,16 +10,12 @@
 #include "templates/algorithms.h"
 
 // Return list of target Modules / data for refeinement
-const RefDataList<Module, ModuleGroup *> &EPSRModule::allTargets() const { return groupedTargets_.modules(); }
-
-// Return grouped target Modules
-const ModuleGroups &EPSRModule::groupedTargets() const { return groupedTargets_; }
+const RefList<Module> &EPSRModule::targets() const { return targets_; }
 
 // Add target Modules
-void EPSRModule::addTargets(RefList<Module> targets, std::string_view groupName)
+void EPSRModule::addTargets(RefList<Module> targets)
 {
-    for (Module *module : targets)
-        groupedTargets_.addModule(module, groupName);
+    targets_ += targets;
 
     // Must flag that the associated keyword has been set by other means
     if (targets.nItems() > 0)

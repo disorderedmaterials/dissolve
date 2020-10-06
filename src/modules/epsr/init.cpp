@@ -20,8 +20,6 @@ EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionType
 // Perform any necessary initialisation for the Module
 void EPSRModule::initialise()
 {
-    groupedTargets_.addAllowedModuleType("NeutronSQ");
-
     // Calculation
     keywords_.add("Calculation", new BoolKeyword(true), "OnlyWhenEnergyStable",
                   "Assesses the energy of all involved Configurations, refining the potential only when all their total "
@@ -31,8 +29,8 @@ void EPSRModule::initialise()
     keywords_.add("Calculation", new DoubleKeyword(0.8, 0.0, 1.0), "Feedback", "Confidence factor");
     keywords_.add("Calculation", new BoolKeyword(true), "ModifyPotential",
                   "Whether to apply generated perturbations to interatomic potentials");
-    keywords_.add("Calculation", new ModuleGroupsKeyword(groupedTargets_), "Target",
-                  "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName> [GroupName]");
+    keywords_.add("Calculation", new ModuleRefListKeyword(targets_, {"NeutronSQ", "XRaySQ"}), "Target",
+                  "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName>");
     keywords_.add("Calculation", new DoubleKeyword(30.0, -1.0), "QMax",
                   "Maximum Q value over which to generate potentials from total scattering data");
     keywords_.add("Calculation", new DoubleKeyword(0.5, -1.0), "QMin",

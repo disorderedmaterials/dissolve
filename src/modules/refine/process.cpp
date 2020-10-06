@@ -19,6 +19,7 @@
 #include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
 #include "modules/refine/refine.h"
+#include "modules/sq/sq.h"
 #include "templates/algorithms.h"
 
 // Run main processing
@@ -270,6 +271,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                                          module->uniqueName(), Data1D(), &found);
             if (!found)
                 return Messenger::error("Could not locate ReferenceData for target '{}'.\n", module->uniqueName());
+
             auto &weights = GenericListHelper<NeutronWeights>::retrieve(dissolve.processingModuleData(), "FullWeights",
                                                                         module->uniqueName(), NeutronWeights(), &found);
             if (!found)
@@ -281,9 +283,10 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     "Module '{}' doesn't source any S(Q) data, so it can't be used to augment the scattering matrix.",
                     module->uniqueName());
             const auto &unweightedSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ",
-                                                                            module->uniqueName(), PartialSet(), &found);
+                                                                            sqModule->uniqueName(), PartialSet(), &found);
             if (!found)
                 return Messenger::error("Could not locate UnweightedSQ for target '{}'.\n", module->uniqueName());
+
             auto rho = GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(),
                                                         0.0, &found);
             if (!found)
