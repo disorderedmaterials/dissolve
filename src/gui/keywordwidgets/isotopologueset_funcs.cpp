@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2020 Team Dissolve and contributors
 
-#include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "genericitems/listhelper.h"
@@ -10,25 +9,21 @@
 #include "gui/delegates/exponentialspin.hui"
 #include "gui/delegates/usedspeciescombo.hui"
 #include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/isotopologuecollection.h"
+#include "gui/keywordwidgets/isotopologueset.h"
 #include "module/module.h"
 
-IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget *parent, KeywordBase *keyword,
-                                                                         const CoreData &coreData)
-    : KeywordDropDown(this), KeywordWidgetBase(coreData), isotopologueSetsItemManager_(this), isotopologuesItemManager_(this),
-      isotopologueWeightItemManager_(this)
+IsotopologueSetKeywordWidget::IsotopologueSetKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+    : KeywordDropDown(this), KeywordWidgetBase(coreData), isotopologuesItemManager_(this), isotopologueWeightItemManager_(this)
 {
     // Create and set up the UI for our widget in the drop-down's widget container
     ui_.setupUi(dropWidget());
 
     // Set delegates for table
-    ui_.IsotopologueTree->setItemDelegateForColumn(2,
-                                                   new CustomComboDelegate<IsotopologueCollectionKeywordWidget>(
-                                                       this, &IsotopologueCollectionKeywordWidget::availableIsotopologueNames));
-    ui_.IsotopologueTree->setItemDelegateForColumn(3, new ExponentialSpinDelegate(this));
+    ui_.IsotopologueTree->setItemDelegateForColumn(1, new CustomComboDelegate<IsotopologueSetKeywordWidget>(
+                                                          this, &IsotopologueSetKeywordWidget::availableIsotopologueNames));
+    ui_.IsotopologueTree->setItemDelegateForColumn(2, new ExponentialSpinDelegate(this));
 
     // Connect signals / slots
-    connect(ui_.AutoButton, SIGNAL(clicked(bool)), this, SLOT(autoButton_clicked(bool)));
     connect(ui_.AddButton, SIGNAL(clicked(bool)), this, SLOT(addButton_clicked(bool)));
     connect(ui_.RemoveButton, SIGNAL(clicked(bool)), this, SLOT(removeButton_clicked(bool)));
     connect(ui_.IsotopologueTree, SIGNAL(itemChanged(QTreeWidgetItem *, int)), this,
@@ -37,9 +32,9 @@ IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget
             SLOT(isotopologueTree_currentItemChanged(QTreeWidgetItem *, QTreeWidgetItem *)));
 
     // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<IsotopologueCollectionKeyword *>(keyword);
+    keyword_ = dynamic_cast<IsotopologueSetKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into IsotopologueCollectionKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into IsotopologueSetKeyword.\n", keyword->name());
     else
     {
         // Set current information
@@ -55,30 +50,28 @@ IsotopologueCollectionKeywordWidget::IsotopologueCollectionKeywordWidget(QWidget
  */
 
 // Return valid Isotopologue names for specified model index
-std::vector<std::string> IsotopologueCollectionKeywordWidget::availableIsotopologueNames(const QModelIndex &index)
+std::vector<std::string> IsotopologueSetKeywordWidget::availableIsotopologueNames(const QModelIndex &index)
 {
-    // We are expecting to be given a QModelIndex which locates an item representing a IsotopologueWeight
-    // The column of the provided child model index must therefore be '2'
-    if (index.column() != 2)
+    // We are expecting to be given a QModelIndex which locates an item representing a Isotopologue
+    // The column of the provided child model index must therefore be 1
+    if (index.column() != 1)
     {
         // TODO Raise Exception
-        Messenger::error("IsotopologueCollectionKeywordWidget::availableIsotopologueNames() - Not a suitable column (!= 2).\n");
+        Messenger::error("IsotopologueSetKeywordWidget::availableIsotopologueNames() - Not a suitable column (!= 1).\n");
         return std::vector<std::string>();
     }
 
     // Get the parent and grandparent model indices to get the positions (rows) of the Isopologues and IsotopologueSets
     const auto topesIndex = index.parent();
-    const auto setIndex = topesIndex.parent();
-    if (!topesIndex.isValid() || !setIndex.isValid())
+    if (!topesIndex.isValid())
     {
         // TODO Raise Exception
-        Messenger::error("IsotopologueCollectionKeywordWidget::availableIsotopologueNames() - Parent (Isotopologues) and/or "
+        Messenger::error("IsotopologueSetKeywordWidget::availableIsotopologueNames() - Parent (Isotopologues) and/or "
                          "grandparent (IsotopologueSet) not valid.\n");
         return std::vector<std::string>();
     }
 
-    auto &isotopologueSet = keyword_->data().isotopologueSets()[setIndex.row()];
-    auto &isotopologues = isotopologueSet.isotopologues()[topesIndex.row()];
+    auto &isotopologues = keyword_->data().isotopologues()[topesIndex.row()];
 
     // Construct valid names list
     std::vector<std::string> validNames = {"Natural"};
@@ -89,73 +82,28 @@ std::vector<std::string> IsotopologueCollectionKeywordWidget::availableIsotopolo
     return validNames;
 }
 
-void IsotopologueCollectionKeywordWidget::autoButton_clicked(bool checked)
-{
-    // Complete the set
-    keyword_->data().complete(keyword_->allowedConfigurations());
-
-    // Manually flag that the keyword data has changed
-    keyword_->hasBeenSet();
-
-    updateWidgetValues(coreData_);
-
-    emit(keywordValueChanged(keyword_->optionMask()));
-}
-
-void IsotopologueCollectionKeywordWidget::addButton_clicked(bool checked)
+void IsotopologueSetKeywordWidget::addButton_clicked(bool checked)
 {
     QTreeWidgetItem *item = ui_.IsotopologueTree->currentItem();
+
+    auto &set = keyword_->data();
 
     // Determine what kind of data is selected
     if (!item)
     {
-        // No item selected - add next missing configuration
-        for (Configuration *cfg : keyword_->allowedConfigurations())
+        // No item selected - add next missing Species
+        ListIterator<Species> speciesIterator(coreData_.constSpecies());
+        while (const auto *sp = speciesIterator.iterate())
         {
-            if (keyword_->data().contains(cfg))
-                continue;
-            if (cfg->usedSpecies().nItems() == 0)
-                continue;
-
-            keyword_->data().add(cfg, cfg->usedSpecies().first()->species()->naturalIsotopologue(), 1.0);
-
-            break;
-        }
-    }
-    else if (isotopologueSetsItemManager_.isMapped(item))
-    {
-        // IsotopologueSet (Configuration), so add next Species
-        auto data = isotopologueSetsItemManager_.reference(item);
-        if (!data)
-        {
-            // TODO Raise Exception
-            Messenger::error("Reference for IsotopologueSet not in map.\n");
-            return;
-        }
-        IsotopologueSet &set = *data;
-
-        ListIterator<SpeciesInfo> speciesIterator(set.configuration()->usedSpecies());
-        while (SpeciesInfo *spInfo = speciesIterator.iterate())
-        {
-            if (!set.contains(spInfo->species()))
+            if (!set.contains(sp))
             {
-                set.add(spInfo->species()->naturalIsotopologue(), 1.0);
+                set.add(sp->naturalIsotopologue(), 1.0);
                 break;
             }
         }
     }
     else if (isotopologuesItemManager_.isMapped(item))
     {
-        // Get IsotopologueSet reference
-        auto setData = isotopologueSetsItemManager_.reference(item->parent());
-        if (!setData)
-        {
-            // TODO Raise Exception
-            Messenger::error("Reference for IsotopologueSet not in map.\n");
-            return;
-        }
-        IsotopologueSet &set = *setData;
-
         // Get Isotopologues reference
         auto topesData = isotopologuesItemManager_.reference(item);
         if (!topesData)
@@ -186,19 +134,6 @@ void IsotopologueCollectionKeywordWidget::addButton_clicked(bool checked)
     }
     else if (isotopologueWeightItemManager_.isMapped(item))
     {
-        // Get toplevel item parent (two levels up) so we have access to the IsotopologueSet
-        QTreeWidgetItem *topLevelItem = item->parent();
-        while (topLevelItem->parent())
-            topLevelItem = topLevelItem->parent();
-        auto setData = isotopologueSetsItemManager_.reference(topLevelItem);
-        if (!setData)
-        {
-            // TODO Raise Exception
-            Messenger::error("Reference for IsotopologueSet not in map.\n");
-            return;
-        }
-        IsotopologueSet &set = *setData;
-
         // Get IsotopologueWeight reference
         auto weightData = isotopologueWeightItemManager_.reference(item);
         if (!weightData)
@@ -248,38 +183,17 @@ void IsotopologueCollectionKeywordWidget::addButton_clicked(bool checked)
     emit(keywordValueChanged(keyword_->optionMask()));
 }
 
-void IsotopologueCollectionKeywordWidget::removeButton_clicked(bool checked)
+void IsotopologueSetKeywordWidget::removeButton_clicked(bool checked)
 {
     QTreeWidgetItem *item = ui_.IsotopologueTree->currentItem();
     if (!item)
         return;
 
-    // Determine what kind of data is selected
-    if (isotopologueSetsItemManager_.isMapped(item))
-    {
-        // Get IsotopologueSet reference
-        auto setData = isotopologueSetsItemManager_.reference(item);
-        if (!setData)
-        {
-            // TODO Raise Exception
-            Messenger::error("Reference for IsotopologueSet not in map.\n");
-            return;
-        }
-        IsotopologueSet &set = *setData;
-        keyword_->data().remove(&set);
-    }
-    else if (isotopologuesItemManager_.isMapped(item))
-    {
-        // Get IsotopologueSet reference
-        auto setData = isotopologueSetsItemManager_.reference(item->parent());
-        if (!setData)
-        {
-            // TODO Raise Exception
-            Messenger::error("Reference for IsotopologueSet not in map.\n");
-            return;
-        }
-        IsotopologueSet &set = *setData;
+    auto &set = keyword_->data();
 
+    // Determine what kind of data is selected
+    if (isotopologuesItemManager_.isMapped(item))
+    {
         // Get Isotopologues reference
         auto topesData = isotopologuesItemManager_.reference(item);
         if (!topesData)
@@ -290,25 +204,10 @@ void IsotopologueCollectionKeywordWidget::removeButton_clicked(bool checked)
         }
         Isotopologues &topes = *topesData;
 
-        keyword_->data().remove(&set, topes.species());
+        set.remove(topes.species());
     }
     else if (isotopologueWeightItemManager_.isMapped(item))
     {
-        // Get toplevel item parent (two levels up) so we have access to the IsotopologueSet
-        QTreeWidgetItem *topLevelItem = item->parent();
-        while (topLevelItem->parent())
-            topLevelItem = topLevelItem->parent();
-
-        // Get IsotopologueSet reference
-        auto setData = isotopologueSetsItemManager_.reference(topLevelItem);
-        if (!setData)
-        {
-            // TODO Raise Exception
-            Messenger::error("Reference for IsotopologueSet not in map.\n");
-            return;
-        }
-        IsotopologueSet &set = *setData;
-
         // Get IsotopologueWeight reference
         auto weightData = isotopologueWeightItemManager_.reference(item);
         if (!weightData)
@@ -319,7 +218,7 @@ void IsotopologueCollectionKeywordWidget::removeButton_clicked(bool checked)
         }
         IsotopologueWeight &weight = *weightData;
 
-        keyword_->data().remove(&set, &weight);
+        set.remove(&weight);
     }
 
     // Manually flag that the keyword data has changed
@@ -330,7 +229,7 @@ void IsotopologueCollectionKeywordWidget::removeButton_clicked(bool checked)
     emit(keywordValueChanged(keyword_->optionMask()));
 }
 
-void IsotopologueCollectionKeywordWidget::isotopologueTree_itemChanged(QTreeWidgetItem *item, int column)
+void IsotopologueSetKeywordWidget::isotopologueTree_itemChanged(QTreeWidgetItem *item, int column)
 {
     if (refreshing_)
         return;
@@ -389,8 +288,8 @@ void IsotopologueCollectionKeywordWidget::isotopologueTree_itemChanged(QTreeWidg
         Messenger::error("Don't know what to do with data from column {} of Isotopologue table.\n", column);
 }
 
-void IsotopologueCollectionKeywordWidget::isotopologueTree_currentItemChanged(QTreeWidgetItem *currentItem,
-                                                                              QTreeWidgetItem *previousItem)
+void IsotopologueSetKeywordWidget::isotopologueTree_currentItemChanged(QTreeWidgetItem *currentItem,
+                                                                       QTreeWidgetItem *previousItem)
 {
     ui_.RemoveButton->setEnabled(currentItem);
 }
@@ -400,23 +299,7 @@ void IsotopologueCollectionKeywordWidget::isotopologueTree_currentItemChanged(QT
  */
 
 // IsotopologueTree parent (IsotopologueSet) item update function
-void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeRootItem(QTreeWidgetItem *item, IsotopologueSet &topeSet,
-                                                                         bool itemIsNew)
-{
-    if (itemIsNew)
-        item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-
-    // Set item data
-    item->setText(0, QString::fromStdString(std::string(topeSet.configuration()->name())));
-
-    // Update child (Isotopologues) items
-    isotopologuesItemManager_.updateChildren(item, topeSet.isotopologues(),
-                                             &IsotopologueCollectionKeywordWidget::updateIsotopologueTreeChildItem);
-}
-
-// IsotopologueTree child (Isotopologues) update function
-void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeChildItem(QTreeWidgetItem *item, Isotopologues &topes,
-                                                                          bool itemIsNew)
+void IsotopologueSetKeywordWidget::updateIsotopologueTreeRootItem(QTreeWidgetItem *item, Isotopologues &topes, bool itemIsNew)
 {
     if (itemIsNew)
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
@@ -426,12 +309,12 @@ void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeChildItem(QTreeW
 
     // Update child (IsotopologueWeight) items
     isotopologueWeightItemManager_.updateChildren(item, topes.mix(),
-                                                  &IsotopologueCollectionKeywordWidget::updateIsotopologueTreeSubChildItem);
+                                                  &IsotopologueSetKeywordWidget::updateIsotopologueTreeChildItem);
 }
 
 // IsotopologueTree sub-child (IsotopologueWeight) update function
-void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeSubChildItem(QTreeWidgetItem *item,
-                                                                             IsotopologueWeight &isoWeight, bool itemIsNew)
+void IsotopologueSetKeywordWidget::updateIsotopologueTreeChildItem(QTreeWidgetItem *item, IsotopologueWeight &isoWeight,
+                                                                   bool itemIsNew)
 {
     if (itemIsNew)
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
@@ -441,18 +324,18 @@ void IsotopologueCollectionKeywordWidget::updateIsotopologueTreeSubChildItem(QTr
 }
 
 // Update value displayed in widget
-void IsotopologueCollectionKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
+void IsotopologueSetKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
 
 // Update widget values data based on keyword data
-void IsotopologueCollectionKeywordWidget::updateWidgetValues(const CoreData &coreData)
+void IsotopologueSetKeywordWidget::updateWidgetValues(const CoreData &coreData)
 {
     refreshing_ = true;
 
     // Update the root items of the tree with the allowed Configurations list
-    isotopologueSetsItemManager_.update(ui_.IsotopologueTree, keyword_->data().isotopologueSets(),
-                                        &IsotopologueCollectionKeywordWidget::updateIsotopologueTreeRootItem);
+    isotopologuesItemManager_.update(ui_.IsotopologueTree, keyword_->data().isotopologues(),
+                                     &IsotopologueSetKeywordWidget::updateIsotopologueTreeRootItem);
 
-    for (int n = 0; n < 4; ++n)
+    for (int n = 0; n < 3; ++n)
         ui_.IsotopologueTree->resizeColumnToContents(n);
     ui_.IsotopologueTree->expandAll();
 
@@ -462,7 +345,7 @@ void IsotopologueCollectionKeywordWidget::updateWidgetValues(const CoreData &cor
 }
 
 // Update keyword data based on widget values
-void IsotopologueCollectionKeywordWidget::updateKeywordData()
+void IsotopologueSetKeywordWidget::updateKeywordData()
 {
     // Not used
 }

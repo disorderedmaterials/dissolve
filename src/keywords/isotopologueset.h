@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "classes/isotopologuecollection.h"
+#include "classes/isotopologueset.h"
 #include "keywords/data.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
@@ -11,23 +11,12 @@
 // Forward Declarations
 /* none */
 
-// Keyword with IsotopologueCollection Data
-class IsotopologueCollectionKeyword : public KeywordData<IsotopologueCollection &>
+// Keyword with IsotopologueSet Data
+class IsotopologueSetKeyword : public KeywordData<IsotopologueSet &>
 {
     public:
-    IsotopologueCollectionKeyword(IsotopologueCollection &collection, const RefList<Configuration> &allowedConfigurations);
-    ~IsotopologueCollectionKeyword();
-
-    /*
-     * Allowed Configurations
-     */
-    private:
-    // Allowed Configurations, to which the IsotopologueCollection may refer
-    const RefList<Configuration> &allowedConfigurations_;
-
-    public:
-    // Return allowed Configurations, to which the IsotopologueCollection may refer
-    const RefList<Configuration> &allowedConfigurations() const;
+    IsotopologueSetKeyword(IsotopologueSet &set);
+    ~IsotopologueSetKeyword();
 
     /*
      * Arguments
