@@ -13,4 +13,4 @@ std::string_view NeutronSQModule::category() const { return "Correlation Functio
 std::string_view NeutronSQModule::brief() const { return "Calculate neutron-weighted S(Q)"; }
 
 // Return the number of Configuration targets this Module requires
-int NeutronSQModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }
+int NeutronSQModule::nRequiredTargets() const { return Module::ZeroTargets; }

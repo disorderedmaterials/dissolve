@@ -10,6 +10,7 @@
 
 // Forward Declarations
 class PartialSet;
+class RDFModule;
 class Weights;
 
 // SQ Module
@@ -44,7 +45,7 @@ class NeutronSQModule : public Module
      */
     private:
     // Isotopologue information
-    IsotopologueCollection isotopologues_;
+    IsotopologueSet isotopologues_;
     // Exchangeable AtomTypes
     AtomTypeList exchangeableTypes_;
     // Reference F(Q) file and format
@@ -93,8 +94,8 @@ class NeutronSQModule : public Module
     // Calculate weighted S(Q) from supplied unweighted S(Q) and neutron weights
     bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
                              NeutronSQModule::NormalisationType normalisation);
-    // Calculate neutron weights summed over target Configurations
-    bool calculateSummedWeights(NeutronWeights &summedWeights) const;
+    // Calculate neutron weights for relevant Configuration targets
+    bool calculateWeights(const RDFModule *rdfModule, NeutronWeights &weights) const;
 
     /*
      * GUI Widget

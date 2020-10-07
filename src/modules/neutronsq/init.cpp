@@ -27,8 +27,8 @@ void NeutronSQModule::initialise()
                   "Source unweighted S(Q) to transform into neutron-weighted S(Q)");
     keywords_.add("Calculation", new AtomTypeSelectionKeyword(exchangeableTypes_, targetConfigurations_), "Exchangeable",
                   "Specify AtomTypes that are exchangeable", "<AtomType> [AtomType...]");
-    keywords_.add("Calculation", new IsotopologueCollectionKeyword(isotopologues_, targetConfigurations()), "Isotopologue",
-                  "Set Isotopologue (and its population) to use for a particular Species in a given Configuration");
+    keywords_.add("Calculation", new IsotopologueSetKeyword(isotopologues_), "Isotopologue",
+                  "Set Isotopologue (and its population) to use for a particular Species");
     keywords_.add("Calculation",
                   new EnumOptionsKeyword<NeutronSQModule::NormalisationType>(NeutronSQModule::normalisationTypes() =
                                                                                  NeutronSQModule::NoNormalisation),
@@ -49,12 +49,12 @@ void NeutronSQModule::initialise()
                   KeywordBase::ModificationRequiresSetUpOption);
 
     // Export
+    keywords_.add("Export", new BoolKeyword(false), "SaveGR",
+                  "Whether to save weighted g(r) and G(r) to disk after calculation", "<True|False>");
     keywords_.add("Export", new BoolKeyword(false), "SaveReference",
                   "Whether to save the reference data and its Fourier transform", "<True|False>");
-    keywords_.add("Export", new BoolKeyword(false), "SaveUnweighted",
-                  "Whether to save unweighted totals / partials to disk after calculation", "<True|False>");
-    keywords_.add("Export", new BoolKeyword(false), "SaveWeighted",
-                  "Whether to save weighted totals / partials to disk after calculation", "<True|False>");
+    keywords_.add("Export", new BoolKeyword(false), "SaveSQ",
+                  "Whether to save weighted S(Q) and F(Q) to disk after calculation", "<True|False>");
 }
 
 // Return file and format for reference total F(Q)

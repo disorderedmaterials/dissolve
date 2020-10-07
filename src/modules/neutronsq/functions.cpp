@@ -6,6 +6,7 @@
 #include "classes/species.h"
 #include "classes/speciesinfo.h"
 #include "modules/neutronsq/neutronsq.h"
+#include "modules/rdf/rdf.h"
 
 // Calculate weighted g(r) from supplied unweighted g(r) and neutron weights
 bool NeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
@@ -81,46 +82,36 @@ bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Partia
     return true;
 }
 
-// Calculate neutron weights summed over target Configurations
-bool NeutronSQModule::calculateSummedWeights(NeutronWeights &summedWeights) const
+// Calculate neutron weights for relevant Configuration targets
+bool NeutronSQModule::calculateWeights(const RDFModule *rdfModule, NeutronWeights &weights) const
 {
-    summedWeights.clear();
-
-    // Loop over Configurations
-    for (Configuration *cfg : targetConfigurations_)
+    // Construct weights matrix based on Isotopologue specifications and Species populations in the underlying configurations
+    // TODO This info would be better calculated by the RDFModule and stored there / associated to it (#400)
+    // TODO Following code should exist locally in RDFModule::sumUnweightedGR() when suitable class storage is available.
+    weights.clear();
+    for (auto *cfg : rdfModule->targetConfigurations())
     {
-        // Loop over Species used in this Configuration and find its entry in the defined Isotopologues for the Module
-        ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
-        while (SpeciesInfo *spInfo = speciesInfoIterator.iterate())
+        // TODO Assume weight of 1.0 per configuration now, until #398/#400 are addressed.
+        const auto CFGWEIGHT = 1.0;
+
+        ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
+        while (auto *spInfo = spInfoIterator.iterate())
         {
-            // Find the Isotopologues for the Configuration/Species, if they have been defined
-            auto data = isotopologues_.getIsotopologues(cfg, spInfo->species());
+            auto *sp = spInfo->species();
 
-            // Use the natural isotopologue if a species in the Configuration is not covered by at least one
-            // explicit Isotopologue definition
-            if (!data)
+            // Find the defined Isotopologue for this Species - if it doesn't exist, use the Natural one
+            auto isoRef = isotopologues_.getIsotopologues(sp);
+            if (isoRef)
             {
-                Messenger::print("Isotopologue specification for Species '{}' in Configuration '{}' is "
-                                 "missing, so the natural isotopologue will be used.\n",
-                                 spInfo->species()->name(), cfg->name());
-
-                Species *sp = spInfo->species();
-                summedWeights.addIsotopologue(sp, spInfo->population(), sp->naturalIsotopologue(), 1.0);
+                const Isotopologues &topes = *isoRef;
+                for (const auto &isoWeight : topes.constMix())
+                    weights.addIsotopologue(spInfo->species(), spInfo->population() * CFGWEIGHT, isoWeight.isotopologue(),
+                                            isoWeight.weight());
             }
             else
-            {
-                const Isotopologues &topes = *data;
-
-                // Add defined isotopologues, in the relative isotopic proportions defined, to the weights.
-                for (auto isoWeight : topes.constMix())
-                    summedWeights.addIsotopologue(spInfo->species(), spInfo->population(), isoWeight.isotopologue(),
-                                                  isoWeight.weight());
-            }
+                weights.addIsotopologue(sp, spInfo->population() * CFGWEIGHT, sp->naturalIsotopologue(), 1.0);
         }
     }
-
-    // Finalise the Weights
-    summedWeights.createFromIsotopologues(exchangeableTypes_);
 
     return true;
 }
