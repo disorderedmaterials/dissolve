@@ -13,17 +13,7 @@ void Species::updateIsotopologues()
 }
 
 // Update and return natural isotopologue
-Isotopologue *Species::naturalIsotopologue()
-{
-    if (naturalIsotopologuePoint_ != atomTypesVersion_)
-    {
-        naturalIsotopologue_.update();
-
-        naturalIsotopologuePoint_ = atomTypesVersion_;
-    }
-
-    return &naturalIsotopologue_;
-}
+const Isotopologue *Species::naturalIsotopologue() const { return &naturalIsotopologue_; }
 
 // Add a new Isotopologue to this species
 Isotopologue *Species::addIsotopologue(std::string_view baseName)
@@ -74,7 +64,7 @@ std::string Species::uniqueIsotopologueName(std::string_view base, const Isotopo
 }
 
 // Search for Isotopologue by name
-Isotopologue *Species::findIsotopologue(std::string_view name, const Isotopologue *exclude)
+const Isotopologue *Species::findIsotopologue(std::string_view name, const Isotopologue *exclude) const
 {
     // Check for the natural Isotopologue
     if (DissolveSys::sameString("Natural", name))

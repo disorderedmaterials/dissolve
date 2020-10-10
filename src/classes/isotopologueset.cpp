@@ -16,7 +16,7 @@
 void IsotopologueSet::clear() { isotopologues_.clear(); }
 
 // Add Isotopologue with the specified relative weight
-void IsotopologueSet::add(Isotopologue *iso, double relativeWeight)
+void IsotopologueSet::add(const Isotopologue *iso, double relativeWeight)
 {
     auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(),
                            [iso](auto &data) { return data.species() == iso->parent(); });
@@ -38,7 +38,7 @@ void IsotopologueSet::remove(Species *sp)
 }
 
 // Remove any occurrences of the specified Isotopologue
-void IsotopologueSet::remove(Isotopologue *iso)
+void IsotopologueSet::remove(const Isotopologue *iso)
 {
     // Get parent Isotopologues from the contained Species pointer
     auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(),

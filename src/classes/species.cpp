@@ -24,7 +24,6 @@ Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
     // Set up natural Isotopologue
     naturalIsotopologue_.setName("Natural");
     naturalIsotopologue_.setParent(this);
-    naturalIsotopologuePoint_ = -1;
 }
 
 Species::~Species() {}

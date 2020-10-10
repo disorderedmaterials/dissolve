@@ -33,7 +33,7 @@ bool IsotopologueSetKeyword::read(LineParser &parser, int startArg, CoreData &co
                                 parser.argsv(startArg + 1));
 
     // Finally, locate isotopologue definition for species (second argument)
-    Isotopologue *iso = sp->findIsotopologue(parser.argsv(startArg + 1));
+    const Isotopologue *iso = sp->findIsotopologue(parser.argsv(startArg + 1));
     if (!iso)
         return Messenger::error("Error defining Isotopologue reference - no Isotopologue named '{}' exists for Species '{}'.\n",
                                 parser.argsv(startArg + 1), sp->name());

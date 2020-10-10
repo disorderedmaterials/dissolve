@@ -31,11 +31,11 @@ class IsotopologueSet : public GenericItemBase
     // Clear all existing data
     void clear();
     // Add Isotopologue with the specified relative weight
-    void add(Isotopologue *iso, double relativeWeight);
+    void add(const Isotopologue *iso, double relativeWeight);
     // Remove specified Species from the list (if it exists)
     void remove(Species *sp);
     // Remove any occurrences of the specified Isotopologue
-    void remove(Isotopologue *iso);
+    void remove(const Isotopologue *iso);
     // Remove the specified IsotopologueWeight
     void remove(IsotopologueWeight *isoWeight);
     // Return whether Isotopologues for the specified Species exists
