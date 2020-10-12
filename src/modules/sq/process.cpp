@@ -20,10 +20,6 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * This is a serial routine, with each process constructing its own copy of the data.
      */
 
-    // Check for zero Configuration targets
-    if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName_);
-
     const RDFModule *rdfModule = keywords_.retrieve<const RDFModule *>("SourceRDFs", nullptr);
     if (!rdfModule)
         return Messenger::error("A source RDF module must be provided.\n");
@@ -74,181 +70,176 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Messenger::print("\n");
 
     /*
-     * Loop over target Configurations and Fourier transform their UnweightedGR into the UnweightedSQ.
+     * Transform target UnweightedGR into the UnweightedSQ.
      */
-    for (Configuration *cfg : targetConfigurations_)
+
+    // Get unweighted g(r) from the source RDF module
+    if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->uniqueName()))
+        return Messenger::error("Couldn't locate source UnweightedGR from module '{}'.\n", rdfModule->uniqueName());
+    const auto &unweightedgr =
+        GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedGR", rdfModule->uniqueName());
+
+    // Get effective atomic density of summed g(r)
+    if (!dissolve.processingModuleData().contains("EffectiveRho", rdfModule->uniqueName()))
+        return Messenger::error("Couldn't locate effective atomic density from module '{}'.\n", rdfModule->uniqueName());
+    const auto &rho =
+        GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", rdfModule->uniqueName());
+
+    // Does a PartialSet already exist for this Configuration?
+    bool wasCreated;
+    auto &unweightedsq = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_,
+                                                                GenericItem::InRestartFileFlag, &wasCreated);
+    if (wasCreated)
+        unweightedsq.setUpPartials(unweightedgr.atomTypes(), uniqueName_, "unweighted", "sq", "Q, 1/Angstroms");
+
+    // Is the PartialSet already up-to-date?
+    if (DissolveSys::sameString(unweightedsq.fingerprint(),
+                                fmt::format("{}/{}",
+                                            dissolve.processingModuleData().version("UnweightedGR", rdfModule->uniqueName()),
+                                            includeBragg ? dissolve.processingModuleData().version("BraggReflections") : -1)))
     {
-        // Set up process pool - must do this to ensure we are using all available processes
-        procPool.assignProcessesToGroups(cfg->processPool());
+        Messenger::print("SQ: Unweighted partial S(Q) are up-to-date.\n");
+        return true;
+    }
 
-        // Get unweighted g(r) for this Configuration - we don't supply a specific Module prefix, since the unweighted
-        // g(r) may come from one of many RDF-type modules
-        if (!cfg->moduleData().contains("UnweightedGR", rdfModule->uniqueName()))
-            return Messenger::error("Couldn't locate UnweightedGR for Configuration '{}'.\n", cfg->name());
-        const auto &unweightedgr =
-            GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR", rdfModule->uniqueName());
+    // Transform g(r) into S(Q)
+    if (!calculateUnweightedSQ(procPool, unweightedgr, unweightedsq, qMin, qDelta, qMax, rho, windowFunction, qBroadening))
+        return false;
 
-        // Does a PartialSet already exist for this Configuration?
-        bool wasCreated;
-        auto &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", uniqueName_,
-                                                                    GenericItem::InRestartFileFlag, &wasCreated);
-        if (wasCreated)
-            unweightedsq.setUpPartials(unweightedgr.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName_),
-                                       "unweighted", "sq", "Q, 1/Angstroms");
+    // Include Bragg scattering?
+    if (includeBragg)
+    {
+        // Get associated BraggModule
+        const auto *braggModule = keywords_.retrieve<const BraggModule *>("SourceReflections", nullptr);
+        if (!braggModule)
+            return Messenger::error("A source Bragg module must be provided.\n");
 
-        // Is the PartialSet already up-to-date?
-        if (DissolveSys::sameString(unweightedsq.fingerprint(),
-                                    fmt::format("{}/{}", cfg->moduleData().version("UnweightedGR", rdfModule->uniqueName()),
-                                                includeBragg ? cfg->moduleData().version("BraggReflections") : -1)))
+        // Check if reflection data is present
+        if (!dissolve.processingModuleData().contains("BraggReflections", braggModule->uniqueName()))
+            return Messenger::error("Bragg scattering requested to be included, but reflections from the module '{}' "
+                                    "could not be located.\n",
+                                    braggModule->uniqueName());
+        const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
+            dissolve.processingModuleData(), "BraggReflections", braggModule->uniqueName(), Array<BraggReflection>());
+        const auto nReflections = braggReflections.nItems();
+        const auto braggQMax = braggReflections.constAt(nReflections - 1).q();
+        Messenger::print("Found BraggReflections data for module '{}' (nReflections = {}, QMax = {} "
+                         "Angstroms**-1).\n",
+                         braggModule->uniqueName(), nReflections, braggQMax);
+
+        // Create a temporary array into which our broadened Bragg partials will be placed
+        bool created;
+        auto &braggPartials = GenericListHelper<Array2D<Data1D>>::realise(dissolve.processingModuleData(), "BraggPartials",
+                                                                          uniqueName_, GenericItem::NoFlag, &created);
+        if (created)
         {
-            Messenger::print("SQ: Unweighted partial S(Q) are up-to-date for Configuration '{}'.\n", cfg->name());
-            continue;
+            // Initialise the array
+            braggPartials.initialise(unweightedsq.nAtomTypes(), unweightedsq.nAtomTypes(), true);
+
+            for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
+            {
+                for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
+                    braggPartials.at(i, j) = unweightedsq.partial(0, 0);
+            }
+        }
+        for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
+        {
+            for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
+                braggPartials.at(i, j).values() = 0.0;
         }
 
-        // Transform g(r) into S(Q)
-        if (!calculateUnweightedSQ(procPool, cfg, unweightedgr, unweightedsq, qMin, qDelta, qMax, cfg->atomicDensity(),
-                                   windowFunction, qBroadening))
-            return false;
+        // First, re-bin the reflection data into the arrays we have just set up
+        // TODO Disabled pending #277
+        //         if (!BraggModule::reBinReflections(procPool, cfg, braggPartials))
+        //             return false;
+        //
+        //         // Apply necessary broadening
+        //         for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
+        //         {
+        //             for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
+        //             {
+        //                 // Bragg-specific broadening
+        //                 Filters::convolve(braggPartials.at(i, j), braggQBroadening, true);
+        //
+        //                 // Local 'QBroadening' term
+        //                 Filters::convolve(braggPartials.at(i, j), qBroadening, true);
+        //             }
+        //         }
+        //
+        //         // Remove self-scattering level from partials between the same atom type and remove normalisation from
+        //         // atomic fractions
+        //         for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
+        //         {
+        //             for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
+        //             {
+        //                 // Subtract self-scattering level if types are equivalent
+        //                 if (i == j)
+        //                     braggPartials.at(i, i) -= cfg->usedAtomTypeData(i).fraction();
+        //
+        //                 // Remove atomic fraction normalisation
+        //                 braggPartials.at(i, j) /= cfg->usedAtomTypeData(i).fraction() * cfg->usedAtomTypeData(j).fraction();
+        //             }
+        //         }
 
-        // Include Bragg scattering?
-        if (includeBragg)
+        // Blend the bound/unbound and Bragg partials at the higher Q limit
+        for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
         {
-            // Check if reflection data is present
-            if (!cfg->moduleData().contains("BraggReflections"))
-                return Messenger::error("Bragg scattering requested to be included, but Configuration '{}' "
-                                        "contains no reflection data.\n",
-                                        cfg->name());
-            const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
-                cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>());
-            const auto nReflections = braggReflections.nItems();
-            const auto braggQMax = braggReflections.constAt(nReflections - 1).q();
-            Messenger::print("Found BraggReflections data for Configuration '{}' (nReflections = {}, QMax = {} "
-                             "Angstroms**-1).\n",
-                             cfg->name(), nReflections, braggQMax);
-
-            // Create a temporary array into which our broadened Bragg partials will be placed
-            bool created;
-            auto &braggPartials = GenericListHelper<Array2D<Data1D>>::realise(cfg->moduleData(), "BraggPartials", uniqueName(),
-                                                                              GenericItem::NoFlag, &created);
-            if (created)
+            for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
             {
-                // Initialise the array
-                braggPartials.initialise(unweightedsq.nAtomTypes(), unweightedsq.nAtomTypes(), true);
+                // Note: Intramolecular broadening will not be applied to bound terms within the
+                // calculated Bragg scattering
+                auto &bound = unweightedsq.boundPartial(i, j);
+                auto &unbound = unweightedsq.unboundPartial(i, j);
+                auto &partial = unweightedsq.partial(i, j);
+                auto &bragg = braggPartials.at(i, j);
 
-                for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
+                for (int n = 0; n < bound.nValues(); ++n)
                 {
-                    for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
-                        braggPartials.at(i, j) = unweightedsq.partial(0, 0);
-                }
-            }
-            for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
-            {
-                for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
-                    braggPartials.at(i, j).values() = 0.0;
-            }
-
-            // First, re-bin the reflection data into the arrays we have just set up
-            if (!BraggModule::reBinReflections(procPool, cfg, braggPartials))
-                return false;
-
-            // Apply necessary broadening
-            for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
-            {
-                for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
-                {
-                    // Bragg-specific broadening
-                    Filters::convolve(braggPartials.at(i, j), braggQBroadening, true);
-
-                    // Local 'QBroadening' term
-                    Filters::convolve(braggPartials.at(i, j), qBroadening, true);
-                }
-            }
-
-            // Remove self-scattering level from partials between the same atom type and remove normalisation from
-            // atomic fractions
-            for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
-            {
-                for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
-                {
-                    // Subtract self-scattering level if types are equivalent
-                    if (i == j)
-                        braggPartials.at(i, i) -= cfg->usedAtomTypeData(i).fraction();
-
-                    // Remove atomic fraction normalisation
-                    braggPartials.at(i, j) /= cfg->usedAtomTypeData(i).fraction() * cfg->usedAtomTypeData(j).fraction();
-                }
-            }
-
-            // Blend the bound/unbound and Bragg partials at the higher Q limit
-            for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
-            {
-                for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
-                {
-                    // Note: Intramolecular broadening will not be applied to bound terms within the
-                    // calculated Bragg scattering
-                    auto &bound = unweightedsq.boundPartial(i, j);
-                    auto &unbound = unweightedsq.unboundPartial(i, j);
-                    auto &partial = unweightedsq.partial(i, j);
-                    auto &bragg = braggPartials.at(i, j);
-
-                    for (int n = 0; n < bound.nValues(); ++n)
+                    const auto q = bound.xAxis(n);
+                    if (q <= braggQMax)
                     {
-                        const auto q = bound.xAxis(n);
-                        if (q <= braggQMax)
-                        {
-                            bound.value(n) = 0.0;
-                            unbound.value(n) = bragg.value(n);
-                            partial.value(n) = bragg.value(n);
-                        }
+                        bound.value(n) = 0.0;
+                        unbound.value(n) = bragg.value(n);
+                        partial.value(n) = bragg.value(n);
                     }
                 }
             }
-
-            // Re-form the total function
-            unweightedsq.formTotal(true);
         }
 
-        // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
-        if (averaging > 1)
-        {
-            // Store the current fingerprint, since we must ensure we retain it in the averaged data.
-            std::string currentFingerprint{unweightedsq.fingerprint()};
-
-            Averaging::average<PartialSet>(cfg->moduleData(), "UnweightedSQ", uniqueName_, averaging, averagingScheme);
-
-            // Need to rename data within the contributing datasets to avoid clashes with the averaged data
-            for (int n = averaging; n > 0; --n)
-            {
-                if (!cfg->moduleData().contains(fmt::format("UnweightedSQ_{}", n), uniqueName_))
-                    continue;
-                auto &p =
-                    GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), fmt::format("UnweightedSQ_{}", n), uniqueName_);
-                p.setObjectTags(fmt::format("{}//{}//UnweightedSQ", cfg->niceName(), uniqueName_), fmt::format("Avg{}", n));
-            }
-
-            // Re-set the object names and fingerprints of the partials
-            unweightedsq.setFingerprint(currentFingerprint);
-        }
-
-        // Set names of resources (Data1D) within the PartialSet
-        unweightedsq.setObjectTags(fmt::format("{}//{}//{}", cfg->niceName(), uniqueName_, "UnweightedSQ"));
-        unweightedsq.setFingerprint(fmt::format("{}/{}", cfg->moduleData().version("UnweightedGR", rdfModule->uniqueName()),
-                                                includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
-        // Save data if requested
-        if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, unweightedsq.save())))
-            return false;
+        // Re-form the total function
+        unweightedsq.formTotal(true);
     }
 
-    // Create/retrieve PartialSet for summed partial S(Q)
-    auto &summedUnweightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedSQ",
-                                                                      uniqueName_, GenericItem::InRestartFileFlag);
+    // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
+    if (averaging > 1)
+    {
+        // Store the current fingerprint, since we must ensure we retain it in the averaged data.
+        std::string currentFingerprint{unweightedsq.fingerprint()};
 
-    // Sum the partials from the associated Configurations
-    if (!sumUnweightedSQ(procPool, this, this, dissolve.processingModuleData(), summedUnweightedSQ))
-        return false;
+        Averaging::average<PartialSet>(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_, averaging,
+                                       averagingScheme);
 
+        // Need to rename data within the contributing datasets to avoid clashes with the averaged data
+        for (int n = averaging; n > 0; --n)
+        {
+            if (!dissolve.processingModuleData().contains(fmt::format("UnweightedSQ_{}", n), uniqueName_))
+                continue;
+            auto &p = GenericListHelper<PartialSet>::retrieve(dissolve.processingModuleData(),
+                                                              fmt::format("UnweightedSQ_{}", n), uniqueName_);
+            p.setObjectTags(fmt::format("{}//UnweightedSQ", uniqueName_), fmt::format("Avg{}", n));
+        }
+
+        // Re-set the object names and fingerprints of the partials
+        unweightedsq.setFingerprint(currentFingerprint);
+    }
+
+    // Set names of resources (Data1D) within the PartialSet
+    unweightedsq.setObjectTags(fmt::format("{}//{}", uniqueName_, "UnweightedSQ"));
+    unweightedsq.setFingerprint(fmt::format("{}/{}",
+                                            dissolve.processingModuleData().version("UnweightedGR", rdfModule->uniqueName()),
+                                            includeBragg ? dissolve.processingModuleData().version("BraggReflections") : -1));
     // Save data if requested
-    if (saveData && (!MPIRunMaster(procPool, summedUnweightedSQ.save())))
+    if (saveData && configurationLocal_ && (!MPIRunMaster(procPool, unweightedsq.save())))
         return false;
 
     return true;

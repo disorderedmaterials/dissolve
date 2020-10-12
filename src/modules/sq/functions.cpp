@@ -12,9 +12,9 @@
  */
 
 // Generate S(Q) from supplied g(r)
-bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, Configuration *cfg, const PartialSet &unweightedgr,
-                                     PartialSet &unweightedsq, double qMin, double qDelta, double qMax, double rho,
-                                     const WindowFunction &windowFunction, const BroadeningFunction &broadening)
+bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, const PartialSet &unweightedgr, PartialSet &unweightedsq,
+                                     double qMin, double qDelta, double qMax, double rho, const WindowFunction &windowFunction,
+                                     const BroadeningFunction &broadening)
 {
     // Copy partial g(r) into our new S(Q) object - it should have been initialised already, so we will just check its size
     if (unweightedgr.nAtomTypes() != unweightedsq.nAtomTypes())
