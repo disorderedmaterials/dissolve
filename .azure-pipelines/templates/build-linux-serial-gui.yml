@@ -7,14 +7,12 @@ parameters:
   - name: mac
     type: boolean
     default: false
-
-variables:
   # Because MS can't be bothered to implement an if statement
   - name: parallel_lower_case
     ${{if parameters.parallel}}
-      value: "true"
+      default: "true"
     ${{if not(parameters.parallel)}}
-      value: "false"
+      default: "false"
 
 steps:
   - bash: |
