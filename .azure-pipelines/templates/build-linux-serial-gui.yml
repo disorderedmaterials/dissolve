@@ -36,7 +36,7 @@ steps:
       # tar czf tests/nix.tar.gz /nix/store/*
       cp nix/result/bin/dissolve* tests/
     displayName: 'Build'
-    condition: ${{paramemters.parallel}}
+    condition: ${{parameters.parallel}}
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
@@ -49,4 +49,4 @@ steps:
       # tar czf tests/nix.tar.gz /nix/store/*
       cp nix/result/bin/dissolve* tests/
     displayName: 'Build'
-    condition: not(${{paramemters.parallel}})
+    condition: not(${{parameters.parallel}})
