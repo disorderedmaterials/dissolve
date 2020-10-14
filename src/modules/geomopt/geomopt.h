@@ -264,7 +264,7 @@ class GeometryOptimisationModule : public Module
             double dF = newRMSForce - oldRMSForce;
 
             // Print summary
-            Messenger::print("{:5i}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", cycle, newEnergy, dE, newRMSForce, dF,
+            Messenger::print("{:5d}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", cycle, newEnergy, dE, newRMSForce, dF,
                              stepSize);
 
             // Check convergence

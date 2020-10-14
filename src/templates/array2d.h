@@ -400,13 +400,12 @@ template <class A> class Array2D
     void print(std::string_view title = "Array2D<A>") const
     {
         Messenger::print("'{}' : {} rows x {} columns:\n", title, nRows_, nColumns_);
-        std::string line;
         for (int row = 0; row < nRows_; ++row)
         {
-            line += fmt::format("R{:2i} :", row);
+            std::string line;
             for (int column = 0; column < nColumns_; ++column)
                 line += fmt::format(" {:e}", constAt(row, column));
-            Messenger::print("{}\n", line);
+            Messenger::print("R{:2d} :{}\n", row, line);
         }
     }
     // Transpose (in-place) the current array
