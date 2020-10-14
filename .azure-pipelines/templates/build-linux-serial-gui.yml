@@ -47,6 +47,6 @@ steps:
       cd ..
       nix-instantiate nix/dissolve.nix --arg parallel false | xargs nix-store -r | xargs nix-store -q --references | xargs tar czf tests/nix.tar.gz
       # tar czf tests/nix.tar.gz /nix/store/*
-      cp nix/result/bin/dissolve* tests/
+      # cp nix/result/bin/dissolve* tests/
     displayName: 'Build'
     condition: not(${{parameters.parallel}})
