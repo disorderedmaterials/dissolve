@@ -16,14 +16,14 @@ steps:
       source ~/.nix-profile/etc/profile.d/nix.sh
       nix-channel --update
     displayName: 'Install Prerequisites'
-    condition: not(parameters.mac)
-  - bash: |
-      set -ex
-      sh <(curl -L https://nixos.org/nix/install) --darwin-use-unencrypted-nix-store-volume
-      source ~/.nix-profile/etc/profile.d/nix.sh
-      nix-channel --update
-    displayName: 'Install Mac Prerequisites'
-    condition: parameters.mac
+    # condition: not(parameters.mac)
+  # - bash: |
+  #     set -ex
+  #     sh <(curl -L https://nixos.org/nix/install) --darwin-use-unencrypted-nix-store-volume
+  #     source ~/.nix-profile/etc/profile.d/nix.sh
+  #     nix-channel --update
+  #   displayName: 'Install Mac Prerequisites'
+  #   condition: parameters.mac
   - bash: |
       set -ex
       source ~/.nix-profile/etc/profile.d/nix.sh
