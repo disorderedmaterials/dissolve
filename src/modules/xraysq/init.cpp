@@ -50,10 +50,10 @@ void XRaySQModule::initialise()
                   "Whether to save combined form factor weightings for atomtype pairs", "<True|False>");
     keywords_.add("Export", new BoolKeyword(false), "SaveReference",
                   "Whether to save the reference data and its Fourier transform", "<True|False>");
-    keywords_.add("Export", new BoolKeyword(false), "SaveUnweighted",
-                  "Whether to save unweighted totals / partials to disk after calculation", "<True|False>");
-    keywords_.add("Export", new BoolKeyword(false), "SaveWeighted",
-                  "Whether to save weighted totals / partials to disk after calculation", "<True|False>");
+    keywords_.add("Export", new BoolKeyword(false), "SaveGR",
+                  "Whether to save weighted g(r) and G(r) to disk after calculation", "<True|False>");
+    keywords_.add("Export", new BoolKeyword(false), "SaveSQ",
+                  "Whether to save weighted S(Q) and F(Q) to disk after calculation", "<True|False>");
 }
 
 // Return file and format for reference total F(Q)

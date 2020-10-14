@@ -113,10 +113,6 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Partial calculation routines called by this routine are parallel.
      */
 
-    // Check for zero Configuration targets
-    if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
-
     const SQModule *sqModule = keywords_.retrieve<const SQModule *>("SourceSQs", nullptr);
     if (!sqModule)
         return Messenger::error("A source SQ module must be provided.\n");
@@ -128,7 +124,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const WindowFunction &referenceWindowFunction =
         keywords_.retrieve<WindowFunction>("ReferenceWindowFunction", WindowFunction());
     const bool saveFormFactors = keywords_.asBool("SaveFormFactors");
-    const bool saveWeighted = keywords_.asBool("SaveWeighted");
+    const bool saveSQ = keywords_.asBool("SaveSQ");
 
     // Print argument/parameter summary
     Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
@@ -147,151 +143,130 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                          referenceWindowFunction.parameterSummary());
     if (saveFormFactors)
         Messenger::print("XRaySQ: Combined form factor weightings for atomtype pairs will be saved.\n");
-    if (saveWeighted)
-        Messenger::print("XRaySQ: Weighted partials and totals will be saved.\n");
+    if (saveSQ)
+        Messenger::print("XRaySQ: Weighted partial S(Q) and total F(Q) will be saved.\n");
     Messenger::print("\n");
 
     /*
-     * Loop over target Configurations and Fourier transform their UnweightedGR into the corresponding UnweightedSQ.
+     * Transform UnweightedSQ from provided SQ data into WeightedSQ.
      */
 
     bool created;
 
-    for (Configuration *cfg : targetConfigurations_)
+    // Get unweighted S(Q) from the specified SQMOdule
+    if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->uniqueName()))
+        return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sqModule->uniqueName());
+    const auto &unweightedSQ =
+        GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ", sqModule->uniqueName());
+
+    // Construct weights matrix containing each Species in the Configuration in the correct proportion
+    // TODO This info would be better calculated by the RDFModule and stored there / associated to it (#400)
+    // TODO Following code should exist locally in RDFModule::sumUnweightedGR() when suitable class storage is available.
+    auto &weights = GenericListHelper<XRayWeights>::realise(dissolve.processingModuleData(), "FullWeights", uniqueName_,
+                                                            GenericItem::InRestartFileFlag);
+    weights.clear();
+    for (auto *cfg : rdfModule->targetConfigurations())
     {
-        // Set up process pool - must do this to ensure we are using all available processes
-        procPool.assignProcessesToGroups(cfg->processPool());
+        // TODO Assume weight of 1.0 per configuration now, until #398/#400 are addressed.
+        const auto CFGWEIGHT = 1.0;
 
-        // Get unweighted S(Q) for this Configuration from the specified SQMOdule
-        if (!cfg->moduleData().contains("UnweightedSQ", sqModule->uniqueName()))
-            return Messenger::error("Couldn't locate unweighted S(Q) data for Configuration '{}'.\n", cfg->name());
-        const auto &unweightedsq =
-            GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedSQ", sqModule->uniqueName());
+        ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
+        while (auto *spInfo = spInfoIterator.iterate())
+            weights.addSpecies(spInfo->species(), spInfo->population() * CFGWEIGHT);
+    }
 
-        // Construct weights matrix containing each Species in the Configuration in the correct proportion
-        XRayWeights weights;
-        ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
-        while (SpeciesInfo *spInfo = speciesInfoIterator.iterate())
-            weights.addSpecies(spInfo->species(), spInfo->population());
+    // Create, print, and store weights
+    Messenger::print("Weights matrix:\n\n");
+    weights.finalise(formFactors);
+    weights.print();
 
-        // Create, print, and store weights
-        Messenger::print("Isotopologue and isotope composition for Configuration '{}':\n\n", cfg->name());
-        weights.finalise(formFactors);
-        weights.print();
+    // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
+    PartialSet &weightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedSQ", uniqueName_,
+                                                                    GenericItem::InRestartFileFlag, &created);
+    if (created)
+        weightedSQ.setUpPartials(unweightedSQ.atomTypes(), uniqueName(), "weighted", "sq", "Q, 1/Angstroms");
 
-        // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-        PartialSet &weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", "",
-                                                                        GenericItem::InRestartFileFlag, &created);
-        if (created)
-            weightedsq.setUpPartials(unweightedsq.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()), "weighted",
-                                     "sq", "Q, 1/Angstroms");
+    // Calculate weighted S(Q)
+    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation);
 
-        // Calculate weighted S(Q)
-        calculateWeightedSQ(unweightedsq, weightedsq, weights, normalisation);
+    // Set names of resources (Data1D) within the PartialSet
+    weightedSQ.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedSQ"));
 
-        // Set names of resources (Data1D) within the PartialSet
-        weightedsq.setObjectTags(fmt::format("{}//{}//{}", cfg->niceName(), uniqueName_, "WeightedSQ"));
-
-        // Save data if requested
-        if (saveWeighted && (!MPIRunMaster(procPool, weightedsq.save())))
-            return false;
-        if (saveFormFactors)
-        {
-            auto result = for_each_pair_early(
-                unweightedsq.atomTypes().begin(), unweightedsq.atomTypes().end(),
-                [&](int i, auto &at1, int j, auto &at2) -> EarlyReturn<bool> {
-                    if (i == j)
-                    {
-                        if (procPool.isMaster())
-                        {
-                            Data1D atomicData = unweightedsq.partial(i, i);
-                            atomicData.values() = weights.formFactor(i, atomicData.constXAxis());
-                            Data1DExportFileFormat exportFormat(
-                                fmt::format("{}-{}-{}.form", uniqueName(), cfg->niceName(), at1.atomTypeName()));
-                            if (!exportFormat.exportData(atomicData))
-                                return procPool.decideFalse();
-                            procPool.decideTrue();
-                        }
-                        else if (!procPool.decision())
-                            return false;
-                    }
-
+    // Save data if requested
+    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save())))
+        return false;
+    if (saveFormFactors)
+    {
+        auto result = for_each_pair_early(
+            unweightedSQ.atomTypes().begin(), unweightedSQ.atomTypes().end(),
+            [&](int i, auto &at1, int j, auto &at2) -> EarlyReturn<bool> {
+                if (i == j)
+                {
                     if (procPool.isMaster())
                     {
-                        Data1D ffData = unweightedsq.partial(i, j);
-                        ffData.values() = weights.weight(i, j, ffData.constXAxis());
-                        Data1DExportFileFormat exportFormat(fmt::format("{}-{}-{}-{}.form", uniqueName(), cfg->niceName(),
-                                                                        at1.atomTypeName(), at2.atomTypeName()));
-                        if (!exportFormat.exportData(ffData))
+                        Data1D atomicData = unweightedSQ.partial(i, i);
+                        atomicData.values() = weights.formFactor(i, atomicData.constXAxis());
+                        Data1DExportFileFormat exportFormat(fmt::format("{}-{}.form", uniqueName(), at1.atomTypeName()));
+                        if (!exportFormat.exportData(atomicData))
                             return procPool.decideFalse();
                         procPool.decideTrue();
                     }
                     else if (!procPool.decision())
                         return false;
+                }
 
-                    return EarlyReturn<bool>::Continue;
-                });
+                if (procPool.isMaster())
+                {
+                    Data1D ffData = unweightedSQ.partial(i, j);
+                    ffData.values() = weights.weight(i, j, ffData.constXAxis());
+                    Data1DExportFileFormat exportFormat(
+                        fmt::format("{}-{}-{}.form", uniqueName(), at1.atomTypeName(), at2.atomTypeName()));
+                    if (!exportFormat.exportData(ffData))
+                        return procPool.decideFalse();
+                    procPool.decideTrue();
+                }
+                else if (!procPool.decision())
+                    return false;
 
-            if (!result.value_or(true))
-                return Messenger::error("Failed to save form factor data.");
-        }
+                return EarlyReturn<bool>::Continue;
+            });
+
+        if (!result.value_or(true))
+            return Messenger::error("Failed to save form factor data.");
     }
 
     /*
-     * Construct the weighted sum of Configuration partials and store in the processing module data list
+     * Transform UnweightedGR from underlying RDF data into WeightedGR.
      */
-
-    // Get summed unweighted S(Q) from the specified SQMOdule
-    if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->uniqueName()))
-        return Messenger::error("Couldn't locate summed unweighted S(Q) data.\n");
-    const auto &summedUnweightedSQ =
-        GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ", sqModule->uniqueName());
-
-    // Create/retrieve PartialSet for summed partial S(Q)
-    PartialSet &summedWeightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedSQ",
-                                                                          uniqueName_, GenericItem::InRestartFileFlag);
-    summedWeightedSQ = summedUnweightedSQ;
-    summedWeightedSQ.setFileNames(uniqueName_, "weighted", "sq");
-    summedWeightedSQ.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedSQ"));
-
-    // Calculate weighted S(Q)
-    Messenger::print("Atom type composition over all Configurations used in '{}':\n\n", uniqueName_);
-    XRayWeights summedWeights;
-    if (!calculateSummedWeights(summedWeights, formFactors))
-        return false;
-    summedWeights.print();
-    GenericListHelper<XRayWeights>::realise(dissolve.processingModuleData(), "FullWeights", uniqueName_,
-                                            GenericItem::InRestartFileFlag) = summedWeights;
-    calculateWeightedSQ(summedUnweightedSQ, summedWeightedSQ, summedWeights, normalisation);
 
     // Get summed unweighted g(r) from the specified RDFMOdule
     if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->uniqueName()))
         return Messenger::error("Couldn't locate summed unweighted g(r) data.\n");
-    const auto &summedUnweightedGR =
+    const auto &unweightedGR =
         GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedGR", rdfModule->uniqueName());
 
     // Create/retrieve PartialSet for summed weighted g(r)
-    auto &summedWeightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedGR", uniqueName_,
-                                                                    GenericItem::InRestartFileFlag, &created);
+    auto &weightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedGR", uniqueName_,
+                                                              GenericItem::InRestartFileFlag, &created);
     if (created)
-        summedWeightedGR.setUpPartials(summedUnweightedSQ.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
-    summedWeightedGR.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedGR"));
+        weightedGR.setUpPartials(unweightedSQ.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
+    weightedGR.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedGR"));
 
     // Calculate weighted g(r)
-    calculateWeightedGR(summedUnweightedGR, summedWeightedGR, summedWeights, normalisation);
+    calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation);
 
     // Calculate representative total g(r) from FT of calculated S(Q)
     auto &repGR = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RepresentativeTotalGR", uniqueName_,
                                                      GenericItem::InRestartFileFlag);
-    repGR = summedWeightedSQ.total();
-    auto qMin = summedWeightedSQ.total().values().firstValue();
-    auto qMax = summedWeightedSQ.total().values().lastValue();
+    repGR = weightedSQ.total();
+    auto qMin = weightedSQ.total().values().firstValue();
+    auto qMax = weightedSQ.total().values().lastValue();
     double rho = nTargetConfigurations() == 0 ? 0.1 : RDFModule::summedRho(this, dissolve.processingModuleData());
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), qMin, 0.05, qMax, referenceWindowFunction);
     repGR.setObjectTag(fmt::format("{}//RepresentativeTotalGR", uniqueName_));
 
     // Save data if requested
-    if (saveWeighted && (!MPIRunMaster(procPool, summedWeightedSQ.save())))
+    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save())))
         return false;
 
     return true;
