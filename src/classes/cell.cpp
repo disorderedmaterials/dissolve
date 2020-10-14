@@ -1,23 +1,5 @@
-/*
-    *** Cell Definition
-    *** src/classes/cell.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/cell.h"
 #include "classes/atom.h"
@@ -82,9 +64,9 @@ int Cell::nAtoms() const { return atoms_.size(); }
 bool Cell::addAtom(Atom *i)
 {
 #ifdef CHECKS
-    if (i == NULL)
+    if (i == nullptr)
     {
-        Messenger::print("NULL_POINTER - NULL Atom pointer given to Cell::addAtom().\n");
+        Messenger::print("NULL_POINTER - nullptr given to Cell::addAtom().\n");
         return false;
     }
 #endif
@@ -103,9 +85,9 @@ bool Cell::addAtom(Atom *i)
 bool Cell::removeAtom(Atom *i)
 {
 #ifdef CHECKS
-    if (i == NULL)
+    if (i == nullptr)
     {
-        Messenger::print("NULL_POINTER - NULL Atom pointer given to Cell::removeAtom().\n");
+        Messenger::print("NULL_POINTER - nullptr given to Cell::removeAtom().\n");
         return false;
     }
 #endif
@@ -113,7 +95,7 @@ bool Cell::removeAtom(Atom *i)
     if (atoms_.erase(i))
     {
         indexOrderedAtoms_.erase(i);
-        i->setCell(NULL);
+        i->setCell(nullptr);
     }
     else
     {

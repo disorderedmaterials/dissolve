@@ -1,23 +1,5 @@
-/*
-    *** Species Definition
-    *** src/classes/species.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/species.h"
 #include "base/lineparser.h"
@@ -34,7 +16,7 @@ template <class Species> std::string_view ObjectStore<Species>::objectTypeName_ 
 
 Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
 {
-    forcefield_ = NULL;
+    forcefield_ = nullptr;
     autoUpdateIntramolecularTerms_ = true;
     attachedAtomListsGenerated_ = false;
     usedAtomTypesPoint_ = -1;
@@ -83,9 +65,9 @@ bool Species::checkSetUp()
     /*
      * AtomTypes
      */
-    for (auto *i = atoms_.first(); i != NULL; i = i->next())
+    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
     {
-        if (i->atomType() == NULL)
+        if (i->atomType() == nullptr)
         {
             Messenger::error("Atom {} ({}) has no associated AtomType.\n", i->userIndex(), i->element()->symbol());
             ++nErrors;
@@ -97,7 +79,7 @@ bool Species::checkSetUp()
     /*
      * IntraMolecular Data
      */
-    for (auto *i = atoms_.first(); i != NULL; i = i->next())
+    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
     {
         if ((i->nBonds() == 0) && (atoms_.nItems() > 1))
         {
@@ -124,7 +106,7 @@ bool Species::checkSetUp()
     /*
      * Check Isotopologues
      */
-    for (auto *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
+    for (auto *iso = isotopologues_.first(); iso != nullptr; iso = iso->next())
     {
         for (auto [atomType, isotope] : iso->isotopes())
         {

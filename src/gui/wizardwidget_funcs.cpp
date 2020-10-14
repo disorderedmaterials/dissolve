@@ -1,23 +1,5 @@
-/*
-    *** Wizard Widget Functions
-    *** src/gui/wizardwidget_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "gui/wizardwidget.hui"
@@ -28,7 +10,7 @@ WizardWidget::WizardWidget()
     footerAvailable_ = false;
     closeButtonAvailable_ = true;
 
-    currentPage_ = NULL;
+    currentPage_ = nullptr;
 }
 
 WizardWidget::~WizardWidget() {}
@@ -139,9 +121,9 @@ void WizardWidget::clearPages()
 {
     pages_.clear();
     history_.clear();
-    currentPage_ = NULL;
+    currentPage_ = nullptr;
 
-    updateHeaderAndFooter(NULL);
+    updateHeaderAndFooter(nullptr);
 }
 
 // Add empty page
@@ -185,7 +167,7 @@ WizardWidgetPageInfo *WizardWidget::findPage(int index)
         if (page->index() == index)
             return page;
 
-    return NULL;
+    return nullptr;
 }
 
 /*
@@ -265,14 +247,14 @@ void WizardWidget::goToPage(int index)
     currentPage_ = findPage(index);
     if (!currentPage_)
     {
-        updateHeaderAndFooter(NULL);
+        updateHeaderAndFooter(nullptr);
         return;
     }
 
     // Instruct the derived class to switch pages
     if (!displayControlPage(index))
     {
-        updateHeaderAndFooter(NULL);
+        updateHeaderAndFooter(nullptr);
         return;
     }
 
@@ -300,14 +282,14 @@ void WizardWidget::goBack()
     currentPage_ = history_.lastItem();
     if (!currentPage_)
     {
-        updateHeaderAndFooter(NULL);
+        updateHeaderAndFooter(nullptr);
         return;
     }
 
     // Instruct the derived class to switch pages
     if (!displayControlPage(currentPage_->index()))
     {
-        updateHeaderAndFooter(NULL);
+        updateHeaderAndFooter(nullptr);
         return;
     }
 

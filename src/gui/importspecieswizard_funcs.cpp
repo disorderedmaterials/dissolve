@@ -1,23 +1,5 @@
-/*
-    *** Add Species Wizard Functions
-    *** src/gui/importspecieswizard_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
 #include "classes/species.h"
@@ -34,8 +16,8 @@ Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
 
 ImportSpeciesWizard::ImportSpeciesWizard(QWidget *parent) : temporaryDissolve_(temporaryCoreData_)
 {
-    dissolveReference_ = NULL;
-    importTarget_ = NULL;
+    dissolveReference_ = nullptr;
+    importTarget_ = nullptr;
 
     // Set up our UI, and attach the wizard's widgets to placeholder widgets (if available)
     ui_.setupUi(this);
@@ -88,7 +70,7 @@ Species *ImportSpeciesWizard::importSpecies(Dissolve &dissolve)
     if (!importTarget_)
     {
         Messenger::error("No target Species to import!\n");
-        return NULL;
+        return nullptr;
     }
 
     // Set the final name of the new Species
@@ -158,7 +140,7 @@ bool ImportSpeciesWizard::prepareForNextPage(int currentIndex)
             }
             // Update the Species and AtomTypes lists
             ui_.SpeciesList->clear();
-            for (auto *sp = temporaryDissolve_.species().first(); sp != NULL; sp = sp->next())
+            for (auto *sp = temporaryDissolve_.species().first(); sp != nullptr; sp = sp->next())
             {
                 QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(std::string(sp->name())));
                 item->setData(Qt::UserRole, VariantPointer<Species>(sp));
@@ -254,7 +236,7 @@ void ImportSpeciesWizard::on_SpeciesList_currentRowChanged(int currentRow)
 {
     // Set import target from current row
     if (currentRow == -1)
-        importTarget_ = NULL;
+        importTarget_ = nullptr;
     else
     {
         importTarget_ = VariantPointer<Species>(ui_.SpeciesList->currentItem()->data(Qt::UserRole));
@@ -535,7 +517,7 @@ void ImportSpeciesWizard::on_SpeciesNameEdit_textChanged(const QString text)
     if (text.isEmpty())
         readyForImport = false;
     else
-        readyForImport = dissolveReference_->findSpecies(qPrintable(text)) == NULL;
+        readyForImport = dissolveReference_->findSpecies(qPrintable(text)) == nullptr;
 
     ui_.SpeciesNameIndicator->setOK(readyForImport);
 

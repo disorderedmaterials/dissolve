@@ -1,23 +1,5 @@
-/*
-    *** Array Classes
-    *** src/templates/array.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #pragma once
 
@@ -33,7 +15,7 @@ template <class A> class Array : public ListItem<Array<A>>
     Array(int initialSize = 0) : ListItem<Array<A>>()
     {
         chunkSize_ = 128;
-        array_ = NULL;
+        array_ = nullptr;
         size_ = 0;
         nItems_ = 0;
         if (initialSize > 0)
@@ -41,20 +23,20 @@ template <class A> class Array : public ListItem<Array<A>>
     }
     Array(const Array<A> &source, int firstIndex, int lastIndex) : ListItem<Array<A>>()
     {
-        array_ = NULL;
+        array_ = nullptr;
         size_ = 0;
         nItems_ = 0;
         copy(source, firstIndex, lastIndex);
     }
     ~Array()
     {
-        if (array_ != NULL)
+        if (array_ != nullptr)
             delete[] array_;
     }
     Array(const Array<A> &source)
     {
         chunkSize_ = source.chunkSize_;
-        array_ = NULL;
+        array_ = nullptr;
         size_ = 0;
         nItems_ = 0;
         initialise(source.size_);
@@ -95,7 +77,7 @@ template <class A> class Array : public ListItem<Array<A>>
             return;
 
         // Copy old data to temporary array
-        A *oldItems = NULL;
+        A *oldItems = nullptr;
         if (nItems_ > 0)
         {
             oldItems = new A[nItems_];
@@ -104,7 +86,7 @@ template <class A> class Array : public ListItem<Array<A>>
         }
 
         // Delete old, and create new array
-        if (array_ != NULL)
+        if (array_ != nullptr)
             delete[] array_;
         size_ = newSize;
         try
@@ -215,9 +197,9 @@ template <class A> class Array : public ListItem<Array<A>>
     void clear()
     {
         nItems_ = 0;
-        if (array_ != NULL)
+        if (array_ != nullptr)
             delete[] array_;
-        array_ = NULL;
+        array_ = nullptr;
         size_ = 0;
     }
     // Drop the first item from the array

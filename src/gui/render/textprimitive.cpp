@@ -1,23 +1,5 @@
-/*
-    *** Text Primitive
-    *** src/gui/render/textprimitive.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "gui/render/textprimitive.h"
 #include "base/sysfunc.h"
@@ -27,8 +9,8 @@
 #include <QtGui/qopengl.h>
 
 // Static members
-TextPrimitive *TextPrimitive::target_ = NULL;
-FontInstance *TextPrimitive::fontInstance_ = NULL;
+TextPrimitive *TextPrimitive::target_ = nullptr;
+FontInstance *TextPrimitive::fontInstance_ = nullptr;
 QString TextPrimitive::stringSource_;
 int TextPrimitive::stringPos_, TextPrimitive::stringLength_;
 List<TextFormat> TextPrimitive::formatStack_;
@@ -184,7 +166,7 @@ void TextPrimitive::boundingBox(FontInstance &fontInstance, Vec3<double> &lowerL
     // Loop over remaining fragments, keeping track of the total width of the primitive and the max/min y values
     Vec3<double> ll, ur;
     // 	double width = upperRight.x - lowerLeft.x;
-    for (auto *fragment = fragments_.first()->next(); fragment != NULL; fragment = fragment->next())
+    for (auto *fragment = fragments_.first()->next(); fragment != nullptr; fragment = fragment->next())
     {
         // Get bounding box for this fragment
         fontInstance.boundingBox(qPrintable(fragment->text()), ll, ur);
@@ -214,7 +196,7 @@ void TextPrimitive::render(FontInstance &fontInstance, const Matrix4 &viewMatrix
     Matrix4 textMatrix;
 
     // Loop over fragments
-    for (auto *fragment = fragments_.first(); fragment != NULL; fragment = fragment->next())
+    for (auto *fragment = fragments_.first(); fragment != nullptr; fragment = fragment->next())
     {
         textMatrix = viewMatrix * transformationMatrix(fontInstance, viewMatrixInverse, baseFontSize, fragment);
         glLoadMatrixd(textMatrix.matrix());

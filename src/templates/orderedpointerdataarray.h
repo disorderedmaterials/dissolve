@@ -1,23 +1,5 @@
-/*
-    *** Simple Ordered Pointer Array Class
-    *** src/templates/orderedpointerarray.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #pragma once
 
@@ -42,16 +24,16 @@ template <class T, class D> class OrderedPointerDataArray
     {
         nItems_ = 0;
         arraySize_ = 0;
-        items_ = NULL;
-        data_ = NULL;
+        items_ = nullptr;
+        data_ = nullptr;
     }
     ~OrderedPointerDataArray() { clear(); }
     OrderedPointerDataArray<T, D>(const OrderedPointerDataArray<T, D> &source)
     {
         nItems_ = 0;
         arraySize_ = 0;
-        items_ = NULL;
-        data_ = NULL;
+        items_ = nullptr;
+        data_ = nullptr;
         (*this) = source;
     }
     OrderedPointerDataArray<T, D> &operator=(const OrderedPointerDataArray<T, D> &source)
@@ -74,7 +56,7 @@ template <class T, class D> class OrderedPointerDataArray
             Messenger::error("OrderedPointerDataArray<T,D>::operator[]({}) - Array index out of bounds ({} items "
                              "in array).\n",
                              index, nItems_);
-            return NULL;
+            return nullptr;
         }
 #endif
         return items_[index];
@@ -101,8 +83,8 @@ template <class T, class D> class OrderedPointerDataArray
             delete[] items_;
         if (data_)
             delete[] data_;
-        items_ = NULL;
-        data_ = NULL;
+        items_ = nullptr;
+        data_ = nullptr;
         nItems_ = 0;
         arraySize_ = 0;
     }
@@ -115,8 +97,8 @@ template <class T, class D> class OrderedPointerDataArray
 
         if (size == 0)
         {
-            items_ = NULL;
-            data_ = NULL;
+            items_ = nullptr;
+            data_ = nullptr;
         }
         else
         {
@@ -126,7 +108,7 @@ template <class T, class D> class OrderedPointerDataArray
 
         for (int n = 0; n < arraySize_; ++n)
         {
-            items_[n] = NULL;
+            items_[n] = nullptr;
             data_[n] = D();
         }
     }
@@ -140,7 +122,7 @@ template <class T, class D> class OrderedPointerDataArray
         {
             Messenger::error("OrderedPointerDataArray<T,D>::value({}) - Array index out of bounds ({} items in array).\n",
                              index, nItems_);
-            return NULL;
+            return nullptr;
         }
 #endif
 
@@ -268,7 +250,7 @@ template <class T, class D> class OrderedPointerDataArray
                     items_[m - 1] = items_[m];
                     data_[m - 1] = data_[m];
                 }
-                items_[nItems_ - 1] = NULL;
+                items_[nItems_ - 1] = nullptr;
                 data_[nItems_ - 1] = D();
                 --nItems_;
 

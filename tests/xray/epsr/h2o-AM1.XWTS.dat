@@ -1,0 +1,21 @@
+h2o-AM1.XWTS               Title of this file
+fnameato    h2o-AM1.ato               Name of .ato file                                                                                                                                                                                                                                               
+output      1               Is the output to be per atom (1) or per molecule (2)                                                                                                                                                                                                            
+normtot     2               Normalise totals to (0 = nothing, 1 = <b>^2, 2 = <b^2>                                                                                                                                                                                                          
+iafformaff  1               Use the IAFFs (1) or MAFFs (2) for normalisation?                                                                                                                                                                                                               
+ncomponent  2               Number of components (determined from ato file)                                                                                                                                                                                                                 
+
+component   1
+
+atom        OW               Atom label - set from .ato file                                                                                                                                                                                                                                 
+atsymbol    O               Atom symbol to specify form factor                                                                                                                                                                                                                              
+maffq       0               Modified atomic form factors alpha values (0)                                                                                                                                                                                                                   
+maffdelta   0               Modified atomic form factors delta value (0)                                                                                                                                                                                                                    
+
+component   2
+
+atom        HW               Atom label - set from .ato file                                                                                                                                                                                                                                 
+atsymbol    H               Atom symbol to specify form factor                                                                                                                                                                                                                              
+maffq       0               Modified atomic form factors alpha values (0)                                                                                                                                                                                                                   
+maffdelta   0               Modified atomic form factors delta value (0)                                                                                                                                                                                                                    
+q

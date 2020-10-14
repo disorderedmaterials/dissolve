@@ -1,23 +1,5 @@
-/*
-    *** Species Input/Output
-    *** src/classes/species_io.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -215,7 +197,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 {
                     Messenger::error("Unrecognised element symbol '{}' found in {} keyword.\n", parser.argsv(2),
                                      Species::keywords().keyword(Species::AtomKeyword));
-                    el = NULL;
+                    el = nullptr;
                     error = true;
                     break;
                 }
@@ -225,7 +207,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 
                 // Locate the AtomType assigned to the Atom
                 if (DissolveSys::sameString("None", parser.argsv(6)))
-                    at = NULL;
+                    at = nullptr;
                 else
                 {
                     at = coreData.findAtomType(parser.argsv(6));
@@ -461,7 +443,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     el = at->element();
                     auto A = std::stoi(std::string(arg2));
                     tope = Isotopes::isotope(el, A);
-                    if (tope == NULL)
+                    if (tope == nullptr)
                     {
                         Messenger::error("No such Isotope ({}) for element {} (AtomType '{}') in Isotopologue "
                                          "'{}', Species '{}'\n",
@@ -590,11 +572,11 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     // Atoms
     parser.writeLineF("{}# Atoms\n", newPrefix);
     auto count = 0;
-    for (auto *i = atoms_.first(); i != NULL; i = i->next())
+    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
     {
         if (!parser.writeLineF("{}{}  {:3d}  {:3}  {:12.6e}  {:12.6e}  {:12.6e}  '{}'  {:12.6e}\n", newPrefix,
                                keywords().keyword(Species::AtomKeyword), ++count, i->element()->symbol(), i->r().x, i->r().y,
-                               i->r().z, i->atomType() == NULL ? "None" : i->atomType()->name(), i->charge()))
+                               i->r().z, i->atomType() == nullptr ? "None" : i->atomType()->name(), i->charge()))
             return false;
     }
 
@@ -766,7 +748,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
         if (!parser.writeLineF("\n{}# Isotopologues\n", newPrefix))
             return false;
 
-        for (auto *iso = isotopologues_.first(); iso != NULL; iso = iso->next())
+        for (auto *iso = isotopologues_.first(); iso != nullptr; iso = iso->next())
         {
             if (!parser.writeLineF("{}{}  '{}'", newPrefix, keywords().keyword(Species::IsotopologueKeyword), iso->name()))
                 return false;

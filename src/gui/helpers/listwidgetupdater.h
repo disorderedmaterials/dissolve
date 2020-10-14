@@ -1,23 +1,5 @@
-/*
-    *** ListWidgetUpdater
-    *** src/gui/helpers/listwidgetupdater.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "templates/list.h"
 #include "templates/reflist.h"
@@ -55,7 +37,7 @@ template <class T, class I> class ListWidgetUpdater
             while (currentRow < listWidget->count())
             {
                 listWidgetItem = listWidget->item(currentRow);
-                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
+                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : nullptr);
                 if (rowData == dataItem)
                 {
                     // Update the current row and quit the loop
@@ -108,7 +90,7 @@ template <class T, class I> class ListWidgetUpdater
             while (currentRow < listWidget->count())
             {
                 listWidgetItem = listWidget->item(currentRow);
-                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
+                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : nullptr);
                 if (rowData == dataItem)
                 {
                     // Update the current row and quit the loop
@@ -208,7 +190,7 @@ template <class T, class I> class ListWidgetUpdater
     // Update widget from supplied List, assuming that the name() function in class I is the desired text to show in the
     // list
     ListWidgetUpdater(QListWidget *listWidget, const List<I> &list, Qt::ItemFlags flags = Qt::NoItemFlags,
-                      I *currentItem = NULL)
+                      I *currentItem = nullptr)
     {
         QListWidgetItem *listWidgetItem;
 
@@ -225,7 +207,7 @@ template <class T, class I> class ListWidgetUpdater
             while (currentRow < listWidget->count())
             {
                 listWidgetItem = listWidget->item(currentRow);
-                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
+                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : nullptr);
                 if (rowData == dataItem)
                 {
                     // Update the current row and quit the loop
@@ -286,7 +268,7 @@ template <class T, class I> class ListWidgetUpdater
             while (currentRow < listWidget->count())
             {
                 listWidgetItem = listWidget->item(currentRow);
-                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : NULL);
+                I *rowData = (listWidgetItem ? VariantPointer<I>(listWidgetItem->data(Qt::UserRole)) : nullptr);
                 if (rowData == dataItem)
                 {
                     // Update the current row and quit the loop

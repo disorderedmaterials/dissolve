@@ -1,23 +1,5 @@
-/*
-    *** Procedure Node - Process1D
-    *** src/procedure/nodes/process1d.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "procedure/nodes/process1d.h"
 #include "base/lineparser.h"
@@ -45,10 +27,10 @@ Process1DProcedureNode::Process1DProcedureNode(const Collect1DProcedureNode *tar
                   "Branch providing normalisation operations for the data");
 
     // Initialise branch
-    normalisationBranch_ = NULL;
+    normalisationBranch_ = nullptr;
 
     // Initialise data pointer
-    processedData_ = NULL;
+    processedData_ = nullptr;
 }
 
 Process1DProcedureNode::~Process1DProcedureNode() {}
@@ -68,7 +50,7 @@ bool Process1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext contex
  */
 
 // Return whether processed data exists
-bool Process1DProcedureNode::hasProcessedData() const { return (processedData_ != NULL); }
+bool Process1DProcedureNode::hasProcessedData() const { return (processedData_ != nullptr); }
 
 // Return processed data
 const Data1D &Process1DProcedureNode::processedData() const
@@ -103,7 +85,7 @@ SequenceProcedureNode *Process1DProcedureNode::addNormalisationBranch()
 }
 
 // Return whether this node has a branch
-bool Process1DProcedureNode::hasBranch() const { return (normalisationBranch_ != NULL); }
+bool Process1DProcedureNode::hasBranch() const { return (normalisationBranch_ != nullptr); }
 
 // Return SequenceNode for the branch (if it exists)
 SequenceProcedureNode *Process1DProcedureNode::branch() { return normalisationBranch_; }

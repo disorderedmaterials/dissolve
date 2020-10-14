@@ -1,23 +1,5 @@
-/*
-    *** Object Store
-    *** src/templates/objectstore.h
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #pragma once
 
@@ -105,12 +87,12 @@ template <class T> class ObjectStore
     public:
     ObjectStore<T>(T *object)
     {
-        // If the passed pointer is NULL, do not add anything to the list (we were probably called from a copy
+        // If the passed pointer is nullptr, do not add anything to the list (we were probably called from a copy
         // constructor)
-        if (object == NULL)
+        if (object == nullptr)
         {
             Messenger::error("ObjectStore was passed a NULL pointer...\n");
-            object_ = NULL;
+            object_ = nullptr;
             return;
         }
 
@@ -216,22 +198,22 @@ template <class T> class ObjectStore
     // Return object with specified ID
     static T *object(int id)
     {
-        for (RefDataItem<T, int> *ri = objects_.first(); ri != NULL; ri = ri->next())
+        for (RefDataItem<T, int> *ri = objects_.first(); ri != nullptr; ri = ri->next())
             if (ri->data() == id)
                 return ri->item();
-        return NULL;
+        return nullptr;
     }
     // Set id of specified object, returning if we were successful
     static bool setObjectId(T *target, int id)
     {
         // Find the RefDataItem object in the list
         RefDataItem<T, int> *targetRefItem = objects_.contains(target);
-        if (targetRefItem == NULL)
+        if (targetRefItem == nullptr)
             return Messenger::error("Couldn't find specified object {} in object list.\n", fmt::ptr(target));
 
         // Can we find an object with the same id?
         RefDataItem<T, int> *rj = objects_.containsData(id);
-        if ((rj != NULL) && (rj != targetRefItem))
+        if ((rj != nullptr) && (rj != targetRefItem))
         {
             Messenger::error("Another object with id {} already exists in the ObjectStore, so refusing to "
                              "duplicate it.\n",
@@ -259,7 +241,7 @@ template <class T> class ObjectStore
         {
             // No type prefix, so add ours and do the search
             std::string tag = fmt::format("{}%{}", objectTypeName_, objectTag);
-            for (RefDataItem<T, int> *ri = objects_.first(); ri != NULL; ri = ri->next())
+            for (RefDataItem<T, int> *ri = objects_.first(); ri != nullptr; ri = ri->next())
             {
                 if (ri->item()->objectTagIs(tag))
                     return ri->item();
@@ -272,14 +254,14 @@ template <class T> class ObjectStore
             {
                 Messenger::error("Searched for object '{}' in a store containing objects of type '{}'.\n", typePrefix,
                                  objectTypeName_);
-                return NULL;
+                return nullptr;
             }
-            for (RefDataItem<T, int> *ri = objects_.first(); ri != NULL; ri = ri->next())
+            for (RefDataItem<T, int> *ri = objects_.first(); ri != nullptr; ri = ri->next())
             {
                 if (ri->item()->objectTagIs(objectTag))
                     return ri->item();
             }
         }
-        return NULL;
+        return nullptr;
     }
 };

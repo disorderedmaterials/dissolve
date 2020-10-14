@@ -1,23 +1,5 @@
-/*
-    *** Rendering Primitive
-    *** src/gui/render/primitive.h
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #pragma once
 
@@ -96,11 +78,11 @@ class Primitive : public ListItem<Primitive>
      */
     public:
     // Define next vertex and normal
-    GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, const GLfloat *rgba = NULL);
+    GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfloat ny, GLfloat nz, const GLfloat *rgba = nullptr);
     // Define next vertex and normal
-    GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, Vec3<double> &normal, const GLfloat *rgba = NULL);
+    GLuint defineVertex(GLfloat x, GLfloat y, GLfloat z, Vec3<double> &normal, const GLfloat *rgba = nullptr);
     // Define next vertex and normal
-    GLuint defineVertex(Vec3<double> &vertex, Vec3<double> &normal, const GLfloat *rgba = NULL);
+    GLuint defineVertex(Vec3<double> &vertex, Vec3<double> &normal, const GLfloat *rgba = nullptr);
     // Define next index double
     void defineIndices(GLuint a, GLuint b);
     // Define next index triple
@@ -111,9 +93,9 @@ class Primitive : public ListItem<Primitive>
      */
     public:
     // Draw line
-    void line(double x1, double y1, double z1, double x2, double y2, double z2, const GLfloat *rgba = NULL);
+    void line(double x1, double y1, double z1, double x2, double y2, double z2, const GLfloat *rgba = nullptr);
     // Draw line
-    void line(Vec3<double> v1, Vec3<double> v2, const GLfloat *rgba = NULL);
+    void line(Vec3<double> v1, Vec3<double> v2, const GLfloat *rgba = nullptr);
     // Create vertices of sphere with specified radius and quality
     void sphere(double radius, int nstacks, int nslices);
     // Plot cylinder vertices from origin {ox,oy,oz}, following vector {vx,vy,vz}, with radii and quality specified

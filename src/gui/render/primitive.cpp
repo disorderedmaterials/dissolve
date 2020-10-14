@@ -1,23 +1,5 @@
-/*
-    *** Rendering Primitive
-    *** src/gui/render/primitive.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "gui/render/primitive.h"
 #include "base/messenger.h"
@@ -209,7 +191,7 @@ void Primitive::popInstance(const QOpenGLContext *context)
     QOpenGLFunctions *glFunctions = context->functions();
 
     PrimitiveInstance *pi = instances_.last();
-    if (pi != NULL)
+    if (pi != nullptr)
     {
         if (pi->context() == context)
         {
@@ -248,7 +230,7 @@ void Primitive::sendToGL() const
     {
         // Grab topmost instance
         PrimitiveInstance *pi = instances_.last();
-        if (pi == NULL)
+        if (pi == nullptr)
             Messenger::error("Internal Error: No instance on stack in primitive.\n");
         else if (pi->type() == PrimitiveInstance::VBOInstance)
         {
@@ -268,7 +250,7 @@ void Primitive::sendToGL() const
             if (indexData_.nItems() != 0)
                 functions->glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, pi->vboIndexObject());
 
-            glInterleavedArrays(colouredVertexData_ ? GL_C4F_N3F_V3F : GL_N3F_V3F, 0, NULL);
+            glInterleavedArrays(colouredVertexData_ ? GL_C4F_N3F_V3F : GL_N3F_V3F, 0, nullptr);
             if (indexData_.nItems() != 0)
                 glDrawElements(type_, indexData_.nItems(), GL_UNSIGNED_INT, 0);
             else
@@ -309,7 +291,7 @@ GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
 {
     if (colouredVertexData_)
     {
-        if (rgba == NULL)
+        if (rgba == nullptr)
         {
             Messenger::error("Internal Error: No colour given to defineVertex(), but the Primitive requires one.\n");
             return -1;
@@ -321,7 +303,7 @@ GLuint Primitive::defineVertex(GLfloat x, GLfloat y, GLfloat z, GLfloat nx, GLfl
         vertexData_.add(rgba[2]);
         vertexData_.add(rgba[3]);
     }
-    else if (rgba != NULL)
+    else if (rgba != nullptr)
     {
         Messenger::error("Internal Error: Colour given to defineVertex(), but the Primitive does not require one.\n");
         return -1;

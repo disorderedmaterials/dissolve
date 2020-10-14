@@ -1,23 +1,5 @@
-/*
-    *** Renderable Group
-    *** src/gui/render/renderablegroupmanager.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "gui/render/renderablegroupmanager.h"
 #include "base/sysfunc.h"
@@ -102,19 +84,19 @@ RenderableGroup *RenderableGroupManager::addToGroup(Renderable *renderable, std:
 // Return named group, if it exists
 RenderableGroup *RenderableGroupManager::group(std::string_view name)
 {
-    for (auto *group = groups_.first(); group != NULL; group = group->next())
+    for (auto *group = groups_.first(); group != nullptr; group = group->next())
         if (group->name() == name)
             return group;
-    return NULL;
+    return nullptr;
 }
 
 // Return group for specified Renderable, if one has been assigned
 RenderableGroup *RenderableGroupManager::group(Renderable *renderable)
 {
-    for (auto *group = groups_.first(); group != NULL; group = group->next())
+    for (auto *group = groups_.first(); group != nullptr; group = group->next())
         if (group->usedByRenderable(renderable))
             return group;
-    return NULL;
+    return nullptr;
 }
 
 // Return current RenderableGroups in use
@@ -143,7 +125,7 @@ void RenderableGroupManager::removeFromGroup(Renderable *renderable)
 // Empty all groups of Renderables
 void RenderableGroupManager::emptyGroups()
 {
-    for (auto *group = groups_.first(); group != NULL; group = group->next())
+    for (auto *group = groups_.first(); group != nullptr; group = group->next())
         group->empty();
 }
 
@@ -197,7 +179,7 @@ void RenderableGroupManager::setRenderableGroupShifts()
 {
     // Loop over RenderableGroups
     auto groupIndex = 0;
-    for (auto *group = groups_.first(); group != NULL; group = group->next())
+    for (auto *group = groups_.first(); group != nullptr; group = group->next())
     {
         group->applyVerticalShift(VerticalShiftAmounts[verticalShiftAmount_], groupIndex++);
     }

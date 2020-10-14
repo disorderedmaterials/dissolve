@@ -8,7 +8,6 @@ trigger:
     exclude:
     - /
 
-# TEST pr: none
 pr:
   autoCancel: true
   branches:
@@ -20,6 +19,7 @@ pr:
     exclude:
     - /
 
+# Only push changes to server and modify short hash if we are running on develop (i.e. the continuous build)
 stages:
   - stage: 'web'
     displayName: 'Website'
@@ -31,4 +31,7 @@ stages:
         steps:
           - template: templates/build-web.yml
             parameters:
-              use_current_hash: true
+              ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+                deploy: true
+              ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
+                use_current_hash: true

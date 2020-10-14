@@ -1,23 +1,5 @@
-/*
-    *** ModuleTab Functions
-    *** src/gui/moduletab_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "gui/charts/moduleblock.h"
@@ -36,8 +18,8 @@ ModuleTab::ModuleTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainTab
 
     Locker refreshLocker(refreshLock_);
 
-    controlsWidget_ = NULL;
-    moduleWidget_ = NULL;
+    controlsWidget_ = nullptr;
+    moduleWidget_ = nullptr;
     splitter_ = new QSplitter(Qt::Horizontal, this);
 
     // Create a layout, add the splitter, and add it to the window
@@ -93,8 +75,8 @@ void ModuleTab::initialiseControls(Module *module)
     splitter_->addWidget(controlsWidget_);
 
     // Create a module widget if there are additional GUI elements available for the Module
-    moduleWidget_ = module->createWidget(NULL, dissolve_);
-    if (moduleWidget_ == NULL)
+    moduleWidget_ = module->createWidget(nullptr, dissolve_);
+    if (moduleWidget_ == nullptr)
         Messenger::printVerbose("Module '{}' did not provide a valid controller widget.\n", module->type());
     else
     {

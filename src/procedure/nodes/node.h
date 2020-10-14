@@ -1,23 +1,5 @@
-/*
-    *** Procedure Node
-    *** src/procedure/nodes/node.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #pragma once
 
@@ -161,14 +143,14 @@ class ProcedureNode : public ListItem<ProcedureNode>
     // Return list of nodes of specified type present in this node's scope
     RefList<ProcedureNode> nodesInScope(ProcedureNode::NodeType nt);
     // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
-    ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = NULL,
+    ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = nullptr,
                               ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
     // Return list of nodes of specified type present in the Procedure
     RefList<ProcedureNode> nodes(ProcedureNode::NodeType nt);
     // Return whether the named parameter is currently in scope
-    ExpressionVariable *parameterInScope(std::string_view name, ExpressionVariable *excludeParameter = NULL);
+    ExpressionVariable *parameterInScope(std::string_view name, ExpressionVariable *excludeParameter = nullptr);
     // Return whether the named parameter exists anywhere in the same Procedure
-    ExpressionVariable *parameterExists(std::string_view name, ExpressionVariable *excludeParameter = NULL) const;
+    ExpressionVariable *parameterExists(std::string_view name, ExpressionVariable *excludeParameter = nullptr) const;
     // Create and return reference list of parameters in scope
     RefList<ExpressionVariable> parametersInScope();
 
@@ -186,7 +168,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
      */
     public:
     // Return whether this node has the named parameter specified
-    virtual ExpressionVariable *hasParameter(std::string_view name, ExpressionVariable *excludeParameter = NULL);
+    virtual ExpressionVariable *hasParameter(std::string_view name, ExpressionVariable *excludeParameter = nullptr);
     // Return references to all parameters for this node
     virtual RefList<ExpressionVariable> parameterReferences() const;
 

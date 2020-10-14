@@ -1,23 +1,5 @@
-/*
-    *** Expression Variable Value Node
-    *** src/expression/variablevalue.cpp
-    Copyright T. Youngs 2015-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "expression/variablevalue.h"
 #include "base/messenger.h"
@@ -41,7 +23,7 @@ ExpressionVariable *ExpressionVariableValue::variable() const { return variable_
 // Return name of variable target
 std::string_view ExpressionVariableValue::name() const
 {
-    if (variable_ == NULL)
+    if (variable_ == nullptr)
     {
         Messenger::error("ExpressionVariableValue contains a NULL Variable pointer.\n");
         return "NULL";
@@ -56,7 +38,7 @@ std::string_view ExpressionVariableValue::name() const
 // Execute command
 bool ExpressionVariableValue::execute(ExpressionValue &result)
 {
-    if (variable_ == NULL)
+    if (variable_ == nullptr)
     {
         Messenger::error("ExpressionVariableValue contains a NULL Variable pointer and can't be executed.\n");
         return false;
@@ -73,7 +55,7 @@ bool ExpressionVariableValue::execute(ExpressionValue &result)
 // Print node contents
 void ExpressionVariableValue::nodePrint(int offset, std::string_view prefix)
 {
-    if (variable_ == NULL)
+    if (variable_ == nullptr)
     {
         Messenger::error("ExpressionVariableValue contains a NULL Variable pointer and can't be printed.\n");
         return;
@@ -85,7 +67,7 @@ void ExpressionVariableValue::nodePrint(int offset, std::string_view prefix)
 // Set from ExpressionValue
 bool ExpressionVariableValue::set(ExpressionValue value)
 {
-    if (variable_ == NULL)
+    if (variable_ == nullptr)
     {
         Messenger::error("ExpressionVariableValue contains a NULL Variable pointer and can't be set.\n");
         return false;
@@ -103,7 +85,7 @@ bool ExpressionVariableValue::set(ExpressionValue value)
 // Initialise node
 bool ExpressionVariableValue::initialise()
 {
-    if (variable_ == NULL)
+    if (variable_ == nullptr)
     {
         Messenger::error("ExpressionVariableValue contains a NULL Variable pointer and can't be initialised.\n");
         return false;

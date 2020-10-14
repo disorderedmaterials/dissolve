@@ -1,23 +1,5 @@
-/*
-    *** Isotopologue Definition
-    *** src/classes/isotopologue.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/isotopologue.h"
 #include "base/processpool.h"
@@ -57,7 +39,7 @@ void Isotopologue::update()
      */
 
     // Check for valid parent_
-    if (parent_ == NULL)
+    if (parent_ == nullptr)
     {
         // The update function is called three places in the code, all
         // in species_isotopologues.cpp.  The instance on line 52 occurs
@@ -75,7 +57,7 @@ void Isotopologue::update()
     isotopes_.clear();
 
     // Loop over Atoms in species, get their assigned AtomTypes, and searching for them in the oldItems list
-    for (auto *i = parent_->firstAtom(); i != NULL; i = i->next())
+    for (auto *i = parent_->firstAtom(); i != nullptr; i = i->next())
     {
         std::shared_ptr<AtomType> at = i->atomType();
         if (!at)
@@ -136,7 +118,7 @@ Isotope *Isotopologue::atomTypeIsotope(std::shared_ptr<AtomType> at) const
     if (it == isotopes_.end())
     {
         Messenger::error("Couldn't retrieve AtomType '{}' from Isotopologue '{}' as it doesn't exist.\n", at->name(), name_);
-        return NULL;
+        return nullptr;
     }
     return std::get<1>(*it);
 }

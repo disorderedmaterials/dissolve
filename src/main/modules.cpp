@@ -1,23 +1,5 @@
-/*
-    *** Dissolve - Modules
-    *** src/main/modules.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "main/dissolve.h"
 #include "modules/analyse/analyse.h"
@@ -52,6 +34,7 @@
 #include "modules/sanitycheck/sanitycheck.h"
 #include "modules/sq/sq.h"
 #include "modules/test/test.h"
+#include "modules/xraysq/xraysq.h"
 
 /*
  * Module Registration
@@ -149,6 +132,8 @@ bool Dissolve::registerMasterModules()
         return false;
     if (!registerMasterModule(new TestModule))
         return false;
+    if (!registerMasterModule(new XRaySQModule))
+        return false;
 
     Messenger::print("Module Information ({} available):\n", masterModules_.nItems());
     ListIterator<Module> moduleIterator(masterModules_);
@@ -171,7 +156,7 @@ Module *Dissolve::findMasterModule(std::string_view moduleType) const
             return module;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 // Return master Module instances
@@ -184,7 +169,7 @@ Module *Dissolve::createModuleInstance(std::string_view moduleType)
     if (!masterModule)
     {
         Messenger::error("No Module type '{}' exists.\n", moduleType);
-        return NULL;
+        return nullptr;
     }
 
     // Find a suitable unique name for the Module
@@ -208,7 +193,7 @@ Module *Dissolve::createModuleInstance(std::string_view moduleType, ModuleLayer 
 {
     Module *module = createModuleInstance(moduleType);
     if (!module)
-        return NULL;
+        return nullptr;
 
     // Add the new module instance to the specified destination layer
     destinationLayer->own(module);
@@ -225,7 +210,7 @@ Module *Dissolve::findModuleInstance(std::string_view uniqueName)
         if (DissolveSys::sameString(module->uniqueName(), uniqueName))
             return module;
 
-    return NULL;
+    return nullptr;
 }
 
 // Search for any instance of any Module with the specified Module type

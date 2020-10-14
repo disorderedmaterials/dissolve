@@ -1,23 +1,5 @@
-/*
-    *** Mathematical Expression
-    *** src/expression/expression.h
-    Copyright T. Youngs 2015-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #pragma once
 
@@ -76,8 +58,9 @@ class Expression
     // Associate a command-based node to the Expression
     ExpressionNode *addFunctionNodeWithArglist(ExpressionFunctions::Function func, ExpressionNode *arglist);
     // Add a function node to the list (overloaded to accept simple arguments instead of a list)
-    ExpressionNode *addFunctionNode(ExpressionFunctions::Function func, ExpressionNode *arg1 = NULL,
-                                    ExpressionNode *arg2 = NULL, ExpressionNode *arg3 = NULL, ExpressionNode *arg4 = NULL);
+    ExpressionNode *addFunctionNode(ExpressionFunctions::Function func, ExpressionNode *arg1 = nullptr,
+                                    ExpressionNode *arg2 = nullptr, ExpressionNode *arg3 = nullptr,
+                                    ExpressionNode *arg4 = nullptr);
     // Add a value node, targetting the supplied variable
     ExpressionNode *addValueNode(ExpressionVariable *var);
     // Join two nodes together
@@ -103,10 +86,10 @@ class Expression
     ExpressionVariable *createConstant(ExpressionValue value, bool persistent = false);
     // Create integer variable, with optional ExpressionNode as initial value source
     ExpressionVariable *createIntegerVariable(std::string_view name, bool persistent = false,
-                                              ExpressionNode *initialValue = NULL);
+                                              ExpressionNode *initialValue = nullptr);
     // Create double variable, with optional ExpressionNode as initial value source
     ExpressionVariable *createDoubleVariable(std::string_view name, bool persistent = false,
-                                             ExpressionNode *initialValue = NULL);
+                                             ExpressionNode *initialValue = nullptr);
     // Create variable with supplied initial value
     ExpressionVariable *createVariableWithValue(std::string_view name, ExpressionValue initialValue, bool persistent = false);
     // Set list of external variables

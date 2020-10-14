@@ -1,23 +1,5 @@
-/*
-    *** ModuleList Chart
-    *** src/gui/charts/modulelist.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "gui/charts/modulelist.h"
 #include "gui/charts/moduleblock.h"
@@ -83,7 +65,7 @@ void ModuleListChart::paintEvent(QPaintEvent *event)
     painter.setPen(solidPen);
     QPoint p1, p2;
     auto top = 0;
-    ModuleBlock *lastBlock = NULL;
+    ModuleBlock *lastBlock = nullptr;
     for (ModuleBlock *block : moduleBlockWidgets_)
     {
         // If this block is not visible, continue
@@ -113,7 +95,7 @@ void ModuleListChart::paintEvent(QPaintEvent *event)
             painter.fillRect(rect, QColor(49, 0, 73, 80));
         }
         else
-            selectedBlock_ = NULL;
+            selectedBlock_ = nullptr;
     }
 
     // Highlight all hotspots
@@ -136,7 +118,7 @@ ModuleBlock *ModuleListChart::moduleBlock(Module *module)
         if (block->module() == module)
             return block;
 
-    return NULL;
+    return nullptr;
 }
 
 // Update the content block widgets against the current target data
@@ -193,7 +175,7 @@ void ModuleListChart::updateContentBlocks()
 void ModuleListChart::setCurrentModule(Module *module)
 {
     if (!module)
-        selectedBlock_ = NULL;
+        selectedBlock_ = nullptr;
     else
         selectedBlock_ = moduleBlock(module);
 
@@ -206,12 +188,12 @@ void ModuleListChart::setCurrentModule(Module *module)
 Module *ModuleListChart::currentModule() const
 {
     if (!selectedBlock_)
-        return NULL;
+        return nullptr;
 
     // Cast selectedBlock_ up to a ModuleBlock
     auto *moduleBlock = dynamic_cast<ModuleBlock *>(selectedBlock_);
     if (!moduleBlock)
-        return NULL;
+        return nullptr;
 
     return moduleBlock->module();
 }
@@ -272,9 +254,9 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
 
         // Cast the blocks either side of the current hotspot up to ModuleBlocks, and get their Modules
         auto *moduleBlockBefore = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockBefore());
-        Module *moduleBeforeHotSpot = (moduleBlockBefore ? moduleBlockBefore->module() : NULL);
+        Module *moduleBeforeHotSpot = (moduleBlockBefore ? moduleBlockBefore->module() : nullptr);
         auto *moduleBlockAfter = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockAfter());
-        Module *moduleAfterHotSpot = (moduleBlockAfter ? moduleBlockAfter->module() : NULL);
+        Module *moduleAfterHotSpot = (moduleBlockAfter ? moduleBlockAfter->module() : nullptr);
 
         // Check the blocks either side of the hotspot to see where our Module needs to be (or has been returned to)
         if ((draggedModule->prev() == moduleBeforeHotSpot) && (draggedModule->next() == moduleAfterHotSpot))
@@ -301,9 +283,9 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
 
         // Cast the blocks either side of the current hotspot up to ModuleBlocks, and get their Modules
         auto *moduleBlockBefore = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockBefore());
-        Module *moduleBeforeHotSpot = (moduleBlockBefore ? moduleBlockBefore->module() : NULL);
+        Module *moduleBeforeHotSpot = (moduleBlockBefore ? moduleBlockBefore->module() : nullptr);
         auto *moduleBlockAfter = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockAfter());
-        Module *moduleAfterHotSpot = (moduleBlockAfter ? moduleBlockAfter->module() : NULL);
+        Module *moduleAfterHotSpot = (moduleBlockAfter ? moduleBlockAfter->module() : nullptr);
 
         // Add the new modele
         if (moduleAfterHotSpot)
@@ -311,7 +293,7 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
         else
             moduleList_->modules().own(newModule);
 
-        newModule->setConfigurationLocal(localConfiguration_ != NULL);
+        newModule->setConfigurationLocal(localConfiguration_ != nullptr);
 
         // Set Configuration targets as appropriate
         if (newModule->nRequiredTargets() != Module::ZeroTargets)
@@ -384,7 +366,7 @@ void ModuleListChart::blockRemovalRequested(const QString &blockIdentifier)
 
         // If the module to delete is the currently-displayed one, unset it now
         if (module == currentModule())
-            setCurrentModule(NULL);
+            setCurrentModule(nullptr);
 
         // Remove the Module instance
         dissolve_.deleteModuleInstance(module);
@@ -437,7 +419,7 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
     ChartHotSpot *hotSpot = hotSpots_.first();
 
     // Loop over widgets
-    ModuleBlock *lastVisibleBlock = NULL;
+    ModuleBlock *lastVisibleBlock = nullptr;
     for (ModuleBlock *block : moduleBlockWidgets_)
     {
         // Set default visibility of the block
@@ -491,13 +473,13 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
 
     // Set final hotspot geometry
     hotSpot->setGeometry(QRect(0, hotSpotTop, width(), height() - hotSpotTop));
-    hotSpot->setSurroundingBlocks(lastVisibleBlock, NULL);
+    hotSpot->setSurroundingBlocks(lastVisibleBlock, nullptr);
     hotSpot = hotSpot->next();
 
     // Set the correct heights for all hotspots up to the current one - any after that are not required and will have zero
     // height 	for (ChartHotSpot* spot = hotSpots_.first(); spot != hotSpot; spot = spot->next())
     // spot->setWidth(maxWidth);
-    for (auto *spot = hotSpot; spot != NULL; spot = spot->next())
+    for (auto *spot = hotSpot; spot != nullptr; spot = spot->next())
         spot->setHeight(0);
 
     // If there is a current hotspot, set the insertion widget to be visible and set its geometry

@@ -1,23 +1,5 @@
-/*
-    *** Dissolve - Simulation
-    *** src/main/simulation.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -48,12 +30,12 @@ bool Dissolve::prepare()
 
     // Initialise random seed
     if (seed_ == -1)
-        srand((unsigned)time(NULL));
+        srand((unsigned)time(nullptr));
     else
         srand(seed_);
 
     // Check Species
-    for (auto *sp = species().first(); sp != NULL; sp = sp->next())
+    for (auto *sp = species().first(); sp != nullptr; sp = sp->next())
         if (!sp->checkSetUp())
             return false;
 
@@ -63,7 +45,7 @@ bool Dissolve::prepare()
         at->setIndex(count++);
 
     // Check Configurations
-    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
     {
         // Check Box extent against pair potential range
         auto maxPPRange = cfg->box()->inscribedSphereRadius();
@@ -150,7 +132,7 @@ bool Dissolve::iterate(int nIterations)
         auto thisTime = 0.0;
         auto nEnabledModules = 0;
 
-        for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+        for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
         {
             if (cfg->nModules() == 0)
                 continue;
@@ -218,7 +200,7 @@ bool Dissolve::iterate(int nIterations)
         Messenger::banner("Configuration Processing");
 
         auto result = true;
-        for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+        for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
         {
             // Check for failure of one or more processes / processing tasks
             if (!worldPool().allTrue(result))
@@ -268,7 +250,7 @@ bool Dissolve::iterate(int nIterations)
          */
         Messenger::banner("Reassemble Data");
         // Loop over Configurations
-        for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+        for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
         {
             Messenger::printVerbose("Broadcasting data for Configuration '{}'...\n", cfg->name());
             if (!cfg->broadcastCoordinates(worldPool(), cfg->processPool().rootWorldRank()))
@@ -334,7 +316,7 @@ bool Dissolve::iterate(int nIterations)
                 iteration_;
 
             // Pair Potentials
-            for (auto *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
+            for (auto *pot = pairPotentials_.first(); pot != nullptr; pot = pot->next())
             {
                 GenericListHelper<Data1D>::realise(
                     processingModuleData_,
@@ -429,7 +411,7 @@ void Dissolve::printTiming()
     // Add on space for brackets
     maxLength += 2;
 
-    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
     {
         if (cfg->nModules() == 0)
             continue;

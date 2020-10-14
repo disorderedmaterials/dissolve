@@ -1,23 +1,5 @@
-/*
-    *** Configuration - Contents
-    *** src/classes/configuration_contents.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "base/processpool.h"
 #include "classes/atomtype.h"
@@ -34,7 +16,7 @@ void Configuration::empty()
     molecules_.clear();
     atoms_.clear();
     usedAtomTypes_.clear();
-    if (box_ != NULL)
+    if (box_ != nullptr)
         delete box_;
     box_ = new CubicBox(1.0);
     cells_.clear();
@@ -87,11 +69,11 @@ SpeciesInfo *Configuration::addUsedSpecies(Species *sp, int population)
 // Return SpeciesInfo for specified Species
 SpeciesInfo *Configuration::usedSpeciesInfo(Species *sp)
 {
-    for (auto *spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next())
+    for (auto *spInfo = usedSpecies_.first(); spInfo != nullptr; spInfo = spInfo->next())
         if (spInfo->species() == sp)
             return spInfo;
 
-    return NULL;
+    return nullptr;
 }
 
 // Return list of SpeciesInfo for the Configuration
@@ -100,7 +82,7 @@ List<SpeciesInfo> &Configuration::usedSpecies() { return usedSpecies_; }
 // Return if the specified Species is present in the usedSpecies list
 bool Configuration::hasUsedSpecies(Species *sp)
 {
-    for (auto *spInfo = usedSpecies_.first(); spInfo != NULL; spInfo = spInfo->next())
+    for (auto *spInfo = usedSpecies_.first(); spInfo != nullptr; spInfo = spInfo->next())
         if (spInfo->species() == sp)
             return true;
 
@@ -204,7 +186,7 @@ Atom *Configuration::atom(int n)
     {
         Messenger::print("OUT_OF_RANGE - Atom index {} passed to Configuration::atom() is out of range (nAtoms = {}).\n", n,
                          atoms_.nItems());
-        return NULL;
+        return nullptr;
     }
 #endif
     return atoms_[n];

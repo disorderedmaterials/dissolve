@@ -1,23 +1,5 @@
-/*
-    *** SpeciesTab Functions - Geometry
-    *** src/gui/speciestab_geometry.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
 #include "gui/gui.h"
@@ -336,7 +318,7 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target SpeciesAtom from the passed widget
-    SpeciesAtom *speciesAtom = w ? VariantPointer<SpeciesAtom>(w->data(Qt::UserRole)) : NULL;
+    SpeciesAtom *speciesAtom = w ? VariantPointer<SpeciesAtom>(w->data(Qt::UserRole)) : nullptr;
     if (!speciesAtom)
         return;
     Vec3<double> r = speciesAtom->r();
@@ -423,7 +405,7 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target SpeciesBond from the passed widget
-    SpeciesBond *speciesBond = w ? VariantPointer<SpeciesBond>(w->data(Qt::UserRole)) : NULL;
+    SpeciesBond *speciesBond = w ? VariantPointer<SpeciesBond>(w->data(Qt::UserRole)) : nullptr;
     if (!speciesBond)
         return;
 
@@ -447,7 +429,7 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem *w)
             else
             {
                 SpeciesBond::BondFunction bf = SpeciesBond::bondFunctions().enumeration(qPrintable(w->text()));
-                speciesBond->setMasterParameters(NULL);
+                speciesBond->setMasterParameters(nullptr);
                 speciesBond->setForm(bf);
             }
             updateRow = true;
@@ -482,7 +464,7 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target SpeciesAngle from the passed widget
-    SpeciesAngle *speciesAngle = w ? VariantPointer<SpeciesAngle>(w->data(Qt::UserRole)) : NULL;
+    SpeciesAngle *speciesAngle = w ? VariantPointer<SpeciesAngle>(w->data(Qt::UserRole)) : nullptr;
     if (!speciesAngle)
         return;
 
@@ -507,7 +489,7 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem *w)
             else
             {
                 SpeciesAngle::AngleFunction af = SpeciesAngle::angleFunctions().enumeration(qPrintable(w->text()));
-                speciesAngle->setMasterParameters(NULL);
+                speciesAngle->setMasterParameters(nullptr);
                 speciesAngle->setForm(af);
             }
             updateRow = true;
@@ -542,7 +524,7 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target SpeciesTorsion from the passed widget
-    SpeciesTorsion *speciesTorsion = w ? VariantPointer<SpeciesTorsion>(w->data(Qt::UserRole)) : NULL;
+    SpeciesTorsion *speciesTorsion = w ? VariantPointer<SpeciesTorsion>(w->data(Qt::UserRole)) : nullptr;
     if (!speciesTorsion)
         return;
 
@@ -568,7 +550,7 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem *w)
             else
             {
                 SpeciesTorsion::TorsionFunction tf = SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text()));
-                speciesTorsion->setMasterParameters(NULL);
+                speciesTorsion->setMasterParameters(nullptr);
                 speciesTorsion->setForm(tf);
             }
             updateRow = true;
@@ -603,7 +585,7 @@ void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target SpeciesImproper from the passed widget
-    SpeciesImproper *speciesImproper = w ? VariantPointer<SpeciesImproper>(w->data(Qt::UserRole)) : NULL;
+    SpeciesImproper *speciesImproper = w ? VariantPointer<SpeciesImproper>(w->data(Qt::UserRole)) : nullptr;
     if (!speciesImproper)
         return;
 
@@ -629,7 +611,7 @@ void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem *w)
             else
             {
                 SpeciesImproper::ImproperFunction tf = SpeciesImproper::improperFunctions().enumeration(qPrintable(w->text()));
-                speciesImproper->setMasterParameters(NULL);
+                speciesImproper->setMasterParameters(nullptr);
                 speciesImproper->setForm(tf);
             }
             updateRow = true;

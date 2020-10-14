@@ -1,23 +1,5 @@
-/*
-    *** SpeciesTab Functions - Sites
-    *** src/gui/speciestab_sites.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "gui/gui.h"
 #include "gui/helpers/listwidgetupdater.h"
@@ -35,7 +17,7 @@ SpeciesSite *SpeciesTab::currentSite()
     // Get current item from tree, and check the parent item
     QListWidgetItem *item = ui_.SiteList->currentItem();
     if (!item)
-        return NULL;
+        return nullptr;
     return VariantPointer<SpeciesSite>(item->data(Qt::UserRole));
 }
 
@@ -84,7 +66,7 @@ void SpeciesTab::on_SiteRemoveButton_clicked(bool checked)
 
     // Remove references to the site, and invalidate our site renderable
     dissolveWindow_->dissolve().removeReferencesTo(site);
-    ui_.SiteViewerWidget->setSite(NULL);
+    ui_.SiteViewerWidget->setSite(nullptr);
 
     // Remove the site proper, and update the sites tab
     species_->removeSite(site);
@@ -156,15 +138,15 @@ void SpeciesTab::updateSitesTab()
     // Update the site list
     ListWidgetUpdater<SpeciesTab, SpeciesSite> siteUpdater(ui_.SiteList, species_->sites(),
                                                            Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
-    if ((current == NULL) && (species_->nSites() != 0))
+    if ((current == nullptr) && (species_->nSites() != 0))
         ui_.SiteList->setCurrentRow(0);
 
     // Check for current site
     SpeciesSite *site = currentSite();
-    ui_.SiteRemoveButton->setEnabled(site != NULL);
-    ui_.SiteOriginGroup->setEnabled(site != NULL);
-    ui_.SiteXAxisGroup->setEnabled(site != NULL);
-    ui_.SiteYAxisGroup->setEnabled(site != NULL);
+    ui_.SiteRemoveButton->setEnabled(site != nullptr);
+    ui_.SiteOriginGroup->setEnabled(site != nullptr);
+    ui_.SiteXAxisGroup->setEnabled(site != nullptr);
+    ui_.SiteYAxisGroup->setEnabled(site != nullptr);
     if (!site)
     {
         ui_.SiteOriginAtomsEdit->clear();

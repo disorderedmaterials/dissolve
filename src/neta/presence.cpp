@@ -1,23 +1,5 @@
-/*
-    *** NETA Presence Node
-    *** src/neta/presence.cpp
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "neta/presence.h"
 #include "classes/speciesatom.h"
@@ -95,9 +77,9 @@ bool NETAPresenceNode::setModifier(std::string_view modifier, ComparisonOperator
 // Evaluate the node and return its score
 int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &availableAtoms) const
 {
-    // We expect the passed SpeciesAtom 'i' to be NULL, as our potential targets are held in availableAtoms (which we will
+    // We expect the passed SpeciesAtom 'i' to be nullptr, as our potential targets are held in availableAtoms (which we will
     // modify as appropriate)
-    if (i != NULL)
+    if (i != nullptr)
         return Messenger::error("Don't pass target atom to NETAPresenceNode - pass a list of possible atoms instead...\n");
 
     // Loop over the provided possible list of atoms

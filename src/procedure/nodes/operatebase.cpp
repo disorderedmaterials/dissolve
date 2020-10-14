@@ -1,23 +1,5 @@
-/*
-    *** Procedure Node - Operate Base Node
-    *** src/procedure/nodes/operatebase.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "procedure/nodes/operatebase.h"
 #include "base/lineparser.h"
@@ -25,9 +7,9 @@
 
 OperateProcedureNodeBase::OperateProcedureNodeBase(ProcedureNode::NodeType nodeType) : ProcedureNode(nodeType)
 {
-    targetData1D_ = NULL;
-    targetData2D_ = NULL;
-    targetData3D_ = NULL;
+    targetData1D_ = nullptr;
+    targetData2D_ = nullptr;
+    targetData3D_ = nullptr;
 }
 
 OperateProcedureNodeBase::~OperateProcedureNodeBase() {}
@@ -53,23 +35,23 @@ bool OperateProcedureNodeBase::mustBeNamed() const { return false; }
 void OperateProcedureNodeBase::setTarget(Data1D *target)
 {
     targetData1D_ = target;
-    targetData2D_ = NULL;
-    targetData3D_ = NULL;
+    targetData2D_ = nullptr;
+    targetData3D_ = nullptr;
 }
 
 // Set target Data2D
 void OperateProcedureNodeBase::setTarget(Data2D *target)
 {
-    targetData1D_ = NULL;
+    targetData1D_ = nullptr;
     targetData2D_ = target;
-    targetData3D_ = NULL;
+    targetData3D_ = nullptr;
 }
 
 // Set target Data3D
 void OperateProcedureNodeBase::setTarget(Data3D *target)
 {
-    targetData1D_ = NULL;
-    targetData2D_ = NULL;
+    targetData1D_ = nullptr;
+    targetData2D_ = nullptr;
     targetData3D_ = target;
 }
 

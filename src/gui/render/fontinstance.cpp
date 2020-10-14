@@ -1,31 +1,13 @@
-/*
-    *** Font Instance
-    *** src/gui/render/fontinstance.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "gui/render/fontinstance.h"
 #include "base/messenger.h"
 
 FontInstance::FontInstance()
 {
-    fontData_ = NULL;
-    font_ = NULL;
+    fontData_ = nullptr;
+    font_ = nullptr;
     fontBaseHeight_ = 0.0;
     fontFullHeight_ = 0.0;
     dotWidth_ = 0.0;
@@ -42,10 +24,10 @@ bool FontInstance::setUp(QString fontFileName)
     // Delete any previous font
     if (font_)
         delete font_;
-    font_ = NULL;
+    font_ = nullptr;
     if (fontData_)
         delete fontData_;
-    fontData_ = NULL;
+    fontData_ = nullptr;
 
     // Check the fontFileName - if it's empty then we try to load the default font from our resource
     fontFile_ = fontFileName;
@@ -88,11 +70,11 @@ bool FontInstance::setUp(QString fontFileName)
         dotWidth_ = boundingBox.Upper().X() - boundingBox.Lower().X();
     }
 
-    return (font_ != NULL);
+    return (font_ != nullptr);
 }
 
 // Return whether font exists and is ready for use
-bool FontInstance::fontOK() const { return (font_ != NULL); }
+bool FontInstance::fontOK() const { return (font_ != nullptr); }
 
 // Return base height of font
 double FontInstance::fontBaseHeight() const { return fontBaseHeight_; }

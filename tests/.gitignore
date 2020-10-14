@@ -1,2 +1,20 @@
 # .gitignore for tests/
+
+# Test outputs
 *.out
+**/*.rdf
+**/*.sq
+
+# Extraneous EPSR files
+dirlist.txt
+dump.erg
+f0_WaasKirf.dat
+fort.*
+gnuatoms.txt
+gnubonds.txt
+*.EPSR.gnu
+plot_defaults.txt
+runflag.txt
+system_commands.txt
+X-rayf0x.dat
+X-raywts.dat

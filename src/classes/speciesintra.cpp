@@ -1,23 +1,5 @@
-/*
-    *** SpeciesIntra Definition
-    *** src/classes/speciesintra.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/speciesintra.h"
 #include "base/messenger.h"
@@ -80,7 +62,7 @@ void SpeciesIntra::detachFromMasterIntra()
     form_ = masterParameters_->form();
     parameters_ = masterParameters_->parameters_;
 
-    masterParameters_ = NULL;
+    masterParameters_ = nullptr;
 }
 
 // Return parameter source
@@ -169,7 +151,7 @@ void SpeciesIntra::setAttachedAtoms(int terminus, const RefList<SpeciesAtom> &at
     attached_[terminus].clear();
 
     // Add the SpeciesAtoms in the list
-    for (RefListItem<SpeciesAtom> *refAtom = atoms.first(); refAtom != NULL; refAtom = refAtom->next())
+    for (RefListItem<SpeciesAtom> *refAtom = atoms.first(); refAtom != nullptr; refAtom = refAtom->next())
         attached_[terminus].push_back(refAtom->item()->index());
 }
 

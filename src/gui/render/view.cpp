@@ -1,23 +1,5 @@
-/*
-    *** Rendering View
-    *** src/gui/render/view.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "gui/render/view.h"
 #include "gui/render/fontinstance.h"
@@ -49,7 +31,7 @@ void View::clear()
 
     // Role
     viewType_ = View::AutoStretchedView;
-    linkedView_ = NULL;
+    linkedView_ = nullptr;
     autoFollowType_ = View::NoAutoFollow;
     autoFollowXLength_ = 20.0;
 
@@ -963,7 +945,7 @@ void View::autoFollowData()
         // Get y range over the horizontal range we've established
         auto first = true;
         double yMin = 0.0, yMax = 0.0, yMinTest = 0.0, yMaxTest = 0.0;
-        for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
+        for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
         {
             // Skip this Renderable if it is not currently visible
             if (!rend->isVisible())
@@ -1029,7 +1011,7 @@ Vec3<double> View::dataMinima()
 
     auto nCounted = 0;
     Vec3<double> v, minima;
-    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1062,7 +1044,7 @@ Vec3<double> View::dataMaxima()
 
     auto nCounted = 0;
     Vec3<double> v, maxima;
-    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1091,7 +1073,7 @@ Vec3<double> View::positiveDataMinima()
 {
     auto nCounted = 0;
     Vec3<double> v, minima;
-    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())
@@ -1124,7 +1106,7 @@ Vec3<double> View::positiveDataMaxima()
 {
     auto nCounted = 0;
     Vec3<double> v, maxima;
-    for (auto *rend = renderables_.first(); rend != NULL; rend = rend->next())
+    for (auto *rend = renderables_.first(); rend != nullptr; rend = rend->next())
     {
         // Skip this Renderable if it is not currently visible
         if (!rend->isVisible())

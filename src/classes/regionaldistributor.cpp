@@ -1,23 +1,5 @@
-/*
-    *** Regional Distributor
-    *** src/classes/regionaldistributor.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/regionaldistributor.h"
 #include "base/lineparser.h"
@@ -454,7 +436,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(Cell *cell, int pr
         checkedMolecules.insert(mol);
     }
 
-    return NULL;
+    return nullptr;
 }
 
 // Try to find a Molecule target for the process/group
@@ -465,7 +447,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(int processOrGroup
      * If there are no suitable Molecules (or there are no Cells, as is the case at the beginning), pick a suitable Cell
      * close to those already in the list (or one at a suitable starting location for the current process/group).
      */
-    std::shared_ptr<Molecule> molecule = NULL;
+    std::shared_ptr<Molecule> molecule = nullptr;
 
     OrderedPointerListIterator<Cell> lockedCellIterator(lockedCells_[processOrGroup]);
     while (Cell *cell = lockedCellIterator.iterate())
@@ -535,7 +517,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(int processOrGroup
             return molecule;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 // Return next set of Molecule IDs assigned to this process

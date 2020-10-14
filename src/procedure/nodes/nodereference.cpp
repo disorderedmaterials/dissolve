@@ -1,23 +1,5 @@
-/*
-    *** Procedure Node Reference
-    *** src/procedure/nodes/nodereference.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "procedure/nodes/nodereference.h"
 #include "base/lineparser.h"
@@ -32,7 +14,7 @@ ProcedureNodeReference::ProcedureNodeReference(ProcedureNode *node) : ListItem<P
     for (int n = 0; n < ProcedureNode::nNodeTypes; ++n)
         allowedTypes_[n] = false;
 
-    analyseModuleParent_ = NULL;
+    analyseModuleParent_ = nullptr;
 }
 
 ProcedureNodeReference::~ProcedureNodeReference() {}
@@ -58,7 +40,7 @@ void ProcedureNodeReference::setAllowAllNodeTypes()
 }
 
 // Return if node pointer is NULL
-bool ProcedureNodeReference::isNull() const { return (node_ == NULL); }
+bool ProcedureNodeReference::isNull() const { return (node_ == nullptr); }
 
 /*
  * Operators
@@ -80,7 +62,7 @@ void ProcedureNodeReference::operator=(const ProcedureNodeReference &nodeRef)
 // Read structure from specified LineParser
 bool ProcedureNodeReference::read(LineParser &parser, int startArg, CoreData &coreData, const Procedure *procedure)
 {
-    node_ = NULL;
+    node_ = nullptr;
 
     // If two arguments are provided, the second is the identifying name of an AnalyseModule
     if (parser.nArgs() == (startArg + 2))
@@ -114,7 +96,7 @@ bool ProcedureNodeReference::read(LineParser &parser, int startArg, CoreData &co
     if (!allowedTypes_[node_->type()])
         return Messenger::error("Node '{}' is not of the correct type.\n", node_->name());
 
-    return (node_ != NULL);
+    return (node_ != nullptr);
 }
 
 // Write structure to specified LineParser

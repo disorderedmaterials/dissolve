@@ -27,7 +27,7 @@ First, stop the simulation if it is running:
 Now we can safely adjust the options in the [`RDF`](../../userguide/modules/rdf) module:
 
 {{< action type="tabs" text=" **RDF / Neutron S(Q)** tab" >}}
-{{< step text="Select th [`RDF`](../../userguide/modules/rdf) module to display its additional controls" >}}
+{{< step text="Select the [`RDF`](../../userguide/modules/rdf) module to display its additional controls" >}}
 {{< action type="groups" text="Open the **Calculation** settings group" >}}
 {{< step text="Set the **IntraBroadening** to `Gaussian` with a FWHM of 0.18 (the default)" >}}
 

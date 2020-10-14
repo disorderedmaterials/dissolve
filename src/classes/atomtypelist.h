@@ -1,23 +1,5 @@
-/*
-    *** AtomTypeList Definition
-    *** src/classes/atomtypelist.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #pragma once
 
@@ -61,7 +43,7 @@ class AtomTypeList : public GenericItemBase
     // Remove specified AtomType from the list
     void remove(std::shared_ptr<AtomType> atomType);
     // Add/increase this AtomType/Isotope pair, returning the index of the AtomType in the list
-    void addIsotope(std::shared_ptr<AtomType> atomType, Isotope *tope = NULL, double popAdd = 0);
+    void addIsotope(std::shared_ptr<AtomType> atomType, Isotope *tope = nullptr, double popAdd = 0);
     // Finalise list, calculating fractional populations etc.
     void finalise();
     // Finalise list, calculating fractional populations etc., and accounting for exchangeable sites in boundCoherent values

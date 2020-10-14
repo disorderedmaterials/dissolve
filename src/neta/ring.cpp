@@ -1,23 +1,5 @@
-/*
-    *** NETA Ring Node
-    *** src/neta/ring.cpp
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "neta/ring.h"
 #include "classes/speciesatom.h"
@@ -156,7 +138,7 @@ int NETARingNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchP
     {
         // Check this ring against others in the list - if we find a duplicate, we can remove it and then move on with
         // the next ring.
-        for (auto *other = ring->next(); other != NULL; other = other->next())
+        for (auto *other = ring->next(); other != nullptr; other = other->next())
         {
             if ((*ring) == (*other))
             {
@@ -194,7 +176,7 @@ int NETARingNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchP
             ListIterator<NETANode> branchIterator(branch_);
             while (NETANode *node = branchIterator.iterate())
             {
-                nodeScore = node->score(NULL, ringAtoms);
+                nodeScore = node->score(nullptr, ringAtoms);
                 if (nodeScore == NETANode::NoMatch)
                     break;
 

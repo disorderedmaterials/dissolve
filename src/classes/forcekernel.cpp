@@ -1,23 +1,5 @@
-/*
-    *** ForceKernel
-    *** src/classes/forcekernel.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/forcekernel.h"
 #include "base/processpool.h"
@@ -92,14 +74,14 @@ void ForceKernel::forcesWithMim(const Atom *i, const Atom *j, double scale)
 void ForceKernel::forces(const Atom *i, const Atom *j, bool applyMim, bool excludeIgeJ)
 {
 #ifdef CHECKS
-    if (i == NULL)
+    if (i == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Atom pointer (i) passed to ForceKernel::forces(Atom,Atom,bool,bool).\n");
+        Messenger::error("NULL_POINTER - nullptr (i) passed to ForceKernel::forces(Atom,Atom,bool,bool).\n");
         return;
     }
-    if (j == NULL)
+    if (j == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Atom pointer (j) passed to ForceKernel::forces(Atom,Atom,bool,bool).\n");
+        Messenger::error("NULL_POINTER - nullptr (j) passed to ForceKernel::forces(Atom,Atom,bool,bool).\n");
         return;
     }
 #endif
@@ -122,13 +104,13 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
                          ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
-    if (centralCell == NULL)
+    if (centralCell == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL central Cell pointer passed to "
                          "ForceKernel::forces(Cell,Cell,bool,bool,DivisionStrategy).\n");
         return;
     }
-    if (otherCell == NULL)
+    if (otherCell == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL other Cell pointer passed to "
                          "ForceKernel::forces(Cell,Cell,bool,bool,DivisionStrategy).\n");
@@ -225,7 +207,7 @@ void ForceKernel::forces(Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStra
 void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
-    if (i == NULL)
+    if (i == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL atom pointer passed to ForceKernel::forces(Atom,Cell,int,DivisionStrategy).\n");
         return;
@@ -411,9 +393,9 @@ void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::Divi
 void ForceKernel::forces(const Atom *i, ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
-    if (i == NULL)
+    if (i == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Atom pointer passed to ForceKernel::forces(Atom,DivisionStrategy).\n");
+        Messenger::error("NULL_POINTER - nullptr passed to ForceKernel::forces(Atom,DivisionStrategy).\n");
         return;
     }
 #endif

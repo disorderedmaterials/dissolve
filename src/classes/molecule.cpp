@@ -1,29 +1,11 @@
-/*
-    *** Molecule Definition
-    *** src/classes/molecule.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/molecule.h"
 #include "classes/atom.h"
 #include "classes/box.h"
 
-Molecule::Molecule() { species_ = NULL; }
+Molecule::Molecule() { species_ = nullptr; }
 
 Molecule::~Molecule() {}
 
@@ -34,7 +16,7 @@ Molecule::~Molecule() {}
 // Clear object, ready for re-use
 void Molecule::clear()
 {
-    species_ = NULL;
+    species_ = nullptr;
 
     atoms_.clear();
 }
@@ -54,7 +36,7 @@ void Molecule::addAtom(Atom *i)
 {
     atoms_.push_back(i);
 
-    if (i->molecule() != NULL)
+    if (i->molecule() != nullptr)
         Messenger::warn("Molecule parent is already set in Atom id {}, and we are about to overwrite it...\n", i->arrayIndex());
     std::shared_ptr<Molecule> parent = shared_from_this();
     i->setMolecule(parent);
@@ -74,7 +56,7 @@ Atom *Molecule::atom(int n) const
     if ((n < 0) || (n >= nAtoms()))
     {
         Messenger::print("OUT_OF_RANGE - Atom index {} is out of range in Molecule::atom().\n", n);
-        return NULL;
+        return nullptr;
     }
 #endif
     return atoms_[n];

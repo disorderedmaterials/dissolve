@@ -1,23 +1,5 @@
-/*
-    *** 1-Dimensional Data With Statistics
-    *** src/math/data1d.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "math/data1d.h"
 #include "base/lineparser.h"
@@ -450,6 +432,19 @@ void Data1D::operator*=(const double factor)
         errors_ *= factor;
 
     ++version_;
+}
+
+void Data1D::operator*=(const Array<double> &factors)
+{
+    // Check array sizes
+    if (x_.nItems() != factors.nItems())
+    {
+        Messenger::error("Can't *= this Array with Data1D values since they are of differing sizes.\n");
+        return;
+    }
+
+    for (int n = 0; n < values_.nItems(); ++n)
+        values_[n] *= factors.constAt(n);
 }
 
 void Data1D::operator/=(const double factor)

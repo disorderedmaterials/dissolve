@@ -1,23 +1,5 @@
-/*
-    *** Isotopologues Definition
-    *** src/classes/isotopologues.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/isotopologues.h"
 #include "base/lineparser.h"
@@ -63,7 +45,7 @@ void Isotopologues::pruneMissing()
 bool Isotopologues::addNext()
 {
     // NULL Pointer?
-    if (species_ == NULL)
+    if (species_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL Species pointer in Isotopologues::addNextIsotopologue().\n");
         return false;
@@ -79,11 +61,11 @@ bool Isotopologues::addNext()
 
     // Find unique (unused) Isotopologue
     Isotopologue *iso;
-    for (iso = species_->isotopologues().first(); iso != NULL; iso = iso->next())
+    for (iso = species_->isotopologues().first(); iso != nullptr; iso = iso->next())
         if (!contains(iso))
             break;
 
-    if (iso == NULL)
+    if (iso == nullptr)
     {
         Messenger::error("Couldn't find an unused Isotopologue in Species '{}'.\n", species_->name());
         return false;
@@ -109,7 +91,7 @@ void Isotopologues::add(const Isotopologue *iso, double relativeWeight)
 bool Isotopologues::set(const Isotopologue *iso, double relativeWeight)
 {
     // NULL Pointer?
-    if (iso == NULL)
+    if (iso == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL Isotopologue passed to Isotopologues::setIsotopologue().\n");
         return false;
@@ -197,7 +179,7 @@ bool Isotopologues::read(LineParser &parser, CoreData &coreData)
     if (parser.getArgsDelim() != LineParser::Success)
         return false;
     species_ = coreData.findSpecies(parser.argsv(0));
-    if (species_ == NULL)
+    if (species_ == nullptr)
     {
         Messenger::error("Failed to find Species '{}' while reading Isotopologues.\n", parser.argsv(0));
         return false;

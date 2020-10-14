@@ -1,23 +1,5 @@
-/*
-    *** Procedure Node - Calculate Base Node
-    *** src/procedure/nodes/calculatebase.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "procedure/nodes/calculatebase.h"
 #include "base/lineparser.h"
@@ -32,10 +14,10 @@ CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType n
     sites_[1] = site1;
     sites_[2] = site2;
     sites_[3] = site3;
-    siteKeywords_[0] = NULL;
-    siteKeywords_[1] = NULL;
-    siteKeywords_[2] = NULL;
-    siteKeywords_[3] = NULL;
+    siteKeywords_[0] = nullptr;
+    siteKeywords_[1] = nullptr;
+    siteKeywords_[2] = nullptr;
+    siteKeywords_[3] = nullptr;
     value_ = 0.0;
 }
 
@@ -82,7 +64,7 @@ bool CalculateProcedureNodeBase::prepare(Configuration *cfg, std::string_view pr
     // Check that the sites have been properly defined
     for (int n = 0; n < nSitesRequired(); ++n)
     {
-        sites_[n] = siteKeywords_[n] ? siteKeywords_[n]->node() : NULL;
+        sites_[n] = siteKeywords_[n] ? siteKeywords_[n]->node() : nullptr;
         if (!sites_[n])
             return Messenger::error("Observable site {} is not set.\n", n);
     }

@@ -1,23 +1,5 @@
-/*
-    *** Three-Dimensional Array
-    *** src/templates/array3d.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #pragma once
 
@@ -31,9 +13,9 @@ template <class A> class Array3D
     public:
     Array3D(int nX = 0, int nY = 0, int nZ = 0)
     {
-        array_ = NULL;
+        array_ = nullptr;
         linearSize_ = 0;
-        sliceOffsets_ = NULL;
+        sliceOffsets_ = nullptr;
         nX_ = 0;
         nY_ = 0;
         nZ_ = 0;
@@ -44,12 +26,12 @@ template <class A> class Array3D
     // Clear array data
     void clear()
     {
-        if (array_ != NULL)
+        if (array_ != nullptr)
             delete[] array_;
-        if (sliceOffsets_ != NULL)
+        if (sliceOffsets_ != nullptr)
             delete[] sliceOffsets_;
-        sliceOffsets_ = NULL;
-        array_ = NULL;
+        sliceOffsets_ = nullptr;
+        array_ = nullptr;
         linearSize_ = 0;
         nX_ = 0;
         nY_ = 0;
@@ -57,9 +39,9 @@ template <class A> class Array3D
     }
     Array3D(const Array3D<A> &source)
     {
-        array_ = NULL;
+        array_ = nullptr;
         linearSize_ = 0;
-        sliceOffsets_ = NULL;
+        sliceOffsets_ = nullptr;
         nX_ = 0;
         nY_ = 0;
         nZ_ = 0;
@@ -267,9 +249,9 @@ template <class A> class OffsetArray3D
     public:
     OffsetArray3D(int xMin, int xMax, int yMin, int yMax, int zMin, int zMax)
     {
-        array_ = NULL;
+        array_ = nullptr;
         linearSize_ = 0;
-        sliceOffsets_ = NULL;
+        sliceOffsets_ = nullptr;
 
         initialise(xMin, xMax, yMin, yMax, zMin, zMax);
     }
@@ -277,12 +259,12 @@ template <class A> class OffsetArray3D
     // Clear array data
     void clear()
     {
-        if (array_ != NULL)
+        if (array_ != nullptr)
             delete[] array_;
-        if (sliceOffsets_ != NULL)
+        if (sliceOffsets_ != nullptr)
             delete[] sliceOffsets_;
-        sliceOffsets_ = NULL;
-        array_ = NULL;
+        sliceOffsets_ = nullptr;
+        array_ = nullptr;
         linearSize_ = 0;
         xMin_ = 0;
         yMin_ = 0;
@@ -296,9 +278,9 @@ template <class A> class OffsetArray3D
     }
     OffsetArray3D(const OffsetArray3D<A> &source)
     {
-        array_ = NULL;
+        array_ = nullptr;
         linearSize_ = 0;
-        sliceOffsets_ = NULL;
+        sliceOffsets_ = nullptr;
         xMin_ = 0;
         yMin_ = 0;
         zMin_ = 0;

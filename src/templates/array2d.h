@@ -1,23 +1,5 @@
-/*
-    *** Two-Dimensional Array
-    *** src/templates/array2d.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #pragma once
 
@@ -31,9 +13,9 @@ template <class A> class Array2D
     public:
     Array2D(int nrows = 0, int ncolumns = 0, bool half = false)
     {
-        array_ = NULL;
+        array_ = nullptr;
         linearSize_ = 0;
-        rowOffsets_ = NULL;
+        rowOffsets_ = nullptr;
         nRows_ = 0;
         nColumns_ = 0;
         half_ = half;
@@ -44,21 +26,21 @@ template <class A> class Array2D
     // Clear array data
     void clear()
     {
-        if (array_ != NULL)
+        if (array_ != nullptr)
             delete[] array_;
-        if (rowOffsets_ != NULL)
+        if (rowOffsets_ != nullptr)
             delete[] rowOffsets_;
-        rowOffsets_ = NULL;
-        array_ = NULL;
+        rowOffsets_ = nullptr;
+        array_ = nullptr;
         linearSize_ = 0;
         nRows_ = 0;
         nColumns_ = 0;
     }
     Array2D(const Array2D<A> &source)
     {
-        array_ = NULL;
+        array_ = nullptr;
         linearSize_ = 0;
-        rowOffsets_ = NULL;
+        rowOffsets_ = nullptr;
         nRows_ = 0;
         nColumns_ = 0;
         half_ = false;

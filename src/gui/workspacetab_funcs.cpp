@@ -1,23 +1,5 @@
-/*
-    *** WorkspaceTab Functions
-    *** src/gui/workspacetab_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -127,8 +109,8 @@ void WorkspaceTab::removeGizmo(QString uniqueName)
 // Create Gizmo with specified type
 Gizmo *WorkspaceTab::createGizmo(QString type)
 {
-    Gizmo *gizmo = NULL;
-    QWidget *widget = NULL;
+    Gizmo *gizmo = nullptr;
+    QWidget *widget = nullptr;
 
     // Check the type of the provided gizmo...
     if (type == "Graph")
@@ -149,7 +131,7 @@ Gizmo *WorkspaceTab::createGizmo(QString type)
     {
         Messenger::error("Couldn't add gizmo to workspace '{} - unrecognised type '{}' encountered.\n", qPrintable(title()),
                          qPrintable(type));
-        return NULL;
+        return nullptr;
     }
 
     // Create a new window for the Gizmo's widget and show it
@@ -227,7 +209,7 @@ bool WorkspaceTab::readState(LineParser &parser, const CoreData &coreData)
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
         Gizmo *gizmo = createGizmo(QString::fromStdString(std::string(parser.argsv(0))));
-        if (gizmo == NULL)
+        if (gizmo == nullptr)
             return Messenger::error("Unrecognised gizmo type '{}' in workspace '{}'.\n", parser.argsv(0), qPrintable(title()));
 
         // Set the unique name

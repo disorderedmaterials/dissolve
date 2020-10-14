@@ -1,23 +1,5 @@
-/*
-    *** AtomTypeList Definition
-    *** src/classes/atomtypelist.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/atomtypelist.h"
 #include "base/lineparser.h"
@@ -94,7 +76,7 @@ void AtomTypeList::add(const AtomTypeList &source)
         AtomTypeData &atd = add(newType.atomType());
 
         // Now add Isotope data
-        for (auto *topeData = newType.isotopeData(); topeData != NULL; topeData = topeData->next())
+        for (auto *topeData = newType.isotopeData(); topeData != nullptr; topeData = topeData->next())
             atd.add(topeData->isotope(), topeData->population());
     }
 }
@@ -112,7 +94,7 @@ void AtomTypeList::addIsotope(std::shared_ptr<AtomType> atomType, Isotope *tope,
     auto &atd = add(atomType, 0);
 
     // Add / increase isotope population
-    if (tope != NULL)
+    if (tope != nullptr)
         atd.add(tope, popAdd);
 }
 
@@ -276,7 +258,7 @@ void AtomTypeList::print() const
             Messenger::print("{} {:<8}  {:<3}    -     {:<10d}    {:10.6f} (of world) {:6.3f}\n", exch, atd.atomTypeName(),
                              atd.atomType()->element()->symbol(), atd.population(), atd.fraction(), atd.boundCoherent());
 
-            for (const auto *topeData = atd.isotopeData(); topeData != NULL; topeData = topeData->next())
+            for (const auto *topeData = atd.isotopeData(); topeData != nullptr; topeData = topeData->next())
             {
                 Messenger::print("                   {:<3d}   {:<10.6e}  {:10.6f} (of type)  {:6.3f}\n",
                                  topeData->isotope()->A(), topeData->population(), topeData->fraction(),

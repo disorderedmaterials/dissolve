@@ -1,23 +1,5 @@
-/*
-    *** Refine Module - Processing
-    *** src/modules/refine/process.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
@@ -344,7 +326,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
             simulatedReferenceData_.createEmpty(combinedUnweightedSQ.linearArraySize());
             for_each_pair_early(
                 dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
                     // Weight in the matrix will be based on the natural isotope and the summed
                     // concentration weight
                     double factor = Isotopes::naturalIsotope(at1->element())->boundCoherent() *
@@ -361,7 +343,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     if (!scatteringMatrix_.addPartialReferenceData(data, at1, at2, factor, (1.0 - augmentationParam)))
                         return Messenger::error("Refine: Failed to augment scattering matrix with partial {}-{}.\n",
                                                 at1->name(), at2->name());
-                    return std::nullopt;
+                    return EarlyReturn<bool>::Continue;
                 });
         }
         else if (augmentationStyle != RefineModule::NoAugmentation)

@@ -1,23 +1,5 @@
-/*
-    *** Generic Item
-    *** src/genericitems/item.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "genericitems/item.h"
 
@@ -44,15 +26,15 @@ void GenericItem::addItemClass(GenericItem *item) { itemClasses_.own(item); }
 GenericItem *GenericItem::newItem(std::string_view className, std::string_view name, int flags)
 {
     // Search through registered item classes list for one matching the class name provided
-    for (auto *item = itemClasses_.first(); item != NULL; item = item->next())
+    for (auto *item = itemClasses_.first(); item != nullptr; item = item->next())
     {
         // See if the item can create a GenericItem of the desired type. If it can't, move on
         GenericItem *newItem = item->createItem(className, name, flags);
-        if (newItem != NULL)
+        if (newItem != nullptr)
             return newItem;
     }
 
-    return NULL;
+    return nullptr;
 }
 
 /*

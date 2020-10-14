@@ -1,23 +1,5 @@
-/*
-    *** CalculateSDF Module Widget - Functions
-    *** src/modules/calculate_sdf/gui/modulewidget_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/box.h"
 #include "classes/configuration.h"
@@ -56,12 +38,12 @@ CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, CalculateSDF
     sdfView.axes().setRange(2, -10.0, 10.0);
     sdfView.setAutoFollowType(View::AllAutoFollow);
 
-    sdfRenderable_ = NULL;
-    referenceMolecule_ = NULL;
-    referenceMoleculeRenderable_ = NULL;
+    sdfRenderable_ = nullptr;
+    referenceMolecule_ = nullptr;
+    referenceMoleculeRenderable_ = nullptr;
 
     // Add on "<None>" option for reference molecule
-    ui_.ReferenceMoleculeCombo->addItem("<None>", VariantPointer<Species>(NULL));
+    ui_.ReferenceMoleculeCombo->addItem("<None>", VariantPointer<Species>(nullptr));
 
     refreshing_ = false;
 
@@ -142,8 +124,8 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
 {
     // Remove any current data
     sdfGraph_->clearRenderables();
-    sdfRenderable_ = NULL;
-    referenceMoleculeRenderable_ = NULL;
+    sdfRenderable_ = nullptr;
+    referenceMoleculeRenderable_ = nullptr;
 
     if (!module_)
         return;
@@ -205,7 +187,7 @@ void CalculateSDFModuleWidget::on_ReferenceMoleculeCombo_currentIndexChanged(int
 
     // Check index...
     if (index == -1)
-        referenceMolecule_ = NULL;
+        referenceMolecule_ = nullptr;
     else
         referenceMolecule_ = VariantPointer<Species>(ui_.ReferenceMoleculeCombo->currentData());
 

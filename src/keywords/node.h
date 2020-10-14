@@ -1,23 +1,5 @@
-/*
-    *** Keyword - Node
-    *** src/keywords/node.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #pragma once
 
@@ -78,7 +60,7 @@ class NodeKeywordBase
 template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordData<N *>
 {
     public:
-    NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N *node = NULL)
+    NodeKeyword(ProcedureNode *parentNode, ProcedureNode::NodeType nodeType, bool onlyInScope, N *node = nullptr)
         : NodeKeywordBase(parentNode, nodeType, onlyInScope), KeywordData<N *>(KeywordBase::NodeData, node)
     {
     }
@@ -112,7 +94,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
     {
         // No need to write the keyword if the node pointer is null
-        if (KeywordData<N *>::data_ == NULL)
+        if (KeywordData<N *>::data_ == nullptr)
             return true;
 
         if (!parser.writeLineF("{}{}  '{}'\n", prefix, KeywordBase::name(), KeywordData<N *>::data_->name()))
@@ -162,6 +144,6 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
     void removeReferencesTo(ProcedureNode *node)
     {
         if (KeywordData<N *>::data_ == node)
-            KeywordData<N *>::data_ = NULL;
+            KeywordData<N *>::data_ = nullptr;
     }
 };

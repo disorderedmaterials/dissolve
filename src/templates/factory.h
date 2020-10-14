@@ -1,23 +1,5 @@
-/*
-    *** Object Factory
-    *** src/templates/factory.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #pragma once
 
@@ -83,7 +65,7 @@ template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
     T *nextAvailable()
     {
         if (nextAvailableObject_ == -1)
-            return NULL;
+            return nullptr;
         T *object = &objectArray_[nextAvailableObject_];
         objectUsed_[nextAvailableObject_] = true;
         --nUnusedObjects_;
@@ -163,7 +145,7 @@ template <class T> class ObjectFactory
     public:
     ObjectFactory<T>()
     {
-        currentChunk_ = NULL;
+        currentChunk_ = nullptr;
         chunkSize_ = 256;
     }
 
@@ -189,7 +171,7 @@ template <class T> class ObjectFactory
     // Produce a new object
     T *produce()
     {
-        if (currentChunk_ == NULL)
+        if (currentChunk_ == nullptr)
         {
             currentChunk_ = new ObjectChunk<T>(chunkSize_);
             objectChunks_.own(currentChunk_);
@@ -201,7 +183,7 @@ template <class T> class ObjectFactory
         {
             // Must search current chunk list to see if any current chunks have available space. If not, we will
             // create a new one
-            for (ObjectChunk<T> *chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next())
+            for (ObjectChunk<T> *chunk = objectChunks_.first(); chunk != nullptr; chunk = chunk->next())
             {
                 if (chunk == currentChunk_)
                     continue;
@@ -220,13 +202,13 @@ template <class T> class ObjectFactory
 
         // If we get here, then something has gone horribly wrong...
         Messenger::error("Couldn't find an empty chunk to return an object from.\n");
-        return NULL;
+        return nullptr;
     }
     // Return specified object to factory
     void returnObject(T *object)
     {
         // Must find chunk which owns this object
-        for (ObjectChunk<T> *chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next())
+        for (ObjectChunk<T> *chunk = objectChunks_.first(); chunk != nullptr; chunk = chunk->next())
             if (chunk->returnObject(object))
                 return;
 
@@ -236,7 +218,7 @@ template <class T> class ObjectFactory
     // Mark all objects as unused
     void markAllObjectsUnused()
     {
-        for (ObjectChunk<T> *chunk = objectChunks_.first(); chunk != NULL; chunk = chunk->next())
+        for (ObjectChunk<T> *chunk = objectChunks_.first(); chunk != nullptr; chunk = chunk->next())
             chunk->markAllObjectsUnused();
     }
 };

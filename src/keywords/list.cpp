@@ -1,23 +1,5 @@
-/*
-    *** Keyword List
-    *** src/keywords/list.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "keywords/list.h"
 #include "base/lineparser.h"
@@ -90,11 +72,11 @@ bool KeywordList::link(std::string_view groupName, KeywordBase *object, std::str
 // Find named keyword
 KeywordBase *KeywordList::find(std::string_view name) const
 {
-    for (auto *kwd = keywords_.first(); kwd != NULL; kwd = kwd->next())
+    for (auto *kwd = keywords_.first(); kwd != nullptr; kwd = kwd->next())
         if (DissolveSys::sameString(name, kwd->name()))
             return kwd->base();
 
-    return NULL;
+    return nullptr;
 }
 
 // Return first keyword in list
@@ -108,8 +90,8 @@ const List<KeywordBase> &KeywordList::keywords() const { return keywords_; }
 KeywordGroup *KeywordList::addGroup(std::string_view name)
 {
     // Check that a group with the specified name doesn't already exist
-    KeywordGroup *group = NULL;
-    for (group = groups_.first(); group != NULL; group = group->next())
+    KeywordGroup *group = nullptr;
+    for (group = groups_.first(); group != nullptr; group = group->next())
         if (DissolveSys::sameString(name, group->name()))
             break;
 

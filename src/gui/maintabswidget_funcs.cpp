@@ -1,23 +1,5 @@
-/*
-    *** Main Tabs Widget
-    *** src/gui/maintabswidget_funcs.cpp
-    Copyright T. Youngs 2013-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "base/messenger.h"
 #include "gui/charts/moduleblock.h"
@@ -71,10 +53,10 @@ Species *MainTabsWidget::currentSpecies() const
     // Get the currently-selected tab, and make sure it's a SpeciesTab
     MainTab *tab = currentTab();
     if (tab->type() != MainTab::SpeciesTabType)
-        return NULL;
+        return nullptr;
 
     SpeciesTab *speciesTab = dynamic_cast<SpeciesTab *>(tab);
-    return (speciesTab ? speciesTab->species() : NULL);
+    return (speciesTab ? speciesTab->species() : nullptr);
 }
 
 // Return currently-selected Configuration (if a ConfigurationTab is the current one)
@@ -83,10 +65,10 @@ Configuration *MainTabsWidget::currentConfiguration() const
     // Get the currently-selected tab, and make sure it's a SpeciesTab
     MainTab *tab = currentTab();
     if (tab->type() != MainTab::ConfigurationTabType)
-        return NULL;
+        return nullptr;
 
     ConfigurationTab *configurationTab = dynamic_cast<ConfigurationTab *>(tab);
-    return (configurationTab ? configurationTab->configuration() : NULL);
+    return (configurationTab ? configurationTab->configuration() : nullptr);
 }
 
 // Return currently-selected ModuleLayer (if a LayerTab is the current one)
@@ -95,70 +77,70 @@ ModuleLayer *MainTabsWidget::currentLayer() const
     // Get the currently-selected tab, and make sure it's a SpeciesTab
     MainTab *tab = currentTab();
     if (tab->type() != MainTab::LayerTabType)
-        return NULL;
+        return nullptr;
 
     LayerTab *layerTab = dynamic_cast<LayerTab *>(tab);
-    return (layerTab ? layerTab->moduleLayer() : NULL);
+    return (layerTab ? layerTab->moduleLayer() : nullptr);
 }
 
 // Find SpeciesTab containing specified page widget
 SpeciesTab *MainTabsWidget::speciesTab(QWidget *page)
 {
-    for (auto *tab = speciesTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = speciesTabs_.first(); tab != nullptr; tab = tab->next())
         if (tab->page() == page)
             return tab;
 
-    return NULL;
+    return nullptr;
 }
 
 // Find ConfigurationTab containing specified page widget
 ConfigurationTab *MainTabsWidget::configurationTab(QWidget *page)
 {
-    for (auto *tab = configurationTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = configurationTabs_.first(); tab != nullptr; tab = tab->next())
         if (tab->page() == page)
             return tab;
 
-    return NULL;
+    return nullptr;
 }
 
 // Find LayerTab containing specified page widget
 LayerTab *MainTabsWidget::processingLayerTab(QWidget *page)
 {
-    for (auto *tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = processingLayerTabs_.first(); tab != nullptr; tab = tab->next())
         if (tab->page() == page)
             return tab;
 
-    return NULL;
+    return nullptr;
 }
 
 // Find ModuleTab containing specified page widget
 ModuleTab *MainTabsWidget::moduleTab(QWidget *page)
 {
-    for (auto *tab = moduleTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = moduleTabs_.first(); tab != nullptr; tab = tab->next())
         if (tab->page() == page)
             return tab;
 
-    return NULL;
+    return nullptr;
 }
 
 // Find ModuleTab containing specified Module
 ModuleTab *MainTabsWidget::moduleTab(Module *module)
 {
-    for (auto *tab = moduleTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = moduleTabs_.first(); tab != nullptr; tab = tab->next())
         if (tab->module() == module)
             return tab;
 
-    return NULL;
+    return nullptr;
 }
 
 // Find WorkspaceTab containing specified page widget
 WorkspaceTab *MainTabsWidget::workspaceTab(QWidget *page)
 {
-    for (auto *tab = workspaceTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = workspaceTabs_.first(); tab != nullptr; tab = tab->next())
         if (tab->page() == page)
             return tab;
 
-    return NULL;
+    return nullptr;
 }
 
 // Find tab with title specified
@@ -168,7 +150,7 @@ MainTab *MainTabsWidget::findTab(const QString title)
         if (tab->title() == title)
             return tab;
 
-    return NULL;
+    return nullptr;
 }
 
 // Find tab with specified page widget
@@ -178,7 +160,7 @@ MainTab *MainTabsWidget::findTab(QWidget *page)
         if (tab->page() == page)
             return tab;
 
-    return NULL;
+    return nullptr;
 }
 
 // Generate unique tab name with base name provided
@@ -466,8 +448,8 @@ MainTab *MainTabsWidget::addWorkspaceTab(DissolveWindow *dissolveWindow, const Q
 // Return current tab
 MainTab *MainTabsWidget::currentTab() const
 {
-    if (currentWidget() == NULL)
-        return NULL;
+    if (currentWidget() == nullptr)
+        return nullptr;
 
     // Retrieve the widget corresponding to the index provided - it will be a MainTab widget, from which all our tab widgets
     // are derived
@@ -475,7 +457,7 @@ MainTab *MainTabsWidget::currentTab() const
     if (!currentTab)
     {
         Messenger::print("Can't cast current tab (index {}) into a MainTab.\n", currentIndex());
-        return NULL;
+        return nullptr;
     }
 
     return currentTab;
@@ -493,7 +475,7 @@ void MainTabsWidget::setCurrentTab(Species *species)
     if (!species)
         return;
 
-    for (auto *tab = speciesTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = speciesTabs_.first(); tab != nullptr; tab = tab->next())
         if (tab->species() == species)
         {
             setCurrentWidget(tab->page());
@@ -509,7 +491,7 @@ void MainTabsWidget::setCurrentTab(Configuration *cfg)
     if (!cfg)
         return;
 
-    for (auto *tab = configurationTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = configurationTabs_.first(); tab != nullptr; tab = tab->next())
         if (tab->configuration() == cfg)
         {
             setCurrentWidget(tab->page());
@@ -525,7 +507,7 @@ void MainTabsWidget::setCurrentTab(ModuleLayer *layer)
     if (!layer)
         return;
 
-    for (auto *tab = processingLayerTabs_.first(); tab != NULL; tab = tab->next())
+    for (auto *tab = processingLayerTabs_.first(); tab != nullptr; tab = tab->next())
         if (tab->moduleLayer() == layer)
         {
             setCurrentWidget(tab->page());
@@ -612,7 +594,7 @@ QToolButton *MainTabsWidget::addTabCloseButton(QWidget *pageWidget)
     // Find the tab containing the specified page
     auto tabIndex = indexOf(pageWidget);
     if (tabIndex == -1)
-        return NULL;
+        return nullptr;
 
     // Create a suitable tool button for the tab
     QToolButton *closeButton = new QToolButton;

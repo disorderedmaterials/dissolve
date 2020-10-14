@@ -1,23 +1,5 @@
-/*
-    *** EPSR Module - Processing
-    *** src/modules/epsr/process.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
@@ -122,6 +104,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     double rmaxpt = keywords_.asDouble("RMaxPT");
     double rminpt = keywords_.asDouble("RMinPT");
     const bool saveDifferences = keywords_.asBool("SaveDifferenceFunctions");
+    const bool saveSimulatedFR = keywords_.asBool("SaveSimulatedFR");
     const bool saveEmpiricalPotentials = keywords_.asBool("SaveEmpiricalPotentials");
     const bool saveEstimatedPartials = keywords_.asBool("SaveEstimatedPartials");
     const bool savePotentialCoefficients = keywords_.asBool("SavePCof");
@@ -164,6 +147,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("EPSR: Estimated partials will be saved.\n");
     if (savePotentialCoefficients)
         Messenger::print("EPSR: Potential coefficients will be saved.\n");
+    if (saveSimulatedFR)
+        Messenger::print("EPSR: Simulated F(r) (from FT of F(Q)) will be saved.\n");
     if (testMode)
         Messenger::print("EPSR: Test mode is enabled (threshold = {}%).", testThreshold);
     Messenger::print("\n");
@@ -452,6 +437,19 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             else if (!procPool.decision())
                 return true;
         }
+        if (saveSimulatedFR)
+        {
+            if (procPool.isMaster())
+            {
+                Data1DExportFileFormat exportFormat(fmt::format("{}-SimulatedFR.r", module->uniqueName()));
+                if (exportFormat.exportData(simulatedFR))
+                    procPool.decideTrue();
+                else
+                    return procPool.decideFalse();
+            }
+            else if (!procPool.decision())
+                return true;
+        }
 
         // Test Mode
         if (testMode)
@@ -590,7 +588,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Create the array
         simulatedReferenceData_.createEmpty(combinedUnweightedSQ.linearArraySize());
         for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                            [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                            [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
                                 // Copy the unweighted data and wight weight it according to the natural isotope / concentration
                                 // factor calculated above
                                 auto data = combinedUnweightedSQ.at(i, j);
@@ -600,7 +598,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 if (!scatteringMatrix.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback)))
                                     return Messenger::error("EPSR: Failed to augment scattering matrix with partial {}-{}.\n",
                                                             at1->name(), at2->name());
-                                return std::nullopt;
+                                return EarlyReturn<bool>::Continue;
                             });
 
         scatteringMatrix.finalise();
@@ -644,7 +642,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (testMode)
         {
             for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
-                                [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+                                [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
                                     testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
                                     if (testData_.containsData(testDataName))
                                     {
@@ -656,7 +654,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                         if (error > testThreshold)
                                             return false;
                                     }
-                                    return std::nullopt;
+                                    return EarlyReturn<bool>::Continue;
                                 });
         }
 

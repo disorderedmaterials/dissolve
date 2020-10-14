@@ -1,23 +1,5 @@
-/*
-    *** EnergyKernel
-    *** src/classes/energykernel.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/energykernel.h"
 #include "base/processpool.h"
@@ -69,14 +51,14 @@ double EnergyKernel::energyWithMim(const Atom *i, const Atom *j)
 double EnergyKernel::energy(const Atom *i, const Atom *j, bool applyMim, bool excludeIgeJ)
 {
 #ifdef CHECKS
-    if (i == NULL)
+    if (i == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Atom pointer (i) passed to EnergyKernel::energy(Atom,Atom,bool,bool).\n");
+        Messenger::error("NULL_POINTER - nullptr (i) passed to EnergyKernel::energy(Atom,Atom,bool,bool).\n");
         return 0.0;
     }
-    if (j == NULL)
+    if (j == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Atom pointer (j) passed to EnergyKernel::energy(Atom,Atom,bool,bool).\n");
+        Messenger::error("NULL_POINTER - nullptr (j) passed to EnergyKernel::energy(Atom,Atom,bool,bool).\n");
         return 0.0;
     }
 #endif
@@ -99,14 +81,15 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
                             ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 #ifdef CHECKS
-    if (centralCell == NULL)
+    if (centralCell == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL central Cell pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
+        Messenger::error(
+            "NULL_POINTER - nullptr (central cell) pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
         return 0.0;
     }
-    if (otherCell == NULL)
+    if (otherCell == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL other Cell pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
+        Messenger::error("NULL_POINTER - nullptr (other cell) pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
         return 0.0;
     }
 #endif
@@ -298,14 +281,14 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
 double EnergyKernel::energy(const Atom *i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 #ifdef CHECKS
-    if (i == NULL)
+    if (i == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL atom pointer passed to EnergyKernel::energy(Atom,Cell).\n");
         return 0.0;
     }
-    if (cell == NULL)
+    if (cell == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Cell pointer passed to EnergyKernel::energy(Atom,Cell).\n");
+        Messenger::error("NULL_POINTER - nullptr passed to EnergyKernel::energy(Atom,Cell).\n");
         return 0.0;
     }
 #endif
@@ -537,9 +520,9 @@ double EnergyKernel::energy(const Atom *i, const Cell *cell, int flags, ProcessP
 double EnergyKernel::energy(const Atom *i, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 #ifdef CHECKS
-    if (i == NULL)
+    if (i == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Atom pointer passed to EnergyKernel::energy(Atom,ParallelStyle).\n");
+        Messenger::error("NULL_POINTER - nullptr passed to EnergyKernel::energy(Atom,ParallelStyle).\n");
         return 0.0;
     }
 #endif
@@ -762,12 +745,12 @@ double EnergyKernel::energy(const SpeciesImproper &imp, const Atom *i, const Ato
 double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, const Atom *i)
 {
 #ifdef CHECKS
-    if (i == NULL)
+    if (i == nullptr)
     {
         Messenger::error("NULL Atom given to EnergyKernel::intraEnergy().\n");
         return 0.0;
     }
-    if (i->speciesAtom() == NULL)
+    if (i->speciesAtom() == nullptr)
     {
         Messenger::error("NULL SpeciesAtom in Atom given to EnergyKernel::intraEnergy().\n");
         return 0.0;
@@ -815,7 +798,7 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, c
 double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol)
 {
 #ifdef CHECKS
-    if (mol == NULL)
+    if (mol == nullptr)
     {
         Messenger::error("NULL Molecule pointer given to EnergyKernel::intramolecularEnergy.\n");
         return 0.0;

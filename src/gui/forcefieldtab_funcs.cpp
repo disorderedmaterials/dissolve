@@ -1,23 +1,5 @@
-/*
-    *** ForcefieldTab Functions
-    *** src/gui/forcefieldtab_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
 #include "classes/speciesangle.h"
@@ -549,7 +531,8 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 {
     // First, need to get target element for the new AtomType
     bool ok;
-    Element *element = ElementSelector::getElement(this, "Element Selection", "Choose the Element for the AtomType", NULL, &ok);
+    Element *element =
+        ElementSelector::getElement(this, "Element Selection", "Choose the Element for the AtomType", nullptr, &ok);
     if (!ok)
         return;
 
@@ -761,7 +744,7 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target PairPotential from the passed widget
-    PairPotential *pairPotential = w ? VariantPointer<PairPotential>(w->data(Qt::UserRole)) : NULL;
+    PairPotential *pairPotential = w ? VariantPointer<PairPotential>(w->data(Qt::UserRole)) : nullptr;
     if (!pairPotential)
         return;
 
@@ -807,7 +790,7 @@ void ForcefieldTab::on_MasterBondsTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target MasterIntra from the passed widget
-    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
+    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : nullptr;
     if (!masterIntra)
         return;
 
@@ -848,7 +831,7 @@ void ForcefieldTab::on_MasterAnglesTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target MasterIntra from the passed widget
-    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
+    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : nullptr;
     if (!masterIntra)
         return;
 
@@ -889,7 +872,7 @@ void ForcefieldTab::on_MasterTorsionsTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target MasterIntra from the passed widgetmasterIntra->setForm(SpeciesBond::bondFunction(qPrintable(w->text())));
-    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
+    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : nullptr;
     if (!masterIntra)
         return;
 
@@ -930,7 +913,7 @@ void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem *w)
         return;
 
     // Get target MasterIntra from the passed widgetmasterIntra->setForm(SpeciesBond::bondFunction(qPrintable(w->text())));
-    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : NULL;
+    MasterIntra *masterIntra = w ? VariantPointer<MasterIntra>(w->data(Qt::UserRole)) : nullptr;
     if (!masterIntra)
         return;
 

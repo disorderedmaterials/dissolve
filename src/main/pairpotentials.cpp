@@ -1,23 +1,5 @@
-/*
-    *** Dissolve - PairPotentials
-    *** src/main/pairpotentials.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
 #include "genericitems/listhelper.h"
@@ -72,27 +54,27 @@ PairPotential *Dissolve::pairPotential(int n) { return pairPotentials_[n]; }
 // Return whether specified PairPotential is defined
 PairPotential *Dissolve::pairPotential(std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2) const
 {
-    for (auto *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
+    for (auto *pot = pairPotentials_.first(); pot != nullptr; pot = pot->next())
     {
         if ((pot->atomTypeI() == at1) && (pot->atomTypeJ() == at2))
             return pot;
         if ((pot->atomTypeI() == at2) && (pot->atomTypeJ() == at1))
             return pot;
     }
-    return NULL;
+    return nullptr;
 }
 
 // Return whether specified PairPotential is defined
 PairPotential *Dissolve::pairPotential(std::string_view at1, std::string_view at2) const
 {
-    for (auto *pot = pairPotentials_.first(); pot != NULL; pot = pot->next())
+    for (auto *pot = pairPotentials_.first(); pot != nullptr; pot = pot->next())
     {
         if (DissolveSys::sameString(pot->atomTypeNameI(), at1) && DissolveSys::sameString(pot->atomTypeNameJ(), at2))
             return pot;
         if (DissolveSys::sameString(pot->atomTypeNameI(), at2) && DissolveSys::sameString(pot->atomTypeNameJ(), at1))
             return pot;
     }
-    return NULL;
+    return nullptr;
 }
 
 // Return map for PairPotentials

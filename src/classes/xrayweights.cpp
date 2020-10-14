@@ -1,23 +1,5 @@
-/*
-    *** XRay Weights Container
-    *** src/classes/xrayweights.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/xrayweights.h"
 #include "base/lineparser.h"
@@ -92,12 +74,12 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
     // Fill atomTypes_ list with AtomType populations, based on Isotopologues relative populations and associated Species
     // populations
     atomTypes_.clear();
-    for (auto *spInfo = speciesInfoList.first(); spInfo != NULL; spInfo = spInfo->next())
+    for (auto *spInfo = speciesInfoList.first(); spInfo != nullptr; spInfo = spInfo->next())
     {
         const Species *sp = spInfo->species();
 
         // Loop over Atoms in the Species
-        for (auto *i = sp->firstAtom(); i != NULL; i = i->next())
+        for (auto *i = sp->firstAtom(); i != nullptr; i = i->next())
             atomTypes_.add(i->atomType(), spInfo->population());
     }
 
@@ -108,7 +90,7 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
 // Add Species to weights in the specified population
 void XRayWeights::addSpecies(const Species *sp, int population)
 {
-    for (auto *i = sp->firstAtom(); i != NULL; i = i->next())
+    for (auto *i = sp->firstAtom(); i != nullptr; i = i->next())
         atomTypes_.add(i->atomType(), population);
 
     valid_ = false;
@@ -254,6 +236,42 @@ Array<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const Array<do
         fijq[n] = fi.magnitude(Q.constAt(n)) * fj.magnitude(Q.constAt(n)) * preFactor;
 
     return fijq;
+}
+
+// Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q values
+Array<double> XRayWeights::boundCoherentSquareOfAverage(const Array<double> &Q) const
+{
+    // Initialise results array
+    Array<double> bbar(Q.nItems());
+
+    for (int typeI = 0; typeI < atomTypes_.nItems(); ++typeI)
+    {
+        const double ci = concentrations_.constAt(typeI);
+        auto &fi = formFactorData_[typeI].get();
+
+        for (int n = 0; n < Q.nItems(); ++n)
+            bbar[n] += ci * fi.magnitude(Q.constAt(n));
+    }
+
+    return bbar;
+}
+
+// Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q values
+Array<double> XRayWeights::boundCoherentAverageOfSquares(const Array<double> &Q) const
+{
+    // Initialise results array
+    Array<double> bbar(Q.nItems());
+
+    for (int typeI = 0; typeI < atomTypes_.nItems(); ++typeI)
+    {
+        const double ci = concentrations_.constAt(typeI);
+        auto &fi = formFactorData_[typeI].get();
+
+        for (int n = 0; n < Q.nItems(); ++n)
+            bbar[n] += ci * fi.magnitude(Q.constAt(n)) * fi.magnitude(Q.constAt(n));
+    }
+
+    return bbar;
 }
 
 // Return whether the structure is valid (i.e. has been finalised)

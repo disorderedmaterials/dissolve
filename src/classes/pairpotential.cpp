@@ -1,23 +1,5 @@
-/*
-    *** Interatomic Pair Potential
-    *** src/classes/pairpotential.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/pairpotential.h"
 #include "base/lineparser.h"
@@ -123,12 +105,12 @@ PairPotential::CoulombTruncationScheme PairPotential::coulombTruncationScheme() 
 void PairPotential::setData1DNames()
 {
     // Check for NULL pointers
-    if (atomTypeI_ == NULL)
+    if (atomTypeI_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL AtomType pointer (atomTypeI_) found in PairPotential::setData1DNames().\n");
         return;
     }
-    if (atomTypeJ_ == NULL)
+    if (atomTypeJ_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL AtomType pointer (atomTypeJ_) found in PairPotential::setData1DNames().\n");
         return;
@@ -242,7 +224,7 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
 std::string_view PairPotential::atomTypeNameI() const
 {
     // Check for NULL pointers
-    if (atomTypeI_ == NULL)
+    if (atomTypeI_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL AtomType pointer found in PairPotential::atomTypeNameI().\n");
         return "NULL";
@@ -254,7 +236,7 @@ std::string_view PairPotential::atomTypeNameI() const
 std::string_view PairPotential::atomTypeNameJ() const
 {
     // Check for NULL pointers
-    if (atomTypeJ_ == NULL)
+    if (atomTypeJ_ == nullptr)
     {
         Messenger::error("NULL_POINTER - NULL AtomType pointer found in PairPotential::atomTypeNameJ().\n");
         return "NULL";
@@ -468,7 +450,7 @@ void PairPotential::calculateDUFull()
 bool PairPotential::tabulate(double maxR, double delta, bool includeCoulomb)
 {
     // Check that AtomType pointers were set at some pointer
-    if ((atomTypeI_ == NULL) || (atomTypeJ_ == NULL))
+    if ((atomTypeI_ == nullptr) || (atomTypeJ_ == nullptr))
     {
         Messenger::error("NULL_POINTER - One or both AtomTypes in PairPotential are NULL.\n");
         return false;

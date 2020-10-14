@@ -1,23 +1,5 @@
-/*
-    *** Procedure Node - Select
-    *** src/procedure/nodes/select.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "procedure/nodes/select.h"
 #include "base/lineparser.h"
@@ -61,13 +43,13 @@ SelectProcedureNode::SelectProcedureNode(SpeciesSite *site, bool axesRequired) :
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &forEachBranch_, ProcedureNode::AnalysisContext), "ForEach",
                   "Branch to run on each site selected");
 
-    forEachBranch_ = NULL;
+    forEachBranch_ = nullptr;
 
     currentSiteIndex_ = -1;
     nCumulativeSites_ = 0;
     nSelections_ = 0;
-    sameMolecule_ = NULL;
-    distanceReferenceSite_ = NULL;
+    sameMolecule_ = nullptr;
+    distanceReferenceSite_ = nullptr;
 }
 
 SelectProcedureNode::~SelectProcedureNode()
@@ -108,13 +90,13 @@ const RefList<const Site> &SelectProcedureNode::excludedSites() const { return e
 std::shared_ptr<const Molecule> SelectProcedureNode::sameMoleculeMolecule()
 {
     if (!sameMolecule_)
-        return NULL;
+        return nullptr;
 
     const Site *site = sameMolecule_->currentSite();
     if (!site)
     {
         Messenger::warn("Requested Molecule from SelectProcedureNode::sameMolecule_, but there is no current site.\n");
-        return NULL;
+        return nullptr;
     }
 
     return site->molecule();
@@ -136,7 +118,7 @@ int SelectProcedureNode::nCumulativeSites() const { return nCumulativeSites_; }
 // Return current site
 const Site *SelectProcedureNode::currentSite() const
 {
-    return (currentSiteIndex_ == -1 ? NULL : sites_.constAt(currentSiteIndex_));
+    return (currentSiteIndex_ == -1 ? nullptr : sites_.constAt(currentSiteIndex_));
 }
 
 /*
@@ -144,7 +126,7 @@ const Site *SelectProcedureNode::currentSite() const
  */
 
 // Return whether this node has a branch
-bool SelectProcedureNode::hasBranch() const { return (forEachBranch_ != NULL); }
+bool SelectProcedureNode::hasBranch() const { return (forEachBranch_ != nullptr); }
 // Return SequenceNode for the branch (if it exists)
 SequenceProcedureNode *SelectProcedureNode::branch() { return forEachBranch_; }
 
@@ -208,10 +190,10 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
             excludedSites_.addUnique(node->currentSite());
 
     // Get required Molecule parent, if requested
-    std::shared_ptr<const Molecule> moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : NULL;
+    std::shared_ptr<const Molecule> moleculeParent = sameMolecule_ ? sameMoleculeMolecule() : nullptr;
 
     // Site to use as distance reference point (if any)
-    const Site *distanceRef = distanceReferenceSite_ ? distanceReferenceSite_->currentSite() : NULL;
+    const Site *distanceRef = distanceReferenceSite_ ? distanceReferenceSite_->currentSite() : nullptr;
 
     /*
      * Add sites from specified Species/Sites
@@ -220,7 +202,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
     for (SpeciesSite *site : speciesSites_)
     {
         const SiteStack *siteStack = cfg->siteStack(site);
-        if (siteStack == NULL)
+        if (siteStack == nullptr)
             return ProcedureNode::Failure;
 
         for (int n = 0; n < siteStack->nSites(); ++n)

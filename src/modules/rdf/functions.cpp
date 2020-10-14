@@ -1,23 +1,5 @@
-/*
-    *** RDF Module - Functions
-    *** src/modules/rdf/functions.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/atom.h"
 #include "classes/atomtype.h"
@@ -479,11 +461,11 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
         // 		while (SpeciesInfo* spInfo = speciesInfoIterator.iterate())
         // 		{
         // 			Species* sp = spInfo->species();
-        // 			for (const SpeciesBond* b = sp->bonds().first(); b != NULL; b = b->next())
+        // 			for (const SpeciesBond* b = sp->bonds().first(); b != nullptr; b = b->next())
         // bondIntra.addUnique(b->parameterSource(), b); 			for (const SpeciesAngle* a =
-        // sp->angles().first(); a != NULL; a
+        // sp->angles().first(); a != nullptr; a
         // = a->next()) angleIntra.addUnique(a->parameterSource(), a); 			for (const SpeciesTorsion* t =
-        // sp->torsions().first(); t != NULL; t = t->next()) torsionIntra.addUnique(t->parameterSource(), t);
+        // sp->torsions().first(); t != nullptr; t = t->next()) torsionIntra.addUnique(t->parameterSource(), t);
         // 		}
 
         return Messenger::error("Frequency broadening not reimplemented yet.\n");
@@ -870,7 +852,7 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
 {
     // We either expect two AtomType names and a target next, or the target 'total'
     auto testResult = false;
-    if (DissolveSys::sameString(typeIorTotal, "total") && (typeJ == NULL) && (target == NULL))
+    if (DissolveSys::sameString(typeIorTotal, "total") && (typeJ == nullptr) && (target == nullptr))
     {
         double error = Error::percent(partials.constTotal(), testData);
         testResult = (error <= testThreshold);
@@ -929,8 +911,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
         if (!DissolveSys::sameString(prefix, parser.argsv(0)))
             return Messenger::error("Unrecognised test data name '{}'.\n", data->name());
 
-        if (!testReferencePartial(partials, testThreshold, *data, parser.argsv(1), parser.hasArg(2) ? parser.argsv(2) : NULL,
-                                  parser.hasArg(3) ? parser.argsv(3) : NULL))
+        if (!testReferencePartial(partials, testThreshold, *data, parser.argsv(1), parser.hasArg(2) ? parser.argsv(2) : nullptr,
+                                  parser.hasArg(3) ? parser.argsv(3) : nullptr))
             return false;
     }
 
@@ -966,8 +948,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
             return Messenger::error("Unrecognised test data name '{}'.\n", data->name());
         const PartialSet &targetSet = (setA ? partialsA : partialsB);
 
-        if (!testReferencePartial(targetSet, testThreshold, *data, parser.argsv(1), parser.hasArg(2) ? parser.argsv(2) : NULL,
-                                  parser.hasArg(3) ? parser.argsv(3) : NULL))
+        if (!testReferencePartial(targetSet, testThreshold, *data, parser.argsv(1),
+                                  parser.hasArg(2) ? parser.argsv(2) : nullptr, parser.hasArg(3) ? parser.argsv(3) : nullptr))
             return false;
     }
 

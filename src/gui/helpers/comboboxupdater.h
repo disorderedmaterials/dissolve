@@ -1,23 +1,5 @@
-/*
-    *** QComboBox Updater
-    *** src/gui/helpers/comboboxupdater.h
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "templates/list.h"
 #include "templates/refdatalist.h"
@@ -48,7 +30,7 @@ template <class I> class ComboBoxUpdater
             comboBox_->removeItem(currentIndex_);
 
         // If there is no valid current item, make sure this is reflected in the combobox
-        if (currentItem == NULL)
+        if (currentItem == nullptr)
             comboBox->setCurrentIndex(indexIfNoCurrentItem);
     }
 
@@ -67,7 +49,7 @@ template <class I> class ComboBoxUpdater
             comboBox_->removeItem(currentIndex_);
 
         // If there is no valid current item, make sure this is reflected in the combobox
-        if (currentItem == NULL)
+        if (currentItem == nullptr)
             comboBox->setCurrentIndex(indexIfNoCurrentItem);
     }
 
@@ -87,7 +69,7 @@ template <class I> class ComboBoxUpdater
             comboBox_->removeItem(currentIndex_);
 
         // If there is no valid current item, make sure this is reflected in the combobox
-        if (currentItem == NULL)
+        if (currentItem == nullptr)
             comboBox->setCurrentIndex(indexIfNoCurrentItem);
     }
 
@@ -198,7 +180,7 @@ template <class T, class I> class ComboBoxTextUpdater
             comboBox->removeItem(currentIndex);
 
         // If there is no valid current item, make sure this is reflected in the combobox
-        if (currentItem == NULL)
+        if (currentItem == nullptr)
             comboBox->setCurrentIndex(-1);
     }
 };

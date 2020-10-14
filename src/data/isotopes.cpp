@@ -1,23 +1,5 @@
-/*
-    *** Sears '91 Neutron Scattering Length Data
-    *** src/data/isotopes.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "data/isotopes.h"
 #include "base/messenger.h"
@@ -513,20 +495,20 @@ void Isotopes::registerIsotope(Isotope *isotope, int Z) { isotopesByElementPriva
 // Return Isotope with specified A for given Element (if it exists)
 Isotope *Isotopes::isotope(int Z, int A)
 {
-    for (auto *isotope = isotopesByElement(Z).first(); isotope != NULL; isotope = isotope->next())
+    for (auto *isotope = isotopesByElement(Z).first(); isotope != nullptr; isotope = isotope->next())
         if (isotope->A() == A)
             return isotope;
 
-    return NULL;
+    return nullptr;
 }
 
 // Return Isotope with specified A for given Element (if it exists)
 Isotope *Isotopes::isotope(Element *el, int A)
 {
-    if (el == NULL)
+    if (el == nullptr)
     {
         Messenger::error("Isotopes::isotope() - Element is NULL.\n");
-        return NULL;
+        return nullptr;
     }
 
     return isotope(el->Z(), A);

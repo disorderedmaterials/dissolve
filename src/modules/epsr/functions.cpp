@@ -1,23 +1,5 @@
-/*
-    *** EPSR Module - Functions
-    *** src/modules/epsr/functions.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
 #include "genericitems/listhelper.h"
@@ -77,7 +59,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
 
     i = 0;
     auto result = for_each_pair_early(
-        dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
+        dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
             Array<double> &potCoeff = coefficients.at(i, j);
 
             // Regenerate empirical potential from the stored coefficients
@@ -113,10 +95,10 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
             }
 
             pp->setUAdditional(ep);
-            return std::nullopt;
+            return EarlyReturn<bool>::Continue;
         });
 
-    return result.value_or(true).value_or(true);
+    return result.value_or(true);
 }
 
 // Generate and return single empirical potential function

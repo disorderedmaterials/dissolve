@@ -1,23 +1,5 @@
-/*
-    *** Configuration I/O
-    *** src/classes/configuration_io.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -49,7 +31,7 @@ bool Configuration::write(LineParser &parser) const
 
     // Write Molecule types - write sequential Molecules with same type as single line
     auto moleculeCount = 0;
-    const Species *lastType = NULL;
+    const Species *lastType = nullptr;
     for (int n = 0; n < molecules_.size(); ++n)
     {
         // If the last Molecule's Species is the same as this one, increment counter and move on
@@ -118,13 +100,13 @@ bool Configuration::read(LineParser &parser, const List<Species> &availableSpeci
 
     // Read Species types for Molecules
     auto nMolsRead = 0;
-    Species *sp = NULL;
+    Species *sp = nullptr;
     while (nMolsRead < expectedNMols)
     {
         // Read line containing number of molecules and Species name
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        for (sp = availableSpecies.first(); sp != NULL; sp = sp->next())
+        for (sp = availableSpecies.first(); sp != nullptr; sp = sp->next())
             if (DissolveSys::sameString(sp->name(), parser.argsv(1)))
                 break;
         if (!sp)

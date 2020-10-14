@@ -1,23 +1,5 @@
-/*
-    *** Cell Array
-    *** src/classes/cellarray.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/cellarray.h"
 #include "classes/box.h"
@@ -25,7 +7,7 @@
 
 CellArray::CellArray()
 {
-    cells_ = NULL;
+    cells_ = nullptr;
     nCells_ = 0;
 }
 
@@ -38,9 +20,9 @@ CellArray::~CellArray() {}
 // Clear Cell arrays
 void CellArray::clear()
 {
-    if (cells_ != NULL)
+    if (cells_ != nullptr)
         delete[] cells_;
-    cells_ = NULL;
+    cells_ = nullptr;
     nCells_ = 0;
 }
 
@@ -281,7 +263,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
         mimNeighbours.clear();
 
         // Loop over list of (relative) neighbour cell indices
-        for (ListVec3<int> *item = neighbourIndices_.first(); item != NULL; item = item->next())
+        for (ListVec3<int> *item = neighbourIndices_.first(); item != nullptr; item = item->next())
         {
             // Retrieve Cell pointer
             nbr = cell(gridRef.x + item->x, gridRef.y + item->y, gridRef.z + item->z);
@@ -370,14 +352,14 @@ bool CellArray::withinRange(const Cell *a, const Cell *b, double distance)
 {
 #ifdef CHECKS
     // Check for NULL cell pointers
-    if (a == NULL)
+    if (a == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Cell pointer 'a' given to CellArray::withinRange().\n");
+        Messenger::error("NULL_POINTER - nullptr 'a' given to CellArray::withinRange().\n");
         return false;
     }
-    if (b == NULL)
+    if (b == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Cell pointer 'b' given to CellArray::withinRange().\n");
+        Messenger::error("NULL_POINTER - nullptr 'b' given to CellArray::withinRange().\n");
         return false;
     }
 #endif
@@ -406,14 +388,14 @@ bool CellArray::minimumImageRequired(const Cell *a, const Cell *b, double distan
 {
 #ifdef CHECKS
     // Check for NULL cell pointers
-    if (a == NULL)
+    if (a == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Cell pointer 'a' given to CellArray::minimumImageRequired().\n");
+        Messenger::error("NULL_POINTER - nullptr 'a' given to CellArray::minimumImageRequired().\n");
         return false;
     }
-    if (b == NULL)
+    if (b == nullptr)
     {
-        Messenger::error("NULL_POINTER - NULL Cell pointer 'b' given to CellArray::minimumImageRequired().\n");
+        Messenger::error("NULL_POINTER - nullptr 'b' given to CellArray::minimumImageRequired().\n");
         return false;
     }
 #endif

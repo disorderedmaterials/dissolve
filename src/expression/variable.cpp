@@ -1,23 +1,5 @@
-/*
-    *** Expression Variable
-    *** src/expression/variable.cpp
-    Copyright T. Youngs 2015-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "expression/variable.h"
 #include "base/messenger.h"
@@ -28,7 +10,7 @@ ExpressionVariable::ExpressionVariable(ExpressionValue value, bool readOnly) : E
     // Private variables
     static int count = 0;
     name_ = fmt::format("_ExpressionVariable{:02d}", count++);
-    initialValue_ = NULL;
+    initialValue_ = nullptr;
     nodeType_ = ExpressionNode::VariableNode;
     value_ = value;
     readOnly_ = readOnly;
@@ -46,7 +28,7 @@ std::string_view ExpressionVariable::name() const { return name_; }
 // Initialise variable
 bool ExpressionVariable::initialise()
 {
-    if (initialValue_ == NULL)
+    if (initialValue_ == nullptr)
         value_ = 0.0;
     else
     {
@@ -70,7 +52,7 @@ bool ExpressionVariable::initialise()
 bool ExpressionVariable::setInitialValue(ExpressionNode *node)
 {
     initialValue_ = node;
-    if (initialValue_ == NULL)
+    if (initialValue_ == nullptr)
         return true;
 
     return true;

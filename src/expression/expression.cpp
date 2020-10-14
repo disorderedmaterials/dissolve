@@ -1,23 +1,5 @@
-/*
-    *** Mathematical Expression
-    *** src/expression/expression.cpp
-    Copyright T. Youngs 2015-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "expression/expression.h"
 #include "base/messenger.h"
@@ -104,7 +86,7 @@ void Expression::print()
 {
     Messenger::print("Leaf Structure ({} statements):\n", statements_.nItems());
     auto n = 1;
-    for (RefListItem<ExpressionNode> *ri = statements_.first(); ri != NULL; ri = ri->next())
+    for (RefListItem<ExpressionNode> *ri = statements_.first(); ri != nullptr; ri = ri->next())
     {
         Messenger::print("-------------------------------------------------------------\n");
         Messenger::print("Statement {}:\n", n);
@@ -121,7 +103,7 @@ void Expression::print()
 // Add a node representing a whole statement to the execution list
 bool Expression::addStatement(ExpressionNode *leaf)
 {
-    if (leaf == NULL)
+    if (leaf == nullptr)
     {
         Messenger::print("Internal Error: NULL Node passed to Expression::addStatement().\n");
         return false;
@@ -142,7 +124,7 @@ ExpressionNode *Expression::addOperator(ExpressionFunctions::Function func, Expr
     // Add arguments and set parent
     leaf->addArguments(1, arg1);
     leaf->setParent(this);
-    if (arg2 != NULL)
+    if (arg2 != nullptr)
         leaf->addArguments(1, arg2);
 
     return leaf;
@@ -165,7 +147,7 @@ ExpressionNode *Expression::addFunctionNodeWithArglist(ExpressionFunctions::Func
         Messenger::error("Function {} requires exactly {} {}.\n", ExpressionFunctions::data[func].keyword,
                          ExpressionFunctions::data[func].nArguments,
                          ExpressionFunctions::data[func].nArguments == 1 ? "argument" : "arguments");
-        return NULL;
+        return nullptr;
     }
 
     return leaf;
@@ -179,13 +161,13 @@ ExpressionNode *Expression::addFunctionNode(ExpressionFunctions::Function func, 
     auto *leaf = new ExpressionFunction(func);
     nodes_.own(leaf);
 
-    if (a1 != NULL)
+    if (a1 != nullptr)
         leaf->addArgument(a1);
-    if (a2 != NULL)
+    if (a2 != nullptr)
         leaf->addArgument(a2);
-    if (a3 != NULL)
+    if (a3 != nullptr)
         leaf->addArgument(a3);
-    if (a4 != NULL)
+    if (a4 != nullptr)
         leaf->addArgument(a4);
     leaf->setParent(this);
 
@@ -195,7 +177,7 @@ ExpressionNode *Expression::addFunctionNode(ExpressionFunctions::Function func, 
         Messenger::error("Function {} requires exactly {} {}.\n", ExpressionFunctions::data[func].keyword,
                          ExpressionFunctions::data[func].nArguments,
                          ExpressionFunctions::data[func].nArguments == 1 ? "argument" : "arguments");
-        return NULL;
+        return nullptr;
     }
 
     return leaf;
@@ -226,9 +208,9 @@ ExpressionNode *Expression::joinCommands(ExpressionNode *node1, ExpressionNode *
     auto *leaf = new ExpressionFunction(ExpressionFunctions::Joiner);
     nodes_.own(leaf);
     leaf->setParent(this);
-    if (node1 != NULL)
+    if (node1 != nullptr)
         leaf->addArgument(node1);
-    if (node2 != NULL)
+    if (node2 != nullptr)
         leaf->addArgument(node2);
 
     return leaf;
@@ -268,7 +250,7 @@ ExpressionVariable *Expression::createIntegerVariable(std::string_view name, boo
     {
         delete var;
         Messenger::print("Failed to set initial value for integer variable.\n");
-        return NULL;
+        return nullptr;
     }
 
     // If persistent, add to the persistent nodes list
@@ -296,7 +278,7 @@ ExpressionVariable *Expression::createDoubleVariable(std::string_view name, bool
     {
         delete var;
         Messenger::print("Failed to set initial value for double variable.\n");
-        return NULL;
+        return nullptr;
     }
 
     // If persistent, add to the persistent nodes list
@@ -357,7 +339,7 @@ ExpressionVariable *Expression::variable(std::string_view name)
             }
 
     Messenger::printVerbose("...variable '{}' not found.\n", name);
-    return NULL;
+    return nullptr;
 }
 
 // Return variables
@@ -374,7 +356,7 @@ RefList<ExpressionVariable> &Expression::constants() { return constants_; }
 bool Expression::execute(ExpressionValue &result)
 {
     auto success = true;
-    for (RefListItem<ExpressionNode> *ri = statements_.first(); ri != NULL; ri = ri->next())
+    for (RefListItem<ExpressionNode> *ri = statements_.first(); ri != nullptr; ri = ri->next())
     {
         // 		ri->item()->nodePrint(1);
         success = ri->item()->execute(result);

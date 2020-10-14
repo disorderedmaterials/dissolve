@@ -229,6 +229,7 @@ set(BASIC_LINK_LIBS
   skeletonmodule
   sqmodule
   testmodule
+  xraysqmodule
 )
 
 # Set linker options for complete/no archive
@@ -272,6 +273,7 @@ target_link_libraries( ${target_name}
   skeletonmodulenogui
   sqmodulenogui
   testmodulenogui
+  xraysqmodulenogui
   ${NO_WHOLE_ARCHIVE_FLAG}
 
   PRIVATE
@@ -318,6 +320,7 @@ if(GUI)
     skeletonmodulegui
     sqmodulegui
     testmodulegui
+    xraysqmodulegui
 
     # Main gui libs
     render

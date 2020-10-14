@@ -1,23 +1,5 @@
-/*
-    *** I/O
-    *** src/main/io.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
@@ -38,7 +20,7 @@ bool Dissolve::loadInput(LineParser &parser)
 
     // Variables
     Configuration *cfg;
-    ModuleLayer *layer = NULL;
+    ModuleLayer *layer = nullptr;
     Species *sp;
     auto error = false;
 
@@ -203,7 +185,7 @@ bool Dissolve::saveInput(std::string_view filename)
         if (!parser.writeLineF("\n{}\n", BlockKeywords::keywords().keyword(BlockKeywords::MasterBlockKeyword)))
             return false;
 
-        for (auto *b = coreData_.masterBonds().first(); b != NULL; b = b->next())
+        for (auto *b = coreData_.masterBonds().first(); b != nullptr; b = b->next())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::BondKeyword),
                                            b->name(), SpeciesBond::bondFunctions().keywordFromInt(b->form()));
@@ -213,7 +195,7 @@ bool Dissolve::saveInput(std::string_view filename)
                 return false;
         }
 
-        for (auto *a = coreData_.masterAngles().first(); a != NULL; a = a->next())
+        for (auto *a = coreData_.masterAngles().first(); a != nullptr; a = a->next())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::AngleKeyword),
                                            a->name(), SpeciesAngle::angleFunctions().keywordFromInt(a->form()));
@@ -223,7 +205,7 @@ bool Dissolve::saveInput(std::string_view filename)
                 return false;
         }
 
-        for (auto *t = coreData_.masterTorsions().first(); t != NULL; t = t->next())
+        for (auto *t = coreData_.masterTorsions().first(); t != nullptr; t = t->next())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::TorsionKeyword),
                                            t->name(), SpeciesTorsion::torsionFunctions().keywordFromInt(t->form()));
@@ -233,7 +215,7 @@ bool Dissolve::saveInput(std::string_view filename)
                 return false;
         }
 
-        for (auto *imp = coreData_.masterImpropers().first(); imp != NULL; imp = imp->next())
+        for (auto *imp = coreData_.masterImpropers().first(); imp != nullptr; imp = imp->next())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword),
                                            imp->name(), SpeciesImproper::improperFunctions().keywordFromInt(imp->form()));
@@ -250,7 +232,7 @@ bool Dissolve::saveInput(std::string_view filename)
 
     // Write Species data
     parser.writeBannerComment("Species");
-    for (auto *sp = species().first(); sp != NULL; sp = sp->next())
+    for (auto *sp = species().first(); sp != nullptr; sp = sp->next())
     {
         if (!parser.writeLineF("\n"))
             return false;
@@ -301,7 +283,7 @@ bool Dissolve::saveInput(std::string_view filename)
     // Write Configurations
     if (!parser.writeBannerComment("Configurations"))
         return false;
-    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
     {
         if (!parser.writeLineF("\n{}  '{}'\n", BlockKeywords::keywords().keyword(BlockKeywords::ConfigurationBlockKeyword),
                                cfg->name()))
@@ -767,7 +749,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     }
 
     // Configuration Module Data
-    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
     {
         // Cycle over data store in the Configuration
         ListIterator<GenericItem> itemIterator(cfg->moduleData().items());
@@ -801,7 +783,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     }
 
     // Configurations
-    for (auto *cfg = configurations().first(); cfg != NULL; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
     {
         if (!parser.writeLineF("Configuration  '{}'\n", cfg->name()))
             return false;

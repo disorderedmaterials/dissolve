@@ -1,23 +1,5 @@
-/*
-    *** Procedure Node - Sequence
-    *** src/procedure/nodes/sequence.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "procedure/nodes/sequence.h"
 #include "base/lineparser.h"
@@ -119,7 +101,7 @@ ProcedureNode *SequenceProcedureNode::searchNodes(std::string_view name, Procedu
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 // Search through the Procedure for the named parameter
@@ -142,7 +124,7 @@ ExpressionVariable *SequenceProcedureNode::searchParameters(std::string_view nam
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 // Return parent Procedure to which this sequence belongs
@@ -175,7 +157,7 @@ ProcedureNode *SequenceProcedureNode::node(std::string_view name, ProcedureNode:
         }
     }
 
-    return NULL;
+    return nullptr;
 }
 
 // Return list of nodes of specified type present in the Procedure
@@ -212,11 +194,11 @@ ProcedureNode *SequenceProcedureNode::nodeInScope(ProcedureNode *queryingNode, s
     {
         Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::nodeInScope() is not a member "
                          "of this sequence.\n");
-        return NULL;
+        return nullptr;
     }
 
     // Start from the target node and work backwards...
-    for (auto *node = queryingNode; node != NULL; node = node->prev())
+    for (auto *node = queryingNode; node != nullptr; node = node->prev())
     {
         if (DissolveSys::sameString(node->name(), name))
         {
@@ -233,7 +215,7 @@ ProcedureNode *SequenceProcedureNode::nodeInScope(ProcedureNode *queryingNode, s
         return parentNode_->nodeInScope(name, nt);
 
     // Not found
-    return NULL;
+    return nullptr;
 }
 
 // Return list of nodes of specified type present in scope
@@ -250,7 +232,7 @@ RefList<ProcedureNode> SequenceProcedureNode::nodesInScope(ProcedureNode *queryi
     RefList<ProcedureNode> matches;
 
     // Start from the target node and work backwards...
-    for (auto *node = queryingNode; node != NULL; node = node->prev())
+    for (auto *node = queryingNode; node != nullptr; node = node->prev())
     {
         // Check type
         if (nt == ProcedureNode::nNodeTypes)
@@ -287,11 +269,11 @@ ExpressionVariable *SequenceProcedureNode::parameterInScope(ProcedureNode *query
     {
         Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::parameterInScope() is not a "
                          "member of this sequence.\n");
-        return NULL;
+        return nullptr;
     }
 
     // Start from the target node and work backwards...
-    for (auto *node = queryingNode; node != NULL; node = node->prev())
+    for (auto *node = queryingNode; node != nullptr; node = node->prev())
     {
         ExpressionVariable *param = node->hasParameter(name, excludeParameter);
         if (param)
@@ -303,7 +285,7 @@ ExpressionVariable *SequenceProcedureNode::parameterInScope(ProcedureNode *query
         return parentNode_->parameterInScope(name, excludeParameter);
 
     // Not found
-    return NULL;
+    return nullptr;
 }
 
 // Return whether the named parameter exists in this sequence or its children (branches)
@@ -331,7 +313,7 @@ RefList<ExpressionVariable> SequenceProcedureNode::parametersInScope(ProcedureNo
     }
 
     // Start from the target node and work backwards...
-    for (auto *node = queryingNode; node != NULL; node = node->prev())
+    for (auto *node = queryingNode; node != nullptr; node = node->prev())
     {
         parameters += node->parameterReferences();
     }
@@ -433,7 +415,7 @@ bool SequenceProcedureNode::read(LineParser &parser, CoreData &coreData)
         }
 
         // Not a control keyword, so must be a node type
-        ProcedureNode *newNode = NULL;
+        ProcedureNode *newNode = nullptr;
         if (!ProcedureNode::nodeTypes().isValid(parser.argsv(0)))
             return Messenger::error("Unrecognised node type '{}' found.\n", parser.argsv(0));
         ProcedureNode::NodeType nt = ProcedureNode::nodeTypes().enumeration(parser.argsv(0));

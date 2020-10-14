@@ -1,23 +1,5 @@
-/*
-    *** Element Selector Widget
-    *** src/gui/widgets/elementselector_funcs.cpp
-    Copyright T. Youngs 2019-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "data/elements.h"
 #include "gui/widgets/elementselector.hui"
@@ -31,7 +13,7 @@
 
 ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
 {
-    currentElement_ = NULL;
+    currentElement_ = nullptr;
 
     // Create grid layout for widget
     auto *gl = new QGridLayout;
@@ -161,10 +143,10 @@ void ElementSelector::elementButtonClicked(bool checked)
     // Cast sender
     auto *button = qobject_cast<QToolButton *>(sender());
     if (!button)
-        currentElement_ = NULL;
+        currentElement_ = nullptr;
 
     RefDataItem<QToolButton, Element *> *ri = elementButtons_.contains(button);
-    currentElement_ = ri ? ri->data() : NULL;
+    currentElement_ = ri ? ri->data() : nullptr;
 
     // Was this a double-click? Check the timer
     if (doubleClickTimer_.isActive())
@@ -195,7 +177,7 @@ void ElementSelector::setCurrentElement(Element *element)
     currentElement_ = element;
 
     // Find and check the related button
-    if (currentElement_ != NULL)
+    if (currentElement_ != nullptr)
     {
         QToolButton *button = elementButtons_.itemWithData(currentElement_);
         if (button)
@@ -232,7 +214,7 @@ Element *ElementSelector::getElement(QWidget *parent, QString title, QString lab
         new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &inputDialog);
     QObject::connect(buttonBox, SIGNAL(accepted()), &inputDialog, SLOT(accept()));
     QObject::connect(buttonBox, SIGNAL(rejected()), &inputDialog, SLOT(reject()));
-    buttonBox->button(QDialogButtonBox::Ok)->setEnabled(element != NULL);
+    buttonBox->button(QDialogButtonBox::Ok)->setEnabled(element != nullptr);
     QObject::connect(elementSelector, SIGNAL(elementSelected(bool)), buttonBox->button(QDialogButtonBox::Ok),
                      SLOT(setEnabled(bool)));
 
