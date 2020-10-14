@@ -8,6 +8,14 @@ parameters:
     type: boolean
     default: false
 
+variables:
+  # Because MS can't be bothered to implement an if statement
+  - name: parallel_lower_case
+    ${{if parameters.parallel}}
+      value: "true"
+    ${{if not(parameters.parallel)}}
+      value: "false"
+
 steps:
   - bash: |
       set -ex
@@ -32,7 +40,7 @@ steps:
       cd nix
       nix-build dissolve.nix --arg parallel $[ lower(parameters["parallel"])]
       cd ..
-      nix-instantiate nix/dissolve.nix --arg parallel ${{ parameters.parallel }} | xargs nix-store -r | xargs nix-store -q --references | xargs tar czf tests/nix.tar.gz
+      nix-instantiate nix/dissolve.nix --arg parallel ${{ variables.parallel_lower_case }} | xargs nix-store -r | xargs nix-store -q --references | xargs tar czf tests/nix.tar.gz
       # tar czf tests/nix.tar.gz /nix/store/*
       cp nix/result/bin/dissolve* tests/
     displayName: 'Build'
