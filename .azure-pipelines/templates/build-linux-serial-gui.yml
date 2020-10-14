@@ -2,8 +2,10 @@ parameters:
   - name: extraflags
     default: ''
   - name: parallel
+    type: boolean
     default: false
   - name: mac
+    type: boolean
     default: false
 
 steps:
