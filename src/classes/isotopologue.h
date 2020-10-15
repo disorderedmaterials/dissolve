@@ -51,14 +51,10 @@ class Isotopologue : public ListItem<Isotopologue>
     std::vector<std::tuple<std::shared_ptr<AtomType>, Isotope *>> isotopes_;
 
     public:
-    // Update AtomType/Isotope RefList
-    void update();
     // Set AtomType/Isotope pair in list
     bool setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *isotope);
     // Return Isotope for specified AtomType
     Isotope *atomTypeIsotope(std::shared_ptr<AtomType> at) const;
     // Return AtomType/Isotope pairs list
     const std::vector<std::tuple<std::shared_ptr<AtomType>, Isotope *>> &isotopes() const;
-    // Return nth Atom/Isotope pair
-    std::tuple<std::shared_ptr<AtomType>, Isotope *> &isotope(int n);
 };

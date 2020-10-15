@@ -5,13 +5,6 @@
 #include "classes/species.h"
 #include <string.h>
 
-// Update current Isotopologues
-void Species::updateIsotopologues()
-{
-    for (auto *iso = isotopologues_.first(); iso != nullptr; iso = iso->next())
-        iso->update();
-}
-
 // Update and return natural isotopologue
 const Isotopologue *Species::naturalIsotopologue() const { return &naturalIsotopologue_; }
 
@@ -21,7 +14,6 @@ Isotopologue *Species::addIsotopologue(std::string_view baseName)
     Isotopologue *iso = isotopologues_.add();
     iso->setParent(this);
     iso->setName(uniqueIsotopologueName(baseName));
-    iso->update();
 
     return iso;
 }
