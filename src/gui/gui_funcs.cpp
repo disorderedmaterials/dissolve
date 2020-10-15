@@ -6,7 +6,6 @@
 #include "gui/forcefieldtab.h"
 #include "gui/gui.h"
 #include "gui/layertab.h"
-#include "gui/moduletab.h"
 #include "gui/speciestab.h"
 #include "gui/workspacetab.h"
 #include "main/dissolve.h"

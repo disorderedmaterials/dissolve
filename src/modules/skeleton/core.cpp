@@ -7,7 +7,7 @@
  * Constructor / Destructor
  */
 
-SkeletonModule::SkeletonModule() : Module()
+SkeletonModule::SkeletonModule() : Module(nRequiredTargets())
 {
     // Set unique name for this instance of the Module
     static int instanceId = 0;

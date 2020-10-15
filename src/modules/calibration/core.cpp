@@ -7,7 +7,7 @@
  * Constructor / Destructor
  */
 
-CalibrationModule::CalibrationModule() : Module()
+CalibrationModule::CalibrationModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

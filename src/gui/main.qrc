@@ -80,6 +80,7 @@
     <file>images/squares.jpg</file>
     <file>images/hexagons1.png</file>
     <file>images/big.png</file>
+    <file>images/cornerhexagons.png</file>
     <file>images/hexagons1.jpg</file>
   </qresource>
   <qresource prefix="tabs">
@@ -87,6 +88,7 @@
     <file>icons/tabs_configuration.svg</file>
     <file>icons/tabs_workspace.svg</file>
     <file>icons/tabs_species.svg</file>
+    <file>icons/tabs_modulelayer_disabled.svg</file>
     <file>icons/tabs_modulelayer.svg</file>
   </qresource>
   <qresource prefix="start">
@@ -106,6 +108,7 @@
     <file>icons/general_unknown.svg</file>
     <file>icons/general_options.svg</file>
     <file>icons/general_edit.svg</file>
+    <file>icons/general_screen.svg</file>
     <file>icons/general_monitor.svg</file>
     <file>icons/general_heartbeat.svg</file>
     <file>icons/general_local.svg</file>

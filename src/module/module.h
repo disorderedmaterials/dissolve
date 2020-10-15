@@ -5,6 +5,7 @@
 
 #include "base/messenger.h"
 #include "genericitems/list.h"
+#include "keywords/configurationreflist.h"
 #include "keywords/group.h"
 #include "keywords/list.h"
 #include "math/sampleddouble.h"
@@ -22,7 +23,7 @@ class QWidget;
 class Module : public ListItem<Module>
 {
     public:
-    Module();
+    Module(int nTargetConfigurations);
     virtual ~Module();
 
     /*
@@ -66,6 +67,8 @@ class Module : public ListItem<Module>
     protected:
     // Keywords recognised by Module
     KeywordList keywords_;
+    // Target configurations keyword
+    ConfigurationRefListKeyword targetConfigurationsKeyword_;
 
     public:
     // Return list of recognised keywords

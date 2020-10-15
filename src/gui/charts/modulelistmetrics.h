@@ -36,9 +36,9 @@ class ModuleListChartMetrics
      */
     public:
     // Inner margin around widgets
-    static int chartMargin() { return 32; }
+    static int chartMargin() { return 16; }
     // Horizontal spacing between modules in list
-    static int verticalModuleSpacing() { return 40; }
+    static int verticalModuleSpacing() { return 16; }
     // Additional horizontal spacing for insertion widget
     static int verticalInsertionSpacing() { return 64; }
 };

@@ -22,7 +22,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -37,21 +37,23 @@
      guidetolerance="10"
      inkscape:pageopacity="0"
      inkscape:pageshadow="2"
-     inkscape:window-width="1920"
-     inkscape:window-height="983"
+     inkscape:window-width="3840"
+     inkscape:window-height="1545"
      id="namedview6"
      showgrid="false"
      inkscape:zoom="3.6875"
-     inkscape:cx="55.595352"
+     inkscape:cx="6.1038266"
      inkscape:cy="94.235331"
      inkscape:window-x="0"
-     inkscape:window-y="27"
+     inkscape:window-y="0"
      inkscape:window-maximized="1"
      inkscape:current-layer="svg4" />
   <path
-     d="M 10,56.25 V 43.75 C 10,41.67187 11.671875,40 13.75,40 H 40 V 26.29687 c 0,-2.78125 3.359375,-4.17187 5.328125,-2.20312 l 23.78125,23.76562 c 1.171875,1.17188 1.171875,3.09375 0,4.26563 L 45.328125,75.92187 C 43.359375,77.89062 40,76.5 40,73.71875 V 60 H 13.75 C 11.671875,60 10,58.32812 10,56.25 Z M 68.75,10 h 17.5 c 2.078125,0 3.75,1.67187 3.75,3.75 v 72.5 C 90,88.32812 88.328125,90 86.25,90 H 68.75 C 66.671875,90 65,88.32812 65,86.25 V 63.32812 l 7.65625,-7.65625 c 3.140625,-3.14062 3.140625,-8.20312 0,-11.34375 L 65,36.67187 V 13.75 C 65,11.67187 66.671875,10 68.75,10 Z"
-     id="path2"
-     inkscape:connector-curvature="0"
-     sodipodi:nodetypes="ssscsccccscssssssssscsscss"
-     style="stroke-width:1;fill:#000000;fill-opacity:1" />
+     style="stroke-width:1;fill:#00537d;fill-opacity:1"
+     d="M 10,56.25 V 43.75 C 10,41.67187 11.671875,40 13.75,40 H 40 V 26.29687 c 0,-2.78125 3.359375,-4.17187 5.328125,-2.20312 l 23.78125,23.76562 c 1.171875,1.17188 1.171875,3.09375 0,4.26563 L 45.328125,75.92187 C 43.359375,77.89062 40,76.5 40,73.71875 V 60 H 13.75 C 11.671875,60 10,58.32812 10,56.25 Z"
+     id="path814" />
+  <path
+     style="stroke-width:1;fill:#000000;fill-opacity:1"
+     d="m 68.75,10 h 17.5 c 2.078125,0 3.75,1.67187 3.75,3.75 v 72.5 C 90,88.32812 88.328125,90 86.25,90 H 68.75 C 66.671875,90 65,88.32812 65,86.25 V 63.32812 l 7.65625,-7.65625 c 3.140625,-3.14062 3.140625,-8.20312 0,-11.34375 L 65,36.67187 V 13.75 C 65,11.67187 66.671875,10 68.75,10 Z"
+     id="path2" />
 </svg>

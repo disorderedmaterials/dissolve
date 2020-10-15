@@ -7,7 +7,7 @@
  * Constructor / Destructor
  */
 
-GeometryOptimisationModule::GeometryOptimisationModule() : Module()
+GeometryOptimisationModule::GeometryOptimisationModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

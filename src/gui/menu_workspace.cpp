@@ -3,6 +3,7 @@
 
 #include "gui/getgizmonamedialog.h"
 #include "gui/gui.h"
+#include "templates/variantpointer.h"
 
 /*
  * Private Slots

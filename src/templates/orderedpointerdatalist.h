@@ -190,8 +190,8 @@ template <class T, class D> class OrderedPointerDataList
             return;
         }
         // Delete a specific item from the list
-        xitem->prev == NULL ? listHead_ = xitem->next : xitem->prev->next = xitem->next;
-        xitem->next == NULL ? listTail_ = xitem->prev : xitem->next->prev = xitem->prev;
+        xitem->prev == nullptr ? listHead_ = xitem->next : xitem->prev->next = xitem->next;
+        xitem->next == nullptr ? listTail_ = xitem->prev : xitem->next->prev = xitem->prev;
         factory_.returnObject(xitem);
         --nItems_;
         regenerateItemArray_ = 1;

@@ -3,10 +3,13 @@
 
 #pragma once
 
+#include "base/lock.h"
 #include "gui/ui_modulecontrolwidget.h"
 #include "templates/variantpointer.h"
 
 // Forward Declarations
+class ConfigurationRefListKeyword;
+class ConfigurationRefListKeywordWidget;
 class Dissolve;
 class DissolveWindow;
 class Module;
@@ -20,12 +23,13 @@ class ModuleControlWidget : public QWidget
     Q_OBJECT
 
     public:
-    ModuleControlWidget(QWidget *parent);
+    // Constructor / Destructor
+    ModuleControlWidget(QWidget *parent = nullptr);
     ~ModuleControlWidget();
 
     private:
-    // Whether the widget is currently refreshing
-    bool refreshing_;
+    // Lock for widget refresh
+    Lock refreshLock_;
 
     /*
      * Setup
@@ -50,9 +54,8 @@ class ModuleControlWidget : public QWidget
     public:
     // Set target Module to display
     void setModule(Module *module, Dissolve *dissolve);
-
-    signals:
-    void updateModuleWidget(int flags);
+    // Return target Module for the widget
+    Module *module() const;
 
     /*
      * Update
@@ -71,19 +74,27 @@ class ModuleControlWidget : public QWidget
     private:
     // Main form declaration
     Ui::ModuleControlWidget ui_;
+    // Keyword widget for Configuration editing
+    ConfigurationRefListKeywordWidget *configurationsWidget_;
+    // Additional controls widget for the Module (if any)
+    ModuleWidget *moduleWidget_;
 
     private slots:
+    void on_ModuleControlsButton_clicked(bool checked);
+    void on_ModuleOutputButton_clicked(bool checked);
     // Keyword data for Module has been modified
     void keywordDataModified();
-
-    public slots:
-    void on_NameEdit_editingFinished();
-    void on_NameEdit_returnPressed();
-    void on_EnabledButton_clicked(bool checked);
-    void on_FrequencySpin_valueChanged(int value);
-    void on_ConfigurationTargetList_itemChanged(QListWidgetItem *item);
 
     signals:
     // Notify that the Module's data has been modified in some way
     void dataModified();
+
+    /*
+     * State I/O
+     */
+    public:
+    // Read widget state through specified LineParser
+    bool readState(LineParser &parser);
+    // Write widget state through specified LineParser
+    bool writeState(LineParser &parser) const;
 };
