@@ -30,27 +30,22 @@ std::string_view Isotopologue::name() const { return name_; }
  */
 
 // Set Isotope associated to AtomType
-bool Isotopologue::setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *isotope)
+void Isotopologue::setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *isotope)
 {
     // Check for NULL pointer
     if (!at)
     {
+        // TODO Use assertion
         Messenger::error("NULL_POINTER - NULL AtomType pointer passed to Isotopologue::setAtomTypeIsotope().\n");
-        return false;
+        return;
     }
 
     // Find the requested AtomType in the list
     auto it = std::find_if(isotopes_.begin(), isotopes_.end(), [&at](auto value) { return std::get<0>(value) == at; });
-    // RefDataItem<AtomType, Isotope *> *rdi = isotopes_.contains(at);
     if (it == isotopes_.end())
-    {
-        Messenger::error("AtomType '{}' not found in Isotopologue '{}'.\n", at->name(), name_);
-        return false;
-    }
-
-    std::get<1>(*it) = isotope;
-
-    return true;
+        isotopes_.emplace_back(at, isotope);
+    else
+        std::get<1>(*it) = isotope;
 }
 
 // Return Isotope for specified AtomType

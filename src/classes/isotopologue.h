@@ -52,7 +52,7 @@ class Isotopologue : public ListItem<Isotopologue>
 
     public:
     // Set AtomType/Isotope pair in list
-    bool setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *isotope);
+    void setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *isotope);
     // Return Isotope for specified AtomType
     Isotope *atomTypeIsotope(std::shared_ptr<AtomType> at) const;
     // Return AtomType/Isotope pairs list
