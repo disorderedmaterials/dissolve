@@ -77,7 +77,7 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
     else if (type == KeywordBase::ConfigurationRefListData)
     {
         ConfigurationRefListKeywordWidget *configurationRefListWidget =
-            new ConfigurationRefListKeywordWidget(NULL, keywordBase, coreData);
+            new ConfigurationRefListKeywordWidget(nullptr, keywordBase, coreData);
         connect(configurationRefListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
         widget = configurationRefListWidget;
         base = configurationRefListWidget;

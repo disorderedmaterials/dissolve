@@ -82,7 +82,7 @@ class ModuleListEditor : public QWidget
 
     public:
     // Set up the ModuleListEditor for the specified ModuleLayer
-    bool setUp(DissolveWindow *dissolveWindow, ModuleLayer *moduleLayer, Configuration *localConfiguration = NULL);
+    bool setUp(DissolveWindow *dissolveWindow, ModuleLayer *moduleLayer, Configuration *localConfiguration = nullptr);
 
     /*
      * Widget Functions

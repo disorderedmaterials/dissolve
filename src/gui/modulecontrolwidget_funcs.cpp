@@ -80,8 +80,8 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
     ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_->constCoreData());
 
     // Create any additional controls offered by the Module
-    moduleWidget_ = module->createWidget(NULL, *dissolve_);
-    if (moduleWidget_ == NULL)
+    moduleWidget_ = module->createWidget(nullptr, *dissolve_);
+    if (moduleWidget_ == nullptr)
         Messenger::printVerbose("Module '%s' did not provide a valid controller widget.\n", module->type());
     else
     {

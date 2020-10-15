@@ -79,9 +79,9 @@ bool ModuleListEditor::setUp(DissolveWindow *dissolveWindow, ModuleLayer *module
         while ((categoryItem = categoryIterator.iterate()))
             if (DissolveSys::sameString(module->category(), qPrintable(categoryIterator.currentData())))
                 break;
-        if (categoryItem == NULL)
+        if (categoryItem == nullptr)
         {
-            categoryItem = new MimeTreeWidgetItem((QTreeWidget *)NULL, 1000);
+            categoryItem = new MimeTreeWidgetItem((QTreeWidget *)nullptr, 1000);
             categoryItem->setText(0, QString::fromStdString(std::string(module->category())));
             categoryItem->setFlags(Qt::ItemIsEnabled);
             moduleCategories_.append(categoryItem, QString::fromStdString(std::string(module->category())));

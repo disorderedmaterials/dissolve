@@ -22,4 +22,4 @@
 #include "modules/checkspecies/checkspecies.h"
 
 // Return a new widget controlling this Module
-ModuleWidget *CheckSpeciesModule::createWidget(QWidget *parent, Dissolve &dissolve) { return NULL; }
+ModuleWidget *CheckSpeciesModule::createWidget(QWidget *parent, Dissolve &dissolve) { return nullptr; }

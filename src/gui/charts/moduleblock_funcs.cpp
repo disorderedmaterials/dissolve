@@ -55,7 +55,7 @@ ModuleBlock::ModuleBlock(QWidget *parent, Module *module, Dissolve &dissolve)
     auto *cfgKeyword = module_->keywords().find("Configuration");
     if (cfgKeyword)
     {
-        auto *cfgWidget = new ConfigurationRefListKeywordWidget(NULL, cfgKeyword, dissolve.coreData());
+        auto *cfgWidget = new ConfigurationRefListKeywordWidget(nullptr, cfgKeyword, dissolve.coreData());
         connect(cfgWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(configurationKeywordEdited(int)));
         auto *layout = new QHBoxLayout;
         layout->setMargin(0);
