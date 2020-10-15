@@ -79,7 +79,7 @@ void SpeciesRefListKeywordWidget::updateWidgetValues(const CoreData &coreData)
     refreshing_ = true;
 
     // Update the list against the global Species list
-    ListWidgetUpdater<SpeciesRefListKeywordWidget, Species> listUpdater(ui_.SelectionList, coreData_.constSpecies(), this,
+    ListWidgetUpdater<SpeciesRefListKeywordWidget, Species> listUpdater(ui_.SelectionList, coreData_.species(), this,
                                                                         &SpeciesRefListKeywordWidget::updateSelectionRow);
 
     updateSummaryText();

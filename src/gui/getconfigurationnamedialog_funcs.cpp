@@ -42,7 +42,7 @@ void GetConfigurationNameDialog::on_NameEdit_textChanged(const QString text)
         nameValid = false;
     else
     {
-        ListIterator<Configuration> configIterator(coreData_.constConfigurations());
+        ListIterator<Configuration> configIterator(coreData_.configurations());
         while (Configuration *cfg = configIterator.iterate())
         {
             if (configuration_ == cfg)

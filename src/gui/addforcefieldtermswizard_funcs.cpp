@@ -503,7 +503,7 @@ void AddForcefieldTermsWizard::updateAtomTypesConflictsPage()
 {
     // Update the list against the global AtomType list
     ListWidgetUpdater<AddForcefieldTermsWizard, AtomType> listUpdater(
-        ui_.AtomTypesConflictsList, temporaryCoreData_.constAtomTypes(), this,
+        ui_.AtomTypesConflictsList, temporaryCoreData_.atomTypes(), this,
         &AddForcefieldTermsWizard::updateAtomTypesConflictsListRow);
 
     typeNameMappings_.clear();

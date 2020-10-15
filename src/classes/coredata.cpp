@@ -62,8 +62,7 @@ int CoreData::nAtomTypes() const { return atomTypes_.size(); }
 // Return core AtomTypes list
 std::vector<std::shared_ptr<AtomType>> &CoreData::atomTypes() { return atomTypes_; }
 
-// Return core AtomTypes list (const)
-const std::vector<std::shared_ptr<AtomType>> &CoreData::constAtomTypes() const { return atomTypes_; }
+const std::vector<std::shared_ptr<AtomType>> &CoreData::atomTypes() const { return atomTypes_; }
 
 // Return nth AtomType in list
 std::shared_ptr<AtomType> CoreData::atomType(int n) { return atomTypes_[n]; }
@@ -312,8 +311,7 @@ int CoreData::nSpecies() const { return species_.nItems(); }
 // Return core Species list
 List<Species> &CoreData::species() { return species_; }
 
-// Return core Species list (const)
-const List<Species> &CoreData::constSpecies() const { return species_; }
+const List<Species> &CoreData::species() const { return species_; }
 
 // Return nth Species in list
 Species *CoreData::species(int n) { return species_[n]; }
@@ -366,8 +364,7 @@ int CoreData::nConfigurations() const { return configurations_.nItems(); }
 // Return core Configurations list
 List<Configuration> &CoreData::configurations() { return configurations_; }
 
-// Return core Configuration list (const)
-const List<Configuration> &CoreData::constConfigurations() const { return configurations_; }
+const List<Configuration> &CoreData::configurations() const { return configurations_; }
 
 // Return nth Configuration in list
 Configuration *CoreData::configuration(int n) { return configurations_[n]; }

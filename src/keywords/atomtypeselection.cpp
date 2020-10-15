@@ -78,10 +78,10 @@ bool AtomTypeSelectionKeyword::read(LineParser &parser, int startArg, CoreData &
     {
         // Do we recognise the AtomType?
         auto it =
-            std::find_if(coreData.constAtomTypes().begin(), coreData.constAtomTypes().end(), [&parser, n](const auto atomType) {
+            std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(), [&parser, n](const auto atomType) {
                 return DissolveSys::sameString(atomType->name(), parser.argsv(n));
             });
-        if (it == coreData.constAtomTypes().end())
+        if (it == coreData.atomTypes().end())
             return Messenger::error("Unrecognised AtomType '{}' found in list.\n", parser.argsv(n));
         auto atomType = *it;
 

@@ -94,7 +94,7 @@ void AtomTypeSelectionKeywordWidget::updateWidgetValues(const CoreData &coreData
 
     // Update the list against the global AtomType list
     ListWidgetUpdater<AtomTypeSelectionKeywordWidget, AtomType> listUpdater(
-        ui.SelectionList, coreData_.constAtomTypes(), this, &AtomTypeSelectionKeywordWidget::updateSelectionRow);
+        ui.SelectionList, coreData_.atomTypes(), this, &AtomTypeSelectionKeywordWidget::updateSelectionRow);
 
     updateSummaryText();
 
