@@ -204,6 +204,9 @@ void Species::updateUsedAtomTypes()
     for (auto *i = atoms_.first(); i != nullptr; i = i->next())
         if (i->atomType())
             usedAtomTypes_.add(i->atomType(), 1);
+
+    // Update our isotopologue definitions while we're here
+    updateIsotopologues();
 }
 
 // Return used atom types list

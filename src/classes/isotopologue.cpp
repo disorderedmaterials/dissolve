@@ -29,6 +29,34 @@ std::string_view Isotopologue::name() const { return name_; }
  * Isotope Definition
  */
 
+// UpdateUpdate current AtomType/Isotopes against parent Species
+void Isotopologue::update()
+{
+    // Prune any types in our list that are not used in the parent species
+    const auto &usedAtomTypes = parent_->usedAtomTypes();
+    isotopes_.erase(std::remove_if(isotopes_.begin(), isotopes_.end(),
+                                   [&usedAtomTypes](auto value) { return !usedAtomTypes.contains(std::get<0>(value)); }),
+                    isotopes_.end());
+
+    // Add in any used atom types that are not currently in the list
+    for (const auto &atd : usedAtomTypes)
+    {
+        auto it = std::find_if(isotopes_.begin(), isotopes_.end(),
+                               [&atd](auto value) { return std::get<0>(value) == atd.atomType(); });
+        if (it == isotopes_.end())
+            isotopes_.emplace_back(atd.atomType(), Isotopes::naturalIsotope(atd.atomType()->element()));
+    }
+}
+
+// Validate current AtomType/Isotopes against available AtomTypes
+void Isotopologue::checkAtomTypes(const std::vector<std::shared_ptr<AtomType>> &atomTypes)
+{
+    for (const auto at : atomTypes)
+        isotopes_.erase(
+            std::remove_if(isotopes_.begin(), isotopes_.end(), [&at](auto value) { return std::get<0>(value) == at; }),
+            isotopes_.end());
+}
+
 // Set Isotope associated to AtomType
 void Isotopologue::setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *isotope)
 {

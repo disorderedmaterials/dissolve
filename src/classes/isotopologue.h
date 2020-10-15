@@ -47,10 +47,14 @@ class Isotopologue : public ListItem<Isotopologue>
      * Isotope Definition
      */
     private:
-    // List of AtomType references and their assigned Isotopes
+    // AtomType references and their assigned Isotopes
     std::vector<std::tuple<std::shared_ptr<AtomType>, Isotope *>> isotopes_;
 
     public:
+    // Update current AtomType/Isotopes against parent Species
+    void update();
+    // Validate current AtomType/Isotopes against available AtomTypes
+    void checkAtomTypes(const std::vector<std::shared_ptr<AtomType>> &atomTypes);
     // Set AtomType/Isotope pair in list
     void setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *isotope);
     // Return Isotope for specified AtomType

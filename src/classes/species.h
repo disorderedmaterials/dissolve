@@ -242,7 +242,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 
     public:
     // Update current Isotopologues
-    void updateIsotopologues();
+    void updateIsotopologues(OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes = std::nullopt);
     // Return natural (empty) Isotopologue
     const Isotopologue *naturalIsotopologue() const;
     // Add a new Isotopologue to this Species
