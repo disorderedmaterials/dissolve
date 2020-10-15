@@ -14,6 +14,23 @@
  * Private Functions
  */
 
+// Return valid AtomType names for specified model index in the SpeciesAtomTable
+std::vector<std::string> SpeciesTab::validAtomTypeNames(const QModelIndex &index)
+{
+    // The QModelIndex should represent an AtomType for a SpeciesAtom, so the column should be 1
+    assert(index.column() == 1);
+
+    // The row of the QModelIndex represents the SpecieAtom index in the Species
+    auto *i = species_->atom(index.row());
+
+    // Construct valid names list
+    std::vector<std::string> validNames;
+    for (auto &at : dissolve_.atomTypes())
+        if (at->element() == i->element()) validNames.emplace_back(at->name());
+
+    return validNames;
+}
+
 // SpeciesAtomTable row update function
 void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool createItems)
 {
