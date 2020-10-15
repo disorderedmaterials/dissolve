@@ -14,10 +14,10 @@ Isotopologue::Isotopologue() : ListItem<Isotopologue>(), parent_(nullptr) {}
  */
 
 // Set parent Species
-void Isotopologue::setParent(Species *parent) { parent_ = parent; }
+void Isotopologue::setParent(const Species *parent) { parent_ = parent; }
 
 // Return parent Species
-Species *Isotopologue::parent() const { return parent_; }
+const Species *Isotopologue::parent() const { return parent_; }
 
 // Set name of Isotopologue
 void Isotopologue::setName(std::string_view name) { name_ = name; }

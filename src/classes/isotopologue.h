@@ -29,15 +29,15 @@ class Isotopologue : public ListItem<Isotopologue>
      */
     private:
     // Parent Species
-    Species *parent_;
+    const Species *parent_;
     // Descriptive name
     std::string name_;
 
     public:
     // Set parent Species
-    void setParent(Species *parent);
+    void setParent(const Species *parent);
     // Return parent Species
-    Species *parent() const;
+    const Species *parent() const;
     // Set name of Isotopologue
     void setName(std::string_view name);
     // Return name of Isotopologue

@@ -9,7 +9,8 @@
 #include "classes/species.h"
 #include <algorithm>
 
-Isotopologues::Isotopologues(Species *species, int speciesPopulation) : species_(species), speciesPopulation_(speciesPopulation)
+Isotopologues::Isotopologues(const Species *species, int speciesPopulation)
+    : species_(species), speciesPopulation_(speciesPopulation)
 {
 }
 
@@ -20,14 +21,14 @@ Isotopologues::~Isotopologues() {}
  */
 
 // Set associated Species
-void Isotopologues::setSpecies(Species *sp, int population)
+void Isotopologues::setSpecies(const Species *sp, int population)
 {
     species_ = sp;
     speciesPopulation_ = population;
 }
 
 // Return associated Species
-Species *Isotopologues::species() const { return species_; }
+const Species *Isotopologues::species() const { return species_; }
 
 // Return associated Species population
 int Isotopologues::speciesPopulation() const { return speciesPopulation_; }

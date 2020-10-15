@@ -30,7 +30,7 @@ void IsotopologueSet::add(const Isotopologue *iso, double relativeWeight)
 }
 
 // Remove specified Species from the list (if it exists)
-void IsotopologueSet::remove(Species *sp)
+void IsotopologueSet::remove(const Species *sp)
 {
     isotopologues_.erase(
         std::remove_if(isotopologues_.begin(), isotopologues_.end(), [sp](const auto &data) { return data.species() == sp; }),
