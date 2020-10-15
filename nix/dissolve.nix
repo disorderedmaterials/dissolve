@@ -38,7 +38,7 @@ pkgs.stdenv.mkDerivation {
     pkgs.libglvnd
     pkgs.libglvnd.dev
     pkgs.qt5.full
-  ] ++ stdenv.lib.optional stdenv.isDarwin pkgs.clang_6;
+  ] ++ pkgs.stdenv.lib.optional stdenv.isDarwin pkgs.clang_6;
   nativeBuildInputs = pkgs.lib.optional gui pkgs.qt5.wrapQtAppsHook;
 
   src = gitignoreSource ./..;
