@@ -2,8 +2,8 @@ parameters:
   - name: extraflags
     default: ''
   - name: parallel
-    type: boolean
-    default: false
+    type: string
+    default: "false"
   - name: mac
     type: boolean
     default: false
@@ -30,23 +30,9 @@ steps:
       nix-env -iA cachix -f https://cachix.org/api/v1/install
       cachix use rprospero
       cd nix
-      nix-build dissolve.nix --arg parallel $[ lower(parameters["parallel"])]
+      nix-build dissolve.nix --arg parallel ${{parameters.parallel}}
       cd ..
-      nix-instantiate nix/dissolve.nix --arg parallel true | xargs nix-store -r | xargs nix-store -q --references | xargs tar czf tests/nix.tar.gz
-      # tar czf tests/nix.tar.gz /nix/store/*
-      cp nix/result/bin/dissolve* tests/
-    displayName: 'Build'
-    condition: ${{parameters.parallel}}
-  - bash: |
-      set -ex
-      source ~/.nix-profile/etc/profile.d/nix.sh
-      nix-env -iA cachix -f https://cachix.org/api/v1/install
-      cachix use rprospero
-      cd nix
-      nix-build dissolve.nix --arg parallel $[ lower(parameters["parallel"])]
-      cd ..
-      nix-instantiate nix/dissolve.nix --arg parallel false | xargs nix-store -r | xargs nix-store -q --references | xargs tar czf tests/nix.tar.gz
+      nix-instantiate nix/dissolve.nix --arg parallel ${{parameters.parallel}} | xargs nix-store -r | xargs nix-store -q --references | xargs tar czf tests/nix.tar.gz
       # tar czf tests/nix.tar.gz /nix/store/*
       # cp nix/result/bin/dissolve* tests/
     displayName: 'Build'
-    condition: not(${{parameters.parallel}})

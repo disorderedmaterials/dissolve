@@ -45,7 +45,7 @@ stages:
           - template: templates/build-linux-serial-gui.yml
             parameters:
               extraflags: '-DCHECKS:bool=true'
-              parallel: true
+              parallel: "true"
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "tests/"
