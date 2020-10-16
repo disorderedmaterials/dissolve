@@ -50,14 +50,12 @@ bool IsotopologueSetKeyword::read(LineParser &parser, int startArg, CoreData &co
 bool IsotopologueSetKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     for (auto topes : data_.isotopologues())
-    {
         for (auto isoWeight : topes.mix())
         {
             if (!parser.writeLineF("{}{}  '{}'  '{}'  {}\n", prefix, keywordName, topes.species()->name(),
                                    isoWeight.isotopologue()->name(), isoWeight.weight()))
                 return false;
         }
-    }
 
     return true;
 }
