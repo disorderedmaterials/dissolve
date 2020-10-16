@@ -338,6 +338,7 @@ target_link_libraries( ${target_name}
   INTERFACE
 
   CONAN_PKG::fmt
+  CONAN_PKG::CLI11
 )
 
 # Build GUI target executables
@@ -402,5 +403,6 @@ if(GUI)
     INTERFACE
 
     CONAN_PKG::fmt
+    CONAN_PKG::CLI11
   )
 endif(GUI)
