@@ -357,6 +357,7 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
                 atomType->setName(qPrintable(w->text()));
             }
             speciesAtom->setAtomType(atomType);
+            updateIsotopologuesTab();
             dissolveWindow_->setModified();
             break;
         // Coordinates
