@@ -90,16 +90,11 @@ void PartialSet::setUpHistograms(double rdfRange, double binWidth)
     boundHistograms_.initialise(nTypes, nTypes, true);
     unboundHistograms_.initialise(nTypes, nTypes, true);
 
-    for (int n = 0; n < nTypes; ++n)
-    {
-        for (int m = n; m < nTypes; ++m)
-        {
-            // Histogram arrays for g(r)
-            fullHistograms_.at(n, m).initialise(0.0, rdfRange, binWidth);
-            boundHistograms_.at(n, m).initialise(0.0, rdfRange, binWidth);
-            unboundHistograms_.at(n, m).initialise(0.0, rdfRange, binWidth);
-        }
-    }
+    for_each_pair(0, nTypes, [&](int i, int j) {
+        fullHistograms_.at(i, j).initialise(0.0, rdfRange, binWidth);
+        boundHistograms_.at(i, j).initialise(0.0, rdfRange, binWidth);
+        unboundHistograms_.at(i, j).initialise(0.0, rdfRange, binWidth);
+    });
 }
 
 // Reset partial arrays
@@ -115,15 +110,12 @@ void PartialSet::reset()
         }
 
     // Zero partials
-    auto nTypes = atomTypes_.nItems();
-    for (auto n = 0; n < nTypes; ++n)
-        for (auto m = n; m < nTypes; ++m)
-        {
-            partials_.at(n, m).values() = 0.0;
-            boundPartials_.at(n, m).values() = 0.0;
-            unboundPartials_.at(n, m).values() = 0.0;
-            emptyBoundPartials_.at(n, m) = true;
-        }
+    for_each_pair(0, atomTypes_.nItems(), [&](int i, int j) {
+        partials_.at(i, j).values() = 0.0;
+        boundPartials_.at(i, j).values() = 0.0;
+        unboundPartials_.at(i, j).values() = 0.0;
+        emptyBoundPartials_.at(i, j) = true;
+    });
 
     // Zero total
     total_.values() = 0.0;
@@ -268,34 +260,27 @@ Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
 bool PartialSet::save() const
 {
     LineParser parser;
-    int typeI, typeJ, n;
 
-    auto nTypes = atomTypes_.nItems();
-    for (typeI = 0; typeI < nTypes; ++typeI)
-    {
-        for (typeJ = typeI; typeJ < nTypes; ++typeJ)
-        {
-            // Open file and check that we're OK to proceed writing to it
-            std::string filename{partials_.constAt(typeI, typeJ).name()};
-            Messenger::printVerbose("Writing partial file '{}'...\n", filename);
+    for_each_pair_early(0, atomTypes_.nItems(), [&](int typeI, int typeJ) -> EarlyReturn<bool> {
+        // Open file and check that we're OK to proceed writing to it
+        std::string filename{partials_.constAt(typeI, typeJ).name()};
+        Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
-            parser.openOutput(filename, true);
-            if (!parser.isFileGoodForWriting())
-            {
-                Messenger::error("Couldn't open file '{}' for writing.\n", filename);
-                return false;
-            }
+        parser.openOutput(filename, true);
+        if (!parser.isFileGoodForWriting())
+            return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
 
-            auto &full = partials_.constAt(typeI, typeJ);
-            auto &bound = boundPartials_.constAt(typeI, typeJ);
-            auto &unbound = unboundPartials_.constAt(typeI, typeJ);
-            parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits_, "Full", "Bound", "Unbound");
-            for (n = 0; n < full.nValues(); ++n)
-                parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.constXAxis(n), full.constValue(n),
-                                  bound.constValue(n), unbound.constValue(n));
-            parser.closeFiles();
-        }
-    }
+        auto &full = partials_.constAt(typeI, typeJ);
+        auto &bound = boundPartials_.constAt(typeI, typeJ);
+        auto &unbound = unboundPartials_.constAt(typeI, typeJ);
+        parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits_, "Full", "Bound", "Unbound");
+        for (int n = 0; n < full.nValues(); ++n)
+            parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.constXAxis(n), full.constValue(n),
+                              bound.constValue(n), unbound.constValue(n));
+        parser.closeFiles();
+
+        return EarlyReturn<bool>::Continue;
+    });
 
     Messenger::printVerbose("Writing total file '{}'...\n", total_.name());
     Data1DExportFileFormat exportFormat(total_.name());
@@ -597,18 +582,16 @@ bool PartialSet::write(LineParser &parser)
     auto nTypes = atomTypes_.nItems();
 
     // Write individual Data1D
-    for (int typeI = 0; typeI < nTypes; ++typeI)
-    {
-        for (int typeJ = typeI; typeJ < nTypes; ++typeJ)
-        {
-            if (!partials_.at(typeI, typeJ).write(parser))
-                return false;
-            if (!boundPartials_.at(typeI, typeJ).write(parser))
-                return false;
-            if (!unboundPartials_.at(typeI, typeJ).write(parser))
-                return false;
-        }
-    }
+    for_each_pair_early(0, nTypes, [&](int typeI, int typeJ) -> EarlyReturn<bool> {
+        if (!partials_.at(typeI, typeJ).write(parser))
+            return false;
+        if (!boundPartials_.at(typeI, typeJ).write(parser))
+            return false;
+        if (!unboundPartials_.at(typeI, typeJ).write(parser))
+            return false;
+
+        return EarlyReturn<bool>::Continue;
+    });
 
     // Write total
     if (!total_.write(parser))
@@ -630,19 +613,16 @@ bool PartialSet::broadcast(ProcessPool &procPool, const int root, const CoreData
 {
 #ifdef PARALLEL
     // The structure should have already been setup(), so arrays should be ready to copy
-    auto nTypes = atomTypes_.nItems();
-    for (int typeI = 0; typeI < nTypes; ++typeI)
-    {
-        for (int typeJ = typeI; typeJ < nTypes; ++typeJ)
-        {
-            if (!partials_.at(typeI, typeJ).broadcast(procPool, root, coreData))
-                return Messenger::error("Failed to broadcast partials_ array.\n");
-            if (!boundPartials_.at(typeI, typeJ).broadcast(procPool, root, coreData))
-                return Messenger::error("Failed to broadcast boundPartials_ array.\n");
-            if (!unboundPartials_.at(typeI, typeJ).broadcast(procPool, root, coreData))
-                return Messenger::error("Failed to broadcast unboundPartials_ array.\n");
-        }
-    }
+    for_each_pair_early(0, atomTypes_.nItems(), [&](int typeI, int typeJ) -> EarlyReturn<bool> {
+        if (!partials_.at(typeI, typeJ).broadcast(procPool, root, coreData))
+            return Messenger::error("Failed to broadcast partials_ array.\n");
+        if (!boundPartials_.at(typeI, typeJ).broadcast(procPool, root, coreData))
+            return Messenger::error("Failed to broadcast boundPartials_ array.\n");
+        if (!unboundPartials_.at(typeI, typeJ).broadcast(procPool, root, coreData))
+            return Messenger::error("Failed to broadcast unboundPartials_ array.\n");
+
+        return EarlyReturn<bool>::Continue;
+    });
 
     if (!total_.broadcast(procPool, root, coreData))
         return Messenger::error("Failed to broadcast total_.\n");
@@ -660,18 +640,16 @@ bool PartialSet::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
     auto nTypes = atomTypes_.nItems();
-    for (int typeI = 0; typeI < nTypes; ++typeI)
-    {
-        for (int typeJ = typeI; typeJ < nTypes; ++typeJ)
-        {
-            if (!partials_.at(typeI, typeJ).equality(procPool))
-                return Messenger::error("PartialSet full partial {}-{} is not equivalent.\n", typeI, typeJ);
-            if (!boundPartials_.at(typeI, typeJ).equality(procPool))
-                return Messenger::error("PartialSet bound partial {}-{} is not equivalent.\n", typeI, typeJ);
-            if (!unboundPartials_.at(typeI, typeJ).equality(procPool))
-                return Messenger::error("PartialSet unbound partial {}-{} is not equivalent.\n", typeI, typeJ);
-        }
-    }
+    for_each_pair_early(0, atomTypes_.nItems(), [&](int typeI, int typeJ) -> EarlyReturn<bool> {
+        if (!partials_.at(typeI, typeJ).equality(procPool))
+            return Messenger::error("PartialSet full partial {}-{} is not equivalent.\n", typeI, typeJ);
+        if (!boundPartials_.at(typeI, typeJ).equality(procPool))
+            return Messenger::error("PartialSet bound partial {}-{} is not equivalent.\n", typeI, typeJ);
+        if (!unboundPartials_.at(typeI, typeJ).equality(procPool))
+            return Messenger::error("PartialSet unbound partial {}-{} is not equivalent.\n", typeI, typeJ);
+
+        return EarlyReturn<bool>::Continue;
+    });
     if (!total_.equality(procPool))
         return Messenger::error("PartialSet total sum is not equivalent.\n");
     if (!procPool.equality(emptyBoundPartials_))
