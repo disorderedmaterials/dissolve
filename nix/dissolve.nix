@@ -21,7 +21,6 @@ pkgs.stdenv.mkDerivation {
     "-DCMAKE_BUILD_TYPE=Release"
     "-DGUI=${cmakeBool gui}"
     "-DPARALLEL=${cmakeBool parallel}"
-    "-DCMAKE_POLICY_DEFAULT_CMP0025=NEW"
   ];
   patches = [ ./ignore_conan.patch ];
   buildInputs = [
