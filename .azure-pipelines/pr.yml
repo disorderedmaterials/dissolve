@@ -63,6 +63,7 @@ stages:
             parameters:
               extraflags: '-DCHECKS:bool=true'
               mac: true
+              nixName: "dissolve-mac"
           - template: templates/package-osx-serial-gui.yml
           - task: PublishBuildArtifacts@1
             inputs:
