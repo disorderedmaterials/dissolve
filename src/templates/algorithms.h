@@ -19,6 +19,14 @@ template <class Iter, class Lam> void for_each_pair(Iter begin, Iter end, Lam la
     }
 }
 
+// Perform an operation on every pair of elements in a range (begin <= i < end)
+template <class Lam> void for_each_pair(int begin, int end, Lam lambda)
+{
+    for (auto i = begin; i < end; ++i)
+        for (auto j = i; j < end; ++j)
+            lambda(i, j);
+}
+
 template <typename T> class EarlyReturn
 {
     public:
@@ -62,5 +70,26 @@ auto for_each_pair_early(Iter begin, Iter end, Lam lambda) -> decltype(lambda(0,
             }
         }
     }
+    return std::nullopt;
+}
+
+// Perform an operation on every pair of elements in a range
+template <class Lam> auto for_each_pair_early(int begin, int end, Lam lambda) -> decltype(lambda(0, 0).value())
+{
+    for (auto i = begin; i < end; ++i)
+        for (auto j = i; j < end; ++j)
+        {
+            auto result = lambda(i, j);
+            switch (result.type())
+            {
+                case EarlyReturn<decltype(lambda(0, 0).value())>::Return:
+                    return result.value();
+                case EarlyReturn<decltype(lambda(0, 0).value())>::Break:
+                    break;
+                case EarlyReturn<decltype(lambda(0, 0).value())>::Continue:
+                    continue;
+            }
+        }
+
     return std::nullopt;
 }
