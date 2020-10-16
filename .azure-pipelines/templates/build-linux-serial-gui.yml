@@ -33,9 +33,9 @@ steps:
       nix-env -iA cachix -f https://cachix.org/api/v1/install
       cachix use rprospero
       cd nix
-      nix-build ${{nixName}}.nix --arg parallel ${{parameters.parallel}}
+      nix-build ${{parameters.nixName}}.nix --arg parallel ${{parameters.parallel}}
       cd ..
-      nix-instantiate nix/${{nixName}}.nix --arg parallel ${{parameters.parallel}} | xargs nix-store -r | xargs nix-store -q --references | xargs tar czf tests/nix.tar.gz
+      nix-instantiate nix/${{parameters.nixName}}.nix --arg parallel ${{parameters.parallel}} | xargs nix-store -r | xargs nix-store -q --references | xargs tar czf tests/nix.tar.gz
       # tar czf tests/nix.tar.gz /nix/store/*
       # cp nix/result/bin/dissolve* tests/
     displayName: 'Build'
