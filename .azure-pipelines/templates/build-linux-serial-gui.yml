@@ -8,7 +8,7 @@ parameters:
     type: boolean
     default: false
   - name: nixName
-    default: ''
+    default: 'dissolve'
     type: string
 
 steps:
