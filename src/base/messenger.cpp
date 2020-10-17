@@ -14,7 +14,7 @@ bool Messenger::quiet_ = false;
 bool Messenger::muted_ = false;
 bool Messenger::verbose_ = false;
 bool Messenger::redirect_ = false;
-bool Messenger::masterOnly_ = false;
+bool Messenger::masterOnly_ = true;
 LineParser Messenger::parser_; //= new LineParser;
 OutputHandler *Messenger::outputHandler_ = nullptr;
 std::string Messenger::outputPrefix_;
