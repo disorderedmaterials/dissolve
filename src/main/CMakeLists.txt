@@ -2,6 +2,7 @@ add_library(main
   atomtypes.cpp
   comms.cpp
   configurations.cpp
+  cli.cpp
   dissolve.cpp
   io.cpp
   keywords.cpp
@@ -20,6 +21,7 @@ add_library(main
   species.cpp
   version.cpp
 
+  cli.h
   dissolve.h
   keywords.h
   version.h
