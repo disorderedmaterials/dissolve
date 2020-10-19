@@ -73,6 +73,7 @@ class Module : public ListItem<Module>
     public:
     // Return list of recognised keywords
     KeywordList &keywords();
+    const KeywordList &keywords() const;
     // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
     KeywordBase::ParseResult parseKeyword(LineParser &parser, Dissolve *dissolve, GenericList &targetList,
                                           std::string_view prefix);

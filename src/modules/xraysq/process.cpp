@@ -11,7 +11,6 @@
 #include "main/dissolve.h"
 #include "math/filters.h"
 #include "math/ft.h"
-#include "modules/bragg/bragg.h"
 #include "modules/import/import.h"
 #include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
@@ -34,16 +33,17 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             return false;
         }
 
-        // Truncate data beyond QMax
-        const double qMax = keywords_.asDouble("QMax") < 0.0 ? 30.0 : keywords_.asDouble("QMax");
-        if (referenceData.constXAxis().lastValue() < qMax)
-            Messenger::warn(
-                "Qmax limit of {:.4e} Angstroms**-1 for calculated XRaySQ ({}) is beyond limit of reference data (Qmax "
-                "= {:.4e} Angstroms**-1).\n",
-                qMax, uniqueName(), referenceData.constXAxis().lastValue());
-        else
-            while (referenceData.constXAxis().lastValue() > qMax)
-                referenceData.removeLastPoint();
+        //         // Truncate data beyond QMax
+        //         const double qMax = keywords_.asDouble("QMax") < 0.0 ? 30.0 : keywords_.asDouble("QMax");
+        //         if (referenceData.constXAxis().lastValue() < qMax)
+        //             Messenger::warn(
+        //                 "Qmax limit of {:.4e} Angstroms**-1 for calculated XRaySQ ({}) is beyond limit of reference data
+        //                 (Qmax "
+        //                 "= {:.4e} Angstroms**-1).\n",
+        //                 qMax, uniqueName(), referenceData.constXAxis().lastValue());
+        //         else
+        //             while (referenceData.constXAxis().lastValue() > qMax)
+        //                 referenceData.removeLastPoint();
 
         // Remove first point?
         if (keywords_.asBool("ReferenceIgnoreFirst"))
@@ -113,32 +113,21 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Partial calculation routines called by this routine are parallel.
      */
 
-    // Check for zero Configuration targets
-    if (targetConfigurations_.nItems() == 0)
-        return Messenger::error("No configuration targets set for module '{}'.\n", uniqueName());
-
-    const bool includeBragg = keywords_.asBool("IncludeBragg");
-    const BroadeningFunction &braggQBroadening =
-        keywords_.retrieve<BroadeningFunction>("BraggQBroadening", BroadeningFunction());
+    const SQModule *sqModule = keywords_.retrieve<const SQModule *>("SourceSQs", nullptr);
+    if (!sqModule)
+        return Messenger::error("A source SQ module must be provided.\n");
+    const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr);
+    if (!rdfModule)
+        return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
     XRayFormFactors::XRayFormFactorData formFactors = keywords_.enumeration<XRayFormFactors::XRayFormFactorData>("FormFactors");
-    const BroadeningFunction &qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
-    const double qDelta = keywords_.asDouble("QDelta");
-    const double qMin = keywords_.asDouble("QMin");
-    double qMax = keywords_.asDouble("QMax");
     XRaySQModule::NormalisationType normalisation = keywords_.enumeration<XRaySQModule::NormalisationType>("Normalisation");
     const WindowFunction &referenceWindowFunction =
         keywords_.retrieve<WindowFunction>("ReferenceWindowFunction", WindowFunction());
-    if (qMax < 0.0)
-        qMax = 30.0;
     const bool saveFormFactors = keywords_.asBool("SaveFormFactors");
-    const bool saveUnweighted = keywords_.asBool("SaveUnweighted");
-    const bool saveWeighted = keywords_.asBool("SaveWeighted");
-    const WindowFunction &windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
+    const bool saveSQ = keywords_.asBool("SaveSQ");
 
     // Print argument/parameter summary
-    Messenger::print(
-        "XRaySQ: Calculating S(Q)/F(Q) over {:.4e} < Q < {:.4e} Angstroms**-1 using step size of {:.4e} Angstroms**-1.\n", qMin,
-        qMax, qDelta);
+    Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
     Messenger::print("XRaySQ: Form factors to use are '{}'.\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors));
     if (normalisation == XRaySQModule::NoNormalisation)
         Messenger::print("XRaySQ: No normalisation will be applied to total F(Q).\n");
@@ -146,318 +135,138 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b>**2");
     else if (normalisation == XRaySQModule::SquareOfAverageNormalisation)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b**2>");
-    if (windowFunction.function() == WindowFunction::NoWindow)
-        Messenger::print("XRaySQ: No window function will be applied in Fourier transforms of g(r) to S(Q).");
-    else
-        Messenger::print("XRaySQ: Window function to be applied in Fourier transforms is {} ({}).",
-                         WindowFunction::functionType(windowFunction.function()), windowFunction.parameterSummary());
     if (referenceWindowFunction.function() == WindowFunction::NoWindow)
         Messenger::print("XRaySQ: No window function will be applied when calculating representative g(r) from S(Q).");
     else
         Messenger::print("XRaySQ: Window function to be applied when calculating representative g(r) from S(Q) is {} ({}).",
                          WindowFunction::functionType(referenceWindowFunction.function()),
                          referenceWindowFunction.parameterSummary());
-    if (qBroadening.function() == BroadeningFunction::NoFunction)
-        Messenger::print("XRaySQ: No broadening will be applied to calculated S(Q).");
-    else
-        Messenger::print("XRaySQ: Broadening to be applied in calculated S(Q) is {} ({}).",
-                         BroadeningFunction::functionType(qBroadening.function()), qBroadening.parameterSummary());
     if (saveFormFactors)
         Messenger::print("XRaySQ: Combined form factor weightings for atomtype pairs will be saved.\n");
-    if (saveUnweighted)
-        Messenger::print("XRaySQ: Unweighted partials and totals will be saved.\n");
-    if (saveWeighted)
-        Messenger::print("XRaySQ: Weighted partials and totals will be saved.\n");
-    if (includeBragg)
-    {
-        Messenger::print(
-            "XRaySQ: Bragg scattering will be calculated from reflection data in target Configurations, if present.\n");
-        if (braggQBroadening.function() == BroadeningFunction::NoFunction)
-            Messenger::print("XRaySQ: No additional broadening will be applied to calculated Bragg S(Q).");
-        else
-            Messenger::print("XRaySQ: Additional broadening to be applied in calculated Bragg S(Q) is {} ({}).",
-                             BroadeningFunction::functionType(braggQBroadening.function()),
-                             braggQBroadening.parameterSummary());
-    }
+    if (saveSQ)
+        Messenger::print("XRaySQ: Weighted partial S(Q) and total F(Q) will be saved.\n");
     Messenger::print("\n");
 
     /*
-     * Loop over target Configurations and Fourier transform their UnweightedGR into the corresponding UnweightedSQ.
+     * Transform UnweightedSQ from provided SQ data into WeightedSQ.
      */
 
     bool created;
 
-    for (Configuration *cfg : targetConfigurations_)
+    // Get unweighted S(Q) from the specified SQMOdule
+    if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->uniqueName()))
+        return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sqModule->uniqueName());
+    const auto &unweightedSQ =
+        GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ", sqModule->uniqueName());
+
+    // Construct weights matrix containing each Species in the Configuration in the correct proportion
+    // TODO This info would be better calculated by the RDFModule and stored there / associated to it (#400)
+    // TODO Following code should exist locally in RDFModule::sumUnweightedGR() when suitable class storage is available.
+    auto &weights = GenericListHelper<XRayWeights>::realise(dissolve.processingModuleData(), "FullWeights", uniqueName_,
+                                                            GenericItem::InRestartFileFlag);
+    weights.clear();
+    for (auto *cfg : rdfModule->targetConfigurations())
     {
-        // Set up process pool - must do this to ensure we are using all available processes
-        procPool.assignProcessesToGroups(cfg->processPool());
+        // TODO Assume weight of 1.0 per configuration now, until #398/#400 are addressed.
+        const auto CFGWEIGHT = 1.0;
 
-        // Get unweighted g(r) for this Configuration - we don't supply a specific Module prefix, since the unweighted g(r) may
-        // come from one of many RDF-type modules
-        if (!cfg->moduleData().contains("UnweightedGR"))
-            return Messenger::error("Couldn't locate UnweightedGR for Configuration '{}'.\n", cfg->name());
-        const PartialSet &unweightedgr = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
+        ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
+        while (auto *spInfo = spInfoIterator.iterate())
+            weights.addSpecies(spInfo->species(), spInfo->population() * CFGWEIGHT);
+    }
 
-        // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-        PartialSet &unweightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedSQ", "",
-                                                                          GenericItem::InRestartFileFlag, &created);
-        if (created)
-            unweightedsq.setUpPartials(unweightedgr.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()),
-                                       "unweighted", "sq", "Q, 1/Angstroms");
+    // Create, print, and store weights
+    Messenger::print("Weights matrix:\n\n");
+    weights.finalise(formFactors);
+    weights.print();
 
-        // Is the PartialSet already up-to-date? Do we force its calculation anyway?
-        bool &forceCalculation = GenericListHelper<bool>::retrieve(cfg->moduleData(), "_ForceXRaySQ", "", false);
-        const bool sqUpToDate = DissolveSys::sameString(
-            unweightedsq.fingerprint(), fmt::format("{}/{}", cfg->moduleData().version("UnweightedGR"),
-                                                    includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
-        if ((!forceCalculation) && sqUpToDate)
-        {
-            Messenger::print("Unweighted partial S(Q) are up-to-date for Configuration '{}'.\n", cfg->name());
-            continue;
-        }
-        forceCalculation = false;
+    // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
+    PartialSet &weightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedSQ", uniqueName_,
+                                                                    GenericItem::InRestartFileFlag, &created);
+    if (created)
+        weightedSQ.setUpPartials(unweightedSQ.atomTypes(), uniqueName(), "weighted", "sq", "Q, 1/Angstroms");
 
-        // Transform g(r) into S(Q)
-        if (!SQModule::calculateUnweightedSQ(procPool, cfg, unweightedgr, unweightedsq, qMin, qDelta, qMax,
-                                             cfg->atomicDensity(), windowFunction, qBroadening))
-            return false;
+    // Calculate weighted S(Q)
+    calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation);
 
-        // Include Bragg scattering?
-        if (includeBragg)
-        {
-            // Check if reflection data is present
-            if (!cfg->moduleData().contains("BraggReflections"))
-                return Messenger::error(
-                    "Bragg scattering requested to be included, but Configuration '{}' contains no reflection data.\n",
-                    cfg->name());
-            const Array<BraggReflection> &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
-                cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>());
-            const int nReflections = braggReflections.nItems();
-            const double braggQMax = braggReflections.constAt(nReflections - 1).q();
-            Messenger::print(
-                "Found BraggReflections data for Configuration '{}' (nReflections = {}, QMax = {:.4e} Angstroms**-1).\n",
-                cfg->name(), nReflections, braggQMax);
+    // Set names of resources (Data1D) within the PartialSet
+    weightedSQ.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedSQ"));
 
-            // Create a temporary array into which our broadened Bragg partials will be placed
-            Array2D<Data1D> &braggPartials = GenericListHelper<Array2D<Data1D>>::realise(
-                cfg->moduleData(), "BraggPartials", uniqueName(), GenericItem::NoFlag, &created);
-            if (created)
-            {
-                // Initialise the array
-                braggPartials.initialise(unweightedsq.nAtomTypes(), unweightedsq.nAtomTypes(), true);
-
-                for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
+    // Save data if requested
+    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save())))
+        return false;
+    if (saveFormFactors)
+    {
+        auto result = for_each_pair_early(
+            unweightedSQ.atomTypes().begin(), unweightedSQ.atomTypes().end(),
+            [&](int i, auto &at1, int j, auto &at2) -> EarlyReturn<bool> {
+                if (i == j)
                 {
-                    for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
-                        braggPartials.at(i, j) = unweightedsq.constPartial(0, 0);
-                }
-            }
-            for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
-            {
-                for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
-                    braggPartials.at(i, j).values() = 0.0;
-            }
-
-            // First, re-bin the reflection data into the arrays we have just set up
-            if (!BraggModule::reBinReflections(procPool, cfg, braggPartials))
-                return false;
-
-            // Apply necessary broadening
-            for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
-            {
-                for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
-                {
-                    // Bragg-specific broadening
-                    Filters::convolve(braggPartials.at(i, j), braggQBroadening, true);
-
-                    // Local 'QBroadening' term
-                    Filters::convolve(braggPartials.at(i, j), qBroadening, true);
-                }
-            }
-
-            // Remove self-scattering level from partials between the same atom type and remove normalisation from atomic
-            // fractions
-            for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
-            {
-                for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
-                {
-                    // Subtract self-scattering level if types are equivalent
-                    if (i == j)
-                        braggPartials.at(i, i) -= cfg->usedAtomTypeData(i).fraction();
-
-                    // Remove atomic fraction normalisation
-                    braggPartials.at(i, j) /= cfg->usedAtomTypeData(i).fraction() * cfg->usedAtomTypeData(j).fraction();
-                }
-            }
-
-            // Blend the bound/unbound and Bragg partials at the higher Q limit
-            for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
-            {
-                for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
-                {
-                    // Note: Intramolecular broadening will not be applied to bound terms within the calculated Bragg scattering
-                    Data1D &bound = unweightedsq.boundPartial(i, j);
-                    Data1D &unbound = unweightedsq.unboundPartial(i, j);
-                    Data1D &partial = unweightedsq.partial(i, j);
-                    Data1D &bragg = braggPartials.at(i, j);
-
-                    for (int n = 0; n < bound.nValues(); ++n)
-                    {
-                        const double q = bound.xAxis(n);
-                        if (q <= braggQMax)
-                        {
-                            bound.value(n) = 0.0;
-                            unbound.value(n) = bragg.value(n);
-                            partial.value(n) = bragg.value(n);
-                        }
-                    }
-                }
-            }
-
-            // Re-form the total function
-            unweightedsq.formTotal(true);
-        }
-
-        // Set names of resources (Data1D) within the PartialSet, and tag it with the fingerprint from the source unweighted
-        // g(r)
-        unweightedsq.setObjectTags(fmt::format("{}//{}//{}", cfg->niceName(), "XRaySQ", "UnweightedSQ"));
-        unweightedsq.setFingerprint(fmt::format("{}/{}", cfg->moduleData().version("UnweightedGR"),
-                                                includeBragg ? cfg->moduleData().version("BraggReflections") : -1));
-
-        // Save data if requested
-        if (saveUnweighted && (!MPIRunMaster(procPool, unweightedsq.save())))
-            return false;
-
-        // Construct weights matrix containing each Species in the Configuration in the correct proportion
-        XRayWeights weights;
-        ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
-        while (SpeciesInfo *spInfo = speciesInfoIterator.iterate())
-            weights.addSpecies(spInfo->species(), spInfo->population());
-
-        // Create, print, and store weights
-        Messenger::print("Isotopologue and isotope composition for Configuration '{}':\n\n", cfg->name());
-        weights.finalise(formFactors);
-        weights.print();
-
-        // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
-        PartialSet &weightedsq = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "WeightedSQ", "",
-                                                                        GenericItem::InRestartFileFlag, &created);
-        if (created)
-            weightedsq.setUpPartials(unweightedsq.atomTypes(), fmt::format("{}-{}", cfg->niceName(), uniqueName()), "weighted",
-                                     "sq", "Q, 1/Angstroms");
-
-        // Calculate weighted S(Q)
-        calculateWeightedSQ(unweightedsq, weightedsq, weights, normalisation);
-
-        // Set names of resources (Data1D) within the PartialSet
-        weightedsq.setObjectTags(fmt::format("{}//{}//{}", cfg->niceName(), uniqueName_, "WeightedSQ"));
-
-        // Save data if requested
-        if (saveWeighted && (!MPIRunMaster(procPool, weightedsq.save())))
-            return false;
-        if (saveFormFactors)
-        {
-            auto result = for_each_pair_early(
-                unweightedsq.atomTypes().begin(), unweightedsq.atomTypes().end(),
-                [&](int i, auto &at1, int j, auto &at2) -> EarlyReturn<bool> {
-                    if (i == j)
-                    {
-                        if (procPool.isMaster())
-                        {
-                            Data1D atomicData = unweightedsq.partial(i, i);
-                            atomicData.values() = weights.formFactor(i, atomicData.constXAxis());
-                            Data1DExportFileFormat exportFormat(
-                                fmt::format("{}-{}-{}.form", uniqueName(), cfg->niceName(), at1.atomTypeName()));
-                            if (!exportFormat.exportData(atomicData))
-                                return procPool.decideFalse();
-                            procPool.decideTrue();
-                        }
-                        else if (!procPool.decision())
-                            return false;
-                    }
-
                     if (procPool.isMaster())
                     {
-                        Data1D ffData = unweightedsq.partial(i, j);
-                        ffData.values() = weights.weight(i, j, ffData.constXAxis());
-                        Data1DExportFileFormat exportFormat(fmt::format("{}-{}-{}-{}.form", uniqueName(), cfg->niceName(),
-                                                                        at1.atomTypeName(), at2.atomTypeName()));
-                        if (!exportFormat.exportData(ffData))
+                        Data1D atomicData = unweightedSQ.partial(i, i);
+                        atomicData.values() = weights.formFactor(i, atomicData.constXAxis());
+                        Data1DExportFileFormat exportFormat(fmt::format("{}-{}.form", uniqueName(), at1.atomTypeName()));
+                        if (!exportFormat.exportData(atomicData))
                             return procPool.decideFalse();
                         procPool.decideTrue();
                     }
                     else if (!procPool.decision())
                         return false;
+                }
 
-                    return EarlyReturn<bool>::Continue;
-                });
+                if (procPool.isMaster())
+                {
+                    Data1D ffData = unweightedSQ.partial(i, j);
+                    ffData.values() = weights.weight(i, j, ffData.constXAxis());
+                    Data1DExportFileFormat exportFormat(
+                        fmt::format("{}-{}-{}.form", uniqueName(), at1.atomTypeName(), at2.atomTypeName()));
+                    if (!exportFormat.exportData(ffData))
+                        return procPool.decideFalse();
+                    procPool.decideTrue();
+                }
+                else if (!procPool.decision())
+                    return false;
 
-            if (!result.value_or(true))
-                return Messenger::error("Failed to save form factor data.");
-        }
+                return EarlyReturn<bool>::Continue;
+            });
+
+        if (!result.value_or(true))
+            return Messenger::error("Failed to save form factor data.");
     }
 
     /*
-     * Construct the weighted sum of Configuration partials and store in the processing module data list
+     * Transform UnweightedGR from underlying RDF data into WeightedGR.
      */
 
-    // Create/retrieve PartialSet for summed partial S(Q)
-    PartialSet &summedUnweightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedSQ",
-                                                                            uniqueName_, GenericItem::InRestartFileFlag);
-
-    // Sum the partials from the associated Configurations
-    if (!SQModule::sumUnweightedSQ(procPool, this, dissolve.processingModuleData(), summedUnweightedSQ))
-        return false;
-
-    // Save data if requested
-    if (saveUnweighted && (!MPIRunMaster(procPool, summedUnweightedSQ.save())))
-        return false;
-
-    // Create/retrieve PartialSet for summed partial S(Q)
-    PartialSet &summedWeightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedSQ",
-                                                                          uniqueName_, GenericItem::InRestartFileFlag);
-    summedWeightedSQ = summedUnweightedSQ;
-    summedWeightedSQ.setFileNames(uniqueName_, "weighted", "sq");
-    summedWeightedSQ.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedSQ"));
-
-    // Calculate weighted S(Q)
-    Messenger::print("Atom type composition over all Configurations used in '{}':\n\n", uniqueName_);
-    XRayWeights summedWeights;
-    if (!calculateSummedWeights(summedWeights, formFactors))
-        return false;
-    summedWeights.print();
-    GenericListHelper<XRayWeights>::realise(dissolve.processingModuleData(), "FullWeights", uniqueName_,
-                                            GenericItem::InRestartFileFlag) = summedWeights;
-    calculateWeightedSQ(summedUnweightedSQ, summedWeightedSQ, summedWeights, normalisation);
-
-    // Create/retrieve PartialSet for summed unweighted g(r)
-    PartialSet &summedUnweightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR",
-                                                                            uniqueName_, GenericItem::InRestartFileFlag);
-
-    // Sum the partials from the associated Configurations
-    if (!RDFModule::sumUnweightedGR(procPool, this, dissolve.processingModuleData(), summedUnweightedGR))
-        return false;
+    // Get summed unweighted g(r) from the specified RDFMOdule
+    if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->uniqueName()))
+        return Messenger::error("Couldn't locate summed unweighted g(r) data.\n");
+    const auto &unweightedGR =
+        GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedGR", rdfModule->uniqueName());
 
     // Create/retrieve PartialSet for summed weighted g(r)
-    PartialSet &summedWeightedGR = GenericListHelper<PartialSet>::realise(
-        dissolve.processingModuleData(), "WeightedGR", uniqueName_, GenericItem::InRestartFileFlag, &created);
+    auto &weightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedGR", uniqueName_,
+                                                              GenericItem::InRestartFileFlag, &created);
     if (created)
-        summedWeightedGR.setUpPartials(summedUnweightedSQ.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
-    summedWeightedGR.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedGR"));
+        weightedGR.setUpPartials(unweightedSQ.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
+    weightedGR.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedGR"));
 
     // Calculate weighted g(r)
-    calculateWeightedGR(summedUnweightedGR, summedWeightedGR, summedWeights, normalisation);
+    calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation);
 
     // Calculate representative total g(r) from FT of calculated S(Q)
-    Data1D &repGR = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RepresentativeTotalGR", uniqueName_,
-                                                       GenericItem::InRestartFileFlag);
-    repGR = summedWeightedSQ.total();
+    auto &repGR = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RepresentativeTotalGR", uniqueName_,
+                                                     GenericItem::InRestartFileFlag);
+    repGR = weightedSQ.total();
+    auto qMin = weightedSQ.total().values().firstValue();
+    auto qMax = weightedSQ.total().values().lastValue();
     double rho = nTargetConfigurations() == 0 ? 0.1 : RDFModule::summedRho(this, dissolve.processingModuleData());
-    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), qMin, qDelta, qMax, referenceWindowFunction);
+    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), qMin, 0.05, qMax, referenceWindowFunction);
     repGR.setObjectTag(fmt::format("{}//RepresentativeTotalGR", uniqueName_));
 
     // Save data if requested
-    if (saveWeighted && (!MPIRunMaster(procPool, summedWeightedSQ.save())))
+    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save())))
         return false;
 
     return true;

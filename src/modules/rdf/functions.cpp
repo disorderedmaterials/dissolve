@@ -247,7 +247,7 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
 {
     // Does a PartialSet already exist for this Configuration?
     bool wasCreated;
-    auto &originalgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "OriginalGR", "",
+    auto &originalgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "OriginalGR", uniqueName_,
                                                               GenericItem::InRestartFileFlag, &wasCreated);
     if (wasCreated)
         originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth, cfg->niceName(), "original", "rdf", "r, Angstroms");
@@ -396,19 +396,19 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
         {
             for (int j = i; j < unweightedgr.nAtomTypes(); ++j)
             {
-                unweightedgr.boundPartial(i, j).copyArrays(originalgr.constBoundPartial(i, j));
-                unweightedgr.unboundPartial(i, j).copyArrays(originalgr.constUnboundPartial(i, j));
-                unweightedgr.partial(i, j).copyArrays(originalgr.constPartial(i, j));
+                unweightedgr.boundPartial(i, j).copyArrays(originalgr.boundPartial(i, j));
+                unweightedgr.unboundPartial(i, j).copyArrays(originalgr.unboundPartial(i, j));
+                unweightedgr.partial(i, j).copyArrays(originalgr.partial(i, j));
             }
         }
-        unweightedgr.total().copyArrays(originalgr.constTotal());
+        unweightedgr.total().copyArrays(originalgr.total());
     }
 
     // Remove bound partial from full partial
     for (int i = 0; i < unweightedgr.nAtomTypes(); ++i)
     {
         for (int j = i; j < unweightedgr.nAtomTypes(); ++j)
-            unweightedgr.partial(i, j) -= originalgr.constBoundPartial(i, j);
+            unweightedgr.partial(i, j) -= originalgr.boundPartial(i, j);
     }
 
     // Broaden the bound partials according to the supplied PairBroadeningFunction
@@ -621,7 +621,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
     // Add broadened bound partials back in to full partials
     auto &types = unweightedgr.atomTypes();
     for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &typeI, int j, const AtomTypeData &typeJ) {
-        unweightedgr.partial(i, j) += unweightedgr.constBoundPartial(i, j);
+        unweightedgr.partial(i, j) += unweightedgr.boundPartial(i, j);
     });
 
     // Apply smoothing if requested
@@ -659,30 +659,33 @@ double RDFModule::summedRho(Module *module, GenericList &processingModuleData)
 }
 
 // Sum unweighted g(r) over the supplied Module's target Configurations
-bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericList &processingModuleData,
-                                PartialSet &summedUnweightedGR)
+bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, const RDFModule *rdfModule,
+                                GenericList &processingModuleData, PartialSet &summedUnweightedGR)
 {
-    // Create an AtomTypeList containing the sum of atom types over all target configurations
-    AtomTypeList combinedAtomTypes;
-    for (Configuration *cfg : module->targetConfigurations())
+    // Realise an AtomTypeList containing the sum of atom types over all target configurations
+    // TODO Assume weight of 1.0 per configuration now, until #398/#400 are addressed.
+    auto &combinedAtomTypes = GenericListHelper<AtomTypeList>::realise(
+        processingModuleData, "SummedAtomTypes", parentModule->uniqueName(), GenericItem::InRestartFileFlag);
+    combinedAtomTypes.clear();
+    for (Configuration *cfg : parentModule->targetConfigurations())
         combinedAtomTypes.add(cfg->usedAtomTypesList());
 
-    // Finalise and print the combined AtomTypes matrix
+    // Finalise and save the combined AtomTypes matrix
     combinedAtomTypes.finalise();
 
     // Set up PartialSet container
-    summedUnweightedGR.setUpPartials(combinedAtomTypes, module->uniqueName(), "unweighted", "gr", "r, Angstroms");
-    summedUnweightedGR.setObjectTags(fmt::format("{}//UnweightedGR", module->uniqueName()));
+    summedUnweightedGR.setUpPartials(combinedAtomTypes, parentModule->uniqueName(), "unweighted", "gr", "r, Angstroms");
+    summedUnweightedGR.setObjectTags(fmt::format("{}//UnweightedGR", parentModule->uniqueName()));
 
     // Determine total weighting factors and combined density over all Configurations, and set up a Configuration/weight
     // RefList for simplicity
     RefDataList<Configuration, double> configWeights;
     double totalWeight = 0.0;
-    for (Configuration *cfg : module->targetConfigurations())
+    for (Configuration *cfg : parentModule->targetConfigurations())
     {
         // Get weighting factor for this Configuration to contribute to the summed partials
         auto weight = GenericListHelper<double>::value(
-            processingModuleData, fmt::format("ConfigurationWeight_{}", cfg->niceName()), module->uniqueName(), 1.0);
+            processingModuleData, fmt::format("ConfigurationWeight_{}", cfg->niceName()), parentModule->uniqueName(), 1.0);
         Messenger::print("Weight for Configuration '{}' is {}.\n", cfg->name(), weight);
 
         // Add our Configuration target
@@ -710,15 +713,15 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *module, GenericLi
         double weight = ((weightsIterator.currentData() / totalWeight) * cfg->atomicDensity()) / rho0;
 
         // Grab partials for Configuration and add into our set
-        if (!cfg->moduleData().contains("UnweightedGR"))
+        if (!cfg->moduleData().contains("UnweightedGR", rdfModule->uniqueName()))
             return Messenger::error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
-        auto cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
+        auto cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR", rdfModule->uniqueName());
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }
     summedUnweightedGR.setFingerprint(fingerprint);
 
     // Store the overall density of our partials
-    GenericListHelper<double>::realise(processingModuleData, "EffectiveRho", module->uniqueName(),
+    GenericListHelper<double>::realise(processingModuleData, "EffectiveRho", parentModule->uniqueName(),
                                        GenericItem::InRestartFileFlag) = rho0;
 
     return true;
@@ -784,9 +787,9 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
         double weight = (weightsIterator.currentData() * cfg->atomicDensity()) / rho0;
 
         // *Copy* the partials for the Configuration, subtract 1.0, and add into our set
-        if (!cfg->moduleData().contains("UnweightedGR"))
+        if (!cfg->moduleData().contains("UnweightedGR", parentModule->uniqueName()))
             return Messenger::error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
-        auto cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR");
+        auto cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR", parentModule->uniqueName());
         cfgPartialGR -= 1.0;
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }
@@ -854,7 +857,7 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
     auto testResult = false;
     if (DissolveSys::sameString(typeIorTotal, "total") && (typeJ == nullptr) && (target == nullptr))
     {
-        double error = Error::percent(partials.constTotal(), testData);
+        double error = Error::percent(partials.total(), testData);
         testResult = (error <= testThreshold);
         Messenger::print("Test reference data '{}' has error of {:7.3f}% with calculated data and is {} (threshold is "
                          "{:6.3f}%)\n\n",
@@ -871,11 +874,11 @@ bool RDFModule::testReferencePartial(const PartialSet &partials, double testThre
         // AtomTypes are valid, so check the 'target'
         double error = -1.0;
         if (DissolveSys::sameString(target, "bound"))
-            error = Error::percent(partials.constBoundPartial(indexI, indexJ), testData);
+            error = Error::percent(partials.boundPartial(indexI, indexJ), testData);
         else if (DissolveSys::sameString(target, "unbound"))
-            error = Error::percent(partials.constUnboundPartial(indexI, indexJ), testData);
+            error = Error::percent(partials.unboundPartial(indexI, indexJ), testData);
         else if (DissolveSys::sameString(target, "full"))
-            error = Error::percent(partials.constPartial(indexI, indexJ), testData);
+            error = Error::percent(partials.partial(indexI, indexJ), testData);
         else
             return Messenger::error("Unrecognised test data name '{}'.\n", testData.name());
 

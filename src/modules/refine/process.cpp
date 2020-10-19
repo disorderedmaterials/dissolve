@@ -19,6 +19,7 @@
 #include "modules/energy/energy.h"
 #include "modules/rdf/rdf.h"
 #include "modules/refine/refine.h"
+#include "modules/sq/sq.h"
 #include "templates/algorithms.h"
 
 // Run main processing
@@ -150,7 +151,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                     module->uniqueName());
                     return false;
                 }
-                auto calcSQTotal = calcSQ.constTotal();
+                auto calcSQTotal = calcSQ.total();
 
                 error = Error::percent(referenceData, calcSQTotal);
 
@@ -270,14 +271,22 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                                          module->uniqueName(), Data1D(), &found);
             if (!found)
                 return Messenger::error("Could not locate ReferenceData for target '{}'.\n", module->uniqueName());
+
             auto &weights = GenericListHelper<NeutronWeights>::retrieve(dissolve.processingModuleData(), "FullWeights",
                                                                         module->uniqueName(), NeutronWeights(), &found);
             if (!found)
                 return Messenger::error("Could not locate NeutronWeights for target '{}'.\n", module->uniqueName());
+
+            const SQModule *sqModule = module->keywords().retrieve<const SQModule *>("SourceSQs", nullptr);
+            if (!sqModule)
+                return Messenger::error(
+                    "Module '{}' doesn't source any S(Q) data, so it can't be used to augment the scattering matrix.",
+                    module->uniqueName());
             const auto &unweightedSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ",
-                                                                            module->uniqueName(), PartialSet(), &found);
+                                                                            sqModule->uniqueName(), PartialSet(), &found);
             if (!found)
                 return Messenger::error("Could not locate UnweightedSQ for target '{}'.\n", module->uniqueName());
+
             auto rho = GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", module->uniqueName(),
                                                         0.0, &found);
             if (!found)
@@ -294,7 +303,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 auto globalI = atd1.atomType()->index();
                 auto globalJ = atd2.atomType()->index();
 
-                Data1D partialIJ = unweightedSQ.constPartial(i, j);
+                Data1D partialIJ = unweightedSQ.partial(i, j);
                 Interpolator::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ), partialIJ, factor);
                 combinedRho.at(globalI, globalJ) += rho * factor;
                 combinedFactor.at(globalI, globalJ) += factor;

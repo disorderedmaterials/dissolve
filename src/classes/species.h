@@ -241,16 +241,14 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     private:
     // Natural Isotopologue
     Isotopologue naturalIsotopologue_;
-    // Point at which natural Isotopologue was last updated
-    int naturalIsotopologuePoint_;
     // List of isotopic variants defined for this species
     List<Isotopologue> isotopologues_;
 
     public:
     // Update current Isotopologues
     void updateIsotopologues();
-    // Update and return natural isotopologue
-    Isotopologue *naturalIsotopologue();
+    // Return natural (empty) Isotopologue
+    const Isotopologue *naturalIsotopologue() const;
     // Add a new Isotopologue to this Species
     Isotopologue *addIsotopologue(std::string_view baseName);
     // Remove specified Isotopologue from this Species
@@ -266,7 +264,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Generate unique Isotopologue name with base name provided
     std::string uniqueIsotopologueName(std::string_view baseName, const Isotopologue *exclude = nullptr);
     // Search for Isotopologue by name
-    Isotopologue *findIsotopologue(std::string_view name, const Isotopologue *exclude = nullptr);
+    const Isotopologue *findIsotopologue(std::string_view name, const Isotopologue *exclude = nullptr) const;
     // Return index of specified Isotopologue
     int indexOfIsotopologue(const Isotopologue *iso) const;
 

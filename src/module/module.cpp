@@ -40,6 +40,7 @@ std::string_view Module::uniqueName() const { return uniqueName_; }
 
 // Return list of recognised keywords
 KeywordList &Module::keywords() { return keywords_; }
+const KeywordList &Module::keywords() const { return keywords_; };
 
 // Parse keyword line, returning true (1) on success, false (0) for recognised but failed, and -1 for not recognised
 KeywordBase::ParseResult Module::parseKeyword(LineParser &parser, Dissolve *dissolve, GenericList &targetList,

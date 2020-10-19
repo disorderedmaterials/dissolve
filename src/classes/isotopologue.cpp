@@ -114,12 +114,9 @@ bool Isotopologue::setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *iso
 Isotope *Isotopologue::atomTypeIsotope(std::shared_ptr<AtomType> at) const
 {
     auto it = std::find_if(isotopes_.begin(), isotopes_.end(), [&at](auto value) { return std::get<0>(value) == at; });
-    // RefDataItem<AtomType, Isotope *> *rdi = isotopes_.contains(at);
     if (it == isotopes_.end())
-    {
-        Messenger::error("Couldn't retrieve AtomType '{}' from Isotopologue '{}' as it doesn't exist.\n", at->name(), name_);
-        return nullptr;
-    }
+        return Isotopes::naturalIsotope(at->element());
+
     return std::get<1>(*it);
 }
 

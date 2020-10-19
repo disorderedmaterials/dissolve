@@ -100,13 +100,12 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = intWidget;
         base = intWidget;
     }
-    else if (type == KeywordBase::IsotopologueCollectionData)
+    else if (type == KeywordBase::IsotopologueSetData)
     {
-        IsotopologueCollectionKeywordWidget *isotopologueCollectionWidget =
-            new IsotopologueCollectionKeywordWidget(nullptr, keywordBase, coreData);
-        connect(isotopologueCollectionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = isotopologueCollectionWidget;
-        base = isotopologueCollectionWidget;
+        IsotopologueSetKeywordWidget *isotopologueSetWidget = new IsotopologueSetKeywordWidget(nullptr, keywordBase, coreData);
+        connect(isotopologueSetWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+        widget = isotopologueSetWidget;
+        base = isotopologueSetWidget;
     }
     else if (type == KeywordBase::ModuleData)
     {

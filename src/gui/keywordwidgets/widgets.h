@@ -13,7 +13,7 @@
 #include "gui/keywordwidgets/expressionvariablelist.h"
 #include "gui/keywordwidgets/fileandformat.h"
 #include "gui/keywordwidgets/integer.hui"
-#include "gui/keywordwidgets/isotopologuecollection.h"
+#include "gui/keywordwidgets/isotopologueset.h"
 #include "gui/keywordwidgets/module.h"
 #include "gui/keywordwidgets/modulegroups.h"
 #include "gui/keywordwidgets/modulereflist.h"

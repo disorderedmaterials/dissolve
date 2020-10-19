@@ -9,7 +9,7 @@
 #include "modules/xraysq/xraysq.h"
 
 // Calculate weighted g(r) from supplied unweighted g(r) and Weights
-bool XRaySQModule::calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, const XRayWeights &weights,
+bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, const XRayWeights &weights,
                                        XRaySQModule::NormalisationType normalisation)
 {
     int typeI, typeJ;
@@ -46,7 +46,7 @@ bool XRaySQModule::calculateWeightedGR(PartialSet &unweightedgr, PartialSet &wei
 }
 
 // Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
-bool XRaySQModule::calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, const XRayWeights &weights,
+bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, const XRayWeights &weights,
                                        XRaySQModule::NormalisationType normalisation)
 {
     int typeI, typeJ;

@@ -204,11 +204,17 @@ Layer  'RDF / Neutron S(Q)'
     IntraBroadening    Gaussian  1.800000e-01
   EndModule
 
+  Module  SQ  'SQ01'
+    Frequency  1
+
+    SourceRDFs  'RDF01'
+    QBroadening  'OmegaDependentGaussian'  0.020000
+  EndModule
+
   Module  NeutronSQ  'C6H6'
     Frequency  1
 
-    Configuration  'Bulk'
-    QBroadening  'OmegaDependentGaussian'  0.020000
+    SourceSQs  'SQ01'
     Reference  mint  'data/C6H6.mint01'
     EndReference
   EndModule
@@ -216,9 +222,8 @@ Layer  'RDF / Neutron S(Q)'
   Module  NeutronSQ  'C6D6'
     Frequency  1
 
-    Configuration  'Bulk'
-    QBroadening  'OmegaDependentGaussian'  0.020000
-    Isotopologue  'Bulk'  'Benzene'  'Deuterated'  1.000000
+    SourceSQs  'SQ01'
+    Isotopologue  'Benzene'  'Deuterated'  1.000000
     Reference  mint  'data/C6D6.mint01'
     EndReference
   EndModule
@@ -226,10 +231,9 @@ Layer  'RDF / Neutron S(Q)'
   Module  NeutronSQ  '5050'
     Frequency  1
 
-    Configuration  'Bulk'
-    QBroadening  'OmegaDependentGaussian'  0.020000
-    Isotopologue  'Bulk'  'Benzene'  'Natural'  1.000000
-    Isotopologue  'Bulk'  'Benzene'  'Deuterated'  1.000000
+    SourceSQs  'SQ01'
+    Isotopologue  'Benzene'  'Natural'  1.000000
+    Isotopologue  'Benzene'  'Deuterated'  1.000000
     Reference  mint  'data/5050.mint01'
     EndReference
   EndModule
@@ -241,9 +245,9 @@ Layer  'Refine (EPSR)'
   Module  EPSR  'EPSR01'
     Frequency  1
     EReq   2.00000e+01
-    Target  'C6H6'  'Default'
-    Target  'C6D6'  'Default'
-    Target  '5050'  'Default'
+    Target  'C6H6'
+    Target  'C6D6'
+    Target  '5050'
   EndModule
 EndLayer
 
