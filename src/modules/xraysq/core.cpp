@@ -26,7 +26,7 @@
  */
 
 // Constructor
-XRaySQModule::XRaySQModule() : Module()
+XRaySQModule::XRaySQModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();
