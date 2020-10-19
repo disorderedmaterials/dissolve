@@ -141,9 +141,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     braggPartials.at(i, j) = unweightedsq.partial(0, 0);
             });
         }
-        for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
-            for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
-                braggPartials.at(i, j).values() = 0.0;
+        for_each_pair(0, unweightedsq.nAtomTypes(), [&](const int i, const int j) {braggPartials.at(i, j).values() = 0.0;})
 
         // First, re-bin the reflection data into the arrays we have just set up
         // TODO Disabled pending #277
