@@ -136,11 +136,10 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Initialise the array
             braggPartials.initialise(unweightedsq.nAtomTypes(), unweightedsq.nAtomTypes(), true);
 
-            for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
+            for_each_pair (0, unweightedsq.nAtomTypes(), [&](const int i, const int j)
             {
-                for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
                     braggPartials.at(i, j) = unweightedsq.partial(0, 0);
-            }
+            });
         }
         for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
             for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
