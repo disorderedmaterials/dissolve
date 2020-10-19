@@ -12,7 +12,6 @@
 class TextFormat : public ListItem<TextFormat>
 {
     public:
-    // Constructor / Desctructor
     TextFormat();
     ~TextFormat();
     TextFormat(const TextFormat &source);

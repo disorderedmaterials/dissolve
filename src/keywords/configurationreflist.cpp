@@ -6,7 +6,6 @@
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 
-// Constructor
 ConfigurationRefListKeyword::ConfigurationRefListKeyword(RefList<Configuration> &references, int maxListSize)
     : KeywordData<RefList<Configuration> &>(KeywordBase::ConfigurationRefListData, references)
 {

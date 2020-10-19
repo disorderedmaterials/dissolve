@@ -16,7 +16,6 @@ class WindowFunctionKeywordWidget : public QWidget, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    // Constructor
     WindowFunctionKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
     /*

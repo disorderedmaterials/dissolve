@@ -25,9 +25,7 @@ class IntraFormComboDelegate : public QItemDelegate
     const List<MasterIntra> &masterTerms_;
 
     public:
-    // Constructor
     IntraFormComboDelegate(QObject *parent, ComboListItems *items, const List<MasterIntra> &masterTerms);
-    // Destructor
     virtual ~IntraFormComboDelegate();
     // Reimplemented virtual function to create editing widget
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;

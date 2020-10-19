@@ -3,10 +3,6 @@
 
 #include "modules/export_pairpotentials/exportpp.h"
 
-/*
- * Constructor / Destructor
- */
-
 ExportPairPotentialsModule::ExportPairPotentialsModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

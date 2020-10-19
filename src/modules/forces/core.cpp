@@ -3,10 +3,6 @@
 
 #include "modules/forces/forces.h"
 
-/*
- * Constructor / Destructor
- */
-
 ForcesModule::ForcesModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

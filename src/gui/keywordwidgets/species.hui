@@ -16,7 +16,6 @@ class SpeciesKeywordWidget : public QComboBox, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    // Constructor
     SpeciesKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
     /*

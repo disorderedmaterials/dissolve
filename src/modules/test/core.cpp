@@ -3,10 +3,6 @@
 
 #include "modules/test/test.h"
 
-/*
- * Constructor / Destructor
- */
-
 TestModule::TestModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

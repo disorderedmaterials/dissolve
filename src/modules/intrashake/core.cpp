@@ -3,10 +3,6 @@
 
 #include "modules/intrashake/intrashake.h"
 
-/*
- * Constructor / Destructor
- */
-
 IntraShakeModule::IntraShakeModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

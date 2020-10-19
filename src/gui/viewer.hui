@@ -30,7 +30,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     Q_OBJECT
 
     public:
-    // Constructor / Destructor
     BaseViewer(QWidget *parent);
     ~BaseViewer();
 

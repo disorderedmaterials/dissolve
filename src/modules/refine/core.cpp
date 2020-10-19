@@ -3,10 +3,6 @@
 
 #include "modules/refine/refine.h"
 
-/*
- * Constructor / Destructor
- */
-
 RefineModule::RefineModule() : Module(nRequiredTargets()), interpolatedFitData_(fitData_)
 {
     // Initialise Module - set up keywords etc.

@@ -3,18 +3,12 @@
 
 #include "modules/xraysq/xraysq.h"
 
-/*
- * Constructor / Destructor
- */
-
-// Constructor
 XRaySQModule::XRaySQModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();
 }
 
-// Destructor
 XRaySQModule::~XRaySQModule() {}
 
 /*

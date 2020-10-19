@@ -3,10 +3,6 @@
 
 #include "modules/calculate_dangle/dangle.h"
 
-/*
- * Constructor / Destructor
- */
-
 CalculateDAngleModule::CalculateDAngleModule() : Module(nRequiredTargets()), analyser_(ProcedureNode::AnalysisContext)
 {
     // Set unique name for this instance of the Module

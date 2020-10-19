@@ -3,10 +3,6 @@
 
 #include "modules/md/md.h"
 
-/*
- * Constructor / Destructor
- */
-
 MDModule::MDModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

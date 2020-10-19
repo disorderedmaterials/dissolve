@@ -3,10 +3,6 @@
 
 #include "modules/analyse/analyse.h"
 
-/*
- * Constructor / Destructor
- */
-
 AnalyseModule::AnalyseModule() : Module(nRequiredTargets()), analyser_(ProcedureNode::AnalysisContext, "EndAnalyser")
 {
     // Initialise Module - set up keywords etc.

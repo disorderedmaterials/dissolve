@@ -11,7 +11,6 @@
 #include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
-// Constructor
 XRaySQModuleWidget::XRaySQModuleWidget(QWidget *parent, XRaySQModule *module, Dissolve &dissolve)
     : ModuleWidget(parent), module_(module), dissolve_(dissolve)
 {

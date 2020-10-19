@@ -3,10 +3,6 @@
 
 #include "modules/calibration/calibration.h"
 
-/*
- * Constructor / Destructor
- */
-
 CalibrationModule::CalibrationModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

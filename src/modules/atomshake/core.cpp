@@ -3,10 +3,6 @@
 
 #include "modules/atomshake/atomshake.h"
 
-/*
- * Constructor / Destructor
- */
-
 AtomShakeModule::AtomShakeModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

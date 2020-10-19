@@ -3,10 +3,6 @@
 
 #include "modules/calculate_angle/angle.h"
 
-/*
- * Constructor / Destructor
- */
-
 CalculateAngleModule::CalculateAngleModule() : Module(nRequiredTargets()), analyser_(ProcedureNode::AnalysisContext)
 {
     // Set unique name for this instance of the Module

@@ -14,9 +14,7 @@ class Configuration;
 class ConfigurationRefListKeyword : public KeywordData<RefList<Configuration> &>
 {
     public:
-    // Constructor
     ConfigurationRefListKeyword(RefList<Configuration> &references, int maxListSize = -1);
-    // Destructor
     ~ConfigurationRefListKeyword();
 
     /*

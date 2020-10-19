@@ -20,7 +20,6 @@ class XRaySQModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    // Constructor / Destructor
     XRaySQModuleWidget(QWidget *parent, XRaySQModule *module, Dissolve &dissolve);
     ~XRaySQModuleWidget();
 

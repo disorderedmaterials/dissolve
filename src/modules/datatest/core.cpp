@@ -3,10 +3,6 @@
 
 #include "modules/datatest/datatest.h"
 
-/*
- * Constructor / Destructor
- */
-
 DataTestModule::DataTestModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

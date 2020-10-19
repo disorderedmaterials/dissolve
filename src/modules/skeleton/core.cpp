@@ -3,10 +3,6 @@
 
 #include "modules/skeleton/skeleton.h"
 
-/*
- * Constructor / Destructor
- */
-
 SkeletonModule::SkeletonModule() : Module(nRequiredTargets())
 {
     // Set unique name for this instance of the Module

@@ -18,9 +18,7 @@ class XRayWeights;
 class XRaySQModule : public Module
 {
     public:
-    // Constructor
     XRaySQModule();
-    // Destructor
     ~XRaySQModule();
 
     /*

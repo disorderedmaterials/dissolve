@@ -3,10 +3,6 @@
 
 #include "modules/calculate_cn/cn.h"
 
-/*
- * Constructor / Destructor
- */
-
 CalculateCNModule::CalculateCNModule() : Module(nRequiredTargets()), analyser_(ProcedureNode::AnalysisContext)
 {
     // Set unique name for this instance of the Module

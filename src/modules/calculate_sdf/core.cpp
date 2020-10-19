@@ -3,10 +3,6 @@
 
 #include "modules/calculate_sdf/sdf.h"
 
-/*
- * Constructor / Destructor
- */
-
 CalculateSDFModule::CalculateSDFModule() : Module(nRequiredTargets()), analyser_(ProcedureNode::AnalysisContext)
 {
     // Set unique name for this instance of the Module

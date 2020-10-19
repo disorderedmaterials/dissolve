@@ -3,10 +3,6 @@
 
 #include "modules/energy/energy.h"
 
-/*
- * Constructor / Destructor
- */
-
 EnergyModule::EnergyModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

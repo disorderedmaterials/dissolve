@@ -3,10 +3,6 @@
 
 #include "modules/molshake/molshake.h"
 
-/*
- * Constructor / Destructor
- */
-
 MolShakeModule::MolShakeModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

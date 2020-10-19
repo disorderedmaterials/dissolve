@@ -3,10 +3,6 @@
 
 #include "modules/bragg/bragg.h"
 
-/*
- * Constructor / Destructor
- */
-
 BraggModule::BraggModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

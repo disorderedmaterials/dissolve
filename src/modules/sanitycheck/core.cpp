@@ -3,10 +3,6 @@
 
 #include "modules/sanitycheck/sanitycheck.h"
 
-/*
- * Constructor / Destructor
- */
-
 SanityCheckModule::SanityCheckModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

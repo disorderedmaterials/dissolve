@@ -19,7 +19,6 @@ class ConfigurationRefListKeywordWidget : public KeywordDropDown, public Keyword
     Q_OBJECT
 
     public:
-    // Constructor
     ConfigurationRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
     /*

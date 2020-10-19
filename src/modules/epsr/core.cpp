@@ -3,10 +3,6 @@
 
 #include "modules/epsr/epsr.h"
 
-/*
- * Constructor / Destructor
- */
-
 EPSRModule::EPSRModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

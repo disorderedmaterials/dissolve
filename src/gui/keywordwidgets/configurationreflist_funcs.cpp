@@ -11,7 +11,6 @@
 #include <QHBoxLayout>
 #include <QString>
 
-// Constructor
 ConfigurationRefListKeywordWidget::ConfigurationRefListKeywordWidget(QWidget *parent, KeywordBase *keyword,
                                                                      const CoreData &coreData)
     : KeywordDropDown(this), KeywordWidgetBase(coreData)

@@ -11,7 +11,6 @@
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 
-// Constructor / Destructor
 ModuleListEditor::ModuleListEditor(QWidget *parent) : QWidget(parent)
 {
     ui_.setupUi(this);

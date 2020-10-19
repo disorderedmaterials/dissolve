@@ -15,7 +15,6 @@ class GradientBar : public QWidget
     Q_OBJECT
 
     public:
-    // Constructor
     GradientBar(QWidget *parent);
 
     /*

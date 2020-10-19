@@ -43,7 +43,6 @@ AtomTypeData::AtomTypeData(LineParser &parser, const CoreData &coreData, int lis
     }
 }
 
-// Initialise Constructor
 AtomTypeData::AtomTypeData(int listIndex, std::shared_ptr<AtomType> type, double population)
     : atomType_(type), listIndex_(listIndex), population_(population)
 {
