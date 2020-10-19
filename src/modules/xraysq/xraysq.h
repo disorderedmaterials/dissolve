@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2020 Team Dissolve and contributors
 
-#ifndef DISSOLVE_MODULE_XRAYSQ_H
-#define DISSOLVE_MODULE_XRAYSQ_H
+#pragma once
 
 #include "classes/data1dstore.h"
 #include "classes/partialset.h"
@@ -101,5 +100,3 @@ class XRaySQModule : public Module
     // Return a new widget controlling this Module
     ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
 };
-
-#endif
