@@ -12,7 +12,7 @@ void SQModule::initialise()
     // Calculation
     keywords_.add("Calculation", new ModuleKeyword<const RDFModule>("RDF"), "SourceRDFs", "Source RDFs to transform into S(Q)");
     keywords_.add("Calculation", new DoubleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
-    keywords_.add("Calculation", new DoubleKeyword(-1.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
+    keywords_.add("Calculation", new DoubleKeyword(30.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
     keywords_.add("Calculation", new DoubleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
     keywords_.add("Calculation", new BroadeningFunctionKeyword(BroadeningFunction()), "QBroadening",
                   "Instrument broadening function to apply when calculating S(Q)");

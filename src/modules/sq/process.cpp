@@ -31,9 +31,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto &qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
     const auto qDelta = keywords_.asDouble("QDelta");
     const auto qMin = keywords_.asDouble("QMin");
-    double qMax = keywords_.asDouble("QMax");
-    if (qMax < 0.0)
-        qMax = 30.0;
+    const auto qMax = keywords_.asDouble("QMax");
     const bool saveData = keywords_.asBool("Save");
     const auto &windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
 
