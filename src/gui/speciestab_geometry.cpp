@@ -26,7 +26,8 @@ std::vector<std::string> SpeciesTab::validAtomTypeNames(const QModelIndex &index
     // Construct valid names list
     std::vector<std::string> validNames;
     for (auto &at : dissolve_.atomTypes())
-        if (at->element() == i->element()) validNames.emplace_back(at->name());
+        if (at->element() == i->element())
+            validNames.emplace_back(at->name());
 
     return validNames;
 }
