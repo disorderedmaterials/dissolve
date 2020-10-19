@@ -379,18 +379,6 @@ bool Dissolve::saveInput(std::string_view filename)
             if (module->isDisabled() && (!parser.writeLineF("    Disabled\n")))
                 return false;
 
-            // Write Configuration target(s)
-            auto first = true;
-            for (Configuration *cfg : module->targetConfigurations())
-            {
-                if (first && (!parser.writeLineF("\n")))
-                    return false;
-                first = false;
-                if (!parser.writeLineF("    {}  '{}'\n", ModuleBlock::keywords().keyword(ModuleBlock::ConfigurationKeyword),
-                                       cfg->name()))
-                    return false;
-            }
-
             // Write keyword options
             if (!module->keywords().write(parser, "    ", true))
                 return false;

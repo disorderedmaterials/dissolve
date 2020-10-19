@@ -47,12 +47,11 @@ ModuleListChart::~ModuleListChart() {}
 // Paint event
 void ModuleListChart::paintEvent(QPaintEvent *event)
 {
-    // Draw suitable connecting lines between widgets, illustrating the execution path of the code
     QPainter painter(this);
 
     // Draw the background before we do anything else
-    QBrush backgroundBrush = QBrush(Qt::black, QPixmap(":/images/images/squares.jpg"));
-    painter.fillRect(QRect(0, 0, width(), height()), backgroundBrush);
+    painter.fillRect(QRect(0, 0, width(), height()), Qt::white);
+    painter.drawPixmap(0, 0, QPixmap(":/images/images/cornerhexagons.png"));
 
     // Set up some QPens
     QPen solidPen(Qt::black);
@@ -65,7 +64,6 @@ void ModuleListChart::paintEvent(QPaintEvent *event)
     painter.setPen(solidPen);
     QPoint p1, p2;
     auto top = 0;
-    ModuleBlock *lastBlock = nullptr;
     for (ModuleBlock *block : moduleBlockWidgets_)
     {
         // If this block is not visible, continue
@@ -411,7 +409,7 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
     ModuleListChartMetrics metrics;
 
     // Left edge of next widget, and maximum height
-    auto top = metrics.chartMargin();
+    auto top = metrics.chartMargin() - metrics.verticalModuleSpacing();
     auto hotSpotTop = 0;
     auto maxWidth = 0;
 
@@ -431,6 +429,9 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
             block->setVisible(false);
             continue;
         }
+
+        // Add vertical spacing
+        top += metrics.verticalModuleSpacing();
 
         // If our hotspot is the current one, increase the size.
         if (hotSpot == currentHotSpot_)

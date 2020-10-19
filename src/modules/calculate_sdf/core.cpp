@@ -7,7 +7,7 @@
  * Constructor / Destructor
  */
 
-CalculateSDFModule::CalculateSDFModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
+CalculateSDFModule::CalculateSDFModule() : Module(nRequiredTargets()), analyser_(ProcedureNode::AnalysisContext)
 {
     // Set unique name for this instance of the Module
     static int instanceId = 0;

@@ -7,7 +7,7 @@
  * Constructor / Destructor
  */
 
-MolShakeModule::MolShakeModule() : Module()
+MolShakeModule::MolShakeModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

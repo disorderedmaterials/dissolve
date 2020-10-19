@@ -7,7 +7,7 @@
  * Constructor / Destructor
  */
 
-RefineModule::RefineModule() : Module(), interpolatedFitData_(fitData_)
+RefineModule::RefineModule() : Module(nRequiredTargets()), interpolatedFitData_(fitData_)
 {
     // Initialise Module - set up keywords etc.
     initialise();

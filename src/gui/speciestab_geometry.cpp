@@ -7,6 +7,7 @@
 #include "gui/selectforcefielddialog.h"
 #include "gui/speciestab.h"
 #include "main/dissolve.h"
+#include "templates/variantpointer.h"
 #include <QMessageBox>
 
 /*

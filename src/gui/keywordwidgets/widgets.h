@@ -6,6 +6,7 @@
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/bool.hui"
 #include "gui/keywordwidgets/broadeningfunction.h"
+#include "gui/keywordwidgets/configurationreflist.h"
 #include "gui/keywordwidgets/double.hui"
 #include "gui/keywordwidgets/dropwidget.hui"
 #include "gui/keywordwidgets/enumoptions.hui"

@@ -207,7 +207,6 @@ SET(gui_MOC_HDRS
   forcefieldtab.h
   layertab.h
   maintab.h
-  moduletab.h
   speciestab.h
   workspacetab.h
 
@@ -235,7 +234,6 @@ SET(gui_UIS
   configurationtab.ui
   forcefieldtab.ui
   layertab.ui
-  moduletab.ui
   speciestab.ui
   workspacetab.ui
 
@@ -259,7 +257,6 @@ SET(gui_SRCS
   maintab.cpp
   maintabsbar_funcs.cpp
   maintabswidget_funcs.cpp
-  moduletab_funcs.cpp
   speciestab_funcs.cpp
   speciestab_geometry.cpp
   speciestab_isotopologues.cpp

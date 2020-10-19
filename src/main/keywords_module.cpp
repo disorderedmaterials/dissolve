@@ -11,11 +11,9 @@
 // Return enum option info for ModuleKeyword
 EnumOptions<ModuleBlock::ModuleKeyword> ModuleBlock::keywords()
 {
-    static EnumOptionsList ModuleKeywords = EnumOptionsList()
-                                            << EnumOption(ModuleBlock::ConfigurationKeyword, "Configuration", 1)
-                                            << EnumOption(ModuleBlock::DisableKeyword, "Disabled")
-                                            << EnumOption(ModuleBlock::EndModuleKeyword, "EndModule")
-                                            << EnumOption(ModuleBlock::FrequencyKeyword, "Frequency", 1);
+    static EnumOptionsList ModuleKeywords = EnumOptionsList() << EnumOption(ModuleBlock::DisableKeyword, "Disabled")
+                                                              << EnumOption(ModuleBlock::EndModuleKeyword, "EndModule")
+                                                              << EnumOption(ModuleBlock::FrequencyKeyword, "Frequency", 1);
 
     static EnumOptions<ModuleBlock::ModuleKeyword> options("ModuleKeyword", ModuleKeywords);
 
@@ -48,31 +46,6 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
             // All OK, so process the keyword
             switch (kwd)
             {
-                case (ModuleBlock::ConfigurationKeyword):
-                    // Find the named Configuration
-                    targetCfg = dissolve->findConfiguration(parser.argsv(1));
-                    if (!targetCfg)
-                    {
-                        Messenger::error("Can't associate Configuration '{}' to the Module '{}', since no "
-                                         "Configuration by this name exists.\n",
-                                         parser.argsv(1), module->type());
-                        error = true;
-                        break;
-                    }
-
-                    // Add it as a target
-                    if (!module->addTargetConfiguration(targetCfg))
-                    {
-                        Messenger::error("Failed to add Configuration target in Module '{}'.\n", module->type());
-                        error = true;
-                        break;
-                    }
-
-                    // Create weight data if a second argument was provided
-                    if (parser.hasArg(2))
-                        GenericListHelper<double>::add(targetList, fmt::format("ConfigurationWeight_{}", targetCfg->niceName()),
-                                                       module->uniqueName()) = parser.argd(2);
-                    break;
                 case (ModuleBlock::DisableKeyword):
                     module->setEnabled(false);
                     break;

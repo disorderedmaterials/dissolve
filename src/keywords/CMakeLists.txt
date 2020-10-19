@@ -4,6 +4,7 @@ add_library(keywords
   base.cpp
   bool.cpp
   broadeningfunction.cpp
+  configurationreflist.cpp
   data1dstore.cpp
   data2dstore.cpp
   data3dstore.cpp
@@ -48,6 +49,7 @@ add_library(keywords
   base.h
   bool.h
   broadeningfunction.h
+  configurationreflist.h
   data.h
   data1dstore.h
   data2dstore.h
