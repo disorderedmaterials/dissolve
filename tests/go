@@ -164,7 +164,7 @@ do
 				output=../${test}.${input%.txt}.${nprocs}.out
 				echo -e "\nRunning test \"${input}\" (${nprocs} processes)..."
 				echo "Arguments are: $ARGS"
-				mpirun -np $nprocs ../$PARALLELBINARY $ARGS $input -r $output > $output
+				mpirun -np $nprocs ../$PARALLELBINARY $ARGS $input -a --redirect=$output > $output
 			fi
 
 			if [ "$?" -eq "0" ]
