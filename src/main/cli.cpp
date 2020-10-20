@@ -8,7 +8,6 @@
 #include <CLI/App.hpp>
 #include <CLI/Config.hpp>
 #include <CLI/Formatter.hpp>
-#include <limits>
 
 // Parse CLI options
 int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
