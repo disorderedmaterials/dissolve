@@ -244,15 +244,15 @@ bool Isotopologues::broadcast(ProcessPool &procPool, const int root, const CoreD
     int nIso = mix_.size();
     if (!procPool.broadcast(nIso, root))
         return false;
-    int topIndex;
+    std::string topeName;
     double weight;
     if (procPool.poolRank() == root)
     {
         for (int n = 0; n < nIso; ++n)
         {
-            // Broadcast Isotopologue index data
-            topIndex = species_->indexOfIsotopologue(mix_[n].isotopologue());
-            if (!procPool.broadcast(topIndex, root))
+            // Broadcast Isotopologue
+            topeName = mix_[n].isotopologue()->name();
+            if (!procPool.broadcast(topeName, root))
                 return false;
 
             // Broadcast relative population data
@@ -267,7 +267,7 @@ bool Isotopologues::broadcast(ProcessPool &procPool, const int root, const CoreD
         for (int n = 0; n < nIso; ++n)
         {
             // Broadcast Isotopologue index data
-            if (!procPool.broadcast(topIndex, root))
+            if (!procPool.broadcast(topeName, root))
                 return false;
 
             // Broadcast relative population data
@@ -275,7 +275,7 @@ bool Isotopologues::broadcast(ProcessPool &procPool, const int root, const CoreD
                 return false;
 
             // Add mix data
-            mix_.emplace_back(species_->isotopologue(topIndex), weight);
+            mix_.emplace_back(species_->findIsotopologue(topeName), weight);
         }
     }
 #endif
