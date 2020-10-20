@@ -11,7 +11,7 @@
 #include <limits>
 
 // Parse CLI options
-int CLIOptions::parse(const int nArgs, char **args, bool isGUI, bool isParallel)
+int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
 {
     // Create CLI object
 #ifdef PARALLEL
@@ -75,7 +75,7 @@ int CLIOptions::parse(const int nArgs, char **args, bool isGUI, bool isParallel)
     // The CLI11_PARSE macro expands to a simple try/catch block, returning non-zero on error.
     // However, early exits from -h or --help return zero, and a successful parse does not return at all.
     // So, we return 1 on a "non-help" success to inform the calling function that it should proceed.
-    CLI11_PARSE(app, nArgs, args);
+    CLI11_PARSE(app, args, argv);
 
     return 1;
 }

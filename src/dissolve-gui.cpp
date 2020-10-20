@@ -13,11 +13,11 @@
 #include <stdlib.h>
 #include <time.h>
 
-int main(int nArgs, char **args)
+int main(int args, char **argv)
 {
 #ifdef PARALLEL
     // Initialise parallel communication
-    ProcessPool::initialiseMPI(&nArgs, &args);
+    ProcessPool::initialiseMPI(&args, &argv);
 #endif
 
     // Instantiate main classes
@@ -26,7 +26,7 @@ int main(int nArgs, char **args)
 
     // Parse CLI options
     CLIOptions options;
-    if (options.parse(nArgs, args, true) != 1)
+    if (options.parse(args, argv, true) != 1)
         return 1;
 
     // Print GPL license information
@@ -49,7 +49,7 @@ int main(int nArgs, char **args)
      */
 
     // Create the main QApplication */
-    QApplication app(nArgs, args);
+    QApplication app(args, argv);
     QCoreApplication::setOrganizationName("ProjectAten");
     QCoreApplication::setOrganizationDomain("www.projectaten.com");
     QCoreApplication::setApplicationName("Dissolve-GUI");

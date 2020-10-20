@@ -40,7 +40,7 @@ class CLIOptions
 
     public:
     // Parse supplied options
-    int parse(int nArgs, char **args, bool isGUI = false, bool isParallel = false);
+    int parse(int args, char **argv, bool isGUI = false, bool isParallel = false);
     // Return input file to load
     std::optional<std::string> inputFile() const;
     // Return number of iterations to perform
