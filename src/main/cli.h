@@ -39,6 +39,11 @@ class CLIOptions
     bool writeNoFiles_;
 
     public:
+    // Parse Result enum
+    enum ParseResult
+    {
+        Success = 1
+    };
     // Parse supplied options
     int parse(int args, char **argv, bool isGUI = false, bool isParallel = false);
     // Return input file to load

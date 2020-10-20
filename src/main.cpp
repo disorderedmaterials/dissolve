@@ -24,10 +24,10 @@ int main(int args, char **argv)
     // Parse CLI options
     CLIOptions options;
 #ifdef PARALLEL
-    if (options.parse(args, argv, false, true) != 1)
+    if (options.parse(args, argv, false, true) != CLIOptions::Success)
         return 1;
 #else
-    if (options.parse(args, argv) != 1)
+    if (options.parse(args, argv) != CLIOptions::Success)
         return 1;
 #endif
 

@@ -76,7 +76,7 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
     // So, we return 1 on a "non-help" success to inform the calling function that it should proceed.
     CLI11_PARSE(app, args, argv);
 
-    return 1;
+    return CLIOptions::Success;
 }
 
 // Return input file to load
