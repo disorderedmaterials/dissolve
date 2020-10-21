@@ -126,7 +126,7 @@ void ConfigurationRefListKeywordWidget::updateWidgetValues(const CoreData &coreD
 
     // Update the list against the global Configuration list
     ListWidgetUpdater<ConfigurationRefListKeywordWidget, Configuration> listUpdater(
-        ui_.SelectionList, coreData_.constConfigurations(), this, &ConfigurationRefListKeywordWidget::updateSelectionRow);
+        ui_.SelectionList, coreData_.configurations(), this, &ConfigurationRefListKeywordWidget::updateSelectionRow);
 
     updateSummaryText();
 

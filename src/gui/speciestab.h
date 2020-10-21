@@ -77,6 +77,8 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
      * Widget Functions - Geometry
      */
     private:
+    // Return valid AtomType names for specified model index in the SpeciesAtomTable
+    std::vector<std::string> validAtomTypeNames(const QModelIndex &index);
     // SpeciesAtomTable row update function
     void updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool createItems);
     // SpeciesBondTable row update function

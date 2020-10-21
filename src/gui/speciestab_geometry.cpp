@@ -14,6 +14,24 @@
  * Private Functions
  */
 
+// Return valid AtomType names for specified model index in the SpeciesAtomTable
+std::vector<std::string> SpeciesTab::validAtomTypeNames(const QModelIndex &index)
+{
+    // The QModelIndex should represent an AtomType for a SpeciesAtom, so the column should be 1
+    assert(index.column() == 1);
+
+    // The row of the QModelIndex represents the SpecieAtom index in the Species
+    auto *i = species_->atom(index.row());
+
+    // Construct valid names list
+    std::vector<std::string> validNames;
+    for (auto &at : dissolve_.atomTypes())
+        if (at->element() == i->element())
+            validNames.emplace_back(at->name());
+
+    return validNames;
+}
+
 // SpeciesAtomTable row update function
 void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool createItems)
 {
@@ -314,7 +332,6 @@ void SpeciesTab::updateAtomTableSelection()
 
 void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
 {
-    std::optional<std::shared_ptr<AtomType>> opt_atomType;
     if (refreshLock_.isLocked())
         return;
 
@@ -323,6 +340,7 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
     if (!speciesAtom)
         return;
     Vec3<double> r = speciesAtom->r();
+
     // Column of passed item tells us the type of data we need to change
     std::shared_ptr<AtomType> atomType;
     switch (w->column())
@@ -333,15 +351,14 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
         // AtomType
         case (1):
             // Check the text to see if it is an existing AtomType - if not, we should create it
-            opt_atomType = dissolve_.findAtomType(qPrintable(w->text()));
-            if (!opt_atomType)
+            atomType = dissolve_.findAtomType(qPrintable(w->text()));
+            if (!atomType)
             {
                 atomType = dissolve_.addAtomType(speciesAtom->element());
                 atomType->setName(qPrintable(w->text()));
             }
-            else
-                atomType = *opt_atomType;
             speciesAtom->setAtomType(atomType);
+            updateIsotopologuesTab();
             dissolveWindow_->setModified();
             break;
         // Coordinates

@@ -81,7 +81,7 @@ void CalculateSDFModuleWidget::updateControls(int flags)
     for (CalculateAvgMolModule *module : avgMolModules)
         refMolecules.append(&module->averageSpecies(), fmt::format("{} (AvgMol)", module->averageSpecies().name()));
     // -- Add on current species
-    ListIterator<Species> speciesIterator(coreData_.constSpecies());
+    ListIterator<Species> speciesIterator(coreData_.species());
     while (Species *sp = speciesIterator.iterate())
         refMolecules.append(sp, fmt::format("{} (Species)", sp->name()));
     ComboBoxUpdater<Species> refMoleculeUpdater(ui_.ReferenceMoleculeCombo, refMolecules, referenceMolecule_, 1, 0);

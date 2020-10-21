@@ -3,6 +3,7 @@
 
 #include "classes/atomtype.h"
 #include "gui/delegates/combolist.hui"
+#include "gui/delegates/customcombodelegate.h"
 #include "gui/delegates/exponentialspin.hui"
 #include "gui/delegates/integerspin.hui"
 #include "gui/delegates/intraformcombo.hui"
@@ -26,8 +27,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
 
     // Set item delegates in tables
     // -- SpeciesAtomTable
-    ui_.AtomTable->setItemDelegateForColumn(
-        1, new ComboListDelegate(this, new ComboSharedNameListItems<AtomType>(dissolve_.atomTypes())));
+    ui_.AtomTable->setItemDelegateForColumn(1, new CustomComboDelegate<SpeciesTab>(this, &SpeciesTab::validAtomTypeNames));
     for (int n = 2; n < 6; ++n)
         ui_.AtomTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
     ui_.AtomTable->horizontalHeader()->setFont(font());

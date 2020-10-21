@@ -453,11 +453,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Assign isotope to AtomType
-                    if (!iso->setAtomTypeIsotope(at, tope))
-                    {
-                        error = true;
-                        break;
-                    }
+                    iso->setAtomTypeIsotope(at, tope);
                 }
                 break;
             case (Species::SiteKeyword):

@@ -197,24 +197,20 @@ double Species::mass() const
     return m;
 }
 
-// Bump AtomTypes version
-void Species::bumpAtomTypesVersion() { ++atomTypesVersion_; }
-
-// Return used AtomTypesList
-const AtomTypeList &Species::usedAtomTypes()
+// Update used atom types
+void Species::updateUsedAtomTypes()
 {
-    if (usedAtomTypesPoint_ != atomTypesVersion_)
-    {
-        usedAtomTypes_.clear();
-        for (auto *i = atoms_.first(); i != nullptr; i = i->next())
-            if (i->atomType())
-                usedAtomTypes_.add(i->atomType(), 1);
+    usedAtomTypes_.clear();
+    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
+        if (i->atomType())
+            usedAtomTypes_.add(i->atomType(), 1);
 
-        usedAtomTypesPoint_ = atomTypesVersion_;
-    }
-
-    return usedAtomTypes_;
+    // Update our isotopologue definitions while we're here
+    updateIsotopologues();
 }
+
+// Return used atom types list
+const AtomTypeList &Species::usedAtomTypes() const { return usedAtomTypes_; }
 
 // Clear AtomType assignments for all atoms
 void Species::clearAtomTypes()
@@ -222,5 +218,5 @@ void Species::clearAtomTypes()
     for (auto *i = atoms_.first(); i != nullptr; i = i->next())
         i->setAtomType(nullptr);
 
-    ++atomTypesVersion_;
+    usedAtomTypes_.clear();
 }

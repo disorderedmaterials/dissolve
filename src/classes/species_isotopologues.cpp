@@ -6,10 +6,15 @@
 #include <string.h>
 
 // Update current Isotopologues
-void Species::updateIsotopologues()
+void Species::updateIsotopologues(OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes)
 {
-    for (auto *iso = isotopologues_.first(); iso != nullptr; iso = iso->next())
+    for (Isotopologue *iso = isotopologues_.first(); iso != nullptr; iso = iso->next())
+    {
+        if (atomTypes)
+            iso->checkAtomTypes(*atomTypes);
+
         iso->update();
+    }
 }
 
 // Update and return natural isotopologue

@@ -45,8 +45,7 @@ class CoreData
     int nAtomTypes() const;
     // Return core AtomTypes list
     std::vector<std::shared_ptr<AtomType>> &atomTypes();
-    // Return core AtomTypes list (const)
-    const std::vector<std::shared_ptr<AtomType>> &constAtomTypes() const;
+    const std::vector<std::shared_ptr<AtomType>> &atomTypes() const;
     // Return nth AtomType in list
     std::shared_ptr<AtomType> atomType(int n);
     // Generate unique AtomType name with base name provided
@@ -133,8 +132,7 @@ class CoreData
     int nSpecies() const;
     // Return core Species list
     List<Species> &species();
-    // Return core Species list (const)
-    const List<Species> &constSpecies() const;
+    const List<Species> &species() const;
     // Return nth Species in list
     Species *species(int n);
     // Generate unique Species name with base name provided
@@ -158,8 +156,7 @@ class CoreData
     int nConfigurations() const;
     // Return core Configuration list
     List<Configuration> &configurations();
-    // Return core Configuration list (const)
-    const List<Configuration> &constConfigurations() const;
+    const List<Configuration> &configurations() const;
     // Return nth Configuration in list
     Configuration *configuration(int n);
     // Generate unique Configuration name with base name provided

@@ -62,7 +62,7 @@ void SelectConfigurationWidget::updateConfigurationList()
     }
 
     ListWidgetUpdater<SelectConfigurationWidget, Configuration> speciesUpdater(ui_.ConfigurationList,
-                                                                               coreData_->constConfigurations());
+                                                                               coreData_->configurations());
 }
 
 void SelectConfigurationWidget::on_SelectNoneButton_clicked(bool checked) { ui_.ConfigurationList->clearSelection(); }

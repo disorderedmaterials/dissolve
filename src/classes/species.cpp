@@ -19,7 +19,6 @@ Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
     forcefield_ = nullptr;
     autoUpdateIntramolecularTerms_ = true;
     attachedAtomListsGenerated_ = false;
-    usedAtomTypesPoint_ = -1;
 
     // Set up natural Isotopologue
     naturalIsotopologue_.setName("Natural");

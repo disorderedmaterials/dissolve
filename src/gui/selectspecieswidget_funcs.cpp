@@ -61,7 +61,7 @@ void SelectSpeciesWidget::updateSpeciesList()
         return;
     }
 
-    ListWidgetUpdater<SelectSpeciesWidget, Species> speciesUpdater(ui_.SpeciesList, coreData_->constSpecies());
+    ListWidgetUpdater<SelectSpeciesWidget, Species> speciesUpdater(ui_.SpeciesList, coreData_->species());
 }
 
 void SelectSpeciesWidget::on_SelectNoneButton_clicked(bool checked) { ui_.SpeciesList->clearSelection(); }

@@ -275,14 +275,14 @@ void ImportSpeciesWizard::updateAtomTypesListRow(int row, std::shared_ptr<AtomTy
 void ImportSpeciesWizard::updateAtomTypesPage()
 {
     // Update the list against the global AtomType list
-    ListWidgetUpdater<ImportSpeciesWizard, AtomType> listUpdater(ui_.AtomTypesList, temporaryCoreData_.constAtomTypes(), this,
+    ListWidgetUpdater<ImportSpeciesWizard, AtomType> listUpdater(ui_.AtomTypesList, temporaryCoreData_.atomTypes(), this,
                                                                  &ImportSpeciesWizard::updateAtomTypesListRow);
 
     // Determine whether we have any naming conflicts
     auto conflicts = false;
-    auto it = std::find_if(temporaryCoreData_.constAtomTypes().begin(), temporaryCoreData_.constAtomTypes().end(),
+    auto it = std::find_if(temporaryCoreData_.atomTypes().begin(), temporaryCoreData_.atomTypes().end(),
                            [this](const auto at) { return dissolveReference_->findAtomType(at->name()); });
-    if (it != temporaryCoreData_.constAtomTypes().end())
+    if (it != temporaryCoreData_.atomTypes().end())
         conflicts = true;
     ui_.AtomTypesIndicator->setNotOK(conflicts);
     if (conflicts)

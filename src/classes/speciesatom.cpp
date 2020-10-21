@@ -71,7 +71,7 @@ void SpeciesAtom::setAtomType(std::shared_ptr<AtomType> at)
 
     atomType_ = at;
     if (parent_)
-        parent_->bumpAtomTypesVersion();
+        parent_->updateUsedAtomTypes();
 }
 
 // Return SpeciesAtomType of SpeciesAtom
