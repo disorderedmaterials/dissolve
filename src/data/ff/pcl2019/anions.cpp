@@ -31,7 +31,8 @@ bool Forcefield_PCL2019_Anions::setUp()
     addAtomType(ELEMENT_O, 12, "OTF", "nbonds=1,-S(-O(n=3))", "Sulphonate oxygen", -0.63, "OB");
     // longer perfluoroalkanesulphonylamides
     addAtomType(ELEMENT_C, 13, "C1F", "nbonds=4,-F(n=2),-S,-C", "First fluorinated carbon in ethylsulphonyl chain", 0.19, "CF");
-    addAtomType(ELEMENT_C, 14, "CEF", "nbonds=4,-F(n=3),-C(-S)", "Terminal fluorinated carbon in ethylsulphonyl chain", 0.36, "CF");
+    addAtomType(ELEMENT_C, 14, "CEF", "nbonds=4,-F(n=3),-C(-S)", "Terminal fluorinated carbon in ethylsulphonyl chain", 0.36,
+                "CF");
     // bis(fluorosulphonyl)amide PCCP 43 (2017) 29617
     addAtomType(ELEMENT_F, 15, "FSI", "", "", -0.13, "FB");
     // dicyanamide JPCB 110 (2006) 19586
@@ -86,8 +87,9 @@ std::string_view Forcefield_PCL2019_Anions::name() const { return "PCL2019/Anion
 // Return description for Forcefield
 std::string_view Forcefield_PCL2019_Anions::description() const
 {
-    static std::string desc = fmt::format("Ionic liquid anions forcefield of Padua & Canongia Lopes (and contributors), 19 June 2019 version, "
-                           "covering .<br/><br/>References: {}",
-                           publicationReferences());
+    static std::string desc =
+        fmt::format("Ionic liquid anions forcefield of Padua & Canongia Lopes (and contributors), 19 June 2019 version, "
+                    "covering .<br/><br/>References: {}",
+                    publicationReferences());
     return desc;
 }

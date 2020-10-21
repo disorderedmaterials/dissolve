@@ -21,7 +21,7 @@ PCL2019BaseForcefield::PCL2019BaseForcefield()
     addParameters("CW", 3.55, 0.29288);
     addParameters("CWH", 2.93, 0.29288);
     addParameters("CZ", 3.30, 0.27614);
-    addParameters("F", 2.95, 0.22175);  // TODO Check!
+    addParameters("F", 2.95, 0.22175); // TODO Check!
     addParameters("F", 3.12, 0.25520);
     addParameters("FB", 3.118, 0.25540);
     addParameters("HA", 2.42, 0.12552);

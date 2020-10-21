@@ -133,8 +133,9 @@ std::string_view Forcefield_PCL2019_Cations::name() const { return "PCL2019/Cati
 // Return description for Forcefield
 std::string_view Forcefield_PCL2019_Cations::description() const
 {
-    static std::string desc = fmt::format("Ionic liquid cations forcefield of Padua & Canongia Lopes (and contributors), 19 June 2019 "
-                           "version, covering .<br/><br/>References: {}",
-                           publicationReferences());
+    static std::string desc =
+        fmt::format("Ionic liquid cations forcefield of Padua & Canongia Lopes (and contributors), 19 June 2019 "
+                    "version, covering .<br/><br/>References: {}",
+                    publicationReferences());
     return desc;
 }
