@@ -22,13 +22,13 @@ bool Forcefield_PCL2019_Anions::setUp()
     // bromide JPCB 110 (2006) 19586
     addAtomType(ELEMENT_BR, 6, "Br", "nbonds=0", "Bromide", -1.0, "Br");
     // bistriflamide JPCB 108 (2004) 16893, PCCP 43 (2017) 29617
-    addAtomType(ELEMENT_C, 7, "CBT", "-F(n=3),-S(-O(n>=2)", "Fluorosulphonyl carbon", 0.35, "CF");
-    addAtomType(ELEMENT_S, 8, "SBT", "nbonds=4,-O(n>=2),-[N,O],-[C,F]", "Fluorosulphonyl sulphur", 1.02, "SB");
+    addAtomType(ELEMENT_C, 7, "CBT", "-F(n=3),-S(-O(n>=2))", "Fluorosulphonyl carbon", 0.35, "CF");
+    addAtomType(ELEMENT_S, 8, "SBT", "nbonds=4,-O(n>=2),-F|-C(-F)", "Fluorosulphonyl sulphur", 1.02, "SB");
     addAtomType(ELEMENT_N, 9, "NBT", "nbonds=2,-&8(n=2)", "Bridging nitrogen in bis-fluorosulphonyls", -0.66, "NB");
-    addAtomType(ELEMENT_O, 10, "OBT", "nbonds=1,-S(-O(n=2))", "Sulphonyl oxygen", -0.53, "OB");
+    addAtomType(ELEMENT_O, 10, "OBT", "nbonds=1,-&8(-N)", "Sulphonyl oxygen", -0.53, "OB");
     addAtomType(ELEMENT_F, 11, "F1", "nbonds=1,-C(-S)", "Fluorine on carbon next to sulphonyl / sulphonate", -0.16, "FB");
     // triflate PCCP 43 (2017) 29617
-    addAtomType(ELEMENT_O, 12, "OTF", "nbonds=1,-S(-O(n=3))", "Sulphonate oxygen", -0.63, "OB");
+    addAtomType(ELEMENT_O, 12, "OTF", "nbonds=1,-&8(-C)", "Triflate sulphonate oxygen", -0.63, "OB");
     // longer perfluoroalkanesulphonylamides
     addAtomType(ELEMENT_C, 13, "C1F", "nbonds=4,-F(n=2),-S,-C", "First fluorinated carbon in ethylsulphonyl chain", 0.19, "CF");
     addAtomType(ELEMENT_C, 14, "CEF", "nbonds=4,-F(n=3),-C(-S)", "Terminal fluorinated carbon in ethylsulphonyl chain", 0.36,
@@ -38,25 +38,25 @@ bool Forcefield_PCL2019_Anions::setUp()
     // dicyanamide JPCB 110 (2006) 19586
     addAtomType(ELEMENT_N, 16, "N3A", "-C(nbonds=2,-N(nbonds=1),n=2)", "Dicyanamide nitrogen", -0.76, "N3");
     addAtomType(ELEMENT_C, 17, "CZA", "-&16", "Dicyanamide carbon", 0.64, "CZ");
-    addAtomType(ELEMENT_N, 18, "NZA", "-&17", "Dicyanamide nitrogen", -0.76, "NZ");
+    addAtomType(ELEMENT_N, 18, "NZA", "nbonds=1,-&17", "Dicyanamide nitrogen", -0.76, "NZ");
     // acetate OPLS-AA
     addAtomType(ELEMENT_C, 19, "CO2", "nbonds=3,-O(n=2),-C(nbonds=4)", "Acetate carboxyl carbon", 0.70, "CO");
-    addAtomType(ELEMENT_O, 20, "O2", "-&19,-C(nh=3)", "Acetate oxygen", -0.80, "O2");
+    addAtomType(ELEMENT_O, 20, "O2", "-&19(-C(nh=3))", "Acetate oxygen", -0.80, "O2");
     addAtomType(ELEMENT_C, 21, "CTA", "nh=3,-&19", "Acetate methyl carbon", -0.28, "CT");
     // trifluorocetate PCCP 17 (2015) 22321
-    addAtomType(ELEMENT_O, 22, "O2F", "-&19,-C(-F(n=3))", "Trifluoroacetate carboxyl carbon", -0.75, "OC_a");
+    addAtomType(ELEMENT_O, 22, "O2F", "-&19(-C(-F(n=3)))", "Trifluoroacetate carboxyl carbon", -0.75, "O2F");
     addAtomType(ELEMENT_C, 23, "CFA", "-&19,-F(n=3)", "Trifluoroacetate fluoromethyl carbon", 0.40, "CF");
-    addAtomType(ELEMENT_F, 24, "FFA", "-&23", "Trifluoroacetate fluorine", -0.20, "F");
+    addAtomType(ELEMENT_F, 24, "FFA", "-&23", "Trifluoroacetate fluorine", -0.20, "FC");
     // alkylsulphates JPCB 112 (2008) 5039
-    addAtomType(ELEMENT_S, 25, "SO", "-O(n=3),-[C,O]", "Alkylsulphate sulphur", 1.18, "SO");
-    addAtomType(ELEMENT_O, 26, "OS4", "-&25(-O(-C))", "Alkylsulphate oxygen", -0.65, "OS");
-    addAtomType(ELEMENT_O, 27, "OC4", "-C(nh=3),-S(-O(n=4))", "Alkylsulphate bridging oxygen", -0.45, "OC");
-    addAtomType(ELEMENT_C, 28, "CS4", "nh=3,-O(-&25)", "Alkylsulphate methyl carbon", 0.22, "CT");
-    addAtomType(ELEMENT_H, 29, "HS4", "-&28", "Alkylsulphate methyl hydrogen", 0.00, "HC");
+    addAtomType(ELEMENT_S, 25, "SO", "-O(n>=3),!-C(-F)", "Alkylsulphate sulphur", 1.18, "SO");
+    addAtomType(ELEMENT_O, 26, "OS4", "nbonds=1,-&25(-O(root,n=4))", "Alkylsulphate oxygen", -0.65, "OS");
+    addAtomType(ELEMENT_O, 27, "OC4", "nbonds=2,-&25(-&26(n=3)),-C(nh>=2)", "Alkylsulphate bridging oxygen", -0.45, "OC");
+    addAtomType(ELEMENT_C, 28, "CS4", "-O(-&25)", "Alkylsulphate first carbon", 0.22, "CT");
+    addAtomType(ELEMENT_H, 29, "HS4", "-&28", "Alkylsulphate hydrogen on first carbon", 0.00, "HC");
     // alkylsulphonates JPCB 112 (2008) 5039
-    addAtomType(ELEMENT_O, 30, "OS3", "-&25(-C)", "Alkylsulphonate oxygen", -0.68, "OS");
-    addAtomType(ELEMENT_C, 31, "CS3", "nh=3,-&25", "Alkylsulphonate methyl carbon", -0.14, "CT");
-    addAtomType(ELEMENT_H, 32, "HS3", "-&31", "Alkylsulphonate methyl hydrogen", 0.00, "HC");
+    addAtomType(ELEMENT_O, 30, "OS3", "-&25(-O(root,n=3))", "Alkylsulphonate oxygen", -0.68, "OS");
+    addAtomType(ELEMENT_C, 31, "CS3", "-&25", "Alkylsulphonate first carbon", -0.14, "CT");
+    addAtomType(ELEMENT_H, 32, "HS3", "-&31", "Alkylsulphonate hydrogen on first carbon", 0.00, "HC");
     // thiocyanate JCP 128 (2008) 154504
     addAtomType(ELEMENT_S, 33, "SK", "nbonds=1,-C(nbonds=2,-N)", "Thiocyanate sulphur", -0.72, "SK");
     addAtomType(ELEMENT_C, 34, "CK", "-&33", "Thiocyanate carbon", 0.44, "CK");
@@ -73,7 +73,13 @@ bool Forcefield_PCL2019_Anions::setUp()
     addAtomType(ELEMENT_C, 43, "CTTS", "-&42,nh=3", "Tosylate methyl carbon", -0.197, "CT");
     addAtomType(ELEMENT_H, 44, "HATS", "-[&40,&41]", "Tosylate ring hydrogen", 0.100, "HA");
     addAtomType(ELEMENT_H, 45, "HTS", "-&43", "Tosylate methyl carbon", 0.060, "HC");
-
+    // Additional types
+    addAtomType(ELEMENT_C, 100, "CT2", "nbonds=4,-C(n=2),-H(n=2)", "General carbon in R group", -0.12, "CT");
+    addAtomType(ELEMENT_C, 101, "CT3", "nbonds=4,nh=3", "Terminal carbon in R group", -0.18, "CT");
+    addAtomType(ELEMENT_H, 102, "HC", "", "Hydrogen on other carbon in R group", 0.06, "HC");
+    addAtomType(ELEMENT_C, 103, "CTF", "nbonds=4,-F(n=3)", "Terminal carbon in fluoroalkyl chain", 0.36, "CF");
+    addAtomType(ELEMENT_C, 104, "CSF", "nbonds=4,-F(n=2),-C(-F,n=2)", "Mid-chain carbon in fluoroalkyl chain", 0.24, "CF");
+    addAtomType(ELEMENT_F, 105, "F", "-C", "Fluorine in fluoroalkyl chain", -0.12, "FC");
     return true;
 }
 

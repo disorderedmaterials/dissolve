@@ -17,19 +17,17 @@ PCL2019BaseForcefield::PCL2019BaseForcefield()
     addParameters("CO", 3.75, 0.43932);
     addParameters("CR", 3.55, 0.29288);
     addParameters("CT", 3.50, 0.27614);
-    addParameters("CT_alt1", 3.50, 0.27600); // TODO CHECK used by CS3 and CS4 - rounding?
     addParameters("CW", 3.55, 0.29288);
     addParameters("CWH", 2.93, 0.29288);
     addParameters("CZ", 3.30, 0.27614);
-    addParameters("F", 2.95, 0.22175); // TODO Check!
     addParameters("F", 3.12, 0.25520);
+    addParameters("FC", 2.95, 0.22175);
     addParameters("FB", 3.118, 0.25540);
     addParameters("HA", 2.42, 0.12552);
     addParameters("HC", 2.50, 0.12552);
-    addParameters("HC_alt1", 2.42, 0.12552); // TODO CHECK used by HT and HTS (toluene-like) - typo, should be 2.5?
-    addParameters("HC_alt2", 2.50, 0.12600); // TODO CHECK used by HS3 and HS4 - rounding?
     addParameters("HG", 0.00, 0.00000);
     addParameters("HN", 0.00, 0.00000);
+    addParameters("HNA", 0.00, 0.00000);
     addParameters("HO", 0.00, 0.00000);
     addParameters("Li", 2.126, 0.07648);
     addParameters("N3", 3.25, 0.71128);
@@ -44,7 +42,7 @@ PCL2019BaseForcefield::PCL2019BaseForcefield()
     addParameters("O2", 2.96, 0.87864);
     addParameters("OB", 3.15, 0.83736);
     addParameters("OC", 2.90, 0.58600);
-    addParameters("OC_a", 2.96, 0.87864); // Trifluoroacetate - needs wildcard match in associated intramolecular terms
+    addParameters("O2F", 2.96, 0.87864); // Trifluoroacetate
     addParameters("OH", 3.12, 0.71128);
     addParameters("OS", 3.15, 0.83700);
     addParameters("P", 3.74, 0.83680);
