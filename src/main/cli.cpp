@@ -14,9 +14,9 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
 {
     // Create CLI object
 #ifdef PARALLEL
-    CLI::App app{fmt::format("Dissolve PARALLEL version {}, Copyright (C) 2012-2020 T. Youngs.", Version::info())};
+    CLI::App app{fmt::format("Dissolve PARALLEL version {}, 2020 Team Dissolve and contributors.", Version::info())};
 #else
-    CLI::App app{fmt::format("Dissolve SERIAL version {}, Copyright (C) 2012-2020 T. Youngs.", Version::info())};
+    CLI::App app{fmt::format("Dissolve SERIAL version {}, 2020 Team Dissolve and contributors.", Version::info())};
 #endif
 
     // Add positionals
