@@ -6,8 +6,8 @@ steps:
   - bash: |
       set -ex
       # -- General
-      brew update
-      brew install bison ftgl ninja
+      brew update-reset
+      brew install antlr antlr4-cpp-runtime bison ftgl ninja
       # -- Qt
       brew install qt5
     displayName: 'Install Prerequisites'
@@ -24,9 +24,13 @@ steps:
       export Qt5PrintSupport_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5PrintSupport
       export Qt5Gui_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Gui
       Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
+      ANTLR_EXE=`find /usr/local/Cellar/antlr/4.8* -iname antlr`
+      ls /usr/local/Cellar/antlr/4.8_1
+      ls /usr/local/Cellar/antlr/4.8_1/bin
+      echo "Detected ANTLR exe as [$ANTLR_EXE]"
       mkdir build
       cd build
       conan install --remote=conan-center ../
-      cmake -G "Ninja" -DGUI:bool=true ${{ parameters.extraflags }} ../
+      cmake -G "Ninja" -DGUI:bool=true -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ parameters.extraflags }} ../
       ninja
     displayName: 'Build'
