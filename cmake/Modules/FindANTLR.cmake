@@ -31,7 +31,7 @@ if(ANTLR_EXECUTABLE AND Java_JAVA_EXECUTABLE)
   else()
     message(
         SEND_ERROR
-        "Command '${ANTLR_COMMAND_TO_RUN}' "
+        "Command '${ANTLR_COMMAND_TO_RUN} ${ANTLR_COMMAND_ARGS}'"
         "failed with the output '${ANTLR_COMMAND_ERROR}'")
   endif()
 
@@ -116,6 +116,7 @@ if(ANTLR_EXECUTABLE AND Java_JAVA_EXECUTABLE)
     add_custom_command(
         OUTPUT ${ANTLR_${Name}_OUTPUTS}
 	COMMAND ${ANTLR_COMMAND_TO_RUN}
+		${ANTLR_COMMAND_ARGS}
                 ${InputFile}
                 -o ${ANTLR_${Name}_OUTPUT_DIR}
                 -no-listener
