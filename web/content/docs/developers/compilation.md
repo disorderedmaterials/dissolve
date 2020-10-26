@@ -20,6 +20,7 @@ You may also consider using the excellent [`Ninja`](https://ninja-build.org/) to
 Regardless of which version is being built, several external libraries are always required:
 
 - [`libfmt`](https://github.com/fmtlib/fmt) >= v7, to provide flexible and type-safe output formatting
+- [`CLI11`](https://github.com/CLIUtils/CLI11) >= v1.9.1, to provide coherent handling of command line arguments
 - [`bison`](https://www.gnu.org/software/bison/), required to implement various grammars (e.g. equation parsing)
 - [`ANTLR4`](https://www.antlr.org/) >= v4.7.2, required to implement various grammars (e.g. NETA)
 
