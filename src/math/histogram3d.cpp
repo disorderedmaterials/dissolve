@@ -147,7 +147,7 @@ int Histogram3D::nYBins() const { return nYBins_; }
 bool Histogram3D::bin(double x, double y, double z)
 {
     // Calculate target bin along x
-    auto xBin = (x - xMinimum_) / xBinWidth_;
+    auto xBin = int((x - xMinimum_) / xBinWidth_);
     if ((xBin < 0) || (xBin >= nXBins_))
     {
         ++nMissed_;
@@ -155,7 +155,7 @@ bool Histogram3D::bin(double x, double y, double z)
     }
 
     // Calculate target bin along y
-    auto yBin = (y - yMinimum_) / yBinWidth_;
+    auto yBin = int((y - yMinimum_) / yBinWidth_);
     if ((yBin < 0) || (yBin >= nYBins_))
     {
         ++nMissed_;
@@ -163,7 +163,7 @@ bool Histogram3D::bin(double x, double y, double z)
     }
 
     // Calculate target bin along z
-    auto zBin = (z - zMinimum_) / zBinWidth_;
+    auto zBin = int((z - zMinimum_) / zBinWidth_);
     if ((zBin < 0) || (zBin >= nZBins_))
     {
         ++nMissed_;
