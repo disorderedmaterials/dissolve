@@ -33,7 +33,7 @@ EnumOptions<NETARootNode::NETARootModifier> NETARootNode::modifiers()
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETARootNode::isValidModifier(std::string_view s) const { return (modifiers().isValid(s)); }
+bool NETARootNode::isValidModifier(std::string_view s) const { return modifiers().isValid(s); }
 
 // Set value and comparator for specified modifier
 bool NETARootNode::setModifier(std::string_view modifier, ComparisonOperator op, int value)

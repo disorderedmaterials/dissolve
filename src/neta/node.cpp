@@ -9,7 +9,20 @@
 #include "neta/ring.h"
 #include "templates/reflist.h"
 
-// Return enum options for SymbolToken
+// Return enum options for NodeTypes
+EnumOptions<NETANode::NodeType> NETANode::nodeTypes()
+{
+    static EnumOptionsList NETANodeTypes = EnumOptionsList()
+                                           << EnumOption(BasicNode, "Basic") << EnumOption(ConnectionNode, "Connection")
+                                           << EnumOption(LogicNode, "Logic") << EnumOption(PresenceNode, "Presence")
+                                           << EnumOption(RingNode, "Ring") << EnumOption(RootNode, "Root");
+
+    static EnumOptions<NETANode::NodeType> options("NodeTypes", NETANodeTypes);
+
+    return options;
+}
+
+// Return enum options for ComparisonOperator
 EnumOptions<NETANode::ComparisonOperator> NETANode::comparisonOperators()
 {
     static EnumOptionsList ComparisonOperatorOptions =
@@ -42,6 +55,22 @@ NETANode::NodeType NETANode::nodeType() const { return nodeType_; }
 NETADefinition *NETANode::parent() const { return parent_; }
 
 /*
+ * Atom Targets
+ */
+
+// Add element target to node
+bool NETANode::addElementTarget(const Element &el)
+{
+    return Messenger::error("NETA {} does not accept element targets.\n", nodeTypes().keyword(nodeType_));
+}
+
+// Add forcefield type target to node
+bool NETANode::addFFTypeTarget(const ForcefieldAtomType &ffType)
+{
+    return Messenger::error("NETA {} does not accept forcefield atomtype targets.\n", nodeTypes().keyword(nodeType_));
+}
+
+/*
  * Branching and Node Generation
  */
 
@@ -56,7 +85,7 @@ int NETANode::nBranchNodes() const { return branch_.nItems(); }
 
 // Create connectivity node from current targets
 NETAConnectionNode *
-NETANode::createConnectionNode(std::vector<Element *> targetElements,
+NETANode::createConnectionNode(std::vector<std::reference_wrapper<const Element>> targetElements,
                                std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
 {
     // Create the new node and own it
@@ -67,7 +96,7 @@ NETANode::createConnectionNode(std::vector<Element *> targetElements,
 }
 
 // Create presence node in the branch
-NETAPresenceNode *NETANode::createPresenceNode(std::vector<Element *> targetElements,
+NETAPresenceNode *NETANode::createPresenceNode(std::vector<std::reference_wrapper<const Element>> targetElements,
                                                std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
 {
     // Create the new node and own it
@@ -137,7 +166,7 @@ bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
             result = (lhsValue <= rhsValue);
             break;
         default:
-            Messenger::error("Unrecognised operator ({}) in NETANode::valueComparison.\n", op);
+            Messenger::error("Unrecognised operator (id = {}) in NETANode::valueComparison.\n", op);
             break;
     }
 

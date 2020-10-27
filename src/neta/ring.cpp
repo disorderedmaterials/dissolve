@@ -34,7 +34,7 @@ EnumOptions<NETARingNode::NETARingModifier> NETARingNode::modifiers()
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETARingNode::isValidModifier(std::string_view s) const { return (modifiers().isValid(s)); }
+bool NETARingNode::isValidModifier(std::string_view s) const { return modifiers().isValid(s); }
 
 // Set value and comparator for specified modifier
 bool NETARingNode::setModifier(std::string_view modifier, ComparisonOperator op, int value)
@@ -172,7 +172,6 @@ int NETARingNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchP
             for (int n = 0; n < ring->size(); ++n)
                 ringAtoms.append(ring->atom(n));
 
-            const SpeciesAtom *matchedAtom;
             ListIterator<NETANode> branchIterator(branch_);
             while (NETANode *node = branchIterator.iterate())
             {

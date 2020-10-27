@@ -34,6 +34,8 @@ class NETANode : public ListItem<NETANode>
         RootNode,
         nNETANodeTypes
     };
+    // Return enum options for Node Types
+    static EnumOptions<NETANode::NodeType> nodeTypes();
     // Value Comparison Operators
     enum ComparisonOperator
     {
@@ -71,6 +73,15 @@ class NETANode : public ListItem<NETANode>
     NETADefinition *parent() const;
 
     /*
+     * Atom Targets
+     */
+    public:
+    // Add element target to node
+    virtual bool addElementTarget(const Element &el);
+    // Add forcefield type target to node
+    virtual bool addFFTypeTarget(const ForcefieldAtomType &ffType);
+
+    /*
      * Branching and Node Generation
      */
     protected:
@@ -85,11 +96,12 @@ class NETANode : public ListItem<NETANode>
     // Return number of nodes defined in branch
     int nBranchNodes() const;
     // Create connectivity node in the branch
-    NETAConnectionNode *createConnectionNode(std::vector<Element *> targetElements,
-                                             std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes);
+    NETAConnectionNode *
+    createConnectionNode(std::vector<std::reference_wrapper<const Element>> targetElements = {},
+                         std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
     // Create presence node in the branch
-    NETAPresenceNode *createPresenceNode(std::vector<Element *> targetElements,
-                                         std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes);
+    NETAPresenceNode *createPresenceNode(std::vector<std::reference_wrapper<const Element>> targetElements = {},
+                                         std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
     // Create ring node in the branch
     NETARingNode *createRingNode();
 

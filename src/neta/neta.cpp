@@ -2,11 +2,16 @@
 // Copyright (c) 2020 Team Dissolve and contributors
 
 #include "neta/neta.h"
+#include "NETALexer.h"
+#include "NETAParser.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 #include "data/ffatomtype.h"
-#include "neta/generator.h"
+#include "neta/NETAErrorListeners.h"
+#include "neta/NETAVisitor.h"
+#include "neta/neta.h"
 #include "neta/node.h"
+#include <antlr4-runtime.h>
 #include <stdarg.h>
 #include <string.h>
 
@@ -21,12 +26,54 @@ NETADefinition::~NETADefinition() { rootNode_.clear(); }
 // Return root node pointer
 NETARootNode *NETADefinition::rootNode() { return &rootNode_; }
 
-// Create definition from stored string
+// Creat definition from stored definition string
 bool NETADefinition::create(const Forcefield *associatedFF)
 {
-    rootNode_.clear();
+    // Create string stream and set up ANTLR input strem
+    std::stringstream stream;
+    stream << definitionString_;
+    antlr4::ANTLRInputStream input(stream);
 
-    return NETADefinitionGenerator::generate(*this, definitionString_, associatedFF);
+    // Create ANTLR lexer and set-up error listener
+    NETALexer lexer(&input);
+    NETALexerErrorListener lexerErrorListener(*this);
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(&lexerErrorListener);
+
+    // Generate tokens from input stream
+    antlr4::CommonTokenStream tokens(&lexer);
+
+    // Create ANTLR parser and set-up error listenres
+    NETAParser parser(&tokens);
+    NETAParserErrorListener parserErrorListener(*this);
+    parser.removeErrorListeners();
+    parser.removeParseListeners();
+    parser.addErrorListener(&lexerErrorListener);
+    parser.addErrorListener(&parserErrorListener);
+
+    // Generate the AST
+    NETAParser::NetaContext *tree = nullptr;
+    try
+    {
+        tree = parser.neta();
+    }
+    catch (NETAExceptions::NETASyntaxException &ex)
+    {
+        return Messenger::error(ex.what());
+    };
+
+    // Visit the nodes in the AST
+    NETAVisitor visitor;
+    try
+    {
+        visitor.create(*this, tree, associatedFF);
+    }
+    catch (NETAExceptions::NETASyntaxException &ex)
+    {
+        return Messenger::error(ex.what());
+    }
+
+    return true;
 }
 
 // Set generating string

@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2020 Team Dissolve and contributors
 
-#ifndef DISSOLVE_MODULEWIDGET_NEUTRONSQ_H
-#define DISSOLVE_MODULEWIDGET_NEUTRONSQ_H
+#pragma once
 
 #include "gui/modulewidget.h"
 #include "modules/xraysq/gui/ui_modulewidget.h"
@@ -58,5 +57,3 @@ class XRaySQModuleWidget : public ModuleWidget
     // Set data targets in graphs
     void setGraphDataTargets(XRaySQModule *module);
 };
-
-#endif

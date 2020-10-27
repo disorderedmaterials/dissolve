@@ -7,7 +7,8 @@
 #include "templates/dynamicarray.h"
 #include "templates/refdatalist.h"
 
-NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Element *> targetElements,
+NETAConnectionNode::NETAConnectionNode(NETADefinition *parent,
+                                       std::vector<std::reference_wrapper<const Element>> targetElements,
                                        std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes,
                                        SpeciesBond::BondType bt)
     : NETANode(parent, NETANode::ConnectionNode)
@@ -31,6 +32,26 @@ NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Eleme
 NETAConnectionNode::~NETAConnectionNode() {}
 
 /*
+ * Atom Targets
+ */
+
+// Add element target to node
+bool NETAConnectionNode::addElementTarget(const Element &el)
+{
+    allowedElements_.push_back(el);
+
+    return true;
+}
+
+// Add forcefield type target to node
+bool NETAConnectionNode::addFFTypeTarget(const ForcefieldAtomType &ffType)
+{
+    allowedAtomTypes_.push_back(ffType);
+
+    return true;
+}
+
+/*
  * Modifiers
  */
 
@@ -47,7 +68,7 @@ EnumOptions<NETAConnectionNode::NETAConnectionModifier> NETAConnectionNode::modi
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETAConnectionNode::isValidModifier(std::string_view s) const { return (modifiers().isValid(s)); }
+bool NETAConnectionNode::isValidModifier(std::string_view s) const { return modifiers().isValid(s); }
 
 // Set value and comparator for specified modifier
 bool NETAConnectionNode::setModifier(std::string_view modifier, ComparisonOperator op, int value)
@@ -92,7 +113,7 @@ EnumOptions<NETAConnectionNode::NETAConnectionFlag> NETAConnectionNode::flags()
 }
 
 // Return whether the specified flag is valid for this node
-bool NETAConnectionNode::isValidFlag(std::string_view s) const { return (flags().isValid(s)); }
+bool NETAConnectionNode::isValidFlag(std::string_view s) const { return flags().isValid(s); }
 
 // Set specified flag
 bool NETAConnectionNode::setFlag(std::string_view flag, bool state)
@@ -143,9 +164,9 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
     {
         // Evaluate the neighbour against our elements
         int atomScore = NETANode::NoMatch;
-        for (const auto *element : allowedElements_)
+        for (const auto &element : allowedElements_)
         {
-            if (j->element() != element)
+            if (j->element() != &element.get())
                 continue;
 
             // Process branch definition via the base class, using a copy of the current match path
