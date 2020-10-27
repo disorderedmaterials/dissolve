@@ -13,14 +13,11 @@ steps:
     inputs:
       versionSpec: '3.x'
   - script: |
-      choco install -y antlr4 ninja winflexbison unzip
+      choco install -y antlr4 winflexbison unzip
     displayName: 'Install Prerequisites'
   - script: |
       python -m pip install aqtinstall
       python -m aqt install --outputdir $(Build.BinariesDirectory)\\Qt ${{ parameters.qtver }} windows desktop win64_msvc2019_64 -m qtcore qtgui qtwidgets qtprintsupport
-      ls $(Build.BinariesDirectory)\Qt
-      ls $(Build.BinariesDirectory)\Qt\${{ parameters.qtver }}
-      ls $(Build.BinariesDirectory)\Qt\${{ parameters.qtver }}\msvc2019_64
     displayName: 'Install Qt'
   - powershell: |
       $ErrorActionPreference = 'Stop'
@@ -66,7 +63,7 @@ steps:
       mkdir build
       cd build
       conan install --remote=conan-center ../
-      #cmake -G "Visual Studio 16 2019" -A "x64" .. -DGUI:bool=true -DANTLRRUNTIME_DIR:path=$(System.DefaultWorkingDirectory)/antlr4-cpp-runtime ${{ parameters.extraflags }}
-      cmake -G "Visual Studio 16 2019" -A "x64" .. -DGUI:bool=true -DBUILD_ANTLR_RUNTIME:bool=true ${{ parameters.extraflags }}
+      cmake -G "Visual Studio 16 2019" -A "x64" .. -DGUI:bool=true -DANTLRRUNTIME_DIR:path=$(System.DefaultWorkingDirectory)/antlr4-cpp-runtime ${{ parameters.extraflags }}
+      cmake --build . --config Release --target keywordwidgets
       cmake --build . --config Release
     displayName: 'Build'

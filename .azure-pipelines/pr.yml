@@ -19,7 +19,6 @@ stages:
     displayName: 'Build'
     jobs:
       - job: 'linux_serialgui'
-        condition: eq(0,1)
         displayName: 'Build Linux (Serial/GUI, ubuntu-18.04)'
         pool:
           vmImage: 'ubuntu-18.04' 
@@ -41,7 +40,6 @@ stages:
               ArtifactName: 'linux-tests-serial'
             displayName: 'Publish Serial Test Artifacts'
       - job: 'linux_parallel'
-        condition: eq(0,1)
         displayName: 'Build Linux (Parallel, ubuntu-18.04)'
         pool:
           vmImage: 'ubuntu-18.04' 
@@ -59,7 +57,6 @@ stages:
               ArtifactName: 'linux-tests-parallel'
             displayName: 'Publish Parallel Test Artifacts'
       - job: 'osx_serialgui'
-        condition: eq(0,1)
         displayName: 'Build OSX (Serial/GUI, macos-latest)'
         pool:
           vmImage: 'macos-latest' 
@@ -75,6 +72,7 @@ stages:
               ArtifactName: 'osx-artifacts'
             displayName: 'Publish OSX Artifacts'
       - job: 'windows_serialgui'
+        timeoutInMinutes: 120
         displayName: 'Build Windows (Serial/GUI, windows-latest)'
         pool:
           vmImage: 'windows-latest' 

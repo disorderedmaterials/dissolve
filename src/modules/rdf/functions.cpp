@@ -57,9 +57,9 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     nTypes = partialSet.nAtomTypes();
     Messenger::printVerbose("Constructing local partial working arrays for {} types.\n", nTypes);
     const Box *box = cfg->box();
-    std::vector< Vec3<double>* > r(nTypes);
+    std::vector<Vec3<double> *> r(nTypes);
     std::vector<int> maxr(nTypes), nr(nTypes);
-    std::vector<int*> binss(nTypes);
+    std::vector<int *> binss(nTypes);
     int *bins;
 
     n = 0;
