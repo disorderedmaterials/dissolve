@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2020 Team Dissolve and contributors
 
-#ifndef DISSOLVE_KEYWORD_CONFIGURATIONREFLIST_H
-#define DISSOLVE_KEYWORD_CONFIGURATIONREFLIST_H
+#pragma once
 
 #include "keywords/data.h"
 #include "templates/reflist.h"
@@ -52,5 +51,3 @@ class ConfigurationRefListKeyword : public KeywordData<RefList<Configuration> &>
     // Prune any references to the supplied Configuration in the contained data
     void removeReferencesTo(Configuration *sp);
 };
-
-#endif

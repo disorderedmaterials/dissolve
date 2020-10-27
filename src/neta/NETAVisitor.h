@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2020 Team Dissolve and contributors
 
-#ifndef DISSOLVE_NETA_VISITOR_H
-#define DISSOLVE_NETA_VISITOR_H
+#pragma once
 
 #include "NETAParserVisitor.h"
 #include "neta/neta.h"
@@ -50,5 +49,3 @@ class NETAVisitor : private NETAParserVisitor
     antlrcpp::Any visitModifier(NETAParser::ModifierContext *context) override;
     antlrcpp::Any visitFlag(NETAParser::FlagContext *context) override;
 };
-
-#endif

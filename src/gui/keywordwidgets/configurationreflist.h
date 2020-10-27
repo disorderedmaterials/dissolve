@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2020 Team Dissolve and contributors
 
-#ifndef DISSOLVE_KEYWORDWIDGET_CONFIGURATIONREFLIST_H
-#define DISSOLVE_KEYWORDWIDGET_CONFIGURATIONREFLIST_H
+#pragma once
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
@@ -60,5 +59,3 @@ class ConfigurationRefListKeywordWidget : public KeywordDropDown, public Keyword
     // Update summary text
     void updateSummaryText();
 };
-
-#endif

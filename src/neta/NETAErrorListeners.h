@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2020 Team Dissolve and contributors
 
-#ifndef DISSOLVE_NETA_ERRORLISTENERS_H
-#define DISSOLVE_NETA_ERRORLISTENERS_H
+#pragma once
 
 #include <antlr4-runtime.h>
 #include <exception>
@@ -63,5 +62,3 @@ class NETAParserErrorListener : public antlr4::BaseErrorListener
     void syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *, size_t line, size_t charPositionInLine,
                      const std::string &, std::exception_ptr ep);
 };
-
-#endif

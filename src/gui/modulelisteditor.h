@@ -1,8 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2020 Team Dissolve and contributors
 
-#ifndef DISSOLVE_MODULELISTEDITOR_H
-#define DISSOLVE_MODULELISTEDITOR_H
+#pragma once
 
 #include "gui/ui_modulelisteditor.h"
 #include "templates/refdatalist.h"
@@ -96,5 +95,3 @@ class ModuleListEditor : public QWidget
     // Read widget state through specified LineParser
     bool readState(LineParser &parser);
 };
-
-#endif
