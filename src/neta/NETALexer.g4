@@ -17,9 +17,6 @@ lexer grammar NETALexer;
 // Appears in the private part of the lexer in the h file.
 @lexer::declarations {
 bool isElement(std::string symbol) { return Elements::element(symbol.c_str()).Z() != 0; }
-
-void myFooLexerAction() { /* do something*/ };
-void myBarLexerAction() { /* do something*/ };
 }
 
 // Appears in line with the other class member definitions in the cpp file.
