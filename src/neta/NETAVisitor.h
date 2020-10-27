@@ -39,8 +39,6 @@ class NETAVisitor : private NETAParserVisitor
     const Forcefield *associatedForcefield_;
     // Context stack
     std::vector<NETANode *> contextStack_;
-    // Parse error counter
-    int errorCounter_;
 
     private:
     // Return the topmost context in the stack
@@ -48,7 +46,7 @@ class NETAVisitor : private NETAParserVisitor
 
     public:
     // Construct description within supplied object, from given tree
-    bool create(NETADefinition &neta, NETAParser::NetaContext *tree, const Forcefield *associatedForcefield = nullptr);
+    void create(NETADefinition &neta, NETAParser::NetaContext *tree, const Forcefield *associatedForcefield);
 
     /*
      * Visitor Overrides

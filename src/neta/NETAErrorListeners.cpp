@@ -32,13 +32,12 @@ NETALexerErrorListener::NETALexerErrorListener(const NETADefinition &currentDefi
 void NETALexerErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *token, size_t line,
                                          size_t charPositionInLine, const std::string &message, std::exception_ptr ep)
 {
-    Messenger::print("Error in NETA definition '{}'\n", neta_.definitionString());
+    Messenger::print("\nError in NETA definition '{}'\n", neta_.definitionString());
     std::string marker(26 + charPositionInLine, ' ');
     marker += '^';
-    Messenger::print("{}\n", marker.c_str());
-    Messenger::print("Reason: {}\n", message.c_str());
+    Messenger::print("{}\n", marker);
 
-    throw NETAExceptions::syntaxException;
+    throw NETAExceptions::NETASyntaxException(fmt::format("Syntax Error: {}", message));
 }
 
 /*
@@ -50,11 +49,10 @@ NETAParserErrorListener::NETAParserErrorListener(const NETADefinition &currentDe
 void NETAParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *token, size_t line,
                                           size_t charPositionInLine, const std::string &message, std::exception_ptr ep)
 {
-    Messenger::print("Error in NETA definition '{}'\n", neta_.definitionString());
+    Messenger::print("\nError in NETA definition '{}'\n", neta_.definitionString());
     std::string marker(26 + charPositionInLine, ' ');
     marker += '^';
-    Messenger::print("{}\n", marker.c_str());
-    Messenger::print("Reason: {}\n", message.c_str());
+    Messenger::print("{}\n", marker);
 
-    throw NETAExceptions::syntaxException;
+    throw NETAExceptions::NETASyntaxException(message);
 }

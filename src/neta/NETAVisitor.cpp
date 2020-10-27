@@ -21,6 +21,7 @@
 
 #include "neta/NETAVisitor.h"
 #include "data/ff.h"
+#include "neta/NETAErrorListeners.h"
 #include "neta/presence.h"
 #include "neta/ring.h"
 #include "templates/optionalref.h"
@@ -37,7 +38,7 @@ NETANode *NETAVisitor::currentNETAContext() const
 }
 
 // Construct description within supplied object, from given tree
-bool NETAVisitor::create(NETADefinition &neta, NETAParser::NetaContext *tree, const Forcefield *associatedForcefield)
+void NETAVisitor::create(NETADefinition &neta, NETAParser::NetaContext *tree, const Forcefield *associatedForcefield)
 {
     // Store pointer to definition and forcefield. and clear the passed definition
     neta_ = &neta;
@@ -47,9 +48,7 @@ bool NETAVisitor::create(NETADefinition &neta, NETAParser::NetaContext *tree, co
     contextStack_.push_back(neta_->rootNode());
 
     // Traverse the AST
-    errorCounter_ = 0;
     visitChildren(tree);
-    return errorCounter_ == 0;
 }
 
 /*
@@ -116,20 +115,15 @@ antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *
     {
         // Is a forcefield available to search?
         if (!associatedForcefield_)
-        {
-            ++errorCounter_;
-            return Messenger::error("No associated forcefield, so can't use atom type targets in NETA definition.\n");
-        }
+            throw(NETAExceptions::NETASyntaxException(
+                "No associated forcefield, so can't use atom type targets in NETA definition."));
 
         // Search for the atom type with the name specified (after removing leading '&' from string)
         const auto &at = associatedForcefield_->atomTypeByName(context->FFTypeName()->getText().substr(1).c_str());
         if (!at)
-        {
-            ++errorCounter_;
-            return Messenger::error(
-                "No forcefield atom type with name {} exists in forcefield '{}', so can't add it as a target.\n",
-                context->FFTypeName()->getText().c_str(), associatedForcefield_->name());
-        }
+            throw(NETAExceptions::NETASyntaxException(
+                fmt::format("No forcefield atom type with name {} exists in forcefield '{}', so can't add it as a target.",
+                            context->FFTypeName()->getText().c_str(), associatedForcefield_->name())));
 
         return std::reference_wrapper(*at);
     }
@@ -137,21 +131,16 @@ antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *
     {
         // Is a forcefield available to search?
         if (!associatedForcefield_)
-        {
-            ++errorCounter_;
-            return Messenger::error("No associated forcefield, so can't use atom type targets in NETA definition.\n");
-        }
+            throw(NETAExceptions::NETASyntaxException(
+                "No associated forcefield, so can't use atom type targets in NETA definition."));
 
         // Search for the atom type with the index specified (after removing leading '&' from string)
         auto id = std::stoi(context->FFTypeIndex()->getText().substr(1));
         const auto &at = associatedForcefield_->atomTypeById(id);
         if (!at)
-        {
-            ++errorCounter_;
-            return Messenger::error(
-                "No forcefield atom type with id {} exists in forcefield '{}', so can't add it as a target.\n", id,
-                associatedForcefield_->name());
-        }
+            throw(NETAExceptions::NETASyntaxException(
+                fmt::format("No forcefield atom type with id {} exists in forcefield '{}', so can't add it as a target.", id,
+                            associatedForcefield_->name())));
 
         return std::reference_wrapper(*at);
     }
@@ -168,19 +157,16 @@ antlrcpp::Any NETAVisitor::visitTargetList(NETAParser::TargetListContext *contex
         {
             auto elRef = target.as<std::reference_wrapper<Element>>();
             if (!currentNETAContext()->addElementTarget(elRef))
-                return false;
+                throw(NETAExceptions::NETASyntaxException("Failed to add element to target list."));
         }
         else if (target.is<std::reference_wrapper<const ForcefieldAtomType>>())
         {
             auto atomTypeRef = target.as<std::reference_wrapper<const ForcefieldAtomType>>();
             if (!currentNETAContext()->addFFTypeTarget(atomTypeRef.get()))
-                return false;
+                throw(NETAExceptions::NETASyntaxException("Failed to add atom type to target list."));
         }
         else
-        {
-            ++errorCounter_;
-            return Messenger::error("Unrecognised item in target list.\n");
-        }
+            throw(NETAExceptions::NETASyntaxException("Unrecognised item in target list."));
     }
 
     return true;
@@ -196,17 +182,14 @@ antlrcpp::Any NETAVisitor::visitModifier(NETAParser::ModifierContext *context)
     if (currentNETAContext()->isValidModifier(context->Keyword()->getText().c_str()))
     {
         if (!currentNETAContext()->setModifier(context->Keyword()->getText().c_str(), op, std::stoi(context->value->getText())))
-            return Messenger::error("Failed to set modifier '{}' for the current context ({}).\n",
-                                    context->Keyword()->getText().c_str(),
-                                    NETANode::nodeTypes().keyword(currentNETAContext()->nodeType()));
+            throw(NETAExceptions::NETASyntaxException(
+                fmt::format("Failed to set modifier '{}' for the current context ({}).", context->Keyword()->getText().c_str(),
+                            NETANode::nodeTypes().keyword(currentNETAContext()->nodeType()))));
     }
     else
-    {
-        ++errorCounter_;
-        return Messenger::error("'{}' is not a valid modifier keyword for the current context ({}).\n",
-                                context->Keyword()->getText().c_str(),
-                                NETANode::nodeTypes().keyword(currentNETAContext()->nodeType()));
-    }
+        throw(NETAExceptions::NETASyntaxException(fmt::format(
+            "'{}' is not a valid modifier keyword for the current context ({}).", context->Keyword()->getText().c_str(),
+            NETANode::nodeTypes().keyword(currentNETAContext()->nodeType()))));
 
     return visitChildren(context);
 }
@@ -216,17 +199,14 @@ antlrcpp::Any NETAVisitor::visitFlag(NETAParser::FlagContext *context)
     if (currentNETAContext()->isValidFlag(context->Keyword()->getText().c_str()))
     {
         if (!currentNETAContext()->setFlag(context->Keyword()->getText().c_str(), true))
-            return Messenger::error("Failed to set flag '{}' for the current context ({}).\n",
-                                    context->Keyword()->getText().c_str(),
-                                    NETANode::nodeTypes().keyword(currentNETAContext()->nodeType()));
+            throw(NETAExceptions::NETASyntaxException(
+                fmt::format("Failed to set flag '{}' for the current context ({}).", context->Keyword()->getText().c_str(),
+                            NETANode::nodeTypes().keyword(currentNETAContext()->nodeType()))));
     }
     else
-    {
-        ++errorCounter_;
-        return Messenger::error("'{}' is not a valid flag for the current context ({}).\n",
-                                context->Keyword()->getText().c_str(),
-                                NETANode::nodeTypes().keyword(currentNETAContext()->nodeType()));
-    }
+        throw(NETAExceptions::NETASyntaxException(
+            fmt::format("'{}' is not a valid flag for the current context ({}).", context->Keyword()->getText().c_str(),
+                        NETANode::nodeTypes().keyword(currentNETAContext()->nodeType()))));
 
     return visitChildren(context);
 }

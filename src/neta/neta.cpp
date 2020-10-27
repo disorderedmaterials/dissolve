@@ -59,7 +59,7 @@ bool NETADefinition::create(const Forcefield *associatedFF)
     }
     catch (NETAExceptions::NETASyntaxException &ex)
     {
-        return Messenger::error("Failed to construct NETA definition.\n");
+        return Messenger::error(ex.what());
     };
 
     // Visit the nodes in the AST
@@ -70,7 +70,7 @@ bool NETADefinition::create(const Forcefield *associatedFF)
     }
     catch (NETAExceptions::NETASyntaxException &ex)
     {
-        return Messenger::error("Failed to construct NETA definition.\n");
+        return Messenger::error(ex.what());
     }
 
     return true;

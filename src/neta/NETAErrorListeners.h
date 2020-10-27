@@ -34,9 +34,16 @@ namespace NETAExceptions
 // NETA Syntax Exception
 class NETASyntaxException : public std::exception
 {
-    virtual const char *what() const throw() { return "NETA Syntax Exception"; }
+    public:
+    NETASyntaxException(std::string_view message = "Undefined NETA Syntax Exception") : message_{message} {}
+
+    private:
+    // Error message
+    std::string message_;
+
+    public:
+    virtual const char *what() const throw() { return message_.c_str(); }
 };
-static NETASyntaxException syntaxException;
 } // namespace NETAExceptions
 
 // NETA Lexer Error Listener
