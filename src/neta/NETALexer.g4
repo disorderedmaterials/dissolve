@@ -50,6 +50,7 @@ WS : [ ]* -> skip;
 Integer: DIGIT+;
 
 // Keywords
+Or: '|';
 ConnectionKeyword: '-';
 RingKeyword: 'r' 'i' 'n' 'g';
 

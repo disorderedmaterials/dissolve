@@ -4,6 +4,7 @@
 #include "neta/NETAVisitor.h"
 #include "data/ff.h"
 #include "neta/NETAErrorListeners.h"
+#include "neta/or.h"
 #include "neta/presence.h"
 #include "neta/ring.h"
 #include "templates/optionalref.h"
@@ -40,6 +41,22 @@ void NETAVisitor::create(NETADefinition &neta, NETAParser::NetaContext *tree, co
 antlrcpp::Any NETAVisitor::visitNeta(NETAParser::NetaContext *context) { return visitChildren(context); }
 
 antlrcpp::Any NETAVisitor::visitNode(NETAParser::NodeContext *context) { return visitChildren(context); }
+
+antlrcpp::Any NETAVisitor::visitOrNode(NETAParser::OrNodeContext *context)
+{
+    auto orLogic = currentNETAContext()->createOrNode();
+    contextStack_.push_back(orLogic);
+
+    auto result = visitChildren(context);
+
+    contextStack_.pop_back();
+
+    return true;
+}
+
+antlrcpp::Any NETAVisitor::visitCommonNode(NETAParser::CommonNodeContext *context) { return visitChildren(context); }
+
+antlrcpp::Any NETAVisitor::visitContextual(NETAParser::ContextualContext *context) { return visitChildren(context); }
 
 antlrcpp::Any NETAVisitor::visitNodeSequence(NETAParser::NodeSequenceContext *context) { return visitChildren(context); }
 

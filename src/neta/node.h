@@ -10,9 +10,10 @@
 // Forward Declarations
 class Element;
 class ForcefieldAtomType;
-class NETADefinition;
-class NETAPresenceNode;
 class NETAConnectionNode;
+class NETADefinition;
+class NETAOrNode;
+class NETAPresenceNode;
 class NETARingNode;
 class SpeciesAtom;
 
@@ -25,7 +26,7 @@ class NETANode
     {
         BasicNode,
         ConnectionNode,
-        LogicNode,
+        OrNode,
         PresenceNode,
         RingNode,
         RootNode,
@@ -88,6 +89,8 @@ class NETANode
     public:
     // Clear all nodes
     void clear();
+    // Create logical 'or' node in the branch
+    std::shared_ptr<NETAOrNode> createOrNode();
     // Create connectivity node in the branch
     std::shared_ptr<NETAConnectionNode>
     createConnectionNode(std::vector<std::reference_wrapper<const Element>> targetElements = {},

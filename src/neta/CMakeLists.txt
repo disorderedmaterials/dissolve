@@ -16,9 +16,9 @@ add_library(neta
   ${ANTLR_NETAGrammarParser_CXX_OUTPUTS}
 
   connection.cpp
-  logic.cpp
   neta.cpp
   node.cpp
+  or.cpp
   presence.cpp
   ring.cpp
   root.cpp
@@ -26,9 +26,9 @@ add_library(neta
   NETAVisitor.cpp
 
   connection.h
-  logic.h
   neta.h
   node.h
+  or.h
   presence.h
   ring.h
   root.h

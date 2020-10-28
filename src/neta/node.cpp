@@ -5,6 +5,7 @@
 #include "base/sysfunc.h"
 #include "neta/connection.h"
 #include "neta/node.h"
+#include "neta/or.h"
 #include "neta/presence.h"
 #include "neta/ring.h"
 
@@ -13,7 +14,7 @@ EnumOptions<NETANode::NodeType> NETANode::nodeTypes()
 {
     static EnumOptionsList NETANodeTypes = EnumOptionsList()
                                            << EnumOption(BasicNode, "Basic") << EnumOption(ConnectionNode, "Connection")
-                                           << EnumOption(LogicNode, "Logic") << EnumOption(PresenceNode, "Presence")
+                                           << EnumOption(OrNode, "Or") << EnumOption(PresenceNode, "Presence")
                                            << EnumOption(RingNode, "Ring") << EnumOption(RootNode, "Root");
 
     static EnumOptions<NETANode::NodeType> options("NodeTypes", NETANodeTypes);
@@ -76,7 +77,17 @@ bool NETANode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 // Clear all nodes
 void NETANode::clear() { branch_.clear(); }
 
-// Create connectivity node in the branch
+// Create logical 'or' node in the branch
+std::shared_ptr<NETAOrNode> NETANode::createOrNode()
+{
+    // Create the new node and own it
+    auto node = std::make_shared<NETAOrNode>(parent_);
+    branch_.push_back(node);
+
+    return node;
+}
+
+// Create connectivity node from current targets
 std::shared_ptr<NETAConnectionNode>
 NETANode::createConnectionNode(std::vector<std::reference_wrapper<const Element>> targetElements,
                                std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)

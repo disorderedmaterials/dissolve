@@ -34,10 +34,20 @@ neta: nodeSequence EOF;
 // Node Sequence
 nodeSequence: (node (Comma node)*)*;
 
+// Any Node
+node: commonNode
+| orNode
+| contextual;
+
+// 'Or' Node
+orNode: commonNode Or commonNode;
+
 // Common Nodes
-node: connectionNode
-| ringNode
-| modifier
+commonNode: connectionNode
+| ringNode;
+
+// Contextuals
+contextual: modifier
 | flag;
 
 // Ring Node Sequence

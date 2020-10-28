@@ -8,8 +8,8 @@
 // Forward Declarations
 class NETADefinition;
 
-// NETA Logic Node
-class NETALogicNode : public NETANode
+// NETA Or Node
+class NETAOrNode : public NETANode
 {
     public:
     // Node logic types
@@ -19,14 +19,8 @@ class NETALogicNode : public NETANode
         OrLogic,
         AndNotLogic
     };
-    NETALogicNode(NETADefinition *parent, LogicType logic, NETANode *arg1, NETANode *arg2);
-    ~NETALogicNode();
-
-    private:
-    // Logic type
-    LogicType logic_;
-    // Node targets
-    NETANode *argument1_, *argument2_;
+    NETAOrNode(NETADefinition *parent);
+    ~NETAOrNode();
 
     /*
      * Scoring

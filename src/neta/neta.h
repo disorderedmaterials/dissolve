@@ -5,7 +5,6 @@
 
 #include "base/enumoptions.h"
 #include "neta/connection.h"
-#include "neta/logic.h"
 #include "neta/root.h"
 
 // Forward Declarations
