@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2020 Team Dissolve and contributors
 
+#include "neta/node.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 #include "neta/connection.h"
-#include "neta/node.h"
 #include "neta/or.h"
 #include "neta/presence.h"
 #include "neta/ring.h"

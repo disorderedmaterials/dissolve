@@ -172,7 +172,7 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
 
     // Did we find the required number of ring matches?
     if (!compareValues(nMatches, repeatCountOperator_, repeatCount_))
-        return NETANode::NoMatch;
+        return reverseLogic_ ? 1 : NETANode::NoMatch;
 
-    return totalScore;
+    return reverseLogic_ ? NETANode::NoMatch : totalScore;
 }

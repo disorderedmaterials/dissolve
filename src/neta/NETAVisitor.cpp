@@ -69,7 +69,11 @@ antlrcpp::Any NETAVisitor::visitRingNodeSequence(NETAParser::RingNodeSequenceCon
 
 antlrcpp::Any NETAVisitor::visitConnectionNode(NETAParser::ConnectionNodeContext *context)
 {
-    contextStack_.push_back(currentNETAContext()->createConnectionNode());
+    auto connection = currentNETAContext()->createConnectionNode();
+    contextStack_.push_back(connection);
+
+    if (context->Not())
+        connection->setReverseLogic();
 
     auto result = visitChildren(context);
 
@@ -80,7 +84,11 @@ antlrcpp::Any NETAVisitor::visitConnectionNode(NETAParser::ConnectionNodeContext
 
 antlrcpp::Any NETAVisitor::visitPresenceNode(NETAParser::PresenceNodeContext *context)
 {
-    contextStack_.push_back(currentNETAContext()->createPresenceNode());
+    auto presence = currentNETAContext()->createPresenceNode();
+    contextStack_.push_back(presence);
+
+    if (context->Not())
+        presence->setReverseLogic();
 
     auto result = visitChildren(context);
 
@@ -91,7 +99,11 @@ antlrcpp::Any NETAVisitor::visitPresenceNode(NETAParser::PresenceNodeContext *co
 
 antlrcpp::Any NETAVisitor::visitRingNode(NETAParser::RingNodeContext *context)
 {
-    contextStack_.push_back(currentNETAContext()->createRingNode());
+    auto ring = currentNETAContext()->createRingNode();
+    contextStack_.push_back(ring);
+
+    if (context->Not())
+        ring->setReverseLogic();
 
     auto result = visitChildren(context);
 

@@ -242,7 +242,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
 
     // Did we find the required number of matches in the neighbour list?
     if (!compareValues(nMatches, repeatCountOperator_, repeatCount_))
-        return NETANode::NoMatch;
+        return reverseLogic_ ? 1 : NETANode::NoMatch;
 
     // Generate total score and add matched atoms to the path
     auto totalScore = 0;
@@ -255,5 +255,5 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
         matchPath.push_back(nbr.first);
     }
 
-    return totalScore;
+    return reverseLogic_ ? NETANode::NoMatch : totalScore;
 }
