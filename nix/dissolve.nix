@@ -37,7 +37,8 @@ pkgs.stdenv.mkDerivation {
     pkgs.libGL
     pkgs.libglvnd
     pkgs.libglvnd.dev
-    pkgs.qt5.full
+    pkgs.qt5.qtbase
+    pkgs.qt5.qtmultimedia
   ] ++ pkgs.stdenv.lib.optional pkgs.stdenv.isDarwin pkgs.clang_6;
   nativeBuildInputs = pkgs.lib.optional gui pkgs.qt5.wrapQtAppsHook;
 
