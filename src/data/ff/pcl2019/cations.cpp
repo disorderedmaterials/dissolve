@@ -10,19 +10,6 @@
 //  Set up / create all forcefield terms
 bool Forcefield_PCL2019_Cations::setUp()
 {
-    /*
-     * Implementation Notes:
-     *
-     * - Ordering of atom types has been changed in places to facilitate NETA descriptions.
-     * - Alkylimidazolium H on ring nitrogen mapped as HA in original forcefield, but is remapped as HN here to give zero LJ
-     * parameters.
-     * - CW carbon next to ring nitrogen with H attached has different LJ parameters to actual CW - mapped to CWH here.
-     * - OPLS-AA alcohol carbon (CTO) and hydrogen (H10) not implemented - see OPLSAA2005/Alcohols for the full description.
-     * - Phosphonium P renamed from P3 to P4 for consistency with N4 and
-     * https://github.com/agiliopadua/ilff/blob/master/ilff_structures.pdf
-     * - C1A (polarisable FF only) implemented specifically for pyrrolidinium cation
-     */
-
     // Create atom types
     // dialkylimidazolium JPCB 108 (2004) 2038
     addAtomType(ELEMENT_C, 1, "C1", "nbonds=4,-N,nh>=2", "First tetrahedral carbon in R group on ring nitrogen", -0.17, "CT");
