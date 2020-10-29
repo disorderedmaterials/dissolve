@@ -42,7 +42,7 @@ pkgs.stdenv.mkDerivation {
   ] ++ pkgs.stdenv.lib.optional pkgs.stdenv.isDarwin pkgs.clang_6;
   nativeBuildInputs = pkgs.lib.optional gui pkgs.qt5.wrapQtAppsHook;
 
-  src = gitignoreSource ./..;
+  src = builtins.filterSource (path: type: !( baseNameOf path == "nix" || baseNameOf path == "build" || baseNameOf path == ".git")) ./..;
   installPhase = "cp -r .$prefix $out";
   meta = {
     name = "Dissolve";
