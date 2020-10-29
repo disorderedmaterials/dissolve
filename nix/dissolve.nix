@@ -23,7 +23,7 @@ pkgs.stdenv.mkDerivation {
     "-DPARALLEL=${cmakeBool parallel}"
     "-DCMAKE_POLICY_DEFAULT_CMP0025=NEW"
   ];
-  patches = [ ./ignore_conan.patch ];
+  patches = [ ../patches/ignore_conan.patch ];
   buildInputs = [
     pkgs.antlr
     pkgs.bison
