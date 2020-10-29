@@ -158,9 +158,9 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
                 totalScore += nodeScore;
             }
 
-            // If we didn't find a match for the ring, exit the loop now
+            // If we didn't find a match for the ring, continue to the next one
             if (nodeScore == NETANode::NoMatch)
-                break;
+                continue;
 
             ++nMatches;
 

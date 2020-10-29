@@ -155,7 +155,7 @@ int NETAPresenceNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom 
         if (nBondsValue_ >= 0)
         {
             if (!compareValues(j->nBonds(), nBondsValueOperator_, nBondsValue_))
-                return NETANode::NoMatch;
+                continue;
 
             ++atomScore;
         }
@@ -165,7 +165,7 @@ int NETAPresenceNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom 
             auto nH = std::count_if(j->bonds().begin(), j->bonds().end(),
                                     [j](const SpeciesBond &bond) { return bond.partner(j)->element()->Z() == ELEMENT_H; });
             if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_))
-                return NETANode::NoMatch;
+                continue;
 
             ++atomScore;
         }

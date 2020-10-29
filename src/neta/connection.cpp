@@ -215,7 +215,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
         if (nBondsValue_ >= 0)
         {
             if (!compareValues(j->nBonds(), nBondsValueOperator_, nBondsValue_))
-                return NETANode::NoMatch;
+                continue;
 
             ++atomScore;
         }
