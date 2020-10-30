@@ -159,7 +159,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
 
     // Loop over neighbour atoms
     auto nMatches = 0;
-    for (auto nbr : neighbours)
+    for (auto &nbr : neighbours)
     {
         auto *j = nbr.first;
 
@@ -196,6 +196,10 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
 
                 // Process branch definition via the base class, using a copy of the current match path
                 auto branchMatchPath = matchPath;
+
+                // Add ourselves to the match path so we can't backtrack
+                branchMatchPath.push_back(i);
+
                 auto branchScore = NETANode::score(j, branchMatchPath);
                 if (branchScore == NETANode::NoMatch)
                     continue;
