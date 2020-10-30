@@ -87,6 +87,10 @@ void Messenger::clearOutputPrefix() { outputPrefix_.clear(); }
 // Output text to relevant handler
 void Messenger::outputText(std::string_view s)
 {
+#ifdef PARALLEL
+    //Only print on master thread
+    if(!ProcessPool::isWorldMaster()) return;
+#endif
     if (outputPrefix_.empty())
     {
         // If we are redirecting to files, use the parser_
@@ -120,6 +124,10 @@ void Messenger::outputText(std::string_view s)
 // Output blank line (with prefix if set) to relevant handler
 void Messenger::outputBlank()
 {
+#ifdef PARALLEL
+  //Only print on master thread
+  if(!ProcessPool::isWorldMaster()) return;
+#endif
     if (outputPrefix_.empty())
     {
         // If we are redirecting to files, use the parser_
