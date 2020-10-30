@@ -46,8 +46,8 @@ int main(int args, char **argv)
                                      "process "
                                      "rank\n");
                     Messenger::print("\t-i\t\tIgnore restart file\n");
-                    Messenger::print("\t-m\t\tRestrict output to be from the master process alone (parallel code "
-                                     "only)\n");
+                    Messenger::print("\t-m\t\tDisplay output from all processes, instead of just the master "
+				     "(parallel code only)\n");
                     Messenger::print("\t-n <iterations>\tRun for the specified number of main loop iterations, then "
                                      "stop\n");
                     Messenger::print("\t-q\t\tQuiet mode - print no output\n");
@@ -86,7 +86,7 @@ int main(int args, char **argv)
                     ignoreRestart = true;
                     break;
                 case ('m'):
-                    Messenger::setMasterOnly(true);
+                    Messenger::setMasterOnly(false);
                     break;
                 case ('n'):
                     ++n;

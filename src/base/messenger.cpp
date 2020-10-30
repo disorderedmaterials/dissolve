@@ -14,7 +14,7 @@ bool Messenger::quiet_ = false;
 bool Messenger::muted_ = false;
 bool Messenger::verbose_ = false;
 bool Messenger::redirect_ = false;
-bool Messenger::masterOnly_ = false;
+bool Messenger::masterOnly_ = true;
 LineParser Messenger::parser_; //= new LineParser;
 OutputHandler *Messenger::outputHandler_ = nullptr;
 std::string Messenger::outputPrefix_;
@@ -88,8 +88,9 @@ void Messenger::clearOutputPrefix() { outputPrefix_.clear(); }
 void Messenger::outputText(std::string_view s)
 {
 #ifdef PARALLEL
-    //Only print on master thread
-    if(!ProcessPool::isWorldMaster()) return;
+    // Only print on master thread
+    if (masterOnly_ && !ProcessPool::isWorldMaster())
+        return;
 #endif
     if (outputPrefix_.empty())
     {
@@ -125,8 +126,9 @@ void Messenger::outputText(std::string_view s)
 void Messenger::outputBlank()
 {
 #ifdef PARALLEL
-  //Only print on master thread
-  if(!ProcessPool::isWorldMaster()) return;
+    // Only print on master thread
+    if (masterOnly_ && !ProcessPool::isWorldMaster())
+        return;
 #endif
     if (outputPrefix_.empty())
     {
