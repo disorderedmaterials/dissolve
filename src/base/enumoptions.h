@@ -25,7 +25,7 @@ template <class T> class EnumOptions : public EnumOptionsBase
     // Return enumeration in T
     T enumeration(std::string_view keyword) const
     {
-        for (int n = 0; n < options_.size(); ++n)
+        for (auto n = 0; n < options_.size(); ++n)
             if (DissolveSys::sameString(keyword, options_[n].keyword()))
                 return (T)options_[n].enumeration();
 
@@ -37,13 +37,13 @@ template <class T> class EnumOptions : public EnumOptionsBase
     T enumeration() const
     {
         // Use local index to return enumeration
-        if (currentOptionIndex_ == -1)
+        if (!currentOptionIndex_.has_value())
         {
             Messenger::warn("No current option set in EnumOptions, so can't return an enumeration.\n");
             return (T)-1;
         }
 
-        return (T)options_[currentOptionIndex_].enumeration();
+        return (T)options_[currentOptionIndex_.value()].enumeration();
     }
     // Return enumerated keyword
     std::string_view keyword(T enumeration) const

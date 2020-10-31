@@ -22,7 +22,7 @@ class AtomTypeList : public GenericItemBase
     ~AtomTypeList();
     AtomTypeList(const AtomTypeList &source);
     void operator=(const AtomTypeList &source);
-    AtomTypeData &operator[](unsigned int n);
+    AtomTypeData &operator[](int n);
 
     /*
      * Type List

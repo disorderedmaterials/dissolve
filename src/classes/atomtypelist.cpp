@@ -23,7 +23,7 @@ AtomTypeList::AtomTypeList(const AtomTypeList &source) { (*this) = source; }
 void AtomTypeList::operator=(const AtomTypeList &source) { types_ = source.types_; }
 
 // Array access operator
-AtomTypeData &AtomTypeList::operator[](unsigned int n)
+AtomTypeData &AtomTypeList::operator[](int n)
 {
 #ifdef CHECKS
     if ((n < 0) || (n >= types_.size()))
