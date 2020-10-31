@@ -71,6 +71,7 @@ int NETARootNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
         return NETANode::NoMatch;
     else
         ++totalScore;
+
     if (nHydrogensValue_ >= 0)
     {
         // Count number of hydrogens attached to this atom
