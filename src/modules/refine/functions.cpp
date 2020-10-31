@@ -70,8 +70,8 @@ bool RefineModule::modifyBondTerms(CoreData &coreData, const Data1D &deltaGR, st
     // exp(-(((x-r)-delta)**2)/width**2)-exp(-(((x-r)+delta)**2)/width**2) w l
 
     // Scan through master bond terms searching for those that involve the AtomTypes specified
-    const auto idI = typeI->index();
-    const auto idJ = typeJ->index();
+    //     const auto idI = typeI->index();
+    //     const auto idJ = typeJ->index();
     RefList<MasterIntra> masterBonds;
     // 	for (MasterIntra* b = coreData.masterBonds().first(); b != nullptr; b = b->next()) if (b->usageCount(idI, idJ) > 0)
     // masterBonds.append(b);

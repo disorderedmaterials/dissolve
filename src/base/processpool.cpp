@@ -2103,7 +2103,6 @@ bool ProcessPool::equality(bool b, ProcessPool::CommunicatorType commType)
 bool ProcessPool::equality(int i, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-    bool result;
     if (poolRank_ != 0)
     {
         if (!send(i, 0, commType))
@@ -2135,7 +2134,6 @@ bool ProcessPool::equality(int i, ProcessPool::CommunicatorType commType)
 bool ProcessPool::equality(long int i, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-    bool result;
     if (poolRank_ != 0)
     {
         if (!send(i, 0, commType))
@@ -2167,7 +2165,6 @@ bool ProcessPool::equality(long int i, ProcessPool::CommunicatorType commType)
 bool ProcessPool::equality(double x, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
-    bool result;
     if (poolRank_ != 0)
     {
         if (!send(x, 0, commType))

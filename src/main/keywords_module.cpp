@@ -27,7 +27,6 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
     Messenger::print("\nParsing {} block '{}'...\n", BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
                      module->type());
 
-    Configuration *targetCfg;
     auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())

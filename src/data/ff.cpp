@@ -540,7 +540,6 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
 {
     AtomGeometry result = nAtomGeometries;
     double angle, largest;
-    SpeciesBond *b1, *b2;
     SpeciesAtom *h, *j;
     // 	RefListItem<SpeciesBond,int>* bref1, *bref2;
 

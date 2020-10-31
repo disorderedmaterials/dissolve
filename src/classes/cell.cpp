@@ -113,8 +113,6 @@ bool Cell::removeAtom(Atom *i)
 // Add Cell neighbours
 void Cell::addCellNeighbours(OrderedVector<Cell *> &nearNeighbours, OrderedVector<Cell *> &mimNeighbours)
 {
-    int n;
-
     // Create near-neighbour array of Cells not requiring minimum image to be applied
     nCellNeighbours_ = nearNeighbours.size();
     cellNeighbours_.resize(nCellNeighbours_);

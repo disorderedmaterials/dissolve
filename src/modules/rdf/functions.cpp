@@ -158,7 +158,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
 bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
 {
     Atom *i, *j;
-    int n, m, ii, jj, nI, nJ, typeI;
+    int n, m, typeI;
     Cell *cellI, *cellJ;
     double distance;
     Vec3<double> rI;
@@ -301,7 +301,6 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
 
     double distance;
     const Box *box = cfg->box();
-    CellArray &cellArray = cfg->cells();
 
     // Set start/stride for parallel loop (pool solo)
     auto start = (method == RDFModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
@@ -310,7 +309,7 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
     timer.start();
 
     // Loop over molecules...
-    Atom *i, *j, *k;
+    Atom *i, *j;
     for (int m = start; m < cfg->nMolecules(); m += stride)
     {
         std::shared_ptr<Molecule> mol = cfg->molecule(m);
@@ -435,12 +434,6 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
          * according to the PairBroadeningFunction 4) Sum the broadened version back into the bound partial in
          * 'unweightedgr'
          */
-
-        Atom *i, *j, *k;
-
-        double distance;
-        const Box *box = cfg->box();
-        CellArray &cellArray = cfg->cells();
 
         // Set up working PartialSets to use when calculating our g(r)
         PartialSet tempgr, broadgr = unweightedgr;

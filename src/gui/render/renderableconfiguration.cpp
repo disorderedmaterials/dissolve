@@ -154,7 +154,6 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 
     // Grab the Configuration's Box and CellArray
     const Box *box = source_->box();
-    const CellArray &cellArray = source_->constCells();
 
     // Render according to the current displayStyle
     if (displayStyle_ == LinesStyle)

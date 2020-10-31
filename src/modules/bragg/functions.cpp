@@ -371,7 +371,7 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
         braggPartials.linearArray()[n].values() = 0.0;
 
     // Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
-    double qCentre, factor;
+    double qCentre;
     int bin;
     auto &types = cfg->usedAtomTypesList();
     for_each_pair(types.begin(), types.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {

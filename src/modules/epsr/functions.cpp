@@ -48,12 +48,10 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
                                              double sigma2)
 {
     const auto nAtomTypes = dissolve.nAtomTypes();
-    int i, j;
 
     // Get coefficients array
     Array2D<Array<double>> &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
-    i = 0;
     auto result = for_each_pair_early(
         dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
             Array<double> &potCoeff = coefficients.at(i, j);
@@ -107,8 +105,6 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i,
     auto ncoeffp = keywords_.asInt("NCoeffP");
     const auto psigma1 = keywords_.asDouble("PSigma1");
     const auto psigma2 = keywords_.asDouble("PSigma2");
-    const auto qMax = keywords_.asDouble("QMax");
-    const auto qMin = keywords_.asDouble("QMin");
     double rmaxpt = keywords_.asDouble("RMaxPT");
     double rminpt = keywords_.asDouble("RMinPT");
 

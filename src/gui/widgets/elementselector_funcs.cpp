@@ -23,7 +23,6 @@ ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
     // Create periodic table buttons
     QLabel *label;
     int n, m, z;
-    double *colour;
 
     // Create element button array (and buttons)
     QToolButton *button;

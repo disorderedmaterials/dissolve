@@ -264,8 +264,6 @@ void RenderableSpecies::recreateSelectionPrimitive()
 
     const GLfloat *colour;
     Matrix4 A;
-    const Atom *i;
-    const SpeciesBond *b;
 
     if (displayStyle_ == LinesStyle)
     {

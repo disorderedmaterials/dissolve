@@ -179,7 +179,6 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
     total_.initialise(partials_.at(0, 0));
     total_.values() = 0.0;
 
-    int typeI, typeJ;
     for_each_pair(atomTypes_.begin(), atomTypes_.end(),
                   [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
                       // Calculate weighting factor if requested
@@ -317,11 +316,8 @@ std::string_view PartialSet::objectNamePrefix() const { return objectNamePrefix_
 // Set underlying Data1D file names
 void PartialSet::setFileNames(std::string_view prefix, std::string_view tag, std::string_view suffix)
 {
-    auto nTypes = atomTypes_.nItems();
-
     // Set titles for partials
     std::string title;
-    int n = 0, m = 0;
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
         title = fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
         partials_.at(n, m).setName(title);
@@ -340,8 +336,6 @@ void PartialSet::setFileNames(std::string_view prefix, std::string_view tag, std
 // Adjust all partials, adding specified delta to each
 void PartialSet::adjust(double delta)
 {
-    auto nTypes = atomTypes_.nItems();
-
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
         partials_.at(n, m).values() += delta;
         boundPartials_.at(n, m).values() += delta;
@@ -354,8 +348,6 @@ void PartialSet::adjust(double delta)
 // Form partials from stored Histogram data
 void PartialSet::formPartials(double boxVolume)
 {
-    auto nTypes = atomTypes_.nItems();
-
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
         // Calculate RDFs from histogram data
         calculateRDF(partials_.at(n, m), fullHistograms_.at(n, m), boxVolume, at1.population(), at2.population(),
@@ -454,8 +446,6 @@ void PartialSet::operator+=(const PartialSet &source)
         (*this) = source;
         return;
     }
-
-    auto sourceNTypes = source.atomTypes_.nItems();
 
     // Loop over partials in source set
     const auto &types = source.atomTypes();
@@ -639,7 +629,6 @@ bool PartialSet::broadcast(ProcessPool &procPool, const int root, const CoreData
 bool PartialSet::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
-    auto nTypes = atomTypes_.nItems();
     for_each_pair_early(0, atomTypes_.nItems(), [&](int typeI, int typeJ) -> EarlyReturn<bool> {
         if (!partials_.at(typeI, typeJ).equality(procPool))
             return Messenger::error("PartialSet full partial {}-{} is not equivalent.\n", typeI, typeJ);

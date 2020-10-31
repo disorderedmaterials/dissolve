@@ -128,8 +128,6 @@ bool ImportSpeciesWizard::progressionAllowed(int index) const
 // Perform any necessary actions before moving to the next page
 bool ImportSpeciesWizard::prepareForNextPage(int currentIndex)
 {
-    SpeciesAtom *atomicAtom;
-
     switch (currentIndex)
     {
         case (ImportSpeciesWizard::SelectFilePage):

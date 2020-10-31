@@ -96,11 +96,10 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
     double totalEnergy = 0.0;
     auto &centralAtoms = centralCell->atoms();
     auto &otherAtoms = otherCell->atoms();
-    Atom *ii, *jj;
+    Atom *ii;
     Vec3<double> rI;
     std::shared_ptr<Molecule> molI;
     double rSq, scale;
-    auto central = centralAtoms.begin();
 
     // Get start/stride for specified loop context
     auto start = processPool_.interleavedLoopStart(strategy);
@@ -185,7 +184,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
 {
     double totalEnergy = 0.0;
     auto &centralAtoms = centralCell->atoms();
-    Atom *ii, *jj;
+    Atom *ii;
     Vec3<double> rJ;
     std::shared_ptr<Molecule> molJ;
     double rSq, scale;
@@ -204,7 +203,6 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
             molJ = jj->molecule();
             rJ = jj->r();
 
-            auto central = centralAtoms.begin();
             // Loop over central cell atoms
             for (auto indexI = centralAtoms.begin() + start; indexI < centralAtoms.end(); indexI += stride)
             {
@@ -242,7 +240,6 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
             molJ = jj->molecule();
             rJ = jj->r();
 
-            auto central = centralAtoms.begin();
             // Loop over central cell atoms
             for (auto indexI = centralAtoms.begin() + start; indexI < centralAtoms.end(); indexI += stride)
             {
@@ -294,11 +291,8 @@ double EnergyKernel::energy(const Atom *i, const Cell *cell, int flags, ProcessP
 #endif
     double totalEnergy = 0.0;
     Atom *jj;
-    int j;
     double rSq, scale;
     auto &otherAtoms = cell->atoms();
-    auto other = otherAtoms.begin();
-    auto nOtherAtoms = cell->nAtoms();
 
     // Grab some information on the supplied Atom
     std::shared_ptr<Molecule> moleculeI = i->molecule();
@@ -585,8 +579,6 @@ double EnergyKernel::energy(std::shared_ptr<const Molecule> mol, ProcessPool::Di
 double EnergyKernel::correct(const Atom *i)
 {
     // Loop over atoms in molecule
-    auto nMolAtoms = i->molecule()->nAtoms();
-    Atom *j;
     std::vector<Atom *> atoms = i->molecule()->atoms();
     double scale, r, correctionEnergy = 0.0;
     const auto rI = i->r();

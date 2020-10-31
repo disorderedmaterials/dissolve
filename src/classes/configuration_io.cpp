@@ -11,8 +11,6 @@
 // Write through specified LineParser
 bool Configuration::write(LineParser &parser) const
 {
-    int molId;
-
     if (!parser.writeLineF("'{}'  {}  # nMolecules\n", name(), molecules_.size()))
         return false;
 

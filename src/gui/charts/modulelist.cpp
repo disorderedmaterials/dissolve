@@ -280,8 +280,8 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
         Module *newModule = dissolve_.createModuleInstance(strings->data(MimeString::ModuleType));
 
         // Cast the blocks either side of the current hotspot up to ModuleBlocks, and get their Modules
-        auto *moduleBlockBefore = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockBefore());
-        Module *moduleBeforeHotSpot = (moduleBlockBefore ? moduleBlockBefore->module() : nullptr);
+        //         auto *moduleBlockBefore = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockBefore());
+        // Module *moduleBeforeHotSpot = (moduleBlockBefore ? moduleBlockBefore->module() : nullptr);
         auto *moduleBlockAfter = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockAfter());
         Module *moduleAfterHotSpot = (moduleBlockAfter ? moduleBlockAfter->module() : nullptr);
 

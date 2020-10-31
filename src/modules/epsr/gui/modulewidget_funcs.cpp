@@ -283,8 +283,6 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule *module)
     if (!module)
         return;
 
-    int n, m;
-
     // Add total R-Factor before any dataset R-Factors
     auto *rFacTot = rFactorGraph_->createRenderable(Renderable::Data1DRenderable,
                                                     fmt::format("{}//RFactor", module->uniqueName()), "Total", "Total");

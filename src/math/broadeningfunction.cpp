@@ -524,7 +524,6 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX) const
 // Return the discrete kernel normalisation factor for the current function, given the underlying data binwidth and omega value
 double BroadeningFunction::discreteKernelNormalisation(double deltaX, double omega) const
 {
-    double test;
     // Return the multiplicative factor to normalise the current function against its discretised sum
     switch (function_)
     {

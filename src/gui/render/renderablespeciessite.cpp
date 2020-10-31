@@ -70,8 +70,6 @@ void RenderableSpeciesSite::transformValues() { return; }
 void RenderableSpeciesSite::recreatePrimitives(const View &view, const ColourDefinition &colourDefinition)
 {
     Matrix4 A;
-    const GLfloat *colour;
-    const GLfloat colourBlack[4] = {0.0, 0.0, 0.0, 1.0};
 
     // Clear existing data
     siteAssembly_.clear();

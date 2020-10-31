@@ -173,9 +173,7 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
     data.setObjectTag(fmt::format("{}//Fit1D//{}//{}", prefix, cfg->name(), name()));
     data.clear();
 
-    double cost = 0.0;
     const auto &x = referenceData_.xAxis();
-    bool success;
     for (int n = 0; n < referenceData_.nValues(); ++n)
     {
         // Set axis value

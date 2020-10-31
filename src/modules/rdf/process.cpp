@@ -31,7 +31,6 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto useHalfCellRange = keywords_.asBool("UseHalfCellRange");
     const auto specifiedRange = keywords_.asDouble("Range");
     const auto binWidth = keywords_.asDouble("BinWidth");
-    const bool allIntra = true;
     const bool internalTest = keywords_.asBool("InternalTest");
     const bool saveData = keywords_.asBool("Save");
     const auto smoothing = keywords_.asInt("Smoothing");

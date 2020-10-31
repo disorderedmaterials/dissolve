@@ -26,8 +26,6 @@ CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(
 double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double> &alpha)
 {
     // Store alpha parameters in the PairBroadeningFunction in the associated RDF modules
-    auto alphaIndex = 0;
-    const auto nAlpha = alpha.nItems();
     for (Module *rdfModule : intraBroadeningModules_)
     {
         // Retrieve the PairBroadeningFunction - new test values will already have been set (pokeBeforeCost = true)
