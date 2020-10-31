@@ -189,6 +189,10 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
         if (atomScore == NETANode::NoMatch)
             for (const ForcefieldAtomType &atomType : allowedAtomTypes_)
             {
+                // Check the element of the atom type against that of the neighbours
+                if (j->element() != &atomType.element())
+                    continue;
+
                 // Evaluate the neighbour against the atom type
                 auto typeScore = atomType.neta().score(j);
                 if (typeScore == NETANode::NoMatch)
