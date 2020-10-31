@@ -14,7 +14,7 @@ SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : Spe
     k_ = k;
     form_ = SpeciesAngle::NoForm;
 
-    // Add ourself to the list of bonds on each atom
+    // Add ourself to the list of angles on each atom
     if (i_ && j_ && k_)
     {
         i_->addAngle(*this);
@@ -27,7 +27,7 @@ SpeciesAngle::SpeciesAngle(SpeciesAngle &source) : SpeciesIntra(source) { this->
 
 SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) : SpeciesIntra(source)
 {
-    // Detach source bond referred to by the species atoms
+    // Detach source angle referred to by the species atoms
     if (source.i_ && source.j_ && source.k_)
     {
         source.i_->removeAngle(source);
