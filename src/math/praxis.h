@@ -261,7 +261,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         double c;
         double *e;
         double eps;
-        double f;
+        double f = 0.0;
         double g;
         double h;
         int i;

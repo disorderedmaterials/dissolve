@@ -135,7 +135,7 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
 
     // Loop over rings
     auto nMatches = 0, totalScore = 0;
-    int nodeScore;
+    int nodeScore = NETANode::NoMatch;
     for (auto ring : rings)
     {
         // Check through atoms in the ring - either in order or not - to see if the ring matches
