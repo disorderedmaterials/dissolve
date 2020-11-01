@@ -47,8 +47,8 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
 {
     public:
     EnumOptionsKeyword(EnumOptions<E> options)
-        : KeywordData<EnumOptions<E>>(KeywordBase::EnumOptionsData, options),
-          EnumOptionsBaseKeyword(KeywordData<EnumOptions<E>>::data_)
+        : EnumOptionsBaseKeyword(KeywordData<EnumOptions<E>>::data_), KeywordData<EnumOptions<E>>(KeywordBase::EnumOptionsData,
+                                                                                                  options)
     {
         // Set our array of valid values
         for (int n = 0; n < KeywordData<EnumOptions<E>>::data_.nOptions(); ++n)

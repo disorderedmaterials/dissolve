@@ -21,7 +21,7 @@ AtomTypeData::AtomTypeData(std::shared_ptr<AtomType> type, double population, do
         isotopes_.add();
 }
 
-AtomTypeData::AtomTypeData(const AtomTypeData &source) : atomType_(source.atomType_), listIndex_(source.listIndex())
+AtomTypeData::AtomTypeData(const AtomTypeData &source) : listIndex_(source.listIndex()), atomType_(source.atomType_)
 {
     (*this) = source;
 }
