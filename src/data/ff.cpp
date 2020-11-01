@@ -541,7 +541,6 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
     AtomGeometry result = nAtomGeometries;
     double angle, largest;
     SpeciesAtom *h, *j;
-    // 	RefListItem<SpeciesBond,int>* bref1, *bref2;
 
     // Work based on the number of bound atoms
     switch (i->nBonds())
@@ -566,28 +565,10 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             if (angle > 150.0)
                 result = Forcefield::LinearGeometry;
-            // 			else if ((angle > 100.0) && (angle < 115.0)) result =
-            // Forcefield::TetrahedralGeometry;
             else
                 result = Forcefield::TetrahedralGeometry;
             break;
         case (3):
-            // 			bref1 = bonds();
-            // 			bref2 = bonds()->next;
-            // 			b1 = bref1->item;
-            // 			b2 = bref2->item;
-            // 			angle = parent_->angle(b1->partner(this),this,b2->partner(this));
-            // 			largest = angle;
-            // 			b2 = bref2->next->item;
-            // 			angle = parent_->angle(b1->partner(this),this,b2->partner(this));
-            // 			if (angle > largest) largest = angle;
-            // 			b1 = bref1->next->item;
-            // 			angle = parent_->angle(b1->partner(this),this,b2->partner(this));
-            // 			if (angle > largest) largest = angle;
-            // 			if (largest > 170.0) result = Forcefield::TShapeGeometry;
-            // 			else if ((largest > 115.0) && (largest < 125.0)) result =
-            // Forcefield::TrigPlanarGeometry; 			else if ((largest < 115.0) && (largest > 100.0))
-            // result = Forcefield::TetrahedralGeometry; Get largest of the three angles around the central atom
             h = i->bond(0).partner(i);
             j = i->bond(1).partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
@@ -604,8 +585,6 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
                 result = Forcefield::TShapeGeometry;
             else if ((largest > 115.0) && (largest < 125.0))
                 result = Forcefield::TrigonalPlanarGeometry;
-            // 			else if ((largest < 115.0) && (largest > 100.0)) result =
-            // Forcefield::TetrahedralGeometry;
             else
                 result = Forcefield::TetrahedralGeometry;
             break;
@@ -625,8 +604,6 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
             angle /= 6.0;
             if ((angle > 100.0) && (angle < 115.0))
                 result = Forcefield::TetrahedralGeometry;
-            // 			else if ((angle >= 115.0) && (angle < 125.0)) result =
-            // Forcefield::SquarePlanarGeometry;
             else
                 result = Forcefield::SquarePlanarGeometry;
             break;
