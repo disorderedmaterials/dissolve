@@ -17,10 +17,8 @@ AtomTypeData::AtomTypeData(std::shared_ptr<AtomType> type, double population, do
     : atomType_(type), exchangeable_(false), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
 {
     isotopes_.clear();
-    for (int n = 0; n < nIso; ++n)
-    {
+    for (auto n = 0; n < nIso; ++n)
         isotopes_.add();
-    }
 }
 
 AtomTypeData::AtomTypeData(const AtomTypeData &source) : atomType_(source.atomType_), listIndex_(source.listIndex())

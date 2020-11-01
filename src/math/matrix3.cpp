@@ -328,7 +328,7 @@ void Matrix3::adjustColumn(int col, const Vec3<double> vec)
 double Matrix3::columnMagnitude(int column) const
 {
     double mag = 0.0;
-    for (int n = column * 3; n < column * 3 + 3; ++n)
+    for (auto n = column * 3; n < column * 3 + 3; ++n)
         mag += (matrix_[n] * matrix_[n]);
     return sqrt(mag);
 }
