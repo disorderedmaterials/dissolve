@@ -27,11 +27,8 @@ AtomTypeData::AtomTypeData(const AtomTypeData &source) : listIndex_(source.listI
 }
 
 AtomTypeData::AtomTypeData(int listIndex, std::shared_ptr<AtomType> type, double population)
-    : atomType_(type), listIndex_(listIndex), population_(population)
+    : listIndex_(listIndex), atomType_(type), exchangeable_(false), population_(population), fraction_(0.0), boundCoherent_(0.0)
 {
-    exchangeable_ = false;
-    fraction_ = 0.0;
-    boundCoherent_ = 0.0;
 }
 
 void AtomTypeData::operator=(const AtomTypeData &source)
