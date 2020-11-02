@@ -51,7 +51,7 @@ Integer: DIGIT+;
 
 // Keywords
 Or: '|';
-Not: '!' | `¬`;
+Not: '!' | '¬';
 ConnectionKeyword: '-';
 RingKeyword: 'r' 'i' 'n' 'g';
 
