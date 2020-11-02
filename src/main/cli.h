@@ -10,7 +10,7 @@
 class CLIOptions
 {
     public:
-    CLIOptions() = default;
+    CLIOptions();
     ~CLIOptions() = default;
 
     /*

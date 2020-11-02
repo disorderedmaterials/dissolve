@@ -9,6 +9,8 @@
 #include <CLI/Config.hpp>
 #include <CLI/Formatter.hpp>
 
+CLIOptions::CLIOptions() : checkInputOnly_(false), ignoreRestartFile_(false), ignoreStateFile_(false), writeNoFiles_(false) {}
+
 // Parse CLI options
 int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
 {
