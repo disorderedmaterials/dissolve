@@ -60,11 +60,11 @@ bool Data3DExportFileFormat::exportBlock(LineParser &parser, const Data3D &data)
 
     // Export datapoints, separating each block of a specific x value with a single blank line
     const Array3D<double> &values = data.constValues3D();
-    for (int x = 0; x < values.nX(); ++x)
+    for (auto x = 0; x < values.nX(); ++x)
     {
-        for (int y = 0; y < values.nY(); ++y)
+        for (auto y = 0; y < values.nY(); ++y)
         {
-            for (int z = 0; z < values.nZ(); ++z)
+            for (auto z = 0; z < values.nZ(); ++z)
             {
                 if (!parser.writeLineF("{:15.9e}\n", values.constAt(x, y, z)))
                     return false;
@@ -85,13 +85,13 @@ bool Data3DExportFileFormat::exportCartesian(LineParser &parser, const Data3D &d
     const auto &xAxis = data.constXAxis();
     const auto &yAxis = data.constYAxis();
     const auto &zAxis = data.constZAxis();
-    for (int x = 0; x < values.nX(); ++x)
+    for (auto x = 0; x < values.nX(); ++x)
     {
         double xVal = xAxis.constAt(x);
-        for (int y = 0; y < values.nY(); ++y)
+        for (auto y = 0; y < values.nY(); ++y)
         {
             double yVal = yAxis.constAt(y);
-            for (int z = 0; z < values.nZ(); ++z)
+            for (auto z = 0; z < values.nZ(); ++z)
             {
                 if (!parser.writeLineF("{:15.9e} {:15.9e} {:15.9e} {:15.9e}\n", xVal, yVal, zAxis.constAt(z),
                                        values.constAt(x, y, z)))
@@ -131,11 +131,11 @@ bool Data3DExportFileFormat::exportPDens(LineParser &parser, const Data3D &data)
         return false;
 
     // Lines 5+ (Data)
-    for (int x = 0; x < values.nX(); ++x)
+    for (auto x = 0; x < values.nX(); ++x)
     {
-        for (int y = 0; y < values.nY(); ++y)
+        for (auto y = 0; y < values.nY(); ++y)
         {
-            for (int z = 0; z < values.nZ(); ++z)
+            for (auto z = 0; z < values.nZ(); ++z)
             {
                 if (!parser.writeLineF("{:15.9e}\n", values.constAt(x, y, z)))
                     return false;

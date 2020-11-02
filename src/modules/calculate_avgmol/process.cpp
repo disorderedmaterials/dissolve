@@ -100,7 +100,7 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Loop over sites
     Vec3<double> r;
-    for (int n = 0; n < stack->nSites(); ++n)
+    for (auto n = 0; n < stack->nSites(); ++n)
     {
         const Site &s = stack->site(n);
 #ifdef CHECKS
@@ -116,7 +116,7 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
         inverseAxes.invert();
 
         // Loop over atoms, taking delta position with origin, and rotating into local axes
-        for (int i = 0; i < s.molecule()->nAtoms(); ++i)
+        for (auto i = 0; i < s.molecule()->nAtoms(); ++i)
         {
             r = inverseAxes * box->minimumVector(s.origin(), s.molecule()->atom(i)->r());
 

@@ -58,9 +58,9 @@ bool Data2DExportFileFormat::exportBlock(LineParser &parser, const Data2D &data)
 
     // Export datapoints, separating each block of a specific x value with a single blank line
     const Array2D<double> &values = data.constValues2D();
-    for (int x = 0; x < values.nRows(); ++x)
+    for (auto x = 0; x < values.nRows(); ++x)
     {
-        for (int y = 0; y < values.nColumns(); ++y)
+        for (auto y = 0; y < values.nColumns(); ++y)
             if (!parser.writeLineF("{:15.9f}\n", values.constAt(x, y)))
                 return false;
         if (!parser.writeLineF("\n"))
@@ -77,9 +77,9 @@ bool Data2DExportFileFormat::exportCartesian(LineParser &parser, const Data2D &d
     const Array2D<double> &values = data.constValues2D();
     const auto &xAxis = data.constXAxis();
     const auto &yAxis = data.constYAxis();
-    for (int x = 0; x < values.nRows(); ++x)
+    for (auto x = 0; x < values.nRows(); ++x)
     {
-        for (int y = 0; y < values.nColumns(); ++y)
+        for (auto y = 0; y < values.nColumns(); ++y)
             if (!parser.writeLineF("{:15.9f} {:15.9f} {:15.9f}\n", xAxis.constAt(x), yAxis.constAt(y), values.constAt(x, y)))
                 return false;
         if (!parser.writeLineF("\n"))

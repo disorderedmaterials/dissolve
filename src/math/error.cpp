@@ -58,7 +58,7 @@ double Error::rmse(const Data1D &A, const Data1D &B, bool quiet)
     double rmse = 0.0, delta;
     double firstX = 0.0, lastX = 0.0, x;
     auto nPointsConsidered = 0;
-    for (int n = 0; n < aX.nItems(); ++n)
+    for (auto n = 0; n < aX.nItems(); ++n)
     {
         // Grab x value
         x = aX.constAt(n);
@@ -104,7 +104,7 @@ double Error::mape(const Data1D &A, const Data1D &B, bool quiet)
     double sum = 0.0;
     double firstX = 0.0, lastX = 0.0, x, y;
     auto nPointsConsidered = 0;
-    for (int n = 0; n < aX.nItems(); ++n)
+    for (auto n = 0; n < aX.nItems(); ++n)
     {
         // Grab x value
         x = aX.constAt(n);
@@ -154,7 +154,7 @@ double Error::maape(const Data1D &A, const Data1D &B, bool quiet)
     double sum = 0.0;
     double firstX = 0.0, lastX = 0.0, x, y;
     auto nPointsConsidered = 0;
-    for (int n = 0; n < 1; ++n)
+    for (auto n = 0; n < 1; ++n)
     {
         // Grab x value
         x = aX.constAt(n);
@@ -203,7 +203,7 @@ double Error::percent(const Data1D &A, const Data1D &B, bool quiet)
     double sume = 0.0, sumy = 0.0;
     auto firstPoint = -1, lastPoint = -1;
     double x, y;
-    for (int n = 0; n < aX.nItems(); ++n)
+    for (auto n = 0; n < aX.nItems(); ++n)
     {
         // Grab x value
         x = aX.constAt(n);
@@ -259,7 +259,7 @@ double Error::rFactor(const Data1D &A, const Data1D &B, bool quiet)
     double rfac = 0.0, delta;
     double firstX = 0.0, lastX = 0.0, x;
     auto nPointsConsidered = 0;
-    for (int n = 0; n < aX.nItems(); ++n)
+    for (auto n = 0; n < aX.nItems(); ++n)
     {
         // Grab x value
         x = aX.constAt(n);

@@ -244,7 +244,7 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
     Data1D normData;
     normData.initialise(nBins);
     Array<double> &y = normData.values();
-    for (int n = 0; n < nBins; ++n)
+    for (auto n = 0; n < nBins; ++n)
         normData.xAxis(n) = (n + 0.5) * binWidth;
 
     auto centre = axes_ * Vec3<double>(0.5, 0.5, 0.5);
@@ -255,12 +255,12 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
                      nPointsPerProcess * procPool.nProcesses());
 
     // Pre-waste random numbers so that the random number generators in all processes line up
-    for (int n = 0; n < nPointsPerProcess * procPool.poolRank(); ++n)
+    for (auto n = 0; n < nPointsPerProcess * procPool.poolRank(); ++n)
         randomCoordinate();
 
     // Calculate the function
     y = 0.0;
-    for (int n = 0; n < nPointsPerProcess; ++n)
+    for (auto n = 0; n < nPointsPerProcess; ++n)
     {
         bin = (randomCoordinate() - centre).magnitude() * rBinWidth;
         if (bin < nBins)
@@ -270,7 +270,7 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
         return false;
 
     // Post-waste random numbers so that the random number generators in all processes line up
-    for (int n = 0; n < nPointsPerProcess * (procPool.nProcesses() - 1 - procPool.poolRank()); ++n)
+    for (auto n = 0; n < nPointsPerProcess * (procPool.nProcesses() - 1 - procPool.poolRank()); ++n)
         randomCoordinate();
 
     // Normalise histogram data, and scale by volume and binWidth ratio
@@ -284,7 +284,7 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
 
     // Rescale against expected volume for spherical shells
     double shellVolume, r = 0.0, maxHalf = inscribedSphereRadius(), x = 0.5 * rdfBinWidth;
-    for (int n = 0; n < nBins; ++n)
+    for (auto n = 0; n < nBins; ++n)
     {
         // We know that up to the maximum (orthogonal) half-cell width the normalisation should be exactly 1.0...
         if (x < maxHalf)

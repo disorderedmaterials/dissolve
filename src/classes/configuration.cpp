@@ -238,7 +238,7 @@ bool Configuration::broadcastCoordinates(ProcessPool &procPool, int rootRank)
     if (procPool.poolRank() == rootRank)
     {
         Messenger::printVerbose("Process rank {} is assembling coordinate data...\n", procPool.poolRank());
-        for (int n = 0; n < atoms_.nItems(); ++n)
+        for (auto n = 0; n < atoms_.nItems(); ++n)
         {
             x[n] = atoms_[n]->r().x;
             y[n] = atoms_[n]->r().y;
@@ -255,7 +255,7 @@ bool Configuration::broadcastCoordinates(ProcessPool &procPool, int rootRank)
 
     // Slaves then store values into Atoms, updating related info as we go
     if (procPool.isSlave())
-        for (int n = 0; n < atoms_.nItems(); ++n)
+        for (auto n = 0; n < atoms_.nItems(); ++n)
             atoms_[n]->setCoordinates(x[n], y[n], z[n]);
 
     delete[] x;

@@ -520,7 +520,7 @@ bool RenderableSpecies::writeStyleBlock(LineParser &parser, int indentLevel) con
 {
     // Construct indent string
     char *indent = new char[indentLevel * 2 + 1];
-    for (int n = 0; n < indentLevel * 2; ++n)
+    for (auto n = 0; n < indentLevel * 2; ++n)
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 

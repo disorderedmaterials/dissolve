@@ -70,7 +70,7 @@ void Transformer::transformValues(Data1D &data)
     Array<double> &values = data.values();
 
     // Data1D x and value (y) arrays are of same size - loop over number of values
-    for (int n = 0; n < data.nValues(); ++n)
+    for (auto n = 0; n < data.nValues(); ++n)
     {
         // Set values in equations
         x_->set(xAxis.constAt(n));
@@ -95,13 +95,13 @@ void Transformer::transformValues(Data2D &data)
     Array2D<double> &values = data.values();
 
     // Data2D x and y arrays may be of different sizes
-    for (int i = 0; i < xAxis.nItems(); ++i)
+    for (auto i = 0; i < xAxis.nItems(); ++i)
     {
         // Set x value in equation
         x_->set(xAxis.constAt(i));
 
         // Loop over Y axis points
-        for (int j = 0; j < yAxis.nItems(); ++j)
+        for (auto j = 0; j < yAxis.nItems(); ++j)
         {
             // Set y and value (z) values in equation
             y_->set(yAxis.constAt(j));
@@ -128,19 +128,19 @@ void Transformer::transformValues(Data3D &data)
     Array3D<double> &values = data.values();
 
     // Data3D x, y and z arrays may be of different sizes
-    for (int i = 0; i < xAxis.nItems(); ++i)
+    for (auto i = 0; i < xAxis.nItems(); ++i)
     {
         // Set x value in equation
         x_->set(xAxis.constAt(i));
 
         // Loop over Y axis points
-        for (int j = 0; j < yAxis.nItems(); ++j)
+        for (auto j = 0; j < yAxis.nItems(); ++j)
         {
             // Set y and value (z) values in equation
             y_->set(yAxis.constAt(j));
 
             // Loop over z values
-            for (int k = 0; k < zAxis.nItems(); ++k)
+            for (auto k = 0; k < zAxis.nItems(); ++k)
             {
                 z_->set(values.at(i, j, k));
                 value_->set(values.at(i, j, k));

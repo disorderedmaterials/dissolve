@@ -609,7 +609,7 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
 
     double totalEnergy = 0.0;
     Cell *cell;
-    for (int cellId = start; cellId < cellArray.nCells(); cellId += stride)
+    for (auto cellId = start; cellId < cellArray.nCells(); cellId += stride)
     {
         cell = cellArray.cell(cellId);
 

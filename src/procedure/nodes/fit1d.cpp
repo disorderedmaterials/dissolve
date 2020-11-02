@@ -71,7 +71,7 @@ double Fit1DProcedureNode::equationCost(const Array<double> &alpha)
     const auto &x = referenceData_.xAxis();
     const auto &y = referenceData_.values();
     double equationY;
-    for (int n = 0; n < referenceData_.nValues(); ++n)
+    for (auto n = 0; n < referenceData_.nValues(); ++n)
     {
         // Set axis value
         xVariable_->set(x.constAt(n));
@@ -174,7 +174,7 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
     data.clear();
 
     const auto &x = referenceData_.xAxis();
-    for (int n = 0; n < referenceData_.nValues(); ++n)
+    for (auto n = 0; n < referenceData_.nValues(); ++n)
     {
         // Set axis value
         xVariable_->set(x.constAt(n));

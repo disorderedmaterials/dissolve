@@ -97,18 +97,18 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Timer testTimer;
 
             // Calculate interatomic energy in a loop over defined Molecules
-            for (int n = 0; n < cfg->nMolecules(); ++n)
+            for (auto n = 0; n < cfg->nMolecules(); ++n)
             {
                 molN = cfg->molecule(n);
 
                 // Molecule self-energy
-                for (int ii = 0; ii < molN->nAtoms() - 1; ++ii)
+                for (auto ii = 0; ii < molN->nAtoms() - 1; ++ii)
                 {
                     i = molN->atom(ii);
 
                     // 					Messenger::print("Atom {} r = {} {} {}\n", ii,
                     // molN->atom(ii)->r().x, molN->atom(ii)->r().y, molN->atom(ii)->r().z);
-                    for (int jj = ii + 1; jj < molN->nAtoms(); ++jj)
+                    for (auto jj = ii + 1; jj < molN->nAtoms(); ++jj)
                     {
                         j = molN->atom(jj);
 
@@ -130,16 +130,16 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 }
 
                 // Molecule-molecule energy
-                for (int m = n + 1; m < cfg->nMolecules(); ++m)
+                for (auto m = n + 1; m < cfg->nMolecules(); ++m)
                 {
                     molM = cfg->molecule(m);
 
                     // Double loop over atoms
-                    for (int ii = 0; ii < molN->nAtoms(); ++ii)
+                    for (auto ii = 0; ii < molN->nAtoms(); ++ii)
                     {
                         i = molN->atom(ii);
 
-                        for (int jj = 0; jj < molM->nAtoms(); ++jj)
+                        for (auto jj = 0; jj < molM->nAtoms(); ++jj)
                         {
                             j = molM->atom(jj);
 

@@ -51,7 +51,7 @@ template <class T> class MinimiserBase
         double x = (object_.*costFunction_)(alpha);
 
         // Add penalties from values exceeding set limits
-        for (int n = 0; n < alpha.nItems(); ++n)
+        for (auto n = 0; n < alpha.nItems(); ++n)
         {
             // Minimum limit
             if (minimumLimit_[n] && (alpha.constAt(n) < minimumValue_[n]))
@@ -91,7 +91,7 @@ template <class T> class MinimiserBase
     private:
     void pokeValues(const Array<double> &values)
     {
-        for (int n = 0; n < targets_.nItems(); ++n)
+        for (auto n = 0; n < targets_.nItems(); ++n)
             (*targets_[n]) = values.constAt(n);
     }
 
@@ -123,7 +123,7 @@ template <class T> class MinimiserBase
     void addTargets(Array<double *> vars, bool minLimit = false, double minValue = 0.0, bool maxLimit = false,
                     double maxValue = 0.0)
     {
-        for (int n = 0; n < vars.nItems(); ++n)
+        for (auto n = 0; n < vars.nItems(); ++n)
             addTarget(vars[n], minLimit, minValue, maxLimit, maxValue);
     }
     // Set penalty power for values outside of set limits
@@ -151,7 +151,7 @@ template <class T> class MinimiserBase
 
         // Create a local array of values to pass to the fitting routine
         Array<double> values;
-        for (int n = 0; n < targets_.nItems(); ++n)
+        for (auto n = 0; n < targets_.nItems(); ++n)
             values.add(*targets_[n]);
 
         // Minimise the function

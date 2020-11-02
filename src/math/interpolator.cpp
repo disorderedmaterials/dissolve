@@ -253,7 +253,7 @@ void Interpolator::interpolateLinear()
 {
     // Calculate y interval array 'a'
     a_.initialise(y_.nItems() - 1);
-    for (int i = 0; i < y_.nItems() - 1; ++i)
+    for (auto i = 0; i < y_.nItems() - 1; ++i)
         a_[i] = y_.constAt(i + 1) - y_.constAt(i);
 
     lastInterval_ = 0;
@@ -267,7 +267,7 @@ void Interpolator::interpolate(Interpolator::InterpolationScheme scheme)
 {
     // Calculate interval array 'h'
     h_.initialise(x_.nItems() - 1);
-    for (int i = 0; i < x_.nItems() - 1; ++i)
+    for (auto i = 0; i < x_.nItems() - 1; ++i)
         h_[i] = x_.constAt(i + 1) - x_.constAt(i);
 
     scheme_ = scheme;
@@ -418,7 +418,7 @@ void Interpolator::addInterpolated(Data1D &A, const Data1D &B, double factor)
         // Generate interpolation of data B
         Interpolator interpolatedB(B);
 
-        for (int n = 0; n < aX.nItems(); ++n)
+        for (auto n = 0; n < aX.nItems(); ++n)
             aY[n] += interpolatedB.y(aX.constAt(n)) * factor;
     }
 }

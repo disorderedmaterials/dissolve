@@ -156,7 +156,7 @@ bool SampledDouble::allSum(ProcessPool &procPool)
 #ifdef PARALLEL
     // All processes in the pool send their data to the zero rank, which assembles the statistics and then broadcasts the
     // final result
-    for (int n = 1; n < procPool.nProcesses(); ++n)
+    for (auto n = 1; n < procPool.nProcesses(); ++n)
     {
         if (procPool.poolRank() == 0)
         {

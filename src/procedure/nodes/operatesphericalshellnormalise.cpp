@@ -33,7 +33,7 @@ bool OperateSphericalShellNormaliseProcedureNode::operateData1D(ProcessPool &pro
     // Derive first left-bin boundary from the delta betwen points 0 and 1
     double leftBin = xAxis.constAt(0) - (xAxis.constAt(1) - xAxis.constAt(0)) * 0.5, rightBin, divisor;
     double r1Cubed = pow(leftBin, 3), r2Cubed;
-    for (int n = 0; n < xAxis.nItems(); ++n)
+    for (auto n = 0; n < xAxis.nItems(); ++n)
     {
         // Get new right-bin from existing left bin boundary and current bin centre
         rightBin = leftBin + 2 * (xAxis.constAt(n) - leftBin);

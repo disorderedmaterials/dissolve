@@ -45,7 +45,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
                this, new ComboEnumOptionsItems<SpeciesImproper::ImproperFunction>(SpeciesImproper::improperFunctions())));
 
     // -- Parameters
-    for (int n = 2; n < 6; ++n)
+    for (auto n = 2; n < 6; ++n)
     {
         ui_.MasterBondsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
         ui_.MasterAnglesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
@@ -72,7 +72,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     ui_.AtomTypesTable->setItemDelegateForColumn(
         3, new ComboListDelegate(this, new ComboEnumOptionsItems<Forcefield::ShortRangeType>(Forcefield::shortRangeTypes())));
     // -- Charge / Parameters
-    for (int n = 4; n < 9; ++n)
+    for (auto n = 4; n < 9; ++n)
         ui_.AtomTypesTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 
     // Ensure fonts for table headers are set correctly and the headers themselves are visible
@@ -98,7 +98,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     ui_.PairPotentialsTable->horizontalHeader()->setVisible(true);
 
     // -- Charges / Parameters delegates
-    // 	for (int n=3; n<9; ++n) ui_.PairPotentialsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
+    // 	for (auto n=3; n<9; ++n) ui_.PairPotentialsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
 
     DataViewer *viewer = ui_.PairPotentialsPlotWidget->dataViewer();
     viewer->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
@@ -344,7 +344,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
     item->setText(QString::fromStdString(std::string(Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()))));
 
     // Parameters
-    for (int n = 0; n < MAXSRPARAMETERS; ++n)
+    for (auto n = 0; n < MAXSRPARAMETERS; ++n)
     {
         if (createItems)
         {
@@ -424,7 +424,7 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential *pairPot
     item->setText(QString::number(pairPotential->chargeJ()));
 
     // Parameters
-    for (int n = 0; n < MAXSRPARAMETERS; ++n)
+    for (auto n = 0; n < MAXSRPARAMETERS; ++n)
     {
         if (createItems)
         {

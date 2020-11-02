@@ -28,7 +28,7 @@ void ChangeStore::add(Atom *i)
 // Add Molecule to watch
 void ChangeStore::add(std::shared_ptr<Molecule> mol)
 {
-    for (int n = 0; n < mol->nAtoms(); ++n)
+    for (auto n = 0; n < mol->nAtoms(); ++n)
         add(mol->atom(n));
 }
 
@@ -60,7 +60,7 @@ void ChangeStore::updateAll()
 // Update Atom positions using list indices
 void ChangeStore::updateAtomsLocal(int nAtoms, int *indices)
 {
-    for (int n = 0; n < nAtoms; ++n)
+    for (auto n = 0; n < nAtoms; ++n)
     {
 #ifdef CHECKS
         if ((indices[n] < 0) || (indices[n] >= targetAtoms_.nItems()))
@@ -157,7 +157,7 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
     indices_.initialise(nTotalChanges);
 
     // Copy local change data into arrays
-    for (int n = 0; n < changes_.nItems(); ++n)
+    for (auto n = 0; n < changes_.nItems(); ++n)
     {
         indices_[n] = changes_[n]->atomArrayIndex();
         x_[n] = changes_[n]->r().x;
@@ -187,7 +187,7 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
 
     // Apply atom changes
     Atom **atoms = cfg->atoms().array();
-    for (int n = 0; n < nTotalChanges; ++n)
+    for (auto n = 0; n < nTotalChanges; ++n)
     {
 #ifdef CHECKS
         if ((indices_[n] < 0) || (indices_[n] >= cfg->nAtoms()))

@@ -111,7 +111,7 @@ class GeometryOptimisationModule : public Module
         Vec3<int> order(1, xyLargest ? 0 : 2, xyLargest ? 2 : 0);
 
         // Check each energy to see if our new energy is lower. If it is, overwrite it and recurse
-        for (int n = 0; n < 3; ++n)
+        for (auto n = 0; n < 3; ++n)
         {
             if (eNew < energies[order[n]])
             {
@@ -246,7 +246,7 @@ class GeometryOptimisationModule : public Module
                          stepSize);
 
         auto nStepSizeResets = 0;
-        for (int cycle = 1; cycle <= nCycles_; ++cycle)
+        for (auto cycle = 1; cycle <= nCycles_; ++cycle)
         {
             // Copy current target coordinates as our reference (they will be modified by lineMinimise())
             setReferenceCoordinates(target);

@@ -51,7 +51,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
                                                                                                   options)
     {
         // Set our array of valid values
-        for (int n = 0; n < KeywordData<EnumOptions<E>>::data_.nOptions(); ++n)
+        for (auto n = 0; n < KeywordData<EnumOptions<E>>::data_.nOptions(); ++n)
             validKeywords_.emplace_back(std::string(KeywordData<EnumOptions<E>>::data_.keywordByIndex(n)));
     }
     ~EnumOptionsKeyword() {}

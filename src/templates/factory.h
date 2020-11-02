@@ -124,7 +124,7 @@ template <class T> class ObjectChunk : public ListItem<ObjectChunk<T>>
     // Mark all objects as unused
     void markAllObjectsUnused()
     {
-        for (int n = 0; n < nObjects_; ++n)
+        for (auto n = 0; n < nObjects_; ++n)
             objectUsed_[n] = false;
         nextAvailableObject_ = 0;
         nUnusedObjects_ = nObjects_;

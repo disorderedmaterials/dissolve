@@ -50,7 +50,7 @@ int ModuleRefListKeyword::maxArguments() const { return (maxModules_ == -1 ? 99 
 bool ModuleRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Loop over arguments provided to the keyword
-    for (int n = startArg; n < parser.nArgs(); ++n)
+    for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Find specified Module by its unique name
         Module *module = coreData.findModule(parser.argsv(n));

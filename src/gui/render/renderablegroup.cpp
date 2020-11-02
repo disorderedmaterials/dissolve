@@ -128,7 +128,7 @@ void RenderableGroup::setRenderableColour(Renderable *rend)
     {
         // Find the StockColour with the lowest usage count
         auto lowestId = 0;
-        for (int colourId = 0; colourId < StockColours::nStockColours; ++colourId)
+        for (auto colourId = 0; colourId < StockColours::nStockColours; ++colourId)
         {
             if (automaticStockColourUsageCount_[colourId] < automaticStockColourUsageCount_[lowestId])
                 lowestId = colourId;

@@ -32,7 +32,7 @@ Array2D<Array<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, co
         ((ncoeffp != -1) && (ncoeffp != arrayNCoeffP)))
     {
         coefficients.initialise(nAtomTypes, nAtomTypes, true);
-        for (int n = 0; n < coefficients.linearArraySize(); ++n)
+        for (auto n = 0; n < coefficients.linearArraySize(); ++n)
         {
             coefficients.linearArray()[n].initialise(ncoeffp);
             coefficients.linearArray()[n] = 0.0;
@@ -167,7 +167,7 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
 
         double cMin = potCoeff.nItems() == 0 ? 0.0 : potCoeff.constAt(0);
         double cMax = cMin;
-        for (int n = 1; n < potCoeff.nItems(); ++n)
+        for (auto n = 1; n < potCoeff.nItems(); ++n)
         {
             if (potCoeff.constAt(n) < cMin)
                 cMin = potCoeff.constAt(n);
@@ -193,7 +193,7 @@ void EPSRModule::truncate(Data1D &data, double rMin, double rMax)
     double x;
     Array<double> &y = data.values();
     const auto decay = rMax - rMin;
-    for (int n = 0; n < data.nValues(); ++n)
+    for (auto n = 0; n < data.nValues(); ++n)
     {
         x = data.xAxis(n);
 

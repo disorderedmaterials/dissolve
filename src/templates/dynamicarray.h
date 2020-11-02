@@ -89,7 +89,7 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
         }
 
         objectSize_ = sizeof(T);
-        for (int n = 0; n < nObjects_; ++n)
+        for (auto n = 0; n < nObjects_; ++n)
             objectUsed_[n] = false;
         nextAvailableObject_ = 0;
         nUnusedObjects_ = nObjects_;
@@ -99,7 +99,7 @@ template <class T> class ArrayChunk : public ListItem<ArrayChunk<T>>
     // Clear entire chunk
     void clear()
     {
-        for (int n = 0; n < nObjects_; ++n)
+        for (auto n = 0; n < nObjects_; ++n)
         {
             objectArray_[n].clear();
             objectUsed_[n] = false;
@@ -274,7 +274,7 @@ template <class T> class DynamicArray
     {
         array_.initialise(nItems);
         T *newItem;
-        for (int n = 0; n < nItems; ++n)
+        for (auto n = 0; n < nItems; ++n)
         {
             newItem = produce();
             newItem->setArrayIndex(n);
@@ -298,7 +298,7 @@ template <class T> class DynamicArray
     void add(int count)
     {
         T *newItem;
-        for (int n = 0; n < count; ++n)
+        for (auto n = 0; n < count; ++n)
         {
             newItem = produce();
             newItem->setArrayIndex(array_.nItems());
@@ -353,7 +353,7 @@ template <class T> class DynamicArray
     // Return whether the specified object pointer is in the array
     bool contains(const T *object)
     {
-        for (int n = 0; n < array_.nItems(); ++n)
+        for (auto n = 0; n < array_.nItems(); ++n)
             if (array_.constAt(n) == object)
                 return true;
 
@@ -362,7 +362,7 @@ template <class T> class DynamicArray
     // Return index of the specified object pointer (if it exists in the array)
     bool indexOf(const T *object)
     {
-        for (int n = 0; n < array_.nItems(); ++n)
+        for (auto n = 0; n < array_.nItems(); ++n)
             if (array_.constAt(n) == object)
                 return n;
 

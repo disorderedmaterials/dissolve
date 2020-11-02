@@ -18,7 +18,7 @@ SelectGenericItemDialog::~SelectGenericItemDialog() {}
 void SelectGenericItemDialog::updateGenericItemTable(GenericItem *current, QString filter)
 {
     // Loop over rows in the table
-    for (int n = 0; n < ui_.ItemsTable->rowCount(); ++n)
+    for (auto n = 0; n < ui_.ItemsTable->rowCount(); ++n)
     {
         QTableWidgetItem *item = ui_.ItemsTable->item(n, 0);
         if (!item)

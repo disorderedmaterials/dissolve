@@ -74,13 +74,13 @@ bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSe
     if (normalisation == XRaySQModule::SquareOfAverageNormalisation)
     {
         Array<double> bbar = weights.boundCoherentSquareOfAverage(unweightedsq.boundPartial(0, 0).constXAxis());
-        for (int n = 0; n < bbar.nItems(); ++n)
+        for (auto n = 0; n < bbar.nItems(); ++n)
             weightedsq.total().value(n) /= bbar[n];
     }
     else if (normalisation == XRaySQModule::AverageOfSquaresNormalisation)
     {
         Array<double> bbar = weights.boundCoherentAverageOfSquares(unweightedsq.boundPartial(0, 0).constXAxis());
-        for (int n = 0; n < bbar.nItems(); ++n)
+        for (auto n = 0; n < bbar.nItems(); ++n)
             weightedsq.total().value(n) /= bbar[n];
     }
 

@@ -122,7 +122,7 @@ bool RegionalDistributor::cycle()
     // molecules sequentially to each
     if (nProcessesOrGroups_ == 1)
     {
-        for (int n = 0; n < nMoleculesToDistribute_; ++n)
+        for (auto n = 0; n < nMoleculesToDistribute_; ++n)
         {
             if (moleculeStatus_[n] == RegionalDistributor::WaitingFlag)
             {
@@ -184,7 +184,7 @@ bool RegionalDistributor::cycle()
                 // Assign all remaining Molecules to group 0, and copy this group for distribution to all
                 // others.
                 assignedMolecules_[0].clear();
-                for (int n = 0; n < nMoleculesToDistribute_; ++n)
+                for (auto n = 0; n < nMoleculesToDistribute_; ++n)
                 {
                     if (moleculeStatus_[n] == RegionalDistributor::WaitingFlag)
                     {
@@ -283,7 +283,7 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
 
     // Go through the Atoms of the Molecule, assembling a list of primary Cells in which its Atoms are found.
     Array<Cell *> primaryCells;
-    for (int i = 0; i < mol->nAtoms(); ++i)
+    for (auto i = 0; i < mol->nAtoms(); ++i)
     {
         // Get Cell pointer and index
         primaryCell = mol->atom(i)->cell();
@@ -316,7 +316,7 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
     // We are able to lock all Cells that we need to edit, so now construct a list of those within the cutoff range of any
     // primaryCell that we must be able to read (but not modify)
     OrderedPointerList<const Cell> readOnlyCells;
-    for (int c = 0; c < primaryCells.nItems(); ++c)
+    for (auto c = 0; c < primaryCells.nItems(); ++c)
     {
         // Loop over all cell neighbours for this primary Cell
         for (const auto &neighbour : primaryCells[c]->allCellNeighbours())
@@ -347,7 +347,7 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
     // If we reach this point, we can lock all the necessary Cells for editing, and mark all those necessary for reading.
 
     // Add primary and secondary lock Cells to our list, sanity checking along the way
-    for (int c = 0; c < primaryCells.nItems(); ++c)
+    for (auto c = 0; c < primaryCells.nItems(); ++c)
     {
         cellIndex = primaryCells[c]->index();
 
@@ -499,7 +499,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(int processOrGroup
     }
 
     // No suitable Molecule yet, so start searching over all Cells from a suitable point along the array.
-    for (int n = 0; n < cellArray_.nCells(); ++n)
+    for (auto n = 0; n < cellArray_.nCells(); ++n)
     {
         // Determine Cell index
         cellIndex = n;

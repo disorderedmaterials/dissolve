@@ -11,7 +11,7 @@
 ProcedureNodeReference::ProcedureNodeReference(ProcedureNode *node) : ListItem<ProcedureNodeReference>()
 {
     node_ = node;
-    for (int n = 0; n < ProcedureNode::nNodeTypes; ++n)
+    for (auto n = 0; n < ProcedureNode::nNodeTypes; ++n)
         allowedTypes_[n] = false;
 
     analyseModuleParent_ = nullptr;
@@ -35,7 +35,7 @@ void ProcedureNodeReference::addAllowableNodeType(ProcedureNode::NodeType nt) { 
 // Allow all node types
 void ProcedureNodeReference::setAllowAllNodeTypes()
 {
-    for (int n = 0; n < ProcedureNode::nNodeTypes; ++n)
+    for (auto n = 0; n < ProcedureNode::nNodeTypes; ++n)
         allowedTypes_[n] = true;
 }
 
@@ -51,7 +51,7 @@ void ProcedureNodeReference::operator=(ProcedureNode *node) { node_ = node; }
 void ProcedureNodeReference::operator=(const ProcedureNodeReference &nodeRef)
 {
     node_ = nodeRef.node_;
-    for (int n = 0; n < ProcedureNode::nNodeTypes; ++n)
+    for (auto n = 0; n < ProcedureNode::nNodeTypes; ++n)
         allowedTypes_[n] = nodeRef.allowedTypes_[n];
 }
 

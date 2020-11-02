@@ -255,7 +255,7 @@ bool Dissolve::saveInput(std::string_view filename)
                                        PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword),
                                        atomType->name(), atomType->element()->symbol(), atomType->parameters().charge(),
                                        Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()));
-        for (int n = 0; n < MAXSRPARAMETERS; ++n)
+        for (auto n = 0; n < MAXSRPARAMETERS; ++n)
             line += fmt::format("  {:12.6e}", atomType->parameters().parameter(n));
         if (!parser.writeLine(line))
             return false;

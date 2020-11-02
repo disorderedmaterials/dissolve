@@ -27,7 +27,7 @@ void GradientBar::setColourScale(const ColourScale &colourScale)
             const auto nPoints = 101;
             double value = colourScale.firstPoint().value();
             double delta = (colourScale.lastPoint().value() - value) / nPoints;
-            for (int n = 0; n < nPoints; ++n)
+            for (auto n = 0; n < nPoints; ++n)
             {
                 colourScale_.addPoint(value, colourScale.colour(value));
                 value += delta;
@@ -56,7 +56,7 @@ void GradientBar::setColourScale(const ColourScale &colourScale)
     {
         double zero = colourScale_.firstPoint().value();
         double span = colourScale_.lastPoint().value() - zero;
-        for (int n = 0; n < colourScale_.nPoints(); ++n)
+        for (auto n = 0; n < colourScale_.nPoints(); ++n)
             gradient_.setColorAt((colourScale_.point(n).value() - zero) / span, colourScale_.point(n).colour());
     }
 

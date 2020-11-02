@@ -47,7 +47,7 @@ void ColourScale::addPoint(double value, QColor colour)
     else
     {
         // Find a suitable insertion point now, so we don't have to reorder
-        for (int n = 0; n < points_.nItems(); ++n)
+        for (auto n = 0; n < points_.nItems(); ++n)
         {
             if (points_[n].value() > value)
             {
@@ -156,7 +156,7 @@ QColor ColourScale::colour(double value) const
         return points_.constAt(nPoints() - 1).colour();
 
     // Find the correct delta to use
-    for (int n = 0; n < deltas_.nItems(); ++n)
+    for (auto n = 0; n < deltas_.nItems(); ++n)
     {
         if (deltas_.constAt(n).containsValue(value))
         {
@@ -197,7 +197,7 @@ void ColourScale::colour(double value, GLfloat *rgba) const
     }
 
     // Find the correct delta to use
-    for (int n = 0; n < deltas_.nItems(); ++n)
+    for (auto n = 0; n < deltas_.nItems(); ++n)
     {
         if (deltas_.constAt(n).containsValue(value))
         {
@@ -225,7 +225,7 @@ void ColourScale::setAllAlpha(double alpha)
     else if (alphai > 255)
         alphai = 255;
 
-    for (int n = 0; n < points_.nItems(); ++n)
+    for (auto n = 0; n < points_.nItems(); ++n)
         points_[n].setAlpha(alphai);
 
     calculateDeltas();
@@ -240,7 +240,7 @@ void ColourScale::calculateDeltas()
 {
     // Reinitialise deltas array
     deltas_.clear();
-    for (int n = 0; n < points_.nItems() - 1; ++n)
+    for (auto n = 0; n < points_.nItems() - 1; ++n)
         deltas_.add(ColourScaleDelta(points_[n], points_[n + 1], useHSV_));
 }
 

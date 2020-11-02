@@ -50,7 +50,7 @@ template <> class GenericItemContainer<Array2D<double>> : public GenericItem
     static bool write(const Array2D<double> &thisData, LineParser &parser)
     {
         parser.writeLineF("{}  {}  {}\n", thisData.nRows(), thisData.nColumns(), DissolveSys::btoa(thisData.halved()));
-        for (int n = 0; n < thisData.linearArraySize(); ++n)
+        for (auto n = 0; n < thisData.linearArraySize(); ++n)
             if (!parser.writeLineF("{:16.9e}\n", thisData.constLinearValue(n)))
                 return false;
         return true;
@@ -63,7 +63,7 @@ template <> class GenericItemContainer<Array2D<double>> : public GenericItem
         int nRows = parser.argi(0), nColumns = parser.argi(1);
         thisData.initialise(nRows, nColumns, parser.argb(2));
 
-        for (int n = 0; n < thisData.linearArraySize(); ++n)
+        for (auto n = 0; n < thisData.linearArraySize(); ++n)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;

@@ -436,7 +436,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             Data1D refSQTrimmed;
             double x;
-            for (int n = 0; n < x1.nItems(); ++n)
+            for (auto n = 0; n < x1.nItems(); ++n)
             {
                 x = x1.constAt(n);
                 if (x < deltaSQMin)
@@ -624,7 +624,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     // possibility to get NaNs when taking the ln later on
 
                     /*
-                    for (int n=0; n<dGR.nPoints(); ++n) crgr.add(cr.y(n) / (fabs(dGR.y(n)-1.0)+1.0));
+                    for (auto n=0; n<dGR.nPoints(); ++n) crgr.add(cr.y(n) / (fabs(dGR.y(n)-1.0)+1.0));
 
                     scaleFactor = crgr.maxAbs() * 1.01;
                     if (scaleFactor < 1.0) scaleFactor = 1.01;
@@ -633,12 +633,12 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     crgr /= scaleFactor;
 
                     // Original PY
-                  // 					for (int n=0; n<deltaGR.nPoints(); ++n)
+                  // 					for (auto n=0; n<deltaGR.nPoints(); ++n)
                   dU.addPoint(deltaGR.x(n), log(1.0
                   - cr.y(n)/(deltaGR.y(n)+1.0));
 
                     // Modified PY
-                    for (int n=0; n<dGR.nPoints(); ++n) dPhiR.addPoint(dGR.x(n), log(1.0 - crgr[n]));
+                    for (auto n=0; n<dGR.nPoints(); ++n) dPhiR.addPoint(dGR.x(n), log(1.0 - crgr[n]));
                   //cr.y(n) / (fabs(dGR.y(n)-1.0)+1.0)));
 
                     // Rescale the resulting potential to account for the reduction we made earlier
@@ -667,7 +667,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                     cr.arrayY() /= scaleFactor;
 
-                    for (int n=0; n<dGR.nPoints(); ++n) dPhiR.addPoint(dGR.x(n), dGR.y(n) - cr.y(n) - 1.0 -
+                    for (auto n=0; n<dGR.nPoints(); ++n) dPhiR.addPoint(dGR.x(n), dGR.y(n) - cr.y(n) - 1.0 -
                     log(dGR.y(n) + 1.0));
                     */
                 }
@@ -679,7 +679,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 const auto truncationStart = minimumRadius - truncationWidth;
                 double r;
                 Array<double> &y = dPhiR.values();
-                for (int n = 0; n < dPhiR.nValues(); ++n)
+                for (auto n = 0; n < dPhiR.nValues(); ++n)
                 {
                     r = dPhiR.xAxis(n);
                     if (r < truncationStart)
@@ -695,7 +695,7 @@ bool RefineModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     Filters::kolmogorovZurbenko(dPhiR, phiRSmoothK, phiRSmoothM);
 
                 // Make sure we go smoothly to zero at the limit of the potential
-                for (int n = 0; n < dPhiR.nValues(); ++n)
+                for (auto n = 0; n < dPhiR.nValues(); ++n)
                     dPhiR.value(n) *= 1.0 - double(n) / (dPhiR.nValues() - 1);
 
                 // Apply factor to additional potential

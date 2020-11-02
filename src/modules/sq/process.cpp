@@ -146,9 +146,9 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         //             return false;
         //
         //         // Apply necessary broadening
-        //         for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
+        //         for (auto i = 0; i < unweightedsq.nAtomTypes(); ++i)
         //         {
-        //             for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
+        //             for (auto j = i; j < unweightedsq.nAtomTypes(); ++j)
         //             {
         //                 // Bragg-specific broadening
         //                 Filters::convolve(braggPartials.at(i, j), braggQBroadening, true);
@@ -160,9 +160,9 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         //
         //         // Remove self-scattering level from partials between the same atom type and remove normalisation from
         //         // atomic fractions
-        //         for (int i = 0; i < unweightedsq.nAtomTypes(); ++i)
+        //         for (auto i = 0; i < unweightedsq.nAtomTypes(); ++i)
         //         {
-        //             for (int j = i; j < unweightedsq.nAtomTypes(); ++j)
+        //             for (auto j = i; j < unweightedsq.nAtomTypes(); ++j)
         //             {
         //                 // Subtract self-scattering level if types are equivalent
         //                 if (i == j)
@@ -183,7 +183,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto &partial = unweightedsq.partial(i, j);
             auto &bragg = braggPartials.at(i, j);
 
-            for (int n = 0; n < bound.nValues(); ++n)
+            for (auto n = 0; n < bound.nValues(); ++n)
             {
                 const auto q = bound.xAxis(n);
                 if (q <= braggQMax)
@@ -209,7 +209,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                        averagingScheme);
 
         // Need to rename data within the contributing datasets to avoid clashes with the averaged data
-        for (int n = averaging; n > 0; --n)
+        for (auto n = averaging; n > 0; --n)
         {
             if (!dissolve.processingModuleData().contains(fmt::format("UnweightedSQ_{}", n), uniqueName_))
                 continue;

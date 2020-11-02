@@ -13,7 +13,7 @@ std::string_view ParallelStrategyKeywords[] = {"Sequential", "Even"};
 // Convert string to ParallelStrategy
 Dissolve::ParallelStrategy Dissolve::parallelStrategy(std::string_view s)
 {
-    for (int n = 0; n < Dissolve::nParallelStrategies; ++n)
+    for (auto n = 0; n < Dissolve::nParallelStrategies; ++n)
         if (DissolveSys::sameString(ParallelStrategyKeywords[n], s))
             return (Dissolve::ParallelStrategy)n;
     return Dissolve::nParallelStrategies;
@@ -42,7 +42,7 @@ ProcessPool &Dissolve::worldPool()
     {
         // Assemble list of (world) process ranks for the pool
         Array<int> ranks;
-        for (int n = 0; n < ProcessPool::nWorldProcesses(); ++n)
+        for (auto n = 0; n < ProcessPool::nWorldProcesses(); ++n)
             ranks.add(n);
         world.setUp("World", ranks, ProcessPool::MinimumGroupPopulation);
         firstRun = false;
@@ -72,7 +72,7 @@ bool Dissolve::setUpMPIPools()
 
     // Default pool - all world ranks
     Array<int> allProcesses;
-    for (int n = 0; n < ProcessPool::nWorldProcesses(); ++n)
+    for (auto n = 0; n < ProcessPool::nWorldProcesses(); ++n)
         allProcesses.add(n);
 
     // Set up pool based on selected strategy
@@ -108,7 +108,7 @@ bool Dissolve::setUpMPIPools()
             // Create new pool
             auto procsPerConfig = ProcessPool::nWorldProcesses() / nConfigurations();
             Array<int> poolProcesses;
-            for (int n = 0; n < procsPerConfig; ++n)
+            for (auto n = 0; n < procsPerConfig; ++n)
                 poolProcesses.add(procsPerConfig * cfgIndex + n);
             if (!cfg->setUpProcessPool(poolProcesses, parallelGroupPopulation_))
                 return false;

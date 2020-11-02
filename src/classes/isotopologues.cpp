@@ -188,7 +188,7 @@ bool Isotopologues::read(LineParser &parser, CoreData &coreData)
     speciesPopulation_ = parser.argi(1);
     auto nIso = parser.argi(2);
     mix_.clear();
-    for (int n = 0; n < nIso; ++n)
+    for (auto n = 0; n < nIso; ++n)
     {
         if (parser.getArgsDelim() != LineParser::Success)
             return false;
@@ -248,7 +248,7 @@ bool Isotopologues::broadcast(ProcessPool &procPool, const int root, const CoreD
     double weight;
     if (procPool.poolRank() == root)
     {
-        for (int n = 0; n < nIso; ++n)
+        for (auto n = 0; n < nIso; ++n)
         {
             // Broadcast Isotopologue
             topeName = mix_[n].isotopologue()->name();
@@ -264,7 +264,7 @@ bool Isotopologues::broadcast(ProcessPool &procPool, const int root, const CoreD
     else
     {
         mix_.clear();
-        for (int n = 0; n < nIso; ++n)
+        for (auto n = 0; n < nIso; ++n)
         {
             // Broadcast Isotopologue index data
             if (!procPool.broadcast(topeName, root))

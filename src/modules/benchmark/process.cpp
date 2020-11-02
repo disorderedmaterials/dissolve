@@ -40,7 +40,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (keywords_.asBool("TestGenerator"))
         {
             SampledDouble timing;
-            for (int n = 0; n < N; ++n)
+            for (auto n = 0; n < N; ++n)
             {
                 srand(dissolve.seed());
 
@@ -60,7 +60,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (keywords_.asBool("TestRDFCells"))
         {
             SampledDouble timing;
-            for (int n = 0; n < N; ++n)
+            for (auto n = 0; n < N; ++n)
             {
                 RDFModule rdfModule;
                 rdfModule.addTargetConfiguration(cfg);
@@ -86,7 +86,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (keywords_.asBool("TestRDFSimple"))
         {
             SampledDouble timing;
-            for (int n = 0; n < N; ++n)
+            for (auto n = 0; n < N; ++n)
             {
                 RDFModule rdfModule;
                 rdfModule.addTargetConfiguration(cfg);
@@ -112,7 +112,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (keywords_.asBool("TestIntraEnergy"))
         {
             SampledDouble timing;
-            for (int n = 0; n < N; ++n)
+            for (auto n = 0; n < N; ++n)
             {
                 Timer timer;
                 Messenger::mute();
@@ -130,7 +130,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (keywords_.asBool("TestInterEnergy"))
         {
             SampledDouble timing;
-            for (int n = 0; n < N; ++n)
+            for (auto n = 0; n < N; ++n)
             {
                 Timer timer;
                 Messenger::mute();
@@ -148,7 +148,7 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (keywords_.asBool("TestDistributors"))
         {
             SampledDouble timing;
-            for (int n = 0; n < N; ++n)
+            for (auto n = 0; n < N; ++n)
             {
                 // Create a Molecule distributor
                 auto &moleculeArray = cfg->molecules();

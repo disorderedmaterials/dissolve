@@ -50,7 +50,7 @@ template <> class GenericItemContainer<Array<double>> : public GenericItem
     static bool write(const Array<double> &thisData, LineParser &parser)
     {
         parser.writeLineF("{}\n", thisData.nItems());
-        for (int n = 0; n < thisData.nItems(); ++n)
+        for (auto n = 0; n < thisData.nItems(); ++n)
         {
             if (!parser.writeLineF("{:16.9e}\n", thisData.constAt(n)))
                 return false;
@@ -64,7 +64,7 @@ template <> class GenericItemContainer<Array<double>> : public GenericItem
             return false;
         int nItems = parser.argi(0);
         thisData.createEmpty(nItems);
-        for (int n = 0; n < nItems; ++n)
+        for (auto n = 0; n < nItems; ++n)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;

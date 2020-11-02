@@ -69,9 +69,9 @@ void Histogram2D::initialise(double xMin, double xMax, double xBinWidth, double 
 
     // Set up accumulated data array and set bin centres
     accumulatedData_.initialise(nXBins_, nYBins_, true);
-    for (int x = 0; x < nXBins_; ++x)
+    for (auto x = 0; x < nXBins_; ++x)
         accumulatedData_.xAxis(x) = xBinCentres_[x];
-    for (int y = 0; y < nYBins_; ++y)
+    for (auto y = 0; y < nYBins_; ++y)
         accumulatedData_.yAxis(y) = yBinCentres_[y];
 }
 
@@ -138,9 +138,9 @@ long int Histogram2D::nBinned() const { return nBinned_; }
 // Accumulate current histogram bins into averages
 void Histogram2D::accumulate()
 {
-    for (int x = 0; x < nXBins_; ++x)
+    for (auto x = 0; x < nXBins_; ++x)
     {
-        for (int y = 0; y < nYBins_; ++y)
+        for (auto y = 0; y < nYBins_; ++y)
         {
             // Update averages
             averages_.at(x, y) += double(bins_.at(x, y));
@@ -171,9 +171,9 @@ void Histogram2D::add(Histogram2D &other, int factor)
         return;
     }
 
-    for (int x = 0; x < nXBins_; ++x)
+    for (auto x = 0; x < nXBins_; ++x)
     {
-        for (int y = 0; y < nYBins_; ++y)
+        for (auto y = 0; y < nYBins_; ++y)
             bins_.at(x, y) += other.bins_.at(x, y) * factor;
     }
 }
@@ -228,9 +228,9 @@ bool Histogram2D::read(LineParser &parser, CoreData &coreData)
     nBinned_ = parser.argli(0);
     nMissed_ = parser.argli(1);
 
-    for (int x = 0; x < nXBins_; ++x)
+    for (auto x = 0; x < nXBins_; ++x)
     {
-        for (int y = 0; y < nYBins_; ++y)
+        for (auto y = 0; y < nYBins_; ++y)
             if (!averages_.at(x, y).read(parser, coreData))
                 return false;
     }
@@ -247,9 +247,9 @@ bool Histogram2D::write(LineParser &parser)
         return false;
     if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
         return false;
-    for (int x = 0; x < nXBins_; ++x)
+    for (auto x = 0; x < nXBins_; ++x)
     {
-        for (int y = 0; y < nYBins_; ++y)
+        for (auto y = 0; y < nYBins_; ++y)
             if (!averages_.at(x, y).write(parser))
                 return false;
     }
@@ -306,7 +306,7 @@ bool Histogram2D::broadcast(ProcessPool &procPool, const int root, const CoreDat
     if (!procPool.broadcast(bins_.linearArray(), bins_.linearArraySize(), root))
         return false;
     SampledDouble *avgs = averages_.linearArray();
-    for (int n = 0; n < averages_.linearArraySize(); ++n)
+    for (auto n = 0; n < averages_.linearArraySize(); ++n)
         if (!avgs[n].broadcast(procPool, root, coreData))
             return false;
 #endif
@@ -355,7 +355,7 @@ bool Histogram2D::equality(ProcessPool &procPool)
         return Messenger::error("Histogram2D nunmber of binned values is not equivalent (process {} has {}).\n",
                                 procPool.poolRank(), nBinned_);
     SampledDouble *avgs = averages_.linearArray();
-    for (int n = 0; n < averages_.linearArraySize(); ++n)
+    for (auto n = 0; n < averages_.linearArraySize(); ++n)
         if (!avgs[n].equality(procPool))
             return Messenger::error("Histogram2D average values not equivalent.\n");
 #endif

@@ -35,7 +35,7 @@ Data1D RefineModule::calculateCR(const Data1D &sq, double normFactor, double rMi
     while (omega <= rMax)
     {
         ft = 0.0;
-        for (int m = 0; m < nQ; ++m)
+        for (auto m = 0; m < nQ; ++m)
         {
             // Get window value at this point in the function
             window = windowFunction.y(sq.constXAxis(m), omega);
@@ -354,7 +354,7 @@ double RefineModule::costFunction2Exp(const Array<double> &alpha)
 // Sum fitting equation with the specified parameters into the specified Data1D
 void RefineModule::sumFitEquation(Data1D &target, double xCentre, double delta, double width, double AL, double AC, double AR)
 {
-    for (int n = 0; n < target.nValues(); ++n)
+    for (auto n = 0; n < target.nValues(); ++n)
         target.value(n) += fitEquation(target.xAxis(n), xCentre, delta, width, AL, AC, AR);
 }
 

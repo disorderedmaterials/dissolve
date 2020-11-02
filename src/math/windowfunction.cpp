@@ -19,7 +19,7 @@ WindowFunction::WindowFunction(WindowFunction::FunctionType function, double p1,
 void WindowFunction::operator=(const WindowFunction &source)
 {
     function_ = source.function_;
-    for (int n = 0; n < MAXWINDOWFUNCTIONPARAMS; ++n)
+    for (auto n = 0; n < MAXWINDOWFUNCTIONPARAMS; ++n)
         parameters_[n] = source.parameters_[n];
 
     xMax_ = source.xMax_;
@@ -35,7 +35,7 @@ int WindowFunctionNParameters[] = {0, 0, 0, 0, 0, 0, 0};
 // Return FunctionType from supplied string
 WindowFunction::FunctionType WindowFunction::functionType(std::string_view s)
 {
-    for (int n = 0; n < nFunctionTypes; ++n)
+    for (auto n = 0; n < nFunctionTypes; ++n)
         if (DissolveSys::sameString(s, WindowFunctionKeywords[n]))
             return (FunctionType)n;
     return WindowFunction::nFunctionTypes;
@@ -260,7 +260,7 @@ bool WindowFunction::read(LineParser &parser, CoreData &coreData)
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     function_ = functionType(parser.argsv(0));
-    for (int n = 0; n < nFunctionParameters(function_); ++n)
+    for (auto n = 0; n < nFunctionParameters(function_); ++n)
         parameters_[n] = parser.argd(n + 1);
     return true;
 }
@@ -269,7 +269,7 @@ bool WindowFunction::read(LineParser &parser, CoreData &coreData)
 bool WindowFunction::write(LineParser &parser)
 {
     std::string line{functionType(function_)};
-    for (int n = 0; n < nFunctionParameters(function_); ++n)
+    for (auto n = 0; n < nFunctionParameters(function_); ++n)
         line += fmt::format(" {:16.9e}", parameters_[n]);
     return parser.writeLine(line);
 }

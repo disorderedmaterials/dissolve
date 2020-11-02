@@ -37,7 +37,7 @@ RenderableGroup *RenderableGroupManager::createGroup(std::string_view name)
         // No existing group, so must add a new one
         // First, find the StockColour with the lowest usage count
         auto lowestId = 0;
-        for (int colourId = 0; colourId < StockColours::nStockColours; ++colourId)
+        for (auto colourId = 0; colourId < StockColours::nStockColours; ++colourId)
         {
             if (stockColourUsageCount_[colourId] < stockColourUsageCount_[lowestId])
                 lowestId = colourId;

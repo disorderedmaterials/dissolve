@@ -39,7 +39,7 @@ int ConfigurationRefListKeyword::maxArguments() const { return 99; }
 bool ConfigurationRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Each argument is the name of a Configuration that we will add to our list
-    for (int n = startArg; n < parser.nArgs(); ++n)
+    for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         Configuration *cfg = coreData.findConfiguration(parser.argsv(n));
         if (!cfg)

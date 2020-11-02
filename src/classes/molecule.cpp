@@ -74,7 +74,7 @@ void Molecule::setCentreOfGeometry(const Box *box, const Vec3<double> newCentre)
     const auto cog = centreOfGeometry(box);
 
     // Apply transform
-    for (int n = 0; n < nAtoms(); ++n)
+    for (auto n = 0; n < nAtoms(); ++n)
     {
         newR = box->minimumVector(atom(n), cog) + newCentre;
         atom(n)->setCoordinates(newR);
@@ -89,7 +89,7 @@ Vec3<double> Molecule::centreOfGeometry(const Box *box) const
 
     // Calculate center relative to first atom in molecule
     auto cog = atom(0)->r();
-    for (int n = 1; n < nAtoms(); ++n)
+    for (auto n = 1; n < nAtoms(); ++n)
         cog += box->minimumImage(atom(n), atom(0)->r());
 
     return (cog / nAtoms());
@@ -103,7 +103,7 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix)
     const auto cog = centreOfGeometry(box);
 
     // Apply transform
-    for (int n = 0; n < nAtoms(); ++n)
+    for (auto n = 0; n < nAtoms(); ++n)
     {
         newR = transformationMatrix * box->minimumVector(cog, atom(n)->r()) + cog;
         atom(n)->setCoordinates(newR);
@@ -128,7 +128,7 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
 // Translate whole molecule by the delta specified
 void Molecule::translate(const Vec3<double> delta)
 {
-    for (int n = 0; n < nAtoms(); ++n)
+    for (auto n = 0; n < nAtoms(); ++n)
         atom(n)->translateCoordinates(delta);
 }
 

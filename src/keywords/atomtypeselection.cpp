@@ -74,7 +74,7 @@ bool AtomTypeSelectionKeyword::read(LineParser &parser, int startArg, CoreData &
     checkSelection();
 
     // Loop over arguments (which are AtomType names) and add them to our list
-    for (int n = startArg; n < parser.nArgs(); ++n)
+    for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Do we recognise the AtomType?
         auto it = std::find_if(coreData.atomTypes().begin(), coreData.atomTypes().end(), [&parser, n](const auto atomType) {

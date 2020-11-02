@@ -235,7 +235,7 @@ double Data1D::minValue() const
         return 0.0;
 
     double value = values_.constAt(0);
-    for (int n = 1; n < values_.nItems(); ++n)
+    for (auto n = 1; n < values_.nItems(); ++n)
         if (values_.constAt(n) < value)
             value = values_.constAt(n);
 
@@ -249,7 +249,7 @@ double Data1D::maxValue() const
         return 0.0;
 
     double value = values_.constAt(0);
-    for (int n = 1; n < values_.nItems(); ++n)
+    for (auto n = 1; n < values_.nItems(); ++n)
         if (values_.constAt(n) > value)
             value = values_.constAt(n);
 
@@ -356,7 +356,7 @@ void Data1D::operator+=(const Data1D &source)
     ++version_;
 
     // Loop over points, summing them into our array
-    for (int n = 0; n < x_.nItems(); ++n)
+    for (auto n = 0; n < x_.nItems(); ++n)
     {
 #ifdef CHECKS
         // Check x values for consistency
@@ -374,7 +374,7 @@ void Data1D::operator+=(const Data1D &source)
 
 void Data1D::operator+=(const double delta)
 {
-    for (int n = 0; n < values_.nItems(); ++n)
+    for (auto n = 0; n < values_.nItems(); ++n)
         values_[n] += delta;
 
     ++version_;
@@ -386,7 +386,7 @@ void Data1D::operator-=(const Data1D &source)
     if (x_.nItems() == 0)
     {
         copyArrays(source);
-        for (int n = 0; n < values_.nItems(); ++n)
+        for (auto n = 0; n < values_.nItems(); ++n)
             values_[n] = -values_[n];
         return;
     }
@@ -401,7 +401,7 @@ void Data1D::operator-=(const Data1D &source)
     ++version_;
 
     // Loop over points, summing them into our array
-    for (int n = 0; n < x_.nItems(); ++n)
+    for (auto n = 0; n < x_.nItems(); ++n)
     {
 #ifdef CHECKS
         // Check x values for consistency
@@ -419,7 +419,7 @@ void Data1D::operator-=(const Data1D &source)
 
 void Data1D::operator-=(const double delta)
 {
-    for (int n = 0; n < values_.nItems(); ++n)
+    for (auto n = 0; n < values_.nItems(); ++n)
         values_[n] -= delta;
 
     ++version_;
@@ -443,7 +443,7 @@ void Data1D::operator*=(const Array<double> &factors)
         return;
     }
 
-    for (int n = 0; n < values_.nItems(); ++n)
+    for (auto n = 0; n < values_.nItems(); ++n)
         values_[n] *= factors.constAt(n);
 }
 
@@ -486,7 +486,7 @@ bool Data1D::read(LineParser &parser, CoreData &coreData)
     initialise(nPoints, errors);
 
     // Read data points
-    for (int n = 0; n < nPoints; ++n)
+    for (auto n = 0; n < nPoints; ++n)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
@@ -515,12 +515,12 @@ bool Data1D::write(LineParser &parser)
     // Write values / errors
     if (hasError_)
     {
-        for (int n = 0; n < x_.nItems(); ++n)
+        for (auto n = 0; n < x_.nItems(); ++n)
             if (!parser.writeLineF("{}  {}  {}\n", x_[n], values_[n], errors_[n]))
                 return false;
     }
     else
-        for (int n = 0; n < x_.nItems(); ++n)
+        for (auto n = 0; n < x_.nItems(); ++n)
             if (!parser.writeLineF("{}  {}\n", x_[n], values_[n]))
                 return false;
 

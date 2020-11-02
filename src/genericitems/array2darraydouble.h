@@ -50,12 +50,12 @@ template <> class GenericItemContainer<Array2D<Array<double>>> : public GenericI
     static bool write(const Array2D<Array<double>> &thisData, LineParser &parser)
     {
         parser.writeLineF("{}  {}  {}\n", thisData.nRows(), thisData.nColumns(), DissolveSys::btoa(thisData.halved()));
-        for (int n = 0; n < thisData.linearArraySize(); ++n)
+        for (auto n = 0; n < thisData.linearArraySize(); ++n)
         {
             const Array<double> &arrayData = thisData.constLinearValue(n);
 
             parser.writeLineF("{}\n", arrayData.nItems());
-            for (int m = 0; m < arrayData.nItems(); ++m)
+            for (auto m = 0; m < arrayData.nItems(); ++m)
             {
                 if (!parser.writeLineF("{:16.9e}\n", arrayData.constAt(m)))
                     return false;
@@ -71,13 +71,13 @@ template <> class GenericItemContainer<Array2D<Array<double>>> : public GenericI
         int nRows = parser.argi(0), nColumns = parser.argi(1);
         thisData.initialise(nRows, nColumns, parser.argb(2));
 
-        for (int n = 0; n < thisData.linearArraySize(); ++n)
+        for (auto n = 0; n < thisData.linearArraySize(); ++n)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
             int nItems = parser.argi(0);
             thisData.linearArray()[n].createEmpty(nItems);
-            for (int m = 0; m < nItems; ++m)
+            for (auto m = 0; m < nItems; ++m)
             {
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                     return false;
@@ -123,7 +123,7 @@ template <> class GenericItemContainer<Array2D<Array<double>>> : public GenericI
             }
 
             // Now broadcast Array elements
-            for (int n = 0; n < data_.linearArraySize(); ++n)
+            for (auto n = 0; n < data_.linearArraySize(); ++n)
             {
                 if (!procPool.broadcast(data_.linearArray()[n], root))
                     return false;
@@ -156,7 +156,7 @@ template <> class GenericItemContainer<Array2D<Array<double>>> : public GenericI
 
             // Resize and receive array
             data_.initialise(nRows, nColumns, half);
-            for (int n = 0; n < data_.linearArraySize(); ++n)
+            for (auto n = 0; n < data_.linearArraySize(); ++n)
             {
                 if (!procPool.broadcast(data_.linearArray()[n], root))
                     return false;
@@ -181,7 +181,7 @@ template <> class GenericItemContainer<Array2D<Array<double>>> : public GenericI
                                     procPool.poolRank(), data_.halved());
 
         // Keep it simple (and slow) and check/send one object at a time
-        for (int n = 0; n < data_.linearArraySize(); ++n)
+        for (auto n = 0; n < data_.linearArraySize(); ++n)
             if (!procPool.equality(data_.linearArray()[n]))
                 return Messenger::error("Array<double> index {} is not equivalent (process {}.\n", procPool.poolRank());
 #endif

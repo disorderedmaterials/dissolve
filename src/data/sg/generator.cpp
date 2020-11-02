@@ -68,7 +68,7 @@ bool SymmetryGenerator::set(std::string_view s)
     matrix_.zero();
 
     // Loop over arguments (equivalent to rows in matrix) and set parameters
-    for (int n = 0; n < 3; ++n)
+    for (auto n = 0; n < 3; ++n)
     {
         // Step through characters in 'part', adding until we find a (second) 'delimiting' character
         std::string subString;

@@ -57,7 +57,7 @@ Matrix4 Matrix4::operator*(const Matrix4 &B) const
 Matrix4 Matrix4::operator*(const double a) const
 {
     Matrix4 AB;
-    for (int n = 0; n < 16; ++n)
+    for (auto n = 0; n < 16; ++n)
         AB.matrix_[n] = matrix_[n] * a;
     return AB;
 }
@@ -65,7 +65,7 @@ Matrix4 Matrix4::operator*(const double a) const
 Matrix4 Matrix4::operator+(const Matrix4 &B) const
 {
     Matrix4 A;
-    for (int n = 0; n < 16; ++n)
+    for (auto n = 0; n < 16; ++n)
         A[n] = matrix_[n] + B.matrix_[n];
     return A;
 }
@@ -73,7 +73,7 @@ Matrix4 Matrix4::operator+(const Matrix4 &B) const
 Matrix4 Matrix4::operator-(const Matrix4 &B) const
 {
     Matrix4 A;
-    for (int n = 0; n < 16; ++n)
+    for (auto n = 0; n < 16; ++n)
         A[n] = matrix_[n] - B.matrix_[n];
     return A;
 }
@@ -483,7 +483,7 @@ void Matrix4::adjustColumn(int col, Vec4<double> vec)
 double Matrix4::columnMagnitude(int column) const
 {
     double mag = 0.0;
-    for (int n = column * 4; n < column * 4 + 4; ++n)
+    for (auto n = column * 4; n < column * 4 + 4; ++n)
         mag += (matrix_[n] * matrix_[n]);
     return sqrt(mag);
 }
@@ -508,8 +508,8 @@ void Matrix4::columnMultiply(Vec3<double> vec)
 // Normalise specified column to 1
 void Matrix4::columnNormalise(int col)
 {
-    double mag = 1.0 / sqrt(matrix_[col * 4] * matrix_[col * 4] + matrix_[col * 4 + 1] * matrix_[col * 4 + 1] +
-                            matrix_[col * 4 + 2] * matrix_[col * 4 + 2] + matrix_[col * 4 + 3] * matrix_[col * 4 + 3]);
+    auto mag = 1.0 / sqrt(matrix_[col * 4] * matrix_[col * 4] + matrix_[col * 4 + 1] * matrix_[col * 4 + 1] +
+                          matrix_[col * 4 + 2] * matrix_[col * 4 + 2] + matrix_[col * 4 + 3] * matrix_[col * 4 + 3]);
     matrix_[col * 4] *= mag;
     matrix_[col * 4 + 1] *= mag;
     matrix_[col * 4 + 2] *= mag;

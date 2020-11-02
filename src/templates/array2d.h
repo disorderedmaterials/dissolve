@@ -49,13 +49,13 @@ template <class A> class Array2D
     void operator=(const A value)
     {
         // Copy source data elements
-        for (int row = 0; row < nRows_; ++row)
+        for (auto row = 0; row < nRows_; ++row)
         {
             if (half_)
-                for (int column = row; column < nColumns_; ++column)
+                for (auto column = row; column < nColumns_; ++column)
                     array_[rowOffsets_[row] + column - row] = value;
             else
-                for (int column = 0; column < nColumns_; ++column)
+                for (auto column = 0; column < nColumns_; ++column)
                     array_[rowOffsets_[row] + column] = value;
         }
     }
@@ -66,13 +66,13 @@ template <class A> class Array2D
         initialise(source.nRows_, source.nColumns_, source.half_);
 
         // Copy source data elements
-        for (int row = 0; row < nRows_; ++row)
+        for (auto row = 0; row < nRows_; ++row)
         {
             if (half_)
-                for (int column = row; column < nColumns_; ++column)
+                for (auto column = row; column < nColumns_; ++column)
                     array_[rowOffsets_[row] + column - row] = source.array_[rowOffsets_[row] + column - row];
             else
-                for (int column = 0; column < nColumns_; ++column)
+                for (auto column = 0; column < nColumns_; ++column)
                     array_[rowOffsets_[row] + column] = source.array_[rowOffsets_[row] + column];
         }
     }
@@ -125,7 +125,7 @@ template <class A> class Array2D
         {
             linearSize_ = nRows_ * nColumns_;
             array_ = new A[linearSize_];
-            for (int n = 0; n < nRows_; ++n)
+            for (auto n = 0; n < nRows_; ++n)
                 rowOffsets_[n] = n * nColumns_;
         }
     }
@@ -170,16 +170,16 @@ template <class A> class Array2D
             initialise(nRows_ + 1, nCols, half_);
 
         // Copy old data back in
-        for (int n = 0; n < oldArray.nRows_; ++n)
+        for (auto n = 0; n < oldArray.nRows_; ++n)
         {
-            for (int m = 0; m < oldArray.nColumns_; ++m)
+            for (auto m = 0; m < oldArray.nColumns_; ++m)
                 at(n, m) = oldArray.at(n, m);
         }
     }
     // Set row
     void setRow(int row, A value)
     {
-        for (int n = 0; n < nColumns_; ++n)
+        for (auto n = 0; n < nColumns_; ++n)
             at(row, n) = value;
     }
     // Return specified element as reference
@@ -315,25 +315,25 @@ template <class A> class Array2D
     // Operator+= (add to all)
     void operator+=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] += value;
     }
     // Operator-= (subtract from all)
     void operator-=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] -= value;
     }
     // Operator*= (multiply all)
     void operator*=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] *= value;
     }
     // Operator/= (divide all)
     void operator/=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] /= value;
     }
     // Operator+= (matrix addition)
@@ -346,7 +346,7 @@ template <class A> class Array2D
                              nColumns_, B.nRows_, B.nColumns_);
             return;
         }
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] += B.constLinearValue(n);
     }
     // Operator-= (matrix subtraction)
@@ -359,7 +359,7 @@ template <class A> class Array2D
                              nColumns_, B.nRows_, B.nColumns_);
             return;
         }
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] -= B.constLinearValue(n);
     }
     // Operator* (matrix multiply)
@@ -376,7 +376,7 @@ template <class A> class Array2D
         Array2D<A> C(nRows_, B.nColumns_);
         int colB, i;
         double x;
-        for (int rowA = 0; rowA < nRows_; ++rowA)
+        for (auto rowA = 0; rowA < nRows_; ++rowA)
         {
             for (colB = 0; colB < B.nColumns_; ++colB)
             {
@@ -400,10 +400,10 @@ template <class A> class Array2D
     void print(std::string_view title = "Array2D<A>") const
     {
         Messenger::print("'{}' : {} rows x {} columns:\n", title, nRows_, nColumns_);
-        for (int row = 0; row < nRows_; ++row)
+        for (auto row = 0; row < nRows_; ++row)
         {
             std::string line;
-            for (int column = 0; column < nColumns_; ++column)
+            for (auto column = 0; column < nColumns_; ++column)
                 line += fmt::format(" {:e}", constAt(row, column));
             Messenger::print("R{:2d} :{}\n", row, line);
         }
@@ -414,9 +414,9 @@ template <class A> class Array2D
     Array2D<A> transposed() const
     {
         Array2D<A> result(nColumns_, nRows_);
-        for (int r = 0; r < nRows_; ++r)
+        for (auto r = 0; r < nRows_; ++r)
         {
-            for (int c = 0; c < nColumns_; ++c)
+            for (auto c = 0; c < nColumns_; ++c)
                 result.at(c, r) = constAt(r, c);
         }
         return result;

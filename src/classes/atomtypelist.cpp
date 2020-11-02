@@ -288,7 +288,7 @@ bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     auto nItems = parser.argi(0);
-    for (int n = 0; n < nItems; ++n)
+    for (auto n = 0; n < nItems; ++n)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
@@ -303,7 +303,7 @@ bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
         // types_.emplace_back(types_.size(), atomType, population);
         types_.emplace_back(atomType, population, fraction, boundCoherent);
         auto &atd = types_.back();
-        for (int i = 0; i < nIsotopes; ++i)
+        for (auto i = 0; i < nIsotopes; ++i)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
@@ -359,7 +359,7 @@ bool AtomTypeList::broadcast(ProcessPool &procPool, const int root, const CoreDa
 
         // Clear list and reconstruct
         types_.clear();
-        for (int n = 0; n < count; ++n)
+        for (auto n = 0; n < count; ++n)
         {
             // Slaves must create a suitable structure first, and then join the broadcast
             std::string typeName;

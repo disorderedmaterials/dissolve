@@ -145,7 +145,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     }
 
     // Delete temporary arrays
-    for (int n = 0; n < nTypes; ++n)
+    for (auto n = 0; n < nTypes; ++n)
     {
         delete[] r[n];
         delete[] binss[n];
@@ -310,7 +310,7 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
 
     // Loop over molecules...
     Atom *i, *j;
-    for (int m = start; m < cfg->nMolecules(); m += stride)
+    for (auto m = start; m < cfg->nMolecules(); m += stride)
     {
         std::shared_ptr<Molecule> mol = cfg->molecule(m);
         std::vector<Atom *> atoms = mol->atoms();
@@ -392,9 +392,9 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
         unweightedgr = originalgr;
     else
     {
-        for (int i = 0; i < unweightedgr.nAtomTypes(); ++i)
+        for (auto i = 0; i < unweightedgr.nAtomTypes(); ++i)
         {
-            for (int j = i; j < unweightedgr.nAtomTypes(); ++j)
+            for (auto j = i; j < unweightedgr.nAtomTypes(); ++j)
             {
                 unweightedgr.boundPartial(i, j).copyArrays(originalgr.boundPartial(i, j));
                 unweightedgr.unboundPartial(i, j).copyArrays(originalgr.unboundPartial(i, j));
@@ -405,9 +405,9 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
     }
 
     // Remove bound partial from full partial
-    for (int i = 0; i < unweightedgr.nAtomTypes(); ++i)
+    for (auto i = 0; i < unweightedgr.nAtomTypes(); ++i)
     {
-        for (int j = i; j < unweightedgr.nAtomTypes(); ++j)
+        for (auto j = i; j < unweightedgr.nAtomTypes(); ++j)
             unweightedgr.partial(i, j) -= originalgr.boundPartial(i, j);
     }
 
@@ -479,9 +479,9 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
         // 			// Add contributions from this SpeciesIntra only
         // 			std::shared_ptr<const Molecule>* molecules = cfg->molecules().array();
         // 			std::shared_ptr<const Molecule> mol;
-        // 			for (int n=0; n<molecules.nItems(); ++n, mol = molecules.at(n))
+        // 			for (auto n=0; n<molecules.nItems(); ++n, mol = molecules.at(n))
         // 			{
-        // 				for (int n=bondPointers.nItems()-1; n>=0; --n)
+        // 				for (auto n=bondPointers.nItems()-1; n>=0; --n)
         // 				{
         // 					Bond* b = bondPointers[n];
         // 					if (b->speciesBond()->parameterSource() != intra) continue;
@@ -507,7 +507,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
         // i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
         // 			{
         // 				typeJ = typeI;
-        // 				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())
+        // 				for (auto j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())
         // 				{
         // 					if (tempgr.isBoundPartialEmpty(i, j)) continue;
         //
@@ -535,11 +535,11 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
         // 		PointerArray<Angle> anglePointers;
         // 		anglePointers.initialise(cfg->nAngles());
         // 		Angle** angles = cfg->angles().array();
-        // 		for (int n=0; n<cfg->nAngles(); ++n) anglePointers.append(angles[n]);
+        // 		for (auto n=0; n<cfg->nAngles(); ++n) anglePointers.append(angles[n]);
         //
         // 		// 1) Assemble a list of unique (in terms of parameters) SpeciesIntra pointers, accompanied by
         // their associated SpeciesBond 		RefDataList<SpeciesIntra,SpeciesAngle*> angleIntra;
-        // for (int n=0; n<cfg->nAngles(); ++n)
+        // for (auto n=0; n<cfg->nAngles(); ++n)
         // 		{
         // 			SpeciesAngle* sa = angles[n]->speciesAngle();
         // 			angleIntra.addUnique(sa->parameterSource(), sa);
@@ -554,7 +554,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
         // 			tempgr.reset();
         //
         // 			// Add contributions from this SpeciesIntra only
-        // 			for (int n=anglePointers.nItems()-1; n>=0; --n)
+        // 			for (auto n=anglePointers.nItems()-1; n>=0; --n)
         // 			{
         // 				Angle* a = anglePointers[n];
         // 				if (a->speciesAngle()->parameterSource() != intra) continue;
@@ -580,7 +580,7 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
         // i=0; i<tempgr.nAtomTypes(); ++i, typeI = typeI->next())
         // 			{
         // 				typeJ = typeI;
-        // 				for (int j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())
+        // 				for (auto j=i; j<tempgr.nAtomTypes(); ++j, typeJ = typeJ->next())
         // 				{
         // 					if (tempgr.isBoundPartialEmpty(i, j)) continue;
         //

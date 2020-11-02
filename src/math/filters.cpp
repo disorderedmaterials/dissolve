@@ -24,7 +24,7 @@ void Filters::convolve(Data1D &data, const BroadeningFunction &function, bool va
     // parameter
     double xCentre, xBroad, norm;
     if (variableOmega)
-        for (int n = 0; n < x.nItems(); ++n)
+        for (auto n = 0; n < x.nItems(); ++n)
         {
             // Grab x value as our current xCentre
             xCentre = x.constAt(n);
@@ -33,7 +33,7 @@ void Filters::convolve(Data1D &data, const BroadeningFunction &function, bool va
             norm = (normalise ? function.discreteKernelNormalisation(xDelta, xCentre) : 1.0);
 
             // Inner loop over whole array
-            for (int m = 0; m < x.nItems(); ++m)
+            for (auto m = 0; m < x.nItems(); ++m)
             {
                 xBroad = x.constAt(m) - xCentre;
                 newY[m] += y.constAt(n) * function.y(xBroad, xCentre) * norm;
@@ -44,13 +44,13 @@ void Filters::convolve(Data1D &data, const BroadeningFunction &function, bool va
         // Get normalisation for this convolution
         norm = (normalise ? function.discreteKernelNormalisation(xDelta) : 1.0);
 
-        for (int n = 0; n < x.nItems(); ++n)
+        for (auto n = 0; n < x.nItems(); ++n)
         {
             // Grab x value as our current xCentre
             xCentre = x.constAt(n);
 
             // Inner loop over whole array
-            for (int m = 0; m < x.nItems(); ++m)
+            for (auto m = 0; m < x.nItems(); ++m)
             {
                 xBroad = x.constAt(m) - xCentre;
                 newY[m] += y.constAt(n) * function.y(xBroad) * norm;
@@ -74,7 +74,7 @@ void Filters::convolve(double xCentre, double value, const BroadeningFunction &f
 
     // Loop over existing datapoints
     double xBroad;
-    for (int n = 0; n < x.nItems(); ++n)
+    for (auto n = 0; n < x.nItems(); ++n)
     {
         xBroad = x.constAt(n) - xCentre;
         y[n] += value * function.y(xBroad);
@@ -84,7 +84,7 @@ void Filters::convolve(double xCentre, double value, const BroadeningFunction &f
 // Apply Kolmogorov–Zurbenko filter
 void Filters::kolmogorovZurbenko(Data1D &data, int k, int m, bool normalised)
 {
-    for (int iteration = 0; iteration < k; ++iteration)
+    for (auto iteration = 0; iteration < k; ++iteration)
         normalised ? normalisedMovingAverage(data, m) : movingAverage(data, m);
 }
 
@@ -209,7 +209,7 @@ double Filters::subtractAverage(Data1D &data, double xStart)
 
     double sum = 0.0;
     auto nPoints = 0;
-    for (int n = 0; n < x.nItems(); ++n)
+    for (auto n = 0; n < x.nItems(); ++n)
     {
         if (x.constAt(n) >= xStart)
         {
@@ -228,7 +228,7 @@ void Filters::trim(Data1D &data, double xMin, double xMax, bool interpolateEnds,
 {
     Array<double> newX, newY;
     const auto &x = data.constXAxis();
-    for (int n = 0; n < x.nItems(); ++n)
+    for (auto n = 0; n < x.nItems(); ++n)
     {
         if (x.constAt(n) < xMin)
             continue;
@@ -281,7 +281,7 @@ void Filters::convertBinBoundaries(Data1D &data)
     // Assume that input x values are histogram bin left-boundaries, so x(n) = 0.5[x(n)+x(n_1)]
     Array<double> &x = data.xAxis();
     double a = x[0], b;
-    for (int n = 0; n < data.nValues() - 1; ++n)
+    for (auto n = 0; n < data.nValues() - 1; ++n)
     {
         b = x[n + 1];
         x[n] = 0.5 * (a + b);

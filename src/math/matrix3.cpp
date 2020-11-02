@@ -34,7 +34,7 @@ Matrix3 Matrix3::operator*(const Matrix3 &B) const
 Matrix3 Matrix3::operator*(const double a) const
 {
     Matrix3 AB;
-    for (int n = 0; n < 9; ++n)
+    for (auto n = 0; n < 9; ++n)
         AB.matrix_[n] = matrix_[n] * a;
     return AB;
 }
@@ -42,7 +42,7 @@ Matrix3 Matrix3::operator*(const double a) const
 Matrix3 Matrix3::operator+(const Matrix3 &B) const
 {
     Matrix3 A;
-    for (int n = 0; n < 9; ++n)
+    for (auto n = 0; n < 9; ++n)
         A[n] = matrix_[n] + B.matrix_[n];
     return A;
 }
@@ -50,7 +50,7 @@ Matrix3 Matrix3::operator+(const Matrix3 &B) const
 Matrix3 Matrix3::operator-(const Matrix3 &B) const
 {
     Matrix3 A;
-    for (int n = 0; n < 9; ++n)
+    for (auto n = 0; n < 9; ++n)
         A[n] = matrix_[n] - B.matrix_[n];
     return A;
 }
@@ -267,7 +267,7 @@ double Matrix3::value(int n) const { return matrix_[n]; }
 double Matrix3::max() const
 {
     auto maxId = 0;
-    for (int n = 1; n < 9; ++n)
+    for (auto n = 1; n < 9; ++n)
         if (matrix_[n] > matrix_[maxId])
             maxId = n;
     return matrix_[maxId];
@@ -352,8 +352,8 @@ void Matrix3::columnMultiply(Vec3<double> vec)
 // Normalise specified column to 1
 void Matrix3::columnNormalise(int col)
 {
-    double mag = 1.0 / sqrt(matrix_[col * 3] * matrix_[col * 3] + matrix_[col * 3 + 1] * matrix_[col * 3 + 1] +
-                            matrix_[col * 3 + 2] * matrix_[col * 3 + 2]);
+    auto mag = 1.0 / sqrt(matrix_[col * 3] * matrix_[col * 3] + matrix_[col * 3 + 1] * matrix_[col * 3 + 1] +
+                          matrix_[col * 3 + 2] * matrix_[col * 3 + 2]);
     matrix_[col * 3] *= mag;
     matrix_[col * 3 + 1] *= mag;
     matrix_[col * 3 + 2] *= mag;

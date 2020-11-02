@@ -58,7 +58,7 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const
         i = sp->atom(indexI);
         rI = i->r();
 
-        for (int indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
+        for (auto indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
         {
             j = sp->atom(indexJ);
 
@@ -145,7 +145,7 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
 
     std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
     std::shared_ptr<const Molecule> mol;
-    for (int m = start; m < cfg->nMolecules(); m += stride)
+    for (auto m = start; m < cfg->nMolecules(); m += stride)
     {
         // Get Molecule pointer
         mol = molecules[m];

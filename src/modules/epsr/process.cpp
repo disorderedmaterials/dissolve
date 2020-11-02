@@ -342,7 +342,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             deltaSQMax = std::min(x1.lastValue(), simulatedFQ.xAxis().lastValue());
 
         double x;
-        for (int n = 0; n < x1.nItems(); ++n)
+        for (auto n = 0; n < x1.nItems(); ++n)
         {
             // Grab experimental data x value
             x = x1.constAt(n);
@@ -636,7 +636,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (procPool.isMaster())
         {
             Data1D *generatedArray = estimatedSQ.linearArray();
-            for (int n = 0; n < estimatedSQ.linearArraySize(); ++n)
+            for (auto n = 0; n < estimatedSQ.linearArraySize(); ++n)
             {
                 // generatedArray[n].save(generatedArray[n].name());
                 Data1DExportFileFormat exportFormat(generatedArray[n].name());
@@ -709,7 +709,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 weight *= 0.5;
 
             // Store fluctuation coefficients ready for addition to potential coefficients later on.
-            for (int n = 0; n < ncoeffp; ++n)
+            for (auto n = 0; n < ncoeffp; ++n)
                 fluctuationCoefficients.at(i, j, n) += weight * fitCoefficients.constAt(n);
         });
 
@@ -733,12 +733,12 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Perform smoothing of the fluctuation coefficients before we sum them into the potential (the
             // un-smoothed coefficients are stored)
             Data1D smoothedCoefficients;
-            for (int n = 0; n < ncoeffp; ++n)
+            for (auto n = 0; n < ncoeffp; ++n)
                 smoothedCoefficients.addPoint(n, fluctuationCoefficients.constAt(i, j, n));
             Filters::kolmogorovZurbenko(smoothedCoefficients, 3, 5);
 
             // Add in fluctuation coefficients
-            for (int n = 0; n < ncoeffp; ++n)
+            for (auto n = 0; n < ncoeffp; ++n)
                 potCoeff[n] += weighting * smoothedCoefficients.value(n);
 
             // Set first term to zero (following EPSR)
@@ -832,7 +832,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                               LineParser fileParser;
                               if (!fileParser.openOutput(fmt::format("PCof-{}-{}.txt", at1->name(), at2->name())))
                                   return procPool.decideFalse();
-                              for (int n = 0; n < potCoeff.nItems(); ++n)
+                              for (auto n = 0; n < potCoeff.nItems(); ++n)
                                   if (!fileParser.writeLineF("{}\n", potCoeff[n]))
                                       return procPool.decideFalse();
                               fileParser.closeFiles();

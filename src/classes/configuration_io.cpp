@@ -52,7 +52,7 @@ bool Configuration::write(LineParser &parser) const
     // Write all Atoms - for each write index and coordinates
     if (!parser.writeLineF("{}  # nAtoms\n", atoms_.nItems()))
         return false;
-    for (int n = 0; n < atoms_.nItems(); ++n)
+    for (auto n = 0; n < atoms_.nItems(); ++n)
     {
         const Atom *i = atoms_.constValue(n);
         if (!parser.writeLineF("{} {:e} {:e} {:e}\n", i->molecule()->arrayIndex(), i->x(), i->y(), i->z()))
@@ -113,7 +113,7 @@ bool Configuration::read(LineParser &parser, const List<Species> &availableSpeci
 
         // Set Species pointers for this range of Molecules
         auto nMols = parser.argi(0);
-        for (int n = 0; n < nMols; ++n)
+        for (auto n = 0; n < nMols; ++n)
             addMolecule(sp);
 
         // Increase our counter
@@ -124,7 +124,7 @@ bool Configuration::read(LineParser &parser, const List<Species> &availableSpeci
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     auto nAtoms = parser.argi(0);
-    for (int n = 0; n < nAtoms; ++n)
+    for (auto n = 0; n < nAtoms; ++n)
     {
         // Each line contains molecule ID and coordinates only
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

@@ -61,7 +61,7 @@ ProcedureNode::NodeExecutionResult CalculateAxisAngleProcedureNode::execute(Proc
                                                                             std::string_view prefix, GenericList &targetList)
 {
 #ifdef CHECKS
-    for (int n = 0; n < nSitesRequired(); ++n)
+    for (auto n = 0; n < nSitesRequired(); ++n)
     {
         if (sites_[n]->currentSite() == nullptr)
         {

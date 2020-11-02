@@ -133,7 +133,7 @@ void Species::print()
     Messenger::print("  Atoms:\n");
     Messenger::print("      ID   El  Type (ID)        X             Y             Z             Q\n");
     Messenger::print("    ----------------------------------------------------------------------------\n");
-    for (int n = 0; n < nAtoms(); ++n)
+    for (auto n = 0; n < nAtoms(); ++n)
     {
         SpeciesAtom *i = atoms_[n];
         Messenger::print("    {:4d}  {:3}  {:4} ({:2d})  {:12.4e}  {:12.4e}  {:12.4e}  {:12.4e}\n", n + 1,

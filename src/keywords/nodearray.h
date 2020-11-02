@@ -88,7 +88,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
         if (nodeArray.nItems() != fixedArraySize)
         {
             nodeArray.initialise(fixedArraySize);
-            for (int n = 0; n < fixedArraySize; ++n)
+            for (auto n = 0; n < fixedArraySize; ++n)
                 nodeArray[n] = nullptr;
         }
     }
@@ -110,7 +110,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
                                     KeywordBase::name());
 
         // Loop over arguments
-        for (int n = startArg; n < parser.nArgs(); ++n)
+        for (auto n = startArg; n < parser.nArgs(); ++n)
         {
             // Locate the named node - don't prune by type yet (we'll check that in setNode())
             ProcedureNode *node = onlyInScope() ? parentNode()->nodeInScope(parser.argsv(startArg))
@@ -132,7 +132,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
             return true;
 
         std::string nodes;
-        for (int n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
+        for (auto n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
         {
             N *node = KeywordData<Array<N *> &>::data_[n];
             nodes += fmt::format("  '{}'", node ? node->name() : "???");
@@ -233,7 +233,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
     // Return index of the specified node, if it is in the array
     int indexOfNode(ProcedureNode *node) const
     {
-        for (int n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
+        for (auto n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
             if (KeywordData<Array<N *> &>::data_.constAt(n) == node)
                 return n;
 
@@ -244,7 +244,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
     {
         Array<ProcedureNode *> nodes(KeywordData<Array<N *> &>::data_.nItems());
 
-        for (int n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
+        for (auto n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
             nodes[n] = KeywordData<Array<N *> &>::data_.constAt(n);
 
         return nodes;
@@ -271,7 +271,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
             return;
 
         // Loop over array items
-        for (int n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
+        for (auto n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
             if (KeywordData<Array<N *> &>::data_[n] == castNode)
                 KeywordData<Array<N *> &>::data_[n] = nullptr;
     }

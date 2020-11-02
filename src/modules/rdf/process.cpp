@@ -101,7 +101,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Averaging::average<PartialSet>(cfg->moduleData(), "OriginalGR", uniqueName_, averaging, averagingScheme);
 
             // Need to rename data within the contributing datasets to avoid clashes with the averaged data
-            for (int n = averaging; n > 0; --n)
+            for (auto n = averaging; n > 0; --n)
             {
                 if (!cfg->moduleData().contains(fmt::format("OriginalGR_{}", n), uniqueName_))
                     continue;

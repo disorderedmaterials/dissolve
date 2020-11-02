@@ -118,7 +118,7 @@ bool Dissolve::iterate(int nIterations)
     iterationTimer_.zero();
     iterationTimer_.start();
 
-    for (int iter = 0; iter < nIterations; ++iter)
+    for (auto iter = 0; iter < nIterations; ++iter)
     {
         // Increase iteration counters
         ++iteration_;

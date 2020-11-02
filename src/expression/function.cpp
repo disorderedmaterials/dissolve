@@ -28,7 +28,7 @@ void ExpressionFunction::nodePrint(int offset, std::string_view prefix)
 {
     // Construct tabbed offset
     std::string tab;
-    for (int n = 0; n < offset - 1; n++)
+    for (auto n = 0; n < offset - 1; n++)
         tab += '\t';
     if (offset > 1)
         tab += "   |--> ";

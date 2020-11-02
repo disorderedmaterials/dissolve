@@ -92,7 +92,7 @@ void SpeciesRefListKeywordWidget::updateKeywordData()
 {
     // Loop over items in the QListWidget, adding the associated Speciess for any that are checked
     RefList<Species> newSelection;
-    for (int n = 0; n < ui_.SelectionList->count(); ++n)
+    for (auto n = 0; n < ui_.SelectionList->count(); ++n)
     {
         QListWidgetItem *item = ui_.SelectionList->item(n);
         if (item->checkState() == Qt::Checked)

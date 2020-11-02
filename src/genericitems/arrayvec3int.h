@@ -47,7 +47,7 @@ template <> class GenericItemContainer<Array<Vec3<int>>> : public GenericItem
     {
         parser.writeLineF("{}\n", data_.nItems());
         Vec3<int> *array = data_.array();
-        for (int n = 0; n < data_.nItems(); ++n)
+        for (auto n = 0; n < data_.nItems(); ++n)
         {
             if (!parser.writeLineF("{} {} {}\n", array[n].x, array[n].y, array[n].z))
                 return false;
@@ -61,7 +61,7 @@ template <> class GenericItemContainer<Array<Vec3<int>>> : public GenericItem
             return false;
         int nItems = parser.argi(0);
         data_.createEmpty(nItems);
-        for (int n = 0; n < nItems; ++n)
+        for (auto n = 0; n < nItems; ++n)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
@@ -83,7 +83,7 @@ template <> class GenericItemContainer<Array<Vec3<int>>> : public GenericItem
         if (!procPool.equality(data_.nItems()))
             return false;
         // Keep it simple (and slow) and check/send one value at a time
-        for (int n = 0; n < data_.nItems(); ++n)
+        for (auto n = 0; n < data_.nItems(); ++n)
             if (!procPool.equality(data_.constAt(n)))
                 return false;
         return true;

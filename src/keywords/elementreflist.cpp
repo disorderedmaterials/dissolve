@@ -26,7 +26,7 @@ int ElementRefListKeyword::maxArguments() const { return 999; }
 bool ElementRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Loop over arguments (which are Element names) and add them to our list
-    for (int n = startArg; n < parser.nArgs(); ++n)
+    for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Do we recognise the Element?
         Element *el = Elements::elementPointer(parser.argsv(n));

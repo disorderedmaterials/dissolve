@@ -273,7 +273,7 @@ bool PartialSet::save() const
         auto &bound = boundPartials_.constAt(typeI, typeJ);
         auto &unbound = unboundPartials_.constAt(typeI, typeJ);
         parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits_, "Full", "Bound", "Unbound");
-        for (int n = 0; n < full.nValues(); ++n)
+        for (auto n = 0; n < full.nValues(); ++n)
             parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.constXAxis(n), full.constValue(n),
                               bound.constValue(n), unbound.constValue(n));
         parser.closeFiles();
@@ -420,7 +420,7 @@ void PartialSet::calculateRDF(Data1D &destination, Histogram1D &histogram, doubl
     destination.clear();
 
     double shellVolume, factor, r = 0.5 * delta, lowerShellLimit = 0.0, numberDensity = nSurrounding / boxVolume;
-    for (int n = 0; n < nBins; ++n)
+    for (auto n = 0; n < nBins; ++n)
     {
         shellVolume = (4.0 / 3.0) * PI * (pow(lowerShellLimit + delta, 3.0) - pow(lowerShellLimit, 3.0));
         factor = nCentres * (shellVolume * numberDensity);
@@ -487,9 +487,9 @@ void PartialSet::operator*=(const double factor)
 {
     auto nTypes = atomTypes_.nItems();
 
-    for (int n = 0; n < nTypes; ++n)
+    for (auto n = 0; n < nTypes; ++n)
     {
-        for (int m = n; m < nTypes; ++m)
+        for (auto m = n; m < nTypes; ++m)
         {
             partials_.at(n, m).values() *= factor;
             boundPartials_.at(n, m).values() *= factor;
@@ -530,9 +530,9 @@ bool PartialSet::read(LineParser &parser, CoreData &coreData)
     emptyBoundPartials_.initialise(nTypes, nTypes, true);
     emptyBoundPartials_ = false;
 
-    for (int typeI = 0; typeI < nTypes; ++typeI)
+    for (auto typeI = 0; typeI < nTypes; ++typeI)
     {
-        for (int typeJ = typeI; typeJ < nTypes; ++typeJ)
+        for (auto typeJ = typeI; typeJ < nTypes; ++typeJ)
         {
             if (!partials_.at(typeI, typeJ).read(parser, coreData))
                 return false;

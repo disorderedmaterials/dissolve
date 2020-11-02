@@ -28,7 +28,7 @@ void PoissonFit::generateApproximation(FunctionSpace::SpaceType space)
     approximateData_.initialise(referenceData_);
 
     // Sum defined functions
-    for (int n = 0; n < nPoissons_; ++n)
+    for (auto n = 0; n < nPoissons_; ++n)
         addFunction(approximateData_, space, C_.constAt(n), n);
 }
 
@@ -37,13 +37,13 @@ void PoissonFit::addFunction(Data1D &data, FunctionSpace::SpaceType space, doubl
 {
     if (space == FunctionSpace::RealSpace)
     {
-        for (int m = 0; m < data.nValues(); ++m)
+        for (auto m = 0; m < data.nValues(); ++m)
             data.value(m) += C * poisson(data.xAxis(m), nIndex);
     }
     else
     {
         // We assume here that the supplied 'data' has abscissa consistent with the precalculated data
-        for (int m = 0; m < data.nValues(); ++m)
+        for (auto m = 0; m < data.nValues(); ++m)
             data.value(m) += C * poissonFT(m, nIndex);
     }
 }
@@ -123,7 +123,7 @@ Data1D PoissonFit::approximation(FunctionSpace::SpaceType space, double factor, 
     }
 
     // Loop over defined functions
-    for (int n = 0; n < nPoissons_; ++n)
+    for (auto n = 0; n < nPoissons_; ++n)
         addFunction(approx, space, C_.constAt(n), n);
 
     approx.values() *= factor;
@@ -191,7 +191,7 @@ bool PoissonFit::saveCoefficients(std::string_view filename) const
         return false;
 
     parser.writeLineF("#   C\n");
-    for (int n = 0; n < nPoissons_; ++n)
+    for (auto n = 0; n < nPoissons_; ++n)
         parser.writeLineF("{}\n", C_.constAt(n));
 
     parser.closeFiles();
@@ -211,7 +211,7 @@ void PoissonFit::preCalculateTerms()
     sqrtOnePlusQSqSigmaSq_.initialise(referenceData_.nValues());
     oneMinusQSqSigmaSq_.initialise(referenceData_.nValues());
     arcTanQSigma_.initialise(referenceData_.nValues());
-    for (int n = 0; n < referenceData_.nValues(); ++n)
+    for (auto n = 0; n < referenceData_.nValues(); ++n)
     {
         sqrtOnePlusQSqSigmaSq_[n] = sqrt(1.0 + Q.constAt(n) * Q.constAt(n) * sigmaQ_ * sigmaQ_);
         oneMinusQSqSigmaSq_[n] = 1.0 - Q.constAt(n) * Q.constAt(n) * sigmaQ_ * sigmaQ_;
@@ -231,7 +231,7 @@ void PoissonFit::preCalculateTerms()
     double r = rStep_;
     auto deltaN = floor(rStep_ / sigmaR_ + 0.5);
     auto n = deltaN - 1;
-    for (int i = 0; i < nPoissons_; ++i)
+    for (auto i = 0; i < nPoissons_; ++i)
     {
         // Store n at this r value
         n_.add((sigmaR_ > 0.0) && (sigmaR_ <= r) ? n : 0);
@@ -253,17 +253,17 @@ void PoissonFit::updatePrecalculatedFunctions(FunctionSpace::SpaceType space, do
 
     if (space == FunctionSpace::RealSpace)
     {
-        for (int n = 0; n < nPoissons_; ++n)
+        for (auto n = 0; n < nPoissons_; ++n)
         {
-            for (int m = 0; m < referenceData_.nValues(); ++m)
+            for (auto m = 0; m < referenceData_.nValues(); ++m)
                 functions_.at(n, m) = C * poisson(referenceData_.xAxis(m), n);
         }
     }
     else
     {
-        for (int n = 0; n < nPoissons_; ++n)
+        for (auto n = 0; n < nPoissons_; ++n)
         {
-            for (int m = 0; m < referenceData_.nValues(); ++m)
+            for (auto m = 0; m < referenceData_.nValues(); ++m)
                 functions_.at(n, m) = C * poissonFT(m, n);
         }
     }
@@ -284,7 +284,7 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
 
     currentError_ = 1.0e9;
 
-    for (int loop = 0; loop < nLoops; ++loop)
+    for (auto loop = 0; loop < nLoops; ++loop)
     {
         // Index of the function in the C_ array is given by 'p'
         auto p = loop * (sampleSize / nLoops);
@@ -303,7 +303,7 @@ double PoissonFit::sweepFitC(FunctionSpace::SpaceType space, double xMin, int sa
             alphaSpace_ = space;
 
             // Set-up fitting targets
-            for (int n = 0; n < sampleSize; ++n)
+            for (auto n = 0; n < sampleSize; ++n)
             {
                 // Add the Poisson coefficients to the fitting pool - ignore any whose x centre is below rMin
                 if (((p + 1) * sigmaR_) >= xMin)
@@ -371,7 +371,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, int nPoissons, 
     alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
     // Add coefficients for minimising
-    for (int n = (ignoreZerothTerm_ ? 1 : 0); n < nPoissons_; ++n)
+    for (auto n = (ignoreZerothTerm_ ? 1 : 0); n < nPoissons_; ++n)
     {
         if (((n + 1) * sigmaR_) < rMin)
             continue;
@@ -422,7 +422,7 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, Array<double> c
     alphaSpace_ = FunctionSpace::ReciprocalSpace;
 
     // Add coefficients for minimising
-    for (int n = (ignoreZerothTerm_ ? 1 : 0); n < nPoissons_; ++n)
+    for (auto n = (ignoreZerothTerm_ ? 1 : 0); n < nPoissons_; ++n)
     {
         if (((n + 1) * sigmaR_) < rMin)
             continue;
@@ -459,14 +459,14 @@ double PoissonFit::costAnalyticC(const Array<double> &alpha)
 
     // Loop over data points, add in our Gaussian contributions, and
     double x, y, dy;
-    for (int i = 0; i < approximateData_.nValues(); ++i)
+    for (auto i = 0; i < approximateData_.nValues(); ++i)
     {
         // Get approximate data x and y for this point
         x = approximateData_.xAxis(i);
         y = approximateData_.value(i);
 
         // Add in contributions from our Gaussians
-        for (int n = 0; n < alpha.nItems(); ++n)
+        for (auto n = 0; n < alpha.nItems(); ++n)
         {
             nIndex = alphaIndex_[n];
             C = alpha.constAt(n);
@@ -488,13 +488,13 @@ double PoissonFit::costTabulatedC(const Array<double> &alpha)
 
     double y, dy;
     auto nAlpha = alpha.nItems();
-    for (int i = 0; i < approximateData_.nValues(); ++i)
+    for (auto i = 0; i < approximateData_.nValues(); ++i)
     {
         // Get approximate data x and y for this point
         y = approximateData_.value(i);
 
         // Add in contributions from our Gaussians
-        for (int n = 0; n < nAlpha; ++n)
+        for (auto n = 0; n < nAlpha; ++n)
             y += functions_.at(alphaIndex_[n], i) * alpha.constAt(n);
 
         dy = referenceData_.value(i) - y;

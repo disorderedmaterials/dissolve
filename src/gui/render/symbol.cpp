@@ -60,7 +60,7 @@ SymbolData SymbolData::symbols[] = {{0x00D7, "mult", "Multiplication Sign"},
 // Return named symbol
 SymbolData *SymbolData::symbol(QString name)
 {
-    for (int n = 0; n < nSymbols; ++n)
+    for (auto n = 0; n < nSymbols; ++n)
         if (name == symbols[n].name)
             return &symbols[n];
 

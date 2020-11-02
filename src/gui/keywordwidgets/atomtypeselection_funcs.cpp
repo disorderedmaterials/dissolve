@@ -106,7 +106,7 @@ void AtomTypeSelectionKeywordWidget::updateKeywordData()
 {
     // Loop over items in the QListWidget, adding the associated AtomTypes for any that are checked
     AtomTypeList newSelection;
-    for (int n = 0; n < ui.SelectionList->count(); ++n)
+    for (auto n = 0; n < ui.SelectionList->count(); ++n)
     {
         QListWidgetItem *item = ui.SelectionList->item(n);
         if (item->checkState() == Qt::Checked)

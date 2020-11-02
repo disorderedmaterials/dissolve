@@ -36,7 +36,7 @@ Cuboid TextPrimitiveList::boundingCuboid(FontInstance &fontInstance, const Matri
 
         // Transform the four corners of the bounding box with the text primitive's transformation matrix
         // and determine the extreme x, y, and z coordinates of the primitives in the local frame
-        for (int m = 0; m < 4; ++m)
+        for (auto m = 0; m < 4; ++m)
         {
             local = textMatrix * corners[m];
             result.updateExtremes(local);
