@@ -5,6 +5,7 @@
 
 #include "keywords/data.h"
 #include "templates/reflist.h"
+#include <optional>
 
 // Forward Declarations
 class Configuration;
@@ -13,7 +14,7 @@ class Configuration;
 class ConfigurationRefListKeyword : public KeywordData<RefList<Configuration> &>
 {
     public:
-    ConfigurationRefListKeyword(RefList<Configuration> &references, int maxListSize = -1);
+    ConfigurationRefListKeyword(RefList<Configuration> &references, std::optional<int> maxListSize = std::nullopt);
     ~ConfigurationRefListKeyword();
 
     /*
@@ -21,7 +22,7 @@ class ConfigurationRefListKeyword : public KeywordData<RefList<Configuration> &>
      */
     private:
     // Maximum number of Configurations to allow in the list (or -1 for any number)
-    int maxListSize_;
+    std::optional<int> maxListSize_;
 
     protected:
     // Determine whether current data is 'empty', and should be considered as 'not set'
@@ -29,7 +30,7 @@ class ConfigurationRefListKeyword : public KeywordData<RefList<Configuration> &>
 
     public:
     // Return maximum number of Configurations to allow in the list
-    int maxListSize() const;
+    std::optional<int> maxListSize() const;
 
     /*
      * Arguments
