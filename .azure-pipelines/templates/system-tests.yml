@@ -54,7 +54,7 @@ jobs:
       - bash: |
           cd $(System.ArtifactsDirectory)/linux-tests-parallel
           chmod u+x ./go ./dissolve-mpi
-          ./go -a -p ./dissolve-mpi
+          ./go -a -m mpirun.openmpi -p ./dissolve-mpi
         displayName: 'Run Parallel System Tests'
       - bash: |
           mkdir test-output
