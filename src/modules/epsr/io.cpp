@@ -22,6 +22,10 @@ EnumOptions<EPSRModule::EPSRPCofKeyword> &EPSRModule::epsrPCofKeywords()
         << EnumOption(EPSRModule::RepPotTypePCofKeyword, "reppottype") << EnumOption(EPSRModule::RMaxPtPCofKeyword, "rmaxpt")
         << EnumOption(EPSRModule::RMinFacPCofKeyword, "rminfac") << EnumOption(EPSRModule::RMinPtPCofKeyword, "rminpt")
         << EnumOption(EPSRModule::ROverlapPCofKeyword, "roverlap");
+
+    static EnumOptions<EPSRModule::EPSRPCofKeyword> options("PCOFKeywords", PCOFKeywordOptions);
+
+    return options;
 }
 
 // Read data from supplied pcof file
