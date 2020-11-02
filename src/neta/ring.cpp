@@ -139,35 +139,28 @@ int NETARingNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &
     for (auto ring : rings)
     {
         // Check through atoms in the ring - either in order or not - to see if the ring matches
-        if (false)
+        // Disordered search - try to match the branch definition against this ring, in any order (provide a copy of all
+        // atoms in the ring at once)
+        std::vector<const SpeciesAtom *> ringAtoms = ring.atoms();
+        for (auto node : branch_)
         {
-            // Ordered search
-        }
-        else
-        {
-            // Disordered search - try to match the branch definition against this ring, in any order (provide a copy of all
-            // atoms in the ring at once)
-            std::vector<const SpeciesAtom *> ringAtoms = ring.atoms();
-            for (auto node : branch_)
-            {
-                nodeScore = node->score(nullptr, ringAtoms);
-                if (nodeScore == NETANode::NoMatch)
-                    break;
-
-                // Match found
-                totalScore += nodeScore;
-            }
-
-            // If we didn't find a match for the ring, continue to the next one
+            nodeScore = node->score(nullptr, ringAtoms);
             if (nodeScore == NETANode::NoMatch)
-                continue;
-
-            ++nMatches;
-
-            // Don't match more than we need to - check the repeatCount
-            if (compareValues(nMatches, repeatCountOperator_, repeatCount_))
                 break;
+
+            // Match found
+            totalScore += nodeScore;
         }
+
+        // If we didn't find a match for the ring, continue to the next one
+        if (nodeScore == NETANode::NoMatch)
+            continue;
+
+        ++nMatches;
+
+        // Don't match more than we need to - check the repeatCount
+        if (compareValues(nMatches, repeatCountOperator_, repeatCount_))
+            break;
     }
 
     // Did we find the required number of ring matches?
