@@ -88,7 +88,7 @@ int main(int args, char **argv)
     // Load restart file if it exists
     Messenger::banner("Parse Restart File");
     if (options.ignoreRestartFile())
-        Messenger::print("Restart file (if it exists) will be ignored).\n");
+        Messenger::print("Restart file (if it exists) will be ignored.\n");
     else
     {
         // We may have been provided the name of a restart file to read in...
@@ -112,7 +112,7 @@ int main(int args, char **argv)
             Messenger::print("Restart file '{}' does not exist.\n", restartFile);
     }
 
-    // Iwe were just checking the input and restart files, exit now
+    // If were just checking the input and restart files, exit now
     if (options.checkInputOnly())
         return 0;
 
