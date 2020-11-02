@@ -91,7 +91,7 @@ void Messenger::outputText(std::string_view s)
     {
         // If we are redirecting to files, use the parser_
         if (redirect_)
-            parser_.writeLineF("{}", std::string(s));
+            parser_.writeLineF("{}\n", std::string(s));
         else
         {
             // Not redirecting - has an OutputHandler been defined?
@@ -105,7 +105,7 @@ void Messenger::outputText(std::string_view s)
     {
         // If we are redirecting to files, use the parser_
         if (redirect_)
-            parser_.writeLineF("{} {}", outputPrefix_, s);
+            parser_.writeLineF("{} {}\n", outputPrefix_, s);
         else
         {
             // Not redirecting - has an OutputHandler been defined?
