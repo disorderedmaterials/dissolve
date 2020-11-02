@@ -114,7 +114,11 @@ int main(int args, char **argv)
 
     // If were just checking the input and restart files, exit now
     if (options.checkInputOnly())
+    {
+        ProcessPool::finalise();
+        Messenger::ceaseRedirect();
         return 0;
+    }
 
     // Prepare for run
     if (!dissolve.prepare())
