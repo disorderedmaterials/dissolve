@@ -713,11 +713,11 @@ bool ProcessPool::wait(ProcessPool::CommunicatorType commType)
 }
 
 // Send single integer value to target process
-bool ProcessPool::send(int value, int targetWorldRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::send(int value, int targetRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     timer_.start();
-    if (MPI_Send(&value, 1, MPI_INTEGER, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS)
+    if (MPI_Send(&value, 1, MPI_INTEGER, targetRank, 0, communicator(commType)) != MPI_SUCCESS)
         return false;
     timer_.accumulate();
 #endif
@@ -725,12 +725,12 @@ bool ProcessPool::send(int value, int targetWorldRank, ProcessPool::Communicator
 }
 
 // Receive single integer value from source process
-bool ProcessPool::receive(int &value, int sourceWorldRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::receive(int &value, int sourceRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     timer_.start();
     MPI_Status status;
-    if (MPI_Recv(&value, 1, MPI_INTEGER, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS)
+    if (MPI_Recv(&value, 1, MPI_INTEGER, sourceRank, 0, communicator(commType), &status) != MPI_SUCCESS)
         return false;
     timer_.accumulate();
 #endif
@@ -738,11 +738,11 @@ bool ProcessPool::receive(int &value, int sourceWorldRank, ProcessPool::Communic
 }
 
 // Send single long integer value to target process
-bool ProcessPool::send(long int value, int targetWorldRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::send(long int value, int targetRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     timer_.start();
-    if (MPI_Send(&value, 1, MPI_LONG, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS)
+    if (MPI_Send(&value, 1, MPI_LONG, targetRank, 0, communicator(commType)) != MPI_SUCCESS)
         return false;
     timer_.accumulate();
 #endif
@@ -750,12 +750,12 @@ bool ProcessPool::send(long int value, int targetWorldRank, ProcessPool::Communi
 }
 
 // Receive single long integer value from source process
-bool ProcessPool::receive(long int &value, int sourceWorldRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::receive(long int &value, int sourceRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     timer_.start();
     MPI_Status status;
-    if (MPI_Recv(&value, 1, MPI_LONG, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS)
+    if (MPI_Recv(&value, 1, MPI_LONG, sourceRank, 0, communicator(commType), &status) != MPI_SUCCESS)
         return false;
     timer_.accumulate();
 #endif
@@ -763,11 +763,11 @@ bool ProcessPool::receive(long int &value, int sourceWorldRank, ProcessPool::Com
 }
 
 // Send single double value to target process
-bool ProcessPool::send(double value, int targetWorldRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::send(double value, int targetRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     timer_.start();
-    if (MPI_Send(&value, 1, MPI_DOUBLE, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS)
+    if (MPI_Send(&value, 1, MPI_DOUBLE, targetRank, 0, communicator(commType)) != MPI_SUCCESS)
         return false;
     timer_.accumulate();
 #endif
@@ -775,12 +775,12 @@ bool ProcessPool::send(double value, int targetWorldRank, ProcessPool::Communica
 }
 
 // Receive single double value from source process
-bool ProcessPool::receive(double &value, int sourceWorldRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::receive(double &value, int sourceRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     timer_.start();
     MPI_Status status;
-    if (MPI_Recv(&value, 1, MPI_DOUBLE, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS)
+    if (MPI_Recv(&value, 1, MPI_DOUBLE, sourceRank, 0, communicator(commType), &status) != MPI_SUCCESS)
         return false;
     timer_.accumulate();
 #endif
@@ -788,12 +788,12 @@ bool ProcessPool::receive(double &value, int sourceWorldRank, ProcessPool::Commu
 }
 
 // Send single bool value to target process
-bool ProcessPool::send(bool value, int targetWorldRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::send(bool value, int targetRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     timer_.start();
     int data = value;
-    if (MPI_Send(&data, 1, MPI_INTEGER, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS)
+    if (MPI_Send(&data, 1, MPI_INTEGER, targetRank, 0, communicator(commType)) != MPI_SUCCESS)
         return false;
     timer_.accumulate();
 #endif
@@ -801,13 +801,13 @@ bool ProcessPool::send(bool value, int targetWorldRank, ProcessPool::Communicato
 }
 
 // Receive single bool value from source process
-bool ProcessPool::receive(bool &value, int sourceWorldRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::receive(bool &value, int sourceRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     timer_.start();
     MPI_Status status;
     int result;
-    if (MPI_Recv(&result, 1, MPI_INTEGER, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS)
+    if (MPI_Recv(&result, 1, MPI_INTEGER, sourceRank, 0, communicator(commType), &status) != MPI_SUCCESS)
         return false;
     value = result;
     timer_.accumulate();
@@ -816,11 +816,11 @@ bool ProcessPool::receive(bool &value, int sourceWorldRank, ProcessPool::Communi
 }
 
 // Send integer array data to target process
-bool ProcessPool::send(int *source, int nData, int targetWorldRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::send(int *source, int nData, int targetRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     timer_.start();
-    if (MPI_Send(source, nData, MPI_INTEGER, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS)
+    if (MPI_Send(source, nData, MPI_INTEGER, targetRank, 0, communicator(commType)) != MPI_SUCCESS)
         return false;
     timer_.accumulate();
 #endif
@@ -828,12 +828,12 @@ bool ProcessPool::send(int *source, int nData, int targetWorldRank, ProcessPool:
 }
 
 // Receive integer array data from target process
-bool ProcessPool::receive(int *source, int nData, int sourceWorldRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::receive(int *source, int nData, int sourceRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     timer_.start();
     MPI_Status status;
-    if (MPI_Recv(source, nData, MPI_INTEGER, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS)
+    if (MPI_Recv(source, nData, MPI_INTEGER, sourceRank, 0, communicator(commType), &status) != MPI_SUCCESS)
         return false;
     timer_.accumulate();
 #endif
@@ -841,11 +841,11 @@ bool ProcessPool::receive(int *source, int nData, int sourceWorldRank, ProcessPo
 }
 
 // Send double array data to target process
-bool ProcessPool::send(double *source, int nData, int targetWorldRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::send(double *source, int nData, int targetRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     timer_.start();
-    if (MPI_Send(source, nData, MPI_DOUBLE, targetWorldRank, 0, communicator(commType)) != MPI_SUCCESS)
+    if (MPI_Send(source, nData, MPI_DOUBLE, targetRank, 0, communicator(commType)) != MPI_SUCCESS)
         return false;
     timer_.accumulate();
 #endif
@@ -853,12 +853,12 @@ bool ProcessPool::send(double *source, int nData, int targetWorldRank, ProcessPo
 }
 
 // Receive double array data from target process
-bool ProcessPool::receive(double *source, int nData, int sourceWorldRank, ProcessPool::CommunicatorType commType)
+bool ProcessPool::receive(double *source, int nData, int sourceRank, ProcessPool::CommunicatorType commType)
 {
 #ifdef PARALLEL
     timer_.start();
     MPI_Status status;
-    if (MPI_Recv(source, nData, MPI_DOUBLE, sourceWorldRank, 0, communicator(commType), &status) != MPI_SUCCESS)
+    if (MPI_Recv(source, nData, MPI_DOUBLE, sourceRank, 0, communicator(commType), &status) != MPI_SUCCESS)
         return false;
     timer_.accumulate();
 #endif
