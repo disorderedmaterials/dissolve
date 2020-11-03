@@ -3,12 +3,12 @@
 
 #pragma once
 
-#include "NETAParserVisitor.h"
+#include "NETAParserBaseVisitor.h"
 #include "neta/neta.h"
 #include <antlr4-runtime.h>
 
 // NETA Visitor for ANTLR
-class NETAVisitor : private NETAParserVisitor
+class NETAVisitor : private NETAParserBaseVisitor
 {
     /*
      * Creation Entry-Point
@@ -19,11 +19,13 @@ class NETAVisitor : private NETAParserVisitor
     // Encompassing forcefield for the definition (if any)
     const Forcefield *associatedForcefield_;
     // Context stack
-    std::vector<NETANode *> contextStack_;
+    std::vector<std::shared_ptr<NETANode>> contextStack_;
+    // Parse error counter
+    int errorCounter_;
 
     private:
     // Return the topmost context in the stack
-    NETANode *currentNETAContext() const;
+    std::shared_ptr<NETANode> currentNETAContext() const;
 
     public:
     // Construct description within supplied object, from given tree
@@ -33,12 +35,8 @@ class NETAVisitor : private NETAParserVisitor
      * Visitor Overrides
      */
     private:
-    antlrcpp::Any visitNeta(NETAParser::NetaContext *context) override;
     // Nodes
-    antlrcpp::Any visitNode(NETAParser::NodeContext *context) override;
-    antlrcpp::Any visitNodeSequence(NETAParser::NodeSequenceContext *context) override;
-    antlrcpp::Any visitRingOnlyNode(NETAParser::RingOnlyNodeContext *context) override;
-    antlrcpp::Any visitRingNodeSequence(NETAParser::RingNodeSequenceContext *context) override;
+    antlrcpp::Any visitOrNode(NETAParser::OrNodeContext *context) override;
     antlrcpp::Any visitConnectionNode(NETAParser::ConnectionNodeContext *context) override;
     antlrcpp::Any visitPresenceNode(NETAParser::PresenceNodeContext *context) override;
     antlrcpp::Any visitRingNode(NETAParser::RingNodeContext *context) override;

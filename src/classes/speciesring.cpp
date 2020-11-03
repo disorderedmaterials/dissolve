@@ -5,39 +5,7 @@
 #include "classes/speciesatom.h"
 #include "data/elements.h"
 
-SpeciesRing::SpeciesRing() : ListItem<SpeciesRing>() {}
-
-SpeciesRing::~SpeciesRing() {}
-
-/*
- * Atoms
- */
-
-// Set atoms in ring
-void SpeciesRing::setAtoms(const std::vector<const SpeciesAtom *> &atoms) { atoms_ = atoms; }
-
-// Return nth atom in ring
-const SpeciesAtom *SpeciesRing::atom(int n) const { return atoms_.at(n); }
-
-// Return array of atoms in ring
-const std::vector<const SpeciesAtom *> &SpeciesRing::atoms() const { return atoms_; }
-
-// Return size of ring (number of atoms in array)
-int SpeciesRing::size() const { return atoms_.size(); }
-
-// Print ring information
-void SpeciesRing::print() const
-{
-    Messenger::print("Ring({}) :", atoms_.size());
-    std::string atomString;
-    for (const auto *atom : atoms_)
-        atomString += fmt::format(" {}({})", atom->userIndex(), atom->element()->symbol());
-    Messenger::print(atomString);
-}
-
-/*
- * Comparison
- */
+SpeciesRing::SpeciesRing(const std::vector<const SpeciesAtom *> atoms) : atoms_(atoms){};
 
 bool SpeciesRing::operator==(const SpeciesRing &other)
 {
@@ -58,7 +26,7 @@ bool SpeciesRing::operator==(const SpeciesRing &other)
         return false;
 
     // Go over atoms and compare in both directions around the other ring
-    for (int n = 1; n < nAtoms; ++n)
+    for (auto n = 1; n < nAtoms; ++n)
     {
         if ((atoms_.at(indexA + n) != other.atoms_.at((indexB + n) % nAtoms)) &&
             (atoms_.at(indexA + n) != other.atoms_.at((nAtoms + indexB - n) % nAtoms)))
@@ -66,4 +34,29 @@ bool SpeciesRing::operator==(const SpeciesRing &other)
     }
 
     return true;
+}
+
+/*
+ * Atoms
+ */
+
+// Set atoms in ring
+void SpeciesRing::setAtoms(const std::vector<const SpeciesAtom *> &atoms) { atoms_ = atoms; }
+
+// Return nth atom in ring
+const SpeciesAtom *SpeciesRing::atom(int n) const { return atoms_.at(n); }
+
+// Return array of atoms in ring
+const std::vector<const SpeciesAtom *> &SpeciesRing::atoms() const { return atoms_; }
+
+// Return size of ring (number of atoms in array)
+int SpeciesRing::size() const { return atoms_.size(); }
+
+// Print ring information
+void SpeciesRing::print() const
+{
+    std::string s = fmt::format("Ring({}) :", atoms_.size());
+    for (const auto *atom : atoms_)
+        s += fmt::format(" {}({})", atom->userIndex(), atom->element()->symbol());
+    Messenger::print(s);
 }

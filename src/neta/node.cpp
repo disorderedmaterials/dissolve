@@ -5,16 +5,16 @@
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 #include "neta/connection.h"
+#include "neta/or.h"
 #include "neta/presence.h"
 #include "neta/ring.h"
-#include "templates/reflist.h"
 
 // Return enum options for NodeTypes
 EnumOptions<NETANode::NodeType> NETANode::nodeTypes()
 {
     static EnumOptionsList NETANodeTypes = EnumOptionsList()
                                            << EnumOption(BasicNode, "Basic") << EnumOption(ConnectionNode, "Connection")
-                                           << EnumOption(LogicNode, "Logic") << EnumOption(PresenceNode, "Presence")
+                                           << EnumOption(OrNode, "Or") << EnumOption(PresenceNode, "Presence")
                                            << EnumOption(RingNode, "Ring") << EnumOption(RootNode, "Root");
 
     static EnumOptions<NETANode::NodeType> options("NodeTypes", NETANodeTypes);
@@ -35,7 +35,7 @@ EnumOptions<NETANode::ComparisonOperator> NETANode::comparisonOperators()
     return options;
 }
 
-NETANode::NETANode(NETADefinition *parent, NETANode::NodeType type) : ListItem<NETANode>()
+NETANode::NETANode(NETADefinition *parent, NETANode::NodeType type)
 {
     reverseLogic_ = false;
     parent_ = parent;
@@ -77,41 +77,44 @@ bool NETANode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 // Clear all nodes
 void NETANode::clear() { branch_.clear(); }
 
-// Return last node of branch
-NETANode *NETANode::lastBranchNode() { return branch_.last(); }
+// Create logical 'or' node in the branch
+std::shared_ptr<NETAOrNode> NETANode::createOrNode()
+{
+    // Create the new node and own it
+    auto node = std::make_shared<NETAOrNode>(parent_);
+    branch_.push_back(node);
 
-// Return number of nodes defined in branch
-int NETANode::nBranchNodes() const { return branch_.nItems(); }
+    return node;
+}
 
 // Create connectivity node from current targets
-NETAConnectionNode *
+std::shared_ptr<NETAConnectionNode>
 NETANode::createConnectionNode(std::vector<std::reference_wrapper<const Element>> targetElements,
                                std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
 {
-    // Create the new node and own it
-    NETAConnectionNode *node = new NETAConnectionNode(parent_, targetElements, targetAtomTypes);
-    branch_.own(node);
+    auto node = std::make_shared<NETAConnectionNode>(parent_, targetElements, targetAtomTypes);
+    branch_.push_back(node);
 
     return node;
 }
 
 // Create presence node in the branch
-NETAPresenceNode *NETANode::createPresenceNode(std::vector<std::reference_wrapper<const Element>> targetElements,
-                                               std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
+std::shared_ptr<NETAPresenceNode>
+NETANode::createPresenceNode(std::vector<std::reference_wrapper<const Element>> targetElements,
+                             std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
 {
-    // Create the new node and own it
-    NETAPresenceNode *node = new NETAPresenceNode(parent_, targetElements, targetAtomTypes);
-    branch_.own(node);
+    auto node = std::make_shared<NETAPresenceNode>(parent_, targetElements, targetAtomTypes);
+    branch_.push_back(node);
 
     return node;
 }
 
 // Create ring node in the branch
-NETARingNode *NETANode::createRingNode()
+std::shared_ptr<NETARingNode> NETANode::createRingNode()
 {
     // Create the new node and own it
-    auto *node = new NETARingNode(parent_);
-    branch_.own(node);
+    auto node = std::make_shared<NETARingNode>(parent_);
+    branch_.push_back(node);
 
     return node;
 }
@@ -181,13 +184,12 @@ bool NETANode::compareValues(int lhsValue, ComparisonOperator op, int rhsValue)
 void NETANode::setReverseLogic() { reverseLogic_ = true; }
 
 // Evaluate the node and return its score
-int NETANode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &atomData) const
+int NETANode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &atomData) const
 {
     auto totalScore = 0;
 
-    // Loop over nodes in branch in sequence
-    ListIterator<NETANode> branchIterator(branch_);
-    while (NETANode *node = branchIterator.iterate())
+    // Loop over branch nodes in sequence
+    for (auto node : branch_)
     {
         // Get the score from the node, returning early if NoMatch is encountered
         auto nodeScore = node->score(i, atomData);

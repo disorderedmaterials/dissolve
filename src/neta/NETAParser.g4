@@ -34,10 +34,21 @@ neta: nodeSequence EOF;
 // Node Sequence
 nodeSequence: (node (Comma node)*)*;
 
+// Any Node
+node: commonNode
+| orNode
+| contextual;
+
+// 'Or' Node
+orNode: commonNode Or commonNode
+| commonNode Or orNode;
+
 // Common Nodes
-node: connectionNode
-| ringNode
-| modifier
+commonNode: connectionNode
+| ringNode;
+
+// Contextuals
+contextual: modifier
 | flag;
 
 // Ring Node Sequence
@@ -49,15 +60,15 @@ ringOnlyNode: presenceNode
 | flag;
 
 // Connection Node
-connectionNode: ConnectionKeyword targetList OpenParenthesis nodeSequence CloseParenthesis
-| ConnectionKeyword targetList;
+connectionNode: Not? ConnectionKeyword targetList OpenParenthesis nodeSequence CloseParenthesis
+| Not? ConnectionKeyword targetList;
 
 // Presence Node
-presenceNode: targetList OpenParenthesis nodeSequence CloseParenthesis
-| targetList;
+presenceNode: Not? targetList OpenParenthesis nodeSequence CloseParenthesis
+| Not? targetList;
 
 // Ring Node
-ringNode: RingKeyword OpenParenthesis ringNodeSequence CloseParenthesis;
+ringNode: Not? RingKeyword OpenParenthesis ringNodeSequence CloseParenthesis;
 
 // Target List
 elementOrType: Element

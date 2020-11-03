@@ -4,6 +4,7 @@
 #include "neta/NETAVisitor.h"
 #include "data/ff.h"
 #include "neta/NETAErrorListeners.h"
+#include "neta/or.h"
 #include "neta/presence.h"
 #include "neta/ring.h"
 #include "templates/optionalref.h"
@@ -13,7 +14,7 @@
  */
 
 // Return the topmost context in the stack
-NETANode *NETAVisitor::currentNETAContext() const
+std::shared_ptr<NETANode> NETAVisitor::currentNETAContext() const
 {
     // TODO Assert that we have a valid context?
     return contextStack_.back();
@@ -37,23 +38,25 @@ void NETAVisitor::create(NETADefinition &neta, NETAParser::NetaContext *tree, co
  * Visitor Overrides
  */
 
-antlrcpp::Any NETAVisitor::visitNeta(NETAParser::NetaContext *context) { return visitChildren(context); }
-
-antlrcpp::Any NETAVisitor::visitNode(NETAParser::NodeContext *context) { return visitChildren(context); }
-
-antlrcpp::Any NETAVisitor::visitNodeSequence(NETAParser::NodeSequenceContext *context) { return visitChildren(context); }
-
-antlrcpp::Any NETAVisitor::visitRingOnlyNode(NETAParser::RingOnlyNodeContext *context) { return visitChildren(context); }
-
-antlrcpp::Any NETAVisitor::visitRingNodeSequence(NETAParser::RingNodeSequenceContext *context)
+antlrcpp::Any NETAVisitor::visitOrNode(NETAParser::OrNodeContext *context)
 {
-    return visitChildren(context);
+    auto orLogic = currentNETAContext()->createOrNode();
+    contextStack_.push_back(orLogic);
+
+    auto result = visitChildren(context);
+
+    contextStack_.pop_back();
+
+    return true;
 }
 
 antlrcpp::Any NETAVisitor::visitConnectionNode(NETAParser::ConnectionNodeContext *context)
 {
-    NETAConnectionNode *connection = currentNETAContext()->createConnectionNode();
+    auto connection = currentNETAContext()->createConnectionNode();
     contextStack_.push_back(connection);
+
+    if (context->Not())
+        connection->setReverseLogic();
 
     auto result = visitChildren(context);
 
@@ -64,8 +67,11 @@ antlrcpp::Any NETAVisitor::visitConnectionNode(NETAParser::ConnectionNodeContext
 
 antlrcpp::Any NETAVisitor::visitPresenceNode(NETAParser::PresenceNodeContext *context)
 {
-    NETAPresenceNode *presence = currentNETAContext()->createPresenceNode();
+    auto presence = currentNETAContext()->createPresenceNode();
     contextStack_.push_back(presence);
+
+    if (context->Not())
+        presence->setReverseLogic();
 
     auto result = visitChildren(context);
 
@@ -76,8 +82,11 @@ antlrcpp::Any NETAVisitor::visitPresenceNode(NETAParser::PresenceNodeContext *co
 
 antlrcpp::Any NETAVisitor::visitRingNode(NETAParser::RingNodeContext *context)
 {
-    NETARingNode *ring = currentNETAContext()->createRingNode();
+    auto ring = currentNETAContext()->createRingNode();
     contextStack_.push_back(ring);
+
+    if (context->Not())
+        ring->setReverseLogic();
 
     auto result = visitChildren(context);
 
