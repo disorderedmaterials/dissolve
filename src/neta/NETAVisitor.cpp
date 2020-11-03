@@ -38,10 +38,6 @@ void NETAVisitor::create(NETADefinition &neta, NETAParser::NetaContext *tree, co
  * Visitor Overrides
  */
 
-antlrcpp::Any NETAVisitor::visitNeta(NETAParser::NetaContext *context) { return visitChildren(context); }
-
-antlrcpp::Any NETAVisitor::visitNode(NETAParser::NodeContext *context) { return visitChildren(context); }
-
 antlrcpp::Any NETAVisitor::visitOrNode(NETAParser::OrNodeContext *context)
 {
     auto orLogic = currentNETAContext()->createOrNode();
@@ -52,19 +48,6 @@ antlrcpp::Any NETAVisitor::visitOrNode(NETAParser::OrNodeContext *context)
     contextStack_.pop_back();
 
     return true;
-}
-
-antlrcpp::Any NETAVisitor::visitCommonNode(NETAParser::CommonNodeContext *context) { return visitChildren(context); }
-
-antlrcpp::Any NETAVisitor::visitContextual(NETAParser::ContextualContext *context) { return visitChildren(context); }
-
-antlrcpp::Any NETAVisitor::visitNodeSequence(NETAParser::NodeSequenceContext *context) { return visitChildren(context); }
-
-antlrcpp::Any NETAVisitor::visitRingOnlyNode(NETAParser::RingOnlyNodeContext *context) { return visitChildren(context); }
-
-antlrcpp::Any NETAVisitor::visitRingNodeSequence(NETAParser::RingNodeSequenceContext *context)
-{
-    return visitChildren(context);
 }
 
 antlrcpp::Any NETAVisitor::visitConnectionNode(NETAParser::ConnectionNodeContext *context)
