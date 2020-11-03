@@ -40,7 +40,8 @@ node: commonNode
 | contextual;
 
 // 'Or' Node
-orNode: commonNode Or commonNode;
+orNode: commonNode Or commonNode
+| commonNode Or orNode;
 
 // Common Nodes
 commonNode: connectionNode
