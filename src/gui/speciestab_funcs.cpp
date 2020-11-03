@@ -31,10 +31,21 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     for (int n = 2; n < 6; ++n)
         ui_.AtomTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
     // -- Geometry tables
-    ui_.BondTable->setItemDelegateForColumn(2, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<SpeciesBond::BondFunction>(SpeciesBond::bondFunctions()), dissolve.masterBonds()));
-    ui_.AngleTable->setItemDelegateForColumn(3, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<SpeciesAngle::AngleFunction>(SpeciesAngle::angleFunctions()), dissolve.masterAngles()));
-    ui_.TorsionTable->setItemDelegateForColumn(4, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions()), dissolve.masterTorsions()));
-    ui_.ImproperTable->setItemDelegateForColumn(4, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<SpeciesImproper::ImproperFunction>(SpeciesImproper::improperFunctions()), dissolve.masterImpropers()));
+    ui_.BondTable->setItemDelegateForColumn(
+        2, new IntraFormComboDelegate(this, new ComboEnumOptionsItems<SpeciesBond::BondFunction>(SpeciesBond::bondFunctions()),
+                                      dissolve.masterBonds()));
+    ui_.AngleTable->setItemDelegateForColumn(
+        3,
+        new IntraFormComboDelegate(this, new ComboEnumOptionsItems<SpeciesAngle::AngleFunction>(SpeciesAngle::angleFunctions()),
+                                   dissolve.masterAngles()));
+    ui_.TorsionTable->setItemDelegateForColumn(
+        4, new IntraFormComboDelegate(
+               this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions()),
+               dissolve.masterTorsions()));
+    ui_.ImproperTable->setItemDelegateForColumn(
+        4, new IntraFormComboDelegate(
+               this, new ComboEnumOptionsItems<SpeciesImproper::ImproperFunction>(SpeciesImproper::improperFunctions()),
+               dissolve.masterImpropers()));
     // -- Isotopologues Tree
     ui_.IsotopologuesTree->setItemDelegateForColumn(1, new NullDelegate(this));
     ui_.IsotopologuesTree->setItemDelegateForColumn(2, new IsotopeComboDelegate(this));
