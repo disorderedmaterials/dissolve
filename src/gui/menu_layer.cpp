@@ -178,7 +178,7 @@ void DissolveWindow::on_LayerCreateCalculateRDFStructureFactorAction_triggered(b
 
     // Add a plain structure factor module
     Module *module = dissolve_.createModuleInstance("SQ", newLayer);
-    module->keywords().set("SourceRDFs", rdfModule);
+    module->keywords().set<const RDFModule *>("SourceRDFs", rdfModule);
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -200,11 +200,11 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronAction_triggered(bool chec
 
     // Add a plain structure factor module
     SQModule *sqModule = dynamic_cast<SQModule *>(dissolve_.createModuleInstance("SQ", newLayer));
-    sqModule->keywords().set("SourceRDFs", rdfModule);
+    sqModule->keywords().set<const RDFModule *>("SourceRDFs", rdfModule);
 
     // Add a NeutronSQ module
     Module *module = dissolve_.createModuleInstance("NeutronSQ", newLayer);
-    module->keywords().set("SourceSQs", sqModule);
+    module->keywords().set<const SQModule *>("SourceSQs", sqModule);
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
@@ -226,15 +226,15 @@ void DissolveWindow::on_LayerCreateCalculateRDFNeutronXRayAction_triggered(bool 
 
     // Add a plain structure factor module
     SQModule *sqModule = dynamic_cast<SQModule *>(dissolve_.createModuleInstance("SQ", newLayer));
-    sqModule->keywords().set("SourceRDFs", rdfModule);
+    sqModule->keywords().set<const RDFModule *>("SourceRDFs", rdfModule);
 
     // Add a NeutronSQ module
     Module *module = dissolve_.createModuleInstance("NeutronSQ", newLayer);
-    module->keywords().set("SourceSQs", sqModule);
+    module->keywords().set<const SQModule *>("SourceSQs", sqModule);
 
     // Add an XRaySQ module
     module = dissolve_.createModuleInstance("XRaySQ", newLayer);
-    module->keywords().set("SourceSQs", sqModule);
+    module->keywords().set<const SQModule *>("SourceSQs", sqModule);
 
     // Run set-up stages for modules
     newLayer->setUpAll(dissolve_, dissolve_.worldPool());
