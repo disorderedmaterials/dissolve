@@ -85,7 +85,7 @@ void Histogram1D::setUpAxis(double axisMin, double &axisMax, double binWidth, in
     // Min, max, and bin width should be set to requested values initially
     // We will clamp the maximum to the nearest bin boundary (not less than the supplied axisMax)
     double range = axisMax - axisMin;
-    nBins = range / binWidth;
+    nBins = int(range / binWidth);
     if ((axisMin + nBins * binWidth) < axisMax)
     {
         ++nBins;
@@ -115,7 +115,7 @@ int Histogram1D::nBins() const { return nBins_; }
 bool Histogram1D::bin(double x)
 {
     // Calculate target bin
-    auto bin = (x - minimum_) / binWidth_;
+    auto bin = int((x - minimum_) / binWidth_);
 
     // Check bin range
     if ((bin < 0) || (bin >= nBins_))

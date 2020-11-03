@@ -16,8 +16,8 @@ class ProcessPool;
 class SpeciesTorsion : public SpeciesIntra
 {
     public:
-    SpeciesTorsion(const SpeciesTorsion &source);
-    SpeciesTorsion(const SpeciesTorsion &&source);
+    SpeciesTorsion(SpeciesTorsion &source);
+    SpeciesTorsion(SpeciesTorsion &&source);
     SpeciesTorsion(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr, SpeciesAtom *k = nullptr, SpeciesAtom *l = nullptr);
     ~SpeciesTorsion();
     SpeciesTorsion &operator=(const SpeciesTorsion &source);

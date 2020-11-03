@@ -27,7 +27,39 @@ SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, S
     }
 }
 
-SpeciesTorsion::SpeciesTorsion(const SpeciesTorsion &source) { this->operator=(source); }
+SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &source) { this->operator=(source); }
+
+SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &&source) : SpeciesIntra(source)
+{
+    // Detach source torsion referred to by the species atoms
+    if (source.i_ && source.j_ && source.k_ && source.l_)
+    {
+        source.i_->removeTorsion(source);
+        source.j_->removeTorsion(source);
+        source.k_->removeTorsion(source);
+        source.l_->removeTorsion(source);
+    }
+
+    // Copy data
+    i_ = source.i_;
+    j_ = source.j_;
+    k_ = source.k_;
+    l_ = source.l_;
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->addTorsion(*this, 0.5);
+        j_->addTorsion(*this, 0.5);
+        k_->addTorsion(*this, 0.5);
+        l_->addTorsion(*this, 0.5);
+    }
+    form_ = source.form_;
+
+    // Reset source data
+    source.i_ = nullptr;
+    source.j_ = nullptr;
+    source.k_ = nullptr;
+    source.l_ = nullptr;
+}
 
 SpeciesTorsion::~SpeciesTorsion() { detach(); }
 

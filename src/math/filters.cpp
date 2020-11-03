@@ -94,7 +94,8 @@ void Filters::median(Data1D &data, int length)
     // Grab y array
     Array<double> &y = data.values();
 
-    double window[length], avg, result;
+    std::vector<double> window(length);
+    double avg, result;
     int m, i = length / 2, n = length / 2, miny, maxy;
     Array<double> newY(data.nValues());
 

@@ -122,7 +122,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
             trialValues = values;
 
             // Perform a Monte Carlo move on a random parameter
-            int i = trialValues.nItems() * DissolveMath::random();
+            auto i = int(trialValues.nItems() * DissolveMath::random());
             if (i >= trialValues.nItems())
                 i = trialValues.nItems() - 1;
 

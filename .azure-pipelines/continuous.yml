@@ -63,6 +63,7 @@ stages:
               ArtifactName: 'osx-artifacts'
             displayName: 'Publish OSX Artifacts'
       - job: 'windows_serialgui'
+        timeoutInMinutes: 120
         displayName: 'Build Windows (Serial/GUI, windows-latest)'
         pool:
           vmImage: 'windows-latest' 

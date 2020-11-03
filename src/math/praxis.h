@@ -724,7 +724,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         int ok;
         double s;
         double sf1;
-        double small;
+        double smallValue;
         double sx1;
         double t2;
         double temp;
@@ -732,7 +732,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         double xm;
 
         machep = std::numeric_limits<double>::epsilon();
-        small = machep * machep;
+        smallValue = machep * machep;
         m2 = sqrt(machep);
         m4 = sqrt(m2);
         sf1 = f1;
@@ -763,7 +763,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
             t2 = s;
         }
 
-        t2 = std::max(t2, small);
+        t2 = std::max(t2, smallValue);
         t2 = std::min(t2, 0.01 * h);
 
         if (fk && f1 <= fm)
@@ -826,7 +826,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
             //
             //  Predict the minimum.
             //
-            if (d2 <= small)
+            if (d2 <= smallValue)
             {
                 if (0.0 <= d1)
                 {
@@ -898,7 +898,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         //
         //  Get a new estimate of the second derivative.
         //
-        if (small < fabs(x2 * (x2 - x1)))
+        if (smallValue < fabs(x2 * (x2 - x1)))
         {
             d2 = (x2 * (f1 - f0) - x1 * (fm - f0)) / ((x1 * x2) * (x1 - x2));
         }
@@ -910,7 +910,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
             }
         }
 
-        d2 = std::max(d2, small);
+        d2 = std::max(d2, smallValue);
 
         x1 = x2;
         fx = fm;
@@ -1973,7 +1973,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         int seed;
         double sf;
         double sl;
-        double small;
+        double smallValue;
         double t;
         double temp;
         double t2;
@@ -1997,9 +1997,9 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         //  Initialization.
         //
         machep = std::numeric_limits<double>::epsilon();
-        small = machep * machep;
-        vsmall = small * small;
-        large = 1.0 / small;
+        smallValue = machep * machep;
+        vsmall = smallValue * smallValue;
+        large = 1.0 / smallValue;
         vlarge = 1.0 / vsmall;
         m2 = sqrt(machep);
         m4 = sqrt(m2);
@@ -2036,9 +2036,9 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         fx = MinimiserBase<T>::cost(x);
 
         qf1 = fx;
-        t = small + fabs(t0);
+        t = smallValue + fabs(t0);
         t2 = t;
-        dmin = small;
+        dmin = smallValue;
         h = h0;
         h = std::max(h, 100.0 * t);
         ldt = h;
@@ -2230,7 +2230,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
                 //  If no random step was taken, V(*,KL) is the "non-conjugate"
                 //  direction along which the greatest improvement was made.
                 //
-                if (small < lds)
+                if (smallValue < lds)
                 {
                     for (j = kl - 1; k <= j; j--)
                     {
@@ -2422,7 +2422,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
                 {
                     d[i] = vsmall;
                 }
-                else if (dni < small)
+                else if (dni < smallValue)
                 {
                     d[i] = vlarge;
                 }
@@ -2438,7 +2438,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
             //
             //  Determine the smallest eigenvalue.
             //
-            dmin = std::max(d[nAlpha - 1], small);
+            dmin = std::max(d[nAlpha - 1], smallValue);
             //
             //  The ratio of the smallest to largest eigenvalue determines whether
             //  the system is ill conditioned.

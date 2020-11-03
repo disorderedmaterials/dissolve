@@ -75,10 +75,10 @@ void Data2D::initialise(const Data2D &source)
 // Initialise from supplied axis ranges
 void Data2D::initialise(double xMin, double xMax, double xBin, double yMin, double yMax, double yBin, bool withError)
 {
-    double xRange = xMax - xMin;
-    double yRange = yMax - yMin;
-    auto nXBins = xRange / xBin;
-    auto nYBins = yRange / yBin;
+    auto xRange = xMax - xMin;
+    auto yRange = yMax - yMin;
+    int nXBins = xRange / xBin;
+    int nYBins = yRange / yBin;
 
     // We will clamp the maxima to the nearest bin boundary (not less than the supplied axis maxima)
     if ((xMin + nXBins * xBin) < xMax)
@@ -88,13 +88,13 @@ void Data2D::initialise(double xMin, double xMax, double xBin, double yMin, doub
 
     // Create x_ axis array
     x_.initialise(nXBins);
-    double xCentre = xMin + xBin * 0.5;
+    auto xCentre = xMin + xBin * 0.5;
     for (int n = 0; n < nXBins; ++n, xCentre += xBin)
         x_[n] = xCentre;
 
     // Create y_ axis array
     y_.initialise(nYBins);
-    double yCentre = yMin + yBin * 0.5;
+    auto yCentre = yMin + yBin * 0.5;
     for (int n = 0; n < nYBins; ++n, yCentre += yBin)
         y_[n] = yCentre;
 

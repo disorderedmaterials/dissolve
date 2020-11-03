@@ -10,7 +10,7 @@
 DoubleExp::DoubleExp()
 {
     mantissa_ = 0.0;
-    exponent_ = 0.0;
+    exponent_ = 0;
     recalculate();
 }
 
