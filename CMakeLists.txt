@@ -76,6 +76,7 @@ if(BUILD_ANTLR_RUNTIME)
     URL               "${ANTLR_SOURCE_URL}"
     BUILD_ALWAYS      ON
     BUILD_BYPRODUCTS  "antlr4runtime/src/antlr_runtime/${ANTLR_LINK_LIB}"
+	CMAKE_ARGS        "-DCMAKE_BUILD_TYPE:STRING=Release"
     INSTALL_COMMAND   ""
     )
   ExternalProject_Get_Property(antlr_runtime source_dir)
