@@ -72,6 +72,8 @@ class Dissolve
     const List<MasterIntra> &masterAngles() const;
     // Return list of master Torsion parameters
     const List<MasterIntra> &masterTorsions() const;
+    // Return list of master Improper parameters
+    const List<MasterIntra> &masterImpropers() const;
     // Check and print MasterTerm usage
     void checkMasterTermUsage() const;
 
