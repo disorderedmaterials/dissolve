@@ -17,7 +17,7 @@ void DissolveWindow::setupIteration(int count)
     // Ensure that the simulation can run
     if (dissolve_.inputFilename().empty())
     {
-        Messenger::error("Cannot run the simulation until the file is saved.");
+        QMessageBox::warning(this, "No Input File", "You must save the file before running the simulation");
         return;
     }
 
