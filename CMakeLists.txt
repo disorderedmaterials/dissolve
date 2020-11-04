@@ -61,7 +61,7 @@ if(BUILD_ANTLR_RUNTIME)
   if(BUILD_ANTLR_ZIPFILE)
     set(ANTLR_SOURCE_URL "${BUILD_ANTLR_ZIPFILE}")
   else(BUILD_ANTLR_ZIPFILE)
-    set(ANTLR_SOURCE_URL "https://www.antlr.org/download/antlr4-cpp-runtime-4.8-source.zip")
+    set(ANTLR_SOURCE_URL "https://www.antlr.org/download/antlr4-cpp-runtime-4.7.2-source.zip")
   endif(BUILD_ANTLR_ZIPFILE)
 
   if(BUILD_ANTLR_LINK_LIB)
