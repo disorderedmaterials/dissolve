@@ -68,7 +68,8 @@ int main(int args, char **argv)
     DissolveWindow dissolveWindow(dissolve);
 
     // If an input file was specified, load it here
-    if (!dissolveWindow.openLocalFile(options.inputFile().value_or(""), options.restartFilename().value_or(""),
+    if (options.inputFile() &&
+        !dissolveWindow.openLocalFile(options.inputFile().value_or(""), options.restartFilename().value_or(""),
                                       options.ignoreRestartFile(), options.ignoreStateFile()))
     {
         ProcessPool::finalise();
@@ -76,7 +77,7 @@ int main(int args, char **argv)
     }
 
     // Iterate before launching the GUI?
-    if (options.nIterations() > 0)
+    if (options.inputFile() && options.nIterations() > 0)
     {
         // Prepare for run
         if (!dissolve.prepare())
