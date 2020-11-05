@@ -141,7 +141,7 @@ template <class A> class Array2D
             resize(nrows, ncolumns);
     }
     // Add empty row to array
-    void addRow(int nCols = -1)
+    void addRow(std::optional<unsigned int> nCols = std::nullopt)
     {
         // Copy current Array
         Array2D<A> oldArray = *this;
@@ -150,7 +150,7 @@ template <class A> class Array2D
         if (nColumns_ == 0)
         {
             // Must have been supplied the column size if we currently have no data
-            if (nCols == -1)
+            if (!nCols)
             {
                 Messenger::error("Array2D<A>::addRow() - Array is currently empty, so column size must be provided.\n");
                 return;
@@ -160,14 +160,14 @@ template <class A> class Array2D
             nCols = nColumns_;
 
         // Reinitialise the present matrix to the new size
-        if (half_ && (nRows_ == nCols))
+        if (half_ && (nRows_ == nCols.value()))
         {
             Messenger::warn("Adding a row to this Array2D<A> will force it to be rectangular, so it will no longer "
                             "be halved.\n");
-            initialise(nRows_ + 1, nCols, false);
+            initialise(nRows_ + 1, nCols.value(), false);
         }
         else
-            initialise(nRows_ + 1, nCols, half_);
+            initialise(nRows_ + 1, nCols.value(), half_);
 
         // Copy old data back in
         for (auto n = 0; n < oldArray.nRows_; ++n)
