@@ -13,6 +13,9 @@ void CheckSpeciesModule::initialise()
     // Checks
     keywords_.add("Atoms", new IntegerStringVectorKeyword(atomTypes_, 1, 1), "AtomType",
                   "Check that atom index <id> has the atom type <type>", "<id> <type>");
+    keywords_.add("Atoms", new DoubleKeyword(1.0e-3), "ChargeTolerance", "Tolerance beyond which charges are said to differ");
+    keywords_.add("Atoms", new DoubleKeyword(0.0), "TotalCharge",
+                  "Check the total charge of the species against the specified value");
     keywords_.add("Intramolecular", new IntegerDoubleVectorKeyword(bondParameters_, 2), "Bond",
                   "Check that the bond <i>-<j> has the correct parameters", "<i> <j> <p1> [p2...]");
     keywords_.add("Intramolecular", new IntegerDoubleVectorKeyword(angleParameters_, 3), "Angle",

@@ -54,6 +54,25 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Messenger::print("\n{} atoms have incorrect types.", nAtomTypesFailed);
     }
 
+    // Check total charge
+    auto nChargesFailed = 0;
+    if (keywords_.isSet("TotalCharge"))
+    {
+        Messenger::print("\nChecking total charge...\n");
+
+        auto q = sp->totalChargeOnAtoms();
+        auto qDiff = fabs(q - keywords_.asDouble("TotalCharge"));
+        if (qDiff > keywords_.asDouble("ChargeTolerance"))
+        {
+            ++nChargesFailed;
+            Messenger::print("Total charge on species is incorrect at {} e (expected = {} e).\n", q,
+                             keywords_.asDouble("TotalCharge"));
+        }
+        else
+            Messenger::print("Total charge on species is {} e, which is within the tolerance ({:12.6e} e).\n", q,
+                             keywords_.asDouble("ChargeTolerance"));
+    }
+
     // Check bond parameters
     auto nBondsFailed = 0;
     if (bondParameters_.size() != 0)
@@ -111,5 +130,5 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             });
     }
 
-    return (nAtomTypesFailed + nBondsFailed + nAnglesFailed + nTorsionsFailed + nImpropersFailed) == 0;
+    return (nAtomTypesFailed + nChargesFailed + nBondsFailed + nAnglesFailed + nTorsionsFailed + nImpropersFailed) == 0;
 }

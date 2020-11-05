@@ -14,6 +14,8 @@
 #include "data/ff/oplsaa2005/diols.h"
 #include "data/ff/oplsaa2005/noblegases.h"
 #include "data/ff/oplsaa2005/triols.h"
+#include "data/ff/pcl2019/anions.h"
+#include "data/ff/pcl2019/cations.h"
 #include "data/ff/spcfw.h"
 #include "data/ff/uff.h"
 
@@ -44,6 +46,10 @@ bool ForcefieldLibrary::registerForcefield(std::shared_ptr<Forcefield> ff)
 // Register Forcefields for use
 void ForcefieldLibrary::registerForcefields()
 {
+    registerForcefield(std::make_shared<Forcefield_Kulmala2010>());
+    registerForcefield(std::make_shared<Forcefield_Ludwig_NTf2>());
+    registerForcefield(std::make_shared<Forcefield_Ludwig_Py5>());
+    registerForcefield(std::make_shared<Forcefield_Ludwig_Py4OH>());
     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alcohols>());
     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alkanes>());
     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Alkenes>());
@@ -51,12 +57,10 @@ void ForcefieldLibrary::registerForcefields()
     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Diols>());
     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_NobleGases>());
     registerForcefield(std::make_shared<Forcefield_OPLSAA2005_Triols>());
-    registerForcefield(std::make_shared<Forcefield_Kulmala2010>());
+    registerForcefield(std::make_shared<Forcefield_PCL2019_Anions>());
+    registerForcefield(std::make_shared<Forcefield_PCL2019_Cations>());
     registerForcefield(std::make_shared<Forcefield_SPCFw>());
     registerForcefield(std::make_shared<Forcefield_UFF>());
-    registerForcefield(std::make_shared<Forcefield_Ludwig_NTf2>());
-    registerForcefield(std::make_shared<Forcefield_Ludwig_Py5>());
-    registerForcefield(std::make_shared<Forcefield_Ludwig_Py4OH>());
 }
 
 /*

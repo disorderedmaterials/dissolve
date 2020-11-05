@@ -76,7 +76,13 @@ class SpeciesImproper : public SpeciesIntra
     enum ImproperFunction
     {
         NoForm,
-        CosineForm
+        CosineForm,
+        Cos3Form,
+        Cos3CForm,
+        Cos4Form,
+        CosNForm,
+        CosNCForm,
+        UFFCosineForm
     };
     // Return enum options for ImproperFunction
     static EnumOptions<ImproperFunction> improperFunctions();
