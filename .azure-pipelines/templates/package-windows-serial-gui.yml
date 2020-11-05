@@ -13,9 +13,9 @@ steps:
       $env:PATH += ";$env:Qt5_DIR" + "\bin"
       echo $env:Qt5_DIR
       $env:MINGW_DIR = $env:Qt5_DIR
-      $env:FREETYPE_DIR += "$(Build.BinariesDirectory)\freetype-install\bin"
-      $env:FTGL_DIR += "$(Build.BinariesDirectory)\ftgl-install\bin"
-      $env:ANTLR_DIR += "$(System.DefaultWorkingDirectory)\antlr4-cpp-runtime\lib"
+      $env:FREETYPE_DIR = "$(Build.BinariesDirectory)\freetype-install\bin"
+      $env:FTGL_DIR = "$(Build.BinariesDirectory)\ftgl-install\bin"
+      $env:ANTLR_DIR = $(Get-Location).path + "\build\antlr4runtime\src\antlr_runtime\dist\Release"
       $env:DISSOLVE_DIR = $(Get-Location).path + "\build\bin"
       # Run Inno Setup Compiler
       iscc.exe /O.\ .\ci\windows\dissolve-gui.iss
