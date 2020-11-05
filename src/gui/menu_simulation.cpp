@@ -8,11 +8,18 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
-void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
+void DissolveWindow::setupIteration(int count)
 {
     // Prepare the simulation
     if (!dissolve_.prepare())
         return;
+
+    // Ensure that the simulation can run
+    if (dissolve_.inputFilename().empty())
+    {
+        QMessageBox::warning(this, "No Input File", "You must save the file before running the simulation");
+        return;
+    }
 
     // Prepare the GUI
     disableSensitiveControls();
@@ -22,8 +29,10 @@ void DissolveWindow::on_SimulationRunAction_triggered(bool checked)
     // Update the controls
     updateControlsFrame();
 
-    emit iterate(-1);
+    emit iterate(count);
 }
+
+void DissolveWindow::on_SimulationRunAction_triggered(bool checked) { setupIteration(-1); }
 
 void DissolveWindow::on_SimulationRunForAction_triggered(bool checked)
 {
@@ -33,55 +42,12 @@ void DissolveWindow::on_SimulationRunForAction_triggered(bool checked)
         QInputDialog::getInt(this, "Iterate Simulation...", "Enter the number of iterations to run", 10, 1, 1000000, 10, &ok);
     if (!ok)
         return;
-
-    // Prepare the simulation
-    if (!dissolve_.prepare())
-        return;
-
-    // Prepare the GUI
-    disableSensitiveControls();
-    Renderable::setSourceDataAccessEnabled(false);
-    dissolveState_ = DissolveWindow::RunningState;
-
-    // Update the controls
-    updateControlsFrame();
-
-    emit iterate(nIterations);
+    setupIteration(nIterations);
 }
 
-void DissolveWindow::on_SimulationStepAction_triggered(bool checked)
-{
-    // Prepare the simulation
-    if (!dissolve_.prepare())
-        return;
+void DissolveWindow::on_SimulationStepAction_triggered(bool checked) { setupIteration(1); }
 
-    // Prepare the GUI
-    disableSensitiveControls();
-    Renderable::setSourceDataAccessEnabled(false);
-    dissolveState_ = DissolveWindow::RunningState;
-
-    // Update the controls
-    updateControlsFrame();
-
-    emit iterate(1);
-}
-
-void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked)
-{
-    // Prepare the simulation
-    if (!dissolve_.prepare())
-        return;
-
-    // Prepare the GUI
-    disableSensitiveControls();
-    Renderable::setSourceDataAccessEnabled(false);
-    dissolveState_ = DissolveWindow::RunningState;
-
-    // Update the controls
-    updateControlsFrame();
-
-    emit iterate(5);
-}
+void DissolveWindow::on_SimulationStepFiveAction_triggered(bool checked) { setupIteration(5); }
 
 void DissolveWindow::on_SimulationPauseAction_triggered(bool checked)
 {
