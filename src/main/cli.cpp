@@ -28,10 +28,10 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
     app.add_option("-n,--iterations", nIterations_, "Number of iterations to run (default = 5)")->group("Basic Control");
     app.add_flag_callback("-m,--mpi-output-all", []() { Messenger::setMasterOnly(false) });
     app.add_flag("-q,--quiet", [](int count) { Messenger::setQuiet(true); },
-                  "Be quiet - don't output any messages whatsoever (output files are still written)")
+                 "Be quiet - don't output any messages whatsoever (output files are still written)")
         ->group("Basic Control");
     app.add_flag("-v,--verbose", [](int count) { Messenger::setVerbose(true); },
-                  "Print lots of additional output, useful for debugging")
+                 "Print lots of additional output, useful for debugging")
         ->group("Basic Control");
 
     // Input Files
