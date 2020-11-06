@@ -26,10 +26,10 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
 
     // Basic Control
     app.add_option("-n,--iterations", nIterations_, "Number of iterations to run (default = 5)")->group("Basic Control");
-    app.add_flag("-q,--quiet", [](int count) { Messenger::setQuiet(true); },
+    app.add_flag_callback("-q,--quiet", []() { Messenger::setQuiet(true); },
                  "Be quiet - don't output any messages whatsoever (output files are still written)")
         ->group("Basic Control");
-    app.add_flag("-v,--verbose", [](int count) { Messenger::setVerbose(true); },
+    app.add_flag_callback("-v,--verbose", []() { Messenger::setVerbose(true); },
                  "Print lots of additional output, useful for debugging")
         ->group("Basic Control");
 
@@ -60,7 +60,7 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
     // Add parallel-specific options
     if (isParallel)
     {
-        app.add_flag("-a,--all", [](int count) { Messenger::setMasterOnly(false); },
+        app.add_flag_callback("-a,--all", []() { Messenger::setMasterOnly(false); },
                      "Write output from all processes, not just master")
             ->group("Parallel Code Options");
         app.add_option("--redirect", redirectionBasename_,
