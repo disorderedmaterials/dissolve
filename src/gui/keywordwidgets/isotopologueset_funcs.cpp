@@ -23,7 +23,7 @@ IsotopologueSetKeywordWidget::IsotopologueSetKeywordWidget(QWidget *parent, Keyw
     ui_.IsotopologueTree->setItemDelegateForColumn(0, new NullDelegate(this));
     ui_.IsotopologueTree->setItemDelegateForColumn(1, new CustomComboDelegate<IsotopologueSetKeywordWidget>(
                                                           this, &IsotopologueSetKeywordWidget::availableIsotopologueNames));
-    ui_.IsotopologueTree->setItemDelegateForColumn(2, new ExponentialSpinDelegate(this));
+    ui_.IsotopologueTree->setItemDelegateForColumn(2, new ExponentialSpinDelegate(this, 0.0));
 
     // Connect signals / slots
     connect(ui_.AddButton, SIGNAL(clicked(bool)), this, SLOT(addButton_clicked(bool)));
