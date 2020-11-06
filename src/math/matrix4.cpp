@@ -4,6 +4,7 @@
 #include "math/matrix4.h"
 #include "base/messenger.h"
 #include "math/matrix3.h"
+#include <array>
 
 Matrix4::Matrix4() { setIdentity(); }
 

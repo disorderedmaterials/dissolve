@@ -6,6 +6,7 @@
 #include "base/messenger.h"
 #include "templates/list.h"
 #include "templates/vector3.h"
+#include <optional>
 
 // Array2D
 template <class A> class Array2D

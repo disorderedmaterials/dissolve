@@ -3,6 +3,7 @@
 
 #include "math/matrix3.h"
 #include "base/messenger.h"
+#include <array>
 
 Matrix3::Matrix3() { setIdentity(); }
 
