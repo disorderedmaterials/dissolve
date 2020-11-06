@@ -7,6 +7,7 @@
 #include "gui/delegates/combolist.hui"
 #include "gui/delegates/customcombodelegate.h"
 #include "gui/delegates/exponentialspin.hui"
+#include "gui/delegates/null.h"
 #include "gui/delegates/usedspeciescombo.hui"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/isotopologueset.h"
@@ -19,6 +20,7 @@ IsotopologueSetKeywordWidget::IsotopologueSetKeywordWidget(QWidget *parent, Keyw
     ui_.setupUi(dropWidget());
 
     // Set delegates for table
+    ui_.IsotopologueTree->setItemDelegateForColumn(0, new NullDelegate(this));
     ui_.IsotopologueTree->setItemDelegateForColumn(1, new CustomComboDelegate<IsotopologueSetKeywordWidget>(
                                                           this, &IsotopologueSetKeywordWidget::availableIsotopologueNames));
     ui_.IsotopologueTree->setItemDelegateForColumn(2, new ExponentialSpinDelegate(this));
