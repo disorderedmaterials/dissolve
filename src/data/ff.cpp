@@ -88,6 +88,8 @@ OptionalReferenceWrapper<const ForcefieldAtomType>
 Forcefield::determineAtomType(SpeciesAtom *i,
                               const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes)
 {
+    Messenger::printVerbose("Determining atom type for atom {} ({})\n", i->userIndex(), i->element()->symbol());
+
     // Go through AtomTypes defined for the target's element, and check NETA scores
     auto bestScore = -1;
     OptionalReferenceWrapper<const ForcefieldAtomType> bestType;
@@ -96,12 +98,19 @@ Forcefield::determineAtomType(SpeciesAtom *i,
         // Get the scoring for this type
         auto &type = typeRef.get();
         auto score = type.neta().score(i);
+        Messenger::printVerbose("  -- score for type index {} ({}) is {}.\n", type.index(), type.name(), score);
         if (score > bestScore)
         {
             bestScore = score;
             bestType = type;
         }
     }
+
+    if (bestScore == -1)
+        Messenger::printVerbose("  -- no suitable type found.");
+    else
+        Messenger::printVerbose("  Best type for atom {} is {} ({}) with a score of {}.\n", i->userIndex(),
+                                bestType->get().index(), bestType->get().name(), bestScore);
 
     return bestType;
 }

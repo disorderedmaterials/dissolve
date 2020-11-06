@@ -15,16 +15,16 @@
 #include <stdarg.h>
 #include <string.h>
 
-NETADefinition::NETADefinition() : rootNode_(this) {}
+NETADefinition::NETADefinition() { rootNode_ = std::make_shared<NETARootNode>(this); }
 
-NETADefinition::~NETADefinition() { rootNode_.clear(); }
+NETADefinition::~NETADefinition() { rootNode_->clear(); }
 
 /*
  * Data
  */
 
 // Return root node pointer
-NETARootNode *NETADefinition::rootNode() { return &rootNode_; }
+std::shared_ptr<NETARootNode> NETADefinition::rootNode() { return rootNode_; }
 
 // Creat definition from stored definition string
 bool NETADefinition::create(const Forcefield *associatedFF)
@@ -89,6 +89,6 @@ std::string_view NETADefinition::definitionString() const { return definitionStr
 // Check supplied atom to see if it matches this NETA description
 int NETADefinition::score(const SpeciesAtom *i) const
 {
-    RefList<const SpeciesAtom> matchPath;
-    return rootNode_.score(i, matchPath);
+    std::vector<const SpeciesAtom *> matchPath;
+    return rootNode_->score(i, matchPath);
 }

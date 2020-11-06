@@ -5,7 +5,8 @@
 #include "classes/speciesatom.h"
 #include "data/ffatomtype.h"
 #include "templates/dynamicarray.h"
-#include "templates/refdatalist.h"
+#include <algorithm>
+#include <map>
 
 NETAConnectionNode::NETAConnectionNode(NETADefinition *parent,
                                        std::vector<std::reference_wrapper<const Element>> targetElements,
@@ -139,29 +140,29 @@ bool NETAConnectionNode::setFlag(std::string_view flag, bool state)
  */
 
 // Evaluate the node and return its score
-int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
+int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const
 {
     // Get directly connected atoms about 'i', excluding any that have already been matched
-    RefDataList<const SpeciesAtom, int> neighbours;
+    std::map<const SpeciesAtom *, int> neighbours;
     for (const SpeciesBond &bond : i->bonds())
     {
         const auto *partner = bond.partner(i);
-        if (partner == matchPath.firstItem())
-        {
-            // We may allow the path's root atom to be matched again, if the allowRootMatch_ is set...
-            if (!allowRootMatch_)
-                continue;
-        }
-        else if (matchPath.contains(partner))
-            continue;
-        neighbours.append(partner, NETANode::NoMatch);
+
+        // Search for this species atom in the current match path
+        auto atomIt =
+            std::find_if(matchPath.begin(), matchPath.end(), [partner](const auto spAtom) { return spAtom == partner; });
+        if (atomIt == matchPath.end())
+            neighbours.emplace(partner, NETANode::NoMatch);
+        else if (atomIt == matchPath.begin() && allowRootMatch_)
+            neighbours.emplace(partner, NETANode::NoMatch);
     }
 
     // Loop over neighbour atoms
     auto nMatches = 0;
-    RefDataListIterator<const SpeciesAtom, int> neighbourIterator(neighbours);
-    while (const SpeciesAtom *j = neighbourIterator.iterate())
+    for (auto &nbr : neighbours)
     {
+        auto *j = nbr.first;
+
         // Evaluate the neighbour against our elements
         int atomScore = NETANode::NoMatch;
         for (const auto &element : allowedElements_)
@@ -170,10 +171,10 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
                 continue;
 
             // Process branch definition via the base class, using a copy of the current match path
-            RefList<const SpeciesAtom> branchMatchPath = matchPath;
+            auto branchMatchPath = matchPath;
 
             // Add ourselves to the match path so we can't backtrack
-            branchMatchPath.append(i);
+            branchMatchPath.push_back(i);
 
             auto branchScore = NETANode::score(j, branchMatchPath);
             if (branchScore == NETANode::NoMatch)
@@ -188,13 +189,21 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
         if (atomScore == NETANode::NoMatch)
             for (const ForcefieldAtomType &atomType : allowedAtomTypes_)
             {
+                // Check the element of the atom type against that of the neighbours
+                if (j->element() != &atomType.element())
+                    continue;
+
                 // Evaluate the neighbour against the atom type
                 auto typeScore = atomType.neta().score(j);
                 if (typeScore == NETANode::NoMatch)
                     continue;
 
                 // Process branch definition via the base class, using a copy of the current match path
-                RefList<const SpeciesAtom> branchMatchPath = matchPath;
+                auto branchMatchPath = matchPath;
+
+                // Add ourselves to the match path so we can't backtrack
+                branchMatchPath.push_back(i);
+
                 auto branchScore = NETANode::score(j, branchMatchPath);
                 if (branchScore == NETANode::NoMatch)
                     continue;
@@ -214,7 +223,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
         if (nBondsValue_ >= 0)
         {
             if (!compareValues(j->nBonds(), nBondsValueOperator_, nBondsValue_))
-                return NETANode::NoMatch;
+                continue;
 
             ++atomScore;
         }
@@ -231,7 +240,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
 
         // Found a match, so increase the match count and store the score
         ++nMatches;
-        neighbourIterator.currentData() = atomScore;
+        nbr.second = atomScore;
 
         // Exit early in the case of GreaterThan GreaterThanEqualTo logic
         if ((repeatCountOperator_ == NETANode::GreaterThan || repeatCountOperator_ == NETANode::GreaterThanEqualTo) &&
@@ -241,19 +250,18 @@ int NETAConnectionNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &
 
     // Did we find the required number of matches in the neighbour list?
     if (!compareValues(nMatches, repeatCountOperator_, repeatCount_))
-        return NETANode::NoMatch;
+        return reverseLogic_ ? 1 : NETANode::NoMatch;
 
     // Generate total score and add matched atoms to the path
     auto totalScore = 0;
-    neighbourIterator.restart();
-    while (const SpeciesAtom *j = neighbourIterator.iterate())
+    for (auto nbr : neighbours)
     {
-        if (neighbourIterator.currentData() == NETANode::NoMatch)
+        if (nbr.second == NETANode::NoMatch)
             continue;
 
-        totalScore += neighbourIterator.currentData();
-        matchPath.append(j);
+        totalScore += nbr.second;
+        matchPath.push_back(nbr.first);
     }
 
-    return totalScore;
+    return reverseLogic_ ? NETANode::NoMatch : totalScore;
 }

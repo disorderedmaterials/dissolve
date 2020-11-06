@@ -57,18 +57,26 @@ find_package(ANTLR REQUIRED)
 
 # Find / build ANTLR4 runtime dependency
 if(BUILD_ANTLR_RUNTIME)
+
   if(BUILD_ANTLR_ZIPFILE)
     set(ANTLR_SOURCE_URL "${BUILD_ANTLR_ZIPFILE}")
   else(BUILD_ANTLR_ZIPFILE)
-    set(ANTLR_SOURCE_URL "https://www.antlr.org/download/antlr4-cpp-runtime-4.8-source.zip")
+    set(ANTLR_SOURCE_URL "https://www.antlr.org/download/antlr4-cpp-runtime-4.7.2-source.zip")
   endif(BUILD_ANTLR_ZIPFILE)
+
+  if(BUILD_ANTLR_LINK_LIB)
+    set(ANTLR_LINK_LIB "${BUILD_ANTLR_LINK_LIB}")
+  else(BUILD_ANTLR_LINK_LIB)
+    set(ANTLR_LINK_LIB "dist/libantlr4-runtime.a")
+  endif(BUILD_ANTLR_LINK_LIB)
 
   include(ExternalProject)
   ExternalProject_Add(antlr_runtime
     PREFIX            antlr4runtime
     URL               "${ANTLR_SOURCE_URL}"
     BUILD_ALWAYS      ON
-    BUILD_BYPRODUCTS  "antlr4runtime/src/antlr_runtime/dist/libantlr4-runtime.a"
+    BUILD_BYPRODUCTS  "antlr4runtime/src/antlr_runtime/${ANTLR_LINK_LIB}"
+	CMAKE_ARGS        "-DCMAKE_BUILD_TYPE:STRING=Release"
     INSTALL_COMMAND   ""
     )
   ExternalProject_Get_Property(antlr_runtime source_dir)
@@ -76,7 +84,7 @@ if(BUILD_ANTLR_RUNTIME)
   # Tell CMake that the ExternalProject generated a library
   add_library(antlr4-runtime STATIC IMPORTED GLOBAL)
   set_property(TARGET antlr4-runtime PROPERTY
-     IMPORTED_LOCATION "${source_dir}/dist/libantlr4-runtime.a"
+     IMPORTED_LOCATION "${source_dir}/${ANTLR_LINK_LIB}"
   )
   set(ANTLRRUNTIME_INCLUDE_DIRS "${source_dir}/runtime/src")
 else(BUILD_ANTLR_RUNTIME)
@@ -242,6 +250,7 @@ set(BASIC_LINK_LIBS
   main classes module io export import neta procedure procedurenodes keywords expression genericitems base math data ff
 
   # Forcefields
+  ff_pcl2019
   ff_ludwig
   ff_oplsaa2005
 
@@ -338,6 +347,7 @@ target_link_libraries( ${target_name}
   INTERFACE
 
   CONAN_PKG::fmt
+  CONAN_PKG::CLI11
 )
 
 # Build GUI target executables
@@ -402,5 +412,6 @@ if(GUI)
     INTERFACE
 
     CONAN_PKG::fmt
+    CONAN_PKG::CLI11
   )
 endif(GUI)

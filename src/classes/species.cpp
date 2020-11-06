@@ -67,7 +67,8 @@ bool Species::checkSetUp()
     {
         if (i->atomType() == nullptr)
         {
-            Messenger::error("Atom {} ({}) has no associated AtomType.\n", i->userIndex(), i->element()->symbol());
+            Messenger::error("Atom {} ({}) of species '{}' has no associated atom type.\n", i->userIndex(),
+                             i->element()->symbol(), name_);
             ++nErrors;
         }
     }

@@ -57,9 +57,10 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     nTypes = partialSet.nAtomTypes();
     Messenger::printVerbose("Constructing local partial working arrays for {} types.\n", nTypes);
     const Box *box = cfg->box();
-    Vec3<double> *r[nTypes];
-    int maxr[nTypes], nr[nTypes];
-    int *binss[nTypes], *bins;
+    std::vector<Vec3<double> *> r(nTypes);
+    std::vector<int> maxr(nTypes), nr(nTypes);
+    std::vector<int *> binss(nTypes);
+    int *bins;
 
     n = 0;
     for (auto &atd : cfg->usedAtomTypesList())
@@ -810,34 +811,38 @@ bool RDFModule::testReferencePartials(PartialSet &setA, PartialSet &setB, double
     AtomTypeList atomTypes = setA.atomTypes();
     double error;
 
-    for_each_pair(atomTypes.begin(), atomTypes.end(), [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) {
-        // Full partial
-        error = Error::percent(setA.partial(n, m), setB.partial(n, m));
-        Messenger::print("Test reference full partial '{}-{}' has error of {:7.3f}% with calculated data and is "
-                         "{} (threshold is {:6.3f}%)\n\n",
-                         typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
-                         testThreshold);
-        if (error > testThreshold)
-            return false;
+    for_each_pair_early(
+        atomTypes.begin(), atomTypes.end(),
+        [&](int n, const AtomTypeData &typeI, int m, const AtomTypeData &typeJ) -> EarlyReturn<bool> {
+            // Full partial
+            error = Error::percent(setA.partial(n, m), setB.partial(n, m));
+            Messenger::print("Test reference full partial '{}-{}' has error of {:7.3f}% with calculated data and is "
+                             "{} (threshold is {:6.3f}%)\n\n",
+                             typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
+                             testThreshold);
+            if (error > testThreshold)
+                return false;
 
-        // Bound partial
-        error = Error::percent(setA.boundPartial(n, m), setB.boundPartial(n, m));
-        Messenger::print("Test reference bound partial '{}-{}' has error of {:7.3f}% with calculated data and "
-                         "is {} (threshold is {:6.3f}%)\n\n",
-                         typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
-                         testThreshold);
-        if (error > testThreshold)
-            return false;
+            // Bound partial
+            error = Error::percent(setA.boundPartial(n, m), setB.boundPartial(n, m));
+            Messenger::print("Test reference bound partial '{}-{}' has error of {:7.3f}% with calculated data and "
+                             "is {} (threshold is {:6.3f}%)\n\n",
+                             typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
+                             testThreshold);
+            if (error > testThreshold)
+                return false;
 
-        // Unbound reference
-        error = Error::percent(setA.unboundPartial(n, m), setB.unboundPartial(n, m));
-        Messenger::print("Test reference unbound partial '{}-{}' has error of {:7.3f}% with calculated data and "
-                         "is {} (threshold is {:6.3f}%)\n\n",
-                         typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
-                         testThreshold);
-        if (error > testThreshold)
-            return false;
-    });
+            // Unbound reference
+            error = Error::percent(setA.unboundPartial(n, m), setB.unboundPartial(n, m));
+            Messenger::print("Test reference unbound partial '{}-{}' has error of {:7.3f}% with calculated data and "
+                             "is {} (threshold is {:6.3f}%)\n\n",
+                             typeI.atomTypeName(), typeJ.atomTypeName(), error, error <= testThreshold ? "OK" : "NOT OK",
+                             testThreshold);
+            if (error > testThreshold)
+                return false;
+
+            return EarlyReturn<bool>::Continue;
+        });
 
     // Total reference data supplied?
     error = Error::percent(setA.total(), setB.total());

@@ -4,23 +4,21 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "templates/list.h"
-#include "templates/listitem.h"
-#include "templates/reflist.h"
 #include <memory>
 #include <vector>
 
 // Forward Declarations
 class Element;
 class ForcefieldAtomType;
-class NETADefinition;
-class NETAPresenceNode;
 class NETAConnectionNode;
+class NETADefinition;
+class NETAOrNode;
+class NETAPresenceNode;
 class NETARingNode;
 class SpeciesAtom;
 
 // NETA Node
-class NETANode : public ListItem<NETANode>
+class NETANode
 {
     public:
     // Node types
@@ -28,7 +26,7 @@ class NETANode : public ListItem<NETANode>
     {
         BasicNode,
         ConnectionNode,
-        LogicNode,
+        OrNode,
         PresenceNode,
         RingNode,
         RootNode,
@@ -86,24 +84,23 @@ class NETANode : public ListItem<NETANode>
      */
     protected:
     // Branch of nodes
-    List<NETANode> branch_;
+    std::vector<std::shared_ptr<NETANode>> branch_;
 
     public:
     // Clear all nodes
     void clear();
-    // Return last node of branch
-    NETANode *lastBranchNode();
-    // Return number of nodes defined in branch
-    int nBranchNodes() const;
+    // Create logical 'or' node in the branch
+    std::shared_ptr<NETAOrNode> createOrNode();
     // Create connectivity node in the branch
-    NETAConnectionNode *
+    std::shared_ptr<NETAConnectionNode>
     createConnectionNode(std::vector<std::reference_wrapper<const Element>> targetElements = {},
                          std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
     // Create presence node in the branch
-    NETAPresenceNode *createPresenceNode(std::vector<std::reference_wrapper<const Element>> targetElements = {},
-                                         std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
+    std::shared_ptr<NETAPresenceNode>
+    createPresenceNode(std::vector<std::reference_wrapper<const Element>> targetElements = {},
+                       std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
     // Create ring node in the branch
-    NETARingNode *createRingNode();
+    std::shared_ptr<NETARingNode> createRingNode();
 
     /*
      * Modifiers
@@ -141,5 +138,5 @@ class NETANode : public ListItem<NETANode>
     // Set node to use reverse logic
     void setReverseLogic();
     // Evaluate the node and return its score
-    virtual int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &atomData) const;
+    virtual int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &atomData) const;
 };

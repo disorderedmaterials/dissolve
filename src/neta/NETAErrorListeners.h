@@ -11,12 +11,25 @@ class NETADefinition;
 
 namespace NETAExceptions
 {
-
 // NETA Syntax Exception
 class NETASyntaxException : public std::exception
 {
     public:
     NETASyntaxException(std::string_view message = "Undefined NETA Syntax Exception") : message_{message} {}
+
+    private:
+    // Error message
+    std::string message_;
+
+    public:
+    virtual const char *what() const throw() { return message_.c_str(); }
+};
+
+// NETA Internal Error Exception
+class NETAInternalErrorException : public std::exception
+{
+    public:
+    NETAInternalErrorException(std::string_view message = "NETA internal error.") : message_{message} {}
 
     private:
     // Error message

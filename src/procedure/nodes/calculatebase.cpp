@@ -4,6 +4,7 @@
 #include "procedure/nodes/calculatebase.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "procedure/nodes/select.h"
 
 CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode *site0,
                                                        SelectProcedureNode *site1, SelectProcedureNode *site2,

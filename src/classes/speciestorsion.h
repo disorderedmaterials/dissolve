@@ -16,8 +16,8 @@ class ProcessPool;
 class SpeciesTorsion : public SpeciesIntra
 {
     public:
-    SpeciesTorsion(const SpeciesTorsion &source);
-    SpeciesTorsion(const SpeciesTorsion &&source);
+    SpeciesTorsion(SpeciesTorsion &source);
+    SpeciesTorsion(SpeciesTorsion &&source);
     SpeciesTorsion(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr, SpeciesAtom *k = nullptr, SpeciesAtom *l = nullptr);
     ~SpeciesTorsion();
     SpeciesTorsion &operator=(const SpeciesTorsion &source);
@@ -97,8 +97,12 @@ class SpeciesTorsion : public SpeciesIntra
     double fundamentalFrequency(double reducedMass) const;
     // Return type of this interaction
     SpeciesIntra::InteractionType type() const;
+    // Return energy for specified angle and functional form, given supplied parameters
+    static double energy(double angleInDegrees, int form, const std::vector<double> &params);
     // Return energy for specified angle
     double energy(double angleInDegrees) const;
+    // Return force multiplier for specified angle and functional form, given supplied parameters
+    static double force(double angleInDegrees, int form, const std::vector<double> &params);
     // Return force multiplier for specified angle
     double force(double angleInDegrees) const;
 };
