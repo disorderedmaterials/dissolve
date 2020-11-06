@@ -13,7 +13,7 @@ steps:
     inputs:
       versionSpec: '3.x'
   - script: |
-      choco install -y antlr4 winflexbison unzip
+      choco install -y antlr4 winflexbison
     displayName: 'Install Prerequisites'
   - script: |
       python -m pip install aqtinstall
@@ -45,13 +45,6 @@ steps:
       conan profile update settings.compiler.version=16 default
     displayName: 'Install Conan' 
   - powershell: |
-      cd $(System.DefaultWorkingDirectory)
-      $url = "https://github.com/projectdissolve/antlr4/releases/download/continuous/antlr4-cpp-runtime-windows.zip"
-      $output = "antlr4-cpp-runtime-windows.zip"
-      (New-Object System.Net.WebClient).DownloadFile($url, $output)
-      unzip $output
-    displayName: 'Retrieve ANTLR4 Runtime'
-  - powershell: |
       $ErrorActionPreference = 'Stop'
       $env:Qt5_DIR = "$(Build.BinariesDirectory)\Qt\${{ parameters.qtver }}\msvc2019_64"
       $env:PATH += ";$env:Qt5_DIR" + "\bin"
@@ -63,7 +56,7 @@ steps:
       mkdir build
       cd build
       conan install --remote=conan-center ../
-      cmake -G "Visual Studio 16 2019" -A "x64" .. -DGUI:bool=true -DANTLRRUNTIME_DIR:path=$(System.DefaultWorkingDirectory)/antlr4-cpp-runtime ${{ parameters.extraflags }}
+      cmake ../ -G "Visual Studio 16 2019" -A "x64" -DGUI:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DBUILD_ANTLR_LINK_LIB:string="dist\Release\antlr4-runtime.lib" -DCMAKE_BUILD_TYPE:STRING="Release" ${{ parameters.extraflags }}
       cmake --build . --config Release --target keywordwidgets
       cmake --build . --config Release
     displayName: 'Build'
