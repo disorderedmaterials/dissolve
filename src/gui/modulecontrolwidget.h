@@ -31,13 +31,6 @@ class ModuleControlWidget : public QWidget
     Lock refreshLock_;
 
     /*
-     * Setup
-     */
-    public:
-    // Set up links to main window
-    void setUp(DissolveWindow *dissolveWindow);
-
-    /*
      * Module Target
      */
     private:

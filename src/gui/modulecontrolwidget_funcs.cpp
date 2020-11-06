@@ -23,20 +23,13 @@ ModuleControlWidget::ModuleControlWidget(QWidget *parent)
     module_ = nullptr;
     configurationsWidget_ = nullptr;
     moduleWidget_ = nullptr;
-}
 
-ModuleControlWidget::~ModuleControlWidget() {}
-
-/*
- * SetUp
- */
-
-// Set up links to main window
-void ModuleControlWidget::setUp(DissolveWindow *dissolveWindow)
-{
+    // Connect signals from keywords widget
     connect(ui_.ModuleKeywordsWidget, SIGNAL(dataModified()), this, SLOT(keywordDataModified()));
     connect(ui_.ModuleKeywordsWidget, SIGNAL(setUpRequired()), this, SLOT(setUpModule()));
 }
+
+ModuleControlWidget::~ModuleControlWidget() {}
 
 /*
  * Module Target
