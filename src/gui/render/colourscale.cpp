@@ -238,7 +238,6 @@ void ColourScale::setAllAlpha(double alpha)
 // Recalculate colour deltas between points
 void ColourScale::calculateDeltas()
 {
-    // Reinitialise deltas array
     deltas_.clear();
     for (auto n = 0; n < points_.nItems() - 1; ++n)
         deltas_.add(ColourScaleDelta(points_[n], points_[n + 1], useHSV_));
