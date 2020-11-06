@@ -300,18 +300,14 @@ void Matrix4::invert()
 {
     // Gauss-Jordan Inversion
     // Invert the supplied matrix using Gauss-Jordan elimination
-    int pivotrows[4], pivotcols[4], pivotrow = 0, pivotcol = 0;
-    bool pivoted[4];
-    int row, col, n, m;
+    std::array<int, 4> pivotcols{0}, pivotrows{0};
+    std::array<bool, 4> pivoted{false};
+    int pivotrow = 0, pivotcol = 0;
+    int row, col, m;
     double large, element;
-    for (n = 0; n < 4; ++n)
-    {
-        pivotrows[n] = 0;
-        pivotcols[n] = 0;
-        pivoted[n] = false;
-    }
+
     // Loop over columns to be reduced
-    for (n = 0; n < 4; ++n)
+    for (auto n = 0; n < 4; ++n)
     {
         // Locate suitable pivot element - find largest value in the matrix A
         large = 0.0;
@@ -370,14 +366,14 @@ void Matrix4::invert()
         }
     }
     // Rearrange columns to undo row exchanges performed earlier
-    for (n = 3; n >= 0; --n)
+    for (auto i = 3; i >= 0; --i)
     {
-        if (pivotrows[n] != pivotcols[n])
+        if (pivotrows[i] != pivotcols[i])
             for (m = 0; m < 4; ++m)
             {
-                element = matrix_[m * 4 + pivotrows[n]];
-                matrix_[m * 4 + pivotrows[n]] = matrix_[m * 4 + pivotcols[n]];
-                matrix_[m * 4 + pivotcols[n]] = element;
+                element = matrix_[m * 4 + pivotrows[i]];
+                matrix_[m * 4 + pivotrows[i]] = matrix_[m * 4 + pivotcols[i]];
+                matrix_[m * 4 + pivotcols[i]] = element;
             }
     }
 }
