@@ -4,7 +4,7 @@
 #include "math/interpolator.h"
 #include "math/data1d.h"
 
-Interpolator::Interpolator(const Array<double> &x, const Array<double> &y, InterpolationScheme scheme) : x_(x), y_(x)
+Interpolator::Interpolator(const Array<double> &x, const Array<double> &y, InterpolationScheme scheme) : x_(x), y_(y)
 {
     interpolate(scheme);
 }
@@ -134,7 +134,7 @@ void Interpolator::interpolateSpline()
      * 					x(i) - x(i-1)
      */
 
-    int i, nPoints = x_.nItems();
+    unsigned int i, nPoints = x_.nItems();
 
     if (nPoints < 2)
         return;
@@ -265,12 +265,19 @@ void Interpolator::interpolateThreePoint() { lastInterval_ = 0; }
 // Regenerate using specified scheme
 void Interpolator::interpolate(Interpolator::InterpolationScheme scheme)
 {
+    scheme_ = scheme;
+
+    // Do we have any data to work with?
+    if (x_.nItems() < 2)
+    {
+        h_.clear();
+        return;
+    }
+
     // Calculate interval array 'h'
     h_.initialise(x_.nItems() - 1);
     for (auto i = 0; i < x_.nItems() - 1; ++i)
         h_[i] = x_.constAt(i + 1) - x_.constAt(i);
-
-    scheme_ = scheme;
 
     if (scheme_ == Interpolator::SplineInterpolation)
         interpolateSpline();
