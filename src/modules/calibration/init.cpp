@@ -7,8 +7,8 @@
 // Perform any necessary initialisation for the Module
 void CalibrationModule::initialise()
 {
-    // Calculation
-    keywords_.add("Calculation", new BoolKeyword(true), "OnlyWhenEnergyStable",
+    // Control
+    keywords_.add("Control", new BoolKeyword(true), "OnlyWhenEnergyStable",
                   "Only perform calibrations when all related Configuration energies are stable");
 
     // RDF Calibration

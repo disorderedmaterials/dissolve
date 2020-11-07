@@ -7,10 +7,10 @@
 // Perform any necessary initialisation for the Module
 void EnergyModule::initialise()
 {
-    // Calculation
-    keywords_.add("Calculation", new DoubleKeyword(0.001), "StabilityThreshold",
+    // Control
+    keywords_.add("Control", new DoubleKeyword(0.001), "StabilityThreshold",
                   "Threshold value at which energy is deemed stable over the defined windowing period", "<value[0.0-1.0]>");
-    keywords_.add("Calculation", new IntegerKeyword(10), "StabilityWindow",
+    keywords_.add("Control", new IntegerKeyword(10), "StabilityWindow",
                   "Number of points over which to assess the stability of the energy (per Configuration)");
 
     // Test

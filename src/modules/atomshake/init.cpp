@@ -7,10 +7,10 @@
 // Perform any necessary initialisation for the Module
 void AtomShakeModule::initialise()
 {
-    // Calculation
-    keywords_.add("Calculation", new DoubleKeyword(-1.0, -1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
-    keywords_.add("Calculation", new IntegerKeyword(1, 1, 1000), "ShakesPerAtom", "Number of shakes per Atom to attempt");
-    keywords_.add("Calculation", new DoubleKeyword(0.33, 0.01, 1.0), "TargetAcceptanceRate",
+    // Control
+    keywords_.add("Control", new DoubleKeyword(-1.0, -1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
+    keywords_.add("Control", new IntegerKeyword(1, 1, 1000), "ShakesPerAtom", "Number of shakes per Atom to attempt");
+    keywords_.add("Control", new DoubleKeyword(0.33, 0.01, 1.0), "TargetAcceptanceRate",
                   "Target acceptance rate for Monte Carlo moves");
 
     // Translations

@@ -7,10 +7,10 @@
 // Perform any necessary initialisation for the Module
 void MolShakeModule::initialise()
 {
-    // Calculation
-    keywords_.add("Calculation", new DoubleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ", "<rcut>");
-    keywords_.add("Calculation", new IntegerKeyword(1), "ShakesPerMolecule", "Number of shakes per Molecule", "<n>");
-    keywords_.add("Calculation", new DoubleKeyword(0.33), "TargetAcceptanceRate",
+    // Control
+    keywords_.add("Control", new DoubleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ", "<rcut>");
+    keywords_.add("Control", new IntegerKeyword(1), "ShakesPerMolecule", "Number of shakes per Molecule", "<n>");
+    keywords_.add("Control", new DoubleKeyword(0.33), "TargetAcceptanceRate",
                   "Target acceptance rate for Monte Carlo moves", "<rate (0.0 - 1.0)>");
 
     // Rotations
