@@ -591,12 +591,11 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             return EarlyReturn<bool>::Continue;
                         });
 
-    scatteringMatrix.finalise();
     scatteringMatrix.print();
 
     if (Messenger::isVerbose())
     {
-        Messenger::print("\nScattering Matrix Inverse:\n");
+        Messenger::print("\nScattering Matrix Inverse (Q = 0.0):\n");
         scatteringMatrix.printInverse();
 
         Messenger::print("\nIdentity (Ainv * A):\n");
@@ -681,7 +680,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
         for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-            double weight = scatteringMatrix.pairWeightInverse(at1, at2, dataIndex);
+            auto weight = scatteringMatrix.pairWeightInverse(0.0, at1, at2, dataIndex);
 
             // Halve contribution from unlike terms to avoid adding double the potential for those partials
             if (i != j)
