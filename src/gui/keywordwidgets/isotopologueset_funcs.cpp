@@ -7,6 +7,7 @@
 #include "gui/delegates/combolist.hui"
 #include "gui/delegates/customcombodelegate.h"
 #include "gui/delegates/exponentialspin.hui"
+#include "gui/delegates/null.h"
 #include "gui/delegates/usedspeciescombo.hui"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/isotopologueset.h"
@@ -19,9 +20,10 @@ IsotopologueSetKeywordWidget::IsotopologueSetKeywordWidget(QWidget *parent, Keyw
     ui_.setupUi(dropWidget());
 
     // Set delegates for table
+    ui_.IsotopologueTree->setItemDelegateForColumn(0, new NullDelegate(this));
     ui_.IsotopologueTree->setItemDelegateForColumn(1, new CustomComboDelegate<IsotopologueSetKeywordWidget>(
                                                           this, &IsotopologueSetKeywordWidget::availableIsotopologueNames));
-    ui_.IsotopologueTree->setItemDelegateForColumn(2, new ExponentialSpinDelegate(this));
+    ui_.IsotopologueTree->setItemDelegateForColumn(2, new ExponentialSpinDelegate(this, 0.0));
 
     // Connect signals / slots
     connect(ui_.AddButton, SIGNAL(clicked(bool)), this, SLOT(addButton_clicked(bool)));
@@ -252,7 +254,7 @@ void IsotopologueSetKeywordWidget::isotopologueTree_itemChanged(QTreeWidgetItem 
     IsotopologueWeight &weight = *weightData;
 
     // Column of passed item tells us the type of data we need to change
-    if (column == 2)
+    if (column == 1)
     {
         // Editing the Isotopologue - need the parent item in order to validate it
         auto topesData = isotopologuesItemManager_.reference(item->parent());
@@ -275,7 +277,7 @@ void IsotopologueSetKeywordWidget::isotopologueTree_itemChanged(QTreeWidgetItem 
 
         emit(keywordValueChanged(keyword_->optionMask()));
     }
-    else if (column == 3)
+    else if (column == 2)
     {
         weight.setWeight(item->text(column).toDouble());
 
@@ -305,7 +307,7 @@ void IsotopologueSetKeywordWidget::updateIsotopologueTreeRootItem(QTreeWidgetIte
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
 
     // Set item data
-    item->setText(1, QString::fromStdString(std::string(topes.species()->name())));
+    item->setText(0, QString::fromStdString(std::string(topes.species()->name())));
 
     // Update child (IsotopologueWeight) items
     isotopologueWeightItemManager_.updateChildren(item, topes.mix(),
@@ -319,8 +321,8 @@ void IsotopologueSetKeywordWidget::updateIsotopologueTreeChildItem(QTreeWidgetIt
     if (itemIsNew)
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsEditable);
 
-    item->setText(2, QString::fromStdString(std::string(isoWeight.isotopologue()->name())));
-    item->setText(3, QString::number(isoWeight.weight()));
+    item->setText(1, QString::fromStdString(std::string(isoWeight.isotopologue()->name())));
+    item->setText(2, QString::number(isoWeight.weight()));
 }
 
 // Update value displayed in widget

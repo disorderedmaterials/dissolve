@@ -222,6 +222,7 @@ void ModuleListEditor::moduleSelectionChanged(const QString &blockIdentifier)
         // Create a new widget to display this Module
         ModuleControlWidget *mcw = new ModuleControlWidget;
         mcw->setModule(module, &dissolveWindow_->dissolve());
+        connect(mcw, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
         widgetIndex = ui_.ModuleControlsStack->addWidget(mcw);
     }
 
