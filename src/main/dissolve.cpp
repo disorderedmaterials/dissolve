@@ -115,6 +115,7 @@ void Dissolve::registerGenericItems()
     GenericItem::addItemClass(new GenericItemContainer<Array<Vec3<int>>>("Array<Vec3<int>>"));
     GenericItem::addItemClass(new GenericItemContainer<Array<Vec3<double>>>("Array<Vec3<double>>"));
 
+    GenericItem::addItemClass(new GenericItemContainer<AtomTypeList>(AtomTypeList::itemClassName()));
     GenericItem::addItemClass(new GenericItemContainer<BraggReflection>(BraggReflection::itemClassName()));
     GenericItem::addItemClass(new GenericItemContainer<Data1D>(Data1D::itemClassName()));
     GenericItem::addItemClass(new GenericItemContainer<Data2D>(Data2D::itemClassName()));
