@@ -215,23 +215,6 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
                     partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
                 }
             }
-            // 			else
-            // 			{
-            // 				for (ii = 0; ii < nI; ++ii)
-            // 				{
-            // 					i = atomsI[ii];
-            // 					typeI = i->localTypeIndex();
-            // 					rI = i->r();
-            //
-            // 					for (jj = 0; jj < nJ; ++jj)
-            // 					{
-            // 						j = atomsJ[jj];
-            // 						distance = (rI - j->r()).magnitude();
-            // 						partialSet.fullHistogram(typeI,
-            // j->localTypeIndex()).bin(distance);
-            // 					}
-            // 				}
-            // 			}
         }
     }
 
