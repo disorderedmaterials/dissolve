@@ -134,7 +134,7 @@ void Interpolator::interpolateSpline()
      * 					x(i) - x(i-1)
      */
 
-    const int nPoints = x_.nItems();
+    const auto nPoints = x_.nItems();
 
     if (nPoints < 2)
         return;
