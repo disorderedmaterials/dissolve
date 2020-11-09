@@ -53,6 +53,39 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
                              referenceData.constXAxis().firstValue());
         }
 
+        // Get dependent modules
+        const SQModule *sqModule = keywords_.retrieve<const SQModule *>("SourceSQs", nullptr);
+        if (!sqModule)
+            return Messenger::error("A source SQ module must be provided.\n");
+        const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr);
+        if (!rdfModule)
+            return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
+
+        // Remove normalisation factor from data
+        auto normType = keywords_.enumeration<StructureFactors::NormalisationType>("ReferenceNormalisation");
+        if (normType != StructureFactors::NoNormalisation)
+        {
+            // We need the x-ray weights in order to do the normalisation
+            XRayFormFactors::XRayFormFactorData formFactors =
+                keywords_.enumeration<XRayFormFactors::XRayFormFactorData>("FormFactors");
+            XRayWeights weights;
+            calculateWeights(rdfModule, weights, formFactors);
+
+            // Remove normalisation from the data
+            if (normType == StructureFactors::SquareOfAverageNormalisation)
+            {
+                Array<double> bbar = weights.boundCoherentSquareOfAverage(referenceData.constXAxis());
+                for (auto n = 0; n < bbar.nItems(); ++n)
+                    referenceData.value(n) /= bbar[n];
+            }
+            else if (normType == StructureFactors::AverageOfSquaresNormalisation)
+            {
+                Array<double> bbar = weights.boundCoherentAverageOfSquares(referenceData.constXAxis());
+                for (auto n = 0; n < bbar.nItems(); ++n)
+                    referenceData.value(n) /= bbar[n];
+            }
+        }
+
         // Get window function to use for transformation of S(Q) to g(r)
         const WindowFunction &referenceWindowFunction =
             keywords_.retrieve<WindowFunction>("ReferenceWindowFunction", WindowFunction());

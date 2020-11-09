@@ -6,6 +6,7 @@
 #include "classes/neutronweights.h"
 #include "classes/partialset.h"
 #include "classes/scatteringmatrix.h"
+#include "classes/xrayweights.h"
 #include "data/isotopes.h"
 #include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
@@ -18,8 +19,10 @@
 #include "module/group.h"
 #include "modules/energy/energy.h"
 #include "modules/epsr/epsr.h"
+#include "modules/neutronsq/neutronsq.h"
 #include "modules/rdf/rdf.h"
 #include "modules/sq/sq.h"
+#include "modules/xraysq/xraysq.h"
 #include "templates/algorithms.h"
 #include "templates/array3d.h"
 
@@ -193,70 +196,59 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Calculate our error based on the type of Module
         double rFactor = 100.0;
-        if (DissolveSys::sameString(module->type(), "NeutronSQ"))
+        bool found;
+
+        // Get difference data container
+        auto &differenceData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(),
+                                                                  fmt::format("DifferenceData_{}", module->uniqueName()),
+                                                                  uniqueName(), GenericItem::InRestartFileFlag);
+        differenceData.setObjectTag(fmt::format("{}//Difference//{}", uniqueName_, module->uniqueName()));
+
+        // Retrieve the ReferenceData from the Module (as Data1D)
+        const auto &referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData",
+                                                                     module->uniqueName(), Data1D(), &found);
+        if (!found)
+            return Messenger::error("Could not locate ReferenceData for target '{}'.\n", module->uniqueName());
+        differenceData = referenceData;
+
+        // Retrieve the PartialSet from the Module
+        const auto &calcSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "WeightedSQ",
+                                                                  module->uniqueName(), PartialSet(), &found);
+        if (!found)
+            return Messenger::error("Could not locate associated weighted neutron PartialSet for target '{}'.\n",
+                                    module->uniqueName());
+        auto calcSQTotal = calcSQ.total();
+
+        // Determine overlapping Q range between the two datasets
+        double FQMin = qMin, FQMax = qMax;
+        if ((FQMin < differenceData.xAxis().firstValue()) || (FQMin < calcSQTotal.xAxis().firstValue()))
+            FQMin = std::max(differenceData.xAxis().firstValue(), calcSQTotal.xAxis().firstValue());
+        if ((FQMax > differenceData.xAxis().lastValue()) || (FQMax > calcSQTotal.xAxis().lastValue()))
+            FQMax = std::min(differenceData.xAxis().lastValue(), calcSQTotal.xAxis().lastValue());
+
+        // Trim both datasets to the common range
+        Filters::trim(calcSQTotal, FQMin, FQMax, true);
+        Filters::trim(differenceData, FQMin, FQMax, true);
+
+        rFactor = Error::rFactor(referenceData, calcSQTotal, true);
+        rFacTot += rFactor;
+
+        // Calculate difference function
+        Interpolator::addInterpolated(differenceData, calcSQTotal, -1.0);
+
+        if (saveDifferences)
         {
-            bool found;
-
-            // Get difference data container
-            auto &differenceData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(),
-                                                                      fmt::format("DifferenceData_{}", module->uniqueName()),
-                                                                      uniqueName(), GenericItem::InRestartFileFlag);
-            differenceData.setObjectTag(fmt::format("{}//Difference//{}", uniqueName_, module->uniqueName()));
-
-            // Retrieve the ReferenceData from the Module (as Data1D)
-            const auto &referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData",
-                                                                         module->uniqueName(), Data1D(), &found);
-            if (!found)
+            if (procPool.isMaster())
             {
-                Messenger::warn("Could not locate ReferenceData for target '{}'.\n", module->uniqueName());
-                return false;
+                Data1DExportFileFormat exportFormat(fmt::format("{}-Diff.q", module->uniqueName()));
+                if (exportFormat.exportData(differenceData))
+                    procPool.decideTrue();
+                else
+                    return procPool.decideFalse();
             }
-            differenceData = referenceData;
-
-            // Retrieve the PartialSet from the Module
-            const auto &calcSQ = GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "WeightedSQ",
-                                                                      module->uniqueName(), PartialSet(), &found);
-            if (!found)
-            {
-                Messenger::warn("Could not locate associated weighted neutron PartialSet for target '{}'.\n",
-                                module->uniqueName());
-                return false;
-            }
-            auto calcSQTotal = calcSQ.total();
-
-            // Determine overlapping Q range between the two datasets
-            double FQMin = qMin, FQMax = qMax;
-            if ((FQMin < differenceData.xAxis().firstValue()) || (FQMin < calcSQTotal.xAxis().firstValue()))
-                FQMin = std::max(differenceData.xAxis().firstValue(), calcSQTotal.xAxis().firstValue());
-            if ((FQMax > differenceData.xAxis().lastValue()) || (FQMax > calcSQTotal.xAxis().lastValue()))
-                FQMax = std::min(differenceData.xAxis().lastValue(), calcSQTotal.xAxis().lastValue());
-
-            // Trim both datasets to the common range
-            Filters::trim(calcSQTotal, FQMin, FQMax, true);
-            Filters::trim(differenceData, FQMin, FQMax, true);
-
-            rFactor = Error::rFactor(referenceData, calcSQTotal, true);
-            rFacTot += rFactor;
-
-            // Calculate difference function
-            Interpolator::addInterpolated(differenceData, calcSQTotal, -1.0);
-
-            if (saveDifferences)
-            {
-                if (procPool.isMaster())
-                {
-                    Data1DExportFileFormat exportFormat(fmt::format("{}-Diff.q", module->uniqueName()));
-                    if (exportFormat.exportData(differenceData))
-                        procPool.decideTrue();
-                    else
-                        return procPool.decideFalse();
-                }
-                else if (!procPool.decision())
-                    return true;
-            }
+            else if (!procPool.decision())
+                return true;
         }
-        else
-            return Messenger::error("Unrecognised Module type '{}', so can't calculate error.", module->type());
 
         // Store the rFactor for this reference dataset
         errors.addPoint(dissolve.iteration(), rFactor);
@@ -428,11 +420,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                                module->uniqueName(), GenericItem::InRestartFileFlag);
         simulatedFR.setObjectTag(fmt::format("{}//SimulatedFR//{}", uniqueName_, module->uniqueName()));
         simulatedFR = simulatedFQ;
-        Fourier::sineFT(simulatedFR,
-                        1.0 / (2 * PI * PI *
-                               GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho",
-                                                                rdfModule->uniqueName(), 0.0)),
-                        0.0, 0.03, 30.0, WindowFunction(WindowFunction::Lorch0Window));
+        Fourier::sineFT(simulatedFR, 1.0 / (2 * PI * PI * targetConfiguration_->atomicDensity()), 0.0, 0.03, 30.0,
+                        WindowFunction(WindowFunction::Lorch0Window));
 
         // Save data?
         if (saveDifferences)
@@ -499,7 +488,6 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                                                              uniqueName_, GenericItem::InRestartFileFlag);
     combinedUnweightedSQ.initialise(nAtomTypes, nAtomTypes, true);
 
-
     // Set object names in combinedUnweightedSQ
     for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
         combinedUnweightedSQ.at(i, j).setObjectTag(
@@ -517,7 +505,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         bool found;
 
-        // Retrieve the reference data, associated neutron weights and source unweighted and weighted partials
+        // Retrieve the reference data and associated unweighted and weighted partials
         const auto &referenceData = GenericListHelper<Data1D>::value(dissolve.processingModuleData(), "ReferenceData",
                                                                      module->uniqueName(), Data1D(), &found);
         if (!found)
@@ -538,10 +526,6 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (!found)
             return Messenger::error("Could not locate WeightedSQ for target '{}'.\n", module->uniqueName());
 
-        // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
-        auto refMinusIntra = referenceData, boundTotal = weightedSQ.boundTotal(false);
-        Interpolator::addInterpolated(refMinusIntra, boundTotal, -1.0);
-
         // Get the weights for the reference data, and add a row to the scattering matrix
         if (module->type() == "NeutronSQ")
         {
@@ -550,7 +534,58 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             if (!found)
                 return Messenger::error("Could not locate NeutronWeights for target '{}'.\n", module->uniqueName());
 
+            // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
+            auto refMinusIntra = referenceData, boundTotal = weightedSQ.boundTotal(false);
+            Interpolator::addInterpolated(refMinusIntra, boundTotal, -1.0);
+
+            // Always add absolute data to the scattering matrix - if the calculated data has been normalised, remove this
+            // normalisation from the reference data (we assume that the two are consistent)
+            auto normType = module->keywords().enumeration<StructureFactors::NormalisationType>("Normalisation");
+            if (normType == StructureFactors::AverageOfSquaresNormalisation)
+                refMinusIntra.values() *= weights.boundCoherentAverageOfSquares();
+            else if (normType == StructureFactors::SquareOfAverageNormalisation)
+                refMinusIntra.values() *= weights.boundCoherentSquareOfAverage();
+
             if (!scatteringMatrix.addReferenceData(refMinusIntra, weights, feedback))
+                return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->uniqueName());
+        }
+        else if (module->type() == "XRaySQ")
+        {
+            auto &weights = GenericListHelper<XRayWeights>::retrieve(dissolve.processingModuleData(), "FullWeights",
+                                                                     module->uniqueName(), XRayWeights(), &found);
+            if (!found)
+                return Messenger::error("Could not locate XRayWeights for target '{}'.\n", module->uniqueName());
+
+            // For X-ray data we always add the reference data normalised to AverageOfSquares in order to give consistency in
+            // terms of magnitude with any neutron data. If the calculated data have not been normalised, or were normalised to
+            // something else, we correct it before adding.
+            auto normalisedRef = referenceData;
+            auto normType = module->keywords().enumeration<StructureFactors::NormalisationType>("Normalisation");
+            if (normType == StructureFactors::SquareOfAverageNormalisation)
+            {
+                // Remove square of average normalisation, and apply average of squares
+                Array<double> bbarOld = weights.boundCoherentSquareOfAverage(normalisedRef.constXAxis());
+                Array<double> bbarNew = weights.boundCoherentAverageOfSquares(normalisedRef.constXAxis());
+                for (auto n = 0; n < bbarOld.nItems(); ++n)
+                    normalisedRef.value(n) *= bbarOld[n] / bbarNew[n];
+            }
+            else if (normType == StructureFactors::NoNormalisation)
+            {
+                Array<double> bbar = weights.boundCoherentAverageOfSquares(normalisedRef.constXAxis());
+                for (auto n = 0; n < bbar.nItems(); ++n)
+                    normalisedRef.value(n) /= bbar[n];
+            }
+
+            // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
+            // Our reference data is normalised to AverageOfSquares at this point, so must do the same to the
+            // bound total before subtracting it.
+            auto boundTotal = weightedSQ.boundTotal(false);
+            Array<double> bbar = weights.boundCoherentAverageOfSquares(boundTotal.constXAxis());
+            for (auto n = 0; n < bbar.nItems(); ++n)
+                boundTotal.value(n) /= bbar[n];
+            Interpolator::addInterpolated(normalisedRef, boundTotal, -1.0);
+
+            if (!scatteringMatrix.addReferenceData(normalisedRef, weights, feedback))
                 return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->uniqueName());
         }
         else
