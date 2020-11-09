@@ -113,7 +113,7 @@ int main(int args, char **argv)
     }
 
     // If were just checking the input and restart files, exit now
-    if (options.checkInputOnly())
+    if (!options.nIterations())
     {
         ProcessPool::finalise();
         Messenger::ceaseRedirect();
@@ -149,8 +149,8 @@ int main(int args, char **argv)
                      ProcessPool::nWorldProcesses());
 #endif
 
-    // Run main simulation
-    auto result = dissolve.iterate(options.nIterations());
+    // Run main simulation?
+    auto result = dissolve.iterate(options.nIterations().value());
 
     // Print timing information
     dissolve.printTiming();
