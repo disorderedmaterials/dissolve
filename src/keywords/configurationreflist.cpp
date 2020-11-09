@@ -6,7 +6,7 @@
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 
-ConfigurationRefListKeyword::ConfigurationRefListKeyword(RefList<Configuration> &references, std::optional<int> maxListSize)
+ConfigurationRefListKeyword::ConfigurationRefListKeyword(RefList<Configuration> &references, int maxListSize)
     : KeywordData<RefList<Configuration> &>(KeywordBase::ConfigurationRefListData, references)
 {
     maxListSize_ = maxListSize;
@@ -23,7 +23,7 @@ ConfigurationRefListKeyword::~ConfigurationRefListKeyword() {}
 bool ConfigurationRefListKeyword::isDataEmpty() const { return data_.nItems() == 0; }
 
 // Return maximum number of Configurations to allow in the list
-std::optional<int> ConfigurationRefListKeyword::maxListSize() const { return maxListSize_; }
+int ConfigurationRefListKeyword::maxListSize() const { return maxListSize_; }
 
 /*
  * Arguments
@@ -47,8 +47,8 @@ bool ConfigurationRefListKeyword::read(LineParser &parser, int startArg, CoreDat
                                     parser.argsv(n));
 
         // Check maximum size of list
-        if (maxListSize_.has_value() && data_.nItems() >= maxListSize_.value())
-            return Messenger::error("Too many configurations given to keyword. Maximum allowed is {}.\n", maxListSize_.value());
+        if ((maxListSize_ != -1) && (data_.nItems() >= maxListSize_))
+            return Messenger::error("Too many configurations given to keyword. Maximum allowed is {}.\n", maxListSize_);
 
         // Check that the configuration isn't already in the list
         if (data_.contains(cfg))

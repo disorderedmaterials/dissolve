@@ -68,7 +68,7 @@ void ConfigurationRefListKeywordWidget::itemChanged(QListWidgetItem *item)
     for (auto n = 0; n < ui_.SelectionList->count(); ++n)
         if (ui_.SelectionList->item(n)->checkState() == Qt::Checked)
             ++nChecked;
-    switch (keyword_->maxListSize().value_or(Module::OneOrMoreTargets))
+    switch (keyword_->maxListSize())
     {
         case (Module::ZeroTargets):
             if (nChecked != 0)
