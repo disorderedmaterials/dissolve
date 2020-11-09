@@ -26,7 +26,7 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
 
     // Basic Control
     app.add_option("-n,--iterations", nIterations_, "Number of iterations to run (default = 5)")->group("Basic Control");
-    app.add_flag_callback("-m,--mpi-output-all", []() { Messenger::setMasterOnly(false);});
+    app.add_flag_callback("-m,--mpi-output-all", []() { Messenger::setMasterOnly(false); });
     app.add_flag_callback("-q,--quiet", []() { Messenger::setQuiet(true); },
                           "Be quiet - don't output any messages whatsoever (output files are still written)")
         ->group("Basic Control");
