@@ -3,12 +3,17 @@ trigger:
     include:
     - develop
   paths:
-    exclude:
-    - examples/*
-    - web/*
-    - README.md
     include:
-    - /
+    - src/*
+    - ci/*
+    - cmake/*
+    - icon/*
+    - tests/*
+    - CMakeLists.txt
+    - conanfile.txt
+    - .azure-pipelines/*
+    - .clang-format
+    - .cmake-format.json
 
 pr: none
 
