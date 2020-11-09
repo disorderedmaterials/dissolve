@@ -9,7 +9,11 @@
 #include <CLI/Config.hpp>
 #include <CLI/Formatter.hpp>
 
-CLIOptions::CLIOptions() : checkInputOnly_(false), ignoreRestartFile_(false), ignoreStateFile_(false), writeNoFiles_(false) {}
+CLIOptions::CLIOptions()
+    : nIterations_(std::nullopt), restartFileFrequency_(10), ignoreRestartFile_(false), ignoreStateFile_(false),
+      writeNoFiles_(false)
+{
+}
 
 // Parse CLI options
 int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
@@ -34,9 +38,6 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
         ->group("Basic Control");
 
     // Input Files
-    if (!isGUI)
-        app.add_flag("-c,--check", checkInputOnly_, "Only check input and restart files for validity, then quit")
-            ->group("Input Files");
     app.add_flag("-i,--ignore-restart", ignoreRestartFile_, "Ignore restart file (if it exists)")->group("Input Files");
     if (!isGUI)
         app.add_option("-w,--write-input", writeInputFilename_,
@@ -85,7 +86,7 @@ int CLIOptions::parse(const int args, char **argv, bool isGUI, bool isParallel)
 std::optional<std::string> CLIOptions::inputFile() const { return inputFile_; }
 
 // Return number of iterations to perform
-int CLIOptions::nIterations() const { return nIterations_; }
+std::optional<int> CLIOptions::nIterations() const { return nIterations_; }
 
 // Return frequency at which to write restart file
 int CLIOptions::restartFileFrequency() const { return restartFileFrequency_; }
@@ -98,9 +99,6 @@ std::optional<std::string> CLIOptions::restartFilename() const { return restartF
 
 // Return new input file to write (after reading supplied file)
 std::optional<std::string> CLIOptions::writeInputFilename() const { return writeInputFilename_; }
-
-// Return whether to just check the input file, and then quit
-bool CLIOptions::checkInputOnly() const { return checkInputOnly_; }
 
 // Return whether to ignore restart file if it exists
 bool CLIOptions::ignoreRestartFile() const { return ignoreRestartFile_; }

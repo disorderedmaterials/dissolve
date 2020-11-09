@@ -20,7 +20,7 @@ class CLIOptions
     // Input file to load
     std::optional<std::string> inputFile_;
     // Number of iterations to perform
-    int nIterations_;
+    std::optional<int> nIterations_;
     // Frequency at which to write restart file
     int restartFileFrequency_;
     // Redirection basename (for per-process output)
@@ -29,8 +29,6 @@ class CLIOptions
     std::optional<std::string> restartFilename_;
     // New input file to write (after reading supplied file)
     std::optional<std::string> writeInputFilename_;
-    // Whether to just check the input file, and then quit
-    bool checkInputOnly_;
     // Whether to ignore restart file (if it exists)
     bool ignoreRestartFile_;
     // Whether to ignore GUI state file (if it exists)
@@ -49,7 +47,7 @@ class CLIOptions
     // Return input file to load
     std::optional<std::string> inputFile() const;
     // Return number of iterations to perform
-    int nIterations() const;
+    std::optional<int> nIterations() const;
     // Return frequency at which to write restart file
     int restartFileFrequency() const;
     // Return redirection basename (for per-process output)
@@ -58,8 +56,6 @@ class CLIOptions
     std::optional<std::string> restartFilename() const;
     // Return new input file to write (after reading supplied file)
     std::optional<std::string> writeInputFilename() const;
-    // Return whether to just check the input file, and then quit
-    bool checkInputOnly() const;
     // Return whether to ignore restart file if it exists
     bool ignoreRestartFile() const;
     // Return whether to ignore GUI state file (if it exists)
