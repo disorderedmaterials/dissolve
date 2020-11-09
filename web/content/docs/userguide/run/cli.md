@@ -14,7 +14,7 @@ Note that an input file must be provided for the serial and parallel codes - it 
 The following options are recognised by the serial and parallel codes, as well as the GUI.
 
 #### `-n <n>`, `--niterations <n>`
-Run Dissolve for the specified number of iterations, and then quit. The default number of iterations if the `-n` flag is not specified is 5. For the GUI version, the specified number of iterations will be run, and then the GUI launched.
+Run Dissolve for the specified number of iterations, and then quit. For the GUI version, the specified number of iterations will be run, and then the GUI launched. The default number of iterations if the `-n` flag is not specified is zero - in this case Dissolve will load the input file (and any associated restart file) and then quit, essentially corresponding to a sanity check of the input files.
 
 #### `-q`, `--quiet`
 Don't print any output to the console whatsoever. Output files such as the restart file, heartbeat, and any data output requested in individual modules will still be written. Use the [`-x`](#-x---no-files) flag to prevent the restart and heartbeat files being written.
@@ -23,11 +23,6 @@ Don't print any output to the console whatsoever. Output files such as the resta
 Print lots more output, mostly useful for debugging
 
 ### Input Files
-
-#### `-c`, `--check`
-Dissolve will read in the supplied input file, and the restart file if it exists, and then exit without performing any simulation. Mostly useful for checking the validity of an input file before committing to a production run.
-
-Not available in the GUI code.
 
 #### `-i`, `--ignore-restart`
 Ignore the restart file (i.e. don't read it in) if it exists. The name of the expected restart file is the input file name suffixed with `.restart`.
