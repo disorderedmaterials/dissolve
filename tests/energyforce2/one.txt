@@ -142,7 +142,7 @@ Configuration  'Liquid'
       BoxAction  None
     EndAddSpecies
   EndGenerator
-  InputCoordinates  dlpoly  'dlpoly_one/CONFIG'
+  InputCoordinates  dlpoly  '../_data/dlpoly/hexane1/CONFIG'
   EndInputCoordinates
 EndConfiguration
 
@@ -158,7 +158,7 @@ EndModule
 Module Forces
   Test  On
   Configuration  'Liquid'
-  TestReference  dlpoly  'dlpoly_one/REVCON'
+  TestReference  dlpoly  '../_data/dlpoly/hexane1/REVCON'
   EndTestReference
   TestThreshold  0.50
 EndModule
