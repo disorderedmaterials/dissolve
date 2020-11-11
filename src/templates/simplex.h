@@ -210,7 +210,7 @@ template <class T> class Simplex
     {
         // Shrink vertices of current simplex, leaving only the first (x(1)) as-is: x(n) = x(1) + sigma(x(n) - x(1)),
         // n=2,nalpha+1
-        for (int n = 0; n < nVertices_; ++n)
+        for (auto n = 0; n < nVertices_; ++n)
         {
             if (n == vBest_)
                 continue;
@@ -259,13 +259,13 @@ template <class T> class Simplex
     {
         // Get average cost of all vertices
         double average = 0.0;
-        for (int n = 0; n < nVertices_; ++n)
+        for (auto n = 0; n < nVertices_; ++n)
             average += costs_[n];
         average /= nVertices_;
 
         // Now calculate SD of individual costs with mean value
         double serror = 0.0;
-        for (int n = 0; n < nVertices_; ++n)
+        for (auto n = 0; n < nVertices_; ++n)
             serror += (costs_[n] - average) * (costs_[n] - average);
         return sqrt(serror / nVertices_);
     }
@@ -276,7 +276,7 @@ template <class T> class Simplex
     // Print vertex information
     void printVertexInformation()
     {
-        for (int n = 0; n < nVertices_; ++n)
+        for (auto n = 0; n < nVertices_; ++n)
             Messenger::print("[SMPLX]\t\tVertex {} has cold cost value = {:12.6e}\n", n, costs_[n]);
     }
 

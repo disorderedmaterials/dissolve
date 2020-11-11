@@ -128,8 +128,6 @@ bool ImportSpeciesWizard::progressionAllowed(int index) const
 // Perform any necessary actions before moving to the next page
 bool ImportSpeciesWizard::prepareForNextPage(int currentIndex)
 {
-    SpeciesAtom *atomicAtom;
-
     switch (currentIndex)
     {
         case (ImportSpeciesWizard::SelectFilePage):
@@ -303,7 +301,7 @@ void ImportSpeciesWizard::atomTypesListEdited(QWidget *lineEdit)
 {
     // Since the signal that leads us here does not tell us the item that was edited, update all AtomType names here before
     // updating the page
-    for (int n = 0; n < ui_.AtomTypesList->count(); ++n)
+    for (auto n = 0; n < ui_.AtomTypesList->count(); ++n)
     {
         QListWidgetItem *item = ui_.AtomTypesList->item(n);
         std::shared_ptr<AtomType> at = item->data(Qt::UserRole).value<std::shared_ptr<AtomType>>();
@@ -433,7 +431,7 @@ void ImportSpeciesWizard::masterTermsTreeEdited(QWidget *lineEdit)
 {
     // Since the signal that leads us here does not tell us the item that was edited, update all MasterTerm names here
     // before updating the page
-    for (int n = 0; n < masterBondItemParent_->childCount(); ++n)
+    for (auto n = 0; n < masterBondItemParent_->childCount(); ++n)
     {
         QTreeWidgetItem *item = masterBondItemParent_->child(n);
         MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
@@ -442,7 +440,7 @@ void ImportSpeciesWizard::masterTermsTreeEdited(QWidget *lineEdit)
 
         intra->setName(qPrintable(item->text(0)));
     }
-    for (int n = 0; n < masterAngleItemParent_->childCount(); ++n)
+    for (auto n = 0; n < masterAngleItemParent_->childCount(); ++n)
     {
         QTreeWidgetItem *item = masterAngleItemParent_->child(n);
         MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
@@ -451,7 +449,7 @@ void ImportSpeciesWizard::masterTermsTreeEdited(QWidget *lineEdit)
 
         intra->setName(qPrintable(item->text(0)));
     }
-    for (int n = 0; n < masterTorsionItemParent_->childCount(); ++n)
+    for (auto n = 0; n < masterTorsionItemParent_->childCount(); ++n)
     {
         QTreeWidgetItem *item = masterTorsionItemParent_->child(n);
         MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));

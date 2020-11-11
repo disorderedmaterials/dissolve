@@ -47,7 +47,7 @@ void Histogram1D::updateAccumulatedData()
     accumulatedData_.initialise(bins_.nItems(), true);
 
     // Store bin centres and accumulated averages in the object
-    for (int n = 0; n < bins_.nItems(); ++n)
+    for (auto n = 0; n < bins_.nItems(); ++n)
     {
         accumulatedData_.xAxis(n) = binCentres_[n];
         accumulatedData_.value(n) = averages_.constAt(n);
@@ -95,7 +95,7 @@ void Histogram1D::setUpAxis(double axisMin, double &axisMax, double binWidth, in
     // Create centre-bin array
     binCentres.initialise(nBins);
     double centre = axisMin + binWidth * 0.5;
-    for (int n = 0; n < nBins; ++n, centre += binWidth)
+    for (auto n = 0; n < nBins; ++n, centre += binWidth)
         binCentres[n] = centre;
 }
 
@@ -136,7 +136,7 @@ long int Histogram1D::nBinned() const { return nBinned_; }
 // Accumulate current histogram bins into averages
 void Histogram1D::accumulate()
 {
-    for (int n = 0; n < nBins_; ++n)
+    for (auto n = 0; n < nBins_; ++n)
         averages_[n] += double(bins_[n]);
 
     // Update accumulated data
@@ -158,7 +158,7 @@ void Histogram1D::add(Histogram1D &other, int factor)
                          other.nBins_);
         return;
     }
-    for (int n = 0; n < nBins_; ++n)
+    for (auto n = 0; n < nBins_; ++n)
         bins_[n] += other.bins_[n] * factor;
 }
 
@@ -207,7 +207,7 @@ bool Histogram1D::read(LineParser &parser, CoreData &coreData)
     nBinned_ = parser.argli(0);
     nMissed_ = parser.argli(1);
 
-    for (int n = 0; n < nBins_; ++n)
+    for (auto n = 0; n < nBins_; ++n)
         if (!averages_[n].read(parser, coreData))
             return false;
 
@@ -223,7 +223,7 @@ bool Histogram1D::write(LineParser &parser)
         return false;
     if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
         return false;
-    for (int n = 0; n < nBins_; ++n)
+    for (auto n = 0; n < nBins_; ++n)
         if (!averages_[n].write(parser))
             return false;
 
@@ -267,7 +267,7 @@ bool Histogram1D::broadcast(ProcessPool &procPool, const int root, const CoreDat
         return false;
     if (!procPool.broadcast(bins_, root))
         return false;
-    for (int n = 0; n < averages_.nItems(); ++n)
+    for (auto n = 0; n < averages_.nItems(); ++n)
         if (!averages_[n].broadcast(procPool, root, coreData))
             return false;
 #endif
@@ -301,7 +301,7 @@ bool Histogram1D::equality(ProcessPool &procPool)
     if (!procPool.equality(nMissed_))
         return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process {} has {}).\n",
                                 procPool.poolRank(), nBinned_);
-    for (int n = 0; n < averages_.nItems(); ++n)
+    for (auto n = 0; n < averages_.nItems(); ++n)
         if (!averages_[n].equality(procPool))
             return Messenger::error("Histogram1D average values not equivalent.\n");
 #endif

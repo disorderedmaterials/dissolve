@@ -226,7 +226,7 @@ bool GenericList::equality(ProcessPool &procPool)
     RefList<GenericItem> checkedItems;
     std::string itemName, itemClassName;
     auto nFailed = 0;
-    for (int n = 0; n < procPool.nProcesses(); ++n)
+    for (auto n = 0; n < procPool.nProcesses(); ++n)
     {
         // The master process - rank 'n' - will control the loop
         if (procPool.poolRank() == n)

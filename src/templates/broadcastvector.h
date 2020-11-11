@@ -39,7 +39,7 @@ template <class T> class BroadcastVector
 
             // Clear list and reconstruct
             items.clear();
-            for (int n = 0; n < count; ++n)
+            for (auto n = 0; n < count; ++n)
             {
                 // Slaves must create a suitable structure first, and then join the broadcast
                 items.emplace_back();

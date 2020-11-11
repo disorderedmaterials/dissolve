@@ -283,8 +283,6 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule *module)
     if (!module)
         return;
 
-    int n, m;
-
     // Add total R-Factor before any dataset R-Factors
     auto *rFacTot = rFactorGraph_->createRenderable(Renderable::Data1DRenderable,
                                                     fmt::format("{}//RFactor", module->uniqueName()), "Total", "Total");
@@ -422,7 +420,7 @@ void EPSRModuleWidget::updateDebugEPFunctionsGraph(int from, int to)
         viewer->addRenderableToGroup(phi, id);
 
         // Generate data for function range specified
-        for (int n = from; n <= to; ++n)
+        for (auto n = from; n <= to; ++n)
         {
             Data1D *data = debugFunctionData_.add();
             (*data) = module_->generateEmpiricalPotentialFunction(dissolve_, i, j, n);

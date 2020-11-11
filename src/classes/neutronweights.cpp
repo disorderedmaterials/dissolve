@@ -346,7 +346,7 @@ bool NeutronWeights::read(LineParser &parser, CoreData &coreData)
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     auto nItems = parser.argi(0);
-    for (int n = 0; n < nItems; ++n)
+    for (auto n = 0; n < nItems; ++n)
     {
         isotopologueMixtures_.emplace_back();
         if (!isotopologueMixtures_.back().read(parser, coreData))

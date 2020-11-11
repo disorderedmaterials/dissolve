@@ -49,7 +49,7 @@ bool DynamicSiteProcedureNode::mustBeNamed() const { return false; }
 void DynamicSiteProcedureNode::generateSites(std::shared_ptr<const Molecule> molecule)
 {
     // Loop over Atoms in the Molecule
-    for (int n = 0; n < molecule->nAtoms(); ++n)
+    for (auto n = 0; n < molecule->nAtoms(); ++n)
     {
         // If the element is listed in our target elements list, add this atom as a site
         if (elements_.contains(molecule->atom(n)->speciesAtom()->element()))

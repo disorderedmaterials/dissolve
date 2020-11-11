@@ -181,12 +181,12 @@ void Species::addMissingBonds(double tolerance)
     Vec3<double> vij;
     double radiusI;
     SpeciesAtom **atoms = atoms_.array();
-    for (int indexI = 0; indexI < nAtoms() - 1; ++indexI)
+    for (auto indexI = 0; indexI < nAtoms() - 1; ++indexI)
     {
         // Get SpeciesAtom 'i' and its radius
         SpeciesAtom *i = atoms[indexI];
         radiusI = AtomicRadius::radius(i->element());
-        for (int indexJ = indexI + 1; indexJ < nAtoms(); ++indexJ)
+        for (auto indexJ = indexI + 1; indexJ < nAtoms(); ++indexJ)
         {
             // Get SpeciesAtom 'j'
             SpeciesAtom *j = atoms[indexJ];

@@ -38,7 +38,7 @@ bool OperateExpressionProcedureNode::operateData1D(ProcessPool &procPool, Config
     z_->set(0.0);
 
     // Evaluate the expression over all values
-    for (int i = 0; i < x.nItems(); ++i)
+    for (auto i = 0; i < x.nItems(); ++i)
     {
         // Set variables in expression
         x_->set(x.constAt(i));
@@ -61,12 +61,12 @@ bool OperateExpressionProcedureNode::operateData2D(ProcessPool &procPool, Config
     z_->set(0.0);
 
     // Evaluate the expression over all values
-    for (int i = 0; i < x.nItems(); ++i)
+    for (auto i = 0; i < x.nItems(); ++i)
     {
         // Set x value in expression
         x_->set(x.constAt(i));
 
-        for (int j = 0; j < y.nItems(); ++j)
+        for (auto j = 0; j < y.nItems(); ++j)
         {
             // Set y and value in expression
             y_->set(y.constAt(j));
@@ -91,17 +91,17 @@ bool OperateExpressionProcedureNode::operateData3D(ProcessPool &procPool, Config
     z_->set(0.0);
 
     // Evaluate the expression over all values
-    for (int i = 0; i < x.nItems(); ++i)
+    for (auto i = 0; i < x.nItems(); ++i)
     {
         // Set x value in expression
         x_->set(x.constAt(i));
 
-        for (int j = 0; j < y.nItems(); ++j)
+        for (auto j = 0; j < y.nItems(); ++j)
         {
             // Set y value in expression
             y_->set(y.constAt(j));
 
-            for (int k = 0; k < z.nItems(); ++k)
+            for (auto k = 0; k < z.nItems(); ++k)
             {
                 // Set z and  value in expression
                 z_->set(z.constAt(k));

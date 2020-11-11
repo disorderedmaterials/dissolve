@@ -50,7 +50,7 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
     bool write(LineParser &parser)
     {
         parser.writeLineF("{}  {}  {}\n", data_.nRows(), data_.nColumns(), DissolveSys::btoa(data_.halved()));
-        for (int n = 0; n < data_.linearArraySize(); ++n)
+        for (auto n = 0; n < data_.linearArraySize(); ++n)
             if (!data_.linearValue(n).write(parser))
                 return false;
         return true;
@@ -63,7 +63,7 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
         int nRows = parser.argi(0), nColumns = parser.argi(1);
         data_.initialise(nRows, nColumns, parser.argb(2));
 
-        for (int n = 0; n < data_.linearArraySize(); ++n)
+        for (auto n = 0; n < data_.linearArraySize(); ++n)
             if (!data_.linearArray()[n].read(parser, coreData))
                 return false;
         return true;
@@ -95,7 +95,7 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
             // Now broadcast Array data
             if ((nRows * nColumns) > 0)
             {
-                for (int n = 0; n < data_.linearArraySize(); ++n)
+                for (auto n = 0; n < data_.linearArraySize(); ++n)
                     if (!data_.linearArray()[n].broadcast(procPool, root, coreData))
                         return false;
             }
@@ -114,7 +114,7 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
             data_.initialise(nRows, nColumns, half);
             if ((nRows * nColumns) > 0)
             {
-                for (int n = 0; n < data_.linearArraySize(); ++n)
+                for (auto n = 0; n < data_.linearArraySize(); ++n)
                     if (!data_.linearArray()[n].broadcast(procPool, root, coreData))
                         return false;
             }
@@ -135,7 +135,7 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
         if (!procPool.equality(data_.halved()))
             return Messenger::error("Array2D<double> half-status are not equivalent.\n");
         // Keep it simple (and slow) and check/send one value at a time
-        for (int n = 0; n < data_.linearArraySize(); ++n)
+        for (auto n = 0; n < data_.linearArraySize(); ++n)
             if (!data_.linearArray()[n].equality(procPool))
                 return false;
         return true;

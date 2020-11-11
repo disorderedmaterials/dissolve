@@ -126,7 +126,7 @@ void SelectSymbolDialog::updateTable(bool force)
         // Populate the symbols list
         QTableWidgetItem *item;
         QSize itemSize(itemSize_, itemSize_);
-        for (int n = 0; n < SymbolData::nSymbols; ++n)
+        for (auto n = 0; n < SymbolData::nSymbols; ++n)
         {
             item = new QTableWidgetItem();
             item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
@@ -144,7 +144,7 @@ void SelectSymbolDialog::updateTable(bool force)
         header->setStretchLastSection(true);
 
     // Set sizes of all columns except the last
-    for (int n = 0; n < nDisplayColumns; ++n)
+    for (auto n = 0; n < nDisplayColumns; ++n)
         ui.SymbolTable->setColumnWidth(n, itemSize_ + widthRemainder / nDisplayColumns);
 
     oldNColumns = nDisplayColumns;

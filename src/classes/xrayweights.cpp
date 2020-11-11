@@ -178,7 +178,7 @@ Array<double> XRayWeights::formFactor(int typeIndexI, const Array<double> &Q) co
 
     auto &fi = formFactorData_[typeIndexI].get();
 
-    for (int n = 0; n < Q.nItems(); ++n)
+    for (auto n = 0; n < Q.nItems(); ++n)
         fiq[n] = fi.magnitude(Q.constAt(n));
 
     return fiq;
@@ -232,7 +232,7 @@ Array<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const Array<do
     auto &fj = formFactorData_[typeIndexJ].get();
     auto preFactor = preFactors_.constAt(typeIndexI, typeIndexJ);
 
-    for (int n = 0; n < Q.nItems(); ++n)
+    for (auto n = 0; n < Q.nItems(); ++n)
         fijq[n] = fi.magnitude(Q.constAt(n)) * fj.magnitude(Q.constAt(n)) * preFactor;
 
     return fijq;
@@ -244,12 +244,12 @@ Array<double> XRayWeights::boundCoherentSquareOfAverage(const Array<double> &Q) 
     // Initialise results array
     Array<double> bbar(Q.nItems());
 
-    for (int typeI = 0; typeI < atomTypes_.nItems(); ++typeI)
+    for (auto typeI = 0; typeI < atomTypes_.nItems(); ++typeI)
     {
         const double ci = concentrations_.constAt(typeI);
         auto &fi = formFactorData_[typeI].get();
 
-        for (int n = 0; n < Q.nItems(); ++n)
+        for (auto n = 0; n < Q.nItems(); ++n)
             bbar[n] += ci * fi.magnitude(Q.constAt(n));
     }
 
@@ -262,12 +262,12 @@ Array<double> XRayWeights::boundCoherentAverageOfSquares(const Array<double> &Q)
     // Initialise results array
     Array<double> bbar(Q.nItems());
 
-    for (int typeI = 0; typeI < atomTypes_.nItems(); ++typeI)
+    for (auto typeI = 0; typeI < atomTypes_.nItems(); ++typeI)
     {
         const double ci = concentrations_.constAt(typeI);
         auto &fi = formFactorData_[typeI].get();
 
-        for (int n = 0; n < Q.nItems(); ++n)
+        for (auto n = 0; n < Q.nItems(); ++n)
             bbar[n] += ci * fi.magnitude(Q.constAt(n)) * fi.magnitude(Q.constAt(n));
     }
 

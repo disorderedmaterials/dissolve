@@ -99,7 +99,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Array<std::shared_ptr<Molecule>> targetMolecules;
         if (restrictToSpecies_.nItems() > 0)
         {
-            for (int n = 0; n < cfg->nMolecules(); ++n)
+            for (auto n = 0; n < cfg->nMolecules(); ++n)
             {
                 std::shared_ptr<Molecule> mol = cfg->molecule(n);
                 if (restrictToSpecies_.contains(mol->species()))
@@ -226,7 +226,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Ready to do MD propagation of system
-        for (int step = 1; step <= nSteps; ++step)
+        for (auto step = 1; step <= nSteps; ++step)
         {
             // Variable timestep?
             if (variableTimestep)
@@ -332,7 +332,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Write Atoms
-                    for (int n = 0; n < cfg->nAtoms(); ++n)
+                    for (auto n = 0; n < cfg->nAtoms(); ++n)
                     {
                         Atom *i = atoms[n];
                         if (!trajParser.writeLineF("{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n",

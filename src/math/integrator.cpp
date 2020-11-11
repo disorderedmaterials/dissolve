@@ -23,7 +23,7 @@ double Integrator::trapezoid(const Data1D &data)
     const auto &y = data.constValues();
 
     double total = 0.0, y0 = y.firstValue(), y1, x0 = x.firstValue(), x1;
-    for (int n = 1; n < x.nItems(); ++n)
+    for (auto n = 1; n < x.nItems(); ++n)
     {
         x1 = x.constAt(n);
         y1 = y.constAt(n);
@@ -47,7 +47,7 @@ double Integrator::trapezoid(const Data1D &data, double xMin, double xMax)
 
     double total = 0.0, y0, y1, x0, x1;
     auto nPoints = 0;
-    for (int n = 0; n < x.nItems(); ++n)
+    for (auto n = 0; n < x.nItems(); ++n)
     {
         // Get current x and y values and check limit
         x1 = x.constAt(n);
@@ -89,7 +89,7 @@ double Integrator::absTrapezoid(const Data1D &data)
     const auto &y = data.constValues();
 
     double total = 0.0, y0 = y.firstValue(), y1, x0 = x.firstValue(), x1;
-    for (int n = 1; n < x.nItems(); ++n)
+    for (auto n = 1; n < x.nItems(); ++n)
     {
         x1 = x.constAt(n);
         y1 = y.constAt(n);
@@ -108,7 +108,7 @@ double Integrator::sum(const Data1D &data)
 
     double total = 0.0;
 
-    for (int n = 0; n < values.nItems(); ++n)
+    for (auto n = 0; n < values.nItems(); ++n)
         total += values.constAt(n);
 
     return total;
@@ -123,7 +123,7 @@ double Integrator::sum(const Data1D &data, double xMin, double xMax)
 
     double total = 0.0;
 
-    for (int n = 0; n < values.nItems(); ++n)
+    for (auto n = 0; n < values.nItems(); ++n)
     {
         if (x.constAt(n) < xMin)
             continue;
@@ -147,7 +147,7 @@ double Integrator::absSum(const Data1D &data)
 
     double total = 0.0;
 
-    for (int n = 0; n < values.nItems(); ++n)
+    for (auto n = 0; n < values.nItems(); ++n)
         total += fabs(values.constAt(n));
 
     return total;
@@ -162,7 +162,7 @@ double Integrator::absSum(const Data1D &data, double xMin, double xMax)
 
     double total = 0.0;
 
-    for (int n = 0; n < values.nItems(); ++n)
+    for (auto n = 0; n < values.nItems(); ++n)
     {
         if (x.constAt(n) < xMin)
             continue;
@@ -186,7 +186,7 @@ double Integrator::sumOfSquares(const Data1D &data)
 
     double total = 0.0;
 
-    for (int n = 0; n < values.nItems(); ++n)
+    for (auto n = 0; n < values.nItems(); ++n)
         total += values.constAt(n) * values.constAt(n);
 
     return total;
@@ -201,7 +201,7 @@ double Integrator::sumOfSquares(const Data1D &data, double xMin, double xMax)
 
     double total = 0.0;
 
-    for (int n = 0; n < values.nItems(); ++n)
+    for (auto n = 0; n < values.nItems(); ++n)
     {
         if (x.constAt(n) < xMin)
             continue;
@@ -228,7 +228,7 @@ double Integrator::sum(const Data2D &data)
 
     double total = 0.0;
 
-    for (int n = 0; n < values.linearArraySize(); ++n)
+    for (auto n = 0; n < values.linearArraySize(); ++n)
         total += values.constLinearValue(n);
 
     return total;
@@ -242,7 +242,7 @@ double Integrator::absSum(const Data2D &data)
 
     double total = 0.0;
 
-    for (int n = 0; n < values.linearArraySize(); ++n)
+    for (auto n = 0; n < values.linearArraySize(); ++n)
         total += fabs(values.constLinearValue(n));
 
     return total;
@@ -256,7 +256,7 @@ double Integrator::sum(const Data3D &data)
 
     double total = 0.0;
 
-    for (int n = 0; n < values.linearArraySize(); ++n)
+    for (auto n = 0; n < values.linearArraySize(); ++n)
         total += values.constLinearValue(n);
 
     return total;
@@ -270,7 +270,7 @@ double Integrator::absSum(const Data3D &data)
 
     double total = 0.0;
 
-    for (int n = 0; n < values.linearArraySize(); ++n)
+    for (auto n = 0; n < values.linearArraySize(); ++n)
         total += fabs(values.constLinearValue(n));
 
     return total;

@@ -11,7 +11,7 @@ double Extrema::min(const Array<double> &A)
     if (A.nItems() > 0)
     {
         double min = A.constAt(0);
-        for (int i = 0; i < A.nItems(); ++i)
+        for (auto i = 0; i < A.nItems(); ++i)
         {
             if (A.constAt(i) < min)
                 min = A.constAt(i);
@@ -28,7 +28,7 @@ double Extrema::max(const Array<double> &A)
     if (A.nItems() > 0)
     {
         double max = A.constAt(0);
-        for (int i = 0; i < A.nItems(); ++i)
+        for (auto i = 0; i < A.nItems(); ++i)
         {
             if (A.constAt(i) > max)
                 max = A.constAt(i);
@@ -45,7 +45,7 @@ double Extrema::min(const Array2D<double> &A)
     if (A.linearArraySize() > 0)
     {
         double min = A.constLinearValue(0);
-        for (int i = 0; i < A.linearArraySize(); ++i)
+        for (auto i = 0; i < A.linearArraySize(); ++i)
         {
             if (A.constLinearValue(i) < min)
                 min = A.constLinearValue(i);
@@ -62,7 +62,7 @@ double Extrema::max(const Array2D<double> &A)
     if (A.linearArraySize() > 0)
     {
         double max = A.constLinearValue(0);
-        for (int i = 0; i < A.linearArraySize(); ++i)
+        for (auto i = 0; i < A.linearArraySize(); ++i)
         {
             if (A.constLinearValue(i) > max)
                 max = A.constLinearValue(i);
@@ -79,7 +79,7 @@ double Extrema::absMin(const Array<double> &A)
     if (A.nItems() > 0)
     {
         double absMin = abs(A.constAt(0));
-        for (int i = 0; i < A.nItems(); ++i)
+        for (auto i = 0; i < A.nItems(); ++i)
         {
             if (abs(A.constAt(i)) < absMin)
                 absMin = abs(A.constAt(i));
@@ -96,7 +96,7 @@ double Extrema::absMax(const Array<double> &A)
     if (A.nItems() > 0)
     {
         double absMax = abs(A.constAt(0));
-        for (int i = 0; i < A.nItems(); ++i)
+        for (auto i = 0; i < A.nItems(); ++i)
         {
             if (abs(A.constAt(i)) > absMax)
                 absMax = abs(A.constAt(i));
@@ -113,7 +113,7 @@ double Extrema::absMin(const Array2D<double> &A)
     if (A.linearArraySize() > 0)
     {
         double absMin = abs(A.constLinearValue(0));
-        for (int i = 0; i < A.linearArraySize(); ++i)
+        for (auto i = 0; i < A.linearArraySize(); ++i)
         {
             if (abs(A.constLinearValue(i)) < absMin)
                 absMin = abs(A.constLinearValue(i));
@@ -130,7 +130,7 @@ double Extrema::absMax(const Array2D<double> &A)
     if (A.linearArraySize() > 0)
     {
         double absMax = abs(A.constLinearValue(0));
-        for (int i = 0; i < A.linearArraySize(); ++i)
+        for (auto i = 0; i < A.linearArraySize(); ++i)
         {
             if (abs(A.constLinearValue(i)) < absMax)
                 absMax = abs(A.constLinearValue(i));

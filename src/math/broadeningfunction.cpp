@@ -22,7 +22,7 @@ BroadeningFunction::BroadeningFunction(const BroadeningFunction &source) { (*thi
 void BroadeningFunction::operator=(const BroadeningFunction &source)
 {
     function_ = source.function_;
-    for (int n = 0; n < MAXBROADENINGFUNCTIONPARAMS; ++n)
+    for (auto n = 0; n < MAXBROADENINGFUNCTIONPARAMS; ++n)
         parameters_[n] = source.parameters_[n];
     inverted_ = source.inverted_;
     staticOmega_ = source.staticOmega_;
@@ -75,7 +75,7 @@ std::string_view BroadeningFunctionParameters[][MAXBROADENINGFUNCTIONPARAMS] = {
 // Return FunctionType from supplied string
 BroadeningFunction::FunctionType BroadeningFunction::functionType(std::string_view s)
 {
-    for (int n = 0; n < nFunctionTypes; ++n)
+    for (auto n = 0; n < nFunctionTypes; ++n)
         if (DissolveSys::sameString(s, BroadeningFunctionKeywords[n]))
             return (FunctionType)n;
     return BroadeningFunction::nFunctionTypes;
@@ -140,7 +140,7 @@ void BroadeningFunction::set(BroadeningFunction::FunctionType function, double p
 bool BroadeningFunction::set(LineParser &parser, int startArg)
 {
     // Zero all parameters before we start
-    for (int n = 0; n < MAXBROADENINGFUNCTIONPARAMS; ++n)
+    for (auto n = 0; n < MAXBROADENINGFUNCTIONPARAMS; ++n)
         parameters_[n] = 0.0;
 
     // First argument is the form of the function
@@ -524,7 +524,6 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX) const
 // Return the discrete kernel normalisation factor for the current function, given the underlying data binwidth and omega value
 double BroadeningFunction::discreteKernelNormalisation(double deltaX, double omega) const
 {
-    double test;
     // Return the multiplicative factor to normalise the current function against its discretised sum
     switch (function_)
     {
@@ -614,7 +613,7 @@ bool BroadeningFunction::read(LineParser &parser, CoreData &coreData)
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     function_ = functionType(parser.argsv(0));
-    for (int n = 0; n < nFunctionParameters(function_); ++n)
+    for (auto n = 0; n < nFunctionParameters(function_); ++n)
         parameters_[n] = parser.argd(n + 1);
     return true;
 }
@@ -623,7 +622,7 @@ bool BroadeningFunction::read(LineParser &parser, CoreData &coreData)
 bool BroadeningFunction::write(LineParser &parser)
 {
     std::string line{functionType(function_)};
-    for (int n = 0; n < nFunctionParameters(function_); ++n)
+    for (auto n = 0; n < nFunctionParameters(function_); ++n)
         line += fmt::format(" {:16.9e}", parameters_[n]);
     return parser.writeLine(line);
 }

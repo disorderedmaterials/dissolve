@@ -50,7 +50,7 @@ template <class A> class Array3D
     void operator=(const A value)
     {
         // Copy source data elements
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] = value;
     }
     void operator=(const Array3D<A> &source)
@@ -59,7 +59,7 @@ template <class A> class Array3D
         clear();
         initialise(source.nX_, source.nY_, source.nZ_);
 
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] = source.array_[n];
     }
 
@@ -92,7 +92,7 @@ template <class A> class Array3D
 
         // Create slice offsets array
         sliceOffsets_ = new int[nZ_];
-        for (int n = 0; n < nZ_; ++n)
+        for (auto n = 0; n < nZ_; ++n)
             sliceOffsets_[n] = n * nX_ * nY_;
     }
 
@@ -220,25 +220,25 @@ template <class A> class Array3D
     // Operator+= (add to all)
     void operator+=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] += value;
     }
     // Operator-= (subtract from all)
     void operator-=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] -= value;
     }
     // Operator*= (multiply all)
     void operator*=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] *= value;
     }
     // Operator/= (divide all)
     void operator/=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] /= value;
     }
 };
@@ -295,7 +295,7 @@ template <class A> class OffsetArray3D
     void operator=(const A value)
     {
         // Copy source data elements
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] = value;
     }
     void operator=(const Array3D<A> &source)
@@ -304,7 +304,7 @@ template <class A> class OffsetArray3D
         clear();
         initialise(source.nX_, source.nY_, source.nZ_);
 
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] = source.array_[n];
     }
 
@@ -346,7 +346,7 @@ template <class A> class OffsetArray3D
 
             // Create slice offsets array
             sliceOffsets_ = new int[nZ_];
-            for (int n = 0; n < nZ_; ++n)
+            for (auto n = 0; n < nZ_; ++n)
                 sliceOffsets_[n] = n * nX_ * nY_;
         }
     }
@@ -485,25 +485,25 @@ template <class A> class OffsetArray3D
     // Operator+= (add to all)
     void operator+=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] += value;
     }
     // Operator-= (subtract from all)
     void operator-=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] -= value;
     }
     // Operator*= (multiply all)
     void operator*=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] *= value;
     }
     // Operator/= (divide all)
     void operator/=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
+        for (auto n = 0; n < linearSize_; ++n)
             array_[n] /= value;
     }
 };

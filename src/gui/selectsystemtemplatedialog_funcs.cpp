@@ -26,7 +26,7 @@ SelectSystemTemplateDialog::~SelectSystemTemplateDialog() {}
 void SelectSystemTemplateDialog::updateTemplatesList(QString filter)
 {
     // Loop over items in the list
-    for (int n = 0; n < ui_.TemplatesList->count(); ++n)
+    for (auto n = 0; n < ui_.TemplatesList->count(); ++n)
     {
         QListWidgetItem *item = ui_.TemplatesList->item(n);
         if (!item)

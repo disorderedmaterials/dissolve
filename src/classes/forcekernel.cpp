@@ -119,7 +119,7 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
 #endif
     OrderedVector<Atom *> &centralAtoms = centralCell->atoms();
     OrderedVector<Atom *> &otherAtoms = otherCell->atoms();
-    Atom *ii, *jj;
+    Atom *ii;
     Vec3<double> rI;
     std::shared_ptr<Molecule> molI;
     double scale;
@@ -214,7 +214,6 @@ void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::Divi
     }
 #endif
     Atom *jj;
-    int j, index;
     double scale;
 
     // Grab some information on the supplied atom
@@ -289,7 +288,6 @@ void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::Divi
         }
         else
         {
-            index = 0;
             for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
             {
                 // Grab other Atom pointer

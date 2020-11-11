@@ -27,9 +27,9 @@ bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, const PartialSet &un
     Timer timer;
     timer.start();
     auto nTypes = unweightedgr.nAtomTypes();
-    for (int n = 0; n < nTypes; ++n)
+    for (auto n = 0; n < nTypes; ++n)
     {
-        for (int m = n; m < nTypes; ++m)
+        for (auto m = n; m < nTypes; ++m)
         {
             // Total partial
             unweightedsq.partial(n, m).copyArrays(unweightedgr.partial(n, m));

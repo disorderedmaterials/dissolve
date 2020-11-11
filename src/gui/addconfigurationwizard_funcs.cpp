@@ -110,8 +110,6 @@ bool AddConfigurationWizard::progressionAllowed(int index) const
 // Perform any necessary actions before moving to the next page
 bool AddConfigurationWizard::prepareForNextPage(int currentIndex)
 {
-    Species *sp;
-
     switch (currentIndex)
     {
         case (AddConfigurationWizard::SelectTemplatePage):

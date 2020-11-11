@@ -68,7 +68,7 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
 
             // Calculate origin
 #ifdef CHECKS
-        for (int i = 0; i < originAtomIndices.nItems(); ++i)
+        for (auto i = 0; i < originAtomIndices.nItems(); ++i)
             if ((originAtomIndices[i] < 0) || (originAtomIndices[i] >= molecule->nAtoms()))
                 return Messenger::error("Origin atom index {} is out of range for molecule (contains {} atoms).\n",
                                         originAtomIndices[i], molecule->nAtoms());
@@ -78,7 +78,7 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
             double mass = AtomicMass::mass(molecule->atom(originAtomIndices.firstValue())->speciesAtom()->element());
             origin = molecule->atom(originAtomIndices.firstValue())->r() * mass;
             double massNorm = mass;
-            for (int m = 1; m < originAtomIndices.nItems(); ++m)
+            for (auto m = 1; m < originAtomIndices.nItems(); ++m)
             {
                 mass = AtomicMass::mass(molecule->atom(originAtomIndices[m])->speciesAtom()->element());
                 origin += box->minimumImage(molecule->atom(originAtomIndices[m])->r(),
@@ -91,7 +91,7 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
         else
         {
             origin = molecule->atom(originAtomIndices.firstValue())->r();
-            for (int m = 1; m < originAtomIndices.nItems(); ++m)
+            for (auto m = 1; m < originAtomIndices.nItems(); ++m)
                 origin += box->minimumImage(molecule->atom(originAtomIndices[m])->r(),
                                             molecule->atom(originAtomIndices.firstValue())->r());
             origin /= originAtomIndices.nItems();
@@ -101,18 +101,18 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
         if (sitesHaveOrientation_)
         {
 #ifdef CHECKS
-            for (int i = 0; i < xAxisAtomIndices.nItems(); ++i)
+            for (auto i = 0; i < xAxisAtomIndices.nItems(); ++i)
                 if ((xAxisAtomIndices[i] < 0) || (xAxisAtomIndices[i] >= molecule->nAtoms()))
                     return Messenger::error("X-axis atom index {} is out of range for molecule (contains {} atoms).\n",
                                             xAxisAtomIndices[i], molecule->nAtoms());
-            for (int i = 0; i < yAxisAtomIndices.nItems(); ++i)
+            for (auto i = 0; i < yAxisAtomIndices.nItems(); ++i)
                 if ((yAxisAtomIndices[i] < 0) || (yAxisAtomIndices[i] >= molecule->nAtoms()))
                     return Messenger::error("Y-axis atom index {} is out of range for molecule (contains {} atoms).\n",
                                             yAxisAtomIndices[i], molecule->nAtoms());
 #endif
             // Get average position of supplied x-axis atoms
             v = molecule->atom(xAxisAtomIndices.firstValue())->r();
-            for (int m = 1; m < xAxisAtomIndices.nItems(); ++m)
+            for (auto m = 1; m < xAxisAtomIndices.nItems(); ++m)
                 v += box->minimumImage(molecule->atom(xAxisAtomIndices[m])->r(),
                                        molecule->atom(xAxisAtomIndices.firstValue())->r());
             v /= xAxisAtomIndices.nItems();
@@ -123,7 +123,7 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
 
             // Get average position of supplied y-axis atoms
             v = molecule->atom(yAxisAtomIndices.firstValue())->r();
-            for (int m = 1; m < yAxisAtomIndices.nItems(); ++m)
+            for (auto m = 1; m < yAxisAtomIndices.nItems(); ++m)
                 v += box->minimumImage(molecule->atom(yAxisAtomIndices[m])->r(),
                                        molecule->atom(yAxisAtomIndices.firstValue())->r());
             v /= yAxisAtomIndices.nItems();

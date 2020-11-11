@@ -70,10 +70,10 @@ void ScatteringMatrix::print() const
     Messenger::print("{}", line);
 
     // Loop over reference data
-    for (int row = 0; row < data_.nItems(); ++row)
+    for (auto row = 0; row < data_.nItems(); ++row)
     {
         line.clear();
-        for (int n = 0; n < A_.nColumns(); ++n)
+        for (auto n = 0; n < A_.nColumns(); ++n)
         {
             line += fmt::format("{:10f} ", A_.constAt(row, n));
 
@@ -90,7 +90,7 @@ void ScatteringMatrix::print() const
         if (row >= std::max(nColsWritten, 10))
         {
             line.clear();
-            for (int n = 0; n < nColsWritten; ++n)
+            for (auto n = 0; n < nColsWritten; ++n)
                 line += "    ...    ";
             Messenger::print("{}\n", line);
             break;
@@ -140,7 +140,7 @@ void ScatteringMatrix::printInverse() const
         if (col >= std::max(nColsWritten, 10))
         {
             line.clear();
-            for (int n = 0; n < nColsWritten; ++n)
+            for (auto n = 0; n < nColsWritten; ++n)
                 line += "    ...    ";
             Messenger::print(line);
             break;
@@ -169,14 +169,14 @@ void ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
     Data1D *partials = estimatedSQ.linearArray();
 
     // Clear current partials
-    for (int n = 0; n < estimatedSQ.linearArraySize(); ++n)
+    for (auto n = 0; n < estimatedSQ.linearArraySize(); ++n)
         partials[n].clear();
 
     // Generate new partials (nPartials = nColumns)
-    for (int n = 0; n < A_.nColumns(); ++n)
+    for (auto n = 0; n < A_.nColumns(); ++n)
     {
         // Add in contribution from each datset (row).
-        for (int m = 0; m < data_.nItems(); ++m)
+        for (auto m = 0; m < data_.nItems(); ++m)
         {
             Interpolator::addInterpolated(partials[n], data_[m], inverseA_.constAt(n, m));
         }
@@ -252,9 +252,9 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeigh
     // Set coefficients in A_
     const auto nUsedTypes = dataWeights.nUsedTypes();
     AtomTypeList &usedTypes = dataWeights.atomTypes();
-    for (int n = 0; n < nUsedTypes; ++n)
+    for (auto n = 0; n < nUsedTypes; ++n)
     {
-        for (int m = n; m < nUsedTypes; ++m)
+        for (auto m = n; m < nUsedTypes; ++m)
         {
             auto colIndex = pairIndex(usedTypes.atomType(n), usedTypes.atomType(m));
             if (colIndex == -1)

@@ -337,7 +337,7 @@ void IsotopologueSetKeywordWidget::updateWidgetValues(const CoreData &coreData)
     isotopologuesItemManager_.update(ui_.IsotopologueTree, keyword_->data().isotopologues(),
                                      &IsotopologueSetKeywordWidget::updateIsotopologueTreeRootItem);
 
-    for (int n = 0; n < 3; ++n)
+    for (auto n = 0; n < 3; ++n)
         ui_.IsotopologueTree->resizeColumnToContents(n);
     ui_.IsotopologueTree->expandAll();
 

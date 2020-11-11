@@ -198,7 +198,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
     CoordinateSet *coordSet = sp->coordinateSets().first();
     Matrix3 transform;
     const Box *box = cfg->box();
-    for (int n = 0; n < requestedPopulation; ++n)
+    for (auto n = 0; n < requestedPopulation; ++n)
     {
         // Add the Molecule
         std::shared_ptr<Molecule> mol = cfg->addMolecule(sp, coordSet);

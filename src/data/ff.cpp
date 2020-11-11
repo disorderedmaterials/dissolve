@@ -161,7 +161,7 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeByName(st
 {
     auto startZ = (element ? element->Z() : 0);
     auto endZ = (element ? element->Z() : nElements() - 1);
-    for (int Z = startZ; Z <= endZ; ++Z)
+    for (auto Z = startZ; Z <= endZ; ++Z)
     {
         // Go through types associated to the Element
         auto it = std::find_if(atomTypesByElementPrivate_[Z].cbegin(), atomTypesByElementPrivate_[Z].cend(),
@@ -178,7 +178,7 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int 
 {
     auto startZ = (element ? element->Z() : 0);
     auto endZ = (element ? element->Z() : nElements() - 1);
-    for (int Z = startZ; Z <= endZ; ++Z)
+    for (auto Z = startZ; Z <= endZ; ++Z)
     {
         // Go through types associated to the Element
         auto it = std::find_if(atomTypesByElementPrivate_[Z].cbegin(), atomTypesByElementPrivate_[Z].cend(),
@@ -470,7 +470,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                 continue;
 
             // Loop over combinations of bonds to the central atom
-            for (int indexJ = 0; indexJ < i->nBonds() - 2; ++indexJ)
+            for (auto indexJ = 0; indexJ < i->nBonds() - 2; ++indexJ)
             {
                 // Get SpeciesAtom 'j'
                 auto *j = i->bond(indexJ).partner(i);
@@ -481,7 +481,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                 if (selectionOnly && (!j->isSelected()))
                     continue;
 
-                for (int indexK = indexJ + 1; indexK < i->nBonds() - 1; ++indexK)
+                for (auto indexK = indexJ + 1; indexK < i->nBonds() - 1; ++indexK)
                 {
                     // Get SpeciesAtom 'k'
                     auto *k = i->bond(indexK).partner(i);
@@ -492,7 +492,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                     if (selectionOnly && (!k->isSelected()))
                         continue;
 
-                    for (int indexL = indexK + 1; indexL < i->nBonds(); ++indexL)
+                    for (auto indexL = indexK + 1; indexL < i->nBonds(); ++indexL)
                     {
                         // Get SpeciesAtom 'l'
                         auto *l = i->bond(indexL).partner(i);
@@ -540,9 +540,7 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
 {
     AtomGeometry result = nAtomGeometries;
     double angle, largest;
-    SpeciesBond *b1, *b2;
     SpeciesAtom *h, *j;
-    // 	RefListItem<SpeciesBond,int>* bref1, *bref2;
 
     // Work based on the number of bound atoms
     switch (i->nBonds())
@@ -567,28 +565,10 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             if (angle > 150.0)
                 result = Forcefield::LinearGeometry;
-            // 			else if ((angle > 100.0) && (angle < 115.0)) result =
-            // Forcefield::TetrahedralGeometry;
             else
                 result = Forcefield::TetrahedralGeometry;
             break;
         case (3):
-            // 			bref1 = bonds();
-            // 			bref2 = bonds()->next;
-            // 			b1 = bref1->item;
-            // 			b2 = bref2->item;
-            // 			angle = parent_->angle(b1->partner(this),this,b2->partner(this));
-            // 			largest = angle;
-            // 			b2 = bref2->next->item;
-            // 			angle = parent_->angle(b1->partner(this),this,b2->partner(this));
-            // 			if (angle > largest) largest = angle;
-            // 			b1 = bref1->next->item;
-            // 			angle = parent_->angle(b1->partner(this),this,b2->partner(this));
-            // 			if (angle > largest) largest = angle;
-            // 			if (largest > 170.0) result = Forcefield::TShapeGeometry;
-            // 			else if ((largest > 115.0) && (largest < 125.0)) result =
-            // Forcefield::TrigPlanarGeometry; 			else if ((largest < 115.0) && (largest > 100.0))
-            // result = Forcefield::TetrahedralGeometry; Get largest of the three angles around the central atom
             h = i->bond(0).partner(i);
             j = i->bond(1).partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
@@ -605,8 +585,6 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
                 result = Forcefield::TShapeGeometry;
             else if ((largest > 115.0) && (largest < 125.0))
                 result = Forcefield::TrigonalPlanarGeometry;
-            // 			else if ((largest < 115.0) && (largest > 100.0)) result =
-            // Forcefield::TetrahedralGeometry;
             else
                 result = Forcefield::TetrahedralGeometry;
             break;
@@ -614,10 +592,10 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
             // Two possibilities - tetrahedral or square planar. Tetrahedral will have an
             // average of all angles of ~ 109.5, for square planar (1/6) * (4*90 + 2*180) = 120
             angle = 0.0;
-            for (int n = 0; n < i->nBonds(); ++n)
+            for (auto n = 0; n < i->nBonds(); ++n)
             {
                 h = i->bond(n).partner(i);
-                for (int m = n + 1; m < i->nBonds(); ++m)
+                for (auto m = n + 1; m < i->nBonds(); ++m)
                 {
                     j = i->bond(m).partner(i);
                     angle += NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
@@ -626,8 +604,6 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
             angle /= 6.0;
             if ((angle > 100.0) && (angle < 115.0))
                 result = Forcefield::TetrahedralGeometry;
-            // 			else if ((angle >= 115.0) && (angle < 125.0)) result =
-            // Forcefield::SquarePlanarGeometry;
             else
                 result = Forcefield::SquarePlanarGeometry;
             break;

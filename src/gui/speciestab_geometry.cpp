@@ -322,10 +322,10 @@ void SpeciesTab::updateAtomTableSelection()
         i = VariantPointer<SpeciesAtom>(item->data(Qt::UserRole));
 
         if (i->isSelected())
-            for (int m = 0; m < 6; ++m)
+            for (auto m = 0; m < 6; ++m)
                 ui_.AtomTable->item(n, m)->setSelected(true);
         else
-            for (int m = 0; m < 6; ++m)
+            for (auto m = 0; m < 6; ++m)
                 ui_.AtomTable->item(n, m)->setSelected(false);
     }
 }

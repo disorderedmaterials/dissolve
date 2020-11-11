@@ -41,7 +41,7 @@ class Averaging
             moduleData.remove(fmt::format("{}_{}", name, nStored), prefix);
             --nStored;
         }
-        for (int n = nStored; n > 0; --n)
+        for (auto n = nStored; n > 0; --n)
             moduleData.rename(fmt::format("{}_{}", name, n), prefix, fmt::format("{}_{}", name, n + 1), prefix);
 
         return nStored;
@@ -86,7 +86,7 @@ class Averaging
         // Perform averaging of the datsets that we have
         currentData.reset();
         double weight = 1.0;
-        for (int n = 0; n < nData; ++n)
+        for (auto n = 0; n < nData; ++n)
         {
             // Get a copy of the (n+1)'th dataset
             T data = GenericListHelper<T>::value(moduleData, fmt::format("{}_{}", name, n + 1), prefix);
@@ -132,12 +132,12 @@ class Averaging
         double normalisation = normalisationFactor(averagingScheme, nData);
 
         // Reset array elements
-        for (int i = 0; i < currentData.nItems(); ++i)
+        for (auto i = 0; i < currentData.nItems(); ++i)
             currentData.at(i).reset();
 
         // Perform averaging of the datsets that we have
         double weight = 1.0;
-        for (int n = 0; n < nData; ++n)
+        for (auto n = 0; n < nData; ++n)
         {
             // Get a copy of the (n+1)'th dataset
             T data = GenericListHelper<T>::value(moduleData, fmt::format("{}_{}", name, n + 1), prefix);
@@ -149,7 +149,7 @@ class Averaging
                 weight = pow(expDecay(), n) / normalisation;
 
             // Loop over individual elements of the array
-            for (int i = 0; i < currentData.nItems(); ++i)
+            for (auto i = 0; i < currentData.nItems(); ++i)
             {
                 // Weight the data
                 data.at(i) *= weight;

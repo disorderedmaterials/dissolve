@@ -5,6 +5,7 @@
 
 #include "keywords/data.h"
 #include "templates/reflist.h"
+#include <optional>
 
 // Forward Declarations
 class Configuration;
@@ -13,7 +14,7 @@ class Configuration;
 class ConfigurationRefListKeyword : public KeywordData<RefList<Configuration> &>
 {
     public:
-    ConfigurationRefListKeyword(RefList<Configuration> &references, int maxListSize = -1);
+    ConfigurationRefListKeyword(RefList<Configuration> &references, int maxListSize);
     ~ConfigurationRefListKeyword();
 
     /*

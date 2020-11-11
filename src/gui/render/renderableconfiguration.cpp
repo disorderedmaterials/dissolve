@@ -154,7 +154,6 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 
     // Grab the Configuration's Box and CellArray
     const Box *box = source_->box();
-    const CellArray &cellArray = source_->constCells();
 
     // Render according to the current displayStyle
     if (displayStyle_ == LinesStyle)
@@ -165,7 +164,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 
         // Draw Atoms
         const DynamicArray<Atom> &atoms = source_->constAtoms();
-        for (int n = 0; n < atoms.nItems(); ++n)
+        for (auto n = 0; n < atoms.nItems(); ++n)
         {
             // Get the Atom pointer
             i = atoms.constValue(n);
@@ -213,7 +212,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 
         // Draw Atoms
         const DynamicArray<Atom> &atoms = source_->constAtoms();
-        for (int n = 0; n < atoms.nItems(); ++n)
+        for (auto n = 0; n < atoms.nItems(); ++n)
         {
             const Atom *i = atoms.constValue(n);
 
@@ -314,7 +313,7 @@ bool RenderableConfiguration::writeStyleBlock(LineParser &parser, int indentLeve
 {
     // Construct indent string
     char *indent = new char[indentLevel * 2 + 1];
-    for (int n = 0; n < indentLevel * 2; ++n)
+    for (auto n = 0; n < indentLevel * 2; ++n)
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 

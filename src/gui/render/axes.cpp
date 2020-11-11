@@ -75,7 +75,7 @@ Axes::Axes(View &parent, FontInstance &fontInstance) : parentView_(parent), font
     autoPositionTitles_ = true;
 
     // GL
-    for (int n = 0; n < 3; ++n)
+    for (auto n = 0; n < 3; ++n)
     {
         axisPrimitives_[n].initialise(GL_LINES, false);
         axisPrimitives_[n].setNoInstances();
@@ -117,7 +117,7 @@ EnumOptions<Axes::AutoScaleMethod> &Axes::autoScaleMethods()
 void Axes::updateCoordinates()
 {
     // Loop over axes
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         // Determine central coordinate component
         if (logarithmic_[axis])
@@ -127,7 +127,7 @@ void Axes::updateCoordinates()
             coordCentre_[axis] = (max_[axis] + min_[axis]) * 0.5 * stretch_[axis];
 
         // Set axis position along other directions
-        for (int n = 0; n < 3; ++n)
+        for (auto n = 0; n < 3; ++n)
         {
             // Get axis position
             double position = (positionIsFractional_[axis] ? positionFractional_[axis][n] * (max_[n] - min_[n]) + min_[n]
@@ -167,7 +167,7 @@ void Axes::clamp(int axis)
     }
 
     // 	// Clamp axis position point values if necessary
-    // 	for (int axis=0; axis < 3; ++axis)
+    // 	for (auto axis=0; axis < 3; ++axis)
     // 	{
     // 		if (positionReal_[axis][(axis+1)%3] < limitMin_[(axis+1)%3])
     // 		{
@@ -322,7 +322,7 @@ double Axes::limitMax(int axis) const { return limitMax_.get(axis); }
 // Set all axis limits at once
 void Axes::expandLimits(bool noShrink)
 {
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         if ((min_[axis] > limitMin_[axis]) || (!noShrink))
             setToLimit(axis, true);
@@ -475,13 +475,13 @@ double Axes::transformX(double x) const
 void Axes::transformX(Array<double> &xArray) const
 {
     if (inverted_.x && logarithmic_.x)
-        for (int n = 0; n < xArray.nItems(); ++n)
+        for (auto n = 0; n < xArray.nItems(); ++n)
             xArray[n] = log10(max_.x / xArray[n]) * stretch_.x;
     else if (inverted_.x)
-        for (int n = 0; n < xArray.nItems(); ++n)
+        for (auto n = 0; n < xArray.nItems(); ++n)
             xArray[n] = ((max_.x - xArray[n]) + min_.x) * stretch_.x;
     else if (logarithmic_.x)
-        for (int n = 0; n < xArray.nItems(); ++n)
+        for (auto n = 0; n < xArray.nItems(); ++n)
             xArray[n] = log10(xArray[n]) * stretch_.x;
     else
         xArray *= stretch_.x;
@@ -504,17 +504,17 @@ double Axes::transformY(double y) const
 void Axes::transformY(Array<double> &yArray) const
 {
     if (inverted_.y && logarithmic_.y)
-        for (int n = 0; n < yArray.nItems(); ++n)
+        for (auto n = 0; n < yArray.nItems(); ++n)
         {
             // 		if (max_.y / yArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
             // 		else
             yArray[n] = log10(max_.y / yArray[n]) * stretch_.y;
         }
     else if (inverted_.y)
-        for (int n = 0; n < yArray.nItems(); ++n)
+        for (auto n = 0; n < yArray.nItems(); ++n)
             yArray[n] = ((max_.y - yArray[n]) + min_.y) * stretch_.y;
     else if (logarithmic_.y)
-        for (int n = 0; n < yArray.nItems(); ++n)
+        for (auto n = 0; n < yArray.nItems(); ++n)
         {
             // 		if (yArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
             // 		else
@@ -541,17 +541,17 @@ double Axes::transformZ(double z) const
 void Axes::transformZ(Array<double> &zArray) const
 {
     if (inverted_.z && logarithmic_.z)
-        for (int n = 0; n < zArray.nItems(); ++n)
+        for (auto n = 0; n < zArray.nItems(); ++n)
         {
             // 		if (max_.z / zArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
             // 		else
             zArray[n] = log10(max_.z / zArray[n]) * stretch_.z;
         }
     else if (inverted_.z)
-        for (int n = 0; n < zArray.nItems(); ++n)
+        for (auto n = 0; n < zArray.nItems(); ++n)
             zArray[n] = ((max_.z - zArray[n]) + min_.z) * stretch_.z;
     else if (logarithmic_.z)
-        for (int n = 0; n < zArray.nItems(); ++n)
+        for (auto n = 0; n < zArray.nItems(); ++n)
         {
             // 		if (zArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
             // 		else
@@ -773,7 +773,7 @@ void Axes::determineLabelFormat(int axis)
             QString tickLabel, oldLabel;
             auto nTicks = (max_[axis] - min_[axis]) / tickDelta_[axis];
             double axisValue = tickFirst_[axis];
-            for (int n = 0; n < nTicks; ++n)
+            for (auto n = 0; n < nTicks; ++n)
             {
                 // Print the current label value
                 tickLabel = numberFormat_[axis].format(axisValue);
@@ -1071,7 +1071,7 @@ void Axes::updateAxisPrimitives()
         inPlaneAxis = 0;
 
     // Set clip coordinates
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         if (logarithmic_[axis])
         {
@@ -1087,7 +1087,7 @@ void Axes::updateAxisPrimitives()
     }
 
     // Construct axes
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         // Clear old axis primitives
         axisPrimitives_[axis].forgetAll();
@@ -1301,7 +1301,7 @@ void Axes::updateAxisPrimitives()
     gridLineMajorPrimitives_[2].initialise(GL_LINES, false);
 
     // The 'axis' variable indicates the vector we are drawing lines along, and the relevant primitive store them in
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         // Check to see if there is anything to draw for this direction
         if ((!gridLinesMajor_[axis]) && (!gridLinesMinor_[axis]))
@@ -1312,9 +1312,9 @@ void Axes::updateAxisPrimitives()
         int ortho2 = (axis + 2) % 3;
 
         // Double loop now, over the two sets of tickmarks that are orthogonal to 'axis'
-        for (int i1 = 0; i1 < tickPositions[ortho1].nItems(); ++i1)
+        for (auto i1 = 0; i1 < tickPositions[ortho1].nItems(); ++i1)
         {
-            for (int i2 = 0; i2 < tickPositions[ortho2].nItems(); ++i2)
+            for (auto i2 = 0; i2 < tickPositions[ortho2].nItems(); ++i2)
             {
                 // Set basic vector info
                 // The 'axis' will define its own component, with the other two coming from the tickmark

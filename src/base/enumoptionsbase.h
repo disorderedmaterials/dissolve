@@ -4,6 +4,7 @@
 #pragma once
 
 #include "base/enumoptionslist.h"
+#include <optional>
 
 // Enum Options Base
 class EnumOptionsBase
@@ -35,7 +36,7 @@ class EnumOptionsBase
     // Options
     std::vector<EnumOption> options_;
     // Current option index in local options_ array
-    int currentOptionIndex_;
+    std::optional<int> currentOptionIndex_;
 
     public:
     // Return number of options available

@@ -23,7 +23,7 @@ template <class T> class BroadcastArray
             count = array.nItems();
             if (!procPool.broadcast(count, root))
                 return;
-            for (int n = 0; n < count; ++n)
+            for (auto n = 0; n < count; ++n)
                 array[n].broadcast(procPool, root, coreData);
         }
         else
@@ -34,7 +34,7 @@ template <class T> class BroadcastArray
 
             // Clear list and reconstruct
             array.initialise(count);
-            for (int n = 0; n < count; ++n)
+            for (auto n = 0; n < count; ++n)
                 array[n].broadcast(procPool, root, coreData);
         }
 

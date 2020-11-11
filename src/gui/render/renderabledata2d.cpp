@@ -82,7 +82,7 @@ void RenderableData2D::transformValues()
 
     // Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value
     // X
-    for (int n = 0; n < transformedData_.constXAxis().nItems(); ++n)
+    for (auto n = 0; n < transformedData_.constXAxis().nItems(); ++n)
     {
         if (transformedData_.constXAxis(n) > 0.0)
         {
@@ -97,7 +97,7 @@ void RenderableData2D::transformValues()
     }
 
     // Y
-    for (int n = 0; n < transformedData_.constYAxis().nItems(); ++n)
+    for (auto n = 0; n < transformedData_.constYAxis().nItems(); ++n)
     {
         if (transformedData_.constYAxis(n) > 0.0)
         {
@@ -112,7 +112,7 @@ void RenderableData2D::transformValues()
     }
 
     // Values
-    for (int n = 0; n < transformedData_.nValues(); ++n)
+    for (auto n = 0; n < transformedData_.nValues(); ++n)
     {
         if (transformedData_.value(n) > 0.0)
         {
@@ -179,7 +179,7 @@ const void RenderableData2D::sendToGL(const double pixelScaling)
     // Disable lighting
     glDisable(GL_LIGHTING);
 
-    for (int n = 0; n < nPrimitives(); ++n)
+    for (auto n = 0; n < nPrimitives(); ++n)
         primitive(n)->sendToGL();
 
     // Reset LineStyle back to defaults
@@ -227,13 +227,13 @@ void RenderableData2D::constructLine(const Array<double> &displayXAbscissa, cons
         colourDefinition.colour(0.0, colour);
 
         // Loop over y
-        for (int n = 0; n < nY; ++n)
+        for (auto n = 0; n < nY; ++n)
         {
             // Set vertexA to -1 so we don't draw a line at n=0
             vertexA = -1;
             p = primitive(n);
             // Loop over x
-            for (int m = 0; m < nX; ++m)
+            for (auto m = 0; m < nX; ++m)
             {
                 vertexB = p->defineVertex(x.constAt(m), y.constAt(n), v.constAt(m, n), nrm, colour);
 
@@ -252,14 +252,14 @@ void RenderableData2D::constructLine(const Array<double> &displayXAbscissa, cons
         colourDef.setHSVGradientEndValue(positiveValuesMax_);
 
         // Loop over y
-        for (int n = 0; n < nY; ++n)
+        for (auto n = 0; n < nY; ++n)
         {
             // Set vertexA to -1 so we don't draw a line at n=0
             vertexA = -1;
             p = primitive(n);
 
             // Loop over x
-            for (int m = 0; m < nX; ++m)
+            for (auto m = 0; m < nX; ++m)
             {
                 // Assigning colour based on value
                 double c = (vLogarithmic ? pow(displayValues.constAt(m, n), 10.0) : displayValues.constAt(m, n));
@@ -320,7 +320,7 @@ bool RenderableData2D::writeStyleBlock(LineParser &parser, int indentLevel) cons
 {
     // Construct indent string
     char *indent = new char[indentLevel * 2 + 1];
-    for (int n = 0; n < indentLevel * 2; ++n)
+    for (auto n = 0; n < indentLevel * 2; ++n)
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 

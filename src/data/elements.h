@@ -77,7 +77,7 @@ class Elements
          * again from the destruction of the static array.
          */
         listArray.initialise(Elements::nElements());
-        for (int n = 0; n < nElements(); ++n)
+        for (auto n = 0; n < nElements(); ++n)
             listArray[n].setDisownOnDestruction(true);
     }
     // Create array of RefLists, with array size equal to number of elements defined

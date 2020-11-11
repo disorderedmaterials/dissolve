@@ -207,8 +207,6 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule *module)
     if (!module)
         return;
 
-    int n, m;
-
     // Loop over groups
     ListIterator<ModuleGroup> groupIterator(module_->groupedTargets().groups());
     while (ModuleGroup *group = groupIterator.iterate())
@@ -305,7 +303,7 @@ void RefineModuleWidget::setGraphDataTargets(RefineModule *module)
              */
 
             // Generated potential
-            Renderable *deltaPhiR = deltaPhiRGraph_->createRenderable(
+            deltaPhiRGraph_->createRenderable(
                 Renderable::Data1DRenderable,
                 fmt::format("{}//DeltaPhiR//{}//{}//Full", module_->uniqueName(), group->name(), atomTypes),
                 fmt::format("DeltaPhiR//{}//{}", group->name(), atomTypes), fmt::format("{} dphi(r)", id));

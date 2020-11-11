@@ -177,12 +177,12 @@ void CalculateAngleModuleWidget::setGraphDataTargets(CalculateAngleModule *modul
     angle->setColour(StockColours::RedStockColour);
 
     // Calculated (A-B)-C distance-angle map
-    auto *dAngleAB = dAngleABGraph_->createRenderable(
-        Renderable::Data2DRenderable, fmt::format("{}//Process2D//{}//DAngle((A-B)-C)", module_->uniqueName(), cfg->niceName()),
-        "A-B vs A-B-C");
+    dAngleABGraph_->createRenderable(Renderable::Data2DRenderable,
+                                     fmt::format("{}//Process2D//{}//DAngle((A-B)-C)", module_->uniqueName(), cfg->niceName()),
+                                     "A-B vs A-B-C");
 
     // Calculated A-(B-C) distance-angle map
-    auto *dAngleBC = dAngleBCGraph_->createRenderable(
-        Renderable::Data2DRenderable, fmt::format("{}//Process2D//{}//DAngle(A-(B-C))", module_->uniqueName(), cfg->niceName()),
-        "B-C vs A-B-C");
+    dAngleBCGraph_->createRenderable(Renderable::Data2DRenderable,
+                                     fmt::format("{}//Process2D//{}//DAngle(A-(B-C))", module_->uniqueName(), cfg->niceName()),
+                                     "B-C vs A-B-C");
 }

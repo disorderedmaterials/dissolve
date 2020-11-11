@@ -16,7 +16,7 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
 {
     public:
     Data1D();
-    ~Data1D();
+    virtual ~Data1D();
     Data1D(const Data1D &source);
     // Clear data
     void clear();

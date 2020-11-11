@@ -68,7 +68,7 @@ void DataManagerDialog::addItemsToTable(QTableWidget *table, List<GenericItem> &
 void DataManagerDialog::filterTable(QTableWidget *table, GenericItem *current, QString filter)
 {
     // Loop over rows in the table
-    for (int n = 0; n < table->rowCount(); ++n)
+    for (auto n = 0; n < table->rowCount(); ++n)
     {
         QTableWidgetItem *item = table->item(n, 0);
         if (!item)

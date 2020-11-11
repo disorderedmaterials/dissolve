@@ -27,7 +27,7 @@ int AtomTypeRefListKeyword::maxArguments() const { return 999; }
 bool AtomTypeRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Loop over arguments (which are AtomType names) and add them to our list
-    for (int n = startArg; n < parser.nArgs(); ++n)
+    for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Do we recognise the AtomType?
         auto atomType = coreData.findAtomType(parser.argsv(n));

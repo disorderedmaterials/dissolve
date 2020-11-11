@@ -56,12 +56,12 @@ bool Data1DExportFileFormat::exportXY(LineParser &parser, const Data1D &data)
     if (data.valuesHaveErrors())
     {
         const auto &errors = data.constErrors();
-        for (int n = 0; n < x.nItems(); ++n)
+        for (auto n = 0; n < x.nItems(); ++n)
             if (!parser.writeLineF("{:16.10e}  {:16.10e}  {:16.10e}\n", x.constAt(n), values.constAt(n), errors.constAt(n)))
                 return false;
     }
     else
-        for (int n = 0; n < x.nItems(); ++n)
+        for (auto n = 0; n < x.nItems(); ++n)
             if (!parser.writeLineF("{:16.10e}  {:16.10e}\n", x.constAt(n), values.constAt(n)))
                 return false;
 

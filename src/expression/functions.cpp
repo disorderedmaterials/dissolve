@@ -93,7 +93,7 @@ ExpressionFunctionData ExpressionFunctions::data[ExpressionFunctions::nFunctions
 // Return enumerated command from string
 ExpressionFunctions::Function ExpressionFunctions::function(std::string_view s)
 {
-    for (int result = ExpressionFunctions::NoFunction; result < ExpressionFunctions::nFunctions; result++)
+    for (auto result = (int)ExpressionFunctions::NoFunction; result < ExpressionFunctions::nFunctions; ++result)
         if (DissolveSys::sameString(data[result].keyword, s))
             return (ExpressionFunctions::Function)result;
 

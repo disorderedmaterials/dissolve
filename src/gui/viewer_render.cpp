@@ -138,7 +138,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
         if (fontInstance_.fontOK())
         {
             fontInstance_.setFaceSize(1);
-            for (int axis = 0; axis < 3; ++axis)
+            for (auto axis = 0; axis < 3; ++axis)
                 if (view_.axes().visible(axis) && (axis != skipAxis))
                 {
                     view_.axes().labelPrimitive(axis).renderAll(fontInstance_, viewMatrix, viewRotationInverse,
@@ -154,14 +154,14 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
         glLoadMatrixd(viewMatrix.matrix());
         glDisable(GL_LIGHTING);
         glEnable(GL_LINE_SMOOTH);
-        for (int axis = 0; axis < 3; ++axis)
+        for (auto axis = 0; axis < 3; ++axis)
             if (view_.axes().visible(axis) && (axis != skipAxis))
             {
                 view_.axes().gridLineMinorStyle(axis).sendToGL(pixelScaling_);
                 view_.axes().gridLineMinorPrimitive(axis).sendToGL();
                 updateQuery(BaseViewer::GridLineMinorObject, fmt::format("{}", axis), fmt::format("{}", char(88 + axis)));
             }
-        for (int axis = 0; axis < 3; ++axis)
+        for (auto axis = 0; axis < 3; ++axis)
             if (view_.axes().visible(axis) && (axis != skipAxis))
             {
                 view_.axes().gridLineMajorStyle(axis).sendToGL(pixelScaling_);
@@ -171,7 +171,7 @@ void BaseViewer::renderGL(int xOffset, int yOffset)
 
         // -- Reset line style, ensure polygons are now filled, and render the axis lines
         LineStyle().sendToGL(pixelScaling_);
-        for (int axis = 0; axis < 3; ++axis)
+        for (auto axis = 0; axis < 3; ++axis)
             if (view_.axes().visible(axis) && (axis != skipAxis))
             {
                 view_.axes().axisPrimitive(axis).sendToGL();
@@ -393,7 +393,7 @@ void BaseViewer::enableClipping()
 
     // Loop over axes
     Vec3<double> translation;
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         translation.zero();
 
@@ -480,9 +480,9 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
     // Loop over tiles in x and y
     QProgressDialog progress("Generating tiled image", "Cancel", 0, nX * nY);
     progress.setWindowTitle("Dissolve");
-    for (int x = 0; x < nX; ++x)
+    for (auto x = 0; x < nX; ++x)
     {
-        for (int y = 0; y < nY; ++y)
+        for (auto y = 0; y < nY; ++y)
         {
             // Set progress value and check for cancellation
             if (progress.wasCanceled())

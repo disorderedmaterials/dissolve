@@ -588,7 +588,7 @@ void Primitive::cross(double width)
 {
     Vec3<double> v;
     const auto halfWidth = 0.5 * width;
-    for (int i = 0; i < 3; ++i)
+    for (auto i = 0; i < 3; ++i)
     {
         v.zero();
         v.set(i, halfWidth);

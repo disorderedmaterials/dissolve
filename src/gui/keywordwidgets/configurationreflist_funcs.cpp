@@ -65,20 +65,20 @@ void ConfigurationRefListKeywordWidget::itemChanged(QListWidgetItem *item)
 
     // Ensure that we obey any limit on maximum number of selected items
     auto nChecked = 0;
-    for (int n = 0; n < ui_.SelectionList->count(); ++n)
+    for (auto n = 0; n < ui_.SelectionList->count(); ++n)
         if (ui_.SelectionList->item(n)->checkState() == Qt::Checked)
             ++nChecked;
     switch (keyword_->maxListSize())
     {
         case (Module::ZeroTargets):
             if (nChecked != 0)
-                for (int n = 0; n < ui_.SelectionList->count(); ++n)
+                for (auto n = 0; n < ui_.SelectionList->count(); ++n)
                     ui_.SelectionList->item(n)->setCheckState(Qt::Unchecked);
             break;
         case (Module::ExactlyOneTarget):
             if (nChecked > 1)
             {
-                for (int n = 0; n < ui_.SelectionList->count(); ++n)
+                for (auto n = 0; n < ui_.SelectionList->count(); ++n)
                     if ((ui_.SelectionList->item(n)->checkState() == Qt::Checked) && (ui_.SelectionList->item(n) != item))
                         ui_.SelectionList->item(n)->setCheckState(Qt::Unchecked);
             }
@@ -89,7 +89,7 @@ void ConfigurationRefListKeywordWidget::itemChanged(QListWidgetItem *item)
         default:
             if (nChecked > keyword_->maxListSize())
             {
-                for (int n = 0; n < ui_.SelectionList->count(); ++n)
+                for (auto n = 0; n < ui_.SelectionList->count(); ++n)
                 {
                     if ((ui_.SelectionList->item(n)->checkState() == Qt::Checked) && (ui_.SelectionList->item(n) != item))
                     {
@@ -138,7 +138,7 @@ void ConfigurationRefListKeywordWidget::updateKeywordData()
 {
     // Loop over items in the QListWidget, adding the associated Configurations for any that are checked
     RefList<Configuration> newSelection;
-    for (int n = 0; n < ui_.SelectionList->count(); ++n)
+    for (auto n = 0; n < ui_.SelectionList->count(); ++n)
     {
         QListWidgetItem *item = ui_.SelectionList->item(n);
         if (item->checkState() == Qt::Checked)

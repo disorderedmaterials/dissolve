@@ -66,8 +66,6 @@ void SiteViewer::startInteraction()
 // End interaction at the specified screen coordinates
 void SiteViewer::endInteraction()
 {
-    SpeciesAtom *i, *j;
-
     // Finalise interaction type
     switch (interactionMode())
     {

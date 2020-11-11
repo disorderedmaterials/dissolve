@@ -4,7 +4,7 @@
 #include "math/interpolator.h"
 #include "math/data1d.h"
 
-Interpolator::Interpolator(const Array<double> &x, const Array<double> &y, InterpolationScheme scheme) : x_(x), y_(x)
+Interpolator::Interpolator(const Array<double> &x, const Array<double> &y, InterpolationScheme scheme) : x_(x), y_(y)
 {
     interpolate(scheme);
 }
@@ -134,14 +134,14 @@ void Interpolator::interpolateSpline()
      * 					x(i) - x(i-1)
      */
 
-    int i, nPoints = x_.nItems();
+    const auto nPoints = x_.nItems();
 
     if (nPoints < 2)
         return;
 
     // Calculate interval array 'h'
     h_.initialise(nPoints);
-    for (i = 0; i < nPoints - 1; ++i)
+    for (auto i = 0; i < nPoints - 1; ++i)
         h_[i] = x_.constAt(i + 1) - x_.constAt(i);
 
     // Initialise parameter arrays and working array
@@ -157,7 +157,7 @@ void Interpolator::interpolateSpline()
     rprime[0] = 0.0; // Would be 0.0 / 1.0 in the case of Natural spline
     sprime[0] = 0.0;
 
-    for (i = 1; i < nPoints - 1; ++i)
+    for (auto i = 1; i < nPoints - 1; ++i)
     {
         // For a given i, p(i) = h(i-1), q(i) = 2(h(i-1)+h(i)), r(i) = h(i), s(i) = 6 ((y(n+1) - y(n)) / h(n) - (y(n) -
         // y(n-1)) / h(n-1)
@@ -172,18 +172,18 @@ void Interpolator::interpolateSpline()
         sprime[i] = (s - sprime[i - 1] * p) / (q - rprime[i - 1] * p);
     }
     rprime[nPoints - 1] = 0.0;
-    sprime[nPoints - 1] = (0.0 - sprime[nPoints - 2] / h_[i - 1]) / (2.0 * h_[i - 1]);
+    sprime[nPoints - 1] = (0.0 - sprime[nPoints - 2] / h_[nPoints - 1]) / (2.0 * h_[nPoints - 1]);
 
     // -- Second stage - backsubstitution
     c_[nPoints - 1] = 0.0;
-    for (i = nPoints - 2; i >= 0; --i)
+    for (int i = nPoints - 2; i >= 0; --i)
     {
         // For a given i, m(i) = s'(i) - r'(i)m(i+1)
         c_[i] = sprime[i] - rprime[i] * c_[i + 1];
     }
 
     // c_ array now contains m(i)...
-    for (i = 0; i < nPoints - 1; ++i)
+    for (auto i = 0; i < nPoints - 1; ++i)
     {
         b_[i] = (y_.constAt(i + 1) - y_.constAt(i)) / h_[i] - 0.5 * h_[i] * c_[i] - (h_[i] * (c_[i + 1] - c_[i])) / 6.0;
         d_[i] = (c_[i + 1] - c_[i]) / (6.0 * h_[i]);
@@ -253,7 +253,7 @@ void Interpolator::interpolateLinear()
 {
     // Calculate y interval array 'a'
     a_.initialise(y_.nItems() - 1);
-    for (int i = 0; i < y_.nItems() - 1; ++i)
+    for (auto i = 0; i < y_.nItems() - 1; ++i)
         a_[i] = y_.constAt(i + 1) - y_.constAt(i);
 
     lastInterval_ = 0;
@@ -265,12 +265,19 @@ void Interpolator::interpolateThreePoint() { lastInterval_ = 0; }
 // Regenerate using specified scheme
 void Interpolator::interpolate(Interpolator::InterpolationScheme scheme)
 {
+    scheme_ = scheme;
+
+    // Do we have any data to work with?
+    if (x_.nItems() < 2)
+    {
+        h_.clear();
+        return;
+    }
+
     // Calculate interval array 'h'
     h_.initialise(x_.nItems() - 1);
-    for (int i = 0; i < x_.nItems() - 1; ++i)
+    for (auto i = 0; i < x_.nItems() - 1; ++i)
         h_[i] = x_.constAt(i + 1) - x_.constAt(i);
-
-    scheme_ = scheme;
 
     if (scheme_ == Interpolator::SplineInterpolation)
         interpolateSpline();
@@ -418,7 +425,7 @@ void Interpolator::addInterpolated(Data1D &A, const Data1D &B, double factor)
         // Generate interpolation of data B
         Interpolator interpolatedB(B);
 
-        for (int n = 0; n < aX.nItems(); ++n)
+        for (auto n = 0; n < aX.nItems(); ++n)
             aY[n] += interpolatedB.y(aX.constAt(n)) * factor;
     }
 }

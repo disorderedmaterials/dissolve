@@ -50,7 +50,7 @@ int PairBroadeningFunctionNParameters[] = {0, 1, 0, 2};
 // Return FunctionType from supplied string
 PairBroadeningFunction::FunctionType PairBroadeningFunction::functionType(std::string_view s)
 {
-    for (int n = 0; n < nFunctionTypes; ++n)
+    for (auto n = 0; n < nFunctionTypes; ++n)
         if (DissolveSys::sameString(s, PairBroadeningFunctionKeywords[n]))
             return (FunctionType)n;
     return PairBroadeningFunction::nFunctionTypes;
@@ -146,16 +146,16 @@ bool PairBroadeningFunction::writeAsKeyword(LineParser &parser, std::string_view
                 return false;
 
             // Count number of pairs/values to expect and write to file
-            for (int n = 0; n < elementPairGaussianFlags_.linearArraySize(); ++n)
+            for (auto n = 0; n < elementPairGaussianFlags_.linearArraySize(); ++n)
                 if (elementPairGaussianFlags_.constLinearValue(n))
                     ++count;
             if (!parser.writeLineF("{}{}\n", prefix, count))
                 return false;
 
             // Loop again and write the data proper
-            for (int i = 0; i < elementPairGaussianFlags_.nRows(); ++i)
+            for (auto i = 0; i < elementPairGaussianFlags_.nRows(); ++i)
             {
-                for (int j = i; j < elementPairGaussianFlags_.nColumns(); ++j)
+                for (auto j = i; j < elementPairGaussianFlags_.nColumns(); ++j)
                 {
                     if (elementPairGaussianFlags_.constAt(i, j))
                     {
@@ -214,7 +214,7 @@ Array<double *> PairBroadeningFunction::parameters()
             params.add(&gaussianFWHM_);
             break;
         case (PairBroadeningFunction::GaussianElementPairFunction):
-            for (int n = 0; n < elementPairGaussianFlags_.linearArraySize(); ++n)
+            for (auto n = 0; n < elementPairGaussianFlags_.linearArraySize(); ++n)
             {
                 if (elementPairGaussianFlags_.constLinearValue(n))
                     params.add(&elementPairGaussianFWHM_.linearValue(n));
@@ -360,7 +360,7 @@ bool PairBroadeningFunction::read(LineParser &parser, CoreData &coreData)
                 elementPairGaussianFlags_ = false;
 
                 auto nPairs = parser.argi(0);
-                for (int n = 0; n < nPairs; ++n)
+                for (auto n = 0; n < nPairs; ++n)
                 {
                     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                         return false;

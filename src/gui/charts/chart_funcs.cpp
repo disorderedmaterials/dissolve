@@ -121,9 +121,7 @@ void ChartBase::mouseMoveEvent(QMouseEvent *event)
     repaint();
 
     // Begin the drag event
-    Qt::DropAction dropAction = drag->exec(Qt::MoveAction);
-    // 	if (dropAction
-    // 	...
+    drag->exec(Qt::MoveAction);
 
     // Nullify the dragged block
     draggedBlock_ = nullptr;

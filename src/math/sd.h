@@ -27,7 +27,7 @@ template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
         const double deltaFrac = 0.05;
         double delta;
         Array<double> gradient;
-        for (int n = 0; n < alpha.nItems(); ++n)
+        for (auto n = 0; n < alpha.nItems(); ++n)
         {
             Array<double> tempAlpha = alpha;
             tempAlpha[n] = alpha.value(n) * (1.0 - deltaFrac);
@@ -43,7 +43,7 @@ template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
     Array<double> gradientMove(const Array<double> &alpha, const Array<double> grad, double stepSize)
     {
         Array<double> newAlpha(alpha.nItems());
-        for (int n = 0; n < alpha.nItems(); ++n)
+        for (auto n = 0; n < alpha.nItems(); ++n)
             newAlpha[n] = alpha.value(n) * grad.value(n) * stepSize;
         return newAlpha;
     }
@@ -119,7 +119,7 @@ template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
             Messenger::print("Steepest descent did not converge within {} steps.", maxIterations);
 
         // Set minimised values back into their original variables
-        for (int n = 0; n < targets_.nItems(); ++n)
+        for (auto n = 0; n < targets_.nItems(); ++n)
             (*targets_[n]) = values_[n];
 
         return currentError;

@@ -140,7 +140,6 @@ bool SQModuleWidget::readState(LineParser &parser)
 void SQModuleWidget::setGraphDataTargets(SQModule *module)
 {
     // Add partials
-    auto n = 0;
     for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
         const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 

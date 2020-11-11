@@ -97,7 +97,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
             if (!braggParser.openOutput(fmt::format("{}-Bragg.txt", cfg->niceName())))
                 return false;
             braggParser.writeLineF("#   ID      Q       nKVecs    Intensity(0,0)\n");
-            for (int n = 0; n < braggReflections.nItems(); ++n)
+            for (auto n = 0; n < braggReflections.nItems(); ++n)
             {
                 if (!braggParser.writeLineF("{:6d}  {:10.6f}  {:8d}  {:10.6e}\n", n, braggReflections.constAt(n).q(),
                                             braggReflections.constAt(n).nKVectors(),
@@ -116,7 +116,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             fmt::format("{}-Bragg-{}-{}.txt", cfg->niceName(), atd1.atomTypeName(), atd2.atomTypeName())))
                         return false;
                     intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
-                    for (int n = 0; n < braggReflections.nItems(); ++n)
+                    for (auto n = 0; n < braggReflections.nItems(); ++n)
                     {
                         if (!intensityParser.writeLineF("{:10.6f}  {:10.6e}\n", braggReflections.constAt(n).q(),
                                                         braggReflections.constAt(n).intensity(i, j)))

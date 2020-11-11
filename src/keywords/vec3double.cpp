@@ -106,7 +106,7 @@ bool Vec3DoubleKeyword::read(LineParser &parser, int startArg, CoreData &coreDat
     if (parser.hasArg(startArg + 2))
     {
         // Check individual components of the vector
-        for (int n = 0; n < 3; ++n)
+        for (auto n = 0; n < 3; ++n)
         {
             if (!isValid(n, parser.argd(startArg + n)))
             {

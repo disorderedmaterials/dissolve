@@ -28,7 +28,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
     // Set item delegates
     // -- SpeciesAtomTable
     ui_.AtomTable->setItemDelegateForColumn(1, new CustomComboDelegate<SpeciesTab>(this, &SpeciesTab::validAtomTypeNames));
-    for (int n = 2; n < 6; ++n)
+    for (auto n = 2; n < 6; ++n)
         ui_.AtomTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
     // -- Geometry tables
     ui_.BondTable->setItemDelegateForColumn(

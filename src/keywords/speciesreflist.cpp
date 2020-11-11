@@ -34,7 +34,7 @@ int SpeciesRefListKeyword::maxArguments() const { return 99; }
 bool SpeciesRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Each argument is the name of a Species that we will add to our list
-    for (int n = startArg; n < parser.nArgs(); ++n)
+    for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         Species *sp = coreData.findSpecies(parser.argsv(n));
         if (!sp)

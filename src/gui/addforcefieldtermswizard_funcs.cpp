@@ -514,7 +514,7 @@ void AddForcefieldTermsWizard::checkForAtomTypeConflicts()
 {
     // Determine whether we have any naming conflicts
     auto nConflicts = 0;
-    for (int i = 0; i < ui_.AtomTypesConflictsList->count(); ++i)
+    for (auto i = 0; i < ui_.AtomTypesConflictsList->count(); ++i)
     {
         QListWidgetItem *item = ui_.AtomTypesConflictsList->item(i);
 
@@ -679,7 +679,7 @@ void AddForcefieldTermsWizard::masterTermsTreeEdited(QWidget *lineEdit)
 {
     // Since the signal that leads us here does not tell us the item that was edited, update all MasterTerm names here
     // before updating the page
-    for (int n = 0; n < masterBondItemParent_->childCount(); ++n)
+    for (auto n = 0; n < masterBondItemParent_->childCount(); ++n)
     {
         QTreeWidgetItem *item = masterBondItemParent_->child(n);
         MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
@@ -688,7 +688,7 @@ void AddForcefieldTermsWizard::masterTermsTreeEdited(QWidget *lineEdit)
 
         intra->setName(qPrintable(item->text(0)));
     }
-    for (int n = 0; n < masterAngleItemParent_->childCount(); ++n)
+    for (auto n = 0; n < masterAngleItemParent_->childCount(); ++n)
     {
         QTreeWidgetItem *item = masterAngleItemParent_->child(n);
         MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
@@ -697,7 +697,7 @@ void AddForcefieldTermsWizard::masterTermsTreeEdited(QWidget *lineEdit)
 
         intra->setName(qPrintable(item->text(0)));
     }
-    for (int n = 0; n < masterTorsionItemParent_->childCount(); ++n)
+    for (auto n = 0; n < masterTorsionItemParent_->childCount(); ++n)
     {
         QTreeWidgetItem *item = masterTorsionItemParent_->child(n);
         MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));

@@ -15,7 +15,7 @@ BroadeningFunctionKeywordWidget::BroadeningFunctionKeywordWidget(QWidget *parent
     ui_.setupUi(dropWidget());
 
     // Add BroadeningFunction types to Combo
-    for (int n = 0; n < BroadeningFunction::nFunctionTypes; ++n)
+    for (auto n = 0; n < BroadeningFunction::nFunctionTypes; ++n)
         ui_.FunctionCombo->addItem(
             QString::fromStdString(std::string(BroadeningFunction::functionType((BroadeningFunction::FunctionType)n))));
 

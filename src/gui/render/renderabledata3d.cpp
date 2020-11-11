@@ -90,7 +90,7 @@ void RenderableData3D::transformValues()
 
     // Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value
     // X
-    for (int n = 0; n < transformedData_.constXAxis().nItems(); ++n)
+    for (auto n = 0; n < transformedData_.constXAxis().nItems(); ++n)
     {
         if (transformedData_.constXAxis(n) > 0.0)
         {
@@ -105,7 +105,7 @@ void RenderableData3D::transformValues()
     }
 
     // Y
-    for (int n = 0; n < transformedData_.constYAxis().nItems(); ++n)
+    for (auto n = 0; n < transformedData_.constYAxis().nItems(); ++n)
     {
         if (transformedData_.constYAxis(n) > 0.0)
         {
@@ -120,7 +120,7 @@ void RenderableData3D::transformValues()
     }
 
     // Z
-    for (int n = 0; n < transformedData_.constZAxis().nItems(); ++n)
+    for (auto n = 0; n < transformedData_.constZAxis().nItems(); ++n)
     {
         if (transformedData_.constZAxis(n) > 0.0)
         {
@@ -135,7 +135,7 @@ void RenderableData3D::transformValues()
     }
 
     // Values
-    for (int n = 0; n < transformedData_.nValues(); ++n)
+    for (auto n = 0; n < transformedData_.nValues(); ++n)
     {
         double val = transformedData_.values().linearValue(n);
         if (val > 0.0)
@@ -695,7 +695,7 @@ bool RenderableData3D::writeStyleBlock(LineParser &parser, int indentLevel) cons
 {
     // Construct indent string
     char *indent = new char[indentLevel * 2 + 1];
-    for (int n = 0; n < indentLevel * 2; ++n)
+    for (auto n = 0; n < indentLevel * 2; ++n)
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 

@@ -181,7 +181,7 @@ double BondTypeOrders[] = {1.0, 2.0, 3.0, 4.0, 1.5};
 // Convert bond type string to functional form
 SpeciesBond::BondType SpeciesBond::bondType(std::string_view s)
 {
-    for (int n = 0; n < SpeciesBond::nBondTypes; ++n)
+    for (auto n = 0; n < SpeciesBond::nBondTypes; ++n)
         if (DissolveSys::sameString(s, BondTypeKeywords[n]))
             return (SpeciesBond::BondType)n;
     return SpeciesBond::nBondTypes;

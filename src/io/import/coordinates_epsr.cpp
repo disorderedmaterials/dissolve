@@ -55,7 +55,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
     auto atomOffset = 0;
     int nAtoms, nRestraints, currentArg;
     Vec3<double> com, delta;
-    for (int m = 0; m < nMols; m++)
+    for (auto m = 0; m < nMols; m++)
     {
         Messenger::printVerbose("Importing molecule {} from EPSR ato file...\n", m + 1);
 
@@ -64,7 +64,7 @@ bool CoordinateImportFileFormat::importEPSR(LineParser &parser, Array<Vec3<doubl
         nAtoms = parser.argi(0);
         com = parser.arg3d(1);
 
-        for (int n = 0; n < nAtoms; n++)
+        for (auto n = 0; n < nAtoms; n++)
         {
             // Atom name
             if (parser.getArgsDelim() != LineParser::Success)

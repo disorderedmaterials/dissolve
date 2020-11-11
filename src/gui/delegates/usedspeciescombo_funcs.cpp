@@ -43,7 +43,7 @@ void UsedSpeciesComboDelegate::setEditorData(QWidget *editor, const QModelIndex 
     // Get the current text and search for it in the combo
     QString value = index.model()->data(index, Qt::EditRole).toString();
 
-    for (int n = 0; n < comboBox->count(); ++n)
+    for (auto n = 0; n < comboBox->count(); ++n)
     {
         if (comboBox->itemText(n) == value)
         {

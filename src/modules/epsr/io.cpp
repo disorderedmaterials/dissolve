@@ -122,7 +122,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string
     auto &potentialCoefficients = GenericListHelper<Array2D<Array<double>>>::realise(
         dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
     potentialCoefficients.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
-    for (int n = 0; n < potentialCoefficients.linearArraySize(); ++n)
+    for (auto n = 0; n < potentialCoefficients.linearArraySize(); ++n)
     {
         potentialCoefficients.linearArray()[n].initialise(ncoeffp);
         potentialCoefficients.linearArray()[n] = 0.0;
@@ -134,7 +134,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string
         return Messenger::error("Failed to read number of pair potentials from pcof file.\n");
     auto nPots = parser.argi(0);
     Messenger::print("Number of potentials in pcof file = {}\n", nPots);
-    for (int n = 0; n < nPots; ++n)
+    for (auto n = 0; n < nPots; ++n)
     {
         // First line of potential contains the two atom types it is related to, and its index (in EPSR)
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -162,7 +162,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string
         if (parser.nArgs() != ncoeffp)
             return Messenger::error("Number of potential coefficients ({}) does not match ncoeffp ({}).\n", parser.nArgs(),
                                     ncoeffp);
-        for (int i = 0; i < ncoeffp; ++i)
+        for (auto i = 0; i < ncoeffp; ++i)
             coefficients[i] = parser.argd(i);
 
         // Zero the first coefficient, which EPSR ignores

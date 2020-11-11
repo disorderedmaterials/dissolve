@@ -19,7 +19,6 @@
 void DataViewer::showGeneralContextMenu(QPoint pos)
 {
     QMenu menu;
-    QAction *action;
     menu.setFont(font());
 
     // Reset View

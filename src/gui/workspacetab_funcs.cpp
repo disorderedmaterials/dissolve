@@ -203,7 +203,7 @@ bool WorkspaceTab::readState(LineParser &parser, const CoreData &coreData)
     const auto nGizmos = parser.argi(0);
 
     // Read in widgets
-    for (int n = 0; n < nGizmos; ++n)
+    for (auto n = 0; n < nGizmos; ++n)
     {
         // Read line from the file, which should contain the gizmo type
         if (parser.getArgsDelim() != LineParser::Success)

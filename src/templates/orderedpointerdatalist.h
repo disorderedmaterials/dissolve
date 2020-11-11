@@ -484,9 +484,9 @@ template <class T, class D> class OrderedPointerDataList
         }
 
         // If we have not yet gone through all the items in either list, add them to the relevant unique results list
-        for (int n = indexA; n < nItems_; ++n)
+        for (auto n = indexA; n < nItems_; ++n)
             uniqueToA.addAtEnd(itemsA[n]);
-        for (int n = indexB; n < listB.nItems_; ++n)
+        for (auto n = indexB; n < listB.nItems_; ++n)
             uniqueToB.addAtEnd(itemsB[n]);
     }
 

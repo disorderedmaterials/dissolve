@@ -43,7 +43,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
     void smoothParameters(Array<double> &values)
     {
         // Apply Kolmogorov–Zurbenko filter
-        for (int k = 0; k < parameterSmoothingK_; ++k)
+        for (auto k = 0; k < parameterSmoothingK_; ++k)
         {
             Array<double> newY(values.nItems());
             newY = 0.0;
@@ -73,7 +73,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
                 newY[n] /= (values.nItems() - n + i + 1);
             }
 
-            for (int n = 0; n < values.nItems(); ++n)
+            for (auto n = 0; n < values.nItems(); ++n)
                 values[n] = newY[n];
         }
     }
@@ -116,7 +116,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
         int smoothingNAccepted = 0;
 
         // Outer loop
-        for (int iter = 0; iter < maxIterations_; ++iter)
+        for (auto iter = 0; iter < maxIterations_; ++iter)
         {
             // Copy current best alpha
             trialValues = values;

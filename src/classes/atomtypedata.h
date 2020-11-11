@@ -22,11 +22,7 @@ class AtomTypeData
     AtomTypeData(std::shared_ptr<AtomType> type, double population = 0, double fraction = 0, double boundCoherent = 0,
                  int nIso = 0);
     AtomTypeData(const AtomTypeData &source);
-    // Read data through specified LineParser
-    AtomTypeData(LineParser &parser, const CoreData &coreData, int listIndex);
-    // Old Initialise
     AtomTypeData(int listIndex, std::shared_ptr<AtomType> atomType, double population);
-    // Assignment Operator
     void operator=(const AtomTypeData &source);
 
     /*

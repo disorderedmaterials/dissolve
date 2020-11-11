@@ -89,13 +89,13 @@ void Data2D::initialise(double xMin, double xMax, double xBin, double yMin, doub
     // Create x_ axis array
     x_.initialise(nXBins);
     auto xCentre = xMin + xBin * 0.5;
-    for (int n = 0; n < nXBins; ++n, xCentre += xBin)
+    for (auto n = 0; n < nXBins; ++n, xCentre += xBin)
         x_[n] = xCentre;
 
     // Create y_ axis array
     y_.initialise(nYBins);
     auto yCentre = yMin + yBin * 0.5;
-    for (int n = 0; n < nYBins; ++n, yCentre += yBin)
+    for (auto n = 0; n < nYBins; ++n, yCentre += yBin)
         y_[n] = yCentre;
 
     // Initialise values array
@@ -287,7 +287,7 @@ double Data2D::minValue() const
         return 0.0;
 
     double value = values_.constLinearValue(0);
-    for (int n = 1; n < values_.linearArraySize(); ++n)
+    for (auto n = 1; n < values_.linearArraySize(); ++n)
         if (values_.constLinearValue(n) < value)
             value = values_.constLinearValue(n);
 
@@ -301,7 +301,7 @@ double Data2D::maxValue() const
         return 0.0;
 
     double value = values_.constLinearValue(0);
-    for (int n = 1; n < values_.linearArraySize(); ++n)
+    for (auto n = 1; n < values_.linearArraySize(); ++n)
         if (values_.constLinearValue(n) > value)
             value = values_.constLinearValue(n);
 
@@ -419,7 +419,7 @@ void Data2D::operator=(const Data2D &source)
 
 void Data2D::operator+=(const double delta)
 {
-    for (int n = 0; n < values_.linearArraySize(); ++n)
+    for (auto n = 0; n < values_.linearArraySize(); ++n)
         values_.linearValue(n) += delta;
 
     ++version_;
@@ -427,7 +427,7 @@ void Data2D::operator+=(const double delta)
 
 void Data2D::operator-=(const double delta)
 {
-    for (int n = 0; n < values_.linearArraySize(); ++n)
+    for (auto n = 0; n < values_.linearArraySize(); ++n)
         values_.linearValue(n) -= delta;
 
     ++version_;
@@ -482,7 +482,7 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
     initialise(xSize, ySize, errors);
 
     // Read x axis
-    for (int x = 0; x < x_.nItems(); ++x)
+    for (auto x = 0; x < x_.nItems(); ++x)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
@@ -490,7 +490,7 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
     }
 
     // Read y axis
-    for (int y = 0; y < y_.nItems(); ++y)
+    for (auto y = 0; y < y_.nItems(); ++y)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
@@ -500,9 +500,9 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
     // Read errors / valuse
     if (hasError_)
     {
-        for (int x = 0; x < x_.nItems(); ++x)
+        for (auto x = 0; x < x_.nItems(); ++x)
         {
-            for (int y = 0; y < y_.nItems(); ++y)
+            for (auto y = 0; y < y_.nItems(); ++y)
             {
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                     return false;
@@ -513,9 +513,9 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
     }
     else
     {
-        for (int x = 0; x < x_.nItems(); ++x)
+        for (auto x = 0; x < x_.nItems(); ++x)
         {
-            for (int y = 0; y < y_.nItems(); ++y)
+            for (auto y = 0; y < y_.nItems(); ++y)
             {
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                     return false;
@@ -541,30 +541,30 @@ bool Data2D::write(LineParser &parser)
         return false;
 
     // Write x axis array
-    for (int x = 0; x < x_.nItems(); ++x)
+    for (auto x = 0; x < x_.nItems(); ++x)
         if (!parser.writeLineF("{:e}\n", x_[x]))
             return false;
 
     // Write y axis array
-    for (int y = 0; y < y_.nItems(); ++y)
+    for (auto y = 0; y < y_.nItems(); ++y)
         if (!parser.writeLineF("{:e}\n", y_[y]))
             return false;
 
     // Write values / errors
     if (hasError_)
     {
-        for (int x = 0; x < x_.nItems(); ++x)
+        for (auto x = 0; x < x_.nItems(); ++x)
         {
-            for (int y = 0; y < y_.nItems(); ++y)
+            for (auto y = 0; y < y_.nItems(); ++y)
                 if (!parser.writeLineF("{:e}  {:e}\n", values_.constAt(x, y), errors_.constAt(x, y)))
                     return false;
         }
     }
     else
     {
-        for (int x = 0; x < x_.nItems(); ++x)
+        for (auto x = 0; x < x_.nItems(); ++x)
         {
-            for (int y = 0; y < y_.nItems(); ++y)
+            for (auto y = 0; y < y_.nItems(); ++y)
                 if (!parser.writeLineF("{:e}\n", values_.constAt(x, y)))
                     return false;
         }

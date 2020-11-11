@@ -17,38 +17,18 @@ AtomTypeData::AtomTypeData(std::shared_ptr<AtomType> type, double population, do
     : atomType_(type), exchangeable_(false), population_(population), fraction_(fraction), boundCoherent_(boundCoherent)
 {
     isotopes_.clear();
-    for (int n = 0; n < nIso; ++n)
-    {
+    for (auto n = 0; n < nIso; ++n)
         isotopes_.add();
-    }
 }
 
-AtomTypeData::AtomTypeData(const AtomTypeData &source) : atomType_(source.atomType_), listIndex_(source.listIndex())
+AtomTypeData::AtomTypeData(const AtomTypeData &source) : listIndex_(source.listIndex()), atomType_(source.atomType_)
 {
     (*this) = source;
 }
 
-// Read data through specified LineParser
-AtomTypeData::AtomTypeData(LineParser &parser, const CoreData &coreData, int listIndex)
-    : atomType_(coreData.findAtomType(parser.argsv(0))), listIndex_(listIndex)
-{
-    population_ = parser.argd(1);
-    fraction_ = parser.argd(2);
-    boundCoherent_ = parser.argd(3);
-    isotopes_.clear();
-    int nIso = parser.argi(4);
-    for (int n = 0; n < nIso; ++n)
-    {
-        IsotopeData *tope = isotopes_.add();
-    }
-}
-
 AtomTypeData::AtomTypeData(int listIndex, std::shared_ptr<AtomType> type, double population)
-    : atomType_(type), listIndex_(listIndex), population_(population)
+    : listIndex_(listIndex), atomType_(type), exchangeable_(false), population_(population), fraction_(0.0), boundCoherent_(0.0)
 {
-    exchangeable_ = false;
-    fraction_ = 0.0;
-    boundCoherent_ = 0.0;
 }
 
 void AtomTypeData::operator=(const AtomTypeData &source)

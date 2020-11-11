@@ -80,7 +80,7 @@ void RenderableData1D::transformValues()
     }
 
     // Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value
-    for (int n = 0; n < transformedData_.nValues(); ++n)
+    for (auto n = 0; n < transformedData_.nValues(); ++n)
     {
         // X
         if (transformedData_.constXAxis(n) > 0.0)
@@ -151,7 +151,7 @@ bool RenderableData1D::yRangeOverX(double xMin, double xMax, double &yMin, doubl
     const auto &data = transformedData();
 
     auto first = true;
-    for (int n = 0; n < data.nValues(); ++n)
+    for (auto n = 0; n < data.nValues(); ++n)
     {
         if (data.constXAxis(n) < xMin)
             continue;
@@ -241,7 +241,7 @@ void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, con
         colourDefinition.colour(0.0, colour);
 
         // Loop over x values
-        for (int n = 0; n < nX; ++n)
+        for (auto n = 0; n < nX; ++n)
         {
             vertexB = primitive->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
 
@@ -255,7 +255,7 @@ void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, con
     else
     {
         // Loop over x values
-        for (int n = 0; n < nX; ++n)
+        for (auto n = 0; n < nX; ++n)
         {
             colourDefinition.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);
             vertexB = primitive->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
@@ -314,7 +314,7 @@ bool RenderableData1D::writeStyleBlock(LineParser &parser, int indentLevel) cons
 {
     // Construct indent string
     char *indent = new char[indentLevel * 2 + 1];
-    for (int n = 0; n < indentLevel * 2; ++n)
+    for (auto n = 0; n < indentLevel * 2; ++n)
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 

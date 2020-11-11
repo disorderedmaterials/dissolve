@@ -48,7 +48,7 @@ bool ForceImportFileFormat::importDLPOLY(LineParser &parser, Array<double> &fx, 
         parser.skipLines(3);
 
     // Loop over atoms
-    for (int n = 0; n < nAtoms; ++n)
+    for (auto n = 0; n < nAtoms; ++n)
     {
         // Skip atomname, position and velocity lines
         if (parser.skipLines(3) != LineParser::Success)

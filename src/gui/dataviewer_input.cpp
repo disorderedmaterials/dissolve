@@ -128,6 +128,8 @@ void DataViewer::mouseDoubleClicked()
             break;
         case (GridLineMinorObject):
             break;
+        case (CustomObject):
+            break;
     }
 
     // Reset clicked object info

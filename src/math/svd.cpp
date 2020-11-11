@@ -378,10 +378,10 @@ bool SVD::pseudoinverse(Array2D<double> &A)
     // Perform a quick sanity check on the decomposition
     Array2D<double> A2;
     A2 = U * S * Vt;
-    for (int n = 0; n < A.nRows(); ++n)
+    for (auto n = 0; n < A.nRows(); ++n)
     {
         // TODO Need better double comparison here
-        for (int m = 0; m < A.nColumns(); ++m)
+        for (auto m = 0; m < A.nColumns(); ++m)
             if (fabs(A.constAt(n, m) - A2.constAt(n, m)) > 1.0e-9)
                 return Messenger::error("DissolveMath::pseudoinverse() - SVD does not appear to be valid.\n");
     }
@@ -391,7 +391,7 @@ bool SVD::pseudoinverse(Array2D<double> &A)
     // Take the diagonal single-value matrix S and form its pseudoinverse.
     // This amounts to taking each non-zero diagonal element and replacing it with its reciprocal
     Array2D<double> Splus = S;
-    for (int n = 0; n < S.nRows(); ++n)
+    for (auto n = 0; n < S.nRows(); ++n)
         if (fabs(Splus.constAt(n, n)) > 1.0e-16)
             Splus.at(n, n) = 1.0 / Splus.constAt(n, n);
 
