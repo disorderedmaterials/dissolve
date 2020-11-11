@@ -5,9 +5,9 @@
 #include "data/ff.h"
 #include "data/ffparameters.h"
 
-ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int index, std::string_view name,
-                                       std::string_view netaDefinition, std::string_view description, double q, double data0,
-                                       double data1, double data2, double data3)
+ForcefieldAtomType::ForcefieldAtomType(int Z, int index, std::string_view name, std::string_view netaDefinition,
+                                       std::string_view description, double q, double data0, double data1, double data2,
+                                       double data3)
     : ElementReference(Z)
 {
     index_ = index;
@@ -35,9 +35,8 @@ ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int inde
         Messenger::error("Reference parameters named '{}' are not defined in the forcefield '{}'.\n", parameterReference,
                          parent->name());
 }
-ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, const ForcefieldAtomType &sourceType,
-                                       std::string_view newTypeName, std::string_view netaDefinition,
-                                       std::string_view equivalentName)
+ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &sourceType, std::string_view newTypeName,
+                                       std::string_view netaDefinition, std::string_view equivalentName)
     : ElementReference(sourceType.Z())
 {
     // Copy data from the supplied source

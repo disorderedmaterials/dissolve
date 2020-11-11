@@ -59,7 +59,7 @@ EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
 void Forcefield::addAtomType(int Z, int index, std::string_view name, std::string_view netaDefinition,
                              std::string_view description, double q, double data0, double data1, double data2, double data3)
 {
-    atomTypes_.emplace_back(this, Z, index, name, netaDefinition, description, q, data0, data1, data2, data3);
+    atomTypes_.emplace_back(Z, index, name, netaDefinition, description, q, data0, data1, data2, data3);
 }
 
 // Add new atom type referencing existing parameters by name
@@ -78,7 +78,7 @@ bool Forcefield::copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType>
         return Messenger::error("Can't copy atom type with new name '{}' into forcefield '{}' as no sourceType was provided.\n",
                                 newTypeName, name());
 
-    atomTypes_.emplace_back(this, *sourceTypeRef, newTypeName, netaDefinition, equivalentName);
+    atomTypes_.emplace_back(*sourceTypeRef, newTypeName, netaDefinition, equivalentName);
 
     return true;
 }
