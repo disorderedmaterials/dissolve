@@ -31,7 +31,6 @@ EnumOptions<MainTab::TabType> MainTab::tabTypes()
     static EnumOptionsList TabTypeOptions = EnumOptionsList() << EnumOption(MainTab::ConfigurationTabType, "ConfigurationTab")
                                                               << EnumOption(MainTab::ForcefieldTabType, "ForcefieldTab")
                                                               << EnumOption(MainTab::LayerTabType, "LayerTab")
-                                                              << EnumOption(MainTab::ModuleTabType, "ModuleTab")
                                                               << EnumOption(MainTab::SpeciesTabType, "SpeciesTab")
                                                               << EnumOption(MainTab::WorkspaceTabType, "WorkspaceTab");
 

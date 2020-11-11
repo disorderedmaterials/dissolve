@@ -21,7 +21,6 @@ class QLCDNumber;
 class QMdiSubWindow;
 class Species;
 class SpeciesTab;
-class ModuleTab;
 class ModuleLayer;
 class LayerTab;
 class WorkspaceTab;

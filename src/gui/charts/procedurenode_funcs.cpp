@@ -66,7 +66,7 @@ void ProcedureChartNodeBlock::setKeywordsExpanded(bool expanded, bool permanent)
     ui_.ToggleKeywordsButton->setDisabled(permanent);
 }
 
-// Hide the remove button (e.g. when shown in a ModuleTab)
+// Hide the remove button
 void ProcedureChartNodeBlock::hideRemoveButton() { ui_.RemoveButton->setVisible(false); }
 
 // Return RefList of widgets that exist in the branch of our Procedure node

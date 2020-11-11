@@ -283,7 +283,6 @@ set(BASIC_LINK_LIBS
   molshakemodule
   neutronsqmodule
   rdfmodule
-  refinemodule
   sanitycheckmodule
   skeletonmodule
   sqmodule
@@ -328,7 +327,6 @@ target_link_libraries( ${target_name}
   geomoptmodulenogui
   neutronsqmodulenogui
   rdfmodulenogui
-  refinemodulenogui
   skeletonmodulenogui
   sqmodulenogui
   testmodulenogui
@@ -381,7 +379,6 @@ if(GUI)
     geomoptmodulegui
     neutronsqmodulegui
     rdfmodulegui
-    refinemodulegui
     skeletonmodulegui
     sqmodulegui
     testmodulegui

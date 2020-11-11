@@ -357,7 +357,7 @@ void ModuleListChart::blockRemovalRequested(const QString &blockIdentifier)
     {
         modules.cut(module);
 
-        // If the Module is currently displayed in its own ModuleTab, remove that first
+        // Notify that we are removing this Module/block
         emit(blockRemoved(blockIdentifier));
 
         // If the module to delete is the currently-displayed one, unset it now
