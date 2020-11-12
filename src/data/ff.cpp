@@ -66,7 +66,11 @@ void Forcefield::addAtomType(int Z, int index, std::string_view name, std::strin
 void Forcefield::addAtomType(int Z, int index, std::string_view name, std::string_view netaDefinition,
                              std::string_view description, double q, std::string_view parameterReference)
 {
-    atomTypes_.emplace_back(this, Z, index, name, netaDefinition, description, q, parameterReference);
+    OptionalReferenceWrapper<const ForcefieldParameters> parameterReference_ = shortRangeParameters(parameterReference);
+    if (!parameterReference_)
+        Messenger::error("Reference parameters named '{}' are not defined in the forcefield '{}'.\n", parameterReference,
+                         this->name());
+    atomTypes_.emplace_back(parameterReference_, Z, index, name, netaDefinition, description, q);
 }
 
 // Copy existing atom type

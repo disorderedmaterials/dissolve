@@ -20,20 +20,13 @@ ForcefieldAtomType::ForcefieldAtomType(int Z, int index, std::string_view name, 
     parameters_.setParameter(2, data2);
     parameters_.setParameter(3, data3);
 }
-ForcefieldAtomType::ForcefieldAtomType(const Forcefield *parent, int Z, int index, std::string_view name,
-                                       std::string_view netaDefinition, std::string_view description, double q,
-                                       std::string_view parameterReference)
-    : ElementReference(Z)
+ForcefieldAtomType::ForcefieldAtomType(OptionalReferenceWrapper<const ForcefieldParameters> params, int Z, int index,
+                                       std::string_view name, std::string_view netaDefinition, std::string_view description,
+                                       double q)
+    : ElementReference(Z), index_(index), name_(name), description_(description), parameterReference_(params)
 {
-    index_ = index;
-    name_ = name;
     neta_.setDefinitionString(netaDefinition);
-    description_ = description;
     parameters_.setCharge(q);
-    parameterReference_ = parent->shortRangeParameters(parameterReference);
-    if (!parameterReference_)
-        Messenger::error("Reference parameters named '{}' are not defined in the forcefield '{}'.\n", parameterReference,
-                         parent->name());
 }
 ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &sourceType, std::string_view newTypeName,
                                        std::string_view netaDefinition, std::string_view equivalentName)
