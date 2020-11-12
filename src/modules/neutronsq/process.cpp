@@ -64,10 +64,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         {
             // We need the neutron weights in order to do the normalisation
             NeutronWeights weights;
-            if (!calculateWeights(rdfModule, weights))
-                return Messenger::error("Couldn't get summed Weights for reference data in NeutronSQ module '{}', and "
-                                        "so can't perform requested normalisation.\n",
-                                        uniqueName());
+            calculateWeights(rdfModule, weights);
 
             // Remove normalisation of data
             if (normType == NeutronSQModule::AverageOfSquaresNormalisation)
@@ -194,8 +191,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Calculate and store weights
     auto &weights = GenericListHelper<NeutronWeights>::realise(dissolve.processingModuleData(), "FullWeights", uniqueName_,
                                                                GenericItem::InRestartFileFlag);
-    if (!calculateWeights(rdfModule, weights))
-        return false;
+    calculateWeights(rdfModule, weights);
 
     // Create, print, and store weights
     Messenger::print("Isotopologue and isotope composition:\n\n");

@@ -95,7 +95,7 @@ class NeutronSQModule : public Module
     bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
                              NeutronSQModule::NormalisationType normalisation);
     // Calculate neutron weights for relevant Configuration targets
-    bool calculateWeights(const RDFModule *rdfModule, NeutronWeights &weights) const;
+    void calculateWeights(const RDFModule *rdfModule, NeutronWeights &weights) const;
 
     /*
      * GUI Widget

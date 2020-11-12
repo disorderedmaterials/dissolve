@@ -83,7 +83,7 @@ bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Partia
 }
 
 // Calculate neutron weights for relevant Configuration targets
-bool NeutronSQModule::calculateWeights(const RDFModule *rdfModule, NeutronWeights &weights) const
+void NeutronSQModule::calculateWeights(const RDFModule *rdfModule, NeutronWeights &weights) const
 {
     // Construct weights matrix based on Isotopologue specifications and Species populations in the underlying configurations
     // TODO This info would be better calculated by the RDFModule and stored there / associated to it (#400)
@@ -112,6 +112,4 @@ bool NeutronSQModule::calculateWeights(const RDFModule *rdfModule, NeutronWeight
                 weights.addIsotopologue(sp, spInfo->population() * CFGWEIGHT, sp->naturalIsotopologue(), 1.0);
         }
     }
-
-    return true;
 }
