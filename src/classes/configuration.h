@@ -98,8 +98,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
     public:
     // Empty contents of Configuration, leaving core definitions intact
     void empty();
-    // Initialise content array
-    void initialiseArrays(int nMolecules);
     // Return specified used type
     std::shared_ptr<AtomType> usedAtomType(int index);
     // Return specified used type data

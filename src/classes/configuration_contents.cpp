@@ -27,13 +27,6 @@ void Configuration::empty()
     ++contentsVersion_;
 }
 
-// Initialise content arrays
-void Configuration::initialiseArrays(int nMolecules)
-{
-    // Clear current contents
-    empty();
-}
-
 // Return specified used type
 std::shared_ptr<AtomType> Configuration::usedAtomType(int index) { return usedAtomTypes_.atomType(index); }
 
