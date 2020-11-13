@@ -11,22 +11,17 @@
 #include "templates/algorithms.h"
 #include "templates/enumhelpers.h"
 
-XRayWeights::XRayWeights()
-    : formFactors_(XRayFormFactors::NoFormFactorData), valid_(false), boundCoherentSquareOfAverage_(0.0),
-      boundCoherentAverageOfSquares_(0.0)
-{
-}
+XRayWeights::XRayWeights() : formFactors_(XRayFormFactors::NoFormFactorData), valid_(false) {}
 
 XRayWeights::XRayWeights(const XRayWeights &source) { (*this) = source; }
 
 void XRayWeights::operator=(const XRayWeights &source)
 {
     formFactors_ = source.formFactors_;
-    boundCoherentSquareOfAverage_ = source.boundCoherentSquareOfAverage_;
-    boundCoherentAverageOfSquares_ = source.boundCoherentAverageOfSquares_;
     atomTypes_ = source.atomTypes_;
     concentrations_ = source.concentrations_;
     concentrationProducts_ = source.concentrationProducts_;
+    formFactorData_ = source.formFactorData_;
     preFactors_ = source.preFactors_;
     valid_ = source.valid_;
 }

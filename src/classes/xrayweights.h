@@ -68,10 +68,6 @@ class XRayWeights : public GenericItemBase
     Array2D<double> concentrationProducts_;
     // Pre-factors matrix (ci * cj * [2-dij])
     Array2D<double> preFactors_;
-    // Average squared scattering (<b>**2)
-    double boundCoherentSquareOfAverage_;
-    // Bound coherent squared average scattering (<b**2>)
-    double boundCoherentAverageOfSquares_;
 
     private:
     // Set up matrices based on current AtomType information
