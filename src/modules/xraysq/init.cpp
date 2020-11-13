@@ -5,20 +5,6 @@
 #include "modules/sq/sq.h"
 #include "modules/xraysq/xraysq.h"
 
-// Return enum option info for NormalisationType
-EnumOptions<XRaySQModule::NormalisationType> XRaySQModule::normalisationTypes()
-{
-    static EnumOptionsList NormalisationTypeOptions =
-        EnumOptionsList() << EnumOption(XRaySQModule::NoNormalisation, "None")
-                          << EnumOption(XRaySQModule::AverageOfSquaresNormalisation, "AverageOfSquares")
-                          << EnumOption(XRaySQModule::SquareOfAverageNormalisation, "SquareOfAverage");
-
-    static EnumOptions<XRaySQModule::NormalisationType> options("NormalisationType", NormalisationTypeOptions,
-                                                                XRaySQModule::NoNormalisation);
-
-    return options;
-}
-
 // Perform any necessary initialisation for the Module
 void XRaySQModule::initialise()
 {
@@ -30,8 +16,8 @@ void XRaySQModule::initialise()
                                                                                   XRayFormFactors::WaasmaierKirfel1995),
                   "FormFactors", "Form factors to use for weighting");
     keywords_.add("Calculation",
-                  new EnumOptionsKeyword<XRaySQModule::NormalisationType>(XRaySQModule::normalisationTypes() =
-                                                                              XRaySQModule::NoNormalisation),
+                  new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
+                                                                                  StructureFactors::NoNormalisation),
                   "Normalisation", "Normalisation to apply to total weighted F(Q)");
     keywords_.add("Calculation", new WindowFunctionKeyword(WindowFunction(WindowFunction::NoWindow)), "WindowFunction",
                   "Window function to apply when Fourier-transforming g(r) to S(Q)");
@@ -41,6 +27,10 @@ void XRaySQModule::initialise()
                   "<format> <filename>", KeywordBase::ModificationRequiresSetUpOption);
     keywords_.add("Reference Data", new BoolKeyword(false), "ReferenceIgnoreFirst",
                   "Ignore the first point in the supplied reference data", KeywordBase::ModificationRequiresSetUpOption);
+    keywords_.add("Reference Data",
+                  new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
+                                                                                  StructureFactors::NoNormalisation),
+                  "ReferenceNormalisation", "Normalisation to remove from reference data");
     keywords_.add("Reference Data", new WindowFunctionKeyword(WindowFunction(WindowFunction::Lorch0Window)),
                   "ReferenceWindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)",
                   KeywordBase::ModificationRequiresSetUpOption);

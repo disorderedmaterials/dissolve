@@ -5,20 +5,6 @@
 #include "modules/neutronsq/neutronsq.h"
 #include "modules/sq/sq.h"
 
-// Return enum option info for NormalisationType
-EnumOptions<NeutronSQModule::NormalisationType> NeutronSQModule::normalisationTypes()
-{
-    static EnumOptionsList NormalisationTypeOptions =
-        EnumOptionsList() << EnumOption(NeutronSQModule::NoNormalisation, "None")
-                          << EnumOption(NeutronSQModule::AverageOfSquaresNormalisation, "AverageSquared")
-                          << EnumOption(NeutronSQModule::SquareOfAverageNormalisation, "SquaredAverage");
-
-    static EnumOptions<NeutronSQModule::NormalisationType> options("NormalisationType", NormalisationTypeOptions,
-                                                                   NeutronSQModule::NoNormalisation);
-
-    return options;
-}
-
 // Perform any necessary initialisation for the Module
 void NeutronSQModule::initialise()
 {
@@ -30,16 +16,16 @@ void NeutronSQModule::initialise()
     keywords_.add("Calculation", new IsotopologueSetKeyword(isotopologues_), "Isotopologue",
                   "Set Isotopologue (and its population) to use for a particular Species");
     keywords_.add("Calculation",
-                  new EnumOptionsKeyword<NeutronSQModule::NormalisationType>(NeutronSQModule::normalisationTypes() =
-                                                                                 NeutronSQModule::NoNormalisation),
+                  new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
+                                                                                  StructureFactors::NoNormalisation),
                   "Normalisation", "Normalisation to apply to total weighted F(Q)");
 
     // Reference Data
     keywords_.add("Reference Data", new FileAndFormatKeyword(referenceFQ_, "EndReference"), "Reference", "F(Q) reference data",
                   "<format> <filename>", KeywordBase::ModificationRequiresSetUpOption);
     keywords_.add("Reference Data",
-                  new EnumOptionsKeyword<NeutronSQModule::NormalisationType>(NeutronSQModule::normalisationTypes() =
-                                                                                 NeutronSQModule::NoNormalisation),
+                  new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
+                                                                                  StructureFactors::NoNormalisation),
                   "ReferenceNormalisation", "Normalisation to remove from reference data before use",
                   KeywordBase::ModificationRequiresSetUpOption);
     keywords_.add("Reference Data", new BoolKeyword(false), "ReferenceIgnoreFirst",

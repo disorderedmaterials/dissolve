@@ -59,21 +59,21 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
 
         // Remove normalisation factor from data
-        auto normType = keywords_.enumeration<NeutronSQModule::NormalisationType>("ReferenceNormalisation");
-        if (normType != NeutronSQModule::NoNormalisation)
+        auto normType = keywords_.enumeration<StructureFactors::NormalisationType>("ReferenceNormalisation");
+        if (normType != StructureFactors::NoNormalisation)
         {
             // We need the neutron weights in order to do the normalisation
             NeutronWeights weights;
             calculateWeights(rdfModule, weights);
 
             // Remove normalisation of data
-            if (normType == NeutronSQModule::AverageOfSquaresNormalisation)
+            if (normType == StructureFactors::AverageOfSquaresNormalisation)
             {
                 referenceData.values() *= weights.boundCoherentAverageOfSquares();
                 Messenger::print("NeutronSQ: Removed <b>**2 normalisation from reference data ('{}'), factor = {}.\n",
                                  uniqueName(), weights.boundCoherentAverageOfSquares());
             }
-            else if (normType == NeutronSQModule::SquareOfAverageNormalisation)
+            else if (normType == StructureFactors::SquareOfAverageNormalisation)
             {
                 referenceData.values() *= weights.boundCoherentSquareOfAverage();
                 Messenger::print("NeutronSQ: Removed <b**2> normalisation from reference data ('{}'), factor = {}.\n",
@@ -150,7 +150,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr);
     if (!rdfModule)
         return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
-    auto normalisation = keywords_.enumeration<NeutronSQModule::NormalisationType>("Normalisation");
+    auto normalisation = keywords_.enumeration<StructureFactors::NormalisationType>("Normalisation");
     const auto saveSQ = keywords_.asBool("SaveSQ");
     const auto saveGR = keywords_.asBool("SaveGR");
 
@@ -164,11 +164,11 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("Window function to be applied when calculating representative g(r) from S(Q) is {} ({}).",
                          WindowFunction::functionType(referenceWindowFunction.function()),
                          referenceWindowFunction.parameterSummary());
-    if (normalisation == NeutronSQModule::NoNormalisation)
+    if (normalisation == StructureFactors::NoNormalisation)
         Messenger::print("NeutronSQ: No normalisation will be applied to total F(Q).\n");
-    else if (normalisation == NeutronSQModule::AverageOfSquaresNormalisation)
+    else if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
         Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b>**2");
-    else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation)
+    else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
         Messenger::print("NeutronSQ: Total F(Q) will be normalised to <b**2>");
     if (saveGR)
         Messenger::print("NeutronSQ: Weighted partial g(r) and total G(r) will be saved.\n");

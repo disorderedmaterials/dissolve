@@ -120,7 +120,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (!rdfModule)
         return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
     XRayFormFactors::XRayFormFactorData formFactors = keywords_.enumeration<XRayFormFactors::XRayFormFactorData>("FormFactors");
-    XRaySQModule::NormalisationType normalisation = keywords_.enumeration<XRaySQModule::NormalisationType>("Normalisation");
+    auto normalisation = keywords_.enumeration<StructureFactors::NormalisationType>("Normalisation");
     const WindowFunction &referenceWindowFunction =
         keywords_.retrieve<WindowFunction>("ReferenceWindowFunction", WindowFunction());
     const bool saveFormFactors = keywords_.asBool("SaveFormFactors");
@@ -129,11 +129,11 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Print argument/parameter summary
     Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
     Messenger::print("XRaySQ: Form factors to use are '{}'.\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors));
-    if (normalisation == XRaySQModule::NoNormalisation)
+    if (normalisation == StructureFactors::NoNormalisation)
         Messenger::print("XRaySQ: No normalisation will be applied to total F(Q).\n");
-    else if (normalisation == XRaySQModule::AverageOfSquaresNormalisation)
+    else if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b>**2");
-    else if (normalisation == XRaySQModule::SquareOfAverageNormalisation)
+    else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b**2>");
     if (referenceWindowFunction.function() == WindowFunction::NoWindow)
         Messenger::print("XRaySQ: No window function will be applied when calculating representative g(r) from S(Q).");

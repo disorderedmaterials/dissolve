@@ -10,7 +10,7 @@
 
 // Calculate weighted g(r) from supplied unweighted g(r) and Weights
 bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, const XRayWeights &weights,
-                                       XRaySQModule::NormalisationType normalisation)
+                                       StructureFactors::NormalisationType normalisation)
 {
     int typeI, typeJ;
     for (typeI = 0; typeI < unweightedgr.nAtomTypes(); ++typeI)
@@ -38,8 +38,8 @@ bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSe
     // Form total G(r)
     weightedgr.formTotal(false);
     printf("TODO: NEED TO WEIGHT TOTAL G(r) PROPERLY.\n");
-    // 	if (normalisation == XRaySQModule::AverageOfSquaresNormalisation) weightedgr.total().values() /=
-    // weights.boundCoherentAverageOfSquares(); 	else if (normalisation == XRaySQModule::SquareOfAverageNormalisation)
+    // 	if (normalisation == StructureFactors::AverageOfSquaresNormalisation) weightedgr.total().values() /=
+    // weights.boundCoherentAverageOfSquares(); 	else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
     // weightedgr.total().values() /= weights.boundCoherentSquareOfAverage();
 
     return true;
@@ -47,7 +47,7 @@ bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSe
 
 // Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
 bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, const XRayWeights &weights,
-                                       XRaySQModule::NormalisationType normalisation)
+                                       StructureFactors::NormalisationType normalisation)
 {
     int typeI, typeJ;
     for (typeI = 0; typeI < unweightedsq.nAtomTypes(); ++typeI)
@@ -71,13 +71,13 @@ bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSe
 
     // Form total structure factor
     weightedsq.formTotal(false);
-    if (normalisation == XRaySQModule::SquareOfAverageNormalisation)
+    if (normalisation == StructureFactors::SquareOfAverageNormalisation)
     {
         Array<double> bbar = weights.boundCoherentSquareOfAverage(unweightedsq.boundPartial(0, 0).constXAxis());
         for (auto n = 0; n < bbar.nItems(); ++n)
             weightedsq.total().value(n) /= bbar[n];
     }
-    else if (normalisation == XRaySQModule::AverageOfSquaresNormalisation)
+    else if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
     {
         Array<double> bbar = weights.boundCoherentAverageOfSquares(unweightedsq.boundPartial(0, 0).constXAxis());
         for (auto n = 0; n < bbar.nItems(); ++n)

@@ -6,6 +6,7 @@
 #include "classes/data1dstore.h"
 #include "classes/partialset.h"
 #include "data/formfactors.h"
+#include "data/structurefactors.h"
 #include "io/import/data1d.h"
 #include "module/module.h"
 
@@ -52,16 +53,6 @@ class XRaySQModule : public Module
     void initialise();
 
     public:
-    // Normalisation Type enum
-    enum NormalisationType
-    {
-        NoNormalisation,
-        AverageOfSquaresNormalisation,
-        SquareOfAverageNormalisation,
-        nNormalisationTypes
-    };
-    // Return enum option info for NormalisationType
-    EnumOptions<XRaySQModule::NormalisationType> normalisationTypes();
     // Return file and format for reference total F(Q)
     const Data1DImportFileFormat &referenceFQFileAndFormat();
 
@@ -86,10 +77,10 @@ class XRaySQModule : public Module
     public:
     // Calculate weighted g(r) from supplied unweighted g(r) and Weights
     bool calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, const XRayWeights &weights,
-                             XRaySQModule::NormalisationType normalisation);
+                             StructureFactors::NormalisationType normalisation);
     // Calculate weighted S(Q) from supplied unweighted S(Q) and Weights
     bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, const XRayWeights &weights,
-                             XRaySQModule::NormalisationType normalisation);
+                             StructureFactors::NormalisationType normalisation);
     // Calculate Weights matrix summed over target Configurations
     bool calculateSummedWeights(XRayWeights &summedWeights, XRayFormFactors::XRayFormFactorData formFactors) const;
 

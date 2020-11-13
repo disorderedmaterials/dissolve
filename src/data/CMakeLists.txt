@@ -17,6 +17,7 @@ add_library(data
   formfactors_wk1995.cpp
   isotopes.cpp
   spacegroups.cpp
+  structurefactors.cpp
 
   atomicmass.h
   atomicradius.h
@@ -36,6 +37,7 @@ add_library(data
   formfactors_wk1995.h
   isotopes.h
   spacegroups.h
+  structurefactors.h
 )
 
 include_directories(
