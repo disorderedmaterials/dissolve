@@ -191,7 +191,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto &unweightedSQ =
         GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ", sqModule->uniqueName());
 
-    // Get weights (from underlying source configurations)
+    // Calculate and store weights
     auto &weights = GenericListHelper<NeutronWeights>::realise(dissolve.processingModuleData(), "FullWeights", uniqueName_,
                                                                GenericItem::InRestartFileFlag);
     if (!calculateWeights(rdfModule, weights))

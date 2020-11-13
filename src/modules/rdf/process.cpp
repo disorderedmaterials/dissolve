@@ -86,8 +86,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         rdfRange = int(rdfRange / binWidth) * binWidth;
         Messenger::print("Cutoff (snapped to bin width) is {} Angstroms.\n", rdfRange);
 
-        // Calculate unweighted partials for this Configuration (under generic Module name 'Partials', rather than the
-        // uniqueName_)
+        // Calculate unweighted partials for this Configuration
         bool alreadyUpToDate;
         calculateGR(procPool, cfg, method, rdfRange, binWidth, alreadyUpToDate);
         auto &originalgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "OriginalGR", uniqueName_);
