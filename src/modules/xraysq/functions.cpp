@@ -6,6 +6,7 @@
 #include "classes/species.h"
 #include "classes/speciesinfo.h"
 #include "classes/xrayweights.h"
+#include "modules/rdf/rdf.h"
 #include "modules/xraysq/xraysq.h"
 
 // Calculate weighted g(r) from supplied unweighted g(r) and Weights
@@ -87,26 +88,24 @@ bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSe
     return true;
 }
 
-// Calculate Weights matrix summed over target Configurations
-bool XRaySQModule::calculateSummedWeights(XRayWeights &summedWeights, XRayFormFactors::XRayFormFactorData formFactors) const
+// Calculate xray weights for relevant Configuration targets
+void XRaySQModule::calculateWeights(const RDFModule *rdfModule, XRayWeights &weights,
+                                    XRayFormFactors::XRayFormFactorData formFactors) const
 {
-    summedWeights.clear();
+    // Construct weights matrix containing each Species in the Configuration in the correct proportion
+    // TODO This info would be better calculated by the RDFModule and stored there / associated to it (#400)
+    // TODO Following code should exist locally in RDFModule::sumUnweightedGR() when suitable class storage is available.
+    weights.clear();
 
-    // Loop over Configurations
-    for (Configuration *cfg : targetConfigurations_)
+    for (auto *cfg : rdfModule->targetConfigurations())
     {
-        // Loop over Species used in this Configuration and add its natural isotopologue (we only care about the elements, not
-        // the isotopic make-up)
-        ListIterator<SpeciesInfo> speciesInfoIterator(cfg->usedSpecies());
-        while (SpeciesInfo *spInfo = speciesInfoIterator.iterate())
-        {
-            Species *sp = spInfo->species();
-            summedWeights.addSpecies(sp, spInfo->population());
-        }
+        // TODO Assume weight of 1.0 per configuration now, until #398/#400 are addressed.
+        const auto CFGWEIGHT = 1.0;
+
+        ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
+        while (auto *spInfo = spInfoIterator.iterate())
+            weights.addSpecies(spInfo->species(), spInfo->population() * CFGWEIGHT);
     }
 
-    // Finalise the weights
-    summedWeights.finalise(formFactors);
-
-    return true;
+    weights.finalise(formFactors);
 }

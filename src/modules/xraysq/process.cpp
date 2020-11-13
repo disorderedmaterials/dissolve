@@ -159,25 +159,11 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto &unweightedSQ =
         GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ", sqModule->uniqueName());
 
-    // Construct weights matrix containing each Species in the Configuration in the correct proportion
-    // TODO This info would be better calculated by the RDFModule and stored there / associated to it (#400)
-    // TODO Following code should exist locally in RDFModule::sumUnweightedGR() when suitable class storage is available.
+    // Construct weights matrix
     auto &weights = GenericListHelper<XRayWeights>::realise(dissolve.processingModuleData(), "FullWeights", uniqueName_,
                                                             GenericItem::InRestartFileFlag);
-    weights.clear();
-    for (auto *cfg : rdfModule->targetConfigurations())
-    {
-        // TODO Assume weight of 1.0 per configuration now, until #398/#400 are addressed.
-        const auto CFGWEIGHT = 1.0;
-
-        ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
-        while (auto *spInfo = spInfoIterator.iterate())
-            weights.addSpecies(spInfo->species(), spInfo->population() * CFGWEIGHT);
-    }
-
-    // Create, print, and store weights
+    calculateWeights(rdfModule, weights, formFactors);
     Messenger::print("Weights matrix:\n\n");
-    weights.finalise(formFactors);
     weights.print();
 
     // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
