@@ -65,7 +65,7 @@ void AtomTypeData::add(Isotope *tope, double nAdd)
     // Increase Isotope population
     topeData->add(nAdd);
 
-    // Increase total integer population
+    // Increase total population
     population_ += nAdd;
 }
 
@@ -120,6 +120,9 @@ void AtomTypeData::naturalise()
     topeData->finalise(population_);
     boundCoherent_ = topeData->isotope()->boundCoherent();
 }
+
+// Return the number of defined Isotopes
+int AtomTypeData::nIsotopes() const { return isotopes_.nItems(); }
 
 // Return if specified Isotope is already in the list
 bool AtomTypeData::hasIsotope(Isotope *tope)
