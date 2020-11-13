@@ -72,9 +72,6 @@ XRaySQModuleWidget::XRaySQModuleWidget(QWidget *parent, XRaySQModule *module, Di
     totalGRGraph_->view().axes().setMax(1, 1.0);
     totalGRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
     totalGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
-    // -- Set group styling
-    totalGRGraph_->groupManager().setGroupColouring("Reference", RenderableGroup::FixedGroupColouring);
-    totalGRGraph_->groupManager().setGroupFixedColour("Reference", StockColours::RedStockColour);
 
     // Set up total F(Q) graph
     totalFQGraph_ = ui_.TotalSQPlotWidget->dataViewer();
@@ -87,9 +84,6 @@ XRaySQModuleWidget::XRaySQModuleWidget(QWidget *parent, XRaySQModule *module, Di
     totalFQGraph_->view().axes().setMax(1, 1.0);
     totalFQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
     totalFQGraph_->view().setAutoFollowType(View::AllAutoFollow);
-    // -- Set group styling
-    totalFQGraph_->groupManager().setGroupColouring("Reference", RenderableGroup::FixedGroupColouring);
-    totalFQGraph_->groupManager().setGroupFixedColour("Reference", StockColours::RedStockColour);
 
     setGraphDataTargets(module_);
 
@@ -215,33 +209,34 @@ void XRaySQModuleWidget::setGraphDataTargets(XRaySQModule *module)
     });
 
     // Add calculated total G(r)
-    Renderable *totalGR = totalGRGraph_->createRenderable(
-        Renderable::Data1DRenderable, fmt::format("{}//WeightedGR//Total", module_->uniqueName()), "Calculated (Direct)");
-    totalGRGraph_->addRenderableToGroup(totalGR, "Calculated");
+    totalGRGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//WeightedGR//Total", module_->uniqueName()),
+                                    "Calculated G(r) (Direct)", "Calculated");
 
     // Add calculated total representative G(r) (from FT of S(Q))
-    Renderable *repGR = totalGRGraph_->createRenderable(
-        Renderable::Data1DRenderable, fmt::format("{}//RepresentativeTotalGR", module_->uniqueName()), "Calculated (via FT)");
+    Renderable *repGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable,
+                                                        fmt::format("{}//RepresentativeTotalGR", module_->uniqueName()),
+                                                        "Calculated G(r) (via FT)", "Calculated");
     repGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
-    totalGRGraph_->addRenderableToGroup(repGR, "Calculated");
+    repGR->setColour(StockColours::RedStockColour);
 
     // Add calculate total F(Q)
-    Renderable *totalFQ = totalFQGraph_->createRenderable(
-        Renderable::Data1DRenderable, fmt::format("{}//WeightedSQ//Total", module_->uniqueName()), "Calculated");
-    totalFQGraph_->addRenderableToGroup(totalFQ, "Calculated");
+    totalFQGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//WeightedSQ//Total", module_->uniqueName()),
+                                    "Calculated F(Q)", "Calculated");
 
     // Add on reference data if present
     const Data1DImportFileFormat &referenceFileAndFormat = module->referenceFQFileAndFormat();
     if (referenceFileAndFormat.hasValidFileAndFormat())
     {
         // Add FT of reference data total G(r)
-        Renderable *refGR = totalGRGraph_->createRenderable(
-            Renderable::Data1DRenderable, fmt::format("{}//ReferenceDataFT", module_->uniqueName()), "Reference");
-        totalGRGraph_->addRenderableToGroup(refGR, "Reference");
+        totalGRGraph_
+            ->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//ReferenceDataFT", module_->uniqueName()),
+                               "Reference G(r) (via FT)", "Reference")
+            ->setColour(StockColours::RedStockColour);
 
         // Add calculate total F(Q)
-        Renderable *refFQ = totalFQGraph_->createRenderable(
-            Renderable::Data1DRenderable, fmt::format("{}//ReferenceData", module_->uniqueName()), "Reference");
-        totalFQGraph_->addRenderableToGroup(refFQ, "Reference");
+        totalFQGraph_
+            ->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//ReferenceData", module_->uniqueName()),
+                               "Reference F(Q)", "Reference")
+            ->setColour(StockColours::RedStockColour);
     }
 }
