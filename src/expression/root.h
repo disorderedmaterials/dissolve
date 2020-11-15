@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "expression/nodeNEW.h"
+#include "expression/node.h"
 
 // Expression Root Node
-class ExpressionRootNode : public ExpressionNodeNEW
+class ExpressionRootNode : public ExpressionNode
 {
     public:
     ExpressionRootNode();

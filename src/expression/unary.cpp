@@ -3,7 +3,7 @@
 
 #include "expression/unary.h"
 
-ExpressionUnaryOperatorNode::ExpressionUnaryOperatorNode(UnaryOperator op) : ExpressionNodeNEW(), operator_(op) {}
+ExpressionUnaryOperatorNode::ExpressionUnaryOperatorNode(UnaryOperator op) : ExpressionNode(), operator_(op) {}
 
 /*
  * Evaluation

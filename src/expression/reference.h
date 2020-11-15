@@ -3,13 +3,13 @@
 
 #pragma once
 
-#include "expression/nodeNEW.h"
+#include "expression/node.h"
 
 // Forward Declarations
 class ExpressionVariable;
 
 // Expression Variable Reference Node
-class ExpressionReferenceNode : public ExpressionNodeNEW
+class ExpressionReferenceNode : public ExpressionNode
 {
     public:
     ExpressionReferenceNode(ExpressionVariable *variable);

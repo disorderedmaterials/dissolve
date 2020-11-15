@@ -3,7 +3,7 @@
 
 #include "expression/root.h"
 
-ExpressionRootNode::ExpressionRootNode() : ExpressionNodeNEW() {}
+ExpressionRootNode::ExpressionRootNode() : ExpressionNode() {}
 
 /*
  * Evaluation

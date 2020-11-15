@@ -3,9 +3,9 @@
 
 #include "expression/number.h"
 
-ExpressionNumberNode::ExpressionNumberNode(int i) : ExpressionNodeNEW() { value_ = i; }
+ExpressionNumberNode::ExpressionNumberNode(int i) : ExpressionNode() { value_ = i; }
 
-ExpressionNumberNode::ExpressionNumberNode(double d) : ExpressionNodeNEW() { value_ = d; }
+ExpressionNumberNode::ExpressionNumberNode(double d) : ExpressionNode() { value_ = d; }
 
 /*
  * Evaluation

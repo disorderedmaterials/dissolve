@@ -5,7 +5,7 @@
 #include "data/ff.h"
 #include "expression/ExpressionErrorListeners.h"
 #include "expression/binary.h"
-#include "expression/functionNEW.h"
+#include "expression/function.h"
 #include "expression/number.h"
 #include "expression/reference.h"
 #include "expression/unary.h"
@@ -17,7 +17,7 @@
  */
 
 // Return the topmost context in the stack
-std::shared_ptr<ExpressionNodeNEW> ExpressionVisitor::currentContext() const
+std::shared_ptr<ExpressionNode> ExpressionVisitor::currentContext() const
 {
     assert(contextStack_.size() != 0);
 
@@ -25,7 +25,7 @@ std::shared_ptr<ExpressionNodeNEW> ExpressionVisitor::currentContext() const
 }
 
 // Construct description within supplied object, from given tree
-void ExpressionVisitor::create(ExpressionNEW &expr, ExpressionParser::ExpressionContext *tree,
+void ExpressionVisitor::create(Expression &expr, ExpressionParser::ExpressionContext *tree,
                                RefList<ExpressionVariable> externalVariables)
 {
     expression_ = &expr;

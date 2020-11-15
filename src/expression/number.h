@@ -3,11 +3,11 @@
 
 #pragma once
 
-#include "expression/nodeNEW.h"
+#include "expression/node.h"
 #include "expression/value.h"
 
 // Expression Number Node
-class ExpressionNumberNode : public ExpressionNodeNEW
+class ExpressionNumberNode : public ExpressionNode
 {
     public:
     ExpressionNumberNode(int i);

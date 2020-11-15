@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "expression/nodeNEW.h"
+#include "expression/node.h"
 
 // Expression Function Node
-class ExpressionFunctionNode : public ExpressionNodeNEW
+class ExpressionFunctionNode : public ExpressionNode
 {
     public:
     // Internal Functions enum

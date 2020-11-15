@@ -18,9 +18,9 @@ add_library(expression
   ExpressionErrorListeners.cpp
   ExpressionVisitor.cpp
   binary.cpp
-  expressionNEW.cpp
-  functionNEW.cpp
-  nodeNEW.cpp
+  expression.cpp
+  function.cpp
+  node.cpp
   number.cpp
   reference.cpp
   root.cpp
@@ -30,9 +30,9 @@ add_library(expression
   ExpressionErrorListeners.h
   ExpressionVisitor.h
   binary.h
-  expressionNEW.h
-  functionNEW.h
-  nodeNEW.h
+  expression.h
+  function.h
+  node.h
   number.h
   reference.h
   root.h

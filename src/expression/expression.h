@@ -11,13 +11,13 @@
 class ExpressionVariable;
 
 // Mathematical Expression
-class ExpressionNEW
+class Expression
 {
     public:
-    ExpressionNEW(std::string_view expressionText = "");
-    ~ExpressionNEW();
-    ExpressionNEW(const ExpressionNEW &source);
-    void operator=(const ExpressionNEW &source);
+    Expression(std::string_view expressionText = "");
+    ~Expression();
+    Expression(const Expression &source);
+    void operator=(const Expression &source);
 
     /*
      * Data

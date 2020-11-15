@@ -9,27 +9,27 @@
 #include <vector>
 
 // Forward Declarations
-class ExpressionNEW;
+class Expression;
 
 // NETA Node
-class ExpressionNodeNEW
+class ExpressionNode
 {
     public:
-    ExpressionNodeNEW() = default;
-    virtual ~ExpressionNodeNEW();
+    ExpressionNode() = default;
+    virtual ~ExpressionNode();
 
     /*
      * Nodes
      */
     protected:
     // Child nodes
-    std::vector<std::shared_ptr<ExpressionNodeNEW>> children_;
+    std::vector<std::shared_ptr<ExpressionNode>> children_;
 
     public:
     // Clear all nodes
     void clear();
     // Add child node
-    void addChild(std::shared_ptr<ExpressionNodeNEW> node);
+    void addChild(std::shared_ptr<ExpressionNode> node);
     // Return number of children
     int nChildren() const;
 

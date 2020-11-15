@@ -4,7 +4,7 @@
 #include "expression/reference.h"
 #include "expression/variable.h"
 
-ExpressionReferenceNode::ExpressionReferenceNode(ExpressionVariable *variable) : ExpressionNodeNEW(), variable_(variable) {}
+ExpressionReferenceNode::ExpressionReferenceNode(ExpressionVariable *variable) : ExpressionNode(), variable_(variable) {}
 
 /*
  * Evaluation

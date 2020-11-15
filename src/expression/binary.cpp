@@ -3,7 +3,7 @@
 
 #include "expression/binary.h"
 
-ExpressionBinaryOperatorNode::ExpressionBinaryOperatorNode(BinaryOperator op) : ExpressionNodeNEW(), operator_(op) {}
+ExpressionBinaryOperatorNode::ExpressionBinaryOperatorNode(BinaryOperator op) : ExpressionNode(), operator_(op) {}
 
 /*
  * Evaluation

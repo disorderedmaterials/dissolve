@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2020 Team Dissolve and contributors
 
-#include "expression/functionNEW.h"
+#include "expression/function.h"
 #include "math/constants.h"
 
 // Return enum options for NodeTypes
@@ -20,7 +20,7 @@ EnumOptions<ExpressionFunctionNode::InternalFunction> ExpressionFunctionNode::in
     return options;
 }
 
-ExpressionFunctionNode::ExpressionFunctionNode(InternalFunction func) : ExpressionNodeNEW(), function_(func) {}
+ExpressionFunctionNode::ExpressionFunctionNode(InternalFunction func) : ExpressionNode(), function_(func) {}
 
 /*
  * Evaluation

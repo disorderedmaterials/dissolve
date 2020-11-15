@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "expression/nodeNEW.h"
+#include "expression/node.h"
 
 // Expression Unary Operator Node
-class ExpressionUnaryOperatorNode : public ExpressionNodeNEW
+class ExpressionUnaryOperatorNode : public ExpressionNode
 {
     public:
     // Unary Operators Enum

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2020 Team Dissolve and contributors
 
-#include "expression/expressionNEW.h"
+#include "expression/expression.h"
 #include "ExpressionLexer.h"
 #include "ExpressionParser.h"
 #include "base/messenger.h"
@@ -13,17 +13,17 @@
 #include <stdarg.h>
 #include <string.h>
 
-ExpressionNEW::ExpressionNEW(std::string_view expressionText)
+Expression::Expression(std::string_view expressionText)
 {
     if (!expressionText.empty())
         create(expressionText);
 }
 
-ExpressionNEW::~ExpressionNEW() { clear(); }
+Expression::~Expression() { clear(); }
 
-ExpressionNEW::ExpressionNEW(const ExpressionNEW &source) { (*this) = source; }
+Expression::Expression(const Expression &source) { (*this) = source; }
 
-void ExpressionNEW::operator=(const ExpressionNEW &source)
+void Expression::operator=(const Expression &source)
 {
     throw(std::runtime_error("TODO Expression::operator= not implemented"));
     // Reset our structure, and regenerate from the expression string
@@ -31,7 +31,7 @@ void ExpressionNEW::operator=(const ExpressionNEW &source)
 
     //     expressionString_ = source.expressionString_;
 
-    //     ExpressionNEWGenerator::generate(*this, source.externalVariables_);
+    //     ExpressionGenerator::generate(*this, source.externalVariables_);
 }
 
 /*
@@ -39,7 +39,7 @@ void ExpressionNEW::operator=(const ExpressionNEW &source)
  */
 
 // Clear data
-void ExpressionNEW::clear()
+void Expression::clear()
 {
     expressionString_ = "";
 
@@ -50,10 +50,10 @@ void ExpressionNEW::clear()
 }
 
 // Return whether current expression is valid
-bool ExpressionNEW::isValid() const { return rootNode_ != nullptr; }
+bool Expression::isValid() const { return rootNode_ != nullptr; }
 
 // Create expression from supplied string, with optional external variables
-bool ExpressionNEW::create(std::string_view expressionString, RefList<ExpressionVariable> externalVariables)
+bool Expression::create(std::string_view expressionString, RefList<ExpressionVariable> externalVariables)
 {
     clear();
 
@@ -108,17 +108,17 @@ bool ExpressionNEW::create(std::string_view expressionString, RefList<Expression
 }
 
 // Return original generating string
-std::string_view ExpressionNEW::expressionString() const { return expressionString_; }
+std::string_view Expression::expressionString() const { return expressionString_; }
 
 // Return root node for the expression
-std::shared_ptr<ExpressionRootNode> ExpressionNEW::rootNode() { return rootNode_; }
+std::shared_ptr<ExpressionRootNode> Expression::rootNode() { return rootNode_; }
 
 /*
  * Execution
  */
 
 // Execute expression
-std::optional<ExpressionValue> ExpressionNEW::evaluate()
+std::optional<ExpressionValue> Expression::evaluate()
 {
     if (rootNode_)
         return rootNode_->evaluate();
@@ -127,7 +127,7 @@ std::optional<ExpressionValue> ExpressionNEW::evaluate()
 }
 
 // Execute and return as integer
-int ExpressionNEW::asInteger()
+int Expression::asInteger()
 {
     auto result = evaluate();
     if (!result)
@@ -137,7 +137,7 @@ int ExpressionNEW::asInteger()
 }
 
 // Execute and return as double
-double ExpressionNEW::asDouble()
+double Expression::asDouble()
 {
     auto result = evaluate();
     if (!result)
