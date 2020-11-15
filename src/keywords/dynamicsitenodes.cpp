@@ -29,7 +29,7 @@ const SelectProcedureNode *DynamicSiteNodesKeyword::parentNode() const { return 
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool DynamicSiteNodesKeyword::isDataEmpty() const { return data_.nItems() > 0; }
+bool DynamicSiteNodesKeyword::isDataEmpty() const { return data_.nItems() == 0; }
 
 /*
  * Arguments

@@ -36,7 +36,7 @@ ExpressionValue::ValueType ExpressionVariableListKeyword::variableType() const {
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool ExpressionVariableListKeyword::isDataEmpty() const { return data_.nItems() > 0; }
+bool ExpressionVariableListKeyword::isDataEmpty() const { return data_.nItems() == 0; }
 
 /*
  * Arguments
