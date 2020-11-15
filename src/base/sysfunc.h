@@ -54,6 +54,8 @@ class DissolveSys
     static bool isNumber(std::string_view text);
     // Return whether the supplied string is a number, and also whether it is floating-point
     static bool isNumber(std::string_view text, bool &isFloatingPoint);
+    // Replace all occurrences of search string with replace string
+    static std::string replace(const std::string_view source, const std::string_view search, const std::string_view replace);
 
     /*
      * Files
