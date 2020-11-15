@@ -11,33 +11,7 @@ list(APPEND ANTLR_OUTPUT_DIRS ${ANTLR_ExpressionGrammarLexer_OUTPUT_DIR})
 list(APPEND ANTLR_OUTPUT_DIRS ${ANTLR_ExpressionGrammarParser_OUTPUT_DIR})
 set(ANTLR_OUTPUT_DIRS ${ANTLR_OUTPUT_DIRS} CACHE INTERNAL "")
 
-# Old Bison target
-bison_target(ExpressionGenerator generator_grammar.yy ${CMAKE_CURRENT_BINARY_DIR}/generator_grammar.cc COMPILE_FLAGS -y )
-
 add_library(expression
-  ${BISON_ExpressionGenerator_OUTPUTS}
-  expression.cpp
-  function.cpp
-  functions.cpp
-  generator.cpp
-  node.cpp
-  value.cpp
-  variable.cpp
-  variablevalue.cpp
-  ExpressionErrorListeners.cpp
-  ExpressionVisitor.cpp
-
-  expression.h
-  function.h
-  functions.h
-  generator.h
-  node.h
-  value.h
-  variable.h
-  variablevalue.h
-  ExpressionErrorListeners.h
-  ExpressionVisitor.h
-
   ${ANTLR_ExpressionGrammarLexer_CXX_OUTPUTS}
   ${ANTLR_ExpressionGrammarParser_CXX_OUTPUTS}
 
@@ -51,6 +25,7 @@ add_library(expression
   reference.cpp
   root.cpp
   unary.cpp
+  variable.cpp
 
   ExpressionErrorListeners.h
   ExpressionVisitor.h
@@ -62,6 +37,7 @@ add_library(expression
   reference.h
   root.h
   unary.h
+  variable.h
 )
 
 target_include_directories(expression PRIVATE
