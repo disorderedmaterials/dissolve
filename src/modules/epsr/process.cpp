@@ -415,11 +415,12 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             deltaFQFit = coeffMinimiser.approximation();
         }
 
-        // Calculate F(r)
+        // Calculate F(r) using the simulation data truncated to the same range as the experimental data
         auto &simulatedFR = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "SimulatedFR",
                                                                module->uniqueName(), GenericItem::InRestartFileFlag);
         simulatedFR.setObjectTag(fmt::format("{}//SimulatedFR//{}", uniqueName_, module->uniqueName()));
         simulatedFR = simulatedFQ;
+        Filters::trim(simulatedFR, referenceData);
         Fourier::sineFT(simulatedFR, 1.0 / (2 * PI * PI * targetConfiguration_->atomicDensity()), 0.0, 0.03, 30.0,
                         WindowFunction(WindowFunction::Lorch0Window));
 
