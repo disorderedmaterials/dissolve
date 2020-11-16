@@ -32,16 +32,6 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             return false;
         }
 
-        //         // Truncate data beyond QMax
-        //         const auto qMax = keywords_.asDouble("QMax") < 0.0 ? 30.0 : keywords_.asDouble("QMax");
-        //         if (referenceData.constXAxis().lastValue() < qMax)
-        //             Messenger::warn("Qmax limit of {:e} Angstroms**-1 for calculated NeutronSQ ({}) is beyond limit of "
-        //                             "reference data (Qmax = {:e} Angstroms**-1).\n",
-        //                             qMax, uniqueName(), referenceData.constXAxis().lastValue());
-        //         else
-        //             while (referenceData.constXAxis().lastValue() > qMax)
-        //                 referenceData.removeLastPoint();
-
         // Remove first point?
         if (keywords_.asBool("ReferenceIgnoreFirst"))
         {
