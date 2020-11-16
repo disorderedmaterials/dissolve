@@ -144,7 +144,6 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
             if (intraSelectionOnly && (!originalBond.isSelected()))
                 continue;
 
-            // Copy interaction parameters, including MasterIntra if necessary
             dissolve.copySpeciesIntra(*modifiedBond, originalBond);
 
             ++modifiedBond;
@@ -154,9 +153,11 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
         for (auto &originalAngle : targetSpecies_->angles())
         {
             // Selection only?
-            if (!intraSelectionOnly || originalAngle.isSelected())
-                // Copy interaction parameters, including MasterIntra if necessary
-                dissolve.copySpeciesIntra(*modifiedAngle, originalAngle);
+            if (intraSelectionOnly && (!originalAngle.isSelected()))
+                continue;
+
+            dissolve.copySpeciesIntra(*modifiedAngle, originalAngle);
+
             ++modifiedAngle;
         }
 
@@ -165,11 +166,31 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
         {
 
             // Selection only?
-            if (!intraSelectionOnly || originalTorsion.isSelected())
-                dissolve.copySpeciesIntra(*modifiedTorsion, originalTorsion);
-            ++modifiedTorsion;
+            if (intraSelectionOnly && (!originalTorsion.isSelected()))
+                continue;
 
-            // Copy interaction parameters, including MasterIntra if necessary
+            dissolve.copySpeciesIntra(*modifiedTorsion, originalTorsion);
+
+            ++modifiedTorsion;
+        }
+
+        for (auto &modifiedImproper : modifiedSpecies_->constImpropers())
+        {
+            // Selection only?
+            if (intraSelectionOnly && (!modifiedImproper.isSelected()))
+                continue;
+
+            // Find / create the improper in the target species
+            auto optImproper = targetSpecies_->getImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
+                                                           modifiedImproper.indexK(), modifiedImproper.indexL());
+            if (optImproper)
+                dissolve.copySpeciesIntra(modifiedImproper, *optImproper);
+            else
+            {
+                auto &improper = targetSpecies_->addImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
+                                                             modifiedImproper.indexK(), modifiedImproper.indexL());
+                dissolve.copySpeciesIntra(modifiedImproper, improper);
+            }
         }
     }
 
