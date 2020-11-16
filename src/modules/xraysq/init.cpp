@@ -25,8 +25,6 @@ void XRaySQModule::initialise()
     // Reference Data
     keywords_.add("Reference Data", new FileAndFormatKeyword(referenceFQ_, "EndReference"), "Reference", "F(Q) reference data",
                   "<format> <filename>", KeywordBase::ModificationRequiresSetUpOption);
-    keywords_.add("Reference Data", new BoolKeyword(false), "ReferenceIgnoreFirst",
-                  "Ignore the first point in the supplied reference data", KeywordBase::ModificationRequiresSetUpOption);
     keywords_.add("Reference Data",
                   new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
                                                                                   StructureFactors::NoNormalisation),

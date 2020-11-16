@@ -33,14 +33,6 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             return false;
         }
 
-        // Remove first point?
-        if (keywords_.asBool("ReferenceIgnoreFirst"))
-        {
-            referenceData.removeFirstPoint();
-            Messenger::print("Removed first point from supplied reference data - new Qmin = {:.4e} Angstroms**-1.\n",
-                             referenceData.constXAxis().firstValue());
-        }
-
         // Get dependent modules
         const SQModule *sqModule = keywords_.retrieve<const SQModule *>("SourceSQs", nullptr);
         if (!sqModule)

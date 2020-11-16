@@ -28,8 +28,6 @@ void NeutronSQModule::initialise()
                                                                                   StructureFactors::NoNormalisation),
                   "ReferenceNormalisation", "Normalisation to remove from reference data before use",
                   KeywordBase::ModificationRequiresSetUpOption);
-    keywords_.add("Reference Data", new BoolKeyword(false), "ReferenceIgnoreFirst",
-                  "Ignore the first point in the supplied reference data", KeywordBase::ModificationRequiresSetUpOption);
     keywords_.add("Reference Data", new WindowFunctionKeyword(WindowFunction(WindowFunction::Lorch0Window)),
                   "ReferenceWindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)",
                   KeywordBase::ModificationRequiresSetUpOption);
