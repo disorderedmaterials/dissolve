@@ -114,7 +114,7 @@ bool XRayWeights::finalise(XRayFormFactors::XRayFormFactorData formFactors)
 XRayFormFactors::XRayFormFactorData XRayWeights::formFactors() const { return formFactors_; }
 
 // Return AtomTypeList
-AtomTypeList &XRayWeights::atomTypes() { return atomTypes_; }
+const AtomTypeList &XRayWeights::atomTypes() const { return atomTypes_; }
 
 // Return number of used AtomTypes
 int XRayWeights::nUsedTypes() const { return atomTypes_.nItems(); }

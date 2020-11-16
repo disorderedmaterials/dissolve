@@ -293,7 +293,7 @@ void NeutronWeights::naturalise()
 }
 
 // Return AtomTypeList
-AtomTypeList &NeutronWeights::atomTypes() { return atomTypes_; }
+const AtomTypeList &NeutronWeights::atomTypes() const { return atomTypes_; }
 
 // Return number of used AtomTypes
 int NeutronWeights::nUsedTypes() const { return atomTypes_.nItems(); }

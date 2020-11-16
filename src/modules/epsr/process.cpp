@@ -545,8 +545,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Get the weights for the reference data, and add a row to the scattering matrix
         if (module->type() == "NeutronSQ")
         {
-            auto &weights = GenericListHelper<NeutronWeights>::retrieve(dissolve.processingModuleData(), "FullWeights",
-                                                                        module->uniqueName(), NeutronWeights(), &found);
+            const auto &weights = GenericListHelper<NeutronWeights>::value(dissolve.processingModuleData(), "FullWeights",
+                                                                           module->uniqueName(), NeutronWeights(), &found);
             if (!found)
                 return Messenger::error("Could not locate NeutronWeights for target '{}'.\n", module->uniqueName());
 

@@ -52,7 +52,7 @@ class XRayWeights : public GenericItemBase
     // Return X-Ray form factors being used
     XRayFormFactors::XRayFormFactorData formFactors() const;
     // Return AtomTypeList
-    AtomTypeList &atomTypes();
+    const AtomTypeList &atomTypes() const;
     // Return number of used AtomTypes
     int nUsedTypes() const;
     // Print atomtype information

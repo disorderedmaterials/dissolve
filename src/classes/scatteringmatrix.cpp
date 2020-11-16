@@ -335,7 +335,7 @@ void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &
 }
 
 // Add reference data with its associated NeutronWeights, applying optional factor to those weights and the data itself
-bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeights &dataWeights, double factor)
+bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const NeutronWeights &dataWeights, double factor)
 {
     // Make sure that the scattering weights are valid
     if (!dataWeights.isValid())
@@ -347,7 +347,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeigh
 
     // Set coefficients in A_
     const auto nUsedTypes = dataWeights.nUsedTypes();
-    AtomTypeList &usedTypes = dataWeights.atomTypes();
+    const auto &usedTypes = dataWeights.atomTypes();
     for (auto n = 0; n < nUsedTypes; ++n)
     {
         for (auto m = n; m < nUsedTypes; ++m)
@@ -374,7 +374,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeigh
 }
 
 // Add reference data with its associated XRayWeights, applying optional factor to those weights and the data itself
-bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, XRayWeights &dataWeights, double factor)
+bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWeights &dataWeights, double factor)
 {
     // Make sure that the scattering weights are valid
     if (!dataWeights.isValid())
@@ -386,7 +386,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, XRayWeights 
 
     // Set coefficients in A_
     const auto nUsedTypes = dataWeights.nUsedTypes();
-    AtomTypeList &usedTypes = dataWeights.atomTypes();
+    const auto &usedTypes = dataWeights.atomTypes();
     for (int n = 0; n < nUsedTypes; ++n)
     {
         for (int m = n; m < nUsedTypes; ++m)

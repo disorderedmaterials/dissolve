@@ -69,7 +69,7 @@ class AtomTypeList : public GenericItemBase
     // Return total population of all types in list
     double totalPopulation() const;
     // Return nth referenced AtomType
-    std::shared_ptr<AtomType> atomType(int n);
+    const std::shared_ptr<AtomType> atomType(int n) const;
     // Return AtomTypeData for specified AtomType
     OptionalReferenceWrapper<const AtomTypeData> atomTypeData(std::shared_ptr<AtomType> atomType);
     // Print AtomType populations

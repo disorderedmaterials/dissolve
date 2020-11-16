@@ -71,9 +71,9 @@ class ScatteringMatrix
     void initialise(const std::vector<std::shared_ptr<AtomType>> &types, Array2D<Data1D> &estimatedSQ,
                     std::string_view objectNamePrefix, std::string_view groupName);
     // Add reference data with its associated NeutronWeights, applying optional factor to those weights and the data itself
-    bool addReferenceData(const Data1D &weightedData, NeutronWeights &dataWeights, double factor = 1.0);
+    bool addReferenceData(const Data1D &weightedData, const NeutronWeights &dataWeights, double factor = 1.0);
     // Add reference data with its associated XRayWeights, applying optional factor to those weights and the data itself
-    bool addReferenceData(const Data1D &weightedData, XRayWeights &dataWeights, double factor = 1.0);
+    bool addReferenceData(const Data1D &weightedData, const XRayWeights &dataWeights, double factor = 1.0);
     // Add reference partial data between specified AtomTypes, applying optional factor to the weight and the data itself
     bool addPartialReferenceData(Data1D &weightedData, std::shared_ptr<AtomType> at1, std::shared_ptr<AtomType> at2,
                                  double dataWeight, double factor = 1.0);
