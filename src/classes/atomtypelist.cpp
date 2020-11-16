@@ -71,13 +71,16 @@ AtomTypeData &AtomTypeList::add(std::shared_ptr<AtomType> atomType, double popul
 void AtomTypeList::add(const AtomTypeList &source)
 {
     // Loop over AtomTypes in the source list
-    for (auto &newType : source)
+    for (auto &otherType : source)
     {
-        AtomTypeData &atd = add(newType.atomType());
+        AtomTypeData &atd = add(otherType.atomType());
 
-        // Now add Isotope data
-        for (auto *topeData = newType.isotopeData(); topeData != nullptr; topeData = topeData->next())
-            atd.add(topeData->isotope(), topeData->population());
+        // If no Isotope data are present, add the population now. Otherwise, add it via the isotopes...
+        if (otherType.nIsotopes() == 0)
+            atd.add(otherType.population());
+        else
+            for (auto *topeData = otherType.isotopeData(); topeData != nullptr; topeData = topeData->next())
+                atd.add(topeData->isotope(), topeData->population());
     }
 }
 
@@ -91,7 +94,7 @@ void AtomTypeList::remove(std::shared_ptr<AtomType> atomType)
 // Add/increase this AtomType/Isotope pair
 void AtomTypeList::addIsotope(std::shared_ptr<AtomType> atomType, Isotope *tope, double popAdd)
 {
-    auto &atd = add(atomType, 0);
+    auto &atd = add(atomType);
 
     // Add / increase isotope population
     if (tope != nullptr)

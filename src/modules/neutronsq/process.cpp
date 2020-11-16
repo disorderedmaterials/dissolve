@@ -109,11 +109,11 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         storedDataFT = referenceData;
         auto rho = 0.1;
         if (dissolve.processingModuleData().contains("EffectiveRho", rdfModule->uniqueName()))
+            rho = GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", rdfModule->uniqueName());
+        else
             Messenger::warn("Couldn't locate effective atomic density from '{}', so Fourier transform of reference data will "
                             "use assumed atomic density of 0.1.\n",
                             rdfModule->uniqueName());
-        else
-            rho = GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", rdfModule->uniqueName());
         Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), 0.0, 0.05, 30.0, referenceWindowFunction);
 
         // Save data?
@@ -191,7 +191,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto &unweightedSQ =
         GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ", sqModule->uniqueName());
 
-    // Get weights (from underlying source configurations)
+    // Calculate and store weights
     auto &weights = GenericListHelper<NeutronWeights>::realise(dissolve.processingModuleData(), "FullWeights", uniqueName_,
                                                                GenericItem::InRestartFileFlag);
     if (!calculateWeights(rdfModule, weights))
@@ -248,10 +248,15 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto &repGR = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RepresentativeTotalGR", uniqueName_,
                                                      GenericItem::InRestartFileFlag);
     repGR = weightedSQ.total();
-    auto qMin = weightedSQ.total().values().firstValue();
-    auto qMax = weightedSQ.total().values().lastValue();
-    auto rho = nTargetConfigurations() == 0 ? 0.1 : RDFModule::summedRho(this, dissolve.processingModuleData());
-    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), qMin, 0.05, qMax, referenceWindowFunction);
+    auto rMin = weightedGR.total().xAxis().firstValue();
+    auto rMax = weightedGR.total().xAxis().lastValue();
+    auto rho = 0.1;
+    if (dissolve.processingModuleData().contains("EffectiveRho", rdfModule->uniqueName()))
+        rho = GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", rdfModule->uniqueName());
+    else
+        Messenger::warn("Couldn't locate effective atomic density for RDF module.\n");
+
+    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, referenceWindowFunction);
     repGR.setObjectTag(fmt::format("{}//RepresentativeTotalGR", uniqueName_));
 
     return true;

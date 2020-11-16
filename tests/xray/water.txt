@@ -85,8 +85,6 @@ Layer  'Processing'
   Module  SQ  'SQ01'
     Frequency  1
     SourceRDFs  'RDF01'
-    QMin  0.0
-    QDelta 0.05
     QBroadening  GaussianC2  0.0  0.02
   EndModule
 

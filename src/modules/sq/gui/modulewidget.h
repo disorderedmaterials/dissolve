@@ -27,7 +27,7 @@ class SQModuleWidget : public ModuleWidget
     // Associated Module
     SQModule *module_;
     // DataViewers contained within this widget
-    DataViewer *partialGRGraph_, *partialSQGraph_, *totalGRGraph_, *totalSQGraph_;
+    DataViewer *partialsGraph_, *totalGraph_;
     // Reference to Dissolve
     Dissolve &dissolve_;
 

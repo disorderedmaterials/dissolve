@@ -25,14 +25,14 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (!rdfModule)
         return Messenger::error("A source RDF module must be provided.\n");
     const auto averaging = keywords_.asInt("Averaging");
-    const bool includeBragg = keywords_.asBool("IncludeBragg");
+    const auto includeBragg = keywords_.asBool("IncludeBragg");
     const auto &braggQBroadening = keywords_.retrieve<BroadeningFunction>("BraggQBroadening", BroadeningFunction());
-    auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
+    const auto averagingScheme = keywords_.enumeration<Averaging::AveragingScheme>("AveragingScheme");
     const auto &qBroadening = keywords_.retrieve<BroadeningFunction>("QBroadening", BroadeningFunction());
     const auto qDelta = keywords_.asDouble("QDelta");
     const auto qMin = keywords_.asDouble("QMin");
     const auto qMax = keywords_.asDouble("QMax");
-    const bool saveData = keywords_.asBool("Save");
+    const auto saveData = keywords_.asBool("Save");
     const auto &windowFunction = keywords_.retrieve<WindowFunction>("WindowFunction", WindowFunction());
 
     // Print argument/parameter summary
