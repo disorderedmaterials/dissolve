@@ -13,7 +13,7 @@
 class UFFAtomType : public ForcefieldAtomType
 {
     public:
-    UFFAtomType(Forcefield *parent = nullptr, int z = 0, int index = -1, std::string_view name = "", std::string_view neta = "",
+    UFFAtomType(int z = 0, int index = -1, std::string_view name = "", std::string_view neta = "",
                 std::string_view description = "", double r = 0.0, double theta = 0.0, double x = 0.0, double D = 0.0,
                 double zeta = 0.0, double Z = 0.0, double chi = 0.0, int geom = 0, double V = 0.0, double U = 0.0);
     UFFAtomType &operator=(const UFFAtomType &source);

@@ -4,10 +4,9 @@
 #include "data/ff/uffatomtype.h"
 #include "data/ff/uff.h"
 
-UFFAtomType::UFFAtomType(Forcefield *parent, int z, int index, std::string_view name, std::string_view neta,
-                         std::string_view description, double r, double theta, double x, double D, double zeta, double Z,
-                         double chi, int geom, double V, double U)
-    : ForcefieldAtomType(parent, z, index, name, neta, description, 0.0, 0.0, 0.0)
+UFFAtomType::UFFAtomType(int z, int index, std::string_view name, std::string_view neta, std::string_view description, double r,
+                         double theta, double x, double D, double zeta, double Z, double chi, int geom, double V, double U)
+    : ForcefieldAtomType(z, index, name, neta, description, 0.0, 0.0, 0.0)
 {
     // Set the atomtype's data
     r_ = r;
