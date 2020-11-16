@@ -30,4 +30,6 @@
 #include "genericitems/arrayvec3double.h"
 #include "genericitems/arrayvec3int.h"
 
+#include "genericitems/std_vector.h"
+
 #include "genericitems/container.h"

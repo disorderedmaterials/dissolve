@@ -23,19 +23,20 @@ void EPSRModule::addTargets(RefList<Module> targets)
 }
 
 // Create / retrieve arrays for storage of empirical potential coefficients
-Array2D<Array<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp)
+Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp)
 {
-    auto &coefficients = GenericListHelper<Array2D<Array<double>>>::realise(
+    auto &coefficients = GenericListHelper<Array2D<std::vector<double>>>::realise(
         dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
-    auto arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients.at(0, 0).nItems() : 0);
+    auto arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients.at(0, 0).size() : 0);
     if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) ||
         ((ncoeffp != -1) && (ncoeffp != arrayNCoeffP)))
     {
         coefficients.initialise(nAtomTypes, nAtomTypes, true);
         for (auto n = 0; n < coefficients.linearArraySize(); ++n)
         {
-            coefficients.linearArray()[n].initialise(ncoeffp);
-            coefficients.linearArray()[n] = 0.0;
+            coefficients.linearArray()[n].clear();
+            coefficients.linearArray()[n].resize(ncoeffp);
+            std::fill(coefficients.linearArray()[n].begin(), coefficients.linearArray()[n].end(), 0.0);
         }
     }
 
@@ -50,11 +51,11 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
     const auto nAtomTypes = dissolve.nAtomTypes();
 
     // Get coefficients array
-    Array2D<Array<double>> &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
+    Array2D<std::vector<double>> &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
     auto result = for_each_pair_early(
         dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
-            Array<double> &potCoeff = coefficients.at(i, j);
+            auto &potCoeff = coefficients.at(i, j);
 
             // Regenerate empirical potential from the stored coefficients
             Data1D ep;
@@ -120,8 +121,8 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i,
         ncoeffp = std::min(int(10.0 * rmaxpt + 0.0001), mcoeff);
 
     // Get coefficients array
-    Array2D<Array<double>> &coefficients = potentialCoefficients(dissolve, nAtomTypes);
-    Array<double> &potCoeff = coefficients.at(i, j);
+    auto &coefficients = potentialCoefficients(dissolve, nAtomTypes);
+    auto &potCoeff = coefficients.at(i, j);
 
     // Regenerate empirical potential from the stored coefficients
     Data1D result;
@@ -158,22 +159,15 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
      */
 
     // Get coefficients array
-    Array2D<Array<double>> &coefficients = potentialCoefficients(dissolve, dissolve.nAtomTypes());
+    auto &coefficients = potentialCoefficients(dissolve, dissolve.nAtomTypes());
 
     double absEnergyEP = 0.0;
 
     for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-        Array<double> &potCoeff = coefficients.at(i, j);
+        auto &potCoeff = coefficients.at(i, j);
 
-        double cMin = potCoeff.nItems() == 0 ? 0.0 : potCoeff.constAt(0);
-        double cMax = cMin;
-        for (auto n = 1; n < potCoeff.nItems(); ++n)
-        {
-            if (potCoeff.constAt(n) < cMin)
-                cMin = potCoeff.constAt(n);
-            if (potCoeff.constAt(n) > cMax)
-                cMax = potCoeff.constAt(n);
-        }
+        double cMin = potCoeff.empty() ? 0.0 : *std::min_element(potCoeff.begin(), potCoeff.end());
+        double cMax = potCoeff.empty() ? 0.0 : *std::max_element(potCoeff.begin(), potCoeff.end());
 
         double range = cMax - cMin;
         if (range > absEnergyEP)
@@ -191,7 +185,7 @@ void EPSRModule::truncate(Data1D &data, double rMin, double rMax)
 {
     // Replicates the EPSR25 truncate(xx,rminpt,rmaxpt) function applied over a whole dataset.
     double x;
-    Array<double> &y = data.values();
+    auto &y = data.values();
     const auto decay = rMax - rMin;
     for (auto n = 0; n < data.nValues(); ++n)
     {

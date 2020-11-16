@@ -172,7 +172,7 @@ std::string WindowFunction::parameterSummary() const
 bool WindowFunction::setUp(const Data1D &data)
 {
     // Store maximum x value of data
-    xMax_ = data.constXAxis().lastValue();
+    xMax_ = data.xAxis().back();
 
     switch (function_)
     {

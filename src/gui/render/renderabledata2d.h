@@ -52,7 +52,7 @@ class RenderableData2D : public Renderable
 
     private:
     // Create line strip primitive
-    void constructLine(const Array<double> &displayXAbscissa, const Array<double> &displayYAbscissa,
+    void constructLine(const std::vector<double> &displayXAbscissa, const std::vector<double> &displayYAbscissa,
                        const Array2D<double> &displayValues, const Axes &axes, const ColourDefinition &colourDefinition);
 
     protected:

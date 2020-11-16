@@ -22,18 +22,18 @@ std::string_view PlottableData::name() const { return name_; }
  */
 
 // Return y axis Array (const)
-const Array<double> &PlottableData::constYAxis() const
+const std::vector<double> &PlottableData::yAxis() const
 {
     Messenger::error("Tried to retrieve y axis array from a PlottableData that doesn't have a y axis.\n");
-    static Array<double> dummy;
+    static std::vector<double> dummy;
     return dummy;
 }
 
 // Return z axis Array (const)
-const Array<double> &PlottableData::constZAxis() const
+const std::vector<double> &PlottableData::zAxis() const
 {
     Messenger::error("Tried to retrieve z axis array from a PlottableData that doesn't have a z axis.\n");
-    static Array<double> dummy;
+    static std::vector<double> dummy;
     return dummy;
 }
 
@@ -42,11 +42,11 @@ const Array<double> &PlottableData::constZAxis() const
  */
 
 // Return values Array
-const Array<double> &PlottableData::constValues() const
+const std::vector<double> &PlottableData::values() const
 {
     Messenger::error(
         "Tried to retrieve a one-dimensional value array from a PlottableData that doesn't know how to return one.\n");
-    static Array<double> dummy;
+    static std::vector<double> dummy;
     return dummy;
 }
 
@@ -72,11 +72,11 @@ const Array3D<double> &PlottableData::constValues3D() const
 bool PlottableData::valuesHaveErrors() const { return false; }
 
 // Return errors Array
-const Array<double> &PlottableData::constErrors() const
+const std::vector<double> &PlottableData::errors() const
 {
     Messenger::error(
         "Tried to retrieve a one-dimensional error array from a PlottableData that doesn't know how to return one.\n");
-    static Array<double> dummy;
+    static std::vector<double> dummy;
     return dummy;
 }
 

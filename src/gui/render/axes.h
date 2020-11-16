@@ -13,6 +13,7 @@
 #include "templates/objectstore.h"
 #include "templates/vector3.h"
 #include "templates/vector4.h"
+#include <vector>
 
 // Forward Declarations
 class View;
@@ -161,15 +162,15 @@ class Axes
     // Return supplied data x value in local axes coordinates
     double transformX(double x) const;
     // Transform entire array of values into local axes coordinates
-    void transformX(Array<double> &xArray) const;
+  void transformX(std::vector<double> &xArray) const;
     // Return supplied data y value in local axes coordinates
     double transformY(double y) const;
     // Transform entire array of values into local axes coordinates
-    void transformY(Array<double> &yArray) const;
+    void transformY(std::vector<double> &yArray) const;
     // Return supplied data z value in local axes coordinates
     double transformZ(double z) const;
     // Transform entire array of values into local axes coordinates
-    void transformZ(Array<double> &zArray) const;
+    void transformZ(std::vector<double> &zArray) const;
     // Transform a 2D array of values into local axes coordinates
     void transformX(Array2D<double> &xArray) const;
     // Transform a 2D array of values into local axes coordinates

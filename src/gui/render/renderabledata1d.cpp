@@ -75,8 +75,8 @@ void RenderableData1D::transformValues()
     {
         valuesMin_ = transformedData_.minValue();
         valuesMax_ = transformedData_.maxValue();
-        limitsMin_.set(transformedData_.constXAxis().firstValue(), valuesMin_, 0.0);
-        limitsMax_.set(transformedData_.constXAxis().lastValue(), valuesMax_, 0.0);
+        limitsMin_.set(transformedData_.xAxis().front(), valuesMin_, 0.0);
+        limitsMax_.set(transformedData_.xAxis().back(), valuesMax_, 0.0);
     }
 
     // Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value
@@ -185,8 +185,7 @@ void RenderableData1D::recreatePrimitives(const View &view, const ColourDefiniti
 {
     dataPrimitive_->initialise(GL_LINE_STRIP, true, 4096);
 
-    constructLineXY(transformedData().constXAxis(), transformedData().constValues(), dataPrimitive_, view.constAxes(),
-                    colourDefinition);
+    constructLineXY(transformedData().xAxis(), transformedData().values(), dataPrimitive_, view.constAxes(), colourDefinition);
 }
 
 // Send primitives for rendering
@@ -205,14 +204,14 @@ const void RenderableData1D::sendToGL(const double pixelScaling)
 }
 
 // Create line strip primitive
-void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, const Array<double> &displayValues,
+void RenderableData1D::constructLineXY(const std::vector<double> &displayAbscissa, const std::vector<double> &displayValues,
                                        Primitive *primitive, const Axes &axes, const ColourDefinition &colourDefinition,
                                        double zCoordinate)
 {
     // Copy and transform abscissa values (still in data space) into axes coordinates
-    Array<double> x = displayAbscissa;
+    std::vector<double> x = displayAbscissa;
     axes.transformX(x);
-    auto nX = x.nItems();
+    auto nX = x.size();
     if (nX < 2)
         return;
 
@@ -227,7 +226,7 @@ void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, con
     // Create lines for slices
     int vertexA, vertexB;
     // Grab y and z values
-    Array<double> y = displayValues;
+    std::vector<double> y = displayValues;
     axes.transformY(y);
     double z = axes.transformZ(zCoordinate);
 
@@ -243,7 +242,7 @@ void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, con
         // Loop over x values
         for (auto n = 0; n < nX; ++n)
         {
-            vertexB = primitive->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
+            vertexB = primitive->defineVertex(x[n], y[n], z, nrm, colour);
 
             // If both vertices are valid, plot a line
             if (vertexA != -1)
@@ -257,8 +256,8 @@ void RenderableData1D::constructLineXY(const Array<double> &displayAbscissa, con
         // Loop over x values
         for (auto n = 0; n < nX; ++n)
         {
-            colourDefinition.colour(yLogarithmic ? pow(10.0, y.constAt(n) / yStretch) : y.constAt(n) / yStretch, colour);
-            vertexB = primitive->defineVertex(x.constAt(n), y.constAt(n), z, nrm, colour);
+            colourDefinition.colour(yLogarithmic ? pow(10.0, y[n] / yStretch) : y[n] / yStretch, colour);
+            vertexB = primitive->defineVertex(x[n], y[n], z, nrm, colour);
 
             // If both vertices are valid, plot a line
             if (vertexA != -1)

@@ -45,8 +45,10 @@ void Data2D::clear()
 // Initialise arrays to specified size
 void Data2D::initialise(int xSize, int ySize, bool withError)
 {
-    x_.initialise(xSize);
-    y_.initialise(ySize);
+    x_.clear();
+    x_.resize(xSize);
+    y_.clear();
+    y_.resize(ySize);
     values_.initialise(xSize, ySize);
     hasError_ = withError;
     if (hasError_)
@@ -62,10 +64,10 @@ void Data2D::initialise(const Data2D &source)
 {
     x_ = source.x_;
     y_ = source.y_;
-    values_.initialise(x_.nItems(), y_.nItems());
+    values_.initialise(x_.size(), y_.size());
     hasError_ = source.hasError_;
     if (hasError_)
-        errors_.initialise(x_.nItems(), y_.nItems());
+        errors_.initialise(x_.size(), y_.size());
     else
         errors_.clear();
 
@@ -87,13 +89,15 @@ void Data2D::initialise(double xMin, double xMax, double xBin, double yMin, doub
         ++nYBins;
 
     // Create x_ axis array
-    x_.initialise(nXBins);
+    x_.clear();
+    x_.resize(nXBins);
     auto xCentre = xMin + xBin * 0.5;
     for (auto n = 0; n < nXBins; ++n, xCentre += xBin)
         x_[n] = xCentre;
 
     // Create y_ axis array
-    y_.initialise(nYBins);
+    y_.clear();
+    y_.resize(nXBins);
     auto yCentre = yMin + yBin * 0.5;
     for (auto n = 0; n < nYBins; ++n, yCentre += yBin)
         y_[n] = yCentre;
@@ -163,11 +167,11 @@ double Data2D::constXAxis(int index) const
         return 0.0;
     }
 #endif
-    return x_.constAt(index);
+    return x_[index];
 }
 
 // Return x axis Array
-Array<double> &Data2D::xAxis()
+std::vector<double> &Data2D::xAxis()
 {
     ++version_;
 
@@ -175,7 +179,7 @@ Array<double> &Data2D::xAxis()
 }
 
 // Return x axis Array (const)
-const Array<double> &Data2D::constXAxis() const { return x_; }
+const std::vector<double> &Data2D::xAxis() const { return x_; }
 
 // Return y value specified
 double &Data2D::yAxis(int index)
@@ -203,11 +207,11 @@ double Data2D::constYAxis(int index) const
         return 0.0;
     }
 #endif
-    return y_.constAt(index);
+    return y_[index];
 }
 
 // Return y Array
-Array<double> &Data2D::yAxis()
+std::vector<double> &Data2D::yAxis()
 {
     ++version_;
 
@@ -215,7 +219,7 @@ Array<double> &Data2D::yAxis()
 }
 
 // Return y axis Array (const)
-const Array<double> &Data2D::constYAxis() const { return y_; }
+const std::vector<double> &Data2D::yAxis() const { return y_; }
 
 // Return value specified
 double &Data2D::value(int xIndex, int yIndex)
@@ -314,7 +318,7 @@ void Data2D::addErrors()
     if (hasError_)
         Messenger::warn("Adding an error array to a Data2D that already has one...\n");
 
-    errors_.initialise(x_.nItems(), y_.nItems());
+    errors_.initialise(x_.size(), y_.size());
 
     hasError_ = true;
 
@@ -482,7 +486,7 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
     initialise(xSize, ySize, errors);
 
     // Read x axis
-    for (auto x = 0; x < x_.nItems(); ++x)
+    for (auto x = 0; x < x_.size(); ++x)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
@@ -490,7 +494,7 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
     }
 
     // Read y axis
-    for (auto y = 0; y < y_.nItems(); ++y)
+    for (auto y = 0; y < y_.size(); ++y)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
@@ -500,9 +504,9 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
     // Read errors / valuse
     if (hasError_)
     {
-        for (auto x = 0; x < x_.nItems(); ++x)
+        for (auto x = 0; x < x_.size(); ++x)
         {
-            for (auto y = 0; y < y_.nItems(); ++y)
+            for (auto y = 0; y < y_.size(); ++y)
             {
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                     return false;
@@ -513,9 +517,9 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
     }
     else
     {
-        for (auto x = 0; x < x_.nItems(); ++x)
+        for (auto x = 0; x < x_.size(); ++x)
         {
-            for (auto y = 0; y < y_.nItems(); ++y)
+            for (auto y = 0; y < y_.size(); ++y)
             {
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                     return false;
@@ -537,34 +541,34 @@ bool Data2D::write(LineParser &parser)
         return false;
 
     // Write axis sizes and errors flag
-    if (!parser.writeLineF("{}  {}  {}\n", x_.nItems(), y_.nItems(), DissolveSys::btoa(hasError_)))
+    if (!parser.writeLineF("{}  {}  {}\n", x_.size(), y_.size(), DissolveSys::btoa(hasError_)))
         return false;
 
     // Write x axis array
-    for (auto x = 0; x < x_.nItems(); ++x)
-        if (!parser.writeLineF("{:e}\n", x_[x]))
+    for (auto x : x_)
+        if (!parser.writeLineF("{:e}\n", x))
             return false;
 
     // Write y axis array
-    for (auto y = 0; y < y_.nItems(); ++y)
-        if (!parser.writeLineF("{:e}\n", y_[y]))
+    for (auto y : y_)
+        if (!parser.writeLineF("{:e}\n", y))
             return false;
 
     // Write values / errors
     if (hasError_)
     {
-        for (auto x = 0; x < x_.nItems(); ++x)
+        for (auto x = 0; x < x_.size(); ++x)
         {
-            for (auto y = 0; y < y_.nItems(); ++y)
+            for (auto y = 0; y < y_.size(); ++y)
                 if (!parser.writeLineF("{:e}  {:e}\n", values_.constAt(x, y), errors_.constAt(x, y)))
                     return false;
         }
     }
     else
     {
-        for (auto x = 0; x < x_.nItems(); ++x)
+        for (auto x = 0; x < x_.size(); ++x)
         {
-            for (auto y = 0; y < y_.nItems(); ++y)
+            for (auto y = 0; y < y_.size(); ++y)
                 if (!parser.writeLineF("{:e}\n", values_.constAt(x, y)))
                     return false;
         }

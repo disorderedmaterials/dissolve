@@ -5,14 +5,14 @@
 
 #include "base/messenger.h"
 #include "expression/variable.h"
-#include "templates/array.h"
+#include <vector>
 
 // Minimiser Base Class
 template <class T> class MinimiserBase
 {
     public:
     // Cost function pointer typedef
-    typedef double (T::*MinimiserCostFunction)(const Array<double> &alpha);
+    typedef double (T::*MinimiserCostFunction)(const std::vector<double> &alpha);
     MinimiserBase<T>(T &object, MinimiserCostFunction costFunction, bool pokeBeforeCost = false)
         : object_(object), costFunction_(costFunction)
     {
@@ -41,7 +41,7 @@ template <class T> class MinimiserBase
 
     protected:
     // Calculate cost from specified values, including contributions from any supplied limits
-    double cost(const Array<double> &alpha)
+    double cost(const std::vector<double> &alpha)
     {
         // Poke values into targets before calling cost function?
         if (pokeBeforeCost_)
@@ -51,15 +51,15 @@ template <class T> class MinimiserBase
         double x = (object_.*costFunction_)(alpha);
 
         // Add penalties from values exceeding set limits
-        for (auto n = 0; n < alpha.nItems(); ++n)
+        for (auto n = 0; n < alpha.size(); ++n)
         {
             // Minimum limit
-            if (minimumLimit_[n] && (alpha.constAt(n) < minimumValue_[n]))
-                x += penaltyFactor_ * pow(minimumValue_[n] - alpha.constAt(n), penaltyPower_);
+            if (minimumLimit_[n] && (alpha[n] < minimumValue_[n]))
+                x += penaltyFactor_ * pow(minimumValue_[n] - alpha[n], penaltyPower_);
 
             // Minimum limit
-            if (maximumLimit_[n] && (alpha.constAt(n) > maximumValue_[n]))
-                x += penaltyFactor_ * pow(alpha.constAt(n) - maximumValue_[n], penaltyPower_);
+            if (maximumLimit_[n] && (alpha[n] > maximumValue_[n]))
+                x += penaltyFactor_ * pow(alpha[n] - maximumValue_[n], penaltyPower_);
         }
 
         return x;
@@ -74,25 +74,25 @@ template <class T> class MinimiserBase
      */
     protected:
     // Pointers to double values to be fit
-    Array<double *> targets_;
+    std::vector<double *> targets_;
     // Whether maximum limits have been set for targets
-    Array<bool> maximumLimit_;
+    std::vector<bool> maximumLimit_;
     // Whether minimum limits have been set for targets
-    Array<bool> minimumLimit_;
+    std::vector<bool> minimumLimit_;
     // Maximum limiting values for targets
-    Array<double> maximumValue_;
+    std::vector<double> maximumValue_;
     // Minimum limiting values for targets
-    Array<double> minimumValue_;
+    std::vector<double> minimumValue_;
     // Integer power of penalty function when outside allowable limit
     int penaltyPower_;
     // Scaling factor for penalties incurred when outside of allowable limit
     double penaltyFactor_;
 
     private:
-    void pokeValues(const Array<double> &values)
+    void pokeValues(const std::vector<double> &values)
     {
-        for (auto n = 0; n < targets_.nItems(); ++n)
-            (*targets_[n]) = values.constAt(n);
+        for (auto n = 0; n < targets_.size(); ++n)
+            (*targets_[n]) = values[n];
     }
 
     public:
@@ -100,13 +100,13 @@ template <class T> class MinimiserBase
     void addTarget(double *var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0)
     {
         // Add pointer and current value
-        targets_.add(var);
+        targets_.push_back(var);
 
         // Add/set limits
-        minimumLimit_.add(minLimit);
-        minimumValue_.add(minValue);
-        maximumLimit_.add(maxLimit);
-        maximumValue_.add(maxValue);
+        minimumLimit_.push_back(minLimit);
+        minimumValue_.push_back(minValue);
+        maximumLimit_.push_back(maxLimit);
+        maximumValue_.push_back(maxValue);
     }
     // Add reference as fit target, with limits specified
     void addTarget(double &var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false, double maxValue = 0.0)
@@ -120,10 +120,10 @@ template <class T> class MinimiserBase
         addTarget(var->valuePointer()->doublePointer(), minLimit, minValue, maxLimit, maxValue);
     }
     // Add array of pointers to targets
-    void addTargets(Array<double *> vars, bool minLimit = false, double minValue = 0.0, bool maxLimit = false,
+    void addTargets(std::vector<double *> vars, bool minLimit = false, double minValue = 0.0, bool maxLimit = false,
                     double maxValue = 0.0)
     {
-        for (auto n = 0; n < vars.nItems(); ++n)
+        for (auto n = 0; n < vars.size(); ++n)
             addTarget(vars[n], minLimit, minValue, maxLimit, maxValue);
     }
     // Set penalty power for values outside of set limits
@@ -136,23 +136,22 @@ template <class T> class MinimiserBase
      */
     protected:
     // Minimiser function to be called in derived class
-    virtual double execute(Array<double> &values) = 0;
+    virtual double execute(std::vector<double> &values) = 0;
 
     public:
     // Minimise target parameters
     double minimise()
     {
         // Check for zero variable parameters
-        if (targets_.nItems() == 0)
+        if (targets_.size() == 0)
         {
             Messenger::warn("No variables specified for fitting, so nothing to do.\n");
             return 0.0;
         }
 
         // Create a local array of values to pass to the fitting routine
-        Array<double> values;
-        for (auto n = 0; n < targets_.nItems(); ++n)
-            values.add(*targets_[n]);
+        std::vector<double> values;
+        std::transform(targets_.begin(), targets_.end(), values.begin(), [](auto *target) { return *target; });
 
         // Minimise the function
         double finalCost = execute(values);

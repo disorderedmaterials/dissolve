@@ -19,14 +19,14 @@ double Integrator::trapezoid(const Data1D &data)
         return 0.0;
 
     // Grab data arrays
-    const auto &x = data.constXAxis();
-    const auto &y = data.constValues();
+    const auto &x = data.xAxis();
+    const auto &y = data.values();
 
-    double total = 0.0, y0 = y.firstValue(), y1, x0 = x.firstValue(), x1;
-    for (auto n = 1; n < x.nItems(); ++n)
+    double total = 0.0, y0 = y.front(), y1, x0 = x.front(), x1;
+    for (auto n = 1; n < x.size(); ++n)
     {
-        x1 = x.constAt(n);
-        y1 = y.constAt(n);
+        x1 = x[n];
+        y1 = y[n];
         total += (x1 - x0) * (y0 + y1) * 0.5;
         x0 = x1;
         y0 = y1;
@@ -42,16 +42,16 @@ double Integrator::trapezoid(const Data1D &data, double xMin, double xMax)
         return 0.0;
 
     // Grab data arrays
-    const auto &x = data.constXAxis();
-    const auto &y = data.constValues();
+    const auto &x = data.xAxis();
+    const auto &y = data.values();
 
     double total = 0.0, y0, y1, x0, x1;
     auto nPoints = 0;
-    for (auto n = 0; n < x.nItems(); ++n)
+    for (auto n = 0; n < x.size(); ++n)
     {
         // Get current x and y values and check limit
-        x1 = x.constAt(n);
-        y1 = y.constAt(n);
+        x1 = x[n];
+        y1 = y[n];
         if (x1 < xMin)
             continue;
         if (x1 > xMax)
@@ -85,14 +85,14 @@ double Integrator::absTrapezoid(const Data1D &data)
         return 0.0;
 
     // Grab data arrays
-    const auto &x = data.constXAxis();
-    const auto &y = data.constValues();
+    const auto &x = data.xAxis();
+    const auto &y = data.values();
 
-    double total = 0.0, y0 = y.firstValue(), y1, x0 = x.firstValue(), x1;
-    for (auto n = 1; n < x.nItems(); ++n)
+    double total = 0.0, y0 = y.front(), y1, x0 = x.front(), x1;
+    for (auto n = 1; n < x.size(); ++n)
     {
-        x1 = x.constAt(n);
-        y1 = y.constAt(n);
+        x1 = x[n];
+        y1 = y[n];
         total += fabs((x1 - x0) * (y0 + y1) * 0.5);
         x0 = x1;
         y0 = y1;
@@ -104,12 +104,12 @@ double Integrator::absTrapezoid(const Data1D &data)
 double Integrator::sum(const Data1D &data)
 {
     // Grab data array
-    const auto &values = data.constValues();
+    const auto &values = data.values();
 
     double total = 0.0;
 
-    for (auto n = 0; n < values.nItems(); ++n)
-        total += values.constAt(n);
+    for (auto n = 0; n < values.size(); ++n)
+        total += values[n];
 
     return total;
 }
@@ -118,19 +118,19 @@ double Integrator::sum(const Data1D &data)
 double Integrator::sum(const Data1D &data, double xMin, double xMax)
 {
     // Grab data arrays
-    const auto &x = data.constXAxis();
-    const auto &values = data.constValues();
+    const auto &x = data.xAxis();
+    const auto &values = data.values();
 
     double total = 0.0;
 
-    for (auto n = 0; n < values.nItems(); ++n)
+    for (auto n = 0; n < values.size(); ++n)
     {
-        if (x.constAt(n) < xMin)
+        if (x[n] < xMin)
             continue;
-        if (x.constAt(n) > xMax)
+        if (x[n] > xMax)
             break;
 
-        total += values.constAt(n);
+        total += values[n];
     }
 
     return total;
@@ -143,12 +143,12 @@ double Integrator::sum(const Data1D &data, const Range range) { return sum(data,
 double Integrator::absSum(const Data1D &data)
 {
     // Grab data array
-    const auto &values = data.constValues();
+    const auto &values = data.values();
 
     double total = 0.0;
 
-    for (auto n = 0; n < values.nItems(); ++n)
-        total += fabs(values.constAt(n));
+    for (auto n = 0; n < values.size(); ++n)
+        total += fabs(values[n]);
 
     return total;
 }
@@ -157,19 +157,19 @@ double Integrator::absSum(const Data1D &data)
 double Integrator::absSum(const Data1D &data, double xMin, double xMax)
 {
     // Grab data arrays
-    const auto &x = data.constXAxis();
-    const auto &values = data.constValues();
+    const auto &x = data.xAxis();
+    const auto &values = data.values();
 
     double total = 0.0;
 
-    for (auto n = 0; n < values.nItems(); ++n)
+    for (auto n = 0; n < values.size(); ++n)
     {
-        if (x.constAt(n) < xMin)
+        if (x[n] < xMin)
             continue;
-        if (x.constAt(n) > xMax)
+        if (x[n] > xMax)
             break;
 
-        total += fabs(values.constAt(n));
+        total += fabs(values[n]);
     }
 
     return total;
@@ -182,12 +182,12 @@ double Integrator::absSum(const Data1D &data, const Range range) { return absSum
 double Integrator::sumOfSquares(const Data1D &data)
 {
     // Grab data array
-    const auto &values = data.constValues();
+    const auto &values = data.values();
 
     double total = 0.0;
 
-    for (auto n = 0; n < values.nItems(); ++n)
-        total += values.constAt(n) * values.constAt(n);
+    for (auto n = 0; n < values.size(); ++n)
+        total += values[n] * values[n];
 
     return total;
 }
@@ -196,19 +196,19 @@ double Integrator::sumOfSquares(const Data1D &data)
 double Integrator::sumOfSquares(const Data1D &data, double xMin, double xMax)
 {
     // Grab data arrays
-    const auto &x = data.constXAxis();
-    const auto &values = data.constValues();
+    const auto &x = data.xAxis();
+    const auto &values = data.values();
 
     double total = 0.0;
 
-    for (auto n = 0; n < values.nItems(); ++n)
+    for (auto n = 0; n < values.size(); ++n)
     {
-        if (x.constAt(n) < xMin)
+        if (x[n] < xMin)
             continue;
-        if (x.constAt(n) > xMax)
+        if (x[n] > xMax)
             break;
 
-        total += values.constAt(n) * values.constAt(n);
+        total += values[n] * values[n];
     }
 
     return total;

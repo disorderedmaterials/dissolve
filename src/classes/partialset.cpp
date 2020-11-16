@@ -111,14 +111,14 @@ void PartialSet::reset()
 
     // Zero partials
     for_each_pair(0, atomTypes_.nItems(), [&](int i, int j) {
-        partials_.at(i, j).values() = 0.0;
-        boundPartials_.at(i, j).values() = 0.0;
-        unboundPartials_.at(i, j).values() = 0.0;
+        std::fill(partials_.at(i, j).values().begin(), partials_.at(i, j).values().end(), 0.0);
+        std::fill(boundPartials_.at(i, j).values().begin(), boundPartials_.at(i, j).values().end(), 0.0);
+        std::fill(unboundPartials_.at(i, j).values().begin(), unboundPartials_.at(i, j).values().end(), 0.0);
         emptyBoundPartials_.at(i, j) = true;
     });
 
     // Zero total
-    total_.values() = 0.0;
+    std::fill(total_.values().begin(), total_.values().end(), 0.0);
 
     fingerprint_ = "NO_FINGERPRINT";
 }
@@ -177,22 +177,23 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
 
     // Copy x and y arrays from one of the partials, and zero the latter
     total_.initialise(partials_.at(0, 0));
-    total_.values() = 0.0;
+    std::fill(total_.values().begin(), total_.values().end(), 0.0);
 
-    for_each_pair(atomTypes_.begin(), atomTypes_.end(),
-                  [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
-                      // Calculate weighting factor if requested
-                      double factor = 1.0;
-                      if (applyConcentrationWeights)
-                      {
-                          double ci = at1.fraction();
-                          double cj = at2.fraction();
-                          factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
-                      }
+    for_each_pair(
+        atomTypes_.begin(), atomTypes_.end(), [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
+            // Calculate weighting factor if requested
+            double factor = 1.0;
+            if (applyConcentrationWeights)
+            {
+                double ci = at1.fraction();
+                double cj = at2.fraction();
+                factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
+            }
 
-                      // Add contribution from partials (bound + unbound)
-                      total_.values() += partials_.at(typeI, typeJ).values() * factor;
-                  });
+            // Add contribution from partials (bound + unbound)
+            std::transform(total_.values().begin(), total_.values().end(), partials_.at(typeI, typeJ).values().begin(),
+                           total_.values().begin(), [=](auto total, auto partial) { return total + partial * factor; });
+        });
 }
 
 // Return total function
@@ -209,20 +210,21 @@ Data1D PartialSet::boundTotal(bool applyConcentrationWeights) const
     Data1D bound;
     bound.initialise(boundPartials_.constAt(0, 0));
 
-    for_each_pair(atomTypes_.begin(), atomTypes_.end(),
-                  [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
-                      // Calculate weighting factor if requested
-                      double factor = 1.0;
-                      if (applyConcentrationWeights)
-                      {
-                          double ci = atd1.fraction();
-                          double cj = atd2.fraction();
-                          factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
-                      }
+    for_each_pair(
+        atomTypes_.begin(), atomTypes_.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
+            // Calculate weighting factor if requested
+            double factor = 1.0;
+            if (applyConcentrationWeights)
+            {
+                double ci = atd1.fraction();
+                double cj = atd2.fraction();
+                factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
+            }
 
-                      // Add contribution
-                      bound.values() += boundPartials_.constAt(typeI, typeJ).values() * factor;
-                  });
+            // Add contribution
+            std::transform(bound.values().begin(), bound.values().end(), boundPartials_.constAt(typeI, typeJ).values().begin(),
+                           bound.values().begin(), [=](auto bound, auto partial) { return bound + partial * factor; });
+        });
 
     return bound;
 }
@@ -249,7 +251,9 @@ Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
                       }
 
                       // Add contribution
-                      unbound.values() += unboundPartials_.constAt(typeI, typeJ).values() * factor;
+                      std::transform(unbound.values().begin(), unbound.values().end(),
+                                     unboundPartials_.constAt(typeI, typeJ).values().begin(), unbound.values().begin(),
+                                     [=](auto unbound, auto partial) { return unbound + partial * factor; });
                   });
 
     return unbound;
@@ -337,12 +341,16 @@ void PartialSet::setFileNames(std::string_view prefix, std::string_view tag, std
 void PartialSet::adjust(double delta)
 {
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
-        partials_.at(n, m).values() += delta;
-        boundPartials_.at(n, m).values() += delta;
-        unboundPartials_.at(n, m).values() += delta;
+        std::transform(partials_.at(n, m).values().begin(), partials_.at(n, m).values().end(),
+                       partials_.at(n, m).values().begin(), [=](auto value) { return value + (delta); });
+        std::transform(boundPartials_.at(n, m).values().begin(), boundPartials_.at(n, m).values().end(),
+                       boundPartials_.at(n, m).values().begin(), [=](auto value) { return value + (delta); });
+        std::transform(unboundPartials_.at(n, m).values().begin(), unboundPartials_.at(n, m).values().end(),
+                       unboundPartials_.at(n, m).values().begin(), [=](auto value) { return value + (delta); });
     });
 
-    total_.values() += delta;
+    std::transform(total_.values().begin(), total_.values().end(), total_.values().begin(),
+                   [=](auto value) { return value + (delta); });
 }
 
 // Form partials from stored Histogram data
@@ -415,7 +423,7 @@ void PartialSet::calculateRDF(Data1D &destination, Histogram1D &histogram, doubl
 {
     auto nBins = histogram.nBins();
     double delta = histogram.binWidth();
-    const Array<long int> &bins = histogram.bins();
+    const std::vector<long int> &bins = histogram.bins();
 
     destination.clear();
 
@@ -425,7 +433,7 @@ void PartialSet::calculateRDF(Data1D &destination, Histogram1D &histogram, doubl
         shellVolume = (4.0 / 3.0) * PI * (pow(lowerShellLimit + delta, 3.0) - pow(lowerShellLimit, 3.0));
         factor = nCentres * (shellVolume * numberDensity);
 
-        destination.addPoint(r, bins.constAt(n) * (multiplier / factor));
+        destination.addPoint(r, bins[n] * (multiplier / factor));
 
         r += delta;
         lowerShellLimit += delta;
@@ -491,13 +499,17 @@ void PartialSet::operator*=(const double factor)
     {
         for (auto m = n; m < nTypes; ++m)
         {
-            partials_.at(n, m).values() *= factor;
-            boundPartials_.at(n, m).values() *= factor;
-            unboundPartials_.at(n, m).values() *= factor;
+            std::transform(partials_.at(n, m).values().begin(), partials_.at(n, m).values().end(),
+                           partials_.at(n, m).values().begin(), [=](auto value) { return value * (factor); });
+            std::transform(boundPartials_.at(n, m).values().begin(), boundPartials_.at(n, m).values().end(),
+                           boundPartials_.at(n, m).values().begin(), [=](auto value) { return value * (factor); });
+            std::transform(unboundPartials_.at(n, m).values().begin(), unboundPartials_.at(n, m).values().end(),
+                           unboundPartials_.at(n, m).values().begin(), [=](auto value) { return value * (factor); });
         }
     }
 
-    total_.values() *= factor;
+    std::transform(total_.values().begin(), total_.values().end(), total_.values().begin(),
+                   [=](auto value) { return value * (factor); });
 }
 
 /*

@@ -223,10 +223,10 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Determine overlapping Q range between the two datasets
             double FQMin = qMin, FQMax = qMax;
-            if ((FQMin < differenceData.xAxis().firstValue()) || (FQMin < calcSQTotal.xAxis().firstValue()))
-                FQMin = std::max(differenceData.xAxis().firstValue(), calcSQTotal.xAxis().firstValue());
-            if ((FQMax > differenceData.xAxis().lastValue()) || (FQMax > calcSQTotal.xAxis().lastValue()))
-                FQMax = std::min(differenceData.xAxis().lastValue(), calcSQTotal.xAxis().lastValue());
+            if ((FQMin < differenceData.xAxis().front()) || (FQMin < calcSQTotal.xAxis().front()))
+                FQMin = std::max(differenceData.xAxis().front(), calcSQTotal.xAxis().front());
+            if ((FQMax > differenceData.xAxis().back()) || (FQMax > calcSQTotal.xAxis().back()))
+                FQMax = std::min(differenceData.xAxis().back(), calcSQTotal.xAxis().back());
 
             // Trim both datasets to the common range
             Filters::trim(calcSQTotal, FQMin, FQMax, true);
@@ -329,23 +329,23 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Set up data for construction of the deltaFQ
         deltaFQ.clear();
-        const Array<double> x1 = referenceData.constXAxis();
-        const Array<double> y1 = referenceData.constValues();
+        const auto x1 = referenceData.xAxis();
+        const auto y1 = referenceData.values();
         auto simulatedFQ = weightedSQ.total();
         Interpolator interpolatedSimFQ(simulatedFQ);
 
         // Determine allowable range for fit, based on requested values and limits of generated / simulated datasets.
-        double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.lastValue() : qMax);
-        if ((deltaSQMin < x1.firstValue()) || (deltaSQMin < simulatedFQ.xAxis().firstValue()))
-            deltaSQMin = std::max(x1.firstValue(), simulatedFQ.xAxis().firstValue());
-        if ((deltaSQMax > x1.lastValue()) || (deltaSQMax > simulatedFQ.xAxis().lastValue()))
-            deltaSQMax = std::min(x1.lastValue(), simulatedFQ.xAxis().lastValue());
+        double deltaSQMin = qMin, deltaSQMax = (qMax < 0.0 ? x1.back() : qMax);
+        if ((deltaSQMin < x1.front()) || (deltaSQMin < simulatedFQ.xAxis().front()))
+            deltaSQMin = std::max(x1.front(), simulatedFQ.xAxis().front());
+        if ((deltaSQMax > x1.back()) || (deltaSQMax > simulatedFQ.xAxis().back()))
+            deltaSQMax = std::min(x1.back(), simulatedFQ.xAxis().back());
 
         double x;
-        for (auto n = 0; n < x1.nItems(); ++n)
+        for (auto n = 0; n < x1.size(); ++n)
         {
             // Grab experimental data x value
-            x = x1.constAt(n);
+            x = x1[n];
 
             // If this x value is below the minimum Q value we are fitting, set the difference to zero. Otherwise,
             // store the "inverse" value ([sim - exp], for consistency with EPSR)
@@ -354,7 +354,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             else if (x > deltaSQMax)
                 break;
             else
-                deltaFQ.addPoint(x, interpolatedSimFQ.y(x) - y1.constAt(n));
+                deltaFQ.addPoint(x, interpolatedSimFQ.y(x) - y1[n]);
         }
 
         /*
@@ -364,7 +364,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Do the coefficient arrays already exist? If so, we re-fit from this set of coefficients. If not, start from
         // scratch
         bool created;
-        auto &fitCoefficients = GenericListHelper<Array<double>>::realise(
+        auto &fitCoefficients = GenericListHelper<std::vector<double>>::realise(
             dissolve.processingModuleData(), fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_,
             GenericItem::InRestartFileFlag, &created);
 
@@ -377,11 +377,11 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 0, 3, 3, false);
             else
             {
-                if (fitCoefficients.nItems() != ncoeffp)
+                if (fitCoefficients.size() != ncoeffp)
                 {
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
-                                    fitCoefficients.nItems(), module->uniqueName(), ncoeffp);
+                                    fitCoefficients.size(), module->uniqueName(), ncoeffp);
                     coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 0, 3, 3, false);
                 }
                 else
@@ -389,7 +389,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             }
 
             // Store the new fit coefficients
-            fitCoefficients = coeffMinimiser.A();
+            std::copy(coeffMinimiser.A().begin(), coeffMinimiser.A().end(), fitCoefficients.begin());
 
             deltaFQFit = coeffMinimiser.approximation();
         }
@@ -402,11 +402,11 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.1, 0, 3, 3, false);
             else
             {
-                if (fitCoefficients.nItems() != ncoeffp)
+                if (fitCoefficients.size() != ncoeffp)
                 {
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
-                                    fitCoefficients.nItems(), module->uniqueName(), ncoeffp);
+                                    fitCoefficients.size(), module->uniqueName(), ncoeffp);
                     coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 0, 3, 3, false);
                 }
                 else
@@ -685,7 +685,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         expGR = estimatedSQ.at(i, j);
         Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * combinedRho.at(i, j)), 0.0, 0.05, 30.0,
                         WindowFunction(WindowFunction::Lorch0Window));
-        expGR.values() += 1.0;
+        std::transform(expGR.values().begin(), expGR.values().end(), expGR.values().begin(),
+                       [](auto value) { return value + 1.0; });
     });
 
     /*
@@ -722,13 +723,13 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (modifyPotential)
     {
         // Sum fluctuation coefficients in to the potential coefficients
-        Array2D<Array<double>> &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
+        auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
         for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-            Array<double> &potCoeff = coefficients.at(i, j);
+            auto &potCoeff = coefficients.at(i, j);
 
             // Zero potential before adding in fluctuation coefficients?
             if (overwritePotentials)
-                potCoeff = 0.0;
+                std::fill(potCoeff.begin(), potCoeff.end(), 0.0);
 
             // Perform smoothing of the fluctuation coefficients before we sum them into the potential (the
             // un-smoothed coefficients are stored)
@@ -784,7 +785,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Scale coefficients
         for (i = 0; i < coefficients.linearArraySize(); ++i)
-            coefficients.linearArray()[i] *= pressfac;
+            std::transform(coefficients.linearArray()[i].begin(), coefficients.linearArray()[i].end(),
+                           coefficients.linearArray()[i].begin(), [pressfac](auto value) { return value * pressfac; });
         energabs *= pressfac;
 
         // Generate additional potentials from the coefficients
@@ -822,18 +824,18 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         if (procPool.isMaster())
         {
-            Array2D<Array<double>> &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
+            auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
             for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
                           [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
                               // Grab reference to coefficients
-                              Array<double> &potCoeff = coefficients.at(i, j);
+                              auto &potCoeff = coefficients.at(i, j);
 
                               LineParser fileParser;
                               if (!fileParser.openOutput(fmt::format("PCof-{}-{}.txt", at1->name(), at2->name())))
                                   return procPool.decideFalse();
-                              for (auto n = 0; n < potCoeff.nItems(); ++n)
-                                  if (!fileParser.writeLineF("{}\n", potCoeff[n]))
+                              for (auto n : potCoeff)
+                                  if (!fileParser.writeLineF("{}\n", n))
                                       return procPool.decideFalse();
                               fileParser.closeFiles();
                               return std::nullopt;

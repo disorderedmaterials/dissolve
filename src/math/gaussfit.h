@@ -5,7 +5,6 @@
 
 #include "math/data1d.h"
 #include "math/functionspace.h"
-#include "templates/array.h"
 #include "templates/array2d.h"
 
 // Gaussian Function Approximation
@@ -25,11 +24,11 @@ class GaussFit
     // Number of Gaussians used in fit
     int nGaussians_;
     // Function centres
-    Array<double> x_;
+  std::vector<double> x_;
     // Amplitudes
-    Array<double> A_;
+  std::vector<double> A_;
     // FWHM values
-    Array<double> fwhm_;
+  std::vector<double> fwhm_;
 
     private:
     // Generate full approximation from current parameters
@@ -53,17 +52,17 @@ class GaussFit
     Data1D singleFunction(int index, FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax,
                           double fwhmFactor = 1.0) const;
     // Set coefficients from supplied values
-    void set(double rMax, const Array<double> &A, double sigma);
+    void set(double rMax, const std::vector<double> &A, double sigma);
     // Return number of Gaussians in fit
     int nGaussians() const;
     // Return current function centres
-    const Array<double> &x() const;
+  const std::vector<double> &x() const;
     // Return current amplitudes
-    const Array<double> &A() const;
+  const std::vector<double> &A() const;
     // Return amplitudes (and xCentres) as Data1D
     Data1D Ax() const;
     // Return current full-width half-maximum values
-    const Array<double> &fwhm() const;
+  const std::vector<double> &fwhm() const;
     // Save coefficients to specified file
     bool saveCoefficients(std::string_view filename) const;
     // Print coefficients
@@ -80,7 +79,7 @@ class GaussFit
     // Function space relevant to current functions being fit space
     FunctionSpace::SpaceType alphaSpace_;
     // Indices of Gaussians being fit
-    Array<int> alphaIndex_;
+  std::vector<int> alphaIndex_;
     // Precalculated function data
     Array2D<double> functions_;
 
@@ -99,7 +98,7 @@ class GaussFit
                                double initialStepSize = 0.01, int smoothingThreshold = 0, int smoothingK = 3,
                                int smoothingM = 3, bool reFitAtEnd = false);
     // Construct function representation in reciprocal space using specified parameters as starting point
-    double constructReciprocal(double rMin, double rMax, const Array<double> &A, double sigmaQ = 0.02, int nIterations = 1000,
+    double constructReciprocal(double rMin, double rMax, const std::vector<double> &A, double sigmaQ = 0.02, int nIterations = 1000,
                                double initialStepSize = 0.01, int smoothingThreshold = 0, int smoothingK = 3,
                                int smoothingM = 3, bool reFitAtEnd = false);
 
@@ -109,17 +108,17 @@ class GaussFit
     private:
     // One-parameter cost function (amplitude) with alpha array containing A values, including current approximate data into
     // sum
-    double costAnalyticA(const Array<double> &alpha);
+    double costAnalyticA(const std::vector<double> &alpha);
     // Two-parameter cost function (amplitude and FWHM) with alpha array containing A and FWHM values, including current
     // approximate data into sum
-    double costAnalyticAF(const Array<double> &alpha);
+    double costAnalyticAF(const std::vector<double> &alpha);
     // Two-parameter cost function (amplitude and xCentre) with alpha array containing A and FWHM values, including current
     // approximate data into sum
-    double costAnalyticAX(const Array<double> &alpha);
+    double costAnalyticAX(const std::vector<double> &alpha);
     // Three-parameter cost function (amplitude, FWHM, and xCentre) with alpha array containing A and FWHM values, including
     // current approximate data into sum
-    double costAnalyticAFX(const Array<double> &alpha);
+    double costAnalyticAFX(const std::vector<double> &alpha);
     // One-parameter cost function (amplitude) using pre-calculated function array, including current approximate data in
     // sum
-    double costTabulatedA(const Array<double> &alpha);
+    double costTabulatedA(const std::vector<double> &alpha);
 };

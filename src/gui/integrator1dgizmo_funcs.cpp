@@ -55,8 +55,8 @@ void Integrator1DGizmo::updateControls()
     ui_.PlotWidget->postRedisplay();
 
     // Get limits from data
-    double xMin = integrationTarget_ ? integrationTarget_->xAxis().first() : 0.0;
-    double xMax = integrationTarget_ ? integrationTarget_->xAxis().last() : 1.0;
+    double xMin = integrationTarget_ ? integrationTarget_->xAxis().front() : 0.0;
+    double xMax = integrationTarget_ ? integrationTarget_->xAxis().back() : 1.0;
     ui_.Region1MinSpin->setRange(xMin, xMax);
     ui_.Region1MaxSpin->setRange(xMin, xMax);
 

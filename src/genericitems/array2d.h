@@ -141,3 +141,35 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
         return true;
     }
 };
+
+template <> bool GenericItemContainer<Array2D<std::vector<double>>>::write(LineParser &parser)
+{
+
+    parser.writeLineF("{}  {}  {}\n", data_.nRows(), data_.nColumns(), DissolveSys::btoa(data_.halved()));
+    for (auto n = 0; n < data_.linearArraySize(); ++n)
+    {
+        auto data = data_.linearValue(n);
+        parser.writeLineF("{}\n", data.size());
+        for (auto n : data)
+            if (!parser.writeLineF("{:16.9e}\n", n))
+                return false;
+    }
+    return true;
+}
+
+template <> std::string_view GenericItemContainer<Array2D<std::vector<double>>>::itemClassName()
+{
+    return "Array2D<std::vector<double>>";
+}
+
+template <> bool GenericItemContainer<Array2D<std::vector<double>>>::read(LineParser &parser, CoreData &coreData)
+{
+    // FIXME: This is just a stub
+    return true;
+}
+
+template <> bool GenericItemContainer<Array2D<std::vector<double>>>::equality(ProcessPool &procPool)
+{
+    // FIXME: This is just a stub
+    return true;
+}

@@ -5,7 +5,6 @@
 
 #include "math/data1d.h"
 #include "math/functionspace.h"
-#include "templates/array.h"
 #include "templates/array2d.h"
 
 // Poisson Function Approximation to Q-Space Data (replicating EPSR's methodology)
@@ -39,7 +38,7 @@ class PoissonFit
     // Number of functions used in fit
     int nPoissons_;
     // Function scale coefficients
-    Array<double> C_;
+    std::vector<double> C_;
     // Whether the first coefficient should be ignored (set to zero)
     bool ignoreZerothTerm_;
     // Maximum value of exponential
@@ -64,7 +63,7 @@ class PoissonFit
     Data1D singleFunction(int index, FunctionSpace::SpaceType space, double factor, double xMin, double xStep,
                           double xMax) const;
     // Set coefficients from supplied values
-    void set(FunctionSpace::SpaceType space, double rMax, Array<double> coefficients, double sigmaQ = 0.02,
+    void set(FunctionSpace::SpaceType space, double rMax, std::vector<double> coefficients, double sigmaQ = 0.02,
              double sigmaR = 0.08);
     // Return number of Poisson functions in fit
     int nPoissons() const;
@@ -73,7 +72,7 @@ class PoissonFit
     // Return whether the first coefficient should be ignored (set to zero)
     bool ignoreZerothTerm() const;
     // Return current C values
-    const Array<double> &C() const;
+    const std::vector<double> &C() const;
     // Save coefficients to specified file
     bool saveCoefficients(std::string_view filename) const;
 
@@ -86,13 +85,13 @@ class PoissonFit
     // Function space in which current alpha are being fit
     FunctionSpace::SpaceType alphaSpace_;
     // Precalculated terms
-    Array<double> sqrtOnePlusQSqSigmaSq_, arcTanQSigma_, oneMinusQSqSigmaSq_, lnNPlusTwoFactorial_;
-    Array<int> n_;
+    std::vector<double> sqrtOnePlusQSqSigmaSq_, arcTanQSigma_, oneMinusQSqSigmaSq_, lnNPlusTwoFactorial_;
+    std::vector<int> n_;
     double fourPiSigmaRCubed_;
     // Precalculated function data
     Array2D<double> functions_;
     // Indices of Gaussians being fit
-    Array<int> alphaIndex_;
+    std::vector<int> alphaIndex_;
 
     private:
     // Precalculate necessary terms
@@ -109,7 +108,7 @@ class PoissonFit
                                int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0,
                                int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
     // Construct suitable reciprocal-space representation using provided coefficients as a starting point
-    double constructReciprocal(double rMin, double rMax, Array<double> coefficients, double sigmaQ = 0.02, double sigmaR = 0.08,
+    double constructReciprocal(double rMin, double rMax, std::vector<double> coefficients, double sigmaQ = 0.02, double sigmaR = 0.08,
                                int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0,
                                int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
 
@@ -119,8 +118,8 @@ class PoissonFit
     private:
     // One-parameter cost function (coefficient) with alpha array containing C values, including current approximate data
     // into sum
-    double costAnalyticC(const Array<double> &alpha);
+    double costAnalyticC(const std::vector<double> &alpha);
     // One-parameter cost function (coefficient) using pre-calculated function array, including current approximate data in
     // sum
-    double costTabulatedC(const Array<double> &alpha);
+    double costTabulatedC(const std::vector<double> &alpha);
 };

@@ -44,14 +44,14 @@ void Histogram1D::clear()
 void Histogram1D::updateAccumulatedData()
 {
     // Set up arrays
-    accumulatedData_.initialise(bins_.nItems(), true);
+    accumulatedData_.initialise(bins_.size(), true);
 
     // Store bin centres and accumulated averages in the object
-    for (auto n = 0; n < bins_.nItems(); ++n)
+    for (auto n = 0; n < bins_.size(); ++n)
     {
         accumulatedData_.xAxis(n) = binCentres_[n];
-        accumulatedData_.value(n) = averages_.constAt(n);
-        accumulatedData_.error(n) = averages_.constAt(n).stDev();
+        accumulatedData_.value(n) = averages_[n];
+        accumulatedData_.error(n) = averages_[n].stDev();
     }
 }
 
@@ -67,20 +67,22 @@ void Histogram1D::initialise(double xMin, double xMax, double binWidth)
     setUpAxis(minimum_, maximum_, binWidth_, nBins_, binCentres_);
 
     // Create the arrays
-    bins_.initialise(nBins_);
-    averages_.initialise(nBins_);
+    bins_.clear();
+    bins_.resize(nBins_);
+    averages_.clear();
+    averages_.resize(nBins_);
 }
 
 // Zero histogram bins
 void Histogram1D::zeroBins()
 {
-    bins_ = 0;
+    std::fill(bins_.begin(), bins_.end(), 0);
     nBinned_ = 0;
     nMissed_ = 0;
 }
 
 // Set up supplied axis
-void Histogram1D::setUpAxis(double axisMin, double &axisMax, double binWidth, int &nBins, Array<double> &binCentres)
+void Histogram1D::setUpAxis(double axisMin, double &axisMax, double binWidth, int &nBins, std::vector<double> &binCentres)
 {
     // Min, max, and bin width should be set to requested values initially
     // We will clamp the maximum to the nearest bin boundary (not less than the supplied axisMax)
@@ -93,7 +95,8 @@ void Histogram1D::setUpAxis(double axisMin, double &axisMax, double binWidth, in
     }
 
     // Create centre-bin array
-    binCentres.initialise(nBins);
+    binCentres.clear();
+    binCentres.resize(nBins);
     double centre = axisMin + binWidth * 0.5;
     for (auto n = 0; n < nBins; ++n, centre += binWidth)
         binCentres[n] = centre;
@@ -144,10 +147,10 @@ void Histogram1D::accumulate()
 }
 
 // Return Array of x centre-bin values
-const Array<double> &Histogram1D::binCentres() const { return binCentres_; }
+const std::vector<double> &Histogram1D::binCentres() const { return binCentres_; }
 
 // Return histogram data
-Array<long int> &Histogram1D::bins() { return bins_; }
+std::vector<long int> &Histogram1D::bins() { return bins_; }
 
 // Add source histogram data into local array
 void Histogram1D::add(Histogram1D &other, int factor)

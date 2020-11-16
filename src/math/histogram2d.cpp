@@ -153,10 +153,10 @@ void Histogram2D::accumulate()
 }
 
 // Return Array of x centre-bin values
-const Array<double> &Histogram2D::xBinCentres() const { return xBinCentres_; }
+const std::vector<double> &Histogram2D::xBinCentres() const { return xBinCentres_; }
 
 // Return Array of y centre-bin values
-const Array<double> &Histogram2D::yBinCentres() const { return yBinCentres_; }
+const std::vector<double> &Histogram2D::yBinCentres() const { return yBinCentres_; }
 
 // Return histogram data
 Array2D<long int> &Histogram2D::bins() { return bins_; }

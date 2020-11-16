@@ -93,7 +93,7 @@ class EPSRModule : public Module
     // Add target Modules
     void addTargets(RefList<Module> targets);
     // Create / retrieve arrays for storage of empirical potential coefficients
-    Array2D<Array<double>> &potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp = -1);
+    Array2D<std::vector<double>> &potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp = -1);
     // Generate empirical potentials from current coefficients
     bool generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::ExpansionFunctionType functionType, double rho,
                                      int ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);

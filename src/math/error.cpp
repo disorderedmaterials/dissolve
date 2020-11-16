@@ -51,24 +51,24 @@ double Error::rmse(const Data1D &A, const Data1D &B, bool quiet)
     Interpolator interpolatedB(B);
 
     // Grab x and y arrays from data A
-    const auto &aX = A.constXAxis();
-    const auto &aY = A.constValues();
+    const auto &aX = A.xAxis();
+    const auto &aY = A.values();
 
     // Generate RMSE at x values of A
     double rmse = 0.0, delta;
     double firstX = 0.0, lastX = 0.0, x;
     auto nPointsConsidered = 0;
-    for (auto n = 0; n < aX.nItems(); ++n)
+    for (auto n = 0; n < aX.size(); ++n)
     {
         // Grab x value
-        x = aX.constAt(n);
+        x = aX[n];
 
         // Is our x value lower than the lowest x value of the reference data?
-        if (x < B.constXAxis().firstValue())
+        if (x < B.xAxis().front())
             continue;
 
         // Is our x value higher than the last x value of the reference data?
-        if (x > B.constXAxis().lastValue())
+        if (x > B.xAxis().back())
             break;
 
         // Is this the first point considered?
@@ -76,7 +76,7 @@ double Error::rmse(const Data1D &A, const Data1D &B, bool quiet)
             firstX = x;
 
         // Sum squared error
-        delta = aY.constAt(n) - interpolatedB.y(x);
+        delta = aY[n] - interpolatedB.y(x);
         rmse += delta * delta;
         lastX = x;
         ++nPointsConsidered;
@@ -98,23 +98,23 @@ double Error::mape(const Data1D &A, const Data1D &B, bool quiet)
     Interpolator interpolatedB(B);
 
     // Grab x and y arrays from data A
-    const auto &aX = A.constXAxis();
-    const auto &aY = A.constValues();
+    const auto &aX = A.xAxis();
+    const auto &aY = A.values();
 
     double sum = 0.0;
     double firstX = 0.0, lastX = 0.0, x, y;
     auto nPointsConsidered = 0;
-    for (auto n = 0; n < aX.nItems(); ++n)
+    for (auto n = 0; n < aX.size(); ++n)
     {
         // Grab x value
-        x = aX.constAt(n);
+        x = aX[n];
 
         // Is our x value lower than the lowest x value of the reference data?
-        if (x < B.constXAxis().firstValue())
+        if (x < B.xAxis().front())
             continue;
 
         // Is our x value higher than the last x value of the reference data?
-        if (x > B.constXAxis().lastValue())
+        if (x > B.xAxis().back())
             break;
 
         // Is this the first point considered?
@@ -122,7 +122,7 @@ double Error::mape(const Data1D &A, const Data1D &B, bool quiet)
             firstX = x;
 
         // Get y reference value, and skip if zero
-        y = aY.constAt(n);
+        y = aY[n];
         if (fabs(y) == 0.0)
             continue;
 
@@ -148,8 +148,8 @@ double Error::maape(const Data1D &A, const Data1D &B, bool quiet)
     Interpolator interpolatedB(B);
 
     // Grab x and y arrays from data A
-    const auto &aX = A.constXAxis();
-    const auto &aY = A.constValues();
+    const auto &aX = A.xAxis();
+    const auto &aY = A.values();
 
     double sum = 0.0;
     double firstX = 0.0, lastX = 0.0, x, y;
@@ -157,14 +157,14 @@ double Error::maape(const Data1D &A, const Data1D &B, bool quiet)
     for (auto n = 0; n < 1; ++n)
     {
         // Grab x value
-        x = aX.constAt(n);
+        x = aX[n];
 
         // Is our x value lower than the lowest x value of the reference data?
-        if (x < B.constXAxis().firstValue())
+        if (x < B.xAxis().front())
             continue;
 
         // Is our x value higher than the last x value of the reference data?
-        if (x > B.constXAxis().lastValue())
+        if (x > B.xAxis().back())
             break;
 
         // Is this the first point considered?
@@ -172,7 +172,7 @@ double Error::maape(const Data1D &A, const Data1D &B, bool quiet)
             firstX = x;
 
         // Get y reference value
-        y = aY.constAt(n);
+        y = aY[n];
 
         // Accumulate sum
         sum += atan(fabs((y - interpolatedB.y(x)) / y));
@@ -196,24 +196,24 @@ double Error::percent(const Data1D &A, const Data1D &B, bool quiet)
     Interpolator interpolatedB(B);
 
     // Grab x and y arrays from data A
-    const auto &aX = A.constXAxis();
-    const auto &aY = A.constValues();
+    const auto &aX = A.xAxis();
+    const auto &aY = A.values();
 
     // Calculate summed absolute error and absolute y value deviations from average
     double sume = 0.0, sumy = 0.0;
     auto firstPoint = -1, lastPoint = -1;
     double x, y;
-    for (auto n = 0; n < aX.nItems(); ++n)
+    for (auto n = 0; n < aX.size(); ++n)
     {
         // Grab x value
-        x = aX.constAt(n);
+        x = aX[n];
 
         // Is our x value lower than the lowest x value of the reference data?
-        if (x < B.constXAxis().firstValue())
+        if (x < B.xAxis().front())
             continue;
 
         // Is our x value higher than the last x value of the reference data?
-        if (x > B.constXAxis().lastValue())
+        if (x > B.xAxis().back())
             break;
 
         // Is this the first point considered?
@@ -221,8 +221,8 @@ double Error::percent(const Data1D &A, const Data1D &B, bool quiet)
             firstPoint = n;
 
         // Get y reference value
-        y = aY.constAt(n);
-        sume += fabs(y - interpolatedB.y(aX.constAt(n)));
+        y = aY[n];
+        sume += fabs(y - interpolatedB.y(aX[n]));
         sumy += fabs(y);
 
         // Update last point considered
@@ -236,10 +236,10 @@ double Error::percent(const Data1D &A, const Data1D &B, bool quiet)
     {
         if (zeroSum)
             Messenger::print("Absolute squared error between datasets is {:7.3f}% over {:15.9e} < x < {:15.9e} ({} points).\n",
-                             percentError, aX.constAt(firstPoint), aX.constAt(lastPoint), (lastPoint - firstPoint) + 1);
+                             percentError, aX[firstPoint], aX[lastPoint], (lastPoint - firstPoint) + 1);
         else
             Messenger::print("Percentage error between datasets is {:7.3f}% over {:15.9e} < x < {:15.9e} ({} points).\n",
-                             percentError, aX.constAt(firstPoint), aX.constAt(lastPoint), (lastPoint - firstPoint) + 1);
+                             percentError, aX[firstPoint], aX[lastPoint], (lastPoint - firstPoint) + 1);
     }
 
     return percentError;
@@ -252,24 +252,24 @@ double Error::rFactor(const Data1D &A, const Data1D &B, bool quiet)
     Interpolator interpolatedB(B);
 
     // Grab x and y arrays from data A
-    const auto &aX = A.constXAxis();
-    const auto &aY = A.constValues();
+    const auto &aX = A.xAxis();
+    const auto &aY = A.values();
 
     // Accumulate sum-of-squares error at x values of A
     double rfac = 0.0, delta;
     double firstX = 0.0, lastX = 0.0, x;
     auto nPointsConsidered = 0;
-    for (auto n = 0; n < aX.nItems(); ++n)
+    for (auto n = 0; n < aX.size(); ++n)
     {
         // Grab x value
-        x = aX.constAt(n);
+        x = aX[n];
 
         // Is our x value lower than the lowest x value of the reference data?
-        if (x < B.constXAxis().firstValue())
+        if (x < B.xAxis().front())
             continue;
 
         // Is our x value higher than the last x value of the reference data?
-        if (x > B.constXAxis().lastValue())
+        if (x > B.xAxis().back())
             break;
 
         // Is this the first point considered?
@@ -277,7 +277,7 @@ double Error::rFactor(const Data1D &A, const Data1D &B, bool quiet)
             firstX = x;
 
         // Sum squared error
-        delta = aY.constAt(n) - interpolatedB.y(x);
+        delta = aY[n] - interpolatedB.y(x);
         rfac += delta * delta;
         lastX = x;
         ++nPointsConsidered;
