@@ -18,8 +18,7 @@ bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSe
     {
         for (typeJ = typeI; typeJ < unweightedgr.nAtomTypes(); ++typeJ)
         {
-            printf("TODO: NEED TO WEIGHT g(r) PROPERLY.\n");
-            double weight = weights.weight(typeI, typeJ, 0);
+            auto weight = weights.weight(typeI, typeJ, 0.0);
 
             // Bound (intramolecular) partial (multiplied by the bound term weight)
             weightedgr.boundPartial(typeI, typeJ).copyArrays(unweightedgr.boundPartial(typeI, typeJ));
@@ -38,10 +37,10 @@ bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSe
 
     // Form total G(r)
     weightedgr.formTotal(false);
-    printf("TODO: NEED TO WEIGHT TOTAL G(r) PROPERLY.\n");
-    // 	if (normalisation == StructureFactors::AverageOfSquaresNormalisation) weightedgr.total().values() /=
-    // weights.boundCoherentAverageOfSquares(); 	else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
-    // weightedgr.total().values() /= weights.boundCoherentSquareOfAverage();
+    if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
+        weightedgr.total().values() /= weights.boundCoherentAverageOfSquares(0.0);
+    else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
+        weightedgr.total().values() /= weights.boundCoherentSquareOfAverage(0.0);
 
     return true;
 }
