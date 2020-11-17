@@ -84,8 +84,6 @@ class EPSRModule : public Module
     RefList<Module> targets_;
     // Target Configuration (determined from target modules)
     Configuration *targetConfiguration_;
-    // Simulated data added as reference data
-    Array<Data1D> simulatedReferenceData_;
 
     public:
     // Return list of target Modules / data for refeinement
