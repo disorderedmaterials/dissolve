@@ -13,11 +13,7 @@
 #include <stdarg.h>
 #include <string.h>
 
-Expression::Expression(std::string_view expressionText)
-{
-    if (!expressionText.empty())
-        create(expressionText);
-}
+Expression::Expression(std::string_view expressionText) : rootNode_(nullptr) { create(expressionText); }
 
 Expression::~Expression() { clear(); }
 
@@ -49,6 +45,11 @@ bool Expression::create(std::string_view expressionString, std::vector<std::shar
     clear();
 
     expressionString_ = expressionString;
+
+    // If the string is empty, can return now
+    if (expressionString_.empty())
+        return true;
+
     rootNode_ = std::make_shared<ExpressionRootNode>();
 
     // Create string stream and set up ANTLR input strem

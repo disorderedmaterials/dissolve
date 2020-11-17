@@ -13,7 +13,7 @@ ExpressionVariable::ExpressionVariable(ExpressionValue value)
     value_ = value;
 }
 
-ExpressionVariable::ExpressionVariable(std::string_view name, ExpressionValue value) : name_(name), value_(value) { }
+ExpressionVariable::ExpressionVariable(std::string_view name, ExpressionValue value) : name_(name), value_(value) {}
 
 ExpressionVariable::~ExpressionVariable() {}
 
@@ -31,4 +31,3 @@ const ExpressionValue &ExpressionVariable::value() const { return value_; }
 
 // Return pointer to value
 ExpressionValue *ExpressionVariable::valuePointer() { return &value_; }
-
