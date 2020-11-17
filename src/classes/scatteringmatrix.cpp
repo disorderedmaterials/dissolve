@@ -119,7 +119,7 @@ void ScatteringMatrix::print(double q) const
     for (auto [i, j] : typePairs_)
     {
         text = fmt::format("{}-{}", i->name(), j->name());
-        line = fmt::format("{:10} ", text);
+        line += fmt::format("{:^10} ", text);
 
         // Limit output to sensible length
         if (line.length() >= 80)
