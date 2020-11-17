@@ -105,13 +105,14 @@ ProcedureNode *SequenceProcedureNode::searchNodes(std::string_view name, Procedu
 }
 
 // Search through the Procedure for the named parameter
-ExpressionVariable *SequenceProcedureNode::searchParameters(std::string_view name, ExpressionVariable *excludeParameter) const
+std::shared_ptr<ExpressionVariable>
+SequenceProcedureNode::searchParameters(std::string_view name, std::shared_ptr<ExpressionVariable> excludeParameter) const
 {
     ListIterator<ProcedureNode> nodeIterator(sequence_);
     while (ProcedureNode *node = nodeIterator.iterate())
     {
         // Does this node have a parameter by this name?
-        ExpressionVariable *result = node->hasParameter(name, excludeParameter);
+        auto result = node->hasParameter(name, excludeParameter);
         if (result)
             return result;
 
@@ -260,9 +261,10 @@ ProcedureNode *SequenceProcedureNode::nodeExists(std::string_view name, Procedur
     return searchNodes(name, excludeNode, nt);
 }
 
-// Return whether the named parameter is currently in scope
-ExpressionVariable *SequenceProcedureNode::parameterInScope(ProcedureNode *queryingNode, std::string_view name,
-                                                            ExpressionVariable *excludeParameter)
+// Return the named parameter if it is currently in scope
+std::shared_ptr<ExpressionVariable>
+SequenceProcedureNode::parameterInScope(ProcedureNode *queryingNode, std::string_view name,
+                                        std::shared_ptr<ExpressionVariable> excludeParameter)
 {
     // Is this node present in our own sequence?
     if (queryingNode && (!sequence_.contains(queryingNode)))
@@ -275,7 +277,7 @@ ExpressionVariable *SequenceProcedureNode::parameterInScope(ProcedureNode *query
     // Start from the target node and work backwards...
     for (auto *node = queryingNode; node != nullptr; node = node->prev())
     {
-        ExpressionVariable *param = node->hasParameter(name, excludeParameter);
+        auto param = node->hasParameter(name, excludeParameter);
         if (param)
             return param;
     }
@@ -289,7 +291,8 @@ ExpressionVariable *SequenceProcedureNode::parameterInScope(ProcedureNode *query
 }
 
 // Return whether the named parameter exists in this sequence or its children (branches)
-ExpressionVariable *SequenceProcedureNode::parameterExists(std::string_view name, ExpressionVariable *excludeParameter) const
+std::shared_ptr<ExpressionVariable>
+SequenceProcedureNode::parameterExists(std::string_view name, std::shared_ptr<ExpressionVariable> excludeParameter) const
 {
     // First, bubble up to the topmost sequence (which should be the Procedure's rootSequence_)
     if (parentNode_)
@@ -300,27 +303,31 @@ ExpressionVariable *SequenceProcedureNode::parameterExists(std::string_view name
 }
 
 // Create and return reference list of parameters in scope
-RefList<ExpressionVariable> SequenceProcedureNode::parametersInScope(ProcedureNode *queryingNode)
+std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::parametersInScope(ProcedureNode *queryingNode)
 {
-    RefList<ExpressionVariable> parameters;
-
     // Is this node present in our own sequence?
     if (queryingNode && (!sequence_.contains(queryingNode)))
     {
         Messenger::error("INTERNAL ERROR: Querying node passed to SequenceProcedureNode::parametersInScope() is not a "
                          "member of this sequence.\n");
-        return parameters;
+        return {};
     }
+
+    std::vector<std::shared_ptr<ExpressionVariable>> parameters;
 
     // Start from the target node and work backwards...
     for (auto *node = queryingNode; node != nullptr; node = node->prev())
     {
-        parameters += node->parameterReferences();
+        auto otherParams = node->parameters();
+        parameters.insert(parameters.end(), otherParams.begin(), otherParams.end());
     }
 
     // Recursively check our parent(s)
     if (parentNode_)
-        parameters += parentNode_->parametersInScope();
+    {
+        auto otherParams = parentNode_->parameters();
+        parameters.insert(parameters.end(), otherParams.begin(), otherParams.end());
+    }
 
     return parameters;
 }

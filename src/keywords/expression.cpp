@@ -41,7 +41,7 @@ bool ExpressionKeyword::write(LineParser &parser, std::string_view keywordName, 
 // Set the value from supplied expression text
 bool ExpressionKeyword::setValue(std::string_view expressionText)
 {
-    if (!data_.set(expressionText))
+    if (!data_.create(expressionText))
         return false;
 
     set_ = true;

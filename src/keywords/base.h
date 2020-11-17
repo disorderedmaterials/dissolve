@@ -40,7 +40,7 @@ class KeywordBase : public ListItem<KeywordBase>
         ElementRefListData,
         EnumOptionsData,
         ExpressionData,
-        ExpressionVariableListData,
+        ExpressionVariableVectorData,
         FileAndFormatData,
         GeometryListData,
         IntegerData,

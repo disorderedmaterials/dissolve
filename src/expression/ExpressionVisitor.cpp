@@ -26,7 +26,7 @@ std::shared_ptr<ExpressionNode> ExpressionVisitor::currentContext() const
 
 // Construct description within supplied object, from given tree
 void ExpressionVisitor::create(Expression &expr, ExpressionParser::ExpressionContext *tree,
-                               RefList<ExpressionVariable> externalVariables)
+                               std::vector<std::shared_ptr<ExpressionVariable>> externalVariables)
 {
     expression_ = &expr;
     externalVariables_ = externalVariables;
@@ -157,7 +157,7 @@ antlrcpp::Any ExpressionVisitor::visitVariable(ExpressionParser::VariableContext
         throw(ExpressionExceptions::ExpressionSyntaxException(
             fmt::format("Variable '{}' does not exist in this context.", ctx->Name()->getText())));
 
-    auto node = std::make_shared<ExpressionReferenceNode>(it.item());
+    auto node = std::make_shared<ExpressionReferenceNode>(*it);
 
     currentContext()->addChild(node);
 

@@ -23,16 +23,7 @@ Expression::~Expression() { clear(); }
 
 Expression::Expression(const Expression &source) { (*this) = source; }
 
-void Expression::operator=(const Expression &source)
-{
-    throw(std::runtime_error("TODO Expression::operator= not implemented"));
-    // Reset our structure, and regenerate from the expression string
-    //     clear();
-
-    //     expressionString_ = source.expressionString_;
-
-    //     ExpressionGenerator::generate(*this, source.externalVariables_);
-}
+void Expression::operator=(const Expression &source) { create(source.expressionString_); }
 
 /*
  * Data
@@ -53,7 +44,7 @@ void Expression::clear()
 bool Expression::isValid() const { return rootNode_ != nullptr; }
 
 // Create expression from supplied string, with optional external variables
-bool Expression::create(std::string_view expressionString, RefList<ExpressionVariable> externalVariables)
+bool Expression::create(std::string_view expressionString, std::vector<std::shared_ptr<ExpressionVariable>> externalVariables)
 {
     clear();
 

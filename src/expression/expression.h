@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "expression/functions.h"
 #include "expression/root.h"
 #include "templates/reflist.h"
 
@@ -34,8 +33,7 @@ class Expression
     // Return whether current expression is valid (contains at least one node)
     bool isValid() const;
     // Create expression from supplied string, with optional external variables
-    bool create(std::string_view expressionString,
-                RefList<ExpressionVariable> externalVariables = RefList<ExpressionVariable>());
+    bool create(std::string_view expressionString, std::vector<std::shared_ptr<ExpressionVariable>> externalVariables = {});
     // Return original generating string
     std::string_view expressionString() const;
     // Return root node for the expression

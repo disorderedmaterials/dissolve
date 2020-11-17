@@ -17,7 +17,7 @@ class NodeValue
     NodeValue();
     NodeValue(const int i);
     NodeValue(const double d);
-    NodeValue(std::string_view expressionText, RefList<ExpressionVariable> parameters);
+    NodeValue(std::string_view expressionText, std::vector<std::shared_ptr<ExpressionVariable>> parameters);
     ~NodeValue();
     void operator=(const int value);
     void operator=(const double value);
@@ -49,7 +49,7 @@ class NodeValue
     // Set double value
     bool set(double value);
     // Set from expression text
-    bool set(std::string_view expressionText, RefList<ExpressionVariable> parameters);
+    bool set(std::string_view expressionText, std::vector<std::shared_ptr<ExpressionVariable>> parameters);
     // Return whether value is currently valid
     bool isValid() const;
 

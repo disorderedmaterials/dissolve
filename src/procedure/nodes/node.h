@@ -147,12 +147,14 @@ class ProcedureNode : public ListItem<ProcedureNode>
                               ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
     // Return list of nodes of specified type present in the Procedure
     RefList<ProcedureNode> nodes(ProcedureNode::NodeType nt);
-    // Return whether the named parameter is currently in scope
-    ExpressionVariable *parameterInScope(std::string_view name, ExpressionVariable *excludeParameter = nullptr);
-    // Return whether the named parameter exists anywhere in the same Procedure
-    ExpressionVariable *parameterExists(std::string_view name, ExpressionVariable *excludeParameter = nullptr) const;
+    // Return the named parameter if it is currently in scope
+    std::shared_ptr<ExpressionVariable> parameterInScope(std::string_view name,
+                                                         std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
+    // Return the named parameter if it exists anywhere in the same Procedure
+    std::shared_ptr<ExpressionVariable> parameterExists(std::string_view name,
+                                                        std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
     // Create and return reference list of parameters in scope
-    RefList<ExpressionVariable> parametersInScope();
+    std::vector<std::shared_ptr<ExpressionVariable>> parametersInScope();
 
     /*
      * Branch
@@ -168,9 +170,10 @@ class ProcedureNode : public ListItem<ProcedureNode>
      */
     public:
     // Return whether this node has the named parameter specified
-    virtual ExpressionVariable *hasParameter(std::string_view name, ExpressionVariable *excludeParameter = nullptr);
+    virtual std::shared_ptr<ExpressionVariable> hasParameter(std::string_view name,
+                                                             std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
     // Return references to all parameters for this node
-    virtual RefList<ExpressionVariable> parameterReferences() const;
+    virtual std::vector<std::shared_ptr<ExpressionVariable>> parameters() const;
 
     /*
      * Execution

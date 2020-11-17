@@ -25,6 +25,7 @@ add_library(expression
   reference.cpp
   root.cpp
   unary.cpp
+  value.cpp
   variable.cpp
 
   ExpressionErrorListeners.h
@@ -37,6 +38,7 @@ add_library(expression
   reference.h
   root.h
   unary.h
+  value.h
   variable.h
 )
 

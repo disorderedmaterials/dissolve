@@ -20,16 +20,12 @@ class OperateExpressionProcedureNode : public OperateProcedureNodeBase
      * Expression and Variables
      */
     private:
-    // Normalisation expression
+    // Expression
     Expression expression_;
-    // X variable in equation
-    ExpressionVariable *x_;
-    // Y variable in equation
-    ExpressionVariable *y_;
-    // Z variable in equation
-    ExpressionVariable *z_;
-    // Value variable in equation
-    ExpressionVariable *value_;
+    // Vector of variables accessible by the transform equation
+    std::vector<std::shared_ptr<ExpressionVariable>> variables_;
+    // Variables accessible by the transform equation
+    std::shared_ptr<ExpressionVariable> x_, y_, z_, value_;
 
     /*
      * Data Target (implements virtuals in OperateProcedureNodeBase)

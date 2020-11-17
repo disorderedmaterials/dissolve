@@ -30,10 +30,10 @@ class ParametersProcedureNode : public ProcedureNode
      * Parameters
      */
     private:
-    // List of defined integer parameters (as base ExpressionNode type)
-    List<ExpressionNode> integerParameters_;
-    // List of defined double parameters (as base ExpressionNode type)
-    List<ExpressionNode> doubleParameters_;
+    // Defined integer parameters
+    std::vector<std::shared_ptr<ExpressionVariable>> integerParameters_;
+    // Defined double parameters
+    std::vector<std::shared_ptr<ExpressionVariable>> doubleParameters_;
 
     public:
     // Add new integer parameter
@@ -41,9 +41,10 @@ class ParametersProcedureNode : public ProcedureNode
     // Add new double parameter
     bool addParameter(std::string_view name, double initialValue = 0.0);
     // Return whether this node has the named parameter specified
-    ExpressionVariable *hasParameter(std::string_view name, ExpressionVariable *excludeParameter);
-    // Return list of all parameters for this node
-    RefList<ExpressionVariable> parameterReferences() const;
+    std::shared_ptr<ExpressionVariable> hasParameter(std::string_view name,
+                                                     std::shared_ptr<ExpressionVariable> excludeParameter);
+    // Return vector of all parameters for this node
+    std::vector<std::shared_ptr<ExpressionVariable>> parameters() const;
 
     /*
      * Execute

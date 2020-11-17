@@ -12,7 +12,7 @@ add_library(keywords
   dynamicsitenodes.cpp
   elementreflist.cpp
   expression.cpp
-  expressionvariablelist.cpp
+  expressionvariablevector.cpp
   fileandformat.cpp
   geometrylist.cpp
   group.cpp
@@ -59,7 +59,7 @@ add_library(keywords
   elementreflist.h
   enumoptions.h
   expression.h
-  expressionvariablelist.h
+  expressionvariablevector.h
   fileandformat.h
   geometrylist.h
   group.h

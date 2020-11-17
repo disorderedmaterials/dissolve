@@ -5,7 +5,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/configuration.h"
-#include "expression/generator.h"
 #include "expression/variable.h"
 #include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
@@ -17,8 +16,9 @@ Fit1DProcedureNode::Fit1DProcedureNode(Collect1DProcedureNode *target) : Procedu
 {
     dataNode_.addAllowableNodeType(ProcedureNode::Process1DNode);
 
-    // Create persistent 'x' variable for Expression
-    xVariable_ = equation_.createDoubleVariable("x", true);
+    // Create variables, and add them to the vector
+    xVariable_ = std::make_shared<ExpressionVariable>("x");
+    variables_.emplace_back(xVariable_);
 
     dataNode_ = target;
     saveData_ = false;
@@ -62,6 +62,26 @@ EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> Fit1DProcedureNode::fit1DNodeK
  * Data
  */
 
+// Return the named fit target, if it exists
+std::shared_ptr<ExpressionVariable> Fit1DProcedureNode::getFitTarget(std::string_view name)
+{
+    for (auto var : fitTargets_)
+        if (DissolveSys::sameString(name, var->name()))
+            return var;
+
+    return nullptr;
+}
+
+// Return the named constant, if it exists
+std::shared_ptr<ExpressionVariable> Fit1DProcedureNode::getConstant(std::string_view name)
+{
+    for (auto var : constants_)
+        if (DissolveSys::sameString(name, var->name()))
+            return var;
+
+    return nullptr;
+}
+
 // Fitting cost function
 double Fit1DProcedureNode::equationCost(const std::vector<double> &alpha)
 {
@@ -74,7 +94,7 @@ double Fit1DProcedureNode::equationCost(const std::vector<double> &alpha)
     for (auto n = 0; n < referenceData_.nValues(); ++n)
     {
         // Set axis value
-        xVariable_->set(x[n]);
+        xVariable_->setValue(x[n]);
 
         // Evaluate expression
         equationY = equation_.asDouble();
@@ -135,32 +155,28 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
 
     // Print equation info
     Messenger::print("Expression to fit is: {}\n", equation_.expressionString());
-    for (ExpressionVariable *var : equation_.variables())
-    {
-        if (var == xVariable_)
-            Messenger::print("  {:10}                (axis variable)\n", var->name());
-        else if (fitTargets_.contains(var))
-            Messenger::print("  {:10} = {:e} (fit)\n", var->name(), var->value().asDouble());
-        else
-            Messenger::print("  {:10} = {:e} (constant)\n", var->name(), var->value().asDouble());
-    }
+    Messenger::print("  {:10}                (axis variable)\n", xVariable_->name());
+    for (auto var : fitTargets_)
+        Messenger::print("  {:10} = {:e} (fit)\n", var->name(), var->value().asDouble());
+    for (auto var : constants_)
+        Messenger::print("  {:10} = {:e} (constant)\n", var->name(), var->value().asDouble());
     Messenger::print("\n");
 
     // Check number of variable parameters
-    if (fitTargets_.nItems() > 0)
+    if (fitTargets_.size() > 0)
     {
         // Create a minimiser
         MonteCarloMinimiser<Fit1DProcedureNode> mcMinimiser(*this, &Fit1DProcedureNode::equationCost, true);
         mcMinimiser.setMaxIterations(1000);
         mcMinimiser.setStepSize(0.1);
         // 		mcMinimiser.setMinStepSize(0.001);
-        for (ExpressionVariable *var : fitTargets_)
+        for (auto var : fitTargets_)
             mcMinimiser.addTarget(var);
 
         mcMinimiser.minimise();
 
         Messenger::print("Optimised values:\n");
-        for (ExpressionVariable *var : fitTargets_)
+        for (auto var : fitTargets_)
             Messenger::print("  {:10} = {:e}\n", var->name(), var->value().asDouble());
     }
 
@@ -177,7 +193,7 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
     for (auto n = 0; n < referenceData_.nValues(); ++n)
     {
         // Set axis value
-        xVariable_->set(x[n]);
+        xVariable_->setValue(x[n]);
 
         // Add point
         data.addPoint(x[n], equation_.asDouble());
@@ -193,21 +209,14 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
                 return procPool.decideFalse();
             if (!parser.writeLineF("# Fit Equation : {}\n", equation_.expressionString()))
                 return procPool.decideFalse();
-            for (ExpressionVariable *var : equation_.variables())
-            {
-                if (var == xVariable_)
-                {
-                    if (!parser.writeLineF("#  {:10}                (axis variable)\n", var->name()))
-                        return procPool.decideFalse();
-                }
-                else if (fitTargets_.contains(var))
-                {
-                    if (!parser.writeLineF("#  {:10} = {:e} (fit)\n", var->name(), var->value().asDouble()))
-                        return procPool.decideFalse();
-                }
-                else if (!parser.writeLineF("#  {:10} = {:e} (constant)\n", var->name(), var->value().asDouble()))
+            if (!parser.writeLineF("#  {:10}                (axis variable)\n", xVariable_->name()))
+                return procPool.decideFalse();
+            for (auto var : fitTargets_)
+                if (!parser.writeLineF("#  {:10} = {:e} (fit)\n", var->name(), var->value().asDouble()))
                     return procPool.decideFalse();
-            }
+            for (auto var : constants_)
+                if (!parser.writeLineF("#  {:10} = {:e} (constant)\n", var->name(), var->value().asDouble()))
+                    return procPool.decideFalse();
 
             Data1DExportFileFormat exportFormat(name());
             if (exportFormat.exportData(data))
@@ -253,22 +262,20 @@ bool Fit1DProcedureNode::read(LineParser &parser, CoreData &coreData)
         switch (nk)
         {
             case (Fit1DProcedureNode::ConstantKeyword):
-                var = equation_.createVariableWithValue(parser.argsv(1), parser.argd(2), true);
-                if (!var)
-                    return Messenger::error("Failed to create constant.\n");
-                constants_.append(var);
+                if (getConstant(parser.argsv(1)) || getFitTarget(parser.argsv(1)))
+                    return Messenger::error("Failed to create constant, as a variable by this name already exists.\n");
+                constants_.emplace_back(std::make_shared<ExpressionVariable>(parser.argsv(1), parser.argd(2)));
                 break;
             case (Fit1DProcedureNode::EndFit1DKeyword):
                 return true;
             case (Fit1DProcedureNode::EquationKeyword):
-                if (!equation_.set(parser.argsv(1)))
+                if (!equation_.create(parser.argsv(1)))
                     return Messenger::error("Failed to create expression.\n");
                 break;
             case (Fit1DProcedureNode::FitKeyword):
-                var = equation_.createVariableWithValue(parser.argsv(1), parser.argd(2), true);
-                if (!var)
-                    return Messenger::error("Failed to create variable '{}'.\n", parser.argsv(1));
-                fitTargets_.append(var);
+                if (getConstant(parser.argsv(1)) || getFitTarget(parser.argsv(1)))
+                    return Messenger::error("Failed to create fit target, as a variable by this name already exists.\n");
+                fitTargets_.emplace_back(std::make_shared<ExpressionVariable>(parser.argsv(1), parser.argd(2)));
                 break;
             case (Fit1DProcedureNode::MethodKeyword):
                 return false;
@@ -300,14 +307,14 @@ bool Fit1DProcedureNode::write(LineParser &parser, std::string_view prefix)
         return false;
 
     // Constants
-    for (ExpressionVariable *var : constants_)
+    for (auto var : constants_)
         if (!parser.writeLineF("{}  {}  {}  {:12.6e}\n", prefix,
                                fit1DNodeKeywords().keyword(Fit1DProcedureNode::ConstantKeyword), var->name(),
                                var->value().asDouble()))
             return false;
 
-    // Constants
-    for (ExpressionVariable *var : fitTargets_)
+    // Fitting targets
+    for (auto var : fitTargets_)
         if (!parser.writeLineF("{}  {}  {}  {:12.6e}\n", prefix, fit1DNodeKeywords().keyword(Fit1DProcedureNode::FitKeyword),
                                var->name(), var->value().asDouble()))
             return false;

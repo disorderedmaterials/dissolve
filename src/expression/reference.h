@@ -12,7 +12,7 @@ class ExpressionVariable;
 class ExpressionReferenceNode : public ExpressionNode
 {
     public:
-    ExpressionReferenceNode(ExpressionVariable *variable);
+    ExpressionReferenceNode(std::shared_ptr<ExpressionVariable> variable);
     ~ExpressionReferenceNode() = default;
 
     /*
@@ -20,7 +20,7 @@ class ExpressionReferenceNode : public ExpressionNode
      */
     private:
     // Target variable
-    ExpressionVariable *variable_;
+    std::shared_ptr<ExpressionVariable> variable_;
 
     /*
      * Evaluation
