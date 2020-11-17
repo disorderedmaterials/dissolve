@@ -22,12 +22,19 @@ bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSe
 
             // Bound (intramolecular) partial (multiplied by the bound term weight)
             weightedgr.boundPartial(typeI, typeJ).copyArrays(unweightedgr.boundPartial(typeI, typeJ));
-            weightedgr.boundPartial(typeI, typeJ).values() *= weight;
+            std::transform(
+                weightedgr.boundPartial(typeI, typeJ).values().begin(), weightedgr.boundPartial(typeI, typeJ).values().end(),
+                weightedgr.boundPartial(typeI, typeJ).values().begin(), [=](auto value) { return value * (weight); });
 
             // Unbound partial (multiplied by the full weight)
             weightedgr.unboundPartial(typeI, typeJ).copyArrays(unweightedgr.unboundPartial(typeI, typeJ));
-            weightedgr.unboundPartial(typeI, typeJ).values() -= 1.0;
-            weightedgr.unboundPartial(typeI, typeJ).values() *= weight;
+            std::transform(weightedgr.unboundPartial(typeI, typeJ).values().begin(),
+                           weightedgr.unboundPartial(typeI, typeJ).values().end(),
+                           weightedgr.unboundPartial(typeI, typeJ).values().begin(), [=](auto value) { return value - (1.0); });
+            std::transform(weightedgr.unboundPartial(typeI, typeJ).values().begin(),
+                           weightedgr.unboundPartial(typeI, typeJ).values().end(),
+                           weightedgr.unboundPartial(typeI, typeJ).values().begin(),
+                           [=](auto value) { return value * (weight); });
 
             // Full partial, summing bound and unbound terms
             weightedgr.partial(typeI, typeJ).copyArrays(weightedgr.unboundPartial(typeI, typeJ));
@@ -55,7 +62,7 @@ bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSe
         for (typeJ = typeI; typeJ < unweightedsq.nAtomTypes(); ++typeJ)
         {
             // Weight bound and unbound S(Q) and sum into full partial
-            Array<double> qWeights = weights.weight(typeI, typeJ, unweightedsq.boundPartial(typeI, typeJ).constXAxis());
+            auto qWeights = weights.weight(typeI, typeJ, unweightedsq.boundPartial(typeI, typeJ).xAxis());
 
             // Bound (intramolecular) and unbound partials
             weightedsq.boundPartial(typeI, typeJ).copyArrays(unweightedsq.boundPartial(typeI, typeJ));
@@ -73,14 +80,14 @@ bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSe
     weightedsq.formTotal(false);
     if (normalisation == XRaySQModule::SquareOfAverageNormalisation)
     {
-        Array<double> bbar = weights.boundCoherentSquareOfAverage(unweightedsq.boundPartial(0, 0).constXAxis());
-        for (auto n = 0; n < bbar.nItems(); ++n)
+        auto bbar = weights.boundCoherentSquareOfAverage(unweightedsq.boundPartial(0, 0).xAxis());
+        for (auto n = 0; n < bbar.size(); ++n)
             weightedsq.total().value(n) /= bbar[n];
     }
     else if (normalisation == XRaySQModule::AverageOfSquaresNormalisation)
     {
-        Array<double> bbar = weights.boundCoherentAverageOfSquares(unweightedsq.boundPartial(0, 0).constXAxis());
-        for (auto n = 0; n < bbar.nItems(); ++n)
+        auto bbar = weights.boundCoherentAverageOfSquares(unweightedsq.boundPartial(0, 0).xAxis());
+        for (auto n = 0; n < bbar.size(); ++n)
             weightedsq.total().value(n) /= bbar[n];
     }
 

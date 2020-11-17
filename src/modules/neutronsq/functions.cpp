@@ -22,12 +22,19 @@ bool NeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, Partia
 
             // Bound (intramolecular) partial (multiplied by the bound term weight)
             weightedgr.boundPartial(typeI, typeJ).copyArrays(unweightedgr.boundPartial(typeI, typeJ));
-            weightedgr.boundPartial(typeI, typeJ).values() *= intraWeight;
+            std::transform(
+                weightedgr.boundPartial(typeI, typeJ).values().begin(), weightedgr.boundPartial(typeI, typeJ).values().end(),
+                weightedgr.boundPartial(typeI, typeJ).values().begin(), [=](auto value) { return value * (intraWeight); });
 
             // Unbound partial (multiplied by the full weight)
             weightedgr.unboundPartial(typeI, typeJ).copyArrays(unweightedgr.unboundPartial(typeI, typeJ));
-            weightedgr.unboundPartial(typeI, typeJ).values() -= 1.0;
-            weightedgr.unboundPartial(typeI, typeJ).values() *= weight;
+            std::transform(weightedgr.unboundPartial(typeI, typeJ).values().begin(),
+                           weightedgr.unboundPartial(typeI, typeJ).values().end(),
+                           weightedgr.unboundPartial(typeI, typeJ).values().begin(), [=](auto value) { return value - (1.0); });
+            std::transform(weightedgr.unboundPartial(typeI, typeJ).values().begin(),
+                           weightedgr.unboundPartial(typeI, typeJ).values().end(),
+                           weightedgr.unboundPartial(typeI, typeJ).values().begin(),
+                           [=](auto value) { return value * (weight); });
 
             // Full partial, summing bound and unbound terms
             weightedgr.partial(typeI, typeJ).copyArrays(weightedgr.unboundPartial(typeI, typeJ));
@@ -38,9 +45,13 @@ bool NeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, Partia
     // Calculate and normalise total to form factor if requested
     weightedgr.formTotal(false);
     if (normalisation == NeutronSQModule::AverageOfSquaresNormalisation)
-        weightedgr.total().values() /= weights.boundCoherentAverageOfSquares();
+        std::transform(weightedgr.total().values().begin(), weightedgr.total().values().end(),
+                       weightedgr.total().values().begin(),
+                       [=](auto value) { return value / (weights.boundCoherentAverageOfSquares()); });
     else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation)
-        weightedgr.total().values() /= weights.boundCoherentSquareOfAverage();
+        std::transform(weightedgr.total().values().begin(), weightedgr.total().values().end(),
+                       weightedgr.total().values().begin(),
+                       [=](auto value) { return value / (weights.boundCoherentSquareOfAverage()); });
 
     return true;
 }
@@ -60,11 +71,16 @@ bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Partia
 
             // Bound (intramolecular) partial (multiplied by the bound term weight)
             weightedsq.boundPartial(typeI, typeJ).copyArrays(unweightedsq.boundPartial(typeI, typeJ));
-            weightedsq.boundPartial(typeI, typeJ).values() *= boundWeight;
+            std::transform(
+                weightedsq.boundPartial(typeI, typeJ).values().begin(), weightedsq.boundPartial(typeI, typeJ).values().end(),
+                weightedsq.boundPartial(typeI, typeJ).values().begin(), [=](auto value) { return value * (boundWeight); });
 
             // Unbound partial (multiplied by the full weight)
             weightedsq.unboundPartial(typeI, typeJ).copyArrays(unweightedsq.unboundPartial(typeI, typeJ));
-            weightedsq.unboundPartial(typeI, typeJ).values() *= weight;
+            std::transform(weightedsq.unboundPartial(typeI, typeJ).values().begin(),
+                           weightedsq.unboundPartial(typeI, typeJ).values().end(),
+                           weightedsq.unboundPartial(typeI, typeJ).values().begin(),
+                           [=](auto value) { return value * (weight); });
 
             // Full partial (sum of bound and unbound terms)
             weightedsq.partial(typeI, typeJ).copyArrays(weightedsq.unboundPartial(typeI, typeJ));
@@ -75,9 +91,13 @@ bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Partia
     // Calculate and normalise total to form factor if requested
     weightedsq.formTotal(false);
     if (normalisation == NeutronSQModule::AverageOfSquaresNormalisation)
-        weightedsq.total().values() /= weights.boundCoherentAverageOfSquares();
+        std::transform(weightedsq.total().values().begin(), weightedsq.total().values().end(),
+                       weightedsq.total().values().begin(),
+                       [=](auto value) { return value / (weights.boundCoherentAverageOfSquares()); });
     else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation)
-        weightedsq.total().values() /= weights.boundCoherentSquareOfAverage();
+        std::transform(weightedsq.total().values().begin(), weightedsq.total().values().end(),
+                       weightedsq.total().values().begin(),
+                       [=](auto value) { return value / (weights.boundCoherentSquareOfAverage()); });
 
     return true;
 }

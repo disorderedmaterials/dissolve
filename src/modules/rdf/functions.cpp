@@ -84,7 +84,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
 
     // Loop over assigned Atoms
     Vec3<double> centre, *ri, *rj, mim;
-    long int *histogram;
+    std::vector<long int> histogram;
     double rbin = 1.0 / binWidth;
 
     // Loop context is to use all processes in Pool as one group

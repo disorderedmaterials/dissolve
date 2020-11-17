@@ -50,7 +50,7 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         {
             referenceData.removeFirstPoint();
             Messenger::print("Removed first point from supplied reference data - new Qmin = {:.4e} Angstroms**-1.\n",
-                             referenceData.constXAxis().firstValue());
+                             referenceData.xAxis().front());
         }
 
         // Get window function to use for transformation of S(Q) to g(r)
@@ -205,7 +205,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     if (procPool.isMaster())
                     {
                         Data1D atomicData = unweightedSQ.partial(i, i);
-                        atomicData.values() = weights.formFactor(i, atomicData.constXAxis());
+                        atomicData.values() = weights.formFactor(i, atomicData.xAxis());
                         Data1DExportFileFormat exportFormat(fmt::format("{}-{}.form", uniqueName(), at1.atomTypeName()));
                         if (!exportFormat.exportData(atomicData))
                             return procPool.decideFalse();
@@ -218,7 +218,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 if (procPool.isMaster())
                 {
                     Data1D ffData = unweightedSQ.partial(i, j);
-                    ffData.values() = weights.weight(i, j, ffData.constXAxis());
+                    ffData.values() = weights.weight(i, j, ffData.xAxis());
                     Data1DExportFileFormat exportFormat(
                         fmt::format("{}-{}-{}.form", uniqueName(), at1.atomTypeName(), at2.atomTypeName()));
                     if (!exportFormat.exportData(ffData))
@@ -259,8 +259,8 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto &repGR = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RepresentativeTotalGR", uniqueName_,
                                                      GenericItem::InRestartFileFlag);
     repGR = weightedSQ.total();
-    auto rMin = weightedGR.total().xAxis().firstValue();
-    auto rMax = weightedGR.total().xAxis().lastValue();
+    auto rMin = weightedGR.total().xAxis().front();
+    auto rMax = weightedGR.total().xAxis().back();
     auto rho = 0.1;
     if (dissolve.processingModuleData().contains("EffectiveRho", rdfModule->uniqueName()))
         rho = GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", rdfModule->uniqueName());

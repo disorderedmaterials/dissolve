@@ -136,7 +136,8 @@ void XRayWeights::print() const
 // Set up matrices based on current AtomType information
 void XRayWeights::setUpMatrices()
 {
-    concentrations_.initialise(atomTypes_.nItems());
+    concentrations_.clear();
+    concentrations_.resize(atomTypes_.nItems());
     concentrationProducts_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
     preFactors_.initialise(atomTypes_.nItems(), atomTypes_.nItems(), true);
 
@@ -154,7 +155,7 @@ void XRayWeights::setUpMatrices()
 }
 
 // Return concentration product for type i
-double XRayWeights::concentration(int typeIndexI) const { return concentrations_.constAt(typeIndexI); }
+double XRayWeights::concentration(int typeIndexI) const { return concentrations_[typeIndexI]; }
 
 // Return concentration product for types i and j
 double XRayWeights::concentrationProduct(int typeIndexI, int typeIndexJ) const
@@ -163,7 +164,7 @@ double XRayWeights::concentrationProduct(int typeIndexI, int typeIndexJ) const
 }
 
 // Return form factor for type i over supplied Q values
-Array<double> XRayWeights::formFactor(int typeIndexI, const Array<double> &Q) const
+std::vector<double> XRayWeights::formFactor(int typeIndexI, const std::vector<double> &Q) const
 {
 #ifdef CHECKS
     if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
@@ -174,12 +175,12 @@ Array<double> XRayWeights::formFactor(int typeIndexI, const Array<double> &Q) co
 #endif
 
     // Initialise results array
-    Array<double> fiq(Q.nItems());
+    std::vector<double> fiq(Q.size());
 
     auto &fi = formFactorData_[typeIndexI].get();
 
-    for (auto n = 0; n < Q.nItems(); ++n)
-        fiq[n] = fi.magnitude(Q.constAt(n));
+    for (auto n = 0; n < Q.size(); ++n)
+        fiq[n] = fi.magnitude(Q[n]);
 
     return fiq;
 }
@@ -209,7 +210,7 @@ double XRayWeights::weight(int typeIndexI, int typeIndexJ, double Q) const
 }
 
 // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) over supplied Q values
-Array<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const Array<double> &Q) const
+std::vector<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const std::vector<double> &Q) const
 {
     // Get form factor data for involved types
 #ifdef CHECKS
@@ -226,49 +227,49 @@ Array<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const Array<do
 #endif
 
     // Initialise results array
-    Array<double> fijq(Q.nItems());
+    std::vector<double> fijq(Q.size());
 
     auto &fi = formFactorData_[typeIndexI].get();
     auto &fj = formFactorData_[typeIndexJ].get();
     auto preFactor = preFactors_.constAt(typeIndexI, typeIndexJ);
 
-    for (auto n = 0; n < Q.nItems(); ++n)
-        fijq[n] = fi.magnitude(Q.constAt(n)) * fj.magnitude(Q.constAt(n)) * preFactor;
+    for (auto n = 0; n < Q.size(); ++n)
+        fijq[n] = fi.magnitude(Q[n]) * fj.magnitude(Q[n]) * preFactor;
 
     return fijq;
 }
 
 // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q values
-Array<double> XRayWeights::boundCoherentSquareOfAverage(const Array<double> &Q) const
+std::vector<double> XRayWeights::boundCoherentSquareOfAverage(const std::vector<double> &Q) const
 {
     // Initialise results array
-    Array<double> bbar(Q.nItems());
+    std::vector<double> bbar(Q.size());
 
     for (auto typeI = 0; typeI < atomTypes_.nItems(); ++typeI)
     {
-        const double ci = concentrations_.constAt(typeI);
+        const double ci = concentrations_[typeI];
         auto &fi = formFactorData_[typeI].get();
 
-        for (auto n = 0; n < Q.nItems(); ++n)
-            bbar[n] += ci * fi.magnitude(Q.constAt(n));
+        for (auto n = 0; n < Q.size(); ++n)
+            bbar[n] += ci * fi.magnitude(Q[n]);
     }
 
     return bbar;
 }
 
 // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q values
-Array<double> XRayWeights::boundCoherentAverageOfSquares(const Array<double> &Q) const
+std::vector<double> XRayWeights::boundCoherentAverageOfSquares(const std::vector<double> &Q) const
 {
     // Initialise results array
-    Array<double> bbar(Q.nItems());
+    std::vector<double> bbar(Q.size());
 
     for (auto typeI = 0; typeI < atomTypes_.nItems(); ++typeI)
     {
-        const double ci = concentrations_.constAt(typeI);
+        const double ci = concentrations_[typeI];
         auto &fi = formFactorData_[typeI].get();
 
-        for (auto n = 0; n < Q.nItems(); ++n)
-            bbar[n] += ci * fi.magnitude(Q.constAt(n)) * fi.magnitude(Q.constAt(n));
+        for (auto n = 0; n < Q.size(); ++n)
+            bbar[n] += ci * fi.magnitude(Q[n]) * fi.magnitude(Q[n]);
     }
 
     return bbar;
