@@ -22,9 +22,9 @@ OperateExpressionProcedureNode::OperateExpressionProcedureNode(std::string_view 
     value_ = std::make_shared<ExpressionVariable>("value");
     variables_.emplace_back(value_);
 
-    expression_.create(expressionText);
+    expression_.create(expressionText, variables_);
 
-    keywords_.add("Expression", new ExpressionKeyword(expression_), "Expression", "Expression to apply to values");
+    keywords_.add("Expression", new ExpressionKeyword(expression_, variables_), "Expression", "Expression to apply to values");
 }
 
 OperateExpressionProcedureNode::~OperateExpressionProcedureNode() {}

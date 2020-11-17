@@ -5,8 +5,8 @@
 #include "base/lineparser.h"
 #include "expression/expression.h"
 
-ExpressionKeyword::ExpressionKeyword(Expression &expression)
-    : KeywordData<Expression &>(KeywordData::ExpressionData, expression)
+ExpressionKeyword::ExpressionKeyword(Expression &expression, const std::vector<std::shared_ptr<ExpressionVariable>> &variables)
+    : KeywordData<Expression &>(KeywordData::ExpressionData, expression), variables_(variables)
 {
 }
 
@@ -41,7 +41,7 @@ bool ExpressionKeyword::write(LineParser &parser, std::string_view keywordName, 
 // Set the value from supplied expression text
 bool ExpressionKeyword::setValue(std::string_view expressionText)
 {
-    if (!data_.create(expressionText))
+    if (!data_.create(expressionText, variables_))
         return false;
 
     set_ = true;
