@@ -7,7 +7,7 @@
 #include "templates/broadcastarray.h"
 #include <vector>
 
-// GenericItemContainer< std::vector<T> >
+// GenericItemContainer< std::vector<double> >
 template <> class GenericItemContainer<std::vector<double>> : public GenericItem
 {
     public:
@@ -38,11 +38,7 @@ template <> class GenericItemContainer<std::vector<double>> : public GenericItem
 
     public:
     // Return class name contained in item
-    std::string_view itemClassName()
-    {
-        static std::string className = "std::vector<double>";
-        return className;
-    }
+    std::string_view itemClassName() { return "std::vector<double>"; }
 
     /*
      * I/O
@@ -84,10 +80,32 @@ template <> class GenericItemContainer<std::vector<double>> : public GenericItem
     // Broadcast item contents
     bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
     {
-        bool success;
-        // FIXME FIXME FIXME
-        // BroadcastArray<double>(procPool, root, data_.data(), coreData, success);
-        return success;
+        bool result = false;
+        int count;
+        if (procPool.isMaster())
+        {
+            // Broadcast number of items in list, then list items...
+            count = data_.size();
+            if (!procPool.broadcast(count, root))
+                return false;
+            for (auto n : data_)
+                procPool.broadcast(n, root);
+        }
+        else
+        {
+            // Get number of list items to expect
+            if (!procPool.broadcast(count, root))
+                return false;
+
+            // Clear list and reconstruct
+            data_.clear();
+            data_.resize(count);
+            for (auto n : data_)
+                procPool.broadcast(n, root);
+        }
+
+        // All OK - success!
+        result = true;
     }
     // Return equality between items
     bool equality(ProcessPool &procPool) { return false; }
