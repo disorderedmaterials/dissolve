@@ -150,7 +150,7 @@ template <class T> class MinimiserBase
         }
 
         // Create a local array of values to pass to the fitting routine
-        std::vector<double> values;
+        std::vector<double> values(targets_.size());
         std::transform(targets_.begin(), targets_.end(), values.begin(), [](auto *target) { return *target; });
 
         // Minimise the function
