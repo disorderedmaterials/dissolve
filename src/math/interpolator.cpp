@@ -436,7 +436,7 @@ void Interpolator::addInterpolated(Data1D &A, const Data1D &B, double factor)
         // Generate interpolation of data B
         Interpolator interpolatedB(B);
 
-        for (auto n = 0; n < aX.size(); ++n)
-            aY[n] += interpolatedB.y(aX[n]) * factor;
+        std::transform(aX.begin(), aX.end(), aY.begin(), aY.begin(),
+                       [&](auto x, auto y) { return y + interpolatedB.y(x) * factor; });
     }
 }

@@ -503,27 +503,27 @@ bool Data3D::read(LineParser &parser, CoreData &coreData)
     initialise(xSize, ySize, zSize, errors);
 
     // Read x axis
-    for (auto x = 0; x < x_.size(); ++x)
+    for (auto &x : x_)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        x_[x] = parser.argd(0);
+        x = parser.argd(0);
     }
 
     // Read y axis
-    for (auto y = 0; y < y_.size(); ++y)
+    for (auto &y : y_)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        y_[y] = parser.argd(0);
+        y = parser.argd(0);
     }
 
     // Read z axis
-    for (auto z = 0; z < z_.size(); ++z)
+    for (auto &z : z_)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        z_[z] = parser.argd(0);
+        z = parser.argd(0);
     }
 
     // Read errors / valuse
@@ -576,18 +576,18 @@ bool Data3D::write(LineParser &parser)
         return false;
 
     // Write x axis array
-    for (auto x = 0; x < x_.size(); ++x)
-        if (!parser.writeLineF("{:e}\n", x_[x]))
+    for (auto x : x_)
+        if (!parser.writeLineF("{:e}\n", x))
             return false;
 
     // Write y axis array
-    for (auto y = 0; y < y_.size(); ++y)
-        if (!parser.writeLineF("{:e}\n", y_[y]))
+    for (auto y : y_)
+        if (!parser.writeLineF("{:e}\n", y))
             return false;
 
     // Write z axis array
-    for (auto z = 0; z < z_.size(); ++z)
-        if (!parser.writeLineF("{:e}\n", z_[z]))
+    for (auto z : z_)
+        if (!parser.writeLineF("{:e}\n", z))
             return false;
 
     // Write values / errors

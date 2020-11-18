@@ -385,8 +385,7 @@ void Data1D::operator-=(const Data1D &source)
     if (x_.size() == 0)
     {
         copyArrays(source);
-        for (auto n = 0; n < values_.size(); ++n)
-            values_[n] = -values_[n];
+        std::transform(values_.begin(), values_.end(), values_.begin(), [](auto value) { return -value; });
         return;
     }
 
@@ -400,6 +399,8 @@ void Data1D::operator-=(const Data1D &source)
     ++version_;
 
     // Loop over points, summing them into our array
+    // TODO: The actual loop body could be performed in parallel with a simple std::transform.  The check, however, requires
+    // ranges, which needs either boost or C++20
     for (auto n = 0; n < x_.size(); ++n)
     {
 #ifdef CHECKS

@@ -486,19 +486,19 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
     initialise(xSize, ySize, errors);
 
     // Read x axis
-    for (auto x = 0; x < x_.size(); ++x)
+    for (auto &x : x_)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        x_[x] = parser.argd(0);
+        x = parser.argd(0);
     }
 
     // Read y axis
-    for (auto y = 0; y < y_.size(); ++y)
+    for (auto &y : y_)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        y_[y] = parser.argd(0);
+        y = parser.argd(0);
     }
 
     // Read errors / valuse

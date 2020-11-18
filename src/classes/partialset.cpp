@@ -419,7 +419,7 @@ void PartialSet::calculateRDF(Data1D &destination, Histogram1D &histogram, doubl
 {
     auto nBins = histogram.nBins();
     double delta = histogram.binWidth();
-    const std::vector<long int> &bins = histogram.bins();
+    const auto &bins = histogram.bins();
 
     destination.clear();
 

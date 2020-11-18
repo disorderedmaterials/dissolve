@@ -35,8 +35,7 @@ Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissol
         for (auto n = 0; n < coefficients.linearArraySize(); ++n)
         {
             coefficients.linearArray()[n].clear();
-            coefficients.linearArray()[n].resize(ncoeffp);
-            std::fill(coefficients.linearArray()[n].begin(), coefficients.linearArray()[n].end(), 0.0);
+            coefficients.linearArray()[n].resize(ncoeffp, 0);
         }
     }
 
