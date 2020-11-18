@@ -52,7 +52,7 @@ void Data1D::initialise(int size, bool withError)
     if (hasError_)
     {
         errors_.clear();
-        values_.resize(size);
+        errors_.resize(size);
     }
     else
         errors_.clear();
