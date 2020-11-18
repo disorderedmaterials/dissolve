@@ -697,7 +697,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     for (auto *module : targets_)
     {
         // For this Module, retrive the coefficents of the fit performed above.
-        const auto &fitCoefficients = GenericListHelper<Array<double>>::value(
+        const auto &fitCoefficients = GenericListHelper<std::vector<double>>::value(
             dissolve.processingModuleData(), fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_);
 
         // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
@@ -710,7 +710,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Store fluctuation coefficients ready for addition to potential coefficients later on.
             for (auto n = 0; n < ncoeffp; ++n)
-                fluctuationCoefficients.at(i, j, n) += weight * fitCoefficients.constAt(n);
+                fluctuationCoefficients.at(i, j, n) += weight * fitCoefficients[n];
         });
 
         // Increase dataIndex
