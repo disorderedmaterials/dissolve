@@ -696,8 +696,7 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     {
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data->name()};
-        std::replace_if(
-            dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
+        std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
         // Sanity check on number of arguments
@@ -728,8 +727,7 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     {
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data->name()};
-        std::replace_if(
-            dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
+        std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
         // Sanity check on number of arguments

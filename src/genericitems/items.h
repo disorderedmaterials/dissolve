@@ -18,8 +18,8 @@
 #include "genericitems/vec3double.h"
 #include "genericitems/vec3int.h"
 
-#include "genericitems/std_vector.h"
 #include "genericitems/array2d_vector_double.h"
+#include "genericitems/std_vector.h"
 
 #include "genericitems/array.h"
 #include "genericitems/array2d.h"

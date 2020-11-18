@@ -108,9 +108,9 @@ class PoissonFit
                                int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0,
                                int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
     // Construct suitable reciprocal-space representation using provided coefficients as a starting point
-    double constructReciprocal(double rMin, double rMax, std::vector<double> coefficients, double sigmaQ = 0.02, double sigmaR = 0.08,
-                               int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0,
-                               int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
+    double constructReciprocal(double rMin, double rMax, std::vector<double> coefficients, double sigmaQ = 0.02,
+                               double sigmaR = 0.08, int nIterations = 1000, double initialStepSize = 0.01,
+                               int smoothingThreshold = 0, int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
 
     /*
      * Cost Functions

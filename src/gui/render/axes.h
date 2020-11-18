@@ -162,7 +162,7 @@ class Axes
     // Return supplied data x value in local axes coordinates
     double transformX(double x) const;
     // Transform entire array of values into local axes coordinates
-  void transformX(std::vector<double> &xArray) const;
+    void transformX(std::vector<double> &xArray) const;
     // Return supplied data y value in local axes coordinates
     double transformY(double y) const;
     // Transform entire array of values into local axes coordinates

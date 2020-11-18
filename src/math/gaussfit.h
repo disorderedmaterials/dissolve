@@ -24,11 +24,11 @@ class GaussFit
     // Number of Gaussians used in fit
     int nGaussians_;
     // Function centres
-  std::vector<double> x_;
+    std::vector<double> x_;
     // Amplitudes
-  std::vector<double> A_;
+    std::vector<double> A_;
     // FWHM values
-  std::vector<double> fwhm_;
+    std::vector<double> fwhm_;
 
     private:
     // Generate full approximation from current parameters
@@ -56,13 +56,13 @@ class GaussFit
     // Return number of Gaussians in fit
     int nGaussians() const;
     // Return current function centres
-  const std::vector<double> &x() const;
+    const std::vector<double> &x() const;
     // Return current amplitudes
-  const std::vector<double> &A() const;
+    const std::vector<double> &A() const;
     // Return amplitudes (and xCentres) as Data1D
     Data1D Ax() const;
     // Return current full-width half-maximum values
-  const std::vector<double> &fwhm() const;
+    const std::vector<double> &fwhm() const;
     // Save coefficients to specified file
     bool saveCoefficients(std::string_view filename) const;
     // Print coefficients
@@ -79,7 +79,7 @@ class GaussFit
     // Function space relevant to current functions being fit space
     FunctionSpace::SpaceType alphaSpace_;
     // Indices of Gaussians being fit
-  std::vector<int> alphaIndex_;
+    std::vector<int> alphaIndex_;
     // Precalculated function data
     Array2D<double> functions_;
 
@@ -98,9 +98,9 @@ class GaussFit
                                double initialStepSize = 0.01, int smoothingThreshold = 0, int smoothingK = 3,
                                int smoothingM = 3, bool reFitAtEnd = false);
     // Construct function representation in reciprocal space using specified parameters as starting point
-    double constructReciprocal(double rMin, double rMax, const std::vector<double> &A, double sigmaQ = 0.02, int nIterations = 1000,
-                               double initialStepSize = 0.01, int smoothingThreshold = 0, int smoothingK = 3,
-                               int smoothingM = 3, bool reFitAtEnd = false);
+    double constructReciprocal(double rMin, double rMax, const std::vector<double> &A, double sigmaQ = 0.02,
+                               int nIterations = 1000, double initialStepSize = 0.01, int smoothingThreshold = 0,
+                               int smoothingK = 3, int smoothingM = 3, bool reFitAtEnd = false);
 
     /*
      * Cost Functions
