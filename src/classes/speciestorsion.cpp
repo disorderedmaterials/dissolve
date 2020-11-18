@@ -558,7 +558,7 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
          * 1 : Periodicity, n
          * 2 : Equilibrium angle, eq (degrees)
          */
-        return 0.5 * params[0] * params[0] * cos(params[1] * params[2] / DEGRAD) * params[1] * sin(params[1] * phi);
+        return 0.5 * params[0] * cos(params[1] * params[2] / DEGRAD) * params[1] * sin(params[1] * phi);
     }
 
     Messenger::error("Functional form of torsion / improper term not accounted for, so can't calculate force.\n");
