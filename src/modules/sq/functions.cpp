@@ -30,7 +30,7 @@ bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, const PartialSet &un
     for_each_pair(0, unweightedgr.nAtomTypes(), [&](int n, int m) {
         // Total partial
         unweightedsq.partial(n, m).copyArrays(unweightedgr.partial(n, m));
-        std::transform(unweightedsq.partial(n, m).values().begin(), unweightedsq.partial(n, m).values().end(), unweightedsq.partial(n, m).values().begin(), [=](auto value){return value - 1.0;});
+	unweightedsq.partial(n, m) -= 1.0;
         Fourier::sineFT(unweightedsq.partial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
 
         // Bound partial
@@ -39,7 +39,7 @@ bool SQModule::calculateUnweightedSQ(ProcessPool &procPool, const PartialSet &un
 
         // Unbound partial
         unweightedsq.unboundPartial(n, m).copyArrays(unweightedgr.unboundPartial(n, m));
-        std::transform(unweightedsq.unboundPartial(n, m).values().begin(), unweightedsq.unboundPartial(n, m).values().end(), unweightedsq.unboundPartial(n, m).values().begin(), [=](auto value){return value - 1.0;});
+	unweightedsq.unboundPartial(n, m) -= 1.0;
         Fourier::sineFT(unweightedsq.unboundPartial(n, m), 4.0 * PI * rho, qMin, qDelta, qMax, windowFunction, broadening);
     });
 

@@ -194,8 +194,7 @@ void Filters::normalisedMovingAverage(Data1D &data, int avgSize)
     // Calculate the new integral
     double newIntegral = Integrator::absTrapezoid(data);
 
-    std::transform(data.values().begin(), data.values().end(), data.values().begin(),
-                   [originalIntegral, newIntegral](auto value) { return value * originalIntegral / newIntegral; });
+    data *= originalIntegral / newIntegral;
 }
 
 // Subtract average level from data, forming average from supplied x value

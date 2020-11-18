@@ -173,8 +173,7 @@ Data1D GaussFit::approximation(FunctionSpace::SpaceType space, double factor, do
     for (auto n = 0; n < nGaussians_; ++n)
         addFunction(approx, space, x_[n], A_[n], fwhm_[n] * fwhmFactor);
 
-    std::transform(approx.values().begin(), approx.values().end(), approx.values().begin(),
-                   [factor](auto value) { return value * factor; });
+    approx *= factor;
 
     return approx;
 }
@@ -194,8 +193,7 @@ Data1D GaussFit::singleFunction(int index, FunctionSpace::SpaceType space, doubl
     // Loop over defined Gaussians
     addFunction(func, space, x_[index], A_[index], fwhm_[index] * fwhmFactor);
 
-    std::transform(func.values().begin(), func.values().end(), func.values().begin(),
-                   [factor](auto value) { return value * factor; });
+    func *= factor;
 
     return func;
 }

@@ -22,19 +22,12 @@ bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSe
 
             // Bound (intramolecular) partial (multiplied by the bound term weight)
             weightedgr.boundPartial(typeI, typeJ).copyArrays(unweightedgr.boundPartial(typeI, typeJ));
-            std::transform(
-                weightedgr.boundPartial(typeI, typeJ).values().begin(), weightedgr.boundPartial(typeI, typeJ).values().end(),
-                weightedgr.boundPartial(typeI, typeJ).values().begin(), [=](auto value) { return value * (weight); });
+            weightedgr.boundPartial(typeI, typeJ) *= weight;
 
             // Unbound partial (multiplied by the full weight)
             weightedgr.unboundPartial(typeI, typeJ).copyArrays(unweightedgr.unboundPartial(typeI, typeJ));
-            std::transform(weightedgr.unboundPartial(typeI, typeJ).values().begin(),
-                           weightedgr.unboundPartial(typeI, typeJ).values().end(),
-                           weightedgr.unboundPartial(typeI, typeJ).values().begin(), [=](auto value) { return value - (1.0); });
-            std::transform(weightedgr.unboundPartial(typeI, typeJ).values().begin(),
-                           weightedgr.unboundPartial(typeI, typeJ).values().end(),
-                           weightedgr.unboundPartial(typeI, typeJ).values().begin(),
-                           [=](auto value) { return value * (weight); });
+            weightedgr.unboundPartial(typeI, typeJ) -= 1.0;
+            weightedgr.unboundPartial(typeI, typeJ) *= weight;
 
             // Full partial, summing bound and unbound terms
             weightedgr.partial(typeI, typeJ).copyArrays(weightedgr.unboundPartial(typeI, typeJ));

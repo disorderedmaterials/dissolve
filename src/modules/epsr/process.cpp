@@ -685,8 +685,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         expGR = estimatedSQ.at(i, j);
         Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * combinedRho.at(i, j)), 0.0, 0.05, 30.0,
                         WindowFunction(WindowFunction::Lorch0Window));
-        std::transform(expGR.values().begin(), expGR.values().end(), expGR.values().begin(),
-                       [](auto value) { return value + 1.0; });
+        expGR += 1.0;
     });
 
     /*

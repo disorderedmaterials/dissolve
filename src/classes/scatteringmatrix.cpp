@@ -272,8 +272,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeigh
 
     // Add reference data and its associated factor
     data_.add(weightedData);
-    std::transform(data_.last().values().begin(), data_.last().values().end(), data_.last().values().begin(),
-                   [=](auto value) { return value * factor; });
+    data_.last() *= factor;
 
     return true;
 }
@@ -300,8 +299,7 @@ bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, std::shared
 
     // Add reference data and its associated factor
     data_.add(weightedData);
-    std::transform(data_.last().values().begin(), data_.last().values().end(), data_.last().values().begin(),
-                   [=](auto value) { return value * factor; });
+    data_.last() *= factor;
 
     return true;
 }

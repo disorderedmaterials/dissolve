@@ -341,16 +341,12 @@ void PartialSet::setFileNames(std::string_view prefix, std::string_view tag, std
 void PartialSet::adjust(double delta)
 {
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
-        std::transform(partials_.at(n, m).values().begin(), partials_.at(n, m).values().end(),
-                       partials_.at(n, m).values().begin(), [=](auto value) { return value + (delta); });
-        std::transform(boundPartials_.at(n, m).values().begin(), boundPartials_.at(n, m).values().end(),
-                       boundPartials_.at(n, m).values().begin(), [=](auto value) { return value + (delta); });
-        std::transform(unboundPartials_.at(n, m).values().begin(), unboundPartials_.at(n, m).values().end(),
-                       unboundPartials_.at(n, m).values().begin(), [=](auto value) { return value + (delta); });
+        partials_.at(n, m) += delta;
+        boundPartials_.at(n, m) += delta;
+        unboundPartials_.at(n, m) += delta;
     });
 
-    std::transform(total_.values().begin(), total_.values().end(), total_.values().begin(),
-                   [=](auto value) { return value + (delta); });
+    total_ += delta;
 }
 
 // Form partials from stored Histogram data
@@ -495,21 +491,13 @@ void PartialSet::operator*=(const double factor)
 {
     auto nTypes = atomTypes_.nItems();
 
-    for (auto n = 0; n < nTypes; ++n)
-    {
-        for (auto m = n; m < nTypes; ++m)
-        {
-            std::transform(partials_.at(n, m).values().begin(), partials_.at(n, m).values().end(),
-                           partials_.at(n, m).values().begin(), [=](auto value) { return value * (factor); });
-            std::transform(boundPartials_.at(n, m).values().begin(), boundPartials_.at(n, m).values().end(),
-                           boundPartials_.at(n, m).values().begin(), [=](auto value) { return value * (factor); });
-            std::transform(unboundPartials_.at(n, m).values().begin(), unboundPartials_.at(n, m).values().end(),
-                           unboundPartials_.at(n, m).values().begin(), [=](auto value) { return value * (factor); });
-        }
-    }
+    for_each_pair(0, nTypes, [&](auto n, auto m) {
+        partials_.at(n, m) *= factor;
+        boundPartials_.at(n, m) *= factor;
+        unboundPartials_.at(n, m) *= factor;
+    });
 
-    std::transform(total_.values().begin(), total_.values().end(), total_.values().begin(),
-                   [=](auto value) { return value * (factor); });
+    total_ *= factor;
 }
 
 /*

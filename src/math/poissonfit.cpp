@@ -125,8 +125,7 @@ Data1D PoissonFit::approximation(FunctionSpace::SpaceType space, double factor, 
     for (auto n = 0; n < nPoissons_; ++n)
         addFunction(approx, space, C_[n], n);
 
-    std::transform(approx.values().begin(), approx.values().end(), approx.values().begin(),
-                   [=](auto value) { return value * factor; });
+    approx *= factor;
 
     return approx;
 }
@@ -145,8 +144,7 @@ Data1D PoissonFit::singleFunction(int index, FunctionSpace::SpaceType space, dou
 
     addFunction(func, space, C_[index], index);
 
-    std::transform(func.values().begin(), func.values().end(), func.values().begin(),
-                   [=](auto value) { return value * factor; });
+    func *= factor;
 
     return func;
 }

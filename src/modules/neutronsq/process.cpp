@@ -72,15 +72,13 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             // Remove normalisation of data
             if (normType == NeutronSQModule::AverageOfSquaresNormalisation)
             {
-                std::transform(referenceData.values().begin(), referenceData.values().end(), referenceData.values().begin(),
-                               [=](auto value) { return value * (weights.boundCoherentAverageOfSquares()); });
+                referenceData *= weights.boundCoherentAverageOfSquares();
                 Messenger::print("NeutronSQ: Removed <b>**2 normalisation from reference data ('{}'), factor = {}.\n",
                                  uniqueName(), weights.boundCoherentAverageOfSquares());
             }
             else if (normType == NeutronSQModule::SquareOfAverageNormalisation)
             {
-                std::transform(referenceData.values().begin(), referenceData.values().end(), referenceData.values().begin(),
-                               [=](auto value) { return value * (weights.boundCoherentSquareOfAverage()); });
+                referenceData *= weights.boundCoherentSquareOfAverage();
                 Messenger::print("NeutronSQ: Removed <b**2> normalisation from reference data ('{}'), factor = {}.\n",
                                  uniqueName(), weights.boundCoherentSquareOfAverage());
             }
