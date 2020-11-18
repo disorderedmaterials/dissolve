@@ -84,7 +84,6 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
 
     // Loop over assigned Atoms
     Vec3<double> centre, *ri, *rj, mim;
-    std::vector<long int> histogram;
     double rbin = 1.0 / binWidth;
 
     // Loop context is to use all processes in Pool as one group
@@ -97,7 +96,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     for (typeI = 0; typeI < nTypes; ++typeI)
     {
         ri = r[typeI];
-        histogram = partialSet.fullHistogram(typeI, typeI).bins();
+        auto &histogram = partialSet.fullHistogram(typeI, typeI).bins();
         bins = binss[typeI];
         nPoints = partialSet.fullHistogram(typeI, typeI).nBins();
         for (i = start; i < maxr[typeI]; i += stride)
@@ -129,7 +128,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
                 continue;
 
             rj = r[typeJ];
-            histogram = partialSet.fullHistogram(typeI, typeJ).bins();
+            auto &histogram = partialSet.fullHistogram(typeI, typeJ).bins();
             bins = binss[typeJ];
             nPoints = partialSet.fullHistogram(typeI, typeJ).nBins();
             for (i = start; i < maxr[typeI]; i += stride)
@@ -697,7 +696,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     {
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data->name()};
-        std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
+        std::replace_if(
+            dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
         // Sanity check on number of arguments
@@ -728,7 +728,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     {
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data->name()};
-        std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
+        std::replace_if(
+            dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
         // Sanity check on number of arguments
