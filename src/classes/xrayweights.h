@@ -49,8 +49,10 @@ class XRayWeights : public GenericItemBase
     void addSpecies(const Species *sp, int population);
     // Finalise weights after addition of all individual Species
     bool finalise(XRayFormFactors::XRayFormFactorData formFactors);
+    // Return X-Ray form factors being used
+    XRayFormFactors::XRayFormFactorData formFactors() const;
     // Return AtomTypeList
-    AtomTypeList &atomTypes();
+    const AtomTypeList &atomTypes() const;
     // Return number of used AtomTypes
     int nUsedTypes() const;
     // Print atomtype information
@@ -66,10 +68,6 @@ class XRayWeights : public GenericItemBase
     Array2D<double> concentrationProducts_;
     // Pre-factors matrix (ci * cj * [2-dij])
     Array2D<double> preFactors_;
-    // Average squared scattering (<b>**2)
-    double boundCoherentSquareOfAverage_;
-    // Bound coherent squared average scattering (<b**2>)
-    double boundCoherentAverageOfSquares_;
 
     private:
     // Set up matrices based on current AtomType information
@@ -80,16 +78,22 @@ class XRayWeights : public GenericItemBase
     double concentration(int typeIndexI) const;
     // Return concentration product for types i and j
     double concentrationProduct(int typeIndexI, int typeIndexJ) const;
+    // Return pre-factor for types i and j
+    double preFactor(int typeIndexI, int typeIndexJ) const;
     // Return form factor product for types i and j at specified Q value
     double formFactorProduct(int typeIndexI, int typeIndexJ, double Q) const;
     // Return form factor for type i over supplied Q values
     Array<double> formFactor(int typeIndexI, const Array<double> &Q) const;
     // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) at specified Q value
-    double weight(int typeIndexI, int typetypeIndexJ, double Q) const;
+    double weight(int typeIndexI, int typeIndexJ, double Q) const;
     // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) over supplied Q values
     Array<double> weight(int typeIndexI, int typeIndexJ, const Array<double> &Q) const;
+    // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q value
+    double boundCoherentSquareOfAverage(double Q) const;
     // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q values
     Array<double> boundCoherentSquareOfAverage(const Array<double> &Q) const;
+    // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q value
+    double boundCoherentAverageOfSquares(double Q) const;
     // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q values
     Array<double> boundCoherentAverageOfSquares(const Array<double> &Q) const;
     // Return whether the structure is valid (i.e. has been finalised)

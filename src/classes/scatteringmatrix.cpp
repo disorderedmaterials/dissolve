@@ -4,6 +4,7 @@
 #include "classes/scatteringmatrix.h"
 #include "classes/atomtype.h"
 #include "classes/neutronweights.h"
+#include "classes/xrayweights.h"
 #include "math/interpolator.h"
 #include "math/svd.h"
 #include "templates/algorithms.h"
@@ -35,7 +36,7 @@ int ScatteringMatrix::pairIndex(std::shared_ptr<AtomType> typeI, std::shared_ptr
 }
 
 // Return weight of the specified AtomType pair in the inverse matrix
-double ScatteringMatrix::pairWeightInverse(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ,
+double ScatteringMatrix::pairWeightInverse(double q, std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomType> typeJ,
                                            int dataIndex) const
 {
     /*
@@ -44,19 +45,81 @@ double ScatteringMatrix::pairWeightInverse(std::shared_ptr<AtomType> typeI, std:
      */
 
     auto index = pairIndex(typeI, typeJ);
-    return inverseA_.constAt(index, dataIndex);
+    return inverse(q).constAt(index, dataIndex);
 }
 
-// Print the matrix
-void ScatteringMatrix::print() const
+// Calculate and return the scattering matrix at the specified Q value
+Array2D<double> ScatteringMatrix::matrix(double q) const
 {
+    // Take a copy of A to begin with
+    auto m = A_;
+
+    // Go over rows of the matrix (corresponding to the reference data) and check if any need to be xray-weighted
+    for (auto row = 0; row < m.nRows(); ++row)
+    {
+        // If this is not xray data we can move on to the next
+        if (!std::get<0>(xRayData_[row]))
+            continue;
+
+        // Grab the weights and normalisation to apply to the matrix elements
+        auto optWeights = std::get<1>(xRayData_[row]);
+        auto &weights = (*optWeights);
+        auto normType = std::get<2>(xRayData_[row]);
+        auto normFactor = 1.0;
+        if (normType == StructureFactors::AverageOfSquaresNormalisation)
+            normFactor = weights.boundCoherentAverageOfSquares(q);
+        else if (normType == StructureFactors::SquareOfAverageNormalisation)
+            normFactor = weights.boundCoherentSquareOfAverage(q);
+
+        // Loop over columns (partials) and weight according to the elements of the atom types
+        auto col = 0;
+        for (auto [i, j] : typePairs_)
+        {
+            auto ffi = XRayFormFactors::formFactorData(weights.formFactors(), i->element());
+            if (!ffi)
+                throw(std::runtime_error(fmt::format("No form factor data available for element {} in dataset {}.",
+                                                     i->element()->name(),
+                                                     XRayFormFactors::xRayFormFactorData().keyword(weights.formFactors()))));
+            auto ffj = XRayFormFactors::formFactorData(weights.formFactors(), j->element());
+            if (!ffj)
+                throw(std::runtime_error(fmt::format("No form factor data available for element {} in dataset {}.",
+                                                     j->element()->name(),
+                                                     XRayFormFactors::xRayFormFactorData().keyword(weights.formFactors()))));
+
+            m.at(row, col) *= ffi->get().magnitude(q) * ffj->get().magnitude(q) / normFactor;
+
+            ++col;
+        }
+    }
+
+    return m;
+}
+
+// Calculate and return the inverse matrix at the specified Q value
+Array2D<double> ScatteringMatrix::inverse(double q) const
+{
+    // Get the scattering matrix at the specified Q value
+    auto inverseA = matrix(q);
+
+    // Invert the matrix and return
+    if (!SVD::pseudoinverse(inverseA))
+        throw(std::runtime_error("Failed to invert the scattering matrix."));
+
+    return inverseA;
+}
+
+// Print the scattering coefficients matrix at the specified Q value
+void ScatteringMatrix::print(double q) const
+{
+    auto m = matrix(q);
+
     // Write header
     std::string text, line;
     auto nColsWritten = 0;
     for (auto [i, j] : typePairs_)
     {
         text = fmt::format("{}-{}", i->name(), j->name());
-        line = fmt::format("{:10} ", text);
+        line += fmt::format("{:^10} ", text);
 
         // Limit output to sensible length
         if (line.length() >= 80)
@@ -73,9 +136,9 @@ void ScatteringMatrix::print() const
     for (auto row = 0; row < data_.nItems(); ++row)
     {
         line.clear();
-        for (auto n = 0; n < A_.nColumns(); ++n)
+        for (auto n = 0; n < m.nColumns(); ++n)
         {
-            line += fmt::format("{:10f} ", A_.constAt(row, n));
+            line += fmt::format("{:10f} ", m.constAt(row, n));
 
             // Limit output to sensible length
             if (line.length() >= 80)
@@ -98,9 +161,11 @@ void ScatteringMatrix::print() const
     }
 }
 
-// Print the inverse matrix
-void ScatteringMatrix::printInverse() const
+// Print the inverse matrix at the specified Q value
+void ScatteringMatrix::printInverse(double q) const
 {
+    auto inverseA = inverse(q);
+
     // Write header
     std::string line;
     auto nColsWritten = 0;
@@ -120,12 +185,12 @@ void ScatteringMatrix::printInverse() const
     Messenger::print(line);
 
     // Loop over inverse matrix columns, rather than rows, to match the AtomType headers
-    for (auto col = 0; col < inverseA_.nColumns(); ++col)
+    for (auto col = 0; col < inverseA.nColumns(); ++col)
     {
         line.clear();
-        for (auto row = 0; row < inverseA_.nRows(); ++row)
+        for (auto row = 0; row < inverseA.nRows(); ++row)
         {
-            line += fmt::format("{:10f} ", inverseA_.constAt(row, col));
+            line += fmt::format("{:10f} ", inverseA.constAt(row, col));
 
             // Limit output to sensible length
             if (line.length() >= 80)
@@ -149,8 +214,14 @@ void ScatteringMatrix::printInverse() const
 }
 
 // Generate partials from reference data using the inverse coefficients matrix
-void ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
+bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
 {
+    // Check that we have the correct number of reference data to be able to invert the matrix
+    if (data_.nItems() < A_.nColumns())
+        return Messenger::error("Can't finalise this scattering matrix, since there are not enough reference data ({}) "
+                                "compared to rows in the matrix ({}).\n",
+                                data_.nItems(), A_.nColumns());
+
     /*
      * Currently our scattering matrix / data look as follows:
      *
@@ -160,7 +231,8 @@ void ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
      * [ cM1 cM2 ... cMN ] [ PN ]   [ DM ]
      *
      * ... where the coefficients in the matrix are the partial weights, P are the (unknown) partial S(Q), and D are the
-     * (known) data.
+     * (known) data. The partial weights cMN contain the bound coherent scattering lengths if the row corresponds to a
+     * neutron dataset. For xray data, the scattering weights must be added in as a function of Q below.
      *
      * Take the matrix inverse and multiply it by the known data to generate the estimated partials.
      */
@@ -168,26 +240,70 @@ void ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
     // Get linear array from estimatedSQ
     Data1D *partials = estimatedSQ.linearArray();
 
-    // Clear current partials
+    // Template the estimatedSQ from the first data item
     for (auto n = 0; n < estimatedSQ.linearArraySize(); ++n)
-        partials[n].clear();
+        partials[n].initialise(data_[0]);
 
-    // Generate new partials (nPartials = nColumns)
-    for (auto n = 0; n < A_.nColumns(); ++n)
+    Array2D<double> inverseA;
+    auto qDependentMatrix =
+        std::find_if(xRayData_.begin(), xRayData_.end(), [](auto data) { return std::get<0>(data); }) != xRayData_.end();
+
+    if (qDependentMatrix)
     {
-        // Add in contribution from each datset (row).
-        for (auto m = 0; m < data_.nItems(); ++m)
+        // Generate interpolations for each dataset
+        std::vector<Interpolator> interpolations;
+        for (auto refDataIndex = 0; refDataIndex < data_.nItems(); ++refDataIndex)
+            interpolations.emplace_back(Interpolator(data_[refDataIndex]));
+
+        // Q-dependent terms in the scattering matrix, so need to invert once at each distinct Q value
+        const Array<double> &x = partials[0].constXAxis();
+        for (auto n = 0; n < x.nItems(); ++n)
         {
-            Interpolator::addInterpolated(partials[n], data_[m], inverseA_.constAt(n, m));
+            const auto q = x.constAt(n);
+
+            // Generate inverse matrix at this Q value
+            inverseA = matrix(q);
+            if (!SVD::pseudoinverse(inverseA))
+                return false;
+
+            // Sum in contributions from each dataset at this Q value, provided it is within the range of the dataset
+            for (auto partialIndex = 0; partialIndex < A_.nColumns(); ++partialIndex)
+            {
+                for (auto refDataIndex = 0; refDataIndex < data_.nItems(); ++refDataIndex)
+                {
+                    if ((q < data_[refDataIndex].xAxis().first()) || (q > data_[refDataIndex].xAxis().last()))
+                        continue;
+                    partials[partialIndex].value(n) +=
+                        interpolations[refDataIndex].y(q) * inverseA.constAt(partialIndex, refDataIndex);
+                }
+            }
         }
     }
+    else
+    {
+        // No Q-dependent terms in the scattering matrix, so only need to invert once
+        inverseA = A_;
+        if (!SVD::pseudoinverse(inverseA))
+            return false;
+
+        // Generate new partials (nPartials = nColumns)
+        for (auto partialIndex = 0; partialIndex < A_.nColumns(); ++partialIndex)
+        {
+            // Add in contribution from each datset (row).
+            for (auto refDataIndex = 0; refDataIndex < data_.nItems(); ++refDataIndex)
+                Interpolator::addInterpolated(partials[partialIndex], data_[refDataIndex],
+                                              inverseA.constAt(partialIndex, refDataIndex));
+        }
+    }
+
+    return true;
 }
 
 // Return if the scattering matrix is underdetermined
 bool ScatteringMatrix::underDetermined() const { return (data_.nItems() < A_.nColumns()); }
 
-// Return the product of inverseA_ and A_ (which should be the identity matrix)
-Array2D<double> ScatteringMatrix::matrixProduct() const { return inverseA_ * A_; }
+// Return the product of inverseA_ and A_ (which should be the identity matrix) at the specified Q value
+Array2D<double> ScatteringMatrix::matrixProduct(double q) const { return inverse(q) * matrix(q); }
 
 /*
  * Construction
@@ -199,7 +315,6 @@ void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &
 {
     // Clear coefficients matrix and its inverse_, and empty our typePairs_ and data_ lists
     A_.clear();
-    inverseA_.clear();
     data_.clear();
     typePairs_.clear();
 
@@ -219,27 +334,8 @@ void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &
     }
 }
 
-// Finalise
-bool ScatteringMatrix::finalise()
-{
-    // Check that we have the correct number of reference data to be able to invert the matrix
-    if (data_.nItems() < A_.nColumns())
-    {
-        Messenger::error("Can't finalise this scattering matrix, since there are not enough reference data ({}) "
-                         "compared to rows in the matrix ({}).\n",
-                         data_.nItems(), A_.nColumns());
-        return false;
-    }
-
-    inverseA_ = A_;
-    if (!SVD::pseudoinverse(inverseA_))
-        return false;
-
-    return true;
-}
-
-// Add reference data
-bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeights &dataWeights, double factor)
+// Add reference data with its associated NeutronWeights, applying optional factor to those weights and the data itself
+bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const NeutronWeights &dataWeights, double factor)
 {
     // Make sure that the scattering weights are valid
     if (!dataWeights.isValid())
@@ -251,28 +347,68 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, NeutronWeigh
 
     // Set coefficients in A_
     const auto nUsedTypes = dataWeights.nUsedTypes();
-    AtomTypeList &usedTypes = dataWeights.atomTypes();
+    const auto &usedTypes = dataWeights.atomTypes();
     for (auto n = 0; n < nUsedTypes; ++n)
     {
         for (auto m = n; m < nUsedTypes; ++m)
         {
             auto colIndex = pairIndex(usedTypes.atomType(n), usedTypes.atomType(m));
             if (colIndex == -1)
-            {
-                Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
-                                 "('{}' and/or '{}').\n",
-                                 usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
-                return false;
-            }
+                return Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
+                                        "('{}' and/or '{}').\n",
+                                        usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
 
             // Now have the local column index of the AtomType pair in our matrix A_...
             A_.at(rowIndex, colIndex) = dataWeights.weight(n, m) * factor;
         }
     }
 
-    // Add reference data and its associated factor
+    // Add reference data and apply the associated factor
     data_.add(weightedData);
     data_.last().values() *= factor;
+
+    // Neutron data, so store dummy XRay form factor data indicator
+    xRayData_.emplace_back(false, std::nullopt, StructureFactors::NoNormalisation);
+
+    return true;
+}
+
+// Add reference data with its associated XRayWeights, applying optional factor to those weights and the data itself
+bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWeights &dataWeights, double factor)
+{
+    // Make sure that the scattering weights are valid
+    if (!dataWeights.isValid())
+        return Messenger::error("Reference data '{}' does not have valid scattering weights.\n", weightedData.name());
+
+    // Extend the scattering matrix by one row
+    A_.addRow(typePairs_.size());
+    const auto rowIndex = A_.nRows() - 1;
+
+    // Set coefficients in A_
+    const auto nUsedTypes = dataWeights.nUsedTypes();
+    const auto &usedTypes = dataWeights.atomTypes();
+    for (int n = 0; n < nUsedTypes; ++n)
+    {
+        for (int m = n; m < nUsedTypes; ++m)
+        {
+            auto colIndex = pairIndex(usedTypes.atomType(n), usedTypes.atomType(m));
+            if (colIndex == -1)
+                return Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes "
+                                        "('{}' and/or '{}').\n",
+                                        usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
+
+            // Now have the local column index of the AtomType pair in our matrix A_.
+            // Since this is X-ray data, we will just store the product of the concentrtion weights and the factor
+            A_.at(rowIndex, colIndex) = dataWeights.preFactor(n, m) * factor;
+        }
+    }
+
+    // Add reference data and apply the associated factor
+    data_.add(weightedData);
+    data_.last().values() *= factor;
+
+    // Store XRay form factor data indicator
+    xRayData_.emplace_back(true, dataWeights, StructureFactors::AverageOfSquaresNormalisation);
 
     return true;
 }
@@ -287,11 +423,9 @@ bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, std::shared
 
     auto colIndex = pairIndex(at1, at2);
     if (colIndex == -1)
-    {
-        Messenger::error("Weights associated to reference data contain one or more unknown AtomTypes ('{}' and/or '{}').\n",
-                         at1->name(), at2->name());
-        return false;
-    }
+        return Messenger::error(
+            "Weights associated to reference data contain one or more unknown AtomTypes ('{}' and/or '{}').\n", at1->name(),
+            at2->name());
 
     // Now have the local column index of the AtomType pair in our matrix A_...
     A_.setRow(rowIndex, 0.0);
@@ -300,6 +434,9 @@ bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, std::shared
     // Add reference data and its associated factor
     data_.add(weightedData);
     data_.last().values() *= factor;
+
+    // Simulated partial data, so store dummy XRay form factor data indicator
+    xRayData_.emplace_back(false, std::nullopt, StructureFactors::NoNormalisation);
 
     return true;
 }

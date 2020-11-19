@@ -69,7 +69,7 @@ class NeutronWeights : public GenericItemBase
     // Reduce data to be naturally-weighted
     void naturalise();
     // Return AtomTypeList
-    AtomTypeList &atomTypes();
+    const AtomTypeList &atomTypes() const;
     // Return number of used AtomTypes
     int nUsedTypes() const;
     // Return concentration product for types i and j

@@ -26,7 +26,7 @@ Configuration  'Bulk'
     EndAddSpecies
   EndGenerator
 
-  InputCoordinates  dlpoly  'dlpoly_vdw/CONFIG'
+  InputCoordinates  dlpoly  '../_data/dlpoly/water3000_vdw/CONFIG'
   EndInputCoordinates
 
   # Test analytical energy against production and reference energy
@@ -41,7 +41,7 @@ Configuration  'Bulk'
     Test on
     TestAnalytic  on
     TestThreshold  3.2   # See README
-    TestReference  dlpoly  'dlpoly_vdw/REVCON'
+    TestReference  dlpoly  '../_data/dlpoly/water3000_vdw/REVCON'
     EndTestReference
   EndModule
 EndConfiguration

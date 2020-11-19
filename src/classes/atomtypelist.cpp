@@ -226,7 +226,7 @@ double AtomTypeList::totalPopulation() const
 }
 
 // Return nth referenced AtomType
-std::shared_ptr<AtomType> AtomTypeList::atomType(int n)
+const std::shared_ptr<AtomType> AtomTypeList::atomType(int n) const
 {
 #ifdef CHECKS
     if ((n < 0) || (n >= types_.size()))

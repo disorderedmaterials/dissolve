@@ -11,22 +11,17 @@
 #include "templates/algorithms.h"
 #include "templates/enumhelpers.h"
 
-XRayWeights::XRayWeights()
-    : formFactors_(XRayFormFactors::NoFormFactorData), valid_(false), boundCoherentSquareOfAverage_(0.0),
-      boundCoherentAverageOfSquares_(0.0)
-{
-}
+XRayWeights::XRayWeights() : formFactors_(XRayFormFactors::NoFormFactorData), valid_(false) {}
 
 XRayWeights::XRayWeights(const XRayWeights &source) { (*this) = source; }
 
 void XRayWeights::operator=(const XRayWeights &source)
 {
     formFactors_ = source.formFactors_;
-    boundCoherentSquareOfAverage_ = source.boundCoherentSquareOfAverage_;
-    boundCoherentAverageOfSquares_ = source.boundCoherentAverageOfSquares_;
     atomTypes_ = source.atomTypes_;
     concentrations_ = source.concentrations_;
     concentrationProducts_ = source.concentrationProducts_;
+    formFactorData_ = source.formFactorData_;
     preFactors_ = source.preFactors_;
     valid_ = source.valid_;
 }
@@ -115,8 +110,11 @@ bool XRayWeights::finalise(XRayFormFactors::XRayFormFactorData formFactors)
     return true;
 }
 
+// Return X-Ray form factors being used
+XRayFormFactors::XRayFormFactorData XRayWeights::formFactors() const { return formFactors_; }
+
 // Return AtomTypeList
-AtomTypeList &XRayWeights::atomTypes() { return atomTypes_; }
+const AtomTypeList &XRayWeights::atomTypes() const { return atomTypes_; }
 
 // Return number of used AtomTypes
 int XRayWeights::nUsedTypes() const { return atomTypes_.nItems(); }
@@ -161,6 +159,9 @@ double XRayWeights::concentrationProduct(int typeIndexI, int typeIndexJ) const
 {
     return concentrationProducts_.constAt(typeIndexI, typeIndexJ);
 }
+
+// Return pre-factor for types i and j
+double XRayWeights::preFactor(int typeIndexI, int typeIndexJ) const { return preFactors_.constAt(typeIndexI, typeIndexJ); }
 
 // Return form factor for type i over supplied Q values
 Array<double> XRayWeights::formFactor(int typeIndexI, const Array<double> &Q) const
@@ -238,6 +239,17 @@ Array<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const Array<do
     return fijq;
 }
 
+// Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q value
+double XRayWeights::boundCoherentSquareOfAverage(double Q) const
+{
+    auto bbar = 0.0;
+
+    for (auto typeI = 0; typeI < atomTypes_.nItems(); ++typeI)
+        bbar += concentrations_.constAt(typeI) * formFactorData_[typeI].get().magnitude(Q);
+
+    return bbar;
+}
+
 // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q values
 Array<double> XRayWeights::boundCoherentSquareOfAverage(const Array<double> &Q) const
 {
@@ -251,6 +263,20 @@ Array<double> XRayWeights::boundCoherentSquareOfAverage(const Array<double> &Q) 
 
         for (auto n = 0; n < Q.nItems(); ++n)
             bbar[n] += ci * fi.magnitude(Q.constAt(n));
+    }
+
+    return bbar;
+}
+
+// Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q value
+double XRayWeights::boundCoherentAverageOfSquares(double Q) const
+{
+    auto bbar = 0.0;
+
+    for (auto typeI = 0; typeI < atomTypes_.nItems(); ++typeI)
+    {
+        auto mag = formFactorData_[typeI].get().magnitude(Q);
+        bbar += concentrations_.constAt(typeI) * mag * mag;
     }
 
     return bbar;

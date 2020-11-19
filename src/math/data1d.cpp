@@ -129,6 +129,8 @@ void Data1D::removeFirstPoint()
 
     x_.removeFirst();
     values_.removeFirst();
+    if (hasError_)
+        errors_.removeFirst();
 
     ++version_;
 }
@@ -141,6 +143,8 @@ void Data1D::removeLastPoint()
 
     x_.removeLast();
     values_.removeLast();
+    if (hasError_)
+        errors_.removeLast();
 
     ++version_;
 }
