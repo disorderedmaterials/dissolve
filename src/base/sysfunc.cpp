@@ -272,6 +272,21 @@ bool DissolveSys::isNumber(std::string_view text, bool &isFloatingPoint)
     return true;
 }
 
+// Replace all occurrences of search string with replace string
+std::string DissolveSys::replace(const std::string_view source, const std::string_view search, const std::string_view replace)
+{
+    std::string result{source};
+
+    size_t pos = result.find(search);
+    while (pos != std::string::npos)
+    {
+        result.replace(pos, search.size(), replace);
+        pos = result.find(search, pos + replace.size());
+    }
+
+    return result;
+}
+
 /*
  * Files
  */

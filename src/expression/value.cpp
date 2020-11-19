@@ -30,7 +30,13 @@ ExpressionValue::ExpressionValue(double value)
 
 ExpressionValue::~ExpressionValue() {}
 
-ExpressionValue::ExpressionValue(const ExpressionValue &source) { (*this) = source; }
+ExpressionValue::ExpressionValue(const ExpressionValue &source)
+{
+    valueI_ = source.valueI_;
+    valueD_ = source.valueD_;
+    type_ = source.type_;
+    typeFixed_ = source.typeFixed_;
+}
 
 void ExpressionValue::operator=(const ExpressionValue &source)
 {
