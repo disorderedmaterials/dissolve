@@ -78,13 +78,13 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = enumOptionsWidget;
         base = enumOptionsWidget;
     }
-    else if (type == KeywordBase::ExpressionVariableListData)
+    else if (type == KeywordBase::ExpressionVariableVectorData)
     {
-        ExpressionVariableListKeywordWidget *expressionVariableListWidget =
-            new ExpressionVariableListKeywordWidget(nullptr, keywordBase, coreData);
-        connect(expressionVariableListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = expressionVariableListWidget;
-        base = expressionVariableListWidget;
+        ExpressionVariableVectorKeywordWidget *expressionVariableVectorWidget =
+            new ExpressionVariableVectorKeywordWidget(nullptr, keywordBase, coreData);
+        connect(expressionVariableVectorWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+        widget = expressionVariableVectorWidget;
+        base = expressionVariableVectorWidget;
     }
     else if (type == KeywordBase::FileAndFormatData)
     {

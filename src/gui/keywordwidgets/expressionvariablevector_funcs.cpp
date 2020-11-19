@@ -6,14 +6,16 @@
 #include "gui/delegates/exponentialspin.hui"
 #include "gui/delegates/integerspin.hui"
 #include "gui/helpers/tablewidgetupdater.h"
-#include "gui/keywordwidgets/expressionvariablelist.h"
+#include "gui/keywordwidgets/expressionvariablevector.h"
 #include "procedure/nodes/node.h"
-#include "templates/variantpointer.h"
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QString>
 
-ExpressionVariableListKeywordWidget::ExpressionVariableListKeywordWidget(QWidget *parent, KeywordBase *keyword,
+Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
+Q_DECLARE_METATYPE(std::shared_ptr<ExpressionVariable>)
+
+ExpressionVariableVectorKeywordWidget::ExpressionVariableVectorKeywordWidget(QWidget *parent, KeywordBase *keyword,
                                                                          const CoreData &coreData)
     : QWidget(parent), KeywordWidgetBase(coreData)
 {
@@ -21,9 +23,9 @@ ExpressionVariableListKeywordWidget::ExpressionVariableListKeywordWidget(QWidget
     ui_.setupUi(this);
 
     // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<ExpressionVariableListKeyword *>(keyword);
+    keyword_ = dynamic_cast<ExpressionVariableVectorKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword '{}' into ExpressionVariableListKeyword.\n", keyword->name());
+        Messenger::error("Couldn't cast base keyword '{}' into ExpressionVariableVectorKeyword.\n", keyword->name());
     else
     {
         // Set current information
@@ -42,47 +44,42 @@ ExpressionVariableListKeywordWidget::ExpressionVariableListKeywordWidget(QWidget
  */
 
 // Variable table update function
-void ExpressionVariableListKeywordWidget::updateVariableTableRow(int row, ExpressionNode *node, bool createItem)
+void ExpressionVariableVectorKeywordWidget::updateVariableTableRow(int row, std::shared_ptr<ExpressionVariable> variable, bool createItem)
 {
-    // Case the node up into an ExpressionVariable
-    auto *var = dynamic_cast<ExpressionVariable *>(node);
-    if (!var)
-        return;
-
     QTableWidgetItem *item;
 
     // Name
     if (createItem)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<ExpressionVariable>(var));
+        item->setData(Qt::UserRole, QVariant::fromValue(variable));
         ui_.VariablesTable->setItem(row, 0, item);
     }
     else
         item = ui_.VariablesTable->item(row, 0);
-    item->setText(QString::fromStdString(std::string(var->name())));
+    item->setText(QString::fromStdString(std::string(variable->name())));
 
     // Value
     if (createItem)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<ExpressionVariable>(var));
+        item->setData(Qt::UserRole, QVariant::fromValue(variable));
         ui_.VariablesTable->setItem(row, 1, item);
     }
     else
         item = ui_.VariablesTable->item(row, 1);
-    item->setText(QString::fromStdString(var->value().asString()));
+    item->setText(QString::fromStdString(variable->value().asString()));
 }
 
 // Variable data changed
-void ExpressionVariableListKeywordWidget::on_VariablesTable_itemChanged(QTableWidgetItem *w)
+void ExpressionVariableVectorKeywordWidget::on_VariablesTable_itemChanged(QTableWidgetItem *w)
 {
     if (refreshing_)
         return;
 
     // Get the widget's data (our ExpressionVariable)
-    ExpressionVariable *var = VariantPointer<ExpressionVariable>(w->data(Qt::UserRole));
-    if (!var)
+    std::shared_ptr<ExpressionVariable> variable = w->data(Qt::UserRole).value<std::shared_ptr<ExpressionVariable>>();
+    if (!variable)
         return;
 
     // Check column of the item to see what we need to do
@@ -91,22 +88,22 @@ void ExpressionVariableListKeywordWidget::on_VariablesTable_itemChanged(QTableWi
         // Variable name
         case (0):
             // Check that the name is not currently in use anywhere in the Procedure
-            if (keyword_->parentNode()->parameterExists(qPrintable(w->text()), var))
+            if (keyword_->parentNode()->parameterExists(qPrintable(w->text()), variable))
             {
                 Messenger::error("A Node with name '{}' already exists elsewhere in the Procedure.\n", qPrintable(w->text()));
-                w->setText(QString::fromStdString(std::string(var->name())));
+                w->setText(QString::fromStdString(std::string(variable->name())));
                 return;
             }
             else
-                var->setName(qPrintable(w->text()));
+                variable->setName(qPrintable(w->text()));
             break;
         // Variable value
         case (1):
             // Set the new value
             if (keyword_->variableType() == ExpressionValue::IntegerType)
-                var->set(w->text().toInt());
+                variable->setValue(w->text().toInt());
             else if (keyword_->variableType() == ExpressionValue::DoubleType)
-                var->set(w->text().toDouble());
+                variable->setValue(w->text().toDouble());
             break;
     }
 
@@ -118,13 +115,13 @@ void ExpressionVariableListKeywordWidget::on_VariablesTable_itemChanged(QTableWi
  */
 
 // Update value displayed in widget
-void ExpressionVariableListKeywordWidget::updateValue()
+void ExpressionVariableVectorKeywordWidget::updateValue()
 {
     refreshing_ = true;
 
     // Update the variables list against that contained in the keyword's data
-    TableWidgetUpdater<ExpressionVariableListKeywordWidget, ExpressionNode> tableUpdater(
-        ui_.VariablesTable, keyword_->data(), this, &ExpressionVariableListKeywordWidget::updateVariableTableRow);
+    TableWidgetUpdater<ExpressionVariableVectorKeywordWidget, ExpressionVariable, std::shared_ptr<ExpressionVariable>> tableUpdater(
+        ui_.VariablesTable, keyword_->data(), this, &ExpressionVariableVectorKeywordWidget::updateVariableTableRow);
 
     refreshing_ = false;
 }
