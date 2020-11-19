@@ -50,8 +50,8 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
     bool write(LineParser &parser)
     {
         parser.writeLineF("{}  {}  {}\n", data_.nRows(), data_.nColumns(), DissolveSys::btoa(data_.halved()));
-        for (auto n = 0; n < data_.linearArraySize(); ++n)
-            if (!data_.linearValue(n).write(parser))
+        for (auto n : data_)
+            if (!n.write(parser))
                 return false;
         return true;
     }

@@ -50,8 +50,8 @@ template <> class GenericItemContainer<Array2D<bool>> : public GenericItem
     static bool write(const Array2D<bool> &thisData, LineParser &parser)
     {
         parser.writeLineF("{}  {}  {}\n", thisData.nRows(), thisData.nColumns(), DissolveSys::btoa(thisData.halved()));
-        for (auto n = 0; n < thisData.linearArraySize(); ++n)
-            if (!parser.writeLineF("{}\n", thisData.constLinearValue(n) ? 'T' : 'F'))
+        for (auto n : thisData)
+            if (!parser.writeLineF("{}\n", n ? 'T' : 'F'))
                 return false;
         return true;
     }

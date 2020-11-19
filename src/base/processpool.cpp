@@ -1698,7 +1698,7 @@ bool ProcessPool::broadcast(Array2D<double> &array, int rootRank, ProcessPool::C
         // Now broadcast Array data
         if ((nRows * nColumns) > 0)
         {
-            if (MPI_Bcast(array.linearArray(), array.linearArraySize(), MPI_DOUBLE, rootRank, communicator(commType)) !=
+            if (MPI_Bcast(array.linearArray().data(), array.linearArraySize(), MPI_DOUBLE, rootRank, communicator(commType)) !=
                 MPI_SUCCESS)
             {
                 Messenger::print("Failed to broadcast Array2D<double> data from root rank {}.\n", rootRank);
@@ -1732,7 +1732,7 @@ bool ProcessPool::broadcast(Array2D<double> &array, int rootRank, ProcessPool::C
         array.initialise(nRows, nColumns, half);
         if ((nRows * nColumns) > 0)
         {
-            if (MPI_Bcast(array.linearArray(), array.linearArraySize(), MPI_DOUBLE, rootRank, communicator(commType)) !=
+            if (MPI_Bcast(array.linearArray().data(), array.linearArraySize(), MPI_DOUBLE, rootRank, communicator(commType)) !=
                 MPI_SUCCESS)
             {
                 Messenger::print("Slave {} (world rank {}) failed to receive ArrayD<double> data from root rank {}.\n",
@@ -1782,12 +1782,14 @@ bool ProcessPool::broadcast(Array2D<bool> &array, int rootRank, ProcessPool::Com
         // Now broadcast Array data
         if ((nRows * nColumns) > 0)
         {
-            if (MPI_Bcast(array.linearArray(), array.linearArraySize(), MPI_C_BOOL, rootRank, communicator(commType)) !=
-                MPI_SUCCESS)
-            {
-                Messenger::print("Failed to broadcast Array2D<bool> data from root rank {}.\n", rootRank);
-                return false;
-            }
+            return false; // FIXME: handle vector<bool> nonsense
+                          // if (MPI_Bcast(array.linearArray().data(), array.linearArraySize(), MPI_C_BOOL, rootRank,
+                          // communicator(commType)) !=
+                          //     MPI_SUCCESS)
+                          // {
+                          //     Messenger::print("Failed to broadcast Array2D<bool> data from root rank {}.\n", rootRank);
+                          //     return false;
+                          // }
         }
     }
     else
@@ -1816,13 +1818,16 @@ bool ProcessPool::broadcast(Array2D<bool> &array, int rootRank, ProcessPool::Com
         array.initialise(nRows, nColumns, half);
         if ((nRows * nColumns) > 0)
         {
-            if (MPI_Bcast(array.linearArray(), array.linearArraySize(), MPI_C_BOOL, rootRank, communicator(commType)) !=
-                MPI_SUCCESS)
-            {
-                Messenger::print("Slave {} (world rank {}) failed to receive ArrayD<bool> data from root rank {}.\n", poolRank_,
-                                 worldRank_, rootRank);
-                return false;
-            }
+            return false; // FIXME: Handle vector::bool nonsense
+                          // if (MPI_Bcast(array.linearArray().data(), array.linearArraySize(), MPI_C_BOOL, rootRank,
+                          // communicator(commType)) !=
+                          //     MPI_SUCCESS)
+                          // {
+                          //     Messenger::print("Slave {} (world rank {}) failed to receive ArrayD<bool> data from root rank
+                          //     {}.\n", poolRank_,
+                          //                      worldRank_, rootRank);
+                          //     return false;
+                          // }
         }
         else
             array.clear();
@@ -2481,10 +2486,9 @@ bool ProcessPool::equality(const Array2D<int> &array, ProcessPool::CommunicatorT
                                 array.halved());
 
     // Keep it simple (and slow) and check/send one value at a time
-    for (auto n = 0; n < array.linearArraySize(); ++n)
-        if (!equality(array.constLinearValue(n), commType))
-            return Messenger::error("Array2D<int> value {} is not equivalent (process {} has {:e}).\n", n, poolRank_,
-                                    array.constLinearValue(n));
+    for (auto n : array)
+        if (!equality(n, commType))
+            return Messenger::error("Array2D<int> value {} is not equivalent (process {} has {:e}).\n", n, poolRank_, n);
 #endif
     return true;
 }
@@ -2503,10 +2507,9 @@ bool ProcessPool::equality(const Array2D<double> &array, ProcessPool::Communicat
                                 array.halved());
 
     // Keep it simple (and slow) and check/send one value at a time
-    for (auto n = 0; n < array.linearArraySize(); ++n)
-        if (!equality(array.constLinearValue(n), commType))
-            return Messenger::error("Array2D<double> value {} is not equivalent (process {} has {:e}).\n", n, poolRank_,
-                                    array.constLinearValue(n));
+    for (auto n : array)
+        if (!equality(n, commType))
+            return Messenger::error("Array2D<double> value {} is not equivalent (process {} has {:e}).\n", n, poolRank_, n);
 #endif
     return true;
 }
@@ -2525,10 +2528,9 @@ bool ProcessPool::equality(const Array2D<bool> &array, ProcessPool::Communicator
                                 array.halved());
 
     // Keep it simple (and slow) and check/send one value at a time
-    for (auto n = 0; n < array.linearArraySize(); ++n)
-        if (!equality(array.constLinearValue(n), commType))
-            return Messenger::error("Array2D<bool> value {} is not equivalent (process {} has {}).\n", n, poolRank_,
-                                    array.constLinearValue(n));
+    for (auto n : array)
+        if (!equality(n, commType))
+            return Messenger::error("Array2D<bool> value {} is not equivalent (process {} has {}).\n", n, poolRank_, n);
 #endif
     return true;
 }

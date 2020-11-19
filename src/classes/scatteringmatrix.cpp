@@ -166,11 +166,11 @@ void ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
      */
 
     // Get linear array from estimatedSQ
-    Data1D *partials = estimatedSQ.linearArray();
+    auto &partials = estimatedSQ.linearArray();
 
     // Clear current partials
-    for (auto n = 0; n < estimatedSQ.linearArraySize(); ++n)
-        partials[n].clear();
+    for (auto n : partials)
+        n.clear();
 
     // Generate new partials (nPartials = nColumns)
     for (auto n = 0; n < A_.nColumns(); ++n)
@@ -208,7 +208,7 @@ void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &
 
     // Create partials array
     estimatedSQ.initialise(types.size(), types.size(), true);
-    Data1D *partials = estimatedSQ.linearArray();
+    auto partials = estimatedSQ.linearArray();
     auto index = 0;
     for (auto [i, j] : typePairs_)
     {

@@ -47,9 +47,8 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
     bool write(LineParser &parser)
     {
         parser.writeLineF("{}  {}  {}\n", data_.nRows(), data_.nColumns(), DissolveSys::btoa(data_.halved()));
-        for (auto n = 0; n < data_.linearArraySize(); ++n)
+        for (auto data: data_)
         {
-            auto data = data_.linearValue(n);
             parser.writeLineF("{}\n", data.size());
             for (auto n : data)
                 if (!parser.writeLineF("{:16.9e}\n", n))
@@ -86,10 +85,8 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
     static bool write(const Array2D<std::vector<double>> &thisData, LineParser &parser)
     {
         parser.writeLineF("{}  {}  {}\n", thisData.nRows(), thisData.nColumns(), DissolveSys::btoa(thisData.halved()));
-        for (auto n = 0; n < thisData.linearArraySize(); ++n)
+        for (const auto &arrayData : thisData)
         {
-            const auto &arrayData = thisData.constLinearValue(n);
-
             parser.writeLineF("{}\n", arrayData.size());
             for (auto m : arrayData)
             {

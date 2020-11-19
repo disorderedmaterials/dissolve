@@ -43,15 +43,7 @@ double Extrema::max(const Array<double> &A)
 double Extrema::min(const Array2D<double> &A)
 {
     if (A.linearArraySize() > 0)
-    {
-        double min = A.constLinearValue(0);
-        for (auto i = 0; i < A.linearArraySize(); ++i)
-        {
-            if (A.constLinearValue(i) < min)
-                min = A.constLinearValue(i);
-        }
-        return min;
-    }
+        return *std::min_element(A.begin(), A.end());
     else
         return 0;
 }
@@ -60,15 +52,7 @@ double Extrema::min(const Array2D<double> &A)
 double Extrema::max(const Array2D<double> &A)
 {
     if (A.linearArraySize() > 0)
-    {
-        double max = A.constLinearValue(0);
-        for (auto i = 0; i < A.linearArraySize(); ++i)
-        {
-            if (A.constLinearValue(i) > max)
-                max = A.constLinearValue(i);
-        }
-        return max;
-    }
+        return *std::max_element(A.begin(), A.end());
     else
         return 0;
 }
@@ -111,15 +95,7 @@ double Extrema::absMax(const Array<double> &A)
 double Extrema::absMin(const Array2D<double> &A)
 {
     if (A.linearArraySize() > 0)
-    {
-        double absMin = abs(A.constLinearValue(0));
-        for (auto i = 0; i < A.linearArraySize(); ++i)
-        {
-            if (abs(A.constLinearValue(i)) < absMin)
-                absMin = abs(A.constLinearValue(i));
-        }
-        return absMin;
-    }
+        return *std::min_element(A.begin(), A.end(), [](auto a, auto b) { return fabs(a) < fabs(b); });
     else
         return 0;
 }
@@ -128,15 +104,7 @@ double Extrema::absMin(const Array2D<double> &A)
 double Extrema::absMax(const Array2D<double> &A)
 {
     if (A.linearArraySize() > 0)
-    {
-        double absMax = abs(A.constLinearValue(0));
-        for (auto i = 0; i < A.linearArraySize(); ++i)
-        {
-            if (abs(A.constLinearValue(i)) < absMax)
-                absMax = abs(A.constLinearValue(i));
-        }
-        return absMax;
-    }
+        return *std::max_element(A.begin(), A.end(), [](auto a, auto b) { return fabs(a) < fabs(b); });
     else
         return 0;
 }

@@ -50,10 +50,8 @@ template <> class GenericItemContainer<Array2D<Array<double>>> : public GenericI
     static bool write(const Array2D<Array<double>> &thisData, LineParser &parser)
     {
         parser.writeLineF("{}  {}  {}\n", thisData.nRows(), thisData.nColumns(), DissolveSys::btoa(thisData.halved()));
-        for (auto n = 0; n < thisData.linearArraySize(); ++n)
+        for (const auto &arrayData : thisData)
         {
-            const Array<double> &arrayData = thisData.constLinearValue(n);
-
             parser.writeLineF("{}\n", arrayData.nItems());
             for (auto m = 0; m < arrayData.nItems(); ++m)
             {
