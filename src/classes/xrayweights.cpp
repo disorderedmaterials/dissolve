@@ -166,16 +166,16 @@ double XRayWeights::concentrationProduct(int typeIndexI, int typeIndexJ) const
 // Return form factor for type i over supplied Q values
 std::vector<double> XRayWeights::formFactor(int typeIndexI, const std::vector<double> &Q) const
 {
+    // Initialise results array
+    std::vector<double> fiq(Q.size());
+
 #ifdef CHECKS
     if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
     {
         Messenger::error("XRayWeights::formFactorProduct() - Type i index {} is out of range.\n", typeIndexI);
-        return 0.0;
+        return fiq;
     }
 #endif
-
-    // Initialise results array
-    std::vector<double> fiq(Q.size());
 
     auto &fi = formFactorData_[typeIndexI].get();
 
@@ -212,22 +212,22 @@ double XRayWeights::weight(int typeIndexI, int typeIndexJ, double Q) const
 // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) over supplied Q values
 std::vector<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const std::vector<double> &Q) const
 {
+    // Initialise results array
+    std::vector<double> fijq(Q.size());
+
     // Get form factor data for involved types
 #ifdef CHECKS
     if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
     {
         Messenger::error("XRayWeights::weight() - Type i index {} is out of range.\n", typeIndexI);
-        return 0.0;
+        return fijq;
     }
     if ((typeIndexJ < 0) || (typeIndexJ >= formFactorData_.size()))
     {
         Messenger::error("XRayWeights::weight() - Type j index {} is out of range.\n", typeIndexJ);
-        return 0.0;
+        return fijq;
     }
 #endif
-
-    // Initialise results array
-    std::vector<double> fijq(Q.size());
 
     auto &fi = formFactorData_[typeIndexI].get();
     auto &fj = formFactorData_[typeIndexJ].get();

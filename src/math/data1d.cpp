@@ -158,7 +158,7 @@ void Data1D::removeLastPoint()
 double &Data1D::xAxis(int index)
 {
 #ifdef CHECKS
-    if ((index < 0) || (index >= x_.nItems()))
+    if ((index < 0) || (index >= x_.size()))
     {
         static double dummy;
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data1D::xAxis().\n", index);
@@ -174,7 +174,7 @@ double &Data1D::xAxis(int index)
 double Data1D::constXAxis(int index) const
 {
 #ifdef CHECKS
-    if ((index < 0) || (index >= x_.nItems()))
+    if ((index < 0) || (index >= x_.size()))
     {
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data1D::constXAxis().\n", index);
         return 0.0;
@@ -198,7 +198,7 @@ const std::vector<double> &Data1D::xAxis() const { return x_; }
 double &Data1D::value(int index)
 {
 #ifdef CHECKS
-    if ((index < 0) || (index >= values_.nItems()))
+    if ((index < 0) || (index >= values_.size()))
     {
         static double dummy;
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for values_ array in Data1D::value().\n", index);
@@ -214,7 +214,7 @@ double &Data1D::value(int index)
 double Data1D::constValue(int index) const
 {
 #ifdef CHECKS
-    if ((index < 0) || (index >= values_.nItems()))
+    if ((index < 0) || (index >= values_.size()))
     {
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for values_ array in Data1D::constValue().\n", index);
         return 0.0;
@@ -360,7 +360,7 @@ void Data1D::operator+=(const Data1D &source)
     {
 #ifdef CHECKS
         // Check x values for consistency
-        if (fabs(x_[n] - source.constXAxis(n)) > 1.0e-6)
+        if (fabs(x_[n] - source.x_[n]) > 1.0e-6)
         {
             Messenger::error("Failed to += these Data1D together since the x arrays are different (at point {}, x "
                              "are {:e} and {:e}).\n",
@@ -405,7 +405,7 @@ void Data1D::operator-=(const Data1D &source)
     {
 #ifdef CHECKS
         // Check x values for consistency
-        if (fabs(x_[n] - source.constXAxis(n)) > 1.0e-6)
+        if (fabs(x_[n] - source.x_[n]) > 1.0e-6)
         {
             Messenger::error("Failed to -= these Data1D together since the x arrays are different (at point {}, x "
                              "are {:e} and {:e}).\n",
