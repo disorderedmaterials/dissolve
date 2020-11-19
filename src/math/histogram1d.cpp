@@ -241,7 +241,7 @@ bool Histogram1D::write(LineParser &parser)
 bool Histogram1D::allSum(ProcessPool &procPool)
 {
 #ifdef PARALLEL
-    if (!procPool.allSum(bins_, nBins_))
+    if (!procPool.allSum(bins_.data(), nBins_))
         return false;
 #endif
     return true;
@@ -270,8 +270,8 @@ bool Histogram1D::broadcast(ProcessPool &procPool, const int root, const CoreDat
         return false;
     if (!procPool.broadcast(bins_, root))
         return false;
-    for (auto n = 0; n < averages_.nItems(); ++n)
-        if (!averages_[n].broadcast(procPool, root, coreData))
+    for (auto n : averages_)
+        if (!n.broadcast(procPool, root, coreData))
             return false;
 #endif
     return true;
@@ -304,8 +304,8 @@ bool Histogram1D::equality(ProcessPool &procPool)
     if (!procPool.equality(nMissed_))
         return Messenger::error("Histogram1D nunmber of binned values is not equivalent (process {} has {}).\n",
                                 procPool.poolRank(), nBinned_);
-    for (auto n = 0; n < averages_.nItems(); ++n)
-        if (!averages_[n].equality(procPool))
+    for (auto n : averages_)
+        if (!n.equality(procPool))
             return Messenger::error("Histogram1D average values not equivalent.\n");
 #endif
     return true;
