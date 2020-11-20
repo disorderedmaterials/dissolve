@@ -138,6 +138,7 @@ void Data1D::removeFirstPoint()
 
     x_.erase(x_.begin());
     values_.erase(values_.begin());
+    if (hasError_) errors_.erase(values.begin());
 
     ++version_;
 }
@@ -150,6 +151,7 @@ void Data1D::removeLastPoint()
 
     x_.pop_back();
     values_.pop_back();
+    if (hasError_) errors_.pop_back();
 
     ++version_;
 }

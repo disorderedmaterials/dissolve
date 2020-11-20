@@ -567,7 +567,7 @@ double GaussFit::constructReciprocal(double rMin, double rMax, const std::vector
 
     // Regenerate approximation and calculate percentage error of fit
     generateApproximation(FunctionSpace::ReciprocalSpace);
-    currentError_ = Error::percent(referenceData_, approximateData_);
+    currentError_ = Error::percent(referenceData_, approximateData_, true);
 
     return currentError_;
 }

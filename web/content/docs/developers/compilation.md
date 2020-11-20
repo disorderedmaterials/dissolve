@@ -172,6 +172,14 @@ Example: `-DBUILD_ANTLR_ZIPFILE:path=/path/to/antlr4-cpp-runtime-4.8-source.zip`
 
 Default: `not set`
 
+#### `BUILD_TESTS`
+
+In addition to the main build, also build unit tests.
+
+Example: `-DBUILD_TESTS:bool=true`
+
+Default: `false`
+
 #### `GUI`
 
 Requests that the GUI version of Dissolve be built. This option is mutually exclusive with `-DPARALLEL:bool=true`. Qt5 libraries and development tools must be present in the path, as well as [`FTGL`](http://ftgl.sourceforge.net/docs/html/).

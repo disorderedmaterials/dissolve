@@ -21,7 +21,7 @@ Configuration 'liquid'
       BoxAction  None
     EndAddSpecies
   EndGenerator
-  InputCoordinates  epsr  'epsr_dep0.2indep0.1/argonbox.ato'
+  InputCoordinates  epsr  '../_data/epsr25/argon10000_dep0.2indep0.1/argonbox.ato'
   EndInputCoordinates
 EndConfiguration
 
@@ -46,7 +46,7 @@ EndModule
 
 Module DataTest
   Threshold  0.25
-  Data1D  'NeutronSQ01//WeightedSQ//Total'  xy  'epsr_dep0.2indep0.1/argon.EPSR.u01'
+  Data1D  'NeutronSQ01//WeightedSQ//Total'  xy  '../_data/epsr25/argon10000_dep0.2indep0.1/argon.EPSR.u01'
     Y  2
   EndData1D
 EndModule
