@@ -275,7 +275,7 @@ void Filters::trim(Data1D &data, double xMin, double xMax, bool interpolateEnds,
 // Trim supplied data to be the same range as the reference data
 void Filters::trim(Data1D &data, const Data1D &ref, bool interpolateEnds, double interpolationThreshold)
 {
-    trim(data, ref.constXAxis().firstValue(), ref.constXAxis().lastValue(), interpolateEnds, interpolationThreshold);
+    trim(data, ref.xAxis().front(), ref.xAxis().back(), interpolateEnds, interpolationThreshold);
 }
 
 // Convert bin boundaries to centre-bin values

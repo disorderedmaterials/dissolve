@@ -10,6 +10,7 @@
 #include "genericitems/array2ddouble.h"
 #include "templates/algorithms.h"
 #include "templates/enumhelpers.h"
+#include <numeric>
 
 XRayWeights::XRayWeights() : formFactors_(XRayFormFactors::NoFormFactorData), valid_(false) {}
 
@@ -243,12 +244,9 @@ std::vector<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const st
 // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q value
 double XRayWeights::boundCoherentSquareOfAverage(double Q) const
 {
-    auto bbar = 0.0;
-
-    for (auto typeI = 0; typeI < atomTypes_.nItems(); ++typeI)
-        bbar += concentrations_.constAt(typeI) * formFactorData_[typeI].get().magnitude(Q);
-
-    return bbar;
+    return std::inner_product(
+        concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0, [](auto a, auto b) { return a + b; },
+        [Q](auto con, auto form) { return con * form.get().magnitude(Q); });
 }
 
 // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q values
@@ -272,15 +270,9 @@ std::vector<double> XRayWeights::boundCoherentSquareOfAverage(const std::vector<
 // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q value
 double XRayWeights::boundCoherentAverageOfSquares(double Q) const
 {
-    auto bbar = 0.0;
-
-    for (auto typeI = 0; typeI < atomTypes_.nItems(); ++typeI)
-    {
-        auto mag = formFactorData_[typeI].get().magnitude(Q);
-        bbar += concentrations_.constAt(typeI) * mag * mag;
-    }
-
-    return bbar;
+    return std::inner_product(
+        concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0, [](auto a, auto b) { return a + b; },
+        [Q](auto con, auto form) { return con * form.get().magnitude(Q); });
 }
 
 // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q values

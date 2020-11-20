@@ -398,9 +398,9 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // normalisation from the reference data (we assume that the two are consistent)
             auto normType = module->keywords().enumeration<StructureFactors::NormalisationType>("Normalisation");
             if (normType == StructureFactors::AverageOfSquaresNormalisation)
-                refMinusIntra.values() *= weights.boundCoherentAverageOfSquares();
+                refMinusIntra *= weights.boundCoherentAverageOfSquares();
             else if (normType == StructureFactors::SquareOfAverageNormalisation)
-                refMinusIntra.values() *= weights.boundCoherentSquareOfAverage();
+                refMinusIntra *= weights.boundCoherentSquareOfAverage();
 
             if (!scatteringMatrix.addReferenceData(refMinusIntra, weights, feedback))
                 return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->uniqueName());
@@ -420,25 +420,25 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             if (normType == StructureFactors::SquareOfAverageNormalisation)
             {
                 // Remove square of average normalisation, and apply average of squares
-                Array<double> bbarOld = weights.boundCoherentSquareOfAverage(normalisedRef.constXAxis());
-                Array<double> bbarNew = weights.boundCoherentAverageOfSquares(normalisedRef.constXAxis());
-                for (auto n = 0; n < bbarOld.nItems(); ++n)
+                auto bbarOld = weights.boundCoherentSquareOfAverage(normalisedRef.xAxis());
+                auto bbarNew = weights.boundCoherentAverageOfSquares(normalisedRef.xAxis());
+                for (auto n = 0; n < bbarOld.size(); ++n)
                     normalisedRef.value(n) *= bbarOld[n] / bbarNew[n];
             }
             else if (normType == StructureFactors::NoNormalisation)
             {
-                Array<double> bbar = weights.boundCoherentAverageOfSquares(normalisedRef.constXAxis());
-                for (auto n = 0; n < bbar.nItems(); ++n)
-                    normalisedRef.value(n) /= bbar[n];
+                auto bbar = weights.boundCoherentAverageOfSquares(normalisedRef.xAxis());
+                std::transform(bbar.begin(), bbar.end(), normalisedRef.values().begin(), normalisedRef.values().begin(),
+                               [](auto b, auto v) { return v / b; });
             }
 
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
             // Our reference data is normalised to AverageOfSquares at this point, so must do the same to the
             // bound total before subtracting it.
             auto boundTotal = weightedSQ.boundTotal(false);
-            Array<double> bbar = weights.boundCoherentAverageOfSquares(boundTotal.constXAxis());
-            for (auto n = 0; n < bbar.nItems(); ++n)
-                boundTotal.value(n) /= bbar[n];
+            auto bbar = weights.boundCoherentAverageOfSquares(boundTotal.xAxis());
+            std::transform(boundTotal.values().begin(), boundTotal.values().end(), bbar.begin(), boundTotal.values().begin(),
+                           [](auto bound, auto b) { return bound / b; });
             Interpolator::addInterpolated(normalisedRef, boundTotal, -1.0);
 
             if (!scatteringMatrix.addReferenceData(normalisedRef, weights, feedback))

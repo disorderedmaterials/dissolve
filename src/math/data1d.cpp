@@ -138,7 +138,7 @@ void Data1D::removeFirstPoint()
 
     x_.erase(x_.begin());
     values_.erase(values_.begin());
-    if (hasError_) errors_.erase(values.begin());
+    if (hasError_) errors_.erase(values_.begin());
 
     ++version_;
 }

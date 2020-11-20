@@ -38,9 +38,9 @@ bool XRaySQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSe
     // Form total G(r)
     weightedgr.formTotal(false);
     if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
-        weightedgr.total().values() /= weights.boundCoherentAverageOfSquares(0.0);
+        weightedgr.total() /= weights.boundCoherentAverageOfSquares(0.0);
     else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
-        weightedgr.total().values() /= weights.boundCoherentSquareOfAverage(0.0);
+        weightedgr.total() /= weights.boundCoherentSquareOfAverage(0.0);
 
     return true;
 }

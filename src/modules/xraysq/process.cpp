@@ -54,12 +54,12 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             // Remove normalisation from the data
             if (normType == StructureFactors::SquareOfAverageNormalisation)
             {
-                auto bbar = weights.boundCoherentSquareOfAverage(referenceData.constXAxis());
+                auto bbar = weights.boundCoherentSquareOfAverage(referenceData.xAxis());
 		std::transform(bbar.begin(), bbar.end(), referenceData.values().begin(), referenceData.values().begin(), [](auto b, auto ref){return ref / b;});
             }
             else if (normType == StructureFactors::AverageOfSquaresNormalisation)
             {
-                auto bbar = weights.boundCoherentAverageOfSquares(referenceData.constXAxis());
+                auto bbar = weights.boundCoherentAverageOfSquares(referenceData.xAxis());
 		std::transform(bbar.begin(), bbar.end(), referenceData.values().begin(), referenceData.values().begin(), [](auto b, auto ref){return ref / b;});
             }
         }
