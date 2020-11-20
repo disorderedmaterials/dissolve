@@ -29,8 +29,8 @@ latexDashes = true
     weight = 1
 
   [[menu.main]]
-    name = "Downloads"
-    url = "#downloads"
+    name = "Packages"
+    url = "packages/"
     weight = 2
 
   [[menu.main]]
