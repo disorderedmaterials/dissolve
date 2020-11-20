@@ -25,6 +25,7 @@
 #include "modules/xraysq/xraysq.h"
 #include "templates/algorithms.h"
 #include "templates/array3d.h"
+#include <functional>
 
 // Run set-up stage
 bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
@@ -428,8 +429,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             else if (normType == StructureFactors::NoNormalisation)
             {
                 auto bbar = weights.boundCoherentAverageOfSquares(normalisedRef.xAxis());
-                std::transform(bbar.begin(), bbar.end(), normalisedRef.values().begin(), normalisedRef.values().begin(),
-                               [](auto b, auto v) { return v / b; });
+                std::transform(normalisedRef.values().begin(), normalisedRef.values().end(), bbar.begin(),
+                               normalisedRef.values().begin(), std::divides<>());
             }
 
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
@@ -438,7 +439,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto boundTotal = weightedSQ.boundTotal(false);
             auto bbar = weights.boundCoherentAverageOfSquares(boundTotal.xAxis());
             std::transform(boundTotal.values().begin(), boundTotal.values().end(), bbar.begin(), boundTotal.values().begin(),
-                           [](auto bound, auto b) { return bound / b; });
+                           std::divides<>());
             Interpolator::addInterpolated(normalisedRef, boundTotal, -1.0);
 
             if (!scatteringMatrix.addReferenceData(normalisedRef, weights, feedback))

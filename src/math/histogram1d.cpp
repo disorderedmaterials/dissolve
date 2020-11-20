@@ -270,7 +270,7 @@ bool Histogram1D::broadcast(ProcessPool &procPool, const int root, const CoreDat
         return false;
     if (!procPool.broadcast(bins_, root))
         return false;
-    for (auto n : averages_)
+    for (auto &n : averages_)
         if (!n.broadcast(procPool, root, coreData))
             return false;
 #endif

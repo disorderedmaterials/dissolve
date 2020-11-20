@@ -50,11 +50,9 @@ void Filters::convolve(Data1D &data, const BroadeningFunction &function, bool va
             xCentre = x[n];
 
             // Inner loop over whole array
-            for (auto m = 0; m < x.size(); ++m)
-            {
-                xBroad = x[m] - xCentre;
-                newY[m] += y[n] * function.y(xBroad) * norm;
-            }
+            std::transform(
+                x.begin(), x.end(), newY.begin(), newY.begin(),
+                [&y, &function, norm, n, xCentre](auto X, auto NewY) { return NewY + y[n] * function.y(X - xCentre) * norm; });
         }
     }
 

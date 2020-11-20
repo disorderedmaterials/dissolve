@@ -359,10 +359,9 @@ void Data1D::operator+=(const Data1D &source)
 
     ++version_;
 
-    // Loop over points, summing them into our array
+#ifdef CHECKS
     for (auto n = 0; n < x_.size(); ++n)
     {
-#ifdef CHECKS
         // Check x values for consistency
         if (fabs(x_[n] - source.x_[n]) > 1.0e-6)
         {
@@ -371,9 +370,10 @@ void Data1D::operator+=(const Data1D &source)
                              n, x_[n], source.constXAxis(n));
             return;
         }
-#endif
-        values_[n] += source.constValue(n);
     }
+#endif
+    // Loop over points, summing them into our array
+    std::transform(source.values().begin(), source.values().end(), values_.begin(), values_.begin(), std::plus<>());
 }
 
 void Data1D::operator+=(const double delta)
@@ -389,7 +389,7 @@ void Data1D::operator-=(const Data1D &source)
     if (x_.size() == 0)
     {
         copyArrays(source);
-        std::transform(values_.begin(), values_.end(), values_.begin(), [](auto value) { return -value; });
+        std::transform(values_.begin(), values_.end(), values_.begin(), std::negate<>());
         return;
     }
 
@@ -402,12 +402,9 @@ void Data1D::operator-=(const Data1D &source)
 
     ++version_;
 
-    // Loop over points, summing them into our array
-    // TODO: The actual loop body could be performed in parallel with a simple std::transform.  The check, however, requires
-    // ranges, which needs either boost or C++20
+#ifdef CHECKS
     for (auto n = 0; n < x_.size(); ++n)
     {
-#ifdef CHECKS
         // Check x values for consistency
         if (fabs(x_[n] - source.x_[n]) > 1.0e-6)
         {
@@ -417,7 +414,8 @@ void Data1D::operator-=(const Data1D &source)
             return;
         }
 #endif
-        values_[n] -= source.constValue(n);
+        // Loop over points, summing them into our array
+        std::transform(values_.begin(), values_.end(), source.values().begin(), values_.begin(), std::minus<>());
     }
 }
 
@@ -447,8 +445,7 @@ void Data1D::operator*=(const std::vector<double> &factors)
         return;
     }
 
-    std::transform(values_.begin(), values_.end(), factors.begin(), values_.begin(),
-                   [](auto value, auto factor) { return value * factor; });
+    std::transform(values_.begin(), values_.end(), factors.begin(), values_.begin(), std::multiplies<>());
 }
 
 void Data1D::operator/=(const double factor)
