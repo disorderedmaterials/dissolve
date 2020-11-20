@@ -385,9 +385,11 @@ class ProcessPool
     // Check equality of Array<double> across involved processes
     bool equality(const Array<double> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Check equality of std::vector<double> across involved processes
-    bool equality(const std::vector<double> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    bool equality(const std::vector<double> &array,
+                  ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Check equality of std::vector<long int> across involved processes
-    bool equality(const std::vector<long int> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    bool equality(const std::vector<long int> &array,
+                  ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Check equality of Array2D<int> across involved processes
     bool equality(const Array2D<int> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Check equality of Array2D<double> across involved processes
