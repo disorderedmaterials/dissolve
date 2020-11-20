@@ -64,7 +64,7 @@ template <> class GenericItemContainer<std::vector<double>> : public GenericItem
         data_.clear();
         data_.resize(nItems);
 
-        for (auto n : data_)
+        for (auto &n : data_)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
