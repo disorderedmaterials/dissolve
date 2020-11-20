@@ -244,9 +244,9 @@ std::vector<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const st
 // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q value
 double XRayWeights::boundCoherentSquareOfAverage(double Q) const
 {
-    return std::inner_product(
-        concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0, [](auto a, auto b) { return a + b; },
-        [Q](auto con, auto form) { return con * form.get().magnitude(Q); });
+    return std::inner_product(concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0,
+                              [](auto a, auto b) { return a + b; },
+                              [Q](auto con, auto form) { return con * form.get().magnitude(Q); });
 }
 
 // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q values
@@ -270,9 +270,9 @@ std::vector<double> XRayWeights::boundCoherentSquareOfAverage(const std::vector<
 // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q value
 double XRayWeights::boundCoherentAverageOfSquares(double Q) const
 {
-    return std::inner_product(
-        concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0, [](auto a, auto b) { return a + b; },
-        [Q](auto con, auto form) { return con * form.get().magnitude(Q); });
+    return std::inner_product(concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0,
+                              [](auto a, auto b) { return a + b; },
+                              [Q](auto con, auto form) { return con * form.get().magnitude(Q); });
 }
 
 // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q values
