@@ -37,5 +37,5 @@ Finally, we just need to check the ordering of the species in the `AddSpecies` n
 
 We're all set up, so click **Regenerate** to recreate the box using our new parameters.
 
-{{< button pos="left" text="Previous Step" path="../step1/">}}
-{{< button pos="right" text="Next Step" path="../step3/">}}
+{{< button pos="left" text="Previous Step" path="step1/">}}
+{{< button pos="right" text="Next Step" path="step3/">}}

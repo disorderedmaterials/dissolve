@@ -7,7 +7,7 @@ weight: 8
 There is a hint in the structure factors for the H<sub>2</sub>O sample (particularly the G(r)), that the intramolecular geometry of our off-the-shelf forcefield is not quite consistent with the real world.  This is made clearly obvious if you look at the G(r) for the D<sub>2</sub>O sample:
 
 {{< action type="tabs" text="**RDF / Neutron S(Q)** tab" >}}
-{{< step text="Double-click on the `D2O` [`NeutronSQ`](../../userguide/modules/neutronsq) module to open its additional controls in a separate tab">}}
+{{< step text="Double-click on the `D2O` `NeutronSQ` module to open its additional controls in a separate tab">}}
 
 
 {{< cimage src="../equilibrated-d2o-broadened-gr.png" caption="Equilibrated water (D2O) G(r) with effective broadening applied to intramolecular g(r)" >}}
@@ -28,12 +28,12 @@ Now run the simulation for a little longer and let the species adjust to their n
 
 {{< cimage src="../equilibrated-d2o-broadened-adjusted-gr.png" caption="Equilibrated water (D2O) G(r) with effective broadening and adjusted intramolecular geometry" >}}
 
-{{< tip text="The change in the G(r) will not be instant as the majority of the evolution of the system is from the [`MolShake`](../../userguide/modules/molshake) which does not change the intramolecular geometry. Only the [`MD`](../../userguide/modules/md) module will affect the intramolecular geometry. Also, the g(r) calculated by the [`RDF`](../../userguide/modules/rdf) are averaged over five calculations by default." >}}
+{{< tip text="The change in the G(r) will not be instant as the majority of the evolution of the system is from the `MolShake` which does not change the intramolecular geometry. Only the `MD` module will affect the intramolecular geometry. Also, the g(r) calculated by the `RDF` are averaged over five calculations by default." >}}
 
 It's also worth checking the other two samples, where the same kind of improvement should be noticeable (if a little less prominent).
 
 ### References
 1. [Quantum Differences between Heavy and Light Water](https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.101.065502), A. K. Soper and C. J. Benmore, Phys. Rev. Lett. **101**, 065502 (2008).
 
-{{< button pos="left" text="Previous Step" path= "../step5/">}}
-{{< button pos="right" text="Next Step" path= "../step7/">}}
+{{< button pos="left" text="Previous Step" path="step5/">}}
+{{< button pos="right" text="Next Step" path="step7/">}}

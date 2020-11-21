@@ -13,5 +13,5 @@ We'll split our simulation up into two layers:
 {{< tip text="You can have as many layers in a simulation as you need - whatever makes the most sense in what you're trying to do.">}}
 
 
-{{< button pos="left" text="Previous Step" path="../step3/">}}
-{{< button pos="right" text="Next Step" path="../step4a/">}}
+{{< button pos="left" text="Previous Step" path="step3/">}}
+{{< button pos="right" text="Next Step" path="step4a/">}}
