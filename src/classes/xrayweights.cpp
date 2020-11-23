@@ -245,8 +245,11 @@ std::vector<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const st
 // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q value
 double XRayWeights::boundCoherentSquareOfAverage(double Q) const
 {
-    return std::transform_reduce(concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0, std::plus<>(),
-                                 [Q](auto con, auto form) { return con * form.get().magnitude(Q); });
+    auto result = std::transform_reduce(concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0,
+                                        std::plus<>(), [Q](auto con, auto form) { return con * form.get().magnitude(Q); });
+    // NOTE: This reproduces the behaviour of the original code, but I
+    // would have expected that we should be returnining result^2
+    return result;
 }
 
 // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q values
