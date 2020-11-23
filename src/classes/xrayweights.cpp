@@ -273,7 +273,7 @@ std::vector<double> XRayWeights::boundCoherentSquareOfAverage(const std::vector<
 double XRayWeights::boundCoherentAverageOfSquares(double Q) const
 {
     return std::transform_reduce(concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0, std::plus<>(),
-                                 [Q](auto con, auto form) { return con * form.get().magnitude(Q); });
+                                 [Q](auto con, auto form) { return con * form.get().magnitude(Q) * form.get().magnitude(Q); });
 }
 
 // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q values
