@@ -241,8 +241,8 @@ bool SVD::decompose(const Array2D<double> &A, Array2D<double> &U, Array2D<double
                 }
                 break;
             }
-            if (its == 29)
-                return Messenger::error("DissolveMath::svd() - No convergence in 30 iterations.\n");
+            if (its == 30)
+                return Messenger::error("DissolveMath::svd() - No convergence in 31 iterations.\n");
 
             // Shift from bottom 2x2 minor
             x = S.constAt(l, l);
