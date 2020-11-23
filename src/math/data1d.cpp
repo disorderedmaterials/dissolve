@@ -413,10 +413,10 @@ void Data1D::operator-=(const Data1D &source)
                              n, x_[n], source.constXAxis(n));
             return;
         }
-#endif
-        // Loop over points, summing them into our array
-        std::transform(values_.begin(), values_.end(), source.values().begin(), values_.begin(), std::minus<>());
     }
+#endif
+    // Loop over points, summing them into our array
+    std::transform(values_.begin(), values_.end(), source.values().begin(), values_.begin(), std::minus<>());
 }
 
 void Data1D::operator-=(const double delta)
