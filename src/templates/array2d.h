@@ -66,11 +66,12 @@ template <class A> class Array2D
         // Create new array
         nRows_ = nrows;
         nColumns_ = ncolumns;
+        rowOffsets_.resize(nRows_);
         if (half_)
         {
             // Half-array, with element (i,j) == (j,i)
-            int n, linearSize;
-            for (n = nRows_; n > 0; --n)
+            int linearSize = 0;
+            for (auto n = nRows_; n > 0; --n)
             {
                 rowOffsets_[nRows_ - n] = linearSize;
                 linearSize += n;
