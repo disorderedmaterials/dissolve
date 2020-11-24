@@ -6,6 +6,20 @@
 ExpressionRootNode::ExpressionRootNode() : ExpressionNode() {}
 
 /*
+ * Nodes
+ */
+
+// Duplicate this node and its contents
+std::shared_ptr<ExpressionNode> ExpressionRootNode::duplicate()
+{
+    auto node = std::make_shared<ExpressionRootNode>();
+    for (auto child : children_)
+        node->addChild(child->duplicate());
+
+    return node;
+}
+
+/*
  * Evaluation
  */
 

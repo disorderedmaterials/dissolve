@@ -6,6 +6,21 @@
 ExpressionUnaryOperatorNode::ExpressionUnaryOperatorNode(UnaryOperator op) : ExpressionNode(), operator_(op) {}
 
 /*
+ * Nodes
+ */
+
+// Duplicate this node and its contents
+std::shared_ptr<ExpressionNode> ExpressionUnaryOperatorNode::duplicate()
+{
+    auto node = std::make_shared<ExpressionUnaryOperatorNode>(operator_);
+
+    for (auto child : children_)
+        node->addChild(child->duplicate());
+
+    return node;
+}
+
+/*
  * Evaluation
  */
 

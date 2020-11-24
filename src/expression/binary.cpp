@@ -6,6 +6,21 @@
 ExpressionBinaryOperatorNode::ExpressionBinaryOperatorNode(BinaryOperator op) : ExpressionNode(), operator_(op) {}
 
 /*
+ * Nodes
+ */
+
+// Duplicate this node and its contents
+std::shared_ptr<ExpressionNode> ExpressionBinaryOperatorNode::duplicate()
+{
+    auto node = std::make_shared<ExpressionBinaryOperatorNode>(operator_);
+
+    for (auto child : children_)
+        node->addChild(child->duplicate());
+
+    return node;
+}
+
+/*
  * Evaluation
  */
 

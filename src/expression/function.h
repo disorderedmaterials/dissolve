@@ -30,6 +30,13 @@ class ExpressionFunctionNode : public ExpressionNode
     ~ExpressionFunctionNode() = default;
 
     /*
+     * Nodes
+     */
+    protected:
+    // Duplicate this node and its contents
+    std::shared_ptr<ExpressionNode> duplicate();
+
+    /*
      * Data
      */
     private:

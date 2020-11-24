@@ -19,7 +19,15 @@ Expression::~Expression() { clear(); }
 
 Expression::Expression(const Expression &source) { (*this) = source; }
 
-void Expression::operator=(const Expression &source) { create(source.expressionString_); }
+void Expression::operator=(const Expression &source)
+{
+    clear();
+
+    expressionString_ = source.expressionString_;
+
+    if (source.rootNode_)
+        rootNode_ = source.rootNode_->duplicate();
+}
 
 /*
  * Data
@@ -83,6 +91,7 @@ bool Expression::create(std::string_view expressionString,
     }
     catch (ExpressionExceptions::ExpressionSyntaxException &ex)
     {
+        fmt::print(ex.what());
         return Messenger::error(ex.what());
     };
 
@@ -94,6 +103,7 @@ bool Expression::create(std::string_view expressionString,
     }
     catch (ExpressionExceptions::ExpressionSyntaxException &ex)
     {
+        fmt::print(ex.what());
         return Messenger::error(ex.what());
     }
 
@@ -104,7 +114,7 @@ bool Expression::create(std::string_view expressionString,
 std::string_view Expression::expressionString() const { return expressionString_; }
 
 // Return root node for the expression
-std::shared_ptr<ExpressionRootNode> Expression::rootNode() { return rootNode_; }
+std::shared_ptr<ExpressionNode> Expression::rootNode() { return rootNode_; }
 
 /*
  * Execution

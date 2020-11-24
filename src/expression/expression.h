@@ -25,7 +25,7 @@ class Expression
     // Original generating string
     std::string expressionString_;
     // Root node for the expression
-    std::shared_ptr<ExpressionRootNode> rootNode_;
+    std::shared_ptr<ExpressionNode> rootNode_;
 
     public:
     // Clear data
@@ -39,7 +39,7 @@ class Expression
     // Return original generating string
     std::string_view expressionString() const;
     // Return root node for the expression
-    std::shared_ptr<ExpressionRootNode> rootNode();
+    std::shared_ptr<ExpressionNode> rootNode();
 
     /*
      * Execution

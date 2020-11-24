@@ -11,7 +11,7 @@ class ExpressionVariable
     public:
     ExpressionVariable(ExpressionValue value = ExpressionValue());
     ExpressionVariable(std::string_view name, ExpressionValue value = ExpressionValue());
-    ~ExpressionVariable();
+    ~ExpressionVariable() = default;
 
     /*
      * Variable Data

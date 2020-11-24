@@ -15,8 +15,6 @@ ExpressionVariable::ExpressionVariable(ExpressionValue value)
 
 ExpressionVariable::ExpressionVariable(std::string_view name, ExpressionValue value) : name_(name), value_(value) {}
 
-ExpressionVariable::~ExpressionVariable() {}
-
 // Set name of variable
 void ExpressionVariable::setName(std::string_view s) { name_ = s; }
 

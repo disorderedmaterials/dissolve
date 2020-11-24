@@ -23,6 +23,21 @@ EnumOptions<ExpressionFunctionNode::InternalFunction> ExpressionFunctionNode::in
 ExpressionFunctionNode::ExpressionFunctionNode(InternalFunction func) : ExpressionNode(), function_(func) {}
 
 /*
+ * Nodes
+ */
+
+// Duplicate this node and its contents
+std::shared_ptr<ExpressionNode> ExpressionFunctionNode::duplicate()
+{
+    auto node = std::make_shared<ExpressionFunctionNode>(function_);
+
+    for (auto child : children_)
+        node->addChild(child->duplicate());
+
+    return node;
+}
+
+/*
  * Evaluation
  */
 

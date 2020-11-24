@@ -13,6 +13,13 @@ class ExpressionRootNode : public ExpressionNode
     ~ExpressionRootNode() = default;
 
     /*
+     * Nodes
+     */
+    public:
+    // Duplicate this node and its contents
+    std::shared_ptr<ExpressionNode> duplicate();
+
+    /*
      * Evaluation
      */
     public:

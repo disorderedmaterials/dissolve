@@ -10,6 +10,16 @@ ExpressionReferenceNode::ExpressionReferenceNode(std::shared_ptr<ExpressionVaria
 }
 
 /*
+ * Nodes
+ */
+
+// Duplicate this node and its contents
+std::shared_ptr<ExpressionNode> ExpressionReferenceNode::duplicate()
+{
+    return std::make_shared<ExpressionReferenceNode>(variable_);
+}
+
+/*
  * Evaluation
  */
 

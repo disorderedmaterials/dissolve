@@ -32,6 +32,8 @@ class ExpressionNode
     void addChild(std::shared_ptr<ExpressionNode> node);
     // Return number of children
     int nChildren() const;
+    // Duplicate this node and its contents
+    virtual std::shared_ptr<ExpressionNode> duplicate() = 0;
 
     /*
      * Evaluation

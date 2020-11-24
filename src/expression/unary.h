@@ -18,6 +18,13 @@ class ExpressionUnaryOperatorNode : public ExpressionNode
     ~ExpressionUnaryOperatorNode() = default;
 
     /*
+     * Nodes
+     */
+    protected:
+    // Duplicate this node and its contents
+    std::shared_ptr<ExpressionNode> duplicate();
+
+    /*
      * Data
      */
     private:

@@ -12,7 +12,15 @@ class ExpressionNumberNode : public ExpressionNode
     public:
     ExpressionNumberNode(int i);
     ExpressionNumberNode(double d);
+    ExpressionNumberNode(const ExpressionValue &value);
     ~ExpressionNumberNode() = default;
+
+    /*
+     * Nodes
+     */
+    protected:
+    // Duplicate this node and its contents
+    std::shared_ptr<ExpressionNode> duplicate();
 
     /*
      * Data

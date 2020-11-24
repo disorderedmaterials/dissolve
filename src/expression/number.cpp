@@ -7,6 +7,15 @@ ExpressionNumberNode::ExpressionNumberNode(int i) : ExpressionNode() { value_ = 
 
 ExpressionNumberNode::ExpressionNumberNode(double d) : ExpressionNode() { value_ = d; }
 
+ExpressionNumberNode::ExpressionNumberNode(const ExpressionValue &value) : ExpressionNode() { value_ = value; }
+
+/*
+ * Nodes
+ */
+
+// Duplicate this node and its contents
+std::shared_ptr<ExpressionNode> ExpressionNumberNode::duplicate() { return std::make_shared<ExpressionNumberNode>(value_); }
+
 /*
  * Evaluation
  */
