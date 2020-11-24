@@ -16,7 +16,7 @@ Q_DECLARE_SMART_POINTER_METATYPE(std::shared_ptr)
 Q_DECLARE_METATYPE(std::shared_ptr<ExpressionVariable>)
 
 ExpressionVariableVectorKeywordWidget::ExpressionVariableVectorKeywordWidget(QWidget *parent, KeywordBase *keyword,
-                                                                         const CoreData &coreData)
+                                                                             const CoreData &coreData)
     : QWidget(parent), KeywordWidgetBase(coreData)
 {
     // Create and set up the UI for our widget
@@ -44,7 +44,8 @@ ExpressionVariableVectorKeywordWidget::ExpressionVariableVectorKeywordWidget(QWi
  */
 
 // Variable table update function
-void ExpressionVariableVectorKeywordWidget::updateVariableTableRow(int row, std::shared_ptr<ExpressionVariable> variable, bool createItem)
+void ExpressionVariableVectorKeywordWidget::updateVariableTableRow(int row, std::shared_ptr<ExpressionVariable> variable,
+                                                                   bool createItem)
 {
     QTableWidgetItem *item;
 
@@ -120,8 +121,9 @@ void ExpressionVariableVectorKeywordWidget::updateValue()
     refreshing_ = true;
 
     // Update the variables list against that contained in the keyword's data
-    TableWidgetUpdater<ExpressionVariableVectorKeywordWidget, ExpressionVariable, std::shared_ptr<ExpressionVariable>> tableUpdater(
-        ui_.VariablesTable, keyword_->data(), this, &ExpressionVariableVectorKeywordWidget::updateVariableTableRow);
+    TableWidgetUpdater<ExpressionVariableVectorKeywordWidget, ExpressionVariable, std::shared_ptr<ExpressionVariable>>
+        tableUpdater(ui_.VariablesTable, keyword_->data(), this,
+                     &ExpressionVariableVectorKeywordWidget::updateVariableTableRow);
 
     refreshing_ = false;
 }

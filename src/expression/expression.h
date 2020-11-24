@@ -4,7 +4,7 @@
 #pragma once
 
 #include "expression/root.h"
-#include "templates/reflist.h"
+#include "templates/optionalref.h"
 
 // Forward Declarations
 class ExpressionVariable;
@@ -33,7 +33,9 @@ class Expression
     // Return whether current expression is valid (contains at least one node)
     bool isValid() const;
     // Create expression from supplied string, with optional external variables
-    bool create(std::string_view expressionString, std::vector<std::shared_ptr<ExpressionVariable>> externalVariables = {});
+    bool
+    create(std::string_view expressionString,
+           OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> externalVariables = std::nullopt);
     // Return original generating string
     std::string_view expressionString() const;
     // Return root node for the expression
@@ -44,9 +46,9 @@ class Expression
      */
     public:
     // Evaluate the expression
-    std::optional<ExpressionValue> evaluate();
+    std::optional<ExpressionValue> evaluate() const;
     // Execute and return as integer
-    int asInteger();
+    int asInteger() const;
     // Execute and return as double
-    double asDouble();
+    double asDouble() const;
 };

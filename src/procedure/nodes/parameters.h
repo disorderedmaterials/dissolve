@@ -30,21 +30,19 @@ class ParametersProcedureNode : public ProcedureNode
      * Parameters
      */
     private:
-    // Defined integer parameters
-    std::vector<std::shared_ptr<ExpressionVariable>> integerParameters_;
-    // Defined double parameters
-    std::vector<std::shared_ptr<ExpressionVariable>> doubleParameters_;
+    // Defined parameters
+    std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
 
     public:
     // Add new integer parameter
-    bool addParameter(std::string_view name, int initialValue = 0);
+    bool addParameter(std::string_view name, int initialValue);
     // Add new double parameter
-    bool addParameter(std::string_view name, double initialValue = 0.0);
+    bool addParameter(std::string_view name, double initialValue);
     // Return whether this node has the named parameter specified
     std::shared_ptr<ExpressionVariable> hasParameter(std::string_view name,
                                                      std::shared_ptr<ExpressionVariable> excludeParameter);
     // Return vector of all parameters for this node
-    std::vector<std::shared_ptr<ExpressionVariable>> parameters() const;
+    OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const;
 
     /*
      * Execute

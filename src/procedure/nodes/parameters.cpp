@@ -9,12 +9,10 @@
 
 ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode::ParametersNode)
 {
-    keywords_.add("Defined Parameters",
-                  new ExpressionVariableVectorKeyword(this, integerParameters_, ExpressionValue::IntegerType), "Integer",
-                  "Available integer parameters");
-    keywords_.add("Defined Parameters",
-                  new ExpressionVariableVectorKeyword(this, doubleParameters_, ExpressionValue::DoubleType), "Real",
-                  "Available real (floating point) parameters");
+    keywords_.add("Defined Parameters", new ExpressionVariableVectorKeyword(this, parameters_, ExpressionValue::IntegerType),
+                  "Integer", "Available integer parameters");
+    keywords_.add("Defined Parameters", new ExpressionVariableVectorKeyword(this, parameters_, ExpressionValue::DoubleType),
+                  "Real", "Available real (floating point) parameters");
 }
 
 ParametersProcedureNode::~ParametersProcedureNode() {}
@@ -39,7 +37,7 @@ bool ParametersProcedureNode::mustBeNamed() const { return false; }
 // Add new integer parameter
 bool ParametersProcedureNode::addParameter(std::string_view name, int initialValue)
 {
-    integerParameters_.push_back(std::make_shared<ExpressionVariable>(name, initialValue));
+    parameters_.push_back(std::make_shared<ExpressionVariable>(name, initialValue));
 
     return true;
 }
@@ -47,7 +45,7 @@ bool ParametersProcedureNode::addParameter(std::string_view name, int initialVal
 // Add new double parameter
 bool ParametersProcedureNode::addParameter(std::string_view name, double initialValue)
 {
-    doubleParameters_.push_back(std::make_shared<ExpressionVariable>(name, initialValue));
+    parameters_.push_back(std::make_shared<ExpressionVariable>(name, initialValue));
 
     return true;
 }
@@ -57,12 +55,7 @@ std::shared_ptr<ExpressionVariable> ParametersProcedureNode::hasParameter(std::s
                                                                           std::shared_ptr<ExpressionVariable> excludeParameter)
 {
     // Search integer parameters
-    for (auto var : integerParameters_)
-        if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))
-            return var;
-
-    // Search double parameters
-    for (auto var : doubleParameters_)
+    for (auto var : parameters_)
         if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))
             return var;
 
@@ -70,12 +63,9 @@ std::shared_ptr<ExpressionVariable> ParametersProcedureNode::hasParameter(std::s
 }
 
 // Return vector of all parameters for this node
-std::vector<std::shared_ptr<ExpressionVariable>> ParametersProcedureNode::parameters() const
+OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> ParametersProcedureNode::parameters() const
 {
-    std::vector<std::shared_ptr<ExpressionVariable>> params = integerParameters_;
-    params.insert(params.end(), doubleParameters_.begin(), doubleParameters_.end());
-
-    return params;
+    return parameters_;
 }
 
 /*

@@ -40,7 +40,8 @@ void Expression::clear()
 bool Expression::isValid() const { return rootNode_ != nullptr; }
 
 // Create expression from supplied string, with optional external variables
-bool Expression::create(std::string_view expressionString, std::vector<std::shared_ptr<ExpressionVariable>> externalVariables)
+bool Expression::create(std::string_view expressionString,
+                        OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> externalVariables)
 {
     clear();
 
@@ -110,7 +111,7 @@ std::shared_ptr<ExpressionRootNode> Expression::rootNode() { return rootNode_; }
  */
 
 // Execute expression
-std::optional<ExpressionValue> Expression::evaluate()
+std::optional<ExpressionValue> Expression::evaluate() const
 {
     if (rootNode_)
         return rootNode_->evaluate();
@@ -119,7 +120,7 @@ std::optional<ExpressionValue> Expression::evaluate()
 }
 
 // Execute and return as integer
-int Expression::asInteger()
+int Expression::asInteger() const
 {
     auto result = evaluate();
     if (!result)
@@ -129,7 +130,7 @@ int Expression::asInteger()
 }
 
 // Execute and return as double
-double Expression::asDouble()
+double Expression::asDouble() const
 {
     auto result = evaluate();
     if (!result)

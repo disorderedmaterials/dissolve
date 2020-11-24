@@ -6,6 +6,7 @@
 #include "base/enumoptions.h"
 #include "keywords/list.h"
 #include "templates/listitem.h"
+#include "templates/optionalref.h"
 
 // Forward Declarations
 class Configuration;
@@ -173,7 +174,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
     virtual std::shared_ptr<ExpressionVariable> hasParameter(std::string_view name,
                                                              std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
     // Return references to all parameters for this node
-    virtual std::vector<std::shared_ptr<ExpressionVariable>> parameters() const;
+    virtual OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters() const;
 
     /*
      * Execution

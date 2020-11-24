@@ -318,15 +318,23 @@ std::vector<std::shared_ptr<ExpressionVariable>> SequenceProcedureNode::paramete
     // Start from the target node and work backwards...
     for (auto *node = queryingNode; node != nullptr; node = node->prev())
     {
-        auto otherParams = node->parameters();
-        parameters.insert(parameters.end(), otherParams.begin(), otherParams.end());
+        auto optOtherParams = node->parameters();
+        if (optOtherParams)
+        {
+            const std::vector<std::shared_ptr<ExpressionVariable>> otherParams = (*optOtherParams);
+            parameters.insert(parameters.end(), otherParams.begin(), otherParams.end());
+        }
     }
 
     // Recursively check our parent(s)
     if (parentNode_)
     {
-        auto otherParams = parentNode_->parameters();
-        parameters.insert(parameters.end(), otherParams.begin(), otherParams.end());
+        auto optOtherParams = parentNode_->parameters();
+        if (optOtherParams)
+        {
+            const std::vector<std::shared_ptr<ExpressionVariable>> otherParams = (*optOtherParams);
+            parameters.insert(parameters.end(), otherParams.begin(), otherParams.end());
+        }
     }
 
     return parameters;

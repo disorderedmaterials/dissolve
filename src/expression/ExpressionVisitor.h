@@ -5,6 +5,7 @@
 
 #include "ExpressionParserBaseVisitor.h"
 #include "expression/expression.h"
+#include "templates/optionalref.h"
 #include <antlr4-runtime.h>
 
 // Expression Visitor for ANTLR
@@ -17,7 +18,7 @@ class ExpressionVisitor : ExpressionParserBaseVisitor
     // Target Expression
     Expression *expression_;
     // External variables available to this expression
-    std::vector<std::shared_ptr<ExpressionVariable>> externalVariables_;
+    OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> externalVariables_;
     // Context stack
     std::vector<std::shared_ptr<ExpressionNode>> contextStack_;
 
@@ -28,7 +29,7 @@ class ExpressionVisitor : ExpressionParserBaseVisitor
     public:
     // Construct description within supplied object, from given tree
     void create(Expression &expr, ExpressionParser::ExpressionContext *tree,
-                std::vector<std::shared_ptr<ExpressionVariable>> externalVariables);
+                OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> externalVariables);
 
     /*
      * Visitor Overrides

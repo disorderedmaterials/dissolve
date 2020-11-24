@@ -231,7 +231,10 @@ std::shared_ptr<ExpressionVariable> ProcedureNode::hasParameter(std::string_view
 }
 
 // Return references to all parameters for this node
-std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNode::parameters() const { return {}; }
+OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> ProcedureNode::parameters() const
+{
+    return std::nullopt;
+}
 
 /*
  * Execution

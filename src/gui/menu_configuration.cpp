@@ -39,8 +39,7 @@ void DissolveWindow::on_ConfigurationCreateSimpleRandomMixAction_triggered(bool 
     generator.addRootSequenceNode(new BoxProcedureNode);
     for (auto sp : mixSpecies)
     {
-        generator.addRootSequenceNode(
-            new AddSpeciesProcedureNode(sp, 100, NodeValue("rho", paramsNode->parameters())));
+        generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, 100, NodeValue("rho", paramsNode->parameters())));
     }
 
     // Run the generator
@@ -73,9 +72,8 @@ void DissolveWindow::on_ConfigurationCreateRelativeRandomMixAction_triggered(boo
     {
         // Add a parameter for the ratio of this species to the first (or the population of the first)
         if (count == 0)
-            generator.addRootSequenceNode(
-                new AddSpeciesProcedureNode(sp, NodeValue("populationA", paramsNode->parameters()),
-                                            NodeValue("rho", paramsNode->parameters())));
+            generator.addRootSequenceNode(new AddSpeciesProcedureNode(sp, NodeValue("populationA", paramsNode->parameters()),
+                                                                      NodeValue("rho", paramsNode->parameters())));
         else
         {
             std::string parameterName = fmt::format("ratio{}", char(65 + count));

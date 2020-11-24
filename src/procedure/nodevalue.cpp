@@ -23,7 +23,8 @@ NodeValue::NodeValue(const double d)
     valueD_ = d;
     type_ = DoubleNodeValue;
 }
-NodeValue::NodeValue(std::string_view expressionText, std::vector<std::shared_ptr<ExpressionVariable>> parameters)
+NodeValue::NodeValue(std::string_view expressionText,
+                     OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters)
 {
     valueI_ = 0;
     valueD_ = 0.0;
@@ -64,7 +65,8 @@ bool NodeValue::set(double value)
 }
 
 // Set from expression text
-bool NodeValue::set(std::string_view expressionText, std::vector<std::shared_ptr<ExpressionVariable>> parameters)
+bool NodeValue::set(std::string_view expressionText,
+                    OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters)
 {
     // Is this just a plain number, rather than an equation.
     bool isFloatingPoint;
