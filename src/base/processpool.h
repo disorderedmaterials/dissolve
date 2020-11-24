@@ -309,8 +309,8 @@ class ProcessPool
     // Broadcast Array2D<double>
     bool broadcast(Array2D<double> &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
-    // Broadcast Array2D<bool>
-    bool broadcast(Array2D<bool> &array, int rootRank = 0,
+    // Broadcast Array2D<char>
+    bool broadcast(Array2D<char> &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
     /*
@@ -395,8 +395,8 @@ class ProcessPool
     // Check equality of Array2D<double> across involved processes
     bool equality(const Array2D<double> &array,
                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
-    // Check equality of Array2D<bool> across involved processes
-    bool equality(const Array2D<bool> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Check equality of Array2D<char> across involved processes
+    bool equality(const Array2D<char> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
 
     /*
      * Buffered Random Numbers

@@ -237,11 +237,8 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
      * Take the matrix inverse and multiply it by the known data to generate the estimated partials.
      */
 
-    // Get linear array from estimatedSQ
-    auto &partials = estimatedSQ.linearArray();
-
     // Template the estimatedSQ from the first data item
-    for (auto n : partials)
+    for (auto &n : estimatedSQ)
         n.initialise(data_[0]);
 
     Array2D<double> inverseA;
@@ -256,7 +253,7 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
             interpolations.emplace_back(Interpolator(data_[refDataIndex]));
 
         // Q-dependent terms in the scattering matrix, so need to invert once at each distinct Q value
-        const auto &x = partials[0].xAxis();
+        const auto &x = estimatedSQ[0].xAxis();
         for (auto n = 0; n < x.size(); ++n)
         {
             const auto q = x[n];
@@ -273,7 +270,7 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
                 {
                     if ((q < data_[refDataIndex].xAxis().front()) || (q > data_[refDataIndex].xAxis().back()))
                         continue;
-                    partials[partialIndex].value(n) +=
+                    estimatedSQ[partialIndex].value(n) +=
                         interpolations[refDataIndex].y(q) * inverseA.constAt(partialIndex, refDataIndex);
                 }
             }
@@ -291,7 +288,7 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
         {
             // Add in contribution from each datset (row).
             for (auto refDataIndex = 0; refDataIndex < data_.nItems(); ++refDataIndex)
-                Interpolator::addInterpolated(partials[partialIndex], data_[refDataIndex],
+                Interpolator::addInterpolated(estimatedSQ[partialIndex], data_[refDataIndex],
                                               inverseA.constAt(partialIndex, refDataIndex));
         }
     }
@@ -323,12 +320,11 @@ void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &
 
     // Create partials array
     estimatedSQ.initialise(types.size(), types.size(), true);
-    auto partials = estimatedSQ.linearArray();
     auto index = 0;
     for (auto [i, j] : typePairs_)
     {
-        partials[index].setName(fmt::format("EstimatedSQ-{}-{}-{}.sq", i->name(), j->name(), groupName));
-        partials[index].setObjectTag(
+        estimatedSQ[index].setName(fmt::format("EstimatedSQ-{}-{}-{}.sq", i->name(), j->name(), groupName));
+        estimatedSQ[index].setObjectTag(
             fmt::format("{}//EstimatedSQ//{}//{}-{}", objectNamePrefix, groupName, i->name(), j->name()));
         ++index;
     }

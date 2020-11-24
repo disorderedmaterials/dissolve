@@ -42,7 +42,7 @@ double Extrema::max(const Array<double> &A)
 // Return minimum from 2D array provided
 double Extrema::min(const Array2D<double> &A)
 {
-    if (A.linearArraySize() > 0)
+    if (!A.empty())
         return *std::min_element(A.begin(), A.end());
     else
         return 0;
@@ -51,7 +51,7 @@ double Extrema::min(const Array2D<double> &A)
 // Return maximum from 2D array provided
 double Extrema::max(const Array2D<double> &A)
 {
-    if (A.linearArraySize() > 0)
+    if (!A.empty())
         return *std::max_element(A.begin(), A.end());
     else
         return 0;
@@ -62,11 +62,11 @@ double Extrema::absMin(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
-        double absMin = abs(A.constAt(0));
+        double absMin = fabs(A.constAt(0));
         for (auto i = 0; i < A.nItems(); ++i)
         {
-            if (abs(A.constAt(i)) < absMin)
-                absMin = abs(A.constAt(i));
+            if (fabs(A.constAt(i)) < absMin)
+                absMin = fabs(A.constAt(i));
         }
         return absMin;
     }
@@ -79,11 +79,11 @@ double Extrema::absMax(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
-        double absMax = abs(A.constAt(0));
+        double absMax = fabs(A.constAt(0));
         for (auto i = 0; i < A.nItems(); ++i)
         {
-            if (abs(A.constAt(i)) > absMax)
-                absMax = abs(A.constAt(i));
+            if (fabs(A.constAt(i)) > absMax)
+                absMax = fabs(A.constAt(i));
         }
         return absMax;
     }
@@ -94,7 +94,7 @@ double Extrema::absMax(const Array<double> &A)
 // Return absolute minimum from 2D array provided
 double Extrema::absMin(const Array2D<double> &A)
 {
-    if (A.linearArraySize() > 0)
+    if (!A.empty())
         return *std::min_element(A.begin(), A.end(), [](auto a, auto b) { return fabs(a) < fabs(b); });
     else
         return 0;
@@ -103,7 +103,7 @@ double Extrema::absMin(const Array2D<double> &A)
 // Return absolute maximum from 2D array provided
 double Extrema::absMax(const Array2D<double> &A)
 {
-    if (A.linearArraySize() > 0)
+    if (!A.empty())
         return *std::max_element(A.begin(), A.end(), [](auto a, auto b) { return fabs(a) < fabs(b); });
     else
         return 0;

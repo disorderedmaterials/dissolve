@@ -76,8 +76,6 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
     Array2D<double> &values();
     // Return values Array
     const Array2D<double> &constValues2D() const;
-    // Return values Array in linear format
-    double *values2DLinear();
     // Return value specified from linear array
     double value(int index);
     // Return number of values present in whole dataset

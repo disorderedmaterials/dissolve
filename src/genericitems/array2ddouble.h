@@ -63,11 +63,11 @@ template <> class GenericItemContainer<Array2D<double>> : public GenericItem
         int nRows = parser.argi(0), nColumns = parser.argi(1);
         thisData.initialise(nRows, nColumns, parser.argb(2));
 
-        for (auto n = 0; n < thisData.linearArraySize(); ++n)
+        for (auto &n : thisData)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
-            thisData.linearArray()[n] = parser.argd(0);
+            n = parser.argd(0);
         }
         return true;
     }

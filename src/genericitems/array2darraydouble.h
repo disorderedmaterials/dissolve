@@ -69,17 +69,17 @@ template <> class GenericItemContainer<Array2D<Array<double>>> : public GenericI
         int nRows = parser.argi(0), nColumns = parser.argi(1);
         thisData.initialise(nRows, nColumns, parser.argb(2));
 
-        for (auto n = 0; n < thisData.linearArraySize(); ++n)
+        for (auto &n : thisData)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
             int nItems = parser.argi(0);
-            thisData.linearArray()[n].createEmpty(nItems);
+            n.createEmpty(nItems);
             for (auto m = 0; m < nItems; ++m)
             {
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                     return false;
-                thisData.linearArray()[n].add(parser.argd(0));
+                n.add(parser.argd(0));
             }
         }
 

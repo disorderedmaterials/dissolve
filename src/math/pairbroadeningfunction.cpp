@@ -185,10 +185,10 @@ std::vector<double *> PairBroadeningFunction::parameters()
             params.push_back(&gaussianFWHM_);
             break;
         case (PairBroadeningFunction::GaussianElementPairFunction):
-            for (auto n = 0; n < elementPairGaussianFlags_.linearArraySize(); ++n)
+            for (auto n = 0; n < elementPairGaussianFlags_.size(); ++n)
             {
-                if (elementPairGaussianFlags_.[n])
-                    params.push_back(&elementPairGaussianFWHM_.[n]);
+                if (elementPairGaussianFlags_[n])
+                    params.push_back(&elementPairGaussianFWHM_[n]);
             }
             break;
         default:

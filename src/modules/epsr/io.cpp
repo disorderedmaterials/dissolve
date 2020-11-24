@@ -122,10 +122,10 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string
     auto &potentialCoefficients = GenericListHelper<Array2D<Array<double>>>::realise(
         dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
     potentialCoefficients.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
-    for (auto n = 0; n < potentialCoefficients.linearArraySize(); ++n)
+    for (auto &n : potentialCoefficients)
     {
-        potentialCoefficients.linearArray()[n].initialise(ncoeffp);
-        potentialCoefficients.linearArray()[n] = 0.0;
+        n.initialise(ncoeffp);
+        n = 0.0;
     }
 
     // Now we are ready to read in the potential coefficients - first line contains the number of pair potentials to expect

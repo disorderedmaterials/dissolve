@@ -564,34 +564,19 @@ void Axes::transformZ(std::vector<double> &zArray) const
 // Transform a 2D array of values into local axes coordinates
 void Axes::transformX(Array2D<double> &xArray) const
 {
-    auto n = 0;
-    while (n < xArray.linearArraySize())
-    {
-        xArray.linearValue(n) = transformX(xArray.linearValue(n));
-        n++;
-    }
+    std::transform(xArray.begin(), xArray.end(), xArray.begin(), [this](auto x) { return transformX(x); });
 }
 
 // Transform a 2D array of values into local axes coordinates
 void Axes::transformY(Array2D<double> &yArray) const
 {
-    auto n = 0;
-    while (n < yArray.linearArraySize())
-    {
-        yArray.linearValue(n) = transformY(yArray.linearValue(n));
-        n++;
-    }
+    std::transform(yArray.begin(), yArray.end(), yArray.begin(), [this](auto y) { return transformY(y); });
 }
 
 // Transform a 2D array of values into local axes coordinates
 void Axes::transformZ(Array2D<double> &zArray) const
 {
-    auto n = 0;
-    while (n < zArray.linearArraySize())
-    {
-        zArray.linearValue(n) = transformZ(zArray.linearValue(n));
-        n++;
-    }
+    std::transform(zArray.begin(), zArray.end(), zArray.begin(), [this](auto z) { return transformZ(z); });
 }
 
 /*

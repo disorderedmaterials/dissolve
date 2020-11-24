@@ -224,17 +224,14 @@ double Integrator::sumOfSquares(const Data1D &data, const Range range)
 // Return sum of all values in supplied data
 double Integrator::sum(const Data2D &data)
 {
-    // Grab data array
-    const Array2D<double> &values = data.constValues2D();
-
-    return std::accumulate(values.begin(), values.end(), 0.0);
+    return std::accumulate(data.constValues2D().begin(), data.constValues2D().end(), 0.0);
 }
 
 // Return sum of all absolute values in supplied data
 double Integrator::absSum(const Data2D &data)
 {
     // Grab data array
-    const Array2D<double> &values = data.constValues2D();
+    const auto &values = data.constValues2D();
 
     return std::accumulate(values.begin(), values.end(), 0.0, [](auto a, auto b) { return fabs(a) + fabs(b); });
 }

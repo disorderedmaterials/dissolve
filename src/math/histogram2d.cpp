@@ -146,7 +146,7 @@ void Histogram2D::accumulate()
             averages_.at(x, y) += double(bins_.at(x, y));
 
             // Update accumulated data
-            accumulatedData_.value(x, y) = averages_.constAt(x, y);
+            accumulatedData_.value(x, y) = averages_.constAt(x, y).value();
             accumulatedData_.error(x, y) = averages_.constAt(x, y).stDev();
         }
     }

@@ -231,13 +231,10 @@ template <class A> class Array2D
     typename std::vector<A>::const_iterator begin() const { return array_.begin(); }
     typename std::vector<A>::const_iterator end() const { return array_.end(); }
     // Return linear array size
-    int linearArraySize() const { return array_.size(); }
-    //
-    // Return linear array
+    int size() const { return array_.size(); }
+    // Does the array have contents?
+    bool empty() const { return array_.empty(); }
     std::vector<A> &linearArray() { return array_; }
-
-    // Return linear array (const)
-    const std::vector<A> &constLinearArray() const { return array_; }
 
     /*
      * Operators
@@ -316,6 +313,8 @@ template <class A> class Array2D
 
         return C;
     }
+    A &operator[](const int index) { return array_[index]; }
+    const A &operator[](const int index) const { return array_[index]; }
 
     /*
      * Functions
@@ -347,9 +346,3 @@ template <class A> class Array2D
         return result;
     }
 };
-
-template <> bool &Array2D<bool>::at(int row, int column)
-{
-    static bool temp;
-    return temp;
-}

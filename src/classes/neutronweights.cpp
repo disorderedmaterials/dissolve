@@ -148,8 +148,8 @@ void NeutronWeights::calculateWeightingMatrices()
     // Loop over defined Isotopologues in our defining mixtures, summing terms from (intramolecular) pairs of Atoms
     intramolecularWeights_ = 0.0;
     Array2D<double> intraNorm(atomTypes_.nItems(), atomTypes_.nItems(), true);
-    Array2D<bool> intraFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
-    Array2D<bool> globalFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
+    Array2D<char> intraFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
+    Array2D<char> globalFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
     intraNorm = 0.0;
     globalFlag = false;
     for (auto &topes : isotopologueMixtures_)

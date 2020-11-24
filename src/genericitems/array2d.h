@@ -63,8 +63,8 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
         int nRows = parser.argi(0), nColumns = parser.argi(1);
         data_.initialise(nRows, nColumns, parser.argb(2));
 
-        for (auto n = 0; n < data_.linearArraySize(); ++n)
-            if (!data_.linearArray()[n].read(parser, coreData))
+        for (auto &n : data_)
+            if (!n.read(parser, coreData))
                 return false;
         return true;
     }
@@ -135,8 +135,8 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
         if (!procPool.equality(data_.halved()))
             return Messenger::error("Array2D<double> half-status are not equivalent.\n");
         // Keep it simple (and slow) and check/send one value at a time
-        for (auto n = 0; n < data_.linearArraySize(); ++n)
-            if (!data_.linearArray()[n].equality(procPool))
+        for (auto &n : data_)
+            if (!n.equality(procPool))
                 return false;
         return true;
     }
