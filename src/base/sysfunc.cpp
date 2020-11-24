@@ -231,9 +231,9 @@ bool DissolveSys::isNumber(std::string_view text, bool &isFloatingPoint)
     std::optional<int> exponentIndex;
 
     const auto length = text.size();
-    for (int n = 0; n < length; ++n)
+    for (auto n = 0; n < length; ++n)
     {
-        char c = text[n];
+        auto c = text[n];
         switch (text[n])
         {
             // Decimal point
@@ -246,6 +246,9 @@ bool DissolveSys::isNumber(std::string_view text, bool &isFloatingPoint)
                 // Only allow as first character or immediately following an exponent
                 if (n != (exponentIndex.value_or(-1) + 1))
                     return false;
+                // If the exponent power is negative, assume floating point
+                if ((c == '-') && exponentIndex && (exponentIndex.value() == (n - 1)))
+                    isFloatingPoint = true;
                 break;
             // Exponentiation
             case ('e'):
