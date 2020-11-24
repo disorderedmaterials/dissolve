@@ -259,7 +259,7 @@ void PoissonFit::updatePrecalculatedFunctions(FunctionSpace::SpaceType space, do
         for (auto n = 0; n < nPoissons_; ++n)
         {
             for (auto m = 0; m < referenceData_.nValues(); ++m)
-                functions_.at(n, m) = C * poisson(referenceData_.xAxis(m), n);
+                functions_[{n, m}] = C * poisson(referenceData_.xAxis(m), n);
         }
     }
     else
@@ -267,7 +267,7 @@ void PoissonFit::updatePrecalculatedFunctions(FunctionSpace::SpaceType space, do
         for (auto n = 0; n < nPoissons_; ++n)
         {
             for (auto m = 0; m < referenceData_.nValues(); ++m)
-                functions_.at(n, m) = C * poissonFT(m, n);
+                functions_[{n, m}] = C * poissonFT(m, n);
         }
     }
 }
@@ -499,7 +499,7 @@ double PoissonFit::costTabulatedC(const std::vector<double> &alpha)
 
         // Add in contributions from our Gaussians
         for (auto n = 0; n < nAlpha; ++n)
-            y += functions_.at(alphaIndex_[n], i) * alpha[n];
+            y += functions_[{alphaIndex_[n], i}] * alpha[n];
 
         dy = referenceData_.value(i) - y;
         sose += dy * dy;

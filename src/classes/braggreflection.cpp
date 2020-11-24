@@ -74,7 +74,7 @@ void BraggReflection::reset()
 }
 
 // Add intensity between specified atomtypes
-void BraggReflection::addIntensity(int typeI, int typeJ, double intensity) { intensities_.at(typeI, typeJ) += intensity; }
+void BraggReflection::addIntensity(int typeI, int typeJ, double intensity) { intensities_[{typeI, typeJ}] += intensity; }
 
 // Scale intensities between all atom types by factor provided
 void BraggReflection::scaleIntensities(double factor)
@@ -97,11 +97,11 @@ void BraggReflection::scaleIntensity(int typeI, int typeJ, double factor)
         return;
     }
 #endif
-    intensities_.at(typeI, typeJ) *= factor;
+    intensities_[{typeI, typeJ}] *= factor;
 }
 
 // Return intensity between specified atom types for this reflection
-double BraggReflection::intensity(int typeI, int typeJ) const { return intensities_.constAt(typeI, typeJ); }
+double BraggReflection::intensity(int typeI, int typeJ) const { return intensities_[{typeI, typeJ}]; }
 
 // Increment number of contributing k-vectors
 void BraggReflection::addKVectors(int count) { nKVectors_ += count; }

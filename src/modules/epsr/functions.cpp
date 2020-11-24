@@ -27,7 +27,7 @@ Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissol
 {
     auto &coefficients = GenericListHelper<Array2D<std::vector<double>>>::realise(
         dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
-    auto arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients.at(0, 0).size() : 0);
+    auto arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients[{0, 0}].size() : 0);
     if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) ||
         ((ncoeffp != -1) && (ncoeffp != arrayNCoeffP)))
     {
@@ -54,7 +54,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
 
     auto result = for_each_pair_early(
         dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
-            auto &potCoeff = coefficients.at(i, j);
+            auto &potCoeff = coefficients[{i, j}];
 
             // Regenerate empirical potential from the stored coefficients
             Data1D ep;
@@ -121,7 +121,7 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i,
 
     // Get coefficients array
     auto &coefficients = potentialCoefficients(dissolve, nAtomTypes);
-    auto &potCoeff = coefficients.at(i, j);
+    auto &potCoeff = coefficients[{i, j}];
 
     // Regenerate empirical potential from the stored coefficients
     Data1D result;
@@ -163,7 +163,7 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
     double absEnergyEP = 0.0;
 
     for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-        auto &potCoeff = coefficients.at(i, j);
+        auto &potCoeff = coefficients[{i, j}];
 
         double cMin = potCoeff.empty() ? 0.0 : *std::min_element(potCoeff.begin(), potCoeff.end());
         double cMax = potCoeff.empty() ? 0.0 : *std::max_element(potCoeff.begin(), potCoeff.end());

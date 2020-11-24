@@ -126,7 +126,7 @@ bool Histogram2D::bin(double x, double y)
         return false;
     }
 
-    ++bins_.at(xBin, yBin);
+    ++bins_[{xBin, yBin}];
     ++nBinned_;
 
     return true;
@@ -143,11 +143,11 @@ void Histogram2D::accumulate()
         for (auto y = 0; y < nYBins_; ++y)
         {
             // Update averages
-            averages_.at(x, y) += double(bins_.at(x, y));
+            averages_[{x, y}] += double(bins_[{x, y}]);
 
             // Update accumulated data
-            accumulatedData_.value(x, y) = averages_.constAt(x, y).value();
-            accumulatedData_.error(x, y) = averages_.constAt(x, y).stDev();
+            accumulatedData_.value(x, y) = averages_[{x, y}].value();
+            accumulatedData_.error(x, y) = averages_[{x, y}].stDev();
         }
     }
 }
@@ -174,7 +174,7 @@ void Histogram2D::add(Histogram2D &other, int factor)
     for (auto x = 0; x < nXBins_; ++x)
     {
         for (auto y = 0; y < nYBins_; ++y)
-            bins_.at(x, y) += other.bins_.at(x, y) * factor;
+            bins_[{x, y}] += other.bins_[{x, y}] * factor;
     }
 }
 
@@ -231,7 +231,7 @@ bool Histogram2D::read(LineParser &parser, CoreData &coreData)
     for (auto x = 0; x < nXBins_; ++x)
     {
         for (auto y = 0; y < nYBins_; ++y)
-            if (!averages_.at(x, y).read(parser, coreData))
+            if (!averages_[{x, y}].read(parser, coreData))
                 return false;
     }
 
@@ -250,7 +250,7 @@ bool Histogram2D::write(LineParser &parser)
     for (auto x = 0; x < nXBins_; ++x)
     {
         for (auto y = 0; y < nYBins_; ++y)
-            if (!averages_.at(x, y).write(parser))
+            if (!averages_[{x, y}].write(parser))
                 return false;
     }
 

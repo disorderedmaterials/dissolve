@@ -145,10 +145,10 @@ bool PairBroadeningFunction::writeAsKeyword(LineParser &parser, std::string_view
             {
                 for (auto j = i; j < elementPairGaussianFlags_.nColumns(); ++j)
                 {
-                    if (elementPairGaussianFlags_.constAt(i, j))
+                    if (elementPairGaussianFlags_[{i, j}])
                     {
                         if (!parser.writeLineF("{}{}  {}  {}\n", prefix, Elements::element(i).symbol(),
-                                               Elements::element(j).symbol(), elementPairGaussianFWHM_.constAt(i, j)))
+                                               Elements::element(j).symbol(), elementPairGaussianFWHM_[{i, j}]))
                             return false;
                     }
                 }
@@ -235,10 +235,10 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(std::shared_ptr<At
             break;
         case (PairBroadeningFunction::GaussianElementPairFunction):
             // If this matrix value has never been used/read, set the flag now
-            if (!elementPairGaussianFlags_.at(at1->element()->Z(), at2->element()->Z()))
-                elementPairGaussianFlags_.at(at1->element()->Z(), at2->element()->Z()) = true;
+            if (!elementPairGaussianFlags_[{at1->element()->Z(), at2->element()->Z()}])
+                elementPairGaussianFlags_[{at1->element()->Z(), at2->element()->Z()}] = true;
             result.set(BroadeningFunction::GaussianFunction,
-                       elementPairGaussianFWHM_.at(at1->element()->Z(), at2->element()->Z()));
+                       elementPairGaussianFWHM_[{at1->element()->Z(), at2->element()->Z()}]);
             break;
         default:
             Messenger::error("Function form '{}' not accounted for in setUpDependentParameters().\n",
@@ -300,8 +300,8 @@ bool PairBroadeningFunction::read(LineParser &parser, CoreData &coreData)
                                                 parser.argsv(1));
 
                     // Set the value
-                    elementPairGaussianFlags_.at(el1.Z(), el2.Z()) = parser.argd(2);
-                    elementPairGaussianFlags_.at(el1.Z(), el2.Z()) = true;
+                    elementPairGaussianFlags_[{el1.Z(), el2.Z()}] = parser.argd(2);
+                    elementPairGaussianFlags_[{el1.Z(), el2.Z()}] = true;
                 }
             }
             break;

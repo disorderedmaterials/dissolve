@@ -45,7 +45,7 @@ double ScatteringMatrix::pairWeightInverse(double q, std::shared_ptr<AtomType> t
      */
 
     auto index = pairIndex(typeI, typeJ);
-    return inverse(q).constAt(index, dataIndex);
+    return inverse(q)[{index, dataIndex}];
 }
 
 // Calculate and return the scattering matrix at the specified Q value
@@ -86,7 +86,7 @@ Array2D<double> ScatteringMatrix::matrix(double q) const
                                                      j->element()->name(),
                                                      XRayFormFactors::xRayFormFactorData().keyword(weights.formFactors()))));
 
-            m.at(row, col) *= ffi->get().magnitude(q) * ffj->get().magnitude(q) / normFactor;
+            m[{row, col}] *= ffi->get().magnitude(q) * ffj->get().magnitude(q) / normFactor;
 
             ++col;
         }
@@ -138,7 +138,7 @@ void ScatteringMatrix::print(double q) const
         line.clear();
         for (auto n = 0; n < m.nColumns(); ++n)
         {
-            line += fmt::format("{:10f} ", m.constAt(row, n));
+            line += fmt::format("{:10f} ", m[{row, n}]);
 
             // Limit output to sensible length
             if (line.length() >= 80)
@@ -190,7 +190,7 @@ void ScatteringMatrix::printInverse(double q) const
         line.clear();
         for (auto row = 0; row < inverseA.nRows(); ++row)
         {
-            line += fmt::format("{:10f} ", inverseA.constAt(row, col));
+            line += fmt::format("{:10f} ", inverseA[{row, col}]);
 
             // Limit output to sensible length
             if (line.length() >= 80)
@@ -271,7 +271,7 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
                     if ((q < data_[refDataIndex].xAxis().front()) || (q > data_[refDataIndex].xAxis().back()))
                         continue;
                     estimatedSQ[partialIndex].value(n) +=
-                        interpolations[refDataIndex].y(q) * inverseA.constAt(partialIndex, refDataIndex);
+                        interpolations[refDataIndex].y(q) * inverseA[{partialIndex, refDataIndex}];
                 }
             }
         }
@@ -289,7 +289,7 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
             // Add in contribution from each datset (row).
             for (auto refDataIndex = 0; refDataIndex < data_.nItems(); ++refDataIndex)
                 Interpolator::addInterpolated(estimatedSQ[partialIndex], data_[refDataIndex],
-                                              inverseA.constAt(partialIndex, refDataIndex));
+                                              inverseA[{partialIndex, refDataIndex}]);
         }
     }
 
@@ -355,7 +355,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const Neutro
                                         usedTypes.atomType(n)->name(), usedTypes.atomType(m)->name());
 
             // Now have the local column index of the AtomType pair in our matrix A_...
-            A_.at(rowIndex, colIndex) = dataWeights.weight(n, m) * factor;
+            A_[{rowIndex, colIndex}] = dataWeights.weight(n, m) * factor;
         }
     }
 
@@ -395,7 +395,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWe
 
             // Now have the local column index of the AtomType pair in our matrix A_.
             // Since this is X-ray data, we will just store the product of the concentrtion weights and the factor
-            A_.at(rowIndex, colIndex) = dataWeights.preFactor(n, m) * factor;
+            A_[{rowIndex, colIndex}] = dataWeights.preFactor(n, m) * factor;
         }
     }
 
@@ -425,7 +425,7 @@ bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, std::shared
 
     // Now have the local column index of the AtomType pair in our matrix A_...
     A_.setRow(rowIndex, 0.0);
-    A_.at(rowIndex, colIndex) = dataWeight * factor;
+    A_[{rowIndex, colIndex}] = dataWeight * factor;
 
     // Add reference data and its associated factor
     data_.add(weightedData);

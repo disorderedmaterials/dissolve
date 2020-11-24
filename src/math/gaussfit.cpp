@@ -233,7 +233,7 @@ void GaussFit::updatePrecalculatedFunctions(FunctionSpace::SpaceType space, doub
         for (auto n = 0; n < nGaussians_; ++n)
         {
             for (auto m = 0; m < referenceData_.nValues(); ++m)
-                functions_.at(n, m) = gaussian(referenceData_.xAxis(m), x_[n], A, fwhm_[n]);
+                functions_[{n, m}] = gaussian(referenceData_.xAxis(m), x_[n], A, fwhm_[n]);
         }
     }
     else
@@ -241,7 +241,7 @@ void GaussFit::updatePrecalculatedFunctions(FunctionSpace::SpaceType space, doub
         for (auto n = 0; n < nGaussians_; ++n)
         {
             for (auto m = 0; m < referenceData_.nValues(); ++m)
-                functions_.at(n, m) = gaussianFT(referenceData_.xAxis(m), x_[n], A, fwhm_[n]);
+                functions_[{n, m}] = gaussianFT(referenceData_.xAxis(m), x_[n], A, fwhm_[n]);
         }
     }
 }
@@ -744,7 +744,7 @@ double GaussFit::costTabulatedA(const std::vector<double> &alpha)
 
         // Add in contributions from our Gaussians
         for (auto n = 0; n < nAlpha; ++n)
-            y += functions_.at(alphaIndex_[n], i) * alpha[n];
+            y += functions_[{alphaIndex_[n], i}] * alpha[n];
 
         dy = referenceData_.value(i) - y;
         sose += dy * dy;

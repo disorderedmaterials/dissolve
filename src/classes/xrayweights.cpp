@@ -149,8 +149,8 @@ void XRayWeights::setUpMatrices()
 
                       double cj = atd2.fraction();
 
-                      concentrationProducts_.at(typeI, typeJ) = ci * cj;
-                      preFactors_.at(typeI, typeJ) = ci * cj * (typeI == typeJ ? 1 : 2);
+                      concentrationProducts_[{typeI, typeJ}] = ci * cj;
+                      preFactors_[{typeI, typeJ}] = ci * cj * (typeI == typeJ ? 1 : 2);
                   });
 }
 
@@ -160,11 +160,11 @@ double XRayWeights::concentration(int typeIndexI) const { return concentrations_
 // Return concentration product for types i and j
 double XRayWeights::concentrationProduct(int typeIndexI, int typeIndexJ) const
 {
-    return concentrationProducts_.constAt(typeIndexI, typeIndexJ);
+    return concentrationProducts_[{typeIndexI, typeIndexJ}];
 }
 
 // Return pre-factor for types i and j
-double XRayWeights::preFactor(int typeIndexI, int typeIndexJ) const { return preFactors_.constAt(typeIndexI, typeIndexJ); }
+double XRayWeights::preFactor(int typeIndexI, int typeIndexJ) const { return preFactors_[{typeIndexI, typeIndexJ}]; }
 
 // Return form factor for type i over supplied Q values
 std::vector<double> XRayWeights::formFactor(int typeIndexI, const std::vector<double> &Q) const
@@ -209,7 +209,7 @@ double XRayWeights::formFactorProduct(int typeIndexI, int typeIndexJ, double Q) 
 // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) at specified Q value
 double XRayWeights::weight(int typeIndexI, int typeIndexJ, double Q) const
 {
-    return preFactors_.constAt(typeIndexI, typeIndexJ) * formFactorProduct(typeIndexI, typeIndexJ, Q);
+    return preFactors_[{typeIndexI, typeIndexJ}] * formFactorProduct(typeIndexI, typeIndexJ, Q);
 }
 
 // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) over supplied Q values
@@ -234,7 +234,7 @@ std::vector<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const st
 
     auto &fi = formFactorData_[typeIndexI].get();
     auto &fj = formFactorData_[typeIndexJ].get();
-    auto preFactor = preFactors_.constAt(typeIndexI, typeIndexJ);
+    auto preFactor = preFactors_[{typeIndexI, typeIndexJ}];
 
     std::transform(Q.begin(), Q.end(), fijq.begin(),
                    [preFactor, &fi, &fj](auto q) { return fi.magnitude(q) * fj.magnitude(q) * preFactor; });

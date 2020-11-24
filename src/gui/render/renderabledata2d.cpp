@@ -235,7 +235,7 @@ void RenderableData2D::constructLine(const std::vector<double> &displayXAbscissa
             // Loop over x
             for (auto m = 0; m < nX; ++m)
             {
-                vertexB = p->defineVertex(x[m], y[n], v.constAt(m, n), nrm, colour);
+                vertexB = p->defineVertex(x[m], y[n], v[{m, n}], nrm, colour);
 
                 // If both vertices are valid, plot a line
                 if (vertexA != -1)
@@ -262,9 +262,9 @@ void RenderableData2D::constructLine(const std::vector<double> &displayXAbscissa
             for (auto m = 0; m < nX; ++m)
             {
                 // Assigning colour based on value
-                double c = (vLogarithmic ? pow(displayValues.constAt(m, n), 10.0) : displayValues.constAt(m, n));
+                double c = (vLogarithmic ? pow(displayValues[{m, n}], 10.0) : displayValues[{m, n}]);
                 colourDef.colour(c, colour);
-                vertexB = p->defineVertex(x[m], y[n], v.constAt(m, n), nrm, colour);
+                vertexB = p->defineVertex(x[m], y[n], v[{m, n}], nrm, colour);
 
                 // If both vertices are valid, plot a line
                 if (vertexA != -1)

@@ -375,7 +375,7 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
     auto &types = cfg->usedAtomTypesList();
     for_each_pair(types.begin(), types.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
         // Retrieve partial container and make sure its object tag is set
-        auto &partial = braggPartials.at(typeI, typeJ);
+        auto &partial = braggPartials[{typeI, typeJ}];
         partial.setObjectTag(
             fmt::format("{}//OriginalBragg//{}-{}", cfg->niceName(), atd1.atomTypeName(), atd2.atomTypeName()));
 
@@ -413,8 +413,8 @@ bool BraggModule::reBinReflections(ProcessPool &procPool, Configuration *cfg, Ar
     const auto nTypes = cfg->nUsedAtomTypes();
 
     // Create a temporary Data1D into which we will generate individual Bragg peak contributions
-    const auto qDelta = braggPartials.at(0, 0).xAxis(1) - braggPartials.at(0, 0).xAxis(0);
-    const auto nBins = braggPartials.at(0, 0).nValues();
+    const auto qDelta = braggPartials[{0, 0}].xAxis(1) - braggPartials[{0, 0}].xAxis(0);
+    const auto nBins = braggPartials[{0, 0}].nValues();
     Array<int> nAdded(nBins);
 
     nAdded = 0;
@@ -443,7 +443,7 @@ bool BraggModule::reBinReflections(ProcessPool &procPool, Configuration *cfg, Ar
             int typeJ = typeI;
             for (auto atd2 = atd1; atd2 != types.end(); typeJ++, atd2++)
             {
-                braggPartials.at(typeI, typeJ).value(bin) += braggReflections.constAt(n).intensity(typeI, typeJ);
+                braggPartials[{typeI, typeJ}].value(bin) += braggReflections.constAt(n).intensity(typeI, typeJ);
             }
         }
     }
@@ -455,7 +455,7 @@ bool BraggModule::reBinReflections(ProcessPool &procPool, Configuration *cfg, Ar
         {
             for (auto n = 0; n < nBins; ++n)
                 if (nAdded[n] > 0)
-                    braggPartials.at(typeI, typeJ).value(n) /= nAdded[n];
+                    braggPartials[{typeI, typeJ}].value(n) /= nAdded[n];
         }
     }
     return true;

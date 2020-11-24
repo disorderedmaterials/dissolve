@@ -70,10 +70,10 @@ bool OperateExpressionProcedureNode::operateData2D(ProcessPool &procPool, Config
         {
             // Set y and value in expression
             y_->set(y[j]);
-            value_->set(values.at(i, j));
+            value_->set(values[{i, j}]);
 
             // Evaluate and store new value
-            values.at(i, j) = expression_.asDouble();
+            values[{i, j}] = expression_.asDouble();
         }
     }
 
