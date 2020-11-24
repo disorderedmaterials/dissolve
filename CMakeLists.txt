@@ -299,6 +299,12 @@ else()
   set(NO_WHOLE_ARCHIVE_FLAG "-Wl,-no-whole-archive")
 endif()
 
+# Enable build of unit tests?
+if (BUILD_TESTS)
+  ENABLE_TESTING()
+  ADD_SUBDIRECTORY(unit)
+endif(BUILD_TESTS)
+
 # Build CLI target executable
 target_link_libraries( ${target_name}
 
@@ -340,7 +346,6 @@ target_link_libraries( ${target_name}
   antlr4-runtime
 
   ${EXTRA_LINK_LIBS}
-
 
   INTERFACE
 

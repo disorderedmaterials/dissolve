@@ -29,6 +29,8 @@ class Filters
     // Trim supplied data to specified range
     static void trim(Data1D &data, double xMin, double xMax, bool interpolateEnds = false,
                      double interpolationThreshold = 0.01);
+    // Trim supplied data to be the same range as the reference data
+    static void trim(Data1D &data, const Data1D &ref, bool interpolateEnds = false, double interpolationThreshold = 0.01);
     // Convert bin boundaries to centre-bin values
     static void convertBinBoundaries(Data1D &data);
 };

@@ -50,11 +50,9 @@ void Filters::convolve(Data1D &data, const BroadeningFunction &function, bool va
             xCentre = x[n];
 
             // Inner loop over whole array
-            for (auto m = 0; m < x.size(); ++m)
-            {
-                xBroad = x[m] - xCentre;
-                newY[m] += y[n] * function.y(xBroad) * norm;
-            }
+            std::transform(
+                x.begin(), x.end(), newY.begin(), newY.begin(),
+                [&y, &function, norm, n, xCentre](auto X, auto NewY) { return NewY + y[n] * function.y(X - xCentre) * norm; });
         }
     }
 
@@ -270,6 +268,12 @@ void Filters::trim(Data1D &data, double xMin, double xMax, bool interpolateEnds,
     // Set new arrays
     data.xAxis() = newX;
     data.values() = newY;
+}
+
+// Trim supplied data to be the same range as the reference data
+void Filters::trim(Data1D &data, const Data1D &ref, bool interpolateEnds, double interpolationThreshold)
+{
+    trim(data, ref.xAxis().front(), ref.xAxis().back(), interpolateEnds, interpolationThreshold);
 }
 
 // Convert bin boundaries to centre-bin values

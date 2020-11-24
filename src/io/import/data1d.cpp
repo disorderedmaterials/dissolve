@@ -30,6 +30,10 @@ void Data1DImportFileFormat::setUpKeywords()
     keywords_.add("Columns", new IntegerKeyword(0, 0), "Error", "Column index to use for error values");
     keywords_.add("Manipulations", new DoubleKeyword(-1.0, -1.0), "RemoveAverage",
                   "X axis value from which to form average value to subtract from data (-1 for no subtraction)");
+    keywords_.add("Manipulations", new RangeKeyword(Range(0.0, 0.0), Vec3Labels::MinMaxDeltaLabels), "Trim",
+                  "Trim the range of the loaded data to be within the specified boundaries");
+    keywords_.add("Manipulations", new IntegerKeyword(0, 0), "RemovePoints",
+                  "Remove a number of points from the start of the data");
 }
 
 /*
@@ -113,12 +117,21 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
         return false;
 
     // Handle any additional options
-    // --Subtract average level from data?
+    // -- Remove points from the start of the data?
+    for (auto n = 0; n < keywords_.asInt("RemovePoints"); ++n)
+        data.removeFirstPoint();
+    // -- Subtract average level from data?
     const auto removeAverage = keywords_.asDouble("RemoveAverage");
     if (removeAverage > 0.0)
     {
         double level = Filters::subtractAverage(data, removeAverage);
         Messenger::print("Removed average level of {} from data, forming average over x >= {}.\n", level, removeAverage);
+    }
+    // -- Trim range?
+    if (keywords_.isSet("Trim"))
+    {
+        const auto range = keywords_.retrieve<Range>("Trim");
+        Filters::trim(data, range.minimum(), range.maximum());
     }
 
     return result;

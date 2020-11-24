@@ -33,24 +33,37 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             return false;
         }
 
-        //         // Truncate data beyond QMax
-        //         const double qMax = keywords_.asDouble("QMax") < 0.0 ? 30.0 : keywords_.asDouble("QMax");
-        //         if (referenceData.constXAxis().lastValue() < qMax)
-        //             Messenger::warn(
-        //                 "Qmax limit of {:.4e} Angstroms**-1 for calculated XRaySQ ({}) is beyond limit of reference data
-        //                 (Qmax "
-        //                 "= {:.4e} Angstroms**-1).\n",
-        //                 qMax, uniqueName(), referenceData.constXAxis().lastValue());
-        //         else
-        //             while (referenceData.constXAxis().lastValue() > qMax)
-        //                 referenceData.removeLastPoint();
+        // Get dependent modules
+        const SQModule *sqModule = keywords_.retrieve<const SQModule *>("SourceSQs", nullptr);
+        if (!sqModule)
+            return Messenger::error("A source SQ module must be provided.\n");
+        const RDFModule *rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr);
+        if (!rdfModule)
+            return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
 
-        // Remove first point?
-        if (keywords_.asBool("ReferenceIgnoreFirst"))
+        // Remove normalisation factor from data
+        auto normType = keywords_.enumeration<StructureFactors::NormalisationType>("ReferenceNormalisation");
+        if (normType != StructureFactors::NoNormalisation)
         {
-            referenceData.removeFirstPoint();
-            Messenger::print("Removed first point from supplied reference data - new Qmin = {:.4e} Angstroms**-1.\n",
-                             referenceData.xAxis().front());
+            // We need the x-ray weights in order to do the normalisation
+            XRayFormFactors::XRayFormFactorData formFactors =
+                keywords_.enumeration<XRayFormFactors::XRayFormFactorData>("FormFactors");
+            XRayWeights weights;
+            calculateWeights(rdfModule, weights, formFactors);
+
+            // Remove normalisation from the data
+            if (normType == StructureFactors::SquareOfAverageNormalisation)
+            {
+                auto bbar = weights.boundCoherentSquareOfAverage(referenceData.xAxis());
+                std::transform(bbar.begin(), bbar.end(), referenceData.values().begin(), referenceData.values().begin(),
+                               [](auto b, auto ref) { return ref / b; });
+            }
+            else if (normType == StructureFactors::AverageOfSquaresNormalisation)
+            {
+                auto bbar = weights.boundCoherentAverageOfSquares(referenceData.xAxis());
+                std::transform(bbar.begin(), bbar.end(), referenceData.values().begin(), referenceData.values().begin(),
+                               [](auto b, auto ref) { return ref / b; });
+            }
         }
 
         // Get window function to use for transformation of S(Q) to g(r)
@@ -120,7 +133,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (!rdfModule)
         return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
     XRayFormFactors::XRayFormFactorData formFactors = keywords_.enumeration<XRayFormFactors::XRayFormFactorData>("FormFactors");
-    XRaySQModule::NormalisationType normalisation = keywords_.enumeration<XRaySQModule::NormalisationType>("Normalisation");
+    auto normalisation = keywords_.enumeration<StructureFactors::NormalisationType>("Normalisation");
     const WindowFunction &referenceWindowFunction =
         keywords_.retrieve<WindowFunction>("ReferenceWindowFunction", WindowFunction());
     const bool saveFormFactors = keywords_.asBool("SaveFormFactors");
@@ -129,11 +142,11 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Print argument/parameter summary
     Messenger::print("XRaySQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
     Messenger::print("XRaySQ: Form factors to use are '{}'.\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors));
-    if (normalisation == XRaySQModule::NoNormalisation)
+    if (normalisation == StructureFactors::NoNormalisation)
         Messenger::print("XRaySQ: No normalisation will be applied to total F(Q).\n");
-    else if (normalisation == XRaySQModule::AverageOfSquaresNormalisation)
+    else if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b>**2");
-    else if (normalisation == XRaySQModule::SquareOfAverageNormalisation)
+    else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b**2>");
     if (referenceWindowFunction.function() == WindowFunction::NoWindow)
         Messenger::print("XRaySQ: No window function will be applied when calculating representative g(r) from S(Q).");
@@ -159,25 +172,11 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto &unweightedSQ =
         GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ", sqModule->uniqueName());
 
-    // Construct weights matrix containing each Species in the Configuration in the correct proportion
-    // TODO This info would be better calculated by the RDFModule and stored there / associated to it (#400)
-    // TODO Following code should exist locally in RDFModule::sumUnweightedGR() when suitable class storage is available.
+    // Construct weights matrix
     auto &weights = GenericListHelper<XRayWeights>::realise(dissolve.processingModuleData(), "FullWeights", uniqueName_,
                                                             GenericItem::InRestartFileFlag);
-    weights.clear();
-    for (auto *cfg : rdfModule->targetConfigurations())
-    {
-        // TODO Assume weight of 1.0 per configuration now, until #398/#400 are addressed.
-        const auto CFGWEIGHT = 1.0;
-
-        ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
-        while (auto *spInfo = spInfoIterator.iterate())
-            weights.addSpecies(spInfo->species(), spInfo->population() * CFGWEIGHT);
-    }
-
-    // Create, print, and store weights
+    calculateWeights(rdfModule, weights, formFactors);
     Messenger::print("Weights matrix:\n\n");
-    weights.finalise(formFactors);
     weights.print();
 
     // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?

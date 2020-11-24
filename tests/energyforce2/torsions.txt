@@ -142,7 +142,7 @@ Configuration  'Liquid'
       BoxAction  None
     EndAddSpecies
   EndGenerator
-  InputCoordinates  dlpoly  'dlpoly_torsions/CONFIG'
+  InputCoordinates  dlpoly  '../_data/dlpoly/hexane200_torsions/CONFIG'
   EndInputCoordinates
 EndConfiguration
 
@@ -157,7 +157,7 @@ EndModule
 Module Forces
   Test  On
   Configuration  'Liquid'
-  TestReference  dlpoly  'dlpoly_torsions/REVCON'
+  TestReference  dlpoly  '../_data/dlpoly/hexane200_torsions/REVCON'
   EndTestReference
   TestThreshold  0.12
 EndModule

@@ -10,7 +10,7 @@
 
 // Calculate weighted g(r) from supplied unweighted g(r) and neutron weights
 bool NeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
-                                          NeutronSQModule::NormalisationType normalisation)
+                                          StructureFactors::NormalisationType normalisation)
 {
     int typeI, typeJ;
     for (typeI = 0; typeI < unweightedgr.nAtomTypes(); ++typeI)
@@ -37,9 +37,9 @@ bool NeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, Partia
 
     // Calculate and normalise total to form factor if requested
     weightedgr.formTotal(false);
-    if (normalisation == NeutronSQModule::AverageOfSquaresNormalisation)
+    if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
         weightedgr.total() /= weights.boundCoherentAverageOfSquares();
-    else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation)
+    else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
         weightedgr.total() /= weights.boundCoherentSquareOfAverage();
 
     return true;
@@ -47,7 +47,7 @@ bool NeutronSQModule::calculateWeightedGR(const PartialSet &unweightedgr, Partia
 
 // Calculate weighted S(Q) from supplied unweighted S(Q) and neutron weights
 bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
-                                          NeutronSQModule::NormalisationType normalisation)
+                                          StructureFactors::NormalisationType normalisation)
 {
     int typeI, typeJ;
     for (typeI = 0; typeI < unweightedsq.nAtomTypes(); ++typeI)
@@ -74,16 +74,16 @@ bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Partia
 
     // Calculate and normalise total to form factor if requested
     weightedsq.formTotal(false);
-    if (normalisation == NeutronSQModule::AverageOfSquaresNormalisation)
+    if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
         weightedsq.total() /= weights.boundCoherentAverageOfSquares();
-    else if (normalisation == NeutronSQModule::SquareOfAverageNormalisation)
+    else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
         weightedsq.total() /= weights.boundCoherentSquareOfAverage();
 
     return true;
 }
 
 // Calculate neutron weights for relevant Configuration targets
-bool NeutronSQModule::calculateWeights(const RDFModule *rdfModule, NeutronWeights &weights) const
+void NeutronSQModule::calculateWeights(const RDFModule *rdfModule, NeutronWeights &weights) const
 {
     // Construct weights matrix based on Isotopologue specifications and Species populations in the underlying configurations
     // TODO This info would be better calculated by the RDFModule and stored there / associated to it (#400)
@@ -112,6 +112,4 @@ bool NeutronSQModule::calculateWeights(const RDFModule *rdfModule, NeutronWeight
                 weights.addIsotopologue(sp, spInfo->population() * CFGWEIGHT, sp->naturalIsotopologue(), 1.0);
         }
     }
-
-    return true;
 }
