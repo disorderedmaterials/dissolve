@@ -34,10 +34,8 @@ class ParametersProcedureNode : public ProcedureNode
     std::vector<std::shared_ptr<ExpressionVariable>> parameters_;
 
     public:
-    // Add new integer parameter
-    bool addParameter(std::string_view name, int initialValue);
-    // Add new double parameter
-    bool addParameter(std::string_view name, double initialValue);
+    // Add new parameter
+    void addParameter(std::string_view name, ExpressionValue initialValue);
     // Return whether this node has the named parameter specified
     std::shared_ptr<ExpressionVariable> hasParameter(std::string_view name,
                                                      std::shared_ptr<ExpressionVariable> excludeParameter);

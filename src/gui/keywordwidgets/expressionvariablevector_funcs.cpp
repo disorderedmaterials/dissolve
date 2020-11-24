@@ -33,10 +33,7 @@ ExpressionVariableVectorKeywordWidget::ExpressionVariableVectorKeywordWidget(QWi
     }
 
     // Add suitable delegate to the table
-    if (keyword_->variableType() == ExpressionValue::IntegerType)
-        ui_.VariablesTable->setItemDelegateForColumn(1, new IntegerSpinDelegate(this));
-    else if (keyword_->variableType() == ExpressionValue::DoubleType)
-        ui_.VariablesTable->setItemDelegateForColumn(1, new ExponentialSpinDelegate(this));
+    ui_.VariablesTable->setItemDelegateForColumn(2, new ExponentialSpinDelegate(this));
 }
 
 /*
@@ -60,15 +57,27 @@ void ExpressionVariableVectorKeywordWidget::updateVariableTableRow(int row, std:
         item = ui_.VariablesTable->item(row, 0);
     item->setText(QString::fromStdString(std::string(variable->name())));
 
-    // Value
+    // Type
     if (createItem)
     {
         item = new QTableWidgetItem;
+        item->setFlags(Qt::ItemIsSelectable);
         item->setData(Qt::UserRole, QVariant::fromValue(variable));
         ui_.VariablesTable->setItem(row, 1, item);
     }
     else
         item = ui_.VariablesTable->item(row, 1);
+    item->setText(variable->value().type() == ExpressionValue::IntegerType ? "int" : "double");
+
+    // Value
+    if (createItem)
+    {
+        item = new QTableWidgetItem;
+        item->setData(Qt::UserRole, QVariant::fromValue(variable));
+        ui_.VariablesTable->setItem(row, 2, item);
+    }
+    else
+        item = ui_.VariablesTable->item(row, 2);
     item->setText(QString::fromStdString(variable->value().asString()));
 }
 
@@ -99,12 +108,26 @@ void ExpressionVariableVectorKeywordWidget::on_VariablesTable_itemChanged(QTable
                 variable->setName(qPrintable(w->text()));
             break;
         // Variable value
-        case (1):
-            // Set the new value
-            if (keyword_->variableType() == ExpressionValue::IntegerType)
-                variable->setValue(w->text().toInt());
-            else if (keyword_->variableType() == ExpressionValue::DoubleType)
-                variable->setValue(w->text().toDouble());
+        case (2):
+            // Determine the type of the new value so we can convert and set accordingly
+            bool isFloatingPoint = false, originalFloatingPoint = variable->value().type() == ExpressionValue::DoubleType;
+            if (DissolveSys::isNumber(qPrintable(w->text()), isFloatingPoint))
+            {
+                if (isFloatingPoint)
+                    variable->setValue(ExpressionValue(w->text().toDouble(), false));
+                else
+                    variable->setValue(ExpressionValue(w->text().toInt(), false));
+
+                // Update the type?
+                if (isFloatingPoint != originalFloatingPoint)
+                {
+                    auto *item = ui_.VariablesTable->item(w->row(), 1);
+                    if (item)
+                        item->setText(isFloatingPoint ? "double" : "int");
+                }
+            }
+            else
+                Messenger::error("Invalid input - not a number.\n");
             break;
     }
 

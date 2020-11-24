@@ -9,10 +9,7 @@
 
 ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode::ParametersNode)
 {
-    keywords_.add("Defined Parameters", new ExpressionVariableVectorKeyword(this, parameters_, ExpressionValue::IntegerType),
-                  "Integer", "Available integer parameters");
-    keywords_.add("Defined Parameters", new ExpressionVariableVectorKeyword(this, parameters_, ExpressionValue::DoubleType),
-                  "Real", "Available real (floating point) parameters");
+    keywords_.add("Parameters", new ExpressionVariableVectorKeyword(this, parameters_), "Parameter", "Defined parameters");
 }
 
 ParametersProcedureNode::~ParametersProcedureNode() {}
@@ -34,20 +31,10 @@ bool ParametersProcedureNode::mustBeNamed() const { return false; }
  * Parameters
  */
 
-// Add new integer parameter
-bool ParametersProcedureNode::addParameter(std::string_view name, int initialValue)
+// Add new parameter
+void ParametersProcedureNode::addParameter(std::string_view name, ExpressionValue initialValue)
 {
     parameters_.push_back(std::make_shared<ExpressionVariable>(name, initialValue));
-
-    return true;
-}
-
-// Add new double parameter
-bool ParametersProcedureNode::addParameter(std::string_view name, double initialValue)
-{
-    parameters_.push_back(std::make_shared<ExpressionVariable>(name, initialValue));
-
-    return true;
 }
 
 // Return whether this node has the named parameter specified

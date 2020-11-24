@@ -15,8 +15,7 @@ class ProcedureNode;
 class ExpressionVariableVectorKeyword : public KeywordData<std::vector<std::shared_ptr<ExpressionVariable>> &>
 {
     public:
-    ExpressionVariableVectorKeyword(ProcedureNode *parentNode, std::vector<std::shared_ptr<ExpressionVariable>> &variables,
-                                    ExpressionValue::ValueType variableType);
+    ExpressionVariableVectorKeyword(ProcedureNode *parentNode, std::vector<std::shared_ptr<ExpressionVariable>> &variables);
     ~ExpressionVariableVectorKeyword();
 
     /*
@@ -29,17 +28,6 @@ class ExpressionVariableVectorKeyword : public KeywordData<std::vector<std::shar
     public:
     // Return parent ProcedureNode
     const ProcedureNode *parentNode() const;
-
-    /*
-     * Variable Type
-     */
-    private:
-    // Assumed type for variables in the list
-    ExpressionValue::ValueType variableType_;
-
-    public:
-    // Return assumed type for variables in the list
-    ExpressionValue::ValueType variableType() const;
 
     /*
      * Data

@@ -9,12 +9,10 @@
 #include <memory>
 
 ExpressionVariableVectorKeyword::ExpressionVariableVectorKeyword(ProcedureNode *parentNode,
-                                                                 std::vector<std::shared_ptr<ExpressionVariable>> &variables,
-                                                                 ExpressionValue::ValueType variableType)
+                                                                 std::vector<std::shared_ptr<ExpressionVariable>> &variables)
     : KeywordData<std::vector<std::shared_ptr<ExpressionVariable>> &>(KeywordBase::ExpressionVariableVectorData, variables)
 {
     parentNode_ = parentNode;
-    variableType_ = variableType;
 }
 
 ExpressionVariableVectorKeyword::~ExpressionVariableVectorKeyword() {}
@@ -25,13 +23,6 @@ ExpressionVariableVectorKeyword::~ExpressionVariableVectorKeyword() {}
 
 // Return parent ProcedureNode
 const ProcedureNode *ExpressionVariableVectorKeyword::parentNode() const { return parentNode_; }
-
-/*
- * Variable Type
- */
-
-// Return assumed type for variables in the list
-ExpressionValue::ValueType ExpressionVariableVectorKeyword::variableType() const { return variableType_; }
 
 /*
  * Data
@@ -67,8 +58,18 @@ bool ExpressionVariableVectorKeyword::read(LineParser &parser, int startArg, Cor
     data_.emplace_back(parameter);
     parameter->setName(parser.argsv(startArg));
 
-    // Set the initial value
-    parameter->setValue(variableType_ == ExpressionValue::IntegerType ? parser.argi(startArg + 1) : parser.argd(startArg + 1));
+    // Set the value
+    bool isFloatingPoint = false;
+    if (DissolveSys::isNumber(parser.argsv(startArg + 1), isFloatingPoint))
+    {
+        if (isFloatingPoint)
+            parameter->setValue(parser.argd(startArg + 1));
+        else
+            parameter->setValue(parser.argi(startArg + 1));
+    }
+    else
+        return Messenger::error("Value '{}' provided for variable '{}' doesn't appear to be a number.\n",
+                                parser.argsv(startArg + 1), parser.argsv(startArg));
 
     set_ = true;
 
@@ -81,16 +82,8 @@ bool ExpressionVariableVectorKeyword::write(LineParser &parser, std::string_view
     // Loop over list of defined ExpressionNode's (ExpressionVariables)
     for (const auto node : data_)
     {
-        if (variableType_ == ExpressionValue::IntegerType)
-        {
-            if (!parser.writeLineF("{}{}  {}  {}\n", prefix, keywordName, node->name(), node->value().asInteger()))
-                return false;
-        }
-        else if (variableType_ == ExpressionValue::DoubleType)
-        {
-            if (!parser.writeLineF("{}{}  {}  {:12.6e}\n", prefix, keywordName, node->name(), node->value().asDouble()))
-                return false;
-        }
+        if (!parser.writeLineF("{}{}  {}  {}\n", prefix, keywordName, node->name(), node->value().asString()))
+            return false;
     }
 
     return true;
