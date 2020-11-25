@@ -154,12 +154,9 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
                 return false;
             }
 
-            // Now broadcast Array elements
-            for (auto &n : data_)
-            {
-                if (!procPool.broadcast(n, root))
+            for (auto &vec : data_.linearArray())
+                if (!procPool.broadcast(vec, root))
                     return false;
-            }
         }
         else
         {
@@ -188,11 +185,9 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
 
             // Resize and receive array
             data_.initialise(nRows, nColumns, half);
-            for (auto &n : data)
-            {
-                if (!procPool.broadcast(n, root))
+            for (auto &vec : data_.linearArray())
+                if (!procPool.broadcast(vec, root))
                     return false;
-            }
         }
 #endif
         return true;
