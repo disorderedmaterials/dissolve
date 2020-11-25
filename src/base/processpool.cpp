@@ -1270,55 +1270,11 @@ bool ProcessPool::broadcast(std::vector<long int> &array, int rootRank, ProcessP
 #ifdef PARALLEL
     timer_.start();
 
-    int length;
-    if (poolRank_ == rootRank)
+    if (!broadcast(array.data(), array.size(), rootRank, commType))
     {
-        // Broadcast array length first...
-        length = array.size();
-        if (MPI_Bcast(&length, 1, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
-        {
-            Messenger::print("Failed to broadcast Array<long int> size from root rank {} (world rank {}).\n", rootRank,
-                             worldRanks_[rootRank]);
-            return false;
-        }
-
-        // Now broadcast Array data
-        if (length > 0)
-        {
-            if (MPI_Bcast(array.data(), length, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
-            {
-                Messenger::print("Failed to broadcast Array<long int> data from root rank {} (world rank {}).\n", rootRank,
-                                 worldRanks_[rootRank]);
-                return false;
-            }
-        }
-    }
-    else
-    {
-        // Slaves receive the length, and then create and receive the array
-        // Length first...
-        if (MPI_Bcast(&length, 1, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
-        {
-            Messenger::print("Slave {} (world rank {}) failed to receive Array<long int> size from root rank {}.\n", poolRank_,
-                             worldRank_, rootRank);
-            return false;
-        }
-
-        if (length > 0)
-        {
-            // Create array of specified size
-            array.clear();
-            array.resize(length);
-
-            if (MPI_Bcast(array.data(), length, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
-            {
-                Messenger::print("Slave {} (world rank {}) failed to receive Array<long int> data from root rank {}.\n",
-                                 poolRank_, worldRank_, rootRank);
-                return false;
-            }
-        }
-        else
-            array.clear();
+        Messenger::print("Failed to broadcast std::vector<long int> data from root rank {} (world rank {}).\n", rootRank,
+                         worldRanks_[rootRank]);
+        return false;
     }
 
     timer_.accumulate();
@@ -1391,55 +1347,11 @@ bool ProcessPool::broadcast(std::vector<double> &array, int rootRank, ProcessPoo
 #ifdef PARALLEL
     timer_.start();
 
-    int length;
-    if (poolRank_ == rootRank)
+    if (!broadcast(array.data(), array.size(), rootRank, commType))
     {
-        // Broadcast array length first...
-        length = array.size();
-        if (MPI_Bcast(&length, 1, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
-        {
-            Messenger::print("Failed to broadcast Array<long int> size from root rank {} (world rank {}).\n", rootRank,
-                             worldRanks_[rootRank]);
-            return false;
-        }
-
-        // Now broadcast Array data
-        if (length > 0)
-        {
-            if (MPI_Bcast(array.data(), length, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
-            {
-                Messenger::print("Failed to broadcast Array<long int> data from root rank {} (world rank {}).\n", rootRank,
-                                 worldRanks_[rootRank]);
-                return false;
-            }
-        }
-    }
-    else
-    {
-        // Slaves receive the length, and then create and receive the array
-        // Length first...
-        if (MPI_Bcast(&length, 1, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
-        {
-            Messenger::print("Slave {} (world rank {}) failed to receive Array<long int> size from root rank {}.\n", poolRank_,
-                             worldRank_, rootRank);
-            return false;
-        }
-
-        if (length > 0)
-        {
-            // Create array of specified size
-            array.clear();
-            array.resize(length);
-
-            if (MPI_Bcast(array.data(), length, MPI_LONG, rootRank, communicator(commType)) != MPI_SUCCESS)
-            {
-                Messenger::print("Slave {} (world rank {}) failed to receive Array<long int> data from root rank {}.\n",
-                                 poolRank_, worldRank_, rootRank);
-                return false;
-            }
-        }
-        else
-            array.clear();
+        Messenger::print("Failed to broadcast std::vector<double> data from root rank {} (world rank {}).\n", rootRank,
+                         worldRanks_[rootRank]);
+        return false;
     }
 
     timer_.accumulate();
