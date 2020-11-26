@@ -51,18 +51,19 @@ Data1DExportFileFormat::Data1DExportFormat Data1DExportFileFormat::data1DFormat(
 // Export Data1D as simple XY (or XYE) data
 bool Data1DExportFileFormat::exportXY(LineParser &parser, const Data1D &data)
 {
-    const auto &x = data.constXAxis();
-    const auto &values = data.constValues();
+    const auto &x = data.xAxis();
+    const auto &values = data.values();
     if (data.valuesHaveErrors())
     {
-        const auto &errors = data.constErrors();
-        for (auto n = 0; n < x.nItems(); ++n)
-            if (!parser.writeLineF("{:16.10e}  {:16.10e}  {:16.10e}\n", x.constAt(n), values.constAt(n), errors.constAt(n)))
+        const auto &errors = data.errors();
+        // When we get Ranges, we can refactor this code
+        for (auto n = 0; n < x.size(); ++n)
+            if (!parser.writeLineF("{:16.10e}  {:16.10e}  {:16.10e}\n", x[n], values[n], errors[n]))
                 return false;
     }
     else
-        for (auto n = 0; n < x.nItems(); ++n)
-            if (!parser.writeLineF("{:16.10e}  {:16.10e}\n", x.constAt(n), values.constAt(n)))
+        for (auto n = 0; n < x.size(); ++n)
+            if (!parser.writeLineF("{:16.10e}  {:16.10e}\n", x[n], values[n]))
                 return false;
 
     return true;

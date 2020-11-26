@@ -26,11 +26,11 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
      */
     private:
     // X axis array
-    Array<double> x_;
+    std::vector<double> x_;
     // Y axis array
-    Array<double> y_;
+    std::vector<double> y_;
     // Z axis array
-    Array<double> z_;
+    std::vector<double> z_;
     // Values at each xyz
     Array3D<double> values_;
     // Whether data has associated errors
@@ -56,25 +56,25 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
     // Return x axis value specified (const)
     double constXAxis(int index) const;
     // Return x axis Array
-    Array<double> &xAxis();
+    std::vector<double> &xAxis();
     // Return x axis Array (const)
-    const Array<double> &constXAxis() const;
+    const std::vector<double> &xAxis() const;
     // Return y axis value specified
     double &yAxis(int index);
     // Return y axis value specified (const)
     double constYAxis(int index) const;
     // Return y axis Array
-    Array<double> &yAxis();
+    std::vector<double> &yAxis();
     // Return y axis Array (const)
-    const Array<double> &constYAxis() const;
+    const std::vector<double> &yAxis() const;
     // Return z axis value specified
     double &zAxis(int index);
     // Return z axis value specified (const)
     double constZAxis(int index) const;
     // Return z axis Array
-    Array<double> &zAxis();
+    std::vector<double> &zAxis();
     // Return z axis Array (const)
-    const Array<double> &constZAxis() const;
+    const std::vector<double> &zAxis() const;
     // Return value specified
     double &value(int xIndex, int yIndex, int zIndex);
     // Return value value specified (const)

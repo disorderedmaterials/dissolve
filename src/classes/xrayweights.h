@@ -63,7 +63,7 @@ class XRayWeights : public GenericItemBase
      */
     private:
     // Concentration products (ci)
-    Array<double> concentrations_;
+    std::vector<double> concentrations_;
     // Concentration product matrix (ci * cj)
     Array2D<double> concentrationProducts_;
     // Pre-factors matrix (ci * cj * [2-dij])
@@ -83,19 +83,19 @@ class XRayWeights : public GenericItemBase
     // Return form factor product for types i and j at specified Q value
     double formFactorProduct(int typeIndexI, int typeIndexJ, double Q) const;
     // Return form factor for type i over supplied Q values
-    Array<double> formFactor(int typeIndexI, const Array<double> &Q) const;
+    std::vector<double> formFactor(int typeIndexI, const std::vector<double> &Q) const;
     // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) at specified Q value
     double weight(int typeIndexI, int typeIndexJ, double Q) const;
     // Return full weighting for types i and j (ci * cj * f(i,Q) * F(j,Q) * [2-dij]) over supplied Q values
-    Array<double> weight(int typeIndexI, int typeIndexJ, const Array<double> &Q) const;
+    std::vector<double> weight(int typeIndexI, int typeIndexJ, const std::vector<double> &Q) const;
     // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q value
     double boundCoherentSquareOfAverage(double Q) const;
     // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q values
-    Array<double> boundCoherentSquareOfAverage(const Array<double> &Q) const;
+    std::vector<double> boundCoherentSquareOfAverage(const std::vector<double> &Q) const;
     // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q value
     double boundCoherentAverageOfSquares(double Q) const;
     // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q values
-    Array<double> boundCoherentAverageOfSquares(const Array<double> &Q) const;
+    std::vector<double> boundCoherentAverageOfSquares(const std::vector<double> &Q) const;
     // Return whether the structure is valid (i.e. has been finalised)
     bool isValid() const;
 

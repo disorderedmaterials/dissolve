@@ -45,9 +45,9 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
     // Histogram bins
     Array2D<long int> bins_;
     // Array of x bin centres
-    Array<double> xBinCentres_;
+    std::vector<double> xBinCentres_;
     // Array of y bin centres
-    Array<double> yBinCentres_;
+    std::vector<double> yBinCentres_;
     // Accumulated averages
     Array2D<SampledDouble> averages_;
     // Number of values binned over all bins
@@ -85,9 +85,9 @@ class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D
     // Accumulate current histogram bins into averages
     void accumulate();
     // Return Array of x centre-bin values
-    const Array<double> &xBinCentres() const;
+    const std::vector<double> &xBinCentres() const;
     // Return Array of y centre-bin values
-    const Array<double> &yBinCentres() const;
+    const std::vector<double> &yBinCentres() const;
     // Return histogram data
     Array2D<long int> &bins();
     // Add source histogram data into local array

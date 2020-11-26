@@ -59,8 +59,9 @@ class RenderableData1D : public Renderable
 
     private:
     // Create line strip primitive
-    void constructLineXY(const Array<double> &displayAbscissa, const Array<double> &displayValues, Primitive *primitive,
-                         const Axes &axes, const ColourDefinition &colourDefinition, double zCoordinate = 0.0);
+    void constructLineXY(const std::vector<double> &displayAbscissa, const std::vector<double> &displayValues,
+                         Primitive *primitive, const Axes &axes, const ColourDefinition &colourDefinition,
+                         double zCoordinate = 0.0);
 
     protected:
     // Recreate necessary primitives / primitive assemblies for the data

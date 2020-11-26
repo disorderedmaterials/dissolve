@@ -54,8 +54,8 @@ Data3DExportFileFormat::Data3DExportFormat Data3DExportFileFormat::data3DFormat(
 bool Data3DExportFileFormat::exportBlock(LineParser &parser, const Data3D &data)
 {
     // Export header comment
-    if (!parser.writeLineF("# {} blocks (nX*nY) of {} points (nZ).\n", data.constXAxis().nItems() * data.constYAxis().nItems(),
-                           data.constZAxis().nItems()))
+    if (!parser.writeLineF("# {} blocks (nX*nY) of {} points (nZ).\n", data.xAxis().size() * data.yAxis().size(),
+                           data.zAxis().size()))
         return false;
 
     // Export datapoints, separating each block of a specific x value with a single blank line
@@ -82,19 +82,18 @@ bool Data3DExportFileFormat::exportCartesian(LineParser &parser, const Data3D &d
 {
     // Four-column format (x  y  z  value) in blocks of similar x and y value, separated by blank lines
     const Array3D<double> &values = data.constValues3D();
-    const auto &xAxis = data.constXAxis();
-    const auto &yAxis = data.constYAxis();
-    const auto &zAxis = data.constZAxis();
+    const auto &xAxis = data.xAxis();
+    const auto &yAxis = data.yAxis();
+    const auto &zAxis = data.zAxis();
     for (auto x = 0; x < values.nX(); ++x)
     {
-        double xVal = xAxis.constAt(x);
+        double xVal = xAxis[x];
         for (auto y = 0; y < values.nY(); ++y)
         {
-            double yVal = yAxis.constAt(y);
+            double yVal = yAxis[y];
             for (auto z = 0; z < values.nZ(); ++z)
             {
-                if (!parser.writeLineF("{:15.9e} {:15.9e} {:15.9e} {:15.9e}\n", xVal, yVal, zAxis.constAt(z),
-                                       values.constAt(x, y, z)))
+                if (!parser.writeLineF("{:15.9e} {:15.9e} {:15.9e} {:15.9e}\n", xVal, yVal, zAxis[z], values.constAt(x, y, z)))
                     return false;
             }
         }
@@ -116,14 +115,12 @@ bool Data3DExportFileFormat::exportPDens(LineParser &parser, const Data3D &data)
 
     // Line 2 (Axis Definitions) - assume orthogonal
     if (!parser.writeLineF("{:9.3e} {:9.3e} {:9.3e} {:9.3e} {:9.3e} {:9.3e} {:9.3e} {:9.3e} {:9.3e}\n",
-                           data.constXAxis().constAt(1) - data.constXAxis().constAt(0), 0.0, 0.0, 0.0,
-                           data.constYAxis().constAt(1) - data.constYAxis().constAt(0), 0.0, 0.0, 0.0,
-                           data.constZAxis().constAt(1) - data.constZAxis().constAt(0)))
+                           data.xAxis()[1] - data.xAxis()[0], 0.0, 0.0, 0.0, data.yAxis()[1] - data.yAxis()[0], 0.0, 0.0, 0.0,
+                           data.zAxis()[1] - data.zAxis()[0]))
         return false;
 
     // Line 3 (Origin)
-    if (!parser.writeLineF("{:10.4f}{:10.4f}{:10.4f}\n", data.constXAxis().constAt(0), data.constYAxis().constAt(0),
-                           data.constZAxis().constAt(0)))
+    if (!parser.writeLineF("{:10.4f}{:10.4f}{:10.4f}\n", data.xAxis()[0], data.yAxis()[0], data.zAxis()[0]))
         return false;
 
     // Line 4 (Loop order)

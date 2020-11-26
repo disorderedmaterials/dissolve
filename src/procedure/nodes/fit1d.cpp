@@ -63,7 +63,7 @@ EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> Fit1DProcedureNode::fit1DNodeK
  */
 
 // Fitting cost function
-double Fit1DProcedureNode::equationCost(const Array<double> &alpha)
+double Fit1DProcedureNode::equationCost(const std::vector<double> &alpha)
 {
     // We assume that the minimiser has 'pokeBeforeCost' set, so our Expression's variables are up-to-date with new test
     // values.
@@ -74,13 +74,13 @@ double Fit1DProcedureNode::equationCost(const Array<double> &alpha)
     for (auto n = 0; n < referenceData_.nValues(); ++n)
     {
         // Set axis value
-        xVariable_->set(x.constAt(n));
+        xVariable_->set(x[n]);
 
         // Evaluate expression
         equationY = equation_.asDouble();
 
         // Sum squared error
-        cost += (equationY - y.constAt(n)) * (equationY - y.constAt(n));
+        cost += (equationY - y[n]) * (equationY - y[n]);
     }
 
     cost /= referenceData_.nValues();
@@ -177,10 +177,10 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
     for (auto n = 0; n < referenceData_.nValues(); ++n)
     {
         // Set axis value
-        xVariable_->set(x.constAt(n));
+        xVariable_->set(x[n]);
 
         // Add point
-        data.addPoint(x.constAt(n), equation_.asDouble());
+        data.addPoint(x[n], equation_.asDouble());
     }
 
     // Save data?

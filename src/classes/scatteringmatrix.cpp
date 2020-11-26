@@ -256,10 +256,10 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
             interpolations.emplace_back(Interpolator(data_[refDataIndex]));
 
         // Q-dependent terms in the scattering matrix, so need to invert once at each distinct Q value
-        const Array<double> &x = partials[0].constXAxis();
-        for (auto n = 0; n < x.nItems(); ++n)
+        const auto &x = partials[0].xAxis();
+        for (auto n = 0; n < x.size(); ++n)
         {
-            const auto q = x.constAt(n);
+            const auto q = x[n];
 
             // Generate inverse matrix at this Q value
             inverseA = matrix(q);
@@ -271,7 +271,7 @@ bool ScatteringMatrix::generatePartials(Array2D<Data1D> &estimatedSQ)
             {
                 for (auto refDataIndex = 0; refDataIndex < data_.nItems(); ++refDataIndex)
                 {
-                    if ((q < data_[refDataIndex].xAxis().first()) || (q > data_[refDataIndex].xAxis().last()))
+                    if ((q < data_[refDataIndex].xAxis().front()) || (q > data_[refDataIndex].xAxis().back()))
                         continue;
                     partials[partialIndex].value(n) +=
                         interpolations[refDataIndex].y(q) * inverseA.constAt(partialIndex, refDataIndex);
@@ -365,7 +365,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const Neutro
 
     // Add reference data and apply the associated factor
     data_.add(weightedData);
-    data_.last().values() *= factor;
+    data_.last() *= factor;
 
     // Neutron data, so store dummy XRay form factor data indicator
     xRayData_.emplace_back(false, std::nullopt, StructureFactors::NoNormalisation);
@@ -405,7 +405,7 @@ bool ScatteringMatrix::addReferenceData(const Data1D &weightedData, const XRayWe
 
     // Add reference data and apply the associated factor
     data_.add(weightedData);
-    data_.last().values() *= factor;
+    data_.last() *= factor;
 
     // Store XRay form factor data indicator
     xRayData_.emplace_back(true, dataWeights, StructureFactors::AverageOfSquaresNormalisation);
@@ -433,7 +433,7 @@ bool ScatteringMatrix::addPartialReferenceData(Data1D &weightedData, std::shared
 
     // Add reference data and its associated factor
     data_.add(weightedData);
-    data_.last().values() *= factor;
+    data_.last() *= factor;
 
     // Simulated partial data, so store dummy XRay form factor data indicator
     xRayData_.emplace_back(false, std::nullopt, StructureFactors::NoNormalisation);

@@ -25,6 +25,7 @@
 #include "modules/xraysq/xraysq.h"
 #include "templates/algorithms.h"
 #include "templates/array3d.h"
+#include <functional>
 
 // Run set-up stage
 bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
@@ -300,10 +301,10 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         deltaFQ = differenceData;
         Filters::trim(deltaFQ, qMin, qMax);
         Interpolator::addInterpolated(deltaFQ, weightedSQ.total(), -1.0);
-        deltaFQ.values() *= -1.0;
+        deltaFQ *= -1.0;
 
         // Fit a function expansion to the deltaFQ - if the coefficient arrays already exist then re-fit starting from those.
-        auto &fitCoefficients = GenericListHelper<Array<double>>::realise(
+        auto &fitCoefficients = GenericListHelper<std::vector<double>>::realise(
             dissolve.processingModuleData(), fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_,
             GenericItem::InRestartFileFlag, &created);
 
@@ -317,11 +318,11 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 0, 3, 3, false);
             else
             {
-                if (fitCoefficients.nItems() != ncoeffp)
+                if (fitCoefficients.size() != ncoeffp)
                 {
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
-                                    fitCoefficients.nItems(), module->uniqueName(), ncoeffp);
+                                    fitCoefficients.size(), module->uniqueName(), ncoeffp);
                     fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, gsigma1, npitss, 0.01, 0, 3, 3, false);
                 }
                 else
@@ -330,7 +331,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             }
 
             // Store the new fit coefficients
-            fitCoefficients = coeffMinimiser.A();
+            std::copy(coeffMinimiser.A().begin(), coeffMinimiser.A().end(), fitCoefficients.begin());
 
             deltaFQFit = coeffMinimiser.approximation();
         }
@@ -344,11 +345,11 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.1, 0, 3, 3, false);
             else
             {
-                if (fitCoefficients.nItems() != ncoeffp)
+                if (fitCoefficients.size() != ncoeffp)
                 {
                     Messenger::warn("Number of terms ({}) in existing FitCoefficients array for target '{}' does "
                                     "not match the current number ({}), so will fit from scratch.\n",
-                                    fitCoefficients.nItems(), module->uniqueName(), ncoeffp);
+                                    fitCoefficients.size(), module->uniqueName(), ncoeffp);
                     fitError = coeffMinimiser.constructReciprocal(0.0, rmaxpt, ncoeffp, psigma1, psigma2, npitss, 0.01, 0, 3, 3,
                                                                   false);
                 }
@@ -398,9 +399,9 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // normalisation from the reference data (we assume that the two are consistent)
             auto normType = module->keywords().enumeration<StructureFactors::NormalisationType>("Normalisation");
             if (normType == StructureFactors::AverageOfSquaresNormalisation)
-                refMinusIntra.values() *= weights.boundCoherentAverageOfSquares();
+                refMinusIntra *= weights.boundCoherentAverageOfSquares();
             else if (normType == StructureFactors::SquareOfAverageNormalisation)
-                refMinusIntra.values() *= weights.boundCoherentSquareOfAverage();
+                refMinusIntra *= weights.boundCoherentSquareOfAverage();
 
             if (!scatteringMatrix.addReferenceData(refMinusIntra, weights, feedback))
                 return Messenger::error("Failed to add target data '{}' to weights matrix.\n", module->uniqueName());
@@ -420,25 +421,25 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             if (normType == StructureFactors::SquareOfAverageNormalisation)
             {
                 // Remove square of average normalisation, and apply average of squares
-                Array<double> bbarOld = weights.boundCoherentSquareOfAverage(normalisedRef.constXAxis());
-                Array<double> bbarNew = weights.boundCoherentAverageOfSquares(normalisedRef.constXAxis());
-                for (auto n = 0; n < bbarOld.nItems(); ++n)
+                auto bbarOld = weights.boundCoherentSquareOfAverage(normalisedRef.xAxis());
+                auto bbarNew = weights.boundCoherentAverageOfSquares(normalisedRef.xAxis());
+                for (auto n = 0; n < bbarOld.size(); ++n)
                     normalisedRef.value(n) *= bbarOld[n] / bbarNew[n];
             }
             else if (normType == StructureFactors::NoNormalisation)
             {
-                Array<double> bbar = weights.boundCoherentAverageOfSquares(normalisedRef.constXAxis());
-                for (auto n = 0; n < bbar.nItems(); ++n)
-                    normalisedRef.value(n) /= bbar[n];
+                auto bbar = weights.boundCoherentAverageOfSquares(normalisedRef.xAxis());
+                std::transform(normalisedRef.values().begin(), normalisedRef.values().end(), bbar.begin(),
+                               normalisedRef.values().begin(), std::divides<>());
             }
 
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
             // Our reference data is normalised to AverageOfSquares at this point, so must do the same to the
             // bound total before subtracting it.
             auto boundTotal = weightedSQ.boundTotal(false);
-            Array<double> bbar = weights.boundCoherentAverageOfSquares(boundTotal.constXAxis());
-            for (auto n = 0; n < bbar.nItems(); ++n)
-                boundTotal.value(n) /= bbar[n];
+            auto bbar = weights.boundCoherentAverageOfSquares(boundTotal.xAxis());
+            std::transform(boundTotal.values().begin(), boundTotal.values().end(), bbar.begin(), boundTotal.values().begin(),
+                           std::divides<>());
             Interpolator::addInterpolated(normalisedRef, boundTotal, -1.0);
 
             if (!scatteringMatrix.addReferenceData(normalisedRef, weights, feedback))
@@ -621,7 +622,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         expGR = estimatedSQ.at(i, j);
         Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * targetConfiguration_->atomicDensity()), 0.0, 0.05, 30.0,
                         WindowFunction(WindowFunction::Lorch0Window));
-        expGR.values() += 1.0;
+        expGR += 1.0;
     });
 
     /*
@@ -633,7 +634,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     for (auto *module : targets_)
     {
         // For this Module, retrive the coefficents of the fit performed above.
-        const auto &fitCoefficients = GenericListHelper<Array<double>>::value(
+        const auto &fitCoefficients = GenericListHelper<std::vector<double>>::value(
             dissolve.processingModuleData(), fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_);
 
         // Loop over pair potentials and retrieve the inverse weight from the scattering matrix
@@ -646,7 +647,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Store fluctuation coefficients ready for addition to potential coefficients later on.
             for (auto n = 0; n < ncoeffp; ++n)
-                fluctuationCoefficients.at(i, j, n) += weight * fitCoefficients.constAt(n);
+                fluctuationCoefficients.at(i, j, n) += weight * fitCoefficients[n];
         });
 
         // Increase dataIndex
@@ -658,13 +659,13 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (modifyPotential)
     {
         // Sum fluctuation coefficients in to the potential coefficients
-        Array2D<Array<double>> &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
+        auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
         for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-            Array<double> &potCoeff = coefficients.at(i, j);
+            auto &potCoeff = coefficients.at(i, j);
 
             // Zero potential before adding in fluctuation coefficients?
             if (overwritePotentials)
-                potCoeff = 0.0;
+                std::fill(potCoeff.begin(), potCoeff.end(), 0.0);
 
             // Perform smoothing of the fluctuation coefficients before we sum them into the potential (the
             // un-smoothed coefficients are stored)
@@ -720,7 +721,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Scale coefficients
         for (i = 0; i < coefficients.linearArraySize(); ++i)
-            coefficients.linearArray()[i] *= pressfac;
+            std::transform(coefficients.linearArray()[i].begin(), coefficients.linearArray()[i].end(),
+                           coefficients.linearArray()[i].begin(), [pressfac](auto value) { return value * pressfac; });
         energabs *= pressfac;
 
         // Generate additional potentials from the coefficients
@@ -758,18 +760,18 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         if (procPool.isMaster())
         {
-            Array2D<Array<double>> &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
+            auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
 
             for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
                           [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
                               // Grab reference to coefficients
-                              Array<double> &potCoeff = coefficients.at(i, j);
+                              auto &potCoeff = coefficients.at(i, j);
 
                               LineParser fileParser;
                               if (!fileParser.openOutput(fmt::format("PCof-{}-{}.txt", at1->name(), at2->name())))
                                   return procPool.decideFalse();
-                              for (auto n = 0; n < potCoeff.nItems(); ++n)
-                                  if (!fileParser.writeLineF("{}\n", potCoeff[n]))
+                              for (auto n : potCoeff)
+                                  if (!fileParser.writeLineF("{}\n", n))
                                       return procPool.decideFalse();
                               fileParser.closeFiles();
                               return std::nullopt;

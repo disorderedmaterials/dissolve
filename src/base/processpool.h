@@ -291,8 +291,14 @@ class ProcessPool
     // Broadcast Array<long int>
     bool broadcast(Array<long int> &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast std::vector<long int>
+    bool broadcast(std::vector<long int> &array, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast Array<double>
     bool broadcast(Array<double> &array, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast std::vector<double>
+    bool broadcast(std::vector<double> &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast Array< Vec3<int> >
     bool broadcast(Array<Vec3<int>> &array, int rootRank = 0,
@@ -378,6 +384,12 @@ class ProcessPool
     bool equality(const Array<int> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Check equality of Array<double> across involved processes
     bool equality(const Array<double> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Check equality of std::vector<double> across involved processes
+    bool equality(const std::vector<double> &array,
+                  ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Check equality of std::vector<long int> across involved processes
+    bool equality(const std::vector<long int> &array,
+                  ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Check equality of Array2D<int> across involved processes
     bool equality(const Array2D<int> &array, ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Check equality of Array2D<double> across involved processes

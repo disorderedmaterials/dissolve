@@ -82,55 +82,53 @@ void RenderableData3D::transformValues()
     {
         valuesMin_ = transformedData_.minValue();
         valuesMax_ = transformedData_.maxValue();
-        limitsMin_.set(transformedData_.constXAxis().firstValue(), transformedData_.constYAxis().firstValue(),
-                       transformedData_.constZAxis().firstValue());
-        limitsMax_.set(transformedData_.constXAxis().lastValue(), transformedData_.constYAxis().lastValue(),
-                       transformedData_.constZAxis().lastValue());
+        limitsMin_.set(transformedData_.xAxis().front(), transformedData_.yAxis().front(), transformedData_.zAxis().front());
+        limitsMax_.set(transformedData_.xAxis().back(), transformedData_.yAxis().back(), transformedData_.zAxis().back());
     }
 
     // Now determine minimum positive limits - loop over points in data, searching for first positive, non-zero value
     // X
-    for (auto n = 0; n < transformedData_.constXAxis().nItems(); ++n)
+    for (auto n = 0; n < transformedData_.xAxis().size(); ++n)
     {
-        if (transformedData_.constXAxis(n) > 0.0)
+        if (transformedData_.xAxis(n) > 0.0)
         {
             if (positiveLimitsMin_.x < 0.0)
-                positiveLimitsMin_.x = transformedData_.constXAxis(n);
-            else if (transformedData_.constXAxis(n) < positiveLimitsMin_.x)
-                positiveLimitsMin_.x = transformedData_.constXAxis(n);
+                positiveLimitsMin_.x = transformedData_.xAxis(n);
+            else if (transformedData_.xAxis(n) < positiveLimitsMin_.x)
+                positiveLimitsMin_.x = transformedData_.xAxis(n);
 
-            if (transformedData_.constXAxis(n) > positiveLimitsMax_.x)
-                positiveLimitsMax_.x = transformedData_.constXAxis(n);
+            if (transformedData_.xAxis(n) > positiveLimitsMax_.x)
+                positiveLimitsMax_.x = transformedData_.xAxis(n);
         }
     }
 
     // Y
-    for (auto n = 0; n < transformedData_.constYAxis().nItems(); ++n)
+    for (auto n = 0; n < transformedData_.yAxis().size(); ++n)
     {
-        if (transformedData_.constYAxis(n) > 0.0)
+        if (transformedData_.yAxis(n) > 0.0)
         {
             if (positiveLimitsMin_.y < 0.0)
-                positiveLimitsMin_.y = transformedData_.constYAxis(n);
-            else if (transformedData_.constYAxis(n) < positiveLimitsMin_.y)
-                positiveLimitsMin_.y = transformedData_.constYAxis(n);
+                positiveLimitsMin_.y = transformedData_.yAxis(n);
+            else if (transformedData_.yAxis(n) < positiveLimitsMin_.y)
+                positiveLimitsMin_.y = transformedData_.yAxis(n);
 
-            if (transformedData_.constYAxis(n) > positiveLimitsMax_.y)
-                positiveLimitsMax_.y = transformedData_.constYAxis(n);
+            if (transformedData_.yAxis(n) > positiveLimitsMax_.y)
+                positiveLimitsMax_.y = transformedData_.yAxis(n);
         }
     }
 
     // Z
-    for (auto n = 0; n < transformedData_.constZAxis().nItems(); ++n)
+    for (auto n = 0; n < transformedData_.zAxis().size(); ++n)
     {
-        if (transformedData_.constZAxis(n) > 0.0)
+        if (transformedData_.zAxis(n) > 0.0)
         {
             if (positiveLimitsMin_.z < 0.0)
-                positiveLimitsMin_.z = transformedData_.constZAxis(n);
-            else if (transformedData_.constZAxis(n) < positiveLimitsMin_.z)
-                positiveLimitsMin_.z = transformedData_.constZAxis(n);
+                positiveLimitsMin_.z = transformedData_.zAxis(n);
+            else if (transformedData_.zAxis(n) < positiveLimitsMin_.z)
+                positiveLimitsMin_.z = transformedData_.zAxis(n);
 
-            if (transformedData_.constZAxis(n) > positiveLimitsMax_.z)
-                positiveLimitsMax_.z = transformedData_.constZAxis(n);
+            if (transformedData_.zAxis(n) > positiveLimitsMax_.z)
+                positiveLimitsMax_.z = transformedData_.zAxis(n);
         }
     }
 
@@ -183,7 +181,7 @@ void RenderableData3D::recreatePrimitives(const View &view, const ColourDefiniti
     if (!validateDataSource())
         return;
 
-    marchingCubesOriginal(transformedData_.constXAxis(), transformedData_.constYAxis(), transformedData_.constZAxis(),
+    marchingCubesOriginal(transformedData_.xAxis(), transformedData_.yAxis(), transformedData_.zAxis(),
                           transformedData_.constValues3D(), lowerCutoff_, upperCutoff_, colourDefinition, view.constAxes(),
                           dataPrimitive_);
 }
@@ -473,8 +471,9 @@ int facetriples[256][15] = {
 
 // marching cubes
 // Render volumetric isosurface with Marching Cubes ORIGINAL
-void RenderableData3D::marchingCubesOriginal(const Array<double> &displayXAbscissa, const Array<double> &displayYAbscissa,
-                                             const Array<double> &displayZAbscissa, const Array3D<double> &displayValues,
+void RenderableData3D::marchingCubesOriginal(const std::vector<double> &displayXAbscissa,
+                                             const std::vector<double> &displayYAbscissa,
+                                             const std::vector<double> &displayZAbscissa, const Array3D<double> &displayValues,
                                              double lowerCutoff, double upperCutoff, const ColourDefinition &colourDefinition,
                                              const Axes &axes, Primitive *primitive)
 {
@@ -483,29 +482,29 @@ void RenderableData3D::marchingCubesOriginal(const Array<double> &displayXAbscis
     Vec3<double> r, v1;
     double vertex[8], ipol, a, b;
     GLfloat colour[4];
-    Array<double> x = displayXAbscissa, y = displayYAbscissa, z = displayZAbscissa;
+    std::vector<double> x = displayXAbscissa, y = displayYAbscissa, z = displayZAbscissa;
 
     // Get distances between grid points
     double dx, dy, dz;
-    dx = x.constAt(1) - x.constAt(0);
-    dy = y.constAt(1) - y.constAt(0);
-    dz = z.constAt(1) - z.constAt(0);
+    dx = x[1] - x[0];
+    dy = y[1] - y[0];
+    dz = z[1] - z[0];
 
     // Transform abscissa values (still in data space) into axes coordinates
     axes.transformX(x);
-    auto nX = x.nItems();
+    auto nX = x.size();
     if (nX < 2)
         return;
 
     // Transform abscissa values (still in data space) into axes coordinates
     axes.transformY(y);
-    auto nY = y.nItems();
+    auto nY = y.size();
     if (nY < 2)
         return;
 
     // Transform abscissa values (still in data space) into axes coordinates
     axes.transformZ(z);
-    auto nZ = z.nItems();
+    auto nZ = z.size();
     if (nZ < 2)
         return;
 
@@ -514,11 +513,11 @@ void RenderableData3D::marchingCubesOriginal(const Array<double> &displayXAbscis
         colourDefinition.colour(0.0, colour);
 
     // Generate isosurface
-    for (i = 1; i < x.nItems() - 2; ++i)
+    for (i = 1; i < x.size() - 2; ++i)
     {
-        for (j = 1; j < y.nItems() - 2; ++j)
+        for (j = 1; j < y.size() - 2; ++j)
         {
-            for (k = 1; k < z.nItems() - 2; ++k)
+            for (k = 1; k < z.size() - 2; ++k)
             {
                 // Grab values that form vertices of cube.
                 vertex[0] = displayValues.constAt(i, j, k);
@@ -605,7 +604,7 @@ void RenderableData3D::marchingCubesOriginal(const Array<double> &displayXAbscis
                         normal.normalise();
 
                         // Add data lower-left-corner coordinate to r, and data-scaled edge origin v1
-                        r.add(x.constAt(i) + dx * v1[0], y.constAt(j) + dy * v1[1], z.constAt(k) + dz * v1[2]);
+                        r.add(x[i] + dx * v1[0], y[j] + dy * v1[1], z[k] + dz * v1[2]);
 
                         // Plot vertex
                         if (colourDefinition.style() == ColourDefinition::SingleColourStyle)

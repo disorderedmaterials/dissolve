@@ -5,6 +5,7 @@
 
 #include "math/sampleddouble.h"
 #include "templates/array.h"
+#include <vector>
 
 // Forward Declarations
 template <class T> class Array3D;
@@ -44,11 +45,11 @@ class PlottableData
      */
     public:
     // Return x axis Array
-    virtual const Array<double> &constXAxis() const = 0;
+    virtual const std::vector<double> &xAxis() const = 0;
     // Return y axis Array
-    virtual const Array<double> &constYAxis() const;
+    virtual const std::vector<double> &yAxis() const;
     // Return z axis Array
-    virtual const Array<double> &constZAxis() const;
+    virtual const std::vector<double> &zAxis() const;
 
     /*
      * Values / Errors
@@ -57,7 +58,7 @@ class PlottableData
     // Return data version
     virtual int version() const = 0;
     // Return values Array
-    virtual const Array<double> &constValues() const;
+    virtual const std::vector<double> &values() const;
     // Return values Array
     virtual const Array2D<double> &constValues2D() const;
     // Return three-dimensional values Array
@@ -71,7 +72,7 @@ class PlottableData
     // Return whether the values have associated errors
     virtual bool valuesHaveErrors() const;
     // Return errors Array
-    virtual const Array<double> &constErrors() const;
+    virtual const std::vector<double> &errors() const;
     // Return errors Array
     virtual const Array2D<double> &constErrors2D() const;
     // Return three-dimensional errors Array

@@ -102,5 +102,5 @@ class CalibrationModuleCostFunctions
 
     public:
     // Cost function for intraBroadening minimisation
-    double intraBroadeningCost(const Array<double> &alpha);
+    double intraBroadeningCost(const std::vector<double> &alpha);
 };

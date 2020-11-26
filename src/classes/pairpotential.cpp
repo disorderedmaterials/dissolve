@@ -475,7 +475,7 @@ bool PairPotential::tabulate(double maxR, double delta, bool includeCoulomb)
 
     // Set additional potential to zero and update full potential
     uAdditional_ = uOriginal_;
-    uAdditional_.values() = 0.0;
+    std::fill(uAdditional_.values().begin(), uAdditional_.values().end(), 0);
     calculateUFull();
 
     // Generate derivative data
@@ -642,7 +642,7 @@ Data1D &PairPotential::uAdditional() { return uAdditional_; }
 // Zero additional potential
 void PairPotential::resetUAdditional()
 {
-    uAdditional_.values() = 0.0;
+    std::fill(uAdditional_.values().begin(), uAdditional_.values().end(), 0.0);
 
     calculateUFull();
     calculateDUFull();

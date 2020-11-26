@@ -53,11 +53,11 @@ class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D
     // Histogram bins
     Array3D<long int> bins_;
     // Array of bin centres along x
-    Array<double> xBinCentres_;
+    std::vector<double> xBinCentres_;
     // Array of bin centres along y
-    Array<double> yBinCentres_;
+    std::vector<double> yBinCentres_;
     // Array of bin centres along z
-    Array<double> zBinCentres_;
+    std::vector<double> zBinCentres_;
     // Accumulated averages
     Array3D<SampledDouble> averages_;
     // Number of values binned over all bins
@@ -110,11 +110,11 @@ class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D
     // Accumulate current histogram bins into averages
     void accumulate();
     // Return Array of x centre-bin values
-    const Array<double> &xBinCentres() const;
+    const std::vector<double> &xBinCentres() const;
     // Return Array of y centre-bin values
-    const Array<double> &yBinCentres() const;
+    const std::vector<double> &yBinCentres() const;
     // Return Array of z centre-bin values
-    const Array<double> &zBinCentres() const;
+    const std::vector<double> &zBinCentres() const;
     // Return histogram data
     Array3D<long int> &bins();
     // Add source histogram data into local array
