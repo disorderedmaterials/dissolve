@@ -417,3 +417,6 @@ if(GUI)
     CONAN_PKG::CLI11
   )
 endif(GUI)
+
+enable_testing()
+add_subdirectory(tests)
