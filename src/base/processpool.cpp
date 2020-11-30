@@ -1058,6 +1058,21 @@ bool ProcessPool::broadcast(int *source, int count, int rootRank, ProcessPool::C
     return true;
 }
 
+// Broadcast char(s) to all Processes
+bool ProcessPool::broadcast(char *source, int count, int rootRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+    timer_.start();
+    if (MPI_Bcast(source, count, MPI_CHAR, rootRank, communicator(commType)) != MPI_SUCCESS)
+    {
+        Messenger::print("Failed to broadcast int data from root rank {}.\n", rootRank);
+        return false;
+    }
+    timer_.accumulate();
+#endif
+    return true;
+}
+
 // Broadcast long integer to all Processes
 bool ProcessPool::broadcast(long int &source, int rootRank, ProcessPool::CommunicatorType commType)
 {
@@ -1369,6 +1384,24 @@ bool ProcessPool::broadcast(Array<double> &array, int rootRank, ProcessPool::Com
         }
         else
             array.clear();
+    }
+
+    timer_.accumulate();
+#endif
+    return true;
+}
+
+// Broadcast std::vector<char>
+bool ProcessPool::broadcast(std::vector<char> &array, int rootRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+    timer_.start();
+
+    if (!broadcast(array.data(), array.size(), rootRank, commType))
+    {
+        Messenger::print("Failed to broadcast std::vector<long int> data from root rank {} (world rank {}).\n", rootRank,
+                         worldRanks_[rootRank]);
+        return false;
     }
 
     timer_.accumulate();
@@ -1727,14 +1760,11 @@ bool ProcessPool::broadcast(Array2D<char> &array, int rootRank, ProcessPool::Com
         // Now broadcast Array data
         if ((nRows * nColumns) > 0)
         {
-            return false; // FIXME: handle vector<bool> nonsense
-                          // if (MPI_Bcast(array.linearArray().data(), array.linearArraySize(), MPI_C_BOOL, rootRank,
-                          // communicator(commType)) !=
-                          //     MPI_SUCCESS)
-                          // {
-                          //     Messenger::print("Failed to broadcast Array2D<char> data from root rank {}.\n", rootRank);
-                          //     return false;
-                          // }
+            if (!broadcast(array.linearArray(), rootRank, commType))
+            {
+                Messenger::print("Failed to broadcast Array2D<char> data from root rank {}.\n", rootRank);
+                return false;
+            }
         }
     }
     else
@@ -1763,17 +1793,12 @@ bool ProcessPool::broadcast(Array2D<char> &array, int rootRank, ProcessPool::Com
         array.initialise(nRows, nColumns, half);
         if ((nRows * nColumns) > 0)
         {
-            return false; // FIXME: Handle vector::bool nonsense
-                          // if (MPI_Bcast(array.linearArray().data(), array.linearArraySize(), MPI_C_BOOL, rootRank,
-                          // communicator(commType)) !=
-                          //     MPI_SUCCESS)
-                          // {
-                          //     Messenger::print("Slave {} (world rank {}) failed to receive ArrayD<bool> data from root
-                          //     rank
-                          //     {}.\n", poolRank_,
-                          //                      worldRank_, rootRank);
-                          //     return false;
-                          // }
+            if (!broadcast(array.linearArray(), rootRank, commType))
+            {
+                Messenger::print("Slave {} (world rank {}) failed to receive ArrayD<bool> data from root rank{} .\n ",
+                                 poolRank_, worldRank_, rootRank);
+                return false;
+            }
         }
         else
             array.clear();

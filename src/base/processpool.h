@@ -268,6 +268,9 @@ class ProcessPool
     // Broadcast integers
     bool broadcast(int *source, int count, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast chars
+    bool broadcast(char *source, int count, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast single long integer
     bool broadcast(long int &source, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
@@ -297,6 +300,9 @@ class ProcessPool
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast Array<double>
     bool broadcast(Array<double> &array, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast std::vector<char>
+    bool broadcast(std::vector<char> &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast std::vector<double>
     bool broadcast(std::vector<double> &array, int rootRank = 0,
