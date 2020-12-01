@@ -3,7 +3,7 @@ enable_testing()
 
 function(dissolve_system_test file_name count directory)
   add_test(NAME ${directory}-${file_name}
-    COMMAND $<TARGET_FILE:${target_name}> -n ${count} -x -i ${file_name}.txt
+    COMMAND $<TARGET_FILE:${target_name}> -n ${count} -x -i ${file_name}.txt ${ARGN}
     WORKING_DIRECTORY ../tests/${directory})
   set_property(TEST ${directory}-${file_name}
     PROPERTY
@@ -26,8 +26,8 @@ add_subdirectory(epsr)
 add_subdirectory(exchangeable)
 add_subdirectory(ff)
 
-# add_subdirectory(md)
+add_subdirectory(md)
 add_subdirectory(molshake)
 add_subdirectory(rdfmethod)
-# add_subdirectory(restart)
+add_subdirectory(restart)
 add_subdirectory(xray)
