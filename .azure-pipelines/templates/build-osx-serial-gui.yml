@@ -7,7 +7,7 @@ steps:
       set -ex
       # -- General
       brew update-reset
-      brew install antlr antlr4-cpp-runtime
+      brew install antlr antlr4-cpp-runtime bison ftgl
       # -- Qt
       brew install qt5
     displayName: 'Install Prerequisites'
