@@ -24,9 +24,7 @@ steps:
       export Qt5PrintSupport_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5PrintSupport
       export Qt5Gui_DIR=/usr/local/Cellar/qt/$QTVER/lib/cmake/Qt5Gui
       Qt5_ROOT=/usr/local/Cellar/qt/${QTVER}
-      ANTLR_EXE=`find /usr/local/Cellar/antlr/4.8* -iname antlr`
-      ls /usr/local/Cellar/antlr/4.8_1
-      ls /usr/local/Cellar/antlr/4.8_1/bin
+      ANTLR_EXE=`find /usr/local/Cellar/antlr/4.9* -iname antlr`
       echo "Detected ANTLR exe as [$ANTLR_EXE]"
       mkdir build
       cd build
