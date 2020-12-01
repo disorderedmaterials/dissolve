@@ -30,5 +30,5 @@ steps:
       cd build
       conan install --remote=conan-center ../
       cmake -DGUI:bool=true -DANTLR_EXECUTABLE:string=$ANTLR_EXE ${{ parameters.extraflags }} ../
-      cmake --build ..
+      make
     displayName: 'Build'
