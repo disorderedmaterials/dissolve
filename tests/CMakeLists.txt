@@ -2,12 +2,23 @@
 enable_testing()
 
 function(dissolve_system_test file_name count directory)
+  if (PARALLEL)
+    foreach(nproc 1 2 3 4)
+  add_test(NAME ${directory}-${file_name}-${nproc}
+    COMMAND mpirun -np ${nproc} $<TARGET_FILE:${target_name}> -n ${count} -x -i ${file_name}.txt ${ARGN}
+    WORKING_DIRECTORY ../tests/${directory})
+  set_property(TEST ${directory}-${file_name}-${nproc}
+    PROPERTY
+    LABELS ${directory})
+    endforeach()
+  else()
   add_test(NAME ${directory}-${file_name}
     COMMAND $<TARGET_FILE:${target_name}> -n ${count} -x -i ${file_name}.txt ${ARGN}
     WORKING_DIRECTORY ../tests/${directory})
   set_property(TEST ${directory}-${file_name}
     PROPERTY
     LABELS ${directory})
+  endif()
 endfunction()
 
 add_subdirectory(atomshake)
