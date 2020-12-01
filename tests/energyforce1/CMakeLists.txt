@@ -1,0 +1,5 @@
+dissolve_system_test(water3000-coul 1 energyforce1)
+dissolve_system_test(water3000-elec 1 energyforce1)
+dissolve_system_test(water3000-full 1 energyforce1)
+dissolve_system_test(water3000-intra 1 energyforce1)
+dissolve_system_test(water3000-vdw 1 energyforce1)
