@@ -6,6 +6,7 @@
 #include "classes/cell.h"
 #include "math/data1d.h"
 #include "math/interpolator.h"
+#include <algorithm>
 #include <string.h>
 
 Box::Box()
@@ -243,7 +244,7 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
     int bin, nBins = rdfRange / binWidth;
     Data1D normData;
     normData.initialise(nBins);
-    Array<double> &y = normData.values();
+    auto &y = normData.values();
     for (auto n = 0; n < nBins; ++n)
         normData.xAxis(n) = (n + 0.5) * binWidth;
 
@@ -259,14 +260,14 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
         randomCoordinate();
 
     // Calculate the function
-    y = 0.0;
+    std::fill(y.begin(), y.end(), 0);
     for (auto n = 0; n < nPointsPerProcess; ++n)
     {
         bin = (randomCoordinate() - centre).magnitude() * rBinWidth;
         if (bin < nBins)
             y[bin] += 1.0;
     }
-    if (!procPool.allSum(y.array(), nBins))
+    if (!procPool.allSum(y.data(), nBins))
         return false;
 
     // Post-waste random numbers so that the random number generators in all processes line up
@@ -274,8 +275,9 @@ bool Box::calculateRDFNormalisation(ProcessPool &procPool, Data1D &boxNorm, doub
         randomCoordinate();
 
     // Normalise histogram data, and scale by volume and binWidth ratio
-    y /= double(nPointsPerProcess * procPool.nProcesses());
-    y *= volume_ * (rdfBinWidth / binWidth);
+    std::transform(y.begin(), y.end(), y.begin(), [&](auto &value) {
+        return value * (volume_ * (rdfBinWidth / binWidth) / double(nPointsPerProcess * procPool.nProcesses()));
+    });
 
     // Interpolate the normalisation data, and create the final function
     nBins = rdfRange / rdfBinWidth;

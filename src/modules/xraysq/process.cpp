@@ -54,15 +54,15 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             // Remove normalisation from the data
             if (normType == StructureFactors::SquareOfAverageNormalisation)
             {
-                Array<double> bbar = weights.boundCoherentSquareOfAverage(referenceData.constXAxis());
-                for (auto n = 0; n < bbar.nItems(); ++n)
-                    referenceData.value(n) /= bbar[n];
+                auto bbar = weights.boundCoherentSquareOfAverage(referenceData.xAxis());
+                std::transform(bbar.begin(), bbar.end(), referenceData.values().begin(), referenceData.values().begin(),
+                               [](auto b, auto ref) { return ref / b; });
             }
             else if (normType == StructureFactors::AverageOfSquaresNormalisation)
             {
-                Array<double> bbar = weights.boundCoherentAverageOfSquares(referenceData.constXAxis());
-                for (auto n = 0; n < bbar.nItems(); ++n)
-                    referenceData.value(n) /= bbar[n];
+                auto bbar = weights.boundCoherentAverageOfSquares(referenceData.xAxis());
+                std::transform(bbar.begin(), bbar.end(), referenceData.values().begin(), referenceData.values().begin(),
+                               [](auto b, auto ref) { return ref / b; });
             }
         }
 
@@ -204,7 +204,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     if (procPool.isMaster())
                     {
                         Data1D atomicData = unweightedSQ.partial(i, i);
-                        atomicData.values() = weights.formFactor(i, atomicData.constXAxis());
+                        atomicData.values() = weights.formFactor(i, atomicData.xAxis());
                         Data1DExportFileFormat exportFormat(fmt::format("{}-{}.form", uniqueName(), at1.atomTypeName()));
                         if (!exportFormat.exportData(atomicData))
                             return procPool.decideFalse();
@@ -217,7 +217,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 if (procPool.isMaster())
                 {
                     Data1D ffData = unweightedSQ.partial(i, j);
-                    ffData.values() = weights.weight(i, j, ffData.constXAxis());
+                    ffData.values() = weights.weight(i, j, ffData.xAxis());
                     Data1DExportFileFormat exportFormat(
                         fmt::format("{}-{}-{}.form", uniqueName(), at1.atomTypeName(), at2.atomTypeName()));
                     if (!exportFormat.exportData(ffData))
@@ -258,8 +258,8 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto &repGR = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RepresentativeTotalGR", uniqueName_,
                                                      GenericItem::InRestartFileFlag);
     repGR = weightedSQ.total();
-    auto rMin = weightedGR.total().xAxis().firstValue();
-    auto rMax = weightedGR.total().xAxis().lastValue();
+    auto rMin = weightedGR.total().xAxis().front();
+    auto rMax = weightedGR.total().xAxis().back();
     auto rho = 0.1;
     if (dissolve.processingModuleData().contains("EffectiveRho", rdfModule->uniqueName()))
         rho = GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", rdfModule->uniqueName());

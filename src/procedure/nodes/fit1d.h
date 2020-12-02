@@ -70,7 +70,7 @@ class Fit1DProcedureNode : public ProcedureNode
 
     private:
     // Fitting cost function
-    double equationCost(const Array<double> &alpha);
+    double equationCost(const std::vector<double> &alpha);
 
     public:
     // Return fitted data

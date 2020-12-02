@@ -175,22 +175,22 @@ void PairBroadeningFunction::setGaussianFWHM(double fwhm) { gaussianFWHM_ = fwhm
 double PairBroadeningFunction::gaussianFWHM() const { return gaussianFWHM_; }
 
 // Return array of pointers to all adjustable parameters
-Array<double *> PairBroadeningFunction::parameters()
+std::vector<double *> PairBroadeningFunction::parameters()
 {
-    Array<double *> params;
+    std::vector<double *> params;
 
     switch (function_)
     {
         case (PairBroadeningFunction::NoFunction):
             break;
         case (PairBroadeningFunction::GaussianFunction):
-            params.add(&gaussianFWHM_);
+            params.push_back(&gaussianFWHM_);
             break;
         case (PairBroadeningFunction::GaussianElementPairFunction):
             for (auto n = 0; n < elementPairGaussianFlags_.linearArraySize(); ++n)
             {
                 if (elementPairGaussianFlags_.constLinearValue(n))
-                    params.add(&elementPairGaussianFWHM_.linearValue(n));
+                    params.push_back(&elementPairGaussianFWHM_.linearValue(n));
             }
             break;
         default:

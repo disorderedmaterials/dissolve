@@ -51,13 +51,13 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             // Remove normalisation of data
             if (normType == StructureFactors::AverageOfSquaresNormalisation)
             {
-                referenceData.values() *= weights.boundCoherentAverageOfSquares();
+                referenceData *= weights.boundCoherentAverageOfSquares();
                 Messenger::print("NeutronSQ: Removed <b>**2 normalisation from reference data ('{}'), factor = {}.\n",
                                  uniqueName(), weights.boundCoherentAverageOfSquares());
             }
             else if (normType == StructureFactors::SquareOfAverageNormalisation)
             {
-                referenceData.values() *= weights.boundCoherentSquareOfAverage();
+                referenceData *= weights.boundCoherentSquareOfAverage();
                 Messenger::print("NeutronSQ: Removed <b**2> normalisation from reference data ('{}'), factor = {}.\n",
                                  uniqueName(), weights.boundCoherentSquareOfAverage());
             }
@@ -226,8 +226,8 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto &repGR = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RepresentativeTotalGR", uniqueName_,
                                                      GenericItem::InRestartFileFlag);
     repGR = weightedSQ.total();
-    auto rMin = weightedGR.total().xAxis().firstValue();
-    auto rMax = weightedGR.total().xAxis().lastValue();
+    auto rMin = weightedGR.total().xAxis().front();
+    auto rMax = weightedGR.total().xAxis().back();
     auto rho = 0.1;
     if (dissolve.processingModuleData().contains("EffectiveRho", rdfModule->uniqueName()))
         rho = GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", rdfModule->uniqueName());

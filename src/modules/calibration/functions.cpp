@@ -23,7 +23,7 @@ CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(
 }
 
 // Cost function for intraBroadening minimisation
-double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double> &alpha)
+double CalibrationModuleCostFunctions::intraBroadeningCost(const std::vector<double> &alpha)
 {
     // Store alpha parameters in the PairBroadeningFunction in the associated RDF modules
     for (Module *rdfModule : intraBroadeningModules_)

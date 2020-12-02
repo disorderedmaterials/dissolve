@@ -211,7 +211,7 @@ void BenchmarkModule::printTimingResult(std::string_view testFile, std::string_v
     // Print timing, comparing to last known value if available
     if (existingDataAvailable)
     {
-        SampledDouble lastTiming = existingTimings.values().last();
+        SampledDouble lastTiming = existingTimings.values().back();
         double deltaT = lastTiming.value() - timing.value();
         Messenger::print("  {:50}  {:8.4e} s (+/- {:8.4e} s) => {}{:0.3e} s ({}{:0.2f}%)\n", testDescription, timing.value(),
                          timing.stDev(), deltaT < timing.value() ? '+' : '-', fabs(deltaT), deltaT < timing.value() ? '+' : '-',

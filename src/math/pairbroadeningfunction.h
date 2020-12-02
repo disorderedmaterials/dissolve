@@ -67,7 +67,7 @@ class PairBroadeningFunction : public GenericItemBase
     // Return Gaussian FWHM parameter
     double gaussianFWHM() const;
     // Return array of pointers to all adjustable parameters
-    Array<double *> parameters();
+    std::vector<double *> parameters();
     // Return short summary of function and its parameters
     std::string summary() const;
     // Return a BroadeningFunction tailored to the specified AtomType pair

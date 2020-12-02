@@ -106,9 +106,9 @@ void Histogram3D::initialise(double xMin, double xMax, double xBinWidth, double 
 
     // Set up the accumulated data array
     accumulatedData_.initialise(nXBins_, nYBins_, nZBins_, true);
-    accumulatedData_.xAxis() = xBinCentres_;
-    accumulatedData_.yAxis() = yBinCentres_;
-    accumulatedData_.zAxis() = zBinCentres_;
+    std::copy(xBinCentres_.begin(), xBinCentres_.end(), accumulatedData_.xAxis().begin());
+    std::copy(yBinCentres_.begin(), yBinCentres_.end(), accumulatedData_.yAxis().begin());
+    std::copy(zBinCentres_.begin(), zBinCentres_.end(), accumulatedData_.zAxis().begin());
 }
 
 // Zero histogram bins
@@ -199,10 +199,10 @@ void Histogram3D::accumulate()
 }
 
 // Return Array of x centre-bin values
-const Array<double> &Histogram3D::xBinCentres() const { return xBinCentres_; }
+const std::vector<double> &Histogram3D::xBinCentres() const { return xBinCentres_; }
 
 // Return Array of y centre-bin values
-const Array<double> &Histogram3D::yBinCentres() const { return yBinCentres_; }
+const std::vector<double> &Histogram3D::yBinCentres() const { return yBinCentres_; }
 
 // Return histogram data
 Array3D<long int> &Histogram3D::bins() { return bins_; }

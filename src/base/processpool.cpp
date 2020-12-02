@@ -1264,6 +1264,24 @@ bool ProcessPool::broadcast(Array<long int> &array, int rootRank, ProcessPool::C
     return true;
 }
 
+// Broadcast std::vector<long int>
+bool ProcessPool::broadcast(std::vector<long int> &array, int rootRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+    timer_.start();
+
+    if (!broadcast(array.data(), array.size(), rootRank, commType))
+    {
+        Messenger::print("Failed to broadcast std::vector<long int> data from root rank {} (world rank {}).\n", rootRank,
+                         worldRanks_[rootRank]);
+        return false;
+    }
+
+    timer_.accumulate();
+#endif
+    return true;
+}
+
 // Broadcast Array<double>
 bool ProcessPool::broadcast(Array<double> &array, int rootRank, ProcessPool::CommunicatorType commType)
 {
@@ -1316,6 +1334,24 @@ bool ProcessPool::broadcast(Array<double> &array, int rootRank, ProcessPool::Com
         }
         else
             array.clear();
+    }
+
+    timer_.accumulate();
+#endif
+    return true;
+}
+
+// Broadcast std::vector<double>
+bool ProcessPool::broadcast(std::vector<double> &array, int rootRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+    timer_.start();
+
+    if (!broadcast(array.data(), array.size(), rootRank, commType))
+    {
+        Messenger::print("Failed to broadcast std::vector<double> data from root rank {} (world rank {}).\n", rootRank,
+                         worldRanks_[rootRank]);
+        return false;
     }
 
     timer_.accumulate();
@@ -2307,6 +2343,38 @@ bool ProcessPool::equality(const Array<double> &array, ProcessPool::Communicator
         if (!equality(array.constAt(n), commType))
             return Messenger::error("Array<double> value {} is not equivalent (process {} has {:e}).\n", n, poolRank_,
                                     array.constAt(n));
+#endif
+    return true;
+}
+
+// Check equality of std::vector<double> across involved processes
+bool ProcessPool::equality(const std::vector<double> &array, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+    // Verify array size first
+    if (!equality((long int)array.size(), commType))
+        return Messenger::error("Array<int> sizes are not equal (process {} has {}).\n", poolRank_, array.size());
+
+    // Keep it simple (and slow) and check/send one value at a time
+    for (auto n : array)
+        if (!equality(n, commType))
+            return Messenger::error("Array<int> value {} is not equivalent (process {} has {:e}).\n", n, poolRank_, n);
+#endif
+    return true;
+}
+
+// Check equality of std::vector<long int> across involved processes
+bool ProcessPool::equality(const std::vector<long int> &array, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+    // Verify array size first
+    if (!equality((long int)array.size(), commType))
+        return Messenger::error("Array<int> sizes are not equal (process {} has {}).\n", poolRank_, array.size());
+
+    // Keep it simple (and slow) and check/send one value at a time
+    for (auto n : array)
+        if (!equality(n, commType))
+            return Messenger::error("Array<int> value {} is not equivalent (process {} has {:e}).\n", n, poolRank_, n);
 #endif
     return true;
 }

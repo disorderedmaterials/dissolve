@@ -45,8 +45,10 @@ void Data2D::clear()
 // Initialise arrays to specified size
 void Data2D::initialise(int xSize, int ySize, bool withError)
 {
-    x_.initialise(xSize);
-    y_.initialise(ySize);
+    x_.clear();
+    x_.resize(xSize);
+    y_.clear();
+    y_.resize(ySize);
     values_.initialise(xSize, ySize);
     hasError_ = withError;
     if (hasError_)
@@ -62,10 +64,10 @@ void Data2D::initialise(const Data2D &source)
 {
     x_ = source.x_;
     y_ = source.y_;
-    values_.initialise(x_.nItems(), y_.nItems());
+    values_.initialise(x_.size(), y_.size());
     hasError_ = source.hasError_;
     if (hasError_)
-        errors_.initialise(x_.nItems(), y_.nItems());
+        errors_.initialise(x_.size(), y_.size());
     else
         errors_.clear();
 
@@ -87,13 +89,15 @@ void Data2D::initialise(double xMin, double xMax, double xBin, double yMin, doub
         ++nYBins;
 
     // Create x_ axis array
-    x_.initialise(nXBins);
+    x_.clear();
+    x_.resize(nXBins);
     auto xCentre = xMin + xBin * 0.5;
     for (auto n = 0; n < nXBins; ++n, xCentre += xBin)
         x_[n] = xCentre;
 
     // Create y_ axis array
-    y_.initialise(nYBins);
+    y_.clear();
+    y_.resize(nXBins);
     auto yCentre = yMin + yBin * 0.5;
     for (auto n = 0; n < nYBins; ++n, yCentre += yBin)
         y_[n] = yCentre;
@@ -140,7 +144,7 @@ int Data2D::version() const { return version_; }
 double &Data2D::xAxis(int index)
 {
 #ifdef CHECKS
-    if ((index < 0) || (index >= x_.nItems()))
+    if ((index < 0) || (index >= x_.size()))
     {
         static double dummy;
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data2D::xAxis().\n", index);
@@ -157,17 +161,17 @@ double &Data2D::xAxis(int index)
 double Data2D::constXAxis(int index) const
 {
 #ifdef CHECKS
-    if ((index < 0) || (index >= x_.nItems()))
+    if ((index < 0) || (index >= x_.size()))
     {
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data2D::constXAxis().\n", index);
         return 0.0;
     }
 #endif
-    return x_.constAt(index);
+    return x_[index];
 }
 
 // Return x axis Array
-Array<double> &Data2D::xAxis()
+std::vector<double> &Data2D::xAxis()
 {
     ++version_;
 
@@ -175,13 +179,13 @@ Array<double> &Data2D::xAxis()
 }
 
 // Return x axis Array (const)
-const Array<double> &Data2D::constXAxis() const { return x_; }
+const std::vector<double> &Data2D::xAxis() const { return x_; }
 
 // Return y value specified
 double &Data2D::yAxis(int index)
 {
 #ifdef CHECKS
-    if ((index < 0) || (index >= y_.nItems()))
+    if ((index < 0) || (index >= y_.size()))
     {
         static double dummy;
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for y_ array in Data2D::yAxis().\n", index);
@@ -197,17 +201,17 @@ double &Data2D::yAxis(int index)
 double Data2D::constYAxis(int index) const
 {
 #ifdef CHECKS
-    if ((index < 0) || (index >= y_.nItems()))
+    if ((index < 0) || (index >= y_.size()))
     {
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for y_ array in Data2D::constYAxis().\n", index);
         return 0.0;
     }
 #endif
-    return y_.constAt(index);
+    return y_[index];
 }
 
 // Return y Array
-Array<double> &Data2D::yAxis()
+std::vector<double> &Data2D::yAxis()
 {
     ++version_;
 
@@ -215,19 +219,19 @@ Array<double> &Data2D::yAxis()
 }
 
 // Return y axis Array (const)
-const Array<double> &Data2D::constYAxis() const { return y_; }
+const std::vector<double> &Data2D::yAxis() const { return y_; }
 
 // Return value specified
 double &Data2D::value(int xIndex, int yIndex)
 {
 #ifdef CHECKS
-    if ((xIndex < 0) || (xIndex >= x_.nItems()))
+    if ((xIndex < 0) || (xIndex >= x_.size()))
     {
         static double dummy;
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data2D::value().\n", xIndex);
         return dummy;
     }
-    if ((yIndex < 0) || (yIndex >= y_.nItems()))
+    if ((yIndex < 0) || (yIndex >= y_.size()))
     {
         static double dummy;
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data2D::value().\n", yIndex);
@@ -243,12 +247,12 @@ double &Data2D::value(int xIndex, int yIndex)
 double Data2D::constValue(int xIndex, int yIndex) const
 {
 #ifdef CHECKS
-    if ((xIndex < 0) || (xIndex >= x_.nItems()))
+    if ((xIndex < 0) || (xIndex >= x_.size()))
     {
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data2D::constValue().\n", xIndex);
         return 0.0;
     }
-    if ((yIndex < 0) || (yIndex >= y_.nItems()))
+    if ((yIndex < 0) || (yIndex >= y_.size()))
     {
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data2D::constValue().\n", yIndex);
         return 0.0;
@@ -314,7 +318,7 @@ void Data2D::addErrors()
     if (hasError_)
         Messenger::warn("Adding an error array to a Data2D that already has one...\n");
 
-    errors_.initialise(x_.nItems(), y_.nItems());
+    errors_.initialise(x_.size(), y_.size());
 
     hasError_ = true;
 
@@ -335,13 +339,13 @@ double &Data2D::error(int xIndex, int yIndex)
         return dummy;
     }
 #ifdef CHECKS
-    if ((xIndex < 0) || (xIndex >= x_.nItems()))
+    if ((xIndex < 0) || (xIndex >= x_.size()))
     {
         static double dummy;
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data2D::error().\n", xIndex);
         return dummy;
     }
-    if ((yIndex < 0) || (yIndex >= y_.nItems()))
+    if ((yIndex < 0) || (yIndex >= y_.size()))
     {
         static double dummy;
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data2D::error().\n", yIndex);
@@ -364,12 +368,12 @@ double Data2D::constError(int xIndex, int yIndex) const
         return 0.0;
     }
 #ifdef CHECKS
-    if ((xIndex < 0) || (xIndex >= x_.nItems()))
+    if ((xIndex < 0) || (xIndex >= x_.size()))
     {
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data2D::constError().\n", xIndex);
         return 0.0;
     }
-    if ((yIndex < 0) || (yIndex >= y_.nItems()))
+    if ((yIndex < 0) || (yIndex >= y_.size()))
     {
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data2D::constError().\n", yIndex);
         return 0.0;
@@ -482,27 +486,27 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
     initialise(xSize, ySize, errors);
 
     // Read x axis
-    for (auto x = 0; x < x_.nItems(); ++x)
+    for (auto &x : x_)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        x_[x] = parser.argd(0);
+        x = parser.argd(0);
     }
 
     // Read y axis
-    for (auto y = 0; y < y_.nItems(); ++y)
+    for (auto &y : y_)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        y_[y] = parser.argd(0);
+        y = parser.argd(0);
     }
 
     // Read errors / valuse
     if (hasError_)
     {
-        for (auto x = 0; x < x_.nItems(); ++x)
+        for (auto x = 0; x < x_.size(); ++x)
         {
-            for (auto y = 0; y < y_.nItems(); ++y)
+            for (auto y = 0; y < y_.size(); ++y)
             {
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                     return false;
@@ -513,9 +517,9 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
     }
     else
     {
-        for (auto x = 0; x < x_.nItems(); ++x)
+        for (auto x = 0; x < x_.size(); ++x)
         {
-            for (auto y = 0; y < y_.nItems(); ++y)
+            for (auto y = 0; y < y_.size(); ++y)
             {
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                     return false;
@@ -537,34 +541,34 @@ bool Data2D::write(LineParser &parser)
         return false;
 
     // Write axis sizes and errors flag
-    if (!parser.writeLineF("{}  {}  {}\n", x_.nItems(), y_.nItems(), DissolveSys::btoa(hasError_)))
+    if (!parser.writeLineF("{}  {}  {}\n", x_.size(), y_.size(), DissolveSys::btoa(hasError_)))
         return false;
 
     // Write x axis array
-    for (auto x = 0; x < x_.nItems(); ++x)
-        if (!parser.writeLineF("{:e}\n", x_[x]))
+    for (auto x : x_)
+        if (!parser.writeLineF("{:e}\n", x))
             return false;
 
     // Write y axis array
-    for (auto y = 0; y < y_.nItems(); ++y)
-        if (!parser.writeLineF("{:e}\n", y_[y]))
+    for (auto y : y_)
+        if (!parser.writeLineF("{:e}\n", y))
             return false;
 
     // Write values / errors
     if (hasError_)
     {
-        for (auto x = 0; x < x_.nItems(); ++x)
+        for (auto x = 0; x < x_.size(); ++x)
         {
-            for (auto y = 0; y < y_.nItems(); ++y)
+            for (auto y = 0; y < y_.size(); ++y)
                 if (!parser.writeLineF("{:e}  {:e}\n", values_.constAt(x, y), errors_.constAt(x, y)))
                     return false;
         }
     }
     else
     {
-        for (auto x = 0; x < x_.nItems(); ++x)
+        for (auto x = 0; x < x_.size(); ++x)
         {
-            for (auto y = 0; y < y_.nItems(); ++y)
+            for (auto y = 0; y < y_.size(); ++y)
                 if (!parser.writeLineF("{:e}\n", values_.constAt(x, y)))
                     return false;
         }

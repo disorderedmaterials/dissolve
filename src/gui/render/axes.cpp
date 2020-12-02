@@ -472,19 +472,19 @@ double Axes::transformX(double x) const
 }
 
 // Transform entire array of values into local axes coordinates
-void Axes::transformX(Array<double> &xArray) const
+void Axes::transformX(std::vector<double> &xArray) const
 {
     if (inverted_.x && logarithmic_.x)
-        for (auto n = 0; n < xArray.nItems(); ++n)
+        for (auto n = 0; n < xArray.size(); ++n)
             xArray[n] = log10(max_.x / xArray[n]) * stretch_.x;
     else if (inverted_.x)
-        for (auto n = 0; n < xArray.nItems(); ++n)
+        for (auto n = 0; n < xArray.size(); ++n)
             xArray[n] = ((max_.x - xArray[n]) + min_.x) * stretch_.x;
     else if (logarithmic_.x)
-        for (auto n = 0; n < xArray.nItems(); ++n)
+        for (auto n = 0; n < xArray.size(); ++n)
             xArray[n] = log10(xArray[n]) * stretch_.x;
     else
-        xArray *= stretch_.x;
+        std::transform(xArray.begin(), xArray.end(), xArray.begin(), [=](auto value) { return value * stretch_.x; });
 }
 
 // Return supplied data y value in local axes coordinates
@@ -501,27 +501,27 @@ double Axes::transformY(double y) const
 }
 
 // Transform entire array of values into local axes coordinates
-void Axes::transformY(Array<double> &yArray) const
+void Axes::transformY(std::vector<double> &yArray) const
 {
     if (inverted_.y && logarithmic_.y)
-        for (auto n = 0; n < yArray.nItems(); ++n)
+        for (auto n = 0; n < yArray.size(); ++n)
         {
             // 		if (max_.y / yArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
             // 		else
             yArray[n] = log10(max_.y / yArray[n]) * stretch_.y;
         }
     else if (inverted_.y)
-        for (auto n = 0; n < yArray.nItems(); ++n)
+        for (auto n = 0; n < yArray.size(); ++n)
             yArray[n] = ((max_.y - yArray[n]) + min_.y) * stretch_.y;
     else if (logarithmic_.y)
-        for (auto n = 0; n < yArray.nItems(); ++n)
+        for (auto n = 0; n < yArray.size(); ++n)
         {
             // 		if (yArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
             // 		else
             yArray[n] = log10(yArray[n]) * stretch_.y;
         }
     else
-        yArray *= stretch_.y;
+        std::transform(yArray.begin(), yArray.end(), yArray.begin(), [=](auto value) { return value * stretch_.y; });
 }
 
 // Return supplied data z value in local axes coordinates
@@ -538,27 +538,27 @@ double Axes::transformZ(double z) const
 }
 
 // Transform entire array of values into local axes coordinates
-void Axes::transformZ(Array<double> &zArray) const
+void Axes::transformZ(std::vector<double> &zArray) const
 {
     if (inverted_.z && logarithmic_.z)
-        for (auto n = 0; n < zArray.nItems(); ++n)
+        for (auto n = 0; n < zArray.size(); ++n)
         {
             // 		if (max_.z / zArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
             // 		else
             zArray[n] = log10(max_.z / zArray[n]) * stretch_.z;
         }
     else if (inverted_.z)
-        for (auto n = 0; n < zArray.nItems(); ++n)
+        for (auto n = 0; n < zArray.size(); ++n)
             zArray[n] = ((max_.z - zArray[n]) + min_.z) * stretch_.z;
     else if (logarithmic_.z)
-        for (auto n = 0; n < zArray.nItems(); ++n)
+        for (auto n = 0; n < zArray.size(); ++n)
         {
             // 		if (zArray[n] <= 0.0) typeArray[n] = DisplayDataSet::NoPoint;
             // 		else
             zArray[n] = log10(zArray[n]) * stretch_.z;
         }
     else
-        zArray *= stretch_.z;
+        std::transform(zArray.begin(), zArray.end(), zArray.begin(), [=](auto value) { return value * stretch_.z; });
 }
 
 // Transform a 2D array of values into local axes coordinates
@@ -1054,8 +1054,8 @@ void Axes::updateAxisPrimitives()
     double delta, value, clipPlaneDelta = 0.0001;
     Vec3<double> u, v1, v2, tickDir, adjustment;
     Matrix4 labelTransform, titleTransform;
-    Array<double> tickPositions[3];
-    Array<bool> tickIsMajor[3];
+    std::vector<double> tickPositions[3];
+    std::vector<bool> tickIsMajor[3];
 
     // Make sure coordinates are up-to-date
     updateCoordinates();
@@ -1162,8 +1162,8 @@ void Axes::updateAxisPrimitives()
                 {
                     // Tick mark
                     axisPrimitives_[axis].line(u, u + tickDir * tickSize_[axis] * (count == 0 ? 1.0 : 0.5));
-                    tickPositions[axis].add(u[axis]);
-                    tickIsMajor[axis].add(count == 0);
+                    tickPositions[axis].push_back(u[axis]);
+                    tickIsMajor[axis].push_back(count == 0);
 
                     // Tick label
                     if (count == 0)
@@ -1218,7 +1218,7 @@ void Axes::updateAxisPrimitives()
                 // Draw tick here, only if value >= min_
                 if (value >= min_[axis])
                 {
-                    tickPositions[axis].add(u[axis]);
+                    tickPositions[axis].push_back(u[axis]);
 
                     if (count % (minorTicks_[axis] + 1) == 0)
                     {
@@ -1232,14 +1232,14 @@ void Axes::updateAxisPrimitives()
                                                    parentView_.labelPointSize(),
                                                    parentView_.isFlatView() ? false : parentView_.flatLabelsIn3D());
 
-                        tickIsMajor[axis].add(true);
+                        tickIsMajor[axis].push_back(true);
 
                         count = 0;
                     }
                     else
                     {
                         axisPrimitives_[axis].line(u, u + tickDir * tickSize_[axis] * 0.5);
-                        tickIsMajor[axis].add(false);
+                        tickIsMajor[axis].push_back(false);
                     }
                 }
                 u.add(axis, delta * (inverted_[axis] ? -stretch_[axis] : stretch_[axis]));
@@ -1312,9 +1312,9 @@ void Axes::updateAxisPrimitives()
         int ortho2 = (axis + 2) % 3;
 
         // Double loop now, over the two sets of tickmarks that are orthogonal to 'axis'
-        for (auto i1 = 0; i1 < tickPositions[ortho1].nItems(); ++i1)
+        for (auto i1 = 0; i1 < tickPositions[ortho1].size(); ++i1)
         {
-            for (auto i2 = 0; i2 < tickPositions[ortho2].nItems(); ++i2)
+            for (auto i2 = 0; i2 < tickPositions[ortho2].size(); ++i2)
             {
                 // Set basic vector info
                 // The 'axis' will define its own component, with the other two coming from the tickmark

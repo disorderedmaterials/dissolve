@@ -368,7 +368,7 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
 
     // Zero Bragg partials
     for (auto n = 0; n < braggPartials.linearArraySize(); ++n)
-        braggPartials.linearArray()[n].values() = 0.0;
+        std::fill(braggPartials.linearArray()[n].values().begin(), braggPartials.linearArray()[n].values().end(), 0.0);
 
     // Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
     double qCentre;

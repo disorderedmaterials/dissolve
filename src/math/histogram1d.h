@@ -6,7 +6,6 @@
 #include "genericitems/base.h"
 #include "math/data1d.h"
 #include "math/sampleddouble.h"
-#include "templates/array.h"
 #include "templates/objectstore.h"
 
 // Forward Declarations
@@ -35,11 +34,11 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
     // Number of bins
     int nBins_;
     // Histogram bins
-    Array<long int> bins_;
+    std::vector<long int> bins_;
     // Array of bin centres
-    Array<double> binCentres_;
+    std::vector<double> binCentres_;
     // Accumulated averages
-    Array<SampledDouble> averages_;
+    std::vector<SampledDouble> averages_;
     // Number of values binned over all bins
     long int nBinned_;
     // Number of points missed (out of bin range)
@@ -57,7 +56,7 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
     // Zero histogram bins
     void zeroBins();
     // Set up supplied axis
-    static void setUpAxis(double axisMin, double &axisMax, double binWidth, int &nBins, Array<double> &binCentres);
+    static void setUpAxis(double axisMin, double &axisMax, double binWidth, int &nBins, std::vector<double> &binCentres);
     // Return minimum value for data (hard left-edge of first bin)
     double minimum() const;
     // Return maximum value for data (hard right-edge of last bin, adjusted to match bin width if necessary)
@@ -73,9 +72,9 @@ class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D
     // Accumulate current histogram bins into averages
     void accumulate();
     // Return Array of x centre-bin values
-    const Array<double> &binCentres() const;
+    const std::vector<double> &binCentres() const;
     // Return histogram data
-    Array<long int> &bins();
+    std::vector<long int> &bins();
     // Add source histogram data into local array
     void add(Histogram1D &other, int factor = 1);
     // Return accumulated (averaged) data
