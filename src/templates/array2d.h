@@ -244,22 +244,22 @@ template <class A> class Array2D
     // Operator+= (add to all)
     void operator+=(const A value)
     {
-        std::transform(array_.begin(), array_.end(), array_.begin(), [value](auto n) { return n + value; });
+        std::transform(array_.begin(), array_.end(), array_.begin(), [&value](auto &n) { return n + value; });
     }
     // Operator-= (subtract from all)
     void operator-=(const A value)
     {
-        std::transform(array_.begin(), array_.end(), array_.begin(), [value](auto n) { return n - value; });
+        std::transform(array_.begin(), array_.end(), array_.begin(), [&value](auto &n) { return n - value; });
     }
     // Operator*= (multiply all)
     void operator*=(const A value)
     {
-        std::transform(array_.begin(), array_.end(), array_.begin(), [value](auto n) { return n * value; });
+        std::transform(array_.begin(), array_.end(), array_.begin(), [&value](auto &n) { return n * value; });
     }
     // Operator/= (divide all)
     void operator/=(const A value)
     {
-        std::transform(array_.begin(), array_.end(), array_.begin(), [value](auto n) { return n / value; });
+        std::transform(array_.begin(), array_.end(), array_.begin(), [&value](auto &n) { return n / value; });
     }
     // Operator+= (matrix addition)
     void operator+=(const Array2D<A> &B)
@@ -271,7 +271,7 @@ template <class A> class Array2D
                              nColumns_, B.nRows_, B.nColumns_);
             return;
         }
-        std::transform(array_.begin(), array_.end(), B.array_.begin(), array_.begin(), [](auto a, auto b) { return a + b; });
+        std::transform(array_.begin(), array_.end(), B.array_.begin(), array_.begin(), [](auto &a, auto &b) { return a + b; });
     }
     // Operator-= (matrix subtraction)
     void operator-=(const Array2D<A> &B)
@@ -283,7 +283,7 @@ template <class A> class Array2D
                              nColumns_, B.nRows_, B.nColumns_);
             return;
         }
-        std::transform(array_.begin(), array_.end(), B.array_begin(), array_.begin(), [](auto a, auto b) { return a - b; });
+        std::transform(array_.begin(), array_.end(), B.array_begin(), array_.begin(), [](auto &a, auto &b) { return a - b; });
     }
     // Operator* (matrix multiply)
     Array2D<A> operator*(const Array2D<A> &B) const
