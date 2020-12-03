@@ -1758,7 +1758,7 @@ bool ProcessPool::broadcast(Array2D<char> &array, int rootRank, ProcessPool::Com
         }
 
         // Now broadcast Array data
-        if ((nRows * nColumns) > 0)
+        if (!array.empty())
         {
             if (!broadcast(array.linearArray(), rootRank, commType))
             {
