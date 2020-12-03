@@ -366,7 +366,7 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
     braggTotal.clear();
 
     // Zero Bragg partials
-    for (auto n : braggPartials)
+    for (auto &n : braggPartials)
         std::fill(n.values().begin(), n.values().end(), 0.0);
 
     // Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
