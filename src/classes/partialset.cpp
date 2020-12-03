@@ -604,11 +604,11 @@ bool PartialSet::broadcast(ProcessPool &procPool, const int root, const CoreData
 #ifdef PARALLEL
     // The structure should have already been setup(), so arrays should be ready to copy
     for_each_pair_early(0, atomTypes_.nItems(), [&](int typeI, int typeJ) -> EarlyReturn<bool> {
-        if (!partials_.at(typeI, typeJ).broadcast(procPool, root, coreData))
+        if (!partials_[{typeI, typeJ}].broadcast(procPool, root, coreData))
             return Messenger::error("Failed to broadcast partials_ array.\n");
-        if (!boundPartials_.at(typeI, typeJ).broadcast(procPool, root, coreData))
+        if (!boundPartials_[{typeI, typeJ}].broadcast(procPool, root, coreData))
             return Messenger::error("Failed to broadcast boundPartials_ array.\n");
-        if (!unboundPartials_.at(typeI, typeJ).broadcast(procPool, root, coreData))
+        if (!unboundPartials_[{typeI, typeJ}].broadcast(procPool, root, coreData))
             return Messenger::error("Failed to broadcast unboundPartials_ array.\n");
 
         return EarlyReturn<bool>::Continue;
@@ -630,11 +630,11 @@ bool PartialSet::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
     for_each_pair_early(0, atomTypes_.nItems(), [&](int typeI, int typeJ) -> EarlyReturn<bool> {
-        if (!partials_.at(typeI, typeJ).equality(procPool))
+        if (!partials_[{typeI, typeJ}].equality(procPool))
             return Messenger::error("PartialSet full partial {}-{} is not equivalent.\n", typeI, typeJ);
-        if (!boundPartials_.at(typeI, typeJ).equality(procPool))
+        if (!boundPartials_[{typeI, typeJ}].equality(procPool))
             return Messenger::error("PartialSet bound partial {}-{} is not equivalent.\n", typeI, typeJ);
-        if (!unboundPartials_.at(typeI, typeJ).equality(procPool))
+        if (!unboundPartials_[{typeI, typeJ}].equality(procPool))
             return Messenger::error("PartialSet unbound partial {}-{} is not equivalent.\n", typeI, typeJ);
 
         return EarlyReturn<bool>::Continue;
