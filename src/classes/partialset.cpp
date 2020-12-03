@@ -239,22 +239,21 @@ Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
     Data1D unbound;
     unbound.initialise(boundPartials_[{0, 0}]);
 
-    for_each_pair(atomTypes_.begin(), atomTypes_.end(),
-                  [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
-                      // Calculate weighting factor if requested
-                      double factor = 1.0;
-                      if (applyConcentrationWeights)
-                      {
-                          double ci = atd1.fraction();
-                          double cj = atd2.fraction();
-                          factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
-                      }
+    for_each_pair(
+        atomTypes_.begin(), atomTypes_.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
+            // Calculate weighting factor if requested
+            double factor = 1.0;
+            if (applyConcentrationWeights)
+            {
+                double ci = atd1.fraction();
+                double cj = atd2.fraction();
+                factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
+            }
 
-                      // Add contribution
-                      std::transform(unbound.values().begin(), unbound.values().end(),
-                                     unboundPartials_[{typeI, typeJ}].values().begin(), unbound.values().begin(),
-                                     [=](auto unbound, auto partial) { return unbound + partial * factor; });
-                  });
+            // Add contribution
+            std::transform(unbound.values().begin(), unbound.values().end(), unboundPartials_[{typeI, typeJ}].values().begin(),
+                           unbound.values().begin(), [=](auto unbound, auto partial) { return unbound + partial * factor; });
+        });
 
     return unbound;
 }
@@ -300,16 +299,15 @@ void PartialSet::setObjectTags(std::string_view prefix, std::string_view suffix)
 
     objectNamePrefix_ = prefix;
 
-    for_each_pair(
-        atomTypes_.begin(), atomTypes_.end(), [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
-            partials_[{typeI, typeJ}]
-                .setObjectTag(fmt::format("{}//{}-{}//Full{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
-            boundPartials_[{typeI, typeJ}]
-                .setObjectTag(fmt::format("{}//{}-{}//Bound{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
-            unboundPartials_[{typeI, typeJ}]
-                .setObjectTag(
-                    fmt::format("{}//{}-{}//Unbound{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
-        });
+    for_each_pair(atomTypes_.begin(), atomTypes_.end(),
+                  [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
+                      partials_[{typeI, typeJ}].setObjectTag(
+                          fmt::format("{}//{}-{}//Full{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
+                      boundPartials_[{typeI, typeJ}].setObjectTag(
+                          fmt::format("{}//{}-{}//Bound{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
+                      unboundPartials_[{typeI, typeJ}].setObjectTag(
+                          fmt::format("{}//{}-{}//Unbound{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
+                  });
 
     total_.setObjectTag(fmt::format("{}//Total{}", prefix, actualSuffix));
 }
