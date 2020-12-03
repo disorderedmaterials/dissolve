@@ -154,15 +154,14 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
                 tempReflections[n].setIndex(braggIndex++);
 
         // Collapse KVectors into a linear list, excluding any that weren't initialised
-        KVector *kVectorsLinear = tempKVectors.linearArray();
-        for (auto n = 0; n < tempKVectors.linearArraySize(); ++n)
+        for (auto &n : tempKVectors.linearArray())
         {
-            if (kVectorsLinear[n].braggReflectionIndex() == -1)
+            if (n.braggReflectionIndex() == -1)
                 continue;
 
             // Look up and set the new index of the associated BraggReflection
-            kVectorsLinear[n].setBraggReflectionIndex(tempReflections[kVectorsLinear[n].braggReflectionIndex()].index());
-            braggKVectors.add(kVectorsLinear[n]);
+            n.setBraggReflectionIndex(tempReflections[n.braggReflectionIndex()].index());
+            braggKVectors.add(n);
         }
 
         // Prune BraggReflections array, putting them into a sequential Array that will reflect their new indexing
