@@ -1709,7 +1709,7 @@ bool ProcessPool::broadcast(Array2D<double> &array, int rootRank, ProcessPool::C
 
         // Resize and receive array
         array.initialise(nRows, nColumns, half);
-        if ((nRows * nColumns) > 0)
+        if (!array.empty())
         {
             if (!broadcast(array.linearArray(), rootRank, commType))
             {
