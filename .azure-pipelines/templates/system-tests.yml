@@ -18,9 +18,8 @@ jobs:
           artifactName: 'linux-tests-serial'
         displayName: 'Download Serial Test Artifacts'
       - bash: |
-          cd $(System.ArtifactsDirectory)/linux-tests-serial
-          chmod u+x ./go ./dissolve
-          ./go -a -s ./dissolve
+          cd $(System.ArtifactsDirectory)/linux-tests-serial/build
+          ctest -j2
         displayName: 'Run Serial System Tests'
       - bash: |
           mkdir test-output
@@ -52,9 +51,8 @@ jobs:
           artifactName: 'linux-tests-parallel'
         displayName: 'Download Parallel Test Artifacts'
       - bash: |
-          cd $(System.ArtifactsDirectory)/linux-tests-parallel
-          chmod u+x ./go ./dissolve-mpi
-          ./go -a -m mpirun.openmpi -p ./dissolve-mpi
+          cd $(System.ArtifactsDirectory)/linux-tests-parallel/build
+          ctest
         displayName: 'Run Parallel System Tests'
       - bash: |
           mkdir test-output
