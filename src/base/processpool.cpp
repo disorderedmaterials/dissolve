@@ -1287,14 +1287,12 @@ bool ProcessPool::broadcast(Data1D &array, int rootRank, ProcessPool::Communicat
 
     if (!broadcast(array.xAxis(), rootRank, commType))
     {
-        Messenger::print("Failed to broadcast Data1D from root rank {} (world rank {}).\n", rootRank,
-                         worldRanks_[rootRank]);
+        Messenger::print("Failed to broadcast Data1D from root rank {} (world rank {}).\n", rootRank, worldRanks_[rootRank]);
         return false;
     }
     if (!broadcast(array.values(), rootRank, commType))
     {
-        Messenger::print("Failed to broadcast Data1D from root rank {} (world rank {}).\n", rootRank,
-                         worldRanks_[rootRank]);
+        Messenger::print("Failed to broadcast Data1D from root rank {} (world rank {}).\n", rootRank, worldRanks_[rootRank]);
         return false;
     }
     if (array.valuesHaveErrors())
@@ -1796,7 +1794,7 @@ bool ProcessPool::broadcast(Array2D<char> &array, int rootRank, ProcessPool::Com
             if (!broadcast(array.linearArray(), rootRank, commType))
             {
                 return Messenger::error("Slave {} (world rank {}) failed to receive ArrayD<bool> data from root rank{} .\n ",
-                                 poolRank_, worldRank_, rootRank);
+                                        poolRank_, worldRank_, rootRank);
             }
         }
         else
