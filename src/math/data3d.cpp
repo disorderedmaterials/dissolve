@@ -292,29 +292,19 @@ int Data3D::nValues() const { return values_.linearArraySize(); }
 // Return minimum value over all data points
 double Data3D::minValue() const
 {
-    if (values_.linearArraySize() == 0)
+    if (values_.empty())
         return 0.0;
 
-    double value = values_.constLinearValue(0);
-    for (auto n = 1; n < values_.linearArraySize(); ++n)
-        if (values_.constLinearValue(n) < value)
-            value = values_.constLinearValue(n);
-
-    return value;
+    return *std::min_element(values_.cbegin(), values_.cend());
 }
 
 // Return maximum value over all data points
 double Data3D::maxValue() const
 {
-    if (values_.linearArraySize() == 0)
+    if (values_.empty())
         return 0.0;
 
-    double value = values_.constLinearValue(0);
-    for (auto n = 1; n < values_.linearArraySize(); ++n)
-        if (values_.constLinearValue(n) > value)
-            value = values_.constLinearValue(n);
-
-    return value;
+    return *std::max_element(values_.cbegin(), values_.cend());
 }
 
 // Add / initialise errors array
@@ -633,11 +623,11 @@ bool Data3D::broadcast(ProcessPool &procPool, const int root, const CoreData &co
         return false;
     if (!procPool.broadcast(z_, root))
         return false;
-    if (!procPool.broadcast(values_.linearArray(), values_.linearArraySize(), root))
+    if (!procPool.broadcast(values_.linearArray(), root))
         return false;
     if (!procPool.broadcast(hasError_, root))
         return false;
-    if (!procPool.broadcast(errors_.linearArray(), errors_.linearArraySize(), root))
+    if (!procPool.broadcast(errors_.linearArray(), root))
         return false;
 #endif
     return true;
@@ -653,11 +643,11 @@ bool Data3D::equality(ProcessPool &procPool)
         return Messenger::error("Data3D y axis values not equivalent.\n");
     if (!procPool.equality(z_))
         return Messenger::error("Data3D z axis values not equivalent.\n");
-    if (!procPool.equality(values_.linearArray(), values_.linearArraySize()))
+    if (!procPool.equality(values_.linearArray()))
         return Messenger::error("Data3D values not equivalent.\n");
     if (!procPool.equality(hasError_))
         return Messenger::error("Data3D error flag not equivalent.\n");
-    if (!procPool.equality(errors_.linearArray(), errors_.linearArraySize()))
+    if (!procPool.equality(errors_.linearArray()))
         return Messenger::error("Data3D error values not equivalent.\n");
 #endif
     return true;
