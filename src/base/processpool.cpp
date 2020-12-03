@@ -1795,7 +1795,7 @@ bool ProcessPool::broadcast(Array2D<char> &array, int rootRank, ProcessPool::Com
         {
             if (!broadcast(array.linearArray(), rootRank, commType))
             {
-                Messenger::print("Slave {} (world rank {}) failed to receive ArrayD<bool> data from root rank{} .\n ",
+                Messenger::print("Slave {} (world rank {}) failed to receive Array2D<char> data from root rank {}.\n ",
                                  poolRank_, worldRank_, rootRank);
                 return false;
             }
