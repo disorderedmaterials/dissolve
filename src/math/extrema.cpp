@@ -42,19 +42,17 @@ double Extrema::max(const Array<double> &A)
 // Return minimum from 2D array provided
 double Extrema::min(const Array2D<double> &A)
 {
-    if (!A.empty())
-        return *std::min_element(A.begin(), A.end());
-    else
+    if (A.empty())
         return 0;
+    return *std::min_element(A.begin(), A.end());
 }
 
 // Return maximum from 2D array provided
 double Extrema::max(const Array2D<double> &A)
 {
-    if (!A.empty())
-        return *std::max_element(A.begin(), A.end());
-    else
+    if (A.empty())
         return 0;
+    return *std::max_element(A.begin(), A.end());
 }
 
 // Return absolute minimum from array provided
@@ -94,17 +92,15 @@ double Extrema::absMax(const Array<double> &A)
 // Return absolute minimum from 2D array provided
 double Extrema::absMin(const Array2D<double> &A)
 {
-    if (!A.empty())
-        return *std::min_element(A.begin(), A.end(), [](auto a, auto b) { return fabs(a) < fabs(b); });
-    else
+    if (A.empty())
         return 0;
+    return *std::min_element(A.begin(), A.end(), [](auto a, auto b) { return fabs(a) < fabs(b); });
 }
 
 // Return absolute maximum from 2D array provided
 double Extrema::absMax(const Array2D<double> &A)
 {
-    if (!A.empty())
-        return *std::max_element(A.begin(), A.end(), [](auto a, auto b) { return fabs(a) < fabs(b); });
-    else
+    if (A.empty())
         return 0;
+    return *std::max_element(A.begin(), A.end(), [](auto a, auto b) { return fabs(a) < fabs(b); });
 }
