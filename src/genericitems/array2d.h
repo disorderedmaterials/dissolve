@@ -86,10 +86,6 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
             nColumns = data_.nColumns();
             half = data_.halved();
         }
-        else
-        {
-            data_.initialise(nRows, nColumns, half);
-        }
         // Slaves receive the size, and then create and receive the array
         if (!procPool.broadcast(nRows, root))
             return false;
@@ -97,6 +93,11 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
             return false;
         if (!procPool.broadcast(half, root))
             return false;
+
+        if (procPool.poolRank() != root)
+        {
+            data_.initialise(nRows, nColumns, half);
+        }
 
         // Resize and receive array
         if ((nRows * nColumns) > 0)
