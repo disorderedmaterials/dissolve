@@ -8,6 +8,7 @@
 
 #include "base/processgroup.h"
 #include "base/timer.h"
+#include "math/data1d.h"
 #include "templates/array.h"
 #include "templates/array2d.h"
 #include "templates/vector3.h"
@@ -267,6 +268,9 @@ class ProcessPool
     // Broadcast integers
     bool broadcast(int *source, int count, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast chars
+    bool broadcast(char *source, int count, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast single long integer
     bool broadcast(long int &source, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
@@ -297,8 +301,14 @@ class ProcessPool
     // Broadcast Array<double>
     bool broadcast(Array<double> &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast std::vector<char>
+    bool broadcast(std::vector<char> &array, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast std::vector<double>
     bool broadcast(std::vector<double> &array, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast Data1D
+    bool broadcast(Data1D &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast Array< Vec3<int> >
     bool broadcast(Array<Vec3<int>> &array, int rootRank = 0,
@@ -312,6 +322,46 @@ class ProcessPool
     // Broadcast Array2D<char>
     bool broadcast(Array2D<char> &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast Array2D fallback
+    template <typename T>
+    bool broadcast(Array2D<T> &array, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator)
+    {
+        int nRows, nColumns;
+        bool half;
+        if (poolRank_ == rootRank)
+        {
+            nRows = array.nRows();
+            nColumns = array.nColumns();
+            half = array.halved();
+        }
+        if (!broadcast(nRows, rootRank, commType))
+        {
+            Messenger::print("Failed to broadcast Array2D<T> nRows from root rank {}.\n", rootRank);
+            return false;
+        }
+        if (!broadcast(nColumns, rootRank, commType))
+        {
+            Messenger::print("Failed to broadcast Array2D<T> nRows from root rank {}.\n", rootRank);
+            return false;
+        }
+        if (!broadcast(half, rootRank, commType))
+        {
+            Messenger::print("Failed to broadcast Array2D<T> nRows from root rank {}.\n", rootRank);
+            return false;
+        }
+        if (poolRank_ != rootRank)
+            array.initialise(nRows, nColumns, half);
+        for (auto &value : array)
+        {
+            if (!broadcast(value, rootRank, commType))
+            {
+                Messenger::print("Failed to broadcast arbitrary data from root rank {}.\n", rootRank);
+                return false;
+            }
+        }
+        return true;
+    }
 
     /*
      * Special Array Functions

@@ -77,10 +77,7 @@ void BraggReflection::reset()
 void BraggReflection::addIntensity(int typeI, int typeJ, double intensity) { intensities_[{typeI, typeJ}] += intensity; }
 
 // Scale intensities between all atom types by factor provided
-void BraggReflection::scaleIntensities(double factor)
-{
-  intensities_ *= factor;
-}
+void BraggReflection::scaleIntensities(double factor) { intensities_ *= factor; }
 
 // Scale intensity between all specific atom types by factor provided
 void BraggReflection::scaleIntensity(int typeI, int typeJ, double factor)

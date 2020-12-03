@@ -83,26 +83,16 @@ template <> class GenericItemContainer<std::vector<double>> : public GenericItem
         bool result = false;
         int count;
         if (procPool.isMaster())
-        {
-            // Broadcast number of items in list, then list items...
             count = data_.size();
-            if (!procPool.broadcast(count, root))
-                return false;
-            for (auto n : data_)
-                procPool.broadcast(n, root);
-        }
         else
         {
-            // Get number of list items to expect
-            if (!procPool.broadcast(count, root))
-                return false;
-
             // Clear list and reconstruct
             data_.clear();
             data_.resize(count);
-            for (auto n : data_)
-                procPool.broadcast(n, root);
         }
+        if (!procPool.broadcast(count, root))
+            return false;
+        procPool.broadcast(data_.data(), count, root);
 
         // All OK - success!
         result = true;

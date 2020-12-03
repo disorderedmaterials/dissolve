@@ -121,11 +121,8 @@ template <> class GenericItemContainer<Array2D<Array<double>>> : public GenericI
             }
 
             // Now broadcast Array elements
-            for (auto n = 0; n < data_.linearArraySize(); ++n)
-            {
-                if (!procPool.broadcast(data_.linearArray()[n], root))
-                    return false;
-            }
+            if (!procPool.broadcast(data_.linearArray(), root))
+                return false;
         }
         else
         {
@@ -154,11 +151,8 @@ template <> class GenericItemContainer<Array2D<Array<double>>> : public GenericI
 
             // Resize and receive array
             data_.initialise(nRows, nColumns, half);
-            for (auto n = 0; n < data_.linearArraySize(); ++n)
-            {
-                if (!procPool.broadcast(data_.linearArray()[n], root))
-                    return false;
-            }
+            if (!procPool.broadcast(data_.linearArray(), root))
+                return false;
         }
 #endif
         return true;
@@ -179,9 +173,8 @@ template <> class GenericItemContainer<Array2D<Array<double>>> : public GenericI
                                     procPool.poolRank(), data_.halved());
 
         // Keep it simple (and slow) and check/send one object at a time
-        for (auto n = 0; n < data_.linearArraySize(); ++n)
-            if (!procPool.equality(data_.linearArray()[n]))
-                return Messenger::error("Array<double> index {} is not equivalent (process {}.\n", procPool.poolRank());
+        if (!procPool.equality(data_.linearArray()))
+            return Messenger::error("Array<double> is not equivalent (process {}).\n", procPool.poolRank());
 #endif
         return true;
     }

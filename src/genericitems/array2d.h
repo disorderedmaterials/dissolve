@@ -83,44 +83,29 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
         {
             // Broadcast array size first...
             nRows = data_.nRows();
-            if (!procPool.broadcast(nRows, root))
-                return false;
             nColumns = data_.nColumns();
-            if (!procPool.broadcast(nColumns, root))
-                return false;
             half = data_.halved();
-            if (!procPool.broadcast(half, root))
-                return false;
-
-            // Now broadcast Array data
-            if ((nRows * nColumns) > 0)
-            {
-                for (auto n = 0; n < data_.linearArraySize(); ++n)
-                    if (!data_.linearArray()[n].broadcast(procPool, root, coreData))
-                        return false;
-            }
         }
         else
         {
-            // Slaves receive the size, and then create and receive the array
-            if (!procPool.broadcast(nRows, root))
-                return false;
-            if (!procPool.broadcast(nColumns, root))
-                return false;
-            if (!procPool.broadcast(half, root))
-                return false;
-
-            // Resize and receive array
             data_.initialise(nRows, nColumns, half);
-            if ((nRows * nColumns) > 0)
-            {
-                for (auto n = 0; n < data_.linearArraySize(); ++n)
-                    if (!data_.linearArray()[n].broadcast(procPool, root, coreData))
-                        return false;
-            }
-            else
-                data_.clear();
         }
+        // Slaves receive the size, and then create and receive the array
+        if (!procPool.broadcast(nRows, root))
+            return false;
+        if (!procPool.broadcast(nColumns, root))
+            return false;
+        if (!procPool.broadcast(half, root))
+            return false;
+
+        // Resize and receive array
+        if ((nRows * nColumns) > 0)
+        {
+            if (!procPool.broadcast(data_, root))
+                return false;
+        }
+        else
+            data_.clear();
 #endif
         return true;
     }
