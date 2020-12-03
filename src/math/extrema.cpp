@@ -60,7 +60,7 @@ double Extrema::absMin(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
-        double absMin = fabs(A.constAt(0));
+        auto absMin = fabs(A.constAt(0));
         for (auto i = 0; i < A.nItems(); ++i)
         {
             if (fabs(A.constAt(i)) < absMin)
@@ -77,7 +77,7 @@ double Extrema::absMax(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
-        double absMax = fabs(A.constAt(0));
+        auto absMax = fabs(A.constAt(0));
         for (auto i = 0; i < A.nItems(); ++i)
         {
             if (fabs(A.constAt(i)) > absMax)
