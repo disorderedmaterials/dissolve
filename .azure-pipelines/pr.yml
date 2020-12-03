@@ -36,6 +36,7 @@ stages:
             displayName: 'Copy Executable'
           - task: PublishBuildArtifacts@1
             inputs:
+              PathtoPublish: "."
               ArtifactName: 'linux-tests-serial'
             displayName: 'Publish Serial Test Artifacts'
       - job: 'linux_parallel'
@@ -52,6 +53,7 @@ stages:
             displayName: 'Copy Executable'
           - task: PublishBuildArtifacts@1
             inputs:
+              PathtoPublish: "."
               ArtifactName: 'linux-tests-parallel'
             displayName: 'Publish Parallel Test Artifacts'
       - job: 'osx_serialgui'
