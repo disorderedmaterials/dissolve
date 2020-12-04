@@ -230,10 +230,8 @@ double Integrator::sum(const Data2D &data)
 // Return sum of all absolute values in supplied data
 double Integrator::absSum(const Data2D &data)
 {
-    // Grab data array
-    const auto &values = data.constValues2D();
-
-    return std::accumulate(values.begin(), values.end(), 0.0, [](auto a, auto b) { return fabs(a) + fabs(b); });
+    return std::accumulate(data.constValues2D().begin(), data.constValues2D().end(), 0.0,
+                           [](auto a, auto b) { return fabs(a) + fabs(b); });
 }
 
 // Return sum of all values in supplied data
