@@ -23,7 +23,6 @@
 
 #include "genericitems/array.h"
 #include "genericitems/array2d.h"
-/* #include "genericitems/array2darraydouble.h" */
 #include "genericitems/array2dchar.h"
 #include "genericitems/array2ddouble.h"
 #include "genericitems/array2ddummy.h"
