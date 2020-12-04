@@ -136,9 +136,7 @@ bool PairBroadeningFunction::writeAsKeyword(LineParser &parser, std::string_view
                 return false;
 
             // Count number of pairs/values to expect and write to file
-            for (auto n = 0; n < elementPairGaussianFlags_.linearArraySize(); ++n)
-                if (elementPairGaussianFlags_.constLinearValue(n))
-                    ++count;
+            count += std::count(elementPairGaussianFlags_.begin(), elementPairGaussianFlags_.end(), true);
             if (!parser.writeLineF("{}{}\n", prefix, count))
                 return false;
 
@@ -187,10 +185,10 @@ std::vector<double *> PairBroadeningFunction::parameters()
             params.push_back(&gaussianFWHM_);
             break;
         case (PairBroadeningFunction::GaussianElementPairFunction):
-            for (auto n = 0; n < elementPairGaussianFlags_.linearArraySize(); ++n)
+            for (auto n = 0; n < elementPairGaussianFlags_.size(); ++n)
             {
-                if (elementPairGaussianFlags_.constLinearValue(n))
-                    params.push_back(&elementPairGaussianFWHM_.linearValue(n));
+                if (elementPairGaussianFlags_[n])
+                    params.push_back(&elementPairGaussianFWHM_[n]);
             }
             break;
         default:

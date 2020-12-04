@@ -119,13 +119,13 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string
     }
 
     // Retrieve and zero the current potential coefficients file
-    auto &potentialCoefficients = GenericListHelper<Array2D<Array<double>>>::realise(
+    auto &potentialCoefficients = GenericListHelper<Array2D<std::vector<double>>>::realise(
         dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
     potentialCoefficients.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
-    for (auto n = 0; n < potentialCoefficients.linearArraySize(); ++n)
+    for (auto &n : potentialCoefficients)
     {
-        potentialCoefficients.linearArray()[n].initialise(ncoeffp);
-        potentialCoefficients.linearArray()[n] = 0.0;
+        n.clear();
+        n.resize(ncoeffp, 0.0);
     }
 
     // Now we are ready to read in the potential coefficients - first line contains the number of pair potentials to expect
@@ -156,7 +156,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string
 
         // Grab the coefficient storage from the module data and read the coefficients in - they will all be on one
         // single line in the file.
-        Array<double> &coefficients = potentialCoefficients.at(at1->index(), at2->index());
+        auto &coefficients = potentialCoefficients.at(at1->index(), at2->index());
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return Messenger::error("Failed to read coefficients from pcof file.\n");
         if (parser.nArgs() != ncoeffp)

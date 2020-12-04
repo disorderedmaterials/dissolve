@@ -51,7 +51,7 @@ class PairBroadeningFunction : public GenericItemBase
     // Elemental pair Gaussian FWHM parameters
     Array2D<double> elementPairGaussianFWHM_;
     // Elemental pair flags (whether a valid value exists)
-    Array2D<bool> elementPairGaussianFlags_;
+    Array2D<char> elementPairGaussianFlags_;
 
     public:
     // Read function data from LineParser source

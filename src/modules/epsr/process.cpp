@@ -572,12 +572,11 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         if (procPool.isMaster())
         {
-            Data1D *generatedArray = estimatedSQ.linearArray();
-            for (auto n = 0; n < estimatedSQ.linearArraySize(); ++n)
+            for (auto n = 0; n < estimatedSQ.size(); ++n)
             {
                 // generatedArray[n].save(generatedArray[n].name());
-                Data1DExportFileFormat exportFormat(generatedArray[n].name());
-                if (!exportFormat.exportData(generatedArray[n]))
+                Data1DExportFileFormat exportFormat(estimatedSQ[n].name());
+                if (!exportFormat.exportData(estimatedSQ[n]))
                     return procPool.decideFalse();
             }
             procPool.decideTrue();
@@ -720,9 +719,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("  generate_ep>  {}  {}  {}\n", ereq, energabs, pressfac);
 
         // Scale coefficients
-        for (i = 0; i < coefficients.linearArraySize(); ++i)
-            std::transform(coefficients.linearArray()[i].begin(), coefficients.linearArray()[i].end(),
-                           coefficients.linearArray()[i].begin(), [pressfac](auto value) { return value * pressfac; });
+        for (auto &n : coefficients)
+            std::transform(n.begin(), n.end(), n.begin(), [pressfac](auto value) { return value * pressfac; });
         energabs *= pressfac;
 
         // Generate additional potentials from the coefficients

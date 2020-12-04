@@ -6,6 +6,7 @@
 #include "base/messenger.h"
 #include "math/data1d.h"
 #include "math/histogram2d.h"
+#include <algorithm>
 
 // Static Members (ObjectStore)
 template <class Data2D> RefDataList<Data2D, int> ObjectStore<Data2D>::objects_;
@@ -271,45 +272,29 @@ Array2D<double> &Data2D::values()
 
 // Return values Array (const)
 const Array2D<double> &Data2D::constValues2D() const { return values_; }
-// Return values array in linear format
-double *Data2D::values2DLinear() { return values_.linearArray(); }
 
 // Return value specified from linear array
-double Data2D::value(int index)
-{
-    double *array = values2DLinear();
-    return array[index];
-}
+double Data2D::value(int index) { return values_[index]; }
 
 // Return number of values present in whole dataset
-int Data2D::nValues() const { return values_.linearArraySize(); }
+int Data2D::nValues() const { return values_.size(); }
 
 // Return minimum value over all data points
 double Data2D::minValue() const
 {
-    if (values_.linearArraySize() == 0)
+    if (values_.empty())
         return 0.0;
 
-    double value = values_.constLinearValue(0);
-    for (auto n = 1; n < values_.linearArraySize(); ++n)
-        if (values_.constLinearValue(n) < value)
-            value = values_.constLinearValue(n);
-
-    return value;
+    return *std::min_element(values_.begin(), values_.end());
 }
 
 // Return maximum value over all data points
 double Data2D::maxValue() const
 {
-    if (values_.linearArraySize() == 0)
+    if (values_.empty())
         return 0.0;
 
-    double value = values_.constLinearValue(0);
-    for (auto n = 1; n < values_.linearArraySize(); ++n)
-        if (values_.constLinearValue(n) > value)
-            value = values_.constLinearValue(n);
-
-    return value;
+    return *std::max_element(values_.begin(), values_.end());
 }
 
 // Add / initialise errors array
@@ -423,16 +408,14 @@ void Data2D::operator=(const Data2D &source)
 
 void Data2D::operator+=(const double delta)
 {
-    for (auto n = 0; n < values_.linearArraySize(); ++n)
-        values_.linearValue(n) += delta;
+    values_ += delta;
 
     ++version_;
 }
 
 void Data2D::operator-=(const double delta)
 {
-    for (auto n = 0; n < values_.linearArraySize(); ++n)
-        values_.linearValue(n) -= delta;
+    values_ -= delta;
 
     ++version_;
 }

@@ -32,10 +32,10 @@ Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissol
         ((ncoeffp != -1) && (ncoeffp != arrayNCoeffP)))
     {
         coefficients.initialise(nAtomTypes, nAtomTypes, true);
-        for (auto n = 0; n < coefficients.linearArraySize(); ++n)
+        for (auto &n : coefficients)
         {
-            coefficients.linearArray()[n].clear();
-            coefficients.linearArray()[n].resize(ncoeffp, 0);
+            n.clear();
+            n.resize(ncoeffp, 0);
         }
     }
 

@@ -5,22 +5,22 @@
 
 #include "genericitems/container.h"
 
-// GenericItemContainer< Array2D<bool> >
-template <> class GenericItemContainer<Array2D<bool>> : public GenericItem
+// GenericItemContainer< Array2D<char> >
+template <> class GenericItemContainer<Array2D<char>> : public GenericItem
 {
     public:
-    GenericItemContainer<Array2D<bool>>(std::string_view name, int flags = 0) : GenericItem(name, flags) {}
+    GenericItemContainer<Array2D<char>>(std::string_view name, int flags = 0) : GenericItem(name, flags) {}
 
     /*
      * Data
      */
     private:
     // Data item
-    Array2D<bool> data_;
+    Array2D<char> data_;
 
     public:
     // Return data item
-    Array2D<bool> &data() { return data_; }
+    Array2D<char> &data() { return data_; }
 
     /*
      * Item Class
@@ -30,13 +30,13 @@ template <> class GenericItemContainer<Array2D<bool>> : public GenericItem
     GenericItem *createItem(std::string_view className, std::string_view name, int flags = 0)
     {
         if (DissolveSys::sameString(className, itemClassName()))
-            return new GenericItemContainer<Array2D<bool>>(name, flags);
+            return new GenericItemContainer<Array2D<char>>(name, flags);
         return nullptr;
     }
 
     public:
     // Return class name contained in item
-    std::string_view itemClassName() { return "Array2D<bool>"; }
+    std::string_view itemClassName() { return "Array2D<char>"; }
 
     /*
      * I/O
@@ -47,27 +47,27 @@ template <> class GenericItemContainer<Array2D<bool>> : public GenericItem
     // Read data through specified parser
     bool read(LineParser &parser, CoreData &coreData) { return read(data_, parser); }
     // Write specified data through specified parser
-    static bool write(const Array2D<bool> &thisData, LineParser &parser)
+    static bool write(const Array2D<char> &thisData, LineParser &parser)
     {
         parser.writeLineF("{}  {}  {}\n", thisData.nRows(), thisData.nColumns(), DissolveSys::btoa(thisData.halved()));
-        for (auto n = 0; n < thisData.linearArraySize(); ++n)
-            if (!parser.writeLineF("{}\n", thisData.constLinearValue(n) ? 'T' : 'F'))
+        for (auto n : thisData)
+            if (!parser.writeLineF("{}\n", n ? 'T' : 'F'))
                 return false;
         return true;
     }
     // Read specified data through specified parser
-    static bool read(Array2D<bool> &thisData, LineParser &parser)
+    static bool read(Array2D<char> &thisData, LineParser &parser)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
         int nRows = parser.argi(0), nColumns = parser.argi(1);
         thisData.initialise(nRows, nColumns, parser.argb(2));
 
-        for (auto n = 0; n < thisData.linearArraySize(); ++n)
+        for (auto &n : thisData)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
-            thisData.linearArray()[n] = (parser.argsv(0)[0] == 'T' || parser.argsv(0)[0] == 't');
+            n = (parser.argsv(0)[0] == 'T' || parser.argsv(0)[0] == 't');
         }
         return true;
     }

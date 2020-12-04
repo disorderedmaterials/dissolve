@@ -357,8 +357,7 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
         }
 
         // Set up Data1D array with our empty data
-        for (auto n = 0; n < braggPartials.linearArraySize(); ++n)
-            braggPartials.linearArray()[n] = temp;
+        std::fill(braggPartials.begin(), braggPartials.end(), temp);
     }
     auto &braggTotal = GenericListHelper<Data1D>::realise(cfg->moduleData(), "OriginalBraggTotal", "",
                                                           GenericItem::InRestartFileFlag, &wasCreated);
@@ -367,8 +366,8 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
     braggTotal.clear();
 
     // Zero Bragg partials
-    for (auto n = 0; n < braggPartials.linearArraySize(); ++n)
-        std::fill(braggPartials.linearArray()[n].values().begin(), braggPartials.linearArray()[n].values().end(), 0.0);
+    for (auto &n : braggPartials)
+        std::fill(n.values().begin(), n.values().end(), 0.0);
 
     // Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
     double qCentre;
