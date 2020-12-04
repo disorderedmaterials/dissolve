@@ -1065,7 +1065,7 @@ bool ProcessPool::broadcast(char *source, int count, int rootRank, ProcessPool::
     timer_.start();
     if (MPI_Bcast(source, count, MPI_CHAR, rootRank, communicator(commType)) != MPI_SUCCESS)
     {
-        Messenger::print("Failed to broadcast int data from root rank {}.\n", rootRank);
+        Messenger::print("Failed to broadcast char array data from root rank {}.\n", rootRank);
         return false;
     }
     timer_.accumulate();
@@ -1287,13 +1287,13 @@ bool ProcessPool::broadcast(Data1D &array, int rootRank, ProcessPool::Communicat
 
     if (!broadcast(array.xAxis(), rootRank, commType))
     {
-        Messenger::print("Failed to broadcast std::vector<long int> data from root rank {} (world rank {}).\n", rootRank,
+        Messenger::print("Failed to broadcast Data1D data from root rank {} (world rank {}).\n", rootRank,
                          worldRanks_[rootRank]);
         return false;
     }
     if (!broadcast(array.values(), rootRank, commType))
     {
-        Messenger::print("Failed to broadcast std::vector<long int> data from root rank {} (world rank {}).\n", rootRank,
+        Messenger::print("Failed to broadcast Data1D data from root rank {} (world rank {}).\n", rootRank,
                          worldRanks_[rootRank]);
         return false;
     }
@@ -1301,7 +1301,7 @@ bool ProcessPool::broadcast(Data1D &array, int rootRank, ProcessPool::Communicat
     {
         if (!broadcast(array.errors(), rootRank, commType))
         {
-            Messenger::print("Failed to broadcast std::vector<long int> data from root rank {} (world rank {}).\n", rootRank,
+            Messenger::print("Failed to broadcast Data1D data from root rank {} (world rank {}).\n", rootRank,
                              worldRanks_[rootRank]);
             return false;
         }
@@ -1399,7 +1399,7 @@ bool ProcessPool::broadcast(std::vector<char> &array, int rootRank, ProcessPool:
 
     if (!broadcast(array.data(), array.size(), rootRank, commType))
     {
-        Messenger::print("Failed to broadcast std::vector<long int> data from root rank {} (world rank {}).\n", rootRank,
+        Messenger::print("Failed to broadcast std::vector<char> data from root rank {} (world rank {}).\n", rootRank,
                          worldRanks_[rootRank]);
         return false;
     }
@@ -1677,13 +1677,8 @@ bool ProcessPool::broadcast(Array2D<double> &array, int rootRank, ProcessPool::C
 
         // Now broadcast Array data
         if (!array.empty())
-        {
             if (!broadcast(array.linearArray(), rootRank, commType))
-            {
-                Messenger::print("Failed to broadcast Array2D<double> data from root rank {}.\n", rootRank);
-                return false;
-            }
-        }
+                return Messenger::error("Failed to broadcast Array2D<double> data from root rank {}.\n", rootRank);
     }
     else
     {
