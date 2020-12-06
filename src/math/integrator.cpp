@@ -240,12 +240,7 @@ double Integrator::sum(const Data3D &data)
     // Grab data array
     const Array3D<double> &values = data.constValues3D();
 
-    double total = 0.0;
-
-    for (auto n = 0; n < values.linearArraySize(); ++n)
-        total += values.constLinearValue(n);
-
-    return total;
+    return std::accumulate(values.linearArray().begin(), values.linearArray().end(), 0.0);
 }
 
 // Return sum of all absolute values in supplied data
@@ -254,10 +249,6 @@ double Integrator::absSum(const Data3D &data)
     // Grab data array
     const Array3D<double> &values = data.constValues3D();
 
-    double total = 0.0;
-
-    for (auto n = 0; n < values.linearArraySize(); ++n)
-        total += fabs(values.constLinearValue(n));
-
-    return total;
+    return std::accumulate(values.linearArray().begin(), values.linearArray().end(), 0.0,
+                           [](auto acc, auto n) { return acc + fabs(n); });
 }

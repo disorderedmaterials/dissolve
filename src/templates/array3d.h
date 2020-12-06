@@ -6,19 +6,15 @@
 #include "base/messenger.h"
 #include "templates/list.h"
 #include "templates/vector3.h"
+#include <numeric>
+#include <vector>
 
 // Array3D
 template <class A> class Array3D
 {
     public:
-    Array3D(int nX = 0, int nY = 0, int nZ = 0)
+    Array3D(int nX = 0, int nY = 0, int nZ = 0) : nX_(nX), nY_(nY), nZ_(nZ)
     {
-        array_ = nullptr;
-        linearSize_ = 0;
-        sliceOffsets_ = nullptr;
-        nX_ = 0;
-        nY_ = 0;
-        nZ_ = 0;
         if ((nX > 0) && (nY > 0) && (nZ > 0))
             resize(nX, nY, nZ);
     }
@@ -26,32 +22,17 @@ template <class A> class Array3D
     // Clear array data
     void clear()
     {
-        if (array_ != nullptr)
-            delete[] array_;
-        if (sliceOffsets_ != nullptr)
-            delete[] sliceOffsets_;
-        sliceOffsets_ = nullptr;
-        array_ = nullptr;
-        linearSize_ = 0;
+        array_.clear();
+        sliceOffsets_.clear();
         nX_ = 0;
         nY_ = 0;
         nZ_ = 0;
     }
-    Array3D(const Array3D<A> &source)
-    {
-        array_ = nullptr;
-        linearSize_ = 0;
-        sliceOffsets_ = nullptr;
-        nX_ = 0;
-        nY_ = 0;
-        nZ_ = 0;
-        (*this) = source;
-    }
+    Array3D(const Array3D<A> &source) { (*this) = source; }
     void operator=(const A value)
     {
         // Copy source data elements
-        for (auto n = 0; n < linearSize_; ++n)
-            array_[n] = value;
+        std::fill(array_.begin(), array_.end(), value);
     }
     void operator=(const Array3D<A> &source)
     {
@@ -59,8 +40,7 @@ template <class A> class Array3D
         clear();
         initialise(source.nX_, source.nY_, source.nZ_);
 
-        for (auto n = 0; n < linearSize_; ++n)
-            array_[n] = source.array_[n];
+        std::copy(source.array_.begin(), source.array_.end(), array_.begin());
     }
 
     /*
@@ -68,13 +48,11 @@ template <class A> class Array3D
      */
     private:
     // Linear array of objects
-    A *array_;
-    // Size of linear array
-    int linearSize_;
+    std::vector<A> array_;
     // Array dimensions
     int nX_, nY_, nZ_;
     // XY slice offsets
-    int *sliceOffsets_;
+    std::vector<int> sliceOffsets_;
 
     private:
     // Resize array
@@ -87,13 +65,14 @@ template <class A> class Array3D
         nX_ = nX;
         nY_ = nY;
         nZ_ = nZ;
-        linearSize_ = nX_ * nY_ * nZ_;
-        array_ = new A[linearSize_];
+        array_.resize(nX_ * nY_ * nZ_);
 
         // Create slice offsets array
-        sliceOffsets_ = new int[nZ_];
-        for (auto n = 0; n < nZ_; ++n)
-            sliceOffsets_[n] = n * nX_ * nY_;
+        sliceOffsets_.resize(nZ_);
+        std::vector<int> indices(nZ_, 0);
+        std::iota(indices.begin(), indices.end(), 0);
+        std::transform(indices.begin(), indices.end(), sliceOffsets_.begin(),
+                       [this](const int index) { return index * nX_ * nY_; });
     }
 
     public:
@@ -129,7 +108,7 @@ template <class A> class Array3D
         return array_[sliceOffsets_[z] + y * nX_ + x];
     }
     // Return specified element as const-reference
-    A &constAt(int x, int y, int z) const
+    const A &constAt(int x, int y, int z) const
     {
 #ifdef CHECKS
         static A dummy;
@@ -181,32 +160,43 @@ template <class A> class Array3D
     // Return array size in z
     int nZ() const { return nZ_; }
     // Return linear array size
-    int linearArraySize() const { return linearSize_; }
+    int linearArraySize() const { return array_.size(); }
     // Return linear array
-    A *linearArray() { return array_; }
+    std::vector<A> &linearArray() { return array_; }
+    // Return linear array
+    const std::vector<A> &linearArray() const { return array_; }
+    // Beginning of the underlying array
+    typename std::vector<A>::iterator begin() { return array_.begin(); }
+    // End of the underlying array
+    typename std::vector<A>::iterator end() { return array_.end(); }
+    // Beginning of the underlying array
+    typename std::vector<A>::const_iterator cbegin() const { return array_.cbegin(); }
+    // End of the underlying array
+    typename std::vector<A>::const_iterator cend() const { return array_.cend(); }
+    bool empty() const { return array_.empty(); }
     // Return linear value
     A &linearValue(int index)
     {
 #ifdef CHECKS
         static A dummy;
-        if ((index < 0) || (index >= linearSize_))
+        if ((index < 0) || (index >= array_.size()))
         {
             Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in Array3D::linearValue() (linearSize = {}).\n", index,
-                             linearSize_);
+                             array_.size());
             return dummy;
         }
 #endif
         return array_[index];
     }
     // Return linear value (const)
-    A &constLinearValue(int index) const
+    const A &linearValue(int index) const
     {
 #ifdef CHECKS
         static A dummy;
-        if ((index < 0) || (index >= linearSize_))
+        if ((index < 0) || (index >= array_.size()))
         {
             Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in Array3D::constLinearValue() (linearSize = {}).\n",
-                             index, linearSize_);
+                             index, array_.size());
             return dummy;
         }
 #endif
@@ -220,26 +210,22 @@ template <class A> class Array3D
     // Operator+= (add to all)
     void operator+=(const A value)
     {
-        for (auto n = 0; n < linearSize_; ++n)
-            array_[n] += value;
+        std::transform(array_.begin(), array_.end(), array_.begin(), [value](auto n) { return n + value; });
     }
     // Operator-= (subtract from all)
     void operator-=(const A value)
     {
-        for (auto n = 0; n < linearSize_; ++n)
-            array_[n] -= value;
+        std::transform(array_.begin(), array_.end(), array_.begin(), [value](auto n) { return n - value; });
     }
     // Operator*= (multiply all)
     void operator*=(const A value)
     {
-        for (auto n = 0; n < linearSize_; ++n)
-            array_[n] *= value;
+        std::transform(array_.begin(), array_.end(), array_.begin(), [value](auto n) { return n * value; });
     }
     // Operator/= (divide all)
     void operator/=(const A value)
     {
-        for (auto n = 0; n < linearSize_; ++n)
-            array_[n] /= value;
+        std::transform(array_.begin(), array_.end(), array_.begin(), [value](auto n) { return n / value; });
     }
 };
 
@@ -249,23 +235,14 @@ template <class A> class OffsetArray3D
     public:
     OffsetArray3D(int xMin, int xMax, int yMin, int yMax, int zMin, int zMax)
     {
-        array_ = nullptr;
-        linearSize_ = 0;
-        sliceOffsets_ = nullptr;
-
         initialise(xMin, xMax, yMin, yMax, zMin, zMax);
     }
     ~OffsetArray3D() { clear(); }
     // Clear array data
     void clear()
     {
-        if (array_ != nullptr)
-            delete[] array_;
-        if (sliceOffsets_ != nullptr)
-            delete[] sliceOffsets_;
-        sliceOffsets_ = nullptr;
-        array_ = nullptr;
-        linearSize_ = 0;
+        array_.clear();
+        sliceOffsets_.clear();
         xMin_ = 0;
         yMin_ = 0;
         zMin_ = 0;
@@ -278,9 +255,8 @@ template <class A> class OffsetArray3D
     }
     OffsetArray3D(const OffsetArray3D<A> &source)
     {
-        array_ = nullptr;
-        linearSize_ = 0;
-        sliceOffsets_ = nullptr;
+        array_.clear();
+        sliceOffsets_.clear();
         xMin_ = 0;
         yMin_ = 0;
         zMin_ = 0;
@@ -295,8 +271,7 @@ template <class A> class OffsetArray3D
     void operator=(const A value)
     {
         // Copy source data elements
-        for (auto n = 0; n < linearSize_; ++n)
-            array_[n] = value;
+        std::fill(array_.begin(), array_.end(), value);
     }
     void operator=(const Array3D<A> &source)
     {
@@ -304,8 +279,7 @@ template <class A> class OffsetArray3D
         clear();
         initialise(source.nX_, source.nY_, source.nZ_);
 
-        for (auto n = 0; n < linearSize_; ++n)
-            array_[n] = source.array_[n];
+        std::copy(source.array_.begin(), source.array_.end(), array_.begin());
     }
 
     /*
@@ -313,15 +287,13 @@ template <class A> class OffsetArray3D
      */
     private:
     // Linear array of objects
-    A *array_;
-    // Size of linear array
-    int linearSize_;
+    std::vector<A> array_;
     // Array limits
     int xMin_, xMax_, yMin_, yMax_, zMin_, zMax_;
     // Array dimensions
     int nX_, nY_, nZ_;
     // XY slice offsets
-    int *sliceOffsets_;
+    std::vector<int> sliceOffsets_;
 
     public:
     // Initialise array
@@ -338,14 +310,12 @@ template <class A> class OffsetArray3D
         nX_ = (xMax_ - xMin_) + 1;
         nY_ = (yMax_ - yMin_) + 1;
         nZ_ = (zMax_ - zMin_) + 1;
-        linearSize_ = nX_ * nY_ * nZ_;
 
         if ((nX_ > 0) && (nY_ > 0) && (nZ_ > 0))
         {
-            array_ = new A[linearSize_];
+            array_.resize(nX_ * nY_ * nZ_);
+            sliceOffsets_.resize(nZ_);
 
-            // Create slice offsets array
-            sliceOffsets_ = new int[nZ_];
             for (auto n = 0; n < nZ_; ++n)
                 sliceOffsets_[n] = n * nX_ * nY_;
         }
@@ -444,34 +414,38 @@ template <class A> class OffsetArray3D
     // Return array size in z
     int nZ() const { return nZ_; }
     // Return linear array size
-    int linearArraySize() const { return linearSize_; }
+    int linearArraySize() const { return array_.size(); }
     // Return linear array
-    A *linearArray() { return array_; }
+    std::vector<A> linearArray() { return array_; }
+    // Beginning iterator
+    std::vector<A> begin() { return array_.begin(); }
+    // End iterator
+    std::vector<A> end() { return array_.end(); }
     // Return linear value
     A &linearValue(int index)
     {
 #ifdef CHECKS
         static A dummy;
-        if ((index < 0) || (index >= linearSize_))
+        if ((index < 0) || (index >= array_.size()))
         {
             Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in OffsetArray3D::linearValue() "
                              "(linearSize = {}).\n",
-                             index, linearSize_);
+                             index, array_.size());
             return dummy;
         }
 #endif
         return array_[index];
     }
     // Return linear value (const)
-    A &constLinearValue(int index) const
+    const A &constLinearValue(int index) const
     {
 #ifdef CHECKS
         static A dummy;
-        if ((index < 0) || (index >= linearSize_))
+        if ((index < 0) || (index >= array_.size()))
         {
             Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in OffsetArray3D::constLinearValue() "
                              "(linearSize = {}).\n",
-                             index, linearSize_);
+                             index, array_.size());
             return dummy;
         }
 #endif
@@ -485,25 +459,21 @@ template <class A> class OffsetArray3D
     // Operator+= (add to all)
     void operator+=(const A value)
     {
-        for (auto n = 0; n < linearSize_; ++n)
-            array_[n] += value;
+        std::transform(array_.begin(), array_.end(), array_.begin(), [value](auto n) { return n + value; });
     }
     // Operator-= (subtract from all)
     void operator-=(const A value)
     {
-        for (auto n = 0; n < linearSize_; ++n)
-            array_[n] -= value;
+        std::transform(array_.begin(), array_.end(), array_.begin(), [value](auto n) { return n - value; });
     }
     // Operator*= (multiply all)
     void operator*=(const A value)
     {
-        for (auto n = 0; n < linearSize_; ++n)
-            array_[n] *= value;
+        std::transform(array_.begin(), array_.end(), array_.begin(), [value](auto n) { return n * value; });
     }
     // Operator/= (divide all)
     void operator/=(const A value)
     {
-        for (auto n = 0; n < linearSize_; ++n)
-            array_[n] /= value;
+        std::transform(array_.begin(), array_.end(), array_.begin(), [value](auto n) { return n / value; });
     }
 };
