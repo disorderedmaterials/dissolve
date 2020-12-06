@@ -61,7 +61,7 @@ bool Data2DExportFileFormat::exportBlock(LineParser &parser, const Data2D &data)
     for (auto x = 0; x < values.nRows(); ++x)
     {
         for (auto y = 0; y < values.nColumns(); ++y)
-            if (!parser.writeLineF("{:15.9f}\n", values.constAt(x, y)))
+            if (!parser.writeLineF("{:15.9f}\n", values[{x, y}]))
                 return false;
         if (!parser.writeLineF("\n"))
             return false;
@@ -80,7 +80,7 @@ bool Data2DExportFileFormat::exportCartesian(LineParser &parser, const Data2D &d
     for (auto x = 0; x < values.nRows(); ++x)
     {
         for (auto y = 0; y < values.nColumns(); ++y)
-            if (!parser.writeLineF("{:15.9f} {:15.9f} {:15.9f}\n", xAxis[x], yAxis[y], values.constAt(x, y)))
+            if (!parser.writeLineF("{:15.9f} {:15.9f} {:15.9f}\n", xAxis[x], yAxis[y], values[{x, y}]))
                 return false;
         if (!parser.writeLineF("\n"))
             return false;

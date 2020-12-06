@@ -241,7 +241,7 @@ double &Data2D::value(int xIndex, int yIndex)
 #endif
     ++version_;
 
-    return values_.at(xIndex, yIndex);
+    return values_[{xIndex, yIndex}];
 }
 
 // Return value specified (const)
@@ -259,7 +259,7 @@ double Data2D::constValue(int xIndex, int yIndex) const
         return 0.0;
     }
 #endif
-    return values_.constAt(xIndex, yIndex);
+    return values_[{xIndex, yIndex}];
 }
 
 // Return values Array
@@ -340,7 +340,7 @@ double &Data2D::error(int xIndex, int yIndex)
 
     ++version_;
 
-    return errors_.at(xIndex, yIndex);
+    return errors_[{xIndex, yIndex}];
 }
 
 // Return error value specified (const)
@@ -365,7 +365,7 @@ double Data2D::constError(int xIndex, int yIndex) const
     }
 #endif
 
-    return errors_.constAt(xIndex, yIndex);
+    return errors_[{xIndex, yIndex}];
 }
 
 // Return error Array
@@ -493,8 +493,8 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
             {
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                     return false;
-                values_.at(x, y) = parser.argd(0);
-                errors_.at(x, y) = parser.argd(1);
+                values_[{x, y}] = parser.argd(0);
+                errors_[{x, y}] = parser.argd(1);
             }
         }
     }
@@ -506,7 +506,7 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
             {
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                     return false;
-                values_.at(x, y) = parser.argd(0);
+                values_[{x, y}] = parser.argd(0);
             }
         }
     }
@@ -543,7 +543,7 @@ bool Data2D::write(LineParser &parser)
         for (auto x = 0; x < x_.size(); ++x)
         {
             for (auto y = 0; y < y_.size(); ++y)
-                if (!parser.writeLineF("{:e}  {:e}\n", values_.constAt(x, y), errors_.constAt(x, y)))
+                if (!parser.writeLineF("{:e}  {:e}\n", values_[{x, y}], errors_[{x, y}]))
                     return false;
         }
     }
@@ -552,7 +552,7 @@ bool Data2D::write(LineParser &parser)
         for (auto x = 0; x < x_.size(); ++x)
         {
             for (auto y = 0; y < y_.size(); ++y)
-                if (!parser.writeLineF("{:e}\n", values_.constAt(x, y)))
+                if (!parser.writeLineF("{:e}\n", values_[{x, y}]))
                     return false;
         }
     }

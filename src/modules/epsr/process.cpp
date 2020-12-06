@@ -213,7 +213,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Set object names in combinedUnweightedSQ
     for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-        combinedUnweightedSQ.at(i, j).setObjectTag(
+        combinedUnweightedSQ[{i, j}].setObjectTag(
             fmt::format("{}//UnweightedSQ//{}-{}", uniqueName(), at1->name(), at2->name()));
     });
 
@@ -460,7 +460,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto globalJ = atd2.atomType()->index();
 
             Data1D partialIJ = unweightedSQ.unboundPartial(i, j);
-            Interpolator::addInterpolated(combinedUnweightedSQ.at(globalI, globalJ), partialIJ, 1.0 / targets_.nItems());
+            Interpolator::addInterpolated(combinedUnweightedSQ[{globalI, globalJ}], partialIJ, 1.0 / targets_.nItems());
         });
 
         /*
@@ -540,7 +540,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
                         [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
                             // Copy and rename the data for clarity
-                            auto data = combinedUnweightedSQ.at(i, j);
+                            auto data = combinedUnweightedSQ[{i, j}];
                             data.setName(fmt::format("Simulated {}-{}", at1->name(), at2->name()));
 
                             // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
@@ -593,7 +593,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
                                 if (testData_.containsData(testDataName))
                                 {
-                                    double error = Error::percent(estimatedSQ.at(i, j), testData_.data(testDataName));
+                                    double error = Error::percent(estimatedSQ[{i, j}], testData_.data(testDataName));
                                     Messenger::print("Generated S(Q) reference data '{}' has error of {:7.3f}% with "
                                                      "calculated data and is {} (threshold is {:6.3f}%)\n\n",
                                                      testDataName, error, error <= testThreshold ? "OK" : "NOT OK",
@@ -614,11 +614,11 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
     for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
         // Grab experimental g(r) container and make sure its object name is set
-        auto &expGR = estimatedGR.at(i, j);
+        auto &expGR = estimatedGR[{i, j}];
         expGR.setObjectTag(fmt::format("{}//EstimatedGR//{}-{}", uniqueName_, at1->name(), at2->name()));
 
         // Copy experimental S(Q) and FT it
-        expGR = estimatedSQ.at(i, j);
+        expGR = estimatedSQ[{i, j}];
         Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * targetConfiguration_->atomicDensity()), 0.0, 0.05, 30.0,
                         WindowFunction(WindowFunction::Lorch0Window));
         expGR += 1.0;
@@ -660,7 +660,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Sum fluctuation coefficients in to the potential coefficients
         auto &coefficients = potentialCoefficients(dissolve, nAtomTypes, ncoeffp);
         for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-            auto &potCoeff = coefficients.at(i, j);
+            auto &potCoeff = coefficients[{i, j}];
 
             // Zero potential before adding in fluctuation coefficients?
             if (overwritePotentials)
@@ -763,7 +763,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
                           [&](int i, auto at1, int j, auto at2) -> std::optional<bool> {
                               // Grab reference to coefficients
-                              auto &potCoeff = coefficients.at(i, j);
+                              auto &potCoeff = coefficients[{i, j}];
 
                               LineParser fileParser;
                               if (!fileParser.openOutput(fmt::format("PCof-{}-{}.txt", at1->name(), at2->name())))

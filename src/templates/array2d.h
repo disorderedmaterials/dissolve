@@ -129,18 +129,19 @@ template <class A> class Array2D
         for (auto n = 0; n < oldArray.nRows_; ++n)
         {
             for (auto m = 0; m < oldArray.nColumns_; ++m)
-                at(n, m) = oldArray.at(n, m);
+                (*this)[{n, m}] = oldArray[{n, m}];
         }
     }
     // Set row
     void setRow(int row, A value)
     {
         for (auto n = 0; n < nColumns_; ++n)
-            at(row, n) = value;
+            (*this)[{row, n}] = value;
     }
     // Return specified element as reference
-    A &at(const int row, int column)
+    A &operator[](const std::tuple<int, int> index)
     {
+        auto [row, column] = index;
 #ifdef CHECKS
         static A dummy;
         if ((row < 0) || (row >= nRows_))
@@ -166,8 +167,9 @@ template <class A> class Array2D
             return array_[rowOffsets_[row] + column];
     }
     // Return specified element as const reference
-    const A &constAt(const int row, const int column) const
+    const A &operator[](const std::tuple<int, int> index) const
     {
+        auto [row, column] = index;
 #ifdef CHECKS
         static A dummy;
         if ((row < 0) || (row >= nRows_))
@@ -307,8 +309,8 @@ template <class A> class Array2D
                 // The number of elements equals nColumns in A (== nRows in B)
                 x = 0.0;
                 for (i = 0; i < nColumns_; ++i)
-                    x += constAt(rowA, i) * B.constAt(i, colB);
-                C.at(rowA, colB) = x;
+                    x += (*this)[{rowA, i}] * B[{i, colB}];
+                C[{rowA, colB}] = x;
             }
         }
 
@@ -329,7 +331,7 @@ template <class A> class Array2D
         {
             std::string line;
             for (auto column = 0; column < nColumns_; ++column)
-                line += fmt::format(" {:e}", constAt(row, column));
+                line += fmt::format(" {:e}", (*this)[{row, column}]);
             Messenger::print("R{:2d} :{}\n", row, line);
         }
     }
@@ -342,7 +344,7 @@ template <class A> class Array2D
         for (auto r = 0; r < nRows_; ++r)
         {
             for (auto c = 0; c < nColumns_; ++c)
-                result.at(c, r) = constAt(r, c);
+                result[{c, r}] = (*this)[{r, c}];
         }
         return result;
     }

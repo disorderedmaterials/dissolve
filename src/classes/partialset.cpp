@@ -64,9 +64,9 @@ bool PartialSet::setUpPartials(const AtomTypeList &atomTypes, std::string_view p
     std::string title;
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
         title = fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
-        partials_.at(n, m).setName(title);
-        boundPartials_.at(n, m).setName(title);
-        unboundPartials_.at(n, m).setName(title);
+        partials_[{n, m}].setName(title);
+        boundPartials_[{n, m}].setName(title);
+        unboundPartials_[{n, m}].setName(title);
     });
 
     // Set up array for total
@@ -91,9 +91,9 @@ void PartialSet::setUpHistograms(double rdfRange, double binWidth)
     unboundHistograms_.initialise(nTypes, nTypes, true);
 
     for_each_pair(0, nTypes, [&](int i, int j) {
-        fullHistograms_.at(i, j).initialise(0.0, rdfRange, binWidth);
-        boundHistograms_.at(i, j).initialise(0.0, rdfRange, binWidth);
-        unboundHistograms_.at(i, j).initialise(0.0, rdfRange, binWidth);
+        fullHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
+        boundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
+        unboundHistograms_[{i, j}].initialise(0.0, rdfRange, binWidth);
     });
 }
 
@@ -104,17 +104,17 @@ void PartialSet::reset()
     for (auto n = 0; n < fullHistograms_.nRows(); ++n)
         for (auto m = n; m < fullHistograms_.nColumns(); ++m)
         {
-            fullHistograms_.at(n, m).zeroBins();
-            boundHistograms_.at(n, m).zeroBins();
-            unboundHistograms_.at(n, m).zeroBins();
+            fullHistograms_[{n, m}].zeroBins();
+            boundHistograms_[{n, m}].zeroBins();
+            unboundHistograms_[{n, m}].zeroBins();
         }
 
     // Zero partials
     for_each_pair(0, atomTypes_.nItems(), [&](int i, int j) {
-        std::fill(partials_.at(i, j).values().begin(), partials_.at(i, j).values().end(), 0.0);
-        std::fill(boundPartials_.at(i, j).values().begin(), boundPartials_.at(i, j).values().end(), 0.0);
-        std::fill(unboundPartials_.at(i, j).values().begin(), unboundPartials_.at(i, j).values().end(), 0.0);
-        emptyBoundPartials_.at(i, j) = true;
+        std::fill(partials_[{i, j}].values().begin(), partials_[{i, j}].values().end(), 0.0);
+        std::fill(boundPartials_[{i, j}].values().begin(), boundPartials_[{i, j}].values().end(), 0.0);
+        std::fill(unboundPartials_[{i, j}].values().begin(), unboundPartials_[{i, j}].values().end(), 0.0);
+        emptyBoundPartials_[{i, j}] = true;
     });
 
     // Zero total
@@ -142,28 +142,28 @@ void PartialSet::setFingerprint(std::string_view fingerprint) { fingerprint_ = f
 std::string_view PartialSet::fingerprint() const { return fingerprint_; }
 
 // Return full histogram specified
-Histogram1D &PartialSet::fullHistogram(int i, int j) { return fullHistograms_.at(i, j); }
+Histogram1D &PartialSet::fullHistogram(int i, int j) { return fullHistograms_[{i, j}]; }
 
 // Return bound histogram specified
-Histogram1D &PartialSet::boundHistogram(int i, int j) { return boundHistograms_.at(i, j); }
+Histogram1D &PartialSet::boundHistogram(int i, int j) { return boundHistograms_[{i, j}]; }
 
 // Return unbound histogram specified
-Histogram1D &PartialSet::unboundHistogram(int i, int j) { return unboundHistograms_.at(i, j); }
+Histogram1D &PartialSet::unboundHistogram(int i, int j) { return unboundHistograms_[{i, j}]; }
 
 // Return full atom-atom partial specified
-Data1D &PartialSet::partial(int i, int j) { return partials_.at(i, j); }
-const Data1D &PartialSet::partial(int i, int j) const { return partials_.constAt(i, j); }
+Data1D &PartialSet::partial(int i, int j) { return partials_[{i, j}]; }
+const Data1D &PartialSet::partial(int i, int j) const { return partials_[{i, j}]; }
 
 // Return atom-atom partial for unbound pairs
-Data1D &PartialSet::unboundPartial(int i, int j) { return unboundPartials_.at(i, j); }
-const Data1D &PartialSet::unboundPartial(int i, int j) const { return unboundPartials_.constAt(i, j); }
+Data1D &PartialSet::unboundPartial(int i, int j) { return unboundPartials_[{i, j}]; }
+const Data1D &PartialSet::unboundPartial(int i, int j) const { return unboundPartials_[{i, j}]; }
 
 // Return atom-atom partial for bound pairs
-Data1D &PartialSet::boundPartial(int i, int j) { return boundPartials_.at(i, j); }
-const Data1D &PartialSet::boundPartial(int i, int j) const { return boundPartials_.constAt(i, j); }
+Data1D &PartialSet::boundPartial(int i, int j) { return boundPartials_[{i, j}]; }
+const Data1D &PartialSet::boundPartial(int i, int j) const { return boundPartials_[{i, j}]; }
 
 // Return whether specified bound partial is empty
-bool PartialSet::isBoundPartialEmpty(int i, int j) const { return emptyBoundPartials_.constAt(i, j); }
+bool PartialSet::isBoundPartialEmpty(int i, int j) const { return emptyBoundPartials_[{i, j}]; }
 
 // Sum partials into total
 void PartialSet::formTotal(bool applyConcentrationWeights)
@@ -176,7 +176,7 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
     }
 
     // Copy x and y arrays from one of the partials, and zero the latter
-    total_.initialise(partials_.at(0, 0));
+    total_.initialise(partials_[{0, 0}]);
     std::fill(total_.values().begin(), total_.values().end(), 0.0);
 
     for_each_pair(
@@ -191,7 +191,7 @@ void PartialSet::formTotal(bool applyConcentrationWeights)
             }
 
             // Add contribution from partials (bound + unbound)
-            std::transform(total_.values().begin(), total_.values().end(), partials_.at(typeI, typeJ).values().begin(),
+            std::transform(total_.values().begin(), total_.values().end(), partials_[{typeI, typeJ}].values().begin(),
                            total_.values().begin(), [=](auto total, auto partial) { return total + partial * factor; });
         });
 }
@@ -208,7 +208,7 @@ Data1D PartialSet::boundTotal(bool applyConcentrationWeights) const
         return Data1D();
 
     Data1D bound;
-    bound.initialise(boundPartials_.constAt(0, 0));
+    bound.initialise(boundPartials_[{0, 0}]);
 
     for_each_pair(
         atomTypes_.begin(), atomTypes_.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
@@ -222,7 +222,7 @@ Data1D PartialSet::boundTotal(bool applyConcentrationWeights) const
             }
 
             // Add contribution
-            std::transform(bound.values().begin(), bound.values().end(), boundPartials_.constAt(typeI, typeJ).values().begin(),
+            std::transform(bound.values().begin(), bound.values().end(), boundPartials_[{typeI, typeJ}].values().begin(),
                            bound.values().begin(), [=](auto bound, auto partial) { return bound + partial * factor; });
         });
 
@@ -237,24 +237,23 @@ Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
         return Data1D();
 
     Data1D unbound;
-    unbound.initialise(boundPartials_.constAt(0, 0));
+    unbound.initialise(boundPartials_[{0, 0}]);
 
-    for_each_pair(atomTypes_.begin(), atomTypes_.end(),
-                  [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
-                      // Calculate weighting factor if requested
-                      double factor = 1.0;
-                      if (applyConcentrationWeights)
-                      {
-                          double ci = atd1.fraction();
-                          double cj = atd2.fraction();
-                          factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
-                      }
+    for_each_pair(
+        atomTypes_.begin(), atomTypes_.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
+            // Calculate weighting factor if requested
+            double factor = 1.0;
+            if (applyConcentrationWeights)
+            {
+                double ci = atd1.fraction();
+                double cj = atd2.fraction();
+                factor *= ci * cj * (typeI == typeJ ? 1.0 : 2.0);
+            }
 
-                      // Add contribution
-                      std::transform(unbound.values().begin(), unbound.values().end(),
-                                     unboundPartials_.constAt(typeI, typeJ).values().begin(), unbound.values().begin(),
-                                     [=](auto unbound, auto partial) { return unbound + partial * factor; });
-                  });
+            // Add contribution
+            std::transform(unbound.values().begin(), unbound.values().end(), unboundPartials_[{typeI, typeJ}].values().begin(),
+                           unbound.values().begin(), [=](auto unbound, auto partial) { return unbound + partial * factor; });
+        });
 
     return unbound;
 }
@@ -266,16 +265,16 @@ bool PartialSet::save() const
 
     for_each_pair_early(0, atomTypes_.nItems(), [&](int typeI, int typeJ) -> EarlyReturn<bool> {
         // Open file and check that we're OK to proceed writing to it
-        std::string filename{partials_.constAt(typeI, typeJ).name()};
+        std::string filename{partials_[{typeI, typeJ}].name()};
         Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
         parser.openOutput(filename, true);
         if (!parser.isFileGoodForWriting())
             return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
 
-        auto &full = partials_.constAt(typeI, typeJ);
-        auto &bound = boundPartials_.constAt(typeI, typeJ);
-        auto &unbound = unboundPartials_.constAt(typeI, typeJ);
+        auto &full = partials_[{typeI, typeJ}];
+        auto &bound = boundPartials_[{typeI, typeJ}];
+        auto &unbound = unboundPartials_[{typeI, typeJ}];
         parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits_, "Full", "Bound", "Unbound");
         for (auto n = 0; n < full.nValues(); ++n)
             parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.constXAxis(n), full.constValue(n),
@@ -300,16 +299,15 @@ void PartialSet::setObjectTags(std::string_view prefix, std::string_view suffix)
 
     objectNamePrefix_ = prefix;
 
-    for_each_pair(
-        atomTypes_.begin(), atomTypes_.end(), [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
-            partials_.at(typeI, typeJ)
-                .setObjectTag(fmt::format("{}//{}-{}//Full{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
-            boundPartials_.at(typeI, typeJ)
-                .setObjectTag(fmt::format("{}//{}-{}//Bound{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
-            unboundPartials_.at(typeI, typeJ)
-                .setObjectTag(
-                    fmt::format("{}//{}-{}//Unbound{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
-        });
+    for_each_pair(atomTypes_.begin(), atomTypes_.end(),
+                  [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
+                      partials_[{typeI, typeJ}].setObjectTag(
+                          fmt::format("{}//{}-{}//Full{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
+                      boundPartials_[{typeI, typeJ}].setObjectTag(
+                          fmt::format("{}//{}-{}//Bound{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
+                      unboundPartials_[{typeI, typeJ}].setObjectTag(
+                          fmt::format("{}//{}-{}//Unbound{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
+                  });
 
     total_.setObjectTag(fmt::format("{}//Total{}", prefix, actualSuffix));
 }
@@ -324,9 +322,9 @@ void PartialSet::setFileNames(std::string_view prefix, std::string_view tag, std
     std::string title;
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
         title = fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
-        partials_.at(n, m).setName(title);
-        boundPartials_.at(n, m).setName(title);
-        unboundPartials_.at(n, m).setName(title);
+        partials_[{n, m}].setName(title);
+        boundPartials_[{n, m}].setName(title);
+        unboundPartials_[{n, m}].setName(title);
     });
 
     // Set up array for total
@@ -341,9 +339,9 @@ void PartialSet::setFileNames(std::string_view prefix, std::string_view tag, std
 void PartialSet::adjust(double delta)
 {
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
-        partials_.at(n, m) += delta;
-        boundPartials_.at(n, m) += delta;
-        unboundPartials_.at(n, m) += delta;
+        partials_[{n, m}] += delta;
+        boundPartials_[{n, m}] += delta;
+        unboundPartials_[{n, m}] += delta;
     });
 
     total_ += delta;
@@ -354,15 +352,15 @@ void PartialSet::formPartials(double boxVolume)
 {
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
         // Calculate RDFs from histogram data
-        calculateRDF(partials_.at(n, m), fullHistograms_.at(n, m), boxVolume, at1.population(), at2.population(),
+        calculateRDF(partials_[{n, m}], fullHistograms_[{n, m}], boxVolume, at1.population(), at2.population(),
                      &at1 == &at2 ? 2.0 : 1.0);
-        calculateRDF(boundPartials_.at(n, m), boundHistograms_.at(n, m), boxVolume, at1.population(), at2.population(),
+        calculateRDF(boundPartials_[{n, m}], boundHistograms_[{n, m}], boxVolume, at1.population(), at2.population(),
                      &at1 == &at2 ? 2.0 : 1.0);
-        calculateRDF(unboundPartials_.at(n, m), unboundHistograms_.at(n, m), boxVolume, at1.population(), at2.population(),
+        calculateRDF(unboundPartials_[{n, m}], unboundHistograms_[{n, m}], boxVolume, at1.population(), at2.population(),
                      &at1 == &at2 ? 2.0 : 1.0);
 
         // Set flags for bound partials specifying if they are empty (i.e. there are no contributions of that type)
-        emptyBoundPartials_.at(n, m) = boundHistograms_.at(n, m).nBinned() == 0;
+        emptyBoundPartials_[{n, m}] = boundHistograms_[{n, m}].nBinned() == 0;
     });
 }
 
@@ -396,14 +394,14 @@ bool PartialSet::addPartials(PartialSet &source, double weighting)
             }
 
             // Add interpolated source partials to our set
-            Interpolator::addInterpolated(partials_.at(localI, localJ), source.partial(typeI, typeJ), weighting);
-            Interpolator::addInterpolated(boundPartials_.at(localI, localJ), source.boundPartial(typeI, typeJ), weighting);
-            Interpolator::addInterpolated(unboundPartials_.at(localI, localJ), source.unboundPartial(typeI, typeJ), weighting);
+            Interpolator::addInterpolated(partials_[{localI, localJ}], source.partial(typeI, typeJ), weighting);
+            Interpolator::addInterpolated(boundPartials_[{localI, localJ}], source.boundPartial(typeI, typeJ), weighting);
+            Interpolator::addInterpolated(unboundPartials_[{localI, localJ}], source.unboundPartial(typeI, typeJ), weighting);
 
             // If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set
             // correctly
             if (!source.isBoundPartialEmpty(typeI, typeJ))
-                emptyBoundPartials_.at(typeI, typeJ) = false;
+                emptyBoundPartials_[{typeI, typeJ}] = false;
         }
     }
 
@@ -472,13 +470,13 @@ void PartialSet::operator+=(const PartialSet &source)
         }
 
         // Add interpolated source partials to our set
-        Interpolator::addInterpolated(partials_.at(localI, localJ), source.partial(typeI, typeJ));
-        Interpolator::addInterpolated(boundPartials_.at(localI, localJ), source.boundPartial(typeI, typeJ));
-        Interpolator::addInterpolated(unboundPartials_.at(localI, localJ), source.unboundPartial(typeI, typeJ));
+        Interpolator::addInterpolated(partials_[{localI, localJ}], source.partial(typeI, typeJ));
+        Interpolator::addInterpolated(boundPartials_[{localI, localJ}], source.boundPartial(typeI, typeJ));
+        Interpolator::addInterpolated(unboundPartials_[{localI, localJ}], source.unboundPartial(typeI, typeJ));
 
         // If the source data bound partial is *not* empty, ensure that our emptyBoundPartials_ flag is set correctly
         if (!source.isBoundPartialEmpty(typeI, typeJ))
-            emptyBoundPartials_.at(typeI, typeJ) = false;
+            emptyBoundPartials_[{typeI, typeJ}] = false;
     });
 
     // Add total function
@@ -492,9 +490,9 @@ void PartialSet::operator*=(const double factor)
     auto nTypes = atomTypes_.nItems();
 
     for_each_pair(0, nTypes, [&](auto n, auto m) {
-        partials_.at(n, m) *= factor;
-        boundPartials_.at(n, m) *= factor;
-        unboundPartials_.at(n, m) *= factor;
+        partials_[{n, m}] *= factor;
+        boundPartials_[{n, m}] *= factor;
+        unboundPartials_[{n, m}] *= factor;
     });
 
     total_ *= factor;
@@ -534,11 +532,11 @@ bool PartialSet::read(LineParser &parser, CoreData &coreData)
     {
         for (auto typeJ = typeI; typeJ < nTypes; ++typeJ)
         {
-            if (!partials_.at(typeI, typeJ).read(parser, coreData))
+            if (!partials_[{typeI, typeJ}].read(parser, coreData))
                 return false;
-            if (!boundPartials_.at(typeI, typeJ).read(parser, coreData))
+            if (!boundPartials_[{typeI, typeJ}].read(parser, coreData))
                 return false;
-            if (!unboundPartials_.at(typeI, typeJ).read(parser, coreData))
+            if (!unboundPartials_[{typeI, typeJ}].read(parser, coreData))
                 return false;
         }
     }
@@ -573,11 +571,11 @@ bool PartialSet::write(LineParser &parser)
 
     // Write individual Data1D
     for_each_pair_early(0, nTypes, [&](int typeI, int typeJ) -> EarlyReturn<bool> {
-        if (!partials_.at(typeI, typeJ).write(parser))
+        if (!partials_[{typeI, typeJ}].write(parser))
             return false;
-        if (!boundPartials_.at(typeI, typeJ).write(parser))
+        if (!boundPartials_[{typeI, typeJ}].write(parser))
             return false;
-        if (!unboundPartials_.at(typeI, typeJ).write(parser))
+        if (!unboundPartials_[{typeI, typeJ}].write(parser))
             return false;
 
         return EarlyReturn<bool>::Continue;
@@ -604,11 +602,11 @@ bool PartialSet::broadcast(ProcessPool &procPool, const int root, const CoreData
 #ifdef PARALLEL
     // The structure should have already been setup(), so arrays should be ready to copy
     for_each_pair_early(0, atomTypes_.nItems(), [&](int typeI, int typeJ) -> EarlyReturn<bool> {
-        if (!partials_.at(typeI, typeJ).broadcast(procPool, root, coreData))
+        if (!partials_[{typeI, typeJ}].broadcast(procPool, root, coreData))
             return Messenger::error("Failed to broadcast partials_ array.\n");
-        if (!boundPartials_.at(typeI, typeJ).broadcast(procPool, root, coreData))
+        if (!boundPartials_[{typeI, typeJ}].broadcast(procPool, root, coreData))
             return Messenger::error("Failed to broadcast boundPartials_ array.\n");
-        if (!unboundPartials_.at(typeI, typeJ).broadcast(procPool, root, coreData))
+        if (!unboundPartials_[{typeI, typeJ}].broadcast(procPool, root, coreData))
             return Messenger::error("Failed to broadcast unboundPartials_ array.\n");
 
         return EarlyReturn<bool>::Continue;
@@ -630,11 +628,11 @@ bool PartialSet::equality(ProcessPool &procPool)
 {
 #ifdef PARALLEL
     for_each_pair_early(0, atomTypes_.nItems(), [&](int typeI, int typeJ) -> EarlyReturn<bool> {
-        if (!partials_.at(typeI, typeJ).equality(procPool))
+        if (!partials_[{typeI, typeJ}].equality(procPool))
             return Messenger::error("PartialSet full partial {}-{} is not equivalent.\n", typeI, typeJ);
-        if (!boundPartials_.at(typeI, typeJ).equality(procPool))
+        if (!boundPartials_[{typeI, typeJ}].equality(procPool))
             return Messenger::error("PartialSet bound partial {}-{} is not equivalent.\n", typeI, typeJ);
-        if (!unboundPartials_.at(typeI, typeJ).equality(procPool))
+        if (!unboundPartials_[{typeI, typeJ}].equality(procPool))
             return Messenger::error("PartialSet unbound partial {}-{} is not equivalent.\n", typeI, typeJ);
 
         return EarlyReturn<bool>::Continue;

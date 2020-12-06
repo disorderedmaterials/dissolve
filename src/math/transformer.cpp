@@ -105,11 +105,11 @@ void Transformer::transformValues(Data2D &data)
         {
             // Set y and value (z) values in equation
             y_->set(yAxis[j]);
-            z_->set(values.at(i, j));
-            value_->set(values.at(i, j));
+            z_->set(values[{i, j}]);
+            value_->set(values[{i, j}]);
 
             // Perform transform
-            values.at(i, j) = equation_.asDouble();
+            values[{i, j}] = equation_.asDouble();
         }
     }
 }
