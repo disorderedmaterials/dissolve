@@ -36,7 +36,8 @@ Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissol
         for (auto &n : coefficients)
         {
             n.clear();
-            n.resize(ncoeffp, 0);
+            if (ncoeffp > 0)
+                n.resize(ncoeffp, 0);
         }
     }
 
@@ -160,6 +161,8 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
 
     // Get coefficients array
     auto &coefficients = potentialCoefficients(dissolve, dissolve.nAtomTypes());
+    if (coefficients.empty())
+        return 0.0;
 
     double absEnergyEP = 0.0;
 
