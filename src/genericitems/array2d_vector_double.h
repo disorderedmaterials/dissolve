@@ -71,7 +71,7 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
             int nItems = parser.argi(0);
             data.clear();
             data.resize(nItems);
-            for (auto n : data)
+            for (auto &n : data)
             {
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                     return false;
