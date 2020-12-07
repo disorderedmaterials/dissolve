@@ -101,10 +101,13 @@ void Dissolve::registerGenericItems()
     GenericItem::addItemClass(new GenericItemContainer<std::streampos>("streampos"));
     GenericItem::addItemClass(new GenericItemContainer<std::string>("string"));
 
+    GenericItem::addItemClass(new GenericItemContainer<std::vector<double>>("std::vector<double>"));
+
     GenericItem::addItemClass(new GenericItemContainer<Vec3<int>>("Vec3<int>"));
     GenericItem::addItemClass(new GenericItemContainer<Vec3<double>>("Vec3<double>"));
 
     GenericItem::addItemClass(new GenericItemContainer<Array2D<double>>("Array2D<double>"));
+    GenericItem::addItemClass(new GenericItemContainer<Array2D<std::vector<double>>>("Array2D<std::vector<double>>"));
     GenericItem::addItemClass(new GenericItemContainer<Array2D<DummyClass>>("Array2D<DummyClass>"));
 
     GenericItem::addItemClass(new GenericItemContainer<Array<int>>("Array<int>"));
