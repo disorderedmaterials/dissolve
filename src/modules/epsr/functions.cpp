@@ -27,6 +27,7 @@ Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissol
 {
     auto &coefficients = GenericListHelper<Array2D<std::vector<double>>>::realise(
         dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
+
     auto arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients[{0, 0}].size() : 0);
     if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) ||
         ((ncoeffp != -1) && (ncoeffp != arrayNCoeffP)))
