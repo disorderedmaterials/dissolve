@@ -85,8 +85,9 @@ template <class A> class Array3D
             resize(nX, nY, nZ);
     }
     // Return specified element as modifiable reference
-    A &at(int x, int y, int z)
+    A &operator[](std::tuple<int, int, int> index)
     {
+        auto [x, y, z] = index;
 #ifdef CHECKS
         static A dummy;
         if ((x < 0) || (x >= nX_))
@@ -108,8 +109,9 @@ template <class A> class Array3D
         return array_[sliceOffsets_[z] + y * nX_ + x];
     }
     // Return specified element as const-reference
-    const A &constAt(int x, int y, int z) const
+    const A &operator[](std::tuple<int, int, int> index) const
     {
+        auto [x, y, z] = index;
 #ifdef CHECKS
         static A dummy;
         if ((x < 0) || (x >= nX_))
@@ -321,8 +323,9 @@ template <class A> class OffsetArray3D
         }
     }
     // Return specified element as reference
-    A &at(int x, int y, int z)
+    A &operator[](std::tuple<int, int, int> index)
     {
+        auto [x, y, z] = index;
 #ifdef CHECKS
         static A dummy;
         if ((x < xMin_) || (x > xMax_))
@@ -350,8 +353,9 @@ template <class A> class OffsetArray3D
         return array_[sliceOffsets_[z - zMin_] + (y - yMin_) * nX_ + (x - xMin_)];
     }
     // Return specified element as const reference
-    A &constAt(int x, int y, int z) const
+    const A &operator[](std::tuple<int, int, int> index) const
     {
+        auto [x, y, z] = index;
 #ifdef CHECKS
         static A dummy;
         if ((x < xMin_) || (x > xMax_))

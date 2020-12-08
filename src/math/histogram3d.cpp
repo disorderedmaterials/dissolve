@@ -69,8 +69,8 @@ void Histogram3D::updateAccumulatedData()
                 if (x == 0)
                     accumulatedData_.zAxis(z) = zBinCentres_[z];
 
-                accumulatedData_.value(x, y, z) = averages_.constAt(x, y, z);
-                accumulatedData_.error(x, y, z) = averages_.constAt(x, y, z).stDev();
+                accumulatedData_.value(x, y, z) = averages_[{x, y, z}];
+                accumulatedData_.error(x, y, z) = averages_[{x, y, z}].stDev();
             }
         }
     }
@@ -170,7 +170,7 @@ bool Histogram3D::bin(double x, double y, double z)
         return false;
     }
 
-    ++bins_.at(xBin, yBin, zBin);
+    ++bins_[{xBin, yBin, zBin}];
     ++nBinned_;
 
     return true;
@@ -190,7 +190,8 @@ void Histogram3D::accumulate()
         for (auto y = 0; y < nYBins_; ++y)
         {
             for (auto z = 0; z < nZBins_; ++z)
-                averages_.at(x, y, z) += double(bins_.at(x, y, z));
+	        //FIXME: std::transform?
+                averages_[{x, y, z}] += double(bins_[{x, y, z}]);
         }
     }
 
@@ -222,7 +223,8 @@ void Histogram3D::add(Histogram3D &other, int factor)
         for (auto y = 0; y < nYBins_; ++y)
         {
             for (auto z = 0; z < nZBins_; ++z)
-                bins_.at(x, y, z) += other.bins_.at(x, y, z) * factor;
+	        //FIXME: std::transform?
+                bins_[{x, y, z}] += other.bins_[{x, y, z}] * factor;
         }
     }
 }
@@ -283,7 +285,8 @@ bool Histogram3D::read(LineParser &parser, CoreData &coreData)
         for (auto y = 0; y < nYBins_; ++y)
         {
             for (auto z = 0; z < nZBins_; ++z)
-                if (!averages_.at(x, y, z).read(parser, coreData))
+	        //FIXME: one loop?
+		if (!averages_[{x, y, z}].read(parser, coreData))
                     return false;
         }
     }
@@ -306,7 +309,8 @@ bool Histogram3D::write(LineParser &parser)
         for (auto y = 0; y < nYBins_; ++y)
         {
             for (auto z = 0; z < nZBins_; ++z)
-                if (!averages_.at(x, y, z).write(parser))
+	        //FIXME: one loop
+                if (!averages_[{x, y, z}].write(parser))
                     return false;
         }
     }

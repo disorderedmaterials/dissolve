@@ -249,7 +249,7 @@ double &Data3D::value(int xIndex, int yIndex, int zIndex)
 #endif
     ++version_;
 
-    return values_.at(xIndex, yIndex, zIndex);
+    return values_[{xIndex, yIndex, zIndex}];
 }
 
 // Return value specified (const)
@@ -272,7 +272,7 @@ double Data3D::constValue(int xIndex, int yIndex, int zIndex) const
         return 0.0;
     }
 #endif
-    return values_.constAt(xIndex, yIndex, zIndex);
+    return values_[{xIndex, yIndex, zIndex}];
 }
 
 // Return values Array
@@ -355,7 +355,7 @@ double &Data3D::error(int xIndex, int yIndex, int zIndex)
 #endif
     ++version_;
 
-    return errors_.at(xIndex, yIndex, zIndex);
+    return errors_[{xIndex, yIndex, zIndex}];
 }
 
 // Return error value specified (const)
@@ -385,7 +385,7 @@ double Data3D::constError(int xIndex, int yIndex, int zIndex) const
     }
 #endif
 
-    return errors_.constAt(xIndex, yIndex, zIndex);
+    return errors_[{xIndex, yIndex, zIndex}];
 }
 
 // Return error Array
@@ -527,8 +527,8 @@ bool Data3D::read(LineParser &parser, CoreData &coreData)
                 {
                     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                         return false;
-                    values_.at(x, y, z) = parser.argd(0);
-                    errors_.at(x, y, z) = parser.argd(1);
+                    values_[{x, y, z}] = parser.argd(0);
+                    errors_[{x, y, z}] = parser.argd(1);
                 }
             }
         }
@@ -543,7 +543,8 @@ bool Data3D::read(LineParser &parser, CoreData &coreData)
                 {
                     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                         return false;
-                    values_.at(x, y, z) = parser.argd(0);
+		    //FIXME: Can we make this one loop?
+                    values_[{x, y, z}] = parser.argd(0);
                 }
             }
         }
@@ -588,7 +589,8 @@ bool Data3D::write(LineParser &parser)
             for (auto y = 0; y < y_.size(); ++y)
             {
                 for (auto z = 0; z < z_.size(); ++z)
-                    if (!parser.writeLineF("{:e}  {:e}\n", values_.constAt(x, y, z), errors_.constAt(x, y, z)))
+		    //FIXME: One loop?
+		    if (!parser.writeLineF("{:e}  {:e}\n", values_[{x, y, z}], errors_[{x, y, z}]))
                         return false;
             }
         }
@@ -600,7 +602,8 @@ bool Data3D::write(LineParser &parser)
             for (auto y = 0; y < y_.size(); ++y)
             {
                 for (auto z = 0; z < z_.size(); ++z)
-                    if (!parser.writeLineF("{:e}\n", values_.constAt(x, y, z)))
+		    //FIXME: One loop
+                    if (!parser.writeLineF("{:e}\n", values_[{x, y, z}]))
                         return false;
             }
         }
