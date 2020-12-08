@@ -535,18 +535,11 @@ bool Data3D::read(LineParser &parser, CoreData &coreData)
     }
     else
     {
-        for (auto x = 0; x < x_.size(); ++x)
+        for (auto &value : values_)
         {
-            for (auto y = 0; y < y_.size(); ++y)
-            {
-                for (auto z = 0; z < z_.size(); ++z)
-                {
-                    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-                        return false;
-		    //FIXME: Can we make this one loop?
-                    values_[{x, y, z}] = parser.argd(0);
-                }
-            }
+            if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
+                return false;
+            value = parser.argd(0);
         }
     }
 
@@ -589,24 +582,18 @@ bool Data3D::write(LineParser &parser)
             for (auto y = 0; y < y_.size(); ++y)
             {
                 for (auto z = 0; z < z_.size(); ++z)
-		    //FIXME: One loop?
-		    if (!parser.writeLineF("{:e}  {:e}\n", values_[{x, y, z}], errors_[{x, y, z}]))
+                    // TODO: Turn into a single loop when we have an
+                    // iterator combinator
+                    if (!parser.writeLineF("{:e}  {:e}\n", values_[{x, y, z}], errors_[{x, y, z}]))
                         return false;
             }
         }
     }
     else
     {
-        for (auto x = 0; x < x_.size(); ++x)
-        {
-            for (auto y = 0; y < y_.size(); ++y)
-            {
-                for (auto z = 0; z < z_.size(); ++z)
-		    //FIXME: One loop
-                    if (!parser.writeLineF("{:e}\n", values_[{x, y, z}]))
-                        return false;
-            }
-        }
+        for (auto &value : values_)
+            if (!parser.writeLineF("{:e}\n", value))
+                return false;
     }
 
     return true;

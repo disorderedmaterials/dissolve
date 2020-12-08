@@ -142,7 +142,6 @@ void Transformer::transformValues(Data3D &data)
             // Loop over z values
             for (auto k = 0; k < zAxis.size(); ++k)
             {
-	        //FIXME: Single loop? transform?
                 z_->set(values[{i, j, k}]);
                 value_->set(values[{i, j, k}]);
 

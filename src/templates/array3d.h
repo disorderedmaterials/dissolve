@@ -422,9 +422,9 @@ template <class A> class OffsetArray3D
     // Return linear array
     std::vector<A> linearArray() { return array_; }
     // Beginning iterator
-    std::vector<A> begin() { return array_.begin(); }
+    typename std::vector<A>::iterator begin() { return array_.begin(); }
     // End iterator
-    std::vector<A> end() { return array_.end(); }
+    typename std::vector<A>::iterator end() { return array_.end(); }
     // Return linear value
     A &linearValue(int index)
     {
