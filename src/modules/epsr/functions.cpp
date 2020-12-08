@@ -27,6 +27,7 @@ Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissol
 {
     auto &coefficients = GenericListHelper<Array2D<std::vector<double>>>::realise(
         dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
+
     auto arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients[{0, 0}].size() : 0);
     if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) ||
         ((ncoeffp != -1) && (ncoeffp != arrayNCoeffP)))
@@ -35,7 +36,8 @@ Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissol
         for (auto &n : coefficients)
         {
             n.clear();
-            n.resize(ncoeffp, 0);
+            if (ncoeffp > 0)
+                n.resize(ncoeffp, 0);
         }
     }
 
@@ -105,8 +107,8 @@ Data1D EPSRModule::generateEmpiricalPotentialFunction(Dissolve &dissolve, int i,
     auto ncoeffp = keywords_.asInt("NCoeffP");
     const auto psigma1 = keywords_.asDouble("PSigma1");
     const auto psigma2 = keywords_.asDouble("PSigma2");
-    double rmaxpt = keywords_.asDouble("RMaxPT");
-    double rminpt = keywords_.asDouble("RMinPT");
+    auto rmaxpt = keywords_.asDouble("RMaxPT");
+    auto rminpt = keywords_.asDouble("RMinPT");
 
     // EPSR constants
     const auto mcoeff = 200;
@@ -159,16 +161,18 @@ double EPSRModule::absEnergyEP(Dissolve &dissolve)
 
     // Get coefficients array
     auto &coefficients = potentialCoefficients(dissolve, dissolve.nAtomTypes());
+    if (coefficients.empty())
+        return 0.0;
 
-    double absEnergyEP = 0.0;
+    auto absEnergyEP = 0.0;
 
     for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
         auto &potCoeff = coefficients[{i, j}];
 
-        double cMin = potCoeff.empty() ? 0.0 : *std::min_element(potCoeff.begin(), potCoeff.end());
-        double cMax = potCoeff.empty() ? 0.0 : *std::max_element(potCoeff.begin(), potCoeff.end());
+        auto cMin = potCoeff.empty() ? 0.0 : *std::min_element(potCoeff.begin(), potCoeff.end());
+        auto cMax = potCoeff.empty() ? 0.0 : *std::max_element(potCoeff.begin(), potCoeff.end());
 
-        double range = cMax - cMin;
+        auto range = cMax - cMin;
         if (range > absEnergyEP)
             absEnergyEP = range;
 

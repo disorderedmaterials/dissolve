@@ -61,17 +61,17 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        int nRows = parser.argi(0), nColumns = parser.argi(1);
+        auto nRows = parser.argi(0), nColumns = parser.argi(1);
         data_.initialise(nRows, nColumns, parser.argb(2));
 
         for (auto &data : data_)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
-            int nItems = parser.argi(0);
+            auto nItems = parser.argi(0);
             data.clear();
             data.resize(nItems);
-            for (auto n : data)
+            for (auto &n : data)
             {
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                     return false;
@@ -100,14 +100,14 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        int nRows = parser.argi(0), nColumns = parser.argi(1);
+        auto nRows = parser.argi(0), nColumns = parser.argi(1);
         thisData.initialise(nRows, nColumns, parser.argb(2));
 
         for (auto &data : thisData)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
-            int nItems = parser.argi(0);
+            auto nItems = parser.argi(0);
             data.createEmpty(nItems);
             for (auto m = 0; m < nItems; ++m)
             {
