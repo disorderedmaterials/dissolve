@@ -7,7 +7,7 @@ function(dissolve_system_test file_name count directory)
     foreach(nproc 1 2 3 4)
       add_test(
 	NAME ${directory}-${file_name}-${nproc}
-	COMMAND mpirun -np ${nproc} ${test_target_executable} -n ${count} -x -i ${file_name}.txt ${ARGN}
+	COMMAND ${MPIEXEC_EXECUTABLE} -np ${nproc} ${test_target_executable} -n ${count} -x -i ${file_name}.txt ${ARGN}
 	WORKING_DIRECTORY ../tests/${directory}
       )
       set_property(

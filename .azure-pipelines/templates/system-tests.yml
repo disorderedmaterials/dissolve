@@ -20,7 +20,7 @@ jobs:
       - bash: |
           cd $(System.ArtifactsDirectory)/linux-tests-serial/build
           chmod +x bin/dissolve
-          ctest -j2
+          ctest -j2 --output-on-failure
         displayName: 'Run Serial System Tests'
       # - bash: |
       #     mkdir test-output
@@ -54,7 +54,7 @@ jobs:
       - bash: |
           cd $(System.ArtifactsDirectory)/linux-tests-parallel/build-parallel
           chmod +x bin/dissolve-mpi
-          ctest
+          ctest --output-on-failure
         displayName: 'Run Parallel System Tests'
       # - bash: |
       #     mkdir test-output
