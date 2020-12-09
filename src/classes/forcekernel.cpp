@@ -25,7 +25,7 @@ ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const PotentialM
  */
 
 // Calculate PairPotential forces between Atoms provided (no minimum image calculation)
-void ForceKernel::forcesWithoutMim(const Atom *i, const Atom *j, double scale)
+void ForceKernel::forcesWithoutMim(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double scale)
 {
     Vec3<double> force = j->r() - i->r();
     double distanceSq = force.magnitudeSq();
@@ -46,7 +46,7 @@ void ForceKernel::forcesWithoutMim(const Atom *i, const Atom *j, double scale)
 }
 
 // Calculate PairPotential forces between Atoms provided (minimum image calculation)
-void ForceKernel::forcesWithMim(const Atom *i, const Atom *j, double scale)
+void ForceKernel::forcesWithMim(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double scale)
 {
     Vec3<double> force = box_->minimumVector(i, j);
     double distanceSq = force.magnitudeSq();
@@ -71,7 +71,7 @@ void ForceKernel::forcesWithMim(const Atom *i, const Atom *j, double scale)
  */
 
 // Calculate forces between atoms
-void ForceKernel::forces(const Atom *i, const Atom *j, bool applyMim, bool excludeIgeJ)
+void ForceKernel::forces(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, bool applyMim, bool excludeIgeJ)
 {
 #ifdef CHECKS
     if (i == nullptr)
@@ -117,9 +117,9 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
         return;
     }
 #endif
-    OrderedVector<Atom *> &centralAtoms = centralCell->atoms();
-    OrderedVector<Atom *> &otherAtoms = otherCell->atoms();
-    Atom *ii;
+    auto &centralAtoms = centralCell->atoms();
+    auto &otherAtoms = otherCell->atoms();
+    std::shared_ptr<Atom> ii;
     Vec3<double> rI;
     std::shared_ptr<Molecule> molI;
     double scale;
@@ -138,7 +138,7 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
             rI = ii->r();
 
             // Straight loop over other cell atoms
-            for (auto *jj : otherAtoms)
+            for (auto jj : otherAtoms)
             {
                 // Check exclusion of I > J (pointer comparison)
                 if (excludeIgeJ && (ii >= jj))
@@ -165,7 +165,7 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
             rI = ii->r();
 
             // Straight loop over other cell atoms
-            for (auto *jj : otherAtoms)
+            for (auto jj : otherAtoms)
             {
                 // Check exclusion of I > J (pointer comparison)
                 if (excludeIgeJ && (ii >= jj))
@@ -204,7 +204,7 @@ void ForceKernel::forces(Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStra
 }
 
 // Calculate forces between Atom and Cell
-void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::DivisionStrategy strategy)
+void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
     if (i == nullptr)
@@ -213,14 +213,14 @@ void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::Divi
         return;
     }
 #endif
-    Atom *jj;
+    std::shared_ptr<Atom> jj;
     double scale;
 
     // Grab some information on the supplied atom
     std::shared_ptr<Molecule> moleculeI = i->molecule();
 
     // Grab the array of Atoms in the supplied Cell
-    OrderedVector<Atom *> &otherAtoms = cell->atoms();
+    OrderedVector<std::shared_ptr<Atom>> &otherAtoms = cell->atoms();
 
     // Get start/stride for specified loop context
     auto start = processPool_.interleavedLoopStart(strategy);
@@ -231,7 +231,7 @@ void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::Divi
     {
         // Loop over atom neighbours
         if (flags & KernelFlags::ExcludeSelfFlag)
-            for (auto *jj : otherAtoms)
+            for (auto jj : otherAtoms)
             {
                 // Check for same atom
                 if (i == jj)
@@ -248,7 +248,7 @@ void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::Divi
                 }
             }
         else if (flags & KernelFlags::ExcludeIGEJFlag)
-            for (auto *jj : otherAtoms)
+            for (auto jj : otherAtoms)
             {
                 // Pointer comparison for i >= jj
                 if (i >= jj)
@@ -388,7 +388,7 @@ void ForceKernel::forces(const Atom *i, Cell *cell, int flags, ProcessPool::Divi
 }
 
 // Calculate forces between atom and world
-void ForceKernel::forces(const Atom *i, ProcessPool::DivisionStrategy strategy)
+void ForceKernel::forces(const std::shared_ptr<Atom> i, ProcessPool::DivisionStrategy strategy)
 {
 #ifdef CHECKS
     if (i == nullptr)
@@ -428,7 +428,7 @@ void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec
 }
 
 // Calculate SpeciesBond forces
-void ForceKernel::forces(const SpeciesBond &bond, const Atom *i, const Atom *j)
+void ForceKernel::forces(const SpeciesBond &bond, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j)
 {
     // Determine whether we need to apply minimum image to the vector calculation
     Vec3<double> vecji;
@@ -460,7 +460,8 @@ void ForceKernel::forces(const SpeciesBond &bond, const Atom *i, const Atom *j)
 }
 
 // Calculate SpeciesBond forces for specified Atom only
-void ForceKernel::forces(const Atom *onlyThis, const SpeciesBond &bond, const Atom *i, const Atom *j)
+void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesBond &bond, const std::shared_ptr<Atom> i,
+                         const std::shared_ptr<Atom> j)
 {
 #ifdef CHECKS
     if ((i != onlyThis) && (j != onlyThis))
@@ -542,7 +543,8 @@ void ForceKernel::calculateAngleParameters(Vec3<double> vecji, Vec3<double> vecj
 }
 
 // Calculate SpeciesAngle forces
-void ForceKernel::forces(const SpeciesAngle &angle, const Atom *i, const Atom *j, const Atom *k)
+void ForceKernel::forces(const SpeciesAngle &angle, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
+                         const std::shared_ptr<Atom> k)
 {
     Vec3<double> vecji, vecjk;
 
@@ -577,7 +579,8 @@ void ForceKernel::forces(const SpeciesAngle &angle, const Atom *i, const Atom *j
 }
 
 // Calculate SpeciesAngle forces for specified Atom only
-void ForceKernel::forces(const Atom *onlyThis, const SpeciesAngle &angle, const Atom *i, const Atom *j, const Atom *k)
+void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesAngle &angle, const std::shared_ptr<Atom> i,
+                         const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k)
 {
     Vec3<double> vecji, vecjk;
 
@@ -696,7 +699,8 @@ void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec
 }
 
 // Calculate SpeciesTorsion forces
-void ForceKernel::forces(const SpeciesTorsion &torsion, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
+void ForceKernel::forces(const SpeciesTorsion &torsion, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
+                         const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l)
 {
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
@@ -745,8 +749,8 @@ void ForceKernel::forces(const SpeciesTorsion &torsion, const Atom *i, const Ato
 }
 
 // Calculate SpeciesTorsion forces for specified Atom only
-void ForceKernel::forces(const Atom *onlyThis, const SpeciesTorsion &torsion, const Atom *i, const Atom *j, const Atom *k,
-                         const Atom *l)
+void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesTorsion &torsion, const std::shared_ptr<Atom> i,
+                         const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l)
 {
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
@@ -839,7 +843,8 @@ void ForceKernel::forces(const SpeciesTorsion &torsion)
 }
 
 // Calculate SpeciesImproper forces
-void ForceKernel::forces(const SpeciesImproper &improper, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
+void ForceKernel::forces(const SpeciesImproper &improper, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
+                         const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l)
 {
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
@@ -888,8 +893,8 @@ void ForceKernel::forces(const SpeciesImproper &improper, const Atom *i, const A
 }
 
 // Calculate SpeciesImproper forces for specified Atom only
-void ForceKernel::forces(const Atom *onlyThis, const SpeciesImproper &imp, const Atom *i, const Atom *j, const Atom *k,
-                         const Atom *l)
+void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesImproper &imp, const std::shared_ptr<Atom> i,
+                         const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l)
 {
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;

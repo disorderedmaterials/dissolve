@@ -53,7 +53,7 @@ class RenderableConfiguration : public Renderable
 
     private:
     // Create cylinder bond between supplied atoms in specified assembly
-    void createCylinderBond(PrimitiveAssembly &assembly, const Atom *i, const Atom *j, const Vec3<double> vij,
+    void createCylinderBond(PrimitiveAssembly &assembly, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, const Vec3<double> vij,
                             bool drawFromAtoms, double radialScaling);
 
     protected:

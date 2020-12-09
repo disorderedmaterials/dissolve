@@ -28,21 +28,11 @@ bool RDFModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet
 {
     // Calculate radial distribution functions with a simple double loop, in serial
     const Box *box = cfg->box();
-    Atom **atoms = cfg->atoms().array();
-    int ii, jj, typeI;
-    double distance;
-    Vec3<double> rI;
 
-    for (ii = 0; ii < cfg->nAtoms() - 1; ++ii)
-    {
-        rI = atoms[ii]->r();
-        typeI = atoms[ii]->localTypeIndex();
-        for (jj = ii + 1; jj < cfg->nAtoms(); ++jj)
-        {
-            distance = box->minimumDistance(rI, atoms[jj]->r());
-            partialSet.fullHistogram(typeI, atoms[jj]->localTypeIndex()).bin(distance);
-        }
-    }
+    for_each_pair(cfg->atoms().begin(), cfg->atoms().end(), [box, &partialSet](auto i, auto ii, auto j, auto jj) {
+        if (ii != jj)
+            partialSet.fullHistogram(ii->localTypeIndex(), jj->localTypeIndex()).bin(box->minimumDistance(ii->r(), jj->r()));
+    });
 
     return true;
 }
@@ -73,7 +63,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     }
 
     // Loop over Atoms and construct arrays
-    Atom **atoms = cfg->atoms().array();
+    auto atoms = cfg->atoms();
     for (n = 0; n < cfg->nAtoms(); ++n)
     {
         m = atoms[n]->localTypeIndex();
@@ -156,7 +146,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
 // Calculate partial g(r) utilising Cell neighbour lists
 bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, PartialSet &partialSet, const double rdfRange)
 {
-    Atom *i, *j;
+    std::shared_ptr<Atom> i, j;
     int n, m, typeI;
     Cell *cellI, *cellJ;
     double distance;
@@ -173,7 +163,7 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
     for (n = start; n < cellArray.nCells(); n += stride)
     {
         cellI = cellArray.cell(n);
-        OrderedVector<Atom *> &atomsI = cellI->atoms();
+        auto &atomsI = cellI->atoms();
 
         // Add contributions between atoms in cellI
         for (auto iter = atomsI.begin(); iter != atomsI.end() && std::next(iter) != atomsI.end(); ++iter)
@@ -199,16 +189,16 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
             if (!cellArray.withinRange(cellI, cellJ, rdfRange))
                 continue;
 
-            OrderedVector<Atom *> &atomsJ = cellJ->atoms();
+            auto &atomsJ = cellJ->atoms();
 
             // Perform minimum image calculation on all atom pairs - quicker than working out if we need to in the
             // absence of a 2D look-up array
-            for (auto *i : atomsI)
+            for (auto i : atomsI)
             {
                 typeI = i->localTypeIndex();
                 rI = i->r();
 
-                for (auto *j : atomsJ)
+                for (auto j : atomsJ)
                 {
                     distance = box->minimumDistance(j, rI);
                     partialSet.fullHistogram(typeI, j->localTypeIndex()).bin(distance);
@@ -291,11 +281,11 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
     timer.start();
 
     // Loop over molecules...
-    Atom *i, *j;
+    std::shared_ptr<Atom> i, j;
     for (auto m = start; m < cfg->nMolecules(); m += stride)
     {
         std::shared_ptr<Molecule> mol = cfg->molecule(m);
-        std::vector<Atom *> atoms = mol->atoms();
+        auto &atoms = mol->atoms();
 
         for (auto ii = atoms.begin(); ii < std::prev(atoms.end()); ++ii)
         {
@@ -696,7 +686,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     {
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data->name()};
-        std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
+        std::replace_if(
+            dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
         // Sanity check on number of arguments
@@ -727,7 +718,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     {
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data->name()};
-        std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
+        std::replace_if(
+            dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
         // Sanity check on number of arguments

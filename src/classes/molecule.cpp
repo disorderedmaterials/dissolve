@@ -32,7 +32,7 @@ void Molecule::setSpecies(const Species *sp) { species_ = sp; }
 const Species *Molecule::species() const { return species_; }
 
 // Add Atom to Molecule
-void Molecule::addAtom(Atom *i)
+void Molecule::addAtom(std::shared_ptr<Atom> i)
 {
     atoms_.push_back(i);
 
@@ -46,11 +46,11 @@ void Molecule::addAtom(Atom *i)
 int Molecule::nAtoms() const { return atoms_.size(); }
 
 // Return atoms array
-std::vector<Atom *> &Molecule::atoms() { return atoms_; }
-const std::vector<Atom *> &Molecule::atoms() const { return atoms_; }
+std::vector<std::shared_ptr<Atom> > &Molecule::atoms() { return atoms_; }
+const std::vector<std::shared_ptr<Atom> > &Molecule::atoms() const { return atoms_; }
 
 // Return nth Atom pointer
-Atom *Molecule::atom(int n) const
+std::shared_ptr<Atom> Molecule::atom(int n) const
 {
 #ifdef CHECKS
     if ((n < 0) || (n >= nAtoms()))
@@ -116,7 +116,7 @@ void Molecule::transform(const Box *box, const Matrix3 &transformationMatrix, co
 {
     // Loop over supplied Atoms
     Vec3<double> newR;
-    Atom *i;
+    std::shared_ptr<Atom> i;
     for (const auto index : targetAtoms)
     {
         i = atom(index);

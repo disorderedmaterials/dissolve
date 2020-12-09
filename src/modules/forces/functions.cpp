@@ -74,13 +74,8 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     auto stride = procPool.interleavedLoopStride(strategy);
 
     // Loop over supplied atom indices
-    const DynamicArray<Atom> &atoms = cfg->atoms();
-    for (auto n = start; n < targetIndices.nItems(); n += stride)
-    {
-        const Atom *i = atoms.constValue(targetIndices.constAt(n));
-
+    for (auto i : cfg->atoms())
         kernel.forces(i, ProcessPool::subDivisionStrategy(strategy));
-    }
 }
 
 // Calculate interatomic forces within the specified Species
@@ -147,10 +142,10 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
     auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
     // Loop over supplied atom indices
-    const DynamicArray<Atom> &atoms = cfg->atoms();
+    const auto &atoms = cfg->atoms();
     for (auto n = start; n < targetIndices.nItems(); n += stride)
     {
-        const Atom *i = atoms.constValue(targetIndices.constAt(n));
+        const auto i = atoms[targetIndices.constAt(n)];
         const SpeciesAtom *spAtom = i->speciesAtom();
         std::shared_ptr<const Molecule> mol = i->molecule();
 

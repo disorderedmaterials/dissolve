@@ -90,7 +90,7 @@ void RenderableConfiguration::transformValues()
  */
 
 // Create cylinder bond between supplied atoms in specified assembly
-void RenderableConfiguration::createCylinderBond(PrimitiveAssembly &assembly, const Atom *i, const Atom *j,
+void RenderableConfiguration::createCylinderBond(PrimitiveAssembly &assembly, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
                                                  const Vec3<double> vij, bool drawFromAtoms, double radialScaling)
 {
     Matrix4 A;
@@ -140,7 +140,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
     Matrix4 A;
     const GLfloat *colour;
     const GLfloat colourBlack[4] = {0.0, 0.0, 0.0, 1.0};
-    const Atom *i, *partner;
+    const std::shared_ptr<Atom> i, *partner;
     Vec3<double> ri, rj;
 
     // Check data source
@@ -211,11 +211,8 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
         configurationAssembly_.add(true, GL_FILL);
 
         // Draw Atoms
-        const DynamicArray<Atom> &atoms = source_->constAtoms();
-        for (auto n = 0; n < atoms.nItems(); ++n)
+	for (auto i : source_->constAtoms())
         {
-            const Atom *i = atoms.constValue(n);
-
             A.setIdentity();
             A.setTranslation(i->r());
             A.applyScaling(spheresAtomRadius_);

@@ -142,10 +142,12 @@ std::deque<std::shared_ptr<Molecule>> &Configuration::molecules() { return molec
 std::shared_ptr<Molecule> Configuration::molecule(int n) { return molecules_[n]; }
 
 // Add new Atom to Configuration, with Molecule parent specified
-Atom *Configuration::addAtom(const SpeciesAtom *sourceAtom, std::shared_ptr<Molecule> molecule, Vec3<double> r)
+std::shared_ptr<Atom> Configuration::addAtom(const SpeciesAtom *sourceAtom, std::shared_ptr<Molecule> molecule, Vec3<double> r)
 {
     // Create new Atom object and set its source pointer
-    Atom *newAtom = atoms_.add();
+    auto newAtom = std::make_shared<Atom>();
+    newAtom->setArrayIndex(atoms_.size());
+    atoms_.push_back(newAtom);
     newAtom->setSpeciesAtom(sourceAtom);
 
     // Register the Atom in the specified Molecule (this will also set the Molecule pointer in the Atom)
@@ -163,22 +165,22 @@ Atom *Configuration::addAtom(const SpeciesAtom *sourceAtom, std::shared_ptr<Mole
 }
 
 // Return number of Atoms in Configuration
-int Configuration::nAtoms() const { return atoms_.nItems(); }
+int Configuration::nAtoms() const { return atoms_.size(); }
 
 // Return Atom array
-DynamicArray<Atom> &Configuration::atoms() { return atoms_; }
+std::vector<std::shared_ptr<Atom>> &Configuration::atoms() { return atoms_; }
 
 // Return Atom array (const)
-const DynamicArray<Atom> &Configuration::constAtoms() const { return atoms_; }
+const std::vector<std::shared_ptr<Atom>> &Configuration::constAtoms() const { return atoms_; }
 
 // Return nth atom
-Atom *Configuration::atom(int n)
+std::shared_ptr<Atom> Configuration::atom(int n)
 {
 #ifdef CHECKS
-    if ((n < 0) || (n >= atoms_.nItems()))
+    if ((n < 0) || (n >= atoms_.size()))
     {
         Messenger::print("OUT_OF_RANGE - Atom index {} passed to Configuration::atom() is out of range (nAtoms = {}).\n", n,
-                         atoms_.nItems());
+                         atoms_.size());
         return nullptr;
     }
 #endif
@@ -201,7 +203,7 @@ void Configuration::scaleMoleculeCentres(double factor)
         for (auto m = 0; m < mol->nAtoms(); ++m)
         {
             // Get Atom pointer
-            Atom *i = mol->atom(m);
+            auto i = mol->atom(m);
 
             // Calculate and set new position
             newPos = newCog + box()->minimumVector(i->r(), oldCog);

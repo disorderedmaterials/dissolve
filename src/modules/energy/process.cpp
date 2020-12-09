@@ -87,7 +87,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             double correctInterEnergy = 0.0, correctIntraEnergy = 0.0;
 
             double r, angle;
-            Atom *i, *j;
+            std::shared_ptr<Atom> i, j;
             Vec3<double> vecji, vecjk, veckl;
             std::shared_ptr<Molecule> molN, molM;
             const Box *box = cfg->box();

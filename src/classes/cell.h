@@ -52,23 +52,23 @@ class Cell
      */
     private:
     // Array of Atoms contained in this Cell
-    OrderedVector<Atom *> atoms_;
+    OrderedVector<std::shared_ptr<Atom> > atoms_;
     // Return array of contained Atoms, ordered by their array indices
-    OrderedVector<Atom *> indexOrderedAtoms_ =
-        OrderedVector<Atom *>([](const Atom *lhs, const Atom *rhs) { return lhs->arrayIndex() < rhs->arrayIndex(); });
+    OrderedVector<std::shared_ptr<Atom> > indexOrderedAtoms_ =
+        OrderedVector<std::shared_ptr<Atom> >([](const std::shared_ptr<Atom> lhs, const std::shared_ptr<Atom> rhs) { return lhs->arrayIndex() < rhs->arrayIndex(); });
 
     public:
     // Return array of contained Atoms
-    OrderedVector<Atom *> &atoms();
-    const OrderedVector<Atom *> &atoms() const;
+    OrderedVector<std::shared_ptr<Atom> > &atoms();
+    const OrderedVector<std::shared_ptr<Atom> > &atoms() const;
     // Return array of contained Atoms, ordered by their array indices
-    const OrderedVector<Atom *> &indexOrderedAtoms() const;
+    const OrderedVector<std::shared_ptr<Atom> > &indexOrderedAtoms() const;
     // Return number of Atoms in array
     int nAtoms() const;
     // Add atom to Cell
-    bool addAtom(Atom *atom);
+    bool addAtom(std::shared_ptr<Atom> atom);
     // Remove Atom from Cell
-    bool removeAtom(Atom *atom);
+    bool removeAtom(std::shared_ptr<Atom> atom);
 
     /*
      * Neighbours

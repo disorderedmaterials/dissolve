@@ -22,7 +22,7 @@ ScaledEnergyKernel::~ScaledEnergyKernel() {}
  */
 
 // Return PairPotential energy between atoms provided as pointers, at the distance specified
-double ScaledEnergyKernel::pairPotentialEnergy(const Atom *i, const Atom *j, double r)
+double ScaledEnergyKernel::pairPotentialEnergy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r)
 {
     /*
      * Check the Molecules of the supplied Atoms - if they exist within different Molecules we scale the distance

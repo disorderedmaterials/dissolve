@@ -50,11 +50,10 @@ bool Configuration::write(LineParser &parser) const
         return false;
 
     // Write all Atoms - for each write index and coordinates
-    if (!parser.writeLineF("{}  # nAtoms\n", atoms_.nItems()))
+    if (!parser.writeLineF("{}  # nAtoms\n", atoms_.size()))
         return false;
-    for (auto n = 0; n < atoms_.nItems(); ++n)
+    for (const auto i : atoms_)
     {
-        const Atom *i = atoms_.constValue(n);
         if (!parser.writeLineF("{} {:e} {:e} {:e}\n", i->molecule()->arrayIndex(), i->x(), i->y(), i->z()))
             return false;
     }
