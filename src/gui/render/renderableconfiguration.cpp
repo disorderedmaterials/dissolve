@@ -90,8 +90,9 @@ void RenderableConfiguration::transformValues()
  */
 
 // Create cylinder bond between supplied atoms in specified assembly
-void RenderableConfiguration::createCylinderBond(PrimitiveAssembly &assembly, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
-                                                 const Vec3<double> vij, bool drawFromAtoms, double radialScaling)
+void RenderableConfiguration::createCylinderBond(PrimitiveAssembly &assembly, const std::shared_ptr<Atom> i,
+                                                 const std::shared_ptr<Atom> j, const Vec3<double> vij, bool drawFromAtoms,
+                                                 double radialScaling)
 {
     Matrix4 A;
     auto unit = vij;
@@ -211,7 +212,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
         configurationAssembly_.add(true, GL_FILL);
 
         // Draw Atoms
-	for (auto i : source_->constAtoms())
+        for (auto i : source_->constAtoms())
         {
             A.setIdentity();
             A.setTranslation(i->r());

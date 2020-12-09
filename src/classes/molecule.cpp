@@ -46,8 +46,8 @@ void Molecule::addAtom(std::shared_ptr<Atom> i)
 int Molecule::nAtoms() const { return atoms_.size(); }
 
 // Return atoms array
-std::vector<std::shared_ptr<Atom> > &Molecule::atoms() { return atoms_; }
-const std::vector<std::shared_ptr<Atom> > &Molecule::atoms() const { return atoms_; }
+std::vector<std::shared_ptr<Atom>> &Molecule::atoms() { return atoms_; }
+const std::vector<std::shared_ptr<Atom>> &Molecule::atoms() const { return atoms_; }
 
 // Return nth Atom pointer
 std::shared_ptr<Atom> Molecule::atom(int n) const

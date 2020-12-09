@@ -68,7 +68,8 @@ class EnergyKernel
     // Return PairPotential energy between Cell and its neighbours
     double energy(Cell *cell, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy, bool performSum);
     // Return PairPotential energy between Atom and Cell
-    double energy(const std::shared_ptr<Atom> i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum);
+    double energy(const std::shared_ptr<Atom> i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy,
+                  bool performSum);
     // Return PairPotential energy of atom with world
     double energy(const std::shared_ptr<Atom> i, ProcessPool::DivisionStrategy strategy, bool performSum);
     // Return PairPotential energy of Molecule with world
@@ -87,15 +88,18 @@ class EnergyKernel
     // Return SpeciesBond energy
     static double energy(const SpeciesBond &b);
     // Return SpeciesAngle energy at Atoms specified
-    double energy(const SpeciesAngle &a, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k);
+    double energy(const SpeciesAngle &a, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
+                  const std::shared_ptr<Atom> k);
     // Return SpeciesAngle energy
     static double energy(const SpeciesAngle &a);
     // Return SpeciesTorsion energy at Atoms specified
-    double energy(const SpeciesTorsion &t, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l);
+    double energy(const SpeciesTorsion &t, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
+                  const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l);
     // Return SpeciesTorsion energy
     static double energy(const SpeciesTorsion &t);
     // Return SpeciesImproper energy
-    double energy(const SpeciesImproper &imp, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l);
+    double energy(const SpeciesImproper &imp, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
+                  const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l);
     // Return intramolecular energy for the supplied Atom
     double intramolecularEnergy(std::shared_ptr<const Molecule> mol, const std::shared_ptr<Atom> i);
     // Return intramolecular energy for the supplied Molecule

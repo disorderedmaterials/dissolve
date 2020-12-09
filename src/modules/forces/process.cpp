@@ -83,7 +83,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             const auto cutoffSq = potentialMap.range() * potentialMap.range();
 
             double magjisq, magji, magjk, dp, force, r;
-	    std::shared_ptr<Atom> i, j, k, l;
+            std::shared_ptr<Atom> i, j, k, l;
             Vec3<double> vecji, vecjk, veckl, forcei, forcek;
             Vec3<double> xpj, xpk, dcos_dxpj, dcos_dxpk, temp;
             Matrix3 dxpj_dij, dxpj_dkj, dxpk_dkj, dxpk_dlk;

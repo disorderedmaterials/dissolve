@@ -181,13 +181,19 @@ Vec3<double> MonoclinicBox::minimumVector(const Vec3<double> &i, const Vec3<doub
 }
 
 // Return minimum image distance from 'i' to 'j'
-double MonoclinicBox::minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const { return minimumVector(i, j).magnitude(); }
+double MonoclinicBox::minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const
+{
+    return minimumVector(i, j).magnitude();
+}
 
 // Return minimum image distance from 'i' to 'j'
 double MonoclinicBox::minimumDistance(const Atom &i, const Atom &j) const { return minimumVector(i, j).magnitude(); }
 
 // Return minimum image distance from 'i' to 'j'
-double MonoclinicBox::minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const { return minimumVector(i, j).magnitude(); }
+double MonoclinicBox::minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const
+{
+    return minimumVector(i, j).magnitude();
+}
 
 // Return minimum image distance from 'i' to 'j'
 double MonoclinicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const
@@ -196,7 +202,10 @@ double MonoclinicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> 
 }
 
 // Return minimum image squared distance from 'i' to 'j' (pointers)
-double MonoclinicBox::minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const { return minimumVector(i, j).magnitudeSq(); }
+double MonoclinicBox::minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const
+{
+    return minimumVector(i, j).magnitudeSq();
+}
 
 // Return minimum image squared distance from 'i' to 'j' (references)
 double MonoclinicBox::minimumDistanceSquared(const Atom &i, const Atom &j) const
