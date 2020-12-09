@@ -141,7 +141,6 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
     Matrix4 A;
     const GLfloat *colour;
     const GLfloat colourBlack[4] = {0.0, 0.0, 0.0, 1.0};
-    const std::shared_ptr<Atom> i, *partner;
     Vec3<double> ri, rj;
 
     // Check data source
@@ -164,12 +163,8 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
         configurationAssembly_.add(lineConfigurationPrimitive_, A);
 
         // Draw Atoms
-        const DynamicArray<Atom> &atoms = source_->constAtoms();
-        for (auto n = 0; n < atoms.nItems(); ++n)
+        for (auto i : source_->constAtoms())
         {
-            // Get the Atom pointer
-            i = atoms.constValue(n);
-
             // If the atom has no bonds draw it as a 'cross'
             if (i->speciesAtom()->nBonds() == 0)
             {
@@ -187,7 +182,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
                 {
                     // Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is
                     // the same as 'i' (in which case we skip it, ensuring we draw every bond only once)
-                    partner = i->molecule()->atom(bond.indexJ());
+                    auto partner = i->molecule()->atom(bond.indexJ());
                     if (i == partner)
                         continue;
 
@@ -227,7 +222,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
             {
                 // Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same
                 // as 'i' (in which case we skip it, ensuring we draw every bond only once)
-                partner = i->molecule()->atom(bond.indexJ());
+                auto partner = i->molecule()->atom(bond.indexJ());
                 if (i == partner)
                     continue;
 
