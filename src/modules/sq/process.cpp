@@ -135,11 +135,12 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Initialise the array
             braggPartials.initialise(unweightedsq.nAtomTypes(), unweightedsq.nAtomTypes(), true);
 
-            for_each_pair(0, unweightedsq.nAtomTypes(),
-                          [&](const int i, const int j) { braggPartials.at(i, j) = unweightedsq.partial(0, 0); });
+            for_each_pair(0, unweightedsq.nAtomTypes(), [&](const int i, const int j) {
+                braggPartials[{i, j}] = unweightedsq.partial(0, 0);
+            });
         }
         for_each_pair(0, unweightedsq.nAtomTypes(), [&](const int i, const int j) {
-            std::fill(braggPartials.at(i, j).values().begin(), braggPartials.at(i, j).values().end(), 0.0);
+            std::fill(braggPartials[{i, j}].values().begin(), braggPartials[{i, j}].values().end(), 0.0);
         });
 
         // First, re-bin the reflection data into the arrays we have just set up
@@ -183,7 +184,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto &bound = unweightedsq.boundPartial(i, j);
             auto &unbound = unweightedsq.unboundPartial(i, j);
             auto &partial = unweightedsq.partial(i, j);
-            auto &bragg = braggPartials.at(i, j);
+            auto &bragg = braggPartials[{i, j}];
 
             for (auto n = 0; n < bound.nValues(); ++n)
             {

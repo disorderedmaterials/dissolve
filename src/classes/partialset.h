@@ -48,7 +48,7 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
     // Bound matrix, containing atom-atom partial of bound pairs
     Array2D<Data1D> boundPartials_;
     // Bound flag matrix, specifying if bound partials are empty
-    Array2D<bool> emptyBoundPartials_;
+    Array2D<char> emptyBoundPartials_;
     // Total function
     Data1D total_;
     // Prefix applied to object names

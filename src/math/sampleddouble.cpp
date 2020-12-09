@@ -47,6 +47,7 @@ double SampledDouble::stDev() const { return (count_ < 2 ? 0.0 : sqrt(m2_ / (cou
 
 // Conversion (double)
 SampledDouble::operator double &() { return mean_; }
+SampledDouble::operator const double &() const { return mean_; }
 
 // Assigment
 void SampledDouble::operator=(double x)

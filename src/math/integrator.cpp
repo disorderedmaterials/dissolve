@@ -6,6 +6,7 @@
 #include "math/data2d.h"
 #include "math/data3d.h"
 #include "templates/array.h"
+#include <numeric>
 
 /*
  * Static Functions
@@ -223,29 +224,14 @@ double Integrator::sumOfSquares(const Data1D &data, const Range range)
 // Return sum of all values in supplied data
 double Integrator::sum(const Data2D &data)
 {
-    // Grab data array
-    const Array2D<double> &values = data.constValues2D();
-
-    double total = 0.0;
-
-    for (auto n = 0; n < values.linearArraySize(); ++n)
-        total += values.constLinearValue(n);
-
-    return total;
+    return std::accumulate(data.constValues2D().begin(), data.constValues2D().end(), 0.0);
 }
 
 // Return sum of all absolute values in supplied data
 double Integrator::absSum(const Data2D &data)
 {
-    // Grab data array
-    const Array2D<double> &values = data.constValues2D();
-
-    double total = 0.0;
-
-    for (auto n = 0; n < values.linearArraySize(); ++n)
-        total += fabs(values.constLinearValue(n));
-
-    return total;
+    return std::accumulate(data.constValues2D().begin(), data.constValues2D().end(), 0.0,
+                           [](auto a, auto b) { return fabs(a) + fabs(b); });
 }
 
 // Return sum of all values in supplied data
@@ -254,12 +240,7 @@ double Integrator::sum(const Data3D &data)
     // Grab data array
     const Array3D<double> &values = data.constValues3D();
 
-    double total = 0.0;
-
-    for (auto n = 0; n < values.linearArraySize(); ++n)
-        total += values.constLinearValue(n);
-
-    return total;
+    return std::accumulate(values.linearArray().begin(), values.linearArray().end(), 0.0);
 }
 
 // Return sum of all absolute values in supplied data
@@ -268,10 +249,6 @@ double Integrator::absSum(const Data3D &data)
     // Grab data array
     const Array3D<double> &values = data.constValues3D();
 
-    double total = 0.0;
-
-    for (auto n = 0; n < values.linearArraySize(); ++n)
-        total += fabs(values.constLinearValue(n));
-
-    return total;
+    return std::accumulate(values.linearArray().begin(), values.linearArray().end(), 0.0,
+                           [](auto acc, auto n) { return acc + fabs(n); });
 }

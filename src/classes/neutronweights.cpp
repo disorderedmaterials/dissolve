@@ -136,9 +136,9 @@ void NeutronWeights::calculateWeightingMatrices()
                       cj = atd2.fraction();
                       bj = atd2.boundCoherent() * 0.1;
 
-                      concentrationProducts_.at(typeI, typeJ) = ci * cj;
-                      boundCoherentProducts_.at(typeI, typeJ) = bi * bj;
-                      weights_.at(typeI, typeJ) = ci * cj * bi * bj * (typeI == typeJ ? 1 : 2);
+                      concentrationProducts_[{typeI, typeJ}] = ci * cj;
+                      boundCoherentProducts_[{typeI, typeJ}] = bi * bj;
+                      weights_[{typeI, typeJ}] = ci * cj * bi * bj * (typeI == typeJ ? 1 : 2);
                   });
 
     // Finalise <b>**2
@@ -148,8 +148,8 @@ void NeutronWeights::calculateWeightingMatrices()
     // Loop over defined Isotopologues in our defining mixtures, summing terms from (intramolecular) pairs of Atoms
     intramolecularWeights_ = 0.0;
     Array2D<double> intraNorm(atomTypes_.nItems(), atomTypes_.nItems(), true);
-    Array2D<bool> intraFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
-    Array2D<bool> globalFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
+    Array2D<char> intraFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
+    Array2D<char> globalFlag(atomTypes_.nItems(), atomTypes_.nItems(), true);
     intraNorm = 0.0;
     globalFlag = false;
     for (auto &topes : isotopologueMixtures_)
@@ -173,7 +173,7 @@ void NeutronWeights::calculateWeightingMatrices()
                           if (typeJ == -1)
                               Messenger::error("Failed to find AtomType '{}' in local NeutronWeights.\n", atd2.atomTypeName());
 
-                          intraFlag.at(typeI, typeJ) = true;
+                          intraFlag[{typeI, typeJ}] = true;
                       });
 
         // Loop over Isotopologues defined for this mixture
@@ -211,7 +211,7 @@ void NeutronWeights::calculateWeightingMatrices()
                     auto &localJ = atomTypes_[typeJ];
 
                     // Check to see if this interaction is present in the current Species
-                    if (!intraFlag.at(typeI, typeJ))
+                    if (!intraFlag[{typeI, typeJ}])
                         continue;
 
                     // If this AtomType is exchangeable, add the averaged scattering length from the local
@@ -226,9 +226,9 @@ void NeutronWeights::calculateWeightingMatrices()
                     }
                     bj *= 0.1;
 
-                    intramolecularWeights_.at(typeI, typeJ) += weight * bi * bj;
-                    intraNorm.at(typeI, typeJ) += weight;
-                    globalFlag.at(typeI, typeJ) = true;
+                    intramolecularWeights_[{typeI, typeJ}] += weight * bi * bj;
+                    intraNorm[{typeI, typeJ}] += weight;
+                    globalFlag[{typeI, typeJ}] = true;
                 }
             }
         }
@@ -238,14 +238,14 @@ void NeutronWeights::calculateWeightingMatrices()
     for_each_pair(atomTypes_.begin(), atomTypes_.end(),
                   [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
                       // Skip this pair if there are no such intramolecular interactions
-                      if (!globalFlag.at(typeI, typeJ))
+                      if (!globalFlag[{typeI, typeJ}])
                           return;
 
                       ci = atd1.fraction();
                       cj = atd2.fraction();
 
-                      intramolecularWeights_.at(typeI, typeJ) /= intraNorm.at(typeI, typeJ);
-                      intramolecularWeights_.at(typeI, typeJ) *= ci * cj * (typeI == typeJ ? 1 : 2);
+                      intramolecularWeights_[{typeI, typeJ}] /= intraNorm[{typeI, typeJ}];
+                      intramolecularWeights_[{typeI, typeJ}] *= ci * cj * (typeI == typeJ ? 1 : 2);
                   });
 }
 
@@ -299,16 +299,16 @@ const AtomTypeList &NeutronWeights::atomTypes() const { return atomTypes_; }
 int NeutronWeights::nUsedTypes() const { return atomTypes_.nItems(); }
 
 // Return concentration product for types i and j
-double NeutronWeights::concentrationProduct(int i, int j) const { return concentrationProducts_.constAt(i, j); }
+double NeutronWeights::concentrationProduct(int i, int j) const { return concentrationProducts_[{i, j}]; }
 
 // Return bound coherent scattering product for types i
-double NeutronWeights::boundCoherentProduct(int i, int j) const { return boundCoherentProducts_.constAt(i, j); }
+double NeutronWeights::boundCoherentProduct(int i, int j) const { return boundCoherentProducts_[{i, j}]; }
 
 // Return full weighting for types i and j (ci * cj * bi * bj * [2-dij])
-double NeutronWeights::weight(int i, int j) const { return weights_.constAt(i, j); }
+double NeutronWeights::weight(int i, int j) const { return weights_[{i, j}]; }
 
 // Return full intramolecular weighting for types i and j
-double NeutronWeights::intramolecularWeight(int i, int j) const { return intramolecularWeights_.constAt(i, j); }
+double NeutronWeights::intramolecularWeight(int i, int j) const { return intramolecularWeights_[{i, j}]; }
 
 // Return full weights matrix
 const Array2D<double> &NeutronWeights::weights() const { return weights_; }

@@ -47,11 +47,10 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
     bool write(LineParser &parser)
     {
         parser.writeLineF("{}  {}  {}\n", data_.nRows(), data_.nColumns(), DissolveSys::btoa(data_.halved()));
-        for (auto n = 0; n < data_.linearArraySize(); ++n)
+        for (auto &data : data_)
         {
-            auto data = data_.linearValue(n);
             parser.writeLineF("{}\n", data.size());
-            for (auto n : data)
+            for (auto &n : data)
                 if (!parser.writeLineF("{:16.9e}\n", n))
                     return false;
         }
@@ -62,18 +61,17 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        int nRows = parser.argi(0), nColumns = parser.argi(1);
+        auto nRows = parser.argi(0), nColumns = parser.argi(1);
         data_.initialise(nRows, nColumns, parser.argb(2));
 
-        for (auto n = 0; n < data_.linearArraySize(); ++n)
+        for (auto &data : data_)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
-            int nItems = parser.argi(0);
-            auto &data = data_.linearArray()[n];
+            auto nItems = parser.argi(0);
             data.clear();
             data.resize(nItems);
-            for (auto n : data)
+            for (auto &n : data)
             {
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                     return false;
@@ -86,10 +84,8 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
     static bool write(const Array2D<std::vector<double>> &thisData, LineParser &parser)
     {
         parser.writeLineF("{}  {}  {}\n", thisData.nRows(), thisData.nColumns(), DissolveSys::btoa(thisData.halved()));
-        for (auto n = 0; n < thisData.linearArraySize(); ++n)
+        for (const auto &arrayData : thisData)
         {
-            const auto &arrayData = thisData.constLinearValue(n);
-
             parser.writeLineF("{}\n", arrayData.size());
             for (auto m : arrayData)
             {
@@ -104,20 +100,20 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        int nRows = parser.argi(0), nColumns = parser.argi(1);
+        auto nRows = parser.argi(0), nColumns = parser.argi(1);
         thisData.initialise(nRows, nColumns, parser.argb(2));
 
-        for (auto n = 0; n < thisData.linearArraySize(); ++n)
+        for (auto &data : thisData)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
-            int nItems = parser.argi(0);
-            thisData.linearArray()[n].createEmpty(nItems);
+            auto nItems = parser.argi(0);
+            data.createEmpty(nItems);
             for (auto m = 0; m < nItems; ++m)
             {
                 if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                     return false;
-                thisData.linearArray()[n].add(parser.argd(0));
+                data.add(parser.argd(0));
             }
         }
 
@@ -158,12 +154,9 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
                 return false;
             }
 
-            // Now broadcast Array elements
-            for (auto n = 0; n < data_.linearArraySize(); ++n)
-            {
-                if (!procPool.broadcast(data_.linearArray()[n], root))
+            for (auto &vec : data_.linearArray())
+                if (!procPool.broadcast(vec, root))
                     return false;
-            }
         }
         else
         {
@@ -192,11 +185,9 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
 
             // Resize and receive array
             data_.initialise(nRows, nColumns, half);
-            for (auto n = 0; n < data_.linearArraySize(); ++n)
-            {
-                if (!procPool.broadcast(data_.linearArray()[n], root))
+            for (auto &vec : data_.linearArray())
+                if (!procPool.broadcast(vec, root))
                     return false;
-            }
         }
 #endif
         return true;
@@ -217,8 +208,8 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
                                     procPool.poolRank(), data_.halved());
 
         // Keep it simple (and slow) and check/send one object at a time
-        for (auto n = 0; n < data_.linearArraySize(); ++n)
-            if (!procPool.equality(data_.linearArray()[n]))
+        for (auto &n : data_)
+            if (!procPool.equality(n))
                 return Messenger::error("Array<double> index {} is not equivalent (process {}.\n", procPool.poolRank());
 #endif
         return true;

@@ -69,8 +69,8 @@ void Histogram3D::updateAccumulatedData()
                 if (x == 0)
                     accumulatedData_.zAxis(z) = zBinCentres_[z];
 
-                accumulatedData_.value(x, y, z) = averages_.constAt(x, y, z);
-                accumulatedData_.error(x, y, z) = averages_.constAt(x, y, z).stDev();
+                accumulatedData_.value(x, y, z) = averages_[{x, y, z}];
+                accumulatedData_.error(x, y, z) = averages_[{x, y, z}].stDev();
             }
         }
     }
@@ -170,7 +170,7 @@ bool Histogram3D::bin(double x, double y, double z)
         return false;
     }
 
-    ++bins_.at(xBin, yBin, zBin);
+    ++bins_[{xBin, yBin, zBin}];
     ++nBinned_;
 
     return true;
@@ -185,14 +185,8 @@ long int Histogram3D::nBinned() const { return nBinned_; }
 // Accumulate current histogram bins into averages
 void Histogram3D::accumulate()
 {
-    for (auto x = 0; x < nXBins_; ++x)
-    {
-        for (auto y = 0; y < nYBins_; ++y)
-        {
-            for (auto z = 0; z < nZBins_; ++z)
-                averages_.at(x, y, z) += double(bins_.at(x, y, z));
-        }
-    }
+    std::transform(averages_.begin(), averages_.end(), bins_.begin(), averages_.begin(),
+                   [](auto avg, auto bin) { return avg + bin; });
 
     // Update accumulated data
     updateAccumulatedData();
@@ -217,14 +211,8 @@ void Histogram3D::add(Histogram3D &other, int factor)
         return;
     }
 
-    for (auto x = 0; x < nXBins_; ++x)
-    {
-        for (auto y = 0; y < nYBins_; ++y)
-        {
-            for (auto z = 0; z < nZBins_; ++z)
-                bins_.at(x, y, z) += other.bins_.at(x, y, z) * factor;
-        }
-    }
+    std::transform(bins_.begin(), bins_.end(), other.bins_.begin(), bins_.begin(),
+                   [factor](auto bin, auto oth) { return bin + oth * factor; });
 }
 
 // Return accumulated (averaged) data
@@ -278,15 +266,9 @@ bool Histogram3D::read(LineParser &parser, CoreData &coreData)
     nBinned_ = parser.argli(0);
     nMissed_ = parser.argli(1);
 
-    for (auto x = 0; x < nXBins_; ++x)
-    {
-        for (auto y = 0; y < nYBins_; ++y)
-        {
-            for (auto z = 0; z < nZBins_; ++z)
-                if (!averages_.at(x, y, z).read(parser, coreData))
-                    return false;
-        }
-    }
+    for (auto &average : averages_)
+        if (!average.read(parser, coreData))
+            return false;
 
     return true;
 }
@@ -301,15 +283,9 @@ bool Histogram3D::write(LineParser &parser)
         return false;
     if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
         return false;
-    for (auto x = 0; x < nXBins_; ++x)
-    {
-        for (auto y = 0; y < nYBins_; ++y)
-        {
-            for (auto z = 0; z < nZBins_; ++z)
-                if (!averages_.at(x, y, z).write(parser))
-                    return false;
-        }
-    }
+    for (auto &average : averages_)
+        if (average.write(parser))
+            return false;
 
     return true;
 }
@@ -322,7 +298,7 @@ bool Histogram3D::write(LineParser &parser)
 bool Histogram3D::allSum(ProcessPool &procPool)
 {
 #ifdef PARALLEL
-    if (!procPool.allSum(bins_.linearArray(), bins_.linearArraySize()))
+    if (!procPool.allSum(bins_.linearArray().data(), bins_.linearArray().size()))
         return false;
 #endif
 
@@ -370,11 +346,10 @@ bool Histogram3D::broadcast(ProcessPool &procPool, const int root, const CoreDat
         return false;
     if (!procPool.broadcast(zBinCentres_, root))
         return false;
-    if (!procPool.broadcast(bins_.linearArray(), bins_.linearArraySize(), root))
+    if (!procPool.broadcast(bins_.linearArray(), root))
         return false;
-    SampledDouble *avgs = averages_.linearArray();
-    for (auto n = 0; n < averages_.linearArraySize(); ++n)
-        if (!avgs[n].broadcast(procPool, root, coreData))
+    for (auto n : averages_)
+        if (!n.broadcast(procPool, root, coreData))
             return false;
 #endif
     return true;
@@ -427,7 +402,7 @@ bool Histogram3D::equality(ProcessPool &procPool)
                                 nZBins_);
     if (!procPool.equality(zBinCentres_))
         return Messenger::error("Histogram3D z bin centre values not equivalent.\n");
-    if (!procPool.equality(bins_.linearArray(), bins_.linearArraySize()))
+    if (!procPool.equality(bins_.linearArray()))
         return Messenger::error("Histogram3D bin values not equivalent.\n");
     if (!procPool.equality(nBinned_))
         return Messenger::error("Histogram3D nunmber of binned values is not equivalent (process {} has {}).\n",
@@ -435,9 +410,8 @@ bool Histogram3D::equality(ProcessPool &procPool)
     if (!procPool.equality(nMissed_))
         return Messenger::error("Histogram3D nunmber of binned values is not equivalent (process {} has {}).\n",
                                 procPool.poolRank(), nBinned_);
-    SampledDouble *avgs = averages_.linearArray();
-    for (auto n = 0; n < averages_.linearArraySize(); ++n)
-        if (!avgs[n].equality(procPool))
+    for (auto &n : averages_)
+        if (!n.equality(procPool))
             return Messenger::error("Histogram3D average values not equivalent.\n");
 #endif
     return true;

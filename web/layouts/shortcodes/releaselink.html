@@ -1,3 +1,9 @@
-{{ $urlSuffix := .Get "urlSuffix"  }}
-{{ $textSuffix := .Get "textSuffix"  }}
-<a href="https://github.com/projectdissolve/dissolve/releases/download/{{ .Site.Params.releaseVersion }}/Dissolve-GUI-{{ .Site.Params.releaseVersion }}-{{ $urlSuffix }}">Release {{ .Site.Params.releaseVersion }}{{ with $textSuffix }} {{ . | markdownify }}{{ end }}</a>
+{{ $urlSuffix := .Get "urlSuffix" }}
+{{ $textSuffix := .Get "textSuffix" }}
+{{ $target := .Get "target" }}
+{{ if (eq $target "GUI") }}
+<a href="https://github.com/projectdissolve/dissolve/releases/download/{{ .Site.Params.releaseVersion }}/Dissolve-GUI-{{ .Site.Params.releaseVersion }}{{ $urlSuffix }}">Release {{ .Site.Params.releaseVersion }}{{ with $textSuffix }} {{ . | markdownify }}{{ end }}</a>
+{{ end }}
+{{ if (eq $target "examples") }}
+<a href="https://github.com/projectdissolve/dissolve/releases/download/{{ .Site.Params.releaseVersion }}/Dissolve-{{ .Site.Params.releaseVersion }}-ExampleData{{ $urlSuffix }}">Example Data {{ .Site.Params.releaseVersion }}{{ with $textSuffix }} {{ . | markdownify }}{{ end }}</a>
+{{ end }}

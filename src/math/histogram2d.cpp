@@ -126,7 +126,7 @@ bool Histogram2D::bin(double x, double y)
         return false;
     }
 
-    ++bins_.at(xBin, yBin);
+    ++bins_[{xBin, yBin}];
     ++nBinned_;
 
     return true;
@@ -143,11 +143,11 @@ void Histogram2D::accumulate()
         for (auto y = 0; y < nYBins_; ++y)
         {
             // Update averages
-            averages_.at(x, y) += double(bins_.at(x, y));
+            averages_[{x, y}] += double(bins_[{x, y}]);
 
             // Update accumulated data
-            accumulatedData_.value(x, y) = averages_.constAt(x, y);
-            accumulatedData_.error(x, y) = averages_.constAt(x, y).stDev();
+            accumulatedData_.value(x, y) = averages_[{x, y}].value();
+            accumulatedData_.error(x, y) = averages_[{x, y}].stDev();
         }
     }
 }
@@ -174,7 +174,7 @@ void Histogram2D::add(Histogram2D &other, int factor)
     for (auto x = 0; x < nXBins_; ++x)
     {
         for (auto y = 0; y < nYBins_; ++y)
-            bins_.at(x, y) += other.bins_.at(x, y) * factor;
+            bins_[{x, y}] += other.bins_[{x, y}] * factor;
     }
 }
 
@@ -231,7 +231,7 @@ bool Histogram2D::read(LineParser &parser, CoreData &coreData)
     for (auto x = 0; x < nXBins_; ++x)
     {
         for (auto y = 0; y < nYBins_; ++y)
-            if (!averages_.at(x, y).read(parser, coreData))
+            if (!averages_[{x, y}].read(parser, coreData))
                 return false;
     }
 
@@ -250,7 +250,7 @@ bool Histogram2D::write(LineParser &parser)
     for (auto x = 0; x < nXBins_; ++x)
     {
         for (auto y = 0; y < nYBins_; ++y)
-            if (!averages_.at(x, y).write(parser))
+            if (!averages_[{x, y}].write(parser))
                 return false;
     }
 
@@ -265,7 +265,7 @@ bool Histogram2D::write(LineParser &parser)
 bool Histogram2D::allSum(ProcessPool &procPool)
 {
 #ifdef PARALLEL
-    if (!procPool.allSum(bins_.linearArray(), bins_.linearArraySize()))
+    if (!procPool.allSum(bins_.linearArray().data(), bins_.linearArray().size()))
         return false;
 #endif
 
@@ -303,11 +303,10 @@ bool Histogram2D::broadcast(ProcessPool &procPool, const int root, const CoreDat
         return false;
     if (!procPool.broadcast(yBinCentres_, root))
         return false;
-    if (!procPool.broadcast(bins_.linearArray(), bins_.linearArraySize(), root))
+    if (!procPool.broadcast(bins_.linearArray(), root))
         return false;
-    SampledDouble *avgs = averages_.linearArray();
-    for (auto n = 0; n < averages_.linearArraySize(); ++n)
-        if (!avgs[n].broadcast(procPool, root, coreData))
+    for (auto &n : averages_)
+        if (!n.broadcast(procPool, root, coreData))
             return false;
 #endif
     return true;
@@ -346,7 +345,7 @@ bool Histogram2D::equality(ProcessPool &procPool)
                                 nYBins_);
     if (!procPool.equality(yBinCentres_))
         return Messenger::error("Histogram2D y bin centre values not equivalent.\n");
-    if (!procPool.equality(bins_.linearArray(), bins_.linearArraySize()))
+    if (!procPool.equality(bins_.linearArray()))
         return Messenger::error("Histogram2D bin values not equivalent.\n");
     if (!procPool.equality(nBinned_))
         return Messenger::error("Histogram2D nunmber of binned values is not equivalent (process {} has {}).\n",
@@ -354,9 +353,8 @@ bool Histogram2D::equality(ProcessPool &procPool)
     if (!procPool.equality(nMissed_))
         return Messenger::error("Histogram2D nunmber of binned values is not equivalent (process {} has {}).\n",
                                 procPool.poolRank(), nBinned_);
-    SampledDouble *avgs = averages_.linearArray();
-    for (auto n = 0; n < averages_.linearArraySize(); ++n)
-        if (!avgs[n].equality(procPool))
+    for (auto &n : averages_)
+        if (!n.equality(procPool))
             return Messenger::error("Histogram2D average values not equivalent.\n");
 #endif
     return true;
