@@ -7,7 +7,7 @@ function(dissolve_system_test file_name count directory)
       set(test_target_executable ../../build-parallel/bin/${target_name})
       add_test(
 	NAME ${directory}-${file_name}-${nproc}
-	COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${nproc} ${test_target_executable} -n ${count} -x -i ${file_name}.txt ${ARGN}"
+	COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${nproc} ${test_target_executable} -n ${count} -x -i ${file_name}.txt ${ARGN}
 	WORKING_DIRECTORY ../tests/${directory}
       )
       set_property(
