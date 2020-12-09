@@ -74,8 +74,8 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     auto stride = procPool.interleavedLoopStride(strategy);
 
     // Loop over supplied atom indices
-    for (auto i : cfg->atoms())
-        kernel.forces(i, ProcessPool::subDivisionStrategy(strategy));
+    for (auto n = start; n < targetIndices.nItems(); n += stride)
+        kernel.forces(cfg->atoms()[targetIndices.constAt(n)], ProcessPool::subDivisionStrategy(strategy));
 }
 
 // Calculate interatomic forces within the specified Species
