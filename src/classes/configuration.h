@@ -19,7 +19,6 @@
 #include "module/layer.h"
 #include "procedure/procedure.h"
 #include "templates/array.h"
-#include "templates/dynamicarray.h"
 #include "templates/objectstore.h"
 #include "templates/orderedlist.h"
 #include "templates/vector3.h"

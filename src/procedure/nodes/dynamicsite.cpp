@@ -14,7 +14,6 @@
 #include "data/elements.h"
 #include "keywords/types.h"
 #include "procedure/nodes/select.h"
-#include "templates/dynamicarray.h"
 
 DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode *parent) : ProcedureNode(ProcedureNode::DynamicSiteNode)
 {

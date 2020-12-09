@@ -4,7 +4,6 @@
 #include "neta/connection.h"
 #include "classes/speciesatom.h"
 #include "data/ffatomtype.h"
-#include "templates/dynamicarray.h"
 #include <algorithm>
 #include <map>
 
