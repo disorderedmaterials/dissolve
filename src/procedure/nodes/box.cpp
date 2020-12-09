@@ -12,8 +12,7 @@ BoxProcedureNode::BoxProcedureNode(Vec3<double> lengths, Vec3<double> angles, bo
     : ProcedureNode(ProcedureNode::BoxNode)
 {
     keywords_.add("Control", new Vec3NodeValueKeyword(this, lengths, Vec3Labels::ABCLabels), "Lengths", "Box lengths");
-    keywords_.add("Control", new Vec3NodeValueKeyword(this, angles, Vec3Labels::AlphaBetaGammaLabels), "Angles",
-                  "Box angles");
+    keywords_.add("Control", new Vec3NodeValueKeyword(this, angles, Vec3Labels::AlphaBetaGammaLabels), "Angles", "Box angles");
     keywords_.add("Control", new BoolKeyword(false), "NonPeriodic", "Whether the box is non-periodic");
 }
 
