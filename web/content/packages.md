@@ -65,7 +65,7 @@ linkTitle = "Packages"
 {{< blocks/section color="secondary" >}}
 
 <div class="mx-auto">
-<p>These packages are built dynamically from the <a href="https://github.com/projectdissolve/dissolve">development branch</a> and as such contain the most up-to-date functionality, but may also contain bugs and other undocumented features. If you use these versions and discover a bug, please consider supporting the project and <a href="https://github.com/projectdissolve/dissolve/issues/new/choose">submitting an issue</a> to highlight it. Please include the unique hash value of the version you were using in your report.</p>
+<p>These packages are built dynamically from the <a href="https://github.com/projectdissolve/dissolve">development branch</a> and as such contain the most up-to-date functionality, but may also contain bugs and other undocumented features. If you use these versions and discover a bug, please <a href="https://github.com/projectdissolve/dissolve/issues/new/choose">submit an issue</a> to highlight it. Please include the unique hash value of the version you were using in your report.</p>
 <p>To see all of the available packages for the continuous release, <a href="https://github.com/projectdissolve/dissolve/releases/tag/continuous">head over to GitHub</a>.</p>
 </div>
 
