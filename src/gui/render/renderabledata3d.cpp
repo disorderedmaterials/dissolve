@@ -520,40 +520,40 @@ void RenderableData3D::marchingCubesOriginal(const std::vector<double> &displayX
             for (k = 1; k < z.size() - 2; ++k)
             {
                 // Grab values that form vertices of cube.
-                vertex[0] = displayValues.constAt(i, j, k);
-                vertex[1] = displayValues.constAt(i + 1, j, k);
-                vertex[2] = displayValues.constAt(i + 1, j + 1, k);
-                vertex[3] = displayValues.constAt(i, j + 1, k);
-                vertex[4] = displayValues.constAt(i, j, k + 1);
-                vertex[5] = displayValues.constAt(i + 1, j, k + 1);
-                vertex[6] = displayValues.constAt(i + 1, j + 1, k + 1);
-                vertex[7] = displayValues.constAt(i, j + 1, k + 1);
+                vertex[0] = displayValues[{i, j, k}];
+                vertex[1] = displayValues[{i + 1, j, k}];
+                vertex[2] = displayValues[{i + 1, j + 1, k}];
+                vertex[3] = displayValues[{i, j + 1, k}];
+                vertex[4] = displayValues[{i, j, k + 1}];
+                vertex[5] = displayValues[{i + 1, j, k + 1}];
+                vertex[6] = displayValues[{i + 1, j + 1, k + 1}];
+                vertex[7] = displayValues[{i, j + 1, k + 1}];
 
                 // Calculate gradients at the cube vertices
-                gradient[0].x = (vertex[1] - displayValues.constAt(i - 1, j, k)) / dx;
-                gradient[0].y = (vertex[3] - displayValues.constAt(i, j - 1, k)) / dy;
-                gradient[0].z = (vertex[4] - displayValues.constAt(i, j, k - 1)) / dz;
-                gradient[1].x = (displayValues.constAt(i + 2, j, k) - vertex[0]) / dx;
-                gradient[1].y = (vertex[2] - displayValues.constAt(i + 1, j - 1, k)) / dy;
-                gradient[1].z = (vertex[5] - displayValues.constAt(i + 1, j, k - 1)) / dz;
-                gradient[2].x = (displayValues.constAt(i + 2, j + 1, k) - vertex[3]) / dx;
-                gradient[2].y = (displayValues.constAt(i + 1, j + 2, k) - vertex[1]) / dy;
-                gradient[2].z = (vertex[6] - displayValues.constAt(i + 1, j + 1, k - 1)) / dz;
-                gradient[3].x = (vertex[2] - displayValues.constAt(i - 1, j + 1, k)) / dx;
-                gradient[3].y = (displayValues.constAt(i, j + 2, k) - vertex[0]) / dy;
-                gradient[3].z = (vertex[7] - displayValues.constAt(i, j + 1, k - 1)) / dz;
-                gradient[4].x = (vertex[5] - displayValues.constAt(i - 1, j, k + 1)) / dx;
-                gradient[4].y = (vertex[7] - displayValues.constAt(i, j - 1, k + 1)) / dy;
-                gradient[4].z = (displayValues.constAt(i, j, k + 2) - vertex[0]) / dz;
-                gradient[5].x = (displayValues.constAt(i + 2, j, k + 1) - vertex[4]) / dx;
-                gradient[5].y = (vertex[6] - displayValues.constAt(i + 1, j - 1, k + 1)) / dy;
-                gradient[5].z = (displayValues.constAt(i + 1, j, k + 2) - vertex[1]) / dz;
-                gradient[6].x = (displayValues.constAt(i + 2, j + 1, k + 1) - vertex[7]) / dx;
-                gradient[6].y = (displayValues.constAt(i + 1, j + 2, k + 1) - vertex[5]) / dy;
-                gradient[6].z = (displayValues.constAt(i + 1, j + 1, k + 2) - vertex[2]) / dz;
-                gradient[7].x = (vertex[6] - displayValues.constAt(i - 1, j + 1, k + 1)) / dx;
-                gradient[7].y = (displayValues.constAt(i, j + 2, k + 1) - vertex[4]) / dy;
-                gradient[7].z = (displayValues.constAt(i, j + 1, k + 2) - vertex[3]) / dz;
+                gradient[0].x = (vertex[1] - displayValues[{i - 1, j, k}]) / dx;
+                gradient[0].y = (vertex[3] - displayValues[{i, j - 1, k}]) / dy;
+                gradient[0].z = (vertex[4] - displayValues[{i, j, k - 1}]) / dz;
+                gradient[1].x = (displayValues[{i + 2, j, k}] - vertex[0]) / dx;
+                gradient[1].y = (vertex[2] - displayValues[{i + 1, j - 1, k}]) / dy;
+                gradient[1].z = (vertex[5] - displayValues[{i + 1, j, k - 1}]) / dz;
+                gradient[2].x = (displayValues[{i + 2, j + 1, k}] - vertex[3]) / dx;
+                gradient[2].y = (displayValues[{i + 1, j + 2, k}] - vertex[1]) / dy;
+                gradient[2].z = (vertex[6] - displayValues[{i + 1, j + 1, k - 1}]) / dz;
+                gradient[3].x = (vertex[2] - displayValues[{i - 1, j + 1, k}]) / dx;
+                gradient[3].y = (displayValues[{i, j + 2, k}] - vertex[0]) / dy;
+                gradient[3].z = (vertex[7] - displayValues[{i, j + 1, k - 1}]) / dz;
+                gradient[4].x = (vertex[5] - displayValues[{i - 1, j, k + 1}]) / dx;
+                gradient[4].y = (vertex[7] - displayValues[{i, j - 1, k + 1}]) / dy;
+                gradient[4].z = (displayValues[{i, j, k + 2}] - vertex[0]) / dz;
+                gradient[5].x = (displayValues[{i + 2, j, k + 1}] - vertex[4]) / dx;
+                gradient[5].y = (vertex[6] - displayValues[{i + 1, j - 1, k + 1}]) / dy;
+                gradient[5].z = (displayValues[{i + 1, j, k + 2}] - vertex[1]) / dz;
+                gradient[6].x = (displayValues[{i + 2, j + 1, k + 1}] - vertex[7]) / dx;
+                gradient[6].y = (displayValues[{i + 1, j + 2, k + 1}] - vertex[5]) / dy;
+                gradient[6].z = (displayValues[{i + 1, j + 1, k + 2}] - vertex[2]) / dz;
+                gradient[7].x = (vertex[6] - displayValues[{i - 1, j + 1, k + 1}]) / dx;
+                gradient[7].y = (displayValues[{i, j + 2, k + 1}] - vertex[4]) / dy;
+                gradient[7].z = (displayValues[{i, j + 1, k + 2}] - vertex[3]) / dz;
 
                 // Determine cube type
                 cubeType = 0;

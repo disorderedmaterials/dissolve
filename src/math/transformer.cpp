@@ -142,11 +142,11 @@ void Transformer::transformValues(Data3D &data)
             // Loop over z values
             for (auto k = 0; k < zAxis.size(); ++k)
             {
-                z_->set(values.at(i, j, k));
-                value_->set(values.at(i, j, k));
+                z_->set(values[{i, j, k}]);
+                value_->set(values[{i, j, k}]);
 
                 // Perform transform
-                values.at(i, j, k) = equation_.asDouble();
+                values[{i, j, k}] = equation_.asDouble();
             }
         }
     }

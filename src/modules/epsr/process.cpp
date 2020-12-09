@@ -646,7 +646,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Store fluctuation coefficients ready for addition to potential coefficients later on.
             for (auto n = 0; n < ncoeffp; ++n)
-                fluctuationCoefficients.at(i, j, n) += weight * fitCoefficients[n];
+                fluctuationCoefficients[{i, j, n}] += weight * fitCoefficients[n];
         });
 
         // Increase dataIndex
@@ -670,7 +670,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // un-smoothed coefficients are stored)
             Data1D smoothedCoefficients;
             for (auto n = 0; n < ncoeffp; ++n)
-                smoothedCoefficients.addPoint(n, fluctuationCoefficients.constAt(i, j, n));
+                smoothedCoefficients.addPoint(n, fluctuationCoefficients[{i, j, n}]);
             Filters::kolmogorovZurbenko(smoothedCoefficients, 3, 5);
 
             // Add in fluctuation coefficients

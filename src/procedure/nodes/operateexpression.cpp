@@ -105,10 +105,12 @@ bool OperateExpressionProcedureNode::operateData3D(ProcessPool &procPool, Config
             {
                 // Set z and  value in expression
                 z_->set(z[k]);
-                value_->set(values.at(i, j, k));
+                // TODO: Convert to a single loop when we have the
+                // iterator combiner
+                value_->set(values[{i, j, k}]);
 
                 // Evaluate and store new value
-                values.at(i, j, k) = expression_.asDouble();
+                values[{i, j, k}] = expression_.asDouble();
             }
         }
     }
