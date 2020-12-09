@@ -1,1 +1,1 @@
-dissolve_system_test(watermeth 1 exchangeable)
+dissolve_system_test(exchangeable watermeth 1)

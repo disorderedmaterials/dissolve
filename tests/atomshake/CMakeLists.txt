@@ -1,1 +1,1 @@
-dissolve_system_test(singlewater 100 atomshake)
+dissolve_system_test(atomshake singlewater 100)

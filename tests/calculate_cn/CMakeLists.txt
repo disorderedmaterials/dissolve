@@ -1,1 +1,1 @@
-dissolve_system_test(cn 95 calculate_cn)
+dissolve_system_test(calculate_cn cn 95)

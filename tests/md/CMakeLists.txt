@@ -1,1 +1,1 @@
-dissolve_system_test(benzene 2 md --restart reference.config)
+dissolve_system_test(md benzene 1 --restart reference.config)

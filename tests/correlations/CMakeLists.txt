@@ -1,1 +1,1 @@
-dissolve_system_test(sq 1 correlations)
+dissolve_system_test(correlations sq 1)

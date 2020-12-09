@@ -1,7 +1,7 @@
 # Testing Code
 enable_testing()
 
-function(dissolve_system_test file_name count directory)
+function(dissolve_system_test directory file_name count)
   set(test_target_executable ../../build/bin/${target_name})
   if(PARALLEL)
     foreach(nproc 1 2 3 4)

@@ -1,1 +1,1 @@
-dissolve_system_test(benzene 2 molshake)
+dissolve_system_test(molshake benzene 2)

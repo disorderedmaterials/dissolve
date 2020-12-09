@@ -1,1 +1,1 @@
-dissolve_system_test(benzene 1 restart --restart benzene.txt.restart.test)
+dissolve_system_test(restart benzene 1 --restart benzene.txt.restart.test)

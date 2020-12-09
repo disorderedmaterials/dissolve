@@ -1,1 +1,1 @@
-dissolve_system_test(dangle 95 calculate_dangle)
+dissolve_system_test(calculate_dangle dangle 95)

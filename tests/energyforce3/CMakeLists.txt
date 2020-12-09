@@ -1,3 +1,3 @@
-dissolve_system_test(poe 1 energyforce3)
-dissolve_system_test(py4oh-ntf2 1 energyforce3)
-dissolve_system_test(py5-ntf2 1 energyforce3)
+dissolve_system_test(energyforce3 poe 1)
+dissolve_system_test(energyforce3 py4oh-ntf2 1)
+dissolve_system_test(energyforce3 py5-ntf2 1)

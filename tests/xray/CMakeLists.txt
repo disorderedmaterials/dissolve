@@ -1,1 +1,1 @@
-dissolve_system_test(water 1 xray)
+dissolve_system_test(xray water 1)

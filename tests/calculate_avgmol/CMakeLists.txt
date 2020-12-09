@@ -1,1 +1,1 @@
-dissolve_system_test(avgmol 95 calculate_avgmol)
+dissolve_system_test(calculate_avgmol avgmol 95)

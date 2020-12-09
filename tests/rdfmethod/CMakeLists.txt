@@ -1,2 +1,2 @@
-dissolve_system_test(cells 1 rdfmethod)
-dissolve_system_test(simple 1 rdfmethod)
+dissolve_system_test(rdfmethod cells 1)
+dissolve_system_test(rdfmethod simple 1)

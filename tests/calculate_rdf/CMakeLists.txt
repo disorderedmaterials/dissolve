@@ -1,1 +1,1 @@
-dissolve_system_test(rdf 95 calculate_rdf)
+dissolve_system_test(calculate_rdf rdf 95)
