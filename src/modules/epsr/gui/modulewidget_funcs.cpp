@@ -337,15 +337,20 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule *module)
 
     // Get (first) source RDF module for the partial data
     // Retrieve source SQ module, and then the related RDF module
-    const SQModule *sqModule = module->targets().firstItem()->keywords().retrieve<const SQModule *>("SourceSQs", nullptr);
-    if (!sqModule)
-        Messenger::error(
-            "Couldn't get any S(Q) data from the first target module, so underlying partial g(r) will be unavailable.",
-            module->uniqueName());
-    const RDFModule *rdfModule = sqModule ? sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr) : nullptr;
-    if (!rdfModule)
-        Messenger::error(
-            "First target's S(Q) module doesn't reference an RDFModule, so underlying partial g(r) will be unavailable.");
+    const RDFModule *rdfModule = nullptr;
+    if (module->targets().nItems() > 0)
+    {
+        const SQModule *sqModule = module->targets().firstItem()->keywords().retrieve<const SQModule *>("SourceSQs", nullptr);
+        if (!sqModule)
+            Messenger::error(
+                "Couldn't get any S(Q) data from the first target module, so underlying partial g(r) will be unavailable.",
+                module->uniqueName());
+        else
+            rdfModule = sqModule ? sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr) : nullptr;
+        if (!rdfModule)
+            Messenger::error(
+                "First target's S(Q) module doesn't reference an RDFModule, so underlying partial g(r) will be unavailable.");
+    }
 
     // Add experimentally-determined partial S(Q) and g(r) to the estimatedSQGraph_ and estimatedGRGraph_
     for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
@@ -380,9 +385,10 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule *module)
                                             fmt::format("{} (Estimated)", id), "Estimated");
 
         // Calculated / summed partials, taken from the RDF module referenced by the first module target
-        estimatedGRGraph_->createRenderable(Renderable::Data1DRenderable,
-                                            fmt::format("{}//UnweightedGR//{}//Full", rdfModule->uniqueName(), id),
-                                            fmt::format("{} (Calc)", id), "Calc");
+        if (rdfModule)
+            estimatedGRGraph_->createRenderable(Renderable::Data1DRenderable,
+                                                fmt::format("{}//UnweightedGR//{}//Full", rdfModule->uniqueName(), id),
+                                                fmt::format("{} (Calc)", id), "Calc");
     });
 
     for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
