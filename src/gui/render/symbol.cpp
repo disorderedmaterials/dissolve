@@ -2,6 +2,7 @@
 // Copyright (c) 2020 Team Dissolve and contributors
 
 #include "gui/render/symbol.h"
+#include "base/sysfunc.h"
 
 // Static list of symbols
 SymbolData SymbolData::symbols[] = {{0x00D7, "mult", "Multiplication Sign"},
@@ -58,10 +59,10 @@ SymbolData SymbolData::symbols[] = {{0x00D7, "mult", "Multiplication Sign"},
                                     {0x03A9, "Omega", "Greek Capital Letter Omega"}};
 
 // Return named symbol
-SymbolData *SymbolData::symbol(QString name)
+SymbolData *SymbolData::symbol(std::string_view name)
 {
     for (auto n = 0; n < nSymbols; ++n)
-        if (name == symbols[n].name)
+        if (DissolveSys::sameString(name, qPrintable(symbols[n].name), true))
             return &symbols[n];
 
     return nullptr;

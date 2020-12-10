@@ -14,11 +14,12 @@
 class TextFragment : public ListItem<TextFragment>
 {
     public:
-    TextFragment();
-    ~TextFragment();
+    TextFragment(QString text, double scale = 1.0, Vec3<double> translation = Vec3<double>(), bool isItalic = false,
+                 bool isBold = false);
+    ~TextFragment() = default;
 
     /*
-     * Fragment Definition
+     * Data
      */
     private:
     // Fragment text
@@ -28,22 +29,19 @@ class TextFragment : public ListItem<TextFragment>
     // Local translation for fragment
     Vec3<double> translation_;
     // Whether fragment is to be drawn italic
-    bool italic_;
+    bool isItalic_;
     // Whether fragment is to be drawn bold
-    bool bold_;
+    bool isBold_;
 
     public:
-    // Set fragment data
-    void set(QString &text, double scale = 1.0, Vec3<double> translation = Vec3<double>(), bool italic = false,
-             bool bold = false);
     // Return fragment text
-    QString text();
+    QString text() const;
     // Return local scale for fragment
-    double scale();
+    double scale() const;
     // Return local translation for fragment
-    Vec3<double> translation();
+    Vec3<double> translation() const;
     // Return whether fragment is to be drawn italic
-    bool italic();
+    bool isItalic() const;
     // Return whether fragment is to be drawn bold
-    bool bold();
+    bool isBold() const;
 };

@@ -2,19 +2,13 @@
 // Copyright (c) 2020 Team Dissolve and contributors
 
 #include "gui/render/textprimitive.h"
+#include "TextPrimitiveLexer.h"
 #include "base/sysfunc.h"
+#include "gui/render/TextPrimitiveErrorListeners.h"
+#include "gui/render/TextPrimitiveVisitor.h"
 #include "gui/render/fontinstance.h"
 #include "gui/render/symbol.h"
-#include "gui/render/textprimitive_grammar.hh"
 #include <QtGui/qopengl.h>
-
-// Static members
-TextPrimitive *TextPrimitive::target_ = nullptr;
-FontInstance *TextPrimitive::fontInstance_ = nullptr;
-QString TextPrimitive::stringSource_;
-int TextPrimitive::stringPos_, TextPrimitive::stringLength_;
-List<TextFormat> TextPrimitive::formatStack_;
-double TextPrimitive::horizontalPosition_;
 
 TextPrimitive::TextPrimitive() : ListItem<TextPrimitive>() {}
 
@@ -39,27 +33,54 @@ EnumOptions<TextPrimitive::TextAnchor> &TextPrimitive::textAnchors()
     return options;
 }
 
-// Return enum options for TextAnchor
-EnumOptions<TextPrimitive::EscapeSequence> &TextPrimitive::escapeSequences()
-{
-    static EnumOptionsList EscapeSequenceOptions =
-        EnumOptionsList() << EnumOption(TextPrimitive::BoldEscape, "b") << EnumOption(TextPrimitive::ItalicEscape, "it")
-                          << EnumOption(TextPrimitive::NewLineEscape, "n") << EnumOption(TextPrimitive::SubScriptEscape, "sub")
-                          << EnumOption(TextPrimitive::SuperScriptEscape, "sup")
-                          << EnumOption(TextPrimitive::SymbolEscape, "sym");
-
-    static EnumOptions<TextPrimitive::EscapeSequence> options("EscapeSequence", EscapeSequenceOptions);
-
-    return options;
-}
-
 // Set data
-void TextPrimitive::set(FontInstance &fontInstance, QString text, Vec3<double> anchorPoint,
+bool TextPrimitive::set(FontInstance *fontInstance, QString text, Vec3<double> anchorPoint,
                         TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 localRotation,
                         double textSize, bool flat)
 {
-    // Call the parser
-    generateFragments(&fontInstance, this, text);
+    // Create string stream and set up ANTLR input strem
+    std::stringstream stream;
+    stream << qPrintable(text);
+    antlr4::ANTLRInputStream input(stream);
+
+    // Create ANTLR lexer and set-up error listener
+    TextPrimitiveLexer lexer(&input);
+    TextPrimitiveLexerErrorListener lexerErrorListener(qPrintable(text));
+    lexer.removeErrorListeners();
+    lexer.addErrorListener(&lexerErrorListener);
+
+    // Generate tokens from input stream
+    antlr4::CommonTokenStream tokens(&lexer);
+
+    // Create ANTLR parser and set-up error listenres
+    TextPrimitiveParser parser(&tokens);
+    TextPrimitiveParserErrorListener parserErrorListener(qPrintable(text));
+    parser.removeErrorListeners();
+    parser.removeParseListeners();
+    parser.addErrorListener(&lexerErrorListener);
+    parser.addErrorListener(&parserErrorListener);
+
+    // Generate the AST
+    TextPrimitiveParser::PrimitiveContext *tree = nullptr;
+    try
+    {
+        tree = parser.primitive();
+    }
+    catch (TextPrimitiveExceptions::TextPrimitiveSyntaxException &ex)
+    {
+        return Messenger::error(ex.what());
+    };
+
+    // Visit the nodes in the AST
+    TextPrimitiveVisitor visitor;
+    try
+    {
+        fragments_ = visitor.create(tree, fontInstance);
+    }
+    catch (TextPrimitiveExceptions::TextPrimitiveSyntaxException &ex)
+    {
+        return Messenger::error(ex.what());
+    }
 
     anchorPoint_ = anchorPoint;
     anchorPosition_ = anchorPosition;
@@ -67,11 +88,13 @@ void TextPrimitive::set(FontInstance &fontInstance, QString text, Vec3<double> a
     localRotation_ = localRotation;
     textSize_ = textSize;
     flat_ = flat;
+
+    return true;
 }
 
 // Return transformation matrix to use when rendering the text
 Matrix4 TextPrimitive::transformationMatrix(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize,
-                                            TextFragment *fragment)
+                                            OptionalReferenceWrapper<const TextFragment> optFragment)
 {
     Matrix4 textMatrix, A;
     Vec3<double> lowerLeft, upperRight, anchorPos, anchorPosRotated, textCentre;
@@ -121,8 +144,8 @@ Matrix4 TextPrimitive::transformationMatrix(FontInstance &fontInstance, const Ma
     // Construct matrix
 
     // -- Translate to centre of text bounding box (not rotated) accounting for fragment translation if one was specified
-    if (fragment)
-        textCentre -= fragment->translation();
+    if (optFragment)
+        textCentre -= optFragment->get().translation();
     textMatrix.createTranslation(-textCentre);
 
     // -- Apply scaled local rotation matrix (if not flat)
@@ -137,12 +160,12 @@ Matrix4 TextPrimitive::transformationMatrix(FontInstance &fontInstance, const Ma
     textMatrix.applyPreTranslation(-anchorPosRotated + anchorPoint_ + adjustmentVector_ * scale);
 
     // -- Apply fragment specific operations
-    if (fragment)
+    if (optFragment)
     {
         // -- Apply local scaling to text (if fragment was provided)
-        textMatrix.applyScaling(fragment->scale());
+        textMatrix.applyScaling(optFragment->get().scale());
         // -- Apply local shear to text (if fragment is italic)
-        if (fragment->italic())
+        if (optFragment->get().isItalic())
             textMatrix.applyShearX(0.2);
     }
 
@@ -152,12 +175,9 @@ Matrix4 TextPrimitive::transformationMatrix(FontInstance &fontInstance, const Ma
 // Calculate bounding box of primitive
 void TextPrimitive::boundingBox(FontInstance &fontInstance, Vec3<double> &lowerLeft, Vec3<double> &upperRight)
 {
-    // Set initial lowerLeft and upperRight from the first primitive in the list
-    if (fragments_.first())
-        fontInstance.boundingBox(qPrintable(fragments_.first()->text()), lowerLeft, upperRight);
-    else
+    // Check for zero fragments
+    if (fragments_.empty())
     {
-        // No fragments in list!
         lowerLeft.zero();
         upperRight.zero();
         return;
@@ -165,27 +185,36 @@ void TextPrimitive::boundingBox(FontInstance &fontInstance, Vec3<double> &lowerL
 
     // Loop over remaining fragments, keeping track of the total width of the primitive and the max/min y values
     Vec3<double> ll, ur;
-    // 	double width = upperRight.x - lowerLeft.x;
-    for (auto *fragment = fragments_.first()->next(); fragment != nullptr; fragment = fragment->next())
+    auto firstFragment = true;
+    for (const auto &fragment : fragments_)
     {
         // Get bounding box for this fragment
-        fontInstance.boundingBox(qPrintable(fragment->text()), ll, ur);
+        fontInstance.boundingBox(qPrintable(fragment.text()), ll, ur);
 
         // Scale the box by the current scaling factor...
-        ur.x = ll.x + (ur.x - ll.x) * fragment->scale();
-        ur.y = ll.y + (ur.y - ll.y) * fragment->scale();
+        ur.x = ll.x + (ur.x - ll.x) * fragment.scale();
+        ur.y = ll.y + (ur.y - ll.y) * fragment.scale();
 
         // Translate the box by the defined amount
-        ll += fragment->translation();
-        ur += fragment->translation();
+        ll += fragment.translation();
+        ur += fragment.translation();
 
         // Update lowerLeft and upperRight values
-        if (ll.y < lowerLeft.y)
-            lowerLeft.y = ll.y;
-        if (ur.y > upperRight.y)
-            upperRight.y = ur.y;
-        if (ur.x > upperRight.x)
-            upperRight.x = ur.x;
+        if (firstFragment)
+        {
+            lowerLeft = ll;
+            upperRight = ur;
+            firstFragment = false;
+        }
+        else
+        {
+            if (ll.y < lowerLeft.y)
+                lowerLeft.y = ll.y;
+            if (ur.y > upperRight.y)
+                upperRight.y = ur.y;
+            if (ur.x > upperRight.x)
+                upperRight.x = ur.x;
+        }
     }
 }
 
@@ -196,7 +225,7 @@ void TextPrimitive::render(FontInstance &fontInstance, const Matrix4 &viewMatrix
     Matrix4 textMatrix;
 
     // Loop over fragments
-    for (auto *fragment = fragments_.first(); fragment != nullptr; fragment = fragment->next())
+    for (const auto &fragment : fragments_)
     {
         textMatrix = viewMatrix * transformationMatrix(fontInstance, viewMatrixInverse, baseFontSize, fragment);
         glLoadMatrixd(textMatrix.matrix());
@@ -207,7 +236,7 @@ void TextPrimitive::render(FontInstance &fontInstance, const Matrix4 &viewMatrix
             glDisable(GL_LINE_STIPPLE);
             glLineWidth(1.0);
             Vec3<double> ll, ur;
-            fontInstance.boundingBox(qPrintable(fragment->text()), ll, ur);
+            fontInstance.boundingBox(qPrintable(fragment.text()), ll, ur);
             glBegin(GL_LINE_LOOP);
             glVertex3d(ll.x, ll.y, 0.0);
             glVertex3d(ur.x, ll.y, 0.0);
@@ -219,231 +248,15 @@ void TextPrimitive::render(FontInstance &fontInstance, const Matrix4 &viewMatrix
         // Apply any scaling stored in the FontInstance
         glScaled(fontInstance.scaleFactor(), fontInstance.scaleFactor(), fontInstance.scaleFactor());
 
-        if (fragment->bold())
+        if (fragment.isBold())
         {
             // Render the text twice - once with lines, and once with polygon fill
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            fontInstance.renderText(qPrintable(fragment->text().toUtf8()));
+            fontInstance.renderText(qPrintable(fragment.text().toUtf8()));
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            fontInstance.renderText(qPrintable(fragment->text().toUtf8()));
+            fontInstance.renderText(qPrintable(fragment.text().toUtf8()));
         }
         else
-            fontInstance.renderText(qPrintable(fragment->text().toUtf8()));
+            fontInstance.renderText(qPrintable(fragment.text().toUtf8()));
     }
 }
-
-/*
- * Generation
- */
-
-// Bison-generated ExpressionParser_lex()
-int TextPrimitiveParser_lex()
-{
-    if (!TextPrimitive::target())
-        return 0;
-    return TextPrimitive::target()->lex();
-}
-
-// Get next character from current input stream
-QChar TextPrimitive::getChar()
-{
-    // Are we at the end of the current string?
-    if (stringPos_ == stringLength_)
-        return 0;
-
-    // Return current char and increment index
-    return stringSource_.at(stringPos_++);
-}
-
-// Peek next character from current input stream
-QChar TextPrimitive::peekChar() { return (stringPos_ == stringLength_ ? 0 : stringSource_.at(stringPos_)); }
-
-// 'Replace' last character read from current input stream
-void TextPrimitive::unGetChar() { --stringPos_; }
-
-// Parser lexer, called by yylex()
-int TextPrimitive::lex()
-{
-    bool done, isEscape;
-    static QString token;
-    QChar c;
-
-    // Reset some variables
-    token.clear();
-    isEscape = false;
-    done = false;
-
-    do
-    {
-        c = getChar();
-        if (c == QChar(0))
-        {
-            if (token.length() == 0)
-                return 0;
-            done = true;
-            break;
-        }
-        else if (c == QChar('\\'))
-        {
-            if (token.length() == 0)
-                isEscape = true;
-            else
-            {
-                unGetChar();
-                done = true;
-            }
-        }
-        else if (c == QChar('{'))
-        {
-            if (token.length() == 0)
-                return '{';
-            unGetChar();
-            done = true;
-        }
-        else if (c == QChar('}'))
-        {
-            if (token.length() == 0)
-                return '}';
-            unGetChar();
-            done = true;
-        }
-        else
-            token += c;
-
-        // Break out if we are finished
-        if (done)
-            break;
-    } while (c != 0);
-
-    // Did we find an escape sequence, or just normal text?
-    if (isEscape)
-    {
-        // Is the text a recognised escape?
-        if (TextPrimitive::escapeSequences().isValid(qPrintable(token)))
-        {
-            TextPrimitiveParser_lval.escSeq = TextPrimitive::escapeSequences().enumeration(qPrintable(token));
-            return DISSOLVE_TEXT_ESCAPE;
-        }
-        else
-        {
-            Messenger::printVerbose("Error: String '{}' is not a valid escape sequence.\n", qPrintable(token));
-            return DISSOLVE_TEXT_FAIL;
-        }
-    }
-    else
-    {
-        TextPrimitiveParser_lval.text = &token;
-        return DISSOLVE_TEXT_TEXT;
-    }
-
-    return 0;
-}
-
-// Generate TextFragment data for specified TextPrimitive from supplied string
-bool TextPrimitive::generateFragments(FontInstance *fontInstance, TextPrimitive *target, QString inputString)
-{
-    // Set / reset variables
-    target_ = target;
-    fontInstance_ = fontInstance;
-    stringPos_ = 0;
-    stringSource_ = inputString;
-    stringLength_ = stringSource_.length();
-
-    // Clear the format stack and create a basic format
-    formatStack_.clear();
-    formatStack_.add();
-    horizontalPosition_ = 0.0;
-
-    return (TextPrimitiveParser_parse() == 0);
-}
-
-// Return current target
-TextPrimitive *TextPrimitive::target() { return target_; }
-
-// Add text fragment
-bool TextPrimitive::addFragment(QString text)
-{
-    TextFragment *fragment = fragments_.add();
-    if (formatStack_.nItems() == 0)
-    {
-        Messenger::print("Internal Error: No TextFormat on stack in TextPrimitive::addFragment().\n");
-        fragment->set(text);
-        return false;
-    }
-
-    // Get topmost TextFormat
-    TextFormat *format = formatStack_.last();
-
-    // Set fragment info
-    Vec3<double> translation(horizontalPosition_, format->y(), 0.0);
-    QString textToAdd;
-    if (!format->symbol())
-        textToAdd = text;
-    else
-    {
-        // Must convert the supplied text into a symbol - use '??' if we don't recognise it
-        SymbolData *symbol = SymbolData::symbol(text);
-        if (symbol)
-            textToAdd = symbol->character;
-        else
-            textToAdd = "<?>";
-    }
-    fragment->set(textToAdd, format->scale(), translation, format->italic(), format->bold());
-
-    // We have just added some text, so update the horizontal position
-    horizontalPosition_ += fontInstance_->boundingBoxWidth(qPrintable(textToAdd)) * format->scale();
-
-    return true;
-}
-
-// Add escape code
-bool TextPrimitive::addEscape(TextPrimitive::EscapeSequence escSeq)
-{
-    // Copy topmost formatting node first, since we retain any previously-set (i.e. nested) formats
-    TextFormat *topMostFormat = formatStack_.last();
-    TextFormat *newFormat = formatStack_.add();
-    if (topMostFormat)
-        (*newFormat) = (*topMostFormat);
-    else
-        Messenger::print("Internal Error: No topmost TextFormat to copy from in TextPrimitive::addEscape().\n");
-
-    // Deal with the escape sequence
-    switch (escSeq)
-    {
-        // Add bold level
-        case (TextPrimitive::BoldEscape):
-            newFormat->setBold(true);
-            break;
-        // Add italic level
-        case (TextPrimitive::ItalicEscape):
-            newFormat->setItalic(true);
-            break;
-        // Newline
-        case (TextPrimitive::NewLineEscape):
-            // 			newFormat->		TODO
-            break;
-        // Add subscript level - adjust baseline position and scale of current format
-        case (TextPrimitive::SubScriptEscape):
-            newFormat->adjustY(-fontInstance_->fontBaseHeight() * newFormat->scale() * (1.0 / 3.0));
-            newFormat->setScale(0.583 * newFormat->scale());
-            break;
-        // Add superscript level - adjust baseline position and scale of current format
-        case (TextPrimitive::SuperScriptEscape):
-            newFormat->adjustY(fontInstance_->fontBaseHeight() * newFormat->scale() * (2.0 / 3.0));
-            newFormat->setScale(0.583 * newFormat->scale());
-            break;
-        // Add a symbol (flags that any text added to it should be converted to a named symbol)
-        case (TextPrimitive::SymbolEscape):
-            newFormat->setSymbol(true);
-            break;
-        default:
-            Messenger::print("Escape {} not handled in TextPrimitive::addEscape().\n", escSeq);
-            return false;
-            break;
-    }
-
-    return true;
-}
-
-// Remove escape code
-void TextPrimitive::removeEscape() { formatStack_.removeLast(); }

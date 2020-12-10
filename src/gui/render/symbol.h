@@ -83,5 +83,5 @@ class SymbolData
     // Static list of symbols
     static SymbolData symbols[];
     // Return named symbol
-    static SymbolData *symbol(QString name);
+    static SymbolData *symbol(std::string_view name);
 };

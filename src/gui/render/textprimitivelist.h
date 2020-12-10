@@ -27,7 +27,7 @@ class TextPrimitiveList
     // Clear list
     void clear();
     // Add primitive to list
-    void add(FontInstance &fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition,
+    void add(FontInstance *fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition,
              Vec3<double> adjustmentVector, Matrix4 &rotation, double textSize, bool flat);
     // Update global bounding cuboid for all text primitives in the list
     Cuboid boundingCuboid(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize,

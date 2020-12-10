@@ -3,36 +3,26 @@
 
 #include "gui/render/textfragment.h"
 
-TextFragment::TextFragment() : ListItem<TextFragment>()
+TextFragment::TextFragment(QString text, double scale, Vec3<double> translation, bool isItalic, bool isBold)
+    : ListItem<TextFragment>(), text_(text), scale_(scale), translation_(translation), isItalic_(isItalic), isBold_(isBold)
 {
-    scale_ = 1.0;
-    italic_ = false;
-    bold_ = false;
 }
 
-TextFragment::~TextFragment() {}
-
-// Set fragment data
-void TextFragment::set(QString &text, double scale, Vec3<double> translation, bool italic, bool bold)
-{
-    text_ = text;
-    scale_ = scale;
-    translation_ = translation;
-    italic_ = italic;
-    bold_ = bold;
-}
+/*
+ * Data
+ */
 
 // Return text of fragment
-QString TextFragment::text() { return text_; }
+QString TextFragment::text() const { return text_; }
 
 // Return local scale for fragment
-double TextFragment::scale() { return scale_; }
+double TextFragment::scale() const { return scale_; }
 
 // Return local translation for fragment
-Vec3<double> TextFragment::translation() { return translation_; }
+Vec3<double> TextFragment::translation() const { return translation_; }
 
 // Return whether fragment is to be drawn italic
-bool TextFragment::italic() { return italic_; }
+bool TextFragment::isItalic() const { return isItalic_; }
 
 // Return whether fragment is to be drawn bold
-bool TextFragment::bold() { return bold_; }
+bool TextFragment::isBold() const { return isBold_; }

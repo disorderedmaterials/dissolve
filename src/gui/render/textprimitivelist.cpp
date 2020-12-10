@@ -11,7 +11,7 @@ TextPrimitiveList::TextPrimitiveList() {}
 void TextPrimitiveList::clear() { textPrimitives_.clear(); }
 
 // Set data from literal coordinates and text
-void TextPrimitiveList::add(FontInstance &fontInstance, QString text, Vec3<double> anchorPoint,
+void TextPrimitiveList::add(FontInstance *fontInstance, QString text, Vec3<double> anchorPoint,
                             TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 &localRotation,
                             double textSize, bool flat)
 {

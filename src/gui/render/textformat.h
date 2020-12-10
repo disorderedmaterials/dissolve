@@ -13,7 +13,7 @@ class TextFormat : public ListItem<TextFormat>
 {
     public:
     TextFormat();
-    ~TextFormat();
+    ~TextFormat() = default;
     TextFormat(const TextFormat &source);
     void operator=(const TextFormat &source);
 
@@ -26,11 +26,11 @@ class TextFormat : public ListItem<TextFormat>
     // Scale
     double scale_;
     // Whether text is italic
-    bool italic_;
+    bool isItalic_;
     // Whether text is bold
-    bool bold_;
+    bool isBold_;
     // Whether text is actually a symbol
-    bool symbol_;
+    bool isSymbol_;
 
     public:
     // Set vertical (bottom-edge) position
@@ -38,21 +38,21 @@ class TextFormat : public ListItem<TextFormat>
     // Adjust vertical (bottom-edge) position
     void adjustY(double delta);
     // Return vertical (bottom-edge) position
-    double y();
+    double y() const;
     // Set scale
     void setScale(double scale);
     // Return scale
-    double scale();
+    double scale() const;
     // Set whether text is italic
     void setItalic(bool italic);
     // Return whether text is italic
-    bool italic();
+    bool isItalic() const;
     // Set whether text is bold
     void setBold(bool bold);
     // Return whether text is bold
-    bool bold();
+    bool isBold() const;
     // Set whether text is actually a symbol
     void setSymbol(bool symbol);
     // Return whether text is actually a symbol
-    bool symbol();
+    bool isSymbol() const;
 };
