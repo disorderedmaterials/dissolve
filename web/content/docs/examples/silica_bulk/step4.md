@@ -14,7 +14,7 @@ Now we'll run for 250 steps
 {{< action type="menu" text="Simulation &#8680; Run For..." >}}
 {{< step text="Set the number of steps to 250 and click _OK_" >}}
 
-You can open (double-click) the [`NeutronSQ`](../../userguide/modules/neutronsq) module in the _RDF / Neutron S(Q)_ layer to monitor the structure, or the [`Energy`](../../userguide/modules/energy) module in the _Evolve (Basic Atomic)_ to check the energy as the simulation progresses. The total energy will be large and negative - of the order of &ndash;4&mult;10<sup>6</sup>. When finished, the F(Q) and G(r) should look a little like this:
+You can open (double-click) the [`NeutronSQ`]({{< ref "neutronsq" >}}) module in the _RDF / Neutron S(Q)_ layer to monitor the structure, or the [`Energy`]({{< ref "energy" >}}) module in the _Evolve (Basic Atomic)_ to check the energy as the simulation progresses. The total energy will be large and negative - of the order of &ndash;4&mult;10<sup>6</sup>. When finished, the F(Q) and G(r) should look a little like this:
 
 {{< cimage src="../cooked-fq.png" caption="Calculated structure factor (black line) of amorphous silica at high temperature (2000 K) compared to reference data at 298 K (red line)" >}}
 
@@ -34,5 +34,5 @@ Once finished, the structure should look a lot better:
 
 {{< cimage src="../cooked-gr.png" caption="Equilibrated total G(r) (black line) of amorphous silica compared to Fourier transform of reference data at 298 K (red line)" >}}
 
-{{< button pos="left" text="Previous Step" path="../step3/">}}
-{{< button pos="right" text="Next Step" path="../step5/">}}
+{{< button pos="left" text="Previous Step" path="step3/">}}
+{{< button pos="right" text="Next Step" path="step5/">}}

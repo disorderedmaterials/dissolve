@@ -51,6 +51,7 @@ module load intel/20.0.0
 module load intel/mpi/20.0.0
 module load gcc/8.1.0
 export I_MPI_FABRICS="shm:ofi"
+export I_MPI_HYDRA_TOPOLIB=ipl
 export FI_PROVIDER=verbs
 
 # Load Dissolve
@@ -72,7 +73,7 @@ Before using this script, you should:
 
 Note that, as written here, the associated error and log files written by the system for the run are prepended by the numerical job identifier for the run (e.g. `435003.err`).
 
-### Compiling Dissolve on SCARF
+### Compiling Dissolve on SCARF (Intel Compilers)
 
 You should never need to compile Dissolve on SCARF yourself, but in case you have a specific version / commit you want to test, or I forget how to do it, here are step-by-step instructions.
 
@@ -101,6 +102,22 @@ Conan is not installed on SCARF, so you must install a user-space copy of it in 
 
 ```
 pip3 install --user conan
+```
+
+Copy and paste the following into your `.conan/profiles/default` (create this file if it doesn't exist):
+
+```
+[settings]
+arch=x86_64
+arch_build=x86_64
+build_type=Release
+compiler=intel
+compiler.base=gcc
+compiler.base.libcxx=libstdc++11
+compiler.base.version=8
+compiler.version=19
+os=Linux
+os_build=Linux
 ```
 
 #### 4. Retrieve ANTLR4

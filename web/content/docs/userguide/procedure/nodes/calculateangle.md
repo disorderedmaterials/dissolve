@@ -1,5 +1,0 @@
----
-title: CalculateAngle
----
-
-{{< todo-label >}}

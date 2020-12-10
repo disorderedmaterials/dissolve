@@ -34,5 +34,5 @@ And now, the oxygen:
 {{< step text="Select the oxygen atom in the viewer, and click _Create_ in the toolbar to create a site" >}}
 
 
-{{< button pos="left" text="Back to Overview" path="../">}}
-{{< button pos="right" text="Next Step" path="../step2/">}}
+{{< button pos="left" text="Back to Overview" path="">}}
+{{< button pos="right" text="Next Step" path="step2/">}}

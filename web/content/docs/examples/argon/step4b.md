@@ -11,17 +11,17 @@ The new layer contains the following modules:
 
 | Module | Purpose |
 |--------|---------|
-| [`RDF`](../../userguide/modules/rdf) | Calculates partial g(r) between every pair of atom types, and sums them into the total G(r) |
-| [`NeutronSQ`](../../userguide/modules/neutronsq) | Fourier transforms the g(r) calculated by an [`RDF`](../../userguide/modules/rdf) module to generate S(Q) and the neutron-weighted total structure factor F(Q) |
+| [`RDF`]({{< ref "rdf" >}}) | Calculates partial g(r) between every pair of atom types, and sums them into the total G(r) |
+| [`NeutronSQ`]({{< ref "neutronsq" >}}) | Fourier transforms the g(r) calculated by an [`RDF`]({{< ref "rdf" >}}) module to generate S(Q) and the neutron-weighted total structure factor F(Q) |
 
-This time we will need to set a few parameters in the [`NeutronSQ`](../../userguide/modules/neutronsq) module, in particular informing it of the isotopic composition of our system and loading in reference data.
+This time we will need to set a few parameters in the [`NeutronSQ`]({{< ref "neutronsq" >}}) module, in particular informing it of the isotopic composition of our system and loading in reference data.
 
-{{< warn text="A [`NeutronSQ`](../../userguide/modules/neutronsq) module calculates S(Q) and F(Q) for a single isotopic composition. Where there are multiple isotopic samples, you need to add a [`NeutronSQ`](../../userguide/modules/neutronsq) for each distinct isotopic composition." >}}
+{{< warn text="A `NeutronSQ` module calculates S(Q) and F(Q) for a single isotopic composition. Where there are multiple isotopic samples, you need to add a `NeutronSQ` for each distinct isotopic composition." >}}
 
 
 ### Set up Isotopes
 
-The [`NeutronSQ`](../../userguide/modules/neutronsq) module will use isotopic natural abundances to calculate the neutron weights for all species unless we tell it otherwise. We'll first define the correct isotopologue for our argon species, and then tell [`NeutronSQ`](../../userguide/modules/neutronsq) to use it. The experimental measurement was made on Ar<sup>36</sup> since its coherent scattering cross-section (24.9 fm) is considerably higher than that of the naturally-occuring mix (1.91 fm).
+The [`NeutronSQ`]({{< ref "neutronsq" >}}) module will use isotopic natural abundances to calculate the neutron weights for all species unless we tell it otherwise. We'll first define the correct isotopologue for our argon species, and then tell [`NeutronSQ`]({{< ref "neutronsq" >}}) to use it. The experimental measurement was made on Ar<sup>36</sup> since its coherent scattering cross-section (24.9 fm) is considerably higher than that of the naturally-occuring mix (1.91 fm).
 
 {{< action type="tabs" text="**Ar** species tab, **Isotopologues** section" >}}
 {{< step text="Click **Add**" >}}
@@ -29,10 +29,9 @@ The [`NeutronSQ`](../../userguide/modules/neutronsq) module will use isotopic na
 {{< step text="Change the entry for the Ar atom type from `Natural (bc = 1.909 fm)` to `36 (bc = 24.9)`" >}}
 {{< step text="For sanity's sake, you may also want to change the name of the isotopologue to something like 'Ar36' (double-click on the name, 'NewIsotopologue', to do so)" >}}
 
-Now, we'll open up our [`NeutronSQ`](../../userguide/modules/neutronsq) module in a tab of its own.
+Now, we'll open up our [`NeutronSQ`]({{< ref "neutronsq" >}}) module in a tab of its own.
 
-{{< action type="mouse" text="Double-click the [`NeutronSQ`](../../userguide/modules/neutronsq) module on its icon or name" >}}
-
+{{< action type="mouse" text="Double-click the `NeutronSQ` module on its icon or name" >}}
 
 In this tab we have access to all the options for the module, as well as the plots for the calculated structure factors. On the left you'll see a categorised list of all available options where we will specify our isotopologue.
 
@@ -46,7 +45,7 @@ In this tab we have access to all the options for the module, as well as the plo
 
 ### Import Reference Data
 
-The [`NeutronSQ`](../../userguide/modules/neutronsq) module itself looks after any related experimental reference data that we might wish to compare our calculated data to, and which we'll now set up.
+The [`NeutronSQ`]({{< ref "neutronsq" >}}) module itself looks after any related experimental reference data that we might wish to compare our calculated data to, and which we'll now set up.
 
 {{< action type="tabs" text="**NeutronSQ** tab" >}}
 {{< action type="groups" text="Open the **Reference Data** settings group" >}}
@@ -63,5 +62,5 @@ The data, along with its Fourier transform, are now plotted in the graphs to the
 {{< step text="Set the **ReferenceNormalisation** to `AverageSquared`" >}}
 
 
-{{< button pos="left" text="Previous Step" path="../step4a/">}}
-{{< button pos="right" text="Next Step" path="../step5/">}}
+{{< button pos="left" text="Previous Step" path="step4a/">}}
+{{< button pos="right" text="Next Step" path="step5/">}}

@@ -6,5 +6,5 @@ Now that our simulation is set up and running nicely, we will consider the quali
 
 You're now prepared for more useful / interesting / exciting (delete as appropriate) examples - a good next step would be to try the [liquid water example](../../water).
 
-{{< button pos="left" text="Previous Step" path="../step5/">}}
+{{< button pos="left" text="Previous Step" path="step5/">}}
 {{< button pos="right" text="Back to Index" path= "/docs/examples/argon/">}}
