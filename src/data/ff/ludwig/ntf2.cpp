@@ -52,9 +52,7 @@ bool Forcefield_Ludwig_NTf2::setUp()
     // Torsion Terms
     addTorsionTerm("F", "C", "S", "N", SpeciesTorsion::CosineForm, {2.0401, 3.0, 0.0, 1});
     addTorsionTerm("F", "C", "S", "O", SpeciesTorsion::NoForm);
-    //{ this, "F", "C", "S", "O", SpeciesTorsion::CosineForm, { 0,0,0,0 } );
     addTorsionTerm("O", "S", "N", "S", SpeciesTorsion::NoForm);
-    //{ this, "O", "S", "N", "S", SpeciesTorsion::CosineForm, { 0,0,0,0 } );
     addTorsionTerm("S", "N", "S", "C", SpeciesTorsion::CosNForm, {23.7647, 6.2081, -2.3684, -0.0298, 0.6905, 1.0165});
 
     return true;
@@ -65,13 +63,14 @@ bool Forcefield_Ludwig_NTf2::setUp()
  */
 
 // Return name of Forcefield
-std::string_view Forcefield_Ludwig_NTf2::name() const { return "Ludwig NTf2 Anion"; }
+std::string_view Forcefield_Ludwig_NTf2::name() const { return "Ludwig/NTf2"; }
 
 // Return description for Forcefield
 std::string_view Forcefield_Ludwig_NTf2::description() const
 {
-    return "J. Neumann, B. Golub, L.-M. Odebrecht, R. Ludwig, D. Paschek: bis(trifluoromethylsulfonyl)imide anion by "
-           "Ludwig Group, <em>J. Chem. Phys.</em> <b>148</b>, 193828 (2018).";
+    return "Implements 'Revisiting imidazolium based ionic liquids: Effect of the conformation bias of the [NTf2] anion "
+           "studied by molecular dynamics simulations', J. Neumann, B. Golub, LM. Odebrecht, R. Ludwig, D. Paschek, "
+           "<em>Journal of Chemical Physics</em>, <b>148</b>, 193828 (2018).";
 }
 
 // Return short-range interaction style for AtomTypes

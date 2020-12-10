@@ -20,8 +20,8 @@ EnumOptions<Data3DExportFileFormat::Data3DExportFormat> &Data3DExportFileFormat:
 {
     static EnumOptionsList Data3DExportFormats =
         EnumOptionsList() << EnumOption(Data3DExportFileFormat::BlockData3D, "block", "Block Data")
-                          << EnumOption(Data3DExportFileFormat::CartesianData3D, "cartesian", "Cartesian (x,y,value) Data")
-                          << EnumOption(Data3DExportFileFormat::CartesianData3D, "pdens", "DLPutils PDens Data");
+                          << EnumOption(Data3DExportFileFormat::CartesianData3D, "cartesian", "Cartesian (x,y,z,value) Data")
+                          << EnumOption(Data3DExportFileFormat::PDensData3D, "pdens", "DLPutils PDens Data");
 
     static EnumOptions<Data3DExportFileFormat::Data3DExportFormat> options("Data3DExportFileFormat", Data3DExportFormats);
 
@@ -66,7 +66,7 @@ bool Data3DExportFileFormat::exportBlock(LineParser &parser, const Data3D &data)
         {
             for (auto z = 0; z < values.nZ(); ++z)
             {
-                if (!parser.writeLineF("{:15.9e}\n", values.constAt(x, y, z)))
+                if (!parser.writeLineF("{:15.9e}\n", values[{x, y, z}]))
                     return false;
             }
             if (!parser.writeLineF("\n"))
@@ -93,7 +93,7 @@ bool Data3DExportFileFormat::exportCartesian(LineParser &parser, const Data3D &d
             double yVal = yAxis[y];
             for (auto z = 0; z < values.nZ(); ++z)
             {
-                if (!parser.writeLineF("{:15.9e} {:15.9e} {:15.9e} {:15.9e}\n", xVal, yVal, zAxis[z], values.constAt(x, y, z)))
+                if (!parser.writeLineF("{:15.9e} {:15.9e} {:15.9e} {:15.9e}\n", xVal, yVal, zAxis[z], values[{x, y, z}]))
                     return false;
             }
         }
@@ -134,7 +134,7 @@ bool Data3DExportFileFormat::exportPDens(LineParser &parser, const Data3D &data)
         {
             for (auto z = 0; z < values.nZ(); ++z)
             {
-                if (!parser.writeLineF("{:15.9e}\n", values.constAt(x, y, z)))
+                if (!parser.writeLineF("{:15.9e}\n", values[{x, y, z}]))
                     return false;
             }
         }

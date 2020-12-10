@@ -8,16 +8,17 @@
 void ForcesModule::initialise()
 {
     // Test
-    keywords_.add("Test", new BoolKeyword(false), "Test", "Test parallel force routines against simplified, serial ones");
+    keywords_.add("Test", new BoolKeyword(false), "Test",
+                  "Test parallel force routines against basic serial versions and supplied reference values (if provided)");
     keywords_.add("Test", new BoolKeyword(false), "TestAnalytic",
-                  "Compare parallel force routines against exact (analytic) force rather than tabulated values");
+                  "Use analytic interatomic forces rather than (production) tabulated potentials for tests");
     keywords_.add("Test", new BoolKeyword(true), "TestInter", "Include interatomic forces in test");
     keywords_.add("Test", new BoolKeyword(true), "TestIntra", "Include intramolecular forces in test");
     keywords_.add("Test", new FileAndFormatKeyword(referenceForces_, "EndTestReference"), "TestReference",
-                  "Reference forces for test");
+                  "Reference forces to test calculated forces against");
     keywords_.add("Test", new DoubleKeyword(0.1), "TestThreshold", "Threshold of force (%) at which test comparison will fail");
 
     // Export
     keywords_.add("Export", new FileAndFormatKeyword(exportedForces_, "EndSaveForces"), "SaveForces",
-                  "File to save calculated forces to");
+                  "Save calculated energies to the specified file / format");
 }

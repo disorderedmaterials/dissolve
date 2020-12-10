@@ -120,18 +120,18 @@ bool Data1DImportFileFormat::importData(LineParser &parser, Data1D &data)
     // -- Remove points from the start of the data?
     for (auto n = 0; n < keywords_.asInt("RemovePoints"); ++n)
         data.removeFirstPoint();
+    // -- Trim range?
+    if (keywords_.isSet("Trim"))
+    {
+        const auto range = keywords_.retrieve<Range>("Trim");
+        Filters::trim(data, range.minimum(), range.maximum());
+    }
     // -- Subtract average level from data?
     const auto removeAverage = keywords_.asDouble("RemoveAverage");
     if (removeAverage > 0.0)
     {
         double level = Filters::subtractAverage(data, removeAverage);
         Messenger::print("Removed average level of {} from data, forming average over x >= {}.\n", level, removeAverage);
-    }
-    // -- Trim range?
-    if (keywords_.isSet("Trim"))
-    {
-        const auto range = keywords_.retrieve<Range>("Trim");
-        Filters::trim(data, range.minimum(), range.maximum());
     }
 
     return result;

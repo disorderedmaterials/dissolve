@@ -9,19 +9,19 @@
 // Perform any necessary initialisation for the Module
 void SQModule::initialise()
 {
-    // Calculation
-    keywords_.add("Calculation", new ModuleKeyword<const RDFModule>("RDF"), "SourceRDFs", "Source RDFs to transform into S(Q)");
-    keywords_.add("Calculation", new DoubleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
-    keywords_.add("Calculation", new DoubleKeyword(30.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
-    keywords_.add("Calculation", new DoubleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
-    keywords_.add("Calculation", new BroadeningFunctionKeyword(BroadeningFunction()), "QBroadening",
+    // Control
+    keywords_.add("Control", new ModuleKeyword<const RDFModule>("RDF"), "SourceRDFs", "Source RDFs to transform into S(Q)");
+    keywords_.add("Control", new DoubleKeyword(0.05, 1.0e-5), "QDelta", "Step size in Q for S(Q) calculation");
+    keywords_.add("Control", new DoubleKeyword(30.0, -1.0), "QMax", "Maximum Q for calculated S(Q)");
+    keywords_.add("Control", new DoubleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
+    keywords_.add("Control", new BroadeningFunctionKeyword(BroadeningFunction()), "QBroadening",
                   "Instrument broadening function to apply when calculating S(Q)");
-    keywords_.add("Calculation", new WindowFunctionKeyword(WindowFunction(WindowFunction::NoWindow)), "WindowFunction",
+    keywords_.add("Control", new WindowFunctionKeyword(WindowFunction(WindowFunction::NoWindow)), "WindowFunction",
                   "Window function to apply in Fourier-transform of g(r) to S(Q)");
-    keywords_.add("Calculation", new IntegerKeyword(1, 1), "Averaging",
+    keywords_.add("Control", new IntegerKeyword(1, 1), "Averaging",
                   "Number of historical partial sets to combine into final partials", "<1>");
     keywords_.add(
-        "Calculation",
+        "Control",
         new EnumOptionsKeyword<Averaging::AveragingScheme>(Averaging::averagingSchemes() = Averaging::LinearAveraging),
         "AveragingScheme", "Weighting scheme to use when averaging partials", "<Linear>");
 

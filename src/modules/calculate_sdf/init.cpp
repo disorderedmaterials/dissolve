@@ -95,16 +95,16 @@ void CalculateSDFModule::initialise()
      * Keywords (including those exposed from the ProcedureNodes)
      */
 
-    // Calculation
-    keywords_.add("Calculation",
+    // Control
+    keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05),
                                         Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
                   "RangeX", "Range along X axis", "<min> <max> <delta> (Angstroms)");
-    keywords_.add("Calculation",
+    keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05),
                                         Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
                   "RangeY", "Range along Y axis", "<min> <max> <delta> (Angstroms)");
-    keywords_.add("Calculation",
+    keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(-10.0, 10.0, 0.5), Vec3<double>(-1.0e6, -1.0e6, 0.05),
                                         Vec3<double>(1.0e6, 1.0e6, 1.0e4), Vec3Labels::MinMaxDeltaLabels),
                   "RangeZ", "Range along Z axis", "<min> <max> <delta> (Angstroms)");

@@ -136,7 +136,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
                         braggIndex = int(mag / qDelta);
 
                         // Point this (h,k,l) value to this Bragg reflection
-                        tempKVectors.at(h, k, l).initialise(h, k, l, braggIndex, nTypes);
+                        tempKVectors[{h, k, l}].initialise(h, k, l, braggIndex, nTypes);
 
                         // Note in the reflection that we have found another (h,k,l) that contributes to
                         // it

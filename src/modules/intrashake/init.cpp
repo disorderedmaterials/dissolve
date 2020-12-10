@@ -7,13 +7,12 @@
 // Perform any necessary initialisation for the Module
 void IntraShakeModule::initialise()
 {
-    // Calculation
-    keywords_.add("Calculation", new DoubleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ",
-                  "<distance>");
-    keywords_.add("Calculation", new IntegerKeyword(1), "ShakesPerTerm", "Number of shakes per term", "<n>");
-    keywords_.add("Calculation", new DoubleKeyword(0.33), "TargetAcceptanceRate",
-                  "Target acceptance rate for Monte Carlo moves", "<rate (0.0-1.0)>");
-    keywords_.add("Calculation", new BoolKeyword(false), "TermEnergyOnly",
+    // Control
+    keywords_.add("Control", new DoubleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ", "<distance>");
+    keywords_.add("Control", new IntegerKeyword(1), "ShakesPerTerm", "Number of shakes per term", "<n>");
+    keywords_.add("Control", new DoubleKeyword(0.33), "TargetAcceptanceRate", "Target acceptance rate for Monte Carlo moves",
+                  "<rate (0.0-1.0)>");
+    keywords_.add("Control", new BoolKeyword(false), "TermEnergyOnly",
                   "Whether only the energy of the intramolecular term is calculated and assessed");
 
     // Bonds
