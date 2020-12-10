@@ -7,19 +7,19 @@
 // Perform any necessary initialisation for the Module
 void MDModule::initialise()
 {
-    // Calculation
-    keywords_.add("Calculation", new DoubleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
-    keywords_.add("Calculation", new IntegerKeyword(50), "NSteps", "Number of MD steps to perform");
-    keywords_.add("Calculation", new BoolKeyword(false), "CapForces", "Control whether atomic forces are capped every step");
-    keywords_.add("Calculation", new DoubleKeyword(1.0e7), "CapForcesAt", "Set cap on allowable force (kJ/mol) per atom");
-    keywords_.add("Calculation", new DoubleKeyword(1.0e-4), "DeltaT", "Timestep (ps) to use in MD simulation");
-    keywords_.add("Calculation", new BoolKeyword(true), "OnlyWhenEnergyStable",
+    // Control
+    keywords_.add("Control", new DoubleKeyword(-1.0), "CutoffDistance", "Interatomic cutoff distance to employ");
+    keywords_.add("Control", new IntegerKeyword(50), "NSteps", "Number of MD steps to perform");
+    keywords_.add("Control", new BoolKeyword(false), "CapForces", "Control whether atomic forces are capped every step");
+    keywords_.add("Control", new DoubleKeyword(1.0e7), "CapForcesAt", "Set cap on allowable force (kJ/mol) per atom");
+    keywords_.add("Control", new DoubleKeyword(1.0e-4), "DeltaT", "Timestep (ps) to use in MD simulation");
+    keywords_.add("Control", new BoolKeyword(true), "OnlyWhenEnergyStable",
                   "Only run MD when target Configuration energies are stable");
-    keywords_.add("Calculation", new BoolKeyword(true), "VariableTimestep",
+    keywords_.add("Control", new BoolKeyword(true), "VariableTimestep",
                   "Whether a variable timestep should be used, determined from the maximal force vector");
-    keywords_.add("Calculation", new BoolKeyword(false), "RandomVelocities",
+    keywords_.add("Control", new BoolKeyword(false), "RandomVelocities",
                   "Whether random velocities should always be assigned before beginning MD simulation");
-    keywords_.add("Calculation", new SpeciesRefListKeyword(restrictToSpecies_), "RestrictToSpecies",
+    keywords_.add("Control", new SpeciesRefListKeyword(restrictToSpecies_), "RestrictToSpecies",
                   "Restrict the calculation to the specified Species");
 
     // Output

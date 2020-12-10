@@ -15,17 +15,17 @@ AddSpeciesProcedureNode::AddSpeciesProcedureNode(Species *sp, NodeValue populati
     : ProcedureNode(ProcedureNode::AddSpeciesNode)
 {
     // Set up keywords
-    keywords_.add("Target", new SpeciesKeyword(sp), "Species", "Target species to add");
-    keywords_.add("Target", new NodeValueKeyword(this, population), "Population", "Population of the target species to add");
+    keywords_.add("Control", new SpeciesKeyword(sp), "Species", "Target species to add");
+    keywords_.add("Control", new NodeValueKeyword(this, population), "Population", "Population of the target species to add");
     keywords_.add(
-        "Target",
+        "Control",
         new EnumOptionsKeyword<AddSpeciesProcedureNode::BoxActionStyle>(boxActionStyles() = AddSpeciesProcedureNode::AddVolume),
         "BoxAction", "Action to take on the Box geometry / volume on addition of the species");
-    keywords_.add("Target",
+    keywords_.add("Control",
                   new NodeValueEnumOptionsKeyword<Units::DensityUnits>(this, density, Units::densityUnits() = densityUnits),
                   "Density", "Density at which to add the target species");
-    keywords_.add("Positioning", new BoolKeyword(true), "Rotate", "Whether to rotate molecules on insertion");
-    keywords_.add("Positioning",
+    keywords_.add("Control", new BoolKeyword(true), "Rotate", "Whether to randomly rotate molecules on insertion");
+    keywords_.add("Control",
                   new EnumOptionsKeyword<AddSpeciesProcedureNode::PositioningType>(
                       positioningTypes() = AddSpeciesProcedureNode::RandomPositioning),
                   "Positioning", "Positioning type for individual molecules");

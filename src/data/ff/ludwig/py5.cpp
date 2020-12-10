@@ -107,7 +107,7 @@ bool Forcefield_Ludwig_Py5::setUp()
  */
 
 // Return name of Forcefield
-std::string_view Forcefield_Ludwig_Py5::name() const { return "Ludwig Py5 Cation"; }
+std::string_view Forcefield_Ludwig_Py5::name() const { return "Ludwig/Py5"; }
 
 // Return description for Forcefield
 std::string_view Forcefield_Ludwig_Py5::description() const

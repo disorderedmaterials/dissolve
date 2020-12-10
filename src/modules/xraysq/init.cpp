@@ -8,18 +8,18 @@
 // Perform any necessary initialisation for the Module
 void XRaySQModule::initialise()
 {
-    // Calculation
-    keywords_.add("Calculation", new ModuleKeyword<const SQModule>("SQ"), "SourceSQs",
+    // Control
+    keywords_.add("Control", new ModuleKeyword<const SQModule>("SQ"), "SourceSQs",
                   "Source unweighted S(Q) to transform into xray-weighted S(Q)");
-    keywords_.add("Calculation",
+    keywords_.add("Control",
                   new EnumOptionsKeyword<XRayFormFactors::XRayFormFactorData>(XRayFormFactors::xRayFormFactorData() =
                                                                                   XRayFormFactors::WaasmaierKirfel1995),
-                  "FormFactors", "Form factors to use for weighting");
-    keywords_.add("Calculation",
+                  "FormFactors", "Atomic form factors to use for weighting");
+    keywords_.add("Control",
                   new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
                                                                                   StructureFactors::NoNormalisation),
                   "Normalisation", "Normalisation to apply to total weighted F(Q)");
-    keywords_.add("Calculation", new WindowFunctionKeyword(WindowFunction(WindowFunction::NoWindow)), "WindowFunction",
+    keywords_.add("Control", new WindowFunctionKeyword(WindowFunction(WindowFunction::NoWindow)), "WindowFunction",
                   "Window function to apply when Fourier-transforming g(r) to S(Q)");
 
     // Reference Data

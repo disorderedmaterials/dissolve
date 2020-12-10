@@ -74,16 +74,16 @@ linkTitle = "Packages"
 {{< blocks/section color="secondary" >}}
 
 {{% blocks/feature icon="fab fa-linux" title="Linux" %}}
-{{< continuouslink target="GUI" urlSuffix="x86_64.AppImage" textSuffix="AppImage" >}}
+{{< continuouslink target="GUI" urlSuffix="-x86_64.AppImage" textSuffix="AppImage" >}}
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon=" fab fa-apple" title="Mac OS" %}}
-{{< continuouslink target="GUI" urlSuffix="Catalina.dmg" textSuffix="Catalina DMG" >}}
+{{< continuouslink target="GUI" urlSuffix="-Catalina.dmg" textSuffix="Catalina DMG" >}}
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fab fa-windows" title="Windows" textSuffix="Installer" %}}
-{{< continuouslink target="GUI" urlSuffix="Win64.exe" textSuffix="Installer" >}}
-{{< continuouslink target="GUI" urlSuffix="Win64.zip" textSuffix="Zip Archive" >}}
+{{< continuouslink target="GUI" urlSuffix="-Win64.exe" textSuffix="Installer" >}}
+{{< continuouslink target="GUI" urlSuffix="-Win64.zip" textSuffix="Zip Archive" >}}
 {{% /blocks/feature %}}
 
 {{% blocks/feature icon="fa fa-archive" title="Example Data" %}}

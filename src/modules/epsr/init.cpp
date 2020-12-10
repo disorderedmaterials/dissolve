@@ -20,22 +20,22 @@ EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionType
 // Perform any necessary initialisation for the Module
 void EPSRModule::initialise()
 {
-    // Calculation
-    keywords_.add("Calculation", new BoolKeyword(true), "OnlyWhenEnergyStable",
+    // Control
+    keywords_.add("Control", new BoolKeyword(true), "OnlyWhenEnergyStable",
                   "Assesses the energy of all involved Configurations, refining the potential only when all their total "
                   "energies are stable");
-    keywords_.add("Calculation", new DoubleKeyword(3.0, -1.0), "EReq",
+    keywords_.add("Control", new DoubleKeyword(3.0, -1.0), "EReq",
                   "Limit of magnitude of additional potential for any one pair potential");
-    keywords_.add("Calculation", new DoubleKeyword(0.8, 0.0, 1.0), "Feedback", "Confidence factor");
-    keywords_.add("Calculation", new BoolKeyword(true), "ModifyPotential",
+    keywords_.add("Control", new DoubleKeyword(0.8, 0.0, 1.0), "Feedback", "Confidence factor");
+    keywords_.add("Control", new BoolKeyword(true), "ModifyPotential",
                   "Whether to apply generated perturbations to interatomic potentials");
-    keywords_.add("Calculation", new ModuleRefListKeyword(targets_, {"NeutronSQ", "XRaySQ"}), "Target",
+    keywords_.add("Control", new ModuleRefListKeyword(targets_, {"NeutronSQ", "XRaySQ"}), "Target",
                   "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName>");
-    keywords_.add("Calculation", new DoubleKeyword(30.0, -1.0), "QMax",
+    keywords_.add("Control", new DoubleKeyword(30.0, -1.0), "QMax",
                   "Maximum Q value over which to generate potentials from total scattering data");
-    keywords_.add("Calculation", new DoubleKeyword(0.5, -1.0), "QMin",
+    keywords_.add("Control", new DoubleKeyword(0.5, -1.0), "QMin",
                   "Minimum Q value over which to generate potentials from total scattering data");
-    keywords_.add("Calculation", new DoubleKeyword(1.0, 0.0, 10.0), "Weighting",
+    keywords_.add("Control", new DoubleKeyword(1.0, 0.0, 10.0), "Weighting",
                   "Factor used when adding fluctuation coefficients to pair potentials");
 
     // Expansion Function
