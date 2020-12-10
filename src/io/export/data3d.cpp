@@ -20,8 +20,8 @@ EnumOptions<Data3DExportFileFormat::Data3DExportFormat> &Data3DExportFileFormat:
 {
     static EnumOptionsList Data3DExportFormats =
         EnumOptionsList() << EnumOption(Data3DExportFileFormat::BlockData3D, "block", "Block Data")
-                          << EnumOption(Data3DExportFileFormat::CartesianData3D, "cartesian", "Cartesian (x,y,value) Data")
-                          << EnumOption(Data3DExportFileFormat::CartesianData3D, "pdens", "DLPutils PDens Data");
+                          << EnumOption(Data3DExportFileFormat::CartesianData3D, "cartesian", "Cartesian (x,y,z,value) Data")
+                          << EnumOption(Data3DExportFileFormat::PDensData3D, "pdens", "DLPutils PDens Data");
 
     static EnumOptions<Data3DExportFileFormat::Data3DExportFormat> options("Data3DExportFileFormat", Data3DExportFormats);
 

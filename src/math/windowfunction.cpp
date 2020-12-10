@@ -231,11 +231,12 @@ double WindowFunction::y(double x, double omega) const
             /*
              * Original Lorch function
              *
-             * Parameters:  0 = delta0	( = PI/xmax )
+             * Parameters:
+             *  0 = delta0  ( = PI/xmax )
              *
-             * 	  sin(x * delta0)
+             *        sin(x * delta0)
              * f(x) = ---------------
-             * 	    x * delta0
+             *          x * delta0
              */
             return sin(x * parameters_[0]) / (x * parameters_[0]);
             break;

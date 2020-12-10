@@ -106,7 +106,7 @@ bool Forcefield_Ludwig_Py4OH::setUp()
  */
 
 // Return name of Forcefield
-std::string_view Forcefield_Ludwig_Py4OH::name() const { return "Ludwig Py4OH Cation"; }
+std::string_view Forcefield_Ludwig_Py4OH::name() const { return "Ludwig/Py4OH"; }
 
 // Return description for Forcefield
 std::string_view Forcefield_Ludwig_Py4OH::description() const
