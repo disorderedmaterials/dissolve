@@ -4,7 +4,7 @@ enable_testing()
 function(dissolve_system_test directory file_name count)
   if(PARALLEL)
     foreach(nproc 1 2 3 4)
-      set(test_target_executable ../../build-parallel/bin/${target_name})
+      set(test_target_executable ../../build/bin/${target_name})
       add_test(
 	NAME ${directory}-${file_name}-${nproc}
 	COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${nproc} ${test_target_executable} -n ${count} -x -i ${file_name}.txt ${ARGN}

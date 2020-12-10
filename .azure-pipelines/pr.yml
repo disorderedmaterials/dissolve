@@ -49,7 +49,7 @@ stages:
           - template: templates/set-short-hash.yml
           - template: templates/build-linux-parallel.yml
           - bash: |
-              cp build-parallel/bin/dissolve-mpi tests/
+              cp build/bin/dissolve-mpi tests/
             displayName: 'Copy Executable'
           - task: PublishBuildArtifacts@1
             inputs:
