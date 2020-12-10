@@ -1,12 +1,12 @@
 parameters:
   - name: qtver
-    default: 512
+    default: 513
 
 steps:
   - bash: |
       set -ex
-      ci/scripts/prep-appimage -a Dissolve -v continuous -b build/dissolve
-      ci/scripts/prep-appimage -a Dissolve-GUI -v continuous -b build/dissolve-gui
+      ci/scripts/prep-appimage -a Dissolve -v continuous -b build/bin/dissolve
+      ci/scripts/prep-appimage -a Dissolve-GUI -v continuous -b build/bin/dissolve-gui
     displayName: 'Prepare AppDirs'
   - bash: |
       echo -e "\nRetrieving linuxdeploy...\n"
