@@ -141,7 +141,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
     // Return Atom array
     std::vector<std::shared_ptr<Atom>> &atoms();
     // Return Atom array (const)
-    const std::vector<std::shared_ptr<Atom>> &constAtoms() const;
+    const std::vector<std::shared_ptr<Atom>> &atoms() const;
     // Return nth Atom
     std::shared_ptr<Atom> atom(int n);
     // Scale geometric centres of molecules within box

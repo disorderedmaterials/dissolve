@@ -163,7 +163,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
         configurationAssembly_.add(lineConfigurationPrimitive_, A);
 
         // Draw Atoms
-        for (auto i : source_->constAtoms())
+        for (const auto i : source_->atoms())
         {
             // If the atom has no bonds draw it as a 'cross'
             if (i->speciesAtom()->nBonds() == 0)
@@ -207,7 +207,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
         configurationAssembly_.add(true, GL_FILL);
 
         // Draw Atoms
-        for (auto i : source_->constAtoms())
+        for (const auto i : source_->atoms())
         {
             A.setIdentity();
             A.setTranslation(i->r());

@@ -20,7 +20,7 @@ const std::shared_ptr<Atom> ConfigurationViewer::atomAt(int x, int y)
 
     // Loop over atoms, converting the local coordinates into screen coordinates, and testing distance from the point
     // provided
-    for (auto i : configuration_->constAtoms())
+    for (const auto i : configuration_->atoms())
     {
         // Set the lengthscale to the appropriate atom radius for the current display style - it will be replaced with
         // the atom's screen radius
