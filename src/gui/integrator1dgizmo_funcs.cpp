@@ -55,8 +55,8 @@ void Integrator1DGizmo::updateControls()
     ui_.PlotWidget->postRedisplay();
 
     // Get limits from data
-    double xMin = integrationTarget_ ? integrationTarget_->xAxis().first() : 0.0;
-    double xMax = integrationTarget_ ? integrationTarget_->xAxis().last() : 1.0;
+    double xMin = integrationTarget_ ? integrationTarget_->xAxis().front() : 0.0;
+    double xMax = integrationTarget_ ? integrationTarget_->xAxis().back() : 1.0;
     ui_.Region1MinSpin->setRange(xMin, xMax);
     ui_.Region1MaxSpin->setRange(xMin, xMax);
 
@@ -93,8 +93,7 @@ void Integrator1DGizmo::setGraphDataTargets()
     if (!integrationTarget_)
         return;
 
-    Renderable *data = ui_.PlotWidget->createRenderable(Renderable::Data1DRenderable, integrationTarget_->objectTag(),
-                                                        integrationTarget_->name());
+    ui_.PlotWidget->createRenderable(Renderable::Data1DRenderable, integrationTarget_->objectTag(), integrationTarget_->name());
 }
 
 /*

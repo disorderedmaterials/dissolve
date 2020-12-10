@@ -59,14 +59,18 @@ EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
 void Forcefield::addAtomType(int Z, int index, std::string_view name, std::string_view netaDefinition,
                              std::string_view description, double q, double data0, double data1, double data2, double data3)
 {
-    atomTypes_.emplace_back(this, Z, index, name, netaDefinition, description, q, data0, data1, data2, data3);
+    atomTypes_.emplace_back(Z, index, name, netaDefinition, description, q, data0, data1, data2, data3);
 }
 
 // Add new atom type referencing existing parameters by name
 void Forcefield::addAtomType(int Z, int index, std::string_view name, std::string_view netaDefinition,
                              std::string_view description, double q, std::string_view parameterReference)
 {
-    atomTypes_.emplace_back(this, Z, index, name, netaDefinition, description, q, parameterReference);
+    OptionalReferenceWrapper<const ForcefieldParameters> parameterReference_ = shortRangeParameters(parameterReference);
+    if (!parameterReference_)
+        Messenger::error("Reference parameters named '{}' are not defined in the forcefield '{}'.\n", parameterReference,
+                         this->name());
+    atomTypes_.emplace_back(parameterReference_, Z, index, name, netaDefinition, description, q);
 }
 
 // Copy existing atom type
@@ -78,7 +82,7 @@ bool Forcefield::copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType>
         return Messenger::error("Can't copy atom type with new name '{}' into forcefield '{}' as no sourceType was provided.\n",
                                 newTypeName, name());
 
-    atomTypes_.emplace_back(this, *sourceTypeRef, newTypeName, netaDefinition, equivalentName);
+    atomTypes_.emplace_back(*sourceTypeRef, newTypeName, netaDefinition, equivalentName);
 
     return true;
 }
@@ -88,6 +92,8 @@ OptionalReferenceWrapper<const ForcefieldAtomType>
 Forcefield::determineAtomType(SpeciesAtom *i,
                               const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes)
 {
+    Messenger::printVerbose("Determining atom type for atom {} ({})\n", i->userIndex(), i->element()->symbol());
+
     // Go through AtomTypes defined for the target's element, and check NETA scores
     auto bestScore = -1;
     OptionalReferenceWrapper<const ForcefieldAtomType> bestType;
@@ -96,12 +102,19 @@ Forcefield::determineAtomType(SpeciesAtom *i,
         // Get the scoring for this type
         auto &type = typeRef.get();
         auto score = type.neta().score(i);
+        Messenger::printVerbose("  -- score for type index {} ({}) is {}.\n", type.index(), type.name(), score);
         if (score > bestScore)
         {
             bestScore = score;
             bestType = type;
         }
     }
+
+    if (bestScore == -1)
+        Messenger::printVerbose("  -- no suitable type found.");
+    else
+        Messenger::printVerbose("  Best type for atom {} is {} ({}) with a score of {}.\n", i->userIndex(),
+                                bestType->get().index(), bestType->get().name(), bestScore);
 
     return bestType;
 }
@@ -121,8 +134,13 @@ void Forcefield::addParameters(std::string_view name, double data0, double data1
 // Create NETA definitions for all atom types from stored defs
 bool Forcefield::createNETADefinitions()
 {
-    auto nFailed =
-        std::count_if(atomTypes_.begin(), atomTypes_.end(), [this](auto &atomType) { return !atomType.createNETA(this); });
+    auto nFailed = std::count_if(atomTypes_.begin(), atomTypes_.end(), [this](auto &atomType) {
+        auto success = atomType.createNETA(this);
+        if (!success)
+            Messenger::print("Failed to parse NETA definition '{}' for atom type '{}'.", atomType.neta().definitionString(),
+                             atomType.name());
+        return !success;
+    });
 
     if (nFailed > 0)
         Messenger::error("Failed to create {} NETA {} for the forcefield '{}'.\n", nFailed,
@@ -147,7 +165,7 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeByName(st
 {
     auto startZ = (element ? element->Z() : 0);
     auto endZ = (element ? element->Z() : nElements() - 1);
-    for (int Z = startZ; Z <= endZ; ++Z)
+    for (auto Z = startZ; Z <= endZ; ++Z)
     {
         // Go through types associated to the Element
         auto it = std::find_if(atomTypesByElementPrivate_[Z].cbegin(), atomTypesByElementPrivate_[Z].cend(),
@@ -164,7 +182,7 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int 
 {
     auto startZ = (element ? element->Z() : 0);
     auto endZ = (element ? element->Z() : nElements() - 1);
-    for (int Z = startZ; Z <= endZ; ++Z)
+    for (auto Z = startZ; Z <= endZ; ++Z)
     {
         // Go through types associated to the Element
         auto it = std::find_if(atomTypesByElementPrivate_[Z].cbegin(), atomTypesByElementPrivate_[Z].cend(),
@@ -456,7 +474,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                 continue;
 
             // Loop over combinations of bonds to the central atom
-            for (int indexJ = 0; indexJ < i->nBonds() - 2; ++indexJ)
+            for (auto indexJ = 0; indexJ < i->nBonds() - 2; ++indexJ)
             {
                 // Get SpeciesAtom 'j'
                 auto *j = i->bond(indexJ).partner(i);
@@ -467,7 +485,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                 if (selectionOnly && (!j->isSelected()))
                     continue;
 
-                for (int indexK = indexJ + 1; indexK < i->nBonds() - 1; ++indexK)
+                for (auto indexK = indexJ + 1; indexK < i->nBonds() - 1; ++indexK)
                 {
                     // Get SpeciesAtom 'k'
                     auto *k = i->bond(indexK).partner(i);
@@ -478,7 +496,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                     if (selectionOnly && (!k->isSelected()))
                         continue;
 
-                    for (int indexL = indexK + 1; indexL < i->nBonds(); ++indexL)
+                    for (auto indexL = indexK + 1; indexL < i->nBonds(); ++indexL)
                     {
                         // Get SpeciesAtom 'l'
                         auto *l = i->bond(indexL).partner(i);
@@ -526,9 +544,7 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
 {
     AtomGeometry result = nAtomGeometries;
     double angle, largest;
-    SpeciesBond *b1, *b2;
     SpeciesAtom *h, *j;
-    // 	RefListItem<SpeciesBond,int>* bref1, *bref2;
 
     // Work based on the number of bound atoms
     switch (i->nBonds())
@@ -553,28 +569,10 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
             if (angle > 150.0)
                 result = Forcefield::LinearGeometry;
-            // 			else if ((angle > 100.0) && (angle < 115.0)) result =
-            // Forcefield::TetrahedralGeometry;
             else
                 result = Forcefield::TetrahedralGeometry;
             break;
         case (3):
-            // 			bref1 = bonds();
-            // 			bref2 = bonds()->next;
-            // 			b1 = bref1->item;
-            // 			b2 = bref2->item;
-            // 			angle = parent_->angle(b1->partner(this),this,b2->partner(this));
-            // 			largest = angle;
-            // 			b2 = bref2->next->item;
-            // 			angle = parent_->angle(b1->partner(this),this,b2->partner(this));
-            // 			if (angle > largest) largest = angle;
-            // 			b1 = bref1->next->item;
-            // 			angle = parent_->angle(b1->partner(this),this,b2->partner(this));
-            // 			if (angle > largest) largest = angle;
-            // 			if (largest > 170.0) result = Forcefield::TShapeGeometry;
-            // 			else if ((largest > 115.0) && (largest < 125.0)) result =
-            // Forcefield::TrigPlanarGeometry; 			else if ((largest < 115.0) && (largest > 100.0))
-            // result = Forcefield::TetrahedralGeometry; Get largest of the three angles around the central atom
             h = i->bond(0).partner(i);
             j = i->bond(1).partner(i);
             angle = NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
@@ -591,8 +589,6 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
                 result = Forcefield::TShapeGeometry;
             else if ((largest > 115.0) && (largest < 125.0))
                 result = Forcefield::TrigonalPlanarGeometry;
-            // 			else if ((largest < 115.0) && (largest > 100.0)) result =
-            // Forcefield::TetrahedralGeometry;
             else
                 result = Forcefield::TetrahedralGeometry;
             break;
@@ -600,10 +596,10 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
             // Two possibilities - tetrahedral or square planar. Tetrahedral will have an
             // average of all angles of ~ 109.5, for square planar (1/6) * (4*90 + 2*180) = 120
             angle = 0.0;
-            for (int n = 0; n < i->nBonds(); ++n)
+            for (auto n = 0; n < i->nBonds(); ++n)
             {
                 h = i->bond(n).partner(i);
-                for (int m = n + 1; m < i->nBonds(); ++m)
+                for (auto m = n + 1; m < i->nBonds(); ++m)
                 {
                     j = i->bond(m).partner(i);
                     angle += NonPeriodicBox::literalAngleInDegrees(h->r(), i->r(), j->r());
@@ -612,8 +608,6 @@ Forcefield::AtomGeometry Forcefield::geometryOfAtom(SpeciesAtom *i) const
             angle /= 6.0;
             if ((angle > 100.0) && (angle < 115.0))
                 result = Forcefield::TetrahedralGeometry;
-            // 			else if ((angle >= 115.0) && (angle < 125.0)) result =
-            // Forcefield::SquarePlanarGeometry;
             else
                 result = Forcefield::SquarePlanarGeometry;
             break;

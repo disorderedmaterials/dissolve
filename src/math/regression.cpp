@@ -16,28 +16,28 @@ double Regression::linear(const Data1D &data, int nSamples)
 double Regression::linear(const Data1D &data, int nSamples, double &yBar)
 {
     // Grab data arrays
-    const auto &x = data.constXAxis();
-    const auto &y = data.constValues();
+    const auto &x = data.xAxis();
+    const auto &y = data.values();
 
     double Sxx = 0.0, Syy = 0.0, Sxy = 0.0;
     double xBar = 0.0;
     yBar = 0.0;
 
     // Calculate mean values of x and y
-    for (int n = data.nValues() - nSamples; n < data.nValues(); ++n)
+    for (auto n = data.nValues() - nSamples; n < data.nValues(); ++n)
     {
-        xBar += x.constAt(n);
-        yBar += y.constAt(n);
+        xBar += x[n];
+        yBar += y[n];
     }
     xBar /= nSamples;
     yBar /= nSamples;
 
     // Determine Sx, Sy, and Sxy
     double dx, dy;
-    for (int n = data.nValues() - nSamples; n < data.nValues(); ++n)
+    for (auto n = data.nValues() - nSamples; n < data.nValues(); ++n)
     {
-        dx = x.constAt(n) - xBar;
-        dy = y.constAt(n) - yBar;
+        dx = x[n] - xBar;
+        dy = y[n] - yBar;
         Sxx += dx * dx;
         Syy += dy * dy;
         Sxy += dx * dy;

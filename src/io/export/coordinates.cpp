@@ -67,7 +67,7 @@ bool CoordinateExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
         return false;
 
     // Export Atoms
-    for (int n = 0; n < cfg->nAtoms(); ++n)
+    for (auto n = 0; n < cfg->nAtoms(); ++n)
     {
         Atom *i = cfg->atom(n);
         if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", i->speciesAtom()->element()->symbol(), i->r().x,
@@ -117,7 +117,7 @@ bool CoordinateExportFileFormat::exportDLPOLY(LineParser &parser, Configuration 
     }
 
     // Export Atoms
-    for (int n = 0; n < cfg->nAtoms(); ++n)
+    for (auto n = 0; n < cfg->nAtoms(); ++n)
     {
         Atom *i = cfg->atom(n);
         if (!parser.writeLineF("{:<6}{:10d}{:20.10f}\n{:20.12f}{:20.12f}{:20.12f}\n",

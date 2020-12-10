@@ -11,3 +11,6 @@ const List<MasterIntra> &Dissolve::masterAngles() const { return coreData_.maste
 
 // Return list of master Torsion parameters
 const List<MasterIntra> &Dissolve::masterTorsions() const { return coreData_.masterTorsions(); }
+
+// Return list of master Improper parameters
+const List<MasterIntra> &Dissolve::masterImpropers() const { return coreData_.masterImpropers(); }

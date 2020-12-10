@@ -42,10 +42,9 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Configuration *cfg
 // Return total interatomic energy of Species
 double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap)
 {
-    double r, angle;
     SpeciesAtom *i, *j;
     Vec3<double> rI;
-    double scale, energy = 0.0;
+    double r, scale, energy = 0.0;
     const auto cutoff = potentialMap.range();
 
     // Get start/end for loop
@@ -59,7 +58,7 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const
         i = sp->atom(indexI);
         rI = i->r();
 
-        for (int indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
+        for (auto indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
         {
             j = sp->atom(indexJ);
 
@@ -146,7 +145,7 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
 
     std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
     std::shared_ptr<const Molecule> mol;
-    for (int m = start; m < cfg->nMolecules(); m += stride)
+    for (auto m = start; m < cfg->nMolecules(); m += stride)
     {
         // Get Molecule pointer
         mol = molecules[m];

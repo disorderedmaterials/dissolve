@@ -504,7 +504,7 @@ Vec3<double> View::screenToData(int x, int y, double z) const
     newx = viewportMatrix_[0] + viewportMatrix_[2] * (temp.x / temp.w + 1.0) * 0.5;
     newy = viewportMatrix_[1] + viewportMatrix_[3] * (temp.y / temp.w + 1.0) * 0.5;
 
-    for (int n = 0; n < 10; ++n)
+    for (auto n = 0; n < 10; ++n)
     {
         // Determine new (better) coordinate from a yardstick centred at current world coordinates
         temp = projectionMatrix_ * Vec4<double>(worldr.x + 1.0, worldr.y + 1.0, worldr.z, worldr.w);
@@ -644,7 +644,7 @@ void View::recalculateView(bool force)
     Vec3<double> coordMin[3], coordMax[3], labelMin, labelMax, a, b, globalMin, globalMax;
 
     // Iterate for a few cycles
-    for (int cycle = 0; cycle < 5; ++cycle)
+    for (auto cycle = 0; cycle < 5; ++cycle)
     {
         // We will now calculate more accurate stretch factors to apply to the X and Y axes.
         // Project the axis limits on to the screen using the relevant viewmatrix + coordinate centre translation
@@ -677,7 +677,7 @@ void View::recalculateView(bool force)
             coordMax[axis].set(std::max(a.x, b.x), std::max(a.y, b.y), std::max(a.z, b.z));
 
             // Update global min/max
-            for (int n = 0; n < 3; ++n)
+            for (auto n = 0; n < 3; ++n)
             {
                 if (coordMin[axis][n] < globalMin[n])
                     globalMin[n] = coordMin[axis][n];
@@ -695,7 +695,7 @@ void View::recalculateView(bool force)
             b = dataToScreen(cuboid.maxima(), tempProjection, viewMat);
 
             // Update global and label min/max
-            for (int n = 0; n < 3; ++n)
+            for (auto n = 0; n < 3; ++n)
             {
                 tempMin = std::min(a[n], b[n]);
                 tempMax = std::max(a[n], b[n]);
@@ -802,7 +802,7 @@ void View::showAllData(double xFrac, double yFrac, double zFrac)
     updateAxisLimits(xFrac, yFrac, zFrac);
 
     // Set axes limits to the extreme data values, making sure we have a sensible (i.e. non-zero range)
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         // Grab axis limits and make sure the limits are sensible, expanding only if the range is zero
         double limitMin = axes_.limitMin(axis);
@@ -836,7 +836,7 @@ void View::zoomTo(Vec3<double> limit1, Vec3<double> limit2)
     else
     {
         // 3D view, so set all three axes
-        for (int axis = 0; axis < 3; ++axis)
+        for (auto axis = 0; axis < 3; ++axis)
         {
             axes_.setMin(axis, newMin.get(axis));
             axes_.setMax(axis, newMax.get(axis));
@@ -857,7 +857,7 @@ void View::scaleRange(double factor)
         skipAxis = 0;
 
     // Loop over axes
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         if (axis == skipAxis)
             continue;
@@ -1151,7 +1151,7 @@ void View::updateAxisLimits(double xFrac, double yFrac, double zFrac)
     Vec3<double> fractions(xFrac, yFrac, zFrac);
 
     // Loop over axes
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
     {
         // Adjust limits
         if (fractions[axis] > 0.0)
@@ -1204,7 +1204,7 @@ void View::shiftFlatAxisLimits(double deltaH, double deltaV)
     double deltas[2];
     deltas[0] = deltaH;
     deltas[1] = deltaV;
-    for (int n = 0; n < 2; ++n)
+    for (auto n = 0; n < 2; ++n)
     {
         double range = axes_.realRange(axes[n]);
         auto logarithmic = axes_.logarithmic(axes[n]);

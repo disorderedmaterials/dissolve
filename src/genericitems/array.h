@@ -52,7 +52,7 @@ template <class T> class GenericItemContainer<Array<T>> : public GenericItem
     {
         parser.writeLineF("{}\n", data_.nItems());
         T *array = data_.array();
-        for (int n = 0; n < data_.nItems(); ++n)
+        for (auto n = 0; n < data_.nItems(); ++n)
         {
             if (!array[n].write(parser))
                 return false;
@@ -67,7 +67,7 @@ template <class T> class GenericItemContainer<Array<T>> : public GenericItem
         int nItems = parser.argi(0);
         data_.initialise(nItems);
 
-        for (int n = 0; n < nItems; ++n)
+        for (auto n = 0; n < nItems; ++n)
             if (!data_[n].read(parser, coreData))
                 return false;
         return true;

@@ -4,8 +4,10 @@
 #pragma once
 
 #include "base/messenger.h"
+#include "math/mathfunc.h"
 #include "math/minimiser.h"
 #include <iomanip>
+#include <numeric>
 
 template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
 {
@@ -40,13 +42,12 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
 
     private:
     // Smooth current parameter set
-    void smoothParameters(Array<double> &values)
+    void smoothParameters(std::vector<double> &values)
     {
         // Apply Kolmogorov–Zurbenko filter
-        for (int k = 0; k < parameterSmoothingK_; ++k)
+        for (auto k = 0; k < parameterSmoothingK_; ++k)
         {
-            Array<double> newY(values.nItems());
-            newY = 0.0;
+            std::vector<double> newY(values.size(), 0.0);
             int n, m, i = parameterSmoothingM_ / 2;
 
             // Left-most region of data
@@ -58,7 +59,7 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
             }
 
             // Central region (full average width available)
-            for (n = i; n < values.nItems() - i; ++n)
+            for (n = i; n < values.size() - i; ++n)
             {
                 for (m = n - i; m <= n + i; ++m)
                     newY[n] += (values[m]);
@@ -66,14 +67,14 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
             }
 
             // Right-most region of data
-            for (n = values.nItems() - i; n < values.nItems(); ++n)
+            for (n = values.size() - i; n < values.size(); ++n)
             {
-                for (m = n - i; m < values.nItems(); ++m)
+                for (m = n - i; m < values.size(); ++m)
                     newY[n] += values[m];
-                newY[n] /= (values.nItems() - n + i + 1);
+                newY[n] /= (values.size() - n + i + 1);
             }
 
-            for (int n = 0; n < values.nItems(); ++n)
+            for (auto n = 0; n < values.size(); ++n)
                 values[n] = newY[n];
         }
     }
@@ -103,28 +104,28 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
     // Target acceptance ratio
     void setTargetAcceptanceRatio(double ratio) { targetAcceptanceRatio_ = ratio; }
     // Perform minimisation
-    double execute(Array<double> &values)
+    double execute(std::vector<double> &values)
     {
         // Get initial error of input parameters
         double currentError = MinimiserBase<T>::cost(values);
         Messenger::printVerbose("MonteCarloMinimiser<T>::minimise() - Initial error = {}\n", currentError);
 
         double trialError;
-        Array<double> trialValues;
-        Array<int> accepts;
+        std::vector<double> trialValues;
+        std::vector<int> accepts;
         bool accepted;
         int smoothingNAccepted = 0;
 
         // Outer loop
-        for (int iter = 0; iter < maxIterations_; ++iter)
+        for (auto iter = 0; iter < maxIterations_; ++iter)
         {
             // Copy current best alpha
             trialValues = values;
 
             // Perform a Monte Carlo move on a random parameter
-            int i = trialValues.nItems() * DissolveMath::random();
-            if (i >= trialValues.nItems())
-                i = trialValues.nItems() - 1;
+            auto i = int(trialValues.size() * DissolveMath::random());
+            if (i >= trialValues.size())
+                i = trialValues.size() - 1;
 
             if (fabs(trialValues[i]) < 1.0e-8)
                 trialValues[i] += DissolveMath::randomPlusMinusOne() * 0.01 * stepSize_;
@@ -145,12 +146,13 @@ template <class T> class MonteCarloMinimiser : public MinimiserBase<T>
                 trialValues[i] = values[i];
 
             // Accumulate acceptance memory
-            accepts.add(accepted);
+            accepts.push_back(accepted);
 
             // If we have enough acceptance memory, adjust the step size
-            if (accepts.nItems() == acceptanceMemoryLength_)
+            if (accepts.size() == acceptanceMemoryLength_)
             {
-                double ratio = targetAcceptanceRatio_ / (double(accepts.sum()) / acceptanceMemoryLength_);
+                double ratio =
+                    targetAcceptanceRatio_ / (std::accumulate(accepts.begin(), accepts.end(), 0.0) / acceptanceMemoryLength_);
                 stepSize_ /= ratio;
                 if (stepSize_ < minStepSize_)
                     stepSize_ = minStepSize_;

@@ -94,6 +94,30 @@ class KeywordList
             (*found) = true;
         return castItem->data();
     }
+    template <class T> const T &retrieve(std::string_view name, T defaultValue = T(), bool *found = nullptr) const
+    {
+        // Find item in the list
+        KeywordBase *item = find(name);
+        if (!item)
+        {
+            Messenger::printVerbose("No item named '{}' in the keyword list - default value item will be returned.\n", name);
+            static T dummy;
+            dummy = defaultValue;
+            if (found != nullptr)
+                (*found) = false;
+            return dummy;
+        }
+
+        // Attempt to cast to specified type
+        KeywordData<T> *castItem = dynamic_cast<KeywordData<T> *>(item);
+        if (!castItem)
+            throw std::runtime_error(
+                fmt::format("KeywordList::retrieve({}) failed, because the target item is of the wrong type.", name));
+
+        if (found != nullptr)
+            (*found) = true;
+        return castItem->data();
+    }
     // Set named item from specified list as a template-guided type
     template <class T> bool set(std::string_view name, T value)
     {

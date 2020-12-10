@@ -21,7 +21,6 @@ class QLCDNumber;
 class QMdiSubWindow;
 class Species;
 class SpeciesTab;
-class ModuleTab;
 class ModuleLayer;
 class LayerTab;
 class WorkspaceTab;
@@ -105,6 +104,8 @@ class DissolveWindow : public QMainWindow
     private:
     // Initialise system templates from the main resource
     void initialiseSystemTemplates();
+    // Prepare the simulation and run for a set count
+    void setupIteration(int count);
 
     /*
      * Reference Points

@@ -16,9 +16,7 @@
 class ComboListItems
 {
     public:
-    // Constructor
     ComboListItems();
-    // Destructor
     virtual ~ComboListItems();
 
     /*
@@ -39,7 +37,6 @@ class ComboListItems
 template <class T> class ComboNameListItems : public ComboListItems
 {
     public:
-    // Constructor
     ComboNameListItems(const List<T> &items) : items_(items), iterator_(items) {}
 
     private:
@@ -72,14 +69,13 @@ template <class T> class ComboNameListItems : public ComboListItems
 template <class T> class ComboSharedNameListItems : public ComboListItems
 {
     public:
-    // Constructor
-    ComboSharedNameListItems(const std::vector<std::shared_ptr<T>> &items) : items_(items), currentItem_(items.cbegin()) {}
+    ComboSharedNameListItems(const std::vector<std::shared_ptr<T>> &items) : items_(items), currentIndex_(-1) {}
 
     private:
     // Associated item list
     const std::vector<std::shared_ptr<T>> &items_;
-    // Current iteration item
-    typename std::vector<std::shared_ptr<T>>::const_iterator currentItem_;
+    // Current iteration item index
+    int currentIndex_;
 
     /*
      * Access
@@ -88,17 +84,19 @@ template <class T> class ComboSharedNameListItems : public ComboListItems
     // Return number of items in list
     int nItems() { return items_.size(); }
     // Restart list iteration
-    void restartIterator() { currentItem_ = items_.cbegin(); }
+    void restartIterator() { currentIndex_ = -1; }
     // Move to next item in list
     bool nextItem()
     {
-        ++currentItem_;
-        return currentItem_ < items_.cend();
+        ++currentIndex_;
+        return currentIndex_ < items_.size();
     }
     // Return text entry for nth item
     QString currentItemText()
     {
-        return (*currentItem_ ? QString::fromStdString(std::string((*currentItem_)->name())) : "NULL");
+        return ((currentIndex_ != -1) && (currentIndex_ < items_.size())
+                    ? QString::fromStdString(std::string((items_[currentIndex_])->name()))
+                    : "NULL");
     }
 };
 
@@ -106,7 +104,6 @@ template <class T> class ComboSharedNameListItems : public ComboListItems
 template <class E> class ComboEnumOptionsItems : public ComboListItems
 {
     public:
-    // Constructor
     ComboEnumOptionsItems(EnumOptions<E> enumOptions) : items_(enumOptions) { currentItemIndex_ = 0; }
 
     private:
@@ -143,9 +140,7 @@ class ComboListDelegate : public QItemDelegate
     Q_OBJECT
 
     public:
-    // Constructor
     ComboListDelegate(QObject *parent, ComboListItems *items, bool allowNewItems = false);
-    // Destructor
     virtual ~ComboListDelegate();
 
     /*

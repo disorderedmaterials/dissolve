@@ -9,54 +9,33 @@
 #include <vector>
 
 // Forward Declarations
-class Configuration;
 class Species;
 class Isotopologue;
-class IsotopologueCollection;
 class LineParser;
 
-// IsotopologueSet - Isotopologues for one or more Species in a single Configuration
+// IsotopologueSet - Isotopologues for one or more Species
 class IsotopologueSet : public GenericItemBase
 {
     public:
-    IsotopologueSet(IsotopologueCollection *parent = nullptr, Configuration *cfg = nullptr);
-    ~IsotopologueSet();
+    IsotopologueSet() = default;
+    ~IsotopologueSet() = default;
 
     /*
-     * Parent Collection
+     * Data
      */
     private:
-    // Parent IsotopologueCollection in which this set exists
-    IsotopologueCollection *parentCollection_;
-
-    public:
-    // Set parent IsotopologueCollection in which this set exists
-    void setParentCollection(IsotopologueCollection *parent);
-    // Parent IsotopologueCollection in which this set exists
-    IsotopologueCollection *parentCollection() const;
-
-    /*
-     * Mix Definitions
-     */
-    private:
-    // Configuration in which the Species are used
-    Configuration *configuration_;
     // Isotopologue mixtures for individual Species
     std::vector<Isotopologues> isotopologues_;
 
     public:
     // Clear all existing data
     void clear();
-    // Set Configuration in which the Species are used
-    void setConfiguration(Configuration *cfg);
-    // Return Configuration in which the Species are used
-    Configuration *configuration() const;
     // Add Isotopologue with the specified relative weight
-    void add(Isotopologue *iso, double relativeWeight);
+    void add(const Isotopologue *iso, double relativeWeight);
     // Remove specified Species from the list (if it exists)
-    void remove(Species *sp);
+    void remove(const Species *sp);
     // Remove any occurrences of the specified Isotopologue
-    void remove(Isotopologue *iso);
+    void remove(const Isotopologue *iso);
     // Remove the specified IsotopologueWeight
     void remove(IsotopologueWeight *isoWeight);
     // Return whether Isotopologues for the specified Species exists

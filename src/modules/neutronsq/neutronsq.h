@@ -5,11 +5,13 @@
 
 #include "classes/data1dstore.h"
 #include "classes/partialset.h"
+#include "data/structurefactors.h"
 #include "io/import/data1d.h"
 #include "module/module.h"
 
 // Forward Declarations
 class PartialSet;
+class RDFModule;
 class Weights;
 
 // SQ Module
@@ -44,7 +46,7 @@ class NeutronSQModule : public Module
      */
     private:
     // Isotopologue information
-    IsotopologueCollection isotopologues_;
+    IsotopologueSet isotopologues_;
     // Exchangeable AtomTypes
     AtomTypeList exchangeableTypes_;
     // Reference F(Q) file and format
@@ -55,16 +57,6 @@ class NeutronSQModule : public Module
     void initialise();
 
     public:
-    // Normalisation Type enum
-    enum NormalisationType
-    {
-        NoNormalisation,
-        AverageOfSquaresNormalisation,
-        SquareOfAverageNormalisation,
-        nNormalisationTypes
-    };
-    // Return enum option info for NormalisationType
-    EnumOptions<NeutronSQModule::NormalisationType> normalisationTypes();
     // Return file and format for reference total F(Q)
     const Data1DImportFileFormat &referenceFQFileAndFormat();
 
@@ -88,13 +80,13 @@ class NeutronSQModule : public Module
 
     public:
     // Calculate weighted g(r) from supplied unweighted g(r) and neutron weights
-    bool calculateWeightedGR(PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
-                             NeutronSQModule::NormalisationType normalisation);
+    bool calculateWeightedGR(const PartialSet &unweightedgr, PartialSet &weightedgr, NeutronWeights &weights,
+                             StructureFactors::NormalisationType normalisation);
     // Calculate weighted S(Q) from supplied unweighted S(Q) and neutron weights
-    bool calculateWeightedSQ(PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
-                             NeutronSQModule::NormalisationType normalisation);
-    // Calculate neutron weights summed over target Configurations
-    bool calculateSummedWeights(NeutronWeights &summedWeights) const;
+    bool calculateWeightedSQ(const PartialSet &unweightedsq, PartialSet &weightedsq, NeutronWeights &weights,
+                             StructureFactors::NormalisationType normalisation);
+    // Calculate neutron weights for relevant Configuration targets
+    void calculateWeights(const RDFModule *rdfModule, NeutronWeights &weights) const;
 
     /*
      * GUI Widget

@@ -55,11 +55,11 @@ jobs:
           export PATH=/nix/store/3nkklvqiy74dsdimlqy3704yxwah47sy-openmpi-4.0.2/bin:$PATH
           ls /nix/store
           chmod u+x ./go ./dissolve-mpi
-          ./go -a -p ./dissolve-mpi
+          ./go -a -m mpirun.openmpi -p ./dissolve-mpi
         displayName: 'Run Parallel System Tests'
       - bash: |
           mkdir test-output
-          cp -rv $(System.ArtifactsDirectory)/linux-tests-parallel/*.out test-output/
+          cp -rv $(System.ArtifactsDirectory)/linux-tests-parallel/*.out* test-output/
         displayName: 'Copy Test Output'
         condition: always()
       - task: PublishBuildArtifacts@1

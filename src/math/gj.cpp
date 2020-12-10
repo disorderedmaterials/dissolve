@@ -20,11 +20,11 @@ bool GaussJordan::invert(Array2D<double> &A)
     }
 
     const auto rank = A.nRows();
-    double *array = A.linearArray();
+    auto &array = A.linearArray();
 
-    int pivotrows[rank], pivotcols[rank], pivotrow = 0, pivotcol = 0;
-    bool pivoted[rank];
-    int row, col, n, m;
+    std::vector<int> pivotrows(rank), pivotcols(rank);
+    std::vector<bool> pivoted(rank);
+    int row, col, n, m, pivotrow = 0, pivotcol = 0;
     double large, element;
     for (n = 0; n < rank; ++n)
     {

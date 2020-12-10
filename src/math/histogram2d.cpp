@@ -69,9 +69,9 @@ void Histogram2D::initialise(double xMin, double xMax, double xBinWidth, double 
 
     // Set up accumulated data array and set bin centres
     accumulatedData_.initialise(nXBins_, nYBins_, true);
-    for (int x = 0; x < nXBins_; ++x)
+    for (auto x = 0; x < nXBins_; ++x)
         accumulatedData_.xAxis(x) = xBinCentres_[x];
-    for (int y = 0; y < nYBins_; ++y)
+    for (auto y = 0; y < nYBins_; ++y)
         accumulatedData_.yAxis(y) = yBinCentres_[y];
 }
 
@@ -111,7 +111,7 @@ int Histogram2D::nYBins() const { return nYBins_; }
 bool Histogram2D::bin(double x, double y)
 {
     // Calculate target bin along x
-    auto xBin = (x - xMinimum_) / xBinWidth_;
+    auto xBin = int((x - xMinimum_) / xBinWidth_);
     if ((xBin < 0) || (xBin >= nXBins_))
     {
         ++nMissed_;
@@ -119,14 +119,14 @@ bool Histogram2D::bin(double x, double y)
     }
 
     // Calculate target bin along y
-    auto yBin = (y - yMinimum_) / yBinWidth_;
+    auto yBin = int((y - yMinimum_) / yBinWidth_);
     if ((yBin < 0) || (yBin >= nYBins_))
     {
         ++nMissed_;
         return false;
     }
 
-    ++bins_.at(xBin, yBin);
+    ++bins_[{xBin, yBin}];
     ++nBinned_;
 
     return true;
@@ -138,25 +138,25 @@ long int Histogram2D::nBinned() const { return nBinned_; }
 // Accumulate current histogram bins into averages
 void Histogram2D::accumulate()
 {
-    for (int x = 0; x < nXBins_; ++x)
+    for (auto x = 0; x < nXBins_; ++x)
     {
-        for (int y = 0; y < nYBins_; ++y)
+        for (auto y = 0; y < nYBins_; ++y)
         {
             // Update averages
-            averages_.at(x, y) += double(bins_.at(x, y));
+            averages_[{x, y}] += double(bins_[{x, y}]);
 
             // Update accumulated data
-            accumulatedData_.value(x, y) = averages_.constAt(x, y);
-            accumulatedData_.error(x, y) = averages_.constAt(x, y).stDev();
+            accumulatedData_.value(x, y) = averages_[{x, y}].value();
+            accumulatedData_.error(x, y) = averages_[{x, y}].stDev();
         }
     }
 }
 
 // Return Array of x centre-bin values
-const Array<double> &Histogram2D::xBinCentres() const { return xBinCentres_; }
+const std::vector<double> &Histogram2D::xBinCentres() const { return xBinCentres_; }
 
 // Return Array of y centre-bin values
-const Array<double> &Histogram2D::yBinCentres() const { return yBinCentres_; }
+const std::vector<double> &Histogram2D::yBinCentres() const { return yBinCentres_; }
 
 // Return histogram data
 Array2D<long int> &Histogram2D::bins() { return bins_; }
@@ -171,10 +171,10 @@ void Histogram2D::add(Histogram2D &other, int factor)
         return;
     }
 
-    for (int x = 0; x < nXBins_; ++x)
+    for (auto x = 0; x < nXBins_; ++x)
     {
-        for (int y = 0; y < nYBins_; ++y)
-            bins_.at(x, y) += other.bins_.at(x, y) * factor;
+        for (auto y = 0; y < nYBins_; ++y)
+            bins_[{x, y}] += other.bins_[{x, y}] * factor;
     }
 }
 
@@ -228,10 +228,10 @@ bool Histogram2D::read(LineParser &parser, CoreData &coreData)
     nBinned_ = parser.argli(0);
     nMissed_ = parser.argli(1);
 
-    for (int x = 0; x < nXBins_; ++x)
+    for (auto x = 0; x < nXBins_; ++x)
     {
-        for (int y = 0; y < nYBins_; ++y)
-            if (!averages_.at(x, y).read(parser, coreData))
+        for (auto y = 0; y < nYBins_; ++y)
+            if (!averages_[{x, y}].read(parser, coreData))
                 return false;
     }
 
@@ -247,10 +247,10 @@ bool Histogram2D::write(LineParser &parser)
         return false;
     if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
         return false;
-    for (int x = 0; x < nXBins_; ++x)
+    for (auto x = 0; x < nXBins_; ++x)
     {
-        for (int y = 0; y < nYBins_; ++y)
-            if (!averages_.at(x, y).write(parser))
+        for (auto y = 0; y < nYBins_; ++y)
+            if (!averages_[{x, y}].write(parser))
                 return false;
     }
 
@@ -265,7 +265,7 @@ bool Histogram2D::write(LineParser &parser)
 bool Histogram2D::allSum(ProcessPool &procPool)
 {
 #ifdef PARALLEL
-    if (!procPool.allSum(bins_.linearArray(), bins_.linearArraySize()))
+    if (!procPool.allSum(bins_.linearArray().data(), bins_.linearArray().size()))
         return false;
 #endif
 
@@ -303,11 +303,10 @@ bool Histogram2D::broadcast(ProcessPool &procPool, const int root, const CoreDat
         return false;
     if (!procPool.broadcast(yBinCentres_, root))
         return false;
-    if (!procPool.broadcast(bins_.linearArray(), bins_.linearArraySize(), root))
+    if (!procPool.broadcast(bins_.linearArray(), root))
         return false;
-    SampledDouble *avgs = averages_.linearArray();
-    for (int n = 0; n < averages_.linearArraySize(); ++n)
-        if (!avgs[n].broadcast(procPool, root, coreData))
+    for (auto &n : averages_)
+        if (!n.broadcast(procPool, root, coreData))
             return false;
 #endif
     return true;
@@ -346,7 +345,7 @@ bool Histogram2D::equality(ProcessPool &procPool)
                                 nYBins_);
     if (!procPool.equality(yBinCentres_))
         return Messenger::error("Histogram2D y bin centre values not equivalent.\n");
-    if (!procPool.equality(bins_.linearArray(), bins_.linearArraySize()))
+    if (!procPool.equality(bins_.linearArray()))
         return Messenger::error("Histogram2D bin values not equivalent.\n");
     if (!procPool.equality(nBinned_))
         return Messenger::error("Histogram2D nunmber of binned values is not equivalent (process {} has {}).\n",
@@ -354,9 +353,8 @@ bool Histogram2D::equality(ProcessPool &procPool)
     if (!procPool.equality(nMissed_))
         return Messenger::error("Histogram2D nunmber of binned values is not equivalent (process {} has {}).\n",
                                 procPool.poolRank(), nBinned_);
-    SampledDouble *avgs = averages_.linearArray();
-    for (int n = 0; n < averages_.linearArraySize(); ++n)
-        if (!avgs[n].equality(procPool))
+    for (auto &n : averages_)
+        if (!n.equality(procPool))
             return Messenger::error("Histogram2D average values not equivalent.\n");
 #endif
     return true;

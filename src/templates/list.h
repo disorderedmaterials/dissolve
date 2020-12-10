@@ -110,7 +110,7 @@ template <class T> class List
     void createEmpty(int size)
     {
         clear();
-        for (int n = 0; n < size; ++n)
+        for (auto n = 0; n < size; ++n)
             add();
         regenerate_ = true;
     }
@@ -619,7 +619,7 @@ template <class T> class List
         }
         // Get pointer to item that we're moving and shift it
         T *olditem = array()[target];
-        for (int n = 0; n < abs(delta); n++)
+        for (auto n = 0; n < abs(delta); n++)
             (delta < 0 ? shiftUp(olditem) : shiftDown(olditem));
         // Flag for regeneration
         regenerate_ = true;

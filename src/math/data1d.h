@@ -5,18 +5,14 @@
 
 #include "base/version.h"
 #include "math/plottable.h"
-#include "templates/array.h"
 #include "templates/objectstore.h"
-
-// Forward Declarations
-class Histogram1D;
 
 // One-Dimensional Data
 class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore<Data1D>, public GenericItemBase
 {
     public:
     Data1D();
-    ~Data1D();
+    virtual ~Data1D();
     Data1D(const Data1D &source);
     // Clear data
     void clear();
@@ -26,13 +22,13 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
      */
     private:
     // X array
-    Array<double> x_;
+    std::vector<double> x_;
     // Values at each x
-    Array<double> values_;
+    std::vector<double> values_;
     // Whether data has associated errors
     bool hasError_;
     // Errors of values, if present
-    Array<double> errors_;
+    std::vector<double> errors_;
     // Data version
     VersionCounter version_;
 
@@ -60,17 +56,17 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
     // Return x axis value specified (const)
     double constXAxis(int index) const;
     // Return x axis Array
-    Array<double> &xAxis();
+    std::vector<double> &xAxis();
     // Return x axis Array (const)
-    const Array<double> &constXAxis() const;
+    const std::vector<double> &xAxis() const;
     // Return value specified
     double &value(int index);
     // Return value value specified (const)
     double constValue(int index) const;
     // Return value Array
-    Array<double> &values();
+    std::vector<double> &values();
     // Return values Array
-    const Array<double> &constValues() const;
+    const std::vector<double> &values() const;
     // Return number of values present in whole dataset
     int nValues() const;
     // Return minimum value over all data points
@@ -84,11 +80,11 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
     // Return error value specified
     double &error(int index);
     // Return error value specified (const)
-    double constError(int index) const;
+    double error(int index) const;
     // Return error Array
-    Array<double> &errors();
+    std::vector<double> &errors();
     // Return errors Array
-    const Array<double> &constErrors() const;
+    const std::vector<double> &errors() const;
 
     /*
      * Operators
@@ -100,7 +96,7 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
     void operator-=(const Data1D &source);
     void operator-=(const double delta);
     void operator*=(const double factor);
-    void operator*=(const Array<double> &factors);
+    void operator*=(const std::vector<double> &factors);
     void operator/=(const double factor);
 
     /*

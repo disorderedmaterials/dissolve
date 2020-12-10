@@ -103,7 +103,7 @@ void ExpressionNode::addArguments(int nargs, ...)
     va_start(vars, nargs);
 
     // Add arguments in the order they were provided
-    for (int n = 0; n < nargs; n++)
+    for (auto n = 0; n < nargs; n++)
         addArgument(va_arg(vars, ExpressionNode *));
     va_end(vars);
 }

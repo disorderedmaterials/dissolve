@@ -44,5 +44,5 @@ We need to refine the simulation before we calculate our properties again, so we
 {{< step text="Disable the layer by clicking the ![](/img/slider-on.png) button so it displays ![](/img/slider-off.png)" >}}
 
 
-{{< button pos="left" text="Previous Step" path="../step4/">}}
-{{< button pos="right" text="Next Step" path="../step6/">}}
+{{< button pos="left" text="Previous Step" path="step4/">}}
+{{< button pos="right" text="Next Step" path="step6/">}}

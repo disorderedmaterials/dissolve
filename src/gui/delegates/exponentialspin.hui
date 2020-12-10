@@ -17,7 +17,6 @@ class ExponentialSpinDelegate : public QItemDelegate
     double min_, max_, step_, nDecimals_;
 
     public:
-    // Constructor
     ExponentialSpinDelegate(QObject *parent = 0, double vmin = -1e6, double vmax = 1e6, double vstep = 1.0,
                             double nDecimals = 5);
     // Reimplemented virtual function to create editing widget

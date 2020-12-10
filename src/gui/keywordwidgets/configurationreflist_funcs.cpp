@@ -1,23 +1,5 @@
-/*
-    *** Keyword Widget - Configuration RefList
-    *** src/gui/keywordwidgets/configurationreflist_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/configuration.h"
 #include "classes/coredata.h"
@@ -29,7 +11,6 @@
 #include <QHBoxLayout>
 #include <QString>
 
-// Constructor
 ConfigurationRefListKeywordWidget::ConfigurationRefListKeywordWidget(QWidget *parent, KeywordBase *keyword,
                                                                      const CoreData &coreData)
     : KeywordDropDown(this), KeywordWidgetBase(coreData)
@@ -84,20 +65,20 @@ void ConfigurationRefListKeywordWidget::itemChanged(QListWidgetItem *item)
 
     // Ensure that we obey any limit on maximum number of selected items
     auto nChecked = 0;
-    for (int n = 0; n < ui_.SelectionList->count(); ++n)
+    for (auto n = 0; n < ui_.SelectionList->count(); ++n)
         if (ui_.SelectionList->item(n)->checkState() == Qt::Checked)
             ++nChecked;
     switch (keyword_->maxListSize())
     {
         case (Module::ZeroTargets):
             if (nChecked != 0)
-                for (int n = 0; n < ui_.SelectionList->count(); ++n)
+                for (auto n = 0; n < ui_.SelectionList->count(); ++n)
                     ui_.SelectionList->item(n)->setCheckState(Qt::Unchecked);
             break;
         case (Module::ExactlyOneTarget):
             if (nChecked > 1)
             {
-                for (int n = 0; n < ui_.SelectionList->count(); ++n)
+                for (auto n = 0; n < ui_.SelectionList->count(); ++n)
                     if ((ui_.SelectionList->item(n)->checkState() == Qt::Checked) && (ui_.SelectionList->item(n) != item))
                         ui_.SelectionList->item(n)->setCheckState(Qt::Unchecked);
             }
@@ -108,7 +89,7 @@ void ConfigurationRefListKeywordWidget::itemChanged(QListWidgetItem *item)
         default:
             if (nChecked > keyword_->maxListSize())
             {
-                for (int n = 0; n < ui_.SelectionList->count(); ++n)
+                for (auto n = 0; n < ui_.SelectionList->count(); ++n)
                 {
                     if ((ui_.SelectionList->item(n)->checkState() == Qt::Checked) && (ui_.SelectionList->item(n) != item))
                     {
@@ -145,7 +126,7 @@ void ConfigurationRefListKeywordWidget::updateWidgetValues(const CoreData &coreD
 
     // Update the list against the global Configuration list
     ListWidgetUpdater<ConfigurationRefListKeywordWidget, Configuration> listUpdater(
-        ui_.SelectionList, coreData_.constConfigurations(), this, &ConfigurationRefListKeywordWidget::updateSelectionRow);
+        ui_.SelectionList, coreData_.configurations(), this, &ConfigurationRefListKeywordWidget::updateSelectionRow);
 
     updateSummaryText();
 
@@ -157,7 +138,7 @@ void ConfigurationRefListKeywordWidget::updateKeywordData()
 {
     // Loop over items in the QListWidget, adding the associated Configurations for any that are checked
     RefList<Configuration> newSelection;
-    for (int n = 0; n < ui_.SelectionList->count(); ++n)
+    for (auto n = 0; n < ui_.SelectionList->count(); ++n)
     {
         QListWidgetItem *item = ui_.SelectionList->item(n);
         if (item->checkState() == Qt::Checked)

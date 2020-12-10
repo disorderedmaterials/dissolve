@@ -13,20 +13,28 @@ class Element;
 class ForcefieldAtomType;
 class NETADefinition;
 
-// NETA Character Node
+// NETA Presence Node
 class NETAPresenceNode : public NETANode
 {
     public:
-    NETAPresenceNode(NETADefinition *parent, std::vector<Element *> targetElements,
-                     std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes,
-                     SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
+    NETAPresenceNode(NETADefinition *parent, std::vector<std::reference_wrapper<const Element>> targetElements,
+                     std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes);
     ~NETAPresenceNode();
 
+    /*
+     * Atom Targets
+     */
     private:
     // Array of elements that the current context atom may be
-    std::vector<Element *> allowedElements_;
+    std::vector<std::reference_wrapper<const Element>> allowedElements_;
     // Array of ForcefieldAtomTypes that the current context atom may be
     std::vector<std::reference_wrapper<const ForcefieldAtomType>> allowedAtomTypes_;
+
+    public:
+    // Add element target to node
+    bool addElementTarget(const Element &el);
+    // Add forcefield type target to node
+    bool addFFTypeTarget(const ForcefieldAtomType &ffType);
 
     /*
      * Modifiers
@@ -66,5 +74,5 @@ class NETAPresenceNode : public NETANode
      */
     public:
     // Evaluate the node and return its score
-    int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &availableAtoms) const;
+    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &availableAtoms) const;
 };

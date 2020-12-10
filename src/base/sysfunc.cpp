@@ -8,6 +8,7 @@
 #include <fstream>
 #include <iomanip>
 #include <iostream>
+#include <optional>
 #include <sstream>
 
 using namespace std;
@@ -227,7 +228,7 @@ bool DissolveSys::isNumber(std::string_view text, bool &isFloatingPoint)
     // Assume integer to start with
     isFloatingPoint = false;
 
-    auto exponentIndex = -1;
+    std::optional<int> exponentIndex;
 
     const auto length = text.size();
     for (int n = 0; n < length; ++n)
@@ -243,7 +244,7 @@ bool DissolveSys::isNumber(std::string_view text, bool &isFloatingPoint)
             case ('-'):
             case ('+'):
                 // Only allow as first character or immediately following an exponent
-                if (n != (exponentIndex + 1))
+                if (n != (exponentIndex.value_or(-1) + 1))
                     return false;
                 break;
             // Exponentiation
@@ -254,7 +255,7 @@ bool DissolveSys::isNumber(std::string_view text, bool &isFloatingPoint)
                     return false;
 
                 // Can't have more than one
-                if (exponentIndex > 0)
+                if (exponentIndex.has_value())
                     return false;
 
                 // Store position
@@ -269,6 +270,21 @@ bool DissolveSys::isNumber(std::string_view text, bool &isFloatingPoint)
     }
 
     return true;
+}
+
+// Replace all occurrences of search string with replace string
+std::string DissolveSys::replace(const std::string_view source, const std::string_view search, const std::string_view replace)
+{
+    std::string result{source};
+
+    size_t pos = result.find(search);
+    while (pos != std::string::npos)
+    {
+        result.replace(pos, search.size(), replace);
+        pos = result.find(search, pos + replace.size());
+    }
+
+    return result;
 }
 
 /*

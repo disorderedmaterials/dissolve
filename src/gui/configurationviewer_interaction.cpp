@@ -21,7 +21,7 @@ const Atom *ConfigurationViewer::atomAt(int x, int y)
     // Loop over atoms, converting the local coordinates into screen coordinates, and testing distance from the point
     // provided
     const DynamicArray<Atom> &atoms = configuration_->constAtoms();
-    for (int n = 0; n < atoms.nItems(); ++n)
+    for (auto n = 0; n < atoms.nItems(); ++n)
     {
         const Atom *i = atoms.constValue(n);
 

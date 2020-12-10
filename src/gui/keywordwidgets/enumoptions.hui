@@ -16,7 +16,6 @@ class EnumOptionsKeywordWidget : public QComboBox, public KeywordWidgetBase
     Q_OBJECT
 
     public:
-    // Constructor
     EnumOptionsKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
     /*

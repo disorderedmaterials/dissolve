@@ -16,7 +16,6 @@ class ConfigurationViewer : public BaseViewer
     Q_OBJECT
 
     public:
-    // Constructor / Destructor
     ConfigurationViewer(QWidget *parent);
     ~ConfigurationViewer();
 

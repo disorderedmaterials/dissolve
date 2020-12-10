@@ -41,7 +41,7 @@ template <class A> class Array : public ListItem<Array<A>>
         nItems_ = 0;
         initialise(source.size_);
         nItems_ = source.nItems_;
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] = source.array_[n];
     }
     void operator=(const Array<A> &source)
@@ -50,7 +50,7 @@ template <class A> class Array : public ListItem<Array<A>>
         clear();
         resize(source.size_);
         nItems_ = source.nItems_;
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] = source.array_[n];
     }
     operator A *() { return array_; }
@@ -81,7 +81,7 @@ template <class A> class Array : public ListItem<Array<A>>
         if (nItems_ > 0)
         {
             oldItems = new A[nItems_];
-            for (int n = 0; n < nItems_; ++n)
+            for (auto n = 0; n < nItems_; ++n)
                 oldItems[n] = array_[n];
         }
 
@@ -101,7 +101,7 @@ template <class A> class Array : public ListItem<Array<A>>
         }
 
         // Copy old data into new array
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] = oldItems[n];
         delete[] oldItems;
     }
@@ -125,7 +125,7 @@ template <class A> class Array : public ListItem<Array<A>>
         nItems_ = size;
 
         // ...and finally set all elements to default value
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] = A();
     }
     // Create empty array of specified size
@@ -149,7 +149,7 @@ template <class A> class Array : public ListItem<Array<A>>
         {
             resize(nItemsToCopy);
             nItems_ = nItemsToCopy;
-            for (int n = 0; n < nItems_; ++n)
+            for (auto n = 0; n < nItems_; ++n)
                 array_[n] = source.array_[n + firstIndex];
         }
     }
@@ -185,7 +185,7 @@ template <class A> class Array : public ListItem<Array<A>>
             resize(size_ + chunkSize_);
 
         // Working from the top of the array, shift all items after or at 'position' up one place
-        for (int n = nItems_; n > position; --n)
+        for (auto n = nItems_; n > position; --n)
             array_[n] = array_[n - 1];
 
         array_[position] = data;
@@ -211,7 +211,7 @@ template <class A> class Array : public ListItem<Array<A>>
             return;
         }
 
-        for (int n = 0; n < nItems_ - 1; ++n)
+        for (auto n = 0; n < nItems_ - 1; ++n)
             array_[n] = array_[n + 1];
 
         --nItems_;
@@ -237,7 +237,7 @@ template <class A> class Array : public ListItem<Array<A>>
             return;
         }
 #endif
-        for (int n = position; n < nItems_ - 1; ++n)
+        for (auto n = position; n < nItems_ - 1; ++n)
             array_[n] = array_[n + 1];
 
         --nItems_;
@@ -379,36 +379,36 @@ template <class A> class Array : public ListItem<Array<A>>
     // Operator= (set all)
     void operator=(const A value)
     {
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] = value;
     }
     // Operator+= (add to all)
     void operator+=(const A value)
     {
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] += value;
     }
     void operator+=(const Array<A> array)
     {
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] += array.constAt(n);
     }
     // Operator-= (subtract from all)
     void operator-=(const A value)
     {
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] -= value;
     }
     // Operator*= (multiply all)
     void operator*=(const A value)
     {
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] *= value;
     }
     // Operator/= (divide all)
     void operator/=(const A value)
     {
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             array_[n] /= value;
     }
     // Operator- (subtraction)
@@ -421,7 +421,7 @@ template <class A> class Array : public ListItem<Array<A>>
     Array<A> operator-(const Array<A> array)
     {
         Array<A> result(nItems_);
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             result[n] = array_[n] - array.constAt(n);
         return result;
     }
@@ -435,7 +435,7 @@ template <class A> class Array : public ListItem<Array<A>>
     Array<A> operator+(const Array<A> array)
     {
         Array<A> result(nItems_);
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             result[n] = array_[n] + array.constAt(n);
         return result;
     }
@@ -462,7 +462,7 @@ template <class A> class Array : public ListItem<Array<A>>
     A sum()
     {
         A result = 0.0;
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             result += array_[n];
         return result;
     }
@@ -471,7 +471,7 @@ template <class A> class Array : public ListItem<Array<A>>
     {
         A result = 0.0;
         A temp;
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
         {
             temp = array_[n];
             if (temp < 0)

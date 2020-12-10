@@ -211,12 +211,12 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
                 // Check a nominal central cell at (0,0,0) and this grid reference to see if any pairs of
                 // corners are in range
                 auto close = false;
-                for (int iCorner = 0; iCorner < 8; ++iCorner)
+                for (auto iCorner = 0; iCorner < 8; ++iCorner)
                 {
                     // Set integer vertex of corner on 'central' box
                     i.set(iCorner & 1 ? 1 : 0, iCorner & 2 ? 1 : 0, iCorner & 4 ? 1 : 0);
 
-                    for (int jCorner = 0; jCorner < 8; ++jCorner)
+                    for (auto jCorner = 0; jCorner < 8; ++jCorner)
                     {
                         // Set integer vertex of corner on 'other' box
                         j.set(x + (jCorner & 1 ? 1 : 0), y + (jCorner & 2 ? 1 : 0), z + (jCorner & 4 ? 1 : 0));
@@ -404,13 +404,13 @@ bool CellArray::minimumImageRequired(const Cell *a, const Cell *b, double distan
     // required
     Vec3<int> i, j;
     Vec3<double> r;
-    for (int iCorner = 0; iCorner < 8; ++iCorner)
+    for (auto iCorner = 0; iCorner < 8; ++iCorner)
     {
         // Set integer vertex of corner on 'central' box
         i.set(a->gridReference().x + (iCorner & 1 ? 1 : 0), a->gridReference().y + (iCorner & 2 ? 1 : 0),
               a->gridReference().z + (iCorner & 4 ? 1 : 0));
 
-        for (int jCorner = 0; jCorner < 8; ++jCorner)
+        for (auto jCorner = 0; jCorner < 8; ++jCorner)
         {
             // Set integer vertex of corner on 'other' box
             j.set(b->gridReference().x + (jCorner & 1 ? 1 : 0), b->gridReference().y + (jCorner & 2 ? 1 : 0),

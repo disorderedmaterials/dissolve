@@ -38,7 +38,7 @@ int GeometryListKeyword::maxArguments() const
 bool GeometryListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     Geometry *g = data_.add();
-    for (int i = startArg; i <= (startArg + maxArguments() - 1); i++)
+    for (auto i = startArg; i <= (startArg + maxArguments() - 1); i++)
     {
         if (parser.argi(i) < 1)
             return Messenger::error("Index value, {}, not appropriate", parser.argi(i));
@@ -67,7 +67,7 @@ bool GeometryListKeyword::write(LineParser &parser, std::string_view keywordName
     while (Geometry *ref = GeoIterator.iterate())
     {
         index.clear();
-        for (int n = 0; n < maxArguments() - 1; ++n)
+        for (auto n = 0; n < maxArguments() - 1; ++n)
             index += fmt::format("  {}", ref->indices(n) + 1);
         if (!parser.writeLineF("{}{}{}  {:12.4e}\n", prefix, keywordName, index, ref->value()))
             return false;

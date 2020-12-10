@@ -61,7 +61,7 @@ void SelectSpeciesWidget::updateSpeciesList()
         return;
     }
 
-    ListWidgetUpdater<SelectSpeciesWidget, Species> speciesUpdater(ui_.SpeciesList, coreData_->constSpecies());
+    ListWidgetUpdater<SelectSpeciesWidget, Species> speciesUpdater(ui_.SpeciesList, coreData_->species());
 }
 
 void SelectSpeciesWidget::on_SelectNoneButton_clicked(bool checked) { ui_.SpeciesList->clearSelection(); }
@@ -95,7 +95,7 @@ bool SelectSpeciesWidget::isSelectionValid() const
 int SelectSpeciesWidget::nSelected() const
 {
     auto count = 0;
-    for (int n = 0; n < ui_.SpeciesList->count(); ++n)
+    for (auto n = 0; n < ui_.SpeciesList->count(); ++n)
     {
         QListWidgetItem *item = ui_.SpeciesList->item(n);
 
@@ -112,7 +112,7 @@ RefList<Species> SelectSpeciesWidget::currentSpecies() const
     RefList<Species> selection;
 
     // Loop over items in the list and construct the selection RefList
-    for (int n = 0; n < ui_.SpeciesList->count(); ++n)
+    for (auto n = 0; n < ui_.SpeciesList->count(); ++n)
     {
         QListWidgetItem *item = ui_.SpeciesList->item(n);
 

@@ -3,9 +3,7 @@
 
 #include "neta/root.h"
 #include "classes/speciesatom.h"
-#include "data/ffatomtype.h"
-#include "templates/dynamicarray.h"
-#include "templates/refdatalist.h"
+#include "data/elements.h"
 
 NETARootNode::NETARootNode(NETADefinition *parent) : NETANode(parent, NETANode::RootNode)
 {
@@ -33,7 +31,7 @@ EnumOptions<NETARootNode::NETARootModifier> NETARootNode::modifiers()
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETARootNode::isValidModifier(std::string_view s) const { return (modifiers().isValid(s)); }
+bool NETARootNode::isValidModifier(std::string_view s) const { return modifiers().isValid(s); }
 
 // Set value and comparator for specified modifier
 bool NETARootNode::setModifier(std::string_view modifier, ComparisonOperator op, int value)
@@ -64,7 +62,7 @@ bool NETARootNode::setModifier(std::string_view modifier, ComparisonOperator op,
  */
 
 // Evaluate the node and return its score
-int NETARootNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const
+int NETARootNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const
 {
     auto totalScore = 0;
 
@@ -73,6 +71,7 @@ int NETARootNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchP
         return NETANode::NoMatch;
     else
         ++totalScore;
+
     if (nHydrogensValue_ >= 0)
     {
         // Count number of hydrogens attached to this atom

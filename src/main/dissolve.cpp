@@ -101,11 +101,13 @@ void Dissolve::registerGenericItems()
     GenericItem::addItemClass(new GenericItemContainer<std::streampos>("streampos"));
     GenericItem::addItemClass(new GenericItemContainer<std::string>("string"));
 
+    GenericItem::addItemClass(new GenericItemContainer<std::vector<double>>("std::vector<double>"));
+
     GenericItem::addItemClass(new GenericItemContainer<Vec3<int>>("Vec3<int>"));
     GenericItem::addItemClass(new GenericItemContainer<Vec3<double>>("Vec3<double>"));
 
     GenericItem::addItemClass(new GenericItemContainer<Array2D<double>>("Array2D<double>"));
-    GenericItem::addItemClass(new GenericItemContainer<Array2D<Array<double>>>("Array2D<Array<double>>"));
+    GenericItem::addItemClass(new GenericItemContainer<Array2D<std::vector<double>>>("Array2D<std::vector<double>>"));
     GenericItem::addItemClass(new GenericItemContainer<Array2D<DummyClass>>("Array2D<DummyClass>"));
 
     GenericItem::addItemClass(new GenericItemContainer<Array<int>>("Array<int>"));
@@ -115,6 +117,7 @@ void Dissolve::registerGenericItems()
     GenericItem::addItemClass(new GenericItemContainer<Array<Vec3<int>>>("Array<Vec3<int>>"));
     GenericItem::addItemClass(new GenericItemContainer<Array<Vec3<double>>>("Array<Vec3<double>>"));
 
+    GenericItem::addItemClass(new GenericItemContainer<AtomTypeList>(AtomTypeList::itemClassName()));
     GenericItem::addItemClass(new GenericItemContainer<BraggReflection>(BraggReflection::itemClassName()));
     GenericItem::addItemClass(new GenericItemContainer<Data1D>(Data1D::itemClassName()));
     GenericItem::addItemClass(new GenericItemContainer<Data2D>(Data2D::itemClassName()));

@@ -18,7 +18,6 @@ class SiteViewer : public BaseViewer
     Q_OBJECT
 
     public:
-    // Constructor / Destructor
     SiteViewer(QWidget *parent);
     ~SiteViewer();
 

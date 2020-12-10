@@ -9,6 +9,8 @@
 #include "module/group.h"
 #include "modules/epsr/epsr.h"
 #include "modules/epsr/gui/modulewidget.h"
+#include "modules/rdf/rdf.h"
+#include "modules/sq/sq.h"
 #include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
@@ -281,16 +283,13 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule *module)
     if (!module)
         return;
 
-    int n, m;
-
     // Add total R-Factor before any dataset R-Factors
     auto *rFacTot = rFactorGraph_->createRenderable(Renderable::Data1DRenderable,
                                                     fmt::format("{}//RFactor", module->uniqueName()), "Total", "Total");
     rFacTot->lineStyle().setStipple(LineStipple::HalfDashStipple);
 
     // Add reference data & calculated data to the FQGraph_, and percentage errors to the rFactorGraph_
-    RefDataListIterator<Module, ModuleGroup *> targetIterator(module->allTargets());
-    while (Module *targetModule = targetIterator.iterate())
+    for (auto *targetModule : module->targets())
     {
         // Reference data
         FQGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//ReferenceData", targetModule->uniqueName()),
@@ -336,54 +335,55 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule *module)
                                       fmt::format("{} (Fit)", targetModule->uniqueName()), "Fit");
     }
 
-    // Loop over groups
-    ListIterator<ModuleGroup> groupIterator(module_->groupedTargets().groups());
-    while (ModuleGroup *group = groupIterator.iterate())
-    {
-        // Add experimentally-determined partial S(Q), calculated partial S(Q), and delta S(Q) to the estimatedSQGraph_
-        for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
-            const std::string atomTypes = fmt::format("{}-{}", at1->name(), at2->name());
-            const std::string id = fmt::format("{} [{}]", atomTypes, group->name());
+    // Get (first) source RDF module for the partial data
+    // Retrieve source SQ module, and then the related RDF module
+    const SQModule *sqModule = module->targets().firstItem()->keywords().retrieve<const SQModule *>("SourceSQs", nullptr);
+    if (!sqModule)
+        Messenger::error(
+            "Couldn't get any S(Q) data from the first target module, so underlying partial g(r) will be unavailable.",
+            module->uniqueName());
+    const RDFModule *rdfModule = sqModule ? sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr) : nullptr;
+    if (!rdfModule)
+        Messenger::error(
+            "First target's S(Q) module doesn't reference an RDFModule, so underlying partial g(r) will be unavailable.");
 
-            /*
-             * Partial Structure Factors
-             */
+    // Add experimentally-determined partial S(Q) and g(r) to the estimatedSQGraph_ and estimatedGRGraph_
+    for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
+        const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
-            // Unweighted estimated partial
-            estimatedSQGraph_->createRenderable(
-                Renderable::Data1DRenderable,
-                fmt::format("{}//EstimatedSQ//{}//{}", module_->uniqueName(), group->name(), atomTypes),
-                fmt::format("{} (Estimated)", id), "Estimated");
+        /*
+         * Partial Structure Factors
+         */
 
-            // Calculated / summed partial
-            estimatedSQGraph_->createRenderable(
-                Renderable::Data1DRenderable,
-                fmt::format("{}//UnweightedSQ//{}//{}", module_->uniqueName(), group->name(), atomTypes),
-                fmt::format("{} (Calc)", id), "Calc");
+        // Unweighted estimated partial
+        estimatedSQGraph_->createRenderable(Renderable::Data1DRenderable,
+                                            fmt::format("{}//EstimatedSQ//{}", module_->uniqueName(), id),
+                                            fmt::format("{} (Estimated)", id), "Estimated");
 
-            // Deltas
-            estimatedSQGraph_->createRenderable(
-                Renderable::Data1DRenderable,
-                fmt::format("{}//DeltaSQ//{}//{}", module_->uniqueName(), group->name(), atomTypes),
-                fmt::format("{} (Delta)", id), "Delta");
+        // Calculated / summed partial
+        estimatedSQGraph_->createRenderable(Renderable::Data1DRenderable,
+                                            fmt::format("{}//UnweightedSQ//{}", module_->uniqueName(), id),
+                                            fmt::format("{} (Calc)", id), "Calc");
 
-            /*
-             * Partial RDFs
-             */
+        // Deltas
+        estimatedSQGraph_->createRenderable(Renderable::Data1DRenderable,
+                                            fmt::format("{}//DeltaSQ//{}", module_->uniqueName(), id),
+                                            fmt::format("{} (Delta)", id), "Delta");
 
-            // Experimentally-determined unweighted partial
-            estimatedGRGraph_->createRenderable(
-                Renderable::Data1DRenderable,
-                fmt::format("{}//EstimatedGR//{}//{}", module_->uniqueName(), group->name(), atomTypes),
-                fmt::format("{} (Estimated)", id), "Estimated");
+        /*
+         * Partial RDFs
+         */
 
-            // Calculated / summed partial
-            estimatedGRGraph_->createRenderable(
-                Renderable::Data1DRenderable,
-                fmt::format("{}//UnweightedGR//{}//{}//Full", module_->uniqueName(), group->name(), atomTypes),
-                fmt::format("{} (Calc)", id), "Calc");
-        });
-    }
+        // Experimentally-determined unweighted partial
+        estimatedGRGraph_->createRenderable(Renderable::Data1DRenderable,
+                                            fmt::format("{}//EstimatedGR//{}", module_->uniqueName(), id),
+                                            fmt::format("{} (Estimated)", id), "Estimated");
+
+        // Calculated / summed partials, taken from the RDF module referenced by the first module target
+        estimatedGRGraph_->createRenderable(Renderable::Data1DRenderable,
+                                            fmt::format("{}//UnweightedGR//{}//Full", rdfModule->uniqueName(), id),
+                                            fmt::format("{} (Calc)", id), "Calc");
+    });
 
     for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int n, auto at1, int m, auto at2) {
         const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
@@ -420,7 +420,7 @@ void EPSRModuleWidget::updateDebugEPFunctionsGraph(int from, int to)
         viewer->addRenderableToGroup(phi, id);
 
         // Generate data for function range specified
-        for (int n = from; n <= to; ++n)
+        for (auto n = from; n <= to; ++n)
         {
             Data1D *data = debugFunctionData_.add();
             (*data) = module_->generateEmpiricalPotentialFunction(dissolve_, i, j, n);

@@ -62,7 +62,7 @@ void SelectConfigurationWidget::updateConfigurationList()
     }
 
     ListWidgetUpdater<SelectConfigurationWidget, Configuration> speciesUpdater(ui_.ConfigurationList,
-                                                                               coreData_->constConfigurations());
+                                                                               coreData_->configurations());
 }
 
 void SelectConfigurationWidget::on_SelectNoneButton_clicked(bool checked) { ui_.ConfigurationList->clearSelection(); }
@@ -99,7 +99,7 @@ bool SelectConfigurationWidget::isSelectionValid() const
 int SelectConfigurationWidget::nSelected() const
 {
     auto count = 0;
-    for (int n = 0; n < ui_.ConfigurationList->count(); ++n)
+    for (auto n = 0; n < ui_.ConfigurationList->count(); ++n)
     {
         QListWidgetItem *item = ui_.ConfigurationList->item(n);
 
@@ -116,7 +116,7 @@ RefList<Configuration> SelectConfigurationWidget::currentConfiguration() const
     RefList<Configuration> selection;
 
     // Loop over items in the list and construct the selection RefList
-    for (int n = 0; n < ui_.ConfigurationList->count(); ++n)
+    for (auto n = 0; n < ui_.ConfigurationList->count(); ++n)
     {
         QListWidgetItem *item = ui_.ConfigurationList->item(n);
 

@@ -70,8 +70,6 @@ void RenderableSpeciesSite::transformValues() { return; }
 void RenderableSpeciesSite::recreatePrimitives(const View &view, const ColourDefinition &colourDefinition)
 {
     Matrix4 A;
-    const GLfloat *colour;
-    const GLfloat colourBlack[4] = {0.0, 0.0, 0.0, 1.0};
 
     // Clear existing data
     siteAssembly_.clear();
@@ -168,7 +166,7 @@ bool RenderableSpeciesSite::writeStyleBlock(LineParser &parser, int indentLevel)
 {
     // Construct indent string
     char *indent = new char[indentLevel * 2 + 1];
-    for (int n = 0; n < indentLevel * 2; ++n)
+    for (auto n = 0; n < indentLevel * 2; ++n)
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 

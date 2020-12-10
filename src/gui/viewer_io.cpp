@@ -588,7 +588,7 @@ bool BaseViewer::writeRenderableBlock(LineParser &parser, Renderable *renderable
 {
     // Construct indent string
     char *indent = new char[indentLevel * 2 + 1];
-    for (int n = 0; n < indentLevel * 2; ++n)
+    for (auto n = 0; n < indentLevel * 2; ++n)
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 
@@ -644,7 +644,7 @@ bool BaseViewer::writeRenderableBlock(LineParser &parser, Renderable *renderable
         return false;
     // -- Custom Gradient
     const Array<ColourScalePoint> customGradient = colourDef.customGradientPoints();
-    for (int n = 0; n < customGradient.nItems(); ++n)
+    for (auto n = 0; n < customGradient.nItems(); ++n)
     {
         const ColourScalePoint &point = customGradient.constAt(n);
         if (!parser.writeLineF("{}  {}  {} {} {} {} {}\n", indent,
@@ -786,7 +786,7 @@ bool BaseViewer::writeRenderableGroupBlock(LineParser &parser, RenderableGroup *
 {
     // Construct indent string
     char *indent = new char[indentLevel * 2 + 1];
-    for (int n = 0; n < indentLevel * 2; ++n)
+    for (auto n = 0; n < indentLevel * 2; ++n)
         indent[n] = ' ';
     indent[indentLevel * 2] = '\0';
 
@@ -971,7 +971,7 @@ bool BaseViewer::writeViewBlock(LineParser &parser) const
     if (!parser.writeLineF("  {}  {}\n", BaseViewer::viewKeywords().keyword(BaseViewer::AutoPositionTitlesKeyword),
                            DissolveSys::btoa(view_.constAxes().autoPositionTitles())))
         return false;
-    for (int axis = 0; axis < 3; ++axis)
+    for (auto axis = 0; axis < 3; ++axis)
         writeAxisBlock(parser, view_.constAxes(), axis);
     if (!parser.writeLineF("  {}  {}\n", BaseViewer::viewKeywords().keyword(BaseViewer::FlatLabelsKeyword),
                            DissolveSys::btoa(view_.flatLabelsIn3D())))

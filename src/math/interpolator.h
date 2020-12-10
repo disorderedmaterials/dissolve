@@ -2,8 +2,7 @@
 // Copyright (c) 2020 Team Dissolve and contributors
 
 #pragma once
-
-#include "templates/array.h"
+#include <vector>
 
 // Forward Declarations
 class Data1D;
@@ -21,7 +20,7 @@ class Interpolator
         LinearInterpolation,
         ThreePointInterpolation
     };
-    Interpolator(const Array<double> &x, const Array<double> &y, InterpolationScheme scheme = SplineInterpolation);
+    Interpolator(const std::vector<double> &x, const std::vector<double> &y, InterpolationScheme scheme = SplineInterpolation);
     Interpolator(const Data1D &source, InterpolationScheme scheme = SplineInterpolation);
     ~Interpolator();
 
@@ -30,13 +29,13 @@ class Interpolator
      */
     private:
     // Target x array
-    const Array<double> &x_;
+    const std::vector<double> &x_;
     // Target y array
-    const Array<double> &y_;
+    const std::vector<double> &y_;
     // Interpolation scheme currently employed
     InterpolationScheme scheme_;
     // Interpolation parameters
-    Array<double> a_, b_, c_, d_, h_;
+    std::vector<double> a_, b_, c_, d_, h_;
     // Interval of last returned interpolated point
     int lastInterval_;
 

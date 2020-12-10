@@ -42,7 +42,7 @@ void GetSpeciesNameDialog::on_NameEdit_textChanged(const QString text)
         nameValid = false;
     else
     {
-        ListIterator<Species> speciesIterator(coreData_.constSpecies());
+        ListIterator<Species> speciesIterator(coreData_.species());
         while (Species *sp = speciesIterator.iterate())
         {
             if (species_ == sp)

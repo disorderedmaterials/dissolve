@@ -3,10 +3,6 @@
 
 #include "modules/calculate_rdf/rdf.h"
 
-/*
- * Constructor / Destructor
- */
-
 CalculateRDFModule::CalculateRDFModule() : Module(nRequiredTargets()), analyser_(ProcedureNode::AnalysisContext)
 {
     // Set unique name for this instance of the Module

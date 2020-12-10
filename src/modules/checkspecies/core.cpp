@@ -3,10 +3,6 @@
 
 #include "modules/checkspecies/checkspecies.h"
 
-/*
- * Constructor / Destructor
- */
-
 CheckSpeciesModule::CheckSpeciesModule() : Module(nRequiredTargets())
 {
     // Set unique name for this instance of the Module

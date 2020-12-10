@@ -18,5 +18,5 @@ Once those iterations have completed, we can move on to do the comparison of the
 {{< action type="edit" text="Change the filename to `production.restart` and click _Save_" >}}
 
 
-{{< button pos="left" text="Previous Step" path="../step7/">}}
-{{< button pos="right" text="Next Step" path="../step9/">}}
+{{< button pos="left" text="Previous Step" path="step7/">}}
+{{< button pos="right" text="Next Step" path="step9/">}}

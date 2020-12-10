@@ -53,15 +53,15 @@ Data2DExportFileFormat::Data2DExportFormat Data2DExportFileFormat::data2DFormat(
 bool Data2DExportFileFormat::exportBlock(LineParser &parser, const Data2D &data)
 {
     // Export header comment
-    if (!parser.writeLineF("# {} blocks (nX) of {} points (nY).\n", data.constXAxis().nItems(), data.constYAxis().nItems()))
+    if (!parser.writeLineF("# {} blocks (nX) of {} points (nY).\n", data.xAxis().size(), data.yAxis().size()))
         return false;
 
     // Export datapoints, separating each block of a specific x value with a single blank line
     const Array2D<double> &values = data.constValues2D();
-    for (int x = 0; x < values.nRows(); ++x)
+    for (auto x = 0; x < values.nRows(); ++x)
     {
-        for (int y = 0; y < values.nColumns(); ++y)
-            if (!parser.writeLineF("{:15.9f}\n", values.constAt(x, y)))
+        for (auto y = 0; y < values.nColumns(); ++y)
+            if (!parser.writeLineF("{:15.9f}\n", values[{x, y}]))
                 return false;
         if (!parser.writeLineF("\n"))
             return false;
@@ -75,12 +75,12 @@ bool Data2DExportFileFormat::exportCartesian(LineParser &parser, const Data2D &d
 {
     // Three-column format (x  y  value) in blocks of similar y value, separated by blank lines
     const Array2D<double> &values = data.constValues2D();
-    const auto &xAxis = data.constXAxis();
-    const auto &yAxis = data.constYAxis();
-    for (int x = 0; x < values.nRows(); ++x)
+    const auto &xAxis = data.xAxis();
+    const auto &yAxis = data.yAxis();
+    for (auto x = 0; x < values.nRows(); ++x)
     {
-        for (int y = 0; y < values.nColumns(); ++y)
-            if (!parser.writeLineF("{:15.9f} {:15.9f} {:15.9f}\n", xAxis.constAt(x), yAxis.constAt(y), values.constAt(x, y)))
+        for (auto y = 0; y < values.nColumns(); ++y)
+            if (!parser.writeLineF("{:15.9f} {:15.9f} {:15.9f}\n", xAxis[x], yAxis[y], values[{x, y}]))
                 return false;
         if (!parser.writeLineF("\n"))
             return false;

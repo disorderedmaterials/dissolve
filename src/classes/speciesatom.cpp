@@ -71,7 +71,7 @@ void SpeciesAtom::setAtomType(std::shared_ptr<AtomType> at)
 
     atomType_ = at;
     if (parent_)
-        parent_->bumpAtomTypesVersion();
+        parent_->updateUsedAtomTypes();
 }
 
 // Return SpeciesAtomType of SpeciesAtom
@@ -227,7 +227,7 @@ const std::vector<std::reference_wrapper<SpeciesImproper>> &SpeciesAtom::imprope
 double SpeciesAtom::scaling(const SpeciesAtom *j) const
 {
     // Look through our ordered list of excluded Atom interactions
-    for (int n = 0; n < exclusions_.nItems(); ++n)
+    for (auto n = 0; n < exclusions_.nItems(); ++n)
     {
         // If the current item matches our Atom 'j', we have found a match
         if (exclusions_.pointer(n) == j)

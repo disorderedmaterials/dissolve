@@ -205,7 +205,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
         if (siteStack == nullptr)
             return ProcedureNode::Failure;
 
-        for (int n = 0; n < siteStack->nSites(); ++n)
+        for (auto n = 0; n < siteStack->nSites(); ++n)
         {
             const Site *site = &siteStack->site(n);
 
@@ -246,7 +246,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
             return ProcedureNode::Failure;
 
         const Array<Site> &generatedSites = dynamicNode->generatedSites();
-        for (int n = 0; n < generatedSites.nItems(); ++n)
+        for (auto n = 0; n < generatedSites.nItems(); ++n)
             sites_.add(&generatedSites.constAt(n));
     }
 

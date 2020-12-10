@@ -14,7 +14,6 @@ class DropWidget : public QWidget
     Q_OBJECT
 
     public:
-    // Constructor
     DropWidget(QWidget *parent = nullptr);
 
     /*

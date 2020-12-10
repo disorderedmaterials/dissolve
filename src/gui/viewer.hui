@@ -30,7 +30,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     Q_OBJECT
 
     public:
-    // Constructor / Destructor
     BaseViewer(QWidget *parent);
     ~BaseViewer();
 
@@ -145,7 +144,7 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
      * Rendering
      */
     protected:
-    // Width, height, and aspect ratio of the context
+    // Width and height of the context
     GLsizei contextWidth_, contextHeight_;
     // Flag to indicate whether we may draw to the context
     bool valid_;

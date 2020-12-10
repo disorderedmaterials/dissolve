@@ -29,7 +29,7 @@ SelectForcefieldWidget::~SelectForcefieldWidget() {}
 void SelectForcefieldWidget::updateForcefieldsList(std::shared_ptr<Forcefield> current, QString filter)
 {
     // Loop over items in the list
-    for (int n = 0; n < ui_.ForcefieldsList->count(); ++n)
+    for (auto n = 0; n < ui_.ForcefieldsList->count(); ++n)
     {
         QListWidgetItem *item = ui_.ForcefieldsList->item(n);
         if (!item)

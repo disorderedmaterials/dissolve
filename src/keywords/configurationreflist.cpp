@@ -1,30 +1,11 @@
-/*
-    *** Keyword - Configuration RefList
-    *** src/keywords/configurationreflist.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "keywords/configurationreflist.h"
 #include "base/lineparser.h"
 #include "classes/configuration.h"
 #include "classes/coredata.h"
 
-// Constructor
 ConfigurationRefListKeyword::ConfigurationRefListKeyword(RefList<Configuration> &references, int maxListSize)
     : KeywordData<RefList<Configuration> &>(KeywordBase::ConfigurationRefListData, references)
 {
@@ -58,7 +39,7 @@ int ConfigurationRefListKeyword::maxArguments() const { return 99; }
 bool ConfigurationRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Each argument is the name of a Configuration that we will add to our list
-    for (int n = startArg; n < parser.nArgs(); ++n)
+    for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         Configuration *cfg = coreData.findConfiguration(parser.argsv(n));
         if (!cfg)

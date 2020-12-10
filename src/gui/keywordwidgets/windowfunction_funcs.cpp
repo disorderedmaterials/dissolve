@@ -14,7 +14,7 @@ WindowFunctionKeywordWidget::WindowFunctionKeywordWidget(QWidget *parent, Keywor
     layout->setContentsMargins(0, 0, 0, 0);
     layout->setSpacing(4);
     functionCombo_ = new QComboBox;
-    for (int n = 0; n < WindowFunction::nFunctionTypes; ++n)
+    for (auto n = 0; n < WindowFunction::nFunctionTypes; ++n)
         functionCombo_->addItem(
             QString::fromStdString(std::string(WindowFunction::functionType((WindowFunction::FunctionType)n))));
     layout->addWidget(functionCombo_);

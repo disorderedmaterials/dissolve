@@ -5,6 +5,7 @@
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/speciesatom.h"
+#include "classes/speciestorsion.h"
 #include "templates/enumhelpers.h"
 
 SpeciesImproper::SpeciesImproper() : SpeciesIntra() { clear(); }
@@ -207,7 +208,15 @@ bool SpeciesImproper::isSelected() const
 // Return enum options for ImproperFunction
 EnumOptions<SpeciesImproper::ImproperFunction> SpeciesImproper::improperFunctions()
 {
-    static EnumOptionsList ImproperFunctionOptions = EnumOptionsList() << EnumOption(SpeciesImproper::CosineForm, "Cos", 4, 4);
+    static EnumOptionsList ImproperFunctionOptions = EnumOptionsList()
+                                                     << EnumOption(SpeciesTorsion::NoForm, "None", 0, 0)
+                                                     << EnumOption(SpeciesTorsion::CosineForm, "Cos", 4, 4)
+                                                     << EnumOption(SpeciesTorsion::Cos3Form, "Cos3", 3, 3)
+                                                     << EnumOption(SpeciesTorsion::Cos3CForm, "Cos3C", 4, 4)
+                                                     << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4, 4)
+                                                     << EnumOption(SpeciesTorsion::CosNForm, "CosN", 1, 10)
+                                                     << EnumOption(SpeciesTorsion::CosNCForm, "CosNC", 1, 11)
+                                                     << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3, 3);
 
     static EnumOptions<SpeciesImproper::ImproperFunction> options("ImproperFunction", ImproperFunctionOptions);
 
@@ -230,58 +239,11 @@ SpeciesIntra::InteractionType SpeciesImproper::type() const { return SpeciesIntr
 // Return energy for specified angle
 double SpeciesImproper::energy(double angleInDegrees) const
 {
-    // Get pointer to relevant parameters array
-    const auto &params = parameters();
-
-    // Convert torsion angle from degrees to radians
-    double phi = angleInDegrees / DEGRAD;
-
-    if (form() == SpeciesImproper::NoForm)
-        return 0.0;
-    else if (form() == SpeciesImproper::CosineForm)
-    {
-        /*
-         * U(phi) = k * (1 + s*cos(n*phi - eq))
-         *
-         * Parameters:
-         * 0 : force constant k
-         * 1 : Period 'n'
-         * 2 : equilibrium angle (degrees)
-         * 3 : Sign 's'
-         */
-        return params[0] * (1.0 + params[3] * cos(params[1] * phi - (params[2] / DEGRAD)));
-    }
-
-    Messenger::error("Functional form of SpeciesImproper term not accounted for, so can't calculate energy.\n");
-    return 0.0;
+    return SpeciesTorsion::energy(angleInDegrees, form(), parameters());
 }
 
 // Return force multiplier for specified angle
 double SpeciesImproper::force(double angleInDegrees) const
 {
-    // Get pointer to relevant parameters array
-    const auto &params = parameters();
-
-    // Convert torsion angle from degrees to radians, and calculate derivative w.r.t. change in torsion angle
-    double phi = angleInDegrees / DEGRAD;
-    double dphi_dcosphi = (phi < 1E-8 ? 0.0 : -1.0 / sin(phi));
-
-    if (form() == SpeciesImproper::NoForm)
-        return 0.0;
-    else if (form() == SpeciesImproper::CosineForm)
-    {
-        /*
-         * dU/dphi = k * n * s * -sin(n*phi - eq)
-         *
-         * Parameters:
-         * 0 : Force constant 'k'
-         * 1 : Period 'n'
-         * 2 : Equilibrium angle (degrees)
-         * 3 : Sign 's'
-         */
-        return dphi_dcosphi * params[1] * params[0] * params[3] * -sin(params[1] * phi - (params[2] / DEGRAD));
-    }
-
-    Messenger::error("Functional form of SpeciesImproper term not accounted for, so can't calculate force.\n");
-    return 0.0;
+    return SpeciesTorsion::force(angleInDegrees, form(), parameters());
 }

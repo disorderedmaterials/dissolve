@@ -72,7 +72,7 @@ Configuration  'POE'
       BoxAction  None
     EndAddSpecies
   EndGenerator
-  InputCoordinates  moscito  'poe/torsions-final.str'
+  InputCoordinates  moscito  '../_data/moscito/poe64_torsions/torsions-final.str'
   EndInputCoordinates
 EndConfiguration
 
@@ -92,7 +92,7 @@ Layer  'Processing'
     Module Forces
     Test  On
     Configuration  'POE'
-    TestReference  moscito  'poe/torsions-final.str'
+    TestReference  moscito  '../_data/moscito/poe64_torsions/torsions-final.str'
     EndTestReference
     TestThreshold  0.4
     EndModule

@@ -73,7 +73,7 @@ bool PairPotentialExportFileFormat::exportBlock(LineParser &parser, PairPotentia
                            "U(kJ/mol)", "U(kJ/mol)", "U(kJ/mol)", "dU(kJ/mol/Ang)"))
         return false;
 
-    for (int n = 0; n < nPoints; ++n)
+    for (auto n = 0; n < nPoints; ++n)
         if (!parser.writeLineF("{:10.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}\n",
                                uOriginal.constXAxis(n), uFull.constValue(n), dUFull.constValue(n), uOriginal.constValue(n),
                                uAdditional.constValue(n), pp->analyticEnergy(uOriginal.constXAxis(n)),
@@ -104,7 +104,7 @@ bool PairPotentialExportFileFormat::exportDLPOLY(LineParser &parser, PairPotenti
         return false;
 
     // Write energy data
-    for (int n = 0; n < nPoints; ++n)
+    for (auto n = 0; n < nPoints; ++n)
     {
         if (!parser.writeLineF("{:17.12e} ", uFull.constValue(n)))
             return false;
@@ -116,7 +116,7 @@ bool PairPotentialExportFileFormat::exportDLPOLY(LineParser &parser, PairPotenti
     }
 
     // Write force data
-    for (int n = 0; n < nPoints; ++n)
+    for (auto n = 0; n < nPoints; ++n)
     {
         if (!parser.writeLineF("{:17.12e} ", dUFull.constValue(n)))
             return false;

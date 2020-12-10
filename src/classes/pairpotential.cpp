@@ -22,7 +22,7 @@ double PairPotential::shortRangeTruncationWidth_ = 2.0;
 
 PairPotential::PairPotential() : ListItem<PairPotential>(), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
 {
-    for (int n = 0; n < MAXSRPARAMETERS; ++n)
+    for (auto n = 0; n < MAXSRPARAMETERS; ++n)
         parameters_[n] = 0.0;
     chargeI_ = 0.0;
     chargeJ_ = 0.0;
@@ -415,7 +415,7 @@ void PairPotential::calculateDUFull()
         return;
 
     double fprime;
-    for (int n = 1; n < nPoints_ - 1; ++n)
+    for (auto n = 1; n < nPoints_ - 1; ++n)
     {
         /* Calculate numerical derivative with five-point stencil if possible. Otherwise use three-point stencil.
          * Assumes data are regularly-spaced (they should be, with gap of delta_)
@@ -475,7 +475,7 @@ bool PairPotential::tabulate(double maxR, double delta, bool includeCoulomb)
 
     // Set additional potential to zero and update full potential
     uAdditional_ = uOriginal_;
-    uAdditional_.values() = 0.0;
+    std::fill(uAdditional_.values().begin(), uAdditional_.values().end(), 0);
     calculateUFull();
 
     // Generate derivative data
@@ -499,7 +499,7 @@ void PairPotential::calculateUOriginal(bool recalculateUFull)
 {
     double r;
 
-    for (int n = 1; n < nPoints_; ++n)
+    for (auto n = 1; n < nPoints_; ++n)
     {
         r = n * delta_;
         uOriginal_.xAxis(n) = r;
@@ -642,7 +642,7 @@ Data1D &PairPotential::uAdditional() { return uAdditional_; }
 // Zero additional potential
 void PairPotential::resetUAdditional()
 {
-    uAdditional_.values() = 0.0;
+    std::fill(uAdditional_.values().begin(), uAdditional_.values().end(), 0.0);
 
     calculateUFull();
     calculateDUFull();

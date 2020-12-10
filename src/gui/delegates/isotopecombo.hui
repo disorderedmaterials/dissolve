@@ -15,9 +15,7 @@ class IsotopeComboDelegate : public QItemDelegate
     Q_OBJECT
 
     public:
-    // Constructor
     IsotopeComboDelegate(QObject *parent);
-    // Destructor
     virtual ~IsotopeComboDelegate();
     // Reimplemented virtual function to create editing widget
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;

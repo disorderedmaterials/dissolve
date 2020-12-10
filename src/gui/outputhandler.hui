@@ -14,9 +14,7 @@ class GUIOutputHandler : public QObject, public OutputHandler
     Q_OBJECT
 
     public:
-    // Constructor
     GUIOutputHandler();
-    // Destructor
     ~GUIOutputHandler();
 
     /*

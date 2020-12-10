@@ -347,8 +347,11 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 }
                 break;
             case (Species::EndSpeciesKeyword):
-                if (forcefield_)
-                    applyForcefieldTerms(coreData);
+                if (forcefield_ && !applyForcefieldTerms(coreData))
+                {
+                    error = true;
+                    break;
+                }
                 Messenger::print("Found end of Species '{}'.\n", name());
                 blockDone = true;
                 break;
@@ -453,11 +456,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Assign isotope to AtomType
-                    if (!iso->setAtomTypeIsotope(at, tope))
-                    {
-                        error = true;
-                        break;
-                    }
+                    iso->setAtomTypeIsotope(at, tope);
                 }
                 break;
             case (Species::SiteKeyword):

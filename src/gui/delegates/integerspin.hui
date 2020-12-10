@@ -17,7 +17,6 @@ class IntegerSpinDelegate : public QItemDelegate
     int min_, max_, step_;
 
     public:
-    // Constructor
     IntegerSpinDelegate(QObject *parent = 0, int vmin = -1e6, int vmax = 1e6, int vstep = 1);
     // Reimplemented virtual function to create editing widget
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;

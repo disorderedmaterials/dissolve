@@ -3,10 +3,6 @@
 
 #include "modules/import/import.h"
 
-/*
- * Constructor / Destructor
- */
-
 ImportModule::ImportModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

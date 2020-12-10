@@ -15,7 +15,6 @@ class MimeTreeWidget : public QTreeWidget
     Q_OBJECT
 
     public:
-    // Constructor
     MimeTreeWidget(QWidget *parent);
 
     private:

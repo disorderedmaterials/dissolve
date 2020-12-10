@@ -19,12 +19,10 @@ Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
     forcefield_ = nullptr;
     autoUpdateIntramolecularTerms_ = true;
     attachedAtomListsGenerated_ = false;
-    usedAtomTypesPoint_ = -1;
 
     // Set up natural Isotopologue
     naturalIsotopologue_.setName("Natural");
     naturalIsotopologue_.setParent(this);
-    naturalIsotopologuePoint_ = -1;
 }
 
 Species::~Species() {}
@@ -69,7 +67,8 @@ bool Species::checkSetUp()
     {
         if (i->atomType() == nullptr)
         {
-            Messenger::error("Atom {} ({}) has no associated AtomType.\n", i->userIndex(), i->element()->symbol());
+            Messenger::error("Atom {} ({}) of species '{}' has no associated atom type.\n", i->userIndex(),
+                             i->element()->symbol(), name_);
             ++nErrors;
         }
     }
@@ -134,7 +133,7 @@ void Species::print()
     Messenger::print("  Atoms:\n");
     Messenger::print("      ID   El  Type (ID)        X             Y             Z             Q\n");
     Messenger::print("    ----------------------------------------------------------------------------\n");
-    for (int n = 0; n < nAtoms(); ++n)
+    for (auto n = 0; n < nAtoms(); ++n)
     {
         SpeciesAtom *i = atoms_[n];
         Messenger::print("    {:4d}  {:3}  {:4} ({:2d})  {:12.4e}  {:12.4e}  {:12.4e}  {:12.4e}\n", n + 1,

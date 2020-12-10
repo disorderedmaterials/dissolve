@@ -6,7 +6,7 @@
 
 InteractionParameters::InteractionParameters()
 {
-    for (int n = 0; n < MAXSRPARAMETERS; ++n)
+    for (auto n = 0; n < MAXSRPARAMETERS; ++n)
         parameters_[n] = 0.0;
     charge_ = 0.0;
     empty_ = true;

@@ -318,13 +318,13 @@ void DataWidget::updateStatusBar()
     switch (view.viewType())
     {
         case (View::FlatXYView):
-            text = QString("x = {%1}, y = {%2}").arg(rLocal.x, rLocal.y);
+            text = QString("x = {%1}, y = {%2}").arg(rLocal.x).arg(rLocal.y);
             break;
         case (View::FlatXZView):
-            text = QString("x = {%1}, z = {%2}").arg(rLocal.x, rLocal.z);
+            text = QString("x = {%1}, z = {%2}").arg(rLocal.x).arg(rLocal.z);
             break;
         case (View::FlatZYView):
-            text = QString("z = {%1}, y = {%2}").arg(rLocal.z, rLocal.y);
+            text = QString("z = {%1}, y = {%2}").arg(rLocal.z).arg(rLocal.y);
             break;
         default:
             text = QString("x = {%1}, y = {%2}, z = {%3}").arg(rLocal.x, rLocal.y, rLocal.z);

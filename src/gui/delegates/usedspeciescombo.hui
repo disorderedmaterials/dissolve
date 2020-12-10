@@ -18,9 +18,7 @@ class UsedSpeciesComboDelegate : public QItemDelegate
     Q_OBJECT
 
     public:
-    // Constructor
     UsedSpeciesComboDelegate(QObject *parent);
-    // Destructor
     virtual ~UsedSpeciesComboDelegate();
     // Reimplemented virtual function to create editing widget
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;

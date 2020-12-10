@@ -6,19 +6,15 @@
 #include "base/messenger.h"
 #include "templates/list.h"
 #include "templates/vector3.h"
+#include <optional>
+#include <vector>
 
 // Array2D
 template <class A> class Array2D
 {
     public:
-    Array2D(int nrows = 0, int ncolumns = 0, bool half = false)
+    Array2D(int nrows = 0, int ncolumns = 0, bool half = false) : nRows_(0), nColumns_(0), half_(half)
     {
-        array_ = nullptr;
-        linearSize_ = 0;
-        rowOffsets_ = nullptr;
-        nRows_ = 0;
-        nColumns_ = 0;
-        half_ = half;
         if ((nrows > 0) && (ncolumns > 0))
             resize(nrows, ncolumns);
     }
@@ -26,55 +22,19 @@ template <class A> class Array2D
     // Clear array data
     void clear()
     {
-        if (array_ != nullptr)
-            delete[] array_;
-        if (rowOffsets_ != nullptr)
-            delete[] rowOffsets_;
-        rowOffsets_ = nullptr;
-        array_ = nullptr;
-        linearSize_ = 0;
+        array_.clear();
+        rowOffsets_.clear();
         nRows_ = 0;
         nColumns_ = 0;
     }
-    Array2D(const Array2D<A> &source)
-    {
-        array_ = nullptr;
-        linearSize_ = 0;
-        rowOffsets_ = nullptr;
-        nRows_ = 0;
-        nColumns_ = 0;
-        half_ = false;
-        (*this) = source;
-    }
-    void operator=(const A value)
-    {
-        // Copy source data elements
-        for (int row = 0; row < nRows_; ++row)
-        {
-            if (half_)
-                for (int column = row; column < nColumns_; ++column)
-                    array_[rowOffsets_[row] + column - row] = value;
-            else
-                for (int column = 0; column < nColumns_; ++column)
-                    array_[rowOffsets_[row] + column] = value;
-        }
-    }
+    Array2D(const Array2D<A> &source) { (*this) = source; }
+    void operator=(const A value) { std::fill(array_.begin(), array_.end(), value); }
     void operator=(const Array2D<A> &source)
     {
         // Clear any existing data and reinitialise the array
         clear();
         initialise(source.nRows_, source.nColumns_, source.half_);
-
-        // Copy source data elements
-        for (int row = 0; row < nRows_; ++row)
-        {
-            if (half_)
-                for (int column = row; column < nColumns_; ++column)
-                    array_[rowOffsets_[row] + column - row] = source.array_[rowOffsets_[row] + column - row];
-            else
-                for (int column = 0; column < nColumns_; ++column)
-                    array_[rowOffsets_[row] + column] = source.array_[rowOffsets_[row] + column];
-        }
+        std::copy(source.array_.begin(), source.array_.end(), array_.begin());
     }
 
     /*
@@ -82,15 +42,13 @@ template <class A> class Array2D
      */
     private:
     // Linear array of objects
-    A *array_;
-    // Size of linear array
-    int linearSize_;
+    std::vector<A> array_;
     // Array dimensions
     int nRows_, nColumns_;
     // Half-matrix mode
     bool half_;
     // Row offsets
-    int *rowOffsets_;
+    std::vector<int> rowOffsets_;
 
     private:
     // Resize array
@@ -102,30 +60,28 @@ template <class A> class Array2D
         // If we're only interested in half the matrix then it must be square
         if (half_ && (nrows != ncolumns))
         {
-            Messenger::print("BAD_USAGE - Requested half-matrix mode on a non-square matrix in Array2D::resize().\n");
+            Messenger::error("BAD_USAGE - Requested half-matrix mode on a non-square matrix in Array2D::resize().\n");
         }
 
         // Create new array
         nRows_ = nrows;
         nColumns_ = ncolumns;
-        rowOffsets_ = new int[nRows_];
+        rowOffsets_.resize(nRows_);
         if (half_)
         {
             // Half-array, with element (i,j) == (j,i)
-            int n;
-            linearSize_ = 0;
-            for (n = nRows_; n > 0; --n)
+            int linearSize = 0;
+            for (auto n = nRows_; n > 0; --n)
             {
-                rowOffsets_[nRows_ - n] = linearSize_;
-                linearSize_ += n;
+                rowOffsets_[nRows_ - n] = linearSize;
+                linearSize += n;
             }
-            array_ = new A[linearSize_];
+            array_.resize(linearSize);
         }
         else
         {
-            linearSize_ = nRows_ * nColumns_;
-            array_ = new A[linearSize_];
-            for (int n = 0; n < nRows_; ++n)
+            array_.resize(nRows_ * nColumns_);
+            for (auto n = 0; n < nRows_; ++n)
                 rowOffsets_[n] = n * nColumns_;
         }
     }
@@ -141,7 +97,7 @@ template <class A> class Array2D
             resize(nrows, ncolumns);
     }
     // Add empty row to array
-    void addRow(int nCols = -1)
+    void addRow(std::optional<unsigned int> nCols = std::nullopt)
     {
         // Copy current Array
         Array2D<A> oldArray = *this;
@@ -150,7 +106,7 @@ template <class A> class Array2D
         if (nColumns_ == 0)
         {
             // Must have been supplied the column size if we currently have no data
-            if (nCols == -1)
+            if (!nCols)
             {
                 Messenger::error("Array2D<A>::addRow() - Array is currently empty, so column size must be provided.\n");
                 return;
@@ -160,31 +116,32 @@ template <class A> class Array2D
             nCols = nColumns_;
 
         // Reinitialise the present matrix to the new size
-        if (half_ && (nRows_ == nCols))
+        if (half_ && (nRows_ == nCols.value()))
         {
             Messenger::warn("Adding a row to this Array2D<A> will force it to be rectangular, so it will no longer "
                             "be halved.\n");
-            initialise(nRows_ + 1, nCols, false);
+            initialise(nRows_ + 1, nCols.value(), false);
         }
         else
-            initialise(nRows_ + 1, nCols, half_);
+            initialise(nRows_ + 1, nCols.value(), half_);
 
         // Copy old data back in
-        for (int n = 0; n < oldArray.nRows_; ++n)
+        for (auto n = 0; n < oldArray.nRows_; ++n)
         {
-            for (int m = 0; m < oldArray.nColumns_; ++m)
-                at(n, m) = oldArray.at(n, m);
+            for (auto m = 0; m < oldArray.nColumns_; ++m)
+                (*this)[{n, m}] = oldArray[{n, m}];
         }
     }
     // Set row
     void setRow(int row, A value)
     {
-        for (int n = 0; n < nColumns_; ++n)
-            at(row, n) = value;
+        for (auto n = 0; n < nColumns_; ++n)
+            (*this)[{row, n}] = value;
     }
     // Return specified element as reference
-    A &at(int row, int column)
+    A &operator[](const std::tuple<int, int> index)
     {
+        auto [row, column] = index;
 #ifdef CHECKS
         static A dummy;
         if ((row < 0) || (row >= nRows_))
@@ -210,8 +167,9 @@ template <class A> class Array2D
             return array_[rowOffsets_[row] + column];
     }
     // Return specified element as const reference
-    A &constAt(int row, int column) const
+    const A &operator[](const std::tuple<int, int> index) const
     {
+        auto [row, column] = index;
 #ifdef CHECKS
         static A dummy;
         if ((row < 0) || (row >= nRows_))
@@ -271,42 +229,15 @@ template <class A> class Array2D
     int nRows() const { return nRows_; }
     // Return number of columns
     int nColumns() const { return nColumns_; }
+    typename std::vector<A>::iterator begin() { return array_.begin(); }
+    typename std::vector<A>::iterator end() { return array_.end(); }
+    typename std::vector<A>::const_iterator begin() const { return array_.begin(); }
+    typename std::vector<A>::const_iterator end() const { return array_.end(); }
     // Return linear array size
-    int linearArraySize() const { return linearSize_; }
-    //
-    // Return linear array
-    A *linearArray() { return array_; }
-
-    // Return linear array (const)
-    A *constLinearArray() const { return array_; }
-    // Return linear value
-    A &linearValue(int index)
-    {
-#ifdef CHECKS
-        static A dummy;
-        if ((index < 0) || (index >= linearSize_))
-        {
-            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in Array2D::linearValue() (linearSize = {}).\n", index,
-                             linearSize_);
-            return dummy;
-        }
-#endif
-        return array_[index];
-    }
-    // Return linear value (const)
-    A &constLinearValue(int index) const
-    {
-#ifdef CHECKS
-        static A dummy;
-        if ((index < 0) || (index >= linearSize_))
-        {
-            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in Array2D::constLinearValue() (linearSize = {}).\n",
-                             index, linearSize_);
-            return dummy;
-        }
-#endif
-        return array_[index];
-    }
+    int size() const { return array_.size(); }
+    // Does the array have contents?
+    bool empty() const { return array_.empty(); }
+    std::vector<A> &linearArray() { return array_; }
 
     /*
      * Operators
@@ -315,29 +246,25 @@ template <class A> class Array2D
     // Operator+= (add to all)
     void operator+=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
-            array_[n] += value;
+        std::transform(array_.begin(), array_.end(), array_.begin(), [&value](auto &n) { return n + value; });
     }
     // Operator-= (subtract from all)
     void operator-=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
-            array_[n] -= value;
+        std::transform(array_.begin(), array_.end(), array_.begin(), [&value](auto &n) { return n - value; });
     }
     // Operator*= (multiply all)
     void operator*=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
-            array_[n] *= value;
+        std::transform(array_.begin(), array_.end(), array_.begin(), [&value](auto &n) { return n * value; });
     }
     // Operator/= (divide all)
     void operator/=(const A value)
     {
-        for (int n = 0; n < linearSize_; ++n)
-            array_[n] /= value;
+        std::transform(array_.begin(), array_.end(), array_.begin(), [&value](auto &n) { return n / value; });
     }
     // Operator+= (matrix addition)
-    void operator+=(const Array2D<A> &B) const
+    void operator+=(const Array2D<A> &B)
     {
         // Check array sizes are compatible
         if (nColumns_ != B.nRows_)
@@ -346,11 +273,10 @@ template <class A> class Array2D
                              nColumns_, B.nRows_, B.nColumns_);
             return;
         }
-        for (int n = 0; n < linearSize_; ++n)
-            array_[n] += B.constLinearValue(n);
+        std::transform(array_.begin(), array_.end(), B.array_.begin(), array_.begin(), [](auto &a, auto &b) { return a + b; });
     }
     // Operator-= (matrix subtraction)
-    void operator-=(const Array2D<A> &B) const
+    void operator-=(const Array2D<A> &B)
     {
         // Check array sizes are compatible
         if (nColumns_ != B.nRows_)
@@ -359,8 +285,7 @@ template <class A> class Array2D
                              nColumns_, B.nRows_, B.nColumns_);
             return;
         }
-        for (int n = 0; n < linearSize_; ++n)
-            array_[n] -= B.constLinearValue(n);
+        std::transform(array_.begin(), array_.end(), B.array_begin(), array_.begin(), [](auto &a, auto &b) { return a - b; });
     }
     // Operator* (matrix multiply)
     Array2D<A> operator*(const Array2D<A> &B) const
@@ -376,7 +301,7 @@ template <class A> class Array2D
         Array2D<A> C(nRows_, B.nColumns_);
         int colB, i;
         double x;
-        for (int rowA = 0; rowA < nRows_; ++rowA)
+        for (auto rowA = 0; rowA < nRows_; ++rowA)
         {
             for (colB = 0; colB < B.nColumns_; ++colB)
             {
@@ -384,13 +309,15 @@ template <class A> class Array2D
                 // The number of elements equals nColumns in A (== nRows in B)
                 x = 0.0;
                 for (i = 0; i < nColumns_; ++i)
-                    x += constAt(rowA, i) * B.constAt(i, colB);
-                C.at(rowA, colB) = x;
+                    x += (*this)[{rowA, i}] * B[{i, colB}];
+                C[{rowA, colB}] = x;
             }
         }
 
         return C;
     }
+    A &operator[](const int index) { return array_[index]; }
+    const A &operator[](const int index) const { return array_[index]; }
 
     /*
      * Functions
@@ -400,11 +327,11 @@ template <class A> class Array2D
     void print(std::string_view title = "Array2D<A>") const
     {
         Messenger::print("'{}' : {} rows x {} columns:\n", title, nRows_, nColumns_);
-        for (int row = 0; row < nRows_; ++row)
+        for (auto row = 0; row < nRows_; ++row)
         {
             std::string line;
-            for (int column = 0; column < nColumns_; ++column)
-                line += fmt::format(" {:e}", constAt(row, column));
+            for (auto column = 0; column < nColumns_; ++column)
+                line += fmt::format(" {:e}", (*this)[{row, column}]);
             Messenger::print("R{:2d} :{}\n", row, line);
         }
     }
@@ -414,10 +341,10 @@ template <class A> class Array2D
     Array2D<A> transposed() const
     {
         Array2D<A> result(nColumns_, nRows_);
-        for (int r = 0; r < nRows_; ++r)
+        for (auto r = 0; r < nRows_; ++r)
         {
-            for (int c = 0; c < nColumns_; ++c)
-                result.at(c, r) = constAt(r, c);
+            for (auto c = 0; c < nColumns_; ++c)
+                result[{c, r}] = (*this)[{r, c}];
         }
         return result;
     }

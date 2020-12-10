@@ -97,7 +97,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
             if (!braggParser.openOutput(fmt::format("{}-Bragg.txt", cfg->niceName())))
                 return false;
             braggParser.writeLineF("#   ID      Q       nKVecs    Intensity(0,0)\n");
-            for (int n = 0; n < braggReflections.nItems(); ++n)
+            for (auto n = 0; n < braggReflections.nItems(); ++n)
             {
                 if (!braggParser.writeLineF("{:6d}  {:10.6f}  {:8d}  {:10.6e}\n", n, braggReflections.constAt(n).q(),
                                             braggReflections.constAt(n).nKVectors(),
@@ -108,21 +108,25 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Save intensity data
             auto &types = cfg->usedAtomTypesList();
-            for_each_pair(types.begin(), types.end(), [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) {
-                LineParser intensityParser(&procPool);
-                if (!intensityParser.openOutput(
-                        fmt::format("{}-Bragg-{}-{}.txt", cfg->niceName(), atd1.atomTypeName(), atd2.atomTypeName())))
-                    return false;
-                intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
-                for (int n = 0; n < braggReflections.nItems(); ++n)
-                {
-                    if (!intensityParser.writeLineF("{:10.6f}  {:10.6e}\n", braggReflections.constAt(n).q(),
-                                                    braggReflections.constAt(n).intensity(i, j)))
+            for_each_pair_early(
+                types.begin(), types.end(),
+                [&](int i, const AtomTypeData &atd1, int j, const AtomTypeData &atd2) -> EarlyReturn<bool> {
+                    LineParser intensityParser(&procPool);
+                    if (!intensityParser.openOutput(
+                            fmt::format("{}-Bragg-{}-{}.txt", cfg->niceName(), atd1.atomTypeName(), atd2.atomTypeName())))
                         return false;
                     intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
-                }
-                intensityParser.closeFiles();
-            });
+                    for (auto n = 0; n < braggReflections.nItems(); ++n)
+                    {
+                        if (!intensityParser.writeLineF("{:10.6f}  {:10.6e}\n", braggReflections.constAt(n).q(),
+                                                        braggReflections.constAt(n).intensity(i, j)))
+                            return false;
+                        intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
+                    }
+                    intensityParser.closeFiles();
+
+                    return EarlyReturn<bool>::Continue;
+                });
         }
     }
 

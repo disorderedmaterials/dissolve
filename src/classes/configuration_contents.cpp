@@ -27,13 +27,6 @@ void Configuration::empty()
     ++contentsVersion_;
 }
 
-// Initialise content arrays
-void Configuration::initialiseArrays(int nMolecules)
-{
-    // Clear current contents
-    empty();
-}
-
 // Return specified used type
 std::shared_ptr<AtomType> Configuration::usedAtomType(int index) { return usedAtomTypes_.atomType(index); }
 
@@ -130,10 +123,10 @@ std::shared_ptr<Molecule> Configuration::addMolecule(Species *sp, CoordinateSet 
     // Add Atoms from Species to the Molecule, using either species coordinates or those from the source CoordinateSet
     SpeciesAtom *spi = sp->firstAtom();
     if (sourceCoordinates)
-        for (int n = 0; n < sp->nAtoms(); ++n, spi = spi->next())
+        for (auto n = 0; n < sp->nAtoms(); ++n, spi = spi->next())
             addAtom(spi, newMolecule, sourceCoordinates->r(n));
     else
-        for (int n = 0; n < sp->nAtoms(); ++n, spi = spi->next())
+        for (auto n = 0; n < sp->nAtoms(); ++n, spi = spi->next())
             addAtom(spi, newMolecule, spi->r());
 
     return newMolecule;
@@ -205,7 +198,7 @@ void Configuration::scaleMoleculeCentres(double factor)
         newCog = oldCog * factor;
 
         // Loop over Atoms in Molecule, setting new coordinates as we go
-        for (int m = 0; m < mol->nAtoms(); ++m)
+        for (auto m = 0; m < mol->nAtoms(); ++m)
         {
             // Get Atom pointer
             Atom *i = mol->atom(m);

@@ -3,10 +3,6 @@
 
 #include "modules/export_trajectory/exporttraj.h"
 
-/*
- * Constructor / Destructor
- */
-
 ExportTrajectoryModule::ExportTrajectoryModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

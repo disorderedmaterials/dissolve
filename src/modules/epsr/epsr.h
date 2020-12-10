@@ -80,20 +80,18 @@ class EPSRModule : public Module
     private:
     // Test datasets (if any)
     Data1DStore testData_;
-    // Target Modules, divided into groups
-    ModuleGroups groupedTargets_;
-    // Simulated data added as reference data
-    Array<Data1D> simulatedReferenceData_;
+    // Target Modules for refinement
+    RefList<Module> targets_;
+    // Target Configuration (determined from target modules)
+    Configuration *targetConfiguration_;
 
     public:
     // Return list of target Modules / data for refeinement
-    const RefDataList<Module, ModuleGroup *> &allTargets() const;
-    // Return grouped target Modules
-    const ModuleGroups &groupedTargets() const;
+    const RefList<Module> &targets() const;
     // Add target Modules
-    void addTargets(RefList<Module> targets, std::string_view groupName = "Default");
+    void addTargets(RefList<Module> targets);
     // Create / retrieve arrays for storage of empirical potential coefficients
-    Array2D<Array<double>> &potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp = -1);
+    Array2D<std::vector<double>> &potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp = -1);
     // Generate empirical potentials from current coefficients
     bool generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::ExpansionFunctionType functionType, double rho,
                                      int ncoeffp, double rminpt, double rmaxpt, double sigma1, double sigma2);

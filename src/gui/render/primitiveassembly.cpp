@@ -61,6 +61,6 @@ void PrimitiveAssembly::add(LineStyle lineStyle)
 // Send to OpenGL (i.e. render)
 void PrimitiveAssembly::sendToGL(double pixelScaling)
 {
-    for (int n = 0; n < assembly_.nItems(); ++n)
+    for (auto n = 0; n < assembly_.nItems(); ++n)
         assembly_[n]->sendToGL(pixelScaling);
 }

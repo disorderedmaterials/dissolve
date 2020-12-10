@@ -1,5 +1,0 @@
----
-title: OperateMultiply
----
-
-{{< todo-label >}}

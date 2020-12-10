@@ -4,11 +4,12 @@
 #include "math/interpolator.h"
 #include "math/data1d.h"
 
-Interpolator::Interpolator(const Array<double> &x, const Array<double> &y, InterpolationScheme scheme) : x_(x), y_(x)
+Interpolator::Interpolator(const std::vector<double> &x, const std::vector<double> &y, InterpolationScheme scheme)
+    : x_(x), y_(y)
 {
     interpolate(scheme);
 }
-Interpolator::Interpolator(const Data1D &source, InterpolationScheme scheme) : x_(source.constXAxis()), y_(source.constValues())
+Interpolator::Interpolator(const Data1D &source, InterpolationScheme scheme) : x_(source.xAxis()), y_(source.values())
 {
     interpolate(scheme);
 }
@@ -134,37 +135,42 @@ void Interpolator::interpolateSpline()
      * 					x(i) - x(i-1)
      */
 
-    int i, nPoints = x_.nItems();
+    const auto nPoints = x_.size();
 
     if (nPoints < 2)
         return;
 
     // Calculate interval array 'h'
-    h_.initialise(nPoints);
-    for (i = 0; i < nPoints - 1; ++i)
-        h_[i] = x_.constAt(i + 1) - x_.constAt(i);
+    h_.clear();
+    h_.resize(nPoints);
+    for (auto i = 0; i < nPoints - 1; ++i)
+        h_[i] = x_[i + 1] - x_[i];
 
     // Initialise parameter arrays and working array
-    a_.initialise(nPoints - 1);
-    b_.initialise(nPoints - 1);
-    c_.initialise(nPoints);
-    d_.initialise(nPoints - 1);
+    a_.clear();
+    a_.resize(nPoints - 1);
+    b_.clear();
+    b_.resize(nPoints - 1);
+    c_.clear();
+    c_.resize(nPoints);
+    d_.clear();
+    d_.resize(nPoints - 1);
 
     // Determine 'm' values (== C) now by solving the tridiagonal matrix above. Use Thomas algorithm...
     // -- First stage
     double p, q, r, s;
-    Array<double> rprime(nPoints), sprime(nPoints);
+    std::vector<double> rprime(nPoints), sprime(nPoints);
     rprime[0] = 0.0; // Would be 0.0 / 1.0 in the case of Natural spline
     sprime[0] = 0.0;
 
-    for (i = 1; i < nPoints - 1; ++i)
+    for (auto i = 1; i < nPoints - 1; ++i)
     {
         // For a given i, p(i) = h(i-1), q(i) = 2(h(i-1)+h(i)), r(i) = h(i), s(i) = 6 ((y(n+1) - y(n)) / h(n) - (y(n) -
         // y(n-1)) / h(n-1)
         p = h_[i - 1];
         q = 2.0 * (h_[i - 1] + h_[i]);
         r = h_[i];
-        s = 6.0 * ((y_.constAt(i + 1) - y_.constAt(i)) / h_[i] - (y_.constAt(i) - y_.constAt(i - 1)) / h_[i - 1]);
+        s = 6.0 * ((y_[i + 1] - y_[i]) / h_[i] - (y_[i] - y_[i - 1]) / h_[i - 1]);
 
         // -- Calculate r'(i) = r(i) / ( q(i) - r'(i-1)p(i) )
         rprime[i] = r / (q - rprime[i - 1] * p);
@@ -172,23 +178,23 @@ void Interpolator::interpolateSpline()
         sprime[i] = (s - sprime[i - 1] * p) / (q - rprime[i - 1] * p);
     }
     rprime[nPoints - 1] = 0.0;
-    sprime[nPoints - 1] = (0.0 - sprime[nPoints - 2] / h_[i - 1]) / (2.0 * h_[i - 1]);
+    sprime[nPoints - 1] = (0.0 - sprime[nPoints - 2] / h_[nPoints - 1]) / (2.0 * h_[nPoints - 1]);
 
     // -- Second stage - backsubstitution
     c_[nPoints - 1] = 0.0;
-    for (i = nPoints - 2; i >= 0; --i)
+    for (int i = nPoints - 2; i >= 0; --i)
     {
         // For a given i, m(i) = s'(i) - r'(i)m(i+1)
         c_[i] = sprime[i] - rprime[i] * c_[i + 1];
     }
 
     // c_ array now contains m(i)...
-    for (i = 0; i < nPoints - 1; ++i)
+    for (auto i = 0; i < nPoints - 1; ++i)
     {
-        b_[i] = (y_.constAt(i + 1) - y_.constAt(i)) / h_[i] - 0.5 * h_[i] * c_[i] - (h_[i] * (c_[i + 1] - c_[i])) / 6.0;
+        b_[i] = (y_[i + 1] - y_[i]) / h_[i] - 0.5 * h_[i] * c_[i] - (h_[i] * (c_[i + 1] - c_[i])) / 6.0;
         d_[i] = (c_[i + 1] - c_[i]) / (6.0 * h_[i]);
         c_[i] *= 0.5;
-        a_[i] = y_.constAt(i);
+        a_[i] = y_[i];
     }
 
     lastInterval_ = 0;
@@ -201,21 +207,25 @@ void Interpolator::interpolateConstrainedSpline()
      * Constrained Spline fit
      */
 
-    int i, nPoints = x_.nItems();
+    int i, nPoints = x_.size();
 
     // Initialise parameter arrays and working array
-    a_.initialise(nPoints - 1);
-    b_.initialise(nPoints - 1);
-    c_.initialise(nPoints - 1);
-    d_.initialise(nPoints - 1);
+    a_.clear();
+    a_.resize(nPoints - 1);
+    b_.clear();
+    b_.resize(nPoints - 1);
+    c_.clear();
+    c_.resize(nPoints - 1);
+    d_.clear();
+    d_.resize(nPoints - 1);
 
     // Calculate first derivatives at each point
-    Array<double> fp(nPoints);
+    std::vector<double> fp(nPoints);
     double gradA, gradB;
     for (i = 1; i < nPoints - 1; ++i)
     {
-        gradA = (x_.constAt(i + 1) - x_.constAt(i)) / (y_.constAt(i + 1) - y_.constAt(i));
-        gradB = (x_.constAt(i) - x_.constAt(i - 1)) / (y_.constAt(i) - y_.constAt(i - 1));
+        gradA = (x_[i + 1] - x_[i]) / (y_[i + 1] - y_[i]);
+        gradB = (x_[i] - x_[i - 1]) / (y_[i] - y_[i - 1]);
         if (DissolveMath::sgn(gradA) != DissolveMath::sgn(gradB))
             fp[i] = 0.0;
         else
@@ -231,18 +241,17 @@ void Interpolator::interpolateConstrainedSpline()
     double fppi, fppim1, dx, dy;
     for (i = 1; i < nPoints; ++i)
     {
-        dx = x_.constAt(i) - x_.constAt(i - 1);
-        dy = y_.constAt(i) - y_.constAt(i - 1);
+        dx = x_[i] - x_[i - 1];
+        dy = y_[i] - y_[i - 1];
         fppim1 = -2.0 * (fp[i] + 2.0 * fp[i - 1]) / dx + 6.0 * dy / (dx * dx);
         fppi = 2.0 * (2.0 * fp[i] + fp[i - 1]) / dx - 6.0 * dy / (dx * dx);
         d_[i - 1] = (fppi - fppim1) / (6.0 * dx);
-        c_[i - 1] = (x_.constAt(i) * fppim1 - x_.constAt(i - 1) * fppi) / (2.0 * dx);
-        b_[i - 1] = (dy - c_[i - 1] * (x_.constAt(i) * x_.constAt(i) - x_.constAt(i - 1) * x_.constAt(i - 1)) -
-                     d_[i - 1] * (x_.constAt(i) * x_.constAt(i) * x_.constAt(i) -
-                                  x_.constAt(i - 1) * x_.constAt(i - 1) * x_.constAt(i - 1))) /
+        c_[i - 1] = (x_[i] * fppim1 - x_[i - 1] * fppi) / (2.0 * dx);
+        b_[i - 1] = (dy - c_[i - 1] * (x_[i] * x_[i] - x_[i - 1] * x_[i - 1]) -
+                     d_[i - 1] * (x_[i] * x_[i] * x_[i] - x_[i - 1] * x_[i - 1] * x_[i - 1])) /
                     dx;
-        a_[i - 1] = y_.constAt(i - 1) - b_[i - 1] * x_.constAt(i - 1) - c_[i - 1] * x_.constAt(i - 1) * x_.constAt(i - 1) -
-                    d_[i - 1] * x_.constAt(i - 1) * x_.constAt(i - 1) * x_.constAt(i - 1);
+        a_[i - 1] = y_[i - 1] - b_[i - 1] * x_[i - 1] - c_[i - 1] * x_[i - 1] * x_[i - 1] -
+                    d_[i - 1] * x_[i - 1] * x_[i - 1] * x_[i - 1];
     }
 
     lastInterval_ = 0;
@@ -252,9 +261,10 @@ void Interpolator::interpolateConstrainedSpline()
 void Interpolator::interpolateLinear()
 {
     // Calculate y interval array 'a'
-    a_.initialise(y_.nItems() - 1);
-    for (int i = 0; i < y_.nItems() - 1; ++i)
-        a_[i] = y_.constAt(i + 1) - y_.constAt(i);
+    a_.clear();
+    a_.resize(y_.size() - 1);
+    for (auto i = 0; i < y_.size() - 1; ++i)
+        a_[i] = y_[i + 1] - y_[i];
 
     lastInterval_ = 0;
 }
@@ -265,12 +275,20 @@ void Interpolator::interpolateThreePoint() { lastInterval_ = 0; }
 // Regenerate using specified scheme
 void Interpolator::interpolate(Interpolator::InterpolationScheme scheme)
 {
-    // Calculate interval array 'h'
-    h_.initialise(x_.nItems() - 1);
-    for (int i = 0; i < x_.nItems() - 1; ++i)
-        h_[i] = x_.constAt(i + 1) - x_.constAt(i);
-
     scheme_ = scheme;
+
+    // Do we have any data to work with?
+    if (x_.size() < 2)
+    {
+        h_.clear();
+        return;
+    }
+
+    // Calculate interval array 'h'
+    h_.clear();
+    h_.resize(x_.size() - 1);
+    for (auto i = 0; i < x_.size() - 1; ++i)
+        h_[i] = x_[i + 1] - x_[i];
 
     if (scheme_ == Interpolator::SplineInterpolation)
         interpolateSpline();
@@ -299,11 +317,11 @@ double Interpolator::y(double x)
 
     // Perform binary chop search
     lastInterval_ = 0;
-    int i, right = h_.nItems() - 1;
+    int i, right = h_.size() - 1;
     while ((right - lastInterval_) > 1)
     {
         i = (right + lastInterval_) / 2;
-        if (x_.constAt(i) > x)
+        if (x_[i] > x)
             right = i;
         else
             lastInterval_ = i;
@@ -316,14 +334,14 @@ double Interpolator::y(double x)
 double Interpolator::y(double x, int interval)
 {
     if (interval < 0)
-        return y_.firstValue();
+        return y_.front();
 
     if (scheme_ == Interpolator::SplineInterpolation)
     {
-        if (x >= x_.lastValue())
-            return y_.lastValue();
+        if (x >= x_.back())
+            return y_.back();
 
-        double h = x - x_.constAt(interval);
+        double h = x - x_[interval];
         double hh = h * h;
         return a_[interval] + b_[interval] * h + c_[interval] * hh + d_[interval] * hh * h;
     }
@@ -335,22 +353,22 @@ double Interpolator::y(double x, int interval)
     //	}
     else if (scheme_ == Interpolator::LinearInterpolation)
     {
-        if (interval >= (x_.nItems() - 1))
-            return y_.lastValue();
+        if (interval >= (x_.size() - 1))
+            return y_.back();
 
-        double delta = (x - x_.constAt(interval)) / h_.constAt(interval);
-        return y_.constAt(interval) + delta * a_.constAt(interval);
+        double delta = (x - x_[interval]) / h_[interval];
+        return y_[interval] + delta * a_[interval];
     }
     else if (scheme_ == Interpolator::ThreePointInterpolation)
     {
-        if (interval >= (x_.nItems() - 3))
-            return y_.lastValue();
+        if (interval >= (x_.size() - 3))
+            return y_.back();
 
-        double ppp = (x - x_.constAt(interval)) / h_.constAt(interval);
+        double ppp = (x - x_[interval]) / h_[interval];
 
-        double vk0 = y_.constAt(interval);
-        double vk1 = y_.constAt(interval + 1);
-        double vk2 = y_.constAt(interval + 2);
+        double vk0 = y_[interval];
+        double vk1 = y_[interval + 1];
+        double vk2 = y_[interval + 2];
         double t1 = vk0 + (vk1 - vk0) * ppp;
         double t2 = vk1 + (vk2 - vk1) * (ppp - 1.0);
         return t1 + (t2 - t1) * ppp * 0.5;
@@ -367,31 +385,31 @@ double Interpolator::y(double x, int interval)
 double Interpolator::approximate(const Data1D &data, double x)
 {
     // Grab xand y arrays
-    const auto &xData = data.constXAxis();
-    const auto &yData = data.constValues();
+    const auto &xData = data.xAxis();
+    const auto &yData = data.values();
 
-    if (x < xData.firstValue())
-        return yData.firstValue();
-    if (x > xData.lastValue())
-        return yData.lastValue();
+    if (x < xData.front())
+        return yData.front();
+    if (x > xData.back())
+        return yData.back();
 
     // Perform binary chop search
     auto left = 0;
-    int i, right = data.constXAxis().nItems() - 1;
+    int i, right = data.xAxis().size() - 1;
     while ((right - left) > 1)
     {
         i = (right + left) / 2;
-        if (xData.constAt(i) > x)
+        if (xData[i] > x)
             right = i;
         else
             left = i;
     }
 
-    double ppp = (x - xData.constAt(left)) / (xData.constAt(right) - xData.constAt(left));
+    double ppp = (x - xData[left]) / (xData[right] - xData[left]);
 
-    double vk0 = yData.constAt(left);
-    double vk1 = yData.constAt(left + 1);
-    double vk2 = yData.constAt(left + 2);
+    double vk0 = yData[left];
+    double vk1 = yData[left + 1];
+    double vk2 = yData[left + 2];
 
     double t1 = vk0 + (vk1 - vk0) * ppp;
     double t2 = vk1 + (vk2 - vk1) * (ppp - 1.0);
@@ -403,22 +421,22 @@ double Interpolator::approximate(const Data1D &data, double x)
 void Interpolator::addInterpolated(Data1D &A, const Data1D &B, double factor)
 {
     // Grab x and y arrays from data A
-    Array<double> &aX = A.xAxis();
-    Array<double> &aY = A.values();
+    std::vector<double> &aX = A.xAxis();
+    std::vector<double> &aY = A.values();
 
     // If there is currently no data in A, just copy the arrays from B
-    if (aX.nItems() == 0)
+    if (aX.size() == 0)
     {
-        aX = B.constXAxis();
-        aY = B.constValues();
-        aY *= factor;
+        aX = B.xAxis();
+        aY = B.values();
+        std::transform(aY.begin(), aY.end(), aY.begin(), [factor](auto value) { return value * factor; });
     }
     else
     {
         // Generate interpolation of data B
         Interpolator interpolatedB(B);
 
-        for (int n = 0; n < aX.nItems(); ++n)
-            aY[n] += interpolatedB.y(aX.constAt(n)) * factor;
+        std::transform(aX.begin(), aX.end(), aY.begin(), aY.begin(),
+                       [&](auto x, auto y) { return y + interpolatedB.y(x) * factor; });
     }
 }

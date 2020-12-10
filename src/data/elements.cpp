@@ -129,8 +129,8 @@ Element &Elements::element(std::string_view symbol)
             return elements()[Z];
     }
     else
-        for (int n = 0; n < nElements(); n++)
-            if (cleaned == elements()[n].symbol())
+        for (auto n = 0; n < nElements(); n++)
+            if (DissolveSys::sameString(cleaned, elements()[n].symbol()))
                 return elements()[n];
 
     return elements()[0];

@@ -144,7 +144,6 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
             if (intraSelectionOnly && (!originalBond.isSelected()))
                 continue;
 
-            // Copy interaction parameters, including MasterIntra if necessary
             dissolve.copySpeciesIntra(*modifiedBond, originalBond);
 
             ++modifiedBond;
@@ -154,9 +153,11 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
         for (auto &originalAngle : targetSpecies_->angles())
         {
             // Selection only?
-            if (!intraSelectionOnly || originalAngle.isSelected())
-                // Copy interaction parameters, including MasterIntra if necessary
-                dissolve.copySpeciesIntra(*modifiedAngle, originalAngle);
+            if (intraSelectionOnly && (!originalAngle.isSelected()))
+                continue;
+
+            dissolve.copySpeciesIntra(*modifiedAngle, originalAngle);
+
             ++modifiedAngle;
         }
 
@@ -165,11 +166,31 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
         {
 
             // Selection only?
-            if (!intraSelectionOnly || originalTorsion.isSelected())
-                dissolve.copySpeciesIntra(*modifiedTorsion, originalTorsion);
-            ++modifiedTorsion;
+            if (intraSelectionOnly && (!originalTorsion.isSelected()))
+                continue;
 
-            // Copy interaction parameters, including MasterIntra if necessary
+            dissolve.copySpeciesIntra(*modifiedTorsion, originalTorsion);
+
+            ++modifiedTorsion;
+        }
+
+        for (auto &modifiedImproper : modifiedSpecies_->constImpropers())
+        {
+            // Selection only?
+            if (intraSelectionOnly && (!modifiedImproper.isSelected()))
+                continue;
+
+            // Find / create the improper in the target species
+            auto optImproper = targetSpecies_->getImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
+                                                           modifiedImproper.indexK(), modifiedImproper.indexL());
+            if (optImproper)
+                dissolve.copySpeciesIntra(modifiedImproper, *optImproper);
+            else
+            {
+                auto &improper = targetSpecies_->addImproper(modifiedImproper.indexI(), modifiedImproper.indexJ(),
+                                                             modifiedImproper.indexK(), modifiedImproper.indexL());
+                dissolve.copySpeciesIntra(modifiedImproper, improper);
+            }
         }
     }
 
@@ -503,7 +524,7 @@ void AddForcefieldTermsWizard::updateAtomTypesConflictsPage()
 {
     // Update the list against the global AtomType list
     ListWidgetUpdater<AddForcefieldTermsWizard, AtomType> listUpdater(
-        ui_.AtomTypesConflictsList, temporaryCoreData_.constAtomTypes(), this,
+        ui_.AtomTypesConflictsList, temporaryCoreData_.atomTypes(), this,
         &AddForcefieldTermsWizard::updateAtomTypesConflictsListRow);
 
     typeNameMappings_.clear();
@@ -514,7 +535,7 @@ void AddForcefieldTermsWizard::checkForAtomTypeConflicts()
 {
     // Determine whether we have any naming conflicts
     auto nConflicts = 0;
-    for (int i = 0; i < ui_.AtomTypesConflictsList->count(); ++i)
+    for (auto i = 0; i < ui_.AtomTypesConflictsList->count(); ++i)
     {
         QListWidgetItem *item = ui_.AtomTypesConflictsList->item(i);
 
@@ -679,7 +700,7 @@ void AddForcefieldTermsWizard::masterTermsTreeEdited(QWidget *lineEdit)
 {
     // Since the signal that leads us here does not tell us the item that was edited, update all MasterTerm names here
     // before updating the page
-    for (int n = 0; n < masterBondItemParent_->childCount(); ++n)
+    for (auto n = 0; n < masterBondItemParent_->childCount(); ++n)
     {
         QTreeWidgetItem *item = masterBondItemParent_->child(n);
         MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
@@ -688,7 +709,7 @@ void AddForcefieldTermsWizard::masterTermsTreeEdited(QWidget *lineEdit)
 
         intra->setName(qPrintable(item->text(0)));
     }
-    for (int n = 0; n < masterAngleItemParent_->childCount(); ++n)
+    for (auto n = 0; n < masterAngleItemParent_->childCount(); ++n)
     {
         QTreeWidgetItem *item = masterAngleItemParent_->child(n);
         MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));
@@ -697,7 +718,7 @@ void AddForcefieldTermsWizard::masterTermsTreeEdited(QWidget *lineEdit)
 
         intra->setName(qPrintable(item->text(0)));
     }
-    for (int n = 0; n < masterTorsionItemParent_->childCount(); ++n)
+    for (auto n = 0; n < masterTorsionItemParent_->childCount(); ++n)
     {
         QTreeWidgetItem *item = masterTorsionItemParent_->child(n);
         MasterIntra *intra = VariantPointer<MasterIntra>(item->data(0, Qt::UserRole));

@@ -4,6 +4,7 @@
 #include "procedure/nodes/calculatebase.h"
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "procedure/nodes/select.h"
 
 CalculateProcedureNodeBase::CalculateProcedureNodeBase(ProcedureNode::NodeType nodeType, SelectProcedureNode *site0,
                                                        SelectProcedureNode *site1, SelectProcedureNode *site2,
@@ -62,7 +63,7 @@ Vec3<double> CalculateProcedureNodeBase::values() const { return value_; }
 bool CalculateProcedureNodeBase::prepare(Configuration *cfg, std::string_view prefix, GenericList &targetList)
 {
     // Check that the sites have been properly defined
-    for (int n = 0; n < nSitesRequired(); ++n)
+    for (auto n = 0; n < nSitesRequired(); ++n)
     {
         sites_[n] = siteKeywords_[n] ? siteKeywords_[n]->node() : nullptr;
         if (!sites_[n])

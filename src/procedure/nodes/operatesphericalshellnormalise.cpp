@@ -25,18 +25,18 @@ OperateSphericalShellNormaliseProcedureNode::~OperateSphericalShellNormaliseProc
 bool OperateSphericalShellNormaliseProcedureNode::operateData1D(ProcessPool &procPool, Configuration *cfg)
 {
     // We expect x values to be centre-bin values, and regularly spaced
-    const auto &xAxis = targetData1D_->constXAxis();
-    Array<double> &values = targetData1D_->values();
-    if (xAxis.nItems() < 2)
+    const auto &xAxis = targetData1D_->xAxis();
+    auto &values = targetData1D_->values();
+    if (xAxis.size() < 2)
         return true;
 
     // Derive first left-bin boundary from the delta betwen points 0 and 1
-    double leftBin = xAxis.constAt(0) - (xAxis.constAt(1) - xAxis.constAt(0)) * 0.5, rightBin, divisor;
+    double leftBin = xAxis[0] - (xAxis[1] - xAxis[0]) * 0.5, rightBin, divisor;
     double r1Cubed = pow(leftBin, 3), r2Cubed;
-    for (int n = 0; n < xAxis.nItems(); ++n)
+    for (auto n = 0; n < xAxis.size(); ++n)
     {
         // Get new right-bin from existing left bin boundary and current bin centre
-        rightBin = leftBin + 2 * (xAxis.constAt(n) - leftBin);
+        rightBin = leftBin + 2 * (xAxis[n] - leftBin);
         r2Cubed = pow(rightBin, 3);
         divisor = (4.0 / 3.0) * PI * (r2Cubed - r1Cubed);
         values[n] /= divisor;

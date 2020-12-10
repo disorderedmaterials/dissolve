@@ -28,7 +28,7 @@ ConfigurationTab::ConfigurationTab(DissolveWindow *dissolveWindow, Dissolve &dis
     configuration_ = cfg;
 
     // Populate coordinates file format combo
-    for (int n = 0; n < cfg->inputCoordinates().nFormats(); ++n)
+    for (auto n = 0; n < cfg->inputCoordinates().nFormats(); ++n)
         ui_.CoordinatesFileFormatCombo->addItem(QString::fromStdString(std::string(cfg->inputCoordinates().formatKeyword(n))));
 
     // Populate density units combo

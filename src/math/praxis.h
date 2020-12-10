@@ -34,7 +34,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 
     private:
     // Perform minimisation
-    double execute(Array<double> &values) { return praxis(tolerance_, maxStep_, values, printLevel_); }
+    double execute(std::vector<double> &values) { return praxis(tolerance_, maxStep_, values, printLevel_); }
 
     public:
     // Set maximum step size
@@ -79,8 +79,8 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
     private:
     //****************************************************************************80
 
-    double flin(const Array<double> alpha, int jsearch, double l, int &nf, double v[], double q0[], double q1[], double &qd0,
-                double &qd1, double &qa, double &qb, double &qc)
+    double flin(const std::vector<double> alpha, int jsearch, double l, int &nf, double v[], double q0[], double q1[],
+                double &qd0, double &qd1, double &qa, double &qb, double &qc)
 
     //****************************************************************************80
     //
@@ -153,8 +153,8 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         int i;
         double value;
 
-        int n = alpha.nItems();
-        Array<double> t(n);
+        int n = alpha.size();
+        std::vector<double> t(n);
 
         //
         //  The search is linear.
@@ -163,7 +163,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         {
             for (i = 0; i < n; i++)
             {
-                t[i] = alpha.constAt(i) + l * v[i + jsearch * n];
+                t[i] = alpha[i] + l * v[i + jsearch * n];
             }
         }
         //
@@ -177,7 +177,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 
             for (i = 0; i < n; i++)
             {
-                t[i] = qa * q0[i] + qb * alpha.constAt(i) + qc * q1[i];
+                t[i] = qa * q0[i] + qb * alpha[i] + qc * q1[i];
             }
         }
         //
@@ -261,7 +261,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         double c;
         double *e;
         double eps;
-        double f;
+        double f = 0.0;
         double g;
         double h;
         int i;
@@ -618,9 +618,9 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
     }
     //****************************************************************************80
 
-    void minny(Array<double> &alpha, int jsearch, int nits, double &d2, double &x1, double &f1, bool fk, double t, double h,
-               double v[], double q0[], double q1[], int &nl, int &nf, double dmin, double ldt, double &fx, double &qa,
-               double &qb, double &qc, double &qd0, double &qd1)
+    void minny(std::vector<double> &alpha, int jsearch, int nits, double &d2, double &x1, double &f1, bool fk, double t,
+               double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin, double ldt, double &fx,
+               double &qa, double &qb, double &qc, double &qd0, double &qd1)
 
     //****************************************************************************80
     //
@@ -717,14 +717,14 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         double fm;
         int i;
         int k;
-        int n = alpha.nItems();
+        int n = alpha.size();
         double m2;
         double m4;
         double machep;
         int ok;
         double s;
         double sf1;
-        double small;
+        double smallValue;
         double sx1;
         double t2;
         double temp;
@@ -732,7 +732,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         double xm;
 
         machep = std::numeric_limits<double>::epsilon();
-        small = machep * machep;
+        smallValue = machep * machep;
         m2 = sqrt(machep);
         m4 = sqrt(m2);
         sf1 = f1;
@@ -745,7 +745,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         //
         //  Find the step size.
         //
-        s = r8vec_norm(alpha.nItems(), alpha.array());
+        s = r8vec_norm(alpha.size(), alpha.data());
 
         if (dz)
         {
@@ -763,7 +763,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
             t2 = s;
         }
 
-        t2 = std::max(t2, small);
+        t2 = std::max(t2, smallValue);
         t2 = std::min(t2, 0.01 * h);
 
         if (fk && f1 <= fm)
@@ -826,7 +826,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
             //
             //  Predict the minimum.
             //
-            if (d2 <= small)
+            if (d2 <= smallValue)
             {
                 if (0.0 <= d1)
                 {
@@ -898,7 +898,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         //
         //  Get a new estimate of the second derivative.
         //
-        if (small < fabs(x2 * (x2 - x1)))
+        if (smallValue < fabs(x2 * (x2 - x1)))
         {
             d2 = (x2 * (f1 - f0) - x1 * (fm - f0)) / ((x1 * x2) * (x1 - x2));
         }
@@ -910,7 +910,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
             }
         }
 
-        d2 = std::max(d2, small);
+        d2 = std::max(d2, smallValue);
 
         x1 = x2;
         fx = fm;
@@ -1000,8 +1000,8 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
     }
     //****************************************************************************80
 
-    void quad(Array<double> &alpha, double t, double h, double v[], double q0[], double q1[], int &nl, int &nf, double dmin,
-              double ldt, double &fx, double &qf1, double &qa, double &qb, double &qc, double &qd0, double &qd1)
+    void quad(std::vector<double> &alpha, double t, double h, double v[], double q0[], double q1[], int &nl, int &nf,
+              double dmin, double ldt, double &fx, double &qf1, double &qa, double &qb, double &qc, double &qd0, double &qd1)
 
     //****************************************************************************80
     //
@@ -1068,7 +1068,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         bool fk;
         int i;
         int jsearch;
-        int n = alpha.nItems();
+        int n = alpha.size();
         double l;
         int nits;
         double s;
@@ -1834,7 +1834,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 
     //****************************************************************************80
 
-    double praxis(double t0, double h0, Array<double> &x, int prin)
+    double praxis(double t0, double h0, std::vector<double> &x, int prin)
 
     //****************************************************************************80
     //
@@ -1973,7 +1973,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         int seed;
         double sf;
         double sl;
-        double small;
+        double smallValue;
         double t;
         double temp;
         double t2;
@@ -1986,7 +1986,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         //
         //  Allocation.
         //
-        int nAlpha = x.nItems();
+        int nAlpha = x.size();
         d = new double[nAlpha];
         q0 = new double[nAlpha];
         q1 = new double[nAlpha];
@@ -1997,9 +1997,9 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         //  Initialization.
         //
         machep = std::numeric_limits<double>::epsilon();
-        small = machep * machep;
-        vsmall = small * small;
-        large = 1.0 / small;
+        smallValue = machep * machep;
+        vsmall = smallValue * smallValue;
+        large = 1.0 / smallValue;
         vlarge = 1.0 / vsmall;
         m2 = sqrt(machep);
         m4 = sqrt(m2);
@@ -2036,9 +2036,9 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         fx = MinimiserBase<T>::cost(x);
 
         qf1 = fx;
-        t = small + fabs(t0);
+        t = smallValue + fabs(t0);
         t2 = t;
-        dmin = small;
+        dmin = smallValue;
         h = h0;
         h = std::max(h, 100.0 * t);
         ldt = h;
@@ -2063,12 +2063,12 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
         qc = 0.0;
         qd0 = 0.0;
         qd1 = 0.0;
-        r8vec_copy(nAlpha, x.array(), q0);
-        r8vec_copy(nAlpha, x.array(), q1);
+        r8vec_copy(nAlpha, x.data(), q0);
+        r8vec_copy(nAlpha, x.data(), q1);
 
         if (0 < prin)
         {
-            print2(nAlpha, x.array(), prin, fx, nf, nl);
+            print2(nAlpha, x.data(), prin, fx, nf, nl);
         }
         //
         //  The main loop starts here.
@@ -2111,7 +2111,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
             //
             for (k = 1; k <= nAlpha; k++)
             {
-                r8vec_copy(x.nItems(), x.array(), y);
+                r8vec_copy(x.size(), x.data(), y);
 
                 sf = fx;
 
@@ -2230,7 +2230,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
                 //  If no random step was taken, V(*,KL) is the "non-conjugate"
                 //  direction along which the greatest improvement was made.
                 //
-                if (small < lds)
+                if (smallValue < lds)
                 {
                     for (j = kl - 1; k <= j; j--)
                     {
@@ -2276,10 +2276,10 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 
                 if (0 < prin)
                 {
-                    print2(nAlpha, x, prin, fx, nf, nl);
+                    print2(nAlpha, x.data(), prin, fx, nf, nl);
                 }
 
-                t2 = r8vec_norm(nAlpha, x);
+                t2 = r8vec_norm(nAlpha, x.data());
 
                 t2 = m2 * t2 + t;
                 //
@@ -2297,7 +2297,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
                 {
                     if (0 < prin)
                     {
-                        r8vec_print(nAlpha, x, "  X:");
+                        r8vec_print(nAlpha, x.data(), "  X:");
                     }
 
                     delete[] d;
@@ -2422,7 +2422,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
                 {
                     d[i] = vsmall;
                 }
-                else if (dni < small)
+                else if (dni < smallValue)
                 {
                     d[i] = vlarge;
                 }
@@ -2438,7 +2438,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
             //
             //  Determine the smallest eigenvalue.
             //
-            dmin = std::max(d[nAlpha - 1], small);
+            dmin = std::max(d[nAlpha - 1], smallValue);
             //
             //  The ratio of the smallest to largest eigenvalue determines whether
             //  the system is ill conditioned.
@@ -2473,7 +2473,7 @@ template <class T> class PrAxisMinimiser : public MinimiserBase<T>
 
         if (0 < prin)
         {
-            r8vec_print(nAlpha, x, "  X:");
+            r8vec_print(nAlpha, x.data(), "  X:");
         }
         //
         //  Free memory.

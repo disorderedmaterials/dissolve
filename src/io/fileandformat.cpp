@@ -18,7 +18,7 @@ FileAndFormat::operator std::string_view() const { return filename_; }
 // Convert text string to format index
 int FileAndFormat::format(std::string_view fmtString) const
 {
-    for (int n = 0; n < nFormats(); ++n)
+    for (auto n = 0; n < nFormats(); ++n)
         if (DissolveSys::sameString(fmtString, formatKeyword(n)))
             return n;
 
@@ -52,7 +52,7 @@ std::string_view FileAndFormat::description() const
 // Print available formats
 void FileAndFormat::printAvailableFormats() const
 {
-    for (int n = 0; n < nFormats(); ++n)
+    for (auto n = 0; n < nFormats(); ++n)
         Messenger::print("  {:12}  {}\n", formatKeyword(n), formatDescription(n));
 }
 

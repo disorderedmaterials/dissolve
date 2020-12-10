@@ -35,7 +35,7 @@ bool BroadeningFunctionKeyword::read(LineParser &parser, int startArg, CoreData 
 bool BroadeningFunctionKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     std::string params;
-    for (int n = 0; n < BroadeningFunction::nFunctionParameters(data_.function()); ++n)
+    for (auto n = 0; n < BroadeningFunction::nFunctionParameters(data_.function()); ++n)
         params += fmt::format("  {}", data_.parameter(n));
     return parser.writeLineF("{}{}  '{}'{}\n", prefix, keywordName, BroadeningFunction::functionType(data_.function()), params);
 }

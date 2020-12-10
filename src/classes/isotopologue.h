@@ -29,15 +29,15 @@ class Isotopologue : public ListItem<Isotopologue>
      */
     private:
     // Parent Species
-    Species *parent_;
+    const Species *parent_;
     // Descriptive name
     std::string name_;
 
     public:
     // Set parent Species
-    void setParent(Species *parent);
+    void setParent(const Species *parent);
     // Return parent Species
-    Species *parent() const;
+    const Species *parent() const;
     // Set name of Isotopologue
     void setName(std::string_view name);
     // Return name of Isotopologue
@@ -47,18 +47,18 @@ class Isotopologue : public ListItem<Isotopologue>
      * Isotope Definition
      */
     private:
-    // List of AtomType references and their assigned Isotopes
+    // AtomType references and their assigned Isotopes
     std::vector<std::tuple<std::shared_ptr<AtomType>, Isotope *>> isotopes_;
 
     public:
-    // Update AtomType/Isotope RefList
+    // Update current AtomType/Isotopes against parent Species
     void update();
+    // Validate current AtomType/Isotopes against available AtomTypes
+    void checkAtomTypes(const std::vector<std::shared_ptr<AtomType>> &atomTypes);
     // Set AtomType/Isotope pair in list
-    bool setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *isotope);
+    void setAtomTypeIsotope(std::shared_ptr<AtomType> at, Isotope *isotope);
     // Return Isotope for specified AtomType
     Isotope *atomTypeIsotope(std::shared_ptr<AtomType> at) const;
     // Return AtomType/Isotope pairs list
     const std::vector<std::tuple<std::shared_ptr<AtomType>, Isotope *>> &isotopes() const;
-    // Return nth Atom/Isotope pair
-    std::tuple<std::shared_ptr<AtomType>, Isotope *> &isotope(int n);
 };

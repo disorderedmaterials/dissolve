@@ -141,7 +141,7 @@ template <class N> class NodeKeyword : public NodeKeywordBase, public KeywordDat
      */
     protected:
     // Prune any references to the supplied ProcedureNode in the contained data
-    void removeReferencesTo(ProcedureNode *node)
+    void removeReferencesTo(N *node)
     {
         if (KeywordData<N *>::data_ == node)
             KeywordData<N *>::data_ = nullptr;

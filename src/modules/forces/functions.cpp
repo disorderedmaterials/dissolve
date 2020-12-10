@@ -33,7 +33,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     auto start = procPool.interleavedLoopStart(strategy);
     auto stride = procPool.interleavedLoopStride(strategy);
 
-    for (int cellId = start; cellId < cellArray.nCells(); cellId += stride)
+    for (auto cellId = start; cellId < cellArray.nCells(); cellId += stride)
     {
         cell = cellArray.cell(cellId);
 
@@ -75,7 +75,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
 
     // Loop over supplied atom indices
     const DynamicArray<Atom> &atoms = cfg->atoms();
-    for (int n = start; n < targetIndices.nItems(); n += stride)
+    for (auto n = start; n < targetIndices.nItems(); n += stride)
     {
         const Atom *i = atoms.constValue(targetIndices.constAt(n));
 
@@ -96,7 +96,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Species *sp, const P
     {
         auto *i = sp->atom(indexI);
 
-        for (int indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
+        for (auto indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
         {
             j = sp->atom(indexJ);
 
@@ -148,7 +148,7 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
 
     // Loop over supplied atom indices
     const DynamicArray<Atom> &atoms = cfg->atoms();
-    for (int n = start; n < targetIndices.nItems(); n += stride)
+    for (auto n = start; n < targetIndices.nItems(); n += stride)
     {
         const Atom *i = atoms.constValue(targetIndices.constAt(n));
         const SpeciesAtom *spAtom = i->speciesAtom();
@@ -198,7 +198,7 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
     // Loop over Molecules
     std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
     std::shared_ptr<const Molecule> mol;
-    for (int m = start; m < cfg->nMolecules(); m += stride)
+    for (auto m = start; m < cfg->nMolecules(); m += stride)
     {
         // Get Molecule pointer
         mol = molecules[m];
@@ -339,11 +339,11 @@ void ForcesModule::totalForces(ProcessPool &procPool, Configuration *cfg,
     // TODO Calculating forces for whole molecule at once may be more efficient
     // TODO Partitioning atoms of target molecules into cells and running a distributor may be more efficient
     Array<int> indices;
-    for (int n = 0; n < targetMolecules.nItems(); ++n)
+    for (auto n = 0; n < targetMolecules.nItems(); ++n)
     {
         std::shared_ptr<Molecule> mol = targetMolecules.constAt(n);
 
-        for (int i = 0; i < mol->nAtoms(); ++i)
+        for (auto i = 0; i < mol->nAtoms(); ++i)
         {
             indices.add(mol->atom(i)->arrayIndex());
         }

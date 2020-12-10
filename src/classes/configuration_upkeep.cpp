@@ -12,7 +12,7 @@ void Configuration::updateCellContents()
 {
     // Fold the coordinates of each atom into the box, and then check its Cell location, moving if necessary.
     Atom **atoms = atoms_.array();
-    for (int n = 0; n < atoms_.nItems(); ++n)
+    for (auto n = 0; n < atoms_.nItems(); ++n)
         updateCellLocation(atoms[n]);
 }
 
@@ -37,7 +37,7 @@ void Configuration::updateCellLocation(Atom *i)
 // Update Cell location of specified Molecule
 void Configuration::updateCellLocation(std::shared_ptr<Molecule> mol)
 {
-    for (int n = 0; n < mol->nAtoms(); ++n)
+    for (auto n = 0; n < mol->nAtoms(); ++n)
         updateCellLocation(mol->atom(n));
 }
 

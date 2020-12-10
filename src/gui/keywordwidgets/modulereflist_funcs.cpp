@@ -96,7 +96,7 @@ void ModuleRefListKeywordWidget::updateKeywordData()
 {
     // Loop over items in the QListWidget, adding the associated Modules for any that are checked
     RefList<Module> newSelection;
-    for (int n = 0; n < ui_.SelectionList->count(); ++n)
+    for (auto n = 0; n < ui_.SelectionList->count(); ++n)
     {
         QListWidgetItem *item = ui_.SelectionList->item(n);
         if (item->checkState() == Qt::Checked)

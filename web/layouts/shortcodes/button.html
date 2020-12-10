@@ -1,5 +1,4 @@
 {{ $pos := .Get "pos"  }}
 {{ $path := .Get "path" }}
 {{ $text := .Get "text" }}
-<a class="btn {{ $pos }}" href="{{ $path }}"> {{ $text }}</a>
-
+<a class="btn {{ $pos }}" href="{{ ref . $path }}"> {{ $text }}</a>

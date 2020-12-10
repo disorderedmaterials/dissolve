@@ -11,7 +11,6 @@
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 
-// Constructor / Destructor
 ModuleListEditor::ModuleListEditor(QWidget *parent) : QWidget(parent)
 {
     ui_.setupUi(this);
@@ -125,7 +124,7 @@ void ModuleListEditor::disableSensitiveControls()
 {
     ui_.AvailableModulesTree->setEnabled(false);
     chartWidget_->disableSensitiveControls();
-    for (int n = 0; n < ui_.ModuleControlsStack->count(); ++n)
+    for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
     {
         ModuleControlWidget *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
         if (mcw)
@@ -138,7 +137,7 @@ void ModuleListEditor::enableSensitiveControls()
 {
     ui_.AvailableModulesTree->setEnabled(true);
     chartWidget_->enableSensitiveControls();
-    for (int n = 0; n < ui_.ModuleControlsStack->count(); ++n)
+    for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
     {
         ModuleControlWidget *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
         if (mcw)
@@ -156,7 +155,7 @@ void ModuleListEditor::setModulePaletteVisible(bool visible) { ui_.ModulePalette
 // Find the ModuleControlWidget for this Module in the stack, if it exists
 ModuleControlWidget *ModuleListEditor::controlWidgetForModule(Module *module) const
 {
-    for (int n = 0; n < ui_.ModuleControlsStack->count(); ++n)
+    for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
     {
         ModuleControlWidget *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
         if (mcw && (mcw->module() == module))
@@ -169,7 +168,7 @@ ModuleControlWidget *ModuleListEditor::controlWidgetForModule(Module *module) co
 // Return the index of the ModuleControlWidget for this Module in the stack, if it exists
 int ModuleListEditor::widgetIndexForModule(Module *module) const
 {
-    for (int n = 0; n < ui_.ModuleControlsStack->count(); ++n)
+    for (auto n = 0; n < ui_.ModuleControlsStack->count(); ++n)
     {
         ModuleControlWidget *mcw = dynamic_cast<ModuleControlWidget *>(ui_.ModuleControlsStack->widget(n));
         if (mcw && (mcw->module() == module))
@@ -223,6 +222,7 @@ void ModuleListEditor::moduleSelectionChanged(const QString &blockIdentifier)
         // Create a new widget to display this Module
         ModuleControlWidget *mcw = new ModuleControlWidget;
         mcw->setModule(module, &dissolveWindow_->dissolve());
+        connect(mcw, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
         widgetIndex = ui_.ModuleControlsStack->addWidget(mcw);
     }
 

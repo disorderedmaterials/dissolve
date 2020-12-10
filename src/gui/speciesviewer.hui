@@ -17,7 +17,6 @@ class SpeciesViewer : public BaseViewer
     Q_OBJECT
 
     public:
-    // Constructor / Destructor
     SpeciesViewer(QWidget *parent);
     ~SpeciesViewer();
 

@@ -56,16 +56,12 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     private:
     // List of Atoms in the Species
     List<SpeciesAtom> atoms_;
-    // Version of the atom types
-    VersionCounter atomTypesVersion_;
     // List of selected Atoms
     RefList<SpeciesAtom> selectedAtoms_;
     // Version of the atom selection
     VersionCounter atomSelectionVersion_;
     // List of AtomTypes, and their populations, used in the Species
     AtomTypeList usedAtomTypes_;
-    // Point at which the used atom types list was last update
-    int usedAtomTypesPoint_;
 
     public:
     // Add a new atom to the Species
@@ -108,10 +104,10 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     int atomSelectionVersion() const;
     // Return total atomic mass of Species
     double mass() const;
-    // Bump AtomTypes version
-    void bumpAtomTypesVersion();
-    // Update and return used AtomTypesList
-    const AtomTypeList &usedAtomTypes();
+    // Update used atom types
+    void updateUsedAtomTypes();
+    // Return used atom types list
+    const AtomTypeList &usedAtomTypes() const;
     // Clear AtomType assignments for all atoms
     void clearAtomTypes();
     // Return total charge of species from local atomic charges
@@ -241,16 +237,14 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     private:
     // Natural Isotopologue
     Isotopologue naturalIsotopologue_;
-    // Point at which natural Isotopologue was last updated
-    int naturalIsotopologuePoint_;
     // List of isotopic variants defined for this species
     List<Isotopologue> isotopologues_;
 
     public:
     // Update current Isotopologues
-    void updateIsotopologues();
-    // Update and return natural isotopologue
-    Isotopologue *naturalIsotopologue();
+    void updateIsotopologues(OptionalReferenceWrapper<const std::vector<std::shared_ptr<AtomType>>> atomTypes = std::nullopt);
+    // Return natural (empty) Isotopologue
+    const Isotopologue *naturalIsotopologue() const;
     // Add a new Isotopologue to this Species
     Isotopologue *addIsotopologue(std::string_view baseName);
     // Remove specified Isotopologue from this Species
@@ -266,7 +260,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Generate unique Isotopologue name with base name provided
     std::string uniqueIsotopologueName(std::string_view baseName, const Isotopologue *exclude = nullptr);
     // Search for Isotopologue by name
-    Isotopologue *findIsotopologue(std::string_view name, const Isotopologue *exclude = nullptr);
+    const Isotopologue *findIsotopologue(std::string_view name, const Isotopologue *exclude = nullptr) const;
     // Return index of specified Isotopologue
     int indexOfIsotopologue(const Isotopologue *iso) const;
 

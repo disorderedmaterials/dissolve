@@ -54,7 +54,7 @@ void SpeciesKeywordWidget::updateValue()
     refreshing_ = true;
 
     // Update the QComboBox against the global Species list
-    ComboBoxUpdater<Species> comboUpdater(this, coreData_.constSpecies(), keyword_->data());
+    ComboBoxUpdater<Species> comboUpdater(this, coreData_.species(), keyword_->data());
 
     refreshing_ = false;
 }

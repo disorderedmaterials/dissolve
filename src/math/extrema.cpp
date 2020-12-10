@@ -11,7 +11,7 @@ double Extrema::min(const Array<double> &A)
     if (A.nItems() > 0)
     {
         double min = A.constAt(0);
-        for (int i = 0; i < A.nItems(); ++i)
+        for (auto i = 0; i < A.nItems(); ++i)
         {
             if (A.constAt(i) < min)
                 min = A.constAt(i);
@@ -28,7 +28,7 @@ double Extrema::max(const Array<double> &A)
     if (A.nItems() > 0)
     {
         double max = A.constAt(0);
-        for (int i = 0; i < A.nItems(); ++i)
+        for (auto i = 0; i < A.nItems(); ++i)
         {
             if (A.constAt(i) > max)
                 max = A.constAt(i);
@@ -42,35 +42,17 @@ double Extrema::max(const Array<double> &A)
 // Return minimum from 2D array provided
 double Extrema::min(const Array2D<double> &A)
 {
-    if (A.linearArraySize() > 0)
-    {
-        double min = A.constLinearValue(0);
-        for (int i = 0; i < A.linearArraySize(); ++i)
-        {
-            if (A.constLinearValue(i) < min)
-                min = A.constLinearValue(i);
-        }
-        return min;
-    }
-    else
+    if (A.empty())
         return 0;
+    return *std::min_element(A.begin(), A.end());
 }
 
 // Return maximum from 2D array provided
 double Extrema::max(const Array2D<double> &A)
 {
-    if (A.linearArraySize() > 0)
-    {
-        double max = A.constLinearValue(0);
-        for (int i = 0; i < A.linearArraySize(); ++i)
-        {
-            if (A.constLinearValue(i) > max)
-                max = A.constLinearValue(i);
-        }
-        return max;
-    }
-    else
+    if (A.empty())
         return 0;
+    return *std::max_element(A.begin(), A.end());
 }
 
 // Return absolute minimum from array provided
@@ -78,11 +60,11 @@ double Extrema::absMin(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
-        double absMin = abs(A.constAt(0));
-        for (int i = 0; i < A.nItems(); ++i)
+        auto absMin = fabs(A.constAt(0));
+        for (auto i = 0; i < A.nItems(); ++i)
         {
-            if (abs(A.constAt(i)) < absMin)
-                absMin = abs(A.constAt(i));
+            if (fabs(A.constAt(i)) < absMin)
+                absMin = fabs(A.constAt(i));
         }
         return absMin;
     }
@@ -95,11 +77,11 @@ double Extrema::absMax(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
-        double absMax = abs(A.constAt(0));
-        for (int i = 0; i < A.nItems(); ++i)
+        auto absMax = fabs(A.constAt(0));
+        for (auto i = 0; i < A.nItems(); ++i)
         {
-            if (abs(A.constAt(i)) > absMax)
-                absMax = abs(A.constAt(i));
+            if (fabs(A.constAt(i)) > absMax)
+                absMax = fabs(A.constAt(i));
         }
         return absMax;
     }
@@ -110,33 +92,15 @@ double Extrema::absMax(const Array<double> &A)
 // Return absolute minimum from 2D array provided
 double Extrema::absMin(const Array2D<double> &A)
 {
-    if (A.linearArraySize() > 0)
-    {
-        double absMin = abs(A.constLinearValue(0));
-        for (int i = 0; i < A.linearArraySize(); ++i)
-        {
-            if (abs(A.constLinearValue(i)) < absMin)
-                absMin = abs(A.constLinearValue(i));
-        }
-        return absMin;
-    }
-    else
+    if (A.empty())
         return 0;
+    return *std::min_element(A.begin(), A.end(), [](auto a, auto b) { return fabs(a) < fabs(b); });
 }
 
 // Return absolute maximum from 2D array provided
 double Extrema::absMax(const Array2D<double> &A)
 {
-    if (A.linearArraySize() > 0)
-    {
-        double absMax = abs(A.constLinearValue(0));
-        for (int i = 0; i < A.linearArraySize(); ++i)
-        {
-            if (abs(A.constLinearValue(i)) < absMax)
-                absMax = abs(A.constLinearValue(i));
-        }
-        return absMax;
-    }
-    else
+    if (A.empty())
         return 0;
+    return *std::max_element(A.begin(), A.end(), [](auto a, auto b) { return fabs(a) < fabs(b); });
 }

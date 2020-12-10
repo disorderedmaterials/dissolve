@@ -27,5 +27,5 @@ Finally, we'll tweak the temperature of the configuration.
 
 {{< cimage src="../waterbox.png" caption="Initial, randomised water box containing 1000 molecules" >}}
 
-{{< button pos="left" text="Previous Step" path= "../step1b/">}}
-{{< button pos="right" text="Next Step" path= "../step3/">}}
+{{< button pos="left" text="Previous Step" path="step1b/">}}
+{{< button pos="right" text="Next Step" path="step3/">}}

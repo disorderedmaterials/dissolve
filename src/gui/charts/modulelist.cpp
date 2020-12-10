@@ -279,9 +279,7 @@ void ModuleListChart::handleDroppedObject(const MimeStrings *strings)
         // Create a new instance of the specified module type
         Module *newModule = dissolve_.createModuleInstance(strings->data(MimeString::ModuleType));
 
-        // Cast the blocks either side of the current hotspot up to ModuleBlocks, and get their Modules
-        auto *moduleBlockBefore = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockBefore());
-        Module *moduleBeforeHotSpot = (moduleBlockBefore ? moduleBlockBefore->module() : nullptr);
+        // Cast necessary blocks around the current hotspot up to ModuleBlocks, and get their Modules
         auto *moduleBlockAfter = dynamic_cast<ModuleBlock *>(currentHotSpot_->blockAfter());
         Module *moduleAfterHotSpot = (moduleBlockAfter ? moduleBlockAfter->module() : nullptr);
 
@@ -359,7 +357,7 @@ void ModuleListChart::blockRemovalRequested(const QString &blockIdentifier)
     {
         modules.cut(module);
 
-        // If the Module is currently displayed in its own ModuleTab, remove that first
+        // Notify that we are removing this Module/block
         emit(blockRemoved(blockIdentifier));
 
         // If the module to delete is the currently-displayed one, unset it now

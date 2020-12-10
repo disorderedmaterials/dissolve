@@ -13,7 +13,6 @@ class Primitive;
 class PrimitiveInfo
 {
     public:
-    // Constructor / Desctructor
     PrimitiveInfo();
     virtual ~PrimitiveInfo();
 

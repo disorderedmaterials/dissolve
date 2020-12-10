@@ -19,7 +19,6 @@ class WizardWidget : public QWidget
     Q_OBJECT
 
     public:
-    // Constructor / Destructor
     WizardWidget();
     ~WizardWidget();
 

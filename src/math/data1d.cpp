@@ -44,11 +44,16 @@ void Data1D::clear()
 // Initialise arrays to specified size
 void Data1D::initialise(int size, bool withError)
 {
-    x_.initialise(size);
-    values_.initialise(size);
+    x_.clear();
+    x_.resize(size);
+    values_.clear();
+    values_.resize(size);
     hasError_ = withError;
     if (hasError_)
-        errors_.initialise(size);
+    {
+        errors_.clear();
+        errors_.resize(size);
+    }
     else
         errors_.clear();
 
@@ -59,10 +64,14 @@ void Data1D::initialise(int size, bool withError)
 void Data1D::initialise(const Data1D &source)
 {
     x_ = source.x_;
-    values_.initialise(x_.nItems());
+    values_.clear();
+    values_.resize(x_.size());
     hasError_ = source.hasError_;
     if (hasError_)
-        errors_.initialise(x_.nItems());
+    {
+        errors_.clear();
+        errors_.resize(x_.size());
+    }
     else
         errors_.clear();
 
@@ -83,9 +92,9 @@ void Data1D::copyArrays(const Data1D &source)
 // Zero values array
 void Data1D::zero()
 {
-    values_ = 0.0;
+    std::fill(values_.begin(), values_.end(), 0.0);
     if (hasError_)
-        errors_ = 0.0;
+        std::fill(errors_.begin(), errors_.end(), 0.0);
 
     ++version_;
 }
@@ -96,11 +105,11 @@ int Data1D::version() const { return version_; }
 // Add new data point
 void Data1D::addPoint(double x, double value)
 {
-    x_.add(x);
-    values_.add(value);
+    x_.push_back(x);
+    values_.push_back(value);
 
     if (hasError_)
-        errors_.add(0.0);
+        errors_.push_back(0.0);
 
     ++version_;
 }
@@ -108,11 +117,11 @@ void Data1D::addPoint(double x, double value)
 // Add new data point with error
 void Data1D::addPoint(double x, double value, double error)
 {
-    x_.add(x);
-    values_.add(value);
+    x_.push_back(x);
+    values_.push_back(value);
 
     if (hasError_)
-        errors_.add(error);
+        errors_.push_back(error);
     else
         Messenger::warn("Tried to addPoint() with an error to Data1D, but this Data1D (name='{}', tag='{}') has no "
                         "error information associated with it.\n",
@@ -124,11 +133,13 @@ void Data1D::addPoint(double x, double value, double error)
 // Remove first point
 void Data1D::removeFirstPoint()
 {
-    if (values_.nItems() == 0)
+    if (values_.empty())
         return;
 
-    x_.removeFirst();
-    values_.removeFirst();
+    x_.erase(x_.begin());
+    values_.erase(values_.begin());
+    if (hasError_)
+        errors_.erase(values_.begin());
 
     ++version_;
 }
@@ -136,11 +147,13 @@ void Data1D::removeFirstPoint()
 // Remove last point
 void Data1D::removeLastPoint()
 {
-    if (values_.nItems() == 0)
+    if (values_.empty())
         return;
 
-    x_.removeLast();
-    values_.removeLast();
+    x_.pop_back();
+    values_.pop_back();
+    if (hasError_)
+        errors_.pop_back();
 
     ++version_;
 }
@@ -149,7 +162,7 @@ void Data1D::removeLastPoint()
 double &Data1D::xAxis(int index)
 {
 #ifdef CHECKS
-    if ((index < 0) || (index >= x_.nItems()))
+    if ((index < 0) || (index >= x_.size()))
     {
         static double dummy;
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data1D::xAxis().\n", index);
@@ -165,17 +178,17 @@ double &Data1D::xAxis(int index)
 double Data1D::constXAxis(int index) const
 {
 #ifdef CHECKS
-    if ((index < 0) || (index >= x_.nItems()))
+    if ((index < 0) || (index >= x_.size()))
     {
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data1D::constXAxis().\n", index);
         return 0.0;
     }
 #endif
-    return x_.constAt(index);
+    return x_[index];
 }
 
 // Return x Array
-Array<double> &Data1D::xAxis()
+std::vector<double> &Data1D::xAxis()
 {
     ++version_;
 
@@ -183,13 +196,13 @@ Array<double> &Data1D::xAxis()
 }
 
 // Return x axis Array (const)
-const Array<double> &Data1D::constXAxis() const { return x_; }
+const std::vector<double> &Data1D::xAxis() const { return x_; }
 
 // Return y value specified
 double &Data1D::value(int index)
 {
 #ifdef CHECKS
-    if ((index < 0) || (index >= values_.nItems()))
+    if ((index < 0) || (index >= values_.size()))
     {
         static double dummy;
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for values_ array in Data1D::value().\n", index);
@@ -205,17 +218,17 @@ double &Data1D::value(int index)
 double Data1D::constValue(int index) const
 {
 #ifdef CHECKS
-    if ((index < 0) || (index >= values_.nItems()))
+    if ((index < 0) || (index >= values_.size()))
     {
         Messenger::error("OUT_OF_RANGE - Index {} is out of range for values_ array in Data1D::constValue().\n", index);
         return 0.0;
     }
 #endif
-    return values_.constAt(index);
+    return values_[index];
 }
 
 // Return y Array
-Array<double> &Data1D::values()
+std::vector<double> &Data1D::values()
 {
     ++version_;
 
@@ -223,37 +236,27 @@ Array<double> &Data1D::values()
 }
 
 // Return y Array (const)
-const Array<double> &Data1D::constValues() const { return values_; }
+const std::vector<double> &Data1D::values() const { return values_; }
 
 // Return number of values present in whole dataset
-int Data1D::nValues() const { return x_.nItems(); }
+int Data1D::nValues() const { return x_.size(); }
 
 // Return minimum value over all data points
 double Data1D::minValue() const
 {
-    if (values_.nItems() == 0)
+    if (values_.empty())
         return 0.0;
 
-    double value = values_.constAt(0);
-    for (int n = 1; n < values_.nItems(); ++n)
-        if (values_.constAt(n) < value)
-            value = values_.constAt(n);
-
-    return value;
+    return *std::min_element(values_.begin(), values_.end());
 }
 
 // Return maximum value over all data points
 double Data1D::maxValue() const
 {
-    if (values_.nItems() == 0)
+    if (values_.empty())
         return 0.0;
 
-    double value = values_.constAt(0);
-    for (int n = 1; n < values_.nItems(); ++n)
-        if (values_.constAt(n) > value)
-            value = values_.constAt(n);
-
-    return value;
+    return *std::max_element(values_.begin(), values_.end());
 }
 
 // Add / initialise errors array
@@ -261,7 +264,8 @@ void Data1D::addErrors()
 {
     // 	if (hasError_) Messenger::warn("Adding an error array to a Data1D that already has one...\n");
 
-    errors_.initialise(x_.nItems());
+    errors_.clear();
+    errors_.resize(x_.size());
 
     hasError_ = true;
 
@@ -288,7 +292,7 @@ double &Data1D::error(int index)
 }
 
 // Return error value specified (const)
-double Data1D::constError(int index) const
+double Data1D::error(int index) const
 {
     if (!hasError_)
     {
@@ -297,11 +301,11 @@ double Data1D::constError(int index) const
         return 0.0;
     }
 
-    return errors_.constAt(index);
+    return errors_[index];
 }
 
 // Return error Array
-Array<double> &Data1D::errors()
+std::vector<double> &Data1D::errors()
 {
     if (!hasError_)
         Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
@@ -313,7 +317,7 @@ Array<double> &Data1D::errors()
 }
 
 // Return error Array (const)
-const Array<double> &Data1D::constErrors() const
+const std::vector<double> &Data1D::errors() const
 {
     if (!hasError_)
         Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but constErrors() was requested.\n", name(),
@@ -340,14 +344,14 @@ void Data1D::operator=(const Data1D &source)
 void Data1D::operator+=(const Data1D &source)
 {
     // If no data is present, simply copy the other arrays
-    if (x_.nItems() == 0)
+    if (x_.empty())
     {
         copyArrays(source);
         return;
     }
 
     // Check array sizes
-    if (x_.nItems() != source.x_.nItems())
+    if (x_.size() != source.x_.size())
     {
         Messenger::error("Can't += these Data1D together since they are of differing sizes.\n");
         return;
@@ -355,27 +359,26 @@ void Data1D::operator+=(const Data1D &source)
 
     ++version_;
 
-    // Loop over points, summing them into our array
-    for (int n = 0; n < x_.nItems(); ++n)
-    {
 #ifdef CHECKS
+    for (auto n = 0; n < x_.size(); ++n)
+    {
         // Check x values for consistency
-        if (fabs(x_[n] - source.constXAxis(n)) > 1.0e-6)
+        if (fabs(x_[n] - source.x_[n]) > 1.0e-6)
         {
             Messenger::error("Failed to += these Data1D together since the x arrays are different (at point {}, x "
                              "are {:e} and {:e}).\n",
                              n, x_[n], source.constXAxis(n));
             return;
         }
-#endif
-        values_[n] += source.constValue(n);
     }
+#endif
+    // Loop over points, summing them into our array
+    std::transform(source.values().begin(), source.values().end(), values_.begin(), values_.begin(), std::plus<>());
 }
 
 void Data1D::operator+=(const double delta)
 {
-    for (int n = 0; n < values_.nItems(); ++n)
-        values_[n] += delta;
+    std::transform(values_.begin(), values_.end(), values_.begin(), [delta](auto value) { return value + delta; });
 
     ++version_;
 }
@@ -383,16 +386,15 @@ void Data1D::operator+=(const double delta)
 void Data1D::operator-=(const Data1D &source)
 {
     // If no data is present, simply copy the other arrays and negate the y array
-    if (x_.nItems() == 0)
+    if (x_.size() == 0)
     {
         copyArrays(source);
-        for (int n = 0; n < values_.nItems(); ++n)
-            values_[n] = -values_[n];
+        std::transform(values_.begin(), values_.end(), values_.begin(), std::negate<>());
         return;
     }
 
     // Check array sizes
-    if (x_.nItems() != source.x_.nItems())
+    if (x_.size() != source.x_.size())
     {
         Messenger::error("Can't -= these Data1D together since they are of differing sizes.\n");
         return;
@@ -400,60 +402,60 @@ void Data1D::operator-=(const Data1D &source)
 
     ++version_;
 
-    // Loop over points, summing them into our array
-    for (int n = 0; n < x_.nItems(); ++n)
-    {
 #ifdef CHECKS
+    for (auto n = 0; n < x_.size(); ++n)
+    {
         // Check x values for consistency
-        if (fabs(x_[n] - source.constXAxis(n)) > 1.0e-6)
+        if (fabs(x_[n] - source.x_[n]) > 1.0e-6)
         {
             Messenger::error("Failed to -= these Data1D together since the x arrays are different (at point {}, x "
                              "are {:e} and {:e}).\n",
                              n, x_[n], source.constXAxis(n));
             return;
         }
-#endif
-        values_[n] -= source.constValue(n);
     }
+#endif
+    // Loop over points, summing them into our array
+    std::transform(values_.begin(), values_.end(), source.values().begin(), values_.begin(), std::minus<>());
 }
 
 void Data1D::operator-=(const double delta)
 {
-    for (int n = 0; n < values_.nItems(); ++n)
-        values_[n] -= delta;
+    std::transform(values_.begin(), values_.end(), values_.begin(), [delta](auto value) { return value - delta; });
 
     ++version_;
 }
 
 void Data1D::operator*=(const double factor)
 {
-    values_ *= factor;
+    std::transform(values_.begin(), values_.end(), values_.begin(), [factor](auto value) { return value * factor; });
+
     if (hasError_)
-        errors_ *= factor;
+        std::transform(errors_.begin(), errors_.end(), errors_.begin(), [factor](auto error) { return error * factor; });
 
     ++version_;
 }
 
-void Data1D::operator*=(const Array<double> &factors)
+void Data1D::operator*=(const std::vector<double> &factors)
 {
     // Check array sizes
-    if (x_.nItems() != factors.nItems())
+    if (x_.size() != factors.size())
     {
         Messenger::error("Can't *= this Array with Data1D values since they are of differing sizes.\n");
         return;
     }
 
-    for (int n = 0; n < values_.nItems(); ++n)
-        values_[n] *= factors.constAt(n);
+    std::transform(values_.begin(), values_.end(), factors.begin(), values_.begin(), std::multiplies<>());
 }
 
 void Data1D::operator/=(const double factor)
 {
     ++version_;
 
-    values_ /= factor;
+    std::transform(values_.begin(), values_.end(), values_.begin(), [factor](auto value) { return value / factor; });
+
     if (hasError_)
-        errors_ /= factor;
+        std::transform(errors_.begin(), errors_.end(), errors_.begin(), [factor](auto error) { return error / factor; });
 }
 
 /*
@@ -486,7 +488,7 @@ bool Data1D::read(LineParser &parser, CoreData &coreData)
     initialise(nPoints, errors);
 
     // Read data points
-    for (int n = 0; n < nPoints; ++n)
+    for (auto n = 0; n < nPoints; ++n)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
@@ -509,18 +511,18 @@ bool Data1D::write(LineParser &parser)
         return false;
 
     // Write axis size and errors flag
-    if (!parser.writeLineF("{} {}\n", x_.nItems(), DissolveSys::btoa(hasError_)))
+    if (!parser.writeLineF("{} {}\n", x_.size(), DissolveSys::btoa(hasError_)))
         return false;
 
     // Write values / errors
     if (hasError_)
     {
-        for (int n = 0; n < x_.nItems(); ++n)
+        for (auto n = 0; n < x_.size(); ++n)
             if (!parser.writeLineF("{}  {}  {}\n", x_[n], values_[n], errors_[n]))
                 return false;
     }
     else
-        for (int n = 0; n < x_.nItems(); ++n)
+        for (auto n = 0; n < x_.size(); ++n)
             if (!parser.writeLineF("{}  {}\n", x_[n], values_[n]))
                 return false;
 

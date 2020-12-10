@@ -43,7 +43,7 @@ template <class T, class D> class OrderedPointerDataArray
 
         initialise(source.nItems());
 
-        for (int n = 0; n < source.nItems(); ++n)
+        for (auto n = 0; n < source.nItems(); ++n)
             add(source.value(n), source.data(n));
 
         return *this;
@@ -106,7 +106,7 @@ template <class T, class D> class OrderedPointerDataArray
             data_ = new D[arraySize_];
         }
 
-        for (int n = 0; n < arraySize_; ++n)
+        for (auto n = 0; n < arraySize_; ++n)
         {
             items_[n] = nullptr;
             data_[n] = D();
@@ -238,14 +238,14 @@ template <class T, class D> class OrderedPointerDataArray
     bool remove(T *ptr)
     {
         // Step through the items until we find the specified pointer
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
         {
             if (items_[n] > ptr)
                 return false;
             if (items_[n] == ptr)
             {
                 // Found it. Move all items from this point forward back one place
-                for (int m = n + 1; m < nItems_; ++m)
+                for (auto m = n + 1; m < nItems_; ++m)
                 {
                     items_[m - 1] = items_[m];
                     data_[m - 1] = data_[m];
@@ -263,7 +263,7 @@ template <class T, class D> class OrderedPointerDataArray
     // Return array index of pointer within the list
     int indexOf(const T *ptr) const
     {
-        for (int n = 0; n < nItems_; ++n)
+        for (auto n = 0; n < nItems_; ++n)
             if (items_[n] == ptr)
                 return n;
 

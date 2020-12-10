@@ -33,7 +33,6 @@ add_library(classes
   forcekernel.cpp
   isotopedata.cpp
   isotopologue.cpp
-  isotopologuecollection.cpp
   isotopologues.cpp
   isotopologueset.cpp
   isotopologueweight.cpp
@@ -94,7 +93,6 @@ add_library(classes
   forcekernel.h
   isotopedata.h
   isotopologue.h
-  isotopologuecollection.h
   isotopologues.h
   isotopologueset.h
   isotopologueweight.h

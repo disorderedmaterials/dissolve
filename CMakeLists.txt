@@ -42,15 +42,62 @@ if(CHECKS)
   ADD_DEFINITIONS("-DCHECKS")
 endif(CHECKS)
 
+# Add local Modules dir to cmake search path
+LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
+
 # Find basic requirements
 include(FindBISON)
 # -- Force first look for Bison to be /usr/local/bin, since version provided by XCode on OSX is too old (v2.3) 
 find_package(BISON PATHS /usr/local/bin NO_DEFAULT_PATH QUIET)
 find_package(BISON REQUIRED)
 
+# Find ANTLR4 Java
+include(FindANTLR)
+find_package(ANTLR REQUIRED)
+
+# Find / build ANTLR4 runtime dependency
+if(BUILD_ANTLR_RUNTIME)
+
+  if(BUILD_ANTLR_ZIPFILE)
+    set(ANTLR_SOURCE_URL "${BUILD_ANTLR_ZIPFILE}")
+  else(BUILD_ANTLR_ZIPFILE)
+    set(ANTLR_SOURCE_URL "https://www.antlr.org/download/antlr4-cpp-runtime-4.7.2-source.zip")
+  endif(BUILD_ANTLR_ZIPFILE)
+
+  if(BUILD_ANTLR_LINK_LIB)
+    set(ANTLR_LINK_LIB "${BUILD_ANTLR_LINK_LIB}")
+  else(BUILD_ANTLR_LINK_LIB)
+    set(ANTLR_LINK_LIB "dist/libantlr4-runtime.a")
+  endif(BUILD_ANTLR_LINK_LIB)
+
+  include(ExternalProject)
+  ExternalProject_Add(antlr_runtime
+    PREFIX            antlr4runtime
+    URL               "${ANTLR_SOURCE_URL}"
+    BUILD_ALWAYS      ON
+    BUILD_BYPRODUCTS  "antlr4runtime/src/antlr_runtime/${ANTLR_LINK_LIB}"
+	CMAKE_ARGS        "-DCMAKE_BUILD_TYPE:STRING=Release"
+    INSTALL_COMMAND   ""
+    )
+  ExternalProject_Get_Property(antlr_runtime source_dir)
+
+  # Tell CMake that the ExternalProject generated a library
+  add_library(antlr4-runtime STATIC IMPORTED GLOBAL)
+  set_property(TARGET antlr4-runtime PROPERTY
+     IMPORTED_LOCATION "${source_dir}/${ANTLR_LINK_LIB}"
+  )
+  set(ANTLRRUNTIME_INCLUDE_DIRS "${source_dir}/runtime/src")
+else(BUILD_ANTLR_RUNTIME)
+  include(FindANTLRRUNTIME)
+  find_package(ANTLRRUNTIME REQUIRED)
+  add_library(antlr4-runtime STATIC IMPORTED GLOBAL)
+  set_property(TARGET antlr4-runtime PROPERTY
+     IMPORTED_LOCATION "${ANTLRRUNTIME_LIBRARIES}"
+  )
+endif(BUILD_ANTLR_RUNTIME)
+
 if(GUI)
   # Add extra functions
-  LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
   include(FindFTGL)
 
   find_package(Qt5Widgets 5.4 REQUIRED)
@@ -85,12 +132,10 @@ if(WIN32)
     )
   endif(GUI)
  
-  # Add global NOMINMAX define for Windows systems, and inhibit console creation
-  ADD_DEFINITIONS("-DNOMINMAX")
-  #SET(GUI_TYPE WIN32)
-  #if(MINGW)
-  #  SET(CMAKE_EXE_LINKER_FLAGS "-mwindows")
-  #endif(MINGW)
+  # Add defines for Windows systems
+  #  - NOMINMAX to prevent conflicts with std::min() and std::max()
+  #  - NOGDI to prevent conflicts arising from Windows defining ERROR as a global macro (used in ANTLR4)
+  ADD_DEFINITIONS(-DNOMINMAX -DNOGDI)
 endif(WIN32)
 
 # -- Unix
@@ -156,11 +201,19 @@ add_executable(${target_name}
   MACOSX_BUNDLE
   ${SRCS}/main.cpp 
 )
+
+# Add the ANTLR4 dependency if building locally
+if(BUILD_ANTLR_RUNTIME)
+  add_dependencies(${target_name} antlr_runtime)
+endif(BUILD_ANTLR_RUNTIME)
+
 # Set project-local include directories for target
 target_include_directories(${target_name} PRIVATE
   ${PROJECT_SOURCE_DIR}/src
   ${PROJECT_BINARY_DIR}/src
   ${FREETYPE_INCLUDE_DIRS}
+  ${ANTLR4_INCLUDE_DIRS}
+  ${ANTLR_OUTPUT_DIRS}
 )
 
 # Add GUI targets
@@ -171,6 +224,11 @@ if(GUI)
     MACOSX_BUNDLE
     ${SRCS}/dissolve-gui.cpp 
   )
+
+  # Add the ANTLR4 dependency if building locally
+  if(BUILD_ANTLR_RUNTIME)
+    add_dependencies(${target_name} antlr_runtime)
+  endif(BUILD_ANTLR_RUNTIME)
 
   # Set project-local include directories for target
   target_include_directories(${gui_target_name} PRIVATE
@@ -192,6 +250,7 @@ set(BASIC_LINK_LIBS
   main classes module io export import neta procedure procedurenodes keywords expression genericitems base math data ff
 
   # Forcefields
+  ff_pcl2019
   ff_ludwig
   ff_oplsaa2005
 
@@ -224,7 +283,6 @@ set(BASIC_LINK_LIBS
   molshakemodule
   neutronsqmodule
   rdfmodule
-  refinemodule
   sanitycheckmodule
   skeletonmodule
   sqmodule
@@ -240,6 +298,12 @@ else()
   set(WHOLE_ARCHIVE_FLAG "-Wl,-whole-archive")
   set(NO_WHOLE_ARCHIVE_FLAG "-Wl,-no-whole-archive")
 endif()
+
+# Enable build of unit tests?
+if (BUILD_TESTS)
+  ENABLE_TESTING()
+  ADD_SUBDIRECTORY(unit)
+endif(BUILD_TESTS)
 
 # Build CLI target executable
 target_link_libraries( ${target_name}
@@ -269,20 +333,24 @@ target_link_libraries( ${target_name}
   geomoptmodulenogui
   neutronsqmodulenogui
   rdfmodulenogui
-  refinemodulenogui
   skeletonmodulenogui
   sqmodulenogui
   testmodulenogui
   xraysqmodulenogui
+
   ${NO_WHOLE_ARCHIVE_FLAG}
 
   PRIVATE
+
+  # External libs
+  antlr4-runtime
 
   ${EXTRA_LINK_LIBS}
 
   INTERFACE
 
   CONAN_PKG::fmt
+  CONAN_PKG::CLI11
 )
 
 # Build GUI target executables
@@ -316,7 +384,6 @@ if(GUI)
     geomoptmodulegui
     neutronsqmodulegui
     rdfmodulegui
-    refinemodulegui
     skeletonmodulegui
     sqmodulegui
     testmodulegui
@@ -336,6 +403,7 @@ if(GUI)
     PRIVATE
 
     # External libs
+    antlr4-runtime
     Qt5::Widgets Qt5::Core Qt5::PrintSupport
     ${FTGL_LIBRARIES}
     ${OPENGL_LIBRARIES}
@@ -346,5 +414,6 @@ if(GUI)
     INTERFACE
 
     CONAN_PKG::fmt
+    CONAN_PKG::CLI11
   )
 endif(GUI)

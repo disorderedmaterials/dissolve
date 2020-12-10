@@ -23,11 +23,9 @@ CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(
 }
 
 // Cost function for intraBroadening minimisation
-double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double> &alpha)
+double CalibrationModuleCostFunctions::intraBroadeningCost(const std::vector<double> &alpha)
 {
     // Store alpha parameters in the PairBroadeningFunction in the associated RDF modules
-    auto alphaIndex = 0;
-    const auto nAlpha = alpha.nItems();
     for (Module *rdfModule : intraBroadeningModules_)
     {
         // Retrieve the PairBroadeningFunction - new test values will already have been set (pokeBeforeCost = true)
@@ -71,7 +69,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double> &
                 GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(), "WeightedSQ", module->uniqueName());
             const Data1D &referenceData =
                 GenericListHelper<Data1D>::value(dissolve_.processingModuleData(), "ReferenceData", module->uniqueName());
-            totalError += Error::rmse(weightedSQ.constTotal(), referenceData, true);
+            totalError += Error::rmse(weightedSQ.total(), referenceData, true);
         }
         if ((target == CalibrationModule::IntraBroadeningTargetBoth) || (target == CalibrationModule::IntraBroadeningTargetGR))
         {
@@ -80,7 +78,7 @@ double CalibrationModuleCostFunctions::intraBroadeningCost(const Array<double> &
                 GenericListHelper<PartialSet>::value(dissolve_.processingModuleData(), "WeightedGR", module->uniqueName());
             const Data1D &referenceDataFT =
                 GenericListHelper<Data1D>::value(dissolve_.processingModuleData(), "ReferenceDataFT", module->uniqueName());
-            totalError += Error::rmse(weightedGR.constTotal(), referenceDataFT, true);
+            totalError += Error::rmse(weightedGR.total(), referenceDataFT, true);
         }
     }
 

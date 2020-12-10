@@ -19,6 +19,14 @@ template <class Iter, class Lam> void for_each_pair(Iter begin, Iter end, Lam la
     }
 }
 
+// Perform an operation on every pair of elements in a range (begin <= i < end)
+template <class Lam> void for_each_pair(int begin, int end, Lam lambda)
+{
+    for (auto i = begin; i < end; ++i)
+        for (auto j = i; j < end; ++j)
+            lambda(i, j);
+}
+
 template <typename T> class EarlyReturn
 {
     public:
@@ -34,6 +42,7 @@ template <typename T> class EarlyReturn
     std::optional<T> value_;
 
     public:
+    using inner = T;
     EarlyReturn(Type t = Type::Continue, std::optional<T> v = std::nullopt) : type_(t), value_(v){};
     EarlyReturn(const T &val) : type_(Type::Return), value_(val){};
     Type type() const { return type_; }
@@ -53,14 +62,35 @@ auto for_each_pair_early(Iter begin, Iter end, Lam lambda) -> decltype(lambda(0,
             auto result = lambda(i, *elem1, j, *elem2);
             switch (result.type())
             {
-                case EarlyReturn<decltype(lambda(0, *begin, 0, *end).value())>::Return:
+                case EarlyReturn<typename decltype(result)::inner>::Return:
                     return result.value();
-                case EarlyReturn<decltype(lambda(0, *begin, 0, *end).value())>::Break:
+                case EarlyReturn<typename decltype(result)::inner>::Break:
                     break;
-                case EarlyReturn<decltype(lambda(0, *begin, 0, *end).value())>::Continue:
+                case EarlyReturn<typename decltype(result)::inner>::Continue:
                     continue;
             }
         }
     }
+    return std::nullopt;
+}
+
+// Perform an operation on every pair of elements in a range
+template <class Lam> auto for_each_pair_early(int begin, int end, Lam lambda) -> decltype(lambda(0, 0).value())
+{
+    for (auto i = begin; i < end; ++i)
+        for (auto j = i; j < end; ++j)
+        {
+            auto result = lambda(i, j);
+            switch (result.type())
+            {
+                case EarlyReturn<typename decltype(result)::inner>::Return:
+                    return result.value();
+                case EarlyReturn<typename decltype(result)::inner>::Break:
+                    break;
+                case EarlyReturn<typename decltype(result)::inner>::Continue:
+                    continue;
+            }
+        }
+
     return std::nullopt;
 }

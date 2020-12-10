@@ -3,10 +3,6 @@
 
 #include "modules/checks/checks.h"
 
-/*
- * Constructor / Destructor
- */
-
 ChecksModule::ChecksModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

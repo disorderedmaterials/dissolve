@@ -71,6 +71,7 @@ stages:
               ArtifactName: 'osx-artifacts'
             displayName: 'Publish OSX Artifacts'
       - job: 'windows_serialgui'
+        timeoutInMinutes: 120
         displayName: 'Build Windows (Serial/GUI, windows-latest)'
         condition: eq(1, 2)
         pool:

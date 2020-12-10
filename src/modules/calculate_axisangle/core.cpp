@@ -3,10 +3,6 @@
 
 #include "modules/calculate_axisangle/axisangle.h"
 
-/*
- * Constructor / Destructor
- */
-
 CalculateAxisAngleModule::CalculateAxisAngleModule() : Module(nRequiredTargets()), analyser_(ProcedureNode::AnalysisContext)
 {
     // Set unique name for this instance of the Module

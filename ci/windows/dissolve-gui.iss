@@ -10,9 +10,10 @@
 ; Locations of bin directories of Dissolve, Qt, GnuWin, MinGW etc.
 #define DissolveDir GetEnv('DISSOLVE_DIR')
 #define FreetypeDir GetEnv('FREETYPE_DIR')
+#define ANTLRDir GetEnv('ANTLR_DIR')
 #define FTGLDir GetEnv('FTGL_DIR')
 #define QtDir GetEnv('Qt5_DIR')
-#define MinGWDir GetEnv('MINGW_DIR')
+;#define MinGWDir GetEnv('MINGW_DIR')
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application.
@@ -46,11 +47,12 @@ Source: "{#DissolveDir}\Dissolve.exe"; DestDir: "{app}\bin"; Flags: ignoreversio
 Source: "{#DissolveDir}\Dissolve-GUI.exe"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "Dissolve.ico"; DestDir: "{app}\bin"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
-Source: "{#FreetypeDir}\libfreetype.dll"; DestDir: "{app}\bin"
-Source: "{#FTGLDir}\src\libftgl.dll"; DestDir: "{app}\bin"
-Source: "{#MinGWDir}\bin\libgcc_s_seh-1.dll"; DestDir: "{app}\bin"
-Source: "{#MinGWDir}\bin\libstdc++-6.dll"; DestDir: "{app}\bin"
-Source: "{#MinGWDir}\bin\libwinpthread-1.dll"; DestDir: "{app}\bin"
+Source: "{#FreetypeDir}\freetype.dll"; DestDir: "{app}\bin"
+Source: "{#ANTLRDir}\antlr4-runtime.dll"; DestDir: "{app}\bin"
+Source: "{#FTGLDir}\ftgl.dll"; DestDir: "{app}\bin"
+;Source: "{#MinGWDir}\bin\libgcc_s_seh-1.dll"; DestDir: "{app}\bin"
+;Source: "{#MinGWDir}\bin\libstdc++-6.dll"; DestDir: "{app}\bin"
+;Source: "{#MinGWDir}\bin\libwinpthread-1.dll"; DestDir: "{app}\bin"
 Source: "{#QtDir}\bin\Qt5Gui.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#QtDir}\bin\Qt5Core.dll"; DestDir: "{app}\bin"; Flags: ignoreversion
 Source: "{#QtDir}\bin\Qt5OpenGL.dll"; DestDir: "{app}\bin"; Flags: ignoreversion

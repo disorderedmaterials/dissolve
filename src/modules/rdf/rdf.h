@@ -92,8 +92,8 @@ class RDFModule : public Module
     // Return effective density for specified Module's target Configurations
     static double summedRho(Module *module, GenericList &processingModuleData);
     // Sum unweighted g(r) over the supplied Module's target Configurations
-    static bool sumUnweightedGR(ProcessPool &procPool, Module *module, GenericList &processingModuleData,
-                                PartialSet &summedUnweightedGR);
+    static bool sumUnweightedGR(ProcessPool &procPool, Module *parentModule, const RDFModule *rdfModule,
+                                GenericList &processingModuleData, PartialSet &summedUnweightedGR);
     // Sum unweighted g(r) over all Configurations targeted by the specified ModuleGroup
     static bool sumUnweightedGR(ProcessPool &procPool, Module *parentModule, ModuleGroup *moduleGroup,
                                 GenericList &processingModuleData, PartialSet &summedUnweightedGR);

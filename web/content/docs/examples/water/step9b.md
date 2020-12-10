@@ -22,11 +22,11 @@ Let's now create a new layer and add the analysis module that we want:
 {{< action type="menu" text="Layer &#8680; Create... &#8680; Empty" >}}
 {{< action type="edit" text="Rename the layer by double-clicking on the tab name, and change it to `Analyse HBond`" >}}
 {{< action type="mouse" text="Show the module palette for the layer by clicking the **Show Palette** button at the top left of the tab." >}}
-{{< step text="Drag a [CalculateDAngle](../../userguide/modules/calculatedangle) module over to the **Current Modules** list" >}}
+{{< step text="Drag a `CalculateDAngle` module over to the **Current Modules** list" >}}
 
-As its name suggests, the [CalculateDAngle](../../userguide/modules/calculatedangle) module calculates distance and angle histograms, and their 2D map, from three target sites. Since the module is general-purpose, we'll need to set up the module to give us information on our specific geometry of interest. The [CalculateDAngle](../../userguide/modules/calculatedangle) assumes in the target interaction A&ndash;B&middot;&middot;&middot;C that A&ndash;B occur on the same molecule, and gives us a choice as to whether we exclude C sites that are also on the same molecule.
+As its name suggests, the [CalculateDAngle]({{< ref "calculatedangle" >}}) module calculates distance and angle histograms, and their 2D map, from three target sites. Since the module is general-purpose, we'll need to set up the module to give us information on our specific geometry of interest. The [CalculateDAngle]({{< ref "calculatedangle" >}}) assumes in the target interaction A&ndash;B&middot;&middot;&middot;C that A&ndash;B occur on the same molecule, and gives us a choice as to whether we exclude C sites that are also on the same molecule.
 
-{{< action type="mouse" text="Select the [`CalculateDAngle`](../../userguide/modules/calculatedangle) module to display its options" >}}
+{{< action type="mouse" text="Select the `CalculateDAngle` module to display its options" >}}
 {{< action type="groups" text="Open the **Calculation** settings group" >}}
 {{< step text="Change the maximum value of the **DistanceRange** to 5.0 &#8491;" >}}
 {{< action type="" text="Open the **Sites** settings group" >}}
@@ -35,5 +35,5 @@ As its name suggests, the [CalculateDAngle](../../userguide/modules/calculatedan
 {{< step text="For **SiteC** choose the `O` site" >}}
 {{< step text="Enable the **ExcludeSameMolecule** to ignore interactions where site C is on the same molecule as A and B." >}}
 
-{{< button pos="left" text="Previous Step" path= "../step9b/">}}
-{{< button pos="right" text="Next Step" path= "../step9c/">}}
+{{< button pos="left" text="Previous Step" path="step9b/">}}
+{{< button pos="right" text="Next Step" path="step9c/">}}

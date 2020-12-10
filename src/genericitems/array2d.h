@@ -50,8 +50,8 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
     bool write(LineParser &parser)
     {
         parser.writeLineF("{}  {}  {}\n", data_.nRows(), data_.nColumns(), DissolveSys::btoa(data_.halved()));
-        for (int n = 0; n < data_.linearArraySize(); ++n)
-            if (!data_.linearValue(n).write(parser))
+        for (auto n : data_)
+            if (!n.write(parser))
                 return false;
         return true;
     }
@@ -63,8 +63,8 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
         int nRows = parser.argi(0), nColumns = parser.argi(1);
         data_.initialise(nRows, nColumns, parser.argb(2));
 
-        for (int n = 0; n < data_.linearArraySize(); ++n)
-            if (!data_.linearArray()[n].read(parser, coreData))
+        for (auto &n : data_)
+            if (!n.read(parser, coreData))
                 return false;
         return true;
     }
@@ -83,44 +83,30 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
         {
             // Broadcast array size first...
             nRows = data_.nRows();
-            if (!procPool.broadcast(nRows, root))
-                return false;
             nColumns = data_.nColumns();
-            if (!procPool.broadcast(nColumns, root))
-                return false;
             half = data_.halved();
-            if (!procPool.broadcast(half, root))
-                return false;
+        }
+        // Slaves receive the size, and then create and receive the array
+        if (!procPool.broadcast(nRows, root))
+            return false;
+        if (!procPool.broadcast(nColumns, root))
+            return false;
+        if (!procPool.broadcast(half, root))
+            return false;
 
-            // Now broadcast Array data
-            if ((nRows * nColumns) > 0)
-            {
-                for (int n = 0; n < data_.linearArraySize(); ++n)
-                    if (!data_.linearArray()[n].broadcast(procPool, root, coreData))
-                        return false;
-            }
+        if (procPool.poolRank() != root)
+        {
+            data_.initialise(nRows, nColumns, half);
+        }
+
+        // Resize and receive array
+        if ((nRows * nColumns) > 0)
+        {
+            if (!procPool.broadcast(data_, root))
+                return false;
         }
         else
-        {
-            // Slaves receive the size, and then create and receive the array
-            if (!procPool.broadcast(nRows, root))
-                return false;
-            if (!procPool.broadcast(nColumns, root))
-                return false;
-            if (!procPool.broadcast(half, root))
-                return false;
-
-            // Resize and receive array
-            data_.initialise(nRows, nColumns, half);
-            if ((nRows * nColumns) > 0)
-            {
-                for (int n = 0; n < data_.linearArraySize(); ++n)
-                    if (!data_.linearArray()[n].broadcast(procPool, root, coreData))
-                        return false;
-            }
-            else
-                data_.clear();
-        }
+            data_.clear();
 #endif
         return true;
     }
@@ -135,8 +121,8 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
         if (!procPool.equality(data_.halved()))
             return Messenger::error("Array2D<double> half-status are not equivalent.\n");
         // Keep it simple (and slow) and check/send one value at a time
-        for (int n = 0; n < data_.linearArraySize(); ++n)
-            if (!data_.linearArray()[n].equality(procPool))
+        for (auto &n : data_)
+            if (!n.equality(procPool))
                 return false;
         return true;
     }

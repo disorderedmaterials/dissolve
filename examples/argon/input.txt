@@ -92,12 +92,18 @@ Layer  'RDF / Neutron S(Q)'
     Configuration  'Bulk'
   EndModule
 
+  Module  SQ  'SQ01'
+    Frequency  1
+
+    SourceRDFs  'RDF01'
+    WindowFunction  'None'
+  EndModule
+
   Module  NeutronSQ  'NeutronSQ01'
     Frequency  1
 
-    Configuration  'Bulk'
-    WindowFunction  'None'
-    Isotopologue  'Bulk'  'Ar'  'Ar36'  1.000000
+    SourceSQs  'SQ01'
+    Isotopologue  'Ar'  'Ar36'  1.000000
     Reference  xy  'data/yarnell.sq'
       RemoveAverage   9.00000e+00
     EndReference

@@ -66,16 +66,16 @@ void Transformer::transformValues(Data1D &data)
         return;
 
     // Get references to x and value arrays, and take copies of each
-    const auto &xAxis = data.constXAxis();
-    Array<double> &values = data.values();
+    const auto &xAxis = data.xAxis();
+    auto &values = data.values();
 
     // Data1D x and value (y) arrays are of same size - loop over number of values
-    for (int n = 0; n < data.nValues(); ++n)
+    for (auto n = 0; n < data.nValues(); ++n)
     {
         // Set values in equations
-        x_->set(xAxis.constAt(n));
-        y_->set(values.constAt(n));
-        value_->set(values.constAt(n));
+        x_->set(xAxis[n]);
+        y_->set(values[n]);
+        value_->set(values[n]);
 
         // Perform transform
         values[n] = equation_.asDouble();
@@ -90,26 +90,26 @@ void Transformer::transformValues(Data2D &data)
         return;
 
     // Get references to x and value arrays, and take copies of each
-    const auto &xAxis = data.constXAxis();
-    const auto &yAxis = data.constYAxis();
+    const auto &xAxis = data.xAxis();
+    const auto &yAxis = data.yAxis();
     Array2D<double> &values = data.values();
 
     // Data2D x and y arrays may be of different sizes
-    for (int i = 0; i < xAxis.nItems(); ++i)
+    for (auto i = 0; i < xAxis.size(); ++i)
     {
         // Set x value in equation
-        x_->set(xAxis.constAt(i));
+        x_->set(xAxis[i]);
 
         // Loop over Y axis points
-        for (int j = 0; j < yAxis.nItems(); ++j)
+        for (auto j = 0; j < yAxis.size(); ++j)
         {
             // Set y and value (z) values in equation
-            y_->set(yAxis.constAt(j));
-            z_->set(values.at(i, j));
-            value_->set(values.at(i, j));
+            y_->set(yAxis[j]);
+            z_->set(values[{i, j}]);
+            value_->set(values[{i, j}]);
 
             // Perform transform
-            values.at(i, j) = equation_.asDouble();
+            values[{i, j}] = equation_.asDouble();
         }
     }
 }
@@ -122,31 +122,31 @@ void Transformer::transformValues(Data3D &data)
         return;
 
     // Get references to x and value arrays, and take copies of each
-    const auto &xAxis = data.constXAxis();
-    const auto &yAxis = data.constYAxis();
-    const auto &zAxis = data.constZAxis();
+    const auto &xAxis = data.xAxis();
+    const auto &yAxis = data.yAxis();
+    const auto &zAxis = data.zAxis();
     Array3D<double> &values = data.values();
 
     // Data3D x, y and z arrays may be of different sizes
-    for (int i = 0; i < xAxis.nItems(); ++i)
+    for (auto i = 0; i < xAxis.size(); ++i)
     {
         // Set x value in equation
-        x_->set(xAxis.constAt(i));
+        x_->set(xAxis[i]);
 
         // Loop over Y axis points
-        for (int j = 0; j < yAxis.nItems(); ++j)
+        for (auto j = 0; j < yAxis.size(); ++j)
         {
             // Set y and value (z) values in equation
-            y_->set(yAxis.constAt(j));
+            y_->set(yAxis[j]);
 
             // Loop over z values
-            for (int k = 0; k < zAxis.nItems(); ++k)
+            for (auto k = 0; k < zAxis.size(); ++k)
             {
-                z_->set(values.at(i, j, k));
-                value_->set(values.at(i, j, k));
+                z_->set(values[{i, j, k}]);
+                value_->set(values[{i, j, k}]);
 
                 // Perform transform
-                values.at(i, j, k) = equation_.asDouble();
+                values[{i, j, k}] = equation_.asDouble();
             }
         }
     }

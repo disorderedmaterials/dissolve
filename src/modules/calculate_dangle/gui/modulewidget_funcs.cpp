@@ -120,8 +120,8 @@ void CalculateDAngleModuleWidget::setGraphDataTargets(CalculateDAngleModule *mod
         angle->setColour(StockColours::RedStockColour);
 
         // Calculated distance-angle map
-        auto *dAngle = dAngleGraph_->createRenderable(
-            Renderable::Data2DRenderable,
-            fmt::format("{}//Process2D//{}//DAngle(A-BC)", module_->uniqueName(), cfg->niceName()), "B...C vs A-B...C");
+        dAngleGraph_->createRenderable(Renderable::Data2DRenderable,
+                                       fmt::format("{}//Process2D//{}//DAngle(A-BC)", module_->uniqueName(), cfg->niceName()),
+                                       "B...C vs A-B...C");
     }
 }

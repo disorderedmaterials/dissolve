@@ -46,7 +46,7 @@ template <> class GenericItemContainer<Array<int>> : public GenericItem
     bool write(LineParser &parser)
     {
         parser.writeLineF("{}\n", data_.nItems());
-        for (int n = 0; n < data_.nItems(); ++n)
+        for (auto n = 0; n < data_.nItems(); ++n)
         {
             if (!parser.writeLineF("{}\n", data_.constAt(n)))
                 return false;
@@ -60,7 +60,7 @@ template <> class GenericItemContainer<Array<int>> : public GenericItem
             return false;
         int nItems = parser.argi(0);
         data_.createEmpty(nItems);
-        for (int n = 0; n < nItems; ++n)
+        for (auto n = 0; n < nItems; ++n)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;

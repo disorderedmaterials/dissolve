@@ -6,11 +6,12 @@ NFAILED=0
 EXITONFAIL="TRUE"
 SERIALBINARY=../src/dissolve
 PARALLELBINARY=../src/dissolve-mpi
+MPIRUN="mpirun"
 TESTS=""
 NTESTS="0"
 COMMONARGS="-x -i -n 1"
 
-while getopts "as:p:" op
+while getopts "as:p:m:" op
 do
 	case $op in
 		a)
@@ -25,13 +26,17 @@ do
 			PARALLELBINARY=${OPTARG}
 			echo "Parallel binary to use is '${PARALLELBINARY}'"
 			;;
+		m)
+			MPIRUN=${OPTARG}
+			echo "MPI launch command to use is '${MPIRUN}'"
+			;;
 		\?)
 			echo "Error: Unrecognised switch '$op'"
 			exit 1
 			;;
 		*)
 			echo "Error: Extra operands given."
-			echo "Usage: $0 [-a] [-s <serial binary>] [-p <parallel binary>]"
+			echo "Usage: $0 [-a] [-s <serial binary>] [-p <parallel binary>] [-m <mpirun command>]"
 			exit 1
 			;;
 	esac
@@ -164,7 +169,7 @@ do
 				output=../${test}.${input%.txt}.${nprocs}.out
 				echo -e "\nRunning test \"${input}\" (${nprocs} processes)..."
 				echo "Arguments are: $ARGS"
-				mpirun -np $nprocs ../$PARALLELBINARY $ARGS $input -r $output > $output
+				$MPIRUN -np $nprocs ../$PARALLELBINARY $ARGS $input -a --redirect=$output > $output
 			fi
 
 			if [ "$?" -eq "0" ]

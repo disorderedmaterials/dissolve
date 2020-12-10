@@ -20,7 +20,7 @@ bool CoordinateImportFileFormat::importXYZ(LineParser &parser, Array<Vec3<double
 
     Messenger::print(" --> Expecting coordinates for {} atoms.\n", nAtoms);
     r.clear();
-    for (int n = 0; n < nAtoms; ++n)
+    for (auto n = 0; n < nAtoms; ++n)
     {
         if (parser.getArgsDelim() != LineParser::Success)
             return false;

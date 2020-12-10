@@ -25,7 +25,7 @@ Array<Cell *> MoleculeDistributor::cellsToBeModifiedForObject(int objectId)
     // Loop over Atoms in the Molecule, and add the (unique) cellID each Atom is in
     Array<Cell *> cells;
     int n;
-    for (int i = 0; i < molecule->nAtoms(); ++i)
+    for (auto i = 0; i < molecule->nAtoms(); ++i)
     {
         Cell *cell = molecule->atom(i)->cell();
 

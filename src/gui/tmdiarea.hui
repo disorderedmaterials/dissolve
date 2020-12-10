@@ -14,7 +14,6 @@ class TMdiArea : public QMdiArea
     Q_OBJECT
 
     public:
-    // Constructor
     TMdiArea(DissolveWindow *dissolveWindow, QWidget *parent = nullptr);
 
     /*

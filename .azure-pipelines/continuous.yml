@@ -3,12 +3,17 @@ trigger:
     include:
     - develop
   paths:
-    exclude:
-    - examples/*
-    - web/*
-    - README.md
     include:
-    - /
+    - src/*
+    - ci/*
+    - cmake/*
+    - icon/*
+    - tests/*
+    - CMakeLists.txt
+    - conanfile.txt
+    - .azure-pipelines/*
+    - .clang-format
+    - .cmake-format.json
 
 pr: none
 
@@ -19,7 +24,7 @@ stages:
   - stage: 'build'
     displayName: 'Build and Package'
     jobs:
-      - job: 'linux_serialgui'
+      - job: 'linux_serialgui_appimage'
         displayName: 'Build Linux (Serial/GUI, ubuntu-18.04)'
         pool:
           vmImage: 'ubuntu-18.04'
@@ -28,19 +33,6 @@ stages:
             fetchDepth: 1
           - template: templates/set-short-hash.yml
           - template: templates/build-linux-serial-gui.yml
-      - job: 'linux_serialgui_appimage'
-        displayName: 'Build Linux (Serial/GUI, ubuntu-16.04)'
-        condition: eq(0,1)
-        pool:
-          vmImage: 'ubuntu-16.04'
-        steps:
-          - checkout: self
-            fetchDepth: 1
-          - template: templates/set-short-hash.yml
-          - template: templates/build-linux-serial-gui.yml
-            parameters:
-              ppa: 'beineri/opt-qt-5.12.0-xenial'
-              qtver: 512
           - template: templates/package-linux-serial-gui.yml
           - task: PublishBuildArtifacts@1
             inputs:
@@ -63,6 +55,7 @@ stages:
               ArtifactName: 'osx-artifacts'
             displayName: 'Publish OSX Artifacts'
       - job: 'windows_serialgui'
+        timeoutInMinutes: 120
         displayName: 'Build Windows (Serial/GUI, windows-latest)'
         pool:
           vmImage: 'windows-latest' 
@@ -89,13 +82,13 @@ stages:
         steps:
           - checkout: self
             fetchDepth: 1
-          #- task: DownloadBuildArtifacts@0
-          #  inputs:
-          #    buildType: 'current'
-          #    specificBuildWithTriggering: true
-          #    downloadType: 'single'
-          #    artifactName: 'linux-artifacts'
-          #  displayName: 'Download Linux Artifacts'
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              specificBuildWithTriggering: true
+              downloadType: 'single'
+              artifactName: 'linux-artifacts'
+            displayName: 'Download Linux Artifacts'
           - task: DownloadBuildArtifacts@0
             inputs:
               buildType: 'current'
@@ -112,33 +105,31 @@ stages:
             displayName: 'Download Windows Artifacts'
           - bash: |
               VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
-              SHORTHASH=`git rev-parse --short HEAD`
               cd ./examples
-              ./package-examples -v ${VERSION}-${SHORTHASH}
+              ./package-examples -v ${VERSION}
             displayName: 'Create Example Data Archives'
           - bash: |
-              SHORTHASH=`git rev-parse --short HEAD`
               VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
               # Linux AppImages
-              #cd $(System.ArtifactsDirectory)/linux-artifacts
-              #mv -v Dissolve-${SHORTHASH}-x86_64.AppImage Dissolve-${VERSION}-${SHORTHASH}-x86_64.AppImage
-              #mv -v Dissolve-GUI-${SHORTHASH}-x86_64.AppImage Dissolve-GUI-${VERSION}-${SHORTHASH}-x86_64.AppImage
-              #cd ../
+              cd $(System.ArtifactsDirectory)/linux-artifacts
+              mv -v Dissolve-x86_64.AppImage Dissolve-${VERSION}-x86_64.AppImage
+              mv -v Dissolve-GUI-x86_64.AppImage Dissolve-GUI-${VERSION}-x86_64.AppImage
+              cd ../
               # OSX Disk Images
               cd $(System.ArtifactsDirectory)/osx-artifacts
-              mv -v Dissolve-GUI-${VERSION}.dmg Dissolve-GUI-${VERSION}-${SHORTHASH}-Catalina.dmg
+              mv -v Dissolve-GUI-${VERSION}.dmg Dissolve-GUI-${VERSION}-Catalina.dmg
               cd ../
               # Windows Installer / Zip
               cd $(System.ArtifactsDirectory)/windows-artifacts
-              mv -v Dissolve-GUI-${VERSION}-Win64.zip Dissolve-GUI-${VERSION}-${SHORTHASH}-Win64.zip
-              mv -v Dissolve-GUI-${VERSION}-Win64.exe Dissolve-GUI-${VERSION}-${SHORTHASH}-Win64.exe
+              mv -v Dissolve-GUI-${VERSION}-Win64.zip Dissolve-GUI-${VERSION}-Win64.zip
+              mv -v Dissolve-GUI-${VERSION}-Win64.exe Dissolve-GUI-${VERSION}-Win64.exe
               cd ../
             displayName: 'Rename Artifacts'
           - bash: |
               SHORTHASH=`git rev-parse --short HEAD`
               DATE=`date`
               VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
-              ./ci/scripts/update-release -r projectdissolve/dissolve -t continuous -n "Continuous Build (${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg examples/*zip examples/*.tar.gz
+              ./ci/scripts/update-release -r projectdissolve/dissolve -t continuous -n "Continuous Build (${VERSION} @ ${SHORTHASH})" -b "Continuous release from current \`develop\` branch at ${SHORTHASH}. Built ${DATE}." -p -e -u $(System.ArtifactsDirectory)/linux-artifacts/*.AppImage $(System.ArtifactsDirectory)/windows-artifacts/*.exe $(System.ArtifactsDirectory)/windows-artifacts/*.zip $(System.ArtifactsDirectory)/osx-artifacts/*dmg examples/*zip examples/*.tar.gz
             env:
               GITHUB_TOKEN: $(REPO_SECRET)
             displayName: 'Update Continuous Release (GitHub)'

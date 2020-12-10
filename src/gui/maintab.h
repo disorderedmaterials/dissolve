@@ -31,7 +31,6 @@ class MainTab
         ConfigurationTabType,
         ForcefieldTabType,
         LayerTabType,
-        ModuleTabType,
         SpeciesTabType,
         WorkspaceTabType
     };

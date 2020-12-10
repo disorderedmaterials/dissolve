@@ -80,7 +80,7 @@ template <class N> class NodeRefListKeyword : public NodeRefListKeywordBase, pub
                                     KeywordBase::name());
 
         // Loop over arguments
-        for (int n = startArg; n < parser.nArgs(); ++n)
+        for (auto n = startArg; n < parser.nArgs(); ++n)
         {
             // Locate the named node - don't prune by type yet (we'll check that in setNode())
             ProcedureNode *node =

@@ -14,7 +14,7 @@ bool Messenger::quiet_ = false;
 bool Messenger::muted_ = false;
 bool Messenger::verbose_ = false;
 bool Messenger::redirect_ = false;
-bool Messenger::masterOnly_ = false;
+bool Messenger::masterOnly_ = true;
 LineParser Messenger::parser_; //= new LineParser;
 OutputHandler *Messenger::outputHandler_ = nullptr;
 std::string Messenger::outputPrefix_;
@@ -87,11 +87,16 @@ void Messenger::clearOutputPrefix() { outputPrefix_.clear(); }
 // Output text to relevant handler
 void Messenger::outputText(std::string_view s)
 {
+#ifdef PARALLEL
+    // Only print on master thread
+    if (masterOnly_ && !ProcessPool::isWorldMaster())
+        return;
+#endif
     if (outputPrefix_.empty())
     {
         // If we are redirecting to files, use the parser_
         if (redirect_)
-            parser_.writeLineF("{}", std::string(s));
+            parser_.writeLineF("{}\n", std::string(s));
         else
         {
             // Not redirecting - has an OutputHandler been defined?
@@ -105,7 +110,7 @@ void Messenger::outputText(std::string_view s)
     {
         // If we are redirecting to files, use the parser_
         if (redirect_)
-            parser_.writeLineF("{} {}", outputPrefix_, s);
+            parser_.writeLineF("{} {}\n", outputPrefix_, s);
         else
         {
             // Not redirecting - has an OutputHandler been defined?
@@ -120,6 +125,11 @@ void Messenger::outputText(std::string_view s)
 // Output blank line (with prefix if set) to relevant handler
 void Messenger::outputBlank()
 {
+#ifdef PARALLEL
+    // Only print on master thread
+    if (masterOnly_ && !ProcessPool::isWorldMaster())
+        return;
+#endif
     if (outputPrefix_.empty())
     {
         // If we are redirecting to files, use the parser_

@@ -4,10 +4,10 @@
 #include "neta/presence.h"
 #include "classes/speciesatom.h"
 #include "data/ffatomtype.h"
+#include <algorithm>
 
-NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Element *> targetElements,
-                                   std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes,
-                                   SpeciesBond::BondType bt)
+NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<std::reference_wrapper<const Element>> targetElements,
+                                   std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
     : NETANode(parent, NETANode::PresenceNode)
 {
     allowedElements_ = targetElements;
@@ -22,6 +22,26 @@ NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Element *
 }
 
 NETAPresenceNode::~NETAPresenceNode() {}
+
+/*
+ * Atom Targets
+ */
+
+// Add element target to node
+bool NETAPresenceNode::addElementTarget(const Element &el)
+{
+    allowedElements_.push_back(el);
+
+    return true;
+}
+
+// Add forcefield type target to node
+bool NETAPresenceNode::addFFTypeTarget(const ForcefieldAtomType &ffType)
+{
+    allowedAtomTypes_.push_back(ffType);
+
+    return true;
+}
 
 /*
  * Modifiers
@@ -40,7 +60,7 @@ EnumOptions<NETAPresenceNode::NETACharacterModifier> NETAPresenceNode::modifiers
 }
 
 // Return whether the specified modifier is valid for this node
-bool NETAPresenceNode::isValidModifier(std::string_view s) const { return (modifiers().isValid(s)); }
+bool NETAPresenceNode::isValidModifier(std::string_view s) const { return modifiers().isValid(s); }
 
 // Set value and comparator for specified modifier
 bool NETAPresenceNode::setModifier(std::string_view modifier, ComparisonOperator op, int value)
@@ -75,7 +95,7 @@ bool NETAPresenceNode::setModifier(std::string_view modifier, ComparisonOperator
  */
 
 // Evaluate the node and return its score
-int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &availableAtoms) const
+int NETAPresenceNode::score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &availableAtoms) const
 {
     // We expect the passed SpeciesAtom 'i' to be nullptr, as our potential targets are held in availableAtoms (which we will
     // modify as appropriate)
@@ -84,18 +104,18 @@ int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &av
 
     // Loop over the provided possible list of atoms
     auto nMatches = 0, totalScore = 0;
-    RefList<const SpeciesAtom> matches;
+    std::vector<const SpeciesAtom *> matches;
     for (auto j : availableAtoms)
     {
         // Evaluate the atom against our elements
         int atomScore = NETANode::NoMatch;
-        for (const auto *element : allowedElements_)
+        for (const auto &element : allowedElements_)
         {
-            if (j->element() != element)
+            if (j->element() != &element.get())
                 continue;
 
             // Process branch definition via the base class, using a fresh path
-            RefList<const SpeciesAtom> emptyPath;
+            std::vector<const SpeciesAtom *> emptyPath;
             auto branchScore = NETANode::score(j, emptyPath);
             if (branchScore == NETANode::NoMatch)
                 continue;
@@ -115,7 +135,7 @@ int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &av
                     continue;
 
                 // Process branch definition via the base class, using an empty path
-                RefList<const SpeciesAtom> emptyPath;
+                std::vector<const SpeciesAtom *> emptyPath;
                 auto branchScore = NETANode::score(j, emptyPath);
                 if (branchScore == NETANode::NoMatch)
                     continue;
@@ -135,7 +155,7 @@ int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &av
         if (nBondsValue_ >= 0)
         {
             if (!compareValues(j->nBonds(), nBondsValueOperator_, nBondsValue_))
-                return NETANode::NoMatch;
+                continue;
 
             ++atomScore;
         }
@@ -145,7 +165,7 @@ int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &av
             auto nH = std::count_if(j->bonds().begin(), j->bonds().end(),
                                     [j](const SpeciesBond &bond) { return bond.partner(j)->element()->Z() == ELEMENT_H; });
             if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_))
-                return NETANode::NoMatch;
+                continue;
 
             ++atomScore;
         }
@@ -153,16 +173,21 @@ int NETAPresenceNode::score(const SpeciesAtom *i, RefList<const SpeciesAtom> &av
         // Found a match, so increase the match count and score, and add the matched atom to our local list
         ++nMatches;
         totalScore += atomScore;
-        matches.append(j);
+        matches.push_back(j);
+
+        // Don't match more than we need to - check the repeatCount
+        if (compareValues(nMatches, repeatCountOperator_, repeatCount_))
+            break;
     }
 
     // Did we find the required number of matches in the provided list?
     if (!compareValues(nMatches, repeatCountOperator_, repeatCount_))
-        return NETANode::NoMatch;
+        return reverseLogic_ ? 1 : NETANode::NoMatch;
 
     // Remove any matched atoms from the original list
     for (auto j : matches)
-        availableAtoms.remove(j);
+        availableAtoms.erase(std::remove_if(availableAtoms.begin(), availableAtoms.end(),
+                                            [&j](const auto &matchedAtom) { return matchedAtom == j; }));
 
-    return totalScore;
+    return reverseLogic_ ? NETANode::NoMatch : totalScore;
 }

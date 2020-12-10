@@ -1,23 +1,5 @@
-/*
-    *** XRay SQ Module Widget - Functions
-    *** src/modules/xraysq/gui/modulewidget_funcs.cpp
-    Copyright T. Youngs 2012-2020
-
-    This file is part of Dissolve.
-
-    Dissolve is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    Dissolve is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with Dissolve.  If not, see <http://www.gnu.org/licenses/>.
-*/
+// SPDX-License-Identifier: GPL-3.0-or-later
+// Copyright (c) 2020 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
 #include "genericitems/listhelper.h"
@@ -29,7 +11,6 @@
 #include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
-// Constructor
 XRaySQModuleWidget::XRaySQModuleWidget(QWidget *parent, XRaySQModule *module, Dissolve &dissolve)
     : ModuleWidget(parent), module_(module), dissolve_(dissolve)
 {
@@ -91,9 +72,6 @@ XRaySQModuleWidget::XRaySQModuleWidget(QWidget *parent, XRaySQModule *module, Di
     totalGRGraph_->view().axes().setMax(1, 1.0);
     totalGRGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
     totalGRGraph_->view().setAutoFollowType(View::AllAutoFollow);
-    // -- Set group styling
-    totalGRGraph_->groupManager().setGroupColouring("Reference", RenderableGroup::FixedGroupColouring);
-    totalGRGraph_->groupManager().setGroupFixedColour("Reference", StockColours::RedStockColour);
 
     // Set up total F(Q) graph
     totalFQGraph_ = ui_.TotalSQPlotWidget->dataViewer();
@@ -106,9 +84,6 @@ XRaySQModuleWidget::XRaySQModuleWidget(QWidget *parent, XRaySQModule *module, Di
     totalFQGraph_->view().axes().setMax(1, 1.0);
     totalFQGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::NoVerticalShift);
     totalFQGraph_->view().setAutoFollowType(View::AllAutoFollow);
-    // -- Set group styling
-    totalFQGraph_->groupManager().setGroupColouring("Reference", RenderableGroup::FixedGroupColouring);
-    totalFQGraph_->groupManager().setGroupFixedColour("Reference", StockColours::RedStockColour);
 
     setGraphDataTargets(module_);
 
@@ -234,33 +209,34 @@ void XRaySQModuleWidget::setGraphDataTargets(XRaySQModule *module)
     });
 
     // Add calculated total G(r)
-    Renderable *totalGR = totalGRGraph_->createRenderable(
-        Renderable::Data1DRenderable, fmt::format("{}//WeightedGR//Total", module_->uniqueName()), "Calculated (Direct)");
-    totalGRGraph_->addRenderableToGroup(totalGR, "Calculated");
+    totalGRGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//WeightedGR//Total", module_->uniqueName()),
+                                    "Calculated G(r) (Direct)", "Calculated");
 
     // Add calculated total representative G(r) (from FT of S(Q))
-    Renderable *repGR = totalGRGraph_->createRenderable(
-        Renderable::Data1DRenderable, fmt::format("{}//RepresentativeTotalGR", module_->uniqueName()), "Calculated (via FT)");
+    Renderable *repGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable,
+                                                        fmt::format("{}//RepresentativeTotalGR", module_->uniqueName()),
+                                                        "Calculated G(r) (via FT)", "Calculated");
     repGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
-    totalGRGraph_->addRenderableToGroup(repGR, "Calculated");
+    repGR->setColour(StockColours::RedStockColour);
 
     // Add calculate total F(Q)
-    Renderable *totalFQ = totalFQGraph_->createRenderable(
-        Renderable::Data1DRenderable, fmt::format("{}//WeightedSQ//Total", module_->uniqueName()), "Calculated");
-    totalFQGraph_->addRenderableToGroup(totalFQ, "Calculated");
+    totalFQGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//WeightedSQ//Total", module_->uniqueName()),
+                                    "Calculated F(Q)", "Calculated");
 
     // Add on reference data if present
     const Data1DImportFileFormat &referenceFileAndFormat = module->referenceFQFileAndFormat();
     if (referenceFileAndFormat.hasValidFileAndFormat())
     {
         // Add FT of reference data total G(r)
-        Renderable *refGR = totalGRGraph_->createRenderable(
-            Renderable::Data1DRenderable, fmt::format("{}//ReferenceDataFT", module_->uniqueName()), "Reference");
-        totalGRGraph_->addRenderableToGroup(refGR, "Reference");
+        totalGRGraph_
+            ->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//ReferenceDataFT", module_->uniqueName()),
+                               "Reference G(r) (via FT)", "Reference")
+            ->setColour(StockColours::RedStockColour);
 
         // Add calculate total F(Q)
-        Renderable *refFQ = totalFQGraph_->createRenderable(
-            Renderable::Data1DRenderable, fmt::format("{}//ReferenceData", module_->uniqueName()), "Reference");
-        totalFQGraph_->addRenderableToGroup(refFQ, "Reference");
+        totalFQGraph_
+            ->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//ReferenceData", module_->uniqueName()),
+                               "Reference F(Q)", "Reference")
+            ->setColour(StockColours::RedStockColour);
     }
 }

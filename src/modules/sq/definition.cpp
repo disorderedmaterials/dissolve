@@ -13,4 +13,4 @@ std::string_view SQModule::category() const { return "Correlation Functions"; }
 std::string_view SQModule::brief() const { return "Transform g(r) into unweighted S(Q)"; }
 
 // Return the number of Configuration targets this Module requires
-int SQModule::nRequiredTargets() const { return Module::OneOrMoreTargets; }
+int SQModule::nRequiredTargets() const { return Module::ZeroTargets; }

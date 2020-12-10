@@ -17,7 +17,7 @@ LineStipple LineStipple::stipple[] = {{1, 0xffff, "Solid"},       {1, 0xaaaa, "D
 // Convert text string to StippleType
 LineStipple::StippleType LineStipple::stippleType(std::string_view s)
 {
-    for (int n = 0; n < LineStipple::nStippleTypes; ++n)
+    for (auto n = 0; n < LineStipple::nStippleTypes; ++n)
         if (DissolveSys::sameString(s, LineStipple::stipple[n].name))
             return (LineStipple::StippleType)n;
     return LineStipple::nStippleTypes;
@@ -66,7 +66,7 @@ QVector<qreal> &LineStipple::dashPattern()
     // 	test[16] = '\0';
     auto consecutive = 0, last = -1, nEntries = 0;
     int bit;
-    for (int n = 15; n >= 0; --n)
+    for (auto n = 15; n >= 0; --n)
     {
         bit = (stipplePattern & (1 << n) ? 1 : 0);
         // 		test[15-n] = (bit ? '1' : '0');

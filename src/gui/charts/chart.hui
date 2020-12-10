@@ -23,7 +23,6 @@ class ChartBase : public QWidget
     Q_OBJECT
 
     public:
-    // Constructor / Destructor
     ChartBase(QWidget *parent = nullptr);
     ~ChartBase();
 

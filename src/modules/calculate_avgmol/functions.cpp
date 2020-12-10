@@ -47,7 +47,7 @@ void CalculateAvgMolModule::updateSpecies(const Array<SampledDouble> &x, const A
                                           const Array<SampledDouble> &z)
 {
     // Loop over atoms in our species
-    for (int n = 0; n < averageSpecies_.nAtoms(); ++n)
+    for (auto n = 0; n < averageSpecies_.nAtoms(); ++n)
         averageSpecies_.setAtomCoordinates(n, x.constAt(n).value(), y.constAt(n).value(), z.constAt(n).value());
 }
 

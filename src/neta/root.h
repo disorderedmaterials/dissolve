@@ -52,5 +52,5 @@ class NETARootNode : public NETANode
      */
     public:
     // Evaluate the node and return its score
-    int score(const SpeciesAtom *i, RefList<const SpeciesAtom> &matchPath) const;
+    int score(const SpeciesAtom *i, std::vector<const SpeciesAtom *> &matchPath) const;
 };

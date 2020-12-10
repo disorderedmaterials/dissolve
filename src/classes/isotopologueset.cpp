@@ -4,47 +4,19 @@
 #include "classes/isotopologueset.h"
 #include "base/lineparser.h"
 #include "base/processpool.h"
-#include "classes/configuration.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include <algorithm>
 
-IsotopologueSet::IsotopologueSet(IsotopologueCollection *parent, Configuration *cfg)
-    : parentCollection_(parent), configuration_(cfg)
-{
-}
-
-IsotopologueSet::~IsotopologueSet() {}
-
 /*
- * Parent Collection
- */
-
-// Set parent IsotopologueCollection in which this set exists
-void IsotopologueSet::setParentCollection(IsotopologueCollection *parent) { parentCollection_ = parent; }
-
-// Parent IsotopologueCollection in which this set exists
-IsotopologueCollection *IsotopologueSet::parentCollection() const { return parentCollection_; }
-
-/*
- * Mix Definitions
+ * Data
  */
 
 // Clear all existing data
-void IsotopologueSet::clear()
-{
-    configuration_ = nullptr;
-    isotopologues_.clear();
-}
-
-// Set Configuration in which the Species are used
-void IsotopologueSet::setConfiguration(Configuration *cfg) { configuration_ = cfg; }
-
-// Return Configuration in which the Species are used
-Configuration *IsotopologueSet::configuration() const { return configuration_; }
+void IsotopologueSet::clear() { isotopologues_.clear(); }
 
 // Add Isotopologue with the specified relative weight
-void IsotopologueSet::add(Isotopologue *iso, double relativeWeight)
+void IsotopologueSet::add(const Isotopologue *iso, double relativeWeight)
 {
     auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(),
                            [iso](auto &data) { return data.species() == iso->parent(); });
@@ -58,7 +30,7 @@ void IsotopologueSet::add(Isotopologue *iso, double relativeWeight)
 }
 
 // Remove specified Species from the list (if it exists)
-void IsotopologueSet::remove(Species *sp)
+void IsotopologueSet::remove(const Species *sp)
 {
     isotopologues_.erase(
         std::remove_if(isotopologues_.begin(), isotopologues_.end(), [sp](const auto &data) { return data.species() == sp; }),
@@ -66,7 +38,7 @@ void IsotopologueSet::remove(Species *sp)
 }
 
 // Remove any occurrences of the specified Isotopologue
-void IsotopologueSet::remove(Isotopologue *iso)
+void IsotopologueSet::remove(const Isotopologue *iso)
 {
     // Get parent Isotopologues from the contained Species pointer
     auto it = std::find_if(isotopologues_.begin(), isotopologues_.end(),
@@ -138,16 +110,8 @@ bool IsotopologueSet::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 
-    // Find target Configuration (first argument) and number of Species defined (second argument)
-    configuration_ = coreData.findConfiguration(parser.argsv(0));
-    if (!configuration_)
-    {
-        Messenger::error("Error reading IsotopologueSet - no Configuration named '{}' exists.\n", parser.argsv(0));
-        return false;
-    }
-    const auto nSpecies = parser.argi(1);
-
-    for (int n = 0; n < nSpecies; ++n)
+    const auto nSpecies = parser.argi(0);
+    for (auto n = 0; n < nSpecies; ++n)
     {
         // Add a new isotopologue set and read it
         isotopologues_.emplace_back();
@@ -162,7 +126,7 @@ bool IsotopologueSet::read(LineParser &parser, CoreData &coreData)
 bool IsotopologueSet::write(LineParser &parser)
 {
     // Write Configuration name and number of Isotopologues we have defined
-    if (!parser.writeLineF("'{}'  {}\n", configuration_->name(), isotopologues_.size()))
+    if (!parser.writeLineF("{}\n", isotopologues_.size()))
         return false;
 
     // Write details for each set of Isotopologues

@@ -19,7 +19,7 @@ WindowFunction::WindowFunction(WindowFunction::FunctionType function, double p1,
 void WindowFunction::operator=(const WindowFunction &source)
 {
     function_ = source.function_;
-    for (int n = 0; n < MAXWINDOWFUNCTIONPARAMS; ++n)
+    for (auto n = 0; n < MAXWINDOWFUNCTIONPARAMS; ++n)
         parameters_[n] = source.parameters_[n];
 
     xMax_ = source.xMax_;
@@ -35,7 +35,7 @@ int WindowFunctionNParameters[] = {0, 0, 0, 0, 0, 0, 0};
 // Return FunctionType from supplied string
 WindowFunction::FunctionType WindowFunction::functionType(std::string_view s)
 {
-    for (int n = 0; n < nFunctionTypes; ++n)
+    for (auto n = 0; n < nFunctionTypes; ++n)
         if (DissolveSys::sameString(s, WindowFunctionKeywords[n]))
             return (FunctionType)n;
     return WindowFunction::nFunctionTypes;
@@ -172,7 +172,7 @@ std::string WindowFunction::parameterSummary() const
 bool WindowFunction::setUp(const Data1D &data)
 {
     // Store maximum x value of data
-    xMax_ = data.constXAxis().lastValue();
+    xMax_ = data.xAxis().back();
 
     switch (function_)
     {
@@ -231,11 +231,12 @@ double WindowFunction::y(double x, double omega) const
             /*
              * Original Lorch function
              *
-             * Parameters:  0 = delta0	( = PI/xmax )
+             * Parameters:
+             *  0 = delta0  ( = PI/xmax )
              *
-             * 	  sin(x * delta0)
+             *        sin(x * delta0)
              * f(x) = ---------------
-             * 	    x * delta0
+             *          x * delta0
              */
             return sin(x * parameters_[0]) / (x * parameters_[0]);
             break;
@@ -260,7 +261,7 @@ bool WindowFunction::read(LineParser &parser, CoreData &coreData)
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     function_ = functionType(parser.argsv(0));
-    for (int n = 0; n < nFunctionParameters(function_); ++n)
+    for (auto n = 0; n < nFunctionParameters(function_); ++n)
         parameters_[n] = parser.argd(n + 1);
     return true;
 }
@@ -269,7 +270,7 @@ bool WindowFunction::read(LineParser &parser, CoreData &coreData)
 bool WindowFunction::write(LineParser &parser)
 {
     std::string line{functionType(function_)};
-    for (int n = 0; n < nFunctionParameters(function_); ++n)
+    for (auto n = 0; n < nFunctionParameters(function_); ++n)
         line += fmt::format(" {:16.9e}", parameters_[n]);
     return parser.writeLine(line);
 }

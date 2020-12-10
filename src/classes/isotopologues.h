@@ -17,7 +17,7 @@ class LineParser;
 class Isotopologues : public GenericItemBase
 {
     public:
-    Isotopologues(Species *species = nullptr, int speciesPopulation = 0);
+    Isotopologues(const Species *species = nullptr, int speciesPopulation = 0);
     ~Isotopologues();
 
     /*
@@ -25,7 +25,7 @@ class Isotopologues : public GenericItemBase
      */
     private:
     // Associated Species
-    Species *species_;
+    const Species *species_;
     // Integer population of associated Species
     int speciesPopulation_;
     // Weighted Isotopologue mixture
@@ -33,9 +33,9 @@ class Isotopologues : public GenericItemBase
 
     public:
     // Set associated Species and population
-    void setSpecies(Species *sp, int population);
+    void setSpecies(const Species *sp, int population);
     // Return associated Species
-    Species *species() const;
+    const Species *species() const;
     // Return associated Species population
     int speciesPopulation() const;
     /// Prune defunct Isotopologue entries

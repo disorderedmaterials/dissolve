@@ -19,7 +19,7 @@ class ComboEnumOptionsPopulator
             combo->clear();
 
         // Add our text items to the list
-        for (int n = 0; n < options.nOptions(); ++n)
+        for (auto n = 0; n < options.nOptions(); ++n)
             combo->addItem(QString::fromStdString(std::string(options.keywordByIndex(n))));
     }
 };

@@ -14,7 +14,6 @@ class ColourButton : public QPushButton
     Q_OBJECT
 
     public:
-    // Constructor
     ColourButton(QWidget *parent);
 
     /*

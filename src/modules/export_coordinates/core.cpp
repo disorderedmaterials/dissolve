@@ -3,10 +3,6 @@
 
 #include "modules/export_coordinates/exportcoords.h"
 
-/*
- * Constructor / Destructor
- */
-
 ExportCoordinatesModule::ExportCoordinatesModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

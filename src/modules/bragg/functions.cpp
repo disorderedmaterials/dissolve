@@ -106,7 +106,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
 
         // Initialise Bragg reflections - Q values reflect the centre-bins of the reflection.
         double q = 0.5 * qDelta;
-        for (int n = 0; n < nBraggBins; ++n)
+        for (auto n = 0; n < nBraggBins; ++n)
         {
             tempReflections[n].initialise(q, -1, nTypes);
             q += qDelta;
@@ -136,7 +136,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
                         braggIndex = int(mag / qDelta);
 
                         // Point this (h,k,l) value to this Bragg reflection
-                        tempKVectors.at(h, k, l).initialise(h, k, l, braggIndex, nTypes);
+                        tempKVectors[{h, k, l}].initialise(h, k, l, braggIndex, nTypes);
 
                         // Note in the reflection that we have found another (h,k,l) that contributes to
                         // it
@@ -149,24 +149,23 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
         // Renumber reflections in BraggReflection array, assigning an index only if there are KVectors associated with
         // it
         braggIndex = 0;
-        for (int n = 0; n < nBraggBins; ++n)
+        for (auto n = 0; n < nBraggBins; ++n)
             if (tempReflections[n].nKVectors() > 0)
                 tempReflections[n].setIndex(braggIndex++);
 
         // Collapse KVectors into a linear list, excluding any that weren't initialised
-        KVector *kVectorsLinear = tempKVectors.linearArray();
-        for (int n = 0; n < tempKVectors.linearArraySize(); ++n)
+        for (auto &n : tempKVectors.linearArray())
         {
-            if (kVectorsLinear[n].braggReflectionIndex() == -1)
+            if (n.braggReflectionIndex() == -1)
                 continue;
 
             // Look up and set the new index of the associated BraggReflection
-            kVectorsLinear[n].setBraggReflectionIndex(tempReflections[kVectorsLinear[n].braggReflectionIndex()].index());
-            braggKVectors.add(kVectorsLinear[n]);
+            n.setBraggReflectionIndex(tempReflections[n.braggReflectionIndex()].index());
+            braggKVectors.add(n);
         }
 
         // Prune BraggReflections array, putting them into a sequential Array that will reflect their new indexing
-        for (int n = 0; n < nBraggBins; ++n)
+        for (auto n = 0; n < nBraggBins; ++n)
         {
             if (tempReflections[n].nKVectors() == 0)
                 continue;
@@ -357,8 +356,7 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
         }
 
         // Set up Data1D array with our empty data
-        for (int n = 0; n < braggPartials.linearArraySize(); ++n)
-            braggPartials.linearArray()[n] = temp;
+        std::fill(braggPartials.begin(), braggPartials.end(), temp);
     }
     auto &braggTotal = GenericListHelper<Data1D>::realise(cfg->moduleData(), "OriginalBraggTotal", "",
                                                           GenericItem::InRestartFileFlag, &wasCreated);
@@ -367,21 +365,21 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
     braggTotal.clear();
 
     // Zero Bragg partials
-    for (int n = 0; n < braggPartials.linearArraySize(); ++n)
-        braggPartials.linearArray()[n].values() = 0.0;
+    for (auto &n : braggPartials)
+        std::fill(n.values().begin(), n.values().end(), 0.0);
 
     // Loop over pairs of atom types, adding in contributions from our calculated BraggReflections
-    double qCentre, factor;
+    double qCentre;
     int bin;
     auto &types = cfg->usedAtomTypesList();
     for_each_pair(types.begin(), types.end(), [&](int typeI, const AtomTypeData &atd1, int typeJ, const AtomTypeData &atd2) {
         // Retrieve partial container and make sure its object tag is set
-        auto &partial = braggPartials.at(typeI, typeJ);
+        auto &partial = braggPartials[{typeI, typeJ}];
         partial.setObjectTag(
             fmt::format("{}//OriginalBragg//{}-{}", cfg->niceName(), atd1.atomTypeName(), atd2.atomTypeName()));
 
         // Loop over defined Bragg reflections
-        for (int n = 0; n < nReflections; ++n)
+        for (auto n = 0; n < nReflections; ++n)
         {
             // Get q value and intensity of reflection
             qCentre = braggReflections.constAt(n).q();
@@ -414,8 +412,8 @@ bool BraggModule::reBinReflections(ProcessPool &procPool, Configuration *cfg, Ar
     const auto nTypes = cfg->nUsedAtomTypes();
 
     // Create a temporary Data1D into which we will generate individual Bragg peak contributions
-    const auto qDelta = braggPartials.at(0, 0).xAxis(1) - braggPartials.at(0, 0).xAxis(0);
-    const auto nBins = braggPartials.at(0, 0).nValues();
+    const auto qDelta = braggPartials[{0, 0}].xAxis(1) - braggPartials[{0, 0}].xAxis(0);
+    const auto nBins = braggPartials[{0, 0}].nValues();
     Array<int> nAdded(nBins);
 
     nAdded = 0;
@@ -423,7 +421,7 @@ bool BraggModule::reBinReflections(ProcessPool &procPool, Configuration *cfg, Ar
     // Loop over defined Bragg reflections
     // TODO Prune reflections based on intensity to speed-up process?
     int bin;
-    for (int n = 0; n < nReflections; ++n)
+    for (auto n = 0; n < nReflections; ++n)
     {
         // Get Q bin (in the braggPartials) of the reflection
         bin = braggReflections.constAt(n).q() / qDelta;
@@ -444,19 +442,19 @@ bool BraggModule::reBinReflections(ProcessPool &procPool, Configuration *cfg, Ar
             int typeJ = typeI;
             for (auto atd2 = atd1; atd2 != types.end(); typeJ++, atd2++)
             {
-                braggPartials.at(typeI, typeJ).value(bin) += braggReflections.constAt(n).intensity(typeI, typeJ);
+                braggPartials[{typeI, typeJ}].value(bin) += braggReflections.constAt(n).intensity(typeI, typeJ);
             }
         }
     }
 
     // Normalise data against number of intensities added to each bin
-    for (int typeI = 0; typeI < nTypes; ++typeI)
+    for (auto typeI = 0; typeI < nTypes; ++typeI)
     {
-        for (int typeJ = typeI; typeJ < nTypes; ++typeJ)
+        for (auto typeJ = typeI; typeJ < nTypes; ++typeJ)
         {
-            for (int n = 0; n < nBins; ++n)
+            for (auto n = 0; n < nBins; ++n)
                 if (nAdded[n] > 0)
-                    braggPartials.at(typeI, typeJ).value(n) /= nAdded[n];
+                    braggPartials[{typeI, typeJ}].value(n) /= nAdded[n];
         }
     }
     return true;

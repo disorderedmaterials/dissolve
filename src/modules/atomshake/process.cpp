@@ -64,7 +64,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Initialise the random number buffer so it is suitable for our parallel strategy within the main loop
         procPool.initialiseRandomBuffer(ProcessPool::subDivisionStrategy(strategy));
 
-        int shake, n, m;
+        int shake, n;
         auto nAttempts = 0, nAccepted = 0;
         bool accept;
         double currentEnergy, currentIntraEnergy, newEnergy, newIntraEnergy, delta, totalDelta = 0.0;

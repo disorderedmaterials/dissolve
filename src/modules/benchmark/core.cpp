@@ -3,10 +3,6 @@
 
 #include "modules/benchmark/benchmark.h"
 
-/*
- * Constructor / Destructor
- */
-
 BenchmarkModule::BenchmarkModule() : Module(nRequiredTargets())
 {
     // Set unique name for this instance of the Module

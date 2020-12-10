@@ -3,10 +3,6 @@
 
 #include "modules/neutronsq/neutronsq.h"
 
-/*
- * Constructor / Destructor
- */
-
 NeutronSQModule::NeutronSQModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.

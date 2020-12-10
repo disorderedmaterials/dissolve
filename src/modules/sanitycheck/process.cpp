@@ -51,7 +51,7 @@ bool SanityCheckModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::printVerbose("Sanity checking Configuration {} atoms...\n", cfg->name());
         if (!procPool.equality(cfg->nAtoms()))
             return Messenger::error("Failed sanity check for Configuration '{}' nAtoms ({}).\n", cfg->name(), cfg->nAtoms());
-        for (int n = 0; n < cfg->nAtoms(); ++n)
+        for (auto n = 0; n < cfg->nAtoms(); ++n)
         {
             auto r = cfg->atom(n)->r();
             if (!procPool.equality(cfg->atom(n)->r()))

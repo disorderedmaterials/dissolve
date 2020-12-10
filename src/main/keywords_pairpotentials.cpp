@@ -35,7 +35,6 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
 
     std::shared_ptr<AtomType> at1;
     std::optional<decltype(at1)> opt_at;
-    PairPotential::ShortRangeTruncationScheme srTrunc;
     auto blockDone = false, error = false;
 
     while (!parser.eofOrBlank())

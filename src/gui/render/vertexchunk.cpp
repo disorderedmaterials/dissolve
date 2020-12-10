@@ -66,7 +66,7 @@ void VertexChunk::initialise(GLenum type, bool colourData)
     nDefinedTypes_ = 0;
     vertexData_ = new GLfloat[maxVertices_ * dataPerVertex_];
     centroids_ = new GLfloat[VERTEXCHUNKSIZE * 3];
-    for (int n = 0; n < VERTEXCHUNKSIZE * 3; ++n)
+    for (auto n = 0; n < VERTEXCHUNKSIZE * 3; ++n)
         centroids_[n] = 0.0f;
 }
 
@@ -177,7 +177,7 @@ void VertexChunk::forgetAll()
 {
     nDefinedTypes_ = 0;
     nDefinedVertices_ = 0;
-    for (int n = 0; n < VERTEXCHUNKSIZE * 3; ++n)
+    for (auto n = 0; n < VERTEXCHUNKSIZE * 3; ++n)
         centroids_[n] = 0.0f;
 }
 

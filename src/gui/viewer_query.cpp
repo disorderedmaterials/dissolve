@@ -89,9 +89,9 @@ void BaseViewer::updateQuery(BaseViewer::ViewerObject objectType, std::string_vi
     // Compare the stored colours in the region with those in the current buffer
     auto index = 0;
     double delta = 0.0;
-    for (int dx = 0; dx < queryRegionWidth_; ++dx)
+    for (auto dx = 0; dx < queryRegionWidth_; ++dx)
     {
-        for (int dy = 0; dy < queryRegionHeight_; ++dy)
+        for (auto dy = 0; dy < queryRegionHeight_; ++dy)
         {
             // Accumulate difference between stored and current colour
             QColor pixelColour = tile.pixelColor(queryRegionLeft_ + dx, queryImageHeight_ - queryRegionBottom_ - dy);

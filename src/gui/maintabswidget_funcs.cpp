@@ -584,7 +584,7 @@ void MainTabsWidget::tabCloseButtonClicked(bool checked)
         removeByPage(page);
 
         // Emit data modified signal dependent on tab type
-        if ((tabType != MainTab::ModuleTabType) && (tabType != MainTab::WorkspaceTabType))
+        if (tabType != MainTab::WorkspaceTabType)
             emit(dataModified());
     }
 }

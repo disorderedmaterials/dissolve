@@ -354,7 +354,7 @@ Configuration  'Py5-NTf2'
       Positioning  Random
     EndAddSpecies
   EndGenerator
-    InputCoordinates  moscito  'py5/py5-ntf2-final.str'
+    InputCoordinates  moscito  '../_data/moscito/py5_impropers/py5-ntf2-final.str'
     EndInputCoordinates
   Temperature  300.000000
 
@@ -378,7 +378,7 @@ Layer  'Processing'
     Module Forces
     Test  On
     Configuration  'Py5-NTf2'
-    TestReference  moscito  'py5/py5-ntf2-final.str'
+    TestReference  moscito  '../_data/moscito/py5_impropers/py5-ntf2-final.str'
     EndTestReference
     TestThreshold  7.0e-2
     EndModule
