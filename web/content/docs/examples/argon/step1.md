@@ -15,6 +15,5 @@ Note also the presence of the **Isotopologues** section which allows us to defin
 
 {{< tip text="Isotopologue definitions depend on atom types, so all atom types should be defined before setting up isotopologues." >}}
 
-<a class="btn left" href="/docs/examples/argon/">Back to Overview</a>
-<a class="btn right" href="../step2/">Next Step</a>
-
+{{< button pos="left" text="Back to Overview" path="./">}}
+{{< button pos="right" text="Next Step" path="step2">}}

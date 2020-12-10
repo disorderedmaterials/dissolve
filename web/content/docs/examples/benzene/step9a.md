@@ -18,7 +18,7 @@ For sanity, we'll rename it to something we understand:
 
 First of all, let's send the centre-of-geometry RDF from the current production run to this graph. You can right-click on any data shown in any plot in Dissolve to set style options and, in this case, copy the data to any workspace gizmo that will accept it.
 
-{{< action type="tabs" text="Open the [`CalculateAxisAngle`](../../userguide/modules/calculateaxisangle) module in a tab if it isn't already open" >}}
+{{< action type="tabs" text="Open the `CalculateAxisAngle` module in a tab if it isn't already open" >}}
 {{< action type="mouse" text="Right-click on the data curve in the line plot of the centre-of-mass RDF" >}}
 {{< step text="The **Copy to...** menu contains all the current workspace gizmos that can accept the data. There should be only one (`COG Graph`) so select it" >}}
 
@@ -47,5 +47,5 @@ Our reference data is now available, so let's add the centre-of-geometry RDF fro
 
 As we can see from the plot, the differences are quite subtle, but nevertheless they are there. On refinement we observe a decrease in the number of short contacts, suggesting a reduction in face-to-face stacking.
 
-{{< button pos="left" text="Previous Step" path="../step9/">}}
-{{< button pos="right" text="Next Step" path="../step9b/">}}
+{{< button pos="left" text="Previous Step" path="step9/">}}
+{{< button pos="right" text="Next Step" path="step9b/">}}

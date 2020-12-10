@@ -56,6 +56,6 @@ All source files are contained within the `src/` directory which is laid out as 
 - `gui`: Qt-based GUI for Dissolve.
 - `main`: Main class providing Dissolve's core object.
 - `math`: Math-related classes, including classes containing (static) data operations and methods.
-- `module`: Base definition and associated helper classes for defining and handling [modules](overviews/modules.md).
+- `module`: Base definition and associated helper classes for defining and handling [modules](overviews/moduledev.md).
 - `modules`: Repository containing subdirectores defining individual modules.
 - `templates`: Template classes providing general, context-free functionality.

@@ -43,5 +43,5 @@ We can now clean up the geometry of our molecule by doing a quick geometry optim
 
 Do this a couple of times until there's no further appreciable change to the geometry of the molecule.
 
-{{< button pos="left" text="Back to Overview" path= "../">}}
-{{< button pos="right" text="Next Step" path= "../step1b">}}
+{{< button pos="left" text="Back to Overview" path="">}}
+{{< button pos="right" text="Next Step" path="step1b">}}

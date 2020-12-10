@@ -1,5 +1,0 @@
----
-title: CalculateVector
----
-
-{{< todo-label >}}

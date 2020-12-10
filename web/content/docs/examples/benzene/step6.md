@@ -9,13 +9,13 @@ As noted in the introduction we have neutron-weighted experimental data, so we n
 
 {{< action type="menu" text="Layer &#8680; Create... &#8680; Calculate... &#8680; RDF and Neutron S(Q)" >}}
 {{< action type="mouse" text="Show the module palette for the layer by clicking the **Show Palette** button at the top left of the tab" >}}
-{{< step text="Drag two additional [`NeutronSQ`](../../userguide/modules/neutronsq) modules from the `Correlation Functions` in the **Module Palette** on the left, placing them after the existing [`RDF`](../../userguide/modules/rdf) module">}}
+{{< step text="Drag two additional `NeutronSQ` modules from the `Correlation Functions` in the **Module Palette** on the left, placing them after the existing `RDF` module">}}
 
-Let's set up the three [`NeutronSQ`](../../userguide/modules/neutronsq) modules to calculate what we want:
+Let's set up the three [`NeutronSQ`]({{< ref "neutronsq" >}}) modules to calculate what we want:
 
 ### C<sub>6</sub>H<sub>6</sub>
 
-{{< action type="mouse" text="Click on the first the [`NeutronSQ`](../../userguide/modules/neutronsq) module to display its options" >}}
+{{< action type="mouse" text="Click on the first the `NeutronSQ` module to display its options" >}}
 {{< action type="edit" text="Change its name to `C6H6`" >}}
 {{< action type="groups" text="Open the **Calculation** settings group" >}}
 {{< step text="Set the **QBroadening** to `OmegaDependentGaussian` with a FWHM of 0.02">}}
@@ -28,7 +28,7 @@ Let's set up the three [`NeutronSQ`](../../userguide/modules/neutronsq) modules 
 
 ### C<sub>6</sub>D<sub>6</sub>Edit
 
-{{< action type="mouse" text="Click on the second the [`NeutronSQ`](../../userguide/modules/neutronsq) module to display its options" >}}
+{{< action type="mouse" text="Click on the second the `NeutronSQ` module to display its options" >}}
 {{< action type="edit" text="Change its name to `C6D6`" >}}
 {{< action type="groups" text="Open the **Calculation** settings group" >}}
 {{< step text="Set the **QBroadening** to `OmegaDependentGaussian` with a FWHM of 0.02" >}}
@@ -41,7 +41,7 @@ Let's set up the three [`NeutronSQ`](../../userguide/modules/neutronsq) modules 
 
 ### 50:50 Mix
 
-{{< action type="mouse" text="Click on the third the [`NeutronSQ`](../../userguide/modules/neutronsq) module to display its options" >}}
+{{< action type="mouse" text="Click on the third the `NeutronSQ` module to display its options" >}}
 {{< action type="edit" text="Change its name to `5050`" >}}
 {{< action type="settings" text="Open the **Calculation** settings group" >}}
 {{< step text="Set the **QBroadening** to `OmegaDependentGaussian` with a FWHM of 0.02">}}
@@ -56,9 +56,9 @@ Let's set up the three [`NeutronSQ`](../../userguide/modules/neutronsq) modules 
 All that remains is to add our EPSR refinement layer:
 
 {{< action type="menu" text="Layer &#8680; Create... &#8680; Refinement... &#8680; Standard EPSR" >}}
-{{< step text=" Select the [`EPSR`](../../userguide/modules/epsr) module to display its options">}}
+{{< step text=" Select the `EPSR` module to display its options">}}
 {{< action type="edit" text="Change the **EReq** value to 10.0 - the default of 3.0 will not be enough to promote the necessary changes in structure" >}}
 
 
-{{< button pos="left" text="Previous Step" path="../step5/">}}
-{{< button pos="right" text="Next Step" path="../step7/">}}
+{{< button pos="left" text="Previous Step" path="step5/">}}
+{{< button pos="right" text="Next Step" path="step7/">}}
