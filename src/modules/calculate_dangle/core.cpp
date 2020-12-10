@@ -7,7 +7,7 @@
  * Constructor / Destructor
  */
 
-CalculateDAngleModule::CalculateDAngleModule() : Module(), analyser_(ProcedureNode::AnalysisContext)
+CalculateDAngleModule::CalculateDAngleModule() : Module(nRequiredTargets()), analyser_(ProcedureNode::AnalysisContext)
 {
     // Set unique name for this instance of the Module
     static int instanceId = 0;

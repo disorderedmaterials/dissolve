@@ -7,7 +7,7 @@
  * Constructor / Destructor
  */
 
-BraggModule::BraggModule() : Module()
+BraggModule::BraggModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

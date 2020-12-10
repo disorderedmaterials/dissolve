@@ -7,7 +7,7 @@
  * Constructor / Destructor
  */
 
-MDModule::MDModule() : Module()
+MDModule::MDModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

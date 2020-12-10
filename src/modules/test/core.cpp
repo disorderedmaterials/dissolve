@@ -7,7 +7,7 @@
  * Constructor / Destructor
  */
 
-TestModule::TestModule() : Module()
+TestModule::TestModule() : Module(nRequiredTargets())
 {
     // Initialise Module - set up keywords etc.
     initialise();

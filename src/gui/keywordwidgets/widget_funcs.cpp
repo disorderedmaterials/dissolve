@@ -56,6 +56,14 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = broadeningFunctionWidget;
         base = broadeningFunctionWidget;
     }
+    else if (type == KeywordBase::ConfigurationRefListData)
+    {
+        ConfigurationRefListKeywordWidget *configurationRefListWidget =
+            new ConfigurationRefListKeywordWidget(nullptr, keywordBase, coreData);
+        connect(configurationRefListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+        widget = configurationRefListWidget;
+        base = configurationRefListWidget;
+    }
     else if (type == KeywordBase::DoubleData)
     {
         DoubleKeywordWidget *doubleWidget = new DoubleKeywordWidget(nullptr, keywordBase, coreData);
