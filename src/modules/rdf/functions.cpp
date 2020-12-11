@@ -510,10 +510,6 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, con
     }
     summedUnweightedGR.setFingerprint(fingerprint);
 
-    // Store the overall density of our partials
-    GenericListHelper<double>::realise(processingModuleData, "EffectiveRho", parentModule->uniqueName(),
-                                       GenericItem::InRestartFileFlag) = rho0;
-
     return true;
 }
 
@@ -585,10 +581,6 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
     }
     summedUnweightedGR.setFingerprint(fingerprint);
     summedUnweightedGR += 1.0;
-
-    // Store the overall density of our partials
-    // 	GenericListHelper<double>::realise(moduleData, "EffectiveRho", module->uniqueName(),
-    // GenericItem::InRestartFileFlag) = rho0;
 
     return true;
 }
