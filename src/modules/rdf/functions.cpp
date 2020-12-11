@@ -243,6 +243,27 @@ double RDFModule::effectiveDensity() const
     return rho0;
 }
 
+// Calculate and return used species populations based on target Configurations
+std::map<const Species *, double> RDFModule::speciesPopulations() const
+{
+    std::map<const Species *, double> populations;
+
+    for (auto *cfg : targetConfigurations())
+    {
+        // TODO Get weight for configuration
+        auto weight = 1.0;
+
+        ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
+        while (auto *spInfo = spInfoIterator.iterate())
+        {
+            populations.try_emplace(spInfo->species(), 0.0);
+            populations[spInfo->species()] += spInfo->population() * weight;
+        }
+    }
+
+    return populations;
+}
+
 // Calculate unweighted partials for the specified Configuration
 bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule::PartialsMethod method, const double rdfRange,
                             const double rdfBinWidth, bool &alreadyUpToDate)

@@ -91,20 +91,12 @@ bool XRaySQModule::calculateWeightedSQ(const PartialSet &unweightedsq, PartialSe
 void XRaySQModule::calculateWeights(const RDFModule *rdfModule, XRayWeights &weights,
                                     XRayFormFactors::XRayFormFactorData formFactors) const
 {
-    // Construct weights matrix containing each Species in the Configuration in the correct proportion
-    // TODO This info would be better calculated by the RDFModule and stored there / associated to it (#400)
-    // TODO Following code should exist locally in RDFModule::sumUnweightedGR() when suitable class storage is available.
+    // Clear weights and get species populations from RDFModule
     weights.clear();
+    auto populations = rdfModule->speciesPopulations();
 
-    for (auto *cfg : rdfModule->targetConfigurations())
-    {
-        // TODO Assume weight of 1.0 per configuration now, until #398/#400 are addressed.
-        const auto CFGWEIGHT = 1.0;
-
-        ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
-        while (auto *spInfo = spInfoIterator.iterate())
-            weights.addSpecies(spInfo->species(), spInfo->population() * CFGWEIGHT);
-    }
+    for (auto speciesPop : populations)
+        weights.addSpecies(speciesPop.first, speciesPop.second);
 
     weights.finalise(formFactors);
 }
