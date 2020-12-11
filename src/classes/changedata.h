@@ -11,7 +11,7 @@ class Atom;
 class Cell;
 
 // Change Data
-class ChangeData : public ListItem<ChangeData>
+class ChangeData
 {
     public:
     ChangeData();

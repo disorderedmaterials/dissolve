@@ -298,6 +298,9 @@ class ProcessPool
     // Broadcast std::vector<long int>
     bool broadcast(std::vector<long int> &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
+    // Broadcast std::vector<int>
+    bool broadcast(std::vector<int> &array, int rootRank = 0,
+                   ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);
     // Broadcast Array<double>
     bool broadcast(Array<double> &array, int rootRank = 0,
                    ProcessPool::CommunicatorType commType = ProcessPool::PoolProcessesCommunicator);

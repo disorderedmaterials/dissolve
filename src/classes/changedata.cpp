@@ -6,7 +6,7 @@
 #include "classes/atom.h"
 #include "classes/cell.h"
 
-ChangeData::ChangeData() : ListItem<ChangeData>()
+ChangeData::ChangeData()
 {
     atom_ = nullptr;
     cell_ = nullptr;

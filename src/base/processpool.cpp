@@ -1330,6 +1330,24 @@ bool ProcessPool::broadcast(std::vector<long int> &array, int rootRank, ProcessP
     return true;
 }
 
+// Broadcast std::vector<int>
+bool ProcessPool::broadcast(std::vector<int> &array, int rootRank, ProcessPool::CommunicatorType commType)
+{
+#ifdef PARALLEL
+    timer_.start();
+
+    if (!broadcast(array.data(), array.size(), rootRank, commType))
+    {
+        Messenger::print("Failed to broadcast std::vector<int> data from root rank {} (world rank {}).\n", rootRank,
+                         worldRanks_[rootRank]);
+        return false;
+    }
+
+    timer_.accumulate();
+#endif
+    return true;
+}
+
 // Broadcast Array<double>
 bool ProcessPool::broadcast(Array<double> &array, int rootRank, ProcessPool::CommunicatorType commType)
 {
