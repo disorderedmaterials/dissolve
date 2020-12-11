@@ -6,14 +6,14 @@ function(dissolve_system_test directory file_name count)
     foreach(nproc 1 2 3 4)
       set(test_target_executable ../../build/bin/${target_name})
       add_test(
-	NAME ${directory}-${file_name}-${nproc}
-	COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${nproc} ${test_target_executable} -n ${count} -x -i ${file_name}.txt ${ARGN}
-	WORKING_DIRECTORY ../tests/${directory}
+        NAME ${directory}-${file_name}-${nproc}
+        COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${nproc} ${test_target_executable} -n ${count} -x -i ${file_name}.txt ${ARGN}
+        WORKING_DIRECTORY ../tests/${directory}
       )
       set_property(
-	TEST ${directory}-${file_name}-${nproc}
-	PROPERTY
-	LABELS ${directory}
+        TEST ${directory}-${file_name}-${nproc}
+        PROPERTY
+        LABELS ${directory}
       )
     endforeach()
   else()
