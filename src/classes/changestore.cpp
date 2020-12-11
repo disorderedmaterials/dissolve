@@ -152,13 +152,10 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
     indices_.resize(nTotalChanges);
 
     // Copy local change data into arrays
-    for (auto n = 0; n < changes_.nItems(); ++n)
-    {
-        indices_[n] = changes_[n]->atomArrayIndex();
-        x_[n] = changes_[n]->r().x;
-        y_[n] = changes_[n]->r().y;
-        z_[n] = changes_[n]->r().z;
-    }
+    std::transform(changes_.begin(), changes_.end(), indices_.begin(), [](auto &change) { return change.atomArrayIndex(); });
+    std::transform(changes_.begin(), changes_.end(), x_.begin(), [](auto &change) { return change.r().x; });
+    std::transform(changes_.begin(), changes_.end(), y_.begin(), [](auto &change) { return change.r().y; });
+    std::transform(changes_.begin(), changes_.end(), z_.begin(), [](auto &change) { return change.r().z; });
 
     // Now, assemble full array of the change data on the master...
     if (!processPool_.assemble(indices_.data(), changes_.size(), indices_.data(), nTotalChanges))
