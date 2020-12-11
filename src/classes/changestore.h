@@ -54,8 +54,6 @@ class ChangeStore
     void updateAll();
     // Update single atom position
     void updateAtom(int id);
-    // Update Atom positions using list indices
-    void updateAtomsLocal(int nAtoms, int *indices);
     // Revert all atoms to stored positions
     void revertAll();
     // Revert specified index to stored position

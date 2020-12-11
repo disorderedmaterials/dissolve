@@ -56,24 +56,6 @@ void ChangeStore::updateAll()
     std::for_each(targetAtoms_.begin(), targetAtoms_.end(), [](auto &item) { item.updatePosition(); });
 }
 
-// Update Atom positions using list indices
-void ChangeStore::updateAtomsLocal(int nAtoms, int *indices)
-{
-    for (auto n = 0; n < nAtoms; ++n)
-    {
-#ifdef CHECKS
-        if ((indices[n] < 0) || (indices[n] >= targetAtoms_.nItems()))
-        {
-            Messenger::print("OUT_OF_RANGE - Supplied indices_[n] ({}) is out of range in "
-                             "ChangeStore::updateAtomsLocal() (nTargetAtoms = {})\n",
-                             n, indices_[n], targetAtoms_.nItems());
-            continue;
-        }
-#endif
-        targetAtoms_[indices[n]].updatePosition();
-    }
-}
-
 // Update single atom position
 void ChangeStore::updateAtom(int id)
 {
