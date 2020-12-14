@@ -117,7 +117,7 @@ antlrcpp::Any TextPrimitiveVisitor::visitSymbol(TextPrimitiveParser::SymbolConte
     // Get symbol data
     auto symbol = SymbolData::symbol(ctx->Symbol()->getText());
 
-    addText(qPrintable(symbol->character), formatStack_.back());
+    addText(SymbolData::symbol(symbol), formatStack_.back());
 
     return visitChildren(ctx);
 }

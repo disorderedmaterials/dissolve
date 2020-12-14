@@ -4,66 +4,93 @@
 #include "gui/render/symbol.h"
 #include "base/sysfunc.h"
 
-// Static list of symbols
-SymbolData SymbolData::symbols[] = {{0x00D7, "mult", "Multiplication Sign"},
-                                    {0x00F7, "div", "Division Sign"},
-                                    {0x212B, "angstrom", "Angstrom"},
-                                    {0x00B0, "degree", "Degree"},
-                                    {0x03B1, "alpha", "Greek Small Letter Alpha"},
-                                    {0x03B2, "beta", "Greek Small Letter Beta"},
-                                    {0x03B3, "gamma", "Greek Small Letter Gamma"},
-                                    {0x03B4, "delta", "Greek Small Letter Delta"},
-                                    {0x03B5, "epsilon", "Greek Small Letter Epsilon"},
-                                    {0x03B6, "zeta", "Greek Small Letter Zeta"},
-                                    {0x03B7, "eta", "Greek Small Letter Eta"},
-                                    {0x03B8, "theta", "Greek Small Letter Theta"},
-                                    {0x03B9, "iota", "Greek Small Letter Iota"},
-                                    {0x03BA, "kappa", "Greek Small Letter Kappa"},
-                                    {0x03BB, "lambda", "Greek Small Letter Lambda"},
-                                    {0x03BC, "mu", "Greek Small Letter Mu"},
-                                    {0x03BD, "nu", "Greek Small Letter Nu"},
-                                    {0x03BE, "xi", "Greek Small Letter Xi"},
-                                    {0x03BF, "omicron", "Greek Small Letter Omicron"},
-                                    {0x03C0, "pi", "Greek Small Letter Pi"},
-                                    {0x03C1, "rho", "Greek Small Letter Rho"},
-                                    {0x03C3, "sigma", "Greek Small Letter Sigma"},
-                                    {0x03C4, "tau", "Greek Small Letter Tau"},
-                                    {0x03C5, "upsilon", "Greek Small Letter Upsilon"},
-                                    {0x03C6, "phi", "Greek Small Letter Phi"},
-                                    {0x03C7, "chi", "Greek Small Letter Chi"},
-                                    {0x03C8, "psi", "Greek Small Letter Psi"},
-                                    {0x03C9, "omega", "Greek Small Letter Omega"},
-                                    {0x0391, "Alpha", "Greek Capital Letter Alpha"},
-                                    {0x0392, "Beta	", "Greek Capital Letter Beta"},
-                                    {0x0393, "Gamma", "Greek Capital Letter Gamma"},
-                                    {0x0394, "Delta", "Greek Capital Letter Delta"},
-                                    {0x0395, "Epsilon", "Greek Capital Letter Epsilon"},
-                                    {0x0396, "Zeta", "Greek Capital Letter Zeta"},
-                                    {0x0397, "Eta", "Greek Capital Letter Eta"},
-                                    {0x0398, "Theta", "Greek Capital Letter Theta"},
-                                    {0x0399, "Iota", "Greek Capital Letter Iota"},
-                                    {0x039A, "Kappa", "Greek Capital Letter Kappa"},
-                                    {0x039B, "Lambda", "Greek Capital Letter Lambda"},
-                                    {0x039C, "Mu", "Greek Capital Letter Mu"},
-                                    {0x039D, "Nu", "Greek Capital Letter Nu"},
-                                    {0x039E, "Xi", "Greek Capital Letter Xi"},
-                                    {0x039F, "Omicron", "Greek Capital Letter Omicron"},
-                                    {0x03A0, "Pi", "Greek Capital Letter Pi"},
-                                    {0x03A1, "Rho", "Greek Capital Letter Rho"},
-                                    {0x03A3, "Sigma", "Greek Capital Letter Sigma"},
-                                    {0x03A4, "Tau", "Greek Capital Letter Tau"},
-                                    {0x03A5, "Upsilon", "Greek Capital Letter Upsilon"},
-                                    {0x03A6, "Phi", "Greek Capital Letter Phi"},
-                                    {0x03A7, "Chi", "Greek Capital Letter Chi"},
-                                    {0x03A8, "Psi", "Greek Capital Letter Psi"},
-                                    {0x03A9, "Omega", "Greek Capital Letter Omega"}};
-
-// Return named symbol
-SymbolData *SymbolData::symbol(std::string_view name)
+namespace SymbolData
 {
-    for (auto n = 0; n < nSymbols; ++n)
-        if (DissolveSys::sameString(name, qPrintable(symbols[n].name), true))
-            return &symbols[n];
 
-    return nullptr;
+// Return symbol vector
+const std::vector<std::tuple<Symbol, std::string, std::string, std::string>> &symbols()
+{
+    static std::vector<std::tuple<Symbol, std::string, std::string, std::string>> symbolData = {
+        {MultiplySymbol, "mult", "\u00D7", "Multiplication Sign"},
+        {DivisionSymbol, "div", "\u00F7", "Division Sign"},
+        {AngstromSymbol, "angstrom", "\u212B", "Angstrom"},
+        {DegreeSymbol, "degree", "\u00B0", "Degree"},
+        {AlphaSymbol, "alpha", "\u03B1", "Greek Small Letter Alpha"},
+        {BetaSymbol, "beta", "\u03B2", "Greek Small Letter Beta"},
+        {GammaSymbol, "gamma", "\u03B3", "Greek Small Letter Gamma"},
+        {DeltaSymbol, "delta", "\u03B4", "Greek Small Letter Delta"},
+        {EpsilonSymbol, "epsilon", "\u03B5", "Greek Small Letter Epsilon"},
+        {ZetaSymbol, "zeta", "\u03B6", "Greek Small Letter Zeta"},
+        {EtaSymbol, "eta", "\u03B7", "Greek Small Letter Eta"},
+        {ThetaSymbol, "theta", "\u03B8", "Greek Small Letter Theta"},
+        {IotaSymbol, "iota", "\u03B9", "Greek Small Letter Iota"},
+        {KappaSymbol, "kappa", "\u03BA", "Greek Small Letter Kappa"},
+        {LambdaSymbol, "lambda", "\u03BB", "Greek Small Letter Lambda"},
+        {MuSymbol, "mu", "\u03BC", "Greek Small Letter Mu"},
+        {NuSymbol, "nu", "\u03BD", "Greek Small Letter Nu"},
+        {XiSymbol, "xi", "\u03BE", "Greek Small Letter Xi"},
+        {OmicronSymbol, "omicron", "\u03BF", "Greek Small Letter Omicron"},
+        {PiSymbol, "pi", "\u03C0", "Greek Small Letter Pi"},
+        {RhoSymbol, "rho", "\u03C1", "Greek Small Letter Rho"},
+        {SigmaSymbol, "sigma", "\u03C3", "Greek Small Letter Sigma"},
+        {TauSymbol, "tau", "\u03C4", "Greek Small Letter Tau"},
+        {UpsilonSymbol, "upsilon", "\u03C5", "Greek Small Letter Upsilon"},
+        {PhiSymbol, "phi", "\u03C6", "Greek Small Letter Phi"},
+        {ChiSymbol, "chi", "\u03C7", "Greek Small Letter Chi"},
+        {PsiSymbol, "psi", "\u03C8", "Greek Small Letter Psi"},
+        {OmegaSymbol, "omega", "\u03C9", "Greek Small Letter Omega"},
+        {CapitalAlphaSymbol, "Alpha", "\u0391", "Greek Capital Letter Alpha"},
+        {CapitalBetaSymbol, "Beta", "\u0392", "Greek Capital Letter Beta"},
+        {CapitalGammaSymbol, "Gamma", "\u0393", "Greek Capital Letter Gamma"},
+        {CapitalDeltaSymbol, "Delta", "\u0394", "Greek Capital Letter Delta"},
+        {CapitalEpsilonSymbol, "Epsilon", "\u0395", "Greek Capital Letter Epsilon"},
+        {CapitalZetaSymbol, "Zeta", "\u0396", "Greek Capital Letter Zeta"},
+        {CapitalEtaSymbol, "Eta", "\u0397", "Greek Capital Letter Eta"},
+        {CapitalThetaSymbol, "Theta", "\u0398", "Greek Capital Letter Theta"},
+        {CapitalIotaSymbol, "Iota", "\u0399", "Greek Capital Letter Iota"},
+        {CapitalKappaSymbol, "Kappa", "\u039A", "Greek Capital Letter Kappa"},
+        {CapitalLambdaSymbol, "Lambda", "\u039B", "Greek Capital Letter Lambda"},
+        {CapitalMuSymbol, "Mu", "\u039C", "Greek Capital Letter Mu"},
+        {CapitalNuSymbol, "Nu", "\u039D", "Greek Capital Letter Nu"},
+        {CapitalXiSymbol, "Xi", "\u039E", "Greek Capital Letter Xi"},
+        {CapitalOmicronSymbol, "Omicron", "\u039F", "Greek Capital Letter Omicron"},
+        {CapitalPiSymbol, "Pi", "\u03A0", "Greek Capital Letter Pi"},
+        {CapitalRhoSymbol, "Rho", "\u03A1", "Greek Capital Letter Rho"},
+        {CapitalSigmaSymbol, "Sigma", "\u03A3", "Greek Capital Letter Sigma"},
+        {CapitalTauSymbol, "Tau", "\u03A4", "Greek Capital Letter Tau"},
+        {CapitalUpsilonSymbol, "Upsilon", "\u03A5", "Greek Capital Letter Upsilon"},
+        {CapitalPhiSymbol, "Phi", "\u03A6", "Greek Capital Letter Phi"},
+        {CapitalChiSymbol, "Chi", "\u03A7", "Greek Capital Letter Chi"},
+        {CapitalPsiSymbol, "Psi", "\u03A8", "Greek Capital Letter Psi"},
+        {CapitalOmegaSymbol, "Omega", "\u03A9", "Greek Capital Letter Omega"}};
+
+    return symbolData;
 }
+
+// Return enumeration for named symbol
+Symbol symbol(std::string_view name)
+{
+    for (const auto &sym : symbols())
+        if (DissolveSys::sameString(std::get<1>(sym), name, true))
+            return std::get<0>(sym);
+
+    return nSymbols;
+}
+
+// Return symbol string
+std::string_view symbol(Symbol sym) { return std::get<2>(symbols()[sym]); }
+
+// Return symbol description
+std::string_view description(Symbol sym) { return std::get<3>(symbols()[sym]); }
+
+// Return first symbol whose description contains the search text
+Symbol firstDescriptionMatch(std::string_view text)
+{
+    for (const auto &sym : symbols())
+        if (std::get<3>(sym).find(text) != std::string::npos)
+            return std::get<0>(sym);
+
+    return nSymbols;
+}
+
+}; // namespace SymbolData
