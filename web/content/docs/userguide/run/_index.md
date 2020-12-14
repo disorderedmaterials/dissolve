@@ -1,4 +1,4 @@
 ---
 title: 5. Running Dissolve
-description: The basics of invoking Dissolve to do your bidding
+description: Invoking Dissolve to do your bidding
 ---

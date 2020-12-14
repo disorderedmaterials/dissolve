@@ -67,6 +67,6 @@ We'll locate our analysis site at the centre of the benzene ring and give it som
 {{< action type="edit" text="Rename the site to `COG` by double-clicking `C6`" >}}
 
 
-{{< button pos="left" text="Back to Overview" path="../">}}
-{{< button pos="right" text="Next Step" path="../step2">}}
+{{< button pos="left" text="Back to Overview" path="">}}
+{{< button pos="right" text="Next Step" path="step2">}}
 

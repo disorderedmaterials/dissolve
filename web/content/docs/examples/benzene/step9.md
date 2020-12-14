@@ -8,5 +8,5 @@ Viewing the output of modules in their own tabs is convenient enough, but if we 
 In the next two sections we'll compare both the centre-of-geometry RDF and the axis angle map between the reference and refined simulations.
 
 
-{{< button pos="left" text="Previous Step" path="../step8/">}}
-{{< button pos="right" text="Next Step" path="../step9a/">}}
+{{< button pos="left" text="Previous Step" path="step8/">}}
+{{< button pos="right" text="Next Step" path="step9a/">}}
