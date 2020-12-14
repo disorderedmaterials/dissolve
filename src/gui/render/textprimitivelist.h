@@ -6,7 +6,6 @@
 #include "gui/render/textprimitive.h"
 #include "math/cuboid.h"
 #include "math/matrix4.h"
-#include "templates/list.h"
 #include "templates/vector3.h"
 #include <QString>
 
@@ -17,11 +16,12 @@ class FontInstance;
 class TextPrimitiveList
 {
     public:
-    TextPrimitiveList();
+    TextPrimitiveList() = default;
+    ~TextPrimitiveList() = default;
 
     private:
-    // List of text primitive chunks
-    List<TextPrimitive> textPrimitives_;
+    // List of text primitives
+    std::vector<TextPrimitive> textPrimitives_;
 
     public:
     // Clear list

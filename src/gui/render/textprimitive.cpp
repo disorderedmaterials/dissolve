@@ -10,10 +10,6 @@
 #include "gui/render/symbol.h"
 #include <QtGui/qopengl.h>
 
-TextPrimitive::TextPrimitive() : ListItem<TextPrimitive>() {}
-
-TextPrimitive::~TextPrimitive() {}
-
 // Return enum options for TextAnchor
 EnumOptions<TextPrimitive::TextAnchor> &TextPrimitive::textAnchors()
 {
@@ -94,7 +90,7 @@ bool TextPrimitive::set(FontInstance *fontInstance, QString text, Vec3<double> a
 
 // Return transformation matrix to use when rendering the text
 Matrix4 TextPrimitive::transformationMatrix(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize,
-                                            OptionalReferenceWrapper<const TextFragment> optFragment)
+                                            OptionalReferenceWrapper<const TextFragment> optFragment) const
 {
     Matrix4 textMatrix, A;
     Vec3<double> lowerLeft, upperRight, anchorPos, anchorPosRotated, textCentre;
@@ -173,7 +169,7 @@ Matrix4 TextPrimitive::transformationMatrix(FontInstance &fontInstance, const Ma
 }
 
 // Calculate bounding box of primitive
-void TextPrimitive::boundingBox(FontInstance &fontInstance, Vec3<double> &lowerLeft, Vec3<double> &upperRight)
+void TextPrimitive::boundingBox(FontInstance &fontInstance, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const
 {
     // Check for zero fragments
     if (fragments_.empty())
@@ -220,7 +216,7 @@ void TextPrimitive::boundingBox(FontInstance &fontInstance, Vec3<double> &lowerL
 
 // Render primitive
 void TextPrimitive::render(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse,
-                           double baseFontSize)
+                           double baseFontSize) const
 {
     Matrix4 textMatrix;
 

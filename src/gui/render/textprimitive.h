@@ -5,9 +5,7 @@
 
 #include "base/enumoptions.h"
 #include "gui/render/textfragment.h"
-#include "math/cuboid.h"
 #include "math/matrix4.h"
-#include "templates/list.h"
 #include "templates/optionalref.h"
 #include "templates/vector3.h"
 #include <QString>
@@ -16,11 +14,11 @@
 class FontInstance;
 
 // Text Primitive
-class TextPrimitive : public ListItem<TextPrimitive>
+class TextPrimitive
 {
     public:
-    TextPrimitive();
-    ~TextPrimitive();
+    TextPrimitive() = default;
+    ~TextPrimitive() = default;
     // Text Anchors enum
     enum TextAnchor
     {
@@ -63,9 +61,10 @@ class TextPrimitive : public ListItem<TextPrimitive>
              Vec3<double> adjustmentVector, Matrix4 localRotation, double textSize, bool flat);
     // Return transformation matrix to use when rendering (including fragment scale/translation if one is specified)
     Matrix4 transformationMatrix(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize,
-                                 OptionalReferenceWrapper<const TextFragment> optFragment = std::nullopt);
+                                 OptionalReferenceWrapper<const TextFragment> optFragment = std::nullopt) const;
     // Calculate bounding box of primitive
-    void boundingBox(FontInstance &fontInstance, Vec3<double> &lowerLeft, Vec3<double> &upperRight);
+    void boundingBox(FontInstance &fontInstance, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const;
     // Render primitive
-    void render(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse, double baseFontSize);
+    void render(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse,
+                double baseFontSize) const;
 };

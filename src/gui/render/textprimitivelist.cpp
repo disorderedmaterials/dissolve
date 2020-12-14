@@ -5,8 +5,6 @@
 #include "gui/render/fontinstance.h"
 #include "gui/render/view.h"
 
-TextPrimitiveList::TextPrimitiveList() {}
-
 // Clear list
 void TextPrimitiveList::clear() { textPrimitives_.clear(); }
 
@@ -15,8 +13,8 @@ void TextPrimitiveList::add(FontInstance *fontInstance, QString text, Vec3<doubl
                             TextPrimitive::TextAnchor anchorPosition, Vec3<double> adjustmentVector, Matrix4 &localRotation,
                             double textSize, bool flat)
 {
-    TextPrimitive *primitive = textPrimitives_.add();
-    primitive->set(fontInstance, text, anchorPoint, anchorPosition, adjustmentVector, localRotation, textSize, flat);
+    auto &primitive = textPrimitives_.emplace_back();
+    primitive.set(fontInstance, text, anchorPoint, anchorPosition, adjustmentVector, localRotation, textSize, flat);
 }
 
 // Update global bounding cuboid for all text primitives in the list
@@ -26,11 +24,11 @@ Cuboid TextPrimitiveList::boundingCuboid(FontInstance &fontInstance, const Matri
     Cuboid result = startingCuboid;
     Matrix4 textMatrix;
     Vec3<double> corners[4], local;
-    for (auto *primitive = textPrimitives_.first(); primitive != nullptr; primitive = primitive->next())
+    for (const auto &primitive : textPrimitives_)
     {
         // Get transformation matrix and bounding box for text
-        textMatrix = primitive->transformationMatrix(fontInstance, viewMatrixInverse, baseFontSize);
-        primitive->boundingBox(fontInstance, corners[0], corners[1]);
+        textMatrix = primitive.transformationMatrix(fontInstance, viewMatrixInverse, baseFontSize);
+        primitive.boundingBox(fontInstance, corners[0], corners[1]);
         corners[2].set(corners[0].x, corners[1].y, 0.0);
         corners[3].set(corners[1].x, corners[0].y, 0.0);
 
@@ -53,6 +51,6 @@ void TextPrimitiveList::renderAll(FontInstance &fontInstance, const Matrix4 &vie
     if (!fontInstance.fontOK())
         return;
 
-    for (auto *primitive = textPrimitives_.first(); primitive != nullptr; primitive = primitive->next())
-        primitive->render(fontInstance, viewMatrix, viewMatrixInverse, baseFontSize);
+    for (const auto &primitive : textPrimitives_)
+        primitive.render(fontInstance, viewMatrix, viewMatrixInverse, baseFontSize);
 }
