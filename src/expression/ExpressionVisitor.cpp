@@ -181,21 +181,3 @@ antlrcpp::Any ExpressionVisitor::visitValue(ExpressionParser::ValueContext *ctx)
 
     return visitChildren(ctx);
 }
-
-/*
-antlrcpp::Any ExpressionVisitor::visitFlag(ExpressionParser::FlagContext *context)
-{
-    if (currentExpressionContext()->isValidFlag(context->Keyword()->getText().c_str()))
-    {
-        if (!currentExpressionContext()->setFlag(context->Keyword()->getText().c_str(), true))
-            throw(ExpressionExceptions::ExpressionSyntaxException(
-                fmt::format("Failed to set flag '{}' for the current context ({}).", context->Keyword()->getText().c_str(),
-                            ExpressionNode::nodeTypes().keyword(currentExpressionContext()->nodeType()))));
-    }
-    else
-        throw(ExpressionExceptions::ExpressionSyntaxException(
-            fmt::format("'{}' is not a valid flag for the current context ({}).", context->Keyword()->getText().c_str(),
-                        ExpressionNode::nodeTypes().keyword(currentExpressionContext()->nodeType()))));
-
-    return visitChildren(context);
-}*/
