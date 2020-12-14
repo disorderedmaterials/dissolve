@@ -178,11 +178,11 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
     }
 #else
     // Apply atom changes
-    for (auto *data = changes_.first(); data != nullptr; data = data->next())
+    for (auto &data : changes_)
     {
         // Set new coordinates and check cell position (Configuration::updateAtomInCell() will do all this)
-        data->revertPosition();
-        cfg->updateCellLocation(data->atom());
+        data.revertPosition();
+        cfg->updateCellLocation(data.atom());
     }
 #endif
 
