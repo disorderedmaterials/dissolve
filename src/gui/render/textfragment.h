@@ -4,13 +4,13 @@
 #pragma once
 
 #include "templates/vector3.h"
-#include <QString>
+#include <string>
 
 // Text Fragment
 class TextFragment
 {
     public:
-    TextFragment(QString text, double scale = 1.0, Vec3<double> translation = Vec3<double>(), bool isItalic = false,
+    TextFragment(std::string_view text, double scale = 1.0, Vec3<double> translation = Vec3<double>(), bool isItalic = false,
                  bool isBold = false);
     ~TextFragment() = default;
 
@@ -19,7 +19,7 @@ class TextFragment
      */
     private:
     // Fragment text
-    QString text_;
+    std::string text_;
     // Local scale for fragment
     double scale_;
     // Local translation for fragment
@@ -31,7 +31,7 @@ class TextFragment
 
     public:
     // Return fragment text
-    QString text() const;
+    const std::string &text() const;
     // Return local scale for fragment
     double scale() const;
     // Return local translation for fragment

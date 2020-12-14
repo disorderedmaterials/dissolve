@@ -3,7 +3,7 @@
 
 #include "gui/render/textfragment.h"
 
-TextFragment::TextFragment(QString text, double scale, Vec3<double> translation, bool isItalic, bool isBold)
+TextFragment::TextFragment(std::string_view text, double scale, Vec3<double> translation, bool isItalic, bool isBold)
     : text_(text), scale_(scale), translation_(translation), isItalic_(isItalic), isBold_(isBold)
 {
 }
@@ -13,7 +13,7 @@ TextFragment::TextFragment(QString text, double scale, Vec3<double> translation,
  */
 
 // Return text of fragment
-QString TextFragment::text() const { return text_; }
+const std::string &TextFragment::text() const { return text_; }
 
 // Return local scale for fragment
 double TextFragment::scale() const { return scale_; }

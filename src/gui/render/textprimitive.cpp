@@ -185,7 +185,7 @@ void TextPrimitive::boundingBox(FontInstance &fontInstance, Vec3<double> &lowerL
     for (const auto &fragment : fragments_)
     {
         // Get bounding box for this fragment
-        fontInstance.boundingBox(qPrintable(fragment.text()), ll, ur);
+        fontInstance.boundingBox(fragment.text(), ll, ur);
 
         // Scale the box by the current scaling factor...
         ur.x = ll.x + (ur.x - ll.x) * fragment.scale();
@@ -232,7 +232,7 @@ void TextPrimitive::render(FontInstance &fontInstance, const Matrix4 &viewMatrix
             glDisable(GL_LINE_STIPPLE);
             glLineWidth(1.0);
             Vec3<double> ll, ur;
-            fontInstance.boundingBox(qPrintable(fragment.text()), ll, ur);
+            fontInstance.boundingBox(fragment.text(), ll, ur);
             glBegin(GL_LINE_LOOP);
             glVertex3d(ll.x, ll.y, 0.0);
             glVertex3d(ur.x, ll.y, 0.0);
@@ -248,11 +248,11 @@ void TextPrimitive::render(FontInstance &fontInstance, const Matrix4 &viewMatrix
         {
             // Render the text twice - once with lines, and once with polygon fill
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-            fontInstance.renderText(qPrintable(fragment.text().toUtf8()));
+            fontInstance.renderText(fragment.text());
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-            fontInstance.renderText(qPrintable(fragment.text().toUtf8()));
+            fontInstance.renderText(fragment.text());
         }
         else
-            fontInstance.renderText(qPrintable(fragment.text().toUtf8()));
+            fontInstance.renderText(fragment.text());
     }
 }
