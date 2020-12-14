@@ -12,8 +12,6 @@
 
 ChangeStore::ChangeStore(ProcessPool &procPool) : processPool_(procPool) {}
 
-ChangeStore::~ChangeStore() {}
-
 /*
  * Watch Targets
  */

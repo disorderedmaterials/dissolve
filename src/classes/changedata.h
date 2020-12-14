@@ -15,7 +15,7 @@ class ChangeData
 {
     public:
     ChangeData();
-    ~ChangeData();
+    ~ChangeData() = default;
 
     /*
      * Target Data

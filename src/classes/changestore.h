@@ -19,7 +19,7 @@ class ChangeStore
 {
     public:
     ChangeStore(ProcessPool &procPool);
-    ~ChangeStore();
+    ~ChangeStore() = default;
 
     /*
      * Watch Targets
