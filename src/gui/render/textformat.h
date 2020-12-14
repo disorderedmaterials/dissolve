@@ -3,13 +3,8 @@
 
 #pragma once
 
-#include "templates/listitem.h"
-
-// Forward Declarations
-/* none */
-
-// Text Formatter
-class TextFormat : public ListItem<TextFormat>
+// Text Formatting
+class TextFormat
 {
     public:
     TextFormat();

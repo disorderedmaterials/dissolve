@@ -3,15 +3,11 @@
 
 #pragma once
 
-#include "templates/list.h"
 #include "templates/vector3.h"
 #include <QString>
 
-// Forward Declarations
-/* none */
-
 // Text Fragment
-class TextFragment : public ListItem<TextFragment>
+class TextFragment
 {
     public:
     TextFragment(QString text, double scale = 1.0, Vec3<double> translation = Vec3<double>(), bool isItalic = false,

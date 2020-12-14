@@ -3,7 +3,7 @@
 
 #include "gui/render/textformat.h"
 
-TextFormat::TextFormat() : ListItem<TextFormat>(), y_(0.0), scale_(1.0), isItalic_(false), isBold_(false), isSymbol_(false) {}
+TextFormat::TextFormat() : y_(0.0), scale_(1.0), isItalic_(false), isBold_(false), isSymbol_(false) {}
 
 TextFormat::TextFormat(const TextFormat &source) { (*this) = source; }
 

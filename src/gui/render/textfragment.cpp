@@ -4,7 +4,7 @@
 #include "gui/render/textfragment.h"
 
 TextFragment::TextFragment(QString text, double scale, Vec3<double> translation, bool isItalic, bool isBold)
-    : ListItem<TextFragment>(), text_(text), scale_(scale), translation_(translation), isItalic_(isItalic), isBold_(isBold)
+    : text_(text), scale_(scale), translation_(translation), isItalic_(isItalic), isBold_(isBold)
 {
 }
 
