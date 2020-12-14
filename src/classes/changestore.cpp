@@ -60,10 +60,10 @@ void ChangeStore::updateAll()
 void ChangeStore::updateAtom(int id)
 {
 #ifdef CHECKS
-    if ((id < 0) || (id >= targetAtoms_.nItems()))
+    if ((id < 0) || (id >= targetAtoms_.size()))
     {
         Messenger::print("OUT_OF_RANGE - Specified index {} is out of range in ChangeStore::updateAtom() (nTargetAtoms = {})\n",
-                         id, targetAtoms_.nItems());
+                         id, targetAtoms_.size());
         return;
     }
 #endif
@@ -83,10 +83,10 @@ void ChangeStore::revertAll()
 void ChangeStore::revert(int id)
 {
 #ifdef CHECKS
-    if ((id < 0) || (id >= targetAtoms_.nItems()))
+    if ((id < 0) || (id >= targetAtoms_.size()))
     {
         Messenger::print("OUT_OF_RANGE - Index of Atom ({}) is out of range in ChangeStore::revert() (nAtoms = {}).\n", id,
-                         targetAtoms_.nItems());
+                         targetAtoms_.size());
         return;
     }
 #endif
