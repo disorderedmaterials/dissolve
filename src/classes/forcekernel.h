@@ -12,7 +12,6 @@
 class Atom;
 class Box;
 class Cell;
-class ChangeStore;
 class Configuration;
 class PotentialMap;
 class SpeciesAngle;

@@ -17,7 +17,6 @@ class Box;
 class Cell;
 class Isotopologue;
 class Molecule;
-class ChangeStore;
 
 // Dissolve Main Class
 class Dissolve
