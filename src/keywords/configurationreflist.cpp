@@ -12,7 +12,6 @@ ConfigurationRefListKeyword::ConfigurationRefListKeyword(RefList<Configuration> 
     maxListSize_ = maxListSize;
 }
 
-// Destructor
 ConfigurationRefListKeyword::~ConfigurationRefListKeyword() {}
 
 /*
