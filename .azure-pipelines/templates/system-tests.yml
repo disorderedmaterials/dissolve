@@ -18,21 +18,10 @@ jobs:
           artifactName: 'linux-tests-serial'
         displayName: 'Download Serial Test Artifacts'
       - bash: |
-          cd $(System.ArtifactsDirectory)/linux-tests-serial
-          chmod u+x ./go ./dissolve
-          ./go -a -s ./dissolve
+          cd $(System.ArtifactsDirectory)/linux-tests-serial/build
+          chmod +x bin/dissolve
+          ctest -j2 --output-on-failure
         displayName: 'Run Serial System Tests'
-      - bash: |
-          mkdir test-output
-          cp -rv $(System.ArtifactsDirectory)/linux-tests-serial/*.out test-output/
-        displayName: 'Copy Test Output'
-        condition: always()
-      - task: PublishBuildArtifacts@1
-        inputs:
-          PathtoPublish: "test-output/"
-          ArtifactName: 'linux-test-output-serial'
-        displayName: 'Publish Serial Test Output Artifacts'
-        condition: always()
   - job:
     condition: eq('${{ parameters.parallel }}', true)
     displayName: 'System Tests (Parallel)'
@@ -52,18 +41,7 @@ jobs:
           artifactName: 'linux-tests-parallel'
         displayName: 'Download Parallel Test Artifacts'
       - bash: |
-          cd $(System.ArtifactsDirectory)/linux-tests-parallel
-          chmod u+x ./go ./dissolve-mpi
-          ./go -a -m mpirun.openmpi -p ./dissolve-mpi
+          cd $(System.ArtifactsDirectory)/linux-tests-parallel/build-parallel
+          chmod +x bin/dissolve-mpi
+          ctest --output-on-failure
         displayName: 'Run Parallel System Tests'
-      - bash: |
-          mkdir test-output
-          cp -rv $(System.ArtifactsDirectory)/linux-tests-parallel/*.out* test-output/
-        displayName: 'Copy Test Output'
-        condition: always()
-      - task: PublishBuildArtifacts@1
-        inputs:
-          PathtoPublish: "test-output/"
-          ArtifactName: 'linux-test-output-parallel'
-        displayName: 'Publish Parallel Test Output Artifacts'
-        condition: always()

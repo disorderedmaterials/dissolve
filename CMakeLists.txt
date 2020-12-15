@@ -303,6 +303,7 @@ endif()
 if (BUILD_TESTS)
   ENABLE_TESTING()
   ADD_SUBDIRECTORY(unit)
+  ADD_SUBDIRECTORY(tests)
 endif(BUILD_TESTS)
 
 # Build CLI target executable
