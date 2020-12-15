@@ -34,5 +34,5 @@ foreach(SRCFILE "${tests_SRC}")
   )
 
   # Register the test
-  ADD_TEST(${NAME} ${NAME})
+  ADD_TEST(NAME ${NAME} COMMAND $<TARGET_FILE:${NAME}>)
 endforeach(SRCFILE)
