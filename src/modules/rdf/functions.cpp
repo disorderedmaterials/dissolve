@@ -474,7 +474,6 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, con
                                 GenericList &processingModuleData, PartialSet &summedUnweightedGR)
 {
     // Realise an AtomTypeList containing the sum of atom types over all target configurations
-    // TODO Assume weight of 1.0 per configuration now, until #398/#400 are addressed.
     auto &combinedAtomTypes = GenericListHelper<AtomTypeList>::realise(
         processingModuleData, "SummedAtomTypes", parentModule->uniqueName(), GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
@@ -494,10 +493,8 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, con
     double totalWeight = 0.0;
     for (Configuration *cfg : parentModule->targetConfigurations())
     {
-        // Get weighting factor for this Configuration to contribute to the summed partials
-        auto weight = GenericListHelper<double>::value(
-            processingModuleData, fmt::format("ConfigurationWeight_{}", cfg->niceName()), parentModule->uniqueName(), 1.0);
-        Messenger::print("Weight for Configuration '{}' is {}.\n", cfg->name(), weight);
+        // TODO Assume weight of 1.0
+        auto weight = 1.0;
 
         // Add our Configuration target
         configWeights.append(cfg, weight);
@@ -546,10 +543,8 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
         // Loop over Configurations defined in this target
         for (Configuration *cfg : module->targetConfigurations())
         {
-            // Get weighting factor for this Configuration to contribute to the summed partials
-            auto weight = GenericListHelper<double>::value(
-                processingModuleData, fmt::format("ConfigurationWeight_{}", cfg->niceName()), module->uniqueName(), 1.0);
-            Messenger::print("Weight for Configuration '{}' is {}.\n", cfg->name(), weight);
+            // TODO Assume weight of 1.0
+            auto weight = 1.0;
 
             // Add our Configuration target
             configWeights.append(cfg, weight);
