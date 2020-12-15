@@ -37,7 +37,7 @@ ConfigurationRefListKeywordWidget::ConfigurationRefListKeywordWidget(QWidget *pa
  */
 
 // Selection list update function
-void ConfigurationRefListKeywordWidget::updateSelectionRow(int row, Configuration *sp, bool createItem)
+void ConfigurationRefListKeywordWidget::updateSelectionRow(int row, Configuration *cfg, bool createItem)
 {
     // Grab the target reference list
     RefList<Configuration> &selection = keyword_->data();
@@ -45,14 +45,14 @@ void ConfigurationRefListKeywordWidget::updateSelectionRow(int row, Configuratio
     QListWidgetItem *item;
     if (createItem)
     {
-        item = new QListWidgetItem(QString::fromStdString(std::string(sp->name())));
-        item->setData(Qt::UserRole, VariantPointer<Configuration>(sp));
+        item = new QListWidgetItem(QString::fromStdString(std::string(cfg->name())));
+        item->setData(Qt::UserRole, VariantPointer<Configuration>(cfg));
         item->setFlags(Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
         ui_.SelectionList->insertItem(row, item);
     }
     else
         item = ui_.SelectionList->item(row);
-    item->setCheckState(selection.contains(sp) ? Qt::Checked : Qt::Unchecked);
+    item->setCheckState(selection.contains(cfg) ? Qt::Checked : Qt::Unchecked);
 }
 
 // List item changed
@@ -157,9 +157,9 @@ void ConfigurationRefListKeywordWidget::updateSummaryText()
     else
     {
         QString summaryText;
-        for (Configuration *sp : selection)
+        for (Configuration *cfg : selection)
             summaryText +=
-                QString("%1%2").arg(summaryText.isEmpty() ? "" : ", ").arg(QString::fromStdString(std::string(sp->name())));
+                QString("%1%2").arg(summaryText.isEmpty() ? "" : ", ").arg(QString::fromStdString(std::string(cfg->name())));
 
         setSummaryText(summaryText);
     }

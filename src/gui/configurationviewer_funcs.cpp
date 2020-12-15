@@ -32,9 +32,9 @@ ConfigurationViewer::~ConfigurationViewer() {}
  */
 
 // Set target Configuration
-void ConfigurationViewer::setConfiguration(Configuration *sp)
+void ConfigurationViewer::setConfiguration(Configuration *cfg)
 {
-    configuration_ = sp;
+    configuration_ = cfg;
     configurationRenderable_ = nullptr;
 
     // Clear Renderables
