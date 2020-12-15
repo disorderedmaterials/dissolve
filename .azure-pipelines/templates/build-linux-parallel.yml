@@ -16,8 +16,8 @@ steps:
     displayName: 'Install Conan'
   - bash: |
       set -ex
-      mkdir build-parallel
-      cd build-parallel
+      mkdir build
+      cd build
       conan install --remote=conan-center ../ 
       cmake -G "Ninja" -DPARALLEL:bool=true -DBUILD_ANTLR_RUNTIME:bool=true ${{ parameters.extraflags }} ../
       ninja

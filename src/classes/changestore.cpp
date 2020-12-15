@@ -12,8 +12,6 @@
 
 ChangeStore::ChangeStore(ProcessPool &procPool) : processPool_(procPool) {}
 
-ChangeStore::~ChangeStore() {}
-
 /*
  * Watch Targets
  */
@@ -21,8 +19,8 @@ ChangeStore::~ChangeStore() {}
 // Add atom to watch
 void ChangeStore::add(std::shared_ptr<Atom> i)
 {
-    ChangeData *item = targetAtoms_.add();
-    item->setAtom(i);
+    targetAtoms_.emplace_back();
+    targetAtoms_.back().setAtom(i);
 }
 
 // Add Molecule to watch
@@ -53,84 +51,57 @@ void ChangeStore::reset()
 // Update all Atom positions
 void ChangeStore::updateAll()
 {
-    for (auto *item = targetAtoms_.first(); item != nullptr; item = item->next())
-        item->updatePosition();
-}
-
-// Update Atom positions using list indices
-void ChangeStore::updateAtomsLocal(int nAtoms, int *indices)
-{
-    for (auto n = 0; n < nAtoms; ++n)
-    {
-#ifdef CHECKS
-        if ((indices[n] < 0) || (indices[n] >= targetAtoms_.nItems()))
-        {
-            Messenger::print("OUT_OF_RANGE - Supplied indices_[n] ({}) is out of range in "
-                             "ChangeStore::updateAtomsLocal() (nTargetAtoms = {})\n",
-                             n, indices_[n], targetAtoms_.nItems());
-            continue;
-        }
-#endif
-        ChangeData *item = targetAtoms_[indices[n]];
-        item->updatePosition();
-    }
+    std::for_each(targetAtoms_.begin(), targetAtoms_.end(), [](auto &item) { item.updatePosition(); });
 }
 
 // Update single atom position
 void ChangeStore::updateAtom(int id)
 {
 #ifdef CHECKS
-    if ((id < 0) || (id >= targetAtoms_.nItems()))
+    if ((id < 0) || (id >= targetAtoms_.size()))
     {
         Messenger::print("OUT_OF_RANGE - Specified index {} is out of range in ChangeStore::updateAtom() (nTargetAtoms = {})\n",
-                         id, targetAtoms_.nItems());
+                         id, targetAtoms_.size());
         return;
     }
 #endif
-    ChangeData *item = targetAtoms_[id];
-    item->updatePosition();
+    targetAtoms_[id].updatePosition();
 }
 
 // Revert all atoms to their previous positions
 void ChangeStore::revertAll()
 {
-    for (auto *item = targetAtoms_.first(); item != nullptr; item = item->next())
-        item->revertPosition();
+    for (auto &item : targetAtoms_)
+        // revertPosition can make alterations to the cell that
+        // contains the item, so it cannot be safely run in parallel.
+        item.revertPosition();
 }
 
 // Revert specified index to stored position
 void ChangeStore::revert(int id)
 {
 #ifdef CHECKS
-    if ((id < 0) || (id >= targetAtoms_.nItems()))
+    if ((id < 0) || (id >= targetAtoms_.size()))
     {
         Messenger::print("OUT_OF_RANGE - Index of Atom ({}) is out of range in ChangeStore::revert() (nAtoms = {}).\n", id,
-                         targetAtoms_.nItems());
+                         targetAtoms_.size());
         return;
     }
 #endif
-    ChangeData *item = targetAtoms_[id];
-    item->revertPosition();
+    targetAtoms_[id].revertPosition();
 }
 
 // Save Atom changes for broadcast, and reset arrays for new data
 void ChangeStore::storeAndReset()
 {
-    ChangeData *item = targetAtoms_.first();
-    ChangeData *nextItem;
-    while (item != nullptr)
+    for (auto item = targetAtoms_.begin(); item < targetAtoms_.end(); ++item)
     {
-        // Grab pointer to next item
-        nextItem = item->next();
-
         // Has the position of this Atom been changed (i.e. updated)?
         if (item->hasMoved())
         {
-            targetAtoms_.cut(item);
-            changes_.own(item);
+            changes_.push_back(*item);
+            targetAtoms_.erase(item);
         }
-
-        item = nextItem;
     }
 
     // Clear target Atom data
@@ -142,7 +113,7 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
 {
 #ifdef PARALLEL
     // First, get total number of changes across all processes
-    auto nTotalChanges = changes_.nItems();
+    int nTotalChanges = changes_.size();
     if (!processPool_.allSum(&nTotalChanges, 1))
         return false;
 
@@ -151,28 +122,29 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
     // All processes now resize their arrays so they are large enough to hold the total number of changes
     if (nTotalChanges == 0)
         return true;
-    x_.initialise(nTotalChanges);
-    y_.initialise(nTotalChanges);
-    z_.initialise(nTotalChanges);
-    indices_.initialise(nTotalChanges);
+    x_.clear();
+    x_.resize(nTotalChanges);
+    y_.clear();
+    y_.resize(nTotalChanges);
+    z_.clear();
+    z_.resize(nTotalChanges);
+    indices_.clear();
+    indices_.resize(nTotalChanges);
 
     // Copy local change data into arrays
-    for (auto n = 0; n < changes_.nItems(); ++n)
-    {
-        indices_[n] = changes_[n]->atomArrayIndex();
-        x_[n] = changes_[n]->r().x;
-        y_[n] = changes_[n]->r().y;
-        z_[n] = changes_[n]->r().z;
-    }
+    std::transform(changes_.begin(), changes_.end(), indices_.begin(), [](auto &change) { return change.atomArrayIndex(); });
+    std::transform(changes_.begin(), changes_.end(), x_.begin(), [](auto &change) { return change.r().x; });
+    std::transform(changes_.begin(), changes_.end(), y_.begin(), [](auto &change) { return change.r().y; });
+    std::transform(changes_.begin(), changes_.end(), z_.begin(), [](auto &change) { return change.r().z; });
 
     // Now, assemble full array of the change data on the master...
-    if (!processPool_.assemble(indices_, changes_.nItems(), indices_, nTotalChanges))
+    if (!processPool_.assemble(indices_.data(), changes_.size(), indices_.data(), nTotalChanges))
         return false;
-    if (!processPool_.assemble(x_, changes_.nItems(), x_, nTotalChanges))
+    if (!processPool_.assemble(x_.data(), changes_.size(), x_.data(), nTotalChanges))
         return false;
-    if (!processPool_.assemble(y_, changes_.nItems(), y_, nTotalChanges))
+    if (!processPool_.assemble(y_.data(), changes_.size(), y_.data(), nTotalChanges))
         return false;
-    if (!processPool_.assemble(z_, changes_.nItems(), z_, nTotalChanges))
+    if (!processPool_.assemble(z_.data(), changes_.size(), z_.data(), nTotalChanges))
         return false;
 
     // ... then broadcast it to the slaves
@@ -204,11 +176,11 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
     }
 #else
     // Apply atom changes
-    for (auto *data = changes_.first(); data != nullptr; data = data->next())
+    for (auto &data : changes_)
     {
         // Set new coordinates and check cell position (Configuration::updateAtomInCell() will do all this)
-        data->revertPosition();
-        cfg->updateCellLocation(data->atom());
+        data.revertPosition();
+        cfg->updateCellLocation(data.atom());
     }
 #endif
 
