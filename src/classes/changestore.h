@@ -4,8 +4,6 @@
 #pragma once
 
 #include "classes/changedata.h"
-#include "templates/array.h"
-#include "templates/reflist.h"
 #include "templates/vector3.h"
 #include <memory>
 
@@ -21,14 +19,14 @@ class ChangeStore
 {
     public:
     ChangeStore(ProcessPool &procPool);
-    ~ChangeStore();
+    ~ChangeStore() = default;
 
     /*
      * Watch Targets
      */
     private:
     // List of target atoms (and modification data)
-    List<ChangeData> targetAtoms_;
+    std::vector<ChangeData> targetAtoms_;
 
     public:
     // Add atom to watch
@@ -43,11 +41,11 @@ class ChangeStore
      */
     private:
     // List of local changes
-    List<ChangeData> changes_;
+    std::vector<ChangeData> changes_;
     // Coordinate broadcast arrays
-    Array<double> x_, y_, z_;
+    std::vector<double> x_, y_, z_;
     // Index broadcast array
-    Array<int> indices_;
+    std::vector<int> indices_;
 
     public:
     // Reset ChangeStore, forgetting all changes
@@ -56,8 +54,6 @@ class ChangeStore
     void updateAll();
     // Update single atom position
     void updateAtom(int id);
-    // Update Atom positions using list indices
-    void updateAtomsLocal(int nAtoms, int *indices);
     // Revert all atoms to stored positions
     void revertAll();
     // Revert specified index to stored position
