@@ -18,7 +18,7 @@ lexer grammar TextPrimitiveLexer;
 // Appears in the private part of the lexer in the h file.
 @lexer::declarations {
     bool isFormatter(std::string text) { return TextPrimitiveVisitor::escapedFormatters().isValid(text.substr(1)); }
-    bool isSymbol(std::string text) { return SymbolData::symbol(text) != nullptr; }
+    bool isSymbol(std::string text) { return SymbolData::symbol(text) != SymbolData::nSymbols; }
 }
 
 // Appears in line with the other class member definitions in the cpp file.
