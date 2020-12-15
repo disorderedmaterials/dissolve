@@ -19,7 +19,7 @@
 #define HALFPI 1.570796326794896
 
 // Degrees per Radian
-#define DEGRAD ( 180.0 / M_PI )
+#define DEGRAD (180.0 / M_PI)
 
 // Angstroms per Bohr
 #define ANGBOHR 0.529177249
