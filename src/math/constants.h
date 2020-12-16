@@ -4,7 +4,7 @@
 #pragma once
 
 #define _USE_MATH_DEFINES
-#include <cmath>
+#include <math.h>
 
 // Permittivity of free space (m-3 kg-1 s4 A2)
 #define EPSILON0 8.85418782E-12
