@@ -40,10 +40,7 @@ void SelectSymbolDialog::on_SearchEdit_textChanged(QString text)
         return;
 
     // See if a symbol description matches our search string
-    int symbol;
-    for (symbol = 0; symbol < SymbolData::nSymbols; ++symbol)
-        if (SymbolData::symbols[symbol].description.contains(text, Qt::CaseInsensitive))
-            break;
+    auto symbol = SymbolData::firstDescriptionMatch(qPrintable(text));
     if (symbol == SymbolData::nSymbols)
         return;
 
@@ -70,14 +67,8 @@ void SelectSymbolDialog::on_SymbolTable_itemSelectionChanged()
     if (!item)
         return;
 
-    // Get the Symbol pointer from the selected item
-    SymbolData *symbol = VariantPointer<SymbolData>(item->data(Qt::UserRole));
-    if (symbol)
-    {
-        selectedSymbol_ = symbol->character;
-        QString hexCode = QString("0x%1").arg(symbol->character.unicode(), 4, 16, QChar('0'));
-        ui.SymbolLabel->setText(hexCode + " : " + symbol->description);
-    }
+    // Copy the text of the widget item to the symbol label
+    ui.SymbolLabel->setText(item->text());
 
     ui.SelectButton->setEnabled(true);
 }
@@ -130,9 +121,9 @@ void SelectSymbolDialog::updateTable(bool force)
         {
             item = new QTableWidgetItem();
             item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-            item->setText(SymbolData::symbols[n].character);
+            item->setText(QString::fromStdString(std::string(SymbolData::symbol((SymbolData::Symbol)n))));
             item->setTextAlignment(Qt::AlignCenter);
-            item->setData(Qt::UserRole, VariantPointer<SymbolData>(&SymbolData::symbols[n]));
+            item->setData(Qt::UserRole, QVariant::fromValue(n));
             item->setSizeHint(itemSize);
             ui.SymbolTable->setItem(n / nDisplayColumns, n % nDisplayColumns, item);
         }

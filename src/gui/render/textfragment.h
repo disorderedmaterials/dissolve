@@ -3,47 +3,41 @@
 
 #pragma once
 
-#include "templates/list.h"
 #include "templates/vector3.h"
-#include <QString>
-
-// Forward Declarations
-/* none */
+#include <string>
 
 // Text Fragment
-class TextFragment : public ListItem<TextFragment>
+class TextFragment
 {
     public:
-    TextFragment();
-    ~TextFragment();
+    TextFragment(std::string_view text, double scale = 1.0, Vec3<double> translation = Vec3<double>(), bool isItalic = false,
+                 bool isBold = false);
+    ~TextFragment() = default;
 
     /*
-     * Fragment Definition
+     * Data
      */
     private:
     // Fragment text
-    QString text_;
+    std::string text_;
     // Local scale for fragment
     double scale_;
     // Local translation for fragment
     Vec3<double> translation_;
     // Whether fragment is to be drawn italic
-    bool italic_;
+    bool isItalic_;
     // Whether fragment is to be drawn bold
-    bool bold_;
+    bool isBold_;
 
     public:
-    // Set fragment data
-    void set(QString &text, double scale = 1.0, Vec3<double> translation = Vec3<double>(), bool italic = false,
-             bool bold = false);
     // Return fragment text
-    QString text();
+    const std::string &text() const;
     // Return local scale for fragment
-    double scale();
+    double scale() const;
     // Return local translation for fragment
-    Vec3<double> translation();
+    Vec3<double> translation() const;
     // Return whether fragment is to be drawn italic
-    bool italic();
+    bool isItalic() const;
     // Return whether fragment is to be drawn bold
-    bool bold();
+    bool isBold() const;
 };
