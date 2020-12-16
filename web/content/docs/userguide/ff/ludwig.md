@@ -11,7 +11,7 @@ description: 1‐(4‐hydroxybutyl)pyridinium and 1‐pentylpyridinium cations w
 |`Ludwig/Py4OH`|1‐(4‐hydroxybutyl)pyridinium cation|
 |`Ludwig/Py5`|1-pentylpyridinium cation|
 
-{{< warn text="Atomic charges in these forcefields are defined in the top-level atom descriptions, rather than in the atom types. As such, when using these forcefields you must turn off inclusion of charges into the tabulated pair potentials, e.g. by setting `IncludeCoulomb` in the [`PairPotentials`](/docs/userguide/inputfile/pairpotentialsblock) block to `false`, so that the atomic charges assigned to the atoms are used instead." >}}
+{{< warn text="Atomic charges in these forcefields are defined in the top-level atom descriptions, rather than in the atom types. As such, when using these forcefields you must turn off inclusion of charges into the tabulated pair potentials, e.g. by setting `IncludeCoulomb` in the [`PairPotentials`](/docs/userguide/inputfile/pairpotentialsblock/) block to `false`, so that the atomic charges assigned to the atoms are used instead." >}}
 
 ### Overview
 

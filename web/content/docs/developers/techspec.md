@@ -13,7 +13,7 @@ This document lists the high-level technical specifications for the Dissolve pro
 
 ## Background
 
-See the [project description](../description) for an overview of the purpose and intention of Dissolve.
+See the [project description]({{< ref "description" >}}) for an overview of the purpose and intention of Dissolve.
 
 ## General Requirements
 
@@ -37,4 +37,3 @@ See the [project description](../description) for an overview of the purpose and
 
 ### Consistency
 - The code should implement core algorithms of the existing Empirical Potential Structure Refinement (EPSR) code so as to provide smooth transition in the user community.
-
