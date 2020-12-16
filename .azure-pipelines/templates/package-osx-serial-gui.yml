@@ -1,6 +1,6 @@
 steps:
   - script: |
-      pip3 install dmgbuild
+      pip3 install dmgbuild biplist
     displayName: 'Install Prerequisites'
   - bash: |
       set -ex
