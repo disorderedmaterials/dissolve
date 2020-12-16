@@ -3,7 +3,7 @@ parameters:
     default: false
     type: boolean
   - name: hugo_version
-    default: '0.75.1'
+    default: '0.79.0'
   - name: web_dir_root
     default: 'github.com/projectdissolve/dissolve/edit/develop/web'
   - name: last_hash_url
