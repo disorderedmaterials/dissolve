@@ -3,6 +3,7 @@
 
 #pragma once
 
+#define _USE_MATH_DEFINES
 #include <cmath>
 
 // Permittivity of free space (m-3 kg-1 s4 A2)
