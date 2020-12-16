@@ -3,16 +3,11 @@ parameters:
     default: false
     type: boolean
   - name: hugo_version
-    default: '0.75.1'
-  - name: use_current_hash
-    default: false
-    type: boolean
+    default: '0.79.0'
   - name: web_dir_root
     default: 'github.com/projectdissolve/dissolve/edit/develop/web'
   - name: last_hash_url
     default: 'https://www.projectdissolve.com'
-  - name: last_hash_file
-    default: 'doc_hash'
 
 steps:
   - checkout: self
@@ -27,38 +22,21 @@ steps:
       sudo dpkg -i $(Pipeline.Workspace)/hugo*.deb
     displayName: 'Download & Install Hugo (Extended Version)'
   - bash: |
-      if [ "${{ parameters.use_current_hash }}" = "true" ]
-      then
-        # Use short hash from most recent (this) commit
-        SHORTHASH=`git rev-parse --short HEAD`
-      else
-        # Retrieve last hash from web server, and re-use it
-        SHORTHASH=`wget -qO- ${{ parameters.last_hash_url }}/${{ parameters.last_hash_file }}`
-        if [ -z $SHORTHASH ]
-        then
-          echo "Failed to retrieve last hash from doc server - current short hash will be used..."
-          SHORTHASH=`git rev-parse --short HEAD`
-        fi
-      fi
-      echo "Continuous hash will be set to $SHORTHASH"
-      # Set hash in config.toml
-      sed -i "s/devShortHash = .*/devShortHash = \"$SHORTHASH\"/g" web/config.toml
-      grep "devShortHash" web/config.toml
-      # Store current hash in file for upload to server
-      echo $SHORTHASH > web/${{ parameters.last_hash_file }}
-    displayName: 'Set Continuous Short Hash'
-  - bash: |
       set -ex
       cd web
       npm install
       hugo
-      mv ${{ parameters.last_hash_file }} public/
     displayName: 'Build Site'
   - bash: |
       set -ex
       # Remove language ('en') from 'Edit on GitHub' path links
       find web/public/ -iname *.html -exec sed -i "s:${{ parameters.web_dir_root }}/content/en/docs/:${{ parameters.web_dir_root }}/content/docs/:g" {} +
     displayName: 'Rewrite Edit Links'
+  - bash: |
+      set -ex
+      sudo npm install -g link-checker
+      link-checker --disable-external web/public
+    displayName: 'Check Links'
   - task: DownloadSecureFile@1
     name: privateKey
     inputs:

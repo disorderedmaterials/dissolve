@@ -54,7 +54,7 @@ void NeutronWeights::clear()
 }
 
 // Add Isotopologue for Species
-void NeutronWeights::addIsotopologue(Species *sp, int speciesPopulation, const Isotopologue *iso,
+void NeutronWeights::addIsotopologue(const Species *sp, int speciesPopulation, const Isotopologue *iso,
                                      double isotopologueRelativePopulation)
 {
     // Does an Isotopologues definition already exist for the supplied Species?
@@ -71,7 +71,7 @@ void NeutronWeights::addIsotopologue(Species *sp, int speciesPopulation, const I
 }
 
 // Return whether an Isotopologues definition exists for the provided Species
-bool NeutronWeights::containsIsotopologues(Species *sp) const
+bool NeutronWeights::containsIsotopologues(const Species *sp) const
 {
     return std::any_of(isotopologueMixtures_.cbegin(), isotopologueMixtures_.cend(),
                        [sp](const Isotopologues &mix) { return mix.species() == sp; });

@@ -75,7 +75,7 @@ class ConfigurationViewer : public BaseViewer
 
     public:
     // Set target Configuration
-    void setConfiguration(Configuration *sp);
+    void setConfiguration(Configuration *cfg);
     // Return target Configuration
     Configuration *configuration() const;
 

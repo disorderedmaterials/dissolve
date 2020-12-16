@@ -19,7 +19,7 @@ pr:
     exclude:
     - /
 
-# Only push changes to server and modify short hash if we are running on develop (i.e. the continuous build)
+# Only push changes to server if we are running on develop (i.e. the continuous build)
 stages:
   - stage: 'web'
     displayName: 'Website'
@@ -33,5 +33,3 @@ stages:
             parameters:
               ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
                 deploy: true
-              ${{ if eq(variables['Build.SourceBranchName'], 'develop') }}:
-                use_current_hash: true

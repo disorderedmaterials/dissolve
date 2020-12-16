@@ -32,9 +32,10 @@ class NeutronWeights : public GenericItemBase
     // Clear contents
     void clear();
     // Add Species Isotopologue to the relevant mixture
-    void addIsotopologue(Species *sp, int speciesPopulation, const Isotopologue *iso, double isotopologueRelativePopulation);
+    void addIsotopologue(const Species *sp, int speciesPopulation, const Isotopologue *iso,
+                         double isotopologueRelativePopulation);
     // Return whether an Isotopologues definition exists for the provided Species
-    bool containsIsotopologues(Species *sp) const;
+    bool containsIsotopologues(const Species *sp) const;
     // Print atomtype / weights information
     void print() const;
 

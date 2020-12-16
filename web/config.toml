@@ -48,7 +48,6 @@ copyright = "Copyright (c) 2020 Team Dissolve and contributors. Built using Hugo
 releaseVersion = "0.6.1"
 releaseDate = "18th March 2020"
 devVersion = "0.7.0"
-devShortHash = ""
 github_repo = "https://github.com/projectdissolve/dissolve"
 github_subdir = "web"
 github_branch = "develop"
