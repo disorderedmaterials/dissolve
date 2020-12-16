@@ -3,13 +3,11 @@
 
 #pragma once
 
-#include "expression/functions.h"
-#include "expression/node.h"
-#include "templates/list.h"
+#include "expression/root.h"
+#include "templates/optionalref.h"
 
-// Forward declarations
+// Forward Declarations
 class ExpressionVariable;
-class Node;
 
 // Mathematical Expression
 class Expression
@@ -26,89 +24,31 @@ class Expression
     private:
     // Original generating string
     std::string expressionString_;
+    // Root node for the expression
+    std::shared_ptr<ExpressionNode> rootNode_;
 
     public:
-    // Clear all expression data
+    // Clear data
     void clear();
     // Return whether current expression is valid (contains at least one node)
     bool isValid() const;
-    // Set Expression from supplied string
-    bool set(std::string_view expressionString);
-    // Set Expression from supplied string and external variables
-    bool set(std::string_view expressionString, RefList<ExpressionVariable> externalVariables);
-    // Return original generating string`
+    // Create expression from supplied string, with optional external variables
+    bool
+    create(std::string_view expressionString,
+           OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> externalVariables = std::nullopt);
+    // Return original generating string
     std::string_view expressionString() const;
-
-    /*
-     * Nodes
-     */
-    private:
-    // Node list - a disordered list of all nodes (except persistent ones) owned by the Expression
-    List<ExpressionNode> nodes_;
-    // Persistent node list, not removed by normal clear() function
-    List<ExpressionNode> persistentNodes_;
-    // Reflist of all statements in the Expression, to be executed sequentially
-    RefList<ExpressionNode> statements_;
-
-    public:
-    // Add a node representing a whole statement to the execution list
-    bool addStatement(ExpressionNode *node);
-    // Add an operator to the Expression
-    ExpressionNode *addOperator(ExpressionFunctions::Function func, ExpressionNode *arg1, ExpressionNode *arg2 = nullptr);
-    // Associate a command-based node to the Expression
-    ExpressionNode *addFunctionNodeWithArglist(ExpressionFunctions::Function func, ExpressionNode *arglist);
-    // Add a function node to the list (overloaded to accept simple arguments instead of a list)
-    ExpressionNode *addFunctionNode(ExpressionFunctions::Function func, ExpressionNode *arg1 = nullptr,
-                                    ExpressionNode *arg2 = nullptr, ExpressionNode *arg3 = nullptr,
-                                    ExpressionNode *arg4 = nullptr);
-    // Add a value node, targetting the supplied variable
-    ExpressionNode *addValueNode(ExpressionVariable *var);
-    // Join two nodes together
-    static ExpressionNode *joinArguments(ExpressionNode *arg1, ExpressionNode *arg2);
-    // Join two commands together
-    ExpressionNode *joinCommands(ExpressionNode *node1, ExpressionNode *node2);
-    // Print statement info
-    void print();
-
-    /*
-     * Variables / Constants
-     */
-    private:
-    // Reference list of variables
-    RefList<ExpressionVariable> variables_;
-    // Reference list of constants
-    RefList<ExpressionVariable> constants_;
-    // Reference list of external variables
-    RefList<ExpressionVariable> externalVariables_;
-
-    public:
-    // Create numeric constant
-    ExpressionVariable *createConstant(ExpressionValue value, bool persistent = false);
-    // Create integer variable, with optional ExpressionNode as initial value source
-    ExpressionVariable *createIntegerVariable(std::string_view name, bool persistent = false,
-                                              ExpressionNode *initialValue = nullptr);
-    // Create double variable, with optional ExpressionNode as initial value source
-    ExpressionVariable *createDoubleVariable(std::string_view name, bool persistent = false,
-                                             ExpressionNode *initialValue = nullptr);
-    // Create variable with supplied initial value
-    ExpressionVariable *createVariableWithValue(std::string_view name, ExpressionValue initialValue, bool persistent = false);
-    // Set list of external variables
-    void setExternalVariables(RefList<ExpressionVariable> externalVariables);
-    // Search for variable
-    ExpressionVariable *variable(std::string_view name);
-    // Return list of variables
-    RefList<ExpressionVariable> &variables();
-    // Return list of constants
-    RefList<ExpressionVariable> &constants();
+    // Return root node for the expression
+    std::shared_ptr<ExpressionNode> rootNode();
 
     /*
      * Execution
      */
     public:
-    // Execute, returning whether successful, and setting result value of some type
-    bool execute(ExpressionValue &result);
+    // Evaluate the expression
+    std::optional<ExpressionValue> evaluate() const;
     // Execute and return as integer
-    int asInteger();
+    int asInteger() const;
     // Execute and return as double
-    double asDouble();
+    double asDouble() const;
 };

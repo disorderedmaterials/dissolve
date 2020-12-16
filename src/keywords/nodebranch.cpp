@@ -21,7 +21,7 @@ NodeBranchKeyword::~NodeBranchKeyword() {}
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool NodeBranchKeyword::isDataEmpty() const { return ((*data_) ? (*data_)->nNodes() > 0 : false); }
+bool NodeBranchKeyword::isDataEmpty() const { return ((*data_) ? (*data_)->nNodes() == 0 : false); }
 
 /*
  * Arguments

@@ -42,7 +42,10 @@ bool NodeValueKeyword::write(LineParser &parser, std::string_view keywordName, s
 // Set the value from supplied expression text
 bool NodeValueKeyword::setValue(std::string_view expressionText)
 {
-    if (!data_.set(expressionText, parentNode_->parametersInScope()))
+    // Get any variables currently in scope
+    auto vars = parentNode_->parametersInScope();
+
+    if (!data_.set(expressionText, vars))
         return false;
 
     set_ = true;

@@ -10,7 +10,7 @@
 #include "gui/keywordwidgets/double.hui"
 #include "gui/keywordwidgets/dropwidget.hui"
 #include "gui/keywordwidgets/enumoptions.hui"
-#include "gui/keywordwidgets/expressionvariablelist.h"
+#include "gui/keywordwidgets/expressionvariablevector.h"
 #include "gui/keywordwidgets/fileandformat.h"
 #include "gui/keywordwidgets/integer.hui"
 #include "gui/keywordwidgets/isotopologueset.h"

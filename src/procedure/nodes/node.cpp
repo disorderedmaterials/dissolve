@@ -180,8 +180,9 @@ RefList<ProcedureNode> ProcedureNode::nodes(ProcedureNode::NodeType nt)
     return scope_->nodes(this, nt);
 }
 
-// Return whether the named parameter is currently in scope
-ExpressionVariable *ProcedureNode::parameterInScope(std::string_view name, ExpressionVariable *excludeParameter)
+// Return the named parameter if it is currently in scope
+std::shared_ptr<ExpressionVariable> ProcedureNode::parameterInScope(std::string_view name,
+                                                                    std::shared_ptr<ExpressionVariable> excludeParameter)
 {
     if (!scope_)
         return nullptr;
@@ -189,8 +190,9 @@ ExpressionVariable *ProcedureNode::parameterInScope(std::string_view name, Expre
     return scope_->parameterInScope(this, name, excludeParameter);
 }
 
-// Return whether the named parameter exists anywhere in the same Procedure
-ExpressionVariable *ProcedureNode::parameterExists(std::string_view name, ExpressionVariable *excludeParameter) const
+// Return the named parameter if it exists anywhere in the same Procedure
+std::shared_ptr<ExpressionVariable> ProcedureNode::parameterExists(std::string_view name,
+                                                                   std::shared_ptr<ExpressionVariable> excludeParameter) const
 {
     if (!scope_)
         return nullptr;
@@ -199,10 +201,10 @@ ExpressionVariable *ProcedureNode::parameterExists(std::string_view name, Expres
 }
 
 // Create and return reference list of parameters in scope
-RefList<ExpressionVariable> ProcedureNode::parametersInScope()
+std::vector<std::shared_ptr<ExpressionVariable>> ProcedureNode::parametersInScope()
 {
     if (!scope_)
-        return RefList<ExpressionVariable>();
+        return {};
 
     return scope_->parametersInScope(this);
 }
@@ -222,10 +224,17 @@ SequenceProcedureNode *ProcedureNode::branch() { return nullptr; }
  */
 
 // Return whether this node has the named parameter specified
-ExpressionVariable *ProcedureNode::hasParameter(std::string_view name, ExpressionVariable *excludeParameter) { return nullptr; }
+std::shared_ptr<ExpressionVariable> ProcedureNode::hasParameter(std::string_view name,
+                                                                std::shared_ptr<ExpressionVariable> excludeParameter)
+{
+    return nullptr;
+}
 
 // Return references to all parameters for this node
-RefList<ExpressionVariable> ProcedureNode::parameterReferences() const { return RefList<ExpressionVariable>(); }
+OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> ProcedureNode::parameters() const
+{
+    return std::nullopt;
+}
 
 /*
  * Execution

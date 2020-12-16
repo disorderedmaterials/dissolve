@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2020 Team Dissolve and contributors
 
-#include "expression/expressionNEW.h"
+#include "expression/expression.h"
 #include "expression/reference.h"
 #include "expression/variable.h"
 #include <fmt/format.h>
@@ -14,13 +14,10 @@ int main(int args, char **argv)
     // Test ANTLR-based Expression parser
 
     // Set up test data:  <"name", "expression", "expectedValue", "shouldFail">
-    RefList<ExpressionVariable> variables;
-    ExpressionVariable a(1.0);
-    a.setName("a");
-    ExpressionVariable bee(100.0);
-    bee.setName("bee");
-    variables.append(&a);
-    variables.append(&bee);
+    std::vector<std::shared_ptr<ExpressionVariable>> variables;
+    auto a = 1.0, bee = 100.0;
+    variables.emplace_back(std::make_shared<ExpressionVariable>("a", a));
+    variables.emplace_back(std::make_shared<ExpressionVariable>("bee", bee));
     std::vector<std::tuple<std::string_view, std::string_view, ExpressionValue, bool>> tests = {
         {"Basic integer math 1", "1-(3*2)", 1 - (3 * 2), false},
         {"Basic integer math 2", "1-3*2", 1 - 3 * 2, false},
@@ -38,8 +35,8 @@ int main(int args, char **argv)
         {"Functions 3", "sqrt(sin(78.9)*cos(45))", sqrt(sin(78.9) * cos(45)), false},
         {"Bad function args 1", "atan()", 0, true},
         {"Bad function args 2", "ln(0.0, 1.0)", 0, true},
-        {"Variables 1", "a/5", a.value().asDouble() / 5, false},
-        {"Variables 2", "a + sqrt(bee)", a.value().asDouble() + sqrt(bee.value().asDouble()), false},
+        {"Variables 1", "a/5", a / 5, false},
+        {"Variables 2", "a + sqrt(bee)", a + sqrt(bee), false},
         {"Bad name", "1.8*wasp", 0, true}};
 
     const auto threshold = 1.0e-10;
@@ -52,7 +49,7 @@ int main(int args, char **argv)
         auto shouldFail = std::get<3>(test);
 
         fmt::print("Evaluating: {}\n", title);
-        ExpressionNEW expression;
+        Expression expression;
         auto generationResult = expression.create(expr, variables);
         if (shouldFail)
         {

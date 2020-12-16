@@ -2,8 +2,24 @@
 // Copyright (c) 2020 Team Dissolve and contributors
 
 #include "expression/binary.h"
+#include "math/mathfunc.h"
 
-ExpressionBinaryOperatorNode::ExpressionBinaryOperatorNode(BinaryOperator op) : ExpressionNodeNEW(), operator_(op) {}
+ExpressionBinaryOperatorNode::ExpressionBinaryOperatorNode(BinaryOperator op) : ExpressionNode(), operator_(op) {}
+
+/*
+ * Nodes
+ */
+
+// Duplicate this node and its contents
+std::shared_ptr<ExpressionNode> ExpressionBinaryOperatorNode::duplicate()
+{
+    auto node = std::make_shared<ExpressionBinaryOperatorNode>(operator_);
+
+    for (auto child : children_)
+        node->addChild(child->duplicate());
+
+    return node;
+}
 
 /*
  * Evaluation
@@ -48,7 +64,10 @@ std::optional<ExpressionValue> ExpressionBinaryOperatorNode::evaluate() const
                 result = lhs.asDouble() - rhs.asDouble();
             break;
         case (OperatorPow):
-            result = pow(lhs.asDouble(), rhs.asDouble());
+            if (ExpressionValue::bothIntegers(lhs, rhs))
+                result = DissolveMath::power(lhs.asInteger(), rhs.asInteger());
+            else
+                result = pow(lhs.asDouble(), rhs.asDouble());
             break;
         case (OperatorMultiply):
             if (ExpressionValue::bothIntegers(lhs, rhs))
@@ -56,6 +75,8 @@ std::optional<ExpressionValue> ExpressionBinaryOperatorNode::evaluate() const
             else
                 result = lhs.asDouble() * rhs.asDouble();
             break;
+        default:
+            throw(std::runtime_error(fmt::format("ExpressionBinaryOperatorNode - unhandled operator {}.\n", operator_)));
     }
 
     return result;

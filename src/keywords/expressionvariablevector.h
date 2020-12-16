@@ -8,15 +8,15 @@
 #include "templates/list.h"
 
 // Forward Declarations
+class ExpressionVariable;
 class ProcedureNode;
 
 // Keyword with ExpressionVariable List
-class ExpressionVariableListKeyword : public KeywordData<List<ExpressionNode> &>
+class ExpressionVariableVectorKeyword : public KeywordData<std::vector<std::shared_ptr<ExpressionVariable>> &>
 {
     public:
-    ExpressionVariableListKeyword(ProcedureNode *parentNode, List<ExpressionNode> &variables,
-                                  ExpressionValue::ValueType variableType);
-    ~ExpressionVariableListKeyword();
+    ExpressionVariableVectorKeyword(ProcedureNode *parentNode, std::vector<std::shared_ptr<ExpressionVariable>> &variables);
+    ~ExpressionVariableVectorKeyword();
 
     /*
      * Parent Node
@@ -28,17 +28,6 @@ class ExpressionVariableListKeyword : public KeywordData<List<ExpressionNode> &>
     public:
     // Return parent ProcedureNode
     const ProcedureNode *parentNode() const;
-
-    /*
-     * Variable Type
-     */
-    private:
-    // Assumed type for variables in the list
-    ExpressionValue::ValueType variableType_;
-
-    public:
-    // Return assumed type for variables in the list
-    ExpressionValue::ValueType variableType() const;
 
     /*
      * Data

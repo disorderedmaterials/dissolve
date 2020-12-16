@@ -70,7 +70,8 @@ class SequenceProcedureNode : public ProcedureNode
     ProcedureNode *searchNodes(std::string_view name, ProcedureNode *excludeNode = nullptr,
                                ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
     // Search through the Procedure for the named parameter
-    ExpressionVariable *searchParameters(std::string_view name, ExpressionVariable *excludeParameter = nullptr) const;
+    std::shared_ptr<ExpressionVariable> searchParameters(std::string_view name,
+                                                         std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
 
     public:
     // Return parent Procedure to which this sequence belongs
@@ -89,13 +90,14 @@ class SequenceProcedureNode : public ProcedureNode
     // Return named node if it exists anywhere in the same Procedure, and optionally matches the type given
     ProcedureNode *nodeExists(std::string_view name, ProcedureNode *excludeNode = nullptr,
                               ProcedureNode::NodeType nt = ProcedureNode::nNodeTypes) const;
-    // Return whether the named parameter is currently in scope
-    ExpressionVariable *parameterInScope(ProcedureNode *queryingNode, std::string_view name,
-                                         ExpressionVariable *excludeParameter = nullptr);
+    // Return the named parameter if it is currently in scope
+    std::shared_ptr<ExpressionVariable> parameterInScope(ProcedureNode *queryingNode, std::string_view name,
+                                                         std::shared_ptr<ExpressionVariable> excludeParameter = nullptr);
     // Return whether the named parameter exists in this sequence or its children (branches)
-    ExpressionVariable *parameterExists(std::string_view name, ExpressionVariable *excludeParameter = nullptr) const;
+    std::shared_ptr<ExpressionVariable> parameterExists(std::string_view name,
+                                                        std::shared_ptr<ExpressionVariable> excludeParameter = nullptr) const;
     // Create and return reference list of parameters in scope
-    RefList<ExpressionVariable> parametersInScope(ProcedureNode *queryingNode);
+    std::vector<std::shared_ptr<ExpressionVariable>> parametersInScope(ProcedureNode *queryingNode);
 
     /*
      * Execute

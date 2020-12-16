@@ -93,8 +93,11 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
         // Need two args...
         if (parser.hasArg(startArg + 1))
         {
+            // Get any variables currently in scope
+            auto vars = parentNode_->parametersInScope();
+
             // Parse the value to start with...
-            if (!KeywordData<Venum<NodeValue, E>>::data_.value().set(parser.argsv(startArg), parentNode_->parametersInScope()))
+            if (!KeywordData<Venum<NodeValue, E>>::data_.value().set(parser.argsv(startArg), vars))
                 return false;
 
             // Now the enum option
@@ -127,7 +130,10 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
             return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",
                                     KeywordBase::name());
 
-        bool result = KeywordData<Venum<NodeValue, E>>::data_.value().set(expressionText, parentNode_->parametersInScope());
+        // Get any variables currently in scope
+        auto vars = parentNode_->parametersInScope();
+
+        bool result = KeywordData<Venum<NodeValue, E>>::data_.value().set(expressionText, vars);
 
         KeywordData<Venum<NodeValue, E>>::hasBeenSet();
 

@@ -4,8 +4,8 @@
 #pragma once
 
 #include "gui/keywordwidgets/base.h"
-#include "gui/keywordwidgets/ui_expressionvariablelist.h"
-#include "keywords/expressionvariablelist.h"
+#include "gui/keywordwidgets/ui_expressionvariablevector.h"
+#include "keywords/expressionvariablevector.h"
 #include "procedure/nodes/node.h"
 
 Q_DECLARE_METATYPE(ExpressionNode *);
@@ -13,31 +13,31 @@ Q_DECLARE_METATYPE(ExpressionNode *);
 // Forward Declarations
 class QWidget;
 
-class ExpressionVariableListKeywordWidget : public QWidget, public KeywordWidgetBase
+class ExpressionVariableVectorKeywordWidget : public QWidget, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro
     Q_OBJECT
 
     public:
-    ExpressionVariableListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    ExpressionVariableVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
     /*
      * Keyword
      */
     private:
     // Associated keyword
-    ExpressionVariableListKeyword *keyword_;
+    ExpressionVariableVectorKeyword *keyword_;
 
     /*
      * Widgets
      */
     private:
     // Main form declaration
-    Ui::ExpressionVariableListWidget ui_;
+    Ui::ExpressionVariableVectorWidget ui_;
 
     private:
     // Variable table update function
-    void updateVariableTableRow(int row, ExpressionNode *node, bool createItem);
+    void updateVariableTableRow(int row, std::shared_ptr<ExpressionVariable> variable, bool createItem);
 
     private slots:
     // Variables table item changed

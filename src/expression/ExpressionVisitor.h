@@ -4,7 +4,8 @@
 #pragma once
 
 #include "ExpressionParserBaseVisitor.h"
-#include "expression/expressionNEW.h"
+#include "expression/expression.h"
+#include "templates/optionalref.h"
 #include <antlr4-runtime.h>
 
 // Expression Visitor for ANTLR
@@ -14,20 +15,21 @@ class ExpressionVisitor : ExpressionParserBaseVisitor
      * Creation Entry-Point
      */
     private:
-    // Target ExpressionDefinition
-    ExpressionNEW *expression_;
+    // Target Expression
+    Expression *expression_;
     // External variables available to this expression
-    RefList<ExpressionVariable> externalVariables_;
+    OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> externalVariables_;
     // Context stack
-    std::vector<std::shared_ptr<ExpressionNodeNEW>> contextStack_;
+    std::vector<std::shared_ptr<ExpressionNode>> contextStack_;
 
     private:
     // Return the topmost context in the stack
-    std::shared_ptr<ExpressionNodeNEW> currentContext() const;
+    std::shared_ptr<ExpressionNode> currentContext() const;
 
     public:
     // Construct description within supplied object, from given tree
-    void create(ExpressionNEW &expr, ExpressionParser::ExpressionContext *tree, RefList<ExpressionVariable> externalVariables);
+    void create(Expression &expr, ExpressionParser::ExpressionContext *tree,
+                OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> externalVariables);
 
     /*
      * Visitor Overrides
