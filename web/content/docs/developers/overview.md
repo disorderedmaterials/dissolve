@@ -24,19 +24,14 @@ Dissolve is written entirely in C++. For relevant conventions and guidelines reg
 The CMake build sytem is used in provide cross-platform compatibility.
 
 ### Executable Targets
-- `dissolve-serial`: Serial CLI version.
-- `dissolve`: (Optional) Parallel CLI version (requires suitable MPI compiler).
+- `dissolve`: Serial CLI version.
+- `dissolve-mpi`: (Optional) Parallel CLI version (requires suitable MPI compiler).
 - `dissolve-gui`: (Optional) Graphical user interface for Dissolve.
 
-Note that binaries are named as listed above only on Linux and OSX. Windows binaries are built as `Dissolve-Serial`, `Dissolve`, and `Dissolve-GUI`.
+Note that binaries are named as listed above only on Linux and OSX. Windows binaries are built as `Dissolve`, `Dissolve-MPI`, and `Dissolve-GUI`.
 
 ### External Dependencies
-- `dissolve-serial`: Bison (required for construction of various parser-lexers).
-- `dissolve`: Suitable MPI library (e.g. OpenMPI 1.10+).
-- `dissolve-gui`: Qt 5 (Qt5Gui, Qt5OpenGL, Qt5Widgets, and Qt5PrintSupport), Freetype2, FTGL.
-
-### Compilation Flags
-Use `-DCHECKS=1`, `-DGUI=1`, or `-DPARALLEL=1` to enable the options described above in the CMake build.
+Dissolve has a modest set of external dependencies, as detailed in the [compilation]({{< ref "compilation" >}}) instructions.
 
 ## Source Tree Layout
 All source files are contained within the `src/` directory which is laid out as follows:
@@ -57,5 +52,5 @@ All source files are contained within the `src/` directory which is laid out as 
 - `main`: Main class providing Dissolve's core object.
 - `math`: Math-related classes, including classes containing (static) data operations and methods.
 - `module`: Base definition and associated helper classes for defining and handling [modules]({{< ref "moduledev" >}}).
-- `modules`: Repository containing subdirectores defining individual modules.
+- `modules`: Repository containing subdirectories defining individual modules.
 - `templates`: Template classes providing general, context-free functionality.

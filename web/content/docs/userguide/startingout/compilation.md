@@ -24,12 +24,11 @@ Regardless of which version is being built, several external libraries are alway
 
 - [`libfmt`](https://github.com/fmtlib/fmt) >= v7, to provide flexible and type-safe output formatting
 - [`CLI11`](https://github.com/CLIUtils/CLI11) >= v1.9.1, to provide coherent handling of command line arguments
-- [`bison`](https://www.gnu.org/software/bison/), required to implement various grammars (e.g. equation parsing)
 - [`ANTLR4`](https://www.antlr.org/) >= v4.7.2, required to implement various grammars (e.g. NETA)
 
 Satisfying these dependencies is enough to build the serial version. For the parallel and GUI versions additional libraries are required, detailed in the following sections.
 
-Some of these dependencies can be installed from standard sources for your particular operating system (e.g. `bison`), while others can be done so easily via the [`conan`](https://conan.io/) package manager. Dissolve uses `conan` as far as is possible in order to satisfy these external dependencies.
+Dissolve uses the [`Conan`](https://conan.io/) package manager to satisfy external dependencies as far as possible. `ANTLR4` is not available via Conan (yet) and so must either be installed from platform-specific repositories or built alongside Dissolve using the relevant configuration options. See the [compilation instructions]({{< ref "compilation#install-antlr4" >}}) for more information.
 
 ### Dissolve (Parallel Version)
 
