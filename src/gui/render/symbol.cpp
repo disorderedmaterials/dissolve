@@ -3,6 +3,7 @@
 
 #include "gui/render/symbol.h"
 #include "base/sysfunc.h"
+#include <algorithm>
 
 namespace SymbolData
 {
@@ -70,10 +71,12 @@ const std::vector<std::tuple<Symbol, std::string, std::string, std::string>> &sy
 // Return enumeration for named symbol
 Symbol symbol(std::string_view name)
 {
-    auto it = std::find_if(symbols().begin(), symbols().end(), [&name](auto & sym){ return DissolveSys::sameString(std::get<1>(sym), name, true); }
-            return std::get<0>(sym);
-    if (it == symbols().end()) return nSymbols;
-    
+    auto it = std::find_if(symbols().begin(), symbols().end(),
+                           [&name](auto &sym) { return DissolveSys::sameString(std::get<1>(sym), name, true); });
+
+    if (it == symbols().end())
+        return nSymbols;
+
     return std::get<0>(*it);
 }
 
@@ -86,11 +89,12 @@ std::string_view description(Symbol sym) { return std::get<3>(symbols()[sym]); }
 // Return first symbol whose description contains the search text
 Symbol firstDescriptionMatch(std::string_view text)
 {
-    for (const auto &sym : symbols())
-        if (std::get<3>(sym).find(text) != std::string::npos)
-            return std::get<0>(sym);
+    auto it = std::find_if(symbols().begin(), symbols().end(),
+                           [&text](auto &sym) { return std::get<3>(sym).find(text) != std::string::npos; });
+    if (it == symbols().end())
+        return nSymbols;
 
-    return nSymbols;
+    return std::get<0>(*it);
 }
 
 }; // namespace SymbolData
