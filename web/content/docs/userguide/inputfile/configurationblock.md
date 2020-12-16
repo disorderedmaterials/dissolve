@@ -5,7 +5,7 @@ description: Describes the contents of a representative system, and how to gener
 
 ## Overview
 
-A `Configuration` block provides a complete description of an atomic / molecular system - e.g. a liquid, crystal, glass, or mixture thereof. A definition of how this system should be created is constructed in a subsection called the 'generator' - within that section, references are made to the species present in the configuration. As such, they must have already been defined in one or more [`Species`](species) blocks _before_ the `Configuration` block in the input file.
+A `Configuration` block provides a complete description of an atomic / molecular system - e.g. a liquid, crystal, glass, or mixture thereof. A definition of how this system should be created is constructed in a subsection called the 'generator' - within that section, references are made to the species present in the configuration. As such, they must have already been defined in one or more [`Species`]({{< ref "speciesblock" >}}) blocks _before_ the `Configuration` block in the input file.
 
 The block keyword itself takes a single (required) argument - the name of the configuration. This name is used to reference the configuration when, for example, specifying [module]({{< ref "moduleblock" >}}) targets.
 

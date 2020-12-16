@@ -17,7 +17,7 @@ This overview provides implementation details on data storage and management tec
 
 ### Brief
 
-The core functionality of Dissolve is contained within independent [modules](../modules), which may run in any order. Each module typically creates useful data that are of interest to the user (e.g. calculations which yield some specific property of interest), to other modules (which take pre-existing data and use it as the basis for other calculations), or which is necessary to store in order to permit a successful restart of the simulation (i.e. historic data used when performing averaging). These data may be PODs, opaque classes, or templated objects.
+The core functionality of Dissolve is contained within independent [modules]({{< ref "modules" >}}), which may run in any order. Each module typically creates useful data that are of interest to the user (e.g. calculations which yield some specific property of interest), to other modules (which take pre-existing data and use it as the basis for other calculations), or which is necessary to store in order to permit a successful restart of the simulation (i.e. historic data used when performing averaging). These data may be PODs, opaque classes, or templated objects.
 
 ### Rationale
 

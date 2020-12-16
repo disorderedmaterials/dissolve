@@ -6,7 +6,7 @@ linkTitle = "Packages"
 {{< blocks/cover title="Packages" image_anchor="top" height="min" >}}
 <div class="mx-auto">
     <p class="lead mt-1">Current Release: <a href="#release">{{< releaseversion >}}</a></p>
-    <p class="lead mt-1">Development Version: <a href="#continuous">{{< continuousversion >}}</a></p>
+    <p class="lead mt-1">Development Version: <a href="#development">{{< continuousversion >}}</a></p>
 </div>
 {{< /blocks/cover >}}
 

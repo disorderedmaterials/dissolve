@@ -4,7 +4,7 @@ weight: 2
 description: Compilation instructions
 ---
 
-{{< tip text="Pre-built binaries for most desktop systems are available in the [packages](packages) section - don't compile Dissolve if you don't have to!" >}}
+{{< tip text="Pre-built binaries for most desktop systems are available in the [packages](/packages/) section - don't compile Dissolve if you don't have to!" >}}
 
 Dissolve uses `CMake` in order to provide a consistent build system across Window, OSX, and Linux.
 
