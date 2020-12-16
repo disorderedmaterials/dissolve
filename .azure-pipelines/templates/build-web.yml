@@ -35,7 +35,7 @@ steps:
   - bash: |
       set -ex
       sudo npm install -g link-checker
-      link-checker --disable-external web/
+      link-checker --disable-external web/public
     displayName: 'Check Links'
   - task: DownloadSecureFile@1
     name: privateKey
