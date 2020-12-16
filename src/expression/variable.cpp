@@ -16,7 +16,6 @@ ExpressionVariable::ExpressionVariable(ExpressionValue value, bool readOnly) : E
     readOnly_ = readOnly;
 }
 
-// Destructor (virtual)
 ExpressionVariable::~ExpressionVariable() {}
 
 // Set name of variable

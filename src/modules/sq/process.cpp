@@ -78,11 +78,8 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto &unweightedgr =
         GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedGR", rdfModule->uniqueName());
 
-    // Get effective atomic density of summed g(r)
-    if (!dissolve.processingModuleData().contains("EffectiveRho", rdfModule->uniqueName()))
-        return Messenger::error("Couldn't locate effective atomic density from module '{}'.\n", rdfModule->uniqueName());
-    const auto &rho =
-        GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", rdfModule->uniqueName());
+    // Get effective atomic density of underlying g(r)
+    const auto rho = rdfModule->effectiveDensity();
 
     // Does a PartialSet already exist for this Configuration?
     bool wasCreated;

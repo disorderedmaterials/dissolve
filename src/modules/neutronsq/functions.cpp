@@ -85,31 +85,21 @@ bool NeutronSQModule::calculateWeightedSQ(const PartialSet &unweightedsq, Partia
 // Calculate neutron weights for relevant Configuration targets
 void NeutronSQModule::calculateWeights(const RDFModule *rdfModule, NeutronWeights &weights) const
 {
-    // Construct weights matrix based on Isotopologue specifications and Species populations in the underlying configurations
-    // TODO This info would be better calculated by the RDFModule and stored there / associated to it (#400)
-    // TODO Following code should exist locally in RDFModule::sumUnweightedGR() when suitable class storage is available.
+    // Clear weights and get species populations from RDFModule
     weights.clear();
-    for (auto *cfg : rdfModule->targetConfigurations())
+    auto populations = rdfModule->speciesPopulations();
+
+    for (auto speciesPop : populations)
     {
-        // TODO Assume weight of 1.0 per configuration now, until #398/#400 are addressed.
-        const auto CFGWEIGHT = 1.0;
-
-        ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
-        while (auto *spInfo = spInfoIterator.iterate())
+        // Find the defined Isotopologue for this Species - if it doesn't exist, use the Natural one
+        auto isoRef = isotopologues_.getIsotopologues(speciesPop.first);
+        if (isoRef)
         {
-            auto *sp = spInfo->species();
-
-            // Find the defined Isotopologue for this Species - if it doesn't exist, use the Natural one
-            auto isoRef = isotopologues_.getIsotopologues(sp);
-            if (isoRef)
-            {
-                const Isotopologues &topes = *isoRef;
-                for (const auto &isoWeight : topes.constMix())
-                    weights.addIsotopologue(spInfo->species(), spInfo->population() * CFGWEIGHT, isoWeight.isotopologue(),
-                                            isoWeight.weight());
-            }
-            else
-                weights.addIsotopologue(sp, spInfo->population() * CFGWEIGHT, sp->naturalIsotopologue(), 1.0);
+            const Isotopologues &topes = *isoRef;
+            for (const auto &isoWeight : topes.constMix())
+                weights.addIsotopologue(speciesPop.first, speciesPop.second, isoWeight.isotopologue(), isoWeight.weight());
         }
+        else
+            weights.addIsotopologue(speciesPop.first, speciesPop.second, speciesPop.first->naturalIsotopologue(), 1.0);
     }
 }

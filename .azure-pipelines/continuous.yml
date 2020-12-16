@@ -41,6 +41,7 @@ stages:
             displayName: 'Publish Linux Artifacts'
       - job: 'osx_serialgui'
         displayName: 'Build OSX (Serial/GUI, macos-latest)'
+        timeoutInMinutes: 120
         pool:
           vmImage: 'macos-latest' 
         steps:
@@ -55,8 +56,8 @@ stages:
               ArtifactName: 'osx-artifacts'
             displayName: 'Publish OSX Artifacts'
       - job: 'windows_serialgui'
-        timeoutInMinutes: 120
         displayName: 'Build Windows (Serial/GUI, windows-latest)'
+        timeoutInMinutes: 120
         pool:
           vmImage: 'windows-latest' 
         steps:
