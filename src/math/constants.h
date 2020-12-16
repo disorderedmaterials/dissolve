@@ -3,6 +3,8 @@
 
 #pragma once
 
+#include <cmath>
+
 // Permittivity of free space (m-3 kg-1 s4 A2)
 #define EPSILON0 8.85418782E-12
 
