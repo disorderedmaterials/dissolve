@@ -32,6 +32,11 @@ steps:
       # Remove language ('en') from 'Edit on GitHub' path links
       find web/public/ -iname *.html -exec sed -i "s:${{ parameters.web_dir_root }}/content/en/docs/:${{ parameters.web_dir_root }}/content/docs/:g" {} +
     displayName: 'Rewrite Edit Links'
+  - bash: |
+      set -ex
+      sudo npm install -g link-checker
+      link-checker --disable-external web/
+    displayName: 'Check Links'
   - task: DownloadSecureFile@1
     name: privateKey
     inputs:
