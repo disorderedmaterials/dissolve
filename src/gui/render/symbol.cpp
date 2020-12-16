@@ -70,11 +70,11 @@ const std::vector<std::tuple<Symbol, std::string, std::string, std::string>> &sy
 // Return enumeration for named symbol
 Symbol symbol(std::string_view name)
 {
-    for (const auto &sym : symbols())
-        if (DissolveSys::sameString(std::get<1>(sym), name, true))
+    auto it = std::find_if(symbols().begin(), symbols().end(), [&name](auto & sym){ return DissolveSys::sameString(std::get<1>(sym), name, true); }
             return std::get<0>(sym);
-
-    return nSymbols;
+    if (it == symbols().end()) return nSymbols;
+    
+    return std::get<0>(*it);
 }
 
 // Return symbol string
