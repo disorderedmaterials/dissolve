@@ -67,7 +67,7 @@ bool ConfigurationRefListKeyword::write(LineParser &parser, std::string_view key
     // Loop over list of Configuration
     std::string configurationString;
     for (Configuration *cfg : data_)
-        configurationString += fmt::format("  '{}'", cfg->name());
+        configurationString += fmt::format("{}'{}'", configurationString.empty() ? "" : "  ", cfg->name());
 
     if (!parser.writeLineF("{}{}  {}\n", prefix, keywordName, configurationString))
         return false;

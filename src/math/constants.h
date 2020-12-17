@@ -3,6 +3,9 @@
 
 #pragma once
 
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 // Permittivity of free space (m-3 kg-1 s4 A2)
 #define EPSILON0 8.85418782E-12
 
@@ -19,7 +22,7 @@
 #define HALFPI 1.570796326794896
 
 // Degrees per Radian
-#define DEGRAD 57.295779578552
+const double DEGRAD = 180.0 / M_PI;
 
 // Angstroms per Bohr
 #define ANGBOHR 0.529177249
