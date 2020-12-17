@@ -227,6 +227,8 @@ void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
         return;
 
     configuration_->setRequestedSizeFactor(value);
+
+    dissolveWindow_->setModified();
 }
 
 /*
