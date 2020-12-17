@@ -319,6 +319,12 @@ bool Dissolve::saveInput(std::string_view filename)
                                cfg->temperature()))
             return false;
 
+        if (!parser.writeLineF("\n"))
+            return false;
+        if (!parser.writeLineF("  {}  {}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::SizeFactorKeyword),
+                               cfg->requestedSizeFactor()))
+            return false;
+
         // Modules
         if (!parser.writeLineF("\n  # Modules\n"))
             return false;

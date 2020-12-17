@@ -172,17 +172,16 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
     // Set requested size factor for Box
     void setRequestedSizeFactor(double factor);
     // Return requested size factor for Box
-    double requestedSizeFactor();
+    double requestedSizeFactor() const;
     // Return last size factor applied to Box / Cells
-    double appliedSizeFactor();
+    double appliedSizeFactor() const;
     // Set requested side length for individual Cell
     void setRequestedCellDivisionLength(double a);
     // Return requested side length for individual Cell
     double requestedCellDivisionLength() const;
     // Return cell array
     CellArray &cells();
-    // Return cell array
-    const CellArray &constCells() const;
+    const CellArray &cells() const;
     // Scale Box, Cells, and Molecule geometric centres according to current size factor
     void applySizeFactor(const PotentialMap &potentialMap);
 
