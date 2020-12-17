@@ -3,7 +3,22 @@
 
 #include "expression/unary.h"
 
-ExpressionUnaryOperatorNode::ExpressionUnaryOperatorNode(UnaryOperator op) : ExpressionNodeNEW(), operator_(op) {}
+ExpressionUnaryOperatorNode::ExpressionUnaryOperatorNode(UnaryOperator op) : ExpressionNode(), operator_(op) {}
+
+/*
+ * Nodes
+ */
+
+// Duplicate this node and its contents
+std::shared_ptr<ExpressionNode> ExpressionUnaryOperatorNode::duplicate()
+{
+    auto node = std::make_shared<ExpressionUnaryOperatorNode>(operator_);
+
+    for (auto child : children_)
+        node->addChild(child->duplicate());
+
+    return node;
+}
 
 /*
  * Evaluation
@@ -32,6 +47,8 @@ std::optional<ExpressionValue> ExpressionUnaryOperatorNode::evaluate() const
             else
                 result = -rhs.asDouble();
             break;
+        default:
+            throw(std::runtime_error(fmt::format("ExpressionUnaryOperatorNode - unhandled operator {}.\n", operator_)));
     }
 
     return result;

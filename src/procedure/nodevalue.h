@@ -4,11 +4,7 @@
 #pragma once
 
 #include "expression/expression.h"
-#include "templates/reflist.h"
-
-// Forward Declarations
-class Configuration;
-class LineParser;
+#include "templates/optionalref.h"
 
 // Node Value
 class NodeValue
@@ -17,7 +13,8 @@ class NodeValue
     NodeValue();
     NodeValue(const int i);
     NodeValue(const double d);
-    NodeValue(std::string_view expressionText, RefList<ExpressionVariable> parameters);
+    NodeValue(std::string_view expressionText,
+              OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters = std::nullopt);
     ~NodeValue();
     void operator=(const int value);
     void operator=(const double value);
@@ -49,7 +46,8 @@ class NodeValue
     // Set double value
     bool set(double value);
     // Set from expression text
-    bool set(std::string_view expressionText, RefList<ExpressionVariable> parameters);
+    bool set(std::string_view expressionText,
+             OptionalReferenceWrapper<const std::vector<std::shared_ptr<ExpressionVariable>>> parameters = std::nullopt);
     // Return whether value is currently valid
     bool isValid() const;
 

@@ -20,7 +20,7 @@ The resulting box will have a side length of just over 24.5 &#8491;.
 
 {{< cimage src="../benzenebox.png" caption="Initial, randomised benzene box containing 100 molecules" >}}
 
-Since the molecules were added to the box completely at random, there will most likely be some that overlap quite a lot. Since our molecule has a ring, this can lead to situations where molecules become interlocked, and which will persist throughout the simulation unless we deal with them. The easiest thing to do is to to what Dissolve (and EPSR) call "size factor scaling". Basically, this allows the configuration box and the positions of the molecules to be scaled temporarily, removing bad overlaps and letting molecules move safely apart. The factor by which the box is scaled is reduced gradually until a value of 1.0 (i.e. the initial system size) is regained.
+Since the molecules were added to the box completely at random, there will most likely be some that overlap quite a lot. Since our molecule has a ring, this can lead to situations where molecules become interlocked, and which will persist throughout the simulation unless we deal with them. The easiest thing to do is to use what Dissolve (and EPSR) call "size factor scaling". Basically, this allows the configuration box and the positions of the molecules to be scaled temporarily, removing bad overlaps and letting molecules move safely apart. The factor by which the box is scaled is reduced gradually until a value of 1.0 (i.e. the initial system size) is regained.
 
 In anticipation of some bad contacts:
 

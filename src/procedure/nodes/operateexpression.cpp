@@ -12,14 +12,19 @@
 OperateExpressionProcedureNode::OperateExpressionProcedureNode(std::string_view expressionText)
     : OperateProcedureNodeBase(ProcedureNode::OperateExpressionNode)
 {
-    // Set up persistent variables and initial expression value
-    x_ = expression_.createDoubleVariable("x", true);
-    y_ = expression_.createDoubleVariable("y", true);
-    z_ = expression_.createDoubleVariable("z", true);
-    value_ = expression_.createDoubleVariable("value", true);
-    expression_.set(expressionText);
+    // Create variables, and add them to the vector
+    x_ = std::make_shared<ExpressionVariable>("x");
+    variables_.emplace_back(x_);
+    y_ = std::make_shared<ExpressionVariable>("y");
+    variables_.emplace_back(y_);
+    z_ = std::make_shared<ExpressionVariable>("z");
+    variables_.emplace_back(z_);
+    value_ = std::make_shared<ExpressionVariable>("value");
+    variables_.emplace_back(value_);
 
-    keywords_.add("Expression", new ExpressionKeyword(expression_), "Expression", "Expression to apply to values");
+    expression_.create(expressionText, variables_);
+
+    keywords_.add("Expression", new ExpressionKeyword(expression_, variables_), "Expression", "Expression to apply to values");
 }
 
 OperateExpressionProcedureNode::~OperateExpressionProcedureNode() {}
@@ -34,15 +39,15 @@ bool OperateExpressionProcedureNode::operateData1D(ProcessPool &procPool, Config
     const auto &x = targetData1D_->xAxis();
     auto &values = targetData1D_->values();
 
-    y_->set(0.0);
-    z_->set(0.0);
+    y_->setValue(0.0);
+    z_->setValue(0.0);
 
     // Evaluate the expression over all values
     for (auto i = 0; i < x.size(); ++i)
     {
         // Set variables in expression
-        x_->set(x[i]);
-        value_->set(values.at(i));
+        x_->setValue(x[i]);
+        value_->setValue(values.at(i));
 
         // Evaluate and store new value
         values.at(i) = expression_.asDouble();
@@ -58,19 +63,19 @@ bool OperateExpressionProcedureNode::operateData2D(ProcessPool &procPool, Config
     const auto &y = targetData2D_->yAxis();
     Array2D<double> &values = targetData2D_->values();
 
-    z_->set(0.0);
+    z_->setValue(0.0);
 
     // Evaluate the expression over all values
     for (auto i = 0; i < x.size(); ++i)
     {
         // Set x value in expression
-        x_->set(x[i]);
+        x_->setValue(x[i]);
 
         for (auto j = 0; j < y.size(); ++j)
         {
             // Set y and value in expression
-            y_->set(y[j]);
-            value_->set(values[{i, j}]);
+            y_->setValue(y[j]);
+            value_->setValue(values[{i, j}]);
 
             // Evaluate and store new value
             values[{i, j}] = expression_.asDouble();
@@ -88,26 +93,26 @@ bool OperateExpressionProcedureNode::operateData3D(ProcessPool &procPool, Config
     const auto &z = targetData3D_->zAxis();
     Array3D<double> &values = targetData3D_->values();
 
-    z_->set(0.0);
+    z_->setValue(0.0);
 
     // Evaluate the expression over all values
     for (auto i = 0; i < x.size(); ++i)
     {
         // Set x value in expression
-        x_->set(x[i]);
+        x_->setValue(x[i]);
 
         for (auto j = 0; j < y.size(); ++j)
         {
             // Set y value in expression
-            y_->set(y[j]);
+            y_->setValue(y[j]);
 
             for (auto k = 0; k < z.size(); ++k)
             {
                 // Set z and  value in expression
-                z_->set(z[k]);
+                z_->setValue(z[k]);
                 // TODO: Convert to a single loop when we have the
                 // iterator combiner
-                value_->set(values[{i, j, k}]);
+                value_->setValue(values[{i, j, k}]);
 
                 // Evaluate and store new value
                 values[{i, j, k}] = expression_.asDouble();

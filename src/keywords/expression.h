@@ -7,14 +7,22 @@
 
 // Forward Declarations
 class Expression;
+class ExpressionVariable;
 class ProcedureNode;
 
 // Keyword with Expression
 class ExpressionKeyword : public KeywordData<Expression &>
 {
     public:
-    ExpressionKeyword(Expression &expression);
+    ExpressionKeyword(Expression &expression, const std::vector<std::shared_ptr<ExpressionVariable>> &variables);
     ~ExpressionKeyword();
+
+    /*
+     * Data
+     */
+    private:
+    // Vector of variables available to the expression
+    const std::vector<std::shared_ptr<ExpressionVariable>> &variables_;
 
     /*
      * Arguments

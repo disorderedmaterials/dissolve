@@ -4,7 +4,20 @@
 #include "expression/reference.h"
 #include "expression/variable.h"
 
-ExpressionReferenceNode::ExpressionReferenceNode(ExpressionVariable *variable) : ExpressionNodeNEW(), variable_(variable) {}
+ExpressionReferenceNode::ExpressionReferenceNode(std::shared_ptr<ExpressionVariable> variable)
+    : ExpressionNode(), variable_(variable)
+{
+}
+
+/*
+ * Nodes
+ */
+
+// Duplicate this node and its contents
+std::shared_ptr<ExpressionNode> ExpressionReferenceNode::duplicate()
+{
+    return std::make_shared<ExpressionReferenceNode>(variable_);
+}
 
 /*
  * Evaluation

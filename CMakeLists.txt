@@ -47,12 +47,6 @@ endif(CHECKS)
 # Add local Modules dir to cmake search path
 LIST(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
 
-# Find basic requirements
-include(FindBISON)
-# -- Force first look for Bison to be /usr/local/bin, since version provided by XCode on OSX is too old (v2.3) 
-find_package(BISON PATHS /usr/local/bin NO_DEFAULT_PATH QUIET)
-find_package(BISON REQUIRED)
-
 # Find ANTLR4 Java
 include(FindANTLR)
 find_package(ANTLR REQUIRED)

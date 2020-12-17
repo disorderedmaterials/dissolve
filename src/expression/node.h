@@ -3,107 +3,42 @@
 
 #pragma once
 
+#include "base/enumoptions.h"
 #include "expression/value.h"
-#include "templates/listitem.h"
-#include "templates/reflist.h"
+#include <memory>
+#include <vector>
 
-// Forward declarations
+// Forward Declarations
 class Expression;
 
-// Expresison Node
-class ExpressionNode : public ListItem<ExpressionNode>
+// NETA Node
+class ExpressionNode
 {
     public:
-    ExpressionNode();
+    ExpressionNode() = default;
     virtual ~ExpressionNode();
-    // List pointers (for argument list)
-    ExpressionNode *nextArgument, *prevArgument;
-    // Node Types
-    enum NodeType
-    {
-        BasicNode,
-        FunctionNode,
-        ValueNode,
-        VariableNode,
-        VariableValueNode,
-        nNodeTypes
-    };
-    // Copy data
-    void copy(ExpressionNode *source);
 
     /*
-     * Node Type
+     * Nodes
      */
     protected:
-    // Type of node
-    NodeType nodeType_;
-    // Pointer to parent expression
-    Expression *parent_;
+    // Child nodes
+    std::vector<std::shared_ptr<ExpressionNode>> children_;
 
     public:
-    // Retrieve node type
-    NodeType nodeType() const;
-    // Set parent
-    void setParent(Expression *parent);
-    // Retrieve parent
-    Expression *parent() const;
+    // Clear all nodes
+    void clear();
+    // Add child node
+    void addChild(std::shared_ptr<ExpressionNode> node);
+    // Return number of children
+    int nChildren() const;
+    // Duplicate this node and its contents
+    virtual std::shared_ptr<ExpressionNode> duplicate() = 0;
 
     /*
-     * Argument Data
-     */
-    protected:
-    // Arguments (if any) to leaf node operation
-    RefList<ExpressionNode> args_;
-
-    public:
-    // Return number of arguments currently assigned to node
-    int nArgs() const;
-    // Add list of arguments formas as a plain List<Node>, beginning from supplied list head
-    void addListArguments(ExpressionNode *leaf);
-    // Add list of arguments joined by parser, probably with list tail supplied
-    void addJoinedArguments(ExpressionNode *args);
-    // Add multiple arguments to node
-    void addArguments(int nargs, ...);
-    // Add multiple arguments to node
-    void addArgument(ExpressionNode *arg);
-    // Return (execute) argument specified
-    bool arg(int i, ExpressionValue &result);
-    // Return (execute) argument specified as a bool
-    bool argb(int i);
-    // Return (execute) argument specified as an integer
-    int argi(int i);
-    // Return (execute) argument specified as a double
-    double argd(int i);
-    // Return the Node corresponding to the argument, rather than executing it
-    ExpressionNode *argNode(int i);
-    // Set argument specified
-    bool setArg(int i, ExpressionValue &result);
-    // Return whether argument i was given
-    bool hasArg(int i);
-
-    /*
-     * Node Character
-     */
-    protected:
-    // Whether node is read-only
-    bool readOnly_;
-
-    public:
-    // Set the readonly status of the node to true
-    void setReadOnly();
-    // Return the readonly status of the node
-    bool readOnly() const;
-
-    /*
-     * Node Data Set / Get / Execute
+     * Evaluation
      */
     public:
-    // Set from value
-    virtual bool set(ExpressionValue value) = 0;
-    // Get reduced value of node
-    virtual bool execute(ExpressionValue &result) = 0;
-    // Print layout of current node
-    virtual void nodePrint(int offset, std::string_view prefix = "") = 0;
-    // Reset node
-    virtual bool initialise() = 0;
+    // Evaluate node
+    virtual std::optional<ExpressionValue> evaluate() const = 0;
 };

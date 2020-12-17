@@ -3,13 +3,13 @@
 
 #include "expression/ExpressionErrorListeners.h"
 #include "base/messenger.h"
-#include "expression/expressionNEW.h"
+#include "expression/expression.h"
 
 /*
  * Expression Lexer Error Listener
  */
 
-ExpressionLexerErrorListener::ExpressionLexerErrorListener(const ExpressionNEW &expr) : expression_(expr) {}
+ExpressionLexerErrorListener::ExpressionLexerErrorListener(const Expression &expr) : expression_(expr) {}
 
 void ExpressionLexerErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *token, size_t line,
                                                size_t charPositionInLine, const std::string &message, std::exception_ptr ep)
@@ -29,7 +29,7 @@ void ExpressionLexerErrorListener::syntaxError(antlr4::Recognizer *recognizer, a
  * Expression Parser Error Listener
  */
 
-ExpressionParserErrorListener::ExpressionParserErrorListener(const ExpressionNEW &expr) : expression_(expr) {}
+ExpressionParserErrorListener::ExpressionParserErrorListener(const Expression &expr) : expression_(expr) {}
 
 void ExpressionParserErrorListener::syntaxError(antlr4::Recognizer *recognizer, antlr4::Token *token, size_t line,
                                                 size_t charPositionInLine, const std::string &message, std::exception_ptr ep)

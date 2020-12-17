@@ -6,7 +6,6 @@
 #include "gui/render/textprimitive.h"
 #include "math/cuboid.h"
 #include "math/matrix4.h"
-#include "templates/list.h"
 #include "templates/vector3.h"
 #include <QString>
 
@@ -17,17 +16,18 @@ class FontInstance;
 class TextPrimitiveList
 {
     public:
-    TextPrimitiveList();
+    TextPrimitiveList() = default;
+    ~TextPrimitiveList() = default;
 
     private:
-    // List of text primitive chunks
-    List<TextPrimitive> textPrimitives_;
+    // List of text primitives
+    std::vector<TextPrimitive> textPrimitives_;
 
     public:
     // Clear list
     void clear();
     // Add primitive to list
-    void add(FontInstance &fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition,
+    void add(FontInstance *fontInstance, QString text, Vec3<double> anchorPoint, TextPrimitive::TextAnchor anchorPosition,
              Vec3<double> adjustmentVector, Matrix4 &rotation, double textSize, bool flat);
     // Update global bounding cuboid for all text primitives in the list
     Cuboid boundingCuboid(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize,

@@ -28,7 +28,7 @@ ModuleRefListKeyword::~ModuleRefListKeyword() {}
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool ModuleRefListKeyword::isDataEmpty() const { return data_.nItems() > 0; }
+bool ModuleRefListKeyword::isDataEmpty() const { return data_.nItems() == 0; }
 
 // Return the Module type(s) to allow
 const std::vector<std::string> &ModuleRefListKeyword::moduleTypes() const { return moduleTypes_; }

@@ -136,10 +136,10 @@ const Data1D &RenderableData1D::transformedData()
 
     // If the value transform is not enabled, just return the original data
     if (!valuesTransform_.enabled())
-        return *source_;
-
-    // Make sure the transformed data is up-to-date
-    transformValues();
+        transformedData_ = *source_;
+    else
+        // Make sure the transformed data is up-to-date
+        transformValues();
 
     return transformedData_;
 }

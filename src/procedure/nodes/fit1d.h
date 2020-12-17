@@ -59,16 +59,22 @@ class Fit1DProcedureNode : public ProcedureNode
     Expression equation_;
     // Data against which to fit
     Data1D referenceData_;
-    // X variable for equation
-    ExpressionVariable *xVariable_;
-    // List of variables that we use, but are not fitting
-    RefList<ExpressionVariable> constants_;
-    // List of variables which we are fitting
-    RefList<ExpressionVariable> fitTargets_;
+    // Vector of variables accessible by the fitting equation
+    std::vector<std::shared_ptr<ExpressionVariable>> variables_;
+    // Data variables accessible by the transform equation
+    std::shared_ptr<ExpressionVariable> xVariable_;
+    // Vector of variables that we use, but are not fitting
+    std::vector<std::shared_ptr<ExpressionVariable>> constants_;
+    // Vector of variables which we are fitting
+    std::vector<std::shared_ptr<ExpressionVariable>> fitTargets_;
     // Whether to save data after normalisation
     bool saveData_;
 
     private:
+    // Return the named fit target, if it exists
+    std::shared_ptr<ExpressionVariable> getFitTarget(std::string_view name);
+    // Return the named constant, if it exists
+    std::shared_ptr<ExpressionVariable> getConstant(std::string_view name);
     // Fitting cost function
     double equationCost(const std::vector<double> &alpha);
 

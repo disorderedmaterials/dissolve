@@ -39,11 +39,14 @@ bool Vec3NodeValueKeyword::read(LineParser &parser, int startArg, CoreData &core
 
     if (parser.hasArg(startArg + 2))
     {
-        if (!data_.x.set(parser.argsv(startArg), parentNode_->parametersInScope()))
+        // Get any variables currently in scope
+        auto vars = parentNode_->parametersInScope();
+
+        if (!data_.x.set(parser.argsv(startArg), vars))
             return false;
-        if (!data_.y.set(parser.argsv(startArg + 1), parentNode_->parametersInScope()))
+        if (!data_.y.set(parser.argsv(startArg + 1), vars))
             return false;
-        if (!data_.z.set(parser.argsv(startArg + 2), parentNode_->parametersInScope()))
+        if (!data_.z.set(parser.argsv(startArg + 2), vars))
             return false;
 
         hasBeenSet();
@@ -71,7 +74,10 @@ bool Vec3NodeValueKeyword::setValue(int index, std::string_view expressionText)
     if ((index < 0) || (index > 2))
         return Messenger::error("Index {} out of range in Vec3NodeValueKeyword::setValue().\n", index);
 
-    if (!data_[index].set(expressionText, parentNode_->parametersInScope()))
+    // Get any variables currently in scope
+    auto vars = parentNode_->parametersInScope();
+
+    if (!data_[index].set(expressionText, vars))
         return false;
 
     set_ = true;

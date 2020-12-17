@@ -4,26 +4,21 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "gui/render/textformat.h"
 #include "gui/render/textfragment.h"
-#include "math/cuboid.h"
 #include "math/matrix4.h"
-#include "templates/list.h"
+#include "templates/optionalref.h"
 #include "templates/vector3.h"
 #include <QString>
-
-// External Declarations
-extern int TextPrimitiveParser_parse();
 
 // Forward Declarations
 class FontInstance;
 
 // Text Primitive
-class TextPrimitive : public ListItem<TextPrimitive>
+class TextPrimitive
 {
     public:
-    TextPrimitive();
-    ~TextPrimitive();
+    TextPrimitive() = default;
+    ~TextPrimitive() = default;
     // Text Anchors enum
     enum TextAnchor
     {
@@ -40,19 +35,6 @@ class TextPrimitive : public ListItem<TextPrimitive>
     };
     // Return enum options for TextAnchor
     static EnumOptions<TextPrimitive::TextAnchor> &textAnchors();
-    // Escape Sequence enum
-    enum EscapeSequence
-    {
-        BoldEscape,
-        ItalicEscape,
-        NewLineEscape,
-        SubScriptEscape,
-        SuperScriptEscape,
-        SymbolEscape,
-        nEscapeSequences
-    };
-    // Return enum options for TextAnchor
-    static EnumOptions<TextPrimitive::EscapeSequence> &escapeSequences();
 
     /*
      * Definition
@@ -71,54 +53,18 @@ class TextPrimitive : public ListItem<TextPrimitive>
     // Text size
     double textSize_;
     // Text fragments to render
-    List<TextFragment> fragments_;
+    std::vector<TextFragment> fragments_;
 
     public:
     // Set data
-    void set(FontInstance &fontInstance, QString text, Vec3<double> anchorPoint, TextAnchor anchorPosition,
+    bool set(FontInstance *fontInstance, QString text, Vec3<double> anchorPoint, TextAnchor anchorPosition,
              Vec3<double> adjustmentVector, Matrix4 localRotation, double textSize, bool flat);
     // Return transformation matrix to use when rendering (including fragment scale/translation if one is specified)
     Matrix4 transformationMatrix(FontInstance &fontInstance, const Matrix4 &viewMatrixInverse, double baseFontSize,
-                                 TextFragment *fragment = nullptr);
+                                 OptionalReferenceWrapper<const TextFragment> optFragment = std::nullopt) const;
     // Calculate bounding box of primitive
-    void boundingBox(FontInstance &fontInstance, Vec3<double> &lowerLeft, Vec3<double> &upperRight);
+    void boundingBox(FontInstance &fontInstance, Vec3<double> &lowerLeft, Vec3<double> &upperRight) const;
     // Render primitive
-    void render(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse, double baseFontSize);
-
-    /*
-     * Generation
-     */
-    private:
-    // Character string source
-    static QString stringSource_;
-    // Integer position in stringSource, total length of string, and starting position of current token/function
-    static int stringPos_, stringLength_;
-    // Get next character from current input stream
-    static QChar getChar();
-    // Peek next character from current input stream
-    static QChar peekChar();
-    // 'Replace' last character read from current input stream
-    static void unGetChar();
-    // Current target for generation
-    static TextPrimitive *target_;
-    // Current FontInstance
-    static FontInstance *fontInstance_;
-    // Format stack, used when generating primitive
-    static List<TextFormat> formatStack_;
-    // Current horizontal position, used when generating primitive
-    static double horizontalPosition_;
-
-    public:
-    // Parser lexer, called by yylex()
-    static int lex();
-    // Generate TextFragment data for specified TextPrimitive from supplied string
-    static bool generateFragments(FontInstance *fontInstance, TextPrimitive *target, QString inputString);
-    // Return current target TextPrimitive
-    static TextPrimitive *target();
-    // Add text fragment
-    bool addFragment(QString text);
-    // Add escape marker
-    static bool addEscape(TextPrimitive::EscapeSequence escSeq);
-    // Remove escape marker
-    static void removeEscape();
+    void render(FontInstance &fontInstance, const Matrix4 &viewMatrix, const Matrix4 &viewMatrixInverse,
+                double baseFontSize) const;
 };

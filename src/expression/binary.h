@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "expression/nodeNEW.h"
+#include "expression/node.h"
 
 // Expression Binary Operator Node
-class ExpressionBinaryOperatorNode : public ExpressionNodeNEW
+class ExpressionBinaryOperatorNode : public ExpressionNode
 {
     public:
     // Binary Operators Enum
@@ -20,6 +20,13 @@ class ExpressionBinaryOperatorNode : public ExpressionNodeNEW
     };
     ExpressionBinaryOperatorNode(BinaryOperator op);
     ~ExpressionBinaryOperatorNode() = default;
+
+    /*
+     * Nodes
+     */
+    protected:
+    // Duplicate this node and its contents
+    std::shared_ptr<ExpressionNode> duplicate();
 
     /*
      * Data

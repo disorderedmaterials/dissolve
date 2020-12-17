@@ -3,7 +3,6 @@
 
 #include "math/transformer.h"
 #include "data3d.h"
-#include "expression/generator.h"
 #include "expression/variable.h"
 #include "math/data1d.h"
 #include "math/data2d.h"
@@ -11,11 +10,16 @@
 
 Transformer::Transformer()
 {
-    // Add persistent variable trio to equation
-    x_ = equation_.createDoubleVariable("x", true);
-    y_ = equation_.createDoubleVariable("y", true);
-    z_ = equation_.createDoubleVariable("z", true);
-    value_ = equation_.createDoubleVariable("value", true);
+    // Create variables, and add them to the vector
+    x_ = std::make_shared<ExpressionVariable>("x");
+    variables_.emplace_back(x_);
+    y_ = std::make_shared<ExpressionVariable>("y");
+    variables_.emplace_back(y_);
+    z_ = std::make_shared<ExpressionVariable>("z");
+    variables_.emplace_back(z_);
+    value_ = std::make_shared<ExpressionVariable>("value");
+    variables_.emplace_back(value_);
+
     valid_ = false;
 }
 
@@ -43,12 +47,12 @@ bool Transformer::enabled() const { return enabled_; }
 // Set equation, returning if it was successfully generated
 bool Transformer::setEquation(std::string_view equation)
 {
-    valid_ = equation_.set(equation);
+    valid_ = equation_.create(equation, variables_);
 
     return valid_;
 }
 
-// Return text used to generate last equation_
+// Return text used to generate last equation
 std::string_view Transformer::text() const { return equation_.expressionString(); }
 
 // Return whether current equation is valid
@@ -73,9 +77,9 @@ void Transformer::transformValues(Data1D &data)
     for (auto n = 0; n < data.nValues(); ++n)
     {
         // Set values in equations
-        x_->set(xAxis[n]);
-        y_->set(values[n]);
-        value_->set(values[n]);
+        x_->setValue(xAxis[n]);
+        y_->setValue(values[n]);
+        value_->setValue(values[n]);
 
         // Perform transform
         values[n] = equation_.asDouble();
@@ -98,15 +102,15 @@ void Transformer::transformValues(Data2D &data)
     for (auto i = 0; i < xAxis.size(); ++i)
     {
         // Set x value in equation
-        x_->set(xAxis[i]);
+        x_->setValue(xAxis[i]);
 
         // Loop over Y axis points
         for (auto j = 0; j < yAxis.size(); ++j)
         {
             // Set y and value (z) values in equation
-            y_->set(yAxis[j]);
-            z_->set(values[{i, j}]);
-            value_->set(values[{i, j}]);
+            y_->setValue(yAxis[j]);
+            z_->setValue(values[{i, j}]);
+            value_->setValue(values[{i, j}]);
 
             // Perform transform
             values[{i, j}] = equation_.asDouble();
@@ -131,19 +135,19 @@ void Transformer::transformValues(Data3D &data)
     for (auto i = 0; i < xAxis.size(); ++i)
     {
         // Set x value in equation
-        x_->set(xAxis[i]);
+        x_->setValue(xAxis[i]);
 
         // Loop over Y axis points
         for (auto j = 0; j < yAxis.size(); ++j)
         {
             // Set y and value (z) values in equation
-            y_->set(yAxis[j]);
+            y_->setValue(yAxis[j]);
 
             // Loop over z values
             for (auto k = 0; k < zAxis.size(); ++k)
             {
-                z_->set(values[{i, j, k}]);
-                value_->set(values[{i, j, k}]);
+                z_->setValue(values[{i, j, k}]);
+                value_->setValue(values[{i, j, k}]);
 
                 // Perform transform
                 values[{i, j, k}] = equation_.asDouble();

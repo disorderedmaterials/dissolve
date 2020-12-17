@@ -50,7 +50,7 @@ Configuration  'Water100k'
   # Modules
   Generator
     Parameters
-      Real  rho  1.000000e-01
+      Parameter  rho  1.000000e-01
     EndParameters
     Box
       Lengths  1.000000e+00  1.000000e+00  1.000000e+00

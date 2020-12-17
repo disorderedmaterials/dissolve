@@ -12,7 +12,8 @@ The new layer contains the following modules:
 | Module | Purpose |
 |--------|---------|
 | [`RDF`]({{< ref "rdf" >}}) | Calculates partial g(r) between every pair of atom types, and sums them into the total G(r) |
-| [`NeutronSQ`]({{< ref "neutronsq" >}}) | Fourier transforms the g(r) calculated by an [`RDF`]({{< ref "rdf" >}}) module to generate S(Q) and the neutron-weighted total structure factor F(Q) |
+| [`SQ`]({{< ref "sq" >}}) | Calculates partial S(Q) between every pair of atom types by Fourier-transforming a source set of g(r), and sums them into the total F(Q) |
+| [`NeutronSQ`]({{< ref "neutronsq" >}}) | Takes the S(Q) calculated by an [`SQ`]({{< ref "sq" >}}) module to generate the neutron-weighted partial and total structure factors |
 
 This time we will need to set a few parameters in the [`NeutronSQ`]({{< ref "neutronsq" >}}) module, in particular informing it of the isotopic composition of our system and loading in reference data.
 
