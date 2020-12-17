@@ -1,8 +1,8 @@
-# Input file written by Dissolve v0.5.1 at 10:41:34 on 14-01-2020.
+# Input file written by Dissolve v0.7.0 at 10:54:15 on 17-12-2020.
 
-#------------------------------------------------------------------------------#
+#==============================================================================#
 #                                 Master Terms                                 #
-#------------------------------------------------------------------------------#
+#==============================================================================#
 
 Master
   Bond  'CA-CA'  Harmonic  3924.590     1.400
@@ -14,24 +14,24 @@ Master
   Torsion  'HA-CA-CA-HA'  Cos3     0.000    30.334     0.000
 EndMaster
 
-#------------------------------------------------------------------------------#
+#==============================================================================#
 #                                   Species                                    #
-#------------------------------------------------------------------------------#
+#==============================================================================#
 
 Species 'Benzene'
   # Atoms
-  Atom    1    C  -1.399000e+00  1.600000e-01  0.000000e+00  'CA'  -1.150000e-01
-  Atom    2    C  -5.610000e-01  1.293000e+00  0.000000e+00  'CA'  -1.150000e-01
-  Atom    3    C  8.390000e-01  1.132000e+00  0.000000e+00  'CA'  -1.150000e-01
-  Atom    4    C  1.399000e+00  -1.600000e-01  0.000000e+00  'CA'  -1.150000e-01
-  Atom    5    C  5.600000e-01  -1.293000e+00  0.000000e+00  'CA'  -1.150000e-01
-  Atom    6    C  -8.390000e-01  -1.132000e+00  0.000000e+00  'CA'  -1.150000e-01
-  Atom    7    H  1.483000e+00  2.001000e+00  0.000000e+00  'HA'  1.150000e-01
-  Atom    8    H  2.472000e+00  -2.840000e-01  0.000000e+00  'HA'  1.150000e-01
-  Atom    9    H  9.910000e-01  -2.284000e+00  0.000000e+00  'HA'  1.150000e-01
-  Atom   10    H  -1.483000e+00  -2.000000e+00  0.000000e+00  'HA'  1.150000e-01
-  Atom   11    H  -2.472000e+00  2.820000e-01  0.000000e+00  'HA'  1.150000e-01
-  Atom   12    H  -9.900000e-01  2.284000e+00  0.000000e+00  'HA'  1.150000e-01
+  Atom    1  C    -1.399000e+00  1.600000e-01  0.000000e+00  'CA'  -1.150000e-01
+  Atom    2  C    -5.610000e-01  1.293000e+00  0.000000e+00  'CA'  -1.150000e-01
+  Atom    3  C    8.390000e-01  1.132000e+00  0.000000e+00  'CA'  -1.150000e-01
+  Atom    4  C    1.399000e+00  -1.600000e-01  0.000000e+00  'CA'  -1.150000e-01
+  Atom    5  C    5.600000e-01  -1.293000e+00  0.000000e+00  'CA'  -1.150000e-01
+  Atom    6  C    -8.390000e-01  -1.132000e+00  0.000000e+00  'CA'  -1.150000e-01
+  Atom    7  H    1.483000e+00  2.001000e+00  0.000000e+00  'HA'  1.150000e-01
+  Atom    8  H    2.472000e+00  -2.840000e-01  0.000000e+00  'HA'  1.150000e-01
+  Atom    9  H    9.910000e-01  -2.284000e+00  0.000000e+00  'HA'  1.150000e-01
+  Atom   10  H    -1.483000e+00  -2.000000e+00  0.000000e+00  'HA'  1.150000e-01
+  Atom   11  H    -2.472000e+00  2.820000e-01  0.000000e+00  'HA'  1.150000e-01
+  Atom   12  H    -9.900000e-01  2.284000e+00  0.000000e+00  'HA'  1.150000e-01
 
   # Bonds
   Bond    1    2  @CA-CA
@@ -104,24 +104,24 @@ Species 'Benzene'
   EndSite
 EndSpecies
 
-#------------------------------------------------------------------------------#
+#==============================================================================#
 #                               Pair Potentials                                #
-#------------------------------------------------------------------------------#
+#==============================================================================#
 
 PairPotentials
   # Atom Type Parameters
   Parameters  CA  C  -1.150000e-01  LJGeometric  2.928800e-01  3.550000e+00  0.000000e+00  0.000000e+00
   Parameters  HA  H  1.150000e-01  LJGeometric  1.255200e-01  2.420000e+00  0.000000e+00  0.000000e+00
-  Range  12.000000
-  Delta  0.005000
+  Range  12.0
+  Delta  0.005
   IncludeCoulomb  True
   CoulombTruncation  Shifted
   ShortRangeTruncation  Shifted
 EndPairPotentials
 
-#------------------------------------------------------------------------------#
+#==============================================================================#
 #                                Configurations                                #
-#------------------------------------------------------------------------------#
+#==============================================================================#
 
 Configuration  'Bulk'
 
@@ -138,42 +138,42 @@ Configuration  'Bulk'
     AddSpecies
       Species  'Benzene'
       Population  '200'
+      BoxAction  AddVolume
       Density  'rho'  g/cm3
       Rotate  True
       Positioning  Random
     EndAddSpecies
   EndGenerator
 
-  Temperature  300.000000
+  Temperature  300.0
+
+  SizeFactor  10.0
 
   # Modules
   # -- None
 EndConfiguration
 
-#------------------------------------------------------------------------------#
+#==============================================================================#
 #                              Processing Layers                               #
-#------------------------------------------------------------------------------#
+#==============================================================================#
 
 Layer  'Evolve (Standard)'
   Frequency  1
 
   Module  MolShake  'MolShake01'
     Frequency  1
-
     Configuration  'Bulk'
-    RotationStepSize   1.08426e+01
-    TranslationStepSize   2.58465e-01
+    RotationStepSize   9.00000e+01
+    TranslationStepSize   3.00000e+00
   EndModule
 
   Module  MD  'MD01'
     Frequency  5
-
     Configuration  'Bulk'
   EndModule
 
   Module  Energy  'Energy01'
     Frequency  1
-
     Configuration  'Bulk'
   EndModule
 EndLayer
@@ -183,7 +183,6 @@ Layer  'Analysis'
 
   Module  CalculateAxisAngle  'CalculateAxisAngle01'
     Frequency  1
-
     Configuration  'Bulk'
     AngleRange  0.000000e+00  9.000000e+01  1.000000e+01
     SiteA  'Benzene'  'COG'
@@ -199,21 +198,18 @@ Layer  'RDF / Neutron S(Q)'
 
   Module  RDF  'RDF01'
     Frequency  1
-
     Configuration  'Bulk'
     IntraBroadening    Gaussian  1.800000e-01
   EndModule
 
   Module  SQ  'SQ01'
     Frequency  1
-
     SourceRDFs  'RDF01'
-    QBroadening  'OmegaDependentGaussian'  0.020000
+    QBroadening  'OmegaDependentGaussian'  0.02
   EndModule
 
   Module  NeutronSQ  'C6H6'
     Frequency  1
-
     SourceSQs  'SQ01'
     Reference  mint  'data/C6H6.mint01'
     EndReference
@@ -221,19 +217,17 @@ Layer  'RDF / Neutron S(Q)'
 
   Module  NeutronSQ  'C6D6'
     Frequency  1
-
     SourceSQs  'SQ01'
-    Isotopologue  'Benzene'  'Deuterated'  1.000000
+    Isotopologue  'Benzene'  'Deuterated'  1.0
     Reference  mint  'data/C6D6.mint01'
     EndReference
   EndModule
 
   Module  NeutronSQ  '5050'
     Frequency  1
-
     SourceSQs  'SQ01'
-    Isotopologue  'Benzene'  'Natural'  1.000000
-    Isotopologue  'Benzene'  'Deuterated'  1.000000
+    Isotopologue  'Benzene'  'Natural'  1.0
+    Isotopologue  'Benzene'  'Deuterated'  1.0
     Reference  mint  'data/5050.mint01'
     EndReference
   EndModule
@@ -251,9 +245,9 @@ Layer  'Refine (EPSR)'
   EndModule
 EndLayer
 
-#------------------------------------------------------------------------------#
+#==============================================================================#
 #                                  Simulation                                  #
-#------------------------------------------------------------------------------#
+#==============================================================================#
 
 Simulation
   Seed  -1
