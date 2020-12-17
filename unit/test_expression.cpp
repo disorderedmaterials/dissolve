@@ -7,7 +7,6 @@
 #include <fmt/format.h>
 #include <gtest/gtest.h>
 #include <string_view>
-#include <tuple>
 #include <vector>
 
 class ExpressionTest : public ::testing::Test
