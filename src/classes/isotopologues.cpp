@@ -140,8 +140,7 @@ bool Isotopologues::contains(const Isotopologue *iso) const
 // Return Isotopologue/weight mix
 std::vector<IsotopologueWeight> &Isotopologues::mix() { return mix_; }
 
-// Return Isotopologue/weight mix (const)
-const std::vector<IsotopologueWeight> &Isotopologues::constMix() const { return mix_; }
+const std::vector<IsotopologueWeight> &Isotopologues::mix() const { return mix_; }
 
 // Return number of Isotopologues in list
 int Isotopologues::nIsotopologues() const { return mix_.size(); }

@@ -95,8 +95,7 @@ int IsotopologueSet::nIsotopologues() const { return isotopologues_.size(); }
 // Return vector of all Isotopologues
 std::vector<Isotopologues> &IsotopologueSet::isotopologues() { return isotopologues_; }
 
-// Return vector of all Isotopologues (const)
-const std::vector<Isotopologues> &IsotopologueSet::constIsotopologues() const { return isotopologues_; }
+const std::vector<Isotopologues> &IsotopologueSet::isotopologues() const { return isotopologues_; }
 
 /*
  * GenericItemBase Implementations
