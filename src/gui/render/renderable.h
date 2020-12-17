@@ -170,8 +170,7 @@ class Renderable : public ListItem<Renderable>
     void setColour(StockColours::StockColour stockColour);
     // Return local colour definition for display
     ColourDefinition &colour();
-    // Return local colour definition for display (const)
-    const ColourDefinition &constColour() const;
+    const ColourDefinition &colour() const;
     // Return line style
     LineStyle &lineStyle();
     // Return style version

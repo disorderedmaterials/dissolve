@@ -969,10 +969,10 @@ bool BaseViewer::writeViewBlock(LineParser &parser) const
                            View::autoFollowTypes().keyword(view_.autoFollowType())))
         return false;
     if (!parser.writeLineF("  {}  {}\n", BaseViewer::viewKeywords().keyword(BaseViewer::AutoPositionTitlesKeyword),
-                           DissolveSys::btoa(view_.constAxes().autoPositionTitles())))
+                           DissolveSys::btoa(view_.axes().autoPositionTitles())))
         return false;
     for (auto axis = 0; axis < 3; ++axis)
-        writeAxisBlock(parser, view_.constAxes(), axis);
+        writeAxisBlock(parser, view_.axes(), axis);
     if (!parser.writeLineF("  {}  {}\n", BaseViewer::viewKeywords().keyword(BaseViewer::FlatLabelsKeyword),
                            DissolveSys::btoa(view_.flatLabelsIn3D())))
         return false;
@@ -1000,7 +1000,7 @@ bool BaseViewer::writeViewBlock(LineParser &parser) const
                            DissolveSys::btoa(view_.hasPerspective())))
         return false;
     if (!parser.writeLineF("  {}  {}\n", BaseViewer::viewKeywords().keyword(BaseViewer::UseBestFlatViewKeyword),
-                           DissolveSys::btoa(view_.constAxes().useBestFlatView())))
+                           DissolveSys::btoa(view_.axes().useBestFlatView())))
         return false;
     if (!parser.writeLineF("  {}  {}\n", BaseViewer::viewKeywords().keyword(BaseViewer::VerticalShiftKeyword),
                            groupManager_.verticalShiftAmount()))

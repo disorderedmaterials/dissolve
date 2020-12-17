@@ -264,8 +264,7 @@ void Renderable::setColour(StockColours::StockColour stockColour)
 // Return local colour definition for display
 ColourDefinition &Renderable::colour() { return colour_; }
 
-// Return local colour definition for display (const)
-const ColourDefinition &Renderable::constColour() const { return colour_; }
+const ColourDefinition &Renderable::colour() const { return colour_; }
 
 // Return line style
 LineStyle &Renderable::lineStyle() { return lineStyle_; }
@@ -304,7 +303,7 @@ void Renderable::updateAndSendPrimitives(const View &view, bool forceUpdate, boo
         return;
 
     // Grab axes for the View
-    const Axes &axes = view.constAxes();
+    const Axes &axes = view.axes();
 
     // Grab copy of the relevant colour definition for this Renderable
     const ColourDefinition &colourDefinition = colour();
