@@ -17,7 +17,7 @@ bool Configuration::write(LineParser &parser) const
     // Write unit cell (box) lengths and angles
     const auto lengths = box()->axisLengths();
     const auto angles = box()->axisAngles();
-    if (!parser.writeLineF("{:12e} {:12e} {:12e}  {}  {}\n", lengths.x, lengths.y, lengths.z, appliedSizeFactor_,
+    if (!parser.writeLineF("{:12e} {:12e} {:12e}  {}  {}  {}\n", lengths.x, lengths.y, lengths.z, appliedSizeFactor_, requestedSizeFactor_,
                            DissolveSys::btoa(box()->type() == Box::NonPeriodicBoxType)))
         return false;
     if (!parser.writeLineF("{:12e} {:12e} {:12e}\n", angles.x, angles.y, angles.z))
@@ -81,6 +81,7 @@ bool Configuration::read(LineParser &parser, const List<Species> &availableSpeci
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     appliedSizeFactor_ = parser.argd(3);
+    requestedSizeFactor_ = parser.argd(4);
     const auto lengths = parser.arg3d(0) / appliedSizeFactor_;
 
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
