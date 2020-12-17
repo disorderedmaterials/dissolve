@@ -199,20 +199,20 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
         mol = molecules[m];
 
         // Loop over bonds
-        for (const auto &bond : mol->species()->constBonds())
+        for (const auto &bond : mol->species()->bonds())
             kernel.forces(bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()));
 
         // Loop over angles
-        for (const auto &angle : mol->species()->constAngles())
+        for (const auto &angle : mol->species()->angles())
             kernel.forces(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()), mol->atom(angle.indexK()));
 
         // Loop over torsions
-        for (const auto &torsion : mol->species()->constTorsions())
+        for (const auto &torsion : mol->species()->torsions())
             kernel.forces(torsion, mol->atom(torsion.indexI()), mol->atom(torsion.indexJ()), mol->atom(torsion.indexK()),
                           mol->atom(torsion.indexL()));
 
         // Loop over impropers
-        for (const auto &imp : mol->species()->constImpropers())
+        for (const auto &imp : mol->species()->impropers())
             kernel.forces(imp, mol->atom(imp.indexI()), mol->atom(imp.indexJ()), mol->atom(imp.indexK()),
                           mol->atom(imp.indexL()));
     }
@@ -226,19 +226,19 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Species *sp, cons
     ForceKernel kernel(procPool, &box, potentialMap, fx, fy, fz);
 
     // Loop over bonds
-    for (const auto &b : sp->constBonds())
+    for (const auto &b : sp->bonds())
         kernel.forces(b);
 
     // Loop over angles
-    for (const auto &a : sp->constAngles())
+    for (const auto &a : sp->angles())
         kernel.forces(a);
 
     // Loop over torsions
-    for (const auto &t : sp->constTorsions())
+    for (const auto &t : sp->torsions())
         kernel.forces(t);
 
     // Loop over impropers
-    for (const auto &imp : sp->constImpropers())
+    for (const auto &imp : sp->impropers())
         kernel.forces(imp);
 }
 

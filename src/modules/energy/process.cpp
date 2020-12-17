@@ -157,14 +157,14 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 }
 
                 // Bond energy
-                for (const auto &bond : molN->species()->constBonds())
+                for (const auto &bond : molN->species()->bonds())
                 {
                     r = cfg->box()->minimumDistance(molN->atom(bond.indexI()), molN->atom(bond.indexJ()));
                     correctIntraEnergy += bond.energy(r);
                 }
 
                 // Angle energy
-                for (const auto &angle : molN->species()->constAngles())
+                for (const auto &angle : molN->species()->angles())
                 {
                     // Get vectors 'j-i' and 'j-k'
                     vecji = cfg->box()->minimumVector(molN->atom(angle.indexJ()), molN->atom(angle.indexI()));
@@ -177,7 +177,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 }
 
                 // Torsion energy
-                for (const auto &torsion : molN->species()->constTorsions())
+                for (const auto &torsion : molN->species()->torsions())
                 {
                     // Get vectors 'j-i', 'j-k' and 'k-l'
                     vecji = cfg->box()->minimumVector(molN->atom(torsion.indexJ()), molN->atom(torsion.indexI()));
@@ -191,7 +191,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 }
 
                 // Improper energy
-                for (const auto &imp : molN->species()->constImpropers())
+                for (const auto &imp : molN->species()->impropers())
                 {
                     // Get vectors 'j-i', 'j-k' and 'k-l'
                     vecji = cfg->box()->minimumVector(molN->atom(imp.indexJ()), molN->atom(imp.indexI()));

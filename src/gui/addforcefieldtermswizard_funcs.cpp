@@ -137,7 +137,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
     // Copy intramolecular terms
     if (!ui_.IntramolecularTermsAssignNoneRadio->isChecked())
     {
-        auto modifiedBond = modifiedSpecies_->constBonds().cbegin();
+        auto modifiedBond = modifiedSpecies_->bonds().cbegin();
         for (auto &originalBond : targetSpecies_->bonds())
         {
             // Selection only?
@@ -149,7 +149,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
             ++modifiedBond;
         }
 
-        auto modifiedAngle = modifiedSpecies_->constAngles().cbegin();
+        auto modifiedAngle = modifiedSpecies_->angles().cbegin();
         for (auto &originalAngle : targetSpecies_->angles())
         {
             // Selection only?
@@ -161,7 +161,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
             ++modifiedAngle;
         }
 
-        auto modifiedTorsion = modifiedSpecies_->constTorsions().cbegin();
+        auto modifiedTorsion = modifiedSpecies_->torsions().cbegin();
         for (auto &originalTorsion : targetSpecies_->torsions())
         {
 
@@ -174,7 +174,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
             ++modifiedTorsion;
         }
 
-        for (auto &modifiedImproper : modifiedSpecies_->constImpropers())
+        for (auto &modifiedImproper : modifiedSpecies_->impropers())
         {
             // Selection only?
             if (intraSelectionOnly && (!modifiedImproper.isSelected()))

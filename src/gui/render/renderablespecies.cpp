@@ -190,7 +190,7 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
         }
 
         // Draw bonds
-        for (const auto &bond : source_->constBonds())
+        for (const auto &bond : source_->bonds())
         {
             // Determine half delta i-j for bond
             const auto ri = bond.i()->r();
@@ -231,7 +231,7 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
         }
 
         // Draw bonds
-        for (const auto &bond : source_->constBonds())
+        for (const auto &bond : source_->bonds())
             createCylinderBond(speciesAssembly_, bond.i(), bond.j(), spheresBondRadius_);
     }
 }

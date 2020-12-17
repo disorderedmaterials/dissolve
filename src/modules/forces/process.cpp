@@ -197,7 +197,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 if (testIntra)
                 {
                     // Bond forces
-                    for (const auto &bond : molN->species()->constBonds())
+                    for (const auto &bond : molN->species()->bonds())
                     {
                         // Grab pointers to atoms involved in bond
                         i = molN->atom(bond.indexI());
@@ -216,7 +216,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Angle forces
-                    for (const auto &angle : molN->species()->constAngles())
+                    for (const auto &angle : molN->species()->angles())
                     {
                         // Grab pointers to atoms involved in angle
                         i = molN->atom(angle.indexI());
@@ -249,7 +249,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Torsion forces
-                    for (const auto &torsion : molN->species()->constTorsions())
+                    for (const auto &torsion : molN->species()->torsions())
                     {
                         // Grab pointers to atoms involved in angle
                         i = molN->atom(torsion.indexI());
@@ -296,7 +296,7 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Improper forces
-                    for (const auto &imp : molN->species()->constImpropers())
+                    for (const auto &imp : molN->species()->impropers())
                     {
                         // Grab pointers to atoms involved in angle
                         i = molN->atom(imp.indexI());
