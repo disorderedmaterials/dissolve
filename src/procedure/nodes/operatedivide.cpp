@@ -9,7 +9,7 @@
 
 OperateDivideProcedureNode::OperateDivideProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateDivideNode)
 {
-    keywords_.add("Divisor", new NodeValueKeyword(this, 1.0), "Value", "Value expression to divide by");
+    keywords_.add("Control", new NodeValueKeyword(this, 1.0), "Value", "Constant value to use as the divisor");
 }
 
 OperateDivideProcedureNode::~OperateDivideProcedureNode() {}

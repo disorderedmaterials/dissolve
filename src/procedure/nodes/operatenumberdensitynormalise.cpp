@@ -14,7 +14,7 @@ OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedu
     : OperateProcedureNodeBase(ProcedureNode::OperateNumberDensityNormaliseNode)
 {
     // Create keywords - store the pointers to the superclasses for later use
-    keywords_.add("Sites",
+    keywords_.add("Control",
                   new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_),
                   "Site", "Site(s) by which to normalise data based on their population");
 }
@@ -24,7 +24,7 @@ OperateNumberDensityNormaliseProcedureNode::OperateNumberDensityNormaliseProcedu
     : OperateProcedureNodeBase(ProcedureNode::OperateNumberDensityNormaliseNode)
 {
     // Create keywords - store the pointers to the superclasses for later use
-    keywords_.add("Sites",
+    keywords_.add("Control",
                   new NodeRefListKeyword<const SelectProcedureNode>(this, ProcedureNode::SelectNode, false, selectNodes_),
                   "Site", "Site(s) by which to normalise data based on their population");
 

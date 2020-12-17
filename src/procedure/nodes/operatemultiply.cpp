@@ -9,7 +9,7 @@
 
 OperateMultiplyProcedureNode::OperateMultiplyProcedureNode() : OperateProcedureNodeBase(ProcedureNode::OperateMultiplyNode)
 {
-    keywords_.add("Multiplier", new NodeValueKeyword(this, 1.0), "Value", "Value expression to multiply by");
+    keywords_.add("Control", new NodeValueKeyword(this, 1.0), "Value", "Constant value to use as the multiplier");
 }
 
 OperateMultiplyProcedureNode::~OperateMultiplyProcedureNode() {}
