@@ -10,6 +10,7 @@
 ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode::ParametersNode)
 {
     keywords_.add("Parameters", new ExpressionVariableVectorKeyword(this, parameters_), "Parameter", "Defined parameters");
+    keywords_.add("Parameters", new ExpressionVariableVectorKeyword(this, parameters_), "Real", "Defined parameters");
 }
 
 ParametersProcedureNode::~ParametersProcedureNode() {}
