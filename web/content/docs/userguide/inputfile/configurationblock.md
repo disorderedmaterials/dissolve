@@ -26,15 +26,15 @@ The block keyword itself takes a single (required) argument - the name of the co
 Configuration  'Liquid'
 
   Generator
-	Box
-	  Lengths  1.0  1.0  1.0
-	  Angles  90.0  90.0  90.0
-	EndBox
-	AddSpecies
-	  Species  'SpeciesA'
-	  Population  '200'
-	  Density  '0.95'  g/cm3
-	EndAddSpecies
+    Box
+      Lengths  1.0  1.0  1.0
+      Angles  90.0  90.0  90.0
+    EndBox
+    AddSpecies
+      Species  'SpeciesA'
+      Population  '200'
+      Density  '0.95'  g/cm3
+    EndAddSpecies
   EndGenerator
 
   Temperature  300.000000
@@ -70,7 +70,7 @@ Two-component system, e.g. a liquid mixture, with a set number of molecules of t
 ```r
 Generator
   Parameters
-	Integer  N  1000
+	Parameter   N  1000
 	Parameter   ratio   2.0
 	Parameter   rho    0.9
   EndParameters
