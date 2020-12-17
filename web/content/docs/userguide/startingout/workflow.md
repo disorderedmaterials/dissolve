@@ -6,7 +6,11 @@ description: An overview of key files and basic operation
 
 ## Input
 
-Dissolve takes a single [main input file]({{< ref "inputfile" >}}) that contains all of the definitions for species, configurations, forcefield parameters, and the actual description of what simulation to perform. This input file is never modified by Dissolve when running - input parameters that change are stored in the [restart file]({{< ref "restart" >}}), along with current configuration coordinates etc. The restart file is named after the input file, with the suffix `.restart` appended - e.g. if the input file is `water-3000.txt` the restart file for the simulation will be `water-3000.txt.restart`. If it exists, the restart file is read in once the main input file has been parsed, and all necessary structures set up. A different restart file to the one assumed by Dissolve can be specified using the `--restart` [command line option]({{< ref "cli" >}}).
+Dissolve takes a single [main input file]({{< ref "inputfile" >}}) that contains all of the definitions for species, configurations, forcefield parameters, and the actual description of what simulation to perform. Essentially, this file is a blueprint for the entire simulation, but does not contain any information on the current _state_ of the simulation. The current state of the simulation - every calculated property, every coordinate of every atom etc. - is stored in the [restart file]({{< ref "restart" >}}). The [restart file]({{< ref "restart" >}}), if it exists, is read in immediately after Dissolve has finished parsing the [main input file]({{< ref "inputfile" >}}), and is written to periodically as the simulation progresses. If you remove your restart file (or choose to ignore it with the [`-i` switch]({{< ref "cli#-i---ignore-restart" >}})) then your simulation is effectively reset, and begins again from the start with no memory of anything.
+
+The restart file is named after the input file, with the suffix `.restart` appended - e.g. if the input file is `water-3000.txt` the restart file for the simulation will be `water-3000.txt.restart`. Dissolve also saves a second, backup restart file with the suffix `.restart.bak`, containing the previous saved state of the simulation.
+
+### External Data
 
 Certain modules may require external data - this data does not have to be stored in the same directory as the main input file, since Dissolve uses relative paths for any referenced external files.
 
