@@ -44,10 +44,10 @@ void Configuration::scaleBox(double factor)
 void Configuration::setRequestedSizeFactor(double factor) { requestedSizeFactor_ = factor; }
 
 // Return requested size factor for Box
-double Configuration::requestedSizeFactor() { return requestedSizeFactor_; }
+double Configuration::requestedSizeFactor() const { return requestedSizeFactor_; }
 
 // Return last size factor applied to Box / Cells
-double Configuration::appliedSizeFactor() { return appliedSizeFactor_; }
+double Configuration::appliedSizeFactor() const { return appliedSizeFactor_; }
 
 // Set requested side length for individual Cell
 void Configuration::setRequestedCellDivisionLength(double a) { requestedCellDivisionLength_ = a; }
@@ -58,8 +58,7 @@ double Configuration::requestedCellDivisionLength() const { return requestedCell
 // Return cell array
 CellArray &Configuration::cells() { return cells_; }
 
-// Return cell array
-const CellArray &Configuration::constCells() const { return cells_; }
+const CellArray &Configuration::cells() const { return cells_; }
 
 // Scale Box, Cells, and Molecule geometric centres according to current size factor
 void Configuration::applySizeFactor(const PotentialMap &potentialMap)
