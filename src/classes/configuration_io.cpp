@@ -82,13 +82,14 @@ bool Configuration::read(LineParser &parser, const List<Species> &availableSpeci
         return false;
     appliedSizeFactor_ = parser.argd(3);
     requestedSizeFactor_ = parser.argd(4);
+    auto nonPeriodic = parser.argb(5);
     const auto lengths = parser.arg3d(0) / appliedSizeFactor_;
 
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     const auto angles = parser.arg3d(0);
 
-    if (!createBox(lengths, angles))
+    if (!createBox(lengths, angles, nonPeriodic))
         return false;
 
     // Read total number of Molecules to expect
