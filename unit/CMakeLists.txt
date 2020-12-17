@@ -1,8 +1,12 @@
 # CMakeLists.txt for Unit Tests
 # All tests must be single source file.
 
+# Set policy for GoogleTest
+CMAKE_POLICY(SET CMP0054 NEW)
+
 # Get list of sources, from which we can construct the exe / test list.
 file(GLOB_RECURSE tests_SRC "*.cpp")
+find_package(GTest REQUIRED)
 
 # Add executables and tests
 foreach(SRCFILE "${tests_SRC}")
@@ -20,6 +24,7 @@ foreach(SRCFILE "${tests_SRC}")
     ${ANTLR_OUTPUT_DIRS}
   )
   target_link_libraries(${NAME} PUBLIC
+    ${CONAN_LIBS}
     ${BASIC_LINK_LIBS}
     PRIVATE
 
@@ -31,8 +36,9 @@ foreach(SRCFILE "${tests_SRC}")
 
     CONAN_PKG::fmt
     CONAN_PKG::CLI11
+    CONAN_PKG::GTest
   )
 
   # Register the test
-  ADD_TEST(${NAME} ${NAME})
+  GTEST_DISCOVER_TESTS(${NAME})
 endforeach(SRCFILE)

@@ -18,7 +18,7 @@ steps:
       set -ex
       mkdir build
       cd build
-      conan install --remote=conan-center ../ 
+      conan install --remote=conan-center -s compiler.libcxx=libstdc++11 ../
       cmake -G "Ninja" -DPARALLEL:bool=true -DBUILD_ANTLR_RUNTIME:bool=true ${{ parameters.extraflags }} ../
       ninja
     displayName: 'Build'
