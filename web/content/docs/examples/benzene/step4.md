@@ -16,11 +16,14 @@ Let's add an empty processing layer to to the simulation, add on our module, and
 {{< action type="menu" text="Layer &#8680; Create... &#8680; Empty" >}}
 {{< step text="Double-click the layer tab and rename it to `Analysis`" >}}
 {{< action type="mouse" text="Show the module palette for the current layer by clicking the **Show Palette** button at the top left of the tab" >}}
-{{< action type="mouse" text=" Drag a `CalculateAxisAngle` module over to the **Current Modules** list" >}}
+{{< action type="mouse" text="Drag a `CalculateAxisAngle` module over to the **Current Modules** list" >}}
 {{< step text="Select the `CalculateAxisAngle` module to show its options" >}}
-{{< action type="groups" text="Open the **Calculation** settings group" >}}
-{{< action type="edit" text="Leave the **DistanceRange** settings as-is, but change the Max and Bin Width for the **AngleRange** to 90 and 10 respectively" >}}
-{{< action type="groups" text="Open the **Sites** settings group" >}}
+{{< action type="groups" text="Open the **Control** settings group" >}}
+{{< step text="Leave the **DistanceRange** settings as-is - the defaults are fine" >}}
+{{< action type="edit" text="For the **AngleRange** change the _Max_ to 90 and the _Bin Width_ 10 respectively" >}}
+
+Now we must tell the module which sites to use for its calculation:
+
 {{< step text="Set both **SiteA** and **SiteB** to `COG`">}}
 {{< step text="Set the **AxisA** and **AxisB** to `ZAxis`">}}
 {{< step text="Enable the **ExcludeSameMolecule** to prevent the unwanted self-correlation spike at 0 in the resulting RDF">}}
