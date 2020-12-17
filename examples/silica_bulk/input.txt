@@ -50,7 +50,7 @@ Configuration  'Bulk'
     Parameters
       Integer  populationA  1500
       Integer  ratioB  2
-      Real  rho  6.640000e-02
+      Parameter  rho  6.640000e-02
     EndParameters
     Box
       Lengths  1  1  1
