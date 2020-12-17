@@ -9,13 +9,12 @@ description: Insert a species into a box
 |--------|----------|
 |Context|Generation|
 |Name Required?|No|
+|Branches|--|
 {{< /htable >}}
 
 ## Overview
 
 The `AddSpecies` node is a core component of nearly all configuration generators requiring the initial construction of a suitable starting point. It adds a number of copies of a given target species to the current box, either at specific or random coordinates. By default, the box is resized to accommodate the new population of molecules based on a supplied density.
-
-The `AddSpecies` node can be used in a `generation` context.
 
 ## Description
 
@@ -32,8 +31,8 @@ When adding molecules of the target species to the current box, there are severa
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
 |`BoxAction`|[`BoxActionStyle`]({{< ref "boxactionstyle" >}})|`AddVolume`|Action to take on the Box geometry / volume on addition of the species|
-|`Density`|`expr`<br/>[`DensityUnit`]({{< ref "densityunit" >}})|`0.1 atoms/A3`|Density at which to add the target species. Note that the use of this value differs according to the selected `BoxAction` (see above).|
-|`Population`|`expr`|`0`|Population of the target species to add.|
+|`Density`|[`expr`]({{< ref "expressions" >}})<br/>[`DensityUnit`]({{< ref "densityunit" >}})|`0.1 atoms/A3`|Density at which to add the target species. Note that the use of this value differs according to the selected `BoxAction` (see above).|
+|`Population`|[`expr`]({{< ref "expressions" >}})|`0`|Population of the target species to add.|
 |`Positioning`|[`PositioningType`]({{< ref "positioningtype" >}})|`Random`|Positioning type for individual molecules.|
 |`Rotate`|`true|false`|`true`|Whether to randomly rotate molecules on insertion.|
 |`Species`|`name`|--|{{< required-label >}} Target species to add.|

@@ -9,13 +9,12 @@ description: Define / create a unit cell
 |-|-|
 |Context|Generation|
 |Name Required?|No|
+|Branches|--|
 {{< /htable >}}
 
 ## Overview
 
 The `Box` node creates a unit cell for the current configuration.
-
-The `Box` node can be used in a `generation` context.
 
 ## Description
 
