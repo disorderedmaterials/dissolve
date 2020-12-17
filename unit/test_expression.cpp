@@ -9,6 +9,9 @@
 #include <string_view>
 #include <vector>
 
+namespace UnitTest
+{
+
 class ExpressionTest : public ::testing::Test
 {
     public:
@@ -78,3 +81,5 @@ TEST_F(ExpressionTest, Variables)
     exprTest("a + sqrt(bee)", a->value().asDouble() + sqrt(bee->value().asDouble()), false);
     exprTest("1.8*wasp", 0, true);
 };
+
+} // namespace UnitTest
