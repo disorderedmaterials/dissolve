@@ -583,7 +583,7 @@ double EnergyKernel::energy(std::shared_ptr<const Molecule> mol, ProcessPool::Di
 double EnergyKernel::correct(const std::shared_ptr<Atom> i)
 {
     // Loop over atoms in molecule
-    auto atoms = i->molecule()->atoms();
+    auto &atoms = i->molecule()->atoms();
     double scale, r, correctionEnergy = 0.0;
     const auto rI = i->r();
 
