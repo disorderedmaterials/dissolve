@@ -17,8 +17,8 @@ bool Configuration::write(LineParser &parser) const
     // Write unit cell (box) lengths and angles
     const auto lengths = box()->axisLengths();
     const auto angles = box()->axisAngles();
-    if (!parser.writeLineF("{:12e} {:12e} {:12e}  {}  {}  {}\n", lengths.x, lengths.y, lengths.z, appliedSizeFactor_, requestedSizeFactor_,
-                           DissolveSys::btoa(box()->type() == Box::NonPeriodicBoxType)))
+    if (!parser.writeLineF("{:12e} {:12e} {:12e}  {}  {}  {}\n", lengths.x, lengths.y, lengths.z, appliedSizeFactor_,
+                           requestedSizeFactor_, DissolveSys::btoa(box()->type() == Box::NonPeriodicBoxType)))
         return false;
     if (!parser.writeLineF("{:12e} {:12e} {:12e}\n", angles.x, angles.y, angles.z))
         return false;
