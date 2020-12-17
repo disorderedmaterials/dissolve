@@ -631,7 +631,7 @@ void AddForcefieldTermsWizard::updateMasterTermsTreeChild(QTreeWidgetItem *paren
 
     // Set item data
     item->setText(0, QString::fromStdString(std::string(masterIntra->name())));
-    item->setIcon(0, QIcon(dissolveReference_->constCoreData().findMasterTerm(masterIntra->name())
+    item->setIcon(0, QIcon(dissolveReference_->coreData().findMasterTerm(masterIntra->name())
                                ? ":/general/icons/general_warn.svg"
                                : ":/general/icons/general_true.svg"));
 }
@@ -655,28 +655,28 @@ void AddForcefieldTermsWizard::updateMasterTermsPage()
     auto conflicts = false;
     ListIterator<MasterIntra> bondIterator(temporaryCoreData_.masterBonds());
     while (MasterIntra *intra = bondIterator.iterate())
-        if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
+        if (dissolveReference_->coreData().findMasterTerm(intra->name()))
         {
             conflicts = true;
             break;
         }
     ListIterator<MasterIntra> angleIterator(temporaryCoreData_.masterAngles());
     while (MasterIntra *intra = angleIterator.iterate())
-        if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
+        if (dissolveReference_->coreData().findMasterTerm(intra->name()))
         {
             conflicts = true;
             break;
         }
     ListIterator<MasterIntra> torsionIterator(temporaryCoreData_.masterTorsions());
     while (MasterIntra *intra = torsionIterator.iterate())
-        if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
+        if (dissolveReference_->coreData().findMasterTerm(intra->name()))
         {
             conflicts = true;
             break;
         }
     ListIterator<MasterIntra> improperIterator(temporaryCoreData_.masterTorsions());
     while (MasterIntra *intra = improperIterator.iterate())
-        if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
+        if (dissolveReference_->coreData().findMasterTerm(intra->name()))
         {
             conflicts = true;
             break;
