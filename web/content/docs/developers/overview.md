@@ -14,29 +14,24 @@ This overview provides basic information suitable for developers wishing to buil
 ## Basics
 
 ### Project Purpose
-Dissolve is a code to permit interrogation of scattering data through the classical simulation of underlying experimental systems. For more of an overview see the [project description](description.md) document.
+Dissolve is a code to permit interrogation of scattering data through the classical simulation of underlying experimental systems. For more of an overview see the [project description]({{< ref "description" >}}) document.
 
 ### Language
-Dissolve is written entirely in C++. For relevant conventions and guidelines regarding style see the [coding standards](standards.md) document.
+Dissolve is written entirely in C++. For relevant conventions and guidelines regarding style see the [coding standards]({{< ref "standards" >}}) document.
 
 ## Build System
 
 The CMake build sytem is used in provide cross-platform compatibility.
 
 ### Executable Targets
-- `dissolve-serial`: Serial CLI version.
-- `dissolve`: (Optional) Parallel CLI version (requires suitable MPI compiler).
+- `dissolve`: Serial CLI version.
+- `dissolve-mpi`: (Optional) Parallel CLI version (requires suitable MPI compiler).
 - `dissolve-gui`: (Optional) Graphical user interface for Dissolve.
 
-Note that binaries are named as listed above only on Linux and OSX. Windows binaries are built as `Dissolve-Serial`, `Dissolve`, and `Dissolve-GUI`.
+Note that binaries are named as listed above only on Linux and OSX. Windows binaries are built as `Dissolve`, `Dissolve-MPI`, and `Dissolve-GUI`.
 
 ### External Dependencies
-- `dissolve-serial`: Bison (required for construction of various parser-lexers).
-- `dissolve`: Suitable MPI library (e.g. OpenMPI 1.10+).
-- `dissolve-gui`: Qt 5 (Qt5Gui, Qt5OpenGL, Qt5Widgets, and Qt5PrintSupport), Freetype2, FTGL.
-
-### Compilation Flags
-Use `-DCHECKS=1`, `-DGUI=1`, or `-DPARALLEL=1` to enable the options described above in the CMake build.
+Dissolve has a modest set of external dependencies, as detailed in the [compilation]({{< ref "compilation" >}}) instructions.
 
 ## Source Tree Layout
 All source files are contained within the `src/` directory which is laid out as follows:
@@ -52,10 +47,10 @@ All source files are contained within the `src/` directory which is laid out as 
 - `classes`: Classes providing core contextual objects used in the operation of Dissolve, and which depend only on other classes in the same directory or those in `base/`.
 - `data`: Objects providing static data such as the periodic table, scattering lengths, forcefield parameters etc.
 - `expression`: Mathematical expression parser / generator.
-- `genericitems`: Classes permitting storage of data in atype-agnostic way in order to enable suitable [data management](overviews/dataManagement.md).
+- `genericitems`: Classes permitting storage of data in a type-agnostic way in order to enable suitable [data management]({{< ref "datamanagement" >}}).
 - `gui`: Qt-based GUI for Dissolve.
 - `main`: Main class providing Dissolve's core object.
 - `math`: Math-related classes, including classes containing (static) data operations and methods.
-- `module`: Base definition and associated helper classes for defining and handling [modules](overviews/moduledev.md).
-- `modules`: Repository containing subdirectores defining individual modules.
+- `module`: Base definition and associated helper classes for defining and handling [modules]({{< ref "moduledev" >}}).
+- `modules`: Repository containing subdirectories defining individual modules.
 - `templates`: Template classes providing general, context-free functionality.

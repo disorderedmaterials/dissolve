@@ -3,10 +3,10 @@
 
 #pragma once
 
-#include "expression/nodeNEW.h"
+#include "expression/node.h"
 
 // Expression Unary Operator Node
-class ExpressionUnaryOperatorNode : public ExpressionNodeNEW
+class ExpressionUnaryOperatorNode : public ExpressionNode
 {
     public:
     // Unary Operators Enum
@@ -16,6 +16,13 @@ class ExpressionUnaryOperatorNode : public ExpressionNodeNEW
     };
     ExpressionUnaryOperatorNode(UnaryOperator op);
     ~ExpressionUnaryOperatorNode() = default;
+
+    /*
+     * Nodes
+     */
+    protected:
+    // Duplicate this node and its contents
+    std::shared_ptr<ExpressionNode> duplicate();
 
     /*
      * Data

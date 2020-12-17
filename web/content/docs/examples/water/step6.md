@@ -7,7 +7,7 @@ weight: 8
 There is a hint in the structure factors for the H<sub>2</sub>O sample (particularly the G(r)), that the intramolecular geometry of our off-the-shelf forcefield is not quite consistent with the real world.  This is made clearly obvious if you look at the G(r) for the D<sub>2</sub>O sample:
 
 {{< action type="tabs" text="**RDF / Neutron S(Q)** tab" >}}
-{{< step text="Double-click on the `D2O` `NeutronSQ` module to open its additional controls in a separate tab">}}
+{{< step text="Click on the `D2O` `NeutronSQ` module and select the **Module Output** button" >}}
 
 
 {{< cimage src="../equilibrated-d2o-broadened-gr.png" caption="Equilibrated water (D2O) G(r) with effective broadening applied to intramolecular g(r)" >}}

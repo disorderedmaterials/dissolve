@@ -3,36 +3,50 @@
 
 #pragma once
 
-#include "expression/functions.h"
 #include "expression/node.h"
 
-// Forward Declarations
-/* none */
-
-// Function Node
-class ExpressionFunction : public ExpressionNode
+// Expression Function Node
+class ExpressionFunctionNode : public ExpressionNode
 {
     public:
-    ExpressionFunction(ExpressionFunctions::Function func = ExpressionFunctions::NoFunction);
-    ExpressionFunction(ExpressionNode *source);
-    ~ExpressionFunction();
+    // Internal Functions enum
+    enum InternalFunction
+    {
+        AbsFunction,
+        ACosFunction,
+        ASinFunction,
+        ATanFunction,
+        CosFunction,
+        ExpFunction,
+        LnFunction,
+        LogFunction,
+        SinFunction,
+        SqrtFunction,
+        TanFunction
+    };
+    // Return enum options for NodeTypes
+    static EnumOptions<ExpressionFunctionNode::InternalFunction> internalFunctions();
+    ExpressionFunctionNode(InternalFunction func);
+    ~ExpressionFunctionNode() = default;
 
     /*
-     * Function Data
+     * Nodes
      */
     protected:
-    // Function that this node performs
-    ExpressionFunctions::Function function_;
+    // Duplicate this node and its contents
+    std::shared_ptr<ExpressionNode> duplicate();
 
+    /*
+     * Data
+     */
+    private:
+    // Function that the node performs
+    InternalFunction function_;
+
+    /*
+     * Evaluation
+     */
     public:
-    // Get command function
-    ExpressionFunctions::Function function() const;
-    // Execute command
-    bool execute(ExpressionValue &result);
-    // Print node contents
-    void nodePrint(int offset, std::string_view prefix = "");
-    // Set from ExpressionValue
-    bool set(ExpressionValue value);
-    // Initialise node
-    bool initialise();
+    // Evaluate node
+    virtual std::optional<ExpressionValue> evaluate() const;
 };

@@ -12,7 +12,6 @@ ConfigurationRefListKeyword::ConfigurationRefListKeyword(RefList<Configuration> 
     maxListSize_ = maxListSize;
 }
 
-// Destructor
 ConfigurationRefListKeyword::~ConfigurationRefListKeyword() {}
 
 /*
@@ -62,7 +61,7 @@ bool ConfigurationRefListKeyword::read(LineParser &parser, int startArg, CoreDat
     return true;
 }
 
-// Write keyword data to cfgecified LineParser
+// Write keyword data to specified LineParser
 bool ConfigurationRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     // Loop over list of Configuration

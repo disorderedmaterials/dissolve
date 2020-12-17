@@ -13,8 +13,8 @@ class ExpressionValue
 {
     public:
     ExpressionValue();
-    ExpressionValue(int value);
-    ExpressionValue(double value);
+    ExpressionValue(int value, bool fixedType = true);
+    ExpressionValue(double value, bool fixedType = true);
     ~ExpressionValue();
     ExpressionValue(const ExpressionValue &source);
     void operator=(const ExpressionValue &source);

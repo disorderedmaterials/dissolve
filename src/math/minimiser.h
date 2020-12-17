@@ -114,7 +114,7 @@ template <class T> class MinimiserBase
         addTarget(&var, minLimit, minValue, maxLimit, maxValue);
     }
     // Add ExpressionVariable as target, with limits specified
-    void addTarget(ExpressionVariable *var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false,
+    void addTarget(std::shared_ptr<ExpressionVariable> var, bool minLimit = false, double minValue = 0.0, bool maxLimit = false,
                    double maxValue = 0.0)
     {
         addTarget(var->valuePointer()->doublePointer(), minLimit, minValue, maxLimit, maxValue);

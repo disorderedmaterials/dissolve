@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2020 Team Dissolve and contributors
 
-#include "expression/expressionNEW.h"
+#include "expression/expression.h"
 #include "expression/reference.h"
 #include "expression/variable.h"
 #include <fmt/format.h>
@@ -12,15 +12,13 @@
 class ExpressionTest : public ::testing::Test
 {
     public:
-    ExpressionTest() : a(1.0), bee(100.0){};
+    ExpressionTest() = default;
 
     protected:
     void SetUp() override
     {
-        a.setName("a");
-        bee.setName("bee");
-        variables.append(&a);
-        variables.append(&bee);
+        variables.emplace_back(std::make_shared<ExpressionVariable>("a", 1.0));
+        variables.emplace_back(std::make_shared<ExpressionVariable>("bee", 100.0));
     }
 
     void exprTest(std::string_view expr, ExpressionValue val, bool fail)
@@ -44,9 +42,8 @@ class ExpressionTest : public ::testing::Test
         }
     }
 
-    RefList<ExpressionVariable> variables;
-    ExpressionNEW expression;
-    ExpressionVariable a, bee;
+    std::vector<std::shared_ptr<ExpressionVariable>> variables;
+    Expression expression;
 };
 
 TEST_F(ExpressionTest, BasicIntegerMath)
@@ -75,7 +72,9 @@ TEST_F(ExpressionTest, BasicFloatMath)
 
 TEST_F(ExpressionTest, Variables)
 {
-    exprTest("a/5", a.value().asDouble() / 5, false);
-    exprTest("a + sqrt(bee)", a.value().asDouble() + sqrt(bee.value().asDouble()), false);
+    auto a = variables[0];
+    auto bee = variables[1];
+    exprTest("a/5", a->value().asDouble() / 5, false);
+    exprTest("a + sqrt(bee)", a->value().asDouble() + sqrt(bee->value().asDouble()), false);
     exprTest("1.8*wasp", 0, true);
 };

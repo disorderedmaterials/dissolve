@@ -50,5 +50,5 @@ class ConfigurationRefListKeyword : public KeywordData<RefList<Configuration> &>
      */
     protected:
     // Prune any references to the supplied Configuration in the contained data
-    void removeReferencesTo(Configuration *sp);
+    void removeReferencesTo(Configuration *cfg);
 };

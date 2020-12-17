@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ExpressionVariableListWidget</class>
- <widget class="QWidget" name="ExpressionVariableListWidget">
+ <class>ExpressionVariableVectorWidget</class>
+ <widget class="QWidget" name="ExpressionVariableVectorWidget">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>144</width>
-    <height>121</height>
+    <width>194</width>
+    <height>81</height>
    </rect>
   </property>
   <property name="font">
@@ -18,7 +18,10 @@
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout">
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>4</number>
+   </property>
    <property name="leftMargin">
     <number>0</number>
    </property>
@@ -31,10 +34,7 @@
    <property name="bottomMargin">
     <number>0</number>
    </property>
-   <property name="spacing">
-    <number>4</number>
-   </property>
-   <item row="0" column="0">
+   <item>
     <widget class="QTableWidget" name="VariablesTable">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -45,7 +45,7 @@
      <property name="maximumSize">
       <size>
        <width>16777215</width>
-       <height>128</height>
+       <height>16777215</height>
       </size>
      </property>
      <property name="selectionMode">
@@ -55,7 +55,7 @@
       <number>0</number>
      </property>
      <property name="columnCount">
-      <number>2</number>
+      <number>3</number>
      </property>
      <attribute name="horizontalHeaderVisible">
       <bool>true</bool>
@@ -72,6 +72,11 @@
      <column>
       <property name="text">
        <string>Name</string>
+      </property>
+     </column>
+     <column>
+      <property name="text">
+       <string>Type</string>
       </property>
      </column>
      <column>

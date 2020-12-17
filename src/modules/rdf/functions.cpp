@@ -224,6 +224,46 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
  * Public Functions
  */
 
+// Calculate and return effective density for based on the target Configurations
+double RDFModule::effectiveDensity() const
+{
+    auto rho0 = 0.0, totalWeight = 0.0;
+    for (auto *cfg : targetConfigurations())
+    {
+        // TODO Get weight for configuration
+        auto weight = 1.0;
+
+        totalWeight += weight;
+
+        rho0 += weight / cfg->atomicDensity();
+    }
+    rho0 /= totalWeight;
+    rho0 = 1.0 / rho0;
+
+    return rho0;
+}
+
+// Calculate and return used species populations based on target Configurations
+std::map<const Species *, double> RDFModule::speciesPopulations() const
+{
+    std::map<const Species *, double> populations;
+
+    for (auto *cfg : targetConfigurations())
+    {
+        // TODO Get weight for configuration
+        auto weight = 1.0;
+
+        ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
+        while (auto *spInfo = spInfoIterator.iterate())
+        {
+            populations.try_emplace(spInfo->species(), 0.0);
+            populations[spInfo->species()] += spInfo->population() * weight;
+        }
+    }
+
+    return populations;
+}
+
 // Calculate unweighted partials for the specified Configuration
 bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule::PartialsMethod method, const double rdfRange,
                             const double rdfBinWidth, bool &alreadyUpToDate)
@@ -429,30 +469,11 @@ bool RDFModule::calculateUnweightedGR(ProcessPool &procPool, Configuration *cfg,
     return true;
 }
 
-// Return effective density for specified Module's target Configurations
-double RDFModule::summedRho(Module *module, GenericList &processingModuleData)
-{
-    double rho0 = 0.0, totalWeight = 0.0;
-    for (Configuration *cfg : module->targetConfigurations())
-    {
-        auto weight = GenericListHelper<double>::value(
-            processingModuleData, fmt::format("ConfigurationWeight_{}", cfg->niceName()), module->uniqueName(), 1.0);
-        totalWeight += weight;
-
-        rho0 += weight / cfg->atomicDensity();
-    }
-    rho0 /= totalWeight;
-    rho0 = 1.0 / rho0;
-
-    return rho0;
-}
-
 // Sum unweighted g(r) over the supplied Module's target Configurations
 bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, const RDFModule *rdfModule,
                                 GenericList &processingModuleData, PartialSet &summedUnweightedGR)
 {
     // Realise an AtomTypeList containing the sum of atom types over all target configurations
-    // TODO Assume weight of 1.0 per configuration now, until #398/#400 are addressed.
     auto &combinedAtomTypes = GenericListHelper<AtomTypeList>::realise(
         processingModuleData, "SummedAtomTypes", parentModule->uniqueName(), GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
@@ -472,10 +493,8 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, con
     double totalWeight = 0.0;
     for (Configuration *cfg : parentModule->targetConfigurations())
     {
-        // Get weighting factor for this Configuration to contribute to the summed partials
-        auto weight = GenericListHelper<double>::value(
-            processingModuleData, fmt::format("ConfigurationWeight_{}", cfg->niceName()), parentModule->uniqueName(), 1.0);
-        Messenger::print("Weight for Configuration '{}' is {}.\n", cfg->name(), weight);
+        // TODO Assume weight of 1.0
+        auto weight = 1.0;
 
         // Add our Configuration target
         configWeights.append(cfg, weight);
@@ -509,10 +528,6 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, con
     }
     summedUnweightedGR.setFingerprint(fingerprint);
 
-    // Store the overall density of our partials
-    GenericListHelper<double>::realise(processingModuleData, "EffectiveRho", parentModule->uniqueName(),
-                                       GenericItem::InRestartFileFlag) = rho0;
-
     return true;
 }
 
@@ -528,10 +543,8 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
         // Loop over Configurations defined in this target
         for (Configuration *cfg : module->targetConfigurations())
         {
-            // Get weighting factor for this Configuration to contribute to the summed partials
-            auto weight = GenericListHelper<double>::value(
-                processingModuleData, fmt::format("ConfigurationWeight_{}", cfg->niceName()), module->uniqueName(), 1.0);
-            Messenger::print("Weight for Configuration '{}' is {}.\n", cfg->name(), weight);
+            // TODO Assume weight of 1.0
+            auto weight = 1.0;
 
             // Add our Configuration target
             configWeights.append(cfg, weight);
@@ -584,10 +597,6 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
     }
     summedUnweightedGR.setFingerprint(fingerprint);
     summedUnweightedGR += 1.0;
-
-    // Store the overall density of our partials
-    // 	GenericListHelper<double>::realise(moduleData, "EffectiveRho", module->uniqueName(),
-    // GenericItem::InRestartFileFlag) = rho0;
 
     return true;
 }

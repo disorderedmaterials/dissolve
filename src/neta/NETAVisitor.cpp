@@ -99,7 +99,7 @@ antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *
 {
     if (context->Element())
     {
-        Element &el = Elements::element(context->Element()->getText().c_str());
+        Element &el = Elements::element(context->Element()->getText());
         return std::reference_wrapper(el);
     }
     else if (context->FFTypeName())
@@ -110,11 +110,11 @@ antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *
                 "No associated forcefield, so can't use atom type targets in NETA definition."));
 
         // Search for the atom type with the name specified (after removing leading '&' from string)
-        const auto &at = associatedForcefield_->atomTypeByName(context->FFTypeName()->getText().substr(1).c_str());
+        const auto &at = associatedForcefield_->atomTypeByName(context->FFTypeName()->getText().substr(1));
         if (!at)
             throw(NETAExceptions::NETASyntaxException(
                 fmt::format("No forcefield atom type with name {} exists in forcefield '{}', so can't add it as a target.",
-                            context->FFTypeName()->getText().c_str(), associatedForcefield_->name())));
+                            context->FFTypeName()->getText(), associatedForcefield_->name())));
 
         return std::reference_wrapper(*at);
     }
@@ -166,37 +166,36 @@ antlrcpp::Any NETAVisitor::visitTargetList(NETAParser::TargetListContext *contex
 antlrcpp::Any NETAVisitor::visitModifier(NETAParser::ModifierContext *context)
 {
     // Check comparison operator
-    if (!NETANode::comparisonOperators().isValid(context->ComparisonOperator()->getText().c_str()))
-        return Messenger::error("'{}' is not a valid comparison operator.\n", context->ComparisonOperator()->getText().c_str());
-    NETANode::ComparisonOperator op =
-        NETANode::comparisonOperators().enumeration(context->ComparisonOperator()->getText().c_str());
-    if (currentNETAContext()->isValidModifier(context->Keyword()->getText().c_str()))
+    if (!NETANode::comparisonOperators().isValid(context->ComparisonOperator()->getText()))
+        return Messenger::error("'{}' is not a valid comparison operator.\n", context->ComparisonOperator()->getText());
+    NETANode::ComparisonOperator op = NETANode::comparisonOperators().enumeration(context->ComparisonOperator()->getText());
+    if (currentNETAContext()->isValidModifier(context->Keyword()->getText()))
     {
-        if (!currentNETAContext()->setModifier(context->Keyword()->getText().c_str(), op, std::stoi(context->value->getText())))
+        if (!currentNETAContext()->setModifier(context->Keyword()->getText(), op, std::stoi(context->value->getText())))
             throw(NETAExceptions::NETASyntaxException(
-                fmt::format("Failed to set modifier '{}' for the current context ({}).", context->Keyword()->getText().c_str(),
+                fmt::format("Failed to set modifier '{}' for the current context ({}).", context->Keyword()->getText(),
                             NETANode::nodeTypes().keyword(currentNETAContext()->nodeType()))));
     }
     else
-        throw(NETAExceptions::NETASyntaxException(fmt::format(
-            "'{}' is not a valid modifier keyword for the current context ({}).", context->Keyword()->getText().c_str(),
-            NETANode::nodeTypes().keyword(currentNETAContext()->nodeType()))));
+        throw(NETAExceptions::NETASyntaxException(
+            fmt::format("'{}' is not a valid modifier keyword for the current context ({}).", context->Keyword()->getText(),
+                        NETANode::nodeTypes().keyword(currentNETAContext()->nodeType()))));
 
     return visitChildren(context);
 }
 
 antlrcpp::Any NETAVisitor::visitFlag(NETAParser::FlagContext *context)
 {
-    if (currentNETAContext()->isValidFlag(context->Keyword()->getText().c_str()))
+    if (currentNETAContext()->isValidFlag(context->Keyword()->getText()))
     {
-        if (!currentNETAContext()->setFlag(context->Keyword()->getText().c_str(), true))
+        if (!currentNETAContext()->setFlag(context->Keyword()->getText(), true))
             throw(NETAExceptions::NETASyntaxException(
-                fmt::format("Failed to set flag '{}' for the current context ({}).", context->Keyword()->getText().c_str(),
+                fmt::format("Failed to set flag '{}' for the current context ({}).", context->Keyword()->getText(),
                             NETANode::nodeTypes().keyword(currentNETAContext()->nodeType()))));
     }
     else
         throw(NETAExceptions::NETASyntaxException(
-            fmt::format("'{}' is not a valid flag for the current context ({}).", context->Keyword()->getText().c_str(),
+            fmt::format("'{}' is not a valid flag for the current context ({}).", context->Keyword()->getText(),
                         NETANode::nodeTypes().keyword(currentNETAContext()->nodeType()))));
 
     return visitChildren(context);

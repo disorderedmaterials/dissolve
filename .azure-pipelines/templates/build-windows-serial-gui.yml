@@ -13,7 +13,7 @@ steps:
     inputs:
       versionSpec: '3.x'
   - script: |
-      choco install -y antlr4 winflexbison
+      choco install -y antlr4
     displayName: 'Install Prerequisites'
   - script: |
       python -m pip install aqtinstall

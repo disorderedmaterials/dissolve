@@ -204,9 +204,9 @@ Module  Analyse  'DAngle(X-H...O)-Analyser'
     Process1D  'Angle'
       SourceData  'ANGLE(ABC)'
       Normalisation
-	OperateExpression
-	  Expression  "value/sin(x)"
-	EndOperateExpression
+        OperateExpression
+          Expression  "value/sin(x)"
+        EndOperateExpression
         OperateNormalise
           Value  1.0
         EndOperateNormalise

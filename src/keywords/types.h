@@ -24,7 +24,7 @@
 #include "keywords/elementreflist.h"
 #include "keywords/enumoptions.h"
 #include "keywords/expression.h"
-#include "keywords/expressionvariablelist.h"
+#include "keywords/expressionvariablevector.h"
 #include "keywords/fileandformat.h"
 #include "keywords/geometrylist.h"
 #include "keywords/isotopologueset.h"

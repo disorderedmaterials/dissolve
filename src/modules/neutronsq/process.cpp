@@ -86,13 +86,8 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
                                                                 uniqueName(), GenericItem::ProtectedFlag);
         storedDataFT.setObjectTag(fmt::format("{}//ReferenceDataFT", uniqueName()));
         storedDataFT = referenceData;
-        auto rho = 0.1;
-        if (dissolve.processingModuleData().contains("EffectiveRho", rdfModule->uniqueName()))
-            rho = GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", rdfModule->uniqueName());
-        else
-            Messenger::warn("Couldn't locate effective atomic density from '{}', so Fourier transform of reference data will "
-                            "use assumed atomic density of 0.1.\n",
-                            rdfModule->uniqueName());
+        auto rho = rdfModule->effectiveDensity();
+        Messenger::print("Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n", rho);
         Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), 0.0, 0.05, 30.0, referenceWindowFunction);
 
         // Save data?
@@ -228,12 +223,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     repGR = weightedSQ.total();
     auto rMin = weightedGR.total().xAxis().front();
     auto rMax = weightedGR.total().xAxis().back();
-    auto rho = 0.1;
-    if (dissolve.processingModuleData().contains("EffectiveRho", rdfModule->uniqueName()))
-        rho = GenericListHelper<double>::value(dissolve.processingModuleData(), "EffectiveRho", rdfModule->uniqueName());
-    else
-        Messenger::warn("Couldn't locate effective atomic density for RDF module.\n");
-
+    auto rho = rdfModule->effectiveDensity();
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, referenceWindowFunction);
     repGR.setObjectTag(fmt::format("{}//RepresentativeTotalGR", uniqueName_));
 

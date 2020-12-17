@@ -8,7 +8,7 @@ SET(keywordwidgets_MOC_HDRS
   configurationreflist.h
   dialog.h
   dropdown.h
-  expressionvariablelist.h
+  expressionvariablevector.h
   fileandformat.h
   isotopologueset.h
   module.h
@@ -49,7 +49,7 @@ SET(keywordwidgets_UIS
   configurationreflist.ui
   dialog.ui
   dropdown.ui
-  expressionvariablelist.ui
+  expressionvariablevector.ui
   fileandformat.ui
   isotopologueset.ui
   module.ui
@@ -84,7 +84,7 @@ SET(keywordwidgets_SRCS
   dropdown_funcs.cpp
   dropwidget_funcs.cpp
   enumoptions_funcs.cpp
-  expressionvariablelist_funcs.cpp
+  expressionvariablevector_funcs.cpp
   fileandformat_funcs.cpp
   integer_funcs.cpp
   isotopologueset_funcs.cpp

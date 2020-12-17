@@ -36,7 +36,7 @@ class ConfigurationRefListKeywordWidget : public KeywordDropDown, public Keyword
 
     private:
     // Selection list update function
-    void updateSelectionRow(int row, Configuration *sp, bool createItem);
+    void updateSelectionRow(int row, Configuration *cfg, bool createItem);
 
     private slots:
     // List item changed

@@ -1156,7 +1156,7 @@ void Axes::updateAxisPrimitives()
                         // Get formatted value text
                         s = numberFormat_[axis].format(value);
 
-                        labelPrimitives_[axis].add(fontInstance_, s, u + tickDir * tickSize_[axis], labelAnchor(axis),
+                        labelPrimitives_[axis].add(&fontInstance_, s, u + tickDir * tickSize_[axis], labelAnchor(axis),
                                                    tickDir * labelOrientation(axis).z, labelTransform,
                                                    parentView_.labelPointSize(),
                                                    parentView_.isFlatView() ? false : parentView_.flatLabelsIn3D());
@@ -1212,7 +1212,7 @@ void Axes::updateAxisPrimitives()
                         // Get formatted label text
                         s = numberFormat_[axis].format(value);
 
-                        labelPrimitives_[axis].add(fontInstance_, s, u + tickDir * tickSize_[axis], labelAnchor(axis),
+                        labelPrimitives_[axis].add(&fontInstance_, s, u + tickDir * tickSize_[axis], labelAnchor(axis),
                                                    tickDir * labelOrientation(axis).z, labelTransform,
                                                    parentView_.labelPointSize(),
                                                    parentView_.isFlatView() ? false : parentView_.flatLabelsIn3D());
@@ -1272,7 +1272,7 @@ void Axes::updateAxisPrimitives()
             adjustment = tickDir * titleDistances_[axis];
 
         // -- Add primitive
-        titlePrimitives_[axis].add(fontInstance_, QString::fromStdString(title_[axis]), u, titleAnchor(axis), adjustment,
+        titlePrimitives_[axis].add(&fontInstance_, QString::fromStdString(title_[axis]), u, titleAnchor(axis), adjustment,
                                    titleTransform, parentView_.titlePointSize(),
                                    parentView_.isFlatView() ? false : parentView_.flatLabelsIn3D());
     }

@@ -13,6 +13,4 @@ This document describes and defines the release cycle and versioning for the Dis
 
 ## Overview
 
-Dissolve is a scientific code with a well-defined underlying framework (which is likely to change slowly) upon which specific functionality is added in a [modular manner](../overviews/modules). The development team undertake sequential two week sprints as a general practice, with each minor version increment (e.g. `0.7` to `0.8`) loosely comprising of four sprints, although this is subject to change by external factors.
-
-Development priorities for each incremental version will be decided by the [project management committee](/docs/governance/project).
+Dissolve is a scientific code with a well-defined underlying framework (which is likely to change slowly) upon which specific functionality is added in a [modular manner]({{< ref "moduledev" >}}). Each minor version increment (e.g. `0.7` to `0.8`) typically marks the introduction of a significant new feature or capability, with development priorities for each incremental version  decided by the [project management committee]({{< ref "pmc" >}}). Critical bugfixes and other usability issues are introduced as patched versions to minor releases (e.g. `0.8.1`, `0.8.2`).

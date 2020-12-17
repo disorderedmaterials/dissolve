@@ -3,14 +3,21 @@
 
 #pragma once
 
-#include "expression/nodeNEW.h"
+#include "expression/node.h"
 
 // Expression Root Node
-class ExpressionRootNode : public ExpressionNodeNEW
+class ExpressionRootNode : public ExpressionNode
 {
     public:
     ExpressionRootNode();
     ~ExpressionRootNode() = default;
+
+    /*
+     * Nodes
+     */
+    public:
+    // Duplicate this node and its contents
+    std::shared_ptr<ExpressionNode> duplicate();
 
     /*
      * Evaluation

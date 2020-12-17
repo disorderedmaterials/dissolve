@@ -7,7 +7,7 @@ weight: 7
 With our equilibrated (or equilibrating...) system we'll now make a basic comparison between our simulated total structure factors and the reference datasets.
 
 {{< action type="tabs" text="**RDF / Neutron S(Q)** tab" >}}
-{{< step text="Double-click on the `H2O` `NeutronSQ` module to open its additional controls in a separate tab" >}}
+{{< step text="Click on the `H2O` `NeutronSQ` module and select the **Module Output** button" >}}
 
 
 Now we can see the comparison between the total radial distribution functions (top panel) and neutron-weighted structure factors (bottom panel) for the H<sub>2</sub>O sample. When the system is approaching equilibrium you should see something similar to this:
@@ -28,7 +28,6 @@ Now we can safely adjust the options in the [`RDF`]({{< ref "rdf" >}}) module:
 
 {{< action type="tabs" text=" **RDF / Neutron S(Q)** tab" >}}
 {{< step text="Select the `RDF` module to display its additional controls" >}}
-{{< action type="groups" text="Open the **Calculation** settings group" >}}
 {{< step text="Set the **IntraBroadening** to `Gaussian` with a FWHM of 0.18 (the default)" >}}
 
 

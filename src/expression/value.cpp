@@ -12,20 +12,20 @@ ExpressionValue::ExpressionValue()
     typeFixed_ = false;
 }
 
-ExpressionValue::ExpressionValue(int value)
+ExpressionValue::ExpressionValue(int value, bool fixedType)
 {
     valueI_ = value;
     valueD_ = 0.0;
     type_ = IntegerType;
-    typeFixed_ = true;
+    typeFixed_ = fixedType;
 }
 
-ExpressionValue::ExpressionValue(double value)
+ExpressionValue::ExpressionValue(double value, bool fixedType)
 {
     valueI_ = 0;
     valueD_ = value;
     type_ = DoubleType;
-    typeFixed_ = true;
+    typeFixed_ = fixedType;
 }
 
 ExpressionValue::~ExpressionValue() {}
