@@ -51,14 +51,14 @@ Simple one-component system, e.g. a pure liquid, with a set number of molecules 
 ```r
 Generator
   Box
-    Lengths  1.0  1.0  1.0
-    Angles  90.0  90.0  90.0
+	Lengths  1.0  1.0  1.0
+	Angles  90.0  90.0  90.0
   EndBox
   AddSpecies
-    Species  'Water'
-    Population  '1000'
-    Density  '0.1'  atoms/A3
-    Positioning  Random
+	Species  'Water'
+	Population  '1000'
+	Density  '0.1'  atoms/A3
+	Positioning  Random
   EndAddSpecies
 EndGenerator
 ```
@@ -70,23 +70,23 @@ Two-component system, e.g. a liquid mixture, with a set number of molecules of t
 ```r
 Generator
   Parameters
-    Integer  N  1000
-    Real   ratio   2.0
-    Real   rho    0.9
+	Parameter   N  1000
+	Parameter   ratio   2.0
+	Parameter   rho    0.9
   EndParameters
   Box
-    Angles  90.0  90.0  90.0
-    Lengths  1.0  1.0  1.0
+	Angles  90.0  90.0  90.0
+	Lengths  1.0  1.0  1.0
   EndBox
   AddSpecies
-    Species  'Water'
-    Population  N*ratio
-    Density  rho  g/cm3
+	Species  'Water'
+	Population  N*ratio
+	Density  rho  g/cm3
   EndAddSpecies
   AddSpecies
-    Species  'Alcohol'
-    Population  N
-    Density  rho  g/cm3
+	Species  'Alcohol'
+	Population  N
+	Density  rho  g/cm3
   EndAddSpecies
 EndGenerator
 ```
