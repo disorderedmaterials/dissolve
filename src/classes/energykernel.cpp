@@ -717,7 +717,7 @@ double EnergyKernel::energy(const SpeciesTorsion &torsion)
                                                 torsion.l()->r() - torsion.k()->r()));
 }
 
-// Return SpeciesImproper energy
+// Return SpeciesImproper energy at Atoms specified
 double EnergyKernel::energy(const SpeciesImproper &imp, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
                             const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l)
 {
@@ -738,6 +738,13 @@ double EnergyKernel::energy(const SpeciesImproper &imp, const std::shared_ptr<At
         veckl = l->r() - k->r();
 
     return imp.energy(Box::torsionInDegrees(vecji, vecjk, veckl));
+}
+
+// Return SpeciesImproper energy
+double EnergyKernel::energy(const SpeciesImproper &imp)
+{
+    return imp.energy(
+        Box::torsionInDegrees(imp.i()->r() - imp.j()->r(), imp.k()->r() - imp.j()->r(), imp.l()->r() - imp.k()->r()));
 }
 
 // Return intramolecular energy for the supplied Atom
