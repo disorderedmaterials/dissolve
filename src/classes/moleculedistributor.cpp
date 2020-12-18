@@ -31,7 +31,7 @@ Array<Cell *> MoleculeDistributor::cellsToBeModifiedForObject(int objectId)
 
         // Is it already in the list?
         for (n = 0; n < cells.nItems(); ++n)
-            if (cells.constAt(n) == cell)
+            if (cells.at(n) == cell)
                 break;
         if (n == cells.nItems())
             cells.add(cell);

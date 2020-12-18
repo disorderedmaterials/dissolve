@@ -274,13 +274,13 @@ template <class A> class Array : public ListItem<Array<A>>
         return array_[n];
     }
     // Return nth item as const reference
-    A &constAt(int n) const
+    const A &at(int n) const
     {
 #ifdef CHECKS
         if ((n < 0) || (n >= nItems_))
         {
             static A dummy;
-            Messenger::print("OUT_OF_RANGE - Array index {} is out of range in Array::constAt() (nItems = {}).\n", n, nItems_);
+            Messenger::print("OUT_OF_RANGE - Array index {} is out of range in Array::at() (nItems = {}).\n", n, nItems_);
             return dummy;
         }
 #endif
@@ -391,7 +391,7 @@ template <class A> class Array : public ListItem<Array<A>>
     void operator+=(const Array<A> array)
     {
         for (auto n = 0; n < nItems_; ++n)
-            array_[n] += array.constAt(n);
+            array_[n] += array.at(n);
     }
     // Operator-= (subtract from all)
     void operator-=(const A value)
@@ -422,7 +422,7 @@ template <class A> class Array : public ListItem<Array<A>>
     {
         Array<A> result(nItems_);
         for (auto n = 0; n < nItems_; ++n)
-            result[n] = array_[n] - array.constAt(n);
+            result[n] = array_[n] - array.at(n);
         return result;
     }
     // Operator+ (addition)
@@ -436,7 +436,7 @@ template <class A> class Array : public ListItem<Array<A>>
     {
         Array<A> result(nItems_);
         for (auto n = 0; n < nItems_; ++n)
-            result[n] = array_[n] + array.constAt(n);
+            result[n] = array_[n] + array.at(n);
         return result;
     }
     // Operator* (multiply all and return new)

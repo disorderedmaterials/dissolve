@@ -50,8 +50,8 @@ double GeometryOptimisationModule::rmsForce() const
 {
     double rmsf = 0.0;
     for (auto n = 0; n < xForce_.nItems(); ++n)
-        rmsf += xForce_.constAt(n) * xForce_.constAt(n) + yForce_.constAt(n) * yForce_.constAt(n) +
-                zForce_.constAt(n) * zForce_.constAt(n);
+        rmsf += xForce_.at(n) * xForce_.at(n) + yForce_.at(n) * yForce_.at(n) +
+                zForce_.at(n) * zForce_.at(n);
     rmsf /= xForce_.nItems();
 
     return sqrt(rmsf);

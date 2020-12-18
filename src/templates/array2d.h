@@ -174,13 +174,13 @@ template <class A> class Array2D
         static A dummy;
         if ((row < 0) || (row >= nRows_))
         {
-            Messenger::print("OUT_OF_RANGE - Row number ({}) is out of range in Array2D::constAt() (nRows = {}).\n", row,
+            Messenger::print("OUT_OF_RANGE - Row number ({}) is out of range in Array2D::at() (nRows = {}).\n", row,
                              nRows_);
             return dummy;
         }
         if ((column < 0) || (column >= nColumns_))
         {
-            Messenger::print("OUT_OF_RANGE - Column number ({}) is out of range in Array2D::constAt() (nColumns = {}).\n",
+            Messenger::print("OUT_OF_RANGE - Column number ({}) is out of range in Array2D::at() (nColumns = {}).\n",
                              column, nColumns_);
             return dummy;
         }

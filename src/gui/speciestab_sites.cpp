@@ -157,24 +157,24 @@ void SpeciesTab::updateSitesTab()
 
     // Set origin atom indices
     Array<int> originAtoms = site->originAtomIndices();
-    QString originText = originAtoms.nItems() == 0 ? QString() : QString::number(originAtoms.constAt(0) + 1);
+    QString originText = originAtoms.nItems() == 0 ? QString() : QString::number(originAtoms.at(0) + 1);
     for (auto n = 1; n < originAtoms.nItems(); ++n)
-        originText += QString(" %1").arg(originAtoms.constAt(n) + 1);
+        originText += QString(" %1").arg(originAtoms.at(n) + 1);
     ui_.SiteOriginAtomsEdit->setText(originText);
     ui_.SiteOriginMassWeightedCheck->setCheckState(site->originMassWeighted() ? Qt::Checked : Qt::Unchecked);
 
     // Set x axis atom indices
     Array<int> xAxisAtoms = site->xAxisAtomIndices();
-    QString xAxisText = xAxisAtoms.nItems() == 0 ? QString() : QString::number(xAxisAtoms.constAt(0) + 1);
+    QString xAxisText = xAxisAtoms.nItems() == 0 ? QString() : QString::number(xAxisAtoms.at(0) + 1);
     for (auto n = 1; n < xAxisAtoms.nItems(); ++n)
-        xAxisText += QString(" %1").arg(xAxisAtoms.constAt(n) + 1);
+        xAxisText += QString(" %1").arg(xAxisAtoms.at(n) + 1);
     ui_.SiteXAxisAtomsEdit->setText(xAxisText);
 
     // Set y axis atom indices
     Array<int> yAxisAtoms = site->yAxisAtomIndices();
-    QString yAxisText = yAxisAtoms.nItems() == 0 ? QString() : QString::number(yAxisAtoms.constAt(0) + 1);
+    QString yAxisText = yAxisAtoms.nItems() == 0 ? QString() : QString::number(yAxisAtoms.at(0) + 1);
     for (auto n = 1; n < yAxisAtoms.nItems(); ++n)
-        yAxisText += QString(" %1").arg(yAxisAtoms.constAt(n) + 1);
+        yAxisText += QString(" %1").arg(yAxisAtoms.at(n) + 1);
     ui_.SiteYAxisAtomsEdit->setText(yAxisText);
 
     // If the current site has changed, also regenerate the SpeciesSite renderable

@@ -10,11 +10,11 @@ double Extrema::min(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
-        double min = A.constAt(0);
+        double min = A.at(0);
         for (auto i = 0; i < A.nItems(); ++i)
         {
-            if (A.constAt(i) < min)
-                min = A.constAt(i);
+            if (A.at(i) < min)
+                min = A.at(i);
         }
         return min;
     }
@@ -27,11 +27,11 @@ double Extrema::max(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
-        double max = A.constAt(0);
+        double max = A.at(0);
         for (auto i = 0; i < A.nItems(); ++i)
         {
-            if (A.constAt(i) > max)
-                max = A.constAt(i);
+            if (A.at(i) > max)
+                max = A.at(i);
         }
         return max;
     }
@@ -60,11 +60,11 @@ double Extrema::absMin(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
-        auto absMin = fabs(A.constAt(0));
+        auto absMin = fabs(A.at(0));
         for (auto i = 0; i < A.nItems(); ++i)
         {
-            if (fabs(A.constAt(i)) < absMin)
-                absMin = fabs(A.constAt(i));
+            if (fabs(A.at(i)) < absMin)
+                absMin = fabs(A.at(i));
         }
         return absMin;
     }
@@ -77,11 +77,11 @@ double Extrema::absMax(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
-        auto absMax = fabs(A.constAt(0));
+        auto absMax = fabs(A.at(0));
         for (auto i = 0; i < A.nItems(); ++i)
         {
-            if (fabs(A.constAt(i)) > absMax)
-                absMax = fabs(A.constAt(i));
+            if (fabs(A.at(i)) > absMax)
+                absMax = fabs(A.at(i));
         }
         return absMax;
     }

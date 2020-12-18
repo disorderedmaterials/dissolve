@@ -234,7 +234,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
     int indexOfNode(ProcedureNode *node) const
     {
         for (auto n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
-            if (KeywordData<Array<N *> &>::data_.constAt(n) == node)
+            if (KeywordData<Array<N *> &>::data_.at(n) == node)
                 return n;
 
         return -1;
@@ -245,7 +245,7 @@ template <class N> class NodeArrayKeyword : public NodeArrayKeywordBase, public 
         Array<ProcedureNode *> nodes(KeywordData<Array<N *> &>::data_.nItems());
 
         for (auto n = 0; n < KeywordData<Array<N *> &>::data_.nItems(); ++n)
-            nodes[n] = KeywordData<Array<N *> &>::data_.constAt(n);
+            nodes[n] = KeywordData<Array<N *> &>::data_.at(n);
 
         return nodes;
     }

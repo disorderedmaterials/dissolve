@@ -118,7 +118,7 @@ int SelectProcedureNode::nCumulativeSites() const { return nCumulativeSites_; }
 // Return current site
 const Site *SelectProcedureNode::currentSite() const
 {
-    return (currentSiteIndex_ == -1 ? nullptr : sites_.constAt(currentSiteIndex_));
+    return (currentSiteIndex_ == -1 ? nullptr : sites_.at(currentSiteIndex_));
 }
 
 /*
@@ -247,7 +247,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
 
         const Array<Site> &generatedSites = dynamicNode->generatedSites();
         for (auto n = 0; n < generatedSites.nItems(); ++n)
-            sites_.add(&generatedSites.constAt(n));
+            sites_.add(&generatedSites.at(n));
     }
 
     // Set first site index and increase selections counter

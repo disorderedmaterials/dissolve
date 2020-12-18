@@ -506,9 +506,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 sumError = 0.0;
                 for (auto n = 0; n < cfg->nAtoms(); ++n)
                 {
-                    totalRatio.x = referenceFx.constAt(n) - (interFx[n] + intraFx[n]);
-                    totalRatio.y = referenceFy.constAt(n) - (interFy[n] + intraFy[n]);
-                    totalRatio.z = referenceFz.constAt(n) - (interFz[n] + intraFz[n]);
+                    totalRatio.x = referenceFx.at(n) - (interFx[n] + intraFx[n]);
+                    totalRatio.y = referenceFy.at(n) - (interFy[n] + intraFy[n]);
+                    totalRatio.z = referenceFz.at(n) - (interFz[n] + intraFz[n]);
                     if (fabs(interFx[n] + intraFx[n]) > 1.0e-6)
                         totalRatio.x *= 100.0 / (interFx[n] + intraFx[n]);
                     if (fabs(interFy[n] + intraFy[n]) > 1.0e-6)
@@ -532,9 +532,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     {
                         Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:5.2f}%) {:15.8e} "
                                          "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol\n",
-                                         n + 1, referenceFx.constAt(n) - (interFx[n] + intraFx[n]), totalRatio.x,
-                                         referenceFy.constAt(n) - (interFy[n] + intraFy[n]), totalRatio.y,
-                                         referenceFz.constAt(n) - (interFz[n] + intraFz[n]), totalRatio.z);
+                                         n + 1, referenceFx.at(n) - (interFx[n] + intraFx[n]), totalRatio.x,
+                                         referenceFy.at(n) - (interFy[n] + intraFy[n]), totalRatio.y,
+                                         referenceFz.at(n) - (interFz[n] + intraFz[n]), totalRatio.z);
                         ++nFailed2;
                     }
                 }
@@ -548,9 +548,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 sumError = 0.0;
                 for (auto n = 0; n < cfg->nAtoms(); ++n)
                 {
-                    totalRatio.x = referenceFx.constAt(n) - (checkInterFx[n] + checkIntraFx[n]);
-                    totalRatio.y = referenceFy.constAt(n) - (checkInterFy[n] + checkIntraFy[n]);
-                    totalRatio.z = referenceFz.constAt(n) - (checkInterFz[n] + checkIntraFz[n]);
+                    totalRatio.x = referenceFx.at(n) - (checkInterFx[n] + checkIntraFx[n]);
+                    totalRatio.y = referenceFy.at(n) - (checkInterFy[n] + checkIntraFy[n]);
+                    totalRatio.z = referenceFz.at(n) - (checkInterFz[n] + checkIntraFz[n]);
                     if (fabs(checkInterFx[n] + checkIntraFx[n]) > 1.0e-6)
                         totalRatio.x *= 100.0 / (checkInterFx[n] + checkIntraFx[n]);
                     if (fabs(checkInterFy[n] + checkIntraFy[n]) > 1.0e-6)
@@ -574,9 +574,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     {
                         Messenger::print("Check atom {:10d} - errors are {:15.8e} ({:5.2f}%) {:15.8e} "
                                          "({:5.2f}%) {:15.8e} ({:5.2f}%) (x y z) 10J/mol\n",
-                                         n + 1, referenceFx.constAt(n) - (checkInterFx[n] + checkIntraFx[n]), totalRatio.x,
-                                         referenceFy.constAt(n) - (checkInterFy[n] + checkIntraFy[n]), totalRatio.y,
-                                         referenceFz.constAt(n) - (checkInterFz[n] + checkIntraFz[n]), totalRatio.z);
+                                         n + 1, referenceFx.at(n) - (checkInterFx[n] + checkIntraFx[n]), totalRatio.x,
+                                         referenceFy.at(n) - (checkInterFy[n] + checkIntraFy[n]), totalRatio.y,
+                                         referenceFz.at(n) - (checkInterFz[n] + checkIntraFz[n]), totalRatio.z);
                         ++nFailed3;
                     }
                 }

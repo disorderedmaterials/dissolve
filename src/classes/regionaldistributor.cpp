@@ -230,11 +230,11 @@ ProcessPool::DivisionStrategy RegionalDistributor::currentStrategy() { return cu
 // Return whether the specified processOrGroup can lock the given Cell index
 bool RegionalDistributor::canLockCellForEditing(int processOrGroup, int cellIndex)
 {
-    CellStatusFlag status = cellStatusFlags_.constAt(cellIndex);
+    CellStatusFlag status = cellStatusFlags_.at(cellIndex);
 
     if (DND)
         Messenger::print("  0-- Checking ability to lock Cell index {} for process/group {}: current status = {}\n", cellIndex,
-                         processOrGroup, cellStatusFlag(cellStatusFlags_.constAt(cellIndex)));
+                         processOrGroup, cellStatusFlag(cellStatusFlags_.at(cellIndex)));
 
     // If the Cell is flagged as unused, return true
     if (status == RegionalDistributor::UnusedFlag)
@@ -243,12 +243,12 @@ bool RegionalDistributor::canLockCellForEditing(int processOrGroup, int cellInde
     // If the Cell is flagged as 'LockedForEditing', and not by this processOrGroup, return false. If we have locked it,
     // return true.
     if (status == RegionalDistributor::LockedForEditingFlag)
-        return (cellLockOwners_.constAt(cellIndex) == processOrGroup);
+        return (cellLockOwners_.at(cellIndex) == processOrGroup);
 
     // If the Cell is flagged as 'ReadByOne', but not by this processOrGroup, return false (if we are the sole reader, we
     // can lock it)
     if (status == RegionalDistributor::ReadByOneFlag)
-        return (cellLockOwners_.constAt(cellIndex) == processOrGroup);
+        return (cellLockOwners_.at(cellIndex) == processOrGroup);
 
     // If the Cell is flagged as 'ReadByMany', there is no chance of locking it, so return false.
     if (status == RegionalDistributor::ReadByManyFlag)

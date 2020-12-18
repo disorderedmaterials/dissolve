@@ -118,7 +118,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
             dissolve.processingModuleData(), "BraggReflections", braggModule->uniqueName(), Array<BraggReflection>());
         const auto nReflections = braggReflections.nItems();
-        const auto braggQMax = braggReflections.constAt(nReflections - 1).q();
+        const auto braggQMax = braggReflections.at(nReflections - 1).q();
         Messenger::print("Found BraggReflections data for module '{}' (nReflections = {}, QMax = {} "
                          "Angstroms**-1).\n",
                          braggModule->uniqueName(), nReflections, braggQMax);

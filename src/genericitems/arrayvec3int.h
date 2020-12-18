@@ -84,7 +84,7 @@ template <> class GenericItemContainer<Array<Vec3<int>>> : public GenericItem
             return false;
         // Keep it simple (and slow) and check/send one value at a time
         for (auto n = 0; n < data_.nItems(); ++n)
-            if (!procPool.equality(data_.constAt(n)))
+            if (!procPool.equality(data_.at(n)))
                 return false;
         return true;
     }

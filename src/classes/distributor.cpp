@@ -107,7 +107,7 @@ bool Distributor::addHardLocks(Array<Cell *> cells)
     // Loop over Cells to hard-lock
     for (auto n = 0; n < cells.nItems(); ++n)
     {
-        cellId = cells.constAt(n)->index();
+        cellId = cells.at(n)->index();
 
         // Add a hard lock to the Cell - set the lock counter to -1.
         // We can't hard-lock a cell if it is currently being modified ( == HardLocked ) or is soft-locked ( > 0 )
@@ -129,7 +129,7 @@ bool Distributor::addHardLocks(Array<Cell *> cells)
     // Must now soft-lock all the surrounding Cells
     for (auto n = 0; n < softCells.nItems(); ++n)
     {
-        cellId = softCells.constAt(n)->index();
+        cellId = softCells.at(n)->index();
         if (!addSoftLock(cellId))
             return false;
     }
@@ -150,7 +150,7 @@ bool Distributor::removeHardLocks(Array<Cell *> cells)
     // Loop over Cells to hard-unlock
     for (auto n = 0; n < cells.nItems(); ++n)
     {
-        cellId = cells.constAt(n)->index();
+        cellId = cells.at(n)->index();
 
         // Remove a hard lock from the Cell - set lock counter to zero
         // We can't hard-unlock a cell unless it is currently hard-locked (obviously!)
@@ -172,7 +172,7 @@ bool Distributor::removeHardLocks(Array<Cell *> cells)
     // Must now soft-unlock all the surrounding Cells
     for (auto n = 0; n < softCells.nItems(); ++n)
     {
-        cellId = softCells.constAt(n)->index();
+        cellId = softCells.at(n)->index();
         if (!removeSoftLock(cellId))
             return false;
     }
@@ -181,12 +181,12 @@ bool Distributor::removeHardLocks(Array<Cell *> cells)
 }
 
 // Return lock count
-int Distributor::lockCount(int cellIndex) const { return cellLocks_.constAt(cellIndex); }
+int Distributor::lockCount(int cellIndex) const { return cellLocks_.at(cellIndex); }
 
 // Check hard lock possibility
 bool Distributor::canHardLock(int cellIndex) const
 {
-    if (cellLocks_.constAt(cellIndex) != NoLocks)
+    if (cellLocks_.at(cellIndex) != NoLocks)
         return false;
 
     Cell *cell = cellArray_.cell(cellIndex);
@@ -198,7 +198,7 @@ bool Distributor::canHardLock(int cellIndex) const
     for (auto n = 0; n < cell->nCellNeighbours(); ++n)
     {
         id = cell->cellNeighbour(n)->index();
-        if (cellLocks_.constAt(id) == HardLocked)
+        if (cellLocks_.at(id) == HardLocked)
             return false;
     }
 
@@ -206,7 +206,7 @@ bool Distributor::canHardLock(int cellIndex) const
     for (auto n = 0; n < cell->nMimCellNeighbours(); ++n)
     {
         id = cell->mimCellNeighbour(n)->index();
-        if (cellLocks_.constAt(id) == HardLocked)
+        if (cellLocks_.at(id) == HardLocked)
             return false;
     }
 
@@ -466,7 +466,7 @@ bool Distributor::finishedWithObject()
         // Mark hard-locked Cells as being modified
         for (auto n = 0; n < lastHardLockedCells_[processOrGroup].nItems(); ++n)
         {
-            auto cellIndex = lastHardLockedCells_[processOrGroup].constAt(n)->index();
+            auto cellIndex = lastHardLockedCells_[processOrGroup].at(n)->index();
 
             // If the current process/group was the last to modify it, that's OK.
             if (cellContentsModifiedBy_[cellIndex] == processOrGroup)
