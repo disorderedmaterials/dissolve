@@ -11,6 +11,18 @@ Dissolve is available in packaged / installable form for several common operatin
 
 For serious simulations, the parallel MPI version is recommended, but which must usually be compiled by hand on the target machine on a case-by-case basis.
 
+### Windows 10
+
+Dissolve comes as a full installer as well as a plain zip archive (if you don't want to install it, or don't have the privileges to do so). Note that Dissolve is built using Visual Studio, and so you may need to install the [Visual C++ runtime libraries](https://visualstudio.microsoft.com/downloads/).
+
+### Mac OSX
+
+A disk image is available for recent versions of OSX.
+
+### Linux
+
+Dissolve is packaged in an AppImage, which should be suitable for most distributions. Note that the AppImage must be made executable in order to use it! We do not currently provide rpm or deb packages.
+
 * * *
 
 ## Compilation
