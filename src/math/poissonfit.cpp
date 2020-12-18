@@ -102,7 +102,7 @@ double PoissonFit::poissonFT(const int qIndex, const int nIndex) const
 
     double factor = 1.0 / ((n + 2) * pow(sqrtOnePlusQSqSigmaSq_[qIndex], n + 4));
 
-    double value = 2.0 * cos(na) + (oneMinusQSqSigmaSq_[qIndex] / (referenceData_.constXAxis(qIndex) * sigmaQ_)) * sin(na);
+    double value = 2.0 * cos(na) + (oneMinusQSqSigmaSq_[qIndex] / (referenceData_.xAxis(qIndex) * sigmaQ_)) * sin(na);
 
     return factor * value;
 }

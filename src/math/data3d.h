@@ -53,36 +53,29 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
     int version() const;
     // Return x axis value specified
     double &xAxis(int index);
-    // Return x axis value specified (const)
-    double constXAxis(int index) const;
+    const double &xAxis(int index) const;
     // Return x axis Array
     std::vector<double> &xAxis();
-    // Return x axis Array (const)
     const std::vector<double> &xAxis() const;
     // Return y axis value specified
     double &yAxis(int index);
-    // Return y axis value specified (const)
-    double constYAxis(int index) const;
+    const double &yAxis(int index) const;
     // Return y axis Array
     std::vector<double> &yAxis();
-    // Return y axis Array (const)
     const std::vector<double> &yAxis() const;
     // Return z axis value specified
     double &zAxis(int index);
-    // Return z axis value specified (const)
-    double constZAxis(int index) const;
+    const double &zAxis(int index) const;
     // Return z axis Array
     std::vector<double> &zAxis();
-    // Return z axis Array (const)
     const std::vector<double> &zAxis() const;
     // Return value specified
     double &value(int xIndex, int yIndex, int zIndex);
-    // Return value value specified (const)
-    double constValue(int xIndex, int yIndex, int zIndex) const;
+    const double &value(int xIndex, int yIndex, int zIndex) const;
     // Return value Array
     Array3D<double> &values();
     // Return values Array
-    const Array3D<double> &constValues3D() const;
+    const Array3D<double> &values3D() const;
     // Return number of values present in whole dataset
     int nValues() const;
     // Return minimum value over all data points
@@ -95,12 +88,11 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
     bool valuesHaveErrors() const;
     // Return error value specified
     double &error(int xIndex, int yIndex, int zIndex);
-    // Return error value specified (const)
-    double constError(int xIndex, int yIndex, int zIndex) const;
+    const double &error(int xIndex, int yIndex, int zIndex) const;
     // Return error Array
     Array3D<double> &errors();
     // Return errors Array
-    const Array3D<double> &constErrors3D() const;
+    const Array3D<double> &errors3D() const;
 
     /*
      * Operators

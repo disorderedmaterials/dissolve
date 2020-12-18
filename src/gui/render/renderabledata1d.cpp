@@ -83,27 +83,27 @@ void RenderableData1D::transformValues()
     for (auto n = 0; n < transformedData_.nValues(); ++n)
     {
         // X
-        if (transformedData_.constXAxis(n) > 0.0)
+        if (transformedData_.xAxis(n) > 0.0)
         {
             if (positiveLimitsMin_.x < 0.0)
-                positiveLimitsMin_.x = transformedData_.constXAxis(n);
-            else if (transformedData_.constXAxis(n) < positiveLimitsMin_.x)
-                positiveLimitsMin_.x = transformedData_.constXAxis(n);
+                positiveLimitsMin_.x = transformedData_.xAxis(n);
+            else if (transformedData_.xAxis(n) < positiveLimitsMin_.x)
+                positiveLimitsMin_.x = transformedData_.xAxis(n);
 
-            if (transformedData_.constXAxis(n) > positiveLimitsMax_.x)
-                positiveLimitsMax_.x = transformedData_.constXAxis(n);
+            if (transformedData_.xAxis(n) > positiveLimitsMax_.x)
+                positiveLimitsMax_.x = transformedData_.xAxis(n);
         }
 
         // Value
-        if (transformedData_.constValue(n) > 0.0)
+        if (transformedData_.value(n) > 0.0)
         {
             if (positiveValuesMin_ < 0.0)
-                positiveValuesMin_ = transformedData_.constValue(n);
-            else if (transformedData_.constValue(n) < positiveValuesMin_)
-                positiveValuesMin_ = transformedData_.constValue(n);
+                positiveValuesMin_ = transformedData_.value(n);
+            else if (transformedData_.value(n) < positiveValuesMin_)
+                positiveValuesMin_ = transformedData_.value(n);
 
-            if (transformedData_.constValue(n) > positiveValuesMax_)
-                positiveValuesMax_ = transformedData_.constValue(n);
+            if (transformedData_.value(n) > positiveValuesMax_)
+                positiveValuesMax_ = transformedData_.value(n);
         }
     }
 
@@ -153,23 +153,23 @@ bool RenderableData1D::yRangeOverX(double xMin, double xMax, double &yMin, doubl
     auto first = true;
     for (auto n = 0; n < data.nValues(); ++n)
     {
-        if (data.constXAxis(n) < xMin)
+        if (data.xAxis(n) < xMin)
             continue;
-        else if (data.constXAxis(n) > xMax)
+        else if (data.xAxis(n) > xMax)
             break;
 
         if (first)
         {
-            yMin = data.constValue(n);
+            yMin = data.value(n);
             yMax = yMin;
             first = false;
         }
         else
         {
-            if (data.constValue(n) < yMin)
-                yMin = data.constValue(n);
-            else if (data.constValue(n) > yMax)
-                yMax = data.constValue(n);
+            if (data.value(n) < yMin)
+                yMin = data.value(n);
+            else if (data.value(n) > yMax)
+                yMax = data.value(n);
         }
     }
 

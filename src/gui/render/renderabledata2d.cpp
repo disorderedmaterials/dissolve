@@ -166,7 +166,7 @@ void RenderableData2D::recreatePrimitives(const View &view, const ColourDefiniti
     }
 
     reinitialisePrimitives(source_->yAxis().size(), GL_LINE_STRIP, true);
-    constructLine(transformedData().xAxis(), transformedData().yAxis(), transformedData().constValues2D(), view.axes(),
+    constructLine(transformedData().xAxis(), transformedData().yAxis(), transformedData().values2D(), view.axes(),
                   colourDefinition);
 }
 

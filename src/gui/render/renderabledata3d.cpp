@@ -182,7 +182,7 @@ void RenderableData3D::recreatePrimitives(const View &view, const ColourDefiniti
         return;
 
     marchingCubesOriginal(transformedData_.xAxis(), transformedData_.yAxis(), transformedData_.zAxis(),
-                          transformedData_.constValues3D(), lowerCutoff_, upperCutoff_, colourDefinition, view.axes(),
+                          transformedData_.values3D(), lowerCutoff_, upperCutoff_, colourDefinition, view.axes(),
                           dataPrimitive_);
 }
 

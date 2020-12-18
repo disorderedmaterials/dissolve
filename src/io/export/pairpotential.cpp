@@ -74,10 +74,9 @@ bool PairPotentialExportFileFormat::exportBlock(LineParser &parser, PairPotentia
         return false;
 
     for (auto n = 0; n < nPoints; ++n)
-        if (!parser.writeLineF("{:10.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}\n",
-                               uOriginal.constXAxis(n), uFull.constValue(n), dUFull.constValue(n), uOriginal.constValue(n),
-                               uAdditional.constValue(n), pp->analyticEnergy(uOriginal.constXAxis(n)),
-                               pp->analyticForce(uOriginal.constXAxis(n))))
+        if (!parser.writeLineF("{:10.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}  {:12.6e}\n", uOriginal.xAxis(n),
+                               uFull.value(n), dUFull.value(n), uOriginal.value(n), uAdditional.value(n),
+                               pp->analyticEnergy(uOriginal.xAxis(n)), pp->analyticForce(uOriginal.xAxis(n))))
             return false;
 
     return true;
@@ -106,7 +105,7 @@ bool PairPotentialExportFileFormat::exportDLPOLY(LineParser &parser, PairPotenti
     // Write energy data
     for (auto n = 0; n < nPoints; ++n)
     {
-        if (!parser.writeLineF("{:17.12e} ", uFull.constValue(n)))
+        if (!parser.writeLineF("{:17.12e} ", uFull.value(n)))
             return false;
         if (((n + 1) % 4 == 0) || (n == (nPoints - 1)))
         {
@@ -118,7 +117,7 @@ bool PairPotentialExportFileFormat::exportDLPOLY(LineParser &parser, PairPotenti
     // Write force data
     for (auto n = 0; n < nPoints; ++n)
     {
-        if (!parser.writeLineF("{:17.12e} ", dUFull.constValue(n)))
+        if (!parser.writeLineF("{:17.12e} ", dUFull.value(n)))
             return false;
         if (((n + 1) % 4 == 0) || (n == (nPoints - 1)))
         {

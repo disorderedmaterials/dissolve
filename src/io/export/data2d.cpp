@@ -57,7 +57,7 @@ bool Data2DExportFileFormat::exportBlock(LineParser &parser, const Data2D &data)
         return false;
 
     // Export datapoints, separating each block of a specific x value with a single blank line
-    const Array2D<double> &values = data.constValues2D();
+    const Array2D<double> &values = data.values2D();
     for (auto x = 0; x < values.nRows(); ++x)
     {
         for (auto y = 0; y < values.nColumns(); ++y)
@@ -74,7 +74,7 @@ bool Data2DExportFileFormat::exportBlock(LineParser &parser, const Data2D &data)
 bool Data2DExportFileFormat::exportCartesian(LineParser &parser, const Data2D &data)
 {
     // Three-column format (x  y  value) in blocks of similar y value, separated by blank lines
-    const Array2D<double> &values = data.constValues2D();
+    const Array2D<double> &values = data.values2D();
     const auto &xAxis = data.xAxis();
     const auto &yAxis = data.yAxis();
     for (auto x = 0; x < values.nRows(); ++x)

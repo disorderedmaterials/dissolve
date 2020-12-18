@@ -60,9 +60,9 @@ class PlottableData
     // Return values Array
     virtual const std::vector<double> &values() const;
     // Return values Array
-    virtual const Array2D<double> &constValues2D() const;
+    virtual const Array2D<double> &values2D() const;
     // Return three-dimensional values Array
-    virtual const Array3D<double> &constValues3D() const;
+    virtual const Array3D<double> &values3D() const;
     // Return number of values present in the whole dataset
     virtual int nValues() const = 0;
     // Return minimum value over all data points
@@ -74,7 +74,7 @@ class PlottableData
     // Return errors Array
     virtual const std::vector<double> &errors() const;
     // Return errors Array
-    virtual const Array2D<double> &constErrors2D() const;
+    virtual const Array2D<double> &errors2D() const;
     // Return three-dimensional errors Array
-    virtual const Array3D<double> &constErrors3D() const;
+    virtual const Array3D<double> &errors3D() const;
 };

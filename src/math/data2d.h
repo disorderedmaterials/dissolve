@@ -54,28 +54,23 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
     int version() const;
     // Return x axis value specified
     double &xAxis(int index);
-    // Return x axis value specified (const)
-    double constXAxis(int index) const;
+    const double &xAxis(int index) const;
     // Return x axis Array
     std::vector<double> &xAxis();
-    // Return x axis Array (const)
     const std::vector<double> &xAxis() const;
     // Return y axis value specified
     double &yAxis(int index);
-    // Return y axis value specified (const)
-    double constYAxis(int index) const;
+    const double &yAxis(int index) const;
     // Return y axis Array
     std::vector<double> &yAxis();
-    // Return y axis Array (const)
     const std::vector<double> &yAxis() const;
     // Return value specified
     double &value(int xIndex, int yIndex);
-    // Return value value specified (const)
-    double constValue(int xIndex, int yIndex) const;
+    const double &value(int xIndex, int yIndex) const;
     // Return value Array
     Array2D<double> &values();
     // Return values Array
-    const Array2D<double> &constValues2D() const;
+    const Array2D<double> &values2D() const;
     // Return value specified from linear array
     double value(int index);
     // Return number of values present in whole dataset
@@ -90,12 +85,11 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
     bool valuesHaveErrors() const;
     // Return error value specified
     double &error(int xIndex, int yIndex);
-    // Return error value specified (const)
-    double constError(int xIndex, int yIndex) const;
+    const double &error(int xIndex, int yIndex) const;
     // Return error Array
     Array2D<double> &errors();
     // Return errors Array
-    const Array2D<double> &constErrors2D() const;
+    const Array2D<double> &errors2D() const;
 
     /*
      * Operators

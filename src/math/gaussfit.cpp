@@ -128,7 +128,7 @@ void GaussFit::printCoefficients() const
 // Save Fourier-transformed Gaussians to individual files
 bool GaussFit::saveFTGaussians(std::string_view filenamePrefix, double xStep) const
 {
-    double xDelta = (xStep < 0.0 ? referenceData_.constXAxis(1) - referenceData_.constXAxis(0) : xStep);
+    double xDelta = (xStep < 0.0 ? referenceData_.xAxis(1) - referenceData_.xAxis(0) : xStep);
     for (auto n = 0; n < nGaussians_; ++n)
     {
         LineParser parser;
