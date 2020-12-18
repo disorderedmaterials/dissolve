@@ -32,8 +32,7 @@ template <class V, class E> class Venum
     public:
     // Return value
     V &value() { return value_; }
-    // Return value (const)
-    const V &constValue() const { return value_; }
+    const V &value() const { return value_; }
     // Set value
     void setValue(V value) { value_ = value; }
 
