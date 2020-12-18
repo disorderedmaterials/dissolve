@@ -25,7 +25,37 @@ foreach(SRCFILE "${tests_SRC}")
   )
   target_link_libraries(${NAME} PUBLIC
     ${CONAN_LIBS}
+
+    ${WHOLE_ARCHIVE_FLAG}
+
     ${BASIC_LINK_LIBS}
+
+    # Module 'nogui' libs
+    analysemodulenogui
+    atomshakemodulenogui
+    benchmarkmodulenogui
+    braggmodulenogui
+    calculateanglemodulenogui
+    calculateavgmolmodulenogui
+    calculateaxisanglemodulenogui
+    calculatecnmodulenogui
+    calculatedanglemodulenogui
+    calculaterdfmodulenogui
+    calculatesdfmodulenogui
+    calibrationmodulenogui
+    datatestmodulenogui
+    energymodulenogui
+    epsrmodulenogui
+    geomoptmodulenogui
+    neutronsqmodulenogui
+    rdfmodulenogui
+    skeletonmodulenogui
+    sqmodulenogui
+    testmodulenogui
+    xraysqmodulenogui
+
+    ${NO_WHOLE_ARCHIVE_FLAG}
+
     PRIVATE
 
     antlr4-runtime
