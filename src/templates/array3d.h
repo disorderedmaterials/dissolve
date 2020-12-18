@@ -196,8 +196,8 @@ template <class A> class Array3D
         static A dummy;
         if ((index < 0) || (index >= array_.size()))
         {
-            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in Array3D::linearValue() (linearSize = {}).\n",
-                             index, array_.size());
+            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in Array3D::linearValue() (linearSize = {}).\n", index,
+                             array_.size());
             return dummy;
         }
 #endif

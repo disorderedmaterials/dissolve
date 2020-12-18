@@ -100,8 +100,7 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
             for (auto n = 0; n < braggReflections.nItems(); ++n)
             {
                 if (!braggParser.writeLineF("{:6d}  {:10.6f}  {:8d}  {:10.6e}\n", n, braggReflections.at(n).q(),
-                                            braggReflections.at(n).nKVectors(),
-                                            braggReflections.at(n).intensity(0, 0)))
+                                            braggReflections.at(n).nKVectors(), braggReflections.at(n).intensity(0, 0)))
                     return false;
             }
             braggParser.closeFiles();
