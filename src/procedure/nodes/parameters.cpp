@@ -9,7 +9,7 @@
 
 ParametersProcedureNode::ParametersProcedureNode() : ProcedureNode(ProcedureNode::ParametersNode)
 {
-    keywords_.add("Parameters", new ExpressionVariableVectorKeyword(this, parameters_), "Parameter", "Defined parameters");
+    keywords_.add("Control", new ExpressionVariableVectorKeyword(this, parameters_), "Parameter", "Defined parameters");
 }
 
 ParametersProcedureNode::~ParametersProcedureNode() {}
@@ -41,7 +41,6 @@ void ParametersProcedureNode::addParameter(std::string_view name, ExpressionValu
 std::shared_ptr<ExpressionVariable> ParametersProcedureNode::hasParameter(std::string_view name,
                                                                           std::shared_ptr<ExpressionVariable> excludeParameter)
 {
-    // Search integer parameters
     for (auto var : parameters_)
         if ((var != excludeParameter) && (DissolveSys::sameString(var->name(), name)))
             return var;

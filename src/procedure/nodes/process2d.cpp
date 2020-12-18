@@ -17,11 +17,11 @@
 Process2DProcedureNode::Process2DProcedureNode(const Collect2DProcedureNode *target)
     : ProcedureNode(ProcedureNode::Process2DNode)
 {
-    keywords_.add("Target", new NodeKeyword<const Collect2DProcedureNode>(this, ProcedureNode::Collect2DNode, false, target),
-                  "SourceData", "Collect2D node containing the data to process");
-    keywords_.add("Target", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
-    keywords_.add("Target", new StringKeyword("X"), "LabelX", "Label for the x axis");
-    keywords_.add("Target", new StringKeyword("Y"), "LabelY", "Label for the y axis");
+    keywords_.add("Control", new NodeKeyword<const Collect2DProcedureNode>(this, ProcedureNode::Collect2DNode, false, target),
+                  "SourceData", "Collect2D node containing the histogram data to process");
+    keywords_.add("Control", new StringKeyword("Counts"), "LabelValue", "Label for the value axis");
+    keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
+    keywords_.add("Control", new StringKeyword("Y"), "LabelY", "Label for the y axis");
     keywords_.add("Export", new BoolKeyword(false), "Save", "Save processed data to disk");
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
                   "Branch providing normalisation operations for the data");

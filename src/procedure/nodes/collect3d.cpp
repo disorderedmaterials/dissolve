@@ -18,29 +18,29 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xObse
     : ProcedureNode(ProcedureNode::Collect3DNode)
 {
     keywords_.add(
-        "Target",
+        "Control",
         new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, xObservable, 0),
         "QuantityX", "Calculated observable to collect for x axis");
     keywords_.add(
-        "Target",
+        "Control",
         new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, yObservable, 0),
         "QuantityY", "Calculated observable to collect for y axis");
     keywords_.add(
-        "Target",
+        "Control",
         new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, zObservable, 0),
         "QuantityZ", "Calculated observable to collect for z axis");
-    keywords_.add("Target",
+    keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
                                         Vec3Labels::MinMaxDeltaLabels),
-                  "RangeX", "Range of calculation for the specified x observable");
-    keywords_.add("Target",
+                  "RangeX", "Range and binwidth of the x-axis of the histogram");
+    keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
                                         Vec3Labels::MinMaxDeltaLabels),
-                  "RangeY", "Range of calculation for the specified y observable");
-    keywords_.add("Target",
+                  "RangeY", "Range and binwidth of the y-axis of the histogram");
+    keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(zMin, zMax, zBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.0015),
                                         Vec3Labels::MinMaxDeltaLabels),
-                  "RangeZ", "Range of calculation for the specified z observable");
+                  "RangeZ", "Range and binwidth of the z-axis of the histogram");
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
                   "Branch which runs if the target quantities were binned successfully");
 
@@ -53,26 +53,26 @@ Collect3DProcedureNode::Collect3DProcedureNode(CalculateProcedureNodeBase *xyzOb
     : ProcedureNode(ProcedureNode::Collect3DNode)
 {
     keywords_.add(
-        "Target",
+        "Control",
         new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, xyzObservable, 0),
         "QuantityX", "Calculated observable to collect for x axis");
     keywords_.add(
-        "Target",
+        "Control",
         new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, xyzObservable, 1),
         "QuantityY", "Calculated observable to collect for y axis");
     keywords_.add(
-        "Target",
+        "Control",
         new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, xyzObservable, 2),
         "QuantityZ", "Calculated observable to collect for z axis");
-    keywords_.add("Target",
+    keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
                                         Vec3Labels::MinMaxDeltaLabels),
                   "RangeX", "Range of calculation for the specified x observable");
-    keywords_.add("Target",
+    keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
                                         Vec3Labels::MinMaxDeltaLabels),
                   "RangeY", "Range of calculation for the specified y observable");
-    keywords_.add("Target",
+    keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(zMin, zMax, zBinWidth), Vec3<double>(-1.0e6, -1.0e6, 0.001),
                                         Vec3Labels::MinMaxDeltaLabels),
                   "RangeZ", "Range of calculation for the specified z observable");

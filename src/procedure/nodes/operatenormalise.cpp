@@ -11,14 +11,14 @@
 OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(double value)
     : OperateProcedureNodeBase(ProcedureNode::OperateNormaliseNode)
 {
-    keywords_.add("Normal", new NodeValueKeyword(this, value), "Value", "Value expression to normalise to");
-    keywords_.add("Normal", new BoolKeyword(true), "Absolute", "Normalise absolute sum of values rather than direct sum");
+    keywords_.add("Control", new NodeValueKeyword(this, value), "Value", "Constant value to normalise to");
+    keywords_.add("Control", new BoolKeyword(true), "Absolute", "Normalise absolute sum of values rather than direct sum");
 }
 OperateNormaliseProcedureNode::OperateNormaliseProcedureNode(int value)
     : OperateProcedureNodeBase(ProcedureNode::OperateNormaliseNode)
 {
-    keywords_.add("Normal", new NodeValueKeyword(this, value), "Value", "Value expression to normalise to");
-    keywords_.add("Normal", new BoolKeyword(true), "Absolute", "Normalise absolute sum of values rather than direct sum");
+    keywords_.add("Control", new NodeValueKeyword(this, value), "Value", "Constant value to normalise to");
+    keywords_.add("Control", new BoolKeyword(true), "Absolute", "Normalise absolute sum of values rather than direct sum");
 }
 
 OperateNormaliseProcedureNode::~OperateNormaliseProcedureNode() {}

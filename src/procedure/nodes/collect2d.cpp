@@ -17,21 +17,21 @@ Collect2DProcedureNode::Collect2DProcedureNode(CalculateProcedureNodeBase *xObse
     : ProcedureNode(ProcedureNode::Collect2DNode)
 {
     keywords_.add(
-        "Target",
+        "Control",
         new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, xObservable, 0),
         "QuantityX", "Calculated observable to collect for x axis");
     keywords_.add(
-        "Target",
+        "Control",
         new NodeAndIntegerKeyword<CalculateProcedureNodeBase>(this, ProcedureNode::CalculateBaseNode, true, yObservable, 0),
         "QuantityY", "Calculated observable to collect for y axis");
-    keywords_.add("Target",
+    keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(xMin, xMax, xBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
                                         Vec3Labels::MinMaxBinwidthlabels),
-                  "RangeX", "Range of calculation for the specified x observable");
-    keywords_.add("Target",
+                  "RangeX", "Range and binwidth of the x-axis of the histogram");
+    keywords_.add("Control",
                   new Vec3DoubleKeyword(Vec3<double>(yMin, yMax, yBinWidth), Vec3<double>(0.0, 0.0, 1.0e-5),
                                         Vec3Labels::MinMaxDeltaLabels),
-                  "RangeY", "Range of calculation for the specified y observable");
+                  "RangeY", "Range and binwidth of the y-axis of the histogram");
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &subCollectBranch_, ProcedureNode::AnalysisContext), "SubCollect",
                   "Branch which runs if the target quantities were binned successfully");
 

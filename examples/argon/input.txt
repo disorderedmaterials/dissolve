@@ -1,34 +1,34 @@
-# Input file written by Dissolve v0.4.4 at 20:52:17 on 27-10-2019.
+# Input file written by Dissolve v0.7.0 at 11:22:52 on 17-12-2020.
 
-#------------------------------------------------------------------------------#
+#==============================================================================#
 #                                   Species                                    #
-#------------------------------------------------------------------------------#
+#==============================================================================#
 
 Species 'Ar'
   # Atoms
-  Atom    1   Ar     0.000     0.000     0.000  'Ar'     0.000
+  Atom    1  Ar   0.000000e+00  0.000000e+00  0.000000e+00  'Ar'  0.000000e+00
 
   # Isotopologues
   Isotopologue  'Ar36'  Ar=36
 EndSpecies
 
-#------------------------------------------------------------------------------#
+#==============================================================================#
 #                               Pair Potentials                                #
-#------------------------------------------------------------------------------#
+#==============================================================================#
 
 PairPotentials
   # Atom Type Parameters
   Parameters  Ar  Ar  0.000000e+00  LJGeometric  9.786380e-01  3.401000e+00  0.000000e+00  0.000000e+00
-  Range  10.000000
-  Delta  0.005000
+  Range  10.0
+  Delta  0.005
+  IncludeCoulomb  False
   CoulombTruncation  Shifted
   ShortRangeTruncation  Shifted
-#  ENUMERATION_NOT_VALID  LJGeometric  Ar  Ar  0.000000e+00  0.000000e+00  9.786380e-01  3.401000e+00  0.000000e+00  0.000000e+00
 EndPairPotentials
 
-#------------------------------------------------------------------------------#
+#==============================================================================#
 #                                Configurations                                #
-#------------------------------------------------------------------------------#
+#==============================================================================#
 
 Configuration  'Bulk'
 
@@ -45,40 +45,40 @@ Configuration  'Bulk'
     AddSpecies
       Species  'Ar'
       Population  '1000'
+      BoxAction  AddVolume
       Density  'rho'  atoms/A3
       Rotate  True
       Positioning  Random
     EndAddSpecies
   EndGenerator
 
-  Temperature  85.000000
+  Temperature  85.0
+
+  SizeFactor  1.0
 
   # Modules
   # -- None
 EndConfiguration
 
-#------------------------------------------------------------------------------#
+#==============================================================================#
 #                              Processing Layers                               #
-#------------------------------------------------------------------------------#
+#==============================================================================#
 
 Layer  'Evolve (Atomic)'
   Frequency  1
 
   Module  AtomShake  'AtomShake01'
     Frequency  1
-
     Configuration  'Bulk'
   EndModule
 
   Module  MD  'MD01'
     Frequency  5
-
     Configuration  'Bulk'
   EndModule
 
   Module  Energy  'Energy01'
     Frequency  1
-
     Configuration  'Bulk'
   EndModule
 EndLayer
@@ -88,32 +88,29 @@ Layer  'RDF / Neutron S(Q)'
 
   Module  RDF  'RDF01'
     Frequency  1
-
     Configuration  'Bulk'
   EndModule
 
   Module  SQ  'SQ01'
     Frequency  1
-
     SourceRDFs  'RDF01'
     WindowFunction  'None'
   EndModule
 
   Module  NeutronSQ  'NeutronSQ01'
     Frequency  1
-
     SourceSQs  'SQ01'
-    Isotopologue  'Ar'  'Ar36'  1.000000
+    Isotopologue  'Ar'  'Ar36'  1.0
     Reference  xy  'data/yarnell.sq'
       RemoveAverage   9.00000e+00
     EndReference
-    ReferenceNormalisation  AverageSquared
+    ReferenceNormalisation  SquareOfAverage
   EndModule
 EndLayer
 
-#------------------------------------------------------------------------------#
+#==============================================================================#
 #                                  Simulation                                  #
-#------------------------------------------------------------------------------#
+#==============================================================================#
 
 Simulation
   Seed  -1

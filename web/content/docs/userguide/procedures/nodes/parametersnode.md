@@ -1,24 +1,24 @@
 ---
 title: Parameters (Node)
 linkTitle: Parameters
-description: X
+description: Store numerical reference parameters
 ---
 
 {{< htable >}}
 | | |
 |-|-|
-|Context||
-|Name Required?||
+|Context|Any|
+|Name Required?|No|
+|Branches|--|
 {{< /htable >}}
 
 ## Overview
 
-The ...
-
-The ... node can be used in YYY context.
+The `Parameters` node stores zero or more named numerical values that may be referenced in [expressions]({{< ref "expressions" >}}) within nodes contained in the same encompassing [procedure]({{< ref "procedures" >}}).
 
 ## Description
 
+The `Parameters` node stores named values, with each value being one of two explicit types - integer or floating point. The type of the value is automatically detected on input.
 
 ## Configuration
 
@@ -26,4 +26,4 @@ The ... node can be used in YYY context.
 
 |Keyword|Arguments|Default|Description|
 |:------|:--:|:-----:|-----------|
-|`xx`|`xx`|--||
+|`Parameter`|`name`<br/>`value`|--|Define a `name`d parameter with the specified `value`, which can be either integer or floating point.|
