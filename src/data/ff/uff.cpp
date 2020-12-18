@@ -443,10 +443,10 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle &angle, c
 {
     // rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
     // We need the bond orders of the involved bonds...
-    const auto &ijRef = sp->getConstBond(angle.i(), angle.j());
+    const auto &ijRef = sp->getBond(angle.i(), angle.j());
     if (!ijRef)
         return Messenger::error("Can't locate bond i-j for bond order retrieval.\n");
-    const auto &jkRef = sp->getConstBond(angle.j(), angle.k());
+    const auto &jkRef = sp->getBond(angle.j(), angle.k());
     if (!jkRef)
         return Messenger::error("Can't locate bond j-k for bond order retrieval.\n");
 
@@ -575,7 +575,7 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion &tors
     {
         // Case e) j and k are both sp2 centres
         // Force constant is adjusted based on current bond order
-        auto jkRef = sp->getConstBond(torsionTerm.j(), torsionTerm.k());
+        auto jkRef = sp->getBond(torsionTerm.j(), torsionTerm.k());
         if (jkRef)
         {
             const SpeciesBond &jk = *jkRef;

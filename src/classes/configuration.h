@@ -140,7 +140,6 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
     int nAtoms() const;
     // Return Atom array
     std::vector<std::shared_ptr<Atom>> &atoms();
-    // Return Atom array (const)
     const std::vector<std::shared_ptr<Atom>> &atoms() const;
     // Return nth Atom
     std::shared_ptr<Atom> atom(int n);

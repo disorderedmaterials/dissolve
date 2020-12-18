@@ -1257,8 +1257,7 @@ void View::shiftFlatAxisLimitsFractional(double fracH, double fracV)
 // Return axes for the view
 Axes &View::axes() { return axes_; }
 
-// Return axes for the view (const)
-const Axes &View::constAxes() const { return axes_; }
+const Axes &View::axes() const { return axes_; }
 
 /*
  * Style

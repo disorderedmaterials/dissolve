@@ -48,7 +48,7 @@ template <> class GenericItemContainer<Array<int>> : public GenericItem
         parser.writeLineF("{}\n", data_.nItems());
         for (auto n = 0; n < data_.nItems(); ++n)
         {
-            if (!parser.writeLineF("{}\n", data_.constAt(n)))
+            if (!parser.writeLineF("{}\n", data_.at(n)))
                 return false;
         }
         return true;

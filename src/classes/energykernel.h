@@ -97,9 +97,11 @@ class EnergyKernel
                   const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l);
     // Return SpeciesTorsion energy
     static double energy(const SpeciesTorsion &t);
-    // Return SpeciesImproper energy
+    // Return SpeciesImproper energy at Atoms specified
     double energy(const SpeciesImproper &imp, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
                   const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l);
+    // Return SpeciesImproper energy
+    static double energy(const SpeciesImproper &imp);
     // Return intramolecular energy for the supplied Atom
     double intramolecularEnergy(std::shared_ptr<const Molecule> mol, const std::shared_ptr<Atom> i);
     // Return intramolecular energy for the supplied Molecule

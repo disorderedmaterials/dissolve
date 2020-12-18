@@ -84,9 +84,9 @@ void NeutronWeights::print() const
     Messenger::print("  ------------------------------------------------------\n");
     for (auto &topes : isotopologueMixtures_)
     {
-        for (auto it = topes.constMix().begin(); it != topes.constMix().end(); ++it)
+        for (auto it = topes.mix().begin(); it != topes.mix().end(); ++it)
         {
-            if (it == topes.constMix().begin())
+            if (it == topes.mix().begin())
                 Messenger::print("  {:<15}  {:<15}  {:<10d}  {}\n", topes.species()->name(), it->isotopologue()->name(),
                                  topes.speciesPopulation(), it->weight());
             else

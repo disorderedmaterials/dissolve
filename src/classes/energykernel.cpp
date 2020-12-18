@@ -717,7 +717,7 @@ double EnergyKernel::energy(const SpeciesTorsion &torsion)
                                                 torsion.l()->r() - torsion.k()->r()));
 }
 
-// Return SpeciesImproper energy
+// Return SpeciesImproper energy at Atoms specified
 double EnergyKernel::energy(const SpeciesImproper &imp, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
                             const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l)
 {
@@ -738,6 +738,13 @@ double EnergyKernel::energy(const SpeciesImproper &imp, const std::shared_ptr<At
         veckl = l->r() - k->r();
 
     return imp.energy(Box::torsionInDegrees(vecji, vecjk, veckl));
+}
+
+// Return SpeciesImproper energy
+double EnergyKernel::energy(const SpeciesImproper &imp)
+{
+    return imp.energy(
+        Box::torsionInDegrees(imp.i()->r() - imp.j()->r(), imp.k()->r() - imp.j()->r(), imp.l()->r() - imp.k()->r()));
 }
 
 // Return intramolecular energy for the supplied Atom
@@ -807,26 +814,26 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol)
     auto intraEnergy = 0.0;
 
     // Loop over Bonds
-    intraEnergy = std::accumulate(mol->species()->constBonds().begin(), mol->species()->constBonds().end(), intraEnergy,
+    intraEnergy = std::accumulate(mol->species()->bonds().begin(), mol->species()->bonds().end(), intraEnergy,
                                   [mol, this](const auto acc, const auto &bond) {
                                       return acc + energy(bond, mol->atom(bond.indexI()), mol->atom(bond.indexJ()));
                                   });
     // Loop over Angles
-    intraEnergy = std::accumulate(mol->species()->constAngles().begin(), mol->species()->constAngles().end(), intraEnergy,
+    intraEnergy = std::accumulate(mol->species()->angles().begin(), mol->species()->angles().end(), intraEnergy,
                                   [mol, this](const auto acc, const auto &angle) {
                                       return acc + energy(angle, mol->atom(angle.indexI()), mol->atom(angle.indexJ()),
                                                           mol->atom(angle.indexK()));
                                   });
 
     // Loop over Torsions
-    intraEnergy = std::accumulate(mol->species()->constTorsions().begin(), mol->species()->constTorsions().end(), intraEnergy,
+    intraEnergy = std::accumulate(mol->species()->torsions().begin(), mol->species()->torsions().end(), intraEnergy,
                                   [mol, this](const auto acc, const auto &torsion) {
                                       return acc + energy(torsion, mol->atom(torsion.indexI()), mol->atom(torsion.indexJ()),
                                                           mol->atom(torsion.indexK()), mol->atom(torsion.indexL()));
                                   });
 
     // Loop over Impropers
-    intraEnergy = std::accumulate(mol->species()->constImpropers().begin(), mol->species()->constImpropers().end(), intraEnergy,
+    intraEnergy = std::accumulate(mol->species()->impropers().begin(), mol->species()->impropers().end(), intraEnergy,
                                   [mol, this](const auto acc, const auto &improper) {
                                       return acc + energy(improper, mol->atom(improper.indexI()), mol->atom(improper.indexJ()),
                                                           mol->atom(improper.indexK()), mol->atom(improper.indexL()));

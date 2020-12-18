@@ -46,8 +46,7 @@ class IsotopologueSet : public GenericItemBase
     int nIsotopologues() const;
     // Return vector of all Isotopologues
     std::vector<Isotopologues> &isotopologues();
-    // Return vector of all Isotopologues (const)
-    const std::vector<Isotopologues> &constIsotopologues() const;
+    const std::vector<Isotopologues> &isotopologues() const;
 
     /*
      * GenericItemBase Implementations

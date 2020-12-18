@@ -53,19 +53,15 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
     void removeLastPoint();
     // Return x axis value specified
     double &xAxis(int index);
-    // Return x axis value specified (const)
-    double constXAxis(int index) const;
+    const double &xAxis(int index) const;
     // Return x axis Array
     std::vector<double> &xAxis();
-    // Return x axis Array (const)
     const std::vector<double> &xAxis() const;
     // Return value specified
     double &value(int index);
-    // Return value value specified (const)
-    double constValue(int index) const;
+    const double &value(int index) const;
     // Return value Array
     std::vector<double> &values();
-    // Return values Array
     const std::vector<double> &values() const;
     // Return number of values present in whole dataset
     int nValues() const;
@@ -79,8 +75,7 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
     bool valuesHaveErrors() const;
     // Return error value specified
     double &error(int index);
-    // Return error value specified (const)
-    double error(int index) const;
+    const double &error(int index) const;
     // Return error Array
     std::vector<double> &errors();
     // Return errors Array

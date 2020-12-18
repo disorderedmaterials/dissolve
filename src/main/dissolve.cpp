@@ -55,8 +55,7 @@ Dissolve::~Dissolve()
 // Return reference to CoreData
 CoreData &Dissolve::coreData() { return coreData_; }
 
-// Return const reference to CoreData
-const CoreData &Dissolve::constCoreData() const { return coreData_; }
+const CoreData &Dissolve::coreData() const { return coreData_; }
 
 // Clear all data
 void Dissolve::clear()

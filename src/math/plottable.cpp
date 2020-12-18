@@ -50,8 +50,8 @@ const std::vector<double> &PlottableData::values() const
     return dummy;
 }
 
-// Return values Array
-const Array2D<double> &PlottableData::constValues2D() const
+// Return two-dimensional values Array
+const Array2D<double> &PlottableData::values2D() const
 {
     Messenger::error(
         "Tried to retrieve a two-dimensional value array from a PlottableData that doesn't know how to return one.\n");
@@ -60,7 +60,7 @@ const Array2D<double> &PlottableData::constValues2D() const
 }
 
 // Return three-dimensional values Array
-const Array3D<double> &PlottableData::constValues3D() const
+const Array3D<double> &PlottableData::values3D() const
 {
     Messenger::error("Tried to retrieve a three-dimensional value array from a PlottableData that doesn't know how to "
                      "return one.\n");
@@ -80,8 +80,8 @@ const std::vector<double> &PlottableData::errors() const
     return dummy;
 }
 
-// Return errors Array
-const Array2D<double> &PlottableData::constErrors2D() const
+// Return two-dimensional errors Array
+const Array2D<double> &PlottableData::errors2D() const
 {
     Messenger::error(
         "Tried to retrieve a two-dimensional error array from a PlottableData that doesn't know how to return one.\n");
@@ -90,7 +90,7 @@ const Array2D<double> &PlottableData::constErrors2D() const
 }
 
 // Return three-dimensional errors Array
-const Array3D<double> &PlottableData::constErrors3D() const
+const Array3D<double> &PlottableData::errors3D() const
 {
     Messenger::error("Tried to retrieve a three-dimensional error array from a PlottableData that doesn't know how to "
                      "return one.\n");

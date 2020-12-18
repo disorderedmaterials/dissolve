@@ -112,7 +112,7 @@ const QString DataViewer::interactionModeText() const
     switch (interactionMode())
     {
         case (DataViewer::DefaultInteraction):
-            if (constView().isFlatView())
+            if (view().isFlatView())
                 return "2D View: <b>Left</b> Zoom to area; <b>Middle</b> Translate view";
             else
                 return "3D View: <b>Right</b> Rotate view; <b>Middle</b> Translate view; <b>Wheel</b> Zoom "

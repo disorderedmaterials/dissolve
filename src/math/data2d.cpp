@@ -158,13 +158,12 @@ double &Data2D::xAxis(int index)
     return x_[index];
 }
 
-// Return x value specified (const)
-double Data2D::constXAxis(int index) const
+const double &Data2D::xAxis(int index) const
 {
 #ifdef CHECKS
     if ((index < 0) || (index >= x_.size()))
     {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data2D::constXAxis().\n", index);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data2D::xAxis().\n", index);
         return 0.0;
     }
 #endif
@@ -179,7 +178,6 @@ std::vector<double> &Data2D::xAxis()
     return x_;
 }
 
-// Return x axis Array (const)
 const std::vector<double> &Data2D::xAxis() const { return x_; }
 
 // Return y value specified
@@ -198,13 +196,12 @@ double &Data2D::yAxis(int index)
     return y_[index];
 }
 
-// Return y value specified (const)
-double Data2D::constYAxis(int index) const
+const double &Data2D::yAxis(int index) const
 {
 #ifdef CHECKS
     if ((index < 0) || (index >= y_.size()))
     {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y_ array in Data2D::constYAxis().\n", index);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y_ array in Data2D::yAxis().\n", index);
         return 0.0;
     }
 #endif
@@ -219,7 +216,6 @@ std::vector<double> &Data2D::yAxis()
     return y_;
 }
 
-// Return y axis Array (const)
 const std::vector<double> &Data2D::yAxis() const { return y_; }
 
 // Return value specified
@@ -244,34 +240,32 @@ double &Data2D::value(int xIndex, int yIndex)
     return values_[{xIndex, yIndex}];
 }
 
-// Return value specified (const)
-double Data2D::constValue(int xIndex, int yIndex) const
+const double &Data2D::value(int xIndex, int yIndex) const
 {
 #ifdef CHECKS
     if ((xIndex < 0) || (xIndex >= x_.size()))
     {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data2D::constValue().\n", xIndex);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data2D::value().\n", xIndex);
         return 0.0;
     }
     if ((yIndex < 0) || (yIndex >= y_.size()))
     {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data2D::constValue().\n", yIndex);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data2D::value().\n", yIndex);
         return 0.0;
     }
 #endif
     return values_[{xIndex, yIndex}];
 }
 
-// Return values Array
-Array2D<double> &Data2D::values()
+// Return two-dimensional values Array
+Array2D<double> &Data2D::values2D()
 {
     ++version_;
 
     return values_;
 }
 
-// Return values Array (const)
-const Array2D<double> &Data2D::constValues2D() const { return values_; }
+const Array2D<double> &Data2D::values2D() const { return values_; }
 
 // Return value specified from linear array
 double Data2D::value(int index) { return values_[index]; }
@@ -343,33 +337,35 @@ double &Data2D::error(int xIndex, int yIndex)
     return errors_[{xIndex, yIndex}];
 }
 
-// Return error value specified (const)
-double Data2D::constError(int xIndex, int yIndex) const
+const double &Data2D::error(int xIndex, int yIndex) const
 {
     if (!hasError_)
     {
-        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but constError(int,int) was requested.\n",
+        static double dummy;
+        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but error(int,int) was requested.\n",
                         name(), objectTag());
-        return 0.0;
+        return dummy;
     }
 #ifdef CHECKS
     if ((xIndex < 0) || (xIndex >= x_.size()))
     {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data2D::constError().\n", xIndex);
-        return 0.0;
+        static double dummy;
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data2D::error().\n", xIndex);
+        return dummy;
     }
     if ((yIndex < 0) || (yIndex >= y_.size()))
     {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data2D::constError().\n", yIndex);
-        return 0.0;
+        static double dummy;
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data2D::error().\n", yIndex);
+        return dummy;
     }
 #endif
 
     return errors_[{xIndex, yIndex}];
 }
 
-// Return error Array
-Array2D<double> &Data2D::errors()
+// Return two-dimensional errors Array
+Array2D<double> &Data2D::errors2D()
 {
     if (!hasError_)
         Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
@@ -380,12 +376,11 @@ Array2D<double> &Data2D::errors()
     return errors_;
 }
 
-// Return error Array (const)
-const Array2D<double> &Data2D::constErrors2D() const
+const Array2D<double> &Data2D::errors2D() const
 {
     if (!hasError_)
-        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but constErrors2D() was requested.\n",
-                        name(), objectTag());
+        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but errors2D() was requested.\n", name(),
+                        objectTag());
 
     return errors_;
 }

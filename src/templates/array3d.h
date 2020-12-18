@@ -116,17 +116,17 @@ template <class A> class Array3D
         static A dummy;
         if ((x < 0) || (x >= nX_))
         {
-            Messenger::print("OUT_OF_RANGE - X index ({}) is out of range in Array3D::constAt() (nX_ = {}).\n", x, nX_);
+            Messenger::print("OUT_OF_RANGE - X index ({}) is out of range in Array3D::at() (nX_ = {}).\n", x, nX_);
             return dummy;
         }
         if ((y < 0) || (y >= nY_))
         {
-            Messenger::print("OUT_OF_RANGE - Y index ({}) is out of range in Array3D::constAt() (nY_ = {}).\n", y, nY_);
+            Messenger::print("OUT_OF_RANGE - Y index ({}) is out of range in Array3D::at() (nY_ = {}).\n", y, nY_);
             return dummy;
         }
         if ((z < 0) || (z >= nZ_))
         {
-            Messenger::print("OUT_OF_RANGE - Z index ({}) is out of range in Array3D::constAt() (nZ_ = {}).\n", z, nZ_);
+            Messenger::print("OUT_OF_RANGE - Z index ({}) is out of range in Array3D::at() (nZ_ = {}).\n", z, nZ_);
             return dummy;
         }
 #endif
@@ -190,15 +190,14 @@ template <class A> class Array3D
 #endif
         return array_[index];
     }
-    // Return linear value (const)
     const A &linearValue(int index) const
     {
 #ifdef CHECKS
         static A dummy;
         if ((index < 0) || (index >= array_.size()))
         {
-            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in Array3D::constLinearValue() (linearSize = {}).\n",
-                             index, array_.size());
+            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in Array3D::linearValue() (linearSize = {}).\n", index,
+                             array_.size());
             return dummy;
         }
 #endif
@@ -440,14 +439,13 @@ template <class A> class OffsetArray3D
 #endif
         return array_[index];
     }
-    // Return linear value (const)
-    const A &constLinearValue(int index) const
+    const A &linearValue(int index) const
     {
 #ifdef CHECKS
         static A dummy;
         if ((index < 0) || (index >= array_.size()))
         {
-            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in OffsetArray3D::constLinearValue() "
+            Messenger::print("OUT_OF_RANGE - Index ({}) is out of range in OffsetArray3D::linearValue() "
                              "(linearSize = {}).\n",
                              index, array_.size());
             return dummy;

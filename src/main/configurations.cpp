@@ -51,8 +51,7 @@ int Dissolve::nConfigurations() const { return coreData_.nConfigurations(); }
 // Return Configuration list
 List<Configuration> &Dissolve::configurations() { return coreData_.configurations(); }
 
-// Return Configuration list (const)
-const List<Configuration> &Dissolve::constConfigurations() const { return coreData_.configurations(); }
+const List<Configuration> &Dissolve::configurations() const { return coreData_.configurations(); }
 
 // Find configuration by name
 Configuration *Dissolve::findConfiguration(std::string_view name) const { return coreData_.findConfiguration(name); }
@@ -60,7 +59,7 @@ Configuration *Dissolve::findConfiguration(std::string_view name) const { return
 // Find configuration by 'nice' name
 Configuration *Dissolve::findConfigurationByNiceName(std::string_view name) const
 {
-    for (auto *cfg = constConfigurations().first(); cfg != nullptr; cfg = cfg->next())
+    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
         if (DissolveSys::sameString(name, cfg->niceName()))
             return cfg;
 

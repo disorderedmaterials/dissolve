@@ -35,8 +35,7 @@ class Dissolve
     public:
     // Return reference to CoreData
     CoreData &coreData();
-    // Return const reference to CoreData
-    const CoreData &constCoreData() const;
+    const CoreData &coreData() const;
     // Clear all data
     void clear();
     // Register GenericItems
@@ -170,8 +169,7 @@ class Dissolve
     int nConfigurations() const;
     // Return Configuration list
     List<Configuration> &configurations();
-    // Return Configuration list (const)
-    const List<Configuration> &constConfigurations() const;
+    const List<Configuration> &configurations() const;
     // Find configuration by name
     Configuration *findConfiguration(std::string_view name) const;
     // Find configuration by 'nice' name

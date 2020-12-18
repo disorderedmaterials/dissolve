@@ -123,8 +123,7 @@ int Species::nBonds() const { return bonds_.size(); }
 // Return array of SpeciesBond
 std::vector<SpeciesBond> &Species::bonds() { return bonds_; }
 
-// Return array of SpeciesBond (const)
-const std::vector<SpeciesBond> &Species::constBonds() const { return bonds_; }
+const std::vector<SpeciesBond> &Species::bonds() const { return bonds_; }
 
 // Return whether SpeciesBond between specified SpeciesAtoms exists
 bool Species::hasBond(SpeciesAtom *i, SpeciesAtom *j) const
@@ -138,6 +137,15 @@ bool Species::hasBond(SpeciesAtom *i, SpeciesAtom *j) const
 OptionalReferenceWrapper<SpeciesBond> Species::getBond(SpeciesAtom *i, SpeciesAtom *j)
 {
     auto it = std::find_if(bonds_.begin(), bonds_.end(), [i, j](auto &bond) { return bond.matches(i, j); });
+    if (it == bonds_.end())
+        return {};
+
+    return *it;
+}
+
+OptionalReferenceWrapper<const SpeciesBond> Species::getBond(SpeciesAtom *i, SpeciesAtom *j) const
+{
+    auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i, j](const auto &bond) { return bond.matches(i, j); });
     if (it == bonds_.end())
         return {};
 
@@ -163,16 +171,6 @@ OptionalReferenceWrapper<SpeciesBond> Species::getBond(int i, int j)
     }
 
     return getBond(atoms_[i], atoms_[j]);
-}
-
-// Return the SpeciesBond between the specified SpeciesAtoms (const)
-OptionalReferenceWrapper<const SpeciesBond> Species::getConstBond(SpeciesAtom *i, SpeciesAtom *j) const
-{
-    auto it = std::find_if(bonds_.cbegin(), bonds_.cend(), [i, j](const auto &bond) { return bond.matches(i, j); });
-    if (it == bonds_.end())
-        return {};
-
-    return *it;
 }
 
 // Add missing bonds
@@ -243,8 +241,7 @@ int Species::nAngles() const { return angles_.size(); }
 // Return array of SpeciesAngle
 std::vector<SpeciesAngle> &Species::angles() { return angles_; }
 
-// Return array of SpeciesAngle (const)
-const std::vector<SpeciesAngle> &Species::constAngles() const { return angles_; }
+const std::vector<SpeciesAngle> &Species::angles() const { return angles_; }
 
 // Return whether SpeciesAngle between SpeciesAtoms exists
 bool Species::hasAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const
@@ -303,8 +300,7 @@ int Species::nTorsions() const { return torsions_.size(); }
 // Return array of SpeciesTorsions
 std::vector<SpeciesTorsion> &Species::torsions() { return torsions_; }
 
-// Return array of SpeciesTorsions (const)
-const std::vector<SpeciesTorsion> &Species::constTorsions() const { return torsions_; }
+const std::vector<SpeciesTorsion> &Species::torsions() const { return torsions_; }
 
 // Return whether SpeciesTorsion between SpeciesAtoms exists
 bool Species::hasTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const
@@ -362,8 +358,7 @@ int Species::nImpropers() const { return impropers_.size(); }
 // Return array of SpeciesImproper
 std::vector<SpeciesImproper> &Species::impropers() { return impropers_; }
 
-// Return array of SpeciesImproper (const)
-const std::vector<SpeciesImproper> &Species::constImpropers() const { return impropers_; }
+const std::vector<SpeciesImproper> &Species::impropers() const { return impropers_; }
 
 // Return whether SpeciesImproper between SpeciesAtoms exists
 bool Species::hasImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) const

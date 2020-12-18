@@ -382,10 +382,10 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
         for (auto n = 0; n < nReflections; ++n)
         {
             // Get q value and intensity of reflection
-            qCentre = braggReflections.constAt(n).q();
+            qCentre = braggReflections.at(n).q();
             bin = qCentre / qDelta;
 
-            partial.value(bin) += braggReflections.constAt(n).intensity(typeI, typeJ);
+            partial.value(bin) += braggReflections.at(n).intensity(typeI, typeJ);
         }
 
         // Add this partial into the total function, accounting for doubling of partials between unlike atom
@@ -424,11 +424,11 @@ bool BraggModule::reBinReflections(ProcessPool &procPool, Configuration *cfg, Ar
     for (auto n = 0; n < nReflections; ++n)
     {
         // Get Q bin (in the braggPartials) of the reflection
-        bin = braggReflections.constAt(n).q() / qDelta;
+        bin = braggReflections.at(n).q() / qDelta;
         if ((bin < 0) || (bin >= nBins))
         {
             Messenger::warn("Reflection {} is at Q = {} Angstroms**-1, which is outside of the current Q range.\n", n,
-                            braggReflections.constAt(n).q());
+                            braggReflections.at(n).q());
             continue;
         }
 
@@ -442,7 +442,7 @@ bool BraggModule::reBinReflections(ProcessPool &procPool, Configuration *cfg, Ar
             int typeJ = typeI;
             for (auto atd2 = atd1; atd2 != types.end(); typeJ++, atd2++)
             {
-                braggPartials[{typeI, typeJ}].value(bin) += braggReflections.constAt(n).intensity(typeI, typeJ);
+                braggPartials[{typeI, typeJ}].value(bin) += braggReflections.at(n).intensity(typeI, typeJ);
             }
         }
     }

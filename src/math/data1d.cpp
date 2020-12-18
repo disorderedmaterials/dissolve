@@ -174,13 +174,12 @@ double &Data1D::xAxis(int index)
     return x_[index];
 }
 
-// Return x value specified (const)
-double Data1D::constXAxis(int index) const
+const double &Data1D::xAxis(int index) const
 {
 #ifdef CHECKS
     if ((index < 0) || (index >= x_.size()))
     {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data1D::constXAxis().\n", index);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data1D::xAxis().\n", index);
         return 0.0;
     }
 #endif
@@ -195,7 +194,6 @@ std::vector<double> &Data1D::xAxis()
     return x_;
 }
 
-// Return x axis Array (const)
 const std::vector<double> &Data1D::xAxis() const { return x_; }
 
 // Return y value specified
@@ -214,20 +212,19 @@ double &Data1D::value(int index)
     return values_[index];
 }
 
-// Return y value specified (const)
-double Data1D::constValue(int index) const
+const double &Data1D::value(int index) const
 {
 #ifdef CHECKS
     if ((index < 0) || (index >= values_.size()))
     {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for values_ array in Data1D::constValue().\n", index);
+        Messenger::error("OUT_OF_RANGE - Index {} is out of range for values_ array in Data1D::value().\n", index);
         return 0.0;
     }
 #endif
     return values_[index];
 }
 
-// Return y Array
+// Return values Array
 std::vector<double> &Data1D::values()
 {
     ++version_;
@@ -235,7 +232,6 @@ std::vector<double> &Data1D::values()
     return values_;
 }
 
-// Return y Array (const)
 const std::vector<double> &Data1D::values() const { return values_; }
 
 // Return number of values present in whole dataset
@@ -291,14 +287,14 @@ double &Data1D::error(int index)
     return errors_.at(index);
 }
 
-// Return error value specified (const)
-double Data1D::error(int index) const
+const double &Data1D::error(int index) const
 {
     if (!hasError_)
     {
-        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but constError(int) was requested.\n",
-                        name(), objectTag());
-        return 0.0;
+        static double dummy;
+        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but error(int) was requested.\n", name(),
+                        objectTag());
+        return dummy;
     }
 
     return errors_[index];
@@ -316,11 +312,10 @@ std::vector<double> &Data1D::errors()
     return errors_;
 }
 
-// Return error Array (const)
 const std::vector<double> &Data1D::errors() const
 {
     if (!hasError_)
-        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but constErrors() was requested.\n", name(),
+        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
                         objectTag());
 
     return errors_;
@@ -367,7 +362,7 @@ void Data1D::operator+=(const Data1D &source)
         {
             Messenger::error("Failed to += these Data1D together since the x arrays are different (at point {}, x "
                              "are {:e} and {:e}).\n",
-                             n, x_[n], source.constXAxis(n));
+                             n, x_[n], source.xAxis(n));
             return;
         }
     }
@@ -410,7 +405,7 @@ void Data1D::operator-=(const Data1D &source)
         {
             Messenger::error("Failed to -= these Data1D together since the x arrays are different (at point {}, x "
                              "are {:e} and {:e}).\n",
-                             n, x_[n], source.constXAxis(n));
+                             n, x_[n], source.xAxis(n));
             return;
         }
     }

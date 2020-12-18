@@ -54,8 +54,7 @@ class Isotopologues : public GenericItemBase
     bool contains(const Isotopologue *iso) const;
     // Return Isotopologue/weight mix
     std::vector<IsotopologueWeight> &mix();
-    // Return Isotopologue/weight mix (const)
-    const std::vector<IsotopologueWeight> &constMix() const;
+    const std::vector<IsotopologueWeight> &mix() const;
     // Return number of Isotopologues in mix
     int nIsotopologues() const;
     // Return total relative population

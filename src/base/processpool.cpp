@@ -164,9 +164,9 @@ bool ProcessPool::isMaster(ProcessPool::CommunicatorType commType) const
     if (commType == ProcessPool::PoolProcessesCommunicator)
         return (poolRank_ == 0);
     else if (commType == ProcessPool::GroupProcessesCommunicator)
-        return (groupLeaders_.constAt(groupIndex_) == poolRank_);
+        return (groupLeaders_.at(groupIndex_) == poolRank_);
     else if (commType == ProcessPool::GroupLeadersCommunicator)
-        return (groupLeaders_.constAt(0) == poolRank_);
+        return (groupLeaders_.at(0) == poolRank_);
 
     return false;
 }
@@ -177,9 +177,9 @@ bool ProcessPool::isSlave(ProcessPool::CommunicatorType commType) const
     if (commType == ProcessPool::PoolProcessesCommunicator)
         return (poolRank_ != 0);
     else if (commType == ProcessPool::GroupProcessesCommunicator)
-        return (groupLeaders_.constAt(groupIndex_) != poolRank_);
+        return (groupLeaders_.at(groupIndex_) != poolRank_);
     else if (commType == ProcessPool::GroupLeadersCommunicator)
-        return (groupLeaders_.constAt(0) != poolRank_);
+        return (groupLeaders_.at(0) != poolRank_);
 
     return true;
 }
@@ -191,7 +191,7 @@ bool ProcessPool::isMe(int poolIndex) const { return (poolRank_ == poolIndex); }
 bool ProcessPool::involvesMe() const
 {
     for (auto n = 0; n < worldRanks_.nItems(); ++n)
-        if (worldRanks_.constAt(n) == worldRank_)
+        if (worldRanks_.at(n) == worldRank_)
             return true;
     return false;
 }
@@ -287,7 +287,7 @@ std::string_view ProcessPool::name() const { return name_; }
 int ProcessPool::nProcesses() const { return worldRanks_.nItems(); }
 
 // Return root (first) world rank of this pool
-int ProcessPool::rootWorldRank() const { return worldRanks_.constAt(0); }
+int ProcessPool::rootWorldRank() const { return worldRanks_.at(0); }
 
 // Assign processes to groups
 bool ProcessPool::assignProcessesToGroups()
@@ -497,11 +497,11 @@ int ProcessPool::nProcessesInGroup(int groupId) const
         return 0;
     }
 #endif
-    return processGroups_.constAt(groupId).nProcesses();
+    return processGroups_.at(groupId).nProcesses();
 }
 
 // Return array of pool ranks in specified group
-int *ProcessPool::poolRanksInGroup(int groupId) const
+const Array<int> &ProcessPool::poolRanksInGroup(int groupId) const
 {
 #ifdef CHECKS
     if ((groupId < 0) || (groupId >= processGroups_.nItems()))
@@ -512,7 +512,7 @@ int *ProcessPool::poolRanksInGroup(int groupId) const
         return 0;
     }
 #endif
-    return processGroups_.constAt(groupId).poolRanks().array();
+    return processGroups_.at(groupId).poolRanks();
 }
 
 // Return whether group data is modifiable
@@ -2395,9 +2395,9 @@ bool ProcessPool::equality(const Array<int> &array, ProcessPool::CommunicatorTyp
 
     // Keep it simple (and slow) and check/send one value at a time
     for (auto n = 0; n < array.nItems(); ++n)
-        if (!equality(array.constAt(n), commType))
+        if (!equality(array.at(n), commType))
             return Messenger::error("Array<int> value {} is not equivalent (process {} has {:e}).\n", n, poolRank_,
-                                    array.constAt(n));
+                                    array.at(n));
 #endif
     return true;
 }
@@ -2412,9 +2412,9 @@ bool ProcessPool::equality(const Array<double> &array, ProcessPool::Communicator
 
     // Keep it simple (and slow) and check/send one value at a time
     for (auto n = 0; n < array.nItems(); ++n)
-        if (!equality(array.constAt(n), commType))
+        if (!equality(array.at(n), commType))
             return Messenger::error("Array<double> value {} is not equivalent (process {} has {:e}).\n", n, poolRank_,
-                                    array.constAt(n));
+                                    array.at(n));
 #endif
     return true;
 }

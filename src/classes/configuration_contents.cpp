@@ -170,7 +170,6 @@ int Configuration::nAtoms() const { return atoms_.size(); }
 // Return Atom array
 std::vector<std::shared_ptr<Atom>> &Configuration::atoms() { return atoms_; }
 
-// Return Atom array (const)
 const std::vector<std::shared_ptr<Atom>> &Configuration::atoms() const { return atoms_; }
 
 // Return nth atom

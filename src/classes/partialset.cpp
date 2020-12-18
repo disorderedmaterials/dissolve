@@ -277,8 +277,8 @@ bool PartialSet::save() const
         auto &unbound = unboundPartials_[{typeI, typeJ}];
         parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits_, "Full", "Bound", "Unbound");
         for (auto n = 0; n < full.nValues(); ++n)
-            parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.constXAxis(n), full.constValue(n),
-                              bound.constValue(n), unbound.constValue(n));
+            parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n), bound.value(n),
+                              unbound.value(n));
         parser.closeFiles();
 
         return EarlyReturn<bool>::Continue;

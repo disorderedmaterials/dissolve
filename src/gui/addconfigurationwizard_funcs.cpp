@@ -166,7 +166,7 @@ void AddConfigurationWizard::reset()
 
     // Set a new, unique name ready on the final page
     ui_.FinishNameEdit->setText(
-        QString::fromStdString(std::string(dissolveReference_->constCoreData().uniqueConfigurationName("NewConfiguration"))));
+        QString::fromStdString(std::string(dissolveReference_->coreData().uniqueConfigurationName("NewConfiguration"))));
 }
 
 /*

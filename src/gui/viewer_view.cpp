@@ -15,8 +15,7 @@ View &BaseViewer::view()
     return view_;
 }
 
-// Return the View definition (const)
-const View &BaseViewer::constView() const
+const View &BaseViewer::view() const
 {
     if (view_.linkedView())
         return (*view_.linkedView());

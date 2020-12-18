@@ -147,7 +147,7 @@ void ScatteringMatrix::print(double q) const
                 break;
             }
         }
-        Messenger::print("{}  {}\n", line, data_.constAt(row).name());
+        Messenger::print("{}  {}\n", line, data_.at(row).name());
 
         // Limit to sensible number of rows
         if (row >= std::max(nColsWritten, 10))
@@ -199,7 +199,7 @@ void ScatteringMatrix::printInverse(double q) const
                 break;
             }
         }
-        Messenger::print("{}  {}\n", line, data_.constAt(col).name());
+        Messenger::print("{}  {}\n", line, data_.at(col).name());
 
         // Limit to sensible number of rows
         if (col >= std::max(nColsWritten, 10))

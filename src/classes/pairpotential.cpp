@@ -426,21 +426,20 @@ void PairPotential::calculateDUFull()
         if ((n == 1) || (n == (nPoints_ - 2)))
         {
             // Three-point
-            dUFull_.value(n) = -(uFull_.constValue(n - 1) - uFull_.constValue(n + 1)) / (2 * delta_);
+            dUFull_.value(n) = -(uFull_.value(n - 1) - uFull_.value(n + 1)) / (2 * delta_);
         }
         else
         {
             // Five-point stencil
-            fprime = -uFull_.constValue(n + 2) + 8 * uFull_.constValue(n + 1) - 8 * uFull_.constValue(n - 1) +
-                     uFull_.constValue(n - 2);
+            fprime = -uFull_.value(n + 2) + 8 * uFull_.value(n + 1) - 8 * uFull_.value(n - 1) + uFull_.value(n - 2);
             fprime /= 12 * delta_;
             dUFull_.value(n) = fprime;
         }
     }
 
     // Set first and last points
-    dUFull_.value(0) = 10.0 * dUFull_.constValue(1);
-    dUFull_.value(nPoints_ - 1) = dUFull_.constValue(nPoints_ - 2);
+    dUFull_.value(0) = 10.0 * dUFull_.value(1);
+    dUFull_.value(nPoints_ - 1) = dUFull_.value(nPoints_ - 2);
 
     // Update interpolation
     dUFullInterpolation_.interpolate(Interpolator::ThreePointInterpolation);
@@ -516,7 +515,7 @@ void PairPotential::calculateUOriginal(bool recalculateUFull)
     }
 
     // Since the first point (at zero) risks being a nan, set it to ten times the second point instead
-    uOriginal_.value(0) = 10.0 * uOriginal_.constValue(1);
+    uOriginal_.value(0) = 10.0 * uOriginal_.value(1);
 
     // Update full potential (if not the first generation of the potential)
     if (recalculateUFull)

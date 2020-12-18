@@ -60,7 +60,7 @@ bool ForceExportFileFormat::exportSimple(LineParser &parser, const Array<double>
         return false;
 
     for (auto n = 0; n < fx.nItems(); ++n)
-        if (!parser.writeLineF("  {:10d}  {:15.8e}  {:15.8e}  {:15.8e}\n", n + 1, fx.constAt(n), fy.constAt(n), fz.constAt(n)))
+        if (!parser.writeLineF("  {:10d}  {:15.8e}  {:15.8e}  {:15.8e}\n", n + 1, fx.at(n), fy.at(n), fz.at(n)))
             return false;
 
     return true;

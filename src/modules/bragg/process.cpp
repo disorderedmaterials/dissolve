@@ -99,9 +99,8 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
             braggParser.writeLineF("#   ID      Q       nKVecs    Intensity(0,0)\n");
             for (auto n = 0; n < braggReflections.nItems(); ++n)
             {
-                if (!braggParser.writeLineF("{:6d}  {:10.6f}  {:8d}  {:10.6e}\n", n, braggReflections.constAt(n).q(),
-                                            braggReflections.constAt(n).nKVectors(),
-                                            braggReflections.constAt(n).intensity(0, 0)))
+                if (!braggParser.writeLineF("{:6d}  {:10.6f}  {:8d}  {:10.6e}\n", n, braggReflections.at(n).q(),
+                                            braggReflections.at(n).nKVectors(), braggReflections.at(n).intensity(0, 0)))
                     return false;
             }
             braggParser.closeFiles();
@@ -118,8 +117,8 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
                     for (auto n = 0; n < braggReflections.nItems(); ++n)
                     {
-                        if (!intensityParser.writeLineF("{:10.6f}  {:10.6e}\n", braggReflections.constAt(n).q(),
-                                                        braggReflections.constAt(n).intensity(i, j)))
+                        if (!intensityParser.writeLineF("{:10.6f}  {:10.6e}\n", braggReflections.at(n).q(),
+                                                        braggReflections.at(n).intensity(i, j)))
                             return false;
                         intensityParser.writeLineF("#     Q      Intensity({},{})\n", atd1.atomTypeName(), atd2.atomTypeName());
                     }

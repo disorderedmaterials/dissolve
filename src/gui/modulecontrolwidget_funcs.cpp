@@ -52,7 +52,7 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
     ui_.ModuleIconLabel->setPixmap(ModuleBlock::modulePixmap(module_));
 
     // Set up our control widgets
-    ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_->constCoreData());
+    ui_.ModuleKeywordsWidget->setUp(module_->keywords(), dissolve_->coreData());
 
     // Create any additional controls offered by the Module
     moduleWidget_ = module->createWidget(nullptr, *dissolve_);

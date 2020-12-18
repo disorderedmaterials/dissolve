@@ -208,7 +208,7 @@ void ImportSpeciesWizard::reset()
 
     // Set a new, unique name ready on the final page
     ui_.SpeciesNameEdit->setText(
-        QString::fromStdString(std::string(dissolveReference_->constCoreData().uniqueSpeciesName("NewSpecies"))));
+        QString::fromStdString(std::string(dissolveReference_->coreData().uniqueSpeciesName("NewSpecies"))));
 }
 
 /*
@@ -373,7 +373,7 @@ void ImportSpeciesWizard::updateMasterTermsTreeChild(QTreeWidgetItem *parent, in
 
     // Set item data
     item->setText(0, QString::fromStdString(std::string(masterIntra->name())));
-    item->setIcon(0, QIcon(dissolveReference_->constCoreData().findMasterTerm(masterIntra->name())
+    item->setIcon(0, QIcon(dissolveReference_->coreData().findMasterTerm(masterIntra->name())
                                ? ":/general/icons/general_warn.svg"
                                : ":/general/icons/general_true.svg"));
 }
@@ -393,21 +393,21 @@ void ImportSpeciesWizard::updateMasterTermsPage()
     auto conflicts = false;
     ListIterator<MasterIntra> bondIterator(temporaryCoreData_.masterBonds());
     while (MasterIntra *intra = bondIterator.iterate())
-        if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
+        if (dissolveReference_->coreData().findMasterTerm(intra->name()))
         {
             conflicts = true;
             break;
         }
     ListIterator<MasterIntra> angleIterator(temporaryCoreData_.masterAngles());
     while (MasterIntra *intra = angleIterator.iterate())
-        if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
+        if (dissolveReference_->coreData().findMasterTerm(intra->name()))
         {
             conflicts = true;
             break;
         }
     ListIterator<MasterIntra> torsionIterator(temporaryCoreData_.masterTorsions());
     while (MasterIntra *intra = torsionIterator.iterate())
-        if (dissolveReference_->constCoreData().findMasterTerm(intra->name()))
+        if (dissolveReference_->coreData().findMasterTerm(intra->name()))
         {
             conflicts = true;
             break;

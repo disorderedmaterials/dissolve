@@ -52,7 +52,7 @@ template <> class GenericItemContainer<Array<double>> : public GenericItem
         parser.writeLineF("{}\n", thisData.nItems());
         for (auto n = 0; n < thisData.nItems(); ++n)
         {
-            if (!parser.writeLineF("{:16.9e}\n", thisData.constAt(n)))
+            if (!parser.writeLineF("{:16.9e}\n", thisData.at(n)))
                 return false;
         }
         return true;

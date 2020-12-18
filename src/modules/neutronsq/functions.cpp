@@ -96,7 +96,7 @@ void NeutronSQModule::calculateWeights(const RDFModule *rdfModule, NeutronWeight
         if (isoRef)
         {
             const Isotopologues &topes = *isoRef;
-            for (const auto &isoWeight : topes.constMix())
+            for (const auto &isoWeight : topes.mix())
                 weights.addIsotopologue(speciesPop.first, speciesPop.second, isoWeight.isotopologue(), isoWeight.weight());
         }
         else

@@ -171,7 +171,7 @@ class ProcessPool
     // Return number of processes in specified group
     int nProcessesInGroup(int groupId) const;
     // Return array of pool ranks in the specified group
-    int *poolRanksInGroup(int groupId) const;
+    const Array<int> &poolRanksInGroup(int groupId) const;
     // Return whether group data is modifiable
     bool groupsModifiable() const;
     // Prevent group data from being modified

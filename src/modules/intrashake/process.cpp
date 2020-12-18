@@ -155,7 +155,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                 // Loop over defined bonds
                 if (adjustBonds)
-                    for (const auto &bond : mol->species()->constBonds())
+                    for (const auto &bond : mol->species()->bonds())
                     {
                         // Get Atom pointers
                         i = mol->atom(bond.indexI());
@@ -209,7 +209,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                 // Loop over defined angles
                 if (adjustAngles)
-                    for (const auto &angle : mol->species()->constAngles())
+                    for (const auto &angle : mol->species()->angles())
                     {
                         // Get Atom pointers
                         i = mol->atom(angle.indexI());
@@ -266,7 +266,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                 // Loop over defined torsions
                 if (adjustTorsions)
-                    for (const auto &torsion : mol->species()->constTorsions())
+                    for (const auto &torsion : mol->species()->torsions())
                     {
                         // Get Atom pointers
                         i = mol->atom(torsion.indexI());

@@ -151,7 +151,7 @@ Species *Dissolve::copySpecies(const Species *species)
     }
 
     // Duplicate bonds
-    for (const auto &bond : species->constBonds())
+    for (const auto &bond : species->bonds())
     {
         // Create the bond in the new Species
         auto &newBond = newSpecies->addBond(bond.indexI(), bond.indexJ());
@@ -161,7 +161,7 @@ Species *Dissolve::copySpecies(const Species *species)
     }
 
     // Duplicate angles
-    for (const auto &angle : species->constAngles())
+    for (const auto &angle : species->angles())
     {
         // Create the angle in the new Species
         auto &newAngle = newSpecies->addAngle(angle.indexI(), angle.indexJ(), angle.indexK());
@@ -171,7 +171,7 @@ Species *Dissolve::copySpecies(const Species *species)
     }
 
     // Duplicate torsions
-    for (const auto &torsion : species->constTorsions())
+    for (const auto &torsion : species->torsions())
     {
         // Create the torsion in the new Species
         SpeciesTorsion &newTorsion =
@@ -182,7 +182,7 @@ Species *Dissolve::copySpecies(const Species *species)
     }
 
     // Duplicate impropers
-    for (auto &t : species->constImpropers())
+    for (auto &t : species->impropers())
     {
         // Create the improper in the new Species
         auto &newImproper = newSpecies->addImproper(t.indexI(), t.indexJ(), t.indexK(), t.indexL());
