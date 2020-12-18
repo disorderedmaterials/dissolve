@@ -135,9 +135,9 @@ const double &Data3D::xAxis(int index) const
 // Return x axis Array
 std::vector<double> &Data3D::xAxis()
 {
-    return x_;
-
     ++version_;
+
+    return x_;
 }
 
 const std::vector<double> &Data3D::xAxis() const { return x_; }
