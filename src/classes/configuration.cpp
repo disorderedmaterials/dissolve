@@ -119,13 +119,13 @@ bool Configuration::loadCoordinates(LineParser &parser, CoordinateImportFileForm
         return false;
 
     // Temporary array now contains some number of atoms - does it match the number in the configuration's molecules?
-    if (atoms_.nItems() != r.nItems())
+    if (atoms_.size() != r.nItems())
         return Messenger::error(
             "Number of atoms read from initial coordinates file ({}) does not match that in Configuration ({}).\n", r.nItems(),
-            atoms_.nItems());
+            atoms_.size());
 
     // All good, so copy atom coordinates over into our array
-    for (auto n = 0; n < atoms_.nItems(); ++n)
+    for (auto n = 0; n < atoms_.size(); ++n)
         atoms_[n]->setCoordinates(r[n]);
 
     return true;
@@ -229,38 +229,31 @@ ProcessPool &Configuration::processPool() { return processPool_; }
 bool Configuration::broadcastCoordinates(ProcessPool &procPool, int rootRank)
 {
 #ifdef PARALLEL
-    double *x, *y, *z;
-    x = new double[atoms_.nItems()];
-    y = new double[atoms_.nItems()];
-    z = new double[atoms_.nItems()];
+    std::vector<double> x, y, z;
+    x.resize(atoms_.size());
+    y.resize(atoms_.size());
+    z.resize(atoms_.size());
 
     // Master assembles Atom coordinate arrays...
     if (procPool.poolRank() == rootRank)
     {
         Messenger::printVerbose("Process rank {} is assembling coordinate data...\n", procPool.poolRank());
-        for (auto n = 0; n < atoms_.nItems(); ++n)
-        {
-            x[n] = atoms_[n]->r().x;
-            y[n] = atoms_[n]->r().y;
-            z[n] = atoms_[n]->r().z;
-        }
+        std::transform(atoms_.begin(), atoms_.end(), x.begin(), [](const auto &atom) { return atom->r().x; });
+        std::transform(atoms_.begin(), atoms_.end(), y.begin(), [](const auto &atom) { return atom->r().y; });
+        std::transform(atoms_.begin(), atoms_.end(), z.begin(), [](const auto &atom) { return atom->r().z; });
     }
 
-    if (!procPool.broadcast(x, atoms_.nItems(), rootRank))
+    if (!procPool.broadcast(x, rootRank))
         return false;
-    if (!procPool.broadcast(y, atoms_.nItems(), rootRank))
+    if (!procPool.broadcast(y, rootRank))
         return false;
-    if (!procPool.broadcast(z, atoms_.nItems(), rootRank))
+    if (!procPool.broadcast(z, rootRank))
         return false;
 
     // Slaves then store values into Atoms, updating related info as we go
     if (procPool.isSlave())
-        for (auto n = 0; n < atoms_.nItems(); ++n)
+        for (auto n = 0; n < atoms_.size(); ++n)
             atoms_[n]->setCoordinates(x[n], y[n], z[n]);
-
-    delete[] x;
-    delete[] y;
-    delete[] z;
 
     // Broadcast contents version
     if (!contentsVersion_.broadcast(procPool, rootRank))

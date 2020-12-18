@@ -26,16 +26,19 @@ EnergyKernel::~EnergyKernel() {}
  */
 
 // Return PairPotential energy between atoms provided as pointers, at the distance specified
-double EnergyKernel::pairPotentialEnergy(const Atom *i, const Atom *j, double r) { return potentialMap_.energy(i, j, r); }
+double EnergyKernel::pairPotentialEnergy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r)
+{
+    return potentialMap_.energy(i, j, r);
+}
 
 // Return PairPotential energy between atoms provided as pointers (no minimum image calculation)
-double EnergyKernel::energyWithoutMim(const Atom *i, const Atom *j)
+double EnergyKernel::energyWithoutMim(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j)
 {
     return pairPotentialEnergy(i, j, (i->r() - j->r()).magnitude());
 }
 
 // Return PairPotential energy between atoms provided as pointers (minimum image calculation)
-double EnergyKernel::energyWithMim(const Atom *i, const Atom *j)
+double EnergyKernel::energyWithMim(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j)
 {
     // 	Messenger::print("EnergyKernel::atoms(*,*) - energy {}-{} is {} at {} mim\n",
     // min(i->arrayIndex(),j->arrayIndex()), max(i->arrayIndex(),j->arrayIndex()), pairPotentialEnergy(i->masterTypeIndex(),
@@ -48,7 +51,7 @@ double EnergyKernel::energyWithMim(const Atom *i, const Atom *j)
  */
 
 // Return PairPotential energy between atoms (provided as pointers)
-double EnergyKernel::energy(const Atom *i, const Atom *j, bool applyMim, bool excludeIgeJ)
+double EnergyKernel::energy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, bool applyMim, bool excludeIgeJ)
 {
 #ifdef CHECKS
     if (i == nullptr)
@@ -96,7 +99,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
     double totalEnergy = 0.0;
     auto &centralAtoms = centralCell->atoms();
     auto &otherAtoms = otherCell->atoms();
-    Atom *ii;
+    std::shared_ptr<Atom> ii;
     Vec3<double> rI;
     std::shared_ptr<Molecule> molI;
     double rSq, scale;
@@ -115,7 +118,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
             rI = ii->r();
 
             // Straight loop over other cell atoms
-            for (auto *jj : otherAtoms)
+            for (auto jj : otherAtoms)
             {
                 // Check exclusion of I >= J
                 if (excludeIgeJ && (ii >= jj))
@@ -147,7 +150,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
             rI = ii->r();
 
             // Straight loop over other cell atoms
-            for (auto *jj : otherAtoms)
+            for (auto jj : otherAtoms)
             {
                 // Check exclusion of I >= J
                 if (excludeIgeJ && (ii >= jj))
@@ -184,7 +187,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
 {
     double totalEnergy = 0.0;
     auto &centralAtoms = centralCell->atoms();
-    Atom *ii;
+    std::shared_ptr<Atom> ii;
     Vec3<double> rJ;
     std::shared_ptr<Molecule> molJ;
     double rSq, scale;
@@ -198,7 +201,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
     {
         auto &otherAtoms = otherCell->atoms();
 
-        for (auto *jj : otherAtoms)
+        for (auto jj : otherAtoms)
         {
             molJ = jj->molecule();
             rJ = jj->r();
@@ -235,7 +238,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
     {
         auto &otherAtoms = otherCell->atoms();
 
-        for (auto *jj : otherAtoms)
+        for (auto jj : otherAtoms)
         {
             molJ = jj->molecule();
             rJ = jj->r();
@@ -275,7 +278,8 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
 }
 
 // Return PairPotential energy between Atom and Cell contents
-double EnergyKernel::energy(const Atom *i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy,
+                            bool performSum)
 {
 #ifdef CHECKS
     if (i == nullptr)
@@ -290,7 +294,7 @@ double EnergyKernel::energy(const Atom *i, const Cell *cell, int flags, ProcessP
     }
 #endif
     double totalEnergy = 0.0;
-    Atom *jj;
+    std::shared_ptr<Atom> jj;
     double rSq, scale;
     auto &otherAtoms = cell->atoms();
 
@@ -511,7 +515,7 @@ double EnergyKernel::energy(const Atom *i, const Cell *cell, int flags, ProcessP
 }
 
 // Return PairPotential energy of Atom with world
-double EnergyKernel::energy(const Atom *i, ProcessPool::DivisionStrategy strategy, bool performSum)
+double EnergyKernel::energy(const std::shared_ptr<Atom> i, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
 #ifdef CHECKS
     if (i == nullptr)
@@ -545,7 +549,7 @@ double EnergyKernel::energy(std::shared_ptr<const Molecule> mol, ProcessPool::Di
 {
     double totalEnergy = 0.0;
 
-    for (auto *ii : mol->atoms())
+    for (auto ii : mol->atoms())
     {
         auto *cellI = ii->cell();
 
@@ -576,14 +580,14 @@ double EnergyKernel::energy(std::shared_ptr<const Molecule> mol, ProcessPool::Di
 }
 
 // Return molecular correction energy related to intramolecular terms involving supplied atom
-double EnergyKernel::correct(const Atom *i)
+double EnergyKernel::correct(const std::shared_ptr<Atom> i)
 {
     // Loop over atoms in molecule
-    std::vector<Atom *> atoms = i->molecule()->atoms();
+    auto &atoms = i->molecule()->atoms();
     double scale, r, correctionEnergy = 0.0;
     const auto rI = i->r();
 
-    correctionEnergy = std::accumulate(atoms.begin(), atoms.end(), 0.0, [&](const auto &acc, auto *j) {
+    correctionEnergy = std::accumulate(atoms.begin(), atoms.end(), 0.0, [&](const auto &acc, auto j) {
         if (i == j)
             return acc;
         scale = 1.0 - i->scaling(j);
@@ -628,7 +632,7 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
  */
 
 // Return SpeciesBond energy at Atoms specified
-double EnergyKernel::energy(const SpeciesBond &bond, const Atom *i, const Atom *j)
+double EnergyKernel::energy(const SpeciesBond &bond, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j)
 {
 #ifdef CHECKS
     // Check for spurious bond distances
@@ -647,7 +651,8 @@ double EnergyKernel::energy(const SpeciesBond &bond, const Atom *i, const Atom *
 double EnergyKernel::energy(const SpeciesBond &b) { return b.energy((b.j()->r() - b.i()->r()).magnitude()); }
 
 // Return SpeciesAngle energy at Atoms specified
-double EnergyKernel::energy(const SpeciesAngle &angle, const Atom *i, const Atom *j, const Atom *k)
+double EnergyKernel::energy(const SpeciesAngle &angle, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
+                            const std::shared_ptr<Atom> k)
 {
     Vec3<double> vecji, vecjk;
 
@@ -683,7 +688,8 @@ double EnergyKernel::energy(const SpeciesAngle &angle)
 }
 
 // Return SpeciesTorsion energy at Atoms specified
-double EnergyKernel::energy(const SpeciesTorsion &torsion, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
+double EnergyKernel::energy(const SpeciesTorsion &torsion, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
+                            const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l)
 {
     Vec3<double> vecji, vecjk, veckl;
 
@@ -712,7 +718,8 @@ double EnergyKernel::energy(const SpeciesTorsion &torsion)
 }
 
 // Return SpeciesImproper energy
-double EnergyKernel::energy(const SpeciesImproper &imp, const Atom *i, const Atom *j, const Atom *k, const Atom *l)
+double EnergyKernel::energy(const SpeciesImproper &imp, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j,
+                            const std::shared_ptr<Atom> k, const std::shared_ptr<Atom> l)
 {
     Vec3<double> vecji, vecjk, veckl;
 
@@ -734,7 +741,7 @@ double EnergyKernel::energy(const SpeciesImproper &imp, const Atom *i, const Ato
 }
 
 // Return intramolecular energy for the supplied Atom
-double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, const Atom *i)
+double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, const std::shared_ptr<Atom> i)
 {
 #ifdef CHECKS
     if (i == nullptr)

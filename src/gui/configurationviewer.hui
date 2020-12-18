@@ -52,7 +52,7 @@ class ConfigurationViewer : public BaseViewer
 
     private:
     // Return atom at specified coordinates
-    const Atom *atomAt(int x, int y);
+    const std::shared_ptr<Atom> atomAt(int x, int y);
 
     protected:
     // Start interaction at the specified screen coordinates

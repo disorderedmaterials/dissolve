@@ -13,7 +13,7 @@ ChangeData::ChangeData() : atom_(nullptr), cell_(nullptr), moved_(false) {}
  */
 
 // Set target atom
-void ChangeData::setAtom(Atom *i)
+void ChangeData::setAtom(std::shared_ptr<Atom> i)
 {
 #ifdef CHECKS
     if (i == nullptr)
@@ -29,7 +29,7 @@ void ChangeData::setAtom(Atom *i)
 }
 
 // Return target Atom
-Atom *ChangeData::atom() { return atom_; }
+std::shared_ptr<Atom> ChangeData::atom() { return atom_; }
 
 // Return array index of stored Atom
 int ChangeData::atomArrayIndex() const { return atom_->arrayIndex(); }

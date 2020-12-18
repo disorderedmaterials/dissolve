@@ -115,7 +115,7 @@ void Atom::translateCoordinates(double dx, double dy, double dz) { setCoordinate
  */
 
 // Return scaling factor to employ with specified Atom
-double Atom::scaling(Atom *j) const
+double Atom::scaling(std::shared_ptr<Atom> j) const
 {
 #ifdef CHECKS
     if (!speciesAtom_)

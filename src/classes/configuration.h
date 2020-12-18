@@ -19,7 +19,6 @@
 #include "module/layer.h"
 #include "procedure/procedure.h"
 #include "templates/array.h"
-#include "templates/dynamicarray.h"
 #include "templates/objectstore.h"
 #include "templates/orderedlist.h"
 #include "templates/vector3.h"
@@ -93,7 +92,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
     // Array of Molecules
     std::deque<std::shared_ptr<Molecule>> molecules_;
     // Array of Atoms
-    DynamicArray<Atom> atoms_;
+    std::vector<std::shared_ptr<Atom>> atoms_;
 
     public:
     // Empty contents of Configuration, leaving core definitions intact
@@ -135,15 +134,16 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
     // Return nth Molecule
     std::shared_ptr<Molecule> molecule(int n);
     // Add new Atom to Configuration
-    Atom *addAtom(const SpeciesAtom *sourceAtom, std::shared_ptr<Molecule> molecule, Vec3<double> r = Vec3<double>());
+    std::shared_ptr<Atom> addAtom(const SpeciesAtom *sourceAtom, std::shared_ptr<Molecule> molecule,
+                                  Vec3<double> r = Vec3<double>());
     // Return number of Atoms in Configuration
     int nAtoms() const;
     // Return Atom array
-    DynamicArray<Atom> &atoms();
+    std::vector<std::shared_ptr<Atom>> &atoms();
     // Return Atom array (const)
-    const DynamicArray<Atom> &constAtoms() const;
+    const std::vector<std::shared_ptr<Atom>> &atoms() const;
     // Return nth Atom
-    Atom *atom(int n);
+    std::shared_ptr<Atom> atom(int n);
     // Scale geometric centres of molecules within box
     void scaleMoleculeCentres(double factor);
 
@@ -192,7 +192,7 @@ class Configuration : public ListItem<Configuration>, public ObjectStore<Configu
     // Update Cell contents
     void updateCellContents();
     // Update Cell location of specified Atom
-    void updateCellLocation(Atom *i);
+    void updateCellLocation(std::shared_ptr<Atom> i);
     // Update Cell location of specified Molecule
     void updateCellLocation(std::shared_ptr<Molecule> mol);
     // Update Cell location of specified Atom indices

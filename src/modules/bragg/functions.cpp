@@ -51,7 +51,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
     const Box *box = cfg->box();
     auto nTypes = cfg->nUsedAtomTypes();
     auto nAtoms = cfg->nAtoms();
-    Atom **atoms = cfg->atoms().array();
+    auto &atoms = cfg->atoms();
 
     // Set up reciprocal axes and lengths - take those from the Box and scale based on the multiplicity
     Matrix3 rAxes = box->reciprocalAxes();

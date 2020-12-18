@@ -89,7 +89,7 @@ template <>
 double GeometryOptimisationModule::energyAtGradientPoint(ProcessPool &procPool, Configuration *cfg,
                                                          const PotentialMap &potentialMap, double delta)
 {
-    Atom **atoms = cfg->atoms().array();
+    auto &atoms = cfg->atoms();
     for (auto n = 0; n < cfg->nAtoms(); ++n)
         atoms[n]->setCoordinates(xRef_[n] + xForce_[n] * delta, yRef_[n] + yForce_[n] * delta, zRef_[n] + zForce_[n] * delta);
     cfg->updateCellContents();

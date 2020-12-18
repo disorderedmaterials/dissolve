@@ -51,17 +51,17 @@ const Vec3<double> &Cell::centre() const { return centre_; }
  */
 
 // Return array of contained Atoms
-OrderedVector<Atom *> &Cell::atoms() { return atoms_; }
-const OrderedVector<Atom *> &Cell::atoms() const { return atoms_; }
+OrderedVector<std::shared_ptr<Atom>> &Cell::atoms() { return atoms_; }
+const OrderedVector<std::shared_ptr<Atom>> &Cell::atoms() const { return atoms_; }
 
 // Return array of contained Atoms, ordered by their array indices
-const OrderedVector<Atom *> &Cell::indexOrderedAtoms() const { return indexOrderedAtoms_; }
+const OrderedVector<std::shared_ptr<Atom>> &Cell::indexOrderedAtoms() const { return indexOrderedAtoms_; }
 
 // Return number of Atoms in list
 int Cell::nAtoms() const { return atoms_.size(); }
 
 // Add atom to Cell
-bool Cell::addAtom(Atom *i)
+bool Cell::addAtom(std::shared_ptr<Atom> i)
 {
 #ifdef CHECKS
     if (i == nullptr)
@@ -82,7 +82,7 @@ bool Cell::addAtom(Atom *i)
 }
 
 // Remove Atom from Cell
-bool Cell::removeAtom(Atom *i)
+bool Cell::removeAtom(std::shared_ptr<Atom> i)
 {
 #ifdef CHECKS
     if (i == nullptr)

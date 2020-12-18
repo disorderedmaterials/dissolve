@@ -2,7 +2,6 @@
 // Copyright (c) 2020 Team Dissolve and contributors
 
 #include "templates/array.h"
-#include "templates/dynamicarray.h"
 #include "templates/list.h"
 #include "templates/refdatalist.h"
 #include "templates/reflist.h"
@@ -98,21 +97,6 @@ template <class T, class I, typename Raw = I *, typename... Args> class TableWid
             updateItemAtIndex(table, rowCount, dataItem, functionParent, updateRow);
             ++rowCount;
         }
-        table->setRowCount(rowCount);
-    }
-    TableWidgetUpdater(QTableWidget *table, DynamicArray<I> &array, T *functionParent, TableWidgetRowUpdateFunction updateRow)
-    {
-        int rowCount = 0;
-
-        DynamicArrayIterator<I> dataIterator(array);
-        while (I *dataItem = dataIterator.iterate())
-        {
-            updateItemAtIndex(table, rowCount, dataItem, functionParent, updateRow);
-            ++rowCount;
-        }
-
-        // Set the number of table rows again here in order to catch the case where there were zero data items to
-        // iterate over
         table->setRowCount(rowCount);
     }
     TableWidgetUpdater(QTableWidget *table, const std::vector<std::shared_ptr<I>> &list, T *functionParent,

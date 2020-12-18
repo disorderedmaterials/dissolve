@@ -77,7 +77,7 @@ double PotentialMap::range() const { return range_; }
  */
 
 // Return energy between Atoms at distance specified
-double PotentialMap::energy(const Atom *i, const Atom *j, double r) const
+double PotentialMap::energy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r) const
 {
 #ifdef CHECKS
     if ((i->masterTypeIndex() < 0) || (i->masterTypeIndex() >= nTypes_))
@@ -123,7 +123,7 @@ double PotentialMap::energy(const SpeciesAtom *i, const SpeciesAtom *j, double r
 }
 
 // Return analytic energy between Atom types at distance specified
-double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r) const
+double PotentialMap::analyticEnergy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r) const
 {
 #ifdef CHECKS
     if ((i->masterTypeIndex() < 0) || (i->masterTypeIndex() >= nTypes_))
@@ -154,7 +154,7 @@ double PotentialMap::analyticEnergy(const Atom *i, const Atom *j, double r) cons
 }
 
 // Return force between Atoms at distance specified
-double PotentialMap::force(const Atom *i, const Atom *j, double r) const
+double PotentialMap::force(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r) const
 {
 #ifdef CHECKS
     if ((i->masterTypeIndex() < 0) || (i->masterTypeIndex() >= nTypes_))
@@ -201,7 +201,7 @@ double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r)
 }
 
 // Return analytic force between Atom types at distance specified
-double PotentialMap::analyticForce(const Atom *i, const Atom *j, double r) const
+double PotentialMap::analyticForce(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r) const
 {
 #ifdef CHECKS
     if ((i->masterTypeIndex() < 0) || (i->masterTypeIndex() >= nTypes_))

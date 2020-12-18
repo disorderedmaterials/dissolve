@@ -102,7 +102,7 @@ bool AtomShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
                 n = 0;
                 // Loop over atoms in the Molecule
-                for (auto *i : mol->atoms())
+                for (auto i : mol->atoms())
                 {
                     // Calculate reference energy for the Atom
                     currentEnergy = kernel.energy(i, ProcessPool::subDivisionStrategy(strategy), true);

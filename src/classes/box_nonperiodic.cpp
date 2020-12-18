@@ -31,46 +31,64 @@ NonPeriodicBox::~NonPeriodicBox() {}
  */
 
 // Return minimum image coordinates of 'i' with respect to 'ref'
-Vec3<double> NonPeriodicBox::minimumImage(const Atom *i, const Atom *ref) const { return i->r(); }
+Vec3<double> NonPeriodicBox::minimumImage(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> ref) const
+{
+    return i->r();
+}
 
 // Return minimum image coordinates of 'i' with respect to 'ref'
-Vec3<double> NonPeriodicBox::minimumImage(const Atom *i, const Vec3<double> &ref) const { return i->r(); }
+Vec3<double> NonPeriodicBox::minimumImage(const std::shared_ptr<Atom> i, const Vec3<double> &ref) const { return i->r(); }
 
 // Return minimum image coordinates of 'i' with respect to 'ref'
 Vec3<double> NonPeriodicBox::minimumImage(const Vec3<double> &i, const Vec3<double> &ref) const { return i; }
 
 // Return minimum image vector from 'i' to 'j'
-Vec3<double> NonPeriodicBox::minimumVector(const Atom *i, const Atom *j) const { return j->r() - i->r(); }
+Vec3<double> NonPeriodicBox::minimumVector(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const
+{
+    return j->r() - i->r();
+}
 
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> NonPeriodicBox::minimumVector(const Atom &i, const Atom &j) const { return j.r() - i.r(); }
 
 // Return minimum image vector from 'i' to 'j'
-Vec3<double> NonPeriodicBox::minimumVector(const Atom *i, const Vec3<double> &j) const { return j - i->r(); }
+Vec3<double> NonPeriodicBox::minimumVector(const std::shared_ptr<Atom> i, const Vec3<double> &j) const { return j - i->r(); }
 
 // Return minimum image vector from 'i' to 'j'
 Vec3<double> NonPeriodicBox::minimumVector(const Vec3<double> &i, const Vec3<double> &j) const { return j - i; }
 
 // Return minimum image distance from 'i' to 'j'
-double NonPeriodicBox::minimumDistance(const Atom *i, const Atom *j) const { return (j->r() - i->r()).magnitude(); }
+double NonPeriodicBox::minimumDistance(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const
+{
+    return (j->r() - i->r()).magnitude();
+}
 
 // Return minimum image distance from 'i' to 'j'
 double NonPeriodicBox::minimumDistance(const Atom &i, const Atom &j) const { return (j.r() - i.r()).magnitude(); }
 
 // Return minimum image distance from 'i' to 'j'
-double NonPeriodicBox::minimumDistance(const Atom *i, const Vec3<double> &j) const { return (j - i->r()).magnitude(); }
+double NonPeriodicBox::minimumDistance(const std::shared_ptr<Atom> i, const Vec3<double> &j) const
+{
+    return (j - i->r()).magnitude();
+}
 
 // Return minimum image distance from 'i' to 'j'
 double NonPeriodicBox::minimumDistance(const Vec3<double> &i, const Vec3<double> &j) const { return (j - i).magnitude(); }
 
 // Return minimum image squared distance from 'i' to 'j' (pointers)
-double NonPeriodicBox::minimumDistanceSquared(const Atom *i, const Atom *j) const { return (j->r() - i->r()).magnitudeSq(); }
+double NonPeriodicBox::minimumDistanceSquared(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j) const
+{
+    return (j->r() - i->r()).magnitudeSq();
+}
 
 // Return minimum image squared distance from 'i' to 'j' (references)
 double NonPeriodicBox::minimumDistanceSquared(const Atom &i, const Atom &j) const { return (j.r() - i.r()).magnitudeSq(); }
 
 // Return minimum image squared distance from 'i' to 'j'
-double NonPeriodicBox::minimumDistanceSquared(const Atom *i, const Vec3<double> &j) const { return (j - i->r()).magnitudeSq(); }
+double NonPeriodicBox::minimumDistanceSquared(const std::shared_ptr<Atom> i, const Vec3<double> &j) const
+{
+    return (j - i->r()).magnitudeSq();
+}
 
 // Return minimum image squared distance from 'i' to 'j'
 double NonPeriodicBox::minimumDistanceSquared(const Vec3<double> &i, const Vec3<double> &j) const

@@ -17,7 +17,7 @@ ChangeStore::ChangeStore(ProcessPool &procPool) : processPool_(procPool) {}
  */
 
 // Add atom to watch
-void ChangeStore::add(Atom *i)
+void ChangeStore::add(std::shared_ptr<Atom> i)
 {
     targetAtoms_.emplace_back();
     targetAtoms_.back().setAtom(i);
@@ -33,7 +33,7 @@ void ChangeStore::add(std::shared_ptr<Molecule> mol)
 // Add Cell to watch
 void ChangeStore::add(Cell *cell)
 {
-    for (auto *atom : cell->atoms())
+    for (auto &atom : cell->atoms())
         add(atom);
 }
 
@@ -158,7 +158,7 @@ bool ChangeStore::distributeAndApply(Configuration *cfg)
         return false;
 
     // Apply atom changes
-    Atom **atoms = cfg->atoms().array();
+    std::vector<std::shared_ptr<Atom>> &atoms = cfg->atoms();
     for (auto n = 0; n < nTotalChanges; ++n)
     {
 #ifdef CHECKS

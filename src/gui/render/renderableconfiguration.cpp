@@ -90,8 +90,9 @@ void RenderableConfiguration::transformValues()
  */
 
 // Create cylinder bond between supplied atoms in specified assembly
-void RenderableConfiguration::createCylinderBond(PrimitiveAssembly &assembly, const Atom *i, const Atom *j,
-                                                 const Vec3<double> vij, bool drawFromAtoms, double radialScaling)
+void RenderableConfiguration::createCylinderBond(PrimitiveAssembly &assembly, const std::shared_ptr<Atom> i,
+                                                 const std::shared_ptr<Atom> j, const Vec3<double> vij, bool drawFromAtoms,
+                                                 double radialScaling)
 {
     Matrix4 A;
     auto unit = vij;
@@ -140,7 +141,6 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
     Matrix4 A;
     const GLfloat *colour;
     const GLfloat colourBlack[4] = {0.0, 0.0, 0.0, 1.0};
-    const Atom *i, *partner;
     Vec3<double> ri, rj;
 
     // Check data source
@@ -163,12 +163,8 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
         configurationAssembly_.add(lineConfigurationPrimitive_, A);
 
         // Draw Atoms
-        const DynamicArray<Atom> &atoms = source_->constAtoms();
-        for (auto n = 0; n < atoms.nItems(); ++n)
+        for (const auto i : source_->atoms())
         {
-            // Get the Atom pointer
-            i = atoms.constValue(n);
-
             // If the atom has no bonds draw it as a 'cross'
             if (i->speciesAtom()->nBonds() == 0)
             {
@@ -186,7 +182,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
                 {
                     // Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is
                     // the same as 'i' (in which case we skip it, ensuring we draw every bond only once)
-                    partner = i->molecule()->atom(bond.indexJ());
+                    auto partner = i->molecule()->atom(bond.indexJ());
                     if (i == partner)
                         continue;
 
@@ -211,11 +207,8 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
         configurationAssembly_.add(true, GL_FILL);
 
         // Draw Atoms
-        const DynamicArray<Atom> &atoms = source_->constAtoms();
-        for (auto n = 0; n < atoms.nItems(); ++n)
+        for (const auto i : source_->atoms())
         {
-            const Atom *i = atoms.constValue(n);
-
             A.setIdentity();
             A.setTranslation(i->r());
             A.applyScaling(spheresAtomRadius_);
@@ -229,7 +222,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
             {
                 // Blindly get partner Atom 'j' - don't check if it is the true partner, only if it is the same
                 // as 'i' (in which case we skip it, ensuring we draw every bond only once)
-                partner = i->molecule()->atom(bond.indexJ());
+                auto partner = i->molecule()->atom(bond.indexJ());
                 if (i == partner)
                     continue;
 

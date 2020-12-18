@@ -116,7 +116,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Variables
         int n, nCapped = 0;
-        Atom **atoms = cfg->atoms().array();
+        auto &atoms = cfg->atoms();
         double tInstant, ke, tScale, peInter, peIntra;
         double deltaTSq = deltaT * deltaT;
 
@@ -332,9 +332,8 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Write Atoms
-                    for (auto n = 0; n < cfg->nAtoms(); ++n)
+                    for (auto i : atoms)
                     {
-                        Atom *i = atoms[n];
                         if (!trajParser.writeLineF("{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n",
                                                    i->speciesAtom()->element()->symbol(), i->r().x, i->r().y, i->r().z))
                         {

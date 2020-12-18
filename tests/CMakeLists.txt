@@ -15,6 +15,11 @@ function(dissolve_system_test directory file_name count)
         PROPERTY
         LABELS ${directory}
       )
+      set_property(
+        TEST ${directory}-${file_name}-${nproc}
+        PROPERTY
+	PROCESSORS ${nproc}
+      )
     endforeach()
   else()
     set(test_target_executable ../../build/bin/${target_name})
