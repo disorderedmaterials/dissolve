@@ -72,9 +72,8 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
     // Return value specified
     double &value(int xIndex, int yIndex, int zIndex);
     const double &value(int xIndex, int yIndex, int zIndex) const;
-    // Return value Array
-    Array3D<double> &values();
-    // Return values Array
+    // Return three-dimensional values Array
+    Array3D<double> &values3D();
     const Array3D<double> &values3D() const;
     // Return number of values present in whole dataset
     int nValues() const;
@@ -89,9 +88,8 @@ class Data3D : public PlottableData, public ListItem<Data3D>, public ObjectStore
     // Return error value specified
     double &error(int xIndex, int yIndex, int zIndex);
     const double &error(int xIndex, int yIndex, int zIndex) const;
-    // Return error Array
-    Array3D<double> &errors();
-    // Return errors Array
+    // Return three-dimensional errors Array
+    Array3D<double> &errors3D();
     const Array3D<double> &errors3D() const;
 
     /*

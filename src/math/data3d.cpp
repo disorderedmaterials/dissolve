@@ -268,15 +268,14 @@ const double &Data3D::value(int xIndex, int yIndex, int zIndex) const
     return values_[{xIndex, yIndex, zIndex}];
 }
 
-// Return values Array
-Array3D<double> &Data3D::values()
+// Return three-dimensional values Array
+Array3D<double> &Data3D::values3D()
 {
     ++version_;
 
     return values_;
 }
 
-// Return values Array (const)
 const Array3D<double> &Data3D::values3D() const { return values_; }
 
 // Return number of values present in whole dataset
@@ -384,8 +383,8 @@ const double &Data3D::error(int xIndex, int yIndex, int zIndex) const
     return errors_[{xIndex, yIndex, zIndex}];
 }
 
-// Return error Array
-Array3D<double> &Data3D::errors()
+// Return three-dimensional errors Array
+Array3D<double> &Data3D::errors3D()
 {
     if (!hasError_)
         Messenger::warn("This Data3D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
@@ -396,7 +395,6 @@ Array3D<double> &Data3D::errors()
     return errors_;
 }
 
-// Return error Array (const)
 const Array3D<double> &Data3D::errors3D() const
 {
     if (!hasError_)

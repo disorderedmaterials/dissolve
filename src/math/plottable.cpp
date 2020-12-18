@@ -50,7 +50,7 @@ const std::vector<double> &PlottableData::values() const
     return dummy;
 }
 
-// Return values Array
+// Return two-dimensional values Array
 const Array2D<double> &PlottableData::values2D() const
 {
     Messenger::error(
@@ -80,7 +80,7 @@ const std::vector<double> &PlottableData::errors() const
     return dummy;
 }
 
-// Return errors Array
+// Return two-dimensional errors Array
 const Array2D<double> &PlottableData::errors2D() const
 {
     Messenger::error(

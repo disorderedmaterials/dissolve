@@ -312,7 +312,6 @@ std::vector<double> &Data1D::errors()
     return errors_;
 }
 
-// Return error Array (const)
 const std::vector<double> &Data1D::errors() const
 {
     if (!hasError_)

@@ -67,9 +67,8 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
     // Return value specified
     double &value(int xIndex, int yIndex);
     const double &value(int xIndex, int yIndex) const;
-    // Return value Array
-    Array2D<double> &values();
-    // Return values Array
+    // Return two-dimensional values Array
+    Array2D<double> &values2D();
     const Array2D<double> &values2D() const;
     // Return value specified from linear array
     double value(int index);
@@ -86,9 +85,8 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
     // Return error value specified
     double &error(int xIndex, int yIndex);
     const double &error(int xIndex, int yIndex) const;
-    // Return error Array
-    Array2D<double> &errors();
-    // Return errors Array
+    // Return two-dimensional errors Array
+    Array2D<double> &errors2D();
     const Array2D<double> &errors2D() const;
 
     /*

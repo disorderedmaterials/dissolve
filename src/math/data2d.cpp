@@ -257,15 +257,14 @@ const double &Data2D::value(int xIndex, int yIndex) const
     return values_[{xIndex, yIndex}];
 }
 
-// Return values Array
-Array2D<double> &Data2D::values()
+// Return two-dimensional values Array
+Array2D<double> &Data2D::values2D()
 {
     ++version_;
 
     return values_;
 }
 
-// Return values Array (const)
 const Array2D<double> &Data2D::values2D() const { return values_; }
 
 // Return value specified from linear array
@@ -365,8 +364,8 @@ const double &Data2D::error(int xIndex, int yIndex) const
     return errors_[{xIndex, yIndex}];
 }
 
-// Return error Array
-Array2D<double> &Data2D::errors()
+// Return two-dimensional errors Array
+Array2D<double> &Data2D::errors2D()
 {
     if (!hasError_)
         Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
@@ -377,7 +376,6 @@ Array2D<double> &Data2D::errors()
     return errors_;
 }
 
-// Return error Array (const)
 const Array2D<double> &Data2D::errors2D() const
 {
     if (!hasError_)

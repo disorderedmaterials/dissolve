@@ -135,7 +135,7 @@ void RenderableData3D::transformValues()
     // Values
     for (auto n = 0; n < transformedData_.nValues(); ++n)
     {
-        double val = transformedData_.values().linearValue(n);
+        auto val = transformedData_.values3D().linearValue(n);
         if (val > 0.0)
         {
             if (positiveValuesMin_ < 0.0)

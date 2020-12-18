@@ -59,7 +59,7 @@ class PlottableData
     virtual int version() const = 0;
     // Return values Array
     virtual const std::vector<double> &values() const;
-    // Return values Array
+    // Return two-dimensional values Array
     virtual const Array2D<double> &values2D() const;
     // Return three-dimensional values Array
     virtual const Array3D<double> &values3D() const;
@@ -73,7 +73,7 @@ class PlottableData
     virtual bool valuesHaveErrors() const;
     // Return errors Array
     virtual const std::vector<double> &errors() const;
-    // Return errors Array
+    // Return two-dimensional errors Array
     virtual const Array2D<double> &errors2D() const;
     // Return three-dimensional errors Array
     virtual const Array3D<double> &errors3D() const;
