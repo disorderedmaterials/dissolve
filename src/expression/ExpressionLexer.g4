@@ -13,9 +13,7 @@ lexer grammar ExpressionLexer;
 @lexer::context {/* lexer context section */}
 
 // Appears in the private part of the lexer in the h file.
-@lexer::declarations {
-bool isVariable(std::string symbol) { return false; /* Elements::element(symbol.c_str()).Z() != 0; */ }
-}
+@lexer::declarations { }
 
 // Appears in line with the other class member definitions in the cpp file.
 @lexer::definitions {/* lexer definitions section */}
@@ -29,9 +27,6 @@ fragment DIGIT: [0-9];
 fragment LETTER: [a-zA-Z];
 fragment EXPONENT: ('e'|'E') ('+'|'-')? ('0'..'9')+;
  
-// Comparison Operators
-ComparisonOperator: '<=' | '>=' | '<' | '>' | '=' | '!=';
-
 // Punctuation
 OpenParenthesis: '(';
 CloseParenthesis: ')';
@@ -53,4 +48,3 @@ Power: '^';
 
 // Named Token
 Name: LETTER+;
-// Variable: LETTER+ { isVariable(getText()) }?;
