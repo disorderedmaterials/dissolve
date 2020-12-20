@@ -1,6 +1,7 @@
 ---
 title: 1. Introduction
 description: A brief overview of the purpose of Dissolve
+weight: 1
 ---
 {{< label color="blue" icon="fa-clock" text="2 minute read" >}}
 

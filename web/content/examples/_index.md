@@ -1,6 +1,7 @@
 ---
 title: Examples
 weight: 2
+type: docs
 ---
 
 Here you can find various usage examples, tutorials, and step-by-step walkthroughs for Dissolve. Important things are highlighted in the following manner:
