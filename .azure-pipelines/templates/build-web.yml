@@ -5,7 +5,7 @@ parameters:
   - name: hugo_version
     default: '0.79.0'
   - name: web_dir_root
-    default: 'github.com/projectdissolve/dissolve/edit/develop/web'
+    default: 'github.com/disorderedmaterials/dissolve/edit/develop/web'
   - name: last_hash_url
     default: 'https://www.projectdissolve.com'
 
