@@ -28,11 +28,11 @@ Since the nature, size, and content of the experimentally-measured systems is by
 
 ## Relevant Classes
 
-- [`Dissolve`](https://github.com/projectdissolve/dissolve/tree/develop/src/main/dissolve.h)
-- [`CoreData`](https://github.com/projectdissolve/dissolve/tree/develop/src/classes/coredata.h)
-- [`Configuration`](https://github.com/projectdissolve/dissolve/tree/develop/src/classes/configuration.h)
-- [`Species`](https://github.com/projectdissolve/dissolve/tree/develop/src/classes/species.h)
-- [`ModuleLayer`](https://github.com/projectdissolve/dissolve/tree/develop/src/module/layer.h)
+- [`Dissolve`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/main/dissolve.h)
+- [`CoreData`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/classes/coredata.h)
+- [`Configuration`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/classes/configuration.h)
+- [`Species`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/classes/species.h)
+- [`ModuleLayer`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/module/layer.h)
 
 ## Class Dependency
 
@@ -74,19 +74,19 @@ classDiagram
 
 ### Initialisation and Set-Up
 
-The main Dissolve class takes a reference to a [`CoreData`](https://github.com/projectdissolve/dissolve/tree/develop/src/classes/coredata.h)) object in its constructor, and which stores configuration, species, and processing layer definitions, as well as some forcefield-related terms. [`Dissolve`](https://github.com/projectdissolve/dissolve/tree/develop/src/main/dissolve.h)) does not own the [`CoreData`](https://github.com/projectdissolve/dissolve/tree/develop/src/classes/coredata.h)) object itself, since it is useful to able to transfer the [`CoreData`](https://github.com/projectdissolve/dissolve/tree/develop/src/classes/coredata.h)) reference through the code, without unnecessary baggage.
+The main Dissolve class takes a reference to a [`CoreData`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/classes/coredata.h)) object in its constructor, and which stores configuration, species, and processing layer definitions, as well as some forcefield-related terms. [`Dissolve`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/main/dissolve.h)) does not own the [`CoreData`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/classes/coredata.h)) object itself, since it is useful to able to transfer the [`CoreData`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/classes/coredata.h)) reference through the code, without unnecessary baggage.
 
-Following instantiation of [`CoreData`](https://github.com/projectdissolve/dissolve/tree/develop/src/classes/coredata.h)) and [`Dissolve`](https://github.com/projectdissolve/dissolve/tree/develop/src/main/dissolve.h)) objects in [`main.cpp`](https://github.com/projectdissolve/dissolve/tree/develop/src/main.cpp) the following major set-up steps are then performed:
+Following instantiation of [`CoreData`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/classes/coredata.h)) and [`Dissolve`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/main/dissolve.h)) objects in [`main.cpp`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/main.cpp) the following major set-up steps are then performed:
 
 #### 1. Registration of Available Modules
 
-The `Dissolve::registerMasterModules()` function is responsible for creating a set of 'master' module instances, from which all other instances (i.e. those used within processing layers) are spawned. These master instances are stored as a list in `Dissolve::masterModules_`, with new instances created / searched through associated functions in [`Dissolve`](https://github.com/projectdissolve/dissolve/tree/develop/src/main/dissolve.h)), referencing them by module type or unique module name. New instances of modules are tracked by adding them to the `Dissolve::moduleInstances_` reference list on their creation.
+The `Dissolve::registerMasterModules()` function is responsible for creating a set of 'master' module instances, from which all other instances (i.e. those used within processing layers) are spawned. These master instances are stored as a list in `Dissolve::masterModules_`, with new instances created / searched through associated functions in [`Dissolve`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/main/dissolve.h)), referencing them by module type or unique module name. New instances of modules are tracked by adding them to the `Dissolve::moduleInstances_` reference list on their creation.
 
 Any module type not registered at this point will not be available for use.
 
 #### 2. Load Input File
 
-Following module registration the main input file is then loaded. This file contains a complete description of the contents (species and configurations) of the system, its forcefield, and any processing layers to construct and run. This initialises and creates the necessary structures within both [`CoreData`](https://github.com/projectdissolve/dissolve/tree/develop/src/classes/coredata.h) and [`Dissolve`](https://github.com/projectdissolve/dissolve/tree/develop/src/main/dissolve.h). The input file is free-format and keyword-based, and is [detailed elsewhere]({{< ref "inputfile" >}})). While syntax checking of the input file is obviously performed while reading, further checking of the relationship between defined objects within the simulation is performed later on.
+Following module registration the main input file is then loaded. This file contains a complete description of the contents (species and configurations) of the system, its forcefield, and any processing layers to construct and run. This initialises and creates the necessary structures within both [`CoreData`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/classes/coredata.h) and [`Dissolve`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/main/dissolve.h). The input file is free-format and keyword-based, and is [detailed elsewhere]({{< ref "inputfile" >}})). While syntax checking of the input file is obviously performed while reading, further checking of the relationship between defined objects within the simulation is performed later on.
 
 #### 3. Load Restart File
 

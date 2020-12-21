@@ -2,8 +2,8 @@
 {{ $textSuffix := .Get "textSuffix" }}
 {{ $target := .Get "target" }}
 {{ if (eq $target "GUI") }}
-<a href="https://github.com/projectdissolve/dissolve/releases/download/continuous/Dissolve-GUI-{{ .Site.Params.devVersion }}{{ $urlSuffix }}">Development {{ .Site.Params.devVersion }}{{ with $textSuffix }} {{ . | markdownify }}{{ end }}</a>
+<a href="https://github.com/disorderedmaterials/dissolve/releases/download/continuous/Dissolve-GUI-{{ .Site.Params.devVersion }}{{ $urlSuffix }}">Development {{ .Site.Params.devVersion }}{{ with $textSuffix }} {{ . | markdownify }}{{ end }}</a>
 {{ end }}
 {{ if (eq $target "examples") }}
-<a href="https://github.com/projectdissolve/dissolve/releases/download/continuous/Dissolve-{{ .Site.Params.devVersion }}-ExampleData{{ $urlSuffix }}">Example Data {{ .Site.Params.devVersion }}{{ with $textSuffix }} {{ . | markdownify }}{{ end }}</a>
+<a href="https://github.com/disorderedmaterials/dissolve/releases/download/continuous/Dissolve-{{ .Site.Params.devVersion }}-ExampleData{{ $urlSuffix }}">Example Data {{ .Site.Params.devVersion }}{{ with $textSuffix }} {{ . | markdownify }}{{ end }}</a>
 {{ end }}

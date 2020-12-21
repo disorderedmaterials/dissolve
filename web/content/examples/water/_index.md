@@ -21,9 +21,9 @@ Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip
 
 Alternatively, download the data files listed below and save them to a location of your choice.
 
-- H<sub>2</sub>O: [SLS18498-H2O.mint01](https://raw.githubusercontent.com/projectdissolve/dissolve/develop/examples/water/data/SLS18498-H2O.mint01)
-- HDO: [SLS18500-HDO5050.mint01](https://raw.githubusercontent.com/projectdissolve/dissolve/develop/examples/water/data/SLS18500-HDO5050.mint01)
-- D<sub>2</sub>O: [SLS18502-D2O.mint01](https://raw.githubusercontent.com/projectdissolve/dissolve/develop/examples/water/data/SLS18502-D2O.mint01)
+- H<sub>2</sub>O: [SLS18498-H2O.mint01](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/water/data/SLS18498-H2O.mint01)
+- HDO: [SLS18500-HDO5050.mint01](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/water/data/SLS18500-HDO5050.mint01)
+- D<sub>2</sub>O: [SLS18502-D2O.mint01](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/water/data/SLS18502-D2O.mint01)
 
 
 {{< button pos="left" text="Let's begin!" path="step1/">}}

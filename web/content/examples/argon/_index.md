@@ -20,7 +20,7 @@ Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip
 
 Alternatively, download the data files listed below and save them to a location of your choice.
 
-- Neutron data file: [yarnell.sq](https://raw.githubusercontent.com/projectdissolve/dissolve/develop/examples/argon/data/yarnell.sq)
+- Neutron data file: [yarnell.sq](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/argon/data/yarnell.sq)
 
 
 {{< button pos="left" text="Let's begin!" path="step1">}}

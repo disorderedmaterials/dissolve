@@ -12,7 +12,7 @@ Here you can find various usage examples, tutorials, and step-by-step walkthroug
 
 {{< warn text="Warning - Brings something potentially important to your attention" >}}
 
-Relevant data as well as fully-constructed input files (for reference) can be downloaded as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} from the [releases page](https://github.com/projectdissolve/dissolve/releases). Alternatively, you can download individual files from the main [GitHub repo](https://github.com/projectdissolve/dissolve/tree/develop/examples).
+Relevant data as well as fully-constructed input files (for reference) can be downloaded as a {{< exampledatalink linkText="zip" urlSuffix="zip" >}} or {{< exampledatalink linkText="tar.gz" urlSuffix="tar.gz" >}} from the [releases page](https://github.com/disorderedmaterials/dissolve/releases). Alternatively, you can download individual files from the main [GitHub repo](https://github.com/disorderedmaterials/dissolve/tree/develop/examples).
 
 ## Basics
 

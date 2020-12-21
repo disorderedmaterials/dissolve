@@ -53,7 +53,7 @@ copyright = "Copyright (c) 2020 Team Dissolve and contributors. Built using Hugo
 releaseVersion = "0.6.1"
 releaseDate = "18th March 2020"
 devVersion = "0.7.0"
-github_repo = "https://github.com/projectdissolve/dissolve"
+github_repo = "https://github.com/disorderedmaterials/dissolve"
 github_subdir = "web"
 github_branch = "develop"
 
@@ -71,6 +71,6 @@ navbar_logo = true
 # End user relevant links. These will show up on left side of footer and in the community page if you have one.
  [[params.links.developer]]
     name = "GitHub"
-    url = "https://github.com/projectdissolve/dissolve"
+    url = "https://github.com/disorderedmaterials/dissolve"
     icon = "fab fa-github"
         desc = "Development takes place here!"
