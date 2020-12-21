@@ -1,6 +1,6 @@
 ---
-title: "Dissolve"
-linkTitle: "Dissolve"
+title: "Dissolve User Guide"
+linkTitle: "User Guide"
 ---
 
 **Structure Refinement for Scattering Data**
@@ -34,7 +34,7 @@ The latest source code is available on GitHub as the [Dissolve project](https://
 
 ## Using Dissolve
 
-Recommended reading for first-time users can be found in the [Starting Out]({{< ref "startingout" >}}) section of the [User Guide]({{< ref "userguide" >}}).
+Recommended reading for first-time users can be found in the [Starting Out]({{< ref "startingout" >}}) section of this guide.
 
 * * *
 

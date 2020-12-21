@@ -1,6 +1,7 @@
 ---
 title: 8. Procedures
 description: Defining procedures to create, analyse, and edit
+weight: 8
 ---
 
 ## Overview

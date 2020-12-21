@@ -30,7 +30,8 @@ steps:
   - bash: |
       set -ex
       # Remove language ('en') from 'Edit on GitHub' path links
-      find web/public/ -iname *.html -exec sed -i "s:${{ parameters.web_dir_root }}/content/en/docs/:${{ parameters.web_dir_root }}/content/docs/:g" {} +
+      find web/public/docs/ -iname *.html -exec sed -i "s:${{ parameters.web_dir_root }}/content/en/docs/:${{ parameters.web_dir_root }}/content/docs/:g" {} +
+      find web/public/examples/ -iname *.html -exec sed -i "s:${{ parameters.web_dir_root }}/content/en/examples/:${{ parameters.web_dir_root }}/content/examples/:g" {} +
     displayName: 'Rewrite Edit Links'
   - bash: |
       set -ex
