@@ -27,10 +27,10 @@ Providing a class-based system for defining keyword options permits transparent 
 
 ### Relevant Classes
 
-- [`ModuleKeywordBase`](https://github.com/projectdissolve/dissolve/tree/develop/src/module/keywordbase.h)
-- [`ModuleKeywordData`](https://github.com/projectdissolve/dissolve/tree/develop/src/module/keyworddata.h) (template)
-- [`ModuleKeywordList`](https://github.com/projectdissolve/dissolve/tree/develop/src/module/keywordlist.h)
-- [`Module`](https://github.com/projectdissolve/dissolve/tree/develop/src/module/module.h)
+- [`ModuleKeywordBase`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/module/keywordbase.h)
+- [`ModuleKeywordData`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/module/keyworddata.h) (template)
+- [`ModuleKeywordList`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/module/keywordlist.h)
+- [`Module`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/module/module.h)
 
 ### Class Dependency
 

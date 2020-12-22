@@ -22,8 +22,8 @@ Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip
 
 Alternatively, download the data files listed below and save them to a location of your choice.
 
-- C<sub>6</sub>H<sub>6</sub>: [C6H6.mint01](https://raw.githubusercontent.com/projectdissolve/dissolve/develop/examples/benzene/data/C6H6.mint01)
-- C<sub>6</sub>H<sub>6</sub>:C<sub>6</sub>D<sub>6</sub> (50:50): [5050.mint01](https://raw.githubusercontent.com/projectdissolve/dissolve/develop/examples/benzene/data/5050.mint01)
-- C<sub>6</sub>D<sub>6</sub>: [C6D6.mint01](https://raw.githubusercontent.com/projectdissolve/dissolve/develop/examples/benzene/data/C6D6.mint01)
+- C<sub>6</sub>H<sub>6</sub>: [C6H6.mint01](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/benzene/data/C6H6.mint01)
+- C<sub>6</sub>H<sub>6</sub>:C<sub>6</sub>D<sub>6</sub> (50:50): [5050.mint01](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/benzene/data/5050.mint01)
+- C<sub>6</sub>D<sub>6</sub>: [C6D6.mint01](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/benzene/data/C6D6.mint01)
 
 {{< button pos="left" text="Let's begin" path="step1/">}}

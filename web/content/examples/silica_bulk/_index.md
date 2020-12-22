@@ -19,6 +19,6 @@ Download the example data as a {{< exampledatalink linkText="zip" urlSuffix="zip
 
 Alternatively, download the data files listed below and save them to a location of your choice.
 
-- Neutron data file: [SiO2_NIMROD.mint01](https://raw.githubusercontent.com/projectdissolve/dissolve/develop/examples/silica_bulk/data/SiO2_NIMROD.mint01)
+- Neutron data file: [SiO2_NIMROD.mint01](https://raw.githubusercontent.com/disorderedmaterials/dissolve/develop/examples/silica_bulk/data/SiO2_NIMROD.mint01)
 
 {{< button pos="left" text="Let's begin!" path="step1/">}}

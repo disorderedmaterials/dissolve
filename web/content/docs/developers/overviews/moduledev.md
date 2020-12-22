@@ -50,8 +50,8 @@ It is strongly recommended to maintain this file structure as far as is possible
 
 ### Relevant Classes
 
-- [Module](https://github.com/projectdissolve/dissolve/tree/develop/src/module/module.h)
-- [ModuleLayer](https://github.com/projectdissolve/dissolve/tree/develop/src/module/layer.h)
+- [Module](https://github.com/disorderedmaterials/dissolve/tree/develop/src/module/module.h)
+- [ModuleLayer](https://github.com/disorderedmaterials/dissolve/tree/develop/src/module/layer.h)
 
 ### Class Diagram
 
@@ -94,7 +94,7 @@ Note that keywords are constructed for each instance of the module, and so are i
 
 ### Set-Up and Processing (`process.cpp`)
 
-Each module has the opportunity to set-up any necessary data prior to it being run through the `Module::setUp(Dissolve &dissolve, ProcessPool &procPool)` virtual. For each module instance the function is called only once as one of the final acts of [`Dissolve::setUpSimulation()`](https://github.com/projectdissolve/dissolve/tree/develop/src/main/dissolve.cpp#L276). References to the master `Dissolve` and current `ProcessPool` are provided to permit full access to necessary data and allow master-only processing and/or distribution of any data.
+Each module has the opportunity to set-up any necessary data prior to it being run through the `Module::setUp(Dissolve &dissolve, ProcessPool &procPool)` virtual. For each module instance the function is called only once as one of the final acts of [`Dissolve::setUpSimulation()`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/main/dissolve.cpp#L276). References to the master `Dissolve` and current `ProcessPool` are provided to permit full access to necessary data and allow master-only processing and/or distribution of any data.
 
 Useful work is performed by `Module::process(Dissolve &dissolve, ProcessPool &procPool)` and which should contain the implementation of the desired algorithm, calculation, or processing to be performed. The function itself is private and only called by the public `Module::executeProcessing()` method, which also obtains and stores suitable timing information. Often it is not practical to perform the whole processing in one linear function call, and so any required additional functions may be implemented in `functions.cpp`.
 
@@ -120,7 +120,7 @@ XXX TODO
 
 ### 1) Copy Module Template
 
-Create a copy of an existing module and rename its classes accordingly to avoid clashes. A [`SkeletonModule`](https://github.com/projectdissolve/dissolve/tree/develop/src/modules/skeleton) providing the basic file structure and build files is included in the source, and may be used as a fresh starting point. On Linux a [shell script](https://github.com/projectdissolve/dissolve/tree/develop/src/modules/skeleton/renamemodule) is available to rename the class, files, and header blocks of `SkeletonModule`.
+Create a copy of an existing module and rename its classes accordingly to avoid clashes. A [`SkeletonModule`](https://github.com/disorderedmaterials/dissolve/tree/develop/src/modules/skeleton) providing the basic file structure and build files is included in the source, and may be used as a fresh starting point. On Linux a [shell script](https://github.com/disorderedmaterials/dissolve/tree/develop/src/modules/skeleton/renamemodule) is available to rename the class, files, and header blocks of `SkeletonModule`.
 
 `SkeletonModule` contains files for an associated GUI. If this is **not** required, remove the `gui` subdirectory, delete the `SUBDIRS` target and `libmodulewidget_la_SOURCES += nogui.cpp` line from the module's `Makefile.am`, and remove the 'add_subdirectory(gui)` line from the module's `CMakeLists.txt`. The `nogui.cpp` source file can also be safely deleted.
 
