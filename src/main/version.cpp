@@ -6,7 +6,7 @@
 
 #define DISSOLVEVERSION "0.7.0"
 #define DISSOLVESHORTHASH ""
-#define DISSOLVEREPO "https://github.com/projectdissolve/dissolve.git"
+#define DISSOLVEREPO "https://github.com/disorderedmaterials/dissolve.git"
 
 namespace Version
 {
