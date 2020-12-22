@@ -51,8 +51,6 @@ class Elements
     static Element &element(int Z);
     // Return Element with corresponding symbol
     static Element &element(std::string_view symbol);
-    // Return pointer to Element with corresponding Z
-    static Element *elementPointer(int Z);
     // Return pointer to Element with corresponding symbol
     static Element *elementPointer(std::string_view symbol);
     // Return total number of defined elements
@@ -79,11 +77,6 @@ class Elements
         listArray.initialise(Elements::nElements());
         for (auto n = 0; n < nElements(); ++n)
             listArray[n].setDisownOnDestruction(true);
-    }
-    // Create array of RefLists, with array size equal to number of elements defined
-    template <class T> static void createElementRefListArray(Array<RefList<T>> &listArray)
-    {
-        listArray.initialise(Elements::nElements());
     }
 };
 

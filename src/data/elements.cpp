@@ -136,9 +136,6 @@ Element &Elements::element(std::string_view symbol)
     return elements()[0];
 }
 
-// Return pointer to Element with corresponding Z
-Element *Elements::elementPointer(int Z) { return &element(Z); }
-
 // Return pointer to Element with corresponding symbol
 Element *Elements::elementPointer(std::string_view symbol) { return &element(symbol); }
 
