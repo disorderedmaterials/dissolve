@@ -4,7 +4,7 @@
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/species.h"
-#include "data/atomicradius.h"
+#include "data/atomicradii.h"
 #include <algorithm>
 
 /*
@@ -183,7 +183,7 @@ void Species::addMissingBonds(double tolerance)
     {
         // Get SpeciesAtom 'i' and its radius
         SpeciesAtom *i = atoms[indexI];
-        radiusI = AtomicRadius::radius(i->element());
+        radiusI = AtomicRadii::radius(i->element()->Z());
         for (auto indexJ = indexI + 1; indexJ < nAtoms(); ++indexJ)
         {
             // Get SpeciesAtom 'j'
@@ -197,7 +197,7 @@ void Species::addMissingBonds(double tolerance)
             vij = j->r() - i->r();
 
             // Compare distance to sum of atomic radii (multiplied by tolerance factor)
-            if (vij.magnitude() <= (radiusI + AtomicRadius::radius(j->element())) * tolerance)
+            if (vij.magnitude() <= (radiusI + AtomicRadii::radius(j->element()->Z())) * tolerance)
                 addBond(i, j);
         }
     }
