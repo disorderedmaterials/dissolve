@@ -36,7 +36,8 @@ OptionalReferenceWrapper<const FormFactorData> formFactorData(XRayFormFactorData
 }
 
 // Return form factor data from specified dataset for given element and formal charge (if it exists)
-OptionalReferenceWrapper<const FormFactorData> formFactorData(XRayFormFactorData dataSet, Element *el, int formalCharge)
+OptionalReferenceWrapper<const FormFactorData> formFactorData(XRayFormFactorData dataSet, Elements::Element *el,
+                                                              int formalCharge)
 {
     return formFactorData(dataSet, el->Z(), formalCharge);
 }

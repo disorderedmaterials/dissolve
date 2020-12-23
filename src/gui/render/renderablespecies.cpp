@@ -372,7 +372,8 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 }
 
 // Recreate interaction Primitive to display drawing interaction (from existing atom to point)
-void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, Vec3<double> toPoint, Element *toElement)
+void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, Vec3<double> toPoint,
+                                                         Elements::Element *toElement)
 {
     // Clear existing data
     clearInteractionPrimitive();
@@ -419,8 +420,8 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 }
 
 // Recreate interaction Primitive to display drawing interaction (from point to point)
-void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Element *fromElement, Vec3<double> toPoint,
-                                                         Element *toElement)
+void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Elements::Element *fromElement,
+                                                         Vec3<double> toPoint, Elements::Element *toElement)
 {
     // Clear existing data
     clearInteractionPrimitive();

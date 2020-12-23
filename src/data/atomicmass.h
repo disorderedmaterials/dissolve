@@ -6,7 +6,7 @@
 #include "data/elements.h"
 
 // Elemental (natural) atomic mass
-class AtomicMassData : public ElementReference
+class AtomicMassData : public Elements::ElementReference
 {
     public:
     AtomicMassData(int z, double massMin, double massMax = -1.0);
@@ -21,7 +21,7 @@ class AtomicMassData : public ElementReference
 };
 
 // Atomic Mass Helper Class
-class AtomicMass : public Elements
+class AtomicMass
 {
     private:
     // Return mass data for specified Z
@@ -31,9 +31,9 @@ class AtomicMass : public Elements
     // Return atomic mass for specified Z
     static double mass(int Z);
     // Return atomic mass for specified Element
-    static double mass(Element *element);
+    static double mass(Elements::Element *element);
     // Return reduced mass for specified pair of Z's
     static double reducedMass(int Z1, int Z2);
     // Return reduced mass for specified pair of Elements
-    static double reducedMass(Element *e1, Element *e2);
+    static double reducedMass(Elements::Element *e1, Elements::Element *e2);
 };

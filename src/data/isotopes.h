@@ -8,7 +8,7 @@
 #include "templates/list.h"
 
 // Isotopic Neutron Scattering Data
-class Isotope : public ElementReference, public ListItem<Isotope>
+class Isotope : public Elements::ElementReference, public ListItem<Isotope>
 {
     public:
     Isotope(int z = 0, int A = 0, std::string_view spin = "", double mass = 0.0, double bc = 0.0, double bi = 0.0,
@@ -60,7 +60,7 @@ class Isotope : public ElementReference, public ListItem<Isotope>
 };
 
 // Sears '91 Isotope Data
-class Isotopes : public Elements
+class Isotopes
 {
     private:
     // Isotope data, grouped by element
@@ -76,11 +76,11 @@ class Isotopes : public Elements
     // Return Isotope with specified A (if it exists) for given Z
     static Isotope *isotope(int Z, int A);
     // Return Isotope with specified A (if it exists) for given Element
-    static Isotope *isotope(Element *el, int A);
+    static Isotope *isotope(Elements::Element *el, int A);
     // Return Isotope with specified index (if it exists) in its parent Element
     static Isotope *isotopeAtIndex(int Z, int index);
     // Return List of all Isotopes available for specified Element
     static const List<Isotope> &isotopes(int Z);
     // Return natural Isotope for given Element
-    static Isotope *naturalIsotope(Element *el);
+    static Isotope *naturalIsotope(Elements::Element *el);
 };

@@ -5,6 +5,7 @@
 
 #include "base/version.h"
 #include "classes/masterintra.h"
+#include "data/elements.h"
 #include "templates/list.h"
 #include "templates/reflist.h"
 #include <memory>
@@ -14,7 +15,6 @@
 // Forward Declarations
 class AtomType;
 class Configuration;
-class Element;
 class Species;
 class Module;
 
@@ -38,7 +38,7 @@ class CoreData
 
     public:
     // Add new AtomType
-    std::shared_ptr<AtomType> addAtomType(Element *el);
+    std::shared_ptr<AtomType> addAtomType(Elements::Element *el);
     // Remove specified AtomType
     void removeAtomType(std::shared_ptr<AtomType> at);
     // Return number of AtomTypes in list

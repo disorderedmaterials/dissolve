@@ -6,6 +6,9 @@
 #include "base/sysfunc.h"
 #include <ctype.h>
 
+namespace Elements
+{
+
 /*
  * Element
  */
@@ -39,7 +42,7 @@ int Element::group() const { return group_; }
  */
 
 // Instantiate / return array of element data
-Element *Elements::elements()
+Element *elements()
 {
     // Basic element data
     static Element elementData[] = {
@@ -88,7 +91,7 @@ Element *Elements::elements()
 }
 
 // Return Element with corresponding Z
-Element &Elements::element(int Z)
+Element &element(int Z)
 {
     if ((Z < 0) || (Z > nElements()))
     {
@@ -100,7 +103,7 @@ Element &Elements::element(int Z)
 }
 
 // Return Element with corresponding symbol
-Element &Elements::element(std::string_view symbol)
+Element &element(std::string_view symbol)
 {
     std::string cleaned;
     auto nDigits = 0;
@@ -137,16 +140,16 @@ Element &Elements::element(std::string_view symbol)
 }
 
 // Return pointer to Element with corresponding symbol
-Element *Elements::elementPointer(std::string_view symbol) { return &element(symbol); }
+Element *elementPointer(std::string_view symbol) { return &element(symbol); }
 
 // Return name of element with specified Z
-std::string_view Elements::name(int Z) { return element(Z).name(); }
+std::string_view name(int Z) { return element(Z).name(); }
 
 // Return symbol of element with specified Z
-std::string_view Elements::symbol(int Z) { return element(Z).symbol(); }
+std::string_view symbol(int Z) { return element(Z).symbol(); }
 
 // Return group for element with specified Z
-int Elements::group(int Z) { return element(Z).group(); }
+int group(int Z) { return element(Z).group(); }
 
 /*
  * ElementReference
@@ -167,3 +170,5 @@ std::string_view ElementReference::name() const { return element_.name(); }
 
 // Return symbol of element
 std::string_view ElementReference::symbol() const { return element_.symbol(); }
+
+} // namespace Elements

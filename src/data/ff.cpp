@@ -161,10 +161,11 @@ const OptionalReferenceWrapper<const ForcefieldParameters> Forcefield::shortRang
 }
 
 // Return the named ForcefieldAtomType (if it exists)
-OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeByName(std::string_view name, Element *element) const
+OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeByName(std::string_view name,
+                                                                              Elements::Element *element) const
 {
     auto startZ = (element ? element->Z() : 0);
-    auto endZ = (element ? element->Z() : nElements() - 1);
+    auto endZ = (element ? element->Z() : Elements::nElements() - 1);
     for (auto Z = startZ; Z <= endZ; ++Z)
     {
         // Go through types associated to the Element
@@ -178,10 +179,10 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeByName(st
 }
 
 // Return the ForcefieldAtomType with specified id (if it exists)
-OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int id, Element *element) const
+OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int id, Elements::Element *element) const
 {
     auto startZ = (element ? element->Z() : 0);
-    auto endZ = (element ? element->Z() : nElements() - 1);
+    auto endZ = (element ? element->Z() : Elements::nElements() - 1);
     for (auto Z = startZ; Z <= endZ; ++Z)
     {
         // Go through types associated to the Element
@@ -675,7 +676,7 @@ bool Forcefield::isBondPattern(const SpeciesAtom *i, const int nSingle, const in
 }
 
 // Return whether the specified atom is bound to a specific element (and count thereof)
-bool Forcefield::isBoundTo(const SpeciesAtom *i, Element *element, const int count, bool allowMoreThanCount) const
+bool Forcefield::isBoundTo(const SpeciesAtom *i, Elements::Element *element, const int count, bool allowMoreThanCount) const
 {
     auto found = std::count_if(i->bonds().begin(), i->bonds().end(),
                                [i, element](const SpeciesBond &bond) { return bond.partner(i)->element() == element; });
@@ -701,7 +702,7 @@ int Forcefield::guessOxidationState(const SpeciesAtom *i) const
     const auto &bonds = i->bonds();
     for (const SpeciesBond &bond : bonds)
     {
-        Element *element = bond.partner(i)->element();
+        Elements::Element *element = bond.partner(i)->element();
         switch (element->Z())
         {
             // Group 1A - Alkali earth metals (includes Hydrogen)

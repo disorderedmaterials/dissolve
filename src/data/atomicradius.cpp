@@ -52,7 +52,7 @@ const AtomicRadiusData &AtomicRadius::radiusData(int Z)
         {ELEMENT_CN, 1.50}, {ELEMENT_NH, 1.50}, {ELEMENT_FL, 1.50}, {ELEMENT_MC, 1.50}, {ELEMENT_LV, 1.50}, {ELEMENT_TS, 1.50},
         {ELEMENT_OG, 1.50}};
 
-    if ((Z < 0) || (Z > nElements()))
+    if ((Z < 0) || (Z > Elements::nElements()))
     {
         Messenger::error("AtomicRadius::radius() - Element with Z={} is out of range!\n", Z);
         return radiusData[0];
@@ -62,7 +62,7 @@ const AtomicRadiusData &AtomicRadius::radiusData(int Z)
 }
 
 // Return atomic radius for specified Element
-double AtomicRadius::radius(Element *element)
+double AtomicRadius::radius(Elements::Element *element)
 {
 #ifdef CHECKS
     if (element == nullptr)

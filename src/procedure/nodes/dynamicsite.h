@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "data/elements.h"
 #include "procedure/nodes/node.h"
 #include "templates/array.h"
 #include "templates/refdatalist.h"
@@ -13,7 +14,6 @@
 // Forward Declarations
 class SelectProcedureNode;
 class AtomType;
-class Element;
 class LineParser;
 class Molecule;
 class NodeScopeStack;
@@ -41,7 +41,7 @@ class DynamicSiteProcedureNode : public ProcedureNode
     // Parent Select node for context
     SelectProcedureNode *parent_;
     // Target Elements for selection as sites
-    RefList<Element> elements_;
+    RefList<Elements::Element> elements_;
     // Target AtomTypes for selection as sites
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
 

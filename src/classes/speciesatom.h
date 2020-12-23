@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "data/elements.h"
 #include "templates/list.h"
 #include "templates/listitem.h"
 #include "templates/optionalref.h"
@@ -14,7 +15,6 @@
 
 // Forward Declarations
 class AtomType;
-class Element;
 class Species;
 class SpeciesAngle;
 class SpeciesBond;
@@ -36,7 +36,7 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
     // Parent Species
     Species *parent_;
     // Atomic Element
-    Element *element_;
+    Elements::Element *element_;
     // Coordinates
     Vec3<double> r_;
     // Charge (if contained in file)
@@ -54,13 +54,13 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
     // Return species parent
     const Species *species() const;
     // Set basic atom properties
-    void set(Element *element, double rx, double ry, double rz, double q = 0.0);
+    void set(Elements::Element *element, double rx, double ry, double rz, double q = 0.0);
     // Set basic atom properties
-    void set(Element *element, const Vec3<double> r, double q = 0.0);
+    void set(Elements::Element *element, const Vec3<double> r, double q = 0.0);
     // Set atomic element
-    void setElement(Element *el);
+    void setElement(Elements::Element *el);
     // Return atomic element
-    Element *element() const;
+    Elements::Element *element() const;
     // Return coordinates (read-only)
     const Vec3<double> &r() const;
     // Set charge of Atom

@@ -6,7 +6,7 @@
 #include "data/elements.h"
 
 // Elemental atomic radius
-class AtomicRadiusData : public ElementReference
+class AtomicRadiusData : public Elements::ElementReference
 {
     public:
     AtomicRadiusData(int z, double radius);
@@ -21,7 +21,7 @@ class AtomicRadiusData : public ElementReference
 };
 
 // Atomic Radius Helper Class
-class AtomicRadius : public Elements
+class AtomicRadius
 {
     private:
     // Return radius data for specified Z
@@ -31,5 +31,5 @@ class AtomicRadius : public Elements
     // Return atomic radius for specified Z
     static double radius(int Z);
     // Return atomic radius for specified Element
-    static double radius(Element *element);
+    static double radius(Elements::Element *element);
 };

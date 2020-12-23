@@ -14,7 +14,7 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
     // Raise an element selection dialog
     static SelectElementDialog selectElementDialog(this);
-    Element *el = selectElementDialog.selectElement();
+    auto *el = selectElementDialog.selectElement();
     if (!el)
         return;
 

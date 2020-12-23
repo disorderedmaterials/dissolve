@@ -8,7 +8,7 @@
 #include <map>
 
 NETAConnectionNode::NETAConnectionNode(NETADefinition *parent,
-                                       std::vector<std::reference_wrapper<const Element>> targetElements,
+                                       std::vector<std::reference_wrapper<const Elements::Element>> targetElements,
                                        std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes,
                                        SpeciesBond::BondType bt)
     : NETANode(parent, NETANode::ConnectionNode)
@@ -36,7 +36,7 @@ NETAConnectionNode::~NETAConnectionNode() {}
  */
 
 // Add element target to node
-bool NETAConnectionNode::addElementTarget(const Element &el)
+bool NETAConnectionNode::addElementTarget(const Elements::Element &el)
 {
     allowedElements_.push_back(el);
 

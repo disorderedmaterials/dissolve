@@ -5,8 +5,8 @@
 #include "base/lineparser.h"
 #include "data/elements.h"
 
-ElementRefListKeyword::ElementRefListKeyword(RefList<Element> &targetRefList)
-    : KeywordData<RefList<Element> &>(KeywordBase::ElementRefListData, targetRefList)
+ElementRefListKeyword::ElementRefListKeyword(RefList<Elements::Element> &targetRefList)
+    : KeywordData<RefList<Elements::Element> &>(KeywordBase::ElementRefListData, targetRefList)
 {
 }
 
@@ -29,7 +29,7 @@ bool ElementRefListKeyword::read(LineParser &parser, int startArg, CoreData &cor
     for (auto n = startArg; n < parser.nArgs(); ++n)
     {
         // Do we recognise the Element?
-        Element *el = Elements::elementPointer(parser.argsv(n));
+        auto *el = Elements::elementPointer(parser.argsv(n));
         if (!el)
             return Messenger::error("Unrecognised Element '{}' found in list.\n", parser.argsv(n));
 

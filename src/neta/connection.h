@@ -17,7 +17,7 @@ class NETADefinition;
 class NETAConnectionNode : public NETANode
 {
     public:
-    NETAConnectionNode(NETADefinition *parent, std::vector<std::reference_wrapper<const Element>> targetElements = {},
+    NETAConnectionNode(NETADefinition *parent, std::vector<std::reference_wrapper<const Elements::Element>> targetElements = {},
                        std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {},
                        SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
     ~NETAConnectionNode();
@@ -27,7 +27,7 @@ class NETAConnectionNode : public NETANode
      */
     private:
     // Array of elements that the current context atom may be
-    std::vector<std::reference_wrapper<const Element>> allowedElements_;
+    std::vector<std::reference_wrapper<const Elements::Element>> allowedElements_;
     // Array of ForcefieldAtomTypes that the current context atom may be
     std::vector<std::reference_wrapper<const ForcefieldAtomType>> allowedAtomTypes_;
     // Type of required connection
@@ -35,7 +35,7 @@ class NETAConnectionNode : public NETANode
 
     public:
     // Add element target to node
-    bool addElementTarget(const Element &el);
+    bool addElementTarget(const Elements::Element &el);
     // Add forcefield type target to node
     bool addFFTypeTarget(const ForcefieldAtomType &ffType);
 
@@ -49,11 +49,11 @@ class NETAConnectionNode : public NETANode
     NETANode::ComparisonOperator repeatCountOperator_;
     // Number of bonds value
     int nBondsValue_;
-    // Numbe of bonds value comparison operator
+    // Number of bonds value comparison operator
     NETANode::ComparisonOperator nBondsValueOperator_;
     // Number of hydrogens value
     int nHydrogensValue_;
-    // Numbe of hydrogens value comparison operator
+    // Number of hydrogens value comparison operator
     NETANode::ComparisonOperator nHydrogensValueOperator_;
 
     public:

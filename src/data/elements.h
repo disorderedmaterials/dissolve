@@ -7,6 +7,8 @@
 #include "templates/list.h"
 #include "templates/reflist.h"
 
+namespace Elements
+{
 // Basic Element Definition (Z, name, symbol)
 class Element
 {
@@ -36,50 +38,6 @@ class Element
     int group() const;
 };
 
-// Basic Elements Base Class
-class Elements
-{
-    /*
-     * Element Data
-     */
-    private:
-    // Instantiate / return array of element data
-    static Element *elements();
-
-    public:
-    // Return Element with corresponding Z
-    static Element &element(int Z);
-    // Return Element with corresponding symbol
-    static Element &element(std::string_view symbol);
-    // Return pointer to Element with corresponding symbol
-    static Element *elementPointer(std::string_view symbol);
-    // Return total number of defined elements
-    static constexpr int nElements() { return 119; }
-    // Return name of element with specified Z
-    static std::string_view name(int Z);
-    // Return symbol of element with specified Z
-    static std::string_view symbol(int Z);
-    // Return group for element with specified Z
-    static int group(int Z);
-
-    /*
-     * Helper Functions
-     */
-    public:
-    // Create array of Lists, with array size equal to number of elements defined
-    template <class T> static void createElementListArray(Array<List<T>> &listArray)
-    {
-        /*
-         * Create the array, and set all Lists to only disown their items on destruction, rather than deleting them.
-         * Need to do this otherwise each datum will be destructed twice - once from the List<T> destructor, and once
-         * again from the destruction of the static array.
-         */
-        listArray.initialise(Elements::nElements());
-        for (auto n = 0; n < nElements(); ++n)
-            listArray[n].setDisownOnDestruction(true);
-    }
-};
-
 // Reference to Element, for use in constructing derived/associated data classes
 class ElementReference
 {
@@ -101,6 +59,37 @@ class ElementReference
     // Return symbol of element
     std::string_view symbol() const;
 };
+
+// Instantiate / return array of element data
+Element *elements();
+
+// Return Element with corresponding Z
+Element &element(int Z);
+// Return Element with corresponding symbol
+Element &element(std::string_view symbol);
+// Return pointer to Element with corresponding symbol
+Element *elementPointer(std::string_view symbol);
+// Return total number of defined elements
+constexpr int nElements() { return 119; }
+// Return name of element with specified Z
+std::string_view name(int Z);
+// Return symbol of element with specified Z
+std::string_view symbol(int Z);
+// Return group for element with specified Z
+int group(int Z);
+
+// Create array of Lists, with array size equal to number of elements defined
+template <class T> void createElementListArray(Array<List<T>> &listArray)
+{
+    /*
+     * Create the array, and set all Lists to only disown their items on destruction, rather than deleting them.
+     * Need to do this otherwise each datum will be destructed twice - once from the List<T> destructor, and once
+     * again from the destruction of the static array.
+     */
+    listArray.initialise(Elements::nElements());
+    for (auto n = 0; n < nElements(); ++n)
+        listArray[n].setDisownOnDestruction(true);
+}
 
 // Element defines
 #ifndef ELEMENTS_DEFINED
@@ -224,3 +213,5 @@ class ElementReference
 #define ELEMENT_TS 117
 #define ELEMENT_OG 118
 #endif
+
+}; // namespace Elements

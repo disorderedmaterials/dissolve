@@ -480,7 +480,7 @@ List<Isotope> &Isotopes::isotopesByElement(int Z)
         {ELEMENT_AM, 248, "0(+)", 248.07234, 7.7, 0, 7.5, 0, 7.5, 3},
     };
 
-    if ((Z < 0) || (Z > nElements()))
+    if ((Z < 0) || (Z > Elements::nElements()))
     {
         Messenger::error("Isotopes::isotopesByElement() - Element with Z={} is out of range!\n", Z);
         return isotopesByElementPrivate_[0];
@@ -503,7 +503,7 @@ Isotope *Isotopes::isotope(int Z, int A)
 }
 
 // Return Isotope with specified A for given Element (if it exists)
-Isotope *Isotopes::isotope(Element *el, int A)
+Isotope *Isotopes::isotope(Elements::Element *el, int A)
 {
     if (el == nullptr)
     {
@@ -521,4 +521,4 @@ const List<Isotope> &Isotopes::isotopes(int Z) { return isotopesByElement(Z); }
 Isotope *Isotopes::isotopeAtIndex(int Z, int index) { return isotopesByElement(Z)[index]; }
 
 // Return natural Isotope for given Element
-Isotope *Isotopes::naturalIsotope(Element *el) { return isotope(el, 0); }
+Isotope *Isotopes::naturalIsotope(Elements::Element *el) { return isotope(el, 0); }

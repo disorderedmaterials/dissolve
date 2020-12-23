@@ -48,7 +48,7 @@ bool Species::loadFromXYZ(std::string_view filename)
     parser.readNextLine(LineParser::Defaults);
     name_ = parser.line();
     int success;
-    Element *el;
+    Elements::Element *el;
     for (auto n = 0; n < nAtoms; ++n)
     {
         success = parser.getArgsDelim(LineParser::Defaults);
@@ -99,7 +99,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 {
     Messenger::print("\nParsing Species '{}'\n", name());
 
-    Element *el;
+    Elements::Element *el;
     std::shared_ptr<AtomType> at;
     Isotopologue *iso;
     OptionalReferenceWrapper<SpeciesAngle> a;

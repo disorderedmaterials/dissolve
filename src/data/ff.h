@@ -26,7 +26,7 @@ class Species;
 class SpeciesAtom;
 
 // Forcefield Base Class
-class Forcefield : public Elements
+class Forcefield
 {
     public:
     Forcefield() = default;
@@ -102,9 +102,9 @@ class Forcefield : public Elements
     const OptionalReferenceWrapper<const ForcefieldParameters> shortRangeParameters(std::string_view name) const;
     // Return the named ForcefieldAtomType (if it exists)
     virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeByName(std::string_view name,
-                                                                              Element *element = nullptr) const;
+                                                                              Elements::Element *element = nullptr) const;
     // Return the ForcefieldAtomType with specified id (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeById(int id, Element *element = nullptr) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeById(int id, Elements::Element *element = nullptr) const;
 
     /*
      * Term Data
@@ -210,7 +210,7 @@ class Forcefield : public Elements
     bool isBondPattern(const SpeciesAtom *i, const int nSingle, const int nDouble = 0, const int nTriple = 0,
                        const int nQuadruple = 0, const int nAromatic = 0) const;
     // Return whether the specified atom is bound to a specific element (and count thereof)
-    bool isBoundTo(const SpeciesAtom *i, Element *element, const int count = 1, bool allowMoreThanCount = true) const;
+    bool isBoundTo(const SpeciesAtom *i, Elements::Element *element, const int count = 1, bool allowMoreThanCount = true) const;
     // Guess and return oxidation state for the specified SpeciesAtom
     int guessOxidationState(const SpeciesAtom *i) const;
 };

@@ -17,7 +17,7 @@ class NETADefinition;
 class NETAPresenceNode : public NETANode
 {
     public:
-    NETAPresenceNode(NETADefinition *parent, std::vector<std::reference_wrapper<const Element>> targetElements,
+    NETAPresenceNode(NETADefinition *parent, std::vector<std::reference_wrapper<const Elements::Element>> targetElements,
                      std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes);
     ~NETAPresenceNode();
 
@@ -26,13 +26,13 @@ class NETAPresenceNode : public NETANode
      */
     private:
     // Array of elements that the current context atom may be
-    std::vector<std::reference_wrapper<const Element>> allowedElements_;
+    std::vector<std::reference_wrapper<const Elements::Element>> allowedElements_;
     // Array of ForcefieldAtomTypes that the current context atom may be
     std::vector<std::reference_wrapper<const ForcefieldAtomType>> allowedAtomTypes_;
 
     public:
     // Add element target to node
-    bool addElementTarget(const Element &el);
+    bool addElementTarget(const Elements::Element &el);
     // Add forcefield type target to node
     bool addFFTypeTarget(const ForcefieldAtomType &ffType);
 

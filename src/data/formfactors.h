@@ -27,7 +27,8 @@ EnumOptions<XRayFormFactorData> xRayFormFactorData();
 OptionalReferenceWrapper<const FormFactorData> formFactorData(XRayFormFactorData dataSet, int Z, int formalCharge = 0);
 
 // Return form factor data from specified dataset for given element and formal charge (if it exists)
-OptionalReferenceWrapper<const FormFactorData> formFactorData(XRayFormFactorData dataSet, Element *el, int formalCharge = 0);
+OptionalReferenceWrapper<const FormFactorData> formFactorData(XRayFormFactorData dataSet, Elements::Element *el,
+                                                              int formalCharge = 0);
 
 // Return Waasmaier & Kirfel (1995) form factor data for given element and formal charge (if it exists)
 OptionalReferenceWrapper<const FormFactorData> wk1995Data(int Z, int formalCharge = 0);

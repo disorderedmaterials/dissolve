@@ -3,12 +3,12 @@
 
 #pragma once
 
+#include "data/elements.h"
 #include "templates/refdatalist.h"
 #include <QTimer>
 #include <QWidget>
 
 // Forward Declarations
-class Element;
 class QToolButton;
 
 // Element Selector Widget
@@ -41,21 +41,21 @@ class ElementSelector : public QWidget
      */
     private:
     // Current element
-    Element *currentElement_;
+    Elements::Element *currentElement_;
     // Reference list of buttons and their associated Elements
-    RefDataList<QToolButton, Element *> elementButtons_;
+    RefDataList<QToolButton, Elements::Element *> elementButtons_;
 
     public:
     // Set current element
-    void setCurrentElement(Element *element);
+    void setCurrentElement(Elements::Element *element);
     // Return current element
-    Element *currentElement() const;
+    Elements::Element *currentElement() const;
 
     /*
      * Static Functions
      */
     public:
     // Get Element from user via input dialog
-    static Element *getElement(QWidget *parent, QString title, QString labelText, Element *element, bool *ok = nullptr,
-                               Qt::WindowFlags flags = Qt::Dialog);
+    static Elements::Element *getElement(QWidget *parent, QString title, QString labelText, Elements::Element *element,
+                                         bool *ok = nullptr, Qt::WindowFlags flags = Qt::Dialog);
 };

@@ -127,8 +127,8 @@ void SpeciesEditor::on_InteractionDrawElementButton_clicked(bool checked)
 {
     // Select a new element for drawing
     bool ok;
-    Element *newElement = ElementSelector::getElement(this, "Choose Element", "Select element to use for drawn atoms",
-                                                      speciesViewer()->drawElement(), &ok);
+    auto *newElement = ElementSelector::getElement(this, "Choose Element", "Select element to use for drawn atoms",
+                                                   speciesViewer()->drawElement(), &ok);
     if (!ok)
         return;
 

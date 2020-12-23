@@ -32,7 +32,7 @@ void CoreData::clear()
  */
 
 // Add new AtomType
-std::shared_ptr<AtomType> CoreData::addAtomType(Element *el)
+std::shared_ptr<AtomType> CoreData::addAtomType(Elements::Element *el)
 {
     auto newAtomType = std::make_shared<AtomType>();
     atomTypes_.push_back(newAtomType);

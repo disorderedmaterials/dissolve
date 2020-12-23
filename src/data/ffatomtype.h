@@ -13,7 +13,7 @@ class Forcefield;
 class ForcefieldParameters;
 
 // Forcefield AtomType Base Class
-class ForcefieldAtomType : public ElementReference
+class ForcefieldAtomType : public Elements::ElementReference
 {
     public:
     ForcefieldAtomType(int Z = 0, int index = -1, std::string_view name = "", std::string_view netaDefinition = "",

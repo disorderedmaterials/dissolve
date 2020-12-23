@@ -28,7 +28,7 @@ void SpeciesAtom::setSpecies(Species *sp) { parent_ = sp; }
 const Species *SpeciesAtom::species() const { return parent_; }
 
 // Set basic SpeciesAtom properties
-void SpeciesAtom::set(Element *element, double rx, double ry, double rz, double q)
+void SpeciesAtom::set(Elements::Element *element, double rx, double ry, double rz, double q)
 {
     element_ = element;
     r_.set(rx, ry, rz);
@@ -36,7 +36,7 @@ void SpeciesAtom::set(Element *element, double rx, double ry, double rz, double 
 }
 
 // Set basic SpeciesAtom properties
-void SpeciesAtom::set(Element *element, const Vec3<double> r, double q)
+void SpeciesAtom::set(Elements::Element *element, const Vec3<double> r, double q)
 {
     element_ = element;
     r_ = r;
@@ -44,10 +44,10 @@ void SpeciesAtom::set(Element *element, const Vec3<double> r, double q)
 }
 
 // Set atomic element
-void SpeciesAtom::setElement(Element *el) { element_ = el; }
+void SpeciesAtom::setElement(Elements::Element *el) { element_ = el; }
 
 // Return atomic element
-Element *SpeciesAtom::element() const { return element_; }
+Elements::Element *SpeciesAtom::element() const { return element_; }
 
 // Return coordinates
 const Vec3<double> &SpeciesAtom::r() const { return r_; }

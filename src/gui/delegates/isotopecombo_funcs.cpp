@@ -21,7 +21,7 @@ QWidget *IsotopeComboDelegate::createEditor(QWidget *parent, const QStyleOptionV
     if (isotope)
     {
         // Populate combo with all possible Isotopes for this Element
-        const Element &element = isotope->element();
+        auto &element = isotope->element();
         ListIterator<Isotope> isotopeIterator(Isotopes::isotopes(element.Z()));
         while (Isotope *tope = isotopeIterator.iterate())
             editor->addItem(textForIsotope(tope));
@@ -60,7 +60,7 @@ void IsotopeComboDelegate::setModelData(QWidget *editor, QAbstractItemModel *mod
     if (isotope)
     {
         // Get parent Element, and find index of new Isotope
-        const Element &element = isotope->element();
+        auto &element = isotope->element();
         isotope = Isotopes::isotopeAtIndex(element.Z(), comboBox->currentIndex());
 
         // Set the Isotope pointer in the model

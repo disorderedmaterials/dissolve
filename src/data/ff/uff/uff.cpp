@@ -5,6 +5,7 @@
 #include "classes/atomtype.h"
 #include "classes/coredata.h"
 #include "classes/species.h"
+#include "data/elements.h"
 
 /*
  * Implements "UFF, a Full Periodic Table Force Field for Molecular Mechanics and Molecular Dynamics Simulations"
@@ -535,8 +536,8 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion &tors
     // Therefore: forcek = 0.5 * V 	#		  s = -cos(n*eq) 	#	     period = n 	#
     // eq = 0.0
 
-    const auto groupJ = group(j.Z());
-    const auto groupK = group(k.Z());
+    const auto groupJ = Elements::group(j.Z());
+    const auto groupK = Elements::group(k.Z());
 
     const auto geomI = i.geom() == 9 ? 2 : i.geom();
     const auto geomJ = j.geom() == 9 ? 2 : j.geom();

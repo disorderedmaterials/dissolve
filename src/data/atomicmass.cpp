@@ -156,7 +156,7 @@ const AtomicMassData &AtomicMass::massData(int Z)
         {ELEMENT_OG, 294.0}      // Assumed mass (http://www.rsc.org/periodic-table)
     };
 
-    if ((Z < 0) || (Z > nElements()))
+    if ((Z < 0) || (Z > Elements::nElements()))
     {
         Messenger::error("AtomicMass::mass() - Element with Z={} is out of range!\n", Z);
         return massData[0];
@@ -166,7 +166,7 @@ const AtomicMassData &AtomicMass::massData(int Z)
 }
 
 // Return atomic mass for specified Element
-double AtomicMass::mass(Element *element)
+double AtomicMass::mass(Elements::Element *element)
 {
 #ifdef CHECKS
     if (element == nullptr)
@@ -189,7 +189,7 @@ double AtomicMass::reducedMass(int Z1, int Z2)
 }
 
 // Return reduced mass for specified pair of Elements
-double AtomicMass::reducedMass(Element *e1, Element *e2)
+double AtomicMass::reducedMass(Elements::Element *e1, Elements::Element *e2)
 {
 #ifdef CHECKS
     if (e1 == nullptr)

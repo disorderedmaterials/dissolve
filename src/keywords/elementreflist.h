@@ -11,10 +11,10 @@
 class Configuration;
 
 // Keyword with Element RefList Data
-class ElementRefListKeyword : public KeywordData<RefList<Element> &>
+class ElementRefListKeyword : public KeywordData<RefList<Elements::Element> &>
 {
     public:
-    ElementRefListKeyword(RefList<Element> &targetRefList);
+    ElementRefListKeyword(RefList<Elements::Element> &targetRefList);
     ~ElementRefListKeyword();
 
     /*

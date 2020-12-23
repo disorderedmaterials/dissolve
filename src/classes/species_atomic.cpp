@@ -5,7 +5,7 @@
 #include "data/atomicmass.h"
 
 // Add a new atom to the Species
-SpeciesAtom *Species::addAtom(Element *element, Vec3<double> r, double q)
+SpeciesAtom *Species::addAtom(Elements::Element *element, Vec3<double> r, double q)
 {
     SpeciesAtom *i = atoms_.add();
     i->setSpecies(this);
@@ -73,7 +73,7 @@ void Species::setAtomCoordinates(int id, double x, double y, double z)
 }
 
 // Transmute specified SpeciesAtom
-void Species::transmuteAtom(SpeciesAtom *i, Element *el)
+void Species::transmuteAtom(SpeciesAtom *i, Elements::Element *el)
 {
     if (!i)
         return;

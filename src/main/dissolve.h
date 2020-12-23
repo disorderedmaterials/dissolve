@@ -47,7 +47,7 @@ class Dissolve
      */
     public:
     // Add AtomType with specified Element
-    std::shared_ptr<AtomType> addAtomType(Element *el);
+    std::shared_ptr<AtomType> addAtomType(Elements::Element *el);
     // Return number of AtomTypes in list
     int nAtomTypes() const;
     // Return AtomTypes list

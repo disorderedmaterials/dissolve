@@ -144,7 +144,7 @@ void ElementSelector::elementButtonClicked(bool checked)
     if (!button)
         currentElement_ = nullptr;
 
-    RefDataItem<QToolButton, Element *> *ri = elementButtons_.contains(button);
+    RefDataItem<QToolButton, Elements::Element *> *ri = elementButtons_.contains(button);
     currentElement_ = ri ? ri->data() : nullptr;
 
     // Was this a double-click? Check the timer
@@ -163,7 +163,7 @@ void ElementSelector::elementButtonClicked(bool checked)
  */
 
 // Set current element
-void ElementSelector::setCurrentElement(Element *element)
+void ElementSelector::setCurrentElement(Elements::Element *element)
 {
     // Uncheck any current element button before we change
     if (currentElement_)
@@ -185,15 +185,15 @@ void ElementSelector::setCurrentElement(Element *element)
 }
 
 // Return current element
-Element *ElementSelector::currentElement() const { return currentElement_; }
+Elements::Element *ElementSelector::currentElement() const { return currentElement_; }
 
 /*
  * Static Functions
  */
 
 // Get Element from user via input dialog
-Element *ElementSelector::getElement(QWidget *parent, QString title, QString labelText, Element *element, bool *ok,
-                                     Qt::WindowFlags flags)
+Elements::Element *ElementSelector::getElement(QWidget *parent, QString title, QString labelText, Elements::Element *element,
+                                               bool *ok, Qt::WindowFlags flags)
 {
     // Create a QDialog for use
     QDialog inputDialog(parent, flags);

@@ -27,10 +27,10 @@ void AtomType::setName(std::string_view name) { name_ = name; }
 std::string_view AtomType::name() const { return name_; }
 
 // Set atomic element
-void AtomType::setElement(Element *el) { element_ = el; }
+void AtomType::setElement(Elements::Element *el) { element_ = el; }
 
 // Return atomic element
-Element *AtomType::element() const { return element_; }
+Elements::Element *AtomType::element() const { return element_; }
 
 /*
  * Interaction Parameters

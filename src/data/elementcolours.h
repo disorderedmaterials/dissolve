@@ -13,6 +13,6 @@ namespace ElementColours
 const float *colour(int Z);
 
 // Return colour for specified Element
-const float *colour(Element *el);
+const float *colour(Elements::Element *el);
 
 } // namespace ElementColours

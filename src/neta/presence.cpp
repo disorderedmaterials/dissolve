@@ -6,7 +6,8 @@
 #include "data/ffatomtype.h"
 #include <algorithm>
 
-NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<std::reference_wrapper<const Element>> targetElements,
+NETAPresenceNode::NETAPresenceNode(NETADefinition *parent,
+                                   std::vector<std::reference_wrapper<const Elements::Element>> targetElements,
                                    std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
     : NETANode(parent, NETANode::PresenceNode)
 {
@@ -28,7 +29,7 @@ NETAPresenceNode::~NETAPresenceNode() {}
  */
 
 // Add element target to node
-bool NETAPresenceNode::addElementTarget(const Element &el)
+bool NETAPresenceNode::addElementTarget(const Elements::Element &el)
 {
     allowedElements_.push_back(el);
 

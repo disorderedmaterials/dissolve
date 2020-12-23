@@ -99,7 +99,7 @@ antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *
 {
     if (context->Element())
     {
-        Element &el = Elements::element(context->Element()->getText());
+        auto &el = Elements::element(context->Element()->getText());
         return std::reference_wrapper(el);
     }
     else if (context->FFTypeName())
@@ -144,9 +144,9 @@ antlrcpp::Any NETAVisitor::visitTargetList(NETAParser::TargetListContext *contex
     for (auto elementOrType : context->targets)
     {
         antlrcpp::Any target = visitElementOrType(elementOrType);
-        if (target.is<std::reference_wrapper<Element>>())
+        if (target.is<std::reference_wrapper<Elements::Element>>())
         {
-            auto elRef = target.as<std::reference_wrapper<Element>>();
+            auto elRef = target.as<std::reference_wrapper<Elements::Element>>();
             if (!currentNETAContext()->addElementTarget(elRef))
                 throw(NETAExceptions::NETASyntaxException("Failed to add element to target list."));
         }
