@@ -7,7 +7,7 @@
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/speciesintra.h"
-#include "data/atomicmass.h"
+#include "data/atomicmasses.h"
 #include "genericitems/array2ddouble.h"
 #include "templates/enumhelpers.h"
 

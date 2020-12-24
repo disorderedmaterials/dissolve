@@ -7,7 +7,7 @@
 #include "classes/configuration.h"
 #include "classes/speciesatom.h"
 #include "classes/speciessite.h"
-#include "data/atomicmass.h"
+#include "data/atomicmasses.h"
 
 SiteStack::SiteStack() : ListItem<SiteStack>()
 {
@@ -75,12 +75,12 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
 #endif
         if (speciesSite->originMassWeighted())
         {
-            double mass = AtomicMass::mass(molecule->atom(originAtomIndices.firstValue())->speciesAtom()->element());
+            double mass = AtomicMass::mass(molecule->atom(originAtomIndices.firstValue())->speciesAtom()->element()->Z());
             origin = molecule->atom(originAtomIndices.firstValue())->r() * mass;
             double massNorm = mass;
             for (auto m = 1; m < originAtomIndices.nItems(); ++m)
             {
-                mass = AtomicMass::mass(molecule->atom(originAtomIndices[m])->speciesAtom()->element());
+                mass = AtomicMass::mass(molecule->atom(originAtomIndices[m])->speciesAtom()->element()->Z());
                 origin += box->minimumImage(molecule->atom(originAtomIndices[m])->r(),
                                             molecule->atom(originAtomIndices.firstValue())->r()) *
                           mass;

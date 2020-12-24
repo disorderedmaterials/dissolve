@@ -2,7 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/species.h"
-#include "data/atomicmass.h"
+#include "data/atomicmasses.h"
 
 // Add a new atom to the Species
 SpeciesAtom *Species::addAtom(Elements::Element *element, Vec3<double> r, double q)
@@ -191,9 +191,9 @@ int Species::atomSelectionVersion() const { return atomSelectionVersion_; }
 // Return total atomic mass of Species
 double Species::mass() const
 {
-    double m = 0.0;
+    auto m = 0.0;
     for (auto *i = atoms_.first(); i != nullptr; i = i->next())
-        m += AtomicMass::mass(i->element());
+        m += AtomicMass::mass(i->element()->Z());
     return m;
 }
 
