@@ -11,7 +11,7 @@ std::string EmpiricalFormula::constructFormula(const std::vector<int> &elCounts,
     std::string s;
 
     // Loop over elements in descending order
-    for (auto n = Elements::nElements() - 1; n >= 0; --n)
+    for (auto n = Elements::nElements - 1; n >= 0; --n)
     {
         if (elCounts[n] == 0)
             continue;
@@ -32,7 +32,7 @@ std::string EmpiricalFormula::constructFormula(const std::vector<int> &elCounts,
 // Return empirical formula for supplied Species
 std::string EmpiricalFormula::formula(const Species *species, bool richText)
 {
-    std::vector<int> elCounts(Elements::nElements(), 0);
+    std::vector<int> elCounts(Elements::nElements, 0);
 
     ListIterator<SpeciesAtom> atomIterator(species->atoms());
     while (SpeciesAtom *i = atomIterator.iterate())
@@ -44,7 +44,7 @@ std::string EmpiricalFormula::formula(const Species *species, bool richText)
 // Return empirical formula for supplied SpeciesAtom reflist
 std::string EmpiricalFormula::formula(const RefList<SpeciesAtom> &atoms, bool richText)
 {
-    std::vector<int> elCounts(Elements::nElements(), 0);
+    std::vector<int> elCounts(Elements::nElements, 0);
 
     for (const auto *i : atoms)
         ++elCounts[i->element()->Z()];

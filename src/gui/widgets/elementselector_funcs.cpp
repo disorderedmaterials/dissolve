@@ -28,7 +28,7 @@ ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
     QToolButton *button;
     QPalette palette = this->palette();
     QColor background, foreground;
-    for (n = 0; n < Elements::nElements(); ++n)
+    for (n = 0; n < Elements::nElements; ++n)
     {
         button = new QToolButton(this);
         button->setAutoRaise(true);

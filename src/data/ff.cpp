@@ -26,7 +26,7 @@ bool Forcefield::prepare()
         return false;
 
     // Create reference vectors of atom types by element
-    atomTypesByElementPrivate_.resize(Elements::nElements());
+    atomTypesByElementPrivate_.resize(Elements::nElements);
 
     for (auto &atomType : atomTypes_)
         atomTypesByElementPrivate_[atomType.Z()].push_back(atomType);
@@ -165,7 +165,7 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeByName(st
                                                                               Elements::Element *element) const
 {
     auto startZ = (element ? element->Z() : 0);
-    auto endZ = (element ? element->Z() : Elements::nElements() - 1);
+    auto endZ = (element ? element->Z() : Elements::nElements - 1);
     for (auto Z = startZ; Z <= endZ; ++Z)
     {
         // Go through types associated to the Element
@@ -182,7 +182,7 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeByName(st
 OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int id, Elements::Element *element) const
 {
     auto startZ = (element ? element->Z() : 0);
-    auto endZ = (element ? element->Z() : Elements::nElements() - 1);
+    auto endZ = (element ? element->Z() : Elements::nElements - 1);
     for (auto Z = startZ; Z <= endZ; ++Z)
     {
         // Go through types associated to the Element
@@ -706,36 +706,36 @@ int Forcefield::guessOxidationState(const SpeciesAtom *i) const
         switch (element->Z())
         {
             // Group 1A - Alkali earth metals (includes Hydrogen)
-            case (ELEMENT_H):
-            case (ELEMENT_LI):
-            case (ELEMENT_NA):
-            case (ELEMENT_K):
-            case (ELEMENT_RB):
-            case (ELEMENT_CS):
-            case (ELEMENT_FR):
+            case (Elements::H):
+            case (Elements::Li):
+            case (Elements::Na):
+            case (Elements::K):
+            case (Elements::Rb):
+            case (Elements::Cs):
+            case (Elements::Fr):
                 osBound += 1;
                 break;
             // Group 2A - Alkaline earth metals
-            case (ELEMENT_BE):
-            case (ELEMENT_MG):
-            case (ELEMENT_CA):
-            case (ELEMENT_SR):
-            case (ELEMENT_BA):
-            case (ELEMENT_RA):
+            case (Elements::Be):
+            case (Elements::Mg):
+            case (Elements::Ca):
+            case (Elements::Sr):
+            case (Elements::Ba):
+            case (Elements::Ra):
                 osBound += 1;
                 break;
             // Oxygen
-            case (ELEMENT_O):
+            case (Elements::O):
                 if (bond.bondType() == SpeciesBond::DoubleBond)
                     osBound -= 2;
                 else
                     osBound -= 1;
                 break;
             // Halogens (F, Cl, Br, I)
-            case (ELEMENT_F):
-            case (ELEMENT_CL):
-            case (ELEMENT_BR):
-            case (ELEMENT_I):
+            case (Elements::F):
+            case (Elements::Cl):
+            case (Elements::Br):
+            case (Elements::I):
                 osBound -= 1;
                 break;
             default:

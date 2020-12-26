@@ -9,6 +9,132 @@
 
 namespace Elements
 {
+
+// Element defines
+enum ElementENUM
+{
+    XX,
+    H,
+    He,
+    Li,
+    Be,
+    B,
+    C,
+    N,
+    O,
+    F,
+    Ne,
+    Na,
+    Mg,
+    Al,
+    Si,
+    P,
+    S,
+    Cl,
+    Ar,
+    K,
+    Ca,
+    Sc,
+    Ti,
+    V,
+    Cr,
+    Mn,
+    Fe,
+    Co,
+    Ni,
+    Cu,
+    Zn,
+    Ga,
+    Ge,
+    As,
+    Se,
+    Br,
+    Kr,
+    Rb,
+    Sr,
+    Y,
+    Zr,
+    Nb,
+    Mo,
+    Tc,
+    Ru,
+    Rh,
+    Pd,
+    Ag,
+    Cd,
+    In,
+    Sn,
+    Sb,
+    Te,
+    I,
+    Xe,
+    Cs,
+    Ba,
+    La,
+    Ce,
+    Pr,
+    Nd,
+    Pm,
+    Sm,
+    Eu,
+    Gd,
+    Tb,
+    Dy,
+    Ho,
+    Er,
+    Tm,
+    Yb,
+    Lu,
+    Hf,
+    Ta,
+    W,
+    Re,
+    Os,
+    Ir,
+    Pt,
+    Au,
+    Hg,
+    Tl,
+    Pb,
+    Bi,
+    Po,
+    At,
+    Rn,
+    Fr,
+    Ra,
+    Ac,
+    Th,
+    Pa,
+    U,
+    Np,
+    Pu,
+    Am,
+    Cm,
+    Bk,
+    Cf,
+    Es,
+    Fm,
+    Md,
+    No,
+    Lr,
+    Rf,
+    Db,
+    Sg,
+    Bh,
+    Hs,
+    Mt,
+    Ds,
+    Rg,
+    Cn,
+    Nh,
+    Fl,
+    Mc,
+    Lv,
+    Ts,
+    Og,
+    nElements
+};
+
 // Basic Element Definition (Z, name, symbol)
 class Element
 {
@@ -69,8 +195,6 @@ Element &element(int Z);
 Element &element(std::string_view symbol);
 // Return pointer to Element with corresponding symbol
 Element *elementPointer(std::string_view symbol);
-// Return total number of defined elements
-constexpr int nElements() { return 119; }
 // Return name of element with specified Z
 std::string_view name(int Z);
 // Return symbol of element with specified Z
@@ -86,132 +210,9 @@ template <class T> void createElementListArray(Array<List<T>> &listArray)
      * Need to do this otherwise each datum will be destructed twice - once from the List<T> destructor, and once
      * again from the destruction of the static array.
      */
-    listArray.initialise(Elements::nElements());
-    for (auto n = 0; n < nElements(); ++n)
+    listArray.initialise(Elements::nElements);
+    for (auto n = 0; n < Elements::nElements; ++n)
         listArray[n].setDisownOnDestruction(true);
 }
-
-// Element defines
-#ifndef ELEMENTS_DEFINED
-#define ELEMENT_XX 0
-#define ELEMENT_H 1
-#define ELEMENT_HE 2
-#define ELEMENT_LI 3
-#define ELEMENT_BE 4
-#define ELEMENT_B 5
-#define ELEMENT_C 6
-#define ELEMENT_N 7
-#define ELEMENT_O 8
-#define ELEMENT_F 9
-#define ELEMENT_NE 10
-#define ELEMENT_NA 11
-#define ELEMENT_MG 12
-#define ELEMENT_AL 13
-#define ELEMENT_SI 14
-#define ELEMENT_P 15
-#define ELEMENT_S 16
-#define ELEMENT_CL 17
-#define ELEMENT_AR 18
-#define ELEMENT_K 19
-#define ELEMENT_CA 20
-#define ELEMENT_SC 21
-#define ELEMENT_TI 22
-#define ELEMENT_V 23
-#define ELEMENT_CR 24
-#define ELEMENT_MN 25
-#define ELEMENT_FE 26
-#define ELEMENT_CO 27
-#define ELEMENT_NI 28
-#define ELEMENT_CU 29
-#define ELEMENT_ZN 30
-#define ELEMENT_GA 31
-#define ELEMENT_GE 32
-#define ELEMENT_AS 33
-#define ELEMENT_SE 34
-#define ELEMENT_BR 35
-#define ELEMENT_KR 36
-#define ELEMENT_RB 37
-#define ELEMENT_SR 38
-#define ELEMENT_Y 39
-#define ELEMENT_ZR 40
-#define ELEMENT_NB 41
-#define ELEMENT_MO 42
-#define ELEMENT_TC 43
-#define ELEMENT_RU 44
-#define ELEMENT_RH 45
-#define ELEMENT_PD 46
-#define ELEMENT_AG 47
-#define ELEMENT_CD 48
-#define ELEMENT_IN 49
-#define ELEMENT_SN 50
-#define ELEMENT_SB 51
-#define ELEMENT_TE 52
-#define ELEMENT_I 53
-#define ELEMENT_XE 54
-#define ELEMENT_CS 55
-#define ELEMENT_BA 56
-#define ELEMENT_LA 57
-#define ELEMENT_CE 58
-#define ELEMENT_PR 59
-#define ELEMENT_ND 60
-#define ELEMENT_PM 61
-#define ELEMENT_SM 62
-#define ELEMENT_EU 63
-#define ELEMENT_GD 64
-#define ELEMENT_TB 65
-#define ELEMENT_DY 66
-#define ELEMENT_HO 67
-#define ELEMENT_ER 68
-#define ELEMENT_TM 69
-#define ELEMENT_YB 70
-#define ELEMENT_LU 71
-#define ELEMENT_HF 72
-#define ELEMENT_TA 73
-#define ELEMENT_W 74
-#define ELEMENT_RE 75
-#define ELEMENT_OS 76
-#define ELEMENT_IR 77
-#define ELEMENT_PT 78
-#define ELEMENT_AU 79
-#define ELEMENT_HG 80
-#define ELEMENT_TL 81
-#define ELEMENT_PB 82
-#define ELEMENT_BI 83
-#define ELEMENT_PO 84
-#define ELEMENT_AT 85
-#define ELEMENT_RN 86
-#define ELEMENT_FR 87
-#define ELEMENT_RA 88
-#define ELEMENT_AC 89
-#define ELEMENT_TH 90
-#define ELEMENT_PA 91
-#define ELEMENT_U 92
-#define ELEMENT_NP 93
-#define ELEMENT_PU 94
-#define ELEMENT_AM 95
-#define ELEMENT_CM 96
-#define ELEMENT_BK 97
-#define ELEMENT_CF 98
-#define ELEMENT_ES 99
-#define ELEMENT_FM 100
-#define ELEMENT_MD 101
-#define ELEMENT_NO 102
-#define ELEMENT_LR 103
-#define ELEMENT_RF 104
-#define ELEMENT_DB 105
-#define ELEMENT_SG 106
-#define ELEMENT_BH 107
-#define ELEMENT_HS 108
-#define ELEMENT_MT 109
-#define ELEMENT_DS 110
-#define ELEMENT_RG 111
-#define ELEMENT_CN 112
-#define ELEMENT_NH 113
-#define ELEMENT_FL 114
-#define ELEMENT_MC 115
-#define ELEMENT_LV 116
-#define ELEMENT_TS 117
-#define ELEMENT_OG 118
-#endif
 
 }; // namespace Elements

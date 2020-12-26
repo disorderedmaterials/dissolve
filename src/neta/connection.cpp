@@ -230,7 +230,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
         {
             // Count number of hydrogens attached to this atom
             auto nH = std::count_if(j->bonds().begin(), j->bonds().end(),
-                                    [j](const SpeciesBond &bond) { return bond.partner(j)->element()->Z() == ELEMENT_H; });
+                                    [j](const SpeciesBond &bond) { return bond.partner(j)->element()->Z() == Elements::H; });
             if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_))
                 continue;
 

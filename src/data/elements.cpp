@@ -93,7 +93,7 @@ Element *elements()
 // Return Element with corresponding Z
 Element &element(int Z)
 {
-    if ((Z < 0) || (Z > nElements()))
+    if ((Z < 0) || (Z > nElements))
     {
         Messenger::error("Element with Z={} is out of range!\n", Z);
         return elements()[0];
@@ -126,13 +126,13 @@ Element &element(std::string_view symbol)
     if (cleaned.size() == nDigits)
     {
         auto Z = std::stoi(cleaned);
-        if ((Z < 0) || (Z > nElements()))
+        if ((Z < 0) || (Z > nElements))
             return elements()[0];
         else
             return elements()[Z];
     }
     else
-        for (auto n = 0; n < nElements(); n++)
+        for (auto n = 0; n < nElements; n++)
             if (DissolveSys::sameString(cleaned, elements()[n].symbol()))
                 return elements()[n];
 

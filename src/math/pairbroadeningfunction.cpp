@@ -18,8 +18,8 @@ PairBroadeningFunction::PairBroadeningFunction(PairBroadeningFunction::FunctionT
     gaussianFWHM_ = 0.18;
 
     // Create element broadening array
-    elementPairGaussianFWHM_.initialise(Elements::nElements(), Elements::nElements(), true);
-    elementPairGaussianFlags_.initialise(Elements::nElements(), Elements::nElements(), true);
+    elementPairGaussianFWHM_.initialise(Elements::nElements, Elements::nElements, true);
+    elementPairGaussianFlags_.initialise(Elements::nElements, Elements::nElements, true);
     elementPairGaussianFWHM_ = 0.13;
     elementPairGaussianFlags_ = false;
 }

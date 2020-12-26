@@ -28,8 +28,8 @@
 bool Forcefield_SPCFw::setUp()
 {
     // Atom types
-    addAtomType(ELEMENT_H, 1, "HW", "-O(nh=2)", "Water hydrogen", 0.41, 0.0, 0.0);
-    addAtomType(ELEMENT_O, 2, "OW", "-H(n=2)", "Water oxygen", -0.82, 0.6503, 3.165492);
+    addAtomType(Elements::H, 1, "HW", "-O(nh=2)", "Water hydrogen", 0.41, 0.0, 0.0);
+    addAtomType(Elements::O, 2, "OW", "-H(n=2)", "Water oxygen", -0.82, 0.6503, 3.165492);
 
     // Bond terms
     addBondTerm("HW", "OW", SpeciesBond::HarmonicForm, {4431.53, 1.0});
