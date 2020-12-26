@@ -516,11 +516,11 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     if (fabs(interFz[n] + intraFz[n]) > 1.0e-6)
                         totalRatio.z *= 100.0 / (interFz[n] + intraFz[n]);
 
-                    if (fabs(totalRatio.x) > testThreshold)
+                    if (isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold)
                         failed = true;
-                    else if (fabs(totalRatio.y) > testThreshold)
+                    else if (isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold)
                         failed = true;
-                    else if (fabs(totalRatio.z) > testThreshold)
+                    else if (isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold)
                         failed = true;
                     else
                         failed = false;
@@ -558,11 +558,11 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     if (fabs(checkInterFz[n] + checkIntraFz[n]) > 1.0e-6)
                         totalRatio.z *= 100.0 / (checkInterFz[n] + checkIntraFz[n]);
 
-                    if (fabs(totalRatio.x) > testThreshold)
+                    if (isnan(totalRatio.x) || fabs(totalRatio.x) > testThreshold)
                         failed = true;
-                    else if (fabs(totalRatio.y) > testThreshold)
+                    else if (isnan(totalRatio.y) || fabs(totalRatio.y) > testThreshold)
                         failed = true;
-                    else if (fabs(totalRatio.z) > testThreshold)
+                    else if (isnan(totalRatio.z) || fabs(totalRatio.z) > testThreshold)
                         failed = true;
                     else
                         failed = false;
