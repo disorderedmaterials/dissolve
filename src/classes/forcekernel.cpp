@@ -188,19 +188,13 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
 // Calculate forces between Cell and its neighbours
 void ForceKernel::forces(Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStrategy strategy)
 {
-    Vec3<double> rJ, v;
-
     // Straight loop over Cells *not* requiring mim
     for (auto *otherCell : cell->cellNeighbours())
-    {
         forces(cell, otherCell, false, excludeIgeJ, strategy);
-    }
 
     // Straight loop over Cells requiring mim
     for (auto *otherCell : cell->mimCellNeighbours())
-    {
         forces(cell, otherCell, true, excludeIgeJ, strategy);
-    }
 }
 
 // Calculate forces between Atom and Cell
@@ -217,10 +211,10 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
     double scale;
 
     // Grab some information on the supplied atom
-    std::shared_ptr<Molecule> moleculeI = i->molecule();
+    auto moleculeI = i->molecule();
 
     // Grab the array of Atoms in the supplied Cell
-    OrderedVector<std::shared_ptr<Atom>> &otherAtoms = cell->atoms();
+    auto &otherAtoms = cell->atoms();
 
     // Get start/stride for specified loop context
     auto start = processPool_.interleavedLoopStart(strategy);
