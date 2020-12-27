@@ -115,7 +115,7 @@ void AtomTypeData::naturalise()
     // Clear the isotopes list and add on the natural isotope, keeping the current population
     isotopes_.clear();
     IsotopeData *topeData = isotopes_.add();
-    topeData->initialise(Isotopes::naturalIsotope(atomType_->element()));
+    topeData->initialise(Isotopes::naturalIsotope(atomType_->Z()));
     topeData->add(population_);
     topeData->finalise(population_);
     boundCoherent_ = topeData->isotope()->boundCoherent();

@@ -9,7 +9,6 @@
 #include <vector>
 
 // Forward Declarations
-class Element;
 class ForcefieldAtomType;
 class NETADefinition;
 
@@ -17,7 +16,7 @@ class NETADefinition;
 class NETAConnectionNode : public NETANode
 {
     public:
-    NETAConnectionNode(NETADefinition *parent, std::vector<std::reference_wrapper<const Elements::Element>> targetElements = {},
+    NETAConnectionNode(NETADefinition *parent, std::vector<Elements::Element> targetElements = {},
                        std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {},
                        SpeciesBond::BondType bt = SpeciesBond::nBondTypes);
     ~NETAConnectionNode();
@@ -27,7 +26,7 @@ class NETAConnectionNode : public NETANode
      */
     private:
     // Array of elements that the current context atom may be
-    std::vector<std::reference_wrapper<const Elements::Element>> allowedElements_;
+    std::vector<Elements::Element> allowedElements_;
     // Array of ForcefieldAtomTypes that the current context atom may be
     std::vector<std::reference_wrapper<const ForcefieldAtomType>> allowedAtomTypes_;
     // Type of required connection
@@ -35,7 +34,7 @@ class NETAConnectionNode : public NETANode
 
     public:
     // Add element target to node
-    bool addElementTarget(const Elements::Element &el);
+    bool addElementTarget(Elements::Element Z);
     // Add forcefield type target to node
     bool addFFTypeTarget(const ForcefieldAtomType &ffType);
 

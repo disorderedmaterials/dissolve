@@ -147,8 +147,8 @@ bool PairBroadeningFunction::writeAsKeyword(LineParser &parser, std::string_view
                 {
                     if (elementPairGaussianFlags_[{i, j}])
                     {
-                        if (!parser.writeLineF("{}{}  {}  {}\n", prefix, Elements::element(i).symbol(),
-                                               Elements::element(j).symbol(), elementPairGaussianFWHM_[{i, j}]))
+                        if (!parser.writeLineF("{}{}  {}  {}\n", prefix, Elements::symbol(Elements::element(i)),
+                                               Elements::symbol(Elements::element(j)), elementPairGaussianFWHM_[{i, j}]))
                             return false;
                     }
                 }
@@ -235,10 +235,9 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(std::shared_ptr<At
             break;
         case (PairBroadeningFunction::GaussianElementPairFunction):
             // If this matrix value has never been used/read, set the flag now
-            if (!elementPairGaussianFlags_[{at1->element()->Z(), at2->element()->Z()}])
-                elementPairGaussianFlags_[{at1->element()->Z(), at2->element()->Z()}] = true;
-            result.set(BroadeningFunction::GaussianFunction,
-                       elementPairGaussianFWHM_[{at1->element()->Z(), at2->element()->Z()}]);
+            if (!elementPairGaussianFlags_[{at1->Z(), at2->Z()}])
+                elementPairGaussianFlags_[{at1->Z(), at2->Z()}] = true;
+            result.set(BroadeningFunction::GaussianFunction, elementPairGaussianFWHM_[{at1->Z(), at2->Z()}]);
             break;
         default:
             Messenger::error("Function form '{}' not accounted for in setUpDependentParameters().\n",
@@ -290,18 +289,18 @@ bool PairBroadeningFunction::read(LineParser &parser, CoreData &coreData)
                         return false;
 
                     // Line format is:  Element1  Element2  FWHM
-                    auto &el1 = Elements::element(parser.argsv(0));
-                    if (el1.isUnknown())
+                    auto Z1 = Elements::element(parser.argsv(0));
+                    if (Z1 == Elements::XX)
                         return Messenger::error("Unrecognised element '{}' found in pair broadening parameters.\n",
                                                 parser.argsv(0));
-                    auto &el2 = Elements::element(parser.argsv(1));
-                    if (el2.isUnknown())
+                    auto Z2 = Elements::element(parser.argsv(1));
+                    if (Z2 == Elements::XX)
                         return Messenger::error("Unrecognised element '{}' found in pair broadening parameters.\n",
                                                 parser.argsv(1));
 
                     // Set the value
-                    elementPairGaussianFlags_[{el1.Z(), el2.Z()}] = parser.argd(2);
-                    elementPairGaussianFlags_[{el1.Z(), el2.Z()}] = true;
+                    elementPairGaussianFlags_[{Z1, Z2}] = parser.argd(2);
+                    elementPairGaussianFlags_[{Z1, Z2}] = true;
                 }
             }
             break;

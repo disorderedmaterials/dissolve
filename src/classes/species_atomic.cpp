@@ -5,11 +5,11 @@
 #include "data/atomicmasses.h"
 
 // Add a new atom to the Species
-SpeciesAtom *Species::addAtom(Elements::Element *element, Vec3<double> r, double q)
+SpeciesAtom *Species::addAtom(Elements::Element Z, Vec3<double> r, double q)
 {
     SpeciesAtom *i = atoms_.add();
     i->setSpecies(this);
-    i->set(element, r.x, r.y, r.z, q);
+    i->set(Z, r.x, r.y, r.z, q);
     i->setIndex(atoms_.nItems() - 1);
 
     ++version_;
@@ -73,18 +73,18 @@ void Species::setAtomCoordinates(int id, double x, double y, double z)
 }
 
 // Transmute specified SpeciesAtom
-void Species::transmuteAtom(SpeciesAtom *i, Elements::Element *el)
+void Species::transmuteAtom(SpeciesAtom *i, Elements::Element newZ)
 {
     if (!i)
         return;
 
     // Nothing to do if current element matches that supplied
-    if (i->element() == el)
+    if (i->Z() == newZ)
         return;
 
     // Remove any existing AtomType assignment
     i->setAtomType(nullptr);
-    i->setElement(el);
+    i->setZ(newZ);
 
     ++version_;
 }
@@ -193,7 +193,7 @@ double Species::mass() const
 {
     auto m = 0.0;
     for (auto *i = atoms_.first(); i != nullptr; i = i->next())
-        m += AtomicMass::mass(i->element()->Z());
+        m += AtomicMass::mass(i->Z());
     return m;
 }
 

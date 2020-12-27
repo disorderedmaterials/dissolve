@@ -75,7 +75,7 @@ class NETANode
      */
     public:
     // Add element target to node
-    virtual bool addElementTarget(const Elements::Element &el);
+    virtual bool addElementTarget(Elements::Element Z);
     // Add forcefield type target to node
     virtual bool addFFTypeTarget(const ForcefieldAtomType &ffType);
 
@@ -93,11 +93,11 @@ class NETANode
     std::shared_ptr<NETAOrNode> createOrNode();
     // Create connectivity node in the branch
     std::shared_ptr<NETAConnectionNode>
-    createConnectionNode(std::vector<std::reference_wrapper<const Elements::Element>> targetElements = {},
+    createConnectionNode(std::vector<Elements::Element> targetElements = {},
                          std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
     // Create presence node in the branch
     std::shared_ptr<NETAPresenceNode>
-    createPresenceNode(std::vector<std::reference_wrapper<const Elements::Element>> targetElements = {},
+    createPresenceNode(std::vector<Elements::Element> targetElements = {},
                        std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes = {});
     // Create ring node in the branch
     std::shared_ptr<NETARingNode> createRingNode();

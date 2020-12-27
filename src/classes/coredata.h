@@ -38,7 +38,7 @@ class CoreData
 
     public:
     // Add new AtomType
-    std::shared_ptr<AtomType> addAtomType(Elements::Element *el);
+    std::shared_ptr<AtomType> addAtomType(Elements::Element Z);
     // Remove specified AtomType
     void removeAtomType(std::shared_ptr<AtomType> at);
     // Return number of AtomTypes in list

@@ -15,15 +15,17 @@ std::string EmpiricalFormula::constructFormula(const std::vector<int> &elCounts,
     {
         if (elCounts[n] == 0)
             continue;
-        else if (elCounts[n] > 1)
+
+        auto Z = Elements::element(n);
+        if (elCounts[n] > 1)
         {
             if (richText)
-                s += fmt::format("{}<sub>{}</sub>", Elements::symbol(n), elCounts[n]);
+                s += fmt::format("{}<sub>{}</sub>", Elements::symbol(Z), elCounts[n]);
             else
-                s += fmt::format("{}{}", Elements::symbol(n), elCounts[n]);
+                s += fmt::format("{}{}", Elements::symbol(Z), elCounts[n]);
         }
         else
-            s += fmt::format("{}", Elements::symbol(n));
+            s += fmt::format("{}", Elements::symbol(Z));
     }
 
     return s;
@@ -36,7 +38,7 @@ std::string EmpiricalFormula::formula(const Species *species, bool richText)
 
     ListIterator<SpeciesAtom> atomIterator(species->atoms());
     while (SpeciesAtom *i = atomIterator.iterate())
-        ++elCounts[i->element()->Z()];
+        ++elCounts[i->Z()];
 
     return constructFormula(elCounts, richText);
 }
@@ -47,7 +49,7 @@ std::string EmpiricalFormula::formula(const RefList<SpeciesAtom> &atoms, bool ri
     std::vector<int> elCounts(Elements::nElements, 0);
 
     for (const auto *i : atoms)
-        ++elCounts[i->element()->Z()];
+        ++elCounts[i->Z()];
 
     return constructFormula(elCounts, richText);
 }

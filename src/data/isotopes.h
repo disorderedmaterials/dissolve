@@ -8,17 +8,19 @@
 #include "templates/list.h"
 
 // Isotopic Neutron Scattering Data
-class Isotope : public Elements::ElementReference, public ListItem<Isotope>
+class Isotope : public ListItem<Isotope>
 {
     public:
-    Isotope(int z = 0, int A = 0, std::string_view spin = "", double mass = 0.0, double bc = 0.0, double bi = 0.0,
-            double sc = 0.0, double si = 0.0, double totalxs = 0.0, double absxs = 0.0);
+    Isotope(Elements::Element Z = Elements::XX, int A = 0, std::string_view spin = "", double mass = 0.0, double bc = 0.0,
+            double bi = 0.0, double sc = 0.0, double si = 0.0, double totalxs = 0.0, double absxs = 0.0);
     Isotope &operator=(const Isotope &source);
 
     /*
      * Isotope Data
      */
     private:
+    // Element for isotope
+    Elements::Element Z_;
     // Mass number (A) of isotope
     int A_;
     // Isotope mass(given C = 12)
@@ -41,6 +43,8 @@ class Isotope : public Elements::ElementReference, public ListItem<Isotope>
     public:
     // Return index of isotope in it's Element parent's list
     int index() const;
+    // Return element (Z) of Isotope
+    Elements::Element Z() const;
     // Return mass number (A) of Isotope
     int A() const;
     // Return isotope mass (given C = 12)
@@ -68,19 +72,17 @@ class Isotopes
 
     private:
     // Return isotope data for specified Element
-    static List<Isotope> &isotopesByElement(int Z);
+    static List<Isotope> &isotopesByElement(Elements::Element Z);
 
     public:
     // Register specified Isotope to given Element
-    static void registerIsotope(Isotope *isotope, int Z);
-    // Return Isotope with specified A (if it exists) for given Z
-    static Isotope *isotope(int Z, int A);
-    // Return Isotope with specified A (if it exists) for given Element
-    static Isotope *isotope(Elements::Element *el, int A);
+    static void registerIsotope(Isotope *isotope, Elements::Element Z);
+    // Return Isotope with specified A (if it exists) for given element
+    static Isotope *isotope(Elements::Element Z, int A);
     // Return Isotope with specified index (if it exists) in its parent Element
-    static Isotope *isotopeAtIndex(int Z, int index);
+    static Isotope *isotopeAtIndex(Elements::Element Z, int index);
     // Return List of all Isotopes available for specified Element
-    static const List<Isotope> &isotopes(int Z);
+    static const List<Isotope> &isotopes(Elements::Element Z);
     // Return natural Isotope for given Element
-    static Isotope *naturalIsotope(Elements::Element *el);
+    static Isotope *naturalIsotope(Elements::Element Z);
 };

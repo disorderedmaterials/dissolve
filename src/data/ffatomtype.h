@@ -13,18 +13,18 @@ class Forcefield;
 class ForcefieldParameters;
 
 // Forcefield AtomType Base Class
-class ForcefieldAtomType : public Elements::ElementReference
+class ForcefieldAtomType
 {
     public:
-    ForcefieldAtomType(int Z = 0, int index = -1, std::string_view name = "", std::string_view netaDefinition = "",
-                       std::string_view description = "", double q = 0.0, double data0 = 0.0, double data1 = 0.0,
-                       double data2 = 0.0, double data3 = 0.0);
-    ForcefieldAtomType(OptionalReferenceWrapper<const ForcefieldParameters> params, int Z = 0, int index = -1,
-                       std::string_view name = "", std::string_view netaDefinition = "", std::string_view description = nullptr,
-                       double q = 0.0);
+    ForcefieldAtomType(Elements::Element Z = Elements::XX, int index = -1, std::string_view name = "",
+                       std::string_view netaDefinition = "", std::string_view description = "", double q = 0.0,
+                       double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+    ForcefieldAtomType(OptionalReferenceWrapper<const ForcefieldParameters> params, Elements::Element Z = Elements::XX,
+                       int index = -1, std::string_view name = "", std::string_view netaDefinition = "",
+                       std::string_view description = nullptr, double q = 0.0);
     ForcefieldAtomType(const ForcefieldAtomType &sourceType, std::string_view newTypeName, std::string_view netaDefinition = "",
                        std::string_view equivalentName = "");
-    virtual ~ForcefieldAtomType();
+    virtual ~ForcefieldAtomType() = default;
     ForcefieldAtomType(const ForcefieldAtomType &source);
     ForcefieldAtomType(const ForcefieldAtomType &&source);
 
@@ -32,16 +32,20 @@ class ForcefieldAtomType : public Elements::ElementReference
      * Identity
      */
     private:
+    // Element to which the atom type applies
+    Elements::Element Z_;
     // Index of atom type
     int index_;
     // Name of atom type
     std::string name_;
     // Equivalent name, if defined
     std::string equivalentName_;
-    // Brief description of tyoe
+    // Brief description of type
     std::string description_;
 
     public:
+    // Return element to which the atom type applies
+    Elements::Element Z() const;
     // Return index of type
     int index() const;
     // Return name of type

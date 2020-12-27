@@ -10,8 +10,8 @@
 namespace Elements
 {
 
-// Element defines
-enum ElementENUM
+// Element Enum
+enum Element
 {
     XX,
     H,
@@ -136,14 +136,14 @@ enum ElementENUM
 };
 
 // Basic Element Definition (Z, name, symbol)
-class Element
+class ElementData
 {
     public:
-    Element(int Z, std::string_view name, std::string_view symbol, int group);
+    ElementData(Element Z, std::string_view name, std::string_view symbol, int group);
 
     private:
     // Atomic number (Z)
-    int Z_;
+    Element Z_;
     // Element name
     std::string_view name_;
     // Element symbol
@@ -153,7 +153,7 @@ class Element
 
     public:
     // Return atomic number (Z)
-    int Z() const;
+    Element Z() const;
     // Return whether the element is unknown
     bool isUnknown() const;
     // Return name of element
@@ -164,43 +164,16 @@ class Element
     int group() const;
 };
 
-// Reference to Element, for use in constructing derived/associated data classes
-class ElementReference
-{
-    public:
-    ElementReference(int Z);
-    virtual ~ElementReference();
-
-    private:
-    // Referenced Element
-    const Element &element_;
-
-    public:
-    // Return referenced element
-    const Element &element() const;
-    // Return atomic number (Z)
-    int Z() const;
-    // Return name of element
-    std::string_view name() const;
-    // Return symbol of element
-    std::string_view symbol() const;
-};
-
-// Instantiate / return array of element data
-Element *elements();
-
-// Return Element with corresponding Z
-Element &element(int Z);
-// Return Element with corresponding symbol
-Element &element(std::string_view symbol);
-// Return pointer to Element with corresponding symbol
-Element *elementPointer(std::string_view symbol);
+// Return enumerated Element with corresponding integer Z
+Element element(int Z);
+// Return enumerated Element with corresponding symbol
+Element element(std::string_view symbol);
 // Return name of element with specified Z
-std::string_view name(int Z);
+std::string_view name(Element Z);
 // Return symbol of element with specified Z
-std::string_view symbol(int Z);
+std::string_view symbol(Element Z);
 // Return group for element with specified Z
-int group(int Z);
+int group(Element Z);
 
 // Create array of Lists, with array size equal to number of elements defined
 template <class T> void createElementListArray(Array<List<T>> &listArray)

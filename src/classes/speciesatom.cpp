@@ -11,15 +11,13 @@
 
 SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
 {
-    element_ = nullptr;
+    Z_ = Elements::XX;
     charge_ = 0.0;
     atomType_ = nullptr;
     r_.zero();
     index_ = -1;
     selected_ = false;
 }
-
-SpeciesAtom::~SpeciesAtom() {}
 
 // Set Species parent
 void SpeciesAtom::setSpecies(Species *sp) { parent_ = sp; }
@@ -28,26 +26,26 @@ void SpeciesAtom::setSpecies(Species *sp) { parent_ = sp; }
 const Species *SpeciesAtom::species() const { return parent_; }
 
 // Set basic SpeciesAtom properties
-void SpeciesAtom::set(Elements::Element *element, double rx, double ry, double rz, double q)
+void SpeciesAtom::set(Elements::Element Z, double rx, double ry, double rz, double q)
 {
-    element_ = element;
+    Z_ = Z;
     r_.set(rx, ry, rz);
     charge_ = q;
 }
 
 // Set basic SpeciesAtom properties
-void SpeciesAtom::set(Elements::Element *element, const Vec3<double> r, double q)
+void SpeciesAtom::set(Elements::Element Z, const Vec3<double> r, double q)
 {
-    element_ = element;
+    Z_ = Z;
     r_ = r;
     charge_ = q;
 }
 
 // Set atomic element
-void SpeciesAtom::setElement(Elements::Element *el) { element_ = el; }
+void SpeciesAtom::setZ(Elements::Element Z) { Z_ = Z; }
 
 // Return atomic element
-Elements::Element *SpeciesAtom::element() const { return element_; }
+Elements::Element SpeciesAtom::Z() const { return Z_; }
 
 // Return coordinates
 const Vec3<double> &SpeciesAtom::r() const { return r_; }
@@ -62,10 +60,10 @@ double SpeciesAtom::charge() const { return charge_; }
 void SpeciesAtom::setAtomType(std::shared_ptr<AtomType> at)
 {
     // Check elements
-    if (at && (at->element() != element_))
+    if (at && (at->Z() != Z_))
     {
         Messenger::warn("Refused to assign AtomType '{}' to an atom of element {}, since the element of the AtomType is {}.\n",
-                        at->name(), element_->symbol(), at->element()->symbol());
+                        at->name(), Elements::symbol(Z_), Elements::symbol(at->Z()));
         return;
     }
 

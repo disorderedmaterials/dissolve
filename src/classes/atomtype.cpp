@@ -6,15 +6,7 @@
 #include "data/elements.h"
 #include <string.h>
 
-AtomType::AtomType()
-{
-    element_ = nullptr;
-    name_ = "XX";
-    exchangeable_ = false;
-    shortRangeType_ = Forcefield::UndefinedType;
-}
-
-AtomType::~AtomType() {}
+AtomType::AtomType() : Z_(Elements::XX), name_{"XX"}, exchangeable_(false), shortRangeType_(Forcefield::UndefinedType) {}
 
 /*
  * Character
@@ -27,10 +19,10 @@ void AtomType::setName(std::string_view name) { name_ = name; }
 std::string_view AtomType::name() const { return name_; }
 
 // Set atomic element
-void AtomType::setElement(Elements::Element *el) { element_ = el; }
+void AtomType::setZ(Elements::Element Z) { Z_ = Z; }
 
 // Return atomic element
-Elements::Element *AtomType::element() const { return element_; }
+Elements::Element AtomType::Z() const { return Z_; }
 
 /*
  * Interaction Parameters

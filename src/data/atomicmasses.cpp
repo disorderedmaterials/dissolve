@@ -140,9 +140,9 @@ constexpr std::pair<int, double> massData_[] = {
 };
  
 // Return atomic mass for specified Z
-double mass(int Z) { return massData_[Z].second; }
+double mass(Elements::Element Z) { return massData_[Z].second; }
 
 // Return reduced mass for specified pair of Z's
-double reducedMass(int Z1, int Z2) { return (mass(Z1) * mass(Z2)) / (mass(Z1) + mass(Z2)); }
+double reducedMass(Elements::Element Z1, Elements::Element Z2) { return (mass(Z1) * mass(Z2)) / (mass(Z1) + mass(Z2)); }
 
 } // namespace AtomicMass

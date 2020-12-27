@@ -7,8 +7,9 @@
 #include <functional>
 #include <vector>
 
-FormFactorData_WK1995::FormFactorData_WK1995(int z, int formalCharge, std::vector<double> a, std::vector<double> b, double c)
-    : FormFactorData(z, formalCharge), a_(a), b_(b), c_(c)
+FormFactorData_WK1995::FormFactorData_WK1995(Elements::Element Z, int formalCharge, std::vector<double> a,
+                                             std::vector<double> b, double c)
+    : FormFactorData(Z, formalCharge), a_(a), b_(b), c_(c)
 {
 }
 
@@ -48,7 +49,7 @@ namespace XRayFormFactors
 {
 
 // Return Waasmaier & Kirfel (1995) form factor data for given element and formal charge (if it exists)
-OptionalReferenceWrapper<const FormFactorData> wk1995Data(int Z, int formalCharge)
+OptionalReferenceWrapper<const FormFactorData> wk1995Data(Elements::Element Z, int formalCharge)
 {
     /*
      * New Analytical Scattering Factor Functions for Free Atoms and Ions

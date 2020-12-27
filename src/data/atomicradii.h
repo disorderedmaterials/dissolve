@@ -9,6 +9,6 @@ namespace AtomicRadii
 {
 
 // Return radius with specified Z
-double radius(int Z);
+double radius(Elements::Element Z);
 
 } // namespace AtomicRadii

@@ -11,11 +11,11 @@ Array<List<Isotope>> Isotopes::isotopesByElementPrivate_;
  * Isotopic Neutron Scattering Data
  */
 
-Isotope::Isotope(int z, int A, std::string_view spin, double mass, double bc, double bi, double sc, double si, double totalxs,
-                 double absxs)
-    : ElementReference(z), ListItem<Isotope>()
+Isotope::Isotope(Elements::Element Z, int A, std::string_view spin, double mass, double bc, double bi, double sc, double si,
+                 double totalxs, double absxs)
+    : ListItem<Isotope>()
 {
-    // Set the isotope's data
+    Z_ = Z;
     A_ = A;
     spin_ = spin;
     mass_ = mass;
@@ -27,7 +27,7 @@ Isotope::Isotope(int z, int A, std::string_view spin, double mass, double bc, do
     absorptionXS_ = absxs;
 
     // Add this isotope to its parent element's list
-    Isotopes::registerIsotope(this, z);
+    Isotopes::registerIsotope(this, Z);
 }
 
 Isotope &Isotope::operator=(const Isotope &source)
@@ -47,7 +47,10 @@ Isotope &Isotope::operator=(const Isotope &source)
 }
 
 // Return index of isotope in it's Element parent's list
-int Isotope::index() const { return Isotopes::isotopes(element().Z()).indexOf(this); }
+int Isotope::index() const { return Isotopes::isotopes(Z_).indexOf(this); }
+
+// Return element (Z) of Isotope
+Elements::Element Isotope::Z() const { return Z_; }
 
 // Return mass number (A) of Isotope
 int Isotope::A() const { return A_; }
@@ -78,7 +81,7 @@ double Isotope::absorptionXS() const { return absorptionXS_; }
  */
 
 // Return isotope data, grouped by element
-List<Isotope> &Isotopes::isotopesByElement(int Z)
+List<Isotope> &Isotopes::isotopesByElement(Elements::Element Z)
 {
     // Has the master array been initialised yet? If not, do it now, before the Sears data is constructed
     if (isotopesByElementPrivate_.nItems() == 0)
@@ -490,10 +493,10 @@ List<Isotope> &Isotopes::isotopesByElement(int Z)
 }
 
 // Register specified Isotope to given Element
-void Isotopes::registerIsotope(Isotope *isotope, int Z) { isotopesByElementPrivate_[Z].own(isotope); }
+void Isotopes::registerIsotope(Isotope *isotope, Elements::Element Z) { isotopesByElementPrivate_[Z].own(isotope); }
 
 // Return Isotope with specified A for given Element (if it exists)
-Isotope *Isotopes::isotope(int Z, int A)
+Isotope *Isotopes::isotope(Elements::Element Z, int A)
 {
     for (auto *isotope = isotopesByElement(Z).first(); isotope != nullptr; isotope = isotope->next())
         if (isotope->A() == A)
@@ -502,23 +505,11 @@ Isotope *Isotopes::isotope(int Z, int A)
     return nullptr;
 }
 
-// Return Isotope with specified A for given Element (if it exists)
-Isotope *Isotopes::isotope(Elements::Element *el, int A)
-{
-    if (el == nullptr)
-    {
-        Messenger::error("Isotopes::isotope() - Element is NULL.\n");
-        return nullptr;
-    }
-
-    return isotope(el->Z(), A);
-}
-
 // Return List of all isotopes available for specified Element
-const List<Isotope> &Isotopes::isotopes(int Z) { return isotopesByElement(Z); }
+const List<Isotope> &Isotopes::isotopes(Elements::Element Z) { return isotopesByElement(Z); }
 
 // Return Isotope with specified index (if it exists) in its parent Element
-Isotope *Isotopes::isotopeAtIndex(int Z, int index) { return isotopesByElement(Z)[index]; }
+Isotope *Isotopes::isotopeAtIndex(Elements::Element Z, int index) { return isotopesByElement(Z)[index]; }
 
 // Return natural Isotope for given Element
-Isotope *Isotopes::naturalIsotope(Elements::Element *el) { return isotope(el, 0); }
+Isotope *Isotopes::naturalIsotope(Elements::Element Z) { return isotope(Z, 0); }

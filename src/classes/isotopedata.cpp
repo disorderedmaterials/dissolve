@@ -81,7 +81,7 @@ bool IsotopeData::read(LineParser &parser, CoreData &coreData)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
-    isotope_ = Isotopes::isotope(parser.argi(0), parser.argi(1));
+    isotope_ = Isotopes::isotope(Elements::element(parser.argi(0)), parser.argi(1));
     population_ = parser.argi(2);
     fraction_ = parser.argd(3);
     return true;
@@ -96,7 +96,7 @@ bool IsotopeData::broadcast(ProcessPool &procPool, const int root, const CoreDat
 {
 #ifdef PARALLEL
     // For isotope_, need to broadcast element Z and isotope A
-    int Z, A;
+    Element Z, A;
     if (procPool.poolRank() == root)
     {
         Z = isotope_->element().Z();

@@ -80,11 +80,12 @@ class Forcefield
     // Add short-range parameters
     void addParameters(std::string_view name, double data0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
     // Add new atom type with its own parameters
-    void addAtomType(int Z, int index, std::string_view name, std::string_view netaDefinition, std::string_view description,
-                     double q, double data0, double data1, double data2 = 0.0, double data3 = 0.0);
+    void addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
+                     std::string_view description, double q, double data0, double data1, double data2 = 0.0,
+                     double data3 = 0.0);
     // Add new atom type referencing existing parameters by name
-    void addAtomType(int Z, int index, std::string_view name, std::string_view netaDefinition, std::string_view description,
-                     double q, std::string_view parameterReference);
+    void addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
+                     std::string_view description, double q, std::string_view parameterReference);
     // Copy existing atom type
     bool copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType> sourceType, std::string_view description,
                       std::string_view netaDefinition = "", std::string_view equivalentName = "");
@@ -102,9 +103,10 @@ class Forcefield
     const OptionalReferenceWrapper<const ForcefieldParameters> shortRangeParameters(std::string_view name) const;
     // Return the named ForcefieldAtomType (if it exists)
     virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeByName(std::string_view name,
-                                                                              Elements::Element *element = nullptr) const;
+                                                                              Elements::Element onlyZ = Elements::XX) const;
     // Return the ForcefieldAtomType with specified id (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeById(int id, Elements::Element *element = nullptr) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeById(int id,
+                                                                            Elements::Element onlyZ = Elements::XX) const;
 
     /*
      * Term Data
@@ -210,7 +212,7 @@ class Forcefield
     bool isBondPattern(const SpeciesAtom *i, const int nSingle, const int nDouble = 0, const int nTriple = 0,
                        const int nQuadruple = 0, const int nAromatic = 0) const;
     // Return whether the specified atom is bound to a specific element (and count thereof)
-    bool isBoundTo(const SpeciesAtom *i, Elements::Element *element, const int count = 1, bool allowMoreThanCount = true) const;
+    bool isBoundTo(const SpeciesAtom *i, Elements::Element Z, const int count = 1, bool allowMoreThanCount = true) const;
     // Guess and return oxidation state for the specified SpeciesAtom
     int guessOxidationState(const SpeciesAtom *i) const;
 };

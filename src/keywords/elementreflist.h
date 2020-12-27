@@ -10,12 +10,12 @@
 // Forward Declarations
 class Configuration;
 
-// Keyword with Element RefList Data
-class ElementRefListKeyword : public KeywordData<RefList<Elements::Element> &>
+// Keyword with Element vector data
+class ElementVectorKeyword : public KeywordData<std::vector<Elements::Element> &>
 {
     public:
-    ElementRefListKeyword(RefList<Elements::Element> &targetRefList);
-    ~ElementRefListKeyword();
+    ElementVectorKeyword(std::vector<Elements::Element> &targetData);
+    ~ElementVectorKeyword();
 
     /*
      * Arguments

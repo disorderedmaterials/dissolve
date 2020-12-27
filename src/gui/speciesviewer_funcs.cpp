@@ -15,7 +15,7 @@ SpeciesViewer::SpeciesViewer(QWidget *parent) : BaseViewer(parent)
     // Interaction
     setInteractionMode(SpeciesViewer::DefaultInteraction);
     clickedAtom_ = nullptr;
-    drawElement_ = &Elements::element(Elements::H);
+    drawElement_ = Elements::H;
 
     // Set up the view
     view_.setViewType(View::NormalView);

@@ -298,7 +298,7 @@ const QString SpeciesViewer::interactionModeText() const
 }
 
 // Set current Element for DrawInteraction
-void SpeciesViewer::setDrawElement(Elements::Element *element) { drawElement_ = element; }
+void SpeciesViewer::setDrawElement(Elements::Element Z) { drawElement_ = Z; }
 
 // Return current Element for DrawInteraction
-Elements::Element *SpeciesViewer::drawElement() const { return drawElement_; }
+Elements::Element SpeciesViewer::drawElement() const { return drawElement_; }

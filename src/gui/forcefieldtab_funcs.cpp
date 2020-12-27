@@ -319,7 +319,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
     }
     else
         item = ui_.AtomTypesTable->item(row, 1);
-    item->setText(QString::fromStdString(std::string(atomType->element()->symbol())));
+    item->setText(QString::fromStdString(std::string(Elements::symbol(atomType->Z()))));
 
     // Charge
     if (createItems)
@@ -531,11 +531,11 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 {
     // First, need to get target element for the new AtomType
     bool ok;
-    auto *element = ElementSelector::getElement(this, "Element Selection", "Choose the Element for the AtomType", nullptr, &ok);
+    auto Z = ElementSelector::getElement(this, "Element Selection", "Choose the Element for the AtomType", Elements::XX, &ok);
     if (!ok)
         return;
 
-    std::shared_ptr<AtomType> at = dissolve_.addAtomType(element);
+    std::shared_ptr<AtomType> at = dissolve_.addAtomType(Z);
 
     Locker refreshLocker(refreshLock_);
 

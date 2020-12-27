@@ -21,7 +21,7 @@ DynamicSiteProcedureNode::DynamicSiteProcedureNode(SelectProcedureNode *parent) 
 
     keywords_.add("Definition", new AtomTypeRefListKeyword(atomTypes_), "AtomType",
                   "Define one or more AtomTypes to include in this site");
-    keywords_.add("Definition", new ElementRefListKeyword(elements_), "Element",
+    keywords_.add("Definition", new ElementVectorKeyword(elements_), "Element",
                   "Define one or more Elements to include in this site");
 }
 
@@ -51,7 +51,7 @@ void DynamicSiteProcedureNode::generateSites(std::shared_ptr<const Molecule> mol
     for (auto n = 0; n < molecule->nAtoms(); ++n)
     {
         // If the element is listed in our target elements list, add this atom as a site
-        if (elements_.contains(molecule->atom(n)->speciesAtom()->element()))
+        if (std::find(elements_.begin(), elements_.end(), molecule->atom(n)->speciesAtom()->Z()) != elements_.end())
         {
             generatedSites_.add(Site(molecule, molecule->atom(n)->r()));
             continue;

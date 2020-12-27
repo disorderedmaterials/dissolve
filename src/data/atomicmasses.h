@@ -9,10 +9,8 @@ namespace AtomicMass
 {
 
 // Return atomic mass for specified Z
-double mass(int Z);
+double mass(Elements::Element Z);
 // Return reduced mass for specified pair of Z's
-double reducedMass(int Z1, int Z2);
-// Return reduced mass for specified pair of Elements
-double reducedMass(Elements::Element *e1, Elements::Element *e2);
+double reducedMass(Elements::Element Z1, Elements::Element Z2);
 
 }; // namespace AtomicMass

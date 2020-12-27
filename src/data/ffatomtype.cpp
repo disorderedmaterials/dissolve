@@ -5,11 +5,11 @@
 #include "data/ff.h"
 #include "data/ffparameters.h"
 
-ForcefieldAtomType::ForcefieldAtomType(int Z, int index, std::string_view name, std::string_view netaDefinition,
+ForcefieldAtomType::ForcefieldAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
                                        std::string_view description, double q, double data0, double data1, double data2,
                                        double data3)
-    : ElementReference(Z)
 {
+    Z_ = Z;
     index_ = index;
     name_ = name;
     neta_.setDefinitionString(netaDefinition);
@@ -20,19 +20,20 @@ ForcefieldAtomType::ForcefieldAtomType(int Z, int index, std::string_view name, 
     parameters_.setParameter(2, data2);
     parameters_.setParameter(3, data3);
 }
-ForcefieldAtomType::ForcefieldAtomType(OptionalReferenceWrapper<const ForcefieldParameters> params, int Z, int index,
-                                       std::string_view name, std::string_view netaDefinition, std::string_view description,
-                                       double q)
-    : ElementReference(Z), index_(index), name_(name), description_(description), parameterReference_(params)
+ForcefieldAtomType::ForcefieldAtomType(OptionalReferenceWrapper<const ForcefieldParameters> params, Elements::Element Z,
+                                       int index, std::string_view name, std::string_view netaDefinition,
+                                       std::string_view description, double q)
+    : index_(index), name_(name), description_(description), parameterReference_(params)
 {
+    Z_ = Z;
     neta_.setDefinitionString(netaDefinition);
     parameters_.setCharge(q);
 }
 ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &sourceType, std::string_view newTypeName,
                                        std::string_view netaDefinition, std::string_view equivalentName)
-    : ElementReference(sourceType.Z())
 {
     // Copy data from the supplied source
+    Z_ = sourceType.Z_;
     index_ = sourceType.index_;
     name_ = newTypeName;
     neta_.setDefinitionString(netaDefinition);
@@ -44,10 +45,9 @@ ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &sourceType, std
         equivalentName_ = equivalentName;
 }
 
-ForcefieldAtomType::~ForcefieldAtomType() {}
-
-ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &source) : ElementReference(source.Z())
+ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &source)
 {
+    Z_ = source.Z_;
     index_ = source.index_;
     name_ = source.name_;
     neta_.setDefinitionString(source.neta_.definitionString());
@@ -57,8 +57,9 @@ ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &source) : Eleme
     parameterReference_ = source.parameterReference_;
 }
 
-ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &&source) : ElementReference(source.Z())
+ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &&source)
 {
+    Z_ = source.Z_;
     index_ = source.index_;
     name_ = source.name_;
     neta_.setDefinitionString(source.neta_.definitionString());
@@ -71,6 +72,9 @@ ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &&source) : Elem
 /*
  * Identity
  */
+
+// Return element to which the atom type applies
+Elements::Element ForcefieldAtomType::Z() const { return Z_; }
 
 // Return index of type
 int ForcefieldAtomType::index() const { return index_; }

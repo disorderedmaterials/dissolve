@@ -233,8 +233,8 @@ void SpeciesBond::setUp()
     if (form() == SpeciesBond::EPSRForm)
     {
         // Work out omega-squared(ab) from mass of natural isotopes
-        double massI = AtomicMass::mass(i_->element()->Z());
-        double massJ = AtomicMass::mass(j_->element()->Z());
+        double massI = AtomicMass::mass(i_->Z());
+        double massJ = AtomicMass::mass(j_->Z());
         parameters_[2] = params[1] / sqrt((massI + massJ) / (massI * massJ));
     }
 }

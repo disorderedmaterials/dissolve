@@ -137,9 +137,6 @@ constexpr color const colours_[] = {
     {1.0, 1.0, 1.0, 1.0}        // OG
 };
 
-const float *colour(int Z) { return reinterpret_cast<const float *>(&colours_[Z]); }
-
-// Return colour for specified Element
-const float *colour(Elements::Element *el) { return reinterpret_cast<const float *>(&colours_[el->Z()]); }
+const float *colour(Elements::Element Z) { return reinterpret_cast<const float *>(&colours_[Z]); }
 
 } // namespace ElementColours

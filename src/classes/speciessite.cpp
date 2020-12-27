@@ -289,7 +289,7 @@ Site *SpeciesSite::createFromParent() const
         double massNorm = 0.0;
         for (auto m = 0; m < originIndices.nItems(); ++m)
         {
-            mass = AtomicMass::mass(parent_->atom(originIndices[m])->element()->Z());
+            mass = AtomicMass::mass(parent_->atom(originIndices[m])->Z());
             origin += parent_->atom(originIndices[m])->r() * mass;
             massNorm += mass;
         }

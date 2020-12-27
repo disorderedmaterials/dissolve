@@ -32,16 +32,16 @@ void CoreData::clear()
  */
 
 // Add new AtomType
-std::shared_ptr<AtomType> CoreData::addAtomType(Elements::Element *el)
+std::shared_ptr<AtomType> CoreData::addAtomType(Elements::Element Z)
 {
     auto newAtomType = std::make_shared<AtomType>();
     atomTypes_.push_back(newAtomType);
 
     // Create a suitable unique name
-    newAtomType->setName(uniqueAtomTypeName(el->symbol()));
+    newAtomType->setName(uniqueAtomTypeName(Elements::symbol(Z)));
 
     // Set data
-    newAtomType->setElement(el);
+    newAtomType->setZ(Z);
     newAtomType->setIndex(nAtomTypes() - 1);
 
     // Bump version

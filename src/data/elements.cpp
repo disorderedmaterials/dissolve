@@ -13,7 +13,7 @@ namespace Elements
  * Element
  */
 
-Element::Element(int Z, std::string_view name, std::string_view symbol, int group)
+ElementData::ElementData(Element Z, std::string_view name, std::string_view symbol, int group)
     : Z_(Z), name_{name}, symbol_{symbol}, group_(group)
 {
 }
@@ -23,87 +23,77 @@ Element::Element(int Z, std::string_view name, std::string_view symbol, int grou
  */
 
 // Return atomic number (Z)
-int Element::Z() const { return Z_; }
+Elements::Element ElementData::Z() const { return Z_; }
 
 // Return whether the element is unknown
-bool Element::isUnknown() const { return Z_ == 0; }
+bool ElementData::isUnknown() const { return Z_ == 0; }
 
 // Return name of element
-std::string_view Element::name() const { return name_; }
+std::string_view ElementData::name() const { return name_; }
 
 // Return symbol of element
-std::string_view Element::symbol() const { return symbol_; }
+std::string_view ElementData::symbol() const { return symbol_; }
 
 // Return group for element
-int Element::group() const { return group_; }
+int ElementData::group() const { return group_; }
 
 /*
  * Elements Helper Class
  */
 
-// Instantiate / return array of element data
-Element *elements()
-{
-    // Basic element data
-    static Element elementData[] = {
-        {0, "Unknown", "XX", 0},        {1, "Hydrogen", "H", 1},        {2, "Helium", "He", 18},
-        {3, "Lithium", "Li", 1},        {4, "Beryllium", "Be", 2},      {5, "Boron", "B", 13},
-        {6, "Carbon", "C", 14},         {7, "Nitrogen", "N", 15},       {8, "Oxygen", "O", 16},
-        {9, "Fluorine", "F", 17},       {10, "Neon", "Ne", 18},         {11, "Sodium", "Na", 1},
-        {12, "Magnesium", "Mg", 2},     {13, "Aluminium", "Al", 13},    {14, "Silicon", "Si", 14},
-        {15, "Phosphorus", "P", 15},    {16, "Sulfur", "S", 16},        {17, "Chlorine", "Cl", 17},
-        {18, "Argon", "Ar", 18},        {19, "Potassium", "K", 1},      {20, "Calcium", "Ca", 2},
-        {21, "Scandium", "Sc", 3},      {22, "Titanium", "Ti", 4},      {23, "Vanadium", "V", 5},
-        {24, "Chromium", "Cr", 6},      {25, "Manganese", "Mn", 7},     {26, "Iron", "Fe", 8},
-        {27, "Cobalt", "Co", 9},        {28, "Nickel", "Ni", 10},       {29, "Copper", "Cu", 11},
-        {30, "Zinc", "Zn", 12},         {31, "Gallium", "Ga", 13},      {32, "Germanium", "Ge", 14},
-        {33, "Arsenic", "As", 15},      {34, "Selenium", "Se", 16},     {35, "Bromine", "Br", 17},
-        {36, "Krypton", "Kr", 18},      {37, "Rubidium", "Rb", 1},      {38, "Strontium", "Sr", 2},
-        {39, "Yttrium", "Y", 3},        {40, "Zirconium", "Zr", 4},     {41, "Niobium", "Nb", 5},
-        {42, "Molybdenum", "Mo", 6},    {43, "Technetium", "Tc", 7},    {44, "Ruthenium", "Ru", 8},
-        {45, "Rhodium", "Rh", 9},       {46, "Palladium", "Pd", 10},    {47, "Silver", "Ag", 11},
-        {48, "Cadmium", "Cd", 12},      {49, "Indium", "In", 13},       {50, "Tin", "Sn", 14},
-        {51, "Antimony", "Sb", 15},     {52, "Tellurium", "Te", 16},    {53, "Iodine", "I", 17},
-        {54, "Xenon", "Xe", 18},        {55, "Caesium", "Cs", 1},       {56, "Barium", "Ba", 2},
-        {57, "Lanthanum", "La", 98},    {58, "Cerium", "Ce", 98},       {59, "Praseodymium", "Pr", 98},
-        {60, "Neodymium", "Nd", 98},    {61, "Promethium", "Pm", 98},   {62, "Samarium", "Sm", 98},
-        {63, "Europium", "Eu", 98},     {64, "Gadolinium", "Gd", 98},   {65, "Terbium", "Tb", 98},
-        {66, "Dysprosium", "Dy", 98},   {67, "Holmium", "Ho", 98},      {68, "Erbium", "Er", 98},
-        {69, "Thulium", "Tm", 98},      {70, "Ytterbium", "Yb", 98},    {71, "Lutetium", "Lu", 3},
-        {72, "Hafnium", "Hf", 4},       {73, "Tantalum", "Ta", 5},      {74, "Tungsten", "W", 6},
-        {75, "Rhenium", "Re", 7},       {76, "Osmium", "Os", 8},        {77, "Iridium", "Ir", 9},
-        {78, "Platinum", "Pt", 10},     {79, "Gold", "Au", 11},         {80, "Mercury", "Hg", 12},
-        {81, "Thallium", "Tl", 13},     {82, "Lead", "Pb", 14},         {83, "Bismuth", "Bi", 15},
-        {84, "Polonium", "Po", 16},     {85, "Astatine", "At", 17},     {86, "Radon", "Rn", 18},
-        {87, "Francium", "Fr", 1},      {88, "Radium", "Ra", 2},        {89, "Actinium", "Ac", 99},
-        {90, "Thorium", "Th", 99},      {91, "Protactinium", "Pa", 99}, {92, "Uranium", "U", 99},
-        {93, "Neptunium", "Np", 99},    {94, "Plutonium", "Pu", 99},    {95, "Americium", "Am", 99},
-        {96, "Curium", "Cm", 99},       {97, "Berkelium", "Bk", 99},    {98, "Californium", "Cf", 99},
-        {99, "Einsteinium", "Es", 99},  {100, "Fermium", "Fm", 99},     {101, "Mendelevium", "Md", 99},
-        {102, "Nobelium", "No", 99},    {103, "Lawrencium", "Lr", 3},   {104, "Rutherfordium", "Rf", 4},
-        {105, "Dubnium", "Db", 5},      {106, "Seaborgium", "Sg", 6},   {107, "Bohrium", "Bh", 7},
-        {108, "Hassium", "Hs", 8},      {109, "Meitnerium", "Mt", 9},   {110, "Darmstadtium", "Ds", 10},
-        {111, "Roentgenium", "Rg", 11}, {112, "Copernicium", "Cn", 12}, {113, "Nihonium", "Nh", 13},
-        {114, "Flerovium", "Fl", 14},   {115, "Moscovium", "Mc", 15},   {116, "Livermorium", "Lv", 16},
-        {117, "Tennessine", "Ts", 17},  {118, "Oganesson", "Og", 18}};
-
-    return elementData;
-}
+// Basic element data
+static std::vector<ElementData> elementData_ = {
+    {Elements::XX, "Unknown", "XX", 0},      {Elements::H, "Hydrogen", "H", 1},        {Elements::He, "Helium", "He", 18},
+    {Elements::Li, "Lithium", "Li", 1},      {Elements::Be, "Beryllium", "Be", 2},     {Elements::B, "Boron", "B", 13},
+    {Elements::C, "Carbon", "C", 14},        {Elements::N, "Nitrogen", "N", 15},       {Elements::O, "Oxygen", "O", 16},
+    {Elements::F, "Fluorine", "F", 17},      {Elements::Ne, "Neon", "Ne", 18},         {Elements::Na, "Sodium", "Na", 1},
+    {Elements::Mg, "Magnesium", "Mg", 2},    {Elements::Al, "Aluminium", "Al", 13},    {Elements::Si, "Silicon", "Si", 14},
+    {Elements::P, "Phosphorus", "P", 15},    {Elements::S, "Sulfur", "S", 16},         {Elements::Cl, "Chlorine", "Cl", 17},
+    {Elements::Ar, "Argon", "Ar", 18},       {Elements::K, "Potassium", "K", 1},       {Elements::Ca, "Calcium", "Ca", 2},
+    {Elements::Sc, "Scandium", "Sc", 3},     {Elements::Ti, "Titanium", "Ti", 4},      {Elements::V, "Vanadium", "V", 5},
+    {Elements::Cr, "Chromium", "Cr", 6},     {Elements::Mn, "Manganese", "Mn", 7},     {Elements::Fe, "Iron", "Fe", 8},
+    {Elements::Co, "Cobalt", "Co", 9},       {Elements::Ni, "Nickel", "Ni", 10},       {Elements::Cu, "Copper", "Cu", 11},
+    {Elements::Zn, "Zinc", "Zn", 12},        {Elements::Ga, "Gallium", "Ga", 13},      {Elements::Ge, "Germanium", "Ge", 14},
+    {Elements::As, "Arsenic", "As", 15},     {Elements::Se, "Selenium", "Se", 16},     {Elements::Br, "Bromine", "Br", 17},
+    {Elements::Kr, "Krypton", "Kr", 18},     {Elements::Rb, "Rubidium", "Rb", 1},      {Elements::Sr, "Strontium", "Sr", 2},
+    {Elements::Y, "Yttrium", "Y", 3},        {Elements::Zr, "Zirconium", "Zr", 4},     {Elements::Nb, "Niobium", "Nb", 5},
+    {Elements::Mo, "Molybdenum", "Mo", 6},   {Elements::Tc, "Technetium", "Tc", 7},    {Elements::Ru, "Ruthenium", "Ru", 8},
+    {Elements::Rh, "Rhodium", "Rh", 9},      {Elements::Pd, "Palladium", "Pd", 10},    {Elements::Ag, "Silver", "Ag", 11},
+    {Elements::Cd, "Cadmium", "Cd", 12},     {Elements::In, "Indium", "In", 13},       {Elements::Sn, "Tin", "Sn", 14},
+    {Elements::Sb, "Antimony", "Sb", 15},    {Elements::Te, "Tellurium", "Te", 16},    {Elements::I, "Iodine", "I", 17},
+    {Elements::Xe, "Xenon", "Xe", 18},       {Elements::Cs, "Caesium", "Cs", 1},       {Elements::Ba, "Barium", "Ba", 2},
+    {Elements::La, "Lanthanum", "La", 98},   {Elements::Ce, "Cerium", "Ce", 98},       {Elements::Pr, "Praseodymium", "Pr", 98},
+    {Elements::Nd, "Neodymium", "Nd", 98},   {Elements::Pm, "Promethium", "Pm", 98},   {Elements::Sm, "Samarium", "Sm", 98},
+    {Elements::Eu, "Europium", "Eu", 98},    {Elements::Gd, "Gadolinium", "Gd", 98},   {Elements::Tb, "Terbium", "Tb", 98},
+    {Elements::Dy, "Dysprosium", "Dy", 98},  {Elements::Ho, "Holmium", "Ho", 98},      {Elements::Er, "Erbium", "Er", 98},
+    {Elements::Tm, "Thulium", "Tm", 98},     {Elements::Yb, "Ytterbium", "Yb", 98},    {Elements::Lu, "Lutetium", "Lu", 3},
+    {Elements::Hf, "Hafnium", "Hf", 4},      {Elements::Ta, "Tantalum", "Ta", 5},      {Elements::W, "Tungsten", "W", 6},
+    {Elements::Re, "Rhenium", "Re", 7},      {Elements::Os, "Osmium", "Os", 8},        {Elements::Ir, "Iridium", "Ir", 9},
+    {Elements::Pt, "Platinum", "Pt", 10},    {Elements::Au, "Gold", "Au", 11},         {Elements::Hg, "Mercury", "Hg", 12},
+    {Elements::Tl, "Thallium", "Tl", 13},    {Elements::Pb, "Lead", "Pb", 14},         {Elements::Bi, "Bismuth", "Bi", 15},
+    {Elements::Po, "Polonium", "Po", 16},    {Elements::At, "Astatine", "At", 17},     {Elements::Rn, "Radon", "Rn", 18},
+    {Elements::Fr, "Francium", "Fr", 1},     {Elements::Ra, "Radium", "Ra", 2},        {Elements::Ac, "Actinium", "Ac", 99},
+    {Elements::Th, "Thorium", "Th", 99},     {Elements::Pa, "Protactinium", "Pa", 99}, {Elements::U, "Uranium", "U", 99},
+    {Elements::Np, "Neptunium", "Np", 99},   {Elements::Pu, "Plutonium", "Pu", 99},    {Elements::Am, "Americium", "Am", 99},
+    {Elements::Cm, "Curium", "Cm", 99},      {Elements::Bk, "Berkelium", "Bk", 99},    {Elements::Cf, "Californium", "Cf", 99},
+    {Elements::Es, "Einsteinium", "Es", 99}, {Elements::Fm, "Fermium", "Fm", 99},      {Elements::Md, "Mendelevium", "Md", 99},
+    {Elements::No, "Nobelium", "No", 99},    {Elements::Lr, "Lawrencium", "Lr", 3},    {Elements::Rf, "Rutherfordium", "Rf", 4},
+    {Elements::Db, "Dubnium", "Db", 5},      {Elements::Sg, "Seaborgium", "Sg", 6},    {Elements::Bh, "Bohrium", "Bh", 7},
+    {Elements::Hs, "Hassium", "Hs", 8},      {Elements::Mt, "Meitnerium", "Mt", 9},    {Elements::Ds, "Darmstadtium", "Ds", 10},
+    {Elements::Rg, "Roentgenium", "Rg", 11}, {Elements::Cn, "Copernicium", "Cn", 12},  {Elements::Nh, "Nihonium", "Nh", 13},
+    {Elements::Fl, "Flerovium", "Fl", 14},   {Elements::Mc, "Moscovium", "Mc", 15},    {Elements::Lv, "Livermorium", "Lv", 16},
+    {Elements::Ts, "Tennessine", "Ts", 17},  {Elements::Og, "Oganesson", "Og", 18}};
 
 // Return Element with corresponding Z
-Element &element(int Z)
+Element element(int Z)
 {
-    if ((Z < 0) || (Z > nElements))
-    {
-        Messenger::error("Element with Z={} is out of range!\n", Z);
-        return elements()[0];
-    }
+    assert((Z >= 0) && (Z < nElements));
 
-    return elements()[Z];
+    return elementData_[Z].Z();
 }
 
 // Return Element with corresponding symbol
-Element &element(std::string_view symbol)
+Element element(std::string_view symbol)
 {
     std::string cleaned;
     auto nDigits = 0;
@@ -127,48 +117,25 @@ Element &element(std::string_view symbol)
     {
         auto Z = std::stoi(cleaned);
         if ((Z < 0) || (Z > nElements))
-            return elements()[0];
+            return Elements::XX;
         else
-            return elements()[Z];
+            return elementData_[Z].Z();
     }
     else
         for (auto n = 0; n < nElements; n++)
-            if (DissolveSys::sameString(cleaned, elements()[n].symbol()))
-                return elements()[n];
+            if (DissolveSys::sameString(cleaned, elementData_[n].symbol()))
+                return elementData_[n].Z();
 
-    return elements()[0];
+    return Elements::XX;
 }
 
-// Return pointer to Element with corresponding symbol
-Element *elementPointer(std::string_view symbol) { return &element(symbol); }
-
 // Return name of element with specified Z
-std::string_view name(int Z) { return element(Z).name(); }
+std::string_view name(Element Z) { return elementData_[Z].name(); }
 
 // Return symbol of element with specified Z
-std::string_view symbol(int Z) { return element(Z).symbol(); }
+std::string_view symbol(Element Z) { return elementData_[Z].symbol(); }
 
 // Return group for element with specified Z
-int group(int Z) { return element(Z).group(); }
-
-/*
- * ElementReference
- */
-
-ElementReference::ElementReference(int z) : element_(Elements::element(z)) {}
-
-ElementReference::~ElementReference() {}
-
-// Return referenced element
-const Element &ElementReference::element() const { return element_; }
-
-// Return atomic number (Z)
-int ElementReference::Z() const { return element_.Z(); }
-
-// Return name of element
-std::string_view ElementReference::name() const { return element_.name(); }
-
-// Return symbol of element
-std::string_view ElementReference::symbol() const { return element_.symbol(); }
+int group(Element Z) { return elementData_[Z].group(); }
 
 } // namespace Elements

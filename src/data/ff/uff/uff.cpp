@@ -288,11 +288,11 @@ OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::determineUFFAtomType
 {
     OptionalReferenceWrapper<const UFFAtomType> typeRef;
 
-    switch (i->element()->Z())
+    switch (i->Z())
     {
         // H
         case (Elements::H):
-            if (isBoundTo(i, &Elements::element(5), 2))
+            if (isBoundTo(i, Elements::element(Elements::B), 2))
                 typeRef = uffAtomTypeByName("H_b");
             else
                 typeRef = uffAtomTypeByName("H_");
@@ -334,7 +334,7 @@ OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::determineUFFAtomType
                 typeRef = uffAtomTypeByName("O_2");
             else if (isBondPattern(i, 0, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry))
                 typeRef = uffAtomTypeByName("O_1");
-            else if (isBoundTo(i, &Elements::element(Elements::Si), 2))
+            else if (isBoundTo(i, Elements::element(Elements::Si), 2))
                 typeRef = uffAtomTypeByName("O_3_z");
             else
                 typeRef = uffAtomTypeByName("O_3");
@@ -401,7 +401,7 @@ OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::determineUFFAtomType
             break;
         // Default - all elements with only one type
         default:
-            typeRef = uffAtomTypeForElement(i->element()->Z());
+            typeRef = uffAtomTypeForElement(i->Z());
             break;
     }
 
@@ -636,7 +636,7 @@ bool Forcefield_UFF::assignAtomTypes(Species *sp, CoreData &coreData, bool keepE
 
         auto optTypeRef = determineUFFAtomType(i);
         if (!optTypeRef)
-            Messenger::print("No UFF type available for Atom {} of Species ({}).\n", i->index() + 1, i->element()->symbol());
+            Messenger::print("No UFF type available for Atom {} of Species ({}).\n", i->index() + 1, Elements::symbol(i->Z()));
         else
         {
             const UFFAtomType &uffType = *optTypeRef;
@@ -646,7 +646,7 @@ bool Forcefield_UFF::assignAtomTypes(Species *sp, CoreData &coreData, bool keepE
             auto opt_at = coreData.findAtomType(uffType.name());
             if (!opt_at)
             {
-                at = coreData.addAtomType(i->element());
+                at = coreData.addAtomType(i->Z());
                 at->setName(uffType.name());
 
                 /*

@@ -43,6 +43,6 @@ constexpr std::pair<int, double> radiusData_[] = {
     {Elements::Fl, 1.50}, {Elements::Mc, 1.50}, {Elements::Lv, 1.50}, {Elements::Ts, 1.50}, {Elements::Og, 1.50}};
 
 // Return radius for specified Z
-double radius(int Z) { return radiusData_[Z].second; }
+double radius(Elements::Element Z) { return radiusData_[Z].second; }
 
 } // namespace AtomicRadii

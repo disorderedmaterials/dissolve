@@ -41,21 +41,21 @@ class ElementSelector : public QWidget
      */
     private:
     // Current element
-    Elements::Element *currentElement_;
-    // Reference list of buttons and their associated Elements
-    RefDataList<QToolButton, Elements::Element *> elementButtons_;
+    Elements::Element currentElement_;
+    // Vector of toole buttons corresponding to elements
+    std::vector<QToolButton *> buttons_;
 
     public:
     // Set current element
-    void setCurrentElement(Elements::Element *element);
+    void setCurrentElement(Elements::Element Z);
     // Return current element
-    Elements::Element *currentElement() const;
+    Elements::Element currentElement() const;
 
     /*
      * Static Functions
      */
     public:
     // Get Element from user via input dialog
-    static Elements::Element *getElement(QWidget *parent, QString title, QString labelText, Elements::Element *element,
-                                         bool *ok = nullptr, Qt::WindowFlags flags = Qt::Dialog);
+    static Elements::Element getElement(QWidget *parent, QString title, QString labelText, Elements::Element Z,
+                                        bool *ok = nullptr, Qt::WindowFlags flags = Qt::Dialog);
 };

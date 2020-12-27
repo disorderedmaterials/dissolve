@@ -58,7 +58,7 @@ class SpeciesViewer : public BaseViewer
     // Clicked atom at the start of the interaction (if any)
     SpeciesAtom *clickedAtom_;
     // Element for created atoms in DrawInteraction
-    Elements::Element *drawElement_;
+    Elements::Element drawElement_;
     // Species-space coordinates at clicked position for DrawInteraction
     Vec3<double> drawCoordinateStart_;
     // Species-space coordinates at current position for DrawInteraction
@@ -80,9 +80,9 @@ class SpeciesViewer : public BaseViewer
     // Return text describing current interaction mode
     const QString interactionModeText() const;
     // Set current Element for DrawInteraction
-    void setDrawElement(Elements::Element *element);
+    void setDrawElement(Elements::Element Z);
     // Return current Element for DrawInteraction
-    Elements::Element *drawElement() const;
+    Elements::Element drawElement() const;
 
     /*
      * Source Species

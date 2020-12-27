@@ -183,7 +183,7 @@ void Species::addMissingBonds(double tolerance)
     {
         // Get SpeciesAtom 'i' and its radius
         SpeciesAtom *i = atoms[indexI];
-        radiusI = AtomicRadii::radius(i->element()->Z());
+        radiusI = AtomicRadii::radius(i->Z());
         for (auto indexJ = indexI + 1; indexJ < nAtoms(); ++indexJ)
         {
             // Get SpeciesAtom 'j'
@@ -197,7 +197,7 @@ void Species::addMissingBonds(double tolerance)
             vij = j->r() - i->r();
 
             // Compare distance to sum of atomic radii (multiplied by tolerance factor)
-            if (vij.magnitude() <= (radiusI + AtomicRadii::radius(j->element()->Z())) * tolerance)
+            if (vij.magnitude() <= (radiusI + AtomicRadii::radius(j->Z())) * tolerance)
                 addBond(i, j);
         }
     }

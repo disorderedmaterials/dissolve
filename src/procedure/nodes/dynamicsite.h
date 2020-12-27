@@ -41,7 +41,7 @@ class DynamicSiteProcedureNode : public ProcedureNode
     // Parent Select node for context
     SelectProcedureNode *parent_;
     // Target Elements for selection as sites
-    RefList<Elements::Element> elements_;
+    std::vector<Elements::Element> elements_;
     // Target AtomTypes for selection as sites
     std::vector<std::shared_ptr<AtomType>> atomTypes_;
 
