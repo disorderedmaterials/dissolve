@@ -14,8 +14,8 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
     // Raise an element selection dialog
     static SelectElementDialog selectElementDialog(this);
-    auto Z = selectElementDialog.selectElement(Elements::XX);
-    if (Z == Elements::XX)
+    auto Z = selectElementDialog.selectElement(Elements::Unknown);
+    if (Z == Elements::Unknown)
         return;
 
     // Create the new Species, and add a single atom at {0,0,0}

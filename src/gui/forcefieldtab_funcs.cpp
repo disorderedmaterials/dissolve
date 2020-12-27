@@ -531,7 +531,8 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 {
     // First, need to get target element for the new AtomType
     bool ok;
-    auto Z = ElementSelector::getElement(this, "Element Selection", "Choose the Element for the AtomType", Elements::XX, &ok);
+    auto Z =
+        ElementSelector::getElement(this, "Element Selection", "Choose the Element for the AtomType", Elements::Unknown, &ok);
     if (!ok)
         return;
 

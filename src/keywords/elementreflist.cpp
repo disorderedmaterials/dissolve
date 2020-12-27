@@ -30,7 +30,7 @@ bool ElementVectorKeyword::read(LineParser &parser, int startArg, CoreData &core
     {
         // Do we recognise the Element?
         auto el = Elements::element(parser.argsv(n));
-        if (el == Elements::XX)
+        if (el == Elements::Unknown)
             return Messenger::error("Unrecognised Element '{}' found in list.\n", parser.argsv(n));
 
         // If the Element is in the list already, complain

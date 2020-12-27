@@ -192,7 +192,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 break;
             case (Species::AtomKeyword):
                 Z = Elements::element(parser.argsv(2));
-                if (Z == Elements::XX)
+                if (Z == Elements::Unknown)
                 {
                     Messenger::error("Unrecognised element symbol '{}' found in {} keyword.\n", parser.argsv(2),
                                      Species::keywords().keyword(Species::AtomKeyword));

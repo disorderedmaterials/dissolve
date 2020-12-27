@@ -290,11 +290,11 @@ bool PairBroadeningFunction::read(LineParser &parser, CoreData &coreData)
 
                     // Line format is:  Element1  Element2  FWHM
                     auto Z1 = Elements::element(parser.argsv(0));
-                    if (Z1 == Elements::XX)
+                    if (Z1 == Elements::Unknown)
                         return Messenger::error("Unrecognised element '{}' found in pair broadening parameters.\n",
                                                 parser.argsv(0));
                     auto Z2 = Elements::element(parser.argsv(1));
-                    if (Z2 == Elements::XX)
+                    if (Z2 == Elements::Unknown)
                         return Messenger::error("Unrecognised element '{}' found in pair broadening parameters.\n",
                                                 parser.argsv(1));
 

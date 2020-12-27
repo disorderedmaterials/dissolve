@@ -43,7 +43,7 @@ int ElementData::group() const { return group_; }
 
 // Basic element data
 static std::vector<ElementData> elementData_ = {
-    {Elements::XX, "Unknown", "XX", 0},      {Elements::H, "Hydrogen", "H", 1},        {Elements::He, "Helium", "He", 18},
+    {Elements::Unknown, "Unknown", "XX", 0}, {Elements::H, "Hydrogen", "H", 1},        {Elements::He, "Helium", "He", 18},
     {Elements::Li, "Lithium", "Li", 1},      {Elements::Be, "Beryllium", "Be", 2},     {Elements::B, "Boron", "B", 13},
     {Elements::C, "Carbon", "C", 14},        {Elements::N, "Nitrogen", "N", 15},       {Elements::O, "Oxygen", "O", 16},
     {Elements::F, "Fluorine", "F", 17},      {Elements::Ne, "Neon", "Ne", 18},         {Elements::Na, "Sodium", "Na", 1},
@@ -117,7 +117,7 @@ Element element(std::string_view symbol)
     {
         auto Z = std::stoi(cleaned);
         if ((Z < 0) || (Z > nElements))
-            return Elements::XX;
+            return Elements::Unknown;
         else
             return elementData_[Z].Z();
     }
@@ -126,7 +126,7 @@ Element element(std::string_view symbol)
             if (DissolveSys::sameString(cleaned, elementData_[n].symbol()))
                 return elementData_[n].Z();
 
-    return Elements::XX;
+    return Elements::Unknown;
 }
 
 // Return name of element with specified Z

@@ -116,7 +116,7 @@ List<Isotope> &Isotopes::isotopesByElement(Elements::Element Z)
 
     static Isotope sears91Data[] = {
         //	Z	El	A	I(p)		Mass		bc	bi	sc	si	ss	sa
-        {Elements::XX, 0, "", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
+        {Elements::Unknown, 0, "", 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0},
         {Elements::H, 0, "", 1.00797, -3.739, 0, 1.7568, 80.26, 82.02, 0.3326},
         {Elements::H, 1, "1/2(+)", 1.00783, -3.7406, 25.274, 1.7583, 80.27, 82.03, 0.3326},
         {Elements::H, 2, "1(+)", 2.014, 6.671, 4.04, 5.592, 2.05, 7.64, 0.000519},

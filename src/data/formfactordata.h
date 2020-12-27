@@ -9,7 +9,7 @@
 class FormFactorData
 {
     public:
-    FormFactorData(Elements::Element Z = Elements::XX, int formalCharge = 0);
+    FormFactorData(Elements::Element Z = Elements::Unknown, int formalCharge = 0);
 
     /*
      * Element State

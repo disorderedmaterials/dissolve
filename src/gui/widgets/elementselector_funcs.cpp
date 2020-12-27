@@ -13,7 +13,7 @@
 
 ElementSelector::ElementSelector(QWidget *parent) : QWidget(parent)
 {
-    currentElement_ = Elements::XX;
+    currentElement_ = Elements::Unknown;
 
     // Create grid layout for widget
     auto *gl = new QGridLayout;
@@ -142,7 +142,7 @@ void ElementSelector::elementButtonClicked(bool checked)
     // Cast sender
     auto *button = qobject_cast<QToolButton *>(sender());
     if (!button)
-        currentElement_ = Elements::XX;
+        currentElement_ = Elements::Unknown;
 
     currentElement_ = Elements::element(qPrintable(button->text()));
 
@@ -175,7 +175,7 @@ void ElementSelector::setCurrentElement(Elements::Element Z)
     currentElement_ = Z;
 
     // Find and check the related button
-    if (currentElement_ != Elements::XX)
+    if (currentElement_ != Elements::Unknown)
     {
         QToolButton *button = buttons_[currentElement_];
         if (button)
@@ -212,7 +212,7 @@ Elements::Element ElementSelector::getElement(QWidget *parent, QString title, QS
         new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel, Qt::Horizontal, &inputDialog);
     QObject::connect(buttonBox, SIGNAL(accepted()), &inputDialog, SLOT(accept()));
     QObject::connect(buttonBox, SIGNAL(rejected()), &inputDialog, SLOT(reject()));
-    buttonBox->button(QDialogButtonBox::Ok)->setEnabled(Z != Elements::XX);
+    buttonBox->button(QDialogButtonBox::Ok)->setEnabled(Z != Elements::Unknown);
     QObject::connect(elementSelector, SIGNAL(elementSelected(bool)), buttonBox->button(QDialogButtonBox::Ok),
                      SLOT(setEnabled(bool)));
 

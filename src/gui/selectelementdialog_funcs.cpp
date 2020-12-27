@@ -33,5 +33,5 @@ Elements::Element SelectElementDialog::selectElement(Elements::Element currentEl
     if (exec() == QDialog::Accepted)
         return ui_.ElementWidget->currentElement();
     else
-        return Elements::XX;
+        return Elements::Unknown;
 }

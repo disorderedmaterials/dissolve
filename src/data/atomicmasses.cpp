@@ -18,7 +18,7 @@ namespace AtomicMass
  */
 
 constexpr std::pair<int, double> massData_[] = {
-    {Elements::XX, 0.0},          // Unknown element
+    {Elements::Unknown, 0.0},     // Unknown element
     {Elements::H, 1.00798175},    // Uncertainty = (1), VSMOW
     {Elements::He, 4.002602},     // Uncertainty = (2)
     {Elements::Li, 6.9675},       // Average of {6.938, 6.997}

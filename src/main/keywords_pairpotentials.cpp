@@ -78,7 +78,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
             case (PairPotentialsBlock::ParametersKeyword):
                 // Sanity check element
                 Z = Elements::element(parser.argsv(2));
-                if (Z == Elements::XX)
+                if (Z == Elements::Unknown)
                 {
                     Messenger::error("Unknown element '{}' given for atom type '{}' in PairPotentials block.\n",
                                      parser.argsv(2), parser.argsv(1));

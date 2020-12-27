@@ -102,11 +102,11 @@ class Forcefield
     // Return named short-range parameters (if they exist)
     const OptionalReferenceWrapper<const ForcefieldParameters> shortRangeParameters(std::string_view name) const;
     // Return the named ForcefieldAtomType (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeByName(std::string_view name,
-                                                                              Elements::Element onlyZ = Elements::XX) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType>
+    atomTypeByName(std::string_view name, Elements::Element onlyZ = Elements::Unknown) const;
     // Return the ForcefieldAtomType with specified id (if it exists)
     virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeById(int id,
-                                                                            Elements::Element onlyZ = Elements::XX) const;
+                                                                            Elements::Element onlyZ = Elements::Unknown) const;
 
     /*
      * Term Data

@@ -6,7 +6,7 @@
 #include "data/elements.h"
 #include <string.h>
 
-AtomType::AtomType() : Z_(Elements::XX), name_{"XX"}, exchangeable_(false), shortRangeType_(Forcefield::UndefinedType) {}
+AtomType::AtomType() : Z_(Elements::Unknown), name_{"XX"}, exchangeable_(false), shortRangeType_(Forcefield::UndefinedType) {}
 
 /*
  * Character

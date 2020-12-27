@@ -16,10 +16,10 @@ class ForcefieldParameters;
 class ForcefieldAtomType
 {
     public:
-    ForcefieldAtomType(Elements::Element Z = Elements::XX, int index = -1, std::string_view name = "",
+    ForcefieldAtomType(Elements::Element Z = Elements::Unknown, int index = -1, std::string_view name = "",
                        std::string_view netaDefinition = "", std::string_view description = "", double q = 0.0,
                        double data0 = 0.0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
-    ForcefieldAtomType(OptionalReferenceWrapper<const ForcefieldParameters> params, Elements::Element Z = Elements::XX,
+    ForcefieldAtomType(OptionalReferenceWrapper<const ForcefieldParameters> params, Elements::Element Z = Elements::Unknown,
                        int index = -1, std::string_view name = "", std::string_view netaDefinition = "",
                        std::string_view description = nullptr, double q = 0.0);
     ForcefieldAtomType(const ForcefieldAtomType &sourceType, std::string_view newTypeName, std::string_view netaDefinition = "",

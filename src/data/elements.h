@@ -13,7 +13,7 @@ namespace Elements
 // Element Enum
 enum Element
 {
-    XX,
+    Unknown,
     H,
     He,
     Li,

@@ -164,7 +164,7 @@ const OptionalReferenceWrapper<const ForcefieldParameters> Forcefield::shortRang
 OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeByName(std::string_view name,
                                                                               Elements::Element onlyZ) const
 {
-    auto endZ = (onlyZ != Elements::XX ? onlyZ : Elements::nElements - 1);
+    auto endZ = (onlyZ != Elements::Unknown ? onlyZ : Elements::nElements - 1);
     for (int Z = onlyZ; Z <= endZ; ++Z)
     {
         // Go through types associated to the Element
@@ -180,7 +180,7 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeByName(st
 // Return the ForcefieldAtomType with specified id (if it exists)
 OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::atomTypeById(int id, Elements::Element onlyZ) const
 {
-    auto endZ = (onlyZ != Elements::XX ? onlyZ : Elements::nElements - 1);
+    auto endZ = (onlyZ != Elements::Unknown ? onlyZ : Elements::nElements - 1);
     for (int Z = onlyZ; Z <= endZ; ++Z)
     {
         // Go through types associated to the Element

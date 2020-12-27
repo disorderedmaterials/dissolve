@@ -11,7 +11,7 @@
 class Isotope : public ListItem<Isotope>
 {
     public:
-    Isotope(Elements::Element Z = Elements::XX, int A = 0, std::string_view spin = "", double mass = 0.0, double bc = 0.0,
+    Isotope(Elements::Element Z = Elements::Unknown, int A = 0, std::string_view spin = "", double mass = 0.0, double bc = 0.0,
             double bi = 0.0, double sc = 0.0, double si = 0.0, double totalxs = 0.0, double absxs = 0.0);
     Isotope &operator=(const Isotope &source);
 

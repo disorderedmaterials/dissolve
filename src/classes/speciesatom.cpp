@@ -11,7 +11,7 @@
 
 SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
 {
-    Z_ = Elements::XX;
+    Z_ = Elements::Unknown;
     charge_ = 0.0;
     atomType_ = nullptr;
     r_.zero();
