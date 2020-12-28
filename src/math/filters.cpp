@@ -6,8 +6,10 @@
 #include "math/integrator.h"
 #include "templates/array.h"
 
+namespace Filters
+{
 // Perform point-wise convolution of data with the supplied BroadeningFunction
-void Filters::convolve(Data1D &data, const BroadeningFunction &function, bool variableOmega, bool normalise)
+void convolve(Data1D &data, const BroadeningFunction &function, bool variableOmega, bool normalise)
 {
     // Check for no broadening function specified
     if (function.function() == BroadeningFunction::NoFunction)
@@ -60,7 +62,7 @@ void Filters::convolve(Data1D &data, const BroadeningFunction &function, bool va
 }
 
 // Perform convolution of the supplied delta function into the supplied data
-void Filters::convolve(double xCentre, double value, const BroadeningFunction &function, Data1D &dest)
+void convolve(double xCentre, double value, const BroadeningFunction &function, Data1D &dest)
 {
     // Check for no broadening function specified
     if (function.function() == BroadeningFunction::NoFunction)
@@ -77,14 +79,14 @@ void Filters::convolve(double xCentre, double value, const BroadeningFunction &f
 }
 
 // Apply Kolmogorov–Zurbenko filter
-void Filters::kolmogorovZurbenko(Data1D &data, int k, int m, bool normalised)
+void kolmogorovZurbenko(Data1D &data, int k, int m, bool normalised)
 {
     for (auto iteration = 0; iteration < k; ++iteration)
         normalised ? normalisedMovingAverage(data, m) : movingAverage(data, m);
 }
 
 // Apply median filter to data
-void Filters::median(Data1D &data, int length)
+void median(Data1D &data, int length)
 {
     // Grab y array
     auto &y = data.values();
@@ -140,7 +142,7 @@ void Filters::median(Data1D &data, int length)
 }
 
 // Perform moving average smoothing
-void Filters::movingAverage(Data1D &data, int avgSize)
+void movingAverage(Data1D &data, int avgSize)
 {
     // Grab y array
     auto &y = data.values();
@@ -181,7 +183,7 @@ void Filters::movingAverage(Data1D &data, int avgSize)
 }
 
 // Perform moving average smoothing, normalising area after smooth
-void Filters::normalisedMovingAverage(Data1D &data, int avgSize)
+void normalisedMovingAverage(Data1D &data, int avgSize)
 {
     // Calculate the original integral
     double originalIntegral = Integrator::absTrapezoid(data);
@@ -196,7 +198,7 @@ void Filters::normalisedMovingAverage(Data1D &data, int avgSize)
 }
 
 // Subtract average level from data, forming average from supplied x value
-double Filters::subtractAverage(Data1D &data, double xStart)
+double subtractAverage(Data1D &data, double xStart)
 {
     // Grab x and y arrays
     const auto &x = data.xAxis();
@@ -219,7 +221,7 @@ double Filters::subtractAverage(Data1D &data, double xStart)
 }
 
 // Trim supplied data to specified range
-void Filters::trim(Data1D &data, double xMin, double xMax, bool interpolateEnds, double interpolationThreshold)
+void trim(Data1D &data, double xMin, double xMax, bool interpolateEnds, double interpolationThreshold)
 {
     std::vector<double> newX, newY;
     const auto &x = data.xAxis();
@@ -271,13 +273,13 @@ void Filters::trim(Data1D &data, double xMin, double xMax, bool interpolateEnds,
 }
 
 // Trim supplied data to be the same range as the reference data
-void Filters::trim(Data1D &data, const Data1D &ref, bool interpolateEnds, double interpolationThreshold)
+void trim(Data1D &data, const Data1D &ref, bool interpolateEnds, double interpolationThreshold)
 {
     trim(data, ref.xAxis().front(), ref.xAxis().back(), interpolateEnds, interpolationThreshold);
 }
 
 // Convert bin boundaries to centre-bin values
-void Filters::convertBinBoundaries(Data1D &data)
+void convertBinBoundaries(Data1D &data)
 {
     // Assume that input x values are histogram bin left-boundaries, so x(n) = 0.5[x(n)+x(n_1)]
     auto &x = data.xAxis();
@@ -292,3 +294,4 @@ void Filters::convertBinBoundaries(Data1D &data)
     // Remove last point
     data.removeLastPoint();
 }
+} // namespace Filters
