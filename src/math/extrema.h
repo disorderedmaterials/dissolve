@@ -9,23 +9,22 @@ template <class T> class Array2D;
 template <class T> class Array3D;
 
 // Extrema
-class Extrema
+namespace Extrema
 {
-    public:
-    // Return minimum from array provided
-    static double min(const Array<double> &A);
-    // Return maximum from array provided
-    static double max(const Array<double> &A);
-    // Return minimum from 2D array provided
-    static double min(const Array2D<double> &A);
-    // Return maximum from 2D array provided
-    static double max(const Array2D<double> &A);
-    // Return absolute minimum from array provided
-    static double absMin(const Array<double> &A);
-    // Return absolute maximum from array provided
-    static double absMax(const Array<double> &A);
-    // Return absolute minimum from 2D array provided
-    static double absMin(const Array2D<double> &A);
-    // Return absolute maximum from 2D array provided
-    static double absMax(const Array2D<double> &A);
-};
+// Return minimum from array provided
+double min(const Array<double> &A);
+// Return maximum from array provided
+double max(const Array<double> &A);
+// Return minimum from 2D array provided
+double min(const Array2D<double> &A);
+// Return maximum from 2D array provided
+double max(const Array2D<double> &A);
+// Return absolute minimum from array provided
+double absMin(const Array<double> &A);
+// Return absolute maximum from array provided
+double absMax(const Array<double> &A);
+// Return absolute minimum from 2D array provided
+double absMin(const Array2D<double> &A);
+// Return absolute maximum from 2D array provided
+double absMax(const Array2D<double> &A);
+}; // namespace Extrema

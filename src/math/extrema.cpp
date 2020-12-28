@@ -5,8 +5,10 @@
 #include "templates/array.h"
 #include "templates/array2d.h"
 
+namespace Extrema
+{
 // Return minimum from 1D array provided
-double Extrema::min(const Array<double> &A)
+double min(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
@@ -23,7 +25,7 @@ double Extrema::min(const Array<double> &A)
 }
 
 // Return maximum from 1D array provided
-double Extrema::max(const Array<double> &A)
+double max(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
@@ -40,7 +42,7 @@ double Extrema::max(const Array<double> &A)
 }
 
 // Return minimum from 2D array provided
-double Extrema::min(const Array2D<double> &A)
+double min(const Array2D<double> &A)
 {
     if (A.empty())
         return 0;
@@ -48,7 +50,7 @@ double Extrema::min(const Array2D<double> &A)
 }
 
 // Return maximum from 2D array provided
-double Extrema::max(const Array2D<double> &A)
+double max(const Array2D<double> &A)
 {
     if (A.empty())
         return 0;
@@ -56,7 +58,7 @@ double Extrema::max(const Array2D<double> &A)
 }
 
 // Return absolute minimum from array provided
-double Extrema::absMin(const Array<double> &A)
+double absMin(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
@@ -73,7 +75,7 @@ double Extrema::absMin(const Array<double> &A)
 }
 
 // Return absolute maximum from array provided
-double Extrema::absMax(const Array<double> &A)
+double absMax(const Array<double> &A)
 {
     if (A.nItems() > 0)
     {
@@ -90,7 +92,7 @@ double Extrema::absMax(const Array<double> &A)
 }
 
 // Return absolute minimum from 2D array provided
-double Extrema::absMin(const Array2D<double> &A)
+double absMin(const Array2D<double> &A)
 {
     if (A.empty())
         return 0;
@@ -98,9 +100,10 @@ double Extrema::absMin(const Array2D<double> &A)
 }
 
 // Return absolute maximum from 2D array provided
-double Extrema::absMax(const Array2D<double> &A)
+double absMax(const Array2D<double> &A)
 {
     if (A.empty())
         return 0;
     return *std::max_element(A.begin(), A.end(), [](auto a, auto b) { return fabs(a) < fabs(b); });
 }
+} // namespace Extrema
