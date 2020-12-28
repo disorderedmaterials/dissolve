@@ -4,8 +4,10 @@
 #include "math/gj.h"
 #include "templates/array2d.h"
 
+namespace GaussJordan
+{
 // Perform Gauss-Jordan inversion of the supplied Array2D<double>
-bool GaussJordan::invert(Array2D<double> &A)
+bool invert(Array2D<double> &A)
 {
     // Matrix must be square, and not stored as a half-matrix
     if (A.nRows() != A.nColumns())
@@ -106,3 +108,4 @@ bool GaussJordan::invert(Array2D<double> &A)
 
     return true;
 }
+} // namespace GaussJordan
