@@ -5,15 +5,17 @@
 #include "math/data1d.h"
 #include "templates/array.h"
 
+namespace Regression
+{
 // Return gradient of last n points
-double Regression::linear(const Data1D &data, int nSamples)
+double linear(const Data1D &data, int nSamples)
 {
     double yMean;
     return linear(data, nSamples, yMean);
 }
 
 // Return gradient of last n points, along with average y value
-double Regression::linear(const Data1D &data, int nSamples, double &yBar)
+double linear(const Data1D &data, int nSamples, double &yBar)
 {
     // Grab data arrays
     const auto &x = data.xAxis();
@@ -46,3 +48,4 @@ double Regression::linear(const Data1D &data, int nSamples, double &yBar)
     // Return the gradient
     return Sxy / Sxx;
 }
+} // namespace Regression
