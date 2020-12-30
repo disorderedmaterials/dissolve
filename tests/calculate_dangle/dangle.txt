@@ -236,7 +236,6 @@ Module DataTest
   Target  'DAngle(X-H...O)'
   Data1D  'DAngle(X-H...O)_RDF(BC)_Bulk'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum'
   EndData1D
-  Threshold  1.03
 EndModule
 
 Module DataTest
@@ -244,7 +243,6 @@ Module DataTest
   Target  'DAngle(X-H...O)-Analyser'
   Data1D  'DAngle(X-H...O)-Analyser//Process1D//Bulk//RDF'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.aardf_21_23_inter_sum'
   EndData1D
-  Threshold  1.03
 EndModule
 
 Module DataTest
@@ -252,7 +250,6 @@ Module DataTest
   Target  'DAngle(X-H...O)'
   Data1D  'DAngle(X-H...O)_ANGLE(ABC)_Bulk'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm'
   EndData1D
-  Threshold  0.4
 EndModule
 
 Module DataTest
@@ -260,7 +257,6 @@ Module DataTest
   Target  'DAngle(X-H...O)-Analyser'
   Data1D  'DAngle(X-H...O)-Analyser//Process1D//Bulk//Angle'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm'
   EndData1D
-  Threshold  0.4
 EndModule
 
 Module DataTest
@@ -270,7 +266,6 @@ Module DataTest
 #    XRange  0.0  5.0  0.01
 #    YRange  0.0  180  1.0
   #EndData2D
-  Threshold  0.3
 EndModule
 
 EndLayer
