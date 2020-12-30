@@ -13,9 +13,9 @@ void DataTestModule::initialise()
                   "<target> <fileformat> <filename> [options...]");
     keywords_.add("Test", new Data2DStoreKeyword(test2DData_), "Data2D", "Specify two-dimensional test reference data",
                   "<target> <fileformat> <filename> [options...]");
-    keywords_.add("Test", new EnumOptionsKeyword<Error::ErrorType>(Error::errorTypes() = Error::PercentError), "ErrorType",
+    keywords_.add("Test", new EnumOptionsKeyword<Error::ErrorType>(Error::errorTypes() = Error::EuclideanError), "ErrorType",
                   "Type of error calculation to use");
     keywords_.add("Test", new ModuleRefListKeyword(targetModule_, 1), "Target", "Module containing target data", "<Module>");
-    keywords_.add("Test", new DoubleKeyword(0.1, 1.0e-5), "Threshold", "Test threshold (%error) above which test fails",
+    keywords_.add("Test", new DoubleKeyword(5.0e-3, 1.0e-5), "Threshold", "Threshold for error metric above which test fails",
                   "<threshold[0.1]>");
 }
