@@ -21,6 +21,7 @@ enum ErrorType
     MAPEError,
     PercentError,
     RFactorError,
+    EuclideanError,
     nErrorCalculationTypes
 };
 // Return enum options for ErrorType
@@ -42,4 +43,7 @@ double mape(const Data1D &A, const Data1D &B, bool quiet = false);
 double percent(const Data1D &A, const Data1D &B, bool quiet = false);
 // Return R-Factor (average squared error per point) between supplied data
 double rFactor(const Data1D &A, const Data1D &B, bool quiet = false);
+// Return Euclidean distance, normalised to mean of B, between supplied data
+double euclidean(const Data1D &A, const Data1D &B, bool quiet = false);
+
 }; // namespace Error
