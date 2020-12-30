@@ -50,8 +50,8 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Generate the error estimate and compare against the threshold value
         double error = Error::error(errorType, data, *testData1D, true);
         Messenger::print("Target data '{}' has error of {:7.3e} with calculated data and is {} (threshold is {:6.3e})\n\n",
-                         testData1D->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
-        if (error > testThreshold)
+                         testData1D->name(), error, isnan(error) || error > testThreshold ? "NOT OK" : "OK", testThreshold);
+        if (isnan(error) || error > testThreshold)
             return false;
     }
 
@@ -77,8 +77,8 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Generate the error estimate and compare against the threshold value
         // 		double error = Error::error(errorType, data, *testData2D, true);
         // 		Messenger::print("Target data '{}' has error of {:7.3f} with calculated data and is {} (threshold
-        // is {:6.3e})\n\n", testData2D->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold); if
-        // (error > testThreshold) return false;
+        // is {:6.3e})\n\n", testData2D->name(), error, isnan(error) || error > testThreshold ? "NOT OK" : "OK", testThreshold);
+        // if (isnan(error) || error > testThreshold) return false;
 
         return Messenger::error("Error calculation between 2D datasets is not yet implemented.\n");
     }
