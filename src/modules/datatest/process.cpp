@@ -49,7 +49,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Generate the error estimate and compare against the threshold value
         double error = Error::error(errorType, data, *testData1D, true);
-        Messenger::print("Target data '{}' has error of {:7.3f} with calculated data and is {} (threshold is {:6.3e})\n\n",
+        Messenger::print("Target data '{}' has error of {:7.3e} with calculated data and is {} (threshold is {:6.3e})\n\n",
                          testData1D->name(), error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
         if (error > testThreshold)
             return false;
