@@ -89,8 +89,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, const std::shared_ptr<At
     if (i == j)
         return;
 
-    // Check indices of Atoms if required
-    if (excludeIgeJ && (i >= j))
+    // Check indices of atoms if required
+    if (excludeIgeJ && (i->arrayIndex() >= j->arrayIndex()))
         return;
 
     if (applyMim)
@@ -140,8 +140,8 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
             // Straight loop over other cell atoms
             for (auto jj : otherAtoms)
             {
-                // Check exclusion of I > J (pointer comparison)
-                if (excludeIgeJ && (ii >= jj))
+                // Check exclusion of I >= J
+                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
                     continue;
 
                 // Check for atoms in the same Molecule
@@ -167,8 +167,8 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
             // Straight loop over other cell atoms
             for (auto jj : otherAtoms)
             {
-                // Check exclusion of I > J (pointer comparison)
-                if (excludeIgeJ && (ii >= jj))
+                // Check exclusion of I >= J
+                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
                     continue;
 
                 // Check for atoms in the same molecule
@@ -244,8 +244,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
         else if (flags & KernelFlags::ExcludeIGEJFlag)
             for (auto jj : otherAtoms)
             {
-                // Pointer comparison for i >= jj
-                if (i >= jj)
+                // Check for i >= jj
+                if (i->arrayIndex() >= jj->arrayIndex())
                     continue;
 
                 // Check for atoms in the same species
@@ -270,8 +270,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
                     forcesWithMim(i, jj);
                 else
                 {
-                    // Pointer comparison for i >= jj
-                    if (i >= jj)
+                    // Check for i >= jj
+                    if (i->arrayIndex() >= jj->arrayIndex())
                         continue;
 
                     scale = i->scaling(jj);
@@ -328,8 +328,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
                 // Grab other Atom pointer
                 jj = *indexJ;
 
-                // Pointer comparison for i >= jj
-                if (i >= jj)
+                // Check for i >= jj
+                if (i->arrayIndex() >= jj->arrayIndex())
                     continue;
 
                 // Check for atoms in the same species
