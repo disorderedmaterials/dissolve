@@ -120,7 +120,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
             for (auto jj : otherAtoms)
             {
                 // Check exclusion of I >= J
-                if (excludeIgeJ && (ii >= jj))
+                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
                     continue;
 
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -152,7 +152,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
             for (auto jj : otherAtoms)
             {
                 // Check exclusion of I >= J
-                if (excludeIgeJ && (ii >= jj))
+                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
                     continue;
 
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -210,8 +210,8 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
             {
                 ii = *indexI;
 
-                // Check exclusion of I >= J (comparison by pointer)
-                if (excludeIgeJ && (ii >= jj))
+                // Check exclusion of I >= J
+                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
                     continue;
 
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -247,8 +247,8 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
             {
                 ii = *indexI;
 
-                // Check exclusion of I >= J (comparison by pointer)
-                if (excludeIgeJ && (ii >= jj))
+                // Check exclusion of I >= J
+                if (excludeIgeJ && (ii->arrayIndex() >= jj->arrayIndex()))
                     continue;
 
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -339,8 +339,8 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
                 // Grab other Atom pointer
                 jj = *indexJ;
 
-                // Pointer comparison for i >= jj
-                if (i >= jj)
+                // Check for i >= jj
+                if (i->arrayIndex() >= jj->arrayIndex())
                     continue;
 
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -374,8 +374,8 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
                     totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq));
                 else
                 {
-                    // Pointer comparison for i >= jj
-                    if (i >= jj)
+                    // Check for i >= jj
+                    if (i->arrayIndex() >= jj->arrayIndex())
                         continue;
 
                     scale = i->scaling(jj);
@@ -439,8 +439,8 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
                 // Grab other Atom pointer
                 jj = *indexJ;
 
-                // Pointer comparison for i >= jj
-                if (i >= jj)
+                // Check for i >= jj
+                if (i->arrayIndex() >= jj->arrayIndex())
                     continue;
 
                 // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
@@ -474,8 +474,8 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
                     totalEnergy += pairPotentialEnergy(i, jj, sqrt(rSq));
                 else
                 {
-                    // Pointer comparison for i >= jj
-                    if (i >= jj)
+                    // Check for i >= jj
+                    if (i->arrayIndex() >= jj->arrayIndex())
                         continue;
 
                     scale = i->scaling(jj);
