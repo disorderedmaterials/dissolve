@@ -31,9 +31,6 @@ stages:
               extraflags: '-DCHECKS:bool=true'
               ppa: 'beineri/opt-qt-5.13.2-bionic'
               qtver: 513
-          - bash: |
-              cp build/bin/dissolve tests/
-            displayName: 'Copy Executable'
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "."
@@ -48,9 +45,6 @@ stages:
             fetchDepth: 1
           - template: templates/set-short-hash.yml
           - template: templates/build-linux-parallel.yml
-          - bash: |
-              cp build/bin/dissolve-mpi tests/
-            displayName: 'Copy Executable'
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "."
