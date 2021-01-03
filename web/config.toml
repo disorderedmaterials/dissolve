@@ -49,7 +49,7 @@ latexDashes = true
     weight = 5
 
 [params]
-copyright = "Copyright (c) 2020 Team Dissolve and contributors. Built using Hugo/Docsy."
+copyright = "Copyright (c) 2021 Team Dissolve and contributors. Built using Hugo/Docsy."
 releaseVersion = "0.6.1"
 releaseDate = "18th March 2020"
 devVersion = "0.7.0"

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
-// Copyright (c) 2020 Team Dissolve and contributors
+// Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/messenger.h"
 #include "base/processpool.h"
@@ -36,9 +36,9 @@ int main(int args, char **argv)
         Messenger::enableRedirect(fmt::format("{}.{}", options.redirectionBasename().value(), ProcessPool::worldRank()));
 
 #ifdef PARALLEL
-    Messenger::print("Dissolve PARALLEL version {}, Copyright (C) 2020 Team Dissolve and contributors.\n", Version::info());
+    Messenger::print("Dissolve PARALLEL version {}, Copyright (C) 2021 Team Dissolve and contributors.\n", Version::info());
 #else
-    Messenger::print("Dissolve SERIAL version {}, Copyright (C) 2020 Team Dissolve and contributors.\n", Version::info());
+    Messenger::print("Dissolve SERIAL version {}, Copyright (C) 2021 Team Dissolve and contributors.\n", Version::info());
 #endif
     Messenger::print("Source repository: {}.\n", Version::repoUrl());
     Messenger::print("Dissolve comes with ABSOLUTELY NO WARRANTY.\n");
