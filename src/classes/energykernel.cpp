@@ -28,6 +28,8 @@ EnergyKernel::~EnergyKernel() {}
 // Return PairPotential energy between atoms provided as pointers, at the distance specified
 double EnergyKernel::pairPotentialEnergy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r)
 {
+    // Messenger::print("E  {} {} @ {} = {}\n", std::min(i->arrayIndex(), j->arrayIndex()), std::max(i->arrayIndex(),
+    // j->arrayIndex()), r, potentialMap_.energy(i, j, r));
     return potentialMap_.energy(i, j, r);
 }
 
@@ -40,9 +42,6 @@ double EnergyKernel::energyWithoutMim(const std::shared_ptr<Atom> i, const std::
 // Return PairPotential energy between atoms provided as pointers (minimum image calculation)
 double EnergyKernel::energyWithMim(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j)
 {
-    // 	Messenger::print("EnergyKernel::atoms(*,*) - energy {}-{} is {} at {} mim\n",
-    // min(i->arrayIndex(),j->arrayIndex()), max(i->arrayIndex(),j->arrayIndex()), pairPotentialEnergy(i->masterTypeIndex(),
-    // j->masterTypeIndex(), box_->minimumDistance(j, i)), box_->minimumDistance(j, i));
     return pairPotentialEnergy(i, j, box_->minimumDistance(j, i));
 }
 
@@ -124,7 +123,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
                 if (excludeIgeJ && (ii >= jj))
                     continue;
 
-                // Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
+                // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
                 rSq = box_->minimumDistanceSquared(rI, jj->r());
                 if (rSq > cutoffDistanceSquared_)
                     continue;
@@ -156,7 +155,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
                 if (excludeIgeJ && (ii >= jj))
                     continue;
 
-                // Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
+                // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
                 rSq = (rI - jj->r()).magnitudeSq();
                 if (rSq > cutoffDistanceSquared_)
                     continue;
@@ -215,7 +214,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
                 if (excludeIgeJ && (ii >= jj))
                     continue;
 
-                // Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
+                // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
                 rSq = (ii->r() - rJ).magnitudeSq();
                 if (rSq > cutoffDistanceSquared_)
                     continue;
@@ -252,7 +251,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
                 if (excludeIgeJ && (ii >= jj))
                     continue;
 
-                // Calculate rSquared distance betwenn atoms, and check it against the stored cutoff distance
+                // Calculate rSquared distance between atoms, and check it against the stored cutoff distance
                 rSq = box_->minimumDistanceSquared(ii->r(), rJ);
                 if (rSq > cutoffDistanceSquared_)
                     continue;
