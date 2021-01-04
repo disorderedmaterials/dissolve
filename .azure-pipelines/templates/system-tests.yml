@@ -22,7 +22,7 @@ jobs:
           set -ex
           mkdir build && cd build
           mv $(System.ArtifactsDirectory)/linux-tests-serial/* ./
-          chmod +x bin/dissolve
+          chmod +x bin/*
           ctest -j2 --output-on-failure
         displayName: 'Run Serial System Tests'
   - job:
@@ -48,6 +48,6 @@ jobs:
           set -ex
           mkdir build && cd build
           mv $(System.ArtifactsDirectory)/linux-tests-parallel/* ./
-          chmod +x bin/dissolve-mpi
+          chmod +x bin/*
           ctest --output-on-failure
         displayName: 'Run Parallel System Tests'
