@@ -86,7 +86,7 @@ class RDFModule : public Module
     // Calculate and return effective density for based on the target Configurations
     double effectiveDensity() const;
     // Calculate and return used species populations based on target Configurations
-    std::map<const Species *, double> speciesPopulations() const;
+    std::vector<std::pair<const Species *, double>> speciesPopulations() const;
     // (Re)calculate partial g(r) for the specified Configuration
     bool calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule::PartialsMethod method, const double rdfRange,
                      const double rdfBinWidth, bool &alreadyUpToDate);

@@ -234,9 +234,9 @@ double RDFModule::effectiveDensity() const
 }
 
 // Calculate and return used species populations based on target Configurations
-std::map<const Species *, double> RDFModule::speciesPopulations() const
+std::vector<std::pair<const Species *, double>> RDFModule::speciesPopulations() const
 {
-    std::map<const Species *, double> populations;
+    std::vector<std::pair<const Species *, double>> populations;
 
     for (auto *cfg : targetConfigurations())
     {
@@ -246,8 +246,12 @@ std::map<const Species *, double> RDFModule::speciesPopulations() const
         ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
         while (auto *spInfo = spInfoIterator.iterate())
         {
-            populations.try_emplace(spInfo->species(), 0.0);
-            populations[spInfo->species()] += spInfo->population() * weight;
+            auto it = std::find_if(populations.begin(), populations.end(),
+                                   [&spInfo](auto &data) { return data.first == spInfo->species(); });
+            if (it != populations.end())
+                it->second += spInfo->population() * weight;
+            else
+                populations.emplace_back(spInfo->species(), spInfo->population() * weight);
         }
     }
 
