@@ -28,7 +28,7 @@ stages:
           - template: templates/set-short-hash.yml
           - template: templates/build-linux-serial-gui.yml
             parameters:
-              extraflags: '-DCHECKS:bool=true'
+              extraflags: '-DCHECKS:bool=true -DBUILD_TESTS:bool=true'
               ppa: 'beineri/opt-qt-5.13.2-bionic'
               qtver: 513
           - task: PublishBuildArtifacts@1
@@ -45,6 +45,8 @@ stages:
             fetchDepth: 1
           - template: templates/set-short-hash.yml
           - template: templates/build-linux-parallel.yml
+            parameters:
+              extraflags: '-DCHECKS:bool=true -DBUILD_TESTS:bool=true'
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "."
