@@ -33,7 +33,7 @@ stages:
               qtver: 513
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: "."
+              PathtoPublish: "build/"
               ArtifactName: 'linux-tests-serial'
             displayName: 'Publish Serial Test Artifacts'
       - job: 'linux_parallel'
@@ -49,7 +49,7 @@ stages:
               extraflags: '-DCHECKS:bool=true -DBUILD_TESTS:bool=true'
           - task: PublishBuildArtifacts@1
             inputs:
-              PathtoPublish: "."
+              PathtoPublish: "build/"
               ArtifactName: 'linux-tests-parallel'
             displayName: 'Publish Parallel Test Artifacts'
       - job: 'osx_serialgui'

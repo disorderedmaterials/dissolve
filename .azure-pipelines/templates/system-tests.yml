@@ -9,7 +9,8 @@ jobs:
     pool:
       vmImage: ubuntu-18.04
     steps:
-      - checkout: none
+      - checkout: self
+        fetchDepth: 1
       - task: DownloadBuildArtifacts@0
         inputs:
           buildType: 'current'
@@ -19,7 +20,8 @@ jobs:
         displayName: 'Download Serial Test Artifacts'
       - bash: |
           set -ex
-          cd $(System.ArtifactsDirectory)/linux-tests-serial/build
+          mkdir build && cd build
+          mv $(System.ArtifactsDirectory)/linux-tests-serial/* ./
           chmod +x bin/dissolve
           ctest -j2 --output-on-failure
         displayName: 'Run Serial System Tests'
@@ -29,7 +31,8 @@ jobs:
     pool:
       vmImage: ubuntu-18.04
     steps:
-      - checkout: none
+      - checkout: self
+        fetchDepth: 1
       - bash: |
           set -ex
           sudo apt-get install libopenmpi-dev openmpi-bin openmpi-common
@@ -43,7 +46,8 @@ jobs:
         displayName: 'Download Parallel Test Artifacts'
       - bash: |
           set -ex
-          cd $(System.ArtifactsDirectory)/linux-tests-parallel/build
+          mkdir build && cd build
+          mv $(System.ArtifactsDirectory)/linux-tests-parallel/* ./
           chmod +x bin/dissolve-mpi
           ctest --output-on-failure
         displayName: 'Run Parallel System Tests'
