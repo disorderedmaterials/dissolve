@@ -91,7 +91,7 @@
          <item>
           <widget class="QPushButton" name="ModuleControlsButton">
            <property name="text">
-            <string>Control</string>
+            <string>Options</string>
            </property>
            <property name="icon">
             <iconset resource="main.qrc">
@@ -117,7 +117,7 @@
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>Module Output</string>
+            <string>Output</string>
            </property>
            <property name="icon">
             <iconset resource="main.qrc">

@@ -13,7 +13,7 @@ Dissolve will now iterate for 1000 iterations and stop - you can see the estimat
 To see what's being calculated, go back to the [`CalculateAxisAngle`]({{< ref "calculateaxisangle" >}}) module and look at its output section:
 
 {{< action type="tabs" text="**Analysis** layer tab" >}}
-{{< action type="mouse" text="Click the `CalculateAxisAngle` module and select the **Module Output** section" >}}
+{{< action type="mouse" text="Click the `CalculateAxisAngle` module and select the **Output** section" >}}
 
 We have three graphs - top-left is the radial distribution function between the centres-of-geometry of the benzene, while the bottom-left is the angle histogram of the z-axis angles (averaged over all distances). The main graph to the right shows the distance-angle map of the two quantities. You might want to explore the latter in 3D space, rather than a top-down view - you can change the view style for the plot in the toolbar at the top (change the view type from `XY` to `3D`).
 
