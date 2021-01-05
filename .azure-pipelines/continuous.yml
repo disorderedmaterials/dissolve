@@ -106,11 +106,13 @@ stages:
               artifactName: 'windows-artifacts'
             displayName: 'Download Windows Artifacts'
           - bash: |
+              set -ex
               VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
               cd ./examples
               ./package-examples -v ${VERSION}
             displayName: 'Create Example Data Archives'
           - bash: |
+              set -ex
               VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
               # Linux AppImages
               cd $(System.ArtifactsDirectory)/linux-artifacts
