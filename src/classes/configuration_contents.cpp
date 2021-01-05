@@ -20,8 +20,8 @@ void Configuration::empty()
         delete box_;
     box_ = new CubicBox(1.0);
     cells_.clear();
-
-    // Clear used species
+    appliedSizeFactor_ = 1.0;
+    requestedSizeFactor_ = 1.0;
     usedSpecies_.clear();
 
     ++contentsVersion_;

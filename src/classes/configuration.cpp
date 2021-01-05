@@ -138,14 +138,13 @@ bool Configuration::initialiseContent(ProcessPool &procPool, double pairPotentia
     if (emptyCurrentContent)
         empty();
 
-    /*
-     * Content Initialisation
-     */
+    appliedSizeFactor_ = 1.0;
+    requestedSizeFactor_ = 1.0;
 
-    // If the Configuation is currently empty, run the generator Procedure and potentially load coordinates from file
+    // If the Configuration is currently empty, run the generator Procedure and potentially load coordinates from file
     if (nAtoms() == 0)
     {
-        // Run the generator procedure (we will need species / atom info to load any coordinates in to anyway)
+        // Run the generator procedure (we will need species / atom info to load any coordinates in)
         if (!generate(procPool, pairPotentialRange))
             return false;
 
