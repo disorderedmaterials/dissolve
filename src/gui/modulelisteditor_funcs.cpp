@@ -40,6 +40,7 @@ bool ModuleListEditor::setUp(DissolveWindow *dissolveWindow, ModuleLayer *module
     ui_.ChartScrollArea->setWidgetResizable(true);
     ui_.ChartScrollArea->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     connect(chartWidget_, SIGNAL(dataModified()), dissolveWindow_, SLOT(setModified()));
+    connect(chartWidget_, SIGNAL(fullUpdate()), dissolveWindow_, SLOT(fullUpdate()));
     connect(chartWidget_, SIGNAL(dataModified()), this, SLOT(chartWidgetDataModified()));
     connect(chartWidget_, SIGNAL(requiredSizeChanged()), this, SLOT(chartWidgetSizeChanged()));
     connect(chartWidget_, SIGNAL(blockRemoved(const QString &)), this, SLOT(moduleDeleted(const QString &)));

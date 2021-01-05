@@ -368,6 +368,7 @@ void ModuleListChart::blockRemovalRequested(const QString &blockIdentifier)
         dissolve_.deleteModuleInstance(module);
 
         emit(dataModified());
+        emit(fullUpdate());
 
         updateControls();
     }

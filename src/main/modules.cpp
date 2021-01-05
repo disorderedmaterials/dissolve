@@ -252,6 +252,9 @@ bool Dissolve::deleteModuleInstance(Module *instance)
     // Remove the reference from our list
     moduleInstances_.remove(instance);
 
+    // Invalidate any references to the module in keywords
+    KeywordBase::objectNoLongerValid(instance);
+
     // Delete the actual Module - we assume that it has been removed from any ModuleList
     delete instance;
 
