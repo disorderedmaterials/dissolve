@@ -1,4 +1,5 @@
-add_library(import
+add_library(
+  import
   coordinates.cpp
   coordinates_dlpoly.cpp
   coordinates_epsr.cpp
@@ -16,7 +17,6 @@ add_library(import
   forces_moscito.cpp
   forces_simple.cpp
   trajectory.cpp
-
   coordinates.h
   data1d.h
   data2d.h
@@ -25,10 +25,4 @@ add_library(import
   trajectory.h
 )
 
-include_directories(
-  ${PROJECT_SOURCE_DIR}/src
-  ${PROJECT_BINARY_DIR}/src
-  ${CMAKE_SOURCE_DIR}
-  ${CMAKE_BINARY_DIR}
-  ${CMAKE_BINARY_DIR}/src
-)
+include_directories(${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src)

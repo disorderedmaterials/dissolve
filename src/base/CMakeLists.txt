@@ -1,4 +1,5 @@
-add_library(base
+add_library(
+  base
   enumoption.cpp
   enumoptionsbase.cpp
   enumoptionslist.cpp
@@ -14,7 +15,6 @@ add_library(base
   timer.cpp
   units.cpp
   version.cpp
-  
   enumoption.h
   enumoptionsbase.h
   enumoptions.h
@@ -33,9 +33,4 @@ add_library(base
   version.h
 )
 
-include_directories(
-../
-${CMAKE_SOURCE_DIR}
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/src
-)
+include_directories(../ ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src)

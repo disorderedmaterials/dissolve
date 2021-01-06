@@ -1,4 +1,5 @@
-add_library(math
+add_library(
+  math
   averaging.cpp
   broadeningfunction.cpp
   cuboid.cpp
@@ -29,7 +30,6 @@ add_library(math
   svd.cpp
   transformer.cpp
   windowfunction.cpp
-
   averaging.h
   broadeningfunction.h
   constants.h
@@ -68,9 +68,4 @@ add_library(math
   windowfunction.h
 )
 
-include_directories(
-../
-${CMAKE_SOURCE_DIR}
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/src
-)
+include_directories(../ ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src)

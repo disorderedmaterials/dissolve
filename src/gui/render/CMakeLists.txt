@@ -1,18 +1,31 @@
 # TextPrimitive ANTLR Lexer/Parser
 antlr_target(TextPrimitiveGrammarLexer TextPrimitiveLexer.g4 LEXER)
-#              PACKAGE TextPrimitiveGrammar)
-antlr_target(TextPrimitiveGrammarParser TextPrimitiveParser.g4 PARSER
-#              PACKAGE TextPrimitiveGrammar
-             DEPENDS_ANTLR TextPrimitiveGrammarLexer
-             COMPILE_FLAGS -no-listener -visitor -lib ${ANTLR_TextPrimitiveGrammarLexer_OUTPUT_DIR})
+# PACKAGE TextPrimitiveGrammar)
+antlr_target(
+  TextPrimitiveGrammarParser
+  TextPrimitiveParser.g4
+  PARSER
+  # PACKAGE TextPrimitiveGrammar
+  DEPENDS_ANTLR
+  TextPrimitiveGrammarLexer
+  COMPILE_FLAGS
+  -no-listener
+  -visitor
+  -lib
+  ${ANTLR_TextPrimitiveGrammarLexer_OUTPUT_DIR}
+)
 
 # Append path to ANTLR parser output, and set cache variable
 list(APPEND ANTLR_OUTPUT_DIRS ${ANTLR_TextPrimitiveGrammarLexer_OUTPUT_DIR})
 list(APPEND ANTLR_OUTPUT_DIRS ${ANTLR_TextPrimitiveGrammarParser_OUTPUT_DIR})
-set(ANTLR_OUTPUT_DIRS ${ANTLR_OUTPUT_DIRS} CACHE INTERNAL "")
+set(ANTLR_OUTPUT_DIRS
+    ${ANTLR_OUTPUT_DIRS}
+    CACHE INTERNAL ""
+)
 
 # Target 'render'
-add_library(render
+add_library(
+  render
   axes.h
   colourdefinition.h
   colourscaledelta.h
@@ -46,7 +59,6 @@ add_library(render
   view.h
   TextPrimitiveErrorListeners.h
   TextPrimitiveVisitor.h
-
   axes.cpp
   colourdefinition.cpp
   colourscale.cpp
@@ -80,18 +92,17 @@ add_library(render
   view.cpp
   TextPrimitiveErrorListeners.cpp
   TextPrimitiveVisitor.cpp
-
   ${ANTLR_TextPrimitiveGrammarLexer_CXX_OUTPUTS}
   ${ANTLR_TextPrimitiveGrammarParser_CXX_OUTPUTS}
 )
 
-target_include_directories(render PRIVATE
-  ${PROJECT_SOURCE_DIR}/src
-  ${PROJECT_BINARY_DIR}/src
-  ${Qt5Widgets_INCLUDE_DIRS}
-  ${FREETYPE_INCLUDE_DIRS}
-  ${ANTLRRUNTIME_INCLUDE_DIRS}
-  ${ANTLR_TextPrimitiveGrammarLexer_OUTPUT_DIR}
-  ${ANTLR_TextPrimitiveGrammarParser_OUTPUT_DIR}
+target_include_directories(
+  render
+  PRIVATE ${PROJECT_SOURCE_DIR}/src
+          ${PROJECT_BINARY_DIR}/src
+          ${Qt5Widgets_INCLUDE_DIRS}
+          ${FREETYPE_INCLUDE_DIRS}
+          ${ANTLRRUNTIME_INCLUDE_DIRS}
+          ${ANTLR_TextPrimitiveGrammarLexer_OUTPUT_DIR}
+          ${ANTLR_TextPrimitiveGrammarParser_OUTPUT_DIR}
 )
-

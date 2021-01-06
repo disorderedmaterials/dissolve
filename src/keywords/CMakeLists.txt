@@ -1,4 +1,5 @@
-add_library(keywords
+add_library(
+  keywords
   atomtypereflist.cpp
   atomtypeselection.cpp
   base.cpp
@@ -43,7 +44,6 @@ add_library(keywords
   vector_intdouble.cpp
   vector_intstring.cpp
   windowfunction.cpp
-
   atomtypereflist.h
   atomtypeselection.h
   base.h
@@ -94,10 +94,4 @@ add_library(keywords
   windowfunction.h
 )
 
-include_directories(
-../
-${CMAKE_SOURCE_DIR}
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/src
-)
-
+include_directories(../ ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src)

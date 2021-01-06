@@ -1,4 +1,5 @@
-add_library(classes
+add_library(
+  classes
   atom.cpp
   atomtype.cpp
   atomtypedata.cpp
@@ -68,7 +69,6 @@ add_library(classes
   speciessite.cpp
   speciestorsion.cpp
   xrayweights.cpp
-  
   atom.h
   atomtypedata.h
   atomtype.h
@@ -124,9 +124,4 @@ add_library(classes
   xrayweights.h
 )
 
-include_directories(
-../
-${CMAKE_SOURCE_DIR}
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/src
-)
+include_directories(../ ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src)
