@@ -112,19 +112,6 @@ stages:
               ./package-examples -v ${VERSION}
             displayName: 'Create Example Data Archives'
           - bash: |
-              set -ex
-              VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
-              # OSX Disk Images
-              cd $(System.ArtifactsDirectory)/osx-artifacts
-              mv -v Dissolve-GUI-${VERSION}.dmg Dissolve-GUI-${VERSION}-Catalina.dmg
-              cd ../
-              # Windows Installer / Zip
-              cd $(System.ArtifactsDirectory)/windows-artifacts
-              mv -v Dissolve-GUI-${VERSION}-Win64.zip Dissolve-GUI-${VERSION}-Win64.zip
-              mv -v Dissolve-GUI-${VERSION}-Win64.exe Dissolve-GUI-${VERSION}-Win64.exe
-              cd ../
-            displayName: 'Rename Artifacts'
-          - bash: |
               SHORTHASH=`git rev-parse --short HEAD`
               DATE=`date`
               VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
