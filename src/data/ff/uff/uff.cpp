@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "data/ff/uff.h"
+#include "data/ff/uff/uff.h"
 #include "classes/atomtype.h"
 #include "classes/coredata.h"
 #include "classes/species.h"

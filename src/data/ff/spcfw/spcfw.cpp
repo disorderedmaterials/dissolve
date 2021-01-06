@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "data/ff/spcfw.h"
+#include "data/ff/spcfw/spcfw.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/speciesatom.h"

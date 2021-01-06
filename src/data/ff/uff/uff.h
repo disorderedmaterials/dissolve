@@ -4,7 +4,7 @@
 #pragma once
 
 #include "data/ff.h"
-#include "data/ff/uffatomtype.h"
+#include "data/ff/uff/uffatomtype.h"
 #include "templates/optionalref.h"
 
 // Forward Declarations

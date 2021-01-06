@@ -3,7 +3,7 @@
 
 #include "data/fflibrary.h"
 #include "base/sysfunc.h"
-#include "data/ff/kulmala2010.h"
+#include "data/ff/kulmala2010/kulmala2010.h"
 #include "data/ff/ludwig/ntf2.h"
 #include "data/ff/ludwig/py4oh.h"
 #include "data/ff/ludwig/py5.h"
@@ -16,8 +16,8 @@
 #include "data/ff/oplsaa2005/triols.h"
 #include "data/ff/pcl2019/anions.h"
 #include "data/ff/pcl2019/cations.h"
-#include "data/ff/spcfw.h"
-#include "data/ff/uff.h"
+#include "data/ff/spcfw/spcfw.h"
+#include "data/ff/uff/uff.h"
 
 // Static Members
 std::vector<std::shared_ptr<Forcefield>> ForcefieldLibrary::forcefields_;

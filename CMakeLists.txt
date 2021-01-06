@@ -193,6 +193,7 @@ endif(APPLE)
 set(MODULE_LINK_LIBS "" CACHE INTERNAL "")
 set(MODULEGUI_LINK_LIBS "" CACHE INTERNAL "")
 set(MODULENOGUI_LINK_LIBS "" CACHE INTERNAL "")
+set(FF_LINK_LIBS "" CACHE INTERNAL "")
 add_subdirectory(${SRCS})
 
 # Add executable target(s)
@@ -246,12 +247,10 @@ endif(GUI)
 set(BASIC_LINK_LIBS
 
   # Main libs
-  main classes module io export import neta procedure procedurenodes keywords expression genericitems base math data ff
+  main classes module io export import neta procedure procedurenodes keywords expression genericitems base math data
 
   # Forcefields
-  ff_pcl2019
-  ff_ludwig
-  ff_oplsaa2005
+  ${FF_LINK_LIBS}
 
   # Modules
   ${MODULE_LINK_LIBS}
