@@ -38,7 +38,9 @@ stages:
           - bash: |
               set -ex
               cmake-format --version
-              find . -type f \( -name CMakeLists.txt -or -name '*.cmake' \) -exec cmake-format --check '{}' \;
+              find . -type f -name CMakeLists.txt -exec cmake-format -i '{}' \;
+              git diff
+              git diff --quiet
             displayName: 'Run cmake-format'
 
       - job: 'copyright_year'
