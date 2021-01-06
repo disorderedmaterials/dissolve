@@ -171,6 +171,8 @@ class ChartBase : public QWidget
     signals:
     // Notify that the underlying data displayed by the chart has changed
     void dataModified();
+    // Notify that the underlying data has changed, and the GUI should be updated in full
+    void fullUpdate();
     // Notify that our required size has changed
     void requiredSizeChanged();
 };

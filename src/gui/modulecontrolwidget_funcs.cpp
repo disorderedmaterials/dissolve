@@ -46,9 +46,7 @@ void ModuleControlWidget::setModule(Module *module, Dissolve *dissolve)
         return;
     }
 
-    // Set the icon name label
-    ui_.ModuleNameLabel->setText(QString("%1 (%2)").arg(QString::fromStdString(std::string(module_->uniqueName())),
-                                                        QString::fromStdString(std::string(module->type()))));
+    // Set the icon label
     ui_.ModuleIconLabel->setPixmap(ModuleBlock::modulePixmap(module_));
 
     // Set up our control widgets
@@ -94,6 +92,10 @@ void ModuleControlWidget::updateControls()
         return;
 
     Locker refreshLocker(refreshLock_);
+
+    // Ensure module name is up to date
+    ui_.ModuleNameLabel->setText(QString("%1 (%2)").arg(QString::fromStdString(std::string(module_->uniqueName())),
+                                                        QString::fromStdString(std::string(module_->type()))));
 
     // Update keywords
     ui_.ModuleKeywordsWidget->updateControls();
