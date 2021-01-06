@@ -31,28 +31,7 @@ foreach(SRCFILE "${tests_SRC}")
     ${BASIC_LINK_LIBS}
 
     # Module 'nogui' libs
-    analysemodulenogui
-    atomshakemodulenogui
-    benchmarkmodulenogui
-    braggmodulenogui
-    calculateanglemodulenogui
-    calculateavgmolmodulenogui
-    calculateaxisanglemodulenogui
-    calculatecnmodulenogui
-    calculatedanglemodulenogui
-    calculaterdfmodulenogui
-    calculatesdfmodulenogui
-    calibrationmodulenogui
-    datatestmodulenogui
-    energymodulenogui
-    epsrmodulenogui
-    geomoptmodulenogui
-    neutronsqmodulenogui
-    rdfmodulenogui
-    skeletonmodulenogui
-    sqmodulenogui
-    testmodulenogui
-    xraysqmodulenogui
+    ${MODULENOGUI_LINK_LIBS}
 
     ${NO_WHOLE_ARCHIVE_FLAG}
 

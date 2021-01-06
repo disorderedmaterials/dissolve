@@ -190,6 +190,9 @@ If(APPLE)
 endif(APPLE)
 
 # Process CMakeLists in subdirs
+set(MODULE_LINK_LIBS "" CACHE INTERNAL "")
+set(MODULEGUI_LINK_LIBS "" CACHE INTERNAL "")
+set(MODULENOGUI_LINK_LIBS "" CACHE INTERNAL "")
 add_subdirectory(${SRCS})
 
 # Add executable target(s)
@@ -251,39 +254,7 @@ set(BASIC_LINK_LIBS
   ff_oplsaa2005
 
   # Modules
-  analysemodule
-  atomshakemodule
-  benchmarkmodule
-  braggmodule
-  calculateanglemodule
-  calculateavgmolmodule
-  calculateaxisanglemodule
-  calculatecnmodule
-  calculatedanglemodule
-  calculaterdfmodule
-  calculatesdfmodule
-  calibrationmodule
-  checksmodule
-  checkspeciesmodule
-  datatestmodule
-  energymodule
-  epsrmodule
-  exportcoordinatesmodule
-  exportpairpotentialsmodule
-  exporttrajectorymodule
-  forcesmodule
-  geomoptmodule
-  importmodule
-  intrashakemodule
-  mdmodule
-  molshakemodule
-  neutronsqmodule
-  rdfmodule
-  sanitycheckmodule
-  skeletonmodule
-  sqmodule
-  testmodule
-  xraysqmodule
+  ${MODULE_LINK_LIBS}
 )
 
 # Set linker options for complete/no archive
@@ -312,28 +283,7 @@ target_link_libraries( ${target_name}
   ${BASIC_LINK_LIBS}
 
   # Module 'nogui' libs
-  analysemodulenogui
-  atomshakemodulenogui
-  benchmarkmodulenogui
-  braggmodulenogui
-  calculateanglemodulenogui
-  calculateavgmolmodulenogui
-  calculateaxisanglemodulenogui
-  calculatecnmodulenogui
-  calculatedanglemodulenogui
-  calculaterdfmodulenogui
-  calculatesdfmodulenogui
-  calibrationmodulenogui
-  datatestmodulenogui
-  energymodulenogui
-  epsrmodulenogui
-  geomoptmodulenogui
-  neutronsqmodulenogui
-  rdfmodulenogui
-  skeletonmodulenogui
-  sqmodulenogui
-  testmodulenogui
-  xraysqmodulenogui
+  ${MODULENOGUI_LINK_LIBS}
 
   ${NO_WHOLE_ARCHIVE_FLAG}
 
@@ -363,28 +313,7 @@ if(GUI)
     ${BASIC_LINK_LIBS}
 
     # Module gui libs
-    analysemodulegui
-    atomshakemodulegui
-    benchmarkmodulegui
-    braggmodulegui
-    calculateanglemodulegui
-    calculateavgmolmodulegui
-    calculateaxisanglemodulegui
-    calculatecnmodulegui
-    calculatedanglemodulegui
-    calculaterdfmodulegui
-    calculatesdfmodulegui
-    calibrationmodulegui
-    datatestmodulegui
-    energymodulegui
-    epsrmodulegui
-    geomoptmodulegui
-    neutronsqmodulegui
-    rdfmodulegui
-    skeletonmodulegui
-    sqmodulegui
-    testmodulegui
-    xraysqmodulegui
+    ${MODULEGUI_LINK_LIBS}
 
     # Main gui libs
     render
