@@ -19,23 +19,23 @@ macro(dissolve_add_module header modulename)
 
     # Add dummy GUI target, so we can link both GUI and non-GUI versions of the code
     list(REMOVE_ITEM MODULE_SRC nogui.cpp)
-    add_library(${modulename}modulenogui nogui.cpp)
+    add_library(module_${modulename}_nogui nogui.cpp)
     set(MODULENOGUI_LINK_LIBS
-        ${MODULENOGUI_LINK_LIBS} "${modulename}modulenogui"
+        ${MODULENOGUI_LINK_LIBS} "module_${modulename}_nogui"
         CACHE INTERNAL "" FORCE
     )
   endif()
 
   # Add library target
-  add_library(${modulename}module ${MODULE_SRC})
+  add_library(module_${modulename} ${MODULE_SRC})
   set(MODULE_LINK_LIBS
-      ${MODULE_LINK_LIBS} "${modulename}module"
+      ${MODULE_LINK_LIBS} "module_${modulename}"
       CACHE INTERNAL "" FORCE
   )
 
   # Set common include dirs
   include_directories(
-    ${modulename}module
+    module_${modulename}
     PRIVATE
     ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_BINARY_DIR}/src
@@ -45,7 +45,7 @@ macro(dissolve_add_module header modulename)
   )
 endmacro()
 macro(dissolve_add_module_gui modulename)
-  message(STATUS "...    GUI component '${modulename}gui'")
+  message(STATUS "...    GUI component 'module_${modulename}_gui'")
 
   # Create source file lists
   set(MODULEGUI_MOC_HDRS "modulewidget.h")
@@ -70,18 +70,18 @@ macro(dissolve_add_module_gui modulename)
   qt5_wrap_ui(MODULEGUI_UIS_H ${MODULEGUI_UIS})
 
   # Add library target
-  add_library(${modulename}gui ${MODULEGUI_MOC_SRCS} ${MODULEGUI_UIS_H} ${MODULEGUI_SRC})
+  add_library(module_${modulename}_gui ${MODULEGUI_MOC_SRCS} ${MODULEGUI_UIS_H} ${MODULEGUI_SRC})
   set(MODULEGUI_LINK_LIBS
-      ${MODULEGUI_LINK_LIBS} "${modulename}gui"
+      ${MODULEGUI_LINK_LIBS} "module_${modulename}_gui"
       CACHE INTERNAL "" FORCE
   )
 
   # Add dependency on main GUI components
-  add_dependencies(${modulename}gui gui)
+  add_dependencies(module_${modulename}_gui gui)
 
   # Set common include dirs
   include_directories(
-    ${modulename}gui
+    module_${modulename}_gui
     PRIVATE
     ${PROJECT_SOURCE_DIR}/src
     ${PROJECT_BINARY_DIR}/src
