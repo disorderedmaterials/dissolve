@@ -114,11 +114,6 @@ stages:
           - bash: |
               set -ex
               VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
-              # Linux AppImages
-              cd $(System.ArtifactsDirectory)/linux-artifacts
-              mv -v Dissolve-x86_64.AppImage Dissolve-${VERSION}-x86_64.AppImage
-              mv -v Dissolve-GUI-x86_64.AppImage Dissolve-GUI-${VERSION}-x86_64.AppImage
-              cd ../
               # OSX Disk Images
               cd $(System.ArtifactsDirectory)/osx-artifacts
               mv -v Dissolve-GUI-${VERSION}.dmg Dissolve-GUI-${VERSION}-Catalina.dmg
