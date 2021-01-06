@@ -7,7 +7,7 @@ function(dissolve_system_test directory file_name count)
       set(test_target_executable ${CMAKE_BINARY_DIR}/bin/${target_name})
       add_test(
         NAME ${directory}-${file_name}-${nproc}
-        COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${nproc} ${test_target_executable} -n ${count} -x -i ${file_name}.txt ${ARGN}
+        COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${nproc} ${test_target_executable} -n ${count} -x ${file_name}.txt ${ARGN}
         WORKING_DIRECTORY ../tests/${directory}
       )
       set_property(
@@ -25,7 +25,7 @@ function(dissolve_system_test directory file_name count)
     set(test_target_executable ${CMAKE_BINARY_DIR}/bin/${target_name})
     add_test(
       NAME ${directory}-${file_name}
-      COMMAND ${test_target_executable} -n ${count} -x -i ${file_name}.txt ${ARGN}
+      COMMAND ${test_target_executable} -n ${count} -x ${file_name}.txt ${ARGN}
       WORKING_DIRECTORY ../tests/${directory}
     )
     set_property(
@@ -51,7 +51,6 @@ add_subdirectory(energyforce4)
 add_subdirectory(epsr)
 add_subdirectory(exchangeable)
 add_subdirectory(ff)
-
 add_subdirectory(md)
 add_subdirectory(molshake)
 add_subdirectory(rdfmethod)

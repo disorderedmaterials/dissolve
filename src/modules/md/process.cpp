@@ -31,19 +31,19 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         configurationLocal_ ? targetConfigurations_.firstItem()->moduleData() : dissolve.processingModuleData();
 
     // Get control parameters
-    const bool capForce = keywords_.asBool("CapForces");
+    const auto capForce = keywords_.asBool("CapForces");
     const auto maxForce = keywords_.asDouble("CapForcesAt") * 100.0; // To convert from kJ/mol to 10 J/mol
-    double cutoffDistance = keywords_.asDouble("CutoffDistance");
+    auto cutoffDistance = keywords_.asDouble("CutoffDistance");
     if (cutoffDistance < 0.0)
         cutoffDistance = dissolve.pairPotentialRange();
-    double deltaT = keywords_.asDouble("DeltaT");
+    auto deltaT = keywords_.asDouble("DeltaT");
     const auto energyFrequency = keywords_.asInt("EnergyFrequency");
     const auto nSteps = keywords_.asInt("NSteps");
     const auto outputFrequency = keywords_.asInt("OutputFrequency");
     auto randomVelocities = keywords_.asBool("RandomVelocities");
-    const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
+    const auto onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
     const auto trajectoryFrequency = keywords_.asInt("TrajectoryFrequency");
-    const bool variableTimestep = keywords_.asBool("VariableTimestep");
+    const auto variableTimestep = keywords_.asBool("VariableTimestep");
     auto writeTraj = trajectoryFrequency > 0;
 
     // Print argument/parameter summary
