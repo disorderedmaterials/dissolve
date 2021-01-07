@@ -1,5 +1,6 @@
 ---
 title: Step 4b - Calculate g(r) and S(Q)
+type: docs
 ---
 
 

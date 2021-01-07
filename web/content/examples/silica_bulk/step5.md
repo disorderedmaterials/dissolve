@@ -1,5 +1,6 @@
 ---
 title: Step 5 - Set up Potential Refinement
+type: docs
 ---
 
 

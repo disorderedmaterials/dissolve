@@ -1,5 +1,6 @@
 ---
 title: Step 9b - Hydrogen Bond Geometry
+type: docs
 weight: 13
 ---
 

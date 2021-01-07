@@ -1,5 +1,6 @@
 ---
 title: Step 7 - Set up Potential Refinement
+type: docs
 weight: 9
 ---
 

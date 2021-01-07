@@ -1,5 +1,6 @@
 ---
 title: Liquid Argon
+type: docs
 ---
 
 {{< label color="blue" icon="fa-clock" text="20 minute read" >}}

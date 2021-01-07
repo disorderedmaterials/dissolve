@@ -1,5 +1,6 @@
 ---
 title: Step 1 - Set up Atomic Species
+type: docs
 ---
 
 

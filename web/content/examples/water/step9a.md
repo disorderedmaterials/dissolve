@@ -1,5 +1,6 @@
 ---
 title: Step 9a - Centre-of-Mass RDF
+type: docs
 weight: 12
 ---
 

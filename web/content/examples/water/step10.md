@@ -1,5 +1,6 @@
 ---
 title: Step 10 - Running the Analysis
+type: docs
 weight: 15
 ---
 

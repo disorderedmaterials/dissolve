@@ -1,5 +1,6 @@
 ---
 title: Step 6 - Fix the Water Molecule Geometry
+type: docs
 weight: 8
 ---
 

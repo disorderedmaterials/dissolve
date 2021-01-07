@@ -1,5 +1,6 @@
 ---
 title: Step 4 - Equilibrate the Box
+type: docs
 ---
 
 

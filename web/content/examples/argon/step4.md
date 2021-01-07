@@ -1,5 +1,6 @@
 ---
 title: Step 4 - Set up the Simulation
+type: docs
 ---
 
 

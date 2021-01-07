@@ -1,5 +1,6 @@
 ---
 title: Step 5 - Assessing the Reference Potential
+type: docs
 weight: 7
 ---
 

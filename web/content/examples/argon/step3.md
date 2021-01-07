@@ -1,5 +1,6 @@
 ---
 title: Step 3 - Add a Configuration
+type: docs
 ---
 
 

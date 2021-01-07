@@ -1,5 +1,6 @@
 ---
 title: Step 9 - Compare Data
+type: docs
 ---
 
 

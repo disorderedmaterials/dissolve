@@ -1,5 +1,6 @@
 ---
 title: Step 1 - Create the Species
+type: docs
 ---
 
 

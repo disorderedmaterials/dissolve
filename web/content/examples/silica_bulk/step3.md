@@ -1,5 +1,6 @@
 ---
 title: Step 3 - Set up Processing
+type: docs
 ---
 
 

@@ -1,5 +1,6 @@
 ---
 title: Step 1a - Draw the Molecule
+type: docs
 weight: 2
 ---
 

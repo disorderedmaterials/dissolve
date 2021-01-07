@@ -1,5 +1,6 @@
 ---
 title: Step 8 - Managing the Refinement
+type: docs
 weight: 10
 ---
 

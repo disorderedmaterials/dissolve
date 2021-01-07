@@ -1,5 +1,6 @@
 ---
 title: Step 9b - Molecule Orientation
+type: docs
 ---
 
 

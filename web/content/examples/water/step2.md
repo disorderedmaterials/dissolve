@@ -1,5 +1,6 @@
 ---
 title: Step 2 - Set up a Configuration
+type: docs
 weight: 4
 ---
 

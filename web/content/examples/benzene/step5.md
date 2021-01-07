@@ -1,5 +1,6 @@
 ---
 title: Step 5 - Calculate Baseline Properties
+type: docs
 ---
 
 

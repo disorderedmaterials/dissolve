@@ -1,5 +1,6 @@
 ---
 title: Step 1 - Creating a Species
+type: docs
 ---
 
 We need a suitable species to represent the argon atom in our simulation.

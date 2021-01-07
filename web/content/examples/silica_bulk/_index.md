@@ -1,5 +1,6 @@
 ---
 title: Bulk Silica
+type: docs
 ---
 
 {{< label color="blue" icon="fa-clock" text="30 minute read" >}}

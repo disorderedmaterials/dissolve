@@ -1,5 +1,6 @@
 ---
 title: Step 6 - Set up Refinement
+type: docs
 ---
 
 

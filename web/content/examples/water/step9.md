@@ -1,5 +1,6 @@
 ---
 title: Step 9 - Setting up Analysis
+type: docs
 weight: 11
 ---
 

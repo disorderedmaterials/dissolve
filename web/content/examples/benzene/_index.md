@@ -1,5 +1,6 @@
 ---
 title: Comparing Benzene Structure
+type: docs
 ---
 
 70 - 90 minutes

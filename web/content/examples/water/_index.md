@@ -1,5 +1,6 @@
 ---
 title: Liquid Water
+type: docs
 weight: 3
 ---
 

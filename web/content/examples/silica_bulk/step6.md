@@ -1,5 +1,6 @@
 ---
 title: Step 6 - Analyse the Structure
+type: docs
 ---
 
 

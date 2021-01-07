@@ -1,5 +1,6 @@
 ---
 title: Step 1b - Add Isotopologues
+type: docs
 weight: 3
 ---
 

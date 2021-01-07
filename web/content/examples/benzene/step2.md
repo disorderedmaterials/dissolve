@@ -1,5 +1,6 @@
 ---
 title: Step 2 - Set up a Configuration
+type: docs
 ---
 
 Time to create a suitable liquid configuration for our simulation using the predefined "simple random mix" generator:

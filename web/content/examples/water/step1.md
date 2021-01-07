@@ -1,5 +1,6 @@
 ---
 title: Step 1 - Create a Water Species
+type: docs
 weight: 1
 ---
 

@@ -1,5 +1,6 @@
 ---
 title: Step 8 - Calculate Refined Properties
+type: docs
 ---
 
 

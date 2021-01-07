@@ -1,5 +1,6 @@
 ---
 title: Step 7 - Refine the Simulation
+type: docs
 ---
 
 

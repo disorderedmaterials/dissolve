@@ -1,5 +1,6 @@
 ---
 title: Step 9c - Centre-of-Mass Spatial Density
+type: docs
 weight: 14
 ---
 

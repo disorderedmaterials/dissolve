@@ -1,5 +1,6 @@
 ---
 title: Step 4 - Equilibrate the System
+type: docs
 weight: 6
 ---
 

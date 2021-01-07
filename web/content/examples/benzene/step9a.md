@@ -1,5 +1,6 @@
 ---
 title: Step 9a - Centre-of-Geometry RDFs
+type: docs
 ---
 
 

@@ -1,5 +1,6 @@
 ---
 title: Step 3 - Set up Basic Processing
+type: docs
 weight: 5
 ---
 

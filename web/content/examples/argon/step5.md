@@ -1,5 +1,6 @@
 ---
 title: Step 5 - Equilibrate the System
+type: docs
 ---
 
 With two of our processing layers set up we can start to run the simulation and monitor how the system is evolving. There are several ways to run the simulation within the Dissolve GUI.
