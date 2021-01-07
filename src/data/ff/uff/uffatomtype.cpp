@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "data/ff/uffatomtype.h"
-#include "data/ff/uff.h"
+#include "data/ff/uff/uffatomtype.h"
+#include "data/ff/uff/uff.h"
 
 UFFAtomType::UFFAtomType(int z, int index, std::string_view name, std::string_view neta, std::string_view description, double r,
                          double theta, double x, double D, double zeta, double Z, double chi, int geom, double V, double U)

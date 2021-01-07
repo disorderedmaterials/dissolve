@@ -10,16 +10,8 @@ function(dissolve_system_test directory file_name count)
         COMMAND ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${nproc} ${test_target_executable} -n ${count} -x ${file_name}.txt ${ARGN}
         WORKING_DIRECTORY ../tests/${directory}
       )
-      set_property(
-        TEST ${directory}-${file_name}-${nproc}
-        PROPERTY
-        LABELS ${directory}
-      )
-      set_property(
-        TEST ${directory}-${file_name}-${nproc}
-        PROPERTY
-	PROCESSORS ${nproc}
-      )
+      set_property(TEST ${directory}-${file_name}-${nproc} PROPERTY LABELS ${directory})
+      set_property(TEST ${directory}-${file_name}-${nproc} PROPERTY PROCESSORS ${nproc})
     endforeach()
   else()
     set(test_target_executable ${CMAKE_BINARY_DIR}/bin/${target_name})
@@ -28,11 +20,7 @@ function(dissolve_system_test directory file_name count)
       COMMAND ${test_target_executable} -n ${count} -x ${file_name}.txt ${ARGN}
       WORKING_DIRECTORY ../tests/${directory}
     )
-    set_property(
-      TEST ${directory}-${file_name}
-      PROPERTY
-      LABELS ${directory}
-    )
+    set_property(TEST ${directory}-${file_name} PROPERTY LABELS ${directory})
   endif()
 endfunction()
 

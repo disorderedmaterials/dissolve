@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "data/ff/kulmala2010.h"
+#include "data/ff/kulmala2010/kulmala2010.h"
 
 /*
  * Implements forcefield found in "Enhancing effect of dimethylamine in sulfuric acid nucleation in the presence

@@ -1,4 +1,5 @@
-add_library(procedurenodes
+add_library(
+  procedurenodes
   addspecies.cpp
   box.cpp
   calculateangle.cpp
@@ -31,7 +32,6 @@ add_library(procedurenodes
   select.cpp
   sequence.cpp
   sum1d.cpp
-
   addspecies.h
   box.h
   calculateangle.h
@@ -67,11 +67,4 @@ add_library(procedurenodes
   sum1d.h
 )
 
-include_directories(
-../
-../../
-${CMAKE_SOURCE_DIR}
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/src
-)
-
+include_directories(../ ../../ ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src)

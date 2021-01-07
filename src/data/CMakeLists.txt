@@ -1,4 +1,5 @@
-add_library(data
+add_library(
+  data
   atomicmass.cpp
   atomicradius.cpp
   elementcolours.cpp
@@ -18,7 +19,6 @@ add_library(data
   isotopes.cpp
   spacegroups.cpp
   structurefactors.cpp
-
   atomicmass.h
   atomicradius.h
   elementcolours.h
@@ -40,12 +40,7 @@ add_library(data
   structurefactors.h
 )
 
-include_directories(
-../
-${CMAKE_SOURCE_DIR}
-${CMAKE_BINARY_DIR}
-${CMAKE_BINARY_DIR}/src
-)
+include_directories(../ ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src)
 
 add_subdirectory(ff)
 add_subdirectory(sg)
