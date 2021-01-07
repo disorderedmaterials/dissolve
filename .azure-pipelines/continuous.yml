@@ -15,6 +15,9 @@ trigger:
     - .azure-pipelines/*
     - .clang-format
     - .cmake-format.json
+    exclude:
+    - .azure-pipelines/pr.yml
+    - .azure-pipelines/release.yml
 
 pr: none
 
