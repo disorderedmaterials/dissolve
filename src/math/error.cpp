@@ -7,33 +7,33 @@
 #include "math/interpolator.h"
 #include <algorithm>
 
-using namespace std;
+namespace Error
+{
 
 // Return enum option info for AveragingScheme
-EnumOptions<Error::ErrorType> Error::errorTypes()
+EnumOptions<ErrorType> errorTypes()
 {
     static EnumOptionsList ErrorTypeOptions =
-        EnumOptionsList() << EnumOption(Error::RMSEError, "RMSE") << EnumOption(Error::MAAPEError, "MAAPE")
-                          << EnumOption(Error::MAPEError, "MAPE") << EnumOption(Error::PercentError, "Percent")
-                          << EnumOption(Error::RFactorError, "RFactor");
+        EnumOptionsList() << EnumOption(RMSEError, "RMSE") << EnumOption(MAAPEError, "MAAPE") << EnumOption(MAPEError, "MAPE")
+                          << EnumOption(PercentError, "Percent") << EnumOption(RFactorError, "RFactor");
 
-    static EnumOptions<Error::ErrorType> options("ErrorType", ErrorTypeOptions, Error::PercentError);
+    static EnumOptions<ErrorType> options("ErrorType", ErrorTypeOptions, PercentError);
 
     return options;
 }
 
-// Return erorr of specified type between supplied data
-double Error::error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet)
+// Return error of specified type between supplied data
+double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet)
 {
-    if (errorType == Error::RMSEError)
+    if (errorType == RMSEError)
         return rmse(A, B, quiet);
-    else if (errorType == Error::MAAPEError)
+    else if (errorType == MAAPEError)
         return maape(A, B, quiet);
-    else if (errorType == Error::MAPEError)
+    else if (errorType == MAPEError)
         return mape(A, B, quiet);
-    else if (errorType == Error::PercentError)
+    else if (errorType == PercentError)
         return percent(A, B, quiet);
-    else if (errorType == Error::RFactorError)
+    else if (errorType == RFactorError)
         return rFactor(A, B, quiet);
 
     Messenger::error("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n");
@@ -45,7 +45,7 @@ double Error::error(ErrorType errorType, const Data1D &A, const Data1D &B, bool 
  */
 
 // Return RMSE between supplied data
-double Error::rmse(const Data1D &A, const Data1D &B, bool quiet)
+double rmse(const Data1D &A, const Data1D &B, bool quiet)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
@@ -92,7 +92,7 @@ double Error::rmse(const Data1D &A, const Data1D &B, bool quiet)
 }
 
 // Return MAPE between supplied data
-double Error::mape(const Data1D &A, const Data1D &B, bool quiet)
+double mape(const Data1D &A, const Data1D &B, bool quiet)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
@@ -142,7 +142,7 @@ double Error::mape(const Data1D &A, const Data1D &B, bool quiet)
 }
 
 // Return MAAPE between supplied data
-double Error::maape(const Data1D &A, const Data1D &B, bool quiet)
+double maape(const Data1D &A, const Data1D &B, bool quiet)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
@@ -190,7 +190,7 @@ double Error::maape(const Data1D &A, const Data1D &B, bool quiet)
 }
 
 // Return percentage error between supplied data
-double Error::percent(const Data1D &A, const Data1D &B, bool quiet)
+double percent(const Data1D &A, const Data1D &B, bool quiet)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
@@ -246,7 +246,7 @@ double Error::percent(const Data1D &A, const Data1D &B, bool quiet)
 }
 
 // Return R-Factor (average squared error per point) between supplied data
-double Error::rFactor(const Data1D &A, const Data1D &B, bool quiet)
+double rFactor(const Data1D &A, const Data1D &B, bool quiet)
 {
     // First, generate interpolation of data B
     Interpolator interpolatedB(B);
@@ -291,3 +291,5 @@ double Error::rFactor(const Data1D &A, const Data1D &B, bool quiet)
 
     return rfac;
 }
+
+} // namespace Error

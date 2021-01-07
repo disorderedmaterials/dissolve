@@ -7,36 +7,33 @@
 template <class A> class Array2D;
 
 // Mathematical functions
-class DissolveMath
+namespace DissolveMath
 {
-    /*
-     * Error Functions
-     */
-    public:
-    static double erfc(double);
-    static double erf(double);
+/*
+ * Error Functions
+ */
+double erfc(double);
+double erf(double);
 
-    /*
-     * Random Number Generation
-     */
-    public:
-    static double random();
-    static double randomPlusMinusOne();
-    static int randomimax();
-    static int randomi(int range);
+/*
+ * Random Number Generation
+ */
+double random();
+double randomPlusMinusOne();
+int randomimax();
+int randomi(int range);
 
-    /*
-     * Integer Functions
-     */
-    public:
-    // Raise the integer 'i' to the power 'p'
-    static int power(int i, int p);
-    // Sign function
-    static int sgn(int x);
-    // Sign function
-    static int sgn(double x);
-    // Apply sign of second argument to first
-    static double sgn(double a, double signOf);
-    // Return the cyclic permutation of the integer 'i', span 3
-    static int cp3(int i);
-};
+/*
+ * Integer Functions
+ */
+// Raise the integer 'i' to the power 'p'
+int power(int i, int p);
+// Sign function
+int sgn(int x);
+// Sign function
+int sgn(double x);
+// Apply sign of second argument to first
+double sgn(double a, double signOf);
+// Return the cyclic permutation of the integer 'i', span 3
+int cp3(int i);
+}; // namespace DissolveMath
