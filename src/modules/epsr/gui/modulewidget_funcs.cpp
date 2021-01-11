@@ -141,7 +141,7 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve
     numberFormat.setType(NumberFormat::IntegerFormat);
     phiMagGraph_->view().axes().setNumberFormat(0, numberFormat);
     phiMagGraph_->view().axes().setMax(0, 10.0);
-    phiMagGraph_->view().axes().setTitle(1, "\\sym{Delta}\\sym{phi}(\\it{r}), kJ mol\\sup{-1} \\sum{angstrom}\\sup{-1}");
+    phiMagGraph_->view().axes().setTitle(1, "\\sym{Delta}\\sym{phi}(\\it{r}), kJ mol\\sup{-1} \\sym{angstrom}\\sup{-1}");
     phiMagGraph_->view().axes().setMin(1, 0.0);
     phiMagGraph_->view().axes().setMax(1, 1.0);
     phiMagGraph_->view().setAutoFollowType(View::XAutoFollow);
