@@ -228,7 +228,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                             dissolve.processingModuleData().version("UnweightedGR", rdfModule->uniqueName()),
                                             includeBragg ? dissolve.processingModuleData().version("BraggReflections") : -1));
     // Save data if requested
-    if (saveData && (!MPIRunMaster(procPool, unweightedsq.save())))
+    if (saveData && !MPIRunMaster(procPool, unweightedsq.save()))
         return false;
 
     return true;
