@@ -94,3 +94,42 @@ template <class Lam> auto for_each_pair_early(int begin, int end, Lam lambda) ->
 
     return std::nullopt;
 }
+
+
+template <typename... Args> class ZipIterator {
+public:
+  ZipIterator(std::tuple<Args...> args) : _source(args) {};
+  bool operator!=(ZipIterator<Args...> other) {
+    return false;
+  }
+  void operator++() {
+    std::apply([](auto&... item){
+      (item++,...);}
+	, _source);
+  }
+  auto operator*() {
+    return std::apply([](auto&... item){
+      return std::make_tuple(std::ref(*item)...);}
+	, _source);
+  }
+private:
+  std::tuple<Args...> _source;
+};
+
+template <typename... Args>
+class zip {
+public:
+  zip(Args&... args) : sources(args...) {}
+  auto begin() {
+    return ZipIterator(std::apply([](auto&... item){
+      return std::make_tuple(item.begin()...);}
+	, sources));
+  }
+  auto end() {
+    return ZipIterator(std::apply([](auto&... item){
+      return std::make_tuple(item.end()...);}
+	, sources));
+  }
+private:
+  std::tuple<Args&...> sources;
+};
