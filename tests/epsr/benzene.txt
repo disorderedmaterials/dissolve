@@ -133,11 +133,11 @@ Module  RDF  'RDFs'
   IntraBroadening  None
   BinWidth  0.03
   Frequency  1
+  #Save  On
 EndModule
 
 # Test partial g(r) (unbound terms)
 Module  DataTest  'Partial g(r) (unbound)'
-  ErrorType  RMSE
   Threshold  0.05
   Data1D  'Liquid//RDFs//OriginalGR//CA-CA//Unbound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.g01'
     Y  2
@@ -152,8 +152,7 @@ EndModule
 
 # Test partial g(r) (intramolecular terms)
 Module  DataTest  'Partial g(r) (bound)'
-  ErrorType  RMSE
-  Threshold  0.08
+  Threshold  0.15
   Data1D  'Liquid//RDFs//OriginalGR//CA-CA//Bound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.y01'
     Y  2
   EndData1D
@@ -170,6 +169,7 @@ Module SQ  'SQs'
   SourceRDFs  'RDFs'
   QBroadening  OmegaDependentGaussian  0.02
   WindowFunction  Lorch0
+  #Save  On
 EndModule
 
 # Calculate S(Q) for the C6H6 sample
@@ -179,12 +179,13 @@ Module  NeutronSQ  'C6H6'
   Reference  mint  '../_data/epsr25/benzene200-neutron/C6H6.mint01'
   EndReference
   Frequency  1
+  #SaveSQ  On
+  #SaveGR  On
 EndModule
 
 # Test partial S(Q) (unbound terms)
 Module  DataTest  'Partial S(Q) (unbound)'
-  ErrorType  RMSE
-  Threshold  0.04
+  Threshold  8.0e-3
   Data1D  'SQs//UnweightedSQ//CA-CA//Unbound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.f01'
     Y  2
   EndData1D
@@ -198,8 +199,7 @@ EndModule
 
 # Test partial S(Q) (bound terms)
 Module  DataTest  'Partial S(Q) (bound)'
-  ErrorType  RMSE
-  Threshold  0.04
+  Threshold  0.01
   Data1D  'SQs//UnweightedSQ//CA-CA//Bound'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.s01'
     Y  2
   EndData1D
@@ -213,8 +213,6 @@ EndModule
 
 # Test total neutron-weighted F(Q)
 Module  DataTest  'F(Q) C6H6'
-  ErrorType  RMSE
-  Threshold  0.003
   Data1D  'C6H6//WeightedSQ//Total'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.u01'
     Y  2
   EndData1D
@@ -227,12 +225,12 @@ Module  NeutronSQ  'C6D6'
   Reference  mint  '../_data/epsr25/benzene200-neutron/C6D6.mint01'
   EndReference
   Frequency  1
+  #SaveSQ  On
+  #SaveGR  On
 EndModule
 
 # Test total neutron-weighted F(Q)
 Module  DataTest  'F(Q) C6D6'
-  ErrorType  RMSE
-  Threshold  0.003
   Data1D  'C6D6//WeightedSQ//Total'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.u01'
     Y  4
   EndData1D
@@ -246,12 +244,12 @@ Module  NeutronSQ  '5050'
   Reference  mint  '../_data/epsr25/benzene200-neutron/5050.mint01'
   EndReference
   Frequency  1
+  #SaveSQ  On
+  #SaveGR  On
 EndModule
 
 # Test total neutron-weighted F(Q)
 Module  DataTest  'F(Q) 5050'
-  ErrorType  RMSE
-  Threshold  0.003
   Data1D  '5050//WeightedSQ//Total'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.u01'
     Y  6
   EndData1D
@@ -271,12 +269,13 @@ Module  EPSR
   Frequency  1
   NPitss  10
   Feedback  0.9
+  #SaveSimulatedFR  On
+  #SaveEstimatedPartials  On
 EndModule
 
 # Test total neutron-weighted F(r)
 Module DataTest
-  ErrorType  RMSE
-  Threshold  0.02
+  Threshold  1.7e-2
   Data1D  'EPSR01//SimulatedFR//C6H6'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.x01'
     Y  2
   EndData1D
@@ -290,8 +289,7 @@ EndModule
 
 # Test partial S(Q) derived from experiment via matrix inversion
 Module DataTest
-  ErrorType  RMSE
-  Threshold  0.04
+  Threshold  2.0e-2
   Data1D  'EPSR01//EstimatedSQ//Default//CA-CA'  xy  '../_data/epsr25/benzene200-neutron/benzene.EPSR.q01'
     Y  2
   EndData1D

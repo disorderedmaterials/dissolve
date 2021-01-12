@@ -85,12 +85,12 @@ Layer  'Processing'
     Frequency  1
     SourceRDFs  'RDF01'
     QBroadening  GaussianC2  0.0  0.02
+    #Save  On
   EndModule
 
   # -- Partial g(r) (unbound terms)
   Module  DataTest  'Partial g(r) (unbound)'
-    Threshold  0.07
-    ErrorType  RMSE
+    Threshold  0.05
     Data1D  'Bulk//RDF01//OriginalGR//OW-OW//Unbound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.g01'
       Y  2
     EndData1D
@@ -104,7 +104,6 @@ Layer  'Processing'
 
   # -- Partial g(r) (intramolecular terms)
   Module  DataTest  'Partial g(r) (bound)'
-    ErrorType  RMSE
     Threshold  0.08
     Data1D  'Bulk//RDF01//OriginalGR//OW-HW//Bound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.y01'
       Y  4
@@ -116,7 +115,8 @@ Layer  'Processing'
 
   # -- Partial g(r) (intramolecular terms)
   Module  DataTest  'Partial g(r) (zeroed bound)'
-    Threshold  0.001
+    ErrorType  RMSE
+    Threshold  1.0e-5
     Data1D  'Bulk//RDF01//OriginalGR//OW-OW//Bound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.y01'
       Y  2
     EndData1D
@@ -125,14 +125,13 @@ Layer  'Processing'
   Module  XRaySQ  H2Oxray
     SourceSQs  'SQ01'
     # SaveFormFactors  On
-    SaveSQ  On
+    # SaveSQ  On
     Normalisation  AverageOfSquares
   EndModule
 
   # -- Partial S(Q) (unbound terms)
   Module  DataTest  'Partial S(Q) (unbound)'
-    ErrorType  RMSE
-    Threshold  0.02
+    Threshold  1.6e-2
     Data1D  'SQ01//UnweightedSQ//OW-OW//Unbound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.f01'
       Y  2
     EndData1D
@@ -146,8 +145,6 @@ Layer  'Processing'
 
   # -- Partial S(Q) (bound terms)
   Module  DataTest  'Partial S(Q) (bound)'
-    ErrorType  RMSE
-    Threshold  0.004
     Data1D  'SQ01//UnweightedSQ//OW-HW//Bound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.s01'
       Y  4
     EndData1D
@@ -159,7 +156,7 @@ Layer  'Processing'
   # -- Partial S(Q) (bound terms)
   Module  DataTest  'Partial S(Q) (zeroed bound)'
     ErrorType  RMSE
-    Threshold  0.001
+    Threshold  1.0e-5
     Data1D  'SQ01//UnweightedSQ//OW-OW//Bound'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.s01'
       Y  2
     EndData1D
@@ -167,7 +164,6 @@ Layer  'Processing'
 
   # -- Total xray-weighted F(Q)
   Module  DataTest  'F(Q) H2Oxray'
-    ErrorType  RMSE
     Threshold  5.0e-3
     Data1D  'H2Oxray//WeightedSQ//Total'  xy  '../_data/epsr25/water1000-neutron-xray/water.EPSR.u01'
       Y  8

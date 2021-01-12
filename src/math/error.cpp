@@ -14,9 +14,10 @@ namespace Error
 // Return enum option info for AveragingScheme
 EnumOptions<ErrorType> errorTypes()
 {
-    static EnumOptionsList ErrorTypeOptions =
-        EnumOptionsList() << EnumOption(RMSEError, "RMSE") << EnumOption(MAAPEError, "MAAPE") << EnumOption(MAPEError, "MAPE")
-                          << EnumOption(PercentError, "Percent") << EnumOption(RFactorError, "RFactor");
+    static EnumOptionsList ErrorTypeOptions = EnumOptionsList()
+                                              << EnumOption(RMSEError, "RMSE") << EnumOption(MAAPEError, "MAAPE")
+                                              << EnumOption(MAPEError, "MAPE") << EnumOption(PercentError, "Percent")
+                                              << EnumOption(RFactorError, "RFactor") << EnumOption(EuclideanError, "Euclidean");
 
     static EnumOptions<ErrorType> options("ErrorType", ErrorTypeOptions, PercentError);
 
@@ -36,6 +37,8 @@ double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet)
         return percent(A, B, quiet);
     else if (errorType == RFactorError)
         return rFactor(A, B, quiet);
+    else if (errorType == EuclideanError)
+        return euclidean(A, B, quiet);
 
     Messenger::error("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n");
     return 0.0;
@@ -281,6 +284,55 @@ double rFactor(const Data1D &A, const Data1D &B, bool quiet)
                          lastX, nPointsConsidered);
 
     return rfac;
+}
+
+// Return Euclidean distance, normalised to mean of B, between supplied data
+double euclidean(const Data1D &A, const Data1D &B, bool quiet)
+{
+    // First, generate interpolation of data B
+    Interpolator interpolatedB(B);
+
+    // Grab x and y arrays from data A
+    const auto &aX = A.xAxis();
+    const auto &aY = A.values();
+
+    auto a2 = 0.0, a = 0.0, sos = 0.0, delta = 0.0;
+    double firstX = 0.0, lastX = 0.0, x = 0.0;
+    auto nPointsConsidered = 0;
+    for (auto n = 0; n < aX.size(); ++n)
+    {
+        // Grab x value
+        x = aX[n];
+
+        // Is our x value lower than the lowest x value of the reference data?
+        if (x < B.xAxis().front())
+            continue;
+
+        // Is our x value higher than the last x value of the reference data?
+        if (x > B.xAxis().back())
+            break;
+
+        // Is this the first point considered?
+        if (nPointsConsidered == 0)
+            firstX = x;
+
+        a = aY[n];
+
+        delta = a - interpolatedB.y(x);
+        sos += delta * delta;
+        a2 += a * a;
+
+        lastX = x;
+        ++nPointsConsidered;
+    }
+
+    // Calculate final error and summarise result
+    auto euc = sos / sqrt(a2);
+    if (!quiet)
+        Messenger::print("Euclidean between datasets is {:15.9e} over {:15.9e} < x < {:15.9e} ({} points).\n", euc, firstX,
+                         lastX, nPointsConsidered);
+
+    return euc;
 }
 
 } // namespace Error

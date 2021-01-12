@@ -70,7 +70,7 @@ Layer  'Correlations'
   # Calculate and test g(r)
   Module  RDF  RDFs
     Configuration  'Mix'
-    # Save  On
+    #Save  On
     Frequency  1
     BinWidth 0.03
   EndModule
@@ -79,7 +79,8 @@ Layer  'Correlations'
     SourceRDFs  'RDFs'
     QMin 0.05
     QBroadening  OmegaDependentGaussian  0.02    # For SLS
-    WindowFunction  None
+    WindowFunction  Lorch0
+    #Save  On
   EndModule
 
   # Sample Structure Factor Calculations
@@ -97,7 +98,9 @@ Layer  'Correlations'
     Isotopologue  'Methanol'  'Protiated'  0.5
     Isotopologue  'Methanol'  'OD-MethylH'  0.5
     Exchangeable  HW  HO
-    #  Save  On
+    #SaveGR  On
+    #SaveSQ  On
+    #SaveReference  On
     Frequency  1
   EndModule
   
@@ -106,7 +109,9 @@ Layer  'Correlations'
     Isotopologue  'Water'  'Deuteriated'  1.0
     Isotopologue  'Methanol'  'Protiated'  1.0
     Exchangeable  HW  HO
-    #  Save  On
+    #SaveGR  On
+    #SaveSQ  On
+    #SaveReference  On
     Frequency  1
   EndModule
   
@@ -115,7 +120,9 @@ Layer  'Correlations'
     Isotopologue  'Water'  'Protiated'  1.0
     Isotopologue  'Methanol'  'OD-MethylH'  1.0
     Exchangeable  HW  HO
-    #  Save  On
+    #SaveGR  On
+    #SaveSQ  On
+    #SaveReference  On
     Frequency  1
   EndModule
   
@@ -124,7 +131,9 @@ Layer  'Correlations'
     Isotopologue  'Water'  'Protiated'  1.0
     Isotopologue  'Methanol'  'MethylD-OH'  1.0
     Exchangeable  HW  HO
-    #  Save  On
+    #SaveGR  On
+    #SaveSQ  On
+    #SaveReference  On
     Frequency  1
   EndModule
   
@@ -133,7 +142,9 @@ Layer  'Correlations'
     Isotopologue  'Water'  'Deuteriated'  1.0
     Isotopologue  'Methanol'  'OD-MethylH'  1.0
     Exchangeable  HW  HO
-    #  Save  On
+    #SaveGR  On
+    #SaveSQ  On
+    #SaveReference  On
     Frequency  1
   EndModule
   
@@ -142,7 +153,9 @@ Layer  'Correlations'
     Isotopologue  'Water'  'Protiated'  1.0
     Isotopologue  'Methanol'  'Deuteriated'  1.0
     Exchangeable  HW  HO
-    #  Save  On
+    #SaveGR  On
+    #SaveSQ  On
+    #SaveReference  On
     Frequency  1
   EndModule
   
@@ -151,7 +164,9 @@ Layer  'Correlations'
     Isotopologue  'Water'  'Deuteriated'  1.0
     Isotopologue  'Methanol'  'Deuteriated'  1.0
     Exchangeable  HW  HO
-    #  Save  On
+    #SaveGR  On
+    #SaveSQ  On
+    #SaveReference  On
     Frequency  1
   EndModule
 EndLayer
@@ -169,8 +184,7 @@ Layer  'Processing'
 
 # -- Partial g(r) (unbound terms)
 Module DataTest  'Unbound g(r)'
-  ErrorType  RMSE
-  Threshold  0.3
+  Threshold 1.0 
   Data1D  'Mix//RDFs//OriginalGR//OW-OW//Unbound'  xy  '../_data/epsr25/water300methanol600/watermeth.EPSR.g01'
     Y  2
   EndData1D
@@ -238,8 +252,7 @@ EndModule
 
 # -- Partial g(r) (intramolecular terms)
 Module DataTest  'Bound g(r)'
-  ErrorType  RMSE
-  Threshold  0.5
+  Threshold  1.0
   Data1D  'Mix//RDFs//OriginalGR//OW-HW//Bound'  xy  '../_data/epsr25/water300methanol600/watermeth.EPSR.y01'
     Y  4
   EndData1D
@@ -271,8 +284,8 @@ EndModule
 
 # -- Partial g(r) (intramolecular terms, zero)
 Module DataTest  'Zeroed bound g(r)
+  Threshold  1.0e-5
   ErrorType  RMSE
-  Threshold  0.00001
   Data1D  'Mix//RDFs//OriginalGR//OW-OW//Bound'  xy  '../_data/epsr25/water300methanol600/watermeth.EPSR.y01'
     Y  2
   EndData1D
@@ -313,7 +326,6 @@ EndModule
 
 # -- Partial S(Q) (unbound terms), unweighted
 Module DataTest  'Partial unweighted unbound S(Q)'
-  ErrorType  RMSE
   Threshold  0.4
   Data1D  'SQs//UnweightedSQ//OW-OW//Unbound'  xy  '../_data/epsr25/water300methanol600/watermeth.EPSR.f01'
     Y  2
@@ -382,8 +394,6 @@ EndModule
 
 # -- Partial S(Q) (bound terms)
 Module DataTest  'Partial unweighted bound S(Q)'
-  ErrorType  RMSE
-  Threshold  0.05
   Data1D  'SQs//UnweightedSQ//OW-HW//Bound'  xy  '../_data/epsr25/water300methanol600/watermeth.EPSR.s01'
     Y  4
   EndData1D
@@ -416,7 +426,7 @@ EndModule
 # -- Partial S(Q) (bound terms, zero)
 Module DataTest  'Partial unweighted zeroed bound S(Q)'
   ErrorType  RMSE
-  Threshold  0.00001
+  Threshold  1.0e-5
   Data1D  'SQs//UnweightedSQ//OW-OW//Bound'  xy  '../_data/epsr25/water300methanol600/watermeth.EPSR.s01'
     Y  2
   EndData1D
@@ -459,8 +469,6 @@ EndModule
 # u01 file: 1  2   4   6   8   10  12  14  16
 #           Q HHH H5H DHH HDH HHD DDH HDD DDD 
 Module DataTest  'Total weighted S(Q)'
-  ErrorType  RMSE
-  Threshold  0.02
   Data1D  'HHH//WeightedSQ//Total'  xy  '../_data/epsr25/water300methanol600/watermeth.EPSR.u01'
     Y  2
   EndData1D
