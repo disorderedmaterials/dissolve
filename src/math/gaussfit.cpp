@@ -7,6 +7,7 @@
 #include "math/error.h"
 #include "math/mc.h"
 #include "math/praxis.h"
+#include "templates/algorithms.h"
 
 GaussFit::GaussFit(const Data1D &referenceData)
 {
@@ -594,13 +595,8 @@ double GaussFit::costAnalyticA(const std::vector<double> &alpha)
         y = approximateData_.value(i);
 
         // Add in contributions from our Gaussians
-        for (auto n = 0; n < alpha.size(); ++n)
-        {
-            g = alphaIndex_[n];
-            A = alpha[n];
-
+        for (auto &&[g, A] : zip(alphaIndex_, alpha))
             y += functionValue(alphaSpace_, x, x_[g], A, fwhm_[g]);
-        }
 
         dy = referenceData_.value(i) - y;
         sose += dy * dy;

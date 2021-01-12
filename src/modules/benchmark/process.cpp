@@ -172,12 +172,9 @@ bool BenchmarkModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     }
 
                     // Loop over target Molecules
-                    for (int n = 0; n < targetMolecules.size(); ++n)
-                    {
+                    for (auto &molId : targetMolecules)
                         // Get Molecule index and pointer
-                        auto molId = targetMolecules[n];
                         auto mol = cfg->molecule(molId);
-                    }
                 }
                 Messenger::unMute();
                 timing += timer.split();

@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "math/data1d.h"
+#include "templates/algorithms.h"
 
 Data1DExportFileFormat::Data1DExportFileFormat(std::string_view filename, Data1DExportFormat format)
     : FileAndFormat(filename, format)
@@ -56,14 +57,13 @@ bool Data1DExportFileFormat::exportXY(LineParser &parser, const Data1D &data)
     if (data.valuesHaveErrors())
     {
         const auto &errors = data.errors();
-        // When we get Ranges, we can refactor this code
-        for (auto n = 0; n < x.size(); ++n)
-            if (!parser.writeLineF("{:16.10e}  {:16.10e}  {:16.10e}\n", x[n], values[n], errors[n]))
+        for (auto &&[n, value, error] : zip(x, values, errors))
+            if (!parser.writeLineF("{:16.10e}  {:16.10e}  {:16.10e}\n", n, value, error))
                 return false;
     }
     else
-        for (auto n = 0; n < x.size(); ++n)
-            if (!parser.writeLineF("{:16.10e}  {:16.10e}\n", x[n], values[n]))
+        for (auto &&[n, value] : zip(x, values))
+            if (!parser.writeLineF("{:16.10e}  {:16.10e}\n", n, value))
                 return false;
 
     return true;
