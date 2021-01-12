@@ -80,23 +80,22 @@ template <> class GenericItemContainer<std::vector<double>> : public GenericItem
     // Broadcast item contents
     bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
     {
-        bool result = false;
-        int count;
-        if (procPool.isMaster())
-            count = data_.size();
-        else
+        int count = data_.size();
+        if (!procPool.broadcast(count, root))
+            return false;
+
+        if (procPool.poolRank() != root)
         {
             // Clear list and reconstruct
             data_.clear();
             data_.resize(count);
         }
-        if (!procPool.broadcast(count, root))
-            return false;
-        procPool.broadcast(data_.data(), count, root);
 
-        // All OK - success!
-        result = true;
+        if (!procPool.broadcast(data_.data(), count, root))
+            return false;
+
+        return true;
     }
     // Return equality between items
-    bool equality(ProcessPool &procPool) { return false; }
+    bool equality(ProcessPool &procPool) { return procPool.equality(data_); }
 };
