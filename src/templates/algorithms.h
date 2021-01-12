@@ -3,7 +3,9 @@
 
 #pragma once
 
+#include <functional>
 #include <optional>
+#include <tuple>
 
 // Perform an operation on every pair of elements in a container
 template <class Iter, class Lam> void for_each_pair(Iter begin, Iter end, Lam lambda)
@@ -100,7 +102,15 @@ template <typename... Args> class ZipIterator {
 public:
   ZipIterator(std::tuple<Args...> args) : _source(args) {};
   bool operator!=(ZipIterator<Args...> other) {
-    return false;
+    return std::apply([&other](auto& a, auto&... as){
+      return std::apply([&a](auto &b, auto&... bs){
+	// Only test the first elements.  We have to make the
+	// assumption that all the containers are the same length,
+	// anyway and this saves us some tests and some code.
+	return a != b;
+      },
+	other._source);}
+      , _source);
   }
   void operator++() {
     std::apply([](auto&... item){
