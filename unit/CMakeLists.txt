@@ -8,7 +8,7 @@ file(GLOB_RECURSE tests_SRC "*.cpp")
 find_package(GTest REQUIRED)
 
 # Add executables and tests
-foreach(SRCFILE "${tests_SRC}")
+foreach(SRCFILE ${tests_SRC})
   # Strip path and extension from source file to get test name
   get_filename_component(NAME ${SRCFILE} NAME_WE)
 
