@@ -58,4 +58,11 @@ stages:
             condition: eq('${{ parameters.continuous }}', true)
             env:
               GITHUB_TOKEN: $(REPO_SECRET)
-            displayName: 'Create Continuous Release (GitHub)'
+            displayName: 'Create Release (GitHub)'
+          - bash: |
+              set -ex
+              ./ci/scripts/list-releases -r disorderedmaterials/dissolve -u -v $(Build.SourceBranchName)
+            condition: eq('${{ parameters.continuous }}', false)
+            env:
+              GITHUB_TOKEN: $(REPO_SECRET)
+            displayName: 'Update Web Release Info'
