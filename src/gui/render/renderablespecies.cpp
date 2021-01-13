@@ -140,12 +140,12 @@ void RenderableSpecies::createCylinderBond(PrimitiveAssembly &assembly, const Sp
     A.applyScaling(radialScaling, radialScaling, 1.0);
 
     // Render half of Bond in colour of Atom j
-    const float *colour = ElementColours::colour(j->element());
+    const float *colour = ElementColours::colour(j->Z());
     assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
     // Render half of Bond in colour of Atom i
     A.columnMultiply(2, -1.0);
-    colour = ElementColours::colour(i->element());
+    colour = ElementColours::colour(i->Z());
     assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 }
 
@@ -182,7 +182,7 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
                 continue;
 
             const auto r = i->r();
-            colour = ElementColours::colour(i->element());
+            colour = ElementColours::colour(i->Z());
 
             lineSpeciesPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
             lineSpeciesPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z, colour);
@@ -199,9 +199,9 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
 
             // Draw bond halves
             lineSpeciesPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
-                                        ElementColours::colour(bond.i()->element()));
+                                        ElementColours::colour(bond.i()->Z()));
             lineSpeciesPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
-                                        ElementColours::colour(bond.j()->element()));
+                                        ElementColours::colour(bond.j()->Z()));
         }
     }
     else if (displayStyle_ == SpheresStyle)
@@ -219,7 +219,7 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
             A.applyScaling(spheresAtomRadius_);
 
             // The atom itself
-            colour = ElementColours::colour(i->element());
+            colour = ElementColours::colour(i->Z());
             speciesAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
             // Is the atom selected?
@@ -281,7 +281,7 @@ void RenderableSpecies::recreateSelectionPrimitive()
                 continue;
 
             // Get element colour
-            colour = ElementColours::colour(i->element());
+            colour = ElementColours::colour(i->Z());
 
             // If the atom has no bonds, draw it as a 'cross', otherwise render all bond halves
             if (i->nBonds() == 0)
@@ -357,9 +357,9 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 
         // Draw bond halves
         lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
-                                        ElementColours::colour(fromAtom->element()));
+                                        ElementColours::colour(fromAtom->Z()));
         lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
-                                        ElementColours::colour(toAtom->element()));
+                                        ElementColours::colour(toAtom->Z()));
     }
     else if (displayStyle_ == SpheresStyle)
     {
@@ -372,7 +372,8 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 }
 
 // Recreate interaction Primitive to display drawing interaction (from existing atom to point)
-void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, Vec3<double> toPoint, Element *toElement)
+void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, Vec3<double> toPoint,
+                                                         Elements::Element toElement)
 {
     // Clear existing data
     clearInteractionPrimitive();
@@ -381,7 +382,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 
     // Temporary SpeciesAtom
     static SpeciesAtom j;
-    j.setElement(toElement);
+    j.setZ(toElement);
     j.setCoordinates(toPoint);
 
     // Render based on the current drawing style
@@ -398,9 +399,9 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 
         // Draw bond halves
         lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
-                                        ElementColours::colour(fromAtom->element()));
+                                        ElementColours::colour(fromAtom->Z()));
         lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
-                                        ElementColours::colour(j.element()));
+                                        ElementColours::colour(j.Z()));
     }
     else if (displayStyle_ == SpheresStyle)
     {
@@ -410,7 +411,7 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
         // Draw the temporary atom
         A.setTranslation(j.r());
         A.applyScaling(spheresAtomRadius_);
-        const float *colour = ElementColours::colour(j.element());
+        const float *colour = ElementColours::colour(j.Z());
         interactionAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
         // Draw the temporary bond between the atoms
@@ -419,8 +420,8 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(SpeciesAtom *fromAtom, 
 }
 
 // Recreate interaction Primitive to display drawing interaction (from point to point)
-void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Element *fromElement, Vec3<double> toPoint,
-                                                         Element *toElement)
+void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Elements::Element fromElement,
+                                                         Vec3<double> toPoint, Elements::Element toElement)
 {
     // Clear existing data
     clearInteractionPrimitive();
@@ -429,9 +430,9 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
 
     // Temporary SpeciesAtoms
     static SpeciesAtom i, j;
-    i.setElement(fromElement);
+    i.setZ(fromElement);
     i.setCoordinates(fromPoint);
-    j.setElement(toElement);
+    j.setZ(toElement);
     j.setCoordinates(toPoint);
 
     // Render based on the current drawing style
@@ -448,9 +449,9 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
 
         // Draw bond halves
         lineInteractionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
-                                        ElementColours::colour(i.element()));
+                                        ElementColours::colour(i.Z()));
         lineInteractionPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
-                                        ElementColours::colour(j.element()));
+                                        ElementColours::colour(j.Z()));
     }
     else if (displayStyle_ == SpheresStyle)
     {
@@ -460,13 +461,13 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
         // Draw the temporary atoms
         A.setTranslation(i.r());
         A.applyScaling(spheresAtomRadius_);
-        const float *colour = ElementColours::colour(i.element());
+        const float *colour = ElementColours::colour(i.Z());
         interactionAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
         A.setIdentity();
         A.setTranslation(j.r());
         A.applyScaling(spheresAtomRadius_);
-        colour = ElementColours::colour(j.element());
+        colour = ElementColours::colour(j.Z());
         interactionAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
         // Draw the temporary bond between the atoms

@@ -3,14 +3,14 @@
 
 #include "data/formfactordata.h"
 
-FormFactorData::FormFactorData(int Z, int formalCharge) : Z_(Z), formalCharge_(formalCharge) {}
+FormFactorData::FormFactorData(Elements::Element Z, int formalCharge) : Z_(Z), formalCharge_(formalCharge) {}
 
 /*
  * Element State
  */
 
 // Return element to which the data relates
-int FormFactorData::Z() const { return Z_; }
+Elements::Element FormFactorData::Z() const { return Z_; }
 
 // Return formal charge of element to which the data relates
 int FormFactorData::formalCharge() const { return formalCharge_; }

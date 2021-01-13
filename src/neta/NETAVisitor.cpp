@@ -98,10 +98,7 @@ antlrcpp::Any NETAVisitor::visitRingNode(NETAParser::RingNodeContext *context)
 antlrcpp::Any NETAVisitor::visitElementOrType(NETAParser::ElementOrTypeContext *context)
 {
     if (context->Element())
-    {
-        Element &el = Elements::element(context->Element()->getText());
-        return std::reference_wrapper(el);
-    }
+        return Elements::element(context->Element()->getText());
     else if (context->FFTypeName())
     {
         // Is a forcefield available to search?
@@ -144,10 +141,10 @@ antlrcpp::Any NETAVisitor::visitTargetList(NETAParser::TargetListContext *contex
     for (auto elementOrType : context->targets)
     {
         antlrcpp::Any target = visitElementOrType(elementOrType);
-        if (target.is<std::reference_wrapper<Element>>())
+        if (target.is<Elements::Element>())
         {
-            auto elRef = target.as<std::reference_wrapper<Element>>();
-            if (!currentNETAContext()->addElementTarget(elRef))
+            auto Z = target.as<Elements::Element>();
+            if (!currentNETAContext()->addElementTarget(Z))
                 throw(NETAExceptions::NETASyntaxException("Failed to add element to target list."));
         }
         else if (target.is<std::reference_wrapper<const ForcefieldAtomType>>())

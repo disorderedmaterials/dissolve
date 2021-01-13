@@ -1,7 +1,7 @@
 add_library(
   data
-  atomicmass.cpp
-  atomicradius.cpp
+  atomicmasses.cpp
+  atomicradii.cpp
   elementcolours.cpp
   elements.cpp
   ff.cpp
@@ -19,8 +19,8 @@ add_library(
   isotopes.cpp
   spacegroups.cpp
   structurefactors.cpp
-  atomicmass.h
-  atomicradius.h
+  atomicmasses.h
+  atomicradii.h
   elementcolours.h
   elements.h
   ff.h

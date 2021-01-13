@@ -4,17 +4,15 @@
 #pragma once
 
 #include "base/parameters.h"
+#include "data/elements.h"
 #include "data/ff.h"
-
-// Forward Declarations
-class Element;
 
 // AtomType Definition
 class AtomType
 {
     public:
     AtomType();
-    ~AtomType();
+    ~AtomType() = default;
 
     /*
      * Character
@@ -22,18 +20,18 @@ class AtomType
     private:
     // Name
     std::string name_;
-    // Associated Element
-    Element *element_;
+    // Associated chemical element
+    Elements::Element Z_;
 
     public:
     // Set name of AtomType
     void setName(std::string_view name);
     // Return name of AtomType
     std::string_view name() const;
-    // Set atomic element
-    void setElement(Element *el);
-    // Return atomic Element
-    Element *element() const;
+    // Set chemical element
+    void setZ(Elements::Element Z);
+    // Return chemical element
+    Elements::Element Z() const;
 
     /*
      * Interaction Parameters

@@ -65,7 +65,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
 
     public:
     // Add a new atom to the Species
-    SpeciesAtom *addAtom(Element *element, Vec3<double> r, double q = 0.0);
+    SpeciesAtom *addAtom(Elements::Element Z, Vec3<double> r, double q = 0.0);
     // Remove the specified atom from the species
     void removeAtom(SpeciesAtom *i);
     // Return the number of atoms in the species
@@ -81,7 +81,7 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     // Set coordinates of specified atom (by index and individual coordinates)
     void setAtomCoordinates(int id, double x, double y, double z);
     // Transmute specified atom
-    void transmuteAtom(SpeciesAtom *i, Element *el);
+    void transmuteAtom(SpeciesAtom *i, Elements::Element newZ);
     // Clear current atom selection
     void clearAtomSelection();
     // Add atom to selection

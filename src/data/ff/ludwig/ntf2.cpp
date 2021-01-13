@@ -28,11 +28,11 @@ bool Forcefield_Ludwig_NTf2::setUp()
     addParameters("N", 0.213349, 3.2500);
 
     // Atom Types
-    addAtomType(ELEMENT_F, 1, "F", "-C(-F(n=2))", "Fluorine", -0.189, "F");
-    addAtomType(ELEMENT_C, 2, "C", "-F(n=3),-S(-O(n=2))", "Carbon", 0.494, "C");
-    addAtomType(ELEMENT_S, 3, "S", "-O(n=2),-C,-N", "Sulfur", 1.076, "S");
-    addAtomType(ELEMENT_O, 4, "O", "-S(-O(n=2,root),-C,-N)", "Oxygen", -0.579, "O");
-    addAtomType(ELEMENT_N, 5, "N", "-S(-O(n=2),-C)", "Nitrogen", -0.69, "N");
+    addAtomType(Elements::F, 1, "F", "-C(-F(n=2))", "Fluorine", -0.189, "F");
+    addAtomType(Elements::C, 2, "C", "-F(n=3),-S(-O(n=2))", "Carbon", 0.494, "C");
+    addAtomType(Elements::S, 3, "S", "-O(n=2),-C,-N", "Sulfur", 1.076, "S");
+    addAtomType(Elements::O, 4, "O", "-S(-O(n=2,root),-C,-N)", "Oxygen", -0.579, "O");
+    addAtomType(Elements::N, 5, "N", "-S(-O(n=2),-C)", "Nitrogen", -0.69, "N");
 
     // Bond Terms
     addBondTerm("C", "F", SpeciesBond::HarmonicForm, {3697.0, 1.323});

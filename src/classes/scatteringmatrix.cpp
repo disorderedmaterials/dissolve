@@ -75,15 +75,15 @@ Array2D<double> ScatteringMatrix::matrix(double q) const
         auto col = 0;
         for (auto [i, j] : typePairs_)
         {
-            auto ffi = XRayFormFactors::formFactorData(weights.formFactors(), i->element());
+            auto ffi = XRayFormFactors::formFactorData(weights.formFactors(), i->Z());
             if (!ffi)
                 throw(std::runtime_error(fmt::format("No form factor data available for element {} in dataset {}.",
-                                                     i->element()->name(),
+                                                     Elements::name(i->Z()),
                                                      XRayFormFactors::xRayFormFactorData().keyword(weights.formFactors()))));
-            auto ffj = XRayFormFactors::formFactorData(weights.formFactors(), j->element());
+            auto ffj = XRayFormFactors::formFactorData(weights.formFactors(), j->Z());
             if (!ffj)
                 throw(std::runtime_error(fmt::format("No form factor data available for element {} in dataset {}.",
-                                                     j->element()->name(),
+                                                     Elements::name(j->Z()),
                                                      XRayFormFactors::xRayFormFactorData().keyword(weights.formFactors()))));
 
             m[{row, col}] *= ffi->get().magnitude(q) * ffj->get().magnitude(q) / normFactor;

@@ -59,7 +59,7 @@ NETADefinition *NETANode::parent() const { return parent_; }
  */
 
 // Add element target to node
-bool NETANode::addElementTarget(const Element &el)
+bool NETANode::addElementTarget(Elements::Element Z)
 {
     return Messenger::error("NETA {} does not accept element targets.\n", nodeTypes().keyword(nodeType_));
 }
@@ -89,7 +89,7 @@ std::shared_ptr<NETAOrNode> NETANode::createOrNode()
 
 // Create connectivity node from current targets
 std::shared_ptr<NETAConnectionNode>
-NETANode::createConnectionNode(std::vector<std::reference_wrapper<const Element>> targetElements,
+NETANode::createConnectionNode(std::vector<Elements::Element> targetElements,
                                std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
 {
     auto node = std::make_shared<NETAConnectionNode>(parent_, targetElements, targetAtomTypes);
@@ -100,7 +100,7 @@ NETANode::createConnectionNode(std::vector<std::reference_wrapper<const Element>
 
 // Create presence node in the branch
 std::shared_ptr<NETAPresenceNode>
-NETANode::createPresenceNode(std::vector<std::reference_wrapper<const Element>> targetElements,
+NETANode::createPresenceNode(std::vector<Elements::Element> targetElements,
                              std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes)
 {
     auto node = std::make_shared<NETAPresenceNode>(parent_, targetElements, targetAtomTypes);

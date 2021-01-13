@@ -8,7 +8,7 @@
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/speciesatom.h"
-#include "data/atomicmass.h"
+#include "data/atomicmasses.h"
 
 CoordinateExportFileFormat::CoordinateExportFileFormat(std::string_view filename, CoordinateExportFormat format)
     : FileAndFormat(filename, format)
@@ -68,7 +68,7 @@ bool CoordinateExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
 
     // Export Atoms
     for (auto i : cfg->atoms())
-        if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", i->speciesAtom()->element()->symbol(), i->r().x,
+        if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", Elements::symbol(i->speciesAtom()->Z()), i->r().x,
                                i->r().y, i->r().z))
             return false;
 
@@ -117,8 +117,8 @@ bool CoordinateExportFileFormat::exportDLPOLY(LineParser &parser, Configuration 
     auto n = 0;
     for (auto i : cfg->atoms())
         if (!parser.writeLineF("{:<6}{:10d}{:20.10f}\n{:20.12f}{:20.12f}{:20.12f}\n",
-                               cfg->usedAtomType(i->localTypeIndex())->name(), n++ + 1,
-                               AtomicMass::mass(i->speciesAtom()->element()), i->r().x, i->r().y, i->r().z))
+                               cfg->usedAtomType(i->localTypeIndex())->name(), n++ + 1, AtomicMass::mass(i->speciesAtom()->Z()),
+                               i->r().x, i->r().y, i->r().z))
             return false;
 
     return true;
