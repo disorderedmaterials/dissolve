@@ -572,7 +572,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         if (procPool.isMaster())
         {
-            for (auto sq : estimatedSQ)
+            for (auto &sq : estimatedSQ)
             {
                 // generatedArray[n].save(generatedArray[n].name());
                 Data1DExportFileFormat exportFormat(sq.name());
