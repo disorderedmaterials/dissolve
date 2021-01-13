@@ -13,7 +13,7 @@ stages:
           vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
-            fetchDepth: 1
+            persistCredentials: true
           - task: DownloadBuildArtifacts@0
             inputs:
               buildType: 'current'
