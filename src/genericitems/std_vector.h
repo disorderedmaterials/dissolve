@@ -80,6 +80,7 @@ template <> class GenericItemContainer<std::vector<double>> : public GenericItem
     // Broadcast item contents
     bool broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
     {
+#ifdef PARALLEL
         int count = data_.size();
         if (!procPool.broadcast(count, root))
             return false;
@@ -93,9 +94,16 @@ template <> class GenericItemContainer<std::vector<double>> : public GenericItem
 
         if (!procPool.broadcast(data_.data(), count, root))
             return false;
-
+#endif
         return true;
     }
     // Return equality between items
-    bool equality(ProcessPool &procPool) { return procPool.equality(data_); }
+    bool equality(ProcessPool &procPool)
+    {
+#ifdef PARALLEL
+        if (!procPool.equality(data_))
+            return Messenger::error("Vectors are not equivalent.\n");
+#endif
+        return true;
+    }
 };
