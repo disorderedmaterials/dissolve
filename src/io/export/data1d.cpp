@@ -59,7 +59,7 @@ bool Data1DExportFileFormat::exportXY(LineParser &parser, const Data1D &data)
                 return false;
     }
     else
-      for (auto &&[x, value] : zip(data.xAxis(), data.values()))
+        for (auto &&[x, value] : zip(data.xAxis(), data.values()))
             if (!parser.writeLineF("{:16.10e}  {:16.10e}\n", x, value))
                 return false;
 
