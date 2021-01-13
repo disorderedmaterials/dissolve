@@ -47,9 +47,10 @@ void convolve(Data1D &data, const BroadeningFunction &function, bool variableOme
         for (auto &&[xCentre, yn] : zip(x, y))
         {
             // Inner loop over whole array
-            std::transform(x.begin(), x.end(), newY.begin(), newY.begin(), [yn, &function, norm, xCentre](auto X, auto NewY) {
-                return NewY + yn * function.y(X - xCentre) * norm;
-            });
+            std::transform(x.begin(), x.end(), newY.begin(), newY.begin(),
+                           [yn = yn, &function, norm, xCentre = xCentre](auto X, auto NewY) {
+                               return NewY + yn * function.y(X - xCentre) * norm;
+                           });
         }
     }
 
