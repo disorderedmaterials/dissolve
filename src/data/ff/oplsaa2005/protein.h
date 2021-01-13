@@ -30,4 +30,8 @@ class Forcefield_OPLSAA2005_Protein : public OPLSAA2005BaseForcefield
     std::string_view name() const;
     // Return description for Forcefield
     std::string_view description() const;
+    // Find the bond terms
+    OptionalReferenceWrapper<const ForcefieldBondTerm> getBondTerm(const ForcefieldAtomType&, const ForcefieldAtomType&) const override;
+    OptionalReferenceWrapper<const ForcefieldAngleTerm> getAngleTerm(const ForcefieldAtomType&, const ForcefieldAtomType&, const ForcefieldAtomType&) const override;
+
 };
