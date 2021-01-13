@@ -24,7 +24,7 @@ void SelectElementDialog::on_SelectButton_clicked(bool checked) { accept(); }
 void SelectElementDialog::on_CancelButton_clicked(bool checked) { reject(); }
 
 // Run the dialog, returning the selected Element
-Element *SelectElementDialog::selectElement(Element *currentElement)
+Elements::Element SelectElementDialog::selectElement(Elements::Element currentElement)
 {
     ui_.ElementWidget->setCurrentElement(currentElement);
 
@@ -33,5 +33,5 @@ Element *SelectElementDialog::selectElement(Element *currentElement)
     if (exec() == QDialog::Accepted)
         return ui_.ElementWidget->currentElement();
     else
-        return nullptr;
+        return Elements::Unknown;
 }

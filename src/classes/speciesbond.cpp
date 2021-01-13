@@ -5,7 +5,7 @@
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/speciesatom.h"
-#include "data/atomicmass.h"
+#include "data/atomicmasses.h"
 #include "templates/enumhelpers.h"
 
 SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra()
@@ -233,8 +233,8 @@ void SpeciesBond::setUp()
     if (form() == SpeciesBond::EPSRForm)
     {
         // Work out omega-squared(ab) from mass of natural isotopes
-        double massI = AtomicMass::mass(i_->element());
-        double massJ = AtomicMass::mass(j_->element());
+        double massI = AtomicMass::mass(i_->Z());
+        double massJ = AtomicMass::mass(j_->Z());
         parameters_[2] = params[1] / sqrt((massI + massJ) / (massI * massJ));
     }
 }

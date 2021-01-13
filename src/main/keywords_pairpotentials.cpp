@@ -36,6 +36,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
     std::shared_ptr<AtomType> at1;
     std::optional<decltype(at1)> opt_at;
     auto blockDone = false, error = false;
+    Elements::Element Z;
 
     while (!parser.eofOrBlank())
     {
@@ -76,7 +77,8 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 break;
             case (PairPotentialsBlock::ParametersKeyword):
                 // Sanity check element
-                if (Elements::element(parser.argsv(2)).isUnknown())
+                Z = Elements::element(parser.argsv(2));
+                if (Z == Elements::Unknown)
                 {
                     Messenger::error("Unknown element '{}' given for atom type '{}' in PairPotentials block.\n",
                                      parser.argsv(2), parser.argsv(1));
@@ -91,10 +93,10 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                     Messenger::warn("Unknown atom type '{}' referenced in PairPotentials block - creating "
                                     "it now...\n",
                                     parser.argsv(1));
-                    at1 = dissolve->addAtomType(&Elements::element(parser.argsv(2)));
+                    at1 = dissolve->addAtomType(Z);
                     at1->setName(parser.argsv(1));
                 }
-                else if (&Elements::element(parser.argsv(2)) != (*opt_at)->element())
+                else if (Z != (*opt_at)->Z())
                 {
                     at1 = *opt_at;
                     Messenger::error("Element '{}' does not match that for the existing atom type '{}' in "

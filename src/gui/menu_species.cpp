@@ -14,14 +14,14 @@ void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)
 {
     // Raise an element selection dialog
     static SelectElementDialog selectElementDialog(this);
-    Element *el = selectElementDialog.selectElement();
-    if (!el)
+    auto Z = selectElementDialog.selectElement(Elements::Unknown);
+    if (Z == Elements::Unknown)
         return;
 
     // Create the new Species, and add a single atom at {0,0,0}
     Species *newSpecies = dissolve_.addSpecies();
-    newSpecies->addAtom(el, Vec3<double>());
-    newSpecies->setName(dissolve_.coreData().uniqueSpeciesName(el->symbol()));
+    newSpecies->addAtom(Z, Vec3<double>());
+    newSpecies->setName(dissolve_.coreData().uniqueSpeciesName(Elements::symbol(Z)));
 
     setModified();
     fullUpdate();

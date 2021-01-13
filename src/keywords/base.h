@@ -37,7 +37,7 @@ class KeywordBase : public ListItem<KeywordBase>
         Data3DStoreData,
         DoubleData,
         DynamicSiteNodesData,
-        ElementRefListData,
+        ElementVectorData,
         EnumOptionsData,
         ExpressionData,
         ExpressionVariableVectorData,

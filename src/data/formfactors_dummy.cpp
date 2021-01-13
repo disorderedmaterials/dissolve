@@ -6,7 +6,7 @@
 #include <functional>
 #include <vector>
 
-FormFactorData_Dummy::FormFactorData_Dummy() : FormFactorData(1, 0) {}
+FormFactorData_Dummy::FormFactorData_Dummy() : FormFactorData() {}
 
 FormFactorData_Dummy &FormFactorData_Dummy::operator=(const FormFactorData_Dummy &source)
 {

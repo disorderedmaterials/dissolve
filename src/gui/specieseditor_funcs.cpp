@@ -69,7 +69,8 @@ void SpeciesEditor::updateToolbar()
     }
 
     // Set drawing element symbol
-    ui_.InteractionDrawElementButton->setText(QString::fromStdString(std::string(speciesViewer()->drawElement()->symbol())));
+    ui_.InteractionDrawElementButton->setText(
+        QString::fromStdString(std::string(Elements::symbol(speciesViewer()->drawElement()))));
 
     // Set checkable buttons
     ui_.ViewAxesVisibleButton->setChecked(speciesViewer()->axesVisible());
@@ -127,8 +128,8 @@ void SpeciesEditor::on_InteractionDrawElementButton_clicked(bool checked)
 {
     // Select a new element for drawing
     bool ok;
-    Element *newElement = ElementSelector::getElement(this, "Choose Element", "Select element to use for drawn atoms",
-                                                      speciesViewer()->drawElement(), &ok);
+    auto newElement = ElementSelector::getElement(this, "Choose Element", "Select element to use for drawn atoms",
+                                                  speciesViewer()->drawElement(), &ok);
     if (!ok)
         return;
 

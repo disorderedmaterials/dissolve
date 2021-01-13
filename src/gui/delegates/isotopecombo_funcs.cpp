@@ -20,9 +20,8 @@ QWidget *IsotopeComboDelegate::createEditor(QWidget *parent, const QStyleOptionV
     Isotope *isotope = VariantPointer<Isotope>(index.data(Qt::UserRole));
     if (isotope)
     {
-        // Populate combo with all possible Isotopes for this Element
-        const Element &element = isotope->element();
-        ListIterator<Isotope> isotopeIterator(Isotopes::isotopes(element.Z()));
+        // Populate combo with all possible Isotopes for this element
+        ListIterator<Isotope> isotopeIterator(Isotopes::isotopes(isotope->Z()));
         while (Isotope *tope = isotopeIterator.iterate())
             editor->addItem(textForIsotope(tope));
     }
@@ -59,9 +58,8 @@ void IsotopeComboDelegate::setModelData(QWidget *editor, QAbstractItemModel *mod
     Isotope *isotope = VariantPointer<Isotope>(index.data(Qt::UserRole));
     if (isotope)
     {
-        // Get parent Element, and find index of new Isotope
-        const Element &element = isotope->element();
-        isotope = Isotopes::isotopeAtIndex(element.Z(), comboBox->currentIndex());
+        // Get parent element, and find index of new Isotope
+        isotope = Isotopes::isotopeAtIndex(isotope->Z(), comboBox->currentIndex());
 
         // Set the Isotope pointer in the model
         model->setData(index, VariantPointer<Isotope>(isotope), Qt::UserRole);

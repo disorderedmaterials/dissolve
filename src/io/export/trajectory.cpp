@@ -65,7 +65,7 @@ bool TrajectoryExportFileFormat::exportXYZ(LineParser &parser, Configuration *cf
 
     // Write Atoms
     for (auto i : cfg->atoms())
-        if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", i->speciesAtom()->element()->symbol(), i->r().x,
+        if (!parser.writeLineF("{:<3}   {:15.9f}  {:15.9f}  {:15.9f}\n", Elements::symbol(i->speciesAtom()->Z()), i->r().x,
                                i->r().y, i->r().z))
             return false;
 
