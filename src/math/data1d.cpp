@@ -513,13 +513,13 @@ bool Data1D::write(LineParser &parser)
     // Write values / errors
     if (hasError_)
     {
-        for (auto &&[n, value, error] : zip(x_, values_, errors_))
-            if (!parser.writeLineF("{}  {}  {}\n", n, value, error))
+        for (auto &&[x, value, error] : zip(x_, values_, errors_))
+            if (!parser.writeLineF("{}  {}  {}\n", x, value, error))
                 return false;
     }
     else
-        for (auto &&[n, value] : zip(x_, values_))
-            if (!parser.writeLineF("{}  {}\n", n, value))
+        for (auto &&[x, value] : zip(x_, values_))
+            if (!parser.writeLineF("{}  {}\n", x, value))
                 return false;
 
     return true;

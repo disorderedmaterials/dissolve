@@ -100,7 +100,7 @@ template <class Lam> auto for_each_pair_early(int begin, int end, Lam lambda) ->
 template <typename... Args> class ZipIterator
 {
     public:
-    ZipIterator(std::tuple<Args...> args) : _source(args){};
+    ZipIterator(std::tuple<Args...> args) : source_(args){};
     bool operator!=(ZipIterator<Args...> other)
     {
         return std::apply(
@@ -112,36 +112,36 @@ template <typename... Args> class ZipIterator
                         // anyway and this saves us some tests and some code.
                         return a != b;
                     },
-                    other._source);
+                    other.source_);
             },
-            _source);
+            source_);
     }
     void operator++()
     {
-        std::apply([](auto &... item) { (item++, ...); }, _source);
+        std::apply([](auto &... item) { (item++, ...); }, source_);
     }
     auto operator*()
     {
-        return std::apply([](auto &... item) { return std::make_tuple(std::ref(*item)...); }, _source);
+        return std::apply([](auto &... item) { return std::make_tuple(std::ref(*item)...); }, source_);
     }
 
     private:
-    std::tuple<Args...> _source;
+    std::tuple<Args...> source_;
 };
 
 template <typename... Args> class zip
 {
     public:
-    zip(Args &... args) : sources(args...) {}
+    zip(Args &... args) : sources_(args...) {}
     auto begin()
     {
-        return ZipIterator(std::apply([](auto &... item) { return std::make_tuple(item.begin()...); }, sources));
+        return ZipIterator(std::apply([](auto &... item) { return std::make_tuple(item.begin()...); }, sources_));
     }
     auto end()
     {
-        return ZipIterator(std::apply([](auto &... item) { return std::make_tuple(item.end()...); }, sources));
+        return ZipIterator(std::apply([](auto &... item) { return std::make_tuple(item.end()...); }, sources_));
     }
 
     private:
-    std::tuple<Args &...> sources;
+    std::tuple<Args &...> sources_;
 };
