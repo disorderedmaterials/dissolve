@@ -242,8 +242,6 @@ bool Fit1DProcedureNode::read(LineParser &parser, CoreData &coreData)
     if (parser.nArgs() == 2)
         setName(parser.argsv(1));
 
-    ExpressionVariable *var;
-
     // Read until we encounter the EndFit1D keyword, or we fail for some reason
     while (!parser.eofOrBlank())
     {

@@ -103,7 +103,6 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 // Run main processing
 bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 {
-    int i, j;
     std::string testDataName;
 
     /*

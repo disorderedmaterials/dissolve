@@ -2,11 +2,12 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
-#include "base/processpool.h"
 #include "data/elements.h"
-#include <string.h>
 
-AtomType::AtomType() : Z_(Elements::Unknown), name_{"XX"}, exchangeable_(false), shortRangeType_(Forcefield::UndefinedType) {}
+AtomType::AtomType()
+    : name_{"XX"}, Z_(Elements::Unknown), shortRangeType_(Forcefield::UndefinedType), exchangeable_(false), index_(-1)
+{
+}
 
 /*
  * Character

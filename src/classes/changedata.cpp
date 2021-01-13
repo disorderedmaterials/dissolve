@@ -6,7 +6,7 @@
 #include "classes/atom.h"
 #include "classes/cell.h"
 
-ChangeData::ChangeData() : atom_(nullptr), cell_(nullptr), moved_(false) {}
+ChangeData::ChangeData() : atom_(nullptr), moved_(false), cell_(nullptr) {}
 
 /*
  * Target Data
