@@ -4,7 +4,7 @@
 
 # Day Suffix Function
 DaySuffix() {
-  case `date +%d` in
+  case $(date +%d) in
     1|21|31) echo "st";;
     2|22)    echo "nd";;
     3|23)    echo "rd";;
@@ -20,7 +20,7 @@ usage() {
   echo "        -p	Increase patch version number (0.0.X)"
   echo "        -s	Set version explicitly to X.Y.Z"
   echo "        -r	Release version - modify release version in web config (and date in README.md) only"
-  echo "        -c	Devlopment version - modify development version in web config only"
+  echo "        -c	Development version - modify development version in web config only"
   echo ""
   echo "Default behaviour is to change version numbering in code, and installer and packaging scripts."
   echo "Web-visible values can be changed with the -r and -d switches."
@@ -34,41 +34,48 @@ then
 fi
 
 # Get current version number
-MAJOR=`grep 'set(VERSION_MAJOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MAJOR \"\([0-9a-z\.]\+\)\")/\1/g'`
-MINOR=`grep 'set(VERSION_MINOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MINOR \"\([0-9a-z\.]\+\)\")/\1/g'`
-PATCH=`grep 'set(VERSION_PATCH' ./CMakeLists.txt | sed -e 's/set(VERSION_PATCH \"\([0-9a-z\.]\+\)\")/\1/g'`
+MAJOR=$(grep 'set(VERSION_MAJOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MAJOR \"\([0-9a-z\.]\+\)\")/\1/g')
+MINOR=$(grep 'set(VERSION_MINOR' ./CMakeLists.txt | sed -e 's/set(VERSION_MINOR \"\([0-9a-z\.]\+\)\")/\1/g')
+PATCH=$(grep 'set(VERSION_PATCH' ./CMakeLists.txt | sed -e 's/set(VERSION_PATCH \"\([0-9a-z\.]\+\)\")/\1/g')
 CHECK="false"
 TYPE="CODE" # CODE / RELEASE / DEVELOP
 
-while getopts "cdmiprs:" opt
+while getopts ":cdmMiprs:" opt
 do
   case $opt in
     c) CHECK="true"
-       echo "Current version numbers will be checked - no modifications will be made";;
+       echo "Current version numbers will be checked - no modifications will be made"
+       ;;
     M) echo "Major version number will be increased from $MAJOR to $((MAJOR+1))"
        MAJOR=$((MAJOR+1))
        MINOR=0
-       PATCH=0;;
+       PATCH=0
+       ;;
     m) echo "Minor version number will be increased from $MINOR to $((MINOR+1))"
        MINOR=$((MINOR+1))
-       PATCH=0;;
+       PATCH=0
+       ;;
     p) echo "Minor version number will be increased from $PATCH to $((PATCH+1))"
-       PATCH=$((PATCH+1));;
+       PATCH=$((PATCH+1))
+       ;;
     s) MAJOR=$(echo $OPTARG | cut -f1 -d.)
        MINOR=$(echo $OPTARG | cut -f2 -d.)
        PATCH=$(echo $OPTARG | cut -f3 -d.)
-       echo "Version will be set explicitly to MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH";;
+       echo "Version will be set explicitly to MAJOR=$MAJOR MINOR=$MINOR PATCH=$PATCH"
+       ;;
     r) echo "Only release version and date will be set."
-       TYPE="RELEASE";;
+       TYPE="RELEASE"
+       ;;
     d) echo "Only development version will be set."
-       TYPE="DEVELOP";;
-    h) usage;;
-    \? ) echo "Error: Unrecognised switch '$opt'"
-	 usage
-         exit 1;;
-    * ) echo "Error: Extra operands given."
-        usage
-        exit 1;;
+       TYPE="DEVELOP"
+       ;;
+   \?) usage
+       exit 1
+       ;;
+    *) echo "Error: Extra operands given."
+       usage
+       exit 1
+       ;;
   esac
 done
 
@@ -139,8 +146,8 @@ then
   then
     sed -i -e "s/releaseVersion = \"[0-9\.]*\"/releaseVersion = \"$MAJOR.$MINOR.$PATCH\"/g" web/config.toml
 
-    DAYSUFFIX=`DaySuffix`
-    TODAY=`date "+%-d${DAYSUFFIX} %B %Y"`
+    DAYSUFFIX=$(DaySuffix)
+    TODAY=$(date "+%-d${DAYSUFFIX} %B %Y")
     sed -i -e "s/releaseDate = \".*\"/releaseDate = \"${TODAY}\"/g" web/config.toml
   fi
   echo -n "         config.toml (Release Version) : "
@@ -170,8 +177,8 @@ then
   # README.md
   if [ "$CHECK" = "false" ]
   then
-    DAYSUFFIX=`DaySuffix`
-    TODAY=`date "+%A %-d${DAYSUFFIX} %B %Y"`
+    DAYSUFFIX=$(DaySuffix)
+    TODAY=$(date "+%A %-d${DAYSUFFIX} %B %Y")
     sed -i -e "s/Last Release: [0-9\.]*, \(.*\)_/Last Release: $MAJOR.$MINOR.$PATCH, ${TODAY}_/g" README.md
   fi
   echo -n "           README.md (Release Version) : "
