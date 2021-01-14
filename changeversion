@@ -20,7 +20,7 @@ usage() {
   echo "        -p	Increase patch version number (0.0.X)"
   echo "        -s	Set version explicitly to X.Y.Z"
   echo "        -r	Release version - modify release version in web config (and date in README.md) only"
-  echo "        -c	Development version - modify development version in web config only"
+  echo "        -d	Development version - modify development version in web config only"
   echo ""
   echo "Default behaviour is to change version numbering in code, and installer and packaging scripts."
   echo "Web-visible values can be changed with the -r and -d switches."
