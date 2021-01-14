@@ -10,6 +10,8 @@ pr:
     - examples/*
     - web/*
     - README.md
+    - .azure-pipelines/continuous.yml
+    - .azure-pipelines/release.yml
 
 stages:
   - template: templates/code-quality-checks.yml
