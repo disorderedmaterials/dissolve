@@ -20,7 +20,7 @@ class Forcefield_OPLSAA2005_Protein : public OPLSAA2005BaseForcefield
      */
     protected:
     // Set up / create all forcefield terms
-    bool setUp();
+    bool setUp() {return true;}
 
     /*
      * Definition
@@ -33,5 +33,7 @@ class Forcefield_OPLSAA2005_Protein : public OPLSAA2005BaseForcefield
     // Find the bond terms
     OptionalReferenceWrapper<const ForcefieldBondTerm> getBondTerm(const ForcefieldAtomType&, const ForcefieldAtomType&) const override;
     OptionalReferenceWrapper<const ForcefieldAngleTerm> getAngleTerm(const ForcefieldAtomType&, const ForcefieldAtomType&, const ForcefieldAtomType&) const override;
+    OptionalReferenceWrapper<const ForcefieldTorsionTerm> getTorsionTerm(const ForcefieldAtomType&, const ForcefieldAtomType&, const ForcefieldAtomType&, const ForcefieldAtomType&) const override;
+    OptionalReferenceWrapper<const ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType&, const ForcefieldAtomType&, const ForcefieldAtomType&, const ForcefieldAtomType&) const override;
 
 };
