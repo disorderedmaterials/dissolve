@@ -144,7 +144,7 @@ then
 
     git diff
     git add ${OLD_RELEASES_FILE} web/config.toml README.md
-    git commit -m "[ci skip] Update version info."
+    git commit -m "(Release Automation) Update version info."
     git push origin HEAD:develop
   else
     echo "No changes to be committed to develop."
