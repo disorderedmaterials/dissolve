@@ -9,6 +9,7 @@
 #include "classes/speciesintra.h"
 #include "data/atomicmasses.h"
 #include "genericitems/array2ddouble.h"
+#include "templates/algorithms.h"
 #include "templates/enumhelpers.h"
 
 PairBroadeningFunction::PairBroadeningFunction(PairBroadeningFunction::FunctionType function)
@@ -185,11 +186,9 @@ std::vector<double *> PairBroadeningFunction::parameters()
             params.push_back(&gaussianFWHM_);
             break;
         case (PairBroadeningFunction::GaussianElementPairFunction):
-            for (auto n = 0; n < elementPairGaussianFlags_.size(); ++n)
-            {
-                if (elementPairGaussianFlags_[n])
-                    params.push_back(&elementPairGaussianFWHM_[n]);
-            }
+            for (auto &&[flags, fwhm] : zip(elementPairGaussianFlags_, elementPairGaussianFWHM_))
+                if (flags)
+                    params.push_back(&fwhm);
             break;
         default:
             break;

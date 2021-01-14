@@ -7,6 +7,7 @@
 #include "math/error.h"
 #include "math/mc.h"
 #include "math/praxis.h"
+#include "templates/algorithms.h"
 
 PoissonFit::PoissonFit(const Data1D &referenceData) : expMax_(25.0)
 {
@@ -470,13 +471,8 @@ double PoissonFit::costAnalyticC(const std::vector<double> &alpha)
         y = approximateData_.value(i);
 
         // Add in contributions from our Gaussians
-        for (auto n = 0; n < alpha.size(); ++n)
-        {
-            nIndex = alphaIndex_[n];
-            C = alpha[n];
-
+        for (auto &&[nIndex, C] : zip(alphaIndex_, alpha))
             y += (alphaSpace_ == FunctionSpace::RealSpace ? C * poisson(x, nIndex) : C * poissonFT(i, nIndex));
-        }
 
         dy = referenceData_.value(i) - y;
         sose += dy * dy;

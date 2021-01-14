@@ -4,6 +4,7 @@
 #include "math/filters.h"
 #include "math/data1d.h"
 #include "math/integrator.h"
+#include "templates/algorithms.h"
 #include "templates/array.h"
 
 namespace Filters
@@ -26,19 +27,16 @@ void convolve(Data1D &data, const BroadeningFunction &function, bool variableOme
     // parameter
     double xCentre, xBroad, norm;
     if (variableOmega)
-        for (auto n = 0; n < x.size(); ++n)
+        for (auto &&[xCentre, yn] : zip(x, y))
         {
-            // Grab x value as our current xCentre
-            xCentre = x[n];
-
             // Get normalisation for this convolution
             norm = (normalise ? function.discreteKernelNormalisation(xDelta, xCentre) : 1.0);
 
             // Inner loop over whole array
-            for (auto m = 0; m < x.size(); ++m)
+            for (auto &&[xm, newYm] : zip(x, newY))
             {
-                xBroad = x[m] - xCentre;
-                newY[m] += y[n] * function.y(xBroad, xCentre) * norm;
+                xBroad = xm - xCentre;
+                newYm += yn * function.y(xBroad, xCentre) * norm;
             }
         }
     else
@@ -46,15 +44,13 @@ void convolve(Data1D &data, const BroadeningFunction &function, bool variableOme
         // Get normalisation for this convolution
         norm = (normalise ? function.discreteKernelNormalisation(xDelta) : 1.0);
 
-        for (auto n = 0; n < x.size(); ++n)
+        for (auto &&[xCentre, yn] : zip(x, y))
         {
-            // Grab x value as our current xCentre
-            xCentre = x[n];
-
             // Inner loop over whole array
-            std::transform(
-                x.begin(), x.end(), newY.begin(), newY.begin(),
-                [&y, &function, norm, n, xCentre](auto X, auto NewY) { return NewY + y[n] * function.y(X - xCentre) * norm; });
+            std::transform(x.begin(), x.end(), newY.begin(), newY.begin(),
+                           [yn = yn, &function, norm, xCentre = xCentre](auto X, auto NewY) {
+                               return NewY + yn * function.y(X - xCentre) * norm;
+                           });
         }
     }
 

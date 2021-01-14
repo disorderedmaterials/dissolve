@@ -422,8 +422,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 // Remove square of average normalisation, and apply average of squares
                 auto bbarOld = weights.boundCoherentSquareOfAverage(normalisedRef.xAxis());
                 auto bbarNew = weights.boundCoherentAverageOfSquares(normalisedRef.xAxis());
-                for (auto n = 0; n < bbarOld.size(); ++n)
-                    normalisedRef.value(n) *= bbarOld[n] / bbarNew[n];
+                for (auto &&[val, old, nw] : zip(normalisedRef.values(), bbarOld, bbarNew))
+                    val *= old / nw;
             }
             else if (normType == StructureFactors::NoNormalisation)
             {
@@ -571,11 +571,11 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     {
         if (procPool.isMaster())
         {
-            for (auto n = 0; n < estimatedSQ.size(); ++n)
+            for (auto &sq : estimatedSQ)
             {
                 // generatedArray[n].save(generatedArray[n].name());
-                Data1DExportFileFormat exportFormat(estimatedSQ[n].name());
-                if (!exportFormat.exportData(estimatedSQ[n]))
+                Data1DExportFileFormat exportFormat(sq.name());
+                if (!exportFormat.exportData(sq))
                     return procPool.decideFalse();
             }
             procPool.decideTrue();

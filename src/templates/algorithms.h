@@ -3,7 +3,9 @@
 
 #pragma once
 
+#include <functional>
 #include <optional>
+#include <tuple>
 
 // Perform an operation on every pair of elements in a container
 template <class Iter, class Lam> void for_each_pair(Iter begin, Iter end, Lam lambda)
@@ -94,3 +96,52 @@ template <class Lam> auto for_each_pair_early(int begin, int end, Lam lambda) ->
 
     return std::nullopt;
 }
+
+template <typename... Args> class ZipIterator
+{
+    public:
+    ZipIterator(std::tuple<Args...> args) : source_(args){};
+    bool operator!=(ZipIterator<Args...> other)
+    {
+        return std::apply(
+            [&other](auto &a, auto &... as) {
+                return std::apply(
+                    [&a](auto &b, auto &... bs) {
+                        // Only test the first elements.  We have to make the
+                        // assumption that all the containers are the same length,
+                        // anyway and this saves us some tests and some code.
+                        return a != b;
+                    },
+                    other.source_);
+            },
+            source_);
+    }
+    void operator++()
+    {
+        std::apply([](auto &... item) { (item++, ...); }, source_);
+    }
+    auto operator*()
+    {
+        return std::apply([](auto &... item) { return std::make_tuple(std::ref(*item)...); }, source_);
+    }
+
+    private:
+    std::tuple<Args...> source_;
+};
+
+template <typename... Args> class zip
+{
+    public:
+    zip(Args &... args) : sources_(args...) {}
+    auto begin()
+    {
+        return ZipIterator(std::apply([](auto &... item) { return std::make_tuple(item.begin()...); }, sources_));
+    }
+    auto end()
+    {
+        return ZipIterator(std::apply([](auto &... item) { return std::make_tuple(item.end()...); }, sources_));
+    }
+
+    private:
+    std::tuple<Args &...> sources_;
+};

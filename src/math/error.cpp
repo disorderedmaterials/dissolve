@@ -6,6 +6,7 @@
 #include "math/data1d.h"
 #include "math/interpolator.h"
 #include <algorithm>
+#include <templates/algorithms.h>
 
 namespace Error
 {
@@ -61,11 +62,8 @@ double rmse(const Data1D &A, const Data1D &B, bool quiet)
     double rmse = 0.0, delta;
     double firstX = 0.0, lastX = 0.0, x;
     auto nPointsConsidered = 0;
-    for (auto n = 0; n < aX.size(); ++n)
+    for (auto &&[x, y] : zip(aX, aY))
     {
-        // Grab x value
-        x = aX[n];
-
         // Is our x value lower than the lowest x value of the reference data?
         if (x < B.xAxis().front())
             continue;
@@ -79,7 +77,7 @@ double rmse(const Data1D &A, const Data1D &B, bool quiet)
             firstX = x;
 
         // Sum squared error
-        delta = aY[n] - interpolatedB.y(x);
+        delta = y - interpolatedB.y(x);
         rmse += delta * delta;
         lastX = x;
         ++nPointsConsidered;
@@ -107,11 +105,8 @@ double mape(const Data1D &A, const Data1D &B, bool quiet)
     double sum = 0.0;
     double firstX = 0.0, lastX = 0.0, x, y;
     auto nPointsConsidered = 0;
-    for (auto n = 0; n < aX.size(); ++n)
+    for (auto &&[x, y] : zip(aX, aY))
     {
-        // Grab x value
-        x = aX[n];
-
         // Is our x value lower than the lowest x value of the reference data?
         if (x < B.xAxis().front())
             continue;
@@ -125,7 +120,6 @@ double mape(const Data1D &A, const Data1D &B, bool quiet)
             firstX = x;
 
         // Get y reference value, and skip if zero
-        y = aY[n];
         if (fabs(y) == 0.0)
             continue;
 
@@ -262,11 +256,8 @@ double rFactor(const Data1D &A, const Data1D &B, bool quiet)
     double rfac = 0.0, delta;
     double firstX = 0.0, lastX = 0.0, x;
     auto nPointsConsidered = 0;
-    for (auto n = 0; n < aX.size(); ++n)
+    for (auto &&[x, y] : zip(aX, aY))
     {
-        // Grab x value
-        x = aX[n];
-
         // Is our x value lower than the lowest x value of the reference data?
         if (x < B.xAxis().front())
             continue;
@@ -280,7 +271,7 @@ double rFactor(const Data1D &A, const Data1D &B, bool quiet)
             firstX = x;
 
         // Sum squared error
-        delta = aY[n] - interpolatedB.y(x);
+        delta = y - interpolatedB.y(x);
         rfac += delta * delta;
         lastX = x;
         ++nPointsConsidered;

@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "base/messenger.h"
 #include "math/histogram1d.h"
+#include "templates/algorithms.h"
 
 // Static Members (ObjectStore)
 template <class Data1D> RefDataList<Data1D, int> ObjectStore<Data1D>::objects_;
@@ -512,13 +513,13 @@ bool Data1D::write(LineParser &parser)
     // Write values / errors
     if (hasError_)
     {
-        for (auto n = 0; n < x_.size(); ++n)
-            if (!parser.writeLineF("{}  {}  {}\n", x_[n], values_[n], errors_[n]))
+        for (auto &&[x, value, error] : zip(x_, values_, errors_))
+            if (!parser.writeLineF("{}  {}  {}\n", x, value, error))
                 return false;
     }
     else
-        for (auto n = 0; n < x_.size(); ++n)
-            if (!parser.writeLineF("{}  {}\n", x_[n], values_[n]))
+        for (auto &&[x, value] : zip(x_, values_))
+            if (!parser.writeLineF("{}  {}\n", x, value))
                 return false;
 
     return true;
