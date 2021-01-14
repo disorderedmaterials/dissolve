@@ -92,5 +92,4 @@ stages:
           parallel: true
 
   # Create Release
-  - stage: 'create_versioned_release'
   - template: templates/create-release.yml
