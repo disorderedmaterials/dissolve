@@ -57,9 +57,9 @@ EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
 
 // Add new atom type with its own parameters
 void Forcefield::addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
-                             std::string_view description, double q, double data0, double data1, double data2, double data3)
+                             std::string_view description, double q, std::vector<double> parameters)
 {
-    atomTypes_.emplace_back(Z, index, name, netaDefinition, description, q, data0, data1, data2, data3);
+    atomTypes_.emplace_back(Z, index, name, netaDefinition, description, q, parameters);
 }
 
 // Add new atom type referencing existing parameters by name
@@ -126,9 +126,9 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType
 }
 
 // Ass short-range parameters
-void Forcefield::addParameters(std::string_view name, double data0, double data1, double data2, double data3)
+void Forcefield::addParameters(std::string_view name, std::vector<double> parameters)
 {
-    shortRangeParameters_.emplace_back(name, data0, data1, data2, data3);
+    shortRangeParameters_.emplace_back(name, parameters);
 }
 
 // Create NETA definitions for all atom types from stored defs

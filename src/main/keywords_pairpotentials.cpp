@@ -37,6 +37,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
     std::optional<decltype(at1)> opt_at;
     auto blockDone = false, error = false;
     Elements::Element Z;
+    std::vector<double> parameters;
 
     while (!parser.eofOrBlank())
     {
@@ -120,9 +121,11 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 }
                 at1->setShortRangeType(Forcefield::shortRangeTypes().enumeration(parser.argsv(4)));
 
-                // Set interaction parameters
+                // Get interaction parameters
+                parameters.clear();
                 for (int n = 5; n < parser.nArgs(); ++n)
-                    at1->parameters().setParameter(n - 5, parser.argd(n));
+                    parameters.push_back(parser.argd(n));
+                at1->parameters().setParameters(parameters);
                 break;
             case (PairPotentialsBlock::RangeKeyword):
                 dissolve->setPairPotentialRange(parser.argd(1));

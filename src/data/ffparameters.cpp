@@ -4,17 +4,12 @@
 #include "data/ffparameters.h"
 #include "data/ff.h"
 
-ForcefieldParameters::ForcefieldParameters(std::string_view name, double data0, double data1, double data2, double data3)
+ForcefieldParameters::ForcefieldParameters(std::string_view name, const std::vector<double> parameters)
     : ListItem<ForcefieldParameters>()
 {
     name_ = name;
-    parameters_.setParameter(0, data0);
-    parameters_.setParameter(1, data1);
-    parameters_.setParameter(2, data2);
-    parameters_.setParameter(3, data3);
+    parameters_.setParameters(parameters);
 }
-
-ForcefieldParameters::~ForcefieldParameters() {}
 
 /*
  * Identity

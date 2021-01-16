@@ -6,26 +6,18 @@
 #include "data/ffparameters.h"
 
 ForcefieldAtomType::ForcefieldAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
-                                       std::string_view description, double q, double data0, double data1, double data2,
-                                       double data3)
+                                       std::string_view description, double q, std::vector<double> parameters)
+    : Z_(Z), index_(index), name_(name), description_(description)
 {
-    Z_ = Z;
-    index_ = index;
-    name_ = name;
     neta_.setDefinitionString(netaDefinition);
-    description_ = description;
     parameters_.setCharge(q);
-    parameters_.setParameter(0, data0);
-    parameters_.setParameter(1, data1);
-    parameters_.setParameter(2, data2);
-    parameters_.setParameter(3, data3);
+    parameters_.setParameters(parameters);
 }
 ForcefieldAtomType::ForcefieldAtomType(OptionalReferenceWrapper<const ForcefieldParameters> params, Elements::Element Z,
                                        int index, std::string_view name, std::string_view netaDefinition,
                                        std::string_view description, double q)
-    : index_(index), name_(name), description_(description), parameterReference_(params)
+    : Z_(Z), index_(index), name_(name), description_(description), parameterReference_(params)
 {
-    Z_ = Z;
     neta_.setDefinitionString(netaDefinition);
     parameters_.setCharge(q);
 }

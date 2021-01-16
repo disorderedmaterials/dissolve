@@ -14,9 +14,8 @@ class Forcefield;
 class ForcefieldParameters : public ListItem<ForcefieldParameters>
 {
     public:
-    ForcefieldParameters(std::string_view name = "", double data0 = 0.0, double data1 = 0.0, double data2 = 0.0,
-                         double data3 = 0.0);
-    ~ForcefieldParameters();
+    ForcefieldParameters(std::string_view name = "", const std::vector<double> parameters = {});
+    ~ForcefieldParameters() = default;
 
     /*
      * Identity

@@ -20,17 +20,12 @@ PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationSch
     PairPotential::ShiftedShortRangeTruncation;
 double PairPotential::shortRangeTruncationWidth_ = 2.0;
 
-PairPotential::PairPotential() : ListItem<PairPotential>(), uFullInterpolation_(uFull_), dUFullInterpolation_(dUFull_)
+PairPotential::PairPotential()
+    : ListItem<PairPotential>(), chargeI_(0.0), chargeJ_(0.0), nPoints_(0), delta_(-1.0), range_(0.0), rDelta_(0.0),
+      includeCoulomb_(true), shortRangeType_(Forcefield::UndefinedType), uFullInterpolation_(uFull_),
+      dUFullInterpolation_(dUFull_), shortRangeEnergyAtCutoff_(0.0), shortRangeForceAtCutoff_(0.0), coulombEnergyAtCutoff_(0.0),
+      coulombForceAtCutoff_(0.0)
 {
-    for (auto n = 0; n < MAXSRPARAMETERS; ++n)
-        parameters_[n] = 0.0;
-    chargeI_ = 0.0;
-    chargeJ_ = 0.0;
-    nPoints_ = 0;
-    delta_ = -1.0;
-    range_ = 0.0;
-    includeCoulomb_ = true;
-    shortRangeType_ = Forcefield::UndefinedType;
 }
 
 // Return enum option info for CoulombTruncationScheme
@@ -134,38 +129,30 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
 {
     // Check for NULL pointers
     if (typeI == nullptr)
-    {
-        // TODO Raise Exception
-        Messenger::error("NULL_POINTER - NULL AtomType pointer (typeI) given to PairPotential::setUp().\n");
-        return false;
-    }
+        throw(std::runtime_error("Invalid AtomType pointer (typeI) given to PairPotential::setUp().\n"));
     if (typeJ == nullptr)
-    {
-        // TODO Raise Exception
-        Messenger::error("NULL_POINTER - NULL AtomType pointer (typeJ) given to PairPotential::setUp().\n");
-        return false;
-    }
+        throw(std::runtime_error("Invalid AtomType pointer (typeJ) given to PairPotential::setUp().\n"));
 
     atomTypeI_ = typeI;
     atomTypeJ_ = typeJ;
+    parameters_.clear();
     setData1DNames();
-    InteractionParameters &paramsI = atomTypeI_->parameters();
-    InteractionParameters &paramsJ = atomTypeJ_->parameters();
+    auto &paramsI = atomTypeI_->parameters();
+    auto &paramsJ = atomTypeJ_->parameters();
 
     // Sanity check - are either of the parameter sets empty (i.e. have never been set with useful data)?
     if (paramsI.isEmpty() || paramsJ.isEmpty())
     {
         if (paramsI.isEmpty() && paramsJ.isEmpty())
-            Messenger::error("Can't set parameters for PairPotential since neither AtomType ({} and {}) contain "
+            return Messenger::error("Can't set parameters for PairPotential since neither AtomType ({} and {}) contain "
                              "any parameters.\n",
                              atomTypeI_->name(), atomTypeJ_->name());
         else if (paramsI.isEmpty())
-            Messenger::error("Can't set parameters for PairPotential since AtomType {} contains no parameters.\n",
+            return Messenger::error("Can't set parameters for PairPotential since AtomType {} contains no parameters.\n",
                              atomTypeI_->name());
         else
-            Messenger::error("Can't set parameters for PairPotential since AtomType {} contains no parameters.\n",
+            return Messenger::error("Can't set parameters for PairPotential since AtomType {} contains no parameters.\n",
                              atomTypeJ_->name());
-        return false;
     }
 
     // Combine / set parameters as necessary, depending on the short-range interaction types of the supplied AtomTypes
@@ -185,8 +172,8 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
                  * Parameter 0 = Epsilon
                  * Parameter 1 = Sigma
                  */
-                parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
-                parameters_[1] = (paramsI.parameter(1) + paramsJ.parameter(1)) * 0.5;
+                parameters_.push_back(sqrt(paramsI.parameter(0) * paramsJ.parameter(0)));
+                parameters_.push_back((paramsI.parameter(1) + paramsJ.parameter(1)) * 0.5);
                 chargeI_ = paramsI.charge();
                 chargeJ_ = paramsJ.charge();
                 break;
@@ -196,8 +183,8 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
                  * Parameter 0 = Epsilon
                  * Parameter 1 = Sigma
                  */
-                parameters_[0] = sqrt(paramsI.parameter(0) * paramsJ.parameter(0));
-                parameters_[1] = sqrt(paramsI.parameter(1) * paramsJ.parameter(1));
+                parameters_.push_back(sqrt(paramsI.parameter(0) * paramsJ.parameter(0)));
+                parameters_.push_back(sqrt(paramsI.parameter(1) * paramsJ.parameter(1)));
                 chargeI_ = paramsI.charge();
                 chargeJ_ = paramsJ.charge();
                 break;
@@ -251,34 +238,13 @@ std::shared_ptr<AtomType> PairPotential::atomTypeI() const { return atomTypeI_; 
 std::shared_ptr<AtomType> PairPotential::atomTypeJ() const { return atomTypeJ_; }
 
 // Set parameter with index specified
-void PairPotential::setParameter(int index, double value)
-{
-#ifdef CHECKS
-    if ((index < 0) || (index >= MAXSRPARAMETERS))
-    {
-        Messenger::error("OUT_OF_RANGE - PairPotential Parameter index {} is out of range (MAXSRPARAMETERS = {}) so it "
-                         "cannot be set.\n",
-                         index, MAXSRPARAMETERS);
-        return;
-    }
-#endif
-    parameters_[index] = value;
-}
+void PairPotential::setParameter(int index, double value) { parameters_[index] = value; }
+
+// Return parameters vector
+const std::vector<double> &PairPotential::parameters() const { return parameters_; }
 
 // Return short-range parameter with index specified
-double PairPotential::parameter(int index) const
-{
-#ifdef CHECKS
-    if ((index < 0) || (index >= MAXSRPARAMETERS))
-    {
-        Messenger::error("OUT_OF_RANGE - PairPotential Parameter index {} is out of range (MAXSRPARAMETERS = {}) so it "
-                         "cannot be returned.\n",
-                         index, MAXSRPARAMETERS);
-        return 0.0;
-    }
-#endif
-    return parameters_[index];
-}
+double PairPotential::parameter(int index) const { return parameters_[index]; }
 
 // Set charge I
 void PairPotential::setChargeI(double value) { chargeI_ = value; }

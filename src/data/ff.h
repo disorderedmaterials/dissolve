@@ -78,11 +78,10 @@ class Forcefield
 
     protected:
     // Add short-range parameters
-    void addParameters(std::string_view name, double data0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+    void addParameters(std::string_view name, std::vector<double> parameters);
     // Add new atom type with its own parameters
     void addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
-                     std::string_view description, double q, double data0, double data1, double data2 = 0.0,
-                     double data3 = 0.0);
+                     std::string_view description, double q, std::vector<double> parameters);
     // Add new atom type referencing existing parameters by name
     void addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
                      std::string_view description, double q, std::string_view parameterReference);

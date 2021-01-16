@@ -21,11 +21,11 @@
 bool Forcefield_Ludwig_NTf2::setUp()
 {
     // Short-Range Parameters
-    addParameters("F", 0.066516, 2.655);
-    addParameters("C", 0.082812, 3.150);
-    addParameters("S", 0.313705, 4.0825);
-    addParameters("O", 0.263568, 3.4632);
-    addParameters("N", 0.213349, 3.2500);
+    addParameters("F", {0.066516, 2.655});
+    addParameters("C", {0.082812, 3.150});
+    addParameters("S", {0.313705, 4.0825});
+    addParameters("O", {0.263568, 3.4632});
+    addParameters("N", {0.213349, 3.2500});
 
     // Atom Types
     addAtomType(Elements::F, 1, "F", "-C(-F(n=2))", "Fluorine", -0.189, "F");
