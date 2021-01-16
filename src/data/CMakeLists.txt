@@ -24,7 +24,7 @@ add_library(
   structurefactors.h
 )
 
-include_directories(data PRIVATE ../ ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src)
+include_directories(data PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
 add_subdirectory(ff)
 add_subdirectory(sg)

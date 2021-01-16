@@ -124,4 +124,4 @@ add_library(
   xrayweights.h
 )
 
-include_directories(../ ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src)
+include_directories(classes PRIVATE ${PROJECT_SOURCE_DIR}/src)
