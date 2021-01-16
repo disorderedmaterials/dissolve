@@ -3,7 +3,7 @@
 
 #include "classes/atomtype.h"
 #include "classes/species.h"
-#include "data/fflibrary.h"
+#include "data/ff/library.h"
 #include "gui/addforcefieldtermswizard.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/treewidgetupdater.h"

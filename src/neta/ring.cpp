@@ -3,7 +3,7 @@
 
 #include "neta/ring.h"
 #include "classes/speciesatom.h"
-#include "data/ffatomtype.h"
+#include "data/ff/atomtype.h"
 #include <algorithm>
 
 NETARingNode::NETARingNode(NETADefinition *parent) : NETANode(parent, NETANode::RingNode)

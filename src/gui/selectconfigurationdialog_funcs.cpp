@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "data/ff.h"
+#include "data/ff/ff.h"
 #include "gui/selectconfigurationdialog.h"
 #include "gui/selectconfigurationwidget.h"
 #include "templates/variantpointer.h"

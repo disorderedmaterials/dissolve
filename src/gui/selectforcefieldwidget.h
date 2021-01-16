@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "data/fflibrary.h"
+#include "data/ff/library.h"
 #include "gui/ui_selectforcefieldwidget.h"
 #include "templates/list.h"
 #include <QWidget>

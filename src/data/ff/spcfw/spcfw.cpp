@@ -5,9 +5,9 @@
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/speciesatom.h"
-#include "data/ffangleterm.h"
-#include "data/ffatomtype.h"
-#include "data/ffbondterm.h"
+#include "data/ff/angleterm.h"
+#include "data/ff/atomtype.h"
+#include "data/ff/bondterm.h"
 
 /*
  * Implements "Flexible simple point-charge water model with improved liquid-state properties"

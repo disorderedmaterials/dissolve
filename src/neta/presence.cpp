@@ -3,7 +3,7 @@
 
 #include "neta/presence.h"
 #include "classes/speciesatom.h"
-#include "data/ffatomtype.h"
+#include "data/ff/atomtype.h"
 #include <algorithm>
 
 NETAPresenceNode::NETAPresenceNode(NETADefinition *parent, std::vector<Elements::Element> targetElements,

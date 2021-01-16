@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "data/ffparameters.h"
-#include "data/ff.h"
+#include "data/ff/parameters.h"
+#include "data/ff/ff.h"
 
 ForcefieldParameters::ForcefieldParameters(std::string_view name, const std::vector<double> parameters)
     : ListItem<ForcefieldParameters>()

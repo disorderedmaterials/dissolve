@@ -5,7 +5,7 @@
 
 #include "base/parameters.h"
 #include "data/elements.h"
-#include "data/ff.h"
+#include "data/ff/ff.h"
 
 // AtomType Definition
 class AtomType

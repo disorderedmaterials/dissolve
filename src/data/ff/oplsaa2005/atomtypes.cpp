@@ -2,7 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "data/ff/oplsaa2005/base.h"
-#include "data/ffatomtype.h"
+#include "data/ff/atomtype.h"
 
 /*
  * OPLS-AA Forcefield (November 2005) AtomTypes

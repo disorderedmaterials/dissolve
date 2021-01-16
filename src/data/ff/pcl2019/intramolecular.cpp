@@ -2,10 +2,10 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "data/ff/pcl2019/base.h"
-#include "data/ffangleterm.h"
-#include "data/ffbondterm.h"
-#include "data/ffimproperterm.h"
-#include "data/fftorsionterm.h"
+#include "data/ff/angleterm.h"
+#include "data/ff/bondterm.h"
+#include "data/ff/improperterm.h"
+#include "data/ff/torsionterm.h"
 #include "templates/optionalref.h"
 #include <vector>
 

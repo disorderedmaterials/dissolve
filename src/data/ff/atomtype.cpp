@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "data/ffatomtype.h"
-#include "data/ff.h"
-#include "data/ffparameters.h"
+#include "data/ff/atomtype.h"
+#include "data/ff/ff.h"
+#include "data/ff/parameters.h"
 
 ForcefieldAtomType::ForcefieldAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
                                        std::string_view description, double q, std::vector<double> parameters)

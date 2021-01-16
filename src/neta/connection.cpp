@@ -3,7 +3,7 @@
 
 #include "neta/connection.h"
 #include "classes/speciesatom.h"
-#include "data/ffatomtype.h"
+#include "data/ff/atomtype.h"
 #include <algorithm>
 #include <map>
 
