@@ -62,7 +62,7 @@ bool Dissolve::prepare()
         {
             auto &types = cfg->usedAtomTypesList();
             totalQ = std::accumulate(types.begin(), types.end(), totalQ, [](auto acc, const auto &atd) {
-                return acc + atd.population() * atd.atomType()->parameters().charge();
+                return acc + atd.population() * atd.atomType()->charge();
             });
         }
         else

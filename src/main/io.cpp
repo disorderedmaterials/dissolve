@@ -253,9 +253,9 @@ bool Dissolve::saveInput(std::string_view filename)
     {
         std::string line = fmt::format("  {}  {}  {}  {:12.6e}  {}",
                                        PairPotentialsBlock::keywords().keyword(PairPotentialsBlock::ParametersKeyword),
-                                       atomType->name(), Elements::symbol(atomType->Z()), atomType->parameters().charge(),
+                                       atomType->name(), Elements::symbol(atomType->Z()), atomType->charge(),
                                        Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()));
-        for (auto x : atomType->parameters().parameters())
+        for (auto x : atomType->shortRangeParameters())
             line += fmt::format("  {:12.6e}", x);
         if (!parser.writeLine(line))
             return false;

@@ -12,7 +12,6 @@
 #include "data/ff/atomtype.h"
 #include "data/ff/bondterm.h"
 #include "data/ff/improperterm.h"
-#include "data/ff/parameters.h"
 #include "data/ff/torsionterm.h"
 #include "templates/optionalref.h"
 #include <algorithm>
@@ -70,7 +69,7 @@ class Forcefield
      */
     protected:
     // Short-range parameter sets
-    std::vector<ForcefieldParameters> shortRangeParameters_;
+    std::vector<std::pair<std::string,std::vector<double>>> shortRangeParameters_;
     // Atom type data
     std::vector<ForcefieldAtomType> atomTypes_;
     // Atom type data, grouped by element
@@ -99,7 +98,7 @@ class Forcefield
     // Create NETA definitions for all atom types from stored defs
     bool createNETADefinitions();
     // Return named short-range parameters (if they exist)
-    const OptionalReferenceWrapper<const ForcefieldParameters> shortRangeParameters(std::string_view name) const;
+    std::optional<std::vector<double>> shortRangeParameters(std::string_view name) const;
     // Return the named ForcefieldAtomType (if it exists)
     virtual OptionalReferenceWrapper<const ForcefieldAtomType>
     atomTypeByName(std::string_view name, Elements::Element onlyZ = Elements::Unknown) const;

@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "base/parameters.h"
 #include "classes/speciesimproper.h"
 
 // Forward Declarations

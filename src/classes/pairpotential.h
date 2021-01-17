@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "base/parameters.h"
 #include "data/ff/ff.h"
 #include "math/data1d.h"
 #include "math/interpolator.h"

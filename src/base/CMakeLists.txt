@@ -8,7 +8,6 @@ add_library(
   lock.cpp
   messenger.cpp
   outputhandler.cpp
-  parameters.cpp
   processgroup.cpp
   processpool.cpp
   sysfunc.cpp
@@ -24,7 +23,6 @@ add_library(
   lock.h
   messenger.h
   outputhandler.h
-  parameters.h
   processgroup.h
   processpool.h
   sysfunc.h

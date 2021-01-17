@@ -32,7 +32,6 @@ add_library(
   ff.cpp
   improperterm.cpp
   library.cpp
-  parameters.cpp
   torsionterm.cpp
   angleterm.h
   atomtype.h
@@ -40,7 +39,6 @@ add_library(
   ff.h
   improperterm.h
   library.h
-  parameters.h
   torsionterm.h
 )
 

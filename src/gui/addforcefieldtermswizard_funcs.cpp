@@ -127,7 +127,7 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
         // Overwrite existing parameters?
         if (ui_.AtomTypesOverwriteParametersCheck->isChecked())
         {
-            i->atomType()->parameters() = modifiedI->atomType()->parameters();
+            i->atomType()->setShortRangeParameters(modifiedI->atomType()->shortRangeParameters());
             i->atomType()->setShortRangeType(modifiedI->atomType()->shortRangeType());
             i->setCharge(modifiedI->charge());
             dissolve.coreData().bumpAtomTypesVersion();

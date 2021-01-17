@@ -4,7 +4,6 @@
 #include "classes/pairpotential.h"
 #include "base/lineparser.h"
 #include "base/messenger.h"
-#include "base/parameters.h"
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
@@ -137,23 +136,13 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
     atomTypeJ_ = typeJ;
     parameters_.clear();
     setData1DNames();
-    auto &paramsI = atomTypeI_->parameters();
-    auto &paramsJ = atomTypeJ_->parameters();
+    auto &paramsI = atomTypeI_->shortRangeParameters();
+    auto &paramsJ = atomTypeJ_->shortRangeParameters();
 
     // Sanity check - are either of the parameter sets empty (i.e. have never been set with useful data)?
-    if (paramsI.isEmpty() || paramsJ.isEmpty())
-    {
-        if (paramsI.isEmpty() && paramsJ.isEmpty())
-            return Messenger::error("Can't set parameters for PairPotential since neither AtomType ({} and {}) contain "
-                             "any parameters.\n",
-                             atomTypeI_->name(), atomTypeJ_->name());
-        else if (paramsI.isEmpty())
-            return Messenger::error("Can't set parameters for PairPotential since AtomType {} contains no parameters.\n",
-                             atomTypeI_->name());
-        else
-            return Messenger::error("Can't set parameters for PairPotential since AtomType {} contains no parameters.\n",
-                             atomTypeJ_->name());
-    }
+    if (paramsI.empty() || paramsJ.empty())
+        return Messenger::error("Can't set parameters for PairPotential since there are {} ({}) and {} ({}) parameters set in the atom types.\n",
+                             paramsI.size(), atomTypeI_->name(), paramsJ.size(), atomTypeJ_->name());
 
     // Combine / set parameters as necessary, depending on the short-range interaction types of the supplied AtomTypes
     if (atomTypeI_->shortRangeType() == atomTypeJ_->shortRangeType())
@@ -172,10 +161,8 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
                  * Parameter 0 = Epsilon
                  * Parameter 1 = Sigma
                  */
-                parameters_.push_back(sqrt(paramsI.parameter(0) * paramsJ.parameter(0)));
-                parameters_.push_back((paramsI.parameter(1) + paramsJ.parameter(1)) * 0.5);
-                chargeI_ = paramsI.charge();
-                chargeJ_ = paramsJ.charge();
+                parameters_.push_back(sqrt(paramsI[0] * paramsJ[0]));
+                parameters_.push_back((paramsI[1] + paramsJ[1]) * 0.5);
                 break;
             case (Forcefield::LennardJonesGeometricType):
                 /*
@@ -183,14 +170,11 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
                  * Parameter 0 = Epsilon
                  * Parameter 1 = Sigma
                  */
-                parameters_.push_back(sqrt(paramsI.parameter(0) * paramsJ.parameter(0)));
-                parameters_.push_back(sqrt(paramsI.parameter(1) * paramsJ.parameter(1)));
-                chargeI_ = paramsI.charge();
-                chargeJ_ = paramsJ.charge();
+                parameters_.push_back(sqrt(paramsI[0] * paramsJ[0]));
+                parameters_.push_back(sqrt(paramsI[1] * paramsJ[1]));
                 break;
             default:
-                Messenger::error("Short-range type {} is not accounted for in PairPotential::setUp().\n", shortRangeType_);
-                return false;
+                return Messenger::error("Short-range type {} is not accounted for in PairPotential::setUp().\n", shortRangeType_);
         }
     }
     else
@@ -203,6 +187,10 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
                                 Forcefield::shortRangeTypes().keyword(atomTypeI_->shortRangeType()),
                                 Forcefield::shortRangeTypes().keyword(atomTypeJ_->shortRangeType()));
     }
+
+    // Set charges
+    chargeI_ = atomTypeI_->charge();
+    chargeJ_ = atomTypeJ_->charge();
 
     return true;
 }

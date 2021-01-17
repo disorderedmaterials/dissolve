@@ -110,7 +110,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                     at1 = *opt_at;
 
                 // Set charge value
-                at1->parameters().setCharge(parser.argd(3));
+                at1->setCharge(parser.argd(3));
 
                 // Get short-range type
                 if (!Forcefield::shortRangeTypes().isValid(parser.argsv(4)))
@@ -125,7 +125,7 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 parameters.clear();
                 for (int n = 5; n < parser.nArgs(); ++n)
                     parameters.push_back(parser.argd(n));
-                at1->parameters().setParameters(parameters);
+                at1->setShortRangeParameters(parameters);
                 break;
             case (PairPotentialsBlock::RangeKeyword):
                 dissolve->setPairPotentialRange(parser.argd(1));

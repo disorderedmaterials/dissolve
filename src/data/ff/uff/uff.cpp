@@ -657,7 +657,7 @@ bool Forcefield_UFF::assignAtomTypes(Species *sp, CoreData &coreData, bool keepE
                  * So:    sigma = x / (2.0^(1/6))
                  * 	epsilon = Dij * 4.184       (UFF energy parameters in kcal)
                  */
-                at->parameters().setParameters({uffType.D() * 4.184, uffType.x() / (pow(2.0, 1.0 / 6.0))});
+                at->setShortRangeParameters({uffType.D() * 4.184, uffType.x() / (pow(2.0, 1.0 / 6.0))});
             }
 
             i->setAtomType(at);

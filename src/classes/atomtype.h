@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "base/parameters.h"
 #include "data/elements.h"
 #include "data/ff/ff.h"
 
@@ -39,8 +38,10 @@ class AtomType
     private:
     // Short-range interaction type
     Forcefield::ShortRangeType shortRangeType_;
-    // Interatomic interaction parameters (including charge)
-    InteractionParameters parameters_;
+    // Vector of parameters for short-range potential
+    std::vector<double> parameters_;
+    // Atomic charge
+    double charge_;
     // Whether this AtomType is exchangeable
     bool exchangeable_;
     // Index of this type in the master type index
@@ -51,8 +52,18 @@ class AtomType
     void setShortRangeType(Forcefield::ShortRangeType srType);
     // Return short-range interaction type
     Forcefield::ShortRangeType shortRangeType() const;
-    // Return interatomic interaction interaction parameters
-    InteractionParameters &parameters();
+    // Set short-range parameters vector
+    void setShortRangeParameters(const std::vector<double> &parameters);
+    // Set single short-range parameter
+    void setShortRangeParameter(int index, double parameter);
+    // Return short-range parameters vector
+    const std::vector<double> &shortRangeParameters() const;
+    // Return short-range parameter with index specified
+    double shortRangeParameter(int index) const;
+    // Set atomic charge
+    void setCharge(double q);
+    // Return atomic charge
+    double charge() const;
     // Set index of this type in the master type index
     void setIndex(int id);
     // Return index of this type in the master type index

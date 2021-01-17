@@ -330,7 +330,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
     }
     else
         item = ui_.AtomTypesTable->item(row, 2);
-    item->setText(QString::number(atomType->parameters().charge()));
+    item->setText(QString::number(atomType->charge()));
 
     // Short-Range Form
     if (createItems)
@@ -345,7 +345,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
 
     // Parameters
     auto col = 4;
-    for (auto x : atomType->parameters().parameters())
+    for (auto x : atomType->shortRangeParameters())
     {
         if (createItems)
         {
@@ -576,7 +576,7 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem *w)
             break;
         // Charge
         case (2):
-            atomType->parameters().setCharge(w->text().toDouble());
+            atomType->setCharge(w->text().toDouble());
             atomTypeDataModified();
             dissolveWindow_->setModified();
             break;
@@ -590,7 +590,7 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem *w)
         case (5):
         case (6):
         case (7):
-            atomType->parameters().setParameter(w->column() - 4, w->text().toDouble());
+            atomType->setShortRangeParameter(w->column() - 4, w->text().toDouble());
             atomTypeDataModified();
             dissolveWindow_->setModified();
             break;

@@ -12,7 +12,6 @@
 #include "data/ff/atomtype.h"
 #include "data/ff/bondterm.h"
 #include "data/ff/improperterm.h"
-#include "data/ff/parameters.h"
 #include "data/ff/torsionterm.h"
 
 /*
@@ -66,11 +65,11 @@ void Forcefield::addAtomType(Elements::Element Z, int index, std::string_view na
 void Forcefield::addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
                              std::string_view description, double q, std::string_view parameterReference)
 {
-    OptionalReferenceWrapper<const ForcefieldParameters> parameterReference_ = shortRangeParameters(parameterReference);
-    if (!parameterReference_)
+    auto refParams = shortRangeParameters(parameterReference);
+    if (!refParams)
         Messenger::error("Reference parameters named '{}' are not defined in the forcefield '{}'.\n", parameterReference,
                          this->name());
-    atomTypes_.emplace_back(parameterReference_, Z, index, name, netaDefinition, description, q);
+    atomTypes_.emplace_back(Z, index, name, netaDefinition, description, q, *refParams, parameterReference);
 }
 
 // Copy existing atom type
@@ -150,14 +149,14 @@ bool Forcefield::createNETADefinitions()
 }
 
 // Return named short-range parameters (if they exist)
-const OptionalReferenceWrapper<const ForcefieldParameters> Forcefield::shortRangeParameters(std::string_view name) const
+std::optional<std::vector<double>> Forcefield::shortRangeParameters(std::string_view name) const
 {
     auto it = std::find_if(shortRangeParameters_.begin(), shortRangeParameters_.end(),
-                           [&name](const auto &params) { return DissolveSys::sameString(name, params.name()); });
+                           [&name](const auto &params) { return DissolveSys::sameString(name, params.first); });
     if (it != shortRangeParameters_.end())
-        return *it;
+        return it->second;
 
-    return {};
+    return std::nullopt;
 }
 
 // Return the named ForcefieldAtomType (if it exists)
@@ -267,44 +266,26 @@ bool Forcefield::assignAtomType(SpeciesAtom *i, CoreData &coreData) const
     auto optRef = determineAtomType(i);
     if (!optRef)
         return false;
-
-    const ForcefieldAtomType &atomType = *optRef;
+    const ForcefieldAtomType &assignedType = *optRef;
 
     // Check if an AtomType of the same name already exists - if it does, just use that one
-    auto at = coreData.findAtomType(atomType.name());
+    auto at = coreData.findAtomType(assignedType.name());
     if (!at)
     {
         at = coreData.addAtomType(i->Z());
-        at->setName(atomType.name());
-
-        // Copy parameters from the Forcefield's atom type
-        at->parameters() = atomType.parameters();
-        at->setShortRangeType(shortRangeType());
-
-        // The atomType may reference parameters, rather than owning them, so set charge explicitly
-        at->parameters().setCharge(atomType.charge());
-
+        at->setName(assignedType.name());
         Messenger::print("Adding AtomType '{}' for atom {} ({}).\n", at->name(), i->userIndex(), Elements::symbol(i->Z()));
     }
     else
-    {
         Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i->userIndex(), Elements::symbol(i->Z()));
 
-        // If the current atomtype is empty, set its parameters
-        if (at->parameters().isEmpty())
-        {
-            // Copy parameters from the Forcefield's atom type
-            at->parameters() = atomType.parameters();
-            at->setShortRangeType(shortRangeType());
+    // Copy parameters from the Forcefield's atom type
+    at->setShortRangeParameters(assignedType.parameters());
+    at->setShortRangeType(shortRangeType());
+    at->setCharge(assignedType.charge());
 
-            // The atomType may reference parameters, rather than owning them, so set charge explicitly
-            at->parameters().setCharge(atomType.charge());
-        }
-    }
-
-    // Update SpeciesAtom
+    // Set type in the SpeciesAtom
     i->setAtomType(at);
-    i->setCharge(at->parameters().charge());
 
     return true;
 }
