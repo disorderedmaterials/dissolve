@@ -2,8 +2,14 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "data/ff/xml/base.h"
+#include <pugixml.hpp>
+#include <iostream>
 
-XMLBaseForcefield::XMLBaseForcefield(std::string_view source) {}
+XMLBaseForcefield::XMLBaseForcefield(std::string_view source) {
+  pugi::xml_document doc;
+  auto result = doc.load_file(source.data());
+  std::cout << "Load result: " << result.description() << std::endl;
+}
 
 /*
  * Definition
