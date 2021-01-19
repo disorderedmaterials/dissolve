@@ -9,6 +9,20 @@ XMLBaseForcefield::XMLBaseForcefield(std::string_view source) {
   pugi::xml_document doc;
   auto result = doc.load_file(source.data());
   std::cout << "Load result: " << result.description() << std::endl;
+  for (auto &b : doc.select_nodes("/ForceField/HarmonicBondForce/Bond")) {
+    std::cout <<
+      b.node().attribute("class1").as_string() << " x " <<
+      b.node().attribute("class2").as_string() << ": " <<
+      b.node().attribute("k").as_double() << " over " <<
+      b.node().attribute("length").as_double() <<
+      std::endl;
+    bondTerms_.emplace_back(b.node().attribute("class1").as_string(),
+			    b.node().attribute("class2").as_string(),
+			    SpeciesBond::HarmonicForm,
+			    std::vector<double>(
+			    {b.node().attribute("length").as_double(),
+			     b.node().attribute("k").as_double()}));
+  }
 }
 
 /*
