@@ -16,6 +16,7 @@
 #include "data/ff/oplsaa2005/triols.h"
 #include "data/ff/pcl2019/anions.h"
 #include "data/ff/pcl2019/cations.h"
+#include "data/ff/xml/base.h"
 #include "data/ff/spcfw/spcfw.h"
 #include "data/ff/uff/uff.h"
 
@@ -86,4 +87,13 @@ std::shared_ptr<Forcefield> ForcefieldLibrary::forcefield(std::string_view name)
         return nullptr;
 
     return *it;
+}
+
+
+// Register a new force field from a file
+std::shared_ptr<Forcefield> ForcefieldLibrary::forcefield(std::string_view name, std::string_view file)
+{
+    auto ff = std::make_shared<XMLBaseForcefield>(file);
+    registerForcefield(ff);
+    return ff;
 }
