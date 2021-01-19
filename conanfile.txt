@@ -9,3 +9,4 @@ cmake
 
 [options]
 fmt:header_only=True
+pugixml:header_only=True
