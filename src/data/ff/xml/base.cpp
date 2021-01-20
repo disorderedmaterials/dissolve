@@ -2,14 +2,31 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "data/ff/xml/base.h"
-#include <pugixml.hpp>
 #include <iostream>
 
 XMLBaseForcefield::XMLBaseForcefield(std::string_view source) {
   pugi::xml_document doc;
   auto result = doc.load_file(source.data());
-  std::cout << "Load result: " << result.description() << std::endl;
-  for (auto &b : doc.select_nodes("/ForceField/HarmonicBondForce/Bond")) {
+  if (result) {
+    doc_ = doc.root();
+  }
+  else {
+    //Throw a fit
+  }
+  setUp();
+}
+
+XMLBaseForcefield::XMLBaseForcefield(pugi::xml_node doc) {
+  doc_ = doc;
+  setUp();
+}
+
+/*
+ * Definition
+ */
+
+bool XMLBaseForcefield::setUp() {
+  for (auto &b : doc_.select_nodes("/ForceField/HarmonicBondForce/Bond")) {
     std::cout <<
       b.node().attribute("class1").as_string() << " x " <<
       b.node().attribute("class2").as_string() << ": " <<
@@ -23,13 +40,70 @@ XMLBaseForcefield::XMLBaseForcefield(std::string_view source) {
 			    {b.node().attribute("length").as_double(),
 			     b.node().attribute("k").as_double()}));
   }
-}
-
-/*
- * Definition
- */
-
-bool XMLBaseForcefield::setUp() {return true;};
+  for (auto &a : doc_.select_nodes("/ForceField/HarmonicAngleForce/Angle")) {
+    std::cout <<
+      a.node().attribute("class1").as_string() << " x " <<
+      a.node().attribute("class2").as_string() << " x " <<
+      a.node().attribute("class3").as_string() << ": " <<
+      a.node().attribute("k").as_double() << " over " <<
+      a.node().attribute("angle").as_double() << " degrees" <<
+      std::endl;
+    angleTerms_.emplace_back(a.node().attribute("class1").as_string(),
+			     a.node().attribute("class2").as_string(),
+			     a.node().attribute("class3").as_string(),
+			     SpeciesAngle::HarmonicForm,
+			     std::vector<double>(
+						 {a.node().attribute("angle").as_double(),
+						  a.node().attribute("k").as_double()}));
+  }
+  for (auto &a : doc_.select_nodes("/ForceField/PeriodicTorsionForce/Proper")) {
+    std::cout <<
+      a.node().attribute("class1").as_string() << " x " <<
+      a.node().attribute("class2").as_string() << " x " <<
+      a.node().attribute("class3").as_string() << " x " <<
+      a.node().attribute("class4").as_string() << ": " <<
+      a.node().attribute("k1").as_double() << " x " <<
+      a.node().attribute("k2").as_double() << " x " <<
+      a.node().attribute("k3").as_double() << " x " <<
+      a.node().attribute("k4").as_double() <<
+      std::endl;
+    //TODO: Get correct force function
+    torsionTerms_.emplace_back(a.node().attribute("class1").as_string(),
+			       a.node().attribute("class2").as_string(),
+			       a.node().attribute("class3").as_string(),
+			       a.node().attribute("class4").as_string(),
+			       SpeciesTorsion::Cos4Form,
+			       std::vector<double>(
+						   {a.node().attribute("k1").as_double(),
+						    a.node().attribute("k2").as_double(),
+						    a.node().attribute("k3").as_double(),
+						    a.node().attribute("k4").as_double()}));
+  }
+  for (auto &a : doc_.select_nodes("/ForceField/PeriodicTorsionForce/Improper")) {
+    std::cout <<
+      a.node().attribute("class1").as_string() << " x " <<
+      a.node().attribute("class2").as_string() << " x " <<
+      a.node().attribute("class3").as_string() << " x " <<
+      a.node().attribute("class4").as_string() << ": " <<
+      a.node().attribute("k1").as_double() << " x " <<
+      a.node().attribute("k2").as_double() << " x " <<
+      a.node().attribute("k3").as_double() << " x " <<
+      a.node().attribute("k4").as_double() <<
+      std::endl;
+    //TODO: Get correct force function
+    improperTerms_.emplace_back(a.node().attribute("class1").as_string(),
+				a.node().attribute("class2").as_string(),
+				a.node().attribute("class3").as_string(),
+				a.node().attribute("class4").as_string(),
+				SpeciesImproper::Cos4Form,
+				std::vector<double>(
+						    {a.node().attribute("k1").as_double(),
+						     a.node().attribute("k2").as_double(),
+						     a.node().attribute("k3").as_double(),
+						     a.node().attribute("k4").as_double()}));
+  }
+  return true;
+};
 
 std::string_view XMLBaseForcefield::name() const {
   return "XML";

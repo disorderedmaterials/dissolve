@@ -5,6 +5,7 @@
 
 #include "data/ff.h"
 #include "templates/optionalref.h"
+#include <pugixml.hpp>
 #include <string_view>
 
 // Forward Declarations
@@ -15,6 +16,7 @@ class XMLBaseForcefield : public Forcefield
 {
     public:
     XMLBaseForcefield(std::string_view);
+    XMLBaseForcefield(pugi::xml_node doc);
     ~XMLBaseForcefield() = default;
 
     /*
@@ -58,4 +60,5 @@ class XMLBaseForcefield : public Forcefield
     std::vector<ForcefieldAngleTerm> angleTerms_;
     std::vector<ForcefieldTorsionTerm> torsionTerms_;
     std::vector<ForcefieldImproperTerm> improperTerms_;
+    pugi::xml_node doc_;
 };
