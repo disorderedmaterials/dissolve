@@ -509,5 +509,5 @@ PairPotentials
   Parameters  'CT'  C  -0.18   LJGeometric   0.276     3.55
   Parameters  'HC'  H  0.06    LJGeometric   0.126     2.5
   Parameters  'OH'  O  -0.68 LJGeometric	0.711	3.12
-  Parameters  'HO'  H  -0.48 LJGeometric	0.126	2.4
+  Parameters  'HO'  H   0.68 LJGeometric	0.126	2.4
 EndPairPotentials
