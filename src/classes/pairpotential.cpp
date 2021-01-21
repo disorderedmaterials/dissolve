@@ -20,10 +20,12 @@ PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationSch
 double PairPotential::shortRangeTruncationWidth_ = 2.0;
 
 PairPotential::PairPotential()
-    : ListItem<PairPotential>(), chargeI_(0.0), chargeJ_(0.0), nPoints_(0), delta_(-1.0), range_(0.0), rDelta_(0.0),
-      includeCoulomb_(true), shortRangeType_(Forcefield::UndefinedType), uFullInterpolation_(uFull_),
-      dUFullInterpolation_(dUFull_), shortRangeEnergyAtCutoff_(0.0), shortRangeForceAtCutoff_(0.0), coulombEnergyAtCutoff_(0.0),
-      coulombForceAtCutoff_(0.0)
+    : ListItem<PairPotential>(),
+
+      shortRangeEnergyAtCutoff_(0.0), shortRangeForceAtCutoff_(0.0), includeCoulomb_(true),
+      shortRangeType_(Forcefield::UndefinedType), chargeI_(0.0), chargeJ_(0.0), nPoints_(0), range_(0.0), delta_(-1.0),
+      rDelta_(0.0), coulombEnergyAtCutoff_(0.0), coulombForceAtCutoff_(0.0), uFullInterpolation_(uFull_),
+      dUFullInterpolation_(dUFull_)
 {
 }
 
@@ -141,8 +143,9 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
 
     // Sanity check - are either of the parameter sets empty (i.e. have never been set with useful data)?
     if (paramsI.empty() || paramsJ.empty())
-        return Messenger::error("Can't set parameters for PairPotential since there are {} ({}) and {} ({}) parameters set in the atom types.\n",
-                             paramsI.size(), atomTypeI_->name(), paramsJ.size(), atomTypeJ_->name());
+        return Messenger::error(
+            "Can't set parameters for PairPotential since there are {} ({}) and {} ({}) parameters set in the atom types.\n",
+            paramsI.size(), atomTypeI_->name(), paramsJ.size(), atomTypeJ_->name());
 
     // Combine / set parameters as necessary, depending on the short-range interaction types of the supplied AtomTypes
     if (atomTypeI_->shortRangeType() == atomTypeJ_->shortRangeType())
@@ -174,7 +177,8 @@ bool PairPotential::setUp(std::shared_ptr<AtomType> typeI, std::shared_ptr<AtomT
                 parameters_.push_back(sqrt(paramsI[1] * paramsJ[1]));
                 break;
             default:
-                return Messenger::error("Short-range type {} is not accounted for in PairPotential::setUp().\n", shortRangeType_);
+                return Messenger::error("Short-range type {} is not accounted for in PairPotential::setUp().\n",
+                                        shortRangeType_);
         }
     }
     else

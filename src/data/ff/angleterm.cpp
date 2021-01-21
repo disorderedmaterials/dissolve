@@ -2,8 +2,8 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "data/ff/angleterm.h"
-#include "data/ff/ff.h"
 #include "data/ff/atomtype.h"
+#include "data/ff/ff.h"
 
 ForcefieldAngleTerm::ForcefieldAngleTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
                                          SpeciesAngle::AngleFunction form, const std::vector<double> parameters)

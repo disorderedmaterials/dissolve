@@ -69,7 +69,7 @@ class Forcefield
      */
     protected:
     // Short-range parameter sets
-    std::vector<std::pair<std::string,std::vector<double>>> shortRangeParameters_;
+    std::vector<std::pair<std::string, std::vector<double>>> shortRangeParameters_;
     // Atom type data
     std::vector<ForcefieldAtomType> atomTypes_;
     // Atom type data, grouped by element

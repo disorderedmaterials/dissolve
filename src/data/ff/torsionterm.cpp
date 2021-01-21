@@ -2,8 +2,8 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "data/ff/torsionterm.h"
-#include "data/ff/ff.h"
 #include "data/ff/atomtype.h"
+#include "data/ff/ff.h"
 
 ForcefieldTorsionTerm::ForcefieldTorsionTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
                                              std::string_view typeL, SpeciesTorsion::TorsionFunction form,

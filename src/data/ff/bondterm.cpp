@@ -2,8 +2,8 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "data/ff/bondterm.h"
-#include "data/ff/ff.h"
 #include "data/ff/atomtype.h"
+#include "data/ff/ff.h"
 
 ForcefieldBondTerm::ForcefieldBondTerm(std::string_view typeI, std::string_view typeJ, SpeciesBond::BondFunction form,
                                        const std::vector<double> parameters)
