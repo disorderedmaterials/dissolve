@@ -69,7 +69,7 @@ void Dissolve::clear()
     pairPotentialDelta_ = 0.005;
     pairPotentialRange_ = 15.0;
     pairPotentialRangeSquared_ = pairPotentialRange_ * pairPotentialRange_;
-    pairPotentialsIncludeCoulomb_ = false;
+    pairPotentialsIncludeCoulomb_ = true;
     pairPotentials_.clear();
     potentialMap_.clear();
     pairPotentialAtomTypeVersion_ = -1;
