@@ -159,7 +159,7 @@ class Forcefield
      */
     protected:
     // Assign suitable AtomType to the supplied atom
-    virtual bool assignAtomType(SpeciesAtom *i, CoreData &coreData) const;
+    bool assignAtomType(SpeciesAtom *i, CoreData &coreData) const;
 
     public:
     // AtomType Assignment Strategy

@@ -408,6 +408,17 @@ OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::determineUFFAtomType
     return typeRef;
 }
 
+
+// Determine and return atom type for specified SpeciesAtom
+OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield_UFF::determineAtomType(SpeciesAtom *i) const
+{
+    auto optTypeRef = determineUFFAtomType(i);
+    if (!optTypeRef)
+        return std::nullopt;
+
+    return OptionalReferenceWrapper<const ForcefieldAtomType>(*optTypeRef);
+}
+
 /*
  * Term Assignment
  */
@@ -620,49 +631,6 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion &tors
     // Store the generated parameters
     torsionTerm.setForm(SpeciesTorsion::UFFCosineForm);
     torsionTerm.setParameters({V, n, phi0});
-
-    return true;
-}
-
-// Assign suitable AtomTypes to the supplied Species
-bool Forcefield_UFF::assignAtomTypes(Species *sp, CoreData &coreData, bool keepExisting) const
-{
-    // Loop over Species atoms
-    for (auto *i = sp->atoms().first(); i != nullptr; i = i->next())
-    {
-        // If keepExisting == true, don't reassign a type to this atom if one already exists
-        if (keepExisting && i->atomType())
-            continue;
-
-        auto optTypeRef = determineUFFAtomType(i);
-        if (!optTypeRef)
-            Messenger::print("No UFF type available for Atom {} of Species ({}).\n", i->index() + 1, Elements::symbol(i->Z()));
-        else
-        {
-            const UFFAtomType &uffType = *optTypeRef;
-
-            // Check if an AtomType of the same name already exists - if it does, just use that one
-            std::shared_ptr<AtomType> at;
-            auto opt_at = coreData.findAtomType(uffType.name());
-            if (!opt_at)
-            {
-                at = coreData.addAtomType(i->Z());
-                at->setName(uffType.name());
-
-                /*
-                 * Determine suitable LJ parameters.
-                 *     UFF functional form  : U = Dij * ( (x/rij)**12 - 2(x/rij)**6 )
-                 * Our functional form (LJ) : U = 4 * epsilon * [ (s/rij)**12 - (s/rij)**6 ]
-                 *
-                 * So:    sigma = x / (2.0^(1/6))
-                 * 	epsilon = Dij * 4.184       (UFF energy parameters in kcal)
-                 */
-                at->setShortRangeParameters({uffType.D() * 4.184, uffType.x() / (pow(2.0, 1.0 / 6.0))});
-            }
-
-            i->setAtomType(at);
-        }
-    }
 
     return true;
 }

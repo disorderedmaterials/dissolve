@@ -54,6 +54,10 @@ class Forcefield_UFF : public Forcefield
     // Determine and return atom type for specified SpeciesAtom
     OptionalReferenceWrapper<const UFFAtomType> determineUFFAtomType(SpeciesAtom *i) const;
 
+    protected:
+    // Determine and return atom type for specified SpeciesAtom
+    OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(SpeciesAtom *i) const;
+
     /*
      * Term Assignment
      */
@@ -68,8 +72,6 @@ class Forcefield_UFF : public Forcefield
                              const UFFAtomType &k, const UFFAtomType &l) const;
 
     public:
-    // Assign suitable AtomTypes to the supplied Species
-    bool assignAtomTypes(Species *sp, CoreData &coreData, bool keepExisting = false) const;
     // Assign intramolecular parameters to the supplied Species
     bool assignIntramolecular(Species *sp, int flags = 0) const;
     // Perform some test calculations

@@ -7,8 +7,8 @@
 UFFAtomType::UFFAtomType(Elements::Element Z, int index, std::string_view name, std::string_view neta,
                          std::string_view description, double r, double theta, double x, double D, double zeta,
                          double effectiveCharge, double chi, int geom, double V, double U)
-    : ForcefieldAtomType(Z, index, name, neta, description), r_(r), theta_(theta), x_(x), D_(D), zeta_(zeta),
-      effectiveCharge_(effectiveCharge), chi_(chi), V_(V), U_(U), geom_(geom)
+    : ForcefieldAtomType(Z, index, name, neta, description, 0.0, {D * 4.184, x / (pow(2.0, 1.0 / 6.0))}), r_(r), theta_(theta),
+      x_(x), D_(D), zeta_(zeta), effectiveCharge_(effectiveCharge), chi_(chi), V_(V), U_(U), geom_(geom)
 {
 }
 
