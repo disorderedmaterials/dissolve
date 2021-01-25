@@ -383,7 +383,6 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
         // Charge
         case (5):
             speciesAtom->setCharge(w->text().toDouble());
-            // TODO This change needs to be propagated to all Configurations->Molecules based on this Species
             dissolveWindow_->setModified();
             break;
         default:
