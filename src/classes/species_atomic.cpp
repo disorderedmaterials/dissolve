@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "classes/atomtype.h"
 #include "classes/species.h"
 #include "data/atomicmasses.h"
 
@@ -170,15 +171,6 @@ SpeciesAtom *Species::selectedAtom(int n)
         return ri->item();
 }
 
-// Return total charge of species from local atomic charges
-double Species::totalChargeOnAtoms()
-{
-    double totalQ = 0.0;
-    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
-        totalQ += i->charge();
-    return totalQ;
-}
-
 // Return number of selected Atoms
 int Species::nSelectedAtoms() const { return selectedAtoms_.nItems(); }
 
@@ -219,4 +211,26 @@ void Species::clearAtomTypes()
         i->setAtomType(nullptr);
 
     usedAtomTypes_.clear();
+}
+
+// Return total charge of species from local/atomtype atomic charges
+double Species::totalCharge(bool useAtomTypes)
+{
+    double totalQ = 0.0;
+    if (useAtomTypes)
+        for (auto *i = atoms_.first(); i != nullptr; i = i->next())
+        {
+            if (!i->atomType())
+            {
+                Messenger::warn(
+                    "No atom type assigned to atom index {} in species '{}', so can't calculate correct total charge.\n",
+                    i->userIndex(), name_);
+                continue;
+            }
+            totalQ += i->atomType()->charge();
+        }
+    else
+        for (auto *i = atoms_.first(); i != nullptr; i = i->next())
+            totalQ += i->charge();
+    return totalQ;
 }
