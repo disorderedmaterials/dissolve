@@ -569,6 +569,3 @@ bool Forcefield_UFF::assignTorsionTermParameters(SpeciesTorsion &torsion, bool d
 
     return true;
 }
-
-// Perform some test calculations
-void Forcefield_UFF::test() const {}
