@@ -53,16 +53,11 @@ class Cell
     private:
     // Array of Atoms contained in this Cell
     OrderedVector<std::shared_ptr<Atom>> atoms_;
-    // Return array of contained Atoms, ordered by their array indices
-    OrderedVector<std::shared_ptr<Atom>> indexOrderedAtoms_ = OrderedVector<std::shared_ptr<Atom>>(
-        [](const std::shared_ptr<Atom> lhs, const std::shared_ptr<Atom> rhs) { return lhs->arrayIndex() < rhs->arrayIndex(); });
 
     public:
     // Return array of contained Atoms
     OrderedVector<std::shared_ptr<Atom>> &atoms();
     const OrderedVector<std::shared_ptr<Atom>> &atoms() const;
-    // Return array of contained Atoms, ordered by their array indices
-    const OrderedVector<std::shared_ptr<Atom>> &indexOrderedAtoms() const;
     // Return number of Atoms in array
     int nAtoms() const;
     // Add atom to Cell

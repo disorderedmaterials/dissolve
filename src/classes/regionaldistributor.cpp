@@ -413,7 +413,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(Cell *cell, int pr
 
     // Loop over Atoms in Cell
     std::shared_ptr<Molecule> mol;
-    for (auto atom : cell->indexOrderedAtoms())
+    for (auto atom : cell->atoms())
     {
         // Get the Atom's Molecule pointer
         mol = atom->molecule();
