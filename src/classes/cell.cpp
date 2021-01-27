@@ -51,52 +51,31 @@ const Vec3<double> &Cell::centre() const { return centre_; }
  */
 
 // Return array of contained Atoms
-OrderedVector<std::shared_ptr<Atom>> &Cell::atoms() { return atoms_; }
-const OrderedVector<std::shared_ptr<Atom>> &Cell::atoms() const { return atoms_; }
+std::vector<std::shared_ptr<Atom>> &Cell::atoms() { return atoms_; }
+const std::vector<std::shared_ptr<Atom>> &Cell::atoms() const { return atoms_; }
 
 // Return number of Atoms in list
 int Cell::nAtoms() const { return atoms_.size(); }
 
 // Add atom to Cell
-bool Cell::addAtom(std::shared_ptr<Atom> i)
+void Cell::addAtom(const std::shared_ptr<Atom> &atom)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::print("NULL_POINTER - nullptr given to Cell::addAtom().\n");
-        return false;
-    }
-#endif
-    // Add Atom to our pointer- and index-ordered arrays
-    atoms_.insert(i);
+    assert(atom);
+    atoms_.push_back(atom);
 
-    if (i->cell())
-        Messenger::warn("About to set Cell pointer in Atom {}, but this will overwrite an existing value.\n", i->arrayIndex());
-    i->setCell(this);
-
-    return true;
+    if (atom->cell())
+        Messenger::warn("About to set Cell pointer in Atom {}, but this will overwrite an existing value.\n",
+                        atom->arrayIndex());
+    atom->setCell(this);
 }
 
 // Remove Atom from Cell
-bool Cell::removeAtom(std::shared_ptr<Atom> i)
+void Cell::removeAtom(const std::shared_ptr<Atom> &atom)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::print("NULL_POINTER - nullptr given to Cell::removeAtom().\n");
-        return false;
-    }
-#endif
-    // Remove atom from this cell
-    if (atoms_.erase(i))
-        i->setCell(nullptr);
-    else
-    {
-        Messenger::error("Tried to remove Atom {} from Cell {}, but it was not present.\n", i->arrayIndex(), index_);
-        return false;
-    }
-
-    return true;
+    auto it = std::find(atoms_.begin(), atoms_.end(), atom);
+    assert(it != atoms_.end());
+    (*it)->setCell(nullptr);
+    atoms_.erase(it);
 }
 
 /*
