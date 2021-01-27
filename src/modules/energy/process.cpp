@@ -4,6 +4,7 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/box.h"
+#include "classes/energykernel.h"
 #include "classes/species.h"
 #include "genericitems/listhelper.h"
 #include "main/dissolve.h"
@@ -42,6 +43,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Set up process pool - must do this to ensure we are using all available processes
         procPool.assignProcessesToGroups(cfg->processPool());
+        auto strategy = procPool.bestStrategy();
 
         // Retrieve control parameters from Configuration
         const auto saveData = keywords_.asBool("Save");
@@ -84,7 +86,7 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
              */
 
             const PotentialMap &potentialMap = dissolve.potentialMap();
-            auto correctInterEnergy = 0.0, correctIntraEnergy = 0.0;
+            auto correctInterEnergy = 0.0, correctIntraEnergy = 0.0, correctSelfEnergy = 0.0;
 
             double r, angle;
             std::shared_ptr<Atom> i, j;
@@ -123,9 +125,9 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                             continue;
 
                         if (testAnalytic)
-                            correctInterEnergy += potentialMap.analyticEnergy(i, j, r) * scale;
+                            correctSelfEnergy += potentialMap.analyticEnergy(i, j, r) * scale;
                         else
-                            correctInterEnergy += potentialMap.energy(i, j, r) * scale;
+                            correctSelfEnergy += potentialMap.energy(i, j, r) * scale;
                     }
                 }
 
@@ -204,9 +206,14 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     correctIntraEnergy += imp.energy(angle);
                 }
             }
+
+            // Add the self energy into the total interatomic energy
+            correctInterEnergy += correctSelfEnergy;
+
             testTimer.stop();
 
-            Messenger::print("Correct interatomic pairpotential energy is {:15.9e} kJ/mol\n", correctInterEnergy);
+            Messenger::print("Correct interatomic pairpotential energy (total) is {:15.9e} kJ/mol\n", correctInterEnergy);
+            Messenger::print("Correct interatomic pairpotential (within molecules) is {:15.9e} kJ/mol\n", correctSelfEnergy);
             Messenger::print("Correct intramolecular energy is {:15.9e} kJ/mol\n", correctIntraEnergy);
             Messenger::print("Correct total energy is {:15.9e} kJ/mol\n", correctInterEnergy + correctIntraEnergy);
             Messenger::print("Time to do total (test) energy was {}.\n", testTimer.totalTimeString());
@@ -229,11 +236,25 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto intraEnergy = intraMolecularEnergy(procPool, cfg, dissolve.potentialMap());
             intraTimer.stop();
 
+            // Calculate total interatomic energy from molecules
+            Timer moleculeTimer;
+            EnergyKernel energyKernel(procPool, cfg, dissolve.potentialMap(), cutoff);
+            auto molecularEnergy = 0.0;
+            for (const auto &mol : cfg->molecules())
+                molecularEnergy += energyKernel.energy(mol, ProcessPool::subDivisionStrategy(strategy), true);
+            // In the typical case where there is more than one molecule, our sum will contain double the intermolecular
+            // pairpotential energy, but exactly the intramolecular pairpotential energy
+            if (cfg->nMolecules() > 1)
+                molecularEnergy = (molecularEnergy - correctSelfEnergy) * 0.5 + correctSelfEnergy;
+            moleculeTimer.stop();
+
             Messenger::print("Production interatomic pairpotential energy is {:15.9e} kJ/mol\n", interEnergy);
             Messenger::print("Production intramolecular energy is {:15.9e} kJ/mol\n", intraEnergy);
             Messenger::print("Total production energy is {:15.9e} kJ/mol\n", interEnergy + intraEnergy);
+            Messenger::print("Molecular energy (excluding bound terms) is {:15.9e} kJ/mol\n", molecularEnergy);
             Messenger::print("Time to do interatomic energy was {}.\n", interTimer.totalTimeString());
             Messenger::print("Time to do intramolecular energy was {}.\n", intraTimer.totalTimeString());
+            Messenger::print("Time to do intermolecular energy was {}.\n", moleculeTimer.totalTimeString());
 
             /*
              * Production Calculation Ends
@@ -277,14 +298,18 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Compare production vs 'correct' values
             auto interDelta = correctInterEnergy - interEnergy;
             auto intraDelta = correctIntraEnergy - intraEnergy;
+            auto moleculeDelta = correctInterEnergy - molecularEnergy;
             Messenger::print("Comparing 'correct' with production values...\n");
             Messenger::print("Interatomic energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
                              interDelta, fabs(interDelta) < testThreshold ? "OK" : "NOT OK", testThreshold);
             Messenger::print("Intramolecular energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
                              intraDelta, fabs(intraDelta) < testThreshold ? "OK" : "NOT OK", testThreshold);
+            Messenger::print("Intermolecular energy delta is {:15.9e} kJ/mol and is {} (threshold is {:10.3e} kJ/mol)\n",
+                             moleculeDelta, fabs(moleculeDelta) < testThreshold ? "OK" : "NOT OK", testThreshold);
 
             // All OK?
-            if (!procPool.allTrue((fabs(interDelta) < testThreshold) && (fabs(intraDelta) < testThreshold)))
+            if (!procPool.allTrue((fabs(interDelta) < testThreshold) && (fabs(intraDelta) < testThreshold) &&
+                                  (fabs(moleculeDelta) < testThreshold)))
                 return false;
         }
         else
