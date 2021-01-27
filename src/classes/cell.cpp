@@ -54,9 +54,6 @@ const Vec3<double> &Cell::centre() const { return centre_; }
 OrderedVector<std::shared_ptr<Atom>> &Cell::atoms() { return atoms_; }
 const OrderedVector<std::shared_ptr<Atom>> &Cell::atoms() const { return atoms_; }
 
-// Return array of contained Atoms, ordered by their array indices
-const OrderedVector<std::shared_ptr<Atom>> &Cell::indexOrderedAtoms() const { return indexOrderedAtoms_; }
-
 // Return number of Atoms in list
 int Cell::nAtoms() const { return atoms_.size(); }
 
@@ -72,7 +69,6 @@ bool Cell::addAtom(std::shared_ptr<Atom> i)
 #endif
     // Add Atom to our pointer- and index-ordered arrays
     atoms_.insert(i);
-    indexOrderedAtoms_.insert(i);
 
     if (i->cell())
         Messenger::warn("About to set Cell pointer in Atom {}, but this will overwrite an existing value.\n", i->arrayIndex());
@@ -93,10 +89,7 @@ bool Cell::removeAtom(std::shared_ptr<Atom> i)
 #endif
     // Remove atom from this cell
     if (atoms_.erase(i))
-    {
-        indexOrderedAtoms_.erase(i);
         i->setCell(nullptr);
-    }
     else
     {
         Messenger::error("Tried to remove Atom {} from Cell {}, but it was not present.\n", i->arrayIndex(), index_);
