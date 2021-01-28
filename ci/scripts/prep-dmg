@@ -68,10 +68,10 @@ set -e
 # \-----------------/
 
 # -- Check for NONE being specified for a critical variable
-if [ "$APP_NAME" = "NONE" ] || [ "$APP_BIN" = "NONE" ] || [ "${APP_PLIST}" = "NONE" ]
+if [ "${APP_NAME}" = "NONE" ] || [ "${APP_BINS}" = "NONE" ] || [ "${APP_PLIST}" = "NONE" ]
 then
   echo "One or more critical variables have not been defined."
-  echo "name=[$APP_NAME] bin=[$APP_BIN] plist=[${APP_PLIST}]"
+  echo "name=[${APP_NAME}] bin=[${APP_BINS}] plist=[${APP_PLIST}]"
   exit 1
 fi
 
@@ -81,8 +81,8 @@ if [ ! -e "${APP_PLIST}" ]; then
   exit 1
 fi
 
-# Check existence of license file
-if [ ! -e "${APP_LICENSE}" ]; then
+# Check existence of (optional) license file
+if [ "${APP_LICENSE}" != "NONE" ] && [ ! -e "${APP_LICENSE}" ]; then
   echo "Error: Specified license file does not exist: ${APP_LICENSE}"
   exit 1
 fi
