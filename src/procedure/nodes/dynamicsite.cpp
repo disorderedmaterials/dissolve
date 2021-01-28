@@ -101,7 +101,7 @@ ProcedureNode::NodeExecutionResult DynamicSiteProcedureNode::execute(ProcessPool
         for (auto molecule : molecules)
         {
             // Check Molecule exclusions
-            if (find(excludedMolecules.begin(), excludedMolecules.end(), molecule) != excludedMolecules.end())
+            if (std::find(excludedMolecules.begin(), excludedMolecules.end(), molecule) != excludedMolecules.end())
                 continue;
 
             // All OK, so generate sites
