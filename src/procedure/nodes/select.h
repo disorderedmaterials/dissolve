@@ -7,7 +7,6 @@
 #include "procedure/nodes/node.h"
 #include "templates/array.h"
 #include "templates/list.h"
-#include "templates/orderedvector.h"
 #include "templates/reflist.h"
 #include <memory>
 
