@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/atom.h"
-#include "templates/orderedvector.h"
 #include "templates/vector3.h"
 #include <set>
 #include <vector>

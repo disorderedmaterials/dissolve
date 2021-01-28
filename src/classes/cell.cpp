@@ -5,7 +5,6 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/cellneighbour.h"
-#include "templates/orderedvector.h"
 #include <algorithm>
 
 Cell::Cell()
