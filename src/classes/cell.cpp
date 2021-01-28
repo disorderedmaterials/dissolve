@@ -83,7 +83,7 @@ void Cell::removeAtom(const std::shared_ptr<Atom> &atom)
  */
 
 // Add Cell neighbours
-void Cell::addCellNeighbours(OrderedVector<Cell *> &nearNeighbours, OrderedVector<Cell *> &mimNeighbours)
+void Cell::addCellNeighbours(std::vector<Cell *> &nearNeighbours, std::vector<Cell *> &mimNeighbours)
 {
     // Create near-neighbour array of Cells not requiring minimum image to be applied
     nCellNeighbours_ = nearNeighbours.size();
@@ -97,11 +97,11 @@ void Cell::addCellNeighbours(OrderedVector<Cell *> &nearNeighbours, OrderedVecto
     std::copy(mimNeighbours.begin(), mimNeighbours.end(), mimCellNeighbours_.begin());
 
     // Create ordered list of CellNeighbours (including cells from both lists)
-    OrderedVector<std::pair<Cell *, bool>> allCells;
+    std::vector<std::pair<Cell *, bool>> allCells;
     for (auto *nearNbr : nearNeighbours)
-        allCells.emplace(nearNbr, false);
+        allCells.emplace_back(nearNbr, false);
     for (auto *mimNbr : mimNeighbours)
-        allCells.emplace(mimNbr, true);
+        allCells.emplace_back(mimNbr, true);
 
     if (allCells.size() != (nCellNeighbours_ + nMimCellNeighbours_))
         Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");

@@ -78,7 +78,7 @@ class Cell
 
     public:
     // Add Cell neighbours
-    void addCellNeighbours(OrderedVector<Cell *> &nearNeighbours, OrderedVector<Cell *> &mimNeighbours);
+    void addCellNeighbours(std::vector<Cell *> &nearNeighbours, std::vector<Cell *> &mimNeighbours);
     // Return number of Cell near-neighbours, not requiring minimum image calculation
     int nCellNeighbours() const;
     // Return number of Cell neighbours requiring minimum image calculation
