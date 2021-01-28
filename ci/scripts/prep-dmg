@@ -81,6 +81,12 @@ if [ ! -e "${APP_PLIST}" ]; then
   exit 1
 fi
 
+# Check existence of license file
+if [ ! -e "${APP_LICENSE}" ]; then
+  echo "Error: Specified license file does not exist: ${APP_LICENSE}"
+  exit 1
+fi
+
 # /-------------------\
 # | Create bundle dir |
 # \-------------------/
@@ -179,14 +185,10 @@ fi
 # \--------------/
 echo -e "\nCopying license....\n"
 
-if [ x${APP_RESOURCES} != "xNONE" ];
+if [ "${APP_LICENSE}" != "NONE" ];
 then
-  if [ ! -e ${APP_RESOURCES} ]; then
-    echo "Error: Specified license file does not exist: ${APP_RESOURCES}"
-    exit 1
-  fi
-  if ! cp -v ${APP_RESOURCES} ${APP_ROOT}/.COPYING; then
-    echo "Error: Failed to copy license file: ${APP_RESOURCES}"
+  if ! cp -v ${APP_LICENSE} ${APP_ROOT}/.COPYING; then
+    echo "Error: Failed to copy license file: ${APP_LICENSE}"
     exit 1
   fi
 fi
