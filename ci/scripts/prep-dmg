@@ -23,7 +23,7 @@ usage()
 }
 
 # Parse options
-while getopts "a:b:d:l:v:p:" opt
+while getopts "a:b:d:i:l:v:p:" opt
 do
 	case $opt in
 		a)
@@ -38,6 +38,10 @@ do
 			QT_DIR=${OPTARG}
 			echo "Qt root directory is '${QT_DIR}'."
 			;;
+		i)
+			APP_ICON=${OPTARG}
+			echo "Icon to generate icon set from is '${APP_ICON}'."
+			;;
 		l)
 			APP_LICENSE=${OPTARG}
 			echo "License file to copy is '${APP_LICENSE}'."
@@ -46,7 +50,7 @@ do
 			APP_PLIST=${OPTARG}
 			echo "PList file to use is '${APP_PLIST}'."
 			;;
-	  v)
+	    v)
 			APP_VERSION=${OPTARG}
 			echo "Application version set to '${APP_VERSION}'."
 			;;
