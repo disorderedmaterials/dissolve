@@ -56,7 +56,7 @@ EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
 
 // Add new atom type with its own parameters
 void Forcefield::addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
-                             std::string_view description, double q, std::vector<double> parameters)
+                             std::string_view description, double q, const std::vector<double> &parameters)
 {
     atomTypes_.emplace_back(Z, index, name, netaDefinition, description, q, parameters);
 }
@@ -125,7 +125,7 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType
 }
 
 // Ass short-range parameters
-void Forcefield::addParameters(std::string_view name, std::vector<double> parameters)
+void Forcefield::addParameters(std::string_view name, const std::vector<double> &parameters)
 {
     shortRangeParameters_.emplace_back(name, parameters);
 }

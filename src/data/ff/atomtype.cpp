@@ -5,7 +5,7 @@
 #include "data/ff/ff.h"
 
 ForcefieldAtomType::ForcefieldAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
-                                       std::string_view description, double q, std::vector<double> parameters,
+                                       std::string_view description, double q, const std::vector<double> &parameters,
                                        std::string_view equivalentName)
     : Z_(Z), index_(index), name_(name), equivalentName_(equivalentName), description_(description), parameters_{parameters},
       charge_(q)
