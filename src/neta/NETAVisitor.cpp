@@ -2,7 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "neta/NETAVisitor.h"
-#include "data/ff.h"
+#include "data/ff/ff.h"
 #include "neta/NETAErrorListeners.h"
 #include "neta/or.h"
 #include "neta/presence.h"

@@ -56,7 +56,7 @@ void Dissolve::copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom
     {
         at = addAtomType(sourceAtom->Z());
         at->setName(sourceAtom->atomType()->name());
-        at->parameters() = sourceAtom->atomType()->parameters();
+        at->setShortRangeParameters(sourceAtom->atomType()->shortRangeParameters());
         at->setShortRangeType(sourceAtom->atomType()->shortRangeType());
     }
 

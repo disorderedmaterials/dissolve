@@ -110,8 +110,8 @@ class Species : public ListItem<Species>, public ObjectStore<Species>
     const AtomTypeList &usedAtomTypes() const;
     // Clear AtomType assignments for all atoms
     void clearAtomTypes();
-    // Return total charge of species from local atomic charges
-    double totalChargeOnAtoms();
+    // Return total charge of species from local/atomtype atomic charges
+    double totalCharge(bool useAtomTypes);
 
     /*
      * Intramolecular Data

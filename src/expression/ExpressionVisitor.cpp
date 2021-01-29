@@ -2,7 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "expression/ExpressionVisitor.h"
-#include "data/ff.h"
+#include "data/ff/ff.h"
 #include "expression/ExpressionErrorListeners.h"
 #include "expression/binary.h"
 #include "expression/function.h"

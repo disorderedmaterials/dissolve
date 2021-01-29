@@ -257,6 +257,7 @@ set(BASIC_LINK_LIBS
     math
     data
     # Forcefields
+    ff
     ${FF_LINK_LIBS}
     # Modules
     ${MODULE_LINK_LIBS}

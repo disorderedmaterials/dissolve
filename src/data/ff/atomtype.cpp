@@ -1,33 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "data/ffatomtype.h"
-#include "data/ff.h"
-#include "data/ffparameters.h"
+#include "data/ff/atomtype.h"
+#include "data/ff/ff.h"
 
 ForcefieldAtomType::ForcefieldAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
-                                       std::string_view description, double q, double data0, double data1, double data2,
-                                       double data3)
+                                       std::string_view description, double q, const std::vector<double> &parameters,
+                                       std::string_view equivalentName)
+    : Z_(Z), index_(index), name_(name), equivalentName_(equivalentName), description_(description), parameters_{parameters},
+      charge_(q)
 {
-    Z_ = Z;
-    index_ = index;
-    name_ = name;
     neta_.setDefinitionString(netaDefinition);
-    description_ = description;
-    parameters_.setCharge(q);
-    parameters_.setParameter(0, data0);
-    parameters_.setParameter(1, data1);
-    parameters_.setParameter(2, data2);
-    parameters_.setParameter(3, data3);
-}
-ForcefieldAtomType::ForcefieldAtomType(OptionalReferenceWrapper<const ForcefieldParameters> params, Elements::Element Z,
-                                       int index, std::string_view name, std::string_view netaDefinition,
-                                       std::string_view description, double q)
-    : index_(index), name_(name), description_(description), parameterReference_(params)
-{
-    Z_ = Z;
-    neta_.setDefinitionString(netaDefinition);
-    parameters_.setCharge(q);
 }
 ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &sourceType, std::string_view newTypeName,
                                        std::string_view netaDefinition, std::string_view equivalentName)
@@ -39,6 +22,7 @@ ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &sourceType, std
     neta_.setDefinitionString(netaDefinition);
     description_ = sourceType.description_;
     parameters_ = sourceType.parameters_;
+    charge_ = sourceType.charge_;
 
     // Equivalent name provided?
     if (!equivalentName.empty())
@@ -54,7 +38,7 @@ ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &source)
     description_ = source.description_;
     equivalentName_ = source.equivalentName_;
     parameters_ = source.parameters_;
-    parameterReference_ = source.parameterReference_;
+    charge_ = source.charge_;
 }
 
 ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &&source)
@@ -66,7 +50,7 @@ ForcefieldAtomType::ForcefieldAtomType(const ForcefieldAtomType &&source)
     description_ = source.description_;
     equivalentName_ = source.equivalentName_;
     parameters_ = source.parameters_;
-    parameterReference_ = source.parameterReference_;
+    charge_ = source.charge_;
 }
 
 /*
@@ -89,13 +73,6 @@ std::string_view ForcefieldAtomType::equivalentName() const
     if (!equivalentName_.empty())
         return equivalentName_;
 
-    // If parameters are referenced, return their name. Otherwise, return ours
-    if (parameterReference_)
-    {
-        const ForcefieldParameters &ffparams = *parameterReference_;
-        return ffparams.name();
-    }
-
     return name_;
 }
 
@@ -116,18 +93,11 @@ const NETADefinition &ForcefieldAtomType::neta() const { return neta_; }
  * Parameters
  */
 
-// Return interatomic interaction parameters
-const InteractionParameters &ForcefieldAtomType::parameters() const
-{
-    // If reference parameters are defined, return those
-    if (parameterReference_)
-    {
-        const ForcefieldParameters &ffparams = *parameterReference_;
-        return ffparams.parameters();
-    }
+// Return parameters vector
+const std::vector<double> &ForcefieldAtomType::parameters() const { return parameters_; }
 
-    return parameters_;
-}
+// Return parameter with index specified
+double ForcefieldAtomType::parameter(int index) const { return parameters_[index]; }
 
-// Return charge (from local parameters)
-double ForcefieldAtomType::charge() const { return parameters_.charge(); }
+// Return atomic charge
+double ForcefieldAtomType::charge() const { return charge_; }

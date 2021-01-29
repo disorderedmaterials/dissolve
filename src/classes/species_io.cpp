@@ -7,7 +7,7 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "data/elements.h"
-#include "data/fflibrary.h"
+#include "data/ff/library.h"
 #include "data/isotopes.h"
 #include <string>
 

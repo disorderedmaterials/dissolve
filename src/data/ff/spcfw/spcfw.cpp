@@ -5,9 +5,9 @@
 #include "base/sysfunc.h"
 #include "classes/atomtype.h"
 #include "classes/speciesatom.h"
-#include "data/ffangleterm.h"
-#include "data/ffatomtype.h"
-#include "data/ffbondterm.h"
+#include "data/ff/angleterm.h"
+#include "data/ff/atomtype.h"
+#include "data/ff/bondterm.h"
 
 /*
  * Implements "Flexible simple point-charge water model with improved liquid-state properties"
@@ -28,8 +28,8 @@
 bool Forcefield_SPCFw::setUp()
 {
     // Atom types
-    addAtomType(Elements::H, 1, "HW", "-O(nh=2)", "Water hydrogen", 0.41, 0.0, 0.0);
-    addAtomType(Elements::O, 2, "OW", "-H(n=2)", "Water oxygen", -0.82, 0.6503, 3.165492);
+    addAtomType(Elements::H, 1, "HW", "-O(nh=2)", "Water hydrogen", 0.41, {0.0, 0.0});
+    addAtomType(Elements::O, 2, "OW", "-H(n=2)", "Water oxygen", -0.82, {0.6503, 3.165492});
 
     // Bond terms
     addBondTerm("HW", "OW", SpeciesBond::HarmonicForm, {4431.53, 1.0});

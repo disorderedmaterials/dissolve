@@ -3,7 +3,7 @@
 
 #include "classes/atomtype.h"
 #include "classes/species.h"
-#include "data/fflibrary.h"
+#include "data/ff/library.h"
 #include "gui/addforcefieldtermswizard.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/helpers/treewidgetupdater.h"
@@ -127,9 +127,9 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
         // Overwrite existing parameters?
         if (ui_.AtomTypesOverwriteParametersCheck->isChecked())
         {
-            i->atomType()->parameters() = modifiedI->atomType()->parameters();
+            i->atomType()->setShortRangeParameters(modifiedI->atomType()->shortRangeParameters());
             i->atomType()->setShortRangeType(modifiedI->atomType()->shortRangeType());
-            i->setCharge(modifiedI->charge());
+            i->atomType()->setCharge(modifiedI->charge());
             dissolve.coreData().bumpAtomTypesVersion();
         }
     }

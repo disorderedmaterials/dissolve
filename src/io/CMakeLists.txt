@@ -1,6 +1,6 @@
 add_library(io fileandformat.cpp fileandformat.h)
 
-include_directories(../ ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src)
+include_directories(io PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
 # Subdirectories
 add_subdirectory(export)

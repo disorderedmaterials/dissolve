@@ -3,7 +3,6 @@
 
 #include "classes/potentialmap.h"
 #include "base/messenger.h"
-#include "base/parameters.h"
 #include "classes/atom.h"
 #include "classes/atomtype.h"
 #include "classes/molecule.h"

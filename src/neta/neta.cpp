@@ -6,7 +6,7 @@
 #include "NETAParser.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
-#include "data/ffatomtype.h"
+#include "data/ff/atomtype.h"
 #include "neta/NETAErrorListeners.h"
 #include "neta/NETAVisitor.h"
 #include "neta/neta.h"
