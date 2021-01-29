@@ -5,7 +5,6 @@
 #include "classes/atom.h"
 #include "classes/box.h"
 #include "classes/cellneighbour.h"
-#include "templates/orderedvector.h"
 #include <algorithm>
 
 Cell::Cell()
@@ -51,59 +50,31 @@ const Vec3<double> &Cell::centre() const { return centre_; }
  */
 
 // Return array of contained Atoms
-OrderedVector<std::shared_ptr<Atom>> &Cell::atoms() { return atoms_; }
-const OrderedVector<std::shared_ptr<Atom>> &Cell::atoms() const { return atoms_; }
-
-// Return array of contained Atoms, ordered by their array indices
-const OrderedVector<std::shared_ptr<Atom>> &Cell::indexOrderedAtoms() const { return indexOrderedAtoms_; }
+std::vector<std::shared_ptr<Atom>> &Cell::atoms() { return atoms_; }
+const std::vector<std::shared_ptr<Atom>> &Cell::atoms() const { return atoms_; }
 
 // Return number of Atoms in list
 int Cell::nAtoms() const { return atoms_.size(); }
 
 // Add atom to Cell
-bool Cell::addAtom(std::shared_ptr<Atom> i)
+void Cell::addAtom(const std::shared_ptr<Atom> &atom)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::print("NULL_POINTER - nullptr given to Cell::addAtom().\n");
-        return false;
-    }
-#endif
-    // Add Atom to our pointer- and index-ordered arrays
-    atoms_.insert(i);
-    indexOrderedAtoms_.insert(i);
+    assert(atom);
+    atoms_.push_back(atom);
 
-    if (i->cell())
-        Messenger::warn("About to set Cell pointer in Atom {}, but this will overwrite an existing value.\n", i->arrayIndex());
-    i->setCell(this);
-
-    return true;
+    if (atom->cell())
+        Messenger::warn("About to set Cell pointer in Atom {}, but this will overwrite an existing value.\n",
+                        atom->arrayIndex());
+    atom->setCell(this);
 }
 
 // Remove Atom from Cell
-bool Cell::removeAtom(std::shared_ptr<Atom> i)
+void Cell::removeAtom(const std::shared_ptr<Atom> &atom)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::print("NULL_POINTER - nullptr given to Cell::removeAtom().\n");
-        return false;
-    }
-#endif
-    // Remove atom from this cell
-    if (atoms_.erase(i))
-    {
-        indexOrderedAtoms_.erase(i);
-        i->setCell(nullptr);
-    }
-    else
-    {
-        Messenger::error("Tried to remove Atom {} from Cell {}, but it was not present.\n", i->arrayIndex(), index_);
-        return false;
-    }
-
-    return true;
+    auto it = std::find(atoms_.begin(), atoms_.end(), atom);
+    assert(it != atoms_.end());
+    (*it)->setCell(nullptr);
+    atoms_.erase(it);
 }
 
 /*
@@ -111,7 +82,7 @@ bool Cell::removeAtom(std::shared_ptr<Atom> i)
  */
 
 // Add Cell neighbours
-void Cell::addCellNeighbours(OrderedVector<Cell *> &nearNeighbours, OrderedVector<Cell *> &mimNeighbours)
+void Cell::addCellNeighbours(std::vector<Cell *> &nearNeighbours, std::vector<Cell *> &mimNeighbours)
 {
     // Create near-neighbour array of Cells not requiring minimum image to be applied
     nCellNeighbours_ = nearNeighbours.size();
@@ -125,11 +96,11 @@ void Cell::addCellNeighbours(OrderedVector<Cell *> &nearNeighbours, OrderedVecto
     std::copy(mimNeighbours.begin(), mimNeighbours.end(), mimCellNeighbours_.begin());
 
     // Create ordered list of CellNeighbours (including cells from both lists)
-    OrderedVector<std::pair<Cell *, bool>> allCells;
+    std::vector<std::pair<Cell *, bool>> allCells;
     for (auto *nearNbr : nearNeighbours)
-        allCells.emplace(nearNbr, false);
+        allCells.emplace_back(nearNbr, false);
     for (auto *mimNbr : mimNeighbours)
-        allCells.emplace(mimNbr, true);
+        allCells.emplace_back(mimNbr, true);
 
     if (allCells.size() != (nCellNeighbours_ + nMimCellNeighbours_))
         Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");

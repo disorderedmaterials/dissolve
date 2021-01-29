@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/atom.h"
-#include "templates/orderedvector.h"
 #include "templates/vector3.h"
 #include <set>
 #include <vector>
@@ -52,23 +51,18 @@ class Cell
      */
     private:
     // Array of Atoms contained in this Cell
-    OrderedVector<std::shared_ptr<Atom>> atoms_;
-    // Return array of contained Atoms, ordered by their array indices
-    OrderedVector<std::shared_ptr<Atom>> indexOrderedAtoms_ = OrderedVector<std::shared_ptr<Atom>>(
-        [](const std::shared_ptr<Atom> lhs, const std::shared_ptr<Atom> rhs) { return lhs->arrayIndex() < rhs->arrayIndex(); });
+    std::vector<std::shared_ptr<Atom>> atoms_;
 
     public:
     // Return array of contained Atoms
-    OrderedVector<std::shared_ptr<Atom>> &atoms();
-    const OrderedVector<std::shared_ptr<Atom>> &atoms() const;
-    // Return array of contained Atoms, ordered by their array indices
-    const OrderedVector<std::shared_ptr<Atom>> &indexOrderedAtoms() const;
+    std::vector<std::shared_ptr<Atom>> &atoms();
+    const std::vector<std::shared_ptr<Atom>> &atoms() const;
     // Return number of Atoms in array
     int nAtoms() const;
     // Add atom to Cell
-    bool addAtom(std::shared_ptr<Atom> atom);
+    void addAtom(const std::shared_ptr<Atom> &atom);
     // Remove Atom from Cell
-    bool removeAtom(std::shared_ptr<Atom> atom);
+    void removeAtom(const std::shared_ptr<Atom> &atom);
 
     /*
      * Neighbours
@@ -83,7 +77,7 @@ class Cell
 
     public:
     // Add Cell neighbours
-    void addCellNeighbours(OrderedVector<Cell *> &nearNeighbours, OrderedVector<Cell *> &mimNeighbours);
+    void addCellNeighbours(std::vector<Cell *> &nearNeighbours, std::vector<Cell *> &mimNeighbours);
     // Return number of Cell near-neighbours, not requiring minimum image calculation
     int nCellNeighbours() const;
     // Return number of Cell neighbours requiring minimum image calculation

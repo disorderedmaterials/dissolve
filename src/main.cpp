@@ -163,11 +163,11 @@ int main(int args, char **argv)
     else
         Messenger::print("Dissolve is done, but with errors.\n");
 
-    // End parallel communication
-    ProcessPool::finalise();
-
     // Stop redirecting
     Messenger::ceaseRedirect();
+
+    // End parallel communication
+    ProcessPool::finalise();
 
     // Done.
     return (result ? 0 : 1);
