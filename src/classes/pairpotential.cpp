@@ -20,11 +20,9 @@ PairPotential::ShortRangeTruncationScheme PairPotential::shortRangeTruncationSch
 double PairPotential::shortRangeTruncationWidth_ = 2.0;
 
 PairPotential::PairPotential()
-    : ListItem<PairPotential>(),
-
-      shortRangeEnergyAtCutoff_(0.0), shortRangeForceAtCutoff_(0.0), includeCoulomb_(true),
-      shortRangeType_(Forcefield::UndefinedType), chargeI_(0.0), chargeJ_(0.0), nPoints_(0), range_(0.0), delta_(-1.0),
-      rDelta_(0.0), coulombEnergyAtCutoff_(0.0), coulombForceAtCutoff_(0.0), uFullInterpolation_(uFull_),
+    : ListItem<PairPotential>(), shortRangeEnergyAtCutoff_(0.0), shortRangeForceAtCutoff_(0.0), includeCoulomb_(true),
+      coulombEnergyAtCutoff_(0.0), coulombForceAtCutoff_(0.0), shortRangeType_(Forcefield::UndefinedType), chargeI_(0.0),
+      chargeJ_(0.0), nPoints_(0), range_(0.0), delta_(-1.0), rDelta_(0.0), uFullInterpolation_(uFull_),
       dUFullInterpolation_(dUFull_)
 {
 }
