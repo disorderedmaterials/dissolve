@@ -351,12 +351,11 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
         {
             item = new QTableWidgetItem;
             item->setData(Qt::UserRole, QVariant::fromValue(atomType));
-            ui_.AtomTypesTable->setItem(row, col, item);
+            ui_.AtomTypesTable->setItem(row, col++, item);
         }
         else
-            item = ui_.AtomTypesTable->item(row, col);
+            item = ui_.AtomTypesTable->item(row, col++);
         item->setText(QString::number(x));
-        ++col;
     }
 }
 
@@ -434,12 +433,11 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential *pairPot
             item = new QTableWidgetItem;
             item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
             item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-            ui_.PairPotentialsTable->setItem(row, col, item);
+            ui_.PairPotentialsTable->setItem(row, col++, item);
         }
         else
-            item = ui_.PairPotentialsTable->item(row, col);
+            item = ui_.PairPotentialsTable->item(row, col++);
         item->setText(QString::number(x));
-        ++col;
     }
 }
 
