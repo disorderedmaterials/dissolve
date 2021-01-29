@@ -8,12 +8,14 @@ APP_ICON="NONE"
 APP_LICENSE="NONE"
 APP_PLIST="NONE"
 APP_DSSTORE="NONE"
+APP_EXTRA="NONE"
 
 usage()
 {
 	echo "Usage: $0 [options]"
 	echo "          -a <Application name>"
 	echo "          -d <Qt root dir>"
+	echo "          -e <Extra files / dirs to add, space separated>"
 	echo "          -b <Application binary to copy>"
 	echo "          -i <Icon to generate icon set from>"
 	echo "          -l <License file to copy>"
@@ -23,7 +25,7 @@ usage()
 }
 
 # Parse options
-while getopts "a:b:d:i:l:v:p:" opt
+while getopts "a:b:d:e:i:l:v:p:" opt
 do
 	case $opt in
 		a)
@@ -37,6 +39,10 @@ do
 		d)
 			QT_DIR=${OPTARG}
 			echo "Qt root directory is '${QT_DIR}'."
+			;;
+    e)
+			APP_EXTRA=${OPTARG}
+			echo "Extra files / dirs to add are '${APP_EXTRA}'."
 			;;
 		i)
 			APP_ICON=${OPTARG}
@@ -76,15 +82,29 @@ then
 fi
 
 # Check existence of plist file
-if [ ! -e "${APP_PLIST}" ]; then
+if [ ! -e "${APP_PLIST}" ]
+then
   echo "Error: Specified plist file does not exist: ${APP_PLIST}"
   exit 1
 fi
 
 # Check existence of (optional) license file
-if [ "${APP_LICENSE}" != "NONE" ] && [ ! -e "${APP_LICENSE}" ]; then
+if [ "${APP_LICENSE}" != "NONE" ] && [ ! -e "${APP_LICENSE}" ]
+then
   echo "Error: Specified license file does not exist: ${APP_LICENSE}"
   exit 1
+fi
+
+# Check existence of (optional) extra data
+if [ "${APP_EXTRA}" != "NONE" ]
+then
+  for a in ${APP_EXTRA};
+  do
+    if [ ! -e "${a}" ]; then
+      echo "Error: Specified extra data does not exist: ${a}"
+      exit 1
+    fi
+  done
 fi
 
 # /-------------------\
