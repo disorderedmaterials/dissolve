@@ -18,7 +18,7 @@ steps:
       set -ex
       # Get program version
       DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
-      # Fix icon liuk
+      # Fix icon link
       sed -i -e "s/Dissolve.icns/Dissolve-GUI.icns/g" Dissolve-GUI-${DISSOLVE_VERSION}/Dissolve-GUI.app/Contents/Info.plist
       # Create DMG
       dmgbuild -s ci/osx/dmgbuild-settings.py -D app=./Dissolve-GUI-${DISSOLVE_VERSION}/Dissolve-GUI.app -D icon=./Dissolve-GUI-${DISSOLVE_VERSION}/Dissolve-GUI.app/Contents/Resources/Dissolve-GUI.icns "Dissolve GUI" Dissolve-GUI-${DISSOLVE_VERSION}.dmg
