@@ -246,10 +246,10 @@ double PairPotential::analyticShortRangeEnergy(double r, Forcefield::ShortRangeT
          * Parameter 0 = Epsilon
          * Parameter 1 = Sigma
          */
-        double sigmar = parameters_[1] / r;
-        double sigmar6 = pow(sigmar, 6.0);
-        double sigmar12 = sigmar6 * sigmar6;
-        double energy = 4.0 * parameters_[0] * (sigmar12 - sigmar6);
+        auto sigmar = parameters_[1] / r;
+        auto sigmar6 = pow(sigmar, 6.0);
+        auto sigmar12 = sigmar6 * sigmar6;
+        auto energy = 4.0 * parameters_[0] * (sigmar12 - sigmar6);
 
         // Apply the selected truncation scheme
         if (truncation == PairPotential::ShiftedShortRangeTruncation)
@@ -259,7 +259,7 @@ double PairPotential::analyticShortRangeEnergy(double r, Forcefield::ShortRangeT
         else if (truncation == PairPotential::CosineShortRangeTruncation)
         {
             // Are we into the truncation strip?
-            double truncr = r - (range_ - shortRangeTruncationWidth_);
+            auto truncr = r - (range_ - shortRangeTruncationWidth_);
             if (truncr >= 0)
             {
                 // Simple truncation scheme - (cos(x)+1)*0.5, mapping the truncation region to {0,Pi}
@@ -293,9 +293,9 @@ double PairPotential::analyticShortRangeForce(double r, Forcefield::ShortRangeTy
 
         // f = -48*epsilon*((sigma**12/x**13)-0.5*(sigma**6/x**7))
 
-        double sigmar = parameters_[1] / r;
-        double sigmar6 = pow(sigmar, 6.0);
-        double sigmar12 = sigmar6 * sigmar6;
+        auto sigmar = parameters_[1] / r;
+        auto sigmar6 = pow(sigmar, 6.0);
+        auto sigmar12 = sigmar6 * sigmar6;
 
         // Apply the selected truncation scheme
         if (truncation == PairPotential::NoShortRangeTruncation)
@@ -474,7 +474,7 @@ double PairPotential::analyticEnergy(double r)
         return 0.0;
 
     // Short-range potential
-    double energy = analyticShortRangeEnergy(r, shortRangeType_);
+    auto energy = analyticShortRangeEnergy(r, shortRangeType_);
 
     // Coulomb contribution
     energy += analyticCoulombEnergy(chargeI_ * chargeJ_, r);

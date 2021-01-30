@@ -131,7 +131,7 @@ void ConfigurationTab::updateControls()
     ui_.TemperatureSpin->setValue(configuration_->temperature());
 
     // Current Box
-    const Box *box = configuration_->box();
+    const auto *box = configuration_->box();
     ui_.CurrentBoxTypeLabel->setText(QString::fromStdString(std::string(Box::boxTypes().keyword(box->type()))));
     ui_.CurrentBoxALabel->setText(QString::number(box->axisLengths().x));
     ui_.CurrentBoxBLabel->setText(QString::number(box->axisLengths().y));

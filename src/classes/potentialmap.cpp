@@ -83,7 +83,7 @@ double PotentialMap::energy(const std::shared_ptr<Atom> i, const std::shared_ptr
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
-    PairPotential *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
+    auto *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
     return pp->energy(r) +
            (pp->includeCoulomb() ? 0 : pp->analyticCoulombEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r));
 }
@@ -108,7 +108,7 @@ double PotentialMap::analyticEnergy(const std::shared_ptr<Atom> i, const std::sh
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being local to the atom
     // types
-    PairPotential *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
+    auto *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
     return pp->includeCoulomb() ? pp->analyticEnergy(r)
                                 : pp->analyticEnergy(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r);
 }
@@ -122,7 +122,7 @@ double PotentialMap::force(const std::shared_ptr<Atom> i, const std::shared_ptr<
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
-    PairPotential *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
+    auto *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
     return pp->includeCoulomb()
                ? pp->force(r)
                : pp->force(r) + pp->analyticCoulombForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r);
@@ -136,7 +136,7 @@ double PotentialMap::force(const SpeciesAtom *i, const SpeciesAtom *j, double r)
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
-    PairPotential *pp = potentialMatrix_[{i->atomType()->index(), j->atomType()->index()}];
+    auto *pp = potentialMatrix_[{i->atomType()->index(), j->atomType()->index()}];
     return pp->includeCoulomb() ? pp->force(r) : pp->force(r) + pp->analyticCoulombForce(i->charge() * j->charge(), r);
 }
 
@@ -149,7 +149,7 @@ double PotentialMap::analyticForce(const std::shared_ptr<Atom> i, const std::sha
 
     // Check to see whether Coulomb terms should be calculated from atomic charges, rather than them being included in the
     // interpolated potential
-    PairPotential *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
+    auto *pp = potentialMatrix_[{i->masterTypeIndex(), j->masterTypeIndex()}];
     return pp->includeCoulomb() ? pp->analyticForce(r)
                                 : pp->analyticForce(i->speciesAtom()->charge() * j->speciesAtom()->charge(), r);
 }

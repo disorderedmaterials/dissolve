@@ -38,10 +38,10 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
     sitesHaveOrientation_ = speciesSite->hasAxes();
 
     // Get origin atom indices from site, and grab the Configuration's Box
-    Array<int> originAtomIndices = speciesSite->originAtomIndices();
+    auto originAtomIndices = speciesSite->originAtomIndices();
     if (originAtomIndices.nItems() == 0)
         return Messenger::error("No origin atoms defined in SpeciesSite '{}'.\n", speciesSite->name());
-    const Box *box = configuration_->box();
+    const auto *box = configuration_->box();
 
     // If the site has axes, grab the atom indices involved
     Array<int> xAxisAtomIndices, yAxisAtomIndices;
@@ -58,10 +58,10 @@ bool SiteStack::create(Configuration *cfg, SpeciesSite *speciesSite)
 
     // Get Molecule array from Configuration and search for the target Species
     std::deque<std::shared_ptr<Molecule>> &molecules = cfg->molecules();
-    Species *targetSpecies = speciesSite->parent();
+    auto *targetSpecies = speciesSite->parent();
     Vec3<double> origin, v, x, y, z;
     Matrix3 axes;
-    for (auto molecule : molecules)
+    for (const auto &molecule : molecules)
     {
         if (molecule->species() != targetSpecies)
             continue;

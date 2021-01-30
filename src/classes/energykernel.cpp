@@ -74,7 +74,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
 {
     assert(centralCell && otherCell);
 
-    double totalEnergy = 0.0;
+    auto totalEnergy = 0.0;
     auto &centralAtoms = centralCell->atoms();
     auto &otherAtoms = otherCell->atoms();
     std::shared_ptr<Atom> ii;
@@ -163,7 +163,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
 double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy,
                             bool performSum)
 {
-    double totalEnergy = 0.0;
+    auto totalEnergy = 0.0;
     auto &centralAtoms = centralCell->atoms();
     std::shared_ptr<Atom> ii;
     Vec3<double> rJ;
@@ -261,13 +261,13 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
 {
     assert(i && cell);
 
-    double totalEnergy = 0.0;
+    auto totalEnergy = 0.0;
     std::shared_ptr<Atom> jj;
     double rSq, scale;
     auto &otherAtoms = cell->atoms();
 
     // Grab some information on the supplied Atom
-    std::shared_ptr<Molecule> moleculeI = i->molecule();
+    auto moleculeI = i->molecule();
     const auto rI = i->r();
 
     // Get start/stride for specified loop context
@@ -487,10 +487,10 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, ProcessPool::Division
 {
     assert(i);
 
-    Cell *cellI = i->cell();
+    auto *cellI = i->cell();
 
     // This Atom with its own Cell
-    double totalEnergy = energy(i, cellI, KernelFlags::ExcludeSelfFlag, strategy, false);
+    auto totalEnergy = energy(i, cellI, KernelFlags::ExcludeSelfFlag, strategy, false);
 
     // Cell neighbours not requiring minimum image
     for (auto *neighbour : cellI->cellNeighbours())
@@ -510,7 +510,7 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, ProcessPool::Division
 // Return PairPotential energy of Molecule with world
 double EnergyKernel::energy(std::shared_ptr<const Molecule> mol, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
-    double totalEnergy = 0.0;
+    auto totalEnergy = 0.0;
 
     for (auto ii : mol->atoms())
     {
@@ -574,7 +574,7 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
     auto start = processPool_.interleavedLoopStart(strategy);
     auto stride = processPool_.interleavedLoopStride(strategy);
 
-    double totalEnergy = 0.0;
+    auto totalEnergy = 0.0;
     Cell *cell;
     for (auto cellId = start; cellId < cellArray.nCells(); cellId += stride)
     {
@@ -640,7 +640,7 @@ double EnergyKernel::energy(const SpeciesAngle &angle, const std::shared_ptr<Ato
 // Return SpeciesAngle energy
 double EnergyKernel::energy(const SpeciesAngle &angle)
 {
-    Vec3<double> vecji = angle.i()->r() - angle.j()->r(), vecjk = angle.k()->r() - angle.j()->r();
+    auto vecji = angle.i()->r() - angle.j()->r(), vecjk = angle.k()->r() - angle.j()->r();
 
     // Normalise vectors
     vecji.normalise();
@@ -716,7 +716,7 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, c
     assert(i);
 
     // Get the SpeciesAtom
-    const SpeciesAtom *spAtom = i->speciesAtom();
+    const auto *spAtom = i->speciesAtom();
     assert(spAtom);
 
     // If no terms are present, return zero
