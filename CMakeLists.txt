@@ -40,10 +40,6 @@ if(PARALLEL)
   set(EXTRA_LINK_LIBS ${EXTRA_LINK_LIBS} ${MPI_LIBRARIES})
 endif(PARALLEL)
 
-if(CHECKS)
-  add_definitions("-DCHECKS")
-endif(CHECKS)
-
 # Add local Modules dir to cmake search path
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
 
