@@ -401,11 +401,6 @@ void ForceKernel::forces(const SpeciesBond &bond, const std::shared_ptr<Atom> i,
     // Get distance and normalise vector ready for force calculation
     double distance = vecji.magAndNormalise();
 
-#ifdef CHECKS
-    if (distance > 5.0)
-        Messenger::print("!!! Long bond: {}-{} = {} Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
-#endif
-
     // Determine final forces
     vecji *= bond.force(distance);
 
@@ -435,11 +430,6 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesBond
 
     // Get distance and normalise vector ready for force calculation
     double distance = vecji.magAndNormalise();
-
-#ifdef CHECKS
-    if (distance > 5.0)
-        Messenger::print("!!! Long bond: {}-{} = {} Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
-#endif
 
     // Determine final forces
     vecji *= bond.force(distance);

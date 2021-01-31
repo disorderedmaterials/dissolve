@@ -597,12 +597,6 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
 // Return SpeciesBond energy at Atoms specified
 double EnergyKernel::energy(const SpeciesBond &bond, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j)
 {
-#ifdef CHECKS
-    // Check for spurious bond distances
-    double distance = i->cell()->mimRequired(j->cell()) ? box_->minimumDistance(i, j) : (i->r() - j->r()).magnitude();
-    if (distance > 5.0)
-        Messenger::print("!!! Long bond: {}-{} = {} Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
-#endif
     // Determine whether we need to apply minimum image to the distance calculation
     if (i->cell()->mimRequired(j->cell()))
         return bond.energy(box_->minimumDistance(i, j));
