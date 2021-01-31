@@ -399,7 +399,7 @@ void ForceKernel::forces(const SpeciesBond &bond, const std::shared_ptr<Atom> i,
         vecji = j->r() - i->r();
 
     // Get distance and normalise vector ready for force calculation
-    double distance = vecji.magAndNormalise();
+    auto distance = vecji.magAndNormalise();
 
     // Determine final forces
     vecji *= bond.force(distance);
@@ -429,7 +429,7 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesBond
         vecji = j->r() - i->r();
 
     // Get distance and normalise vector ready for force calculation
-    double distance = vecji.magAndNormalise();
+    auto distance = vecji.magAndNormalise();
 
     // Determine final forces
     vecji *= bond.force(distance);
