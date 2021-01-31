@@ -176,7 +176,7 @@ Default: `not set`
 
 #### `BUILD_TESTS`
 
-In addition to the main build, also build unit tests.
+In addition to the main build, also build unit/system tests.
 
 Example: `-DBUILD_TESTS:bool=true`
 
