@@ -41,24 +41,6 @@ class XMLBaseForcefield : public Forcefield
     // Return the base ForcefieldAtomType with specified id (if it exists)
     OptionalReferenceWrapper<const ForcefieldAtomType> oplsAtomTypeById(int id) const;
 
-    /*
-     * Term Data
-     */
-    public:
-    // Return bond term for the supplied atom type pair (if it exists)
-    OptionalReferenceWrapper<const ForcefieldBondTerm> getBondTerm(const ForcefieldAtomType &i,
-                                                                   const ForcefieldAtomType &j) const;
-    // Return angle term for the supplied atom type trio (if it exists)
-    OptionalReferenceWrapper<const ForcefieldAngleTerm> getAngleTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k) const;
-    // Return torsion term for the supplied atom type quartet (if it exists)
-    OptionalReferenceWrapper<const ForcefieldTorsionTerm> getTorsionTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k, const ForcefieldAtomType &l) const;
-    // Return improper term for the supplied atom type quartet (if it exists)
-    OptionalReferenceWrapper<const ForcefieldImproperTerm> getImproperTerm(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k, const ForcefieldAtomType &l) const;
-
     private:
-    std::vector<ForcefieldBondTerm> bondTerms_;
-    std::vector<ForcefieldAngleTerm> angleTerms_;
-    std::vector<ForcefieldTorsionTerm> torsionTerms_;
-    std::vector<ForcefieldImproperTerm> improperTerms_;
     pugi::xml_node doc_;
 };
