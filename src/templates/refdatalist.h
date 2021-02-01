@@ -92,14 +92,8 @@ template <class T, class D> class RefDataList
     }
     RefDataItem<T, D> *operator[](int index)
     {
-#ifdef CHECKS
-        if ((index < 0) || (index >= nItems_))
-        {
-            fmt::print("Array index ({}) out of bounds ({} items in RefDataList)\n", index, nItems_);
-            return nullptr;
-        }
-#endif
-        // Use array() function to return item
+        assert(index >= 0 && index < nItems_);
+
         return array()[index];
     }
 
@@ -425,13 +419,8 @@ template <class T, class D> class RefDataList
     // Return nth item in list
     T *item(int n)
     {
-#ifdef CHECKS
-        if ((n < 0) || (n >= nItems_))
-        {
-            fmt::print("Array index ({}) out of bounds ({} items in RefDataList)\n", n, nItems_);
-            return nullptr;
-        }
-#endif
+        assert(n >= 0 && n < nItems_);
+
         // Use array() function to return item
         return array()[n]->item();
     }

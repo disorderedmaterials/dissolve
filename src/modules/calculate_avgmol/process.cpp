@@ -69,7 +69,7 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Grab Configuration and Box pointers
     auto *cfg = targetConfigurations_.firstItem();
-    const Box *box = cfg->box();
+    const auto *box = cfg->box();
 
     // Set up process pool - must do this to ensure we are using all available processes
     procPool.assignProcessesToGroups(cfg->processPool());
@@ -80,7 +80,7 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("No target site defined.\n");
 
     // Get site parent species
-    Species *sp = site->parent();
+    auto *sp = site->parent();
     if (sp != targetSpecies_)
         return Messenger::error("Internal error - target site parent is not the same as the target species.\n");
 
@@ -88,7 +88,7 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
     updateArrays(dissolve);
 
     // Get the site stack
-    const SiteStack *stack = cfg->siteStack(site);
+    const auto *stack = cfg->siteStack(site);
 
     // Retrieve data arrays
     Array<SampledDouble> &x =
@@ -102,17 +102,11 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
     Vec3<double> r;
     for (auto n = 0; n < stack->nSites(); ++n)
     {
-        const Site &s = stack->site(n);
-#ifdef CHECKS
-        if (s.molecule()->species() != targetSpecies_)
-        {
-            Messenger::error("Site species doesn't match target species.\n");
-            continue;
-        }
-#endif
+        const auto &s = stack->site(n);
+        assert(s.molecule()->species() == targetSpecies_);
 
         // Get axes and take inverse
-        Matrix3 inverseAxes = s.axes();
+        auto inverseAxes = s.axes();
         inverseAxes.invert();
 
         // Loop over atoms, taking delta position with origin, and rotating into local axes

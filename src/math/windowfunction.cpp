@@ -200,11 +200,7 @@ double WindowFunction::y(double x, double omega) const
 {
     // Determine current fractional x value (from our stored xMax_)
     const auto chi = x / xMax_;
-
-#ifdef CHECKS
-    if ((chi < 0.0) || (chi > 1.0))
-        Messenger::warn("Position for window function is out of range ({}).\n", chi);
-#endif
+    assert(chi >= 0.0 && chi <= 1.0);
 
     switch (function_)
     {

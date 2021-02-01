@@ -100,26 +100,14 @@ SpeciesAtom *SpeciesBond::partner(const SpeciesAtom *i) const { return (i == i_ 
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesBond::indexI() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesBond::indexI(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(i_);
     return i_->index();
 }
 
 // Return index (in parent Species) of second SpeciesAtom
 int SpeciesBond::indexJ() const
 {
-#ifdef CHECKS
-    if (j_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesBond::indexJ(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(j_);
     return j_->index();
 }
 
@@ -148,13 +136,7 @@ bool SpeciesBond::matches(const SpeciesAtom *i, const SpeciesAtom *j) const
 // Return whether all atoms in the interaction are currently selected
 bool SpeciesBond::isSelected() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr || j_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesBond::isSelected(). Returning false...\n");
-        return false;
-    }
-#endif
+    assert(i_ && j_);
     return (i_->isSelected() && j_->isSelected());
 }
 

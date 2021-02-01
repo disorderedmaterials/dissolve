@@ -25,12 +25,8 @@ void AtomTypeList::operator=(const AtomTypeList &source) { types_ = source.types
 // Array access operator
 AtomTypeData &AtomTypeList::operator[](int n)
 {
-#ifdef CHECKS
-    if ((n < 0) || (n >= types_.size()))
-    {
-        Messenger::print("OUT_OF_RANGE - Specified index {} out of range in AtomTypeList::operator[].\n", n);
-    }
-#endif
+    assert(n >= 0 && n < types_.size());
+
     return types_[n];
 }
 
@@ -228,12 +224,8 @@ double AtomTypeList::totalPopulation() const
 // Return nth referenced AtomType
 const std::shared_ptr<AtomType> AtomTypeList::atomType(int n) const
 {
-#ifdef CHECKS
-    if ((n < 0) || (n >= types_.size()))
-    {
-        Messenger::print("OUT_OF_RANGE - Specified index {} out of range in AtomTypeList::atomType().\n");
-    }
-#endif
+    assert(n >= 0 && n < types_.size());
+
     return types_[n].atomType();
 }
 

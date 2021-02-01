@@ -20,7 +20,7 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
      */
 
     // Grab the Cell array
-    const CellArray &cellArray = cfg->cells();
+    const auto &cellArray = cfg->cells();
 
     // Create a ForceKernel
     ForceKernel kernel(procPool, cfg->box(), potentialMap, fx, fy, fz);

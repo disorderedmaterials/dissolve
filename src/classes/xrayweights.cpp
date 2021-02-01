@@ -172,14 +172,6 @@ std::vector<double> XRayWeights::formFactor(int typeIndexI, const std::vector<do
     // Initialise results array
     std::vector<double> fiq(Q.size());
 
-#ifdef CHECKS
-    if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
-    {
-        Messenger::error("XRayWeights::formFactorProduct() - Type i index {} is out of range.\n", typeIndexI);
-        return fiq;
-    }
-#endif
-
     auto &fi = formFactorData_[typeIndexI].get();
 
     for (auto n = 0; n < Q.size(); ++n)
@@ -191,18 +183,6 @@ std::vector<double> XRayWeights::formFactor(int typeIndexI, const std::vector<do
 // Return form factor product for types i and j at specified Q value
 double XRayWeights::formFactorProduct(int typeIndexI, int typeIndexJ, double Q) const
 {
-#ifdef CHECKS
-    if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
-    {
-        Messenger::error("XRayWeights::formFactorProduct() - Type i index {} is out of range.\n", typeIndexI);
-        return 0.0;
-    }
-    if ((typeIndexJ < 0) || (typeIndexJ >= formFactorData_.size()))
-    {
-        Messenger::error("XRayWeights::formFactorProduct() - Type j index {} is out of range.\n", typeIndexJ);
-        return 0.0;
-    }
-#endif
     return formFactorData_[typeIndexI].get().magnitude(Q) * formFactorData_[typeIndexJ].get().magnitude(Q);
 }
 
@@ -217,20 +197,6 @@ std::vector<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const st
 {
     // Initialise results array
     std::vector<double> fijq(Q.size());
-
-    // Get form factor data for involved types
-#ifdef CHECKS
-    if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
-    {
-        Messenger::error("XRayWeights::weight() - Type i index {} is out of range.\n", typeIndexI);
-        return fijq;
-    }
-    if ((typeIndexJ < 0) || (typeIndexJ >= formFactorData_.size()))
-    {
-        Messenger::error("XRayWeights::weight() - Type j index {} is out of range.\n", typeIndexJ);
-        return fijq;
-    }
-#endif
 
     auto &fi = formFactorData_[typeIndexI].get();
     auto &fj = formFactorData_[typeIndexJ].get();

@@ -202,16 +202,7 @@ int ProcessPool::groupIndex() const { return groupIndex_; }
 // Return local group in which this process exists
 ProcessGroup &ProcessPool::myGroup()
 {
-#ifdef CHECKS
-    if ((groupIndex_ < 0) || (groupIndex_ >= processGroups_.nItems()))
-    {
-        static ProcessGroup dummyGroup;
-        Messenger::print("OUT_OF_RANGE - Local group index for this process ({}) is out of range in "
-                         "ProcessPool::localGroupSize() (nProcessGroups = {}).\n",
-                         groupIndex_, processGroups_.nItems());
-        return dummyGroup;
-    }
-#endif
+    assert(groupIndex_ >= 0 && groupIndex_ < processGroups_.nItems());
     return processGroups_[groupIndex_];
 }
 
@@ -472,46 +463,21 @@ int ProcessPool::nProcessGroups() const { return processGroups_.nItems(); }
 // Return nth process group
 ProcessGroup &ProcessPool::processGroup(int n)
 {
-#ifdef CHECKS
-    if ((n < 0) || (n >= processGroups_.nItems()))
-    {
-        static ProcessGroup dummyGroup;
-        Messenger::print("OUT_OF_RANGE - Specified groupId ({}) is out of range in ProcessPool::processGroup() "
-                         "(nProcessGroups = {}).\n",
-                         n, processGroups_.nItems());
-        return dummyGroup;
-    }
-#endif
+    assert(n >= 0 && n < processGroups_.nItems());
     return processGroups_[n];
 }
 
 // Return number of processes in specified group
 int ProcessPool::nProcessesInGroup(int groupId) const
 {
-#ifdef CHECKS
-    if ((groupId < 0) || (groupId >= processGroups_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Specified groupId ({}) is out of range in ProcessPool::nProcessesInGroup() "
-                         "(nProcessGroups = {}).\n",
-                         groupId, processGroups_.nItems());
-        return 0;
-    }
-#endif
+    assert(groupId >= 0 && groupId < processGroups_.nItems());
     return processGroups_.at(groupId).nProcesses();
 }
 
 // Return array of pool ranks in specified group
 const Array<int> &ProcessPool::poolRanksInGroup(int groupId) const
 {
-#ifdef CHECKS
-    if ((groupId < 0) || (groupId >= processGroups_.nItems()))
-    {
-        Messenger::print("OUT_OF_RANGE - Specified groupId ({}) is out of range in ProcessPool::worldRanksInGroup() "
-                         "(nProcessGroups = {}).\n",
-                         groupId, processGroups_.nItems());
-        return 0;
-    }
-#endif
+    assert(groupId >= 0 && groupId < processGroups_.nItems());
     return processGroups_.at(groupId).poolRanks();
 }
 

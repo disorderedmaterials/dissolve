@@ -175,14 +175,7 @@ const std::vector<std::shared_ptr<Atom>> &Configuration::atoms() const { return 
 // Return nth atom
 std::shared_ptr<Atom> Configuration::atom(int n)
 {
-#ifdef CHECKS
-    if ((n < 0) || (n >= atoms_.size()))
-    {
-        Messenger::print("OUT_OF_RANGE - Atom index {} passed to Configuration::atom() is out of range (nAtoms = {}).\n", n,
-                         atoms_.size());
-        return nullptr;
-    }
-#endif
+    assert(n >= 0 && n < atoms_.size());
     return atoms_[n];
 }
 

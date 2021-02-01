@@ -48,7 +48,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
     auto &braggMaximumHKL = GenericListHelper<Vec3<int>>::realise(cfg->moduleData(), "BraggMaximumHKL");
 
     // Grab some useful values
-    const Box *box = cfg->box();
+    const auto *box = cfg->box();
     auto nTypes = cfg->nUsedAtomTypes();
     auto nAtoms = cfg->nAtoms();
     auto &atoms = cfg->atoms();

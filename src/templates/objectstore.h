@@ -160,7 +160,6 @@ template <class T> class ObjectStore
         if (ObjectInfo::autoSuffixing())
             objectTag = fmt::format("{}@{}", objectTag, ObjectInfo::autoSuffix());
 
-#ifdef CHECKS
         // Check for duplicate value already in list
         if (!objectTag.empty())
         {
@@ -175,7 +174,7 @@ template <class T> class ObjectStore
                                 objectTypeName_, objectTypeName_, objectTag);
             }
         }
-#endif
+
         objectInfo_.setTag(fmt::format("{}%{}", objectTypeName_, objectTag));
     }
     // Return object tag
