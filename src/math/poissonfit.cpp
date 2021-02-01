@@ -68,10 +68,10 @@ double PoissonFit::poisson(const double x, const int nIndex) const
      */
 
     // Calculate natural log of denominator in prefactor
-    double lnFactor = log(fourPiSigmaRCubed_) + lnNPlusTwoFactorial_[nIndex];
+    auto lnFactor = log(fourPiSigmaRCubed_) + lnNPlusTwoFactorial_[nIndex];
 
     // At x == 0 only the first function (with nIndex == 0) contributes - all others are zero
-    double exponent = -(x / sigmaR_) - lnFactor - (rBroad_ * x);
+    auto exponent = -(x / sigmaR_) - lnFactor - (rBroad_ * x);
     if (x > 0.0)
     {
         exponent += n_[nIndex] * log(x / sigmaR_);
@@ -101,9 +101,9 @@ double PoissonFit::poissonFT(const int qIndex, const int nIndex) const
 
     double na = n * arcTanQSigma_[qIndex];
 
-    double factor = 1.0 / ((n + 2) * pow(sqrtOnePlusQSqSigmaSq_[qIndex], n + 4));
+    auto factor = 1.0 / ((n + 2) * pow(sqrtOnePlusQSqSigmaSq_[qIndex], n + 4));
 
-    double value = 2.0 * cos(na) + (oneMinusQSqSigmaSq_[qIndex] / (referenceData_.xAxis(qIndex) * sigmaQ_)) * sin(na);
+    auto value = 2.0 * cos(na) + (oneMinusQSqSigmaSq_[qIndex] / (referenceData_.xAxis(qIndex) * sigmaQ_)) * sin(na);
 
     return factor * value;
 }
@@ -115,7 +115,7 @@ const Data1D &PoissonFit::approximation() const { return approximateData_; }
 Data1D PoissonFit::approximation(FunctionSpace::SpaceType space, double factor, double xMin, double xStep, double xMax) const
 {
     Data1D approx;
-    double x = xMin;
+    auto x = xMin;
     while (x <= xMax)
     {
         approx.addPoint(x, 0.0);
@@ -136,7 +136,7 @@ Data1D PoissonFit::singleFunction(int index, FunctionSpace::SpaceType space, dou
                                   double xMax) const
 {
     Data1D func;
-    double x = xMin;
+    auto x = xMin;
     while (x <= xMax)
     {
         func.addPoint(x, 0.0);
@@ -232,7 +232,7 @@ void PoissonFit::preCalculateTerms()
      */
     n_.clear();
     lnNPlusTwoFactorial_.clear();
-    double r = rStep_;
+    auto r = rStep_;
     auto deltaN = floor(rStep_ / sigmaR_ + 0.5);
     auto n = deltaN - 1;
     for (auto i = 0; i < nPoissons_; ++i)
@@ -456,8 +456,8 @@ double PoissonFit::constructReciprocal(double rMin, double rMax, std::vector<dou
 // One-parameter cost function (amplitude) with alpha array containing A values, including current approximate data into sum
 double PoissonFit::costAnalyticC(const std::vector<double> &alpha)
 {
-    double sose = 0.0;
-    double multiplier = 1.0;
+    auto sose = 0.0;
+    auto multiplier = 1.0;
 
     // Loop over data points, add in our Gaussian contributions, and
     double x, y, dy;
@@ -481,7 +481,7 @@ double PoissonFit::costAnalyticC(const std::vector<double> &alpha)
 // One-parameter cost function (coefficient) using pre-calculated function array, including current approximate data in sum
 double PoissonFit::costTabulatedC(const std::vector<double> &alpha)
 {
-    double sose = 0.0;
+    auto sose = 0.0;
 
     double y, dy;
     for (auto i = 0; i < approximateData_.nValues(); ++i)

@@ -59,8 +59,8 @@ double rmse(const Data1D &A, const Data1D &B, bool quiet)
     const auto &aY = A.values();
 
     // Generate RMSE at x values of A
-    double rmse = 0.0, delta;
-    double firstX = 0.0, lastX = 0.0;
+    auto rmse = 0.0, firstX = 0.0, lastX = 0.0;
+    double delta;
     auto nPointsConsidered = 0;
     for (auto &&[x, y] : zip(aX, aY))
     {
@@ -102,8 +102,7 @@ double mape(const Data1D &A, const Data1D &B, bool quiet)
     const auto &aX = A.xAxis();
     const auto &aY = A.values();
 
-    double sum = 0.0;
-    double firstX = 0.0, lastX = 0.0;
+    auto sum = 0.0, firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
     for (auto &&[x, y] : zip(aX, aY))
     {
@@ -130,7 +129,7 @@ double mape(const Data1D &A, const Data1D &B, bool quiet)
         ++nPointsConsidered;
     }
 
-    double mape = 100.0 * sum / nPointsConsidered;
+    auto mape = 100.0 * sum / nPointsConsidered;
     if (!quiet)
         Messenger::print("MAPE between datasets is {:7.3f}% over {:15.9e} < x < {:15.9e} ({} points).\n", mape, firstX, lastX,
                          nPointsConsidered);
@@ -148,8 +147,8 @@ double maape(const Data1D &A, const Data1D &B, bool quiet)
     const auto &aX = A.xAxis();
     const auto &aY = A.values();
 
-    double sum = 0.0;
-    double firstX = 0.0, lastX = 0.0, x, y;
+    auto sum = 0.0, firstX = 0.0, lastX = 0.0;
+    double x, y;
     auto nPointsConsidered = 0;
     for (auto n = 0; n < 1; ++n)
     {
@@ -178,7 +177,7 @@ double maape(const Data1D &A, const Data1D &B, bool quiet)
         ++nPointsConsidered;
     }
 
-    double maape = 100.0 * sum / nPointsConsidered;
+    auto maape = 100.0 * sum / nPointsConsidered;
     if (!quiet)
         Messenger::print("MAAPE between datasets is {:7.3f}% over {:15.9e} < x < {:15.9e} ({} points).\n", maape, firstX, lastX,
                          nPointsConsidered);
@@ -197,7 +196,7 @@ double percent(const Data1D &A, const Data1D &B, bool quiet)
     const auto &aY = A.values();
 
     // Calculate summed absolute error and absolute y value deviations from average
-    double sume = 0.0, sumy = 0.0;
+    auto sume = 0.0, sumy = 0.0;
     auto firstPoint = -1, lastPoint = -1;
     double x, y;
     for (auto n = 0; n < aX.size(); ++n)
@@ -228,7 +227,7 @@ double percent(const Data1D &A, const Data1D &B, bool quiet)
 
     // Calculate percentage error, avoiding divide-by-zero if the sum of y values is zero
     auto zeroSum = sumy == 0;
-    double percentError = (zeroSum ? sume : 100.0 * sume / sumy);
+    auto percentError = (zeroSum ? sume : 100.0 * sume / sumy);
     if (!quiet)
     {
         if (zeroSum)
@@ -253,8 +252,7 @@ double rFactor(const Data1D &A, const Data1D &B, bool quiet)
     const auto &aY = A.values();
 
     // Accumulate sum-of-squares error at x values of A
-    double rfac = 0.0, delta;
-    double firstX = 0.0, lastX = 0.0;
+    auto rfac = 0.0, delta = 0.0, firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
     for (auto &&[x, y] : zip(aX, aY))
     {
@@ -297,7 +295,7 @@ double euclidean(const Data1D &A, const Data1D &B, bool quiet)
     const auto &aY = A.values();
 
     auto a2 = 0.0, a = 0.0, sos = 0.0, delta = 0.0;
-    double firstX = 0.0, lastX = 0.0, x = 0.0;
+    auto firstX = 0.0, lastX = 0.0, x = 0.0;
     auto nPointsConsidered = 0;
     for (auto n = 0; n < aX.size(); ++n)
     {

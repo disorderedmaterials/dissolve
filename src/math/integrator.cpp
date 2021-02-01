@@ -24,7 +24,7 @@ double Integrator::trapezoid(const Data1D &data)
     const auto &x = data.xAxis();
     const auto &y = data.values();
 
-    double total = 0.0, y0 = y.front(), x0 = x.front();
+    auto total = 0.0, y0 = y.front(), x0 = x.front();
     for (auto &&[x1, y1] : zip(x, y))
     {
         total += (x1 - x0) * (y0 + y1) * 0.5;
@@ -45,7 +45,7 @@ double Integrator::trapezoid(const Data1D &data, double xMin, double xMax)
     const auto &x = data.xAxis();
     const auto &y = data.values();
 
-    double total = 0.0, y0, x0;
+    double total = 0.0, y0 = 0.0, x0 = 0.0;
     auto nPoints = 0;
     for (auto &&[x1, y1] : zip(x, y))
     {
@@ -85,7 +85,7 @@ double Integrator::absTrapezoid(const Data1D &data)
     const auto &x = data.xAxis();
     const auto &y = data.values();
 
-    double total = 0.0, y0 = y.front(), x0 = x.front();
+    auto total = 0.0, y0 = y.front(), x0 = x.front();
     for (auto &&[x1, y1] : zip(x, y))
     {
         total += fabs((x1 - x0) * (y0 + y1) * 0.5);
@@ -101,7 +101,7 @@ double Integrator::sum(const Data1D &data)
     // Grab data array
     const auto &values = data.values();
 
-    double total = 0.0;
+    auto total = 0.0;
 
     for (auto n = 0; n < values.size(); ++n)
         total += values[n];
@@ -116,7 +116,7 @@ double Integrator::sum(const Data1D &data, double xMin, double xMax)
     const auto &x = data.xAxis();
     const auto &values = data.values();
 
-    double total = 0.0;
+    auto total = 0.0;
 
     for (auto &&[xn, value] : zip(x, values))
     {
@@ -140,7 +140,7 @@ double Integrator::absSum(const Data1D &data)
     // Grab data array
     const auto &values = data.values();
 
-    double total = 0.0;
+    auto total = 0.0;
 
     for (auto n = 0; n < values.size(); ++n)
         total += fabs(values[n]);
@@ -155,7 +155,7 @@ double Integrator::absSum(const Data1D &data, double xMin, double xMax)
     const auto &x = data.xAxis();
     const auto &values = data.values();
 
-    double total = 0.0;
+    auto total = 0.0;
 
     for (auto &&[xn, value] : zip(x, values))
     {
@@ -179,7 +179,7 @@ double Integrator::sumOfSquares(const Data1D &data)
     // Grab data array
     const auto &values = data.values();
 
-    double total = 0.0;
+    auto total = 0.0;
 
     for (auto n = 0; n < values.size(); ++n)
         total += values[n] * values[n];
@@ -194,7 +194,7 @@ double Integrator::sumOfSquares(const Data1D &data, double xMin, double xMax)
     const auto &x = data.xAxis();
     const auto &values = data.values();
 
-    double total = 0.0;
+    auto total = 0.0;
 
     for (auto &&[xn, value] : zip(x, values))
     {
