@@ -484,15 +484,14 @@ double PoissonFit::costTabulatedC(const std::vector<double> &alpha)
     double sose = 0.0;
 
     double y, dy;
-    auto nAlpha = alpha.size();
     for (auto i = 0; i < approximateData_.nValues(); ++i)
     {
         // Get approximate data x and y for this point
         y = approximateData_.value(i);
 
         // Add in contributions from our Gaussians
-        for (auto n = 0; n < nAlpha; ++n)
-            y += functions_[{alphaIndex_[n], i}] * alpha[n];
+        for (auto &&[g, A] : zip(alphaIndex_, alpha))
+            y += functions_[{g, i}] * A;
 
         dy = referenceData_.value(i) - y;
         sose += dy * dy;

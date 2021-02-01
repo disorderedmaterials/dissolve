@@ -584,18 +584,14 @@ double GaussFit::costAnalyticA(const std::vector<double> &alpha)
     double multiplier = 1.0;
 
     // Loop over data points, add in our Gaussian contributions, and
-    double x, y, dy;
-    for (auto i = 0; i < approximateData_.nValues(); ++i)
+    double dy;
+    for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
     {
-        // Get approximate data x and y for this point
-        x = approximateData_.xAxis(i);
-        y = approximateData_.value(i);
-
         // Add in contributions from our Gaussians
         for (auto &&[g, A] : zip(alphaIndex_, alpha))
             y += functionValue(alphaSpace_, x, x_[g], A, fwhm_[g]);
 
-        dy = referenceData_.value(i) - y;
+        dy = refY - y;
         sose += dy * dy;
     }
 
@@ -614,13 +610,9 @@ double GaussFit::costAnalyticAF(const std::vector<double> &alpha)
     double A, fwhm, xCentre;
 
     // Loop over data points, add in our Gaussian contributions, and
-    double x, y, dy;
-    for (auto i = 0; i < approximateData_.nValues(); ++i)
+    double dy;
+    for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
     {
-        // Get approximate data x and y for this point
-        x = approximateData_.xAxis(i);
-        y = approximateData_.value(i);
-
         // Add in contributions from our Gaussians
         for (auto n = 0; n < nGauss; ++n)
         {
@@ -635,7 +627,7 @@ double GaussFit::costAnalyticAF(const std::vector<double> &alpha)
             y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
         }
 
-        dy = referenceData_.value(i) - y;
+        dy = refY - y;
         sose += dy * dy;
     }
 
@@ -654,13 +646,9 @@ double GaussFit::costAnalyticAX(const std::vector<double> &alpha)
     double A, fwhm, xCentre;
 
     // Loop over data points, add in our Gaussian contributions, and
-    double x, y, dy;
-    for (auto i = 0; i < approximateData_.nValues(); ++i)
+    double dy;
+    for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
     {
-        // Get approximate data x and y for this point
-        x = approximateData_.xAxis(i);
-        y = approximateData_.value(i);
-
         // Add in contributions from our Gaussians
         for (auto n = 0; n < nGauss; ++n)
         {
@@ -675,7 +663,7 @@ double GaussFit::costAnalyticAX(const std::vector<double> &alpha)
             y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
         }
 
-        dy = referenceData_.value(i) - y;
+        dy = refY - y;
         sose += dy * dy;
     }
 
@@ -694,13 +682,9 @@ double GaussFit::costAnalyticAFX(const std::vector<double> &alpha)
     double A, fwhm, xCentre;
 
     // Loop over data points, add in our Gaussian contributions, and
-    double x, y, dy;
-    for (auto i = 0; i < approximateData_.nValues(); ++i)
+    double dy;
+    for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
     {
-        // Get approximate data x and y for this point
-        x = approximateData_.xAxis(i);
-        y = approximateData_.value(i);
-
         // Add in contributions from our Gaussians
         for (auto n = 0; n < nGauss; ++n)
         {
@@ -715,7 +699,7 @@ double GaussFit::costAnalyticAFX(const std::vector<double> &alpha)
             y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
         }
 
-        dy = referenceData_.value(i) - y;
+        dy = refY - y;
         sose += dy * dy;
     }
 
@@ -729,15 +713,14 @@ double GaussFit::costTabulatedA(const std::vector<double> &alpha)
 
     // Loop over data points and sum contributions from tabulated functions on to the current approximate data
     double y, dy;
-    auto nAlpha = alpha.size();
     for (auto i = 0; i < approximateData_.nValues(); ++i)
     {
         // Get approximate data x and y for this point
         y = approximateData_.value(i);
 
         // Add in contributions from our Gaussians
-        for (auto n = 0; n < nAlpha; ++n)
-            y += functions_[{alphaIndex_[n], i}] * alpha[n];
+        for (auto &&[g, A] : zip(alphaIndex_, alpha))
+            y += functions_[{g, i}] * A;
 
         dy = referenceData_.value(i) - y;
         sose += dy * dy;
