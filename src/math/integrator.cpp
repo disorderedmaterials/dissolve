@@ -24,7 +24,7 @@ double Integrator::trapezoid(const Data1D &data)
     const auto &x = data.xAxis();
     const auto &y = data.values();
 
-    double total = 0.0, y0 = y.front(), y1, x0 = x.front(), x1;
+    double total = 0.0, y0 = y.front(), x0 = x.front();
     for (auto &&[x1, y1] : zip(x, y))
     {
         total += (x1 - x0) * (y0 + y1) * 0.5;
@@ -45,7 +45,7 @@ double Integrator::trapezoid(const Data1D &data, double xMin, double xMax)
     const auto &x = data.xAxis();
     const auto &y = data.values();
 
-    double total = 0.0, y0, y1, x0, x1;
+    double total = 0.0, y0, x0;
     auto nPoints = 0;
     for (auto &&[x1, y1] : zip(x, y))
     {
@@ -85,7 +85,7 @@ double Integrator::absTrapezoid(const Data1D &data)
     const auto &x = data.xAxis();
     const auto &y = data.values();
 
-    double total = 0.0, y0 = y.front(), y1, x0 = x.front(), x1;
+    double total = 0.0, y0 = y.front(), x0 = x.front();
     for (auto &&[x1, y1] : zip(x, y))
     {
         total += fabs((x1 - x0) * (y0 + y1) * 0.5);

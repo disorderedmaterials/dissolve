@@ -583,9 +583,6 @@ double GaussFit::costAnalyticA(const std::vector<double> &alpha)
     double sose = 0.0;
     double multiplier = 1.0;
 
-    double A;
-    int g;
-
     // Loop over data points, add in our Gaussian contributions, and
     double x, y, dy;
     for (auto i = 0; i < approximateData_.nValues(); ++i)

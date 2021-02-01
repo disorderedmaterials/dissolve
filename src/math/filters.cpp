@@ -25,7 +25,7 @@ void convolve(Data1D &data, const BroadeningFunction &function, bool variableOme
 
     // Outer loop over existing data points - if variableOmega == true then we use the x value as the omega broadening
     // parameter
-    double xCentre, xBroad, norm;
+    double norm, xBroad;
     if (variableOmega)
         for (auto &&[xCentre, yn] : zip(x, y))
         {
@@ -69,7 +69,6 @@ void convolve(double xCentre, double value, const BroadeningFunction &function, 
     auto &y = dest.values();
 
     // Loop over existing datapoints
-    double xBroad;
     std::transform(x.begin(), x.end(), y.begin(), y.begin(),
                    [&](auto x, auto y) { return y + value * function.y(x - xCentre); });
 }

@@ -60,7 +60,7 @@ double rmse(const Data1D &A, const Data1D &B, bool quiet)
 
     // Generate RMSE at x values of A
     double rmse = 0.0, delta;
-    double firstX = 0.0, lastX = 0.0, x;
+    double firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
     for (auto &&[x, y] : zip(aX, aY))
     {
@@ -103,7 +103,7 @@ double mape(const Data1D &A, const Data1D &B, bool quiet)
     const auto &aY = A.values();
 
     double sum = 0.0;
-    double firstX = 0.0, lastX = 0.0, x, y;
+    double firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
     for (auto &&[x, y] : zip(aX, aY))
     {
@@ -254,7 +254,7 @@ double rFactor(const Data1D &A, const Data1D &B, bool quiet)
 
     // Accumulate sum-of-squares error at x values of A
     double rfac = 0.0, delta;
-    double firstX = 0.0, lastX = 0.0, x;
+    double firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
     for (auto &&[x, y] : zip(aX, aY))
     {
