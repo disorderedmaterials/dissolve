@@ -33,8 +33,6 @@ class EnumOption
     std::string keyword_;
     // Option description / long text
     std::string description_;
-    // Whether the option has any associated arguments
-    bool hasArguments_;
     // Minimum number of arguments the option takes
     int minArgs_;
     // Maximum number of arguments the option takes
@@ -49,8 +47,6 @@ class EnumOption
     std::string_view keyword() const;
     // Return option description
     std::string_view description() const;
-    // Return whether the option has any associated arguments
-    bool hasArguments() const;
     // Return minimum number of arguments the option takes
     int minArgs() const;
     // Return maximum number of arguments the option takes

@@ -45,9 +45,6 @@ std::string_view EnumOption::keyword() const { return keyword_; }
 // Return option description
 std::string_view EnumOption::description() const { return description_; }
 
-// Return whether the option has any associated arguments
-bool EnumOption::hasArguments() const { return (minArgs_ != 0); }
-
 // Return minimum number of arguments the option takes
 int EnumOption::minArgs() const { return minArgs_; }
 
