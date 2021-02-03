@@ -76,17 +76,18 @@ bool Species::loadFromXYZ(std::string_view filename)
 EnumOptions<Species::SpeciesKeyword> Species::keywords()
 {
     static EnumOptionsList SpeciesKeywords =
-        EnumOptionsList() << EnumOption(Species::AngleKeyword, "Angle", 3, 6) << EnumOption(Species::AtomKeyword, "Atom", 6, 7)
-                          << EnumOption(Species::BondKeyword, "Bond", 2, 5)
+        EnumOptionsList() << EnumOption(Species::AngleKeyword, "Angle", 3, EnumOption::AnyNumberOfArguments)
+                          << EnumOption(Species::AtomKeyword, "Atom", 6, 7)
+                          << EnumOption(Species::BondKeyword, "Bond", 2, EnumOption::AnyNumberOfArguments)
                           << EnumOption(Species::BondTypeKeyword, "BondType", 3)
                           << EnumOption(Species::ChargeKeyword, "Charge", 2)
-                          << EnumOption(Species::CoordinateSetsKeyword, "CoordinateSets", 2, 99)
+                          << EnumOption(Species::CoordinateSetsKeyword, "CoordinateSets", 2, EnumOption::AnyNumberOfArguments)
                           << EnumOption(Species::EndSpeciesKeyword, "EndSpecies")
                           << EnumOption(Species::ForcefieldKeyword, "Forcefield", 1)
-                          << EnumOption(Species::ImproperKeyword, "Improper", 5, 9)
+                          << EnumOption(Species::ImproperKeyword, "Improper", 5, EnumOption::AnyNumberOfArguments)
                           << EnumOption(Species::IsotopologueKeyword, "Isotopologue", EnumOption::OneOrMoreArguments)
                           << EnumOption(Species::SiteKeyword, "Site", 1)
-                          << EnumOption(Species::TorsionKeyword, "Torsion", 4, 9);
+                          << EnumOption(Species::TorsionKeyword, "Torsion", 4, EnumOption::AnyNumberOfArguments);
 
     static EnumOptions<Species::SpeciesKeyword> options("SpeciesKeyword", SpeciesKeywords);
 
