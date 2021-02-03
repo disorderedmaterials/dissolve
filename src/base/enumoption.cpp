@@ -8,29 +8,16 @@
 // Static Singleton
 UnrecognisedEnumOption EnumOptionsBase::unrecognisedOption_;
 
-EnumOption::EnumOption()
+EnumOption::EnumOption() : enumeration_(0) {}
+EnumOption::EnumOption(const int enumeration, std::string_view keyword) : enumeration_(enumeration), keyword_(keyword) {}
+EnumOption::EnumOption(const int enumeration, std::string_view keyword, int minArgs, std::optional<int> maxArgs)
+    : enumeration_(enumeration), keyword_(keyword), minArgs_(minArgs), maxArgs_(maxArgs)
 {
-    enumeration_ = 0;
-    keyword_ = "";
-    description_ = "";
-    minArgs_ = 0;
-    maxArgs_ = 0;
 }
-EnumOption::EnumOption(const int enumeration, std::string_view keyword, int minArgs, int maxArgs)
+EnumOption::EnumOption(const int enumeration, std::string_view keyword, std::string_view description,
+                       std::optional<int> minArgs, std::optional<int> maxArgs)
+    : enumeration_(enumeration), keyword_(keyword), description_(description), minArgs_(minArgs), maxArgs_(maxArgs)
 {
-    enumeration_ = enumeration;
-    keyword_ = keyword;
-    description_ = "";
-    minArgs_ = minArgs;
-    maxArgs_ = (maxArgs == 0 ? minArgs : maxArgs);
-}
-EnumOption::EnumOption(const int enumeration, std::string_view keyword, std::string_view description, int minArgs, int maxArgs)
-{
-    enumeration_ = enumeration;
-    keyword_ = keyword;
-    description_ = description;
-    minArgs_ = minArgs;
-    maxArgs_ = (maxArgs == 0 ? minArgs : maxArgs);
 }
 
 // Return if the option is valid (true except in derived classes)
@@ -46,7 +33,7 @@ std::string_view EnumOption::keyword() const { return keyword_; }
 std::string_view EnumOption::description() const { return description_; }
 
 // Return minimum number of arguments the option takes
-int EnumOption::minArgs() const { return minArgs_; }
+std::optional<int> EnumOption::minArgs() const { return minArgs_; }
 
 // Return maximum number of arguments the option takes
-int EnumOption::maxArgs() const { return maxArgs_; }
+std::optional<int> EnumOption::maxArgs() const { return maxArgs_; }

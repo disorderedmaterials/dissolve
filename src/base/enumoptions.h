@@ -72,14 +72,14 @@ template <class T> class EnumOptions : public EnumOptionsBase
     // Return option with keyword specified
     const EnumOption &option(std::string_view keyword) const { return EnumOptionsBase::option(keyword); }
     // Return minimum number of arguments for the specified enumeration
-    int minArgs(T enumeration) const
+    std::optional<int> minArgs(T enumeration) const
     {
         // Retrieve the relevant EnumOption
         const auto &opt = option(enumeration);
         return opt.minArgs();
     }
     // Return maximum number of arguments for the specified enumeration
-    int maxArgs(T enumeration) const
+    std::optional<int> maxArgs(T enumeration) const
     {
         // Retrieve the relevant EnumOption
         const auto &opt = option(enumeration);
@@ -97,14 +97,19 @@ template <class T> class EnumOptions : public EnumOptionsBase
         // Retrieve the relevant EnumOption
         const auto &opt = option(enumeration);
 
-        switch (opt.minArgs())
+        // If a minimum number of arguments (or special case) has *not* been set, check for zero number of arguments being
+        // provided
+        if (!opt.minArgs())
         {
-            case (EnumOption::NoArguments):
-                if (nArgsProvided == 0)
-                    return true;
-                else
-                    return Messenger::error("'{}' keyword '{}' does not take any arguments.\n", name(), opt.keyword());
-                break;
+            if (nArgsProvided == 0)
+                return true;
+            else
+                return Messenger::error("'{}' keyword '{}' does not take any arguments.\n", name(), opt.keyword());
+        }
+
+        // Check the specified minimum value
+        switch (opt.minArgs().value())
+        {
             case (EnumOption::OneOrMoreArguments):
                 if (nArgsProvided > 0)
                     return true;
@@ -120,15 +125,43 @@ template <class T> class EnumOptions : public EnumOptionsBase
                                             opt.keyword(), nArgsProvided, nArgsProvided == 1 ? "was" : "were");
                 break;
             default:
-                // Specific number of arguments required
-                if ((nArgsProvided >= opt.minArgs()) && (nArgsProvided <= opt.maxArgs()))
-                    return true;
+                // If maxArgs has *not* been given, then we check for a specific number of arguments (== minArgs)
+                if (!opt.maxArgs())
+                {
+                    if (nArgsProvided == opt.minArgs().value())
+                        return true;
+                    else
+                        return Messenger::error("'{}s' keyword '{}' requires exactly {} {}, but {} {} provided.\n", name(),
+                                                opt.keyword(), opt.minArgs().value(),
+                                                opt.minArgs().value() == 1 ? "argument" : "arguments", nArgsProvided,
+                                                nArgsProvided == 1 ? "was" : "were");
+                }
                 else
-                    return Messenger::error(
-                        "'{}s' keyword '{}' requires {} {} {}, but {} {} provided.\n", name(), opt.keyword(),
-                        opt.minArgs() == opt.maxArgs() ? "exactly" : nArgsProvided < opt.minArgs() ? "at least" : "at most",
-                        nArgsProvided < opt.minArgs() ? opt.minArgs() : opt.maxArgs(),
-                        opt.minArgs() == 1 ? "argument" : "arguments", nArgsProvided, nArgsProvided == 1 ? "was" : "were");
+                {
+                    // Range of arguments allowed...
+                    if (opt.maxArgs().value() == EnumOption::AnyNumberOfArguments)
+                    {
+                        // No maximum number of arguments, but must satisfy minimum limit
+                        if (nArgsProvided >= opt.minArgs().value())
+                            return true;
+                        else
+                            return Messenger::error("'{}' keyword '{}' requires at least {} {}, but {} {} provided.\n", name(),
+                                                    opt.keyword(), opt.minArgs().value(),
+                                                    opt.minArgs().value() == 1 ? "argument" : "arguments", nArgsProvided,
+                                                    nArgsProvided == 1 ? "was" : "were");
+                    }
+                    else if ((nArgsProvided >= opt.minArgs().value()) && (nArgsProvided <= opt.maxArgs().value()))
+                        return true;
+                    else
+                        return Messenger::error(
+                            "'{}' keyword '{}' requires {} {} {}, but {} {} provided.\n", name(), opt.keyword(),
+                            opt.minArgs().value() == opt.maxArgs().value()
+                                ? "exactly"
+                                : nArgsProvided < opt.minArgs().value() ? "at least" : "at most",
+                            nArgsProvided < opt.minArgs().value() ? opt.minArgs().value() : opt.maxArgs().value(),
+                            opt.minArgs().value() == 1 ? "argument" : "arguments", nArgsProvided,
+                            nArgsProvided == 1 ? "was" : "were");
+                }
                 break;
         }
 
