@@ -50,7 +50,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return Messenger::error("Failed to read pcof file.\n");
 
-        EPSRModule::EPSRPCofKeyword keyword = epsrPCofKeywords().enumeration(parser.argsv(0));
+        auto keyword = epsrPCofKeywords().enumeration(parser.argsv(0));
         switch (keyword)
         {
             case (EPSRModule::AddPotTypePCofKeyword):
