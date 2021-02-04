@@ -58,7 +58,7 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string
             case (EPSRModule::ExpecFPCofKeyword):
                 break;
             case (EPSRModule::GaussianPCofKeyword):
-                keywords_.set<EPSRModule::ExpansionFunctionType>(
+                keywords_.setEnumeration<EPSRModule::ExpansionFunctionType>(
                     "expansionfunction",
                     (DissolveSys::sameString(parser.argsv(1), "Poisson") || DissolveSys::sameString(parser.argsv(1), "T")
                          ? EPSRModule::PoissonExpansionFunction
