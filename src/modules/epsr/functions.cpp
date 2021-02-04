@@ -9,7 +9,7 @@
 #include "modules/epsr/epsr.h"
 #include "templates/algorithms.h"
 
-// Return list of target Modules / data for refeinement
+// Return list of target Modules / data for refinement
 const RefList<Module> &EPSRModule::targets() const { return targets_; }
 
 // Add target Modules
