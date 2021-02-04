@@ -11,8 +11,8 @@ class EnumOption
 {
     public:
     EnumOption();
-    EnumOption(const int enumeration, std::string_view keyword);
-    EnumOption(const int enumeration, std::string_view keyword, int minArgs, std::optional<int> maxArgs = std::nullopt);
+    EnumOption(const int enumeration, std::string_view keyword, std::optional<int> minArgs = std::nullopt,
+               std::optional<int> maxArgs = std::nullopt);
     EnumOption(const int enumeration, std::string_view keyword, std::string_view description,
                std::optional<int> minArgs = std::nullopt, std::optional<int> maxArgs = std::nullopt);
     virtual ~EnumOption() = default;

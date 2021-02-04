@@ -9,8 +9,7 @@
 UnrecognisedEnumOption EnumOptionsBase::unrecognisedOption_;
 
 EnumOption::EnumOption() : enumeration_(0) {}
-EnumOption::EnumOption(const int enumeration, std::string_view keyword) : enumeration_(enumeration), keyword_(keyword) {}
-EnumOption::EnumOption(const int enumeration, std::string_view keyword, int minArgs, std::optional<int> maxArgs)
+EnumOption::EnumOption(const int enumeration, std::string_view keyword, std::optional<int> minArgs, std::optional<int> maxArgs)
     : enumeration_(enumeration), keyword_(keyword), minArgs_(minArgs), maxArgs_(maxArgs)
 {
 }
