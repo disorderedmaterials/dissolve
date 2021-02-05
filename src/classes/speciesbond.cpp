@@ -191,9 +191,9 @@ double SpeciesBond::bondOrder() const { return SpeciesBond::bondOrder(bondType_)
 // Return enum options for BondFunction
 EnumOptions<SpeciesBond::BondFunction> SpeciesBond::bondFunctions()
 {
-    static EnumOptionsList BondFunctionOptions = EnumOptionsList() << EnumOption(SpeciesBond::NoForm, "None", 0, 0)
-                                                                   << EnumOption(SpeciesBond::HarmonicForm, "Harmonic", 2, 2)
-                                                                   << EnumOption(SpeciesBond::EPSRForm, "EPSR", 2, 2);
+    static EnumOptionsList BondFunctionOptions = EnumOptionsList() << EnumOption(SpeciesBond::NoForm, "None")
+                                                                   << EnumOption(SpeciesBond::HarmonicForm, "Harmonic", 2)
+                                                                   << EnumOption(SpeciesBond::EPSRForm, "EPSR", 2);
 
     static EnumOptions<SpeciesBond::BondFunction> options("BondFunction", BondFunctionOptions);
 

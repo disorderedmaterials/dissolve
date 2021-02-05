@@ -169,15 +169,14 @@ bool SpeciesImproper::isSelected() const
 // Return enum options for ImproperFunction
 EnumOptions<SpeciesImproper::ImproperFunction> SpeciesImproper::improperFunctions()
 {
-    static EnumOptionsList ImproperFunctionOptions = EnumOptionsList()
-                                                     << EnumOption(SpeciesTorsion::NoForm, "None", 0, 0)
-                                                     << EnumOption(SpeciesTorsion::CosineForm, "Cos", 4, 4)
-                                                     << EnumOption(SpeciesTorsion::Cos3Form, "Cos3", 3, 3)
-                                                     << EnumOption(SpeciesTorsion::Cos3CForm, "Cos3C", 4, 4)
-                                                     << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4, 4)
-                                                     << EnumOption(SpeciesTorsion::CosNForm, "CosN", 1, 10)
-                                                     << EnumOption(SpeciesTorsion::CosNCForm, "CosNC", 1, 11)
-                                                     << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3, 3);
+    static EnumOptionsList ImproperFunctionOptions =
+        EnumOptionsList() << EnumOption(SpeciesTorsion::NoForm, "None") << EnumOption(SpeciesTorsion::CosineForm, "Cos", 4)
+                          << EnumOption(SpeciesTorsion::Cos3Form, "Cos3", 3)
+                          << EnumOption(SpeciesTorsion::Cos3CForm, "Cos3C", 4)
+                          << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4)
+                          << EnumOption(SpeciesTorsion::CosNForm, "CosN", 1, EnumOption::AnyNumberOfArguments)
+                          << EnumOption(SpeciesTorsion::CosNCForm, "CosNC", 1, EnumOption::AnyNumberOfArguments)
+                          << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3);
 
     static EnumOptions<SpeciesImproper::ImproperFunction> options("ImproperFunction", ImproperFunctionOptions);
 
