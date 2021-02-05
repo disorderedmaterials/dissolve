@@ -58,11 +58,14 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string
             case (EPSRModule::ExpecFPCofKeyword):
                 break;
             case (EPSRModule::GaussianPCofKeyword):
-                keywords_.setEnumeration<EPSRModule::ExpansionFunctionType>(
-                    "expansionfunction",
-                    (DissolveSys::sameString(parser.argsv(1), "Poisson") || DissolveSys::sameString(parser.argsv(1), "T")
-                         ? EPSRModule::PoissonExpansionFunction
-                         : EPSRModule::GaussianExpansionFunction));
+                if (DissolveSys::sameString(parser.argsv(1), "F") || DissolveSys::sameString(parser.argsv(1), "Poisson"))
+                    keywords_.setEnumeration<EPSRModule::ExpansionFunctionType>("expansionfunction",
+                                                                                EPSRModule::PoissonExpansionFunction);
+                else if (DissolveSys::sameString(parser.argsv(1), "T") || DissolveSys::sameString(parser.argsv(1), "Gaussian"))
+                    keywords_.setEnumeration<EPSRModule::ExpansionFunctionType>("expansionfunction",
+                                                                                EPSRModule::GaussianExpansionFunction);
+                else
+                    Messenger::warn("Couldn't determine expansion function to use (argument is '{}').\n", parser.argsv(1));
                 break;
             case (EPSRModule::NCoeffPPCofKeyword):
                 ncoeffp = parser.argi(1);
