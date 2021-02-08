@@ -299,7 +299,6 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Copy the original difference data and trim to the allowed range
         deltaFQ = differenceData;
         Filters::trim(deltaFQ, qMin, qMax);
-        Interpolator::addInterpolated(deltaFQ, weightedSQ.total(), -1.0);
         deltaFQ *= -1.0;
 
         // Fit a function expansion to the deltaFQ - if the coefficient arrays already exist then re-fit starting from those.
