@@ -64,7 +64,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // If a pcof file was provided, read in the parameters from it here
-    std::string pcofFile = keywords_.asString("PCofFile");
+    auto pcofFile = keywords_.asString("PCofFile");
     if (!pcofFile.empty())
     {
         Messenger::print("Reading potential coefficients from '{}'...\n", pcofFile);
@@ -76,8 +76,8 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         // Get some control parameters
         // const double ereq = keywords_.asDouble("EReq");
         auto ncoeffp = keywords_.asInt("NCoeffP");
-        double rmaxpt = keywords_.asDouble("RMaxPT");
-        double rminpt = keywords_.asDouble("RMinPT");
+        auto rmaxpt = keywords_.asDouble("RMaxPT");
+        auto rminpt = keywords_.asDouble("RMinPT");
 
         // Set up the additional potentials - reconstruct them from the current coefficients
         auto functionType = keywords_.enumeration<EPSRModule::ExpansionFunctionType>("ExpansionFunction");
@@ -113,23 +113,23 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto feedback = keywords_.asDouble("Feedback");
     const auto gsigma1 = keywords_.asDouble("GSigma1");
     const auto gsigma2 = keywords_.asDouble("GSigma2");
-    const bool modifyPotential = keywords_.asBool("ModifyPotential");
+    const auto modifyPotential = keywords_.asBool("ModifyPotential");
     auto ncoeffp = keywords_.asInt("NCoeffP");
     const auto npitss = keywords_.asInt("NPItSs");
-    const bool onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
+    const auto onlyWhenEnergyStable = keywords_.asBool("OnlyWhenEnergyStable");
     const auto psigma1 = keywords_.asDouble("PSigma1");
     const auto psigma2 = keywords_.asDouble("PSigma2");
     const auto qMax = keywords_.asDouble("QMax");
     const auto qMin = keywords_.asDouble("QMin");
-    double rmaxpt = keywords_.asDouble("RMaxPT");
-    double rminpt = keywords_.asDouble("RMinPT");
-    const bool saveDifferences = keywords_.asBool("SaveDifferenceFunctions");
-    const bool saveSimulatedFR = keywords_.asBool("SaveSimulatedFR");
-    const bool saveEmpiricalPotentials = keywords_.asBool("SaveEmpiricalPotentials");
-    const bool saveEstimatedPartials = keywords_.asBool("SaveEstimatedPartials");
-    const bool savePotentialCoefficients = keywords_.asBool("SavePCof");
-    const bool testMode = keywords_.asBool("Test");
-    const bool overwritePotentials = keywords_.asBool("OverwritePotentials");
+    auto rmaxpt = keywords_.asDouble("RMaxPT");
+    auto rminpt = keywords_.asDouble("RMinPT");
+    const auto saveDifferences = keywords_.asBool("SaveDifferenceFunctions");
+    const auto saveSimulatedFR = keywords_.asBool("SaveSimulatedFR");
+    const auto saveEmpiricalPotentials = keywords_.asBool("SaveEmpiricalPotentials");
+    const auto saveEstimatedPartials = keywords_.asBool("SaveEstimatedPartials");
+    const auto savePotentialCoefficients = keywords_.asBool("SavePCof");
+    const auto testMode = keywords_.asBool("Test");
+    const auto overwritePotentials = keywords_.asBool("OverwritePotentials");
     const auto testThreshold = keywords_.asDouble("TestThreshold");
     const auto weighting = keywords_.asDouble("Weighting");
 
@@ -513,7 +513,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             testDataName = fmt::format("WeightedFR-{}-total", module->uniqueName());
             if (testData_.containsData(testDataName))
             {
-                double error = Error::percent(simulatedFR, testData_.data(testDataName));
+                auto error = Error::percent(simulatedFR, testData_.data(testDataName));
                 Messenger::print("Simulated F(r) reference data '{}' has error of {:7.3f}% with calculated data "
                                  "and is {} (threshold is {:6.3f}%)\n\n",
                                  testDataName, error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
@@ -592,7 +592,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                                 testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
                                 if (testData_.containsData(testDataName))
                                 {
-                                    double error = Error::percent(estimatedSQ[{i, j}], testData_.data(testDataName));
+                                    auto error = Error::percent(estimatedSQ[{i, j}], testData_.data(testDataName));
                                     Messenger::print("Generated S(Q) reference data '{}' has error of {:7.3f}% with "
                                                      "calculated data and is {} (threshold is {:6.3f}%)\n\n",
                                                      testDataName, error, error <= testThreshold ? "OK" : "NOT OK",
@@ -653,7 +653,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Generate new empirical potentials
-    double energabs = 0.0;
+    auto energabs = 0.0;
     if (modifyPotential)
     {
         // Sum fluctuation coefficients in to the potential coefficients
@@ -696,8 +696,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
          * 	- erequnit appears to be set to the value of ereqstep read in from the 'ereqstep' command (clamped to
          * 0.0-1.0).
          */
-        double pressfac = 1.0;
-        double erequnit = 0.0, ereqstep = 0.0;
+        auto pressfac = 1.0;
+        auto erequnit = 0.0, ereqstep = 0.0;
 
         if (fabs(ereq) == 0.0)
         {
@@ -723,8 +723,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         energabs *= pressfac;
 
         // Generate additional potentials from the coefficients
-        double sigma1 = functionType == EPSRModule::PoissonExpansionFunction ? psigma1 : gsigma1;
-        double sigma2 = functionType == EPSRModule::PoissonExpansionFunction ? psigma2 : gsigma2;
+        auto sigma1 = functionType == EPSRModule::PoissonExpansionFunction ? psigma1 : gsigma1;
+        auto sigma2 = functionType == EPSRModule::PoissonExpansionFunction ? psigma2 : gsigma2;
 
         if (!generateEmpiricalPotentials(dissolve, functionType, targetConfiguration_->atomicDensity(), ncoeffp, rminpt, rmaxpt,
                                          sigma1, sigma2))

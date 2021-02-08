@@ -58,6 +58,12 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve
     FQFitGraph_->view().axes().setMax(1, 1.0);
     FQFitGraph_->groupManager().setVerticalShiftAmount(RenderableGroupManager::HalfVerticalShift);
     FQFitGraph_->view().setAutoFollowType(View::AllAutoFollow);
+    // -- Set group styling
+    FQFitGraph_->groupManager().setGroupColouring("Delta", RenderableGroup::AutomaticIndividualColouring);
+    FQFitGraph_->groupManager().setGroupVerticalShifting("Delta", RenderableGroup::IndividualVerticalShifting);
+    FQFitGraph_->groupManager().setGroupColouring("Fit", RenderableGroup::AutomaticIndividualColouring);
+    FQFitGraph_->groupManager().setGroupVerticalShifting("Fit", RenderableGroup::IndividualVerticalShifting);
+    FQFitGraph_->groupManager().setGroupStipple("Fit", LineStipple::QuarterDashStipple);
 
     // Partial S(Q) Graph
     estimatedSQGraph_ = ui_.EstimatedSQPlotWidget->dataViewer();
@@ -162,8 +168,8 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve
     rFactorGraph_->view().axes().setMin(1, 0.0);
     rFactorGraph_->view().axes().setMax(1, 0.5);
     rFactorGraph_->view().setAutoFollowType(View::AllAutoFollow);
-
-    setGraphDataTargets(module_);
+    // -- Set group styling
+    rFactorGraph_->groupManager().setGroupColouring("RFactor", RenderableGroup::AutomaticIndividualColouring);
 
     // Debug Tab - EP Functions Graph
     DataViewer *epView = ui_.DebugEPFunctionsPlotWidget->dataViewer();
@@ -175,14 +181,8 @@ EPSRModuleWidget::EPSRModuleWidget(QWidget *parent, EPSRModule *module, Dissolve
     epView->view().axes().setMin(1, -1.0);
     epView->view().axes().setMax(1, 1.0);
     epView->groupManager().setVerticalShiftAmount(RenderableGroupManager::TwoVerticalShift);
-    // -- Set group styling
-    rFactorGraph_->groupManager().setGroupColouring("RFactor", RenderableGroup::AutomaticIndividualColouring);
-    // -- Set group styling
-    FQFitGraph_->groupManager().setGroupColouring("Delta", RenderableGroup::AutomaticIndividualColouring);
-    FQFitGraph_->groupManager().setGroupVerticalShifting("Delta", RenderableGroup::IndividualVerticalShifting);
-    FQFitGraph_->groupManager().setGroupColouring("Fit", RenderableGroup::AutomaticIndividualColouring);
-    FQFitGraph_->groupManager().setGroupVerticalShifting("Fit", RenderableGroup::IndividualVerticalShifting);
-    FQFitGraph_->groupManager().setGroupStipple("Fit", LineStipple::QuarterDashStipple);
+
+    setGraphDataTargets(module_);
 
     updateControls();
 
@@ -420,22 +420,20 @@ void EPSRModuleWidget::updateDebugEPFunctionsGraph(int from, int to)
     for_each_pair(dissolve_.atomTypes().begin(), dissolve_.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
         const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
-        // Add generate potential to graph
-        Renderable *phi =
-            viewer->createRenderable(Renderable::Data1DRenderable, fmt::format("PairPotential//{}//Additional", id), id, id);
-        viewer->addRenderableToGroup(phi, id);
-
         // Generate data for function range specified
         for (auto n = from; n <= to; ++n)
         {
-            Data1D *data = debugFunctionData_.add();
+            auto *data = debugFunctionData_.add();
             (*data) = module_->generateEmpiricalPotentialFunction(dissolve_, i, j, n);
             data->setObjectTag(fmt::format("PairPotential//{}//Function//{}", id, n));
-            Renderable *rend =
+            auto *rend =
                 viewer->createRenderable(Renderable::Data1DRenderable, fmt::format("PairPotential//{}//Function//{}", id, n),
-                                         fmt::format("{}", n), fmt::format("{}/{}", id, n));
-            viewer->addRenderableToGroup(rend, id);
+                                         fmt::format("{}/{}", id, n), id);
+            rend->setColour(StockColours::RedStockColour);
         }
+
+        // Add generate potential to graph
+        viewer->createRenderable(Renderable::Data1DRenderable, fmt::format("PairPotential//{}//Additional", id), id, id);
     });
 }
 
