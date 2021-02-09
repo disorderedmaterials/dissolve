@@ -24,8 +24,8 @@ SiteWidget::SiteWidget(QWidget *parent) : QWidget(parent)
     // Connect signals / slots
     connect(ui_.SiteView, SIGNAL(dataModified()), this, SLOT(notifyDataModified()));
     connect(ui_.SiteView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));
-    connect(ui_.SiteView, SIGNAL(atomSelectionChanged()), this, SLOT(updateStatusBar()));
-    connect(ui_.SiteView, SIGNAL(atomSelectionChanged()), this, SLOT(updateToolbar()));
+    connect(ui_.SiteView, SIGNAL(atomsChanged()), this, SLOT(updateStatusBar()));
+    connect(ui_.SiteView, SIGNAL(atomsChanged()), this, SLOT(updateToolbar()));
     connect(ui_.SiteView, SIGNAL(interactionModeChanged()), this, SLOT(updateStatusBar()));
 
     // Make sure our controls are consistent with the underlying viewer / data

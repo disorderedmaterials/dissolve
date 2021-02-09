@@ -52,7 +52,7 @@ void SpeciesViewer::setSpecies(Species *sp)
     }
 
     // Send relevant signals
-    emit(atomSelectionChanged());
+    emit(atomsChanged());
 }
 
 // Return target Species

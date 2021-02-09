@@ -124,7 +124,7 @@ void SiteViewer::endInteraction()
 
                     // Update the selection
                     speciesRenderable_->recreateSelectionPrimitive();
-                    emit(atomSelectionChanged());
+                    emit(atomsChanged());
 
                     // Revert to default interaction mode
                     setInteractionMode(SiteViewer::InteractionMode::Select);

@@ -163,7 +163,7 @@ void SpeciesViewer::endInteraction()
 
                     // Update the selection
                     speciesRenderable_->recreateSelectionPrimitive();
-                    emit(atomSelectionChanged());
+                    emit(atomsChanged());
 
                     // Revert to default interaction mode
                     setInteractionMode(SpeciesViewer::InteractionMode::Select);
@@ -208,6 +208,7 @@ void SpeciesViewer::endInteraction()
 
                     // Notify that the data has changed
                     emit(dataModified());
+                    emit(atomsChanged());
 
                     // Update display
                     postRedisplay();
@@ -238,6 +239,7 @@ void SpeciesViewer::endInteraction()
 
                     // Notify that the data has changed
                     emit(dataModified());
+                    emit(atomsChanged());
 
                     // Update display
                     postRedisplay();

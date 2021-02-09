@@ -130,5 +130,5 @@ class SpeciesViewer : public BaseViewer
      */
     signals:
     // Atom selection changed
-    void atomSelectionChanged();
+    void atomsChanged();
 };
