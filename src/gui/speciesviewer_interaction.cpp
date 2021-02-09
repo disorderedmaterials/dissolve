@@ -88,10 +88,9 @@ void SpeciesViewer::startInteraction()
 
                 // Update the interaction Primitive
                 if (clickedAtom_)
-                    speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_, drawElement_);
+                    speciesRenderable_->recreateDeleteInteractionPrimitive(clickedAtom_);
                 else
-                    speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_,
-                                                                         drawCoordinateCurrent_, drawElement_);
+                    speciesRenderable_->clearInteractionPrimitive();
                 break;
             default:
                 fmt::print("Unhandled primary mode {} in SpeciesViewer::startInteraction().\n", interactionMode_);

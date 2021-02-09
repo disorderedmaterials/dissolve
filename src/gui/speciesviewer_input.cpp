@@ -29,30 +29,42 @@ void SpeciesViewer::mouseMoved(int dx, int dy)
                     refresh = true;
                     break;
                 case (SpeciesViewer::InteractionMode::Draw):
-                    if (buttonState_.testFlag(Qt::LeftButton))
+                    // If the left button is pressed, need to update our interaction primitives
+                    if (!buttonState_.testFlag(Qt::LeftButton))
+                        break;
+
+                    // Get atom at the current position (if any)
+                    currentAtom = atomAt(rMouseLast_.x, rMouseLast_.y);
+
+                    // Set the current drawing coordinates in data-space
+                    drawCoordinateCurrent_ =
+                        currentAtom ? currentAtom->r() : view().screenToData(rMouseLast_.x, rMouseLast_.y, 0.0);
+
+                    // Update the interaction Primitive
+                    if (clickedAtom_)
                     {
-                        // Get atom at the current position (if any)
-                        currentAtom = atomAt(rMouseLast_.x, rMouseLast_.y);
-
-                        // Set the current drawing coordinates in data-space
-                        drawCoordinateCurrent_ =
-                            currentAtom ? currentAtom->r() : view().screenToData(rMouseLast_.x, rMouseLast_.y, 0.0);
-
-                        // Update the interaction Primitive
-                        if (clickedAtom_)
-                        {
-                            if (currentAtom)
-                                speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, currentAtom);
-                            else
-                                speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_,
-                                                                                     drawElement_);
-                        }
+                        if (currentAtom)
+                            speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, currentAtom);
                         else
-                            speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_,
-                                                                                 drawCoordinateCurrent_, drawElement_);
+                            speciesRenderable_->recreateDrawInteractionPrimitive(clickedAtom_, drawCoordinateCurrent_,
+                                                                                 drawElement_);
                     }
-                    else if (buttonState_.testFlag(Qt::RightButton))
-                        view_.rotateView(-dy / 2.0, dx / 2.0);
+                    else
+                        speciesRenderable_->recreateDrawInteractionPrimitive(drawCoordinateStart_, drawElement_,
+                                                                             drawCoordinateCurrent_, drawElement_);
+                    refresh = true;
+                    break;
+                case (SpeciesViewer::InteractionMode::Delete):
+                    // If the left button is pressed, need to update our interaction primitives
+                    if (!buttonState_.testFlag(Qt::LeftButton))
+                        break;
+
+                    // Update the interaction Primitive
+                    if (clickedAtom_)
+                        speciesRenderable_->recreateDeleteInteractionPrimitive(clickedAtom_,
+                                                                               atomAt(rMouseLast_.x, rMouseLast_.y));
+                    else
+                        speciesRenderable_->clearInteractionPrimitive();
 
                     refresh = true;
                     break;
