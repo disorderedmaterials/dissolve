@@ -113,6 +113,8 @@ SpeciesBond &Species::addBond(int i, int j) { return addBond(atoms_[i], atoms_[j
 void Species::removeBond(SpeciesAtom *i, SpeciesAtom *j)
 {
     auto it = std::remove_if(bonds_.begin(), bonds_.end(), [i, j](const auto &bond) { return bond.matches(i, j); });
+    if (it != bonds_.end())
+        ++version_;
     std::for_each(it, bonds_.end(), [](auto &bond) { bond.detach(); });
     bonds_.erase(it);
 }
