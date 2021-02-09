@@ -57,8 +57,11 @@ void SiteWidget::updateToolbar()
     // Set current interaction mode
     switch (siteViewer()->interactionMode())
     {
-        case (SiteViewer::DefaultInteraction):
+        case (SiteViewer::InteractionMode::Select):
+        case (SiteViewer::InteractionMode::SelectArea):
             ui_.InteractionViewButton->setChecked(true);
+            break;
+        default:
             break;
     }
 
@@ -119,7 +122,7 @@ SiteViewer *SiteWidget::siteViewer() { return ui_.SiteView; }
 void SiteWidget::on_InteractionViewButton_clicked(bool checked)
 {
     if (checked)
-        siteViewer()->setInteractionMode(SiteViewer::DefaultInteraction);
+        siteViewer()->setInteractionMode(SiteViewer::InteractionMode::Select);
 }
 
 void SiteWidget::on_ViewResetButton_clicked(bool checked)

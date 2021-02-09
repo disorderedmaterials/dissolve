@@ -44,16 +44,25 @@ class SiteViewer : public BaseViewer
      */
     public:
     // Interaction Mode enum
-    enum InteractionMode
+    enum class InteractionMode
     {
-        DefaultInteraction,
-        SelectAreaInteraction,
-        TranslateViewInteraction,
-        RotateViewInteraction,
+        Select,
+        SelectArea,
         nInteractionModes
+    };
+    // Secondary Interaction Mode enum
+    enum class TransientInteractionMode
+    {
+        None,
+        TranslateView,
+        RotateView
     };
 
     private:
+    // Primary interaction mode (left mouse button)
+    InteractionMode interactionMode_;
+    // Transient interaction mode (i.e. one not invoked by primary button)
+    TransientInteractionMode transientInteractionMode_;
     // Clicked atom at the start of the interaction (if any)
     SpeciesAtom *clickedAtom_;
 
@@ -70,6 +79,10 @@ class SiteViewer : public BaseViewer
     void cancelInteraction();
 
     public:
+    // Set current interaction mode
+    void setInteractionMode(InteractionMode mode);
+    // Return current interaction mode
+    InteractionMode interactionMode() const;
     // Return text describing current interaction mode
     const QString interactionModeText() const;
 

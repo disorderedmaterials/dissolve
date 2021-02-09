@@ -44,41 +44,53 @@ const std::shared_ptr<Atom> ConfigurationViewer::atomAt(int x, int y)
 // Start interaction at the specified screen coordinates
 void ConfigurationViewer::startInteraction()
 {
-    switch (interactionMode())
+    // Check the button that started the interaction
+    if (buttonState_.testFlag(Qt::LeftButton))
     {
-        // Default Interaction Mode
-        case (ConfigurationViewer::DefaultInteraction):
-            // This is the standard mode, giving access to view manipulation
-            if (buttonState_.testFlag(Qt::RightButton))
-                setInteractionMode(ConfigurationViewer::RotateViewInteraction);
-            else if (buttonState_.testFlag(Qt::MiddleButton))
-                setInteractionMode(ConfigurationViewer::TranslateViewInteraction);
-            break;
-        default:
-            break;
+        switch (interactionMode_)
+        {
+            // Selection
+            case (ConfigurationViewer::InteractionMode::Default):
+                break;
+            default:
+                fmt::print("Unhandled primary mode {} in ConfigurationViewer::startInteraction().\n", interactionMode_);
+                break;
+        }
     }
+    else if (buttonState_.testFlag(Qt::RightButton))
+        transientInteractionMode_ = ConfigurationViewer::TransientInteractionMode::RotateView;
+    else if (buttonState_.testFlag(Qt::MiddleButton))
+        transientInteractionMode_ = ConfigurationViewer::TransientInteractionMode::TranslateView;
 }
 
 // End interaction at the specified screen coordinates
 void ConfigurationViewer::endInteraction()
 {
     // Finalise interaction type
-    switch (interactionMode())
+    switch (transientInteractionMode_)
     {
-        case (ConfigurationViewer::DefaultInteraction):
+        case (TransientInteractionMode::None):
+            // End primary interaction
+            switch (interactionMode_)
+            {
+                case (ConfigurationViewer::InteractionMode::Default):
+                    break;
+                default:
+                    fmt::print("Unhandled primary mode {} in ConfigurationViewer::endInteraction().\n", interactionMode_);
+                    break;
+            }
             break;
-        case (ConfigurationViewer::RotateViewInteraction):
-            // Rotation matrix has already been modified. Revert to default interaction mode
-            setInteractionMode(ConfigurationViewer::DefaultInteraction);
-            break;
-        case (ConfigurationViewer::TranslateViewInteraction):
-            // Translation has already been applied. Revert to default interaction mode
-            setInteractionMode(ConfigurationViewer::DefaultInteraction);
+        case (ConfigurationViewer::TransientInteractionMode::RotateView):
+        case (ConfigurationViewer::TransientInteractionMode::TranslateView):
+            // Rotation / translation has already been modified, so nothing more to do
             break;
         default:
-            Messenger::error("Don't know how to complete interaction mode {}\n", interactionMode());
+            fmt::print("Unhandled secondary mode {} in ConfigurationViewer::endInteraction().\n", transientInteractionMode_);
             break;
     }
+
+    // Reset any transient interaction
+    transientInteractionMode_ = TransientInteractionMode::None;
 }
 
 // Cancel current interaction
@@ -96,17 +108,27 @@ void ConfigurationViewer::cancelInteraction()
  * Public Functions
  */
 
+// Set current interaction mode
+void ConfigurationViewer::setInteractionMode(ConfigurationViewer::InteractionMode mode)
+{
+    // Cancel any current interaction
+    cancelInteraction();
+
+    interactionMode_ = mode;
+
+    emit(interactionModeChanged());
+}
+
+// Return current interaction mode
+ConfigurationViewer::InteractionMode ConfigurationViewer::interactionMode() const { return interactionMode_; }
+
 // Return text describing current interaction mode
 const QString ConfigurationViewer::interactionModeText() const
 {
     switch (interactionMode())
     {
-        case (ConfigurationViewer::DefaultInteraction):
+        case (ConfigurationViewer::InteractionMode::Default):
             return "<b>Right</b> Rotate; <b>Middle</b> Translate; <b>Wheel</b> Zoom";
-        case (ConfigurationViewer::RotateViewInteraction):
-            return "Rotate view";
-        case (ConfigurationViewer::TranslateViewInteraction):
-            return "Translate";
         default:
             return "Unknown ConfigurationViewerInteraction";
     }

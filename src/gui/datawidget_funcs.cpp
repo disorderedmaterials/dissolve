@@ -46,7 +46,7 @@ DataViewer *DataWidget::dataViewer() { return ui_.DataView; }
 // Interaction
 void DataWidget::on_InteractionViewButton_clicked(bool checked)
 {
-    dataViewer()->setInteractionMode(DataViewer::DefaultInteraction);
+    dataViewer()->setInteractionMode(DataViewer::InteractionMode::Default);
 }
 
 // Graph
@@ -280,12 +280,11 @@ void DataWidget::updateToolbar()
     // Set current interaction mode
     switch (dataViewer()->interactionMode())
     {
-        case (DataViewer::DefaultInteraction):
+        case (DataViewer::InteractionMode::Default):
             ui_.InteractionViewButton->setChecked(true);
             break;
-            // 		case (DataViewer::ZoomInteraction):
-            // 			ui_.InteractionZoomutton->setChecked(true);
-            // 			break;
+        default:
+            break;
     }
 
     // Controls reflecting the state of options in the underlying DataViewer

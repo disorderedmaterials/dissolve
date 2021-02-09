@@ -24,7 +24,6 @@ BaseViewer::BaseViewer(QWidget *parent) : QOpenGLWidget(parent), view_(renderabl
 
     // Interaction
     interacting_ = false;
-    interactionMode_ = -1;
     mouseReleaseTimer_.setSingleShot(true);
     mouseReleaseTimer_.setInterval(400);
 

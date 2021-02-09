@@ -60,11 +60,17 @@ void SpeciesEditor::updateToolbar()
     // Set current interaction mode
     switch (speciesViewer()->interactionMode())
     {
-        case (SpeciesViewer::DefaultInteraction):
+        case (SpeciesViewer::InteractionMode::Select):
+        case (SpeciesViewer::InteractionMode::SelectArea):
             ui_.InteractionViewButton->setChecked(true);
             break;
-        case (SpeciesViewer::DrawInteraction):
+        case (SpeciesViewer::InteractionMode::Draw):
             ui_.InteractionDrawButton->setChecked(true);
+            break;
+        case (SpeciesViewer::InteractionMode::Delete):
+            ui_.InteractionDeleteButton->setChecked(true);
+            break;
+        default:
             break;
     }
 
@@ -115,13 +121,13 @@ SpeciesViewer *SpeciesEditor::speciesViewer() { return ui_.SpeciesView; }
 void SpeciesEditor::on_InteractionViewButton_clicked(bool checked)
 {
     if (checked)
-        speciesViewer()->setInteractionMode(SpeciesViewer::DefaultInteraction);
+        speciesViewer()->setInteractionMode(SpeciesViewer::InteractionMode::Select);
 }
 
 void SpeciesEditor::on_InteractionDrawButton_clicked(bool checked)
 {
     if (checked)
-        speciesViewer()->setInteractionMode(SpeciesViewer::DrawInteraction);
+        speciesViewer()->setInteractionMode(SpeciesViewer::InteractionMode::Draw);
 }
 
 void SpeciesEditor::on_InteractionDrawElementButton_clicked(bool checked)
@@ -141,7 +147,7 @@ void SpeciesEditor::on_InteractionDrawElementButton_clicked(bool checked)
 void SpeciesEditor::on_InteractionDeleteButton_clicked(bool checked)
 {
     if (checked)
-        speciesViewer()->setInteractionMode(SpeciesViewer::DeleteInteraction);
+        speciesViewer()->setInteractionMode(SpeciesViewer::InteractionMode::Delete);
 }
 
 void SpeciesEditor::on_ViewResetButton_clicked(bool checked)
