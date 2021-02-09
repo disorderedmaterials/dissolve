@@ -32,6 +32,7 @@ void Species::removeAtom(SpeciesAtom *i)
 
     // Now remove the atom
     atoms_.remove(i);
+    selectedAtoms_.remove(i);
 
     ++version_;
 }
