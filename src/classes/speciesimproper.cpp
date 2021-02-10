@@ -124,21 +124,6 @@ void SpeciesImproper::detach()
 }
 
 /*
- * DynamicArrayObject Virtuals
- */
-
-// Clear object, ready for re-use
-void SpeciesImproper::clear()
-{
-    parent_ = nullptr;
-    i_ = nullptr;
-    j_ = nullptr;
-    k_ = nullptr;
-    l_ = nullptr;
-    form_ = SpeciesImproper::NoForm;
-}
-
-/*
  * Atom Information
  */
 

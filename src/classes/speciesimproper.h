@@ -23,13 +23,6 @@ class SpeciesImproper : public SpeciesIntra
     SpeciesImproper &operator=(SpeciesImproper &&source);
 
     /*
-     * DynamicArrayObject Virtuals
-     */
-    public:
-    // Clear object, ready for re-use
-    void clear();
-
-    /*
      * Atom Information
      */
     private:
