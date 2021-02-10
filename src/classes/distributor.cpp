@@ -195,20 +195,14 @@ bool Distributor::canHardLock(int cellIndex) const
     // For the specified Cell to be hard lockable its neighbours must not be HardLocked
 
     // Check lock status of local Cell neighbours
-    for (auto n = 0; n < cell->nCellNeighbours(); ++n)
-    {
-        id = cell->cellNeighbour(n)->index();
-        if (cellLocks_.at(id) == HardLocked)
+    for (auto *c : cell->cellNeighbours())
+        if (cellLocks_.at(c->index()) == HardLocked)
             return false;
-    }
 
     // Check lock status of minimum image Cell neighbours
-    for (auto n = 0; n < cell->nMimCellNeighbours(); ++n)
-    {
-        id = cell->mimCellNeighbour(n)->index();
-        if (cellLocks_.at(id) == HardLocked)
+    for (auto *c : cell->mimCellNeighbours())
+        if (cellLocks_.at(c->index()) == HardLocked)
             return false;
-    }
 
     return true;
 }
@@ -230,10 +224,8 @@ Array<Cell *> Distributor::surroundingCells(Array<Cell *> centralCells)
     for (auto n = 0; n < centralCells.nItems(); ++n)
     {
         // Local Cell neighbours
-        for (auto nbr = 0; nbr < centralCells[n]->nCellNeighbours(); ++nbr)
+        for (auto *nbrCell : centralCells[n]->cellNeighbours())
         {
-            Cell *nbrCell = centralCells[n]->cellNeighbour(nbr);
-
             // Check presence in central cells list
             for (i = 0; i < centralCells.nItems(); ++i)
                 if (centralCells[i] == nbrCell)
@@ -252,10 +244,8 @@ Array<Cell *> Distributor::surroundingCells(Array<Cell *> centralCells)
         }
 
         // MIM Cell neighbours
-        for (auto nbr = 0; nbr < centralCells[n]->nMimCellNeighbours(); ++nbr)
+        for (auto *nbrCell : centralCells[n]->mimCellNeighbours())
         {
-            Cell *nbrCell = centralCells[n]->mimCellNeighbour(nbr);
-
             // Check presence in central cells list
             for (i = 0; i < centralCells.nItems(); ++i)
                 if (centralCells[i] == nbrCell)
