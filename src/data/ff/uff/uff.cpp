@@ -440,7 +440,7 @@ bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, cons
     const auto rij = sumr + rBO - rEN;
 
     // k : Force constant : = 664.12 * (Zi * Zj) / rij**3     (note 664.12 in kcal)
-    const auto k = 664.12 * 4.184 * (i.Z() * j.Z()) / (rij * rij * rij);
+    const auto k = 664.12 * 4.184 * (i.effectiveCharge() * j.effectiveCharge()) / (rij * rij * rij);
 
     // Set the parameters and form of the new bond term
     // Functional form is Harmonic : U = 0.5 * k * (r - eq)**2
@@ -491,7 +491,7 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle &angle, c
     const auto rik2 = rij * rij + rjk * rjk - 2.0 * rij * rjk * cosTheta;
     const auto rik5 = rik2 * rik2 * sqrt(rik2);
     const auto forcek =
-        664.12 * 4.184 * (i.Z() * k.Z() / rik5) * (3.0 * rij * rjk * (1.0 - cosTheta * cosTheta) - rik2 * cosTheta);
+        664.12 * 4.184 * (i.effectiveCharge() * k.effectiveCharge() / rik5) * (3.0 * rij * rjk * (1.0 - cosTheta * cosTheta) - rik2 * cosTheta);
 
     // To determine angle form and necessary coefficients, use 'geom' integer data (which represents the third letter of the
     // atom name. This idea is shamelessly stolen from MCCCS Towhee!
