@@ -85,6 +85,7 @@ set(components_UIS
     getspeciesnamedialog.ui
     gettabnamedialog.ui
     importspeciesdialog.ui
+    importforcefieldwizard.ui
     selectconfigurationdialog.ui
     selectelementdialog.ui
     selectforcefielddialog.ui
@@ -138,6 +139,7 @@ set(components_SRCS
     addconfigurationwizard_funcs.cpp
     addforcefieldtermswizard_funcs.cpp
     importspecieswizard_funcs.cpp
+    importforcefieldwizard_funcs.cpp
     selectconfigurationwidget_funcs.cpp
     selectforcefieldwidget_funcs.cpp
     selectspecieswidget_funcs.cpp
