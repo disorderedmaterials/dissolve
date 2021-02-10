@@ -516,4 +516,7 @@ void Species::detachFromMasterTerms()
 
     for (auto &torsion : torsions_)
         torsion.detachFromMasterIntra();
+
+    for (auto &improper : impropers_)
+        improper.detachFromMasterIntra();
 }
