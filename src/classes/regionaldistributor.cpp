@@ -6,7 +6,6 @@
 #include "base/processpool.h"
 #include "classes/atom.h"
 #include "classes/cell.h"
-#include "classes/cellneighbour.h"
 #include "classes/molecule.h"
 #include "templates/array3d.h"
 #include <algorithm>
@@ -321,7 +320,7 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
         // Loop over all cell neighbours for this primary Cell
         for (const auto &neighbour : primaryCells[c]->allCellNeighbours())
         {
-            readOnlyCell = neighbour.cell();
+            readOnlyCell = neighbour.first;
             cellIndex = readOnlyCell->index();
 
             // If we have locked this Cell already, continue

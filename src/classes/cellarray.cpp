@@ -4,7 +4,6 @@
 #include "classes/cellarray.h"
 #include "classes/box.h"
 #include "classes/cell.h"
-#include "classes/cellneighbour.h"
 
 CellArray::CellArray()
 {

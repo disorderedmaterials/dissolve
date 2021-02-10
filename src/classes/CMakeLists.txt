@@ -14,7 +14,6 @@ add_library(
   cell.cpp
   cellarray.cpp
   celldistributor.cpp
-  cellneighbour.cpp
   changedata.cpp
   changestore.cpp
   configuration.cpp
@@ -78,7 +77,6 @@ add_library(
   cell.h
   cellarray.h
   celldistributor.h
-  cellneighbour.h
   changedata.h
   changestore.h
   configuration.h
