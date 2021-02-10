@@ -8,25 +8,119 @@
 #include "classes/speciestorsion.h"
 #include "templates/enumhelpers.h"
 
-SpeciesImproper::SpeciesImproper() : SpeciesIntra() { clear(); }
-
-SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-    : SpeciesIntra(), i_(i), j_(j), k_(k), l_(l)
+SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) : SpeciesIntra()
 {
+
+    parent_ = nullptr;
+    i_ = i;
+    j_ = j;
+    k_ = k;
+    l_ = l;
+    form_ = SpeciesImproper::NoForm;
+
+    // Add ourself to the list of impropers on each atom
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->addImproper(*this);
+        j_->addImproper(*this);
+        k_->addImproper(*this);
+        l_->addImproper(*this);
+    }
 }
 
+SpeciesImproper::SpeciesImproper(SpeciesImproper &source) { this->operator=(source); }
+
 SpeciesImproper::SpeciesImproper(SpeciesImproper &&source) : SpeciesIntra(source)
+{
+    // Detach source torsion referred to by the species atoms
+    if (source.i_ && source.j_ && source.k_ && source.l_)
+    {
+        source.i_->removeImproper(source);
+        source.j_->removeImproper(source);
+        source.k_->removeImproper(source);
+        source.l_->removeImproper(source);
+    }
+
+    // Copy data
+    i_ = source.i_;
+    j_ = source.j_;
+    k_ = source.k_;
+    l_ = source.l_;
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->addImproper(*this);
+        j_->addImproper(*this);
+        k_->addImproper(*this);
+        l_->addImproper(*this);
+    }
+    form_ = source.form_;
+
+    // Reset source data
+    source.i_ = nullptr;
+    source.j_ = nullptr;
+    source.k_ = nullptr;
+    source.l_ = nullptr;
+}
+
+SpeciesImproper::~SpeciesImproper() { detach(); }
+
+SpeciesImproper &SpeciesImproper::operator=(const SpeciesImproper &source)
 {
     i_ = source.i_;
     j_ = source.j_;
     k_ = source.k_;
     l_ = source.l_;
-    form_ = source.form_;
 
-    source.i_ = nullptr;
-    source.j_ = nullptr;
-    source.k_ = nullptr;
-    source.l_ = nullptr;
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->addImproper(*this);
+        j_->addImproper(*this);
+        k_->addImproper(*this);
+        l_->addImproper(*this);
+    }
+    form_ = source.form_;
+    SpeciesIntra::operator=(source);
+
+    return *this;
+}
+
+SpeciesImproper &SpeciesImproper::operator=(SpeciesImproper &&source)
+{
+    if (i_ && j_ && k_ && l_)
+        detach();
+
+    i_ = source.i_;
+    j_ = source.j_;
+    k_ = source.k_;
+    l_ = source.l_;
+
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->addImproper(*this);
+        j_->addImproper(*this);
+        k_->addImproper(*this);
+        l_->addImproper(*this);
+    }
+    form_ = source.form_;
+    SpeciesIntra::operator=(source);
+
+    return *this;
+}
+
+// Detach from current atoms
+void SpeciesImproper::detach()
+{
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->removeImproper(*this);
+        j_->removeImproper(*this);
+        k_->removeImproper(*this);
+        l_->removeImproper(*this);
+    }
+    i_ = nullptr;
+    j_ = nullptr;
+    k_ = nullptr;
+    l_ = nullptr;
 }
 
 /*

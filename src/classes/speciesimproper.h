@@ -15,10 +15,12 @@ class ProcessPool;
 class SpeciesImproper : public SpeciesIntra
 {
     public:
-    SpeciesImproper();
-    SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
-    ~SpeciesImproper() = default;
+    SpeciesImproper(SpeciesImproper &source);
     SpeciesImproper(SpeciesImproper &&source);
+    SpeciesImproper(SpeciesAtom *i = nullptr, SpeciesAtom *j = nullptr, SpeciesAtom *k = nullptr, SpeciesAtom *l = nullptr);
+    ~SpeciesImproper();
+    SpeciesImproper &operator=(const SpeciesImproper &source);
+    SpeciesImproper &operator=(SpeciesImproper &&source);
 
     /*
      * DynamicArrayObject Virtuals
@@ -39,6 +41,8 @@ class SpeciesImproper : public SpeciesIntra
     SpeciesAtom *k_;
     // Fourth SpeciesAtom in interaction
     SpeciesAtom *l_;
+    // Detach from current atoms
+    void detach();
 
     public:
     // Set Atoms involved in Improper
