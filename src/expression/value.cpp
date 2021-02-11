@@ -28,8 +28,6 @@ ExpressionValue::ExpressionValue(double value, bool fixedType)
     typeFixed_ = fixedType;
 }
 
-ExpressionValue::~ExpressionValue() {}
-
 ExpressionValue::ExpressionValue(const ExpressionValue &source)
 {
     valueI_ = source.valueI_;
@@ -38,7 +36,7 @@ ExpressionValue::ExpressionValue(const ExpressionValue &source)
     typeFixed_ = source.typeFixed_;
 }
 
-void ExpressionValue::operator=(const ExpressionValue &source)
+ExpressionValue &ExpressionValue::operator=(const ExpressionValue &source)
 {
     if (typeFixed_)
     {
@@ -64,6 +62,28 @@ void ExpressionValue::operator=(const ExpressionValue &source)
         valueD_ = source.valueD_;
         type_ = source.type_;
     }
+
+    return *this;
+}
+
+ExpressionValue &ExpressionValue::operator=(int i)
+{
+    valueI_ = i;
+    valueD_ = i;
+    if (!typeFixed_)
+        type_ = IntegerType;
+
+    return *this;
+}
+
+ExpressionValue &ExpressionValue::operator=(double d)
+{
+    valueI_ = int(d);
+    valueD_ = d;
+    if (!typeFixed_)
+        type_ = DoubleType;
+
+    return *this;
 }
 
 /*
@@ -72,22 +92,6 @@ void ExpressionValue::operator=(const ExpressionValue &source)
 
 // Return the current result type
 ExpressionValue::ValueType ExpressionValue::type() const { return type_; }
-
-void ExpressionValue::operator=(int i)
-{
-    valueI_ = i;
-    valueD_ = i;
-    if (!typeFixed_)
-        type_ = IntegerType;
-}
-
-void ExpressionValue::operator=(double d)
-{
-    valueI_ = int(d);
-    valueD_ = d;
-    if (!typeFixed_)
-        type_ = DoubleType;
-}
 
 // Return result as integer (regardless of current type)
 int ExpressionValue::asInteger() const { return (type_ == IntegerType ? valueI_ : int(valueD_)); }

@@ -13,11 +13,13 @@ class ExpressionValue
 {
     public:
     ExpressionValue();
-    ExpressionValue(int value, bool fixedType = true);
-    ExpressionValue(double value, bool fixedType = true);
-    ~ExpressionValue();
+    explicit ExpressionValue(int value, bool fixedType = true);
+    explicit ExpressionValue(double value, bool fixedType = true);
+    ~ExpressionValue() = default;
     ExpressionValue(const ExpressionValue &source);
-    void operator=(const ExpressionValue &source);
+    ExpressionValue &operator=(const ExpressionValue &source);
+    ExpressionValue &operator=(int i);
+    ExpressionValue &operator=(double d);
 
     /*
      * Data
@@ -43,8 +45,6 @@ class ExpressionValue
     public:
     // Return the current result type
     ValueType type() const;
-    void operator=(int i);
-    void operator=(double d);
     // Return as integer (regardless of current type)
     int asInteger() const;
     // Return as double (regardless of current type)
