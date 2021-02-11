@@ -19,7 +19,7 @@ class Cell
 {
     public:
     Cell();
-    ~Cell();
+    ~Cell() = default;
 
     /*
      * Identity
@@ -71,29 +71,17 @@ class Cell
     // Arrays of neighbouring cells, within the defined potential cutoff (from anywhere in the Cell)
     std::vector<Cell *> cellNeighbours_, mimCellNeighbours_;
     // Array of all neighbouring cells
-    std::vector<CellNeighbour> allCellNeighbours_;
-    // Number of cells in cell arrays
-    int nCellNeighbours_, nMimCellNeighbours_;
+    std::vector<Cell *> allCellNeighbours_;
 
     public:
     // Add Cell neighbours
     void addCellNeighbours(std::vector<Cell *> &nearNeighbours, std::vector<Cell *> &mimNeighbours);
-    // Return number of Cell near-neighbours, not requiring minimum image calculation
-    int nCellNeighbours() const;
-    // Return number of Cell neighbours requiring minimum image calculation
-    int nMimCellNeighbours() const;
-    // Return total number of Cell neighbours
-    int nTotalCellNeighbours() const;
     // Return adjacent Cell neighbour list
     const std::vector<Cell *> &cellNeighbours() const;
-    // Return specified adjacent Cell neighbour
-    Cell *cellNeighbour(int id) const;
     // Return list of Cell neighbours requiring minimum image calculation
     const std::vector<Cell *> &mimCellNeighbours() const;
-    // Return specified Cell neighbour requiring minimum image calculation
-    Cell *mimCellNeighbour(int id) const;
     // Return if the specified Cell requires minimum image calculation
     bool mimRequired(const Cell *otherCell) const;
     // Return list of all Cell neighbours
-    const std::vector<CellNeighbour> &allCellNeighbours() const;
+    const std::vector<Cell *> &allCellNeighbours() const;
 };

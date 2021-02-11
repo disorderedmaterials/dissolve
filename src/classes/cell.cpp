@@ -4,17 +4,9 @@
 #include "classes/cell.h"
 #include "classes/atom.h"
 #include "classes/box.h"
-#include "classes/cellneighbour.h"
 #include <algorithm>
 
-Cell::Cell()
-{
-    index_ = -1;
-    nCellNeighbours_ = 0;
-    nMimCellNeighbours_ = 0;
-}
-
-Cell::~Cell() {}
+Cell::Cell() : index_(-1) {}
 
 /*
  * Identity
@@ -85,63 +77,35 @@ void Cell::removeAtom(const std::shared_ptr<Atom> &atom)
 void Cell::addCellNeighbours(std::vector<Cell *> &nearNeighbours, std::vector<Cell *> &mimNeighbours)
 {
     // Create near-neighbour array of Cells not requiring minimum image to be applied
-    nCellNeighbours_ = nearNeighbours.size();
-    cellNeighbours_.resize(nCellNeighbours_);
+    cellNeighbours_.clear();
+    cellNeighbours_.resize(nearNeighbours.size());
     std::copy(nearNeighbours.begin(), nearNeighbours.end(), cellNeighbours_.begin());
 
     // Create array of neighbours that require minimum image calculation
-    nMimCellNeighbours_ = mimNeighbours.size();
     mimCellNeighbours_.clear();
-    mimCellNeighbours_.resize(nMimCellNeighbours_);
+    mimCellNeighbours_.resize(mimNeighbours.size());
     std::copy(mimNeighbours.begin(), mimNeighbours.end(), mimCellNeighbours_.begin());
 
-    // Create ordered list of CellNeighbours (including cells from both lists)
-    std::vector<std::pair<Cell *, bool>> allCells;
+    // Create list of all cell neighbours
+    allCellNeighbours_.clear();
+    allCellNeighbours_.resize(nearNeighbours.size() + mimNeighbours.size());
     for (auto *nearNbr : nearNeighbours)
-        allCells.emplace_back(nearNbr, false);
+        allCellNeighbours_.emplace_back(nearNbr);
     for (auto *mimNbr : mimNeighbours)
-        allCells.emplace_back(mimNbr, true);
-
-    if (allCells.size() != (nCellNeighbours_ + nMimCellNeighbours_))
-        Messenger::error("Cell neighbour lists are corrupt - same cell found in both near and mim lists.\n");
-    allCellNeighbours_.resize(allCells.size());
-    auto destination = allCellNeighbours_.begin();
-    for (auto source : allCells)
-    {
-        (*destination).set(source.first, source.second);
-        ++destination;
-    }
+        allCellNeighbours_.emplace_back(mimNbr);
 }
-
-// Return number of Cell near-neighbours, not requiring minimum image calculation
-int Cell::nCellNeighbours() const { return nCellNeighbours_; }
-
-// Return total number of Cell neighbours requiring minimum image calculation
-int Cell::nMimCellNeighbours() const { return nMimCellNeighbours_; }
-
-// Return total number of Cell neighbours
-int Cell::nTotalCellNeighbours() const { return nCellNeighbours_ + nMimCellNeighbours_; }
 
 // Return adjacent Cell neighbour list
 const std::vector<Cell *> &Cell::cellNeighbours() const { return cellNeighbours_; }
 
-// Return specified adjacent Cell neighbour
-Cell *Cell::cellNeighbour(int id) const { return cellNeighbours_[id]; }
-
 // Return list of Cell neighbours requiring minimum image calculation
 const std::vector<Cell *> &Cell::mimCellNeighbours() const { return mimCellNeighbours_; }
-
-// Return specified Cell neighbour, requiring minimum image calculation
-Cell *Cell::mimCellNeighbour(int id) const { return mimCellNeighbours_[id]; }
 
 // Return if the specified Cell requires minimum image calculation
 bool Cell::mimRequired(const Cell *otherCell) const
 {
-    for (int n = 0; n < nMimCellNeighbours_; ++n)
-        if (mimCellNeighbours_[n] == otherCell)
-            return true;
-    return false;
+    return (std::find(mimCellNeighbours_.begin(), mimCellNeighbours_.end(), otherCell) != mimCellNeighbours_.end());
 }
 
 // Return list of all Cell neighbours
-const std::vector<CellNeighbour> &Cell::allCellNeighbours() const { return allCellNeighbours_; }
+const std::vector<Cell *> &Cell::allCellNeighbours() const { return allCellNeighbours_; }
