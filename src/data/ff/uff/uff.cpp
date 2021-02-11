@@ -359,8 +359,18 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield_UFF::determineAtom
 bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, const UFFAtomType &i, const UFFAtomType &j) const
 {
     // Calculate rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
-    const auto sumr = i.r() + j.r();
-    const auto rBO = -0.1332 * sumr * log(bond.bondOrder());
+    const auto lambda = 0.1332;
+    // -- Set bond order, recognising special case for the C-N amide bond
+    auto bondOrder = 1.0;
+    if ((i.name() == "C_am" && j.name() == "N_am") || (i.name() == "N_am" && j.name() == "C_am"))
+        bondOrder = 1.41;
+    else if (i.name().back() == 'R' && j.name().back() == 'R')
+        bondOrder = 1.5;
+    else if (i.name().back() == '2' && j.name().back() == '2')
+        bondOrder = 2.0;
+    else if (i.name().back() == '1' && j.name().back() == '1')
+        bondOrder = 3.0;
+    const auto rBO = -lambda * (i.r() + j.r()) * log(bondOrder);
 
     // Calculate rEN : Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
     const auto chi = sqrt(i.chi()) - sqrt(j.chi());
@@ -369,7 +379,7 @@ bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, cons
     // rij : Equilibrium distance : = ri + rj + rBO - rEN  (eq 2)
     // Note: In the original paper  rij = ri + rj + rBO + rEN, but Marcus Martin (MCCCS Towhee) notes that the last term
     // should be subtracted
-    const auto rij = sumr + rBO - rEN;
+    const auto rij = i.r() + j.r() + rBO - rEN;
 
     // k : Force constant : = 664.12 * (Zi * Zj) / rij**3     (note 664.12 in kcal)
     const auto k = 664.12 * 4.184 * (i.effectiveCharge() * j.effectiveCharge()) / (rij * rij * rij);
@@ -422,8 +432,8 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle &angle, c
     // rik2 = rij**2 + rjk**2 - 2 * rij * rjk * cos(theta)
     const auto rik2 = rij * rij + rjk * rjk - 2.0 * rij * rjk * cosTheta;
     const auto rik5 = rik2 * rik2 * sqrt(rik2);
-    const auto forcek =
-        664.12 * 4.184 * (i.effectiveCharge() * k.effectiveCharge() / rik5) * (3.0 * rij * rjk * (1.0 - cosTheta * cosTheta) - rik2 * cosTheta);
+    const auto forcek = 664.12 * 4.184 * (i.effectiveCharge() * k.effectiveCharge() / rik5) *
+                        (3.0 * rij * rjk * (1.0 - cosTheta * cosTheta) - rik2 * cosTheta);
 
     // To determine angle form and necessary coefficients, use 'geom' integer data (which represents the third letter of the
     // atom name. This idea is shamelessly stolen from MCCCS Towhee!
