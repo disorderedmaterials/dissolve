@@ -115,9 +115,9 @@ void ExpressionVariableVectorKeywordWidget::on_VariablesTable_itemChanged(QTable
             if (DissolveSys::isNumber(qPrintable(w->text()), isFloatingPoint))
             {
                 if (isFloatingPoint)
-                    variable->setValue(ExpressionValue(w->text().toDouble(), false));
+                    variable->setValue(w->text().toDouble());
                 else
-                    variable->setValue(ExpressionValue(w->text().toInt(), false));
+                    variable->setValue(w->text().toInt());
 
                 // Update the type?
                 if (isFloatingPoint != originalFloatingPoint)

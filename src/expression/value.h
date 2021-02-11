@@ -13,8 +13,8 @@ class ExpressionValue
 {
     public:
     ExpressionValue();
-    explicit ExpressionValue(int value, bool fixedType = true);
-    explicit ExpressionValue(double value, bool fixedType = true);
+    ExpressionValue(int value);
+    ExpressionValue(double value);
     ~ExpressionValue() = default;
     ExpressionValue(const ExpressionValue &source);
     ExpressionValue &operator=(const ExpressionValue &source);
