@@ -45,8 +45,10 @@ class Forcefield_UFF : public Forcefield
      * Atom Type Data
      */
     private:
-    // Return UFF atom types
-    const std::vector<UFFAtomType> &uffAtomTypes() const;
+    // UFF atom types
+    std::vector<UFFAtomType> uffAtomTypes_;
+
+    private:
     // Return UFF atom type with name specified
     OptionalReferenceWrapper<const UFFAtomType> uffAtomTypeByName(std::string_view name) const;
     // Return first UFF atom type for specified element

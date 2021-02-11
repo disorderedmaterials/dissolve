@@ -25,63 +25,38 @@
  */
 
 // Set up / create all forcefield terms
-bool Forcefield_UFF::setUp() { return true; }
-
-/*
- * Definition
- */
-
-// Return name of Forcefield
-std::string_view Forcefield_UFF::name() const { return "UFF"; }
-
-// Return description for Forcefield
-std::string_view Forcefield_UFF::description() const
+bool Forcefield_UFF::setUp()
 {
-    return "Implements 'UFF, a Full Periodic Table Force Field for Molecular Mechanics and Molecular Dynamics "
-           "Simulations', A. K. Rappe, C. J. Casewit, K. S. Colwell, W. A. Goddard III, and W. "
-           "M. "
-           "Skiff, <i>J. Am. Chem. Soc.</i> <b>114</b>, 10024-10039 (1992).<br/>Notes:<ul><li>Any inconsistencies between "
-           "the forcefield as implemented here and the original work are the sole "
-           "responsibility of TGAY</li><li>Generator data 8 (THyb) are used to quickly determine the method of torsional "
-           "parameter generation.</li><li>Torsional parameters U(i) are assigned to "
-           "the "
-           "second through sixth periods, following M. G. Martin's implementation in MCCCS Towhee.</li><li>Other "
-           "modifications from the original paper are made following the MCCCS Towhee "
-           "implementation.</li></ul>";
-}
-
-// Return short-range interaction style for AtomTypes
-Forcefield::ShortRangeType Forcefield_UFF::shortRangeType() const { return Forcefield::LennardJonesType; }
-
-/*
- * Atom Type Data
- */
-
-// Return UFF atom types
-const std::vector<UFFAtomType> &Forcefield_UFF::uffAtomTypes() const
-{
-    static const std::vector<UFFAtomType> atomTypes = {
+    uffAtomTypes_ = {
         // 	El		FFID	Name		NETA	Description
         // 					  r	theta     x       D     zeta      Z      chi	geom	V
         // U
         {Elements::H, 1, "H_", "", "Generic hydrogen", 0.3540, 180.00, 2.8860, 0.0440, 12.000, 0.7120, 4.528, 0, 0.0, 0.0},
-        {Elements::H, 2, "H_b", "", "Bridging hydrogen in B-H-B", 0.4600, 83.50, 2.8860, 0.0440, 12.000, 0.7125, 4.528, 8, 0.0,
-         0.0},
+        {Elements::H, 2, "H_b", "-B(n=2)", "Bridging hydrogen in B-H-B", 0.4600, 83.50, 2.8860, 0.0440, 12.000, 0.7125, 4.528,
+         8, 0.0, 0.0},
         {Elements::He, 3, "He4+4", "", "Helium", 0.8490, 90.00, 2.3620, 0.0560, 15.240, 0.0972, 9.66, 4, 0.0, 0.0},
         {Elements::Li, 4, "Li", "", "Lithium", 1.3360, 180.00, 2.4510, 0.0250, 12.000, 1.0255, 3.006, 0, 0.0, 2.0},
         {Elements::Be, 5, "Be3+2", "", "Beryllium", 1.0740, 109.47, 2.7450, 0.0850, 12.000, 1.5650, 4.877, 3, 0.0, 2.0},
-        {Elements::B, 6, "B_3", "", "Boron (tetrahedral)", 0.8380, 109.47, 4.0830, 0.1800, 12.052, 1.7550, 5.11, 3, 0.0, 2.0},
-        {Elements::B, 7, "B_2", "", "Boron (trigonal)", 0.8280, 120.00, 4.0830, 0.1800, 12.052, 1.7550, 5.11, 2, 0.0, 2.0},
-        {Elements::C, 8, "C_3", "", "Carbon (tetrahedral)", 0.7570, 109.47, 3.8510, 0.1050, 12.730, 1.9120, 5.343, 3, 2.119,
+        {Elements::B, 6, "B_3", "nbonds=4", "Boron (tetrahedral)", 0.8380, 109.47, 4.0830, 0.1800, 12.052, 1.7550, 5.11, 3, 0.0,
          2.0},
-        {Elements::C, 9, "C_R", "", "Carbon (resonant)", 0.7290, 120.00, 3.8510, 0.1050, 12.730, 1.9120, 5.343, 9, 0.0, 2.0},
-        {Elements::C, 10, "C_2", "", "Carbon (trigonal)", 0.7320, 120.00, 3.8510, 0.1050, 12.730, 1.9120, 5.343, 2, 0.0, 2.0},
-        {Elements::C, 11, "C_1", "", "Carbon (linear)", 0.7060, 180.00, 3.8510, 0.1050, 12.730, 1.9120, 5.343, 1, 0.0, 2.0},
+        {Elements::B, 7, "B_2", "nbonds=3", "Boron (trigonal)", 0.8280, 120.00, 4.0830, 0.1800, 12.052, 1.7550, 5.11, 2, 0.0,
+         2.0},
+        {Elements::C, 8, "C_3", "nbonds=4", "Carbon (tetrahedral)", 0.7570, 109.47, 3.8510, 0.1050, 12.730, 1.9120, 5.343, 3,
+         2.119, 2.0},
+        {Elements::C, 9, "C_R", "nbonds=3,ring()", "Carbon (resonant)", 0.7290, 120.00, 3.8510, 0.1050, 12.730, 1.9120, 5.343,
+         9, 0.0, 2.0},
+        {Elements::C, 10, "C_2", "nbonds=3", "Carbon (trigonal)", 0.7320, 120.00, 3.8510, 0.1050, 12.730, 1.9120, 5.343, 2, 0.0,
+         2.0},
+        {Elements::C, 11, "C_1", "nbonds=2", "Carbon (linear)", 0.7060, 180.00, 3.8510, 0.1050, 12.730, 1.9120, 5.343, 1, 0.0,
+         2.0},
         {Elements::N, 12, "N_3", "", "Nitrogen (tetrahedral)", 0.7000, 106.70, 3.6600, 0.0690, 13.407, 2.5438, 6.899, 3, 0.450,
          0.0},
-        {Elements::N, 13, "N_R", "", "Nitrogen (resonant)", 0.6990, 120.00, 3.6600, 0.0690, 13.407, 2.5438, 6.899, 9, 0.0, 2.0},
-        {Elements::N, 14, "N_2", "", "Nitrogen (trigonal)", 0.6850, 111.30, 3.6600, 0.0690, 13.407, 2.5438, 6.899, 2, 0.0, 2.0},
-        {Elements::N, 15, "N_1", "", "Nitrogen (linear)", 0.6560, 180.00, 3.6600, 0.0690, 13.407, 2.5438, 6.899, 1, 0.0, 2.0},
+        {Elements::N, 13, "N_R", "nbonds=2,ring()", "Nitrogen (resonant)", 0.6990, 120.00, 3.6600, 0.0690, 13.407, 2.5438,
+         6.899, 9, 0.0, 2.0},
+        {Elements::N, 14, "N_2", "nbonds=2", "Nitrogen (trigonal)", 0.6850, 111.30, 3.6600, 0.0690, 13.407, 2.5438, 6.899, 2,
+         0.0, 2.0},
+        {Elements::N, 15, "N_1", "nbonds=1", "Nitrogen (linear)", 0.6560, 180.00, 3.6600, 0.0690, 13.407, 2.5438, 6.899, 1, 0.0,
+         2.0},
         {Elements::O, 16, "O_3", "", "Oxygen (tetrahedral)", 0.6580, 104.51, 3.5000, 0.0600, 14.085, 2.2998, 8.741, 3, 0.018,
          2.0},
         {Elements::O, 17, "O_3_z", "", "Oxygen (in silicate)", 0.5280, 145.50, 3.5000, 0.0600, 14.085, 2.2998, 8.741, 3, 0.018,
@@ -259,17 +234,67 @@ const std::vector<UFFAtomType> &Forcefield_UFF::uffAtomTypes() const
         {Elements::No, 126, "No6+3", "", "Nobelium (octahedral, oxidation state +3)", 1.6790, 90.00, 3.2480, 0.0110, 12.000,
          3.8882, 3.475, 6, 0.0, 0.0},
         {Elements::Lr, 127, "Lr6+3", "", "Lawrencium (octahedral, oxidation state +3)", 1.6980, 90.00, 3.2360, 0.0110, 12.000,
-         3.8882, 3.5, 6, 1.0, 1.0}};
+         3.8882, 3.5, 6, 1.0, 1.0},
+        {Elements::C, 200, "C_am", "nbonds=3,-O(nbonds=1),-N", "Carbon (amide)", 0.7290, 120.00, 3.8510, 0.1050, 12.730, 1.9120,
+         5.343, 9, 0.0, 2.0},
+        {Elements::N, 201, "N_am", "nbonds=3,-C(-O(nbonds=1))", "Nitrogen (amide)", 0.6990, 120.00, 3.6600, 0.0690, 13.407,
+         2.5438, 6.899, 9, 0.0, 2.0}
 
-    return atomTypes;
+    };
+
+    // Create NETA definitions for each atom type - this is normally handled automatically, but we have custom atom types so
+    // must do it ourselves
+    auto nFailed = std::count_if(uffAtomTypes_.begin(), uffAtomTypes_.end(), [this](auto &atomType) {
+        auto success = atomType.createNETA(this);
+        if (!success)
+            Messenger::print("Failed to parse NETA definition '{}' for UFF atom type '{}'.", atomType.neta().definitionString(),
+                             atomType.name());
+        return !success;
+    });
+
+    if (nFailed > 0)
+        Messenger::error("Failed to create {} NETA {} for the forcefield '{}'.\n", nFailed,
+                         nFailed == 1 ? "definition" : "definitions", name());
+
+    return (nFailed == 0);
 }
+
+/*
+ * Definition
+ */
+
+// Return name of Forcefield
+std::string_view Forcefield_UFF::name() const { return "UFF"; }
+
+// Return description for Forcefield
+std::string_view Forcefield_UFF::description() const
+{
+    return "Implements 'UFF, a Full Periodic Table Force Field for Molecular Mechanics and Molecular Dynamics "
+           "Simulations', A. K. Rappe, C. J. Casewit, K. S. Colwell, W. A. Goddard III, and W. "
+           "M. "
+           "Skiff, <i>J. Am. Chem. Soc.</i> <b>114</b>, 10024-10039 (1992).<br/>Notes:<ul><li>Any inconsistencies between "
+           "the forcefield as implemented here and the original work are the sole "
+           "responsibility of TGAY</li><li>Generator data 8 (THyb) are used to quickly determine the method of torsional "
+           "parameter generation.</li><li>Torsional parameters U(i) are assigned to "
+           "the "
+           "second through sixth periods, following M. G. Martin's implementation in MCCCS Towhee.</li><li>Other "
+           "modifications from the original paper are made following the MCCCS Towhee "
+           "implementation.</li></ul>";
+}
+
+// Return short-range interaction style for AtomTypes
+Forcefield::ShortRangeType Forcefield_UFF::shortRangeType() const { return Forcefield::LennardJonesType; }
+
+/*
+ * Atom Type Data
+ */
 
 // Return UFF atom type with name specified
 OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::uffAtomTypeByName(std::string_view name) const
 {
-    auto it = std::find_if(uffAtomTypes().begin(), uffAtomTypes().end(),
+    auto it = std::find_if(uffAtomTypes_.begin(), uffAtomTypes_.end(),
                            [&](auto &data) { return DissolveSys::sameString(data.name(), name); });
-    if (it == uffAtomTypes().end())
+    if (it == uffAtomTypes_.end())
         return {};
     return *it;
 }
@@ -277,8 +302,8 @@ OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::uffAtomTypeByName(st
 // Return first UFF atom type for specified element
 OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::uffAtomTypeForElement(int el) const
 {
-    auto it = std::find_if(uffAtomTypes().begin(), uffAtomTypes().end(), [&](auto &data) { return data.Z() == el; });
-    if (it == uffAtomTypes().end())
+    auto it = std::find_if(uffAtomTypes_.begin(), uffAtomTypes_.end(), [&](auto &data) { return data.Z() == el; });
+    if (it == uffAtomTypes_.end())
         return {};
     return *it;
 }
@@ -286,137 +311,44 @@ OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::uffAtomTypeForElemen
 // Determine and return atom type for specified SpeciesAtom
 OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::determineUFFAtomType(SpeciesAtom *i) const
 {
-    OptionalReferenceWrapper<const UFFAtomType> typeRef;
-
-    switch (i->Z())
+    // Go through AtomTypes defined for the target's element, and check NETA scores
+    auto bestScore = -1;
+    OptionalReferenceWrapper<const UFFAtomType> bestType;
+    for (const auto &type : uffAtomTypes_)
     {
-        // H
-        case (Elements::H):
-            if (isBoundTo(i, Elements::element(Elements::B), 2))
-                typeRef = uffAtomTypeByName("H_b");
-            else
-                typeRef = uffAtomTypeByName("H_");
-            break;
-        // Boron
-        case (Elements::B):
-            if (isAtomGeometry(i, Forcefield::TetrahedralGeometry))
-                typeRef = uffAtomTypeByName("B_3");
-            else
-                typeRef = uffAtomTypeByName("B_2");
-            break;
-        // Carbon
-        case (Elements::C):
-            if (isBondPattern(i, 0, 0, 0, 0, -1))
-                typeRef = uffAtomTypeByName("C_R");
-            else if (isBondPattern(i, 2, 1))
-                typeRef = uffAtomTypeByName("C_2");
-            else if (isBondPattern(i, 1, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry))
-                typeRef = uffAtomTypeByName("C_1");
-            else
-                typeRef = uffAtomTypeByName("C_3");
-            break;
-        // Nitrogen
-        case (Elements::N):
-            if (isBondPattern(i, 0, 0, 0, 0, -1))
-                typeRef = uffAtomTypeByName("N_R");
-            else if (isBondPattern(i, 1, 1))
-                typeRef = uffAtomTypeByName("N_2");
-            else if (isBondPattern(i, 0, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry))
-                typeRef = uffAtomTypeByName("N_1");
-            else
-                typeRef = uffAtomTypeByName("N_3");
-            break;
-        // Oxygen
-        case (Elements::O):
-            if (isBondPattern(i, 0, 0, 0, 0, -1))
-                typeRef = uffAtomTypeByName("O_R");
-            else if (isBondPattern(i, 0, 1))
-                typeRef = uffAtomTypeByName("O_2");
-            else if (isBondPattern(i, 0, 0, 1) || isAtomGeometry(i, Forcefield::LinearGeometry))
-                typeRef = uffAtomTypeByName("O_1");
-            else if (isBoundTo(i, Elements::element(Elements::Si), 2))
-                typeRef = uffAtomTypeByName("O_3_z");
-            else
-                typeRef = uffAtomTypeByName("O_3");
-            break;
-        // Phosphorus
-        case (Elements::P):
-            if (guessOxidationState(i) == 5)
-                typeRef = uffAtomTypeByName("P_3+5");
-            else if (guessOxidationState(i) == 3)
-                typeRef = uffAtomTypeByName("P_3+3");
-            else if ((i->nBonds() == 4) && (isAtomGeometry(i, Forcefield::TetrahedralGeometry)))
-                typeRef = uffAtomTypeByName("P_3+q");
-            break;
-        // Sulphur
-        case (Elements::S):
-            if (guessOxidationState(i) == 2)
-                typeRef = uffAtomTypeByName("S_3+2");
-            else if (guessOxidationState(i) == 4)
-                typeRef = uffAtomTypeByName("S_3+4");
-            else if (guessOxidationState(i) == 6)
-                typeRef = uffAtomTypeByName("S_3+6");
-            else if (isBondPattern(i, 0, 0, 0, 0, -1))
-                typeRef = uffAtomTypeByName("S_R");
-            else if (isAtomGeometry(i, Forcefield::TrigonalPlanarGeometry))
-                typeRef = uffAtomTypeByName("S_2");
-            break;
-        // Titanium
-        case (Elements::Ti):
-            if (isAtomGeometry(i, Forcefield::OctahedralGeometry))
-                typeRef = uffAtomTypeByName("Ti6+4");
-            else
-                typeRef = uffAtomTypeByName("Ti3+4");
-            break;
-        // Iron
-        case (Elements::Fe):
-            if (isAtomGeometry(i, Forcefield::OctahedralGeometry))
-                typeRef = uffAtomTypeByName("Fe6+2");
-            else
-                typeRef = uffAtomTypeByName("Fe3+2");
+        // Is this type of the correct base element?
+        if (type.Z() != i->Z())
+            continue;
 
-            break;
-        // Molybdenum
-        case (Elements::Mo):
-            if (isAtomGeometry(i, Forcefield::OctahedralGeometry))
-                typeRef = uffAtomTypeByName("Mo6+6");
-            else
-                typeRef = uffAtomTypeByName("Mo3+6");
-            break;
-        // Tungsten
-        case (Elements::W):
-            if (isAtomGeometry(i, Forcefield::OctahedralGeometry))
-                typeRef = uffAtomTypeByName("W_6+6");
-            else if (guessOxidationState(i) == 4)
-                typeRef = uffAtomTypeByName("W_3+4");
-            else
-                typeRef = uffAtomTypeByName("W_3+6");
-            break;
-        // Rhenium
-        case (Elements::Re):
-            if (isAtomGeometry(i, Forcefield::OctahedralGeometry))
-                typeRef = uffAtomTypeByName("Re6+5");
-            else
-                typeRef = uffAtomTypeByName("Re3+7");
-            break;
-        // Default - all elements with only one type
-        default:
-            typeRef = uffAtomTypeForElement(i->Z());
-            break;
+        // Get the scoring for this type
+        auto score = type.neta().score(i);
+        Messenger::printVerbose("  -- score for type index {} ({}) is {}.\n", type.index(), type.name(), score);
+        if (score > bestScore)
+        {
+            bestScore = score;
+            bestType = type;
+        }
     }
 
-    return typeRef;
-}
+    if (bestScore == -1)
+        Messenger::printVerbose("  -- no suitable type found.");
+    else
+        Messenger::printVerbose("  Best type for atom {} is {} ({}) with a score of {}.\n", i->userIndex(),
+                                bestType->get().index(), bestType->get().name(), bestScore);
 
+    return bestType;
+}
 
 // Determine and return atom type for specified SpeciesAtom
 OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield_UFF::determineAtomType(SpeciesAtom *i) const
 {
-    auto optTypeRef = determineUFFAtomType(i);
-    if (!optTypeRef)
+    Messenger::printVerbose("Determining atom type for atom {} ({})\n", i->userIndex(), Elements::symbol(i->Z()));
+
+    auto uffType = determineUFFAtomType(i);
+    if (!uffType)
         return std::nullopt;
 
-    return OptionalReferenceWrapper<const ForcefieldAtomType>(*optTypeRef);
+    return OptionalReferenceWrapper<const ForcefieldAtomType>(*uffType);
 }
 
 /*
