@@ -391,16 +391,17 @@ bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, cons
 
     // rij : Equilibrium distance : = ri + rj + rBO - rEN  (eq 2)
     // Note: In the original paper  rij = ri + rj + rBO + rEN, but Marcus Martin (MCCCS Towhee) notes that the last term
-    // should be subtracted
+    // should be subtracted, following conversation with Rappe.
     const auto rij = i.r() + j.r() + rBO - rEN;
 
     // k : Force constant : = 664.12 * (Zi * Zj) / rij**3     (note 664.12 in kcal)
-    const auto k = 664.12 * 4.184 * (i.effectiveCharge() * j.effectiveCharge()) / (rij * rij * rij);
+    const auto k = 664.12 * (i.effectiveCharge() * j.effectiveCharge()) / (rij * rij * rij);
 
     // Set the parameters and form of the new bond term
     // Functional form is Harmonic : U = 0.5 * k * (r - eq)**2
+    // Convert force constant from kcal to kJ
     bond.setForm(SpeciesBond::HarmonicForm);
-    bond.setParameters({k, rij});
+    bond.setParameters({k * 4.184, rij});
 
     return true;
 }
