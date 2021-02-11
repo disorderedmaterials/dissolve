@@ -263,8 +263,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     Vec3<double> current2DAxesCoordinates_;
     // Whether the viewer is currently being interacted with
     bool interacting_;
-    // Current interaction mode
-    int interactionMode_;
 
     protected:
     // Start interaction
@@ -275,10 +273,6 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     virtual void cancelInteraction();
 
     public:
-    // Set current interaction mode
-    void setInteractionMode(int mode);
-    // Return current interaction mode
-    int interactionMode() const;
     // Return whether the viewer is currently being interacted with
     bool interacting() const;
     // Return text describing current interaction mode

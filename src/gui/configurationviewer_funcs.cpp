@@ -12,7 +12,8 @@ ConfigurationViewer::ConfigurationViewer(QWidget *parent) : BaseViewer(parent)
     configuration_ = nullptr;
 
     // Interaction
-    setInteractionMode(ConfigurationViewer::DefaultInteraction);
+    setInteractionMode(ConfigurationViewer::InteractionMode::Default);
+    transientInteractionMode_ = TransientInteractionMode::None;
 
     // Set up the view
     view_.setViewType(View::NormalView);

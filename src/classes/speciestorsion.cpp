@@ -123,21 +123,6 @@ void SpeciesTorsion::detach()
 }
 
 /*
- * DynamicArrayObject Virtuals
- */
-
-// Clear object, ready for re-use
-void SpeciesTorsion::clear()
-{
-    parent_ = nullptr;
-    i_ = nullptr;
-    j_ = nullptr;
-    k_ = nullptr;
-    l_ = nullptr;
-    form_ = SpeciesTorsion::NoForm;
-}
-
-/*
  * Atom Information
  */
 

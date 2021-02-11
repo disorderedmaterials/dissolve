@@ -15,7 +15,8 @@ SiteViewer::SiteViewer(QWidget *parent) : BaseViewer(parent)
     siteRenderable_ = nullptr;
 
     // Interaction
-    setInteractionMode(SiteViewer::DefaultInteraction);
+    setInteractionMode(SiteViewer::InteractionMode::Select);
+    transientInteractionMode_ = TransientInteractionMode::None;
     clickedAtom_ = nullptr;
 
     // Set up the view
@@ -54,7 +55,7 @@ void SiteViewer::setSpecies(Species *sp)
     }
 
     // Send relevant signals
-    emit(atomSelectionChanged());
+    emit(atomsChanged());
 }
 
 // Return target Species

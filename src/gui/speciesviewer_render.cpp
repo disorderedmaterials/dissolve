@@ -22,7 +22,7 @@ void SpeciesViewer::render2DOverlay()
     if (interacting())
         switch (interactionMode())
         {
-            case (SpeciesViewer::SelectAreaInteraction):
+            case (SpeciesViewer::InteractionMode::SelectArea):
                 // Draw dashed box indicating selection area, form clicked to current mouse coordinates
                 selectionBoxStyle.sendToGL();
                 glBegin(GL_LINE_LOOP);
