@@ -320,8 +320,7 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
         // Loop over all cell neighbours for this primary Cell
         for (const auto &neighbour : primaryCells[c]->allCellNeighbours())
         {
-            readOnlyCell = neighbour.first;
-            cellIndex = readOnlyCell->index();
+            cellIndex = neighbour->index();
 
             // If we have locked this Cell already, continue
             if (cellStatusFlags_[cellIndex] == RegionalDistributor::LockedForEditingFlag)

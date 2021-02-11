@@ -71,7 +71,7 @@ class Cell
     // Arrays of neighbouring cells, within the defined potential cutoff (from anywhere in the Cell)
     std::vector<Cell *> cellNeighbours_, mimCellNeighbours_;
     // Array of all neighbouring cells
-    std::vector<std::pair<Cell *, bool>> allCellNeighbours_;
+    std::vector<Cell *> allCellNeighbours_;
 
     public:
     // Add Cell neighbours
@@ -83,5 +83,5 @@ class Cell
     // Return if the specified Cell requires minimum image calculation
     bool mimRequired(const Cell *otherCell) const;
     // Return list of all Cell neighbours
-    const std::vector<std::pair<Cell *, bool>> &allCellNeighbours() const;
+    const std::vector<Cell *> &allCellNeighbours() const;
 };

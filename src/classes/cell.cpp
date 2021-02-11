@@ -90,9 +90,9 @@ void Cell::addCellNeighbours(std::vector<Cell *> &nearNeighbours, std::vector<Ce
     allCellNeighbours_.clear();
     allCellNeighbours_.resize(nearNeighbours.size() + mimNeighbours.size());
     for (auto *nearNbr : nearNeighbours)
-        allCellNeighbours_.emplace_back(nearNbr, false);
+        allCellNeighbours_.emplace_back(nearNbr);
     for (auto *mimNbr : mimNeighbours)
-        allCellNeighbours_.emplace_back(mimNbr, true);
+        allCellNeighbours_.emplace_back(mimNbr);
 }
 
 // Return adjacent Cell neighbour list
@@ -108,4 +108,4 @@ bool Cell::mimRequired(const Cell *otherCell) const
 }
 
 // Return list of all Cell neighbours
-const std::vector<std::pair<Cell *, bool>> &Cell::allCellNeighbours() const { return allCellNeighbours_; }
+const std::vector<Cell *> &Cell::allCellNeighbours() const { return allCellNeighbours_; }
