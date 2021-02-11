@@ -355,12 +355,13 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield_UFF::determineAtom
  * Term Assignment
  */
 
-// Generate bond parameters for the supplied UFF atom types
-bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, const UFFAtomType &i, const UFFAtomType &j) const
+// Return bond order correction for specified atom type pair
+double Forcefield_UFF::bondOrderCorrection(const UFFAtomType &i, const UFFAtomType &j) const
 {
-    // Calculate rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
+    // Bond-order correction = -lambda * (ri + rj) * ln(n)  (eq 3)
     const auto lambda = 0.1332;
-    // -- Set bond order, recognising special case for the C-N amide bond
+
+    // Determine bond order, recognising special case for the C-N amide bond
     auto bondOrder = 1.0;
     if ((i.name() == "C_am" && j.name() == "N_am") || (i.name() == "N_am" && j.name() == "C_am"))
         bondOrder = 1.41;
@@ -370,11 +371,23 @@ bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, cons
         bondOrder = 2.0;
     else if (i.name().back() == '1' && j.name().back() == '1')
         bondOrder = 3.0;
-    const auto rBO = -lambda * (i.r() + j.r()) * log(bondOrder);
 
-    // Calculate rEN : Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
+    return -lambda * (i.r() + j.r()) * log(bondOrder);
+}
+
+// Return electronegativity correction for specified atom type pair
+double Forcefield_UFF::electronegativityCorrection(const UFFAtomType &i, const UFFAtomType &j) const
+{
+    // Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
     const auto chi = sqrt(i.chi()) - sqrt(j.chi());
-    const auto rEN = i.r() * j.r() * chi * chi / (i.chi() * i.r() + j.chi() * j.r());
+    return i.r() * j.r() * chi * chi / (i.chi() * i.r() + j.chi() * j.r());
+}
+
+// Generate bond parameters for the supplied UFF atom types
+bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, const UFFAtomType &i, const UFFAtomType &j) const
+{
+    const auto rBO = bondOrderCorrection(i, j);
+    const auto rEN = electronegativityCorrection(i, j);
 
     // rij : Equilibrium distance : = ri + rj + rBO - rEN  (eq 2)
     // Note: In the original paper  rij = ri + rj + rBO + rEN, but Marcus Martin (MCCCS Towhee) notes that the last term
