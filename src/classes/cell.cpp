@@ -29,11 +29,9 @@ const Vec3<int> &Cell::gridReference() const { return gridReference_; }
 // Set unique index
 void Cell::setIndex(int id)
 {
-    // To prevent misuse, the identity of a Cell can be changed from its starting value of -1 only once.
-    if (id == -1)
-        Messenger::print("BAD_USAGE - Refused to set the ID of a Cell more than once.\n");
-    else
-        index_ = id;
+    assert(index_ == -1);
+
+    index_ = id;
 }
 
 // Return unique index

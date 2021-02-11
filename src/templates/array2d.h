@@ -58,10 +58,8 @@ template <class A> class Array2D
         clear();
 
         // If we're only interested in half the matrix then it must be square
-        if (half_ && (nrows != ncolumns))
-        {
-            Messenger::error("BAD_USAGE - Requested half-matrix mode on a non-square matrix in Array2D::resize().\n");
-        }
+        if (half_)
+            assert(nrows == ncolumns);
 
         // Create new array
         nRows_ = nrows;
