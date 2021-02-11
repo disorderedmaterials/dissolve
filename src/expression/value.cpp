@@ -8,7 +8,7 @@ ExpressionValue::ExpressionValue()
 {
     valueI_ = 0;
     valueD_ = 0.0;
-    type_ = IntegerType;
+    type_ = ValueType::Integer;
     typeFixed_ = false;
 }
 
@@ -16,7 +16,7 @@ ExpressionValue::ExpressionValue(int value, bool fixedType)
 {
     valueI_ = value;
     valueD_ = 0.0;
-    type_ = IntegerType;
+    type_ = ValueType::Integer;
     typeFixed_ = fixedType;
 }
 
@@ -24,7 +24,7 @@ ExpressionValue::ExpressionValue(double value, bool fixedType)
 {
     valueI_ = 0;
     valueD_ = value;
-    type_ = DoubleType;
+    type_ = ValueType::Double;
     typeFixed_ = fixedType;
 }
 
@@ -40,16 +40,16 @@ ExpressionValue &ExpressionValue::operator=(const ExpressionValue &source)
 {
     if (typeFixed_)
     {
-        if (type_ == IntegerType)
+        if (type_ == ValueType::Integer)
         {
-            if (source.type_ == IntegerType)
+            if (source.type_ == ValueType::Integer)
                 valueI_ = source.valueI_;
             else
                 valueI_ = int(source.valueD_);
         }
         else
         {
-            if (source.type_ == IntegerType)
+            if (source.type_ == ValueType::Integer)
                 valueD_ = source.valueI_;
             else
                 valueD_ = source.valueD_;
@@ -71,7 +71,7 @@ ExpressionValue &ExpressionValue::operator=(int i)
     valueI_ = i;
     valueD_ = i;
     if (!typeFixed_)
-        type_ = IntegerType;
+        type_ = ValueType::Integer;
 
     return *this;
 }
@@ -81,7 +81,7 @@ ExpressionValue &ExpressionValue::operator=(double d)
     valueI_ = int(d);
     valueD_ = d;
     if (!typeFixed_)
-        type_ = DoubleType;
+        type_ = ValueType::Double;
 
     return *this;
 }
@@ -94,15 +94,15 @@ ExpressionValue &ExpressionValue::operator=(double d)
 ExpressionValue::ValueType ExpressionValue::type() const { return type_; }
 
 // Return result as integer (regardless of current type)
-int ExpressionValue::asInteger() const { return (type_ == IntegerType ? valueI_ : int(valueD_)); }
+int ExpressionValue::asInteger() const { return (type_ == ValueType::Integer ? valueI_ : int(valueD_)); }
 
 // Return result as double (regardless of current type)
-double ExpressionValue::asDouble() const { return (type_ == IntegerType ? double(valueI_) : valueD_); }
+double ExpressionValue::asDouble() const { return (type_ == ValueType::Integer ? double(valueI_) : valueD_); }
 
 // Return result as a string
 std::string ExpressionValue::asString() const
 {
-    return (type_ == IntegerType ? fmt::format("{}", valueI_) : fmt::format("{:12.6e}", valueD_));
+    return (type_ == ValueType::Integer ? fmt::format("{}", valueI_) : fmt::format("{:12.6e}", valueD_));
 }
 
 // Return pointer to integer value
@@ -116,19 +116,19 @@ double *ExpressionValue::doublePointer() { return &valueD_; }
  */
 
 // Return whether the contained type is an integer
-bool ExpressionValue::isInteger() const { return (type_ == IntegerType); }
+bool ExpressionValue::isInteger() const { return (type_ == ValueType::Integer); }
 
 // Return whether the contained type is an double
-bool ExpressionValue::isDouble() const { return (type_ == DoubleType); }
+bool ExpressionValue::isDouble() const { return (type_ == ValueType::Double); }
 
 // Return the supplied ExpressionValues both contain integer types
 bool ExpressionValue::bothIntegers(const ExpressionValue &a, const ExpressionValue &b)
 {
-    return ((a.type_ == IntegerType) && (b.type_ == IntegerType));
+    return ((a.type_ == ValueType::Integer) && (b.type_ == ValueType::Integer));
 }
 
 // Return the supplied ExpressionValues both contain double types
 bool ExpressionValue::bothDoubles(const ExpressionValue &a, const ExpressionValue &b)
 {
-    return ((a.type_ == DoubleType) && (b.type_ == DoubleType));
+    return ((a.type_ == ValueType::Double) && (b.type_ == ValueType::Double));
 }

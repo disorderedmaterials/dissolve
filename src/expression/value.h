@@ -26,10 +26,10 @@ class ExpressionValue
      */
     public:
     // Value Type
-    enum ValueType
+    enum class ValueType
     {
-        IntegerType,
-        DoubleType
+        Integer,
+        Double
     };
 
     private:

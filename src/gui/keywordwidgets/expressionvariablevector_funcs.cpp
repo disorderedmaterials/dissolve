@@ -67,7 +67,7 @@ void ExpressionVariableVectorKeywordWidget::updateVariableTableRow(int row, std:
     }
     else
         item = ui_.VariablesTable->item(row, 1);
-    item->setText(variable->value().type() == ExpressionValue::IntegerType ? "int" : "double");
+    item->setText(variable->value().type() == ExpressionValue::ValueType::Integer ? "int" : "double");
 
     // Value
     if (createItem)
@@ -110,7 +110,8 @@ void ExpressionVariableVectorKeywordWidget::on_VariablesTable_itemChanged(QTable
         // Variable value
         case (2):
             // Determine the type of the new value so we can convert and set accordingly
-            bool isFloatingPoint = false, originalFloatingPoint = variable->value().type() == ExpressionValue::DoubleType;
+            bool isFloatingPoint = false,
+                 originalFloatingPoint = variable->value().type() == ExpressionValue::ValueType::Double;
             if (DissolveSys::isNumber(qPrintable(w->text()), isFloatingPoint))
             {
                 if (isFloatingPoint)
