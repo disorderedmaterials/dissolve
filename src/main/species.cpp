@@ -75,14 +75,14 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
     if (sourceIntra.masterParameters())
     {
         // Search for MasterIntra by the same name in our main Dissolve instance
-        MasterIntra *master = nullptr;
+        OptionalReferenceWrapper<MasterIntra> master = {};
         if (sourceIntra.type() == SpeciesIntra::BondInteraction)
         {
             master = coreData_.hasMasterBond(sourceIntra.masterParameters()->name());
             if (!master)
             {
                 master = coreData_.addMasterBond(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parameters());
+                master->get().setParameters(sourceIntra.parameters());
             }
         }
         else if (sourceIntra.type() == SpeciesIntra::AngleInteraction)
@@ -91,7 +91,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
             if (!master)
             {
                 master = coreData_.addMasterAngle(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parameters());
+                master->get().setParameters(sourceIntra.parameters());
             }
         }
         else if (sourceIntra.type() == SpeciesIntra::TorsionInteraction)
@@ -100,7 +100,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
             if (!master)
             {
                 master = coreData_.addMasterTorsion(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parameters());
+                master->get().setParameters(sourceIntra.parameters());
             }
         }
         else if (sourceIntra.type() == SpeciesIntra::ImproperInteraction)
@@ -109,15 +109,15 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
             if (!master)
             {
                 master = coreData_.addMasterImproper(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parameters());
+                master->get().setParameters(sourceIntra.parameters());
             }
         }
 
         // Copy the form of the parameters
-        master->setForm(sourceIntra.masterParameters()->form());
+        master->get().setForm(sourceIntra.masterParameters()->form());
 
         // Set the master pointer in the interaction
-        destIntra.setMasterParameters(master);
+        destIntra.setMasterParameters(&master->get());
     }
     else
     {

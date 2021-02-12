@@ -13,10 +13,11 @@
 /*
  * MasterIntra Definition
  */
-class MasterIntra : public SpeciesIntra, public ListItem<MasterIntra>
+class MasterIntra : public SpeciesIntra
 {
     public:
     MasterIntra();
+    MasterIntra(const MasterIntra &);
     ~MasterIntra();
 
     /*

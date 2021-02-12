@@ -8,7 +8,7 @@
 #include "templates/list.h"
 #include "templates/variantpointer.h"
 
-IntraFormComboDelegate::IntraFormComboDelegate(QObject *parent, ComboListItems *items, const List<MasterIntra> &masterTerms)
+IntraFormComboDelegate::IntraFormComboDelegate(QObject *parent, ComboListItems *items, const std::vector<MasterIntra> &masterTerms)
     : QItemDelegate(parent), masterTerms_(masterTerms)
 {
     items_ = items;
@@ -29,7 +29,7 @@ QWidget *IntraFormComboDelegate::createEditor(QWidget *parent, const QStyleOptio
         editor->addItem(items_->currentItemText());
 
     // Now append any MasterBonds we have
-    if (masterTerms_.nItems() > 0)
+    if (!masterTerms_.empty())
         ComboNameListPopulator<MasterIntra>(editor, masterTerms_, "@", true);
 
     return editor;

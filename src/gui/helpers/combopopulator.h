@@ -38,15 +38,15 @@ template <class T> class ComboNameListPopulator
         for (T *item = items.first(); item != nullptr; item = item->next())
             combo->addItem(item->name(), VariantPointer<T>(item));
     }
-    ComboNameListPopulator<T>(QComboBox *combo, const List<T> &items, QString prefix, bool append = false)
+    ComboNameListPopulator<T>(QComboBox *combo, const std::vector<T> &items, QString prefix, bool append = false)
     {
         // Clear the combobox
         if (!append)
             combo->clear();
 
         // Add our text items to the list
-        for (T *item = items.first(); item != nullptr; item = item->next())
-            combo->addItem(QString("%1%2").arg(prefix, QString::fromStdString(std::string(item->name()))),
-                           VariantPointer<T>(item));
+        for (auto &item : items)
+            combo->addItem(QString("%1%2").arg(prefix, QString::fromStdString(std::string(item.name()))),
+                           VariantPointer<T>(&item));
     }
 };

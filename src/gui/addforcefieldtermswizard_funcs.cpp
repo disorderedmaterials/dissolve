@@ -325,15 +325,15 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                             termName = QString("%1-%2").arg(mappedName(bond.j()->atomType()), mappedName(bond.i()->atomType()));
 
                         // Search for an existing master term by this name
-                        MasterIntra *master = temporaryCoreData_.hasMasterBond(qPrintable(termName));
+                        auto master = temporaryCoreData_.hasMasterBond(qPrintable(termName));
                         if (!master)
                         {
                             // Create it now
                             master = temporaryCoreData_.addMasterBond(qPrintable(termName));
-                            master->setForm(bond.form());
-                            master->setParameters(bond.parameters());
+                            master->get().setForm(bond.form());
+                            master->get().setParameters(bond.parameters());
                         }
-                        bond.setMasterParameters(master);
+                        bond.setMasterParameters(&master->get());
                     }
 
                     // Loop over angles in the modified species
@@ -355,15 +355,15 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                                                 mappedName(angle.i()->atomType()));
 
                         // Search for an existing master term by this name
-                        MasterIntra *master = temporaryCoreData_.hasMasterAngle(qPrintable(termName));
+                        auto master = temporaryCoreData_.hasMasterAngle(qPrintable(termName));
                         if (!master)
                         {
                             // Create it now
                             master = temporaryCoreData_.addMasterAngle(qPrintable(termName));
-                            master->setForm(angle.form());
-                            master->setParameters(angle.parameters());
+                            master->get().setForm(angle.form());
+                            master->get().setParameters(angle.parameters());
                         }
-                        angle.setMasterParameters(master);
+                        angle.setMasterParameters(&master->get());
                     }
 
                     // Loop over torsions in the modified species
@@ -385,15 +385,15 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                                                 mappedName(torsion.j()->atomType()), mappedName(torsion.i()->atomType()));
 
                         // Search for an existing master term by this name
-                        MasterIntra *master = temporaryCoreData_.hasMasterTorsion(qPrintable(termName));
+                        auto master = temporaryCoreData_.hasMasterTorsion(qPrintable(termName));
                         if (!master)
                         {
                             // Create it now
                             master = temporaryCoreData_.addMasterTorsion(qPrintable(termName));
-                            master->setForm(torsion.form());
-                            master->setParameters(torsion.parameters());
+                            master->get().setForm(torsion.form());
+                            master->get().setParameters(torsion.parameters());
                         }
-                        torsion.setMasterParameters(master);
+                        torsion.setMasterParameters(&master->get());
                     }
 
                     // Loop over impropers in the modified species
@@ -412,15 +412,15 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                         termName = QString("%1-%2").arg(mappedName(improper.i()->atomType()), qPrintable(jkl.join("-")));
 
                         // Search for an existing master term by this name
-                        MasterIntra *master = temporaryCoreData_.hasMasterImproper(qPrintable(termName));
+                        auto master = temporaryCoreData_.hasMasterImproper(qPrintable(termName));
                         if (!master)
                         {
                             // Create it now
                             master = temporaryCoreData_.addMasterImproper(qPrintable(termName));
-                            master->setForm(improper.form());
-                            master->setParameters(improper.parameters());
+                            master->get().setForm(improper.form());
+                            master->get().setParameters(improper.parameters());
                         }
-                        improper.setMasterParameters(master);
+                        improper.setMasterParameters(&master->get());
                     }
                 }
             }
@@ -615,8 +615,8 @@ void AddForcefieldTermsWizard::on_NoMasterTermsCheck_clicked(bool checked) { upd
  */
 
 // Row update function for MasterTermsList
-void AddForcefieldTermsWizard::updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, MasterIntra *masterIntra,
-                                                          bool createItem)
+void AddForcefieldTermsWizard::updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex,
+                                                          const MasterIntra *masterIntra, bool createItem)
 {
     QTreeWidgetItem *item;
     if (createItem)
@@ -653,30 +653,26 @@ void AddForcefieldTermsWizard::updateMasterTermsPage()
 
     // Determine whether we have any naming conflicts
     auto conflicts = false;
-    ListIterator<MasterIntra> bondIterator(temporaryCoreData_.masterBonds());
-    while (MasterIntra *intra = bondIterator.iterate())
-        if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+    for (auto &intra : temporaryCoreData_.masterBonds())
+        if (dissolveReference_->coreData().findMasterTerm(intra.name()))
         {
             conflicts = true;
             break;
         }
-    ListIterator<MasterIntra> angleIterator(temporaryCoreData_.masterAngles());
-    while (MasterIntra *intra = angleIterator.iterate())
-        if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+    for (auto &intra : temporaryCoreData_.masterAngles())
+        if (dissolveReference_->coreData().findMasterTerm(intra.name()))
         {
             conflicts = true;
             break;
         }
-    ListIterator<MasterIntra> torsionIterator(temporaryCoreData_.masterTorsions());
-    while (MasterIntra *intra = torsionIterator.iterate())
-        if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+    for (auto &intra : temporaryCoreData_.masterTorsions())
+        if (dissolveReference_->coreData().findMasterTerm(intra.name()))
         {
             conflicts = true;
             break;
         }
-    ListIterator<MasterIntra> improperIterator(temporaryCoreData_.masterTorsions());
-    while (MasterIntra *intra = improperIterator.iterate())
-        if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+    for (auto &intra : temporaryCoreData_.masterImpropers())
+        if (dissolveReference_->coreData().findMasterTerm(intra.name()))
         {
             conflicts = true;
             break;

@@ -92,10 +92,10 @@ const List<ModuleGroup> &ModuleGroups::groups() const { return groups_; }
 const RefDataList<Module, ModuleGroup *> &ModuleGroups::modules() const { return allModules_; }
 
 // Return whether the specified Module is present (in any group)
-bool ModuleGroups::contains(Module *module) const { return allModules_.contains(module); }
+bool ModuleGroups::contains(const Module *module) const { return allModules_.contains(module); }
 
 // Return name of group assigned to specified Module (if present)
-std::string_view ModuleGroups::groupName(Module *module) const
+std::string_view ModuleGroups::groupName(const Module *module) const
 {
     auto *ri = allModules_.contains(module);
 

@@ -101,182 +101,220 @@ int CoreData::atomTypesVersion() const { return atomTypesVersion_; }
  */
 
 // Add new master Bond parameters
-MasterIntra *CoreData::addMasterBond(std::string_view name)
+MasterIntra &CoreData::addMasterBond(std::string_view name)
 {
     // Check for existence of master Bond already
     if (hasMasterBond(name))
-    {
-        Messenger::error("Refused to add a new master Bond named '{}' since one with the same name already exists.\n", name);
-        return nullptr;
-    }
+        throw(std::runtime_error(
+            fmt::format("Refused to add a new master Bond named '{}' since one with the same name already exists.\n", name)));
 
     // OK to add new master Bond
-    MasterIntra *b = masterBonds_.add();
-    b->setName(name);
-    b->setType(SpeciesIntra::BondInteraction);
+    masterBonds_.emplace_back();
+    auto &b = masterBonds_.back();
+    b.setName(name);
+    b.setType(SpeciesIntra::BondInteraction);
 
+    masterBonds_.push_back(b);
     return b;
 }
 
 // Return number of master Bond parameters in list
-int CoreData::nMasterBonds() const { return masterBonds_.nItems(); }
+int CoreData::nMasterBonds() const { return masterBonds_.size(); }
 
 // Return list of master Bond parameters
-const List<MasterIntra> &CoreData::masterBonds() const { return masterBonds_; }
+const std::vector<MasterIntra> &CoreData::masterBonds() const { return masterBonds_; }
 
 // Return nth master Bond parameters
-MasterIntra *CoreData::masterBond(int n) { return masterBonds_[n]; }
+MasterIntra &CoreData::masterBond(int n) { return masterBonds_[n]; }
 
 // Return whether named master Bond parameters exist
-MasterIntra *CoreData::hasMasterBond(std::string_view name) const
+OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterBond(std::string_view name) const
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto *b = masterBonds_.first(); b != nullptr; b = b->next())
-        if (DissolveSys::sameString(trimmedName, b->name()))
+    for (auto &b : masterBonds_)
+        if (DissolveSys::sameString(trimmedName, b.name()))
             return b;
-    return nullptr;
+    return {};
+}
+
+// Return whether named master Bond parameters exist
+OptionalReferenceWrapper<MasterIntra> CoreData::hasMasterBond(std::string_view name)
+{
+    // Remove leading '@' if necessary
+    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
+
+    for (auto &b : masterBonds_)
+        if (DissolveSys::sameString(trimmedName, b.name()))
+            return b;
+    return {};
 }
 
 // Add new master Angle parameters
-MasterIntra *CoreData::addMasterAngle(std::string_view name)
+MasterIntra &CoreData::addMasterAngle(std::string_view name)
 {
     // Check for existence of master Angle already
     if (hasMasterAngle(name))
-    {
-        Messenger::error("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name);
-        return nullptr;
-    }
+        throw(std::runtime_error(
+            fmt::format("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name)));
 
     // OK to add new master Angle
-    MasterIntra *a = masterAngles_.add();
-    a->setName(name);
-    a->setType(SpeciesIntra::AngleInteraction);
+    MasterIntra a;
+    a.setName(name);
+    a.setType(SpeciesIntra::AngleInteraction);
+    masterAngles_.push_back(a);
 
-    return a;
+    return masterAngles_.back();
 }
 
 // Return number of master Angle parameters in list
-int CoreData::nMasterAngles() const { return masterAngles_.nItems(); }
+int CoreData::nMasterAngles() const { return masterAngles_.size(); }
 
 // Return list of master Angle parameters
-const List<MasterIntra> &CoreData::masterAngles() const { return masterAngles_; }
+const std::vector<MasterIntra> &CoreData::masterAngles() const { return masterAngles_; }
 
 // Return nth master Angle parameters
-MasterIntra *CoreData::masterAngle(int n) { return masterAngles_[n]; }
+MasterIntra &CoreData::masterAngle(int n) { return masterAngles_[n]; }
 
 // Return whether named master Angle parameters exist
-MasterIntra *CoreData::hasMasterAngle(std::string_view name) const
+OptionalReferenceWrapper<MasterIntra> CoreData::hasMasterAngle(std::string_view name)
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto *a = masterAngles_.first(); a != nullptr; a = a->next())
-        if (DissolveSys::sameString(trimmedName, a->name()))
+    for (auto &a : masterAngles_)
+        if (DissolveSys::sameString(trimmedName, a.name()))
             return a;
-    return nullptr;
+    return {};
+}
+
+// Return whether named master Angle parameters exist
+OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterAngle(std::string_view name) const
+{
+    // Remove leading '@' if necessary
+    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
+
+    for (auto &a : masterAngles_)
+        if (DissolveSys::sameString(trimmedName, a.name()))
+            return a;
+    return {};
 }
 
 // Add new master Torsion parameters
-MasterIntra *CoreData::addMasterTorsion(std::string_view name)
+MasterIntra &CoreData::addMasterTorsion(std::string_view name)
 {
     // Check for existence of master Torsion already
     if (hasMasterTorsion(name))
-    {
-        Messenger::error("Refused to add a new master Torsion named '{}' since one with the same name already exists.\n", name);
-        return nullptr;
-    }
+        throw(std::runtime_error(fmt::format(
+            "Refused to add a new master Torsion named '{}' since one with the same name already exists.\n", name)));
 
     // OK to add new master Torsion
-    MasterIntra *t = masterTorsions_.add();
-    t->setName(name);
-    t->setType(SpeciesIntra::TorsionInteraction);
+    masterTorsions_.emplace_back();
+    auto &t = masterTorsions_.back();
+    t.setName(name);
+    t.setType(SpeciesIntra::TorsionInteraction);
 
     return t;
 }
 
 // Return number of master Torsion parameters in list
-int CoreData::nMasterTorsions() const { return masterTorsions_.nItems(); }
+int CoreData::nMasterTorsions() const { return masterTorsions_.size(); }
 
 // Return list of master Torsion parameters
-const List<MasterIntra> &CoreData::masterTorsions() const { return masterTorsions_; }
+const std::vector<MasterIntra> &CoreData::masterTorsions() const { return masterTorsions_; }
 
 // Return nth master Torsion parameters
-MasterIntra *CoreData::masterTorsion(int n) { return masterTorsions_[n]; }
+MasterIntra &CoreData::masterTorsion(int n) { return masterTorsions_[n]; }
 
 // Return whether named master Torsion parameters exist
-MasterIntra *CoreData::hasMasterTorsion(std::string_view name) const
+OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterTorsion(std::string_view name) const
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto *t = masterTorsions_.first(); t != nullptr; t = t->next())
-        if (DissolveSys::sameString(trimmedName, t->name()))
+    for (auto &t : masterTorsions_)
+        if (DissolveSys::sameString(trimmedName, t.name()))
             return t;
-    return nullptr;
+    return {};
+}
+
+// Return whether named master Torsion parameters exist
+OptionalReferenceWrapper<MasterIntra> CoreData::hasMasterTorsion(std::string_view name)
+{
+    // Remove leading '@' if necessary
+    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
+
+    for (auto &t : masterTorsions_)
+        if (DissolveSys::sameString(trimmedName, t.name()))
+            return t;
+    return {};
 }
 
 // Add new master Improper parameters
-MasterIntra *CoreData::addMasterImproper(std::string_view name)
+MasterIntra &CoreData::addMasterImproper(std::string_view name)
 {
     // Check for existence of master Improper already
     if (hasMasterImproper(name))
-    {
-        Messenger::error("Refused to add a new master Improper named '{}' since one with the same name already exists.\n",
-                         name);
-        return nullptr;
-    }
+        throw(std::runtime_error(fmt::format(
+            "Refused to add a new master Improper named '{}' since one with the same name already exists.\n", name)));
 
     // OK to add new master Improper
-    MasterIntra *i = masterImpropers_.add();
-    i->setName(name);
-    i->setType(SpeciesIntra::ImproperInteraction);
+    masterImpropers_.emplace_back();
+    auto &i = masterImpropers_.back();
+    i.setName(name);
+    i.setType(SpeciesIntra::ImproperInteraction);
 
     return i;
 }
 
 // Return number of master Improper parameters in list
-int CoreData::nMasterImpropers() const { return masterImpropers_.nItems(); }
+int CoreData::nMasterImpropers() const { return masterImpropers_.size(); }
 
 // Return list of master Improper parameters
-const List<MasterIntra> &CoreData::masterImpropers() const { return masterImpropers_; }
+const std::vector<MasterIntra> &CoreData::masterImpropers() const { return masterImpropers_; }
 
 // Return nth master Improper parameters
-MasterIntra *CoreData::masterImproper(int n) { return masterImpropers_[n]; }
+MasterIntra &CoreData::masterImproper(int n) { return masterImpropers_[n]; }
 
 // Return whether named master Improper parameters exist
-MasterIntra *CoreData::hasMasterImproper(std::string_view name) const
+OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterImproper(std::string_view name) const
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
 
-    for (auto *t = masterImpropers_.first(); t != nullptr; t = t->next())
-        if (DissolveSys::sameString(trimmedName, t->name()))
-            return t;
-    return nullptr;
+    for (auto &i : masterImpropers_)
+        if (DissolveSys::sameString(trimmedName, i.name()))
+            return i;
+    return {};
+}
+
+// Return whether named master Improper parameters exist
+OptionalReferenceWrapper<MasterIntra> CoreData::hasMasterImproper(std::string_view name) 
+{
+    // Remove leading '@' if necessary
+    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
+
+    for (auto &i : masterImpropers_)
+        if (DissolveSys::sameString(trimmedName, i.name()))
+            return i;
+    return {};
 }
 
 // Return the named master term (of any form) if it exists
-MasterIntra *CoreData::findMasterTerm(std::string_view name) const
+OptionalReferenceWrapper<const MasterIntra> CoreData::findMasterTerm(std::string_view name) const
 {
-    // Remove leading '@' if necessary
-    std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
-
-    for (auto *b = masterBonds_.first(); b != nullptr; b = b->next())
-        if (DissolveSys::sameString(trimmedName, b->name()))
-            return b;
-    for (auto *a = masterAngles_.first(); a != nullptr; a = a->next())
-        if (DissolveSys::sameString(trimmedName, a->name()))
-            return a;
-    for (auto *t = masterTorsions_.first(); t != nullptr; t = t->next())
-        if (DissolveSys::sameString(trimmedName, t->name()))
-            return t;
-    for (auto *i = masterImpropers_.first(); i != nullptr; i = i->next())
-        if (DissolveSys::sameString(trimmedName, i->name()))
-            return i;
-
-    return nullptr;
+    OptionalReferenceWrapper<const MasterIntra> result;
+    result = hasMasterBond(name);
+    if (result)
+        return result;
+    result = hasMasterAngle(name);
+    if (result)
+        return result;
+    result = hasMasterTorsion(name);
+    if (result)
+        return result;
+    return hasMasterImproper(name);
 }
 
 // Clear all master terms

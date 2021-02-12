@@ -54,7 +54,7 @@ class Renderable : public ListItem<Renderable>
     // Set name of Renderable
     void setName(std::string_view name);
     // Return name of Renderable
-    std::string_view name();
+    std::string_view name() const;
     // Return type of Renderable
     RenderableType type() const;
 

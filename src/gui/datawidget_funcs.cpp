@@ -191,7 +191,7 @@ void DataWidget::on_ViewCopyToClipboardButton_clicked(bool checked) { dataViewer
  */
 
 // Data tree top-level item update function
-void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int topLevelItemIndex, RenderableGroup *data,
+void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int topLevelItemIndex, const RenderableGroup *data,
                                                 bool createItem)
 {
     QTreeWidgetItem *item;
@@ -216,7 +216,7 @@ void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int top
 }
 
 // Data tree item update function
-void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, Renderable *data, bool createItem)
+void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, const Renderable *data, bool createItem)
 {
     QTreeWidgetItem *item;
     if (createItem)

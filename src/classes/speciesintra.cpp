@@ -16,7 +16,7 @@ SpeciesIntra::SpeciesIntra()
     inCycle_ = false;
 }
 
-SpeciesIntra::SpeciesIntra(SpeciesIntra &source) { (*this) = source; }
+SpeciesIntra::SpeciesIntra(const SpeciesIntra &source) { (*this) = source; }
 
 SpeciesIntra &SpeciesIntra::operator=(const SpeciesIntra &source)
 {

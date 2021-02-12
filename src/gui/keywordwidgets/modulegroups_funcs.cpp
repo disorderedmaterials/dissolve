@@ -39,10 +39,10 @@ ModuleGroupsKeywordWidget::ModuleGroupsKeywordWidget(QWidget *parent, KeywordBas
  */
 
 // Selection table update function
-void ModuleGroupsKeywordWidget::updateSelectionRow(int row, Module *module, bool create)
+void ModuleGroupsKeywordWidget::updateSelectionRow(int row, const Module *module, bool create)
 {
     // Grab the target groups
-    auto &groups = keyword_->data();
+    ModuleGroups &groups = keyword_->data();
 
     QTableWidgetItem *item;
 

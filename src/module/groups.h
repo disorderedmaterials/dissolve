@@ -56,7 +56,7 @@ class ModuleGroups
     // Return reflist of all Modules present over all groups
     const RefDataList<Module, ModuleGroup *> &modules() const;
     // Return whether the specified Module is present (in any group)
-    bool contains(Module *module) const;
+    bool contains(const Module *module) const;
     // Return name of group assigned to specified Module (if present)
-    std::string_view groupName(Module *module) const;
+    std::string_view groupName(const Module *module) const;
 };

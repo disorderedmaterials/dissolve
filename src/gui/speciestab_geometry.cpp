@@ -33,7 +33,7 @@ std::vector<std::string> SpeciesTab::validAtomTypeNames(const QModelIndex &index
 }
 
 // SpeciesAtomTable row update function
-void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool createItems)
+void SpeciesTab::updateAtomTableRow(int row, const SpeciesAtom *speciesAtom, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -93,7 +93,7 @@ void SpeciesTab::updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool crea
 }
 
 // BondTable row update function
-void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool createItems)
+void SpeciesTab::updateBondTableRow(int row, const SpeciesBond *speciesBond, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -145,7 +145,7 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
 }
 
 // AngleTable row update function
-void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool createItems)
+void SpeciesTab::updateAngleTableRow(int row, const SpeciesAngle *speciesAngle, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -199,7 +199,7 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
 }
 
 // TorsionTable row update function
-void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, bool createItems)
+void SpeciesTab::updateTorsionTableRow(int row, const SpeciesTorsion *speciesTorsion, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -251,7 +251,7 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
 }
 
 // ImproperTable row update function
-void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImproper, bool createItems)
+void SpeciesTab::updateImproperTableRow(int row, const SpeciesImproper *speciesImproper, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -441,8 +441,8 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem *w)
             // If the text starts with an '@' then its a reference to a master term
             if (w->text().at(0) == '@')
             {
-                MasterIntra *master = dissolve_.coreData().hasMasterBond(qPrintable(w->text()));
-                speciesBond->setMasterParameters(master);
+                auto master = dissolve_.coreData().hasMasterBond(qPrintable(w->text()));
+                speciesBond->setMasterParameters(&master->get());
             }
             else
             {
@@ -501,8 +501,8 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem *w)
             // If the text starts with an '@' then its a reference to a master term
             if (w->text().at(0) == '@')
             {
-                MasterIntra *master = dissolve_.coreData().hasMasterAngle(qPrintable(w->text()));
-                speciesAngle->setMasterParameters(master);
+                auto master = dissolve_.coreData().hasMasterAngle(qPrintable(w->text()));
+                speciesAngle->setMasterParameters(&master->get());
             }
             else
             {
@@ -562,8 +562,8 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem *w)
             // If the text starts with an '@' then its a reference to a master term
             if (w->text().at(0) == '@')
             {
-                MasterIntra *master = dissolve_.coreData().hasMasterTorsion(qPrintable(w->text()));
-                speciesTorsion->setMasterParameters(master);
+                auto master = dissolve_.coreData().hasMasterTorsion(qPrintable(w->text()));
+                speciesTorsion->setMasterParameters(&master->get());
             }
             else
             {
@@ -623,8 +623,8 @@ void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem *w)
             // If the text starts with an '@' then its a reference to a master term
             if (w->text().at(0) == '@')
             {
-                MasterIntra *master = dissolve_.coreData().hasMasterImproper(qPrintable(w->text()));
-                speciesImproper->setMasterParameters(master);
+                auto master = dissolve_.coreData().hasMasterImproper(qPrintable(w->text()));
+                speciesImproper->setMasterParameters(&master->get());
             }
             else
             {

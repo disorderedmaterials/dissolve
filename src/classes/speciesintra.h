@@ -20,7 +20,7 @@ class SpeciesIntra
     public:
     SpeciesIntra();
     virtual ~SpeciesIntra() = default;
-    SpeciesIntra(SpeciesIntra &source);
+    SpeciesIntra(const SpeciesIntra &source);
     SpeciesIntra(SpeciesIntra &&source) = delete;
     SpeciesIntra &operator=(const SpeciesIntra &source);
     SpeciesIntra &operator=(SpeciesIntra &&source) = delete;

@@ -107,7 +107,7 @@ class ImportSpeciesWizard : public WizardWidget
 
     private:
     // Row update function for MasterTermsTree
-    void updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, MasterIntra *masterIntra, bool createItem);
+    void updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, const MasterIntra *masterIntra, bool createItem);
     void updateMasterTermsPage();
 
     private slots:

@@ -357,7 +357,7 @@ void ImportSpeciesWizard::on_AtomTypesSuffixButton_clicked(bool checked)
  */
 
 // Row update function for MasterTermsList
-void ImportSpeciesWizard::updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, MasterIntra *masterIntra,
+void ImportSpeciesWizard::updateMasterTermsTreeChild(QTreeWidgetItem *parent, int childIndex, const MasterIntra *masterIntra,
                                                      bool createItem)
 {
     QTreeWidgetItem *item;
@@ -391,23 +391,20 @@ void ImportSpeciesWizard::updateMasterTermsPage()
 
     // Determine whether we have any naming conflicts
     auto conflicts = false;
-    ListIterator<MasterIntra> bondIterator(temporaryCoreData_.masterBonds());
-    while (MasterIntra *intra = bondIterator.iterate())
-        if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+    for (auto &intra : temporaryCoreData_.masterBonds())
+        if (dissolveReference_->coreData().findMasterTerm(intra.name()))
         {
             conflicts = true;
             break;
         }
-    ListIterator<MasterIntra> angleIterator(temporaryCoreData_.masterAngles());
-    while (MasterIntra *intra = angleIterator.iterate())
-        if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+    for (auto &intra : temporaryCoreData_.masterAngles())
+        if (dissolveReference_->coreData().findMasterTerm(intra.name()))
         {
             conflicts = true;
             break;
         }
-    ListIterator<MasterIntra> torsionIterator(temporaryCoreData_.masterTorsions());
-    while (MasterIntra *intra = torsionIterator.iterate())
-        if (dissolveReference_->coreData().findMasterTerm(intra->name()))
+    for (auto &intra : temporaryCoreData_.masterTorsions())
+        if (dissolveReference_->coreData().findMasterTerm(intra.name()))
         {
             conflicts = true;
             break;

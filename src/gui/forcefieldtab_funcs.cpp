@@ -123,7 +123,7 @@ bool ForcefieldTab::canClose() const { return false; }
  */
 
 // Row update function for BondsTable
-void ForcefieldTab::updateBondsTableRow(int row, MasterIntra *masterBond, bool createItems)
+void ForcefieldTab::updateBondsTableRow(int row, const MasterIntra *masterBond, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -166,7 +166,7 @@ void ForcefieldTab::updateBondsTableRow(int row, MasterIntra *masterBond, bool c
 }
 
 // Row update function for AnglesTable
-void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra *masterAngle, bool createItems)
+void ForcefieldTab::updateAnglesTableRow(int row, const MasterIntra *masterAngle, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -208,7 +208,7 @@ void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra *masterAngle, bool
 }
 
 // Row update function for TorsionsTable
-void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra *masterTorsion, bool createItems)
+void ForcefieldTab::updateTorsionsTableRow(int row, const MasterIntra *masterTorsion, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -251,7 +251,7 @@ void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra *masterTorsion, 
 }
 
 // Row update function for ImpropersTable
-void ForcefieldTab::updateImpropersTableRow(int row, MasterIntra *masterImproper, bool createItems)
+void ForcefieldTab::updateImpropersTableRow(int row, const MasterIntra *masterImproper, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -359,7 +359,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
 }
 
 // Row update function for PairPotentialsTable
-void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential *pairPotential, bool createItems)
+void ForcefieldTab::updatePairPotentialsTableRow(int row, const PairPotential *pairPotential, bool createItems)
 {
     QTableWidgetItem *item;
 
