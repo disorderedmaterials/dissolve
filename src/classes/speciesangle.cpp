@@ -225,7 +225,7 @@ double SpeciesAngle::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::InteractionType SpeciesAngle::type() const { return SpeciesIntra::AngleInteraction; }
+SpeciesIntra::InteractionType SpeciesAngle::type() const { return SpeciesIntra::InteractionType::Angle; }
 
 // Return energy for specified angle
 double SpeciesAngle::energy(double angleInDegrees) const

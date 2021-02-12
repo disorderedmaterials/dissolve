@@ -263,7 +263,7 @@ double SpeciesTorsion::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::InteractionType SpeciesTorsion::type() const { return SpeciesIntra::TorsionInteraction; }
+SpeciesIntra::InteractionType SpeciesTorsion::type() const { return SpeciesIntra::InteractionType::Torsion; }
 
 // Return energy for specified angle and functional form, given supplied parameters
 double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector<double> &params)

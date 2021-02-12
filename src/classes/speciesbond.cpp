@@ -252,7 +252,7 @@ double SpeciesBond::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::InteractionType SpeciesBond::type() const { return SpeciesIntra::BondInteraction; }
+SpeciesIntra::InteractionType SpeciesBond::type() const { return SpeciesIntra::InteractionType::Bond; }
 
 // Return energy for specified distance
 double SpeciesBond::energy(double distance) const

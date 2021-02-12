@@ -24,18 +24,20 @@ class SpeciesIntra
     SpeciesIntra(SpeciesIntra &&source) = delete;
     SpeciesIntra &operator=(const SpeciesIntra &source);
     SpeciesIntra &operator=(SpeciesIntra &&source) = delete;
-    // Interaction Type
-    enum InteractionType
-    {
-        BondInteraction,    /* Interaction is a bond between two atoms in the same molecule */
-        AngleInteraction,   /* Interaction is an angle between three atoms in the same molecule */
-        TorsionInteraction, /* Interaction is a torsion between four atoms in the same molecule */
-        ImproperInteraction /* Interaction is an improper torsion between four atoms in the same molecule */
-    };
 
     /*
      * Interaction Parameters
      */
+    public:
+    // Interaction Type
+    enum class InteractionType
+    {
+        Bond,       /* Interaction is a bond between two atoms  */
+        Angle,      /* Interaction is an angle between three atoms */
+        Torsion,    /* Interaction is a torsion between four atoms */
+        Improper    /* Interaction is an improper torsion between four atoms */
+    };
+
     protected:
     // Linked master from which parameters should be taken (if relevant)
     MasterIntra *masterParameters_;

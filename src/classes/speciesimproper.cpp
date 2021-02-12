@@ -271,7 +271,7 @@ double SpeciesImproper::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::InteractionType SpeciesImproper::type() const { return SpeciesIntra::ImproperInteraction; }
+SpeciesIntra::InteractionType SpeciesImproper::type() const { return SpeciesIntra::InteractionType::Improper; }
 
 // Return energy for specified angle
 double SpeciesImproper::energy(double angleInDegrees) const
