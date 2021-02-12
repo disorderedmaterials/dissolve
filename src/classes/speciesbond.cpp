@@ -2,11 +2,9 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/speciesbond.h"
-#include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/speciesatom.h"
 #include "data/atomicmasses.h"
-#include "templates/enumhelpers.h"
 
 SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra()
 {

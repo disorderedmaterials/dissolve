@@ -2,11 +2,8 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/speciesimproper.h"
-#include "base/processpool.h"
-#include "base/sysfunc.h"
 #include "classes/speciesatom.h"
 #include "classes/speciestorsion.h"
-#include "templates/enumhelpers.h"
 
 SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) : SpeciesIntra()
 {

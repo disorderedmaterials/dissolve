@@ -2,10 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/speciesangle.h"
-#include "base/processpool.h"
-#include "base/sysfunc.h"
 #include "classes/speciesatom.h"
-#include "templates/enumhelpers.h"
 
 SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : SpeciesIntra()
 {
