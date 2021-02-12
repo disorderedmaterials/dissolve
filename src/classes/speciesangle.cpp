@@ -258,7 +258,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
          * 2 : Equilibrium angle, eq (degrees)
          * 3 : Sign, s
          */
-        return params[0] * (1.0 + params[3] * cos(params[1] * angleInDegrees / DEGRAD - params[2]));
+        return params[0] * (1.0 + params[3] * cos(params[1] * angleInDegrees / DEGRAD - params[2] / DEGRAD));
     }
     else if (form() == SpeciesAngle::Cos2Form)
     {
