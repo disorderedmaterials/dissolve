@@ -276,11 +276,7 @@ SpeciesAngle &Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
     }
 
     // OK to add new angle
-
-    // We can't use emplace_back since SpeciesAngle needs
-    // to dereference its `this` pointer in the constructor
-    // to update the SpeciesAtoms.
-    angles_.push_back(std::move(SpeciesAngle(i, j, k)));
+    angles_.emplace_back(i, j, k);
 
     ++version_;
 
