@@ -232,9 +232,9 @@ bool Forcefield_UFF::setUp()
          3.8882, 3.475, 0.0, 0.0},
         {Elements::Lr, 127, "Lr6+3", "", "Lawrencium (octahedral, oxidation state +3)", 1.6980, 90.00, 3.2360, 0.0110, 12.000,
          3.8882, 3.5, 1.0, 1.0},
-        {Elements::C, 200, "C_am", "nbonds=3,-O(nbonds=1),-N", "Carbon (amide)", 0.7290, 120.00, 3.8510, 0.1050, 12.730, 1.9120,
-         5.343, 0.0, 2.0},
-        {Elements::N, 201, "N_am", "nbonds=3,-C(-O(nbonds=1))", "Nitrogen (amide)", 0.6990, 120.00, 3.6600, 0.0690, 13.407,
+        {Elements::C, 200, "C_amR", "nbonds=3,-O(nbonds=1),-N", "Carbon (amide)", 0.7290, 120.00, 3.8510, 0.1050, 12.730,
+         1.9120, 5.343, 0.0, 2.0},
+        {Elements::N, 201, "N_amR", "nbonds=3,-C(-O(nbonds=1))", "Nitrogen (amide)", 0.6990, 120.00, 3.6600, 0.0690, 13.407,
          2.5438, 6.899, 0.0, 2.0}
 
     };
@@ -360,7 +360,7 @@ double Forcefield_UFF::bondOrderCorrection(const UFFAtomType &i, const UFFAtomTy
 
     // Determine bond order, recognising special case for the C-N amide bond
     auto bondOrder = 1.0;
-    if ((i.name() == "C_am" && j.name() == "N_am") || (i.name() == "N_am" && j.name() == "C_am"))
+    if ((i.name() == "C_amR" && j.name() == "N_amR") || (i.name() == "N_amR" && j.name() == "C_amR"))
         bondOrder = 1.41;
     else if (i.name().back() == 'R' && j.name().back() == 'R')
         bondOrder = 1.5;
