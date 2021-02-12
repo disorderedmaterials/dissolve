@@ -410,44 +410,27 @@ bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, cons
 bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle &angle, const UFFAtomType &i, const UFFAtomType &j,
                                        const UFFAtomType &k) const
 {
-    // rBO : Bond-order correction = -0.1332 * (ri + rj) * ln(n)  (eq 3)
-    // We need the bond orders of the involved bonds...
-    const auto &ijRef = sp->getBond(angle.i(), angle.j());
-    if (!ijRef)
-        return Messenger::error("Can't locate bond i-j for bond order retrieval.\n");
-    const auto &jkRef = sp->getBond(angle.j(), angle.k());
-    if (!jkRef)
-        return Messenger::error("Can't locate bond j-k for bond order retrieval.\n");
-
-    const SpeciesBond &ij = *ijRef;
-    const SpeciesBond &jk = *jkRef;
-    const auto sumrij = i.r() + j.r();
-    const auto sumrjk = j.r() + k.r();
-    const auto rBOij = -0.1332 * sumrij * log(ij.bondOrder());
-    const auto rBOjk = -0.1332 * sumrjk * log(jk.bondOrder());
-
-    // rEN : Electronegativity correction : ri*rj * (sqrt(Xi)-sqrt(Xj))**2 / (Xi*ri + Xj*rj)    (eq 4)
-    const auto chiij = sqrt(i.chi()) - sqrt(j.chi());
-    const auto rENij = i.r() * j.r() * chiij * chiij / (i.chi() * i.r() + j.chi() * j.r());
-    const auto chijk = sqrt(j.chi()) - sqrt(k.chi());
-    const auto rENjk = j.r() * k.r() * chijk * chijk / (j.chi() * j.r() + k.chi() * k.r());
+    // Get bond order and electronegativity corrections for the two bonds
+    const auto rBOij = bondOrderCorrection(i, j);
+    const auto rBOjk = bondOrderCorrection(j, k);
+    const auto rENij = electronegativityCorrection(i, j);
+    const auto rENjk = electronegativityCorrection(j, k);
 
     // rij : Equilibrium distance : = ri + rj + rBO - rEN  (eq 2)
     // Note: In the original paper  rij = ri + rj + rBO + rEN, but Marcus Martin (MCCCS Towhee) notes that the last term
     // should be subtracted
-    double rij = sumrij + rBOij - rENij;
-    double rjk = sumrjk + rBOjk - rENjk;
+    double rij = i.r() + j.r() + rBOij - rENij;
+    double rjk = j.r() + k.r() + rBOjk - rENjk;
 
     // Get theta for the central atom
-    const auto theta = j.theta();
-    const auto cosTheta = cos(theta);
+    const auto theta = j.theta() / DEGRAD;
+    const auto cosTheta = cos(theta), sinTheta = sin(theta);
 
     // Determine rik2 and rik5 values
     // rik2 = rij**2 + rjk**2 - 2 * rij * rjk * cos(theta)
-    const auto rik2 = rij * rij + rjk * rjk - 2.0 * rij * rjk * cosTheta;
-    const auto rik5 = rik2 * rik2 * sqrt(rik2);
-    const auto forcek = 664.12 * 4.184 * (i.effectiveCharge() * k.effectiveCharge() / rik5) *
-                        (3.0 * rij * rjk * (1.0 - cosTheta * cosTheta) - rik2 * cosTheta);
+    const auto rik = sqrt(rij * rij + rjk * rjk - 2.0 * rij * rjk * cosTheta);
+    const auto kijk = 664.12 * (i.effectiveCharge() * k.effectiveCharge() / pow(rik, 5.0)) *
+                      (3.0 * rij * rjk * (1.0 - cosTheta * cosTheta) - rik * rik * cosTheta);
 
     // To determine angle form and necessary coefficients, use 'geom' integer data (which represents the third letter of the
     // atom name. This idea is shamelessly stolen from MCCCS Towhee!
@@ -466,20 +449,20 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle &angle, c
         n = 4;
     else
     {
-        // General nonlinear case:  U(theta) = forcek * (C0 + C1 * cos(theta) + C2 * cos(2*theta))
-        const auto c2 = 1.0 / (4.0 * sin(theta) * sin(theta));
+        // General nonlinear case:  U(theta) = kijk * (C0 + C1 * cos(theta) + C2 * cos(2*theta))
+        const auto c2 = 1.0 / (4.0 * sinTheta * sinTheta);
         const auto c1 = -4.0 * c2 * cosTheta;
         const auto c0 = c2 * (2.0 * cosTheta * cosTheta + 1.0);
 
         angle.setForm(SpeciesAngle::Cos2Form);
-        angle.setParameters({forcek, c0, c1, c2});
+        angle.setParameters({kijk * 4.184, c0, c1, c2});
 
         return true;
     }
 
     // Setup terms for the specific case (n != 0)
     angle.setForm(SpeciesAngle::CosineForm);
-    angle.setParameters({forcek / (n * n), n, 0.0, -1.0});
+    angle.setParameters({4.184 * kijk / (n * n), n, 0.0, -1.0});
 
     return true;
 }
