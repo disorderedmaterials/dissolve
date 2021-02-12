@@ -12,9 +12,7 @@ class SpeciesAtom;
 class Species;
 class MasterIntra;
 
-/*
- * SpeciesIntra Definition
- */
+// Base class for intramolecular interactions within Species
 class SpeciesIntra
 {
     public:
