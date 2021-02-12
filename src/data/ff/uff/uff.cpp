@@ -475,11 +475,6 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion &tors
      *  g) everything else (no torsional barrier)
      */
 
-    // 	# The original formula in the paper is given as a sum over cosine terms, but this reduces to: 0.5 * V * (1 -
-    // cos(n*eq) * cos(n*phi)) 	# Aten's single cosine potential has the form: forcek * (1 + s*cos(period*phi - eq)) #
-    // Therefore: forcek = 0.5 * V 	#		  s = -cos(n*eq) 	#	     period = n 	#
-    // eq = 0.0
-
     const auto groupJ = Elements::group(j.Z());
     const auto groupK = Elements::group(k.Z());
 
