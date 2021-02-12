@@ -15,8 +15,7 @@ class UFFAtomType : public ForcefieldAtomType
     public:
     UFFAtomType(Elements::Element Z = Elements::Unknown, int index = -1, std::string_view name = "", std::string_view neta = "",
                 std::string_view description = "", double r = 0.0, double theta = 0.0, double x = 0.0, double D = 0.0,
-                double zeta = 0.0, double effectiveCharge = 0.0, double chi = 0.0, int geom = 0, double V = 0.0,
-                double U = 0.0);
+                double zeta = 0.0, double effectiveCharge = 0.0, double chi = 0.0, double V = 0.0, double U = 0.0);
     UFFAtomType &operator=(const UFFAtomType &source);
 
     /*
@@ -25,7 +24,6 @@ class UFFAtomType : public ForcefieldAtomType
     private:
     // Generator parameters
     double r_, theta_, x_, D_, zeta_, effectiveCharge_, chi_, V_, U_;
-    int geom_;
 
     public:
     // Return single bond radius (r, Angstroms)
@@ -46,6 +44,4 @@ class UFFAtomType : public ForcefieldAtomType
     double V() const;
     // Return torsional parameter 2 (U)
     double U() const;
-    // Return integer representing geometry about the type (geom)
-    int geom() const;
 };
