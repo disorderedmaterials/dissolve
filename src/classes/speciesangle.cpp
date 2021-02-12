@@ -244,7 +244,7 @@ double SpeciesAngle::energy(double angleInDegrees) const
          * 0 : Force constant, k
          * 1 : Equilibrium angle, eq (degrees)
          */
-        double delta = (angleInDegrees - params[1]) / DEGRAD;
+        const auto delta = (angleInDegrees - params[1]) / DEGRAD;
         return 0.5 * params[0] * delta * delta;
     }
     else if (form() == SpeciesAngle::CosineForm)
