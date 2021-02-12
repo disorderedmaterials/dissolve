@@ -34,19 +34,6 @@ class SpeciesIntra
     };
 
     /*
-     * Basic Data
-     */
-    protected:
-    // Parent Species
-    Species *parent_;
-
-    public:
-    // Set parent Species
-    void setParent(Species *parent);
-    // Return parent Species
-    Species *parent() const;
-
-    /*
      * Interaction Parameters
      */
     protected:

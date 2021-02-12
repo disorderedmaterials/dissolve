@@ -9,8 +9,6 @@
 
 SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) : SpeciesIntra()
 {
-
-    parent_ = nullptr;
     i_ = i;
     j_ = j;
     k_ = k;

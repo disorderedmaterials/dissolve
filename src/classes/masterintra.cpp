@@ -7,7 +7,6 @@
 
 MasterIntra::MasterIntra() : SpeciesIntra()
 {
-    parent_ = nullptr;
     masterParameters_ = nullptr;
 }
 
