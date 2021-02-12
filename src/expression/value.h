@@ -13,21 +13,23 @@ class ExpressionValue
 {
     public:
     ExpressionValue();
-    ExpressionValue(int value, bool fixedType = true);
-    ExpressionValue(double value, bool fixedType = true);
-    ~ExpressionValue();
+    ExpressionValue(int value);
+    ExpressionValue(double value);
+    ~ExpressionValue() = default;
     ExpressionValue(const ExpressionValue &source);
-    void operator=(const ExpressionValue &source);
+    ExpressionValue &operator=(const ExpressionValue &source);
+    ExpressionValue &operator=(int i);
+    ExpressionValue &operator=(double d);
 
     /*
      * Data
      */
     public:
     // Value Type
-    enum ValueType
+    enum class ValueType
     {
-        IntegerType,
-        DoubleType
+        Integer,
+        Double
     };
 
     private:
@@ -43,8 +45,6 @@ class ExpressionValue
     public:
     // Return the current result type
     ValueType type() const;
-    void operator=(int i);
-    void operator=(double d);
     // Return as integer (regardless of current type)
     int asInteger() const;
     // Return as double (regardless of current type)
