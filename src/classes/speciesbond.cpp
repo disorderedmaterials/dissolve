@@ -301,6 +301,8 @@ double SpeciesBond::force(double distance) const
     else if (form() == SpeciesBond::HarmonicForm)
     {
         /*
+         * V = -k * (r - eq)
+         *
          * Parameters:
          * 0 : force constant
          * 1 : equilibrium distance
@@ -317,7 +319,7 @@ double SpeciesBond::force(double distance) const
          * 1 : equilibrium distance
          * 2 : omega squared (LOCAL parameter)
          */
-        return -2.0 * params[0] * (distance - params[1]);
+        return -2.0 * params[0] * (distance - params[1]) / params[2];
     }
 
     Messenger::error("Functional form of SpeciesBond term not accounted for, so can't calculate force.\n");
