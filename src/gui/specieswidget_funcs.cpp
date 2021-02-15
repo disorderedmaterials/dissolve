@@ -22,7 +22,7 @@ SpeciesWidget::SpeciesWidget(QWidget *parent) : QWidget(parent)
     // Connect signals / slots
     connect(ui_.SpeciesView, SIGNAL(dataModified()), this, SLOT(notifyDataModified()));
     connect(ui_.SpeciesView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));
-    connect(ui_.SpeciesView, SIGNAL(atomSelectionChanged()), this, SLOT(updateStatusBar()));
+    connect(ui_.SpeciesView, SIGNAL(atomsChanged()), this, SLOT(updateStatusBar()));
 
     // Make sure our controls are consistent with the underlying viewer / data
     updateToolbar();

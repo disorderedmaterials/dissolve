@@ -4,7 +4,7 @@
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/species.h"
-#include "data/atomicradius.h"
+#include "data/atomicradii.h"
 #include <algorithm>
 
 /*
@@ -110,10 +110,78 @@ SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
 SpeciesBond &Species::addBond(int i, int j) { return addBond(atoms_[i], atoms_[j]); }
 
 // Remove bond between specified SpeciesAtoms
-void Species::removeBond(SpeciesAtom *i, SpeciesAtom *j)
+void Species::removeBond(SpeciesAtom *j, SpeciesAtom *k)
 {
-    auto it = std::remove_if(bonds_.begin(), bonds_.end(), [i, j](const auto &bond) { return bond.matches(i, j); });
-    std::for_each(it, bonds_.end(), [](auto &bond) { bond.detach(); });
+    angles_.clear();
+    torsions_.clear();
+    impropers_.clear();
+    auto it = std::remove_if(bonds_.begin(), bonds_.end(), [j, k](const auto &bond) { return bond.matches(j, k); });
+    if (it != bonds_.end())
+        ++version_;
+    std::for_each(it, bonds_.end(), [&, j, k](auto &jk) {
+        // Remove any higher-order terms that contain this bond
+
+        // Loop over bonds 'ij'
+        for (SpeciesBond &ij : j->bonds())
+        {
+            // Avoid 'ij' == 'jk'
+            if (&ij == &jk)
+                continue;
+
+            // Get atom 'i'
+            auto *i = ij.partner(j);
+
+            // Remove angle term 'ijk' if it exists
+            auto ijkIt =
+                std::remove_if(angles_.begin(), angles_.end(), [&, i, j, k](auto &angle) { return angle.matches(i, j, k); });
+            if (ijkIt != angles_.end())
+                angles_.erase(ijkIt);
+
+            // Loop over bonds 'kl'
+            for (SpeciesBond &kl : k->bonds())
+            {
+                // Avoid 'kl' == 'jk'
+                if (&kl == &jk)
+                    continue;
+
+                // Get atom 'l'
+                auto *l = kl.partner(k);
+
+                // Remove angle term 'jkl' if it exists
+                auto jklIt = std::remove_if(angles_.begin(), angles_.end(),
+                                            [&, j, k, l](auto &angle) { return angle.matches(j, k, l); });
+                if (jklIt != angles_.end())
+                    angles_.erase(jklIt);
+
+                // Remove torsion term 'ijkl' if it exists
+                auto torsionIt = std::remove_if(torsions_.begin(), torsions_.end(),
+                                                [&, i, j, k, l](auto &torsion) { return torsion.matches(i, j, k, l); });
+                if (torsionIt != torsions_.end())
+                    torsions_.erase(torsionIt);
+            }
+
+            // Loop over bonds 'jl'
+            for (SpeciesBond &jl : j->bonds())
+            {
+                // Avoid 'jl' == 'ij' and 'jl' == 'jk'
+                if (&jl == &ij || &jl == &jk)
+                    continue;
+
+                auto *l = jl.partner(j);
+
+                // Remove improper term 'ijkl' if it exists
+                auto improperIt = std::remove_if(impropers_.begin(), impropers_.end(),
+                                                 [&, i, j, k, l](auto &improper) { return improper.matches(i, j, k, l); });
+                if (improperIt != impropers_.end())
+                    impropers_.erase(improperIt);
+            }
+        }
+
+        // Finally, detach the bond from its atoms
+        jk.detach();
+    });
+
+    // Erase the now-redundant objects from the vector
     bonds_.erase(it);
 }
 
@@ -183,7 +251,7 @@ void Species::addMissingBonds(double tolerance)
     {
         // Get SpeciesAtom 'i' and its radius
         SpeciesAtom *i = atoms[indexI];
-        radiusI = AtomicRadius::radius(i->element());
+        radiusI = AtomicRadii::radius(i->Z());
         for (auto indexJ = indexI + 1; indexJ < nAtoms(); ++indexJ)
         {
             // Get SpeciesAtom 'j'
@@ -197,7 +265,7 @@ void Species::addMissingBonds(double tolerance)
             vij = j->r() - i->r();
 
             // Compare distance to sum of atomic radii (multiplied by tolerance factor)
-            if (vij.magnitude() <= (radiusI + AtomicRadius::radius(j->element())) * tolerance)
+            if (vij.magnitude() <= (radiusI + AtomicRadii::radius(j->Z())) * tolerance)
                 addBond(i, j);
         }
     }
@@ -514,4 +582,7 @@ void Species::detachFromMasterTerms()
 
     for (auto &torsion : torsions_)
         torsion.detachFromMasterIntra();
+
+    for (auto &improper : impropers_)
+        improper.detachFromMasterIntra();
 }

@@ -103,7 +103,7 @@ linkTitle = "Packages"
 {{< /blocks/section >}}
 
 {{< blocks/section color="white" >}}
-<a href="https://github.com/disorderedmaterials/dissolve/releases/download/0.6.1">Version 0.6.1, release 18th March 2020</a>
+{{< include "./static/include/old_releases.md" >}}
 {{< /blocks/section >}}
 
 {{< blocks/section color="white" >}}

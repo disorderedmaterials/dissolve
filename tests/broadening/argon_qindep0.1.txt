@@ -45,7 +45,6 @@ Module  NeutronSQ
 EndModule
 
 Module DataTest
-  Threshold  0.5
   Data1D  'NeutronSQ01//WeightedSQ//Total'  xy  '../_data/epsr25/argon10000_qindep0.1/argon.EPSR.u01'
     Y  2
   EndData1D

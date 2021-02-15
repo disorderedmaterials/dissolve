@@ -13,9 +13,10 @@ SpeciesViewer::SpeciesViewer(QWidget *parent) : BaseViewer(parent)
     speciesRenderable_ = nullptr;
 
     // Interaction
-    setInteractionMode(SpeciesViewer::DefaultInteraction);
+    setInteractionMode(SpeciesViewer::InteractionMode::Select);
+    transientInteractionMode_ = SpeciesViewer::TransientInteractionMode::None;
     clickedAtom_ = nullptr;
-    drawElement_ = &Elements::element(ELEMENT_C);
+    drawElement_ = Elements::H;
 
     // Set up the view
     view_.setViewType(View::NormalView);
@@ -51,7 +52,7 @@ void SpeciesViewer::setSpecies(Species *sp)
     }
 
     // Send relevant signals
-    emit(atomSelectionChanged());
+    emit(atomsChanged());
 }
 
 // Return target Species

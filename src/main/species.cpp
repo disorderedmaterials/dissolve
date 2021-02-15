@@ -54,9 +54,9 @@ void Dissolve::copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom
     auto at = findAtomType(sourceAtom->atomType()->name());
     if (!at)
     {
-        at = addAtomType(sourceAtom->element());
+        at = addAtomType(sourceAtom->Z());
         at->setName(sourceAtom->atomType()->name());
-        at->parameters() = sourceAtom->atomType()->parameters();
+        at->setShortRangeParameters(sourceAtom->atomType()->shortRangeParameters());
         at->setShortRangeType(sourceAtom->atomType()->shortRangeType());
     }
 
@@ -142,7 +142,7 @@ Species *Dissolve::copySpecies(const Species *species)
     while (SpeciesAtom *i = atomIterator.iterate())
     {
         // Create the Atom in our new Species
-        SpeciesAtom *newAtom = newSpecies->addAtom(i->element(), i->r(), i->charge());
+        SpeciesAtom *newAtom = newSpecies->addAtom(i->Z(), i->r(), i->charge());
         if (i->isSelected())
             newSpecies->selectAtom(newAtom);
 

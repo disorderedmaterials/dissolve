@@ -5,6 +5,7 @@
 #include "math/data1d.h"
 #include "math/data2d.h"
 #include "math/data3d.h"
+#include "templates/algorithms.h"
 #include "templates/array.h"
 #include <numeric>
 
@@ -23,11 +24,9 @@ double Integrator::trapezoid(const Data1D &data)
     const auto &x = data.xAxis();
     const auto &y = data.values();
 
-    double total = 0.0, y0 = y.front(), y1, x0 = x.front(), x1;
-    for (auto n = 1; n < x.size(); ++n)
+    auto total = 0.0, y0 = y.front(), x0 = x.front();
+    for (auto &&[x1, y1] : zip(x, y))
     {
-        x1 = x[n];
-        y1 = y[n];
         total += (x1 - x0) * (y0 + y1) * 0.5;
         x0 = x1;
         y0 = y1;
@@ -46,13 +45,10 @@ double Integrator::trapezoid(const Data1D &data, double xMin, double xMax)
     const auto &x = data.xAxis();
     const auto &y = data.values();
 
-    double total = 0.0, y0, y1, x0, x1;
+    double total = 0.0, y0 = 0.0, x0 = 0.0;
     auto nPoints = 0;
-    for (auto n = 0; n < x.size(); ++n)
+    for (auto &&[x1, y1] : zip(x, y))
     {
-        // Get current x and y values and check limit
-        x1 = x[n];
-        y1 = y[n];
         if (x1 < xMin)
             continue;
         if (x1 > xMax)
@@ -89,11 +85,9 @@ double Integrator::absTrapezoid(const Data1D &data)
     const auto &x = data.xAxis();
     const auto &y = data.values();
 
-    double total = 0.0, y0 = y.front(), y1, x0 = x.front(), x1;
-    for (auto n = 1; n < x.size(); ++n)
+    auto total = 0.0, y0 = y.front(), x0 = x.front();
+    for (auto &&[x1, y1] : zip(x, y))
     {
-        x1 = x[n];
-        y1 = y[n];
         total += fabs((x1 - x0) * (y0 + y1) * 0.5);
         x0 = x1;
         y0 = y1;
@@ -107,7 +101,7 @@ double Integrator::sum(const Data1D &data)
     // Grab data array
     const auto &values = data.values();
 
-    double total = 0.0;
+    auto total = 0.0;
 
     for (auto n = 0; n < values.size(); ++n)
         total += values[n];
@@ -122,16 +116,16 @@ double Integrator::sum(const Data1D &data, double xMin, double xMax)
     const auto &x = data.xAxis();
     const auto &values = data.values();
 
-    double total = 0.0;
+    auto total = 0.0;
 
-    for (auto n = 0; n < values.size(); ++n)
+    for (auto &&[xn, value] : zip(x, values))
     {
-        if (x[n] < xMin)
+        if (xn < xMin)
             continue;
-        if (x[n] > xMax)
+        if (xn > xMax)
             break;
 
-        total += values[n];
+        total += value;
     }
 
     return total;
@@ -146,7 +140,7 @@ double Integrator::absSum(const Data1D &data)
     // Grab data array
     const auto &values = data.values();
 
-    double total = 0.0;
+    auto total = 0.0;
 
     for (auto n = 0; n < values.size(); ++n)
         total += fabs(values[n]);
@@ -161,16 +155,16 @@ double Integrator::absSum(const Data1D &data, double xMin, double xMax)
     const auto &x = data.xAxis();
     const auto &values = data.values();
 
-    double total = 0.0;
+    auto total = 0.0;
 
-    for (auto n = 0; n < values.size(); ++n)
+    for (auto &&[xn, value] : zip(x, values))
     {
-        if (x[n] < xMin)
+        if (xn < xMin)
             continue;
-        if (x[n] > xMax)
+        if (xn > xMax)
             break;
 
-        total += fabs(values[n]);
+        total += fabs(value);
     }
 
     return total;
@@ -185,7 +179,7 @@ double Integrator::sumOfSquares(const Data1D &data)
     // Grab data array
     const auto &values = data.values();
 
-    double total = 0.0;
+    auto total = 0.0;
 
     for (auto n = 0; n < values.size(); ++n)
         total += values[n] * values[n];
@@ -200,16 +194,16 @@ double Integrator::sumOfSquares(const Data1D &data, double xMin, double xMax)
     const auto &x = data.xAxis();
     const auto &values = data.values();
 
-    double total = 0.0;
+    auto total = 0.0;
 
-    for (auto n = 0; n < values.size(); ++n)
+    for (auto &&[xn, value] : zip(x, values))
     {
-        if (x[n] < xMin)
+        if (xn < xMin)
             continue;
-        if (x[n] > xMax)
+        if (xn > xMax)
             break;
 
-        total += values[n] * values[n];
+        total += value * value;
     }
 
     return total;

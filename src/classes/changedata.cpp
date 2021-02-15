@@ -6,7 +6,7 @@
 #include "classes/atom.h"
 #include "classes/cell.h"
 
-ChangeData::ChangeData() : atom_(nullptr), cell_(nullptr), moved_(false) {}
+ChangeData::ChangeData() : atom_(nullptr), moved_(false), cell_(nullptr) {}
 
 /*
  * Target Data
@@ -15,13 +15,8 @@ ChangeData::ChangeData() : atom_(nullptr), cell_(nullptr), moved_(false) {}
 // Set target atom
 void ChangeData::setAtom(std::shared_ptr<Atom> i)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::print("NULL_POINTER - nullptr passed to ChangeData::setAtom().\n");
-        return;
-    }
-#endif
+    assert(i != nullptr);
+
     atom_ = i;
     moved_ = false;
     r_ = atom_->r();

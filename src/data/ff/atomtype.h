@@ -3,28 +3,22 @@
 
 #pragma once
 
-#include "base/parameters.h"
 #include "data/elements.h"
 #include "neta/neta.h"
-#include "templates/optionalref.h"
 
 // Forward Declarations
 class Forcefield;
-class ForcefieldParameters;
 
 // Forcefield AtomType Base Class
-class ForcefieldAtomType : public ElementReference
+class ForcefieldAtomType
 {
     public:
-    ForcefieldAtomType(int Z = 0, int index = -1, std::string_view name = "", std::string_view netaDefinition = "",
-                       std::string_view description = "", double q = 0.0, double data0 = 0.0, double data1 = 0.0,
-                       double data2 = 0.0, double data3 = 0.0);
-    ForcefieldAtomType(OptionalReferenceWrapper<const ForcefieldParameters> params, int Z = 0, int index = -1,
-                       std::string_view name = "", std::string_view netaDefinition = "", std::string_view description = nullptr,
-                       double q = 0.0);
+    ForcefieldAtomType(Elements::Element Z = Elements::Unknown, int index = -1, std::string_view name = "",
+                       std::string_view netaDefinition = "", std::string_view description = "", double q = 0.0,
+                       const std::vector<double> &parameters = {}, std::string_view equivalentName = "");
     ForcefieldAtomType(const ForcefieldAtomType &sourceType, std::string_view newTypeName, std::string_view netaDefinition = "",
                        std::string_view equivalentName = "");
-    virtual ~ForcefieldAtomType();
+    virtual ~ForcefieldAtomType() = default;
     ForcefieldAtomType(const ForcefieldAtomType &source);
     ForcefieldAtomType(const ForcefieldAtomType &&source);
 
@@ -32,16 +26,20 @@ class ForcefieldAtomType : public ElementReference
      * Identity
      */
     private:
+    // Element to which the atom type applies
+    Elements::Element Z_;
     // Index of atom type
     int index_;
     // Name of atom type
     std::string name_;
     // Equivalent name, if defined
     std::string equivalentName_;
-    // Brief description of tyoe
+    // Brief description of type
     std::string description_;
 
     public:
+    // Return element to which the atom type applies
+    Elements::Element Z() const;
     // Return index of type
     int index() const;
     // Return name of type
@@ -68,14 +66,16 @@ class ForcefieldAtomType : public ElementReference
      * Parameters
      */
     private:
-    // Parameters that this atom type references (if any)
-    OptionalReferenceWrapper<const ForcefieldParameters> parameterReference_;
-    // Interatomic interaction parameters for this atom type
-    InteractionParameters parameters_;
+    // Vector of parameters
+    std::vector<double> parameters_;
+    // Atomic charge
+    double charge_;
 
     public:
-    // Return interatomic interaction parameters (referenced or otherwise)
-    const InteractionParameters &parameters() const;
-    // Return charge (from local parameters)
+    // Return parameters vector
+    const std::vector<double> &parameters() const;
+    // Return parameter with index specified
+    double parameter(int index) const;
+    // Return atomic charge
     double charge() const;
 };

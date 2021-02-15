@@ -351,13 +351,8 @@ template <class T> int OrderedPointerList<T>::nItems() const { return nItems_; }
 // Add item to list
 template <class T> void OrderedPointerList<T>::add(T *object)
 {
-#ifdef CHECKS
-    if (object == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr passed to OrderedPointerList<T>::add().\n");
-        return;
-    }
-#endif
+    assert(object);
+
     // Add it in the correct place in the list
     OrderedPointerListItem<T> *nextLargest = nextHighest(object);
     insertBefore(object, nextLargest);
@@ -366,13 +361,8 @@ template <class T> void OrderedPointerList<T>::add(T *object)
 // Add a new item reference to the list, unless it is already there
 template <class T> void OrderedPointerList<T>::addExclusive(T *object)
 {
-#ifdef CHECKS
-    if (object == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr passed to OrderedPointerList<T>::add().\n");
-        return;
-    }
-#endif
+    assert(object);
+
     // Seek the next highest index, checking to see if we find the specified index
     // TODO This can be made much faster - binary chop?
     OrderedPointerListItem<T> *nextLargest = listHead_;
@@ -391,13 +381,8 @@ template <class T> void OrderedPointerList<T>::addExclusive(T *object)
 // Add a new item reference to the end of the list
 template <class T> void OrderedPointerList<T>::addAtEnd(T *object)
 {
-#ifdef CHECKS
-    if (object == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr passed to OrderedPointerList<T>::addAtEnd().\n");
-        return;
-    }
-#endif
+    assert(object);
+
     // Add it directly to the end of the list, provided this adheres to the current order
     // Check object index of last item in list
     if (listTail_ == nullptr)
@@ -525,13 +510,8 @@ template <class T> void OrderedPointerList<T>::operator=(const OrderedPointerLis
 
 template <class T> OrderedPointerListItem<T> *OrderedPointerList<T>::operator[](int index)
 {
-#ifdef CHECKS
-    if ((index < 0) || (index >= nItems_))
-    {
-        Messenger::error("LIST_OPERATOR[] - Array index ({}) out of bounds ({} items in List) >>>>\n", index, nItems_);
-        return nullptr;
-    }
-#endif
+    assert(index >= 0 && index < nItems_);
+
     return items()[index];
 }
 

@@ -16,14 +16,22 @@ void SiteViewer::mouseMoved(int dx, int dy)
     auto refresh = false;
 
     // What we do here depends on the current mode
-    switch (interactionMode())
+    switch (transientInteractionMode_)
     {
-        case (SiteViewer::SelectAreaInteraction):
-            // No action to take - the selection box will be drawn from the clicked and current positions (already
-            // stored)
-            refresh = true;
+        case (TransientInteractionMode::None):
+            // End primary interaction
+            switch (interactionMode_)
+            {
+                case (SiteViewer::InteractionMode::SelectArea):
+                    // No action to take - the selection box will be drawn from the clicked and current positions (already
+                    // stored)
+                    refresh = true;
+                    break;
+                default:
+                    break;
+            }
             break;
-        case (SiteViewer::RotateViewInteraction):
+        case (SiteViewer::TransientInteractionMode::RotateView):
             // Rotate view
             if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
             {
@@ -37,7 +45,7 @@ void SiteViewer::mouseMoved(int dx, int dy)
                 refresh = true;
             }
             break;
-        case (SiteViewer::TranslateViewInteraction):
+        case (SiteViewer::TransientInteractionMode::TranslateView):
             // If this is a flat view, shift the axis limits rather than translating the view
             if (view_.isFlatView())
                 view_.shiftFlatAxisLimits(dx, dy);

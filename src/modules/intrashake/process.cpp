@@ -116,7 +116,7 @@ bool IntraShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         double ppEnergy, newPPEnergy, intraEnergy, newIntraEnergy, delta, totalDelta = 0.0;
         Vec3<double> vji, vjk, v;
         Matrix3 transform;
-        const Box *box = cfg->box();
+        const auto *box = cfg->box();
         std::shared_ptr<Atom> i, j, k, l;
 
         Timer timer;

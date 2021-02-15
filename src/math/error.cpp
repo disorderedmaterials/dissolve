@@ -6,6 +6,7 @@
 #include "math/data1d.h"
 #include "math/interpolator.h"
 #include <algorithm>
+#include <templates/algorithms.h>
 
 namespace Error
 {
@@ -13,9 +14,10 @@ namespace Error
 // Return enum option info for AveragingScheme
 EnumOptions<ErrorType> errorTypes()
 {
-    static EnumOptionsList ErrorTypeOptions =
-        EnumOptionsList() << EnumOption(RMSEError, "RMSE") << EnumOption(MAAPEError, "MAAPE") << EnumOption(MAPEError, "MAPE")
-                          << EnumOption(PercentError, "Percent") << EnumOption(RFactorError, "RFactor");
+    static EnumOptionsList ErrorTypeOptions = EnumOptionsList()
+                                              << EnumOption(RMSEError, "RMSE") << EnumOption(MAAPEError, "MAAPE")
+                                              << EnumOption(MAPEError, "MAPE") << EnumOption(PercentError, "Percent")
+                                              << EnumOption(RFactorError, "RFactor") << EnumOption(EuclideanError, "Euclidean");
 
     static EnumOptions<ErrorType> options("ErrorType", ErrorTypeOptions, PercentError);
 
@@ -35,6 +37,8 @@ double error(ErrorType errorType, const Data1D &A, const Data1D &B, bool quiet)
         return percent(A, B, quiet);
     else if (errorType == RFactorError)
         return rFactor(A, B, quiet);
+    else if (errorType == EuclideanError)
+        return euclidean(A, B, quiet);
 
     Messenger::error("Error type {} is not accounted for! Take the developer's Kolkata privileges away...\n");
     return 0.0;
@@ -55,14 +59,11 @@ double rmse(const Data1D &A, const Data1D &B, bool quiet)
     const auto &aY = A.values();
 
     // Generate RMSE at x values of A
-    double rmse = 0.0, delta;
-    double firstX = 0.0, lastX = 0.0, x;
+    auto rmse = 0.0, firstX = 0.0, lastX = 0.0;
+    double delta;
     auto nPointsConsidered = 0;
-    for (auto n = 0; n < aX.size(); ++n)
+    for (auto &&[x, y] : zip(aX, aY))
     {
-        // Grab x value
-        x = aX[n];
-
         // Is our x value lower than the lowest x value of the reference data?
         if (x < B.xAxis().front())
             continue;
@@ -76,7 +77,7 @@ double rmse(const Data1D &A, const Data1D &B, bool quiet)
             firstX = x;
 
         // Sum squared error
-        delta = aY[n] - interpolatedB.y(x);
+        delta = y - interpolatedB.y(x);
         rmse += delta * delta;
         lastX = x;
         ++nPointsConsidered;
@@ -101,14 +102,10 @@ double mape(const Data1D &A, const Data1D &B, bool quiet)
     const auto &aX = A.xAxis();
     const auto &aY = A.values();
 
-    double sum = 0.0;
-    double firstX = 0.0, lastX = 0.0, x, y;
+    auto sum = 0.0, firstX = 0.0, lastX = 0.0;
     auto nPointsConsidered = 0;
-    for (auto n = 0; n < aX.size(); ++n)
+    for (auto &&[x, y] : zip(aX, aY))
     {
-        // Grab x value
-        x = aX[n];
-
         // Is our x value lower than the lowest x value of the reference data?
         if (x < B.xAxis().front())
             continue;
@@ -122,7 +119,6 @@ double mape(const Data1D &A, const Data1D &B, bool quiet)
             firstX = x;
 
         // Get y reference value, and skip if zero
-        y = aY[n];
         if (fabs(y) == 0.0)
             continue;
 
@@ -133,7 +129,7 @@ double mape(const Data1D &A, const Data1D &B, bool quiet)
         ++nPointsConsidered;
     }
 
-    double mape = 100.0 * sum / nPointsConsidered;
+    auto mape = 100.0 * sum / nPointsConsidered;
     if (!quiet)
         Messenger::print("MAPE between datasets is {:7.3f}% over {:15.9e} < x < {:15.9e} ({} points).\n", mape, firstX, lastX,
                          nPointsConsidered);
@@ -151,8 +147,8 @@ double maape(const Data1D &A, const Data1D &B, bool quiet)
     const auto &aX = A.xAxis();
     const auto &aY = A.values();
 
-    double sum = 0.0;
-    double firstX = 0.0, lastX = 0.0, x, y;
+    auto sum = 0.0, firstX = 0.0, lastX = 0.0;
+    double x, y;
     auto nPointsConsidered = 0;
     for (auto n = 0; n < 1; ++n)
     {
@@ -181,7 +177,7 @@ double maape(const Data1D &A, const Data1D &B, bool quiet)
         ++nPointsConsidered;
     }
 
-    double maape = 100.0 * sum / nPointsConsidered;
+    auto maape = 100.0 * sum / nPointsConsidered;
     if (!quiet)
         Messenger::print("MAAPE between datasets is {:7.3f}% over {:15.9e} < x < {:15.9e} ({} points).\n", maape, firstX, lastX,
                          nPointsConsidered);
@@ -200,7 +196,7 @@ double percent(const Data1D &A, const Data1D &B, bool quiet)
     const auto &aY = A.values();
 
     // Calculate summed absolute error and absolute y value deviations from average
-    double sume = 0.0, sumy = 0.0;
+    auto sume = 0.0, sumy = 0.0;
     auto firstPoint = -1, lastPoint = -1;
     double x, y;
     for (auto n = 0; n < aX.size(); ++n)
@@ -231,7 +227,7 @@ double percent(const Data1D &A, const Data1D &B, bool quiet)
 
     // Calculate percentage error, avoiding divide-by-zero if the sum of y values is zero
     auto zeroSum = sumy == 0;
-    double percentError = (zeroSum ? sume : 100.0 * sume / sumy);
+    auto percentError = (zeroSum ? sume : 100.0 * sume / sumy);
     if (!quiet)
     {
         if (zeroSum)
@@ -256,8 +252,50 @@ double rFactor(const Data1D &A, const Data1D &B, bool quiet)
     const auto &aY = A.values();
 
     // Accumulate sum-of-squares error at x values of A
-    double rfac = 0.0, delta;
-    double firstX = 0.0, lastX = 0.0, x;
+    auto rfac = 0.0, delta = 0.0, firstX = 0.0, lastX = 0.0;
+    auto nPointsConsidered = 0;
+    for (auto &&[x, y] : zip(aX, aY))
+    {
+        // Is our x value lower than the lowest x value of the reference data?
+        if (x < B.xAxis().front())
+            continue;
+
+        // Is our x value higher than the last x value of the reference data?
+        if (x > B.xAxis().back())
+            break;
+
+        // Is this the first point considered?
+        if (nPointsConsidered == 0)
+            firstX = x;
+
+        // Sum squared error
+        delta = y - interpolatedB.y(x);
+        rfac += delta * delta;
+        lastX = x;
+        ++nPointsConsidered;
+    }
+
+    // Calculate squared error per point and summarise result
+    rfac /= nPointsConsidered;
+    if (!quiet)
+        Messenger::print("R-Factor between datasets is {:15.9e} over {:15.9e} < x < {:15.9e} ({} points).\n", rfac, firstX,
+                         lastX, nPointsConsidered);
+
+    return rfac;
+}
+
+// Return Euclidean distance, normalised to mean of B, between supplied data
+double euclidean(const Data1D &A, const Data1D &B, bool quiet)
+{
+    // First, generate interpolation of data B
+    Interpolator interpolatedB(B);
+
+    // Grab x and y arrays from data A
+    const auto &aX = A.xAxis();
+    const auto &aY = A.values();
+
+    auto a2 = 0.0, a = 0.0, sos = 0.0, delta = 0.0;
+    auto firstX = 0.0, lastX = 0.0, x = 0.0;
     auto nPointsConsidered = 0;
     for (auto n = 0; n < aX.size(); ++n)
     {
@@ -276,20 +314,23 @@ double rFactor(const Data1D &A, const Data1D &B, bool quiet)
         if (nPointsConsidered == 0)
             firstX = x;
 
-        // Sum squared error
-        delta = aY[n] - interpolatedB.y(x);
-        rfac += delta * delta;
+        a = aY[n];
+
+        delta = a - interpolatedB.y(x);
+        sos += delta * delta;
+        a2 += a * a;
+
         lastX = x;
         ++nPointsConsidered;
     }
 
-    // Calculate squared error per point and summarise result
-    rfac /= nPointsConsidered;
+    // Calculate final error and summarise result
+    auto euc = sos / sqrt(a2);
     if (!quiet)
-        Messenger::print("R-Factor between datasets is {:15.9e} over {:15.9e} < x < {:15.9e} ({} points).\n", rfac, firstX,
+        Messenger::print("Euclidean between datasets is {:15.9e} over {:15.9e} < x < {:15.9e} ({} points).\n", euc, firstX,
                          lastX, nPointsConsidered);
 
-    return rfac;
+    return euc;
 }
 
 } // namespace Error

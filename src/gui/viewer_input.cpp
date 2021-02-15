@@ -37,7 +37,7 @@ void BaseViewer::mouseReleaseEvent(QMouseEvent *event)
         (((rMouseLast_ - rMouseDown_).magnitude() <= 1) || mouseReleaseTimer_.isActive()))
     {
         // Reset to default interaction
-        setInteractionMode(0);
+        // resetInteraction(0);
 
         contextMenuRequested(event->pos());
     }

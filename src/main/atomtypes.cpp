@@ -6,12 +6,7 @@
 #include "main/dissolve.h"
 
 // Add AtomType with specified Element
-std::shared_ptr<AtomType> Dissolve::addAtomType(Element *el)
-{
-    std::shared_ptr<AtomType> newAtomType = coreData_.addAtomType(el);
-
-    return newAtomType;
-}
+std::shared_ptr<AtomType> Dissolve::addAtomType(Elements::Element Z) { return coreData_.addAtomType(Z); }
 
 // Return number of AtomTypes in list
 int Dissolve::nAtomTypes() const { return coreData_.nAtomTypes(); }

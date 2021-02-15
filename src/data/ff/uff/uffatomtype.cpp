@@ -4,21 +4,12 @@
 #include "data/ff/uff/uffatomtype.h"
 #include "data/ff/uff/uff.h"
 
-UFFAtomType::UFFAtomType(int z, int index, std::string_view name, std::string_view neta, std::string_view description, double r,
-                         double theta, double x, double D, double zeta, double Z, double chi, int geom, double V, double U)
-    : ForcefieldAtomType(z, index, name, neta, description, 0.0, 0.0, 0.0)
+UFFAtomType::UFFAtomType(Elements::Element Z, int index, std::string_view name, std::string_view neta,
+                         std::string_view description, double r, double theta, double x, double D, double zeta,
+                         double effectiveCharge, double chi, int geom, double V, double U)
+    : ForcefieldAtomType(Z, index, name, neta, description), r_(r), theta_(theta), x_(x), D_(D), zeta_(zeta),
+      effectiveCharge_(effectiveCharge), chi_(chi), V_(V), U_(U), geom_(geom)
 {
-    // Set the atomtype's data
-    r_ = r;
-    theta_ = theta;
-    x_ = x;
-    D_ = D;
-    zeta_ = zeta;
-    Z_ = Z;
-    chi_ = chi;
-    geom_ = geom;
-    V_ = V;
-    U_ = U;
 }
 
 UFFAtomType &UFFAtomType::operator=(const UFFAtomType &source)
@@ -28,7 +19,7 @@ UFFAtomType &UFFAtomType::operator=(const UFFAtomType &source)
     x_ = source.x_;
     D_ = source.D_;
     zeta_ = source.zeta_;
-    Z_ = source.Z_;
+    effectiveCharge_ = source.effectiveCharge_;
     chi_ = source.chi_;
     geom_ = source.geom_;
     V_ = source.V_;
@@ -57,7 +48,7 @@ double UFFAtomType::D() const { return D_; }
 double UFFAtomType::zeta() const { return zeta_; }
 
 // Return effective charge (Z)
-double UFFAtomType::Z() const { return Z_; }
+double UFFAtomType::effectiveCharge() const { return effectiveCharge_; }
 
 // Return GMP electronegativity (chi)
 double UFFAtomType::chi() const { return chi_; }

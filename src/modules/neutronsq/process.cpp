@@ -214,7 +214,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     weightedGR.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedGR"));
 
     // Save data if requested
-    if (saveGR && (!MPIRunMaster(procPool, weightedSQ.save())))
+    if (saveGR && (!MPIRunMaster(procPool, weightedGR.save())))
         return false;
 
     // Calculate representative total g(r) from FT of calculated S(Q)
@@ -226,6 +226,21 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto rho = rdfModule->effectiveDensity();
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, referenceWindowFunction);
     repGR.setObjectTag(fmt::format("{}//RepresentativeTotalGR", uniqueName_));
+
+    // Save data if requested
+    if (saveGR)
+    {
+        if (procPool.isMaster())
+        {
+            Data1DExportFileFormat exportFormat(fmt::format("{}-weighted-total.gr.broad", uniqueName_));
+            if (exportFormat.exportData(repGR))
+                procPool.decideTrue();
+            else
+                procPool.decideFalse();
+        }
+        else if (!procPool.decision())
+            return false;
+    }
 
     return true;
 }

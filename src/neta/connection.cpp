@@ -3,12 +3,11 @@
 
 #include "neta/connection.h"
 #include "classes/speciesatom.h"
-#include "data/ffatomtype.h"
+#include "data/ff/atomtype.h"
 #include <algorithm>
 #include <map>
 
-NETAConnectionNode::NETAConnectionNode(NETADefinition *parent,
-                                       std::vector<std::reference_wrapper<const Element>> targetElements,
+NETAConnectionNode::NETAConnectionNode(NETADefinition *parent, std::vector<Elements::Element> targetElements,
                                        std::vector<std::reference_wrapper<const ForcefieldAtomType>> targetAtomTypes,
                                        SpeciesBond::BondType bt)
     : NETANode(parent, NETANode::ConnectionNode)
@@ -36,9 +35,9 @@ NETAConnectionNode::~NETAConnectionNode() {}
  */
 
 // Add element target to node
-bool NETAConnectionNode::addElementTarget(const Element &el)
+bool NETAConnectionNode::addElementTarget(Elements::Element Z)
 {
-    allowedElements_.push_back(el);
+    allowedElements_.push_back(Z);
 
     return true;
 }
@@ -164,9 +163,9 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
 
         // Evaluate the neighbour against our elements
         int atomScore = NETANode::NoMatch;
-        for (const auto &element : allowedElements_)
+        for (const auto Z : allowedElements_)
         {
-            if (j->element() != &element.get())
+            if (j->Z() != Z)
                 continue;
 
             // Process branch definition via the base class, using a copy of the current match path
@@ -189,7 +188,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
             for (const ForcefieldAtomType &atomType : allowedAtomTypes_)
             {
                 // Check the element of the atom type against that of the neighbours
-                if (j->element() != &atomType.element())
+                if (j->Z() != atomType.Z())
                     continue;
 
                 // Evaluate the neighbour against the atom type
@@ -230,7 +229,7 @@ int NETAConnectionNode::score(const SpeciesAtom *i, std::vector<const SpeciesAto
         {
             // Count number of hydrogens attached to this atom
             auto nH = std::count_if(j->bonds().begin(), j->bonds().end(),
-                                    [j](const SpeciesBond &bond) { return bond.partner(j)->element()->Z() == ELEMENT_H; });
+                                    [j](const SpeciesBond &bond) { return bond.partner(j)->Z() == Elements::H; });
             if (!compareValues(nH, nHydrogensValueOperator_, nHydrogensValue_))
                 continue;
 

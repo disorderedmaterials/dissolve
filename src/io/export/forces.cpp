@@ -8,7 +8,7 @@
 #include "classes/box.h"
 #include "classes/configuration.h"
 #include "classes/speciesatom.h"
-#include "data/atomicmass.h"
+#include "data/atomicmasses.h"
 
 ForceExportFileFormat::ForceExportFileFormat(std::string_view filename, ForceExportFormat format)
     : FileAndFormat(filename, format)

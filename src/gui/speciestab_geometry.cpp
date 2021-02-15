@@ -26,7 +26,7 @@ std::vector<std::string> SpeciesTab::validAtomTypeNames(const QModelIndex &index
     // Construct valid names list
     std::vector<std::string> validNames;
     for (auto &at : dissolve_.atomTypes())
-        if (at->element() == i->element())
+        if (at->Z() == i->Z())
             validNames.emplace_back(at->name());
 
     return validNames;
@@ -47,7 +47,7 @@ void SpeciesTab::updateAtomTableRow(int row, const SpeciesAtom *speciesAtom, boo
     }
     else
         item = ui_.AtomTable->item(row, 0);
-    item->setText(QString::fromStdString(std::string(speciesAtom->element()->name())));
+    item->setText(QString::fromStdString(std::string(Elements::name(speciesAtom->Z()))));
     item->setSelected(speciesAtom->isSelected());
 
     // AtomType
@@ -354,7 +354,7 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
             atomType = dissolve_.findAtomType(qPrintable(w->text()));
             if (!atomType)
             {
-                atomType = dissolve_.addAtomType(speciesAtom->element());
+                atomType = dissolve_.addAtomType(speciesAtom->Z());
                 atomType->setName(qPrintable(w->text()));
             }
             speciesAtom->setAtomType(atomType);
@@ -383,7 +383,6 @@ void SpeciesTab::on_AtomTable_itemChanged(QTableWidgetItem *w)
         // Charge
         case (5):
             speciesAtom->setCharge(w->text().toDouble());
-            // TODO This change needs to be propagated to all Configurations->Molecules based on this Species
             dissolveWindow_->setModified();
             break;
         default:

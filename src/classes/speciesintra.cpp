@@ -90,15 +90,6 @@ void SpeciesIntra::addParameter(double param)
 // Set existing parameter
 void SpeciesIntra::setParameter(int id, double value)
 {
-#ifdef CHECKS
-    if ((id < 0) || (id >= parameters_.size()))
-    {
-        Messenger::error("Tried to set a parameter in a SpeciesIntra definition, but the index is out of range ({} vs "
-                         "{} parameters current).\n",
-                         id, parameters_.size());
-        return;
-    }
-#endif
     // Does this intramolecular interaction reference a set of master parameters?
     if (masterParameters_)
     {

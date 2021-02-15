@@ -22,35 +22,36 @@
 bool Forcefield_Ludwig_Py4OH::setUp()
 {
     // Short-Range Parameters
-    addParameters("nc", 0.711302, 3.250);
-    addParameters("ca", 0.292919, 3.550);
-    addParameters("ha", 0.125548, 2.420);
-    addParameters("ct", 0.276040, 3.50);
-    addParameters("hc", 0.125548, 2.50);
-    addParameters("oh", 0.711718, 3.12);
-    addParameters("ho", 0.000000, 0.0);
+    addParameters("nc", {0.711302, 3.250});
+    addParameters("ca", {0.292919, 3.550});
+    addParameters("ha", {0.125548, 2.420});
+    addParameters("ct", {0.276040, 3.50});
+    addParameters("hc", {0.125548, 2.50});
+    addParameters("oh", {0.711718, 3.12});
+    addParameters("ho", {0.000000, 0.0});
 
     // Atom Types
-    addAtomType(ELEMENT_N, 1, "nc", "nbonds=3,ring(size=6,C(n=5),N)", "Nitrogen in pyridine ring", 0.1014, "nc");
-    addAtomType(ELEMENT_C, 2, "ca_o", "nbonds=3,ring(size=6,C(n=5),N),-N,-C,-H", "Carbon in aromatic ring, ortho", 0.0568,
+    addAtomType(Elements::N, 1, "nc", "nbonds=3,ring(size=6,C(n=5),N)", "Nitrogen in pyridine ring", 0.1014, "nc");
+    addAtomType(Elements::C, 2, "ca_o", "nbonds=3,ring(size=6,C(n=5),N),-N,-C,-H", "Carbon in aromatic ring, ortho", 0.0568,
                 "ca");
-    addAtomType(ELEMENT_C, 3, "ca_m", "nbonds=3,ring(size=6,C(n=5),N),-C(n=2),-H", "Carbon in aromatic ring, meta", -0.2214,
+    addAtomType(Elements::C, 3, "ca_m", "nbonds=3,ring(size=6,C(n=5),N),-C(n=2),-H", "Carbon in aromatic ring, meta", -0.2214,
                 "ca");
-    addAtomType(ELEMENT_C, 4, "ca_p", "nbonds=3,ring(size=6,C(n=5),N),-C(n=2,-C(-N))", "Carbon in aromatic ring, para", 0.1747,
-                "ca");
-    addAtomType(ELEMENT_H, 5, "ha_o", "nbonds=1,-&2", "Hydrogen bound to carbon in aromatic ring, ortho", 0.1802, "ha");
-    addAtomType(ELEMENT_H, 6, "ha_m", "nbonds=1,-&3", "Hydrogen bound to carbon in aromatic ring, meta", 0.1759, "ha");
-    addAtomType(ELEMENT_H, 7, "ha_p", "nbonds=1,-&4", "Hydrogen bound to carbon in aromatic ring, para", 0.1275, "ha");
-    addAtomType(ELEMENT_C, 8, "ct_1", "nbonds=4,nh=2,-&1,-C", "Alkane Carbon of Tail, adjacent to N", -0.1509, "ct");
-    addAtomType(ELEMENT_C, 9, "ct_2", "nbonds=4,nh=2,-&8,-C", "Alkane Carbon of Tail,nextnext=N", 0.0160, "ct");
-    addAtomType(ELEMENT_C, 10, "ct_3", "nbonds=4,nh=2,-C(-H(n=2),-O)", "Alkane Carbon of Tail,nextnext=O", 0.0780, "ct");
-    addAtomType(ELEMENT_C, 11, "ct_4", "nbonds=4,nh=2,-C(-H(n=2),-C),-O", "Alkane Carbon of Tail, adjacent to O", 0.2911, "ct");
-    addAtomType(ELEMENT_H, 12, "hc_1", "nbonds=1,-&8", "Hydrogen of Tail, adjacent to N", 0.1015, "hc");
-    addAtomType(ELEMENT_H, 13, "hc_2", "nbonds=1,-&9", "Hydrogen of Tail, nextnext=N", 0.0043, "hc");
-    addAtomType(ELEMENT_H, 14, "hc_3", "nbonds=1,-&10", "Hydrogen of Tail, nextnext=O", 0.0316, "hc");
-    addAtomType(ELEMENT_H, 15, "hc_4", "nbonds=1,-&11", "Hydrogen of Tail, adjacent to O", -0.0205, "hc");
-    addAtomType(ELEMENT_O, 16, "oh", "nbonds=2,-H,-&11", "Oxygen of Hydroxyl Group", -0.6916, "oh");
-    addAtomType(ELEMENT_H, 17, "ho", "nbonds=1,-&16", "Hydrogen of Hydroxyl Group", 0.4370, "ho");
+    addAtomType(Elements::C, 4, "ca_p", "nbonds=3,ring(size=6,C(n=5),N),-C(n=2,-C(-N))", "Carbon in aromatic ring, para",
+                0.1747, "ca");
+    addAtomType(Elements::H, 5, "ha_o", "nbonds=1,-&2", "Hydrogen bound to carbon in aromatic ring, ortho", 0.1802, "ha");
+    addAtomType(Elements::H, 6, "ha_m", "nbonds=1,-&3", "Hydrogen bound to carbon in aromatic ring, meta", 0.1759, "ha");
+    addAtomType(Elements::H, 7, "ha_p", "nbonds=1,-&4", "Hydrogen bound to carbon in aromatic ring, para", 0.1275, "ha");
+    addAtomType(Elements::C, 8, "ct_1", "nbonds=4,nh=2,-&1,-C", "Alkane Carbon of Tail, adjacent to N", -0.1509, "ct");
+    addAtomType(Elements::C, 9, "ct_2", "nbonds=4,nh=2,-&8,-C", "Alkane Carbon of Tail,nextnext=N", 0.0160, "ct");
+    addAtomType(Elements::C, 10, "ct_3", "nbonds=4,nh=2,-C(-H(n=2),-O)", "Alkane Carbon of Tail,nextnext=O", 0.0780, "ct");
+    addAtomType(Elements::C, 11, "ct_4", "nbonds=4,nh=2,-C(-H(n=2),-C),-O", "Alkane Carbon of Tail, adjacent to O", 0.2911,
+                "ct");
+    addAtomType(Elements::H, 12, "hc_1", "nbonds=1,-&8", "Hydrogen of Tail, adjacent to N", 0.1015, "hc");
+    addAtomType(Elements::H, 13, "hc_2", "nbonds=1,-&9", "Hydrogen of Tail, nextnext=N", 0.0043, "hc");
+    addAtomType(Elements::H, 14, "hc_3", "nbonds=1,-&10", "Hydrogen of Tail, nextnext=O", 0.0316, "hc");
+    addAtomType(Elements::H, 15, "hc_4", "nbonds=1,-&11", "Hydrogen of Tail, adjacent to O", -0.0205, "hc");
+    addAtomType(Elements::O, 16, "oh", "nbonds=2,-H,-&11", "Oxygen of Hydroxyl Group", -0.6916, "oh");
+    addAtomType(Elements::H, 17, "ho", "nbonds=1,-&16", "Hydrogen of Hydroxyl Group", 0.4370, "ho");
 
     // Bond Terms
     addBondTerm("ha", "ca", SpeciesBond::HarmonicForm, {3071., 1.080});

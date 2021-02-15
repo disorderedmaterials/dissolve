@@ -7,7 +7,7 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "data/elements.h"
-#include "data/fflibrary.h"
+#include "data/ff/library.h"
 #include "data/isotopes.h"
 #include <string>
 
@@ -48,7 +48,6 @@ bool Species::loadFromXYZ(std::string_view filename)
     parser.readNextLine(LineParser::Defaults);
     name_ = parser.line();
     int success;
-    Element *el;
     for (auto n = 0; n < nAtoms; ++n)
     {
         success = parser.getArgsDelim(LineParser::Defaults);
@@ -58,13 +57,13 @@ bool Species::loadFromXYZ(std::string_view filename)
             Messenger::error("Couldn't read Atom {} from file '{}'\n", n + 1, filename);
             return false;
         }
-        el = Elements::elementPointer(parser.argsv(0));
-        SpeciesAtom *i = addAtom(el, parser.arg3d(1));
+        auto Z = Elements::element(parser.argsv(0));
+        SpeciesAtom *i = addAtom(Z, parser.arg3d(1));
         if (parser.hasArg(4))
             i->setCharge(parser.argd(4));
     }
 
-    Messenger::print("Succesfully loaded XYZ data from file '{}'.\n", filename);
+    Messenger::print("Successfully loaded XYZ data from file '{}'.\n", filename);
     parser.closeFiles();
     return true;
 }
@@ -77,17 +76,18 @@ bool Species::loadFromXYZ(std::string_view filename)
 EnumOptions<Species::SpeciesKeyword> Species::keywords()
 {
     static EnumOptionsList SpeciesKeywords =
-        EnumOptionsList() << EnumOption(Species::AngleKeyword, "Angle", 3, 6) << EnumOption(Species::AtomKeyword, "Atom", 6, 7)
-                          << EnumOption(Species::BondKeyword, "Bond", 2, 5)
+        EnumOptionsList() << EnumOption(Species::AngleKeyword, "Angle", 3, EnumOption::AnyNumberOfArguments)
+                          << EnumOption(Species::AtomKeyword, "Atom", 6, 7)
+                          << EnumOption(Species::BondKeyword, "Bond", 2, EnumOption::AnyNumberOfArguments)
                           << EnumOption(Species::BondTypeKeyword, "BondType", 3)
                           << EnumOption(Species::ChargeKeyword, "Charge", 2)
-                          << EnumOption(Species::CoordinateSetsKeyword, "CoordinateSets", 2, 99)
+                          << EnumOption(Species::CoordinateSetsKeyword, "CoordinateSets", 2, EnumOption::AnyNumberOfArguments)
                           << EnumOption(Species::EndSpeciesKeyword, "EndSpecies")
                           << EnumOption(Species::ForcefieldKeyword, "Forcefield", 1)
-                          << EnumOption(Species::ImproperKeyword, "Improper", 5, 9)
+                          << EnumOption(Species::ImproperKeyword, "Improper", 5, EnumOption::AnyNumberOfArguments)
                           << EnumOption(Species::IsotopologueKeyword, "Isotopologue", EnumOption::OneOrMoreArguments)
                           << EnumOption(Species::SiteKeyword, "Site", 1)
-                          << EnumOption(Species::TorsionKeyword, "Torsion", 4, 9);
+                          << EnumOption(Species::TorsionKeyword, "Torsion", 4, EnumOption::AnyNumberOfArguments);
 
     static EnumOptions<Species::SpeciesKeyword> options("SpeciesKeyword", SpeciesKeywords);
 
@@ -99,7 +99,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 {
     Messenger::print("\nParsing Species '{}'\n", name());
 
-    Element *el;
+    Elements::Element Z;
     std::shared_ptr<AtomType> at;
     Isotopologue *iso;
     OptionalReferenceWrapper<SpeciesAngle> a;
@@ -193,16 +193,15 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 a->get().setUp();
                 break;
             case (Species::AtomKeyword):
-                el = Elements::elementPointer(parser.argsv(2));
-                if (el->Z() == 0)
+                Z = Elements::element(parser.argsv(2));
+                if (Z == Elements::Unknown)
                 {
                     Messenger::error("Unrecognised element symbol '{}' found in {} keyword.\n", parser.argsv(2),
                                      Species::keywords().keyword(Species::AtomKeyword));
-                    el = nullptr;
                     error = true;
                     break;
                 }
-                i = addAtom(el, parser.arg3d(3));
+                i = addAtom(Z, parser.arg3d(3));
                 if (parser.hasArg(7))
                     i->setCharge(parser.argd(7));
 
@@ -215,7 +214,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     if (!at)
                     {
                         Messenger::printVerbose("Creating AtomType '{}'...\n", parser.argsv(6));
-                        at = coreData.addAtomType(el);
+                        at = coreData.addAtomType(Z);
                         at->setName(parser.argsv(6));
                     }
                 }
@@ -444,14 +443,13 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                     }
 
                     // Is the supplied isotope valid for the AtomType's element?
-                    el = at->element();
                     auto A = std::stoi(std::string(arg2));
-                    tope = Isotopes::isotope(el, A);
+                    tope = Isotopes::isotope(at->Z(), A);
                     if (tope == nullptr)
                     {
                         Messenger::error("No such Isotope ({}) for element {} (AtomType '{}') in Isotopologue "
                                          "'{}', Species '{}'\n",
-                                         A, el->symbol(), at->name(), iso->name(), name());
+                                         A, Elements::symbol(at->Z()), at->name(), iso->name(), name());
                         error = true;
                         break;
                     }
@@ -575,7 +573,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
     for (auto *i = atoms_.first(); i != nullptr; i = i->next())
     {
         if (!parser.writeLineF("{}{}  {:3d}  {:3}  {:12.6e}  {:12.6e}  {:12.6e}  '{}'  {:12.6e}\n", newPrefix,
-                               keywords().keyword(Species::AtomKeyword), ++count, i->element()->symbol(), i->r().x, i->r().y,
+                               keywords().keyword(Species::AtomKeyword), ++count, Elements::symbol(i->Z()), i->r().x, i->r().y,
                                i->r().z, i->atomType() == nullptr ? "None" : i->atomType()->name(), i->charge()))
             return false;
     }

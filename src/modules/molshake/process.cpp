@@ -80,7 +80,7 @@ bool MolShakeModule::process(Dissolve &dissolve, ProcessPool &procPool)
         double currentEnergy, newEnergy, delta, totalDelta = 0.0;
         Matrix3 transform;
         Vec3<double> rDelta;
-        const Box *box = cfg->box();
+        const auto *box = cfg->box();
 
         /*
          * In order to be able to adjust translation and rotational steps independently, we will perform 80% of moves

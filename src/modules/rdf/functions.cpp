@@ -27,7 +27,7 @@
 bool RDFModule::calculateGRTestSerial(Configuration *cfg, PartialSet &partialSet)
 {
     // Calculate radial distribution functions with a simple double loop, in serial
-    const Box *box = cfg->box();
+    const auto *box = cfg->box();
 
     for_each_pair(cfg->atoms().begin(), cfg->atoms().end(), [box, &partialSet](auto i, auto ii, auto j, auto jj) {
         if (ii != jj)
@@ -46,7 +46,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     // Construct local arrays of atom type positions
     nTypes = partialSet.nAtomTypes();
     Messenger::printVerbose("Constructing local partial working arrays for {} types.\n", nTypes);
-    const Box *box = cfg->box();
+    const auto *box = cfg->box();
     std::vector<Vec3<double> *> r(nTypes);
     std::vector<int> maxr(nTypes), nr(nTypes);
     std::vector<int *> binss(nTypes);
@@ -153,8 +153,8 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
     Vec3<double> rI;
 
     // Grab the Box pointer and Cell array
-    const Box *box = cfg->box();
-    CellArray &cellArray = cfg->cells();
+    const auto *box = cfg->box();
+    auto &cellArray = cfg->cells();
 
     // Loop context is to use all processes in Pool as one group
     auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
@@ -316,7 +316,7 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
      */
 
     double distance;
-    const Box *box = cfg->box();
+    const auto *box = cfg->box();
 
     // Set start/stride for parallel loop (pool solo)
     auto start = (method == RDFModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));

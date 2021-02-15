@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <optional>
 #include <string>
 
 // Enum Option
@@ -10,8 +11,10 @@ class EnumOption
 {
     public:
     EnumOption();
-    EnumOption(const int enumeration, std::string_view keyword, int minArgs = 0, int maxArgs = 0);
-    EnumOption(const int enumeration, std::string_view keyword, std::string_view description, int minArgs = 0, int maxArgs = 0);
+    EnumOption(const int enumeration, std::string_view keyword, std::optional<int> minArgs = std::nullopt,
+               std::optional<int> maxArgs = std::nullopt);
+    EnumOption(const int enumeration, std::string_view keyword, std::string_view description,
+               std::optional<int> minArgs = std::nullopt, std::optional<int> maxArgs = std::nullopt);
     virtual ~EnumOption() = default;
 
     /*
@@ -21,9 +24,9 @@ class EnumOption
     // Argument Numbers
     enum ArgumentNumber
     {
-        NoArguments = 0,
         OneOrMoreArguments = -1,
-        OptionalSecondArgument = -2
+        OptionalSecondArgument = -2,
+        AnyNumberOfArguments = -3
     };
 
     private:
@@ -33,12 +36,10 @@ class EnumOption
     std::string keyword_;
     // Option description / long text
     std::string description_;
-    // Whether the option has any associated arguments
-    bool hasArguments_;
     // Minimum number of arguments the option takes
-    int minArgs_;
+    std::optional<int> minArgs_;
     // Maximum number of arguments the option takes
-    int maxArgs_;
+    std::optional<int> maxArgs_;
 
     public:
     // Return if the option is valid (true except in derived classes)
@@ -49,12 +50,10 @@ class EnumOption
     std::string_view keyword() const;
     // Return option description
     std::string_view description() const;
-    // Return whether the option has any associated arguments
-    bool hasArguments() const;
     // Return minimum number of arguments the option takes
-    int minArgs() const;
+    std::optional<int> minArgs() const;
     // Return maximum number of arguments the option takes
-    int maxArgs() const;
+    std::optional<int> maxArgs() const;
 };
 
 // Unrecognised Enum Option

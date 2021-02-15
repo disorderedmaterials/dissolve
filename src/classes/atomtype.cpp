@@ -2,19 +2,12 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
-#include "base/processpool.h"
 #include "data/elements.h"
-#include <string.h>
 
 AtomType::AtomType()
+    : name_{"XX"}, Z_(Elements::Unknown), shortRangeType_(Forcefield::UndefinedType), exchangeable_(false), index_(-1)
 {
-    element_ = nullptr;
-    name_ = "XX";
-    exchangeable_ = false;
-    shortRangeType_ = Forcefield::UndefinedType;
 }
-
-AtomType::~AtomType() {}
 
 /*
  * Character
@@ -27,10 +20,10 @@ void AtomType::setName(std::string_view name) { name_ = name; }
 std::string_view AtomType::name() const { return name_; }
 
 // Set atomic element
-void AtomType::setElement(Element *el) { element_ = el; }
+void AtomType::setZ(Elements::Element Z) { Z_ = Z; }
 
 // Return atomic element
-Element *AtomType::element() const { return element_; }
+Elements::Element AtomType::Z() const { return Z_; }
 
 /*
  * Interaction Parameters
@@ -42,8 +35,23 @@ void AtomType::setShortRangeType(Forcefield::ShortRangeType srType) { shortRange
 // Return short-range interaction type
 Forcefield::ShortRangeType AtomType::shortRangeType() const { return shortRangeType_; }
 
-// Return interatomic interaction interaction parameters
-InteractionParameters &AtomType::parameters() { return parameters_; }
+// Set short-range parameters vector
+void AtomType::setShortRangeParameters(const std::vector<double> &parameters) { parameters_ = parameters; }
+
+// Set single short-range parameter
+void AtomType::setShortRangeParameter(int index, double parameter) { parameters_[index] = parameter; }
+
+// Return short-range parameters vector
+const std::vector<double> &AtomType::shortRangeParameters() const { return parameters_; }
+
+// Return short-range parameter with index specified
+double AtomType::shortRangeParameter(int index) const { return parameters_[index]; }
+
+// Set atomic charge
+void AtomType::setCharge(double q) { charge_ = q; }
+
+// Return atomic charge
+double AtomType::charge() const { return charge_; }
 
 // Set index of this type in the main type index
 void AtomType::setIndex(int id) { index_ = id; }

@@ -5,7 +5,7 @@
 #include "base/processpool.h"
 #include "base/sysfunc.h"
 #include "classes/speciesatom.h"
-#include "data/atomicmass.h"
+#include "data/atomicmasses.h"
 #include "templates/enumhelpers.h"
 
 SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra()
@@ -100,26 +100,14 @@ SpeciesAtom *SpeciesBond::partner(const SpeciesAtom *i) const { return (i == i_ 
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesBond::indexI() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesBond::indexI(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(i_);
     return i_->index();
 }
 
 // Return index (in parent Species) of second SpeciesAtom
 int SpeciesBond::indexJ() const
 {
-#ifdef CHECKS
-    if (j_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesBond::indexJ(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(j_);
     return j_->index();
 }
 
@@ -148,13 +136,7 @@ bool SpeciesBond::matches(const SpeciesAtom *i, const SpeciesAtom *j) const
 // Return whether all atoms in the interaction are currently selected
 bool SpeciesBond::isSelected() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr || j_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesBond::isSelected(). Returning false...\n");
-        return false;
-    }
-#endif
+    assert(i_ && j_);
     return (i_->isSelected() && j_->isSelected());
 }
 
@@ -209,9 +191,9 @@ double SpeciesBond::bondOrder() const { return SpeciesBond::bondOrder(bondType_)
 // Return enum options for BondFunction
 EnumOptions<SpeciesBond::BondFunction> SpeciesBond::bondFunctions()
 {
-    static EnumOptionsList BondFunctionOptions = EnumOptionsList() << EnumOption(SpeciesBond::NoForm, "None", 0, 0)
-                                                                   << EnumOption(SpeciesBond::HarmonicForm, "Harmonic", 2, 2)
-                                                                   << EnumOption(SpeciesBond::EPSRForm, "EPSR", 2, 2);
+    static EnumOptionsList BondFunctionOptions = EnumOptionsList() << EnumOption(SpeciesBond::NoForm, "None")
+                                                                   << EnumOption(SpeciesBond::HarmonicForm, "Harmonic", 2)
+                                                                   << EnumOption(SpeciesBond::EPSRForm, "EPSR", 2);
 
     static EnumOptions<SpeciesBond::BondFunction> options("BondFunction", BondFunctionOptions);
 
@@ -233,8 +215,8 @@ void SpeciesBond::setUp()
     if (form() == SpeciesBond::EPSRForm)
     {
         // Work out omega-squared(ab) from mass of natural isotopes
-        double massI = AtomicMass::mass(i_->element());
-        double massJ = AtomicMass::mass(j_->element());
+        double massI = AtomicMass::mass(i_->Z());
+        double massJ = AtomicMass::mass(j_->Z());
         parameters_[2] = params[1] / sqrt((massI + massJ) / (massI * massJ));
     }
 }

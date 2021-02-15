@@ -111,13 +111,13 @@ void RenderableConfiguration::createCylinderBond(PrimitiveAssembly &assembly, co
     {
         // Render half of Bond in colour of Atom j
         A.setTranslation(i->r());
-        const float *colour = ElementColours::colour(j->speciesAtom()->element());
+        const float *colour = ElementColours::colour(j->speciesAtom()->Z());
         assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
         // Render half of Bond in colour of Atom i
         A.setTranslation(j->r());
         A.columnMultiply(2, -1.0);
-        colour = ElementColours::colour(i->speciesAtom()->element());
+        colour = ElementColours::colour(i->speciesAtom()->Z());
         assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
     }
     else
@@ -125,12 +125,12 @@ void RenderableConfiguration::createCylinderBond(PrimitiveAssembly &assembly, co
         A.setTranslation(i->r() + vij * 0.5);
 
         // Render half of Bond in colour of Atom j
-        const float *colour = ElementColours::colour(j->speciesAtom()->element());
+        const float *colour = ElementColours::colour(j->speciesAtom()->Z());
         assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
         // Render half of Bond in colour of Atom i
         A.columnMultiply(2, -1.0);
-        colour = ElementColours::colour(i->speciesAtom()->element());
+        colour = ElementColours::colour(i->speciesAtom()->Z());
         assembly.add(bondPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
     }
 }
@@ -153,7 +153,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
     unitCellAssembly_.clear();
 
     // Grab the Configuration's Box and CellArray
-    const Box *box = source_->box();
+    const auto *box = source_->box();
 
     // Render according to the current displayStyle
     if (displayStyle_ == LinesStyle)
@@ -169,7 +169,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
             if (i->speciesAtom()->nBonds() == 0)
             {
                 const auto r = i->r();
-                colour = ElementColours::colour(i->speciesAtom()->element());
+                colour = ElementColours::colour(i->speciesAtom()->Z());
 
                 lineConfigurationPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
                 lineConfigurationPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z, colour);
@@ -194,9 +194,9 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
 
                     // Draw bond halves
                     lineConfigurationPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z,
-                                                      ElementColours::colour(bond.i()->element()));
+                                                      ElementColours::colour(bond.i()->Z()));
                     lineConfigurationPrimitive_->line(rj.x, rj.y, rj.z, rj.x - dij.x, rj.y - dij.y, rj.z - dij.z,
-                                                      ElementColours::colour(bond.j()->element()));
+                                                      ElementColours::colour(bond.j()->Z()));
                 }
             }
         }
@@ -214,7 +214,7 @@ void RenderableConfiguration::recreatePrimitives(const View &view, const ColourD
             A.applyScaling(spheresAtomRadius_);
 
             // The atom itself
-            colour = ElementColours::colour(i->speciesAtom()->element());
+            colour = ElementColours::colour(i->speciesAtom()->Z());
             configurationAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
             // Bonds from this atom

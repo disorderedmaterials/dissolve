@@ -82,18 +82,9 @@ void BraggReflection::scaleIntensities(double factor) { intensities_ *= factor; 
 // Scale intensity between all specific atom types by factor provided
 void BraggReflection::scaleIntensity(int typeI, int typeJ, double factor)
 {
-#ifdef CHECKS
-    if ((typeI < 0) || (typeI > intensities_.nRows()))
-    {
-        Messenger::error("Type index i of {} is out of range for BraggReflection intensities.\n", typeI);
-        return;
-    }
-    if ((typeJ < 0) || (typeJ > intensities_.nColumns()))
-    {
-        Messenger::error("Type index j of {} is out of range for BraggReflection intensities.\n", typeJ);
-        return;
-    }
-#endif
+    assert(typeI >= 0 && typeI < intensities_.nRows());
+    assert(typeJ >= 0 && typeJ < intensities_.nColumns());
+
     intensities_[{typeI, typeJ}] *= factor;
 }
 

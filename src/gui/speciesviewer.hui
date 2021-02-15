@@ -43,22 +43,31 @@ class SpeciesViewer : public BaseViewer
      */
     public:
     // Interaction Mode enum
-    enum InteractionMode
+    enum class InteractionMode
     {
-        DefaultInteraction,
-        SelectAreaInteraction,
-        TranslateViewInteraction,
-        RotateViewInteraction,
-        DrawInteraction,
-        DeleteInteraction,
+        Select,
+        SelectArea,
+        Draw,
+        Delete,
         nInteractionModes
+    };
+    // Secondary Interaction Mode enum
+    enum class TransientInteractionMode
+    {
+        None,
+        TranslateView,
+        RotateView
     };
 
     private:
+    // Primary interaction mode (left mouse button)
+    InteractionMode interactionMode_;
+    // Transient interaction mode (i.e. one not invoked by primary button)
+    TransientInteractionMode transientInteractionMode_;
     // Clicked atom at the start of the interaction (if any)
     SpeciesAtom *clickedAtom_;
     // Element for created atoms in DrawInteraction
-    Element *drawElement_;
+    Elements::Element drawElement_;
     // Species-space coordinates at clicked position for DrawInteraction
     Vec3<double> drawCoordinateStart_;
     // Species-space coordinates at current position for DrawInteraction
@@ -77,12 +86,16 @@ class SpeciesViewer : public BaseViewer
     void cancelInteraction();
 
     public:
+    // Set current interaction mode
+    void setInteractionMode(InteractionMode mode);
+    // Return current interaction mode
+    InteractionMode interactionMode() const;
     // Return text describing current interaction mode
     const QString interactionModeText() const;
     // Set current Element for DrawInteraction
-    void setDrawElement(Element *element);
+    void setDrawElement(Elements::Element Z);
     // Return current Element for DrawInteraction
-    Element *drawElement() const;
+    Elements::Element drawElement() const;
 
     /*
      * Source Species
@@ -117,5 +130,5 @@ class SpeciesViewer : public BaseViewer
      */
     signals:
     // Atom selection changed
-    void atomSelectionChanged();
+    void atomsChanged();
 };

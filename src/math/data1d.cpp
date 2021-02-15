@@ -5,6 +5,7 @@
 #include "base/lineparser.h"
 #include "base/messenger.h"
 #include "math/histogram1d.h"
+#include "templates/algorithms.h"
 
 // Static Members (ObjectStore)
 template <class Data1D> RefDataList<Data1D, int> ObjectStore<Data1D>::objects_;
@@ -161,30 +162,12 @@ void Data1D::removeLastPoint()
 // Return x value specified
 double &Data1D::xAxis(int index)
 {
-#ifdef CHECKS
-    if ((index < 0) || (index >= x_.size()))
-    {
-        static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data1D::xAxis().\n", index);
-        return dummy;
-    }
-#endif
     ++version_;
 
     return x_[index];
 }
 
-const double &Data1D::xAxis(int index) const
-{
-#ifdef CHECKS
-    if ((index < 0) || (index >= x_.size()))
-    {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data1D::xAxis().\n", index);
-        return 0.0;
-    }
-#endif
-    return x_[index];
-}
+const double &Data1D::xAxis(int index) const { return x_[index]; }
 
 // Return x Array
 std::vector<double> &Data1D::xAxis()
@@ -199,30 +182,12 @@ const std::vector<double> &Data1D::xAxis() const { return x_; }
 // Return y value specified
 double &Data1D::value(int index)
 {
-#ifdef CHECKS
-    if ((index < 0) || (index >= values_.size()))
-    {
-        static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for values_ array in Data1D::value().\n", index);
-        return dummy;
-    }
-#endif
     ++version_;
 
     return values_[index];
 }
 
-const double &Data1D::value(int index) const
-{
-#ifdef CHECKS
-    if ((index < 0) || (index >= values_.size()))
-    {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for values_ array in Data1D::value().\n", index);
-        return 0.0;
-    }
-#endif
-    return values_[index];
-}
+const double &Data1D::value(int index) const { return values_[index]; }
 
 // Return values Array
 std::vector<double> &Data1D::values()
@@ -276,7 +241,7 @@ double &Data1D::error(int index)
 {
     if (!hasError_)
     {
-        static double dummy;
+        static double dummy = 0.0;
         Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but error(int) was requested.\n", name(),
                         objectTag());
         return dummy;
@@ -354,19 +319,6 @@ void Data1D::operator+=(const Data1D &source)
 
     ++version_;
 
-#ifdef CHECKS
-    for (auto n = 0; n < x_.size(); ++n)
-    {
-        // Check x values for consistency
-        if (fabs(x_[n] - source.x_[n]) > 1.0e-6)
-        {
-            Messenger::error("Failed to += these Data1D together since the x arrays are different (at point {}, x "
-                             "are {:e} and {:e}).\n",
-                             n, x_[n], source.xAxis(n));
-            return;
-        }
-    }
-#endif
     // Loop over points, summing them into our array
     std::transform(source.values().begin(), source.values().end(), values_.begin(), values_.begin(), std::plus<>());
 }
@@ -381,7 +333,7 @@ void Data1D::operator+=(const double delta)
 void Data1D::operator-=(const Data1D &source)
 {
     // If no data is present, simply copy the other arrays and negate the y array
-    if (x_.size() == 0)
+    if (x_.empty())
     {
         copyArrays(source);
         std::transform(values_.begin(), values_.end(), values_.begin(), std::negate<>());
@@ -397,19 +349,6 @@ void Data1D::operator-=(const Data1D &source)
 
     ++version_;
 
-#ifdef CHECKS
-    for (auto n = 0; n < x_.size(); ++n)
-    {
-        // Check x values for consistency
-        if (fabs(x_[n] - source.x_[n]) > 1.0e-6)
-        {
-            Messenger::error("Failed to -= these Data1D together since the x arrays are different (at point {}, x "
-                             "are {:e} and {:e}).\n",
-                             n, x_[n], source.xAxis(n));
-            return;
-        }
-    }
-#endif
     // Loop over points, summing them into our array
     std::transform(values_.begin(), values_.end(), source.values().begin(), values_.begin(), std::minus<>());
 }
@@ -512,13 +451,13 @@ bool Data1D::write(LineParser &parser)
     // Write values / errors
     if (hasError_)
     {
-        for (auto n = 0; n < x_.size(); ++n)
-            if (!parser.writeLineF("{}  {}  {}\n", x_[n], values_[n], errors_[n]))
+        for (auto &&[x, value, error] : zip(x_, values_, errors_))
+            if (!parser.writeLineF("{}  {}  {}\n", x, value, error))
                 return false;
     }
     else
-        for (auto n = 0; n < x_.size(); ++n)
-            if (!parser.writeLineF("{}  {}\n", x_[n], values_[n]))
+        for (auto &&[x, value] : zip(x_, values_))
+            if (!parser.writeLineF("{}  {}\n", x, value))
                 return false;
 
     return true;

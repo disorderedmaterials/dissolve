@@ -7,7 +7,8 @@
 DataViewer::DataViewer(QWidget *parent) : BaseViewer(parent)
 {
     // Interaction
-    setInteractionMode(DataViewer::DefaultInteraction);
+    setInteractionMode(DataViewer::InteractionMode::Default);
+    transientInteractionMode_ = TransientInteractionMode::None;
 
     // Set up the view
     view_.setViewType(View::FlatXYView);

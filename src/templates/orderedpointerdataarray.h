@@ -7,9 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-// Forward Declarations
-/* none */
-
 /*
  * Simple Ordered Pointer Array Class
  * A contiguous pointer array class designed to be as lightweight as possible.
@@ -50,15 +47,8 @@ template <class T, class D> class OrderedPointerDataArray
     }
     T *operator[](int index)
     {
-#ifdef CHECKS
-        if ((index < 0) || (index >= nItems_))
-        {
-            Messenger::error("OrderedPointerDataArray<T,D>::operator[]({}) - Array index out of bounds ({} items "
-                             "in array).\n",
-                             index, nItems_);
-            return nullptr;
-        }
-#endif
+        assert(index >= 0 && index < nItems_);
+
         return items_[index];
     }
 
@@ -117,28 +107,14 @@ template <class T, class D> class OrderedPointerDataArray
     // Const pointer access
     T *pointer(int index) const
     {
-#ifdef CHECKS
-        if ((index < 0) || (index >= nItems_))
-        {
-            Messenger::error("OrderedPointerDataArray<T,D>::value({}) - Array index out of bounds ({} items in array).\n",
-                             index, nItems_);
-            return nullptr;
-        }
-#endif
+        assert(index >= 0 && index < nItems_);
 
         return items_[index];
     }
     // Const-data access
     D data(int index) const
     {
-#ifdef CHECKS
-        if ((index < 0) || (index >= nItems_))
-        {
-            Messenger::error("OrderedPointerDataArray<T,D>::data({}) - Array index out of bounds ({} items in array).\n", index,
-                             nItems_);
-            return D();
-        }
-#endif
+        assert(index >= 0 && index < nItems_);
 
         return data_[index];
     }
@@ -223,14 +199,7 @@ template <class T, class D> class OrderedPointerDataArray
     // Set data for the nth item
     void setData(int index, D value)
     {
-#ifdef CHECKS
-        if ((index < 0) || (index >= nItems_))
-        {
-            Messenger::error("OrderedPointerDataArray<T,D>::setData({}) - Array index out of bounds ({} items in array).\n",
-                             index, nItems_);
-            return;
-        }
-#endif
+        assert(index >= 0 && index < nItems_);
 
         data_[index] = value;
     }

@@ -3,7 +3,7 @@ project(Dissolve)
 set(DESCRIPTION "Dissolve")
 set(AUTHOR "Tristan Youngs")
 set(VERSION_MAJOR "0")
-set(VERSION_MINOR "7")
+set(VERSION_MINOR "8")
 set(VERSION_PATCH "0")
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -39,10 +39,6 @@ if(PARALLEL)
   include_directories(${MPI_INCLUDE_PATH})
   set(EXTRA_LINK_LIBS ${EXTRA_LINK_LIBS} ${MPI_LIBRARIES})
 endif(PARALLEL)
-
-if(CHECKS)
-  add_definitions("-DCHECKS")
-endif(CHECKS)
 
 # Add local Modules dir to cmake search path
 list(APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake/Modules")
@@ -257,6 +253,7 @@ set(BASIC_LINK_LIBS
     math
     data
     # Forcefields
+    ff
     ${FF_LINK_LIBS}
     # Modules
     ${MODULE_LINK_LIBS}

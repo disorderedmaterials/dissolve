@@ -129,13 +129,8 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
 ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
                                                                    std::string_view prefix, GenericList &targetList)
 {
-#ifdef CHECKS
-    if (!xObservable_)
-    {
-        Messenger::error("No CalculateProcedureNodeBase pointer set in Collect1DProcedureNode '{}'.\n", name());
-        return ProcedureNode::Failure;
-    }
-#endif
+    assert(xObservable_);
+
     // Bin the current value of the observable, and execute sub-collection branch on success
     if (histogram_->bin(xObservable_->value(xObservableIndex_)) && subCollectBranch_)
         return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
@@ -147,13 +142,8 @@ ProcedureNode::NodeExecutionResult Collect1DProcedureNode::execute(ProcessPool &
 bool Collect1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                       GenericList &targetList)
 {
-#ifdef CHECKS
-    if (!histogram_)
-    {
-        Messenger::error("No Data1D pointer set in Collect1DProcedureNode '{}'.\n", name());
-        return ProcedureNode::Failure;
-    }
-#endif
+    assert(histogram_);
+
     // Accumulate the current binned data
     histogram_->accumulate();
 

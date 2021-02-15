@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "data/ff.h"
+#include "data/ff/ff.h"
 #include "gui/selectforcefielddialog.h"
 #include "gui/selectforcefieldwidget.h"
 #include "templates/variantpointer.h"

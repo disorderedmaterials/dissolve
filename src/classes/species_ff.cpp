@@ -4,7 +4,7 @@
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/species.h"
-#include "data/ff.h"
+#include "data/ff/ff.h"
 
 /*
  * Public

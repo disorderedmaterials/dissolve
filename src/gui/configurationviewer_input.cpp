@@ -16,9 +16,22 @@ void ConfigurationViewer::mouseMoved(int dx, int dy)
     auto refresh = false;
 
     // What we do here depends on the current mode
-    switch (interactionMode())
+    switch (transientInteractionMode_)
     {
-        case (ConfigurationViewer::RotateViewInteraction):
+        case (TransientInteractionMode::None):
+            // End primary interaction
+            switch (interactionMode_)
+            {
+                case (ConfigurationViewer::InteractionMode::Default):
+                    // No action to take - the selection box will be drawn from the clicked and current positions (already
+                    // stored)
+                    refresh = true;
+                    break;
+                default:
+                    break;
+            }
+            break;
+        case (ConfigurationViewer::TransientInteractionMode::RotateView):
             // Rotate view
             if (mouseDownModifiers_.testFlag(Qt::ShiftModifier))
             {
@@ -32,7 +45,7 @@ void ConfigurationViewer::mouseMoved(int dx, int dy)
                 refresh = true;
             }
             break;
-        case (ConfigurationViewer::TranslateViewInteraction):
+        case (ConfigurationViewer::TransientInteractionMode::TranslateView):
             // If this is a flat view, shift the axis limits rather than translating the view
             if (view_.isFlatView())
                 view_.shiftFlatAxisLimits(dx, dy);

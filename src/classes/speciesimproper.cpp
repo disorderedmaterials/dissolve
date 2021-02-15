@@ -8,40 +8,119 @@
 #include "classes/speciestorsion.h"
 #include "templates/enumhelpers.h"
 
-SpeciesImproper::SpeciesImproper() : SpeciesIntra() { clear(); }
-
-SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-    : SpeciesIntra(), i_(i), j_(j), k_(k), l_(l)
+SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) : SpeciesIntra()
 {
+
+    parent_ = nullptr;
+    i_ = i;
+    j_ = j;
+    k_ = k;
+    l_ = l;
+    form_ = SpeciesImproper::NoForm;
+
+    // Add ourself to the list of impropers on each atom
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->addImproper(*this);
+        j_->addImproper(*this);
+        k_->addImproper(*this);
+        l_->addImproper(*this);
+    }
 }
+
+SpeciesImproper::SpeciesImproper(SpeciesImproper &source) { this->operator=(source); }
 
 SpeciesImproper::SpeciesImproper(SpeciesImproper &&source) : SpeciesIntra(source)
 {
+    // Detach source torsion referred to by the species atoms
+    if (source.i_ && source.j_ && source.k_ && source.l_)
+    {
+        source.i_->removeImproper(source);
+        source.j_->removeImproper(source);
+        source.k_->removeImproper(source);
+        source.l_->removeImproper(source);
+    }
+
+    // Copy data
     i_ = source.i_;
     j_ = source.j_;
     k_ = source.k_;
     l_ = source.l_;
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->addImproper(*this);
+        j_->addImproper(*this);
+        k_->addImproper(*this);
+        l_->addImproper(*this);
+    }
     form_ = source.form_;
 
+    // Reset source data
     source.i_ = nullptr;
     source.j_ = nullptr;
     source.k_ = nullptr;
     source.l_ = nullptr;
 }
 
-/*
- * DynamicArrayObject Virtuals
- */
+SpeciesImproper::~SpeciesImproper() { detach(); }
 
-// Clear object, ready for re-use
-void SpeciesImproper::clear()
+SpeciesImproper &SpeciesImproper::operator=(const SpeciesImproper &source)
 {
-    parent_ = nullptr;
+    i_ = source.i_;
+    j_ = source.j_;
+    k_ = source.k_;
+    l_ = source.l_;
+
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->addImproper(*this);
+        j_->addImproper(*this);
+        k_->addImproper(*this);
+        l_->addImproper(*this);
+    }
+    form_ = source.form_;
+    SpeciesIntra::operator=(source);
+
+    return *this;
+}
+
+SpeciesImproper &SpeciesImproper::operator=(SpeciesImproper &&source)
+{
+    if (i_ && j_ && k_ && l_)
+        detach();
+
+    i_ = source.i_;
+    j_ = source.j_;
+    k_ = source.k_;
+    l_ = source.l_;
+
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->addImproper(*this);
+        j_->addImproper(*this);
+        k_->addImproper(*this);
+        l_->addImproper(*this);
+    }
+    form_ = source.form_;
+    SpeciesIntra::operator=(source);
+
+    return *this;
+}
+
+// Detach from current atoms
+void SpeciesImproper::detach()
+{
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->removeImproper(*this);
+        j_->removeImproper(*this);
+        k_->removeImproper(*this);
+        l_->removeImproper(*this);
+    }
     i_ = nullptr;
     j_ = nullptr;
     k_ = nullptr;
     l_ = nullptr;
-    form_ = SpeciesImproper::NoForm;
 }
 
 /*
@@ -55,16 +134,8 @@ void SpeciesImproper::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Spe
     j_ = j;
     k_ = k;
     l_ = l;
-#ifdef CHECKS
-    if (i_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* i in SpeciesImproper::set().\n");
-    if (j_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* j in SpeciesImproper::set().\n");
-    if (k_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesImproper::set().\n");
-    if (l_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* l in SpeciesImproper::set().\n");
-#endif
+
+    assert(i_ && j_ && k_ && l_);
 
     if (i_)
         i_->addImproper(*this);
@@ -97,52 +168,28 @@ bool SpeciesImproper::uses(SpeciesAtom *spAtom) const
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesImproper::indexI() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesImproper::indexI(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(i_);
     return i_->index();
 }
 
 // Return index (in parent Species) of second (central) SpeciesAtom
 int SpeciesImproper::indexJ() const
 {
-#ifdef CHECKS
-    if (j_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesImproper::indexJ(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(j_);
     return j_->index();
 }
 
 // Return index (in parent Species) of third SpeciesAtom
 int SpeciesImproper::indexK() const
 {
-#ifdef CHECKS
-    if (k_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'k' found in SpeciesImproper::indexK(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(k_);
     return k_->index();
 }
 
 // Return index (in parent Species) of fourth SpeciesAtom
 int SpeciesImproper::indexL() const
 {
-#ifdef CHECKS
-    if (l_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'l' found in SpeciesImproper::indexL(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(l_);
     return l_->index();
 }
 
@@ -190,14 +237,7 @@ bool SpeciesImproper::matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Sp
 // Return whether all atoms in the interaction are currently selected
 bool SpeciesImproper::isSelected() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr || j_ == nullptr || k_ == nullptr || l_ == nullptr)
-    {
-        Messenger::error(
-            "NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesImproper::isSelected(). Returning false...\n");
-        return false;
-    }
-#endif
+    assert(i_ && j_ && k_ && l_);
     return (i_->isSelected() && j_->isSelected() && k_->isSelected() && l_->isSelected());
 }
 
@@ -208,15 +248,14 @@ bool SpeciesImproper::isSelected() const
 // Return enum options for ImproperFunction
 EnumOptions<SpeciesImproper::ImproperFunction> SpeciesImproper::improperFunctions()
 {
-    static EnumOptionsList ImproperFunctionOptions = EnumOptionsList()
-                                                     << EnumOption(SpeciesTorsion::NoForm, "None", 0, 0)
-                                                     << EnumOption(SpeciesTorsion::CosineForm, "Cos", 4, 4)
-                                                     << EnumOption(SpeciesTorsion::Cos3Form, "Cos3", 3, 3)
-                                                     << EnumOption(SpeciesTorsion::Cos3CForm, "Cos3C", 4, 4)
-                                                     << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4, 4)
-                                                     << EnumOption(SpeciesTorsion::CosNForm, "CosN", 1, 10)
-                                                     << EnumOption(SpeciesTorsion::CosNCForm, "CosNC", 1, 11)
-                                                     << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3, 3);
+    static EnumOptionsList ImproperFunctionOptions =
+        EnumOptionsList() << EnumOption(SpeciesTorsion::NoForm, "None") << EnumOption(SpeciesTorsion::CosineForm, "Cos", 4)
+                          << EnumOption(SpeciesTorsion::Cos3Form, "Cos3", 3)
+                          << EnumOption(SpeciesTorsion::Cos3CForm, "Cos3C", 4)
+                          << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4)
+                          << EnumOption(SpeciesTorsion::CosNForm, "CosN", 1, EnumOption::AnyNumberOfArguments)
+                          << EnumOption(SpeciesTorsion::CosNCForm, "CosNC", 1, EnumOption::AnyNumberOfArguments)
+                          << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3);
 
     static EnumOptions<SpeciesImproper::ImproperFunction> options("ImproperFunction", ImproperFunctionOptions);
 

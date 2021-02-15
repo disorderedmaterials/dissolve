@@ -42,10 +42,10 @@ bool XRayWeights::initialiseFormFactors()
         auto at = atd.atomType();
 
         // Try to retrieve form factor data for this atom type (element, formal charge [TODO])
-        auto data = XRayFormFactors::formFactorData(formFactors_, at->element());
+        auto data = XRayFormFactors::formFactorData(formFactors_, at->Z());
         if (!data)
             return Messenger::error("No form factor data present for element {} (formal charge {}) in x-ray data set '{}'.\n",
-                                    at->element()->symbol(), 0, XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
+                                    Elements::symbol(at->Z()), 0, XRayFormFactors::xRayFormFactorData().keyword(formFactors_));
 
         formFactorData_.push_back(*data);
     }
@@ -172,14 +172,6 @@ std::vector<double> XRayWeights::formFactor(int typeIndexI, const std::vector<do
     // Initialise results array
     std::vector<double> fiq(Q.size());
 
-#ifdef CHECKS
-    if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
-    {
-        Messenger::error("XRayWeights::formFactorProduct() - Type i index {} is out of range.\n", typeIndexI);
-        return fiq;
-    }
-#endif
-
     auto &fi = formFactorData_[typeIndexI].get();
 
     for (auto n = 0; n < Q.size(); ++n)
@@ -191,18 +183,6 @@ std::vector<double> XRayWeights::formFactor(int typeIndexI, const std::vector<do
 // Return form factor product for types i and j at specified Q value
 double XRayWeights::formFactorProduct(int typeIndexI, int typeIndexJ, double Q) const
 {
-#ifdef CHECKS
-    if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
-    {
-        Messenger::error("XRayWeights::formFactorProduct() - Type i index {} is out of range.\n", typeIndexI);
-        return 0.0;
-    }
-    if ((typeIndexJ < 0) || (typeIndexJ >= formFactorData_.size()))
-    {
-        Messenger::error("XRayWeights::formFactorProduct() - Type j index {} is out of range.\n", typeIndexJ);
-        return 0.0;
-    }
-#endif
     return formFactorData_[typeIndexI].get().magnitude(Q) * formFactorData_[typeIndexJ].get().magnitude(Q);
 }
 
@@ -218,20 +198,6 @@ std::vector<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const st
     // Initialise results array
     std::vector<double> fijq(Q.size());
 
-    // Get form factor data for involved types
-#ifdef CHECKS
-    if ((typeIndexI < 0) || (typeIndexI >= formFactorData_.size()))
-    {
-        Messenger::error("XRayWeights::weight() - Type i index {} is out of range.\n", typeIndexI);
-        return fijq;
-    }
-    if ((typeIndexJ < 0) || (typeIndexJ >= formFactorData_.size()))
-    {
-        Messenger::error("XRayWeights::weight() - Type j index {} is out of range.\n", typeIndexJ);
-        return fijq;
-    }
-#endif
-
     auto &fi = formFactorData_[typeIndexI].get();
     auto &fj = formFactorData_[typeIndexJ].get();
     auto preFactor = preFactors_[{typeIndexI, typeIndexJ}];
@@ -245,8 +211,8 @@ std::vector<double> XRayWeights::weight(int typeIndexI, int typeIndexJ, const st
 // Calculate and return Q-dependent average squared scattering (<b>**2) for supplied Q value
 double XRayWeights::boundCoherentSquareOfAverage(double Q) const
 {
-    auto result = std::inner_product(concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0, std::plus<>(),
-                                     [Q](auto con, auto form) { return con * form.get().magnitude(Q); });
+    auto result = std::inner_product(concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0.0,
+                                     std::plus<>(), [Q](auto con, auto form) { return con * form.get().magnitude(Q); });
     return result * result;
 }
 
@@ -273,7 +239,7 @@ std::vector<double> XRayWeights::boundCoherentSquareOfAverage(const std::vector<
 // Calculate and return Q-dependent squared average scattering (<b**2>) for supplied Q value
 double XRayWeights::boundCoherentAverageOfSquares(double Q) const
 {
-    return std::inner_product(concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0, std::plus<>(),
+    return std::inner_product(concentrations_.begin(), concentrations_.end(), formFactorData_.begin(), 0.0, std::plus<>(),
                               [Q](auto con, auto form) { return con * form.get().magnitude(Q) * form.get().magnitude(Q); });
 }
 

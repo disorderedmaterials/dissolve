@@ -10,6 +10,8 @@ pr:
     - examples/*
     - web/*
     - README.md
+    - .azure-pipelines/continuous.yml
+    - .azure-pipelines/release.yml
 
 stages:
   - template: templates/code-quality-checks.yml
@@ -28,7 +30,7 @@ stages:
           - template: templates/set-short-hash.yml
           - template: templates/build-linux-serial-gui.yml
             parameters:
-              extraflags: '-DCHECKS:bool=true -DBUILD_TESTS:bool=true'
+              extraflags: '-DBUILD_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug'
               ppa: 'beineri/opt-qt-5.13.2-bionic'
               qtver: 513
           - task: PublishBuildArtifacts@1
@@ -46,7 +48,7 @@ stages:
           - template: templates/set-short-hash.yml
           - template: templates/build-linux-parallel.yml
             parameters:
-              extraflags: '-DCHECKS:bool=true -DBUILD_TESTS:bool=true'
+              extraflags: '-DBUILD_TESTS:bool=true -DCMAKE_BUILD_TYPE=Debug'
           - task: PublishBuildArtifacts@1
             inputs:
               PathtoPublish: "build/"

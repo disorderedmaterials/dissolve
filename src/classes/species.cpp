@@ -68,7 +68,7 @@ bool Species::checkSetUp()
         if (i->atomType() == nullptr)
         {
             Messenger::error("Atom {} ({}) of species '{}' has no associated atom type.\n", i->userIndex(),
-                             i->element()->symbol(), name_);
+                             Elements::symbol(i->Z()), name_);
             ++nErrors;
         }
     }
@@ -83,7 +83,7 @@ bool Species::checkSetUp()
         if ((i->nBonds() == 0) && (atoms_.nItems() > 1))
         {
             Messenger::error("SpeciesAtom {} ({}) participates in no Bonds, but is part of a multi-atom Species.\n",
-                             i->userIndex(), i->element()->symbol());
+                             i->userIndex(), Elements::symbol(i->Z()));
             ++nErrors;
         }
 
@@ -115,7 +115,7 @@ bool Species::checkSetUp()
                                  atomType->name());
                 ++nErrors;
             }
-            else if (!Isotopes::isotope(atomType->element(), isotope->A()))
+            else if (!Isotopes::isotope(atomType->Z(), isotope->A()))
             {
                 Messenger::error("Isotopologue '{}' does not refer to a suitable Isotope for AtomType '{}'.\n", iso->name(),
                                  atomType->name());
@@ -137,7 +137,7 @@ void Species::print()
     {
         SpeciesAtom *i = atoms_[n];
         Messenger::print("    {:4d}  {:3}  {:4} ({:2d})  {:12.4e}  {:12.4e}  {:12.4e}  {:12.4e}\n", n + 1,
-                         i->element()->symbol(), (i->atomType() ? i->atomType()->name() : "??"),
+                         Elements::symbol(i->Z()), (i->atomType() ? i->atomType()->name() : "??"),
                          (i->atomType() ? i->atomType()->index() : -1), i->r().x, i->r().y, i->r().z, i->charge());
     }
 

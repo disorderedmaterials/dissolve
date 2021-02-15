@@ -206,26 +206,10 @@ bool Collect3DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
 ProcedureNode::NodeExecutionResult Collect3DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
                                                                    std::string_view prefix, GenericList &targetList)
 {
-#ifdef CHECKS
-    if (!xObservable_)
-    {
-        Messenger::error("No CalculateProcedureNodeBase pointer set for X observable in Collect3DProcedureNode '{}'.\n",
-                         name());
-        return ProcedureNode::Failure;
-    }
-    if (!yObservable_)
-    {
-        Messenger::error("No CalculateProcedureNodeBase pointer set for Y observable in Collect3DProcedureNode '{}'.\n",
-                         name());
-        return ProcedureNode::Failure;
-    }
-    if (!zObservable_)
-    {
-        Messenger::error("No CalculateProcedureNodeBase pointer set for Z observable in Collect3DProcedureNode '{}'.\n",
-                         name());
-        return ProcedureNode::Failure;
-    }
-#endif
+    assert(xObservable_);
+    assert(yObservable_);
+    assert(zObservable_);
+
     // Bin the current value of the observable
     if (histogram_->bin(xObservable_->value(xObservableIndex_), yObservable_->value(yObservableIndex_),
                         zObservable_->value(zObservableIndex_)) &&
@@ -239,13 +223,8 @@ ProcedureNode::NodeExecutionResult Collect3DProcedureNode::execute(ProcessPool &
 bool Collect3DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                       GenericList &targetList)
 {
-#ifdef CHECKS
-    if (!histogram_)
-    {
-        Messenger::error("No Data3D pointer set in Collect3DProcedureNode '{}'.\n", name());
-        return ProcedureNode::Failure;
-    }
-#endif
+    assert(histogram_);
+
     // Accumulate the current binned data
     histogram_->accumulate();
 

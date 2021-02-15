@@ -25,12 +25,8 @@ void AtomTypeList::operator=(const AtomTypeList &source) { types_ = source.types
 // Array access operator
 AtomTypeData &AtomTypeList::operator[](int n)
 {
-#ifdef CHECKS
-    if ((n < 0) || (n >= types_.size()))
-    {
-        Messenger::print("OUT_OF_RANGE - Specified index {} out of range in AtomTypeList::operator[].\n", n);
-    }
-#endif
+    assert(n >= 0 && n < types_.size());
+
     return types_[n];
 }
 
@@ -228,12 +224,8 @@ double AtomTypeList::totalPopulation() const
 // Return nth referenced AtomType
 const std::shared_ptr<AtomType> AtomTypeList::atomType(int n) const
 {
-#ifdef CHECKS
-    if ((n < 0) || (n >= types_.size()))
-    {
-        Messenger::print("OUT_OF_RANGE - Specified index {} out of range in AtomTypeList::atomType().\n");
-    }
-#endif
+    assert(n >= 0 && n < types_.size());
+
     return types_[n].atomType();
 }
 
@@ -259,7 +251,7 @@ void AtomTypeList::print() const
         if (atd.isotopeData())
         {
             Messenger::print("{} {:<8}  {:<3}    -     {:<10d}    {:10.6f} (of world) {:6.3f}\n", exch, atd.atomTypeName(),
-                             atd.atomType()->element()->symbol(), atd.population(), atd.fraction(), atd.boundCoherent());
+                             Elements::symbol(atd.atomType()->Z()), atd.population(), atd.fraction(), atd.boundCoherent());
 
             for (const auto *topeData = atd.isotopeData(); topeData != nullptr; topeData = topeData->next())
             {
@@ -270,7 +262,7 @@ void AtomTypeList::print() const
         }
         else
             Messenger::print("{} {:<8}  {:<3}          {:<10d}  {:8.6f}     --- N/A ---\n", exch, atd.atomTypeName(),
-                             atd.atomType()->element()->symbol(), atd.population(), atd.fraction());
+                             Elements::symbol(atd.atomType()->Z()), atd.population(), atd.fraction());
 
         Messenger::print("  -----------------------------------------------------------------\n");
     }
@@ -303,14 +295,14 @@ bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
         auto boundCoherent = parser.argd(3);
         auto nIsotopes = parser.argi(4);
 
-        // types_.emplace_back(types_.size(), atomType, population);
         types_.emplace_back(atomType, population, fraction, boundCoherent);
         auto &atd = types_.back();
         for (auto i = 0; i < nIsotopes; ++i)
         {
             if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
                 return false;
-            auto isotope = Isotopes::isotope(parser.argi(0), parser.argi(1));
+            auto Z = Elements::element(parser.argi(0));
+            auto isotope = Isotopes::isotope(Z, parser.argi(1));
             atd.add(isotope, parser.argd(2));
         }
     }

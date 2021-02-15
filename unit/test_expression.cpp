@@ -36,10 +36,10 @@ class ExpressionTest : public ::testing::Test
         ASSERT_EQ(result.type(), val.type());
         switch (val.type())
         {
-            case val.DoubleType:
+            case (ExpressionValue::ValueType::Double):
                 EXPECT_DOUBLE_EQ(result.asDouble(), val.asDouble());
                 break;
-            case val.IntegerType:
+            case (ExpressionValue::ValueType::Integer):
                 EXPECT_EQ(result.asInteger(), val.asInteger());
                 break;
         }

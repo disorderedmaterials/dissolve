@@ -1,0 +1,156 @@
+#!/bin/bash
+
+# List / update releases
+
+REPO=""
+UPDATE_WEB="false"
+ON_RELEASE="none"
+OLD_RELEASES_FILE="web/static/include/old_releases.md"
+
+usage()
+{
+	echo "Usage: $0 [-r owner/repo] [-u] [-v version]"
+	exit 1
+}
+
+# Parse options
+while getopts ":r:v:u" opt
+do
+	case "${opt}" in
+		r)
+			REPO=${OPTARG}
+			echo "Repo set to '${REPO}'"
+			;;
+		u)
+			UPDATE_WEB="true"
+			echo "Website will be updates to reflect current and historic releases."
+			;;
+		v)
+			ON_RELEASE=${OPTARG}
+			echo "Release version of current branch set to ${ON_RELEASE}."
+			;;
+		\?)
+			usage
+			;;
+		*)
+			usage
+			;;
+	esac
+done
+
+if [ "x$REPO" = "x" ]
+then
+	echo "Error: The owner and repo must be supplied."
+	exit 1
+fi
+
+# Set up vars
+echo "Repository is $REPO"
+REPO_URL="https://api.github.com/repos/${REPO}"
+echo "API URL is $REPO_URL"
+
+# Enable erroring
+set -e
+
+# Disable command expansion so we don't leak secrets
+set +x
+
+# Determine the release branch that we're currently on, if it wasn't already provided with -v
+if [ "$ON_RELEASE" = "none" ]
+then
+  ON_RELEASE=$(git branch --show-current | sed "s/releases\?\/\([0-9].[0-9].[0-9]\)/\1/g")
+  if [ "x${ON_RELEASE}" = "x" ]
+  then
+    echo "On a branch that doesn't appear to be a release ($(git branch --show-current)). Exiting now."
+    exit 1
+  else
+    echo "Release version for current branch is ${ON_RELEASE}"
+  fi
+fi
+
+# Get available releases information
+i=0
+RELEASES=""
+while (( i < 3 ))
+do
+	# Download release information - we may be refused data because another job is currently accessing the repo, so try a few times
+	RELEASES=$(curl --silent --show-error -XGET --header "Authorization: token ${GITHUB_TOKEN}" ${REPO_URL}/releases)
+
+	# Check for error or no data
+	if [[ ${RELEASES} =~ "documentation_url" ]]
+	then
+		MESSAGE=$(echo ${RELEASES} | jq ". | .message")
+		echo "Error returned: "${MESSAGE}
+		exit 1
+	elif (( ${#RELEASES} < 10 ))
+	then
+		echo "... Empty information returned - waiting 60 seconds and trying again..."
+		sleep 60
+		i=$(( i+1 ))
+	else
+		break
+	fi
+done
+
+# Filter releases so we only have release versions (tagged as release[s]/X.Y.Z)
+echo "Obtaining release information..."
+if [[ -e ${OLD_RELEASES_FILE}.new ]]
+then
+  rm ${OLD_RELEASES_FILE}.new
+fi
+for tag in $(echo ${RELEASES} | jq -r ".[] | select(.tag_name | match(\"[0-9].[0-9].[0-9]\")) | .tag_name")
+do
+  echo "Processing ${tag}..."
+
+  # Get full release info
+  RELEASE=$(echo ${RELEASES} | jq ".[] | select(.tag_name | match(\"${tag}\"))")
+  URL=$(echo ${RELEASE} | jq -r ". | .html_url")
+  PUBLISHED=$(date --date=$(echo ${RELEASE} | jq -r ". | .published_at") +"%-d %B %Y")
+  echo " -- published at ${PUBLISHED}"
+  echo " -- $URL"
+  echo "- [Version ${tag}, released ${PUBLISHED}]($URL)" >> ${OLD_RELEASES_FILE}.new
+done
+
+echo ""
+cat ${OLD_RELEASES_FILE}.new
+echo ""
+
+# Update web-side release info in development branch?
+if [ "${UPDATE_WEB}" == "true" ]
+then
+  # Switch to development branch
+  git checkout origin/develop
+
+  # Change publicly-visible release version, but only if the version (branch) we're on is more up-to-date
+  CURRENT_RELEASE=$(grep 'releaseVersion' web/config.toml | sed -e 's/releaseVersion = "\([0-9\.]*\)"/\1/g')
+  echo "Current release version linked to from web is ${CURRENT_RELEASE}..."
+  HIGHEST=$(echo -e "${ON_RELEASE}\n${CURRENT_VERSION}" | sort -r -V | head -n 1)
+  if [ "${HIGHEST}" == "${CURRENT_RELEASE}" ]
+  then
+    echo " -- This is the highest version available. No changes will be made."
+  else
+    echo " -- Release version for current branch is more recent. Re-linking website..."
+    ./changeversion -s ${ON_RELEASE} -r
+    # Copy the old releases data, excluding the most recent (HIGHEST)
+    grep -v "Version $HIGHEST" ${OLD_RELEASES_FILE}.new > ${OLD_RELEASES_FILE}
+  fi
+
+  # Commit changes (if there are any)
+  if ! git diff --quiet
+  then
+    # Set GitHub username and email
+    git config --local user.name "Tristan Youngs"
+    git config --local user.email "tristan.youngs@stfc.ac.uk"
+
+    git diff
+    git add ${OLD_RELEASES_FILE} web/config.toml README.md
+    git commit -m "(Release Automation) Update version info."
+    git push origin HEAD:develop
+  else
+    echo "No changes to be committed to develop."
+  fi
+
+fi
+
+# All done.
+exit 0

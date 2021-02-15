@@ -68,4 +68,4 @@ add_library(
   windowfunction.h
 )
 
-include_directories(../ ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src)
+include_directories(math PRIVATE ${PROJECT_SOURCE_DIR}/src)

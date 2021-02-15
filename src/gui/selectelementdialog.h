@@ -32,5 +32,5 @@ class SelectElementDialog : public QDialog
 
     public:
     // Run the dialog, returning the selected Element
-    Element *selectElement(Element *currentElement = nullptr);
+    Elements::Element selectElement(Elements::Element currentElement);
 };

@@ -9,7 +9,7 @@
 #include "modules/epsr/epsr.h"
 #include "templates/algorithms.h"
 
-// Return list of target Modules / data for refeinement
+// Return list of target Modules / data for refinement
 const RefList<Module> &EPSRModule::targets() const { return targets_; }
 
 // Add target Modules
@@ -82,15 +82,16 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
             // Multiply by truncation function
             truncate(ep, rminpt, rmaxpt);
 
-            // Grab pointer to the relevant pair potential
-            PairPotential *pp = dissolve.pairPotential(at1, at2);
-            if (!pp)
-            {
-                Messenger::error("Failed to find PairPotential for AtomTypes '{}' and '{}'.\n", at1->name(), at2->name());
-                return false;
-            }
+            // Set the additional potential in the main processing data
+            GenericListHelper<Data1D>::realise(dissolve.processingModuleData(),
+                                               fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()), "Dissolve",
+                                               GenericItem::InRestartFileFlag) = ep;
 
-            pp->setUAdditional(ep);
+            // Grab pointer to the relevant pair potential (if it exists)
+            auto *pp = dissolve.pairPotential(at1, at2);
+            if (pp)
+                pp->setUAdditional(ep);
+
             return EarlyReturn<bool>::Continue;
         });
 

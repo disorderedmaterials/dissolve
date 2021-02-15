@@ -3,37 +3,36 @@
 
 #pragma once
 
-#include "base/parameters.h"
-#include "classes/speciesbond.h"
+#include "classes/speciesangle.h"
 
 // Forward Declarations
 class Forcefield;
 class ForcefieldAtomType;
 
-// Forcefield Bond Term
-class ForcefieldBondTerm
+// Forcefield Angle Term
+class ForcefieldAngleTerm
 {
     public:
-    ForcefieldBondTerm(std::string_view typeI = "", std::string_view typeJ = "",
-                       SpeciesBond::BondFunction form = SpeciesBond::NoForm, const std::vector<double> parameters = {});
-    ~ForcefieldBondTerm() = default;
+    ForcefieldAngleTerm(std::string_view typeI = "", std::string_view typeJ = "", std::string_view typeK = "",
+                        SpeciesAngle::AngleFunction form = SpeciesAngle::NoForm, const std::vector<double> parameters = {});
+    ~ForcefieldAngleTerm() = default;
 
     /*
      * Data
      */
     private:
     // Type names involved in interaction
-    std::string typeI_, typeJ_;
+    std::string typeI_, typeJ_, typeK_;
     // Functional form of interaction
-    SpeciesBond::BondFunction form_;
+    SpeciesAngle::AngleFunction form_;
     // Parameters for interaction
     std::vector<double> parameters_;
 
     public:
     // Return if this term matches the atom types supplied
-    bool isMatch(const ForcefieldAtomType &i, const ForcefieldAtomType &j) const;
+    bool isMatch(const ForcefieldAtomType &i, const ForcefieldAtomType &j, const ForcefieldAtomType &k) const;
     // Return functional form index of interaction
-    SpeciesBond::BondFunction form() const;
+    SpeciesAngle::AngleFunction form() const;
     // Return array of parameters
     const std::vector<double> &parameters() const;
 };

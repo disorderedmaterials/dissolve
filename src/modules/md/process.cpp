@@ -7,7 +7,7 @@
 #include "classes/cell.h"
 #include "classes/forcekernel.h"
 #include "classes/species.h"
-#include "data/atomicmass.h"
+#include "data/atomicmasses.h"
 #include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
@@ -154,7 +154,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
             }
 
             // Grab atom mass for future use
-            mass[n] = AtomicMass::mass(atoms[n]->speciesAtom()->element());
+            mass[n] = AtomicMass::mass(atoms[n]->speciesAtom()->Z());
 
             // Calculate total velocity and mass over all atoms
             vCom += v[n] * mass[n];
@@ -335,7 +335,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
                     for (auto i : atoms)
                     {
                         if (!trajParser.writeLineF("{:<3}   {:10.3f}  {:10.3f}  {:10.3f}\n",
-                                                   i->speciesAtom()->element()->symbol(), i->r().x, i->r().y, i->r().z))
+                                                   Elements::symbol(i->speciesAtom()->Z()), i->r().x, i->r().y, i->r().z))
                         {
                             procPool.decideFalse();
                             return false;

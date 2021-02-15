@@ -8,12 +8,11 @@
 #include "classes/speciesimproper.h"
 #include "classes/speciestorsion.h"
 #include "data/elements.h"
-#include "data/ffangleterm.h"
-#include "data/ffatomtype.h"
-#include "data/ffbondterm.h"
-#include "data/ffimproperterm.h"
-#include "data/ffparameters.h"
-#include "data/fftorsionterm.h"
+#include "data/ff/angleterm.h"
+#include "data/ff/atomtype.h"
+#include "data/ff/bondterm.h"
+#include "data/ff/improperterm.h"
+#include "data/ff/torsionterm.h"
 #include "templates/optionalref.h"
 #include <algorithm>
 #include <functional>
@@ -26,7 +25,7 @@ class Species;
 class SpeciesAtom;
 
 // Forcefield Base Class
-class Forcefield : public Elements
+class Forcefield
 {
     public:
     Forcefield() = default;
@@ -70,7 +69,7 @@ class Forcefield : public Elements
      */
     protected:
     // Short-range parameter sets
-    std::vector<ForcefieldParameters> shortRangeParameters_;
+    std::vector<std::pair<std::string, std::vector<double>>> shortRangeParameters_;
     // Atom type data
     std::vector<ForcefieldAtomType> atomTypes_;
     // Atom type data, grouped by element
@@ -78,13 +77,13 @@ class Forcefield : public Elements
 
     protected:
     // Add short-range parameters
-    void addParameters(std::string_view name, double data0, double data1 = 0.0, double data2 = 0.0, double data3 = 0.0);
+    void addParameters(std::string_view name, const std::vector<double> &parameters);
     // Add new atom type with its own parameters
-    void addAtomType(int Z, int index, std::string_view name, std::string_view netaDefinition, std::string_view description,
-                     double q, double data0, double data1, double data2 = 0.0, double data3 = 0.0);
+    void addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
+                     std::string_view description, double q, const std::vector<double> &parameters);
     // Add new atom type referencing existing parameters by name
-    void addAtomType(int Z, int index, std::string_view name, std::string_view netaDefinition, std::string_view description,
-                     double q, std::string_view parameterReference);
+    void addAtomType(Elements::Element Z, int index, std::string_view name, std::string_view netaDefinition,
+                     std::string_view description, double q, std::string_view parameterReference);
     // Copy existing atom type
     bool copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType> sourceType, std::string_view description,
                       std::string_view netaDefinition = "", std::string_view equivalentName = "");
@@ -99,12 +98,13 @@ class Forcefield : public Elements
     // Create NETA definitions for all atom types from stored defs
     bool createNETADefinitions();
     // Return named short-range parameters (if they exist)
-    const OptionalReferenceWrapper<const ForcefieldParameters> shortRangeParameters(std::string_view name) const;
+    std::optional<std::vector<double>> shortRangeParameters(std::string_view name) const;
     // Return the named ForcefieldAtomType (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeByName(std::string_view name,
-                                                                              Element *element = nullptr) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType>
+    atomTypeByName(std::string_view name, Elements::Element onlyZ = Elements::Unknown) const;
     // Return the ForcefieldAtomType with specified id (if it exists)
-    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeById(int id, Element *element = nullptr) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> atomTypeById(int id,
+                                                                            Elements::Element onlyZ = Elements::Unknown) const;
 
     /*
      * Term Data
@@ -210,7 +210,7 @@ class Forcefield : public Elements
     bool isBondPattern(const SpeciesAtom *i, const int nSingle, const int nDouble = 0, const int nTriple = 0,
                        const int nQuadruple = 0, const int nAromatic = 0) const;
     // Return whether the specified atom is bound to a specific element (and count thereof)
-    bool isBoundTo(const SpeciesAtom *i, Element *element, const int count = 1, bool allowMoreThanCount = true) const;
+    bool isBoundTo(const SpeciesAtom *i, Elements::Element Z, const int count = 1, bool allowMoreThanCount = true) const;
     // Guess and return oxidation state for the specified SpeciesAtom
     int guessOxidationState(const SpeciesAtom *i) const;
 };

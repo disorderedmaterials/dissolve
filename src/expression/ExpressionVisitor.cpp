@@ -2,7 +2,7 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "expression/ExpressionVisitor.h"
-#include "data/ff.h"
+#include "data/ff/ff.h"
 #include "expression/ExpressionErrorListeners.h"
 #include "expression/binary.h"
 #include "expression/function.h"
@@ -140,18 +140,15 @@ antlrcpp::Any ExpressionVisitor::visitFunction(ExpressionParser::FunctionContext
     contextStack_.pop_back();
 
     // Check number of args that were given...
-    const auto nArgs = ExpressionFunctionNode::internalFunctions().minArgs(func);
-    if (node->nChildren() != nArgs)
+    if (!ExpressionFunctionNode::internalFunctions().validNArgs(func, node->nChildren()))
         throw(ExpressionExceptions::ExpressionSyntaxException(
-            fmt::format("Internal function '{}' expects exactly {} {} but {} {} given.", ctx->Name()->getText(), nArgs,
-                        nArgs == 1 ? "argument" : "arguments", node->nChildren(), node->nChildren() == 1 ? "was" : "were")));
+            fmt::format("Internal function '{}' was given the wrong number of arguments.", ctx->Name()->getText())));
 
     return result;
 }
 
 antlrcpp::Any ExpressionVisitor::visitVariable(ExpressionParser::VariableContext *ctx)
 {
-
     // Do we have any external variables available?
     if (!externalVariables_)
         throw(ExpressionExceptions::ExpressionSyntaxException(fmt::format(

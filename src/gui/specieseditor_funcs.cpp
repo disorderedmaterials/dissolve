@@ -28,7 +28,7 @@ SpeciesEditor::SpeciesEditor(QWidget *parent) : QWidget(parent)
     // Connect signals / slots
     connect(ui_.SpeciesView, SIGNAL(dataModified()), this, SLOT(notifyDataModified()));
     connect(ui_.SpeciesView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));
-    connect(ui_.SpeciesView, SIGNAL(atomSelectionChanged()), this, SLOT(updateStatusBar()));
+    connect(ui_.SpeciesView, SIGNAL(atomsChanged()), this, SLOT(updateStatusBar()));
     connect(ui_.SpeciesView, SIGNAL(interactionModeChanged()), this, SLOT(updateStatusBar()));
 
     // Make sure our controls are consistent with the underlying viewer / data
@@ -60,16 +60,23 @@ void SpeciesEditor::updateToolbar()
     // Set current interaction mode
     switch (speciesViewer()->interactionMode())
     {
-        case (SpeciesViewer::DefaultInteraction):
+        case (SpeciesViewer::InteractionMode::Select):
+        case (SpeciesViewer::InteractionMode::SelectArea):
             ui_.InteractionViewButton->setChecked(true);
             break;
-        case (SpeciesViewer::DrawInteraction):
+        case (SpeciesViewer::InteractionMode::Draw):
             ui_.InteractionDrawButton->setChecked(true);
+            break;
+        case (SpeciesViewer::InteractionMode::Delete):
+            ui_.InteractionDeleteButton->setChecked(true);
+            break;
+        default:
             break;
     }
 
     // Set drawing element symbol
-    ui_.InteractionDrawElementButton->setText(QString::fromStdString(std::string(speciesViewer()->drawElement()->symbol())));
+    ui_.InteractionDrawElementButton->setText(
+        QString::fromStdString(std::string(Elements::symbol(speciesViewer()->drawElement()))));
 
     // Set checkable buttons
     ui_.ViewAxesVisibleButton->setChecked(speciesViewer()->axesVisible());
@@ -114,21 +121,21 @@ SpeciesViewer *SpeciesEditor::speciesViewer() { return ui_.SpeciesView; }
 void SpeciesEditor::on_InteractionViewButton_clicked(bool checked)
 {
     if (checked)
-        speciesViewer()->setInteractionMode(SpeciesViewer::DefaultInteraction);
+        speciesViewer()->setInteractionMode(SpeciesViewer::InteractionMode::Select);
 }
 
 void SpeciesEditor::on_InteractionDrawButton_clicked(bool checked)
 {
     if (checked)
-        speciesViewer()->setInteractionMode(SpeciesViewer::DrawInteraction);
+        speciesViewer()->setInteractionMode(SpeciesViewer::InteractionMode::Draw);
 }
 
 void SpeciesEditor::on_InteractionDrawElementButton_clicked(bool checked)
 {
     // Select a new element for drawing
     bool ok;
-    Element *newElement = ElementSelector::getElement(this, "Choose Element", "Select element to use for drawn atoms",
-                                                      speciesViewer()->drawElement(), &ok);
+    auto newElement = ElementSelector::getElement(this, "Choose Element", "Select element to use for drawn atoms",
+                                                  speciesViewer()->drawElement(), &ok);
     if (!ok)
         return;
 
@@ -140,7 +147,7 @@ void SpeciesEditor::on_InteractionDrawElementButton_clicked(bool checked)
 void SpeciesEditor::on_InteractionDeleteButton_clicked(bool checked)
 {
     if (checked)
-        speciesViewer()->setInteractionMode(SpeciesViewer::DeleteInteraction);
+        speciesViewer()->setInteractionMode(SpeciesViewer::InteractionMode::Delete);
 }
 
 void SpeciesEditor::on_ViewResetButton_clicked(bool checked)

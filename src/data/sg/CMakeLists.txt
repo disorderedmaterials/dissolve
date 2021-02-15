@@ -10,4 +10,4 @@ add_library(
   sgsi.c
 )
 
-include_directories(../../ ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src)
+include_directories(sg PRIVATE ${PROJECT_SOURCE_DIR}/src)

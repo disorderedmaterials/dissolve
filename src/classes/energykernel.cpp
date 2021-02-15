@@ -52,18 +52,8 @@ double EnergyKernel::energyWithMim(const std::shared_ptr<Atom> i, const std::sha
 // Return PairPotential energy between atoms (provided as pointers)
 double EnergyKernel::energy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, bool applyMim, bool excludeIgeJ)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr (i) passed to EnergyKernel::energy(Atom,Atom,bool,bool).\n");
-        return 0.0;
-    }
-    if (j == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr (j) passed to EnergyKernel::energy(Atom,Atom,bool,bool).\n");
-        return 0.0;
-    }
-#endif
+    assert(i && j);
+
     // If Atoms are the same, we refuse to calculate
     if (i == j)
         return 0.0;
@@ -82,20 +72,9 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const std::shared_ptr
 double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, bool excludeIgeJ, bool interMolecular,
                             ProcessPool::DivisionStrategy strategy, bool performSum)
 {
-#ifdef CHECKS
-    if (centralCell == nullptr)
-    {
-        Messenger::error(
-            "NULL_POINTER - nullptr (central cell) pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
-        return 0.0;
-    }
-    if (otherCell == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr (other cell) pointer passed to EnergyKernel::energy(Cell,Cell,bool,bool).\n");
-        return 0.0;
-    }
-#endif
-    double totalEnergy = 0.0;
+    assert(centralCell && otherCell);
+
+    auto totalEnergy = 0.0;
     auto &centralAtoms = centralCell->atoms();
     auto &otherAtoms = otherCell->atoms();
     std::shared_ptr<Atom> ii;
@@ -184,7 +163,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
 double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolecular, ProcessPool::DivisionStrategy strategy,
                             bool performSum)
 {
-    double totalEnergy = 0.0;
+    auto totalEnergy = 0.0;
     auto &centralAtoms = centralCell->atoms();
     std::shared_ptr<Atom> ii;
     Vec3<double> rJ;
@@ -280,25 +259,15 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
 double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int flags, ProcessPool::DivisionStrategy strategy,
                             bool performSum)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL atom pointer passed to EnergyKernel::energy(Atom,Cell).\n");
-        return 0.0;
-    }
-    if (cell == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr passed to EnergyKernel::energy(Atom,Cell).\n");
-        return 0.0;
-    }
-#endif
-    double totalEnergy = 0.0;
+    assert(i && cell);
+
+    auto totalEnergy = 0.0;
     std::shared_ptr<Atom> jj;
     double rSq, scale;
     auto &otherAtoms = cell->atoms();
 
     // Grab some information on the supplied Atom
-    std::shared_ptr<Molecule> moleculeI = i->molecule();
+    auto moleculeI = i->molecule();
     const auto rI = i->r();
 
     // Get start/stride for specified loop context
@@ -516,17 +485,12 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
 // Return PairPotential energy of Atom with world
 double EnergyKernel::energy(const std::shared_ptr<Atom> i, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr passed to EnergyKernel::energy(Atom,ParallelStyle).\n");
-        return 0.0;
-    }
-#endif
-    Cell *cellI = i->cell();
+    assert(i);
+
+    auto *cellI = i->cell();
 
     // This Atom with its own Cell
-    double totalEnergy = energy(i, cellI, KernelFlags::ExcludeSelfFlag, strategy, false);
+    auto totalEnergy = energy(i, cellI, KernelFlags::ExcludeSelfFlag, strategy, false);
 
     // Cell neighbours not requiring minimum image
     for (auto *neighbour : cellI->cellNeighbours())
@@ -546,7 +510,7 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, ProcessPool::Division
 // Return PairPotential energy of Molecule with world
 double EnergyKernel::energy(std::shared_ptr<const Molecule> mol, ProcessPool::DivisionStrategy strategy, bool performSum)
 {
-    double totalEnergy = 0.0;
+    auto totalEnergy = 0.0;
 
     for (auto ii : mol->atoms())
     {
@@ -610,7 +574,7 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
     auto start = processPool_.interleavedLoopStart(strategy);
     auto stride = processPool_.interleavedLoopStride(strategy);
 
-    double totalEnergy = 0.0;
+    auto totalEnergy = 0.0;
     Cell *cell;
     for (auto cellId = start; cellId < cellArray.nCells(); cellId += stride)
     {
@@ -633,12 +597,6 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
 // Return SpeciesBond energy at Atoms specified
 double EnergyKernel::energy(const SpeciesBond &bond, const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j)
 {
-#ifdef CHECKS
-    // Check for spurious bond distances
-    double distance = i->cell()->mimRequired(j->cell()) ? box_->minimumDistance(i, j) : (i->r() - j->r()).magnitude();
-    if (distance > 5.0)
-        Messenger::print("!!! Long bond: {}-{} = {} Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
-#endif
     // Determine whether we need to apply minimum image to the distance calculation
     if (i->cell()->mimRequired(j->cell()))
         return bond.energy(box_->minimumDistance(i, j));
@@ -676,7 +634,7 @@ double EnergyKernel::energy(const SpeciesAngle &angle, const std::shared_ptr<Ato
 // Return SpeciesAngle energy
 double EnergyKernel::energy(const SpeciesAngle &angle)
 {
-    Vec3<double> vecji = angle.i()->r() - angle.j()->r(), vecjk = angle.k()->r() - angle.j()->r();
+    auto vecji = angle.i()->r() - angle.j()->r(), vecjk = angle.k()->r() - angle.j()->r();
 
     // Normalise vectors
     vecji.normalise();
@@ -749,20 +707,11 @@ double EnergyKernel::energy(const SpeciesImproper &imp)
 // Return intramolecular energy for the supplied Atom
 double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, const std::shared_ptr<Atom> i)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::error("NULL Atom given to EnergyKernel::intraEnergy().\n");
-        return 0.0;
-    }
-    if (i->speciesAtom() == nullptr)
-    {
-        Messenger::error("NULL SpeciesAtom in Atom given to EnergyKernel::intraEnergy().\n");
-        return 0.0;
-    }
-#endif
+    assert(i);
+
     // Get the SpeciesAtom
-    const SpeciesAtom *spAtom = i->speciesAtom();
+    const auto *spAtom = i->speciesAtom();
+    assert(spAtom);
 
     // If no terms are present, return zero
     if ((spAtom->nBonds() == 0) && (spAtom->nAngles() == 0) && (spAtom->nTorsions() == 0))
@@ -802,13 +751,7 @@ double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol, c
 // Return intramolecular energy for the supplied Molecule
 double EnergyKernel::intramolecularEnergy(std::shared_ptr<const Molecule> mol)
 {
-#ifdef CHECKS
-    if (mol == nullptr)
-    {
-        Messenger::error("NULL Molecule pointer given to EnergyKernel::intramolecularEnergy.\n");
-        return 0.0;
-    }
-#endif
+    assert(mol);
 
     auto intraEnergy = 0.0;
 

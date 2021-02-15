@@ -78,7 +78,7 @@ bool SelectProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
  */
 
 // Return list of Molecules currently excluded from selection
-const OrderedVector<std::shared_ptr<const Molecule>> &SelectProcedureNode::excludedMolecules() const
+const std::vector<std::shared_ptr<const Molecule>> &SelectProcedureNode::excludedMolecules() const
 {
     return excludedMolecules_;
 }
@@ -182,7 +182,7 @@ ProcedureNode::NodeExecutionResult SelectProcedureNode::execute(ProcessPool &pro
     excludedMolecules_.clear();
     for (SelectProcedureNode *node : sameMoleculeExclusions_)
         if (node->currentSite())
-            excludedMolecules_.insert(node->currentSite()->molecule());
+            excludedMolecules_.emplace_back(node->currentSite()->molecule());
 
     excludedSites_.clear();
     for (SelectProcedureNode *node : sameSiteExclusions_)

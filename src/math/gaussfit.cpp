@@ -7,6 +7,7 @@
 #include "math/error.h"
 #include "math/mc.h"
 #include "math/praxis.h"
+#include "templates/algorithms.h"
 
 GaussFit::GaussFit(const Data1D &referenceData)
 {
@@ -54,8 +55,8 @@ double GaussFit::gaussian(double x, double xCentre, double A, double FWHM) const
      * preFactor argument of approximation().
      */
 
-    double c = FWHM / TWOSQRT2LN2;
-    double gfac = (sqrt(0.5 * PI) / (4.0 * PI * PI)) / c;
+    auto c = FWHM / TWOSQRT2LN2;
+    auto gfac = (sqrt(0.5 * PI) / (4.0 * PI * PI)) / c;
     if ((x > 0.0) && (xCentre > 0.0))
         gfac /= x * xCentre;
     else
@@ -66,7 +67,7 @@ double GaussFit::gaussian(double x, double xCentre, double A, double FWHM) const
 // Return Fourier transform of Gaussian at specified x value
 double GaussFit::gaussianFT(double x, double xCentre, double A, double FWHM) const
 {
-    double c = FWHM / TWOSQRT2LN2;
+    auto c = FWHM / TWOSQRT2LN2;
     const auto xCx = xCentre * x;
     return xCx > 0.0 ? A * exp(-(x * x * c * c) / 2.0) * sin(xCx) / (xCx) : A * exp(-(x * x * c * c) / 2.0);
 }
@@ -135,9 +136,9 @@ bool GaussFit::saveFTGaussians(std::string_view filenamePrefix, double xStep) co
         if (!parser.openOutput(fmt::format("{}-{:03d}.gauss", filenamePrefix, n)))
             return false;
 
-        double xCentre = x_[n];
-        double A = A_[n];
-        double fwhm = fwhm_[n];
+        auto xCentre = x_[n];
+        auto A = A_[n];
+        auto fwhm = fwhm_[n];
         if (!parser.writeLineF("#  x={}  A={}  fwhm={}\n", xCentre, A, fwhm))
             return false;
 
@@ -582,27 +583,15 @@ double GaussFit::costAnalyticA(const std::vector<double> &alpha)
     double sose = 0.0;
     double multiplier = 1.0;
 
-    double A;
-    int g;
-
     // Loop over data points, add in our Gaussian contributions, and
-    double x, y, dy;
-    for (auto i = 0; i < approximateData_.nValues(); ++i)
+    double dy;
+    for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
     {
-        // Get approximate data x and y for this point
-        x = approximateData_.xAxis(i);
-        y = approximateData_.value(i);
-
         // Add in contributions from our Gaussians
-        for (auto n = 0; n < alpha.size(); ++n)
-        {
-            g = alphaIndex_[n];
-            A = alpha[n];
-
+        for (auto &&[g, A] : zip(alphaIndex_, alpha))
             y += functionValue(alphaSpace_, x, x_[g], A, fwhm_[g]);
-        }
 
-        dy = referenceData_.value(i) - y;
+        dy = refY - y;
         sose += dy * dy;
     }
 
@@ -615,19 +604,13 @@ double GaussFit::costAnalyticAF(const std::vector<double> &alpha)
 {
     const auto nGauss = alpha.size() / 2;
 
-    double sose = 0.0;
-    double multiplier = 1.0;
+    auto sose = 0.0, multiplier = 1.0;
 
-    double A, fwhm, xCentre;
+    double A, fwhm, xCentre, dy;
 
     // Loop over data points, add in our Gaussian contributions, and
-    double x, y, dy;
-    for (auto i = 0; i < approximateData_.nValues(); ++i)
+    for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
     {
-        // Get approximate data x and y for this point
-        x = approximateData_.xAxis(i);
-        y = approximateData_.value(i);
-
         // Add in contributions from our Gaussians
         for (auto n = 0; n < nGauss; ++n)
         {
@@ -642,7 +625,7 @@ double GaussFit::costAnalyticAF(const std::vector<double> &alpha)
             y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
         }
 
-        dy = referenceData_.value(i) - y;
+        dy = refY - y;
         sose += dy * dy;
     }
 
@@ -655,19 +638,13 @@ double GaussFit::costAnalyticAX(const std::vector<double> &alpha)
 {
     const auto nGauss = alpha.size() / 2;
 
-    double sose = 0.0;
-    double multiplier = 1.0;
+    auto sose = 0.0, multiplier = 1.0;
 
-    double A, fwhm, xCentre;
+    double A, fwhm, xCentre, dy;
 
-    // Loop over data points, add in our Gaussian contributions, and
-    double x, y, dy;
-    for (auto i = 0; i < approximateData_.nValues(); ++i)
+    // Loop over data points, add in our Gaussian contributions
+    for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
     {
-        // Get approximate data x and y for this point
-        x = approximateData_.xAxis(i);
-        y = approximateData_.value(i);
-
         // Add in contributions from our Gaussians
         for (auto n = 0; n < nGauss; ++n)
         {
@@ -682,7 +659,7 @@ double GaussFit::costAnalyticAX(const std::vector<double> &alpha)
             y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
         }
 
-        dy = referenceData_.value(i) - y;
+        dy = refY - y;
         sose += dy * dy;
     }
 
@@ -695,19 +672,13 @@ double GaussFit::costAnalyticAFX(const std::vector<double> &alpha)
 {
     const auto nGauss = alpha.size() / 2;
 
-    double sose = 0.0;
-    double multiplier = 1.0;
+    auto sose = 0.0, multiplier = 1.0;
 
-    double A, fwhm, xCentre;
+    double A, fwhm, xCentre, dy;
 
-    // Loop over data points, add in our Gaussian contributions, and
-    double x, y, dy;
-    for (auto i = 0; i < approximateData_.nValues(); ++i)
+    // Loop over data points, add in our Gaussian contributions
+    for (auto &&[x, y, refY] : zip(approximateData_.xAxis(), approximateData_.values(), referenceData_.values()))
     {
-        // Get approximate data x and y for this point
-        x = approximateData_.xAxis(i);
-        y = approximateData_.value(i);
-
         // Add in contributions from our Gaussians
         for (auto n = 0; n < nGauss; ++n)
         {
@@ -722,7 +693,7 @@ double GaussFit::costAnalyticAFX(const std::vector<double> &alpha)
             y += functionValue(alphaSpace_, x, xCentre, A, fwhm);
         }
 
-        dy = referenceData_.value(i) - y;
+        dy = refY - y;
         sose += dy * dy;
     }
 
@@ -732,19 +703,18 @@ double GaussFit::costAnalyticAFX(const std::vector<double> &alpha)
 // One-parameter cost function (amplitude) using pre-calculated function array, including current approximate data in sum
 double GaussFit::costTabulatedA(const std::vector<double> &alpha)
 {
-    double sose = 0.0;
+    auto sose = 0.0;
 
     // Loop over data points and sum contributions from tabulated functions on to the current approximate data
     double y, dy;
-    auto nAlpha = alpha.size();
     for (auto i = 0; i < approximateData_.nValues(); ++i)
     {
         // Get approximate data x and y for this point
         y = approximateData_.value(i);
 
         // Add in contributions from our Gaussians
-        for (auto n = 0; n < nAlpha; ++n)
-            y += functions_[{alphaIndex_[n], i}] * alpha[n];
+        for (auto &&[g, A] : zip(alphaIndex_, alpha))
+            y += functions_[{g, i}] * A;
 
         dy = referenceData_.value(i) - y;
         sose += dy * dy;

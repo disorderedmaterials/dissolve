@@ -20,8 +20,29 @@ macro(dissolve_add_forcefield ffname)
   )
 
   # Set common include dirs
-  include_directories(ff_${ffname} PRIVATE ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src)
+  include_directories(ff_${ffname} PRIVATE ${PROJECT_SOURCE_DIR}/src)
 endmacro()
+
+# Main Forcefield Library
+add_library(
+  ff
+  angleterm.cpp
+  atomtype.cpp
+  bondterm.cpp
+  ff.cpp
+  improperterm.cpp
+  library.cpp
+  torsionterm.cpp
+  angleterm.h
+  atomtype.h
+  bondterm.h
+  ff.h
+  improperterm.h
+  library.h
+  torsionterm.h
+)
+
+include_directories(ff PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
 # Forcefield subdirectories
 message(STATUS "Looking for forcefields in ${CMAKE_CURRENT_SOURCE_DIR}...")

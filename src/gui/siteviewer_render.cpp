@@ -22,7 +22,7 @@ void SiteViewer::render2DOverlay()
     if (interacting())
         switch (interactionMode())
         {
-            case (SiteViewer::SelectAreaInteraction):
+            case (SiteViewer::InteractionMode::SelectArea):
                 // Draw dashed box indicating selection area, form clicked to current mouse coordinates
                 selectionBoxStyle.sendToGL();
                 glBegin(GL_LINE_LOOP);

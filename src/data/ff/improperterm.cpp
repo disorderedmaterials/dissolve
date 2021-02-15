@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "data/ffimproperterm.h"
-#include "data/ff.h"
-#include "data/ffatomtype.h"
+#include "data/ff/improperterm.h"
+#include "data/ff/atomtype.h"
+#include "data/ff/ff.h"
 
 ForcefieldImproperTerm::ForcefieldImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK,
                                                std::string_view typeL, SpeciesImproper::ImproperFunction form,

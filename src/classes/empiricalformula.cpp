@@ -11,19 +11,21 @@ std::string EmpiricalFormula::constructFormula(const std::vector<int> &elCounts,
     std::string s;
 
     // Loop over elements in descending order
-    for (auto n = Elements::nElements() - 1; n >= 0; --n)
+    for (auto n = Elements::nElements - 1; n >= 0; --n)
     {
         if (elCounts[n] == 0)
             continue;
-        else if (elCounts[n] > 1)
+
+        auto Z = Elements::element(n);
+        if (elCounts[n] > 1)
         {
             if (richText)
-                s += fmt::format("{}<sub>{}</sub>", Elements::symbol(n), elCounts[n]);
+                s += fmt::format("{}<sub>{}</sub>", Elements::symbol(Z), elCounts[n]);
             else
-                s += fmt::format("{}{}", Elements::symbol(n), elCounts[n]);
+                s += fmt::format("{}{}", Elements::symbol(Z), elCounts[n]);
         }
         else
-            s += fmt::format("{}", Elements::symbol(n));
+            s += fmt::format("{}", Elements::symbol(Z));
     }
 
     return s;
@@ -32,11 +34,11 @@ std::string EmpiricalFormula::constructFormula(const std::vector<int> &elCounts,
 // Return empirical formula for supplied Species
 std::string EmpiricalFormula::formula(const Species *species, bool richText)
 {
-    std::vector<int> elCounts(Elements::nElements(), 0);
+    std::vector<int> elCounts(Elements::nElements, 0);
 
     ListIterator<SpeciesAtom> atomIterator(species->atoms());
     while (SpeciesAtom *i = atomIterator.iterate())
-        ++elCounts[i->element()->Z()];
+        ++elCounts[i->Z()];
 
     return constructFormula(elCounts, richText);
 }
@@ -44,10 +46,10 @@ std::string EmpiricalFormula::formula(const Species *species, bool richText)
 // Return empirical formula for supplied SpeciesAtom reflist
 std::string EmpiricalFormula::formula(const RefList<SpeciesAtom> &atoms, bool richText)
 {
-    std::vector<int> elCounts(Elements::nElements(), 0);
+    std::vector<int> elCounts(Elements::nElements, 0);
 
     for (const auto *i : atoms)
-        ++elCounts[i->element()->Z()];
+        ++elCounts[i->Z()];
 
     return constructFormula(elCounts, richText);
 }

@@ -4,6 +4,7 @@
 #include "math/filters.h"
 #include "math/data1d.h"
 #include "math/integrator.h"
+#include "templates/algorithms.h"
 #include "templates/array.h"
 
 namespace Filters
@@ -24,21 +25,18 @@ void convolve(Data1D &data, const BroadeningFunction &function, bool variableOme
 
     // Outer loop over existing data points - if variableOmega == true then we use the x value as the omega broadening
     // parameter
-    double xCentre, xBroad, norm;
+    double norm, xBroad;
     if (variableOmega)
-        for (auto n = 0; n < x.size(); ++n)
+        for (auto &&[xCentre, yn] : zip(x, y))
         {
-            // Grab x value as our current xCentre
-            xCentre = x[n];
-
             // Get normalisation for this convolution
             norm = (normalise ? function.discreteKernelNormalisation(xDelta, xCentre) : 1.0);
 
             // Inner loop over whole array
-            for (auto m = 0; m < x.size(); ++m)
+            for (auto &&[xm, newYm] : zip(x, newY))
             {
-                xBroad = x[m] - xCentre;
-                newY[m] += y[n] * function.y(xBroad, xCentre) * norm;
+                xBroad = xm - xCentre;
+                newYm += yn * function.y(xBroad, xCentre) * norm;
             }
         }
     else
@@ -46,15 +44,13 @@ void convolve(Data1D &data, const BroadeningFunction &function, bool variableOme
         // Get normalisation for this convolution
         norm = (normalise ? function.discreteKernelNormalisation(xDelta) : 1.0);
 
-        for (auto n = 0; n < x.size(); ++n)
+        for (auto &&[xCentre, yn] : zip(x, y))
         {
-            // Grab x value as our current xCentre
-            xCentre = x[n];
-
             // Inner loop over whole array
-            std::transform(
-                x.begin(), x.end(), newY.begin(), newY.begin(),
-                [&y, &function, norm, n, xCentre](auto X, auto NewY) { return NewY + y[n] * function.y(X - xCentre) * norm; });
+            std::transform(x.begin(), x.end(), newY.begin(), newY.begin(),
+                           [yn = yn, &function, norm, xCentre = xCentre](auto X, auto NewY) {
+                               return NewY + yn * function.y(X - xCentre) * norm;
+                           });
         }
     }
 
@@ -73,7 +69,6 @@ void convolve(double xCentre, double value, const BroadeningFunction &function, 
     auto &y = dest.values();
 
     // Loop over existing datapoints
-    double xBroad;
     std::transform(x.begin(), x.end(), y.begin(), y.begin(),
                    [&](auto x, auto y) { return y + value * function.y(x - xCentre); });
 }
@@ -186,13 +181,13 @@ void movingAverage(Data1D &data, int avgSize)
 void normalisedMovingAverage(Data1D &data, int avgSize)
 {
     // Calculate the original integral
-    double originalIntegral = Integrator::absTrapezoid(data);
+    auto originalIntegral = Integrator::absTrapezoid(data);
 
     // Perform the smoothing
     movingAverage(data, avgSize);
 
     // Calculate the new integral
-    double newIntegral = Integrator::absTrapezoid(data);
+    auto newIntegral = Integrator::absTrapezoid(data);
 
     data *= originalIntegral / newIntegral;
 }
@@ -204,7 +199,7 @@ double subtractAverage(Data1D &data, double xStart)
     const auto &x = data.xAxis();
     auto &y = data.values();
 
-    double sum = 0.0;
+    auto sum = 0.0;
     auto nPoints = 0;
     for (auto n = 0; n < x.size(); ++n)
     {
@@ -283,7 +278,7 @@ void convertBinBoundaries(Data1D &data)
 {
     // Assume that input x values are histogram bin left-boundaries, so x(n) = 0.5[x(n)+x(n_1)]
     auto &x = data.xAxis();
-    double a = x[0], b;
+    auto a = x[0], b = 0.0;
     for (auto n = 0; n < data.nValues() - 1; ++n)
     {
         b = x[n + 1];

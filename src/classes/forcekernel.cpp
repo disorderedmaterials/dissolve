@@ -9,7 +9,6 @@
 #include "classes/molecule.h"
 #include "classes/potentialmap.h"
 #include "classes/species.h"
-#include "templates/orderedvector.h"
 #include <iterator>
 
 ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, Array<double> &fx,
@@ -73,18 +72,8 @@ void ForceKernel::forcesWithMim(const std::shared_ptr<Atom> i, const std::shared
 // Calculate forces between atoms
 void ForceKernel::forces(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, bool applyMim, bool excludeIgeJ)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr (i) passed to ForceKernel::forces(Atom,Atom,bool,bool).\n");
-        return;
-    }
-    if (j == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr (j) passed to ForceKernel::forces(Atom,Atom,bool,bool).\n");
-        return;
-    }
-#endif
+    assert(i && j);
+
     // If Atoms are the same, we refuse to calculate
     if (i == j)
         return;
@@ -103,20 +92,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, const std::shared_ptr<At
 void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool excludeIgeJ,
                          ProcessPool::DivisionStrategy strategy)
 {
-#ifdef CHECKS
-    if (centralCell == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL central Cell pointer passed to "
-                         "ForceKernel::forces(Cell,Cell,bool,bool,DivisionStrategy).\n");
-        return;
-    }
-    if (otherCell == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL other Cell pointer passed to "
-                         "ForceKernel::forces(Cell,Cell,bool,bool,DivisionStrategy).\n");
-        return;
-    }
-#endif
+    assert(centralCell && otherCell);
+
     auto &centralAtoms = centralCell->atoms();
     auto &otherAtoms = otherCell->atoms();
     std::shared_ptr<Atom> ii;
@@ -200,13 +177,8 @@ void ForceKernel::forces(Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStra
 // Calculate forces between Atom and Cell
 void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, ProcessPool::DivisionStrategy strategy)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL atom pointer passed to ForceKernel::forces(Atom,Cell,int,DivisionStrategy).\n");
-        return;
-    }
-#endif
+    assert(i);
+
     std::shared_ptr<Atom> jj;
     double scale;
 
@@ -384,13 +356,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
 // Calculate forces between atom and world
 void ForceKernel::forces(const std::shared_ptr<Atom> i, ProcessPool::DivisionStrategy strategy)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr passed to ForceKernel::forces(Atom,DivisionStrategy).\n");
-        return;
-    }
-#endif
+    assert(i);
+
     Cell *cellI = i->cell();
 
     // This Atom with other Atoms in the same Cell
@@ -432,12 +399,7 @@ void ForceKernel::forces(const SpeciesBond &bond, const std::shared_ptr<Atom> i,
         vecji = j->r() - i->r();
 
     // Get distance and normalise vector ready for force calculation
-    double distance = vecji.magAndNormalise();
-
-#ifdef CHECKS
-    if (distance > 5.0)
-        Messenger::print("!!! Long bond: {}-{} = {} Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
-#endif
+    auto distance = vecji.magAndNormalise();
 
     // Determine final forces
     vecji *= bond.force(distance);
@@ -457,13 +419,7 @@ void ForceKernel::forces(const SpeciesBond &bond, const std::shared_ptr<Atom> i,
 void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesBond &bond, const std::shared_ptr<Atom> i,
                          const std::shared_ptr<Atom> j)
 {
-#ifdef CHECKS
-    if ((i != onlyThis) && (j != onlyThis))
-    {
-        Messenger::error("Forces requested for specific Atom in Bond, but neither Atom in the Bond is the one specified.\n");
-        return;
-    }
-#endif
+    assert((i != onlyThis) && (j != onlyThis));
 
     // Determine whether we need to apply minimum image to the vector calculation
     Vec3<double> vecji;
@@ -473,12 +429,7 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesBond
         vecji = j->r() - i->r();
 
     // Get distance and normalise vector ready for force calculation
-    double distance = vecji.magAndNormalise();
-
-#ifdef CHECKS
-    if (distance > 5.0)
-        Messenger::print("!!! Long bond: {}-{} = {} Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
-#endif
+    auto distance = vecji.magAndNormalise();
 
     // Determine final forces
     vecji *= bond.force(distance);
@@ -576,15 +527,9 @@ void ForceKernel::forces(const SpeciesAngle &angle, const std::shared_ptr<Atom> 
 void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesAngle &angle, const std::shared_ptr<Atom> i,
                          const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k)
 {
-    Vec3<double> vecji, vecjk;
+    assert((i != onlyThis) && (j != onlyThis) && (k != onlyThis));
 
-#ifdef CHECKS
-    if ((i != onlyThis) && (j != onlyThis) && (k != onlyThis))
-    {
-        Messenger::error("Forces requested for specific Atom in Angle, but no Atom in the Angle is the one specified.\n");
-        return;
-    }
-#endif
+    Vec3<double> vecji, vecjk;
 
     // Determine whether we need to apply minimum image between 'j-i' and 'j-k'
     if (j->cell()->mimRequired(i->cell()))

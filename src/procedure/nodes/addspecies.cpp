@@ -197,7 +197,7 @@ ProcedureNode::NodeExecutionResult AddSpeciesProcedureNode::execute(ProcessPool 
     Vec3<double> r, cog, newCentre, fr;
     CoordinateSet *coordSet = sp->coordinateSets().first();
     Matrix3 transform;
-    const Box *box = cfg->box();
+    const auto *box = cfg->box();
     for (auto n = 0; n < requestedPopulation; ++n)
     {
         // Add the Molecule
