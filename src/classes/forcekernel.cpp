@@ -602,11 +602,7 @@ void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec
     const auto magxpj = xpj.magAndNormalise();
     const auto magxpk = xpk.magAndNormalise();
     auto dp = xpj.dp(xpk);
-    if (dp < -1.0)
-        dp = -1.0;
-    else if (dp > 1.0)
-        dp = 1.0;
-    phi = acos(dp);
+    phi = atan2(vecjk.dp(xpj * xpk) / vecjk.magnitude(), dp);
 
     /*
      * Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
