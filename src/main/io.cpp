@@ -215,7 +215,7 @@ bool Dissolve::saveInput(std::string_view filename)
                 return false;
         }
 
-        for (auto &imp : coreData_.masterTorsions())
+        for (auto &imp : coreData_.masterImpropers())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword),
                                            imp.name(), SpeciesImproper::improperFunctions().keywordFromInt(imp.form()));
