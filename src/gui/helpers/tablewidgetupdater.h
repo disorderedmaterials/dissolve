@@ -57,7 +57,8 @@ template <class T, class I, typename Raw = const I *, typename... Args> class Ta
     }
 
     public:
-    TableWidgetUpdater(QTableWidget *table, const std::vector<I> &vector, T *functionParent, TableWidgetRowUpdateFunction updateRow)
+    TableWidgetUpdater(QTableWidget *table, const std::vector<I> &vector, T *functionParent,
+                       TableWidgetRowUpdateFunction updateRow)
     {
 
         int rowCount = 0;

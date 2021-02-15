@@ -8,7 +8,8 @@
 #include "templates/list.h"
 #include "templates/variantpointer.h"
 
-IntraFormComboDelegate::IntraFormComboDelegate(QObject *parent, ComboListItems *items, const std::vector<MasterIntra> &masterTerms)
+IntraFormComboDelegate::IntraFormComboDelegate(QObject *parent, ComboListItems *items,
+                                               const std::vector<MasterIntra> &masterTerms)
     : QItemDelegate(parent), masterTerms_(masterTerms)
 {
     items_ = items;

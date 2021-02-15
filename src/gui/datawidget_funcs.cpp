@@ -216,7 +216,8 @@ void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int top
 }
 
 // Data tree item update function
-void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, const Renderable *data, bool createItem)
+void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, const Renderable *data,
+                                            bool createItem)
 {
     QTreeWidgetItem *item;
     if (createItem)

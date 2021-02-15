@@ -289,7 +289,7 @@ OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterImproper(std::str
 }
 
 // Return whether named master Improper parameters exist
-OptionalReferenceWrapper<MasterIntra> CoreData::hasMasterImproper(std::string_view name) 
+OptionalReferenceWrapper<MasterIntra> CoreData::hasMasterImproper(std::string_view name)
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
