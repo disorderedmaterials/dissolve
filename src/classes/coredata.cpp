@@ -114,7 +114,6 @@ MasterIntra &CoreData::addMasterBond(std::string_view name)
     b.setName(name);
     b.setType(SpeciesIntra::BondInteraction);
 
-    masterBonds_.push_back(b);
     return b;
 }
 
@@ -160,10 +159,10 @@ MasterIntra &CoreData::addMasterAngle(std::string_view name)
             fmt::format("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name)));
 
     // OK to add new master Angle
-    MasterIntra a;
+    masterAngles_.emplace_back();
+    auto &a = masterAngles_.back();
     a.setName(name);
     a.setType(SpeciesIntra::AngleInteraction);
-    masterAngles_.push_back(a);
 
     return masterAngles_.back();
 }
