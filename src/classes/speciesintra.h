@@ -30,10 +30,10 @@ class SpeciesIntra
     // Interaction Type
     enum class InteractionType
     {
-        Bond,       /* Interaction is a bond between two atoms  */
-        Angle,      /* Interaction is an angle between three atoms */
-        Torsion,    /* Interaction is a torsion between four atoms */
-        Improper    /* Interaction is an improper torsion between four atoms */
+        Bond,    /* Interaction is a bond between two atoms  */
+        Angle,   /* Interaction is an angle between three atoms */
+        Torsion, /* Interaction is a torsion between four atoms */
+        Improper /* Interaction is an improper torsion between four atoms */
     };
 
     protected:
