@@ -611,7 +611,7 @@ void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec
      *	------------- = rij[cp(n+2)] * U[cp(n+1)] - rij[cp(n+1)] * U[cp(n+2)]
      *	d rkj[n]
      *
-     * where cp is a cylic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a unit vector in the n direction.
+     * where cp is a cyclic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a unit vector in the n direction.
      * So,
      *	d (rij x rkj)
      *	------------- = rij[2] * U[1] - rij[1] * U[2]
