@@ -71,8 +71,7 @@ bool Vec3NodeValueKeyword::write(LineParser &parser, std::string_view keywordNam
 // Set the value from supplied expression text
 bool Vec3NodeValueKeyword::setValue(int index, std::string_view expressionText)
 {
-    if ((index < 0) || (index > 2))
-        return Messenger::error("Index {} out of range in Vec3NodeValueKeyword::setValue().\n", index);
+    assert(index >= 0 && index < 3);
 
     // Get any variables currently in scope
     auto vars = parentNode_->parametersInScope();

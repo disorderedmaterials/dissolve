@@ -223,20 +223,8 @@ OptionalReferenceWrapper<const SpeciesBond> Species::getBond(SpeciesAtom *i, Spe
 // Return the SpeciesBond between the specified SpeciesAtom indices
 OptionalReferenceWrapper<SpeciesBond> Species::getBond(int i, int j)
 {
-    if ((i < 0) || (i >= nAtoms()))
-    {
-        Messenger::print("OUT_OF_RANGE - Internal index 'i' supplied to Species::hasBond() is out of range ({}) for "
-                         "Species '{}'\n",
-                         i, name_);
-        return {};
-    }
-    if ((j < 0) || (j >= nAtoms()))
-    {
-        Messenger::print("OUT_OF_RANGE - Internal index 'j' supplied to Species::hasBond() is out of range ({}) for "
-                         "Species '{}'\n",
-                         j, name_);
-        return {};
-    }
+    assert(i >= 0 || i < nAtoms());
+    assert(j >= 0 || j < nAtoms());
 
     return getBond(atoms_[i], atoms_[j]);
 }
