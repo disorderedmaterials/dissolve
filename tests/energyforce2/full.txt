@@ -161,7 +161,7 @@ Module Forces
   Configuration  'Liquid'
   TestReference  dlpoly  '../_data/dlpoly/hexane200/REVCON'
   EndTestReference
-  TestThreshold  4.0
+  TestThreshold  0.4
 EndModule
 
 Module SanityCheck
