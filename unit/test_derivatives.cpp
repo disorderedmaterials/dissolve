@@ -33,7 +33,8 @@ class DerivativesTest : public ::testing::Test
     double tolerance_;
 
     protected:
-    // Test supplied intramolecular function over the supplied range, comparing numerical and analytical derivatives at each point
+    // Test supplied intramolecular function over the supplied range, comparing numerical and analytical derivatives at each
+    // point
     template <class T>
     void intraTest(T &intraTerm, int form, const std::vector<double> &params, double xMin, double xMax, double xDelta,
                    bool angular = false)
