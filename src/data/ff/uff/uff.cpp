@@ -385,9 +385,18 @@ double Forcefield_UFF::electronegativityCorrection(const UFFAtomType &i, const U
     return i.r() * j.r() * chi * chi / (i.chi() * i.r() + j.chi() * j.r());
 }
 
-// Generate bond parameters for the supplied UFF atom types
-bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, const UFFAtomType &i, const UFFAtomType &j) const
+// Assign / generate bond term parameters
+bool Forcefield_UFF::assignBondTermParameters(SpeciesBond &bond, bool determineTypes) const
 {
+    auto typeI = determineTypes ? determineUFFAtomType(bond.i()) : uffAtomTypeByName(bond.i()->atomType()->name());
+    auto typeJ = determineTypes ? determineUFFAtomType(bond.j()) : uffAtomTypeByName(bond.j()->atomType()->name());
+    if (!typeI || !typeJ)
+        return Messenger::error("Failed to create parameters for bond {}-{} (atom types could not be determined).\n",
+                                bond.i()->userIndex(), bond.j()->userIndex());
+
+    const UFFAtomType &i = *typeI;
+    const UFFAtomType &j = *typeJ;
+
     const auto rBO = bondOrderCorrection(i, j);
     const auto rEN = electronegativityCorrection(i, j);
 
@@ -408,10 +417,21 @@ bool Forcefield_UFF::generateBondTerm(const Species *sp, SpeciesBond &bond, cons
     return true;
 }
 
-// Generate angle parameters for the supplied UFF atom types
-bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle &angle, const UFFAtomType &i, const UFFAtomType &j,
-                                       const UFFAtomType &k) const
+// Assign / generate angle term parameters
+bool Forcefield_UFF::assignAngleTermParameters(SpeciesAngle &angle, bool determineTypes) const
 {
+    auto typeI = determineTypes ? determineUFFAtomType(angle.i()) : uffAtomTypeByName(angle.i()->atomType()->name());
+    auto typeJ = determineTypes ? determineUFFAtomType(angle.j()) : uffAtomTypeByName(angle.j()->atomType()->name());
+    auto typeK = determineTypes ? determineUFFAtomType(angle.k()) : uffAtomTypeByName(angle.k()->atomType()->name());
+
+    if (!typeI || !typeJ || !typeK)
+        Messenger::error("Failed to create parameters for angle {}-{}-{} (atom types could not be determined).\n",
+                         angle.i()->userIndex(), angle.j()->userIndex(), angle.k()->userIndex());
+
+    const UFFAtomType &i = *typeI;
+    const UFFAtomType &j = *typeJ;
+    const UFFAtomType &k = *typeK;
+
     // Get bond order and electronegativity corrections for the two bonds
     const auto rBOij = bondOrderCorrection(i, j);
     const auto rBOjk = bondOrderCorrection(j, k);
@@ -465,10 +485,24 @@ bool Forcefield_UFF::generateAngleTerm(const Species *sp, SpeciesAngle &angle, c
     return true;
 }
 
-// Generate torsion parameters for the supplied UFF atom types
-bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion &torsionTerm, const UFFAtomType &i,
-                                         const UFFAtomType &j, const UFFAtomType &k, const UFFAtomType &l) const
+// Assign / generate torsion term parameters
+bool Forcefield_UFF::assignTorsionTermParameters(SpeciesTorsion &torsion, bool determineTypes) const
 {
+    auto typeI = determineTypes ? determineUFFAtomType(torsion.i()) : uffAtomTypeByName(torsion.i()->atomType()->name());
+    auto typeJ = determineTypes ? determineUFFAtomType(torsion.j()) : uffAtomTypeByName(torsion.j()->atomType()->name());
+    auto typeK = determineTypes ? determineUFFAtomType(torsion.k()) : uffAtomTypeByName(torsion.k()->atomType()->name());
+    auto typeL = determineTypes ? determineUFFAtomType(torsion.l()) : uffAtomTypeByName(torsion.l()->atomType()->name());
+
+    if (!typeI || !typeJ || !typeK || !typeL)
+        Messenger::error("Failed to create parameters for torsion {}-{}-{}-{} (atom types could not be determined).\n",
+                         torsion.i()->userIndex(), torsion.j()->userIndex(), torsion.k()->userIndex(),
+                         torsion.l()->userIndex());
+
+    const UFFAtomType &i = *typeI;
+    const UFFAtomType &j = *typeJ;
+    const UFFAtomType &k = *typeK;
+    const UFFAtomType &l = *typeL;
+
     /*
      * There are seven cases to consider, listed in decreasing complexity:
      *  a) j and k are both group 16 (old group 6) atoms, and both are sp3 centres
@@ -488,7 +522,7 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion &tors
     const auto geomK = k.name().back() == 'R' ? '2' : k.name().back();
     const auto geomL = l.name().back() == 'R' ? '2' : l.name().back();
 
-    torsionTerm.setForm(SpeciesTorsion::UFFCosineForm);
+    torsion.setForm(SpeciesTorsion::UFFCosineForm);
 
     // Selection begins
     if (groupJ == 16 && groupK == 16 && geomJ == '3' && geomK == '3')
@@ -497,104 +531,40 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion &tors
         // V value is 2.0 kcal for oxygen, 6.8 kcal otherwise
         auto vj = j.Z() == Elements::O ? 2.0 : 6.8;
         auto vk = k.Z() == Elements::O ? 2.0 : 6.8;
-        torsionTerm.setParameters({4.184 * sqrt(vj * vk), 2.0, 90.0});
+        torsion.setParameters({4.184 * sqrt(vj * vk), 2.0, 90.0});
     }
-    else if ((groupK == 16 && geomK == '3' && groupJ != 16 && geomJ == '2') || (groupK != 16 && geomK == '2' && groupJ == 16 && geomJ == '3'))
+    else if ((groupK == 16 && geomK == '3' && groupJ != 16 && geomJ == '2') ||
+             (groupK != 16 && geomK == '2' && groupJ == 16 && geomJ == '3'))
     {
         // Case b) j or k is a group 16 atom, while the other is an sp2 or resonant centre
         // Use eq 17, but since the bond order is 1 (single bond) ln term in eq 17 is zero...
-        torsionTerm.setParameters({4.184 * 5.0 * sqrt(j.U() * k.U()) * (1.0 + 4.18*log(bondOrder(j, k))), 2.0, 90.0});
+        torsion.setParameters({4.184 * 5.0 * sqrt(j.U() * k.U()) * (1.0 + 4.18 * log(bondOrder(j, k))), 2.0, 90.0});
     }
     else if (geomJ == '3' && geomK == '3')
     {
         // Case d) j and k are both sp3 centres
-        torsionTerm.setParameters({4.184 * sqrt(j.V() * k.V()), 3.0, 180.0});
+        torsion.setParameters({4.184 * sqrt(j.V() * k.V()), 3.0, 180.0});
     }
     else if (geomJ == '2' && geomK == '2')
     {
         // Case e) j and k are both sp2 centres
         // Force constant is adjusted based on current bond order
-        torsionTerm.setParameters({4.184 * 5.0 * sqrt(j.U() * k.U()) * (1.0 + 4.18 * log(bondOrder(j, k))), 2.0, 180.0});
+        torsion.setParameters({4.184 * 5.0 * sqrt(j.U() * k.U()) * (1.0 + 4.18 * log(bondOrder(j, k))), 2.0, 180.0});
     }
     else if ((geomJ == '3' && geomK == '2') || (geomK == '3' && geomJ == '2'))
     {
         // Case f) j is sp2 and k is sp3 (or vice versa)
-        torsionTerm.setParameters({4.184, 6.0, 0.0});
+        torsion.setParameters({4.184, 6.0, 0.0});
     }
     else if ((geomJ == '3' && geomK == '2' && geomL == '2') || (geomJ == '2' && geomK == '3' && geomI == '2'))
     {
         // Case c) j or k is an sp3 atom, while the other is an sp2/resonant centre bound to another sp2/resonant centre
-        torsionTerm.setParameters({4.184 * 2.0, 3.0, 180.0});
+        torsion.setParameters({4.184 * 2.0, 3.0, 180.0});
     }
     else
     {
         // Case g) everything else
-        torsionTerm.setParameters({0.0, 1.0, 0.0});
-    }
-
-    return true;
-}
-
-// Assign intramolecular parameters to the supplied Species
-bool Forcefield_UFF::assignIntramolecular(Species *sp, int flags) const
-{
-    auto determineTypes = flags & Forcefield::DetermineTypesFlag;
-    auto selectionOnly = flags & Forcefield::SelectionOnlyFlag;
-
-    // Generate bond terms
-    for (auto &bond : sp->bonds())
-    {
-        auto *i = bond.i();
-        auto *j = bond.j();
-
-        if (selectionOnly && (!bond.isSelected()))
-            continue;
-
-        auto typeI = determineTypes ? determineUFFAtomType(i) : uffAtomTypeByName(i->atomType()->name());
-        auto typeJ = determineTypes ? determineUFFAtomType(j) : uffAtomTypeByName(j->atomType()->name());
-
-        if (!typeI || !typeJ || !generateBondTerm(sp, bond, *typeI, *typeJ))
-            return Messenger::error("Failed to create parameters for bond {}-{}.\n", i->userIndex(), j->userIndex());
-    }
-
-    // Generate angle terms
-    for (auto &angle : sp->angles())
-    {
-        auto *i = angle.i();
-        auto *j = angle.j();
-        auto *k = angle.k();
-
-        if (selectionOnly && (!angle.isSelected()))
-            continue;
-
-        auto typeI = determineTypes ? determineUFFAtomType(i) : uffAtomTypeByName(i->atomType()->name());
-        auto typeJ = determineTypes ? determineUFFAtomType(j) : uffAtomTypeByName(j->atomType()->name());
-        auto typeK = determineTypes ? determineUFFAtomType(k) : uffAtomTypeByName(k->atomType()->name());
-
-        if (!typeI || !typeJ || !typeK || !generateAngleTerm(sp, angle, *typeI, *typeJ, *typeK))
-            return Messenger::error("Failed to create parameters for angle {}-{}-{}.\n", i->userIndex(), j->userIndex(),
-                                    k->userIndex());
-    }
-
-    // Generate torsion terms
-    for (auto &torsion : sp->torsions())
-    {
-        SpeciesAtom *i = torsion.i();
-        SpeciesAtom *j = torsion.j();
-        SpeciesAtom *k = torsion.k();
-        SpeciesAtom *l = torsion.l();
-
-        if (selectionOnly && (!torsion.isSelected()))
-            continue;
-
-        auto typeI = determineTypes ? determineUFFAtomType(i) : uffAtomTypeByName(i->atomType()->name());
-        auto typeJ = determineTypes ? determineUFFAtomType(j) : uffAtomTypeByName(j->atomType()->name());
-        auto typeK = determineTypes ? determineUFFAtomType(k) : uffAtomTypeByName(k->atomType()->name());
-        auto typeL = determineTypes ? determineUFFAtomType(l) : uffAtomTypeByName(l->atomType()->name());
-
-        if (!typeI || !typeJ || !typeK || !typeL || !generateTorsionTerm(sp, torsion, *typeI, *typeJ, *typeK, *typeL))
-            return Messenger::error("Failed to create parameters for torsion {}-{}-{}-{}.\n", i->userIndex(), j->userIndex(),
-                                    k->userIndex(), l->userIndex());
+        torsion.setParameters({0.0, 1.0, 0.0});
     }
 
     return true;

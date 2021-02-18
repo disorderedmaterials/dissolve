@@ -160,6 +160,15 @@ class Forcefield
     protected:
     // Assign suitable AtomType to the supplied atom
     bool assignAtomType(SpeciesAtom *i, CoreData &coreData) const;
+    // Assign / generate bond term parameters
+    virtual bool assignBondTermParameters(SpeciesBond &bond, bool determineTypes) const;
+    // Assign / generate angle term parameters
+    virtual bool assignAngleTermParameters(SpeciesAngle &angle, bool determineTypes) const;
+    // Assign / generate torsion term parameters
+    virtual bool assignTorsionTermParameters(SpeciesTorsion &torsion, bool determineTypes) const;
+    // Assign / generate improper term parameters
+    virtual bool assignImproperTermParameters(ForcefieldImproperTerm &improper, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k,
+                                              SpeciesAtom *l, bool determineTypes) const;
 
     public:
     // AtomType Assignment Strategy
@@ -180,7 +189,7 @@ class Forcefield
     // Assign suitable AtomTypes to the supplied Species, returning the number of failures
     int assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy) const;
     // Assign intramolecular parameters to the supplied Species
-    virtual bool assignIntramolecular(Species *sp, int flags = Forcefield::GenerateImpropersFlag) const;
+    bool assignIntramolecular(Species *sp, int flags = Forcefield::GenerateImpropersFlag) const;
 
     /*
      * Atom Environment Helpers

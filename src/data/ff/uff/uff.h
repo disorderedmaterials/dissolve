@@ -58,7 +58,7 @@ class Forcefield_UFF : public Forcefield
 
     protected:
     // Determine and return atom type for specified SpeciesAtom
-    OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(SpeciesAtom *i) const;
+    OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(SpeciesAtom *i) const override;
 
     /*
      * Term Assignment
@@ -70,18 +70,12 @@ class Forcefield_UFF : public Forcefield
     double bondOrderCorrection(const UFFAtomType &i, const UFFAtomType &j) const;
     // Return electronegativity correction for specified atom type pair
     double electronegativityCorrection(const UFFAtomType &i, const UFFAtomType &j) const;
-    // Generate bond parameters for the supplied UFF atom types
-    bool generateBondTerm(const Species *sp, SpeciesBond &bond, const UFFAtomType &i, const UFFAtomType &j) const;
-    // Generate angle parameters for the supplied UFF atom types
-    bool generateAngleTerm(const Species *sp, SpeciesAngle &angle, const UFFAtomType &i, const UFFAtomType &j,
-                           const UFFAtomType &k) const;
-    // Generate torsion parameters for the supplied UFF atom types
-    bool generateTorsionTerm(const Species *sp, SpeciesTorsion &torsionTerm, const UFFAtomType &i, const UFFAtomType &j,
-                             const UFFAtomType &k, const UFFAtomType &l) const;
 
-    public:
-    // Assign intramolecular parameters to the supplied Species
-    bool assignIntramolecular(Species *sp, int flags = 0) const;
-    // Perform some test calculations
-    void test() const;
+    protected:
+    // Assign / generate bond term parameters
+    bool assignBondTermParameters(SpeciesBond &bond, bool determineTypes) const override;
+    // Assign / generate angle term parameters
+    bool assignAngleTermParameters(SpeciesAngle &angle, bool determineTypes) const override;
+    // Assign / generate torsion term parameters
+    bool assignTorsionTermParameters(SpeciesTorsion &torsion, bool determineTypes) const override;
 };
