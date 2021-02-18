@@ -487,82 +487,50 @@ bool Forcefield_UFF::generateTorsionTerm(const Species *sp, SpeciesTorsion &tors
     const auto geomJ = j.name().back() == 'R' ? '2' : j.name().back();
     const auto geomK = k.name().back() == 'R' ? '2' : k.name().back();
     const auto geomL = l.name().back() == 'R' ? '2' : l.name().back();
-    double V, n, phi0;
+
+    torsionTerm.setForm(SpeciesTorsion::UFFCosineForm);
 
     // Selection begins
-    if ((groupJ == 16) && (groupK == 16) && geomJ == '3' && geomK == '3')
+    if (groupJ == 16 && groupK == 16 && geomJ == '3' && geomK == '3')
     {
         // Case a) j and k are both group 16 (old group 6) atoms, and both are sp3 centres
-
         // V value is 2.0 kcal for oxygen, 6.8 kcal otherwise
-        double vj = j.Z() == Elements::O ? 2.0 : 6.8;
-        double vk = k.Z() == Elements::O ? 2.0 : 6.8;
-        V = sqrt(vj * vk);
-        n = 2.0;
-        phi0 = 90.0;
+        auto vj = j.Z() == Elements::O ? 2.0 : 6.8;
+        auto vk = k.Z() == Elements::O ? 2.0 : 6.8;
+        torsionTerm.setParameters({4.184 * sqrt(vj * vk), 2.0, 90.0});
     }
-    else if ((groupJ == 16 && geomJ == '3' && geomK == '2') || (groupK == 16 && geomK == '3' && geomJ == '2'))
+    else if ((groupK == 16 && geomK == '3' && groupJ != 16 && geomJ == '2') || (groupK != 16 && geomK == '2' && groupJ == 16 && geomJ == '3'))
     {
         // Case b) j or k is a group 16 atom, while the other is an sp2 or resonant centre
         // Use eq 17, but since the bond order is 1 (single bond) ln term in eq 17 is zero...
-        V = 5.0 * sqrt(j.U() * k.U());
-        n = 2.0;
-        phi0 = 90.0;
+        torsionTerm.setParameters({4.184 * 5.0 * sqrt(j.U() * k.U()) * (1.0 + 4.18*log(bondOrder(j, k))), 2.0, 90.0});
     }
     else if (geomJ == '3' && geomK == '3')
     {
         // Case d) j and k are both sp3 centres
-        V = sqrt(j.V() * k.V());
-        n = 3.0;
-        phi0 = 180.0;
+        torsionTerm.setParameters({4.184 * sqrt(j.V() * k.V()), 3.0, 180.0});
     }
     else if (geomJ == '2' && geomK == '2')
     {
         // Case e) j and k are both sp2 centres
         // Force constant is adjusted based on current bond order
-        auto jkRef = sp->getBond(torsionTerm.j(), torsionTerm.k());
-        if (jkRef)
-        {
-            const SpeciesBond &jk = *jkRef;
-            V = 5.0 * sqrt(j.U() * k.U()) * (1.0 + 4.18 * log(jk.bondOrder()));
-        }
-        else
-        {
-            Messenger::error("Can't generate correct force constant for torsion, since the SpeciesBond jk is NULL.\n");
-            V = 5.0 * sqrt(j.U() * k.U());
-        }
-        n = 2.0;
-        phi0 = 180.0;
+        torsionTerm.setParameters({4.184 * 5.0 * sqrt(j.U() * k.U()) * (1.0 + 4.18 * log(bondOrder(j, k))), 2.0, 180.0});
     }
     else if ((geomJ == '3' && geomK == '2') || (geomK == '3' && geomJ == '2'))
     {
         // Case f) j is sp2 and k is sp3 (or vice versa)
-        V = 1.0;
-        n = 6.0;
-        phi0 = 0.0;
+        torsionTerm.setParameters({4.184, 6.0, 0.0});
     }
-    else if ((geomJ == '3' && geomK == '2' && geomL == '2') || (geomK == '3' && geomJ == '2' && geomI == '2'))
+    else if ((geomJ == '3' && geomK == '2' && geomL == '2') || (geomJ == '2' && geomK == '3' && geomI == '2'))
     {
         // Case c) j or k is an sp3 atom, while the other is an sp2/resonant centre bound to another sp2/resonant centre
-        V = 2.0;
-        n = 3.0;
-        phi0 = 180.0;
+        torsionTerm.setParameters({4.184 * 2.0, 3.0, 180.0});
     }
     else
     {
         // Case g) everything else
-        // Everything else....
-        V = 0.0;
-        n = 1.0;
-        phi0 = 0.0;
+        torsionTerm.setParameters({0.0, 1.0, 0.0});
     }
-
-    // Convert V from kcal to kJ
-    V *= 4.184;
-
-    // Store the generated parameters
-    torsionTerm.setForm(SpeciesTorsion::UFFCosineForm);
-    torsionTerm.setParameters({V, n, phi0});
 
     return true;
 }
