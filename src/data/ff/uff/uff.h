@@ -64,6 +64,8 @@ class Forcefield_UFF : public Forcefield
      * Term Assignment
      */
     private:
+    // Return bond order for specified atom type pair
+    double bondOrder(const UFFAtomType &i, const UFFAtomType &j) const;
     // Return bond order correction for specified atom type pair
     double bondOrderCorrection(const UFFAtomType &i, const UFFAtomType &j) const;
     // Return electronegativity correction for specified atom type pair

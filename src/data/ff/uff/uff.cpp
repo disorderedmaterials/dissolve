@@ -352,24 +352,29 @@ OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield_UFF::determineAtom
  * Term Assignment
  */
 
+// Return bond order for specified atom type pair
+double Forcefield_UFF::bondOrder(const UFFAtomType &i, const UFFAtomType &j) const
+{
+    // Recognise special case for the C-N amide bond
+    if ((i.name() == "C_amR" && j.name() == "N_amR") || (i.name() == "N_amR" && j.name() == "C_amR"))
+        return 1.41;
+    else if (i.name().back() == 'R' && j.name().back() == 'R')
+        return 1.5;
+    else if (i.name().back() == '2' && j.name().back() == '2')
+        return 2.0;
+    else if (i.name().back() == '1' && j.name().back() == '1')
+        return 3.0;
+
+    return 1.0;
+}
+
 // Return bond order correction for specified atom type pair
 double Forcefield_UFF::bondOrderCorrection(const UFFAtomType &i, const UFFAtomType &j) const
 {
     // Bond-order correction = -lambda * (ri + rj) * ln(n)  (eq 3)
     const auto lambda = 0.1332;
 
-    // Determine bond order, recognising special case for the C-N amide bond
-    auto bondOrder = 1.0;
-    if ((i.name() == "C_amR" && j.name() == "N_amR") || (i.name() == "N_amR" && j.name() == "C_amR"))
-        bondOrder = 1.41;
-    else if (i.name().back() == 'R' && j.name().back() == 'R')
-        bondOrder = 1.5;
-    else if (i.name().back() == '2' && j.name().back() == '2')
-        bondOrder = 2.0;
-    else if (i.name().back() == '1' && j.name().back() == '1')
-        bondOrder = 3.0;
-
-    return -lambda * (i.r() + j.r()) * log(bondOrder);
+    return -lambda * (i.r() + j.r()) * log(bondOrder(i, j));
 }
 
 // Return electronegativity correction for specified atom type pair
