@@ -602,11 +602,7 @@ void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec
     const auto magxpj = xpj.magAndNormalise();
     const auto magxpk = xpk.magAndNormalise();
     auto dp = xpj.dp(xpk);
-    if (dp < -1.0)
-        dp = -1.0;
-    else if (dp > 1.0)
-        dp = 1.0;
-    phi = acos(dp);
+    phi = atan2(vecjk.dp(xpj * xpk) / vecjk.magnitude(), dp);
 
     /*
      * Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
@@ -615,7 +611,7 @@ void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec
      *	------------- = rij[cp(n+2)] * U[cp(n+1)] - rij[cp(n+1)] * U[cp(n+2)]
      *	d rkj[n]
      *
-     * where cp is a cylic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a unit vector in the n direction.
+     * where cp is a cyclic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a unit vector in the n direction.
      * So,
      *	d (rij x rkj)
      *	------------- = rij[2] * U[1] - rij[1] * U[2]
@@ -644,17 +640,17 @@ void ForceKernel::forces(const SpeciesTorsion &torsion, const std::shared_ptr<At
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
     if (j->cell()->mimRequired(i->cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(i, j);
     else
-        vecji = i->r() - j->r();
+        vecji = j->r() - i->r();
     if (j->cell()->mimRequired(k->cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(k, j);
     else
-        vecjk = k->r() - j->r();
+        vecjk = j->r() - k->r();
     if (k->cell()->mimRequired(l->cell()))
-        veckl = box_->minimumVector(k, l);
+        veckl = box_->minimumVector(l, k);
     else
-        veckl = l->r() - k->r();
+        veckl = k->r() - l->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = torsion.force(phi_ * DEGRAD);
@@ -694,17 +690,17 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesTors
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
     if (j->cell()->mimRequired(i->cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(i, j);
     else
-        vecji = i->r() - j->r();
+        vecji = j->r() - i->r();
     if (j->cell()->mimRequired(k->cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(k, j);
     else
-        vecjk = k->r() - j->r();
+        vecjk = j->r() - k->r();
     if (k->cell()->mimRequired(l->cell()))
-        veckl = box_->minimumVector(k, l);
+        veckl = box_->minimumVector(l, k);
     else
-        veckl = l->r() - k->r();
+        veckl = k->r() - l->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = torsion.force(phi_ * DEGRAD);
@@ -747,8 +743,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesTors
 void ForceKernel::forces(const SpeciesTorsion &torsion)
 {
     // Calculate vectors, ensuring we account for minimum image
-    const Vec3<double> vecji = torsion.i()->r() - torsion.j()->r(), vecjk = torsion.k()->r() - torsion.j()->r(),
-                       veckl = torsion.l()->r() - torsion.k()->r();
+    const Vec3<double> vecji = torsion.j()->r() - torsion.i()->r(), vecjk = torsion.j()->r() - torsion.k()->r(),
+                       veckl = torsion.k()->r() - torsion.l()->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = torsion.force(phi_ * DEGRAD);
@@ -788,17 +784,17 @@ void ForceKernel::forces(const SpeciesImproper &improper, const std::shared_ptr<
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
     if (j->cell()->mimRequired(i->cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(i, j);
     else
-        vecji = i->r() - j->r();
+        vecji = j->r() - i->r();
     if (j->cell()->mimRequired(k->cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(k, j);
     else
-        vecjk = k->r() - j->r();
+        vecjk = j->r() - k->r();
     if (k->cell()->mimRequired(l->cell()))
-        veckl = box_->minimumVector(k, l);
+        veckl = box_->minimumVector(l, k);
     else
-        veckl = l->r() - k->r();
+        veckl = k->r() - l->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = improper.force(phi_ * DEGRAD);
@@ -838,17 +834,17 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesImpr
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
     if (j->cell()->mimRequired(i->cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(i, j);
     else
-        vecji = i->r() - j->r();
+        vecji = j->r() - i->r();
     if (j->cell()->mimRequired(k->cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(k, j);
     else
-        vecjk = k->r() - j->r();
+        vecjk = j->r() - k->r();
     if (k->cell()->mimRequired(l->cell()))
-        veckl = box_->minimumVector(k, l);
+        veckl = box_->minimumVector(l, k);
     else
-        veckl = l->r() - k->r();
+        veckl = k->r() - l->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = imp.force(phi_ * DEGRAD);
@@ -891,8 +887,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesImpr
 void ForceKernel::forces(const SpeciesImproper &imp)
 {
     // Calculate vectors, ensuring we account for minimum image
-    const Vec3<double> vecji = imp.i()->r() - imp.j()->r(), vecjk = imp.k()->r() - imp.j()->r(),
-                       veckl = imp.l()->r() - imp.k()->r();
+    const Vec3<double> vecji = imp.j()->r() - imp.i()->r(), vecjk = imp.j()->r() - imp.k()->r(),
+                       veckl = imp.k()->r() - imp.l()->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = imp.force(phi_ * DEGRAD);
