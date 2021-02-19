@@ -109,12 +109,8 @@ MasterIntra &CoreData::addMasterBond(std::string_view name)
             fmt::format("Refused to add a new master Bond named '{}' since one with the same name already exists.\n", name)));
 
     // OK to add new master Bond
-    masterBonds_.emplace_back();
-    auto &b = masterBonds_.back();
-    b.setName(name);
-    b.setType(SpeciesIntra::BondInteraction);
-
-    return b;
+    masterBonds_.emplace_back(name, SpeciesIntra::BondInteraction);
+    return masterBonds_.back();
 }
 
 // Return number of master Bond parameters in list
@@ -159,11 +155,7 @@ MasterIntra &CoreData::addMasterAngle(std::string_view name)
             fmt::format("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name)));
 
     // OK to add new master Angle
-    masterAngles_.emplace_back();
-    auto &a = masterAngles_.back();
-    a.setName(name);
-    a.setType(SpeciesIntra::AngleInteraction);
-
+    masterAngles_.emplace_back(name, SpeciesIntra::AngleInteraction);
     return masterAngles_.back();
 }
 
@@ -209,12 +201,8 @@ MasterIntra &CoreData::addMasterTorsion(std::string_view name)
             "Refused to add a new master Torsion named '{}' since one with the same name already exists.\n", name)));
 
     // OK to add new master Torsion
-    masterTorsions_.emplace_back();
-    auto &t = masterTorsions_.back();
-    t.setName(name);
-    t.setType(SpeciesIntra::TorsionInteraction);
-
-    return t;
+    masterTorsions_.emplace_back(name, SpeciesIntra::TorsionInteraction);
+    return masterTorsions_.back();
 }
 
 // Return number of master Torsion parameters in list
@@ -259,12 +247,8 @@ MasterIntra &CoreData::addMasterImproper(std::string_view name)
             "Refused to add a new master Improper named '{}' since one with the same name already exists.\n", name)));
 
     // OK to add new master Improper
-    masterImpropers_.emplace_back();
-    auto &i = masterImpropers_.back();
-    i.setName(name);
-    i.setType(SpeciesIntra::ImproperInteraction);
-
-    return i;
+    masterImpropers_.emplace_back(name, SpeciesIntra::ImproperInteraction);
+    return masterImpropers_.back();
 }
 
 // Return number of master Improper parameters in list

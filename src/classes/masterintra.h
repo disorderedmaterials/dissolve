@@ -18,6 +18,7 @@ class MasterIntra : public SpeciesIntra
     public:
     MasterIntra();
     MasterIntra(const MasterIntra &);
+    MasterIntra(const std::string_view, const SpeciesIntra::InteractionType);
     ~MasterIntra();
 
     /*

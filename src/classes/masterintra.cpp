@@ -13,6 +13,8 @@ MasterIntra::MasterIntra() : SpeciesIntra()
 
 MasterIntra::MasterIntra(const MasterIntra &source) : SpeciesIntra(source), name_(source.name_), type_(source.type_) {}
 
+MasterIntra::MasterIntra(const std::string_view name, const SpeciesIntra::InteractionType type) : SpeciesIntra(), name_(name), type_(type) {}
+
 MasterIntra::~MasterIntra() {}
 
 /*
