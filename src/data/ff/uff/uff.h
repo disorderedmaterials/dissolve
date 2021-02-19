@@ -78,4 +78,7 @@ class Forcefield_UFF : public Forcefield
     bool assignAngleTermParameters(SpeciesAngle &angle, bool determineTypes) const override;
     // Assign / generate torsion term parameters
     bool assignTorsionTermParameters(SpeciesTorsion &torsion, bool determineTypes) const override;
+    // Assign / generate improper term parameters
+    bool assignImproperTermParameters(ForcefieldImproperTerm &improper, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k,
+                                      SpeciesAtom *l, bool determineTypes) const override;
 };

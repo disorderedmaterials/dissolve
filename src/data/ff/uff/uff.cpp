@@ -569,3 +569,79 @@ bool Forcefield_UFF::assignTorsionTermParameters(SpeciesTorsion &torsion, bool d
 
     return true;
 }
+
+// Assign / generate improper term parameters
+bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improper, SpeciesAtom *i, SpeciesAtom *j,
+                                                  SpeciesAtom *k, SpeciesAtom *l, bool determineTypes) const
+{
+    auto optTypeI = determineTypes ? determineUFFAtomType(i) : uffAtomTypeByName(i->atomType()->name());
+    auto optTypeJ = determineTypes ? determineUFFAtomType(j) : uffAtomTypeByName(j->atomType()->name());
+    auto optTypeK = determineTypes ? determineUFFAtomType(k) : uffAtomTypeByName(k->atomType()->name());
+    auto optTypeL = determineTypes ? determineUFFAtomType(l) : uffAtomTypeByName(l->atomType()->name());
+
+    if (!optTypeI || !optTypeJ || !optTypeK || !optTypeL)
+        Messenger::error("Failed to create parameters for torsion {}-{}-{}-{} (atom types could not be determined).\n",
+                         i->userIndex(), j->userIndex(), k->userIndex(), l->userIndex());
+
+    const UFFAtomType &typeI = *optTypeI;
+    const UFFAtomType &typeJ = *optTypeJ;
+    const UFFAtomType &typeK = *optTypeK;
+    const UFFAtomType &typeL = *optTypeL;
+
+    /*
+     * We have XXX cases for the central atom
+     * a) 'i' is C_2 or C_R (or C_amR), and may also be bound to O_2
+     * b) 'i' is a group 16 element (old group 6)
+     * c) 'i' is a group 15 element (old group 5)
+     * d) All other atomic centres have no inversion term
+     */
+
+    /*
+     * Much of this implementation is based on that of MCCCS Towhee, since the original paper does not describe the
+     * approach well, nor provide all the necessary parameters.
+     */
+
+    // Get information on our central atom 'i'
+    const auto groupI = Elements::group(i->Z());
+
+    if (typeI.name() == "C_2" || typeI.name() == "C_R" || typeI.name() == "C_amR")
+    {
+        // If an O_2 is present, set barrier to 50 kcal/mol, otherwise 6 kcal/mol
+        improper = {
+            typeI.name(),
+            typeJ.name(),
+            typeK.name(),
+            typeL.name(),
+            SpeciesImproper::FourierNForm,
+            {4.184 * (typeJ.name() == "O_2" || typeK.name() == "O_2" || typeL.name() == "O_2" ? 50.0 : 6.0), 1.0, -1.0, 0.0}};
+    }
+    else if (typeI.name() == "N_2" || typeI.name() == "N_R" || typeI.name() == "N_amR")
+        improper = {typeI.name(),
+                    typeJ.name(),
+                    typeK.name(),
+                    typeL.name(),
+                    SpeciesImproper::FourierNForm,
+                    {4.184 * 6.0, 1.0, -1.0, 0.0}};
+    else if (groupI == 15)
+    {
+        // Determine equilibrium angle
+        auto phi = 90.0;
+        if (typeI.name() == "P_3+3")
+            phi = 84.4339;
+        else if (typeI.name() == "As3+3")
+            phi = 86.9735;
+        else if (typeI.name() == "Sb3+3")
+            phi = 87.7047;
+        phi /= DEGRAD;
+        improper = {typeI.name(),
+                    typeJ.name(),
+                    typeK.name(),
+                    typeL.name(),
+                    SpeciesImproper::FourierNForm,
+                    {4.184 * 6.0, -(-4.0 * cos(phi) + cos(2 * phi)), -4.0 * cos(phi), 2.0}};
+    }
+    else
+        improper = {typeI.name(), typeJ.name(), typeK.name(), typeL.name(), SpeciesImproper::NoForm};
+
+    return true;
+}
