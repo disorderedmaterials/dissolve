@@ -119,9 +119,6 @@ int CoreData::nMasterBonds() const { return masterBonds_.size(); }
 // Return list of master Bond parameters
 const std::vector<MasterIntra> &CoreData::masterBonds() const { return masterBonds_; }
 
-// Return nth master Bond parameters
-MasterIntra &CoreData::masterBond(int n) { return masterBonds_[n]; }
-
 // Return whether named master Bond parameters exist
 OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterBond(std::string_view name) const
 {
@@ -164,9 +161,6 @@ int CoreData::nMasterAngles() const { return masterAngles_.size(); }
 
 // Return list of master Angle parameters
 const std::vector<MasterIntra> &CoreData::masterAngles() const { return masterAngles_; }
-
-// Return nth master Angle parameters
-MasterIntra &CoreData::masterAngle(int n) { return masterAngles_[n]; }
 
 // Return whether named master Angle parameters exist
 OptionalReferenceWrapper<MasterIntra> CoreData::hasMasterAngle(std::string_view name)
@@ -211,9 +205,6 @@ int CoreData::nMasterTorsions() const { return masterTorsions_.size(); }
 // Return list of master Torsion parameters
 const std::vector<MasterIntra> &CoreData::masterTorsions() const { return masterTorsions_; }
 
-// Return nth master Torsion parameters
-MasterIntra &CoreData::masterTorsion(int n) { return masterTorsions_[n]; }
-
 // Return whether named master Torsion parameters exist
 OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterTorsion(std::string_view name) const
 {
@@ -256,9 +247,6 @@ int CoreData::nMasterImpropers() const { return masterImpropers_.size(); }
 
 // Return list of master Improper parameters
 const std::vector<MasterIntra> &CoreData::masterImpropers() const { return masterImpropers_; }
-
-// Return nth master Improper parameters
-MasterIntra &CoreData::masterImproper(int n) { return masterImpropers_[n]; }
 
 // Return whether named master Improper parameters exist
 OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterImproper(std::string_view name) const
