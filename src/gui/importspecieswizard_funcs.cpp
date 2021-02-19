@@ -409,6 +409,12 @@ void ImportSpeciesWizard::updateMasterTermsPage()
             conflicts = true;
             break;
         }
+    for (auto &intra : temporaryCoreData_.masterImpropers())
+        if (dissolveReference_->coreData().findMasterTerm(intra.name()))
+        {
+            conflicts = true;
+            break;
+        }
     ui_.MasterTermsIndicator->setNotOK(conflicts);
     if (conflicts)
         ui_.MasterTermsIndicatorLabel->setText("One or more MasterTerms in the imported Species conflict with existing ones");
