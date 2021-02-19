@@ -3,7 +3,7 @@ title: Dissolve on SCARF
 description: Where to find, and how to run, Dissolve on SCARF
 ---
 
-The MPI version of Dissolve is installed as a module on [SCARF](https://www.scarf.rl.ac.uk), and is built using the Intel compiler / MPI framework and gcc 8.1.0.
+The MPI version of Dissolve is installed as a module on [SCARF](https://www.scarf.rl.ac.uk), and is built (as of v0.7.3) using the `gcc` compilers.
 
 Of course, you'll need an account on SCARF - register [here](https://www.scarf.rl.ac.uk/registration.html).
 
@@ -46,16 +46,9 @@ The following example script for SCARF can be used as a basis for your own, or s
 #SBATCH -o %j.log
 #SBATCH -e %j.err
 
-# Load necessary modules and set-up some environment variables
-module load intel/20.0.0
-module load intel/mpi/20.0.0
-module load gcc/8.1.0
-export I_MPI_FABRICS="shm:ofi"
-export I_MPI_HYDRA_TOPOLIB=ipl
-export FI_PROVIDER=verbs
-
-# Load Dissolve
-module load contrib/dissolve/0.6.1
+# Load necessary modules
+module load foss
+module load contrib/dissolve/0.7.3
 
 # Change to directory containing simulation
 cd ~/path/to/simulation
@@ -73,80 +66,27 @@ Before using this script, you should:
 
 Note that, as written here, the associated error and log files written by the system for the run are prepended by the numerical job identifier for the run (e.g. `435003.err`).
 
-### Compiling Dissolve on SCARF (Intel Compilers)
-
-You should never need to compile Dissolve on SCARF yourself, but in case you have a specific version / commit you want to test, or I forget how to do it, here are step-by-step instructions.
-
-#### 1. Request Interactive Resources
-
-Don't compile Dissolve on the login nodes of SCARF. Instead, use the queue and request an interactive session:
-
-```
-srun -p devel --pty /bin/bash
-```
-
-#### 2. Load Required Modules
-
-Dissolve needs a compiler with C++17 support, which on SCARF means the Intel Compiler v2020 backed by gcc 8.1.0, and also a relatively recent CMake:
+If you are using a version built with the Intel compilers (<= v0.7.2) then the `module load` lines must be changed to:
 
 ```
 module load intel/20.0.0
 module load intel/mpi/20.0.0
 module load gcc/8.1.0
-module load cmake/3.10.2
+module load contrib/dissolve/0.7.3
 ```
 
-#### 3. Install Conan
-
-Conan is not installed on SCARF, so you must install a user-space copy of it in order to get some of Dissolve's development prerequisites:
+Some additional environment variables must also be set:
 
 ```
-pip3 install --user conan
+export I_MPI_FABRICS="shm:ofi"
+export I_MPI_HYDRA_TOPOLIB=ipl
+export FI_PROVIDER=verbs
 ```
 
-Copy and paste the following into your `.conan/profiles/default` (create this file if it doesn't exist):
+### Compiling Dissolve on SCARF
 
-```
-[settings]
-arch=x86_64
-arch_build=x86_64
-build_type=Release
-compiler=intel
-compiler.base=gcc
-compiler.base.libcxx=libstdc++11
-compiler.base.version=8
-compiler.version=19
-os=Linux
-os_build=Linux
-```
+You should never need to compile Dissolve on SCARF yourself, but in case you have a specific version / commit you want to test, or I forget how to do it, here are step-by-step instructions.
 
-#### 4. Retrieve ANTLR4
+[Compilation with gcc (recommended)]({{< ref "scarf-foss" >}})
 
-Both parts of ANTLR4 - the Java tool and runtime library - must be manually dealt with, but this is not too onerous. The Java tool can be downloaded to your Dissolve `build` directory with `wget`. At time of writing, the current version of ANTLR is 4.8:
-
-```
-wget https://www.antlr.org/download/antlr-4.8-complete.jar
-```
-
-The runtime library can be built as part of the main Dissolve build (see next step). Download the source zipfile to the `build` directory as well (this is not usually necessary, but there appear to be some network issues when retrieving the source via the external project mechanism):
-
-```
-wget https://www.antlr.org/download/antlr4-cpp-runtime-4.8-source.zip
-```
-
-We'll use the `BUILD_ANTLR_ZIPFILE` option to specify that we want to use this local archive instead of downloading it.
-
-#### 5. Configure and Build
-
-In your Dissolve `build` directory, run:
-
-```
-conan install ..
-cmake .. -DCMAKE_CXX_FLAGS:string="-std=c++17" -DPARALLEL:bool=true -DBUILD_ANTLR_RUNTIME:bool=true -DANTLR_EXECUTABLE:path=`pwd`/antlr-4.8-complete.jar -DBUILD_ANTLR_ZIPFILE:path=`pwd`/antlr4-cpp-runtime-4.8-source.zip
-```
-
-Note that the `CMAKE_CXX_FLAGS` must be explicitly set to force the use of the C++17 standard, as this option is not correctly passed down by `cmake`.
-
-#### 6. Wait
-
-And then some. Once complete, the `dissolve-mpi` binary can be found in the `build/bin` directory.
+[Compilation with the Intel compilers]({{< ref "scarf-intel" >}})
