@@ -104,7 +104,7 @@ int CoreData::atomTypesVersion() const { return atomTypesVersion_; }
 MasterIntra &CoreData::addMasterBond(std::string_view name)
 {
     // Check for existence of master Bond already
-    if (hasMasterBond(name))
+    if (getMasterBond(name))
         throw(std::runtime_error(
             fmt::format("Refused to add a new master Bond named '{}' since one with the same name already exists.\n", name)));
 
@@ -120,7 +120,7 @@ int CoreData::nMasterBonds() const { return masterBonds_.size(); }
 const std::vector<MasterIntra> &CoreData::masterBonds() const { return masterBonds_; }
 
 // Return whether named master Bond parameters exist
-OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterBond(std::string_view name) const
+OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterBond(std::string_view name) const
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -132,7 +132,7 @@ OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterBond(std::string_
 }
 
 // Return whether named master Bond parameters exist
-OptionalReferenceWrapper<MasterIntra> CoreData::hasMasterBond(std::string_view name)
+OptionalReferenceWrapper<MasterIntra> CoreData::getMasterBond(std::string_view name)
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -147,7 +147,7 @@ OptionalReferenceWrapper<MasterIntra> CoreData::hasMasterBond(std::string_view n
 MasterIntra &CoreData::addMasterAngle(std::string_view name)
 {
     // Check for existence of master Angle already
-    if (hasMasterAngle(name))
+    if (getMasterAngle(name))
         throw(std::runtime_error(
             fmt::format("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name)));
 
@@ -163,7 +163,7 @@ int CoreData::nMasterAngles() const { return masterAngles_.size(); }
 const std::vector<MasterIntra> &CoreData::masterAngles() const { return masterAngles_; }
 
 // Return whether named master Angle parameters exist
-OptionalReferenceWrapper<MasterIntra> CoreData::hasMasterAngle(std::string_view name)
+OptionalReferenceWrapper<MasterIntra> CoreData::getMasterAngle(std::string_view name)
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -175,7 +175,7 @@ OptionalReferenceWrapper<MasterIntra> CoreData::hasMasterAngle(std::string_view 
 }
 
 // Return whether named master Angle parameters exist
-OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterAngle(std::string_view name) const
+OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterAngle(std::string_view name) const
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -190,7 +190,7 @@ OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterAngle(std::string
 MasterIntra &CoreData::addMasterTorsion(std::string_view name)
 {
     // Check for existence of master Torsion already
-    if (hasMasterTorsion(name))
+    if (getMasterTorsion(name))
         throw(std::runtime_error(fmt::format(
             "Refused to add a new master Torsion named '{}' since one with the same name already exists.\n", name)));
 
@@ -206,7 +206,7 @@ int CoreData::nMasterTorsions() const { return masterTorsions_.size(); }
 const std::vector<MasterIntra> &CoreData::masterTorsions() const { return masterTorsions_; }
 
 // Return whether named master Torsion parameters exist
-OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterTorsion(std::string_view name) const
+OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterTorsion(std::string_view name) const
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -218,7 +218,7 @@ OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterTorsion(std::stri
 }
 
 // Return whether named master Torsion parameters exist
-OptionalReferenceWrapper<MasterIntra> CoreData::hasMasterTorsion(std::string_view name)
+OptionalReferenceWrapper<MasterIntra> CoreData::getMasterTorsion(std::string_view name)
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -233,7 +233,7 @@ OptionalReferenceWrapper<MasterIntra> CoreData::hasMasterTorsion(std::string_vie
 MasterIntra &CoreData::addMasterImproper(std::string_view name)
 {
     // Check for existence of master Improper already
-    if (hasMasterImproper(name))
+    if (getMasterImproper(name))
         throw(std::runtime_error(fmt::format(
             "Refused to add a new master Improper named '{}' since one with the same name already exists.\n", name)));
 
@@ -249,7 +249,7 @@ int CoreData::nMasterImpropers() const { return masterImpropers_.size(); }
 const std::vector<MasterIntra> &CoreData::masterImpropers() const { return masterImpropers_; }
 
 // Return whether named master Improper parameters exist
-OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterImproper(std::string_view name) const
+OptionalReferenceWrapper<const MasterIntra> CoreData::getMasterImproper(std::string_view name) const
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -261,7 +261,7 @@ OptionalReferenceWrapper<const MasterIntra> CoreData::hasMasterImproper(std::str
 }
 
 // Return whether named master Improper parameters exist
-OptionalReferenceWrapper<MasterIntra> CoreData::hasMasterImproper(std::string_view name)
+OptionalReferenceWrapper<MasterIntra> CoreData::getMasterImproper(std::string_view name)
 {
     // Remove leading '@' if necessary
     std::string_view trimmedName = name[0] == '@' ? &name[1] : name;
@@ -276,16 +276,16 @@ OptionalReferenceWrapper<MasterIntra> CoreData::hasMasterImproper(std::string_vi
 OptionalReferenceWrapper<const MasterIntra> CoreData::findMasterTerm(std::string_view name) const
 {
     OptionalReferenceWrapper<const MasterIntra> result;
-    result = hasMasterBond(name);
+    result = getMasterBond(name);
     if (result)
         return result;
-    result = hasMasterAngle(name);
+    result = getMasterAngle(name);
     if (result)
         return result;
-    result = hasMasterTorsion(name);
+    result = getMasterTorsion(name);
     if (result)
         return result;
-    return hasMasterImproper(name);
+    return getMasterImproper(name);
 }
 
 // Clear all master terms

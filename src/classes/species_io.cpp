@@ -156,7 +156,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 else if (parser.argsv(4)[0] == '@')
                 {
                     // Search through master Angle parameters to see if this name exists
-                    master = coreData.hasMasterAngle(parser.argsv(4));
+                    master = coreData.getMasterAngle(parser.argsv(4));
                     if (!master)
                     {
                         Messenger::error("No master Angle parameters named '{}' exist.\n", &parser.argsv(4)[1]);
@@ -242,7 +242,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 else if (parser.argsv(3)[0] == '@')
                 {
                     // Search through master Bond parameters to see if this name exists
-                    master = coreData.hasMasterBond(parser.argsv(3));
+                    master = coreData.getMasterBond(parser.argsv(3));
                     if (!master)
                     {
                         Messenger::error("No master Bond parameters named '{}' exist.\n", &parser.argsv(3)[1]);
@@ -370,7 +370,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 if (parser.argsv(5)[0] == '@')
                 {
                     // Search through master Improper parameters to see if this name exists
-                    auto master = coreData.hasMasterImproper(parser.argsv(5));
+                    auto master = coreData.getMasterImproper(parser.argsv(5));
                     if (!master)
                     {
                         Messenger::error("No master Improper parameters named '{}' exist.\n", &parser.argsv(5)[1]);
@@ -493,7 +493,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 else if (parser.argsv(5)[0] == '@')
                 {
                     // Search through master Torsion parameters to see if this name exists
-                    auto master = coreData.hasMasterTorsion(parser.argsv(5));
+                    auto master = coreData.getMasterTorsion(parser.argsv(5));
                     if (!master)
                     {
                         Messenger::error("No master Torsion parameters named '{}' exist.\n", &parser.argsv(5)[1]);

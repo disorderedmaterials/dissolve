@@ -440,7 +440,7 @@ void SpeciesTab::on_BondTable_itemChanged(QTableWidgetItem *w)
             // If the text starts with an '@' then its a reference to a master term
             if (w->text().at(0) == '@')
             {
-                auto master = dissolve_.coreData().hasMasterBond(qPrintable(w->text()));
+                auto master = dissolve_.coreData().getMasterBond(qPrintable(w->text()));
                 speciesBond->setMasterParameters(&master->get());
             }
             else
@@ -500,7 +500,7 @@ void SpeciesTab::on_AngleTable_itemChanged(QTableWidgetItem *w)
             // If the text starts with an '@' then its a reference to a master term
             if (w->text().at(0) == '@')
             {
-                auto master = dissolve_.coreData().hasMasterAngle(qPrintable(w->text()));
+                auto master = dissolve_.coreData().getMasterAngle(qPrintable(w->text()));
                 speciesAngle->setMasterParameters(&master->get());
             }
             else
@@ -561,7 +561,7 @@ void SpeciesTab::on_TorsionTable_itemChanged(QTableWidgetItem *w)
             // If the text starts with an '@' then its a reference to a master term
             if (w->text().at(0) == '@')
             {
-                auto master = dissolve_.coreData().hasMasterTorsion(qPrintable(w->text()));
+                auto master = dissolve_.coreData().getMasterTorsion(qPrintable(w->text()));
                 speciesTorsion->setMasterParameters(&master->get());
             }
             else
@@ -622,7 +622,7 @@ void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem *w)
             // If the text starts with an '@' then its a reference to a master term
             if (w->text().at(0) == '@')
             {
-                auto master = dissolve_.coreData().hasMasterImproper(qPrintable(w->text()));
+                auto master = dissolve_.coreData().getMasterImproper(qPrintable(w->text()));
                 speciesImproper->setMasterParameters(&master->get());
             }
             else

@@ -78,7 +78,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
         OptionalReferenceWrapper<MasterIntra> master = {};
         if (sourceIntra.type() == SpeciesIntra::BondInteraction)
         {
-            master = coreData_.hasMasterBond(sourceIntra.masterParameters()->name());
+            master = coreData_.getMasterBond(sourceIntra.masterParameters()->name());
             if (!master)
             {
                 master = coreData_.addMasterBond(sourceIntra.masterParameters()->name());
@@ -87,7 +87,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
         }
         else if (sourceIntra.type() == SpeciesIntra::AngleInteraction)
         {
-            master = coreData_.hasMasterAngle(sourceIntra.masterParameters()->name());
+            master = coreData_.getMasterAngle(sourceIntra.masterParameters()->name());
             if (!master)
             {
                 master = coreData_.addMasterAngle(sourceIntra.masterParameters()->name());
@@ -96,7 +96,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
         }
         else if (sourceIntra.type() == SpeciesIntra::TorsionInteraction)
         {
-            master = coreData_.hasMasterTorsion(sourceIntra.masterParameters()->name());
+            master = coreData_.getMasterTorsion(sourceIntra.masterParameters()->name());
             if (!master)
             {
                 master = coreData_.addMasterTorsion(sourceIntra.masterParameters()->name());
@@ -105,7 +105,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
         }
         else if (sourceIntra.type() == SpeciesIntra::ImproperInteraction)
         {
-            master = coreData_.hasMasterImproper(sourceIntra.masterParameters()->name());
+            master = coreData_.getMasterImproper(sourceIntra.masterParameters()->name());
             if (!master)
             {
                 master = coreData_.addMasterImproper(sourceIntra.masterParameters()->name());

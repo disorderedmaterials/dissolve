@@ -325,7 +325,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                             termName = QString("%1-%2").arg(mappedName(bond.j()->atomType()), mappedName(bond.i()->atomType()));
 
                         // Search for an existing master term by this name
-                        auto master = temporaryCoreData_.hasMasterBond(qPrintable(termName));
+                        auto master = temporaryCoreData_.getMasterBond(qPrintable(termName));
                         if (!master)
                         {
                             // Create it now
@@ -355,7 +355,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                                                 mappedName(angle.i()->atomType()));
 
                         // Search for an existing master term by this name
-                        auto master = temporaryCoreData_.hasMasterAngle(qPrintable(termName));
+                        auto master = temporaryCoreData_.getMasterAngle(qPrintable(termName));
                         if (!master)
                         {
                             // Create it now
@@ -385,7 +385,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                                                 mappedName(torsion.j()->atomType()), mappedName(torsion.i()->atomType()));
 
                         // Search for an existing master term by this name
-                        auto master = temporaryCoreData_.hasMasterTorsion(qPrintable(termName));
+                        auto master = temporaryCoreData_.getMasterTorsion(qPrintable(termName));
                         if (!master)
                         {
                             // Create it now
@@ -412,7 +412,7 @@ bool AddForcefieldTermsWizard::prepareForNextPage(int currentIndex)
                         termName = QString("%1-%2").arg(mappedName(improper.i()->atomType()), qPrintable(jkl.join("-")));
 
                         // Search for an existing master term by this name
-                        auto master = temporaryCoreData_.hasMasterImproper(qPrintable(termName));
+                        auto master = temporaryCoreData_.getMasterImproper(qPrintable(termName));
                         if (!master)
                         {
                             // Create it now

@@ -79,8 +79,8 @@ class CoreData
     // Return list of master Bond parameters
     const std::vector<MasterIntra> &masterBonds() const;
     // Return whether named master Bond parameters exist
-    OptionalReferenceWrapper<MasterIntra> hasMasterBond(std::string_view name);
-    OptionalReferenceWrapper<const MasterIntra> hasMasterBond(std::string_view name) const;
+    OptionalReferenceWrapper<MasterIntra> getMasterBond(std::string_view name);
+    OptionalReferenceWrapper<const MasterIntra> getMasterBond(std::string_view name) const;
     // Add new master Angle parameters
     MasterIntra &addMasterAngle(std::string_view name);
     // Return number of master Angles parameters in list
@@ -88,8 +88,8 @@ class CoreData
     // Return list of master Angle parameters
     const std::vector<MasterIntra> &masterAngles() const;
     // Return whether named master Angle parameters exist
-    OptionalReferenceWrapper<MasterIntra> hasMasterAngle(std::string_view name);
-    OptionalReferenceWrapper<const MasterIntra> hasMasterAngle(std::string_view name) const;
+    OptionalReferenceWrapper<MasterIntra> getMasterAngle(std::string_view name);
+    OptionalReferenceWrapper<const MasterIntra> getMasterAngle(std::string_view name) const;
     // Add new master Torsion parameters
     MasterIntra &addMasterTorsion(std::string_view name);
     // Return number of master Torsions parameters in list
@@ -97,8 +97,8 @@ class CoreData
     // Return list of master Torsion parameters
     const std::vector<MasterIntra> &masterTorsions() const;
     // Return whether named master Torsion parameters exist
-    OptionalReferenceWrapper<MasterIntra> hasMasterTorsion(std::string_view name);
-    OptionalReferenceWrapper<const MasterIntra> hasMasterTorsion(std::string_view name) const;
+    OptionalReferenceWrapper<MasterIntra> getMasterTorsion(std::string_view name);
+    OptionalReferenceWrapper<const MasterIntra> getMasterTorsion(std::string_view name) const;
     // Add new master Improper parameters
     MasterIntra &addMasterImproper(std::string_view name);
     // Return number of master Impropers parameters in list
@@ -106,8 +106,8 @@ class CoreData
     // Return list of master Improper parameters
     const std::vector<MasterIntra> &masterImpropers() const;
     // Return whether named master Improper parameters exist
-    OptionalReferenceWrapper<MasterIntra> hasMasterImproper(std::string_view name);
-    OptionalReferenceWrapper<const MasterIntra> hasMasterImproper(std::string_view name) const;
+    OptionalReferenceWrapper<MasterIntra> getMasterImproper(std::string_view name);
+    OptionalReferenceWrapper<const MasterIntra> getMasterImproper(std::string_view name) const;
     // Return the named master term (of any form) if it exists
     OptionalReferenceWrapper<const MasterIntra> findMasterTerm(std::string_view name) const;
     // Clear all master terms

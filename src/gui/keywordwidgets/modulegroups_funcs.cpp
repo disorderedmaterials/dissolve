@@ -42,7 +42,7 @@ ModuleGroupsKeywordWidget::ModuleGroupsKeywordWidget(QWidget *parent, KeywordBas
 void ModuleGroupsKeywordWidget::updateSelectionRow(int row, const Module *module, bool create)
 {
     // Grab the target groups
-    ModuleGroups &groups = keyword_->data();
+    auto &groups = keyword_->data();
 
     QTableWidgetItem *item;
 
