@@ -102,7 +102,7 @@ void DataManagerDialog::filterTable(QTableWidget *table, GenericItem *current, Q
 }
 
 // Update ReferencePoint table row
-void DataManagerDialog::referencePointRowUpdate(int row, ReferencePoint *refPoint, bool createItems)
+void DataManagerDialog::referencePointRowUpdate(int row, const ReferencePoint *refPoint, bool createItems)
 {
     QTableWidgetItem *item;
 

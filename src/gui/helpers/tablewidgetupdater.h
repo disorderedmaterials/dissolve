@@ -12,7 +12,7 @@
 
 // TableWidgetUpdater - Constructor-only template class to update contents of a QTableWidget, preserving original items as much
 // as possible
-template <class T, class I, typename Raw = I *, typename... Args> class TableWidgetUpdater
+template <class T, class I, typename Raw = const I *, typename... Args> class TableWidgetUpdater
 {
     // Typedefs for passed functions
     typedef void (T::*TableWidgetRowUpdateFunction)(int row, Raw item, bool createItems, Args... args);
@@ -57,7 +57,8 @@ template <class T, class I, typename Raw = I *, typename... Args> class TableWid
     }
 
     public:
-    TableWidgetUpdater(QTableWidget *table, std::vector<I> &vector, T *functionParent, TableWidgetRowUpdateFunction updateRow)
+    TableWidgetUpdater(QTableWidget *table, const std::vector<I> &vector, T *functionParent,
+                       TableWidgetRowUpdateFunction updateRow)
     {
 
         int rowCount = 0;

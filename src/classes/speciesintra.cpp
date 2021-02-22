@@ -16,7 +16,7 @@ SpeciesIntra::SpeciesIntra()
     inCycle_ = false;
 }
 
-SpeciesIntra::SpeciesIntra(SpeciesIntra &source) { (*this) = source; }
+SpeciesIntra::SpeciesIntra(const SpeciesIntra &source) { (*this) = source; }
 
 SpeciesIntra &SpeciesIntra::operator=(const SpeciesIntra &source)
 {
@@ -28,6 +28,7 @@ SpeciesIntra &SpeciesIntra::operator=(const SpeciesIntra &source)
     attached_[0] = source.attached_[0];
     attached_[1] = source.attached_[1];
     inCycle_ = source.inCycle_;
+    form_ = source.form_;
 
     return *this;
 }

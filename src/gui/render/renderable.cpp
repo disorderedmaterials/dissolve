@@ -77,7 +77,7 @@ Renderable::~Renderable() { instances_.remove(this); }
 void Renderable::setName(std::string_view name) { name_ = name; }
 
 // Return name of Renderable
-std::string_view Renderable::name() { return name_; }
+std::string_view Renderable::name() const { return name_; }
 
 // Return type of Renderable
 Renderable::RenderableType Renderable::type() const { return type_; }

@@ -7,6 +7,7 @@
 #include "classes/masterintra.h"
 #include "data/elements.h"
 #include "templates/list.h"
+#include "templates/optionalref.h"
 #include "templates/reflist.h"
 #include <memory>
 #include <optional>
@@ -62,57 +63,53 @@ class CoreData
      */
     private:
     // List of master Bond parameters for Species
-    List<MasterIntra> masterBonds_;
+    std::vector<MasterIntra> masterBonds_;
     // List of master Angles parameters for Species
-    List<MasterIntra> masterAngles_;
+    std::vector<MasterIntra> masterAngles_;
     // List of master Torsions parameters for Species
-    List<MasterIntra> masterTorsions_;
+    std::vector<MasterIntra> masterTorsions_;
     // List of master Improper parameters for Species
-    List<MasterIntra> masterImpropers_;
+    std::vector<MasterIntra> masterImpropers_;
 
     public:
     // Add new master Bond parameters
-    MasterIntra *addMasterBond(std::string_view name);
+    MasterIntra &addMasterBond(std::string_view name);
     // Return number of master Bond parameters in list
     int nMasterBonds() const;
     // Return list of master Bond parameters
-    const List<MasterIntra> &masterBonds() const;
-    // Return nth master Bond
-    MasterIntra *masterBond(int n);
+    const std::vector<MasterIntra> &masterBonds() const;
     // Return whether named master Bond parameters exist
-    MasterIntra *hasMasterBond(std::string_view name) const;
+    OptionalReferenceWrapper<MasterIntra> getMasterBond(std::string_view name);
+    OptionalReferenceWrapper<const MasterIntra> getMasterBond(std::string_view name) const;
     // Add new master Angle parameters
-    MasterIntra *addMasterAngle(std::string_view name);
+    MasterIntra &addMasterAngle(std::string_view name);
     // Return number of master Angles parameters in list
     int nMasterAngles() const;
     // Return list of master Angle parameters
-    const List<MasterIntra> &masterAngles() const;
-    // Return nth master Angle parameters
-    MasterIntra *masterAngle(int n);
+    const std::vector<MasterIntra> &masterAngles() const;
     // Return whether named master Angle parameters exist
-    MasterIntra *hasMasterAngle(std::string_view name) const;
+    OptionalReferenceWrapper<MasterIntra> getMasterAngle(std::string_view name);
+    OptionalReferenceWrapper<const MasterIntra> getMasterAngle(std::string_view name) const;
     // Add new master Torsion parameters
-    MasterIntra *addMasterTorsion(std::string_view name);
+    MasterIntra &addMasterTorsion(std::string_view name);
     // Return number of master Torsions parameters in list
     int nMasterTorsions() const;
     // Return list of master Torsion parameters
-    const List<MasterIntra> &masterTorsions() const;
-    // Return nth master Torsion parameters
-    MasterIntra *masterTorsion(int n);
+    const std::vector<MasterIntra> &masterTorsions() const;
     // Return whether named master Torsion parameters exist
-    MasterIntra *hasMasterTorsion(std::string_view name) const;
+    OptionalReferenceWrapper<MasterIntra> getMasterTorsion(std::string_view name);
+    OptionalReferenceWrapper<const MasterIntra> getMasterTorsion(std::string_view name) const;
     // Add new master Improper parameters
-    MasterIntra *addMasterImproper(std::string_view name);
+    MasterIntra &addMasterImproper(std::string_view name);
     // Return number of master Impropers parameters in list
     int nMasterImpropers() const;
     // Return list of master Improper parameters
-    const List<MasterIntra> &masterImpropers() const;
-    // Return nth master Improper parameters
-    MasterIntra *masterImproper(int n);
+    const std::vector<MasterIntra> &masterImpropers() const;
     // Return whether named master Improper parameters exist
-    MasterIntra *hasMasterImproper(std::string_view name) const;
+    OptionalReferenceWrapper<MasterIntra> getMasterImproper(std::string_view name);
+    OptionalReferenceWrapper<const MasterIntra> getMasterImproper(std::string_view name) const;
     // Return the named master term (of any form) if it exists
-    MasterIntra *findMasterTerm(std::string_view name) const;
+    OptionalReferenceWrapper<const MasterIntra> findMasterTerm(std::string_view name) const;
     // Clear all master terms
     void clearMasterTerms();
 

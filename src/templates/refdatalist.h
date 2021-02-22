@@ -473,7 +473,7 @@ template <class T, class D> class RefDataList
      */
     public:
     // Search references for item
-    RefDataItem<T, D> *contains(T *item) const
+    RefDataItem<T, D> *contains(const T *item) const
     {
         // Search references for specified item
         for (RefDataItem<T, D> *r = listHead_; r != nullptr; r = r->next_)
@@ -483,7 +483,7 @@ template <class T, class D> class RefDataList
         return nullptr;
     }
     // Search references for item and data
-    RefDataItem<T, D> *contains(T *item, D data) const
+    RefDataItem<T, D> *contains(const T *item, D data) const
     {
         // Search references for specified item
         for (RefDataItem<T, D> *r = listHead_; r != nullptr; r = r->next_)

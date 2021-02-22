@@ -15,7 +15,7 @@ Q_DECLARE_METATYPE(std::shared_ptr<AtomType>)
  */
 
 // IsotopologuesTree top-level update function
-void SpeciesTab::updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, int topLevelItemIndex, Isotopologue *data,
+void SpeciesTab::updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, int topLevelItemIndex, const Isotopologue *data,
                                                      bool createItem)
 {
     QTreeWidgetItem *item;

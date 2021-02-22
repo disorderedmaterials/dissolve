@@ -17,11 +17,11 @@ class Isotope;
 class Isotopologue;
 class Species;
 
-Q_DECLARE_METATYPE(SpeciesAtom *)
-Q_DECLARE_METATYPE(SpeciesBond *)
-Q_DECLARE_METATYPE(SpeciesAngle *)
-Q_DECLARE_METATYPE(SpeciesTorsion *)
-Q_DECLARE_METATYPE(SpeciesImproper *)
+Q_DECLARE_METATYPE(const SpeciesAtom *)
+Q_DECLARE_METATYPE(const SpeciesBond *)
+Q_DECLARE_METATYPE(const SpeciesAngle *)
+Q_DECLARE_METATYPE(const SpeciesTorsion *)
+Q_DECLARE_METATYPE(const SpeciesImproper *)
 
 // Species Tab
 class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
@@ -80,15 +80,15 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
     // Return valid AtomType names for specified model index in the SpeciesAtomTable
     std::vector<std::string> validAtomTypeNames(const QModelIndex &index);
     // SpeciesAtomTable row update function
-    void updateAtomTableRow(int row, SpeciesAtom *speciesAtom, bool createItems);
+    void updateAtomTableRow(int row, const SpeciesAtom *speciesAtom, bool createItems);
     // SpeciesBondTable row update function
-    void updateBondTableRow(int row, SpeciesBond *speciesBond, bool createItems);
+    void updateBondTableRow(int row, const SpeciesBond *speciesBond, bool createItems);
     // SpeciesAngleTable row update function
-    void updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool createItems);
+    void updateAngleTableRow(int row, const SpeciesAngle *speciesAngle, bool createItems);
     // SpeciesTorsionTable row update function
-    void updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, bool createItems);
+    void updateTorsionTableRow(int row, const SpeciesTorsion *speciesTorsion, bool createItems);
     // SpeciesImproperTable row update function
-    void updateImproperTableRow(int row, SpeciesImproper *speciesImproper, bool createItems);
+    void updateImproperTableRow(int row, const SpeciesImproper *speciesImproper, bool createItems);
 
     private slots:
     // Update atom table selection
@@ -111,7 +111,7 @@ class SpeciesTab : public QWidget, public ListItem<SpeciesTab>, public MainTab
      */
     private:
     // IsotopologuesTree top-level update function
-    void updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, int topLevelItemIndex, Isotopologue *data,
+    void updateIsotopologuesTreeTopLevelItem(QTreeWidget *treeWidget, int topLevelItemIndex, const Isotopologue *data,
                                              bool createItem);
     // IsotopologuesTree item update function
     void updateIsotopologuesTreeChildItem(QTreeWidgetItem *parentItem, int childIndex, std::shared_ptr<AtomType> item,

@@ -4,7 +4,6 @@
 #pragma once
 
 #include "classes/masterintra.h"
-#include "templates/list.h"
 #include <QComboBox>
 #include <QModelIndex>
 #include <QObject>
@@ -22,10 +21,10 @@ class IntraFormComboDelegate : public QItemDelegate
     // Associated item list
     ComboListItems *items_;
     // List of master terms
-    const List<MasterIntra> &masterTerms_;
+    const std::vector<MasterIntra> &masterTerms_;
 
     public:
-    IntraFormComboDelegate(QObject *parent, ComboListItems *items, const List<MasterIntra> &masterTerms);
+    IntraFormComboDelegate(QObject *parent, ComboListItems *items, const std::vector<MasterIntra> &masterTerms);
     virtual ~IntraFormComboDelegate();
     // Reimplemented virtual function to create editing widget
     QWidget *createEditor(QWidget *parent, const QStyleOptionViewItem &option, const QModelIndex &index) const;
