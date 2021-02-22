@@ -19,7 +19,7 @@ class CalculateAxisAngleModule : public Module
 {
     public:
     CalculateAxisAngleModule();
-    ~CalculateAxisAngleModule();
+    ~CalculateAxisAngleModule() = default;
 
     /*
      * Instances

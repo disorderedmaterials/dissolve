@@ -18,7 +18,7 @@ class ExportCoordinatesModule : public Module
 
     public:
     ExportCoordinatesModule();
-    ~ExportCoordinatesModule();
+    ~ExportCoordinatesModule() = default;
 
     /*
      * Instances

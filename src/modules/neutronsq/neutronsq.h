@@ -19,7 +19,7 @@ class NeutronSQModule : public Module
 {
     public:
     NeutronSQModule();
-    ~NeutronSQModule();
+    ~NeutronSQModule() = default;
 
     /*
      * Instances

@@ -18,7 +18,7 @@ class CalculateSDFModule : public Module
 {
     public:
     CalculateSDFModule();
-    ~CalculateSDFModule();
+    ~CalculateSDFModule() = default;
 
     /*
      * Instances

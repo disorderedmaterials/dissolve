@@ -9,8 +9,6 @@ CalibrationModule::CalibrationModule() : Module(nRequiredTargets())
     initialise();
 }
 
-CalibrationModule::~CalibrationModule() {}
-
 /*
  * Instances
  */

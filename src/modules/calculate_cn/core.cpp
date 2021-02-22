@@ -13,8 +13,6 @@ CalculateCNModule::CalculateCNModule() : Module(nRequiredTargets()), analyser_(P
     initialise();
 }
 
-CalculateCNModule::~CalculateCNModule() {}
-
 /*
  * Instances
  */

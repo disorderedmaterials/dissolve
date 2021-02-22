@@ -18,7 +18,7 @@ class CalibrationModule : public Module
 
     public:
     CalibrationModule();
-    ~CalibrationModule();
+    ~CalibrationModule() = default;
 
     /*
      * Instances

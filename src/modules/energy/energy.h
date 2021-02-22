@@ -17,7 +17,7 @@ class EnergyModule : public Module
 
     public:
     EnergyModule();
-    ~EnergyModule();
+    ~EnergyModule() = default;
 
     /*
      * Instances

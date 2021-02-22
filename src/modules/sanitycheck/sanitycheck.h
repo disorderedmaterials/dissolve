@@ -17,7 +17,7 @@ class SanityCheckModule : public Module
 
     public:
     SanityCheckModule();
-    ~SanityCheckModule();
+    ~SanityCheckModule() = default;
 
     /*
      * Instances

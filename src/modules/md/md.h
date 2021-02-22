@@ -17,7 +17,7 @@ class MDModule : public Module
 
     public:
     MDModule();
-    ~MDModule();
+    ~MDModule() = default;
 
     /*
      * Instances

@@ -17,7 +17,7 @@ class MolShakeModule : public Module
 
     public:
     MolShakeModule();
-    ~MolShakeModule();
+    ~MolShakeModule() = default;
 
     /*
      * Instances

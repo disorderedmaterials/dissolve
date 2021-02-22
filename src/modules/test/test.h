@@ -17,7 +17,7 @@ class TestModule : public Module
 
     public:
     TestModule();
-    ~TestModule();
+    ~TestModule() = default;
 
     /*
      * Instances

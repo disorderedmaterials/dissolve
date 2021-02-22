@@ -9,8 +9,6 @@ SanityCheckModule::SanityCheckModule() : Module(nRequiredTargets())
     initialise();
 }
 
-SanityCheckModule::~SanityCheckModule() {}
-
 /*
  * Instances
  */

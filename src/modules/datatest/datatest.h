@@ -18,7 +18,7 @@ class DataTestModule : public Module
 {
     public:
     DataTestModule();
-    ~DataTestModule();
+    ~DataTestModule() = default;
 
     /*
      * Instances

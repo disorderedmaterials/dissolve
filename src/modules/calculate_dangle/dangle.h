@@ -19,7 +19,7 @@ class CalculateDAngleModule : public Module
 {
     public:
     CalculateDAngleModule();
-    ~CalculateDAngleModule();
+    ~CalculateDAngleModule() = default;
 
     /*
      * Instances

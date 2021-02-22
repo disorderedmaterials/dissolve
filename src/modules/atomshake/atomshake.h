@@ -17,7 +17,7 @@ class AtomShakeModule : public Module
 
     public:
     AtomShakeModule();
-    ~AtomShakeModule();
+    ~AtomShakeModule() = default;
 
     /*
      * Instances

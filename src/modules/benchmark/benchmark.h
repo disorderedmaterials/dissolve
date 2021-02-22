@@ -13,7 +13,7 @@ class BenchmarkModule : public Module
 {
     public:
     BenchmarkModule();
-    ~BenchmarkModule();
+    ~BenchmarkModule() = default;
 
     /*
      * Instances

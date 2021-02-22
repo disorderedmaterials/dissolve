@@ -13,8 +13,6 @@ BenchmarkModule::BenchmarkModule() : Module(nRequiredTargets())
     initialise();
 }
 
-BenchmarkModule::~BenchmarkModule() {}
-
 /*
  * Instances
  */

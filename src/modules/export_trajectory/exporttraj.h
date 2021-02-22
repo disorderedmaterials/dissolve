@@ -18,7 +18,7 @@ class ExportTrajectoryModule : public Module
 
     public:
     ExportTrajectoryModule();
-    ~ExportTrajectoryModule();
+    ~ExportTrajectoryModule() = default;
 
     /*
      * Instances

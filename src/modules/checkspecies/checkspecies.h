@@ -18,7 +18,7 @@ class CheckSpeciesModule : public Module
 {
     public:
     CheckSpeciesModule();
-    ~CheckSpeciesModule();
+    ~CheckSpeciesModule() = default;
 
     /*
      * Instances

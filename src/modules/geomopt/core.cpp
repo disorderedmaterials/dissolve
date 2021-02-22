@@ -9,8 +9,6 @@ GeometryOptimisationModule::GeometryOptimisationModule() : Module(nRequiredTarge
     initialise();
 }
 
-GeometryOptimisationModule::~GeometryOptimisationModule() {}
-
 /*
  * Instances
  */

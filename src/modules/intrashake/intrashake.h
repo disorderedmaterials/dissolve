@@ -17,7 +17,7 @@ class IntraShakeModule : public Module
 
     public:
     IntraShakeModule();
-    ~IntraShakeModule();
+    ~IntraShakeModule() = default;
 
     /*
      * Instances

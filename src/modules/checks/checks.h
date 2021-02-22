@@ -18,7 +18,7 @@ class ChecksModule : public Module
 
     public:
     ChecksModule();
-    ~ChecksModule();
+    ~ChecksModule() = default;
 
     /*
      * Instances

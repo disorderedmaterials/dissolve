@@ -16,7 +16,7 @@ class BraggModule : public Module
 {
     public:
     BraggModule();
-    ~BraggModule();
+    ~BraggModule() = default;
 
     /*
      * Instances

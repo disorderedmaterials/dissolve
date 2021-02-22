@@ -14,7 +14,7 @@ class AnalyseModule : public Module
 {
     public:
     AnalyseModule();
-    ~AnalyseModule();
+    ~AnalyseModule() = default;
 
     /*
      * Instances

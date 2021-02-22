@@ -21,7 +21,7 @@ class ForcesModule : public Module
 
     public:
     ForcesModule();
-    ~ForcesModule();
+    ~ForcesModule() = default;
 
     /*
      * Instances

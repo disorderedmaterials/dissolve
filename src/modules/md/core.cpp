@@ -9,8 +9,6 @@ MDModule::MDModule() : Module(nRequiredTargets())
     initialise();
 }
 
-MDModule::~MDModule() {}
-
 /*
  * Instances
  */

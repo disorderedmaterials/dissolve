@@ -21,7 +21,7 @@ class CalculateAngleModule : public Module
 {
     public:
     CalculateAngleModule();
-    ~CalculateAngleModule();
+    ~CalculateAngleModule() = default;
 
     /*
      * Instances

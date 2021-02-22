@@ -20,7 +20,7 @@ class XRaySQModule : public Module
 {
     public:
     XRaySQModule();
-    ~XRaySQModule();
+    ~XRaySQModule() = default;
 
     /*
      * Instances

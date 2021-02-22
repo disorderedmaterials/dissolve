@@ -9,8 +9,6 @@ SQModule::SQModule() : Module(nRequiredTargets())
     initialise();
 }
 
-SQModule::~SQModule() {}
-
 /*
  * Instances
  */

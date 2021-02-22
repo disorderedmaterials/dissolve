@@ -9,8 +9,6 @@ RDFModule::RDFModule() : Module(nRequiredTargets())
     initialise();
 }
 
-RDFModule::~RDFModule() {}
-
 /*
  * Instances
  */

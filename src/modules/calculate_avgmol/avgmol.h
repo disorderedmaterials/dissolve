@@ -14,7 +14,7 @@ class CalculateAvgMolModule : public Module
 {
     public:
     CalculateAvgMolModule();
-    ~CalculateAvgMolModule();
+    ~CalculateAvgMolModule() = default;
 
     /*
      * Instances

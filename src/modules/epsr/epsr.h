@@ -23,7 +23,7 @@ class EPSRModule : public Module
 
     public:
     EPSRModule();
-    ~EPSRModule();
+    ~EPSRModule() = default;
 
     /*
      * Instances

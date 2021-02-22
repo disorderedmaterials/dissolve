@@ -9,8 +9,6 @@ ExportTrajectoryModule::ExportTrajectoryModule() : Module(nRequiredTargets())
     initialise();
 }
 
-ExportTrajectoryModule::~ExportTrajectoryModule() {}
-
 /*
  * Instances
  */

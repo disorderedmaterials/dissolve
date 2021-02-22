@@ -13,7 +13,7 @@ class SkeletonModule : public Module
 {
     public:
     SkeletonModule();
-    ~SkeletonModule();
+    ~SkeletonModule() = default;
 
     /*
      * Instances

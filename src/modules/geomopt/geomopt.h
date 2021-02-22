@@ -16,7 +16,7 @@ class GeometryOptimisationModule : public Module
 {
     public:
     GeometryOptimisationModule();
-    ~GeometryOptimisationModule();
+    ~GeometryOptimisationModule() = default;
 
     /*
      * Instances

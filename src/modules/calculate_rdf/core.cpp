@@ -13,8 +13,6 @@ CalculateRDFModule::CalculateRDFModule() : Module(nRequiredTargets()), analyser_
     initialise();
 }
 
-CalculateRDFModule::~CalculateRDFModule() {}
-
 /*
  * Instances
  */

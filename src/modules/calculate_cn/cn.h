@@ -16,7 +16,7 @@ class CalculateCNModule : public Module
 {
     public:
     CalculateCNModule();
-    ~CalculateCNModule();
+    ~CalculateCNModule() = default;
 
     /*
      * Instances

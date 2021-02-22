@@ -18,7 +18,7 @@ class ExportPairPotentialsModule : public Module
 
     public:
     ExportPairPotentialsModule();
-    ~ExportPairPotentialsModule();
+    ~ExportPairPotentialsModule() = default;
 
     /*
      * Instances

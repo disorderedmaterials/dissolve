@@ -9,8 +9,6 @@ AnalyseModule::AnalyseModule() : Module(nRequiredTargets()), analyser_(Procedure
     initialise();
 }
 
-AnalyseModule::~AnalyseModule() {}
-
 /*
  * Instances
  */

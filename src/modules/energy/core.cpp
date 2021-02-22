@@ -9,8 +9,6 @@ EnergyModule::EnergyModule() : Module(nRequiredTargets())
     initialise();
 }
 
-EnergyModule::~EnergyModule() {}
-
 /*
  * Instances
  */

@@ -16,7 +16,7 @@ class ImportModule : public Module
 {
     public:
     ImportModule();
-    ~ImportModule();
+    ~ImportModule() = default;
 
     /*
      * Instances

@@ -17,7 +17,7 @@ class SQModule : public Module
 {
     public:
     SQModule();
-    ~SQModule();
+    ~SQModule() = default;
 
     /*
      * Instances

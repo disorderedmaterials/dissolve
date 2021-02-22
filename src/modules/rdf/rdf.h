@@ -18,7 +18,7 @@ class RDFModule : public Module
 {
     public:
     RDFModule();
-    ~RDFModule();
+    ~RDFModule() = default;
 
     /*
      * Instances

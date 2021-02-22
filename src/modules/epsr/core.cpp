@@ -9,8 +9,6 @@ EPSRModule::EPSRModule() : Module(nRequiredTargets())
     initialise();
 }
 
-EPSRModule::~EPSRModule() {}
-
 /*
  * Instances
  */

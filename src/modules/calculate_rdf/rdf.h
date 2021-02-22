@@ -17,7 +17,7 @@ class CalculateRDFModule : public Module
 {
     public:
     CalculateRDFModule();
-    ~CalculateRDFModule();
+    ~CalculateRDFModule() = default;
 
     /*
      * Instances
