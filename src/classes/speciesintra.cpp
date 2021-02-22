@@ -54,9 +54,6 @@ void SpeciesIntra::detachFromMasterIntra()
     masterParameters_ = nullptr;
 }
 
-// Return parameter source
-const SpeciesIntra *SpeciesIntra::parameterSource() const { return (masterParameters_ ? masterParameters_ : this); }
-
 // Set functional form index of interaction
 void SpeciesIntra::setForm(int form) { form_ = form; }
 
