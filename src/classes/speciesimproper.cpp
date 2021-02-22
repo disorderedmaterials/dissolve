@@ -7,20 +7,8 @@
 
 SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) : SpeciesIntra()
 {
-    i_ = i;
-    j_ = j;
-    k_ = k;
-    l_ = l;
+    assign(i, j, k, l);
     form_ = SpeciesImproper::NoForm;
-
-    // Add ourself to the list of impropers on each atom
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addImproper(*this);
-        j_->addImproper(*this);
-        k_->addImproper(*this);
-        l_->addImproper(*this);
-    }
 }
 
 SpeciesImproper::SpeciesImproper(SpeciesImproper &source) { this->operator=(source); }
@@ -37,17 +25,7 @@ SpeciesImproper::SpeciesImproper(SpeciesImproper &&source) : SpeciesIntra(source
     }
 
     // Copy data
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    l_ = source.l_;
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addImproper(*this);
-        j_->addImproper(*this);
-        k_->addImproper(*this);
-        l_->addImproper(*this);
-    }
+    assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
 
     // Reset source data
@@ -61,18 +39,7 @@ SpeciesImproper::~SpeciesImproper() { detach(); }
 
 SpeciesImproper &SpeciesImproper::operator=(const SpeciesImproper &source)
 {
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    l_ = source.l_;
-
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addImproper(*this);
-        j_->addImproper(*this);
-        k_->addImproper(*this);
-        l_->addImproper(*this);
-    }
+    assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
     SpeciesIntra::operator=(source);
 
@@ -84,38 +51,11 @@ SpeciesImproper &SpeciesImproper::operator=(SpeciesImproper &&source)
     if (i_ && j_ && k_ && l_)
         detach();
 
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    l_ = source.l_;
-
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addImproper(*this);
-        j_->addImproper(*this);
-        k_->addImproper(*this);
-        l_->addImproper(*this);
-    }
+    assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
     SpeciesIntra::operator=(source);
 
     return *this;
-}
-
-// Detach from current atoms
-void SpeciesImproper::detach()
-{
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->removeImproper(*this);
-        j_->removeImproper(*this);
-        k_->removeImproper(*this);
-        l_->removeImproper(*this);
-    }
-    i_ = nullptr;
-    j_ = nullptr;
-    k_ = nullptr;
-    l_ = nullptr;
 }
 
 /*
@@ -132,14 +72,26 @@ void SpeciesImproper::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Spe
 
     assert(i_ && j_ && k_ && l_);
 
-    if (i_)
-        i_->addImproper(*this);
-    if (j_)
-        j_->addImproper(*this);
-    if (k_)
-        k_->addImproper(*this);
-    if (l_)
-        l_->addImproper(*this);
+    i_->addImproper(*this);
+    j_->addImproper(*this);
+    k_->addImproper(*this);
+    l_->addImproper(*this);
+}
+
+// Detach from current atoms
+void SpeciesImproper::detach()
+{
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->removeImproper(*this);
+        j_->removeImproper(*this);
+        k_->removeImproper(*this);
+        l_->removeImproper(*this);
+    }
+    i_ = nullptr;
+    j_ = nullptr;
+    k_ = nullptr;
+    l_ = nullptr;
 }
 
 // Return first SpeciesAtom

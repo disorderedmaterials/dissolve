@@ -15,19 +15,6 @@ SpeciesBond::SpeciesBond(SpeciesAtom *i, SpeciesAtom *j) : SpeciesIntra()
 
 SpeciesBond::SpeciesBond(SpeciesBond &source) : SpeciesIntra(source) { this->operator=(source); }
 
-void SpeciesBond::assign(SpeciesAtom *i, SpeciesAtom *j)
-{
-    i_ = i;
-    j_ = j;
-
-    // Add ourself to the list of bonds on each atom
-    if (i_ && j_)
-    {
-        i_->addBond(*this);
-        j_->addBond(*this);
-    }
-}
-
 SpeciesBond::SpeciesBond(SpeciesBond &&source) : SpeciesIntra(source)
 {
     // Detach source bond referred to by the species atoms
@@ -50,13 +37,7 @@ SpeciesBond::SpeciesBond(SpeciesBond &&source) : SpeciesIntra(source)
 SpeciesBond &SpeciesBond::operator=(const SpeciesBond &source)
 {
     // Copy data
-    i_ = source.i_;
-    j_ = source.j_;
-    if (i_ && j_)
-    {
-        i_->addBond(*this);
-        j_->addBond(*this);
-    }
+    assign(source.i_, source.j_);
     bondType_ = source.bondType_;
     form_ = source.form_;
     SpeciesIntra::operator=(source);
@@ -85,6 +66,18 @@ SpeciesBond &SpeciesBond::operator=(SpeciesBond &&source)
 /*
  * SpeciesAtom Information
  */
+
+// Assign the two atoms in the bond
+void SpeciesBond::assign(SpeciesAtom *i, SpeciesAtom *j)
+{
+    i_ = i;
+    j_ = j;
+    assert(i_ && j_);
+
+    // Add ourself to the list of bonds on each atom
+    i_->addBond(*this);
+    j_->addBond(*this);
+}
 
 // Return first SpeciesAtom involved in interaction
 SpeciesAtom *SpeciesBond::i() const { return i_; }

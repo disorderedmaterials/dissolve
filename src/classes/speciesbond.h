@@ -30,6 +30,8 @@ class SpeciesBond : public SpeciesIntra
     SpeciesAtom *i_;
     // Second SpeciesAtom in interaction
     SpeciesAtom *j_;
+
+    private:
     // Assign the two atoms in the bond
     void assign(SpeciesAtom *i, SpeciesAtom *j);
 
