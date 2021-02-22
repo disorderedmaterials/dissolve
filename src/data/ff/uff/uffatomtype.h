@@ -23,6 +23,15 @@ class UFFAtomType : public ForcefieldAtomType
      */
     private:
     // Generator parameters
+    // -               r : single bond radius (Angstroms)
+    // -           theta : equilibrium angle geometry (degrees)
+    // -               x : nonbond distance (Angstroms)
+    // -               D : nonbonc dissiciation energy (kcal/mol)
+    // -            zeta : nonbond scale parameter
+    // - effectiveCharge : ??? (renamed from Z to avoid clash with ForcefieldAtomType::Z_)
+    // -             chi : GMP electronegativity
+    // -               V : sp3 torsional barrier parameter (kcal/mol)
+    // -               U : sp2 torsional barrier parameter (kcal/mol)
     double r_, theta_, x_, D_, zeta_, effectiveCharge_, chi_, V_, U_;
 
     public:
