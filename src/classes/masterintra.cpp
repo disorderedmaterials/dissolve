@@ -5,17 +5,10 @@
 #include "base/messenger.h"
 #include "classes/atom.h"
 
-MasterIntra::MasterIntra() : SpeciesIntra()
-{
-    masterParameters_ = nullptr;
-}
-
 MasterIntra::MasterIntra(const std::string_view name, const SpeciesIntra::InteractionType type)
     : SpeciesIntra(), name_(name), type_(type)
 {
 }
-
-MasterIntra::~MasterIntra() {}
 
 /*
  * Basic Data
@@ -26,9 +19,6 @@ void MasterIntra::setName(std::string_view name) { name_ = name; }
 
 // Return name for interaction
 std::string_view MasterIntra::name() const { return name_; }
-
-// Set type of interaction
-void MasterIntra::setType(SpeciesIntra::InteractionType type) { type_ = type; }
 
 /*
  * Interaction Parameters
