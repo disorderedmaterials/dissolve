@@ -361,7 +361,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
 		      forcefield_ = ForcefieldLibrary::forcefield(parser.argsv(1));
 		      break;
 		    default:
-		      forcefield_ = ForcefieldLibrary::forcefield(parser.argsv(1), parser.argsv(2));
+		      // forcefield_ = ForcefieldLibrary::forcefield(parser.argsv(1), parser.argsv(2));
 		      break;
 		}
                 if (!forcefield_)

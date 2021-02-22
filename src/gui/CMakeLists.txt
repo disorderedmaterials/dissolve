@@ -25,6 +25,7 @@ set(components_MOC_HDRS
     addconfigurationwizard.h
     addforcefieldtermswizard.h
     importspecieswizard.h
+    importforcefieldwizard.h
     selectconfigurationwidget.h
     selectforcefieldwidget.h
     selectspecieswidget.h
