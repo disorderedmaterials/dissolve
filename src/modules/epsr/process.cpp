@@ -33,7 +33,7 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
     // Check for exactly one Configuration referenced through target modules
     targetConfiguration_ = nullptr;
     auto rho = 0.0;
-    const auto &targets = keywords_.retrieve<std::vector<Module *>>("Targets");
+    const auto &targets = keywords_.retrieve<std::vector<Module *>>("Target");
     for (auto *module : targets)
     {
         // Retrieve source SQ module, and then the related RDF module
@@ -177,7 +177,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     /*
      * Do we have targets to refine against?
      */
-    const auto &targets = keywords_.retrieve<std::vector<Module *>>("Targets");
+    const auto &targets = keywords_.retrieve<std::vector<Module *>>("Target");
     if (targets.empty())
         return Messenger::error("At least one Module target containing suitable data must be provided.\n");
 
