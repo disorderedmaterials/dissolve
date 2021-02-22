@@ -7,13 +7,13 @@
 #include "module/list.h"
 #include "module/module.h"
 
-ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, int maxModules)
+ModuleVectorKeyword::ModuleVectorKeyword(RefList<Module> &references, int maxModules)
     : KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references)
 {
     maxModules_ = maxModules;
 }
 
-ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, const std::vector<std::string> &allowedModuleTypes,
+ModuleVectorKeyword::ModuleVectorKeyword(RefList<Module> &references, const std::vector<std::string> &allowedModuleTypes,
                                            int maxModules)
     : KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references)
 {
@@ -21,33 +21,33 @@ ModuleRefListKeyword::ModuleRefListKeyword(RefList<Module> &references, const st
     maxModules_ = maxModules;
 }
 
-ModuleRefListKeyword::~ModuleRefListKeyword() {}
+ModuleVectorKeyword::~ModuleVectorKeyword() {}
 
 /*
  * Data
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool ModuleRefListKeyword::isDataEmpty() const { return data_.nItems() == 0; }
+bool ModuleVectorKeyword::isDataEmpty() const { return data_.nItems() == 0; }
 
 // Return the Module type(s) to allow
-const std::vector<std::string> &ModuleRefListKeyword::moduleTypes() const { return moduleTypes_; }
+const std::vector<std::string> &ModuleVectorKeyword::moduleTypes() const { return moduleTypes_; }
 
 // Return maximum number of Modules to allow in the list
-int ModuleRefListKeyword::maxModules() const { return maxModules_; }
+int ModuleVectorKeyword::maxModules() const { return maxModules_; }
 
 /*
  * Arguments
  */
 
 // Return minimum number of arguments accepted
-int ModuleRefListKeyword::minArguments() const { return 1; }
+int ModuleVectorKeyword::minArguments() const { return 1; }
 
 // Return maximum number of arguments accepted
-int ModuleRefListKeyword::maxArguments() const { return (maxModules_ == -1 ? 99 : maxModules_); }
+int ModuleVectorKeyword::maxArguments() const { return (maxModules_ == -1 ? 99 : maxModules_); }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool ModuleRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool ModuleVectorKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
 {
     // Loop over arguments provided to the keyword
     for (auto n = startArg; n < parser.nArgs(); ++n)
@@ -83,7 +83,7 @@ bool ModuleRefListKeyword::read(LineParser &parser, int startArg, CoreData &core
 }
 
 // Write keyword data to specified LineParser
-bool ModuleRefListKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
+bool ModuleVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     // Loop over list of referenced Modules
     for (Module *module : data_)
@@ -100,4 +100,4 @@ bool ModuleRefListKeyword::write(LineParser &parser, std::string_view keywordNam
  */
 
 // Prune any references to the supplied Module in the contained data
-void ModuleRefListKeyword::removeReferencesTo(Module *module) { data_.remove(module); }
+void ModuleVectorKeyword::removeReferencesTo(Module *module) { data_.remove(module); }

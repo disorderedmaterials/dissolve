@@ -11,7 +11,7 @@
 #include <QHBoxLayout>
 #include <QString>
 
-ModuleRefListKeywordWidget::ModuleRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
+ModuleVectorKeywordWidget::ModuleVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)
     : KeywordDropDown(this), KeywordWidgetBase(coreData)
 {
     // Create and set up the UI for our widget in the drop-down's widget container
@@ -21,9 +21,9 @@ ModuleRefListKeywordWidget::ModuleRefListKeywordWidget(QWidget *parent, KeywordB
     connect(ui_.SelectionList, SIGNAL(itemChanged(QListWidgetItem *)), this, SLOT(itemChanged(QListWidgetItem *)));
 
     // Cast the pointer up into the parent class type
-    keyword_ = dynamic_cast<ModuleRefListKeyword *>(keyword);
+    keyword_ = dynamic_cast<ModuleVectorKeyword *>(keyword);
     if (!keyword_)
-        Messenger::error("Couldn't cast base keyword into ModuleRefListKeyword.\n");
+        Messenger::error("Couldn't cast base keyword into ModuleVectorKeyword.\n");
     else
     {
         // Set current information
@@ -36,7 +36,7 @@ ModuleRefListKeywordWidget::ModuleRefListKeywordWidget(QWidget *parent, KeywordB
  */
 
 // Selection list update function
-void ModuleRefListKeywordWidget::updateSelectionRow(int row, Module *module, bool createItem)
+void ModuleVectorKeywordWidget::updateSelectionRow(int row, Module *module, bool createItem)
 {
     // Grab the target reference list
     auto &selection = keyword_->data();
@@ -55,7 +55,7 @@ void ModuleRefListKeywordWidget::updateSelectionRow(int row, Module *module, boo
 }
 
 // List item changed
-void ModuleRefListKeywordWidget::itemChanged(QListWidgetItem *item)
+void ModuleVectorKeywordWidget::itemChanged(QListWidgetItem *item)
 {
     if (refreshing_)
         return;
@@ -72,10 +72,10 @@ void ModuleRefListKeywordWidget::itemChanged(QListWidgetItem *item)
  */
 
 // Update value displayed in widget
-void ModuleRefListKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
+void ModuleVectorKeywordWidget::updateValue() { updateWidgetValues(coreData_); }
 
 // Update widget values data based on keyword data
-void ModuleRefListKeywordWidget::updateWidgetValues(const CoreData &coreData)
+void ModuleVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)
 {
     refreshing_ = true;
 
@@ -83,8 +83,8 @@ void ModuleRefListKeywordWidget::updateWidgetValues(const CoreData &coreData)
     RefList<Module> availableModules = coreData.findModules(keyword_->moduleTypes());
 
     // Update the list widget
-    ListWidgetUpdater<ModuleRefListKeywordWidget, Module> listUpdater(ui_.SelectionList, availableModules, this,
-                                                                      &ModuleRefListKeywordWidget::updateSelectionRow);
+    ListWidgetUpdater<ModuleVectorKeywordWidget, Module> listUpdater(ui_.SelectionList, availableModules, this,
+                                                                      &ModuleVectorKeywordWidget::updateSelectionRow);
 
     updateSummaryText();
 
@@ -92,7 +92,7 @@ void ModuleRefListKeywordWidget::updateWidgetValues(const CoreData &coreData)
 }
 
 // Update keyword data based on widget values
-void ModuleRefListKeywordWidget::updateKeywordData()
+void ModuleVectorKeywordWidget::updateKeywordData()
 {
     // Loop over items in the QListWidget, adding the associated Modules for any that are checked
     RefList<Module> newSelection;
@@ -108,7 +108,7 @@ void ModuleRefListKeywordWidget::updateKeywordData()
 }
 
 // Update summary text
-void ModuleRefListKeywordWidget::updateSummaryText()
+void ModuleVectorKeywordWidget::updateSummaryText()
 {
     // Create summary text for the KeywordDropDown button
     auto &selection = keyword_->data();

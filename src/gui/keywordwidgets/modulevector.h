@@ -12,27 +12,27 @@
 // Forward Declarations
 class Module;
 
-class ModuleRefListKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
+class ModuleVectorKeywordWidget : public KeywordDropDown, public KeywordWidgetBase
 {
     // All Qt declarations must include this macro
     Q_OBJECT
 
     public:
-    ModuleRefListKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
+    ModuleVectorKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData);
 
     /*
      * Keyword
      */
     private:
     // Associated keyword
-    ModuleRefListKeyword *keyword_;
+    ModuleVectorKeyword *keyword_;
 
     /*
      * Widgets
      */
     private:
     // Main form declaration
-    Ui::ModuleRefListWidget ui_;
+    Ui::ModuleVectorWidget ui_;
 
     private:
     // Selection list update function
