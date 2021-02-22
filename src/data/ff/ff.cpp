@@ -88,7 +88,7 @@ bool Forcefield::copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType>
 
 // Determine and return atom type for specified SpeciesAtom from supplied Array of types
 OptionalReferenceWrapper<const ForcefieldAtomType>
-Forcefield::determineAtomType(SpeciesAtom *i,
+Forcefield::determineAtomType(const SpeciesAtom *i,
                               const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes)
 {
     Messenger::printVerbose("Determining atom type for atom {} ({})\n", i->userIndex(), Elements::symbol(i->Z()));
@@ -119,7 +119,7 @@ Forcefield::determineAtomType(SpeciesAtom *i,
 }
 
 // Determine and return atom type for specified SpeciesAtom
-OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType(SpeciesAtom *i) const
+OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType(const SpeciesAtom *i) const
 {
     return determineAtomType(i, atomTypesByElementPrivate_);
 }

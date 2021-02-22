@@ -306,7 +306,7 @@ OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::uffAtomTypeForElemen
 }
 
 // Determine and return atom type for specified SpeciesAtom
-OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::determineUFFAtomType(SpeciesAtom *i) const
+OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::determineUFFAtomType(const SpeciesAtom *i) const
 {
     // Go through AtomTypes defined for the target's element, and check NETA scores
     auto bestScore = -1;
@@ -337,7 +337,7 @@ OptionalReferenceWrapper<const UFFAtomType> Forcefield_UFF::determineUFFAtomType
 }
 
 // Determine and return atom type for specified SpeciesAtom
-OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield_UFF::determineAtomType(SpeciesAtom *i) const
+OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield_UFF::determineAtomType(const SpeciesAtom *i) const
 {
     Messenger::printVerbose("Determining atom type for atom {} ({})\n", i->userIndex(), Elements::symbol(i->Z()));
 
