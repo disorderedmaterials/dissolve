@@ -7,15 +7,14 @@
 #include "module/list.h"
 #include "module/module.h"
 
-ModuleVectorKeyword::ModuleVectorKeyword(RefList<Module> &references, int maxModules)
-    : KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references)
+ModuleVectorKeyword::ModuleVectorKeyword(int maxModules)
+    : KeywordData<std::vector<Module *>>(KeywordBase::ModuleRefListData, {})
 {
     maxModules_ = maxModules;
 }
 
-ModuleVectorKeyword::ModuleVectorKeyword(RefList<Module> &references, const std::vector<std::string> &allowedModuleTypes,
-                                           int maxModules)
-    : KeywordData<RefList<Module> &>(KeywordBase::ModuleRefListData, references)
+ModuleVectorKeyword::ModuleVectorKeyword(const std::vector<std::string> &allowedModuleTypes, int maxModules)
+    : KeywordData<std::vector<Module *>>(KeywordBase::ModuleRefListData, {})
 {
     moduleTypes_ = allowedModuleTypes;
     maxModules_ = maxModules;
@@ -28,7 +27,7 @@ ModuleVectorKeyword::~ModuleVectorKeyword() {}
  */
 
 // Determine whether current data is 'empty', and should be considered as 'not set'
-bool ModuleVectorKeyword::isDataEmpty() const { return data_.nItems() == 0; }
+bool ModuleVectorKeyword::isDataEmpty() const { return data_.empty(); }
 
 // Return the Module type(s) to allow
 const std::vector<std::string> &ModuleVectorKeyword::moduleTypes() const { return moduleTypes_; }
@@ -55,26 +54,22 @@ bool ModuleVectorKeyword::read(LineParser &parser, int startArg, CoreData &coreD
         // Find specified Module by its unique name
         Module *module = coreData.findModule(parser.argsv(n));
         if (!module)
-        {
-            Messenger::error("No Module named '{}' exists.\n", parser.argsv(n));
-            return false;
-        }
+            return Messenger::error("No Module named '{}' exists.\n", parser.argsv(n));
 
         // Check the module's type (if a list has been specified)
-        if ((moduleTypes_.size() > 0) && (std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(), [module](const auto &s) {
-                                              return s == module->type();
-                                          }) == moduleTypes_.cend()))
+        if (!moduleTypes_.empty() && std::find_if(moduleTypes_.cbegin(), moduleTypes_.cend(), [module](const auto &s) {
+                                         return s == module->type();
+                                     }) == moduleTypes_.cend())
         {
             std::string allowedTypes;
             for (const auto &s : moduleTypes_)
                 allowedTypes += allowedTypes.empty() ? s : ", " + s;
 
-            Messenger::error("Module '{}' is of type '{}', and is not permitted in this list (allowed types = {}).\n",
-                             parser.argsv(n), module->type(), allowedTypes);
-            return false;
+            return Messenger::error("Module '{}' is of type '{}', and is not permitted in this list (allowed types = {}).\n",
+                                    parser.argsv(n), module->type(), allowedTypes);
         }
 
-        data_.append(module);
+        data_.emplace_back(module);
     }
 
     set_ = true;
@@ -86,7 +81,7 @@ bool ModuleVectorKeyword::read(LineParser &parser, int startArg, CoreData &coreD
 bool ModuleVectorKeyword::write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
 {
     // Loop over list of referenced Modules
-    for (Module *module : data_)
+    for (auto *module : data_)
     {
         if (!parser.writeLineF("{}{}  '{}'\n", prefix, keywordName, module->uniqueName()))
             return false;
@@ -100,4 +95,9 @@ bool ModuleVectorKeyword::write(LineParser &parser, std::string_view keywordName
  */
 
 // Prune any references to the supplied Module in the contained data
-void ModuleVectorKeyword::removeReferencesTo(Module *module) { data_.remove(module); }
+void ModuleVectorKeyword::removeReferencesTo(Module *module)
+{
+    auto it = std::find(data_.begin(), data_.end(), module);
+    if (it != data_.end())
+        data_.erase(it);
+}

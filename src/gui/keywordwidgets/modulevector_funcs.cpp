@@ -51,7 +51,7 @@ void ModuleVectorKeywordWidget::updateSelectionRow(int row, Module *module, bool
     }
     else
         item = ui_.SelectionList->item(row);
-    item->setCheckState(selection.contains(module) ? Qt::Checked : Qt::Unchecked);
+    item->setCheckState(std::find(selection.begin(), selection.end(), module) != selection.end() ? Qt::Checked : Qt::Unchecked);
 }
 
 // List item changed
@@ -84,7 +84,7 @@ void ModuleVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)
 
     // Update the list widget
     ListWidgetUpdater<ModuleVectorKeywordWidget, Module> listUpdater(ui_.SelectionList, availableModules, this,
-                                                                      &ModuleVectorKeywordWidget::updateSelectionRow);
+                                                                     &ModuleVectorKeywordWidget::updateSelectionRow);
 
     updateSummaryText();
 
@@ -95,12 +95,12 @@ void ModuleVectorKeywordWidget::updateWidgetValues(const CoreData &coreData)
 void ModuleVectorKeywordWidget::updateKeywordData()
 {
     // Loop over items in the QListWidget, adding the associated Modules for any that are checked
-    RefList<Module> newSelection;
+    std::vector<Module *> newSelection;
     for (auto n = 0; n < ui_.SelectionList->count(); ++n)
     {
         QListWidgetItem *item = ui_.SelectionList->item(n);
         if (item->checkState() == Qt::Checked)
-            newSelection.append(VariantPointer<Module>(item->data(Qt::UserRole)));
+            newSelection.emplace_back(VariantPointer<Module>(item->data(Qt::UserRole)));
     }
 
     // Update the data
@@ -112,7 +112,7 @@ void ModuleVectorKeywordWidget::updateSummaryText()
 {
     // Create summary text for the KeywordDropDown button
     auto &selection = keyword_->data();
-    if (selection.nItems() == 0)
+    if (selection.empty())
         setSummaryText("<None>");
     else
     {

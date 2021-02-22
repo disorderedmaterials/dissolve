@@ -202,7 +202,7 @@ class Dissolve
     // Search for any instance of any Module with the specified unique name
     Module *findModuleInstance(std::string_view uniqueName);
     // Search for any instance of any Module with the specified Module type
-    RefList<Module> findModuleInstances(std::string_view moduleType);
+    std::vector<Module *> findModuleInstances(std::string_view moduleType);
     // Generate unique Module name with base name provided
     std::string uniqueModuleName(std::string_view name, Module *excludeThis = nullptr);
     // Delete specified Module instance

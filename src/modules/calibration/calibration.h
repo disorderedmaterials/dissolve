@@ -65,17 +65,6 @@ class CalibrationModule : public Module
     bool process(Dissolve &dissolve, ProcessPool &procPool);
 
     /*
-     * Members / Functions
-     */
-    private:
-    // RDF Module targets for IntraBroadening calibration
-    RefList<Module> intraBroadeningModules_;
-    // NeutronSQ Module targets for IntraBroadening calibration (S(Q) data)
-    RefList<Module> intraBroadeningNeutronSQReferences_;
-    // NeutronSQ Module targets for IntraBroadening calibration (G(r) data)
-    RefList<Module> intraBroadeningNeutronGRReferences_;
-
-    /*
      * GUI Widget
      */
     public:
@@ -87,7 +76,7 @@ class CalibrationModule : public Module
 class CalibrationModuleCostFunctions
 {
     public:
-    CalibrationModuleCostFunctions(Dissolve &dissolve, ProcessPool &procPool, RefList<Module> &intraBroadeningModules,
+    CalibrationModuleCostFunctions(Dissolve &dissolve, ProcessPool &procPool, std::vector<Module *> &intraBroadeningModules,
                                    RefDataList<Module, CalibrationModule::IntraBroadeningFitTarget> &intraBroadeningReferences);
 
     private:
@@ -96,7 +85,7 @@ class CalibrationModuleCostFunctions
     // Target ProcessPool
     ProcessPool &processPool_;
     // RDFModule targets for IntraBroadening fitting
-    RefList<Module> &intraBroadeningModules_;
+    std::vector<Module *> &intraBroadeningModules_;
     // NeutronSQModule targets for IntraBroadening fitting
     RefDataList<Module, CalibrationModule::IntraBroadeningFitTarget> &intraBroadeningReferences_;
 

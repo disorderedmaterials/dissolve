@@ -33,7 +33,8 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
     // Check for exactly one Configuration referenced through target modules
     targetConfiguration_ = nullptr;
     auto rho = 0.0;
-    for (auto *module : targets_)
+    const auto &targets = keywords_.retrieve<std::vector<Module *>>("Targets");
+    for (auto *module : targets)
     {
         // Retrieve source SQ module, and then the related RDF module
         const SQModule *sqModule = module->keywords().retrieve<const SQModule *>("SourceSQs", nullptr);
@@ -176,7 +177,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     /*
      * Do we have targets to refine against?
      */
-    if (targets_.nItems() == 0)
+    const auto &targets = keywords_.retrieve<std::vector<Module *>>("Targets");
+    if (targets.empty())
         return Messenger::error("At least one Module target containing suitable data must be provided.\n");
 
     if (!targetConfiguration_)
@@ -225,7 +227,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Loop over target data
     auto rFacTot = 0.0;
     bool found, created;
-    for (auto *module : targets_)
+    for (auto *module : targets)
     {
         /*
          * Retrieve data for this module
@@ -457,8 +459,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto globalI = atd1.atomType()->index();
             auto globalJ = atd2.atomType()->index();
 
-            Data1D partialIJ = unweightedSQ.unboundPartial(i, j);
-            Interpolator::addInterpolated(combinedUnweightedSQ[{globalI, globalJ}], partialIJ, 1.0 / targets_.nItems());
+            const auto &partialIJ = unweightedSQ.unboundPartial(i, j);
+            Interpolator::addInterpolated(combinedUnweightedSQ[{globalI, globalJ}], partialIJ, 1.0 / targets.size());
         });
 
         /*
@@ -523,7 +525,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Finalise and store the total r-factor
-    rFacTot /= targets_.nItems();
+    rFacTot /= targets.size();
     auto &totalRFactor = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RFactor", uniqueName_,
                                                             GenericItem::InRestartFileFlag);
     totalRFactor.setObjectTag(fmt::format("{}//RFactor", uniqueName_));
@@ -628,7 +630,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * Note: the data were added to the scattering matrix in the order they appear in the targets iterator.
      */
     auto dataIndex = 0;
-    for (auto *module : targets_)
+    for (auto *module : targets)
     {
         // For this Module, retrive the coefficents of the fit performed above.
         const auto &fitCoefficients = GenericListHelper<std::vector<double>>::value(

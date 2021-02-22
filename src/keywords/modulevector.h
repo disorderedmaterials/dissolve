@@ -10,11 +10,11 @@
 class Module;
 
 // Keyword with Module RefList data
-class ModuleVectorKeyword : public KeywordData<RefList<Module> &>
+class ModuleVectorKeyword : public KeywordData<std::vector<Module *>>
 {
     public:
-    ModuleVectorKeyword(RefList<Module> &references, int maxModules = -1);
-    ModuleVectorKeyword(RefList<Module> &references, const std::vector<std::string> &allowedModuleTypes, int maxModules = -1);
+    ModuleVectorKeyword(int maxModules = -1);
+    ModuleVectorKeyword(const std::vector<std::string> &allowedModuleTypes, int maxModules = -1);
     ~ModuleVectorKeyword();
 
     /*

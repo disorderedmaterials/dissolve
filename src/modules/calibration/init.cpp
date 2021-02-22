@@ -12,19 +12,14 @@ void CalibrationModule::initialise()
                   "Only perform calibrations when all related Configuration energies are stable");
 
     // RDF Calibration
-    keywords_.add("RDF Calibration", new ModuleVectorKeyword(intraBroadeningModules_, std::vector<std::string>{"RDF"}),
-                  "AdjustIntraBroadening", "Add specified RDF module as a target for IntraBroadening adjustment",
-                  "<RDFModule>");
+    keywords_.add("RDF Calibration", new ModuleVectorKeyword({"RDF"}), "AdjustIntraBroadening",
+                  "Add specified RDF module as a target for IntraBroadening adjustment", "<RDFModule>");
 
     // NeutronSQ Calibration
-    keywords_.add("NeutronSQ Calibration",
-                  new ModuleVectorKeyword(intraBroadeningNeutronGRReferences_, std::vector<std::string>{"NeutronSQ"}),
-                  "IntraBroadeningNeutronGRReference",
+    keywords_.add("NeutronSQ Calibration", new ModuleVectorKeyword({"NeutronSQ"}), "IntraBroadeningNeutronGRReference",
                   "Add G(r) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment",
                   "<NeutronSQModule>");
-    keywords_.add("NeutronSQ Calibration",
-                  new ModuleVectorKeyword(intraBroadeningNeutronSQReferences_, std::vector<std::string>{"NeutronSQ"}),
-                  "IntraBroadeningNeutronSQReference",
+    keywords_.add("NeutronSQ Calibration", new ModuleVectorKeyword({"NeutronSQ"}), "IntraBroadeningNeutronSQReference",
                   "Add S(Q) data in the specified NeutronSQ module as a reference for IntraBroadening adjustment",
                   "<NeutronSQModule>");
 }

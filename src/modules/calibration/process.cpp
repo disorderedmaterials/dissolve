@@ -27,15 +27,16 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
      * IntraBroadening Calibration
      */
 
-    if (intraBroadeningModules_.nItems() > 0)
+    auto &intraBroadeningModules = keywords_.retrieve<std::vector<Module *>>("AdjustIntraBroadening");
+    if (!intraBroadeningModules.empty())
     {
         /*
          * Make a list of all Configurations related to all RDF module
          */
         RefList<Configuration> configs;
-        for (Module *module : intraBroadeningModules_)
+        for (auto *module : intraBroadeningModules)
         {
-            for (Configuration *cfg : module->targetConfigurations())
+            for (auto *cfg : module->targetConfigurations())
                 configs.addUnique(cfg);
         }
         Messenger::print("{} Configuration(s) are involved over all RDF Module targets.\n", configs.nItems());
@@ -61,10 +62,14 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
         RefDataList<Module, CalibrationModule::IntraBroadeningFitTarget> neutronReferences;
 
-        for (Module *module : intraBroadeningNeutronSQReferences_)
+        auto &intraBroadeningNeutronSQReferences =
+            keywords_.retrieve<std::vector<Module *>>("IntraBroadeningNeutronSQReference");
+        for (auto *module : intraBroadeningNeutronSQReferences)
             neutronReferences.addUnique(module, CalibrationModule::IntraBroadeningTargetSQ);
 
-        for (Module *module : intraBroadeningNeutronGRReferences_)
+        auto &intraBroadeningNeutronGRReferences =
+            keywords_.retrieve<std::vector<Module *>>("IntraBroadeningNeutronGRReference");
+        for (auto *module : intraBroadeningNeutronGRReferences)
         {
             // If the Module target is already in the list, just set its data to 'both'
             RefDataItem<Module, CalibrationModule::IntraBroadeningFitTarget> *oldItem = neutronReferences.contains(module);
@@ -78,7 +83,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
          * Assemble a list of fitting parameters from the associated RDF modules and their BroadeningFunctions
          */
 
-        CalibrationModuleCostFunctions costFunctions(dissolve, procPool, intraBroadeningModules_, neutronReferences);
+        CalibrationModuleCostFunctions costFunctions(dissolve, procPool, intraBroadeningModules, neutronReferences);
         PrAxisMinimiser<CalibrationModuleCostFunctions> broadeningMinimiser(
             costFunctions, &CalibrationModuleCostFunctions::intraBroadeningCost);
         broadeningMinimiser.setTolerance(0.001);
@@ -86,7 +91,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Array<bool> broadeningAdded(PairBroadeningFunction::nFunctionTypes);
         broadeningAdded = false;
 
-        for (Module *module : intraBroadeningModules_)
+        for (auto *module : intraBroadeningModules)
         {
             // Retrieve the PairBroadeningFunction
             auto &broadening = module->keywords().retrieve<PairBroadeningFunction>("IntraBroadening", PairBroadeningFunction());
@@ -123,7 +128,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Make sure that we re-broaden the RDFs and NeutronSQ data by the correct (optimal) values before we leave
         // Store alpha parameters in the PairBroadeningFunction in the associated RDF modules
-        for (Module *rdfModule : intraBroadeningModules_)
+        for (auto *rdfModule : intraBroadeningModules)
         {
             // Retrieve the PairBroadeningFunction
             auto &broadening =
@@ -150,7 +155,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Go over NeutronSQ Modules and run the processing
         RefDataListIterator<Module, CalibrationModule::IntraBroadeningFitTarget> neutronModuleIterator(neutronReferences);
-        while (Module *module = neutronModuleIterator.iterate())
+        while (auto *module = neutronModuleIterator.iterate())
         {
             // Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target
             // Configurations

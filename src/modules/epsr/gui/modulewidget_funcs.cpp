@@ -338,15 +338,16 @@ void EPSRModuleWidget::setGraphDataTargets(EPSRModule *module)
     // Get (first) source RDF module for the partial data
     // Retrieve source SQ module, and then the related RDF module
     const RDFModule *rdfModule = nullptr;
-    if (module->targets().nItems() > 0)
+    const auto &targets = module->keywords().retrieve<std::vector<Module *>>("Targets");
+    if (!targets.empty())
     {
-        const SQModule *sqModule = module->targets().firstItem()->keywords().retrieve<const SQModule *>("SourceSQs", nullptr);
+        const SQModule *sqModule = targets[0]->keywords().retrieve<const SQModule *>("SourceSQs", nullptr);
         if (!sqModule)
             Messenger::error(
                 "Couldn't get any S(Q) data from the first target module, so underlying partial g(r) will be unavailable.",
                 module->uniqueName());
         else
-            rdfModule = sqModule ? sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr) : nullptr;
+            rdfModule = sqModule->keywords().retrieve<const RDFModule *>("SourceRDFs", nullptr);
         if (!rdfModule)
             Messenger::error(
                 "First target's S(Q) module doesn't reference an RDFModule, so underlying partial g(r) will be unavailable.");
