@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include "data/ffatomtype.h"
+#include "data/ff/atomtype.h"
 #include "templates/list.h"
 
 // Forward Declarations

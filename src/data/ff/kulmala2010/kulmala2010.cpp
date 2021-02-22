@@ -25,32 +25,32 @@ bool Forcefield_Kulmala2010::setUp()
 {
     // Atom types
     // -- Water (SPC/E)
-    addAtomType(Elements::H, 1, "HW", "-O(nh=2)", "Water hydrogen", 0.4238, 0.0, 0.0);
-    addAtomType(Elements::O, 2, "OW", "-H(n=2)", "Water oxygen", -0.8476, 0.6502, 3.166);
+    addAtomType(Elements::H, 1, "HW", "-O(nh=2)", "Water hydrogen", 0.4238, {0.0, 0.0});
+    addAtomType(Elements::O, 2, "OW", "-H(n=2)", "Water oxygen", -0.8476, {0.6502, 3.166});
     // -- Hydronium Ion
-    addAtomType(Elements::H, 3, "HW+", "-O(nh=3)", "Hydronium hydrogen", 0.4722, 0.0, 0.0);
-    addAtomType(Elements::O, 4, "OW+", "-H(n=3)", "Hydronium oxygen", -0.4166, 0.62, 3.234);
+    addAtomType(Elements::H, 3, "HW+", "-O(nh=3)", "Hydronium hydrogen", 0.4722, {0.0, 0.0});
+    addAtomType(Elements::O, 4, "OW+", "-H(n=3)", "Hydronium oxygen", -0.4166, {0.62, 3.234});
     // -- Ammonia
-    addAtomType(Elements::H, 5, "HN", "-N(nh=3)", "Ammonia hydrogen", 0.3, 0.12552, 2.5);
-    addAtomType(Elements::N, 6, "NH", "-H(n=3)", "Ammonia nitrogen", -0.9, 0.71128, 3.25);
+    addAtomType(Elements::H, 5, "HN", "-N(nh=3)", "Ammonia hydrogen", 0.3, {0.12552, 2.5});
+    addAtomType(Elements::N, 6, "NH", "-H(n=3)", "Ammonia nitrogen", -0.9, {0.71128, 3.25});
     // -- Ammonium Ion
-    addAtomType(Elements::H, 7, "HN+", "-N(nh=4)", "Ammonium ion hydrogen", 0.44, 0.12552, 2.5);
-    addAtomType(Elements::N, 8, "NH+", "-H(n=4)", "Ammonium ion nitrogen", -0.76, 0.71128, 3.25);
+    addAtomType(Elements::H, 7, "HN+", "-N(nh=4)", "Ammonium ion hydrogen", 0.44, {0.12552, 2.5});
+    addAtomType(Elements::N, 8, "NH+", "-H(n=4)", "Ammonium ion nitrogen", -0.76, {0.71128, 3.25});
     // -- Sulphuric Acid
-    addAtomType(Elements::S, 9, "SA", "-O(nh=1,n=2)", "Sulphuric acid sulfur", 1.1, 1.046, 3.55);
-    addAtomType(Elements::O, 10, "OHA", "nh=1,-&9", "Sulphuric acid hydroxyl oxygen", -0.53, 0.71176, 3.0);
-    addAtomType(Elements::O, 11, "OA", "nh=0,-&9", "Sulphuric acid oxygen", -0.46, 0.71176, 3.0);
-    addAtomType(Elements::H, 12, "HSA", "-O(-&9)", "Sulphuric acid hydroxyl hydrogen", 0.44, 0.0, 0.0);
+    addAtomType(Elements::S, 9, "SA", "-O(nh=1,n=2)", "Sulphuric acid sulfur", 1.1, {1.046, 3.55});
+    addAtomType(Elements::O, 10, "OHA", "nh=1,-&9", "Sulphuric acid hydroxyl oxygen", -0.53, {0.71176, 3.0});
+    addAtomType(Elements::O, 11, "OA", "nh=0,-&9", "Sulphuric acid oxygen", -0.46, {0.71176, 3.0});
+    addAtomType(Elements::H, 12, "HSA", "-O(-&9)", "Sulphuric acid hydroxyl hydrogen", 0.44, {0.0, 0.0});
     // -- Hydrogen Sulfate Ion
-    addAtomType(Elements::S, 13, "SA-", "-O(nh=1,n=1),-O(nh=0,n=3)", "Hydrogen sulphate sulfur", 1.27, 1.046, 3.55);
-    addAtomType(Elements::O, 14, "OHA-", "nh=1,-&13", "Hydrogen sulphate hydroxyl oxygen", -0.64, 0.71176, 3.0);
-    addAtomType(Elements::O, 15, "OA-", "nh=0,-&13", "Hydrogen sulphate oxygen", -0.67, 0.71176, 3.0);
-    addAtomType(Elements::H, 16, "HSA-", "-O(-&13)", "Hydrogen sulphate hydroxyl hydrogen", 0.38, 0.0, 0.0);
+    addAtomType(Elements::S, 13, "SA-", "-O(nh=1,n=1),-O(nh=0,n=3)", "Hydrogen sulphate sulfur", 1.27, {1.046, 3.55});
+    addAtomType(Elements::O, 14, "OHA-", "nh=1,-&13", "Hydrogen sulphate hydroxyl oxygen", -0.64, {0.71176, 3.0});
+    addAtomType(Elements::O, 15, "OA-", "nh=0,-&13", "Hydrogen sulphate oxygen", -0.67, {0.71176, 3.0});
+    addAtomType(Elements::H, 16, "HSA-", "-O(-&13)", "Hydrogen sulphate hydroxyl hydrogen", 0.38, {0.0, 0.0});
     // -- Dimethylammonium Ion
-    addAtomType(Elements::N, 17, "NDM", "nh=2,-C(nh=3,n=2)", "Dimethylammonium ion nitrogen", -0.12, 0.71128, 3.25);
-    addAtomType(Elements::H, 18, "HDM", "-&17", "Dimethylammonium ion hydrogen", 0.31, 0.12550, 2.5);
-    addAtomType(Elements::C, 19, "CDM", "nh=3,-&17", "Dimethylammonium ion methyl carbon", -0.2, 0.27614, 3.5);
-    addAtomType(Elements::H, 20, "HCD", "-&19", "Dimethylammonium ion methyl hydrogen", 0.15, 0.12550, 2.5);
+    addAtomType(Elements::N, 17, "NDM", "nh=2,-C(nh=3,n=2)", "Dimethylammonium ion nitrogen", -0.12, {0.71128, 3.25});
+    addAtomType(Elements::H, 18, "HDM", "-&17", "Dimethylammonium ion hydrogen", 0.31, {0.12550, 2.5});
+    addAtomType(Elements::C, 19, "CDM", "nh=3,-&17", "Dimethylammonium ion methyl carbon", -0.2, {0.27614, 3.5});
+    addAtomType(Elements::H, 20, "HCD", "-&19", "Dimethylammonium ion methyl hydrogen", 0.15, {0.12550, 2.5});
 
     // Intramolecular terms
     // -- Water (SPC/E)

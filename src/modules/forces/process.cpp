@@ -258,9 +258,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         l = molN->atom(torsion.indexL());
 
                         // Calculate vectors, ensuring we account for minimum image
-                        vecji = box->minimumVector(j, i);
-                        vecjk = box->minimumVector(j, k);
-                        veckl = box->minimumVector(k, l);
+                        vecji = box->minimumVector(i, j);
+                        vecjk = box->minimumVector(k, j);
+                        veckl = box->minimumVector(l, k);
 
                         // Calculate torsion force parameters
                         ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl, phi, dxpj_dij, dxpj_dkj, dxpk_dkj,
@@ -305,9 +305,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         l = molN->atom(imp.indexL());
 
                         // Calculate vectors, ensuring we account for minimum image
-                        vecji = box->minimumVector(j, i);
-                        vecjk = box->minimumVector(j, k);
-                        veckl = box->minimumVector(k, l);
+                        vecji = box->minimumVector(i, j);
+                        vecjk = box->minimumVector(k, j);
+                        veckl = box->minimumVector(l, k);
 
                         // Calculate improper force parameters
                         ForceKernel::calculateTorsionParameters(vecji, vecjk, veckl, phi, dxpj_dij, dxpj_dkj, dxpk_dkj,

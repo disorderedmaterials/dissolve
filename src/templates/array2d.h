@@ -58,10 +58,8 @@ template <class A> class Array2D
         clear();
 
         // If we're only interested in half the matrix then it must be square
-        if (half_ && (nrows != ncolumns))
-        {
-            Messenger::error("BAD_USAGE - Requested half-matrix mode on a non-square matrix in Array2D::resize().\n");
-        }
+        if (half_)
+            assert(nrows == ncolumns);
 
         // Create new array
         nRows_ = nrows;
@@ -142,20 +140,9 @@ template <class A> class Array2D
     A &operator[](const std::tuple<int, int> index)
     {
         auto [row, column] = index;
-#ifdef CHECKS
-        static A dummy;
-        if ((row < 0) || (row >= nRows_))
-        {
-            Messenger::print("OUT_OF_RANGE - Row number ({}) is out of range in Array2D::at() (nRows = {}).\n", row, nRows_);
-            return dummy;
-        }
-        if ((column < 0) || (column >= nColumns_))
-        {
-            Messenger::print("OUT_OF_RANGE - Column number ({}) is out of range in Array2D::at() (nColumns = {}).\n", column,
-                             nColumns_);
-            return dummy;
-        }
-#endif
+        assert(row >= 0 && row < nRows_);
+        assert(column >= 0 && column < nColumns_);
+
         if (half_)
         {
             if (row > column)
@@ -170,20 +157,9 @@ template <class A> class Array2D
     const A &operator[](const std::tuple<int, int> index) const
     {
         auto [row, column] = index;
-#ifdef CHECKS
-        static A dummy;
-        if ((row < 0) || (row >= nRows_))
-        {
-            Messenger::print("OUT_OF_RANGE - Row number ({}) is out of range in Array2D::at() (nRows = {}).\n", row, nRows_);
-            return dummy;
-        }
-        if ((column < 0) || (column >= nColumns_))
-        {
-            Messenger::print("OUT_OF_RANGE - Column number ({}) is out of range in Array2D::at() (nColumns = {}).\n", column,
-                             nColumns_);
-            return dummy;
-        }
-#endif
+        assert(row >= 0 && row < nRows_);
+        assert(column >= 0 && column < nColumns_);
+
         if (half_)
         {
             if (row > column)
@@ -197,21 +173,9 @@ template <class A> class Array2D
     // Return address of specified element
     A *pointerAt(int row, int column)
     {
-#ifdef CHECKS
-        static A dummy;
-        if ((row < 0) || (row >= nRows_))
-        {
-            Messenger::print("OUT_OF_RANGE - Row number ({}) is out of range in Array2D::pointerAt() (nRows = {}).\n", row,
-                             nRows_);
-            return &dummy;
-        }
-        if ((column < 0) || (column >= nColumns_))
-        {
-            Messenger::print("OUT_OF_RANGE - Column number ({}) is out of range in Array2D::pointerAt() (nColumns = {}).\n",
-                             column, nColumns_);
-            return &dummy;
-        }
-#endif
+        assert(row >= 0 && row < nRows_);
+        assert(column >= 0 && column < nColumns_);
+
         if (half_)
         {
             if (row > column)

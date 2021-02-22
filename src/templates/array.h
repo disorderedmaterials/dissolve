@@ -171,14 +171,7 @@ template <class A> class Array : public ListItem<Array<A>>
     // Insert new element in array
     void insert(A data, const int position)
     {
-#ifdef CHECKS
-        if ((position < 0) || (position >= nItems_))
-        {
-            Messenger::print("OUT_OF_RANGE - Position index {} is out of range in Array::insert() (nItems = {}).\n", position,
-                             nItems_);
-            return;
-        }
-#endif
+        assert(position >= 0 && position < nItems_);
 
         // Is current array large enough?
         if (nItems_ == size_)
@@ -229,14 +222,8 @@ template <class A> class Array : public ListItem<Array<A>>
     // Remove the specified index
     void remove(const int position)
     {
-#ifdef CHECKS
-        if ((position < 0) || (position >= nItems_))
-        {
-            Messenger::print("OUT_OF_RANGE - Array index {} is out of range in Array::remove() (nItems = {}).\n", position,
-                             nItems_);
-            return;
-        }
-#endif
+        assert(position >= 0 && position < nItems_);
+
         for (auto n = position; n < nItems_ - 1; ++n)
             array_[n] = array_[n + 1];
 
@@ -250,82 +237,50 @@ template <class A> class Array : public ListItem<Array<A>>
     // Return reference to nth item in array
     A &operator[](int n)
     {
-#ifdef CHECKS
-        if ((n < 0) || (n >= nItems_))
-        {
-            static A dummy;
-            Messenger::print("OUT_OF_RANGE - Array index {} is out of range in Array::operator[] (nItems = {}).\n", n, nItems_);
-            return dummy;
-        }
-#endif
+        assert(n >= 0 && n < nItems_);
+
         return array_[n];
     }
     // Return single value
     A &at(int n)
     {
-#ifdef CHECKS
-        if ((n < 0) || (n >= nItems_))
-        {
-            static A dummy;
-            Messenger::print("OUT_OF_RANGE - Array index {} is out of range in Array::at() (nItems = {}).\n", n, nItems_);
-            return dummy;
-        }
-#endif
+        assert(n >= 0 && n < nItems_);
+
         return array_[n];
     }
     // Return nth item as const reference
     const A &at(int n) const
     {
-#ifdef CHECKS
-        if ((n < 0) || (n >= nItems_))
-        {
-            static A dummy;
-            Messenger::print("OUT_OF_RANGE - Array index {} is out of range in Array::at() (nItems = {}).\n", n, nItems_);
-            return dummy;
-        }
-#endif
+        assert(n >= 0 && n < nItems_);
+
         return array_[n];
     }
     // Return first value in array
     A firstValue() const
     {
-        if (nItems_ == 0)
-        {
-            Messenger::print("OUT_OF_RANGE - No first item to return in Array.\n");
-            return A();
-        }
+        assert(nItems_ > 0);
+
         return array_[0];
     }
     // Return last value in array
     A lastValue() const
     {
-        if (nItems_ == 0)
-        {
-            Messenger::print("OUT_OF_RANGE - No last item to return in Array.\n");
-            return A();
-        }
+        assert(nItems_ > 0);
+
         return array_[nItems_ - 1];
     }
     // Return first item in array
     A &first()
     {
-        if (nItems_ == 0)
-        {
-            static A dummy;
-            Messenger::print("OUT_OF_RANGE - No first item to return in Array.\n");
-            return dummy;
-        }
+        assert(nItems_ > 0);
+
         return array_[0];
     }
     // Return last item in array
     A &last()
     {
-        if (nItems_ == 0)
-        {
-            static A dummy;
-            Messenger::print("OUT_OF_RANGE - No last item to return in Array.\n");
-            return dummy;
-        }
+        assert(nItems_ > 0);
+
         return array_[nItems_ - 1];
     }
 
@@ -336,14 +291,8 @@ template <class A> class Array : public ListItem<Array<A>>
     // Shift item up in the array (towards higher indices)
     void shiftUp(int position)
     {
-#ifdef CHECKS
-        if ((position < 0) || (position >= nItems_))
-        {
-            Messenger::print("OUT_OF_RANGE - Array index {} is out of range in Array::shiftUp() (nItems = {}).\n", position,
-                             nItems_);
-            return;
-        }
-#endif
+        assert(position >= 0 && position < nItems_);
+
         // If this item is already last in the list, return now
         if (position == (nItems_ - 1))
             return;
@@ -355,14 +304,8 @@ template <class A> class Array : public ListItem<Array<A>>
     // Shift item down in the array (towards lower indices)
     void shiftDown(int position)
     {
-#ifdef CHECKS
-        if ((position < 0) || (position >= nItems_))
-        {
-            Messenger::print("OUT_OF_RANGE - Array index {} is out of range in Array::shiftDown() (nItems = {}).\n", position,
-                             nItems_);
-            return;
-        }
-#endif
+        assert(position >= 0 && position < nItems_);
+
         // If this item is already first in the list, return now
         if (position == 0)
             return;

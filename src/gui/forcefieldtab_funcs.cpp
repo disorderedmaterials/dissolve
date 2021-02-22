@@ -123,7 +123,7 @@ bool ForcefieldTab::canClose() const { return false; }
  */
 
 // Row update function for BondsTable
-void ForcefieldTab::updateBondsTableRow(int row, MasterIntra *masterBond, bool createItems)
+void ForcefieldTab::updateBondsTableRow(int row, const MasterIntra *masterBond, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -166,7 +166,7 @@ void ForcefieldTab::updateBondsTableRow(int row, MasterIntra *masterBond, bool c
 }
 
 // Row update function for AnglesTable
-void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra *masterAngle, bool createItems)
+void ForcefieldTab::updateAnglesTableRow(int row, const MasterIntra *masterAngle, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -208,7 +208,7 @@ void ForcefieldTab::updateAnglesTableRow(int row, MasterIntra *masterAngle, bool
 }
 
 // Row update function for TorsionsTable
-void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra *masterTorsion, bool createItems)
+void ForcefieldTab::updateTorsionsTableRow(int row, const MasterIntra *masterTorsion, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -251,7 +251,7 @@ void ForcefieldTab::updateTorsionsTableRow(int row, MasterIntra *masterTorsion, 
 }
 
 // Row update function for ImpropersTable
-void ForcefieldTab::updateImpropersTableRow(int row, MasterIntra *masterImproper, bool createItems)
+void ForcefieldTab::updateImpropersTableRow(int row, const MasterIntra *masterImproper, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -330,7 +330,7 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
     }
     else
         item = ui_.AtomTypesTable->item(row, 2);
-    item->setText(QString::number(atomType->parameters().charge()));
+    item->setText(QString::number(atomType->charge()));
 
     // Short-Range Form
     if (createItems)
@@ -344,22 +344,23 @@ void ForcefieldTab::updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> a
     item->setText(QString::fromStdString(std::string(Forcefield::shortRangeTypes().keyword(atomType->shortRangeType()))));
 
     // Parameters
-    for (auto n = 0; n < MAXSRPARAMETERS; ++n)
+    auto col = 4;
+    for (auto x : atomType->shortRangeParameters())
     {
         if (createItems)
         {
             item = new QTableWidgetItem;
             item->setData(Qt::UserRole, QVariant::fromValue(atomType));
-            ui_.AtomTypesTable->setItem(row, n + 4, item);
+            ui_.AtomTypesTable->setItem(row, col++, item);
         }
         else
-            item = ui_.AtomTypesTable->item(row, n + 4);
-        item->setText(QString::number(atomType->parameters().parameter(n)));
+            item = ui_.AtomTypesTable->item(row, col++);
+        item->setText(QString::number(x));
     }
 }
 
 // Row update function for PairPotentialsTable
-void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential *pairPotential, bool createItems)
+void ForcefieldTab::updatePairPotentialsTableRow(int row, const PairPotential *pairPotential, bool createItems)
 {
     QTableWidgetItem *item;
 
@@ -424,18 +425,19 @@ void ForcefieldTab::updatePairPotentialsTableRow(int row, PairPotential *pairPot
     item->setText(QString::number(pairPotential->chargeJ()));
 
     // Parameters
-    for (auto n = 0; n < MAXSRPARAMETERS; ++n)
+    auto col = 5;
+    for (auto x : pairPotential->parameters())
     {
         if (createItems)
         {
             item = new QTableWidgetItem;
             item->setData(Qt::UserRole, VariantPointer<PairPotential>(pairPotential));
             item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
-            ui_.PairPotentialsTable->setItem(row, n + 5, item);
+            ui_.PairPotentialsTable->setItem(row, col++, item);
         }
         else
-            item = ui_.PairPotentialsTable->item(row, n + 5);
-        item->setText(QString::number(pairPotential->parameter(n)));
+            item = ui_.PairPotentialsTable->item(row, col++);
+        item->setText(QString::number(x));
     }
 }
 
@@ -572,7 +574,7 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem *w)
             break;
         // Charge
         case (2):
-            atomType->parameters().setCharge(w->text().toDouble());
+            atomType->setCharge(w->text().toDouble());
             atomTypeDataModified();
             dissolveWindow_->setModified();
             break;
@@ -586,7 +588,7 @@ void ForcefieldTab::on_AtomTypesTable_itemChanged(QTableWidgetItem *w)
         case (5):
         case (6):
         case (7):
-            atomType->parameters().setParameter(w->column() - 4, w->text().toDouble());
+            atomType->setShortRangeParameter(w->column() - 4, w->text().toDouble());
             atomTypeDataModified();
             dissolveWindow_->setModified();
             break;

@@ -284,7 +284,7 @@ bool Histogram3D::write(LineParser &parser)
     if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
         return false;
     for (auto &average : averages_)
-        if (average.write(parser))
+        if (!average.write(parser))
             return false;
 
     return true;

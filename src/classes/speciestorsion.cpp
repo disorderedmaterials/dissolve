@@ -123,21 +123,6 @@ void SpeciesTorsion::detach()
 }
 
 /*
- * DynamicArrayObject Virtuals
- */
-
-// Clear object, ready for re-use
-void SpeciesTorsion::clear()
-{
-    parent_ = nullptr;
-    i_ = nullptr;
-    j_ = nullptr;
-    k_ = nullptr;
-    l_ = nullptr;
-    form_ = SpeciesTorsion::NoForm;
-}
-
-/*
  * Atom Information
  */
 
@@ -148,16 +133,8 @@ void SpeciesTorsion::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Spec
     j_ = j;
     k_ = k;
     l_ = l;
-#ifdef CHECKS
-    if (i_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* i in SpeciesTorsion::set().\n");
-    if (j_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* j in SpeciesTorsion::set().\n");
-    if (k_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* k in SpeciesTorsion::set().\n");
-    if (l_ == nullptr)
-        Messenger::error("NULL_POINTER - NULL pointer passed for SpeciesAtom* l in SpeciesTorsion::set().\n");
-#endif
+    assert(i_ && j_ && k_ && l_);
+
     if (i_)
         i_->addTorsion(*this, 0.5);
     if (j_)
@@ -183,52 +160,28 @@ SpeciesAtom *SpeciesTorsion::l() const { return l_; }
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesTorsion::indexI() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesTorsion::indexI(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(i_);
     return i_->index();
 }
 
 // Return index (in parent Species) of second (central) SpeciesAtom
 int SpeciesTorsion::indexJ() const
 {
-#ifdef CHECKS
-    if (j_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesTorsion::indexJ(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(j_);
     return j_->index();
 }
 
 // Return index (in parent Species) of third SpeciesAtom
 int SpeciesTorsion::indexK() const
 {
-#ifdef CHECKS
-    if (k_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'k' found in SpeciesTorsion::indexK(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(k_);
     return k_->index();
 }
 
 // Return index (in parent Species) of fourth SpeciesAtom
 int SpeciesTorsion::indexL() const
 {
-#ifdef CHECKS
-    if (l_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'l' found in SpeciesTorsion::indexL(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(l_);
     return l_->index();
 }
 
@@ -276,13 +229,7 @@ bool SpeciesTorsion::matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Spe
 // Return whether all atoms in the interaction are currently selected
 bool SpeciesTorsion::isSelected() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr || j_ == nullptr || k_ == nullptr || l_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesTorsion::isSelected(). Returning false...\n");
-        return false;
-    }
-#endif
+    assert(i_ && j_ && k_ && l_);
     return (i_->isSelected() && j_->isSelected() && k_->isSelected() && l_->isSelected());
 }
 
@@ -293,15 +240,14 @@ bool SpeciesTorsion::isSelected() const
 // Return enum options for TorsionFunction
 EnumOptions<SpeciesTorsion::TorsionFunction> SpeciesTorsion::torsionFunctions()
 {
-    static EnumOptionsList TorsionFunctionOptions = EnumOptionsList()
-                                                    << EnumOption(SpeciesTorsion::NoForm, "None", 0, 0)
-                                                    << EnumOption(SpeciesTorsion::CosineForm, "Cos", 4, 4)
-                                                    << EnumOption(SpeciesTorsion::Cos3Form, "Cos3", 3, 3)
-                                                    << EnumOption(SpeciesTorsion::Cos3CForm, "Cos3C", 4, 4)
-                                                    << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4, 4)
-                                                    << EnumOption(SpeciesTorsion::CosNForm, "CosN", 1, 10)
-                                                    << EnumOption(SpeciesTorsion::CosNCForm, "CosNC", 1, 11)
-                                                    << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3, 3);
+    static EnumOptionsList TorsionFunctionOptions =
+        EnumOptionsList() << EnumOption(SpeciesTorsion::NoForm, "None") << EnumOption(SpeciesTorsion::CosineForm, "Cos", 4)
+                          << EnumOption(SpeciesTorsion::Cos3Form, "Cos3", 3)
+                          << EnumOption(SpeciesTorsion::Cos3CForm, "Cos3C", 4)
+                          << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4)
+                          << EnumOption(SpeciesTorsion::CosNForm, "CosN", 1, EnumOption::AnyNumberOfArguments)
+                          << EnumOption(SpeciesTorsion::CosNCForm, "CosNC", 1, EnumOption::AnyNumberOfArguments)
+                          << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3);
 
     static EnumOptions<SpeciesTorsion::TorsionFunction> options("TorsionFunction", TorsionFunctionOptions);
 
@@ -423,10 +369,10 @@ double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector
     else if (form == SpeciesTorsion::UFFCosineForm)
     {
         /*
-         * U(phi) = 0.5 * V * (1 - cos(n*eq) * cos(n*phi))
+         * U(phi) = 0.5 * k * (1 - cos(n*eq) * cos(n*phi))
          *
          * Parameters:
-         * 0 : Force constant, V
+         * 0 : Force constant, k
          * 1 : Periodicity, n
          * 2 : Equilibrium angle, eq (degrees)
          */
@@ -446,16 +392,31 @@ double SpeciesTorsion::energy(double angleInDegrees) const
 // Return force multiplier for specified angle and functional form, given supplied parameters
 double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<double> &params)
 {
-    // Convert torsion angle from degrees to radians, and calculate derivative w.r.t. change in torsion angle
+    /*
+     * Force of any angle form is given via the chain rule:
+     *
+     *                 dU    dPhi
+     *     F(phi) = - ---- --------
+     *                dPhi cos(phi)
+     *
+     *               dU     1
+     *            = ---- --------
+     *              dPhi sin(phi)
+     */
+
+    // Convert torsion angle from degrees to radians, and calculate derivative w.r.t. change in torsion angle, avoiding step in
+    // 1/sin(phi)
     double phi = angleInDegrees / DEGRAD;
-    double dphi_dcosphi = (phi < 1E-8 ? 0.0 : -1.0 / sin(phi));
+    auto sinPhi = sin(phi);
+    // TODO Avoid singularities (#542)
+    double dphi_dcosphi = -1.0 / DissolveMath::sgn(std::max(1.0e-8, fabs(sinPhi)), sinPhi);
 
     if (form == SpeciesTorsion::NoForm)
         return 0.0;
     else if (form == SpeciesTorsion::CosineForm)
     {
         /*
-         * dU/dphi = k * n * s * -sin(n*phi - eq)
+         * dU/dphi = -k * n * s * sin(n*phi - eq)
          *
          * Parameters:
          * 0 : Force constant 'k'
@@ -463,7 +424,8 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
          * 2 : Equilibrium angle (degrees)
          * 3 : Sign 's'
          */
-        return dphi_dcosphi * params[1] * params[0] * params[3] * -sin(params[1] * phi - (params[2] / DEGRAD));
+
+        return params[0] * params[1] * params[3] * sin(params[1] * phi - (params[2] / DEGRAD)) * dphi_dcosphi;
     }
     else if (form == SpeciesTorsion::Cos3Form)
     {
@@ -475,8 +437,8 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
          * 1 : force constant k2
          * 2 : force constant k3
          */
-        return dphi_dcosphi * 0.5 *
-               (-params[0] * sin(phi) + 2.0 * params[1] * sin(2.0 * phi) - 3.0 * params[2] * sin(3.0 * phi));
+        return -0.5 * (-params[0] * sin(phi) + 2.0 * params[1] * sin(2.0 * phi) - 3.0 * params[2] * sin(3.0 * phi)) *
+               dphi_dcosphi;
     }
     else if (form == SpeciesTorsion::Cos3CForm)
     {
@@ -489,8 +451,8 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
          * 2 : force constant k2
          * 3 : force constant k3
          */
-        return dphi_dcosphi * 0.5 *
-               (-params[1] * sin(phi) + 2.0 * params[2] * sin(2.0 * phi) - 3.0 * params[3] * sin(3.0 * phi));
+        return -0.5 * (-params[1] * sin(phi) + 2.0 * params[2] * sin(2.0 * phi) - 3.0 * params[3] * sin(3.0 * phi)) *
+               dphi_dcosphi;
     }
     else if (form == SpeciesTorsion::Cos4Form)
     {
@@ -503,16 +465,17 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
          * 2 : force constant k3
          * 3 : force constant k4
          */
-        return dphi_dcosphi * 0.5 *
+        return -0.5 *
                (-params[0] * sin(phi) + 2.0 * params[1] * sin(2.0 * phi) - 3.0 * params[2] * sin(3.0 * phi) +
-                4.0 * params[3] * sin(4.0 * phi));
+                4.0 * params[3] * sin(4.0 * phi)) *
+               dphi_dcosphi;
     }
     else if (form == SpeciesTorsion::CosNForm)
     {
         /*
-         *           1
-         * U(phi) = SUM  -k(n) * ( n * sin( n * phi ) )
-         *           n
+         *            1
+         * dU/dphi = SUM  -k(n) * n * sin( n * phi )
+         *            n
          *
          * Parameters:
          * 0 : force constant k1
@@ -520,21 +483,21 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
          * 2 : ...
          * n-1 : force constant kn
          */
-        auto result = 0.0;
+        auto dU_dphi = 0.0;
         auto c = 1;
         for (auto n = 0; n < params.size(); ++n)
         {
-            result -= params[n] * (c * sin(c * phi));
+            dU_dphi -= params[n] * (c * sin(c * phi));
             ++c;
         }
-        return dphi_dcosphi * result;
+        return -dU_dphi * dphi_dcosphi;
     }
     else if (form == SpeciesTorsion::CosNCForm)
     {
         /*
-         *           0
-         * U(phi) = SUM  -k(n) * ( n + sin( n * phi ) )
-         *           n
+         *            0
+         * dU/dphi = SUM  -k(n) * n * sin( n * phi )
+         *            n
          *
          * Parameters:
          * 0 : force constant k0
@@ -542,23 +505,24 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
          * 2 : ...
          * n : force constant kn
          */
-        auto result = 0.0;
+        auto dU_dphi = 0.0;
         for (auto n = 1; n < params.size(); ++n)
-            result -= params[n] * (n * sin(n * phi));
+            dU_dphi -= params[n] * (n * sin(n * phi));
 
-        return dphi_dcosphi * result;
+        return -dU_dphi * dphi_dcosphi;
     }
     else if (form == SpeciesTorsion::UFFCosineForm)
     {
         /*
-         * dU/d(phi) = 0.5 * V * cos(n*eq) * n * sin(n*phi)
+         * dU/d(phi) = 0.5 * k * cos(n*eq) * n * sin(n*phi)
          *
          * Parameters:
-         * 0 : Force constant, V
+         * 0 : Force constant, k
          * 1 : Periodicity, n
          * 2 : Equilibrium angle, eq (degrees)
          */
-        return 0.5 * params[0] * cos(params[1] * params[2] / DEGRAD) * params[1] * sin(params[1] * phi);
+
+        return -0.5 * params[0] * params[1] * cos(params[1] * params[2] / DEGRAD) * sin(params[1] * phi) * dphi_dcosphi;
     }
 
     Messenger::error("Functional form of torsion / improper term not accounted for, so can't calculate force.\n");

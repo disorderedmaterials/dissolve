@@ -67,4 +67,4 @@ add_library(
   sum1d.h
 )
 
-include_directories(../ ../../ ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src)
+include_directories(procedurenodes PRIVATE ${PROJECT_SOURCE_DIR}/src)

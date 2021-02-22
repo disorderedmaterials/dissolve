@@ -23,20 +23,6 @@ void BaseViewer::cancelInteraction() {}
  * Public Functions
  */
 
-// Set current interaction mode
-void BaseViewer::setInteractionMode(int mode)
-{
-    // Cancel any current interaction
-    cancelInteraction();
-
-    interactionMode_ = mode;
-
-    emit(interactionModeChanged());
-}
-
-// Return current interaction mode
-int BaseViewer::interactionMode() const { return interactionMode_; }
-
 // Return whether the viewer is currently being interacted with
 bool BaseViewer::interacting() const { return interacting_; }
 

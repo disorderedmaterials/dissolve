@@ -5,10 +5,15 @@
 #include "base/messenger.h"
 #include "classes/atom.h"
 
-MasterIntra::MasterIntra() : SpeciesIntra(), ListItem<MasterIntra>()
+MasterIntra::MasterIntra() : SpeciesIntra()
 {
     parent_ = nullptr;
     masterParameters_ = nullptr;
+}
+
+MasterIntra::MasterIntra(const std::string_view name, const SpeciesIntra::InteractionType type)
+    : SpeciesIntra(), name_(name), type_(type)
+{
 }
 
 MasterIntra::~MasterIntra() {}

@@ -5,7 +5,7 @@ linkTitle: "User Guide"
 
 **Structure Refinement for Scattering Data**
 
-&copy; Team Dissolve 2020
+&copy; 2021 Team Dissolve and contributors
 - Dr T. Youngs
 - Dr A. Washington (January 2020 - present)
 - D. Nixon (January 2020 - present)

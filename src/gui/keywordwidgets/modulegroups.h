@@ -37,7 +37,7 @@ class ModuleGroupsKeywordWidget : public KeywordDropDown, public KeywordWidgetBa
 
     private:
     // Selection table update function
-    void updateSelectionRow(int row, Module *module, bool create);
+    void updateSelectionRow(int row, const Module *module, bool create);
 
     private slots:
     // Table item changed
@@ -61,4 +61,4 @@ class ModuleGroupsKeywordWidget : public KeywordDropDown, public KeywordWidgetBa
     void updateSummaryText();
 };
 
-Q_DECLARE_METATYPE(Module *);
+Q_DECLARE_METATYPE(const Module *);

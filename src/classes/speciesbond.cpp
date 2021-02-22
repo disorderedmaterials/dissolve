@@ -100,26 +100,14 @@ SpeciesAtom *SpeciesBond::partner(const SpeciesAtom *i) const { return (i == i_ 
 // Return index (in parent Species) of first SpeciesAtom
 int SpeciesBond::indexI() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'i' found in SpeciesBond::indexI(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(i_);
     return i_->index();
 }
 
 // Return index (in parent Species) of second SpeciesAtom
 int SpeciesBond::indexJ() const
 {
-#ifdef CHECKS
-    if (j_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer 'j' found in SpeciesBond::indexJ(). Returning 0...\n");
-        return 0;
-    }
-#endif
+    assert(j_);
     return j_->index();
 }
 
@@ -148,13 +136,7 @@ bool SpeciesBond::matches(const SpeciesAtom *i, const SpeciesAtom *j) const
 // Return whether all atoms in the interaction are currently selected
 bool SpeciesBond::isSelected() const
 {
-#ifdef CHECKS
-    if (i_ == nullptr || j_ == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL SpeciesAtom pointer found in SpeciesBond::isSelected(). Returning false...\n");
-        return false;
-    }
-#endif
+    assert(i_ && j_);
     return (i_->isSelected() && j_->isSelected());
 }
 
@@ -209,9 +191,9 @@ double SpeciesBond::bondOrder() const { return SpeciesBond::bondOrder(bondType_)
 // Return enum options for BondFunction
 EnumOptions<SpeciesBond::BondFunction> SpeciesBond::bondFunctions()
 {
-    static EnumOptionsList BondFunctionOptions = EnumOptionsList() << EnumOption(SpeciesBond::NoForm, "None", 0, 0)
-                                                                   << EnumOption(SpeciesBond::HarmonicForm, "Harmonic", 2, 2)
-                                                                   << EnumOption(SpeciesBond::EPSRForm, "EPSR", 2, 2);
+    static EnumOptionsList BondFunctionOptions = EnumOptionsList() << EnumOption(SpeciesBond::NoForm, "None")
+                                                                   << EnumOption(SpeciesBond::HarmonicForm, "Harmonic", 2)
+                                                                   << EnumOption(SpeciesBond::EPSRForm, "EPSR", 2);
 
     static EnumOptions<SpeciesBond::BondFunction> options("BondFunction", BondFunctionOptions);
 
@@ -319,6 +301,8 @@ double SpeciesBond::force(double distance) const
     else if (form() == SpeciesBond::HarmonicForm)
     {
         /*
+         * V = -k * (r - eq)
+         *
          * Parameters:
          * 0 : force constant
          * 1 : equilibrium distance
@@ -335,7 +319,7 @@ double SpeciesBond::force(double distance) const
          * 1 : equilibrium distance
          * 2 : omega squared (LOCAL parameter)
          */
-        return -2.0 * params[0] * (distance - params[1]);
+        return -2.0 * params[0] * (distance - params[1]) / params[2];
     }
 
     Messenger::error("Functional form of SpeciesBond term not accounted for, so can't calculate force.\n");

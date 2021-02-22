@@ -17,8 +17,8 @@ EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> PairPotentialsBlock::key
         // 		EnumOption(PairPotentialsBlock::GenerateKeyword, 			"Generate",
         // 3,9)
         // <<
-        EnumOption(PairPotentialsBlock::IncludeCoulombKeyword, "IncludeCoulomb", 1)
-                          << EnumOption(PairPotentialsBlock::ParametersKeyword, "Parameters", 3, 8)
+        EnumOption(PairPotentialsBlock::IncludeCoulombKeyword, "IncludeCoulomb",
+                   1) << EnumOption(PairPotentialsBlock::ParametersKeyword, "Parameters", 3, EnumOption::AnyNumberOfArguments)
                           << EnumOption(PairPotentialsBlock::RangeKeyword, "Range", 1)
                           << EnumOption(PairPotentialsBlock::ShortRangeTruncationKeyword, "ShortRangeTruncation", 1)
                           << EnumOption(PairPotentialsBlock::ShortRangeTruncationWidthKeyword, "ShortRangeTruncationWidth", 1);
@@ -34,9 +34,9 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
     Messenger::print("\nParsing {} block...\n", BlockKeywords::keywords().keyword(BlockKeywords::PairPotentialsBlockKeyword));
 
     std::shared_ptr<AtomType> at1;
-    std::optional<decltype(at1)> opt_at;
     auto blockDone = false, error = false;
     Elements::Element Z;
+    std::vector<double> parameters;
 
     while (!parser.eofOrBlank())
     {
@@ -87,8 +87,8 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 }
 
                 // Find / create AtomType and check element...
-                opt_at = dissolve->findAtomType(parser.argsv(1));
-                if (!opt_at)
+                at1 = dissolve->findAtomType(parser.argsv(1));
+                if (!at1)
                 {
                     Messenger::warn("Unknown atom type '{}' referenced in PairPotentials block - creating "
                                     "it now...\n",
@@ -96,20 +96,17 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                     at1 = dissolve->addAtomType(Z);
                     at1->setName(parser.argsv(1));
                 }
-                else if (Z != (*opt_at)->Z())
+                else if (Z != at1->Z())
                 {
-                    at1 = *opt_at;
                     Messenger::error("Element '{}' does not match that for the existing atom type '{}' in "
                                      "PairPotentials block.\n",
                                      parser.argsv(2), parser.argsv(1));
                     error = true;
                     break;
                 }
-                else
-                    at1 = *opt_at;
 
                 // Set charge value
-                at1->parameters().setCharge(parser.argd(3));
+                at1->setCharge(parser.argd(3));
 
                 // Get short-range type
                 if (!Forcefield::shortRangeTypes().isValid(parser.argsv(4)))
@@ -120,9 +117,11 @@ bool PairPotentialsBlock::parse(LineParser &parser, Dissolve *dissolve)
                 }
                 at1->setShortRangeType(Forcefield::shortRangeTypes().enumeration(parser.argsv(4)));
 
-                // Set interaction parameters
+                // Get interaction parameters
+                parameters.clear();
                 for (int n = 5; n < parser.nArgs(); ++n)
-                    at1->parameters().setParameter(n - 5, parser.argd(n));
+                    parameters.push_back(parser.argd(n));
+                at1->setShortRangeParameters(parameters);
                 break;
             case (PairPotentialsBlock::RangeKeyword):
                 dissolve->setPairPotentialRange(parser.argd(1));

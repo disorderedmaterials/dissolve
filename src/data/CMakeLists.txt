@@ -4,14 +4,6 @@ add_library(
   atomicradii.cpp
   elementcolours.cpp
   elements.cpp
-  ff.cpp
-  ffangleterm.cpp
-  ffatomtype.cpp
-  ffbondterm.cpp
-  ffimproperterm.cpp
-  fflibrary.cpp
-  ffparameters.cpp
-  fftorsionterm.cpp
   formfactordata.cpp
   formfactors.cpp
   formfactors_dummy.cpp
@@ -23,14 +15,6 @@ add_library(
   atomicradii.h
   elementcolours.h
   elements.h
-  ff.h
-  ffangleterm.h
-  ffatomtype.h
-  ffbondterm.h
-  ffimproperterm.h
-  fflibrary.h
-  ffparameters.h
-  fftorsionterm.h
   formfactordata.h
   formfactors.h
   formfactors_dummy.h
@@ -40,7 +24,7 @@ add_library(
   structurefactors.h
 )
 
-include_directories(../ ${CMAKE_SOURCE_DIR} ${CMAKE_BINARY_DIR} ${CMAKE_BINARY_DIR}/src)
+include_directories(data PRIVATE ${PROJECT_SOURCE_DIR}/src)
 
 add_subdirectory(ff)
 add_subdirectory(sg)

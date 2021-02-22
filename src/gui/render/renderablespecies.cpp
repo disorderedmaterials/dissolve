@@ -24,8 +24,8 @@ RenderableSpecies::RenderableSpecies(const Species *source, std::string_view obj
     selectedAtomPrimitive_->sphere(1.25, 8, 10);
     bondPrimitive_ = createPrimitive(GL_TRIANGLES, false);
     bondPrimitive_->cylinder(0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 1.0, 1.0, 1, 8);
-    unitCellPrimitive_ = createPrimitive(GL_LINES, false);
-    // 	unitCellPrimitive_->wireCube(1.0, 4, 0, 0, 0);
+    crossBoxPrimitive_ = createPrimitive(GL_LINES, false);
+    crossBoxPrimitive_->wireOrthorhomboid(1.0, 1.0, 1.0, 0.0, 0.0);
     lineSpeciesPrimitive_ = createPrimitive(GL_LINES, true);
     lineSelectionPrimitive_ = createPrimitive(GL_LINES, true);
     lineSelectionPrimitive_->setNoInstances();
@@ -472,6 +472,48 @@ void RenderableSpecies::recreateDrawInteractionPrimitive(Vec3<double> fromPoint,
 
         // Draw the temporary bond between the atoms
         createCylinderBond(interactionAssembly_, &i, &j, spheresBondRadius_);
+    }
+}
+
+// Recreate interaction Primitive to display delete interaction (from existing atom to existing atom)
+void RenderableSpecies::recreateDeleteInteractionPrimitive(SpeciesAtom *fromAtom, SpeciesAtom *toAtom)
+{
+    // Clear existing data
+    clearInteractionPrimitive();
+
+    Matrix4 A;
+
+    A.setTranslation(fromAtom->r());
+
+    // Render based on the current drawing style
+    if (displayStyle_ == LinesStyle)
+    {
+        A.applyScaling(0.1);
+
+        // Set basic styling for assembly
+        interactionAssembly_.add(false, GL_LINE);
+        interactionAssembly_.add(crossBoxPrimitive_, A);
+
+        if (toAtom)
+        {
+            A.setTranslation(toAtom->r());
+            interactionAssembly_.add(crossBoxPrimitive_, A);
+        }
+    }
+    else if (displayStyle_ == SpheresStyle)
+    {
+        // Set basic styling for assembly
+        interactionAssembly_.add(true, GL_FILL);
+
+        // Draw the indicators
+        A.applyScaling(spheresAtomRadius_ * 2.2);
+        interactionAssembly_.add(crossBoxPrimitive_, A, 0.0, 0.0, 0.0, 1.0);
+
+        if (toAtom)
+        {
+            A.setTranslation(toAtom->r());
+            interactionAssembly_.add(crossBoxPrimitive_, A, 0.0, 0.0, 0.0, 1.0);
+        }
     }
 }
 

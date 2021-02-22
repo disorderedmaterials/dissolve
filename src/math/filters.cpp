@@ -25,7 +25,7 @@ void convolve(Data1D &data, const BroadeningFunction &function, bool variableOme
 
     // Outer loop over existing data points - if variableOmega == true then we use the x value as the omega broadening
     // parameter
-    double xCentre, xBroad, norm;
+    double norm, xBroad;
     if (variableOmega)
         for (auto &&[xCentre, yn] : zip(x, y))
         {
@@ -69,7 +69,6 @@ void convolve(double xCentre, double value, const BroadeningFunction &function, 
     auto &y = dest.values();
 
     // Loop over existing datapoints
-    double xBroad;
     std::transform(x.begin(), x.end(), y.begin(), y.begin(),
                    [&](auto x, auto y) { return y + value * function.y(x - xCentre); });
 }
@@ -182,13 +181,13 @@ void movingAverage(Data1D &data, int avgSize)
 void normalisedMovingAverage(Data1D &data, int avgSize)
 {
     // Calculate the original integral
-    double originalIntegral = Integrator::absTrapezoid(data);
+    auto originalIntegral = Integrator::absTrapezoid(data);
 
     // Perform the smoothing
     movingAverage(data, avgSize);
 
     // Calculate the new integral
-    double newIntegral = Integrator::absTrapezoid(data);
+    auto newIntegral = Integrator::absTrapezoid(data);
 
     data *= originalIntegral / newIntegral;
 }
@@ -200,7 +199,7 @@ double subtractAverage(Data1D &data, double xStart)
     const auto &x = data.xAxis();
     auto &y = data.values();
 
-    double sum = 0.0;
+    auto sum = 0.0;
     auto nPoints = 0;
     for (auto n = 0; n < x.size(); ++n)
     {
@@ -279,7 +278,7 @@ void convertBinBoundaries(Data1D &data)
 {
     // Assume that input x values are histogram bin left-boundaries, so x(n) = 0.5[x(n)+x(n_1)]
     auto &x = data.xAxis();
-    double a = x[0], b;
+    auto a = x[0], b = 0.0;
     for (auto n = 0; n < data.nValues() - 1; ++n)
     {
         b = x[n + 1];

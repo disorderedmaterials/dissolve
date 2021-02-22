@@ -56,7 +56,7 @@ void Dissolve::copyAtomType(const SpeciesAtom *sourceAtom, SpeciesAtom *destAtom
     {
         at = addAtomType(sourceAtom->Z());
         at->setName(sourceAtom->atomType()->name());
-        at->parameters() = sourceAtom->atomType()->parameters();
+        at->setShortRangeParameters(sourceAtom->atomType()->shortRangeParameters());
         at->setShortRangeType(sourceAtom->atomType()->shortRangeType());
     }
 
@@ -75,49 +75,49 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
     if (sourceIntra.masterParameters())
     {
         // Search for MasterIntra by the same name in our main Dissolve instance
-        MasterIntra *master = nullptr;
+        OptionalReferenceWrapper<MasterIntra> master = {};
         if (sourceIntra.type() == SpeciesIntra::BondInteraction)
         {
-            master = coreData_.hasMasterBond(sourceIntra.masterParameters()->name());
+            master = coreData_.getMasterBond(sourceIntra.masterParameters()->name());
             if (!master)
             {
                 master = coreData_.addMasterBond(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parameters());
+                master->get().setParameters(sourceIntra.parameters());
             }
         }
         else if (sourceIntra.type() == SpeciesIntra::AngleInteraction)
         {
-            master = coreData_.hasMasterAngle(sourceIntra.masterParameters()->name());
+            master = coreData_.getMasterAngle(sourceIntra.masterParameters()->name());
             if (!master)
             {
                 master = coreData_.addMasterAngle(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parameters());
+                master->get().setParameters(sourceIntra.parameters());
             }
         }
         else if (sourceIntra.type() == SpeciesIntra::TorsionInteraction)
         {
-            master = coreData_.hasMasterTorsion(sourceIntra.masterParameters()->name());
+            master = coreData_.getMasterTorsion(sourceIntra.masterParameters()->name());
             if (!master)
             {
                 master = coreData_.addMasterTorsion(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parameters());
+                master->get().setParameters(sourceIntra.parameters());
             }
         }
         else if (sourceIntra.type() == SpeciesIntra::ImproperInteraction)
         {
-            master = coreData_.hasMasterImproper(sourceIntra.masterParameters()->name());
+            master = coreData_.getMasterImproper(sourceIntra.masterParameters()->name());
             if (!master)
             {
                 master = coreData_.addMasterImproper(sourceIntra.masterParameters()->name());
-                master->setParameters(sourceIntra.parameters());
+                master->get().setParameters(sourceIntra.parameters());
             }
         }
 
         // Copy the form of the parameters
-        master->setForm(sourceIntra.masterParameters()->form());
+        master->get().setForm(sourceIntra.masterParameters()->form());
 
         // Set the master pointer in the interaction
-        destIntra.setMasterParameters(master);
+        destIntra.setMasterParameters(&master->get());
     }
     else
     {

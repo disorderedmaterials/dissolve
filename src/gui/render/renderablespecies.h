@@ -45,7 +45,7 @@ class RenderableSpecies : public Renderable
      */
     private:
     // Basic primitives
-    Primitive *atomPrimitive_, *selectedAtomPrimitive_, *unitCellPrimitive_, *bondPrimitive_;
+    Primitive *atomPrimitive_, *selectedAtomPrimitive_, *crossBoxPrimitive_, *bondPrimitive_;
     // Main primitives
     Primitive *lineSpeciesPrimitive_, *lineSelectionPrimitive_, *lineInteractionPrimitive_;
     // Main assemblies
@@ -75,6 +75,8 @@ class RenderableSpecies : public Renderable
     // Recreate interaction Primitive to display drawing interaction (from point to point)
     void recreateDrawInteractionPrimitive(Vec3<double> fromPoint, Elements::Element fromElement, Vec3<double> toPoint,
                                           Elements::Element toElement);
+    // Recreate interaction Primitive to display delete interaction (from existing atom to existing atom)
+    void recreateDeleteInteractionPrimitive(SpeciesAtom *fromAtom, SpeciesAtom *toAtom = nullptr);
 
     /*
      * Style

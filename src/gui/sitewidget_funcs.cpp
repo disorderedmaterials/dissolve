@@ -24,8 +24,8 @@ SiteWidget::SiteWidget(QWidget *parent) : QWidget(parent)
     // Connect signals / slots
     connect(ui_.SiteView, SIGNAL(dataModified()), this, SLOT(notifyDataModified()));
     connect(ui_.SiteView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));
-    connect(ui_.SiteView, SIGNAL(atomSelectionChanged()), this, SLOT(updateStatusBar()));
-    connect(ui_.SiteView, SIGNAL(atomSelectionChanged()), this, SLOT(updateToolbar()));
+    connect(ui_.SiteView, SIGNAL(atomsChanged()), this, SLOT(updateStatusBar()));
+    connect(ui_.SiteView, SIGNAL(atomsChanged()), this, SLOT(updateToolbar()));
     connect(ui_.SiteView, SIGNAL(interactionModeChanged()), this, SLOT(updateStatusBar()));
 
     // Make sure our controls are consistent with the underlying viewer / data
@@ -57,8 +57,11 @@ void SiteWidget::updateToolbar()
     // Set current interaction mode
     switch (siteViewer()->interactionMode())
     {
-        case (SiteViewer::DefaultInteraction):
+        case (SiteViewer::InteractionMode::Select):
+        case (SiteViewer::InteractionMode::SelectArea):
             ui_.InteractionViewButton->setChecked(true);
+            break;
+        default:
             break;
     }
 
@@ -119,7 +122,7 @@ SiteViewer *SiteWidget::siteViewer() { return ui_.SiteView; }
 void SiteWidget::on_InteractionViewButton_clicked(bool checked)
 {
     if (checked)
-        siteViewer()->setInteractionMode(SiteViewer::DefaultInteraction);
+        siteViewer()->setInteractionMode(SiteViewer::InteractionMode::Select);
 }
 
 void SiteWidget::on_ViewResetButton_clicked(bool checked)

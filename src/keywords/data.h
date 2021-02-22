@@ -49,6 +49,7 @@ template <class T> class KeywordData : public KeywordBase
     }
     // Return data
     T &data() { return data_; }
+    const T &data() const { return data_; }
 
     /*
      * Data Validation

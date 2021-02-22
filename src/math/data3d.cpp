@@ -106,31 +106,12 @@ int Data3D::version() const { return version_; }
 // Return x value specified
 double &Data3D::xAxis(int index)
 {
-#ifdef CHECKS
-    if ((index < 0) || (index >= x_.size()))
-    {
-        static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data3D::xAxis().\n", index);
-        return dummy;
-    }
-#endif
-
     ++version_;
 
     return x_[index];
 }
 
-const double &Data3D::xAxis(int index) const
-{
-#ifdef CHECKS
-    if ((index < 0) || (index >= x_.size()))
-    {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data3D::xAxis().\n", index);
-        return 0.0;
-    }
-#endif
-    return x_[index];
-}
+const double &Data3D::xAxis(int index) const { return x_[index]; }
 
 // Return x axis Array
 std::vector<double> &Data3D::xAxis()
@@ -145,30 +126,12 @@ const std::vector<double> &Data3D::xAxis() const { return x_; }
 // Return y value specified
 double &Data3D::yAxis(int index)
 {
-#ifdef CHECKS
-    if ((index < 0) || (index >= y_.size()))
-    {
-        static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data3D::yAxis().\n", index);
-        return dummy;
-    }
-#endif
     ++version_;
 
     return y_[index];
 }
 
-const double &Data3D::yAxis(int index) const
-{
-#ifdef CHECKS
-    if ((index < 0) || (index >= y_.size()))
-    {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x_ array in Data3D::yAxis().\n", index);
-        return 0.0;
-    }
-#endif
-    return y_[index];
-}
+const double &Data3D::yAxis(int index) const { return y_[index]; }
 
 // Return y Array
 std::vector<double> &Data3D::yAxis()
@@ -183,30 +146,12 @@ const std::vector<double> &Data3D::yAxis() const { return y_; }
 // Return z value specified
 double &Data3D::zAxis(int index)
 {
-#ifdef CHECKS
-    if ((index < 0) || (index >= z_.size()))
-    {
-        static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for z_ array in Data3D::zAxis().\n", index);
-        return dummy;
-    }
-#endif
     ++version_;
 
     return z_[index];
 }
 
-const double &Data3D::zAxis(int index) const
-{
-#ifdef CHECKS
-    if ((index < 0) || (index >= z_.size()))
-    {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for z_ array in Data3D::zAxis().\n", index);
-        return 0.0;
-    }
-#endif
-    return z_[index];
-}
+const double &Data3D::zAxis(int index) const { return z_[index]; }
 
 // Return z Array
 std::vector<double> &Data3D::zAxis()
@@ -221,52 +166,12 @@ const std::vector<double> &Data3D::zAxis() const { return z_; }
 // Return value specified
 double &Data3D::value(int xIndex, int yIndex, int zIndex)
 {
-#ifdef CHECKS
-    if ((xIndex < 0) || (xIndex >= x_.size()))
-    {
-        static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data3D::value().\n", xIndex);
-        return dummy;
-    }
-    if ((yIndex < 0) || (yIndex >= y_.size()))
-    {
-        static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data3D::value().\n", yIndex);
-        return dummy;
-    }
-    if ((zIndex < 0) || (zIndex >= z_.size()))
-    {
-        static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for z axis in Data3D::value().\n", zIndex);
-        return dummy;
-    }
-#endif
     ++version_;
 
     return values_[{xIndex, yIndex, zIndex}];
 }
 
-const double &Data3D::value(int xIndex, int yIndex, int zIndex) const
-{
-#ifdef CHECKS
-    if ((xIndex < 0) || (xIndex >= x_.size()))
-    {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data3D::value().\n", xIndex);
-        return 0.0;
-    }
-    if ((yIndex < 0) || (yIndex >= y_.size()))
-    {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data3D::value().\n", yIndex);
-        return 0.0;
-    }
-    if ((zIndex < 0) || (zIndex >= z_.size()))
-    {
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for z axis in Data3D::value().\n", zIndex);
-        return 0.0;
-    }
-#endif
-    return values_[{xIndex, yIndex, zIndex}];
-}
+const double &Data3D::value(int xIndex, int yIndex, int zIndex) const { return values_[{xIndex, yIndex, zIndex}]; }
 
 // Return three-dimensional values Array
 Array3D<double> &Data3D::values3D()
@@ -325,26 +230,7 @@ double &Data3D::error(int xIndex, int yIndex, int zIndex)
                         objectTag());
         return dummy;
     }
-#ifdef CHECKS
-    if ((xIndex < 0) || (xIndex >= x_.size()))
-    {
-        static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data3D::error().\n", xIndex);
-        return dummy;
-    }
-    if ((yIndex < 0) || (yIndex >= y_.size()))
-    {
-        static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data3D::error().\n", yIndex);
-        return dummy;
-    }
-    if ((zIndex < 0) || (zIndex >= z_.size()))
-    {
-        static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for z axis in Data3D::error().\n", zIndex);
-        return dummy;
-    }
-#endif
+
     ++version_;
 
     return errors_[{xIndex, yIndex, zIndex}];
@@ -359,26 +245,6 @@ const double &Data3D::error(int xIndex, int yIndex, int zIndex) const
                         name(), objectTag());
         return dummy;
     }
-#ifdef CHECKS
-    if ((xIndex < 0) || (xIndex >= x_.size()))
-    {
-        static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for x axis in Data3D::error().\n", xIndex);
-        return dummy;
-    }
-    if ((yIndex < 0) || (yIndex >= y_.size()))
-    {
-        static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for y axis in Data3D::error().\n", yIndex);
-        return dummy;
-    }
-    if ((zIndex < 0) || (zIndex >= z_.size()))
-    {
-        static double dummy;
-        Messenger::error("OUT_OF_RANGE - Index {} is out of range for z axis in Data3D::error().\n", zIndex);
-        return dummy;
-    }
-#endif
 
     return errors_[{xIndex, yIndex, zIndex}];
 }

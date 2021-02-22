@@ -35,8 +35,23 @@ void AtomType::setShortRangeType(Forcefield::ShortRangeType srType) { shortRange
 // Return short-range interaction type
 Forcefield::ShortRangeType AtomType::shortRangeType() const { return shortRangeType_; }
 
-// Return interatomic interaction interaction parameters
-InteractionParameters &AtomType::parameters() { return parameters_; }
+// Set short-range parameters vector
+void AtomType::setShortRangeParameters(const std::vector<double> &parameters) { parameters_ = parameters; }
+
+// Set single short-range parameter
+void AtomType::setShortRangeParameter(int index, double parameter) { parameters_[index] = parameter; }
+
+// Return short-range parameters vector
+const std::vector<double> &AtomType::shortRangeParameters() const { return parameters_; }
+
+// Return short-range parameter with index specified
+double AtomType::shortRangeParameter(int index) const { return parameters_[index]; }
+
+// Set atomic charge
+void AtomType::setCharge(double q) { charge_ = q; }
+
+// Return atomic charge
+double AtomType::charge() const { return charge_; }
 
 // Set index of this type in the main type index
 void AtomType::setIndex(int id) { index_ = id; }

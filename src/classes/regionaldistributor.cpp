@@ -6,7 +6,6 @@
 #include "base/processpool.h"
 #include "classes/atom.h"
 #include "classes/cell.h"
-#include "classes/cellneighbour.h"
 #include "classes/molecule.h"
 #include "templates/array3d.h"
 #include <algorithm>
@@ -321,8 +320,7 @@ bool RegionalDistributor::assignMolecule(std::shared_ptr<const Molecule> mol, in
         // Loop over all cell neighbours for this primary Cell
         for (const auto &neighbour : primaryCells[c]->allCellNeighbours())
         {
-            readOnlyCell = neighbour.cell();
-            cellIndex = readOnlyCell->index();
+            cellIndex = neighbour->index();
 
             // If we have locked this Cell already, continue
             if (cellStatusFlags_[cellIndex] == RegionalDistributor::LockedForEditingFlag)
@@ -409,11 +407,11 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(Cell *cell, int pr
         Messenger::print("  Looking through molecules in Cell {} for process/group {}..\n", cell->index(), processOrGroup);
 
     // There will likely be multiple atoms from the same, so note each Molecule as we check it
-    OrderedVector<std::shared_ptr<Molecule>> checkedMolecules;
+    std::vector<std::shared_ptr<Molecule>> checkedMolecules;
 
     // Loop over Atoms in Cell
     std::shared_ptr<Molecule> mol;
-    for (auto atom : cell->indexOrderedAtoms())
+    for (auto atom : cell->atoms())
     {
         // Get the Atom's Molecule pointer
         mol = atom->molecule();
@@ -433,7 +431,7 @@ std::shared_ptr<Molecule> RegionalDistributor::assignMolecule(Cell *cell, int pr
             return mol;
 
         // Not possible to assign the Molecule, so add it to our list of checked Molecules and move on
-        checkedMolecules.insert(mol);
+        checkedMolecules.emplace_back(mol);
     }
 
     return nullptr;

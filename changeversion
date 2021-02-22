@@ -4,7 +4,7 @@
 
 # Day Suffix Function
 DaySuffix() {
-  case $(date +%d) in
+  case $(date +%-d) in
     1|21|31) echo "st";;
     2|22)    echo "nd";;
     3|23)    echo "rd";;
@@ -107,20 +107,6 @@ then
   echo -n "                       (Patch Version) : "
   grep 'set(VERSION_PATCH' ./CMakeLists.txt | sed -e 's/set(VERSION_PATCH \"\([0-9a-z\.]\+\)\")/\1/g'
 
-
-  # OSX build files
-  if [ "$CHECK" = "false" ]
-  then
-    sed -i -e "s/APP_VERSION=\"\([0-9a-z\.]\+\)\"/APP_VERSION=\"$MAJOR.$MINOR.$PATCH\"/g" ./ci/osx/dissolve.dmginfo
-    sed -i -e "s/APP_VERSION=\"\([0-9a-z\.]\+\)\"/APP_VERSION=\"$MAJOR.$MINOR.$PATCH\"/g" ./ci/osx/dissolve-gui.dmginfo
-    sed -i -e "s/APP_VERSION=\"\([0-9a-z\.]\+\)\"/APP_VERSION=\"$MAJOR.$MINOR.$PATCH\"/g" ./ci/osx/dissolve-mpi.dmginfo
-  fi
-  echo -n "    dissolve.dmginfo (Program Version) : "
-  grep 'APP_VERSION=' ./ci/osx/dissolve.dmginfo | sed -e 's/APP_VERSION=\"\([0-9a-z\.]\+\)\"/\1/g'
-  echo -n "dissolve-gui.dmginfo (Program Version) : "
-  grep 'APP_VERSION=' ./ci/osx/dissolve-gui.dmginfo | sed -e 's/APP_VERSION=\"\([0-9a-z\.]\+\)\"/\1/g'
-  echo -n "dissolve-mpi.dmginfo (Program Version) : "
-  grep 'APP_VERSION=' ./ci/osx/dissolve-mpi.dmginfo | sed -e 's/APP_VERSION=\"\([0-9a-z\.]\+\)\"/\1/g'
 
   # Windows build files
   if [ "$CHECK" = "false" ]

@@ -69,7 +69,7 @@ void Dissolve::clear()
     pairPotentialDelta_ = 0.005;
     pairPotentialRange_ = 15.0;
     pairPotentialRangeSquared_ = pairPotentialRange_ * pairPotentialRange_;
-    pairPotentialsIncludeCoulomb_ = false;
+    pairPotentialsIncludeCoulomb_ = true;
     pairPotentials_.clear();
     potentialMap_.clear();
     pairPotentialAtomTypeVersion_ = -1;
@@ -113,6 +113,7 @@ void Dissolve::registerGenericItems()
     GenericItem::addItemClass(new GenericItemContainer<Array<double>>("Array<double>"));
     GenericItem::addItemClass(new GenericItemContainer<Array<DummyClass>>("Array<DummyClass>"));
     GenericItem::addItemClass(new GenericItemContainer<Array<BraggReflection>>("Array<BraggReflection>"));
+    GenericItem::addItemClass(new GenericItemContainer<Array<SampledDouble>>("Array<SampledDouble>"));
     GenericItem::addItemClass(new GenericItemContainer<Array<Vec3<int>>>("Array<Vec3<int>>"));
     GenericItem::addItemClass(new GenericItemContainer<Array<Vec3<double>>>("Array<Vec3<double>>"));
 

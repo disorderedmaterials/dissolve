@@ -9,7 +9,6 @@
 #include "classes/molecule.h"
 #include "classes/potentialmap.h"
 #include "classes/species.h"
-#include "templates/orderedvector.h"
 #include <iterator>
 
 ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, Array<double> &fx,
@@ -73,18 +72,8 @@ void ForceKernel::forcesWithMim(const std::shared_ptr<Atom> i, const std::shared
 // Calculate forces between atoms
 void ForceKernel::forces(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, bool applyMim, bool excludeIgeJ)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr (i) passed to ForceKernel::forces(Atom,Atom,bool,bool).\n");
-        return;
-    }
-    if (j == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr (j) passed to ForceKernel::forces(Atom,Atom,bool,bool).\n");
-        return;
-    }
-#endif
+    assert(i && j);
+
     // If Atoms are the same, we refuse to calculate
     if (i == j)
         return;
@@ -103,20 +92,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, const std::shared_ptr<At
 void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool excludeIgeJ,
                          ProcessPool::DivisionStrategy strategy)
 {
-#ifdef CHECKS
-    if (centralCell == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL central Cell pointer passed to "
-                         "ForceKernel::forces(Cell,Cell,bool,bool,DivisionStrategy).\n");
-        return;
-    }
-    if (otherCell == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL other Cell pointer passed to "
-                         "ForceKernel::forces(Cell,Cell,bool,bool,DivisionStrategy).\n");
-        return;
-    }
-#endif
+    assert(centralCell && otherCell);
+
     auto &centralAtoms = centralCell->atoms();
     auto &otherAtoms = otherCell->atoms();
     std::shared_ptr<Atom> ii;
@@ -200,13 +177,8 @@ void ForceKernel::forces(Cell *cell, bool excludeIgeJ, ProcessPool::DivisionStra
 // Calculate forces between Atom and Cell
 void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, ProcessPool::DivisionStrategy strategy)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::error("NULL_POINTER - NULL atom pointer passed to ForceKernel::forces(Atom,Cell,int,DivisionStrategy).\n");
-        return;
-    }
-#endif
+    assert(i);
+
     std::shared_ptr<Atom> jj;
     double scale;
 
@@ -384,13 +356,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
 // Calculate forces between atom and world
 void ForceKernel::forces(const std::shared_ptr<Atom> i, ProcessPool::DivisionStrategy strategy)
 {
-#ifdef CHECKS
-    if (i == nullptr)
-    {
-        Messenger::error("NULL_POINTER - nullptr passed to ForceKernel::forces(Atom,DivisionStrategy).\n");
-        return;
-    }
-#endif
+    assert(i);
+
     Cell *cellI = i->cell();
 
     // This Atom with other Atoms in the same Cell
@@ -432,12 +399,7 @@ void ForceKernel::forces(const SpeciesBond &bond, const std::shared_ptr<Atom> i,
         vecji = j->r() - i->r();
 
     // Get distance and normalise vector ready for force calculation
-    double distance = vecji.magAndNormalise();
-
-#ifdef CHECKS
-    if (distance > 5.0)
-        Messenger::print("!!! Long bond: {}-{} = {} Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
-#endif
+    auto distance = vecji.magAndNormalise();
 
     // Determine final forces
     vecji *= bond.force(distance);
@@ -457,13 +419,7 @@ void ForceKernel::forces(const SpeciesBond &bond, const std::shared_ptr<Atom> i,
 void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesBond &bond, const std::shared_ptr<Atom> i,
                          const std::shared_ptr<Atom> j)
 {
-#ifdef CHECKS
-    if ((i != onlyThis) && (j != onlyThis))
-    {
-        Messenger::error("Forces requested for specific Atom in Bond, but neither Atom in the Bond is the one specified.\n");
-        return;
-    }
-#endif
+    assert((i != onlyThis) && (j != onlyThis));
 
     // Determine whether we need to apply minimum image to the vector calculation
     Vec3<double> vecji;
@@ -473,12 +429,7 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesBond
         vecji = j->r() - i->r();
 
     // Get distance and normalise vector ready for force calculation
-    double distance = vecji.magAndNormalise();
-
-#ifdef CHECKS
-    if (distance > 5.0)
-        Messenger::print("!!! Long bond: {}-{} = {} Angstroms\n", i->arrayIndex(), j->arrayIndex(), distance);
-#endif
+    auto distance = vecji.magAndNormalise();
 
     // Determine final forces
     vecji *= bond.force(distance);
@@ -576,15 +527,9 @@ void ForceKernel::forces(const SpeciesAngle &angle, const std::shared_ptr<Atom> 
 void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesAngle &angle, const std::shared_ptr<Atom> i,
                          const std::shared_ptr<Atom> j, const std::shared_ptr<Atom> k)
 {
-    Vec3<double> vecji, vecjk;
+    assert((i != onlyThis) && (j != onlyThis) && (k != onlyThis));
 
-#ifdef CHECKS
-    if ((i != onlyThis) && (j != onlyThis) && (k != onlyThis))
-    {
-        Messenger::error("Forces requested for specific Atom in Angle, but no Atom in the Angle is the one specified.\n");
-        return;
-    }
-#endif
+    Vec3<double> vecji, vecjk;
 
     // Determine whether we need to apply minimum image between 'j-i' and 'j-k'
     if (j->cell()->mimRequired(i->cell()))
@@ -657,11 +602,7 @@ void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec
     const auto magxpj = xpj.magAndNormalise();
     const auto magxpk = xpk.magAndNormalise();
     auto dp = xpj.dp(xpk);
-    if (dp < -1.0)
-        dp = -1.0;
-    else if (dp > 1.0)
-        dp = 1.0;
-    phi = acos(dp);
+    phi = atan2(vecjk.dp(xpj * xpk) / vecjk.magnitude(), dp);
 
     /*
      * Construct derivatives of perpendicular axis (cross product) w.r.t. component vectors.
@@ -670,7 +611,7 @@ void ForceKernel::calculateTorsionParameters(const Vec3<double> vecji, const Vec
      *	------------- = rij[cp(n+2)] * U[cp(n+1)] - rij[cp(n+1)] * U[cp(n+2)]
      *	d rkj[n]
      *
-     * where cp is a cylic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a unit vector in the n direction.
+     * where cp is a cyclic permutation spanning {0,1,2} == {x,y,z}, and U[n] is a unit vector in the n direction.
      * So,
      *	d (rij x rkj)
      *	------------- = rij[2] * U[1] - rij[1] * U[2]
@@ -699,17 +640,17 @@ void ForceKernel::forces(const SpeciesTorsion &torsion, const std::shared_ptr<At
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
     if (j->cell()->mimRequired(i->cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(i, j);
     else
-        vecji = i->r() - j->r();
+        vecji = j->r() - i->r();
     if (j->cell()->mimRequired(k->cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(k, j);
     else
-        vecjk = k->r() - j->r();
+        vecjk = j->r() - k->r();
     if (k->cell()->mimRequired(l->cell()))
-        veckl = box_->minimumVector(k, l);
+        veckl = box_->minimumVector(l, k);
     else
-        veckl = l->r() - k->r();
+        veckl = k->r() - l->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = torsion.force(phi_ * DEGRAD);
@@ -749,17 +690,17 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesTors
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
     if (j->cell()->mimRequired(i->cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(i, j);
     else
-        vecji = i->r() - j->r();
+        vecji = j->r() - i->r();
     if (j->cell()->mimRequired(k->cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(k, j);
     else
-        vecjk = k->r() - j->r();
+        vecjk = j->r() - k->r();
     if (k->cell()->mimRequired(l->cell()))
-        veckl = box_->minimumVector(k, l);
+        veckl = box_->minimumVector(l, k);
     else
-        veckl = l->r() - k->r();
+        veckl = k->r() - l->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = torsion.force(phi_ * DEGRAD);
@@ -802,8 +743,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesTors
 void ForceKernel::forces(const SpeciesTorsion &torsion)
 {
     // Calculate vectors, ensuring we account for minimum image
-    const Vec3<double> vecji = torsion.i()->r() - torsion.j()->r(), vecjk = torsion.k()->r() - torsion.j()->r(),
-                       veckl = torsion.l()->r() - torsion.k()->r();
+    const Vec3<double> vecji = torsion.j()->r() - torsion.i()->r(), vecjk = torsion.j()->r() - torsion.k()->r(),
+                       veckl = torsion.k()->r() - torsion.l()->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = torsion.force(phi_ * DEGRAD);
@@ -843,17 +784,17 @@ void ForceKernel::forces(const SpeciesImproper &improper, const std::shared_ptr<
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
     if (j->cell()->mimRequired(i->cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(i, j);
     else
-        vecji = i->r() - j->r();
+        vecji = j->r() - i->r();
     if (j->cell()->mimRequired(k->cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(k, j);
     else
-        vecjk = k->r() - j->r();
+        vecjk = j->r() - k->r();
     if (k->cell()->mimRequired(l->cell()))
-        veckl = box_->minimumVector(k, l);
+        veckl = box_->minimumVector(l, k);
     else
-        veckl = l->r() - k->r();
+        veckl = k->r() - l->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = improper.force(phi_ * DEGRAD);
@@ -893,17 +834,17 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesImpr
     // Calculate vectors, ensuring we account for minimum image
     Vec3<double> vecji, vecjk, veckl;
     if (j->cell()->mimRequired(i->cell()))
-        vecji = box_->minimumVector(j, i);
+        vecji = box_->minimumVector(i, j);
     else
-        vecji = i->r() - j->r();
+        vecji = j->r() - i->r();
     if (j->cell()->mimRequired(k->cell()))
-        vecjk = box_->minimumVector(j, k);
+        vecjk = box_->minimumVector(k, j);
     else
-        vecjk = k->r() - j->r();
+        vecjk = j->r() - k->r();
     if (k->cell()->mimRequired(l->cell()))
-        veckl = box_->minimumVector(k, l);
+        veckl = box_->minimumVector(l, k);
     else
-        veckl = l->r() - k->r();
+        veckl = k->r() - l->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = imp.force(phi_ * DEGRAD);
@@ -946,8 +887,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> onlyThis, const SpeciesImpr
 void ForceKernel::forces(const SpeciesImproper &imp)
 {
     // Calculate vectors, ensuring we account for minimum image
-    const Vec3<double> vecji = imp.i()->r() - imp.j()->r(), vecjk = imp.k()->r() - imp.j()->r(),
-                       veckl = imp.l()->r() - imp.k()->r();
+    const Vec3<double> vecji = imp.j()->r() - imp.i()->r(), vecjk = imp.j()->r() - imp.k()->r(),
+                       veckl = imp.k()->r() - imp.l()->r();
 
     calculateTorsionParameters(vecji, vecjk, veckl);
     const auto du_dphi = imp.force(phi_ * DEGRAD);

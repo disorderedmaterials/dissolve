@@ -149,20 +149,9 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
 ProcedureNode::NodeExecutionResult Collect2DProcedureNode::execute(ProcessPool &procPool, Configuration *cfg,
                                                                    std::string_view prefix, GenericList &targetList)
 {
-#ifdef CHECKS
-    if (!xObservable_)
-    {
-        Messenger::error("No CalculateProcedureNodeBase pointer set for X observable in Collect2DProcedureNode '{}'.\n",
-                         name());
-        return ProcedureNode::Failure;
-    }
-    if (!yObservable_)
-    {
-        Messenger::error("No CalculateProcedureNodeBase pointer set for Y observable in Collect2DProcedureNode '{}'.\n",
-                         name());
-        return ProcedureNode::Failure;
-    }
-#endif
+    assert(xObservable_);
+    assert(yObservable_);
+
     // Bin the current value of the observable
     if (histogram_->bin(xObservable_->value(xObservableIndex_), yObservable_->value(yObservableIndex_)) && subCollectBranch_)
         return subCollectBranch_->execute(procPool, cfg, prefix, targetList);
@@ -174,13 +163,8 @@ ProcedureNode::NodeExecutionResult Collect2DProcedureNode::execute(ProcessPool &
 bool Collect2DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::string_view prefix,
                                       GenericList &targetList)
 {
-#ifdef CHECKS
-    if (!histogram_)
-    {
-        Messenger::error("No Data2D pointer set in Collect2DProcedureNode '{}'.\n", name());
-        return ProcedureNode::Failure;
-    }
-#endif
+    assert(histogram_);
+
     // Accumulate the current binned data
     histogram_->accumulate();
 

@@ -9,9 +9,9 @@
 #include "gui/maintab.h"
 #include "gui/ui_forcefieldtab.h"
 
-Q_DECLARE_METATYPE(MasterIntra *)
-Q_DECLARE_METATYPE(AtomType *)
-Q_DECLARE_METATYPE(PairPotential *)
+Q_DECLARE_METATYPE(const MasterIntra *)
+Q_DECLARE_METATYPE(const AtomType *)
+Q_DECLARE_METATYPE(const PairPotential *)
 
 // Forcefield Tab
 class ForcefieldTab : public QWidget, public MainTab
@@ -44,17 +44,17 @@ class ForcefieldTab : public QWidget, public MainTab
      */
     private:
     // Row update function for BondsTable
-    void updateBondsTableRow(int row, MasterIntra *masterBond, bool createItems);
+    void updateBondsTableRow(int row, const MasterIntra *masterBond, bool createItems);
     // Row update function for AnglesTable
-    void updateAnglesTableRow(int row, MasterIntra *masterAngle, bool createItems);
+    void updateAnglesTableRow(int row, const MasterIntra *masterAngle, bool createItems);
     // Row update function for TorsionsTable
-    void updateTorsionsTableRow(int row, MasterIntra *masterTorsion, bool createItems);
+    void updateTorsionsTableRow(int row, const MasterIntra *masterTorsion, bool createItems);
     // Row update function for ImpropersTable
-    void updateImpropersTableRow(int row, MasterIntra *masterImproper, bool createItems);
+    void updateImpropersTableRow(int row, const MasterIntra *masterImproper, bool createItems);
     // Row update function for AtomTypesTable
     void updateAtomTypesTableRow(int row, std::shared_ptr<AtomType> atomType, bool createItems);
     // Row update function for PairPotentialsTable
-    void updatePairPotentialsTableRow(int row, PairPotential *pairPotential, bool createItems);
+    void updatePairPotentialsTableRow(int row, const PairPotential *pairPotential, bool createItems);
 
     protected:
     // Update controls in tab

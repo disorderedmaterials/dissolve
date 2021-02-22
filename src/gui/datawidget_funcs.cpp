@@ -46,7 +46,7 @@ DataViewer *DataWidget::dataViewer() { return ui_.DataView; }
 // Interaction
 void DataWidget::on_InteractionViewButton_clicked(bool checked)
 {
-    dataViewer()->setInteractionMode(DataViewer::DefaultInteraction);
+    dataViewer()->setInteractionMode(DataViewer::InteractionMode::Default);
 }
 
 // Graph
@@ -191,7 +191,7 @@ void DataWidget::on_ViewCopyToClipboardButton_clicked(bool checked) { dataViewer
  */
 
 // Data tree top-level item update function
-void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int topLevelItemIndex, RenderableGroup *data,
+void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int topLevelItemIndex, const RenderableGroup *data,
                                                 bool createItem)
 {
     QTreeWidgetItem *item;
@@ -216,7 +216,8 @@ void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int top
 }
 
 // Data tree item update function
-void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, Renderable *data, bool createItem)
+void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, const Renderable *data,
+                                            bool createItem)
 {
     QTreeWidgetItem *item;
     if (createItem)
@@ -280,12 +281,11 @@ void DataWidget::updateToolbar()
     // Set current interaction mode
     switch (dataViewer()->interactionMode())
     {
-        case (DataViewer::DefaultInteraction):
+        case (DataViewer::InteractionMode::Default):
             ui_.InteractionViewButton->setChecked(true);
             break;
-            // 		case (DataViewer::ZoomInteraction):
-            // 			ui_.InteractionZoomutton->setChecked(true);
-            // 			break;
+        default:
+            break;
     }
 
     // Controls reflecting the state of options in the underlying DataViewer

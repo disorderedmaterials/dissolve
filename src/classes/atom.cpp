@@ -55,22 +55,10 @@ void Atom::setLocalTypeIndex(int id) { localTypeIndex_ = id; }
 int Atom::localTypeIndex() const { return localTypeIndex_; }
 
 // Set master AtomType index
-void Atom::setMasterTypeIndex(int id)
-{
-    if (masterTypeIndex_ != -1)
-        Messenger::warn("Warning: Overwriting master AtomType index for atom...\n");
-    masterTypeIndex_ = id;
-}
+void Atom::setMasterTypeIndex(int id) { masterTypeIndex_ = id; }
 
 // Return master AtomType index
-int Atom::masterTypeIndex() const
-{
-#ifdef CHECKS
-    if (masterTypeIndex_ == -1)
-        Messenger::warn("Global AtomType index has not yet been set for atom...\n");
-#endif
-    return masterTypeIndex_;
-}
+int Atom::masterTypeIndex() const { return masterTypeIndex_; }
 
 /*
  * Location
@@ -117,23 +105,9 @@ void Atom::translateCoordinates(double dx, double dy, double dz) { setCoordinate
 // Return scaling factor to employ with specified Atom
 double Atom::scaling(std::shared_ptr<Atom> j) const
 {
-#ifdef CHECKS
-    if (!speciesAtom_)
-    {
-        Messenger::error("Source SpeciesAtom pointer has not been set in Atom {}, so can't return scaling().\n", arrayIndex());
-        return 0.0;
-    }
-    if (!j)
-    {
-        Messenger::error("Partner Atom 'j' not passed, so can't return scaling().\n");
-        return 0.0;
-    }
-    if (!j->speciesAtom())
-    {
-        Messenger::error("SpeciesAtom pointer has not been set in partner Atom {}, so can't return scaling().\n",
-                         j->arrayIndex());
-        return 0.0;
-    }
-#endif
+    assert(speciesAtom_ != nullptr);
+    assert(j != nullptr);
+    assert(j->speciesAtom() != nullptr);
+
     return speciesAtom_->scaling(j->speciesAtom());
 }

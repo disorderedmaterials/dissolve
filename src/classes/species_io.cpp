@@ -7,7 +7,7 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "data/elements.h"
-#include "data/fflibrary.h"
+#include "data/ff/library.h"
 #include "data/isotopes.h"
 #include <string>
 
@@ -76,17 +76,18 @@ bool Species::loadFromXYZ(std::string_view filename)
 EnumOptions<Species::SpeciesKeyword> Species::keywords()
 {
     static EnumOptionsList SpeciesKeywords =
-        EnumOptionsList() << EnumOption(Species::AngleKeyword, "Angle", 3, 6) << EnumOption(Species::AtomKeyword, "Atom", 6, 7)
-                          << EnumOption(Species::BondKeyword, "Bond", 2, 5)
+        EnumOptionsList() << EnumOption(Species::AngleKeyword, "Angle", 3, EnumOption::AnyNumberOfArguments)
+                          << EnumOption(Species::AtomKeyword, "Atom", 6, 7)
+                          << EnumOption(Species::BondKeyword, "Bond", 2, EnumOption::AnyNumberOfArguments)
                           << EnumOption(Species::BondTypeKeyword, "BondType", 3)
                           << EnumOption(Species::ChargeKeyword, "Charge", 2)
-                          << EnumOption(Species::CoordinateSetsKeyword, "CoordinateSets", 2, 99)
+                          << EnumOption(Species::CoordinateSetsKeyword, "CoordinateSets", 2, EnumOption::AnyNumberOfArguments)
                           << EnumOption(Species::EndSpeciesKeyword, "EndSpecies")
-                          << EnumOption(Species::ForcefieldKeyword, "Forcefield", 1, 2)
-                          << EnumOption(Species::ImproperKeyword, "Improper", 5, 9)
+                          << EnumOption(Species::ForcefieldKeyword, "Forcefield", 1)
+                          << EnumOption(Species::ImproperKeyword, "Improper", 5, EnumOption::AnyNumberOfArguments)
                           << EnumOption(Species::IsotopologueKeyword, "Isotopologue", EnumOption::OneOrMoreArguments)
                           << EnumOption(Species::SiteKeyword, "Site", 1)
-                          << EnumOption(Species::TorsionKeyword, "Torsion", 4, 9);
+                          << EnumOption(Species::TorsionKeyword, "Torsion", 4, EnumOption::AnyNumberOfArguments);
 
     static EnumOptions<Species::SpeciesKeyword> options("SpeciesKeyword", SpeciesKeywords);
 
@@ -106,6 +107,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     OptionalReferenceWrapper<SpeciesBond> b;
     OptionalReferenceWrapper<SpeciesImproper> imp;
     OptionalReferenceWrapper<SpeciesTorsion> torsion;
+    OptionalReferenceWrapper<MasterIntra> master;
     SpeciesSite *site;
     SpeciesBond::BondFunction bf;
     SpeciesAngle::AngleFunction af;
@@ -154,7 +156,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 else if (parser.argsv(4)[0] == '@')
                 {
                     // Search through master Angle parameters to see if this name exists
-                    MasterIntra *master = coreData.hasMasterAngle(parser.argsv(4));
+                    master = coreData.getMasterAngle(parser.argsv(4));
                     if (!master)
                     {
                         Messenger::error("No master Angle parameters named '{}' exist.\n", &parser.argsv(4)[1]);
@@ -162,7 +164,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
 
-                    a->get().setMasterParameters(master);
+                    a->get().setMasterParameters(&master->get());
                 }
                 else
                 {
@@ -240,7 +242,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 else if (parser.argsv(3)[0] == '@')
                 {
                     // Search through master Bond parameters to see if this name exists
-                    MasterIntra *master = coreData.hasMasterBond(parser.argsv(3));
+                    master = coreData.getMasterBond(parser.argsv(3));
                     if (!master)
                     {
                         Messenger::error("No master Bond parameters named '{}' exist.\n", &parser.argsv(3)[1]);
@@ -248,7 +250,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
 
-                    b->get().setMasterParameters(master);
+                    b->get().setMasterParameters(&master->get());
                 }
                 else
                 {
@@ -375,7 +377,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 if (parser.argsv(5)[0] == '@')
                 {
                     // Search through master Improper parameters to see if this name exists
-                    MasterIntra *master = coreData.hasMasterImproper(parser.argsv(5));
+                    auto master = coreData.getMasterImproper(parser.argsv(5));
                     if (!master)
                     {
                         Messenger::error("No master Improper parameters named '{}' exist.\n", &parser.argsv(5)[1]);
@@ -390,7 +392,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         error = true;
                         break;
                     }
-                    imp->get().setMasterParameters(master);
+                    imp->get().setMasterParameters(&master->get());
                 }
                 else
                 {
@@ -498,7 +500,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 else if (parser.argsv(5)[0] == '@')
                 {
                     // Search through master Torsion parameters to see if this name exists
-                    MasterIntra *master = coreData.hasMasterTorsion(parser.argsv(5));
+                    auto master = coreData.getMasterTorsion(parser.argsv(5));
                     if (!master)
                     {
                         Messenger::error("No master Torsion parameters named '{}' exist.\n", &parser.argsv(5)[1]);
@@ -506,7 +508,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         break;
                     }
 
-                    torsion->get().setMasterParameters(master);
+                    torsion->get().setMasterParameters(&master->get());
                 }
                 else
                 {

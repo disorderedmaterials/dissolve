@@ -16,7 +16,7 @@ SpeciesIntra::SpeciesIntra()
     inCycle_ = false;
 }
 
-SpeciesIntra::SpeciesIntra(SpeciesIntra &source) { (*this) = source; }
+SpeciesIntra::SpeciesIntra(const SpeciesIntra &source) { (*this) = source; }
 
 SpeciesIntra &SpeciesIntra::operator=(const SpeciesIntra &source)
 {
@@ -28,6 +28,7 @@ SpeciesIntra &SpeciesIntra::operator=(const SpeciesIntra &source)
     attached_[0] = source.attached_[0];
     attached_[1] = source.attached_[1];
     inCycle_ = source.inCycle_;
+    form_ = source.form_;
 
     return *this;
 }
@@ -90,15 +91,6 @@ void SpeciesIntra::addParameter(double param)
 // Set existing parameter
 void SpeciesIntra::setParameter(int id, double value)
 {
-#ifdef CHECKS
-    if ((id < 0) || (id >= parameters_.size()))
-    {
-        Messenger::error("Tried to set a parameter in a SpeciesIntra definition, but the index is out of range ({} vs "
-                         "{} parameters current).\n",
-                         id, parameters_.size());
-        return;
-    }
-#endif
     // Does this intramolecular interaction reference a set of master parameters?
     if (masterParameters_)
     {

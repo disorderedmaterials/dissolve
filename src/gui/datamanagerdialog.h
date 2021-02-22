@@ -8,7 +8,7 @@
 #include "templates/list.h"
 #include <QDialog>
 
-Q_DECLARE_METATYPE(ReferencePoint *)
+Q_DECLARE_METATYPE(const ReferencePoint *)
 
 // Forward Declarations
 class Dissolve;
@@ -43,7 +43,7 @@ class DataManagerDialog : public QDialog
     // Update the specified table of GenericItems, optionally filtering them by name and description
     void filterTable(QTableWidget *table, GenericItem *current, QString filter);
     // Update ReferencePoint table row
-    void referencePointRowUpdate(int row, ReferencePoint *refPoint, bool createItems);
+    void referencePointRowUpdate(int row, const ReferencePoint *refPoint, bool createItems);
     // Return currently-selected ReferencePoint
     ReferencePoint *currentReferencePoint() const;
     // Update controls

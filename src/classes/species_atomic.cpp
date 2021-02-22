@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "classes/atomtype.h"
 #include "classes/species.h"
 #include "data/atomicmasses.h"
 
@@ -31,6 +32,7 @@ void Species::removeAtom(SpeciesAtom *i)
 
     // Now remove the atom
     atoms_.remove(i);
+    selectedAtoms_.remove(i);
 
     ++version_;
 }
@@ -59,24 +61,12 @@ void Species::setAtomCoordinates(SpeciesAtom *i, Vec3<double> r)
 }
 
 // Set coordinates of specified atom (by index and individual coordinates)
-void Species::setAtomCoordinates(int id, double x, double y, double z)
-{
-#ifdef CHECKS
-    if ((id < 0) || (id >= atoms_.nItems()))
-    {
-        Messenger::error("Atom index {} is out of range - nAtoms = {}\n", id, atoms_.nItems());
-        return;
-    }
-#endif
-
-    atoms_[id]->setCoordinates(x, y, z);
-}
+void Species::setAtomCoordinates(int id, double x, double y, double z) { atoms_[id]->setCoordinates(x, y, z); }
 
 // Transmute specified SpeciesAtom
 void Species::transmuteAtom(SpeciesAtom *i, Elements::Element newZ)
 {
-    if (!i)
-        return;
+    assert(i);
 
     // Nothing to do if current element matches that supplied
     if (i->Z() == newZ)
@@ -170,15 +160,6 @@ SpeciesAtom *Species::selectedAtom(int n)
         return ri->item();
 }
 
-// Return total charge of species from local atomic charges
-double Species::totalChargeOnAtoms()
-{
-    double totalQ = 0.0;
-    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
-        totalQ += i->charge();
-    return totalQ;
-}
-
 // Return number of selected Atoms
 int Species::nSelectedAtoms() const { return selectedAtoms_.nItems(); }
 
@@ -219,4 +200,26 @@ void Species::clearAtomTypes()
         i->setAtomType(nullptr);
 
     usedAtomTypes_.clear();
+}
+
+// Return total charge of species from local/atomtype atomic charges
+double Species::totalCharge(bool useAtomTypes)
+{
+    double totalQ = 0.0;
+    if (useAtomTypes)
+        for (auto *i = atoms_.first(); i != nullptr; i = i->next())
+        {
+            if (!i->atomType())
+            {
+                Messenger::warn(
+                    "No atom type assigned to atom index {} in species '{}', so can't calculate correct total charge.\n",
+                    i->userIndex(), name_);
+                continue;
+            }
+            totalQ += i->atomType()->charge();
+        }
+    else
+        for (auto *i = atoms_.first(); i != nullptr; i = i->next())
+            totalQ += i->charge();
+    return totalQ;
 }
