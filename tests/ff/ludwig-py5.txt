@@ -34,151 +34,151 @@ Species 'Py5'
   Atom   27    H  -5.870500e+00  2.299700e+00  -1.353800e+00  'None'  0.0
 
   # Bonds
-  Bond    1    2  
-  Bond    1    6  
-  Bond    1   12  
-  Bond    2    3  
-  Bond    2    7  
-  Bond    3    4  
-  Bond    3    8  
-  Bond    4    5  
-  Bond    4    9  
-  Bond    5    6  
-  Bond    5   10  
-  Bond    6   11  
-  Bond   12   13  
-  Bond   12   14  
-  Bond   12   15  
-  Bond   13   16  
-  Bond   13   17  
-  Bond   13   18  
-  Bond   16   19  
-  Bond   16   20  
-  Bond   16   21  
-  Bond   19   22  
-  Bond   19   23  
-  Bond   19   24  
-  Bond   22   25  
-  Bond   22   26  
-  Bond   22   27  
+  Bond    1    2
+  Bond    1    6
+  Bond    1   12
+  Bond    2    3
+  Bond    2    7
+  Bond    3    4
+  Bond    3    8
+  Bond    4    5
+  Bond    4    9
+  Bond    5    6
+  Bond    5   10
+  Bond    6   11
+  Bond   12   13
+  Bond   12   14
+  Bond   12   15
+  Bond   13   16
+  Bond   13   17
+  Bond   13   18
+  Bond   16   19
+  Bond   16   20
+  Bond   16   21
+  Bond   19   22
+  Bond   19   23
+  Bond   19   24
+  Bond   22   25
+  Bond   22   26
+  Bond   22   27
 
   # Angles
-  Angle    6    1    2  
-  Angle   12    1    2  
-  Angle   12    1    6  
-  Angle    1    2    3  
-  Angle    1    2    7  
-  Angle    7    2    3  
-  Angle    2    3    4  
-  Angle    2    3    8  
-  Angle    8    3    4  
-  Angle    3    4    5  
-  Angle    3    4    9  
-  Angle    9    4    5  
-  Angle    1    6    5  
-  Angle    4    5    6  
-  Angle    4    5   10  
-  Angle   10    5    6  
-  Angle    1    6   11  
-  Angle    5    6   11  
-  Angle    1   12   13  
-  Angle    1   12   14  
-  Angle   14   12   13  
-  Angle    1   12   15  
-  Angle   15   12   13  
-  Angle   15   12   14  
-  Angle   12   13   16  
-  Angle   12   13   17  
-  Angle   17   13   16  
-  Angle   12   13   18  
-  Angle   18   13   16  
-  Angle   18   13   17  
-  Angle   13   16   19  
-  Angle   13   16   20  
-  Angle   20   16   19  
-  Angle   13   16   21  
-  Angle   21   16   19  
-  Angle   21   16   20  
-  Angle   16   19   22  
-  Angle   16   19   23  
-  Angle   23   19   22  
-  Angle   16   19   24  
-  Angle   24   19   22  
-  Angle   24   19   23  
-  Angle   19   22   25  
-  Angle   19   22   26  
-  Angle   26   22   25  
-  Angle   19   22   27  
-  Angle   27   22   25  
-  Angle   27   22   26  
+  Angle    6    1    2
+  Angle   12    1    2
+  Angle   12    1    6
+  Angle    1    2    3
+  Angle    1    2    7
+  Angle    7    2    3
+  Angle    2    3    4
+  Angle    2    3    8
+  Angle    8    3    4
+  Angle    3    4    5
+  Angle    3    4    9
+  Angle    9    4    5
+  Angle    1    6    5
+  Angle    4    5    6
+  Angle    4    5   10
+  Angle   10    5    6
+  Angle    1    6   11
+  Angle    5    6   11
+  Angle    1   12   13
+  Angle    1   12   14
+  Angle   14   12   13
+  Angle    1   12   15
+  Angle   15   12   13
+  Angle   15   12   14
+  Angle   12   13   16
+  Angle   12   13   17
+  Angle   17   13   16
+  Angle   12   13   18
+  Angle   18   13   16
+  Angle   18   13   17
+  Angle   13   16   19
+  Angle   13   16   20
+  Angle   20   16   19
+  Angle   13   16   21
+  Angle   21   16   19
+  Angle   21   16   20
+  Angle   16   19   22
+  Angle   16   19   23
+  Angle   23   19   22
+  Angle   16   19   24
+  Angle   24   19   22
+  Angle   24   19   23
+  Angle   19   22   25
+  Angle   19   22   26
+  Angle   26   22   25
+  Angle   19   22   27
+  Angle   27   22   25
+  Angle   27   22   26
 
   # Torsions
-  Torsion    6    1    2    3  
-  Torsion   12    1    2    3  
-  Torsion    6    1    2    7  
-  Torsion   12    1    2    7  
-  Torsion    1    2    3    4  
-  Torsion    7    2    3    4  
-  Torsion    1    2    3    8  
-  Torsion    7    2    3    8  
-  Torsion    2    3    4    5  
-  Torsion    8    3    4    5  
-  Torsion    2    3    4    9  
-  Torsion    8    3    4    9  
-  Torsion    2    1    6    5  
-  Torsion   12    1    6    5  
-  Torsion    3    4    5    6  
-  Torsion    9    4    5    6  
-  Torsion    4    5    6    1  
-  Torsion    3    4    5   10  
-  Torsion    9    4    5   10  
-  Torsion   10    5    6    1  
-  Torsion    2    1    6   11  
-  Torsion   12    1    6   11  
-  Torsion    4    5    6   11  
-  Torsion   10    5    6   11  
-  Torsion    2    1   12   13  
-  Torsion    6    1   12   13  
-  Torsion    2    1   12   14  
-  Torsion    6    1   12   14  
-  Torsion    2    1   12   15  
-  Torsion    6    1   12   15  
-  Torsion    1   12   13   16  
-  Torsion   14   12   13   16  
-  Torsion   15   12   13   16  
-  Torsion    1   12   13   17  
-  Torsion   14   12   13   17  
-  Torsion   15   12   13   17  
-  Torsion    1   12   13   18  
-  Torsion   14   12   13   18  
-  Torsion   15   12   13   18  
-  Torsion   12   13   16   19  
-  Torsion   17   13   16   19  
-  Torsion   18   13   16   19  
-  Torsion   12   13   16   20  
-  Torsion   17   13   16   20  
-  Torsion   18   13   16   20  
-  Torsion   12   13   16   21  
-  Torsion   17   13   16   21  
-  Torsion   18   13   16   21  
-  Torsion   13   16   19   22  
-  Torsion   20   16   19   22  
-  Torsion   21   16   19   22  
-  Torsion   13   16   19   23  
-  Torsion   20   16   19   23  
-  Torsion   21   16   19   23  
-  Torsion   13   16   19   24  
-  Torsion   20   16   19   24  
-  Torsion   21   16   19   24  
-  Torsion   16   19   22   25  
-  Torsion   23   19   22   25  
-  Torsion   24   19   22   25  
-  Torsion   16   19   22   26  
-  Torsion   23   19   22   26  
-  Torsion   24   19   22   26  
-  Torsion   16   19   22   27  
-  Torsion   23   19   22   27  
-  Torsion   24   19   22   27  
+  Torsion    6    1    2    3
+  Torsion   12    1    2    3
+  Torsion    6    1    2    7
+  Torsion   12    1    2    7
+  Torsion    1    2    3    4
+  Torsion    7    2    3    4
+  Torsion    1    2    3    8
+  Torsion    7    2    3    8
+  Torsion    2    3    4    5
+  Torsion    8    3    4    5
+  Torsion    2    3    4    9
+  Torsion    8    3    4    9
+  Torsion    2    1    6    5
+  Torsion   12    1    6    5
+  Torsion    3    4    5    6
+  Torsion    9    4    5    6
+  Torsion    4    5    6    1
+  Torsion    3    4    5   10
+  Torsion    9    4    5   10
+  Torsion   10    5    6    1
+  Torsion    2    1    6   11
+  Torsion   12    1    6   11
+  Torsion    4    5    6   11
+  Torsion   10    5    6   11
+  Torsion    2    1   12   13
+  Torsion    6    1   12   13
+  Torsion    2    1   12   14
+  Torsion    6    1   12   14
+  Torsion    2    1   12   15
+  Torsion    6    1   12   15
+  Torsion    1   12   13   16
+  Torsion   14   12   13   16
+  Torsion   15   12   13   16
+  Torsion    1   12   13   17
+  Torsion   14   12   13   17
+  Torsion   15   12   13   17
+  Torsion    1   12   13   18
+  Torsion   14   12   13   18
+  Torsion   15   12   13   18
+  Torsion   12   13   16   19
+  Torsion   17   13   16   19
+  Torsion   18   13   16   19
+  Torsion   12   13   16   20
+  Torsion   17   13   16   20
+  Torsion   18   13   16   20
+  Torsion   12   13   16   21
+  Torsion   17   13   16   21
+  Torsion   18   13   16   21
+  Torsion   13   16   19   22
+  Torsion   20   16   19   22
+  Torsion   21   16   19   22
+  Torsion   13   16   19   23
+  Torsion   20   16   19   23
+  Torsion   21   16   19   23
+  Torsion   13   16   19   24
+  Torsion   20   16   19   24
+  Torsion   21   16   19   24
+  Torsion   16   19   22   25
+  Torsion   23   19   22   25
+  Torsion   24   19   22   25
+  Torsion   16   19   22   26
+  Torsion   23   19   22   26
+  Torsion   24   19   22   26
+  Torsion   16   19   22   27
+  Torsion   23   19   22   27
+  Torsion   24   19   22   27
 
   Forcefield  'Ludwig/Py5'
 EndSpecies
