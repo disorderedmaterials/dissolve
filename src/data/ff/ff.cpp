@@ -260,6 +260,25 @@ OptionalReferenceWrapper<const ForcefieldImproperTerm> Forcefield::getImproperTe
  * Term Assignment
  */
 
+// Find / determine atom type(s) for the specified atom(s)
+std::vector<std::reference_wrapper<const ForcefieldAtomType>>
+Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms, bool determineType) const
+{
+    std::vector<std::reference_wrapper<const ForcefieldAtomType>> types;
+    for (const auto *i : atoms)
+    {
+        auto optType = determineType ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->Z());
+        if (!optType)
+        {
+            Messenger::error("Couldn't find or assign type for atom {}.\n", i->userIndex());
+            return {};
+        }
+        types.emplace_back(*optType);
+    }
+
+    return types;
+}
+
 // Assign suitable AtomType to the supplied atom
 bool Forcefield::assignAtomType(SpeciesAtom *i, CoreData &coreData) const
 {
@@ -329,20 +348,14 @@ bool Forcefield::assignBondTermParameters(SpeciesBond &bond, bool determineTypes
     auto *i = bond.i();
     auto *j = bond.j();
 
-    auto optTypeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->Z());
-    if (!optTypeI)
-        return Messenger::error("Couldn't find or assign type for atom {}.\n", i->userIndex());
-    const ForcefieldAtomType &typeI = *optTypeI;
+    auto atomTypes = getAtomTypes({i, j}, determineTypes);
+    if (atomTypes.size() != 2)
+        return false;
 
-    auto optTypeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->Z());
-    if (!optTypeJ)
-        return Messenger::error("Couldn't find or assign type for atom {}.\n", j->userIndex());
-    const ForcefieldAtomType &typeJ = *optTypeJ;
-
-    auto optTerm = getBondTerm(typeI, typeJ);
+    auto optTerm = getBondTerm(atomTypes[0], atomTypes[1]);
     if (!optTerm)
         return Messenger::error("Failed to locate parameters for bond {}-{} ({}-{}).\n", i->userIndex(), j->userIndex(),
-                                typeI.equivalentName(), typeJ.equivalentName());
+                                atomTypes[0].get().equivalentName(), atomTypes[1].get().equivalentName());
     const ForcefieldBondTerm &term = *optTerm;
 
     bond.setForm(term.form());
@@ -359,25 +372,15 @@ bool Forcefield::assignAngleTermParameters(SpeciesAngle &angle, bool determineTy
     auto *j = angle.j();
     auto *k = angle.k();
 
-    auto optTypeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->Z());
-    if (!optTypeI)
-        return Messenger::error("Couldn't find or assign type for atom {}.\n", i->userIndex());
-    const ForcefieldAtomType &typeI = *optTypeI;
+    auto atomTypes = getAtomTypes({i, j, k}, determineTypes);
+    if (atomTypes.size() != 3)
+        return false;
 
-    auto optTypeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->Z());
-    if (!optTypeJ)
-        return Messenger::error("Couldn't find or assign type for atom {}.\n", j->userIndex());
-    const ForcefieldAtomType &typeJ = *optTypeJ;
-
-    auto optTypeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->Z());
-    if (!optTypeK)
-        return Messenger::error("Couldn't find or assign type for atom {}.\n", k->userIndex());
-    const ForcefieldAtomType &typeK = *optTypeK;
-
-    auto optTerm = getAngleTerm(typeI, typeJ, typeK);
+    auto optTerm = getAngleTerm(atomTypes[0], atomTypes[1], atomTypes[2]);
     if (!optTerm)
         return Messenger::error("Failed to locate parameters for angle {}-{}-{} ({}-{}-{}).\n", i->userIndex(), j->userIndex(),
-                                k->userIndex(), typeI.equivalentName(), typeJ.equivalentName(), typeK.equivalentName());
+                                k->userIndex(), atomTypes[0].get().equivalentName(), atomTypes[1].get().equivalentName(),
+                                atomTypes[2].get().equivalentName());
     const ForcefieldAngleTerm &term = *optTerm;
 
     angle.setForm(term.form());
@@ -395,31 +398,16 @@ bool Forcefield::assignTorsionTermParameters(SpeciesTorsion &torsion, bool deter
     SpeciesAtom *k = torsion.k();
     SpeciesAtom *l = torsion.l();
 
-    auto optTypeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->Z());
-    if (!optTypeI)
-        return Messenger::error("Couldn't find or assign type for atom {}.\n", i->userIndex());
-    const ForcefieldAtomType &typeI = *optTypeI;
+    auto atomTypes = getAtomTypes({i, j, k, l}, determineTypes);
+    if (atomTypes.size() != 4)
+        return false;
 
-    auto optTypeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->Z());
-    if (!optTypeJ)
-        return Messenger::error("Couldn't find or assign type for atom {}.\n", j->userIndex());
-    const ForcefieldAtomType &typeJ = *optTypeJ;
-
-    auto optTypeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->Z());
-    if (!optTypeK)
-        return Messenger::error("Couldn't find or assign type for atom {}.\n", k->userIndex());
-    const ForcefieldAtomType &typeK = *optTypeK;
-
-    auto optTypeL = determineTypes ? determineAtomType(l) : atomTypeByName(l->atomType()->name(), l->Z());
-    if (!optTypeL)
-        return Messenger::error("Couldn't find or assign type for atom {}.\n", l->userIndex());
-    const ForcefieldAtomType &typeL = *optTypeL;
-
-    auto optTerm = getTorsionTerm(typeI, typeJ, typeK, typeL);
+    auto optTerm = getTorsionTerm(atomTypes[0], atomTypes[1], atomTypes[2], atomTypes[3]);
     if (!optTerm)
         return Messenger::error("Failed to locate parameters for torsion {}-{}-{}-{} ({}-{}-{}-{}).\n", i->userIndex(),
-                                j->userIndex(), k->userIndex(), l->userIndex(), typeI.equivalentName(), typeJ.equivalentName(),
-                                typeK.equivalentName(), typeL.equivalentName());
+                                j->userIndex(), k->userIndex(), l->userIndex(), atomTypes[0].get().equivalentName(),
+                                atomTypes[1].get().equivalentName(), atomTypes[2].get().equivalentName(),
+                                atomTypes[3].get().equivalentName());
     const ForcefieldTorsionTerm &term = *optTerm;
 
     torsion.setForm(term.form());
@@ -432,29 +420,14 @@ bool Forcefield::assignTorsionTermParameters(SpeciesTorsion &torsion, bool deter
 bool Forcefield::assignImproperTermParameters(ForcefieldImproperTerm &improper, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k,
                                               SpeciesAtom *l, bool determineTypes) const
 {
-    auto optTypeI = determineTypes ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->Z());
-    if (!optTypeI)
-        return Messenger::error("Couldn't find or assign type for atom {}.\n", i->userIndex());
-    const ForcefieldAtomType &typeI = *optTypeI;
+    auto atomTypes = getAtomTypes({i, j, k, l}, determineTypes);
+    if (atomTypes.size() != 4)
+        return false;
 
-    auto optTypeJ = determineTypes ? determineAtomType(j) : atomTypeByName(j->atomType()->name(), j->Z());
-    if (!optTypeJ)
-        return Messenger::error("Couldn't find or assign type for atom {}.\n", j->userIndex());
-    const ForcefieldAtomType &typeJ = *optTypeJ;
-
-    auto optTypeK = determineTypes ? determineAtomType(k) : atomTypeByName(k->atomType()->name(), k->Z());
-    if (!optTypeK)
-        return Messenger::error("Couldn't find or assign type for atom {}.\n", k->userIndex());
-    const ForcefieldAtomType &typeK = *optTypeK;
-
-    auto optTypeL = determineTypes ? determineAtomType(l) : atomTypeByName(l->atomType()->name(), l->Z());
-    if (!optTypeL)
-        return Messenger::error("Couldn't find or assign type for atom {}.\n", l->userIndex());
-    const ForcefieldAtomType &typeL = *optTypeL;
-
-    auto optTerm = getImproperTerm(typeI, typeJ, typeK, typeL);
+    auto optTerm = getImproperTerm(atomTypes[0], atomTypes[1], atomTypes[2], atomTypes[3]);
     if (!optTerm)
-        improper = {typeI.name(), typeJ.name(), typeK.name(), typeL.name(), SpeciesImproper::NoForm};
+        improper = {atomTypes[0].get().equivalentName(), atomTypes[1].get().equivalentName(),
+                    atomTypes[2].get().equivalentName(), atomTypes[3].get().equivalentName(), SpeciesImproper::NoForm};
     else
         improper = *optTerm;
 

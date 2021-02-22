@@ -157,6 +157,11 @@ class Forcefield
     /*
      * Term Assignment
      */
+    private:
+    // Find / determine atom type(s) for the specified atom(s)
+    std::vector<std::reference_wrapper<const ForcefieldAtomType>> getAtomTypes(const std::vector<const SpeciesAtom *> &atoms,
+                                                                               bool determineType) const;
+
     protected:
     // Assign suitable AtomType to the supplied atom
     bool assignAtomType(SpeciesAtom *i, CoreData &coreData) const;
