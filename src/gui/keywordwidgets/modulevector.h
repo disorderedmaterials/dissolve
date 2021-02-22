@@ -5,8 +5,8 @@
 
 #include "gui/keywordwidgets/base.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/ui_modulereflist.h"
-#include "keywords/modulereflist.h"
+#include "gui/keywordwidgets/ui_modulevector.h"
+#include "keywords/modulevector.h"
 #include <QWidget>
 
 // Forward Declarations

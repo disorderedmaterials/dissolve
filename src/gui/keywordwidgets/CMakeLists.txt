@@ -12,7 +12,7 @@ set(keywordwidgets_MOC_HDRS
     isotopologueset.h
     module.h
     modulegroups.h
-    modulereflist.h
+    modulevector.h
     node.h
     nodeandinteger.h
     nodereflist.h
@@ -51,7 +51,7 @@ set(keywordwidgets_UIS
     isotopologueset.ui
     module.ui
     modulegroups.ui
-    modulereflist.ui
+    modulevector.ui
     node.ui
     nodeandinteger.ui
     nodereflist.ui
@@ -86,7 +86,7 @@ set(keywordwidgets_SRCS
     isotopologueset_funcs.cpp
     module_funcs.cpp
     modulegroups_funcs.cpp
-    modulereflist_funcs.cpp
+    modulevector_funcs.cpp
     node_funcs.cpp
     nodeandinteger_funcs.cpp
     nodereflist_funcs.cpp

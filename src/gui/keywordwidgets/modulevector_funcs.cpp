@@ -5,7 +5,7 @@
 #include "genericitems/listhelper.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/keywordwidgets/dropdown.h"
-#include "gui/keywordwidgets/modulereflist.h"
+#include "gui/keywordwidgets/modulevector.h"
 #include "module/module.h"
 #include <QComboBox>
 #include <QHBoxLayout>

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "keywords/modulereflist.h"
+#include "keywords/modulevector.h"
 #include "base/lineparser.h"
 #include "classes/coredata.h"
 #include "module/list.h"

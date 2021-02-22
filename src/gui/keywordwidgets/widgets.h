@@ -16,7 +16,7 @@
 #include "gui/keywordwidgets/isotopologueset.h"
 #include "gui/keywordwidgets/module.h"
 #include "gui/keywordwidgets/modulegroups.h"
-#include "gui/keywordwidgets/modulereflist.h"
+#include "gui/keywordwidgets/modulevector.h"
 #include "gui/keywordwidgets/node.h"
 #include "gui/keywordwidgets/nodeandinteger.h"
 #include "gui/keywordwidgets/nodereflist.h"
