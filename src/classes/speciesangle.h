@@ -33,6 +33,12 @@ class SpeciesAngle : public SpeciesIntra
     // Third SpeciesAtom in interaction
     SpeciesAtom *k_;
 
+    private:
+    // Assign the three atoms in the angle
+    void assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k);
+    // Detach from current atoms
+    void detach();
+
     public:
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
@@ -52,8 +58,6 @@ class SpeciesAngle : public SpeciesIntra
     bool matches(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) const;
     // Return whether all atoms in the interaction are currently selected
     bool isSelected() const;
-    // Detach from current atoms
-    void detach();
 
     /*
      * Interaction Parameters

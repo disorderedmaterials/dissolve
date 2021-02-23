@@ -8,7 +8,6 @@
 
 SpeciesIntra::SpeciesIntra()
 {
-    parent_ = nullptr;
     masterParameters_ = nullptr;
 
     attached_[0] = {};
@@ -20,7 +19,6 @@ SpeciesIntra::SpeciesIntra(const SpeciesIntra &source) { (*this) = source; }
 
 SpeciesIntra &SpeciesIntra::operator=(const SpeciesIntra &source)
 {
-    parent_ = source.parent_;
     masterParameters_ = source.masterParameters_;
     parameters_.clear();
     parameters_.resize(source.parameters_.size());
@@ -32,16 +30,6 @@ SpeciesIntra &SpeciesIntra::operator=(const SpeciesIntra &source)
 
     return *this;
 }
-
-/*
- * Basic Data
- */
-
-// Set parent Species
-void SpeciesIntra::setParent(Species *parent) { parent_ = parent; }
-
-// Return parent Species
-Species *SpeciesIntra::parent() const { return parent_; }
 
 /*
  * Interaction Parameters
@@ -65,9 +53,6 @@ void SpeciesIntra::detachFromMasterIntra()
 
     masterParameters_ = nullptr;
 }
-
-// Return parameter source
-const SpeciesIntra *SpeciesIntra::parameterSource() const { return (masterParameters_ ? masterParameters_ : this); }
 
 // Set functional form index of interaction
 void SpeciesIntra::setForm(int form) { form_ = form; }

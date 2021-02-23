@@ -2,25 +2,12 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/speciesangle.h"
-#include "base/processpool.h"
-#include "base/sysfunc.h"
 #include "classes/speciesatom.h"
-#include "templates/enumhelpers.h"
 
 SpeciesAngle::SpeciesAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k) : SpeciesIntra()
 {
-    i_ = i;
-    j_ = j;
-    k_ = k;
+    assign(i, j, k);
     form_ = SpeciesAngle::NoForm;
-
-    // Add ourself to the list of angles on each atom
-    if (i_ && j_ && k_)
-    {
-        i_->addAngle(*this);
-        j_->addAngle(*this);
-        k_->addAngle(*this);
-    }
 }
 
 SpeciesAngle::SpeciesAngle(SpeciesAngle &source) : SpeciesIntra(source) { this->operator=(source); }
@@ -36,15 +23,7 @@ SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) : SpeciesIntra(source)
     }
 
     // Copy data
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    if (i_ && j_ && k_)
-    {
-        i_->addAngle(*this);
-        j_->addAngle(*this);
-        k_->addAngle(*this);
-    }
+    assign(source.i_, source.j_, source.k_);
     form_ = source.form_;
 
     // Reset source data
@@ -56,15 +35,7 @@ SpeciesAngle::SpeciesAngle(SpeciesAngle &&source) : SpeciesIntra(source)
 SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &source)
 {
     // Copy data
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    if (i_ && j_ && k_)
-    {
-        i_->addAngle(*this);
-        j_->addAngle(*this);
-        k_->addAngle(*this);
-    }
+    assign(source.i_, source.j_, source.k_);
     form_ = source.form_;
     SpeciesIntra::operator=(source);
 
@@ -78,15 +49,7 @@ SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &&source)
         detach();
 
     // Copy data
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    if (i_ && j_ && k_)
-    {
-        i_->addAngle(*this);
-        j_->addAngle(*this);
-        k_->addAngle(*this);
-    }
+    assign(source.i_, source.j_, source.k_);
     form_ = source.form_;
     SpeciesIntra::operator=(source);
 
@@ -99,6 +62,19 @@ SpeciesAngle &SpeciesAngle::operator=(SpeciesAngle &&source)
 /*
  * Atom Information
  */
+
+// Assign the three atoms in the angle
+void SpeciesAngle::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
+{
+    i_ = i;
+    j_ = j;
+    k_ = k;
+    assert(i_ && j_ && k_);
+
+    i_->addAngle(*this);
+    j_->addAngle(*this);
+    k_->addAngle(*this);
+}
 
 // Return first SpeciesAtom
 SpeciesAtom *SpeciesAngle::i() const { return i_; }
@@ -225,7 +201,7 @@ double SpeciesAngle::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::InteractionType SpeciesAngle::type() const { return SpeciesIntra::AngleInteraction; }
+SpeciesIntra::InteractionType SpeciesAngle::type() const { return SpeciesIntra::InteractionType::Angle; }
 
 // Return energy for specified angle
 double SpeciesAngle::energy(double angleInDegrees) const

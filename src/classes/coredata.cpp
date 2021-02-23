@@ -109,7 +109,7 @@ MasterIntra &CoreData::addMasterBond(std::string_view name)
             fmt::format("Refused to add a new master Bond named '{}' since one with the same name already exists.\n", name)));
 
     // OK to add new master Bond
-    masterBonds_.emplace_back(name, SpeciesIntra::BondInteraction);
+    masterBonds_.emplace_back(name, SpeciesIntra::InteractionType::Bond);
     return masterBonds_.back();
 }
 
@@ -152,7 +152,7 @@ MasterIntra &CoreData::addMasterAngle(std::string_view name)
             fmt::format("Refused to add a new master Angle named '{}' since one with the same name already exists.\n", name)));
 
     // OK to add new master Angle
-    masterAngles_.emplace_back(name, SpeciesIntra::AngleInteraction);
+    masterAngles_.emplace_back(name, SpeciesIntra::InteractionType::Angle);
     return masterAngles_.back();
 }
 
@@ -195,7 +195,7 @@ MasterIntra &CoreData::addMasterTorsion(std::string_view name)
             "Refused to add a new master Torsion named '{}' since one with the same name already exists.\n", name)));
 
     // OK to add new master Torsion
-    masterTorsions_.emplace_back(name, SpeciesIntra::TorsionInteraction);
+    masterTorsions_.emplace_back(name, SpeciesIntra::InteractionType::Torsion);
     return masterTorsions_.back();
 }
 
@@ -238,7 +238,7 @@ MasterIntra &CoreData::addMasterImproper(std::string_view name)
             "Refused to add a new master Improper named '{}' since one with the same name already exists.\n", name)));
 
     // OK to add new master Improper
-    masterImpropers_.emplace_back(name, SpeciesIntra::ImproperInteraction);
+    masterImpropers_.emplace_back(name, SpeciesIntra::InteractionType::Improper);
     return masterImpropers_.back();
 }
 

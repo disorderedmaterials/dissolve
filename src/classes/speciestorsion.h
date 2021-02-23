@@ -35,12 +35,14 @@ class SpeciesTorsion : public SpeciesIntra
     SpeciesAtom *k_;
     // Fourth SpeciesAtom in interaction
     SpeciesAtom *l_;
+
+    private:
+    // Set Atoms involved in Torsion
+    void assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Detach from current atoms
     void detach();
 
     public:
-    // Set Atoms involved in Torsion
-    void assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
     // Return second SpeciesAtom

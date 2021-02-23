@@ -2,29 +2,12 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/speciestorsion.h"
-#include "base/processpool.h"
-#include "base/sysfunc.h"
 #include "classes/speciesatom.h"
-#include "templates/enumhelpers.h"
 
 SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) : SpeciesIntra()
 {
-
-    parent_ = nullptr;
-    i_ = i;
-    j_ = j;
-    k_ = k;
-    l_ = l;
+    assign(i, j, k, l);
     form_ = SpeciesTorsion::NoForm;
-
-    // Add ourself to the list of bonds on each atom
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addTorsion(*this, 0.5);
-        j_->addTorsion(*this, 0.5);
-        k_->addTorsion(*this, 0.5);
-        l_->addTorsion(*this, 0.5);
-    }
 }
 
 SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &source) { this->operator=(source); }
@@ -41,17 +24,7 @@ SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &&source) : SpeciesIntra(source)
     }
 
     // Copy data
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    l_ = source.l_;
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addTorsion(*this, 0.5);
-        j_->addTorsion(*this, 0.5);
-        k_->addTorsion(*this, 0.5);
-        l_->addTorsion(*this, 0.5);
-    }
+    assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
 
     // Reset source data
@@ -65,18 +38,7 @@ SpeciesTorsion::~SpeciesTorsion() { detach(); }
 
 SpeciesTorsion &SpeciesTorsion::operator=(const SpeciesTorsion &source)
 {
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    l_ = source.l_;
-
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addTorsion(*this, 0.5);
-        j_->addTorsion(*this, 0.5);
-        k_->addTorsion(*this, 0.5);
-        l_->addTorsion(*this, 0.5);
-    }
+    assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
     SpeciesIntra::operator=(source);
 
@@ -88,22 +50,31 @@ SpeciesTorsion &SpeciesTorsion::operator=(SpeciesTorsion &&source)
     if (i_ && j_ && k_ && l_)
         detach();
 
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    l_ = source.l_;
-
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addTorsion(*this, 0.5);
-        j_->addTorsion(*this, 0.5);
-        k_->addTorsion(*this, 0.5);
-        l_->addTorsion(*this, 0.5);
-    }
+    // Copy data
+    assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
     SpeciesIntra::operator=(source);
 
     return *this;
+}
+
+/*
+ * Atom Information
+ */
+
+// Set Atoms involved in Torsion
+void SpeciesTorsion::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+{
+    i_ = i;
+    j_ = j;
+    k_ = k;
+    l_ = l;
+    assert(i_ && j_ && k_ && l_);
+
+    i_->addTorsion(*this, 0.5);
+    j_->addTorsion(*this, 0.5);
+    k_->addTorsion(*this, 0.5);
+    l_->addTorsion(*this, 0.5);
 }
 
 // Detach from current atoms
@@ -120,29 +91,6 @@ void SpeciesTorsion::detach()
     j_ = nullptr;
     k_ = nullptr;
     l_ = nullptr;
-}
-
-/*
- * Atom Information
- */
-
-// Set Atoms involved in Torsion
-void SpeciesTorsion::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-{
-    i_ = i;
-    j_ = j;
-    k_ = k;
-    l_ = l;
-    assert(i_ && j_ && k_ && l_);
-
-    if (i_)
-        i_->addTorsion(*this, 0.5);
-    if (j_)
-        j_->addTorsion(*this, 0.5);
-    if (k_)
-        k_->addTorsion(*this, 0.5);
-    if (l_)
-        l_->addTorsion(*this, 0.5);
 }
 
 // Return first SpeciesAtom
@@ -266,7 +214,7 @@ double SpeciesTorsion::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::InteractionType SpeciesTorsion::type() const { return SpeciesIntra::TorsionInteraction; }
+SpeciesIntra::InteractionType SpeciesTorsion::type() const { return SpeciesIntra::InteractionType::Torsion; }
 
 // Return energy for specified angle and functional form, given supplied parameters
 double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector<double> &params)
