@@ -247,7 +247,8 @@ EnumOptions<SpeciesTorsion::TorsionFunction> SpeciesTorsion::torsionFunctions()
                           << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4)
                           << EnumOption(SpeciesTorsion::CosNForm, "CosN", 1, EnumOption::AnyNumberOfArguments)
                           << EnumOption(SpeciesTorsion::CosNCForm, "CosNC", 1, EnumOption::AnyNumberOfArguments)
-                          << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3);
+                          << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3)
+                          << EnumOption(SpeciesTorsion::FourierNForm, "FourierN", 2, EnumOption::AnyNumberOfArguments);
 
     static EnumOptions<SpeciesTorsion::TorsionFunction> options("TorsionFunction", TorsionFunctionOptions);
 
@@ -341,11 +342,11 @@ double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector
          * 2 : ...
          * n-1 : force constant kn
          */
-        auto result = 0.0;
+        auto U = 0.0;
         for (auto n = 0; n < params.size(); ++n)
-            result += params[n] * (1.0 + cos((n + 1) * phi));
+            U += params[n] * (1.0 + cos((n + 1) * phi));
 
-        return result;
+        return U;
     }
     else if (form == SpeciesTorsion::CosNCForm)
     {
@@ -360,11 +361,11 @@ double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector
          * 2 : ...
          * n : force constant kn
          */
-        auto result = 0.0;
+        auto U = 0.0;
         for (auto n = 0; n < params.size(); ++n)
-            result += params[n] * (1.0 + cos(n * phi));
+            U += params[n] * (1.0 + cos(n * phi));
 
-        return result;
+        return U;
     }
     else if (form == SpeciesTorsion::UFFCosineForm)
     {
@@ -377,6 +378,21 @@ double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector
          * 2 : Equilibrium angle, eq (degrees)
          */
         return 0.5 * params[0] * (1.0 - cos(params[1] * params[2] / DEGRAD) * cos(params[1] * phi));
+    }
+    else if (form == SpeciesTorsion::FourierNForm)
+    {
+        /*
+         * U(phi) = k * (C0 + C1 cos(phi) + C2 cos(2*phi) ... Cn cos(n*phi))
+         *
+         * Parameters:
+         * 0 : Force constant, k
+         * 1...N : Coefficients C0 - CN
+         */
+        auto U = params[0] * params[1];
+        for (auto n = 2; n < params.size(); ++n)
+            U += params[0] * params[n] * cos((n - 1) * phi);
+
+        return U;
     }
 
     Messenger::error("Functional form of torsion / improper term not accounted for, so can't calculate energy.\n");
@@ -523,6 +539,23 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
          */
 
         return -0.5 * params[0] * params[1] * cos(params[1] * params[2] / DEGRAD) * sin(params[1] * phi) * dphi_dcosphi;
+    }
+    else if (form == SpeciesTorsion::FourierNForm)
+    {
+        /*
+         *            1
+         * dU/dphi = SUM  -k * Cn * sin( n * phi )
+         *            n
+         *
+         * Parameters:
+         * 0 : Force constant, k
+         * 1...N : Coefficients C0 - CN
+         */
+        auto dU_dphi = 0.0;
+        for (auto n = 2; n < params.size(); ++n)
+            dU_dphi -= params[0] * params[n] * (n - 1) * sin((n - 1) * phi);
+
+        return -dU_dphi * dphi_dcosphi;
     }
 
     Messenger::error("Functional form of torsion / improper term not accounted for, so can't calculate force.\n");

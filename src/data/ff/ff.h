@@ -89,10 +89,10 @@ class Forcefield
                       std::string_view netaDefinition = "", std::string_view equivalentName = "");
     // Determine and return atom type for specified SpeciesAtom from supplied Array of types
     static OptionalReferenceWrapper<const ForcefieldAtomType>
-    determineAtomType(SpeciesAtom *i,
+    determineAtomType(const SpeciesAtom *i,
                       const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes);
     // Determine and return atom type for specified SpeciesAtom
-    virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(SpeciesAtom *i) const;
+    virtual OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(const SpeciesAtom *i) const;
 
     public:
     // Create NETA definitions for all atom types from stored defs
@@ -157,9 +157,23 @@ class Forcefield
     /*
      * Term Assignment
      */
+    private:
+    // Find / determine atom type(s) for the specified atom(s)
+    std::vector<std::reference_wrapper<const ForcefieldAtomType>> getAtomTypes(const std::vector<const SpeciesAtom *> &atoms,
+                                                                               bool determineType) const;
+
     protected:
     // Assign suitable AtomType to the supplied atom
-    virtual bool assignAtomType(SpeciesAtom *i, CoreData &coreData) const;
+    bool assignAtomType(SpeciesAtom *i, CoreData &coreData) const;
+    // Assign / generate bond term parameters
+    virtual bool assignBondTermParameters(SpeciesBond &bond, bool determineTypes) const;
+    // Assign / generate angle term parameters
+    virtual bool assignAngleTermParameters(SpeciesAngle &angle, bool determineTypes) const;
+    // Assign / generate torsion term parameters
+    virtual bool assignTorsionTermParameters(SpeciesTorsion &torsion, bool determineTypes) const;
+    // Assign / generate improper term parameters
+    virtual bool assignImproperTermParameters(ForcefieldImproperTerm &improper, SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k,
+                                              SpeciesAtom *l, bool determineTypes) const;
 
     public:
     // AtomType Assignment Strategy
@@ -180,7 +194,7 @@ class Forcefield
     // Assign suitable AtomTypes to the supplied Species, returning the number of failures
     int assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignmentStrategy strategy) const;
     // Assign intramolecular parameters to the supplied Species
-    virtual bool assignIntramolecular(Species *sp, int flags = Forcefield::GenerateImpropersFlag) const;
+    bool assignIntramolecular(Species *sp, int flags = Forcefield::GenerateImpropersFlag) const;
 
     /*
      * Atom Environment Helpers

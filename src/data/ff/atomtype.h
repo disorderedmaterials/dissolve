@@ -65,7 +65,7 @@ class ForcefieldAtomType
     /*
      * Parameters
      */
-    private:
+    protected:
     // Vector of parameters
     std::vector<double> parameters_;
     // Atomic charge

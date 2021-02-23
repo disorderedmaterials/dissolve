@@ -78,7 +78,8 @@ class SpeciesTorsion : public SpeciesIntra
         Cos4Form,
         CosNForm,
         CosNCForm,
-        UFFCosineForm
+        UFFCosineForm,
+        FourierNForm
     };
     // Return enum options for TorsionFunction
     static EnumOptions<TorsionFunction> torsionFunctions();

@@ -178,7 +178,7 @@ bool Dissolve::saveInput(std::string_view filename)
         return false;
 
     // Write master terms
-    if (coreData_.nMasterBonds() || coreData_.nMasterAngles() || coreData_.nMasterTorsions())
+    if (coreData_.nMasterBonds() || coreData_.nMasterAngles() || coreData_.nMasterTorsions() || coreData_.nMasterImpropers())
     {
         if (!parser.writeBannerComment("Master Terms"))
             return false;

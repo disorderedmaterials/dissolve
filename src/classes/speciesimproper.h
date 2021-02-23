@@ -79,7 +79,8 @@ class SpeciesImproper : public SpeciesIntra
         Cos4Form,
         CosNForm,
         CosNCForm,
-        UFFCosineForm
+        UFFCosineForm,
+        FourierNForm
     };
     // Return enum options for ImproperFunction
     static EnumOptions<ImproperFunction> improperFunctions();
