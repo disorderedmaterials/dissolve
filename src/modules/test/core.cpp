@@ -9,8 +9,6 @@ TestModule::TestModule() : Module(nRequiredTargets())
     initialise();
 }
 
-TestModule::~TestModule() {}
-
 /*
  * Instances
  */

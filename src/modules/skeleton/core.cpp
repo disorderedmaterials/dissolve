@@ -13,8 +13,6 @@ SkeletonModule::SkeletonModule() : Module(nRequiredTargets())
     initialise();
 }
 
-SkeletonModule::~SkeletonModule() {}
-
 /*
  * Instances
  */

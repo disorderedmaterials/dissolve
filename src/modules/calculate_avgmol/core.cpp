@@ -13,8 +13,6 @@ CalculateAvgMolModule::CalculateAvgMolModule() : Module(nRequiredTargets())
     initialise();
 }
 
-CalculateAvgMolModule::~CalculateAvgMolModule() {}
-
 /*
  * Instances
  */

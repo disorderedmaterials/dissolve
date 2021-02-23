@@ -9,8 +9,6 @@ MolShakeModule::MolShakeModule() : Module(nRequiredTargets())
     initialise();
 }
 
-MolShakeModule::~MolShakeModule() {}
-
 /*
  * Instances
  */

@@ -9,8 +9,6 @@ NeutronSQModule::NeutronSQModule() : Module(nRequiredTargets())
     initialise();
 }
 
-NeutronSQModule::~NeutronSQModule() {}
-
 /*
  * Instances
  */

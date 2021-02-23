@@ -13,8 +13,6 @@ CalculateAxisAngleModule::CalculateAxisAngleModule() : Module(nRequiredTargets()
     initialise();
 }
 
-CalculateAxisAngleModule::~CalculateAxisAngleModule() {}
-
 /*
  * Instances
  */

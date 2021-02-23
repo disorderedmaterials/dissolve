@@ -13,8 +13,6 @@ CheckSpeciesModule::CheckSpeciesModule() : Module(nRequiredTargets())
     initialise();
 }
 
-CheckSpeciesModule::~CheckSpeciesModule() {}
-
 /*
  * Instances
  */

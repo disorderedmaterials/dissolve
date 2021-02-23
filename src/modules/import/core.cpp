@@ -9,8 +9,6 @@ ImportModule::ImportModule() : Module(nRequiredTargets())
     initialise();
 }
 
-ImportModule::~ImportModule() {}
-
 /*
  * Instances
  */
