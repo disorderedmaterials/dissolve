@@ -16,8 +16,9 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Get options and target Module
     const auto testThreshold = keywords_.asDouble("Threshold");
-    Module *targetModule = targetModule_.firstItem();
     auto errorType = keywords_.enumeration<Error::ErrorType>("ErrorType");
+    const auto &targets = keywords_.retrieve<std::vector<Module *>>("Target");
+    auto *targetModule = targets.size() == 1 ? targets.front() : nullptr;
 
     // Print summary
     if (!targetModule)

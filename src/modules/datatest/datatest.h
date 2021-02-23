@@ -58,8 +58,6 @@ class DataTestModule : public Module
      * Functions
      */
     private:
-    // Target module containing / owning data to test
-    RefList<Module> targetModule_;
     // Test 1D datasets
     Data1DStore test1DData_;
     // Test 2D datasets
