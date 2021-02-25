@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "base/enumoptionslist.h"
 #include <optional>
 
 // Enum Options Base
