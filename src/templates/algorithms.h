@@ -7,6 +7,16 @@
 #include <optional>
 #include <tuple>
 
+// Cut a range into a smaller segment for MPI
+template<typename T>
+auto cut_range(const T begin, const T end, const int count, const int step)
+{
+  auto diff = end - begin;
+  T start = begin + std::div(step * diff, (const long int) count).quot;
+  T stop  = begin + std::div((step + 1) * diff, (const long int) count).quot;
+  return std::make_tuple(start, stop);
+}
+
 // Perform an operation on every pair of elements in a container
 template <class Iter, class Lam> void for_each_pair(Iter begin, Iter end, Lam lambda)
 {
