@@ -103,13 +103,12 @@ template <class E> class EnumOptions : public EnumOptionsBase
     // Return enumeration in E
     E enumeration(std::string_view keyword) const
     {
-        for (auto n = 0; n < options_.size(); ++n)
-            if (DissolveSys::sameString(keyword, options_[n].keyword()))
-                return (E)options_[n].enumeration();
+        auto it =
+            std::find_if(options_.cbegin(), options_.cend(), [keyword](auto &option) { return DissolveSys::sameString(keyword, option.keyword()); });
+        if (it != options_.cend())
+            return (E)it->enumeration();
 
-        Messenger::warn("Option '{}' is not recognised, so can't return its enumeration.\n", keyword);
-
-        return (E)-1;
+        throw(std::runtime_error(fmt::format("Option '{}' is not recognised, so can't return its enumeration.\n", keyword)));
     }
     // Return current enumeration in E
     E enumeration() const
@@ -126,54 +125,34 @@ template <class E> class EnumOptions : public EnumOptionsBase
     // Return enumerated keyword
     std::string_view keyword(E enumeration) const
     {
-        for (int n = 0; n < options_.size(); ++n)
-            if (options_[n].enumeration() == enumeration)
-                return options_[n].keyword();
-        return "ENUMERATION_NOT_VALID";
+        auto it = std::find_if(options_.cbegin(), options_.cend(),
+                               [enumeration](auto &option) { return enumeration == option.enumeration(); });
+        return (it == options_.cend() ? "ENUMERATION_NOT_VALID" : it->keyword());
     }
     // Return enumerated keyword from uncast integer
     std::string_view keywordFromInt(int uncastEnumeration) const
     {
-        for (int n = 0; n < options_.size(); ++n)
-            if (options_[n].enumeration() == uncastEnumeration)
-                return options_[n].keyword();
-        return "ENUMERATION_NOT_VALID";
+        auto it = std::find_if(options_.cbegin(), options_.cend(),
+                               [uncastEnumeration](auto &option) { return uncastEnumeration == option.enumeration(); });
+        return (it == options_.cend() ? "ENUMERATION_NOT_VALID" : it->keyword());
     }
     // Return option with enumeration specified
     const EnumOption &option(E enumeration) const
     {
-        for (int n = 0; n < options_.size(); ++n)
-            if (options_[n].enumeration() == enumeration)
-                return options_[n];
-        return unrecognisedOption_;
-    }
-    // Return option with keyword specified
-    const EnumOption &option(std::string_view keyword) const
-    {
-        for (auto n = 0; n < options_.size(); ++n)
-            if (DissolveSys::sameString(keyword, options_[n].keyword()))
-                return options_[n];
-        return unrecognisedOption_;
+        auto it = std::find_if(options_.cbegin(), options_.cend(),
+                               [enumeration](auto &option) { return enumeration == option.enumeration(); });
+        if (it == options_.cend())
+            throw(std::runtime_error(fmt::format("No option set for enumeration '{}'.\n", enumeration)));
+        return *it;
     }
     // Return minimum number of arguments for the specified enumeration
     std::optional<int> minArgs(E enumeration) const
     {
-        // Retrieve the relevant EnumOption
-        const auto &opt = option(enumeration);
-        return opt.minArgs();
-    }
-    // Return maximum number of arguments for the specified enumeration
-    std::optional<int> maxArgs(E enumeration) const
-    {
-        // Retrieve the relevant EnumOption
-        const auto &opt = option(enumeration);
-        return opt.maxArgs();
-    }
-    // Return whether an exact number of arguments is required
-    bool exactNArgs(E enumeration) const
-    {
-        const auto &opt = option(enumeration);
-        return opt.minArgs() == opt.maxArgs();
+        auto it = std::find_if(options_.begin(), options_.end(),
+                               [enumeration](auto &option) { return enumeration == option.enumeration(); });
+        if (it == options_.end())
+            return std::nullopt;
+        return it->minArgs();
     }
     // Check number of arguments provided to keyword
     bool validNArgs(E enumeration, int nArgsProvided) const

@@ -55,14 +55,3 @@ class EnumOption
     // Return maximum number of arguments the option takes
     std::optional<int> maxArgs() const;
 };
-
-// Unrecognised Enum Option
-class UnrecognisedEnumOption : public EnumOption
-{
-    public:
-    UnrecognisedEnumOption() : EnumOption(0, "UNRECOGNISED_KEYWORD") {}
-
-    public:
-    // Return if the option is valid (true except in derived classes)
-    bool isValid() const { return false; }
-};

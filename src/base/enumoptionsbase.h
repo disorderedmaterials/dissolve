@@ -16,10 +16,6 @@ class EnumOptionsBase
     /*
      * Options Data
      */
-    protected:
-    // Unrecognised option
-    static UnrecognisedEnumOption unrecognisedOption_;
-
     public:
     // Return name of options (e.g. from source enumeration)
     virtual std::string_view name() const = 0;
