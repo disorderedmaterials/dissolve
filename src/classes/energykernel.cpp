@@ -188,8 +188,8 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
             rJ = jj->r();
 
             // Loop over central cell atoms
-	    auto [begin, end] = cut_range(centralAtoms.begin(), centralAtoms.end(), stride, start);
-	    for (auto indexI = begin; indexI < end; ++indexI)
+            auto [begin, end] = cut_range(centralAtoms.begin(), centralAtoms.end(), stride, start);
+            for (auto indexI = begin; indexI < end; ++indexI)
             {
                 ii = *indexI;
 
@@ -226,8 +226,8 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
             rJ = jj->r();
 
             // Loop over central cell atoms
-	    auto [begin, end] = cut_range(centralAtoms.begin(), centralAtoms.end(), stride, start);
-	    for (auto indexI = begin; indexI < end; ++indexI)
+            auto [begin, end] = cut_range(centralAtoms.begin(), centralAtoms.end(), stride, start);
+            for (auto indexI = begin; indexI < end; ++indexI)
             {
                 ii = *indexI;
 

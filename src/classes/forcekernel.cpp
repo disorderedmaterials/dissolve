@@ -138,7 +138,7 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
     else
     {
         auto [begin, end] = cut_range(centralCell->atoms().begin(), centralCell->atoms().end(), stride, start);
-	for (auto indexI = begin; indexI < end; ++indexI)
+        for (auto indexI = begin; indexI < end; ++indexI)
         {
             ii = *indexI;
             molI = ii->molecule();
@@ -235,8 +235,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
             }
         else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
         {
-	    auto [begin, end] = cut_range(otherAtoms.begin(), otherAtoms.end(), stride, start);
-	    for (auto indexJ = begin; indexJ < end; ++indexJ)
+            auto [begin, end] = cut_range(otherAtoms.begin(), otherAtoms.end(), stride, start);
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;
@@ -258,8 +258,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
         }
         else
         {
-	    auto [begin, end] = cut_range(otherAtoms.begin(), otherAtoms.end(), stride, start);
-	    for (auto indexJ = begin; indexJ < end; ++indexJ)
+            auto [begin, end] = cut_range(otherAtoms.begin(), otherAtoms.end(), stride, start);
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;
