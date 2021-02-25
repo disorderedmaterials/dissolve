@@ -20,11 +20,11 @@ TEST(EnumOptionsTest, EnumOptions)
     };
     EnumOptionsList testOptions =
         EnumOptionsList() << EnumOption(Condition::Red, "Red")
-                          << EnumOption(Condition::Mauve, "Mauve", EnumOption::OneOrMoreArguments)
-                          << EnumOption(Condition::Magenta, "Magenta", EnumOption::OptionalSecondArgument)
+                          << EnumOption(Condition::Mauve, "Mauve", OptionArguments::OneOrMore)
+                          << EnumOption(Condition::Magenta, "Magenta", OptionArguments::OptionalSecond)
                           << EnumOption(Condition::Taupe, "Taupe", 3, 6) << EnumOption(Condition::Marigold, "Marigold", 4)
                           << EnumOption(Condition::Heliotrope, "Heliotrope", 3, 3)
-                          << EnumOption(Condition::Tangerine, "Tangerine", 2, EnumOption::AnyNumberOfArguments);
+                          << EnumOption(Condition::Tangerine, "Tangerine", 2, OptionArguments::AnyNumber);
     EnumOptions<Condition> options("TestOptions", testOptions);
 
     // Test options

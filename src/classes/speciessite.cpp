@@ -347,10 +347,10 @@ EnumOptions<SpeciesSite::SiteKeyword> SpeciesSite::keywords()
 {
     static EnumOptionsList SiteKeywords = EnumOptionsList()
                                           << EnumOption(SpeciesSite::EndSiteKeyword, "EndSite")
-                                          << EnumOption(SpeciesSite::OriginKeyword, "Origin", EnumOption::OneOrMoreArguments)
+                                          << EnumOption(SpeciesSite::OriginKeyword, "Origin", OptionArguments::OneOrMore)
                                           << EnumOption(SpeciesSite::OriginMassWeightedKeyword, "OriginMassWeighted", 1)
-                                          << EnumOption(SpeciesSite::XAxisKeyword, "XAxis", EnumOption::OneOrMoreArguments)
-                                          << EnumOption(SpeciesSite::YAxisKeyword, "YAxis", EnumOption::OneOrMoreArguments);
+                                          << EnumOption(SpeciesSite::XAxisKeyword, "XAxis", OptionArguments::OneOrMore)
+                                          << EnumOption(SpeciesSite::YAxisKeyword, "YAxis", OptionArguments::OneOrMore);
 
     static EnumOptions<SpeciesSite::SiteKeyword> options("SiteKeyword", SiteKeywords);
 

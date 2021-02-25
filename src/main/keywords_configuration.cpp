@@ -16,7 +16,7 @@ EnumOptions<ConfigurationBlock::ConfigurationKeyword> ConfigurationBlock::keywor
                           << EnumOption(ConfigurationBlock::EndConfigurationKeyword, "EndConfiguration")
                           << EnumOption(ConfigurationBlock::GeneratorKeyword, "Generator")
                           << EnumOption(ConfigurationBlock::InputCoordinatesKeyword, "InputCoordinates", 2)
-                          << EnumOption(ConfigurationBlock::ModuleKeyword, "Module", EnumOption::OptionalSecondArgument)
+                          << EnumOption(ConfigurationBlock::ModuleKeyword, "Module", OptionArguments::OptionalSecond)
                           << EnumOption(ConfigurationBlock::SizeFactorKeyword, "SizeFactor", 1)
                           << EnumOption(ConfigurationBlock::TemperatureKeyword, "Temperature", 1);
 

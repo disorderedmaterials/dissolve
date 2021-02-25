@@ -18,7 +18,7 @@ EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> PairPotentialsBlock::key
         // 3,9)
         // <<
         EnumOption(PairPotentialsBlock::IncludeCoulombKeyword, "IncludeCoulomb",
-                   1) << EnumOption(PairPotentialsBlock::ParametersKeyword, "Parameters", 3, EnumOption::AnyNumberOfArguments)
+                   1) << EnumOption(PairPotentialsBlock::ParametersKeyword, "Parameters", 3, OptionArguments::AnyNumber)
                           << EnumOption(PairPotentialsBlock::RangeKeyword, "Range", 1)
                           << EnumOption(PairPotentialsBlock::ShortRangeTruncationKeyword, "ShortRangeTruncation", 1)
                           << EnumOption(PairPotentialsBlock::ShortRangeTruncationWidthKeyword, "ShortRangeTruncationWidth", 1);

@@ -51,7 +51,7 @@ EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> Fit1DProcedureNode::fit1DNodeK
                                                    << EnumOption(Fit1DProcedureNode::MethodKeyword, "Method")
                                                    << EnumOption(Fit1DProcedureNode::SaveKeyword, "Save", 1)
                                                    << EnumOption(Fit1DProcedureNode::SourceDataKeyword, "SourceData",
-                                                                 EnumOption::OptionalSecondArgument);
+                                                                 OptionArguments::OptionalSecond);
 
     static EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> options("Fit1DNodeKeyword", Fit1DNodeTypeKeywords);
 

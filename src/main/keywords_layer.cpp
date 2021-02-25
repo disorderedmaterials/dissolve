@@ -14,7 +14,7 @@ EnumOptions<LayerBlock::LayerKeyword> LayerBlock::keywords()
         EnumOptionsList() << EnumOption(LayerBlock::DisabledKeyword, "Disabled")
                           << EnumOption(LayerBlock::EndLayerKeyword, "EndLayer")
                           << EnumOption(LayerBlock::FrequencyKeyword, "Frequency", 1)
-                          << EnumOption(LayerBlock::ModuleKeyword, "Module", EnumOption::OptionalSecondArgument);
+                          << EnumOption(LayerBlock::ModuleKeyword, "Module", OptionArguments::OptionalSecond);
 
     static EnumOptions<LayerBlock::LayerKeyword> options("LayerKeyword", LayerKeywords);
 

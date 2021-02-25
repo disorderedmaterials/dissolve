@@ -173,14 +173,14 @@ template <class E> class EnumOptions : public EnumOptionsBase
         // Check the specified minimum value
         switch (opt.minArgs().value())
         {
-            case (EnumOption::OneOrMoreArguments):
+            case (OptionArguments::OneOrMore):
                 if (nArgsProvided > 0)
                     return true;
                 else
                     return Messenger::error("'{}' keyword '{}' requires one or more arguments, but none were provided.\n",
                                             name(), opt.keyword());
                 break;
-            case (EnumOption::EnumOption::OptionalSecondArgument):
+            case (EnumOption::OptionArguments::OptionalSecond):
                 if ((nArgsProvided == 1) || (nArgsProvided == 2))
                     return true;
                 else
@@ -202,7 +202,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
                 else
                 {
                     // Range of arguments allowed...
-                    if (opt.maxArgs().value() == EnumOption::AnyNumberOfArguments)
+                    if (opt.maxArgs().value() == OptionArguments::AnyNumber)
                     {
                         // No maximum number of arguments, but must satisfy minimum limit
                         if (nArgsProvided >= opt.minArgs().value())

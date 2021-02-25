@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/arguments.h"
 #include <optional>
 #include <string>
 
@@ -20,15 +21,6 @@ class EnumOption
     /*
      * Definition
      */
-    public:
-    // Argument Numbers
-    enum ArgumentNumber
-    {
-        OneOrMoreArguments = -1,
-        OptionalSecondArgument = -2,
-        AnyNumberOfArguments = -3
-    };
-
     private:
     // Option enumeration (i.e. from enum value)
     int enumeration_;

@@ -200,10 +200,10 @@ EnumOptions<SpeciesImproper::ImproperFunction> SpeciesImproper::improperFunction
                           << EnumOption(SpeciesTorsion::Cos3Form, "Cos3", 3)
                           << EnumOption(SpeciesTorsion::Cos3CForm, "Cos3C", 4)
                           << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4)
-                          << EnumOption(SpeciesTorsion::CosNForm, "CosN", 1, EnumOption::AnyNumberOfArguments)
-                          << EnumOption(SpeciesTorsion::CosNCForm, "CosNC", 1, EnumOption::AnyNumberOfArguments)
+                          << EnumOption(SpeciesTorsion::CosNForm, "CosN", 1, OptionArguments::AnyNumber)
+                          << EnumOption(SpeciesTorsion::CosNCForm, "CosNC", 1, OptionArguments::AnyNumber)
                           << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3)
-                          << EnumOption(SpeciesTorsion::FourierNForm, "FourierN", 2, EnumOption::AnyNumberOfArguments);
+                          << EnumOption(SpeciesTorsion::FourierNForm, "FourierN", 2, OptionArguments::AnyNumber);
 
     static EnumOptions<SpeciesImproper::ImproperFunction> options("ImproperFunction", ImproperFunctionOptions);
 
