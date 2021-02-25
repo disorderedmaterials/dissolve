@@ -8,10 +8,7 @@
 #include "module/module.h"
 
 ModuleVectorKeyword::ModuleVectorKeyword(int maxModules)
-    : KeywordData<std::vector<Module *>>(KeywordBase::ModuleRefListData, {})
-{
-    maxModules_ = maxModules;
-}
+    : KeywordData<std::vector<Module *>>(KeywordBase::ModuleRefListData, {}), maxModules_(maxModules) {}
 
 ModuleVectorKeyword::ModuleVectorKeyword(const std::vector<std::string> &allowedModuleTypes, int maxModules)
     : KeywordData<std::vector<Module *>>(KeywordBase::ModuleRefListData, {})
