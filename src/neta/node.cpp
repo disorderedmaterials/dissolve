@@ -12,12 +12,12 @@
 // Return enum options for NodeTypes
 EnumOptions<NETANode::NodeType> NETANode::nodeTypes()
 {
-    static EnumOptionsList NETANodeTypes = EnumOptionsList()
-                                           << EnumOption(BasicNode, "Basic") << EnumOption(ConnectionNode, "Connection")
-                                           << EnumOption(OrNode, "Or") << EnumOption(PresenceNode, "Presence")
-                                           << EnumOption(RingNode, "Ring") << EnumOption(RootNode, "Root");
-
-    static EnumOptions<NETANode::NodeType> options("NodeTypes", NETANodeTypes);
+    static EnumOptions<NETANode::NodeType> options("NodeTypes", {{BasicNode, "Basic"},
+                                                                 {ConnectionNode, "Connection"},
+                                                                 {OrNode, "Or"},
+                                                                 {PresenceNode, "Presence"},
+                                                                 {RingNode, "Ring"},
+                                                                 {RootNode, "Root"}});
 
     return options;
 }
@@ -25,12 +25,12 @@ EnumOptions<NETANode::NodeType> NETANode::nodeTypes()
 // Return enum options for ComparisonOperator
 EnumOptions<NETANode::ComparisonOperator> NETANode::comparisonOperators()
 {
-    static EnumOptionsList ComparisonOperatorOptions =
-        EnumOptionsList() << EnumOption(EqualTo, "=") << EnumOption(NotEqualTo, "!=") << EnumOption(GreaterThan, ">")
-                          << EnumOption(LessThan, "<") << EnumOption(GreaterThanEqualTo, ">=")
-                          << EnumOption(LessThanEqualTo, "<=");
-
-    static EnumOptions<NETANode::ComparisonOperator> options("ComparisonOperator", ComparisonOperatorOptions);
+    static EnumOptions<NETANode::ComparisonOperator> options("ComparisonOperator", {{EqualTo, "="},
+                                                                                    {NotEqualTo, "!="},
+                                                                                    {GreaterThan, ">"},
+                                                                                    {LessThan, "<"},
+                                                                                    {GreaterThanEqualTo, ">="},
+                                                                                    {LessThanEqualTo, "<="}});
 
     return options;
 }

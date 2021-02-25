@@ -524,10 +524,8 @@ void RenderableSpecies::recreateDeleteInteractionPrimitive(SpeciesAtom *fromAtom
 // Return EnumOptions for SpeciesDisplayStyle
 EnumOptions<RenderableSpecies::SpeciesDisplayStyle> RenderableSpecies::speciesDisplayStyles()
 {
-    static EnumOptionsList SpeciesStyleOptions = EnumOptionsList() << EnumOption(RenderableSpecies::LinesStyle, "Lines")
-                                                                   << EnumOption(RenderableSpecies::SpheresStyle, "Spheres");
-
-    static EnumOptions<RenderableSpecies::SpeciesDisplayStyle> options("SpeciesDisplayStyle", SpeciesStyleOptions);
+    static EnumOptions<RenderableSpecies::SpeciesDisplayStyle> options(
+        "SpeciesDisplayStyle", {{RenderableSpecies::LinesStyle, "Lines"}, {RenderableSpecies::SpheresStyle, "Spheres"}});
 
     return options;
 }
@@ -550,10 +548,9 @@ RenderableSpecies::SpeciesDisplayStyle RenderableSpecies::displayStyle() const {
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableSpecies::SpeciesStyleKeyword> RenderableSpecies::speciesStyleKeywords()
 {
-    static EnumOptionsList StyleKeywords = EnumOptionsList() << EnumOption(RenderableSpecies::DisplayKeyword, "Display", 1)
-                                                             << EnumOption(RenderableSpecies::EndStyleKeyword, "EndStyle");
-
-    static EnumOptions<RenderableSpecies::SpeciesStyleKeyword> options("SpeciesStyleKeyword", StyleKeywords);
+    static EnumOptions<RenderableSpecies::SpeciesStyleKeyword> options(
+        "SpeciesStyleKeyword",
+        {{RenderableSpecies::DisplayKeyword, "Display", 1}, {RenderableSpecies::EndStyleKeyword, "EndStyle"}});
 
     return options;
 }

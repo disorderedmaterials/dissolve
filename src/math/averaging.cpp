@@ -9,12 +9,9 @@ namespace Averaging
 // Return enum option info for AveragingScheme
 EnumOptions<Averaging::AveragingScheme> averagingSchemes()
 {
-    static EnumOptionsList AveragingSchemeOptions = EnumOptionsList()
-                                                    << EnumOption(Averaging::LinearAveraging, "Linear")
-                                                    << EnumOption(Averaging::ExponentialAveraging, "Exponential");
-
-    static EnumOptions<Averaging::AveragingScheme> options("AveragingScheme", AveragingSchemeOptions,
-                                                           Averaging::LinearAveraging);
+    static EnumOptions<Averaging::AveragingScheme> options(
+        "AveragingScheme", {{Averaging::LinearAveraging, "Linear"}, {Averaging::ExponentialAveraging, "Exponential"}},
+        Averaging::LinearAveraging);
 
     return options;
 }

@@ -11,16 +11,14 @@
 // Return enum option info for ConfigurationKeyword
 EnumOptions<ConfigurationBlock::ConfigurationKeyword> ConfigurationBlock::keywords()
 {
-    static EnumOptionsList ConfigurationKeywords =
-        EnumOptionsList() << EnumOption(ConfigurationBlock::CellDivisionLengthKeyword, "CellDivisionLength", 1)
-                          << EnumOption(ConfigurationBlock::EndConfigurationKeyword, "EndConfiguration")
-                          << EnumOption(ConfigurationBlock::GeneratorKeyword, "Generator")
-                          << EnumOption(ConfigurationBlock::InputCoordinatesKeyword, "InputCoordinates", 2)
-                          << EnumOption(ConfigurationBlock::ModuleKeyword, "Module", OptionArguments::OptionalSecond)
-                          << EnumOption(ConfigurationBlock::SizeFactorKeyword, "SizeFactor", 1)
-                          << EnumOption(ConfigurationBlock::TemperatureKeyword, "Temperature", 1);
-
-    static EnumOptions<ConfigurationBlock::ConfigurationKeyword> options("ConfigurationKeyword", ConfigurationKeywords);
+    static EnumOptions<ConfigurationBlock::ConfigurationKeyword> options(
+        "ConfigurationKeyword", {{ConfigurationBlock::CellDivisionLengthKeyword, "CellDivisionLength", 1},
+                                 {ConfigurationBlock::EndConfigurationKeyword, "EndConfiguration"},
+                                 {ConfigurationBlock::GeneratorKeyword, "Generator"},
+                                 {ConfigurationBlock::InputCoordinatesKeyword, "InputCoordinates", 2},
+                                 {ConfigurationBlock::ModuleKeyword, "Module", OptionArguments::OptionalSecond},
+                                 {ConfigurationBlock::SizeFactorKeyword, "SizeFactor", 1},
+                                 {ConfigurationBlock::TemperatureKeyword, "Temperature", 1}});
 
     return options;
 }

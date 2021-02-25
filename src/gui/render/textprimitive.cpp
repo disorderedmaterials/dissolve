@@ -13,18 +13,15 @@
 // Return enum options for TextAnchor
 EnumOptions<TextPrimitive::TextAnchor> &TextPrimitive::textAnchors()
 {
-    static EnumOptionsList TextAnchorOptions = EnumOptionsList()
-                                               << EnumOption(TextPrimitive::TopLeftAnchor, "TopLeft")
-                                               << EnumOption(TextPrimitive::TopMiddleAnchor, "TopMiddle")
-                                               << EnumOption(TextPrimitive::TopRightAnchor, "TopRight")
-                                               << EnumOption(TextPrimitive::MiddleLeftAnchor, "MiddleLeft")
-                                               << EnumOption(TextPrimitive::CentralAnchor, "Central")
-                                               << EnumOption(TextPrimitive::MiddleRightAnchor, "MiddleRight")
-                                               << EnumOption(TextPrimitive::BottomLeftAnchor, "BottomLeft")
-                                               << EnumOption(TextPrimitive::BottomMiddleAnchor, "BottomMiddle")
-                                               << EnumOption(TextPrimitive::BottomRightAnchor, "BottomRight");
-
-    static EnumOptions<TextPrimitive::TextAnchor> options("TextAnchor", TextAnchorOptions);
+    static EnumOptions<TextPrimitive::TextAnchor> options("TextAnchor", {{TextPrimitive::TopLeftAnchor, "TopLeft"},
+                                                                         {TextPrimitive::TopMiddleAnchor, "TopMiddle"},
+                                                                         {TextPrimitive::TopRightAnchor, "TopRight"},
+                                                                         {TextPrimitive::MiddleLeftAnchor, "MiddleLeft"},
+                                                                         {TextPrimitive::CentralAnchor, "Central"},
+                                                                         {TextPrimitive::MiddleRightAnchor, "MiddleRight"},
+                                                                         {TextPrimitive::BottomLeftAnchor, "BottomLeft"},
+                                                                         {TextPrimitive::BottomMiddleAnchor, "BottomMiddle"},
+                                                                         {TextPrimitive::BottomRightAnchor, "BottomRight"}});
 
     return options;
 }

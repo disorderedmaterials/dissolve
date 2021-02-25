@@ -22,12 +22,9 @@ CoordinateExportFileFormat::CoordinateExportFileFormat(std::string_view filename
 // Return enum options for CoordinateExportFormat
 EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat> CoordinateExportFileFormat::coordinateExportFormats()
 {
-    static EnumOptionsList CoordinateExportFormats =
-        EnumOptionsList() << EnumOption(CoordinateExportFileFormat::XYZCoordinates, "xyz", "Simple XYZ Coordinates")
-                          << EnumOption(CoordinateExportFileFormat::DLPOLYCoordinates, "dlpoly", "DL_POLY CONFIG File");
-
-    static EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat> options("CoordinateExportFileFormat",
-                                                                                   CoordinateExportFormats);
+    static EnumOptions<CoordinateExportFileFormat::CoordinateExportFormat> options(
+        "CoordinateExportFileFormat", {{CoordinateExportFileFormat::XYZCoordinates, "xyz", "Simple XYZ Coordinates"},
+                                       {CoordinateExportFileFormat::DLPOLYCoordinates, "dlpoly", "DL_POLY CONFIG File"}});
 
     return options;
 }

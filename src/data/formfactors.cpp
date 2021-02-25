@@ -12,11 +12,9 @@ namespace XRayFormFactors
 // Return EnumOptions for ConfigurationDisplayStyle
 EnumOptions<XRayFormFactors::XRayFormFactorData> xRayFormFactorData()
 {
-    static EnumOptionsList XRayFormFactorDataSets = EnumOptionsList()
-                                                    << EnumOption(XRayFormFactors::NoFormFactorData, "None")
-                                                    << EnumOption(XRayFormFactors::WaasmaierKirfel1995, "WK1995");
 
-    static EnumOptions<XRayFormFactors::XRayFormFactorData> options("XRayFormFactors", XRayFormFactorDataSets);
+    static EnumOptions<XRayFormFactors::XRayFormFactorData> options(
+        "XRayFormFactors", {{XRayFormFactors::NoFormFactorData, "None"}, {XRayFormFactors::WaasmaierKirfel1995, "WK1995"}});
 
     return options;
 }

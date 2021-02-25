@@ -38,10 +38,8 @@ void Data2DImportFileFormat::setUpKeywords()
 // Return enum options for Data2DImportFormat
 EnumOptions<Data2DImportFileFormat::Data2DImportFormat> &Data2DImportFileFormat::data2DImportFormats()
 {
-    static EnumOptionsList Data2DImportFormats =
-        EnumOptionsList() << EnumOption(Data2DImportFileFormat::CartesianData2D, "cartesian", "Cartesian X,Y,f(X,Y) data");
-
-    static EnumOptions<Data2DImportFileFormat::Data2DImportFormat> options("Data2DImportFileFormat", Data2DImportFormats);
+    static EnumOptions<Data2DImportFileFormat::Data2DImportFormat> options(
+        "Data2DImportFileFormat", {{Data2DImportFileFormat::CartesianData2D, "cartesian", "Cartesian X,Y,f(X,Y) data"}});
 
     return options;
 }

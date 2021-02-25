@@ -12,37 +12,38 @@
 // Return enum option info for NodeType
 EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 {
-    static EnumOptionsList NodeTypeKeywords =
-        EnumOptionsList() << EnumOption(ProcedureNode::AddSpeciesNode, "AddSpecies")
-                          << EnumOption(ProcedureNode::BoxNode, "Box")
-                          << EnumOption(ProcedureNode::CalculateAngleNode, "CalculateAngle")
-                          << EnumOption(ProcedureNode::CalculateAxisAngleNode, "CalculateAxisAngle")
-                          << EnumOption(ProcedureNode::CalculateDistanceNode, "CalculateDistance")
-                          << EnumOption(ProcedureNode::CalculateBaseNode, "Calculate(Any)")
-                          << EnumOption(ProcedureNode::CalculateVectorNode, "CalculateVector")
-                          << EnumOption(ProcedureNode::Collect1DNode, "Collect1D")
-                          << EnumOption(ProcedureNode::Collect2DNode, "Collect2D")
-                          << EnumOption(ProcedureNode::Collect3DNode, "Collect3D")
-                          << EnumOption(ProcedureNode::DynamicSiteNode, "DynamicSite")
-                          << EnumOption(ProcedureNode::ExcludeNode, "Exclude") << EnumOption(ProcedureNode::Fit1DNode, "Fit1D")
-                          << EnumOption(ProcedureNode::Integrate1DNode, "Integrate1D")
-                          << EnumOption(ProcedureNode::OperateBaseNode, "Operate(Any)")
-                          << EnumOption(ProcedureNode::OperateDivideNode, "OperateDivide")
-                          << EnumOption(ProcedureNode::OperateExpressionNode, "OperateExpression")
-                          << EnumOption(ProcedureNode::OperateMultiplyNode, "OperateMultiply")
-                          << EnumOption(ProcedureNode::OperateNormaliseNode, "OperateNormalise")
-                          << EnumOption(ProcedureNode::OperateNumberDensityNormaliseNode, "OperateNumberDensityNormalise")
-                          << EnumOption(ProcedureNode::OperateSitePopulationNormaliseNode, "OperateSitePopulationNormalise")
-                          << EnumOption(ProcedureNode::OperateSphericalShellNormaliseNode, "OperateSphericalShellNormalise")
-                          << EnumOption(ProcedureNode::ParametersNode, "Parameters")
-                          << EnumOption(ProcedureNode::Process1DNode, "Process1D")
-                          << EnumOption(ProcedureNode::Process2DNode, "Process2D")
-                          << EnumOption(ProcedureNode::Process3DNode, "Process3D")
-                          << EnumOption(ProcedureNode::SelectNode, "Select")
-                          << EnumOption(ProcedureNode::SequenceNode, "Sequence")
-                          << EnumOption(ProcedureNode::Sum1DNode, "Sum1D");
-
-    static EnumOptions<ProcedureNode::NodeType> options("NodeType", NodeTypeKeywords, ProcedureNode::nNodeTypes);
+    static EnumOptions<ProcedureNode::NodeType> options(
+        "NodeType",
+        {{ProcedureNode::AddSpeciesNode, "AddSpecies"},
+         {ProcedureNode::BoxNode, "Box"},
+         {ProcedureNode::CalculateAngleNode, "CalculateAngle"},
+         {ProcedureNode::CalculateAxisAngleNode, "CalculateAxisAngle"},
+         {ProcedureNode::CalculateDistanceNode, "CalculateDistance"},
+         {ProcedureNode::CalculateBaseNode, "Calculate(Any)"},
+         {ProcedureNode::CalculateVectorNode, "CalculateVector"},
+         {ProcedureNode::Collect1DNode, "Collect1D"},
+         {ProcedureNode::Collect2DNode, "Collect2D"},
+         {ProcedureNode::Collect3DNode, "Collect3D"},
+         {ProcedureNode::DynamicSiteNode, "DynamicSite"},
+         {ProcedureNode::ExcludeNode, "Exclude"},
+         {ProcedureNode::Fit1DNode, "Fit1D"},
+         {ProcedureNode::Integrate1DNode, "Integrate1D"},
+         {ProcedureNode::OperateBaseNode, "Operate(Any)"},
+         {ProcedureNode::OperateDivideNode, "OperateDivide"},
+         {ProcedureNode::OperateExpressionNode, "OperateExpression"},
+         {ProcedureNode::OperateMultiplyNode, "OperateMultiply"},
+         {ProcedureNode::OperateNormaliseNode, "OperateNormalise"},
+         {ProcedureNode::OperateNumberDensityNormaliseNode, "OperateNumberDensityNormalise"},
+         {ProcedureNode::OperateSitePopulationNormaliseNode, "OperateSitePopulationNormalise"},
+         {ProcedureNode::OperateSphericalShellNormaliseNode, "OperateSphericalShellNormalise"},
+         {ProcedureNode::ParametersNode, "Parameters"},
+         {ProcedureNode::Process1DNode, "Process1D"},
+         {ProcedureNode::Process2DNode, "Process2D"},
+         {ProcedureNode::Process3DNode, "Process3D"},
+         {ProcedureNode::SelectNode, "Select"},
+         {ProcedureNode::SequenceNode, "Sequence"},
+         {ProcedureNode::Sum1DNode, "Sum1D"}},
+        ProcedureNode::nNodeTypes);
 
     return options;
 }
@@ -50,12 +51,12 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 // Return enum option info for NodeContext
 EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
 {
-    static EnumOptionsList NodeContextKeywords = EnumOptionsList() << EnumOption(ProcedureNode::NoContext, "None")
-                                                                   << EnumOption(ProcedureNode::AnalysisContext, "Analysis")
-                                                                   << EnumOption(ProcedureNode::GenerationContext, "Generation")
-                                                                   << EnumOption(ProcedureNode::OperateContext, "Operate");
-
-    static EnumOptions<ProcedureNode::NodeContext> options("NodeContext", NodeContextKeywords, ProcedureNode::NoContext);
+    static EnumOptions<ProcedureNode::NodeContext> options("NodeContext",
+                                                           {{ProcedureNode::NoContext, "None"},
+                                                            {ProcedureNode::AnalysisContext, "Analysis"},
+                                                            {ProcedureNode::GenerationContext, "Generation"},
+                                                            {ProcedureNode::OperateContext, "Operate"}},
+                                                           ProcedureNode::NoContext);
 
     return options;
 }

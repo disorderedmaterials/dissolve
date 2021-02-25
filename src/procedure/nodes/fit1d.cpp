@@ -43,17 +43,14 @@ bool Fit1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 // Return enum option info for Fit1DNodeKeyword
 EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> Fit1DProcedureNode::fit1DNodeKeywords()
 {
-    static EnumOptionsList Fit1DNodeTypeKeywords = EnumOptionsList()
-                                                   << EnumOption(Fit1DProcedureNode::ConstantKeyword, "Constant", 1)
-                                                   << EnumOption(Fit1DProcedureNode::EndFit1DKeyword, "EndFit1D")
-                                                   << EnumOption(Fit1DProcedureNode::EquationKeyword, "Equation", 1)
-                                                   << EnumOption(Fit1DProcedureNode::FitKeyword, "Fit", 1)
-                                                   << EnumOption(Fit1DProcedureNode::MethodKeyword, "Method")
-                                                   << EnumOption(Fit1DProcedureNode::SaveKeyword, "Save", 1)
-                                                   << EnumOption(Fit1DProcedureNode::SourceDataKeyword, "SourceData",
-                                                                 OptionArguments::OptionalSecond);
-
-    static EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> options("Fit1DNodeKeyword", Fit1DNodeTypeKeywords);
+    static EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> options(
+        "Fit1DNodeKeyword", {{Fit1DProcedureNode::ConstantKeyword, "Constant", 1},
+                             {Fit1DProcedureNode::EndFit1DKeyword, "EndFit1D"},
+                             {Fit1DProcedureNode::EquationKeyword, "Equation", 1},
+                             {Fit1DProcedureNode::FitKeyword, "Fit", 1},
+                             {Fit1DProcedureNode::MethodKeyword, "Method"},
+                             {Fit1DProcedureNode::SaveKeyword, "Save", 1},
+                             {Fit1DProcedureNode::SourceDataKeyword, "SourceData", OptionArguments::OptionalSecond}});
 
     return options;
 }

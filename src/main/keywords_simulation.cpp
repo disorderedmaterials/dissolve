@@ -9,13 +9,11 @@
 // Return enum option info for SimulationKeyword
 EnumOptions<SimulationBlock::SimulationKeyword> SimulationBlock::keywords()
 {
-    static EnumOptionsList SimulationKeywords =
-        EnumOptionsList() << EnumOption(SimulationBlock::EndSimulationKeyword, "EndSimulation")
-                          << EnumOption(SimulationBlock::ParallelStrategyKeyword, "ParallelStrategy", 1)
-                          << EnumOption(SimulationBlock::ParallelGroupPopulationKeyword, "ParallelGroupPopulation", 1)
-                          << EnumOption(SimulationBlock::SeedKeyword, "Seed", 1);
-
-    static EnumOptions<SimulationBlock::SimulationKeyword> options("SimulationKeyword", SimulationKeywords);
+    static EnumOptions<SimulationBlock::SimulationKeyword> options(
+        "SimulationKeyword", {{SimulationBlock::EndSimulationKeyword, "EndSimulation"},
+                              {SimulationBlock::ParallelStrategyKeyword, "ParallelStrategy", 1},
+                              {SimulationBlock::ParallelGroupPopulationKeyword, "ParallelGroupPopulation", 1},
+                              {SimulationBlock::SeedKeyword, "Seed", 1}});
 
     return options;
 }

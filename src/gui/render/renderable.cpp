@@ -16,15 +16,12 @@ RefList<Renderable> Renderable::instances_;
 // Return enum options for RenderableType
 EnumOptions<Renderable::RenderableType> Renderable::renderableTypes()
 {
-    static EnumOptionsList RenderableTypeOptions = EnumOptionsList()
-                                                   << EnumOption(Renderable::ConfigurationRenderable, "Configuration")
-                                                   << EnumOption(Renderable::Data1DRenderable, "Data1D")
-                                                   << EnumOption(Renderable::Data2DRenderable, "Data2D")
-                                                   << EnumOption(Renderable::Data3DRenderable, "Data3D")
-                                                   << EnumOption(Renderable::SpeciesRenderable, "Species")
-                                                   << EnumOption(Renderable::SpeciesSiteRenderable, "SpeciesSite");
-
-    static EnumOptions<Renderable::RenderableType> options("ErrorType", RenderableTypeOptions);
+    static EnumOptions<Renderable::RenderableType> options("ErrorType", {{Renderable::ConfigurationRenderable, "Configuration"},
+                                                                         {Renderable::Data1DRenderable, "Data1D"},
+                                                                         {Renderable::Data2DRenderable, "Data2D"},
+                                                                         {Renderable::Data3DRenderable, "Data3D"},
+                                                                         {Renderable::SpeciesRenderable, "Species"},
+                                                                         {Renderable::SpeciesSiteRenderable, "SpeciesSite"}});
 
     return options;
 }

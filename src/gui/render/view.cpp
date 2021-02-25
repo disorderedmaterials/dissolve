@@ -114,12 +114,11 @@ const GLuint *View::viewportMatrix() const { return viewportMatrix_; }
 // Return enum options for FormatType
 EnumOptions<View::ViewType> &View::viewTypes()
 {
-    static EnumOptionsList ViewTypeOptions =
-        EnumOptionsList() << EnumOption(View::NormalView, "Normal") << EnumOption(View::AutoStretchedView, "AutoStretched")
-                          << EnumOption(View::FlatXYView, "FlatXY") << EnumOption(View::FlatXZView, "FlatXZ")
-                          << EnumOption(View::FlatZYView, "FlatZY");
-
-    static EnumOptions<View::ViewType> options("ViewType", ViewTypeOptions);
+    static EnumOptions<View::ViewType> options("ViewType", {{View::NormalView, "Normal"},
+                                                            {View::AutoStretchedView, "AutoStretched"},
+                                                            {View::FlatXYView, "FlatXY"},
+                                                            {View::FlatXZView, "FlatXZ"},
+                                                            {View::FlatZYView, "FlatZY"}});
 
     return options;
 }
@@ -127,11 +126,8 @@ EnumOptions<View::ViewType> &View::viewTypes()
 // Return enum options for FormatType
 EnumOptions<View::AutoFollowType> &View::autoFollowTypes()
 {
-    static EnumOptionsList AutoFollowTypeOptions = EnumOptionsList() << EnumOption(View::NoAutoFollow, "None")
-                                                                     << EnumOption(View::AllAutoFollow, "All")
-                                                                     << EnumOption(View::XAutoFollow, "X");
-
-    static EnumOptions<View::AutoFollowType> options("AutoFollowType", AutoFollowTypeOptions);
+    static EnumOptions<View::AutoFollowType> options(
+        "AutoFollowType", {{View::NoAutoFollow, "None"}, {View::AllAutoFollow, "All"}, {View::XAutoFollow, "X"}});
 
     return options;
 }

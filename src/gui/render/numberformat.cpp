@@ -20,11 +20,9 @@ NumberFormat::~NumberFormat() {}
 // Return enum options for FormatType
 EnumOptions<NumberFormat::FormatType> &NumberFormat::formatTypes()
 {
-    static EnumOptionsList FormatTypeOptions = EnumOptionsList() << EnumOption(NumberFormat::DecimalFormat, "Decimal")
-                                                                 << EnumOption(NumberFormat::IntegerFormat, "Integer")
-                                                                 << EnumOption(NumberFormat::ScientificFormat, "Scientific");
-
-    static EnumOptions<NumberFormat::FormatType> options("FormatType", FormatTypeOptions);
+    static EnumOptions<NumberFormat::FormatType> options("FormatType", {{NumberFormat::DecimalFormat, "Decimal"},
+                                                                        {NumberFormat::IntegerFormat, "Integer"},
+                                                                        {NumberFormat::ScientificFormat, "Scientific"}});
 
     return options;
 }

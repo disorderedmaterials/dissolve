@@ -8,7 +8,7 @@
 SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) : SpeciesIntra()
 {
     assign(i, j, k, l);
-    form_ = SpeciesImproper::NoForm;
+    form_ = SpeciesTorsion::NoForm;
 }
 
 SpeciesImproper::SpeciesImproper(SpeciesImproper &source) { this->operator=(source); }
@@ -191,24 +191,6 @@ bool SpeciesImproper::isSelected() const
 /*
  * Interaction Parameters
  */
-
-// Return enum options for ImproperFunction
-EnumOptions<SpeciesImproper::ImproperFunction> SpeciesImproper::improperFunctions()
-{
-    static EnumOptionsList ImproperFunctionOptions =
-        EnumOptionsList() << EnumOption(SpeciesTorsion::NoForm, "None") << EnumOption(SpeciesTorsion::CosineForm, "Cos", 4)
-                          << EnumOption(SpeciesTorsion::Cos3Form, "Cos3", 3)
-                          << EnumOption(SpeciesTorsion::Cos3CForm, "Cos3C", 4)
-                          << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4)
-                          << EnumOption(SpeciesTorsion::CosNForm, "CosN", 1, OptionArguments::AnyNumber)
-                          << EnumOption(SpeciesTorsion::CosNCForm, "CosNC", 1, OptionArguments::AnyNumber)
-                          << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3)
-                          << EnumOption(SpeciesTorsion::FourierNForm, "FourierN", 2, OptionArguments::AnyNumber);
-
-    static EnumOptions<SpeciesImproper::ImproperFunction> options("ImproperFunction", ImproperFunctionOptions);
-
-    return options;
-}
 
 // Set up any necessary parameters
 void SpeciesImproper::setUp() {}

@@ -9,13 +9,11 @@
 // Return enum options for EscapedFormatter
 EnumOptions<TextPrimitiveVisitor::EscapedFormatter> &TextPrimitiveVisitor::escapedFormatters()
 {
-    static EnumOptionsList EscapedFormatterOptions = EnumOptionsList()
-                                                     << EnumOption(TextPrimitiveVisitor::BoldFormatter, "b")
-                                                     << EnumOption(TextPrimitiveVisitor::ItalicFormatter, "it")
-                                                     << EnumOption(TextPrimitiveVisitor::SubScriptFormatter, "sub")
-                                                     << EnumOption(TextPrimitiveVisitor::SuperScriptFormatter, "sup");
-
-    static EnumOptions<TextPrimitiveVisitor::EscapedFormatter> options("EscapedFormatter", EscapedFormatterOptions);
+    static EnumOptions<TextPrimitiveVisitor::EscapedFormatter> options("EscapedFormatter",
+                                                                       {{TextPrimitiveVisitor::BoldFormatter, "b"},
+                                                                        {TextPrimitiveVisitor::ItalicFormatter, "it"},
+                                                                        {TextPrimitiveVisitor::SubScriptFormatter, "sub"},
+                                                                        {TextPrimitiveVisitor::SuperScriptFormatter, "sup"}});
 
     return options;
 }

@@ -8,14 +8,20 @@
 #include <string>
 
 // Enum Option
-class EnumOption
+template <class E> class EnumOption
 {
     public:
     EnumOption();
-    EnumOption(const int enumeration, std::string_view keyword, std::optional<int> minArgs = std::nullopt,
-               std::optional<int> maxArgs = std::nullopt);
-    EnumOption(const int enumeration, std::string_view keyword, std::string_view description,
-               std::optional<int> minArgs = std::nullopt, std::optional<int> maxArgs = std::nullopt);
+    EnumOption(const E enumeration, std::string_view keyword, std::optional<int> minArgs = std::nullopt,
+               std::optional<int> maxArgs = std::nullopt)
+        : enumeration_(enumeration), keyword_(keyword), minArgs_(minArgs), maxArgs_(maxArgs)
+    {
+    }
+    EnumOption(const E enumeration, std::string_view keyword, std::string_view description,
+               std::optional<int> minArgs = std::nullopt, std::optional<int> maxArgs = std::nullopt)
+        : enumeration_(enumeration), keyword_(keyword), description_(description), minArgs_(minArgs), maxArgs_(maxArgs)
+    {
+    }
     virtual ~EnumOption() = default;
 
     /*
@@ -23,7 +29,7 @@ class EnumOption
      */
     private:
     // Option enumeration (i.e. from enum value)
-    int enumeration_;
+    E enumeration_;
     // Option keyword
     std::string keyword_;
     // Option description / long text
@@ -35,15 +41,15 @@ class EnumOption
 
     public:
     // Return if the option is valid (true except in derived classes)
-    virtual bool isValid() const;
+    virtual bool isValid() const { return true; }
     // Return option enumeration (i.e. from enum value)
-    int enumeration() const;
+    E enumeration() const { return enumeration_; }
     // Return option keyword
-    std::string_view keyword() const;
+    std::string_view keyword() const { return keyword_; }
     // Return option description
-    std::string_view description() const;
+    std::string_view description() const { return description_; }
     // Return minimum number of arguments the option takes
-    std::optional<int> minArgs() const;
+    std::optional<int> minArgs() const { return minArgs_; }
     // Return maximum number of arguments the option takes
-    std::optional<int> maxArgs() const;
+    std::optional<int> maxArgs() const { return maxArgs_; }
 };

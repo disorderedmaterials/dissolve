@@ -45,13 +45,11 @@ void ColourDefinition::operator=(const ColourDefinition &source)
 // Return enum options for ColourStyle
 EnumOptions<ColourDefinition::ColourStyle> &ColourDefinition::colourStyles()
 {
-    static EnumOptionsList ColourStyleOptions = EnumOptionsList()
-                                                << EnumOption(ColourDefinition::SingleColourStyle, "SingleColour")
-                                                << EnumOption(ColourDefinition::RGBGradientStyle, "RGBGradient")
-                                                << EnumOption(ColourDefinition::HSVGradientStyle, "HSVGradient")
-                                                << EnumOption(ColourDefinition::CustomGradientStyle, "CustomGradient");
-
-    static EnumOptions<ColourDefinition::ColourStyle> options("AutoScaleMethod", ColourStyleOptions);
+    static EnumOptions<ColourDefinition::ColourStyle> options("AutoScaleMethod",
+                                                              {{ColourDefinition::SingleColourStyle, "SingleColour"},
+                                                               {ColourDefinition::RGBGradientStyle, "RGBGradient"},
+                                                               {ColourDefinition::HSVGradientStyle, "HSVGradient"},
+                                                               {ColourDefinition::CustomGradientStyle, "CustomGradient"}});
 
     return options;
 }

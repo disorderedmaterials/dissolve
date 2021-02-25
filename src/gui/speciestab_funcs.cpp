@@ -44,7 +44,7 @@ SpeciesTab::SpeciesTab(DissolveWindow *dissolveWindow, Dissolve &dissolve, MainT
                dissolve.masterTorsions()));
     ui_.ImproperTable->setItemDelegateForColumn(
         4, new IntraFormComboDelegate(
-               this, new ComboEnumOptionsItems<SpeciesImproper::ImproperFunction>(SpeciesImproper::improperFunctions()),
+               this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions()),
                dissolve.masterImpropers()));
     // -- Isotopologues Tree
     ui_.IsotopologuesTree->setItemDelegateForColumn(1, new NullDelegate(this));

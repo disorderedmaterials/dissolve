@@ -264,12 +264,9 @@ const void RenderableConfiguration::sendToGL(const double pixelScaling)
 // Return EnumOptions for ConfigurationDisplayStyle
 EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> RenderableConfiguration::configurationDisplayStyles()
 {
-    static EnumOptionsList ConfigurationStyleOptions = EnumOptionsList()
-                                                       << EnumOption(RenderableConfiguration::LinesStyle, "Lines")
-                                                       << EnumOption(RenderableConfiguration::SpheresStyle, "Spheres");
-
-    static EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> options("ConfigurationDisplayStyle",
-                                                                                   ConfigurationStyleOptions);
+    static EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> options(
+        "ConfigurationDisplayStyle",
+        {{RenderableConfiguration::LinesStyle, "Lines"}, {RenderableConfiguration::SpheresStyle, "Spheres"}});
 
     return options;
 }
@@ -292,11 +289,9 @@ RenderableConfiguration::ConfigurationDisplayStyle RenderableConfiguration::disp
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> RenderableConfiguration::configurationStyleKeywords()
 {
-    static EnumOptionsList StyleKeywords = EnumOptionsList()
-                                           << EnumOption(RenderableConfiguration::DisplayKeyword, "Display", 1)
-                                           << EnumOption(RenderableConfiguration::EndStyleKeyword, "EndStyle");
-
-    static EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> options("ConfigurationStyleKeyword", StyleKeywords);
+    static EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> options(
+        "ConfigurationStyleKeyword",
+        {{RenderableConfiguration::DisplayKeyword, "Display", 1}, {RenderableConfiguration::EndStyleKeyword, "EndStyle"}});
 
     return options;
 }

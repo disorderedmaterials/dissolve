@@ -53,12 +53,10 @@ bool AddSpeciesProcedureNode::mustBeNamed() const { return false; }
 // Return enum option info for PositioningType
 EnumOptions<AddSpeciesProcedureNode::BoxActionStyle> AddSpeciesProcedureNode::boxActionStyles()
 {
-    static EnumOptionsList BoxActionStyleKeywords = EnumOptionsList()
-                                                    << EnumOption(AddSpeciesProcedureNode::None, "None")
-                                                    << EnumOption(AddSpeciesProcedureNode::AddVolume, "AddVolume")
-                                                    << EnumOption(AddSpeciesProcedureNode::ScaleVolume, "ScaleVolume");
-
-    static EnumOptions<AddSpeciesProcedureNode::BoxActionStyle> options("BoxAction", BoxActionStyleKeywords);
+    static EnumOptions<AddSpeciesProcedureNode::BoxActionStyle> options(
+        "BoxAction", {{AddSpeciesProcedureNode::None, "None"},
+                      {AddSpeciesProcedureNode::AddVolume, "AddVolume"},
+                      {AddSpeciesProcedureNode::ScaleVolume, "ScaleVolume"}});
 
     return options;
 }
@@ -66,12 +64,10 @@ EnumOptions<AddSpeciesProcedureNode::BoxActionStyle> AddSpeciesProcedureNode::bo
 // Return enum option info for PositioningType
 EnumOptions<AddSpeciesProcedureNode::PositioningType> AddSpeciesProcedureNode::positioningTypes()
 {
-    static EnumOptionsList PositioningTypeKeywords = EnumOptionsList()
-                                                     << EnumOption(AddSpeciesProcedureNode::CentralPositioning, "Central")
-                                                     << EnumOption(AddSpeciesProcedureNode::CurrentPositioning, "Current")
-                                                     << EnumOption(AddSpeciesProcedureNode::RandomPositioning, "Random");
-
-    static EnumOptions<AddSpeciesProcedureNode::PositioningType> options("PositioningType", PositioningTypeKeywords);
+    static EnumOptions<AddSpeciesProcedureNode::PositioningType> options(
+        "PositioningType", {{AddSpeciesProcedureNode::CentralPositioning, "Central"},
+                            {AddSpeciesProcedureNode::CurrentPositioning, "Current"},
+                            {AddSpeciesProcedureNode::RandomPositioning, "Random"}});
 
     return options;
 }

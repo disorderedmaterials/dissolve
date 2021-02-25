@@ -12,4 +12,4 @@ enum ArgumentNumber
     OptionalSecond = -2,
     AnyNumber = -3
 };
-};
+}; // namespace OptionArguments

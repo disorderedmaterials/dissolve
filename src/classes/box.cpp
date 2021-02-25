@@ -44,12 +44,11 @@ void Box::operator=(const Box &source)
 // Return enum options for BoxType
 EnumOptions<Box::BoxType> Box::boxTypes()
 {
-    static EnumOptionsList BoxTypeOptions =
-        EnumOptionsList() << EnumOption(Box::NonPeriodicBoxType, "NonPeriodic") << EnumOption(Box::CubicBoxType, "Cubic")
-                          << EnumOption(Box::OrthorhombicBoxType, "Orthorhombic")
-                          << EnumOption(Box::MonoclinicBoxType, "Monoclinic") << EnumOption(Box::TriclinicBoxType, "Triclinic");
-
-    static EnumOptions<Box::BoxType> options("BoxType", BoxTypeOptions);
+    static EnumOptions<Box::BoxType> options("BoxType", {{Box::NonPeriodicBoxType, "NonPeriodic"},
+                                                         {Box::CubicBoxType, "Cubic"},
+                                                         {Box::OrthorhombicBoxType, "Orthorhombic"},
+                                                         {Box::MonoclinicBoxType, "Monoclinic"},
+                                                         {Box::TriclinicBoxType, "Triclinic"}});
 
     return options;
 }

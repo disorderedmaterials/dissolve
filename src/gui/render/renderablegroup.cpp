@@ -109,12 +109,10 @@ bool RenderableGroup::isVisible() const { return visible_; }
 // Return enum options for GroupColouring
 EnumOptions<RenderableGroup::GroupColouring> RenderableGroup::groupColourings()
 {
-    static EnumOptionsList GroupColouringOptions = EnumOptionsList()
-                                                   << EnumOption(RenderableGroup::NoGroupColouring, "None")
-                                                   << EnumOption(RenderableGroup::FixedGroupColouring, "Fixed")
-                                                   << EnumOption(RenderableGroup::AutomaticIndividualColouring, "Automatic");
-
-    static EnumOptions<RenderableGroup::GroupColouring> options("GroupColouring", GroupColouringOptions);
+    static EnumOptions<RenderableGroup::GroupColouring> options("GroupColouring",
+                                                                {{RenderableGroup::NoGroupColouring, "None"},
+                                                                 {RenderableGroup::FixedGroupColouring, "Fixed"},
+                                                                 {RenderableGroup::AutomaticIndividualColouring, "Automatic"}});
 
     return options;
 }
@@ -205,12 +203,10 @@ LineStipple::StippleType RenderableGroup::lineStipple() const { return lineStipp
 // Return enum options for VerticalShiftStyle
 EnumOptions<RenderableGroup::VerticalShiftStyle> RenderableGroup::verticalShiftStyles()
 {
-    static EnumOptionsList VerticalShiftStyleOptions = EnumOptionsList()
-                                                       << EnumOption(RenderableGroup::PreventVerticalShifting, "Prevent")
-                                                       << EnumOption(RenderableGroup::GroupVerticalShifting, "Group")
-                                                       << EnumOption(RenderableGroup::IndividualVerticalShifting, "Individual");
-
-    static EnumOptions<RenderableGroup::VerticalShiftStyle> options("VerticalShiftStyle", VerticalShiftStyleOptions);
+    static EnumOptions<RenderableGroup::VerticalShiftStyle> options(
+        "VerticalShiftStyle", {{RenderableGroup::PreventVerticalShifting, "Prevent"},
+                               {RenderableGroup::GroupVerticalShifting, "Group"},
+                               {RenderableGroup::IndividualVerticalShifting, "Individual"}});
 
     return options;
 }

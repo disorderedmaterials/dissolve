@@ -10,14 +10,12 @@
 // Return enum option info for MasterKeyword
 EnumOptions<MasterBlock::MasterKeyword> MasterBlock::keywords()
 {
-    static EnumOptionsList MasterKeywords =
-        EnumOptionsList() << EnumOption(MasterBlock::AngleKeyword, "Angle", 2, OptionArguments::AnyNumber)
-                          << EnumOption(MasterBlock::BondKeyword, "Bond", 2, OptionArguments::AnyNumber)
-                          << EnumOption(MasterBlock::EndMasterKeyword, "EndMaster")
-                          << EnumOption(MasterBlock::ImproperKeyword, "Improper", 2, OptionArguments::AnyNumber)
-                          << EnumOption(MasterBlock::TorsionKeyword, "Torsion", 2, OptionArguments::AnyNumber);
-
-    static EnumOptions<MasterBlock::MasterKeyword> options("MasterKeyword", MasterKeywords);
+    static EnumOptions<MasterBlock::MasterKeyword> options(
+        "MasterKeyword", {{MasterBlock::AngleKeyword, "Angle", 2, OptionArguments::AnyNumber},
+                          {MasterBlock::BondKeyword, "Bond", 2, OptionArguments::AnyNumber},
+                          {MasterBlock::EndMasterKeyword, "EndMaster"},
+                          {MasterBlock::ImproperKeyword, "Improper", 2, OptionArguments::AnyNumber},
+                          {MasterBlock::TorsionKeyword, "Torsion", 2, OptionArguments::AnyNumber}});
 
     return options;
 }
@@ -29,7 +27,6 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
 
     SpeciesBond::BondFunction bf;
     SpeciesAngle::AngleFunction af;
-    SpeciesImproper::ImproperFunction impf;
     SpeciesTorsion::TorsionFunction tf;
     auto blockDone = false, error = false;
 
@@ -137,25 +134,25 @@ bool MasterBlock::parse(LineParser &parser, CoreData &coreData)
                 break;
             case (MasterBlock::ImproperKeyword):
                 // Check the functional form specified
-                if (!SpeciesImproper::improperFunctions().isValid(parser.argsv(2)))
+                if (!SpeciesTorsion::torsionFunctions().isValid(parser.argsv(2)))
                 {
                     Messenger::error("Functional form of improper ({}) not recognised.\n", parser.argsv(2));
                     error = true;
                     break;
                 }
-                impf = SpeciesImproper::improperFunctions().enumeration(parser.argsv(2));
+                tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argsv(2));
 
                 // Create a new master improper definition
                 try
                 {
                     auto &masterIntra = coreData.addMasterImproper(parser.argsv(1));
-                    masterIntra.setForm(impf);
+                    masterIntra.setForm(tf);
 
                     std::string termInfo = fmt::format("     {:<10}  {:<12}", masterIntra.name(),
-                                                       SpeciesImproper::improperFunctions().keywordFromInt(masterIntra.form()));
+                                                       SpeciesTorsion::torsionFunctions().keywordFromInt(masterIntra.form()));
 
                     // Check number of args provided
-                    if (!SpeciesImproper::improperFunctions().validNArgs(impf, parser.nArgs() - 3))
+                    if (!SpeciesTorsion::torsionFunctions().validNArgs(tf, parser.nArgs() - 3))
                     {
                         error = true;
                         break;

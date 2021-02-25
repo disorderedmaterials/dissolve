@@ -18,14 +18,13 @@ TEST(EnumOptionsTest, EnumOptions)
         Heliotrope,
         Tangerine
     };
-    EnumOptionsList testOptions =
-        EnumOptionsList() << EnumOption(Condition::Red, "Red")
-                          << EnumOption(Condition::Mauve, "Mauve", OptionArguments::OneOrMore)
-                          << EnumOption(Condition::Magenta, "Magenta", OptionArguments::OptionalSecond)
-                          << EnumOption(Condition::Taupe, "Taupe", 3, 6) << EnumOption(Condition::Marigold, "Marigold", 4)
-                          << EnumOption(Condition::Heliotrope, "Heliotrope", 3, 3)
-                          << EnumOption(Condition::Tangerine, "Tangerine", 2, OptionArguments::AnyNumber);
-    EnumOptions<Condition> options("TestOptions", testOptions);
+    EnumOptions<Condition> options("TestOptions", {{Condition::Red, "Red"},
+                                                   {Condition::Mauve, "Mauve", OptionArguments::OneOrMore},
+                                                   {Condition::Magenta, "Magenta", OptionArguments::OptionalSecond},
+                                                   {Condition::Taupe, "Taupe", 3, 6},
+                                                   {Condition::Marigold, "Marigold", 4},
+                                                   {Condition::Heliotrope, "Heliotrope", 3, 3},
+                                                   {Condition::Tangerine, "Tangerine", 2, OptionArguments::AnyNumber}});
 
     // Test options
     // Red - no arguments accepted

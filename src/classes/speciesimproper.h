@@ -5,6 +5,7 @@
 
 #include "base/enumoptions.h"
 #include "classes/speciesintra.h"
+#include "classes/speciestorsion.h"
 
 // Forward Declarations
 class SpeciesAtom;
@@ -70,23 +71,6 @@ class SpeciesImproper : public SpeciesIntra
     /*
      * Interaction Parameters
      */
-    public:
-    // Improper functional forms
-    enum ImproperFunction
-    {
-        NoForm,
-        CosineForm,
-        Cos3Form,
-        Cos3CForm,
-        Cos4Form,
-        CosNForm,
-        CosNCForm,
-        UFFCosineForm,
-        FourierNForm
-    };
-    // Return enum options for ImproperFunction
-    static EnumOptions<ImproperFunction> improperFunctions();
-
     public:
     // Set up any necessary parameters
     void setUp();

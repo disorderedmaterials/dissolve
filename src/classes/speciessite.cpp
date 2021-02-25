@@ -345,14 +345,12 @@ Site *SpeciesSite::createFromParent() const
 // Return enum option info for SiteKeyword
 EnumOptions<SpeciesSite::SiteKeyword> SpeciesSite::keywords()
 {
-    static EnumOptionsList SiteKeywords = EnumOptionsList()
-                                          << EnumOption(SpeciesSite::EndSiteKeyword, "EndSite")
-                                          << EnumOption(SpeciesSite::OriginKeyword, "Origin", OptionArguments::OneOrMore)
-                                          << EnumOption(SpeciesSite::OriginMassWeightedKeyword, "OriginMassWeighted", 1)
-                                          << EnumOption(SpeciesSite::XAxisKeyword, "XAxis", OptionArguments::OneOrMore)
-                                          << EnumOption(SpeciesSite::YAxisKeyword, "YAxis", OptionArguments::OneOrMore);
-
-    static EnumOptions<SpeciesSite::SiteKeyword> options("SiteKeyword", SiteKeywords);
+    static EnumOptions<SpeciesSite::SiteKeyword> options("SiteKeyword",
+                                                         {{SpeciesSite::EndSiteKeyword, "EndSite"},
+                                                          {SpeciesSite::OriginKeyword, "Origin", OptionArguments::OneOrMore},
+                                                          {SpeciesSite::OriginMassWeightedKeyword, "OriginMassWeighted", 1},
+                                                          {SpeciesSite::XAxisKeyword, "XAxis", OptionArguments::OneOrMore},
+                                                          {SpeciesSite::YAxisKeyword, "YAxis", OptionArguments::OneOrMore}});
 
     return options;
 }

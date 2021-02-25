@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "base/enumoption.h"
 #include "base/enumoptionsbase.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
@@ -11,13 +12,10 @@
 template <class E> class EnumOptions : public EnumOptionsBase
 {
     public:
-    EnumOptions() : EnumOptionsBase() {}
-    EnumOptions(std::string_view name, const EnumOptionsList &options)
-        : EnumOptionsBase(), name_(name), options_(options.options())
-    {
-    }
-    EnumOptions(std::string_view name, const EnumOptionsList &options, E defaultEnumeration)
-        : name_(name), options_(options.options())
+    EnumOptions() = default;
+    EnumOptions(std::string_view name, const std::vector<EnumOption<E>> &options) : name_(name), options_(std::move(options)) {}
+    EnumOptions(std::string_view name, const std::vector<EnumOption<E>> &options, E defaultEnumeration)
+        : name_(name), options_(std::move(options))
     {
         for (auto n = 0; n < options_.size(); ++n)
             if (options_[n].enumeration() == defaultEnumeration)
@@ -34,7 +32,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
     // Name of options
     std::string name_;
     // Vector of valid options
-    std::vector<EnumOption> options_;
+    std::vector<EnumOption<E>> options_;
     // Currently selected option (by index) in local options_ array
     std::optional<int> currentOptionIndex_;
 
@@ -103,8 +101,8 @@ template <class E> class EnumOptions : public EnumOptionsBase
     // Return enumeration in E
     E enumeration(std::string_view keyword) const
     {
-        auto it =
-            std::find_if(options_.cbegin(), options_.cend(), [keyword](auto &option) { return DissolveSys::sameString(keyword, option.keyword()); });
+        auto it = std::find_if(options_.cbegin(), options_.cend(),
+                               [keyword](auto &option) { return DissolveSys::sameString(keyword, option.keyword()); });
         if (it != options_.cend())
             return (E)it->enumeration();
 
@@ -137,7 +135,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
         return (it == options_.cend() ? "ENUMERATION_NOT_VALID" : it->keyword());
     }
     // Return option with enumeration specified
-    const EnumOption &option(E enumeration) const
+    const EnumOption<E> &option(E enumeration) const
     {
         auto it = std::find_if(options_.cbegin(), options_.cend(),
                                [enumeration](auto &option) { return enumeration == option.enumeration(); });
@@ -180,7 +178,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
                     return Messenger::error("'{}' keyword '{}' requires one or more arguments, but none were provided.\n",
                                             name(), opt.keyword());
                 break;
-            case (EnumOption::OptionArguments::OptionalSecond):
+            case (OptionArguments::OptionalSecond):
                 if ((nArgsProvided == 1) || (nArgsProvided == 2))
                     return true;
                 else

@@ -10,20 +10,15 @@
 // Return enum option info for PairPotentialsKeyword
 EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> PairPotentialsBlock::keywords()
 {
-    static EnumOptionsList PairPotentialsKeywords =
-        EnumOptionsList() << EnumOption(PairPotentialsBlock::CoulombTruncationKeyword, "CoulombTruncation", 1)
-                          << EnumOption(PairPotentialsBlock::DeltaKeyword, "Delta", 1)
-                          << EnumOption(PairPotentialsBlock::EndPairPotentialsKeyword, "EndPairPotentials") <<
-        // 		EnumOption(PairPotentialsBlock::GenerateKeyword, 			"Generate",
-        // 3,9)
-        // <<
-        EnumOption(PairPotentialsBlock::IncludeCoulombKeyword, "IncludeCoulomb",
-                   1) << EnumOption(PairPotentialsBlock::ParametersKeyword, "Parameters", 3, OptionArguments::AnyNumber)
-                          << EnumOption(PairPotentialsBlock::RangeKeyword, "Range", 1)
-                          << EnumOption(PairPotentialsBlock::ShortRangeTruncationKeyword, "ShortRangeTruncation", 1)
-                          << EnumOption(PairPotentialsBlock::ShortRangeTruncationWidthKeyword, "ShortRangeTruncationWidth", 1);
-
-    static EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> options("PairPotentialsKeyword", PairPotentialsKeywords);
+    static EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> options(
+        "PairPotentialsKeyword", {{PairPotentialsBlock::CoulombTruncationKeyword, "CoulombTruncation", 1},
+                                  {PairPotentialsBlock::DeltaKeyword, "Delta", 1},
+                                  {PairPotentialsBlock::EndPairPotentialsKeyword, "EndPairPotentials"},
+                                  {PairPotentialsBlock::IncludeCoulombKeyword, "IncludeCoulomb", 1},
+                                  {PairPotentialsBlock::ParametersKeyword, "Parameters", 3, OptionArguments::AnyNumber},
+                                  {PairPotentialsBlock::RangeKeyword, "Range", 1},
+                                  {PairPotentialsBlock::ShortRangeTruncationKeyword, "ShortRangeTruncation", 1},
+                                  {PairPotentialsBlock::ShortRangeTruncationWidthKeyword, "ShortRangeTruncationWidth", 1}});
 
     return options;
 }

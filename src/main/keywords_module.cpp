@@ -11,11 +11,9 @@
 // Return enum option info for ModuleKeyword
 EnumOptions<ModuleBlock::ModuleKeyword> ModuleBlock::keywords()
 {
-    static EnumOptionsList ModuleKeywords = EnumOptionsList() << EnumOption(ModuleBlock::DisableKeyword, "Disabled")
-                                                              << EnumOption(ModuleBlock::EndModuleKeyword, "EndModule")
-                                                              << EnumOption(ModuleBlock::FrequencyKeyword, "Frequency", 1);
-
-    static EnumOptions<ModuleBlock::ModuleKeyword> options("ModuleKeyword", ModuleKeywords);
+    static EnumOptions<ModuleBlock::ModuleKeyword> options("ModuleKeyword", {{ModuleBlock::DisableKeyword, "Disabled"},
+                                                                             {ModuleBlock::EndModuleKeyword, "EndModule"},
+                                                                             {ModuleBlock::FrequencyKeyword, "Frequency", 1}});
 
     return options;
 }

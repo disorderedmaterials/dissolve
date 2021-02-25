@@ -22,10 +22,8 @@ NETARootNode::~NETARootNode() {}
 // Return enum options for NETARootModifiers
 EnumOptions<NETARootNode::NETARootModifier> NETARootNode::modifiers()
 {
-    static EnumOptionsList ModifierOptions = EnumOptionsList()
-                                             << EnumOption(NBondsModifier, "nbonds") << EnumOption(NHydrogensModifier, "nh");
-
-    static EnumOptions<NETARootNode::NETARootModifier> options("RootModifier", ModifierOptions);
+    static EnumOptions<NETARootNode::NETARootModifier> options("RootModifier",
+                                                               {{NBondsModifier, "nbonds"}, {NHydrogensModifier, "nh"}});
 
     return options;
 }

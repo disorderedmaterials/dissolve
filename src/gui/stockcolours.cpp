@@ -23,22 +23,19 @@ QColor StockQColors[] = {
 // Return enum options for RenderableGroupKeyword
 EnumOptions<StockColours::StockColour> StockColours::stockColours()
 {
-    static EnumOptionsList StockColoursOptions = EnumOptionsList()
-                                                 << EnumOption(StockColours::BlackStockColour, "Black")
-                                                 << EnumOption(StockColours::RedStockColour, "Red")
-                                                 << EnumOption(StockColours::GreenStockColour, "Green")
-                                                 << EnumOption(StockColours::BlueStockColour, "Blue")
-                                                 << EnumOption(StockColours::PurpleStockColour, "Purple")
-                                                 << EnumOption(StockColours::CyanStockColour, "Cyan")
-                                                 << EnumOption(StockColours::OrangeStockColour, "Orange")
-                                                 << EnumOption(StockColours::PinkStockColour, "Pink")
-                                                 << EnumOption(StockColours::LightRedStockColour, "LightRed")
-                                                 << EnumOption(StockColours::LightGreenStockColour, "LightGreen")
-                                                 << EnumOption(StockColours::LightBlueStockColour, "LightBlue")
-                                                 << EnumOption(StockColours::SilverStockColour, "Silver")
-                                                 << EnumOption(StockColours::GoldStockColour, "Gold");
-
-    static EnumOptions<StockColours::StockColour> options("StockColour", StockColoursOptions);
+    static EnumOptions<StockColours::StockColour> options("StockColour", {{StockColours::BlackStockColour, "Black"},
+                                                                          {StockColours::RedStockColour, "Red"},
+                                                                          {StockColours::GreenStockColour, "Green"},
+                                                                          {StockColours::BlueStockColour, "Blue"},
+                                                                          {StockColours::PurpleStockColour, "Purple"},
+                                                                          {StockColours::CyanStockColour, "Cyan"},
+                                                                          {StockColours::OrangeStockColour, "Orange"},
+                                                                          {StockColours::PinkStockColour, "Pink"},
+                                                                          {StockColours::LightRedStockColour, "LightRed"},
+                                                                          {StockColours::LightGreenStockColour, "LightGreen"},
+                                                                          {StockColours::LightBlueStockColour, "LightBlue"},
+                                                                          {StockColours::SilverStockColour, "Silver"},
+                                                                          {StockColours::GoldStockColour, "Gold"}});
 
     return options;
 }

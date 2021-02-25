@@ -42,7 +42,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
                this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions())));
     ui_.MasterImpropersTable->setItemDelegateForColumn(
         1, new ComboListDelegate(
-               this, new ComboEnumOptionsItems<SpeciesImproper::ImproperFunction>(SpeciesImproper::improperFunctions())));
+               this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions())));
 
     // -- Parameters
     for (auto n = 2; n < 6; ++n)
@@ -276,7 +276,7 @@ void ForcefieldTab::updateImpropersTableRow(int row, const MasterIntra *masterIm
     else
         item = ui_.MasterImpropersTable->item(row, 1);
     item->setText(
-        QString::fromStdString(std::string(SpeciesImproper::improperFunctions().keywordFromInt(masterImproper->form()))));
+        QString::fromStdString(std::string(SpeciesTorsion::torsionFunctions().keywordFromInt(masterImproper->form()))));
 
     // Parameters
     for (int n = 0; n < masterImproper->parameters().size(); ++n)
@@ -929,7 +929,7 @@ void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem *w)
             break;
         // Functional Form
         case (1):
-            masterIntra->setForm(SpeciesImproper::improperFunctions().enumeration(qPrintable(w->text())));
+            masterIntra->setForm(SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text())));
             dissolveWindow_->setModified();
             break;
         // Parameters
