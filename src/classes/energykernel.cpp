@@ -583,7 +583,8 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
 
     auto totalEnergy = 0.0;
     Cell *cell;
-    for (auto cellId = start; cellId < cellArray.nCells(); cellId += stride)
+    auto [begin, end] = cut_range(0, cellArray.nCells(), stride, start);
+    for (auto cellId = begin; cellId < end; ++cellId)
     {
         cell = cellArray.cell(cellId);
 

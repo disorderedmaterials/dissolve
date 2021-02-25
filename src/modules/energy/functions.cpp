@@ -7,6 +7,7 @@
 #include "classes/species.h"
 #include "genericitems/listhelper.h"
 #include "modules/energy/energy.h"
+#include "templates/algorithms.h"
 #include <numeric>
 
 // Return total interatomic energy of Configuration
@@ -145,10 +146,11 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
 
     std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
     std::shared_ptr<const Molecule> mol;
-    for (auto m = start; m < cfg->nMolecules(); m += stride)
+    auto [begin, end] = cut_range(cfg->molecules().begin(), cfg->molecules().end(), stride, start);
+    for (auto it = begin; it < end; ++it)
     {
         // Get Molecule pointer
-        mol = molecules[m];
+        mol = *it;
 
         // Loop over Bond
         bondEnergy += std::accumulate(mol->species()->bonds().cbegin(), mol->species()->bonds().cend(), 0.0,
