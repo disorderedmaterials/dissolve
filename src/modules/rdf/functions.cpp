@@ -89,15 +89,13 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
         auto &histogram = partialSet.fullHistogram(typeI, typeI).bins();
         bins = binss[typeI];
         nPoints = partialSet.fullHistogram(typeI, typeI).nBins();
-        for (i = start; i < maxr[typeI]; i += stride)
-        {
-            centre = ri[i];
-            for (j = i + 1; j < maxr[typeI]; ++j)
-                bins[j] = box->minimumDistance(centre, ri[j]) * rbin;
-            for (j = i + 1; j < maxr[typeI]; ++j)
-                if (bins[j] < nPoints)
-                    ++histogram[bins[j]];
-        }
+	for_each_pair(ri, ri + maxr[typeI], stride, start,
+		      [box, bins, rbin, nPoints, &histogram](int i, auto centre, int j, auto other){
+			if (i == j) return;
+			bins[j] = box->minimumDistance(centre, other) * rbin;
+			if (bins[j] < nPoints)
+			  ++histogram[bins[j]];
+		      });
     }
 
     Messenger::printVerbose("Cross terms..\n");
@@ -121,7 +119,8 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
             auto &histogram = partialSet.fullHistogram(typeI, typeJ).bins();
             bins = binss[typeJ];
             nPoints = partialSet.fullHistogram(typeI, typeJ).nBins();
-            for (i = start; i < maxr[typeI]; i += stride)
+	    auto [begin, end] = cut_range(0, maxr[typeI], stride, start);
+	    for (i = begin; i < end; ++i)
             {
                 centre = ri[i];
                 for (j = 0; j < maxr[typeJ]; ++j)
@@ -160,7 +159,8 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
     auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
     auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
-    for (n = start; n < cellArray.nCells(); n += stride)
+    auto [begin, end] = cut_range(0, cellArray.nCells(), stride, start);
+    for (n = begin; n < end; ++n)
     {
         cellI = cellArray.cell(n);
         auto &atomsI = cellI->atoms();
