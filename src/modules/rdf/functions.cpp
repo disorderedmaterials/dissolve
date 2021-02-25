@@ -326,9 +326,10 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
 
     // Loop over molecules...
     std::shared_ptr<Atom> i, j;
-    for (auto m = start; m < cfg->nMolecules(); m += stride)
+    auto [begin, end] = cut_range(cfg->molecules().begin(), cfg->molecules().end(), stride, start);
+    for (auto it = begin; it < end; ++it)
     {
-        std::shared_ptr<Molecule> mol = cfg->molecule(m);
+        std::shared_ptr<Molecule> mol = *it;
         auto &atoms = mol->atoms();
 
         for (auto ii = atoms.begin(); ii < std::prev(atoms.end()); ++ii)
