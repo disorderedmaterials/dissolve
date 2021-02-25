@@ -8,12 +8,12 @@
 #include "base/sysfunc.h"
 
 // Enum Options
-template <class T> class EnumOptions : public EnumOptionsBase
+template <class E> class EnumOptions : public EnumOptionsBase
 {
     public:
     EnumOptions() : EnumOptionsBase() {}
     EnumOptions(std::string_view name, const EnumOptionsList &options) : EnumOptionsBase(name, options) {}
-    EnumOptions(std::string_view name, const EnumOptionsList &options, T defaultEnumeration)
+    EnumOptions(std::string_view name, const EnumOptionsList &options, E defaultEnumeration)
         : EnumOptionsBase(name, options, defaultEnumeration)
     {
     }
@@ -22,31 +22,31 @@ template <class T> class EnumOptions : public EnumOptionsBase
      * Enum Conversion
      */
     public:
-    // Return enumeration in T
-    T enumeration(std::string_view keyword) const
+    // Return enumeration in E
+    E enumeration(std::string_view keyword) const
     {
         for (auto n = 0; n < options_.size(); ++n)
             if (DissolveSys::sameString(keyword, options_[n].keyword()))
-                return (T)options_[n].enumeration();
+                return (E)options_[n].enumeration();
 
         Messenger::warn("Option '{}' is not recognised, so can't return its enumeration.\n", keyword);
 
-        return (T)-1;
+        return (E)-1;
     }
-    // Return current enumeration in T
-    T enumeration() const
+    // Return current enumeration in E
+    E enumeration() const
     {
         // Use local index to return enumeration
         if (!currentOptionIndex_.has_value())
         {
             Messenger::warn("No current option set in EnumOptions, so can't return an enumeration.\n");
-            return (T)-1;
+            return (E)-1;
         }
 
-        return (T)options_[currentOptionIndex_.value()].enumeration();
+        return (E)options_[currentOptionIndex_.value()].enumeration();
     }
     // Return enumerated keyword
-    std::string_view keyword(T enumeration) const
+    std::string_view keyword(E enumeration) const
     {
         for (int n = 0; n < options_.size(); ++n)
             if (options_[n].enumeration() == enumeration)
@@ -62,7 +62,7 @@ template <class T> class EnumOptions : public EnumOptionsBase
         return "ENUMERATION_NOT_VALID";
     }
     // Return option with enumeration specified
-    const EnumOption &option(T enumeration) const
+    const EnumOption &option(E enumeration) const
     {
         for (int n = 0; n < options_.size(); ++n)
             if (options_[n].enumeration() == enumeration)
@@ -72,27 +72,27 @@ template <class T> class EnumOptions : public EnumOptionsBase
     // Return option with keyword specified
     const EnumOption &option(std::string_view keyword) const { return EnumOptionsBase::option(keyword); }
     // Return minimum number of arguments for the specified enumeration
-    std::optional<int> minArgs(T enumeration) const
+    std::optional<int> minArgs(E enumeration) const
     {
         // Retrieve the relevant EnumOption
         const auto &opt = option(enumeration);
         return opt.minArgs();
     }
     // Return maximum number of arguments for the specified enumeration
-    std::optional<int> maxArgs(T enumeration) const
+    std::optional<int> maxArgs(E enumeration) const
     {
         // Retrieve the relevant EnumOption
         const auto &opt = option(enumeration);
         return opt.maxArgs();
     }
     // Return whether an exact number of arguments is required
-    bool exactNArgs(T enumeration) const
+    bool exactNArgs(E enumeration) const
     {
         const auto &opt = option(enumeration);
         return opt.minArgs() == opt.maxArgs();
     }
     // Check number of arguments provided to keyword
-    bool validNArgs(T enumeration, int nArgsProvided) const
+    bool validNArgs(E enumeration, int nArgsProvided) const
     {
         // Retrieve the relevant EnumOption
         const auto &opt = option(enumeration);
@@ -172,7 +172,7 @@ template <class T> class EnumOptions : public EnumOptionsBase
      * Operators
      */
     public:
-    EnumOptions<T> &operator=(T value)
+    EnumOptions<E> &operator=(E value)
     {
         currentOptionIndex_ = value;
         return *this;
