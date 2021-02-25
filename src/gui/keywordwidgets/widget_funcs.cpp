@@ -123,10 +123,10 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
     }
     else if (type == KeywordBase::ModuleRefListData)
     {
-        ModuleRefListKeywordWidget *moduleRefListWidget = new ModuleRefListKeywordWidget(nullptr, keywordBase, coreData);
-        connect(moduleRefListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = moduleRefListWidget;
-        base = moduleRefListWidget;
+        ModuleVectorKeywordWidget *ModuleVectorWidget = new ModuleVectorKeywordWidget(nullptr, keywordBase, coreData);
+        connect(ModuleVectorWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+        widget = ModuleVectorWidget;
+        base = ModuleVectorWidget;
     }
     else if (type == KeywordBase::NodeData)
     {

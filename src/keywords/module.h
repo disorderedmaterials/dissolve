@@ -8,11 +8,7 @@
 #include "keywords/data.h"
 #include "module/module.h"
 
-// Forward Declarations
-class ModuleValue;
-class ProcedureModule;
-
-// Keyword with ProcedureModule base class
+// Keyword with Module base class
 class ModuleKeywordBase
 {
     public:
@@ -42,7 +38,7 @@ class ModuleKeywordBase
     virtual int optionMask() const = 0;
 };
 
-// Keyword with ProcedureModule
+// Keyword with Module
 template <class M> class ModuleKeyword : public ModuleKeywordBase, public KeywordData<M *>
 {
     public:
@@ -122,7 +118,7 @@ template <class M> class ModuleKeyword : public ModuleKeywordBase, public Keywor
      * Object Management
      */
     protected:
-    // Prune any references to the supplied ProcedureModule in the contained data
+    // Prune any references to the supplied Module in the contained data
     void removeReferencesTo(Module *module)
     {
         if (KeywordData<M *>::data_ == module)

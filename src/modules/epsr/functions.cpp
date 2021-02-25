@@ -10,17 +10,7 @@
 #include "templates/algorithms.h"
 
 // Return list of target Modules / data for refinement
-const RefList<Module> &EPSRModule::targets() const { return targets_; }
-
-// Add target Modules
-void EPSRModule::addTargets(RefList<Module> targets)
-{
-    targets_ += targets;
-
-    // Must flag that the associated keyword has been set by other means
-    if (targets.nItems() > 0)
-        keywords_.hasBeenSet("Target");
-}
+const std::vector<Module *> &EPSRModule::targets() const { return keywords_.retrieve<std::vector<Module *>>("Target"); }
 
 // Create / retrieve arrays for storage of empirical potential coefficients
 Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp)

@@ -80,16 +80,12 @@ class EPSRModule : public Module
     private:
     // Test datasets (if any)
     Data1DStore testData_;
-    // Target Modules for refinement
-    RefList<Module> targets_;
     // Target Configuration (determined from target modules)
     Configuration *targetConfiguration_;
 
     public:
-    // Return list of target Modules / data for refeinement
-    const RefList<Module> &targets() const;
-    // Add target Modules
-    void addTargets(RefList<Module> targets);
+    // Return list of target Modules / data for refinement
+    const std::vector<Module *> &targets() const;
     // Create / retrieve arrays for storage of empirical potential coefficients
     Array2D<std::vector<double>> &potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp = -1);
     // Generate empirical potentials from current coefficients

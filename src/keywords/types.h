@@ -31,7 +31,7 @@
 #include "keywords/linkto.h"
 #include "keywords/module.h"
 #include "keywords/modulegroups.h"
-#include "keywords/modulereflist.h"
+#include "keywords/modulevector.h"
 #include "keywords/node.h"
 #include "keywords/nodeandinteger.h"
 #include "keywords/nodearray.h"

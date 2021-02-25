@@ -23,7 +23,7 @@ add_library(
   list.cpp
   module.cpp
   modulegroups.cpp
-  modulereflist.cpp
+  modulevector.cpp
   node.cpp
   nodeandinteger.cpp
   nodearray.cpp
@@ -69,7 +69,7 @@ add_library(
   list.h
   module.h
   modulegroups.h
-  modulereflist.h
+  modulevector.h
   node.h
   nodeandinteger.h
   nodearray.h

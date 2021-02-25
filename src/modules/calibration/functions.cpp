@@ -15,7 +15,7 @@
  */
 
 CalibrationModuleCostFunctions::CalibrationModuleCostFunctions(
-    Dissolve &dissolve, ProcessPool &procPool, RefList<Module> &intraBroadeningModules,
+    Dissolve &dissolve, ProcessPool &procPool, std::vector<Module *> &intraBroadeningModules,
     RefDataList<Module, CalibrationModule::IntraBroadeningFitTarget> &intraBroadeningReferences)
     : dissolve_(dissolve), processPool_(procPool), intraBroadeningModules_(intraBroadeningModules),
       intraBroadeningReferences_(intraBroadeningReferences)
