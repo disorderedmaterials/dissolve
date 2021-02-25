@@ -12,10 +12,88 @@ template <class E> class EnumOptions : public EnumOptionsBase
 {
     public:
     EnumOptions() : EnumOptionsBase() {}
-    EnumOptions(std::string_view name, const EnumOptionsList &options) : EnumOptionsBase(name, options) {}
-    EnumOptions(std::string_view name, const EnumOptionsList &options, E defaultEnumeration)
-        : EnumOptionsBase(name, options, defaultEnumeration)
+    EnumOptions(std::string_view name, const EnumOptionsList &options)
+        : EnumOptionsBase(), name_(name), options_(options.options())
     {
+    }
+    EnumOptions(std::string_view name, const EnumOptionsList &options, E defaultEnumeration)
+        : name_(name), options_(options.options())
+    {
+        for (auto n = 0; n < options_.size(); ++n)
+            if (options_[n].enumeration() == defaultEnumeration)
+            {
+                currentOptionIndex_ = n;
+                break;
+            }
+    }
+
+    /*
+     * Option Data
+     */
+    private:
+    // Name of options
+    std::string name_;
+    // Vector of valid options
+    std::vector<EnumOption> options_;
+    // Currently selected option (by index) in local options_ array
+    std::optional<int> currentOptionIndex_;
+
+    public:
+    // Return name of options (e.g. from source enumeration)
+    std::string_view name() const override { return name_; }
+    // Return number of options available
+    int nOptions() const override { return options_.size(); }
+    // Return nth keyword in the list
+    std::string_view keywordByIndex(int index) const override { return options_[index].keyword(); }
+    // Return description for the nth keyword in the list
+    std::string_view descriptionByIndex(int index) const override { return options_[index].description(); }
+    // Return current option keyword
+    std::string_view keyword() const
+    {
+        if (!currentOptionIndex_.has_value())
+            return "UNDEFINED";
+
+        return options_[currentOptionIndex_.value()].keyword();
+    }
+    // Set current option keyword
+    bool set(std::string_view keyword)
+    {
+        for (auto n = 0; n < options_.size(); ++n)
+            if (DissolveSys::sameString(keyword, options_[n].keyword()))
+            {
+                currentOptionIndex_ = n;
+                return true;
+            }
+
+        return false;
+    }
+    // Return index of current option
+    int index() const override { return currentOptionIndex_.value_or(0); }
+    // Set current option from keyword
+    void setIndex(int index) override
+    {
+        assert(index >= 0 && index < options_.size());
+
+        currentOptionIndex_ = index;
+    }
+    // Return whether specified option keyword is valid
+    bool isValid(std::string_view keyword) const
+    {
+        for (auto n = 0; n < options_.size(); ++n)
+            if (DissolveSys::sameString(keyword, options_[n].keyword()))
+                return true;
+        return false;
+    }
+
+    // Raise error, printing valid options
+    bool errorAndPrintValid(std::string_view badKeyword) const
+    {
+        std::string validValueString;
+        for (auto n = 0; n < options_.size(); ++n)
+            validValueString += fmt::format(n == 0 ? "{}" : ", {}", options_[n].keyword());
+        Messenger::error("'{}' is not a valid {}.\nValid options are:  {}", badKeyword, name_, validValueString);
+
+        return false;
     }
 
     /*
@@ -70,7 +148,13 @@ template <class E> class EnumOptions : public EnumOptionsBase
         return unrecognisedOption_;
     }
     // Return option with keyword specified
-    const EnumOption &option(std::string_view keyword) const { return EnumOptionsBase::option(keyword); }
+    const EnumOption &option(std::string_view keyword) const
+    {
+        for (auto n = 0; n < options_.size(); ++n)
+            if (DissolveSys::sameString(keyword, options_[n].keyword()))
+                return options_[n];
+        return unrecognisedOption_;
+    }
     // Return minimum number of arguments for the specified enumeration
     std::optional<int> minArgs(E enumeration) const
     {
@@ -174,6 +258,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
     public:
     EnumOptions<E> &operator=(E value)
     {
+        // TODO THIS IS WRONG!
         currentOptionIndex_ = value;
         return *this;
     }

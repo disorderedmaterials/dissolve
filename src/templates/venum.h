@@ -51,18 +51,9 @@ template <class V, class E> class Venum
     // Return enumeration
     E enumeration() const { return enumOptions_.enumeration(); }
     // Return enumeration as string
-    std::string_view enumerationAsString() const { return enumOptions_.currentOption().keyword(); }
+    std::string_view enumerationAsString() const { return enumOptions_.keyword(); }
     // Set enumeration by index
-    bool setEnumerationByIndex(int index) { return enumOptions_.setCurrentOptionIndex(index); }
+    void setEnumerationByIndex(int index) { enumOptions_.setIndex(index); }
     // Set enumeration from string
-    bool setEnumeration(std::string_view option)
-    {
-        if (enumOptions_.isValid(option))
-        {
-            enumOptions_.setCurrentOption(option);
-            return true;
-        }
-
-        return false;
-    }
+    bool setEnumeration(std::string_view option) { return enumOptions_.set(option); }
 };
