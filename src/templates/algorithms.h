@@ -11,8 +11,8 @@
 template <typename T> auto cut_range(const T begin, const T end, const int count, const int step)
 {
     auto diff = end - begin;
-    T start = begin + std::div((const long int)step * diff, (const long int)count).quot;
-    T stop = begin + std::div((const long int)(step + 1) * diff, (const long int)count).quot;
+    T start = begin + std::ldiv((const long int)step * diff, (const long int)count).quot;
+    T stop = begin + std::ldiv((const long int)(step + 1) * diff, (const long int)count).quot;
     return std::make_tuple(start, stop);
 }
 
