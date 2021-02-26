@@ -10,8 +10,7 @@ namespace Averaging
 EnumOptions<Averaging::AveragingScheme> averagingSchemes()
 {
     static EnumOptions<Averaging::AveragingScheme> options(
-        "AveragingScheme", {{Averaging::LinearAveraging, "Linear"}, {Averaging::ExponentialAveraging, "Exponential"}},
-        Averaging::LinearAveraging);
+        "AveragingScheme", {{Averaging::LinearAveraging, "Linear"}, {Averaging::ExponentialAveraging, "Exponential"}});
 
     return options;
 }

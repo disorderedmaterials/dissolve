@@ -13,37 +13,35 @@
 EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 {
     static EnumOptions<ProcedureNode::NodeType> options(
-        "NodeType",
-        {{ProcedureNode::AddSpeciesNode, "AddSpecies"},
-         {ProcedureNode::BoxNode, "Box"},
-         {ProcedureNode::CalculateAngleNode, "CalculateAngle"},
-         {ProcedureNode::CalculateAxisAngleNode, "CalculateAxisAngle"},
-         {ProcedureNode::CalculateDistanceNode, "CalculateDistance"},
-         {ProcedureNode::CalculateBaseNode, "Calculate(Any)"},
-         {ProcedureNode::CalculateVectorNode, "CalculateVector"},
-         {ProcedureNode::Collect1DNode, "Collect1D"},
-         {ProcedureNode::Collect2DNode, "Collect2D"},
-         {ProcedureNode::Collect3DNode, "Collect3D"},
-         {ProcedureNode::DynamicSiteNode, "DynamicSite"},
-         {ProcedureNode::ExcludeNode, "Exclude"},
-         {ProcedureNode::Fit1DNode, "Fit1D"},
-         {ProcedureNode::Integrate1DNode, "Integrate1D"},
-         {ProcedureNode::OperateBaseNode, "Operate(Any)"},
-         {ProcedureNode::OperateDivideNode, "OperateDivide"},
-         {ProcedureNode::OperateExpressionNode, "OperateExpression"},
-         {ProcedureNode::OperateMultiplyNode, "OperateMultiply"},
-         {ProcedureNode::OperateNormaliseNode, "OperateNormalise"},
-         {ProcedureNode::OperateNumberDensityNormaliseNode, "OperateNumberDensityNormalise"},
-         {ProcedureNode::OperateSitePopulationNormaliseNode, "OperateSitePopulationNormalise"},
-         {ProcedureNode::OperateSphericalShellNormaliseNode, "OperateSphericalShellNormalise"},
-         {ProcedureNode::ParametersNode, "Parameters"},
-         {ProcedureNode::Process1DNode, "Process1D"},
-         {ProcedureNode::Process2DNode, "Process2D"},
-         {ProcedureNode::Process3DNode, "Process3D"},
-         {ProcedureNode::SelectNode, "Select"},
-         {ProcedureNode::SequenceNode, "Sequence"},
-         {ProcedureNode::Sum1DNode, "Sum1D"}},
-        ProcedureNode::nNodeTypes);
+        "NodeType", {{ProcedureNode::AddSpeciesNode, "AddSpecies"},
+                     {ProcedureNode::BoxNode, "Box"},
+                     {ProcedureNode::CalculateAngleNode, "CalculateAngle"},
+                     {ProcedureNode::CalculateAxisAngleNode, "CalculateAxisAngle"},
+                     {ProcedureNode::CalculateDistanceNode, "CalculateDistance"},
+                     {ProcedureNode::CalculateBaseNode, "Calculate(Any)"},
+                     {ProcedureNode::CalculateVectorNode, "CalculateVector"},
+                     {ProcedureNode::Collect1DNode, "Collect1D"},
+                     {ProcedureNode::Collect2DNode, "Collect2D"},
+                     {ProcedureNode::Collect3DNode, "Collect3D"},
+                     {ProcedureNode::DynamicSiteNode, "DynamicSite"},
+                     {ProcedureNode::ExcludeNode, "Exclude"},
+                     {ProcedureNode::Fit1DNode, "Fit1D"},
+                     {ProcedureNode::Integrate1DNode, "Integrate1D"},
+                     {ProcedureNode::OperateBaseNode, "Operate(Any)"},
+                     {ProcedureNode::OperateDivideNode, "OperateDivide"},
+                     {ProcedureNode::OperateExpressionNode, "OperateExpression"},
+                     {ProcedureNode::OperateMultiplyNode, "OperateMultiply"},
+                     {ProcedureNode::OperateNormaliseNode, "OperateNormalise"},
+                     {ProcedureNode::OperateNumberDensityNormaliseNode, "OperateNumberDensityNormalise"},
+                     {ProcedureNode::OperateSitePopulationNormaliseNode, "OperateSitePopulationNormalise"},
+                     {ProcedureNode::OperateSphericalShellNormaliseNode, "OperateSphericalShellNormalise"},
+                     {ProcedureNode::ParametersNode, "Parameters"},
+                     {ProcedureNode::Process1DNode, "Process1D"},
+                     {ProcedureNode::Process2DNode, "Process2D"},
+                     {ProcedureNode::Process3DNode, "Process3D"},
+                     {ProcedureNode::SelectNode, "Select"},
+                     {ProcedureNode::SequenceNode, "Sequence"},
+                     {ProcedureNode::Sum1DNode, "Sum1D"}});
 
     return options;
 }
@@ -51,12 +49,10 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 // Return enum option info for NodeContext
 EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
 {
-    static EnumOptions<ProcedureNode::NodeContext> options("NodeContext",
-                                                           {{ProcedureNode::NoContext, "None"},
-                                                            {ProcedureNode::AnalysisContext, "Analysis"},
-                                                            {ProcedureNode::GenerationContext, "Generation"},
-                                                            {ProcedureNode::OperateContext, "Operate"}},
-                                                           ProcedureNode::NoContext);
+    static EnumOptions<ProcedureNode::NodeContext> options("NodeContext", {{ProcedureNode::NoContext, "None"},
+                                                                           {ProcedureNode::AnalysisContext, "Analysis"},
+                                                                           {ProcedureNode::GenerationContext, "Generation"},
+                                                                           {ProcedureNode::OperateContext, "Operate"}});
 
     return options;
 }

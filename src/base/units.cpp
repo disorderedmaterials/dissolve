@@ -7,8 +7,7 @@
 EnumOptions<Units::DensityUnits> Units::densityUnits()
 {
     static EnumOptions<Units::DensityUnits> options(
-        "DensityUnits", {{Units::AtomsPerAngstromUnits, "atoms/A3"}, {Units::GramsPerCentimetreCubedUnits, "g/cm3"}},
-        AtomsPerAngstromUnits);
+        "DensityUnits", {{Units::AtomsPerAngstromUnits, "atoms/A3"}, {Units::GramsPerCentimetreCubedUnits, "g/cm3"}});
 
     return options;
 }

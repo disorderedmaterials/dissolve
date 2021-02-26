@@ -13,16 +13,10 @@ template <class E> class EnumOptions : public EnumOptionsBase
 {
     public:
     EnumOptions() = default;
-    EnumOptions(std::string_view name, const std::vector<EnumOption<E>> &options) : name_(name), options_(std::move(options)) {}
-    EnumOptions(std::string_view name, const std::vector<EnumOption<E>> &options, E defaultEnumeration)
-        : name_(name), options_(std::move(options))
+    EnumOptions(std::string_view name, const std::vector<EnumOption<E>> &options) : name_(name), options_(std::move(options))
     {
-        for (auto n = 0; n < options_.size(); ++n)
-            if (options_[n].enumeration() == defaultEnumeration)
-            {
-                currentOptionIndex_ = n;
-                break;
-            }
+        if (options_.size() > 0)
+            currentOptionIndex_ = 0;
     }
 
     /*

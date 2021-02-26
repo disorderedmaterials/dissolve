@@ -8,12 +8,10 @@
 // Return enum option info for NormalisationType
 EnumOptions<RDFModule::PartialsMethod> RDFModule::partialsMethods()
 {
-    static EnumOptions<RDFModule::PartialsMethod> options("PartialsMethod",
-                                                          {{RDFModule::AutoMethod, "Auto"},
-                                                           {RDFModule::CellsMethod, "Cells"},
-                                                           {RDFModule::SimpleMethod, "Simple"},
-                                                           {RDFModule::TestMethod, "TestSquaredAverage"}},
-                                                          RDFModule::AutoMethod);
+    static EnumOptions<RDFModule::PartialsMethod> options("PartialsMethod", {{RDFModule::AutoMethod, "Auto"},
+                                                                             {RDFModule::CellsMethod, "Cells"},
+                                                                             {RDFModule::SimpleMethod, "Simple"},
+                                                                             {RDFModule::TestMethod, "TestSquaredAverage"}});
 
     return options;
 }

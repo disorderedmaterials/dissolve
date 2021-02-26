@@ -9,8 +9,7 @@ EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionType
 {
     static EnumOptions<EPSRModule::ExpansionFunctionType> options(
         "ExpansionFunctionType",
-        {{EPSRModule::PoissonExpansionFunction, "Poisson"}, {EPSRModule::GaussianExpansionFunction, "Gaussian"}},
-        EPSRModule::PoissonExpansionFunction);
+        {{EPSRModule::PoissonExpansionFunction, "Poisson"}, {EPSRModule::GaussianExpansionFunction, "Gaussian"}});
 
     return options;
 }

@@ -14,14 +14,12 @@ namespace Error
 // Return enum option info for AveragingScheme
 EnumOptions<ErrorType> errorTypes()
 {
-    static EnumOptions<ErrorType> options("ErrorType",
-                                          {{RMSEError, "RMSE"},
-                                           {MAAPEError, "MAAPE"},
-                                           {MAPEError, "MAPE"},
-                                           {PercentError, "Percent"},
-                                           {RFactorError, "RFactor"},
-                                           {EuclideanError, "Euclidean"}},
-                                          PercentError);
+    static EnumOptions<ErrorType> options("ErrorType", {{RMSEError, "RMSE"},
+                                                        {MAAPEError, "MAAPE"},
+                                                        {MAPEError, "MAPE"},
+                                                        {PercentError, "Percent"},
+                                                        {RFactorError, "RFactor"},
+                                                        {EuclideanError, "Euclidean"}});
 
     return options;
 }
