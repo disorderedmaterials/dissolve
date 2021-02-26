@@ -10,13 +10,11 @@
 // Return enum option info for LayerKeyword
 EnumOptions<LayerBlock::LayerKeyword> LayerBlock::keywords()
 {
-    static EnumOptions<LayerBlock::LayerKeyword> options(
-        "LayerKeyword", {{LayerBlock::DisabledKeyword, "Disabled"},
-                         {LayerBlock::EndLayerKeyword, "EndLayer"},
-                         {LayerBlock::FrequencyKeyword, "Frequency", 1},
-                         {LayerBlock::ModuleKeyword, "Module", OptionArguments::OptionalSecond}});
-
-    return options;
+    return EnumOptions<LayerBlock::LayerKeyword>("LayerKeyword",
+                                                 {{LayerBlock::DisabledKeyword, "Disabled"},
+                                                  {LayerBlock::EndLayerKeyword, "EndLayer"},
+                                                  {LayerBlock::FrequencyKeyword, "Frequency", 1},
+                                                  {LayerBlock::ModuleKeyword, "Module", OptionArguments::OptionalSecond}});
 }
 
 // Parse Layer block

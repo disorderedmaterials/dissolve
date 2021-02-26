@@ -25,7 +25,7 @@ class TrajectoryExportFileFormat : public FileAndFormat
      */
     private:
     // Return enum options for TrajectoryExportFormat
-    static EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> &trajectoryExportFormats();
+    static EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> trajectoryExportFormats();
 
     public:
     // Return number of available formats

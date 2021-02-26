@@ -28,13 +28,11 @@ MainTab::~MainTab() {}
 // Return enum options for TabType
 EnumOptions<MainTab::TabType> MainTab::tabTypes()
 {
-    static EnumOptions<MainTab::TabType> options("TabType", {{MainTab::ConfigurationTabType, "ConfigurationTab"},
-                                                             {MainTab::ForcefieldTabType, "ForcefieldTab"},
-                                                             {MainTab::LayerTabType, "LayerTab"},
-                                                             {MainTab::SpeciesTabType, "SpeciesTab"},
-                                                             {MainTab::WorkspaceTabType, "WorkspaceTab"}});
-
-    return options;
+    return EnumOptions<MainTab::TabType>("TabType", {{MainTab::ConfigurationTabType, "ConfigurationTab"},
+                                                     {MainTab::ForcefieldTabType, "ForcefieldTab"},
+                                                     {MainTab::LayerTabType, "LayerTab"},
+                                                     {MainTab::SpeciesTabType, "SpeciesTab"},
+                                                     {MainTab::WorkspaceTabType, "WorkspaceTab"}});
 }
 
 /*

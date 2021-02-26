@@ -22,10 +22,8 @@ ForceExportFileFormat::ForceExportFileFormat(std::string_view filename, ForceExp
 // Return enum options for ForceExportFormat
 EnumOptions<ForceExportFileFormat::ForceExportFormat> ForceExportFileFormat::forceExportFormats()
 {
-    static EnumOptions<ForceExportFileFormat::ForceExportFormat> options(
+    return EnumOptions<ForceExportFileFormat::ForceExportFormat>(
         "ForceExportFileFormat", {{ForceExportFileFormat::SimpleForces, "simple", "Simple Free-Formatted Forces"}});
-
-    return options;
 }
 
 // Return number of available formats

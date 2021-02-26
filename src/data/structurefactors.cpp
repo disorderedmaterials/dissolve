@@ -9,11 +9,9 @@ namespace StructureFactors
 // Return enum option info for NormalisationType
 EnumOptions<NormalisationType> normalisationTypes()
 {
-    static EnumOptions<NormalisationType> options("NormalisationType", {{NoNormalisation, "None"},
-                                                                        {AverageOfSquaresNormalisation, "AverageOfSquares"},
-                                                                        {SquareOfAverageNormalisation, "SquareOfAverage"}});
-
-    return options;
+    return EnumOptions<NormalisationType>("NormalisationType", {{NoNormalisation, "None"},
+                                                                {AverageOfSquaresNormalisation, "AverageOfSquares"},
+                                                                {SquareOfAverageNormalisation, "SquareOfAverage"}});
 }
 
 } // namespace StructureFactors

@@ -31,15 +31,13 @@ void CoordinateImportFileFormat::setUpKeywords() {}
  */
 
 // Return enum options for CoordinateImportFormat
-EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> &CoordinateImportFileFormat::coordinateImportFormats()
+EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> CoordinateImportFileFormat::coordinateImportFormats()
 {
-    static EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> options(
+    return EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>(
         "CoordinateImportFileFormat", {{CoordinateImportFileFormat::DLPOLYCoordinates, "dlpoly", "DL_POLY CONFIG"},
                                        {CoordinateImportFileFormat::EPSRCoordinates, "epsr", "EPSR ATO"},
                                        {CoordinateImportFileFormat::MoscitoCoordinates, "moscito", "Moscito structure file"},
                                        {CoordinateImportFileFormat::XYZCoordinates, "xyz", "Simple XYZ"}});
-
-    return options;
 }
 
 // Return number of available formats

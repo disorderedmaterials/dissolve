@@ -50,10 +50,8 @@ bool NETAPresenceNode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 // Return enum options for NETACharacterModifiers
 EnumOptions<NETAPresenceNode::NETACharacterModifier> NETAPresenceNode::modifiers()
 {
-    static EnumOptions<NETAPresenceNode::NETACharacterModifier> options(
+    return EnumOptions<NETAPresenceNode::NETACharacterModifier>(
         "CharacterModifier", {{NBondsModifier, "nbonds"}, {NHydrogensModifier, "nh"}, {RepeatCharacterModifier, "n"}});
-
-    return options;
 }
 
 // Return whether the specified modifier is valid for this node

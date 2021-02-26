@@ -75,7 +75,7 @@ bool Species::loadFromXYZ(std::string_view filename)
 // Return enum option info for SpeciesKeyword
 EnumOptions<Species::SpeciesKeyword> Species::keywords()
 {
-    static EnumOptions<Species::SpeciesKeyword> options(
+    return EnumOptions<Species::SpeciesKeyword>(
         "SpeciesKeyword", {{Species::AngleKeyword, "Angle", 3, OptionArguments::AnyNumber},
                            {Species::AtomKeyword, "Atom", 6, 7},
                            {Species::BondKeyword, "Bond", 2, OptionArguments::AnyNumber},
@@ -88,8 +88,6 @@ EnumOptions<Species::SpeciesKeyword> Species::keywords()
                            {Species::IsotopologueKeyword, "Isotopologue", OptionArguments::OneOrMore},
                            {Species::SiteKeyword, "Site", 1},
                            {Species::TorsionKeyword, "Torsion", 4, OptionArguments::AnyNumber}});
-
-    return options;
 }
 
 // Read Species definition from specified LineParser

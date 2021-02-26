@@ -16,12 +16,10 @@
 // Return enum options for InputBlock
 EnumOptions<BaseViewer::InputBlock> BaseViewer::inputBlockKeywords()
 {
-    static EnumOptions<BaseViewer::InputBlock> options("InputBlock", {{BaseViewer::EndSessionBlock, "EndSession"},
-                                                                      {BaseViewer::RenderableBlock, "Renderable", 3},
-                                                                      {BaseViewer::RenderableGroupBlock, "RenderableGroup", 1},
-                                                                      {BaseViewer::ViewBlock, "View"}});
-
-    return options;
+    return EnumOptions<BaseViewer::InputBlock>("InputBlock", {{BaseViewer::EndSessionBlock, "EndSession"},
+                                                              {BaseViewer::RenderableBlock, "Renderable", 3},
+                                                              {BaseViewer::RenderableGroupBlock, "RenderableGroup", 1},
+                                                              {BaseViewer::ViewBlock, "View"}});
 }
 
 // Parse main input blocks through specified parser
@@ -98,33 +96,31 @@ bool BaseViewer::parseInputBlocks(LineParser &parser)
 // Return enum options for AxisKeyword
 EnumOptions<BaseViewer::AxisKeyword> BaseViewer::axisKeywords()
 {
-    static EnumOptions<BaseViewer::AxisKeyword> options("AxisKeyword",
-                                                        {{BaseViewer::AutoScaleKeyword, "AutoScale", 1},
-                                                         {BaseViewer::AutoTicksKeyword, "AutoTicks", 1},
-                                                         {BaseViewer::EndAxisKeyword, "EndAxis"},
-                                                         {BaseViewer::FirstTickKeyword, "FirstTick", 1},
-                                                         {BaseViewer::FractionalPositioningKeyword, "FractionalPositioning", 1},
-                                                         {BaseViewer::GridLinesKeyword, "GridLines", 3},
-                                                         {BaseViewer::GridLineMajorStyleKeyword, "GridLineMajorStyle", 6},
-                                                         {BaseViewer::GridLineMinorStyleKeyword, "GridLineMinorStyle", 6},
-                                                         {BaseViewer::InvertKeyword, "Invert", 1},
-                                                         {BaseViewer::LabelAnchorKeyword, "LabelAnchor", 1},
-                                                         {BaseViewer::LabelOrientationKeyword, "LabelOrientation", 3},
-                                                         {BaseViewer::LimitsKeyword, "Limits", 2},
-                                                         {BaseViewer::LogarithmicKeyword, "Logarithmic", 1},
-                                                         {BaseViewer::MinorTicksKeyword, "MinorTicks", 1},
-                                                         {BaseViewer::NumberFormatKeyword, "NumberFormat", 4},
-                                                         {BaseViewer::PositionFractionalKeyword, "PositionFractional", 3},
-                                                         {BaseViewer::PositionRealKeyword, "PositionReal", 3},
-                                                         {BaseViewer::StretchKeyword, "Stretch", 1},
-                                                         {BaseViewer::TickDeltaKeyword, "TickDelta", 1},
-                                                         {BaseViewer::TickDirectionKeyword, "TickDirection", 3},
-                                                         {BaseViewer::TitleKeyword, "Title", 1},
-                                                         {BaseViewer::TitleAnchorKeyword, "TitleAnchor", 1},
-                                                         {BaseViewer::TitleOrientationKeyword, "TitleOrientation", 5},
-                                                         {BaseViewer::VisibleAxisKeyword, "Visible", 1}});
-
-    return options;
+    return EnumOptions<BaseViewer::AxisKeyword>("AxisKeyword",
+                                                {{BaseViewer::AutoScaleKeyword, "AutoScale", 1},
+                                                 {BaseViewer::AutoTicksKeyword, "AutoTicks", 1},
+                                                 {BaseViewer::EndAxisKeyword, "EndAxis"},
+                                                 {BaseViewer::FirstTickKeyword, "FirstTick", 1},
+                                                 {BaseViewer::FractionalPositioningKeyword, "FractionalPositioning", 1},
+                                                 {BaseViewer::GridLinesKeyword, "GridLines", 3},
+                                                 {BaseViewer::GridLineMajorStyleKeyword, "GridLineMajorStyle", 6},
+                                                 {BaseViewer::GridLineMinorStyleKeyword, "GridLineMinorStyle", 6},
+                                                 {BaseViewer::InvertKeyword, "Invert", 1},
+                                                 {BaseViewer::LabelAnchorKeyword, "LabelAnchor", 1},
+                                                 {BaseViewer::LabelOrientationKeyword, "LabelOrientation", 3},
+                                                 {BaseViewer::LimitsKeyword, "Limits", 2},
+                                                 {BaseViewer::LogarithmicKeyword, "Logarithmic", 1},
+                                                 {BaseViewer::MinorTicksKeyword, "MinorTicks", 1},
+                                                 {BaseViewer::NumberFormatKeyword, "NumberFormat", 4},
+                                                 {BaseViewer::PositionFractionalKeyword, "PositionFractional", 3},
+                                                 {BaseViewer::PositionRealKeyword, "PositionReal", 3},
+                                                 {BaseViewer::StretchKeyword, "Stretch", 1},
+                                                 {BaseViewer::TickDeltaKeyword, "TickDelta", 1},
+                                                 {BaseViewer::TickDirectionKeyword, "TickDirection", 3},
+                                                 {BaseViewer::TitleKeyword, "Title", 1},
+                                                 {BaseViewer::TitleAnchorKeyword, "TitleAnchor", 1},
+                                                 {BaseViewer::TitleOrientationKeyword, "TitleOrientation", 5},
+                                                 {BaseViewer::VisibleAxisKeyword, "Visible", 1}});
 }
 
 // Parse AxisBlock keywords
@@ -426,25 +422,23 @@ bool BaseViewer::writeAxisBlock(LineParser &parser, const Axes &axes, int axis) 
 // Return enum options for RenderableKeyword
 EnumOptions<BaseViewer::RenderableKeyword> BaseViewer::renderableKeywords()
 {
-    static EnumOptions<BaseViewer::RenderableKeyword> options(
-        "RenderableKeyword", {{BaseViewer::ColourAlphaIsGlobalKeyword, "ColourAlphaIsGlobal", 1},
-                              {BaseViewer::ColourCustomGradientKeyword, "ColourCustom", 5},
-                              {BaseViewer::ColourGlobalAlphaKeyword, "ColourGlobalAlpha", 1},
-                              {BaseViewer::ColourHSVGradientEndKeyword, "ColourHSVEnd", 5},
-                              {BaseViewer::ColourHSVGradientStartKeyword, "ColourHSVStart", 5},
-                              {BaseViewer::ColourRGBGradientEndKeyword, "ColourRGBEnd", 5},
-                              {BaseViewer::ColourRGBGradientStartKeyword, "ColourRGBStart", 5},
-                              {BaseViewer::ColourSingleKeyword, "ColourSingle", 4},
-                              {BaseViewer::ColourStyleKeyword, "ColourStyle", 1},
-                              {BaseViewer::EndRenderableKeyword, "EndRenderable"},
-                              {BaseViewer::EndStyleKeyword, "EndStyle"},
-                              {BaseViewer::GroupKeyword, "Group", 1},
-                              {BaseViewer::LineStyleKeyword, "LineStyle", 2},
-                              {BaseViewer::StyleKeyword, "Style"},
-                              {BaseViewer::TransformValuesKeyword, "TransformValues", 2},
-                              {BaseViewer::VisibleKeyword, "Visible", 1}});
-
-    return options;
+    return EnumOptions<BaseViewer::RenderableKeyword>("RenderableKeyword",
+                                                      {{BaseViewer::ColourAlphaIsGlobalKeyword, "ColourAlphaIsGlobal", 1},
+                                                       {BaseViewer::ColourCustomGradientKeyword, "ColourCustom", 5},
+                                                       {BaseViewer::ColourGlobalAlphaKeyword, "ColourGlobalAlpha", 1},
+                                                       {BaseViewer::ColourHSVGradientEndKeyword, "ColourHSVEnd", 5},
+                                                       {BaseViewer::ColourHSVGradientStartKeyword, "ColourHSVStart", 5},
+                                                       {BaseViewer::ColourRGBGradientEndKeyword, "ColourRGBEnd", 5},
+                                                       {BaseViewer::ColourRGBGradientStartKeyword, "ColourRGBStart", 5},
+                                                       {BaseViewer::ColourSingleKeyword, "ColourSingle", 4},
+                                                       {BaseViewer::ColourStyleKeyword, "ColourStyle", 1},
+                                                       {BaseViewer::EndRenderableKeyword, "EndRenderable"},
+                                                       {BaseViewer::EndStyleKeyword, "EndStyle"},
+                                                       {BaseViewer::GroupKeyword, "Group", 1},
+                                                       {BaseViewer::LineStyleKeyword, "LineStyle", 2},
+                                                       {BaseViewer::StyleKeyword, "Style"},
+                                                       {BaseViewer::TransformValuesKeyword, "TransformValues", 2},
+                                                       {BaseViewer::VisibleKeyword, "Visible", 1}});
 }
 
 // Read RenderableBlock keywords
@@ -687,15 +681,13 @@ bool BaseViewer::writeRenderableBlock(LineParser &parser, Renderable *renderable
 // Return enum options for RenderableGroupKeyword
 EnumOptions<BaseViewer::RenderableGroupKeyword> BaseViewer::renderableGroupKeywords()
 {
-    static EnumOptions<BaseViewer::RenderableGroupKeyword> options(
-        "RenderableGroupKeyword", {{BaseViewer::ColouringStyleKeyword, "ColouringStyle", 1},
-                                   {BaseViewer::EndRenderableGroupKeyword, "EndRenderableGroup"},
-                                   {BaseViewer::FixedStockColourKeyword, "FixedStockColour", 1},
-                                   {BaseViewer::GroupVisibleKeyword, "Visible", 1},
-                                   {BaseViewer::StippleKeyword, "Stipple", 1},
-                                   {BaseViewer::VerticalShiftingKeyword, "VerticalShifting", 1}});
-
-    return options;
+    return EnumOptions<BaseViewer::RenderableGroupKeyword>("RenderableGroupKeyword",
+                                                           {{BaseViewer::ColouringStyleKeyword, "ColouringStyle", 1},
+                                                            {BaseViewer::EndRenderableGroupKeyword, "EndRenderableGroup"},
+                                                            {BaseViewer::FixedStockColourKeyword, "FixedStockColour", 1},
+                                                            {BaseViewer::GroupVisibleKeyword, "Visible", 1},
+                                                            {BaseViewer::StippleKeyword, "Stipple", 1},
+                                                            {BaseViewer::VerticalShiftingKeyword, "VerticalShifting", 1}});
 }
 
 // Read RenderableGroupBlock keywords
@@ -813,26 +805,24 @@ bool BaseViewer::writeRenderableGroupBlock(LineParser &parser, RenderableGroup *
 // Return enum options for ViewKeyword
 EnumOptions<BaseViewer::ViewKeyword> BaseViewer::viewKeywords()
 {
-    static EnumOptions<BaseViewer::ViewKeyword> options("ViewKeyword",
-                                                        {{BaseViewer::AutoFollowTypeKeyword, "AutoFollowType", 1},
-                                                         {BaseViewer::AutoPositionTitlesKeyword, "AutoPositionTitles", 1},
-                                                         {BaseViewer::AxisBlockKeyword, "Axis", 1},
-                                                         {BaseViewer::BoundingBoxKeyword, "BoundingBox", 1},
-                                                         {BaseViewer::BoundingBoxPlaneYKeyword, "BoundingBoxPlaneY", 1},
-                                                         {BaseViewer::EndViewKeyword, "EndView"},
-                                                         {BaseViewer::FlatLabelsKeyword, "FlatLabels", 1},
-                                                         {BaseViewer::LabelPointSizeKeyword, "LabelPointSize", 1},
-                                                         {BaseViewer::PerspectiveKeyword, "Perspective", 1},
-                                                         {BaseViewer::RotationXKeyword, "RotationX", 3},
-                                                         {BaseViewer::RotationYKeyword, "RotationY", 3},
-                                                         {BaseViewer::RotationZKeyword, "RotationZ", 3},
-                                                         {BaseViewer::TitlePointSizeKeyword, "TitlePointSize", 1},
-                                                         {BaseViewer::TranslationKeyword, "Translation", 3},
-                                                         {BaseViewer::UseBestFlatViewKeyword, "UseBestFlatView", 1},
-                                                         {BaseViewer::VerticalShiftKeyword, "VerticalShift", 1},
-                                                         {BaseViewer::ViewTypeKeyword, "ViewType", 1}});
-
-    return options;
+    return EnumOptions<BaseViewer::ViewKeyword>("ViewKeyword",
+                                                {{BaseViewer::AutoFollowTypeKeyword, "AutoFollowType", 1},
+                                                 {BaseViewer::AutoPositionTitlesKeyword, "AutoPositionTitles", 1},
+                                                 {BaseViewer::AxisBlockKeyword, "Axis", 1},
+                                                 {BaseViewer::BoundingBoxKeyword, "BoundingBox", 1},
+                                                 {BaseViewer::BoundingBoxPlaneYKeyword, "BoundingBoxPlaneY", 1},
+                                                 {BaseViewer::EndViewKeyword, "EndView"},
+                                                 {BaseViewer::FlatLabelsKeyword, "FlatLabels", 1},
+                                                 {BaseViewer::LabelPointSizeKeyword, "LabelPointSize", 1},
+                                                 {BaseViewer::PerspectiveKeyword, "Perspective", 1},
+                                                 {BaseViewer::RotationXKeyword, "RotationX", 3},
+                                                 {BaseViewer::RotationYKeyword, "RotationY", 3},
+                                                 {BaseViewer::RotationZKeyword, "RotationZ", 3},
+                                                 {BaseViewer::TitlePointSizeKeyword, "TitlePointSize", 1},
+                                                 {BaseViewer::TranslationKeyword, "Translation", 3},
+                                                 {BaseViewer::UseBestFlatViewKeyword, "UseBestFlatView", 1},
+                                                 {BaseViewer::VerticalShiftKeyword, "VerticalShift", 1},
+                                                 {BaseViewer::ViewTypeKeyword, "ViewType", 1}});
 }
 
 // Read ViewBlock keywords

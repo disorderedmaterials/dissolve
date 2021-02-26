@@ -10,7 +10,7 @@
 // Return enum option info for PairPotentialsKeyword
 EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> PairPotentialsBlock::keywords()
 {
-    static EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> options(
+    return EnumOptions<PairPotentialsBlock::PairPotentialsKeyword>(
         "PairPotentialsKeyword", {{PairPotentialsBlock::CoulombTruncationKeyword, "CoulombTruncation", 1},
                                   {PairPotentialsBlock::DeltaKeyword, "Delta", 1},
                                   {PairPotentialsBlock::EndPairPotentialsKeyword, "EndPairPotentials"},
@@ -19,8 +19,6 @@ EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> PairPotentialsBlock::key
                                   {PairPotentialsBlock::RangeKeyword, "Range", 1},
                                   {PairPotentialsBlock::ShortRangeTruncationKeyword, "ShortRangeTruncation", 1},
                                   {PairPotentialsBlock::ShortRangeTruncationWidthKeyword, "ShortRangeTruncationWidth", 1}});
-
-    return options;
 }
 
 // Parse PairPotentials block

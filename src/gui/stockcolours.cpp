@@ -23,21 +23,19 @@ QColor StockQColors[] = {
 // Return enum options for RenderableGroupKeyword
 EnumOptions<StockColours::StockColour> StockColours::stockColours()
 {
-    static EnumOptions<StockColours::StockColour> options("StockColour", {{StockColours::BlackStockColour, "Black"},
-                                                                          {StockColours::RedStockColour, "Red"},
-                                                                          {StockColours::GreenStockColour, "Green"},
-                                                                          {StockColours::BlueStockColour, "Blue"},
-                                                                          {StockColours::PurpleStockColour, "Purple"},
-                                                                          {StockColours::CyanStockColour, "Cyan"},
-                                                                          {StockColours::OrangeStockColour, "Orange"},
-                                                                          {StockColours::PinkStockColour, "Pink"},
-                                                                          {StockColours::LightRedStockColour, "LightRed"},
-                                                                          {StockColours::LightGreenStockColour, "LightGreen"},
-                                                                          {StockColours::LightBlueStockColour, "LightBlue"},
-                                                                          {StockColours::SilverStockColour, "Silver"},
-                                                                          {StockColours::GoldStockColour, "Gold"}});
-
-    return options;
+    return EnumOptions<StockColours::StockColour>("StockColour", {{StockColours::BlackStockColour, "Black"},
+                                                                  {StockColours::RedStockColour, "Red"},
+                                                                  {StockColours::GreenStockColour, "Green"},
+                                                                  {StockColours::BlueStockColour, "Blue"},
+                                                                  {StockColours::PurpleStockColour, "Purple"},
+                                                                  {StockColours::CyanStockColour, "Cyan"},
+                                                                  {StockColours::OrangeStockColour, "Orange"},
+                                                                  {StockColours::PinkStockColour, "Pink"},
+                                                                  {StockColours::LightRedStockColour, "LightRed"},
+                                                                  {StockColours::LightGreenStockColour, "LightGreen"},
+                                                                  {StockColours::LightBlueStockColour, "LightBlue"},
+                                                                  {StockColours::SilverStockColour, "Silver"},
+                                                                  {StockColours::GoldStockColour, "Gold"}});
 }
 
 // Return stock colour (as QColor)

@@ -37,7 +37,7 @@ class ForceImportFileFormat : public FileAndFormat
      */
     private:
     // Return enum options for ForceImportFormat
-    static EnumOptions<ForceImportFileFormat::ForceImportFormat> &forceImportFormats();
+    static EnumOptions<ForceImportFileFormat::ForceImportFormat> forceImportFormats();
 
     public:
     // Return number of available formats

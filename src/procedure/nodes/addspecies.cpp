@@ -53,23 +53,19 @@ bool AddSpeciesProcedureNode::mustBeNamed() const { return false; }
 // Return enum option info for PositioningType
 EnumOptions<AddSpeciesProcedureNode::BoxActionStyle> AddSpeciesProcedureNode::boxActionStyles()
 {
-    static EnumOptions<AddSpeciesProcedureNode::BoxActionStyle> options(
-        "BoxAction", {{AddSpeciesProcedureNode::None, "None"},
-                      {AddSpeciesProcedureNode::AddVolume, "AddVolume"},
-                      {AddSpeciesProcedureNode::ScaleVolume, "ScaleVolume"}});
-
-    return options;
+    return EnumOptions<AddSpeciesProcedureNode::BoxActionStyle>("BoxAction",
+                                                                {{AddSpeciesProcedureNode::None, "None"},
+                                                                 {AddSpeciesProcedureNode::AddVolume, "AddVolume"},
+                                                                 {AddSpeciesProcedureNode::ScaleVolume, "ScaleVolume"}});
 }
 
 // Return enum option info for PositioningType
 EnumOptions<AddSpeciesProcedureNode::PositioningType> AddSpeciesProcedureNode::positioningTypes()
 {
-    static EnumOptions<AddSpeciesProcedureNode::PositioningType> options(
-        "PositioningType", {{AddSpeciesProcedureNode::CentralPositioning, "Central"},
-                            {AddSpeciesProcedureNode::CurrentPositioning, "Current"},
-                            {AddSpeciesProcedureNode::RandomPositioning, "Random"}});
-
-    return options;
+    return EnumOptions<AddSpeciesProcedureNode::PositioningType>("PositioningType",
+                                                                 {{AddSpeciesProcedureNode::CentralPositioning, "Central"},
+                                                                  {AddSpeciesProcedureNode::CurrentPositioning, "Current"},
+                                                                  {AddSpeciesProcedureNode::RandomPositioning, "Random"}});
 }
 
 /*

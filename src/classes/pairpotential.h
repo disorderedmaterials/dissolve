@@ -25,7 +25,7 @@ class PairPotential : public ListItem<PairPotential>
         nCoulombTruncationSchemes /* Number of Coulomb truncation schemes */
     };
     // Return enum options for CoulombTruncationScheme
-    static EnumOptions<PairPotential::CoulombTruncationScheme> &coulombTruncationSchemes();
+    static EnumOptions<PairPotential::CoulombTruncationScheme> coulombTruncationSchemes();
     // Short-Range Truncation Scheme enum
     enum ShortRangeTruncationScheme
     {
@@ -35,7 +35,7 @@ class PairPotential : public ListItem<PairPotential>
         nShortRangeTruncationSchemes /* Number of Short-Range truncation schemes */
     };
     // Return enum options for ShortRangeTruncationScheme
-    static EnumOptions<PairPotential::ShortRangeTruncationScheme> &shortRangeTruncationSchemes();
+    static EnumOptions<PairPotential::ShortRangeTruncationScheme> shortRangeTruncationSchemes();
 
     /*
      * Seed Interaction Type

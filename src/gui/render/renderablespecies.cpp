@@ -524,10 +524,8 @@ void RenderableSpecies::recreateDeleteInteractionPrimitive(SpeciesAtom *fromAtom
 // Return EnumOptions for SpeciesDisplayStyle
 EnumOptions<RenderableSpecies::SpeciesDisplayStyle> RenderableSpecies::speciesDisplayStyles()
 {
-    static EnumOptions<RenderableSpecies::SpeciesDisplayStyle> options(
+    return EnumOptions<RenderableSpecies::SpeciesDisplayStyle>(
         "SpeciesDisplayStyle", {{RenderableSpecies::LinesStyle, "Lines"}, {RenderableSpecies::SpheresStyle, "Spheres"}});
-
-    return options;
 }
 
 // Set display style for renderable
@@ -548,11 +546,9 @@ RenderableSpecies::SpeciesDisplayStyle RenderableSpecies::displayStyle() const {
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableSpecies::SpeciesStyleKeyword> RenderableSpecies::speciesStyleKeywords()
 {
-    static EnumOptions<RenderableSpecies::SpeciesStyleKeyword> options(
+    return EnumOptions<RenderableSpecies::SpeciesStyleKeyword>(
         "SpeciesStyleKeyword",
         {{RenderableSpecies::DisplayKeyword, "Display", 1}, {RenderableSpecies::EndStyleKeyword, "EndStyle"}});
-
-    return options;
 }
 
 // Write style information

@@ -30,12 +30,10 @@ void TrajectoryImportFileFormat::setUpKeywords() {}
  */
 
 // Return enum options for TrajectoryImportFormat
-EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> &TrajectoryImportFileFormat::trajectoryImportFormats()
+EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> TrajectoryImportFileFormat::trajectoryImportFormats()
 {
-    static EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> options(
+    return EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat>(
         "TrajectoryImportFileFormat", {{TrajectoryImportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory"}});
-
-    return options;
 }
 
 // Return number of available formats

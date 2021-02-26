@@ -24,7 +24,7 @@ class NumberFormat
         nNumberFormats
     };
     // Return enum options for FormatType
-    static EnumOptions<NumberFormat::FormatType> &formatTypes();
+    static EnumOptions<NumberFormat::FormatType> formatTypes();
 
     /*
      * Definition

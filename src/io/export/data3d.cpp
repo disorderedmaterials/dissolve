@@ -16,14 +16,12 @@ Data3DExportFileFormat::Data3DExportFileFormat(std::string_view filename, Data3D
  */
 
 // Return enum options for Data3DExportFormat
-EnumOptions<Data3DExportFileFormat::Data3DExportFormat> &Data3DExportFileFormat::data3DExportFormats()
+EnumOptions<Data3DExportFileFormat::Data3DExportFormat> Data3DExportFileFormat::data3DExportFormats()
 {
-    static EnumOptions<Data3DExportFileFormat::Data3DExportFormat> options(
+    return EnumOptions<Data3DExportFileFormat::Data3DExportFormat>(
         "Data3DExportFileFormat", {{Data3DExportFileFormat::BlockData3D, "block", "Block Data"},
                                    {Data3DExportFileFormat::CartesianData3D, "cartesian", "Cartesian (x,y,z,value) Data"},
                                    {Data3DExportFileFormat::PDensData3D, "pdens", "DLPutils PDens Data"}});
-
-    return options;
 }
 
 // Return number of available formats

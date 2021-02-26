@@ -182,11 +182,9 @@ double SpeciesBond::bondOrder() const { return SpeciesBond::bondOrder(bondType_)
 // Return enum options for BondFunction
 EnumOptions<SpeciesBond::BondFunction> SpeciesBond::bondFunctions()
 {
-    static EnumOptions<SpeciesBond::BondFunction> options(
+    return EnumOptions<SpeciesBond::BondFunction>(
         "BondFunction",
         {{SpeciesBond::NoForm, "None"}, {SpeciesBond::HarmonicForm, "Harmonic", 2}, {SpeciesBond::EPSRForm, "EPSR", 2}});
-
-    return options;
 }
 
 // Set up any necessary parameters

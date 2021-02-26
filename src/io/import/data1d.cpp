@@ -41,15 +41,13 @@ void Data1DImportFileFormat::setUpKeywords()
  */
 
 // Return enum options for Data1DImportFormat
-EnumOptions<Data1DImportFileFormat::Data1DImportFormat> &Data1DImportFileFormat::data1DImportFormats()
+EnumOptions<Data1DImportFileFormat::Data1DImportFormat> Data1DImportFileFormat::data1DImportFormats()
 {
-    static EnumOptions<Data1DImportFileFormat::Data1DImportFormat> options(
+    return EnumOptions<Data1DImportFileFormat::Data1DImportFormat>(
         "Data1DImportFileFormat",
         {{Data1DImportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)"},
          {Data1DImportFileFormat::HistogramData1D, "histogram", "Histogrammed Data (x = bin left-boundaries)"},
          {Data1DImportFileFormat::GudrunMintData1D, "mint", "Gudrun output (mint01)"}});
-
-    return options;
 }
 
 // Return number of available formats

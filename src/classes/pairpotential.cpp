@@ -28,24 +28,20 @@ PairPotential::PairPotential()
 }
 
 // Return enum option info for CoulombTruncationScheme
-EnumOptions<PairPotential::CoulombTruncationScheme> &PairPotential::coulombTruncationSchemes()
+EnumOptions<PairPotential::CoulombTruncationScheme> PairPotential::coulombTruncationSchemes()
 {
-    static EnumOptions<PairPotential::CoulombTruncationScheme> options(
+    return EnumOptions<PairPotential::CoulombTruncationScheme>(
         "CoulombTruncationScheme",
         {{PairPotential::NoCoulombTruncation, "None"}, {PairPotential::ShiftedCoulombTruncation, "Shifted"}});
-
-    return options;
 }
 
 // Return enum option info for ShortRangeTruncationScheme
-EnumOptions<PairPotential::ShortRangeTruncationScheme> &PairPotential::shortRangeTruncationSchemes()
+EnumOptions<PairPotential::ShortRangeTruncationScheme> PairPotential::shortRangeTruncationSchemes()
 {
-    static EnumOptions<PairPotential::ShortRangeTruncationScheme> options(
-        "ShortRangeTruncationScheme", {{PairPotential::NoShortRangeTruncation, "None"},
-                                       {PairPotential::ShiftedShortRangeTruncation, "Shifted"},
-                                       {PairPotential::CosineShortRangeTruncation, "Cosine"}});
-
-    return options;
+    return EnumOptions<PairPotential::ShortRangeTruncationScheme>("ShortRangeTruncationScheme",
+                                                                  {{PairPotential::NoShortRangeTruncation, "None"},
+                                                                   {PairPotential::ShiftedShortRangeTruncation, "Shifted"},
+                                                                   {PairPotential::CosineShortRangeTruncation, "Cosine"}});
 }
 
 /*

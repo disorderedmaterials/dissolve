@@ -12,7 +12,7 @@
 // Return enum option info for NodeType
 EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
 {
-    static EnumOptions<ProcedureNode::NodeType> options(
+    return EnumOptions<ProcedureNode::NodeType>(
         "NodeType", {{ProcedureNode::AddSpeciesNode, "AddSpecies"},
                      {ProcedureNode::BoxNode, "Box"},
                      {ProcedureNode::CalculateAngleNode, "CalculateAngle"},
@@ -42,19 +42,15 @@ EnumOptions<ProcedureNode::NodeType> ProcedureNode::nodeTypes()
                      {ProcedureNode::SelectNode, "Select"},
                      {ProcedureNode::SequenceNode, "Sequence"},
                      {ProcedureNode::Sum1DNode, "Sum1D"}});
-
-    return options;
 }
 
 // Return enum option info for NodeContext
 EnumOptions<ProcedureNode::NodeContext> ProcedureNode::nodeContexts()
 {
-    static EnumOptions<ProcedureNode::NodeContext> options("NodeContext", {{ProcedureNode::NoContext, "None"},
-                                                                           {ProcedureNode::AnalysisContext, "Analysis"},
-                                                                           {ProcedureNode::GenerationContext, "Generation"},
-                                                                           {ProcedureNode::OperateContext, "Operate"}});
-
-    return options;
+    return EnumOptions<ProcedureNode::NodeContext>("NodeContext", {{ProcedureNode::NoContext, "None"},
+                                                                   {ProcedureNode::AnalysisContext, "Analysis"},
+                                                                   {ProcedureNode::GenerationContext, "Generation"},
+                                                                   {ProcedureNode::OperateContext, "Operate"}});
 }
 
 ProcedureNode::ProcedureNode(ProcedureNode::NodeType nodeType) : ListItem<ProcedureNode>()

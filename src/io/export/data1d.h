@@ -25,7 +25,7 @@ class Data1DExportFileFormat : public FileAndFormat
      */
     private:
     // Return enum options for Data1DExportFormat
-    static EnumOptions<Data1DExportFileFormat::Data1DExportFormat> &data1DExportFormats();
+    static EnumOptions<Data1DExportFileFormat::Data1DExportFormat> data1DExportFormats();
 
     public:
     // Return number of available formats

@@ -282,10 +282,7 @@ void RenderableData2D::constructLine(const std::vector<double> &displayXAbscissa
 // Return EnumOptions for Data2DDisplayStyle
 EnumOptions<RenderableData2D::Data2DDisplayStyle> RenderableData2D::data2DDisplayStyles()
 {
-    static EnumOptions<RenderableData2D::Data2DDisplayStyle> options("Data2DDisplayStyle",
-                                                                     {{RenderableData2D::LinesStyle, "Lines"}});
-
-    return options;
+    return EnumOptions<RenderableData2D::Data2DDisplayStyle>("Data2DDisplayStyle", {{RenderableData2D::LinesStyle, "Lines"}});
 }
 
 // Set display style for renderable
@@ -306,11 +303,9 @@ RenderableData2D::Data2DDisplayStyle RenderableData2D::displayStyle() const { re
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableData2D::Data2DStyleKeyword> RenderableData2D::data2DStyleKeywords()
 {
-    static EnumOptions<RenderableData2D::Data2DStyleKeyword> options(
+    return EnumOptions<RenderableData2D::Data2DStyleKeyword>(
         "Data2DStyleKeyword",
         {{RenderableData2D::DisplayKeyword, "Display", 1}, {RenderableData2D::EndStyleKeyword, "EndStyle"}});
-
-    return options;
 }
 
 // Write style information

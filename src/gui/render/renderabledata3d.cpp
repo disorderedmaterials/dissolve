@@ -631,10 +631,7 @@ void RenderableData3D::marchingCubesOriginal(const std::vector<double> &displayX
 // Return EnumOptions for Data3DDisplayStyle
 EnumOptions<RenderableData3D::Data3DDisplayStyle> RenderableData3D::data3DDisplayStyles()
 {
-    static EnumOptions<RenderableData3D::Data3DDisplayStyle> options("Data3DDisplayStyle",
-                                                                     {{RenderableData3D::SolidStyle, "Solid"}});
-
-    return options;
+    return EnumOptions<RenderableData3D::Data3DDisplayStyle>("Data3DDisplayStyle", {{RenderableData3D::SolidStyle, "Solid"}});
 }
 
 // Set display style for renderable
@@ -677,13 +674,11 @@ double RenderableData3D::upperCutoff() const { return upperCutoff_; }
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableData3D::Data3DStyleKeyword> RenderableData3D::data3DStyleKeywords()
 {
-    static EnumOptions<RenderableData3D::Data3DStyleKeyword> options(
-        "Data3DStyleKeyword", {{RenderableData3D::DisplayKeyword, "Display", 1},
-                               {RenderableData3D::EndStyleKeyword, "EndStyle"},
-                               {RenderableData3D::LowerCutoffKeyword, "LowerCutoff", 1},
-                               {RenderableData3D::UpperCutoffKeyword, "UpperCutoff", 1}});
-
-    return options;
+    return EnumOptions<RenderableData3D::Data3DStyleKeyword>("Data3DStyleKeyword",
+                                                             {{RenderableData3D::DisplayKeyword, "Display", 1},
+                                                              {RenderableData3D::EndStyleKeyword, "EndStyle"},
+                                                              {RenderableData3D::LowerCutoffKeyword, "LowerCutoff", 1},
+                                                              {RenderableData3D::UpperCutoffKeyword, "UpperCutoff", 1}});
 }
 
 // Write style information

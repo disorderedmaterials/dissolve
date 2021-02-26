@@ -13,10 +13,8 @@ namespace XRayFormFactors
 EnumOptions<XRayFormFactors::XRayFormFactorData> xRayFormFactorData()
 {
 
-    static EnumOptions<XRayFormFactors::XRayFormFactorData> options(
+    return EnumOptions<XRayFormFactors::XRayFormFactorData>(
         "XRayFormFactors", {{XRayFormFactors::NoFormFactorData, "None"}, {XRayFormFactors::WaasmaierKirfel1995, "WK1995"}});
-
-    return options;
 }
 
 // Return form factor data from specified dataset for given element and formal charge (if it exists)

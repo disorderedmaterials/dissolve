@@ -57,10 +57,8 @@ bool NETAConnectionNode::addFFTypeTarget(const ForcefieldAtomType &ffType)
 // Return enum options for NETAConnectionModifiers
 EnumOptions<NETAConnectionNode::NETAConnectionModifier> NETAConnectionNode::modifiers()
 {
-    static EnumOptions<NETAConnectionNode::NETAConnectionModifier> options(
+    return EnumOptions<NETAConnectionNode::NETAConnectionModifier>(
         "ConnectionModifier", {{NBondsModifier, "nbonds"}, {NHydrogensModifier, "nh"}, {RepeatConnectionModifier, "n"}});
-
-    return options;
 }
 
 // Return whether the specified modifier is valid for this node
@@ -101,9 +99,7 @@ bool NETAConnectionNode::setModifier(std::string_view modifier, ComparisonOperat
 // Return enum options for NETAConnectionFlags
 EnumOptions<NETAConnectionNode::NETAConnectionFlag> NETAConnectionNode::flags()
 {
-    static EnumOptions<NETAConnectionNode::NETAConnectionFlag> options("ConnectionFlag", {{RootFlag, "root"}});
-
-    return options;
+    return EnumOptions<NETAConnectionNode::NETAConnectionFlag>("ConnectionFlag", {{RootFlag, "root"}});
 }
 
 // Return whether the specified flag is valid for this node

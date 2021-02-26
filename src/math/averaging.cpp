@@ -9,10 +9,8 @@ namespace Averaging
 // Return enum option info for AveragingScheme
 EnumOptions<Averaging::AveragingScheme> averagingSchemes()
 {
-    static EnumOptions<Averaging::AveragingScheme> options(
+    return EnumOptions<Averaging::AveragingScheme>(
         "AveragingScheme", {{Averaging::LinearAveraging, "Linear"}, {Averaging::ExponentialAveraging, "Exponential"}});
-
-    return options;
 }
 
 // Establish the number of stored datasets, shift indices down, and lose oldest dataset if necessary

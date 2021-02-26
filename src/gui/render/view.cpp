@@ -112,24 +112,20 @@ const GLuint *View::viewportMatrix() const { return viewportMatrix_; }
  */
 
 // Return enum options for FormatType
-EnumOptions<View::ViewType> &View::viewTypes()
+EnumOptions<View::ViewType> View::viewTypes()
 {
-    static EnumOptions<View::ViewType> options("ViewType", {{View::NormalView, "Normal"},
-                                                            {View::AutoStretchedView, "AutoStretched"},
-                                                            {View::FlatXYView, "FlatXY"},
-                                                            {View::FlatXZView, "FlatXZ"},
-                                                            {View::FlatZYView, "FlatZY"}});
-
-    return options;
+    return EnumOptions<View::ViewType>("ViewType", {{View::NormalView, "Normal"},
+                                                    {View::AutoStretchedView, "AutoStretched"},
+                                                    {View::FlatXYView, "FlatXY"},
+                                                    {View::FlatXZView, "FlatXZ"},
+                                                    {View::FlatZYView, "FlatZY"}});
 }
 
 // Return enum options for FormatType
-EnumOptions<View::AutoFollowType> &View::autoFollowTypes()
+EnumOptions<View::AutoFollowType> View::autoFollowTypes()
 {
-    static EnumOptions<View::AutoFollowType> options(
+    return EnumOptions<View::AutoFollowType>(
         "AutoFollowType", {{View::NoAutoFollow, "None"}, {View::AllAutoFollow, "All"}, {View::XAutoFollow, "X"}});
-
-    return options;
 }
 
 // Return calculated projection matrix

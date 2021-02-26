@@ -109,12 +109,10 @@ bool RenderableGroup::isVisible() const { return visible_; }
 // Return enum options for GroupColouring
 EnumOptions<RenderableGroup::GroupColouring> RenderableGroup::groupColourings()
 {
-    static EnumOptions<RenderableGroup::GroupColouring> options("GroupColouring",
-                                                                {{RenderableGroup::NoGroupColouring, "None"},
-                                                                 {RenderableGroup::FixedGroupColouring, "Fixed"},
-                                                                 {RenderableGroup::AutomaticIndividualColouring, "Automatic"}});
-
-    return options;
+    return EnumOptions<RenderableGroup::GroupColouring>("GroupColouring",
+                                                        {{RenderableGroup::NoGroupColouring, "None"},
+                                                         {RenderableGroup::FixedGroupColouring, "Fixed"},
+                                                         {RenderableGroup::AutomaticIndividualColouring, "Automatic"}});
 }
 
 // Set colour information for the supplied Renderable, according to our settings
@@ -203,12 +201,10 @@ LineStipple::StippleType RenderableGroup::lineStipple() const { return lineStipp
 // Return enum options for VerticalShiftStyle
 EnumOptions<RenderableGroup::VerticalShiftStyle> RenderableGroup::verticalShiftStyles()
 {
-    static EnumOptions<RenderableGroup::VerticalShiftStyle> options(
-        "VerticalShiftStyle", {{RenderableGroup::PreventVerticalShifting, "Prevent"},
-                               {RenderableGroup::GroupVerticalShifting, "Group"},
-                               {RenderableGroup::IndividualVerticalShifting, "Individual"}});
-
-    return options;
+    return EnumOptions<RenderableGroup::VerticalShiftStyle>("VerticalShiftStyle",
+                                                            {{RenderableGroup::PreventVerticalShifting, "Prevent"},
+                                                             {RenderableGroup::GroupVerticalShifting, "Group"},
+                                                             {RenderableGroup::IndividualVerticalShifting, "Individual"}});
 }
 
 // Set vertical shift in specified Renderable

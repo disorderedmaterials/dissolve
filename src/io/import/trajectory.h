@@ -34,7 +34,7 @@ class TrajectoryImportFileFormat : public FileAndFormat
      */
     private:
     // Return enum options for TrajectoryImportFileFormat
-    static EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> &trajectoryImportFormats();
+    static EnumOptions<TrajectoryImportFileFormat::TrajectoryImportFormat> trajectoryImportFormats();
 
     public:
     // Return number of available formats

@@ -7,11 +7,9 @@
 // Return enum option info for ExpansionFunctionType
 EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionTypes()
 {
-    static EnumOptions<EPSRModule::ExpansionFunctionType> options(
+    return EnumOptions<EPSRModule::ExpansionFunctionType>(
         "ExpansionFunctionType",
         {{EPSRModule::PoissonExpansionFunction, "Poisson"}, {EPSRModule::GaussianExpansionFunction, "Gaussian"}});
-
-    return options;
 }
 
 // Perform any necessary initialisation for the Module

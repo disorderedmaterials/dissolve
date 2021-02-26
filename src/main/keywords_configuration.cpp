@@ -11,7 +11,7 @@
 // Return enum option info for ConfigurationKeyword
 EnumOptions<ConfigurationBlock::ConfigurationKeyword> ConfigurationBlock::keywords()
 {
-    static EnumOptions<ConfigurationBlock::ConfigurationKeyword> options(
+    return EnumOptions<ConfigurationBlock::ConfigurationKeyword>(
         "ConfigurationKeyword", {{ConfigurationBlock::CellDivisionLengthKeyword, "CellDivisionLength", 1},
                                  {ConfigurationBlock::EndConfigurationKeyword, "EndConfiguration"},
                                  {ConfigurationBlock::GeneratorKeyword, "Generator"},
@@ -19,8 +19,6 @@ EnumOptions<ConfigurationBlock::ConfigurationKeyword> ConfigurationBlock::keywor
                                  {ConfigurationBlock::ModuleKeyword, "Module", OptionArguments::OptionalSecond},
                                  {ConfigurationBlock::SizeFactorKeyword, "SizeFactor", 1},
                                  {ConfigurationBlock::TemperatureKeyword, "Temperature", 1}});
-
-    return options;
 }
 
 // Parse Configuration block

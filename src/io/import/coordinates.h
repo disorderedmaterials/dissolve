@@ -38,7 +38,7 @@ class CoordinateImportFileFormat : public FileAndFormat
      */
     private:
     // Return enum options for CoordinateImportFormat
-    static EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> &coordinateImportFormats();
+    static EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> coordinateImportFormats();
 
     public:
     // Return number of available formats

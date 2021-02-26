@@ -12,27 +12,23 @@
 // Return enum options for NodeTypes
 EnumOptions<NETANode::NodeType> NETANode::nodeTypes()
 {
-    static EnumOptions<NETANode::NodeType> options("NodeTypes", {{BasicNode, "Basic"},
-                                                                 {ConnectionNode, "Connection"},
-                                                                 {OrNode, "Or"},
-                                                                 {PresenceNode, "Presence"},
-                                                                 {RingNode, "Ring"},
-                                                                 {RootNode, "Root"}});
-
-    return options;
+    return EnumOptions<NETANode::NodeType>("NodeTypes", {{BasicNode, "Basic"},
+                                                         {ConnectionNode, "Connection"},
+                                                         {OrNode, "Or"},
+                                                         {PresenceNode, "Presence"},
+                                                         {RingNode, "Ring"},
+                                                         {RootNode, "Root"}});
 }
 
 // Return enum options for ComparisonOperator
 EnumOptions<NETANode::ComparisonOperator> NETANode::comparisonOperators()
 {
-    static EnumOptions<NETANode::ComparisonOperator> options("ComparisonOperator", {{EqualTo, "="},
-                                                                                    {NotEqualTo, "!="},
-                                                                                    {GreaterThan, ">"},
-                                                                                    {LessThan, "<"},
-                                                                                    {GreaterThanEqualTo, ">="},
-                                                                                    {LessThanEqualTo, "<="}});
-
-    return options;
+    return EnumOptions<NETANode::ComparisonOperator>("ComparisonOperator", {{EqualTo, "="},
+                                                                            {NotEqualTo, "!="},
+                                                                            {GreaterThan, ">"},
+                                                                            {LessThan, "<"},
+                                                                            {GreaterThanEqualTo, ">="},
+                                                                            {LessThanEqualTo, "<="}});
 }
 
 NETANode::NETANode(NETADefinition *parent, NETANode::NodeType type)

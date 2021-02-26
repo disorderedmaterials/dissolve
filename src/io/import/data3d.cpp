@@ -29,12 +29,10 @@ void Data3DImportFileFormat::setUpKeywords() {}
  */
 
 // Return enum options for Data3DImportFormat
-EnumOptions<Data3DImportFileFormat::Data3DImportFormat> &Data3DImportFileFormat::data3DImportFormats()
+EnumOptions<Data3DImportFileFormat::Data3DImportFormat> Data3DImportFileFormat::data3DImportFormats()
 {
-    static EnumOptions<Data3DImportFileFormat::Data3DImportFormat> options(
+    return EnumOptions<Data3DImportFileFormat::Data3DImportFormat>(
         "Data3DImportFileFormat", {{Data3DImportFileFormat::CartesianData3D, "cartesian", "Cartesian X,Y,Z,f(x,y,z) data"}});
-
-    return options;
 }
 
 // Return number of available formats

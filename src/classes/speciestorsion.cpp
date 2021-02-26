@@ -188,7 +188,7 @@ bool SpeciesTorsion::isSelected() const
 // Return enum options for TorsionFunction
 EnumOptions<SpeciesTorsion::TorsionFunction> SpeciesTorsion::torsionFunctions()
 {
-    static EnumOptions<SpeciesTorsion::TorsionFunction> options(
+    return EnumOptions<SpeciesTorsion::TorsionFunction>(
         "TorsionFunction", {{SpeciesTorsion::NoForm, "None"},
                             {SpeciesTorsion::CosineForm, "Cos", 4},
                             {SpeciesTorsion::Cos3Form, "Cos3", 3},
@@ -198,8 +198,6 @@ EnumOptions<SpeciesTorsion::TorsionFunction> SpeciesTorsion::torsionFunctions()
                             {SpeciesTorsion::CosNCForm, "CosNC", 1, OptionArguments::AnyNumber},
                             {SpeciesTorsion::UFFCosineForm, "UFFCosine", 3},
                             {SpeciesTorsion::FourierNForm, "FourierN", 2, OptionArguments::AnyNumber}});
-
-    return options;
 }
 
 // Set up any necessary parameters

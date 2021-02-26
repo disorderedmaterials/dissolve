@@ -17,15 +17,13 @@ PairPotentialExportFileFormat::PairPotentialExportFileFormat(std::string_view fi
  */
 
 // Return enum options for PairPotentialExportFormat
-EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> &
+EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat>
 PairPotentialExportFileFormat::pairPotentialExportFormats()
 {
-    static EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> options(
+    return EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat>(
         "PairPotentialExportFileFormat",
         {{PairPotentialExportFileFormat::BlockPairPotential, "block", "Block Data"},
          {PairPotentialExportFileFormat::DLPOLYTABLEPairPotential, "table", "DL_POLY TABLE File"}});
-
-    return options;
 }
 
 // Return number of available formats

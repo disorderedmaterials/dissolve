@@ -126,10 +126,8 @@ const void RenderableSpeciesSite::sendToGL(const double pixelScaling)
 // Return EnumOptions for SpeciesSiteDisplayStyle
 EnumOptions<RenderableSpeciesSite::SpeciesSiteDisplayStyle> RenderableSpeciesSite::speciesSiteDisplayStyles()
 {
-    static EnumOptions<RenderableSpeciesSite::SpeciesSiteDisplayStyle> options("SpeciesSiteDisplayStyle",
-                                                                               {{RenderableSpeciesSite::LinesStyle, "Lines"}});
-
-    return options;
+    return EnumOptions<RenderableSpeciesSite::SpeciesSiteDisplayStyle>("SpeciesSiteDisplayStyle",
+                                                                       {{RenderableSpeciesSite::LinesStyle, "Lines"}});
 }
 
 // Set display style for renderable
@@ -150,11 +148,9 @@ RenderableSpeciesSite::SpeciesSiteDisplayStyle RenderableSpeciesSite::displaySty
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword> RenderableSpeciesSite::speciesSiteStyleKeywords()
 {
-    static EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword> options(
+    return EnumOptions<RenderableSpeciesSite::SpeciesSiteStyleKeyword>(
         "SpeciesSiteStyleKeyword",
         {{RenderableSpeciesSite::DisplayKeyword, "Display", 1}, {RenderableSpeciesSite::EndStyleKeyword, "EndStyle"}});
-
-    return options;
 }
 
 // Write style information

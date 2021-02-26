@@ -33,14 +33,12 @@ void ForceImportFileFormat::setUpKeywords()
  */
 
 // Return enum options for ForceImportFormat
-EnumOptions<ForceImportFileFormat::ForceImportFormat> &ForceImportFileFormat::forceImportFormats()
+EnumOptions<ForceImportFileFormat::ForceImportFormat> ForceImportFileFormat::forceImportFormats()
 {
-    static EnumOptions<ForceImportFileFormat::ForceImportFormat> options(
+    return EnumOptions<ForceImportFileFormat::ForceImportFormat>(
         "ForceImportFileFormat", {{ForceImportFileFormat::DLPOLYForces, "dlpoly", "DL_POLY Config File Forces"},
                                   {ForceImportFileFormat::MoscitoForces, "moscito", "Moscito Structure File Forces"},
                                   {ForceImportFileFormat::SimpleForces, "simple", "Simple Free-Formatted Forces"}});
-
-    return options;
 }
 
 // Return number of available formats

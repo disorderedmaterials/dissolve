@@ -10,14 +10,12 @@
 // Return enum option info for MasterKeyword
 EnumOptions<MasterBlock::MasterKeyword> MasterBlock::keywords()
 {
-    static EnumOptions<MasterBlock::MasterKeyword> options(
-        "MasterKeyword", {{MasterBlock::AngleKeyword, "Angle", 2, OptionArguments::AnyNumber},
-                          {MasterBlock::BondKeyword, "Bond", 2, OptionArguments::AnyNumber},
-                          {MasterBlock::EndMasterKeyword, "EndMaster"},
-                          {MasterBlock::ImproperKeyword, "Improper", 2, OptionArguments::AnyNumber},
-                          {MasterBlock::TorsionKeyword, "Torsion", 2, OptionArguments::AnyNumber}});
-
-    return options;
+    return EnumOptions<MasterBlock::MasterKeyword>("MasterKeyword",
+                                                   {{MasterBlock::AngleKeyword, "Angle", 2, OptionArguments::AnyNumber},
+                                                    {MasterBlock::BondKeyword, "Bond", 2, OptionArguments::AnyNumber},
+                                                    {MasterBlock::EndMasterKeyword, "EndMaster"},
+                                                    {MasterBlock::ImproperKeyword, "Improper", 2, OptionArguments::AnyNumber},
+                                                    {MasterBlock::TorsionKeyword, "Torsion", 2, OptionArguments::AnyNumber}});
 }
 
 // Parse Master block

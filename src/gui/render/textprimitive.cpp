@@ -11,19 +11,17 @@
 #include <QtGui/qopengl.h>
 
 // Return enum options for TextAnchor
-EnumOptions<TextPrimitive::TextAnchor> &TextPrimitive::textAnchors()
+EnumOptions<TextPrimitive::TextAnchor> TextPrimitive::textAnchors()
 {
-    static EnumOptions<TextPrimitive::TextAnchor> options("TextAnchor", {{TextPrimitive::TopLeftAnchor, "TopLeft"},
-                                                                         {TextPrimitive::TopMiddleAnchor, "TopMiddle"},
-                                                                         {TextPrimitive::TopRightAnchor, "TopRight"},
-                                                                         {TextPrimitive::MiddleLeftAnchor, "MiddleLeft"},
-                                                                         {TextPrimitive::CentralAnchor, "Central"},
-                                                                         {TextPrimitive::MiddleRightAnchor, "MiddleRight"},
-                                                                         {TextPrimitive::BottomLeftAnchor, "BottomLeft"},
-                                                                         {TextPrimitive::BottomMiddleAnchor, "BottomMiddle"},
-                                                                         {TextPrimitive::BottomRightAnchor, "BottomRight"}});
-
-    return options;
+    return EnumOptions<TextPrimitive::TextAnchor>("TextAnchor", {{TextPrimitive::TopLeftAnchor, "TopLeft"},
+                                                                 {TextPrimitive::TopMiddleAnchor, "TopMiddle"},
+                                                                 {TextPrimitive::TopRightAnchor, "TopRight"},
+                                                                 {TextPrimitive::MiddleLeftAnchor, "MiddleLeft"},
+                                                                 {TextPrimitive::CentralAnchor, "Central"},
+                                                                 {TextPrimitive::MiddleRightAnchor, "MiddleRight"},
+                                                                 {TextPrimitive::BottomLeftAnchor, "BottomLeft"},
+                                                                 {TextPrimitive::BottomMiddleAnchor, "BottomMiddle"},
+                                                                 {TextPrimitive::BottomRightAnchor, "BottomRight"}});
 }
 
 // Set data
