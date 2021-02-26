@@ -31,10 +31,10 @@ EnumOptions<NumberFormat::FormatType> &NumberFormat::formatTypes()
  * Definition
  */
 
-// Set ndex type
+// Set format type
 void NumberFormat::setType(NumberFormat::FormatType type) { type_ = type; }
 
-// Return X index type
+// Return format type
 NumberFormat::FormatType NumberFormat::type() { return type_; }
 
 // Set number of decimals to use

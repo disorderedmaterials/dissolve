@@ -24,7 +24,7 @@ int pruneOldData(GenericList &moduleData, std::string_view name, std::string_vie
     for (nStored = 0; nStored < nSetsInAverage; ++nStored)
         if (!moduleData.contains(fmt::format("{}_{}", name, nStored + 1), prefix))
             break;
-    Messenger::print("Average requested over {} datsets - {} available in module data ({} max).\n", nSetsInAverage, nStored,
+    Messenger::print("Average requested over {} datasets - {} available in module data ({} max).\n", nSetsInAverage, nStored,
                      nSetsInAverage - 1);
 
     // Remove the oldest dataset if it exists, and shuffle the others down
