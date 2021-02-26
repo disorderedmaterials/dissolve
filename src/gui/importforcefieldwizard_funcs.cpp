@@ -10,12 +10,18 @@ void ImportForcefieldWizard::nextStack() {
   index += 1;
   ui_.stackedWidget->setCurrentIndex(index >= count ? count-1 : index);
 
+  ui_.continueButton->setEnabled(index < count - 1);
+  ui_.backButton->setEnabled(index > 0);
 }
 
 void ImportForcefieldWizard::prevStack() {
   int index = ui_.stackedWidget->currentIndex();
+  int count = ui_.stackedWidget->count();
   index -= 1;
   ui_.stackedWidget->setCurrentIndex(index < 0 ? 0 : index);
+
+  ui_.continueButton->setEnabled(index < count - 1);
+  ui_.backButton->setEnabled(index > 0);
 }
 
 void ImportForcefieldWizard::xmlFileDialog() {

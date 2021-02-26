@@ -106,13 +106,16 @@
        </item>
        <item>
         <widget class="QPushButton" name="backButton">
+         <property name="enabled">
+          <bool>false</bool>
+         </property>
          <property name="text">
           <string>Back</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="ContinueButton">
+        <widget class="QPushButton" name="continueButton">
          <property name="text">
           <string>Continue</string>
          </property>
@@ -127,7 +130,7 @@
  <tabstops>
   <tabstop>lineEdit</tabstop>
   <tabstop>xmlFileButton</tabstop>
-  <tabstop>ContinueButton</tabstop>
+  <tabstop>continueButton</tabstop>
   <tabstop>backButton</tabstop>
   <tabstop>cancelButton</tabstop>
  </tabstops>
@@ -152,7 +155,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>ContinueButton</sender>
+   <sender>continueButton</sender>
    <signal>clicked()</signal>
    <receiver>ImportForcefieldWizardDialog</receiver>
    <slot>nextStack()</slot>
