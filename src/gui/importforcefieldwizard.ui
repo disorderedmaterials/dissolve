@@ -47,7 +47,7 @@
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="main.qrc">
+              <iconset>
                <normaloff>:/menu/icons/menu_open.svg</normaloff>:/menu/icons/menu_open.svg</iconset>
              </property>
             </widget>
@@ -124,8 +124,104 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>lineEdit</tabstop>
+  <tabstop>xmlFileButton</tabstop>
+  <tabstop>ContinueButton</tabstop>
+  <tabstop>backButton</tabstop>
+  <tabstop>cancelButton</tabstop>
+  <tabstop>BondTable</tabstop>
+  <tabstop>atomTypeTable</tabstop>
+ </tabstops>
  <resources>
   <include location="main.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>cancelButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ImportForcefieldWizardDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>53</x>
+     <y>282</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>145</x>
+     <y>295</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ContinueButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ImportForcefieldWizardDialog</receiver>
+   <slot>nextStack()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>455</x>
+     <y>291</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>493</x>
+     <y>296</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>backButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ImportForcefieldWizardDialog</receiver>
+   <slot>prevStack()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>352</x>
+     <y>284</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>288</x>
+     <y>293</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>lineEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>ImportForcefieldWizardDialog</receiver>
+   <slot>xmlString(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>400</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>496</x>
+     <y>151</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>xmlFileButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ImportForcefieldWizardDialog</receiver>
+   <slot>xmlFileDialog()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>458</x>
+     <y>138</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>494</x>
+     <y>112</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>nextStack()</slot>
+  <slot>prevStack()</slot>
+  <slot>xmlString(QString)</slot>
+  <slot>xmlFileDialog()</slot>
+ </slots>
 </ui>

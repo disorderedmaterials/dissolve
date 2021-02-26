@@ -25,6 +25,11 @@ class ImportForcefieldWizard : public QDialog
     // Main form declaration
     Ui::ImportForcefieldWizardDialog ui_;
 
+    private slots:
+    void nextStack();
+    void prevStack();
+    void xmlFileDialog();
+
     public:
     // Reset, ready for adding a new ForcefieldWizard
     void reset() {};
