@@ -66,7 +66,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QTableWidget" name="atomTypeTable"/>
+          <widget class="QTableView" name="atomTable"/>
          </item>
          <item>
           <widget class="QLabel" name="label_3">
@@ -76,7 +76,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QTableWidget" name="BondTable"/>
+          <widget class="QTableView" name="bondTable"/>
          </item>
         </layout>
        </widget>
@@ -130,8 +130,6 @@
   <tabstop>ContinueButton</tabstop>
   <tabstop>backButton</tabstop>
   <tabstop>cancelButton</tabstop>
-  <tabstop>BondTable</tabstop>
-  <tabstop>atomTypeTable</tabstop>
  </tabstops>
  <resources>
   <include location="main.qrc"/>
