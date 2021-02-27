@@ -18,6 +18,20 @@ template <class E> class EnumOptions : public EnumOptionsBase
         if (options_.size() > 0)
             currentOptionIndex_ = 0;
     }
+    EnumOptions<E> &operator=(E value)
+    {
+        // Find the index of the enumeration
+        currentOptionIndex_ = std::nullopt;
+        for (auto n = 0; n < options_.size(); ++n)
+            if (options_[n].enumeration() == value)
+            {
+                currentOptionIndex_ = n;
+                break;
+            }
+
+        assert(currentOptionIndex_.has_value());
+        return *this;
+    }
 
     /*
      * Option Data
@@ -221,16 +235,5 @@ template <class E> class EnumOptions : public EnumOptionsBase
         }
 
         return false;
-    }
-
-    /*
-     * Operators
-     */
-    public:
-    EnumOptions<E> &operator=(E value)
-    {
-        // TODO THIS IS WRONG!
-        currentOptionIndex_ = value;
-        return *this;
     }
 };
