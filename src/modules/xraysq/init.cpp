@@ -19,8 +19,6 @@ void XRaySQModule::initialise()
                   new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
                                                                                   StructureFactors::NoNormalisation),
                   "Normalisation", "Normalisation to apply to total weighted F(Q)");
-    keywords_.add("Control", new WindowFunctionKeyword(WindowFunction(WindowFunction::NoWindow)), "WindowFunction",
-                  "Window function to apply when Fourier-transforming g(r) to S(Q)");
 
     // Reference Data
     keywords_.add("Reference Data", new FileAndFormatKeyword(referenceFQ_, "EndReference"), "Reference", "F(Q) reference data",
