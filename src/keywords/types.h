@@ -52,4 +52,3 @@
 #include "keywords/vec3nodevalue.h"
 #include "keywords/vector_intdouble.h"
 #include "keywords/vector_intstring.h"
-#include "keywords/windowfunction.h"
