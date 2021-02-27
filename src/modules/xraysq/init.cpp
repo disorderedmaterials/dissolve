@@ -27,7 +27,8 @@ void XRaySQModule::initialise()
                   new EnumOptionsKeyword<StructureFactors::NormalisationType>(StructureFactors::normalisationTypes() =
                                                                                   StructureFactors::NoNormalisation),
                   "ReferenceNormalisation", "Normalisation to remove from reference data");
-    keywords_.add("Reference Data", new WindowFunctionKeyword(WindowFunction(WindowFunction::Lorch0Window)),
+    keywords_.add("Reference Data",
+                  new EnumOptionsKeyword<WindowFunction::Form>(WindowFunction::forms() = WindowFunction::Form::Lorch0),
                   "ReferenceWindowFunction", "Window function to apply when Fourier-transforming reference S(Q) to g(r)",
                   KeywordBase::ModificationRequiresSetUpOption);
 

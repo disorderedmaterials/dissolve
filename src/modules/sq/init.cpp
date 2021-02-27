@@ -16,7 +16,7 @@ void SQModule::initialise()
     keywords_.add("Control", new DoubleKeyword(0.01, 0.0), "QMin", "Minimum Q for calculated S(Q)");
     keywords_.add("Control", new BroadeningFunctionKeyword(BroadeningFunction()), "QBroadening",
                   "Instrument broadening function to apply when calculating S(Q)");
-    keywords_.add("Control", new WindowFunctionKeyword(WindowFunction(WindowFunction::NoWindow)), "WindowFunction",
+    keywords_.add("Control", new EnumOptionsKeyword<WindowFunction::Form>(WindowFunction::forms()), "WindowFunction",
                   "Window function to apply in Fourier-transform of g(r) to S(Q)");
     keywords_.add("Control", new IntegerKeyword(1, 1), "Averaging",
                   "Number of historical partial sets to combine into final partials", "<1>");

@@ -65,15 +65,13 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             }
         }
 
-        // Get window function to use for transformation of S(Q) to g(r)
-        const WindowFunction &referenceWindowFunction =
-            keywords_.retrieve<WindowFunction>("ReferenceWindowFunction", WindowFunction());
-        if (referenceWindowFunction.function() == WindowFunction::NoWindow)
-            Messenger::print("No window function will be applied in Fourier transform of S(Q) to g(r).");
+        // Get window function to use for transformation of reference S(Q) to g(r)
+        const auto wf = keywords_.enumeration<WindowFunction::Form>("ReferenceWindowFunction");
+        if (wf == WindowFunction::Form::None)
+            Messenger::print("No window function will be applied in Fourier transform of reference data to g(r).");
         else
-            Messenger::print("Window function to be applied in Fourier transform of reference data is {} ({}).",
-                             WindowFunction::functionType(referenceWindowFunction.function()),
-                             referenceWindowFunction.parameterSummary());
+            Messenger::print("Window function to be applied in Fourier transform of reference data is {}.",
+                             WindowFunction::forms().keyword(wf));
 
         // Store the reference data in processing
         referenceData.setName(uniqueName());
@@ -90,7 +88,7 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         storedDataFT = referenceData;
         auto rho = rdfModule->effectiveDensity();
         Messenger::print("Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n", rho);
-        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), 0.0, 0.05, 30.0, referenceWindowFunction);
+        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), 0.0, 0.05, 30.0, WindowFunction(wf));
 
         // Save data?
         if (keywords_.asBool("SaveReference"))
@@ -131,8 +129,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return Messenger::error("A source RDF module (in the SQ module) must be provided.\n");
     XRayFormFactors::XRayFormFactorData formFactors = keywords_.enumeration<XRayFormFactors::XRayFormFactorData>("FormFactors");
     auto normalisation = keywords_.enumeration<StructureFactors::NormalisationType>("Normalisation");
-    const WindowFunction &referenceWindowFunction =
-        keywords_.retrieve<WindowFunction>("ReferenceWindowFunction", WindowFunction());
+    const auto rwf = keywords_.enumeration<WindowFunction::Form>("ReferenceWindowFunction");
     const bool saveFormFactors = keywords_.asBool("SaveFormFactors");
     const bool saveSQ = keywords_.asBool("SaveSQ");
 
@@ -145,12 +142,11 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b>**2");
     else if (normalisation == StructureFactors::SquareOfAverageNormalisation)
         Messenger::print("XRaySQ: Total F(Q) will be normalised to <b**2>");
-    if (referenceWindowFunction.function() == WindowFunction::NoWindow)
+    if (rwf == WindowFunction::Form::None)
         Messenger::print("XRaySQ: No window function will be applied when calculating representative g(r) from S(Q).");
     else
-        Messenger::print("XRaySQ: Window function to be applied when calculating representative g(r) from S(Q) is {} ({}).",
-                         WindowFunction::functionType(referenceWindowFunction.function()),
-                         referenceWindowFunction.parameterSummary());
+        Messenger::print("XRaySQ: Window function to be applied when calculating representative g(r) from S(Q) is {}.",
+                         WindowFunction::forms().keyword(rwf));
     if (saveFormFactors)
         Messenger::print("XRaySQ: Combined form factor weightings for atomtype pairs will be saved.\n");
     if (saveSQ)
@@ -256,7 +252,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto rMin = weightedGR.total().xAxis().front();
     auto rMax = weightedGR.total().xAxis().back();
     auto rho = rdfModule->effectiveDensity();
-    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, referenceWindowFunction);
+    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(rwf));
     repGR.setObjectTag(fmt::format("{}//RepresentativeTotalGR", uniqueName_));
 
     // Save data if requested
