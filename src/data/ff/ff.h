@@ -49,11 +49,10 @@ class Forcefield
     // ShortRange Interaction Type
     enum ShortRangeType
     {
-        UndefinedType,             /* Undefined short-range type */
-        NoInteractionType,         /* No short-range dispersive forces */
-        LennardJonesType,          /* Lennard-Jones 12-6 form with Lorentz-Berthelot combination rules */
-        LennardJonesGeometricType, /* Lennard-Jones 12-6 form with Geometric combination rules */
-        nShortRangeTypes           /* Number of short-range interaction types */
+        UndefinedType,            /* Undefined short-range type */
+        NoInteractionType,        /* No short-range dispersive forces */
+        LennardJonesType,         /* Lennard-Jones 12-6 form with Lorentz-Berthelot combination rules */
+        LennardJonesGeometricType /* Lennard-Jones 12-6 form with Geometric combination rules */
     };
     // Return enum options for ShortRangeType
     static EnumOptions<ShortRangeType> shortRangeTypes();

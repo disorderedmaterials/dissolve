@@ -11,7 +11,7 @@
 
 Box::Box()
 {
-    type_ = Box::nBoxTypes;
+    type_ = Box::CubicBoxType;
     periodic_.set(true, true, true);
     volume_ = 0.0;
 }

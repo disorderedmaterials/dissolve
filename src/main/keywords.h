@@ -34,8 +34,7 @@ enum BlockKeyword
     PairPotentialsBlockKeyword, /* 'PairPotentials' - Contains definitions of the PairPotentials for the simulation */
     SimulationBlockKeyword,     /* 'Simulation' - Setting of simulation variables affecting the calculation */
     SiteBlockKeyword,           /* 'Site' - Defines an analysis site within a Species */
-    SpeciesBlockKeyword,        /* 'Species' - Begins a definition of a Species */
-    nBlockKeywords              /* Number of defined BlockKeyword keywords */
+    SpeciesBlockKeyword         /* 'Species' - Begins a definition of a Species */
 };
 // Return enum option info for BlockKeyword
 EnumOptions<BlockKeywords::BlockKeyword> keywords();
@@ -56,8 +55,7 @@ enum ConfigurationKeyword
     InputCoordinatesKeyword,   /* 'InputCoordinates' - Specifies the file which contains the starting coordinates */
     ModuleKeyword,             /* 'Module' - Starts the set up of a Module for this configuration */
     SizeFactorKeyword,         /* 'SizeFactor' - Scaling factor for Box lengths, Cell size, and Molecule centres-of-geometry */
-    TemperatureKeyword,        /* 'Temperature' - Defines the temperature of the simulation */
-    nConfigurationKeywords     /* Number of keywords defined for this block */
+    TemperatureKeyword         /* 'Temperature' - Defines the temperature of the simulation */
 };
 // Return enum option info for ConfigurationKeyword
 EnumOptions<ConfigurationBlock::ConfigurationKeyword> keywords();
@@ -76,8 +74,7 @@ enum LayerKeyword
     DisabledKeyword,  /* 'Disabled' - Specify that the layer is currently disabled */
     EndLayerKeyword,  /* 'EndLayer' - Signals the end of the Layer block */
     FrequencyKeyword, /* 'Frequency' - Frequency at which the layer is executed, relative to the main iteration counter */
-    ModuleKeyword,    /* 'Module' - Begin a Module definition within this layer */
-    nLayerKeywords    /* Number of keywords defined for this block */
+    ModuleKeyword     /* 'Module' - Begin a Module definition within this layer */
 };
 // Return enum option info for LayerKeyword
 EnumOptions<LayerBlock::LayerKeyword> keywords();
@@ -97,8 +94,7 @@ enum MasterKeyword
     BondKeyword,      /* 'Bond' - Define master Bond parameters that can be referred to */
     EndMasterKeyword, /* 'EndMaster' - Signals the end of the Master block */
     ImproperKeyword,  /* 'Improper' - Define master Improper parameters that can be referred to */
-    TorsionKeyword,   /* 'Torsion' - Define master Torsion parameters that can be referred to */
-    nMasterKeywords   /* Number of keywords defined for this block */
+    TorsionKeyword    /* 'Torsion' - Define master Torsion parameters that can be referred to */
 };
 // Return enum option info for MasterKeyword
 EnumOptions<MasterBlock::MasterKeyword> keywords();
@@ -116,8 +112,7 @@ enum ModuleKeyword
 {
     DisableKeyword,   /* 'Disable' - Disables the module, preventing it from running */
     EndModuleKeyword, /* 'EndModule' - Signals the end of the Module block */
-    FrequencyKeyword, /* 'Frequency' - Frequency at which the Module is run */
-    nModuleKeywords   /* Number of keywords defined for this block */
+    FrequencyKeyword  /* 'Frequency' - Frequency at which the Module is run */
 };
 // Return enum option info for ModuleKeyword
 EnumOptions<ModuleBlock::ModuleKeyword> keywords();
@@ -140,10 +135,9 @@ enum PairPotentialsKeyword
     IncludeCoulombKeyword,    /* 'IncludeCoulomb' - Include Coulomb term in tabulated pair potentials" */
     ParametersKeyword,        /* 'Parameters' - Sets or re-sets the short-range and charge parameters for a specific AtomType */
     RangeKeyword, /* 'Range' - Specifies the total range (inc. truncation width) over which to generate potentials */
-    ShortRangeTruncationKeyword,      /* 'ShortRangeTruncation' - Truncation scheme to apply to short-range potential */
-    ShortRangeTruncationWidthKeyword, /* 'ShortRangeTruncationWidth' - Width of potential tail over which to reduce
-                         short-range term to zero */
-    nPairPotentialsKeywords           /* Number of keywords defined for this block */
+    ShortRangeTruncationKeyword,     /* 'ShortRangeTruncation' - Truncation scheme to apply to short-range potential */
+    ShortRangeTruncationWidthKeyword /* 'ShortRangeTruncationWidth' - Width of potential tail over which to reduce
+                        short-range term to zero */
 };
 // Return enum option info for PairPotentialsKeyword
 EnumOptions<PairPotentialsBlock::PairPotentialsKeyword> keywords();
@@ -163,8 +157,7 @@ enum SimulationKeyword
     ParallelStrategyKeyword,        /* 'ParallelStrategy' - Determines the distribution of processes across Configurations */
     ParallelGroupPopulationKeyword, /* 'ParallelGroupPopulation' - Controls the maximum number of groups to split processes
                        in a pool in to */
-    SeedKeyword,                    /* 'Seed' - Random seed to use */
-    nSimulationKeywords             /* Number of keywords defined for this block */
+    SeedKeyword                     /* 'Seed' - Random seed to use */
 };
 // Return enum option info for SimulationKeyword
 EnumOptions<SimulationBlock::SimulationKeyword> keywords();

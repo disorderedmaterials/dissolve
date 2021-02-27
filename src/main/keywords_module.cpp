@@ -52,9 +52,6 @@ bool ModuleBlock::parse(LineParser &parser, Dissolve *dissolve, Module *module, 
                 case (ModuleBlock::FrequencyKeyword):
                     module->setFrequency(parser.argi(1));
                     break;
-                case (ModuleBlock::nModuleKeywords):
-                    // Never used, since it is accounted for in the beginning 'if'
-                    break;
                 default:
                     Messenger::error("{} block keyword '{}' not accounted for.\n",
                                      BlockKeywords::keywords().keyword(BlockKeywords::ModuleBlockKeyword),
