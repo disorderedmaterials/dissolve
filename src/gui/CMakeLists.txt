@@ -51,6 +51,8 @@ set(components_MOC_HDRS
     selectgenericitemdialog.h
     selectspeciesdialog.h
     selectsystemtemplatedialog.h
+    # Models
+    xmlFFModel.h
 )
 qt5_wrap_cpp(components_MOC_SRCS ${components_MOC_HDRS})
 

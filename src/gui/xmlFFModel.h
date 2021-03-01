@@ -13,6 +13,8 @@
 
 class XmlFFModel : public QAbstractTableModel
 {
+    Q_OBJECT
+
     private:
     std::vector<std::tuple<std::string, std::string, double, double>> bonds_;
 
