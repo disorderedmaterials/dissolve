@@ -77,8 +77,8 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     double rbin = 1.0 / binWidth;
 
     // Loop context is to use all processes in Pool as one group
-    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
     Messenger::printVerbose("Self terms..\n");
 
@@ -89,7 +89,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
         auto &histogram = partialSet.fullHistogram(typeI, typeI).bins();
         bins = binss[typeI];
         nPoints = partialSet.fullHistogram(typeI, typeI).nBins();
-        for_each_pair(ri, ri + maxr[typeI], stride, start,
+        for_each_pair(ri, ri + maxr[typeI], nChunks, offset,
                       [box, bins, rbin, nPoints, &histogram](int i, auto centre, int j, auto other) {
                           if (i == j)
                               return;
@@ -120,7 +120,7 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
             auto &histogram = partialSet.fullHistogram(typeI, typeJ).bins();
             bins = binss[typeJ];
             nPoints = partialSet.fullHistogram(typeI, typeJ).nBins();
-            auto [begin, end] = cut_range(0, maxr[typeI], stride, start);
+            auto [begin, end] = chop_range(0, maxr[typeI], nChunks, offset);
             for (i = begin; i < end; ++i)
             {
                 centre = ri[i];
@@ -157,10 +157,10 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
     auto &cellArray = cfg->cells();
 
     // Loop context is to use all processes in Pool as one group
-    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
-    auto [begin, end] = cut_range(0, cellArray.nCells(), stride, start);
+    auto [begin, end] = chop_range(0, cellArray.nCells(), nChunks, offset);
     for (n = begin; n < end; ++n)
     {
         cellI = cellArray.cell(n);
@@ -319,16 +319,16 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
     const auto *box = cfg->box();
 
     // Set start/stride for parallel loop (pool solo)
-    auto start = (method == RDFModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
-    auto stride = (method == RDFModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
+    auto offset = (method == RDFModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
+    auto nChunks = (method == RDFModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
 
     timer.start();
 
     // Loop over molecules...
-    // NOTE: If you attempt to use cut_range for this loop, instead of stride, it will fail.
-    // The problem does not seem to be in cut_range, but rather in how the loops are merged.
+    // NOTE: If you attempt to use chop_range for this loop, instead of stride, it will fail.
+    // The problem does not seem to be in chop_range, but rather in how the loops are merged.
     // This is GitHub issue #562
-    for (auto it = cfg->molecules().begin() + start; it < cfg->molecules().end(); it += stride)
+    for (auto it = cfg->molecules().begin() + offset; it < cfg->molecules().end(); it += nChunks)
     {
         auto &atoms = (*it)->atoms();
 
@@ -693,7 +693,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     {
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data->name()};
-        std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
+        std::replace_if(
+            dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
         // Sanity check on number of arguments
@@ -724,7 +725,8 @@ bool RDFModule::testReferencePartials(const Data1DStore &testData, double testTh
     {
         // Grab the name, replace hyphens with '-', and parse the string into arguments
         std::string dataName{data->name()};
-        std::replace_if(dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
+        std::replace_if(
+            dataName.begin(), dataName.end(), [](auto &c) { return c == '-'; }, ' ');
         parser.getArgsDelim(LineParser::Defaults, dataName);
 
         // Sanity check on number of arguments

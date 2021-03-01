@@ -26,7 +26,7 @@ TEST(AragornTest, ArithmaticSeries)
         // Sum each cut, then take the sum of the cuts
         for (int n = 0; n < cuts; ++n)
         {
-            auto [begin, end] = cut_range(ints.begin(), ints.end(), cuts, n);
+            auto [begin, end] = chop_range(ints.begin(), ints.end(), cuts, n);
             count += std::accumulate(begin, end, 0);
         }
         // Make sure that the sum of the cuts in equal to the total

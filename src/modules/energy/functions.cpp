@@ -146,7 +146,7 @@ double EnergyModule::intraMolecularEnergy(ProcessPool &procPool, Configuration *
 
     std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
     std::shared_ptr<const Molecule> mol;
-    auto [begin, end] = cut_range(cfg->molecules().begin(), cfg->molecules().end(), stride, start);
+    auto [begin, end] = chop_range(cfg->molecules().begin(), cfg->molecules().end(), stride, start);
     for (auto it = begin; it < end; ++it)
     {
         // Get Molecule pointer
