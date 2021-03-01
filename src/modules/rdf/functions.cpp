@@ -325,12 +325,12 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
     timer.start();
 
     // Loop over molecules...
-    std::shared_ptr<Atom> i, j;
-    auto [begin, end] = cut_range(cfg->molecules().begin(), cfg->molecules().end(), stride, start);
-    for (auto it = begin; it < end; ++it)
+    // NOTE: If you attempt to use cut_range for this loop, instead of stride, it will fail.
+    // The problem does not seem to be in cut_range, but rather in how the loops are merged.
+    // This is GitHub issue #562
+    for (auto it = cfg->molecules().begin() + start; it < cfg->molecules().end(); it += stride)
     {
-        std::shared_ptr<Molecule> mol = *it;
-        auto &atoms = mol->atoms();
+        auto &atoms = (*it)->atoms();
 
 	for_each_pair(atoms.begin(), atoms.end(), [box, &originalgr](int index, auto &i, int jndex, auto &j) {
 	  // Ignore atom on itself
