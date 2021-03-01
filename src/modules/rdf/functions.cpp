@@ -332,17 +332,18 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
     {
         auto &atoms = (*it)->atoms();
 
-	for_each_pair(atoms.begin(), atoms.end(), [box, &originalgr](int index, auto &i, int jndex, auto &j) {
-	  // Ignore atom on itself
-	  if (index == jndex) return;
+        for_each_pair(atoms.begin(), atoms.end(), [box, &originalgr](int index, auto &i, int jndex, auto &j) {
+            // Ignore atom on itself
+            if (index == jndex)
+                return;
 
-	  double distance;
-	  if (i->cell()->mimRequired(j->cell()))
-	    distance = box->minimumDistance(i, j);
-	  else
-	    distance = (i->r() - j->r()).magnitude();
-	  originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-	});
+            double distance;
+            if (i->cell()->mimRequired(j->cell()))
+                distance = box->minimumDistance(i, j);
+            else
+                distance = (i->r() - j->r()).magnitude();
+            originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+        });
     }
 
     timer.stop();
@@ -358,19 +359,19 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
     procPool.resetAccumulatedTime();
     timer.start();
     for_each_pair(0, originalgr.nAtomTypes(), [&originalgr, &procPool, method](auto typeI, auto typeJ) {
-            // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all processes
-            // have all data already)
-            if (method != RDFModule::TestMethod)
-            {
-                if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool))
-                    return false;
-                if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool))
-                    return false;
-            }
+        // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all processes
+        // have all data already)
+        if (method != RDFModule::TestMethod)
+        {
+            if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool))
+                return false;
+            if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool))
+                return false;
+        }
 
-            // Create unbound histogram from total and bound data
-            originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
-            originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
+        // Create unbound histogram from total and bound data
+        originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
+        originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
     });
 
     // Transform histogram data into radial distribution functions
