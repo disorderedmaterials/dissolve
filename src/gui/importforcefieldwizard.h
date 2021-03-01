@@ -4,6 +4,7 @@
 #pragma once
 
 #include "gui/ui_importforcefieldwizard.h"
+#include "gui/xmlFFModel.h"
 #include <QDialog>
 
 // Forward Declarations
@@ -16,14 +17,13 @@ class ImportForcefieldWizard : public QDialog
     Q_OBJECT
 
     public:
-    ImportForcefieldWizard(QWidget *parent, const Dissolve &mainDissolveInstance) {
-      ui_.setupUi(this);
-    }
-    ~ImportForcefieldWizard() {};
+    ImportForcefieldWizard(QWidget *parent, const Dissolve &mainDissolveInstance);
+    ~ImportForcefieldWizard(){};
 
     private:
     // Main form declaration
     Ui::ImportForcefieldWizardDialog ui_;
+    XmlFFModel model_;
 
     private slots:
     void nextStack();
@@ -32,7 +32,7 @@ class ImportForcefieldWizard : public QDialog
 
     public:
     // Reset, ready for adding a new ForcefieldWizard
-    void reset() {};
+    void reset(){};
     /* // Copy imported ForcefieldWizard over to the specified Dissolve object */
     /* ForcefieldWizard *importForcefieldWizard(Dissolve &dissolve); */
 };
