@@ -316,7 +316,6 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
      * Calculate intramolecular partials
      */
 
-    double distance;
     const auto *box = cfg->box();
 
     // Set start/stride for parallel loop (pool solo)
@@ -333,20 +332,17 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
         std::shared_ptr<Molecule> mol = *it;
         auto &atoms = mol->atoms();
 
-        for (auto ii = atoms.begin(); ii < std::prev(atoms.end()); ++ii)
-        {
-            i = *ii;
-            for (auto jj = std::next(ii); jj < atoms.end(); ++jj)
-            {
-                j = *jj;
+	for_each_pair(atoms.begin(), atoms.end(), [box, &originalgr](int index, auto &i, int jndex, auto &j) {
+	  // Ignore atom on itself
+	  if (index == jndex) return;
 
-                if (i->cell()->mimRequired(j->cell()))
-                    distance = box->minimumDistance(i, j);
-                else
-                    distance = (i->r() - j->r()).magnitude();
-                originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-            }
-        }
+	  double distance;
+	  if (i->cell()->mimRequired(j->cell()))
+	    distance = box->minimumDistance(i, j);
+	  else
+	    distance = (i->r() - j->r()).magnitude();
+	  originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+	});
     }
 
     timer.stop();
@@ -359,13 +355,9 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
      * knows that (i,j) == (j,i) as it is stored as a half-matrix in the Array2D object.
      */
 
-    int typeI, typeJ;
     procPool.resetAccumulatedTime();
     timer.start();
-    for (typeI = 0; typeI < originalgr.nAtomTypes(); ++typeI)
-    {
-        for (typeJ = typeI; typeJ < originalgr.nAtomTypes(); ++typeJ)
-        {
+    for_each_pair(0, originalgr.nAtomTypes(), [&originalgr, &procPool, method](auto typeI, auto typeJ) {
             // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all processes
             // have all data already)
             if (method != RDFModule::TestMethod)
@@ -379,8 +371,7 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
             // Create unbound histogram from total and bound data
             originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
             originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
-        }
-    }
+    });
 
     // Transform histogram data into radial distribution functions
     originalgr.formPartials(box->volume());
