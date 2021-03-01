@@ -90,7 +90,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
     // Loop over central cell atoms
     if (applyMim)
     {
-        auto [begin, end] = cut_range(centralAtoms.begin(), centralAtoms.end(), stride, start);
+        auto [begin, end] = chop_range(centralAtoms.begin(), centralAtoms.end(), stride, start);
         for (auto indexI = begin; indexI < end; ++indexI)
         {
             ii = *indexI;
@@ -123,7 +123,7 @@ double EnergyKernel::energy(Cell *centralCell, Cell *otherCell, bool applyMim, b
     }
     else
     {
-        auto [begin, end] = cut_range(centralCell->atoms().begin(), centralCell->atoms().end(), stride, start);
+        auto [begin, end] = chop_range(centralCell->atoms().begin(), centralCell->atoms().end(), stride, start);
         for (auto indexI = begin; indexI < end; ++indexI)
         {
             ii = *indexI;
@@ -188,7 +188,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
             rJ = jj->r();
 
             // Loop over central cell atoms
-            auto [begin, end] = cut_range(centralAtoms.begin(), centralAtoms.end(), stride, start);
+            auto [begin, end] = chop_range(centralAtoms.begin(), centralAtoms.end(), stride, start);
             for (auto indexI = begin; indexI < end; ++indexI)
             {
                 ii = *indexI;
@@ -226,7 +226,7 @@ double EnergyKernel::energy(Cell *centralCell, bool excludeIgeJ, bool interMolec
             rJ = jj->r();
 
             // Loop over central cell atoms
-            auto [begin, end] = cut_range(centralAtoms.begin(), centralAtoms.end(), stride, start);
+            auto [begin, end] = chop_range(centralAtoms.begin(), centralAtoms.end(), stride, start);
             for (auto indexI = begin; indexI < end; ++indexI)
             {
                 ii = *indexI;
@@ -281,7 +281,7 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
 
     if (flags & KernelFlags::ApplyMinimumImageFlag)
     {
-        auto [begin, end] = cut_range(otherAtoms.begin(), otherAtoms.end(), stride, start);
+        auto [begin, end] = chop_range(otherAtoms.begin(), otherAtoms.end(), stride, start);
         // Loop over other Atoms
         if (flags & KernelFlags::ExcludeSelfFlag)
             for (auto indexJ = begin; indexJ < end; ++indexJ)
@@ -383,7 +383,7 @@ double EnergyKernel::energy(const std::shared_ptr<Atom> i, const Cell *cell, int
     else
     {
         // Loop over atom neighbours
-        auto [begin, end] = cut_range(otherAtoms.begin(), otherAtoms.end(), stride, start);
+        auto [begin, end] = chop_range(otherAtoms.begin(), otherAtoms.end(), stride, start);
         if (flags & KernelFlags::ExcludeSelfFlag)
             for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
@@ -583,7 +583,7 @@ double EnergyKernel::energy(const CellArray &cellArray, bool interMolecular, Pro
 
     auto totalEnergy = 0.0;
     Cell *cell;
-    auto [begin, end] = cut_range(0, cellArray.nCells(), stride, start);
+    auto [begin, end] = chop_range(0, cellArray.nCells(), stride, start);
     for (auto cellId = begin; cellId < end; ++cellId)
     {
         cell = cellArray.cell(cellId);

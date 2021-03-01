@@ -109,7 +109,7 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
     // Loop over central cell atoms
     if (applyMim)
     {
-        auto [begin, end] = cut_range(centralAtoms.begin(), centralAtoms.end(), stride, start);
+        auto [begin, end] = chop_range(centralAtoms.begin(), centralAtoms.end(), stride, start);
         for (auto indexI = begin; indexI < end; ++indexI)
         {
             ii = *indexI;
@@ -137,7 +137,7 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
     }
     else
     {
-        auto [begin, end] = cut_range(centralCell->atoms().begin(), centralCell->atoms().end(), stride, start);
+        auto [begin, end] = chop_range(centralCell->atoms().begin(), centralCell->atoms().end(), stride, start);
         for (auto indexI = begin; indexI < end; ++indexI)
         {
             ii = *indexI;
@@ -235,7 +235,7 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
             }
         else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
         {
-            auto [begin, end] = cut_range(otherAtoms.begin(), otherAtoms.end(), stride, start);
+            auto [begin, end] = chop_range(otherAtoms.begin(), otherAtoms.end(), stride, start);
             for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
@@ -258,7 +258,7 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
         }
         else
         {
-            auto [begin, end] = cut_range(otherAtoms.begin(), otherAtoms.end(), stride, start);
+            auto [begin, end] = chop_range(otherAtoms.begin(), otherAtoms.end(), stride, start);
             for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
@@ -279,7 +279,7 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
     else
     {
         // Loop over atom neighbours
-        auto [begin, end] = cut_range(otherAtoms.begin(), otherAtoms.end(), stride, start);
+        auto [begin, end] = chop_range(otherAtoms.begin(), otherAtoms.end(), stride, start);
         if (flags & KernelFlags::ExcludeSelfFlag)
             for (auto indexJ = begin; indexJ < end; ++indexJ)
             {

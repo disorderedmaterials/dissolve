@@ -8,7 +8,7 @@
 #include <tuple>
 
 // Cut a range into a smaller segment for MPI
-template <typename T> auto cut_range(const T begin, const T end, const int count, const int step)
+template <typename T> auto chop_range(const T begin, const T end, const int count, const int step)
 {
     auto diff = end - begin;
     T start = begin + std::ldiv((const long int)step * diff, (const long int)count).quot;
