@@ -4,6 +4,7 @@
 #pragma once
 
 #include "gui/ui_importforcefieldwizard.h"
+#include "gui/xmlAngleModel.h"
 #include "gui/xmlBondModel.h"
 #include <QDialog>
 
@@ -24,6 +25,7 @@ class ImportForcefieldWizard : public QDialog
     // Main form declaration
     Ui::ImportForcefieldWizardDialog ui_;
     XmlBondModel bonds_;
+    XmlAngleModel angles_;
 
     private slots:
     void nextStack();
