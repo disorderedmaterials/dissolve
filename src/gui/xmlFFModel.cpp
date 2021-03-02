@@ -1,6 +1,40 @@
 #include "gui/xmlFFModel.h"
+#include <iostream>
+#include <pugixml.hpp>
 
-XmlFFModel::XmlFFModel() { bonds_ = {{"Foo", "Bar", 1.2, 2.3}, {"Baz", "Quux", 3.4, 4.5}}; }
+XmlFFModel::XmlFFModel() {}
+
+void XmlFFModel::readFile(const QString &file)
+{
+    pugi::xml_document doc;
+
+    std::cout << "Reading the file" << std::endl;
+    auto result = doc.load_file(file.toStdString().c_str());
+    if (!result)
+	return;
+    std::cout << "Parsed the file" << std::endl;
+
+    auto root = doc.root();
+
+    beginRemoveRows(QModelIndex(), 0, bonds_.size());
+    bonds_.clear();
+    removeRows(0, bonds_.size());
+    endRemoveRows();
+
+    for (auto &b : root.select_nodes("/ForceField/HarmonicBondForce/Bond"))
+    {
+	beginInsertRows(QModelIndex(), bonds_.size(), bonds_.size());
+	bonds_.emplace_back(b.node().attribute("class1").as_string(), b.node().attribute("class1").as_string(),
+			    b.node().attribute("k").as_double(), b.node().attribute("length").as_double());
+	std::cout << b.node().attribute("class1").as_string() << std::endl;
+	endInsertRows();
+    }
+    std::cout << "Read the bonds" << std::endl;
+
+    dataChanged(index(0, 0), index(bonds_.size(), 4));
+
+    std::cout << "Changed the data" << bonds_.size() << std::endl;
+}
 
 int XmlFFModel::rowCount(const QModelIndex &parent) const
 {
@@ -36,12 +70,12 @@ QVariant XmlFFModel::headerData(int section, Qt::Orientation orientation, int ro
     switch (section)
     {
 	case 0:
-	    return QVariant(QString("Foo"));
+	    return QVariant(QString("AtomI"));
 	case 1:
-	    return QVariant(QString("Bar"));
+	    return QVariant(QString("AtomJ"));
 	case 2:
-	    return QVariant(QString("Quux"));
+	    return QVariant(QString("k"));
 	default:
-	    return QVariant(QString("Xyzzy"));
+	    return QVariant(QString("Length"));
     }
 }

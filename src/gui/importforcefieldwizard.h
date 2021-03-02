@@ -23,7 +23,7 @@ class ImportForcefieldWizard : public QDialog
     private:
     // Main form declaration
     Ui::ImportForcefieldWizardDialog ui_;
-    XmlFFModel model_;
+    XmlFFModel bonds_;
 
     private slots:
     void nextStack();
