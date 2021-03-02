@@ -33,6 +33,7 @@ class ImportForcefieldWizard : public QDialog
     void nextStack();
     void prevStack();
     void xmlFileDialog();
+    void xmlString(QString);
 
     public:
     // Reset, ready for adding a new ForcefieldWizard

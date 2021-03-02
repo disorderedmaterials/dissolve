@@ -41,6 +41,10 @@ void ImportForcefieldWizard::xmlFileDialog()
 	return;
 
     ui_.lineEdit->setText(fileName);
+}
+
+void ImportForcefieldWizard::xmlString(QString fileName)
+{
     atoms_.readFile(fileName);
     bonds_.readFile(fileName);
     angles_.readFile(fileName);
