@@ -18,6 +18,9 @@ class XmlFFModel : public QAbstractTableModel
     private:
     std::vector<std::tuple<std::string, std::string, double, double>> bonds_;
 
+    public slots:
+    void readFile(const QString &);
+
     public:
     XmlFFModel();
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;

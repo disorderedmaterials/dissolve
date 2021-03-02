@@ -7,7 +7,7 @@
 ImportForcefieldWizard::ImportForcefieldWizard(QWidget *parent, const Dissolve &mainDissolveInstance)
 {
     ui_.setupUi(this);
-    ui_.bondTable->setModel(&model_);
+    ui_.bondTable->setModel(&bonds_);
 }
 
 void ImportForcefieldWizard::nextStack()
@@ -35,8 +35,9 @@ void ImportForcefieldWizard::prevStack()
 void ImportForcefieldWizard::xmlFileDialog()
 {
     auto fileName = QFileDialog::getOpenFileName(this, "Open xml file", "/home/adam", "OpenMM Xml files (*.xml)");
-    if (!fileName.isEmpty())
-    {
-	ui_.lineEdit->setText(fileName);
-    }
+    if (fileName.isEmpty())
+	return;
+
+    ui_.lineEdit->setText(fileName);
+    bonds_.readFile(fileName);
 }
