@@ -10,10 +10,10 @@
 template <class V, class E> class Venum
 {
     public:
-    Venum(V value = V(), EnumOptions<E> enumOptions = EnumOptions<E>()) : enumOptions_(enumOptions) { value_ = value; }
-    ~Venum() {}
+    Venum() = default;
+    Venum(V value, EnumOptions<E> enumOptions) : enumOptions_(enumOptions) { value_ = value; }
+    ~Venum() = default;
     Venum(const Venum &source) : enumOptions_(source.enumOptions_) { value_ = source.value_; }
-    // Assignment Operators
     void operator=(const Venum &source)
     {
         value_ = source.value_;
@@ -46,8 +46,6 @@ template <class V, class E> class Venum
     public:
     // Return EnumOptionsBase
     EnumOptionsBase &baseOptions() { return enumOptions_; }
-    // Return EnumOptionsBase (const)
-    const EnumOptionsBase &constBaseOptions() const { return enumOptions_; }
     // Return enumeration
     E enumeration() const { return enumOptions_.enumeration(); }
     // Return enumeration as string
