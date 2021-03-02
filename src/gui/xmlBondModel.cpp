@@ -21,7 +21,7 @@ void XmlBondModel::readFile(const QString &file)
     for (auto &b : root.select_nodes("/ForceField/HarmonicBondForce/Bond"))
     {
 	beginInsertRows(QModelIndex(), bonds_.size(), bonds_.size());
-	bonds_.emplace_back(b.node().attribute("class1").as_string(), b.node().attribute("class1").as_string(),
+	bonds_.emplace_back(b.node().attribute("class1").as_string(), b.node().attribute("class2").as_string(),
 			    b.node().attribute("k").as_double(), b.node().attribute("length").as_double());
 	endInsertRows();
     }
