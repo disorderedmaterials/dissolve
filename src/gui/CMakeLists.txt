@@ -54,6 +54,7 @@ set(components_MOC_HDRS
     # Models
     xmlBondModel.h
     xmlAngleModel.h
+    xmlAtomModel.h
 )
 qt5_wrap_cpp(components_MOC_SRCS ${components_MOC_HDRS})
 
@@ -168,6 +169,7 @@ set(components_SRCS
     selectspeciesdialog_funcs.cpp
     selectsystemtemplatedialog_funcs.cpp
     # Models
+    xmlAtomModel.cpp
     xmlBondModel.cpp
     xmlAngleModel.cpp
 )

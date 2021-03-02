@@ -9,6 +9,7 @@ ImportForcefieldWizard::ImportForcefieldWizard(QWidget *parent, const Dissolve &
     ui_.setupUi(this);
     ui_.bondTable->setModel(&bonds_);
     ui_.angleTable->setModel(&angles_);
+    ui_.atomTable->setModel(&atoms_);
 }
 
 void ImportForcefieldWizard::nextStack()
@@ -40,6 +41,7 @@ void ImportForcefieldWizard::xmlFileDialog()
 	return;
 
     ui_.lineEdit->setText(fileName);
+    atoms_.readFile(fileName);
     bonds_.readFile(fileName);
     angles_.readFile(fileName);
 }

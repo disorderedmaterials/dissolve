@@ -5,6 +5,7 @@
 
 #include "gui/ui_importforcefieldwizard.h"
 #include "gui/xmlAngleModel.h"
+#include "gui/xmlAtomModel.h"
 #include "gui/xmlBondModel.h"
 #include <QDialog>
 
@@ -24,6 +25,7 @@ class ImportForcefieldWizard : public QDialog
     private:
     // Main form declaration
     Ui::ImportForcefieldWizardDialog ui_;
+    XmlAtomModel atoms_;
     XmlBondModel bonds_;
     XmlAngleModel angles_;
 
