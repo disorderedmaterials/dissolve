@@ -1,9 +1,9 @@
-#include "gui/xmlFFModel.h"
+#include "gui/xmlBondModel.h"
 #include <pugixml.hpp>
 
-XmlFFModel::XmlFFModel() {}
+XmlBondModel::XmlBondModel() {}
 
-void XmlFFModel::readFile(const QString &file)
+void XmlBondModel::readFile(const QString &file)
 {
     pugi::xml_document doc;
 
@@ -29,19 +29,19 @@ void XmlFFModel::readFile(const QString &file)
     dataChanged(index(0, 0), index(bonds_.size(), 4));
 }
 
-int XmlFFModel::rowCount(const QModelIndex &parent) const
+int XmlBondModel::rowCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return bonds_.size();
 }
 
-int XmlFFModel::columnCount(const QModelIndex &parent) const
+int XmlBondModel::columnCount(const QModelIndex &parent) const
 {
     Q_UNUSED(parent);
     return 4;
 }
 
-QVariant XmlFFModel::data(const QModelIndex &index, int role) const
+QVariant XmlBondModel::data(const QModelIndex &index, int role) const
 {
     switch (index.column())
     {
@@ -58,7 +58,7 @@ QVariant XmlFFModel::data(const QModelIndex &index, int role) const
     }
 }
 
-QVariant XmlFFModel::headerData(int section, Qt::Orientation orientation, int role) const
+QVariant XmlBondModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     switch (section)
     {

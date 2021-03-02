@@ -52,7 +52,7 @@ set(components_MOC_HDRS
     selectspeciesdialog.h
     selectsystemtemplatedialog.h
     # Models
-    xmlFFModel.h
+    xmlBondModel.h
 )
 qt5_wrap_cpp(components_MOC_SRCS ${components_MOC_HDRS})
 
@@ -167,7 +167,7 @@ set(components_SRCS
     selectspeciesdialog_funcs.cpp
     selectsystemtemplatedialog_funcs.cpp
     # Models
-    xmlFFModel.cpp
+    xmlBondModel.cpp
 )
 
 # Target 'components'

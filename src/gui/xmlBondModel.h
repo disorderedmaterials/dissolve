@@ -11,7 +11,7 @@
 #include <tuple>
 #include <vector>
 
-class XmlFFModel : public QAbstractTableModel
+class XmlBondModel : public QAbstractTableModel
 {
     Q_OBJECT
 
@@ -22,7 +22,7 @@ class XmlFFModel : public QAbstractTableModel
     void readFile(const QString &);
 
     public:
-    XmlFFModel();
+    XmlBondModel();
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;

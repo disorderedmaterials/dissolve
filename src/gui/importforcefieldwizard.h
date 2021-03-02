@@ -4,7 +4,7 @@
 #pragma once
 
 #include "gui/ui_importforcefieldwizard.h"
-#include "gui/xmlFFModel.h"
+#include "gui/xmlBondModel.h"
 #include <QDialog>
 
 // Forward Declarations
@@ -23,7 +23,7 @@ class ImportForcefieldWizard : public QDialog
     private:
     // Main form declaration
     Ui::ImportForcefieldWizardDialog ui_;
-    XmlFFModel bonds_;
+    XmlBondModel bonds_;
 
     private slots:
     void nextStack();
