@@ -1,4 +1,4 @@
-#include "gui/xmlAtomModel.h"
+#include "models/xmlAtomModel.h"
 #include "classes/atomtype.h"
 #include <pugixml.hpp>
 

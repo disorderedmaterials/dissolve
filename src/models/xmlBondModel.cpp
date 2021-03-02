@@ -1,4 +1,4 @@
-#include "gui/xmlBondModel.h"
+#include "models/xmlBondModel.h"
 #include <pugixml.hpp>
 
 XmlBondModel::XmlBondModel() {}

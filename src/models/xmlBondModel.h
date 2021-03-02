@@ -3,8 +3,6 @@
 
 #pragma once
 
-#include <QDialog>
-
 #include <QAbstractTableModel>
 #include <QModelIndex>
 

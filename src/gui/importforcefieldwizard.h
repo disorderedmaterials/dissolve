@@ -4,9 +4,9 @@
 #pragma once
 
 #include "gui/ui_importforcefieldwizard.h"
-#include "gui/xmlAngleModel.h"
-#include "gui/xmlAtomModel.h"
-#include "gui/xmlBondModel.h"
+#include "models/xmlAngleModel.h"
+#include "models/xmlAtomModel.h"
+#include "models/xmlBondModel.h"
 #include <QDialog>
 
 // Forward Declarations

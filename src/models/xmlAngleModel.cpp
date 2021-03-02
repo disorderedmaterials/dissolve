@@ -1,4 +1,4 @@
-#include "gui/xmlAngleModel.h"
+#include "models/xmlAngleModel.h"
 #include <pugixml.hpp>
 
 XmlAngleModel::XmlAngleModel() {}
