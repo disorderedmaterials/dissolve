@@ -80,3 +80,27 @@ QVariant XmlAtomModel::headerData(int section, Qt::Orientation orientation, int 
 	    return QVariant();
     }
 }
+
+Qt::ItemFlags XmlAtomModel::flags(const QModelIndex &index) const
+{
+    Qt::ItemFlags result = Qt::ItemIsEnabled;
+    if (index.column() == 4)
+	result |= Qt::ItemIsEditable;
+    return result;
+}
+
+bool XmlAtomModel::setData(const QModelIndex &index, const QVariant &value, int role)
+{
+    if (index.column() != 4)
+	return false;
+    if (index.row() >= atoms_.size())
+	return false;
+
+    auto type = dissolve_.findAtomType(value.toString().toStdString());
+    if (!type)
+	return false;
+
+    std::get<4>(atoms_[index.row()]) = type->index();
+
+    return true;
+}
