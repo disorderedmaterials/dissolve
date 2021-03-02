@@ -297,7 +297,6 @@ if(GUI)
            # Module gui libs
            ${MODULEGUI_LINK_LIBS}
            # Main gui libs
-	   models
            render
            widgets
            keywordwidgets
@@ -305,6 +304,7 @@ if(GUI)
            charts
            components
            gui
+	   models
            ${NO_WHOLE_ARCHIVE_FLAG}
     PRIVATE # External libs
             antlr4-runtime
