@@ -4,7 +4,7 @@
 #include "gui/importforcefieldwizard.h"
 #include <QFileDialog>
 
-ImportForcefieldWizard::ImportForcefieldWizard(QWidget *parent, const Dissolve &mainDissolveInstance)
+ImportForcefieldWizard::ImportForcefieldWizard(QWidget *parent, Dissolve &mainDissolveInstance) : atoms_(mainDissolveInstance)
 {
     ui_.setupUi(this);
     ui_.bondTable->setModel(&bonds_);

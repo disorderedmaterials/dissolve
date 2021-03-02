@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "main/dissolve.h"
 #include <QDialog>
 
 #include <QAbstractTableModel>
@@ -16,13 +17,14 @@ class XmlAtomModel : public QAbstractTableModel
     Q_OBJECT
 
     private:
-    std::vector<std::tuple<std::string, std::string, std::string, double>> atoms_;
+    std::vector<std::tuple<std::string, std::string, std::string, double, int>> atoms_;
+    Dissolve &dissolve_;
 
     public slots:
     void readFile(const QString &);
 
     public:
-    XmlAtomModel();
+    XmlAtomModel(Dissolve &);
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;

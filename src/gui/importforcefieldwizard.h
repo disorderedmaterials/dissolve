@@ -19,7 +19,7 @@ class ImportForcefieldWizard : public QDialog
     Q_OBJECT
 
     public:
-    ImportForcefieldWizard(QWidget *parent, const Dissolve &mainDissolveInstance);
+    ImportForcefieldWizard(QWidget *parent, Dissolve &mainDissolveInstance);
     ~ImportForcefieldWizard(){};
 
     private:
