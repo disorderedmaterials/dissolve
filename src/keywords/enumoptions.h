@@ -86,11 +86,8 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
             if (!KeywordData<EnumOptions<E>>::data_.isValid(parser.argsv(startArg)))
                 return KeywordData<EnumOptions<E>>::data_.errorAndPrintValid(parser.argsv(startArg));
 
-            // Keyword recognised...
-            EnumOptions<E> newOptions(KeywordData<EnumOptions<E>>::data_);
-            newOptions.set(parser.argsv(startArg));
-            if (!KeywordData<EnumOptions<E>>::setData(newOptions))
-                return Messenger::error("An odd thing happened....\n");
+            KeywordData<EnumOptions<E>>::data_.set(parser.argsv(startArg));
+            KeywordData<EnumOptions<E>>::hasBeenSet();
 
             return true;
         }
