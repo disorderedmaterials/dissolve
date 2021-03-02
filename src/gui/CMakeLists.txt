@@ -166,6 +166,8 @@ set(components_SRCS
     selectgenericitemdialog_funcs.cpp
     selectspeciesdialog_funcs.cpp
     selectsystemtemplatedialog_funcs.cpp
+    # Models
+    xmlFFModel.cpp
 )
 
 # Target 'components'
