@@ -13,23 +13,23 @@ template <class E> class EnumOptions : public EnumOptionsBase
 {
     public:
     EnumOptions() = default;
-    EnumOptions(std::string_view name, const std::vector<EnumOption<E>> &options) : name_(name), options_(std::move(options))
+    EnumOptions(std::string_view name, const std::vector<EnumOption<E>> &options) : name_(name), options_(options)
     {
-        if (options_.size() > 0)
-            currentOptionIndex_ = 0;
+        currentOption_ = options_.cbegin();
+    }
+    EnumOptions(const EnumOptions<E> &source)
+    {
+        name_ = source.name_;
+        options_ = source.options_;
+        currentOption_ = options_.cbegin() + source.index();
     }
     EnumOptions<E> &operator=(E value)
     {
-        // Find the index of the enumeration
-        currentOptionIndex_ = std::nullopt;
-        for (auto n = 0; n < options_.size(); ++n)
-            if (options_[n].enumeration() == value)
-            {
-                currentOptionIndex_ = n;
-                break;
-            }
+        currentOption_ =
+            std::find_if(options_.cbegin(), options_.cend(), [value](auto &option) { return option.enumeration() == value; });
+        if (currentOption_ == options_.end())
+            throw(std::runtime_error(fmt::format("Enumerated options '{}' missing enumeration {}.\n", name_, value)));
 
-        assert(currentOptionIndex_.has_value());
         return *this;
     }
 
@@ -42,7 +42,7 @@ template <class E> class EnumOptions : public EnumOptionsBase
     // Vector of valid options
     std::vector<EnumOption<E>> options_;
     // Currently selected option (by index) in local options_ array
-    std::optional<int> currentOptionIndex_;
+    typename std::vector<EnumOption<E>>::const_iterator currentOption_;
 
     public:
     // Return name of options (e.g. from source enumeration)
@@ -54,41 +54,34 @@ template <class E> class EnumOptions : public EnumOptionsBase
     // Return description for the nth keyword in the list
     std::string_view descriptionByIndex(int index) const override { return options_[index].description(); }
     // Return current option keyword
-    std::string_view keyword() const
-    {
-        if (!currentOptionIndex_.has_value())
-            return "UNDEFINED";
-
-        return options_[currentOptionIndex_.value()].keyword();
-    }
+    std::string_view keyword() const { return currentOption_ == options_.cend() ? "UNDEFINED" : currentOption_->keyword(); }
     // Set current option keyword
     bool set(std::string_view keyword)
     {
-        for (auto n = 0; n < options_.size(); ++n)
-            if (DissolveSys::sameString(keyword, options_[n].keyword()))
-            {
-                currentOptionIndex_ = n;
-                return true;
-            }
+        auto it = std::find_if(options_.cbegin(), options_.cend(),
+                               [keyword](auto &option) { return DissolveSys::sameString(keyword, option.keyword()); });
+        if (it == options_.cend())
+            return false;
 
-        return false;
+        currentOption_ = it;
+
+        return true;
     }
     // Return index of current option
-    int index() const override { return currentOptionIndex_.value_or(0); }
+    int index() const override { return currentOption_ - options_.cbegin(); }
     // Set current option from keyword
     void setIndex(int index) override
     {
         assert(index >= 0 && index < options_.size());
 
-        currentOptionIndex_ = index;
+        currentOption_ = options_.cbegin() + index;
     }
     // Return whether specified option keyword is valid
     bool isValid(std::string_view keyword) const
     {
-        for (auto n = 0; n < options_.size(); ++n)
-            if (DissolveSys::sameString(keyword, options_[n].keyword()))
-                return true;
-        return false;
+        return std::find_if(options_.cbegin(), options_.cend(), [keyword](auto &option) {
+                   return DissolveSys::sameString(keyword, option.keyword());
+               }) != options_.end();
     }
 
     // Raise error, printing valid options
@@ -97,9 +90,8 @@ template <class E> class EnumOptions : public EnumOptionsBase
         std::string validValueString;
         for (auto n = 0; n < options_.size(); ++n)
             validValueString += fmt::format(n == 0 ? "{}" : ", {}", options_[n].keyword());
-        Messenger::error("'{}' is not a valid {}.\nValid options are:  {}", badKeyword, name_, validValueString);
 
-        return false;
+        return Messenger::error("'{}' is not a valid {}.\nValid options are:  {}", badKeyword, name_, validValueString);
     }
 
     /*
@@ -112,35 +104,39 @@ template <class E> class EnumOptions : public EnumOptionsBase
         auto it = std::find_if(options_.cbegin(), options_.cend(),
                                [keyword](auto &option) { return DissolveSys::sameString(keyword, option.keyword()); });
         if (it != options_.cend())
-            return (E)it->enumeration();
+            return it->enumeration();
 
         throw(std::runtime_error(fmt::format("Option '{}' is not recognised, so can't return its enumeration.\n", keyword)));
     }
     // Return current enumeration in E
     E enumeration() const
     {
-        // Use local index to return enumeration
-        if (!currentOptionIndex_.has_value())
-        {
-            Messenger::warn("No current option set in EnumOptions, so can't return an enumeration.\n");
-            return (E)-1;
-        }
+        assert(currentOption_ != options_.cend());
 
-        return (E)options_[currentOptionIndex_.value()].enumeration();
+        return currentOption_->enumeration();
     }
     // Return enumerated keyword
     std::string_view keyword(E enumeration) const
     {
         auto it = std::find_if(options_.cbegin(), options_.cend(),
                                [enumeration](auto &option) { return enumeration == option.enumeration(); });
-        return (it == options_.cend() ? "ENUMERATION_NOT_VALID" : it->keyword());
+        if (it == options_.cend())
+            throw(std::runtime_error(fmt::format(
+                "Enumerated options '{}' missing enumeration {}, so can't return its keyword.\n", name_, enumeration)));
+
+        return it->keyword();
     }
     // Return enumerated keyword from uncast integer
     std::string_view keywordFromInt(int uncastEnumeration) const
     {
         auto it = std::find_if(options_.cbegin(), options_.cend(),
                                [uncastEnumeration](auto &option) { return uncastEnumeration == option.enumeration(); });
-        return (it == options_.cend() ? "ENUMERATION_NOT_VALID" : it->keyword());
+        if (it == options_.cend())
+            throw(std::runtime_error(
+                fmt::format("Enumerated options '{}' missing (uncast) enumeration {}, so can't return its keyword.\n", name_,
+                            uncastEnumeration)));
+
+        return it->keyword();
     }
     // Return option with enumeration specified
     const EnumOption<E> &option(E enumeration) const
