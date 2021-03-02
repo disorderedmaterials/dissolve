@@ -297,6 +297,7 @@ if(GUI)
            # Module gui libs
            ${MODULEGUI_LINK_LIBS}
            # Main gui libs
+	   models
            render
            widgets
            keywordwidgets
