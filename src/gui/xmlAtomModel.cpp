@@ -13,20 +13,16 @@ void XmlAtomModel::readFile(const QString &file)
 
     auto root = doc.root();
 
-    beginRemoveRows(QModelIndex(), 0, atoms_.size());
+    beginResetModel();
     atoms_.clear();
-    removeRows(0, atoms_.size());
-    endRemoveRows();
 
     for (auto &b : root.select_nodes("/ForceField/AtomTypes/Type"))
     {
-	beginInsertRows(QModelIndex(), atoms_.size(), atoms_.size());
 	atoms_.emplace_back(b.node().attribute("name").as_string(), b.node().attribute("class").as_string(),
 			    b.node().attribute("element").as_string(), b.node().attribute("mass").as_double());
-	endInsertRows();
     }
 
-    dataChanged(index(0, 0), index(atoms_.size(), 4));
+    endResetModel();
 }
 
 int XmlAtomModel::rowCount(const QModelIndex &parent) const

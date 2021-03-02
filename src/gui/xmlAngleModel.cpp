@@ -13,21 +13,17 @@ void XmlAngleModel::readFile(const QString &file)
 
     auto root = doc.root();
 
-    beginRemoveRows(QModelIndex(), 0, angles_.size());
+    beginResetModel();
     angles_.clear();
-    removeRows(0, angles_.size());
-    endRemoveRows();
 
     for (auto &a : root.select_nodes("/ForceField/HarmonicAngleForce/Angle"))
     {
-	beginInsertRows(QModelIndex(), angles_.size(), angles_.size());
 	angles_.emplace_back(a.node().attribute("class1").as_string(), a.node().attribute("class2").as_string(),
 			     a.node().attribute("class3").as_string(), a.node().attribute("k").as_double(),
 			     a.node().attribute("angle").as_double());
-	endInsertRows();
     }
 
-    dataChanged(index(0, 0), index(angles_.size(), 5));
+    endResetModel();
 }
 
 int XmlAngleModel::rowCount(const QModelIndex &parent) const

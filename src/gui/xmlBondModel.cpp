@@ -13,20 +13,16 @@ void XmlBondModel::readFile(const QString &file)
 
     auto root = doc.root();
 
-    beginRemoveRows(QModelIndex(), 0, bonds_.size());
+    beginResetModel();
     bonds_.clear();
-    removeRows(0, bonds_.size());
-    endRemoveRows();
 
     for (auto &b : root.select_nodes("/ForceField/HarmonicBondForce/Bond"))
     {
-	beginInsertRows(QModelIndex(), bonds_.size(), bonds_.size());
 	bonds_.emplace_back(b.node().attribute("class1").as_string(), b.node().attribute("class2").as_string(),
 			    b.node().attribute("k").as_double(), b.node().attribute("length").as_double());
-	endInsertRows();
     }
+    endResetModel();
 
-    dataChanged(index(0, 0), index(bonds_.size(), 4));
 }
 
 int XmlBondModel::rowCount(const QModelIndex &parent) const
