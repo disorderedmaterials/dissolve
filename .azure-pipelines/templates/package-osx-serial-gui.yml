@@ -1,7 +1,3 @@
-parameters:
-  - name: qtver
-    default: 5.15.2
-
 steps:
   - bash: |
       pip3 install dmgbuild biplist
@@ -9,7 +5,9 @@ steps:
   - bash: |
       set -ex
       # Set Qt dir - assume that it is somewhere in /usr/local/Cellar
-      Qt5_ROOT=/usr/local/Cellar/qt/${{ parameters.qtver }}
+      QT_INSTALL_DIR=/usr/local/Cellar/qt@5
+      QTVER=`ls -d ${QT_INSTALL_DIR}/* | sed "s/.*\(5\.[0-9][0-9]\.[0-9]\)/\1/g"`
+      Qt5_ROOT=${QT_INSTALL_DIR}/${QTVER}
       # Get program version
       DISSOLVE_VERSION=`grep "#define DISSOLVEVERSION" src/main/version.cpp | sed "s/.*\"\(.*\)\"/\1/g"`
       ci/scripts/prep-dmg -a Dissolve-GUI -v ${DISSOLVE_VERSION} -b build/bin/dissolve-gui.app/Contents/MacOS/dissolve-gui -d ${Qt5_ROOT} -i icon/icon-1024x1024.png -p build/bin/dissolve-gui.app/Contents/Info.plist
