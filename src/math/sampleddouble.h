@@ -34,8 +34,6 @@ class SampledDouble : public GenericItemBase
     double value() const;
     // Return number of samples contributing to averages etc.
     int count() const;
-    // Return mean (current) value
-    double mean() const;
     // Return variance of sampled data
     double variance() const;
     // Return standard deviation of sampled data

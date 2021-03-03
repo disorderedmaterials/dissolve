@@ -32,9 +32,6 @@ double SampledDouble::value() const { return mean_; }
 // Return number of samples contributing to averages etc.
 int SampledDouble::count() const { return count_; }
 
-// Return mean (current) value
-double SampledDouble::mean() const { return mean_; }
-
 // Return variance of sampled data
 double SampledDouble::variance() const { return (count_ < 2 ? 0.0 : m2_ / (count_ - 1)); }
 

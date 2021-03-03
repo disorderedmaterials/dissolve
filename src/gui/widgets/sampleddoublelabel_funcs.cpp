@@ -28,6 +28,6 @@ void SampledDoubleLabel::setLabelFonts(int basePointSize)
 // Set label values
 void SampledDoubleLabel::setText(const SampledDouble &sampledDouble)
 {
-    ui_.ValueLabel->setText(QString::number(sampledDouble.mean()));
+    ui_.ValueLabel->setText(QString::number(sampledDouble.value()));
     ui_.StDevLabel->setText(QString::number(sampledDouble.stDev()));
 }
