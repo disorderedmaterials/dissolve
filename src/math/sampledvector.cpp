@@ -192,49 +192,6 @@ bool SampledVector::write(LineParser &parser)
  * Parallel Comms
  */
 
-// Sum data over all processes within the pool
-bool SampledVector::allSum(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    // All processes in the pool send their data to the zero rank, which assembles the statistics and then broadcasts the
-    // final result
-    for (auto n = 1; n < procPool.nProcesses(); ++n)
-    {
-        if (procPool.poolRank() == 0)
-        {
-            // Rank zero receives the data and sums it
-            SampledVector data;
-            if (!procPool.receive(data.count_, 0))
-                return false;
-            if (!procPool.receive(data.mean_, 0))
-                return false;
-            if (!procPool.receive(data.m2_, 0))
-                return false;
-
-            (*this) += data;
-        }
-        else
-        {
-            // Send our data to rank zero
-            if (!procPool.send(count_, 0))
-                return false;
-            if (!procPool.send(mean_, 0))
-                return false;
-            if (!procPool.send(m2_, 0))
-                return false;
-        }
-    }
-
-    if (!procPool.broadcast(count_))
-        return false;
-    if (!procPool.broadcast(mean_))
-        return false;
-    if (!procPool.broadcast(m2_))
-        return false;
-#endif
-    return true;
-}
-
 // Broadcast data
 bool SampledVector::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
 {
@@ -244,6 +201,8 @@ bool SampledVector::broadcast(ProcessPool &procPool, const int root, const CoreD
     if (!procPool.broadcast(mean_, root))
         return false;
     if (!procPool.broadcast(m2_, root))
+        return false;
+    if (!procPool.broadcast(stDev_, root))
         return false;
 #endif
     return true;
@@ -256,10 +215,11 @@ bool SampledVector::equality(ProcessPool &procPool)
     if (!procPool.equality(count_))
         return Messenger::error("SampledVector count is not equivalent (process {} has {}).\n", procPool.poolRank(), count_);
     if (!procPool.equality(mean_))
-        return Messenger::error("SampledVector mean value is not equivalent (process {} has {:e}).\n", procPool.poolRank(),
-                                mean_);
+        return Messenger::error("SampledVector mean vector is not equivalent.\n", procPool.poolRank());
     if (!procPool.equality(m2_))
-        return Messenger::error("SampledVector m2 value is not equivalent (process {} has {:e}).\n", procPool.poolRank(), m2_);
+        return Messenger::error("SampledVector m2 vector is not equivalent.\n", procPool.poolRank());
+    if (!procPool.equality(stDev_))
+        return Messenger::error("SampledVector stDev vector is not equivalent.\n", procPool.poolRank());
 #endif
     return true;
 }
