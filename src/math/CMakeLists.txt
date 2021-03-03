@@ -26,6 +26,7 @@ add_library(
   poissonfit.cpp
   range.cpp
   regression.cpp
+  sampleddata1d.cpp
   sampleddouble.cpp
   sampledvector.cpp
   svd.cpp
@@ -62,6 +63,7 @@ add_library(
   praxis.h
   range.h
   regression.h
+  sampleddata1d.h
   sampleddouble.h
   sampledvector.h
   sd.h
