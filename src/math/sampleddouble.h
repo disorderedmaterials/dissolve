@@ -45,8 +45,8 @@ class SampledDouble : public GenericItemBase
     public:
     operator double &();
     operator const double &() const;
-    void operator=(double x);
-    void operator=(const SampledDouble &source);
+    SampledDouble &operator=(double x);
+    SampledDouble &operator=(const SampledDouble &source);
     void operator+=(double x);
     void operator+=(int i);
     void operator+=(const SampledDouble &source);
