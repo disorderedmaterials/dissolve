@@ -49,12 +49,12 @@ void SpeciesTab::updateAtomTableRow(int row, const SpeciesAtom *speciesAtom, boo
         item = ui_.AtomTable->item(row, 0);
     item->setText(QString::fromStdString(std::string(Elements::name(speciesAtom->Z()))));
     item->setSelected(speciesAtom->isSelected());
+    printf("UPDATING row %i - spatom = %p\n", row, item->data(Qt::UserRole).value<SpeciesAtom*>());
 
     // AtomType
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<SpeciesAtom>(speciesAtom));
         ui_.AtomTable->setItem(row, 1, item);
     }
     else
@@ -68,7 +68,6 @@ void SpeciesTab::updateAtomTableRow(int row, const SpeciesAtom *speciesAtom, boo
         if (createItems)
         {
             item = new QTableWidgetItem;
-            item->setData(Qt::UserRole, VariantPointer<SpeciesAtom>(speciesAtom));
             ui_.AtomTable->setItem(row, n + 2, item);
         }
         else
@@ -81,7 +80,6 @@ void SpeciesTab::updateAtomTableRow(int row, const SpeciesAtom *speciesAtom, boo
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<SpeciesAtom>(speciesAtom));
         ui_.AtomTable->setItem(row, 5, item);
     }
     else
@@ -117,7 +115,6 @@ void SpeciesTab::updateBondTableRow(int row, const SpeciesBond *speciesBond, boo
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<SpeciesBond>(speciesBond));
         ui_.BondTable->setItem(row, 2, item);
     }
     else
@@ -132,7 +129,6 @@ void SpeciesTab::updateBondTableRow(int row, const SpeciesBond *speciesBond, boo
         if (createItems)
         {
             item = new QTableWidgetItem;
-            item->setData(Qt::UserRole, VariantPointer<SpeciesBond>(speciesBond));
             ui_.BondTable->setItem(row, n + 3, item);
         }
         else
@@ -169,7 +165,6 @@ void SpeciesTab::updateAngleTableRow(int row, const SpeciesAngle *speciesAngle, 
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<SpeciesAngle>(speciesAngle));
         ui_.AngleTable->setItem(row, 3, item);
     }
     else
@@ -186,7 +181,6 @@ void SpeciesTab::updateAngleTableRow(int row, const SpeciesAngle *speciesAngle, 
         if (createItems)
         {
             item = new QTableWidgetItem;
-            item->setData(Qt::UserRole, VariantPointer<SpeciesAngle>(speciesAngle));
             ui_.AngleTable->setItem(row, n + 4, item);
         }
         else
@@ -223,7 +217,6 @@ void SpeciesTab::updateTorsionTableRow(int row, const SpeciesTorsion *speciesTor
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<SpeciesTorsion>(speciesTorsion));
         ui_.TorsionTable->setItem(row, 4, item);
     }
     else
@@ -239,7 +232,6 @@ void SpeciesTab::updateTorsionTableRow(int row, const SpeciesTorsion *speciesTor
         if (createItems)
         {
             item = new QTableWidgetItem;
-            item->setData(Qt::UserRole, VariantPointer<SpeciesTorsion>(speciesTorsion));
             item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             ui_.TorsionTable->setItem(row, n + 5, item);
         }
@@ -274,7 +266,6 @@ void SpeciesTab::updateImproperTableRow(int row, const SpeciesImproper *speciesI
     if (createItems)
     {
         item = new QTableWidgetItem;
-        item->setData(Qt::UserRole, VariantPointer<SpeciesImproper>(speciesImproper));
         ui_.ImproperTable->setItem(row, 4, item);
     }
     else
@@ -291,7 +282,6 @@ void SpeciesTab::updateImproperTableRow(int row, const SpeciesImproper *speciesI
         if (createItems)
         {
             item = new QTableWidgetItem;
-            item->setData(Qt::UserRole, VariantPointer<SpeciesImproper>(speciesImproper));
             ui_.ImproperTable->setItem(row, n + 5, item);
         }
         else
