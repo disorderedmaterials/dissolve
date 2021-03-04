@@ -97,13 +97,13 @@ newData.setI(99);
 /* ... */
 
 // Retrieve the named data from the list
-MyClass &newData = GenericListHelper<MyClass>::retrieve(dataList, "SomeNewData");
+MyClass &newData = dataList.retrieve<MyClass>( "SomeNewData");
 
 // Fails - named data does not exist, default value returned (MyClass())
-MyClass &newData = GenericListHelper<MyClass>::retrieve(dataList, "DifferentNewData");
+MyClass &newData = dataList.retrieve<MyClass>( "DifferentNewData");
 
 // Fails - can't convert class types, default value returned (SomeOtherClass())
-SomeOtherClass &otherData = GenericListHelper<SomeOtherClass>::retrieve(dataList, "SomeNewData");
+SomeOtherClass &otherData = dataList.retrieve<SomeOtherClass>( "SomeNewData");
 ```
 
 ### Versioning

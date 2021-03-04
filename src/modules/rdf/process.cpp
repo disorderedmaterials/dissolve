@@ -5,7 +5,6 @@
 #include "classes/configuration.h"
 #include "classes/neutronweights.h"
 #include "classes/species.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
 #include "modules/rdf/rdf.h"
@@ -89,7 +88,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Calculate unweighted partials for this Configuration
         bool alreadyUpToDate;
         calculateGR(procPool, cfg, method, rdfRange, binWidth, alreadyUpToDate);
-        auto &originalgr = GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), "OriginalGR", uniqueName_);
+        auto &originalgr = cfg->moduleData().retrieve<PartialSet>("OriginalGR", uniqueName_);
 
         // Perform averaging of unweighted partials if requested, and if we're not already up-to-date
         if ((averaging > 1) && (!alreadyUpToDate))
@@ -104,8 +103,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
             {
                 if (!cfg->moduleData().contains(fmt::format("OriginalGR_{}", n), uniqueName_))
                     continue;
-                auto &p =
-                    GenericListHelper<PartialSet>::retrieve(cfg->moduleData(), fmt::format("OriginalGR_{}", n), uniqueName_);
+                auto &p = cfg->moduleData().retrieve<PartialSet>(fmt::format("OriginalGR_{}", n), uniqueName_);
                 p.setObjectTags(fmt::format("{}//{}//OriginalGR", cfg->niceName(), uniqueName_), fmt::format("Avg{}", n));
             }
 
@@ -127,8 +125,8 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Form unweighted g(r) from original g(r), applying any requested smoothing / intramolecular broadening
-        PartialSet &unweightedgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR", uniqueName_,
-                                                                          GenericItem::InRestartFileFlag);
+        PartialSet &unweightedgr =
+            cfg->moduleData().realise<PartialSet>("UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
         calculateUnweightedGR(procPool, cfg, originalgr, unweightedgr, intraBroadening, smoothing);
 
         // Set names of resources and filename in Data1D within the PartialSet
@@ -141,8 +139,8 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Create/retrieve PartialSet for summed unweighted g(r)
-    auto &summedUnweightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedGR",
-                                                                      uniqueName_, GenericItem::InRestartFileFlag);
+    auto &summedUnweightedGR =
+        dissolve.processingModuleData().realise<PartialSet>("UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
 
     // Sum the partials from the associated Configurations
     if (!RDFModule::sumUnweightedGR(procPool, this, this, dissolve.processingModuleData(), summedUnweightedGR))

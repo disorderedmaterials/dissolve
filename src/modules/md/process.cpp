@@ -8,7 +8,6 @@
 #include "classes/forcekernel.h"
 #include "classes/species.h"
 #include "data/atomicmasses.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/forces/forces.h"
@@ -127,8 +126,7 @@ bool MDModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Read in or assign random velocities
         // Realise the velocity array from the moduleData
         bool created;
-        auto &v = GenericListHelper<Array<Vec3<double>>>::realise(moduleData, "Velocities", uniqueName(), GenericItem::NoFlag,
-                                                                  &created);
+        auto &v = moduleData.realise<Array<Vec3<double>>>("Velocities", uniqueName(), GenericItem::NoFlag, &created);
         if (created)
         {
             randomVelocities = true;

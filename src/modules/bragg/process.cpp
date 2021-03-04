@@ -5,7 +5,6 @@
 #include "classes/configuration.h"
 #include "classes/neutronweights.h"
 #include "classes/species.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
 #include "modules/bragg/bragg.h"
@@ -86,8 +85,8 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             // Retrieve BraggReflection data from the Configuration's module data
             auto found = false;
-            const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
-                cfg->moduleData(), "BraggReflections", "", Array<BraggReflection>(), &found);
+            const auto &braggReflections =
+                cfg->moduleData().value<Array<BraggReflection>>("BraggReflections", "", Array<BraggReflection>(), &found);
             if (!found)
                 return Messenger::error("Failed to find BraggReflection array in module data for Configuration '{}'.\n",
                                         cfg->name());

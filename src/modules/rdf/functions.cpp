@@ -10,7 +10,6 @@
 #include "classes/speciesangle.h"
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "math/filters.h"
@@ -264,8 +263,8 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
 {
     // Does a PartialSet already exist for this Configuration?
     bool wasCreated;
-    auto &originalgr = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "OriginalGR", uniqueName_,
-                                                              GenericItem::InRestartFileFlag, &wasCreated);
+    auto &originalgr =
+        cfg->moduleData().realise<PartialSet>("OriginalGR", uniqueName_, GenericItem::InRestartFileFlag, &wasCreated);
     if (wasCreated)
         originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth, cfg->niceName(), "original", "rdf", "r, Angstroms");
 
@@ -468,8 +467,8 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, con
                                 GenericList &processingModuleData, PartialSet &summedUnweightedGR)
 {
     // Realise an AtomTypeList containing the sum of atom types over all target configurations
-    auto &combinedAtomTypes = GenericListHelper<AtomTypeList>::realise(
-        processingModuleData, "SummedAtomTypes", parentModule->uniqueName(), GenericItem::InRestartFileFlag);
+    auto &combinedAtomTypes = processingModuleData.realise<AtomTypeList>("SummedAtomTypes", parentModule->uniqueName(),
+                                                                         GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
     for (Configuration *cfg : parentModule->targetConfigurations())
         combinedAtomTypes.add(cfg->usedAtomTypesList());
@@ -517,7 +516,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, con
         // Grab partials for Configuration and add into our set
         if (!cfg->moduleData().contains("UnweightedGR", rdfModule->uniqueName()))
             return Messenger::error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
-        auto cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR", rdfModule->uniqueName());
+        auto cfgPartialGR = cfg->moduleData().value<PartialSet>("UnweightedGR", rdfModule->uniqueName());
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }
     summedUnweightedGR.setFingerprint(fingerprint);
@@ -585,7 +584,7 @@ bool RDFModule::sumUnweightedGR(ProcessPool &procPool, Module *parentModule, Mod
         // *Copy* the partials for the Configuration, subtract 1.0, and add into our set
         if (!cfg->moduleData().contains("UnweightedGR", parentModule->uniqueName()))
             return Messenger::error("Couldn't find UnweightedGR data for Configuration '{}'.\n", cfg->name());
-        auto cfgPartialGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "UnweightedGR", parentModule->uniqueName());
+        auto cfgPartialGR = cfg->moduleData().value<PartialSet>("UnweightedGR", parentModule->uniqueName());
         cfgPartialGR -= 1.0;
         summedUnweightedGR.addPartials(cfgPartialGR, weight);
     }

@@ -3,7 +3,6 @@
 
 #include "classes/coredata.h"
 #include "classes/species.h"
-#include "genericitems/listhelper.h"
 #include "gui/delegates/combolist.hui"
 #include "gui/delegates/customcombodelegate.h"
 #include "gui/delegates/exponentialspin.hui"

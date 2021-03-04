@@ -3,7 +3,6 @@
 
 #include "base/sysfunc.h"
 #include "classes/partialset.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "math/praxis.h"
 #include "modules/calibration/calibration.h"
@@ -141,16 +140,16 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
             auto smoothing = rdfModule->keywords().asInt("Smoothing");
             for (Configuration *cfg : rdfModule->targetConfigurations())
             {
-                const auto &originalGR = GenericListHelper<PartialSet>::value(cfg->moduleData(), "OriginalGR");
-                auto &unweightedGR = GenericListHelper<PartialSet>::realise(cfg->moduleData(), "UnweightedGR");
+                const auto &originalGR = cfg->moduleData().value<PartialSet>("OriginalGR");
+                auto &unweightedGR = cfg->moduleData().realise<PartialSet>("UnweightedGR");
                 RDFModule::calculateUnweightedGR(procPool, cfg, originalGR, unweightedGR, broadening, smoothing);
             }
 
             // Store the new broadening parameters in the restart file for info only (they won't be read in and
             // used)
-            GenericListHelper<PairBroadeningFunction>::realise(dissolve.processingModuleData(),
-                                                               fmt::format("{}-IntraBroadening", rdfModule->uniqueName()),
-                                                               uniqueName(), GenericItem::InRestartFileFlag) = broadening;
+            dissolve.processingModuleData().realise<PairBroadeningFunction>(
+                fmt::format("{}-IntraBroadening", rdfModule->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag) =
+                broadening;
         }
 
         // Go over NeutronSQ Modules and run the processing
@@ -160,7 +159,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Make sure the structure factors will be updated by the NeutronSQ module - set flag in the target
             // Configurations
             for (Configuration *cfg : module->targetConfigurations())
-                GenericListHelper<bool>::realise(cfg->moduleData(), "_ForceNeutronSQ") = true;
+                cfg->moduleData().realise<bool>("_ForceNeutronSQ") = true;
 
             // Run the NeutronSQModule (quietly)
             Messenger::mute();

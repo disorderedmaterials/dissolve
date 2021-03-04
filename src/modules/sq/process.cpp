@@ -3,7 +3,6 @@
 
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "math/averaging.h"
 #include "math/filters.h"
@@ -75,16 +74,15 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Get unweighted g(r) from the source RDF module
     if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->uniqueName()))
         return Messenger::error("Couldn't locate source UnweightedGR from module '{}'.\n", rdfModule->uniqueName());
-    const auto &unweightedgr =
-        GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedGR", rdfModule->uniqueName());
+    const auto &unweightedgr = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->uniqueName());
 
     // Get effective atomic density of underlying g(r)
     const auto rho = rdfModule->effectiveDensity();
 
     // Does a PartialSet already exist for this Configuration?
     bool wasCreated;
-    auto &unweightedsq = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "UnweightedSQ", uniqueName_,
-                                                                GenericItem::InRestartFileFlag, &wasCreated);
+    auto &unweightedsq = dissolve.processingModuleData().realise<PartialSet>("UnweightedSQ", uniqueName_,
+                                                                             GenericItem::InRestartFileFlag, &wasCreated);
     if (wasCreated)
         unweightedsq.setUpPartials(unweightedgr.atomTypes(), uniqueName_, "unweighted", "sq", "Q, 1/Angstroms");
 
@@ -115,8 +113,8 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("Bragg scattering requested to be included, but reflections from the module '{}' "
                                     "could not be located.\n",
                                     braggModule->uniqueName());
-        const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(
-            dissolve.processingModuleData(), "BraggReflections", braggModule->uniqueName(), Array<BraggReflection>());
+        const auto &braggReflections = dissolve.processingModuleData().value<Array<BraggReflection>>(
+            "BraggReflections", braggModule->uniqueName(), Array<BraggReflection>());
         const auto nReflections = braggReflections.nItems();
         const auto braggQMax = braggReflections.at(nReflections - 1).q();
         Messenger::print("Found BraggReflections data for module '{}' (nReflections = {}, QMax = {} "
@@ -125,8 +123,8 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Create a temporary array into which our broadened Bragg partials will be placed
         bool created;
-        auto &braggPartials = GenericListHelper<Array2D<Data1D>>::realise(dissolve.processingModuleData(), "BraggPartials",
-                                                                          uniqueName_, GenericItem::NoFlag, &created);
+        auto &braggPartials = dissolve.processingModuleData().realise<Array2D<Data1D>>("BraggPartials", uniqueName_,
+                                                                                       GenericItem::NoFlag, &created);
         if (created)
         {
             // Initialise the array
@@ -213,8 +211,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             if (!dissolve.processingModuleData().contains(fmt::format("UnweightedSQ_{}", n), uniqueName_))
                 continue;
-            auto &p = GenericListHelper<PartialSet>::retrieve(dissolve.processingModuleData(),
-                                                              fmt::format("UnweightedSQ_{}", n), uniqueName_);
+            auto &p = dissolve.processingModuleData().retrieve<PartialSet>(fmt::format("UnweightedSQ_{}", n), uniqueName_);
             p.setObjectTags(fmt::format("{}//UnweightedSQ", uniqueName_), fmt::format("Avg{}", n));
         }
 

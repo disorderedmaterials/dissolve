@@ -8,7 +8,6 @@
 #include "classes/configuration.h"
 #include "classes/energykernel.h"
 #include "classes/regionaldistributor.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "modules/atomshake/atomshake.h"
 

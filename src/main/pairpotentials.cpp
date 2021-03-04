@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 
 // Set maximum distance for tabulated PairPotentials
@@ -137,7 +136,7 @@ bool Dissolve::generatePairPotentials(std::shared_ptr<AtomType> onlyInvolving)
             std::string itemName = fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ());
             if (!processingModuleData_.contains(itemName, "Dissolve"))
                 continue;
-            pot->setUAdditional(GenericListHelper<Data1D>::retrieve(processingModuleData_, itemName, "Dissolve", Data1D()));
+            pot->setUAdditional(processingModuleData_.retrieve<Data1D>(itemName, "Dissolve", Data1D()));
         }
     }
 

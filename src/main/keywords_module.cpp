@@ -4,7 +4,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/species.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "main/keywords.h"
 

@@ -3,7 +3,6 @@
 
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "genericitems/listhelper.h"
 #include "math/ft.h"
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"

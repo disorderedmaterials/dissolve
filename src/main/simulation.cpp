@@ -6,7 +6,6 @@
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/species.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include <cstdio>
 #include <numeric>
@@ -303,14 +302,13 @@ bool Dissolve::iterate(int nIterations)
              */
 
             // Iteration number
-            GenericListHelper<int>::realise(processingModuleData_, "Iteration", "Dissolve", GenericItem::InRestartFileFlag) =
-                iteration_;
+            processingModuleData_.realise<int>("Iteration", "Dissolve", GenericItem::InRestartFileFlag) = iteration_;
 
             // Pair Potentials
             for (auto *pot = pairPotentials_.first(); pot != nullptr; pot = pot->next())
             {
-                GenericListHelper<Data1D>::realise(
-                    processingModuleData_,
+
+                processingModuleData_.realise<Data1D>(
                     fmt::format("Potential_{}-{}_Additional", pot->atomTypeNameI(), pot->atomTypeNameJ()), "Dissolve",
                     GenericItem::InRestartFileFlag) = pot->uAdditional();
             }

@@ -10,7 +10,6 @@
 #include "classes/speciesangle.h"
 #include "classes/speciesbond.h"
 #include "classes/speciestorsion.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "modules/intrashake/intrashake.h"
 

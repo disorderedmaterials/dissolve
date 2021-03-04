@@ -4,7 +4,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/configuration.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "modules/import/import.h"
 
@@ -49,8 +48,7 @@ bool ImportModule::process(Dissolve &dissolve, ProcessPool &procPool)
             if (dissolve.processingModuleData().contains(streamPosName, uniqueName()))
             {
                 // Retrieve the streampos and go to it in the file
-                std::streampos trajPos =
-                    GenericListHelper<std::streampos>::retrieve(dissolve.processingModuleData(), streamPosName, uniqueName());
+                std::streampos trajPos = dissolve.processingModuleData().retrieve<std::streampos>(streamPosName, uniqueName());
                 parser.seekg(trajPos);
             }
 
@@ -69,8 +67,8 @@ bool ImportModule::process(Dissolve &dissolve, ProcessPool &procPool)
             }
 
             // Set the trajectory file position in the restart file
-            GenericListHelper<std::streampos>::realise(dissolve.processingModuleData(), streamPosName, uniqueName(),
-                                                       GenericItem::InRestartFileFlag) = parser.tellg();
+            dissolve.processingModuleData().realise<std::streampos>(streamPosName, uniqueName(),
+                                                                    GenericItem::InRestartFileFlag) = parser.tellg();
         }
     }
 

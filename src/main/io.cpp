@@ -6,7 +6,6 @@
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "main/keywords.h"
 #include "main/version.h"
@@ -561,7 +560,7 @@ bool Dissolve::loadRestart(std::string_view filename)
         Messenger::print("Finished reading restart file.\n");
 
     // Set current iteration number
-    iteration_ = GenericListHelper<int>::value(processingModuleData_, "Iteration", "Dissolve", 0);
+    iteration_ = processingModuleData_.value<int>("Iteration", "Dissolve", 0);
 
     // Error encountered?
     if (error)
