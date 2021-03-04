@@ -67,18 +67,6 @@ bool GenericList::contains(std::string_view name, std::string_view prefix) const
     return false;
 }
 
-// Return if named item, if it exists, is of specified type
-bool GenericList::isItemOfType(std::string_view type, std::string_view name, std::string_view prefix) const
-{
-    std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
-
-    for (auto *item = items_.first(); item != nullptr; item = item->next())
-        if (DissolveSys::sameString(item->name(), varName))
-            return DissolveSys::sameString(type, item->itemClassName());
-
-    return false;
-}
-
 // Return item list
 List<GenericItem> &GenericList::items() { return items_; }
 
@@ -122,38 +110,6 @@ int GenericList::version(std::string_view name, std::string_view prefix) const
             return item->version();
 
     return -99;
-}
-
-// Return list of all items with specified prefix (before first '_')
-RefList<GenericItem> GenericList::itemsWithPrefix(std::string_view prefix)
-{
-    RefList<GenericItem> items;
-    for (auto *item = items_.first(); item != nullptr; item = item->next())
-    {
-        if (DissolveSys::beforeChar(item->name(), '_') == prefix)
-            items.append(item);
-    }
-
-    return items;
-}
-
-// Return list of all items with specified class name
-RefList<GenericItem> GenericList::itemsWithClassName(std::string_view className)
-{
-    RefList<GenericItem> items;
-    for (auto *item = items_.first(); item != nullptr; item = item->next())
-        if (DissolveSys::sameString(item->itemClassName(), className))
-            items.append(item);
-
-    return items;
-}
-
-// List all items
-void GenericList::listItems() const
-{
-    auto count = 0;
-    for (auto *item = items_.first(); item != nullptr; item = item->next(), ++count)
-        Messenger::print("  {:3d}  {}", count, item->name());
 }
 
 // Remove named item
