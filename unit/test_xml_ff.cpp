@@ -1,7 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "classes/atomtype.h"
+#include "data/elements.h"
+#include "main/dissolve.h"
 #include "models/xmlAngleModel.h"
+#include "models/xmlAtomModel.h"
 #include "models/xmlBondModel.h"
 #include <gtest/gtest.h>
 #include <tuple>
@@ -58,4 +62,42 @@ TEST(XmlFF, XmlAngle)
 	ASSERT_EQ(angles.data(angles.index(row, 4)).toDouble(), std::get<4>(b));
 	++row;
     }
+}
+
+TEST(XmlFF, XmlAtom)
+{
+    CoreData coreData;
+    Dissolve dissolve(coreData);
+    XmlAtomModel atoms(dissolve);
+
+    atoms.readFile("/home/adam/Code/dissolve/tests/ff/methanol.xml");
+
+    ASSERT_EQ(atoms.columnCount(), 5);
+    ASSERT_EQ(atoms.rowCount(), 6);
+
+    std::vector<XmlAtomData> reference = {{"opls_802", "H802", "H", 1.008000, -1},  {"opls_804", "H804", "H", 1.008000, -1},
+					  {"opls_801", "O801", "O", 15.999000, -1}, {"opls_803", "H803", "H", 1.008000, -1},
+					  {"opls_800", "C800", "C", 12.011000, -1}, {"opls_805", "H805", "H", 1.008000, -1}};
+
+    int row = 0;
+    for (auto b : reference)
+    {
+	ASSERT_EQ(atoms.data(atoms.index(row, 0)).toString().toStdString(), std::get<0>(b));
+	ASSERT_EQ(atoms.data(atoms.index(row, 1)).toString().toStdString(), std::get<1>(b));
+	ASSERT_EQ(atoms.data(atoms.index(row, 2)).toString().toStdString(), std::get<2>(b));
+	ASSERT_EQ(atoms.data(atoms.index(row, 3)).toDouble(), std::get<3>(b));
+	ASSERT_EQ(atoms.data(atoms.index(row, 4)).toString().toStdString(), "Missing");
+	++row;
+    }
+
+    // Cannot set atom type because we haven't defined this type yet.
+    ASSERT_FALSE(atoms.setData(atoms.index(0, 4), "H"));
+    ASSERT_EQ(atoms.data(atoms.index(0, 4)).toString().toStdString(), "Missing");
+
+    auto type = dissolve.addAtomType(Elements::H);
+    ASSERT_EQ(type->name(), "H");
+
+    // Now we can add the atom type because it exists;
+    ASSERT_TRUE(atoms.setData(atoms.index(0, 4), "H"));
+    ASSERT_EQ(atoms.data(atoms.index(0, 4)).toString().toStdString(), "H");
 }

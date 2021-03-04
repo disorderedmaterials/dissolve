@@ -17,11 +17,10 @@ void XmlAtomModel::readFile(const QString &file)
     beginResetModel();
     atoms_.clear();
 
-    int n = 0;
     for (auto &b : root.select_nodes("/ForceField/AtomTypes/Type"))
     {
 	atoms_.emplace_back(b.node().attribute("name").as_string(), b.node().attribute("class").as_string(),
-			    b.node().attribute("element").as_string(), b.node().attribute("mass").as_double(), n++);
+			    b.node().attribute("element").as_string(), b.node().attribute("mass").as_double(), -1);
     }
 
     endResetModel();
@@ -54,7 +53,7 @@ QVariant XmlAtomModel::data(const QModelIndex &index, int role) const
 	    return QVariant(std::get<3>(atoms_[index.row()]));
 	case 4:
 	    type = std::get<4>(atoms_[index.row()]);
-	    if (type >= dissolve_.nAtomTypes())
+	    if (type < 0 || type >= dissolve_.nAtomTypes())
 		return "Missing";
 	    return QVariant(QString(dissolve_.atomType(type)->name().data()));
 	default:

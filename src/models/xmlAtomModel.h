@@ -11,12 +11,14 @@
 #include <tuple>
 #include <vector>
 
+using XmlAtomData = std::tuple<std::string, std::string, std::string, double, int>;
+
 class XmlAtomModel : public QAbstractTableModel
 {
     Q_OBJECT
 
     private:
-    std::vector<std::tuple<std::string, std::string, std::string, double, int>> atoms_;
+    std::vector<XmlAtomData> atoms_;
     Dissolve &dissolve_;
 
     public slots:
