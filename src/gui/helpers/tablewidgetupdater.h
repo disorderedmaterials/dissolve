@@ -10,9 +10,9 @@
 
 #pragma once
 
-// TableWidgetUpdater - Constructor-only template class to update contents of a QTableWidget, preserving original items as much
-// as possible
-template <class T, class I, typename Raw = const I *, typename... Args> class TableWidgetUpdater
+// ConstTableWidgetUpdater - Constructor-only template class to update contents of a QTableWidget, preserving original items as
+// much as possible
+template <class T, class I, typename Raw = const I *, typename... Args> class ConstTableWidgetUpdater
 {
     // Typedefs for passed functions
     typedef void (T::*TableWidgetRowUpdateFunction)(int row, Raw item, bool createItems, Args... args);
@@ -57,8 +57,8 @@ template <class T, class I, typename Raw = const I *, typename... Args> class Ta
     }
 
     public:
-    TableWidgetUpdater(QTableWidget *table, const std::vector<I> &vector, T *functionParent,
-                       TableWidgetRowUpdateFunction updateRow)
+    ConstTableWidgetUpdater(QTableWidget *table, const std::vector<I> &vector, T *functionParent,
+                            TableWidgetRowUpdateFunction updateRow)
     {
 
         int rowCount = 0;
@@ -73,7 +73,7 @@ template <class T, class I, typename Raw = const I *, typename... Args> class Ta
         // iterate over
         table->setRowCount(rowCount);
     }
-    TableWidgetUpdater(QTableWidget *table, const List<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
+    ConstTableWidgetUpdater(QTableWidget *table, const List<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
     {
 
         int rowCount = 0;
@@ -89,7 +89,8 @@ template <class T, class I, typename Raw = const I *, typename... Args> class Ta
         // iterate over
         table->setRowCount(rowCount);
     }
-    TableWidgetUpdater(QTableWidget *table, const RefList<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
+    ConstTableWidgetUpdater(QTableWidget *table, const RefList<I> &list, T *functionParent,
+                            TableWidgetRowUpdateFunction updateRow)
     {
         int rowCount = 0;
 
@@ -100,8 +101,8 @@ template <class T, class I, typename Raw = const I *, typename... Args> class Ta
         }
         table->setRowCount(rowCount);
     }
-    TableWidgetUpdater(QTableWidget *table, const std::vector<std::shared_ptr<I>> &list, T *functionParent,
-                       TableWidgetRowUpdateFunction updateRow)
+    ConstTableWidgetUpdater(QTableWidget *table, const std::vector<std::shared_ptr<I>> &list, T *functionParent,
+                            TableWidgetRowUpdateFunction updateRow)
     {
 
         int rowCount = 0;

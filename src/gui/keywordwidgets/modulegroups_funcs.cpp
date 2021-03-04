@@ -130,8 +130,8 @@ void ModuleGroupsKeywordWidget::updateWidgetValues(const CoreData &coreData)
     RefList<Module> availableModules = coreData.findModules(keyword_->data().allowedModuleTypes());
 
     // Update the list widget
-    TableWidgetUpdater<ModuleGroupsKeywordWidget, Module> tableUpdater(ui_.SelectionTable, availableModules, this,
-                                                                       &ModuleGroupsKeywordWidget::updateSelectionRow);
+    ConstTableWidgetUpdater<ModuleGroupsKeywordWidget, Module> tableUpdater(ui_.SelectionTable, availableModules, this,
+                                                                            &ModuleGroupsKeywordWidget::updateSelectionRow);
 
     ui_.SelectionTable->resizeColumnToContents(0);
 

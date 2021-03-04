@@ -153,8 +153,8 @@ void DataManagerDialog::updateControls()
     ui_.SimulationDataTable->resizeColumnsToContents();
 
     // Populate reference points table
-    TableWidgetUpdater<DataManagerDialog, ReferencePoint> refPointUpdater(ui_.ReferencePointsTable, referencePoints_, this,
-                                                                          &DataManagerDialog::referencePointRowUpdate);
+    ConstTableWidgetUpdater<DataManagerDialog, ReferencePoint> refPointUpdater(ui_.ReferencePointsTable, referencePoints_, this,
+                                                                               &DataManagerDialog::referencePointRowUpdate);
     ui_.ReferencePointsTable->resizeColumnsToContents();
 }
 
