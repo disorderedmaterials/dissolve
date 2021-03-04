@@ -4,7 +4,6 @@
 #include "classes/coredata.h"
 #include "classes/species.h"
 #include "classes/speciessite.h"
-#include "gui/helpers/tablewidgetupdater.h"
 #include "gui/keywordwidgets/speciessite.h"
 #include "templates/variantpointer.h"
 #include <QButtonGroup>

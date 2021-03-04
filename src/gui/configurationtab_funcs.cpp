@@ -7,12 +7,9 @@
 #include "classes/configuration.h"
 #include "classes/species.h"
 #include "gui/configurationtab.h"
-#include "gui/delegates/combolist.hui"
-#include "gui/delegates/exponentialspin.hui"
 #include "gui/getconfigurationnamedialog.h"
 #include "gui/gui.h"
 #include "gui/helpers/combopopulator.h"
-#include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 #include <QMessageBox>

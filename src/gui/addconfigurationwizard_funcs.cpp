@@ -6,7 +6,6 @@
 #include "classes/species.h"
 #include "gui/addconfigurationwizard.h"
 #include "gui/helpers/combopopulator.h"
-#include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
 #include <QFileDialog>
