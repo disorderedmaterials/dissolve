@@ -13,12 +13,23 @@
 #include <tuple>
 #include <vector>
 
-TEST(XmlFF, XmlBond)
+namespace UnitTest
+{
+
+class XmlFFTest : public ::testing::Test
+{
+    public:
+    XmlFFTest() = default;
+
+    protected:
+    void SetUp() override { ASSERT_TRUE(doc.load_file("ff/methanol.xml")); }
+
+    pugi::xml_document doc;
+};
+
+TEST_F(XmlFFTest, XmlBond)
 {
     XmlBondModel bonds;
-    pugi::xml_document doc;
-
-    auto result = doc.load_file("/home/adam/Code/dissolve/tests/ff/methanol.xml");
 
     bonds.readFile(doc.root());
 
@@ -42,12 +53,10 @@ TEST(XmlFF, XmlBond)
     }
 }
 
-TEST(XmlFF, XmlAngle)
+TEST_F(XmlFFTest, XmlAngle)
 {
     XmlAngleModel angles;
-    pugi::xml_document doc;
 
-    auto result = doc.load_file("/home/adam/Code/dissolve/tests/ff/methanol.xml");
     angles.readFile(doc.root());
 
     ASSERT_EQ(angles.columnCount(), 5);
@@ -71,22 +80,21 @@ TEST(XmlFF, XmlAngle)
     }
 }
 
-TEST(XmlFF, XmlTorsion)
+TEST_F(XmlFFTest, XmlTorsion)
 {
     XmlTorsionModel torsions;
-    pugi::xml_document doc;
 
-    auto result = doc.load_file("/home/adam/Code/dissolve/tests/ff/methanol.xml");
     torsions.readFile(doc.root());
 
     ASSERT_EQ(torsions.columnCount(), 16);
     ASSERT_EQ(torsions.rowCount(), 3);
 
-    std::vector<XmlTorsionData> reference = {
-      {"H805", "O801", "C800", "H802", 0.000000, 0.000000, 0.736384, 0.000000, 1, 2, 3, 4, 0.00, 3.141592653589793, 0.00, 3.141592653589793},
-      {"H805", "O801", "C800", "H803", 0.000000, 0.000000, 0.736384, 0.000000, 1, 2, 3, 4, 0.00, 3.141592653589793, 0.00, 3.141592653589793},
-      {"H805", "O801", "C800", "H804", 0.000000, 0.000000, 0.736384, 0.000000, 1, 2, 3, 4, 0.00, 3.141592653589793, 0.00, 3.141592653589793}
-    };
+    std::vector<XmlTorsionData> reference = {{"H805", "O801", "C800", "H802", 0.000000, 0.000000, 0.736384, 0.000000, 1, 2, 3,
+					      4, 0.00, 3.141592653589793, 0.00, 3.141592653589793},
+					     {"H805", "O801", "C800", "H803", 0.000000, 0.000000, 0.736384, 0.000000, 1, 2, 3,
+					      4, 0.00, 3.141592653589793, 0.00, 3.141592653589793},
+					     {"H805", "O801", "C800", "H804", 0.000000, 0.000000, 0.736384, 0.000000, 1, 2, 3,
+					      4, 0.00, 3.141592653589793, 0.00, 3.141592653589793}};
 
     int row = 0;
     for (auto b : reference)
@@ -104,21 +112,19 @@ TEST(XmlFF, XmlTorsion)
     }
 }
 
-TEST(XmlFF, XmlImproper)
+TEST_F(XmlFFTest, XmlImproper)
 {
     XmlImproperModel impropers;
-    pugi::xml_document doc;
 
-    auto result = doc.load_file("/home/adam/Code/dissolve/tests/ff/methanol.xml");
     impropers.readFile(doc.root());
 
     ASSERT_EQ(impropers.columnCount(), 16);
     ASSERT_EQ(impropers.rowCount(), 2);
 
-    std::vector<XmlImproperData> reference = {
-      {"C800", "O801", "H802", "H803", 0.000000, 0.000000, 0.000000, 0.000000, 1, 2, 3, 4, 0.00, 3.141592653589793, 0.00, 3.141592653589793},
-      {"C800", "O801", "H802", "H804", 0.000000, 0.000000, 0.000000, 0.000000, 1, 2, 3, 4, 0.00, 3.141592653589793, 0.00, 3.141592653589793}
-    };
+    std::vector<XmlImproperData> reference = {{"C800", "O801", "H802", "H803", 0.000000, 0.000000, 0.000000, 0.000000, 1, 2, 3,
+					       4, 0.00, 3.141592653589793, 0.00, 3.141592653589793},
+					      {"C800", "O801", "H802", "H804", 0.000000, 0.000000, 0.000000, 0.000000, 1, 2, 3,
+					       4, 0.00, 3.141592653589793, 0.00, 3.141592653589793}};
 
     int row = 0;
     for (auto b : reference)
@@ -136,16 +142,13 @@ TEST(XmlFF, XmlImproper)
     }
 }
 
-TEST(XmlFF, XmlAtom)
+TEST_F(XmlFFTest, XmlAtom)
 {
     CoreData coreData;
     Dissolve dissolve(coreData);
     XmlAtomModel atoms(dissolve);
-    pugi::xml_document doc;
 
-    auto result = doc.load_file("/home/adam/Code/dissolve/tests/ff/methanol.xml");
     atoms.readFile(doc.root());
-
 
     ASSERT_EQ(atoms.columnCount(), 5);
     ASSERT_EQ(atoms.rowCount(), 6);
@@ -176,3 +179,5 @@ TEST(XmlFF, XmlAtom)
     ASSERT_TRUE(atoms.setData(atoms.index(0, 4), "H"));
     ASSERT_EQ(atoms.data(atoms.index(0, 4)).toString().toStdString(), "H");
 }
+
+} // namespace UnitTest

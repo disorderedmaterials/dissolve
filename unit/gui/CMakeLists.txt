@@ -31,5 +31,5 @@ foreach(SRCFILE ${tests_SRC})
   )
 
   # Register the test
-  gtest_discover_tests(${NAME})
+  gtest_discover_tests(${NAME} WORKING_DIRECTORY "${PROJECT_SOURCE_DIR}/tests")
 endforeach(SRCFILE)
