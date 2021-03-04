@@ -74,7 +74,23 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     std::shared_ptr<T> createRenderable(std::string_view objectName, std::string_view renderableName,
                                         std::string_view groupName = "")
     {
-        auto renderable = std::make_shared<T>(nullptr, objectName);
+        auto renderable = std::make_shared<T>(objectName);
+        renderables_.emplace_back(renderable);
+
+        renderable->setName(renderableName);
+
+        if (!groupName.empty())
+            groupManager_.addToGroup(renderable, groupName);
+
+        emit(renderableAdded());
+
+        return renderable;
+    }
+    // Create a new Renderable (by object reference)
+    template <class T, class D>
+    std::shared_ptr<T> createRenderable(const D &objectData, std::string_view renderableName, std::string_view groupName = "")
+    {
+        auto renderable = std::make_shared<T>(objectData);
         renderables_.emplace_back(renderable);
 
         renderable->setName(renderableName);
@@ -108,6 +124,8 @@ class BaseViewer : public QOpenGLWidget, protected QOpenGLFunctions
     void removeRenderable(const std::shared_ptr<Renderable> &renderable);
     // Clear all Renderables
     void clearRenderables();
+    // Attempt to validate all renderables
+    void validateRenderables(const GenericList &source);
     // Return list of Renderables
     const std::vector<std::shared_ptr<Renderable>> &renderables() const;
     // Return Renderable with specified objectTag (if it exists)

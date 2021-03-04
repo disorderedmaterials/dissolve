@@ -26,22 +26,16 @@ class RenderableSpeciesSite : public Renderable
     // Source site in Species
     const SpeciesSite *siteSource_;
 
-    private:
-    // Return whether a valid data source is available (attempting to set it if not)
-    bool validateDataSource();
-    // Invalidate the current data source
-    void invalidateDataSource();
-
     public:
     // Return version of data
-    int dataVersion();
+    int dataVersion() override;
 
     /*
      * Transform / Limits
      */
     protected:
     // Transform data values according to current settings
-    void transformValues();
+    void transformValues() override;
 
     /*
      * Rendering Primitives

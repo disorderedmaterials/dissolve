@@ -51,6 +51,13 @@ void BaseViewer::clearRenderables()
     emit(renderableRemoved());
 }
 
+// Attempt to validate all renderables
+void BaseViewer::validateRenderables(const GenericList &source)
+{
+    for (auto &renderable : renderables_)
+        renderable->validateDataSource(source);
+}
+
 // Return list of Renderables
 const std::vector<std::shared_ptr<Renderable>> &BaseViewer::renderables() const { return renderables_; }
 

@@ -29,25 +29,26 @@ RenderableData3D::~RenderableData3D() {}
  * Data
  */
 
-// Return whether a valid data source is available (attempting to set it if not)
-bool RenderableData3D::validateDataSource()
+// Return source data
+const Data3D *RenderableData3D::source() const { return source_; }
+
+// Attempt to set the data source, searching the supplied list for the object
+void RenderableData3D::validateDataSource(const GenericList &sourceList)
 {
     // Don't try to access source_ if we are not currently permitted to do so
     if (!sourceDataAccessEnabled_)
-        return false;
+        return;
 
     // If there is no valid source set, attempt to set it now...
     if (!source_)
         source_ = Data3D::findObject(objectTag_);
-
-    return source_;
 }
 
 // Invalidate the current data source
 void RenderableData3D::invalidateDataSource() { source_ = nullptr; }
 
 // Return version of data
-int RenderableData3D::dataVersion() { return (validateDataSource() ? source_->version() : -99); }
+int RenderableData3D::dataVersion() { return (source_ ? source_->version() : -99); }
 
 /*
  * Transform / Limits
@@ -156,7 +157,7 @@ void RenderableData3D::transformValues()
 const Data3D &RenderableData3D::transformedData()
 {
     // Check that we have a valid source
-    if (!validateDataSource())
+    if (!source_)
         return transformedData_;
 
     // If the value transform is not enabled, just return the original data
@@ -178,7 +179,7 @@ void RenderableData3D::recreatePrimitives(const View &view, const ColourDefiniti
 {
     dataPrimitive_->initialise(GL_TRIANGLES, true, 65536);
 
-    if (!validateDataSource())
+    if (!source_)
         return;
 
     marchingCubesOriginal(transformedData_.xAxis(), transformedData_.yAxis(), transformedData_.zAxis(),

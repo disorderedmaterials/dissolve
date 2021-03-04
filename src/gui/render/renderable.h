@@ -11,6 +11,7 @@
 #include "math/transformer.h"
 
 // Forward Declarations
+class GenericList;
 class PlottableData;
 class RenderableGroup;
 class View;
@@ -79,17 +80,15 @@ class Renderable
     // Data version at which values were last transformed
     int valuesTransformDataVersion_;
 
-    private:
-    // Return whether a valid data source is available (attempting to set it if not)
-    virtual bool validateDataSource() = 0;
-    // Invalidate the current data source
-    virtual void invalidateDataSource() = 0;
-
     protected:
     // Transform data values
-    virtual void transformValues() = 0;
+    virtual void transformValues();
 
     public:
+    // Attempt to set the data source, searching the supplied list for the object
+    virtual void validateDataSource(const GenericList &sourceList);
+    // Invalidate the current data source
+    virtual void invalidateDataSource();
     // Set whether access to source data is currently enabled
     static void setSourceDataAccessEnabled(bool b);
     // Return whether access to source data is currently enabled

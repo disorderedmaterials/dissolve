@@ -81,6 +81,15 @@ Renderable::RenderableType Renderable::type() const { return type_; }
  * Data
  */
 
+// Transform data values
+void Renderable::transformValues() {}
+
+// Attempt to set the data source, searching the supplied list for the object
+void Renderable::validateDataSource(const GenericList &sourceList) {}
+
+// Invalidate the current data source
+void Renderable::invalidateDataSource() {}
+
 // Set whether access to source data is currently enabled
 void Renderable::setSourceDataAccessEnabled(bool b) { sourceDataAccessEnabled_ = b; }
 

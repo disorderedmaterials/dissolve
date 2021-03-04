@@ -42,21 +42,8 @@ RenderableSpecies::~RenderableSpecies() {}
  * Data
  */
 
-// Return whether a valid data source is available (attempting to set it if not)
-bool RenderableSpecies::validateDataSource()
-{
-    // Don't try to access source_ if we are not currently permitted to do so
-    if (!sourceDataAccessEnabled_)
-        return false;
-
-    return source_;
-}
-
-// Invalidate the current data source
-void RenderableSpecies::invalidateDataSource() { source_ = nullptr; }
-
 // Return version of data
-int RenderableSpecies::dataVersion() { return (validateDataSource() ? source_->version() : -99); }
+int RenderableSpecies::dataVersion() { return (source_ ? source_->version() : -99); }
 
 /*
  * Transform / Limits
@@ -159,7 +146,7 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
     selectionAssembly_.clear();
 
     // Check data source
-    if (!validateDataSource())
+    if (!source_)
         return;
 
     // Render according to the current displayStyle

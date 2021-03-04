@@ -24,14 +24,14 @@ class RenderableData2D : public Renderable
     const Data2D *source_;
 
     private:
-    // Return whether a valid data source is available (attempting to set it if not)
-    bool validateDataSource();
+    // Attempt to set the data source, searching the supplied list for the object
+    void validateDataSource(const GenericList &sourceList) override;
     // Invalidate the current data source
-    void invalidateDataSource();
+    void invalidateDataSource() override;
 
     public:
     // Return version of data
-    int dataVersion();
+    int dataVersion() override;
 
     /*
      * Transform / Limits
@@ -42,7 +42,7 @@ class RenderableData2D : public Renderable
 
     protected:
     // Transform data according to current settings
-    void transformValues();
+    void transformValues() override;
     // Return reference to transformed data
     const Data2D &transformedData();
 
