@@ -55,7 +55,7 @@ GenericItem *GenericList::create(std::string_view name, std::string_view itemCla
 }
 
 // Return whether the named item is contained in the list
-bool GenericList::contains(std::string_view name, std::string_view prefix)
+bool GenericList::contains(std::string_view name, std::string_view prefix) const
 {
     // Construct full name
     std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
@@ -68,13 +68,15 @@ bool GenericList::contains(std::string_view name, std::string_view prefix)
 }
 
 // Return if named item, if it exists, is of specified type
-bool GenericList::isItemOfType(std::string_view type, std::string_view name, std::string_view prefix)
+bool GenericList::isItemOfType(std::string_view type, std::string_view name, std::string_view prefix) const
 {
-    GenericItem *item = find(name, prefix);
-    if (!item)
-        return false;
+    std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
-    return DissolveSys::sameString(type, item->itemClassName());
+    for (auto *item = items_.first(); item != nullptr; item = item->next())
+        if (DissolveSys::sameString(item->name(), varName))
+            return DissolveSys::sameString(type, item->itemClassName());
+
+    return false;
 }
 
 // Return item list
@@ -139,7 +141,7 @@ RefList<GenericItem> GenericList::itemsWithClassName(std::string_view className)
 }
 
 // List all items
-void GenericList::listItems()
+void GenericList::listItems() const
 {
     auto count = 0;
     for (auto *item = items_.first(); item != nullptr; item = item->next(), ++count)
