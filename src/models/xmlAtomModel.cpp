@@ -1,5 +1,6 @@
 #include "models/xmlAtomModel.h"
 #include "classes/atomtype.h"
+#include "data/elements.h"
 #include <QColor>
 #include <pugixml.hpp>
 
@@ -18,10 +19,15 @@ void XmlAtomModel::readFile(const QString &file)
     beginResetModel();
     atoms_.clear();
 
+    auto types = dissolve_.atomTypes();
+
     for (auto &b : root.select_nodes("/ForceField/AtomTypes/Type"))
     {
+	auto it = std::find_if(types.begin(), types.end(),
+			       [&b](auto t) { return Elements::symbol(t->Z()) == b.node().attribute("element").as_string(); });
 	atoms_.emplace_back(b.node().attribute("name").as_string(), b.node().attribute("class").as_string(),
-			    b.node().attribute("element").as_string(), b.node().attribute("mass").as_double(), -1);
+			    b.node().attribute("element").as_string(), b.node().attribute("mass").as_double(),
+			    it == types.end() ? -1 : (*it)->index());
     }
 
     endResetModel();
