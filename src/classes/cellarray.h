@@ -34,9 +34,8 @@ class CellArray
     // Cell axes
     Matrix3 axes_;
     // Total number of Cells in Box
-    int nCells_;
     // Cell array (one-dimensional)
-    Cell *cells_;
+    std::vector<std::unique_ptr<Cell>> cells_;
     // Box associated with this cell division scheme
     const Box *box_;
 

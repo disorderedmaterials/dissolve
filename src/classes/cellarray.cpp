@@ -5,11 +5,7 @@
 #include "classes/box.h"
 #include "classes/cell.h"
 
-CellArray::CellArray()
-{
-    cells_ = nullptr;
-    nCells_ = 0;
-}
+CellArray::CellArray() : box_(nullptr) {}
 
 CellArray::~CellArray() {}
 
@@ -18,13 +14,7 @@ CellArray::~CellArray() {}
  */
 
 // Clear Cell arrays
-void CellArray::clear()
-{
-    if (cells_ != nullptr)
-        delete[] cells_;
-    cells_ = nullptr;
-    nCells_ = 0;
-}
+void CellArray::clear() { cells_.clear(); }
 
 // Generate Cells for Box
 bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRange)
@@ -138,9 +128,9 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 
     // Construct Cell arrays
     clear();
-    nCells_ = divisions_.x * divisions_.y * divisions_.z;
-    Messenger::print("Constructing array of {} cells...\n", nCells_);
-    cells_ = new Cell[nCells_];
+    int nCells = divisions_.x * divisions_.y * divisions_.z;
+    Messenger::print("Constructing array of {} cells...\n", nCells);
+    cells_.reserve(nCells);
     Vec3<double> fracCentre(fractionalCellSize_.x * 0.5, 0.0, 0.0);
     auto count = 0;
     for (x = 0; x < divisions_.x; ++x)
@@ -151,9 +141,10 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
             fracCentre.z = fractionalCellSize_.z * 0.5;
             for (z = 0; z < divisions_.z; ++z)
             {
-                cells_[count].setIndex(count);
-                cells_[count].setGridReference(x, y, z);
-                cells_[count].setCentre(box_->fracToReal(fracCentre));
+                auto &cell = cells_.emplace_back(std::make_unique<Cell>());
+                cell->setIndex(count);
+                cell->setGridReference(x, y, z);
+                cell->setCentre(box_->fracToReal(fracCentre));
                 fracCentre.z += fractionalCellSize_.z;
                 ++count;
             }
@@ -253,10 +244,10 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     Messenger::print("Constructing neighbour lists for individual Cells...\n");
     std::vector<Cell *> nearNeighbours, mimNeighbours;
     Vec3<int> gridRef, delta;
-    for (n = 0; n < nCells_; ++n)
+    for (auto n = 0u; n < cells_.size(); ++n)
     {
         // Grab grid reference of central cell
-        gridRef = cells_[n].gridReference();
+        gridRef = cells_[n]->gridReference();
 
         // Clear neighbour lists
         nearNeighbours.clear();
@@ -269,14 +260,14 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
             nbr = cell(gridRef.x + item->x, gridRef.y + item->y, gridRef.z + item->z);
             if (box_->type() == Box::NonPeriodicBoxType)
                 nearNeighbours.emplace_back(nbr);
-            else if (minimumImageRequired(&cells_[n], nbr, pairPotentialRange))
+            else if (minimumImageRequired(cells_[n].get(), nbr, pairPotentialRange))
                 mimNeighbours.emplace_back(nbr);
             else
                 nearNeighbours.emplace_back(nbr);
         }
 
         // Set up lists in the cell
-        cells_[n].addCellNeighbours(nearNeighbours, mimNeighbours);
+        cells_[n]->addCellNeighbours(nearNeighbours, mimNeighbours);
     }
 
     return true;
@@ -290,7 +281,7 @@ void CellArray::scale(double factor)
 }
 
 // Return number of Cells for box
-int CellArray::nCells() const { return nCells_; }
+int CellArray::nCells() const { return static_cast<int>(cells_.size()); }
 
 // Return cell divisions along each axis
 Vec3<int> CellArray::divisions() const { return divisions_; }
@@ -316,15 +307,15 @@ Cell *CellArray::cell(int x, int y, int z) const
     z = z % divisions_.z;
     if (z < 0)
         z += divisions_.z;
-    return &cells_[x * divisions_.y * divisions_.z + y * divisions_.z + z];
+    return cells_[x * divisions_.y * divisions_.z + y * divisions_.z + z].get();
 }
 
 // Retrieve Cell with id specified
 Cell *CellArray::cell(int id) const
 {
-    assert(id >= 0 && id < nCells_);
+    assert(id >= 0 && id < cells_.size());
 
-    return &cells_[id];
+    return cells_[id].get();
 }
 
 // Return Cell which contains specified coordinate
@@ -339,7 +330,7 @@ Cell *CellArray::cell(const Vec3<double> r) const
     indices.y %= divisions_.y;
     indices.z %= divisions_.z;
 
-    return &cells_[indices.x * divisions_.y * divisions_.z + indices.y * divisions_.z + indices.z];
+    return cells_[indices.x * divisions_.y * divisions_.z + indices.y * divisions_.z + indices.z].get();
 }
 
 // Check if it is possible for any pair of Atoms in the supplied cells to be within the specified distance
