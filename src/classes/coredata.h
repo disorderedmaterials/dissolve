@@ -118,7 +118,7 @@ class CoreData
      */
     private:
     // Core Species list
-    List<Species> species_;
+    std::vector<std::unique_ptr<Species>> species_;
 
     public:
     // Add new Species
@@ -128,8 +128,8 @@ class CoreData
     // Return number of Species in list
     int nSpecies() const;
     // Return core Species list
-    List<Species> &species();
-    const List<Species> &species() const;
+    std::vector<std::unique_ptr<Species>> &species();
+    const std::vector<std::unique_ptr<Species>> &species() const;
     // Return nth Species in list
     Species *species(int n);
     // Generate unique Species name with base name provided

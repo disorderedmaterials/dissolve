@@ -231,7 +231,7 @@ bool Dissolve::saveInput(std::string_view filename)
 
     // Write Species data
     parser.writeBannerComment("Species");
-    for (auto *sp = species().first(); sp != nullptr; sp = sp->next())
+    for (auto &sp : species())
     {
         if (!parser.writeLineF("\n"))
             return false;

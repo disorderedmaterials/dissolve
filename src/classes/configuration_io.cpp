@@ -62,7 +62,7 @@ bool Configuration::write(LineParser &parser) const
 }
 
 // Read through specified LineParser
-bool Configuration::read(LineParser &parser, const List<Species> &availableSpecies, double pairPotentialRange)
+bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies, double pairPotentialRange)
 {
     // Clear current contents of Configuration
     empty();
@@ -104,7 +104,7 @@ bool Configuration::read(LineParser &parser, const List<Species> &availableSpeci
         // Read line containing number of molecules and Species name
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        for (sp = availableSpecies.first(); sp != nullptr; sp = sp->next())
+        for (auto& sp: availableSpecies)
             if (DissolveSys::sameString(sp->name(), parser.argsv(1)))
                 break;
         if (!sp)

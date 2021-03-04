@@ -234,7 +234,7 @@ class Configuration : public ListItem<Configuration>
     // Write through specified LineParser
     bool write(LineParser &parser) const;
     // Read through specified LineParser
-    bool read(LineParser &parser, const List<Species> &availableSpecies, double pairPotentialRange);
+    bool read(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies, double pairPotentialRange);
 
     /*
      * Parallel Comms

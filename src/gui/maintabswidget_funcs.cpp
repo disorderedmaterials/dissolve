@@ -199,17 +199,16 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
     auto &dissolve = dissolveWindow->dissolve();
 
     // Species - Global tab indices run from 1 (first tab after ForcefieldTab) to 1+nSpecies
-    ListIterator<Species> speciesIterator(dissolve.species());
     auto currentTabIndex = 0;
     auto baseIndex = 1;
-    while (Species *sp = speciesIterator.iterate())
+    for (const auto &sp : dissolve.species())
     {
         // Loop over existing tabs
         while (currentTabIndex < speciesTabs_.nItems())
         {
             // If the existing tab is displaying the current Species already, then we can move on.
             // Otherwise, delete it.
-            if (speciesTabs_[currentTabIndex]->species() == sp)
+            if (speciesTabs_[currentTabIndex]->species() == sp.get())
                 break;
             else
             {
@@ -222,7 +221,7 @@ void MainTabsWidget::reconcileTabs(DissolveWindow *dissolveWindow)
         if (currentTabIndex == speciesTabs_.nItems())
         {
             QString tabTitle = QString::fromStdString(std::string(sp->name()));
-            SpeciesTab *newTab = new SpeciesTab(dissolveWindow, dissolve, this, tabTitle, sp);
+            SpeciesTab *newTab = new SpeciesTab(dissolveWindow, dissolve, this, tabTitle, sp.get());
             speciesTabs_.own(newTab);
             allTabs_.append(newTab);
             insertTab(baseIndex + currentTabIndex, newTab, tabTitle);

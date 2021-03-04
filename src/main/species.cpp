@@ -32,7 +32,7 @@ void Dissolve::removeSpecies(Species *sp)
 int Dissolve::nSpecies() const { return coreData_.nSpecies(); }
 
 // Return Species list
-List<Species> &Dissolve::species() { return coreData_.species(); }
+ std::vector<std::unique_ptr<Species>> &Dissolve::species() { return coreData_.species(); }
 
 // Return nth Species in the list
 Species *Dissolve::species(int n) { return coreData_.species(n); }
@@ -138,8 +138,7 @@ Species *Dissolve::copySpecies(const Species *species)
     newSpecies->setAutoUpdateIntramolecularTerms(false);
 
     // Duplicate atoms
-    ListIterator<SpeciesAtom> atomIterator(species->atoms());
-    while (SpeciesAtom *i = atomIterator.iterate())
+    for (auto& i : species->atoms())
     {
         // Create the Atom in our new Species
         SpeciesAtom *newAtom = newSpecies->addAtom(i->Z(), i->r(), i->charge());
@@ -147,7 +146,7 @@ Species *Dissolve::copySpecies(const Species *species)
             newSpecies->selectAtom(newAtom);
 
         // Search for the existing atom's AtomType by name, and create it if it doesn't exist
-        copyAtomType(i, newAtom);
+        copyAtomType(i.get(), newAtom);
     }
 
     // Duplicate bonds

@@ -303,27 +303,31 @@ void CoreData::clearMasterTerms()
 // Add new Species
 Species *CoreData::addSpecies()
 {
-    Species *newSpecies = species_.add();
+    auto &newSpecies = species_.emplace_back(std::make_unique<Species>());
 
     // Create a suitable unique name
     newSpecies->setName(uniqueSpeciesName("NewSpecies"));
 
-    return newSpecies;
+    return newSpecies.get();
 }
 
 // Remove specified Species
-void CoreData::removeSpecies(Species *sp) { species_.remove(sp); }
+void CoreData::removeSpecies(Species *sp)
+{
+    species_.erase(std::remove_if(species_.begin(), species_.end(), [&](const auto &p) { return sp == p.get(); }),
+                   species_.end());
+}
 
 // Return number of Species in list
-int CoreData::nSpecies() const { return species_.nItems(); }
+int CoreData::nSpecies() const { return species_.size(); }
 
 // Return core Species list
-List<Species> &CoreData::species() { return species_; }
+std::vector<std::unique_ptr<Species>> &CoreData::species() { return species_; }
 
-const List<Species> &CoreData::species() const { return species_; }
+const std::vector<std::unique_ptr<Species>> &CoreData::species() const { return species_; }
 
 // Return nth Species in list
-Species *CoreData::species(int n) { return species_[n]; }
+Species *CoreData::species(int n) { return species_[n].get(); }
 
 // Generate unique Species name with base name provided
 std::string CoreData::uniqueSpeciesName(std::string_view base) const
@@ -342,9 +346,9 @@ std::string CoreData::uniqueSpeciesName(std::string_view base) const
 // Search for Species by name
 Species *CoreData::findSpecies(std::string_view name) const
 {
-    for (auto *sp = species_.first(); sp != nullptr; sp = sp->next())
+    for (auto &sp : species_)
         if (DissolveSys::sameString(sp->name(), name))
-            return sp;
+            return sp.get();
 
     return nullptr;
 }

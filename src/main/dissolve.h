@@ -87,7 +87,7 @@ class Dissolve
     // Return number of defined Species
     int nSpecies() const;
     // Return Species list
-    List<Species> &species();
+    std::vector<std::unique_ptr<Species>> &species();
     // Return nth Species in the list
     Species *species(int n);
     // Search for Species by name
