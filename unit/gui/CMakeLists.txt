@@ -4,7 +4,7 @@
 cmake_policy(SET CMP0054 NEW)
 
 # Get list of sources, from which we can construct the exe / test list.
-file(GLOB tests_SRC "*.cpp")
+file(GLOB_RECURSE tests_SRC "*.cpp")
 find_package(GTest REQUIRED)
 
 # Add executables and tests
@@ -21,9 +21,11 @@ foreach(SRCFILE ${tests_SRC})
   )
   target_link_libraries(
     ${NAME}
-    PUBLIC ${CONAN_LIBS} ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS}
+    PUBLIC ${CONAN_LIBS} ${WHOLE_ARCHIVE_FLAG} ${BASIC_LINK_LIBS} models
            # Module 'nogui' libs
            ${MODULENOGUI_LINK_LIBS} ${NO_WHOLE_ARCHIVE_FLAG}
+	   Qt::Core
+	   Qt::Widgets
     PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS}
     INTERFACE CONAN_PKG::fmt CONAN_PKG::CLI11 CONAN_PKG::GTest
   )
@@ -31,7 +33,3 @@ foreach(SRCFILE ${tests_SRC})
   # Register the test
   gtest_discover_tests(${NAME})
 endforeach(SRCFILE)
-
-if(GUI)
-  add_subdirectory(gui)
-endif(GUI)
