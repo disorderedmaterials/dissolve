@@ -59,18 +59,20 @@ QVariant XmlAngleModel::data(const QModelIndex &index, int role) const
 
 QVariant XmlAngleModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
+    if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
+	return QVariant();
     switch (section)
     {
 	case 0:
-	    return QVariant(QString("AtomI"));
+	    return "AtomI";
 	case 1:
-	    return QVariant(QString("AtomJ"));
+	    return "AtomJ";
+	case 2:
+	    return "AtomK";
 	case 3:
-	    return QVariant(QString("AtomK"));
+	    return "Angle";
 	case 4:
-	    return QVariant(QString("Angle"));
-	case 5:
-	    return QVariant(QString("k"));
+	    return "k";
 	default:
 	    return QVariant();
     }

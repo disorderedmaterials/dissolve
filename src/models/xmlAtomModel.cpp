@@ -80,18 +80,20 @@ QVariant XmlAtomModel::data(const QModelIndex &index, int role) const
 
 QVariant XmlAtomModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
+    if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
+	return QVariant();
     switch (section)
     {
 	case 0:
-	    return QVariant(QString("Name"));
+	    return "Name";
 	case 1:
-	    return QVariant(QString("Class"));
+	    return "Class";
 	case 2:
-	    return QVariant(QString("Element"));
+	    return "Element";
 	case 3:
-	    return QVariant(QString("Mass"));
+	    return "Mass";
 	case 4:
-	    return QVariant(QString("Type"));
+	    return "Type";
 	default:
 	    return QVariant();
     }

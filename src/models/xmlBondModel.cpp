@@ -55,16 +55,18 @@ QVariant XmlBondModel::data(const QModelIndex &index, int role) const
 
 QVariant XmlBondModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
+    if (orientation != Qt::Horizontal || role != Qt::DisplayRole)
+	return QVariant();
     switch (section)
     {
 	case 0:
-	    return QVariant(QString("AtomI"));
+	    return "AtomI";
 	case 1:
-	    return QVariant(QString("AtomJ"));
+	    return "AtomJ";
 	case 2:
-	    return QVariant(QString("Length"));
+	    return "Length";
 	case 3:
-	    return QVariant(QString("k"));
+	    return "k";
 	default:
 	    return QVariant();
     }
