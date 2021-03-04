@@ -141,10 +141,6 @@ template <class T> class GenericListHelper
                     throw std::runtime_error(
                         fmt::format("GenericListHelper::items() failed to retrieve item {} as it is not actually class {}.",
                                     item->itemClassName(), T::itemClassName()));
-                {
-                    Messenger::error("That didn't work, because its of the wrong type.\n");
-                    continue;
-                }
 
                 items.append(&castItem->data());
             }
