@@ -3,16 +3,8 @@
 
 XmlAngleModel::XmlAngleModel() {}
 
-void XmlAngleModel::readFile(const QString &file)
+void XmlAngleModel::readFile(const pugi::xml_node &root)
 {
-    pugi::xml_document doc;
-
-    auto result = doc.load_file(file.toStdString().c_str());
-    if (!result)
-	return;
-
-    auto root = doc.root();
-
     beginResetModel();
     angles_.clear();
 

@@ -3,16 +3,8 @@
 
 XmlTorsionModel::XmlTorsionModel() {}
 
-void XmlTorsionModel::readFile(const QString &file)
+void XmlTorsionModel::readFile(const pugi::xml_node &root)
 {
-    pugi::xml_document doc;
-
-    auto result = doc.load_file(file.toStdString().c_str());
-    if (!result)
-	return;
-
-    auto root = doc.root();
-
     beginResetModel();
     torsions_.clear();
 

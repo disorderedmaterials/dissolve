@@ -6,16 +6,8 @@
 
 XmlAtomModel::XmlAtomModel(Dissolve &dissolve) : dissolve_(dissolve) {}
 
-void XmlAtomModel::readFile(const QString &file)
+void XmlAtomModel::readFile(const pugi::xml_node &root)
 {
-    pugi::xml_document doc;
-
-    auto result = doc.load_file(file.toStdString().c_str());
-    if (!result)
-	return;
-
-    auto root = doc.root();
-
     beginResetModel();
     atoms_.clear();
 
@@ -137,4 +129,11 @@ bool XmlAtomModel::setData(const QModelIndex &index, const QVariant &value, int 
     std::get<4>(atoms_[index.row()]) = type->index();
 
     return true;
+}
+
+void XmlAtomModel::clear()
+{
+    beginResetModel();
+    atoms_.clear();
+    endResetModel();
 }

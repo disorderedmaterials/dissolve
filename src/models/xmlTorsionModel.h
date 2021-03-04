@@ -5,11 +5,13 @@
 
 #include <QAbstractTableModel>
 #include <QModelIndex>
+#include <pugixml.hpp>
 
 #include <tuple>
 #include <vector>
 
-using XmlTorsionData = std::tuple<std::string, std::string, std::string, std::string, double, double, double, double, int, int, int, int, double, double, double, double>;
+using XmlTorsionData = std::tuple<std::string, std::string, std::string, std::string, double, double, double, double, int, int,
+				  int, int, double, double, double, double>;
 
 class XmlTorsionModel : public QAbstractTableModel
 {
@@ -20,7 +22,7 @@ class XmlTorsionModel : public QAbstractTableModel
 
     public slots:
     // Read from an XML file
-    void readFile(const QString &);
+    void readFile(const pugi::xml_node &);
 
     public:
     XmlTorsionModel();

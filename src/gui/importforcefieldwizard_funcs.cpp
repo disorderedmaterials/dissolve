@@ -3,6 +3,7 @@
 
 #include "gui/importforcefieldwizard.h"
 #include <QFileDialog>
+#include <pugixml.hpp>
 
 ImportForcefieldWizard::ImportForcefieldWizard(QWidget *parent, Dissolve &mainDissolveInstance) : atoms_(mainDissolveInstance)
 {
@@ -12,6 +13,18 @@ ImportForcefieldWizard::ImportForcefieldWizard(QWidget *parent, Dissolve &mainDi
     ui_.atomTable->setModel(&atoms_);
     ui_.torsionTable->setModel(&torsions_);
     ui_.improperTable->setModel(&impropers_);
+
+    updateNavButtons();
+}
+
+void ImportForcefieldWizard::updateNavButtons()
+{
+    int index = ui_.stackedWidget->currentIndex();
+    int count = ui_.stackedWidget->count();
+
+    ui_.backButton->setEnabled(index > 0);
+
+    ui_.continueButton->setEnabled(index < count - 1 && atoms_.rowCount() > 0);
 }
 
 void ImportForcefieldWizard::nextStack()
@@ -21,19 +34,16 @@ void ImportForcefieldWizard::nextStack()
     index += 1;
     ui_.stackedWidget->setCurrentIndex(index >= count ? count - 1 : index);
 
-    ui_.continueButton->setEnabled(index < count - 1);
-    ui_.backButton->setEnabled(index > 0);
+    updateNavButtons();
 }
 
 void ImportForcefieldWizard::prevStack()
 {
     int index = ui_.stackedWidget->currentIndex();
-    int count = ui_.stackedWidget->count();
     index -= 1;
     ui_.stackedWidget->setCurrentIndex(index < 0 ? 0 : index);
 
-    ui_.continueButton->setEnabled(index < count - 1);
-    ui_.backButton->setEnabled(index > 0);
+    updateNavButtons();
 }
 
 void ImportForcefieldWizard::xmlFileDialog()
@@ -47,9 +57,23 @@ void ImportForcefieldWizard::xmlFileDialog()
 
 void ImportForcefieldWizard::xmlString(QString fileName)
 {
-    atoms_.readFile(fileName);
-    bonds_.readFile(fileName);
-    angles_.readFile(fileName);
-    torsions_.readFile(fileName);
-    impropers_.readFile(fileName);
+    pugi::xml_document doc;
+
+    auto result = doc.load_file(fileName.toStdString().c_str());
+    if (result)
+    {
+	auto root = doc.root();
+
+	atoms_.readFile(root);
+	bonds_.readFile(root);
+	angles_.readFile(root);
+	torsions_.readFile(root);
+	impropers_.readFile(root);
+    }
+    else
+    {
+	atoms_.clear();
+    }
+    updateNavButtons();
+    return;
 }

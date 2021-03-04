@@ -1,18 +1,9 @@
 #include "models/xmlBondModel.h"
-#include <pugixml.hpp>
 
 XmlBondModel::XmlBondModel() {}
 
-void XmlBondModel::readFile(const QString &file)
+void XmlBondModel::readFile(const pugi::xml_node &root)
 {
-    pugi::xml_document doc;
-
-    auto result = doc.load_file(file.toStdString().c_str());
-    if (!result)
-	return;
-
-    auto root = doc.root();
-
     beginResetModel();
     bonds_.clear();
 

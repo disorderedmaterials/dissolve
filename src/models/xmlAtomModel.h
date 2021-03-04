@@ -7,6 +7,7 @@
 
 #include <QAbstractTableModel>
 #include <QModelIndex>
+#include <pugixml.hpp>
 
 #include <tuple>
 #include <vector>
@@ -23,7 +24,7 @@ class XmlAtomModel : public QAbstractTableModel
 
     public slots:
     // Read from an XML file
-    void readFile(const QString &);
+    void readFile(const pugi::xml_node &);
 
     public:
     XmlAtomModel(Dissolve &);
@@ -39,4 +40,6 @@ class XmlAtomModel : public QAbstractTableModel
     Qt::ItemFlags flags(const QModelIndex &index) const override;
 
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
+
+    void clear();
 };

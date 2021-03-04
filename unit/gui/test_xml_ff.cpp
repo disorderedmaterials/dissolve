@@ -16,8 +16,11 @@
 TEST(XmlFF, XmlBond)
 {
     XmlBondModel bonds;
+    pugi::xml_document doc;
 
-    bonds.readFile("/home/adam/Code/dissolve/tests/ff/methanol.xml");
+    auto result = doc.load_file("/home/adam/Code/dissolve/tests/ff/methanol.xml");
+
+    bonds.readFile(doc.root());
 
     ASSERT_EQ(bonds.columnCount(), 4);
     ASSERT_EQ(bonds.rowCount(), 5);
@@ -42,8 +45,10 @@ TEST(XmlFF, XmlBond)
 TEST(XmlFF, XmlAngle)
 {
     XmlAngleModel angles;
+    pugi::xml_document doc;
 
-    angles.readFile("/home/adam/Code/dissolve/tests/ff/methanol.xml");
+    auto result = doc.load_file("/home/adam/Code/dissolve/tests/ff/methanol.xml");
+    angles.readFile(doc.root());
 
     ASSERT_EQ(angles.columnCount(), 5);
     ASSERT_EQ(angles.rowCount(), 7);
@@ -69,8 +74,10 @@ TEST(XmlFF, XmlAngle)
 TEST(XmlFF, XmlTorsion)
 {
     XmlTorsionModel torsions;
+    pugi::xml_document doc;
 
-    torsions.readFile("/home/adam/Code/dissolve/tests/ff/methanol.xml");
+    auto result = doc.load_file("/home/adam/Code/dissolve/tests/ff/methanol.xml");
+    torsions.readFile(doc.root());
 
     ASSERT_EQ(torsions.columnCount(), 16);
     ASSERT_EQ(torsions.rowCount(), 3);
@@ -100,8 +107,10 @@ TEST(XmlFF, XmlTorsion)
 TEST(XmlFF, XmlImproper)
 {
     XmlImproperModel impropers;
+    pugi::xml_document doc;
 
-    impropers.readFile("/home/adam/Code/dissolve/tests/ff/methanol.xml");
+    auto result = doc.load_file("/home/adam/Code/dissolve/tests/ff/methanol.xml");
+    impropers.readFile(doc.root());
 
     ASSERT_EQ(impropers.columnCount(), 16);
     ASSERT_EQ(impropers.rowCount(), 2);
@@ -132,8 +141,11 @@ TEST(XmlFF, XmlAtom)
     CoreData coreData;
     Dissolve dissolve(coreData);
     XmlAtomModel atoms(dissolve);
+    pugi::xml_document doc;
 
-    atoms.readFile("/home/adam/Code/dissolve/tests/ff/methanol.xml");
+    auto result = doc.load_file("/home/adam/Code/dissolve/tests/ff/methanol.xml");
+    atoms.readFile(doc.root());
+
 
     ASSERT_EQ(atoms.columnCount(), 5);
     ASSERT_EQ(atoms.rowCount(), 6);

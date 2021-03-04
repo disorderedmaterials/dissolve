@@ -34,6 +34,7 @@ class ImportForcefieldWizard : public QDialog
     XmlImproperModel impropers_;
 
     private slots:
+    void updateNavButtons();
     void nextStack();
     void prevStack();
     void xmlFileDialog();

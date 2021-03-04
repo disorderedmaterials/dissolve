@@ -5,6 +5,7 @@
 
 #include <QAbstractTableModel>
 #include <QModelIndex>
+#include <pugixml.hpp>
 
 #include <tuple>
 #include <vector>
@@ -20,7 +21,7 @@ class XmlAngleModel : public QAbstractTableModel
 
     public slots:
     // Read from an XML file
-    void readFile(const QString &);
+    void readFile(const pugi::xml_node &);
 
     public:
     XmlAngleModel();
