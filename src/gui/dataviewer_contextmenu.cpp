@@ -30,16 +30,6 @@ void DataViewer::showGeneralContextMenu(QPoint pos)
     // Copy to clipboard
     QAction *copyToClipboardAction = menu.addAction("&Copy to clipboard");
 
-    // If the user can add data, add a new section allowing it
-    RefDataList<QAction, int> addDataAction;
-    if (hasFlag(DataViewer::UserCanAddDataFlag))
-    {
-        menu.addSeparator();
-        addDataAction.append(menu.addAction("Add Data&1D..."), 1);
-        addDataAction.append(menu.addAction("Add Data&2D..."), 2);
-        addDataAction.append(menu.addAction("Add Data&3D..."), 3);
-    }
-
     // Execute the menu
     QAction *selectedAction = menu.exec(mapToGlobal(pos));
 

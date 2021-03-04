@@ -24,8 +24,7 @@ GraphGizmo::GraphGizmo(Dissolve &dissolve, const QString uniqueName) : Gizmo(dis
     dataViewer_->groupManager().setGroupColouring("Default", RenderableGroup::AutomaticIndividualColouring);
 
     // Permit the user to add data to the DataViewer
-    dataViewer_->setFlags(DataViewer::UserCanAddDataFlag + DataViewer::UserCanRenameDataFlag +
-                          DataViewer::UserCanRemoveDataFlag);
+    dataViewer_->setFlags(DataViewer::UserCanRenameDataFlag + DataViewer::UserCanRemoveDataFlag);
     dataViewer_->setDissolve(&dissolve);
 
     // Update associated toolbar
