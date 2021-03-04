@@ -18,7 +18,7 @@ template <class T> class GenericListHelper
         std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
         // Does the named variable already exist in the list?
-        GenericItem *existingItem = targetList.find(varName);
+        auto *existingItem = targetList.find(varName);
         if (existingItem)
         {
             Messenger::warn("Item '{}' already exists in the list - a dummy value will be returned instead.\n", varName);
@@ -27,7 +27,7 @@ template <class T> class GenericListHelper
         }
 
         // Create new item
-        GenericItemContainer<T> *newItem = new GenericItemContainer<T>(varName);
+        auto *newItem = new GenericItemContainer<T>(varName);
         if (flags >= 0)
             newItem->setFlags(flags);
         targetList.add(newItem);
@@ -41,7 +41,7 @@ template <class T> class GenericListHelper
         std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
         // Find item in the list
-        const GenericItem *item = sourceList.find(varName);
+        auto *item = sourceList.find(varName);
         if (!item)
         {
             Messenger::printVerbose("No item named '{}' in list - default value item will be returned.\n", varName);
@@ -53,7 +53,7 @@ template <class T> class GenericListHelper
         }
 
         // Cast to correct type
-        const GenericItemContainer<T> *castItem = dynamic_cast<const GenericItemContainer<T> *>(item);
+        auto *castItem = dynamic_cast<const GenericItemContainer<T> *>(item);
         if (!castItem)
             throw std::runtime_error(
                 fmt::format("GenericListHelper::value({}) failed, because the target item is of the wrong type.", name));
@@ -70,7 +70,7 @@ template <class T> class GenericListHelper
         std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
         // Find item in the list
-        GenericItem *item = sourceList.find(varName);
+        auto *item = sourceList.find(varName);
         if (!item)
         {
             Messenger::printVerbose("No item named '{}' in list - default value item will be returned.\n", varName);
@@ -82,7 +82,7 @@ template <class T> class GenericListHelper
         }
 
         // Cast to correct type
-        GenericItemContainer<T> *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
+        auto *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
         if (!castItem)
             throw std::runtime_error(
                 fmt::format("GenericListHelper::retrieve({}) failed, because the item is not of the specified type.", name));
@@ -102,7 +102,7 @@ template <class T> class GenericListHelper
         std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
         // Find item in the list - if it isn't there, create it and return
-        GenericItem *item = sourceList.find(varName);
+        auto *item = sourceList.find(varName);
         if (!item)
         {
             if (created != nullptr)
@@ -111,7 +111,7 @@ template <class T> class GenericListHelper
         }
 
         // Cast to correct type
-        GenericItemContainer<T> *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
+        auto *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
         if (!castItem)
             throw std::runtime_error(fmt::format(
                 "GenericListHelper::realise({}) failed, because the item couldn't be cast to the desired type.", name));
@@ -136,7 +136,7 @@ template <class T> class GenericListHelper
             if (DissolveSys::sameString(item->itemClassName(), T::itemClassName()))
             {
                 // Cast to correct type
-                GenericItemContainer<T> *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
+                auto *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
                 if (!castItem)
                     throw std::runtime_error(
                         fmt::format("GenericListHelper::items() failed to retrieve item {} as it is not actually class {}.",
