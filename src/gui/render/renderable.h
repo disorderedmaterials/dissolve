@@ -95,6 +95,8 @@ class Renderable
     static bool sourceDataAccessEnabled();
     // Return identifying tag for source data object
     std::string_view objectTag() const;
+    // Validate all renderables
+    static void validateAll(const GenericList &source);
     // Invalidate renderable data for specified object tag
     static int invalidate(std::string_view objectTag);
     // Invalidate all renderables

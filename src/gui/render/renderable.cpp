@@ -99,6 +99,13 @@ bool Renderable::sourceDataAccessEnabled() { return sourceDataAccessEnabled_; }
 // Return identifying tag for source data object
 std::string_view Renderable::objectTag() const { return objectTag_; }
 
+// Validate all renderables
+void Renderable::validateAll(const GenericList &source)
+{
+    for (Renderable *rend : instances_)
+        rend->validateDataSource(source);
+}
+
 // Invalidate renderable data for specified object tag
 int Renderable::invalidate(std::string_view objectTag)
 {
