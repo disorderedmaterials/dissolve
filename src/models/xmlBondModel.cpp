@@ -38,6 +38,9 @@ int XmlBondModel::columnCount(const QModelIndex &parent) const
 
 QVariant XmlBondModel::data(const QModelIndex &index, int role) const
 {
+    if (role != Qt::DisplayRole)
+	return QVariant();
+
     switch (index.column())
     {
 	case 0:

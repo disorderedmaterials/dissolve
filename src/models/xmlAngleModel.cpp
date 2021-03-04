@@ -40,6 +40,9 @@ int XmlAngleModel::columnCount(const QModelIndex &parent) const
 
 QVariant XmlAngleModel::data(const QModelIndex &index, int role) const
 {
+    if (role != Qt::DisplayRole)
+	return QVariant();
+
     switch (index.column())
     {
 	case 0:

@@ -64,6 +64,9 @@ QVariant XmlAtomModel::data(const QModelIndex &index, int role) const
 	}
     }
 
+    if (role != Qt::DisplayRole)
+	return QVariant();
+
     switch (index.column())
     {
 	case 0:
