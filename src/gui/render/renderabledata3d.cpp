@@ -3,6 +3,7 @@
 
 #include "gui/render/renderabledata3d.h"
 #include "base/lineparser.h"
+#include "genericitems/list.h"
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 #include "math/data3d.h"
@@ -10,27 +11,26 @@
 #include "templates/array2d.h"
 #include "templates/array3d.h"
 
-RenderableData3D::RenderableData3D(const Data3D *source, std::string_view objectTag)
-    : Renderable(Renderable::Data3DRenderable, objectTag), source_(source)
+RenderableData3D::RenderableData3D(const Data3D &source)
+    : Renderable(Renderable::Data3DRenderable, ""), source_(source), displayStyle_(SolidStyle), lowerCutoff_(0.0),
+      upperCutoff_(1.0), surfaceShininess_(128.0)
 {
-    // Set style defaults
-    displayStyle_ = SolidStyle;
-    lowerCutoff_ = 0.0;
-    upperCutoff_ = 1.0;
-    surfaceShininess_ = 128.0;
-
-    // Create primitive
     dataPrimitive_ = createPrimitive();
 }
 
-RenderableData3D::~RenderableData3D() {}
+RenderableData3D::RenderableData3D(std::string_view objectTag)
+    : Renderable(Renderable::Data3DRenderable, objectTag), displayStyle_(SolidStyle), lowerCutoff_(0.0), upperCutoff_(1.0),
+      surfaceShininess_(128.0)
+{
+    dataPrimitive_ = createPrimitive();
+}
 
 /*
  * Data
  */
 
 // Return source data
-const Data3D *RenderableData3D::source() const { return source_; }
+OptionalReferenceWrapper<const Data3D> RenderableData3D::source() const { return source_; }
 
 // Attempt to set the data source, searching the supplied list for the object
 void RenderableData3D::validateDataSource(const GenericList &sourceList)
@@ -39,16 +39,17 @@ void RenderableData3D::validateDataSource(const GenericList &sourceList)
     if (!sourceDataAccessEnabled_)
         return;
 
-    // If there is no valid source set, attempt to set it now...
-    if (!source_)
-        source_ = Data3D::findObject(objectTag_);
+    if (source_)
+        return;
+
+    source_ = sourceList.value<Data3D>(objectTag_);
 }
 
 // Invalidate the current data source
-void RenderableData3D::invalidateDataSource() { source_ = nullptr; }
+void RenderableData3D::invalidateDataSource() { source_ = std::nullopt; }
 
 // Return version of data
-int RenderableData3D::dataVersion() { return (source_ ? source_->version() : -99); }
+int RenderableData3D::dataVersion() { return (source_ ? source_->get().version() : -99); }
 
 /*
  * Transform / Limits

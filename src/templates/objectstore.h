@@ -24,7 +24,6 @@ class ObjectInfo
         NoObject = 0,
         Data1DObject,
         Data2DObject,
-        Data3DObject,
         nObjectTypes
     };
 

@@ -128,11 +128,11 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
                 else if (renderable->type() == Renderable::Data3DRenderable)
                 {
                     Data3DExportFileFormat exportFormat(qPrintable(filename));
-                    Data3D *data = Data3D::findObject(renderable->objectTag());
-                    if (!data)
-                        fmt::print("Failed to locate data to export (tag = {}).", renderable->objectTag());
+                    auto *r3d = dynamic_cast<RenderableData3D *>(renderable.get());
+                    if (!r3d->source())
+                        Messenger::error("Failed to locate 3D data to export\n");
                     else
-                        exportFormat.exportData(*data);
+                        exportFormat.exportData(r3d->source()->get());
                 }
             }
         }

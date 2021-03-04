@@ -6,13 +6,12 @@
 #include "base/version.h"
 #include "math/plottable.h"
 #include "templates/array3d.h"
-#include "templates/objectstore.h"
 
 // Forward Declarations
 class Histogram3D;
 
 // One-Dimensional Data
-class Data3D : public PlottableData, public ObjectStore<Data3D>
+class Data3D : public PlottableData
 {
     public:
     Data3D();
