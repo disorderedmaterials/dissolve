@@ -9,12 +9,14 @@
 #include <tuple>
 #include <vector>
 
+using XmlBondData = std::tuple<std::string, std::string, double, double>;
+
 class XmlBondModel : public QAbstractTableModel
 {
     Q_OBJECT
 
     private:
-    std::vector<std::tuple<std::string, std::string, double, double>> bonds_;
+    std::vector<XmlBondData> bonds_;
 
     public slots:
     void readFile(const QString &);

@@ -19,7 +19,7 @@ void XmlBondModel::readFile(const QString &file)
     for (auto &b : root.select_nodes("/ForceField/HarmonicBondForce/Bond"))
     {
 	bonds_.emplace_back(b.node().attribute("class1").as_string(), b.node().attribute("class2").as_string(),
-			    b.node().attribute("k").as_double(), b.node().attribute("length").as_double());
+			    b.node().attribute("length").as_double(), b.node().attribute("k").as_double());
     }
     endResetModel();
 
@@ -63,8 +63,8 @@ QVariant XmlBondModel::headerData(int section, Qt::Orientation orientation, int 
 	case 1:
 	    return QVariant(QString("AtomJ"));
 	case 2:
-	    return QVariant(QString("k"));
-	default:
 	    return QVariant(QString("Length"));
+	default:
+	    return QVariant(QString("k"));
     }
 }
