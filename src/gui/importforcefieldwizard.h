@@ -7,6 +7,7 @@
 #include "models/xmlAngleModel.h"
 #include "models/xmlAtomModel.h"
 #include "models/xmlBondModel.h"
+#include "models/xmlImproperModel.h"
 #include "models/xmlTorsionModel.h"
 #include <QDialog>
 
@@ -30,6 +31,7 @@ class ImportForcefieldWizard : public QDialog
     XmlBondModel bonds_;
     XmlAngleModel angles_;
     XmlTorsionModel torsions_;
+    XmlImproperModel impropers_;
 
     private slots:
     void nextStack();

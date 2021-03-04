@@ -11,6 +11,7 @@ ImportForcefieldWizard::ImportForcefieldWizard(QWidget *parent, Dissolve &mainDi
     ui_.angleTable->setModel(&angles_);
     ui_.atomTable->setModel(&atoms_);
     ui_.torsionTable->setModel(&torsions_);
+    ui_.improperTable->setModel(&impropers_);
 }
 
 void ImportForcefieldWizard::nextStack()
@@ -50,4 +51,5 @@ void ImportForcefieldWizard::xmlString(QString fileName)
     bonds_.readFile(fileName);
     angles_.readFile(fileName);
     torsions_.readFile(fileName);
+    impropers_.readFile(fileName);
 }

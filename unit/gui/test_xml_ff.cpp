@@ -7,6 +7,7 @@
 #include "models/xmlAngleModel.h"
 #include "models/xmlAtomModel.h"
 #include "models/xmlBondModel.h"
+#include "models/xmlImproperModel.h"
 #include "models/xmlTorsionModel.h"
 #include <gtest/gtest.h>
 #include <tuple>
@@ -92,6 +93,36 @@ TEST(XmlFF, XmlTorsion)
 	ASSERT_EQ(torsions.data(torsions.index(row, 5)).toDouble(), std::get<5>(b));
 	ASSERT_EQ(torsions.data(torsions.index(row, 6)).toDouble(), std::get<6>(b));
 	ASSERT_EQ(torsions.data(torsions.index(row, 7)).toDouble(), std::get<7>(b));
+	++row;
+    }
+}
+
+TEST(XmlFF, XmlImproper)
+{
+    XmlImproperModel impropers;
+
+    impropers.readFile("/home/adam/Code/dissolve/tests/ff/methanol.xml");
+
+    ASSERT_EQ(impropers.columnCount(), 16);
+    ASSERT_EQ(impropers.rowCount(), 2);
+
+    std::vector<XmlImproperData> reference = {
+      {"C800", "O801", "H802", "H803", 0.000000, 0.000000, 0.000000, 0.000000, 1, 2, 3, 4, 0.00, 3.141592653589793, 0.00, 3.141592653589793},
+      {"C800", "O801", "H802", "H804", 0.000000, 0.000000, 0.000000, 0.000000, 1, 2, 3, 4, 0.00, 3.141592653589793, 0.00, 3.141592653589793}
+    };
+
+    int row = 0;
+    for (auto b : reference)
+    {
+	ASSERT_EQ(impropers.data(impropers.index(row, 0)).toString().toStdString(), std::get<0>(b));
+	ASSERT_EQ(impropers.data(impropers.index(row, 1)).toString().toStdString(), std::get<1>(b));
+	ASSERT_EQ(impropers.data(impropers.index(row, 2)).toString().toStdString(), std::get<2>(b));
+	ASSERT_EQ(impropers.data(impropers.index(row, 3)).toString().toStdString(), std::get<3>(b));
+
+	ASSERT_EQ(impropers.data(impropers.index(row, 4)).toDouble(), std::get<4>(b));
+	ASSERT_EQ(impropers.data(impropers.index(row, 5)).toDouble(), std::get<5>(b));
+	ASSERT_EQ(impropers.data(impropers.index(row, 6)).toDouble(), std::get<6>(b));
+	ASSERT_EQ(impropers.data(impropers.index(row, 7)).toDouble(), std::get<7>(b));
 	++row;
     }
 }
