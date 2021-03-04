@@ -1,5 +1,6 @@
 #include "models/xmlAtomModel.h"
 #include "classes/atomtype.h"
+#include <QColor>
 #include <pugixml.hpp>
 
 XmlAtomModel::XmlAtomModel(Dissolve &dissolve) : dissolve_(dissolve) {}
@@ -41,6 +42,22 @@ int XmlAtomModel::columnCount(const QModelIndex &parent) const
 QVariant XmlAtomModel::data(const QModelIndex &index, int role) const
 {
     int type;
+
+    if (role == Qt::ForegroundRole)
+    {
+	switch (index.column())
+	{
+	    case 4:
+		type = std::get<4>(atoms_[index.row()]);
+		if (type < 0 || type >= dissolve_.nAtomTypes())
+		    return QColor("Red");
+		else
+		    return QVariant();
+	    default:
+		return QVariant();
+	}
+    }
+
     switch (index.column())
     {
 	case 0:
