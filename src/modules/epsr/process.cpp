@@ -626,7 +626,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto dataIndex = 0;
     for (auto *module : targets)
     {
-        // For this Module, retrive the coefficents of the fit performed above.
+        // For this Module, retrieve the coefficients of the fit performed above.
         const auto &fitCoefficients = dissolve.processingModuleData().value<std::vector<double>>(
             fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_);
 
