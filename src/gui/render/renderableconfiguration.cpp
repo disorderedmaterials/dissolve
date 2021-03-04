@@ -11,8 +11,8 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-RenderableConfiguration::RenderableConfiguration(const Configuration *source, std::string_view objectTag)
-    : Renderable(Renderable::ConfigurationRenderable, objectTag), source_(source)
+RenderableConfiguration::RenderableConfiguration(const Configuration *source)
+    : Renderable(Renderable::ConfigurationRenderable, "UNUSED"), source_(source)
 {
     // Set defaults
     displayStyle_ = LinesStyle;
@@ -44,10 +44,6 @@ bool RenderableConfiguration::validateDataSource()
     // Don't try to access source_ if we are not currently permitted to do so
     if (!sourceDataAccessEnabled_)
         return false;
-
-    // If there is no valid source set, attempt to set it now...
-    if (!source_)
-        source_ = Configuration::findObject(objectTag_);
 
     return source_;
 }

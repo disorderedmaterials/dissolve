@@ -22,7 +22,6 @@ class ObjectInfo
     enum ObjectType
     {
         NoObject = 0,
-        ConfigurationObject,
         Data1DObject,
         Data2DObject,
         Data3DObject,

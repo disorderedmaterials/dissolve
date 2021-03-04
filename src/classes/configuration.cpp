@@ -12,14 +12,7 @@
 #include "classes/species.h"
 #include "modules/energy/energy.h"
 
-// Static Members (ObjectStore)
-template <class Configuration> RefDataList<Configuration, int> ObjectStore<Configuration>::objects_;
-template <class Configuration> int ObjectStore<Configuration>::objectCount_ = 0;
-template <class Configuration> int ObjectStore<Configuration>::objectType_ = ObjectInfo::ConfigurationObject;
-template <class Configuration> std::string_view ObjectStore<Configuration>::objectTypeName_ = "Configuration";
-
-Configuration::Configuration()
-    : ListItem<Configuration>(), ObjectStore<Configuration>(this), generator_(ProcedureNode::GenerationContext, "EndGenerator")
+Configuration::Configuration() : ListItem<Configuration>(), generator_(ProcedureNode::GenerationContext, "EndGenerator")
 {
     box_ = nullptr;
 
