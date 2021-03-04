@@ -116,16 +116,4 @@ template <class T, class I, typename Raw = const I *, typename... Args> class Ta
         // iterate over
         table->setRowCount(rowCount);
     }
-    template <typename D>
-    TableWidgetUpdater(QTableWidget *table, RefDataList<I, D> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
-    {
-        int rowCount = 0;
-
-        auto itemIterator(list);
-        while (I *dataItem = itemIterator.iterate())
-        {
-            updateItemAtIndex(table, rowCount, dataItem, functionParent, updateRow, itemIterator.currentData());
-            ++rowCount;
-        }
-    }
 };
