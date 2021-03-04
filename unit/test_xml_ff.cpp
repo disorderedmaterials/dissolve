@@ -32,3 +32,30 @@ TEST(XmlFF, XmlBond)
 	++row;
     }
 }
+
+TEST(XmlFF, XmlAngle)
+{
+    XmlAngleModel angles;
+
+    angles.readFile("/home/adam/Code/dissolve/tests/ff/methanol.xml");
+
+    ASSERT_EQ(angles.columnCount(), 5);
+    ASSERT_EQ(angles.rowCount(), 7);
+
+    std::vector<XmlAngleData> reference = {
+	{"O801", "C800", "H802", 1.911136, 292.880000}, {"O801", "C800", "H803", 1.911136, 292.880000},
+	{"O801", "C800", "H804", 1.911136, 292.880000}, {"C800", "O801", "H805", 1.893682, 460.240000},
+	{"H802", "C800", "H803", 1.881465, 276.144000}, {"H802", "C800", "H804", 1.881465, 276.144000},
+	{"H803", "C800", "H804", 1.881465, 276.144000}};
+
+    int row = 0;
+    for (auto b : reference)
+    {
+	ASSERT_EQ(angles.data(angles.index(row, 0)).toString().toStdString(), std::get<0>(b));
+	ASSERT_EQ(angles.data(angles.index(row, 1)).toString().toStdString(), std::get<1>(b));
+	ASSERT_EQ(angles.data(angles.index(row, 2)).toString().toStdString(), std::get<2>(b));
+	ASSERT_EQ(angles.data(angles.index(row, 3)).toDouble(), std::get<3>(b));
+	ASSERT_EQ(angles.data(angles.index(row, 4)).toDouble(), std::get<4>(b));
+	++row;
+    }
+}

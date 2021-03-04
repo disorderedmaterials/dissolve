@@ -22,7 +22,6 @@ void XmlBondModel::readFile(const QString &file)
 			    b.node().attribute("length").as_double(), b.node().attribute("k").as_double());
     }
     endResetModel();
-
 }
 
 int XmlBondModel::rowCount(const QModelIndex &parent) const
@@ -64,7 +63,9 @@ QVariant XmlBondModel::headerData(int section, Qt::Orientation orientation, int 
 	    return QVariant(QString("AtomJ"));
 	case 2:
 	    return QVariant(QString("Length"));
-	default:
+	case 3:
 	    return QVariant(QString("k"));
+	default:
+	    return QVariant();
     }
 }

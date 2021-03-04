@@ -9,12 +9,14 @@
 #include <tuple>
 #include <vector>
 
+using XmlAngleData = std::tuple<std::string, std::string, std::string, double, double>;
+
 class XmlAngleModel : public QAbstractTableModel
 {
     Q_OBJECT
 
     private:
-    std::vector<std::tuple<std::string, std::string, std::string, double, double>> angles_;
+    std::vector<XmlAngleData> angles_;
 
     public slots:
     void readFile(const QString &);

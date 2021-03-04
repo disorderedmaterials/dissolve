@@ -19,8 +19,8 @@ void XmlAngleModel::readFile(const QString &file)
     for (auto &a : root.select_nodes("/ForceField/HarmonicAngleForce/Angle"))
     {
 	angles_.emplace_back(a.node().attribute("class1").as_string(), a.node().attribute("class2").as_string(),
-			     a.node().attribute("class3").as_string(), a.node().attribute("k").as_double(),
-			     a.node().attribute("angle").as_double());
+			     a.node().attribute("class3").as_string(), a.node().attribute("angle").as_double(),
+			     a.node().attribute("k").as_double());
     }
 
     endResetModel();
@@ -68,8 +68,10 @@ QVariant XmlAngleModel::headerData(int section, Qt::Orientation orientation, int
 	case 3:
 	    return QVariant(QString("AtomK"));
 	case 4:
+	    return QVariant(QString("Angle"));
+	case 5:
 	    return QVariant(QString("k"));
 	default:
-	    return QVariant(QString("angle"));
+	    return QVariant();
     }
 }
