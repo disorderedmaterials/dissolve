@@ -32,9 +32,6 @@ double SampledDouble::value() const { return mean_; }
 // Return number of samples contributing to averages etc.
 int SampledDouble::count() const { return count_; }
 
-// Return mean (current) value
-double SampledDouble::mean() const { return mean_; }
-
 // Return variance of sampled data
 double SampledDouble::variance() const { return (count_ < 2 ? 0.0 : m2_ / (count_ - 1)); }
 
@@ -45,25 +42,27 @@ double SampledDouble::stDev() const { return (count_ < 2 ? 0.0 : sqrt(m2_ / (cou
  * Operators
  */
 
-// Conversion (double)
 SampledDouble::operator double &() { return mean_; }
+
 SampledDouble::operator const double &() const { return mean_; }
 
-// Assigment
-void SampledDouble::operator=(double x)
+SampledDouble &SampledDouble::operator=(double x)
 {
     // Clear any existing statistics and set new value
     count_ = 1;
     m2_ = 0.0;
     mean_ = x;
+
+    return *this;
 }
 
-// Assigment
-void SampledDouble::operator=(const SampledDouble &source)
+SampledDouble &SampledDouble::operator=(const SampledDouble &source)
 {
     count_ = source.count_;
     mean_ = source.mean_;
     m2_ = source.m2_;
+
+    return *this;
 }
 
 void SampledDouble::operator+=(double x)

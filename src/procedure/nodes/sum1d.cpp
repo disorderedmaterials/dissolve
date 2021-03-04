@@ -88,13 +88,13 @@ ProcedureNode::NodeExecutionResult Sum1DProcedureNode::execute(ProcessPool &proc
         sum_[2] += Integrator::sum(processNode_->processedData(), rangeC_);
 
     // Print info
-    Messenger::print("Sum1D - Range A: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[0].mean(), sum_[0].stDev(),
+    Messenger::print("Sum1D - Range A: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[0].value(), sum_[0].stDev(),
                      rangeA_.minimum(), rangeA_.maximum());
     if (rangeBEnabled_)
-        Messenger::print("Sum1D - Range B: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[1].mean(), sum_[1].stDev(),
+        Messenger::print("Sum1D - Range B: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[1].value(), sum_[1].stDev(),
                          rangeB_.minimum(), rangeB_.maximum());
     if (rangeCEnabled_)
-        Messenger::print("Sum1D - Range C: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[2].mean(), sum_[2].stDev(),
+        Messenger::print("Sum1D - Range C: {:e} +/- {:e} over {:e} < x < {:e}.\n", sum_[2].value(), sum_[2].stDev(),
                          rangeC_.minimum(), rangeC_.maximum());
 
     return ProcedureNode::Success;

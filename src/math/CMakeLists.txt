@@ -27,6 +27,7 @@ add_library(
   range.cpp
   regression.cpp
   sampleddouble.cpp
+  sampledvector.cpp
   svd.cpp
   transformer.cpp
   windowfunction.cpp
@@ -62,6 +63,7 @@ add_library(
   range.h
   regression.h
   sampleddouble.h
+  sampledvector.h
   sd.h
   svd.h
   transformer.h
