@@ -34,14 +34,14 @@ template <class T> class GenericListHelper
         return newItem->data();
     }
     // Return named (const) item from specified list as template-guided type
-    static const T &value(GenericList &sourceList, std::string_view name, std::string_view prefix = "", T defaultValue = T(),
-                          bool *found = nullptr)
+    static const T &value(const GenericList &sourceList, std::string_view name, std::string_view prefix = "",
+                          T defaultValue = T(), bool *found = nullptr)
     {
         // Construct full name
         std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
 
         // Find item in the list
-        GenericItem *item = sourceList.find(varName);
+        const GenericItem *item = sourceList.find(varName);
         if (!item)
         {
             Messenger::printVerbose("No item named '{}' in list - default value item will be returned.\n", varName);
@@ -53,7 +53,7 @@ template <class T> class GenericListHelper
         }
 
         // Cast to correct type
-        GenericItemContainer<T> *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
+        const GenericItemContainer<T> *castItem = dynamic_cast<const GenericItemContainer<T> *>(item);
         if (!castItem)
             throw std::runtime_error(
                 fmt::format("GenericListHelper::value({}) failed, because the target item is of the wrong type.", name));

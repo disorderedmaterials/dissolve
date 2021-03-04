@@ -22,6 +22,7 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
     public:
     // Return data item
     Array2D<std::vector<double>> &data() { return data_; }
+    const Array2D<std::vector<double>> &data() const { return data_; }
 
     /*
      * Item Class

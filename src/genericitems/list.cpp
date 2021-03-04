@@ -91,6 +91,14 @@ GenericItem *GenericList::find(std::string_view name)
     return nullptr;
 }
 
+const GenericItem *GenericList::find(std::string_view name) const
+{
+    for (auto *item = items_.first(); item != nullptr; item = item->next())
+        if (DissolveSys::sameString(item->name(), name))
+            return item;
+    return nullptr;
+}
+
 // Return the named item from the list (with prefix)
 GenericItem *GenericList::find(std::string_view name, std::string_view prefix)
 {

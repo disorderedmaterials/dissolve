@@ -35,6 +35,7 @@ class GenericList
     List<GenericItem> &items();
     // Return the named item from the list
     GenericItem *find(std::string_view name);
+    const GenericItem *find(std::string_view name) const;
     // Return the named item from the list (with prefix)
     GenericItem *find(std::string_view name, std::string_view prefix);
     // Return the version of the named item from the list

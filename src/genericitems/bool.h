@@ -22,6 +22,7 @@ template <> class GenericItemContainer<bool> : public GenericItem
     public:
     // Return data item
     bool &data() { return data_; }
+    const bool &data() const { return data_; }
 
     /*
      * Item Class
