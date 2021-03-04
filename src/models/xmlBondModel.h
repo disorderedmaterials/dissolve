@@ -19,10 +19,12 @@ class XmlBondModel : public QAbstractTableModel
     std::vector<XmlBondData> bonds_;
 
     public slots:
+    // Read from an XML file
     void readFile(const QString &);
 
     public:
     XmlBondModel();
+
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     int columnCount(const QModelIndex &parent = QModelIndex()) const override;

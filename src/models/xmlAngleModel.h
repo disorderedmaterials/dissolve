@@ -19,6 +19,7 @@ class XmlAngleModel : public QAbstractTableModel
     std::vector<XmlAngleData> angles_;
 
     public slots:
+    // Read from an XML file
     void readFile(const QString &);
 
     public:

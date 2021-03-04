@@ -23,10 +23,14 @@ void XmlAtomModel::readFile(const QString &file)
 
     for (auto &b : root.select_nodes("/ForceField/AtomTypes/Type"))
     {
+	// Find the first node with the same element.  Use this as our best guess for the AtomType
 	auto it = std::find_if(types.begin(), types.end(),
 			       [&b](auto t) { return Elements::symbol(t->Z()) == b.node().attribute("element").as_string(); });
+
 	atoms_.emplace_back(b.node().attribute("name").as_string(), b.node().attribute("class").as_string(),
 			    b.node().attribute("element").as_string(), b.node().attribute("mass").as_double(),
+			    // Use our best guess for the AtomType or
+			    // mark it as missing.
 			    it == types.end() ? -1 : (*it)->index());
     }
 
@@ -118,11 +122,14 @@ Qt::ItemFlags XmlAtomModel::flags(const QModelIndex &index) const
 
 bool XmlAtomModel::setData(const QModelIndex &index, const QVariant &value, int role)
 {
-    if (index.column() != 4)
-	return false;
-    if (index.row() >= atoms_.size())
+    if (index.row() >= atoms_.size() || index.row() < 0)
 	return false;
 
+    // Only set the linked AtomType
+    if (index.column() != 4)
+	return false;
+
+    // Find the requested AtomType
     auto type = dissolve_.findAtomType(value.toString().toStdString());
     if (!type)
 	return false;
