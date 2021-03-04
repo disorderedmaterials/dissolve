@@ -7,6 +7,7 @@
 #include "models/xmlAngleModel.h"
 #include "models/xmlAtomModel.h"
 #include "models/xmlBondModel.h"
+#include "models/xmlTorsionModel.h"
 #include <gtest/gtest.h>
 #include <tuple>
 #include <vector>
@@ -60,6 +61,37 @@ TEST(XmlFF, XmlAngle)
 	ASSERT_EQ(angles.data(angles.index(row, 2)).toString().toStdString(), std::get<2>(b));
 	ASSERT_EQ(angles.data(angles.index(row, 3)).toDouble(), std::get<3>(b));
 	ASSERT_EQ(angles.data(angles.index(row, 4)).toDouble(), std::get<4>(b));
+	++row;
+    }
+}
+
+TEST(XmlFF, XmlTorsion)
+{
+    XmlTorsionModel torsions;
+
+    torsions.readFile("/home/adam/Code/dissolve/tests/ff/methanol.xml");
+
+    ASSERT_EQ(torsions.columnCount(), 16);
+    ASSERT_EQ(torsions.rowCount(), 3);
+
+    std::vector<XmlTorsionData> reference = {
+      {"H805", "O801", "C800", "H802", 0.000000, 0.000000, 0.736384, 0.000000, 1, 2, 3, 4, 0.00, 3.141592653589793, 0.00, 3.141592653589793},
+      {"H805", "O801", "C800", "H803", 0.000000, 0.000000, 0.736384, 0.000000, 1, 2, 3, 4, 0.00, 3.141592653589793, 0.00, 3.141592653589793},
+      {"H805", "O801", "C800", "H804", 0.000000, 0.000000, 0.736384, 0.000000, 1, 2, 3, 4, 0.00, 3.141592653589793, 0.00, 3.141592653589793}
+    };
+
+    int row = 0;
+    for (auto b : reference)
+    {
+	ASSERT_EQ(torsions.data(torsions.index(row, 0)).toString().toStdString(), std::get<0>(b));
+	ASSERT_EQ(torsions.data(torsions.index(row, 1)).toString().toStdString(), std::get<1>(b));
+	ASSERT_EQ(torsions.data(torsions.index(row, 2)).toString().toStdString(), std::get<2>(b));
+	ASSERT_EQ(torsions.data(torsions.index(row, 3)).toString().toStdString(), std::get<3>(b));
+
+	ASSERT_EQ(torsions.data(torsions.index(row, 4)).toDouble(), std::get<4>(b));
+	ASSERT_EQ(torsions.data(torsions.index(row, 5)).toDouble(), std::get<5>(b));
+	ASSERT_EQ(torsions.data(torsions.index(row, 6)).toDouble(), std::get<6>(b));
+	ASSERT_EQ(torsions.data(torsions.index(row, 7)).toDouble(), std::get<7>(b));
 	++row;
     }
 }

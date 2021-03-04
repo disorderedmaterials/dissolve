@@ -3,12 +3,14 @@ set(
   xmlAngleModel.cpp
   xmlAtomModel.cpp
   xmlBondModel.cpp
+  xmlTorsionModel.cpp
 )
 
 qt_wrap_cpp(models_SRCS
   xmlAngleModel.h
   xmlAtomModel.h
   xmlBondModel.h
+  xmlTorsionModel.h
   )
 
 add_library(models ${models_SRCS})
