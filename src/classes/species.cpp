@@ -8,13 +8,7 @@
 #include "classes/masterintra.h"
 #include "data/isotopes.h"
 
-// Static Members (ObjectStore)
-template <class Species> RefDataList<Species, int> ObjectStore<Species>::objects_;
-template <class Species> int ObjectStore<Species>::objectCount_ = 0;
-template <class Species> int ObjectStore<Species>::objectType_ = ObjectInfo::SpeciesObject;
-template <class Species> std::string_view ObjectStore<Species>::objectTypeName_ = "Species";
-
-Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
+Species::Species() : ListItem<Species>()
 {
     forcefield_ = nullptr;
     autoUpdateIntramolecularTerms_ = true;

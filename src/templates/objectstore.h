@@ -25,7 +25,6 @@ class ObjectInfo
         Data1DObject,
         Data2DObject,
         Data3DObject,
-        SpeciesObject,
         nObjectTypes
     };
 

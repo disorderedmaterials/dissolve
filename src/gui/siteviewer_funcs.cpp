@@ -47,7 +47,7 @@ void SiteViewer::setSpecies(Species *sp)
     // Create a new Renderable for the supplied Species
     if (species_)
     {
-        speciesRenderable_ = new RenderableSpecies(species_, species_->objectTag());
+        speciesRenderable_ = new RenderableSpecies(species_);
         speciesRenderable_->setName("Species");
         speciesRenderable_->setDisplayStyle(RenderableSpecies::LinesStyle);
         ownRenderable(speciesRenderable_);

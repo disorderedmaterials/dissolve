@@ -21,7 +21,7 @@ class Box;
 class Forcefield;
 
 // Species Definition
-class Species : public ListItem<Species>, public ObjectStore<Species>
+class Species : public ListItem<Species>
 {
     public:
     Species();

@@ -155,8 +155,11 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
 
         // Reference molecule
         if (referenceMolecule_)
-            referenceMoleculeRenderable_ = dynamic_cast<RenderableSpecies *>(sdfGraph_->createRenderable(
-                Renderable::SpeciesRenderable, referenceMolecule_->objectTag(), "Reference Molecule"));
+        {
+            referenceMoleculeRenderable_ = new RenderableSpecies(referenceMolecule_);
+            referenceMoleculeRenderable_->setName("Reference Molecule");
+            sdfGraph_->ownRenderable(referenceMoleculeRenderable_);
+        }
     }
 }
 
