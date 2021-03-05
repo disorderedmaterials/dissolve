@@ -128,7 +128,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
 
     // Construct Cell arrays
     clear();
-    int nCells = divisions_.x * divisions_.y * divisions_.z;
+    auto nCells = divisions_.x * divisions_.y * divisions_.z;
     Messenger::print("Constructing array of {} cells...\n", nCells);
     cells_.reserve(nCells);
     Vec3<double> fracCentre(fractionalCellSize_.x * 0.5, 0.0, 0.0);
@@ -244,7 +244,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
     Messenger::print("Constructing neighbour lists for individual Cells...\n");
     std::vector<Cell *> nearNeighbours, mimNeighbours;
     Vec3<int> gridRef, delta;
-    for (auto n = 0u; n < cells_.size(); ++n)
+    for (auto n = 0; n < cells_.size(); ++n)
     {
         // Grab grid reference of central cell
         gridRef = cells_[n]->gridReference();

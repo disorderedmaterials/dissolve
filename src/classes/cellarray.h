@@ -33,7 +33,6 @@ class CellArray
     List<ListVec3<int>> neighbourIndices_;
     // Cell axes
     Matrix3 axes_;
-    // Total number of Cells in Box
     // Cell array (one-dimensional)
     std::vector<std::unique_ptr<Cell>> cells_;
     // Box associated with this cell division scheme
