@@ -98,30 +98,6 @@ void EnergyModuleWidget::updateControls(int flags)
 }
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool EnergyModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!energyGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool EnergyModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!energyGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 

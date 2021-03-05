@@ -97,31 +97,6 @@ void Integrator1DGizmo::setGraphDataTargets()
 }
 
 /*
- * State
- */
-
-// Write widget state through specified LineParser
-bool Integrator1DGizmo::writeState(LineParser &parser) const
-{
-
-    // Write DataViewer state
-    if (!ui_.PlotWidget->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool Integrator1DGizmo::readState(LineParser &parser)
-{
-    // Read the DataViewer session info
-    if (!ui_.PlotWidget->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widget Signals / Slots
  */
 

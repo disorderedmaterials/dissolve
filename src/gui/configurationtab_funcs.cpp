@@ -227,13 +227,3 @@ void ConfigurationTab::on_RequestedSizeFactorSpin_valueChanged(double value)
 
     dissolveWindow_->setModified();
 }
-
-/*
- * State
- */
-
-// Read widget state through specified LineParser
-bool ConfigurationTab::readState(LineParser &parser, const CoreData &coreData) { return true; }
-
-// Write widget state through specified LineParser
-bool ConfigurationTab::writeState(LineParser &parser) const { return true; }

@@ -35,13 +35,4 @@ class ModuleWidget : public QWidget
     virtual void disableSensitiveControls();
     // Enable sensitive controls within widget
     virtual void enableSensitiveControls();
-
-    /*
-     * State I/O
-     */
-    public:
-    // Read widget state through specified LineParser
-    virtual bool readState(LineParser &parser);
-    // Write widget state through specified LineParser
-    virtual bool writeState(LineParser &parser) const;
 };

@@ -72,13 +72,4 @@ class WorkspaceTab : public QWidget, public ListItem<WorkspaceTab>, public MainT
     public slots:
     // Custom context menu requested
     void showContextMenu(const QPoint &pos);
-
-    /*
-     * State
-     */
-    public:
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser, const CoreData &coreData);
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
 };

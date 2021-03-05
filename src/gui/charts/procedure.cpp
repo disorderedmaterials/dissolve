@@ -232,13 +232,3 @@ QSize ProcedureChart::calculateNewWidgetGeometry(QSize currentSize)
 
     return requiredSize;
 }
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool ProcedureChart::writeState(LineParser &parser) const { return true; }
-
-// Read widget state through specified LineParser
-bool ProcedureChart::readState(LineParser &parser) { return true; }

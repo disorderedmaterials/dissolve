@@ -65,15 +65,6 @@ class ProcedureEditor : public QWidget
     // 	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);
 
     /*
-     * State
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
-
-    /*
      * Signals / Slots
      */
     private slots:

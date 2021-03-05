@@ -19,13 +19,3 @@ void ModuleWidget::disableSensitiveControls() {}
 
 // Enable sensitive controls within widget
 void ModuleWidget::enableSensitiveControls() {}
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool ModuleWidget::writeState(LineParser &parser) const { return true; }
-
-// Read widget state through specified LineParser
-bool ModuleWidget::readState(LineParser &parser) { return true; }

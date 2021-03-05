@@ -73,32 +73,6 @@ void ProcedureEditor::enableSensitiveControls()
 }
 
 /*
- * Widget Functions
- */
-
-/*
- * State
- */
-
-// Write widget state through specified LineParser
-bool ProcedureEditor::writeState(LineParser &parser) const
-{
-    if (!chart_->writeState(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool ProcedureEditor::readState(LineParser &parser)
-{
-    if (!chart_->readState(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Signals / Slots
  */
 

@@ -67,34 +67,6 @@ void BraggModuleWidget::disableSensitiveControls() {}
 void BraggModuleWidget::enableSensitiveControls() {}
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool BraggModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!reflectionsGraph_->writeSession(parser))
-        return false;
-    if (!totalsGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool BraggModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!reflectionsGraph_->readSession(parser))
-        return false;
-    if (!totalsGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 

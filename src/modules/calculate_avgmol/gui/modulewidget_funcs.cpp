@@ -29,15 +29,5 @@ void CalculateAvgMolModuleWidget::disableSensitiveControls() {}
 void CalculateAvgMolModuleWidget::enableSensitiveControls() {}
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool CalculateAvgMolModuleWidget::writeState(LineParser &parser) const { return true; }
-
-// Read widget state through specified LineParser
-bool CalculateAvgMolModuleWidget::readState(LineParser &parser) { return true; }
-
-/*
  * Widgets / Functions
  */

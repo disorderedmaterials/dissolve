@@ -68,34 +68,6 @@ void SQModuleWidget::updateControls(int flags)
 }
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool SQModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!partialsGraph_->writeSession(parser))
-        return false;
-    if (!totalGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool SQModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!partialsGraph_->readSession(parser))
-        return false;
-    if (!totalGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 

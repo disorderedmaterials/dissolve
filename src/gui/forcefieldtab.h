@@ -101,13 +101,4 @@ class ForcefieldTab : public QWidget, public MainTab
     void on_MasterTermAddImproperButton_clicked(bool checked);
     void on_MasterTermRemoveImproperButton_clicked(bool checked);
     void on_MasterImpropersTable_itemChanged(QTableWidgetItem *w);
-
-    /*
-     * State
-     */
-    public:
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser, const CoreData &coreData);
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
 };

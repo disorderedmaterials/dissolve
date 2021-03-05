@@ -89,13 +89,4 @@ class Gizmo : public ListItem<Gizmo>
     static RefList<Gizmo> allThatAccept(const QString &ataType);
     // Send data (referenced by its object tag) to the Gizmo
     virtual bool sendData(const QString &dataType, std::string_view objectTag, std::string_view name = "");
-
-    /*
-     * State
-     */
-    public:
-    // Write widget state through specified LineParser
-    virtual bool writeState(LineParser &parser) const = 0;
-    // Read widget state through specified LineParser
-    virtual bool readState(LineParser &parser) = 0;
 };

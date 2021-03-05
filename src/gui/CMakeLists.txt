@@ -128,7 +128,6 @@ set(components_SRCS
     viewer_funcs.cpp
     viewer_input.cpp
     viewer_interaction.cpp
-    viewer_io.cpp
     viewer_options.cpp
     viewer_query.cpp
     viewer_render.cpp
