@@ -69,6 +69,11 @@ void ImportForcefieldWizard::xmlString(QString fileName)
 	angles_.readFile(root);
 	torsions_.readFile(root);
 	impropers_.readFile(root);
+	ui_.atomTable->resizeColumnsToContents();
+	ui_.bondTable->resizeColumnsToContents();
+	ui_.angleTable->resizeColumnsToContents();
+	ui_.torsionTable->resizeColumnsToContents();
+	ui_.improperTable->resizeColumnsToContents();
     }
     else
     {

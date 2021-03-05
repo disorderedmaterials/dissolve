@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>498</width>
-    <height>310</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -69,7 +69,9 @@
           <widget class="QTableView" name="atomTable"/>
          </item>
          <item>
-          <widget class="QLabel" name="label_3">
+          <layout class="QHBoxLayout" name="horizontalLayout_temp">
+	    <item>
+	  <widget class="QLabel" name="label_3">
            <property name="text">
             <string>Bonds</string>
            </property>
@@ -88,6 +90,8 @@
          <item>
           <widget class="QTableView" name="angleTable"/>
          </item>
+	  </layout>
+	 </item>
          <item>
           <widget class="QLabel" name="label_torsion_table">
            <property name="text">
