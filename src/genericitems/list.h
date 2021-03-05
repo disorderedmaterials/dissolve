@@ -95,7 +95,7 @@ class GenericList
         auto *castItem = dynamic_cast<const GenericItemContainer<T> *>(item);
         if (!castItem)
             throw std::runtime_error(
-                fmt::format("GenericListHelper::value({}) failed, because the target item is of the wrong type.", name));
+                fmt::format("GenericList.value({}) failed, because the target item is of the wrong type.", name));
 
         if (found != nullptr)
             (*found) = true;
@@ -124,7 +124,7 @@ class GenericList
         auto *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
         if (!castItem)
             throw std::runtime_error(
-                fmt::format("GenericListHelper::retrieve({}) failed, because the item is not of the specified type.", name));
+                fmt::format("GenericList.retrieve({}) failed, because the item is not of the specified type.", name));
 
         // Bump the version of the item
         item->bumpVersion();
@@ -151,8 +151,8 @@ class GenericList
         // Cast to correct type
         auto *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
         if (!castItem)
-            throw std::runtime_error(fmt::format(
-                "GenericList.realise({}) failed, because the item couldn't be cast to the desired type.", name));
+            throw std::runtime_error(
+                fmt::format("GenericList.realise({}) failed, because the item couldn't be cast to the desired type.", name));
 
         // Update flags
         if (flags >= 0)
@@ -177,7 +177,7 @@ class GenericList
                 auto *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
                 if (!castItem)
                     throw std::runtime_error(
-                        fmt::format("GenericListHelper::items() failed to retrieve item {} as it is not actually class {}.",
+                        fmt::format("GenericList.items() failed to retrieve item {} as it is not actually class {}.",
                                     item->itemClassName(), T::itemClassName()));
 
                 items.append(&castItem->data());
