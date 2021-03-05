@@ -47,8 +47,7 @@ void SiteViewer::setSpecies(Species *sp)
     // Create a new Renderable for the supplied Species
     if (species_)
     {
-        speciesRenderable_ = std::make_shared<RenderableSpecies>(species_);
-        speciesRenderable_->setName("Species");
+        speciesRenderable_ = createRenderable<RenderableSpecies, Species>(species_, "Species");
         speciesRenderable_->setDisplayStyle(RenderableSpecies::LinesStyle);
 
         view_.showAllData();

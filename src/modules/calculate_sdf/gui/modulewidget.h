@@ -38,11 +38,11 @@ class CalculateSDFModuleWidget : public ModuleWidget
     // DataViewers contained within this widget
     DataViewer *sdfGraph_;
     // Renderable for our SDF
-    std::shared_ptr<Renderable> sdfRenderable_;
+    std::shared_ptr<RenderableData3D> sdfRenderable_;
     // Reference molecule (Species) to display alongside density
     Species *referenceMolecule_;
     // Renderable for reference molecule
-    std::shared_ptr<Renderable> referenceMoleculeRenderable_;
+    std::shared_ptr<RenderableSpecies> referenceMoleculeRenderable_;
 
     public:
     // Update controls within widget

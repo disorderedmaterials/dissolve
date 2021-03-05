@@ -4,6 +4,9 @@
 #include "base/messenger.h"
 #include "gui/dataviewer.hui"
 #include "gui/gizmo.h"
+#include "gui/render/renderabledata1d.h"
+#include "gui/render/renderabledata2d.h"
+#include "gui/render/renderabledata3d.h"
 #include "gui/selectgenericitemdialog.h"
 #include "io/export/data1d.h"
 #include "io/export/data2d.h"
@@ -53,19 +56,19 @@ void DataViewer::showGeneralContextMenu(QPoint pos)
         {
             Data1D *item = genericItemDialog.selectGenericItem<Data1D>();
             if (item)
-                createRenderable(Renderable::Data1DRenderable, item->objectTag(), item->name(), "Default");
+                createRenderable<RenderableData1D>(item->objectTag(), item->name(), "Default");
         }
         else if (dimensionality == 2)
         {
             Data2D *item = genericItemDialog.selectGenericItem<Data2D>();
             if (item)
-                createRenderable(Renderable::Data2DRenderable, item->objectTag(), item->name(), "Default");
+                createRenderable<RenderableData2D>(item->objectTag(), item->name(), "Default");
         }
         else if (dimensionality == 3)
         {
             Data3D *item = genericItemDialog.selectGenericItem<Data3D>();
             if (item)
-                createRenderable(Renderable::Data3DRenderable, item->objectTag(), item->name(), "Default");
+                createRenderable<RenderableData3D>(item->objectTag(), item->name(), "Default");
         }
     }
 }

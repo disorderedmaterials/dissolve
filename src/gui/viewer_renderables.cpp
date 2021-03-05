@@ -19,29 +19,6 @@ void BaseViewer::clear()
     view_.clear();
 }
 
-// Create Renderable by type and object identifier
-std::shared_ptr<Renderable> BaseViewer::createRenderable(Renderable::RenderableType type, std::string_view objectTag,
-                                                         std::string_view name, std::string_view groupName)
-{
-    auto renderable = RenderableFactory::create(type, objectTag);
-    if (renderable)
-    {
-        // Set Renderable name
-        renderable->setName(name);
-
-        // Own the new Renderable
-        renderables_.emplace_back(renderable);
-
-        // Set the group, if one was provided
-        if (!groupName.empty())
-            groupManager_.addToGroup(renderable, groupName);
-    }
-
-    emit(renderableAdded());
-
-    return renderable;
-}
-
 // Add an existing Renderable
 void BaseViewer::addRenderable(const std::shared_ptr<Renderable> &renderable)
 {

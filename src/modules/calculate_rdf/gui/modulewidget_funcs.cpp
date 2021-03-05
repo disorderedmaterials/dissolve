@@ -56,9 +56,9 @@ void CalculateRDFModuleWidget::setGraphDataTargets()
     for (const auto *cfg : module_->targetConfigurations())
     {
         // Calculated RDF
-        auto rdf = rdfGraph_->createRenderable(Renderable::Data1DRenderable,
-                                               fmt::format("{}//Process1D//{}//RDF", module_->uniqueName(), cfg->niceName()),
-                                               fmt::format("RDF//{}", cfg->niceName()), cfg->niceName());
+        auto rdf = rdfGraph_->createRenderable<RenderableData1D>(
+            fmt::format("{}//Process1D//{}//RDF", module_->uniqueName(), cfg->niceName()),
+            fmt::format("RDF//{}", cfg->niceName()), cfg->niceName());
         rdf->setColour(StockColours::BlueStockColour);
     }
 }

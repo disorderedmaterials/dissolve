@@ -107,8 +107,8 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
     for (Configuration *cfg : module_->targetConfigurations())
     {
         // Calculated SDF
-        sdfRenderable_ = sdfGraph_->createRenderable(
-            Renderable::Data3DRenderable, fmt::format("{}//Process3D//{}//SDF", module_->uniqueName(), cfg->niceName()),
+        sdfRenderable_ = sdfGraph_->createRenderable<RenderableData3D>(
+            fmt::format("{}//Process3D//{}//SDF", module_->uniqueName(), cfg->niceName()),
             fmt::format("SDF//{}", cfg->niceName()), cfg->niceName());
 
         if (sdfRenderable_)
@@ -129,10 +129,8 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
 
         // Reference molecule
         if (referenceMolecule_)
-        {
-            referenceMoleculeRenderable_ = std::make_shared<RenderableSpecies>(referenceMolecule_);
-            sdfGraph_->addRenderable(referenceMoleculeRenderable_);
-        }
+            referenceMoleculeRenderable_ =
+                sdfGraph_->createRenderable<RenderableSpecies, Species>(referenceMolecule_, "Reference Molecule");
     }
 }
 

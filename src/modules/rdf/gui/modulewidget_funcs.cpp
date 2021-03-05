@@ -97,9 +97,8 @@ void RDFModuleWidget::setGraphDataTargets(RDFModule *module)
     for (Configuration *cfg : module->targetConfigurations())
     {
         // Add calculated total G(r)
-        totalsGraph_->createRenderable(Renderable::Data1DRenderable,
-                                       fmt::format("{}//{}//UnweightedGR//Total", cfg->niceName(), module_->uniqueName()),
-                                       cfg->niceName(), "Calc");
+        totalsGraph_->createRenderable<RenderableData1D>(
+            fmt::format("{}//{}//UnweightedGR//Total", cfg->niceName(), module_->uniqueName()), cfg->niceName(), "Calc");
     }
 }
 
@@ -120,15 +119,15 @@ void RDFModuleWidget::on_TargetCombo_currentIndexChanged(int index)
         const std::string id = fmt::format("{}-{}", at1->name(), at2->name());
 
         // Full partial
-        partialsGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//UnweightedGR//{}//Full", prefix, id),
-                                         fmt::format("{} (Full)", id), "Full");
+        partialsGraph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedGR//{}//Full", prefix, id),
+                                                           fmt::format("{} (Full)", id), "Full");
 
         // Bound partial
-        partialsGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//UnweightedGR//{}//Bound", prefix, id),
-                                         fmt::format("{} (Bound)", id), "Bound");
+        partialsGraph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedGR//{}//Bound", prefix, id),
+                                                           fmt::format("{} (Bound)", id), "Bound");
 
         // Unbound partial
-        partialsGraph_->createRenderable(Renderable::Data1DRenderable, fmt::format("{}//UnweightedGR//{}//Unbound", prefix, id),
-                                         fmt::format("{} (Unbound)", id), "Unbound");
+        partialsGraph_->createRenderable<RenderableData1D>(fmt::format("{}//UnweightedGR//{}//Unbound", prefix, id),
+                                                           fmt::format("{} (Unbound)", id), "Unbound");
     });
 }
