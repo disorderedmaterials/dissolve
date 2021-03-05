@@ -152,7 +152,7 @@ class GenericList
         auto *castItem = dynamic_cast<GenericItemContainer<T> *>(item);
         if (!castItem)
             throw std::runtime_error(fmt::format(
-                "GenericListHelper::realise({}) failed, because the item couldn't be cast to the desired type.", name));
+                "GenericList.realise({}) failed, because the item couldn't be cast to the desired type.", name));
 
         // Update flags
         if (flags >= 0)
