@@ -141,10 +141,7 @@ bool CellArray::generate(const Box *box, double cellSize, double pairPotentialRa
             fracCentre.z = fractionalCellSize_.z * 0.5;
             for (z = 0; z < divisions_.z; ++z)
             {
-                auto &cell = cells_.emplace_back(std::make_unique<Cell>());
-                cell->setIndex(count);
-                cell->setGridReference(x, y, z);
-                cell->setCentre(box_->fracToReal(fracCentre));
+                cells_.emplace_back(std::make_unique<Cell>(count, Vec3<int>(x, y, z), box_->fracToReal(fracCentre)));
                 fracCentre.z += fractionalCellSize_.z;
                 ++count;
             }
