@@ -23,7 +23,7 @@ class SpeciesTorsion;
 class ProcessPool;
 
 // SpeciesAtom Definition
-class SpeciesAtom : public ListItem<SpeciesAtom>
+class SpeciesAtom
 {
     public:
     SpeciesAtom();

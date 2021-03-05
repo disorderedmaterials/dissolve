@@ -9,14 +9,9 @@
 #include "data/elements.h"
 #include <algorithm>
 
-SpeciesAtom::SpeciesAtom() : ListItem<SpeciesAtom>()
+SpeciesAtom::SpeciesAtom() : Z_(Elements::Unknown), charge_(0.0), atomType_(nullptr), index_(-1), selected_(false)
 {
-    Z_ = Elements::Unknown;
-    charge_ = 0.0;
-    atomType_ = nullptr;
     r_.zero();
-    index_ = -1;
-    selected_ = false;
 }
 
 // Set Species parent
@@ -114,7 +109,7 @@ void SpeciesAtom::clearBonds() { bonds_.clear(); }
 int SpeciesAtom::nBonds() const { return bonds_.size(); }
 
 // Return specified bond
-SpeciesBond &SpeciesAtom::bond(int index) { return bonds_.at(index); }
+SpeciesBond &SpeciesAtom::bond(int index)  { return bonds_.at(index); }
 
 // Return bonds list
 const std::vector<std::reference_wrapper<SpeciesBond>> &SpeciesAtom::bonds() const { return bonds_; }
