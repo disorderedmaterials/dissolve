@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
-#include "genericitems/listhelper.h"
 #include "keywords/types.h"
 #include "main/dissolve.h"
 #include "modules/epsr/epsr.h"
@@ -122,8 +121,8 @@ bool EPSRModule::readPCof(Dissolve &dissolve, ProcessPool &procPool, std::string
     }
 
     // Retrieve and zero the current potential coefficients file
-    auto &potentialCoefficients = GenericListHelper<Array2D<std::vector<double>>>::realise(
-        dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
+    auto &potentialCoefficients = dissolve.processingModuleData().realise<Array2D<std::vector<double>>>(
+        "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
     potentialCoefficients.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
     for (auto &n : potentialCoefficients)
     {

@@ -22,6 +22,7 @@ template <> class GenericItemContainer<std::string> : public GenericItem
     public:
     // Return data item
     std::string &data() { return data_; }
+    const std::string &data() const { return data_; }
 
     /*
      * Item Class

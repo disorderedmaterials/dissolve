@@ -4,7 +4,6 @@
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/regionaldistributor.h"
-#include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
 #include "io/import/data1d.h"
 #include "main/dissolve.h"

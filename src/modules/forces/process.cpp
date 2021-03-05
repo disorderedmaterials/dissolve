@@ -6,7 +6,6 @@
 #include "classes/box.h"
 #include "classes/forcekernel.h"
 #include "classes/species.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "modules/forces/forces.h"
 #include "modules/import/import.h"
@@ -19,9 +18,9 @@ bool ForcesModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("Reading test reference forces.\n");
 
         // Realise some arrays to store the forces in
-        auto &fx = GenericListHelper<Array<double>>::realise(dissolve.processingModuleData(), "ReferenceFX", uniqueName());
-        auto &fy = GenericListHelper<Array<double>>::realise(dissolve.processingModuleData(), "ReferenceFY", uniqueName());
-        auto &fz = GenericListHelper<Array<double>>::realise(dissolve.processingModuleData(), "ReferenceFZ", uniqueName());
+        auto &fx = dissolve.processingModuleData().realise<Array<double>>("ReferenceFX", uniqueName());
+        auto &fy = dissolve.processingModuleData().realise<Array<double>>("ReferenceFY", uniqueName());
+        auto &fz = dissolve.processingModuleData().realise<Array<double>>("ReferenceFZ", uniqueName());
 
         // Read in the forces
         if (!referenceForces_.importData(fx, fy, fz, &procPool))
@@ -485,17 +484,17 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 moduleData.contains("ReferenceFZ", uniqueName()))
             {
                 // Grab reference force arrays and check sizes
-                const auto &referenceFx = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFX", uniqueName());
+                const auto &referenceFx = moduleData.value<Array<double>>("ReferenceFX", uniqueName());
                 if (referenceFx.nItems() != cfg->nAtoms())
                     return Messenger::error("Number of force components in ReferenceFX is {}, but the "
                                             "Configuration '{}' contains {} atoms.\n",
                                             referenceFx.nItems(), cfg->name(), cfg->nAtoms());
-                const auto &referenceFy = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFY", uniqueName());
+                const auto &referenceFy = moduleData.value<Array<double>>("ReferenceFY", uniqueName());
                 if (referenceFy.nItems() != cfg->nAtoms())
                     return Messenger::error("Number of force components in ReferenceFY is {}, but the "
                                             "Configuration '{}' contains {} atoms.\n",
                                             referenceFy.nItems(), cfg->name(), cfg->nAtoms());
-                const auto &referenceFz = GenericListHelper<Array<double>>::value(moduleData, "ReferenceFZ", uniqueName());
+                const auto &referenceFz = moduleData.value<Array<double>>("ReferenceFZ", uniqueName());
                 if (referenceFz.nItems() != cfg->nAtoms())
                     return Messenger::error("Number of force components in ReferenceFZ is {}, but the "
                                             "Configuration '{}' contains {} atoms.\n",
@@ -599,9 +598,9 @@ bool ForcesModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Messenger::print("Calculating total forces for Configuration '{}'...\n", cfg->name());
 
             // Realise the force arrays
-            auto &fx = GenericListHelper<Array<double>>::realise(cfg->moduleData(), "FX", uniqueName());
-            auto &fy = GenericListHelper<Array<double>>::realise(cfg->moduleData(), "FY", uniqueName());
-            auto &fz = GenericListHelper<Array<double>>::realise(cfg->moduleData(), "FZ", uniqueName());
+            auto &fx = cfg->moduleData().realise<Array<double>>("FX", uniqueName());
+            auto &fy = cfg->moduleData().realise<Array<double>>("FY", uniqueName());
+            auto &fz = cfg->moduleData().realise<Array<double>>("FZ", uniqueName());
             fx.initialise(cfg->nAtoms());
             fy.initialise(cfg->nAtoms());
             fz.initialise(cfg->nAtoms());

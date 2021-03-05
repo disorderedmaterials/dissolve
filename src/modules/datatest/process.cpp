@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "base/sysfunc.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "math/error.h"
 #include "modules/datatest/datatest.h"

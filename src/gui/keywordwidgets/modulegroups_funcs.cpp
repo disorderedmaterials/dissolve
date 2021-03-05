@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/coredata.h"
-#include "genericitems/listhelper.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/modulegroups.h"

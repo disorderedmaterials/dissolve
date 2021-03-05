@@ -3,7 +3,6 @@
 
 #include "classes/coredata.h"
 #include "classes/species.h"
-#include "genericitems/listhelper.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/keywordwidgets/speciesreflist.h"
 #include <QComboBox>

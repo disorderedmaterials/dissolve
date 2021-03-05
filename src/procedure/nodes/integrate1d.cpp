@@ -6,7 +6,6 @@
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
 #include "keywords/types.h"
 #include "math/integrator.h"

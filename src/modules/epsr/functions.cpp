@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "math/gaussfit.h"
 #include "math/poissonfit.h"
@@ -15,8 +14,8 @@ const std::vector<Module *> &EPSRModule::targets() const { return keywords_.retr
 // Create / retrieve arrays for storage of empirical potential coefficients
 Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp)
 {
-    auto &coefficients = GenericListHelper<Array2D<std::vector<double>>>::realise(
-        dissolve.processingModuleData(), "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
+    auto &coefficients = dissolve.processingModuleData().realise<Array2D<std::vector<double>>>(
+        "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
 
     auto arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients[{0, 0}].size() : 0);
     if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) ||
@@ -73,9 +72,8 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
             truncate(ep, rminpt, rmaxpt);
 
             // Set the additional potential in the main processing data
-            GenericListHelper<Data1D>::realise(dissolve.processingModuleData(),
-                                               fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()), "Dissolve",
-                                               GenericItem::InRestartFileFlag) = ep;
+            dissolve.processingModuleData().realise<Data1D>(fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()),
+                                                            "Dissolve", GenericItem::InRestartFileFlag) = ep;
 
             // Grab pointer to the relevant pair potential (if it exists)
             auto *pp = dissolve.pairPotential(at1, at2);

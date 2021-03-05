@@ -22,6 +22,7 @@ template <class T> class GenericItemContainer<Array<T>> : public GenericItem
     public:
     // Return data item
     Array<T> &data() { return data_; }
+    const Array<T> &data() const { return data_; }
 
     /*
      * Item Class

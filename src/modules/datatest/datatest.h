@@ -7,7 +7,6 @@
 #include "classes/data1dstore.h"
 #include "classes/data2dstore.h"
 #include "classes/data3dstore.h"
-#include "genericitems/listhelper.h"
 #include "module/module.h"
 
 // Forward Declarations
@@ -89,8 +88,7 @@ class DataTestModule : public Module
             {
                 // Try to retrieve the data as the current type
                 found = false;
-                const T &data =
-                    GenericListHelper<T>::value(moduleData, dataIdentifier, targetModule->uniqueName(), T(), &found);
+                const T &data = moduleData.retrieve<T>(dataIdentifier, targetModule->uniqueName(), T(), &found);
 
                 if (!found)
                 {
@@ -108,7 +106,7 @@ class DataTestModule : public Module
             {
                 // Try to retrieve the data as the current type
                 found = false;
-                const T &data = GenericListHelper<T>::value(moduleData, dataIdentifier, "", T(), &found);
+                const T &data = moduleData.value<T>(dataIdentifier, "", T(), &found);
 
                 if (!found)
                 {

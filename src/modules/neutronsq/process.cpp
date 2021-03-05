@@ -6,7 +6,6 @@
 #include "classes/configuration.h"
 #include "classes/neutronweights.h"
 #include "classes/species.h"
-#include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
 #include "main/dissolve.h"
 #include "math/filters.h"
@@ -75,15 +74,15 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 
         // Store the reference data in processing
         referenceData.setName(uniqueName());
-        auto &storedData = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceData", uniqueName(),
-                                                              GenericItem::ProtectedFlag);
+        auto &storedData =
+            dissolve.processingModuleData().realise<Data1D>("ReferenceData", uniqueName(), GenericItem::ProtectedFlag);
         storedData.setObjectTag(fmt::format("{}//ReferenceData", uniqueName()));
         storedData = referenceData;
 
         // Calculate and store the FT of the reference data in processing
         referenceData.setName(uniqueName());
-        auto &storedDataFT = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "ReferenceDataFT",
-                                                                uniqueName(), GenericItem::ProtectedFlag);
+        auto &storedDataFT =
+            dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", uniqueName(), GenericItem::ProtectedFlag);
         storedDataFT.setObjectTag(fmt::format("{}//ReferenceDataFT", uniqueName()));
         storedDataFT = referenceData;
         auto rho = rdfModule->effectiveDensity();
@@ -162,12 +161,11 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Get unweighted S(Q) from the specified SQMOdule
     if (!dissolve.processingModuleData().contains("UnweightedSQ", sqModule->uniqueName()))
         return Messenger::error("Couldn't locate unweighted S(Q) data from the SQModule '{}'.\n", sqModule->uniqueName());
-    const auto &unweightedSQ =
-        GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedSQ", sqModule->uniqueName());
+    const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sqModule->uniqueName());
 
     // Calculate and store weights
-    auto &weights = GenericListHelper<NeutronWeights>::realise(dissolve.processingModuleData(), "FullWeights", uniqueName_,
-                                                               GenericItem::InRestartFileFlag);
+    auto &weights =
+        dissolve.processingModuleData().realise<NeutronWeights>("FullWeights", uniqueName_, GenericItem::InRestartFileFlag);
     calculateWeights(rdfModule, weights);
 
     // Create, print, and store weights
@@ -176,8 +174,8 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     weights.print();
 
     // Does a PartialSet for the weighted S(Q) already exist for this Configuration?
-    auto &weightedSQ = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedSQ", uniqueName_,
-                                                              GenericItem::InRestartFileFlag, &created);
+    auto &weightedSQ = dissolve.processingModuleData().realise<PartialSet>("WeightedSQ", uniqueName_,
+                                                                           GenericItem::InRestartFileFlag, &created);
     if (created)
         weightedSQ.setUpPartials(unweightedSQ.atomTypes(), uniqueName(), "weighted", "sq", "Q, 1/Angstroms");
 
@@ -198,12 +196,11 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Get summed unweighted g(r) from the RDFMOdule
     if (!dissolve.processingModuleData().contains("UnweightedGR", rdfModule->uniqueName()))
         return Messenger::error("Couldn't locate summed unweighted g(r) data.\n");
-    const auto &unweightedGR =
-        GenericListHelper<PartialSet>::value(dissolve.processingModuleData(), "UnweightedGR", rdfModule->uniqueName());
+    const auto &unweightedGR = dissolve.processingModuleData().value<PartialSet>("UnweightedGR", rdfModule->uniqueName());
 
     // Create/retrieve PartialSet for summed weighted g(r)
-    auto &weightedGR = GenericListHelper<PartialSet>::realise(dissolve.processingModuleData(), "WeightedGR", uniqueName_,
-                                                              GenericItem::InRestartFileFlag, &created);
+    auto &weightedGR = dissolve.processingModuleData().realise<PartialSet>("WeightedGR", uniqueName_,
+                                                                           GenericItem::InRestartFileFlag, &created);
     if (created)
         weightedGR.setUpPartials(unweightedGR.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
 
@@ -218,8 +215,8 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         return false;
 
     // Calculate representative total g(r) from FT of calculated S(Q)
-    auto &repGR = GenericListHelper<Data1D>::realise(dissolve.processingModuleData(), "RepresentativeTotalGR", uniqueName_,
-                                                     GenericItem::InRestartFileFlag);
+    auto &repGR =
+        dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", uniqueName_, GenericItem::InRestartFileFlag);
     repGR = weightedSQ.total();
     auto rMin = weightedGR.total().xAxis().front();
     auto rMax = weightedGR.total().xAxis().back();

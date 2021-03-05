@@ -6,7 +6,6 @@
 #include "base/sysfunc.h"
 #include "classes/configuration.h"
 #include "expression/variable.h"
-#include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
 #include "math/mc.h"
 #include "procedure/nodes/collect1d.h"
@@ -182,8 +181,8 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
 
     // Generate final fit data
     // Retrieve / realise the data from the supplied list
-    auto &data = GenericListHelper<Data1D>::realise(targetList, fmt::format("{}_{}", name(), cfg->niceName()), prefix,
-                                                    GenericItem::InRestartFileFlag);
+    auto &data =
+        targetList.realise<Data1D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag);
 
     data.setName(name());
     data.setObjectTag(fmt::format("{}//Fit1D//{}//{}", prefix, cfg->name(), name()));

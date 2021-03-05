@@ -6,7 +6,6 @@
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
 #include "keywords/types.h"
 #include "math/integrator.h"
@@ -114,8 +113,8 @@ ProcedureNode::NodeExecutionResult Process1DProcedureNode::execute(ProcessPool &
 {
     // Retrieve / realise the normalised data from the supplied list
     bool created;
-    auto &data = GenericListHelper<Data1D>::realise(targetList, fmt::format("{}_{}", name(), cfg->niceName()), prefix,
-                                                    GenericItem::InRestartFileFlag, &created);
+    auto &data = targetList.realise<Data1D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix,
+                                            GenericItem::InRestartFileFlag, &created);
     processedData_ = &data;
 
     data.setName(name());

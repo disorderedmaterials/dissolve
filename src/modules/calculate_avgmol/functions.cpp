@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "modules/calculate_avgmol/avgmol.h"
 
@@ -15,12 +14,9 @@ void CalculateAvgMolModule::updateArrays(Dissolve &dissolve)
     auto requiredSize = targetSpecies_ ? targetSpecies_->nAtoms() : -1;
 
     // Retrieve / create the three data arrays, and size accordingly
-    auto &x = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "X", uniqueName(),
-                                                               GenericItem::InRestartFileFlag);
-    auto &y = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "Y", uniqueName(),
-                                                               GenericItem::InRestartFileFlag);
-    auto &z = GenericListHelper<Array<SampledDouble>>::realise(dissolve.processingModuleData(), "Z", uniqueName(),
-                                                               GenericItem::InRestartFileFlag);
+    auto &x = dissolve.processingModuleData().realise<Array<SampledDouble>>("X", uniqueName(), GenericItem::InRestartFileFlag);
+    auto &y = dissolve.processingModuleData().realise<Array<SampledDouble>>("Y", uniqueName(), GenericItem::InRestartFileFlag);
+    auto &z = dissolve.processingModuleData().realise<Array<SampledDouble>>("Z", uniqueName(), GenericItem::InRestartFileFlag);
 
     if (requiredSize > 0)
     {

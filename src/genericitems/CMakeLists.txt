@@ -7,7 +7,6 @@ add_library(
   item.h
   items.h
   list.h
-  listhelper.h
 )
 
 include_directories(genericitems PRIVATE ${PROJECT_SOURCE_DIR}/src)

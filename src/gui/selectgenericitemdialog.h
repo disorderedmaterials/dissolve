@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "genericitems/listhelper.h"
 #include "gui/ui_selectgenericitemdialog.h"
 #include "main/dissolve.h"
 #include "templates/variantpointer.h"
@@ -79,7 +78,7 @@ class SelectGenericItemDialog : public QDialog
         RefList<T> items;
 
         // -- Processing Module Data
-        items = GenericListHelper<T>::items(dissolve_.processingModuleData());
+        items = dissolve_.processingModuleData().items<T>();
         addToTable<T>(items, "Processing");
 
         show();

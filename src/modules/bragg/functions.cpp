@@ -8,7 +8,6 @@
 #include "classes/configuration.h"
 #include "classes/kvector.h"
 #include "classes/species.h"
-#include "genericitems/listhelper.h"
 #include "math/broadeningfunction.h"
 #include "math/filters.h"
 #include "modules/bragg/bragg.h"
@@ -24,28 +23,22 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
                                       const double qMax, Vec3<int> multiplicity, bool &alreadyUpToDate)
 {
     // Check to see if the arrays are up-to-date
-    auto braggDataVersion = GenericListHelper<int>::retrieve(cfg->moduleData(), "BraggVersion", "", -1);
+    auto braggDataVersion = cfg->moduleData().retrieve<int>("BraggVersion", "", -1);
     alreadyUpToDate = braggDataVersion == cfg->contentsVersion();
     if (alreadyUpToDate)
         return true;
 
     // Realise the arrays from the Configuration
-    auto &braggKVectors = GenericListHelper<Array<KVector>>::realise(cfg->moduleData(), "BraggKVectors");
-    auto &braggReflections = GenericListHelper<Array<BraggReflection>>::realise(cfg->moduleData(), "BraggReflections", "",
-                                                                                GenericItem::InRestartFileFlag);
-    Array2D<double> &braggAtomVectorXCos =
-        GenericListHelper<Array2D<double>>::realise(cfg->moduleData(), "BraggAtomVectorXCos");
-    Array2D<double> &braggAtomVectorYCos =
-        GenericListHelper<Array2D<double>>::realise(cfg->moduleData(), "BraggAtomVectorYCos");
-    Array2D<double> &braggAtomVectorZCos =
-        GenericListHelper<Array2D<double>>::realise(cfg->moduleData(), "BraggAtomVectorZCos");
-    Array2D<double> &braggAtomVectorXSin =
-        GenericListHelper<Array2D<double>>::realise(cfg->moduleData(), "BraggAtomVectorXSin");
-    Array2D<double> &braggAtomVectorYSin =
-        GenericListHelper<Array2D<double>>::realise(cfg->moduleData(), "BraggAtomVectorYSin");
-    Array2D<double> &braggAtomVectorZSin =
-        GenericListHelper<Array2D<double>>::realise(cfg->moduleData(), "BraggAtomVectorZSin");
-    auto &braggMaximumHKL = GenericListHelper<Vec3<int>>::realise(cfg->moduleData(), "BraggMaximumHKL");
+    auto &braggKVectors = cfg->moduleData().realise<Array<KVector>>("BraggKVectors");
+    auto &braggReflections =
+        cfg->moduleData().realise<Array<BraggReflection>>("BraggReflections", "", GenericItem::InRestartFileFlag);
+    auto &braggAtomVectorXCos = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorXCos");
+    auto &braggAtomVectorYCos = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorYCos");
+    auto &braggAtomVectorZCos = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorZCos");
+    auto &braggAtomVectorXSin = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorXSin");
+    auto &braggAtomVectorYSin = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorYSin");
+    auto &braggAtomVectorZSin = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorZSin");
+    auto &braggMaximumHKL = cfg->moduleData().realise<Vec3<int>>("BraggMaximumHKL");
 
     // Grab some useful values
     const auto *box = cfg->box();
@@ -54,7 +47,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
     auto &atoms = cfg->atoms();
 
     // Set up reciprocal axes and lengths - take those from the Box and scale based on the multiplicity
-    Matrix3 rAxes = box->reciprocalAxes();
+    auto rAxes = box->reciprocalAxes();
     rAxes.columnMultiply(0, multiplicity.x);
     rAxes.columnMultiply(1, multiplicity.y);
     rAxes.columnMultiply(2, multiplicity.z);
@@ -319,7 +312,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
     });
 
     // Store the new version of the data
-    GenericListHelper<int>::realise(cfg->moduleData(), "BraggVersion", "") = cfg->contentsVersion();
+    cfg->moduleData().realise<int>("BraggVersion", "") = cfg->contentsVersion();
 
     return true;
 }
@@ -330,8 +323,8 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
 {
     // Retrieve BraggReflection data from the Configuration's module data
     auto found = false;
-    const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(cfg->moduleData(), "BraggReflections", "",
-                                                                                    Array<BraggReflection>(), &found);
+    const auto &braggReflections =
+        cfg->moduleData().value<Array<BraggReflection>>("BraggReflections", "", Array<BraggReflection>(), &found);
     if (!found)
         return Messenger::error("Failed to find BraggReflection array in module data for Configuration '{}'.\n", cfg->name());
     const auto nReflections = braggReflections.nItems();
@@ -339,8 +332,8 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
     // Realise / retrieve storage for the Bragg partial S(Q) and combined F(Q)
     const auto nTypes = cfg->nUsedAtomTypes();
     bool wasCreated;
-    auto &braggPartials = GenericListHelper<Array2D<Data1D>>::realise(cfg->moduleData(), "OriginalBragg", "",
-                                                                      GenericItem::InRestartFileFlag, &wasCreated);
+    auto &braggPartials =
+        cfg->moduleData().realise<Array2D<Data1D>>("OriginalBragg", "", GenericItem::InRestartFileFlag, &wasCreated);
     if (wasCreated)
     {
         // Create the triangular array
@@ -358,8 +351,7 @@ bool BraggModule::formReflectionFunctions(ProcessPool &procPool, Configuration *
         // Set up Data1D array with our empty data
         std::fill(braggPartials.begin(), braggPartials.end(), temp);
     }
-    auto &braggTotal = GenericListHelper<Data1D>::realise(cfg->moduleData(), "OriginalBraggTotal", "",
-                                                          GenericItem::InRestartFileFlag, &wasCreated);
+    auto &braggTotal = cfg->moduleData().realise<Data1D>("OriginalBraggTotal", "", GenericItem::InRestartFileFlag, &wasCreated);
     if (wasCreated)
         braggTotal.setObjectTag(fmt::format("{}//OriginalBragg//Total", cfg->niceName()));
     braggTotal.clear();
@@ -403,8 +395,8 @@ bool BraggModule::reBinReflections(ProcessPool &procPool, Configuration *cfg, Ar
 {
     // Retrieve BraggReflection data from the Configuration's module data
     auto found = false;
-    const auto &braggReflections = GenericListHelper<Array<BraggReflection>>::value(cfg->moduleData(), "BraggReflections", "",
-                                                                                    Array<BraggReflection>(), &found);
+    const auto &braggReflections =
+        cfg->moduleData().value<Array<BraggReflection>>("BraggReflections", "", Array<BraggReflection>(), &found);
     if (!found)
         return Messenger::error("Failed to find BraggReflection array in module data for Configuration '{}'.\n", cfg->name());
     const auto nReflections = braggReflections.nItems();

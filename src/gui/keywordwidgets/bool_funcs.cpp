@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "genericitems/listhelper.h"
 #include "gui/keywordwidgets/bool.hui"
 
 BoolKeywordWidget::BoolKeywordWidget(QWidget *parent, KeywordBase *keyword, const CoreData &coreData)

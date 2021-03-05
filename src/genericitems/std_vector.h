@@ -23,6 +23,7 @@ template <> class GenericItemContainer<std::vector<double>> : public GenericItem
     public:
     // Return data item
     std::vector<double> &data() { return data_; }
+    const std::vector<double> &data() const { return data_; }
 
     /*
      * Item Class
