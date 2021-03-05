@@ -6,13 +6,7 @@
 #include "base/messenger.h"
 #include "math/histogram1d.h"
 
-// Static Members (ObjectStore)
-template <class Histogram2D> RefDataList<Histogram2D, int> ObjectStore<Histogram2D>::objects_;
-template <class Histogram2D> int ObjectStore<Histogram2D>::objectCount_ = 0;
-template <class Histogram2D> int ObjectStore<Histogram2D>::objectType_ = ObjectInfo::Histogram2DObject;
-template <class Histogram2D> std::string_view ObjectStore<Histogram2D>::objectTypeName_ = "Histogram2D";
-
-Histogram2D::Histogram2D() : ListItem<Histogram2D>(), ObjectStore<Histogram2D>(this)
+Histogram2D::Histogram2D() : ListItem<Histogram2D>()
 {
     accumulatedData_.addErrors();
 
@@ -21,7 +15,7 @@ Histogram2D::Histogram2D() : ListItem<Histogram2D>(), ObjectStore<Histogram2D>(t
 
 Histogram2D::~Histogram2D() {}
 
-Histogram2D::Histogram2D(const Histogram2D &source) : ObjectStore<Histogram2D>(this) { (*this) = source; }
+Histogram2D::Histogram2D(const Histogram2D &source) { (*this) = source; }
 
 // Clear Data
 void Histogram2D::clear()
@@ -215,10 +209,6 @@ bool Histogram2D::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 
-    if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
-        return false;
-    setObjectTag(parser.line());
-
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     initialise(parser.argd(0), parser.argd(1), parser.argd(2), parser.argd(3), parser.argd(4), parser.argd(5));
@@ -241,8 +231,6 @@ bool Histogram2D::read(LineParser &parser, CoreData &coreData)
 // Write data through specified LineParser
 bool Histogram2D::write(LineParser &parser)
 {
-    if (!parser.writeLineF("{}\n", objectTag()))
-        return false;
     if (!parser.writeLineF("{} {} {} {} {} {}\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_))
         return false;
     if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))

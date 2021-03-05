@@ -8,8 +8,8 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-RenderableSpecies::RenderableSpecies(const Species *source, std::string_view objectTag)
-    : Renderable(Renderable::SpeciesRenderable, objectTag), source_(source)
+RenderableSpecies::RenderableSpecies(const Species *source)
+    : Renderable(Renderable::SpeciesRenderable, "UNUSED"), source_(source)
 {
     // Set defaults
     displayStyle_ = SpheresStyle;
@@ -48,10 +48,6 @@ bool RenderableSpecies::validateDataSource()
     // Don't try to access source_ if we are not currently permitted to do so
     if (!sourceDataAccessEnabled_)
         return false;
-
-    // If there is no valid source set, attempt to set it now...
-    if (!source_)
-        source_ = Species::findObject(objectTag_);
 
     return source_;
 }

@@ -44,7 +44,7 @@ void ConfigurationViewer::setConfiguration(Configuration *cfg)
     // Create a new Renderable for the supplied Configuration
     if (configuration_)
     {
-        configurationRenderable_ = new RenderableConfiguration(configuration_, configuration_->objectTag());
+        configurationRenderable_ = new RenderableConfiguration(configuration_);
         ownRenderable(configurationRenderable_);
         view_.showAllData();
     }

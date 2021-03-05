@@ -40,7 +40,6 @@ bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 
     // Set name and object tag for average species
     averageSpecies_.setName(fmt::format("{}@{}", site ? site->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
-    averageSpecies_.setObjectTag(fmt::format("CalculateAvgMol_{}", averageSpecies_.name()));
 
     // Realise arrays
     updateArrays(dissolve);

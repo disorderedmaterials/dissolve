@@ -13,7 +13,7 @@ class Axes;
 class RenderableConfiguration : public Renderable
 {
     public:
-    RenderableConfiguration(const Configuration *source, std::string_view objectTag);
+    RenderableConfiguration(const Configuration *source);
     ~RenderableConfiguration();
 
     /*

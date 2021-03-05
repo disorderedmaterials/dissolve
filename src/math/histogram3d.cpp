@@ -6,13 +6,7 @@
 #include "base/messenger.h"
 #include "math/histogram1d.h"
 
-// Static Members (ObjectStore)
-template <class Histogram3D> RefDataList<Histogram3D, int> ObjectStore<Histogram3D>::objects_;
-template <class Histogram3D> int ObjectStore<Histogram3D>::objectCount_ = 0;
-template <class Histogram3D> int ObjectStore<Histogram3D>::objectType_ = ObjectInfo::Histogram3DObject;
-template <class Histogram3D> std::string_view ObjectStore<Histogram3D>::objectTypeName_ = "Histogram3D";
-
-Histogram3D::Histogram3D() : ListItem<Histogram3D>(), ObjectStore<Histogram3D>(this)
+Histogram3D::Histogram3D() : ListItem<Histogram3D>()
 {
     accumulatedData_.addErrors();
 
@@ -21,7 +15,7 @@ Histogram3D::Histogram3D() : ListItem<Histogram3D>(), ObjectStore<Histogram3D>(t
 
 Histogram3D::~Histogram3D() {}
 
-Histogram3D::Histogram3D(const Histogram3D &source) : ObjectStore<Histogram3D>(this) { (*this) = source; }
+Histogram3D::Histogram3D(const Histogram3D &source) { (*this) = source; }
 
 // Clear Data
 void Histogram3D::clear()
@@ -252,10 +246,6 @@ bool Histogram3D::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 
-    if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
-        return false;
-    setObjectTag(parser.line());
-
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     initialise(parser.argd(0), parser.argd(1), parser.argd(2), parser.argd(3), parser.argd(4), parser.argd(5), parser.argd(6),
@@ -276,8 +266,6 @@ bool Histogram3D::read(LineParser &parser, CoreData &coreData)
 // Write data through specified LineParser
 bool Histogram3D::write(LineParser &parser)
 {
-    if (!parser.writeLineF("{}\n", objectTag()))
-        return false;
     if (!parser.writeLineF("{} {} {} {} {} {} {} {} {}\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_,
                            zMinimum_, zMaximum_, zBinWidth_))
         return false;

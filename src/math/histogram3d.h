@@ -7,13 +7,12 @@
 #include "math/data3d.h"
 #include "math/sampleddouble.h"
 #include "templates/array3d.h"
-#include "templates/objectstore.h"
 
 // Forward Declarations
 class ProcessPool;
 
 // One-Dimensional Histogram
-class Histogram3D : public ListItem<Histogram3D>, public ObjectStore<Histogram3D>, public GenericItemBase
+class Histogram3D : public ListItem<Histogram3D>, public GenericItemBase
 {
     public:
     Histogram3D();
