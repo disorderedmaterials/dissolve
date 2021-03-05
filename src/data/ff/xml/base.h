@@ -5,19 +5,19 @@
 
 #include "data/ff/ff.h"
 #include "templates/optionalref.h"
-#include <pugixml.hpp>
 #include <string_view>
 
 // Forward Declarations
 /* none */
 
 // OPLS-AA (2005) Base Forcefield
-class XMLBaseForcefield : public Forcefield
+class Forcefield_XML : public Forcefield
 {
     public:
-    XMLBaseForcefield(std::string_view);
-    XMLBaseForcefield(pugi::xml_node doc);
-    ~XMLBaseForcefield() = default;
+    // Forcefield_XML() = default;
+    Forcefield_XML(std::vector<ForcefieldAtomType> &, std::vector<ForcefieldBondTerm> &, std::vector<ForcefieldAngleTerm> &,
+		   std::vector<ForcefieldTorsionTerm> &, std::vector<ForcefieldImproperTerm> &);
+    ~Forcefield_XML() = default;
 
     /*
      * Definition
@@ -40,7 +40,4 @@ class XMLBaseForcefield : public Forcefield
     public:
     // Return the base ForcefieldAtomType with specified id (if it exists)
     OptionalReferenceWrapper<const ForcefieldAtomType> oplsAtomTypeById(int id) const;
-
-    private:
-    pugi::xml_node doc_;
 };

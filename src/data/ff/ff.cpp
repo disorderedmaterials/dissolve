@@ -18,6 +18,13 @@
  * Set Up
  */
 
+Forcefield::Forcefield(std::vector<ForcefieldAtomType> &atoms, std::vector<ForcefieldBondTerm> &bonds,
+                       std::vector<ForcefieldAngleTerm> &angles, std::vector<ForcefieldTorsionTerm> &torsions,
+                       std::vector<ForcefieldImproperTerm> &impropers)
+    : atomTypes_(atoms), bondTerms_(bonds), angleTerms_(angles), torsionTerms_(torsions), improperTerms_(impropers)
+{
+}
+
 // Prepare forcefield for use
 bool Forcefield::prepare()
 {

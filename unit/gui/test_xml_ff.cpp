@@ -3,6 +3,7 @@
 
 #include "classes/atomtype.h"
 #include "data/elements.h"
+#include "data/ff/xml/base.h"
 #include "main/dissolve.h"
 #include "models/xmlAngleModel.h"
 #include "models/xmlAtomModel.h"
@@ -10,6 +11,7 @@
 #include "models/xmlImproperModel.h"
 #include "models/xmlTorsionModel.h"
 #include <gtest/gtest.h>
+#include <memory>
 #include <tuple>
 #include <vector>
 
@@ -178,6 +180,18 @@ TEST_F(XmlFFTest, XmlAtom)
     // Now we can add the atom type because it exists;
     ASSERT_TRUE(atoms.setData(atoms.index(0, 4), "H"));
     ASSERT_EQ(atoms.data(atoms.index(0, 4)).toString().toStdString(), "H");
+}
+
+TEST_F(XmlFFTest, XmlAll)
+{
+    std::vector<ForcefieldAtomType> atoms;
+    std::vector<ForcefieldBondTerm> bonds;
+    std::vector<ForcefieldAngleTerm> angles;
+    std::vector<ForcefieldTorsionTerm> torsions;
+    std::vector<ForcefieldImproperTerm> impropers;
+    // auto xmlFF = std::make_shared<Forcefield_XML>();
+    auto xmlFF = std::make_shared<Forcefield_XML>(atoms, bonds, angles, torsions, impropers);
+    // ForcefieldLibrary::registerForcefield(std::static_pointer_cast<Forcefield>(xmlFF));
 }
 
 } // namespace UnitTest
