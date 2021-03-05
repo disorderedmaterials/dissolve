@@ -32,12 +32,12 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
     auto &braggKVectors = cfg->moduleData().realise<Array<KVector>>("BraggKVectors");
     auto &braggReflections =
         cfg->moduleData().realise<Array<BraggReflection>>("BraggReflections", "", GenericItem::InRestartFileFlag);
-    Array2D<double> &braggAtomVectorXCos = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorXCos");
+    auto &braggAtomVectorXCos = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorXCos");
     auto &braggAtomVectorYCos = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorYCos");
-    Array2D<double> &braggAtomVectorZCos = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorZCos");
-    Array2D<double> &braggAtomVectorXSin = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorXSin");
-    Array2D<double> &braggAtomVectorYSin = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorYSin");
-    Array2D<double> &braggAtomVectorZSin = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorZSin");
+    auto &braggAtomVectorZCos = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorZCos");
+    auto &braggAtomVectorXSin = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorXSin");
+    auto &braggAtomVectorYSin = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorYSin");
+    auto &braggAtomVectorZSin = cfg->moduleData().realise<Array2D<double>>("BraggAtomVectorZSin");
     auto &braggMaximumHKL = cfg->moduleData().realise<Vec3<int>>("BraggMaximumHKL");
 
     // Grab some useful values
@@ -47,7 +47,7 @@ bool BraggModule::calculateBraggTerms(ProcessPool &procPool, Configuration *cfg,
     auto &atoms = cfg->atoms();
 
     // Set up reciprocal axes and lengths - take those from the Box and scale based on the multiplicity
-    Matrix3 rAxes = box->reciprocalAxes();
+    auto rAxes = box->reciprocalAxes();
     rAxes.columnMultiply(0, multiplicity.x);
     rAxes.columnMultiply(1, multiplicity.y);
     rAxes.columnMultiply(2, multiplicity.z);
