@@ -11,8 +11,7 @@ RenderableGroup::RenderableGroup(std::string_view name, StockColours::StockColou
     visible_ = true;
 
     colouringStyle_ = RenderableGroup::NoGroupColouring;
-    automaticStockColourUsageCount_.initialise(StockColours::nStockColours);
-    automaticStockColourUsageCount_ = 0;
+    automaticStockColourUsageCount_.fill(0);
     fixedStockColour_ = colour;
     lineStipple_ = LineStipple::NoStipple;
 
@@ -93,7 +92,7 @@ void RenderableGroup::empty()
     renderables_.clear();
 
     // Reset colour counters
-    automaticStockColourUsageCount_ = 0;
+    automaticStockColourUsageCount_.fill(0);
 }
 
 /*

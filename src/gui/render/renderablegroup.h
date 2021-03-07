@@ -81,7 +81,7 @@ class RenderableGroup
     // Stock colour associated to this group
     StockColours::StockColour fixedStockColour_;
     // Usage counters for stock colours when colouringStyle_ == AutomaticIndividualColouring
-    Array<int> automaticStockColourUsageCount_;
+    std::array<int, StockColours::nStockColours> automaticStockColourUsageCount_;
 
     private:
     // Set colour information for the supplied Renderable, according to our settings
