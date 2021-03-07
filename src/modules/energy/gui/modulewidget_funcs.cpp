@@ -149,6 +149,10 @@ void EnergyModuleWidget::on_TargetCombo_currentIndexChanged(int index)
         Renderable::Data1DRenderable, fmt::format("{}//{}//Torsion", currentConfiguration_->niceName(), module_->uniqueName()),
         "Torsion", "Intramolecular");
     torsion->setColour(StockColours::OrangeStockColour);
+    auto improper = energyGraph_->createRenderable(
+        Renderable::Data1DRenderable, fmt::format("{}//{}//Improper", currentConfiguration_->niceName(), module_->uniqueName()),
+        "Improper", "Intramolecular");
+    improper->setColour(StockColours::CyanStockColour);
 
     updateControls();
 }
