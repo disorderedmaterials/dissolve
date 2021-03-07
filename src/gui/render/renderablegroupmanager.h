@@ -4,9 +4,7 @@
 #pragma once
 
 #include "gui/render/renderablegroup.h"
-
-// Forward declarations
-/* none */
+#include "templates/optionalref.h"
 
 // Renderable Group Manager
 class RenderableGroupManager
@@ -20,25 +18,23 @@ class RenderableGroupManager
      * Group Management
      */
     private:
-    // List of current RenderableGroups in use
-    List<RenderableGroup> groups_;
+    // Vector of current RenderableGroups in use
+    std::vector<RenderableGroup> groups_;
     // Usage counters for stock colours
     Array<int> stockColourUsageCount_;
 
     public:
     // Create named group, or return existing group by the same name
-    RenderableGroup *createGroup(std::string_view name);
+    RenderableGroup &createGroup(std::string_view name);
     // Add Renderable to its specified group, creating / associating as necessary
-    RenderableGroup *addToGroup(Renderable *renderable, std::string_view groupName);
+    RenderableGroup &addToGroup(const std::shared_ptr<Renderable> &renderable, std::string_view groupName);
     // Return named group, if it exists
-    RenderableGroup *group(std::string_view name);
+    OptionalReferenceWrapper<RenderableGroup> group(std::string_view name);
     // Return group for specified Renderable, if one has been assigned
-    RenderableGroup *group(Renderable *renderable);
+    OptionalReferenceWrapper<RenderableGroup> group(const std::shared_ptr<Renderable> &renderable);
     // Return current RenderableGroups in use
-    const List<RenderableGroup> &groups() const;
-    // Remove Renderable from its specified group
-    void removeFromGroup(Renderable *renderable);
-    // Empty all groups of Renderables
+    const std::vector<RenderableGroup> &groups() const;
+    // Empty all groups
     void emptyGroups();
 
     /*

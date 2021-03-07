@@ -2,6 +2,8 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "gui/render/renderabledata1d.h"
+#include "gui/render/renderabledata2d.h"
 #include "modules/calculate_dangle/dangle.h"
 #include "modules/calculate_dangle/gui/modulewidget.h"
 
@@ -84,14 +86,14 @@ void CalculateDAngleModuleWidget::setGraphDataTargets(CalculateDAngleModule *mod
     for (Configuration *cfg : module_->targetConfigurations())
     {
         // Calculated B...C RDF
-        auto *rdf = rdfGraph_->createRenderable(
-            Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//RDF(BC)", module_->uniqueName(), cfg->niceName()),
+        auto rdf = rdfGraph_->createRenderable(
+            Renderable::Data2DRenderable, fmt::format("{}//Process1D//{}//RDF(BC)", module_->uniqueName(), cfg->niceName()),
             "B...C g(r)");
         rdf->setColour(StockColours::BlueStockColour);
 
         // Calculated angle histogram
-        auto *angle = angleGraph_->createRenderable(
-            Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//Angle(ABC)", module_->uniqueName(), cfg->niceName()),
+        auto angle = angleGraph_->createRenderable(
+            Renderable::Data2DRenderable, fmt::format("{}//Process1D//{}//Angle(ABC)", module_->uniqueName(), cfg->niceName()),
             "A-B...C Angle");
         angle->setColour(StockColours::RedStockColour);
 

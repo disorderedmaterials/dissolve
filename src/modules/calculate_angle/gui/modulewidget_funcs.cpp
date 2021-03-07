@@ -2,6 +2,8 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/configuration.h"
+#include "gui/render/renderabledata1d.h"
+#include "gui/render/renderabledata2d.h"
 #include "modules/calculate_angle/angle.h"
 #include "modules/calculate_angle/gui/modulewidget.h"
 
@@ -119,19 +121,19 @@ void CalculateAngleModuleWidget::setGraphDataTargets(CalculateAngleModule *modul
         return;
 
     // Calculated A...B RDF
-    auto *rdfAB = rdfABGraph_->createRenderable(
+    auto rdfAB = rdfABGraph_->createRenderable(
         Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//RDF(AB)", module_->uniqueName(), cfg->niceName()),
         "B...C g(r)");
     rdfAB->setColour(StockColours::BlueStockColour);
 
     // Calculated B...C RDF
-    auto *rdfBC = rdfBCGraph_->createRenderable(
+    auto rdfBC = rdfBCGraph_->createRenderable(
         Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//RDF(BC)", module_->uniqueName(), cfg->niceName()),
         "B...C g(r)");
     rdfBC->setColour(StockColours::BlueStockColour);
 
     // Calculated angle histogram
-    auto *angle = angleGraph_->createRenderable(
+    auto angle = angleGraph_->createRenderable(
         Renderable::Data1DRenderable, fmt::format("{}//Process1D//{}//Angle(ABC)", module_->uniqueName(), cfg->niceName()),
         "A-B...C Angle");
     angle->setColour(StockColours::RedStockColour);

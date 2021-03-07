@@ -4,7 +4,7 @@
 #include "gui/render/renderablegroup.h"
 #include "gui/render/renderable.h"
 
-RenderableGroup::RenderableGroup(std::string_view name, StockColours::StockColour colour) : ListItem<RenderableGroup>()
+RenderableGroup::RenderableGroup(std::string_view name, StockColours::StockColour colour)
 {
     name_ = name;
 
@@ -13,7 +13,7 @@ RenderableGroup::RenderableGroup(std::string_view name, StockColours::StockColou
     colouringStyle_ = RenderableGroup::NoGroupColouring;
     automaticStockColourUsageCount_.initialise(StockColours::nStockColours);
     automaticStockColourUsageCount_ = 0;
-    setFixedStockColour(StockColours::BlackStockColour);
+    fixedStockColour_ = colour;
     lineStipple_ = LineStipple::NoStipple;
 
     verticalShiftStyle_ = GroupVerticalShifting;
@@ -33,60 +33,64 @@ std::string_view RenderableGroup::name() const { return name_; }
  */
 
 // Associate Renderable to group (if it isn't already)
-void RenderableGroup::associateRenderable(Renderable *renderable)
+void RenderableGroup::associateRenderable(std::shared_ptr<Renderable> renderable)
 {
-    if (renderables_.contains(renderable))
-    {
-        fmt::print("Group '{}' already contains the Renderable '{}', so not adding it again.\n", name(), renderable->name());
+    // Return immediately if tne renderable is already in the group
+    if (std::find(renderables_.begin(), renderables_.end(), renderable) != renderables_.end())
         return;
-    }
 
-    renderables_.append(renderable);
+    renderables_.push_back(renderable);
 
     // Apply colouring information if necessary
     setRenderableColour(renderable);
 
     // Apply vertical shift to the renderable if necessary
-    setRenderableVerticalShift(renderable, renderables_.nItems() - 1);
+    setRenderableVerticalShift(renderable, renderables_.size() - 1);
 
     // Apply line style if necessary
     setRenderableLineStyle(renderable);
 }
 
 // Remove Renderable from group (if it exists)
-void RenderableGroup::removeRenderable(Renderable *renderable)
+void RenderableGroup::removeRenderable(const std::shared_ptr<Renderable> renderable)
 {
-    if (!renderables_.contains(renderable))
+    // Return immediately if tne renderable is already in the group
+    if (std::find(renderables_.begin(), renderables_.end(), renderable) == renderables_.end())
     {
-        fmt::print("Renderable '{}' is not present in the group '{}', so can't remove it.\n", renderable->name(), name());
+        Messenger::warn("Renderable '{}' is not present in the group '{}', so can't remove it.\n", renderable->name(), name());
         return;
     }
+
+    renderables_.erase(
+        std::remove_if(renderables_.begin(), renderables_.end(), [renderable](const auto &data) { return data == renderable; }),
+        renderables_.end());
 
     // Remove shift from the renderable first, if one is being applied
     renderable->setValuesTransformEnabled(false);
     renderable->setValuesTransformEquation("value");
 
-    renderables_.remove(renderable);
-    renderable->setGroup(nullptr);
+    renderable->unSetGroup();
 }
 
 // Return whether the group is used by the specified renderable
-bool RenderableGroup::usedByRenderable(Renderable *renderable) const { return renderables_.contains(renderable); }
+bool RenderableGroup::usedByRenderable(std::shared_ptr<Renderable> renderable) const
+{
+    return std::find(renderables_.begin(), renderables_.end(), renderable) != renderables_.end();
+}
 
 // Return list of Renderables using this group
-const RefList<Renderable> &RenderableGroup::renderables() const { return renderables_; }
+const std::vector<std::shared_ptr<Renderable>> &RenderableGroup::renderables() const { return renderables_; }
 
 // Return whether the group is empty
-bool RenderableGroup::isEmpty() const { return renderables_.nItems() == 0; }
+bool RenderableGroup::isEmpty() const { return renderables_.empty(); }
 
 // Empty the group, removing all Renderable targets
 void RenderableGroup::empty()
 {
-    while (Renderable *renderable = renderables_.firstItem())
-    {
-        renderables_.remove(renderable);
-        renderable->setGroup(nullptr);
-    }
+    for (auto &renderable : renderables_)
+        renderable->unSetGroup();
+
+    renderables_.clear();
 
     // Reset colour counters
     automaticStockColourUsageCount_ = 0;
@@ -116,10 +120,10 @@ EnumOptions<RenderableGroup::GroupColouring> RenderableGroup::groupColourings()
 }
 
 // Set colour information for the supplied Renderable, according to our settings
-void RenderableGroup::setRenderableColour(Renderable *rend)
+void RenderableGroup::setRenderableColour(std::shared_ptr<Renderable> renderable)
 {
     if (colouringStyle_ == FixedGroupColouring)
-        rend->setColour(fixedStockColour_);
+        renderable->setColour(fixedStockColour_);
     else if (colouringStyle_ == AutomaticIndividualColouring)
     {
         // Find the StockColour with the lowest usage count
@@ -130,7 +134,7 @@ void RenderableGroup::setRenderableColour(Renderable *rend)
                 lowestId = colourId;
         }
 
-        rend->setColour((StockColours::StockColour)lowestId);
+        renderable->setColour((StockColours::StockColour)lowestId);
 
         ++automaticStockColourUsageCount_[lowestId];
     }
@@ -139,7 +143,7 @@ void RenderableGroup::setRenderableColour(Renderable *rend)
 // Set all renderable colours
 void RenderableGroup::setRenderableColours()
 {
-    for (Renderable *renderable : renderables_)
+    for (auto &renderable : renderables_)
         setRenderableColour(renderable);
 }
 
@@ -170,16 +174,16 @@ StockColours::StockColour RenderableGroup::fixedStockColour() const { return fix
  */
 
 // Set line style for the supplied Renderable, according to our settings
-void RenderableGroup::setRenderableLineStyle(Renderable *rend)
+void RenderableGroup::setRenderableLineStyle(std::shared_ptr<Renderable> renderable)
 {
     if (lineStipple_ != LineStipple::NoStipple)
-        rend->lineStyle().setStipple(lineStipple_);
+        renderable->lineStyle().setStipple(lineStipple_);
 }
 
 // Set all Renderable line styles
 void RenderableGroup::setRenderableLineStyles()
 {
-    for (Renderable *renderable : renderables_)
+    for (auto &renderable : renderables_)
         setRenderableLineStyle(renderable);
 }
 
@@ -208,7 +212,7 @@ EnumOptions<RenderableGroup::VerticalShiftStyle> RenderableGroup::verticalShiftS
 }
 
 // Set vertical shift in specified Renderable
-void RenderableGroup::setRenderableVerticalShift(Renderable *renderable, int rendIndex)
+void RenderableGroup::setRenderableVerticalShift(std::shared_ptr<Renderable> renderable, int rendIndex)
 {
     renderable->setValuesTransformEnabled(verticalShiftStyle_ != PreventVerticalShifting);
 
@@ -224,7 +228,7 @@ void RenderableGroup::setRenderableVerticalShift(Renderable *renderable, int ren
 void RenderableGroup::setRenderableVerticalShifts()
 {
     auto index = 0;
-    for (Renderable *renderable : renderables_)
+    for (auto &renderable : renderables_)
         setRenderableVerticalShift(renderable, index++);
 }
 

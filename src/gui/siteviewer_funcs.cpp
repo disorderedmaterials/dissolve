@@ -47,10 +47,10 @@ void SiteViewer::setSpecies(Species *sp)
     // Create a new Renderable for the supplied Species
     if (species_)
     {
-        speciesRenderable_ = new RenderableSpecies(species_);
+        speciesRenderable_ = std::make_shared<RenderableSpecies>(species_);
         speciesRenderable_->setName("Species");
         speciesRenderable_->setDisplayStyle(RenderableSpecies::LinesStyle);
-        ownRenderable(speciesRenderable_);
+
         view_.showAllData();
     }
 
@@ -72,9 +72,8 @@ void SiteViewer::setSite(SpeciesSite *site)
     // Create a new Renderable for the parent Species
     if (site_)
     {
-        siteRenderable_ = new RenderableSpeciesSite(species_, site_);
+        siteRenderable_ = std::make_shared<RenderableSpeciesSite>(species_, site_);
         siteRenderable_->setName("Site");
-        ownRenderable(siteRenderable_);
     }
 }
 

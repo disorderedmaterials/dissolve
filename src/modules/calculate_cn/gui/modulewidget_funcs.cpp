@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "gui/render/renderabledata1d.h"
 #include "modules/calculate_cn/cn.h"
 #include "modules/calculate_cn/gui/modulewidget.h"
 #include "modules/calculate_rdf/rdf.h"
@@ -91,7 +92,7 @@ void CalculateCNModuleWidget::setGraphDataTargets()
     }
 
     // Set RDF data target
-    Renderable *rdfRenderable = rdfGraph_->createRenderable(
+    auto rdfRenderable = rdfGraph_->createRenderable(
         Renderable::Data1DRenderable, rdfModule->rdfResult()->processedData().objectTag(), rdfModule->uniqueName());
     rdfRenderable->setColour(StockColours::BlueStockColour);
 

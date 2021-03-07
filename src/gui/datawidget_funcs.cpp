@@ -8,6 +8,9 @@
 #include <QButtonGroup>
 #include <QInputDialog>
 
+Q_DECLARE_METATYPE(std::shared_ptr<Renderable>)
+Q_DECLARE_METATYPE(const RenderableGroup *)
+
 DataWidget::DataWidget(QWidget *parent) : QWidget(parent)
 {
     // Set up our UI
@@ -198,7 +201,7 @@ void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int top
     if (createItem)
     {
         item = new QTreeWidgetItem;
-        item->setData(0, Qt::UserRole, VariantPointer<RenderableGroup>(data));
+        item->setData(0, Qt::UserRole, QVariant::fromValue(data));
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
         treeWidget->insertTopLevelItem(topLevelItemIndex, item);
     }
@@ -210,20 +213,20 @@ void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int top
     // 	item->setIcon(0, QIcon(":/general/icons/general_true.svg"));
     item->setCheckState(0, data->isVisible() ? Qt::Checked : Qt::Unchecked);
 
-    // Update child items
-    TreeWidgetUpdater<DataWidget, Renderable> renderableUpdater(item, data->renderables(), this,
-                                                                &DataWidget::dataTreeItemUpdateFunction);
+    // Update child item  TREEWIDGET_TODO
+    //    TreeWidgetUpdater<DataWidget, Renderable> renderableUpdater(item, data->renderables(), this,
+    //                                                                &DataWidget::dataTreeItemUpdateFunction);
 }
 
 // Data tree item update function
-void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, const Renderable *data,
+void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, std::shared_ptr<Renderable> data,
                                             bool createItem)
 {
     QTreeWidgetItem *item;
     if (createItem)
     {
         item = new QTreeWidgetItem;
-        item->setData(0, Qt::UserRole, VariantPointer<Renderable>(data));
+        item->setData(0, Qt::UserRole, QVariant::fromValue(data));
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
         parentItem->insertChild(childIndex, item);
     }
@@ -339,6 +342,8 @@ void DataWidget::updateDataTree()
 {
     Locker refreshLock(refreshLock_);
 
-    TreeWidgetUpdater<DataWidget, RenderableGroup> dataTreeUpdater(ui_.DataTree, dataViewer()->groupManager().groups(), this,
-                                                                   &DataWidget::dataTreeTopLevelUpdateFunction);
+    // TREEWIDGET_TODO
+    //    TreeWidgetUpdater<DataWidget, RenderableGroup> dataTreeUpdater(ui_.DataTree, dataViewer()->groupManager().groups(),
+    //    this,
+    //                                                                   &DataWidget::dataTreeTopLevelUpdateFunction);
 }

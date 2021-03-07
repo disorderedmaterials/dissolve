@@ -107,9 +107,9 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
     for (Configuration *cfg : module_->targetConfigurations())
     {
         // Calculated SDF
-        sdfRenderable_ = dynamic_cast<RenderableData3D *>(sdfGraph_->createRenderable(
+        sdfRenderable_ = sdfGraph_->createRenderable(
             Renderable::Data3DRenderable, fmt::format("{}//Process3D//{}//SDF", module_->uniqueName(), cfg->niceName()),
-            fmt::format("SDF//{}", cfg->niceName()), cfg->niceName()));
+            fmt::format("SDF//{}", cfg->niceName()), cfg->niceName());
 
         if (sdfRenderable_)
         {
@@ -122,16 +122,16 @@ void CalculateSDFModuleWidget::setGraphDataTargets()
             ui_.LowerCutoffSpin->setValue(lowerCutoff);
             ui_.UpperCutoffSpin->setValue(upperCutoff);
 
-            sdfRenderable_->setLowerCutoff(lowerCutoff);
-            sdfRenderable_->setUpperCutoff(upperCutoff);
+            auto *r3d = dynamic_cast<RenderableData3D *>(sdfRenderable_.get());
+            r3d->setLowerCutoff(lowerCutoff);
+            r3d->setUpperCutoff(upperCutoff);
         }
 
         // Reference molecule
         if (referenceMolecule_)
         {
-            referenceMoleculeRenderable_ = new RenderableSpecies(referenceMolecule_);
-            referenceMoleculeRenderable_->setName("Reference Molecule");
-            sdfGraph_->ownRenderable(referenceMoleculeRenderable_);
+            referenceMoleculeRenderable_ = std::make_shared<RenderableSpecies>(referenceMolecule_);
+            sdfGraph_->addRenderable(referenceMoleculeRenderable_);
         }
     }
 }
@@ -141,7 +141,8 @@ void CalculateSDFModuleWidget::on_LowerCutoffSpin_valueChanged(double value)
     if (refreshing_ || !sdfRenderable_)
         return;
 
-    sdfRenderable_->setLowerCutoff(value);
+    auto *r3d = dynamic_cast<RenderableData3D *>(sdfRenderable_.get());
+    r3d->setLowerCutoff(value);
 
     sdfGraph_->postRedisplay();
 }
@@ -151,7 +152,8 @@ void CalculateSDFModuleWidget::on_UpperCutoffSpin_valueChanged(double value)
     if (refreshing_ || !sdfRenderable_)
         return;
 
-    sdfRenderable_->setUpperCutoff(value);
+    auto *r3d = dynamic_cast<RenderableData3D *>(sdfRenderable_.get());
+    r3d->setUpperCutoff(value);
 
     sdfGraph_->postRedisplay();
 }

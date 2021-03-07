@@ -3,6 +3,7 @@
 
 #include "classes/atomtype.h"
 #include "gui/dataviewer.hui"
+#include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/neutronsq/gui/modulewidget.h"
@@ -176,9 +177,9 @@ void NeutronSQModuleWidget::setGraphDataTargets(NeutronSQModule *module)
                                     "Calculated G(r) (Direct)", "Calculated");
 
     // Add calculated total representative G(r) (from FT of S(Q))
-    auto *repGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable,
-                                                  fmt::format("{}//RepresentativeTotalGR", module_->uniqueName()),
-                                                  "Calculated G(r) (via FT)", "Calculated");
+    auto repGR = totalGRGraph_->createRenderable(Renderable::Data1DRenderable,
+                                                 fmt::format("{}//RepresentativeTotalGR", module_->uniqueName()),
+                                                 "Calculated G(r) (via FT)", "Calculated");
     repGR->lineStyle().setStipple(LineStipple::HalfDashStipple);
     repGR->setColour(StockColours::GreenStockColour);
 

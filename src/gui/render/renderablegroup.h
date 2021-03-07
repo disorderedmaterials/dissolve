@@ -11,7 +11,7 @@
 class Renderable;
 
 // Renderable Group
-class RenderableGroup : public ListItem<RenderableGroup>
+class RenderableGroup
 {
     public:
     RenderableGroup(std::string_view name, StockColours::StockColour colour);
@@ -32,17 +32,17 @@ class RenderableGroup : public ListItem<RenderableGroup>
      */
     private:
     // Renderables using this group
-    RefList<Renderable> renderables_;
+    std::vector<std::shared_ptr<Renderable>> renderables_;
 
     public:
     // Associate Renderable to group (if it isn't already)
-    void associateRenderable(Renderable *renderable);
+    void associateRenderable(std::shared_ptr<Renderable> renderable);
     // Remove Renderable from group (if it exists)
-    void removeRenderable(Renderable *renderable);
+    void removeRenderable(const std::shared_ptr<Renderable> renderable);
     // Return whether the group is used by the specified renderable
-    bool usedByRenderable(Renderable *renderable) const;
+    bool usedByRenderable(const std::shared_ptr<Renderable> renderable) const;
     // Return list of Renderables using this group
-    const RefList<Renderable> &renderables() const;
+    const std::vector<std::shared_ptr<Renderable>> &renderables() const;
     // Return whether the group is empty
     bool isEmpty() const;
     // Empty the group, removing all Renderable targets
@@ -85,7 +85,7 @@ class RenderableGroup : public ListItem<RenderableGroup>
 
     private:
     // Set colour information for the supplied Renderable, according to our settings
-    void setRenderableColour(Renderable *rend);
+    void setRenderableColour(std::shared_ptr<Renderable> renderable);
     // Set all Renderable colours
     void setRenderableColours();
 
@@ -110,7 +110,7 @@ class RenderableGroup : public ListItem<RenderableGroup>
 
     private:
     // Set line style for the supplied Renderable, according to our settings
-    void setRenderableLineStyle(Renderable *rend);
+    void setRenderableLineStyle(std::shared_ptr<Renderable> renderable);
     // Set all Renderable line styles
     void setRenderableLineStyles();
 
@@ -145,7 +145,7 @@ class RenderableGroup : public ListItem<RenderableGroup>
 
     private:
     // Set vertical shift in specified Renderable
-    void setRenderableVerticalShift(Renderable *renderable, int rendIndex);
+    void setRenderableVerticalShift(std::shared_ptr<Renderable> renderable, int rendIndex);
     // Set vertical shift in all Renderables in the group via their transform equations
     void setRenderableVerticalShifts();
 

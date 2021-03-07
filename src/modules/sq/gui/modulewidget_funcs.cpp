@@ -3,12 +3,12 @@
 
 #include "classes/atomtype.h"
 #include "gui/dataviewer.hui"
+#include "gui/render/renderabledata1d.h"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
 #include "modules/sq/gui/modulewidget.h"
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"
-#include "templates/variantpointer.h"
 
 SQModuleWidget::SQModuleWidget(QWidget *parent, SQModule *module, Dissolve &dissolve)
     : ModuleWidget(parent), module_(module), dissolve_(dissolve)

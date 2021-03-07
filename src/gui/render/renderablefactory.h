@@ -12,5 +12,5 @@ class RenderableFactory
 {
     public:
     // Create Renderable of specified type, from specified data (referenced by objectTag)
-    static Renderable *create(Renderable::RenderableType renderableType, std::string_view objectTag);
+    static std::shared_ptr<Renderable> create(Renderable::RenderableType renderableType, std::string_view objectTag);
 };
