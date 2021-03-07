@@ -52,10 +52,9 @@ class DataWidget : public QWidget
      */
     private:
     // Data tree top-level item update function
-    void dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int topLevelItemIndex, const RenderableGroup *data,
-                                        bool createItem);
+    void dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int topLevelItemIndex, RenderableGroup &data, bool createItem);
     // Data tree item update function
-    void dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, std::shared_ptr<Renderable> data,
+    void dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, std::shared_ptr<Renderable> &data,
                                     bool createItem);
 
     private slots:

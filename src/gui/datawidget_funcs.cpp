@@ -9,7 +9,7 @@
 #include <QInputDialog>
 
 Q_DECLARE_METATYPE(std::shared_ptr<Renderable>)
-Q_DECLARE_METATYPE(const RenderableGroup *)
+Q_DECLARE_METATYPE(RenderableGroup *)
 
 DataWidget::DataWidget(QWidget *parent) : QWidget(parent)
 {
@@ -194,14 +194,14 @@ void DataWidget::on_ViewCopyToClipboardButton_clicked(bool checked) { dataViewer
  */
 
 // Data tree top-level item update function
-void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int topLevelItemIndex, const RenderableGroup *data,
+void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int topLevelItemIndex, RenderableGroup &data,
                                                 bool createItem)
 {
     QTreeWidgetItem *item;
     if (createItem)
     {
         item = new QTreeWidgetItem;
-        item->setData(0, Qt::UserRole, QVariant::fromValue(data));
+        item->setData(0, Qt::UserRole, QVariant::fromValue(&data));
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable | Qt::ItemIsUserCheckable);
         treeWidget->insertTopLevelItem(topLevelItemIndex, item);
     }
@@ -209,17 +209,17 @@ void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int top
         item = treeWidget->topLevelItem(topLevelItemIndex);
 
     // Set item data
-    item->setText(0, QString::fromStdString(std::string(data->name())));
+    item->setText(0, QString::fromStdString(std::string(data.name())));
     // 	item->setIcon(0, QIcon(":/general/icons/general_true.svg"));
-    item->setCheckState(0, data->isVisible() ? Qt::Checked : Qt::Unchecked);
+    item->setCheckState(0, data.isVisible() ? Qt::Checked : Qt::Unchecked);
 
-    // Update child item  TREEWIDGET_TODO
-    //    TreeWidgetUpdater<DataWidget, Renderable> renderableUpdater(item, data->renderables(), this,
-    //                                                                &DataWidget::dataTreeItemUpdateFunction);
+    // Update child item
+    TreeWidgetUpdater<DataWidget, Renderable> renderableUpdater(item, data.renderables(), this,
+                                                                &DataWidget::dataTreeItemUpdateFunction);
 }
 
 // Data tree item update function
-void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, std::shared_ptr<Renderable> data,
+void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int childIndex, std::shared_ptr<Renderable> &data,
                                             bool createItem)
 {
     QTreeWidgetItem *item;
@@ -249,14 +249,14 @@ void DataWidget::on_DataTree_itemChanged(QTreeWidgetItem *item, int column)
     // Renderable.
     if (item->parent())
     {
-        Renderable *renderable = VariantPointer<Renderable>(item->data(0, Qt::UserRole));
+        auto renderable = item->data(0, Qt::UserRole).value<std::shared_ptr<Renderable>>();
         if (!renderable)
             return;
         renderable->setVisible(item->checkState(0) == Qt::Checked);
     }
     else
     {
-        RenderableGroup *group = VariantPointer<RenderableGroup>(item->data(0, Qt::UserRole));
+        auto *group = item->data(0, Qt::UserRole).value<RenderableGroup *>();
         if (!group)
             return;
         group->setVisible(item->checkState(0) == Qt::Checked);
@@ -342,8 +342,6 @@ void DataWidget::updateDataTree()
 {
     Locker refreshLock(refreshLock_);
 
-    // TREEWIDGET_TODO
-    //    TreeWidgetUpdater<DataWidget, RenderableGroup> dataTreeUpdater(ui_.DataTree, dataViewer()->groupManager().groups(),
-    //    this,
-    //                                                                   &DataWidget::dataTreeTopLevelUpdateFunction);
+    TreeWidgetUpdater<DataWidget, RenderableGroup> dataTreeUpdater(ui_.DataTree, dataViewer()->groupManager().groups(), this,
+                                                                   &DataWidget::dataTreeTopLevelUpdateFunction);
 }
