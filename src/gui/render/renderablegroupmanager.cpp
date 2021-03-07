@@ -74,7 +74,7 @@ RenderableGroup &RenderableGroupManager::addToGroup(const std::shared_ptr<Render
     auto &renderableGroup = createGroup(groupName);
 
     // Add unique Renderable reference to the group
-    renderableGroup.associateRenderable(renderable);
+    renderableGroup.addRenderable(renderable);
     renderable->setGroup(renderableGroup);
 
     return renderableGroup;

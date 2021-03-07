@@ -35,8 +35,8 @@ class RenderableGroup
     std::vector<std::shared_ptr<Renderable>> renderables_;
 
     public:
-    // Associate Renderable to group (if it isn't already)
-    void associateRenderable(std::shared_ptr<Renderable> renderable);
+    // Add Renderable to group (if it isn't already)
+    void addRenderable(std::shared_ptr<Renderable> renderable);
     // Remove Renderable from group (if it exists)
     void removeRenderable(const std::shared_ptr<Renderable> renderable);
     // Return whether the group is used by the specified renderable

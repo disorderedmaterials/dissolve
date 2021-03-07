@@ -32,7 +32,7 @@ std::string_view RenderableGroup::name() const { return name_; }
  */
 
 // Associate Renderable to group (if it isn't already)
-void RenderableGroup::associateRenderable(std::shared_ptr<Renderable> renderable)
+void RenderableGroup::addRenderable(std::shared_ptr<Renderable> renderable)
 {
     // Return immediately if tne renderable is already in the group
     if (std::find(renderables_.begin(), renderables_.end(), renderable) != renderables_.end())
