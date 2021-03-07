@@ -103,6 +103,7 @@ bool RenderableGroup::usedByRenderable(std::shared_ptr<Renderable> renderable) c
 }
 
 // Return list of Renderables using this group
+std::vector<std::shared_ptr<Renderable>> &RenderableGroup::renderables() { return renderables_; }
 const std::vector<std::shared_ptr<Renderable>> &RenderableGroup::renderables() const { return renderables_; }
 
 // Return whether the group is empty

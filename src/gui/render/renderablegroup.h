@@ -44,6 +44,7 @@ class RenderableGroup
     // Return whether the group is used by the specified renderable
     bool usedByRenderable(const std::shared_ptr<Renderable> renderable) const;
     // Return list of Renderables using this group
+    std::vector<std::shared_ptr<Renderable>> &renderables();
     const std::vector<std::shared_ptr<Renderable>> &renderables() const;
     // Return whether the group is empty
     bool isEmpty() const;

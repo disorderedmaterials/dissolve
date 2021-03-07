@@ -97,6 +97,7 @@ OptionalReferenceWrapper<RenderableGroup> RenderableGroupManager::group(const st
 }
 
 // Return current RenderableGroups in use
+std::vector<RenderableGroup> &RenderableGroupManager::groups() { return groups_; }
 const std::vector<RenderableGroup> &RenderableGroupManager::groups() const { return groups_; }
 
 // Empty all groups of Renderables

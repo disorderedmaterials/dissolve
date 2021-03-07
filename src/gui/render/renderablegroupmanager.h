@@ -33,6 +33,7 @@ class RenderableGroupManager
     // Return group for specified Renderable, if one has been assigned
     OptionalReferenceWrapper<RenderableGroup> group(const std::shared_ptr<Renderable> &renderable);
     // Return current RenderableGroups in use
+    std::vector<RenderableGroup> &groups();
     const std::vector<RenderableGroup> &groups() const;
     // Empty all groups
     void emptyGroups();
