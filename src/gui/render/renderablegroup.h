@@ -15,6 +15,8 @@ class RenderableGroup
 {
     public:
     RenderableGroup(std::string_view name, StockColours::StockColour colour);
+    RenderableGroup(const RenderableGroup &other) = delete;
+    RenderableGroup(RenderableGroup &&other);
 
     /*
      * Name

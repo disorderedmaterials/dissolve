@@ -20,6 +20,31 @@ RenderableGroup::RenderableGroup(std::string_view name, StockColours::StockColou
     verticalShiftMultiplier_ = 1.0;
 }
 
+RenderableGroup::RenderableGroup(RenderableGroup &&other)
+{
+    empty();
+
+    // Copy style settings
+    name_ = other.name_;
+    visible_ = other.visible_;
+    colouringStyle_ = other.colouringStyle_;
+    automaticStockColourUsageCount_ = other.automaticStockColourUsageCount_;
+    fixedStockColour_ = other.fixedStockColour_;
+    lineStipple_ = other.lineStipple_;
+    verticalShiftStyle_ = other.verticalShiftStyle_;
+    verticalShift_ = other.verticalShift_;
+    verticalShiftMultiplier_ = other.verticalShiftMultiplier_;
+
+    // Copy the renderables by hand
+    for (auto &renderable : other.renderables_)
+    {
+        renderables_.emplace_back(renderable);
+        renderable->setGroup(*this);
+    }
+    other.renderables_.clear();
+    other.automaticStockColourUsageCount_.fill(0);
+}
+
 /*
  * Name
  */
