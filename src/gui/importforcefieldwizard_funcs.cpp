@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "data/ff/library.h"
+#include "data/ff/xml/base.h"
 #include "gui/importforcefieldwizard.h"
 #include <QFileDialog>
 #include <pugixml.hpp>
@@ -24,7 +26,18 @@ void ImportForcefieldWizard::updateNavButtons()
 
     ui_.backButton->setEnabled(index > 0);
 
-    ui_.continueButton->setEnabled(index < count - 1 && atoms_.rowCount() > 0);
+    switch (index)
+    {
+	case 0:
+	    ui_.continueButton->setEnabled(atoms_.rowCount() > 0);
+	    break;
+	case 1:
+	    ui_.continueButton->setEnabled(true);
+	    break;
+	default:
+	    ui_.continueButton->setEnabled(false);
+	    break;
+    }
 }
 
 void ImportForcefieldWizard::nextStack()
@@ -35,6 +48,15 @@ void ImportForcefieldWizard::nextStack()
     ui_.stackedWidget->setCurrentIndex(index >= count ? count - 1 : index);
 
     updateNavButtons();
+
+    if (index == 2)
+    {
+	auto map = atoms_.toMap();
+	auto xmlFF = std::make_shared<Forcefield_XML>(atoms_.toVector(), bonds_.toVector(map), angles_.toVector(map),
+						      torsions_.toVector(map), impropers_.toVector(map));
+	ForcefieldLibrary::registerForcefield(std::static_pointer_cast<Forcefield>(xmlFF));
+	this->close();
+    }
 }
 
 void ImportForcefieldWizard::prevStack()
