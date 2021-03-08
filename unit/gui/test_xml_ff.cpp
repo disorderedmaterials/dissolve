@@ -190,6 +190,7 @@ TEST_F(XmlFFTest, XmlAll)
     XmlBondModel bondModel;
     XmlAngleModel angleModel;
     XmlTorsionModel torsionModel;
+    XmlImproperModel improperModel;
 
     dissolve.addAtomType(Elements::H);
     dissolve.addAtomType(Elements::C);
@@ -199,15 +200,17 @@ TEST_F(XmlFFTest, XmlAll)
     bondModel.readFile(doc.root());
     angleModel.readFile(doc.root());
     torsionModel.readFile(doc.root());
+    improperModel.readFile(doc.root());
     std::vector<ForcefieldAtomType> atoms = atomModel.toVector();
     std::vector<ForcefieldBondTerm> bonds = bondModel.toVector();
     std::vector<ForcefieldAngleTerm> angles = angleModel.toVector();
     std::vector<ForcefieldTorsionTerm> torsions = torsionModel.toVector();
-    std::vector<ForcefieldImproperTerm> impropers;
+    std::vector<ForcefieldImproperTerm> impropers = improperModel.toVector();
     ASSERT_EQ(atoms.size(), 6);
     ASSERT_EQ(bonds.size(), 5);
     ASSERT_EQ(angles.size(), 7);
     ASSERT_EQ(torsions.size(), 3);
+    ASSERT_EQ(impropers.size(), 2);
 
     // auto xmlFF = std::make_shared<Forcefield_XML>();
     auto xmlFF = std::make_shared<Forcefield_XML>(atoms, bonds, angles, torsions, impropers);

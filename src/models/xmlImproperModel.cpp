@@ -129,3 +129,15 @@ QVariant XmlImproperModel::headerData(int section, Qt::Orientation orientation, 
 	    return QVariant();
     }
 }
+
+
+std::vector<ForcefieldImproperTerm> XmlImproperModel::toVector()
+{
+    std::vector<ForcefieldImproperTerm> result;
+    for (auto &improper : impropers_)
+	// FIXME: Need to add a proper improper form for the XML Model,
+	// since it uses a different one
+	result.emplace_back(std::get<0>(improper), std::get<1>(improper), std::get<2>(improper), std::get<3>(improper),
+			    SpeciesImproper::NoForm, std::vector<double>());
+    return result;
+}
