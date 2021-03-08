@@ -21,6 +21,7 @@ template <> class GenericItemContainer<Vec3<double>> : public GenericItem
     public:
     // Return data item
     Vec3<double> &data() { return data_; }
+    const Vec3<double> &data() const { return data_; }
 
     /*
      * Item Class

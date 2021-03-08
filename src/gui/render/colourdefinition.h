@@ -33,7 +33,7 @@ class ColourDefinition
         nColourStyles
     };
     // Return enum options for ColourStyle
-    static EnumOptions<ColourDefinition::ColourStyle> &colourStyles();
+    static EnumOptions<ColourDefinition::ColourStyle> colourStyles();
 
     /*
      * Style

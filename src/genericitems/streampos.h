@@ -22,6 +22,7 @@ template <> class GenericItemContainer<std::streampos> : public GenericItem
     public:
     // Return data item
     std::streampos &data() { return data_; }
+    const std::streampos &data() const { return data_; }
 
     /*
      * Item Class

@@ -27,7 +27,7 @@ class Data3DExportFileFormat : public FileAndFormat
      */
     private:
     // Return enum options for Data3DExportFormat
-    static EnumOptions<Data3DExportFileFormat::Data3DExportFormat> &data3DExportFormats();
+    static EnumOptions<Data3DExportFileFormat::Data3DExportFormat> data3DExportFormats();
 
     public:
     // Return number of available formats

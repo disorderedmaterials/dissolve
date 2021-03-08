@@ -95,7 +95,7 @@ SpeciesBond &Species::addBond(SpeciesAtom *i, SpeciesAtom *j)
     }
 
     // OK to add new Bond
-    bonds_.emplace_back(i, j).setParent(this);
+    bonds_.emplace_back(i, j);
 
     // Update higher-order connectivity?
     if (autoUpdateIntramolecularTerms_)
@@ -276,12 +276,7 @@ SpeciesAngle &Species::addAngle(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k)
     }
 
     // OK to add new angle
-
-    // We can't use emplace_back since SpeciesAngle needs
-    // to dereference its `this` pointer in the constructor
-    // to update the SpeciesAtoms.
-    angles_.push_back(std::move(SpeciesAngle(i, j, k)));
-    angles_.back().setParent(this);
+    angles_.emplace_back(i, j, k);
 
     ++version_;
 
@@ -337,7 +332,6 @@ SpeciesTorsion &Species::addTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom 
 
     // OK to add new torsion
     torsions_.emplace_back(i, j, k, l);
-    torsions_.back().setParent(this);
 
     ++version_;
 
@@ -395,7 +389,7 @@ SpeciesImproper &Species::addImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAto
     }
 
     // OK to add new improper
-    impropers_.emplace_back(i, j, k, l).setParent(this);
+    impropers_.emplace_back(i, j, k, l);
 
     ++version_;
 

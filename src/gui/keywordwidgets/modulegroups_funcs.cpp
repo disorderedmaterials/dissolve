@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/coredata.h"
-#include "genericitems/listhelper.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "gui/keywordwidgets/dropdown.h"
 #include "gui/keywordwidgets/modulegroups.h"
@@ -130,8 +129,8 @@ void ModuleGroupsKeywordWidget::updateWidgetValues(const CoreData &coreData)
     RefList<Module> availableModules = coreData.findModules(keyword_->data().allowedModuleTypes());
 
     // Update the list widget
-    TableWidgetUpdater<ModuleGroupsKeywordWidget, Module> tableUpdater(ui_.SelectionTable, availableModules, this,
-                                                                       &ModuleGroupsKeywordWidget::updateSelectionRow);
+    ConstTableWidgetUpdater<ModuleGroupsKeywordWidget, Module> tableUpdater(ui_.SelectionTable, availableModules, this,
+                                                                            &ModuleGroupsKeywordWidget::updateSelectionRow);
 
     ui_.SelectionTable->resizeColumnToContents(0);
 

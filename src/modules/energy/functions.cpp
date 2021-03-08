@@ -5,7 +5,6 @@
 #include "classes/energykernel.h"
 #include "classes/potentialmap.h"
 #include "classes/species.h"
-#include "genericitems/listhelper.h"
 #include "modules/energy/energy.h"
 #include <numeric>
 
@@ -255,7 +254,7 @@ double EnergyModule::totalEnergy(ProcessPool &procPool, Species *sp, const Poten
 EnergyModule::EnergyStability EnergyModule::checkStability(Configuration *cfg)
 {
     // First, check if the Configuration is targetted by an EnergyModule
-    if (!GenericListHelper<bool>::value(cfg->moduleData(), "_IsEnergyModuleTarget", "", false))
+    if (!cfg->moduleData().value<bool>("_IsEnergyModuleTarget", "", false))
     {
         Messenger::error("Configuration '{}' is not targeted by any EnergyModule, so stability cannot be assessed. "
                          "Check your setup!\n",
@@ -266,7 +265,7 @@ EnergyModule::EnergyStability EnergyModule::checkStability(Configuration *cfg)
     // Retrieve the EnergyStable flag from the Configuration's module data
     if (cfg->moduleData().contains("EnergyStable"))
     {
-        auto stable = GenericListHelper<bool>::value(cfg->moduleData(), "EnergyStable");
+        auto stable = cfg->moduleData().value<bool>("EnergyStable");
         if (!stable)
         {
             Messenger::print("Energy for Configuration '{}' is not yet stable.\n", cfg->name());

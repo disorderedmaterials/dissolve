@@ -42,7 +42,7 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
                this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions())));
     ui_.MasterImpropersTable->setItemDelegateForColumn(
         1, new ComboListDelegate(
-               this, new ComboEnumOptionsItems<SpeciesImproper::ImproperFunction>(SpeciesImproper::improperFunctions())));
+               this, new ComboEnumOptionsItems<SpeciesTorsion::TorsionFunction>(SpeciesTorsion::torsionFunctions())));
 
     // -- Parameters
     for (auto n = 2; n < 6; ++n)
@@ -276,7 +276,7 @@ void ForcefieldTab::updateImpropersTableRow(int row, const MasterIntra *masterIm
     else
         item = ui_.MasterImpropersTable->item(row, 1);
     item->setText(
-        QString::fromStdString(std::string(SpeciesImproper::improperFunctions().keywordFromInt(masterImproper->form()))));
+        QString::fromStdString(std::string(SpeciesTorsion::torsionFunctions().keywordFromInt(masterImproper->form()))));
 
     // Parameters
     for (int n = 0; n < masterImproper->parameters().size(); ++n)
@@ -447,27 +447,27 @@ void ForcefieldTab::updateControls()
     Locker refreshLocker(refreshLock_);
 
     // Master Bonds Table
-    TableWidgetUpdater<ForcefieldTab, MasterIntra> bondsUpdater(ui_.MasterBondsTable, dissolve_.coreData().masterBonds(), this,
-                                                                &ForcefieldTab::updateBondsTableRow);
+    ConstTableWidgetUpdater<ForcefieldTab, MasterIntra> bondsUpdater(ui_.MasterBondsTable, dissolve_.coreData().masterBonds(),
+                                                                     this, &ForcefieldTab::updateBondsTableRow);
     ui_.MasterBondsTable->resizeColumnsToContents();
 
     // Master Angles Table
-    TableWidgetUpdater<ForcefieldTab, MasterIntra> anglesUpdater(ui_.MasterAnglesTable, dissolve_.coreData().masterAngles(),
-                                                                 this, &ForcefieldTab::updateAnglesTableRow);
+    ConstTableWidgetUpdater<ForcefieldTab, MasterIntra> anglesUpdater(
+        ui_.MasterAnglesTable, dissolve_.coreData().masterAngles(), this, &ForcefieldTab::updateAnglesTableRow);
     ui_.MasterAnglesTable->resizeColumnsToContents();
 
     // Torsions Table
-    TableWidgetUpdater<ForcefieldTab, MasterIntra> torsionsUpdater(
+    ConstTableWidgetUpdater<ForcefieldTab, MasterIntra> torsionsUpdater(
         ui_.MasterTorsionsTable, dissolve_.coreData().masterTorsions(), this, &ForcefieldTab::updateTorsionsTableRow);
     ui_.MasterTorsionsTable->resizeColumnsToContents();
 
     // Impropers Table
-    TableWidgetUpdater<ForcefieldTab, MasterIntra> impropersUpdater(
+    ConstTableWidgetUpdater<ForcefieldTab, MasterIntra> impropersUpdater(
         ui_.MasterImpropersTable, dissolve_.coreData().masterImpropers(), this, &ForcefieldTab::updateImpropersTableRow);
     ui_.MasterImpropersTable->resizeColumnsToContents();
 
     // AtomTypes Table
-    TableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(
+    ConstTableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(
         ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
     ui_.AtomTypesTable->resizeColumnsToContents();
 
@@ -494,8 +494,8 @@ void ForcefieldTab::updateControls()
     // -- Table
     // -- Get current row index before we refresh...
     auto ppRowIndex = ui_.PairPotentialsTable->currentRow();
-    TableWidgetUpdater<ForcefieldTab, PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this,
-                                                               &ForcefieldTab::updatePairPotentialsTableRow);
+    ConstTableWidgetUpdater<ForcefieldTab, PairPotential> ppUpdater(ui_.PairPotentialsTable, dissolve_.pairPotentials(), this,
+                                                                    &ForcefieldTab::updatePairPotentialsTableRow);
     ui_.PairPotentialsTable->resizeColumnsToContents();
 
     refreshLocker.unlock();
@@ -542,7 +542,7 @@ void ForcefieldTab::on_AtomTypeAddButton_clicked(bool checked)
 
     Locker refreshLocker(refreshLock_);
 
-    TableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(
+    ConstTableWidgetUpdater<ForcefieldTab, AtomType, std::shared_ptr<AtomType>> atomTypesUpdater(
         ui_.AtomTypesTable, dissolve_.atomTypes(), this, &ForcefieldTab::updateAtomTypesTableRow);
     ui_.AtomTypesTable->resizeColumnsToContents();
 
@@ -929,7 +929,7 @@ void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem *w)
             break;
         // Functional Form
         case (1):
-            masterIntra->setForm(SpeciesImproper::improperFunctions().enumeration(qPrintable(w->text())));
+            masterIntra->setForm(SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text())));
             dissolveWindow_->setModified();
             break;
         // Parameters

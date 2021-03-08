@@ -33,8 +33,7 @@ class Box
         CubicBoxType,        /* Cubic box with equivalent cell lengths, and right-angles */
         OrthorhombicBoxType, /* Orthorhombic box with inequivalent cell lengths, and right-angles */
         MonoclinicBoxType,   /* Monoclinic box with cell angles a != 90, and b == c == 90 */
-        TriclinicBoxType,    /* Triclinic box with cell angles a != b != c != 90 */
-        nBoxTypes            /* Number of Box types */
+        TriclinicBoxType     /* Triclinic box with cell angles a != b != c != 90 */
     };
     // Return enum options for BoxType
     static EnumOptions<BoxType> boxTypes();

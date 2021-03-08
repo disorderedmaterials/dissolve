@@ -9,7 +9,6 @@
 #include "classes/configuration.h"
 #include "classes/regionaldistributor.h"
 #include "classes/scaledenergykernel.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "modules/energy/energy.h"
 #include "modules/molshake/molshake.h"

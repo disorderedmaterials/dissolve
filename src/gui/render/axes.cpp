@@ -102,15 +102,11 @@ Axes::~Axes() {}
  */
 
 // Return enum options for AutoScaleMethod
-EnumOptions<Axes::AutoScaleMethod> &Axes::autoScaleMethods()
+EnumOptions<Axes::AutoScaleMethod> Axes::autoScaleMethods()
 {
-    static EnumOptionsList AutoScaleOptions = EnumOptionsList() << EnumOption(Axes::NoAutoScale, "None")
-                                                                << EnumOption(Axes::ExpandingAutoScale, "Expanding")
-                                                                << EnumOption(Axes::FullAutoScale, "Full");
-
-    static EnumOptions<Axes::AutoScaleMethod> options("AutoScaleMethod", AutoScaleOptions);
-
-    return options;
+    return EnumOptions<Axes::AutoScaleMethod>(
+        "AutoScaleMethod",
+        {{Axes::NoAutoScale, "None"}, {Axes::ExpandingAutoScale, "Expanding"}, {Axes::FullAutoScale, "Full"}});
 }
 
 // Recalculate minimum, maximum, and centre coordinates of axes

@@ -9,8 +9,6 @@ AtomShakeModule::AtomShakeModule() : Module(nRequiredTargets())
     initialise();
 }
 
-AtomShakeModule::~AtomShakeModule() {}
-
 /*
  * Instances
  */

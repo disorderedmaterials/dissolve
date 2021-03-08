@@ -6,7 +6,6 @@
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
 #include "keywords/types.h"
 #include "math/integrator.h"
@@ -77,11 +76,11 @@ ProcedureNode::NodeExecutionResult Integrate1DProcedureNode::execute(ProcessPool
     integral_[2] += Integrator::trapezoid(processNode_->processedData(), keywords_.retrieve<Range>("RangeC"));
 
     // Print info
-    Messenger::print("Integrate1D - Range A: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[0].mean(), integral_[0].stDev(),
+    Messenger::print("Integrate1D - Range A: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[0].value(), integral_[0].stDev(),
                      rangeA.minimum(), rangeA.maximum());
-    Messenger::print("Integrate1D - Range B: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[1].mean(), integral_[1].stDev(),
+    Messenger::print("Integrate1D - Range B: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[1].value(), integral_[1].stDev(),
                      rangeB.minimum(), rangeB.maximum());
-    Messenger::print("Integrate1D - Range C: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[2].mean(), integral_[2].stDev(),
+    Messenger::print("Integrate1D - Range C: {:e} +/- {:e} over {:e} < x < {:e}.\n", integral_[2].value(), integral_[2].stDev(),
                      rangeC.minimum(), rangeC.maximum());
 
     return ProcedureNode::Success;

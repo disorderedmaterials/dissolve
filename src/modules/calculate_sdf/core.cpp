@@ -13,8 +13,6 @@ CalculateSDFModule::CalculateSDFModule() : Module(nRequiredTargets()), analyser_
     initialise();
 }
 
-CalculateSDFModule::~CalculateSDFModule() {}
-
 /*
  * Instances
  */

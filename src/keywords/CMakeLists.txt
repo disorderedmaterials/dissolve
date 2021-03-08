@@ -23,7 +23,7 @@ add_library(
   list.cpp
   module.cpp
   modulegroups.cpp
-  modulereflist.cpp
+  modulevector.cpp
   node.cpp
   nodeandinteger.cpp
   nodearray.cpp
@@ -43,7 +43,6 @@ add_library(
   vec3nodevalue.cpp
   vector_intdouble.cpp
   vector_intstring.cpp
-  windowfunction.cpp
   atomtypereflist.h
   atomtypeselection.h
   base.h
@@ -69,7 +68,7 @@ add_library(
   list.h
   module.h
   modulegroups.h
-  modulereflist.h
+  modulevector.h
   node.h
   nodeandinteger.h
   nodearray.h
@@ -91,7 +90,6 @@ add_library(
   vec3nodevalue.h
   vector_intdouble.h
   vector_intstring.h
-  windowfunction.h
 )
 
 include_directories(keywords PRIVATE ${PROJECT_SOURCE_DIR}/src)

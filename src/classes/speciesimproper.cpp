@@ -2,30 +2,13 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/speciesimproper.h"
-#include "base/processpool.h"
-#include "base/sysfunc.h"
 #include "classes/speciesatom.h"
 #include "classes/speciestorsion.h"
-#include "templates/enumhelpers.h"
 
 SpeciesImproper::SpeciesImproper(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) : SpeciesIntra()
 {
-
-    parent_ = nullptr;
-    i_ = i;
-    j_ = j;
-    k_ = k;
-    l_ = l;
-    form_ = SpeciesImproper::NoForm;
-
-    // Add ourself to the list of impropers on each atom
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addImproper(*this);
-        j_->addImproper(*this);
-        k_->addImproper(*this);
-        l_->addImproper(*this);
-    }
+    assign(i, j, k, l);
+    form_ = SpeciesTorsion::NoForm;
 }
 
 SpeciesImproper::SpeciesImproper(SpeciesImproper &source) { this->operator=(source); }
@@ -42,17 +25,7 @@ SpeciesImproper::SpeciesImproper(SpeciesImproper &&source) : SpeciesIntra(source
     }
 
     // Copy data
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    l_ = source.l_;
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addImproper(*this);
-        j_->addImproper(*this);
-        k_->addImproper(*this);
-        l_->addImproper(*this);
-    }
+    assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
 
     // Reset source data
@@ -66,18 +39,7 @@ SpeciesImproper::~SpeciesImproper() { detach(); }
 
 SpeciesImproper &SpeciesImproper::operator=(const SpeciesImproper &source)
 {
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    l_ = source.l_;
-
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addImproper(*this);
-        j_->addImproper(*this);
-        k_->addImproper(*this);
-        l_->addImproper(*this);
-    }
+    assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
     SpeciesIntra::operator=(source);
 
@@ -89,38 +51,11 @@ SpeciesImproper &SpeciesImproper::operator=(SpeciesImproper &&source)
     if (i_ && j_ && k_ && l_)
         detach();
 
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    l_ = source.l_;
-
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addImproper(*this);
-        j_->addImproper(*this);
-        k_->addImproper(*this);
-        l_->addImproper(*this);
-    }
+    assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
     SpeciesIntra::operator=(source);
 
     return *this;
-}
-
-// Detach from current atoms
-void SpeciesImproper::detach()
-{
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->removeImproper(*this);
-        j_->removeImproper(*this);
-        k_->removeImproper(*this);
-        l_->removeImproper(*this);
-    }
-    i_ = nullptr;
-    j_ = nullptr;
-    k_ = nullptr;
-    l_ = nullptr;
 }
 
 /*
@@ -137,14 +72,26 @@ void SpeciesImproper::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, Spe
 
     assert(i_ && j_ && k_ && l_);
 
-    if (i_)
-        i_->addImproper(*this);
-    if (j_)
-        j_->addImproper(*this);
-    if (k_)
-        k_->addImproper(*this);
-    if (l_)
-        l_->addImproper(*this);
+    i_->addImproper(*this);
+    j_->addImproper(*this);
+    k_->addImproper(*this);
+    l_->addImproper(*this);
+}
+
+// Detach from current atoms
+void SpeciesImproper::detach()
+{
+    if (i_ && j_ && k_ && l_)
+    {
+        i_->removeImproper(*this);
+        j_->removeImproper(*this);
+        k_->removeImproper(*this);
+        l_->removeImproper(*this);
+    }
+    i_ = nullptr;
+    j_ = nullptr;
+    k_ = nullptr;
+    l_ = nullptr;
 }
 
 // Return first SpeciesAtom
@@ -245,23 +192,6 @@ bool SpeciesImproper::isSelected() const
  * Interaction Parameters
  */
 
-// Return enum options for ImproperFunction
-EnumOptions<SpeciesImproper::ImproperFunction> SpeciesImproper::improperFunctions()
-{
-    static EnumOptionsList ImproperFunctionOptions =
-        EnumOptionsList() << EnumOption(SpeciesTorsion::NoForm, "None") << EnumOption(SpeciesTorsion::CosineForm, "Cos", 4)
-                          << EnumOption(SpeciesTorsion::Cos3Form, "Cos3", 3)
-                          << EnumOption(SpeciesTorsion::Cos3CForm, "Cos3C", 4)
-                          << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4)
-                          << EnumOption(SpeciesTorsion::CosNForm, "CosN", 1, EnumOption::AnyNumberOfArguments)
-                          << EnumOption(SpeciesTorsion::CosNCForm, "CosNC", 1, EnumOption::AnyNumberOfArguments)
-                          << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3);
-
-    static EnumOptions<SpeciesImproper::ImproperFunction> options("ImproperFunction", ImproperFunctionOptions);
-
-    return options;
-}
-
 // Set up any necessary parameters
 void SpeciesImproper::setUp() {}
 
@@ -273,7 +203,7 @@ double SpeciesImproper::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::InteractionType SpeciesImproper::type() const { return SpeciesIntra::ImproperInteraction; }
+SpeciesIntra::InteractionType SpeciesImproper::type() const { return SpeciesIntra::InteractionType::Improper; }
 
 // Return energy for specified angle
 double SpeciesImproper::energy(double angleInDegrees) const

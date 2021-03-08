@@ -211,13 +211,13 @@ Module *Dissolve::findModuleInstance(std::string_view uniqueName)
 }
 
 // Search for any instance of any Module with the specified Module type
-RefList<Module> Dissolve::findModuleInstances(std::string_view moduleType)
+std::vector<Module *> Dissolve::findModuleInstances(std::string_view moduleType)
 {
-    RefList<Module> instances;
+    std::vector<Module *> instances;
 
     for (auto *module : moduleInstances_)
         if (DissolveSys::sameString(module->type(), moduleType))
-            instances.append(module);
+            instances.emplace_back(module);
 
     return instances;
 }

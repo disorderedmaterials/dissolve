@@ -9,8 +9,6 @@ ChecksModule::ChecksModule() : Module(nRequiredTargets())
     initialise();
 }
 
-ChecksModule::~ChecksModule() {}
-
 /*
  * Instances
  */

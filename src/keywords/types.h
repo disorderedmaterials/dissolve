@@ -31,7 +31,7 @@
 #include "keywords/linkto.h"
 #include "keywords/module.h"
 #include "keywords/modulegroups.h"
-#include "keywords/modulereflist.h"
+#include "keywords/modulevector.h"
 #include "keywords/node.h"
 #include "keywords/nodeandinteger.h"
 #include "keywords/nodearray.h"
@@ -52,4 +52,3 @@
 #include "keywords/vec3nodevalue.h"
 #include "keywords/vector_intdouble.h"
 #include "keywords/vector_intstring.h"
-#include "keywords/windowfunction.h"

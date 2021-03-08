@@ -21,6 +21,7 @@ template <class T> class GenericItemContainer<Array2D<T>> : public GenericItem
     public:
     // Return data item
     Array2D<T> &data() { return data_; }
+    const Array2D<T> &data() const { return data_; }
 
     /*
      * Item Class

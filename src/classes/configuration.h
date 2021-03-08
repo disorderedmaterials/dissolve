@@ -19,7 +19,6 @@
 #include "module/layer.h"
 #include "procedure/procedure.h"
 #include "templates/array.h"
-#include "templates/objectstore.h"
 #include "templates/vector3.h"
 #include <deque>
 #include <memory>
@@ -32,7 +31,7 @@ class PotentialMap;
 class Species;
 
 // Configuration
-class Configuration : public ListItem<Configuration>, public ObjectStore<Configuration>
+class Configuration : public ListItem<Configuration>
 {
     public:
     Configuration();

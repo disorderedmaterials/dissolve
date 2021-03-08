@@ -5,6 +5,7 @@
 
 #include "base/enumoptions.h"
 #include "classes/speciesintra.h"
+#include "classes/speciestorsion.h"
 
 // Forward Declarations
 class SpeciesAtom;
@@ -34,12 +35,14 @@ class SpeciesImproper : public SpeciesIntra
     SpeciesAtom *k_;
     // Fourth SpeciesAtom in interaction
     SpeciesAtom *l_;
+
+    private:
+    // Set Atoms involved in Improper
+    void assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Detach from current atoms
     void detach();
 
     public:
-    // Set Atoms involved in Improper
-    void assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l);
     // Return first SpeciesAtom
     SpeciesAtom *i() const;
     // Return second SpeciesAtom
@@ -68,22 +71,6 @@ class SpeciesImproper : public SpeciesIntra
     /*
      * Interaction Parameters
      */
-    public:
-    // Improper functional forms
-    enum ImproperFunction
-    {
-        NoForm,
-        CosineForm,
-        Cos3Form,
-        Cos3CForm,
-        Cos4Form,
-        CosNForm,
-        CosNCForm,
-        UFFCosineForm
-    };
-    // Return enum options for ImproperFunction
-    static EnumOptions<ImproperFunction> improperFunctions();
-
     public:
     // Set up any necessary parameters
     void setUp();

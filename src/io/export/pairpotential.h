@@ -26,7 +26,7 @@ class PairPotentialExportFileFormat : public FileAndFormat
      */
     private:
     // Return enum options for PairPotentialExportFormat
-    static EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> &pairPotentialExportFormats();
+    static EnumOptions<PairPotentialExportFileFormat::PairPotentialExportFormat> pairPotentialExportFormats();
 
     public:
     // Return number of available formats

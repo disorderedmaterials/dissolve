@@ -145,7 +145,7 @@ void ExpressionVariableVectorKeywordWidget::updateValue()
     refreshing_ = true;
 
     // Update the variables list against that contained in the keyword's data
-    TableWidgetUpdater<ExpressionVariableVectorKeywordWidget, ExpressionVariable, std::shared_ptr<ExpressionVariable>>
+    ConstTableWidgetUpdater<ExpressionVariableVectorKeywordWidget, ExpressionVariable, std::shared_ptr<ExpressionVariable>>
         tableUpdater(ui_.VariablesTable, keyword_->data(), this,
                      &ExpressionVariableVectorKeywordWidget::updateVariableTableRow);
 

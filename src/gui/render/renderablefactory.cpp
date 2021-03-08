@@ -18,8 +18,6 @@ Renderable *RenderableFactory::create(Renderable::RenderableType renderableType,
         renderable = new RenderableData2D(Data2D::findObject(objectTag), objectTag);
     else if (renderableType == Renderable::Data3DRenderable)
         renderable = new RenderableData3D(Data3D::findObject(objectTag), objectTag);
-    else if (renderableType == Renderable::SpeciesRenderable)
-        renderable = new RenderableSpecies(Species::findObject(objectTag), objectTag);
     else
         fmt::print("Don't know how to create a Renderable of type '{}' (object tag = '{}').\n",
                    Renderable::renderableTypes().keyword(renderableType), objectTag);

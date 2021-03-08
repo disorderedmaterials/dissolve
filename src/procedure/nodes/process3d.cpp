@@ -6,7 +6,6 @@
 #include "base/sysfunc.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "genericitems/listhelper.h"
 #include "keywords/types.h"
 #include "procedure/nodes/collect3d.h"
 #include "procedure/nodes/operatebase.h"
@@ -116,8 +115,8 @@ ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool &
 {
     // Retrieve / realise the normalised data from the supplied list
     bool created;
-    auto &data = GenericListHelper<Data3D>::realise(targetList, fmt::format("{}_{}", name(), cfg->niceName()), prefix,
-                                                    GenericItem::InRestartFileFlag, &created);
+    auto &data = targetList.realise<Data3D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix,
+                                            GenericItem::InRestartFileFlag, &created);
     processedData_ = &data;
 
     data.setName(name());

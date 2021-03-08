@@ -23,12 +23,7 @@ NETARingNode::~NETARingNode() {}
 // Return enum options for NETARingModifiers
 EnumOptions<NETARingNode::NETARingModifier> NETARingNode::modifiers()
 {
-    static EnumOptionsList ModifierOptions = EnumOptionsList()
-                                             << EnumOption(SizeModifier, "size") << EnumOption(RepeatRingModifier, "n");
-
-    static EnumOptions<NETARingNode::NETARingModifier> options("RingModifier", ModifierOptions);
-
-    return options;
+    return EnumOptions<NETARingNode::NETARingModifier>("RingModifier", {{SizeModifier, "size"}, {RepeatRingModifier, "n"}});
 }
 
 // Return whether the specified modifier is valid for this node

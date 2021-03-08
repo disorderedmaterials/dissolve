@@ -8,13 +8,7 @@
 #include "classes/masterintra.h"
 #include "data/isotopes.h"
 
-// Static Members (ObjectStore)
-template <class Species> RefDataList<Species, int> ObjectStore<Species>::objects_;
-template <class Species> int ObjectStore<Species>::objectCount_ = 0;
-template <class Species> int ObjectStore<Species>::objectType_ = ObjectInfo::SpeciesObject;
-template <class Species> std::string_view ObjectStore<Species>::objectTypeName_ = "Species";
-
-Species::Species() : ListItem<Species>(), ObjectStore<Species>(this)
+Species::Species() : ListItem<Species>()
 {
     forcefield_ = nullptr;
     autoUpdateIntramolecularTerms_ = true;
@@ -202,7 +196,7 @@ void Species::print()
             std::string line =
                 fmt::format("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}", improper.indexI() + 1, improper.indexJ() + 1,
                             improper.indexK() + 1, improper.indexL() + 1, improper.masterParameters() ? '@' : ' ',
-                            SpeciesImproper::improperFunctions().keywordFromInt(improper.form()));
+                            SpeciesTorsion::torsionFunctions().keywordFromInt(improper.form()));
             for (const auto param : improper.parameters())
                 line += fmt::format("  {:12.4e}", param);
             Messenger::print(line);

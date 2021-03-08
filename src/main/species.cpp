@@ -76,7 +76,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
     {
         // Search for MasterIntra by the same name in our main Dissolve instance
         OptionalReferenceWrapper<MasterIntra> master = {};
-        if (sourceIntra.type() == SpeciesIntra::BondInteraction)
+        if (sourceIntra.type() == SpeciesIntra::InteractionType::Bond)
         {
             master = coreData_.getMasterBond(sourceIntra.masterParameters()->name());
             if (!master)
@@ -85,7 +85,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
                 master->get().setParameters(sourceIntra.parameters());
             }
         }
-        else if (sourceIntra.type() == SpeciesIntra::AngleInteraction)
+        else if (sourceIntra.type() == SpeciesIntra::InteractionType::Angle)
         {
             master = coreData_.getMasterAngle(sourceIntra.masterParameters()->name());
             if (!master)
@@ -94,7 +94,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
                 master->get().setParameters(sourceIntra.parameters());
             }
         }
-        else if (sourceIntra.type() == SpeciesIntra::TorsionInteraction)
+        else if (sourceIntra.type() == SpeciesIntra::InteractionType::Torsion)
         {
             master = coreData_.getMasterTorsion(sourceIntra.masterParameters()->name());
             if (!master)
@@ -103,7 +103,7 @@ void Dissolve::copySpeciesIntra(const SpeciesIntra &sourceIntra, SpeciesIntra &d
                 master->get().setParameters(sourceIntra.parameters());
             }
         }
-        else if (sourceIntra.type() == SpeciesIntra::ImproperInteraction)
+        else if (sourceIntra.type() == SpeciesIntra::InteractionType::Improper)
         {
             master = coreData_.getMasterImproper(sourceIntra.masterParameters()->name());
             if (!master)

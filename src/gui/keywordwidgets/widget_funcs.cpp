@@ -123,10 +123,10 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
     }
     else if (type == KeywordBase::ModuleRefListData)
     {
-        ModuleRefListKeywordWidget *moduleRefListWidget = new ModuleRefListKeywordWidget(nullptr, keywordBase, coreData);
-        connect(moduleRefListWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = moduleRefListWidget;
-        base = moduleRefListWidget;
+        ModuleVectorKeywordWidget *ModuleVectorWidget = new ModuleVectorKeywordWidget(nullptr, keywordBase, coreData);
+        connect(ModuleVectorWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
+        widget = ModuleVectorWidget;
+        base = ModuleVectorWidget;
     }
     else if (type == KeywordBase::NodeData)
     {
@@ -214,13 +214,6 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         connect(charWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
         widget = charWidget;
         base = charWidget;
-    }
-    else if (type == KeywordBase::WindowFunctionData)
-    {
-        WindowFunctionKeywordWidget *windowFunctionWidget = new WindowFunctionKeywordWidget(nullptr, keywordBase, coreData);
-        connect(windowFunctionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = windowFunctionWidget;
-        base = windowFunctionWidget;
     }
     else if (type == KeywordBase::Vec3DoubleData)
     {

@@ -13,8 +13,6 @@ CalculateDAngleModule::CalculateDAngleModule() : Module(nRequiredTargets()), ana
     initialise();
 }
 
-CalculateDAngleModule::~CalculateDAngleModule() {}
-
 /*
  * Instances
  */

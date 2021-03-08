@@ -9,8 +9,6 @@ ExportCoordinatesModule::ExportCoordinatesModule() : Module(nRequiredTargets())
     initialise();
 }
 
-ExportCoordinatesModule::~ExportCoordinatesModule() {}
-
 /*
  * Instances
  */

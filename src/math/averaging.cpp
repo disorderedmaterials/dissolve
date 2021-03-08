@@ -9,14 +9,8 @@ namespace Averaging
 // Return enum option info for AveragingScheme
 EnumOptions<Averaging::AveragingScheme> averagingSchemes()
 {
-    static EnumOptionsList AveragingSchemeOptions = EnumOptionsList()
-                                                    << EnumOption(Averaging::LinearAveraging, "Linear")
-                                                    << EnumOption(Averaging::ExponentialAveraging, "Exponential");
-
-    static EnumOptions<Averaging::AveragingScheme> options("AveragingScheme", AveragingSchemeOptions,
-                                                           Averaging::LinearAveraging);
-
-    return options;
+    return EnumOptions<Averaging::AveragingScheme>(
+        "AveragingScheme", {{Averaging::LinearAveraging, "Linear"}, {Averaging::ExponentialAveraging, "Exponential"}});
 }
 
 // Establish the number of stored datasets, shift indices down, and lose oldest dataset if necessary
@@ -27,7 +21,7 @@ int pruneOldData(GenericList &moduleData, std::string_view name, std::string_vie
     for (nStored = 0; nStored < nSetsInAverage; ++nStored)
         if (!moduleData.contains(fmt::format("{}_{}", name, nStored + 1), prefix))
             break;
-    Messenger::print("Average requested over {} datsets - {} available in module data ({} max).\n", nSetsInAverage, nStored,
+    Messenger::print("Average requested over {} datasets - {} available in module data ({} max).\n", nSetsInAverage, nStored,
                      nSetsInAverage - 1);
 
     // Remove the oldest dataset if it exists, and shuffle the others down

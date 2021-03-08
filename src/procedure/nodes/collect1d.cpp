@@ -5,7 +5,6 @@
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
 #include "classes/configuration.h"
-#include "genericitems/listhelper.h"
 #include "keywords/types.h"
 #include "math/data1d.h"
 #include "procedure/nodes/calculatebase.h"
@@ -97,8 +96,7 @@ bool Collect1DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     // Construct our data name, and search for it in the supplied list
     std::string dataName = fmt::format("{}_{}_Bins", name(), cfg->niceName());
     bool created;
-    auto &target =
-        GenericListHelper<Histogram1D>::realise(targetList, dataName, prefix, GenericItem::InRestartFileFlag, &created);
+    auto &target = targetList.realise<Histogram1D>(dataName, prefix, GenericItem::InRestartFileFlag, &created);
     if (created)
     {
         Messenger::printVerbose("One-dimensional histogram data for '{}' was not in the target list, so it will now be "

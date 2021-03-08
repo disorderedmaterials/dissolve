@@ -5,13 +5,7 @@
 #include "base/lineparser.h"
 #include "base/messenger.h"
 
-// Static Members (ObjectStore)
-template <class Histogram1D> RefDataList<Histogram1D, int> ObjectStore<Histogram1D>::objects_;
-template <class Histogram1D> int ObjectStore<Histogram1D>::objectCount_ = 0;
-template <class Histogram1D> int ObjectStore<Histogram1D>::objectType_ = ObjectInfo::Histogram1DObject;
-template <class Histogram1D> std::string_view ObjectStore<Histogram1D>::objectTypeName_ = "Histogram1D";
-
-Histogram1D::Histogram1D() : ListItem<Histogram1D>(), ObjectStore<Histogram1D>(this)
+Histogram1D::Histogram1D() : ListItem<Histogram1D>()
 {
     accumulatedData_.addErrors();
 
@@ -20,7 +14,7 @@ Histogram1D::Histogram1D() : ListItem<Histogram1D>(), ObjectStore<Histogram1D>(t
 
 Histogram1D::~Histogram1D() {}
 
-Histogram1D::Histogram1D(const Histogram1D &source) : ObjectStore<Histogram1D>(this) { (*this) = source; }
+Histogram1D::Histogram1D(const Histogram1D &source) { (*this) = source; }
 
 // Clear Data
 void Histogram1D::clear()
@@ -197,10 +191,6 @@ bool Histogram1D::read(LineParser &parser, CoreData &coreData)
 {
     clear();
 
-    if (parser.readNextLine(LineParser::Defaults) != LineParser::Success)
-        return false;
-    setObjectTag(parser.line());
-
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;
     initialise(parser.argd(0), parser.argd(1), parser.argd(2));
@@ -220,8 +210,6 @@ bool Histogram1D::read(LineParser &parser, CoreData &coreData)
 // Write data through specified LineParser
 bool Histogram1D::write(LineParser &parser)
 {
-    if (!parser.writeLineF("{}\n", objectTag()))
-        return false;
     if (!parser.writeLineF("{} {} {}\n", minimum_, maximum_, binWidth_))
         return false;
     if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))

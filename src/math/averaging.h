@@ -4,7 +4,7 @@
 #pragma once
 
 #include "base/enumoptions.h"
-#include "genericitems/listhelper.h"
+#include "genericitems/list.h"
 
 // Data Averaging
 namespace Averaging
@@ -36,14 +36,13 @@ bool average(GenericList &moduleData, std::string_view name, std::string_view pr
     // Find the 'root' data of type T, which should currently contain the most recently-calculated data
     if (!moduleData.contains(name, prefix))
         return Messenger::error("Couldn't find root data '{}' (prefix = '{}') in order to perform averaging.\n", name, prefix);
-    T &currentData = GenericListHelper<T>::retrieve(moduleData, name, prefix);
+    T &currentData = moduleData.retrieve<T>(name, prefix);
 
     // Establish the number of existing datasets, and perform management on them
     int nData = pruneOldData(moduleData, name, prefix, nSetsInAverage);
 
     // Store the current T as the earliest data (index == 1)
-    T &recentData =
-        GenericListHelper<T>::realise(moduleData, fmt::format("{}_1", name), prefix, GenericItem::InRestartFileFlag);
+    T &recentData = moduleData.realise<T>(fmt::format("{}_1", name), prefix, GenericItem::InRestartFileFlag);
     recentData = currentData;
     ++nData;
 
@@ -56,7 +55,7 @@ bool average(GenericList &moduleData, std::string_view name, std::string_view pr
     for (auto n = 0; n < nData; ++n)
     {
         // Get a copy of the (n+1)'th dataset
-        T data = GenericListHelper<T>::value(moduleData, fmt::format("{}_{}", name, n + 1), prefix);
+        T data = moduleData.value<T>(fmt::format("{}_{}", name, n + 1), prefix);
 
         // Determine the weighting factor
         if (averagingScheme == Averaging::LinearAveraging)
@@ -85,14 +84,13 @@ static bool arrayAverage(GenericList &moduleData, std::string_view name, std::st
         Messenger::error("Couldn't find root data '{}' (prefix = '{}') in order to perform averaging.\n", name, prefix);
         return false;
     }
-    T &currentData = GenericListHelper<T>::retrieve(moduleData, name, prefix);
+    T &currentData = moduleData.retrieve<T>(name, prefix);
 
     // Establish the number of existing datasets, and perform management on them
     int nData = pruneOldData(moduleData, name, prefix, nSetsInAverage);
 
     // Store the current T as the earliest data (index == 1)
-    T &recentData =
-        GenericListHelper<T>::realise(moduleData, fmt::format("{}_1", name), prefix, GenericItem::InRestartFileFlag);
+    T &recentData = moduleData.realise<T>(fmt::format("{}_1", name), prefix, GenericItem::InRestartFileFlag);
     recentData = currentData;
     ++nData;
 
@@ -108,7 +106,7 @@ static bool arrayAverage(GenericList &moduleData, std::string_view name, std::st
     for (auto n = 0; n < nData; ++n)
     {
         // Get a copy of the (n+1)'th dataset
-        T data = GenericListHelper<T>::value(moduleData, fmt::format("{}_{}", name, n + 1), prefix);
+        T data = moduleData.value<T>(fmt::format("{}_{}", name, n + 1), prefix);
 
         // Determine the weighting factor
         if (averagingScheme == Averaging::LinearAveraging)

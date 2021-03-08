@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "genericitems/listhelper.h"
 #include "gui/helpers/mousewheeladjustmentguard.h"
 #include "gui/keywordwidgets/vec3integer.h"
 #include "gui/keywordwidgets/vec3labels.h"

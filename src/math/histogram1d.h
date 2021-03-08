@@ -6,13 +6,12 @@
 #include "genericitems/base.h"
 #include "math/data1d.h"
 #include "math/sampleddouble.h"
-#include "templates/objectstore.h"
 
 // Forward Declarations
 class ProcessPool;
 
 // One-Dimensional Histogram
-class Histogram1D : public ListItem<Histogram1D>, public ObjectStore<Histogram1D>, public GenericItemBase
+class Histogram1D : public ListItem<Histogram1D>, public GenericItemBase
 {
     public:
     Histogram1D();

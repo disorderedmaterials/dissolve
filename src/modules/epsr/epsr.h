@@ -23,27 +23,27 @@ class EPSRModule : public Module
 
     public:
     EPSRModule();
-    ~EPSRModule();
+    ~EPSRModule() override = default;
 
     /*
      * Instances
      */
     public:
     // Create instance of this module
-    Module *createInstance() const;
+    Module *createInstance() const override;
 
     /*
      * Definition
      */
     public:
     // Return type of module
-    std::string_view type() const;
+    std::string_view type() const override;
     // Return category for module
-    std::string_view category() const;
+    std::string_view category() const override;
     // Return brief description of module
-    std::string_view brief() const;
+    std::string_view brief() const override;
     // Return the number of Configuration targets this Module requires
-    int nRequiredTargets() const;
+    int nRequiredTargets() const override;
 
     /*
      * Initialisation
@@ -61,18 +61,18 @@ class EPSRModule : public Module
 
     protected:
     // Perform any necessary initialisation for the Module
-    void initialise();
+    void initialise() override;
 
     /*
      * Processing
      */
     private:
     // Run main processing
-    bool process(Dissolve &dissolve, ProcessPool &procPool);
+    bool process(Dissolve &dissolve, ProcessPool &procPool) override;
 
     public:
     // Run set-up stage
-    bool setUp(Dissolve &dissolve, ProcessPool &procPool);
+    bool setUp(Dissolve &dissolve, ProcessPool &procPool) override;
 
     /*
      * Functions
@@ -80,16 +80,12 @@ class EPSRModule : public Module
     private:
     // Test datasets (if any)
     Data1DStore testData_;
-    // Target Modules for refinement
-    RefList<Module> targets_;
     // Target Configuration (determined from target modules)
     Configuration *targetConfiguration_;
 
     public:
-    // Return list of target Modules / data for refeinement
-    const RefList<Module> &targets() const;
-    // Add target Modules
-    void addTargets(RefList<Module> targets);
+    // Return list of target Modules / data for refinement
+    const std::vector<Module *> &targets() const;
     // Create / retrieve arrays for storage of empirical potential coefficients
     Array2D<std::vector<double>> &potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp = -1);
     // Generate empirical potentials from current coefficients
@@ -131,7 +127,7 @@ class EPSRModule : public Module
         nEPSRPCofKeywords
     };
     // Return enum options for EPSRPCofKeyword
-    static EnumOptions<EPSRModule::EPSRPCofKeyword> &epsrPCofKeywords();
+    static EnumOptions<EPSRModule::EPSRPCofKeyword> epsrPCofKeywords();
 
     public:
     // Read data from supplied pcof file
@@ -142,5 +138,5 @@ class EPSRModule : public Module
      */
     public:
     // Return a new widget controlling this Module
-    ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve);
+    ModuleWidget *createWidget(QWidget *parent, Dissolve &dissolve) override;
 };

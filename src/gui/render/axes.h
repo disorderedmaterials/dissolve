@@ -44,7 +44,7 @@ class Axes
         nAutoScaleMethods
     };
     // Return enum options for AutoScaleMethod
-    static EnumOptions<Axes::AutoScaleMethod> &autoScaleMethods();
+    static EnumOptions<Axes::AutoScaleMethod> autoScaleMethods();
 
     private:
     // Data limits for surface generation

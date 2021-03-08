@@ -18,15 +18,10 @@ TrajectoryExportFileFormat::TrajectoryExportFileFormat(std::string_view filename
  */
 
 // Return enum options for TrajectoryExportFormat
-EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> &TrajectoryExportFileFormat::trajectoryExportFormats()
+EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> TrajectoryExportFileFormat::trajectoryExportFormats()
 {
-    static EnumOptionsList TrajectoryExportFormats =
-        EnumOptionsList() << EnumOption(TrajectoryExportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory");
-
-    static EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat> options("TrajectoryExportFileFormat",
-                                                                                   TrajectoryExportFormats);
-
-    return options;
+    return EnumOptions<TrajectoryExportFileFormat::TrajectoryExportFormat>(
+        "TrajectoryExportFileFormat", {{TrajectoryExportFileFormat::XYZTrajectory, "xyz", "XYZ Trajectory"}});
 }
 
 // Return number of available formats

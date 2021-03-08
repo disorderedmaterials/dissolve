@@ -13,8 +13,6 @@ CalculateAngleModule::CalculateAngleModule() : Module(nRequiredTargets()), analy
     initialise();
 }
 
-CalculateAngleModule::~CalculateAngleModule() {}
-
 /*
  * Instances
  */

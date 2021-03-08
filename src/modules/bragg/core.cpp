@@ -9,8 +9,6 @@ BraggModule::BraggModule() : Module(nRequiredTargets())
     initialise();
 }
 
-BraggModule::~BraggModule() {}
-
 /*
  * Instances
  */

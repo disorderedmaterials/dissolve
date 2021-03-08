@@ -6,7 +6,6 @@
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "main/keywords.h"
 #include "main/version.h"
@@ -178,7 +177,7 @@ bool Dissolve::saveInput(std::string_view filename)
         return false;
 
     // Write master terms
-    if (coreData_.nMasterBonds() || coreData_.nMasterAngles() || coreData_.nMasterTorsions())
+    if (coreData_.nMasterBonds() || coreData_.nMasterAngles() || coreData_.nMasterTorsions() || coreData_.nMasterImpropers())
     {
         if (!parser.writeBannerComment("Master Terms"))
             return false;
@@ -218,7 +217,7 @@ bool Dissolve::saveInput(std::string_view filename)
         for (auto &imp : coreData_.masterImpropers())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword),
-                                           imp.name(), SpeciesImproper::improperFunctions().keywordFromInt(imp.form()));
+                                           imp.name(), SpeciesTorsion::torsionFunctions().keywordFromInt(imp.form()));
             for (auto p : imp.parameters())
                 line += fmt::format("  {:8.3f}", p);
             if (!parser.writeLine(line))
@@ -561,7 +560,7 @@ bool Dissolve::loadRestart(std::string_view filename)
         Messenger::print("Finished reading restart file.\n");
 
     // Set current iteration number
-    iteration_ = GenericListHelper<int>::value(processingModuleData_, "Iteration", "Dissolve", 0);
+    iteration_ = processingModuleData_.value<int>("Iteration", "Dissolve", 0);
 
     // Error encountered?
     if (error)

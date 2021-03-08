@@ -43,7 +43,7 @@ class NodeValueEnumOptionsBaseKeyword
     // Set node value from expression text, informing KeywordBase
     virtual bool setValue(std::string_view expressionText) = 0;
     // Set new option index, informing KeywordBase
-    virtual bool setEnumerationByIndex(int optionIndex) = 0;
+    virtual void setEnumerationByIndex(int optionIndex) = 0;
 
     /*
      * Access to KeywordBase
@@ -140,13 +140,11 @@ class NodeValueEnumOptionsKeyword : public NodeValueEnumOptionsBaseKeyword, publ
         return result;
     }
     // Set new option index, informing KeywordBase
-    bool setEnumerationByIndex(int optionIndex)
+    void setEnumerationByIndex(int optionIndex)
     {
-        bool result = KeywordData<Venum<NodeValue, E>>::data_.setEnumerationByIndex(optionIndex);
+        KeywordData<Venum<NodeValue, E>>::data_.setEnumerationByIndex(optionIndex);
 
         KeywordData<Venum<NodeValue, E>>::hasBeenSet();
-
-        return result;
     }
 
     /*

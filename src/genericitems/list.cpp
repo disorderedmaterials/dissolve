@@ -55,7 +55,7 @@ GenericItem *GenericList::create(std::string_view name, std::string_view itemCla
 }
 
 // Return whether the named item is contained in the list
-bool GenericList::contains(std::string_view name, std::string_view prefix)
+bool GenericList::contains(std::string_view name, std::string_view prefix) const
 {
     // Construct full name
     std::string varName = prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name);
@@ -67,21 +67,19 @@ bool GenericList::contains(std::string_view name, std::string_view prefix)
     return false;
 }
 
-// Return if named item, if it exists, is of specified type
-bool GenericList::isItemOfType(std::string_view type, std::string_view name, std::string_view prefix)
-{
-    GenericItem *item = find(name, prefix);
-    if (!item)
-        return false;
-
-    return DissolveSys::sameString(type, item->itemClassName());
-}
-
 // Return item list
 List<GenericItem> &GenericList::items() { return items_; }
 
 // Return the named item from the list
 GenericItem *GenericList::find(std::string_view name)
+{
+    for (auto *item = items_.first(); item != nullptr; item = item->next())
+        if (DissolveSys::sameString(item->name(), name))
+            return item;
+    return nullptr;
+}
+
+const GenericItem *GenericList::find(std::string_view name) const
 {
     for (auto *item = items_.first(); item != nullptr; item = item->next())
         if (DissolveSys::sameString(item->name(), name))
@@ -112,38 +110,6 @@ int GenericList::version(std::string_view name, std::string_view prefix) const
             return item->version();
 
     return -99;
-}
-
-// Return list of all items with specified prefix (before first '_')
-RefList<GenericItem> GenericList::itemsWithPrefix(std::string_view prefix)
-{
-    RefList<GenericItem> items;
-    for (auto *item = items_.first(); item != nullptr; item = item->next())
-    {
-        if (DissolveSys::beforeChar(item->name(), '_') == prefix)
-            items.append(item);
-    }
-
-    return items;
-}
-
-// Return list of all items with specified class name
-RefList<GenericItem> GenericList::itemsWithClassName(std::string_view className)
-{
-    RefList<GenericItem> items;
-    for (auto *item = items_.first(); item != nullptr; item = item->next())
-        if (DissolveSys::sameString(item->itemClassName(), className))
-            items.append(item);
-
-    return items;
-}
-
-// List all items
-void GenericList::listItems()
-{
-    auto count = 0;
-    for (auto *item = items_.first(); item != nullptr; item = item->next(), ++count)
-        Messenger::print("  {:3d}  {}", count, item->name());
 }
 
 // Remove named item

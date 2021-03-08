@@ -11,8 +11,8 @@
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-RenderableConfiguration::RenderableConfiguration(const Configuration *source, std::string_view objectTag)
-    : Renderable(Renderable::ConfigurationRenderable, objectTag), source_(source)
+RenderableConfiguration::RenderableConfiguration(const Configuration *source)
+    : Renderable(Renderable::ConfigurationRenderable, "UNUSED"), source_(source)
 {
     // Set defaults
     displayStyle_ = LinesStyle;
@@ -44,10 +44,6 @@ bool RenderableConfiguration::validateDataSource()
     // Don't try to access source_ if we are not currently permitted to do so
     if (!sourceDataAccessEnabled_)
         return false;
-
-    // If there is no valid source set, attempt to set it now...
-    if (!source_)
-        source_ = Configuration::findObject(objectTag_);
 
     return source_;
 }
@@ -264,14 +260,9 @@ const void RenderableConfiguration::sendToGL(const double pixelScaling)
 // Return EnumOptions for ConfigurationDisplayStyle
 EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> RenderableConfiguration::configurationDisplayStyles()
 {
-    static EnumOptionsList ConfigurationStyleOptions = EnumOptionsList()
-                                                       << EnumOption(RenderableConfiguration::LinesStyle, "Lines")
-                                                       << EnumOption(RenderableConfiguration::SpheresStyle, "Spheres");
-
-    static EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> options("ConfigurationDisplayStyle",
-                                                                                   ConfigurationStyleOptions);
-
-    return options;
+    return EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle>(
+        "ConfigurationDisplayStyle",
+        {{RenderableConfiguration::LinesStyle, "Lines"}, {RenderableConfiguration::SpheresStyle, "Spheres"}});
 }
 
 // Set display style for renderable
@@ -292,13 +283,9 @@ RenderableConfiguration::ConfigurationDisplayStyle RenderableConfiguration::disp
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> RenderableConfiguration::configurationStyleKeywords()
 {
-    static EnumOptionsList StyleKeywords = EnumOptionsList()
-                                           << EnumOption(RenderableConfiguration::DisplayKeyword, "Display", 1)
-                                           << EnumOption(RenderableConfiguration::EndStyleKeyword, "EndStyle");
-
-    static EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> options("ConfigurationStyleKeyword", StyleKeywords);
-
-    return options;
+    return EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword>(
+        "ConfigurationStyleKeyword",
+        {{RenderableConfiguration::DisplayKeyword, "Display", 1}, {RenderableConfiguration::EndStyleKeyword, "EndStyle"}});
 }
 
 // Write style information

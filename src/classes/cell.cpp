@@ -6,7 +6,10 @@
 #include "classes/box.h"
 #include <algorithm>
 
-Cell::Cell() : index_(-1) {}
+Cell::Cell(int index, Vec3<int> gridReference, Vec3<double> centre)
+    : gridReference_(gridReference), index_(index), centre_(centre)
+{
+}
 
 /*
  * Identity

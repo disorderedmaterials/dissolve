@@ -9,8 +9,6 @@ IntraShakeModule::IntraShakeModule() : Module(nRequiredTargets())
     initialise();
 }
 
-IntraShakeModule::~IntraShakeModule() {}
-
 /*
  * Instances
  */

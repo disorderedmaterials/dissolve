@@ -2,7 +2,6 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/atomtype.h"
-#include "genericitems/listhelper.h"
 #include "gui/dataviewer.hui"
 #include "gui/widgets/mimetreewidgetitem.h"
 #include "main/dissolve.h"
@@ -63,16 +62,16 @@ void EnergyModuleWidget::updateControls(int flags)
     if (currentConfiguration_)
     {
         const auto &totalEnergyArray =
-            GenericListHelper<Data1D>::value(currentConfiguration_->moduleData(), "Total", module_->uniqueName(), Data1D());
+            currentConfiguration_->moduleData().value<Data1D>("Total", module_->uniqueName(), Data1D());
         if (totalEnergyArray.nValues() < stabilityWindow)
             ui_.GradientValueLabel->setText("N/A");
         else
         {
-            auto grad = GenericListHelper<double>::value(currentConfiguration_->moduleData(), "EnergyGradient", "", 0.0);
+            auto grad = currentConfiguration_->moduleData().value<double>("EnergyGradient", "", 0.0);
             ui_.GradientValueLabel->setText(QString::number(grad));
         }
 
-        auto stable = GenericListHelper<bool>::value(currentConfiguration_->moduleData(), "EnergyStable", "", false);
+        auto stable = currentConfiguration_->moduleData().value<bool>("EnergyStable", "", false);
 
         if (stable)
         {

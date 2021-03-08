@@ -7,14 +7,9 @@
 // Return enum option info for ExpansionFunctionType
 EnumOptions<EPSRModule::ExpansionFunctionType> EPSRModule::expansionFunctionTypes()
 {
-    static EnumOptionsList ExpansionFunctionTypeOptions = EnumOptionsList()
-                                                          << EnumOption(EPSRModule::PoissonExpansionFunction, "Poisson")
-                                                          << EnumOption(EPSRModule::GaussianExpansionFunction, "Gaussian");
-
-    static EnumOptions<EPSRModule::ExpansionFunctionType> options("ExpansionFunctionType", ExpansionFunctionTypeOptions,
-                                                                  EPSRModule::PoissonExpansionFunction);
-
-    return options;
+    return EnumOptions<EPSRModule::ExpansionFunctionType>(
+        "ExpansionFunctionType",
+        {{EPSRModule::PoissonExpansionFunction, "Poisson"}, {EPSRModule::GaussianExpansionFunction, "Gaussian"}});
 }
 
 // Perform any necessary initialisation for the Module
@@ -29,7 +24,7 @@ void EPSRModule::initialise()
     keywords_.add("Control", new DoubleKeyword(0.8, 0.0, 1.0), "Feedback", "Confidence factor");
     keywords_.add("Control", new BoolKeyword(true), "ModifyPotential",
                   "Whether to apply generated perturbations to interatomic potentials");
-    keywords_.add("Control", new ModuleRefListKeyword(targets_, {"NeutronSQ", "XRaySQ"}), "Target",
+    keywords_.add("Control", new ModuleVectorKeyword({"NeutronSQ", "XRaySQ"}), "Target",
                   "Add specified Module (and it's Reference data) as a refinement target", "<ModuleName>");
     keywords_.add("Control", new DoubleKeyword(30.0, -1.0), "QMax",
                   "Maximum Q value over which to generate potentials from total scattering data");

@@ -9,8 +9,6 @@ XRaySQModule::XRaySQModule() : Module(nRequiredTargets())
     initialise();
 }
 
-XRaySQModule::~XRaySQModule() {}
-
 /*
  * Instances
  */

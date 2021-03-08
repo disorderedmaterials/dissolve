@@ -12,9 +12,7 @@ class SpeciesAtom;
 class Species;
 class MasterIntra;
 
-/*
- * SpeciesIntra Definition
- */
+// Base class for intramolecular interactions within Species
 class SpeciesIntra
 {
     public:
@@ -24,31 +22,20 @@ class SpeciesIntra
     SpeciesIntra(SpeciesIntra &&source) = delete;
     SpeciesIntra &operator=(const SpeciesIntra &source);
     SpeciesIntra &operator=(SpeciesIntra &&source) = delete;
-    // Interaction Type
-    enum InteractionType
-    {
-        BondInteraction,    /* Interaction is a bond between two atoms in the same molecule */
-        AngleInteraction,   /* Interaction is an angle between three atoms in the same molecule */
-        TorsionInteraction, /* Interaction is a torsion between four atoms in the same molecule */
-        ImproperInteraction /* Interaction is an improper torsion between four atoms in the same molecule */
-    };
-
-    /*
-     * Basic Data
-     */
-    protected:
-    // Parent Species
-    Species *parent_;
-
-    public:
-    // Set parent Species
-    void setParent(Species *parent);
-    // Return parent Species
-    Species *parent() const;
 
     /*
      * Interaction Parameters
      */
+    public:
+    // Interaction Type
+    enum class InteractionType
+    {
+        Bond,    /* Interaction is a bond between two atoms  */
+        Angle,   /* Interaction is an angle between three atoms */
+        Torsion, /* Interaction is a torsion between four atoms */
+        Improper /* Interaction is an improper torsion between four atoms */
+    };
+
     protected:
     // Linked master from which parameters should be taken (if relevant)
     MasterIntra *masterParameters_;
@@ -64,8 +51,6 @@ class SpeciesIntra
     const MasterIntra *masterParameters() const;
     // Detach from MasterIntra, if we are currently referencing one
     void detachFromMasterIntra();
-    // Return parameter source
-    const SpeciesIntra *parameterSource() const;
     // Set functional form index of interaction
     void setForm(int form);
     // Return functional form index of interaction

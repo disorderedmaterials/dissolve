@@ -21,6 +21,7 @@ template <> class GenericItemContainer<int> : public GenericItem
     public:
     // Return data item
     int &data() { return data_; }
+    const int &data() const { return data_; }
 
     /*
      * Item Class

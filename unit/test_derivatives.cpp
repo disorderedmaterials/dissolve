@@ -90,7 +90,7 @@ TEST_F(DerivativesTest, AngleFunctions)
 
 TEST_F(DerivativesTest, TorsionFunctions)
 {
-    tolerance_ = 1.0e-5;
+    tolerance_ = 9.0e-5;
     // TODO Increase range once #542 is addressed
     auto thetaMin = 1.0, thetaMax = 179.0;
 
@@ -123,6 +123,12 @@ TEST_F(DerivativesTest, TorsionFunctions)
     // UFF Cosine form (parameters = k, n, eq)
     intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::UFFCosineForm, {10.7, 3, 109.5}, thetaMin, thetaMax, 1.0, true);
     intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::UFFCosineForm, {19.0, 4, 90.0}, thetaMin, thetaMax, 1.0, true);
+
+    // FourierN form (parameters = k, C0, C1, ..., Cn)
+    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::FourierNForm, {12.0, 1.0}, thetaMin, thetaMax, 1.0, true);
+    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::FourierNForm, {44.0, 1.0, -1.0, 0.0}, thetaMin, thetaMax, 1.0, true);
+    intraTest<SpeciesTorsion>(torsion_, SpeciesTorsion::FourierNForm, {44.0, 1.0, -2.0, 3.0, 4.0, -5.0}, thetaMin, thetaMax,
+                              1.0, true);
 }
 
 } // namespace UnitTest

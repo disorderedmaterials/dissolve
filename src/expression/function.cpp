@@ -7,17 +7,17 @@
 // Return enum options for NodeTypes
 EnumOptions<ExpressionFunctionNode::InternalFunction> ExpressionFunctionNode::internalFunctions()
 {
-    static EnumOptionsList InternalFunctions = EnumOptionsList()
-                                               << EnumOption(AbsFunction, "abs", 1) << EnumOption(ACosFunction, "acos", 1)
-                                               << EnumOption(ASinFunction, "asin", 1) << EnumOption(ATanFunction, "atan", 1)
-                                               << EnumOption(CosFunction, "cos", 1) << EnumOption(ExpFunction, "exp", 1)
-                                               << EnumOption(LnFunction, "ln", 1) << EnumOption(LogFunction, "log", 1)
-                                               << EnumOption(SinFunction, "sin", 1) << EnumOption(SqrtFunction, "sqrt", 1)
-                                               << EnumOption(TanFunction, "tan", 1);
-
-    static EnumOptions<ExpressionFunctionNode::InternalFunction> options("InternalFunction", InternalFunctions);
-
-    return options;
+    return EnumOptions<ExpressionFunctionNode::InternalFunction>("InternalFunction", {{AbsFunction, "abs", 1},
+                                                                                      {ACosFunction, "acos", 1},
+                                                                                      {ASinFunction, "asin", 1},
+                                                                                      {ATanFunction, "atan", 1},
+                                                                                      {CosFunction, "cos", 1},
+                                                                                      {ExpFunction, "exp", 1},
+                                                                                      {LnFunction, "ln", 1},
+                                                                                      {LogFunction, "log", 1},
+                                                                                      {SinFunction, "sin", 1},
+                                                                                      {SqrtFunction, "sqrt", 1},
+                                                                                      {TanFunction, "tan", 1}});
 }
 
 ExpressionFunctionNode::ExpressionFunctionNode(InternalFunction func) : ExpressionNode(), function_(func) {}

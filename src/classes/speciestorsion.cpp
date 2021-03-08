@@ -2,29 +2,12 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "classes/speciestorsion.h"
-#include "base/processpool.h"
-#include "base/sysfunc.h"
 #include "classes/speciesatom.h"
-#include "templates/enumhelpers.h"
 
 SpeciesTorsion::SpeciesTorsion(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l) : SpeciesIntra()
 {
-
-    parent_ = nullptr;
-    i_ = i;
-    j_ = j;
-    k_ = k;
-    l_ = l;
+    assign(i, j, k, l);
     form_ = SpeciesTorsion::NoForm;
-
-    // Add ourself to the list of bonds on each atom
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addTorsion(*this, 0.5);
-        j_->addTorsion(*this, 0.5);
-        k_->addTorsion(*this, 0.5);
-        l_->addTorsion(*this, 0.5);
-    }
 }
 
 SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &source) { this->operator=(source); }
@@ -41,17 +24,7 @@ SpeciesTorsion::SpeciesTorsion(SpeciesTorsion &&source) : SpeciesIntra(source)
     }
 
     // Copy data
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    l_ = source.l_;
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addTorsion(*this, 0.5);
-        j_->addTorsion(*this, 0.5);
-        k_->addTorsion(*this, 0.5);
-        l_->addTorsion(*this, 0.5);
-    }
+    assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
 
     // Reset source data
@@ -65,18 +38,7 @@ SpeciesTorsion::~SpeciesTorsion() { detach(); }
 
 SpeciesTorsion &SpeciesTorsion::operator=(const SpeciesTorsion &source)
 {
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    l_ = source.l_;
-
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addTorsion(*this, 0.5);
-        j_->addTorsion(*this, 0.5);
-        k_->addTorsion(*this, 0.5);
-        l_->addTorsion(*this, 0.5);
-    }
+    assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
     SpeciesIntra::operator=(source);
 
@@ -88,22 +50,31 @@ SpeciesTorsion &SpeciesTorsion::operator=(SpeciesTorsion &&source)
     if (i_ && j_ && k_ && l_)
         detach();
 
-    i_ = source.i_;
-    j_ = source.j_;
-    k_ = source.k_;
-    l_ = source.l_;
-
-    if (i_ && j_ && k_ && l_)
-    {
-        i_->addTorsion(*this, 0.5);
-        j_->addTorsion(*this, 0.5);
-        k_->addTorsion(*this, 0.5);
-        l_->addTorsion(*this, 0.5);
-    }
+    // Copy data
+    assign(source.i_, source.j_, source.k_, source.l_);
     form_ = source.form_;
     SpeciesIntra::operator=(source);
 
     return *this;
+}
+
+/*
+ * Atom Information
+ */
+
+// Set Atoms involved in Torsion
+void SpeciesTorsion::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
+{
+    i_ = i;
+    j_ = j;
+    k_ = k;
+    l_ = l;
+    assert(i_ && j_ && k_ && l_);
+
+    i_->addTorsion(*this, 0.5);
+    j_->addTorsion(*this, 0.5);
+    k_->addTorsion(*this, 0.5);
+    l_->addTorsion(*this, 0.5);
 }
 
 // Detach from current atoms
@@ -120,29 +91,6 @@ void SpeciesTorsion::detach()
     j_ = nullptr;
     k_ = nullptr;
     l_ = nullptr;
-}
-
-/*
- * Atom Information
- */
-
-// Set Atoms involved in Torsion
-void SpeciesTorsion::assign(SpeciesAtom *i, SpeciesAtom *j, SpeciesAtom *k, SpeciesAtom *l)
-{
-    i_ = i;
-    j_ = j;
-    k_ = k;
-    l_ = l;
-    assert(i_ && j_ && k_ && l_);
-
-    if (i_)
-        i_->addTorsion(*this, 0.5);
-    if (j_)
-        j_->addTorsion(*this, 0.5);
-    if (k_)
-        k_->addTorsion(*this, 0.5);
-    if (l_)
-        l_->addTorsion(*this, 0.5);
 }
 
 // Return first SpeciesAtom
@@ -240,18 +188,16 @@ bool SpeciesTorsion::isSelected() const
 // Return enum options for TorsionFunction
 EnumOptions<SpeciesTorsion::TorsionFunction> SpeciesTorsion::torsionFunctions()
 {
-    static EnumOptionsList TorsionFunctionOptions =
-        EnumOptionsList() << EnumOption(SpeciesTorsion::NoForm, "None") << EnumOption(SpeciesTorsion::CosineForm, "Cos", 4)
-                          << EnumOption(SpeciesTorsion::Cos3Form, "Cos3", 3)
-                          << EnumOption(SpeciesTorsion::Cos3CForm, "Cos3C", 4)
-                          << EnumOption(SpeciesTorsion::Cos4Form, "Cos4", 4)
-                          << EnumOption(SpeciesTorsion::CosNForm, "CosN", 1, EnumOption::AnyNumberOfArguments)
-                          << EnumOption(SpeciesTorsion::CosNCForm, "CosNC", 1, EnumOption::AnyNumberOfArguments)
-                          << EnumOption(SpeciesTorsion::UFFCosineForm, "UFFCosine", 3);
-
-    static EnumOptions<SpeciesTorsion::TorsionFunction> options("TorsionFunction", TorsionFunctionOptions);
-
-    return options;
+    return EnumOptions<SpeciesTorsion::TorsionFunction>(
+        "TorsionFunction", {{SpeciesTorsion::NoForm, "None"},
+                            {SpeciesTorsion::CosineForm, "Cos", 4},
+                            {SpeciesTorsion::Cos3Form, "Cos3", 3},
+                            {SpeciesTorsion::Cos3CForm, "Cos3C", 4},
+                            {SpeciesTorsion::Cos4Form, "Cos4", 4},
+                            {SpeciesTorsion::CosNForm, "CosN", 1, OptionArguments::AnyNumber},
+                            {SpeciesTorsion::CosNCForm, "CosNC", 1, OptionArguments::AnyNumber},
+                            {SpeciesTorsion::UFFCosineForm, "UFFCosine", 3},
+                            {SpeciesTorsion::FourierNForm, "FourierN", 2, OptionArguments::AnyNumber}});
 }
 
 // Set up any necessary parameters
@@ -265,7 +211,7 @@ double SpeciesTorsion::fundamentalFrequency(double reducedMass) const
 }
 
 // Return type of this interaction
-SpeciesIntra::InteractionType SpeciesTorsion::type() const { return SpeciesIntra::TorsionInteraction; }
+SpeciesIntra::InteractionType SpeciesTorsion::type() const { return SpeciesIntra::InteractionType::Torsion; }
 
 // Return energy for specified angle and functional form, given supplied parameters
 double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector<double> &params)
@@ -341,11 +287,11 @@ double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector
          * 2 : ...
          * n-1 : force constant kn
          */
-        auto result = 0.0;
+        auto U = 0.0;
         for (auto n = 0; n < params.size(); ++n)
-            result += params[n] * (1.0 + cos((n + 1) * phi));
+            U += params[n] * (1.0 + cos((n + 1) * phi));
 
-        return result;
+        return U;
     }
     else if (form == SpeciesTorsion::CosNCForm)
     {
@@ -360,11 +306,11 @@ double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector
          * 2 : ...
          * n : force constant kn
          */
-        auto result = 0.0;
+        auto U = 0.0;
         for (auto n = 0; n < params.size(); ++n)
-            result += params[n] * (1.0 + cos(n * phi));
+            U += params[n] * (1.0 + cos(n * phi));
 
-        return result;
+        return U;
     }
     else if (form == SpeciesTorsion::UFFCosineForm)
     {
@@ -377,6 +323,21 @@ double SpeciesTorsion::energy(double angleInDegrees, int form, const std::vector
          * 2 : Equilibrium angle, eq (degrees)
          */
         return 0.5 * params[0] * (1.0 - cos(params[1] * params[2] / DEGRAD) * cos(params[1] * phi));
+    }
+    else if (form == SpeciesTorsion::FourierNForm)
+    {
+        /*
+         * U(phi) = k * (C0 + C1 cos(phi) + C2 cos(2*phi) ... Cn cos(n*phi))
+         *
+         * Parameters:
+         * 0 : Force constant, k
+         * 1...N : Coefficients C0 - CN
+         */
+        auto U = params[0] * params[1];
+        for (auto n = 2; n < params.size(); ++n)
+            U += params[0] * params[n] * cos((n - 1) * phi);
+
+        return U;
     }
 
     Messenger::error("Functional form of torsion / improper term not accounted for, so can't calculate energy.\n");
@@ -523,6 +484,23 @@ double SpeciesTorsion::force(double angleInDegrees, int form, const std::vector<
          */
 
         return -0.5 * params[0] * params[1] * cos(params[1] * params[2] / DEGRAD) * sin(params[1] * phi) * dphi_dcosphi;
+    }
+    else if (form == SpeciesTorsion::FourierNForm)
+    {
+        /*
+         *            1
+         * dU/dphi = SUM  -k * Cn * sin( n * phi )
+         *            n
+         *
+         * Parameters:
+         * 0 : Force constant, k
+         * 1...N : Coefficients C0 - CN
+         */
+        auto dU_dphi = 0.0;
+        for (auto n = 2; n < params.size(); ++n)
+            dU_dphi -= params[0] * params[n] * (n - 1) * sin((n - 1) * phi);
+
+        return -dU_dphi * dphi_dcosphi;
     }
 
     Messenger::error("Functional form of torsion / improper term not accounted for, so can't calculate force.\n");

@@ -9,8 +9,6 @@ DataTestModule::DataTestModule() : Module(nRequiredTargets())
     initialise();
 }
 
-DataTestModule::~DataTestModule() {}
-
 /*
  * Instances
  */

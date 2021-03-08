@@ -86,11 +86,8 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
             if (!KeywordData<EnumOptions<E>>::data_.isValid(parser.argsv(startArg)))
                 return KeywordData<EnumOptions<E>>::data_.errorAndPrintValid(parser.argsv(startArg));
 
-            // Keyword recognised...
-            EnumOptions<E> newOptions(KeywordData<EnumOptions<E>>::data_);
-            newOptions.setCurrentOption(parser.argsv(startArg));
-            if (!KeywordData<EnumOptions<E>>::setData(newOptions))
-                return Messenger::error("An odd thing happened....\n");
+            KeywordData<EnumOptions<E>>::data_.set(parser.argsv(startArg));
+            KeywordData<EnumOptions<E>>::hasBeenSet();
 
             return true;
         }
@@ -100,7 +97,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
     // Write keyword data to specified LineParser
     bool write(LineParser &parser, std::string_view keywordName, std::string_view prefix)
     {
-        return parser.writeLineF("{}{}  {}\n", prefix, keywordName, KeywordData<EnumOptions<E>>::data_.currentOptionKeyword());
+        return parser.writeLineF("{}{}  {}\n", prefix, keywordName, KeywordData<EnumOptions<E>>::data_.keyword());
     }
 
     /*
@@ -110,7 +107,7 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
     // Set new option index, informing KeywordBase
     void setEnumerationByIndex(int optionIndex)
     {
-        KeywordData<EnumOptions<E>>::data_.setCurrentOptionIndex(optionIndex);
+        KeywordData<EnumOptions<E>>::data_.setIndex(optionIndex);
         KeywordData<EnumOptions<E>>::hasBeenSet();
     }
 
@@ -126,5 +123,5 @@ template <class E> class EnumOptionsKeyword : public EnumOptionsBaseKeyword, pub
      */
     public:
     // Return value (as string)
-    std::string asString() { return std::string(KeywordData<EnumOptions<E>>::data_.currentOptionKeyword()); }
+    std::string asString() { return std::string(KeywordData<EnumOptions<E>>::data_.keyword()); }
 };

@@ -9,8 +9,6 @@ ExportPairPotentialsModule::ExportPairPotentialsModule() : Module(nRequiredTarge
     initialise();
 }
 
-ExportPairPotentialsModule::~ExportPairPotentialsModule() {}
-
 /*
  * Instances
  */

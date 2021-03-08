@@ -9,8 +9,6 @@ ForcesModule::ForcesModule() : Module(nRequiredTargets())
     initialise();
 }
 
-ForcesModule::~ForcesModule() {}
-
 /*
  * Instances
  */

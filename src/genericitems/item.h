@@ -71,7 +71,7 @@ class GenericItem : public ListItem<GenericItem>
     void setFlags(int flags);
     // Add (set) flag for item
     void addFlag(ItemFlag flag);
-    // Remove (uneset) flag for item
+    // Remove (unset) flag for item
     void removeFlag(ItemFlag flag);
     // Return flags
     int flags() const;

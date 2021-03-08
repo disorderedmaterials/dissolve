@@ -54,13 +54,8 @@ bool OrientedSite::hasAxes() const { return true; }
 // Return enum options for SiteAxis
 EnumOptions<OrientedSite::SiteAxis> OrientedSite::siteAxis()
 {
-    static EnumOptionsList SiteAxisOptions = EnumOptionsList() << EnumOption(OrientedSite::XAxis, "XAxis")
-                                                               << EnumOption(OrientedSite::YAxis, "YAxis")
-                                                               << EnumOption(OrientedSite::ZAxis, "ZAxis");
-
-    static EnumOptions<OrientedSite::SiteAxis> options("SiteAxis", SiteAxisOptions);
-
-    return options;
+    return EnumOptions<OrientedSite::SiteAxis>(
+        "SiteAxis", {{OrientedSite::XAxis, "XAxis"}, {OrientedSite::YAxis, "YAxis"}, {OrientedSite::ZAxis, "ZAxis"}});
 }
 
 // Return local axes

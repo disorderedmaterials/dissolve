@@ -28,30 +28,20 @@ PairPotential::PairPotential()
 }
 
 // Return enum option info for CoulombTruncationScheme
-EnumOptions<PairPotential::CoulombTruncationScheme> &PairPotential::coulombTruncationSchemes()
+EnumOptions<PairPotential::CoulombTruncationScheme> PairPotential::coulombTruncationSchemes()
 {
-    static EnumOptionsList CoulombTruncationSchemeOptions = EnumOptionsList()
-                                                            << EnumOption(PairPotential::NoCoulombTruncation, "None")
-                                                            << EnumOption(PairPotential::ShiftedCoulombTruncation, "Shifted");
-
-    static EnumOptions<PairPotential::CoulombTruncationScheme> options("CoulombTruncationScheme",
-                                                                       CoulombTruncationSchemeOptions);
-
-    return options;
+    return EnumOptions<PairPotential::CoulombTruncationScheme>(
+        "CoulombTruncationScheme",
+        {{PairPotential::NoCoulombTruncation, "None"}, {PairPotential::ShiftedCoulombTruncation, "Shifted"}});
 }
 
 // Return enum option info for ShortRangeTruncationScheme
-EnumOptions<PairPotential::ShortRangeTruncationScheme> &PairPotential::shortRangeTruncationSchemes()
+EnumOptions<PairPotential::ShortRangeTruncationScheme> PairPotential::shortRangeTruncationSchemes()
 {
-    static EnumOptionsList ShortRangeTruncationSchemeOptions =
-        EnumOptionsList() << EnumOption(PairPotential::NoShortRangeTruncation, "None")
-                          << EnumOption(PairPotential::ShiftedShortRangeTruncation, "Shifted")
-                          << EnumOption(PairPotential::CosineShortRangeTruncation, "Cosine");
-
-    static EnumOptions<PairPotential::ShortRangeTruncationScheme> options("ShortRangeTruncationScheme",
-                                                                          ShortRangeTruncationSchemeOptions);
-
-    return options;
+    return EnumOptions<PairPotential::ShortRangeTruncationScheme>("ShortRangeTruncationScheme",
+                                                                  {{PairPotential::NoShortRangeTruncation, "None"},
+                                                                   {PairPotential::ShiftedShortRangeTruncation, "Shifted"},
+                                                                   {PairPotential::CosineShortRangeTruncation, "Cosine"}});
 }
 
 /*

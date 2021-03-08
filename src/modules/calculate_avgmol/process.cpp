@@ -3,7 +3,6 @@
 
 #include "base/sysfunc.h"
 #include "classes/box.h"
-#include "genericitems/listhelper.h"
 #include "main/dissolve.h"
 #include "modules/calculate_avgmol/avgmol.h"
 
@@ -41,18 +40,14 @@ bool CalculateAvgMolModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 
     // Set name and object tag for average species
     averageSpecies_.setName(fmt::format("{}@{}", site ? site->name() : "???", targetSpecies_ ? targetSpecies_->name() : "???"));
-    averageSpecies_.setObjectTag(fmt::format("CalculateAvgMol_{}", averageSpecies_.name()));
 
     // Realise arrays
     updateArrays(dissolve);
 
     // Retrieve data arrays
-    Array<SampledDouble> &x =
-        GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "X", uniqueName());
-    Array<SampledDouble> &y =
-        GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Y", uniqueName());
-    Array<SampledDouble> &z =
-        GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Z", uniqueName());
+    Array<SampledDouble> &x = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("X", uniqueName());
+    Array<SampledDouble> &y = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Y", uniqueName());
+    Array<SampledDouble> &z = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Z", uniqueName());
 
     // Update our Species
     updateSpecies(x, y, z);
@@ -91,12 +86,9 @@ bool CalculateAvgMolModule::process(Dissolve &dissolve, ProcessPool &procPool)
     const auto *stack = cfg->siteStack(site);
 
     // Retrieve data arrays
-    Array<SampledDouble> &x =
-        GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "X", uniqueName());
-    Array<SampledDouble> &y =
-        GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Y", uniqueName());
-    Array<SampledDouble> &z =
-        GenericListHelper<Array<SampledDouble>>::retrieve(dissolve.processingModuleData(), "Z", uniqueName());
+    Array<SampledDouble> &x = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("X", uniqueName());
+    Array<SampledDouble> &y = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Y", uniqueName());
+    Array<SampledDouble> &z = dissolve.processingModuleData().retrieve<Array<SampledDouble>>("Z", uniqueName());
 
     // Loop over sites
     Vec3<double> r;

@@ -631,11 +631,7 @@ void RenderableData3D::marchingCubesOriginal(const std::vector<double> &displayX
 // Return EnumOptions for Data3DDisplayStyle
 EnumOptions<RenderableData3D::Data3DDisplayStyle> RenderableData3D::data3DDisplayStyles()
 {
-    static EnumOptionsList Style3DOptions = EnumOptionsList() << EnumOption(RenderableData3D::SolidStyle, "Solid");
-
-    static EnumOptions<RenderableData3D::Data3DDisplayStyle> options("Data3DDisplayStyle", Style3DOptions);
-
-    return options;
+    return EnumOptions<RenderableData3D::Data3DDisplayStyle>("Data3DDisplayStyle", {{RenderableData3D::SolidStyle, "Solid"}});
 }
 
 // Set display style for renderable
@@ -678,15 +674,11 @@ double RenderableData3D::upperCutoff() const { return upperCutoff_; }
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableData3D::Data3DStyleKeyword> RenderableData3D::data3DStyleKeywords()
 {
-    static EnumOptionsList StyleKeywords = EnumOptionsList()
-                                           << EnumOption(RenderableData3D::DisplayKeyword, "Display", 1)
-                                           << EnumOption(RenderableData3D::EndStyleKeyword, "EndStyle")
-                                           << EnumOption(RenderableData3D::LowerCutoffKeyword, "LowerCutoff", 1)
-                                           << EnumOption(RenderableData3D::UpperCutoffKeyword, "UpperCutoff", 1);
-
-    static EnumOptions<RenderableData3D::Data3DStyleKeyword> options("Data3DStyleKeyword", StyleKeywords);
-
-    return options;
+    return EnumOptions<RenderableData3D::Data3DStyleKeyword>("Data3DStyleKeyword",
+                                                             {{RenderableData3D::DisplayKeyword, "Display", 1},
+                                                              {RenderableData3D::EndStyleKeyword, "EndStyle"},
+                                                              {RenderableData3D::LowerCutoffKeyword, "LowerCutoff", 1},
+                                                              {RenderableData3D::UpperCutoffKeyword, "UpperCutoff", 1}});
 }
 
 // Write style information

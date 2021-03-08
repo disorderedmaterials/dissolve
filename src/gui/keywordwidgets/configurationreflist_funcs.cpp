@@ -3,7 +3,6 @@
 
 #include "classes/configuration.h"
 #include "classes/coredata.h"
-#include "genericitems/listhelper.h"
 #include "gui/helpers/listwidgetupdater.h"
 #include "gui/keywordwidgets/configurationreflist.h"
 #include "module/module.h"

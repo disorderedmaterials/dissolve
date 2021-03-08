@@ -275,11 +275,7 @@ void RenderableData1D::constructLineXY(const std::vector<double> &displayAbsciss
 // Return EnumOptions for Data1DDisplayStyle
 EnumOptions<RenderableData1D::Data1DDisplayStyle> RenderableData1D::data1DDisplayStyles()
 {
-    static EnumOptionsList Style1DOptions = EnumOptionsList() << EnumOption(RenderableData1D::LinesStyle, "Lines");
-
-    static EnumOptions<RenderableData1D::Data1DDisplayStyle> options("Data1DDisplayStyle", Style1DOptions);
-
-    return options;
+    return EnumOptions<RenderableData1D::Data1DDisplayStyle>("Data1DDisplayStyle", {{RenderableData1D::LinesStyle, "Lines"}});
 }
 
 // Set display style for renderable
@@ -300,12 +296,9 @@ RenderableData1D::Data1DDisplayStyle RenderableData1D::displayStyle() const { re
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableData1D::Data1DStyleKeyword> RenderableData1D::data1DStyleKeywords()
 {
-    static EnumOptionsList StyleKeywords = EnumOptionsList() << EnumOption(RenderableData1D::DisplayKeyword, "Display", 1)
-                                                             << EnumOption(RenderableData1D::EndStyleKeyword, "EndStyle");
-
-    static EnumOptions<RenderableData1D::Data1DStyleKeyword> options("Data1DStyleKeyword", StyleKeywords);
-
-    return options;
+    return EnumOptions<RenderableData1D::Data1DStyleKeyword>(
+        "Data1DStyleKeyword",
+        {{RenderableData1D::DisplayKeyword, "Display", 1}, {RenderableData1D::EndStyleKeyword, "EndStyle"}});
 }
 
 // Write style information

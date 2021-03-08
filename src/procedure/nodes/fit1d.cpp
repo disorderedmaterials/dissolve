@@ -6,7 +6,6 @@
 #include "base/sysfunc.h"
 #include "classes/configuration.h"
 #include "expression/variable.h"
-#include "genericitems/listhelper.h"
 #include "io/export/data1d.h"
 #include "math/mc.h"
 #include "procedure/nodes/collect1d.h"
@@ -43,19 +42,14 @@ bool Fit1DProcedureNode::isContextRelevant(ProcedureNode::NodeContext context)
 // Return enum option info for Fit1DNodeKeyword
 EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> Fit1DProcedureNode::fit1DNodeKeywords()
 {
-    static EnumOptionsList Fit1DNodeTypeKeywords = EnumOptionsList()
-                                                   << EnumOption(Fit1DProcedureNode::ConstantKeyword, "Constant", 1)
-                                                   << EnumOption(Fit1DProcedureNode::EndFit1DKeyword, "EndFit1D")
-                                                   << EnumOption(Fit1DProcedureNode::EquationKeyword, "Equation", 1)
-                                                   << EnumOption(Fit1DProcedureNode::FitKeyword, "Fit", 1)
-                                                   << EnumOption(Fit1DProcedureNode::MethodKeyword, "Method")
-                                                   << EnumOption(Fit1DProcedureNode::SaveKeyword, "Save", 1)
-                                                   << EnumOption(Fit1DProcedureNode::SourceDataKeyword, "SourceData",
-                                                                 EnumOption::OptionalSecondArgument);
-
-    static EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword> options("Fit1DNodeKeyword", Fit1DNodeTypeKeywords);
-
-    return options;
+    return EnumOptions<Fit1DProcedureNode::Fit1DNodeKeyword>(
+        "Fit1DNodeKeyword", {{Fit1DProcedureNode::ConstantKeyword, "Constant", 1},
+                             {Fit1DProcedureNode::EndFit1DKeyword, "EndFit1D"},
+                             {Fit1DProcedureNode::EquationKeyword, "Equation", 1},
+                             {Fit1DProcedureNode::FitKeyword, "Fit", 1},
+                             {Fit1DProcedureNode::MethodKeyword, "Method"},
+                             {Fit1DProcedureNode::SaveKeyword, "Save", 1},
+                             {Fit1DProcedureNode::SourceDataKeyword, "SourceData", OptionArguments::OptionalSecond}});
 }
 
 /*
@@ -182,8 +176,8 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
 
     // Generate final fit data
     // Retrieve / realise the data from the supplied list
-    auto &data = GenericListHelper<Data1D>::realise(targetList, fmt::format("{}_{}", name(), cfg->niceName()), prefix,
-                                                    GenericItem::InRestartFileFlag);
+    auto &data =
+        targetList.realise<Data1D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag);
 
     data.setName(name());
     data.setObjectTag(fmt::format("{}//Fit1D//{}//{}", prefix, cfg->name(), name()));

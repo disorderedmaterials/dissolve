@@ -75,23 +75,19 @@ bool Species::loadFromXYZ(std::string_view filename)
 // Return enum option info for SpeciesKeyword
 EnumOptions<Species::SpeciesKeyword> Species::keywords()
 {
-    static EnumOptionsList SpeciesKeywords =
-        EnumOptionsList() << EnumOption(Species::AngleKeyword, "Angle", 3, EnumOption::AnyNumberOfArguments)
-                          << EnumOption(Species::AtomKeyword, "Atom", 6, 7)
-                          << EnumOption(Species::BondKeyword, "Bond", 2, EnumOption::AnyNumberOfArguments)
-                          << EnumOption(Species::BondTypeKeyword, "BondType", 3)
-                          << EnumOption(Species::ChargeKeyword, "Charge", 2)
-                          << EnumOption(Species::CoordinateSetsKeyword, "CoordinateSets", 2, EnumOption::AnyNumberOfArguments)
-                          << EnumOption(Species::EndSpeciesKeyword, "EndSpecies")
-                          << EnumOption(Species::ForcefieldKeyword, "Forcefield", 1)
-                          << EnumOption(Species::ImproperKeyword, "Improper", 5, EnumOption::AnyNumberOfArguments)
-                          << EnumOption(Species::IsotopologueKeyword, "Isotopologue", EnumOption::OneOrMoreArguments)
-                          << EnumOption(Species::SiteKeyword, "Site", 1)
-                          << EnumOption(Species::TorsionKeyword, "Torsion", 4, EnumOption::AnyNumberOfArguments);
-
-    static EnumOptions<Species::SpeciesKeyword> options("SpeciesKeyword", SpeciesKeywords);
-
-    return options;
+    return EnumOptions<Species::SpeciesKeyword>(
+        "SpeciesKeyword", {{Species::AngleKeyword, "Angle", 3, OptionArguments::AnyNumber},
+                           {Species::AtomKeyword, "Atom", 6, 7},
+                           {Species::BondKeyword, "Bond", 2, OptionArguments::AnyNumber},
+                           {Species::BondTypeKeyword, "BondType", 3},
+                           {Species::ChargeKeyword, "Charge", 2},
+                           {Species::CoordinateSetsKeyword, "CoordinateSets", 2, OptionArguments::AnyNumber},
+                           {Species::EndSpeciesKeyword, "EndSpecies"},
+                           {Species::ForcefieldKeyword, "Forcefield", 1},
+                           {Species::ImproperKeyword, "Improper", 5, OptionArguments::AnyNumber},
+                           {Species::IsotopologueKeyword, "Isotopologue", OptionArguments::OneOrMore},
+                           {Species::SiteKeyword, "Site", 1},
+                           {Species::TorsionKeyword, "Torsion", 4, OptionArguments::AnyNumber}});
 }
 
 // Read Species definition from specified LineParser
@@ -111,7 +107,6 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     SpeciesSite *site;
     SpeciesBond::BondFunction bf;
     SpeciesAngle::AngleFunction af;
-    SpeciesImproper::ImproperFunction impf;
     SpeciesTorsion::TorsionFunction tf;
     SpeciesBond::BondType bt;
     Isotope *tope;
@@ -397,13 +392,13 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 else
                 {
                     // Check the functional form specified
-                    if (!SpeciesImproper::improperFunctions().isValid(parser.argsv(5)))
+                    if (!SpeciesTorsion::torsionFunctions().isValid(parser.argsv(5)))
                     {
                         Messenger::error("Functional form of Improper ({}) not recognised.\n", parser.argsv(5));
                         error = true;
                         break;
                     }
-                    impf = SpeciesImproper::improperFunctions().enumeration(parser.argsv(5));
+                    tf = SpeciesTorsion::torsionFunctions().enumeration(parser.argsv(5));
 
                     // Create a new improper definition
                     imp = addImproper(parser.argi(1) - 1, parser.argi(2) - 1, parser.argi(3) - 1, parser.argi(4) - 1);
@@ -412,10 +407,10 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                         error = true;
                         break;
                     }
-                    imp->get().setForm(impf);
+                    imp->get().setForm(tf);
 
                     // Check number of args provided
-                    if (!SpeciesImproper::improperFunctions().validNArgs(impf, parser.nArgs() - 6))
+                    if (!SpeciesTorsion::torsionFunctions().validNArgs(tf, parser.nArgs() - 6))
                     {
                         error = true;
                         break;
@@ -729,7 +724,7 @@ bool Species::write(LineParser &parser, std::string_view prefix)
                 std::string line =
                     fmt::format("{}{}  {:3d}  {:3d}  {:3d}  {:3d}  {}", newPrefix, keywords().keyword(Species::ImproperKeyword),
                                 imp.indexI() + 1, imp.indexJ() + 1, imp.indexK() + 1, imp.indexL() + 1,
-                                SpeciesImproper::improperFunctions().keywordFromInt(imp.form()));
+                                SpeciesTorsion::torsionFunctions().keywordFromInt(imp.form()));
                 for (const auto param : imp.parameters())
                     line += fmt::format("  {:.4f}", param);
                 if (!parser.writeLine(line))

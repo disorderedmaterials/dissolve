@@ -7,17 +7,13 @@
 #include "gui/render/symbol.h"
 
 // Return enum options for EscapedFormatter
-EnumOptions<TextPrimitiveVisitor::EscapedFormatter> &TextPrimitiveVisitor::escapedFormatters()
+EnumOptions<TextPrimitiveVisitor::EscapedFormatter> TextPrimitiveVisitor::escapedFormatters()
 {
-    static EnumOptionsList EscapedFormatterOptions = EnumOptionsList()
-                                                     << EnumOption(TextPrimitiveVisitor::BoldFormatter, "b")
-                                                     << EnumOption(TextPrimitiveVisitor::ItalicFormatter, "it")
-                                                     << EnumOption(TextPrimitiveVisitor::SubScriptFormatter, "sub")
-                                                     << EnumOption(TextPrimitiveVisitor::SuperScriptFormatter, "sup");
-
-    static EnumOptions<TextPrimitiveVisitor::EscapedFormatter> options("EscapedFormatter", EscapedFormatterOptions);
-
-    return options;
+    return EnumOptions<TextPrimitiveVisitor::EscapedFormatter>("EscapedFormatter",
+                                                               {{TextPrimitiveVisitor::BoldFormatter, "b"},
+                                                                {TextPrimitiveVisitor::ItalicFormatter, "it"},
+                                                                {TextPrimitiveVisitor::SubScriptFormatter, "sub"},
+                                                                {TextPrimitiveVisitor::SuperScriptFormatter, "sup"}});
 }
 
 /*

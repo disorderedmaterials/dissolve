@@ -7,13 +7,12 @@
 #include "math/data2d.h"
 #include "math/sampleddouble.h"
 #include "templates/array2d.h"
-#include "templates/objectstore.h"
 
 // Forward Declarations
 class ProcessPool;
 
 // One-Dimensional Histogram
-class Histogram2D : public ListItem<Histogram2D>, public ObjectStore<Histogram2D>, public GenericItemBase
+class Histogram2D : public ListItem<Histogram2D>, public GenericItemBase
 {
     public:
     Histogram2D();

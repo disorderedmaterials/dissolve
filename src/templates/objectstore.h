@@ -22,14 +22,9 @@ class ObjectInfo
     enum ObjectType
     {
         NoObject = 0,
-        ConfigurationObject,
         Data1DObject,
         Data2DObject,
         Data3DObject,
-        Histogram1DObject,
-        Histogram2DObject,
-        Histogram3DObject,
-        SpeciesObject,
         nObjectTypes
     };
 
