@@ -270,10 +270,10 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
     else
         item = ui_.ImproperTable->item(row, 4);
 
-    item->setText(speciesImproper->masterParameters()
-                      ? QString("@%1").arg(QString::fromStdString(std::string(speciesImproper->masterParameters()->name())))
-                      : QString::fromStdString(
-                            std::string(SpeciesImproper::improperFunctions().keywordFromInt(speciesImproper->form()))));
+    item->setText(
+        speciesImproper->masterParameters()
+            ? QString("@%1").arg(QString::fromStdString(std::string(speciesImproper->masterParameters()->name())))
+            : QString::fromStdString(std::string(SpeciesTorsion::torsionFunctions().keywordFromInt(speciesImproper->form()))));
 
     // Interaction Parameters
     for (auto n = 0; n < speciesImproper->nParameters(); ++n)
@@ -615,7 +615,7 @@ void SpeciesTab::on_ImproperTable_itemChanged(QTableWidgetItem *w)
             }
             else
             {
-                SpeciesImproper::ImproperFunction tf = SpeciesImproper::improperFunctions().enumeration(qPrintable(w->text()));
+                SpeciesTorsion::TorsionFunction tf = SpeciesTorsion::torsionFunctions().enumeration(qPrintable(w->text()));
                 speciesImproper->setMasterParameters(nullptr);
                 speciesImproper->setForm(tf);
             }

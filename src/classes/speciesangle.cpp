@@ -160,13 +160,10 @@ void SpeciesAngle::detach()
 // Return enum options for AngleFunction
 EnumOptions<SpeciesAngle::AngleFunction> SpeciesAngle::angleFunctions()
 {
-    static EnumOptionsList AngleFunctionOptions =
-        EnumOptionsList() << EnumOption(SpeciesAngle::NoForm, "None") << EnumOption(SpeciesAngle::HarmonicForm, "Harmonic", 2)
-                          << EnumOption(SpeciesAngle::CosineForm, "Cos", 4) << EnumOption(SpeciesAngle::Cos2Form, "Cos2", 4);
-
-    static EnumOptions<SpeciesAngle::AngleFunction> options("AngleFunction", AngleFunctionOptions);
-
-    return options;
+    return EnumOptions<SpeciesAngle::AngleFunction>("AngleFunction", {{SpeciesAngle::NoForm, "None"},
+                                                                      {SpeciesAngle::HarmonicForm, "Harmonic", 2},
+                                                                      {SpeciesAngle::CosineForm, "Cos", 4},
+                                                                      {SpeciesAngle::Cos2Form, "Cos2", 4}});
 }
 
 // Set up any necessary parameters

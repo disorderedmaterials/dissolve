@@ -196,7 +196,7 @@ void Species::print()
             std::string line =
                 fmt::format("   {:4d}  {:4d}  {:4d}  {:4d}    {}{:<12}", improper.indexI() + 1, improper.indexJ() + 1,
                             improper.indexK() + 1, improper.indexL() + 1, improper.masterParameters() ? '@' : ' ',
-                            SpeciesImproper::improperFunctions().keywordFromInt(improper.form()));
+                            SpeciesTorsion::torsionFunctions().keywordFromInt(improper.form()));
             for (const auto param : improper.parameters())
                 line += fmt::format("  {:12.4e}", param);
             Messenger::print(line);

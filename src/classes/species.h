@@ -339,8 +339,7 @@ class Species : public ListItem<Species>
         ImproperKeyword,       /* 'Improper' - Define an Improper interaction between four atoms */
         IsotopologueKeyword,   /* 'Isotopologue' - Add an isotopologue to the Species */
         SiteKeyword,           /* 'Site' - Define an analysis site within the Species */
-        TorsionKeyword,        /* 'Torsion' - Define a Torsion interaction between four atoms */
-        nSpeciesKeywords       /* Number of keywords defined for this block */
+        TorsionKeyword         /* 'Torsion' - Define a Torsion interaction between four atoms */
     };
     // Return enum option info for SpeciesKeyword
     static EnumOptions<Species::SpeciesKeyword> keywords();

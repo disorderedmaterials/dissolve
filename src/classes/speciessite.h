@@ -123,9 +123,8 @@ class SpeciesSite : public ListItem<SpeciesSite>
                           mass-weighted coordinates */
         XAxisKeyword, /* 'XAxis' - Define one or more atoms whose average coordinates reflect the direction of the x
                  axis */
-        YAxisKeyword, /* 'YAxis' - Define one or more atoms whose average coordinates reflect the direction of the y
+        YAxisKeyword  /* 'YAxis' - Define one or more atoms whose average coordinates reflect the direction of the y
                  axis */
-        nSiteKeywords /* Number of keywords defined for this block */
     };
     // Return enum option info for SiteKeyword
     static EnumOptions<SpeciesSite::SiteKeyword> keywords();

@@ -127,7 +127,7 @@ class EPSRModule : public Module
         nEPSRPCofKeywords
     };
     // Return enum options for EPSRPCofKeyword
-    static EnumOptions<EPSRModule::EPSRPCofKeyword> &epsrPCofKeywords();
+    static EnumOptions<EPSRModule::EPSRPCofKeyword> epsrPCofKeywords();
 
     public:
     // Read data from supplied pcof file

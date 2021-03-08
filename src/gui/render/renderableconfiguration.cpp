@@ -260,14 +260,9 @@ const void RenderableConfiguration::sendToGL(const double pixelScaling)
 // Return EnumOptions for ConfigurationDisplayStyle
 EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> RenderableConfiguration::configurationDisplayStyles()
 {
-    static EnumOptionsList ConfigurationStyleOptions = EnumOptionsList()
-                                                       << EnumOption(RenderableConfiguration::LinesStyle, "Lines")
-                                                       << EnumOption(RenderableConfiguration::SpheresStyle, "Spheres");
-
-    static EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle> options("ConfigurationDisplayStyle",
-                                                                                   ConfigurationStyleOptions);
-
-    return options;
+    return EnumOptions<RenderableConfiguration::ConfigurationDisplayStyle>(
+        "ConfigurationDisplayStyle",
+        {{RenderableConfiguration::LinesStyle, "Lines"}, {RenderableConfiguration::SpheresStyle, "Spheres"}});
 }
 
 // Set display style for renderable
@@ -288,13 +283,9 @@ RenderableConfiguration::ConfigurationDisplayStyle RenderableConfiguration::disp
 // Return enum option info for RenderableKeyword
 EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> RenderableConfiguration::configurationStyleKeywords()
 {
-    static EnumOptionsList StyleKeywords = EnumOptionsList()
-                                           << EnumOption(RenderableConfiguration::DisplayKeyword, "Display", 1)
-                                           << EnumOption(RenderableConfiguration::EndStyleKeyword, "EndStyle");
-
-    static EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword> options("ConfigurationStyleKeyword", StyleKeywords);
-
-    return options;
+    return EnumOptions<RenderableConfiguration::ConfigurationStyleKeyword>(
+        "ConfigurationStyleKeyword",
+        {{RenderableConfiguration::DisplayKeyword, "Display", 1}, {RenderableConfiguration::EndStyleKeyword, "EndStyle"}});
 }
 
 // Write style information

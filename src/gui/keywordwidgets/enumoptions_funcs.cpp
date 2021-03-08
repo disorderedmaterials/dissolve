@@ -20,7 +20,7 @@ EnumOptionsKeywordWidget::EnumOptionsKeywordWidget(QWidget *parent, KeywordBase 
         for (int n = 0; n < options.nOptions(); ++n)
         {
             addItem(QString::fromStdString(std::string(options.keywordByIndex(n))));
-            if (options.currentOptionIndex() == n)
+            if (options.index() == n)
                 setCurrentIndex(n);
         }
 
@@ -63,7 +63,7 @@ void EnumOptionsKeywordWidget::updateValue()
     refreshing_ = true;
 
     // Set the combo box index
-    setCurrentIndex(keyword_->baseOptions().currentOptionIndex());
+    setCurrentIndex(keyword_->baseOptions().index());
 
     refreshing_ = false;
 }

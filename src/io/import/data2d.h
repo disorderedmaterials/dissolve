@@ -38,7 +38,7 @@ class Data2DImportFileFormat : public FileAndFormat
      */
     private:
     // Return enum options for Data2DImportFormat
-    static EnumOptions<Data2DImportFileFormat::Data2DImportFormat> &data2DImportFormats();
+    static EnumOptions<Data2DImportFileFormat::Data2DImportFormat> data2DImportFormats();
 
     public:
     // Return number of available formats

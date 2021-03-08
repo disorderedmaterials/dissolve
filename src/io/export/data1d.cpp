@@ -17,14 +17,10 @@ Data1DExportFileFormat::Data1DExportFileFormat(std::string_view filename, Data1D
  */
 
 // Return enum options for Data1DExportFormat
-EnumOptions<Data1DExportFileFormat::Data1DExportFormat> &Data1DExportFileFormat::data1DExportFormats()
+EnumOptions<Data1DExportFileFormat::Data1DExportFormat> Data1DExportFileFormat::data1DExportFormats()
 {
-    static EnumOptionsList Data1DExportFormats =
-        EnumOptionsList() << EnumOption(Data1DExportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)");
-
-    static EnumOptions<Data1DExportFileFormat::Data1DExportFormat> options("Data1DExportFileFormat", Data1DExportFormats);
-
-    return options;
+    return EnumOptions<Data1DExportFileFormat::Data1DExportFormat>(
+        "Data1DExportFileFormat", {{Data1DExportFileFormat::XYData1D, "xy", "Simple XY data (x = bin centres)"}});
 }
 
 // Return number of available formats

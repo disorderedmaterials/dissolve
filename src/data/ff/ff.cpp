@@ -40,14 +40,10 @@ bool Forcefield::prepare()
 // Return enum options for ShortRangeType
 EnumOptions<Forcefield::ShortRangeType> Forcefield::shortRangeTypes()
 {
-    static EnumOptionsList ShortRangeTypeOptions =
-        EnumOptionsList() << EnumOption(Forcefield::UndefinedType, "Undefined")
-                          << EnumOption(Forcefield::NoInteractionType, "None") << EnumOption(Forcefield::LennardJonesType, "LJ")
-                          << EnumOption(Forcefield::LennardJonesGeometricType, "LJGeometric");
-
-    static EnumOptions<Forcefield::ShortRangeType> options("ShortRangeType", ShortRangeTypeOptions);
-
-    return options;
+    return EnumOptions<Forcefield::ShortRangeType>("ShortRangeType", {{Forcefield::UndefinedType, "Undefined"},
+                                                                      {Forcefield::NoInteractionType, "None"},
+                                                                      {Forcefield::LennardJonesType, "LJ"},
+                                                                      {Forcefield::LennardJonesGeometricType, "LJGeometric"}});
 }
 
 /*
@@ -219,7 +215,7 @@ void Forcefield::addTorsionTerm(std::string_view typeI, std::string_view typeJ, 
 
 // Add improper term
 void Forcefield::addImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
-                                 SpeciesImproper::ImproperFunction form, const std::vector<double> parameters)
+                                 SpeciesTorsion::TorsionFunction form, const std::vector<double> parameters)
 {
     improperTerms_.emplace_back(typeI, typeJ, typeK, typeL, form, parameters);
 }
@@ -427,7 +423,7 @@ bool Forcefield::assignImproperTermParameters(ForcefieldImproperTerm &improper, 
     auto optTerm = getImproperTerm(atomTypes[0], atomTypes[1], atomTypes[2], atomTypes[3]);
     if (!optTerm)
         improper = {atomTypes[0].get().equivalentName(), atomTypes[1].get().equivalentName(),
-                    atomTypes[2].get().equivalentName(), atomTypes[3].get().equivalentName(), SpeciesImproper::NoForm};
+                    atomTypes[2].get().equivalentName(), atomTypes[3].get().equivalentName(), SpeciesTorsion::NoForm};
     else
         improper = *optTerm;
 
@@ -517,7 +513,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
                         if (!assignImproperTermParameters(improperTerm, i, j, k, l, determineTypes))
                             return false;
 
-                        if (improperTerm.form() == SpeciesImproper::NoForm)
+                        if (improperTerm.form() == SpeciesTorsion::NoForm)
                             continue;
 
                         // If an improper term already exists in the species, overwrite its parameters. Otherwise, create a new

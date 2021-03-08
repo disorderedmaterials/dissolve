@@ -1,8 +1,5 @@
 add_library(
   base
-  enumoption.cpp
-  enumoptionsbase.cpp
-  enumoptionslist.cpp
   geometry.cpp
   lineparser.cpp
   lock.cpp
@@ -17,7 +14,6 @@ add_library(
   enumoption.h
   enumoptionsbase.h
   enumoptions.h
-  enumoptionslist.h
   geometry.h
   lineparser.h
   lock.h

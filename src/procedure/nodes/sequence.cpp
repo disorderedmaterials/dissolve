@@ -35,11 +35,7 @@ bool SequenceProcedureNode::isContextRelevant(ProcedureNode::NodeContext context
 // Return enum option info for SequenceNodeKeyword
 EnumOptions<SequenceProcedureNode::SequenceNodeKeyword> SequenceProcedureNode::sequenceNodeKeywords()
 {
-    static EnumOptionsList SequenceNodeTypeKeywords;
-
-    static EnumOptions<SequenceProcedureNode::SequenceNodeKeyword> options("SequenceNodeKeyword", SequenceNodeTypeKeywords);
-
-    return options;
+    return EnumOptions<SequenceProcedureNode::SequenceNodeKeyword>("SequenceNodeKeyword", {});
 }
 
 /*

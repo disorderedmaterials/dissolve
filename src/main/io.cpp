@@ -217,7 +217,7 @@ bool Dissolve::saveInput(std::string_view filename)
         for (auto &imp : coreData_.masterImpropers())
         {
             std::string line = fmt::format("  {}  '{}'  {}", MasterBlock::keywords().keyword(MasterBlock::ImproperKeyword),
-                                           imp.name(), SpeciesImproper::improperFunctions().keywordFromInt(imp.form()));
+                                           imp.name(), SpeciesTorsion::torsionFunctions().keywordFromInt(imp.form()));
             for (auto p : imp.parameters())
                 line += fmt::format("  {:8.3f}", p);
             if (!parser.writeLine(line))

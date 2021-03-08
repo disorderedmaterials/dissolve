@@ -27,7 +27,7 @@ class TextPrimitiveVisitor : TextPrimitiveParserBaseVisitor
         nEscapedFormatters
     };
     // Return enum options for EscapedFormatter
-    static EnumOptions<TextPrimitiveVisitor::EscapedFormatter> &escapedFormatters();
+    static EnumOptions<TextPrimitiveVisitor::EscapedFormatter> escapedFormatters();
 
     /*
      * Construction

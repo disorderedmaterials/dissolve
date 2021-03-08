@@ -361,26 +361,26 @@ OptionalReferenceWrapper<const ForcefieldImproperTerm> PCL2019BaseForcefield::ge
     // Presented here, the original third atom is placed first.
     static std::vector<ForcefieldImproperTerm> improperTerms = {
         // improper C aromatics AMBER JACS 117 (1995) 5179
-        {"CA", "CA", "CA", "HA", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
-        {"CA", "CA", "CA", "CA", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
-        {"CA", "CA", "CA", "CT", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
-        {"NA", "CA", "CA", "CT", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
-        {"CA", "CA", "NA", "HA", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
+        {"CA", "CA", "CA", "HA", SpeciesTorsion::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
+        {"CA", "CA", "CA", "CA", SpeciesTorsion::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
+        {"CA", "CA", "CA", "CT", SpeciesTorsion::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
+        {"NA", "CA", "CA", "CT", SpeciesTorsion::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
+        {"CA", "CA", "NA", "HA", SpeciesTorsion::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
         // improper imidazolium ring AMBER JACS 117 (1995) 5179
-        {"NA", "CR", "CW*", "CT", SpeciesImproper::Cos4Form, {0.0000, 8.3680, 0.0000, 0.0000}},
-        {"NA", "CR", "CW*", "HA", SpeciesImproper::Cos4Form, {0.0000, 8.3680, 0.0000, 0.0000}},
-        {"CR", "NA", "NA", "HA", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
-        {"CR", "NA", "NA", "CT", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
-        {"CW*", "NA", "CW*", "HA", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
+        {"NA", "CR", "CW*", "CT", SpeciesTorsion::Cos4Form, {0.0000, 8.3680, 0.0000, 0.0000}},
+        {"NA", "CR", "CW*", "HA", SpeciesTorsion::Cos4Form, {0.0000, 8.3680, 0.0000, 0.0000}},
+        {"CR", "NA", "NA", "HA", SpeciesTorsion::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
+        {"CR", "NA", "NA", "CT", SpeciesTorsion::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
+        {"CW*", "NA", "CW*", "HA", SpeciesTorsion::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
         // improper tricyanomethanide AMBER JACS 117 (1995) 5179
-        {"C3A", "CN", "CN", "CN", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
+        {"C3A", "CN", "CN", "CN", SpeciesTorsion::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
         // improper carbonyl AMBER JACS 117 (1995 )5179
-        {"CO", "CT", "O2", "O2", SpeciesImproper::Cos4Form, {0.0000, 87.8640, 0.0000, 0.0000}},
+        {"CO", "CT", "O2", "O2", SpeciesTorsion::Cos4Form, {0.0000, 87.8640, 0.0000, 0.0000}},
         // improper guanidinium AMBER JACS 117 (1995 )5179
-        {"CG", "NG", "NG", "NG", SpeciesImproper::Cos4Form, {0.0000, 8.3680, 0.0000, 0.0000}},
-        {"NG", "CG", "HG", "HG", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
+        {"CG", "NG", "NG", "NG", SpeciesTorsion::Cos4Form, {0.0000, 8.3680, 0.0000, 0.0000}},
+        {"NG", "CG", "HG", "HG", SpeciesTorsion::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}},
         // tosylate aromatics AMBER JACS 117 (1995) 5179
-        {"CA", "CA", "CA", "SO", SpeciesImproper::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}}};
+        {"CA", "CA", "CA", "SO", SpeciesTorsion::Cos4Form, {0.0000, 9.2048, 0.0000, 0.0000}}};
 
     return Forcefield::termMatch_(improperTerms, i, j, k, l);
 }

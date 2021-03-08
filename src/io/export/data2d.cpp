@@ -16,15 +16,11 @@ Data2DExportFileFormat::Data2DExportFileFormat(std::string_view filename, Data2D
  */
 
 // Return enum options for Data2DExportFormat
-EnumOptions<Data2DExportFileFormat::Data2DExportFormat> &Data2DExportFileFormat::data2DExportFormats()
+EnumOptions<Data2DExportFileFormat::Data2DExportFormat> Data2DExportFileFormat::data2DExportFormats()
 {
-    static EnumOptionsList Data2DExportFormats =
-        EnumOptionsList() << EnumOption(Data2DExportFileFormat::BlockData2D, "block", "Block Data")
-                          << EnumOption(Data2DExportFileFormat::CartesianData2D, "cartesian", "Cartesian (x,y,value) Data");
-
-    static EnumOptions<Data2DExportFileFormat::Data2DExportFormat> options("Data2DExportFileFormat", Data2DExportFormats);
-
-    return options;
+    return EnumOptions<Data2DExportFileFormat::Data2DExportFormat>(
+        "Data2DExportFileFormat", {{Data2DExportFileFormat::BlockData2D, "block", "Block Data"},
+                                   {Data2DExportFileFormat::CartesianData2D, "cartesian", "Cartesian (x,y,value) Data"}});
 }
 
 // Return number of available formats

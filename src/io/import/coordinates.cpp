@@ -31,18 +31,13 @@ void CoordinateImportFileFormat::setUpKeywords() {}
  */
 
 // Return enum options for CoordinateImportFormat
-EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> &CoordinateImportFileFormat::coordinateImportFormats()
+EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> CoordinateImportFileFormat::coordinateImportFormats()
 {
-    static EnumOptionsList CoordinateImportFormats =
-        EnumOptionsList() << EnumOption(CoordinateImportFileFormat::DLPOLYCoordinates, "dlpoly", "DL_POLY CONFIG")
-                          << EnumOption(CoordinateImportFileFormat::EPSRCoordinates, "epsr", "EPSR ATO")
-                          << EnumOption(CoordinateImportFileFormat::MoscitoCoordinates, "moscito", "Moscito structure file")
-                          << EnumOption(CoordinateImportFileFormat::XYZCoordinates, "xyz", "Simple XYZ");
-
-    static EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat> options("CoordinateImportFileFormat",
-                                                                                   CoordinateImportFormats);
-
-    return options;
+    return EnumOptions<CoordinateImportFileFormat::CoordinateImportFormat>(
+        "CoordinateImportFileFormat", {{CoordinateImportFileFormat::DLPOLYCoordinates, "dlpoly", "DL_POLY CONFIG"},
+                                       {CoordinateImportFileFormat::EPSRCoordinates, "epsr", "EPSR ATO"},
+                                       {CoordinateImportFileFormat::MoscitoCoordinates, "moscito", "Moscito structure file"},
+                                       {CoordinateImportFileFormat::XYZCoordinates, "xyz", "Simple XYZ"}});
 }
 
 // Return number of available formats

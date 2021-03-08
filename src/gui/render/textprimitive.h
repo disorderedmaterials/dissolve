@@ -34,7 +34,7 @@ class TextPrimitive
         nTextAnchors
     };
     // Return enum options for TextAnchor
-    static EnumOptions<TextPrimitive::TextAnchor> &textAnchors();
+    static EnumOptions<TextPrimitive::TextAnchor> textAnchors();
 
     /*
      * Definition

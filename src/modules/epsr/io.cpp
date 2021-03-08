@@ -7,24 +7,27 @@
 #include "modules/epsr/epsr.h"
 
 // Return enum options for EPSRPCofKeyword
-EnumOptions<EPSRModule::EPSRPCofKeyword> &EPSRModule::epsrPCofKeywords()
+EnumOptions<EPSRModule::EPSRPCofKeyword> EPSRModule::epsrPCofKeywords()
 {
-    static EnumOptionsList PCOFKeywordOptions =
-        EnumOptionsList()
-        << EnumOption(EPSRModule::AddPotTypePCofKeyword, "addpottype") << EnumOption(EPSRModule::ExpecFPCofKeyword, "expecf")
-        << EnumOption(EPSRModule::GaussianPCofKeyword, "gaussian") << EnumOption(EPSRModule::NCoeffPPCofKeyword, "ncoeffp")
-        << EnumOption(EPSRModule::NPItSSPCofKeyword, "npitss") << EnumOption(EPSRModule::PAcceptPCofKeyword, "paccept")
-        << EnumOption(EPSRModule::PDMaxPCofKeyword, "pdmax") << EnumOption(EPSRModule::PDStepPCofKeyword, "pdstep")
-        << EnumOption(EPSRModule::PowerPCofKeyword, "power") << EnumOption(EPSRModule::PSigma2PCofKeyword, "psigma2")
-        << EnumOption(EPSRModule::QuitPCofKeyword, "q") << EnumOption(EPSRModule::RBroadPCofKeyword, "rbroad")
-        << EnumOption(EPSRModule::RChargePCofKeyword, "rcharge") << EnumOption(EPSRModule::RefPotFacPCofKeyword, "refpotfac")
-        << EnumOption(EPSRModule::RepPotTypePCofKeyword, "reppottype") << EnumOption(EPSRModule::RMaxPtPCofKeyword, "rmaxpt")
-        << EnumOption(EPSRModule::RMinFacPCofKeyword, "rminfac") << EnumOption(EPSRModule::RMinPtPCofKeyword, "rminpt")
-        << EnumOption(EPSRModule::ROverlapPCofKeyword, "roverlap");
-
-    static EnumOptions<EPSRModule::EPSRPCofKeyword> options("PCOFKeywords", PCOFKeywordOptions);
-
-    return options;
+    return EnumOptions<EPSRModule::EPSRPCofKeyword>("PCOFKeywords", {{EPSRModule::AddPotTypePCofKeyword, "addpottype"},
+                                                                     {EPSRModule::ExpecFPCofKeyword, "expecf"},
+                                                                     {EPSRModule::GaussianPCofKeyword, "gaussian"},
+                                                                     {EPSRModule::NCoeffPPCofKeyword, "ncoeffp"},
+                                                                     {EPSRModule::NPItSSPCofKeyword, "npitss"},
+                                                                     {EPSRModule::PAcceptPCofKeyword, "paccept"},
+                                                                     {EPSRModule::PDMaxPCofKeyword, "pdmax"},
+                                                                     {EPSRModule::PDStepPCofKeyword, "pdstep"},
+                                                                     {EPSRModule::PowerPCofKeyword, "power"},
+                                                                     {EPSRModule::PSigma2PCofKeyword, "psigma2"},
+                                                                     {EPSRModule::QuitPCofKeyword, "q"},
+                                                                     {EPSRModule::RBroadPCofKeyword, "rbroad"},
+                                                                     {EPSRModule::RChargePCofKeyword, "rcharge"},
+                                                                     {EPSRModule::RefPotFacPCofKeyword, "refpotfac"},
+                                                                     {EPSRModule::RepPotTypePCofKeyword, "reppottype"},
+                                                                     {EPSRModule::RMaxPtPCofKeyword, "rmaxpt"},
+                                                                     {EPSRModule::RMinFacPCofKeyword, "rminfac"},
+                                                                     {EPSRModule::RMinPtPCofKeyword, "rminpt"},
+                                                                     {EPSRModule::ROverlapPCofKeyword, "roverlap"}});
 }
 
 // Read data from supplied pcof file

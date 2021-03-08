@@ -11,7 +11,7 @@
 
 Box::Box()
 {
-    type_ = Box::nBoxTypes;
+    type_ = Box::CubicBoxType;
     periodic_.set(true, true, true);
     volume_ = 0.0;
 }
@@ -44,14 +44,11 @@ void Box::operator=(const Box &source)
 // Return enum options for BoxType
 EnumOptions<Box::BoxType> Box::boxTypes()
 {
-    static EnumOptionsList BoxTypeOptions =
-        EnumOptionsList() << EnumOption(Box::NonPeriodicBoxType, "NonPeriodic") << EnumOption(Box::CubicBoxType, "Cubic")
-                          << EnumOption(Box::OrthorhombicBoxType, "Orthorhombic")
-                          << EnumOption(Box::MonoclinicBoxType, "Monoclinic") << EnumOption(Box::TriclinicBoxType, "Triclinic");
-
-    static EnumOptions<Box::BoxType> options("BoxType", BoxTypeOptions);
-
-    return options;
+    return EnumOptions<Box::BoxType>("BoxType", {{Box::NonPeriodicBoxType, "NonPeriodic"},
+                                                 {Box::CubicBoxType, "Cubic"},
+                                                 {Box::OrthorhombicBoxType, "Orthorhombic"},
+                                                 {Box::MonoclinicBoxType, "Monoclinic"},
+                                                 {Box::TriclinicBoxType, "Triclinic"}});
 }
 
 // Return Box type

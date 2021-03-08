@@ -68,7 +68,7 @@ class View
         nViewTypes
     };
     // Return enum options for ViewType
-    static EnumOptions<View::ViewType> &viewTypes();
+    static EnumOptions<View::ViewType> viewTypes();
     // AutoFollow type
     enum AutoFollowType
     {
@@ -78,7 +78,7 @@ class View
         nAutoFollowTypes
     };
     // Return enum options for AutoFollowType
-    static EnumOptions<View::AutoFollowType> &autoFollowTypes();
+    static EnumOptions<View::AutoFollowType> autoFollowTypes();
 
     private:
     // Type of view to use

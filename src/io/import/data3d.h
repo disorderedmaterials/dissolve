@@ -37,7 +37,7 @@ class Data3DImportFileFormat : public FileAndFormat
      */
     private:
     // Return enum options for Data3DImportFormat
-    static EnumOptions<Data3DImportFileFormat::Data3DImportFormat> &data3DImportFormats();
+    static EnumOptions<Data3DImportFileFormat::Data3DImportFormat> data3DImportFormats();
 
     public:
     // Return number of available formats

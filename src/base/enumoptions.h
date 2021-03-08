@@ -3,96 +3,161 @@
 
 #pragma once
 
+#include "base/enumoption.h"
 #include "base/enumoptionsbase.h"
 #include "base/messenger.h"
 #include "base/sysfunc.h"
 
 // Enum Options
-template <class T> class EnumOptions : public EnumOptionsBase
+template <class E> class EnumOptions : public EnumOptionsBase
 {
     public:
-    EnumOptions() : EnumOptionsBase() {}
-    EnumOptions(std::string_view name, const EnumOptionsList &options) : EnumOptionsBase(name, options) {}
-    EnumOptions(std::string_view name, const EnumOptionsList &options, T defaultEnumeration)
-        : EnumOptionsBase(name, options, defaultEnumeration)
+    EnumOptions() = default;
+    EnumOptions(std::string_view name, const std::vector<EnumOption<E>> &options) : name_(name), options_(options)
     {
+        currentOption_ = options_.cbegin();
+    }
+    EnumOptions(const EnumOptions<E> &source)
+    {
+        name_ = source.name_;
+        options_ = source.options_;
+        currentOption_ = options_.cbegin() + source.index();
+    }
+    EnumOptions<E> &operator=(E value)
+    {
+        currentOption_ =
+            std::find_if(options_.cbegin(), options_.cend(), [value](auto &option) { return option.enumeration() == value; });
+        if (currentOption_ == options_.end())
+            throw(std::runtime_error(fmt::format("Enumerated options '{}' missing enumeration {}.\n", name_, value)));
+
+        return *this;
+    }
+
+    /*
+     * Option Data
+     */
+    private:
+    // Name of options
+    std::string name_;
+    // Vector of valid options
+    std::vector<EnumOption<E>> options_;
+    // Currently selected option (by index) in local options_ array
+    typename std::vector<EnumOption<E>>::const_iterator currentOption_;
+
+    public:
+    // Return name of options (e.g. from source enumeration)
+    std::string_view name() const override { return name_; }
+    // Return number of options available
+    int nOptions() const override { return options_.size(); }
+    // Return nth keyword in the list
+    std::string_view keywordByIndex(int index) const override { return options_[index].keyword(); }
+    // Return description for the nth keyword in the list
+    std::string_view descriptionByIndex(int index) const override { return options_[index].description(); }
+    // Return current option keyword
+    std::string_view keyword() const { return currentOption_ == options_.cend() ? "UNDEFINED" : currentOption_->keyword(); }
+    // Set current option keyword
+    bool set(std::string_view keyword)
+    {
+        auto it = std::find_if(options_.cbegin(), options_.cend(),
+                               [keyword](auto &option) { return DissolveSys::sameString(keyword, option.keyword()); });
+        if (it == options_.cend())
+            return false;
+
+        currentOption_ = it;
+
+        return true;
+    }
+    // Return index of current option
+    int index() const override { return currentOption_ - options_.cbegin(); }
+    // Set current option from keyword
+    void setIndex(int index) override
+    {
+        assert(index >= 0 && index < options_.size());
+
+        currentOption_ = options_.cbegin() + index;
+    }
+    // Return whether specified option keyword is valid
+    bool isValid(std::string_view keyword) const
+    {
+        return std::find_if(options_.cbegin(), options_.cend(), [keyword](auto &option) {
+                   return DissolveSys::sameString(keyword, option.keyword());
+               }) != options_.end();
+    }
+
+    // Raise error, printing valid options
+    bool errorAndPrintValid(std::string_view badKeyword) const
+    {
+        std::string validValueString;
+        for (auto n = 0; n < options_.size(); ++n)
+            validValueString += fmt::format(n == 0 ? "{}" : ", {}", options_[n].keyword());
+
+        return Messenger::error("'{}' is not a valid {}.\nValid options are:  {}", badKeyword, name_, validValueString);
     }
 
     /*
      * Enum Conversion
      */
     public:
-    // Return enumeration in T
-    T enumeration(std::string_view keyword) const
+    // Return enumeration in E
+    E enumeration(std::string_view keyword) const
     {
-        for (auto n = 0; n < options_.size(); ++n)
-            if (DissolveSys::sameString(keyword, options_[n].keyword()))
-                return (T)options_[n].enumeration();
+        auto it = std::find_if(options_.cbegin(), options_.cend(),
+                               [keyword](auto &option) { return DissolveSys::sameString(keyword, option.keyword()); });
+        if (it != options_.cend())
+            return it->enumeration();
 
-        Messenger::warn("Option '{}' is not recognised, so can't return its enumeration.\n", keyword);
-
-        return (T)-1;
+        throw(std::runtime_error(fmt::format("Option '{}' is not recognised, so can't return its enumeration.\n", keyword)));
     }
-    // Return current enumeration in T
-    T enumeration() const
+    // Return current enumeration in E
+    E enumeration() const
     {
-        // Use local index to return enumeration
-        if (!currentOptionIndex_.has_value())
-        {
-            Messenger::warn("No current option set in EnumOptions, so can't return an enumeration.\n");
-            return (T)-1;
-        }
+        assert(currentOption_ != options_.cend());
 
-        return (T)options_[currentOptionIndex_.value()].enumeration();
+        return currentOption_->enumeration();
     }
     // Return enumerated keyword
-    std::string_view keyword(T enumeration) const
+    std::string_view keyword(E enumeration) const
     {
-        for (int n = 0; n < options_.size(); ++n)
-            if (options_[n].enumeration() == enumeration)
-                return options_[n].keyword();
-        return "ENUMERATION_NOT_VALID";
+        auto it = std::find_if(options_.cbegin(), options_.cend(),
+                               [enumeration](auto &option) { return enumeration == option.enumeration(); });
+        if (it == options_.cend())
+            throw(std::runtime_error(fmt::format(
+                "Enumerated options '{}' missing enumeration {}, so can't return its keyword.\n", name_, enumeration)));
+
+        return it->keyword();
     }
     // Return enumerated keyword from uncast integer
     std::string_view keywordFromInt(int uncastEnumeration) const
     {
-        for (int n = 0; n < options_.size(); ++n)
-            if (options_[n].enumeration() == uncastEnumeration)
-                return options_[n].keyword();
-        return "ENUMERATION_NOT_VALID";
+        auto it = std::find_if(options_.cbegin(), options_.cend(),
+                               [uncastEnumeration](auto &option) { return uncastEnumeration == option.enumeration(); });
+        if (it == options_.cend())
+            throw(std::runtime_error(
+                fmt::format("Enumerated options '{}' missing (uncast) enumeration {}, so can't return its keyword.\n", name_,
+                            uncastEnumeration)));
+
+        return it->keyword();
     }
     // Return option with enumeration specified
-    const EnumOption &option(T enumeration) const
+    const EnumOption<E> &option(E enumeration) const
     {
-        for (int n = 0; n < options_.size(); ++n)
-            if (options_[n].enumeration() == enumeration)
-                return options_[n];
-        return unrecognisedOption_;
+        auto it = std::find_if(options_.cbegin(), options_.cend(),
+                               [enumeration](auto &option) { return enumeration == option.enumeration(); });
+        if (it == options_.cend())
+            throw(std::runtime_error(fmt::format("No option set for enumeration '{}'.\n", enumeration)));
+        return *it;
     }
-    // Return option with keyword specified
-    const EnumOption &option(std::string_view keyword) const { return EnumOptionsBase::option(keyword); }
     // Return minimum number of arguments for the specified enumeration
-    std::optional<int> minArgs(T enumeration) const
+    std::optional<int> minArgs(E enumeration) const
     {
-        // Retrieve the relevant EnumOption
-        const auto &opt = option(enumeration);
-        return opt.minArgs();
-    }
-    // Return maximum number of arguments for the specified enumeration
-    std::optional<int> maxArgs(T enumeration) const
-    {
-        // Retrieve the relevant EnumOption
-        const auto &opt = option(enumeration);
-        return opt.maxArgs();
-    }
-    // Return whether an exact number of arguments is required
-    bool exactNArgs(T enumeration) const
-    {
-        const auto &opt = option(enumeration);
-        return opt.minArgs() == opt.maxArgs();
+        auto it = std::find_if(options_.begin(), options_.end(),
+                               [enumeration](auto &option) { return enumeration == option.enumeration(); });
+        if (it == options_.end())
+            return std::nullopt;
+        return it->minArgs();
     }
     // Check number of arguments provided to keyword
-    bool validNArgs(T enumeration, int nArgsProvided) const
+    bool validNArgs(E enumeration, int nArgsProvided) const
     {
         // Retrieve the relevant EnumOption
         const auto &opt = option(enumeration);
@@ -110,14 +175,14 @@ template <class T> class EnumOptions : public EnumOptionsBase
         // Check the specified minimum value
         switch (opt.minArgs().value())
         {
-            case (EnumOption::OneOrMoreArguments):
+            case (OptionArguments::OneOrMore):
                 if (nArgsProvided > 0)
                     return true;
                 else
                     return Messenger::error("'{}' keyword '{}' requires one or more arguments, but none were provided.\n",
                                             name(), opt.keyword());
                 break;
-            case (EnumOption::EnumOption::OptionalSecondArgument):
+            case (OptionArguments::OptionalSecond):
                 if ((nArgsProvided == 1) || (nArgsProvided == 2))
                     return true;
                 else
@@ -139,7 +204,7 @@ template <class T> class EnumOptions : public EnumOptionsBase
                 else
                 {
                     // Range of arguments allowed...
-                    if (opt.maxArgs().value() == EnumOption::AnyNumberOfArguments)
+                    if (opt.maxArgs().value() == OptionArguments::AnyNumber)
                     {
                         // No maximum number of arguments, but must satisfy minimum limit
                         if (nArgsProvided >= opt.minArgs().value())
@@ -166,15 +231,5 @@ template <class T> class EnumOptions : public EnumOptionsBase
         }
 
         return false;
-    }
-
-    /*
-     * Operators
-     */
-    public:
-    EnumOptions<T> &operator=(T value)
-    {
-        currentOptionIndex_ = value;
-        return *this;
     }
 };

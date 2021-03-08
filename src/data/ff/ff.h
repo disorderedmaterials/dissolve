@@ -49,11 +49,10 @@ class Forcefield
     // ShortRange Interaction Type
     enum ShortRangeType
     {
-        UndefinedType,             /* Undefined short-range type */
-        NoInteractionType,         /* No short-range dispersive forces */
-        LennardJonesType,          /* Lennard-Jones 12-6 form with Lorentz-Berthelot combination rules */
-        LennardJonesGeometricType, /* Lennard-Jones 12-6 form with Geometric combination rules */
-        nShortRangeTypes           /* Number of short-range interaction types */
+        UndefinedType,            /* Undefined short-range type */
+        NoInteractionType,        /* No short-range dispersive forces */
+        LennardJonesType,         /* Lennard-Jones 12-6 form with Lorentz-Berthelot combination rules */
+        LennardJonesGeometricType /* Lennard-Jones 12-6 form with Geometric combination rules */
     };
     // Return enum options for ShortRangeType
     static EnumOptions<ShortRangeType> shortRangeTypes();
@@ -131,7 +130,7 @@ class Forcefield
                         SpeciesTorsion::TorsionFunction form, const std::vector<double> parameters = {});
     // Add improper term
     void addImproperTerm(std::string_view typeI, std::string_view typeJ, std::string_view typeK, std::string_view typeL,
-                         SpeciesImproper::ImproperFunction form, const std::vector<double> parameters = {});
+                         SpeciesTorsion::TorsionFunction form, const std::vector<double> parameters = {});
     // Match any kind of term
     template <class T, typename... Args>
     static OptionalReferenceWrapper<const T> termMatch_(const std::vector<T> &, Args &&...);

@@ -18,25 +18,21 @@ NumberFormat::NumberFormat()
 NumberFormat::~NumberFormat() {}
 
 // Return enum options for FormatType
-EnumOptions<NumberFormat::FormatType> &NumberFormat::formatTypes()
+EnumOptions<NumberFormat::FormatType> NumberFormat::formatTypes()
 {
-    static EnumOptionsList FormatTypeOptions = EnumOptionsList() << EnumOption(NumberFormat::DecimalFormat, "Decimal")
-                                                                 << EnumOption(NumberFormat::IntegerFormat, "Integer")
-                                                                 << EnumOption(NumberFormat::ScientificFormat, "Scientific");
-
-    static EnumOptions<NumberFormat::FormatType> options("FormatType", FormatTypeOptions);
-
-    return options;
+    return EnumOptions<NumberFormat::FormatType>("FormatType", {{NumberFormat::DecimalFormat, "Decimal"},
+                                                                {NumberFormat::IntegerFormat, "Integer"},
+                                                                {NumberFormat::ScientificFormat, "Scientific"}});
 }
 
 /*
  * Definition
  */
 
-// Set ndex type
+// Set format type
 void NumberFormat::setType(NumberFormat::FormatType type) { type_ = type; }
 
-// Return X index type
+// Return format type
 NumberFormat::FormatType NumberFormat::type() { return type_; }
 
 // Set number of decimals to use

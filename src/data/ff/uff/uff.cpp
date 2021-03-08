@@ -612,7 +612,7 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
             typeJ.name(),
             typeK.name(),
             typeL.name(),
-            SpeciesImproper::FourierNForm,
+            SpeciesTorsion::FourierNForm,
             {4.184 * (typeJ.name() == "O_2" || typeK.name() == "O_2" || typeL.name() == "O_2" ? 50.0 : 6.0), 1.0, -1.0, 0.0}};
     }
     else if (typeI.name() == "N_2" || typeI.name() == "N_R" || typeI.name() == "N_amR")
@@ -620,7 +620,7 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
                     typeJ.name(),
                     typeK.name(),
                     typeL.name(),
-                    SpeciesImproper::FourierNForm,
+                    SpeciesTorsion::FourierNForm,
                     {4.184 * 6.0, 1.0, -1.0, 0.0}};
     else if (groupI == 15)
     {
@@ -637,11 +637,11 @@ bool Forcefield_UFF::assignImproperTermParameters(ForcefieldImproperTerm &improp
                     typeJ.name(),
                     typeK.name(),
                     typeL.name(),
-                    SpeciesImproper::FourierNForm,
+                    SpeciesTorsion::FourierNForm,
                     {4.184 * 6.0, -(-4.0 * cos(phi) + cos(2 * phi)), -4.0 * cos(phi), 2.0}};
     }
     else
-        improper = {typeI.name(), typeJ.name(), typeK.name(), typeL.name(), SpeciesImproper::NoForm};
+        improper = {typeI.name(), typeJ.name(), typeK.name(), typeL.name(), SpeciesTorsion::NoForm};
 
     return true;
 }
