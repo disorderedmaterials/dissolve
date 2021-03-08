@@ -113,7 +113,7 @@ ProcedureNode::NodeExecutionResult Process2DProcedureNode::execute(ProcessPool &
 {
     // Retrieve / realise the normalised data from the supplied list
     auto &data =
-        targetList.realise<Data2D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag);
+        targetList.realise<Data2D>(fmt::format("{}//{}", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag);
     processedData_ = &data;
 
     data.setTag(name());

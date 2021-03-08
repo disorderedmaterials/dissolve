@@ -432,6 +432,8 @@ void PartialSet::operator+=(const double delta) { adjust(delta); }
 
 void PartialSet::operator+=(const PartialSet &source)
 {
+    assert(source.nAtomTypes() != 0);
+
     // If we currently contain no data, just copy the source data
     if (atomTypes_.nItems() == 0)
     {
