@@ -112,12 +112,10 @@ ProcedureNode::NodeExecutionResult Process1DProcedureNode::execute(ProcessPool &
                                                                    std::string_view prefix, GenericList &targetList)
 {
     // Retrieve / realise the normalised data from the supplied list
-    auto &data =
-        targetList.realise<Data1D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag);
+    auto &data = targetList.realise<Data1D>(fmt::format("Process1D//{}//{}", cfg->niceName(), name()), prefix,
+                                            GenericItem::InRestartFileFlag);
     processedData_ = &data;
-
     data.setTag(name());
-    data.setObjectTag(fmt::format("{}//Process1D//{}//{}", prefix, cfg->name(), name()));
 
     // Copy the averaged data from the associated Process1D node
     data = collectNode_->accumulatedData();

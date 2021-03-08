@@ -720,18 +720,18 @@ void ForcefieldTab::on_PairPotentialsTable_currentItemChanged(QTableWidgetItem *
     PairPotential *pp = VariantPointer<PairPotential>(currentItem->data(Qt::UserRole));
     if (pp)
     {
-        auto fullPotential = graph->createRenderable<RenderableData1D>(pp->uFull().objectTag(), "Full");
+        auto fullPotential = graph->createRenderable<RenderableData1D, Data1D>(pp->uFull(), "Full");
         fullPotential->setColour(StockColours::BlackStockColour);
 
-        auto originalPotential = graph->createRenderable<RenderableData1D>(pp->uOriginal().objectTag(), "Original");
+        auto originalPotential = graph->createRenderable<RenderableData1D, Data1D>(pp->uOriginal(), "Original");
         originalPotential->setColour(StockColours::RedStockColour);
         originalPotential->lineStyle().set(1.0, LineStipple::HalfDashStipple);
 
-        auto additionalPotential = graph->createRenderable<RenderableData1D>(pp->uAdditional().objectTag(), "Additional");
+        auto additionalPotential = graph->createRenderable<RenderableData1D, Data1D>(pp->uAdditional(), "Additional");
         additionalPotential->setColour(StockColours::BlueStockColour);
         additionalPotential->lineStyle().set(1.0, LineStipple::DotStipple);
 
-        auto dUFull = graph->createRenderable<RenderableData1D>(pp->dUFull().objectTag(), "Force");
+        auto dUFull = graph->createRenderable<RenderableData1D, Data1D>(pp->dUFull(), "Force");
         dUFull->setColour(StockColours::GreenStockColour);
     }
 }

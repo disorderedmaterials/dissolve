@@ -324,8 +324,6 @@ void ScatteringMatrix::initialise(const std::vector<std::shared_ptr<AtomType>> &
     for (auto [i, j] : typePairs_)
     {
         estimatedSQ[index].setTag(fmt::format("EstimatedSQ-{}-{}-{}.sq", i->name(), j->name(), groupName));
-        estimatedSQ[index].setObjectTag(
-            fmt::format("{}//EstimatedSQ//{}//{}-{}", objectNamePrefix, groupName, i->name(), j->name()));
         ++index;
     }
 }

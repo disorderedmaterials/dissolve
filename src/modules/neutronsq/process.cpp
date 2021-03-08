@@ -74,14 +74,12 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         referenceData.setTag(uniqueName());
         auto &storedData =
             dissolve.processingModuleData().realise<Data1D>("ReferenceData", uniqueName(), GenericItem::ProtectedFlag);
-        storedData.setObjectTag(fmt::format("{}//ReferenceData", uniqueName()));
         storedData = referenceData;
 
         // Calculate and store the FT of the reference data in processing
         referenceData.setTag(uniqueName());
         auto &storedDataFT =
             dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", uniqueName(), GenericItem::ProtectedFlag);
-        storedDataFT.setObjectTag(fmt::format("{}//ReferenceDataFT", uniqueName()));
         storedDataFT = referenceData;
         auto rho = rdfModule->effectiveDensity();
         Messenger::print("Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n", rho);
@@ -176,9 +174,6 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation);
 
-    // Set names of resources (Data1D) within the PartialSet
-    weightedSQ.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedSQ"));
-
     // Save data if requested
     if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
         return false;
@@ -201,9 +196,6 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Calculate weighted g(r)
     calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation);
 
-    // Set names of resources (Data1D) within the PartialSet
-    weightedGR.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedGR"));
-
     // Save data if requested
     if (saveGR && (!MPIRunMaster(procPool, weightedGR.save(uniqueName_, "WeightedGR", "gr", "r, Angstroms"))))
         return false;
@@ -216,7 +208,6 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto rMax = weightedGR.total().xAxis().back();
     auto rho = rdfModule->effectiveDensity();
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(rwf));
-    repGR.setObjectTag(fmt::format("{}//RepresentativeTotalGR", uniqueName_));
 
     // Save data if requested
     if (saveGR)

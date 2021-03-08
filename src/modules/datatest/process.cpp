@@ -43,7 +43,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 return Messenger::error("No data with name '{}' exists.\n", referenceData.tag());
         }
         const Data1D &data = *optData;
-        Messenger::print("Located reference data with name '{}'.\n", data.objectTag());
+        Messenger::print("Located reference data '{}'.\n", data.tag());
 
         // Generate the error estimate and compare against the threshold value
         double error = Error::error(errorType, data, referenceData, true);
@@ -68,7 +68,7 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 return Messenger::error("No data with tag '{}' exists.\n", referenceData.tag());
         }
         const Data2D &data = *optData;
-        Messenger::print("Located reference data with name '{}'.\n", data.objectTag());
+        Messenger::print("Located reference data with name '{}'.\n", data.tag());
 
         // Generate the error estimate and compare against the threshold value
         // 		double error = Error::error(errorType, data, *testData2D, true);

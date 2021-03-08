@@ -100,23 +100,9 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
             Averaging::average<PartialSet>(dissolve.processingModuleData(), fmt::format("{}//OriginalGR", cfg->niceName()),
                                            uniqueName_, averaging, averagingScheme);
 
-            // Need to rename data within the contributing datasets to avoid clashes with the averaged data
-            for (auto n = averaging; n > 0; --n)
-            {
-                if (!dissolve.processingModuleData().contains(fmt::format("{}//OriginalGR_{}", cfg->niceName(), n),
-                                                              uniqueName_))
-                    continue;
-                auto &p = dissolve.processingModuleData().retrieve<PartialSet>(
-                    fmt::format("{}//OriginalGR_{}", cfg->niceName(), n), uniqueName_);
-                p.setObjectTags(fmt::format("{}//{}//OriginalGR", cfg->niceName(), uniqueName_), fmt::format("Avg{}", n));
-            }
-
             // Re-set the object names and fingerprints of the partials
             originalgr.setFingerprint(currentFingerprint);
         }
-
-        // Set names of resources (Data1D) within the PartialSet
-        originalgr.setObjectTags(fmt::format("{}//{}//OriginalGR", cfg->niceName(), uniqueName_));
 
         // Perform internal test of original g(r)?
         if (internalTest)
@@ -133,9 +119,6 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
         auto &unweightedgr = dissolve.processingModuleData().realise<PartialSet>(
             fmt::format("{}//UnweightedGR", cfg->niceName()), uniqueName_, GenericItem::InRestartFileFlag);
         calculateUnweightedGR(procPool, cfg, originalgr, unweightedgr, intraBroadening, smoothing);
-
-        // Set names of resources and filename in Data1D within the PartialSet
-        unweightedgr.setObjectTags(fmt::format("{}//{}//UnweightedGR", cfg->niceName(), uniqueName_));
 
         // Save data if requested
         if (saveData && (!MPIRunMaster(procPool, unweightedgr.save(uniqueName_, "UnweightedGR", "gr", "r, Angstroms"))))

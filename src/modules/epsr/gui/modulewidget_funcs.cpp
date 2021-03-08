@@ -365,9 +365,7 @@ void EPSRModuleWidget::updateDebugEPFunctionsGraph(int from, int to)
         {
             auto &data = debugFunctionData_.emplace_back();
             data = module_->generateEmpiricalPotentialFunction(dissolve_, i, j, n);
-            data.setObjectTag(fmt::format("PairPotential//{}//Function//{}", id, n));
-            auto rend = viewer->createRenderable<RenderableData1D>(fmt::format("PairPotential//{}//Function//{}", id, n),
-                                                                   fmt::format("{}/{}", id, n), id);
+            auto rend = viewer->createRenderable<RenderableData1D, Data1D>(data, fmt::format("{}/{}", id, n), id);
             rend->setColour(StockColours::RedStockColour);
         }
 

@@ -309,32 +309,6 @@ bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string
     return exportFormat.exportData(total_);
 }
 
-// Name all object based on the supplied prefix
-void PartialSet::setObjectTags(std::string_view prefix, std::string_view suffix)
-{
-    // Set up suffix (if any)
-    std::string actualSuffix;
-    if (!suffix.empty())
-        actualSuffix = fmt::format("_{}", suffix);
-
-    objectNamePrefix_ = prefix;
-
-    for_each_pair(atomTypes_.begin(), atomTypes_.end(),
-                  [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) {
-                      partials_[{typeI, typeJ}].setObjectTag(
-                          fmt::format("{}//{}-{}//Full{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
-                      boundPartials_[{typeI, typeJ}].setObjectTag(
-                          fmt::format("{}//{}-{}//Bound{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
-                      unboundPartials_[{typeI, typeJ}].setObjectTag(
-                          fmt::format("{}//{}-{}//Unbound{}", prefix, at1.atomTypeName(), at2.atomTypeName(), actualSuffix));
-                  });
-
-    total_.setObjectTag(fmt::format("{}//Total{}", prefix, actualSuffix));
-}
-
-// Return prefix applied to object names
-std::string_view PartialSet::objectNamePrefix() const { return objectNamePrefix_; }
-
 /*
  * Manipulation
  */
@@ -511,8 +485,6 @@ void PartialSet::operator*=(const double factor)
 // Read data through specified LineParser
 bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
 {
-    if (parser.readNextLine(LineParser::Defaults, objectNamePrefix_) != LineParser::Success)
-        return false;
     if (parser.readNextLine(LineParser::Defaults, fingerprint_) != LineParser::Success)
         return false;
 
@@ -559,8 +531,6 @@ bool PartialSet::serialise(LineParser &parser) const
     // TODO To reduce filesize we could write abscissa first, and then each Y datset afterwards since they all share a
     // common scale
 
-    if (!parser.writeLineF("{}\n", objectNamePrefix_))
-        return false;
     if (!parser.writeLineF("{}\n", fingerprint_))
         return false;
 

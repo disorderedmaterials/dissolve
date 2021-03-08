@@ -210,12 +210,6 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         dissolve.processingModuleData().realise<Array2D<Data1D>>("UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
     combinedUnweightedSQ.initialise(nAtomTypes, nAtomTypes, true);
 
-    // Set object names in combinedUnweightedSQ
-    for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-        combinedUnweightedSQ[{i, j}].setObjectTag(
-            fmt::format("{}//UnweightedSQ//{}-{}", uniqueName(), at1->name(), at2->name()));
-    });
-
     // Realise storage for generated S(Q), and initialise a scattering matrix
     auto &estimatedSQ =
         dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", uniqueName_, GenericItem::InRestartFileFlag);
@@ -248,9 +242,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             dissolve.processingModuleData().value<Data1D>("ReferenceData", module->uniqueName());
 
         // Realise the r-factor array and make sure its object name is set
-        auto &errors = dissolve.processingModuleData().realise<Data1D>(fmt::format("RFactor_{}", module->uniqueName()),
+        auto &errors = dissolve.processingModuleData().realise<Data1D>(fmt::format("RFactor//{}", module->uniqueName()),
                                                                        uniqueName_, GenericItem::InRestartFileFlag);
-        errors.setObjectTag(fmt::format("{}//RFactor//{}", uniqueName_, module->uniqueName()));
 
         /*
          * Calculate difference functions and current percentage errors in calculated vs reference target data.
@@ -259,8 +252,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Get difference data container and form the difference between the reference and calculated data
         auto &differenceData = dissolve.processingModuleData().realise<Data1D>(
-            fmt::format("DifferenceData_{}", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
-        differenceData.setObjectTag(fmt::format("{}//Difference//{}", uniqueName_, module->uniqueName()));
+            fmt::format("DifferenceData//{}", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
         differenceData = originalReferenceData;
         Interpolator::addInterpolated(differenceData, weightedSQ.total(), -1.0);
 
@@ -275,12 +267,10 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Get difference and fit function objects
-        auto &deltaFQ = dissolve.processingModuleData().realise<Data1D>(fmt::format("DeltaFQ_{}", module->uniqueName()),
+        auto &deltaFQ = dissolve.processingModuleData().realise<Data1D>(fmt::format("DeltaFQ//{}", module->uniqueName()),
                                                                         uniqueName_, GenericItem::InRestartFileFlag);
-        auto &deltaFQFit = dissolve.processingModuleData().realise<Data1D>(fmt::format("DeltaFQFit_{}", module->uniqueName()),
+        auto &deltaFQFit = dissolve.processingModuleData().realise<Data1D>(fmt::format("DeltaFQFit//{}", module->uniqueName()),
                                                                            uniqueName_, GenericItem::InRestartFileFlag);
-        deltaFQ.setObjectTag(fmt::format("{}//DeltaFQ//{}", uniqueName_, module->uniqueName()));
-        deltaFQFit.setObjectTag(fmt::format("{}//DeltaFQFit//{}", uniqueName_, module->uniqueName()));
 
         // Copy the original difference data and trim to the allowed range
         deltaFQ = differenceData;
@@ -353,9 +343,8 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Retrieve the storage object
-        auto &simulatedFR = dissolve.processingModuleData().realise<Data1D>("SimulatedFR", module->uniqueName(),
-                                                                            GenericItem::InRestartFileFlag);
-        simulatedFR.setObjectTag(fmt::format("{}//SimulatedFR//{}", uniqueName_, module->uniqueName()));
+        auto &simulatedFR = dissolve.processingModuleData().realise<Data1D>(
+            fmt::format("SimulatedFR//{}", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag);
 
         // Copy the total calculated F(Q) and trim to the same range as the experimental data before FT
         simulatedFR = weightedSQ.total();
@@ -508,7 +497,6 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     rFacTot /= targets.size();
     auto &totalRFactor =
         dissolve.processingModuleData().realise<Data1D>("RFactor", uniqueName_, GenericItem::InRestartFileFlag);
-    totalRFactor.setObjectTag(fmt::format("{}//RFactor", uniqueName_));
     totalRFactor.addPoint(dissolve.iteration(), rFacTot);
     Messenger::print("Current total R-Factor is {:.5f}.\n", rFacTot);
 
@@ -593,9 +581,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedGR", uniqueName_, GenericItem::InRestartFileFlag);
     estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
     for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
-        // Grab experimental g(r) container and make sure its object name is set
         auto &expGR = estimatedGR[{i, j}];
-        expGR.setObjectTag(fmt::format("{}//EstimatedGR//{}-{}", uniqueName_, at1->name(), at2->name()));
 
         // Copy experimental S(Q) and FT it
         expGR = estimatedSQ[{i, j}];
@@ -763,7 +749,6 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Realise the phiMag array and make sure its object name is set
     auto &phiArray = dissolve.processingModuleData().realise<Data1D>("EPMag", uniqueName_, GenericItem::InRestartFileFlag);
-    phiArray.setObjectTag(fmt::format("{}//EPMag", uniqueName_));
     phiArray.addPoint(dissolve.iteration(), energabs);
 
     return true;

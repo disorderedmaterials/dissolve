@@ -75,16 +75,14 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
 
         // Store the reference data in processing
         referenceData.setTag(uniqueName());
-        Data1D &storedData =
+        auto &storedData =
             dissolve.processingModuleData().realise<Data1D>("ReferenceData", uniqueName(), GenericItem::ProtectedFlag);
-        storedData.setObjectTag(fmt::format("{}//ReferenceData", uniqueName()));
         storedData = referenceData;
 
         // Calculate and store the FT of the reference data in processing
         referenceData.setTag(uniqueName());
-        Data1D &storedDataFT =
+        auto &storedDataFT =
             dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", uniqueName(), GenericItem::ProtectedFlag);
-        storedDataFT.setObjectTag(fmt::format("{}//ReferenceDataFT", uniqueName()));
         storedDataFT = referenceData;
         auto rho = rdfModule->effectiveDensity();
         Messenger::print("Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n", rho);
@@ -131,6 +129,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto normalisation = keywords_.enumeration<StructureFactors::NormalisationType>("Normalisation");
     const auto rwf = keywords_.enumeration<WindowFunction::Form>("ReferenceWindowFunction");
     const bool saveFormFactors = keywords_.asBool("SaveFormFactors");
+    const bool saveGR = keywords_.asBool("SaveGR");
     const bool saveSQ = keywords_.asBool("SaveSQ");
 
     // Print argument/parameter summary
@@ -151,6 +150,8 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         Messenger::print("XRaySQ: Combined form factor weightings for atomtype pairs will be saved.\n");
     if (saveSQ)
         Messenger::print("XRaySQ: Weighted partial S(Q) and total F(Q) will be saved.\n");
+    if (saveGR)
+        Messenger::print("XRaySQ: Weighted partial g(r) and total G(r) will be saved.\n");
     Messenger::print("\n");
 
     /*
@@ -177,9 +178,6 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation);
-
-    // Set names of resources (Data1D) within the PartialSet
-    weightedSQ.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedSQ"));
 
     // Save data if requested
     if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "WeightedSQ", "sq", "Q, 1/Angstroms"))))
@@ -239,8 +237,6 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     if (wGRstatus == GenericItem::ItemStatus::Created)
         weightedGR.setUpPartials(unweightedSQ.atomTypes());
 
-    weightedGR.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedGR"));
-
     // Calculate weighted g(r)
     calculateWeightedGR(unweightedGR, weightedGR, weights, normalisation);
 
@@ -252,7 +248,6 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto rMax = weightedGR.total().xAxis().back();
     auto rho = rdfModule->effectiveDensity();
     Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(rwf));
-    repGR.setObjectTag(fmt::format("{}//RepresentativeTotalGR", uniqueName_));
 
     // Save data if requested
     if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "WeightedGR", "sq", "Q, 1/Angstroms"))))

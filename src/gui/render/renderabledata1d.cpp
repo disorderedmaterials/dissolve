@@ -3,24 +3,28 @@
 
 #include "gui/render/renderabledata1d.h"
 #include "base/lineparser.h"
+#include "genericitems/list.h"
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 
-RenderableData1D::RenderableData1D(const Data1D *source, std::string_view objectTag)
-    : Renderable(Renderable::Data1DRenderable, objectTag), source_(source)
+RenderableData1D::RenderableData1D(const Data1D &source)
+    : Renderable(Renderable::Data1DRenderable, ""), source_(source), displayStyle_(LinesStyle)
 {
-    // Set style defaults
-    displayStyle_ = LinesStyle;
-
-    // Create primitive
     dataPrimitive_ = createPrimitive();
 }
 
-RenderableData1D::~RenderableData1D() {}
+RenderableData1D::RenderableData1D(std::string_view objectTag)
+    : Renderable(Renderable::Data1DRenderable, objectTag), displayStyle_(LinesStyle)
+{
+    dataPrimitive_ = createPrimitive();
+}
 
 /*
  * Data
  */
+
+// Return source data
+OptionalReferenceWrapper<const Data1D> RenderableData1D::source() const { return source_; }
 
 // Attempt to set the data source, searching the supplied list for the object
 void RenderableData1D::validateDataSource(const GenericList &sourceList)
@@ -31,15 +35,15 @@ void RenderableData1D::validateDataSource(const GenericList &sourceList)
 
     if (source_)
         return;
-
-    source_ = Data1D::findObject(objectTag_);
+    
+    source_ = sourceList.search<Data1D>(objectTag_);
 }
 
 // Invalidate the current data source
-void RenderableData1D::invalidateDataSource() { source_ = nullptr; }
+void RenderableData1D::invalidateDataSource() { source_ = std::nullopt; }
 
 // Return version of data
-int RenderableData1D::dataVersion() { return (source_ ? source_->version() : -99); }
+int RenderableData1D::dataVersion() { return (source_ ? source_->get().version() : -99); }
 
 /*
  * Transform / Limits

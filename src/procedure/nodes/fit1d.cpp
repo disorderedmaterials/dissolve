@@ -176,10 +176,9 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
     // Generate final fit data
     // Retrieve / realise the data from the supplied list
     auto &data =
-        targetList.realise<Data1D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag);
+        targetList.realise<Data1D>(fmt::format("{}//{}", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag);
 
     data.setTag(name());
-    data.setObjectTag(fmt::format("{}//Fit1D//{}//{}", prefix, cfg->name(), name()));
     data.clear();
 
     const auto &x = referenceData_.xAxis();

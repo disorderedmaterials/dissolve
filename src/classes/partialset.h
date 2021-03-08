@@ -49,8 +49,6 @@ class PartialSet
     Array2D<char> emptyBoundPartials_;
     // Total function
     Data1D total_;
-    // Prefix applied to object names
-    std::string objectNamePrefix_;
 
     public:
     // Set up PartialSet, including initialising histograms for g(r) use

@@ -5,7 +5,6 @@
 #include "gui/dataviewer.hui"
 #include "gui/gizmo.h"
 #include "gui/render/renderabledata1d.h"
-#include "gui/render/renderabledata2d.h"
 #include "gui/render/renderabledata3d.h"
 #include "gui/selectgenericitemdialog.h"
 #include "io/export/data1d.h"
@@ -110,11 +109,11 @@ void DataViewer::showRenderableContextMenu(QPoint pos, std::shared_ptr<Renderabl
                 if (renderable->type() == Renderable::Data1DRenderable)
                 {
                     Data1DExportFileFormat exportFormat(qPrintable(filename));
-                    Data1D *data = Data1D::findObject(renderable->objectTag());
-                    if (!data)
-                        fmt::print("Failed to locate data to export (tag = {}).\n", renderable->objectTag());
+                    auto *r1d = dynamic_cast<RenderableData1D *>(renderable.get());
+                    if (!r1d->source())
+                        Messenger::error("Failed to locate 1D data to export.\n");
                     else
-                        exportFormat.exportData(*data);
+                        exportFormat.exportData(r1d->source()->get());
                 }
                 else if (renderable->type() == Renderable::Data2DRenderable)
                 {
