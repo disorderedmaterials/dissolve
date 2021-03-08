@@ -35,7 +35,6 @@ set(keywordwidgets_MOC_HDRS
     species.hui
     stdstring.hui
     widget.hui
-    windowfunction.hui
 )
 qt5_wrap_cpp(keywordwidgets_MOC_SRCS ${keywordwidgets_MOC_HDRS})
 
@@ -100,7 +99,6 @@ set(keywordwidgets_SRCS
     speciessitereflist_funcs.cpp
     stdstring_funcs.cpp
     widget_funcs.cpp
-    windowfunction_funcs.cpp
     vec3double_funcs.cpp
     vec3integer_funcs.cpp
     vec3labels.cpp

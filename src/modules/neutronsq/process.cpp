@@ -63,14 +63,12 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         }
 
         // Get window function to use for transformation of S(Q) to g(r)
-        const WindowFunction &referenceWindowFunction =
-            keywords_.retrieve<WindowFunction>("ReferenceWindowFunction", WindowFunction());
-        if (referenceWindowFunction.function() == WindowFunction::NoWindow)
-            Messenger::print("No window function will be applied in Fourier transform of S(Q) to g(r).");
+        const auto wf = keywords_.enumeration<WindowFunction::Form>("ReferenceWindowFunction");
+        if (wf == WindowFunction::Form::None)
+            Messenger::print("No window function will be applied in Fourier transform of reference data to g(r).");
         else
-            Messenger::print("Window function to be applied in Fourier transform of reference data is {} ({}).",
-                             WindowFunction::functionType(referenceWindowFunction.function()),
-                             referenceWindowFunction.parameterSummary());
+            Messenger::print("Window function to be applied in Fourier transform of reference data is {}.",
+                             WindowFunction::forms().keyword(wf));
 
         // Store the reference data in processing
         referenceData.setName(uniqueName());
@@ -87,7 +85,7 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         storedDataFT = referenceData;
         auto rho = rdfModule->effectiveDensity();
         Messenger::print("Effective atomic density used in Fourier transform of reference data is {} atoms/Angstrom3.\n", rho);
-        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), 0.0, 0.05, 30.0, referenceWindowFunction);
+        Fourier::sineFT(storedDataFT, 1.0 / (2.0 * PI * PI * rho), 0.0, 0.05, 30.0, WindowFunction(wf));
 
         // Save data?
         if (keywords_.asBool("SaveReference"))
@@ -132,14 +130,12 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Print argument/parameter summary
     Messenger::print("NeutronSQ: Source unweighted S(Q) will be taken from module '{}'.\n", sqModule->uniqueName());
-    const WindowFunction &referenceWindowFunction =
-        keywords_.retrieve<WindowFunction>("ReferenceWindowFunction", WindowFunction());
-    if (referenceWindowFunction.function() == WindowFunction::NoWindow)
+    const auto rwf = keywords_.enumeration<WindowFunction::Form>("ReferenceWindowFunction");
+    if (rwf == WindowFunction::Form::None)
         Messenger::print("No window function will be applied when calculating representative g(r) from S(Q).");
     else
-        Messenger::print("Window function to be applied when calculating representative g(r) from S(Q) is {} ({}).",
-                         WindowFunction::functionType(referenceWindowFunction.function()),
-                         referenceWindowFunction.parameterSummary());
+        Messenger::print("Window function to be applied when calculating representative g(r) from S(Q) is {}.",
+                         WindowFunction::forms().keyword(rwf));
     if (normalisation == StructureFactors::NoNormalisation)
         Messenger::print("NeutronSQ: No normalisation will be applied to total F(Q).\n");
     else if (normalisation == StructureFactors::AverageOfSquaresNormalisation)
@@ -221,7 +217,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto rMin = weightedGR.total().xAxis().front();
     auto rMax = weightedGR.total().xAxis().back();
     auto rho = rdfModule->effectiveDensity();
-    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, referenceWindowFunction);
+    Fourier::sineFT(repGR, 1.0 / (2.0 * PI * PI * rho), rMin, 0.05, rMax, WindowFunction(rwf));
     repGR.setObjectTag(fmt::format("{}//RepresentativeTotalGR", uniqueName_));
 
     // Save data if requested

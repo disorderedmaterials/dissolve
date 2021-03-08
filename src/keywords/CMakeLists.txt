@@ -43,7 +43,6 @@ add_library(
   vec3nodevalue.cpp
   vector_intdouble.cpp
   vector_intstring.cpp
-  windowfunction.cpp
   atomtypereflist.h
   atomtypeselection.h
   base.h
@@ -91,7 +90,6 @@ add_library(
   vec3nodevalue.h
   vector_intdouble.h
   vector_intstring.h
-  windowfunction.h
 )
 
 include_directories(keywords PRIVATE ${PROJECT_SOURCE_DIR}/src)

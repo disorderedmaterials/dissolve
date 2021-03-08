@@ -215,13 +215,6 @@ QWidget *KeywordsWidget::createKeywordWidget(RefList<KeywordWidgetBase> &keyword
         widget = charWidget;
         base = charWidget;
     }
-    else if (type == KeywordBase::WindowFunctionData)
-    {
-        WindowFunctionKeywordWidget *windowFunctionWidget = new WindowFunctionKeywordWidget(nullptr, keywordBase, coreData);
-        connect(windowFunctionWidget, SIGNAL(keywordValueChanged(int)), this, SLOT(keywordDataChanged(int)));
-        widget = windowFunctionWidget;
-        base = windowFunctionWidget;
-    }
     else if (type == KeywordBase::Vec3DoubleData)
     {
         Vec3DoubleKeywordWidget *vec3DoubleWidget = new Vec3DoubleKeywordWidget(nullptr, keywordBase, coreData);

@@ -8,189 +8,46 @@
 #include "math/data1d.h"
 #include "templates/enumhelpers.h"
 
-WindowFunction::WindowFunction(WindowFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5,
-                               double p6)
+WindowFunction::WindowFunction(WindowFunction::Form function) : form_(function), xMax_(0.0) {}
+
+// Return EnumOptions for FunctionType
+EnumOptions<WindowFunction::Form> WindowFunction::forms()
 {
-    set(function, p1, p2, p3, p4, p5, p6);
-
-    xMax_ = -1.0;
-}
-
-void WindowFunction::operator=(const WindowFunction &source)
-{
-    function_ = source.function_;
-    for (auto n = 0; n < MAXWINDOWFUNCTIONPARAMS; ++n)
-        parameters_[n] = source.parameters_[n];
-
-    xMax_ = source.xMax_;
-}
-
-WindowFunction::~WindowFunction() {}
-
-// Window Function keywords
-std::string_view WindowFunctionKeywords[] = {"None", "Bartlett", "Hann", "Lanczos", "Nuttall", "Sine", "Lorch0"};
-
-int WindowFunctionNParameters[] = {0, 0, 0, 0, 0, 0, 0};
-
-// Return FunctionType from supplied string
-WindowFunction::FunctionType WindowFunction::functionType(std::string_view s)
-{
-    for (auto n = 0; n < nFunctionTypes; ++n)
-        if (DissolveSys::sameString(s, WindowFunctionKeywords[n]))
-            return (FunctionType)n;
-    return WindowFunction::nFunctionTypes;
-}
-
-// Return FunctionType name
-std::string_view WindowFunction::functionType(WindowFunction::FunctionType func) { return WindowFunctionKeywords[func]; }
-
-// Return number of parameters needed to define function
-int WindowFunction::nFunctionParameters(FunctionType func) { return WindowFunctionNParameters[func]; }
-
-// Return description for FunctionType
-std::string_view WindowFunction::functionDescription(FunctionType func)
-{
-    switch (func)
-    {
-        case (WindowFunction::NoWindow):
-            return "No window";
-            break;
-        case (WindowFunction::BartlettWindow):
-            return "Bartlett (triangular) window";
-            break;
-        case (WindowFunction::HannWindow):
-            return "von Hann (Hanning) window";
-            break;
-        case (WindowFunction::LanczosWindow):
-            return "Lanczos window";
-            break;
-        case (WindowFunction::NuttallWindow):
-            return "Nuttall window (continuous first derivatives over range)";
-            break;
-        case (WindowFunction::SineWindow):
-            return "Sine Window";
-            break;
-        case (WindowFunction::Lorch0Window):
-            return "Original Lorch function";
-            break;
-        default:
-            break;
-    }
-
-    return "NO WINDOW FUNCTION DESCRIPTION AVAILABLE.";
+    return EnumOptions<WindowFunction::Form>("WindowFunction", {{Form::None, "None"},
+                                                                {Form::Bartlett, "Bartlett"},
+                                                                {Form::Hann, "Hann"},
+                                                                {Form::Lanczos, "Lanczos"},
+                                                                {Form::Nuttall, "Nuttall"},
+                                                                {Form::Sine, "Sine"},
+                                                                {Form::Lorch0, "Lorch0"}});
 }
 
 /*
  * Function Data
  */
 
-void WindowFunction::set(WindowFunction::FunctionType function, double p1, double p2, double p3, double p4, double p5,
-                         double p6)
-{
-    function_ = function;
-    parameters_[0] = p1;
-    parameters_[1] = p2;
-    parameters_[2] = p3;
-    parameters_[3] = p4;
-    parameters_[4] = p5;
-    parameters_[5] = p6;
-}
+void WindowFunction::set(WindowFunction::Form form) { form_ = form; }
 
 // Set function data from LineParser source
 bool WindowFunction::set(LineParser &parser, int startArg)
 {
     // First argument is the form of the function
-    WindowFunction::FunctionType funcType = WindowFunction::functionType(parser.argsv(startArg));
-    if (funcType == WindowFunction::nFunctionTypes)
-    {
-        Messenger::error("Unrecognised Function type '{}'.\n", parser.argsv(startArg));
-        return false;
-    }
+    if (forms().isValid(parser.argsv(startArg)))
+        return forms().errorAndPrintValid(parser.argsv(startArg));
 
-    // Do we have the right number of arguments for the function specified?
-    if ((parser.nArgs() - startArg) < WindowFunction::nFunctionParameters(funcType))
-    {
-        Messenger::error("Too few parameters supplied for Function '{}' (expected {}, found {}).\n",
-                         WindowFunction::functionType(funcType), WindowFunction::nFunctionParameters(funcType),
-                         parser.nArgs() - startArg);
-        return false;
-    }
-
-    // Set up function
-    function_ = funcType;
-    switch (function_)
-    {
-        case (WindowFunction::NoWindow):
-        case (WindowFunction::BartlettWindow):
-        case (WindowFunction::HannWindow):
-        case (WindowFunction::LanczosWindow):
-        case (WindowFunction::NuttallWindow):
-        case (WindowFunction::SineWindow):
-        case (WindowFunction::Lorch0Window):
-            // No fixed parameters.
-            break;
-        default:
-            Messenger::error("Function form '{}' not accounted for in set(LineParser&,int).\n",
-                             WindowFunction::functionType(funcType));
-            return false;
-    }
+    form_ = forms().enumeration(parser.argsv(startArg));
 
     return true;
 }
 
-// Return function type
-WindowFunction::FunctionType WindowFunction::function() const { return function_; }
-
-// Return parameter specified
-double WindowFunction::parameter(int n) const { return parameters_[n]; }
-
-// Return short summary of function parameters
-std::string WindowFunction::parameterSummary() const
-{
-    switch (function_)
-    {
-        case (WindowFunction::NoWindow):
-        case (WindowFunction::BartlettWindow):
-        case (WindowFunction::HannWindow):
-        case (WindowFunction::LanczosWindow):
-        case (WindowFunction::NuttallWindow):
-        case (WindowFunction::SineWindow):
-            return "No Parameters";
-            break;
-        case (WindowFunction::Lorch0Window):
-            return "Delta0=PI/xMax";
-            break;
-        default:
-            Messenger::warn("WindowFunction::value(x) - Function id {} not accounted for.\n", function_);
-            break;
-    }
-
-    return "NULL";
-}
+// Return functional form
+WindowFunction::Form WindowFunction::form() const { return form_; }
 
 // Set-up function for specified data
 bool WindowFunction::setUp(const Data1D &data)
 {
     // Store maximum x value of data
     xMax_ = data.xAxis().back();
-
-    switch (function_)
-    {
-        case (WindowFunction::NoWindow):
-        case (WindowFunction::BartlettWindow):
-        case (WindowFunction::HannWindow):
-        case (WindowFunction::LanczosWindow):
-        case (WindowFunction::NuttallWindow):
-        case (WindowFunction::SineWindow):
-            break;
-        case (WindowFunction::Lorch0Window):
-            // Set Delta0 from the high x limit of the data
-            parameters_[0] = PI / xMax_;
-            break;
-        default:
-            Messenger::warn("WindowFunction::value(x) - Function id {} not accounted for.\n", function_);
-            break;
-    }
 
     return true;
 }
@@ -202,28 +59,22 @@ double WindowFunction::y(double x, double omega) const
     const auto chi = x / xMax_;
     assert(chi >= 0.0 && chi <= 1.0);
 
-    switch (function_)
+    switch (form_)
     {
-        case (WindowFunction::NoWindow):
+        case (Form::None):
             return 1.0;
-            break;
-        case (WindowFunction::BartlettWindow):
+        case (Form::Bartlett):
             return (1.0 - fabs((chi - 0.5) / 0.5));
-            break;
-        case (WindowFunction::HannWindow):
+        case (Form::Hann):
             return 0.5 * (1.0 - cos(2 * PI * chi));
-            break;
-        case (WindowFunction::LanczosWindow):
+        case (Form::Lanczos):
             return sin(PI * (2 * chi - 1.0)) / (PI * (2 * chi - 1.0));
-            break;
-        case (WindowFunction::NuttallWindow):
+        case (Form::Nuttall):
             return (0.355768 - 0.487396 * cos(2.0 * PI * chi) + 0.144232 * cos(4.0 * PI * chi) -
                     0.012604 * cos(6.0 * PI * chi));
-            break;
-        case (WindowFunction::SineWindow):
+        case (Form::Sine):
             return 1.0 - sin(PI * 0.5 * chi);
-            break;
-        case (WindowFunction::Lorch0Window):
+        case (Form::Lorch0):
             /*
              * Original Lorch function
              *
@@ -234,70 +85,10 @@ double WindowFunction::y(double x, double omega) const
              * f(x) = ---------------
              *          x * delta0
              */
-            return sin(x * parameters_[0]) / (x * parameters_[0]);
-            break;
+            return sin(x * (PI / xMax_)) / (x * (PI / xMax_));
         default:
-            Messenger::warn("WindowFunction::value() - Function id {} not accounted for.\n", function_);
-            break;
+            throw(std::runtime_error(fmt::format("Window function enumeration {} not implemented.\n", form_)));
     }
 
     return 0.0;
-}
-
-/*
- * GenericItemBase Implementations
- */
-
-// Return class name
-std::string_view WindowFunction::itemClassName() { return "WindowFunction"; }
-
-// Read data through specified LineParser
-bool WindowFunction::read(LineParser &parser, CoreData &coreData)
-{
-    if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
-        return false;
-    function_ = functionType(parser.argsv(0));
-    for (auto n = 0; n < nFunctionParameters(function_); ++n)
-        parameters_[n] = parser.argd(n + 1);
-    return true;
-}
-
-// Write data through specified LineParser
-bool WindowFunction::write(LineParser &parser)
-{
-    std::string line{functionType(function_)};
-    for (auto n = 0; n < nFunctionParameters(function_); ++n)
-        line += fmt::format(" {:16.9e}", parameters_[n]);
-    return parser.writeLine(line);
-}
-
-/*
- * Parallel Comms
- */
-
-// Broadcast data from Master to all Slaves
-bool WindowFunction::broadcast(ProcessPool &procPool, const int root, const CoreData &coreData)
-{
-#ifdef PARALLEL
-    if (!procPool.broadcast(EnumCast<WindowFunction::FunctionType>(function_), root))
-        return false;
-    if (!procPool.broadcast(parameters_, MAXWINDOWFUNCTIONPARAMS, root))
-        return false;
-    if (!procPool.broadcast(xMax_, root))
-        return false;
-#endif
-    return true;
-}
-
-// Check item equality
-bool WindowFunction::equality(ProcessPool &procPool)
-{
-#ifdef PARALLEL
-    if (!procPool.equality(EnumCast<WindowFunction::FunctionType>(function_)))
-        return Messenger::error("WindowFunction function type is not equivalent (process {} has {}).\n", procPool.poolRank(),
-                                function_);
-    if (!procPool.equality(parameters_, MAXWINDOWFUNCTIONPARAMS))
-        return Messenger::error("WindowFunction parameters are not equivalent.\n");
-#endif
-    return true;
 }

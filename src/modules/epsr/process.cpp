@@ -372,7 +372,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         simulatedFR = weightedSQ.total();
         Filters::trim(simulatedFR, originalReferenceData);
         Fourier::sineFT(simulatedFR, 1.0 / (2 * PI * PI * targetConfiguration_->atomicDensity()), 0.0, 0.03, 30.0,
-                        WindowFunction(WindowFunction::Lorch0Window));
+                        WindowFunction(WindowFunction::Form::Lorch0));
 
         /*
          * Add the Data to the Scattering Matrix
@@ -614,7 +614,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Copy experimental S(Q) and FT it
         expGR = estimatedSQ[{i, j}];
         Fourier::sineFT(expGR, 1.0 / (2 * PI * PI * targetConfiguration_->atomicDensity()), 0.0, 0.05, 30.0,
-                        WindowFunction(WindowFunction::Lorch0Window));
+                        WindowFunction(WindowFunction::Form::Lorch0));
         expGR += 1.0;
     });
 
