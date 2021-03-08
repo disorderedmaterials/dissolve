@@ -184,11 +184,28 @@ TEST_F(XmlFFTest, XmlAtom)
 
 TEST_F(XmlFFTest, XmlAll)
 {
-    std::vector<ForcefieldAtomType> atoms;
-    std::vector<ForcefieldBondTerm> bonds;
-    std::vector<ForcefieldAngleTerm> angles;
+    CoreData coreData;
+    Dissolve dissolve(coreData);
+    XmlAtomModel atomModel(dissolve);
+    XmlBondModel bondModel;
+    XmlAngleModel angleModel;
+
+    dissolve.addAtomType(Elements::H);
+    dissolve.addAtomType(Elements::C);
+    dissolve.addAtomType(Elements::O);
+
+    atomModel.readFile(doc.root());
+    bondModel.readFile(doc.root());
+    angleModel.readFile(doc.root());
+    std::vector<ForcefieldAtomType> atoms = atomModel.toVector();
+    std::vector<ForcefieldBondTerm> bonds = bondModel.toVector();
+    std::vector<ForcefieldAngleTerm> angles = angleModel.toVector();
     std::vector<ForcefieldTorsionTerm> torsions;
     std::vector<ForcefieldImproperTerm> impropers;
+    ASSERT_EQ(atoms.size(), 6);
+    ASSERT_EQ(bonds.size(), 5);
+    ASSERT_EQ(angles.size(), 7);
+
     // auto xmlFF = std::make_shared<Forcefield_XML>();
     auto xmlFF = std::make_shared<Forcefield_XML>(atoms, bonds, angles, torsions, impropers);
     // ForcefieldLibrary::registerForcefield(std::static_pointer_cast<Forcefield>(xmlFF));

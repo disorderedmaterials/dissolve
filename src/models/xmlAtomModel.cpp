@@ -137,3 +137,20 @@ void XmlAtomModel::clear()
     atoms_.clear();
     endResetModel();
 }
+
+std::vector<ForcefieldAtomType> XmlAtomModel::toVector() {
+  std::vector<ForcefieldAtomType> result;
+  for(auto &at : atoms_) {
+    auto type = dissolve_.atomType(std::get<4>(at));
+    result.emplace_back(type->Z(), type->index(), type->name(), "", "", type->charge(), type->shortRangeParameters());
+  }
+  return result;
+}
+
+std::map<std::string, int> XmlAtomModel::toMap() {
+  std::map<std::string, int> result;
+  for(auto &at : atoms_) {
+    result[std::get<0>(at)] = std::get<4>(at);
+  }
+  return result;
+}

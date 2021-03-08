@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "data/ff/bondterm.h"
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <pugixml.hpp>
@@ -33,4 +34,6 @@ class XmlBondModel : public QAbstractTableModel
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
+
+    std::vector<ForcefieldBondTerm> toVector();
 };

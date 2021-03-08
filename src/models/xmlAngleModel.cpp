@@ -72,3 +72,12 @@ QVariant XmlAngleModel::headerData(int section, Qt::Orientation orientation, int
 	    return QVariant();
     }
 }
+
+std::vector<ForcefieldAngleTerm> XmlAngleModel::toVector()
+{
+    std::vector<ForcefieldAngleTerm> result;
+    for (auto &angle : angles_)
+	result.emplace_back(std::get<0>(angle), std::get<1>(angle), std::get<2>(angle), SpeciesAngle::HarmonicForm,
+			    std::vector({std::get<4>(angle), std::get<3>(angle)}));
+    return result;
+}

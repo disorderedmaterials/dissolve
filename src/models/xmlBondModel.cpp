@@ -65,3 +65,10 @@ QVariant XmlBondModel::headerData(int section, Qt::Orientation orientation, int 
 	    return QVariant();
     }
 }
+
+std::vector<ForcefieldBondTerm> XmlBondModel::toVector() {
+  std::vector<ForcefieldBondTerm> result;
+  for(auto &bond : bonds_)
+    result.emplace_back(std::get<0>(bond), std::get<1>(bond), SpeciesBond::HarmonicForm, std::vector({std::get<3>(bond), std::get<2>(bond)}));
+  return result;
+}

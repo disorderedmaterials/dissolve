@@ -3,12 +3,14 @@
 
 #pragma once
 
+#include "data/ff/atomtype.h"
 #include "main/dissolve.h"
 
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <pugixml.hpp>
 
+#include <map>
 #include <tuple>
 #include <vector>
 
@@ -42,4 +44,7 @@ class XmlAtomModel : public QAbstractTableModel
     bool setData(const QModelIndex &index, const QVariant &value, int role = Qt::EditRole) override;
 
     void clear();
+
+    std::vector<ForcefieldAtomType> toVector();
+    std::map<std::string, int> toMap();
 };
