@@ -3,25 +3,31 @@
 
 #include "gui/render/renderabledata2d.h"
 #include "base/lineparser.h"
+#include "genericitems/list.h"
 #include "gui/render/renderablegroupmanager.h"
 #include "gui/render/view.h"
 #include "math/data2d.h"
 #include "math/extrema.h"
 #include "templates/array2d.h"
 
-RenderableData2D::RenderableData2D(const Data2D *source, std::string_view objectTag)
-    : Renderable(Renderable::Data2DRenderable, objectTag), source_(source)
+RenderableData2D::RenderableData2D(const Data2D &source)
+    : Renderable(Renderable::Data2DRenderable, ""), source_(source), displayStyle_(LinesStyle)
 {
-    // Set defaults
-    displayStyle_ = LinesStyle;
     colour().setStyle(ColourDefinition::HSVGradientStyle);
 }
 
-RenderableData2D::~RenderableData2D() {}
+RenderableData2D::RenderableData2D(std::string_view objectTag)
+    : Renderable(Renderable::Data2DRenderable, objectTag), displayStyle_(LinesStyle)
+{
+    colour().setStyle(ColourDefinition::HSVGradientStyle);
+}
 
 /*
  * Data
  */
+
+// Return source data
+OptionalReferenceWrapper<const Data2D> RenderableData2D::source() const { return source_; }
 
 // Attempt to set the data source, searching the supplied list for the object
 void RenderableData2D::validateDataSource(const GenericList &sourceList)
@@ -33,14 +39,14 @@ void RenderableData2D::validateDataSource(const GenericList &sourceList)
     if (source_)
         return;
 
-    source_ = Data2D::findObject(objectTag_);
+    source_ = sourceList.search<Data2D>(objectTag_);
 }
 
 // Invalidate the current data source
-void RenderableData2D::invalidateDataSource() { source_ = nullptr; }
+void RenderableData2D::invalidateDataSource() { source_ = std::nullopt; }
 
 // Return version of data
-int RenderableData2D::dataVersion() { return (source_ ? source_->version() : -99); }
+int RenderableData2D::dataVersion() { return (source_ ? source_->get().version() : -99); }
 
 /*
  * Transform / Limits
@@ -163,7 +169,7 @@ void RenderableData2D::recreatePrimitives(const View &view, const ColourDefiniti
         return;
     }
 
-    reinitialisePrimitives(source_->yAxis().size(), GL_LINE_STRIP, true);
+    reinitialisePrimitives(source_->get().yAxis().size(), GL_LINE_STRIP, true);
     constructLine(transformedData().xAxis(), transformedData().yAxis(), transformedData().values2D(), view.axes(),
                   colourDefinition);
 }

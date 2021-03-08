@@ -13,23 +13,24 @@ class Axes;
 class RenderableData2D : public Renderable
 {
     public:
-    RenderableData2D(const Data2D *source, std::string_view objectTag);
-    ~RenderableData2D();
+    RenderableData2D(const Data2D &source);
+    RenderableData2D(std::string_view objectTag);
+    ~RenderableData2D() = default;
 
     /*
      * Data
      */
     private:
     // Source data
-    const Data2D *source_;
+    OptionalReferenceWrapper<const Data2D> source_;
 
-    private:
+    public:
+    // Return source data
+    OptionalReferenceWrapper<const Data2D> source() const;
     // Attempt to set the data source, searching the supplied list for the object
     void validateDataSource(const GenericList &sourceList) override;
     // Invalidate the current data source
     void invalidateDataSource() override;
-
-    public:
     // Return version of data
     int dataVersion() override;
 
