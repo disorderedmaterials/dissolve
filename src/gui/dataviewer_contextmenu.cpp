@@ -38,38 +38,6 @@ void DataViewer::showGeneralContextMenu(QPoint pos)
         view_.resetViewMatrix();
     else if (selectedAction == copyToClipboardAction)
         copyViewToClipboard(true);
-    else if (addDataAction.contains(selectedAction))
-    {
-        auto dimensionality = addDataAction.dataForItem(selectedAction);
-        SelectGenericItemDialog genericItemDialog(this, *dissolve_);
-        if (dimensionality == 1)
-        {
-            auto itemName = genericItemDialog.selectGenericItem<Data1D>();
-            if (!itemName.isEmpty())
-            {
-                auto &item = dissolve_->processingModuleData().value<Data1D>(qPrintable(itemName));
-                createRenderable<RenderableData1D>(item.objectTag(), item.tag(), "Default");
-            }
-        }
-        else if (dimensionality == 2)
-        {
-            auto itemName = genericItemDialog.selectGenericItem<Data2D>();
-            if (!itemName.isEmpty())
-            {
-                auto &item = dissolve_->processingModuleData().value<Data2D>(qPrintable(itemName));
-                createRenderable<RenderableData2D>(item.objectTag(), item.tag(), "Default");
-            }
-        }
-        else if (dimensionality == 3)
-        {
-            auto itemName = genericItemDialog.selectGenericItem<Data3D>();
-            if (!itemName.isEmpty())
-            {
-                auto &item = dissolve_->processingModuleData().value<Data3D>(qPrintable(itemName));
-                createRenderable<RenderableData3D>(item.objectTag(), item.tag(), "Default");
-            }
-        }
-    }
 }
 
 // Show renderable context menu

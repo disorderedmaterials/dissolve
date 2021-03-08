@@ -77,10 +77,6 @@ class DataTestModule : public Module
         else if (processingModuleData.contains(dataIdentifier))
             return processingModuleData.value<T>(dataIdentifier);
 
-        // If we haven't found it yet, try a search by object tag
-        if (T::findObject(dataIdentifier))
-            return *T::findObject(dataIdentifier);
-
         // Failed to find data
         return {};
     }
