@@ -129,3 +129,14 @@ QVariant XmlTorsionModel::headerData(int section, Qt::Orientation orientation, i
 	    return QVariant();
     }
 }
+
+std::vector<ForcefieldTorsionTerm> XmlTorsionModel::toVector()
+{
+    std::vector<ForcefieldTorsionTerm> result;
+    for (auto &torsion : torsions_)
+	// FIXME: Need to add a proper torsion form for the XML Model,
+	// since it uses a different one
+	result.emplace_back(std::get<0>(torsion), std::get<1>(torsion), std::get<2>(torsion), std::get<3>(torsion),
+			    SpeciesTorsion::NoForm, std::vector<double>());
+    return result;
+}
