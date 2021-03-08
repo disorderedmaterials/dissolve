@@ -11,13 +11,13 @@ void XmlImproperModel::readFile(const pugi::xml_node &root)
     for (auto &i : root.select_nodes("/ForceField/PeriodicTorsionForce/Improper"))
     {
 	impropers_.emplace_back(i.node().attribute("class1").as_string(), i.node().attribute("class2").as_string(),
-			       i.node().attribute("class3").as_string(), i.node().attribute("class4").as_string(),
-			       i.node().attribute("k1").as_double(), i.node().attribute("k2").as_double(),
-			       i.node().attribute("k3").as_double(), i.node().attribute("k4").as_double(),
-			       i.node().attribute("periodicity1").as_int(), i.node().attribute("periodicity2").as_int(),
-			       i.node().attribute("periodicity3").as_int(), i.node().attribute("periodicity4").as_int(),
-			       i.node().attribute("phase1").as_double(), i.node().attribute("phase2").as_double(),
-			       i.node().attribute("phase3").as_double(), i.node().attribute("phase4").as_double());
+				i.node().attribute("class3").as_string(), i.node().attribute("class4").as_string(),
+				i.node().attribute("k1").as_double(), i.node().attribute("k2").as_double(),
+				i.node().attribute("k3").as_double(), i.node().attribute("k4").as_double(),
+				i.node().attribute("periodicity1").as_int(), i.node().attribute("periodicity2").as_int(),
+				i.node().attribute("periodicity3").as_int(), i.node().attribute("periodicity4").as_int(),
+				i.node().attribute("phase1").as_double(), i.node().attribute("phase2").as_double(),
+				i.node().attribute("phase3").as_double(), i.node().attribute("phase4").as_double());
     }
 
     endResetModel();
@@ -130,14 +130,13 @@ QVariant XmlImproperModel::headerData(int section, Qt::Orientation orientation, 
     }
 }
 
-
-std::vector<ForcefieldImproperTerm> XmlImproperModel::toVector()
+std::vector<ForcefieldImproperTerm> XmlImproperModel::toVector(std::map<std::string, std::string> &names)
 {
     std::vector<ForcefieldImproperTerm> result;
     for (auto &improper : impropers_)
 	// FIXME: Need to add a proper improper form for the XML Model,
 	// since it uses a different one
-	result.emplace_back(std::get<0>(improper), std::get<1>(improper), std::get<2>(improper), std::get<3>(improper),
-			    SpeciesImproper::NoForm, std::vector<double>());
+	result.emplace_back(names[std::get<0>(improper)], names[std::get<1>(improper)], names[std::get<2>(improper)],
+			    names[std::get<3>(improper)], SpeciesImproper::NoForm, std::vector<double>());
     return result;
 }

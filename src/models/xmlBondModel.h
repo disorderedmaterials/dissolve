@@ -8,6 +8,7 @@
 #include <QModelIndex>
 #include <pugixml.hpp>
 
+#include <map>
 #include <tuple>
 #include <vector>
 
@@ -35,5 +36,5 @@ class XmlBondModel : public QAbstractTableModel
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-    std::vector<ForcefieldBondTerm> toVector();
+    std::vector<ForcefieldBondTerm> toVector(std::map<std::string, std::string>);
 };

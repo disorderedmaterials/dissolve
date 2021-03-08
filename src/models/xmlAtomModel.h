@@ -46,5 +46,5 @@ class XmlAtomModel : public QAbstractTableModel
     void clear();
 
     std::vector<ForcefieldAtomType> toVector();
-    std::map<std::string, int> toMap();
+    std::map<std::string, std::string> toMap();
 };

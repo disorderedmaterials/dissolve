@@ -147,10 +147,10 @@ std::vector<ForcefieldAtomType> XmlAtomModel::toVector() {
   return result;
 }
 
-std::map<std::string, int> XmlAtomModel::toMap() {
-  std::map<std::string, int> result;
+std::map<std::string, std::string> XmlAtomModel::toMap() {
+  std::map<std::string, std::string> result;
   for(auto &at : atoms_) {
-    result[std::get<0>(at)] = std::get<4>(at);
+    result[std::get<0>(at)] = dissolve_.atomType(std::get<4>(at))->name();
   }
   return result;
 }

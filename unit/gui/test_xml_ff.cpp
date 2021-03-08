@@ -202,11 +202,12 @@ TEST_F(XmlFFTest, XmlAll)
     angleModel.readFile(doc.root());
     torsionModel.readFile(doc.root());
     improperModel.readFile(doc.root());
+    auto map = atomModel.toMap();
     std::vector<ForcefieldAtomType> atoms = atomModel.toVector();
-    std::vector<ForcefieldBondTerm> bonds = bondModel.toVector();
-    std::vector<ForcefieldAngleTerm> angles = angleModel.toVector();
-    std::vector<ForcefieldTorsionTerm> torsions = torsionModel.toVector();
-    std::vector<ForcefieldImproperTerm> impropers = improperModel.toVector();
+    std::vector<ForcefieldBondTerm> bonds = bondModel.toVector(map);
+    std::vector<ForcefieldAngleTerm> angles = angleModel.toVector(map);
+    std::vector<ForcefieldTorsionTerm> torsions = torsionModel.toVector(map);
+    std::vector<ForcefieldImproperTerm> impropers = improperModel.toVector(map);
     ASSERT_EQ(atoms.size(), 6);
     ASSERT_EQ(bonds.size(), 5);
     ASSERT_EQ(angles.size(), 7);

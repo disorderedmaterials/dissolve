@@ -8,6 +8,7 @@
 #include <QModelIndex>
 #include <pugixml.hpp>
 
+#include <map>
 #include <tuple>
 #include <vector>
 
@@ -35,5 +36,5 @@ class XmlTorsionModel : public QAbstractTableModel
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-    std::vector<ForcefieldTorsionTerm> toVector();
+    std::vector<ForcefieldTorsionTerm> toVector(std::map<std::string, std::string>&);
 };
