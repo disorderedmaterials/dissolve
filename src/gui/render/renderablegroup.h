@@ -6,6 +6,7 @@
 #include "gui/render/colourdefinition.h"
 #include "gui/render/linestipple.h"
 #include "gui/stockcolours.h"
+#include <array>
 
 // Forward declarations
 class Renderable;
