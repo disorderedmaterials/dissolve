@@ -45,7 +45,6 @@ add_library(
   renderabledata1d.h
   renderabledata2d.h
   renderabledata3d.h
-  renderablefactory.h
   renderablegroup.h
   renderablegroupmanager.h
   renderablespecies.h
@@ -78,7 +77,6 @@ add_library(
   renderabledata1d.cpp
   renderabledata2d.cpp
   renderabledata3d.cpp
-  renderablefactory.cpp
   renderablegroup.cpp
   renderablegroupmanager.cpp
   renderablespecies.cpp

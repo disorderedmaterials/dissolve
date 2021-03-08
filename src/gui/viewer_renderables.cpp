@@ -3,7 +3,6 @@
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
-#include "gui/render/renderablefactory.h"
 #include "gui/viewer.hui"
 
 // Clear existing data
