@@ -137,6 +137,6 @@ std::vector<ForcefieldImproperTerm> XmlImproperModel::toVector(std::map<std::str
 	// FIXME: Need to add a proper improper form for the XML Model,
 	// since it uses a different one
 	result.emplace_back(names[std::get<0>(improper)], names[std::get<1>(improper)], names[std::get<2>(improper)],
-			    names[std::get<3>(improper)], SpeciesImproper::NoForm, std::vector<double>());
+			    names[std::get<3>(improper)], SpeciesTorsion::NoForm, std::vector<double>());
     return result;
 }
