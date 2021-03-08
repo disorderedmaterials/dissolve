@@ -123,7 +123,7 @@ template <class T, class I> class TreeWidgetUpdater
         {
             QTreeWidgetItem *treeItem = accessor(count);
             std::shared_ptr<I> rowData = (treeItem ? treeItem->data(0, Qt::UserRole).value<std::shared_ptr<I>>() : nullptr);
-            if (rowData ==  dataItem)
+            if (rowData == dataItem)
             {
                 // Update the current row and quit the loop
                 updater(count, dataItem, false);
