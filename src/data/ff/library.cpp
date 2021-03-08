@@ -88,12 +88,3 @@ std::shared_ptr<Forcefield> ForcefieldLibrary::forcefield(std::string_view name)
 
     return *it;
 }
-
-
-// Register a new force field from a file
-// std::shared_ptr<Forcefield> ForcefieldLibrary::forcefield(std::string_view name, std::string_view file)
-// {
-//     auto ff = std::make_shared<XMLBaseForcefield>(file);
-//     registerForcefield(ff);
-//     return ff;
-// }

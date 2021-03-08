@@ -3,6 +3,7 @@
 
 #include "classes/atomtype.h"
 #include "data/elements.h"
+#include "data/ff/library.h"
 #include "data/ff/xml/base.h"
 #include "main/dissolve.h"
 #include "models/xmlAngleModel.h"
@@ -214,7 +215,7 @@ TEST_F(XmlFFTest, XmlAll)
 
     // auto xmlFF = std::make_shared<Forcefield_XML>();
     auto xmlFF = std::make_shared<Forcefield_XML>(atoms, bonds, angles, torsions, impropers);
-    // ForcefieldLibrary::registerForcefield(std::static_pointer_cast<Forcefield>(xmlFF));
+    ForcefieldLibrary::registerForcefield(std::static_pointer_cast<Forcefield>(xmlFF));
 }
 
 } // namespace UnitTest
