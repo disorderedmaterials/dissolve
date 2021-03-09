@@ -29,9 +29,9 @@ stages:
     displayName: 'Build and Package'
     jobs:
       - job: 'linux_serialgui_appimage'
-        displayName: 'Build Linux (Serial/GUI, ubuntu-18.04)'
+        displayName: 'Build Linux (Serial/GUI, ubuntu-latest)'
         pool:
-          vmImage: 'ubuntu-18.04'
+          vmImage: 'ubuntu-latest'
         steps:
           - checkout: self
             fetchDepth: 1

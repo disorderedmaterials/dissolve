@@ -11,7 +11,7 @@ jobs:
     condition: eq('${{ parameters.parallel }}', false)
     displayName: 'System Tests (Serial)'
     pool:
-      vmImage: ubuntu-18.04
+      vmImage: ubuntu-latest
     steps:
       - checkout: self
         fetchDepth: 1
@@ -37,7 +37,7 @@ jobs:
     condition: eq('${{ parameters.parallel }}', true)
     displayName: 'System Tests (Parallel)'
     pool:
-      vmImage: ubuntu-18.04
+      vmImage: ubuntu-latest
     steps:
       - checkout: self
         fetchDepth: 1
