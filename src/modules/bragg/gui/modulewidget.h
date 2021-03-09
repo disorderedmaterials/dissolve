@@ -21,7 +21,7 @@ class BraggModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    BraggModuleWidget(QWidget *parent, BraggModule *module);
+    BraggModuleWidget(QWidget *parent, const GenericList &processingData, BraggModule *module);
     ~BraggModuleWidget();
 
     private:

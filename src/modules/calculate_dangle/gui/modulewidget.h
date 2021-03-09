@@ -21,7 +21,7 @@ class CalculateDAngleModuleWidget : public ModuleWidget
     CalculateDAngleModule *module_;
 
     public:
-    CalculateDAngleModuleWidget(QWidget *parent, CalculateDAngleModule *module);
+    CalculateDAngleModuleWidget(QWidget *parent, const GenericList &processingData, CalculateDAngleModule *module);
 
     /*
      * UI

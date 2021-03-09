@@ -7,8 +7,9 @@
 #include "modules/calculate_dangle/dangle.h"
 #include "modules/calculate_dangle/gui/modulewidget.h"
 
-CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget *parent, CalculateDAngleModule *module)
-    : ModuleWidget(parent), module_(module)
+CalculateDAngleModuleWidget::CalculateDAngleModuleWidget(QWidget *parent, const GenericList &processingData,
+                                                         CalculateDAngleModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);

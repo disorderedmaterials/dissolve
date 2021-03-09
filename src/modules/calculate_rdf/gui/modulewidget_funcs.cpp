@@ -6,8 +6,9 @@
 #include "modules/calculate_rdf/gui/modulewidget.h"
 #include "modules/calculate_rdf/rdf.h"
 
-CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, CalculateRDFModule *module)
-    : ModuleWidget(parent), module_(module)
+CalculateRDFModuleWidget::CalculateRDFModuleWidget(QWidget *parent, const GenericList &processingData,
+                                                   CalculateRDFModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);

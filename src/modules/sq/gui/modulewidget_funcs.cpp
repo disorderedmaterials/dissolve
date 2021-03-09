@@ -10,8 +10,8 @@
 #include "modules/sq/sq.h"
 #include "templates/algorithms.h"
 
-SQModuleWidget::SQModuleWidget(QWidget *parent, SQModule *module, Dissolve &dissolve)
-    : ModuleWidget(parent), module_(module), dissolve_(dissolve)
+SQModuleWidget::SQModuleWidget(QWidget *parent, const GenericList &processingData, SQModule *module, Dissolve &dissolve)
+    : ModuleWidget(parent, processingData), module_(module), dissolve_(dissolve)
 {
     // Set up user interface
     ui_.setupUi(this);

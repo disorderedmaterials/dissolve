@@ -8,5 +8,5 @@
 // Return a new widget controlling this Module
 ModuleWidget *AnalyseModule::createWidget(QWidget *parent, Dissolve &dissolve)
 {
-    return new AnalyseModuleWidget(parent, this, dissolve.coreData());
+    return new AnalyseModuleWidget(parent, dissolve.processingModuleData(), this, dissolve.coreData());
 }

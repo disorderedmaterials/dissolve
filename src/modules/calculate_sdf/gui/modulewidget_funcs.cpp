@@ -11,8 +11,9 @@
 #include "modules/calculate_sdf/gui/modulewidget.h"
 #include "modules/calculate_sdf/sdf.h"
 
-CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, CalculateSDFModule *module, const CoreData &coreData)
-    : ModuleWidget(parent), module_(module), coreData_(coreData)
+CalculateSDFModuleWidget::CalculateSDFModuleWidget(QWidget *parent, const GenericList &processingData,
+                                                   CalculateSDFModule *module, const CoreData &coreData)
+    : ModuleWidget(parent, processingData), module_(module), coreData_(coreData)
 {
     // Set up user interface
     ui_.setupUi(this);

@@ -20,7 +20,7 @@ class CalibrationModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    CalibrationModuleWidget(QWidget *parent, CalibrationModule *module);
+    CalibrationModuleWidget(QWidget *parent, const GenericList &processingData, CalibrationModule *module);
     ~CalibrationModuleWidget();
 
     private:

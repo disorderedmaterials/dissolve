@@ -9,8 +9,8 @@
 #include "modules/calibration/gui/modulewidget.h"
 #include "templates/variantpointer.h"
 
-CalibrationModuleWidget::CalibrationModuleWidget(QWidget *parent, CalibrationModule *module)
-    : ModuleWidget(parent), module_(module)
+CalibrationModuleWidget::CalibrationModuleWidget(QWidget *parent, const GenericList &processingData, CalibrationModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);

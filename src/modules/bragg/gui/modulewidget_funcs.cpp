@@ -11,7 +11,8 @@
 #include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 
-BraggModuleWidget::BraggModuleWidget(QWidget *parent, BraggModule *module) : ModuleWidget(parent), module_(module)
+BraggModuleWidget::BraggModuleWidget(QWidget *parent, const GenericList &processingData, BraggModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);

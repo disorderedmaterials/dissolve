@@ -7,8 +7,9 @@
 #include "modules/calculate_axisangle/axisangle.h"
 #include "modules/calculate_axisangle/gui/modulewidget.h"
 
-CalculateAxisAngleModuleWidget::CalculateAxisAngleModuleWidget(QWidget *parent, CalculateAxisAngleModule *module)
-    : ModuleWidget(parent), module_(module)
+CalculateAxisAngleModuleWidget::CalculateAxisAngleModuleWidget(QWidget *parent, const GenericList &processingData,
+                                                               CalculateAxisAngleModule *module)
+    : ModuleWidget(parent, processingData), module_(module)
 {
     // Set up user interface
     ui_.setupUi(this);

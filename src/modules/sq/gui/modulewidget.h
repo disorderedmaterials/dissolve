@@ -20,7 +20,7 @@ class SQModuleWidget : public ModuleWidget
     Q_OBJECT
 
     public:
-    SQModuleWidget(QWidget *parent, SQModule *module, Dissolve &dissolve);
+    SQModuleWidget(QWidget *parent, const GenericList &processingData, SQModule *module, Dissolve &dissolve);
     ~SQModuleWidget();
 
     private:
