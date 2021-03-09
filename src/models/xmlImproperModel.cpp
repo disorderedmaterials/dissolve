@@ -133,10 +133,27 @@ QVariant XmlImproperModel::headerData(int section, Qt::Orientation orientation, 
 std::vector<ForcefieldImproperTerm> XmlImproperModel::toVector(std::map<std::string, std::string> &names)
 {
     std::vector<ForcefieldImproperTerm> result;
-    for (auto &improper : impropers_)
-	// FIXME: Need to add a proper improper form for the XML Model,
-	// since it uses a different one
+    for (auto &improper : impropers_){
+	std::vector<double> params,
+	    ks({std::get<4>(improper), std::get<5>(improper), std::get<6>(improper), std::get<7>(improper)}),
+	    phases({std::get<12>(improper), std::get<13>(improper), std::get<14>(improper), std::get<15>(improper)});
+	std::vector<int> ns({std::get<8>(improper), std::get<9>(improper), std::get<10>(improper), std::get<11>(improper)});
+	double k;
+
+	params.resize(*std::max_element(ns.begin(), ns.end()) - 1);
+	for (int n = 1; n <= params.size(); ++n)
+	{
+	    for (int index = 0; index < ns.size(); ++index)
+	    {
+		if (n == ns[index])
+		{
+		    params[n - 1] = (phases[index] > 3.14 && phases[index] < 3.15 ? -1 : 1) * ks[index];
+		}
+	    }
+	}
+
 	result.emplace_back(names[std::get<0>(improper)], names[std::get<1>(improper)], names[std::get<2>(improper)],
-			    names[std::get<3>(improper)], SpeciesTorsion::NoForm, std::vector<double>());
+			    names[std::get<3>(improper)], SpeciesImproper::CosNForm, params);
+    }
     return result;
 }

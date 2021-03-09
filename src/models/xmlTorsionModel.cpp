@@ -1,4 +1,5 @@
 #include "models/xmlTorsionModel.h"
+#include <algorithm>
 #include <pugixml.hpp>
 
 XmlTorsionModel::XmlTorsionModel() {}
@@ -134,9 +135,27 @@ std::vector<ForcefieldTorsionTerm> XmlTorsionModel::toVector(std::map<std::strin
 {
     std::vector<ForcefieldTorsionTerm> result;
     for (auto &torsion : torsions_)
-	// FIXME: Need to add a proper torsion form for the XML Model,
-	// since it uses a different one
+    {
+	std::vector<double> params,
+	    ks({std::get<4>(torsion), std::get<5>(torsion), std::get<6>(torsion), std::get<7>(torsion)}),
+	    phases({std::get<12>(torsion), std::get<13>(torsion), std::get<14>(torsion), std::get<15>(torsion)});
+	std::vector<int> ns({std::get<8>(torsion), std::get<9>(torsion), std::get<10>(torsion), std::get<11>(torsion)});
+	double k;
+
+	params.resize(*std::max_element(ns.begin(), ns.end()) - 1);
+	for (int n = 1; n <= params.size(); ++n)
+	{
+	    for (int index = 0; index < ns.size(); ++index)
+	    {
+		if (n == ns[index])
+		{
+		    params[n - 1] = (phases[index] > 3.14 && phases[index] < 3.15 ? -1 : 1) * ks[index];
+		}
+	    }
+	}
+
 	result.emplace_back(names[std::get<0>(torsion)], names[std::get<1>(torsion)], names[std::get<2>(torsion)],
-			    names[std::get<3>(torsion)], SpeciesTorsion::NoForm, std::vector<double>());
+			    names[std::get<3>(torsion)], SpeciesTorsion::CosNForm, params);
+    }
     return result;
 }
