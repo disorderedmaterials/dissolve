@@ -304,7 +304,7 @@ if(GUI)
            charts
            components
            gui
-	   models
+           models
            ${NO_WHOLE_ARCHIVE_FLAG}
     PRIVATE # External libs
             antlr4-runtime

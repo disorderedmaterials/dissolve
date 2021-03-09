@@ -16,5 +16,4 @@ if(GUI)
   add_subdirectory(gui)
 endif(GUI)
 
-
 add_subdirectory(modules)

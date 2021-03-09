@@ -270,7 +270,15 @@ add_library(gui ${gui_RES} ${gui_UIS_H} ${gui_SRCS} ${gui_MOC_SRCS})
 target_include_directories(
   gui PRIVATE ${PROJECT_SOURCE_DIR}/src ${PROJECT_BINARY_DIR}/src ${Qt5Widgets_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
 )
-target_link_libraries(gui keywordwidgets charts delegates widgets components models)
+target_link_libraries(
+  gui
+  keywordwidgets
+  charts
+  delegates
+  widgets
+  components
+  models
+)
 
 # Subdirectories
 add_subdirectory(keywordwidgets)
