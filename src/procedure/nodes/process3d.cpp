@@ -21,7 +21,8 @@ Process3DProcedureNode::Process3DProcedureNode(const Collect3DProcedureNode *tar
     keywords_.add("Control", new StringKeyword("X"), "LabelX", "Label for the x axis");
     keywords_.add("Control", new StringKeyword("Y"), "LabelY", "Label for the y axis");
     keywords_.add("Control", new StringKeyword("Z"), "LabelZ", "Label for the z axis");
-    keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndSave"), "Save", "Save processed data to disk");
+    keywords_.add("Export", new FileAndFormatKeyword(exportFileAndFormat_, "EndSave"), "Save",
+                  "Format / file to save processed data to");
     keywords_.add("HIDDEN", new NodeBranchKeyword(this, &normalisationBranch_, ProcedureNode::OperateContext), "Normalisation",
                   "Branch providing normalisation operations for the data");
 

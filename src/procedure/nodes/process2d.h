@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include "io/export/data2d.h"
 #include "procedure/nodes/node.h"
 #include "templates/reflist.h"
 
@@ -34,6 +35,8 @@ class Process2DProcedureNode : public ProcedureNode
     const Collect2DProcedureNode *collectNode_;
     // Pointer to processed data (stored in processing data list)
     Data2D *processedData_;
+    // Export file and format for saving data
+    Data2DExportFileFormat exportFileAndFormat_;
 
     public:
     // Return processed data

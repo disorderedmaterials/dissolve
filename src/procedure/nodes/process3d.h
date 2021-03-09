@@ -36,7 +36,7 @@ class Process3DProcedureNode : public ProcedureNode
     const Collect3DProcedureNode *collectNode_;
     // Pointer to processed data (stored in processing data list)
     Data3D *processedData_;
-    // Export file and format
+    // Export file and format for saving data
     Data3DExportFileFormat exportFileAndFormat_;
 
     public:
