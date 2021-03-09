@@ -28,15 +28,15 @@ void ImportForcefieldWizard::updateNavButtons()
 
     switch (index)
     {
-	case 0:
-	    ui_.continueButton->setEnabled(atoms_.rowCount() > 0);
-	    break;
-	case 1:
-	    ui_.continueButton->setEnabled(true);
-	    break;
-	default:
-	    ui_.continueButton->setEnabled(false);
-	    break;
+        case 0:
+            ui_.continueButton->setEnabled(atoms_.rowCount() > 0);
+            break;
+        case 1:
+            ui_.continueButton->setEnabled(true);
+            break;
+        default:
+            ui_.continueButton->setEnabled(false);
+            break;
     }
 }
 
@@ -51,11 +51,11 @@ void ImportForcefieldWizard::nextStack()
 
     if (index == 2)
     {
-	auto map = atoms_.toMap();
-	auto xmlFF = std::make_shared<Forcefield_XML>(atoms_.toVector(), bonds_.toVector(map), angles_.toVector(map),
-						      torsions_.toVector(map), impropers_.toVector(map));
-	ForcefieldLibrary::registerForcefield(std::static_pointer_cast<Forcefield>(xmlFF));
-	this->close();
+        auto map = atoms_.toMap();
+        auto xmlFF = std::make_shared<Forcefield_XML>(atoms_.toVector(), bonds_.toVector(map), angles_.toVector(map),
+                                                      torsions_.toVector(map), impropers_.toVector(map));
+        ForcefieldLibrary::registerForcefield(std::static_pointer_cast<Forcefield>(xmlFF));
+        this->close();
     }
 }
 
@@ -72,7 +72,7 @@ void ImportForcefieldWizard::xmlFileDialog()
 {
     auto fileName = QFileDialog::getOpenFileName(this, "Open xml file", "/home/adam", "OpenMM Xml files (*.xml)");
     if (fileName.isEmpty())
-	return;
+        return;
 
     ui_.lineEdit->setText(fileName);
 }
@@ -84,22 +84,22 @@ void ImportForcefieldWizard::xmlString(QString fileName)
     auto result = doc.load_file(fileName.toStdString().c_str());
     if (result)
     {
-	auto root = doc.root();
+        auto root = doc.root();
 
-	atoms_.readFile(root);
-	bonds_.readFile(root);
-	angles_.readFile(root);
-	torsions_.readFile(root);
-	impropers_.readFile(root);
-	ui_.atomTable->resizeColumnsToContents();
-	ui_.bondTable->resizeColumnsToContents();
-	ui_.angleTable->resizeColumnsToContents();
-	ui_.torsionTable->resizeColumnsToContents();
-	ui_.improperTable->resizeColumnsToContents();
+        atoms_.readFile(root);
+        bonds_.readFile(root);
+        angles_.readFile(root);
+        torsions_.readFile(root);
+        impropers_.readFile(root);
+        ui_.atomTable->resizeColumnsToContents();
+        ui_.bondTable->resizeColumnsToContents();
+        ui_.angleTable->resizeColumnsToContents();
+        ui_.torsionTable->resizeColumnsToContents();
+        ui_.improperTable->resizeColumnsToContents();
     }
     else
     {
-	atoms_.clear();
+        atoms_.clear();
     }
     updateNavButtons();
     return;

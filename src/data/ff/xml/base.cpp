@@ -5,8 +5,8 @@
 #include <iostream>
 
 Forcefield_XML::Forcefield_XML(std::vector<ForcefieldAtomType> atoms, std::vector<ForcefieldBondTerm> bonds,
-			       std::vector<ForcefieldAngleTerm> angles, std::vector<ForcefieldTorsionTerm> torsions,
-			       std::vector<ForcefieldImproperTerm> impropers)
+                               std::vector<ForcefieldAngleTerm> angles, std::vector<ForcefieldTorsionTerm> torsions,
+                               std::vector<ForcefieldImproperTerm> impropers)
     : Forcefield(atoms, bonds, angles, torsions, impropers)
 {
 }

@@ -5,10 +5,10 @@
 #include "gui/addforcefieldtermsdialog.h"
 #include "gui/editspeciesdialog.h"
 #include "gui/gui.h"
+#include "gui/importforcefieldwizard.h"
 #include "gui/importspeciesdialog.h"
 #include "gui/selectelementdialog.h"
 #include "gui/speciestab.h"
-#include "gui/importforcefieldwizard.h"
 #include <QFileDialog>
 
 void DissolveWindow::on_SpeciesCreateAtomicAction_triggered(bool checked)

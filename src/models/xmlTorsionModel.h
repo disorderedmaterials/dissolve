@@ -13,7 +13,7 @@
 #include <vector>
 
 using XmlTorsionData = std::tuple<std::string, std::string, std::string, std::string, double, double, double, double, int, int,
-				  int, int, double, double, double, double>;
+                                  int, int, double, double, double, double>;
 
 class XmlTorsionModel : public QAbstractTableModel
 {
@@ -36,5 +36,5 @@ class XmlTorsionModel : public QAbstractTableModel
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-    std::vector<ForcefieldTorsionTerm> toVector(std::map<std::string, std::string>&);
+    std::vector<ForcefieldTorsionTerm> toVector(std::map<std::string, std::string> &);
 };

@@ -13,7 +13,7 @@
 #include <vector>
 
 using XmlImproperData = std::tuple<std::string, std::string, std::string, std::string, double, double, double, double, int, int,
-				   int, int, double, double, double, double>;
+                                   int, int, double, double, double, double>;
 
 class XmlImproperModel : public QAbstractTableModel
 {
@@ -36,5 +36,5 @@ class XmlImproperModel : public QAbstractTableModel
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;
 
-    std::vector<ForcefieldImproperTerm> toVector(std::map<std::string, std::string>&);
+    std::vector<ForcefieldImproperTerm> toVector(std::map<std::string, std::string> &);
 };
