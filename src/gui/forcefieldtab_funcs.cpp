@@ -945,13 +945,3 @@ void ForcefieldTab::on_MasterImpropersTable_itemChanged(QTableWidgetItem *w)
             break;
     }
 }
-
-/*
- * State
- */
-
-// Read widget state through specified LineParser
-bool ForcefieldTab::readState(LineParser &parser, const CoreData &coreData) { return true; }
-
-// Write widget state through specified LineParser
-bool ForcefieldTab::writeState(LineParser &parser) const { return true; }

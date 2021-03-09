@@ -71,30 +71,6 @@ void CalculateAxisAngleModuleWidget::updateControls(int flags)
 }
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool CalculateAxisAngleModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!rdfGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool CalculateAxisAngleModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!rdfGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 

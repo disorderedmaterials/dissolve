@@ -62,15 +62,6 @@ class Integrator1DGizmo : public QWidget, public Gizmo
     void setGraphDataTargets();
 
     /*
-     * State
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
-
-    /*
      * Widget Signals / Slots
      */
     private slots:

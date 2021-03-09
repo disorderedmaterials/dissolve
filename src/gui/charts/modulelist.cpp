@@ -495,13 +495,3 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
     // Return required size
     return requiredSize;
 }
-
-/*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool ModuleListChart::writeState(LineParser &parser) const { return true; }
-
-// Read widget state through specified LineParser
-bool ModuleListChart::readState(LineParser &parser) { return true; }

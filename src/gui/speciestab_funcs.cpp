@@ -167,13 +167,3 @@ bool SpeciesTab::canClose() const
 
 // Return displayed Species
 Species *SpeciesTab::species() const { return species_; }
-
-/*
- * State
- */
-
-// Read widget state through specified LineParser
-bool SpeciesTab::readState(LineParser &parser, const CoreData &coreData) { return true; }
-
-// Write widget state through specified LineParser
-bool SpeciesTab::writeState(LineParser &parser) const { return true; }

@@ -90,32 +90,6 @@ void CalculateSDFModuleWidget::updateControls(int flags)
 }
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool CalculateSDFModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!sdfGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool CalculateSDFModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!sdfGraph_->readSession(parser))
-        return false;
-
-    setGraphDataTargets();
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 

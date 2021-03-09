@@ -221,58 +221,6 @@ void EPSRModuleWidget::updateControls(int flags)
 }
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool EPSRModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!FQGraph_->writeSession(parser))
-        return false;
-    if (!FQFitGraph_->writeSession(parser))
-        return false;
-    if (!estimatedSQGraph_->writeSession(parser))
-        return false;
-    if (!estimatedGRGraph_->writeSession(parser))
-        return false;
-    if (!totalGRGraph_->writeSession(parser))
-        return false;
-    if (!phiRGraph_->writeSession(parser))
-        return false;
-    if (!phiMagGraph_->writeSession(parser))
-        return false;
-    if (!rFactorGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool EPSRModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!FQGraph_->readSession(parser))
-        return false;
-    if (!FQFitGraph_->readSession(parser))
-        return false;
-    if (!estimatedSQGraph_->readSession(parser))
-        return false;
-    if (!estimatedGRGraph_->readSession(parser))
-        return false;
-    if (!totalGRGraph_->readSession(parser))
-        return false;
-    if (!phiRGraph_->readSession(parser))
-        return false;
-    if (!phiMagGraph_->readSession(parser))
-        return false;
-    if (!rFactorGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 

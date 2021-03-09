@@ -100,46 +100,6 @@ void CalculateAngleModuleWidget::updateControls(int flags)
 }
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool CalculateAngleModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!rdfABGraph_->writeSession(parser))
-        return false;
-    if (!rdfBCGraph_->writeSession(parser))
-        return false;
-    if (!angleGraph_->writeSession(parser))
-        return false;
-    if (!dAngleABGraph_->writeSession(parser))
-        return false;
-    if (!dAngleBCGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool CalculateAngleModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!rdfABGraph_->readSession(parser))
-        return false;
-    if (!rdfBCGraph_->readSession(parser))
-        return false;
-    if (!angleGraph_->readSession(parser))
-        return false;
-    if (!dAngleABGraph_->readSession(parser))
-        return false;
-    if (!dAngleBCGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 

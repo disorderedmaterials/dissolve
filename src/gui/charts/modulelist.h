@@ -97,13 +97,4 @@ class ModuleListChart : public ChartBase
     private:
     // Calculate new widget geometry according to the layout requirements, returning the entire area required
     QSize calculateNewWidgetGeometry(QSize currentSize);
-
-    /*
-     * State I/O (ChartBase Reimplementations)
-     */
-    public:
-    // Write widget state through specified LineParser
-    bool writeState(LineParser &parser) const;
-    // Read widget state through specified LineParser
-    bool readState(LineParser &parser);
 };

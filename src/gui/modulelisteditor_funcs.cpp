@@ -291,25 +291,3 @@ void ModuleListEditor::controlsWidgetDataModified()
     if (chartWidget_->selectedBlock())
         chartWidget_->selectedBlock()->updateControls();
 }
-
-/*
- * State
- */
-
-// Write widget state through specified LineParser
-bool ModuleListEditor::writeState(LineParser &parser) const
-{
-    if ((!chartWidget_) || (!chartWidget_->writeState(parser)))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool ModuleListEditor::readState(LineParser &parser)
-{
-    if ((!chartWidget_) || (!chartWidget_->readState(parser)))
-        return false;
-
-    return true;
-}

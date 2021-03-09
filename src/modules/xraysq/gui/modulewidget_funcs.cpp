@@ -116,42 +116,6 @@ void XRaySQModuleWidget::updateControls(int flags)
 }
 
 /*
- * State I/O
- */
-
-// Write widget state through specified LineParser
-bool XRaySQModuleWidget::writeState(LineParser &parser) const
-{
-    // Write DataViewer sessions
-    if (!partialGRGraph_->writeSession(parser))
-        return false;
-    if (!partialSQGraph_->writeSession(parser))
-        return false;
-    if (!totalGRGraph_->writeSession(parser))
-        return false;
-    if (!totalFQGraph_->writeSession(parser))
-        return false;
-
-    return true;
-}
-
-// Read widget state through specified LineParser
-bool XRaySQModuleWidget::readState(LineParser &parser)
-{
-    // Read DataViewer sessions
-    if (!partialGRGraph_->readSession(parser))
-        return false;
-    if (!partialSQGraph_->readSession(parser))
-        return false;
-    if (!totalGRGraph_->readSession(parser))
-        return false;
-    if (!totalFQGraph_->readSession(parser))
-        return false;
-
-    return true;
-}
-
-/*
  * Widgets / Functions
  */
 
