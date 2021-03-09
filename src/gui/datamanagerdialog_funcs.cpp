@@ -26,12 +26,8 @@ DataManagerDialog::~DataManagerDialog() {}
  */
 
 // Append GenericItems to table under specified source
-void DataManagerDialog::addItemsToTable(QTableWidget *table, List<GenericItem> &items, const QString locationName,
-                                        const QString locationIconResource)
+void DataManagerDialog::addItemsToTable(QTableWidget *table, List<GenericItem> &items)
 {
-    // Create icon
-    QIcon locationIcon = QPixmap(locationIconResource);
-
     QTableWidgetItem *item;
     auto count = table->rowCount();
     table->setRowCount(count + items.nItems());
@@ -53,12 +49,6 @@ void DataManagerDialog::addItemsToTable(QTableWidget *table, List<GenericItem> &
         item = new QTableWidgetItem(QString::number(genericItem->version()));
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         table->setItem(count, 2, item);
-
-        // Location
-        item = new QTableWidgetItem(locationName);
-        item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-        item->setIcon(locationIcon);
-        table->setItem(count, 3, item);
 
         ++count;
     }
@@ -144,8 +134,7 @@ void DataManagerDialog::updateControls()
 {
     // Clear and re-populate simulation data table
     ui_.SimulationDataTable->setRowCount(0);
-    addItemsToTable(ui_.SimulationDataTable, dissolve_.processingModuleData().items(), "Main Processing",
-                    ":/dissolve/icons/dissolve.png");
+    addItemsToTable(ui_.SimulationDataTable, dissolve_.processingModuleData().items());
     ui_.SimulationDataTable->resizeColumnsToContents();
 
     // Populate reference points table

@@ -148,11 +148,6 @@
             <string>Version</string>
            </property>
           </column>
-          <column>
-           <property name="text">
-            <string>Location</string>
-           </property>
-          </column>
          </widget>
         </item>
        </layout>
