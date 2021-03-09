@@ -121,29 +121,6 @@ bool Dissolve::iterate(int nIterations)
         auto thisTime = 0.0;
         auto nEnabledModules = 0;
 
-        for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
-        {
-            if (cfg->nModules() == 0)
-                continue;
-
-            Messenger::print("Configuration layer '{}'  ({}):\n\n", cfg->name(),
-                             cfg->moduleLayer().frequencyDetails(iteration_));
-
-            auto layerExecutionCount = iteration_ / cfg->moduleLayer().frequency();
-            ListIterator<Module> modIterator(cfg->modules());
-            while (Module *module = modIterator.iterate())
-            {
-                Messenger::print("      --> {:20}  ({})\n", module->type(), module->frequencyDetails(layerExecutionCount));
-
-                if (module->isEnabled())
-                    ++nEnabledModules;
-
-                // TODO This will estimate wrongly for anything other than Sequential Processing
-                thisTime += module->processTimes().value();
-            }
-        }
-        Messenger::print("\n");
-
         ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
         while (ModuleLayer *layer = processingLayerIterator.iterate())
         {
@@ -203,29 +180,6 @@ bool Dissolve::iterate(int nIterations)
             // Perform any necessary actions before we start processing this Configuration's Modules
             // -- Apply the current size factor
             cfg->applySizeFactor(potentialMap_);
-
-            // Check involvement of this process
-            if (!cfg->processPool().involvesMe())
-            {
-                Messenger::print("Process rank {} not involved with this Configuration, so moving on...\n",
-                                 ProcessPool::worldRank());
-                continue;
-            }
-
-            // Loop over Modules defined in the Configuration
-            ListIterator<Module> moduleIterator(cfg->modules());
-            while (Module *module = moduleIterator.iterate())
-            {
-                if (!module->runThisIteration(iteration_))
-                    continue;
-
-                Messenger::heading("{} ({})", module->type(), module->uniqueName());
-
-                result = module->executeProcessing(*this, cfg->processPool());
-
-                if (!result)
-                    return false;
-            }
         }
         if (!result)
             return false;
@@ -394,24 +348,6 @@ void Dissolve::printTiming()
 
     // Add on space for brackets
     maxLength += 2;
-
-    for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())
-    {
-        if (cfg->nModules() == 0)
-            continue;
-
-        Messenger::print("Accumulated timing for Configuration '{}' processing:\n\n", cfg->name());
-
-        ListIterator<Module> modIterator(cfg->modules().modules());
-        while (Module *module = modIterator.iterate())
-        {
-            SampledDouble timingInfo = module->processTimes();
-            Messenger::print("      --> {:>20}  {:<{}}  {:7.2g} s/iter  ({} iterations)", module->type(),
-                             fmt::format("({})", module->uniqueName()), maxLength, timingInfo.value(), timingInfo.count());
-        }
-
-        Messenger::print("\n");
-    }
 
     ListIterator<ModuleLayer> processingLayerIterator(processingLayers_);
     while (ModuleLayer *layer = processingLayerIterator.iterate())

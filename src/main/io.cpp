@@ -324,33 +324,6 @@ bool Dissolve::saveInput(std::string_view filename)
                                cfg->requestedSizeFactor()))
             return false;
 
-        // Modules
-        if (!parser.writeLineF("\n  # Modules\n"))
-            return false;
-        if ((cfg->nModules() == 0) && (!parser.writeLineF("  # -- None\n")))
-            return false;
-        ListIterator<Module> moduleIterator(cfg->modules().modules());
-        while (Module *module = moduleIterator.iterate())
-        {
-            if (!parser.writeLineF("  {}  {}  '{}'\n",
-                                   ConfigurationBlock::keywords().keyword(ConfigurationBlock::ModuleKeyword), module->type(),
-                                   module->uniqueName()))
-                return false;
-
-            // Write frequency and disabled keywords
-            if (!parser.writeLineF("    Frequency  {}\n", module->frequency()))
-                return false;
-            if (module->isDisabled() && (!parser.writeLineF("    Disabled\n")))
-                return false;
-
-            // Write keyword options
-            if (!module->keywords().write(parser, "    ", true))
-                return false;
-
-            if (!parser.writeLineF("  {}\n", ModuleBlock::keywords().keyword(ModuleBlock::EndModuleKeyword)))
-                return false;
-        }
-
         if (!parser.writeLineF("{}\n", ConfigurationBlock::keywords().keyword(ConfigurationBlock::EndConfigurationKeyword)))
             return false;
     }
