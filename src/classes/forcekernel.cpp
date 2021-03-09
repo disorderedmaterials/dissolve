@@ -9,6 +9,7 @@
 #include "classes/molecule.h"
 #include "classes/potentialmap.h"
 #include "classes/species.h"
+#include "templates/algorithms.h"
 #include <iterator>
 
 ForceKernel::ForceKernel(ProcessPool &procPool, const Box *box, const PotentialMap &potentialMap, Array<double> &fx,
@@ -102,13 +103,14 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
     double scale;
 
     // Get start/stride for specified loop context
-    auto start = processPool_.interleavedLoopStart(strategy);
-    auto stride = processPool_.interleavedLoopStride(strategy);
+    auto offset = processPool_.interleavedLoopStart(strategy);
+    auto nChunks = processPool_.interleavedLoopStride(strategy);
 
     // Loop over central cell atoms
     if (applyMim)
     {
-        for (auto indexI = centralAtoms.begin() + start; indexI < centralAtoms.end(); indexI += stride)
+        auto [begin, end] = chop_range(centralAtoms.begin(), centralAtoms.end(), nChunks, offset);
+        for (auto indexI = begin; indexI < end; ++indexI)
         {
             ii = *indexI;
             molI = ii->molecule();
@@ -135,7 +137,8 @@ void ForceKernel::forces(Cell *centralCell, Cell *otherCell, bool applyMim, bool
     }
     else
     {
-        for (auto indexI = centralCell->atoms().begin() + start; indexI < centralCell->atoms().end(); indexI += stride)
+        auto [begin, end] = chop_range(centralCell->atoms().begin(), centralCell->atoms().end(), nChunks, offset);
+        for (auto indexI = begin; indexI < end; ++indexI)
         {
             ii = *indexI;
             molI = ii->molecule();
@@ -189,8 +192,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
     auto &otherAtoms = cell->atoms();
 
     // Get start/stride for specified loop context
-    auto start = processPool_.interleavedLoopStart(strategy);
-    auto stride = processPool_.interleavedLoopStride(strategy);
+    auto offset = processPool_.interleavedLoopStart(strategy);
+    auto nChunks = processPool_.interleavedLoopStride(strategy);
 
     // Loop over cell atoms
     if (flags & KernelFlags::ApplyMinimumImageFlag)
@@ -232,7 +235,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
             }
         else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
         {
-            for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+            auto [begin, end] = chop_range(otherAtoms.begin(), otherAtoms.end(), nChunks, offset);
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;
@@ -254,7 +258,8 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
         }
         else
         {
-            for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+            auto [begin, end] = chop_range(otherAtoms.begin(), otherAtoms.end(), nChunks, offset);
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;
@@ -274,8 +279,9 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
     else
     {
         // Loop over atom neighbours
+        auto [begin, end] = chop_range(otherAtoms.begin(), otherAtoms.end(), nChunks, offset);
         if (flags & KernelFlags::ExcludeSelfFlag)
-            for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;
@@ -295,7 +301,7 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
                 }
             }
         else if (flags & KernelFlags::ExcludeIGEJFlag)
-            for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;
@@ -315,7 +321,7 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
                 }
             }
         else if (flags & KernelFlags::ExcludeIntraIGEJFlag)
-            for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;
@@ -335,7 +341,7 @@ void ForceKernel::forces(const std::shared_ptr<Atom> i, Cell *cell, int flags, P
                 }
             }
         else
-            for (auto indexJ = otherAtoms.begin() + start; indexJ < otherAtoms.end(); indexJ += stride)
+            for (auto indexJ = begin; indexJ < end; ++indexJ)
             {
                 // Grab other Atom pointer
                 jj = *indexJ;

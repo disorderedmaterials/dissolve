@@ -76,8 +76,8 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
     double rbin = 1.0 / binWidth;
 
     // Loop context is to use all processes in Pool as one group
-    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
     Messenger::printVerbose("Self terms..\n");
 
@@ -88,15 +88,14 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
         auto &histogram = partialSet.fullHistogram(typeI, typeI).bins();
         bins = binss[typeI];
         nPoints = partialSet.fullHistogram(typeI, typeI).nBins();
-        for (i = start; i < maxr[typeI]; i += stride)
-        {
-            centre = ri[i];
-            for (j = i + 1; j < maxr[typeI]; ++j)
-                bins[j] = box->minimumDistance(centre, ri[j]) * rbin;
-            for (j = i + 1; j < maxr[typeI]; ++j)
-                if (bins[j] < nPoints)
-                    ++histogram[bins[j]];
-        }
+        for_each_pair(ri, ri + maxr[typeI], nChunks, offset,
+                      [box, bins, rbin, nPoints, &histogram](int i, auto centre, int j, auto other) {
+                          if (i == j)
+                              return;
+                          bins[j] = box->minimumDistance(centre, other) * rbin;
+                          if (bins[j] < nPoints)
+                              ++histogram[bins[j]];
+                      });
     }
 
     Messenger::printVerbose("Cross terms..\n");
@@ -120,7 +119,8 @@ bool RDFModule::calculateGRSimple(ProcessPool &procPool, Configuration *cfg, Par
             auto &histogram = partialSet.fullHistogram(typeI, typeJ).bins();
             bins = binss[typeJ];
             nPoints = partialSet.fullHistogram(typeI, typeJ).nBins();
-            for (i = start; i < maxr[typeI]; i += stride)
+            auto [begin, end] = chop_range(0, maxr[typeI], nChunks, offset);
+            for (i = begin; i < end; ++i)
             {
                 centre = ri[i];
                 for (j = 0; j < maxr[typeJ]; ++j)
@@ -156,10 +156,11 @@ bool RDFModule::calculateGRCells(ProcessPool &procPool, Configuration *cfg, Part
     auto &cellArray = cfg->cells();
 
     // Loop context is to use all processes in Pool as one group
-    auto start = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
-    auto stride = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
+    auto offset = procPool.interleavedLoopStart(ProcessPool::PoolStrategy);
+    auto nChunks = procPool.interleavedLoopStride(ProcessPool::PoolStrategy);
 
-    for (n = start; n < cellArray.nCells(); n += stride)
+    auto [begin, end] = chop_range(0, cellArray.nCells(), nChunks, offset);
+    for (n = begin; n < end; ++n)
     {
         cellI = cellArray.cell(n);
         auto &atomsI = cellI->atoms();
@@ -314,36 +315,34 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
      * Calculate intramolecular partials
      */
 
-    double distance;
     const auto *box = cfg->box();
 
     // Set start/stride for parallel loop (pool solo)
-    auto start = (method == RDFModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
-    auto stride = (method == RDFModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
+    auto offset = (method == RDFModule::TestMethod ? 0 : procPool.interleavedLoopStart(ProcessPool::PoolStrategy));
+    auto nChunks = (method == RDFModule::TestMethod ? 1 : procPool.interleavedLoopStride(ProcessPool::PoolStrategy));
 
     timer.start();
 
     // Loop over molecules...
-    std::shared_ptr<Atom> i, j;
-    for (auto m = start; m < cfg->nMolecules(); m += stride)
+    // NOTE: If you attempt to use chop_range for this loop, instead of stride, it will fail.
+    // The problem does not seem to be in chop_range, but rather in how the loops are merged.
+    // This is GitHub issue #562
+    for (auto it = cfg->molecules().begin() + offset; it < cfg->molecules().end(); it += nChunks)
     {
-        std::shared_ptr<Molecule> mol = cfg->molecule(m);
-        auto &atoms = mol->atoms();
+        auto &atoms = (*it)->atoms();
 
-        for (auto ii = atoms.begin(); ii < std::prev(atoms.end()); ++ii)
-        {
-            i = *ii;
-            for (auto jj = std::next(ii); jj < atoms.end(); ++jj)
-            {
-                j = *jj;
+        for_each_pair(atoms.begin(), atoms.end(), [box, &originalgr](int index, auto &i, int jndex, auto &j) {
+            // Ignore atom on itself
+            if (index == jndex)
+                return;
 
-                if (i->cell()->mimRequired(j->cell()))
-                    distance = box->minimumDistance(i, j);
-                else
-                    distance = (i->r() - j->r()).magnitude();
-                originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
-            }
-        }
+            double distance;
+            if (i->cell()->mimRequired(j->cell()))
+                distance = box->minimumDistance(i, j);
+            else
+                distance = (i->r() - j->r()).magnitude();
+            originalgr.boundHistogram(i->localTypeIndex(), j->localTypeIndex()).bin(distance);
+        });
     }
 
     timer.stop();
@@ -356,28 +355,23 @@ bool RDFModule::calculateGR(ProcessPool &procPool, Configuration *cfg, RDFModule
      * knows that (i,j) == (j,i) as it is stored as a half-matrix in the Array2D object.
      */
 
-    int typeI, typeJ;
     procPool.resetAccumulatedTime();
     timer.start();
-    for (typeI = 0; typeI < originalgr.nAtomTypes(); ++typeI)
-    {
-        for (typeJ = typeI; typeJ < originalgr.nAtomTypes(); ++typeJ)
+    for_each_pair(0, originalgr.nAtomTypes(), [&originalgr, &procPool, method](auto typeI, auto typeJ) {
+        // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all processes
+        // have all data already)
+        if (method != RDFModule::TestMethod)
         {
-            // Sum histogram data from all processes (except if using RDFModule::TestMethod, where all processes
-            // have all data already)
-            if (method != RDFModule::TestMethod)
-            {
-                if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool))
-                    return false;
-                if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool))
-                    return false;
-            }
-
-            // Create unbound histogram from total and bound data
-            originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
-            originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
+            if (!originalgr.fullHistogram(typeI, typeJ).allSum(procPool))
+                return false;
+            if (!originalgr.boundHistogram(typeI, typeJ).allSum(procPool))
+                return false;
         }
-    }
+
+        // Create unbound histogram from total and bound data
+        originalgr.unboundHistogram(typeI, typeJ) = originalgr.fullHistogram(typeI, typeJ);
+        originalgr.unboundHistogram(typeI, typeJ).add(originalgr.boundHistogram(typeI, typeJ), -1.0);
+    });
 
     // Transform histogram data into radial distribution functions
     originalgr.formPartials(box->volume());

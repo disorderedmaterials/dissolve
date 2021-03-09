@@ -7,6 +7,7 @@
 #include "classes/potentialmap.h"
 #include "classes/species.h"
 #include "modules/forces/forces.h"
+#include "templates/algorithms.h"
 
 // Calculate interatomic forces within the supplied Configuration
 void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, const PotentialMap &potentialMap,
@@ -33,7 +34,8 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     auto start = procPool.interleavedLoopStart(strategy);
     auto stride = procPool.interleavedLoopStride(strategy);
 
-    for (auto cellId = start; cellId < cellArray.nCells(); cellId += stride)
+    auto [begin, end] = chop_range(0, cellArray.nCells(), stride, start);
+    for (auto cellId = begin; cellId < end; ++cellId)
     {
         cell = cellArray.cell(cellId);
 
@@ -74,7 +76,8 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Configuration *cfg, 
     auto stride = procPool.interleavedLoopStride(strategy);
 
     // Loop over supplied atom indices
-    for (auto n = start; n < targetIndices.nItems(); n += stride)
+    auto [begin, end] = chop_range(0, targetIndices.nItems(), stride, start);
+    for (auto n = begin; n < end; ++n)
         kernel.forces(cfg->atoms()[targetIndices.at(n)], ProcessPool::subDivisionStrategy(strategy));
 }
 
@@ -143,7 +146,8 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
 
     // Loop over supplied atom indices
     const auto &atoms = cfg->atoms();
-    for (auto n = start; n < targetIndices.nItems(); n += stride)
+    auto [begin, end] = chop_range(0, targetIndices.nItems(), stride, start);
+    for (auto n = begin; n < end; ++n)
     {
         const auto i = atoms[targetIndices.at(n)];
         const SpeciesAtom *spAtom = i->speciesAtom();
@@ -193,10 +197,11 @@ void ForcesModule::intraMolecularForces(ProcessPool &procPool, Configuration *cf
     // Loop over Molecules
     std::deque<std::shared_ptr<Molecule>> molecules = cfg->molecules();
     std::shared_ptr<const Molecule> mol;
-    for (auto m = start; m < cfg->nMolecules(); m += stride)
+    auto [begin, end] = chop_range(cfg->molecules().begin(), cfg->molecules().end(), stride, start);
+    for (auto it = begin; it < end; ++it)
     {
         // Get Molecule pointer
-        mol = molecules[m];
+        mol = *it;
 
         // Loop over bonds
         for (const auto &bond : mol->species()->bonds())
