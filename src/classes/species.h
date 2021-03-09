@@ -21,7 +21,7 @@ class Box;
 class Forcefield;
 
 // Species Definition
-class Species : public ListItem<Species>
+class Species
 {
     public:
     Species();
@@ -55,7 +55,7 @@ class Species : public ListItem<Species>
      */
     private:
     // List of Atoms in the Species
-    List<SpeciesAtom> atoms_;
+    std::vector<std::unique_ptr<SpeciesAtom>> atoms_;
     // List of selected Atoms
     RefList<SpeciesAtom> selectedAtoms_;
     // Version of the atom selection
@@ -75,7 +75,10 @@ class Species : public ListItem<Species>
     // Return the nth atom in the Species
     SpeciesAtom *atom(int n);
     // Return the list of atoms
-    const List<SpeciesAtom> &atoms() const;
+    const std::vector<std::unique_ptr<SpeciesAtom>> &atoms() const;
+    // Return vector of mutable atoms
+    std::vector<std::unique_ptr<SpeciesAtom>> &atoms();
+
     // Set coordinates of specified atom
     void setAtomCoordinates(SpeciesAtom *i, Vec3<double> r);
     // Set coordinates of specified atom (by index and individual coordinates)

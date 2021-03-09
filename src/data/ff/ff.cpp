@@ -312,7 +312,7 @@ int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignm
 
     // Loop over Species atoms
     auto nFailed = 0;
-    for (auto *i = sp->atoms().first(); i != nullptr; i = i->next())
+    for (auto &i : sp->atoms())
     {
         // Obey the supplied strategy:
         // -- Don't reassign a type to this atom if one already exists (strategy == Forcefield::TypeMissing)
@@ -474,8 +474,7 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
         ForcefieldImproperTerm improperTerm;
 
         // Loop over potential improper sites in the Species and see if any match terms in the forcefield
-        ListIterator<SpeciesAtom> atomIterator(sp->atoms());
-        while (SpeciesAtom *i = atomIterator.iterate())
+        for (auto &i : sp->atoms())
         {
             // If we have less than three bonds to the central atom 'i', can continue now
             if (i->nBonds() < 3)

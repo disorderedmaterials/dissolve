@@ -49,6 +49,9 @@ SpeciesAtom *Species::atom(int n) { return atoms_[n]; }
 // Return the list of SpeciesAtoms
 const List<SpeciesAtom> &Species::atoms() const { return atoms_; }
 
+// Return vector of mutable atoms
+std::vector<std::unique_ptr<SpeciesAtom>> &Species::atoms() { return atoms_; }
+
 // Set coordinates of specified atom
 void Species::setAtomCoordinates(SpeciesAtom *i, Vec3<double> r)
 {
