@@ -201,8 +201,6 @@ class Configuration : public ListItem<Configuration>
     private:
     // Module layer associated to this Configuration
     ModuleLayer moduleLayer_;
-    // Variables set by Modules
-    GenericList moduleData_;
 
     public:
     // Associate Module to the Configuration
@@ -213,8 +211,6 @@ class Configuration : public ListItem<Configuration>
     ModuleLayer &moduleLayer();
     // Return list of Modules associated to this Configuration
     ModuleList &modules();
-    // Return list of variables set by Modules
-    GenericList &moduleData();
 
     /*
      * Site Stacks

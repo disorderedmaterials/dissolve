@@ -16,7 +16,8 @@ bool EnergyModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
     // For each Configuration target, add a flag to its moduleData (which is *not* stored in the restart file) that we are
     // targeting it
     for (auto *cfg : targetConfigurations_)
-        cfg->moduleData().realise<bool>("_IsEnergyModuleTarget", "", GenericItem::ProtectedFlag) = true;
+        dissolve.processingModuleData().realise<bool>("IsEnergyModuleTarget", cfg->niceName(), GenericItem::ProtectedFlag) =
+            true;
 
     return true;
 }
@@ -341,24 +342,30 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                              bondEnergy, angleEnergy, torsionEnergy);
 
             // Store current energies in the Configuration in case somebody else needs them
-            auto &interData = cfg->moduleData().realise<Data1D>("Inter", uniqueName(), GenericItem::InRestartFileFlag);
+            auto &interData = dissolve.processingModuleData().realise<Data1D>(fmt::format("{}//Inter", cfg->niceName()),
+                                                                              uniqueName(), GenericItem::InRestartFileFlag);
             interData.addPoint(dissolve.iteration(), interEnergy);
             interData.setObjectTag(fmt::format("{}//{}//Inter", cfg->niceName(), uniqueName()));
-            auto &intraData = cfg->moduleData().realise<Data1D>("Intra", uniqueName(), GenericItem::InRestartFileFlag);
+            auto &intraData = dissolve.processingModuleData().realise<Data1D>(fmt::format("{}//Intra", cfg->niceName()),
+                                                                              uniqueName(), GenericItem::InRestartFileFlag);
             intraData.addPoint(dissolve.iteration(), intraEnergy);
             intraData.setObjectTag(fmt::format("{}//{}//Intra", cfg->niceName(), uniqueName()));
-            auto &bondData = cfg->moduleData().realise<Data1D>("Bond", uniqueName(), GenericItem::InRestartFileFlag);
+            auto &bondData = dissolve.processingModuleData().realise<Data1D>(fmt::format("{}//Bond", cfg->niceName()),
+                                                                             uniqueName(), GenericItem::InRestartFileFlag);
             bondData.addPoint(dissolve.iteration(), bondEnergy);
             bondData.setObjectTag(fmt::format("{}//{}//Bond", cfg->niceName(), uniqueName()));
-            auto &angleData = cfg->moduleData().realise<Data1D>("Angle", uniqueName(), GenericItem::InRestartFileFlag);
+            auto &angleData = dissolve.processingModuleData().realise<Data1D>(fmt::format("{}//Angle", cfg->niceName()),
+                                                                              uniqueName(), GenericItem::InRestartFileFlag);
             angleData.addPoint(dissolve.iteration(), angleEnergy);
             angleData.setObjectTag(fmt::format("{}//{}//Angle", cfg->niceName(), uniqueName()));
-            auto &torsionData = cfg->moduleData().realise<Data1D>("Torsion", uniqueName(), GenericItem::InRestartFileFlag);
+            auto &torsionData = dissolve.processingModuleData().realise<Data1D>(fmt::format("{}//Torsions", cfg->niceName()),
+                                                                                uniqueName(), GenericItem::InRestartFileFlag);
             torsionData.addPoint(dissolve.iteration(), torsionEnergy);
             torsionData.setObjectTag(fmt::format("{}//{}//Torsion", cfg->niceName(), uniqueName()));
 
             // Append to arrays of total energies
-            auto &totalEnergyArray = cfg->moduleData().realise<Data1D>("Total", uniqueName(), GenericItem::InRestartFileFlag);
+            auto &totalEnergyArray = dissolve.processingModuleData().realise<Data1D>(
+                fmt::format("{}//Total", cfg->niceName()), uniqueName(), GenericItem::InRestartFileFlag);
             totalEnergyArray.addPoint(dissolve.iteration(), interEnergy + intraEnergy);
             totalEnergyArray.setObjectTag(fmt::format("{}//{}//Total", cfg->niceName(), uniqueName()));
 
@@ -381,10 +388,13 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
             }
 
             // Set variable in Configuration
-            cfg->moduleData().realise<double>("EnergyGradient", "", GenericItem::InRestartFileFlag) = grad;
-            cfg->moduleData().realise<bool>("EnergyStable", "", GenericItem::InRestartFileFlag) = stable;
-            cfg->moduleData()
-                .realise<Data1D>("EnergyStability", "", GenericItem::InRestartFileFlag)
+            dissolve.processingModuleData().realise<double>(fmt::format("{}//EnergyGradient", cfg->niceName()), uniqueName(),
+                                                            GenericItem::InRestartFileFlag) = grad;
+            dissolve.processingModuleData().realise<bool>(fmt::format("{}//EnergyStable", cfg->niceName()), uniqueName(),
+                                                          GenericItem::InRestartFileFlag) = stable;
+            dissolve.processingModuleData()
+                .realise<Data1D>(fmt::format("{}//EnergyStability", cfg->niceName()), uniqueName(),
+                                 GenericItem::InRestartFileFlag)
                 .addPoint(dissolve.iteration(), stable);
 
             // If writing to a file, append it here

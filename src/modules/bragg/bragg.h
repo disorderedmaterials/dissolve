@@ -57,13 +57,13 @@ class BraggModule : public Module
      */
     public:
     // Calculate Bragg terms for specified Configuration
-    bool calculateBraggTerms(ProcessPool &procPool, Configuration *cfg, const double qMin, const double qDelta,
-                             const double qMax, Vec3<int> multiplicity, bool &alreadyUpToDate);
+    bool calculateBraggTerms(GenericList &moduleData, ProcessPool &procPool, Configuration *cfg, const double qMin,
+                             const double qDelta, const double qMax, Vec3<int> multiplicity, bool &alreadyUpToDate);
     // Form partial and total reflection functions from calculated reflection data
-    bool formReflectionFunctions(ProcessPool &procPool, Configuration *cfg, const double qMin, const double qDelta,
-                                 const double qMax);
+    bool formReflectionFunctions(GenericList &moduleData, ProcessPool &procPool, Configuration *cfg, const double qMin,
+                                 const double qDelta, const double qMax);
     // Re-bin reflection data into supplied arrays
-    static bool reBinReflections(ProcessPool &procPool, Configuration *cfg, Array2D<Data1D> &braggPartials);
+    bool reBinReflections(GenericList &moduleData, ProcessPool &procPool, Configuration *cfg, Array2D<Data1D> &braggPartials);
 
     /*
      * GUI Widget

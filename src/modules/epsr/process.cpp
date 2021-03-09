@@ -185,7 +185,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Is the ctarget configuration's energy stable?
     if (onlyWhenEnergyStable)
     {
-        auto stabilityResult = EnergyModule::checkStability(targetConfiguration_);
+        auto stabilityResult = EnergyModule::checkStability(dissolve.processingModuleData(), targetConfiguration_);
         if (stabilityResult == EnergyModule::NotAssessable)
             return false;
         else if (stabilityResult > 0)

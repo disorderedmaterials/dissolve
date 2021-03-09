@@ -130,7 +130,7 @@ bool ConfigurationBlock::parse(LineParser &parser, Dissolve *dissolve, Configura
 
                 // Parse rest of Module block
                 module->setConfigurationLocal(true);
-                if (!ModuleBlock::parse(parser, dissolve, module, cfg->moduleData(), true))
+                if (!ModuleBlock::parse(parser, dissolve, module, dissolve->processingModuleData(), true))
                     error = true;
                 else if (!module->setUp(*dissolve, dissolve->worldPool()))
                     error = true;

@@ -58,11 +58,6 @@ bool SanityCheckModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 return Messenger::error("Failed sanity check for Configuration '{}' atom position {} ({} {} {}).\n",
                                         cfg->name(), n, r.x, r.y, r.z);
         }
-
-        // Module data within the Configuration
-        Messenger::printVerbose("Sanity checking Configuration {} module data...\n", cfg->name());
-        if (!cfg->moduleData().equality(procPool))
-            return Messenger::error("Failed sanity check for Configuration '{}' module data.\n", cfg->name());
     }
 
     // Processing module data

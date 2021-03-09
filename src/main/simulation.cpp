@@ -244,10 +244,6 @@ bool Dissolve::iterate(int nIterations)
             Messenger::printVerbose("Broadcasting data for Configuration '{}'...\n", cfg->name());
             if (!cfg->broadcastCoordinates(worldPool(), cfg->processPool().rootWorldRank()))
                 return false;
-
-            Messenger::printVerbose("Broadcasting Module data for Configuration '{}'...\n", cfg->name());
-            if (!cfg->moduleData().broadcast(worldPool(), cfg->processPool().rootWorldRank(), coreData_))
-                return false;
         }
 
         // Sync up all processes
