@@ -73,8 +73,7 @@ void SpeciesSiteKeywordWidget::updateWidgetValues(const CoreData &coreData)
     auto *buttonGroup = new QButtonGroup(this);
 
     // Add new tabs in, one for each defined Species, and each containing checkboxes for each available site
-    ListIterator<Species> speciesIterator(coreData_.species());
-    while (auto *sp = speciesIterator.iterate())
+    for (const auto &sp : coreData_.species())
     {
         // Create the widget to hold our checkboxes for this Species
         auto *widget = new QWidget();

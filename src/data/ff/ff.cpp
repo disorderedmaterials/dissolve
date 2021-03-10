@@ -316,16 +316,16 @@ int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignm
     {
         // Obey the supplied strategy:
         // -- Don't reassign a type to this atom if one already exists (strategy == Forcefield::TypeMissing)
-        if ((strategy == Forcefield::TypeMissing) && i->atomType())
+        if ((strategy == Forcefield::TypeMissing) && i.atomType())
             continue;
 
         // -- Don't assign a type unless the atom is selected (strategy == Forcefield::TypeSelection)
-        if ((strategy == Forcefield::TypeSelection) && (!i->isSelected()))
+        if ((strategy == Forcefield::TypeSelection) && (!i.isSelected()))
             continue;
 
-        if (!assignAtomType(i, coreData))
+        if (!assignAtomType(&i, coreData))
         {
-            Messenger::error("No matching forcefield type for atom {} ({}).\n", i->userIndex(), Elements::symbol(i->Z()));
+            Messenger::error("No matching forcefield type for atom {} ({}).\n", i.userIndex(), Elements::symbol(i.Z()));
             ++nFailed;
         }
     }
@@ -477,39 +477,39 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
         for (auto &i : sp->atoms())
         {
             // If we have less than three bonds to the central atom 'i', can continue now
-            if (i->nBonds() < 3)
+            if (i.nBonds() < 3)
                 continue;
 
-            if (selectionOnly && (!i->isSelected()))
+            if (selectionOnly && (!i.isSelected()))
                 continue;
 
             // Loop over combinations of bonds to the central atom
-            for (auto indexJ = 0; indexJ < i->nBonds() - 2; ++indexJ)
+            for (auto indexJ = 0; indexJ < i.nBonds() - 2; ++indexJ)
             {
                 // Get SpeciesAtom 'j'
-                auto *j = i->bond(indexJ).partner(i);
+                auto *j = i.bond(indexJ).partner(&i);
 
                 if (selectionOnly && (!j->isSelected()))
                     continue;
 
-                for (auto indexK = indexJ + 1; indexK < i->nBonds() - 1; ++indexK)
+                for (auto indexK = indexJ + 1; indexK < i.nBonds() - 1; ++indexK)
                 {
                     // Get SpeciesAtom 'k'
-                    auto *k = i->bond(indexK).partner(i);
+                    auto *k = i.bond(indexK).partner(&i);
 
                     if (selectionOnly && (!k->isSelected()))
                         continue;
 
-                    for (auto indexL = indexK + 1; indexL < i->nBonds(); ++indexL)
+                    for (auto indexL = indexK + 1; indexL < i.nBonds(); ++indexL)
                     {
                         // Get SpeciesAtom 'l'
-                        auto *l = i->bond(indexL).partner(i);
+                        auto *l = i.bond(indexL).partner(&i);
 
                         if (selectionOnly && (!l->isSelected()))
                             continue;
 
                         // Try to assign / generate an improper term (which may legitimately not exist)
-                        if (!assignImproperTermParameters(improperTerm, i, j, k, l, determineTypes))
+                        if (!assignImproperTermParameters(improperTerm, &i, j, k, l, determineTypes))
                             return false;
 
                         if (improperTerm.form() == SpeciesTorsion::NoForm)
@@ -517,9 +517,9 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
 
                         // If an improper term already exists in the species, overwrite its parameters. Otherwise, create a new
                         // one.
-                        auto optImproper = sp->getImproper(i, j, k, l);
+                        auto optImproper = sp->getImproper(&i, j, k, l);
                         if (!optImproper)
-                            optImproper = sp->addImproper(i, j, k, l);
+                            optImproper = sp->addImproper(&i, j, k, l);
                         SpeciesImproper &improper = *optImproper;
 
                         improper.setForm(improperTerm.form());

@@ -21,12 +21,12 @@ std::vector<std::string> SpeciesTab::validAtomTypeNames(const QModelIndex &index
     assert(index.column() == 1);
 
     // The row of the QModelIndex represents the SpecieAtom index in the Species
-    auto *i = species_->atom(index.row());
+    auto &i = species_->atom(index.row());
 
     // Construct valid names list
     std::vector<std::string> validNames;
     for (auto &at : dissolve_.atomTypes())
-        if (at->Z() == i->Z())
+        if (at->Z() == i.Z())
             validNames.emplace_back(at->name());
 
     return validNames;

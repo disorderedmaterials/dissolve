@@ -72,7 +72,7 @@ void SpeciesSite::removeOriginAtom(SpeciesAtom *originAtom)
 bool SpeciesSite::addOriginAtom(int atomIndex)
 {
     assert(parent_);
-    return addOriginAtom(parent_->atom(atomIndex));
+    return addOriginAtom(&parent_->atom(atomIndex));
 }
 
 // Set origin atoms
@@ -137,7 +137,7 @@ bool SpeciesSite::addXAxisAtom(SpeciesAtom *xAxisAtom)
 bool SpeciesSite::addXAxisAtom(int atomIndex)
 {
     assert(parent_);
-    return addXAxisAtom(parent_->atom(atomIndex));
+    return addXAxisAtom(&parent_->atom(atomIndex));
 }
 
 // Remove x-axis atom
@@ -204,7 +204,7 @@ bool SpeciesSite::addYAxisAtom(SpeciesAtom *yAxisAtom)
 bool SpeciesSite::addYAxisAtom(int atomIndex)
 {
     assert(parent_);
-    return addYAxisAtom(parent_->atom(atomIndex));
+    return addYAxisAtom(&parent_->atom(atomIndex));
 }
 
 // Remove y-axis atom
@@ -280,8 +280,8 @@ Site *SpeciesSite::createFromParent() const
         double massNorm = 0.0;
         for (auto m = 0; m < originIndices.nItems(); ++m)
         {
-            mass = AtomicMass::mass(parent_->atom(originIndices[m])->Z());
-            origin += parent_->atom(originIndices[m])->r() * mass;
+            mass = AtomicMass::mass(parent_->atom(originIndices[m]).Z());
+            origin += parent_->atom(originIndices[m]).r() * mass;
             massNorm += mass;
         }
         origin /= massNorm;
@@ -289,7 +289,7 @@ Site *SpeciesSite::createFromParent() const
     else
     {
         for (auto m = 0; m < originIndices.nItems(); ++m)
-            origin += parent_->atom(originIndices[m])->r();
+            origin += parent_->atom(originIndices[m]).r();
         origin /= originIndices.nItems();
     }
 
@@ -308,7 +308,7 @@ Site *SpeciesSite::createFromParent() const
 
         // Get average position of supplied x-axis atoms
         for (auto m = 0; m < xAxisIndices.nItems(); ++m)
-            v += parent_->atom(xAxisIndices[m])->r();
+            v += parent_->atom(xAxisIndices[m]).r();
         v /= xAxisIndices.nItems();
 
         // Get vector from site origin and normalise it
@@ -318,7 +318,7 @@ Site *SpeciesSite::createFromParent() const
         // Get average position of supplied y-axis atoms
         v.zero();
         for (auto m = 0; m < yAxisIndices.nItems(); ++m)
-            v += parent_->atom(yAxisIndices[m])->r();
+            v += parent_->atom(yAxisIndices[m]).r();
         v /= yAxisIndices.nItems();
 
         // Get vector from site origin, normalise it, and orthogonalise

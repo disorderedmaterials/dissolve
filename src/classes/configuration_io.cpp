@@ -62,7 +62,8 @@ bool Configuration::write(LineParser &parser) const
 }
 
 // Read through specified LineParser
-bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies, double pairPotentialRange)
+bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<Species>> &availableSpecies,
+                         double pairPotentialRange)
 {
     // Clear current contents of Configuration
     empty();
@@ -98,23 +99,26 @@ bool Configuration::read(LineParser &parser, const std::vector<std::unique_ptr<S
 
     // Read Species types for Molecules
     auto nMolsRead = 0;
-    Species *sp = nullptr;
     while (nMolsRead < expectedNMols)
     {
         // Read line containing number of molecules and Species name
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;
-        for (auto& sp: availableSpecies)
-            if (DissolveSys::sameString(sp->name(), parser.argsv(1)))
-                break;
-        if (!sp)
+
+        auto it = std::find_if(availableSpecies.cbegin(), availableSpecies.cend(),
+                               [&](const auto &sp) { return DissolveSys::sameString(sp->name(), parser.argsv(1)); });
+
+        if (it == availableSpecies.cend())
+        {
             return Messenger::error("Unrecognised Species '{}' found in Configuration '{}' in restart file.\n", parser.argsv(1),
                                     name());
+        }
+        auto &sp = *it;
 
         // Set Species pointers for this range of Molecules
         auto nMols = parser.argi(0);
         for (auto n = 0; n < nMols; ++n)
-            addMolecule(sp);
+            addMolecule(sp.get());
 
         // Increase our counter
         nMolsRead += parser.argi(0);

@@ -73,28 +73,28 @@ void RenderableSpecies::transformValues()
         return;
 
     // Loop over Atoms, seeking extreme x, y, and z values
-    ListIterator<SpeciesAtom> atomIterator(source_->atoms());
-    while (SpeciesAtom *i = atomIterator.iterate())
+    for (auto i = 0; i < source_->atoms().size(); ++i)
     {
-        if (atomIterator.isFirst())
+        auto &atom = source_->atom(i);
+        if (i == 0)
         {
-            limitsMin_ = i->r();
-            limitsMax_ = i->r();
+            limitsMin_ = atom.r();
+            limitsMax_ = atom.r();
         }
         else
         {
-            if (i->r().x < limitsMin_.x)
-                limitsMin_.x = i->r().x;
-            else if (i->r().x > limitsMax_.x)
-                limitsMax_.x = i->r().x;
-            if (i->r().y < limitsMin_.y)
-                limitsMin_.y = i->r().y;
-            else if (i->r().y > limitsMax_.y)
-                limitsMax_.y = i->r().y;
-            if (i->r().z < limitsMin_.z)
-                limitsMin_.z = i->r().z;
-            else if (i->r().z > limitsMax_.z)
-                limitsMax_.z = i->r().z;
+            if (atom.r().x < limitsMin_.x)
+                limitsMin_.x = atom.r().x;
+            else if (atom.r().x > limitsMax_.x)
+                limitsMax_.x = atom.r().x;
+            if (atom.r().y < limitsMin_.y)
+                limitsMin_.y = atom.r().y;
+            else if (atom.r().y > limitsMax_.y)
+                limitsMax_.y = atom.r().y;
+            if (atom.r().z < limitsMin_.z)
+                limitsMin_.z = atom.r().z;
+            else if (atom.r().z > limitsMax_.z)
+                limitsMax_.z = atom.r().z;
         }
     }
 
@@ -170,15 +170,14 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
         speciesAssembly_.add(lineSpeciesPrimitive_, A);
 
         // Draw Atoms
-        ListIterator<SpeciesAtom> atomIterator(source_->atoms());
-        while (SpeciesAtom *i = atomIterator.iterate())
+        for (const auto &i : source_->atoms())
         {
             // Only draw the atom if it has no bonds, in which case draw it as a 'cross'
-            if (i->nBonds() != 0)
+            if (i.nBonds() != 0)
                 continue;
 
-            const auto r = i->r();
-            colour = ElementColours::colour(i->Z());
+            const auto r = i.r();
+            colour = ElementColours::colour(i.Z());
 
             lineSpeciesPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
             lineSpeciesPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z, colour);
@@ -207,19 +206,18 @@ void RenderableSpecies::recreatePrimitives(const View &view, const ColourDefinit
         selectionAssembly_.add(true, GL_LINE);
 
         // Draw Atoms
-        ListIterator<SpeciesAtom> atomIterator(source_->atoms());
-        while (SpeciesAtom *i = atomIterator.iterate())
+        for (const auto &i : source_->atoms())
         {
             A.setIdentity();
-            A.setTranslation(i->r());
+            A.setTranslation(i.r());
             A.applyScaling(spheresAtomRadius_);
 
             // The atom itself
-            colour = ElementColours::colour(i->Z());
+            colour = ElementColours::colour(i.Z());
             speciesAssembly_.add(atomPrimitive_, A, colour[0], colour[1], colour[2], colour[3]);
 
             // Is the atom selected?
-            if (i->isSelected())
+            if (i.isSelected())
             {
                 selectionAssembly_.add(selectedAtomPrimitive_, A, colourBlack[0], colourBlack[1], colourBlack[2],
                                        colourBlack[3]);
@@ -269,20 +267,19 @@ void RenderableSpecies::recreateSelectionPrimitive()
         selectionAssembly_.add(lineSelectionPrimitive_, A);
 
         // Draw selection
-        ListIterator<SpeciesAtom> atomIterator(source_->atoms());
-        while (SpeciesAtom *i = atomIterator.iterate())
+        for (const auto &i : source_->atoms())
         {
             // If not selected, continue
-            if (!i->isSelected())
+            if (!i.isSelected())
                 continue;
 
             // Get element colour
-            colour = ElementColours::colour(i->Z());
+            colour = ElementColours::colour(i.Z());
 
             // If the atom has no bonds, draw it as a 'cross', otherwise render all bond halves
-            if (i->nBonds() == 0)
+            if (i.nBonds() == 0)
             {
-                const auto r = i->r();
+                const auto &r = i.r();
 
                 lineSelectionPrimitive_->line(r.x - linesAtomRadius_, r.y, r.z, r.x + linesAtomRadius_, r.y, r.z, colour);
                 lineSelectionPrimitive_->line(r.x, r.y - linesAtomRadius_, r.z, r.x, r.y + linesAtomRadius_, r.z, colour);
@@ -291,10 +288,10 @@ void RenderableSpecies::recreateSelectionPrimitive()
             else
             {
                 // Draw all bonds from this atom
-                for (const SpeciesBond &bond : i->bonds())
+                for (const SpeciesBond &bond : i.bonds())
                 {
-                    const auto ri = i->r();
-                    const auto dij = (bond.partner(i)->r() - ri) * 0.5;
+                    const auto ri = i.r();
+                    const auto dij = (bond.partner(&i)->r() - ri) * 0.5;
 
                     // Draw bond halves
                     lineSelectionPrimitive_->line(ri.x, ri.y, ri.z, ri.x + dij.x, ri.y + dij.y, ri.z + dij.z, colour);
@@ -307,14 +304,13 @@ void RenderableSpecies::recreateSelectionPrimitive()
         // Set basic styling
         selectionAssembly_.add(true, GL_LINE);
 
-        ListIterator<SpeciesAtom> atomIterator(source_->atoms());
-        while (SpeciesAtom *i = atomIterator.iterate())
+        for (auto &i : source_->atoms())
         {
-            if (!i->isSelected())
+            if (!i.isSelected())
                 continue;
 
             A.setIdentity();
-            A.setTranslation(i->r());
+            A.setTranslation(i.r());
             A.applyScaling(spheresAtomRadius_);
 
             selectionAssembly_.add(selectedAtomPrimitive_, A, 0.5, 0.5, 0.5, 1.0);

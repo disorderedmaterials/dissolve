@@ -122,20 +122,20 @@ std::shared_ptr<Molecule> Configuration::addMolecule(Species *sp, CoordinateSet 
 
     // Add Atoms from Species to the Molecule, using either species coordinates or those from the source CoordinateSet
     if (sourceCoordinates)
-        for (auto n = 0; n < sp->nAtoms(); ++n, ++n)
+        for (auto n = 0; n < sp->nAtoms(); ++n)
         {
-            const auto& spi = sp->atoms()[n];
-            addAtom(spi.get(), newMolecule, sourceCoordinates->r(n));
+            const auto &spi = sp->atom(n);
+            addAtom(&spi, newMolecule, sourceCoordinates->r(n));
         }
     else
     {
-        for (auto n = 0; n < sp->nAtoms(); ++n, ++n)
+        for (auto n = 0; n < sp->nAtoms(); ++n)
         {
-            const auto &spi = sp->atoms()[n];
-            addAtom(spi.get(), newMolecule, spi->r());
+            const auto &spi = sp->atom(n);
+            addAtom(&spi, newMolecule, spi.r());
         }
-        return newMolecule;
     }
+    return newMolecule;
 }
 
 // Return number of Molecules in Configuration

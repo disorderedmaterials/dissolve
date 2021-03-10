@@ -34,7 +34,7 @@ bool Dissolve::prepare()
         srand(seed_);
 
     // Check Species
-    for (const auto & sp : species())
+    for (const auto &sp : species())
         if (!sp->checkSetUp())
             return false;
 

@@ -9,6 +9,7 @@
 #include "gui/helpers/treewidgetupdater.h"
 #include "gui/selectforcefieldwidget.h"
 #include "main/dissolve.h"
+#include "templates/algorithms.h"
 #include "templates/variantpointer.h"
 #include <QFileDialog>
 #include <QInputDialog>
@@ -111,25 +112,22 @@ bool AddForcefieldTermsWizard::applyForcefieldTerms(Dissolve &dissolve)
     auto intraSelectionOnly = ui_.IntramolecularTermsAssignSelectionRadio->isChecked();
 
     // 1) Set AtomTypes
-    ListIterator<SpeciesAtom> originalAtomIterator(targetSpecies_->atoms());
-    ListIterator<SpeciesAtom> modifiedAtomIterator(modifiedSpecies_->atoms());
-    while (SpeciesAtom *i = originalAtomIterator.iterate())
+    for (const auto &&[original, modified] : zip(targetSpecies_->atoms(), modifiedSpecies_->atoms()))
     {
-        const SpeciesAtom *modifiedI = modifiedAtomIterator.iterate();
 
         // Selection only?
-        if (typesSelectionOnly && (!i->isSelected()))
+        if (typesSelectionOnly && (!original.isSelected()))
             continue;
 
         // Copy AtomType
-        dissolve.copyAtomType(modifiedI, i);
+        dissolve.copyAtomType(&modified, &original);
 
         // Overwrite existing parameters?
         if (ui_.AtomTypesOverwriteParametersCheck->isChecked())
         {
-            i->atomType()->setShortRangeParameters(modifiedI->atomType()->shortRangeParameters());
-            i->atomType()->setShortRangeType(modifiedI->atomType()->shortRangeType());
-            i->atomType()->setCharge(modifiedI->charge());
+            original.atomType()->setShortRangeParameters(modified.atomType()->shortRangeParameters());
+            original.atomType()->setShortRangeType(modified.atomType()->shortRangeType());
+            original.atomType()->setCharge(modified.charge());
             dissolve.coreData().bumpAtomTypesVersion();
         }
     }

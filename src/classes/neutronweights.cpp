@@ -268,10 +268,10 @@ void NeutronWeights::createFromIsotopologues(const AtomTypeList &exchangeableTyp
 
             // Loop over Atoms in the Species, searching for the AtomType/Isotope entry in the isotopes list of the
             // Isotopologue
-            for (auto *i = topes.species()->firstAtom(); i != nullptr; i = i->next())
+            for (const auto &i : topes.species()->atoms())
             {
-                Isotope *iso = tope->atomTypeIsotope(i->atomType());
-                atomTypes_.addIsotope(i->atomType(), iso, isoWeight.weight() * topes.speciesPopulation());
+                Isotope *iso = tope->atomTypeIsotope(i.atomType());
+                atomTypes_.addIsotope(i.atomType(), iso, isoWeight.weight() * topes.speciesPopulation());
             }
         }
     }
