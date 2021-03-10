@@ -66,18 +66,18 @@ QVariant XmlAtomModel::data(const QModelIndex &index, int role) const
     switch (index.column())
     {
         case 0:
-            return QVariant(QString(std::get<0>(atoms_[index.row()]).c_str()));
+            return std::get<0>(atoms_[index.row()]).c_str();
         case 1:
-            return QVariant(QString(std::get<1>(atoms_[index.row()]).c_str()));
+            return std::get<1>(atoms_[index.row()]).c_str();
         case 2:
-            return QVariant(QString(std::get<2>(atoms_[index.row()]).c_str()));
+            return std::get<2>(atoms_[index.row()]).c_str();
         case 3:
-            return QVariant(std::get<3>(atoms_[index.row()]));
+            return get<3>(atoms_[index.row()]);
         case 4:
             type = std::get<4>(atoms_[index.row()]);
             if (type < 0 || type >= dissolve_.nAtomTypes())
                 return "Missing";
-            return QVariant(QString(dissolve_.atomType(type)->name().data()));
+            return dissolve_.atomType(type)->name().data();
         default:
             return QVariant();
     }
