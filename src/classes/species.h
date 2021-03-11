@@ -76,12 +76,9 @@ class Species
     // Return the nth atom in the Species
     SpeciesAtom &atom(int n);
     const SpeciesAtom &atom(int n) const;
-
-    // Return the list of atoms
+    // Return a reference to the vector of atoms
     const std::list<SpeciesAtom> &atoms() const;
-    // Return vector of mutable atoms
     std::list<SpeciesAtom> &atoms();
-
     // Set coordinates of specified atom
     void setAtomCoordinates(SpeciesAtom *i, Vec3<double> r);
     // Set coordinates of specified atom (by index and individual coordinates)

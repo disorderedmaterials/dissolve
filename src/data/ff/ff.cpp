@@ -84,19 +84,19 @@ bool Forcefield::copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType>
 
 // Determine and return atom type for specified SpeciesAtom from supplied Array of types
 OptionalReferenceWrapper<const ForcefieldAtomType>
-Forcefield::determineAtomType(const SpeciesAtom *i,
+Forcefield::determineAtomType(const SpeciesAtom &i,
                               const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes)
 {
-    Messenger::printVerbose("Determining atom type for atom {} ({})\n", i->userIndex(), Elements::symbol(i->Z()));
+    Messenger::printVerbose("Determining atom type for atom {} ({})\n", i.userIndex(), Elements::symbol(i.Z()));
 
     // Go through AtomTypes defined for the target's element, and check NETA scores
     auto bestScore = -1;
     OptionalReferenceWrapper<const ForcefieldAtomType> bestType;
-    for (const auto &typeRef : atomTypes[i->Z()])
+    for (const auto &typeRef : atomTypes[i.Z()])
     {
         // Get the scoring for this type
         auto &type = typeRef.get();
-        auto score = type.neta().score(i);
+        auto score = type.neta().score(&i);
         Messenger::printVerbose("  -- score for type index {} ({}) is {}.\n", type.index(), type.name(), score);
         if (score > bestScore)
         {
@@ -108,14 +108,14 @@ Forcefield::determineAtomType(const SpeciesAtom *i,
     if (bestScore == -1)
         Messenger::printVerbose("  -- no suitable type found.");
     else
-        Messenger::printVerbose("  Best type for atom {} is {} ({}) with a score of {}.\n", i->userIndex(),
+        Messenger::printVerbose("  Best type for atom {} is {} ({}) with a score of {}.\n", i.userIndex(),
                                 bestType->get().index(), bestType->get().name(), bestScore);
 
     return bestType;
 }
 
 // Determine and return atom type for specified SpeciesAtom
-OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType(const SpeciesAtom *i) const
+OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType(const SpeciesAtom &i) const
 {
     return determineAtomType(i, atomTypesByElementPrivate_);
 }
@@ -263,7 +263,7 @@ Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms, bool det
     std::vector<std::reference_wrapper<const ForcefieldAtomType>> types;
     for (const auto *i : atoms)
     {
-        auto optType = determineType ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->Z());
+        auto optType = determineType ? determineAtomType(*i) : atomTypeByName(i->atomType()->name(), i->Z());
         if (!optType)
         {
             Messenger::error("Couldn't find or assign type for atom {}.\n", i->userIndex());
@@ -276,7 +276,7 @@ Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms, bool det
 }
 
 // Assign suitable AtomType to the supplied atom
-bool Forcefield::assignAtomType(SpeciesAtom *i, CoreData &coreData) const
+bool Forcefield::assignAtomType(SpeciesAtom &i, CoreData &coreData) const
 {
     auto optRef = determineAtomType(i);
     if (!optRef)
@@ -287,12 +287,12 @@ bool Forcefield::assignAtomType(SpeciesAtom *i, CoreData &coreData) const
     auto at = coreData.findAtomType(assignedType.name());
     if (!at)
     {
-        at = coreData.addAtomType(i->Z());
+        at = coreData.addAtomType(i.Z());
         at->setName(assignedType.name());
-        Messenger::print("Adding AtomType '{}' for atom {} ({}).\n", at->name(), i->userIndex(), Elements::symbol(i->Z()));
+        Messenger::print("Adding AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
     }
     else
-        Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i->userIndex(), Elements::symbol(i->Z()));
+        Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
 
     // Copy parameters from the Forcefield's atom type
     at->setShortRangeParameters(assignedType.parameters());
@@ -300,7 +300,7 @@ bool Forcefield::assignAtomType(SpeciesAtom *i, CoreData &coreData) const
     at->setCharge(assignedType.charge());
 
     // Set type in the SpeciesAtom
-    i->setAtomType(at);
+    i.setAtomType(at);
 
     return true;
 }
@@ -323,7 +323,7 @@ int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignm
         if ((strategy == Forcefield::TypeSelection) && (!i.isSelected()))
             continue;
 
-        if (!assignAtomType(&i, coreData))
+        if (!assignAtomType(i, coreData))
         {
             Messenger::error("No matching forcefield type for atom {} ({}).\n", i.userIndex(), Elements::symbol(i.Z()));
             ++nFailed;

@@ -124,15 +124,13 @@ std::shared_ptr<Molecule> Configuration::addMolecule(Species *sp, CoordinateSet 
     if (sourceCoordinates)
         for (auto n = 0; n < sp->nAtoms(); ++n)
         {
-            const auto &spi = sp->atom(n);
-            addAtom(&spi, newMolecule, sourceCoordinates->r(n));
+            addAtom(&sp->atom(n), newMolecule, sourceCoordinates->r(n));
         }
     else
     {
         for (auto n = 0; n < sp->nAtoms(); ++n)
         {
-            const auto &spi = sp->atom(n);
-            addAtom(&spi, newMolecule, spi.r());
+            addAtom(&sp->atom(n), newMolecule, sp->atom(n).r());
         }
     }
     return newMolecule;

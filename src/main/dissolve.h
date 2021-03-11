@@ -88,8 +88,6 @@ class Dissolve
     int nSpecies() const;
     // Return Species list
     std::vector<std::unique_ptr<Species>> &species();
-    // Return nth Species in the list
-    Species *species(int n);
     // Search for Species by name
     Species *findSpecies(std::string_view name) const;
     // Copy AtomType, creating a new one if necessary

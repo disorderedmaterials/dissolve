@@ -130,8 +130,6 @@ class CoreData
     // Return core Species list
     std::vector<std::unique_ptr<Species>> &species();
     const std::vector<std::unique_ptr<Species>> &species() const;
-    // Return nth Species in list
-    Species *species(int n);
     // Generate unique Species name with base name provided
     std::string uniqueSpeciesName(std::string_view baseName) const;
     // Search for Species by name

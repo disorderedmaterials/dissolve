@@ -58,7 +58,7 @@ class Forcefield_UFF : public Forcefield
 
     protected:
     // Determine and return atom type for specified SpeciesAtom
-    OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(const SpeciesAtom *i) const override;
+    OptionalReferenceWrapper<const ForcefieldAtomType> determineAtomType(const SpeciesAtom &i) const override;
 
     /*
      * Term Assignment

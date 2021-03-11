@@ -58,7 +58,7 @@ bool Species::loadFromXYZ(std::string_view filename)
             return false;
         }
         auto Z = Elements::element(parser.argsv(0));
-        SpeciesAtom &i = addAtom(Z, parser.arg3d(1));
+        auto &i = addAtom(Z, parser.arg3d(1));
         if (parser.hasArg(4))
             i.setCharge(parser.argd(4));
     }

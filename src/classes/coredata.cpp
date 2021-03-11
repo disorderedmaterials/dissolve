@@ -326,9 +326,6 @@ std::vector<std::unique_ptr<Species>> &CoreData::species() { return species_; }
 
 const std::vector<std::unique_ptr<Species>> &CoreData::species() const { return species_; }
 
-// Return nth Species in list
-Species *CoreData::species(int n) { return species_[n].get(); }
-
 // Generate unique Species name with base name provided
 std::string CoreData::uniqueSpeciesName(std::string_view base) const
 {
@@ -346,11 +343,16 @@ std::string CoreData::uniqueSpeciesName(std::string_view base) const
 // Search for Species by name
 Species *CoreData::findSpecies(std::string_view name) const
 {
-    for (auto &sp : species_)
-        if (DissolveSys::sameString(sp->name(), name))
-            return sp.get();
-
-    return nullptr;
+    auto it = std::find_if(species_.begin(), species_.end(),
+                           [name](const auto &sp) { return DissolveSys::sameString(sp->name(), name); });
+    if (it != species_.end())
+    {
+        return (*it).get();
+    }
+    else
+    {
+        return nullptr;
+    }
 }
 
 /*
