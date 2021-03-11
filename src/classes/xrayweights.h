@@ -44,7 +44,7 @@ class XRayWeights : public GenericItemBase
     // Clear contents
     void clear();
     // Set-up from supplied SpeciesInfo list
-    bool setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRayFormFactorData formFactors);
+    bool setUp(std::vector<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRayFormFactorData formFactors);
     // Add Species to weights in the specified population
     void addSpecies(const Species *sp, int population);
     // Finalise weights after addition of all individual Species

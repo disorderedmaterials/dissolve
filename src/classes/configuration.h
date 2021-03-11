@@ -82,7 +82,7 @@ class Configuration : public ListItem<Configuration>
      */
     private:
     // List of Species used by the Configuration and their populations
-    List<SpeciesInfo> usedSpecies_;
+    std::vector<SpeciesInfo> usedSpecies_;
     // AtomType list, containing unique (non-isotopic) atom types over all Species used in this configuration
     AtomTypeList usedAtomTypes_;
     // Contents version, incremented whenever Configuration content or Atom positions change
@@ -110,7 +110,7 @@ class Configuration : public ListItem<Configuration>
     // Return SpeciesInfo for specified Species
     SpeciesInfo *usedSpeciesInfo(Species *sp);
     // Return list of SpeciesInfo for the Configuration
-    List<SpeciesInfo> &usedSpecies();
+    std::vector<SpeciesInfo> &usedSpecies();
     // Return if the specified Species is present in the usedSpecies list
     bool hasUsedSpecies(Species *sp);
     // Return the total atomic mass present in the Configuration

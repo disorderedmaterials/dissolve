@@ -64,20 +64,20 @@ void XRayWeights::clear()
 }
 
 // Set-up from supplied SpeciesInfo list
-bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRayFormFactorData formFactors)
+bool XRayWeights::setUp(std::vector<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRayFormFactorData formFactors)
 {
     valid_ = false;
 
     // Fill atomTypes_ list with AtomType populations, based on Isotopologues relative populations and associated Species
     // populations
     atomTypes_.clear();
-    for (auto *spInfo = speciesInfoList.first(); spInfo != nullptr; spInfo = spInfo->next())
+    for (auto &spInfo : speciesInfoList)
     {
-        const Species *sp = spInfo->species();
+        const Species *sp = spInfo.species();
 
         // Loop over Atoms in the Species
         for (const auto &i : sp->atoms())
-            atomTypes_.add(i.atomType(), spInfo->population());
+            atomTypes_.add(i.atomType(), spInfo.population());
     }
 
     // Perform final setup based on now-completed atomtypes list

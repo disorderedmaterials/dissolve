@@ -57,9 +57,8 @@ bool Dissolve::prepare()
 
         // Check total charge of Configuration
         auto totalQ = 0.0;
-        ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
-        while (auto *spInfo = spInfoIterator.iterate())
-            totalQ += spInfo->species()->totalCharge(pairPotentialsIncludeCoulomb_) * spInfo->population();
+        for (auto &spInfo : cfg->usedSpecies())
+            totalQ += spInfo.species()->totalCharge(pairPotentialsIncludeCoulomb_) * spInfo.population();
 
         if (fabs(totalQ) > 1.0e-5)
             return Messenger::error("Total charge for Configuration '{}' is non-zero ({:e}). Refusing to proceed!\n",
