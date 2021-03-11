@@ -5,7 +5,7 @@ parameters:
 
 stages:
   - stage: 'create_release'
-    condition: endsWith(variables['Build.SourceBranch'], 'pre')
+    condition: not(endsWith(variables['Build.SourceBranch'], 'pre'))
     displayName: 'Create Release'
     jobs:
       - job: 'release_gh'
