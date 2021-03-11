@@ -8,7 +8,7 @@
 #include "classes/masterintra.h"
 #include "data/isotopes.h"
 
-Species::Species() : ListItem<Species>()
+Species::Species()
 {
     forcefield_ = nullptr;
     autoUpdateIntramolecularTerms_ = true;
@@ -48,7 +48,7 @@ bool Species::checkSetUp()
     auto nErrors = 0;
 
     // Must have at least one atom...
-    if (atoms_.nItems() == 0)
+    if (atoms_.size() == 0)
     {
         Messenger::error("Species contains no Atoms.\n");
         return false;
@@ -57,12 +57,12 @@ bool Species::checkSetUp()
     /*
      * AtomTypes
      */
-    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
+    for (auto &i : atoms_)
     {
-        if (i->atomType() == nullptr)
+        if (i.atomType() == nullptr)
         {
-            Messenger::error("Atom {} ({}) of species '{}' has no associated atom type.\n", i->userIndex(),
-                             Elements::symbol(i->Z()), name_);
+            Messenger::error("Atom {} ({}) of species '{}' has no associated atom type.\n", i.userIndex(),
+                             Elements::symbol(i.Z()), name_);
             ++nErrors;
         }
     }
@@ -72,23 +72,23 @@ bool Species::checkSetUp()
     /*
      * IntraMolecular Data
      */
-    for (auto *i = atoms_.first(); i != nullptr; i = i->next())
+    for (auto &i : atoms_)
     {
-        if ((i->nBonds() == 0) && (atoms_.nItems() > 1))
+        if ((i.nBonds() == 0) && (atoms_.size() > 1))
         {
             Messenger::error("SpeciesAtom {} ({}) participates in no Bonds, but is part of a multi-atom Species.\n",
-                             i->userIndex(), Elements::symbol(i->Z()));
+                             i.userIndex(), Elements::symbol(i.Z()));
             ++nErrors;
         }
 
         // Check each Bond for two-way consistency
-        for (const SpeciesBond &bond : i->bonds())
+        for (const SpeciesBond &bond : i.bonds())
         {
-            auto *partner = bond.partner(i);
-            if (!partner->hasBond(i))
+            auto *partner = bond.partner(&i);
+            if (!partner->hasBond(&i))
             {
                 Messenger::error("SpeciesAtom {} references a Bond to SpeciesAtom {}, but SpeciesAtom {} does not.\n",
-                                 i->userIndex(), partner->userIndex(), partner->userIndex());
+                                 i.userIndex(), partner->userIndex(), partner->userIndex());
                 ++nErrors;
             }
         }
@@ -129,10 +129,10 @@ void Species::print()
     Messenger::print("    ----------------------------------------------------------------------------\n");
     for (auto n = 0; n < nAtoms(); ++n)
     {
-        SpeciesAtom *i = atoms_[n];
+        auto &i = atom(n);
         Messenger::print("    {:4d}  {:3}  {:4} ({:2d})  {:12.4e}  {:12.4e}  {:12.4e}  {:12.4e}\n", n + 1,
-                         Elements::symbol(i->Z()), (i->atomType() ? i->atomType()->name() : "??"),
-                         (i->atomType() ? i->atomType()->index() : -1), i->r().x, i->r().y, i->r().z, i->charge());
+                         Elements::symbol(i.Z()), (i.atomType() ? i.atomType()->name() : "??"),
+                         (i.atomType() ? i.atomType()->index() : -1), i.r().x, i.r().y, i.r().z, i.charge());
     }
 
     if (nBonds() > 0)
@@ -218,7 +218,7 @@ void Species::clearCoordinateSets() { coordinateSets_.clear(); }
 CoordinateSet *Species::addCoordinateSet()
 {
     CoordinateSet *coordSet = coordinateSets_.add();
-    coordSet->initialise(atoms_.nItems());
+    coordSet->initialise(atoms_.size());
 
     return coordSet;
 }

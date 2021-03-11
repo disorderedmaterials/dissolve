@@ -36,9 +36,8 @@ std::string EmpiricalFormula::formula(const Species *species, bool richText)
 {
     std::vector<int> elCounts(Elements::nElements, 0);
 
-    ListIterator<SpeciesAtom> atomIterator(species->atoms());
-    while (SpeciesAtom *i = atomIterator.iterate())
-        ++elCounts[i->Z()];
+    for (const auto &i : species->atoms())
+        ++elCounts[i.Z()];
 
     return constructFormula(elCounts, richText);
 }

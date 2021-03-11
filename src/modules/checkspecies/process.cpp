@@ -31,10 +31,11 @@ bool CheckSpeciesModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             // Get specified atom - tuple contains 'human-readable' indices from 1 - N...
             auto i = std::get<0>(indexName).at(0);
-            auto *spAtom = sp->atom(i - 1);
-            if (!spAtom)
+            if (i - 1 >= sp->nAtoms())
                 return Messenger::error("Atom index {} is out of range ({} atoms in species).\n", i, sp->nAtoms());
-            auto at = spAtom->atomType();
+
+            auto &spAtom = sp->atom(i - 1);
+            auto at = spAtom.atomType();
 
             // Get type name to validate against
             std::string_view typeName = std::get<1>(indexName).at(0);

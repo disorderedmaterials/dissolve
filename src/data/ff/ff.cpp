@@ -84,19 +84,19 @@ bool Forcefield::copyAtomType(OptionalReferenceWrapper<const ForcefieldAtomType>
 
 // Determine and return atom type for specified SpeciesAtom from supplied Array of types
 OptionalReferenceWrapper<const ForcefieldAtomType>
-Forcefield::determineAtomType(const SpeciesAtom *i,
+Forcefield::determineAtomType(const SpeciesAtom &i,
                               const std::vector<std::vector<std::reference_wrapper<const ForcefieldAtomType>>> &atomTypes)
 {
-    Messenger::printVerbose("Determining atom type for atom {} ({})\n", i->userIndex(), Elements::symbol(i->Z()));
+    Messenger::printVerbose("Determining atom type for atom {} ({})\n", i.userIndex(), Elements::symbol(i.Z()));
 
     // Go through AtomTypes defined for the target's element, and check NETA scores
     auto bestScore = -1;
     OptionalReferenceWrapper<const ForcefieldAtomType> bestType;
-    for (const auto &typeRef : atomTypes[i->Z()])
+    for (const auto &typeRef : atomTypes[i.Z()])
     {
         // Get the scoring for this type
         auto &type = typeRef.get();
-        auto score = type.neta().score(i);
+        auto score = type.neta().score(&i);
         Messenger::printVerbose("  -- score for type index {} ({}) is {}.\n", type.index(), type.name(), score);
         if (score > bestScore)
         {
@@ -108,14 +108,14 @@ Forcefield::determineAtomType(const SpeciesAtom *i,
     if (bestScore == -1)
         Messenger::printVerbose("  -- no suitable type found.");
     else
-        Messenger::printVerbose("  Best type for atom {} is {} ({}) with a score of {}.\n", i->userIndex(),
+        Messenger::printVerbose("  Best type for atom {} is {} ({}) with a score of {}.\n", i.userIndex(),
                                 bestType->get().index(), bestType->get().name(), bestScore);
 
     return bestType;
 }
 
 // Determine and return atom type for specified SpeciesAtom
-OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType(const SpeciesAtom *i) const
+OptionalReferenceWrapper<const ForcefieldAtomType> Forcefield::determineAtomType(const SpeciesAtom &i) const
 {
     return determineAtomType(i, atomTypesByElementPrivate_);
 }
@@ -263,7 +263,7 @@ Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms, bool det
     std::vector<std::reference_wrapper<const ForcefieldAtomType>> types;
     for (const auto *i : atoms)
     {
-        auto optType = determineType ? determineAtomType(i) : atomTypeByName(i->atomType()->name(), i->Z());
+        auto optType = determineType ? determineAtomType(*i) : atomTypeByName(i->atomType()->name(), i->Z());
         if (!optType)
         {
             Messenger::error("Couldn't find or assign type for atom {}.\n", i->userIndex());
@@ -276,7 +276,7 @@ Forcefield::getAtomTypes(const std::vector<const SpeciesAtom *> &atoms, bool det
 }
 
 // Assign suitable AtomType to the supplied atom
-bool Forcefield::assignAtomType(SpeciesAtom *i, CoreData &coreData) const
+bool Forcefield::assignAtomType(SpeciesAtom &i, CoreData &coreData) const
 {
     auto optRef = determineAtomType(i);
     if (!optRef)
@@ -287,12 +287,12 @@ bool Forcefield::assignAtomType(SpeciesAtom *i, CoreData &coreData) const
     auto at = coreData.findAtomType(assignedType.name());
     if (!at)
     {
-        at = coreData.addAtomType(i->Z());
+        at = coreData.addAtomType(i.Z());
         at->setName(assignedType.name());
-        Messenger::print("Adding AtomType '{}' for atom {} ({}).\n", at->name(), i->userIndex(), Elements::symbol(i->Z()));
+        Messenger::print("Adding AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
     }
     else
-        Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i->userIndex(), Elements::symbol(i->Z()));
+        Messenger::print("Re-using AtomType '{}' for atom {} ({}).\n", at->name(), i.userIndex(), Elements::symbol(i.Z()));
 
     // Copy parameters from the Forcefield's atom type
     at->setShortRangeParameters(assignedType.parameters());
@@ -300,7 +300,7 @@ bool Forcefield::assignAtomType(SpeciesAtom *i, CoreData &coreData) const
     at->setCharge(assignedType.charge());
 
     // Set type in the SpeciesAtom
-    i->setAtomType(at);
+    i.setAtomType(at);
 
     return true;
 }
@@ -312,20 +312,20 @@ int Forcefield::assignAtomTypes(Species *sp, CoreData &coreData, AtomTypeAssignm
 
     // Loop over Species atoms
     auto nFailed = 0;
-    for (auto *i = sp->atoms().first(); i != nullptr; i = i->next())
+    for (auto &i : sp->atoms())
     {
         // Obey the supplied strategy:
         // -- Don't reassign a type to this atom if one already exists (strategy == Forcefield::TypeMissing)
-        if ((strategy == Forcefield::TypeMissing) && i->atomType())
+        if ((strategy == Forcefield::TypeMissing) && i.atomType())
             continue;
 
         // -- Don't assign a type unless the atom is selected (strategy == Forcefield::TypeSelection)
-        if ((strategy == Forcefield::TypeSelection) && (!i->isSelected()))
+        if ((strategy == Forcefield::TypeSelection) && (!i.isSelected()))
             continue;
 
         if (!assignAtomType(i, coreData))
         {
-            Messenger::error("No matching forcefield type for atom {} ({}).\n", i->userIndex(), Elements::symbol(i->Z()));
+            Messenger::error("No matching forcefield type for atom {} ({}).\n", i.userIndex(), Elements::symbol(i.Z()));
             ++nFailed;
         }
     }
@@ -474,43 +474,42 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
         ForcefieldImproperTerm improperTerm;
 
         // Loop over potential improper sites in the Species and see if any match terms in the forcefield
-        ListIterator<SpeciesAtom> atomIterator(sp->atoms());
-        while (SpeciesAtom *i = atomIterator.iterate())
+        for (auto &i : sp->atoms())
         {
             // If we have less than three bonds to the central atom 'i', can continue now
-            if (i->nBonds() < 3)
+            if (i.nBonds() < 3)
                 continue;
 
-            if (selectionOnly && (!i->isSelected()))
+            if (selectionOnly && (!i.isSelected()))
                 continue;
 
             // Loop over combinations of bonds to the central atom
-            for (auto indexJ = 0; indexJ < i->nBonds() - 2; ++indexJ)
+            for (auto indexJ = 0; indexJ < i.nBonds() - 2; ++indexJ)
             {
                 // Get SpeciesAtom 'j'
-                auto *j = i->bond(indexJ).partner(i);
+                auto *j = i.bond(indexJ).partner(&i);
 
                 if (selectionOnly && (!j->isSelected()))
                     continue;
 
-                for (auto indexK = indexJ + 1; indexK < i->nBonds() - 1; ++indexK)
+                for (auto indexK = indexJ + 1; indexK < i.nBonds() - 1; ++indexK)
                 {
                     // Get SpeciesAtom 'k'
-                    auto *k = i->bond(indexK).partner(i);
+                    auto *k = i.bond(indexK).partner(&i);
 
                     if (selectionOnly && (!k->isSelected()))
                         continue;
 
-                    for (auto indexL = indexK + 1; indexL < i->nBonds(); ++indexL)
+                    for (auto indexL = indexK + 1; indexL < i.nBonds(); ++indexL)
                     {
                         // Get SpeciesAtom 'l'
-                        auto *l = i->bond(indexL).partner(i);
+                        auto *l = i.bond(indexL).partner(&i);
 
                         if (selectionOnly && (!l->isSelected()))
                             continue;
 
                         // Try to assign / generate an improper term (which may legitimately not exist)
-                        if (!assignImproperTermParameters(improperTerm, i, j, k, l, determineTypes))
+                        if (!assignImproperTermParameters(improperTerm, &i, j, k, l, determineTypes))
                             return false;
 
                         if (improperTerm.form() == SpeciesTorsion::NoForm)
@@ -518,9 +517,9 @@ bool Forcefield::assignIntramolecular(Species *sp, int flags) const
 
                         // If an improper term already exists in the species, overwrite its parameters. Otherwise, create a new
                         // one.
-                        auto optImproper = sp->getImproper(i, j, k, l);
+                        auto optImproper = sp->getImproper(&i, j, k, l);
                         if (!optImproper)
-                            optImproper = sp->addImproper(i, j, k, l);
+                            optImproper = sp->addImproper(&i, j, k, l);
                         SpeciesImproper &improper = *optImproper;
 
                         improper.setForm(improperTerm.form());

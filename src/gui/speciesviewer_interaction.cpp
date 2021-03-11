@@ -21,19 +21,18 @@ SpeciesAtom *SpeciesViewer::atomAt(int x, int y)
 
     // Loop over atoms, converting the local coordinates into screen coordinates, and testing distance from the point
     // provided
-    ListIterator<SpeciesAtom> atomIterator(species_->atoms());
-    while (SpeciesAtom *i = atomIterator.iterate())
+    for (auto &i : species_->atoms())
     {
         // Set the lengthscale to the appropriate atom radius for the current display style - it will be replaced with
         // the atom's screen radius
         lengthScale = 0.3;
-        rScreen = view_.dataToScreen(i->r(), lengthScale);
+        rScreen = view_.dataToScreen(i.r(), lengthScale);
 
         // Subtract the reference coordinates and test against the screen radius
         rScreen.x -= x;
         rScreen.y -= y;
         if (sqrt(rScreen.x * rScreen.x + rScreen.y * rScreen.y) < lengthScale)
-            return i;
+            return &i;
     }
 
     return nullptr;
@@ -152,12 +151,11 @@ void SpeciesViewer::endInteraction()
                             species_->clearAtomSelection();
                         Vec3<double> rScreen;
                         QRect selectionRect(QPoint(rMouseDown_.x, rMouseDown_.y), QPoint(rMouseLast_.x, rMouseLast_.y));
-                        ListIterator<SpeciesAtom> atomIterator(species_->atoms());
-                        while (SpeciesAtom *i = atomIterator.iterate())
+                        for (auto &i : species_->atoms())
                         {
-                            rScreen = view_.dataToScreen(i->r());
+                            rScreen = view_.dataToScreen(i.r());
                             if (selectionRect.contains(rScreen.x, rScreen.y))
-                                species_->selectAtom(i);
+                                species_->selectAtom(&i);
                         }
                     }
 
@@ -192,12 +190,12 @@ void SpeciesViewer::endInteraction()
                     }
 
                     // If an atom was not clicked at the start of the interaction, create a new one now
-                    i = clickedAtom_ ? clickedAtom_ : species_->addAtom(drawElement_, drawCoordinateStart_);
+                    i = clickedAtom_ ? clickedAtom_ : &species_->addAtom(drawElement_, drawCoordinateStart_);
 
                     // Get atom at current coordinates - if there isn't one, create one now
                     j = atomAt(rMouseLast_.x, rMouseLast_.y);
                     if (!j)
-                        j = species_->addAtom(drawElement_, drawCoordinateCurrent_);
+                        j = &species_->addAtom(drawElement_, drawCoordinateCurrent_);
 
                     // Create a bond between the two atoms, if one doesn't currently exist
                     if ((i != j) && (!species_->hasBond(i, j)))

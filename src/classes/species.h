@@ -14,6 +14,7 @@
 #include "classes/speciestorsion.h"
 #include "io/import/coordinates.h"
 #include "templates/objectstore.h"
+#include <list>
 #include <memory>
 
 // Forward Declarations
@@ -21,7 +22,7 @@ class Box;
 class Forcefield;
 
 // Species Definition
-class Species : public ListItem<Species>
+class Species
 {
     public:
     Species();
@@ -55,7 +56,7 @@ class Species : public ListItem<Species>
      */
     private:
     // List of Atoms in the Species
-    List<SpeciesAtom> atoms_;
+    std::list<SpeciesAtom> atoms_;
     // List of selected Atoms
     RefList<SpeciesAtom> selectedAtoms_;
     // Version of the atom selection
@@ -65,17 +66,19 @@ class Species : public ListItem<Species>
 
     public:
     // Add a new atom to the Species
-    SpeciesAtom *addAtom(Elements::Element Z, Vec3<double> r, double q = 0.0);
+    SpeciesAtom &addAtom(Elements::Element Z, Vec3<double> r, double q = 0.0);
     // Remove the specified atom from the species
     void removeAtom(SpeciesAtom *i);
     // Return the number of atoms in the species
     int nAtoms() const;
     // Return the first atom in the Species
-    SpeciesAtom *firstAtom() const;
+    const SpeciesAtom &firstAtom() const;
     // Return the nth atom in the Species
-    SpeciesAtom *atom(int n);
-    // Return the list of atoms
-    const List<SpeciesAtom> &atoms() const;
+    SpeciesAtom &atom(int n);
+    const SpeciesAtom &atom(int n) const;
+    // Return a reference to the vector of atoms
+    const std::list<SpeciesAtom> &atoms() const;
+    std::list<SpeciesAtom> &atoms();
     // Set coordinates of specified atom
     void setAtomCoordinates(SpeciesAtom *i, Vec3<double> r);
     // Set coordinates of specified atom (by index and individual coordinates)

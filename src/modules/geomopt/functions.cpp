@@ -24,7 +24,7 @@ template <> void GeometryOptimisationModule::setReferenceCoordinates(Species *sp
 {
     for (auto n = 0; n < sp->nAtoms(); ++n)
     {
-        auto r = sp->atom(n)->r();
+        auto r = sp->atom(n).r();
         xRef_[n] = r.x;
         yRef_[n] = r.y;
         zRef_[n] = r.z;

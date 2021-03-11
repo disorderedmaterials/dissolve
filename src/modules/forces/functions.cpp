@@ -88,30 +88,29 @@ void ForcesModule::interAtomicForces(ProcessPool &procPool, Species *sp, const P
     double scale, r, magjisq;
     const auto cutoffSq = potentialMap.range() * potentialMap.range();
     Vec3<double> vecij;
-    SpeciesAtom *j;
     // NOTE PR #334 : use for_each_pair
     for (auto indexI = 0; indexI < sp->nAtoms() - 1; ++indexI)
     {
-        auto *i = sp->atom(indexI);
+        auto &i = sp->atom(indexI);
 
         for (auto indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
         {
-            j = sp->atom(indexJ);
+            auto &j = sp->atom(indexJ);
 
             // Get intramolecular scaling of atom pair
-            scale = i->scaling(j);
+            scale = i.scaling(&j);
             if (scale < 1.0e-3)
                 continue;
 
             // Determine final forces
-            vecij = j->r() - i->r();
+            vecij = j.r() - i.r();
             magjisq = vecij.magnitudeSq();
             if (magjisq > cutoffSq)
                 continue;
             r = sqrt(magjisq);
             vecij /= r;
 
-            vecij *= potentialMap.force(i, j, r) * scale;
+            vecij *= potentialMap.force(&i, &j, r) * scale;
             fx[indexI] += vecij.x;
             fy[indexI] += vecij.y;
             fz[indexI] += vecij.z;

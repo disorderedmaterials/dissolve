@@ -42,7 +42,6 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Configuration *cfg
 // Return total interatomic energy of Species
 double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const PotentialMap &potentialMap)
 {
-    SpeciesAtom *i, *j;
     Vec3<double> rI;
     double r, scale, energy = 0.0;
     const auto cutoff = potentialMap.range();
@@ -55,24 +54,24 @@ double EnergyModule::interAtomicEnergy(ProcessPool &procPool, Species *sp, const
     // NOTE PR #334 : use for_each_pair
     for (auto indexI = loopStart; indexI <= loopEnd; ++indexI)
     {
-        i = sp->atom(indexI);
-        rI = i->r();
+        auto &i = sp->atom(indexI);
+        rI = i.r();
 
         for (auto indexJ = indexI + 1; indexJ < sp->nAtoms(); ++indexJ)
         {
-            j = sp->atom(indexJ);
+            auto &j = sp->atom(indexJ);
 
             // Get interatomic distance
-            r = (j->r() - rI).magnitude();
+            r = (j.r() - rI).magnitude();
             if (r > cutoff)
                 continue;
 
             // Get intramolecular scaling of atom pair
-            scale = i->scaling(j);
+            scale = i.scaling(&j);
             if (scale < 1.0e-3)
                 continue;
 
-            energy += potentialMap.energy(i, j, r) * scale;
+            energy += potentialMap.energy(&i, &j, r) * scale;
         }
     }
 

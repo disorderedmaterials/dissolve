@@ -181,6 +181,15 @@ template <class T, class I, typename Raw = I *, typename... Args> class TableWid
         // iterate over
         table->setRowCount(rowCount);
     }
+    TableWidgetUpdater(QTableWidget *table, std::list<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
+    {
+        int rowCount = 0;
+        for (auto &dataItem : list)
+        {
+            updateItemAtIndex(table, rowCount, &dataItem, functionParent, updateRow);
+            ++rowCount;
+        }
+    }
     TableWidgetUpdater(QTableWidget *table, const List<I> &list, T *functionParent, TableWidgetRowUpdateFunction updateRow)
     {
 

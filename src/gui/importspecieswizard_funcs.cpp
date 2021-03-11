@@ -138,16 +138,16 @@ bool ImportSpeciesWizard::prepareForNextPage(int currentIndex)
             }
             // Update the Species and AtomTypes lists
             ui_.SpeciesList->clear();
-            for (auto *sp = temporaryDissolve_.species().first(); sp != nullptr; sp = sp->next())
+            for (const auto &sp : temporaryDissolve_.species())
             {
                 QListWidgetItem *item = new QListWidgetItem(QString::fromStdString(std::string(sp->name())));
-                item->setData(Qt::UserRole, VariantPointer<Species>(sp));
+                item->setData(Qt::UserRole, VariantPointer<Species>(sp.get()));
                 ui_.SpeciesList->addItem(item);
             }
             if (ui_.SpeciesList->count() > 0)
             {
                 ui_.SpeciesList->setCurrentRow(0);
-                importTarget_ = temporaryCoreData_.species().first();
+                importTarget_ = temporaryCoreData_.species().front().get();
             }
 
             updateAtomTypesPage();

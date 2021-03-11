@@ -121,14 +121,18 @@ std::shared_ptr<Molecule> Configuration::addMolecule(Species *sp, CoordinateSet 
     addUsedSpecies(sp, 1);
 
     // Add Atoms from Species to the Molecule, using either species coordinates or those from the source CoordinateSet
-    SpeciesAtom *spi = sp->firstAtom();
     if (sourceCoordinates)
-        for (auto n = 0; n < sp->nAtoms(); ++n, spi = spi->next())
-            addAtom(spi, newMolecule, sourceCoordinates->r(n));
+        for (auto n = 0; n < sp->nAtoms(); ++n)
+        {
+            addAtom(&sp->atom(n), newMolecule, sourceCoordinates->r(n));
+        }
     else
-        for (auto n = 0; n < sp->nAtoms(); ++n, spi = spi->next())
-            addAtom(spi, newMolecule, spi->r());
-
+    {
+        for (auto n = 0; n < sp->nAtoms(); ++n)
+        {
+            addAtom(&sp->atom(n), newMolecule, sp->atom(n).r());
+        }
+    }
     return newMolecule;
 }
 

@@ -76,8 +76,8 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
         const Species *sp = spInfo->species();
 
         // Loop over Atoms in the Species
-        for (auto *i = sp->firstAtom(); i != nullptr; i = i->next())
-            atomTypes_.add(i->atomType(), spInfo->population());
+        for (const auto &i : sp->atoms())
+            atomTypes_.add(i.atomType(), spInfo->population());
     }
 
     // Perform final setup based on now-completed atomtypes list
@@ -87,8 +87,8 @@ bool XRayWeights::setUp(List<SpeciesInfo> &speciesInfoList, XRayFormFactors::XRa
 // Add Species to weights in the specified population
 void XRayWeights::addSpecies(const Species *sp, int population)
 {
-    for (auto *i = sp->firstAtom(); i != nullptr; i = i->next())
-        atomTypes_.add(i->atomType(), population);
+    for (const auto &i : sp->atoms())
+        atomTypes_.add(i.atomType(), population);
 
     valid_ = false;
 }

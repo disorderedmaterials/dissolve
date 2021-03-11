@@ -7,6 +7,8 @@
 #include "templates/variantpointer.h"
 #include <QComboBox>
 
+#include <memory>
+
 #pragma once
 
 // ComboBoxUpdater - Constructor-only template class to update items in a QComboBox, preserving original items as much as
@@ -24,6 +26,25 @@ template <class I> class ComboBoxUpdater
         ListIterator<I> dataIterator(data);
         while (I *dataItem = dataIterator.iterate())
             updateItem(dataItem->name(), dataItem, dataItem == currentItem);
+
+        // If there are still rows remaining in the widget, delete them now
+        while (currentIndex_ < comboBox_->count())
+            comboBox_->removeItem(currentIndex_);
+
+        // If there is no valid current item, make sure this is reflected in the combobox
+        if (currentItem == nullptr)
+            comboBox->setCurrentIndex(indexIfNoCurrentItem);
+    }
+
+    // Update QComboBox from supplied vector assuming that class I implements a name() function for the item
+    ComboBoxUpdater(QComboBox *comboBox, const std::vector<std::unique_ptr<I>> &data, const I *currentItem, int startIndex = 0,
+                    int indexIfNoCurrentItem = -1)
+    {
+        comboBox_ = comboBox;
+        currentIndex_ = startIndex;
+
+        for (const auto &dataItem : data)
+            updateItem(dataItem->name(), dataItem.get(), dataItem.get() == currentItem);
 
         // If there are still rows remaining in the widget, delete them now
         while (currentIndex_ < comboBox_->count())

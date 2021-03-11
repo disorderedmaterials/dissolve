@@ -7,7 +7,6 @@
 #include "templates/list.h"
 #include "templates/listitem.h"
 #include "templates/optionalref.h"
-#include "templates/orderedpointerdataarray.h"
 #include "templates/reflist.h"
 #include "templates/vector3.h"
 #include <memory>
@@ -23,7 +22,7 @@ class SpeciesTorsion;
 class ProcessPool;
 
 // SpeciesAtom Definition
-class SpeciesAtom : public ListItem<SpeciesAtom>
+class SpeciesAtom
 {
     public:
     SpeciesAtom();
@@ -96,8 +95,8 @@ class SpeciesAtom : public ListItem<SpeciesAtom>
     std::vector<std::reference_wrapper<SpeciesTorsion>> torsions_;
     // List of torsions which this atom participates in
     std::vector<std::reference_wrapper<SpeciesImproper>> impropers_;
-    // Ordered list of Atoms with scaled or excluded interactions
-    OrderedPointerDataArray<SpeciesAtom, double> exclusions_;
+    // Vector of Atoms with scaled or excluded interactions
+    std::vector<std::pair<SpeciesAtom *, double>> exclusions_;
 
     public:
     // Add bond reference

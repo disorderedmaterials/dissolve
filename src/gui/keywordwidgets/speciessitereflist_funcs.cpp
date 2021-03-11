@@ -78,8 +78,7 @@ void SpeciesSiteRefListKeywordWidget::updateWidgetValues(const CoreData &coreDat
     ui_.SpeciesTabs->clear();
 
     // Add new tabs in, one for each defined Species, and each containing checkboxes for each available site
-    ListIterator<Species> speciesIterator(coreData_.species());
-    while (Species *sp = speciesIterator.iterate())
+    for (const auto &sp : coreData_.species())
     {
         // Create the widget to hold our checkboxes for this Species
         QWidget *widget = new QWidget();
