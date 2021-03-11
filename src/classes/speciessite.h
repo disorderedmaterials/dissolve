@@ -17,7 +17,7 @@ class Species;
 class SpeciesAtom;
 
 // Species Site Definition
-class SpeciesSite : public ListItem<SpeciesSite>
+class SpeciesSite
 {
     public:
     SpeciesSite();

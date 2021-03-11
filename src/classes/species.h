@@ -267,7 +267,7 @@ class Species
      */
     private:
     // List of defined sites
-    List<SpeciesSite> sites_;
+    std::vector<SpeciesSite> sites_;
 
     public:
     // Add a new SpeciesSite to this Species
@@ -277,13 +277,16 @@ class Species
     // Return number of defined SpeciesSites
     int nSites() const;
     // Return SpeciesSite List
-    const List<SpeciesSite> &sites() const;
+    const std::vector<SpeciesSite> &sites() const;
+    std::vector<SpeciesSite> &sites();
+
     // Return nth SpeciesSite defined
-    SpeciesSite *site(int n);
+    SpeciesSite &site(int n);
     // Generate unique site name with base name provided
     std::string uniqueSiteName(std::string_view base, const SpeciesSite *exclude = nullptr) const;
     // Search for SpeciesSite by name
-    SpeciesSite *findSite(std::string_view name, const SpeciesSite *exclude = nullptr) const;
+    const SpeciesSite *findSite(std::string_view name, const SpeciesSite *exclude = nullptr) const;
+    SpeciesSite *findSite(std::string_view name, const SpeciesSite *exclude = nullptr);
 
     /*
      * Transforms

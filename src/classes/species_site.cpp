@@ -8,33 +8,35 @@
 // Add a new SpeciesSite to this Species
 SpeciesSite *Species::addSite(std::string_view name)
 {
-    auto *site = sites_.add();
-    site->setParent(this);
-    site->setName(uniqueSiteName(name));
+    auto &site = sites_.emplace_back();
+    site.setParent(this);
+    site.setName(uniqueSiteName(name));
 
-    return site;
+    return &site;
 }
 
 // Remove specified SpeciesSite
 void Species::removeSite(SpeciesSite *site)
 {
+    auto it = std::remove_if(sites_.begin(), sites_.end(), [&](const auto &p) { return &p == site; });
     if (site == nullptr)
         Messenger::error("NULL_POINTER - NULL SpeciesSite passed to Species::removeSite().\n");
-    else if (sites_.contains(site))
+    else if (it != sites_.end())
     {
         Messenger::print("Removed SpeciesSite '{}' from Species '{}'.\n", site->name(), name_);
-        sites_.remove(site);
+        sites_.erase(it, sites_.end());
     }
 }
 
 // Return number of defined SpeciesSites
-int Species::nSites() const { return sites_.nItems(); }
+int Species::nSites() const { return sites_.size(); }
 
 // Return SpeciesSite List
-const List<SpeciesSite> &Species::sites() const { return sites_; }
+const std::vector<SpeciesSite> &Species::sites() const { return sites_; }
+std::vector<SpeciesSite> &Species::sites() { return sites_; }
 
 // Return nth SpeciesSite defined
-SpeciesSite *Species::site(int n) { return sites_[n]; }
+SpeciesSite &Species::site(int n) { return sites_[n]; }
 
 // Generate unique site name with base name provided
 std::string Species::uniqueSiteName(std::string_view base, const SpeciesSite *exclude) const
@@ -51,13 +53,21 @@ std::string Species::uniqueSiteName(std::string_view base, const SpeciesSite *ex
 }
 
 // Search for SpeciesSite by name
-SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *exclude) const
+const SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *exclude) const
 {
-    for (auto *site = sites_.first(); site != nullptr; site = site->next())
-        if (site == exclude)
-            continue;
-        else if (DissolveSys::sameString(name, site->name()))
-            return site;
-
-    return nullptr;
+    auto it = std::find_if(sites_.begin(), sites_.end(), [name, exclude](const auto &p) {
+        return ((&p != exclude) && (DissolveSys::sameString(name, p.name())));
+    });
+    if (it != sites_.end())
+    {
+        return &(*it);
+    }
+    else
+    {
+        return nullptr;
+    }
+}
+SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *exclude)
+{
+    return const_cast<SpeciesSite *>(const_cast<const Species *>(this)->findSite(name, exclude));
 }

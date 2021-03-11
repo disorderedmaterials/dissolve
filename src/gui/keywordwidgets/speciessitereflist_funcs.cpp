@@ -96,18 +96,17 @@ void SpeciesSiteRefListKeywordWidget::updateWidgetValues(const CoreData &coreDat
         else
         {
             // Loop over sites defined in this Species
-            ListIterator<SpeciesSite> siteIterator(sp->sites());
-            while (SpeciesSite *site = siteIterator.iterate())
+            for (auto &site : sp->sites())
             {
-                QCheckBox *checkBox = new QCheckBox(QString::fromStdString(std::string(site->name())));
-                if (keyword_->data().contains(site))
+                QCheckBox *checkBox = new QCheckBox(QString::fromStdString(std::string(site.name())));
+                if (keyword_->data().contains(&site))
                     checkBox->setChecked(true);
                 connect(checkBox, SIGNAL(clicked(bool)), this, SLOT(siteCheckBox_clicked(bool)));
-                checkBox->setProperty("SpeciesSite", VariantPointer<SpeciesSite>(site));
+                checkBox->setProperty("SpeciesSite", VariantPointer<SpeciesSite>(&site));
                 layout->addWidget(checkBox);
 
                 // If this keyword demands oriented sites, disable the radio button if the site has no axes
-                if (keyword_->axesRequired() && (!site->hasAxes()))
+                if (keyword_->axesRequired() && (!site.hasAxes()))
                     checkBox->setDisabled(true);
             }
 
