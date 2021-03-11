@@ -72,7 +72,7 @@ QVariant XmlAtomModel::data(const QModelIndex &index, int role) const
         case 2:
             return std::get<2>(atoms_[index.row()]).c_str();
         case 3:
-	    return std::get<3>(atoms_[index.row()]);
+            return std::get<3>(atoms_[index.row()]);
         case 4:
             type = std::get<4>(atoms_[index.row()]);
             if (type < 0 || type >= dissolve_.nAtomTypes())
