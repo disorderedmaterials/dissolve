@@ -103,6 +103,7 @@ bool Species::read(LineParser &parser, CoreData &coreData)
     OptionalReferenceWrapper<SpeciesImproper> imp;
     OptionalReferenceWrapper<SpeciesTorsion> torsion;
     OptionalReferenceWrapper<MasterIntra> master;
+    OptionalReferenceWrapper<SpeciesSite> speciesSite;
     SpeciesSite *site;
     SpeciesBond::BondFunction bf;
     SpeciesAngle::AngleFunction af;
@@ -458,8 +459,8 @@ bool Species::read(LineParser &parser, CoreData &coreData)
                 break;
             case (Species::SiteKeyword):
                 // First argument is the name of the site to create - make sure it doesn't exist already
-                site = findSite(parser.argsv(1));
-                if (site)
+                speciesSite = findSite(parser.argsv(1));
+                if (speciesSite)
                 {
                     Messenger::error("The site '{}' already exists on Species '{}', and cannot be redefined.\n",
                                      parser.argsv(1), name());
@@ -768,9 +769,8 @@ bool Species::write(LineParser &parser, std::string_view prefix)
         if (!parser.writeLineF("\n{}# Sites\n", newPrefix))
             return false;
 
-        ListIterator<SpeciesSite> siteIterator(sites());
-        while (SpeciesSite *site = siteIterator.iterate())
-            if (!site->write(parser, newPrefix))
+        for (auto &site : sites())
+            if (!site.write(parser, newPrefix))
                 return false;
     }
 

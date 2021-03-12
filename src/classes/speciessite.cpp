@@ -7,7 +7,7 @@
 #include "classes/species.h"
 #include "data/atomicmasses.h"
 
-SpeciesSite::SpeciesSite() : ListItem<SpeciesSite>()
+SpeciesSite::SpeciesSite()
 {
     parent_ = nullptr;
     originMassWeighted_ = false;
