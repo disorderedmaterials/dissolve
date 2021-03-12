@@ -303,8 +303,8 @@ if(GUI)
            delegates
            charts
            components
-           gui
            models
+           gui
            ${NO_WHOLE_ARCHIVE_FLAG}
     PRIVATE # External libs
             antlr4-runtime
