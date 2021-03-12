@@ -553,7 +553,7 @@ bool PartialSet::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool PartialSet::write(LineParser &parser)
+bool PartialSet::write(LineParser &parser) const
 {
     // TODO To reduce filesize we could write abscissa first, and then each Y datset afterwards since they all share a
     // common scale

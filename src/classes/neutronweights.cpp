@@ -373,7 +373,7 @@ bool NeutronWeights::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool NeutronWeights::write(LineParser &parser)
+bool NeutronWeights::write(LineParser &parser) const
 {
     // Write AtomTypeList
     if (!atomTypes_.write(parser))

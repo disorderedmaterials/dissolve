@@ -229,7 +229,7 @@ bool Histogram2D::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool Histogram2D::write(LineParser &parser)
+bool Histogram2D::write(LineParser &parser) const
 {
     if (!parser.writeLineF("{} {} {} {} {} {}\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_))
         return false;

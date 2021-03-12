@@ -108,7 +108,7 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
     // Read data through specified LineParser
     bool read(LineParser &parser, CoreData &coreData);
     // Write data through specified LineParser
-    bool write(LineParser &parser);
+    bool write(LineParser &parser) const;
 
     /*
      * Parallel Comms

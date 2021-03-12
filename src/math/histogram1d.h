@@ -94,7 +94,7 @@ class Histogram1D : public ListItem<Histogram1D>, public GenericItemBase
     // Read data through specified LineParser
     bool read(LineParser &parser, CoreData &coreData);
     // Write data through specified LineParser
-    bool write(LineParser &parser);
+    bool write(LineParser &parser) const;
 
     /*
      * Parallel Comms

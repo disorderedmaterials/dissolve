@@ -208,7 +208,7 @@ bool Isotopologues::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool Isotopologues::write(LineParser &parser)
+bool Isotopologues::write(LineParser &parser) const
 {
     // Write Species name, integer population, and number of isotopologues in the mix
     if (!parser.writeLineF("'{}'  {}  {}\n", species_->name(), speciesPopulation_, mix_.size()))

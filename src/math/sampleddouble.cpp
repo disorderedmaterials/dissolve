@@ -144,7 +144,7 @@ bool SampledDouble::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool SampledDouble::write(LineParser &parser) { return parser.writeLineF("{}  {}  {}\n", mean_, count_, m2_); }
+bool SampledDouble::write(LineParser &parser) const { return parser.writeLineF("{}  {}  {}\n", mean_, count_, m2_); }
 
 /*
  * Parallel Comms

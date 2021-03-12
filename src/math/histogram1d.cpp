@@ -208,14 +208,14 @@ bool Histogram1D::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool Histogram1D::write(LineParser &parser)
+bool Histogram1D::write(LineParser &parser) const
 {
     if (!parser.writeLineF("{} {} {}\n", minimum_, maximum_, binWidth_))
         return false;
     if (!parser.writeLineF("{}  {}\n", nBinned_, nMissed_))
         return false;
     for (auto n = 0; n < nBins_; ++n)
-        if (!averages_[n].write(parser))
+        if (!averages_.at(n).write(parser))
             return false;
 
     return true;

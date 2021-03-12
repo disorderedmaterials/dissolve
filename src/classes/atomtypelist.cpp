@@ -311,7 +311,7 @@ bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool AtomTypeList::write(LineParser &parser)
+bool AtomTypeList::write(LineParser &parser) const
 {
     if (!parser.writeLineF("{}  # nItems\n", types_.size()))
         return false;

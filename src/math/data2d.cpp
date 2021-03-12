@@ -416,7 +416,7 @@ bool Data2D::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool Data2D::write(LineParser &parser)
+bool Data2D::write(LineParser &parser) const
 {
     // Write object tag and name
     if (!parser.writeLineF("{}\n", objectTag()))

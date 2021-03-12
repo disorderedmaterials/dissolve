@@ -407,7 +407,7 @@ bool Data3D::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool Data3D::write(LineParser &parser)
+bool Data3D::write(LineParser &parser) const
 {
     // Write object tag and name
     if (!parser.writeLineF("{}\n", objectTag()))
@@ -451,7 +451,7 @@ bool Data3D::write(LineParser &parser)
     }
     else
     {
-        for (auto &value : values_)
+        for (const auto &value : values_)
             if (!parser.writeLineF("{:e}\n", value))
                 return false;
     }

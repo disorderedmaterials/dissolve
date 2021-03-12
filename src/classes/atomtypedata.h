@@ -87,7 +87,7 @@ class AtomTypeData
      */
     public:
     // Write data through specified LineParser
-    bool write(LineParser &parser);
+    bool write(LineParser &parser) const;
 
     /*
      * Parallel Comms

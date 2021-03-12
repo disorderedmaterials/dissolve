@@ -264,7 +264,7 @@ bool Histogram3D::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool Histogram3D::write(LineParser &parser)
+bool Histogram3D::write(LineParser &parser) const
 {
     if (!parser.writeLineF("{} {} {} {} {} {} {} {} {}\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_,
                            zMinimum_, zMaximum_, zBinWidth_))

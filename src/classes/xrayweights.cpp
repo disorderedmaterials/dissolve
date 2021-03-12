@@ -289,7 +289,7 @@ bool XRayWeights::read(LineParser &parser, CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool XRayWeights::write(LineParser &parser)
+bool XRayWeights::write(LineParser &parser) const
 {
     // Write x-ray form factor dataset
     if (!parser.writeLineF("{}\n", XRayFormFactors::xRayFormFactorData().keyword(formFactors_)))
