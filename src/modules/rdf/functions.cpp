@@ -243,15 +243,14 @@ std::vector<std::pair<const Species *, double>> RDFModule::speciesPopulations() 
         // TODO Get weight for configuration
         auto weight = 1.0;
 
-        ListIterator<SpeciesInfo> spInfoIterator(cfg->usedSpecies());
-        while (auto *spInfo = spInfoIterator.iterate())
+        for (auto &spInfo : cfg->usedSpecies())
         {
             auto it = std::find_if(populations.begin(), populations.end(),
-                                   [&spInfo](auto &data) { return data.first == spInfo->species(); });
+                                   [&spInfo](auto &data) { return data.first == spInfo.species(); });
             if (it != populations.end())
-                it->second += spInfo->population() * weight;
+                it->second += spInfo.population() * weight;
             else
-                populations.emplace_back(spInfo->species(), spInfo->population() * weight);
+                populations.emplace_back(spInfo.species(), spInfo.population() * weight);
         }
     }
 

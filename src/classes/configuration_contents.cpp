@@ -46,37 +46,38 @@ int Configuration::nUsedAtomTypes() const { return usedAtomTypes_.nItems(); }
 SpeciesInfo *Configuration::addUsedSpecies(Species *sp, int population)
 {
     // Check if we have an existing info for this Species
-    SpeciesInfo *spInfo = usedSpeciesInfo(sp);
+    auto spInfo = usedSpeciesInfo(sp);
     if (!spInfo)
     {
-        spInfo = usedSpecies_.add();
-        spInfo->setSpecies(sp);
+        auto &spIn = usedSpecies_.emplace_back();
+        spIn.setSpecies(sp);
+        spInfo = spIn;
     }
 
     // Increase the population
-    spInfo->addPopulation(population);
+    spInfo->get().addPopulation(population);
 
-    return spInfo;
+    return &spInfo->get();
 }
 
 // Return SpeciesInfo for specified Species
-SpeciesInfo *Configuration::usedSpeciesInfo(Species *sp)
+OptionalReferenceWrapper<SpeciesInfo> Configuration::usedSpeciesInfo(Species *sp)
 {
-    for (auto *spInfo = usedSpecies_.first(); spInfo != nullptr; spInfo = spInfo->next())
-        if (spInfo->species() == sp)
+    for (auto &spInfo : usedSpecies_)
+        if (spInfo.species() == sp)
             return spInfo;
 
-    return nullptr;
+    return std::nullopt;
 }
 
 // Return list of SpeciesInfo for the Configuration
-List<SpeciesInfo> &Configuration::usedSpecies() { return usedSpecies_; }
+std::vector<SpeciesInfo> &Configuration::usedSpecies() { return usedSpecies_; }
 
 // Return if the specified Species is present in the usedSpecies list
 bool Configuration::hasUsedSpecies(Species *sp)
 {
-    for (auto *spInfo = usedSpecies_.first(); spInfo != nullptr; spInfo = spInfo->next())
-        if (spInfo->species() == sp)
+    for (auto &spInfo : usedSpecies_)
+        if (spInfo.species() == sp)
             return true;
 
     return false;
@@ -88,9 +89,8 @@ double Configuration::atomicMass() const
     double mass = 0.0;
 
     // Get total molar mass in configuration
-    ListIterator<SpeciesInfo> speciesIterator(usedSpecies_);
-    while (SpeciesInfo *spInfo = speciesIterator.iterate())
-        mass += spInfo->species()->mass() * spInfo->population();
+    for (auto spInfo : usedSpecies_)
+        mass += spInfo.species()->mass() * spInfo.population();
 
     // Convert to absolute mass
     return mass / AVOGADRO;

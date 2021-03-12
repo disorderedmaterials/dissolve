@@ -11,7 +11,7 @@ class Species;
 /*
  * Species Information
  */
-class SpeciesInfo : public ListItem<SpeciesInfo>
+class SpeciesInfo
 {
     public:
     SpeciesInfo();
