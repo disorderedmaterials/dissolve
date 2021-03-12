@@ -207,7 +207,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Create storage for our summed UnweightedSQ
     auto &combinedUnweightedSQ =
-        dissolve.processingModuleData().realise<Array2D<Data1D>>("UnweightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realise<Array2D<Data1D>>("UnweightedSQ", uniqueName_, GenericList::InRestartFileFlag);
     combinedUnweightedSQ.initialise(nAtomTypes, nAtomTypes, true);
 
     // Set object names in combinedUnweightedSQ
@@ -218,13 +218,13 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Realise storage for generated S(Q), and initialise a scattering matrix
     auto &estimatedSQ =
-        dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedSQ", uniqueName_, GenericList::InRestartFileFlag);
     ScatteringMatrix scatteringMatrix;
     scatteringMatrix.initialise(dissolve.atomTypes(), estimatedSQ, uniqueName_, "Default");
 
     // Loop over target data
     auto rFacTot = 0.0;
-    bool found, created;
+    bool created;
     for (auto *module : targets)
     {
         /*
@@ -250,7 +250,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Realise the r-factor array and make sure its object name is set
         auto &errors = dissolve.processingModuleData().realise<Data1D>(fmt::format("RFactor_{}", module->uniqueName()),
-                                                                       uniqueName_, GenericItem::InRestartFileFlag);
+                                                                       uniqueName_, GenericList::InRestartFileFlag);
         errors.setObjectTag(fmt::format("{}//RFactor//{}", uniqueName_, module->uniqueName()));
 
         /*
@@ -260,7 +260,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Get difference data container and form the difference between the reference and calculated data
         auto &differenceData = dissolve.processingModuleData().realise<Data1D>(
-            fmt::format("DifferenceData_{}", module->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag);
+            fmt::format("DifferenceData_{}", module->uniqueName()), uniqueName(), GenericList::InRestartFileFlag);
         differenceData.setObjectTag(fmt::format("{}//Difference//{}", uniqueName_, module->uniqueName()));
         differenceData = originalReferenceData;
         Interpolator::addInterpolated(differenceData, weightedSQ.total(), -1.0);
@@ -277,9 +277,9 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Get difference and fit function objects
         auto &deltaFQ = dissolve.processingModuleData().realise<Data1D>(fmt::format("DeltaFQ_{}", module->uniqueName()),
-                                                                        uniqueName_, GenericItem::InRestartFileFlag);
+                                                                        uniqueName_, GenericList::InRestartFileFlag);
         auto &deltaFQFit = dissolve.processingModuleData().realise<Data1D>(fmt::format("DeltaFQFit_{}", module->uniqueName()),
-                                                                           uniqueName_, GenericItem::InRestartFileFlag);
+                                                                           uniqueName_, GenericList::InRestartFileFlag);
         deltaFQ.setObjectTag(fmt::format("{}//DeltaFQ//{}", uniqueName_, module->uniqueName()));
         deltaFQFit.setObjectTag(fmt::format("{}//DeltaFQFit//{}", uniqueName_, module->uniqueName()));
 
@@ -290,7 +290,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Fit a function expansion to the deltaFQ - if the coefficient arrays already exist then re-fit starting from those.
         auto &fitCoefficients = dissolve.processingModuleData().realise<std::vector<double>>(
-            fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_, GenericItem::InRestartFileFlag, &created);
+            fmt::format("FitCoefficients_{}", module->uniqueName()), uniqueName_, GenericList::InRestartFileFlag, &created);
 
         auto fitError = 0.0;
         if (functionType == EPSRModule::GaussianExpansionFunction)
@@ -355,7 +355,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Retrieve the storage object
         auto &simulatedFR = dissolve.processingModuleData().realise<Data1D>("SimulatedFR", module->uniqueName(),
-                                                                            GenericItem::InRestartFileFlag);
+                                                                            GenericList::InRestartFileFlag);
         simulatedFR.setObjectTag(fmt::format("{}//SimulatedFR//{}", uniqueName_, module->uniqueName()));
 
         // Copy the total calculated F(Q) and trim to the same range as the experimental data before FT
@@ -389,10 +389,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         }
         else if (module->type() == "XRaySQ")
         {
-            auto &weights = dissolve.processingModuleData().retrieve<XRayWeights>("FullWeights", module->uniqueName(),
-                                                                                  XRayWeights(), &found);
-            if (!found)
-                return Messenger::error("Could not locate XRayWeights for target '{}'.\n", module->uniqueName());
+            auto &weights = dissolve.processingModuleData().retrieve<XRayWeights>("FullWeights", module->uniqueName());
 
             // For X-ray data we always add the reference data normalised to AverageOfSquares in order to give consistency in
             // terms of magnitude with any neutron data. If the calculated data have not been normalised, or were normalised to
@@ -508,7 +505,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Finalise and store the total r-factor
     rFacTot /= targets.size();
     auto &totalRFactor =
-        dissolve.processingModuleData().realise<Data1D>("RFactor", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realise<Data1D>("RFactor", uniqueName_, GenericList::InRestartFileFlag);
     totalRFactor.setObjectTag(fmt::format("{}//RFactor", uniqueName_));
     totalRFactor.addPoint(dissolve.iteration(), rFacTot);
     Messenger::print("Current total R-Factor is {:.5f}.\n", rFacTot);
@@ -590,7 +587,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
      */
 
     auto &estimatedGR =
-        dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedGR", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realise<Array2D<Data1D>>("EstimatedGR", uniqueName_, GenericList::InRestartFileFlag);
     estimatedGR.initialise(dissolve.nAtomTypes(), dissolve.nAtomTypes(), true);
     for_each_pair(dissolve.atomTypes().begin(), dissolve.atomTypes().end(), [&](int i, auto at1, int j, auto at2) {
         // Grab experimental g(r) container and make sure its object name is set
@@ -762,7 +759,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
     }
 
     // Realise the phiMag array and make sure its object name is set
-    auto &phiArray = dissolve.processingModuleData().realise<Data1D>("EPMag", uniqueName_, GenericItem::InRestartFileFlag);
+    auto &phiArray = dissolve.processingModuleData().realise<Data1D>("EPMag", uniqueName_, GenericList::InRestartFileFlag);
     phiArray.setObjectTag(fmt::format("{}//EPMag", uniqueName_));
     phiArray.addPoint(dissolve.iteration(), energabs);
 

@@ -31,7 +31,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
     // Realise the arrays from the Configuration
     auto &braggKVectors = moduleData.realise<Array<KVector>>("BraggKVectors", cfg->niceName());
     auto &braggReflections = moduleData.realise<Array<BraggReflection>>(fmt::format("{}//BraggReflections", cfg->niceName()),
-                                                                        uniqueName(), GenericItem::InRestartFileFlag);
+                                                                        uniqueName(), GenericList::InRestartFileFlag);
     auto &braggAtomVectorXCos =
         moduleData.realise<Array2D<double>>(fmt::format("{}//BraggAtomVectorXCos", cfg->niceName()), uniqueName());
     auto &braggAtomVectorYCos =
@@ -336,7 +336,7 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &
     const auto nTypes = cfg->nUsedAtomTypes();
     bool wasCreated;
     auto &braggPartials = moduleData.realise<Array2D<Data1D>>(fmt::format("{}//OriginalBragg", cfg->niceName()), uniqueName(),
-                                                              GenericItem::InRestartFileFlag, &wasCreated);
+                                                              GenericList::InRestartFileFlag, &wasCreated);
     if (wasCreated)
     {
         // Create the triangular array
@@ -355,7 +355,7 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &
         std::fill(braggPartials.begin(), braggPartials.end(), temp);
     }
     auto &braggTotal = moduleData.realise<Data1D>(fmt::format("{}//OriginalBraggTotal", cfg->niceName()), uniqueName(),
-                                                  GenericItem::InRestartFileFlag, &wasCreated);
+                                                  GenericList::InRestartFileFlag, &wasCreated);
     if (wasCreated)
         braggTotal.setObjectTag(fmt::format("{}//OriginalBragg//Total", cfg->niceName()));
     braggTotal.clear();

@@ -441,19 +441,8 @@ bool Dissolve::loadRestart(std::string_view filename)
             Messenger::print("Reading item '{}' ({}) into processing module data...\n", parser.argsv(1), parser.argsv(2));
 
             // Realise the item in the list
-            GenericItem *item = processingModuleData_.create(parser.argsv(1), parser.argsv(2), parser.argi(3),
-                                                             parser.hasArg(4) ? parser.argi(4) : 0);
-
-            // Read in the data
-            if ((!item) || (!item->read(parser, coreData_)))
-            {
-                Messenger::error("Failed to read item data '{}' from restart file.\n", item->name());
-                error = true;
-                break;
-            }
-
-            // Add the InRestartFileFlag for the item
-            item->addFlag(GenericItem::InRestartFileFlag);
+            processingModuleData_.deserialise(parser, coreData_, parser.argsv(1), parser.argsv(2), parser.argi(3),
+                                              parser.hasArg(4) ? parser.argi(4) : 0);
         }
         else if (DissolveSys::sameString(parser.argsv(0), "Configuration"))
         {
@@ -554,21 +543,9 @@ bool Dissolve::loadRestartAsReference(std::string_view filename, std::string_vie
             Messenger::print("Reading item '{}' => '{}' ({}) into processing module data...\n", parser.argsv(1), newName,
                              parser.argsv(2));
 
-            // Realise the item in the list
-            GenericItem *item =
-                processingModuleData_.create(newName, parser.argsv(2), parser.argi(3), parser.hasArg(4) ? parser.argi(4) : 0);
-
-            // Read in the data
-            if ((!item) || (!item->read(parser, coreData_)))
-            {
-                Messenger::error("Failed to read item data '{}' from restart file.\n", item->name());
-                error = true;
-                break;
-            }
-
-            // Add the ReferencePointData for the item
-            item->addFlag(GenericItem::IsReferencePointDataFlag);
-            item->removeFlag(GenericItem::InRestartFileFlag);
+            // Deserialise the item
+            processingModuleData_.deserialise(parser, coreData_, newName, parser.argsv(2), parser.argi(3),
+                                              GenericList::IsReferencePointDataFlag);
 
             skipCurrentItem = false;
         }
@@ -647,19 +624,8 @@ bool Dissolve::saveRestart(std::string_view filename)
     }
 
     // Processing Module Data
-    ListIterator<GenericItem> itemIterator(processingModuleData_.items());
-    while (GenericItem *item = itemIterator.iterate())
-    {
-        // If it is not flagged to be saved in the restart file, skip it
-        if (!(item->flags() & GenericItem::InRestartFileFlag))
-            continue;
-
-        if (!parser.writeLineF("Processing  {}  {}  {}  {}\n", item->name(), item->itemClassName(), item->version(),
-                               item->flags()))
-            return false;
-        if (!item->write(parser))
-            return false;
-    }
+    if (!processingModuleData_.serialiseAll(parser, coreData_, "Processing"))
+        return false;
 
     // Configurations
     for (auto *cfg = configurations().first(); cfg != nullptr; cfg = cfg->next())

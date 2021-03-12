@@ -33,19 +33,17 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     while (Data1D *testData1D = data1DIterator.iterate())
     {
         // Locate the target reference data
-        auto found = false;
-        const auto &data = findReferenceData<Data1D>(testData1D->name(), targetModule, dissolve.processingModuleData(), found);
-
-        // Did we succeed?
-        if (!found)
+        const auto optData = findReferenceData<const Data1D>(testData1D->name(), targetModule, dissolve.processingModuleData());
+        if (!optData)
         {
             if (targetModule)
                 return Messenger::error("No data named '{}_{}' or '{}', or tagged '{}', exists.\n", targetModule->uniqueName(),
                                         testData1D->name(), testData1D->name(), testData1D->name());
             else
-                return Messenger::error("No data with tag '{}' exists.\n", testData1D->name());
+                return Messenger::error("No data with name '{}' exists.\n", testData1D->name());
         }
-        Messenger::print("Located reference data with tag '{}'.\n", data.objectTag());
+        const Data1D &data = *optData;
+        Messenger::print("Located reference data with name '{}'.\n", data.objectTag());
 
         // Generate the error estimate and compare against the threshold value
         double error = Error::error(errorType, data, *testData1D, true);
@@ -60,11 +58,8 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
     while (Data2D *testData2D = data2DIterator.iterate())
     {
         // Locate the target reference data
-        auto found = false;
-        const auto &data = findReferenceData<Data2D>(testData2D->name(), targetModule, dissolve.processingModuleData(), found);
-
-        // Did we succeed?
-        if (!found)
+        const auto optData = findReferenceData<const Data2D>(testData2D->name(), targetModule, dissolve.processingModuleData());
+        if (!optData)
         {
             if (targetModule)
                 return Messenger::error("No data named '{}_{}' or '{}', or tagged '{}', exists.\n", targetModule->uniqueName(),
@@ -72,7 +67,8 @@ bool DataTestModule::process(Dissolve &dissolve, ProcessPool &procPool)
             else
                 return Messenger::error("No data with tag '{}' exists.\n", testData2D->name());
         }
-        Messenger::print("Located reference data with tag '{}'.\n", data.objectTag());
+        const Data2D &data = *optData;
+        Messenger::print("Located reference data with name '{}'.\n", data.objectTag());
 
         // Generate the error estimate and compare against the threshold value
         // 		double error = Error::error(errorType, data, *testData2D, true);

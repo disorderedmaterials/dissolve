@@ -86,12 +86,8 @@ bool BraggModule::process(Dissolve &dissolve, ProcessPool &procPool)
         if (saveReflections)
         {
             // Retrieve BraggReflection data from the Configuration's module data
-            auto found = false;
-            const auto &braggReflections = dissolve.processingModuleData().value<Array<BraggReflection>>(
-                fmt::format("{}//BraggReflections", cfg->niceName()), uniqueName(), Array<BraggReflection>(), &found);
-            if (!found)
-                return Messenger::error("Failed to find BraggReflection array in module data for Configuration '{}'.\n",
-                                        cfg->name());
+            const auto &braggReflections = dissolve.processingModuleData().value<const Array<BraggReflection>>(
+                fmt::format("{}//BraggReflections", cfg->niceName()), uniqueName());
 
             // Open a file and save the basic reflection data
             LineParser braggParser(&procPool);

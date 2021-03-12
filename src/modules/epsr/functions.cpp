@@ -15,7 +15,7 @@ const std::vector<Module *> &EPSRModule::targets() const { return keywords_.retr
 Array2D<std::vector<double>> &EPSRModule::potentialCoefficients(Dissolve &dissolve, const int nAtomTypes, const int ncoeffp)
 {
     auto &coefficients = dissolve.processingModuleData().realise<Array2D<std::vector<double>>>(
-        "PotentialCoefficients", uniqueName_, GenericItem::InRestartFileFlag);
+        "PotentialCoefficients", uniqueName_, GenericList::InRestartFileFlag);
 
     auto arrayNCoeffP = (coefficients.nRows() && coefficients.nColumns() ? coefficients[{0, 0}].size() : 0);
     if ((coefficients.nRows() != nAtomTypes) || (coefficients.nColumns() != nAtomTypes) ||
@@ -73,7 +73,7 @@ bool EPSRModule::generateEmpiricalPotentials(Dissolve &dissolve, EPSRModule::Exp
 
             // Set the additional potential in the main processing data
             dissolve.processingModuleData().realise<Data1D>(fmt::format("Potential_{}-{}_Additional", at1->name(), at2->name()),
-                                                            "Dissolve", GenericItem::InRestartFileFlag) = ep;
+                                                            "Dissolve", GenericList::InRestartFileFlag) = ep;
 
             // Grab pointer to the relevant pair potential (if it exists)
             auto *pp = dissolve.pairPotential(at1, at2);

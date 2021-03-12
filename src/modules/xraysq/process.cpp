@@ -76,14 +76,14 @@ bool XRaySQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
         // Store the reference data in processing
         referenceData.setName(uniqueName());
         Data1D &storedData =
-            dissolve.processingModuleData().realise<Data1D>("ReferenceData", uniqueName(), GenericItem::ProtectedFlag);
+            dissolve.processingModuleData().realise<Data1D>("ReferenceData", uniqueName(), GenericList::ProtectedFlag);
         storedData.setObjectTag(fmt::format("{}//ReferenceData", uniqueName()));
         storedData = referenceData;
 
         // Calculate and store the FT of the reference data in processing
         referenceData.setName(uniqueName());
         Data1D &storedDataFT =
-            dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", uniqueName(), GenericItem::ProtectedFlag);
+            dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", uniqueName(), GenericList::ProtectedFlag);
         storedDataFT.setObjectTag(fmt::format("{}//ReferenceDataFT", uniqueName()));
         storedDataFT = referenceData;
         auto rho = rdfModule->effectiveDensity();
@@ -166,14 +166,14 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Construct weights matrix
     auto &weights =
-        dissolve.processingModuleData().realise<XRayWeights>("FullWeights", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realise<XRayWeights>("FullWeights", uniqueName_, GenericList::InRestartFileFlag);
     calculateWeights(rdfModule, weights, formFactors);
     Messenger::print("Weights matrix:\n\n");
     weights.print();
 
     // Does a PartialSet for the unweighted S(Q) already exist for this Configuration?
     PartialSet &weightedSQ = dissolve.processingModuleData().realise<PartialSet>("WeightedSQ", uniqueName_,
-                                                                                 GenericItem::InRestartFileFlag, &created);
+                                                                                 GenericList::InRestartFileFlag, &created);
     if (created)
         weightedSQ.setUpPartials(unweightedSQ.atomTypes(), uniqueName(), "weighted", "sq", "Q, 1/Angstroms");
 
@@ -237,7 +237,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Create/retrieve PartialSet for summed weighted g(r)
     auto &weightedGR = dissolve.processingModuleData().realise<PartialSet>("WeightedGR", uniqueName_,
-                                                                           GenericItem::InRestartFileFlag, &created);
+                                                                           GenericList::InRestartFileFlag, &created);
     if (created)
         weightedGR.setUpPartials(unweightedSQ.atomTypes(), uniqueName_, "weighted", "gr", "r, Angstroms");
     weightedGR.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedGR"));
@@ -247,7 +247,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Calculate representative total g(r) from FT of calculated S(Q)
     auto &repGR =
-        dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", uniqueName_, GenericItem::InRestartFileFlag);
+        dissolve.processingModuleData().realise<Data1D>("RepresentativeTotalGR", uniqueName_, GenericList::InRestartFileFlag);
     repGR = weightedSQ.total();
     auto rMin = weightedGR.total().xAxis().front();
     auto rMax = weightedGR.total().xAxis().back();

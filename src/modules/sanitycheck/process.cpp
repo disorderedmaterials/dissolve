@@ -60,11 +60,6 @@ bool SanityCheckModule::process(Dissolve &dissolve, ProcessPool &procPool)
         }
     }
 
-    // Processing module data
-    Messenger::printVerbose("Sanity checking processing module data...\n");
-    if (!dissolve.processingModuleData().equality(procPool))
-        return Messenger::error("Failed sanity check for processing module data.\n");
-
     Messenger::print("All checked data passed equality tests.\n");
 
     return true;

@@ -116,7 +116,7 @@ ProcedureNode::NodeExecutionResult Process3DProcedureNode::execute(ProcessPool &
     // Retrieve / realise the normalised data from the supplied list
     bool created;
     auto &data = targetList.realise<Data3D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix,
-                                            GenericItem::InRestartFileFlag, &created);
+                                            GenericList::InRestartFileFlag, &created);
     processedData_ = &data;
 
     data.setName(name());

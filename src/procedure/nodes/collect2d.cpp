@@ -113,7 +113,7 @@ bool Collect2DProcedureNode::prepare(Configuration *cfg, std::string_view prefix
     // Construct our data name, and search for it in the supplied list
     std::string dataName = fmt::format("{}_{}_Bins", name(), cfg->niceName());
     bool created;
-    auto &target = targetList.realise<Histogram2D>(dataName, prefix, GenericItem::InRestartFileFlag, &created);
+    auto &target = targetList.realise<Histogram2D>(dataName, prefix, GenericList::InRestartFileFlag, &created);
     if (created)
     {
         Messenger::printVerbose("Two-dimensional histogram data for '{}' was not in the target list, so it will now be "
