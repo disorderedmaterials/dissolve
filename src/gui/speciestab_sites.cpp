@@ -37,9 +37,7 @@ void SpeciesTab::setCurrentSiteFromViewer()
     // Sanity check that the displayed site actually exists in our species
     if (std::find_if(species_->sites().begin(), species_->sites().end(),
                      [displayedSite](const auto &p) { return &p == displayedSite; }) == species_->sites().end())
-    {
         return;
-    }
 
     // Update the site list
     ListWidgetUpdater<SpeciesTab, SpeciesSite> siteUpdater(

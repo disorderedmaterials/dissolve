@@ -53,21 +53,23 @@ std::string Species::uniqueSiteName(std::string_view base, const SpeciesSite *ex
 }
 
 // Search for SpeciesSite by name
-const SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *exclude) const
+OptionalReferenceWrapper<const SpeciesSite> Species::findSite(std::string_view name, const SpeciesSite *exclude) const
 {
     auto it = std::find_if(sites_.begin(), sites_.end(), [name, exclude](const auto &p) {
         return ((&p != exclude) && (DissolveSys::sameString(name, p.name())));
     });
     if (it != sites_.end())
-    {
-        return &(*it);
-    }
+        return *it;
     else
-    {
-        return nullptr;
-    }
+        return std::nullopt;
 }
-SpeciesSite *Species::findSite(std::string_view name, const SpeciesSite *exclude)
+OptionalReferenceWrapper<SpeciesSite> Species::findSite(std::string_view name, const SpeciesSite *exclude)
 {
-    return const_cast<SpeciesSite *>(const_cast<const Species *>(this)->findSite(name, exclude));
+    auto it = std::find_if(sites_.begin(), sites_.end(), [name, exclude](const auto &p) {
+        return ((&p != exclude) && (DissolveSys::sameString(name, p.name())));
+    });
+    if (it != sites_.end())
+        return *it;
+    else
+        return std::nullopt;
 }

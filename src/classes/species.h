@@ -285,8 +285,8 @@ class Species
     // Generate unique site name with base name provided
     std::string uniqueSiteName(std::string_view base, const SpeciesSite *exclude = nullptr) const;
     // Search for SpeciesSite by name
-    const SpeciesSite *findSite(std::string_view name, const SpeciesSite *exclude = nullptr) const;
-    SpeciesSite *findSite(std::string_view name, const SpeciesSite *exclude = nullptr);
+    OptionalReferenceWrapper<const SpeciesSite> findSite(std::string_view name, const SpeciesSite *exclude = nullptr) const;
+    OptionalReferenceWrapper<SpeciesSite> findSite(std::string_view name, const SpeciesSite *exclude = nullptr);
 
     /*
      * Transforms

@@ -47,10 +47,11 @@ bool SpeciesSiteRefListKeyword::read(LineParser &parser, int startArg, CoreData 
         }
 
         // Find specified Site (second argument) in the Species
-        SpeciesSite *site = sp->findSite(parser.argsv(n + 1));
-        if (!site)
+        auto speciesSite = sp->findSite(parser.argsv(n + 1));
+        if (!speciesSite)
             return Messenger::error("Error setting SpeciesSite - no such site named '{}' exists in Species '{}'.\n",
                                     parser.argsv(n + 1), sp->name());
+        auto *site = &speciesSite->get();
         if (axesRequired_ && (!site->hasAxes()))
             return Messenger::error("Can't add site '{}' to keyword '{}', as the keyword requires axes "
                                     "specifications for all sites.\n",
