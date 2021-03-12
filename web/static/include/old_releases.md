@@ -1,4 +1,3 @@
-- [Version 0.7.5, released 11 March 2021](https://github.com/disorderedmaterials/dissolve/releases/tag/0.7.5)
 - [Version 0.7.4, released 9 March 2021](https://github.com/disorderedmaterials/dissolve/releases/tag/0.7.4)
 - [Version 0.7.3, released 9 February 2021](https://github.com/disorderedmaterials/dissolve/releases/tag/0.7.3)
 - [Version 0.7.2, released 1 February 2021](https://github.com/disorderedmaterials/dissolve/releases/tag/0.7.2)
