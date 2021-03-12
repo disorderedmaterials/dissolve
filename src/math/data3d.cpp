@@ -192,7 +192,7 @@ double Data3D::minValue() const
     if (values_.empty())
         return 0.0;
 
-    return *std::min_element(values_.cbegin(), values_.cend());
+    return *std::min_element(values_.begin(), values_.end());
 }
 
 // Return maximum value over all data points
@@ -201,7 +201,7 @@ double Data3D::maxValue() const
     if (values_.empty())
         return 0.0;
 
-    return *std::max_element(values_.cbegin(), values_.cend());
+    return *std::max_element(values_.begin(), values_.end());
 }
 
 // Add / initialise errors array
