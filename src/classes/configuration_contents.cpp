@@ -46,28 +46,28 @@ int Configuration::nUsedAtomTypes() const { return usedAtomTypes_.nItems(); }
 SpeciesInfo *Configuration::addUsedSpecies(Species *sp, int population)
 {
     // Check if we have an existing info for this Species
-    SpeciesInfo *spInfo = usedSpeciesInfo(sp);
+    auto spInfo = usedSpeciesInfo(sp);
     if (!spInfo)
     {
         auto &spIn = usedSpecies_.emplace_back();
         spIn.setSpecies(sp);
-        spInfo = &spIn;
+        spInfo = spIn;
     }
 
     // Increase the population
-    spInfo->addPopulation(population);
+    spInfo->get().addPopulation(population);
 
-    return spInfo;
+    return &spInfo->get();
 }
 
 // Return SpeciesInfo for specified Species
-SpeciesInfo *Configuration::usedSpeciesInfo(Species *sp)
+OptionalReferenceWrapper<SpeciesInfo> Configuration::usedSpeciesInfo(Species *sp)
 {
     for (auto &spInfo : usedSpecies_)
         if (spInfo.species() == sp)
-            return &spInfo;
+            return spInfo;
 
-    return nullptr;
+    return std::nullopt;
 }
 
 // Return list of SpeciesInfo for the Configuration

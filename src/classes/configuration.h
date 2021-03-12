@@ -108,7 +108,7 @@ class Configuration : public ListItem<Configuration>
     // Add Species to list of those used by the Configuration, setting/adding the population specified
     SpeciesInfo *addUsedSpecies(Species *sp, int population);
     // Return SpeciesInfo for specified Species
-    SpeciesInfo *usedSpeciesInfo(Species *sp);
+    OptionalReferenceWrapper<SpeciesInfo> usedSpeciesInfo(Species *sp);
     // Return list of SpeciesInfo for the Configuration
     std::vector<SpeciesInfo> &usedSpecies();
     // Return if the specified Species is present in the usedSpecies list
