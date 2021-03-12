@@ -503,7 +503,7 @@ bool Dissolve::loadRestart(std::string_view filename)
         Messenger::print("Finished reading restart file.\n");
 
     // Set current iteration number
-    iteration_ = processingModuleData_.value<int>("Iteration", "Dissolve", 0);
+    iteration_ = processingModuleData_.valueOr<int>("Iteration", "Dissolve", 0);
 
     // Error encountered?
     if (error)

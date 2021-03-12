@@ -23,7 +23,7 @@ bool BraggModule::calculateBraggTerms(GenericList &moduleData, ProcessPool &proc
                                       const double qDelta, const double qMax, Vec3<int> multiplicity, bool &alreadyUpToDate)
 {
     // Check to see if the arrays are up-to-date
-    auto braggDataVersion = moduleData.retrieve<int>(fmt::format("{}//BraggVersion", cfg->niceName()), uniqueName(), -1);
+    auto braggDataVersion = moduleData.valueOr<int>(fmt::format("{}//BraggVersion", cfg->niceName()), uniqueName(), -1);
     alreadyUpToDate = braggDataVersion == cfg->contentsVersion();
     if (alreadyUpToDate)
         return true;
@@ -328,11 +328,8 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &
                                           const double qDelta, const double qMax)
 {
     // Retrieve BraggReflection data from the Configuration's module data
-    auto found = false;
-    const auto &braggReflections = moduleData.value<Array<BraggReflection>>(
-        fmt::format("{}//BraggReflections", cfg->niceName()), uniqueName(), Array<BraggReflection>(), &found);
-    if (!found)
-        return Messenger::error("Failed to find BraggReflection array in module data for Configuration '{}'.\n", cfg->name());
+    const auto &braggReflections =
+        moduleData.value<Array<BraggReflection>>(fmt::format("{}//BraggReflections", cfg->niceName()), uniqueName());
     const auto nReflections = braggReflections.nItems();
 
     // Realise / retrieve storage for the Bragg partial S(Q) and combined F(Q)
@@ -401,12 +398,9 @@ bool BraggModule::formReflectionFunctions(GenericList &moduleData, ProcessPool &
 bool BraggModule::reBinReflections(GenericList &moduleData, ProcessPool &procPool, Configuration *cfg,
                                    Array2D<Data1D> &braggPartials)
 {
-    // Retrieve BraggReflection data from the Configuration's module data
-    auto found = false;
-    const auto &braggReflections = moduleData.value<Array<BraggReflection>>(
-        fmt::format("{}//BraggReflections", cfg->niceName()), uniqueName(), Array<BraggReflection>(), &found);
-    if (!found)
-        return Messenger::error("Failed to find BraggReflection array in module data for Configuration '{}'.\n", cfg->name());
+    // Retrieve BraggReflection data
+    const auto &braggReflections =
+        moduleData.value<Array<BraggReflection>>(fmt::format("{}//BraggReflections", cfg->niceName()), uniqueName());
     const auto nReflections = braggReflections.nItems();
 
     const auto nTypes = cfg->nUsedAtomTypes();

@@ -232,11 +232,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
          */
 
         // Retrieve the weighted S(Q)/F(Q)
-        const auto &weightedSQ =
-            dissolve.processingModuleData().value<PartialSet>("WeightedSQ", module->uniqueName(), PartialSet(), &found);
-        if (!found)
-            return Messenger::error("Could not locate associated weighted neutron PartialSet for target '{}'.\n",
-                                    module->uniqueName());
+        const auto &weightedSQ = dissolve.processingModuleData().value<PartialSet>("WeightedSQ", module->uniqueName());
 
         // Get source SQModule in order to have access to the unweighted S(Q)
         const SQModule *sqModule = module->keywords().retrieve<const SQModule *>("SourceSQs", nullptr);
@@ -246,16 +242,11 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 module->uniqueName());
 
         // Retrieve the unweighted S(Q)/F(Q)
-        const auto &unweightedSQ =
-            dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sqModule->uniqueName(), PartialSet(), &found);
-        if (!found)
-            return Messenger::error("Could not locate UnweightedSQ for target '{}'.\n", module->uniqueName());
+        const auto &unweightedSQ = dissolve.processingModuleData().value<PartialSet>("UnweightedSQ", sqModule->uniqueName());
 
         // Retrieve the ReferenceData
         const auto &originalReferenceData =
-            dissolve.processingModuleData().value<Data1D>("ReferenceData", module->uniqueName(), Data1D(), &found);
-        if (!found)
-            return Messenger::error("Could not locate ReferenceData for target '{}'.\n", module->uniqueName());
+            dissolve.processingModuleData().value<Data1D>("ReferenceData", module->uniqueName());
 
         // Realise the r-factor array and make sure its object name is set
         auto &errors = dissolve.processingModuleData().realise<Data1D>(fmt::format("RFactor_{}", module->uniqueName()),
@@ -379,10 +370,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         if (module->type() == "NeutronSQ")
         {
-            const auto &weights = dissolve.processingModuleData().value<NeutronWeights>("FullWeights", module->uniqueName(),
-                                                                                        NeutronWeights(), &found);
-            if (!found)
-                return Messenger::error("Could not locate NeutronWeights for target '{}'.\n", module->uniqueName());
+            const auto &weights = dissolve.processingModuleData().value<NeutronWeights>("FullWeights", module->uniqueName());
 
             // Subtract intramolecular total from the reference data - this will enter into the ScatteringMatrix
             auto refMinusIntra = originalReferenceData;

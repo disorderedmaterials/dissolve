@@ -112,8 +112,8 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("Bragg scattering requested to be included, but reflections from the module '{}' "
                                     "could not be located.\n",
                                     braggModule->uniqueName());
-        const auto &braggReflections = dissolve.processingModuleData().value<Array<BraggReflection>>(
-            "BraggReflections", braggModule->uniqueName(), Array<BraggReflection>());
+        const auto &braggReflections =
+            dissolve.processingModuleData().value<Array<BraggReflection>>("BraggReflections", braggModule->uniqueName());
         const auto nReflections = braggReflections.nItems();
         const auto braggQMax = braggReflections.at(nReflections - 1).q();
         Messenger::print("Found BraggReflections data for module '{}' (nReflections = {}, QMax = {} "

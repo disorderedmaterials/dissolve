@@ -255,7 +255,7 @@ double EnergyModule::totalEnergy(ProcessPool &procPool, Species *sp, const Poten
 EnergyModule::EnergyStability EnergyModule::checkStability(GenericList &processingData, Configuration *cfg)
 {
     // First, check if the Configuration is targetted by an EnergyModule
-    if (!processingData.value<bool>("IsEnergyModuleTarget", cfg->niceName(), false))
+    if (!processingData.valueOr<bool>("IsEnergyModuleTarget", cfg->niceName(), false))
     {
         Messenger::error("Configuration '{}' is not targeted by any EnergyModule, so stability cannot be assessed. "
                          "Check your setup!\n",
