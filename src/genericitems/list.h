@@ -184,6 +184,16 @@ class GenericList
         ++std::get<ItemData::Version>(it->second);
         return std::any_cast<T &>(std::get<ItemData::AnyObject>(it->second));
     }
+    // Return names of all items of the template type
+    template <class T> std::vector<std::string_view> all() const
+    {
+        std::vector<std::string_view> matches;
+        for (auto &[key, value] : items_)
+            if (std::get<ItemData::AnyObject>(value).type() == typeid(T))
+                matches.emplace_back(key);
+
+        return matches;
+    }
 
     /*
      * Serialisation

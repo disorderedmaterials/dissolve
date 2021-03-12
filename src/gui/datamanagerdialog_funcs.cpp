@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
-#include "genericitems/item.h"
 #include "gui/datamanagerdialog.h"
 #include "gui/helpers/tablewidgetupdater.h"
 #include "main/dissolve.h"
@@ -25,68 +24,52 @@ DataManagerDialog::~DataManagerDialog() {}
  * UI
  */
 
-// Append GenericItems to table under specified source
-void DataManagerDialog::addItemsToTable(QTableWidget *table, List<GenericItem> &items)
+// Add GenericItems to table
+void DataManagerDialog::addItems(const std::map<std::string, GenericList::GenericItem> &items)
 {
     QTableWidgetItem *item;
-    auto count = table->rowCount();
-    table->setRowCount(count + items.nItems());
-    ListIterator<GenericItem> itemIterator(items);
-    while (GenericItem *genericItem = itemIterator.iterate())
+    ui_.SimulationDataTable->setRowCount(items.size());
+    auto count = 0;
+    for (auto &[key, value] : items)
     {
         // Item name
-        item = new QTableWidgetItem(QString::fromStdString(std::string(genericItem->name())));
+        item = new QTableWidgetItem(QString::fromStdString(std::string(key)));
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-        item->setData(Qt::UserRole, VariantPointer<GenericItem>(genericItem));
-        table->setItem(count, 0, item);
+        ui_.SimulationDataTable->setItem(count, 0, item);
 
         // Item type
-        item = new QTableWidgetItem(QString::fromStdString(std::string(genericItem->itemClassName())));
+        item = new QTableWidgetItem(QString::fromStdString(std::string(std::get<GenericList::ItemData::ClassName>(value))));
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-        table->setItem(count, 1, item);
+        ui_.SimulationDataTable->setItem(count, 1, item);
 
         // Version
-        item = new QTableWidgetItem(QString::number(genericItem->version()));
+        item = new QTableWidgetItem(QString::number(std::get<GenericList::ItemData::Version>(value)));
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
-        table->setItem(count, 2, item);
+        ui_.SimulationDataTable->setItem(count, 2, item);
 
         ++count;
     }
 }
 
 // Update the specified table of GenericItems, optionally filtering them by name and description
-void DataManagerDialog::filterTable(QTableWidget *table, GenericItem *current, QString filter)
+void DataManagerDialog::filterTable(QString filterText)
 {
     // Loop over rows in the table
-    for (auto n = 0; n < table->rowCount(); ++n)
+    for (auto n = 0; n < ui_.SimulationDataTable->rowCount(); ++n)
     {
-        QTableWidgetItem *item = table->item(n, 0);
+        QTableWidgetItem *item = ui_.SimulationDataTable->item(n, 0);
         if (!item)
             continue;
-        GenericItem *genericItem = VariantPointer<GenericItem>(item->data(Qt::UserRole));
-        if (genericItem == current)
-        {
-            table->setCurrentItem(item);
-        }
 
         // Check filtering
-        if (filter.isEmpty())
-            table->setRowHidden(n, false);
+        if (filterText.isEmpty() || !item->text().contains(QRegExp(filterText, Qt::CaseInsensitive, QRegExp::Wildcard)))
+            ui_.SimulationDataTable->setRowHidden(n, false);
         else
         {
-            // Check name
-            QString name = QString::fromStdString(std::string(genericItem->name()));
-            auto inName = name.contains(QRegExp(filter, Qt::CaseInsensitive, QRegExp::Wildcard));
+            if (item->isSelected())
+                ui_.SimulationDataTable->setCurrentItem(nullptr);
 
-            // Hide the item?
-            auto hide = (!inName);
-            table->setRowHidden(n, hide);
-
-            // If the item was hidden, and it was selected, reset the current index
-            if (hide && item->isSelected())
-            {
-                table->setCurrentItem(nullptr);
-            }
+            ui_.SimulationDataTable->setRowHidden(n, true);
         }
     }
 }
@@ -134,7 +117,7 @@ void DataManagerDialog::updateControls()
 {
     // Clear and re-populate simulation data table
     ui_.SimulationDataTable->setRowCount(0);
-    addItemsToTable(ui_.SimulationDataTable, dissolve_.processingModuleData().items());
+    addItems(dissolve_.processingModuleData().items());
     ui_.SimulationDataTable->resizeColumnsToContents();
 
     // Populate reference points table
@@ -144,10 +127,7 @@ void DataManagerDialog::updateControls()
 }
 
 // Simulation Data
-void DataManagerDialog::on_SimulationDataFilterEdit_textChanged(const QString &text)
-{
-    filterTable(ui_.SimulationDataTable, nullptr, text);
-}
+void DataManagerDialog::on_SimulationDataFilterEdit_textChanged(const QString &text) { filterTable(text); }
 
 // Refernce Points
 void DataManagerDialog::on_ReferencePointRemoveButton_clicked(bool checked)

@@ -63,21 +63,15 @@ void EnergyModuleWidget::updateControls(int flags)
     QPalette labelPalette = ui_.StableLabel->palette();
     if (currentConfiguration_)
     {
-        const auto &totalEnergyArray = processingData_.value<Data1D>(
-            fmt::format("{}//Total", currentConfiguration_->niceName()), module_->uniqueName(), Data1D());
-        if (totalEnergyArray.nValues() < stabilityWindow)
-            ui_.GradientValueLabel->setText("N/A");
+        if (processingData_.contains(fmt::format("{}//EnergyGradient", currentConfiguration_->niceName()),
+                                     module_->uniqueName()))
+            ui_.GradientValueLabel->setText(QString::number(processingData_.value<double>(
+                fmt::format("{}//EnergyGradient", currentConfiguration_->niceName()), module_->uniqueName())));
         else
-        {
-            auto grad = processingData_.value<double>(fmt::format("{}//EnergyGradient", currentConfiguration_->niceName()),
-                                                      module_->uniqueName(), 0.0);
-            ui_.GradientValueLabel->setText(QString::number(grad));
-        }
+            ui_.GradientValueLabel->setText("N/A");
 
-        auto stable = processingData_.value<bool>(fmt::format("{}//EnergyStable", currentConfiguration_->niceName()),
-                                                  module_->uniqueName(), false);
-
-        if (stable)
+        if (processingData_.valueOr<bool>(fmt::format("{}//EnergyStable", currentConfiguration_->niceName()),
+                                          module_->uniqueName(), false))
         {
             labelPalette.setColor(QPalette::WindowText, Qt::darkGreen);
             ui_.StableLabel->setText("Yes");

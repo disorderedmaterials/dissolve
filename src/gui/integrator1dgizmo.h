@@ -6,6 +6,7 @@
 #include "gui/gizmo.h"
 #include "gui/ui_integrator1dgizmo.h"
 #include "math/sampleddouble.h"
+#include "templates/optionalref.h"
 
 // Forward Declarations
 class Dissolve;
@@ -51,7 +52,7 @@ class Integrator1DGizmo : public QWidget, public Gizmo
      */
     private:
     // Data1D that we are integrating
-    Data1D *integrationTarget_;
+    OptionalReferenceWrapper<Data1D> integrationTarget_;
     // Calculated integrals
     SampledDouble integrals_[3];
 
