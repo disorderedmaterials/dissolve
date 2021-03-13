@@ -329,9 +329,6 @@ bool NeutronWeights::isValid() const { return valid_; }
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view NeutronWeights::itemClassName() { return "NeutronWeights"; }
-
 // Read data through specified LineParser
 bool NeutronWeights::read(LineParser &parser, const CoreData &coreData)
 {

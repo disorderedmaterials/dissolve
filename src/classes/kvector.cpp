@@ -107,9 +107,6 @@ double KVector::intensity(int typeI, int typeJ)
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view KVector::itemClassName() { return "KVector"; }
-
 /*
  * Parallel Comms
  */

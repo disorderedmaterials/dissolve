@@ -394,9 +394,6 @@ void Data1D::operator/=(const double factor)
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view Data1D::itemClassName() { return "Data1D"; }
-
 // Read data through specified LineParser
 bool Data1D::read(LineParser &parser, const CoreData &coreData)
 {

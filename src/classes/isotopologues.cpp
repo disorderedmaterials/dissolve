@@ -169,9 +169,6 @@ void Isotopologues::normalise()
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view Isotopologues::itemClassName() { return "Isotopologues"; }
-
 // Read data through specified LineParser
 bool Isotopologues::read(LineParser &parser, const CoreData &coreData)
 {

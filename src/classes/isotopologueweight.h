@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "genericitems/base.h"
 #include "templates/listitem.h"
 #include "templates/refdatalist.h"
 

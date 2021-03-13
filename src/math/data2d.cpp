@@ -343,9 +343,6 @@ void Data2D::operator/=(const double factor)
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view Data2D::itemClassName() { return "Data2D"; }
-
 // Read data through specified LineParser
 bool Data2D::read(LineParser &parser, const CoreData &coreData)
 {

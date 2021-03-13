@@ -272,9 +272,6 @@ void AtomTypeList::print() const
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view AtomTypeList::itemClassName() { return "AtomTypeList"; }
-
 // Read data through specified LineParser
 bool AtomTypeList::read(LineParser &parser, const CoreData &coreData)
 {

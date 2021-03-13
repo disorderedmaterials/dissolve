@@ -201,9 +201,6 @@ void Histogram2D::operator=(const Histogram2D &source)
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view Histogram2D::itemClassName() { return "Histogram2D"; }
-
 // Read data through specified LineParser
 bool Histogram2D::read(LineParser &parser, const CoreData &coreData)
 {

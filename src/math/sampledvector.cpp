@@ -151,9 +151,6 @@ void SampledVector::operator/=(double x)
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view SampledVector::itemClassName() { return "SampledVector"; }
-
 // Read data through specified LineParser
 bool SampledVector::read(LineParser &parser, const CoreData &coreData)
 {

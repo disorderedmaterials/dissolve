@@ -128,9 +128,6 @@ void SampledDouble::operator/=(double x)
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view SampledDouble::itemClassName() { return "SampledDouble"; }
-
 // Read data through specified LineParser
 bool SampledDouble::read(LineParser &parser, const CoreData &coreData)
 {

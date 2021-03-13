@@ -250,9 +250,6 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(std::shared_ptr<At
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view PairBroadeningFunction::itemClassName() { return "PairBroadeningFunction"; }
-
 // Read data through specified LineParser
 bool PairBroadeningFunction::read(LineParser &parser, const CoreData &coreData)
 {

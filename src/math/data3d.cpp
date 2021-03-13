@@ -325,9 +325,6 @@ void Data3D::operator/=(const double factor)
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view Data3D::itemClassName() { return "Data3D"; }
-
 // Read data through specified LineParser
 bool Data3D::read(LineParser &parser, const CoreData &coreData)
 {

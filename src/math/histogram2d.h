@@ -3,7 +3,6 @@
 
 #pragma once
 
-#include "genericitems/base.h"
 #include "math/data2d.h"
 #include "math/sampleddouble.h"
 #include "templates/array2d.h"
@@ -12,7 +11,7 @@
 class ProcessPool;
 
 // One-Dimensional Histogram
-class Histogram2D : public ListItem<Histogram2D>, public GenericItemBase
+class Histogram2D : public ListItem<Histogram2D>
 {
     public:
     Histogram2D();
@@ -104,8 +103,6 @@ class Histogram2D : public ListItem<Histogram2D>, public GenericItemBase
      * GenericItemBase Implementations
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
     bool read(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser

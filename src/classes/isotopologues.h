@@ -4,17 +4,17 @@
 #pragma once
 
 #include "classes/isotopologueweight.h"
-#include "genericitems/base.h"
 #include <vector>
 
 // Forward Declarations
-class Species;
+class CoreData;
 class Isotopologue;
-class ProcessPool;
 class LineParser;
+class ProcessPool;
+class Species;
 
 // Isotopologues
-class Isotopologues : public GenericItemBase
+class Isotopologues
 {
     public:
     Isotopologues(const Species *species = nullptr, int speciesPopulation = 0);
@@ -66,8 +66,6 @@ class Isotopologues : public GenericItemBase
      * GenericItemBase Implementations
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
     bool read(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser

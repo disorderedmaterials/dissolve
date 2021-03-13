@@ -502,9 +502,6 @@ void PartialSet::operator*=(const double factor)
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view PartialSet::itemClassName() { return "PartialSet"; }
-
 // Read data through specified LineParser
 bool PartialSet::read(LineParser &parser, const CoreData &coreData)
 {

@@ -238,9 +238,6 @@ void Histogram3D::operator=(const Histogram3D &source)
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view Histogram3D::itemClassName() { return "Histogram3D"; }
-
 // Read data through specified LineParser
 bool Histogram3D::read(LineParser &parser, const CoreData &coreData)
 {

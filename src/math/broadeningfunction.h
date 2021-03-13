@@ -3,16 +3,17 @@
 
 #pragma once
 
+#include <string_view>
+
 #define MAXBROADENINGFUNCTIONPARAMS 6
 
-#include "genericitems/base.h"
-
 // Forward Declarations
+class CoreData;
 class LineParser;
 class ProcessPool;
 
 // Broadening Function
-class BroadeningFunction : public GenericItemBase
+class BroadeningFunction
 {
     public:
     // Function Types
@@ -106,8 +107,6 @@ class BroadeningFunction : public GenericItemBase
      * GenericItemBase Implementations
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
     bool read(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser

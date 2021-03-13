@@ -183,9 +183,6 @@ void Histogram1D::operator=(const Histogram1D &source)
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view Histogram1D::itemClassName() { return "Histogram1D"; }
-
 // Read data through specified LineParser
 bool Histogram1D::read(LineParser &parser, const CoreData &coreData)
 {

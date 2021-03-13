@@ -101,9 +101,6 @@ int BraggReflection::nKVectors() const { return nKVectors_; }
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view BraggReflection::itemClassName() { return "BraggReflection"; }
-
 // Read data through specified parser
 bool BraggReflection::read(LineParser &parser, const CoreData &coreData)
 {

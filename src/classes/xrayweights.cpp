@@ -268,9 +268,6 @@ bool XRayWeights::isValid() const { return valid_; }
  * GenericItemBase Implementations
  */
 
-// Return class name
-std::string_view XRayWeights::itemClassName() { return "XRayWeights"; }
-
 // Read data through specified LineParser
 bool XRayWeights::read(LineParser &parser, const CoreData &coreData)
 {

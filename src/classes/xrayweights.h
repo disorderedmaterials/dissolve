@@ -5,7 +5,6 @@
 
 #include "classes/atomtypelist.h"
 #include "data/formfactors.h"
-#include "genericitems/base.h"
 #include "templates/array2d.h"
 #include "templates/list.h"
 #include <functional>
@@ -16,7 +15,7 @@ class Species;
 class SpeciesInfo;
 
 // XRay Weights Container
-class XRayWeights : public GenericItemBase
+class XRayWeights
 {
     public:
     XRayWeights();
@@ -103,8 +102,6 @@ class XRayWeights : public GenericItemBase
      * GenericItemBase Implementations
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
     bool read(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser

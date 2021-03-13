@@ -15,7 +15,7 @@ class Configuration;
 class Interpolator;
 
 // Set of Partials
-class PartialSet : public ListItem<PartialSet>, public GenericItemBase
+class PartialSet : public ListItem<PartialSet>
 {
     public:
     PartialSet();
@@ -141,8 +141,6 @@ class PartialSet : public ListItem<PartialSet>, public GenericItemBase
      * GenericItemBase Implementations
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
     bool read(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser

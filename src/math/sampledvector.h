@@ -3,14 +3,13 @@
 
 #pragma once
 
-#include "genericitems/base.h"
 #include <ctime>
 
 // Forward Declarations
 class ProcessPool;
 
 // Vector of double values with sampling
-class SampledVector : public GenericItemBase
+class SampledVector
 {
     public:
     SampledVector();
@@ -55,8 +54,6 @@ class SampledVector : public GenericItemBase
      * GenericItemBase Implementations
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
     bool read(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser

@@ -13,7 +13,7 @@
 class Histogram2D;
 
 // One-Dimensional Data
-class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore<Data2D>, public GenericItemBase
+class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore<Data2D>
 {
     public:
     Data2D();
@@ -103,8 +103,6 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
      * GenericItemBase Implementations
      */
     public:
-    // Return class name
-    static std::string_view itemClassName();
     // Read data through specified LineParser
     bool read(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
