@@ -5,6 +5,7 @@
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "genericitems/producers.h"
 #include <any>
 #include <map>
 #include <typeindex>
@@ -13,7 +14,7 @@
 class GenericList
 {
     public:
-    GenericList();
+    GenericList() = default;
     ~GenericList() = default;
     // Item Data Typedef
     typedef std::tuple<std::any, std::string, int, int> GenericItem;
@@ -66,38 +67,6 @@ class GenericList
      * Item Creation
      */
     public:
-    // Producer function type
-    using ProducerFunction = std::function<std::any()>;
-    // Producers for all data types
-    std::unordered_map<std::type_index, std::string> classNames_;
-    std::unordered_map<std::type_index, ProducerFunction> producers_;
-
-    private:
-    // Register producer for specific class
-    template <class T> void registerProducer(std::string className)
-    {
-        producers_[typeid(T)] = []() { return T(); };
-        classNames_[typeid(T)] = std::move(className);
-    }
-    // Register all producers
-    void registerProducers();
-    // Create new item via template
-    template <class T> GenericItem &create(std::string_view name, int version, int flags)
-    {
-        auto it = producers_.find(typeid(T));
-        if (it == producers_.end())
-            throw(std::runtime_error(
-                fmt::format("A producer has not been registered for type '{}', so object '{}' cannot be created.\n",
-                            typeid(T).name(), name)));
-
-        items_.emplace(name, GenericItem((it->second)(), classNames_[typeid(T)], version, flags));
-
-        return items_[std::string(name)];
-    }
-    // Create new item of the named class type
-    GenericItem &create(std::string_view name, std::string_view className, int version, int flags);
-
-    public:
     // Create or retrieve named item as templated type
     template <class T> T &realise(std::string_view name, std::string_view prefix = "", int flags = -1, bool *created = nullptr)
     {
@@ -123,9 +92,10 @@ class GenericList
         }
 
         // Create and return new item
-        auto &item = create<T>(varName, 0, flags);
         if (created)
             *created = true;
+        items_.emplace(varName, GenericItem(GenericItemProducer::create<T>(), GenericItemProducer::className<T>(), 0, flags));
+        auto &item = items_[varName];
         return std::any_cast<T &>(std::get<ItemData::AnyObject>(item));
     }
 
@@ -198,26 +168,6 @@ class GenericList
     /*
      * Serialisation
      */
-    private:
-    // Deserialisation function type
-    using DeserialiseFunction = std::function<bool(std::any &a, LineParser &parser, CoreData &coreData)>;
-    // Deserialisers for all data types
-    std::unordered_map<std::type_index, DeserialiseFunction> deserialisers_;
-    // Serialisation function type
-    using SerialiseFunction = std::function<bool(const std::any &a, LineParser &parser, const CoreData &coreData)>;
-    // Serialisers for all data types
-    std::unordered_map<std::type_index, SerialiseFunction> serialisers_;
-
-    private:
-    // Register deserialiser for specific class
-    template <class T> void registerDeserialiser(DeserialiseFunction func) { deserialisers_[typeid(T)] = std::move(func); }
-    // Register all deserialisers
-    void registerDeserialisers();
-    // Register serialiser for specific class
-    template <class T> void registerSerialiser(SerialiseFunction func) { serialisers_[typeid(T)] = std::move(func); }
-    // Register all serialisers
-    void registerSerialisers();
-
     public:
     // Serialise all objects via the specified LineParser
     bool serialiseAll(LineParser &parser, const CoreData &coreData, std::string_view headerPrefix) const;

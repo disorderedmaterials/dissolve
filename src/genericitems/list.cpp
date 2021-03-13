@@ -2,18 +2,11 @@
 // Copyright (c) 2021 Team Dissolve and contributors
 
 #include "genericitems/list.h"
+#include "genericitems/deserialisers.h"
+#include "genericitems/serialisers.h"
 #include <cassert>
-#include <classes/partialset.h>
 #include <fmt/core.h>
 #include <typeindex>
-
-GenericList::GenericList()
-{
-    registerBroadcasters();
-    registerDeserialisers();
-    registerProducers();
-    registerSerialisers();
-}
 
 // Clear all items (except those that are marked protected)
 void GenericList::clear()
@@ -95,24 +88,6 @@ void GenericList::pruneWithSuffix(std::string_view suffix)
 }
 
 /*
- * Item Creation
- */
-
-// Create new item of the named class type
-GenericList::GenericItem &GenericList::create(std::string_view name, std::string_view className, int version, int flags)
-{
-    auto it =
-        std::find_if(classNames_.begin(), classNames_.end(), [&className](auto &item) { return item.second == className; });
-    if (it == classNames_.end())
-        throw(std::runtime_error(
-            fmt::format("Item '{}' cannot be created as no producer has been registered for class '{}'.\n", name, className)));
-
-    items_.emplace(name, GenericItem(producers_[it->first](), className, version, flags));
-
-    return items_[std::string(name)];
-}
-
-/*
  * Serialisation
  */
 
@@ -131,12 +106,7 @@ bool GenericList::serialiseAll(LineParser &parser, const CoreData &coreData, std
 
         // Find a suitable serialiser and call it
         auto &data = std::get<ItemData::AnyObject>(value);
-        auto it = serialisers_.find(data.type());
-        if (it == serialisers_.end())
-            throw(std::runtime_error(
-                fmt::format("Item '{}' cannot be serialised as no suitable serialiser has been registered for class '{}'.\n",
-                            key, std::get<ItemData::ClassName>(value))));
-        if (!(it->second)(data, parser, coreData))
+        if (!GenericItemSerialiser::serialise(data, parser, coreData))
             return Messenger::error(fmt::format("Serialisation of item '{}' failed.\n", key));
     }
 
@@ -148,17 +118,12 @@ bool GenericList::deserialise(LineParser &parser, CoreData &coreData, std::strin
                               int version, int flags)
 {
     // Create the item
-    auto &item = create(name, itemClass, version, flags);
-    auto &data = std::get<ItemData::AnyObject>(item);
+    items_[std::string(name)] = GenericItem(GenericItemProducer::create(itemClass), itemClass, version, flags);
+    auto &data = std::get<ItemData::AnyObject>(items_[std::string(name)]);
 
     // Find its deserialiser and call it
-    auto it = deserialisers_.find(data.type());
-    if (it == deserialisers_.end())
-        throw(std::runtime_error(
-            fmt::format("Item '{}' cannot be deserialised as no suitable deserialiser has been registered for class '{}'.\n",
-                        name, itemClass)));
-    if (!(it->second)(data, parser, coreData))
-        return Messenger::error(fmt::format("Deserialisation of item '{}' failed.\n", name));
+    if (!GenericItemDeserialiser::deserialise(data, parser, coreData))
+        return Messenger::error(fmt::format("Deerialisation of item '{}' failed.\n", name));
 
     return true;
 }

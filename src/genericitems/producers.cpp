@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 // Copyright (c) 2021 Team Dissolve and contributors
 
+#include "genericitems/producers.h"
 #include "classes/neutronweights.h"
 #include "classes/partialset.h"
 #include "classes/xrayweights.h"
@@ -13,8 +14,7 @@
 #include "math/histogram3d.h"
 #include <ios>
 
-// Register all producers
-void GenericList::registerProducers()
+GenericItemProducer::GenericItemProducer()
 {
     // PODs
     registerProducer<bool>("bool");
@@ -45,3 +45,62 @@ void GenericList::registerProducers()
     registerProducer<Vec3<double>>("Vec3<double>");
     registerProducer<XRayWeights>("XRayWeights");
 }
+
+/*
+ * Producers
+ */
+
+// Produce object of specified type
+std::any GenericItemProducer::produce(const std::type_info &objectType) const
+{
+    auto it = producers_.find(objectType);
+    if (it == producers_.end())
+        throw(std::runtime_error(
+            fmt::format("A producer has not been registered for type '{}', so a new object of this type cannot be created.\n",
+                        objectType.name())));
+
+    return (it->second)();
+}
+
+// Produce object od named class
+std::any GenericItemProducer::produce(const std::string_view className) const
+{
+    auto it =
+        std::find_if(classNames_.begin(), classNames_.end(), [className](auto &item) { return item.second == className; });
+    if (it == classNames_.end())
+        throw(std::runtime_error(fmt::format(
+            "A producer has not been registered for class name '{}', so a new object of this type cannot be created.\n",
+            className)));
+
+    auto producer = producers_.find(it->first);
+    return (producer->second)();
+}
+
+// Return class name for specified type
+std::string GenericItemProducer::className(const std::type_info &objectType) const
+{
+    auto it = classNames_.find(objectType);
+    if (it == classNames_.end())
+        throw(std::runtime_error(fmt::format("Class name has not been registered for type '{}'.\n", objectType.name())));
+
+    return it->second;
+}
+
+/*
+ * Instance
+ */
+
+// Return the producer instance
+const GenericItemProducer &GenericItemProducer::instance()
+{
+    static GenericItemProducer _instance;
+
+    return _instance;
+}
+
+/*
+ * Static Functions
+ */
+
+// Create new item of the named class type
+std::any GenericItemProducer::create(std::string_view className) { return instance().produce(className); }
