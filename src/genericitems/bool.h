@@ -47,7 +47,7 @@ template <> class GenericItemContainer<bool> : public GenericItem
     // Write data through specified parser
     bool write(LineParser &parser) { return parser.writeLineF("{}\n", DissolveSys::btoa(data_)); }
     // Read data through specified parser
-    bool read(LineParser &parser, CoreData &coreData)
+    bool read(LineParser &parser, const CoreData &coreData)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;

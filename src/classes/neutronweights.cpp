@@ -333,7 +333,7 @@ bool NeutronWeights::isValid() const { return valid_; }
 std::string_view NeutronWeights::itemClassName() { return "NeutronWeights"; }
 
 // Read data through specified LineParser
-bool NeutronWeights::read(LineParser &parser, CoreData &coreData)
+bool NeutronWeights::read(LineParser &parser, const CoreData &coreData)
 {
     clear();
 

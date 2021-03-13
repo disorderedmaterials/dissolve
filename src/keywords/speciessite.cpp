@@ -32,7 +32,7 @@ int SpeciesSiteKeyword::minArguments() const { return 2; }
 int SpeciesSiteKeyword::maxArguments() const { return 2; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool SpeciesSiteKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool SpeciesSiteKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Find target Species (first argument)
     Species *sp = coreData.findSpecies(parser.argsv(startArg));

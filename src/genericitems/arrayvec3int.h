@@ -56,7 +56,7 @@ template <> class GenericItemContainer<Array<Vec3<int>>> : public GenericItem
         return true;
     }
     // Read data through specified parser
-    bool read(LineParser &parser, CoreData &coreData)
+    bool read(LineParser &parser, const CoreData &coreData)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;

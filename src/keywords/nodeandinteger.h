@@ -93,7 +93,7 @@ template <class N> class NodeAndIntegerKeyword : public NodeAndIntegerKeywordBas
     // Return maximum number of arguments accepted
     int maxArguments() const { return 1; }
     // Parse arguments from supplied LineParser, starting at given argument offset
-    bool read(LineParser &parser, int startArg, CoreData &coreData)
+    bool read(LineParser &parser, int startArg, const CoreData &coreData)
     {
         if (!parentNode())
             return Messenger::error("Can't read keyword {} since the parent ProcedureNode has not been set.\n",

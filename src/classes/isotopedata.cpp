@@ -78,7 +78,7 @@ bool IsotopeData::write(LineParser &parser)
 }
 
 // Read data through specified LineParser
-bool IsotopeData::read(LineParser &parser, CoreData &coreData)
+bool IsotopeData::read(LineParser &parser, const CoreData &coreData)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

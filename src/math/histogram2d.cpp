@@ -205,7 +205,7 @@ void Histogram2D::operator=(const Histogram2D &source)
 std::string_view Histogram2D::itemClassName() { return "Histogram2D"; }
 
 // Read data through specified LineParser
-bool Histogram2D::read(LineParser &parser, CoreData &coreData)
+bool Histogram2D::read(LineParser &parser, const CoreData &coreData)
 {
     clear();
 

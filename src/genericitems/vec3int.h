@@ -46,7 +46,7 @@ template <> class GenericItemContainer<Vec3<int>> : public GenericItem
     // Write data through specified parser
     bool write(LineParser &parser) { return parser.writeLineF("{}  {}  {}\n", data_.x, data_.y, data_.z); }
     // Read data through specified parser
-    bool read(LineParser &parser, CoreData &coreData)
+    bool read(LineParser &parser, const CoreData &coreData)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;

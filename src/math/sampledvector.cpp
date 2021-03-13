@@ -155,7 +155,7 @@ void SampledVector::operator/=(double x)
 std::string_view SampledVector::itemClassName() { return "SampledVector"; }
 
 // Read data through specified LineParser
-bool SampledVector::read(LineParser &parser, CoreData &coreData)
+bool SampledVector::read(LineParser &parser, const CoreData &coreData)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

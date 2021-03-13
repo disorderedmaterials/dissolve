@@ -134,7 +134,7 @@ class Histogram3D : public ListItem<Histogram3D>, public GenericItemBase
     // Return class name
     static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool read(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
     bool write(LineParser &parser) const;
 

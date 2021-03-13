@@ -276,7 +276,7 @@ void AtomTypeList::print() const
 std::string_view AtomTypeList::itemClassName() { return "AtomTypeList"; }
 
 // Read data through specified LineParser
-bool AtomTypeList::read(LineParser &parser, CoreData &coreData)
+bool AtomTypeList::read(LineParser &parser, const CoreData &coreData)
 {
     types_.clear();
 

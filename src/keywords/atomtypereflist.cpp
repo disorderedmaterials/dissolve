@@ -24,7 +24,7 @@ int AtomTypeRefListKeyword::minArguments() const { return 1; }
 int AtomTypeRefListKeyword::maxArguments() const { return 999; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool AtomTypeRefListKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool AtomTypeRefListKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Loop over arguments (which are AtomType names) and add them to our list
     for (auto n = startArg; n < parser.nArgs(); ++n)

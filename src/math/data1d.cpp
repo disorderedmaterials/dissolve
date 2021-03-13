@@ -398,7 +398,7 @@ void Data1D::operator/=(const double factor)
 std::string_view Data1D::itemClassName() { return "Data1D"; }
 
 // Read data through specified LineParser
-bool Data1D::read(LineParser &parser, CoreData &coreData)
+bool Data1D::read(LineParser &parser, const CoreData &coreData)
 {
     clear();
 

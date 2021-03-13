@@ -20,7 +20,7 @@ int BoolKeyword::minArguments() const { return 1; }
 int BoolKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool BoolKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool BoolKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (parser.hasArg(startArg))
     {

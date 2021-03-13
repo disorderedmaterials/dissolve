@@ -401,7 +401,7 @@ void SequenceProcedureNode::setBlockTerminationKeyword(std::string_view endKeywo
 std::string_view SequenceProcedureNode::blockTerminationKeyword() const { return blockTerminationKeyword_; }
 
 // Read structure from specified LineParser
-bool SequenceProcedureNode::read(LineParser &parser, CoreData &coreData)
+bool SequenceProcedureNode::read(LineParser &parser, const CoreData &coreData)
 {
     // Read until we encounter the block-ending keyword, or we fail for some reason
     while (!parser.eofOrBlank())

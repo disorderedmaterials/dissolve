@@ -73,7 +73,7 @@ class BraggReflection : public GenericItemBase
     // Return class name
     static std::string_view itemClassName();
     // Read data through specified parser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool read(LineParser &parser, const CoreData &coreData);
     // Write data through specified parser
     bool write(LineParser &parser);
 

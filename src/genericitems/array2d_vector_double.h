@@ -58,7 +58,7 @@ template <> class GenericItemContainer<Array2D<std::vector<double>>> : public Ge
         return true;
     }
     // Read data through specified parser
-    bool read(LineParser &parser, CoreData &coreData)
+    bool read(LineParser &parser, const CoreData &coreData)
     {
         if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
             return false;

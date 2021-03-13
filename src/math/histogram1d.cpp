@@ -187,7 +187,7 @@ void Histogram1D::operator=(const Histogram1D &source)
 std::string_view Histogram1D::itemClassName() { return "Histogram1D"; }
 
 // Read data through specified LineParser
-bool Histogram1D::read(LineParser &parser, CoreData &coreData)
+bool Histogram1D::read(LineParser &parser, const CoreData &coreData)
 {
     clear();
 

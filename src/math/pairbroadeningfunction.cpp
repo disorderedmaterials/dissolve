@@ -65,7 +65,7 @@ int PairBroadeningFunction::nFunctionParameters(FunctionType func) { return Pair
  */
 
 // Read function data from LineParser source
-bool PairBroadeningFunction::readAsKeyword(LineParser &parser, int startArg, CoreData &coreData)
+bool PairBroadeningFunction::readAsKeyword(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // First argument is the form of the function, or a '&' to indicate that a full block-style definition of the data
     if (DissolveSys::sameString("&", parser.argsv(startArg)))
@@ -254,7 +254,7 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(std::shared_ptr<At
 std::string_view PairBroadeningFunction::itemClassName() { return "PairBroadeningFunction"; }
 
 // Read data through specified LineParser
-bool PairBroadeningFunction::read(LineParser &parser, CoreData &coreData)
+bool PairBroadeningFunction::read(LineParser &parser, const CoreData &coreData)
 {
     // First line is function name
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

@@ -55,7 +55,7 @@ class PairBroadeningFunction : public GenericItemBase
 
     public:
     // Read function data from LineParser source
-    bool readAsKeyword(LineParser &parser, int startArg, CoreData &coreData);
+    bool readAsKeyword(LineParser &parser, int startArg, const CoreData &coreData);
     // Write function data to LineParser source
     bool writeAsKeyword(LineParser &parser, std::string_view prefix, bool writeBlockMarker = true);
     // Set function type
@@ -81,7 +81,7 @@ class PairBroadeningFunction : public GenericItemBase
     // Return class name
     static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool read(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
     bool write(LineParser &parser);
 

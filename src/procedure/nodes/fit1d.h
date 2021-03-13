@@ -101,7 +101,7 @@ class Fit1DProcedureNode : public ProcedureNode
      */
     public:
     // Read structure from specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool read(LineParser &parser, const CoreData &coreData);
     // Write structure to specified LineParser
     bool write(LineParser &parser, std::string_view prefix);
 };

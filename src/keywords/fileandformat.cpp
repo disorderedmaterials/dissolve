@@ -38,7 +38,7 @@ int FileAndFormatKeyword::maxArguments() const
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool FileAndFormatKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool FileAndFormatKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (!data_.read(parser, startArg, endKeyword_, coreData))
         return Messenger::error("Failed to read file/format.\n");

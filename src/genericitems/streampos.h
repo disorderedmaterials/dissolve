@@ -47,7 +47,7 @@ template <> class GenericItemContainer<std::streampos> : public GenericItem
     // Write data through specified parser
     bool write(LineParser &parser) { return parser.writeArg(data_); }
     // Read data through specified parser
-    bool read(LineParser &parser, CoreData &coreData)
+    bool read(LineParser &parser, const CoreData &coreData)
     {
         // NOTE Can't implicit cast streampos into the arg for readArg(), so assume long long int for now.
         long long int pos;

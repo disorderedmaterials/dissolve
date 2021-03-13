@@ -166,12 +166,15 @@ GenericItemDeserialiser::GenericItemDeserialiser()
     registerDeserialiser<AtomTypeList>([](std::any &a, LineParser &parser, const CoreData &coreData) {
         return std::any_cast<AtomTypeList &>(a).read(parser, coreData);
     });
-    registerDeserialiser<Data1D>(
-        [](std::any &a, LineParser &parser, const CoreData &coreData) { return std::any_cast<Data1D &>(a).read(parser, coreData); });
-    registerDeserialiser<Data2D>(
-        [](std::any &a, LineParser &parser, const CoreData &coreData) { return std::any_cast<Data2D &>(a).read(parser, coreData); });
-    registerDeserialiser<Data3D>(
-        [](std::any &a, LineParser &parser, const CoreData &coreData) { return std::any_cast<Data3D &>(a).read(parser, coreData); });
+    registerDeserialiser<Data1D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
+        return std::any_cast<Data1D &>(a).read(parser, coreData);
+    });
+    registerDeserialiser<Data2D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
+        return std::any_cast<Data2D &>(a).read(parser, coreData);
+    });
+    registerDeserialiser<Data3D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
+        return std::any_cast<Data3D &>(a).read(parser, coreData);
+    });
     registerDeserialiser<Histogram1D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
         return std::any_cast<Histogram1D &>(a).read(parser, coreData);
     });
@@ -201,7 +204,7 @@ GenericItemDeserialiser::GenericItemDeserialiser()
         v = parser.arg3d(0);
         return true;
     });
-    registerDeserialiser<XRayWeights>([](std::any &a, LineParser &parser, constCoreData &coreData) {
+    registerDeserialiser<XRayWeights>([](std::any &a, LineParser &parser, const CoreData &coreData) {
         return std::any_cast<XRayWeights &>(a).read(parser, coreData);
     });
 }

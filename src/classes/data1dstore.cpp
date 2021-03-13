@@ -15,7 +15,7 @@ Data1DStore::~Data1DStore() {}
 
 // Add named data reference to store, reading file and format from specified parser / starting argument
 bool Data1DStore::addData(std::string_view dataName, LineParser &parser, int startArg, std::string_view endKeyword,
-                          CoreData &coreData)
+                          const CoreData &coreData)
 {
     // Create new data
     Data1D *data = data_.add();

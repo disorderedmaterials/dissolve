@@ -85,7 +85,7 @@ class GenericItem : public ListItem<GenericItem>
     // Write data through specified parser
     virtual bool write(LineParser &parser) = 0;
     // Read data through specified parser
-    virtual bool read(LineParser &parser, CoreData &coreData) = 0;
+    virtual bool read(LineParser &parser, const CoreData &coreData) = 0;
 
     /*
      * Parallel Comms

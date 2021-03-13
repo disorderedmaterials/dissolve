@@ -132,7 +132,7 @@ void SampledDouble::operator/=(double x)
 std::string_view SampledDouble::itemClassName() { return "SampledDouble"; }
 
 // Read data through specified LineParser
-bool SampledDouble::read(LineParser &parser, CoreData &coreData)
+bool SampledDouble::read(LineParser &parser, const CoreData &coreData)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

@@ -47,7 +47,7 @@ template <class T> class GenericItemContainer : public GenericItem
     // Write data through specified parser
     bool write(LineParser &parser) { return data_.write(parser); }
     // Read data through specified parser
-    bool read(LineParser &parser, CoreData &coreData) { return data_.read(parser, coreData); }
+    bool read(LineParser &parser, const CoreData &coreData) { return data_.read(parser, coreData); }
 
     /*
      * Parallel Comms

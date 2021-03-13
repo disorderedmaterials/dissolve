@@ -101,7 +101,7 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
     // Return class name
     static std::string_view itemClassName();
     // Read data through specified LineParser
-    bool read(LineParser &parser, CoreData &coreData);
+    bool read(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
     bool write(LineParser &parser) const;
 

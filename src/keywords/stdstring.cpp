@@ -20,7 +20,7 @@ int StringKeyword::minArguments() const { return 1; }
 int StringKeyword::maxArguments() const { return 1; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool StringKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool StringKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (parser.hasArg(startArg))
     {

@@ -30,7 +30,7 @@ int Data3DStoreKeyword::maxArguments() const
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool Data3DStoreKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool Data3DStoreKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     Messenger::print("Reading test data '{}' from file '{}' (format={})...\n", parser.argsv(startArg),
                      parser.argsv(startArg + 2), parser.argsv(startArg + 1));

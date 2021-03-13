@@ -35,7 +35,7 @@ int LinkToKeyword::maxArguments() const
 }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool LinkToKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool LinkToKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     Messenger::warn("Don't call LinkToKeyword::read() - go through base().\n");
     return data_->read(parser, startArg, coreData);

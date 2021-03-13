@@ -88,7 +88,7 @@ class FileAndFormat
      */
     public:
     // Read format / filename from specified parser
-    bool read(LineParser &parser, int startArg, std::string_view endKeyword, CoreData &coreData);
+    bool read(LineParser &parser, int startArg, std::string_view endKeyword, const CoreData &coreData);
     // Write format / filename to specified parser
     bool writeFilenameAndFormat(LineParser &parser, std::string_view prefix);
     // Write options and end block

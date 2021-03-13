@@ -506,7 +506,7 @@ void PartialSet::operator*=(const double factor)
 std::string_view PartialSet::itemClassName() { return "PartialSet"; }
 
 // Read data through specified LineParser
-bool PartialSet::read(LineParser &parser, CoreData &coreData)
+bool PartialSet::read(LineParser &parser, const CoreData &coreData)
 {
     if (parser.readNextLine(LineParser::Defaults, objectNamePrefix_) != LineParser::Success)
         return false;

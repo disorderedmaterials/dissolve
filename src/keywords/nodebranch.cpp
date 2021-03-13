@@ -34,7 +34,7 @@ int NodeBranchKeyword::minArguments() const { return 0; }
 int NodeBranchKeyword::maxArguments() const { return 0; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool NodeBranchKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool NodeBranchKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     // Check that a branch hasn't already been defined
     if (*data_)

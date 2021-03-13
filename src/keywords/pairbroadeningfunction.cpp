@@ -22,7 +22,7 @@ int PairBroadeningFunctionKeyword::minArguments() const { return 1; }
 int PairBroadeningFunctionKeyword::maxArguments() const { return 2; }
 
 // Parse arguments from supplied LineParser, starting at given argument offset
-bool PairBroadeningFunctionKeyword::read(LineParser &parser, int startArg, CoreData &coreData)
+bool PairBroadeningFunctionKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
     if (data_.readAsKeyword(parser, startArg, coreData))
         set_ = true;
