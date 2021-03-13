@@ -7,7 +7,6 @@
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "classes/speciesinfo.h"
-#include "genericitems/array2ddouble.h"
 #include "templates/algorithms.h"
 #include "templates/enumhelpers.h"
 #include <functional>

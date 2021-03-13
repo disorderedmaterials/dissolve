@@ -7,7 +7,8 @@
 #include "classes/atomtype.h"
 #include "classes/species.h"
 #include "data/isotopes.h"
-#include "genericitems/array2ddouble.h"
+#include "genericitems/deserialisers.h"
+#include "genericitems/serialisers.h"
 #include "templates/algorithms.h"
 #include "templates/broadcastlist.h"
 #include "templates/broadcastvector.h"
@@ -351,13 +352,13 @@ bool NeutronWeights::read(LineParser &parser, const CoreData &coreData)
     }
 
     // Read arrays using static methods in the relevant GenericItemContainer
-    if (!GenericItemContainer<Array2D<double>>::read(concentrationProducts_, parser))
+    if (!GenericItemDeserialiser::deserialise<Array2D<double>>(concentrationProducts_, parser))
         return false;
-    if (!GenericItemContainer<Array2D<double>>::read(boundCoherentProducts_, parser))
+    if (!GenericItemDeserialiser::deserialise<Array2D<double>>(boundCoherentProducts_, parser))
         return false;
-    if (!GenericItemContainer<Array2D<double>>::read(weights_, parser))
+    if (!GenericItemDeserialiser::deserialise<Array2D<double>>(weights_, parser))
         return false;
-    if (!GenericItemContainer<Array2D<double>>::read(intramolecularWeights_, parser))
+    if (!GenericItemDeserialiser::deserialise<Array2D<double>>(intramolecularWeights_, parser))
         return false;
 
     // Read averages
@@ -384,13 +385,13 @@ bool NeutronWeights::write(LineParser &parser) const
             return false;
 
     // Write arrays using static methods in the relevant GenericItemContainer
-    if (!GenericItemContainer<Array2D<double>>::write(concentrationProducts_, parser))
+    if (!GenericItemSerialiser::serialise<Array2D<double>>(concentrationProducts_, parser))
         return false;
-    if (!GenericItemContainer<Array2D<double>>::write(boundCoherentProducts_, parser))
+    if (!GenericItemSerialiser::serialise<Array2D<double>>(boundCoherentProducts_, parser))
         return false;
-    if (!GenericItemContainer<Array2D<double>>::write(weights_, parser))
+    if (!GenericItemSerialiser::serialise<Array2D<double>>(weights_, parser))
         return false;
-    if (!GenericItemContainer<Array2D<double>>::write(intramolecularWeights_, parser))
+    if (!GenericItemSerialiser::serialise<Array2D<double>>(intramolecularWeights_, parser))
         return false;
 
     // Write averages

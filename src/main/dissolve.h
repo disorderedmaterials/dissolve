@@ -38,8 +38,6 @@ class Dissolve
     const CoreData &coreData() const;
     // Clear all data
     void clear();
-    // Register GenericItems
-    void registerGenericItems();
 
     /*
      * Atom Types

@@ -6,7 +6,8 @@
 #include "classes/atomtype.h"
 #include "classes/box.h"
 #include "classes/configuration.h"
-#include "genericitems/array2dchar.h"
+#include "genericitems/deserialisers.h"
+#include "genericitems/serialisers.h"
 #include "io/export/data1d.h"
 #include "templates/algorithms.h"
 
@@ -543,7 +544,7 @@ bool PartialSet::read(LineParser &parser, const CoreData &coreData)
         return false;
 
     // Read empty bound flags
-    if (!GenericItemContainer<Array2D<char>>::read(emptyBoundPartials_, parser))
+    if (!GenericItemDeserialiser::deserialise<Array2D<char>>(emptyBoundPartials_, parser))
         return false;
 
     return true;
@@ -583,7 +584,7 @@ bool PartialSet::write(LineParser &parser) const
         return false;
 
     // Write empty bound flags
-    if (!GenericItemContainer<Array2D<char>>::write(emptyBoundPartials_, parser))
+    if (!GenericItemSerialiser::serialise<Array2D<char>>(emptyBoundPartials_, parser))
         return false;
 
     return true;

@@ -63,7 +63,6 @@ class KVector
      * GenericItemBase Implementations
      */
     public:
-
     /*
      * Parallel Comms
      */

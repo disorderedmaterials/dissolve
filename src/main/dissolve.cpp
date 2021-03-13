@@ -8,8 +8,6 @@
 #include "classes/neutronweights.h"
 #include "classes/partialset.h"
 #include "classes/species.h"
-#include "genericitems/item.h"
-#include "genericitems/items.h"
 #include "math/histogram1d.h"
 #include "math/histogram2d.h"
 #include "math/histogram3d.h"
@@ -34,9 +32,6 @@ Dissolve::Dissolve(CoreData &coreData) : coreData_(coreData)
     // Parallel Comms
     parallelStrategy_ = Dissolve::SequentialConfigStrategy;
     parallelGroupPopulation_ = ProcessPool::MinimumGroupPopulation;
-
-    // Register GenericItems
-    registerGenericItems();
 }
 
 Dissolve::~Dissolve()
@@ -89,45 +84,4 @@ void Dissolve::clear()
     setInputFilename("");
     restartFilename_.clear();
     saveRestartTimes_ = 0.0;
-}
-
-// Register GenericItems
-void Dissolve::registerGenericItems()
-{
-    GenericItem::addItemClass(new GenericItemContainer<bool>("bool"));
-    GenericItem::addItemClass(new GenericItemContainer<int>("int"));
-    GenericItem::addItemClass(new GenericItemContainer<double>("double"));
-    GenericItem::addItemClass(new GenericItemContainer<std::streampos>("streampos"));
-    GenericItem::addItemClass(new GenericItemContainer<std::string>("string"));
-
-    GenericItem::addItemClass(new GenericItemContainer<std::vector<double>>("std::vector<double>"));
-
-    GenericItem::addItemClass(new GenericItemContainer<Vec3<int>>("Vec3<int>"));
-    GenericItem::addItemClass(new GenericItemContainer<Vec3<double>>("Vec3<double>"));
-
-    GenericItem::addItemClass(new GenericItemContainer<Array2D<double>>("Array2D<double>"));
-    GenericItem::addItemClass(new GenericItemContainer<Array2D<std::vector<double>>>("Array2D<std::vector<double>>"));
-    GenericItem::addItemClass(new GenericItemContainer<Array2D<DummyClass>>("Array2D<DummyClass>"));
-
-    GenericItem::addItemClass(new GenericItemContainer<Array<int>>("Array<int>"));
-    GenericItem::addItemClass(new GenericItemContainer<Array<double>>("Array<double>"));
-    GenericItem::addItemClass(new GenericItemContainer<Array<DummyClass>>("Array<DummyClass>"));
-    GenericItem::addItemClass(new GenericItemContainer<Array<BraggReflection>>("Array<BraggReflection>"));
-    GenericItem::addItemClass(new GenericItemContainer<Array<SampledDouble>>("Array<SampledDouble>"));
-    GenericItem::addItemClass(new GenericItemContainer<Array<Vec3<int>>>("Array<Vec3<int>>"));
-    GenericItem::addItemClass(new GenericItemContainer<Array<Vec3<double>>>("Array<Vec3<double>>"));
-
-    GenericItem::addItemClass(new GenericItemContainer<AtomTypeList>(AtomTypeList::itemClassName()));
-    GenericItem::addItemClass(new GenericItemContainer<BraggReflection>(BraggReflection::itemClassName()));
-    GenericItem::addItemClass(new GenericItemContainer<Data1D>(Data1D::itemClassName()));
-    GenericItem::addItemClass(new GenericItemContainer<Data2D>(Data2D::itemClassName()));
-    GenericItem::addItemClass(new GenericItemContainer<Data3D>(Data3D::itemClassName()));
-    GenericItem::addItemClass(new GenericItemContainer<Histogram1D>(Histogram1D::itemClassName()));
-    GenericItem::addItemClass(new GenericItemContainer<Histogram2D>(Histogram2D::itemClassName()));
-    GenericItem::addItemClass(new GenericItemContainer<Histogram3D>(Histogram3D::itemClassName()));
-    GenericItem::addItemClass(new GenericItemContainer<Isotopologues>(Isotopologues::itemClassName()));
-    GenericItem::addItemClass(new GenericItemContainer<KVector>(KVector::itemClassName()));
-    GenericItem::addItemClass(new GenericItemContainer<NeutronWeights>(NeutronWeights::itemClassName()));
-    GenericItem::addItemClass(new GenericItemContainer<PairBroadeningFunction>(PairBroadeningFunction::itemClassName()));
-    GenericItem::addItemClass(new GenericItemContainer<PartialSet>(PartialSet::itemClassName()));
 }

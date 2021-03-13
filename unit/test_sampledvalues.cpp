@@ -5,6 +5,7 @@
 #include "math/sampledvector.h"
 #include "templates/algorithms.h"
 #include <gtest/gtest.h>
+#include <cmath>
 #include <vector>
 
 namespace UnitTest

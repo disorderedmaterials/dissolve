@@ -3,9 +3,11 @@
 
 #pragma once
 
-#include <ctime>
+#include <vector>
 
 // Forward Declarations
+class CoreData;
+class LineParser;
 class ProcessPool;
 
 // Vector of double values with sampling

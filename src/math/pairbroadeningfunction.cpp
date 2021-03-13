@@ -8,7 +8,6 @@
 #include "classes/atomtype.h"
 #include "classes/speciesintra.h"
 #include "data/atomicmasses.h"
-#include "genericitems/array2ddouble.h"
 #include "templates/algorithms.h"
 #include "templates/enumhelpers.h"
 
