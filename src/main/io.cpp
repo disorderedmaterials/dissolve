@@ -441,7 +441,7 @@ bool Dissolve::loadRestart(std::string_view filename)
             Messenger::print("Reading item '{}' ({}) into processing module data...\n", parser.argsv(1), parser.argsv(2));
 
             // Realise the item in the list
-            processingModuleData_.deserialise(parser, coreData_, parser.argsv(1), parser.argsv(2), parser.argi(3),
+            processingModuleData_.deserialise(parser, coreData_, parser.args(1), parser.args(2), parser.argi(3),
                                               parser.hasArg(4) ? parser.argi(4) : 0);
         }
         else if (DissolveSys::sameString(parser.argsv(0), "Configuration"))
@@ -544,7 +544,7 @@ bool Dissolve::loadRestartAsReference(std::string_view filename, std::string_vie
                              parser.argsv(2));
 
             // Deserialise the item
-            processingModuleData_.deserialise(parser, coreData_, newName, parser.argsv(2), parser.argi(3),
+            processingModuleData_.deserialise(parser, coreData_, newName, parser.args(2), parser.argi(3),
                                               GenericList::IsReferencePointDataFlag);
 
             skipCurrentItem = false;

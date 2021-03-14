@@ -114,8 +114,8 @@ bool GenericList::serialiseAll(LineParser &parser, const CoreData &coreData, std
 }
 
 // Deserialise an object from the LineParser into our map
-bool GenericList::deserialise(LineParser &parser, CoreData &coreData, std::string_view name, std::string_view itemClass,
-                              int version, int flags)
+bool GenericList::deserialise(LineParser &parser, CoreData &coreData, std::string name, std::string itemClass, int version,
+                              int flags)
 {
     // Create the item
     items_[std::string(name)] = GenericItem(GenericItemProducer::create(itemClass), itemClass, version, flags);

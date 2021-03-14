@@ -819,6 +819,17 @@ bool LineParser::commitCache()
 // Returns number of arguments grabbed from last parse
 int LineParser::nArgs() const { return arguments_.size(); }
 
+// Returns the specified argument as a string
+std::string LineParser::args(int i)
+{
+    if ((i < 0) || (i >= nArgs()))
+    {
+        Messenger::warn("LineParser::args() - Argument {} is out of range - returning \"NULL\"...\n", i);
+        return "NULL";
+    }
+    return arguments_[i];
+}
+
 // Returns the specified argument as a character string view
 std::string_view LineParser::argsv(int i)
 {

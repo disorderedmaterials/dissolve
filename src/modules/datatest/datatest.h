@@ -67,8 +67,8 @@ class DataTestModule : public Module
     private:
     // Find reference Data
     template <class T>
-    const OptionalReferenceWrapper<T> findReferenceData(std::string_view dataIdentifier, Module *targetModule,
-                                                        GenericList &processingModuleData)
+    const OptionalReferenceWrapper<const T> findReferenceData(std::string_view dataIdentifier, Module *targetModule,
+                                                              GenericList &processingModuleData)
     {
         // If a target module was supplied, search there first
         if (targetModule)
