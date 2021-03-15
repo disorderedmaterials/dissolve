@@ -70,16 +70,12 @@ class DataTestModule : public Module
     const OptionalReferenceWrapper<const T> findReferenceData(std::string_view dataIdentifier, Module *targetModule,
                                                               GenericList &processingModuleData)
     {
-        // If a target module was supplied, search there first
-        if (targetModule)
-        {
-            // The 'dataIdentifier' is the actual name of the data (possibly with module prefix) - does it exist in
-            // the target list?
-            if (processingModuleData.contains(dataIdentifier, targetModule->uniqueName()))
-                return processingModuleData.value<T>(dataIdentifier, targetModule->uniqueName());
-            else if (processingModuleData.contains(dataIdentifier))
-                return processingModuleData.value<T>(dataIdentifier);
-        }
+        // The 'dataIdentifier' is the actual name of the data (possibly with module prefix) - does it exist in
+        // the target list?
+        if (targetModule && processingModuleData.contains(dataIdentifier, targetModule->uniqueName()))
+            return processingModuleData.value<T>(dataIdentifier, targetModule->uniqueName());
+        else if (processingModuleData.contains(dataIdentifier))
+            return processingModuleData.value<T>(dataIdentifier);
 
         // If we haven't found it yet, try a search by object tag
         if (T::findObject(dataIdentifier))
