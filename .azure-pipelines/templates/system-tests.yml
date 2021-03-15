@@ -1,6 +1,8 @@
 parameters:
   - name: parallel
     default: false
+  - name: qtver
+    default: 513
 
 jobs:
   - job:
@@ -11,6 +13,9 @@ jobs:
     steps:
       - checkout: self
         fetchDepth: 1
+      - bash: |
+          set -ex
+          sudo apt-get install qt${{ parameters.qtver }}base
       - task: DownloadBuildArtifacts@0
         inputs:
           buildType: 'current'
