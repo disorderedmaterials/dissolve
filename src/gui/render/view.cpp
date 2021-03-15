@@ -909,7 +909,7 @@ void View::autoFollowData()
     // Only update the axes if one of the renderables transformed data has changed, to prevent needless primitive
     // regeneration further down the line
     auto updateRequired = false;
-    for (const auto rend : renderables_)
+    for (const auto &rend : renderables_)
     {
         // If the renderable isn't in the list, or our stored version is different, we need to update
         auto it = std::find_if(autoFollowTransformVersions_.begin(), autoFollowTransformVersions_.end(),
