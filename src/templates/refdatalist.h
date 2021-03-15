@@ -3,6 +3,7 @@
 
 #pragma once
 
+#include <cassert>
 #include <fmt/core.h>
 #include <stddef.h>
 #include <stdio.h>
