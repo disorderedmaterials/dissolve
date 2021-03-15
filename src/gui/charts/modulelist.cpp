@@ -477,8 +477,7 @@ QSize ModuleListChart::calculateNewWidgetGeometry(QSize currentSize)
     hotSpot = hotSpot->next();
 
     // Set the correct heights for all hotspots up to the current one - any after that are not required and will have zero
-    // height 	for (ChartHotSpot* spot = hotSpots_.first(); spot != hotSpot; spot = spot->next())
-    // spot->setWidth(maxWidth);
+    // height
     for (auto *spot = hotSpot; spot != nullptr; spot = spot->next())
         spot->setHeight(0);
 

@@ -207,7 +207,6 @@ void DataWidget::dataTreeTopLevelUpdateFunction(QTreeWidget *treeWidget, int top
 
     // Set item data
     item->setText(0, QString::fromStdString(std::string(data->name())));
-    // 	item->setIcon(0, QIcon(":/general/icons/general_true.svg"));
     item->setCheckState(0, data->isVisible() ? Qt::Checked : Qt::Unchecked);
 
     // Update child items
@@ -232,7 +231,6 @@ void DataWidget::dataTreeItemUpdateFunction(QTreeWidgetItem *parentItem, int chi
 
     // Set item data
     item->setText(0, QString::fromStdString(std::string(data->name())));
-    // 	item->setIcon(0, QIcon(":/general/icons/general_true.svg"));
     item->setCheckState(0, data->isVisible() ? Qt::Checked : Qt::Unchecked);
 }
 

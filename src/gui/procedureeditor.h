@@ -61,9 +61,6 @@ class ProcedureEditor : public QWidget
     // Pointer to created ProcedureChart
     ProcedureChart *chart_;
 
-    private slots:
-    // 	void on_AvailableModulesTree_itemDoubleClicked(QTreeWidgetItem* item);
-
     /*
      * Signals / Slots
      */

@@ -45,7 +45,6 @@ void IsotopeComboDelegate::setEditorData(QWidget *editor, const QModelIndex &ind
     }
     else
         Messenger::error("IsotopeComboDelegate::createEditor() - Did not find an Isotope* in the associated QModelIndex.\n");
-    // 	QString value = index.model()->data(index, Qt::EditRole).toString();
 }
 
 // Get value from editing widget, and set back in model

@@ -68,7 +68,6 @@ bool Dissolve::setUpMPIPools()
     Array<int> configSizes;
     for (auto *cfg = coreData_.configurations().first(); cfg != nullptr; cfg = cfg->next())
         configSizes.add(cfg->nAtoms());
-    // 	configSizes /= configSizes.min();
 
     // Default pool - all world ranks
     Array<int> allProcesses;

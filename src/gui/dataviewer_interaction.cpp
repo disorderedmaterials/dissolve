@@ -45,8 +45,6 @@ void DataViewer::endInteraction()
                 // Single, targetted click - get the clicked object
                 // TODO What action are we performing here? Would this be better as a right-click action,
                 // raising a context menu?
-                // ViewerObject obj = queryAt(rMouseLast_.x, rMouseLast_.y);
-                // Messenger::print("Object Type = {}, info = [{}]\n", BaseViewer::viewerObject(obj), queryObjectInfo());
             }
             else
             {
@@ -132,27 +130,3 @@ const QString DataViewer::interactionModeText() const
             return "Unknown DataViewerInteraction";
     }
 }
-
-// // Return clicked interaction coordinate on axis
-// double DataViewer::clickedInteractionCoordinate()
-// {
-// 	// Check for valid interaction axis
-// 	if (interactionAxis_ == -1) return 0.0;
-//
-// 	Axes& axes = view_.axes();
-// 	if (axes.logarithmic(interactionAxis_)) return (axes.inverted(interactionAxis_) ?
-// log10(axes.max(interactionAxis_)/clickedInteractionValue_) : log10(clickedInteractionValue_)); 	else return
-// (axes.inverted(interactionAxis_) ? axes.max(interactionAxis_) - clickedInteractionValue_ : clickedInteractionValue_);
-// }
-//
-// // Return current interaction coordinate on axis
-// double DataViewer::currentInteractionCoordinate()
-// {
-// 	// Check for valid interaction axis
-// 	if (interactionAxis_ == -1) return 0.0;
-//
-// 	Axes& axes = view_.axes();
-// 	if (axes.logarithmic(interactionAxis_)) return (axes.inverted(interactionAxis_) ?
-// log10(axes.max(interactionAxis_)/currentInteractionValue_) : log10(currentInteractionValue_)); 	else return
-// (axes.inverted(interactionAxis_) ? axes.max(interactionAxis_) - currentInteractionValue_ : currentInteractionValue_);
-// }

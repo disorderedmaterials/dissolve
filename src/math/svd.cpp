@@ -211,7 +211,6 @@ bool SVD::decompose(const Array2D<double> &A, Array2D<double> &U, Array2D<double
                 {
                     f = s * rv1[i];
 
-                    // 	  rv1[i] = c * rv1[i];
                     if ((fabs(f) + anorm) != anorm)
                     {
                         g = S[{i, i}];
@@ -371,9 +370,6 @@ bool SVD::pseudoinverse(Array2D<double> &A)
     Array2D<double> U, S, Vt;
     if (!decompose(A, U, S, Vt))
         return false;
-    // 	U.print("U");
-    // 	S.print("S");
-    // 	V.print("V");
 
     // Perform a quick sanity check on the decomposition
     Array2D<double> A2;
@@ -385,9 +381,6 @@ bool SVD::pseudoinverse(Array2D<double> &A)
             if (fabs(A[{n, m}] - A2[{n, m}]) > 1.0e-9)
                 return Messenger::error("DissolveMath::pseudoinverse() - SVD does not appear to be valid.\n");
     }
-    // 	A.print("Original A");
-    // 	A2.print("Recombined A");
-
     // Take the diagonal single-value matrix S and form its pseudoinverse.
     // This amounts to taking each non-zero diagonal element and replacing it with its reciprocal
     Array2D<double> Splus = S;

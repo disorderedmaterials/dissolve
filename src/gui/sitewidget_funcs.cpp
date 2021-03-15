@@ -16,11 +16,6 @@ SiteWidget::SiteWidget(QWidget *parent) : QWidget(parent)
     // Set up our UI
     ui_.setupUi(this);
 
-    // 	// Create a button group for the interaction modes
-    // 	QButtonGroup* group = new QButtonGroup;
-    // 	group->addButton(ui_.InteractionViewButton);
-    // 	group->addButton(ui_.InteractionDrawButton);
-
     // Connect signals / slots
     connect(ui_.SiteView, SIGNAL(dataModified()), this, SLOT(notifyDataModified()));
     connect(ui_.SiteView, SIGNAL(styleModified()), this, SLOT(notifyStyleModified()));

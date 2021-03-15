@@ -70,7 +70,6 @@ AddForcefieldTermsWizard::~AddForcefieldTermsWizard() {}
 // Return (mapped) name to use for specified type
 const QString AddForcefieldTermsWizard::mappedName(const std::shared_ptr<AtomType> at)
 {
-    // RefDataItem<const AtomType, std::string> *item = typeNameMappings_.contains(at);
     auto it = typeNameMappings_.find(at);
     if (it == typeNameMappings_.end())
         return "???";

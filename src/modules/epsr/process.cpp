@@ -74,7 +74,6 @@ bool EPSRModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
             return Messenger::error("Failed to read in potential coefficients from EPSR pcof file.\n");
 
         // Get some control parameters
-        // const double ereq = keywords_.asDouble("EReq");
         auto ncoeffp = keywords_.asInt("NCoeffP");
         auto rmaxpt = keywords_.asDouble("RMaxPT");
         auto rminpt = keywords_.asDouble("RMinPT");
@@ -568,7 +567,6 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             for (auto &sq : estimatedSQ)
             {
-                // generatedArray[n].save(generatedArray[n].name());
                 Data1DExportFileFormat exportFormat(sq.name());
                 if (!exportFormat.exportData(sq))
                     return procPool.decideFalse();
