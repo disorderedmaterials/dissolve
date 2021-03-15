@@ -29,8 +29,8 @@ foreach(SRCFILE ${tests_SRC})
            # Module 'nogui' libs
            ${MODULENOGUI_LINK_LIBS}
            ${NO_WHOLE_ARCHIVE_FLAG}
-           Qt::Core
-           Qt::Widgets
+           Qt5::Core
+           Qt5::Widgets
     PRIVATE antlr4-runtime ${EXTRA_LINK_LIBS}
     INTERFACE CONAN_PKG::fmt CONAN_PKG::CLI11 CONAN_PKG::GTest
   )
