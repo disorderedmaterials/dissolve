@@ -6,7 +6,6 @@
 #include "base/processpool.h"
 #include "classes/cellarray.h"
 #include "classes/kernelflags.h"
-#include "templates/orderedpointerlist.h"
 
 // Forward Declarations
 class Atom;
