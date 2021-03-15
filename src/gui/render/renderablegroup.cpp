@@ -97,7 +97,8 @@ void RenderableGroup::removeRenderable(Renderable *renderable)
 // Return whether the group is used by the specified renderable
 bool RenderableGroup::usedByRenderable(const Renderable *renderable) const
 {
-    return std::find_if(renderables_.begin(), renderables_.end(), [&renderable](auto &r) { return r.get() == renderable; }) != renderables_.end();
+    return std::find_if(renderables_.begin(), renderables_.end(), [&renderable](auto &r) { return r.get() == renderable; }) !=
+           renderables_.end();
 }
 
 // Return list of Renderables using this group
