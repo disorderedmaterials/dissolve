@@ -44,7 +44,7 @@ RenderableGroup &RenderableGroupManager::createGroup(std::string_view name)
             lowestId = colourId;
     }
 
-    auto &newGroup = groups_.emplace_back(name, (StockColours::StockColour)lowestId);
+    auto &newGroup = groups_.emplace_back(name, static_cast<StockColours::StockColour>(lowestId));
     ++stockColourUsageCount_[lowestId];
 
     // Need to update vertical shifts
