@@ -248,7 +248,7 @@ EndModule
 Module DataTest
   Frequency  95
   Target  'DAngle(X-H...O)'
-  Data1D  'DAngle(X-H...O)_ANGLE(ABC)_Bulk'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm'
+  Data1D  'DAngle(X-H...O)_Angle(ABC)_Bulk'  xy  '../_data/dlpoly/water267-analysis/water-267-298K.dahist1_02_1_01_02.angle.norm'
   EndData1D
 EndModule
 
