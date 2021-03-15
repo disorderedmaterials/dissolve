@@ -197,8 +197,6 @@ bool AtomTypeData::broadcast(ProcessPool &procPool, const int root, const CoreDa
 
     // Broadcast the IsotopeData list
     BroadcastList<IsotopeData> topeBroadcaster(procPool, root, isotopes_, coreData);
-    // if (topeBroadcaster.failed())
-    //   Messenger("Broadcase of AtomTypeData failed");
 
     procPool.broadcast(population_, root);
     procPool.broadcast(fraction_, root);

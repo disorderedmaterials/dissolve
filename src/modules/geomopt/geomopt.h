@@ -212,12 +212,7 @@ class GeometryOptimisationModule : public Module
                 if (nPointsAccepted == 0)
                     break;
             }
-            // 		printf("DIFF = {}, 2tol = {}\n", fabs(bounds[0]-bounds[2]), 2.0 * tolerance);
-            // 		++count;
-            // 		if (count > 10) break;
         } while (fabs(bounds[0] - bounds[2]) > (2.0 * tolerance));
-        // 	printf("Final bounding values are {:12.5e} {:12.5e} {:12.5e}\n",bounds[0],bounds[1],bounds[2]);
-        // 	printf("             energies are {:12.5e} {:12.5e} {:12.5e}\n",energies[0],energies[1],energies[2]);
 
         // Sort w.r.t. energy so that the minimum is in the central point
         sortBoundsAndEnergies(bounds, energies);

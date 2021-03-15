@@ -97,9 +97,6 @@ ForcefieldTab::ForcefieldTab(DissolveWindow *dissolveWindow, Dissolve &dissolve,
     ui_.PairPotentialsTable->horizontalHeader()->setFont(font());
     ui_.PairPotentialsTable->horizontalHeader()->setVisible(true);
 
-    // -- Charges / Parameters delegates
-    // 	for (auto n=3; n<9; ++n) ui_.PairPotentialsTable->setItemDelegateForColumn(n, new ExponentialSpinDelegate(this));
-
     DataViewer *viewer = ui_.PairPotentialsPlotWidget->dataViewer();
     viewer->view().axes().setTitle(0, "\\it{r}, \\sym{angstrom}");
     viewer->view().axes().setTitle(1, "U, kj/mol");
@@ -755,7 +752,6 @@ void ForcefieldTab::on_PairPotentialsTable_itemChanged(QTableWidgetItem *w)
     {
         // Functional form
         case (2):
-            // 			pairPotential->setShortRangeType(PairPotential::shortRangeType(qPrintable(w->text())));
             dissolveWindow_->setModified();
             break;
         // Charge I

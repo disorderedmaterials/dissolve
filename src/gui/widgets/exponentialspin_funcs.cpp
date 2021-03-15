@@ -70,27 +70,3 @@ QValidator::State ExponentialSpin::validate(QString &text, int &pos) const
 
 // Interpret text into value
 double ExponentialSpin::valueFromText(const QString &text) const { return text.toDouble(); }
-
-// Step value by specified amount
-// void ExponentialSpin::stepBy(int nSteps)
-// {
-// 	value_ = value_.value() + valueStep_*nSteps;
-//
-// 	// Check new value and update text
-// 	clamp();
-// 	updateTextFromValue();
-// 	emit(valueChanged(value_.value()));
-// 	textChanged_ = false;
-// }
-
-// // Return which steps should be enabled
-// QAbstractSpinBox::StepEnabled ExponentialSpin::stepEnabled() const
-// {
-// 	bool up = (value_.value() < valueMax_) || (!limitMaxValue_);
-// 	bool down = (value_.value() > valueMin_) || (!limitMinValue_);
-//
-// 	if (up && down) return (QAbstractSpinBox::StepUpEnabled | QAbstractSpinBox::StepDownEnabled);
-// 	else if (up) return QAbstractSpinBox::StepUpEnabled;
-// 	else if (down) return QAbstractSpinBox::StepDownEnabled;
-// 	else return QAbstractSpinBox::StepNone;
-// }

@@ -107,8 +107,6 @@ bool EnergyModule::process(Dissolve &dissolve, ProcessPool &procPool)
                 {
                     i = molN->atom(ii);
 
-                    // 					Messenger::print("Atom {} r = {} {} {}\n", ii,
-                    // molN->atom(ii)->r().x, molN->atom(ii)->r().y, molN->atom(ii)->r().z);
                     for (auto jj = ii + 1; jj < molN->nAtoms(); ++jj)
                     {
                         j = molN->atom(jj);

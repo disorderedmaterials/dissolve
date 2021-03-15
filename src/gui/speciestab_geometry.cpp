@@ -654,9 +654,6 @@ void SpeciesTab::updateGeometryTab()
 {
     Locker refreshLocker(refreshLock_);
 
-    // -- SpeciesAtom Table
-    // 	if (dissolve_.pairPotentialsIncludeCoulomb()) ui_.AtomTable->showColumn(5);
-    // 	else ui_.AtomTable->hideColumn(5);
     if (!species_)
         ui_.AtomTable->clearContents();
     else

@@ -434,7 +434,6 @@ void Primitive::cylinder(GLfloat ox, GLfloat oy, GLfloat oz, GLfloat vx, GLfloat
 
     // Calculate orthogonal vectors
     u = rj.orthogonal();
-    // 	u.normalise();
     v = rj * u;
     v.normalise();
     w = rj;

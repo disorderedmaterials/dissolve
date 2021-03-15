@@ -90,7 +90,6 @@ void SiteViewer::setSpeciesRenderableDrawStyle(RenderableSpecies::SpeciesDisplay
 {
     if (speciesRenderable_)
         speciesRenderable_->setDisplayStyle(ds);
-    // 	else Messenger::warn("No RenderableSpecies exists, so can't set its draw style.\n");
 }
 
 // Return current renderable draw style
@@ -98,7 +97,6 @@ RenderableSpecies::SpeciesDisplayStyle SiteViewer::speciesRenderableDrawStyle() 
 {
     if (speciesRenderable_)
         return speciesRenderable_->displayStyle();
-    // 	else Messenger::warn("No RenderableSpecies exists, so can't return its draw style.\n");
 
     return RenderableSpecies::LinesStyle;
 }

@@ -289,21 +289,6 @@ void BaseViewer::setupGL()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_BLEND);
     glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-
-    // Configure fog effects
-    //	glFogi(GL_FOG_MODE, GL_LINEAR);
-    //	prefs.copyColour(Prefs::BackgroundColour, col);
-    //	glFogfv(GL_FOG_COLOR, col);
-    //	glFogf(GL_FOG_DENSITY, 0.35f);
-    //	glHint(GL_FOG_HINT, GL_NICEST);
-    //	glFogi(GL_FOG_START, prefs.depthNear());
-    //	glFogi(GL_FOG_END, prefs.depthFar());
-    //	glEnable(GL_FOG);
-    glDisable(GL_FOG);
-
-    // Configure face culling
-    // 	glCullFace(GL_BACK);
-    // 	glEnable(GL_CULL_FACE);
 }
 
 /*
@@ -499,7 +484,6 @@ QPixmap BaseViewer::generateImage(int imageWidth, int imageHeight)
 
             // Paste this tile into the main image
             painter.drawImage(x * tileWidth, imageHeight - (y + 1) * tileHeight, tile);
-            // 			tile.save(QString("tile-%1x%2.png").arg(x).arg(y), "png");
         }
         if (progress.wasCanceled())
             break;
