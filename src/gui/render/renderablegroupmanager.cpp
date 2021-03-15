@@ -54,7 +54,7 @@ RenderableGroup &RenderableGroupManager::createGroup(std::string_view name)
 }
 
 // Add Renderable to its specified group, creating / associating as necessary
-RenderableGroup &RenderableGroupManager::addToGroup(const std::shared_ptr<Renderable> &renderable, std::string_view groupName)
+RenderableGroup &RenderableGroupManager::addToGroup(std::shared_ptr<Renderable> &renderable, std::string_view groupName)
 {
     // Check to see if the Renderable is already associated to a group...
     if (renderable->group())
@@ -67,7 +67,7 @@ RenderableGroup &RenderableGroupManager::addToGroup(const std::shared_ptr<Render
         }
 
         // Remove it from the current group
-        group.removeRenderable(renderable);
+        group.removeRenderable(renderable.get());
     }
 
     // Create / retrieve the group
