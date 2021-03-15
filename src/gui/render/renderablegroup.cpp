@@ -78,16 +78,14 @@ void RenderableGroup::addRenderable(std::shared_ptr<Renderable> renderable)
 // Remove Renderable from group (if it exists)
 void RenderableGroup::removeRenderable(const std::shared_ptr<Renderable> renderable)
 {
-    // Return immediately if tne renderable is already in the group
-    if (std::find(renderables_.begin(), renderables_.end(), renderable) == renderables_.end())
+    auto it = std::find(renderables_.begin(), renderables_.end(), renderable);
+    if (it == renderables_.end())
     {
         Messenger::warn("Renderable '{}' is not present in the group '{}', so can't remove it.\n", renderable->name(), name());
         return;
     }
 
-    renderables_.erase(
-        std::remove_if(renderables_.begin(), renderables_.end(), [renderable](const auto &data) { return data == renderable; }),
-        renderables_.end());
+    renderables_.erase(it);
 
     // Remove shift from the renderable first, if one is being applied
     renderable->setValuesTransformEnabled(false);
