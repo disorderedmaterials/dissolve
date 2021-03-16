@@ -9,7 +9,7 @@
 #include <algorithm>
 
 // Write through specified LineParser
-bool Configuration::write(LineParser &parser) const
+bool Configuration::serialise(LineParser &parser) const
 {
     if (!parser.writeLineF("'{}'  {}  # nMolecules\n", name(), molecules_.size()))
         return false;

@@ -74,11 +74,11 @@ class PairBroadeningFunction
                                           SpeciesIntra *intra = nullptr);
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
     // Read data through specified LineParser
-    bool read(LineParser &parser, const CoreData &coreData);
+    bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
     bool write(LineParser &parser);
 

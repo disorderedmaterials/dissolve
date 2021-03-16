@@ -148,11 +148,11 @@ void SampledVector::operator/=(double x)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
 // Read data through specified LineParser
-bool SampledVector::read(LineParser &parser, const CoreData &coreData)
+bool SampledVector::deserialise(LineParser &parser, const CoreData &coreData)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

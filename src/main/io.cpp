@@ -471,7 +471,7 @@ bool Dissolve::loadRestart(std::string_view filename)
                 Messenger::warn("Timing information for Module '{}' found, but no Module with this unique name "
                                 "exists...\n",
                                 parser.argsv(1));
-                if (!SampledDouble().read(parser, coreData_))
+                if (!SampledDouble().deserialise(parser, coreData_))
                     error = true;
             }
             else if (!module->readProcessTimes(parser))
@@ -632,7 +632,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     {
         if (!parser.writeLineF("Configuration  '{}'\n", cfg->name()))
             return false;
-        if (!cfg->write(parser))
+        if (!cfg->serialise(parser))
             return false;
     }
 
@@ -641,7 +641,7 @@ bool Dissolve::saveRestart(std::string_view filename)
     {
         if (!parser.writeLineF("Timing  {}\n", module->uniqueName()))
             return false;
-        if (!module->processTimes().write(parser))
+        if (!module->processTimes().serialise(parser))
             return false;
     }
 

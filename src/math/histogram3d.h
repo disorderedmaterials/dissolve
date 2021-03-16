@@ -127,13 +127,13 @@ class Histogram3D : public ListItem<Histogram3D>
     void operator=(const Histogram3D &source);
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
     // Read data through specified LineParser
-    bool read(LineParser &parser, const CoreData &coreData);
+    bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
-    bool write(LineParser &parser) const;
+    bool serialise(LineParser &parser) const;
 
     /*
      * Parallel Comms

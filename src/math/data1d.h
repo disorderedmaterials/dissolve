@@ -95,13 +95,13 @@ class Data1D : public PlottableData, public ListItem<Data1D>, public ObjectStore
     void operator/=(const double factor);
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
     // Read data through specified LineParser
-    bool read(LineParser &parser, const CoreData &coreData);
+    bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
-    bool write(LineParser &parser) const;
+    bool serialise(LineParser &parser) const;
 
     /*
      * Parallel Comms

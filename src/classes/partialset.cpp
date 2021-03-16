@@ -500,11 +500,11 @@ void PartialSet::operator*=(const double factor)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
 // Read data through specified LineParser
-bool PartialSet::read(LineParser &parser, const CoreData &coreData)
+bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
 {
     if (parser.readNextLine(LineParser::Defaults, objectNamePrefix_) != LineParser::Success)
         return false;
@@ -515,7 +515,7 @@ bool PartialSet::read(LineParser &parser, const CoreData &coreData)
 
     // Read atom types
     atomTypes_.clear();
-    if (!atomTypes_.read(parser, coreData))
+    if (!atomTypes_.deserialise(parser, coreData))
         return false;
     auto nTypes = atomTypes_.nItems();
 
@@ -530,17 +530,17 @@ bool PartialSet::read(LineParser &parser, const CoreData &coreData)
     {
         for (auto typeJ = typeI; typeJ < nTypes; ++typeJ)
         {
-            if (!partials_[{typeI, typeJ}].read(parser, coreData))
+            if (!partials_[{typeI, typeJ}].deserialise(parser, coreData))
                 return false;
-            if (!boundPartials_[{typeI, typeJ}].read(parser, coreData))
+            if (!boundPartials_[{typeI, typeJ}].deserialise(parser, coreData))
                 return false;
-            if (!unboundPartials_[{typeI, typeJ}].read(parser, coreData))
+            if (!unboundPartials_[{typeI, typeJ}].deserialise(parser, coreData))
                 return false;
         }
     }
 
     // Read total
-    if (!total_.read(parser, coreData))
+    if (!total_.deserialise(parser, coreData))
         return false;
 
     // Read empty bound flags
@@ -551,7 +551,7 @@ bool PartialSet::read(LineParser &parser, const CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool PartialSet::write(LineParser &parser) const
+bool PartialSet::serialise(LineParser &parser) const
 {
     // TODO To reduce filesize we could write abscissa first, and then each Y datset afterwards since they all share a
     // common scale
@@ -564,23 +564,23 @@ bool PartialSet::write(LineParser &parser) const
         return false;
 
     // Write out AtomTypes first
-    atomTypes_.write(parser);
+    atomTypes_.serialise(parser);
     auto nTypes = atomTypes_.nItems();
 
     // Write individual Data1D
     for_each_pair_early(0, nTypes, [&](int typeI, int typeJ) -> EarlyReturn<bool> {
-        if (!partials_[{typeI, typeJ}].write(parser))
+        if (!partials_[{typeI, typeJ}].serialise(parser))
             return false;
-        if (!boundPartials_[{typeI, typeJ}].write(parser))
+        if (!boundPartials_[{typeI, typeJ}].serialise(parser))
             return false;
-        if (!unboundPartials_[{typeI, typeJ}].write(parser))
+        if (!unboundPartials_[{typeI, typeJ}].serialise(parser))
             return false;
 
         return EarlyReturn<bool>::Continue;
     });
 
     // Write total
-    if (!total_.write(parser))
+    if (!total_.serialise(parser))
         return false;
 
     // Write empty bound flags

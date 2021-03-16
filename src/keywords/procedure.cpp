@@ -23,7 +23,7 @@ int ProcedureKeyword::maxArguments() const { return 0; }
 // Parse arguments from supplied LineParser, starting at given argument offset
 bool ProcedureKeyword::read(LineParser &parser, int startArg, const CoreData &coreData)
 {
-    if (!data_.read(parser, coreData))
+    if (!data_.deserialise(parser, coreData))
         return false;
 
     set_ = true;

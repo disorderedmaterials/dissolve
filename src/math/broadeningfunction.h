@@ -104,11 +104,11 @@ class BroadeningFunction
     double discreteKernelNormalisation(double deltaX, double omega) const;
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
     // Read data through specified LineParser
-    bool read(LineParser &parser, const CoreData &coreData);
+    bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write data through specified LineParser
     bool write(LineParser &parser);
 

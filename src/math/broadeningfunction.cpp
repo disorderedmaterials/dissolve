@@ -617,11 +617,11 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX, double ome
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
 // Read data through specified LineParser
-bool BroadeningFunction::read(LineParser &parser, const CoreData &coreData)
+bool BroadeningFunction::deserialise(LineParser &parser, const CoreData &coreData)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

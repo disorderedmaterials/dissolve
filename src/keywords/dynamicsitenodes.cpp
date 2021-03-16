@@ -52,7 +52,7 @@ bool DynamicSiteNodesKeyword::read(LineParser &parser, int startArg, const CoreD
     data_.append(dynamicSite);
 
     // Attempt to read the DynamicSite data
-    if (!dynamicSite->read(parser, coreData))
+    if (!dynamicSite->deserialise(parser, coreData))
         return false;
 
     // Check for required axes?

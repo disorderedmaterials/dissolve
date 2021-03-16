@@ -99,11 +99,11 @@ void BraggReflection::addKVectors(int count) { nKVectors_ += count; }
 int BraggReflection::nKVectors() const { return nKVectors_; }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
 // Read data through specified parser
-bool BraggReflection::read(LineParser &parser, const CoreData &coreData)
+bool BraggReflection::deserialise(LineParser &parser, const CoreData &coreData)
 {
     // Read index, Q centre, and number of contributing K-vectors
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

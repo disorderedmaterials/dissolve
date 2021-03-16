@@ -104,7 +104,7 @@ double KVector::intensity(int typeI, int typeJ)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
 /*

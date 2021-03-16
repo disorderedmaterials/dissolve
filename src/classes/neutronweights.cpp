@@ -327,16 +327,16 @@ double NeutronWeights::boundCoherentAverageOfSquares() const { return boundCoher
 bool NeutronWeights::isValid() const { return valid_; }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
 // Read data through specified LineParser
-bool NeutronWeights::read(LineParser &parser, const CoreData &coreData)
+bool NeutronWeights::deserialise(LineParser &parser, const CoreData &coreData)
 {
     clear();
 
     // Read AtomTypeList
-    if (!atomTypes_.read(parser, coreData))
+    if (!atomTypes_.deserialise(parser, coreData))
         return false;
 
     // Read isotopologue mixtures
@@ -347,7 +347,7 @@ bool NeutronWeights::read(LineParser &parser, const CoreData &coreData)
     for (auto n = 0; n < nItems; ++n)
     {
         isotopologueMixtures_.emplace_back();
-        if (!isotopologueMixtures_.back().read(parser, coreData))
+        if (!isotopologueMixtures_.back().deserialise(parser, coreData))
             return false;
     }
 
@@ -371,17 +371,17 @@ bool NeutronWeights::read(LineParser &parser, const CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool NeutronWeights::write(LineParser &parser) const
+bool NeutronWeights::serialise(LineParser &parser) const
 {
     // Write AtomTypeList
-    if (!atomTypes_.write(parser))
+    if (!atomTypes_.serialise(parser))
         return false;
 
     // Write isotopologue mixtures
     if (!parser.writeLineF("{}  # nItems\n", isotopologueMixtures_.size()))
         return false;
     for (auto &topes : isotopologueMixtures_)
-        if (!topes.write(parser))
+        if (!topes.serialise(parser))
             return false;
 
     // Write arrays using static methods in the relevant GenericItemContainer

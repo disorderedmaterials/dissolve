@@ -168,14 +168,14 @@ std::string_view AtomTypeData::atomTypeName() const { return atomType_->name(); 
  */
 
 // Write data through specified LineParser
-bool AtomTypeData::write(LineParser &parser) const
+bool AtomTypeData::serialise(LineParser &parser) const
 {
     // Line Contains: AtomType name, exchangeable flag, population, fraction, boundCoherent, and nIsotopes
     if (!parser.writeLineF("{} {} {} {} {}\n", atomType_->name(), population_, fraction_, boundCoherent_, isotopes_.nItems()))
         return false;
     ListIterator<IsotopeData> isotopeIterator(isotopes_);
     while (IsotopeData *topeData = isotopeIterator.iterate())
-        if (!topeData->write(parser))
+        if (!topeData->serialise(parser))
             return false;
     return true;
 }

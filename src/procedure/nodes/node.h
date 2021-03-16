@@ -200,7 +200,7 @@ class ProcedureNode : public ListItem<ProcedureNode>
      */
     public:
     // Read node data from specified LineParser
-    virtual bool read(LineParser &parser, const CoreData &coreData);
+    virtual bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write node data to specified LineParser
     virtual bool write(LineParser &parser, std::string_view prefix);
 };

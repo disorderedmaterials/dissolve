@@ -303,7 +303,7 @@ SampledDouble Module::processTimes() const { return processTimes_; }
 bool Module::readProcessTimes(LineParser &parser)
 {
     static CoreData dummyData;
-    return processTimes_.read(parser, dummyData);
+    return processTimes_.deserialise(parser, dummyData);
 }
 
 /*

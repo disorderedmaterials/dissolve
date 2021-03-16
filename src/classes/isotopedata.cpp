@@ -72,13 +72,13 @@ double IsotopeData::fraction() const { return fraction_; }
  */
 
 // Write data through specified LineParser
-bool IsotopeData::write(LineParser &parser)
+bool IsotopeData::serialise(LineParser &parser) const
 {
     return parser.writeLineF("{} {} {} {}\n", isotope_->Z(), isotope_->A(), population_, fraction_);
 }
 
 // Read data through specified LineParser
-bool IsotopeData::read(LineParser &parser, const CoreData &coreData)
+bool IsotopeData::deserialise(LineParser &parser, const CoreData &coreData)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

@@ -66,11 +66,11 @@ class BraggReflection
     int nKVectors() const;
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
     // Read data through specified parser
-    bool read(LineParser &parser, const CoreData &coreData);
+    bool deserialise(LineParser &parser, const CoreData &coreData);
     // Write data through specified parser
     bool write(LineParser &parser);
 

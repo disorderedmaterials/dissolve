@@ -247,7 +247,7 @@ bool ProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std::str
  */
 
 // Read node data from specified LineParser
-bool ProcedureNode::read(LineParser &parser, const CoreData &coreData)
+bool ProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
 {
     // Read until we encounter the ending keyword (derived from the node type), or we fail for some reason
     while (!parser.eofOrBlank())

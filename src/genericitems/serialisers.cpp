@@ -58,7 +58,7 @@ GenericItemSerialiser::GenericItemSerialiser()
         if (!parser.writeLineF("{}\n", v.nItems()))
             return false;
         for (auto n = 0; n < v.nItems(); ++n)
-            if (!v.at(n).write(parser))
+            if (!v.at(n).serialise(parser))
                 return false;
         return true;
     });
@@ -112,43 +112,43 @@ GenericItemSerialiser::GenericItemSerialiser()
         if (!parser.writeLineF("{}  {}  {}\n", v.nRows(), v.nColumns(), DissolveSys::btoa(v.halved())))
             return false;
         for (auto &n : v)
-            if (!n.write(parser))
+            if (!n.serialise(parser))
                 return false;
         return true;
     });
     registerSerialiser<AtomTypeList>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const AtomTypeList &>(a).write(parser);
+        return std::any_cast<const AtomTypeList &>(a).serialise(parser);
     });
     registerSerialiser<Data1D>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const Data1D &>(a).write(parser);
+        return std::any_cast<const Data1D &>(a).serialise(parser);
     });
     registerSerialiser<Data2D>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const Data2D &>(a).write(parser);
+        return std::any_cast<const Data2D &>(a).serialise(parser);
     });
     registerSerialiser<Data3D>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const Data3D &>(a).write(parser);
+        return std::any_cast<const Data3D &>(a).serialise(parser);
     });
     registerSerialiser<Histogram1D>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const Histogram1D &>(a).write(parser);
+        return std::any_cast<const Histogram1D &>(a).serialise(parser);
     });
     registerSerialiser<Histogram2D>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const Histogram2D &>(a).write(parser);
+        return std::any_cast<const Histogram2D &>(a).serialise(parser);
     });
     registerSerialiser<Histogram3D>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const Histogram3D &>(a).write(parser);
+        return std::any_cast<const Histogram3D &>(a).serialise(parser);
     });
     registerSerialiser<NeutronWeights>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const NeutronWeights &>(a).write(parser);
+        return std::any_cast<const NeutronWeights &>(a).serialise(parser);
     });
     registerSerialiser<PartialSet>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const PartialSet &>(a).write(parser);
+        return std::any_cast<const PartialSet &>(a).serialise(parser);
     });
     registerSerialiser<Vec3<int>>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
         const auto &v = std::any_cast<const Vec3<int> &>(a);
         return parser.writeLineF("{}  {}  {}\n", v.x, v.y, v.z);
     });
     registerSerialiser<XRayWeights>([](const std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<const XRayWeights &>(a).write(parser);
+        return std::any_cast<const XRayWeights &>(a).serialise(parser);
     });
 }
 

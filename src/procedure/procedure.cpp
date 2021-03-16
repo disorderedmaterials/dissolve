@@ -84,11 +84,11 @@ bool Procedure::execute(ProcessPool &procPool, Configuration *cfg, std::string_v
  */
 
 // Read structure from specified LineParser
-bool Procedure::read(LineParser &parser, const CoreData &coreData)
+bool Procedure::deserialise(LineParser &parser, const CoreData &coreData)
 {
     clear();
 
-    return rootSequence_.read(parser, coreData);
+    return rootSequence_.deserialise(parser, coreData);
 }
 
 // Write structure to specified LineParser

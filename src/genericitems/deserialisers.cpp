@@ -85,7 +85,7 @@ GenericItemDeserialiser::GenericItemDeserialiser()
             return false;
         v.initialise(parser.argi(0));
         for (auto n = 0; n < v.nItems(); ++n)
-            if (!v[n].read(parser, coreData))
+            if (!v[n].deserialise(parser, coreData))
                 return false;
         return true;
     });
@@ -159,36 +159,36 @@ GenericItemDeserialiser::GenericItemDeserialiser()
         int nRows = parser.argi(0), nColumns = parser.argi(1);
         v.initialise(nRows, nColumns, parser.argb(2));
         for (auto &n : v)
-            if (!n.read(parser, coreData))
+            if (!n.deserialise(parser, coreData))
                 return false;
         return true;
     });
     registerDeserialiser<AtomTypeList>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<AtomTypeList &>(a).read(parser, coreData);
+        return std::any_cast<AtomTypeList &>(a).deserialise(parser, coreData);
     });
     registerDeserialiser<Data1D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<Data1D &>(a).read(parser, coreData);
+        return std::any_cast<Data1D &>(a).deserialise(parser, coreData);
     });
     registerDeserialiser<Data2D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<Data2D &>(a).read(parser, coreData);
+        return std::any_cast<Data2D &>(a).deserialise(parser, coreData);
     });
     registerDeserialiser<Data3D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<Data3D &>(a).read(parser, coreData);
+        return std::any_cast<Data3D &>(a).deserialise(parser, coreData);
     });
     registerDeserialiser<Histogram1D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<Histogram1D &>(a).read(parser, coreData);
+        return std::any_cast<Histogram1D &>(a).deserialise(parser, coreData);
     });
     registerDeserialiser<Histogram2D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<Histogram2D &>(a).read(parser, coreData);
+        return std::any_cast<Histogram2D &>(a).deserialise(parser, coreData);
     });
     registerDeserialiser<Histogram3D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<Histogram3D &>(a).read(parser, coreData);
+        return std::any_cast<Histogram3D &>(a).deserialise(parser, coreData);
     });
     registerDeserialiser<PartialSet>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<PartialSet &>(a).read(parser, coreData);
+        return std::any_cast<PartialSet &>(a).deserialise(parser, coreData);
     });
     registerDeserialiser<NeutronWeights>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<NeutronWeights &>(a).read(parser, coreData);
+        return std::any_cast<NeutronWeights &>(a).deserialise(parser, coreData);
     });
     registerDeserialiser<Vec3<int>>([](std::any &a, LineParser &parser, const CoreData &coreData) {
         auto &v = std::any_cast<Vec3<int> &>(a);
@@ -205,7 +205,7 @@ GenericItemDeserialiser::GenericItemDeserialiser()
         return true;
     });
     registerDeserialiser<XRayWeights>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<XRayWeights &>(a).read(parser, coreData);
+        return std::any_cast<XRayWeights &>(a).deserialise(parser, coreData);
     });
 }
 

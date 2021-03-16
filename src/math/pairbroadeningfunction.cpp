@@ -68,7 +68,7 @@ bool PairBroadeningFunction::readAsKeyword(LineParser &parser, int startArg, con
 {
     // First argument is the form of the function, or a '&' to indicate that a full block-style definition of the data
     if (DissolveSys::sameString("&", parser.argsv(startArg)))
-        return read(parser, coreData);
+        return deserialise(parser, coreData);
 
     PairBroadeningFunction::FunctionType funcType = PairBroadeningFunction::functionType(parser.argsv(startArg));
     if (funcType == PairBroadeningFunction::nFunctionTypes)
@@ -246,11 +246,11 @@ BroadeningFunction PairBroadeningFunction::broadeningFunction(std::shared_ptr<At
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
 // Read data through specified LineParser
-bool PairBroadeningFunction::read(LineParser &parser, const CoreData &coreData)
+bool PairBroadeningFunction::deserialise(LineParser &parser, const CoreData &coreData)
 {
     // First line is function name
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)

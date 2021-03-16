@@ -44,7 +44,7 @@ bool NodeBranchKeyword::read(LineParser &parser, int startArg, const CoreData &c
     // Create and parse a new branch
     (*data_) =
         new SequenceProcedureNode(branchContext_, parentNode_->scope()->procedure(), parentNode_, fmt::format("End{}", name()));
-    if (!(*data_)->read(parser, coreData))
+    if (!(*data_)->deserialise(parser, coreData))
         return false;
 
     return true;

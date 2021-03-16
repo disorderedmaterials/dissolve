@@ -60,7 +60,7 @@ class KVector
     double intensity(int typeI, int typeJ);
 
     /*
-     * GenericItemBase Implementations
+     * Serialisation
      */
     public:
     /*

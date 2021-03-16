@@ -401,7 +401,7 @@ void SequenceProcedureNode::setBlockTerminationKeyword(std::string_view endKeywo
 std::string_view SequenceProcedureNode::blockTerminationKeyword() const { return blockTerminationKeyword_; }
 
 // Read structure from specified LineParser
-bool SequenceProcedureNode::read(LineParser &parser, const CoreData &coreData)
+bool SequenceProcedureNode::deserialise(LineParser &parser, const CoreData &coreData)
 {
     // Read until we encounter the block-ending keyword, or we fail for some reason
     while (!parser.eofOrBlank())
@@ -549,7 +549,7 @@ bool SequenceProcedureNode::read(LineParser &parser, const CoreData &coreData)
         newNode->setScope(this);
 
         // Read the new node
-        if (!newNode->read(parser, coreData))
+        if (!newNode->deserialise(parser, coreData))
             return Messenger::error("Failed to read node sequence.\n");
     }
 

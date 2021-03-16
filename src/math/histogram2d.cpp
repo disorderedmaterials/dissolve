@@ -198,11 +198,11 @@ void Histogram2D::operator=(const Histogram2D &source)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
 // Read data through specified LineParser
-bool Histogram2D::read(LineParser &parser, const CoreData &coreData)
+bool Histogram2D::deserialise(LineParser &parser, const CoreData &coreData)
 {
     clear();
 
@@ -218,7 +218,7 @@ bool Histogram2D::read(LineParser &parser, const CoreData &coreData)
     for (auto x = 0; x < nXBins_; ++x)
     {
         for (auto y = 0; y < nYBins_; ++y)
-            if (!averages_[{x, y}].read(parser, coreData))
+            if (!averages_[{x, y}].deserialise(parser, coreData))
                 return false;
     }
 
@@ -226,7 +226,7 @@ bool Histogram2D::read(LineParser &parser, const CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool Histogram2D::write(LineParser &parser) const
+bool Histogram2D::serialise(LineParser &parser) const
 {
     if (!parser.writeLineF("{} {} {} {} {} {}\n", xMinimum_, xMaximum_, xBinWidth_, yMinimum_, yMaximum_, yBinWidth_))
         return false;
@@ -235,7 +235,7 @@ bool Histogram2D::write(LineParser &parser) const
     for (auto x = 0; x < nXBins_; ++x)
     {
         for (auto y = 0; y < nYBins_; ++y)
-            if (!averages_[{x, y}].write(parser))
+            if (!averages_[{x, y}].serialise(parser))
                 return false;
     }
 

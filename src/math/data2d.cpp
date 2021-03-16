@@ -340,11 +340,11 @@ void Data2D::operator/=(const double factor)
 }
 
 /*
- * GenericItemBase Implementations
+ * Serialisation
  */
 
 // Read data through specified LineParser
-bool Data2D::read(LineParser &parser, const CoreData &coreData)
+bool Data2D::deserialise(LineParser &parser, const CoreData &coreData)
 {
     clear();
 
@@ -413,7 +413,7 @@ bool Data2D::read(LineParser &parser, const CoreData &coreData)
 }
 
 // Write data through specified LineParser
-bool Data2D::write(LineParser &parser) const
+bool Data2D::serialise(LineParser &parser) const
 {
     // Write object tag and name
     if (!parser.writeLineF("{}\n", objectTag()))
