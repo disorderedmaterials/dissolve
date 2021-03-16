@@ -223,8 +223,6 @@ double Data1D::maxValue() const
 // Add / initialise errors array
 void Data1D::addErrors()
 {
-    // 	if (hasError_) Messenger::warn("Adding an error array to a Data1D that already has one...\n");
-
     errors_.clear();
     errors_.resize(x_.size());
 

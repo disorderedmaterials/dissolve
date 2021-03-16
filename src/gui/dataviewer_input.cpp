@@ -120,10 +120,6 @@ void DataViewer::mouseDoubleClicked()
         case (NoObject):
             break;
         case (AxisLineObject):
-            //			i = clickedObjectInfo_.asInteger();
-            // 			axesWindow_.updateAndShow();
-            // 			axesWindow_.ui.AxesTabs->setCurrentIndex(i);
-            // 			axesWindow_.ui.
             break;
         case (AxisTickLabelObject):
             break;
@@ -138,10 +134,6 @@ void DataViewer::mouseDoubleClicked()
         case (CustomObject):
             break;
     }
-
-    // Reset clicked object info
-    // 	clickedObject_ = NoObject;
-    // 	clickedObjectInfo_.clear();
 }
 
 // Context menu requested

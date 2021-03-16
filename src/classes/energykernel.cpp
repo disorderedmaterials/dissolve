@@ -29,8 +29,6 @@ EnergyKernel::~EnergyKernel() {}
 // Return PairPotential energy between atoms provided as pointers, at the distance specified
 double EnergyKernel::pairPotentialEnergy(const std::shared_ptr<Atom> i, const std::shared_ptr<Atom> j, double r)
 {
-    // Messenger::print("E  {} {} @ {} = {}\n", std::min(i->arrayIndex(), j->arrayIndex()), std::max(i->arrayIndex(),
-    // j->arrayIndex()), r, potentialMap_.energy(i, j, r));
     return potentialMap_.energy(i, j, r);
 }
 

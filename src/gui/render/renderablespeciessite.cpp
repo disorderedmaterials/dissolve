@@ -100,15 +100,6 @@ void RenderableSpeciesSite::recreatePrimitives(const View &view, const ColourDef
             siteAssembly_.add(axesPrimitive_, A);
         }
     }
-    // 	else if (displayStyle_ == SolidStyle)
-    // 	{
-    // 		// Set basic styling for assemblies
-    // 		siteAssembly_.add(true, GL_FILL);
-    //
-    // 		// Plot origin
-    // 		A.setTranslation(site->origin());
-    // 		siteAssembly_.add(originPrimitive_, A, 0.0, 0.0, 0.0, 0.5);
-    // 	}
 }
 
 // Send primitives for rendering

@@ -163,7 +163,6 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
         MonteCarloMinimiser<Fit1DProcedureNode> mcMinimiser(*this, &Fit1DProcedureNode::equationCost, true);
         mcMinimiser.setMaxIterations(1000);
         mcMinimiser.setStepSize(0.1);
-        // 		mcMinimiser.setMinStepSize(0.001);
         for (auto var : fitTargets_)
             mcMinimiser.addTarget(var);
 

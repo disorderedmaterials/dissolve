@@ -95,19 +95,9 @@ template <class T> class SteepestDescentMinimiser : public MinimiserBase<T>
 
             currentError = trialError;
 
-            // Complex method begins here
-            // 			else currentError = lineMinimise(sourceModel);
-
             // Copy alpha and calculate gradient ready for next cycle
             values_ = trialAlpha;
             grad = gradient(values_);
-
-            // Check convergence criteria
-            // 			if (fabs(deltaEnergy) < eConverge)
-            // 			{
-            // 				converged = true;
-            // 				break;
-            // 			}
 
             if (lineDone || converged)
                 break;

@@ -79,8 +79,6 @@ void MimeTreeWidget::mouseMoveEvent(QMouseEvent *event)
     if (drag->exec(Qt::MoveAction) != Qt::MoveAction)
     {
         // Reset everything, and do not perform a move
-        // 		interactionMode_ = NoInteraction;
-        // 		interactionPane_ = nullptr;
         update();
     }
 

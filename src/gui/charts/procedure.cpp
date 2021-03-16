@@ -28,10 +28,6 @@ ProcedureChart::ProcedureChart(Procedure *procedure, const CoreData &coreData) :
 
     recalculateLayout();
 
-    // Create the insertion widget if we don't already have one
-    // 	insertionWidget_ = new ProcedureChartInsertionBlock(this, dissolveWindow_);
-    // 	insertionWidget_->setVisible(false);
-
     updateControls();
 }
 
@@ -97,7 +93,6 @@ void ProcedureChart::updateContentBlocks(const SequenceProcedureNode *sequence,
             block = new ProcedureChartNodeBlock(this, node, coreData_);
             connect(block, SIGNAL(dataModified()), this, SLOT(chartDataModified()));
             connect(block, SIGNAL(keywordsToggled()), this, SLOT(recalculateLayout()));
-            // 			connect(mcmBlock, SIGNAL(remove(QString)), this, SLOT(removeModule(QString)));
             newSequenceWidgets.append(block);
             chartBlocks_.append(block);
         }

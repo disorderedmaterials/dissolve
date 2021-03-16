@@ -36,9 +36,6 @@ void BaseViewer::mouseReleaseEvent(QMouseEvent *event)
     if (buttonState_.testFlag(Qt::RightButton) &&
         (((rMouseLast_ - rMouseDown_).magnitude() <= 1) || mouseReleaseTimer_.isActive()))
     {
-        // Reset to default interaction
-        // resetInteraction(0);
-
         contextMenuRequested(event->pos());
     }
     else

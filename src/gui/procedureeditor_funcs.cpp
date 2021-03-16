@@ -59,18 +59,10 @@ void ProcedureEditor::updateControls()
 }
 
 // Disable sensitive controls within tab
-void ProcedureEditor::disableSensitiveControls()
-{
-    // 	ui_.AvailableModulesTree->setEnabled(false);
-    chart_->disableSensitiveControls();
-}
+void ProcedureEditor::disableSensitiveControls() { chart_->disableSensitiveControls(); }
 
 // Enable sensitive controls within tab
-void ProcedureEditor::enableSensitiveControls()
-{
-    // 	ui_.AvailableModulesTree->setEnabled(true);
-    chart_->enableSensitiveControls();
-}
+void ProcedureEditor::enableSensitiveControls() { chart_->enableSensitiveControls(); }
 
 /*
  * Signals / Slots

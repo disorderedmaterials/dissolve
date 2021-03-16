@@ -121,7 +121,6 @@ void CalculateAxisAngleModule::initialise()
     SequenceProcedureNode *rdfNormalisation = processDistance_->addNormalisationBranch();
     RefList<const SelectProcedureNode> sitePopulationNormalisers;
     sitePopulationNormalisers.append(selectA_);
-    // 	sitePopulationNormalisers.append(selectB_);
     rdfNormalisation->addNode(new OperateSitePopulationNormaliseProcedureNode(sitePopulationNormalisers));
     rdfNormalisation->addNode(new OperateNumberDensityNormaliseProcedureNode(selectB_));
     rdfNormalisation->addNode(new OperateSphericalShellNormaliseProcedureNode);

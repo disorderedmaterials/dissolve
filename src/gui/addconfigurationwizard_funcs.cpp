@@ -25,12 +25,6 @@ AddConfigurationWizard::AddConfigurationWizard(QWidget *parent)
     registerPage(AddConfigurationWizard::SelectTemplatePage, "Select Generator Template",
                  AddConfigurationWizard::NameAndTemperaturePage);
     registerPage(AddConfigurationWizard::NameAndTemperaturePage, "Name and Temperature", WizardWidgetPageInfo::FinishHereFlag);
-
-    // Connect signals / slots
-    // 	connect(ui_.AtomTypesList->itemDelegate(), SIGNAL(commitData(QWidget*)), this,
-    // SLOT(atomTypesListEdited(QWidget*))); 	connect(ui_.CreateAtomicElementSelector,
-    // SIGNAL(elementSelectionChanged()), this, SLOT(createAtomicElementChanged()));
-
     lockedForRefresh_ = 0;
 }
 

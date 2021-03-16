@@ -148,13 +148,6 @@ Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) c
         result.setColumn(2, (right + left) / (right - left), (top + bottom) / (top - bottom),
                          -(farClip + nearClip) / (farClip - nearClip), -1.0);
         result.setColumn(3, 0.0, 0.0, -(2.0 * nearClip * farClip) / (farClip - nearClip), 0.0);
-        // Equivalent to the following code:
-        // glMatrixMode(GL_PROJECTION);
-        // glLoadIdentity();
-        // top = tan(prefs.perspectiveFov() / DEGRAD) * prefs.clipNear();
-        // bottom = -top;
-        // glFrustum(aspect*bottom, aspect*top, bottom, top, prefs.clipNear(), prefs.clipFar());
-        // glGetDoublev(GL_PROJECTION_MATRIX, modelProjectionMatrix_.matrix());
     }
     else
     {
@@ -167,13 +160,6 @@ Matrix4 View::calculateProjectionMatrix(bool hasPerspective, double orthoZoom) c
         result.setColumn(1, 0.0, 2.0 / (top - bottom), 0.0, (top + bottom) / (top - bottom));
         result.setColumn(2, 0.0, 0.0, -1.0 / farClip, 0.0);
         result.setColumn(3, 0.0, 0.0, 0.0, 1.0);
-        // Equivalent to the following code:
-        // glMatrixMode(GL_PROJECTION);
-        // glLoadIdentity();
-        // top = tan(prefs.perspectiveFov() / DEGRAD) * prefs.clipNear();
-        // bottom = -top;
-        // glOrtho(aspect*top, aspect*bottom, top, bottom, -prefs.clipFar(), prefs.clipFar());
-        // glGetDoublev(GL_PROJECTION_MATRIX, modelProjectionMatrix_.matrix());
     }
 
     return result;
@@ -525,8 +511,6 @@ double View::screenToAxis(int axis, int x, int y, bool clamp) const
     // Project axis coordinates to get a screen-based yardstick
     auto axmin = dataToScreen(axes_.coordMin(axis));
     auto axmax = dataToScreen(axes_.coordMax(axis));
-    // 	axmin.print();
-    // 	axmax.print();
 
     // Calculate vectors between axis minimum and mouse position (AM) and axis maximum (AB)
     Vec3<double> ab(axmax.x - axmin.x, axmax.y - axmin.y, 0.0);
@@ -708,8 +692,6 @@ void View::recalculateView(bool force)
         double globalHeight = globalMax.y - globalMin.y;
         axisPixelLength_[axisX] = coordMax[axisX].x - coordMin[axisX].x;
         axisPixelLength_[axisY] = coordMax[axisY].y - coordMin[axisY].y;
-        // 		double labelWidth = labelMax.x - labelMin.x;
-        // 		double labelHeight = labelMax.y - labelMin.y;
 
         // Now, we know the width and height of the axis on its own, and the extra 'added' by the labels, so work out
         // how much we need to shrink the axis by
@@ -760,14 +742,6 @@ void View::resetViewMatrix()
         viewRotation_.setIdentity();
         viewTranslation_.set(0.0, 0.0, 0.0);
 
-        // If a Normal view, reset the stretch factors
-        // 		if (viewType_ == View::NormalView)
-        // 		{
-        // 			axes_.setStretch(0, 1.0);
-        // 			axes_.setStretch(1, 1.0);
-        // 			axes_.setStretch(2, 1.0);
-        // 		}
-
         // Calculate zoom to show all data
         viewTranslation_.z = calculateRequiredZoom(axes_.realRange(0) * 0.5 * axes_.stretch(0),
                                                    axes_.realRange(1) * 0.5 * axes_.stretch(1), 0.9);
@@ -802,8 +776,6 @@ void View::showAllData(double xFrac, double yFrac, double zFrac)
         Axes::ensureSensibleRange(limitMin, limitMax);
 
         axes_.setRange(axis, limitMin, limitMax);
-        // 		axes_.setToLimit(axis, true);
-        // 		axes_.setToLimit(axis, false);
     }
 }
 
