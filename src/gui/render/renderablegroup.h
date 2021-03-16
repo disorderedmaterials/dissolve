@@ -39,7 +39,7 @@ class RenderableGroup
 
     public:
     // Add Renderable to group (if it isn't already)
-    void addRenderable(std::shared_ptr<Renderable> &renderable);
+    void addRenderable(const std::shared_ptr<Renderable> &renderable);
     // Remove Renderable from group (if it exists)
     void removeRenderable(Renderable *renderable);
     // Return whether the group is used by the specified renderable
@@ -114,7 +114,7 @@ class RenderableGroup
 
     private:
     // Set line style for the supplied Renderable, according to our settings
-    void setRenderableLineStyle(std::shared_ptr<Renderable> &renderable);
+    void setRenderableLineStyle(Renderable *renderable);
     // Set all Renderable line styles
     void setRenderableLineStyles();
 
@@ -149,7 +149,7 @@ class RenderableGroup
 
     private:
     // Set vertical shift in specified Renderable
-    void setRenderableVerticalShift(std::shared_ptr<Renderable> &renderable, int rendIndex);
+    void setRenderableVerticalShift(Renderable *renderable, int rendIndex);
     // Set vertical shift in all Renderables in the group via their transform equations
     void setRenderableVerticalShifts();
 

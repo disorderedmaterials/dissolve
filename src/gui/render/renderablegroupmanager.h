@@ -27,7 +27,7 @@ class RenderableGroupManager
     // Create named group, or return existing group by the same name
     RenderableGroup &createGroup(std::string_view name);
     // Add Renderable to its specified group, creating / associating as necessary
-    RenderableGroup &addToGroup(std::shared_ptr<Renderable> &renderable, std::string_view groupName);
+    RenderableGroup &addToGroup(const std::shared_ptr<Renderable> &renderable, std::string_view groupName);
     // Return named group, if it exists
     OptionalReferenceWrapper<RenderableGroup> group(std::string_view name);
     // Return group for specified Renderable, if one has been assigned

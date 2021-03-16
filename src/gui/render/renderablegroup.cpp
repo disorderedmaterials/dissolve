@@ -57,7 +57,7 @@ std::string_view RenderableGroup::name() const { return name_; }
  */
 
 // Associate Renderable to group (if it isn't already)
-void RenderableGroup::addRenderable(std::shared_ptr<Renderable> &renderable)
+void RenderableGroup::addRenderable(const std::shared_ptr<Renderable> &renderable)
 {
     // Return immediately if tne renderable is already in the group
     if (std::find(renderables_.begin(), renderables_.end(), renderable) != renderables_.end())
@@ -69,10 +69,10 @@ void RenderableGroup::addRenderable(std::shared_ptr<Renderable> &renderable)
     setRenderableColour(renderable);
 
     // Apply vertical shift to the renderable if necessary
-    setRenderableVerticalShift(renderable, renderables_.size() - 1);
+    setRenderableVerticalShift(renderable.get(), renderables_.size() - 1);
 
     // Apply line style if necessary
-    setRenderableLineStyle(renderable);
+    setRenderableLineStyle(renderable.get());
 }
 
 // Remove Renderable from group (if it exists)
@@ -198,7 +198,7 @@ StockColours::StockColour RenderableGroup::fixedStockColour() const { return fix
  */
 
 // Set line style for the supplied Renderable, according to our settings
-void RenderableGroup::setRenderableLineStyle(std::shared_ptr<Renderable> &renderable)
+void RenderableGroup::setRenderableLineStyle(Renderable *renderable)
 {
     if (lineStipple_ != LineStipple::NoStipple)
         renderable->lineStyle().setStipple(lineStipple_);
@@ -208,7 +208,7 @@ void RenderableGroup::setRenderableLineStyle(std::shared_ptr<Renderable> &render
 void RenderableGroup::setRenderableLineStyles()
 {
     for (auto &renderable : renderables_)
-        setRenderableLineStyle(renderable);
+        setRenderableLineStyle(renderable.get());
 }
 
 // Set line stipple for the group
@@ -236,7 +236,7 @@ EnumOptions<RenderableGroup::VerticalShiftStyle> RenderableGroup::verticalShiftS
 }
 
 // Set vertical shift in specified Renderable
-void RenderableGroup::setRenderableVerticalShift(std::shared_ptr<Renderable> &renderable, int rendIndex)
+void RenderableGroup::setRenderableVerticalShift(Renderable *renderable, int rendIndex)
 {
     renderable->setValuesTransformEnabled(verticalShiftStyle_ != PreventVerticalShifting);
 
@@ -253,7 +253,7 @@ void RenderableGroup::setRenderableVerticalShifts()
 {
     auto index = 0;
     for (auto &renderable : renderables_)
-        setRenderableVerticalShift(renderable, index++);
+        setRenderableVerticalShift(renderable.get(), index++);
 }
 
 // Set whether vertical shifting is enabled in this group
