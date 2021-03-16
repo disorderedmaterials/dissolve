@@ -122,16 +122,15 @@ void SpeciesTab::updateBondTableRow(int row, SpeciesBond *speciesBond, bool crea
                       ? QString("@%1").arg(QString::fromStdString(std::string(speciesBond->masterParameters()->name())))
                       : QString::fromStdString(std::string(SpeciesBond::bondFunctions().keywordFromInt(speciesBond->form()))));
 
-    // Interaction Parameters
+    // Interaction Parameters - see if table items are there, and create if necessary
     for (auto n = 0; n < speciesBond->nParameters(); ++n)
     {
-        if (createItems)
+        item = ui_.BondTable->item(row, n + 3);
+        if (!item)
         {
             item = new QTableWidgetItem;
             ui_.BondTable->setItem(row, n + 3, item);
         }
-        else
-            item = ui_.BondTable->item(row, n + 3);
 
         item->setText(QString::number(speciesBond->parameter(n)));
         item->setFlags(speciesBond->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
@@ -174,16 +173,15 @@ void SpeciesTab::updateAngleTableRow(int row, SpeciesAngle *speciesAngle, bool c
             ? QString("@%1").arg(QString::fromStdString(std::string(speciesAngle->masterParameters()->name())))
             : QString::fromStdString(std::string(SpeciesAngle::angleFunctions().keywordFromInt(speciesAngle->form()))));
 
-    // Interaction Parameters
+    // Interaction Parameters - see if table items are there, and create if necessary
     for (auto n = 0; n < speciesAngle->nParameters(); ++n)
     {
-        if (createItems)
+        item = ui_.AngleTable->item(row, n + 4);
+        if (!item)
         {
             item = new QTableWidgetItem;
             ui_.AngleTable->setItem(row, n + 4, item);
         }
-        else
-            item = ui_.AngleTable->item(row, n + 4);
 
         item->setText(QString::number(speciesAngle->parameter(n)));
         item->setFlags(speciesAngle->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
@@ -225,18 +223,16 @@ void SpeciesTab::updateTorsionTableRow(int row, SpeciesTorsion *speciesTorsion, 
             ? QString("@%1").arg(QString::fromStdString(std::string(speciesTorsion->masterParameters()->name())))
             : QString::fromStdString(std::string(SpeciesTorsion::torsionFunctions().keywordFromInt(speciesTorsion->form()))));
 
-    // Interaction Parameters
+    // Interaction Parameters - see if table items are there, and create if necessary
     for (auto n = 0; n < speciesTorsion->nParameters(); ++n)
     {
-        if (createItems)
+        item = ui_.TorsionTable->item(row, n + 5);
+        if (!item)
         {
             item = new QTableWidgetItem;
             item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
             ui_.TorsionTable->setItem(row, n + 5, item);
         }
-        else
-            item = ui_.TorsionTable->item(row, n + 5);
-
         item->setText(QString::number(speciesTorsion->parameter(n)));
     }
 }
@@ -275,16 +271,15 @@ void SpeciesTab::updateImproperTableRow(int row, SpeciesImproper *speciesImprope
             ? QString("@%1").arg(QString::fromStdString(std::string(speciesImproper->masterParameters()->name())))
             : QString::fromStdString(std::string(SpeciesTorsion::torsionFunctions().keywordFromInt(speciesImproper->form()))));
 
-    // Interaction Parameters
+    // Interaction Parameters - see if table items are there, and create if necessary
     for (auto n = 0; n < speciesImproper->nParameters(); ++n)
     {
-        if (createItems)
+        item = ui_.ImproperTable->item(row, n + 5);
+        if (!item)
         {
             item = new QTableWidgetItem;
             ui_.ImproperTable->setItem(row, n + 5, item);
         }
-        else
-            item = ui_.ImproperTable->item(row, n + 5);
 
         item->setText(QString::number(speciesImproper->parameter(n)));
         item->setFlags(speciesImproper->masterParameters() ? Qt::ItemIsEnabled | Qt::ItemIsSelectable
