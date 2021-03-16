@@ -344,7 +344,7 @@ void Data2D::operator/=(const double factor)
  */
 
 // Read data through specified LineParser
-bool Data2D::deserialise(LineParser &parser, const CoreData &coreData)
+bool Data2D::deserialise(LineParser &parser)
 {
     clear();
 

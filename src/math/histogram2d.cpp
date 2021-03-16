@@ -202,7 +202,7 @@ void Histogram2D::operator=(const Histogram2D &source)
  */
 
 // Read data through specified LineParser
-bool Histogram2D::deserialise(LineParser &parser, const CoreData &coreData)
+bool Histogram2D::deserialise(LineParser &parser)
 {
     clear();
 
@@ -218,7 +218,7 @@ bool Histogram2D::deserialise(LineParser &parser, const CoreData &coreData)
     for (auto x = 0; x < nXBins_; ++x)
     {
         for (auto y = 0; y < nYBins_; ++y)
-            if (!averages_[{x, y}].deserialise(parser, coreData))
+            if (!averages_[{x, y}].deserialise(parser))
                 return false;
     }
 

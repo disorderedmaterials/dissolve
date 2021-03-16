@@ -70,7 +70,7 @@ class BraggReflection
      */
     public:
     // Read data through specified parser
-    bool deserialise(LineParser &parser, const CoreData &coreData);
+    bool deserialise(LineParser &parser);
     // Write data through specified parser
     bool write(LineParser &parser);
 

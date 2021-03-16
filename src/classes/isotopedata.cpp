@@ -78,7 +78,7 @@ bool IsotopeData::serialise(LineParser &parser) const
 }
 
 // Read data through specified LineParser
-bool IsotopeData::deserialise(LineParser &parser, const CoreData &coreData)
+bool IsotopeData::deserialise(LineParser &parser)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

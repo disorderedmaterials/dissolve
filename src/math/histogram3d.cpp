@@ -239,7 +239,7 @@ void Histogram3D::operator=(const Histogram3D &source)
  */
 
 // Read data through specified LineParser
-bool Histogram3D::deserialise(LineParser &parser, const CoreData &coreData)
+bool Histogram3D::deserialise(LineParser &parser)
 {
     clear();
 
@@ -254,7 +254,7 @@ bool Histogram3D::deserialise(LineParser &parser, const CoreData &coreData)
     nMissed_ = parser.argli(1);
 
     for (auto &average : averages_)
-        if (!average.deserialise(parser, coreData))
+        if (!average.deserialise(parser))
             return false;
 
     return true;

@@ -129,7 +129,7 @@ void SampledDouble::operator/=(double x)
  */
 
 // Read data through specified LineParser
-bool SampledDouble::deserialise(LineParser &parser, const CoreData &coreData)
+bool SampledDouble::deserialise(LineParser &parser)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

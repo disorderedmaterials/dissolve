@@ -621,7 +621,7 @@ double BroadeningFunction::discreteKernelNormalisation(double deltaX, double ome
  */
 
 // Read data through specified LineParser
-bool BroadeningFunction::deserialise(LineParser &parser, const CoreData &coreData)
+bool BroadeningFunction::deserialise(LineParser &parser)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

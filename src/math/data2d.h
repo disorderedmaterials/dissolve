@@ -104,7 +104,7 @@ class Data2D : public PlottableData, public ListItem<Data2D>, public ObjectStore
      */
     public:
     // Read data through specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData);
+    bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
 

@@ -85,7 +85,7 @@ GenericItemDeserialiser::GenericItemDeserialiser()
             return false;
         v.initialise(parser.argi(0));
         for (auto n = 0; n < v.nItems(); ++n)
-            if (!v[n].deserialise(parser, coreData))
+            if (!v[n].deserialise(parser))
                 return false;
         return true;
     });
@@ -159,7 +159,7 @@ GenericItemDeserialiser::GenericItemDeserialiser()
         int nRows = parser.argi(0), nColumns = parser.argi(1);
         v.initialise(nRows, nColumns, parser.argb(2));
         for (auto &n : v)
-            if (!n.deserialise(parser, coreData))
+            if (!n.deserialise(parser))
                 return false;
         return true;
     });
@@ -167,22 +167,22 @@ GenericItemDeserialiser::GenericItemDeserialiser()
         return std::any_cast<AtomTypeList &>(a).deserialise(parser, coreData);
     });
     registerDeserialiser<Data1D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<Data1D &>(a).deserialise(parser, coreData);
+        return std::any_cast<Data1D &>(a).deserialise(parser);
     });
     registerDeserialiser<Data2D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<Data2D &>(a).deserialise(parser, coreData);
+        return std::any_cast<Data2D &>(a).deserialise(parser);
     });
     registerDeserialiser<Data3D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<Data3D &>(a).deserialise(parser, coreData);
+        return std::any_cast<Data3D &>(a).deserialise(parser);
     });
     registerDeserialiser<Histogram1D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<Histogram1D &>(a).deserialise(parser, coreData);
+        return std::any_cast<Histogram1D &>(a).deserialise(parser);
     });
     registerDeserialiser<Histogram2D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<Histogram2D &>(a).deserialise(parser, coreData);
+        return std::any_cast<Histogram2D &>(a).deserialise(parser);
     });
     registerDeserialiser<Histogram3D>([](std::any &a, LineParser &parser, const CoreData &coreData) {
-        return std::any_cast<Histogram3D &>(a).deserialise(parser, coreData);
+        return std::any_cast<Histogram3D &>(a).deserialise(parser);
     });
     registerDeserialiser<PartialSet>([](std::any &a, LineParser &parser, const CoreData &coreData) {
         return std::any_cast<PartialSet &>(a).deserialise(parser, coreData);

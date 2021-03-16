@@ -530,17 +530,17 @@ bool PartialSet::deserialise(LineParser &parser, const CoreData &coreData)
     {
         for (auto typeJ = typeI; typeJ < nTypes; ++typeJ)
         {
-            if (!partials_[{typeI, typeJ}].deserialise(parser, coreData))
+            if (!partials_[{typeI, typeJ}].deserialise(parser))
                 return false;
-            if (!boundPartials_[{typeI, typeJ}].deserialise(parser, coreData))
+            if (!boundPartials_[{typeI, typeJ}].deserialise(parser))
                 return false;
-            if (!unboundPartials_[{typeI, typeJ}].deserialise(parser, coreData))
+            if (!unboundPartials_[{typeI, typeJ}].deserialise(parser))
                 return false;
         }
     }
 
     // Read total
-    if (!total_.deserialise(parser, coreData))
+    if (!total_.deserialise(parser))
         return false;
 
     // Read empty bound flags

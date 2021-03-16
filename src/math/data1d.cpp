@@ -395,7 +395,7 @@ void Data1D::operator/=(const double factor)
  */
 
 // Read data through specified LineParser
-bool Data1D::deserialise(LineParser &parser, const CoreData &coreData)
+bool Data1D::deserialise(LineParser &parser)
 {
     clear();
 

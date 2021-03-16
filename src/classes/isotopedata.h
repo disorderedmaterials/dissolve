@@ -55,7 +55,7 @@ class IsotopeData : public ListItem<IsotopeData>
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
     // Read data through specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData);
+    bool deserialise(LineParser &parser);
 
     /*
      * Parallel Comms

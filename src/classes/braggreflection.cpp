@@ -103,7 +103,7 @@ int BraggReflection::nKVectors() const { return nKVectors_; }
  */
 
 // Read data through specified parser
-bool BraggReflection::deserialise(LineParser &parser, const CoreData &coreData)
+bool BraggReflection::deserialise(LineParser &parser)
 {
     // Read index, Q centre, and number of contributing K-vectors
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -113,7 +113,7 @@ bool BraggReflection::deserialise(LineParser &parser, const CoreData &coreData)
     nKVectors_ = parser.argi(2);
 
     // Read intensities array
-    if (!GenericItemDeserialiser::deserialise<Array2D<double>>(intensities_, parser, coreData))
+    if (!GenericItemDeserialiser::deserialise<Array2D<double>>(intensities_, parser))
         return false;
 
     return true;

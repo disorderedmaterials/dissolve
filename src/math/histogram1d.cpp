@@ -184,7 +184,7 @@ void Histogram1D::operator=(const Histogram1D &source)
  */
 
 // Read data through specified LineParser
-bool Histogram1D::deserialise(LineParser &parser, const CoreData &coreData)
+bool Histogram1D::deserialise(LineParser &parser)
 {
     clear();
 
@@ -198,7 +198,7 @@ bool Histogram1D::deserialise(LineParser &parser, const CoreData &coreData)
     nMissed_ = parser.argli(1);
 
     for (auto n = 0; n < nBins_; ++n)
-        if (!averages_[n].deserialise(parser, coreData))
+        if (!averages_[n].deserialise(parser))
             return false;
 
     return true;

@@ -57,7 +57,7 @@ class SampledDouble
      */
     public:
     // Read data through specified LineParser
-    bool deserialise(LineParser &parser, const CoreData &coreData);
+    bool deserialise(LineParser &parser);
     // Write data through specified LineParser
     bool serialise(LineParser &parser) const;
 

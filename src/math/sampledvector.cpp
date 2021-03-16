@@ -152,7 +152,7 @@ void SampledVector::operator/=(double x)
  */
 
 // Read data through specified LineParser
-bool SampledVector::deserialise(LineParser &parser, const CoreData &coreData)
+bool SampledVector::deserialise(LineParser &parser)
 {
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
         return false;

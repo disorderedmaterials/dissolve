@@ -471,7 +471,7 @@ bool Dissolve::loadRestart(std::string_view filename)
                 Messenger::warn("Timing information for Module '{}' found, but no Module with this unique name "
                                 "exists...\n",
                                 parser.argsv(1));
-                if (!SampledDouble().deserialise(parser, coreData_))
+                if (!SampledDouble().deserialise(parser))
                     error = true;
             }
             else if (!module->readProcessTimes(parser))

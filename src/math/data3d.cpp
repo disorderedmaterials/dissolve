@@ -326,7 +326,7 @@ void Data3D::operator/=(const double factor)
  */
 
 // Read data through specified LineParser
-bool Data3D::deserialise(LineParser &parser, const CoreData &coreData)
+bool Data3D::deserialise(LineParser &parser)
 {
     clear();
 

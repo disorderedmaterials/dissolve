@@ -300,11 +300,7 @@ bool Module::executeProcessing(Dissolve &dissolve, ProcessPool &procPool)
 SampledDouble Module::processTimes() const { return processTimes_; }
 
 // Read timing information through specified parser
-bool Module::readProcessTimes(LineParser &parser)
-{
-    static CoreData dummyData;
-    return processTimes_.deserialise(parser, dummyData);
-}
+bool Module::readProcessTimes(LineParser &parser) { return processTimes_.deserialise(parser); }
 
 /*
  * GUI Widget
