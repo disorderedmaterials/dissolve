@@ -219,13 +219,7 @@ bool Data3D::valuesHaveErrors() const { return hasError_; }
 // Return error value specified
 double &Data3D::error(int xIndex, int yIndex, int zIndex)
 {
-    if (!hasError_)
-    {
-        static double dummy;
-        Messenger::warn("This Data3D (name='{}', tag='{}') has no errors to return, but error(int) was requested.\n", name(),
-                        objectTag());
-        return dummy;
-    }
+    assert(hasError_);
 
     ++version_;
 
@@ -234,13 +228,7 @@ double &Data3D::error(int xIndex, int yIndex, int zIndex)
 
 const double &Data3D::error(int xIndex, int yIndex, int zIndex) const
 {
-    if (!hasError_)
-    {
-        static double dummy;
-        Messenger::warn("This Data3D (name='{}', tag='{}') has no errors to return, but error(int,int) was requested.\n",
-                        name(), objectTag());
-        return dummy;
-    }
+    assert(hasError_);
 
     return errors_[{xIndex, yIndex, zIndex}];
 }
@@ -248,9 +236,7 @@ const double &Data3D::error(int xIndex, int yIndex, int zIndex) const
 // Return three-dimensional errors Array
 Array3D<double> &Data3D::errors3D()
 {
-    if (!hasError_)
-        Messenger::warn("This Data3D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
-                        objectTag());
+    assert(hasError_);
 
     ++version_;
 
@@ -259,9 +245,7 @@ Array3D<double> &Data3D::errors3D()
 
 const Array3D<double> &Data3D::errors3D() const
 {
-    if (!hasError_)
-        Messenger::warn("This Data3D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
-                        objectTag());
+    assert(hasError_);
 
     return errors_;
 }

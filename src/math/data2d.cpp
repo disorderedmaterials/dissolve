@@ -240,13 +240,7 @@ bool Data2D::valuesHaveErrors() const { return hasError_; }
 // Return error value specified
 double &Data2D::error(int xIndex, int yIndex)
 {
-    if (!hasError_)
-    {
-        static double dummy = 0.0;
-        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but error(int) was requested.\n", name(),
-                        objectTag());
-        return dummy;
-    }
+    assert(hasError_);
 
     ++version_;
 
@@ -255,13 +249,7 @@ double &Data2D::error(int xIndex, int yIndex)
 
 const double &Data2D::error(int xIndex, int yIndex) const
 {
-    if (!hasError_)
-    {
-        static double dummy = 0.0;
-        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but error(int,int) was requested.\n",
-                        name(), objectTag());
-        return dummy;
-    }
+    assert(hasError_);
 
     return errors_[{xIndex, yIndex}];
 }
@@ -269,9 +257,7 @@ const double &Data2D::error(int xIndex, int yIndex) const
 // Return two-dimensional errors Array
 Array2D<double> &Data2D::errors2D()
 {
-    if (!hasError_)
-        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
-                        objectTag());
+    assert(hasError_);
 
     ++version_;
 
@@ -280,9 +266,7 @@ Array2D<double> &Data2D::errors2D()
 
 const Array2D<double> &Data2D::errors2D() const
 {
-    if (!hasError_)
-        Messenger::warn("This Data2D (name='{}', tag='{}') has no errors to return, but errors2D() was requested.\n", name(),
-                        objectTag());
+    assert(hasError_);
 
     return errors_;
 }

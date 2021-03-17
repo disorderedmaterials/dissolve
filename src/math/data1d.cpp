@@ -13,14 +13,9 @@ template <class Data1D> int ObjectStore<Data1D>::objectCount_ = 0;
 template <class Data1D> int ObjectStore<Data1D>::objectType_ = ObjectInfo::Data1DObject;
 template <class Data1D> std::string_view ObjectStore<Data1D>::objectTypeName_ = "Data1D";
 
-Data1D::Data1D() : PlottableData(PlottableData::OneAxisPlottable), ListItem<Data1D>(), ObjectStore<Data1D>(this)
+Data1D::Data1D()
+    : PlottableData(PlottableData::OneAxisPlottable), ListItem<Data1D>(), ObjectStore<Data1D>(this), hasError_(false)
 {
-    static int count = 0;
-    name_ = fmt::format("Data1D_{}", ++count);
-
-    hasError_ = false;
-
-    clear();
 }
 
 Data1D::Data1D(const Data1D &source) : PlottableData(PlottableData::OneAxisPlottable), ObjectStore<Data1D>(this)
@@ -116,15 +111,11 @@ void Data1D::addPoint(double x, double value)
 // Add new data point with error
 void Data1D::addPoint(double x, double value, double error)
 {
+    assert(hasError_);
+
     x_.push_back(x);
     values_.push_back(value);
-
-    if (hasError_)
-        errors_.push_back(error);
-    else
-        Messenger::warn("Tried to addPoint() with an error to Data1D, but this Data1D (name='{}', tag='{}') has no "
-                        "error information associated with it.\n",
-                        name(), objectTag());
+    errors_.push_back(error);
 
     ++version_;
 }
@@ -235,13 +226,7 @@ bool Data1D::valuesHaveErrors() const { return hasError_; }
 // Return error value specified
 double &Data1D::error(int index)
 {
-    if (!hasError_)
-    {
-        static double dummy = 0.0;
-        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but error(int) was requested.\n", name(),
-                        objectTag());
-        return dummy;
-    }
+    assert(hasError_);
 
     ++version_;
 
@@ -250,13 +235,7 @@ double &Data1D::error(int index)
 
 const double &Data1D::error(int index) const
 {
-    if (!hasError_)
-    {
-        static double dummy;
-        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but error(int) was requested.\n", name(),
-                        objectTag());
-        return dummy;
-    }
+    assert(hasError_);
 
     return errors_[index];
 }
@@ -264,9 +243,7 @@ const double &Data1D::error(int index) const
 // Return error Array
 std::vector<double> &Data1D::errors()
 {
-    if (!hasError_)
-        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
-                        objectTag());
+    assert(hasError_);
 
     ++version_;
 
@@ -275,9 +252,7 @@ std::vector<double> &Data1D::errors()
 
 const std::vector<double> &Data1D::errors() const
 {
-    if (!hasError_)
-        Messenger::warn("This Data1D (name='{}', tag='{}') has no errors to return, but errors() was requested.\n", name(),
-                        objectTag());
+    assert(hasError_);
 
     return errors_;
 }
