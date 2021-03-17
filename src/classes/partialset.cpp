@@ -260,33 +260,37 @@ Data1D PartialSet::unboundTotal(bool applyConcentrationWeights) const
 }
 
 // Save all partials and total
-bool PartialSet::save() const
+bool PartialSet::save(std::string_view prefix, std::string_view tag, std::string_view suffix) const
 {
     LineParser parser;
 
-    for_each_pair_early(0, atomTypes_.nItems(), [&](int typeI, int typeJ) -> EarlyReturn<bool> {
-        // Open file and check that we're OK to proceed writing to it
-        std::string filename{partials_[{typeI, typeJ}].tag()};
-        Messenger::printVerbose("Writing partial file '{}'...\n", filename);
+    // Set titles for partials
+    std::string title;
+    for_each_pair_early(atomTypes_.begin(), atomTypes_.end(),
+                        [&](int typeI, const AtomTypeData &at1, int typeJ, const AtomTypeData &at2) -> EarlyReturn<bool> {
+                            // Open file and check that we're OK to proceed writing to it
+                            std::string filename{
+                                fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix)};
+                            Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
-        parser.openOutput(filename, true);
-        if (!parser.isFileGoodForWriting())
-            return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
+                            parser.openOutput(filename, true);
+                            if (!parser.isFileGoodForWriting())
+                                return Messenger::error("Couldn't open file '{}' for writing.\n", filename);
 
-        auto &full = partials_[{typeI, typeJ}];
-        auto &bound = boundPartials_[{typeI, typeJ}];
-        auto &unbound = unboundPartials_[{typeI, typeJ}];
-        parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits_, "Full", "Bound", "Unbound");
-        for (auto n = 0; n < full.nValues(); ++n)
-            parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n), bound.value(n),
-                              unbound.value(n));
-        parser.closeFiles();
+                            auto &full = partials_[{typeI, typeJ}];
+                            auto &bound = boundPartials_[{typeI, typeJ}];
+                            auto &unbound = unboundPartials_[{typeI, typeJ}];
+                            parser.writeLineF("# {:<14}  {:<16}  {:<16}  {:<16}\n", abscissaUnits_, "Full", "Bound", "Unbound");
+                            for (auto n = 0; n < full.nValues(); ++n)
+                                parser.writeLineF("{:16.9e}  {:16.9e}  {:16.9e}  {:16.9e}\n", full.xAxis(n), full.value(n),
+                                                  bound.value(n), unbound.value(n));
+                            parser.closeFiles();
 
-        return EarlyReturn<bool>::Continue;
-    });
+                            return EarlyReturn<bool>::Continue;
+                        });
 
     Messenger::printVerbose("Writing total file '{}'...\n", total_.tag());
-    Data1DExportFileFormat exportFormat(total_.tag());
+    Data1DExportFileFormat exportFormat(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
     return exportFormat.exportData(total_);
 }
 
@@ -315,22 +319,6 @@ void PartialSet::setObjectTags(std::string_view prefix, std::string_view suffix)
 
 // Return prefix applied to object names
 std::string_view PartialSet::objectNamePrefix() const { return objectNamePrefix_; }
-
-// Set underlying Data1D file names
-void PartialSet::setFileNames(std::string_view prefix, std::string_view tag, std::string_view suffix)
-{
-    // Set titles for partials
-    std::string title;
-    for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
-        title = fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
-        partials_[{n, m}].setTag(title);
-        boundPartials_[{n, m}].setTag(title);
-        unboundPartials_[{n, m}].setTag(title);
-    });
-
-    // Set up array for total
-    total_.setTag(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
-}
 
 /*
  * Manipulation

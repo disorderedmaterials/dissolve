@@ -104,13 +104,11 @@ class PartialSet : public ListItem<PartialSet>
     // Calculate and return total unbound function
     Data1D unboundTotal(bool applyConcentrationWeights) const;
     // Save all partials and total
-    bool save() const;
+    bool save(std::string_view prefix, std::string_view tag, std::string_view suffix) const;
     // Name all object based on the supplied prefix
     void setObjectTags(std::string_view prefix, std::string_view suffix = "");
     // Return prefix applied to object names
     std::string_view objectNamePrefix() const;
-    // Set underlying Data1D file names
-    void setFileNames(std::string_view prefix, std::string_view tag, std::string_view suffix);
 
     /*
      * Manipulation

@@ -173,7 +173,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto [weightedSQ, wSQtatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
     if (wSQtatus == GenericItem::ItemStatus::Created)
-        weightedSQ.setUpPartials(unweightedSQ.atomTypes(), uniqueName(), "weighted", "sq", "Q, 1/Angstroms");
+        weightedSQ.setUpPartials(unweightedSQ.atomTypes(), uniqueName_, "weighted", "sq", "Q, 1/Angstroms");
 
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation);
@@ -182,7 +182,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     weightedSQ.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedSQ"));
 
     // Save data if requested
-    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save())))
+    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "weighted", "sq"))))
         return false;
     if (saveFormFactors)
     {
@@ -254,7 +254,7 @@ bool XRaySQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     repGR.setObjectTag(fmt::format("{}//RepresentativeTotalGR", uniqueName_));
 
     // Save data if requested
-    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save())))
+    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "weighted", "sq"))))
         return false;
 
     return true;

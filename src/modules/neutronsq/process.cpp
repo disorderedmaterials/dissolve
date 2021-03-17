@@ -171,7 +171,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     auto [weightedSQ, wSQstatus] =
         dissolve.processingModuleData().realiseIf<PartialSet>("WeightedSQ", uniqueName_, GenericItem::InRestartFileFlag);
     if (wSQstatus == GenericItem::ItemStatus::Created)
-        weightedSQ.setUpPartials(unweightedSQ.atomTypes(), uniqueName(), "weighted", "sq", "Q, 1/Angstroms");
+        weightedSQ.setUpPartials(unweightedSQ.atomTypes(), uniqueName_, "weighted", "sq", "Q, 1/Angstroms");
 
     // Calculate weighted S(Q)
     calculateWeightedSQ(unweightedSQ, weightedSQ, weights, normalisation);
@@ -180,7 +180,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     weightedSQ.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedSQ"));
 
     // Save data if requested
-    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save())))
+    if (saveSQ && (!MPIRunMaster(procPool, weightedSQ.save(uniqueName_, "weighted", "sq"))))
         return false;
 
     /*
@@ -205,7 +205,7 @@ bool NeutronSQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     weightedGR.setObjectTags(fmt::format("{}//{}", uniqueName_, "WeightedGR"));
 
     // Save data if requested
-    if (saveGR && (!MPIRunMaster(procPool, weightedGR.save())))
+    if (saveGR && (!MPIRunMaster(procPool, weightedGR.save(uniqueName_, "weighted", "gr"))))
         return false;
 
     // Calculate representative total g(r) from FT of calculated S(Q)
