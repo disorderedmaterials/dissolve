@@ -150,7 +150,7 @@ bool CalibrationModule::process(Dissolve &dissolve, ProcessPool &procPool)
             // Store the new broadening parameters in the restart file for info only (they won't be read in and
             // used)
             dissolve.processingModuleData().realise<PairBroadeningFunction>(
-                fmt::format("{}-IntraBroadening", rdfModule->uniqueName()), uniqueName(), GenericList::InRestartFileFlag) =
+                fmt::format("{}-IntraBroadening", rdfModule->uniqueName()), uniqueName(), GenericItem::InRestartFileFlag) =
                 broadening;
         }
 

@@ -131,7 +131,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
         // Form unweighted g(r) from original g(r), applying any requested smoothing / intramolecular broadening
         auto &unweightedgr = dissolve.processingModuleData().realise<PartialSet>(
-            fmt::format("{}//UnweightedGR", cfg->niceName()), uniqueName_, GenericList::InRestartFileFlag);
+            fmt::format("{}//UnweightedGR", cfg->niceName()), uniqueName_, GenericItem::InRestartFileFlag);
         calculateUnweightedGR(procPool, cfg, originalgr, unweightedgr, intraBroadening, smoothing);
 
         // Set names of resources and filename in Data1D within the PartialSet
@@ -145,7 +145,7 @@ bool RDFModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
     // Create/retrieve PartialSet for summed unweighted g(r)
     auto &summedUnweightedGR =
-        dissolve.processingModuleData().realise<PartialSet>("UnweightedGR", uniqueName_, GenericList::InRestartFileFlag);
+        dissolve.processingModuleData().realise<PartialSet>("UnweightedGR", uniqueName_, GenericItem::InRestartFileFlag);
 
     // Sum the partials from the associated Configurations
     if (!RDFModule::sumUnweightedGR(dissolve.processingModuleData(), procPool, this, this, summedUnweightedGR))

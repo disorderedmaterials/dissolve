@@ -545,7 +545,7 @@ bool Dissolve::loadRestartAsReference(std::string_view filename, std::string_vie
 
             // Deserialise the item
             processingModuleData_.deserialise(parser, coreData_, newName, parser.args(2), parser.argi(3),
-                                              GenericList::IsReferencePointDataFlag);
+                                              GenericItem::IsReferencePointDataFlag);
 
             skipCurrentItem = false;
         }

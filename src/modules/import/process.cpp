@@ -68,7 +68,7 @@ bool ImportModule::process(Dissolve &dissolve, ProcessPool &procPool)
 
             // Set the trajectory file position in the restart file
             dissolve.processingModuleData().realise<std::streampos>(streamPosName, uniqueName(),
-                                                                    GenericList::InRestartFileFlag) = parser.tellg();
+                                                                    GenericItem::InRestartFileFlag) = parser.tellg();
         }
     }
 

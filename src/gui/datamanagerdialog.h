@@ -38,7 +38,7 @@ class DataManagerDialog : public QDialog
 
     private:
     // Add GenericItems to table
-    void addItems(const std::map<std::string, GenericList::GenericItem> &items);
+    void addItems(const std::map<std::string, GenericItem::Type> &items);
     // Update the specified table of GenericItems, optionally filtering them by name and description
     void filterTable(QString filterText);
     // Update ReferencePoint table row

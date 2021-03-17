@@ -42,7 +42,7 @@ bool average(GenericList &processingData, std::string_view name, std::string_vie
     int nData = pruneOldData(processingData, name, prefix, nSetsInAverage);
 
     // Store the current T as the earliest data (index == 1)
-    T &recentData = processingData.realise<T>(fmt::format("{}_1", name), prefix, GenericList::InRestartFileFlag);
+    T &recentData = processingData.realise<T>(fmt::format("{}_1", name), prefix, GenericItem::InRestartFileFlag);
     recentData = currentData;
     ++nData;
 
@@ -90,7 +90,7 @@ static bool arrayAverage(GenericList &processingData, std::string_view name, std
     int nData = pruneOldData(processingData, name, prefix, nSetsInAverage);
 
     // Store the current T as the earliest data (index == 1)
-    T &recentData = processingData.realise<T>(fmt::format("{}_1", name), prefix, GenericList::InRestartFileFlag);
+    T &recentData = processingData.realise<T>(fmt::format("{}_1", name), prefix, GenericItem::InRestartFileFlag);
     recentData = currentData;
     ++nData;
 

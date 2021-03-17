@@ -12,7 +12,7 @@
 void GenericList::clear()
 {
     for (auto &[key, value] : items_)
-        if (!(std::get<ItemData::Flags>(value) & GenericList::ProtectedFlag))
+        if (!(std::get<GenericItem::Flags>(value) & GenericItem::ProtectedFlag))
             items_.erase(key);
 }
 
@@ -27,14 +27,14 @@ bool GenericList::contains(std::string_view name, std::string_view prefix) const
 }
 
 // Return item list
-const std::map<std::string, GenericList::GenericItem> &GenericList::items() const { return items_; }
+const std::map<std::string, GenericItem::Type> &GenericList::items() const { return items_; }
 
 // Return the version of the named item from the list
 int GenericList::version(std::string_view name, std::string_view prefix) const
 {
     auto it = items_.find(prefix.empty() ? std::string(name) : fmt::format("{}_{}", prefix, name));
     assert(it != items_.end());
-    return std::get<ItemData::Version>(it->second);
+    return std::get<GenericItem::Version>(it->second);
 }
 
 // Remove named item
@@ -82,15 +82,15 @@ bool GenericList::serialiseAll(LineParser &parser, const CoreData &coreData, std
     for (auto &[key, value] : items_)
     {
         // If it is not flagged to be saved in the restart file, skip it
-        if (!(std::get<ItemData::Flags>(value) & GenericList::InRestartFileFlag))
+        if (!(std::get<GenericItem::Flags>(value) & GenericItem::InRestartFileFlag))
             continue;
 
-        if (!parser.writeLineF("{}  {}  {}  {}  {}\n", headerPrefix, key, std::get<ItemData::ClassName>(value),
-                               std::get<ItemData::Version>(value), std::get<ItemData::Flags>(value)))
+        if (!parser.writeLineF("{}  {}  {}  {}  {}\n", headerPrefix, key, std::get<GenericItem::ClassName>(value),
+                               std::get<GenericItem::Version>(value), std::get<GenericItem::Flags>(value)))
             return false;
 
         // Find a suitable serialiser and call it
-        auto &data = std::get<ItemData::AnyObject>(value);
+        auto &data = std::get<GenericItem::AnyObject>(value);
         if (!GenericItemSerialiser::serialise(data, parser, coreData))
             return Messenger::error(fmt::format("Serialisation of item '{}' failed.\n", key));
     }
@@ -103,8 +103,8 @@ bool GenericList::deserialise(LineParser &parser, CoreData &coreData, std::strin
                               int flags)
 {
     // Create the item
-    items_[std::string(name)] = GenericItem(GenericItemProducer::create(itemClass), itemClass, version, flags);
-    auto &data = std::get<ItemData::AnyObject>(items_[std::string(name)]);
+    items_[std::string(name)] = GenericItem::Type(GenericItemProducer::create(itemClass), itemClass, version, flags);
+    auto &data = std::get<GenericItem::AnyObject>(items_[std::string(name)]);
 
     // Find its deserialiser and call it
     if (!GenericItemDeserialiser::deserialise(data, parser, coreData))

@@ -265,7 +265,7 @@ bool RDFModule::calculateGR(GenericList &processingData, ProcessPool &procPool, 
     // Does a PartialSet already exist for this Configuration?
     bool wasCreated;
     auto &originalgr = processingData.realise<PartialSet>(fmt::format("{}//OriginalGR", cfg->niceName()), uniqueName_,
-                                                          GenericList::InRestartFileFlag, &wasCreated);
+                                                          GenericItem::InRestartFileFlag, &wasCreated);
     if (wasCreated)
         originalgr.setUp(cfg->usedAtomTypesList(), rdfRange, rdfBinWidth, cfg->niceName(), "original", "rdf", "r, Angstroms");
 
@@ -462,7 +462,7 @@ bool RDFModule::sumUnweightedGR(GenericList &processingData, ProcessPool &procPo
 {
     // Realise an AtomTypeList containing the sum of atom types over all target configurations
     auto &combinedAtomTypes =
-        processingData.realise<AtomTypeList>("SummedAtomTypes", parentModule->uniqueName(), GenericList::InRestartFileFlag);
+        processingData.realise<AtomTypeList>("SummedAtomTypes", parentModule->uniqueName(), GenericItem::InRestartFileFlag);
     combinedAtomTypes.clear();
     for (Configuration *cfg : parentModule->targetConfigurations())
         combinedAtomTypes.add(cfg->usedAtomTypesList());

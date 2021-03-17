@@ -114,7 +114,7 @@ ProcedureNode::NodeExecutionResult Process1DProcedureNode::execute(ProcessPool &
     // Retrieve / realise the normalised data from the supplied list
     bool created;
     auto &data = targetList.realise<Data1D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix,
-                                            GenericList::InRestartFileFlag, &created);
+                                            GenericItem::InRestartFileFlag, &created);
     processedData_ = &data;
 
     data.setName(name());

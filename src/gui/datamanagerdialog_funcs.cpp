@@ -25,7 +25,7 @@ DataManagerDialog::~DataManagerDialog() {}
  */
 
 // Add GenericItems to table
-void DataManagerDialog::addItems(const std::map<std::string, GenericList::GenericItem> &items)
+void DataManagerDialog::addItems(const std::map<std::string, GenericItem::Type> &items)
 {
     QTableWidgetItem *item;
     ui_.SimulationDataTable->setRowCount(items.size());
@@ -38,12 +38,12 @@ void DataManagerDialog::addItems(const std::map<std::string, GenericList::Generi
         ui_.SimulationDataTable->setItem(count, 0, item);
 
         // Item type
-        item = new QTableWidgetItem(QString::fromStdString(std::string(std::get<GenericList::ItemData::ClassName>(value))));
+        item = new QTableWidgetItem(QString::fromStdString(std::string(std::get<GenericItem::ClassName>(value))));
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         ui_.SimulationDataTable->setItem(count, 1, item);
 
         // Version
-        item = new QTableWidgetItem(QString::number(std::get<GenericList::ItemData::Version>(value)));
+        item = new QTableWidgetItem(QString::number(std::get<GenericItem::Version>(value)));
         item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
         ui_.SimulationDataTable->setItem(count, 2, item);
 

@@ -81,7 +81,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
     // Does a PartialSet already exist for this Configuration?
     bool wasCreated;
     auto &unweightedsq = dissolve.processingModuleData().realise<PartialSet>("UnweightedSQ", uniqueName_,
-                                                                             GenericList::InRestartFileFlag, &wasCreated);
+                                                                             GenericItem::InRestartFileFlag, &wasCreated);
     if (wasCreated)
         unweightedsq.setUpPartials(unweightedgr.atomTypes(), uniqueName_, "unweighted", "sq", "Q, 1/Angstroms");
 
@@ -123,7 +123,7 @@ bool SQModule::process(Dissolve &dissolve, ProcessPool &procPool)
         // Create a temporary array into which our broadened Bragg partials will be placed
         bool created;
         auto &braggPartials = dissolve.processingModuleData().realise<Array2D<Data1D>>("BraggPartials", uniqueName_,
-                                                                                       GenericList::NoFlags, &created);
+                                                                                       GenericItem::NoFlags, &created);
         if (created)
         {
             // Initialise the array

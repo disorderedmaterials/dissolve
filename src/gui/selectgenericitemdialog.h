@@ -9,7 +9,6 @@
 #include <QDialog>
 
 // Forward Declarations
-class GenericItem;
 class QTableWidgetItem;
 class SelectGenericItemWidget;
 

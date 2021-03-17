@@ -5,6 +5,7 @@
 
 #include "base/lineparser.h"
 #include "base/sysfunc.h"
+#include "genericitems/item.h"
 #include "genericitems/producers.h"
 #include <any>
 #include <map>
@@ -16,31 +17,13 @@ class GenericList
     public:
     GenericList() = default;
     ~GenericList() = default;
-    // Item Data Typedef
-    typedef std::tuple<std::any, std::string, int, int> GenericItem;
-    // Item Data Tuple Indices
-    enum ItemData
-    {
-        AnyObject,
-        ClassName,
-        Version,
-        Flags
-    };
-    // Item Flags
-    enum ItemFlag
-    {
-        NoFlags = 0,                  /* No flags */
-        InRestartFileFlag = 1,        /* The item should be written to the restart file */
-        IsReferencePointDataFlag = 2, /* The item was loaded as reference point data */
-        ProtectedFlag = 4             /* The item will not be clear()'d unless forced */
-    };
 
     /*
      * Child Items
      */
     private:
     // Map of items, where the tuple corresponds to <object, className, version, flags>
-    std::map<std::string, GenericItem> items_;
+    std::map<std::string, GenericItem::Type> items_;
 
     public:
     // Clear all items (except those that are marked protected)
@@ -50,7 +33,7 @@ class GenericList
     // Return whether the named item is contained in the list
     bool contains(std::string_view name, std::string_view prefix = "") const;
     // Return item list
-    const std::map<std::string, GenericItem> &items() const;
+    const std::map<std::string, GenericItem::Type> &items() const;
     // Return the version of the named item from the list
     int version(std::string_view name, std::string_view prefix = "") const;
     // Remove named item
@@ -74,26 +57,27 @@ class GenericList
         if (it != items_.end())
         {
             // Check type before we attempt to cast it
-            if (std::get<ItemData::AnyObject>(it->second).type() != typeid(T))
-                throw(
-                    std::runtime_error(fmt::format("GenericList::realise() - Item named '{}' exists, but has a different type "
-                                                   "to that requested ('{}' vs '{}').\n",
-                                                   prefix.empty() ? name : fmt::format("{}_{}", prefix, name),
-                                                   std::get<ItemData::AnyObject>(it->second).type().name(), typeid(T).name())));
+            if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
+                throw(std::runtime_error(
+                    fmt::format("GenericList::realise() - Item named '{}' exists, but has a different type "
+                                "to that requested ('{}' vs '{}').\n",
+                                prefix.empty() ? name : fmt::format("{}_{}", prefix, name),
+                                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
 
             // Bump version of the item and return it
-            ++std::get<ItemData::Version>(it->second);
+            ++std::get<GenericItem::Version>(it->second);
             if (created)
                 *created = false;
-            return std::any_cast<T &>(std::get<ItemData::AnyObject>(it->second));
+            return std::any_cast<T &>(std::get<GenericItem::AnyObject>(it->second));
         }
 
         // Create and return new item
         if (created)
             *created = true;
-        items_.emplace(varName, GenericItem(GenericItemProducer::create<T>(), GenericItemProducer::className<T>(), 0, flags));
+        items_.emplace(varName,
+                       GenericItem::Type(GenericItemProducer::create<T>(), GenericItemProducer::className<T>(), 0, flags));
         auto &item = items_[varName];
-        return std::any_cast<T &>(std::get<ItemData::AnyObject>(item));
+        return std::any_cast<T &>(std::get<GenericItem::AnyObject>(item));
     }
 
     /*
@@ -109,13 +93,13 @@ class GenericList
                                                  prefix.empty() ? name : fmt::format("{}_{}", prefix, name))));
 
         // Check type before we attempt to cast it
-        if (std::get<ItemData::AnyObject>(it->second).type() != typeid(T))
+        if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
             throw(std::runtime_error(fmt::format(
                 "GenericList::value() - Item named '{}' exists, but has a different type to that requested ('{}' vs '{}').\n",
                 prefix.empty() ? name : fmt::format("{}_{}", prefix, name),
-                std::get<ItemData::AnyObject>(it->second).type().name(), typeid(T).name())));
+                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
 
-        return std::any_cast<const T &>(std::get<ItemData::AnyObject>(it->second));
+        return std::any_cast<const T &>(std::get<GenericItem::AnyObject>(it->second));
     }
     // Return copy of named item as templated type, or a default value
     template <class T> T valueOr(std::string_view name, std::string_view prefix, T valueIfNotFound) const
@@ -125,13 +109,13 @@ class GenericList
             return valueIfNotFound;
 
         // Check type before we attempt to cast it
-        if (std::get<ItemData::AnyObject>(it->second).type() != typeid(T))
+        if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
             throw(std::runtime_error(fmt::format(
                 "GenericList::value() - Item named '{}' exists, but has a different type to that requested ('{}' vs '{}').\n",
                 prefix.empty() ? name : fmt::format("{}_{}", prefix, name),
-                std::get<ItemData::AnyObject>(it->second).type().name(), typeid(T).name())));
+                std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
 
-        return std::any_cast<const T>(std::get<ItemData::AnyObject>(it->second));
+        return std::any_cast<const T>(std::get<GenericItem::AnyObject>(it->second));
     }
     // Retrieve named item as templated type, assuming that it is going to be modified
     template <class T> T &retrieve(std::string_view name, std::string_view prefix = "")
@@ -142,21 +126,22 @@ class GenericList
                                                  prefix.empty() ? name : fmt::format("{}_{}", prefix, name))));
 
         // Check type before we attempt to cast it
-        if (std::get<ItemData::AnyObject>(it->second).type() != typeid(T))
-            throw(std::runtime_error(fmt::format("GenericList::retrieve() - Item named '{}' exists, but has a different type "
-                                                 "to that requested ('{}' vs '{}').\n",
-                                                 prefix.empty() ? name : fmt::format("{}_{}", prefix, name),
-                                                 std::get<ItemData::AnyObject>(it->second).type().name(), typeid(T).name())));
+        if (std::get<GenericItem::AnyObject>(it->second).type() != typeid(T))
+            throw(
+                std::runtime_error(fmt::format("GenericList::retrieve() - Item named '{}' exists, but has a different type "
+                                               "to that requested ('{}' vs '{}').\n",
+                                               prefix.empty() ? name : fmt::format("{}_{}", prefix, name),
+                                               std::get<GenericItem::AnyObject>(it->second).type().name(), typeid(T).name())));
 
-        ++std::get<ItemData::Version>(it->second);
-        return std::any_cast<T &>(std::get<ItemData::AnyObject>(it->second));
+        ++std::get<GenericItem::Version>(it->second);
+        return std::any_cast<T &>(std::get<GenericItem::AnyObject>(it->second));
     }
     // Return names of all items of the template type
     template <class T> std::vector<std::string_view> all() const
     {
         std::vector<std::string_view> matches;
         for (auto &[key, value] : items_)
-            if (std::get<ItemData::AnyObject>(value).type() == typeid(T))
+            if (std::get<GenericItem::AnyObject>(value).type() == typeid(T))
                 matches.emplace_back(key);
 
         return matches;
