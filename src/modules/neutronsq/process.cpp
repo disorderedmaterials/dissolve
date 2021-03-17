@@ -71,14 +71,14 @@ bool NeutronSQModule::setUp(Dissolve &dissolve, ProcessPool &procPool)
                              WindowFunction::forms().keyword(wf));
 
         // Store the reference data in processing
-        referenceData.setName(uniqueName());
+        referenceData.setTag(uniqueName());
         auto &storedData =
             dissolve.processingModuleData().realise<Data1D>("ReferenceData", uniqueName(), GenericItem::ProtectedFlag);
         storedData.setObjectTag(fmt::format("{}//ReferenceData", uniqueName()));
         storedData = referenceData;
 
         // Calculate and store the FT of the reference data in processing
-        referenceData.setName(uniqueName());
+        referenceData.setTag(uniqueName());
         auto &storedDataFT =
             dissolve.processingModuleData().realise<Data1D>("ReferenceDataFT", uniqueName(), GenericItem::ProtectedFlag);
         storedDataFT.setObjectTag(fmt::format("{}//ReferenceDataFT", uniqueName()));

@@ -178,7 +178,7 @@ bool Fit1DProcedureNode::finalise(ProcessPool &procPool, Configuration *cfg, std
     auto &data =
         targetList.realise<Data1D>(fmt::format("{}_{}", name(), cfg->niceName()), prefix, GenericItem::InRestartFileFlag);
 
-    data.setName(name());
+    data.setTag(name());
     data.setObjectTag(fmt::format("{}//Fit1D//{}//{}", prefix, cfg->name(), name()));
     data.clear();
 

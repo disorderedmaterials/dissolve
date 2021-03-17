@@ -491,7 +491,10 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
             testDataName = fmt::format("WeightedFR-{}-total", module->uniqueName());
             if (testData_.containsData(testDataName))
             {
-                auto error = Error::percent(simulatedFR, testData_.data(testDataName));
+                auto optRefData = testData_.data(testDataName);
+                if (!optRefData)
+                    return Messenger::error("Reference data '{}' not found.\n", testDataName);
+                auto error = Error::percent(simulatedFR, *optRefData);
                 Messenger::print("Simulated F(r) reference data '{}' has error of {:7.3f}% with calculated data "
                                  "and is {} (threshold is {:6.3f}%)\n\n",
                                  testDataName, error, error <= testThreshold ? "OK" : "NOT OK", testThreshold);
@@ -518,7 +521,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
                         [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
                             // Copy and rename the data for clarity
                             auto data = combinedUnweightedSQ[{i, j}];
-                            data.setName(fmt::format("Simulated {}-{}", at1->name(), at2->name()));
+                            data.setTag(fmt::format("Simulated {}-{}", at1->name(), at2->name()));
 
                             // Add this partial data to the scattering matrix - its factored weight will be (1.0 - feedback)
                             if (!scatteringMatrix.addPartialReferenceData(data, at1, at2, 1.0, (1.0 - feedback)))
@@ -551,7 +554,7 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         {
             for (auto &sq : estimatedSQ)
             {
-                Data1DExportFileFormat exportFormat(sq.name());
+                Data1DExportFileFormat exportFormat(sq.tag());
                 if (!exportFormat.exportData(sq))
                     return procPool.decideFalse();
             }
@@ -567,9 +570,10 @@ bool EPSRModule::process(Dissolve &dissolve, ProcessPool &procPool)
         for_each_pair_early(dissolve.atomTypes().begin(), dissolve.atomTypes().end(),
                             [&](int i, auto at1, int j, auto at2) -> EarlyReturn<bool> {
                                 testDataName = fmt::format("EstimatedSQ-{}-{}", at1->name(), at2->name());
-                                if (testData_.containsData(testDataName))
+                                auto optRefData = testData_.data(testDataName);
+                                if (optRefData)
                                 {
-                                    auto error = Error::percent(estimatedSQ[{i, j}], testData_.data(testDataName));
+                                    auto error = Error::percent(estimatedSQ[{i, j}], *optRefData);
                                     Messenger::print("Generated S(Q) reference data '{}' has error of {:7.3f}% with "
                                                      "calculated data and is {} (threshold is {:6.3f}%)\n\n",
                                                      testDataName, error, error <= testThreshold ? "OK" : "NOT OK",

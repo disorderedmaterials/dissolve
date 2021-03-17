@@ -39,6 +39,12 @@ void Data2D::clear()
  * Data
  */
 
+// Set tag
+void Data2D::setTag(std::string_view tag) { tag_ = tag; }
+
+// Return tag
+std::string_view Data2D::tag() const { return tag_; }
+
 // Initialise arrays to specified size
 void Data2D::initialise(int xSize, int ySize, bool withError)
 {
@@ -277,7 +283,7 @@ const Array2D<double> &Data2D::errors2D() const
 
 void Data2D::operator=(const Data2D &source)
 {
-    name_ = source.name_;
+    tag_ = source.tag_;
     x_ = source.x_;
     y_ = source.y_;
     values_ = source.values_;
@@ -336,7 +342,7 @@ bool Data2D::deserialise(LineParser &parser)
     // Read object name
     if (parser.readNextLine(LineParser::KeepBlanks) != LineParser::Success)
         return false;
-    name_ = parser.line();
+    tag_ = parser.line();
 
     // Read axis sizes and initialise arrays
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -398,7 +404,7 @@ bool Data2D::serialise(LineParser &parser) const
     // Write object tag and name
     if (!parser.writeLineF("{}\n", objectTag()))
         return false;
-    if (!parser.writeLineF("{}\n", name()))
+    if (!parser.writeLineF("{}\n", tag_))
         return false;
 
     // Write axis sizes and errors flag

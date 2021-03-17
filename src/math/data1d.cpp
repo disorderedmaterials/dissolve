@@ -35,6 +35,12 @@ void Data1D::clear()
  * Data
  */
 
+// Set tag
+void Data1D::setTag(std::string_view tag) { tag_ = tag; }
+
+// Return tag
+std::string_view Data1D::tag() const { return tag_; }
+
 // Initialise arrays to specified size
 void Data1D::initialise(int size, bool withError)
 {
@@ -263,7 +269,7 @@ const std::vector<double> &Data1D::errors() const
 
 void Data1D::operator=(const Data1D &source)
 {
-    name_ = source.name_;
+    tag_ = source.tag_;
     x_ = source.x_;
     values_ = source.values_;
     hasError_ = source.hasError_;
@@ -380,7 +386,7 @@ bool Data1D::deserialise(LineParser &parser)
     // Read object name
     if (parser.readNextLine(LineParser::KeepBlanks) != LineParser::Success)
         return false;
-    name_ = parser.line();
+    tag_ = parser.line();
 
     // Read number of points and whether errors are present
     if (parser.getArgsDelim(LineParser::Defaults) != LineParser::Success)
@@ -409,7 +415,7 @@ bool Data1D::serialise(LineParser &parser) const
     // Write object tag and name
     if (!parser.writeLineF("{}\n", objectTag()))
         return false;
-    if (!parser.writeLineF("{}\n", name()))
+    if (!parser.writeLineF("{}\n", tag_))
         return false;
 
     // Write axis size and errors flag

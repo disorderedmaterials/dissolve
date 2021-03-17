@@ -65,13 +65,13 @@ bool PartialSet::setUpPartials(const AtomTypeList &atomTypes, std::string_view p
     std::string title;
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
         title = fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
-        partials_[{n, m}].setName(title);
-        boundPartials_[{n, m}].setName(title);
-        unboundPartials_[{n, m}].setName(title);
+        partials_[{n, m}].setTag(title);
+        boundPartials_[{n, m}].setTag(title);
+        unboundPartials_[{n, m}].setTag(title);
     });
 
     // Set up array for total
-    total_.setName(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
+    total_.setTag(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
     total_.clear();
 
     fingerprint_ = "NO_FINGERPRINT";
@@ -266,7 +266,7 @@ bool PartialSet::save() const
 
     for_each_pair_early(0, atomTypes_.nItems(), [&](int typeI, int typeJ) -> EarlyReturn<bool> {
         // Open file and check that we're OK to proceed writing to it
-        std::string filename{partials_[{typeI, typeJ}].name()};
+        std::string filename{partials_[{typeI, typeJ}].tag()};
         Messenger::printVerbose("Writing partial file '{}'...\n", filename);
 
         parser.openOutput(filename, true);
@@ -285,8 +285,8 @@ bool PartialSet::save() const
         return EarlyReturn<bool>::Continue;
     });
 
-    Messenger::printVerbose("Writing total file '{}'...\n", total_.name());
-    Data1DExportFileFormat exportFormat(total_.name());
+    Messenger::printVerbose("Writing total file '{}'...\n", total_.tag());
+    Data1DExportFileFormat exportFormat(total_.tag());
     return exportFormat.exportData(total_);
 }
 
@@ -323,13 +323,13 @@ void PartialSet::setFileNames(std::string_view prefix, std::string_view tag, std
     std::string title;
     for_each_pair(atomTypes_.begin(), atomTypes_.end(), [&](int n, const AtomTypeData &at1, int m, const AtomTypeData &at2) {
         title = fmt::format("{}-{}-{}-{}.{}", prefix, tag, at1.atomTypeName(), at2.atomTypeName(), suffix);
-        partials_[{n, m}].setName(title);
-        boundPartials_[{n, m}].setName(title);
-        unboundPartials_[{n, m}].setName(title);
+        partials_[{n, m}].setTag(title);
+        boundPartials_[{n, m}].setTag(title);
+        unboundPartials_[{n, m}].setTag(title);
     });
 
     // Set up array for total
-    total_.setName(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
+    total_.setTag(fmt::format("{}-{}-total.{}", prefix, tag, suffix));
 }
 
 /*
